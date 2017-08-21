@@ -1,5 +1,7 @@
 unit FHIRParserJson;
 
+{$I fhir.inc}
+
 {
   Copyright (c) 2011+, HL7 and Health Intersections Pty Ltd (http://www.healthintersections.com.au)
   All rights reserved.
@@ -90,12 +92,14 @@ Type
     function ParsePositiveInt(value : string; jsn : TJsonObject) : TFHIRPositiveInt; overload;
 
     procedure ParseResourceProperties(jsn : TJsonObject; resource : TFhirResource);
+{$IFDEF FHIR_PARAMETERS}
     function ParseParametersParameter(jsn : TJsonObject) : TFhirParametersParameter; overload; {b\}
     procedure ParseParametersParameterProperties(jsn : TJsonObject; result : TFhirParametersParameter); overload; {b\}
     procedure ParseParametersParameter(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
     function ParseParameters(jsn : TJsonObject) : TFhirParameters; overload;
     procedure ParseParametersProperties(jsn : TJsonObject; result : TFhirParameters); overload;
     procedure ParseParameters(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+{$ENDIF FHIR_PARAMETERS}
     procedure ParseDomainResourceProperties(jsn : TJsonObject; resource : TFhirDomainResource);
 
     function ParseExtension(jsn : TJsonObject) : TFhirExtension; overload;
@@ -180,24 +184,33 @@ Type
     procedure ParseTimingProperties(jsn : TJsonObject; result : TFhirTiming); overload;
     procedure ParseTiming(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
 
+{$IFDEF FHIR_ACCOUNT}
     function ParseAccount(jsn : TJsonObject) : TFhirAccount; overload;
     procedure ParseAccountProperties(jsn : TJsonObject; result : TFhirAccount); overload;
     procedure ParseAccount(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+{$ENDIF FHIR_ACCOUNT}
+{$IFDEF FHIR_ALLERGYINTOLERANCE}
     function ParseAllergyIntoleranceReaction(jsn : TJsonObject) : TFhirAllergyIntoleranceReaction; overload; {b\}
     procedure ParseAllergyIntoleranceReactionProperties(jsn : TJsonObject; result : TFhirAllergyIntoleranceReaction); overload; {b\}
     procedure ParseAllergyIntoleranceReaction(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
     function ParseAllergyIntolerance(jsn : TJsonObject) : TFhirAllergyIntolerance; overload;
     procedure ParseAllergyIntoleranceProperties(jsn : TJsonObject; result : TFhirAllergyIntolerance); overload;
     procedure ParseAllergyIntolerance(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+{$ENDIF FHIR_ALLERGYINTOLERANCE}
+{$IFDEF FHIR_APPOINTMENT}
     function ParseAppointmentParticipant(jsn : TJsonObject) : TFhirAppointmentParticipant; overload; {b\}
     procedure ParseAppointmentParticipantProperties(jsn : TJsonObject; result : TFhirAppointmentParticipant); overload; {b\}
     procedure ParseAppointmentParticipant(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
     function ParseAppointment(jsn : TJsonObject) : TFhirAppointment; overload;
     procedure ParseAppointmentProperties(jsn : TJsonObject; result : TFhirAppointment); overload;
     procedure ParseAppointment(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+{$ENDIF FHIR_APPOINTMENT}
+{$IFDEF FHIR_APPOINTMENTRESPONSE}
     function ParseAppointmentResponse(jsn : TJsonObject) : TFhirAppointmentResponse; overload;
     procedure ParseAppointmentResponseProperties(jsn : TJsonObject; result : TFhirAppointmentResponse); overload;
     procedure ParseAppointmentResponse(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+{$ENDIF FHIR_APPOINTMENTRESPONSE}
+{$IFDEF FHIR_AUDITEVENT}
     function ParseAuditEventEvent(jsn : TJsonObject) : TFhirAuditEventEvent; overload; {b\}
     procedure ParseAuditEventEventProperties(jsn : TJsonObject; result : TFhirAuditEventEvent); overload; {b\}
     procedure ParseAuditEventEvent(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
@@ -219,15 +232,23 @@ Type
     function ParseAuditEvent(jsn : TJsonObject) : TFhirAuditEvent; overload;
     procedure ParseAuditEventProperties(jsn : TJsonObject; result : TFhirAuditEvent); overload;
     procedure ParseAuditEvent(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+{$ENDIF FHIR_AUDITEVENT}
+{$IFDEF FHIR_BASIC}
     function ParseBasic(jsn : TJsonObject) : TFhirBasic; overload;
     procedure ParseBasicProperties(jsn : TJsonObject; result : TFhirBasic); overload;
     procedure ParseBasic(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+{$ENDIF FHIR_BASIC}
+{$IFDEF FHIR_BINARY}
     function ParseBinary(jsn : TJsonObject) : TFhirBinary; overload;
     procedure ParseBinaryProperties(jsn : TJsonObject; result : TFhirBinary); overload;
     procedure ParseBinary(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+{$ENDIF FHIR_BINARY}
+{$IFDEF FHIR_BODYSITE}
     function ParseBodySite(jsn : TJsonObject) : TFhirBodySite; overload;
     procedure ParseBodySiteProperties(jsn : TJsonObject; result : TFhirBodySite); overload;
     procedure ParseBodySite(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+{$ENDIF FHIR_BODYSITE}
+{$IFDEF FHIR_BUNDLE}
     function ParseBundleLink(jsn : TJsonObject) : TFhirBundleLink; overload; {b\}
     procedure ParseBundleLinkProperties(jsn : TJsonObject; result : TFhirBundleLink); overload; {b\}
     procedure ParseBundleLink(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
@@ -246,6 +267,8 @@ Type
     function ParseBundle(jsn : TJsonObject) : TFhirBundle; overload;
     procedure ParseBundleProperties(jsn : TJsonObject; result : TFhirBundle); overload;
     procedure ParseBundle(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+{$ENDIF FHIR_BUNDLE}
+{$IFDEF FHIR_CAREPLAN}
     function ParseCarePlanRelatedPlan(jsn : TJsonObject) : TFhirCarePlanRelatedPlan; overload; {b\}
     procedure ParseCarePlanRelatedPlanProperties(jsn : TJsonObject; result : TFhirCarePlanRelatedPlan); overload; {b\}
     procedure ParseCarePlanRelatedPlan(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
@@ -261,6 +284,8 @@ Type
     function ParseCarePlan(jsn : TJsonObject) : TFhirCarePlan; overload;
     procedure ParseCarePlanProperties(jsn : TJsonObject; result : TFhirCarePlan); overload;
     procedure ParseCarePlan(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+{$ENDIF FHIR_CAREPLAN}
+{$IFDEF FHIR_CLAIM}
     function ParseClaimPayee(jsn : TJsonObject) : TFhirClaimPayee; overload; {b\}
     procedure ParseClaimPayeeProperties(jsn : TJsonObject; result : TFhirClaimPayee); overload; {b\}
     procedure ParseClaimPayee(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
@@ -288,6 +313,8 @@ Type
     function ParseClaim(jsn : TJsonObject) : TFhirClaim; overload;
     procedure ParseClaimProperties(jsn : TJsonObject; result : TFhirClaim); overload;
     procedure ParseClaim(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+{$ENDIF FHIR_CLAIM}
+{$IFDEF FHIR_CLAIMRESPONSE}
     function ParseClaimResponseItem(jsn : TJsonObject) : TFhirClaimResponseItem; overload; {b\}
     procedure ParseClaimResponseItemProperties(jsn : TJsonObject; result : TFhirClaimResponseItem); overload; {b\}
     procedure ParseClaimResponseItem(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
@@ -330,6 +357,8 @@ Type
     function ParseClaimResponse(jsn : TJsonObject) : TFhirClaimResponse; overload;
     procedure ParseClaimResponseProperties(jsn : TJsonObject; result : TFhirClaimResponse); overload;
     procedure ParseClaimResponse(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+{$ENDIF FHIR_CLAIMRESPONSE}
+{$IFDEF FHIR_CLINICALIMPRESSION}
     function ParseClinicalImpressionInvestigations(jsn : TJsonObject) : TFhirClinicalImpressionInvestigations; overload; {b\}
     procedure ParseClinicalImpressionInvestigationsProperties(jsn : TJsonObject; result : TFhirClinicalImpressionInvestigations); overload; {b\}
     procedure ParseClinicalImpressionInvestigations(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
@@ -342,18 +371,24 @@ Type
     function ParseClinicalImpression(jsn : TJsonObject) : TFhirClinicalImpression; overload;
     procedure ParseClinicalImpressionProperties(jsn : TJsonObject; result : TFhirClinicalImpression); overload;
     procedure ParseClinicalImpression(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+{$ENDIF FHIR_CLINICALIMPRESSION}
+{$IFDEF FHIR_COMMUNICATION}
     function ParseCommunicationPayload(jsn : TJsonObject) : TFhirCommunicationPayload; overload; {b\}
     procedure ParseCommunicationPayloadProperties(jsn : TJsonObject; result : TFhirCommunicationPayload); overload; {b\}
     procedure ParseCommunicationPayload(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
     function ParseCommunication(jsn : TJsonObject) : TFhirCommunication; overload;
     procedure ParseCommunicationProperties(jsn : TJsonObject; result : TFhirCommunication); overload;
     procedure ParseCommunication(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+{$ENDIF FHIR_COMMUNICATION}
+{$IFDEF FHIR_COMMUNICATIONREQUEST}
     function ParseCommunicationRequestPayload(jsn : TJsonObject) : TFhirCommunicationRequestPayload; overload; {b\}
     procedure ParseCommunicationRequestPayloadProperties(jsn : TJsonObject; result : TFhirCommunicationRequestPayload); overload; {b\}
     procedure ParseCommunicationRequestPayload(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
     function ParseCommunicationRequest(jsn : TJsonObject) : TFhirCommunicationRequest; overload;
     procedure ParseCommunicationRequestProperties(jsn : TJsonObject; result : TFhirCommunicationRequest); overload;
     procedure ParseCommunicationRequest(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+{$ENDIF FHIR_COMMUNICATIONREQUEST}
+{$IFDEF FHIR_COMPOSITION}
     function ParseCompositionAttester(jsn : TJsonObject) : TFhirCompositionAttester; overload; {b\}
     procedure ParseCompositionAttesterProperties(jsn : TJsonObject; result : TFhirCompositionAttester); overload; {b\}
     procedure ParseCompositionAttester(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
@@ -366,6 +401,8 @@ Type
     function ParseComposition(jsn : TJsonObject) : TFhirComposition; overload;
     procedure ParseCompositionProperties(jsn : TJsonObject; result : TFhirComposition); overload;
     procedure ParseComposition(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+{$ENDIF FHIR_COMPOSITION}
+{$IFDEF FHIR_CONCEPTMAP}
     function ParseConceptMapContact(jsn : TJsonObject) : TFhirConceptMapContact; overload; {b\}
     procedure ParseConceptMapContactProperties(jsn : TJsonObject; result : TFhirConceptMapContact); overload; {b\}
     procedure ParseConceptMapContact(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
@@ -381,6 +418,8 @@ Type
     function ParseConceptMap(jsn : TJsonObject) : TFhirConceptMap; overload;
     procedure ParseConceptMapProperties(jsn : TJsonObject; result : TFhirConceptMap); overload;
     procedure ParseConceptMap(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+{$ENDIF FHIR_CONCEPTMAP}
+{$IFDEF FHIR_CONDITION}
     function ParseConditionStage(jsn : TJsonObject) : TFhirConditionStage; overload; {b\}
     procedure ParseConditionStageProperties(jsn : TJsonObject; result : TFhirConditionStage); overload; {b\}
     procedure ParseConditionStage(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
@@ -390,6 +429,8 @@ Type
     function ParseCondition(jsn : TJsonObject) : TFhirCondition; overload;
     procedure ParseConditionProperties(jsn : TJsonObject; result : TFhirCondition); overload;
     procedure ParseCondition(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+{$ENDIF FHIR_CONDITION}
+{$IFDEF FHIR_CONFORMANCE}
     function ParseConformanceContact(jsn : TJsonObject) : TFhirConformanceContact; overload; {b\}
     procedure ParseConformanceContactProperties(jsn : TJsonObject; result : TFhirConformanceContact); overload; {b\}
     procedure ParseConformanceContact(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
@@ -438,6 +479,8 @@ Type
     function ParseConformance(jsn : TJsonObject) : TFhirConformance; overload;
     procedure ParseConformanceProperties(jsn : TJsonObject; result : TFhirConformance); overload;
     procedure ParseConformance(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+{$ENDIF FHIR_CONFORMANCE}
+{$IFDEF FHIR_CONTRACT}
     function ParseContractActor(jsn : TJsonObject) : TFhirContractActor; overload; {b\}
     procedure ParseContractActorProperties(jsn : TJsonObject; result : TFhirContractActor); overload; {b\}
     procedure ParseContractActor(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
@@ -468,9 +511,13 @@ Type
     function ParseContract(jsn : TJsonObject) : TFhirContract; overload;
     procedure ParseContractProperties(jsn : TJsonObject; result : TFhirContract); overload;
     procedure ParseContract(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+{$ENDIF FHIR_CONTRACT}
+{$IFDEF FHIR_COVERAGE}
     function ParseCoverage(jsn : TJsonObject) : TFhirCoverage; overload;
     procedure ParseCoverageProperties(jsn : TJsonObject; result : TFhirCoverage); overload;
     procedure ParseCoverage(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+{$ENDIF FHIR_COVERAGE}
+{$IFDEF FHIR_DATAELEMENT}
     function ParseDataElementContact(jsn : TJsonObject) : TFhirDataElementContact; overload; {b\}
     procedure ParseDataElementContactProperties(jsn : TJsonObject; result : TFhirDataElementContact); overload; {b\}
     procedure ParseDataElementContact(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
@@ -480,33 +527,47 @@ Type
     function ParseDataElement(jsn : TJsonObject) : TFhirDataElement; overload;
     procedure ParseDataElementProperties(jsn : TJsonObject; result : TFhirDataElement); overload;
     procedure ParseDataElement(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+{$ENDIF FHIR_DATAELEMENT}
+{$IFDEF FHIR_DETECTEDISSUE}
     function ParseDetectedIssueMitigation(jsn : TJsonObject) : TFhirDetectedIssueMitigation; overload; {b\}
     procedure ParseDetectedIssueMitigationProperties(jsn : TJsonObject; result : TFhirDetectedIssueMitigation); overload; {b\}
     procedure ParseDetectedIssueMitigation(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
     function ParseDetectedIssue(jsn : TJsonObject) : TFhirDetectedIssue; overload;
     procedure ParseDetectedIssueProperties(jsn : TJsonObject; result : TFhirDetectedIssue); overload;
     procedure ParseDetectedIssue(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+{$ENDIF FHIR_DETECTEDISSUE}
+{$IFDEF FHIR_DEVICE}
     function ParseDevice(jsn : TJsonObject) : TFhirDevice; overload;
     procedure ParseDeviceProperties(jsn : TJsonObject; result : TFhirDevice); overload;
     procedure ParseDevice(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+{$ENDIF FHIR_DEVICE}
+{$IFDEF FHIR_DEVICECOMPONENT}
     function ParseDeviceComponentProductionSpecification(jsn : TJsonObject) : TFhirDeviceComponentProductionSpecification; overload; {b\}
     procedure ParseDeviceComponentProductionSpecificationProperties(jsn : TJsonObject; result : TFhirDeviceComponentProductionSpecification); overload; {b\}
     procedure ParseDeviceComponentProductionSpecification(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
     function ParseDeviceComponent(jsn : TJsonObject) : TFhirDeviceComponent; overload;
     procedure ParseDeviceComponentProperties(jsn : TJsonObject; result : TFhirDeviceComponent); overload;
     procedure ParseDeviceComponent(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+{$ENDIF FHIR_DEVICECOMPONENT}
+{$IFDEF FHIR_DEVICEMETRIC}
     function ParseDeviceMetricCalibration(jsn : TJsonObject) : TFhirDeviceMetricCalibration; overload; {b\}
     procedure ParseDeviceMetricCalibrationProperties(jsn : TJsonObject; result : TFhirDeviceMetricCalibration); overload; {b\}
     procedure ParseDeviceMetricCalibration(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
     function ParseDeviceMetric(jsn : TJsonObject) : TFhirDeviceMetric; overload;
     procedure ParseDeviceMetricProperties(jsn : TJsonObject; result : TFhirDeviceMetric); overload;
     procedure ParseDeviceMetric(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+{$ENDIF FHIR_DEVICEMETRIC}
+{$IFDEF FHIR_DEVICEUSEREQUEST}
     function ParseDeviceUseRequest(jsn : TJsonObject) : TFhirDeviceUseRequest; overload;
     procedure ParseDeviceUseRequestProperties(jsn : TJsonObject; result : TFhirDeviceUseRequest); overload;
     procedure ParseDeviceUseRequest(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+{$ENDIF FHIR_DEVICEUSEREQUEST}
+{$IFDEF FHIR_DEVICEUSESTATEMENT}
     function ParseDeviceUseStatement(jsn : TJsonObject) : TFhirDeviceUseStatement; overload;
     procedure ParseDeviceUseStatementProperties(jsn : TJsonObject; result : TFhirDeviceUseStatement); overload;
     procedure ParseDeviceUseStatement(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+{$ENDIF FHIR_DEVICEUSESTATEMENT}
+{$IFDEF FHIR_DIAGNOSTICORDER}
     function ParseDiagnosticOrderEvent(jsn : TJsonObject) : TFhirDiagnosticOrderEvent; overload; {b\}
     procedure ParseDiagnosticOrderEventProperties(jsn : TJsonObject; result : TFhirDiagnosticOrderEvent); overload; {b\}
     procedure ParseDiagnosticOrderEvent(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
@@ -516,12 +577,16 @@ Type
     function ParseDiagnosticOrder(jsn : TJsonObject) : TFhirDiagnosticOrder; overload;
     procedure ParseDiagnosticOrderProperties(jsn : TJsonObject; result : TFhirDiagnosticOrder); overload;
     procedure ParseDiagnosticOrder(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+{$ENDIF FHIR_DIAGNOSTICORDER}
+{$IFDEF FHIR_DIAGNOSTICREPORT}
     function ParseDiagnosticReportImage(jsn : TJsonObject) : TFhirDiagnosticReportImage; overload; {b\}
     procedure ParseDiagnosticReportImageProperties(jsn : TJsonObject; result : TFhirDiagnosticReportImage); overload; {b\}
     procedure ParseDiagnosticReportImage(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
     function ParseDiagnosticReport(jsn : TJsonObject) : TFhirDiagnosticReport; overload;
     procedure ParseDiagnosticReportProperties(jsn : TJsonObject; result : TFhirDiagnosticReport); overload;
     procedure ParseDiagnosticReport(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+{$ENDIF FHIR_DIAGNOSTICREPORT}
+{$IFDEF FHIR_DOCUMENTMANIFEST}
     function ParseDocumentManifestContent(jsn : TJsonObject) : TFhirDocumentManifestContent; overload; {b\}
     procedure ParseDocumentManifestContentProperties(jsn : TJsonObject; result : TFhirDocumentManifestContent); overload; {b\}
     procedure ParseDocumentManifestContent(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
@@ -531,6 +596,8 @@ Type
     function ParseDocumentManifest(jsn : TJsonObject) : TFhirDocumentManifest; overload;
     procedure ParseDocumentManifestProperties(jsn : TJsonObject; result : TFhirDocumentManifest); overload;
     procedure ParseDocumentManifest(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+{$ENDIF FHIR_DOCUMENTMANIFEST}
+{$IFDEF FHIR_DOCUMENTREFERENCE}
     function ParseDocumentReferenceRelatesTo(jsn : TJsonObject) : TFhirDocumentReferenceRelatesTo; overload; {b\}
     procedure ParseDocumentReferenceRelatesToProperties(jsn : TJsonObject; result : TFhirDocumentReferenceRelatesTo); overload; {b\}
     procedure ParseDocumentReferenceRelatesTo(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
@@ -546,12 +613,18 @@ Type
     function ParseDocumentReference(jsn : TJsonObject) : TFhirDocumentReference; overload;
     procedure ParseDocumentReferenceProperties(jsn : TJsonObject; result : TFhirDocumentReference); overload;
     procedure ParseDocumentReference(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+{$ENDIF FHIR_DOCUMENTREFERENCE}
+{$IFDEF FHIR_ELIGIBILITYREQUEST}
     function ParseEligibilityRequest(jsn : TJsonObject) : TFhirEligibilityRequest; overload;
     procedure ParseEligibilityRequestProperties(jsn : TJsonObject; result : TFhirEligibilityRequest); overload;
     procedure ParseEligibilityRequest(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+{$ENDIF FHIR_ELIGIBILITYREQUEST}
+{$IFDEF FHIR_ELIGIBILITYRESPONSE}
     function ParseEligibilityResponse(jsn : TJsonObject) : TFhirEligibilityResponse; overload;
     procedure ParseEligibilityResponseProperties(jsn : TJsonObject; result : TFhirEligibilityResponse); overload;
     procedure ParseEligibilityResponse(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+{$ENDIF FHIR_ELIGIBILITYRESPONSE}
+{$IFDEF FHIR_ENCOUNTER}
     function ParseEncounterStatusHistory(jsn : TJsonObject) : TFhirEncounterStatusHistory; overload; {b\}
     procedure ParseEncounterStatusHistoryProperties(jsn : TJsonObject; result : TFhirEncounterStatusHistory); overload; {b\}
     procedure ParseEncounterStatusHistory(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
@@ -567,12 +640,18 @@ Type
     function ParseEncounter(jsn : TJsonObject) : TFhirEncounter; overload;
     procedure ParseEncounterProperties(jsn : TJsonObject; result : TFhirEncounter); overload;
     procedure ParseEncounter(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+{$ENDIF FHIR_ENCOUNTER}
+{$IFDEF FHIR_ENROLLMENTREQUEST}
     function ParseEnrollmentRequest(jsn : TJsonObject) : TFhirEnrollmentRequest; overload;
     procedure ParseEnrollmentRequestProperties(jsn : TJsonObject; result : TFhirEnrollmentRequest); overload;
     procedure ParseEnrollmentRequest(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+{$ENDIF FHIR_ENROLLMENTREQUEST}
+{$IFDEF FHIR_ENROLLMENTRESPONSE}
     function ParseEnrollmentResponse(jsn : TJsonObject) : TFhirEnrollmentResponse; overload;
     procedure ParseEnrollmentResponseProperties(jsn : TJsonObject; result : TFhirEnrollmentResponse); overload;
     procedure ParseEnrollmentResponse(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+{$ENDIF FHIR_ENROLLMENTRESPONSE}
+{$IFDEF FHIR_EPISODEOFCARE}
     function ParseEpisodeOfCareStatusHistory(jsn : TJsonObject) : TFhirEpisodeOfCareStatusHistory; overload; {b\}
     procedure ParseEpisodeOfCareStatusHistoryProperties(jsn : TJsonObject; result : TFhirEpisodeOfCareStatusHistory); overload; {b\}
     procedure ParseEpisodeOfCareStatusHistory(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
@@ -582,24 +661,34 @@ Type
     function ParseEpisodeOfCare(jsn : TJsonObject) : TFhirEpisodeOfCare; overload;
     procedure ParseEpisodeOfCareProperties(jsn : TJsonObject; result : TFhirEpisodeOfCare); overload;
     procedure ParseEpisodeOfCare(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+{$ENDIF FHIR_EPISODEOFCARE}
+{$IFDEF FHIR_EXPLANATIONOFBENEFIT}
     function ParseExplanationOfBenefit(jsn : TJsonObject) : TFhirExplanationOfBenefit; overload;
     procedure ParseExplanationOfBenefitProperties(jsn : TJsonObject; result : TFhirExplanationOfBenefit); overload;
     procedure ParseExplanationOfBenefit(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+{$ENDIF FHIR_EXPLANATIONOFBENEFIT}
+{$IFDEF FHIR_FAMILYMEMBERHISTORY}
     function ParseFamilyMemberHistoryCondition(jsn : TJsonObject) : TFhirFamilyMemberHistoryCondition; overload; {b\}
     procedure ParseFamilyMemberHistoryConditionProperties(jsn : TJsonObject; result : TFhirFamilyMemberHistoryCondition); overload; {b\}
     procedure ParseFamilyMemberHistoryCondition(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
     function ParseFamilyMemberHistory(jsn : TJsonObject) : TFhirFamilyMemberHistory; overload;
     procedure ParseFamilyMemberHistoryProperties(jsn : TJsonObject; result : TFhirFamilyMemberHistory); overload;
     procedure ParseFamilyMemberHistory(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+{$ENDIF FHIR_FAMILYMEMBERHISTORY}
+{$IFDEF FHIR_FLAG}
     function ParseFlag(jsn : TJsonObject) : TFhirFlag; overload;
     procedure ParseFlagProperties(jsn : TJsonObject; result : TFhirFlag); overload;
     procedure ParseFlag(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+{$ENDIF FHIR_FLAG}
+{$IFDEF FHIR_GOAL}
     function ParseGoalOutcome(jsn : TJsonObject) : TFhirGoalOutcome; overload; {b\}
     procedure ParseGoalOutcomeProperties(jsn : TJsonObject; result : TFhirGoalOutcome); overload; {b\}
     procedure ParseGoalOutcome(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
     function ParseGoal(jsn : TJsonObject) : TFhirGoal; overload;
     procedure ParseGoalProperties(jsn : TJsonObject; result : TFhirGoal); overload;
     procedure ParseGoal(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+{$ENDIF FHIR_GOAL}
+{$IFDEF FHIR_GROUP}
     function ParseGroupCharacteristic(jsn : TJsonObject) : TFhirGroupCharacteristic; overload; {b\}
     procedure ParseGroupCharacteristicProperties(jsn : TJsonObject; result : TFhirGroupCharacteristic); overload; {b\}
     procedure ParseGroupCharacteristic(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
@@ -609,6 +698,8 @@ Type
     function ParseGroup(jsn : TJsonObject) : TFhirGroup; overload;
     procedure ParseGroupProperties(jsn : TJsonObject; result : TFhirGroup); overload;
     procedure ParseGroup(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+{$ENDIF FHIR_GROUP}
+{$IFDEF FHIR_HEALTHCARESERVICE}
     function ParseHealthcareServiceServiceType(jsn : TJsonObject) : TFhirHealthcareServiceServiceType; overload; {b\}
     procedure ParseHealthcareServiceServiceTypeProperties(jsn : TJsonObject; result : TFhirHealthcareServiceServiceType); overload; {b\}
     procedure ParseHealthcareServiceServiceType(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
@@ -621,6 +712,8 @@ Type
     function ParseHealthcareService(jsn : TJsonObject) : TFhirHealthcareService; overload;
     procedure ParseHealthcareServiceProperties(jsn : TJsonObject; result : TFhirHealthcareService); overload;
     procedure ParseHealthcareService(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+{$ENDIF FHIR_HEALTHCARESERVICE}
+{$IFDEF FHIR_IMAGINGOBJECTSELECTION}
     function ParseImagingObjectSelectionStudy(jsn : TJsonObject) : TFhirImagingObjectSelectionStudy; overload; {b\}
     procedure ParseImagingObjectSelectionStudyProperties(jsn : TJsonObject; result : TFhirImagingObjectSelectionStudy); overload; {b\}
     procedure ParseImagingObjectSelectionStudy(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
@@ -636,6 +729,8 @@ Type
     function ParseImagingObjectSelection(jsn : TJsonObject) : TFhirImagingObjectSelection; overload;
     procedure ParseImagingObjectSelectionProperties(jsn : TJsonObject; result : TFhirImagingObjectSelection); overload;
     procedure ParseImagingObjectSelection(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+{$ENDIF FHIR_IMAGINGOBJECTSELECTION}
+{$IFDEF FHIR_IMAGINGSTUDY}
     function ParseImagingStudySeries(jsn : TJsonObject) : TFhirImagingStudySeries; overload; {b\}
     procedure ParseImagingStudySeriesProperties(jsn : TJsonObject; result : TFhirImagingStudySeries); overload; {b\}
     procedure ParseImagingStudySeries(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
@@ -645,6 +740,8 @@ Type
     function ParseImagingStudy(jsn : TJsonObject) : TFhirImagingStudy; overload;
     procedure ParseImagingStudyProperties(jsn : TJsonObject; result : TFhirImagingStudy); overload;
     procedure ParseImagingStudy(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+{$ENDIF FHIR_IMAGINGSTUDY}
+{$IFDEF FHIR_IMMUNIZATION}
     function ParseImmunizationExplanation(jsn : TJsonObject) : TFhirImmunizationExplanation; overload; {b\}
     procedure ParseImmunizationExplanationProperties(jsn : TJsonObject; result : TFhirImmunizationExplanation); overload; {b\}
     procedure ParseImmunizationExplanation(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
@@ -657,6 +754,8 @@ Type
     function ParseImmunization(jsn : TJsonObject) : TFhirImmunization; overload;
     procedure ParseImmunizationProperties(jsn : TJsonObject; result : TFhirImmunization); overload;
     procedure ParseImmunization(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+{$ENDIF FHIR_IMMUNIZATION}
+{$IFDEF FHIR_IMMUNIZATIONRECOMMENDATION}
     function ParseImmunizationRecommendationRecommendation(jsn : TJsonObject) : TFhirImmunizationRecommendationRecommendation; overload; {b\}
     procedure ParseImmunizationRecommendationRecommendationProperties(jsn : TJsonObject; result : TFhirImmunizationRecommendationRecommendation); overload; {b\}
     procedure ParseImmunizationRecommendationRecommendation(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
@@ -669,6 +768,8 @@ Type
     function ParseImmunizationRecommendation(jsn : TJsonObject) : TFhirImmunizationRecommendation; overload;
     procedure ParseImmunizationRecommendationProperties(jsn : TJsonObject; result : TFhirImmunizationRecommendation); overload;
     procedure ParseImmunizationRecommendation(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+{$ENDIF FHIR_IMMUNIZATIONRECOMMENDATION}
+{$IFDEF FHIR_IMPLEMENTATIONGUIDE}
     function ParseImplementationGuideContact(jsn : TJsonObject) : TFhirImplementationGuideContact; overload; {b\}
     procedure ParseImplementationGuideContactProperties(jsn : TJsonObject; result : TFhirImplementationGuideContact); overload; {b\}
     procedure ParseImplementationGuideContact(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
@@ -690,21 +791,29 @@ Type
     function ParseImplementationGuide(jsn : TJsonObject) : TFhirImplementationGuide; overload;
     procedure ParseImplementationGuideProperties(jsn : TJsonObject; result : TFhirImplementationGuide); overload;
     procedure ParseImplementationGuide(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+{$ENDIF FHIR_IMPLEMENTATIONGUIDE}
+{$IFDEF FHIR_LIST}
     function ParseListEntry(jsn : TJsonObject) : TFhirListEntry; overload; {b\}
     procedure ParseListEntryProperties(jsn : TJsonObject; result : TFhirListEntry); overload; {b\}
     procedure ParseListEntry(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
     function ParseList(jsn : TJsonObject) : TFhirList; overload;
     procedure ParseListProperties(jsn : TJsonObject; result : TFhirList); overload;
     procedure ParseList(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+{$ENDIF FHIR_LIST}
+{$IFDEF FHIR_LOCATION}
     function ParseLocationPosition(jsn : TJsonObject) : TFhirLocationPosition; overload; {b\}
     procedure ParseLocationPositionProperties(jsn : TJsonObject; result : TFhirLocationPosition); overload; {b\}
     procedure ParseLocationPosition(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
     function ParseLocation(jsn : TJsonObject) : TFhirLocation; overload;
     procedure ParseLocationProperties(jsn : TJsonObject; result : TFhirLocation); overload;
     procedure ParseLocation(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+{$ENDIF FHIR_LOCATION}
+{$IFDEF FHIR_MEDIA}
     function ParseMedia(jsn : TJsonObject) : TFhirMedia; overload;
     procedure ParseMediaProperties(jsn : TJsonObject; result : TFhirMedia); overload;
     procedure ParseMedia(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+{$ENDIF FHIR_MEDIA}
+{$IFDEF FHIR_MEDICATION}
     function ParseMedicationProduct(jsn : TJsonObject) : TFhirMedicationProduct; overload; {b\}
     procedure ParseMedicationProductProperties(jsn : TJsonObject; result : TFhirMedicationProduct); overload; {b\}
     procedure ParseMedicationProduct(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
@@ -723,12 +832,16 @@ Type
     function ParseMedication(jsn : TJsonObject) : TFhirMedication; overload;
     procedure ParseMedicationProperties(jsn : TJsonObject; result : TFhirMedication); overload;
     procedure ParseMedication(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+{$ENDIF FHIR_MEDICATION}
+{$IFDEF FHIR_MEDICATIONADMINISTRATION}
     function ParseMedicationAdministrationDosage(jsn : TJsonObject) : TFhirMedicationAdministrationDosage; overload; {b\}
     procedure ParseMedicationAdministrationDosageProperties(jsn : TJsonObject; result : TFhirMedicationAdministrationDosage); overload; {b\}
     procedure ParseMedicationAdministrationDosage(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
     function ParseMedicationAdministration(jsn : TJsonObject) : TFhirMedicationAdministration; overload;
     procedure ParseMedicationAdministrationProperties(jsn : TJsonObject; result : TFhirMedicationAdministration); overload;
     procedure ParseMedicationAdministration(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+{$ENDIF FHIR_MEDICATIONADMINISTRATION}
+{$IFDEF FHIR_MEDICATIONDISPENSE}
     function ParseMedicationDispenseDosageInstruction(jsn : TJsonObject) : TFhirMedicationDispenseDosageInstruction; overload; {b\}
     procedure ParseMedicationDispenseDosageInstructionProperties(jsn : TJsonObject; result : TFhirMedicationDispenseDosageInstruction); overload; {b\}
     procedure ParseMedicationDispenseDosageInstruction(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
@@ -738,6 +851,8 @@ Type
     function ParseMedicationDispense(jsn : TJsonObject) : TFhirMedicationDispense; overload;
     procedure ParseMedicationDispenseProperties(jsn : TJsonObject; result : TFhirMedicationDispense); overload;
     procedure ParseMedicationDispense(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+{$ENDIF FHIR_MEDICATIONDISPENSE}
+{$IFDEF FHIR_MEDICATIONORDER}
     function ParseMedicationOrderDosageInstruction(jsn : TJsonObject) : TFhirMedicationOrderDosageInstruction; overload; {b\}
     procedure ParseMedicationOrderDosageInstructionProperties(jsn : TJsonObject; result : TFhirMedicationOrderDosageInstruction); overload; {b\}
     procedure ParseMedicationOrderDosageInstruction(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
@@ -750,12 +865,16 @@ Type
     function ParseMedicationOrder(jsn : TJsonObject) : TFhirMedicationOrder; overload;
     procedure ParseMedicationOrderProperties(jsn : TJsonObject; result : TFhirMedicationOrder); overload;
     procedure ParseMedicationOrder(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+{$ENDIF FHIR_MEDICATIONORDER}
+{$IFDEF FHIR_MEDICATIONSTATEMENT}
     function ParseMedicationStatementDosage(jsn : TJsonObject) : TFhirMedicationStatementDosage; overload; {b\}
     procedure ParseMedicationStatementDosageProperties(jsn : TJsonObject; result : TFhirMedicationStatementDosage); overload; {b\}
     procedure ParseMedicationStatementDosage(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
     function ParseMedicationStatement(jsn : TJsonObject) : TFhirMedicationStatement; overload;
     procedure ParseMedicationStatementProperties(jsn : TJsonObject; result : TFhirMedicationStatement); overload;
     procedure ParseMedicationStatement(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+{$ENDIF FHIR_MEDICATIONSTATEMENT}
+{$IFDEF FHIR_MESSAGEHEADER}
     function ParseMessageHeaderResponse(jsn : TJsonObject) : TFhirMessageHeaderResponse; overload; {b\}
     procedure ParseMessageHeaderResponseProperties(jsn : TJsonObject; result : TFhirMessageHeaderResponse); overload; {b\}
     procedure ParseMessageHeaderResponse(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
@@ -768,6 +887,8 @@ Type
     function ParseMessageHeader(jsn : TJsonObject) : TFhirMessageHeader; overload;
     procedure ParseMessageHeaderProperties(jsn : TJsonObject; result : TFhirMessageHeader); overload;
     procedure ParseMessageHeader(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+{$ENDIF FHIR_MESSAGEHEADER}
+{$IFDEF FHIR_NAMINGSYSTEM}
     function ParseNamingSystemContact(jsn : TJsonObject) : TFhirNamingSystemContact; overload; {b\}
     procedure ParseNamingSystemContactProperties(jsn : TJsonObject; result : TFhirNamingSystemContact); overload; {b\}
     procedure ParseNamingSystemContact(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
@@ -777,6 +898,8 @@ Type
     function ParseNamingSystem(jsn : TJsonObject) : TFhirNamingSystem; overload;
     procedure ParseNamingSystemProperties(jsn : TJsonObject; result : TFhirNamingSystem); overload;
     procedure ParseNamingSystem(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+{$ENDIF FHIR_NAMINGSYSTEM}
+{$IFDEF FHIR_NUTRITIONORDER}
     function ParseNutritionOrderOralDiet(jsn : TJsonObject) : TFhirNutritionOrderOralDiet; overload; {b\}
     procedure ParseNutritionOrderOralDietProperties(jsn : TJsonObject; result : TFhirNutritionOrderOralDiet); overload; {b\}
     procedure ParseNutritionOrderOralDiet(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
@@ -798,6 +921,8 @@ Type
     function ParseNutritionOrder(jsn : TJsonObject) : TFhirNutritionOrder; overload;
     procedure ParseNutritionOrderProperties(jsn : TJsonObject; result : TFhirNutritionOrder); overload;
     procedure ParseNutritionOrder(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+{$ENDIF FHIR_NUTRITIONORDER}
+{$IFDEF FHIR_OBSERVATION}
     function ParseObservationReferenceRange(jsn : TJsonObject) : TFhirObservationReferenceRange; overload; {b\}
     procedure ParseObservationReferenceRangeProperties(jsn : TJsonObject; result : TFhirObservationReferenceRange); overload; {b\}
     procedure ParseObservationReferenceRange(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
@@ -810,6 +935,8 @@ Type
     function ParseObservation(jsn : TJsonObject) : TFhirObservation; overload;
     procedure ParseObservationProperties(jsn : TJsonObject; result : TFhirObservation); overload;
     procedure ParseObservation(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+{$ENDIF FHIR_OBSERVATION}
+{$IFDEF FHIR_OPERATIONDEFINITION}
     function ParseOperationDefinitionContact(jsn : TJsonObject) : TFhirOperationDefinitionContact; overload; {b\}
     procedure ParseOperationDefinitionContactProperties(jsn : TJsonObject; result : TFhirOperationDefinitionContact); overload; {b\}
     procedure ParseOperationDefinitionContact(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
@@ -822,27 +949,37 @@ Type
     function ParseOperationDefinition(jsn : TJsonObject) : TFhirOperationDefinition; overload;
     procedure ParseOperationDefinitionProperties(jsn : TJsonObject; result : TFhirOperationDefinition); overload;
     procedure ParseOperationDefinition(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+{$ENDIF FHIR_OPERATIONDEFINITION}
+{$IFDEF FHIR_OPERATIONOUTCOME}
     function ParseOperationOutcomeIssue(jsn : TJsonObject) : TFhirOperationOutcomeIssue; overload; {b\}
     procedure ParseOperationOutcomeIssueProperties(jsn : TJsonObject; result : TFhirOperationOutcomeIssue); overload; {b\}
     procedure ParseOperationOutcomeIssue(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
     function ParseOperationOutcome(jsn : TJsonObject) : TFhirOperationOutcome; overload;
     procedure ParseOperationOutcomeProperties(jsn : TJsonObject; result : TFhirOperationOutcome); overload;
     procedure ParseOperationOutcome(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+{$ENDIF FHIR_OPERATIONOUTCOME}
+{$IFDEF FHIR_ORDER}
     function ParseOrderWhen(jsn : TJsonObject) : TFhirOrderWhen; overload; {b\}
     procedure ParseOrderWhenProperties(jsn : TJsonObject; result : TFhirOrderWhen); overload; {b\}
     procedure ParseOrderWhen(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
     function ParseOrder(jsn : TJsonObject) : TFhirOrder; overload;
     procedure ParseOrderProperties(jsn : TJsonObject; result : TFhirOrder); overload;
     procedure ParseOrder(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+{$ENDIF FHIR_ORDER}
+{$IFDEF FHIR_ORDERRESPONSE}
     function ParseOrderResponse(jsn : TJsonObject) : TFhirOrderResponse; overload;
     procedure ParseOrderResponseProperties(jsn : TJsonObject; result : TFhirOrderResponse); overload;
     procedure ParseOrderResponse(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+{$ENDIF FHIR_ORDERRESPONSE}
+{$IFDEF FHIR_ORGANIZATION}
     function ParseOrganizationContact(jsn : TJsonObject) : TFhirOrganizationContact; overload; {b\}
     procedure ParseOrganizationContactProperties(jsn : TJsonObject; result : TFhirOrganizationContact); overload; {b\}
     procedure ParseOrganizationContact(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
     function ParseOrganization(jsn : TJsonObject) : TFhirOrganization; overload;
     procedure ParseOrganizationProperties(jsn : TJsonObject; result : TFhirOrganization); overload;
     procedure ParseOrganization(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+{$ENDIF FHIR_ORGANIZATION}
+{$IFDEF FHIR_PATIENT}
     function ParsePatientContact(jsn : TJsonObject) : TFhirPatientContact; overload; {b\}
     procedure ParsePatientContactProperties(jsn : TJsonObject; result : TFhirPatientContact); overload; {b\}
     procedure ParsePatientContact(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
@@ -858,9 +995,13 @@ Type
     function ParsePatient(jsn : TJsonObject) : TFhirPatient; overload;
     procedure ParsePatientProperties(jsn : TJsonObject; result : TFhirPatient); overload;
     procedure ParsePatient(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+{$ENDIF FHIR_PATIENT}
+{$IFDEF FHIR_PAYMENTNOTICE}
     function ParsePaymentNotice(jsn : TJsonObject) : TFhirPaymentNotice; overload;
     procedure ParsePaymentNoticeProperties(jsn : TJsonObject; result : TFhirPaymentNotice); overload;
     procedure ParsePaymentNotice(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+{$ENDIF FHIR_PAYMENTNOTICE}
+{$IFDEF FHIR_PAYMENTRECONCILIATION}
     function ParsePaymentReconciliationDetail(jsn : TJsonObject) : TFhirPaymentReconciliationDetail; overload; {b\}
     procedure ParsePaymentReconciliationDetailProperties(jsn : TJsonObject; result : TFhirPaymentReconciliationDetail); overload; {b\}
     procedure ParsePaymentReconciliationDetail(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
@@ -870,12 +1011,16 @@ Type
     function ParsePaymentReconciliation(jsn : TJsonObject) : TFhirPaymentReconciliation; overload;
     procedure ParsePaymentReconciliationProperties(jsn : TJsonObject; result : TFhirPaymentReconciliation); overload;
     procedure ParsePaymentReconciliation(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+{$ENDIF FHIR_PAYMENTRECONCILIATION}
+{$IFDEF FHIR_PERSON}
     function ParsePersonLink(jsn : TJsonObject) : TFhirPersonLink; overload; {b\}
     procedure ParsePersonLinkProperties(jsn : TJsonObject; result : TFhirPersonLink); overload; {b\}
     procedure ParsePersonLink(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
     function ParsePerson(jsn : TJsonObject) : TFhirPerson; overload;
     procedure ParsePersonProperties(jsn : TJsonObject; result : TFhirPerson); overload;
     procedure ParsePerson(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+{$ENDIF FHIR_PERSON}
+{$IFDEF FHIR_PRACTITIONER}
     function ParsePractitionerPractitionerRole(jsn : TJsonObject) : TFhirPractitionerPractitionerRole; overload; {b\}
     procedure ParsePractitionerPractitionerRoleProperties(jsn : TJsonObject; result : TFhirPractitionerPractitionerRole); overload; {b\}
     procedure ParsePractitionerPractitionerRole(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
@@ -885,6 +1030,8 @@ Type
     function ParsePractitioner(jsn : TJsonObject) : TFhirPractitioner; overload;
     procedure ParsePractitionerProperties(jsn : TJsonObject; result : TFhirPractitioner); overload;
     procedure ParsePractitioner(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+{$ENDIF FHIR_PRACTITIONER}
+{$IFDEF FHIR_PROCEDURE}
     function ParseProcedurePerformer(jsn : TJsonObject) : TFhirProcedurePerformer; overload; {b\}
     procedure ParseProcedurePerformerProperties(jsn : TJsonObject; result : TFhirProcedurePerformer); overload; {b\}
     procedure ParseProcedurePerformer(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
@@ -894,21 +1041,29 @@ Type
     function ParseProcedure(jsn : TJsonObject) : TFhirProcedure; overload;
     procedure ParseProcedureProperties(jsn : TJsonObject; result : TFhirProcedure); overload;
     procedure ParseProcedure(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+{$ENDIF FHIR_PROCEDURE}
+{$IFDEF FHIR_PROCEDUREREQUEST}
     function ParseProcedureRequest(jsn : TJsonObject) : TFhirProcedureRequest; overload;
     procedure ParseProcedureRequestProperties(jsn : TJsonObject; result : TFhirProcedureRequest); overload;
     procedure ParseProcedureRequest(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+{$ENDIF FHIR_PROCEDUREREQUEST}
+{$IFDEF FHIR_PROCESSREQUEST}
     function ParseProcessRequestItem(jsn : TJsonObject) : TFhirProcessRequestItem; overload; {b\}
     procedure ParseProcessRequestItemProperties(jsn : TJsonObject; result : TFhirProcessRequestItem); overload; {b\}
     procedure ParseProcessRequestItem(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
     function ParseProcessRequest(jsn : TJsonObject) : TFhirProcessRequest; overload;
     procedure ParseProcessRequestProperties(jsn : TJsonObject; result : TFhirProcessRequest); overload;
     procedure ParseProcessRequest(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+{$ENDIF FHIR_PROCESSREQUEST}
+{$IFDEF FHIR_PROCESSRESPONSE}
     function ParseProcessResponseNotes(jsn : TJsonObject) : TFhirProcessResponseNotes; overload; {b\}
     procedure ParseProcessResponseNotesProperties(jsn : TJsonObject; result : TFhirProcessResponseNotes); overload; {b\}
     procedure ParseProcessResponseNotes(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
     function ParseProcessResponse(jsn : TJsonObject) : TFhirProcessResponse; overload;
     procedure ParseProcessResponseProperties(jsn : TJsonObject; result : TFhirProcessResponse); overload;
     procedure ParseProcessResponse(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+{$ENDIF FHIR_PROCESSRESPONSE}
+{$IFDEF FHIR_PROVENANCE}
     function ParseProvenanceAgent(jsn : TJsonObject) : TFhirProvenanceAgent; overload; {b\}
     procedure ParseProvenanceAgentProperties(jsn : TJsonObject; result : TFhirProvenanceAgent); overload; {b\}
     procedure ParseProvenanceAgent(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
@@ -921,6 +1076,8 @@ Type
     function ParseProvenance(jsn : TJsonObject) : TFhirProvenance; overload;
     procedure ParseProvenanceProperties(jsn : TJsonObject; result : TFhirProvenance); overload;
     procedure ParseProvenance(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+{$ENDIF FHIR_PROVENANCE}
+{$IFDEF FHIR_QUESTIONNAIRE}
     function ParseQuestionnaireGroup(jsn : TJsonObject) : TFhirQuestionnaireGroup; overload; {b\}
     procedure ParseQuestionnaireGroupProperties(jsn : TJsonObject; result : TFhirQuestionnaireGroup); overload; {b\}
     procedure ParseQuestionnaireGroup(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
@@ -930,6 +1087,8 @@ Type
     function ParseQuestionnaire(jsn : TJsonObject) : TFhirQuestionnaire; overload;
     procedure ParseQuestionnaireProperties(jsn : TJsonObject; result : TFhirQuestionnaire); overload;
     procedure ParseQuestionnaire(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+{$ENDIF FHIR_QUESTIONNAIRE}
+{$IFDEF FHIR_QUESTIONNAIRERESPONSE}
     function ParseQuestionnaireResponseGroup(jsn : TJsonObject) : TFhirQuestionnaireResponseGroup; overload; {b\}
     procedure ParseQuestionnaireResponseGroupProperties(jsn : TJsonObject; result : TFhirQuestionnaireResponseGroup); overload; {b\}
     procedure ParseQuestionnaireResponseGroup(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
@@ -942,30 +1101,44 @@ Type
     function ParseQuestionnaireResponse(jsn : TJsonObject) : TFhirQuestionnaireResponse; overload;
     procedure ParseQuestionnaireResponseProperties(jsn : TJsonObject; result : TFhirQuestionnaireResponse); overload;
     procedure ParseQuestionnaireResponse(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+{$ENDIF FHIR_QUESTIONNAIRERESPONSE}
+{$IFDEF FHIR_REFERRALREQUEST}
     function ParseReferralRequest(jsn : TJsonObject) : TFhirReferralRequest; overload;
     procedure ParseReferralRequestProperties(jsn : TJsonObject; result : TFhirReferralRequest); overload;
     procedure ParseReferralRequest(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+{$ENDIF FHIR_REFERRALREQUEST}
+{$IFDEF FHIR_RELATEDPERSON}
     function ParseRelatedPerson(jsn : TJsonObject) : TFhirRelatedPerson; overload;
     procedure ParseRelatedPersonProperties(jsn : TJsonObject; result : TFhirRelatedPerson); overload;
     procedure ParseRelatedPerson(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+{$ENDIF FHIR_RELATEDPERSON}
+{$IFDEF FHIR_RISKASSESSMENT}
     function ParseRiskAssessmentPrediction(jsn : TJsonObject) : TFhirRiskAssessmentPrediction; overload; {b\}
     procedure ParseRiskAssessmentPredictionProperties(jsn : TJsonObject; result : TFhirRiskAssessmentPrediction); overload; {b\}
     procedure ParseRiskAssessmentPrediction(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
     function ParseRiskAssessment(jsn : TJsonObject) : TFhirRiskAssessment; overload;
     procedure ParseRiskAssessmentProperties(jsn : TJsonObject; result : TFhirRiskAssessment); overload;
     procedure ParseRiskAssessment(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+{$ENDIF FHIR_RISKASSESSMENT}
+{$IFDEF FHIR_SCHEDULE}
     function ParseSchedule(jsn : TJsonObject) : TFhirSchedule; overload;
     procedure ParseScheduleProperties(jsn : TJsonObject; result : TFhirSchedule); overload;
     procedure ParseSchedule(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+{$ENDIF FHIR_SCHEDULE}
+{$IFDEF FHIR_SEARCHPARAMETER}
     function ParseSearchParameterContact(jsn : TJsonObject) : TFhirSearchParameterContact; overload; {b\}
     procedure ParseSearchParameterContactProperties(jsn : TJsonObject; result : TFhirSearchParameterContact); overload; {b\}
     procedure ParseSearchParameterContact(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
     function ParseSearchParameter(jsn : TJsonObject) : TFhirSearchParameter; overload;
     procedure ParseSearchParameterProperties(jsn : TJsonObject; result : TFhirSearchParameter); overload;
     procedure ParseSearchParameter(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+{$ENDIF FHIR_SEARCHPARAMETER}
+{$IFDEF FHIR_SLOT}
     function ParseSlot(jsn : TJsonObject) : TFhirSlot; overload;
     procedure ParseSlotProperties(jsn : TJsonObject; result : TFhirSlot); overload;
     procedure ParseSlot(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+{$ENDIF FHIR_SLOT}
+{$IFDEF FHIR_SPECIMEN}
     function ParseSpecimenCollection(jsn : TJsonObject) : TFhirSpecimenCollection; overload; {b\}
     procedure ParseSpecimenCollectionProperties(jsn : TJsonObject; result : TFhirSpecimenCollection); overload; {b\}
     procedure ParseSpecimenCollection(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
@@ -978,6 +1151,8 @@ Type
     function ParseSpecimen(jsn : TJsonObject) : TFhirSpecimen; overload;
     procedure ParseSpecimenProperties(jsn : TJsonObject; result : TFhirSpecimen); overload;
     procedure ParseSpecimen(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+{$ENDIF FHIR_SPECIMEN}
+{$IFDEF FHIR_STRUCTUREDEFINITION}
     function ParseStructureDefinitionContact(jsn : TJsonObject) : TFhirStructureDefinitionContact; overload; {b\}
     procedure ParseStructureDefinitionContactProperties(jsn : TJsonObject; result : TFhirStructureDefinitionContact); overload; {b\}
     procedure ParseStructureDefinitionContact(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
@@ -993,12 +1168,16 @@ Type
     function ParseStructureDefinition(jsn : TJsonObject) : TFhirStructureDefinition; overload;
     procedure ParseStructureDefinitionProperties(jsn : TJsonObject; result : TFhirStructureDefinition); overload;
     procedure ParseStructureDefinition(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+{$ENDIF FHIR_STRUCTUREDEFINITION}
+{$IFDEF FHIR_SUBSCRIPTION}
     function ParseSubscriptionChannel(jsn : TJsonObject) : TFhirSubscriptionChannel; overload; {b\}
     procedure ParseSubscriptionChannelProperties(jsn : TJsonObject; result : TFhirSubscriptionChannel); overload; {b\}
     procedure ParseSubscriptionChannel(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
     function ParseSubscription(jsn : TJsonObject) : TFhirSubscription; overload;
     procedure ParseSubscriptionProperties(jsn : TJsonObject; result : TFhirSubscription); overload;
     procedure ParseSubscription(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+{$ENDIF FHIR_SUBSCRIPTION}
+{$IFDEF FHIR_SUBSTANCE}
     function ParseSubstanceInstance(jsn : TJsonObject) : TFhirSubstanceInstance; overload; {b\}
     procedure ParseSubstanceInstanceProperties(jsn : TJsonObject; result : TFhirSubstanceInstance); overload; {b\}
     procedure ParseSubstanceInstance(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
@@ -1008,15 +1187,21 @@ Type
     function ParseSubstance(jsn : TJsonObject) : TFhirSubstance; overload;
     procedure ParseSubstanceProperties(jsn : TJsonObject; result : TFhirSubstance); overload;
     procedure ParseSubstance(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+{$ENDIF FHIR_SUBSTANCE}
+{$IFDEF FHIR_SUPPLYDELIVERY}
     function ParseSupplyDelivery(jsn : TJsonObject) : TFhirSupplyDelivery; overload;
     procedure ParseSupplyDeliveryProperties(jsn : TJsonObject; result : TFhirSupplyDelivery); overload;
     procedure ParseSupplyDelivery(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+{$ENDIF FHIR_SUPPLYDELIVERY}
+{$IFDEF FHIR_SUPPLYREQUEST}
     function ParseSupplyRequestWhen(jsn : TJsonObject) : TFhirSupplyRequestWhen; overload; {b\}
     procedure ParseSupplyRequestWhenProperties(jsn : TJsonObject; result : TFhirSupplyRequestWhen); overload; {b\}
     procedure ParseSupplyRequestWhen(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
     function ParseSupplyRequest(jsn : TJsonObject) : TFhirSupplyRequest; overload;
     procedure ParseSupplyRequestProperties(jsn : TJsonObject; result : TFhirSupplyRequest); overload;
     procedure ParseSupplyRequest(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+{$ENDIF FHIR_SUPPLYREQUEST}
+{$IFDEF FHIR_TESTSCRIPT}
     function ParseTestScriptContact(jsn : TJsonObject) : TFhirTestScriptContact; overload; {b\}
     procedure ParseTestScriptContactProperties(jsn : TJsonObject; result : TFhirTestScriptContact); overload; {b\}
     procedure ParseTestScriptContact(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
@@ -1065,6 +1250,8 @@ Type
     function ParseTestScript(jsn : TJsonObject) : TFhirTestScript; overload;
     procedure ParseTestScriptProperties(jsn : TJsonObject; result : TFhirTestScript); overload;
     procedure ParseTestScript(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+{$ENDIF FHIR_TESTSCRIPT}
+{$IFDEF FHIR_VALUESET}
     function ParseValueSetContact(jsn : TJsonObject) : TFhirValueSetContact; overload; {b\}
     procedure ParseValueSetContactProperties(jsn : TJsonObject; result : TFhirValueSetContact); overload; {b\}
     procedure ParseValueSetContact(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
@@ -1101,12 +1288,15 @@ Type
     function ParseValueSet(jsn : TJsonObject) : TFhirValueSet; overload;
     procedure ParseValueSetProperties(jsn : TJsonObject; result : TFhirValueSet); overload;
     procedure ParseValueSet(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+{$ENDIF FHIR_VALUESET}
+{$IFDEF FHIR_VISIONPRESCRIPTION}
     function ParseVisionPrescriptionDispense(jsn : TJsonObject) : TFhirVisionPrescriptionDispense; overload; {b\}
     procedure ParseVisionPrescriptionDispenseProperties(jsn : TJsonObject; result : TFhirVisionPrescriptionDispense); overload; {b\}
     procedure ParseVisionPrescriptionDispense(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
     function ParseVisionPrescription(jsn : TJsonObject) : TFhirVisionPrescription; overload;
     procedure ParseVisionPrescriptionProperties(jsn : TJsonObject; result : TFhirVisionPrescription); overload;
     procedure ParseVisionPrescription(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+{$ENDIF FHIR_VISIONPRESCRIPTION}
     function ParseResource(jsn : TJsonObject) : TFhirResource; override;
     function ParseDataType(jsn : TJsonObject; name : String; type_ : TFHIRTypeClass) : TFHIRType; override;
   public
@@ -1158,8 +1348,10 @@ Type
     Procedure ComposePositiveIntProps(json : TJSONWriter; name : String; value : TFhirPositiveInt; inArray : boolean);
 
     Procedure ComposeResourceProperties(json : TJSONWriter; elem : TFhirResource);
+{$IFDEF FHIR_PARAMETERS}
     procedure ComposeParametersParameter(json : TJSONWriter; name : string; elem : TFhirParametersParameter; noObj : boolean = false);
     procedure ComposeParameters(json : TJSONWriter; name : string; elem : TFhirParameters; noObj : boolean = false);
+{$ENDIF FHIR_PARAMETERS}
     Procedure ComposeDomainResourceProperties(json : TJSONWriter; elem : TFhirDomainResource);
 
     procedure ComposeExtension(json : TJSONWriter; name : string; elem : TFhirExtension; noObj : boolean = false);
@@ -1190,12 +1382,21 @@ Type
     procedure ComposeTimingRepeat(json : TJSONWriter; name : string; elem : TFhirTimingRepeat; noObj : boolean = false);
     procedure ComposeTiming(json : TJSONWriter; name : string; elem : TFhirTiming; noObj : boolean = false);
 
+{$IFDEF FHIR_ACCOUNT}
     procedure ComposeAccount(json : TJSONWriter; name : string; elem : TFhirAccount; noObj : boolean = false);
+{$ENDIF FHIR_ACCOUNT}
+{$IFDEF FHIR_ALLERGYINTOLERANCE}
     procedure ComposeAllergyIntoleranceReaction(json : TJSONWriter; name : string; elem : TFhirAllergyIntoleranceReaction; noObj : boolean = false);
     procedure ComposeAllergyIntolerance(json : TJSONWriter; name : string; elem : TFhirAllergyIntolerance; noObj : boolean = false);
+{$ENDIF FHIR_ALLERGYINTOLERANCE}
+{$IFDEF FHIR_APPOINTMENT}
     procedure ComposeAppointmentParticipant(json : TJSONWriter; name : string; elem : TFhirAppointmentParticipant; noObj : boolean = false);
     procedure ComposeAppointment(json : TJSONWriter; name : string; elem : TFhirAppointment; noObj : boolean = false);
+{$ENDIF FHIR_APPOINTMENT}
+{$IFDEF FHIR_APPOINTMENTRESPONSE}
     procedure ComposeAppointmentResponse(json : TJSONWriter; name : string; elem : TFhirAppointmentResponse; noObj : boolean = false);
+{$ENDIF FHIR_APPOINTMENTRESPONSE}
+{$IFDEF FHIR_AUDITEVENT}
     procedure ComposeAuditEventEvent(json : TJSONWriter; name : string; elem : TFhirAuditEventEvent; noObj : boolean = false);
     procedure ComposeAuditEventParticipant(json : TJSONWriter; name : string; elem : TFhirAuditEventParticipant; noObj : boolean = false);
     procedure ComposeAuditEventParticipantNetwork(json : TJSONWriter; name : string; elem : TFhirAuditEventParticipantNetwork; noObj : boolean = false);
@@ -1203,20 +1404,32 @@ Type
     procedure ComposeAuditEventObject(json : TJSONWriter; name : string; elem : TFhirAuditEventObject; noObj : boolean = false);
     procedure ComposeAuditEventObjectDetail(json : TJSONWriter; name : string; elem : TFhirAuditEventObjectDetail; noObj : boolean = false);
     procedure ComposeAuditEvent(json : TJSONWriter; name : string; elem : TFhirAuditEvent; noObj : boolean = false);
+{$ENDIF FHIR_AUDITEVENT}
+{$IFDEF FHIR_BASIC}
     procedure ComposeBasic(json : TJSONWriter; name : string; elem : TFhirBasic; noObj : boolean = false);
+{$ENDIF FHIR_BASIC}
+{$IFDEF FHIR_BINARY}
     procedure ComposeBinary(json : TJSONWriter; name : string; elem : TFhirBinary; noObj : boolean = false);
+{$ENDIF FHIR_BINARY}
+{$IFDEF FHIR_BODYSITE}
     procedure ComposeBodySite(json : TJSONWriter; name : string; elem : TFhirBodySite; noObj : boolean = false);
+{$ENDIF FHIR_BODYSITE}
+{$IFDEF FHIR_BUNDLE}
     procedure ComposeBundleLink(json : TJSONWriter; name : string; elem : TFhirBundleLink; noObj : boolean = false);
     procedure ComposeBundleEntry(json : TJSONWriter; name : string; elem : TFhirBundleEntry; noObj : boolean = false);
     procedure ComposeBundleEntrySearch(json : TJSONWriter; name : string; elem : TFhirBundleEntrySearch; noObj : boolean = false);
     procedure ComposeBundleEntryRequest(json : TJSONWriter; name : string; elem : TFhirBundleEntryRequest; noObj : boolean = false);
     procedure ComposeBundleEntryResponse(json : TJSONWriter; name : string; elem : TFhirBundleEntryResponse; noObj : boolean = false);
     procedure ComposeBundle(json : TJSONWriter; name : string; elem : TFhirBundle; noObj : boolean = false);
+{$ENDIF FHIR_BUNDLE}
+{$IFDEF FHIR_CAREPLAN}
     procedure ComposeCarePlanRelatedPlan(json : TJSONWriter; name : string; elem : TFhirCarePlanRelatedPlan; noObj : boolean = false);
     procedure ComposeCarePlanParticipant(json : TJSONWriter; name : string; elem : TFhirCarePlanParticipant; noObj : boolean = false);
     procedure ComposeCarePlanActivity(json : TJSONWriter; name : string; elem : TFhirCarePlanActivity; noObj : boolean = false);
     procedure ComposeCarePlanActivityDetail(json : TJSONWriter; name : string; elem : TFhirCarePlanActivityDetail; noObj : boolean = false);
     procedure ComposeCarePlan(json : TJSONWriter; name : string; elem : TFhirCarePlan; noObj : boolean = false);
+{$ENDIF FHIR_CAREPLAN}
+{$IFDEF FHIR_CLAIM}
     procedure ComposeClaimPayee(json : TJSONWriter; name : string; elem : TFhirClaimPayee; noObj : boolean = false);
     procedure ComposeClaimDiagnosis(json : TJSONWriter; name : string; elem : TFhirClaimDiagnosis; noObj : boolean = false);
     procedure ComposeClaimCoverage(json : TJSONWriter; name : string; elem : TFhirClaimCoverage; noObj : boolean = false);
@@ -1226,6 +1439,8 @@ Type
     procedure ComposeClaimItemProsthesis(json : TJSONWriter; name : string; elem : TFhirClaimItemProsthesis; noObj : boolean = false);
     procedure ComposeClaimMissingTeeth(json : TJSONWriter; name : string; elem : TFhirClaimMissingTeeth; noObj : boolean = false);
     procedure ComposeClaim(json : TJSONWriter; name : string; elem : TFhirClaim; noObj : boolean = false);
+{$ENDIF FHIR_CLAIM}
+{$IFDEF FHIR_CLAIMRESPONSE}
     procedure ComposeClaimResponseItem(json : TJSONWriter; name : string; elem : TFhirClaimResponseItem; noObj : boolean = false);
     procedure ComposeClaimResponseItemAdjudication(json : TJSONWriter; name : string; elem : TFhirClaimResponseItemAdjudication; noObj : boolean = false);
     procedure ComposeClaimResponseItemDetail(json : TJSONWriter; name : string; elem : TFhirClaimResponseItemDetail; noObj : boolean = false);
@@ -1240,26 +1455,40 @@ Type
     procedure ComposeClaimResponseNote(json : TJSONWriter; name : string; elem : TFhirClaimResponseNote; noObj : boolean = false);
     procedure ComposeClaimResponseCoverage(json : TJSONWriter; name : string; elem : TFhirClaimResponseCoverage; noObj : boolean = false);
     procedure ComposeClaimResponse(json : TJSONWriter; name : string; elem : TFhirClaimResponse; noObj : boolean = false);
+{$ENDIF FHIR_CLAIMRESPONSE}
+{$IFDEF FHIR_CLINICALIMPRESSION}
     procedure ComposeClinicalImpressionInvestigations(json : TJSONWriter; name : string; elem : TFhirClinicalImpressionInvestigations; noObj : boolean = false);
     procedure ComposeClinicalImpressionFinding(json : TJSONWriter; name : string; elem : TFhirClinicalImpressionFinding; noObj : boolean = false);
     procedure ComposeClinicalImpressionRuledOut(json : TJSONWriter; name : string; elem : TFhirClinicalImpressionRuledOut; noObj : boolean = false);
     procedure ComposeClinicalImpression(json : TJSONWriter; name : string; elem : TFhirClinicalImpression; noObj : boolean = false);
+{$ENDIF FHIR_CLINICALIMPRESSION}
+{$IFDEF FHIR_COMMUNICATION}
     procedure ComposeCommunicationPayload(json : TJSONWriter; name : string; elem : TFhirCommunicationPayload; noObj : boolean = false);
     procedure ComposeCommunication(json : TJSONWriter; name : string; elem : TFhirCommunication; noObj : boolean = false);
+{$ENDIF FHIR_COMMUNICATION}
+{$IFDEF FHIR_COMMUNICATIONREQUEST}
     procedure ComposeCommunicationRequestPayload(json : TJSONWriter; name : string; elem : TFhirCommunicationRequestPayload; noObj : boolean = false);
     procedure ComposeCommunicationRequest(json : TJSONWriter; name : string; elem : TFhirCommunicationRequest; noObj : boolean = false);
+{$ENDIF FHIR_COMMUNICATIONREQUEST}
+{$IFDEF FHIR_COMPOSITION}
     procedure ComposeCompositionAttester(json : TJSONWriter; name : string; elem : TFhirCompositionAttester; noObj : boolean = false);
     procedure ComposeCompositionEvent(json : TJSONWriter; name : string; elem : TFhirCompositionEvent; noObj : boolean = false);
     procedure ComposeCompositionSection(json : TJSONWriter; name : string; elem : TFhirCompositionSection; noObj : boolean = false);
     procedure ComposeComposition(json : TJSONWriter; name : string; elem : TFhirComposition; noObj : boolean = false);
+{$ENDIF FHIR_COMPOSITION}
+{$IFDEF FHIR_CONCEPTMAP}
     procedure ComposeConceptMapContact(json : TJSONWriter; name : string; elem : TFhirConceptMapContact; noObj : boolean = false);
     procedure ComposeConceptMapElement(json : TJSONWriter; name : string; elem : TFhirConceptMapElement; noObj : boolean = false);
     procedure ComposeConceptMapElementTarget(json : TJSONWriter; name : string; elem : TFhirConceptMapElementTarget; noObj : boolean = false);
     procedure ComposeConceptMapElementTargetDependsOn(json : TJSONWriter; name : string; elem : TFhirConceptMapElementTargetDependsOn; noObj : boolean = false);
     procedure ComposeConceptMap(json : TJSONWriter; name : string; elem : TFhirConceptMap; noObj : boolean = false);
+{$ENDIF FHIR_CONCEPTMAP}
+{$IFDEF FHIR_CONDITION}
     procedure ComposeConditionStage(json : TJSONWriter; name : string; elem : TFhirConditionStage; noObj : boolean = false);
     procedure ComposeConditionEvidence(json : TJSONWriter; name : string; elem : TFhirConditionEvidence; noObj : boolean = false);
     procedure ComposeCondition(json : TJSONWriter; name : string; elem : TFhirCondition; noObj : boolean = false);
+{$ENDIF FHIR_CONDITION}
+{$IFDEF FHIR_CONFORMANCE}
     procedure ComposeConformanceContact(json : TJSONWriter; name : string; elem : TFhirConformanceContact; noObj : boolean = false);
     procedure ComposeConformanceSoftware(json : TJSONWriter; name : string; elem : TFhirConformanceSoftware; noObj : boolean = false);
     procedure ComposeConformanceImplementation(json : TJSONWriter; name : string; elem : TFhirConformanceImplementation; noObj : boolean = false);
@@ -1276,6 +1505,8 @@ Type
     procedure ComposeConformanceMessagingEvent(json : TJSONWriter; name : string; elem : TFhirConformanceMessagingEvent; noObj : boolean = false);
     procedure ComposeConformanceDocument(json : TJSONWriter; name : string; elem : TFhirConformanceDocument; noObj : boolean = false);
     procedure ComposeConformance(json : TJSONWriter; name : string; elem : TFhirConformance; noObj : boolean = false);
+{$ENDIF FHIR_CONFORMANCE}
+{$IFDEF FHIR_CONTRACT}
     procedure ComposeContractActor(json : TJSONWriter; name : string; elem : TFhirContractActor; noObj : boolean = false);
     procedure ComposeContractValuedItem(json : TJSONWriter; name : string; elem : TFhirContractValuedItem; noObj : boolean = false);
     procedure ComposeContractSigner(json : TJSONWriter; name : string; elem : TFhirContractSigner; noObj : boolean = false);
@@ -1286,73 +1517,131 @@ Type
     procedure ComposeContractLegal(json : TJSONWriter; name : string; elem : TFhirContractLegal; noObj : boolean = false);
     procedure ComposeContractRule(json : TJSONWriter; name : string; elem : TFhirContractRule; noObj : boolean = false);
     procedure ComposeContract(json : TJSONWriter; name : string; elem : TFhirContract; noObj : boolean = false);
+{$ENDIF FHIR_CONTRACT}
+{$IFDEF FHIR_COVERAGE}
     procedure ComposeCoverage(json : TJSONWriter; name : string; elem : TFhirCoverage; noObj : boolean = false);
+{$ENDIF FHIR_COVERAGE}
+{$IFDEF FHIR_DATAELEMENT}
     procedure ComposeDataElementContact(json : TJSONWriter; name : string; elem : TFhirDataElementContact; noObj : boolean = false);
     procedure ComposeDataElementMapping(json : TJSONWriter; name : string; elem : TFhirDataElementMapping; noObj : boolean = false);
     procedure ComposeDataElement(json : TJSONWriter; name : string; elem : TFhirDataElement; noObj : boolean = false);
+{$ENDIF FHIR_DATAELEMENT}
+{$IFDEF FHIR_DETECTEDISSUE}
     procedure ComposeDetectedIssueMitigation(json : TJSONWriter; name : string; elem : TFhirDetectedIssueMitigation; noObj : boolean = false);
     procedure ComposeDetectedIssue(json : TJSONWriter; name : string; elem : TFhirDetectedIssue; noObj : boolean = false);
+{$ENDIF FHIR_DETECTEDISSUE}
+{$IFDEF FHIR_DEVICE}
     procedure ComposeDevice(json : TJSONWriter; name : string; elem : TFhirDevice; noObj : boolean = false);
+{$ENDIF FHIR_DEVICE}
+{$IFDEF FHIR_DEVICECOMPONENT}
     procedure ComposeDeviceComponentProductionSpecification(json : TJSONWriter; name : string; elem : TFhirDeviceComponentProductionSpecification; noObj : boolean = false);
     procedure ComposeDeviceComponent(json : TJSONWriter; name : string; elem : TFhirDeviceComponent; noObj : boolean = false);
+{$ENDIF FHIR_DEVICECOMPONENT}
+{$IFDEF FHIR_DEVICEMETRIC}
     procedure ComposeDeviceMetricCalibration(json : TJSONWriter; name : string; elem : TFhirDeviceMetricCalibration; noObj : boolean = false);
     procedure ComposeDeviceMetric(json : TJSONWriter; name : string; elem : TFhirDeviceMetric; noObj : boolean = false);
+{$ENDIF FHIR_DEVICEMETRIC}
+{$IFDEF FHIR_DEVICEUSEREQUEST}
     procedure ComposeDeviceUseRequest(json : TJSONWriter; name : string; elem : TFhirDeviceUseRequest; noObj : boolean = false);
+{$ENDIF FHIR_DEVICEUSEREQUEST}
+{$IFDEF FHIR_DEVICEUSESTATEMENT}
     procedure ComposeDeviceUseStatement(json : TJSONWriter; name : string; elem : TFhirDeviceUseStatement; noObj : boolean = false);
+{$ENDIF FHIR_DEVICEUSESTATEMENT}
+{$IFDEF FHIR_DIAGNOSTICORDER}
     procedure ComposeDiagnosticOrderEvent(json : TJSONWriter; name : string; elem : TFhirDiagnosticOrderEvent; noObj : boolean = false);
     procedure ComposeDiagnosticOrderItem(json : TJSONWriter; name : string; elem : TFhirDiagnosticOrderItem; noObj : boolean = false);
     procedure ComposeDiagnosticOrder(json : TJSONWriter; name : string; elem : TFhirDiagnosticOrder; noObj : boolean = false);
+{$ENDIF FHIR_DIAGNOSTICORDER}
+{$IFDEF FHIR_DIAGNOSTICREPORT}
     procedure ComposeDiagnosticReportImage(json : TJSONWriter; name : string; elem : TFhirDiagnosticReportImage; noObj : boolean = false);
     procedure ComposeDiagnosticReport(json : TJSONWriter; name : string; elem : TFhirDiagnosticReport; noObj : boolean = false);
+{$ENDIF FHIR_DIAGNOSTICREPORT}
+{$IFDEF FHIR_DOCUMENTMANIFEST}
     procedure ComposeDocumentManifestContent(json : TJSONWriter; name : string; elem : TFhirDocumentManifestContent; noObj : boolean = false);
     procedure ComposeDocumentManifestRelated(json : TJSONWriter; name : string; elem : TFhirDocumentManifestRelated; noObj : boolean = false);
     procedure ComposeDocumentManifest(json : TJSONWriter; name : string; elem : TFhirDocumentManifest; noObj : boolean = false);
+{$ENDIF FHIR_DOCUMENTMANIFEST}
+{$IFDEF FHIR_DOCUMENTREFERENCE}
     procedure ComposeDocumentReferenceRelatesTo(json : TJSONWriter; name : string; elem : TFhirDocumentReferenceRelatesTo; noObj : boolean = false);
     procedure ComposeDocumentReferenceContent(json : TJSONWriter; name : string; elem : TFhirDocumentReferenceContent; noObj : boolean = false);
     procedure ComposeDocumentReferenceContext(json : TJSONWriter; name : string; elem : TFhirDocumentReferenceContext; noObj : boolean = false);
     procedure ComposeDocumentReferenceContextRelated(json : TJSONWriter; name : string; elem : TFhirDocumentReferenceContextRelated; noObj : boolean = false);
     procedure ComposeDocumentReference(json : TJSONWriter; name : string; elem : TFhirDocumentReference; noObj : boolean = false);
+{$ENDIF FHIR_DOCUMENTREFERENCE}
+{$IFDEF FHIR_ELIGIBILITYREQUEST}
     procedure ComposeEligibilityRequest(json : TJSONWriter; name : string; elem : TFhirEligibilityRequest; noObj : boolean = false);
+{$ENDIF FHIR_ELIGIBILITYREQUEST}
+{$IFDEF FHIR_ELIGIBILITYRESPONSE}
     procedure ComposeEligibilityResponse(json : TJSONWriter; name : string; elem : TFhirEligibilityResponse; noObj : boolean = false);
+{$ENDIF FHIR_ELIGIBILITYRESPONSE}
+{$IFDEF FHIR_ENCOUNTER}
     procedure ComposeEncounterStatusHistory(json : TJSONWriter; name : string; elem : TFhirEncounterStatusHistory; noObj : boolean = false);
     procedure ComposeEncounterParticipant(json : TJSONWriter; name : string; elem : TFhirEncounterParticipant; noObj : boolean = false);
     procedure ComposeEncounterHospitalization(json : TJSONWriter; name : string; elem : TFhirEncounterHospitalization; noObj : boolean = false);
     procedure ComposeEncounterLocation(json : TJSONWriter; name : string; elem : TFhirEncounterLocation; noObj : boolean = false);
     procedure ComposeEncounter(json : TJSONWriter; name : string; elem : TFhirEncounter; noObj : boolean = false);
+{$ENDIF FHIR_ENCOUNTER}
+{$IFDEF FHIR_ENROLLMENTREQUEST}
     procedure ComposeEnrollmentRequest(json : TJSONWriter; name : string; elem : TFhirEnrollmentRequest; noObj : boolean = false);
+{$ENDIF FHIR_ENROLLMENTREQUEST}
+{$IFDEF FHIR_ENROLLMENTRESPONSE}
     procedure ComposeEnrollmentResponse(json : TJSONWriter; name : string; elem : TFhirEnrollmentResponse; noObj : boolean = false);
+{$ENDIF FHIR_ENROLLMENTRESPONSE}
+{$IFDEF FHIR_EPISODEOFCARE}
     procedure ComposeEpisodeOfCareStatusHistory(json : TJSONWriter; name : string; elem : TFhirEpisodeOfCareStatusHistory; noObj : boolean = false);
     procedure ComposeEpisodeOfCareCareTeam(json : TJSONWriter; name : string; elem : TFhirEpisodeOfCareCareTeam; noObj : boolean = false);
     procedure ComposeEpisodeOfCare(json : TJSONWriter; name : string; elem : TFhirEpisodeOfCare; noObj : boolean = false);
+{$ENDIF FHIR_EPISODEOFCARE}
+{$IFDEF FHIR_EXPLANATIONOFBENEFIT}
     procedure ComposeExplanationOfBenefit(json : TJSONWriter; name : string; elem : TFhirExplanationOfBenefit; noObj : boolean = false);
+{$ENDIF FHIR_EXPLANATIONOFBENEFIT}
+{$IFDEF FHIR_FAMILYMEMBERHISTORY}
     procedure ComposeFamilyMemberHistoryCondition(json : TJSONWriter; name : string; elem : TFhirFamilyMemberHistoryCondition; noObj : boolean = false);
     procedure ComposeFamilyMemberHistory(json : TJSONWriter; name : string; elem : TFhirFamilyMemberHistory; noObj : boolean = false);
+{$ENDIF FHIR_FAMILYMEMBERHISTORY}
+{$IFDEF FHIR_FLAG}
     procedure ComposeFlag(json : TJSONWriter; name : string; elem : TFhirFlag; noObj : boolean = false);
+{$ENDIF FHIR_FLAG}
+{$IFDEF FHIR_GOAL}
     procedure ComposeGoalOutcome(json : TJSONWriter; name : string; elem : TFhirGoalOutcome; noObj : boolean = false);
     procedure ComposeGoal(json : TJSONWriter; name : string; elem : TFhirGoal; noObj : boolean = false);
+{$ENDIF FHIR_GOAL}
+{$IFDEF FHIR_GROUP}
     procedure ComposeGroupCharacteristic(json : TJSONWriter; name : string; elem : TFhirGroupCharacteristic; noObj : boolean = false);
     procedure ComposeGroupMember(json : TJSONWriter; name : string; elem : TFhirGroupMember; noObj : boolean = false);
     procedure ComposeGroup(json : TJSONWriter; name : string; elem : TFhirGroup; noObj : boolean = false);
+{$ENDIF FHIR_GROUP}
+{$IFDEF FHIR_HEALTHCARESERVICE}
     procedure ComposeHealthcareServiceServiceType(json : TJSONWriter; name : string; elem : TFhirHealthcareServiceServiceType; noObj : boolean = false);
     procedure ComposeHealthcareServiceAvailableTime(json : TJSONWriter; name : string; elem : TFhirHealthcareServiceAvailableTime; noObj : boolean = false);
     procedure ComposeHealthcareServiceNotAvailable(json : TJSONWriter; name : string; elem : TFhirHealthcareServiceNotAvailable; noObj : boolean = false);
     procedure ComposeHealthcareService(json : TJSONWriter; name : string; elem : TFhirHealthcareService; noObj : boolean = false);
+{$ENDIF FHIR_HEALTHCARESERVICE}
+{$IFDEF FHIR_IMAGINGOBJECTSELECTION}
     procedure ComposeImagingObjectSelectionStudy(json : TJSONWriter; name : string; elem : TFhirImagingObjectSelectionStudy; noObj : boolean = false);
     procedure ComposeImagingObjectSelectionStudySeries(json : TJSONWriter; name : string; elem : TFhirImagingObjectSelectionStudySeries; noObj : boolean = false);
     procedure ComposeImagingObjectSelectionStudySeriesInstance(json : TJSONWriter; name : string; elem : TFhirImagingObjectSelectionStudySeriesInstance; noObj : boolean = false);
     procedure ComposeImagingObjectSelectionStudySeriesInstanceFrames(json : TJSONWriter; name : string; elem : TFhirImagingObjectSelectionStudySeriesInstanceFrames; noObj : boolean = false);
     procedure ComposeImagingObjectSelection(json : TJSONWriter; name : string; elem : TFhirImagingObjectSelection; noObj : boolean = false);
+{$ENDIF FHIR_IMAGINGOBJECTSELECTION}
+{$IFDEF FHIR_IMAGINGSTUDY}
     procedure ComposeImagingStudySeries(json : TJSONWriter; name : string; elem : TFhirImagingStudySeries; noObj : boolean = false);
     procedure ComposeImagingStudySeriesInstance(json : TJSONWriter; name : string; elem : TFhirImagingStudySeriesInstance; noObj : boolean = false);
     procedure ComposeImagingStudy(json : TJSONWriter; name : string; elem : TFhirImagingStudy; noObj : boolean = false);
+{$ENDIF FHIR_IMAGINGSTUDY}
+{$IFDEF FHIR_IMMUNIZATION}
     procedure ComposeImmunizationExplanation(json : TJSONWriter; name : string; elem : TFhirImmunizationExplanation; noObj : boolean = false);
     procedure ComposeImmunizationReaction(json : TJSONWriter; name : string; elem : TFhirImmunizationReaction; noObj : boolean = false);
     procedure ComposeImmunizationVaccinationProtocol(json : TJSONWriter; name : string; elem : TFhirImmunizationVaccinationProtocol; noObj : boolean = false);
     procedure ComposeImmunization(json : TJSONWriter; name : string; elem : TFhirImmunization; noObj : boolean = false);
+{$ENDIF FHIR_IMMUNIZATION}
+{$IFDEF FHIR_IMMUNIZATIONRECOMMENDATION}
     procedure ComposeImmunizationRecommendationRecommendation(json : TJSONWriter; name : string; elem : TFhirImmunizationRecommendationRecommendation; noObj : boolean = false);
     procedure ComposeImmunizationRecommendationRecommendationDateCriterion(json : TJSONWriter; name : string; elem : TFhirImmunizationRecommendationRecommendationDateCriterion; noObj : boolean = false);
     procedure ComposeImmunizationRecommendationRecommendationProtocol(json : TJSONWriter; name : string; elem : TFhirImmunizationRecommendationRecommendationProtocol; noObj : boolean = false);
     procedure ComposeImmunizationRecommendation(json : TJSONWriter; name : string; elem : TFhirImmunizationRecommendation; noObj : boolean = false);
+{$ENDIF FHIR_IMMUNIZATIONRECOMMENDATION}
+{$IFDEF FHIR_IMPLEMENTATIONGUIDE}
     procedure ComposeImplementationGuideContact(json : TJSONWriter; name : string; elem : TFhirImplementationGuideContact; noObj : boolean = false);
     procedure ComposeImplementationGuideDependency(json : TJSONWriter; name : string; elem : TFhirImplementationGuideDependency; noObj : boolean = false);
     procedure ComposeImplementationGuidePackage(json : TJSONWriter; name : string; elem : TFhirImplementationGuidePackage; noObj : boolean = false);
@@ -1360,35 +1649,57 @@ Type
     procedure ComposeImplementationGuideGlobal(json : TJSONWriter; name : string; elem : TFhirImplementationGuideGlobal; noObj : boolean = false);
     procedure ComposeImplementationGuidePage(json : TJSONWriter; name : string; elem : TFhirImplementationGuidePage; noObj : boolean = false);
     procedure ComposeImplementationGuide(json : TJSONWriter; name : string; elem : TFhirImplementationGuide; noObj : boolean = false);
+{$ENDIF FHIR_IMPLEMENTATIONGUIDE}
+{$IFDEF FHIR_LIST}
     procedure ComposeListEntry(json : TJSONWriter; name : string; elem : TFhirListEntry; noObj : boolean = false);
     procedure ComposeList(json : TJSONWriter; name : string; elem : TFhirList; noObj : boolean = false);
+{$ENDIF FHIR_LIST}
+{$IFDEF FHIR_LOCATION}
     procedure ComposeLocationPosition(json : TJSONWriter; name : string; elem : TFhirLocationPosition; noObj : boolean = false);
     procedure ComposeLocation(json : TJSONWriter; name : string; elem : TFhirLocation; noObj : boolean = false);
+{$ENDIF FHIR_LOCATION}
+{$IFDEF FHIR_MEDIA}
     procedure ComposeMedia(json : TJSONWriter; name : string; elem : TFhirMedia; noObj : boolean = false);
+{$ENDIF FHIR_MEDIA}
+{$IFDEF FHIR_MEDICATION}
     procedure ComposeMedicationProduct(json : TJSONWriter; name : string; elem : TFhirMedicationProduct; noObj : boolean = false);
     procedure ComposeMedicationProductIngredient(json : TJSONWriter; name : string; elem : TFhirMedicationProductIngredient; noObj : boolean = false);
     procedure ComposeMedicationProductBatch(json : TJSONWriter; name : string; elem : TFhirMedicationProductBatch; noObj : boolean = false);
     procedure ComposeMedicationPackage(json : TJSONWriter; name : string; elem : TFhirMedicationPackage; noObj : boolean = false);
     procedure ComposeMedicationPackageContent(json : TJSONWriter; name : string; elem : TFhirMedicationPackageContent; noObj : boolean = false);
     procedure ComposeMedication(json : TJSONWriter; name : string; elem : TFhirMedication; noObj : boolean = false);
+{$ENDIF FHIR_MEDICATION}
+{$IFDEF FHIR_MEDICATIONADMINISTRATION}
     procedure ComposeMedicationAdministrationDosage(json : TJSONWriter; name : string; elem : TFhirMedicationAdministrationDosage; noObj : boolean = false);
     procedure ComposeMedicationAdministration(json : TJSONWriter; name : string; elem : TFhirMedicationAdministration; noObj : boolean = false);
+{$ENDIF FHIR_MEDICATIONADMINISTRATION}
+{$IFDEF FHIR_MEDICATIONDISPENSE}
     procedure ComposeMedicationDispenseDosageInstruction(json : TJSONWriter; name : string; elem : TFhirMedicationDispenseDosageInstruction; noObj : boolean = false);
     procedure ComposeMedicationDispenseSubstitution(json : TJSONWriter; name : string; elem : TFhirMedicationDispenseSubstitution; noObj : boolean = false);
     procedure ComposeMedicationDispense(json : TJSONWriter; name : string; elem : TFhirMedicationDispense; noObj : boolean = false);
+{$ENDIF FHIR_MEDICATIONDISPENSE}
+{$IFDEF FHIR_MEDICATIONORDER}
     procedure ComposeMedicationOrderDosageInstruction(json : TJSONWriter; name : string; elem : TFhirMedicationOrderDosageInstruction; noObj : boolean = false);
     procedure ComposeMedicationOrderDispenseRequest(json : TJSONWriter; name : string; elem : TFhirMedicationOrderDispenseRequest; noObj : boolean = false);
     procedure ComposeMedicationOrderSubstitution(json : TJSONWriter; name : string; elem : TFhirMedicationOrderSubstitution; noObj : boolean = false);
     procedure ComposeMedicationOrder(json : TJSONWriter; name : string; elem : TFhirMedicationOrder; noObj : boolean = false);
+{$ENDIF FHIR_MEDICATIONORDER}
+{$IFDEF FHIR_MEDICATIONSTATEMENT}
     procedure ComposeMedicationStatementDosage(json : TJSONWriter; name : string; elem : TFhirMedicationStatementDosage; noObj : boolean = false);
     procedure ComposeMedicationStatement(json : TJSONWriter; name : string; elem : TFhirMedicationStatement; noObj : boolean = false);
+{$ENDIF FHIR_MEDICATIONSTATEMENT}
+{$IFDEF FHIR_MESSAGEHEADER}
     procedure ComposeMessageHeaderResponse(json : TJSONWriter; name : string; elem : TFhirMessageHeaderResponse; noObj : boolean = false);
     procedure ComposeMessageHeaderSource(json : TJSONWriter; name : string; elem : TFhirMessageHeaderSource; noObj : boolean = false);
     procedure ComposeMessageHeaderDestination(json : TJSONWriter; name : string; elem : TFhirMessageHeaderDestination; noObj : boolean = false);
     procedure ComposeMessageHeader(json : TJSONWriter; name : string; elem : TFhirMessageHeader; noObj : boolean = false);
+{$ENDIF FHIR_MESSAGEHEADER}
+{$IFDEF FHIR_NAMINGSYSTEM}
     procedure ComposeNamingSystemContact(json : TJSONWriter; name : string; elem : TFhirNamingSystemContact; noObj : boolean = false);
     procedure ComposeNamingSystemUniqueId(json : TJSONWriter; name : string; elem : TFhirNamingSystemUniqueId; noObj : boolean = false);
     procedure ComposeNamingSystem(json : TJSONWriter; name : string; elem : TFhirNamingSystem; noObj : boolean = false);
+{$ENDIF FHIR_NAMINGSYSTEM}
+{$IFDEF FHIR_NUTRITIONORDER}
     procedure ComposeNutritionOrderOralDiet(json : TJSONWriter; name : string; elem : TFhirNutritionOrderOralDiet; noObj : boolean = false);
     procedure ComposeNutritionOrderOralDietNutrient(json : TJSONWriter; name : string; elem : TFhirNutritionOrderOralDietNutrient; noObj : boolean = false);
     procedure ComposeNutritionOrderOralDietTexture(json : TJSONWriter; name : string; elem : TFhirNutritionOrderOralDietTexture; noObj : boolean = false);
@@ -1396,79 +1707,141 @@ Type
     procedure ComposeNutritionOrderEnteralFormula(json : TJSONWriter; name : string; elem : TFhirNutritionOrderEnteralFormula; noObj : boolean = false);
     procedure ComposeNutritionOrderEnteralFormulaAdministration(json : TJSONWriter; name : string; elem : TFhirNutritionOrderEnteralFormulaAdministration; noObj : boolean = false);
     procedure ComposeNutritionOrder(json : TJSONWriter; name : string; elem : TFhirNutritionOrder; noObj : boolean = false);
+{$ENDIF FHIR_NUTRITIONORDER}
+{$IFDEF FHIR_OBSERVATION}
     procedure ComposeObservationReferenceRange(json : TJSONWriter; name : string; elem : TFhirObservationReferenceRange; noObj : boolean = false);
     procedure ComposeObservationRelated(json : TJSONWriter; name : string; elem : TFhirObservationRelated; noObj : boolean = false);
     procedure ComposeObservationComponent(json : TJSONWriter; name : string; elem : TFhirObservationComponent; noObj : boolean = false);
     procedure ComposeObservation(json : TJSONWriter; name : string; elem : TFhirObservation; noObj : boolean = false);
+{$ENDIF FHIR_OBSERVATION}
+{$IFDEF FHIR_OPERATIONDEFINITION}
     procedure ComposeOperationDefinitionContact(json : TJSONWriter; name : string; elem : TFhirOperationDefinitionContact; noObj : boolean = false);
     procedure ComposeOperationDefinitionParameter(json : TJSONWriter; name : string; elem : TFhirOperationDefinitionParameter; noObj : boolean = false);
     procedure ComposeOperationDefinitionParameterBinding(json : TJSONWriter; name : string; elem : TFhirOperationDefinitionParameterBinding; noObj : boolean = false);
     procedure ComposeOperationDefinition(json : TJSONWriter; name : string; elem : TFhirOperationDefinition; noObj : boolean = false);
+{$ENDIF FHIR_OPERATIONDEFINITION}
+{$IFDEF FHIR_OPERATIONOUTCOME}
     procedure ComposeOperationOutcomeIssue(json : TJSONWriter; name : string; elem : TFhirOperationOutcomeIssue; noObj : boolean = false);
     procedure ComposeOperationOutcome(json : TJSONWriter; name : string; elem : TFhirOperationOutcome; noObj : boolean = false);
+{$ENDIF FHIR_OPERATIONOUTCOME}
+{$IFDEF FHIR_ORDER}
     procedure ComposeOrderWhen(json : TJSONWriter; name : string; elem : TFhirOrderWhen; noObj : boolean = false);
     procedure ComposeOrder(json : TJSONWriter; name : string; elem : TFhirOrder; noObj : boolean = false);
+{$ENDIF FHIR_ORDER}
+{$IFDEF FHIR_ORDERRESPONSE}
     procedure ComposeOrderResponse(json : TJSONWriter; name : string; elem : TFhirOrderResponse; noObj : boolean = false);
+{$ENDIF FHIR_ORDERRESPONSE}
+{$IFDEF FHIR_ORGANIZATION}
     procedure ComposeOrganizationContact(json : TJSONWriter; name : string; elem : TFhirOrganizationContact; noObj : boolean = false);
     procedure ComposeOrganization(json : TJSONWriter; name : string; elem : TFhirOrganization; noObj : boolean = false);
+{$ENDIF FHIR_ORGANIZATION}
+{$IFDEF FHIR_PATIENT}
     procedure ComposePatientContact(json : TJSONWriter; name : string; elem : TFhirPatientContact; noObj : boolean = false);
     procedure ComposePatientAnimal(json : TJSONWriter; name : string; elem : TFhirPatientAnimal; noObj : boolean = false);
     procedure ComposePatientCommunication(json : TJSONWriter; name : string; elem : TFhirPatientCommunication; noObj : boolean = false);
     procedure ComposePatientLink(json : TJSONWriter; name : string; elem : TFhirPatientLink; noObj : boolean = false);
     procedure ComposePatient(json : TJSONWriter; name : string; elem : TFhirPatient; noObj : boolean = false);
+{$ENDIF FHIR_PATIENT}
+{$IFDEF FHIR_PAYMENTNOTICE}
     procedure ComposePaymentNotice(json : TJSONWriter; name : string; elem : TFhirPaymentNotice; noObj : boolean = false);
+{$ENDIF FHIR_PAYMENTNOTICE}
+{$IFDEF FHIR_PAYMENTRECONCILIATION}
     procedure ComposePaymentReconciliationDetail(json : TJSONWriter; name : string; elem : TFhirPaymentReconciliationDetail; noObj : boolean = false);
     procedure ComposePaymentReconciliationNote(json : TJSONWriter; name : string; elem : TFhirPaymentReconciliationNote; noObj : boolean = false);
     procedure ComposePaymentReconciliation(json : TJSONWriter; name : string; elem : TFhirPaymentReconciliation; noObj : boolean = false);
+{$ENDIF FHIR_PAYMENTRECONCILIATION}
+{$IFDEF FHIR_PERSON}
     procedure ComposePersonLink(json : TJSONWriter; name : string; elem : TFhirPersonLink; noObj : boolean = false);
     procedure ComposePerson(json : TJSONWriter; name : string; elem : TFhirPerson; noObj : boolean = false);
+{$ENDIF FHIR_PERSON}
+{$IFDEF FHIR_PRACTITIONER}
     procedure ComposePractitionerPractitionerRole(json : TJSONWriter; name : string; elem : TFhirPractitionerPractitionerRole; noObj : boolean = false);
     procedure ComposePractitionerQualification(json : TJSONWriter; name : string; elem : TFhirPractitionerQualification; noObj : boolean = false);
     procedure ComposePractitioner(json : TJSONWriter; name : string; elem : TFhirPractitioner; noObj : boolean = false);
+{$ENDIF FHIR_PRACTITIONER}
+{$IFDEF FHIR_PROCEDURE}
     procedure ComposeProcedurePerformer(json : TJSONWriter; name : string; elem : TFhirProcedurePerformer; noObj : boolean = false);
     procedure ComposeProcedureFocalDevice(json : TJSONWriter; name : string; elem : TFhirProcedureFocalDevice; noObj : boolean = false);
     procedure ComposeProcedure(json : TJSONWriter; name : string; elem : TFhirProcedure; noObj : boolean = false);
+{$ENDIF FHIR_PROCEDURE}
+{$IFDEF FHIR_PROCEDUREREQUEST}
     procedure ComposeProcedureRequest(json : TJSONWriter; name : string; elem : TFhirProcedureRequest; noObj : boolean = false);
+{$ENDIF FHIR_PROCEDUREREQUEST}
+{$IFDEF FHIR_PROCESSREQUEST}
     procedure ComposeProcessRequestItem(json : TJSONWriter; name : string; elem : TFhirProcessRequestItem; noObj : boolean = false);
     procedure ComposeProcessRequest(json : TJSONWriter; name : string; elem : TFhirProcessRequest; noObj : boolean = false);
+{$ENDIF FHIR_PROCESSREQUEST}
+{$IFDEF FHIR_PROCESSRESPONSE}
     procedure ComposeProcessResponseNotes(json : TJSONWriter; name : string; elem : TFhirProcessResponseNotes; noObj : boolean = false);
     procedure ComposeProcessResponse(json : TJSONWriter; name : string; elem : TFhirProcessResponse; noObj : boolean = false);
+{$ENDIF FHIR_PROCESSRESPONSE}
+{$IFDEF FHIR_PROVENANCE}
     procedure ComposeProvenanceAgent(json : TJSONWriter; name : string; elem : TFhirProvenanceAgent; noObj : boolean = false);
     procedure ComposeProvenanceAgentRelatedAgent(json : TJSONWriter; name : string; elem : TFhirProvenanceAgentRelatedAgent; noObj : boolean = false);
     procedure ComposeProvenanceEntity(json : TJSONWriter; name : string; elem : TFhirProvenanceEntity; noObj : boolean = false);
     procedure ComposeProvenance(json : TJSONWriter; name : string; elem : TFhirProvenance; noObj : boolean = false);
+{$ENDIF FHIR_PROVENANCE}
+{$IFDEF FHIR_QUESTIONNAIRE}
     procedure ComposeQuestionnaireGroup(json : TJSONWriter; name : string; elem : TFhirQuestionnaireGroup; noObj : boolean = false);
     procedure ComposeQuestionnaireGroupQuestion(json : TJSONWriter; name : string; elem : TFhirQuestionnaireGroupQuestion; noObj : boolean = false);
     procedure ComposeQuestionnaire(json : TJSONWriter; name : string; elem : TFhirQuestionnaire; noObj : boolean = false);
+{$ENDIF FHIR_QUESTIONNAIRE}
+{$IFDEF FHIR_QUESTIONNAIRERESPONSE}
     procedure ComposeQuestionnaireResponseGroup(json : TJSONWriter; name : string; elem : TFhirQuestionnaireResponseGroup; noObj : boolean = false);
     procedure ComposeQuestionnaireResponseGroupQuestion(json : TJSONWriter; name : string; elem : TFhirQuestionnaireResponseGroupQuestion; noObj : boolean = false);
     procedure ComposeQuestionnaireResponseGroupQuestionAnswer(json : TJSONWriter; name : string; elem : TFhirQuestionnaireResponseGroupQuestionAnswer; noObj : boolean = false);
     procedure ComposeQuestionnaireResponse(json : TJSONWriter; name : string; elem : TFhirQuestionnaireResponse; noObj : boolean = false);
+{$ENDIF FHIR_QUESTIONNAIRERESPONSE}
+{$IFDEF FHIR_REFERRALREQUEST}
     procedure ComposeReferralRequest(json : TJSONWriter; name : string; elem : TFhirReferralRequest; noObj : boolean = false);
+{$ENDIF FHIR_REFERRALREQUEST}
+{$IFDEF FHIR_RELATEDPERSON}
     procedure ComposeRelatedPerson(json : TJSONWriter; name : string; elem : TFhirRelatedPerson; noObj : boolean = false);
+{$ENDIF FHIR_RELATEDPERSON}
+{$IFDEF FHIR_RISKASSESSMENT}
     procedure ComposeRiskAssessmentPrediction(json : TJSONWriter; name : string; elem : TFhirRiskAssessmentPrediction; noObj : boolean = false);
     procedure ComposeRiskAssessment(json : TJSONWriter; name : string; elem : TFhirRiskAssessment; noObj : boolean = false);
+{$ENDIF FHIR_RISKASSESSMENT}
+{$IFDEF FHIR_SCHEDULE}
     procedure ComposeSchedule(json : TJSONWriter; name : string; elem : TFhirSchedule; noObj : boolean = false);
+{$ENDIF FHIR_SCHEDULE}
+{$IFDEF FHIR_SEARCHPARAMETER}
     procedure ComposeSearchParameterContact(json : TJSONWriter; name : string; elem : TFhirSearchParameterContact; noObj : boolean = false);
     procedure ComposeSearchParameter(json : TJSONWriter; name : string; elem : TFhirSearchParameter; noObj : boolean = false);
+{$ENDIF FHIR_SEARCHPARAMETER}
+{$IFDEF FHIR_SLOT}
     procedure ComposeSlot(json : TJSONWriter; name : string; elem : TFhirSlot; noObj : boolean = false);
+{$ENDIF FHIR_SLOT}
+{$IFDEF FHIR_SPECIMEN}
     procedure ComposeSpecimenCollection(json : TJSONWriter; name : string; elem : TFhirSpecimenCollection; noObj : boolean = false);
     procedure ComposeSpecimenTreatment(json : TJSONWriter; name : string; elem : TFhirSpecimenTreatment; noObj : boolean = false);
     procedure ComposeSpecimenContainer(json : TJSONWriter; name : string; elem : TFhirSpecimenContainer; noObj : boolean = false);
     procedure ComposeSpecimen(json : TJSONWriter; name : string; elem : TFhirSpecimen; noObj : boolean = false);
+{$ENDIF FHIR_SPECIMEN}
+{$IFDEF FHIR_STRUCTUREDEFINITION}
     procedure ComposeStructureDefinitionContact(json : TJSONWriter; name : string; elem : TFhirStructureDefinitionContact; noObj : boolean = false);
     procedure ComposeStructureDefinitionMapping(json : TJSONWriter; name : string; elem : TFhirStructureDefinitionMapping; noObj : boolean = false);
     procedure ComposeStructureDefinitionSnapshot(json : TJSONWriter; name : string; elem : TFhirStructureDefinitionSnapshot; noObj : boolean = false);
     procedure ComposeStructureDefinitionDifferential(json : TJSONWriter; name : string; elem : TFhirStructureDefinitionDifferential; noObj : boolean = false);
     procedure ComposeStructureDefinition(json : TJSONWriter; name : string; elem : TFhirStructureDefinition; noObj : boolean = false);
+{$ENDIF FHIR_STRUCTUREDEFINITION}
+{$IFDEF FHIR_SUBSCRIPTION}
     procedure ComposeSubscriptionChannel(json : TJSONWriter; name : string; elem : TFhirSubscriptionChannel; noObj : boolean = false);
     procedure ComposeSubscription(json : TJSONWriter; name : string; elem : TFhirSubscription; noObj : boolean = false);
+{$ENDIF FHIR_SUBSCRIPTION}
+{$IFDEF FHIR_SUBSTANCE}
     procedure ComposeSubstanceInstance(json : TJSONWriter; name : string; elem : TFhirSubstanceInstance; noObj : boolean = false);
     procedure ComposeSubstanceIngredient(json : TJSONWriter; name : string; elem : TFhirSubstanceIngredient; noObj : boolean = false);
     procedure ComposeSubstance(json : TJSONWriter; name : string; elem : TFhirSubstance; noObj : boolean = false);
+{$ENDIF FHIR_SUBSTANCE}
+{$IFDEF FHIR_SUPPLYDELIVERY}
     procedure ComposeSupplyDelivery(json : TJSONWriter; name : string; elem : TFhirSupplyDelivery; noObj : boolean = false);
+{$ENDIF FHIR_SUPPLYDELIVERY}
+{$IFDEF FHIR_SUPPLYREQUEST}
     procedure ComposeSupplyRequestWhen(json : TJSONWriter; name : string; elem : TFhirSupplyRequestWhen; noObj : boolean = false);
     procedure ComposeSupplyRequest(json : TJSONWriter; name : string; elem : TFhirSupplyRequest; noObj : boolean = false);
+{$ENDIF FHIR_SUPPLYREQUEST}
+{$IFDEF FHIR_TESTSCRIPT}
     procedure ComposeTestScriptContact(json : TJSONWriter; name : string; elem : TFhirTestScriptContact; noObj : boolean = false);
     procedure ComposeTestScriptMetadata(json : TJSONWriter; name : string; elem : TFhirTestScriptMetadata; noObj : boolean = false);
     procedure ComposeTestScriptMetadataLink(json : TJSONWriter; name : string; elem : TFhirTestScriptMetadataLink; noObj : boolean = false);
@@ -1485,6 +1858,8 @@ Type
     procedure ComposeTestScriptTeardown(json : TJSONWriter; name : string; elem : TFhirTestScriptTeardown; noObj : boolean = false);
     procedure ComposeTestScriptTeardownAction(json : TJSONWriter; name : string; elem : TFhirTestScriptTeardownAction; noObj : boolean = false);
     procedure ComposeTestScript(json : TJSONWriter; name : string; elem : TFhirTestScript; noObj : boolean = false);
+{$ENDIF FHIR_TESTSCRIPT}
+{$IFDEF FHIR_VALUESET}
     procedure ComposeValueSetContact(json : TJSONWriter; name : string; elem : TFhirValueSetContact; noObj : boolean = false);
     procedure ComposeValueSetCodeSystem(json : TJSONWriter; name : string; elem : TFhirValueSetCodeSystem; noObj : boolean = false);
     procedure ComposeValueSetCodeSystemConcept(json : TJSONWriter; name : string; elem : TFhirValueSetCodeSystemConcept; noObj : boolean = false);
@@ -1497,8 +1872,11 @@ Type
     procedure ComposeValueSetExpansionParameter(json : TJSONWriter; name : string; elem : TFhirValueSetExpansionParameter; noObj : boolean = false);
     procedure ComposeValueSetExpansionContains(json : TJSONWriter; name : string; elem : TFhirValueSetExpansionContains; noObj : boolean = false);
     procedure ComposeValueSet(json : TJSONWriter; name : string; elem : TFhirValueSet; noObj : boolean = false);
+{$ENDIF FHIR_VALUESET}
+{$IFDEF FHIR_VISIONPRESCRIPTION}
     procedure ComposeVisionPrescriptionDispense(json : TJSONWriter; name : string; elem : TFhirVisionPrescriptionDispense; noObj : boolean = false);
     procedure ComposeVisionPrescription(json : TJSONWriter; name : string; elem : TFhirVisionPrescription; noObj : boolean = false);
+{$ENDIF FHIR_VISIONPRESCRIPTION}
     procedure ComposeResource(json : TJSONWriter; resource : TFhirResource; links : TFhirBundleLinkList); override;
     procedure ComposeBase(json : TJSONWriter; name : String; base : TFHIRObject); override;
   end;
@@ -2525,7 +2903,7 @@ begin
   if jsn.has('id') or jsn.has('_id') then
     resource.idElement := ParseId(jsn['id'], jsn.vObj['_id']);{q}
   if jsn.has('meta') then
-    resource.meta := ParseMeta(jsn.vObj['meta']);{q}
+    resource.meta := ParseMeta(jsn.vObj['meta']);{q3}
   if jsn.has('implicitRules') or jsn.has('_implicitRules') then
     resource.implicitRulesElement := ParseUri(jsn['implicitRules'], jsn.vObj['_implicitRules']);{q}
   if jsn.has('language') or jsn.has('_language') then
@@ -2550,6 +2928,7 @@ begin
     ComposeCodeProps(json, 'language', elem.languageElement, false);
 end;
 
+{$IFDEF FHIR_PARAMETERS}
 procedure TFHIRJsonParser.ParseParametersParameter(jsn : TJsonObject; ctxt : TFHIRObjectList);
 begin
   ctxt.add(ParseParametersParameter(jsn)); {2}
@@ -2642,7 +3021,7 @@ begin
     if jsn.has('valueTiming') {a9} then
         result.value := ParseTiming(jsn.vObj['valueTiming']);
     if jsn.has('resource') then
-        result.resource := ParseInnerResource(jsn.vObj['resource']);{q}
+        result.resource := ParseInnerResource(jsn.vObj['resource']);{q3}
     if jsn.has('part') then
       iterateArray(jsn.vArr['part'], result.partList, parseParametersParameter);
 end;
@@ -2831,11 +3210,12 @@ begin
   end;
 end;
 
+{$ENDIF FHIR_PARAMETERS}
 procedure TFHIRJsonParser.ParseDomainResourceProperties(jsn : TJsonObject; resource : TFhirDomainResource);
 begin
   ParseResourceProperties(jsn, resource);
   if jsn.has('text') then
-    resource.text := ParseNarrative(jsn.vObj['text']);{q}
+    resource.text := ParseNarrative(jsn.vObj['text']);{q3}
   if jsn.has('contained') then
     iterateArray(jsn.vArr['contained'], resource.containedList, parseInnerResource);
   if jsn.has('extension') then
@@ -2892,7 +3272,7 @@ end;
 
 procedure TFHIRJsonParser.ParseExtensionProperties(jsn : TJsonObject; result : TFhirExtension);
 begin
-    parseElementProperties(jsn, result);
+    ParseElementProperties(jsn, result);
     if jsn.has('url') or jsn.has('_url') then
         result.urlElement := ParseUri(jsn['url'], jsn.vObj['_url']);{q}
     if jsn.has('valueCode') or jsn.has('_valueCode') then
@@ -3119,11 +3499,11 @@ end;
 
 procedure TFHIRJsonParser.ParseNarrativeProperties(jsn : TJsonObject; result : TFhirNarrative);
 begin
-    parseElementProperties(jsn, result);
+    ParseElementProperties(jsn, result);
     if jsn.has('status') or jsn.has('_status')  then
       result.statusElement := parseEnum(jsn.path+'/status', jsn['status'], jsn.vObj['_status'], CODES_TFhirNarrativeStatusEnum, SYSTEMS_TFhirNarrativeStatusEnum);
     if jsn.has('div') then
-        result.div_ := ParseXHtmlNode(jsn.path+'.div', jsn['div']);{q}
+        result.div_ := ParseXHtmlNode(jsn.path+'.div', jsn['div']);{q2}
 end;
 
 procedure TFHIRJsonComposer.ComposeNarrative(json : TJSONWriter; name : string; elem : TFhirNarrative; noObj : boolean = false);
@@ -3159,19 +3539,19 @@ end;
 
 procedure TFHIRJsonParser.ParseIdentifierProperties(jsn : TJsonObject; result : TFhirIdentifier);
 begin
-    parseElementProperties(jsn, result);
+    ParseElementProperties(jsn, result);
     if jsn.has('use') or jsn.has('_use')  then
       result.useElement := parseEnum(jsn.path+'/use', jsn['use'], jsn.vObj['_use'], CODES_TFhirIdentifierUseEnum, SYSTEMS_TFhirIdentifierUseEnum);
     if jsn.has('type') then
-        result.type_ := ParseCodeableConcept(jsn.vObj['type']);{q}
+        result.type_ := ParseCodeableConcept(jsn.vObj['type']);{q3}
     if jsn.has('system') or jsn.has('_system') then
         result.systemElement := ParseUri(jsn['system'], jsn.vObj['_system']);{q}
     if jsn.has('value') or jsn.has('_value') then
         result.valueElement := ParseString(jsn['value'], jsn.vObj['_value']);{q}
     if jsn.has('period') then
-        result.period := ParsePeriod(jsn.vObj['period']);{q}
+        result.period := ParsePeriod(jsn.vObj['period']);{q3}
     if jsn.has('assigner') then
-        result.assigner := ParseReference{TFhirOrganization}(jsn.vObj['assigner']);{q}
+        result.assigner := ParseReference{TFhirOrganization}(jsn.vObj['assigner']);{q3}
 end;
 
 procedure TFHIRJsonComposer.ComposeIdentifier(json : TJSONWriter; name : string; elem : TFhirIdentifier; noObj : boolean = false);
@@ -3219,7 +3599,7 @@ end;
 
 procedure TFHIRJsonParser.ParseCodingProperties(jsn : TJsonObject; result : TFhirCoding);
 begin
-    parseElementProperties(jsn, result);
+    ParseElementProperties(jsn, result);
     if jsn.has('system') or jsn.has('_system') then
         result.systemElement := ParseUri(jsn['system'], jsn.vObj['_system']);{q}
     if jsn.has('version') or jsn.has('_version') then
@@ -3279,7 +3659,7 @@ end;
 
 procedure TFHIRJsonParser.ParseReferenceProperties(jsn : TJsonObject; result : TFhirReference);
 begin
-    parseElementProperties(jsn, result);
+    ParseElementProperties(jsn, result);
     if jsn.has('reference') or jsn.has('_reference') then
         result.referenceElement := ParseString(jsn['reference'], jsn.vObj['_reference']);{q}
     if jsn.has('display') or jsn.has('_display') then
@@ -3321,7 +3701,7 @@ end;
 
 procedure TFHIRJsonParser.ParseSignatureProperties(jsn : TJsonObject; result : TFhirSignature);
 begin
-    parseElementProperties(jsn, result);
+    ParseElementProperties(jsn, result);
     if jsn.has('type') then
       iterateArray(jsn.vArr['type'], result.type_List, parseCoding);
     if jsn.has('when') or jsn.has('_when') then
@@ -3391,9 +3771,9 @@ end;
 
 procedure TFHIRJsonParser.ParseSampledDataProperties(jsn : TJsonObject; result : TFhirSampledData);
 begin
-    parseElementProperties(jsn, result);
+    ParseElementProperties(jsn, result);
     if jsn.has('origin') then
-        result.origin := ParseQuantity(jsn.vObj['origin']);{q}
+        result.origin := ParseQuantity(jsn.vObj['origin']);{q3}
     if jsn.has('period') or jsn.has('_period') then
         result.periodElement := ParseDecimal(jsn['period'], jsn.vObj['_period']);{q}
     if jsn.has('factor') or jsn.has('_factor') then
@@ -3461,7 +3841,7 @@ end;
 
 procedure TFHIRJsonParser.ParsePeriodProperties(jsn : TJsonObject; result : TFhirPeriod);
 begin
-    parseElementProperties(jsn, result);
+    ParseElementProperties(jsn, result);
     if jsn.has('start') or jsn.has('_start') then
         result.startElement := ParseDateTime(jsn['start'], jsn.vObj['_start']);{q}
     if jsn.has('end') or jsn.has('_end') then
@@ -3503,7 +3883,7 @@ end;
 
 procedure TFHIRJsonParser.ParseQuantityProperties(jsn : TJsonObject; result : TFhirQuantity);
 begin
-    parseElementProperties(jsn, result);
+    ParseElementProperties(jsn, result);
     if jsn.has('value') or jsn.has('_value') then
         result.valueElement := ParseDecimal(jsn['value'], jsn.vObj['_value']);{q}
     if jsn.has('comparator') or jsn.has('_comparator')  then
@@ -3563,7 +3943,7 @@ end;
 
 procedure TFHIRJsonParser.ParseAttachmentProperties(jsn : TJsonObject; result : TFhirAttachment);
 begin
-    parseElementProperties(jsn, result);
+    ParseElementProperties(jsn, result);
     if jsn.has('contentType') or jsn.has('_contentType') then
         result.contentTypeElement := ParseCode(jsn['contentType'], jsn.vObj['_contentType']);{q}
     if jsn.has('language') or jsn.has('_language') then
@@ -3641,11 +4021,11 @@ end;
 
 procedure TFHIRJsonParser.ParseRatioProperties(jsn : TJsonObject; result : TFhirRatio);
 begin
-    parseElementProperties(jsn, result);
+    ParseElementProperties(jsn, result);
     if jsn.has('numerator') then
-        result.numerator := ParseQuantity(jsn.vObj['numerator']);{q}
+        result.numerator := ParseQuantity(jsn.vObj['numerator']);{q3}
     if jsn.has('denominator') then
-        result.denominator := ParseQuantity(jsn.vObj['denominator']);{q}
+        result.denominator := ParseQuantity(jsn.vObj['denominator']);{q3}
 end;
 
 procedure TFHIRJsonComposer.ComposeRatio(json : TJSONWriter; name : string; elem : TFhirRatio; noObj : boolean = false);
@@ -3679,11 +4059,11 @@ end;
 
 procedure TFHIRJsonParser.ParseRangeProperties(jsn : TJsonObject; result : TFhirRange);
 begin
-    parseElementProperties(jsn, result);
+    ParseElementProperties(jsn, result);
     if jsn.has('low') then
-        result.low := ParseQuantity(jsn.vObj['low']);{q}
+        result.low := ParseQuantity(jsn.vObj['low']);{q3}
     if jsn.has('high') then
-        result.high := ParseQuantity(jsn.vObj['high']);{q}
+        result.high := ParseQuantity(jsn.vObj['high']);{q3}
 end;
 
 procedure TFHIRJsonComposer.ComposeRange(json : TJSONWriter; name : string; elem : TFhirRange; noObj : boolean = false);
@@ -3717,7 +4097,7 @@ end;
 
 procedure TFHIRJsonParser.ParseAnnotationProperties(jsn : TJsonObject; result : TFhirAnnotation);
 begin
-    parseElementProperties(jsn, result);
+    ParseElementProperties(jsn, result);
     if jsn.has('authorReference') {a3} then
       result.author := ParseReference(jsn.vObj['authorReference']);
     if jsn.has('authorString') or jsn.has('_authorString') then
@@ -3770,7 +4150,7 @@ end;
 
 procedure TFHIRJsonParser.ParseCodeableConceptProperties(jsn : TJsonObject; result : TFhirCodeableConcept);
 begin
-    parseElementProperties(jsn, result);
+    ParseElementProperties(jsn, result);
     if jsn.has('coding') then
       iterateArray(jsn.vArr['coding'], result.codingList, parseCoding);
     if jsn.has('text') or jsn.has('_text') then
@@ -3817,7 +4197,7 @@ end;
 
 procedure TFHIRJsonParser.ParseHumanNameProperties(jsn : TJsonObject; result : TFhirHumanName);
 begin
-    parseElementProperties(jsn, result);
+    ParseElementProperties(jsn, result);
     if jsn.has('use') or jsn.has('_use')  then
       result.useElement := parseEnum(jsn.path+'/use', jsn['use'], jsn.vObj['_use'], CODES_TFhirNameUseEnum, SYSTEMS_TFhirNameUseEnum);
     if jsn.has('text') or jsn.has('_text') then
@@ -3831,7 +4211,7 @@ begin
       if jsn.has('suffix') or jsn.has('_suffix') then
       iteratePrimitiveArray(jsn.vArr['suffix'], jsn.vArr['_suffix'], result.suffixList, parseString);
     if jsn.has('period') then
-        result.period := ParsePeriod(jsn.vObj['period']);{q}
+        result.period := ParsePeriod(jsn.vObj['period']);{q3}
 end;
 
 procedure TFHIRJsonComposer.ComposeHumanName(json : TJSONWriter; name : string; elem : TFhirHumanName; noObj : boolean = false);
@@ -4061,7 +4441,7 @@ end;
 
 procedure TFHIRJsonParser.ParseContactPointProperties(jsn : TJsonObject; result : TFhirContactPoint);
 begin
-    parseElementProperties(jsn, result);
+    ParseElementProperties(jsn, result);
     if jsn.has('system') or jsn.has('_system')  then
       result.systemElement := parseEnum(jsn.path+'/system', jsn['system'], jsn.vObj['_system'], CODES_TFhirContactPointSystemEnum, SYSTEMS_TFhirContactPointSystemEnum);
     if jsn.has('value') or jsn.has('_value') then
@@ -4071,7 +4451,7 @@ begin
     if jsn.has('rank') or jsn.has('_rank') then
         result.rankElement := ParsePositiveInt(jsn['rank'], jsn.vObj['_rank']);{q}
     if jsn.has('period') then
-        result.period := ParsePeriod(jsn.vObj['period']);{q}
+        result.period := ParsePeriod(jsn.vObj['period']);{q3}
 end;
 
 procedure TFHIRJsonComposer.ComposeContactPoint(json : TJSONWriter; name : string; elem : TFhirContactPoint; noObj : boolean = false);
@@ -4119,7 +4499,7 @@ end;
 
 procedure TFHIRJsonParser.ParseAddressProperties(jsn : TJsonObject; result : TFhirAddress);
 begin
-    parseElementProperties(jsn, result);
+    ParseElementProperties(jsn, result);
     if jsn.has('use') or jsn.has('_use')  then
       result.useElement := parseEnum(jsn.path+'/use', jsn['use'], jsn.vObj['_use'], CODES_TFhirAddressUseEnum, SYSTEMS_TFhirAddressUseEnum);
     if jsn.has('type') or jsn.has('_type')  then
@@ -4139,7 +4519,7 @@ begin
     if jsn.has('country') or jsn.has('_country') then
         result.countryElement := ParseString(jsn['country'], jsn.vObj['_country']);{q}
     if jsn.has('period') then
-        result.period := ParsePeriod(jsn.vObj['period']);{q}
+        result.period := ParsePeriod(jsn.vObj['period']);{q3}
 end;
 
 procedure TFHIRJsonComposer.ComposeAddress(json : TJSONWriter; name : string; elem : TFhirAddress; noObj : boolean = false);
@@ -4610,7 +4990,7 @@ end;
 
 procedure TFHIRJsonParser.ParseElementDefinitionProperties(jsn : TJsonObject; result : TFhirElementDefinition);
 begin
-    parseElementProperties(jsn, result);
+    ParseElementProperties(jsn, result);
     if jsn.has('path') or jsn.has('_path') then
         result.pathElement := ParseString(jsn['path'], jsn.vObj['_path']);{q}
     if jsn.has('representation') or jsn.has('_representation') then
@@ -4622,7 +5002,7 @@ begin
     if jsn.has('code') then
       iterateArray(jsn.vArr['code'], result.codeList, parseCoding);
     if jsn.has('slicing') then
-        result.slicing := ParseElementDefinitionSlicing(jsn.vObj['slicing']);{q}
+        result.slicing := ParseElementDefinitionSlicing(jsn.vObj['slicing']);{q3}
     if jsn.has('short') or jsn.has('_short') then
         result.shortElement := ParseString(jsn['short'], jsn.vObj['_short']);{q}
     if jsn.has('definition') or jsn.has('_definition') then
@@ -4638,7 +5018,7 @@ begin
     if jsn.has('max') or jsn.has('_max') then
         result.maxElement := ParseString(jsn['max'], jsn.vObj['_max']);{q}
     if jsn.has('base') then
-        result.base := ParseElementDefinitionBase(jsn.vObj['base']);{q}
+        result.base := ParseElementDefinitionBase(jsn.vObj['base']);{q3}
     if jsn.has('type') then
       iterateArray(jsn.vArr['type'], result.type_List, parseElementDefinitionType);
     if jsn.has('nameReference') or jsn.has('_nameReference') then
@@ -5078,7 +5458,7 @@ begin
     if jsn.has('isSummary') or jsn.has('_isSummary') then
         result.isSummaryElement := ParseBoolean(jsn['isSummary'], jsn.vObj['_isSummary']);{q}
     if jsn.has('binding') then
-        result.binding := ParseElementDefinitionBinding(jsn.vObj['binding']);{q}
+        result.binding := ParseElementDefinitionBinding(jsn.vObj['binding']);{q3}
     if jsn.has('mapping') then
       iterateArray(jsn.vArr['mapping'], result.mappingList, parseElementDefinitionMapping);
 end;
@@ -6108,13 +6488,13 @@ end;
 
 procedure TFHIRJsonParser.ParseTimingProperties(jsn : TJsonObject; result : TFhirTiming);
 begin
-    parseElementProperties(jsn, result);
+    ParseElementProperties(jsn, result);
       if jsn.has('event') or jsn.has('_event') then
       iteratePrimitiveArray(jsn.vArr['event'], jsn.vArr['_event'], result.eventList, parseDateTime);
     if jsn.has('repeat') then
-        result.repeat_ := ParseTimingRepeat(jsn.vObj['repeat']);{q}
+        result.repeat_ := ParseTimingRepeat(jsn.vObj['repeat']);{q3}
     if jsn.has('code') then
-        result.code := ParseCodeableConcept(jsn.vObj['code']);{q}
+        result.code := ParseCodeableConcept(jsn.vObj['code']);{q3}
 end;
 
 procedure TFHIRJsonComposer.ComposeTiming(json : TJSONWriter; name : string; elem : TFhirTiming; noObj : boolean = false);
@@ -6158,6 +6538,7 @@ begin
   if not noObj then json.finishObject;
 end;
 
+{$IFDEF FHIR_ACCOUNT}
 procedure TFHIRJsonParser.ParseAccount(jsn : TJsonObject; ctxt : TFHIRObjectList);
 begin
   ctxt.add(ParseAccount(jsn)); {2}
@@ -6182,21 +6563,21 @@ begin
     if jsn.has('name') or jsn.has('_name') then
         result.nameElement := ParseString(jsn['name'], jsn.vObj['_name']);{q}
     if jsn.has('type') then
-        result.type_ := ParseCodeableConcept(jsn.vObj['type']);{q}
+        result.type_ := ParseCodeableConcept(jsn.vObj['type']);{q3}
     if jsn.has('status') or jsn.has('_status') then
         result.statusElement := ParseCode(jsn['status'], jsn.vObj['_status']);{q}
     if jsn.has('activePeriod') then
-        result.activePeriod := ParsePeriod(jsn.vObj['activePeriod']);{q}
+        result.activePeriod := ParsePeriod(jsn.vObj['activePeriod']);{q3}
     if jsn.has('currency') then
-        result.currency := ParseCoding(jsn.vObj['currency']);{q}
+        result.currency := ParseCoding(jsn.vObj['currency']);{q3}
     if jsn.has('balance') then
-        result.balance := ParseQuantity(jsn.vObj['balance']);{q}
+        result.balance := ParseQuantity(jsn.vObj['balance']);{q3}
     if jsn.has('coveragePeriod') then
-        result.coveragePeriod := ParsePeriod(jsn.vObj['coveragePeriod']);{q}
+        result.coveragePeriod := ParsePeriod(jsn.vObj['coveragePeriod']);{q3}
     if jsn.has('subject') then
-        result.subject := ParseReference{Resource}(jsn.vObj['subject']);{q}
+        result.subject := ParseReference{Resource}(jsn.vObj['subject']);{q3}
     if jsn.has('owner') then
-        result.owner := ParseReference{TFhirOrganization}(jsn.vObj['owner']);{q}
+        result.owner := ParseReference{TFhirOrganization}(jsn.vObj['owner']);{q3}
     if jsn.has('description') or jsn.has('_description') then
         result.descriptionElement := ParseString(jsn['description'], jsn.vObj['_description']);{q}
 end;
@@ -6243,6 +6624,8 @@ begin
     ComposeStringProps(json, 'description', elem.descriptionElement, false);
 end;
 
+{$ENDIF FHIR_ACCOUNT}
+{$IFDEF FHIR_ALLERGYINTOLERANCE}
 procedure TFHIRJsonParser.ParseAllergyIntoleranceReaction(jsn : TJsonObject; ctxt : TFHIRObjectList);
 begin
   ctxt.add(ParseAllergyIntoleranceReaction(jsn)); {2}
@@ -6263,7 +6646,7 @@ procedure TFHIRJsonParser.ParseAllergyIntoleranceReactionProperties(jsn : TJsonO
 begin
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('substance') then
-        result.substance := ParseCodeableConcept(jsn.vObj['substance']);{q}
+        result.substance := ParseCodeableConcept(jsn.vObj['substance']);{q3}
     if jsn.has('certainty') or jsn.has('_certainty')  then
       result.certaintyElement := parseEnum(jsn.path+'/certainty', jsn['certainty'], jsn.vObj['_certainty'], CODES_TFhirReactionEventCertaintyEnum, SYSTEMS_TFhirReactionEventCertaintyEnum);
     if jsn.has('manifestation') then
@@ -6275,9 +6658,9 @@ begin
     if jsn.has('severity') or jsn.has('_severity')  then
       result.severityElement := parseEnum(jsn.path+'/severity', jsn['severity'], jsn.vObj['_severity'], CODES_TFhirReactionEventSeverityEnum, SYSTEMS_TFhirReactionEventSeverityEnum);
     if jsn.has('exposureRoute') then
-        result.exposureRoute := ParseCodeableConcept(jsn.vObj['exposureRoute']);{q}
+        result.exposureRoute := ParseCodeableConcept(jsn.vObj['exposureRoute']);{q3}
     if jsn.has('note') then
-        result.note := ParseAnnotation(jsn.vObj['note']);{q}
+        result.note := ParseAnnotation(jsn.vObj['note']);{q3}
 end;
 
 procedure TFHIRJsonComposer.ComposeAllergyIntoleranceReaction(json : TJSONWriter; name : string; elem : TFhirAllergyIntoleranceReaction; noObj : boolean = false);
@@ -6346,13 +6729,13 @@ begin
     if jsn.has('recordedDate') or jsn.has('_recordedDate') then
         result.recordedDateElement := ParseDateTime(jsn['recordedDate'], jsn.vObj['_recordedDate']);{q}
     if jsn.has('recorder') then
-        result.recorder := ParseReference{Resource}(jsn.vObj['recorder']);{q}
+        result.recorder := ParseReference{Resource}(jsn.vObj['recorder']);{q3}
     if jsn.has('patient') then
-        result.patient := ParseReference{TFhirPatient}(jsn.vObj['patient']);{q}
+        result.patient := ParseReference{TFhirPatient}(jsn.vObj['patient']);{q3}
     if jsn.has('reporter') then
-        result.reporter := ParseReference{Resource}(jsn.vObj['reporter']);{q}
+        result.reporter := ParseReference{Resource}(jsn.vObj['reporter']);{q3}
     if jsn.has('substance') then
-        result.substance := ParseCodeableConcept(jsn.vObj['substance']);{q}
+        result.substance := ParseCodeableConcept(jsn.vObj['substance']);{q3}
     if jsn.has('status') or jsn.has('_status')  then
       result.statusElement := parseEnum(jsn.path+'/status', jsn['status'], jsn.vObj['_status'], CODES_TFhirAllergyIntoleranceStatusEnum, SYSTEMS_TFhirAllergyIntoleranceStatusEnum);
     if jsn.has('criticality') or jsn.has('_criticality')  then
@@ -6364,7 +6747,7 @@ begin
     if jsn.has('lastOccurence') or jsn.has('_lastOccurence') then
         result.lastOccurenceElement := ParseDateTime(jsn['lastOccurence'], jsn.vObj['_lastOccurence']);{q}
     if jsn.has('note') then
-        result.note := ParseAnnotation(jsn.vObj['note']);{q}
+        result.note := ParseAnnotation(jsn.vObj['note']);{q3}
     if jsn.has('reaction') then
       iterateArray(jsn.vArr['reaction'], result.reactionList, parseAllergyIntoleranceReaction);
 end;
@@ -6430,6 +6813,8 @@ begin
   end;
 end;
 
+{$ENDIF FHIR_ALLERGYINTOLERANCE}
+{$IFDEF FHIR_APPOINTMENT}
 procedure TFHIRJsonParser.ParseAppointmentParticipant(jsn : TJsonObject; ctxt : TFHIRObjectList);
 begin
   ctxt.add(ParseAppointmentParticipant(jsn)); {2}
@@ -6452,7 +6837,7 @@ begin
     if jsn.has('type') then
       iterateArray(jsn.vArr['type'], result.type_List, parseCodeableConcept);
     if jsn.has('actor') then
-        result.actor := ParseReference{Resource}(jsn.vObj['actor']);{q}
+        result.actor := ParseReference{Resource}(jsn.vObj['actor']);{q3}
     if jsn.has('required') or jsn.has('_required')  then
       result.requiredElement := parseEnum(jsn.path+'/required', jsn['required'], jsn.vObj['_required'], CODES_TFhirParticipantrequiredEnum, SYSTEMS_TFhirParticipantrequiredEnum);
     if jsn.has('status') or jsn.has('_status')  then
@@ -6511,9 +6896,9 @@ begin
     if jsn.has('status') or jsn.has('_status')  then
       result.statusElement := parseEnum(jsn.path+'/status', jsn['status'], jsn.vObj['_status'], CODES_TFhirAppointmentstatusEnum, SYSTEMS_TFhirAppointmentstatusEnum);
     if jsn.has('type') then
-        result.type_ := ParseCodeableConcept(jsn.vObj['type']);{q}
+        result.type_ := ParseCodeableConcept(jsn.vObj['type']);{q3}
     if jsn.has('reason') then
-        result.reason := ParseCodeableConcept(jsn.vObj['reason']);{q}
+        result.reason := ParseCodeableConcept(jsn.vObj['reason']);{q3}
     if jsn.has('priority') or jsn.has('_priority') then
         result.priorityElement := ParseUnsignedInt(jsn['priority'], jsn.vObj['_priority']);{q}
     if jsn.has('description') or jsn.has('_description') then
@@ -6594,6 +6979,8 @@ begin
   end;
 end;
 
+{$ENDIF FHIR_APPOINTMENT}
+{$IFDEF FHIR_APPOINTMENTRESPONSE}
 procedure TFHIRJsonParser.ParseAppointmentResponse(jsn : TJsonObject; ctxt : TFHIRObjectList);
 begin
   ctxt.add(ParseAppointmentResponse(jsn)); {2}
@@ -6616,7 +7003,7 @@ begin
     if jsn.has('identifier') then
       iterateArray(jsn.vArr['identifier'], result.identifierList, parseIdentifier);
     if jsn.has('appointment') then
-        result.appointment := ParseReference{TFhirAppointment}(jsn.vObj['appointment']);{q}
+        result.appointment := ParseReference{TFhirAppointment}(jsn.vObj['appointment']);{q3}
     if jsn.has('start') or jsn.has('_start') then
         result.startElement := ParseInstant(jsn['start'], jsn.vObj['_start']);{q}
     if jsn.has('end') or jsn.has('_end') then
@@ -6624,7 +7011,7 @@ begin
     if jsn.has('participantType') then
       iterateArray(jsn.vArr['participantType'], result.participantTypeList, parseCodeableConcept);
     if jsn.has('actor') then
-        result.actor := ParseReference{Resource}(jsn.vObj['actor']);{q}
+        result.actor := ParseReference{Resource}(jsn.vObj['actor']);{q3}
     if jsn.has('participantStatus') or jsn.has('_participantStatus')  then
       result.participantStatusElement := parseEnum(jsn.path+'/participantStatus', jsn['participantStatus'], jsn.vObj['_participantStatus'], CODES_TFhirParticipantstatusEnum, SYSTEMS_TFhirParticipantstatusEnum);
     if jsn.has('comment') or jsn.has('_comment') then
@@ -6674,6 +7061,8 @@ begin
     ComposeStringProps(json, 'comment', elem.commentElement, false);
 end;
 
+{$ENDIF FHIR_APPOINTMENTRESPONSE}
+{$IFDEF FHIR_AUDITEVENT}
 procedure TFHIRJsonParser.ParseAuditEventEvent(jsn : TJsonObject; ctxt : TFHIRObjectList);
 begin
   ctxt.add(ParseAuditEventEvent(jsn)); {2}
@@ -6694,7 +7083,7 @@ procedure TFHIRJsonParser.ParseAuditEventEventProperties(jsn : TJsonObject; resu
 begin
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('type') then
-        result.type_ := ParseCoding(jsn.vObj['type']);{q}
+        result.type_ := ParseCoding(jsn.vObj['type']);{q3}
     if jsn.has('subtype') then
       iterateArray(jsn.vArr['subtype'], result.subtypeList, parseCoding);
     if jsn.has('action') or jsn.has('_action')  then
@@ -6774,9 +7163,9 @@ begin
     if jsn.has('role') then
       iterateArray(jsn.vArr['role'], result.roleList, parseCodeableConcept);
     if jsn.has('reference') then
-        result.reference := ParseReference{Resource}(jsn.vObj['reference']);{q}
+        result.reference := ParseReference{Resource}(jsn.vObj['reference']);{q3}
     if jsn.has('userId') then
-        result.userId := ParseIdentifier(jsn.vObj['userId']);{q}
+        result.userId := ParseIdentifier(jsn.vObj['userId']);{q3}
     if jsn.has('altId') or jsn.has('_altId') then
         result.altIdElement := ParseString(jsn['altId'], jsn.vObj['_altId']);{q}
     if jsn.has('name') or jsn.has('_name') then
@@ -6784,13 +7173,13 @@ begin
     if jsn.has('requestor') or jsn.has('_requestor') then
         result.requestorElement := ParseBoolean(jsn['requestor'], jsn.vObj['_requestor']);{q}
     if jsn.has('location') then
-        result.location := ParseReference{TFhirLocation}(jsn.vObj['location']);{q}
+        result.location := ParseReference{TFhirLocation}(jsn.vObj['location']);{q3}
       if jsn.has('policy') or jsn.has('_policy') then
       iteratePrimitiveArray(jsn.vArr['policy'], jsn.vArr['_policy'], result.policyList, parseUri);
     if jsn.has('media') then
-        result.media := ParseCoding(jsn.vObj['media']);{q}
+        result.media := ParseCoding(jsn.vObj['media']);{q3}
     if jsn.has('network') then
-        result.network := ParseAuditEventParticipantNetwork(jsn.vObj['network']);{q}
+        result.network := ParseAuditEventParticipantNetwork(jsn.vObj['network']);{q3}
     if jsn.has('purposeOfUse') then
       iterateArray(jsn.vArr['purposeOfUse'], result.purposeOfUseList, parseCoding);
 end;
@@ -6932,7 +7321,7 @@ begin
     if jsn.has('site') or jsn.has('_site') then
         result.siteElement := ParseString(jsn['site'], jsn.vObj['_site']);{q}
     if jsn.has('identifier') then
-        result.identifier := ParseIdentifier(jsn.vObj['identifier']);{q}
+        result.identifier := ParseIdentifier(jsn.vObj['identifier']);{q3}
     if jsn.has('type') then
       iterateArray(jsn.vArr['type'], result.type_List, parseCoding);
 end;
@@ -6981,15 +7370,15 @@ procedure TFHIRJsonParser.ParseAuditEventObjectProperties(jsn : TJsonObject; res
 begin
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('identifier') then
-        result.identifier := ParseIdentifier(jsn.vObj['identifier']);{q}
+        result.identifier := ParseIdentifier(jsn.vObj['identifier']);{q3}
     if jsn.has('reference') then
-        result.reference := ParseReference{TFhirReference}(jsn.vObj['reference']);{q}
+        result.reference := ParseReference{TFhirReference}(jsn.vObj['reference']);{q3}
     if jsn.has('type') then
-        result.type_ := ParseCoding(jsn.vObj['type']);{q}
+        result.type_ := ParseCoding(jsn.vObj['type']);{q3}
     if jsn.has('role') then
-        result.role := ParseCoding(jsn.vObj['role']);{q}
+        result.role := ParseCoding(jsn.vObj['role']);{q3}
     if jsn.has('lifecycle') then
-        result.lifecycle := ParseCoding(jsn.vObj['lifecycle']);{q}
+        result.lifecycle := ParseCoding(jsn.vObj['lifecycle']);{q3}
     if jsn.has('securityLabel') then
       iterateArray(jsn.vArr['securityLabel'], result.securityLabelList, parseCoding);
     if jsn.has('name') or jsn.has('_name') then
@@ -7111,11 +7500,11 @@ procedure TFHIRJsonParser.ParseAuditEventProperties(jsn : TJsonObject; result : 
 begin
     ParseDomainResourceProperties(jsn, result);
     if jsn.has('event') then
-        result.event := ParseAuditEventEvent(jsn.vObj['event']);{q}
+        result.event := ParseAuditEventEvent(jsn.vObj['event']);{q3}
     if jsn.has('participant') then
       iterateArray(jsn.vArr['participant'], result.participantList, parseAuditEventParticipant);
     if jsn.has('source') then
-        result.source := ParseAuditEventSource(jsn.vObj['source']);{q}
+        result.source := ParseAuditEventSource(jsn.vObj['source']);{q3}
     if jsn.has('object') then
       iterateArray(jsn.vArr['object'], result.object_List, parseAuditEventObject);
 end;
@@ -7147,6 +7536,8 @@ begin
   end;
 end;
 
+{$ENDIF FHIR_AUDITEVENT}
+{$IFDEF FHIR_BASIC}
 procedure TFHIRJsonParser.ParseBasic(jsn : TJsonObject; ctxt : TFHIRObjectList);
 begin
   ctxt.add(ParseBasic(jsn)); {2}
@@ -7169,11 +7560,11 @@ begin
     if jsn.has('identifier') then
       iterateArray(jsn.vArr['identifier'], result.identifierList, parseIdentifier);
     if jsn.has('code') then
-        result.code := ParseCodeableConcept(jsn.vObj['code']);{q}
+        result.code := ParseCodeableConcept(jsn.vObj['code']);{q3}
     if jsn.has('subject') then
-        result.subject := ParseReference{TFhirReference}(jsn.vObj['subject']);{q}
+        result.subject := ParseReference{TFhirReference}(jsn.vObj['subject']);{q3}
     if jsn.has('author') then
-        result.author := ParseReference{Resource}(jsn.vObj['author']);{q}
+        result.author := ParseReference{Resource}(jsn.vObj['author']);{q3}
     if jsn.has('created') or jsn.has('_created') then
         result.createdElement := ParseDate(jsn['created'], jsn.vObj['_created']);{q}
 end;
@@ -7204,6 +7595,8 @@ begin
     ComposeDateProps(json, 'created', elem.createdElement, false);
 end;
 
+{$ENDIF FHIR_BASIC}
+{$IFDEF FHIR_BINARY}
 procedure TFHIRJsonParser.ParseBinary(jsn : TJsonObject; ctxt : TFHIRObjectList);
 begin
   ctxt.add(ParseBinary(jsn)); {2}
@@ -7244,6 +7637,8 @@ begin
     ComposeBase64BinaryProps(json, 'content', elem.contentElement, false);
 end;
 
+{$ENDIF FHIR_BINARY}
+{$IFDEF FHIR_BODYSITE}
 procedure TFHIRJsonParser.ParseBodySite(jsn : TJsonObject; ctxt : TFHIRObjectList);
 begin
   ctxt.add(ParseBodySite(jsn)); {2}
@@ -7264,11 +7659,11 @@ procedure TFHIRJsonParser.ParseBodySiteProperties(jsn : TJsonObject; result : TF
 begin
     ParseDomainResourceProperties(jsn, result);
     if jsn.has('patient') then
-        result.patient := ParseReference{TFhirPatient}(jsn.vObj['patient']);{q}
+        result.patient := ParseReference{TFhirPatient}(jsn.vObj['patient']);{q3}
     if jsn.has('identifier') then
       iterateArray(jsn.vArr['identifier'], result.identifierList, parseIdentifier);
     if jsn.has('code') then
-        result.code := ParseCodeableConcept(jsn.vObj['code']);{q}
+        result.code := ParseCodeableConcept(jsn.vObj['code']);{q3}
     if jsn.has('modifier') then
       iterateArray(jsn.vArr['modifier'], result.modifierList, parseCodeableConcept);
     if jsn.has('description') or jsn.has('_description') then
@@ -7315,6 +7710,8 @@ begin
   end;
 end;
 
+{$ENDIF FHIR_BODYSITE}
+{$IFDEF FHIR_BUNDLE}
 procedure TFHIRJsonParser.ParseBundleLink(jsn : TJsonObject; ctxt : TFHIRObjectList);
 begin
   ctxt.add(ParseBundleLink(jsn)); {2}
@@ -7381,13 +7778,13 @@ begin
     if jsn.has('fullUrl') or jsn.has('_fullUrl') then
         result.fullUrlElement := ParseUri(jsn['fullUrl'], jsn.vObj['_fullUrl']);{q}
     if jsn.has('resource') then
-        result.resource := ParseInnerResource(jsn.vObj['resource']);{q}
+        result.resource := ParseInnerResource(jsn.vObj['resource']);{q3}
     if jsn.has('search') then
-        result.search := ParseBundleEntrySearch(jsn.vObj['search']);{q}
+        result.search := ParseBundleEntrySearch(jsn.vObj['search']);{q3}
     if jsn.has('request') then
-        result.request := ParseBundleEntryRequest(jsn.vObj['request']);{q}
+        result.request := ParseBundleEntryRequest(jsn.vObj['request']);{q3}
     if jsn.has('response') then
-        result.response := ParseBundleEntryResponse(jsn.vObj['response']);{q}
+        result.response := ParseBundleEntryResponse(jsn.vObj['response']);{q3}
 end;
 
 procedure TFHIRJsonComposer.ComposeBundleEntry(json : TJSONWriter; name : string; elem : TFhirBundleEntry; noObj : boolean = false);
@@ -7610,7 +8007,7 @@ begin
     if jsn.has('entry') then
       iterateArray(jsn.vArr['entry'], result.entryList, parseBundleEntry);
     if jsn.has('signature') then
-        result.signature := ParseSignature(jsn.vObj['signature']);{q}
+        result.signature := ParseSignature(jsn.vObj['signature']);{q3}
 end;
 
 procedure TFHIRJsonComposer.ComposeBundle(json : TJSONWriter; name : string; elem : TFhirBundle; noObj : boolean = false);
@@ -7646,6 +8043,8 @@ begin
     ComposeSignature(json, 'signature', elem.signature); {a}
 end;
 
+{$ENDIF FHIR_BUNDLE}
+{$IFDEF FHIR_CAREPLAN}
 procedure TFHIRJsonParser.ParseCarePlanRelatedPlan(jsn : TJsonObject; ctxt : TFHIRObjectList);
 begin
   ctxt.add(ParseCarePlanRelatedPlan(jsn)); {2}
@@ -7668,7 +8067,7 @@ begin
     if jsn.has('code') or jsn.has('_code')  then
       result.codeElement := parseEnum(jsn.path+'/code', jsn['code'], jsn.vObj['_code'], CODES_TFhirCarePlanRelationshipEnum, SYSTEMS_TFhirCarePlanRelationshipEnum);
     if jsn.has('plan') then
-        result.plan := ParseReference{TFhirCarePlan}(jsn.vObj['plan']);{q}
+        result.plan := ParseReference{TFhirCarePlan}(jsn.vObj['plan']);{q3}
 end;
 
 procedure TFHIRJsonComposer.ComposeCarePlanRelatedPlan(json : TJSONWriter; name : string; elem : TFhirCarePlanRelatedPlan; noObj : boolean = false);
@@ -7706,9 +8105,9 @@ procedure TFHIRJsonParser.ParseCarePlanParticipantProperties(jsn : TJsonObject; 
 begin
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('role') then
-        result.role := ParseCodeableConcept(jsn.vObj['role']);{q}
+        result.role := ParseCodeableConcept(jsn.vObj['role']);{q3}
     if jsn.has('member') then
-        result.member := ParseReference{Resource}(jsn.vObj['member']);{q}
+        result.member := ParseReference{Resource}(jsn.vObj['member']);{q3}
 end;
 
 procedure TFHIRJsonComposer.ComposeCarePlanParticipant(json : TJSONWriter; name : string; elem : TFhirCarePlanParticipant; noObj : boolean = false);
@@ -7748,9 +8147,9 @@ begin
     if jsn.has('progress') then
       iterateArray(jsn.vArr['progress'], result.progressList, parseAnnotation);
     if jsn.has('reference') then
-        result.reference := ParseReference{Resource}(jsn.vObj['reference']);{q}
+        result.reference := ParseReference{Resource}(jsn.vObj['reference']);{q3}
     if jsn.has('detail') then
-        result.detail := ParseCarePlanActivityDetail(jsn.vObj['detail']);{q}
+        result.detail := ParseCarePlanActivityDetail(jsn.vObj['detail']);{q3}
 end;
 
 procedure TFHIRJsonComposer.ComposeCarePlanActivity(json : TJSONWriter; name : string; elem : TFhirCarePlanActivity; noObj : boolean = false);
@@ -7802,9 +8201,9 @@ procedure TFHIRJsonParser.ParseCarePlanActivityDetailProperties(jsn : TJsonObjec
 begin
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('category') then
-        result.category := ParseCodeableConcept(jsn.vObj['category']);{q}
+        result.category := ParseCodeableConcept(jsn.vObj['category']);{q3}
     if jsn.has('code') then
-        result.code := ParseCodeableConcept(jsn.vObj['code']);{q}
+        result.code := ParseCodeableConcept(jsn.vObj['code']);{q3}
     if jsn.has('reasonCode') then
       iterateArray(jsn.vArr['reasonCode'], result.reasonCodeList, parseCodeableConcept);
     if jsn.has('reasonReference') then
@@ -7814,7 +8213,7 @@ begin
     if jsn.has('status') or jsn.has('_status')  then
       result.statusElement := parseEnum(jsn.path+'/status', jsn['status'], jsn.vObj['_status'], CODES_TFhirCarePlanActivityStatusEnum, SYSTEMS_TFhirCarePlanActivityStatusEnum);
     if jsn.has('statusReason') then
-        result.statusReason := ParseCodeableConcept(jsn.vObj['statusReason']);{q}
+        result.statusReason := ParseCodeableConcept(jsn.vObj['statusReason']);{q3}
     if jsn.has('prohibited') or jsn.has('_prohibited') then
         result.prohibitedElement := ParseBoolean(jsn['prohibited'], jsn.vObj['_prohibited']);{q}
     if jsn.has('scheduledTiming') {a4} then
@@ -7824,7 +8223,7 @@ begin
     if jsn.has('scheduledString') or jsn.has('_scheduledString') then
       result.scheduled := parseString(jsn['scheduledString'], jsn.vObj['_scheduledString']);
     if jsn.has('location') then
-        result.location := ParseReference{TFhirLocation}(jsn.vObj['location']);{q}
+        result.location := ParseReference{TFhirLocation}(jsn.vObj['location']);{q3}
     if jsn.has('performer') then
       iterateArray(jsn.vArr['performer'], result.performerList, parseReference{Resource});
     if jsn.has('productCodeableConcept') {a4} then
@@ -7832,9 +8231,9 @@ begin
     if jsn.has('productReference') {a3} then
       result.product := ParseReference(jsn.vObj['productReference']);
     if jsn.has('dailyAmount') then
-        result.dailyAmount := ParseQuantity(jsn.vObj['dailyAmount']);{q}
+        result.dailyAmount := ParseQuantity(jsn.vObj['dailyAmount']);{q3}
     if jsn.has('quantity') then
-        result.quantity := ParseQuantity(jsn.vObj['quantity']);{q}
+        result.quantity := ParseQuantity(jsn.vObj['quantity']);{q3}
     if jsn.has('description') or jsn.has('_description') then
         result.descriptionElement := ParseString(jsn['description'], jsn.vObj['_description']);{q}
 end;
@@ -7937,13 +8336,13 @@ begin
     if jsn.has('identifier') then
       iterateArray(jsn.vArr['identifier'], result.identifierList, parseIdentifier);
     if jsn.has('subject') then
-        result.subject := ParseReference{Resource}(jsn.vObj['subject']);{q}
+        result.subject := ParseReference{Resource}(jsn.vObj['subject']);{q3}
     if jsn.has('status') or jsn.has('_status')  then
       result.statusElement := parseEnum(jsn.path+'/status', jsn['status'], jsn.vObj['_status'], CODES_TFhirCarePlanStatusEnum, SYSTEMS_TFhirCarePlanStatusEnum);
     if jsn.has('context') then
-        result.context := ParseReference{Resource}(jsn.vObj['context']);{q}
+        result.context := ParseReference{Resource}(jsn.vObj['context']);{q3}
     if jsn.has('period') then
-        result.period := ParsePeriod(jsn.vObj['period']);{q}
+        result.period := ParsePeriod(jsn.vObj['period']);{q3}
     if jsn.has('author') then
       iterateArray(jsn.vArr['author'], result.authorList, parseReference{Resource});
     if jsn.has('modified') or jsn.has('_modified') then
@@ -7965,7 +8364,7 @@ begin
     if jsn.has('activity') then
       iterateArray(jsn.vArr['activity'], result.activityList, parseCarePlanActivity);
     if jsn.has('note') then
-        result.note := ParseAnnotation(jsn.vObj['note']);{q}
+        result.note := ParseAnnotation(jsn.vObj['note']);{q3}
 end;
 
 procedure TFHIRJsonComposer.ComposeCarePlan(json : TJSONWriter; name : string; elem : TFhirCarePlan; noObj : boolean = false);
@@ -8060,6 +8459,8 @@ begin
     ComposeAnnotation(json, 'note', elem.note); {a}
 end;
 
+{$ENDIF FHIR_CAREPLAN}
+{$IFDEF FHIR_CLAIM}
 procedure TFHIRJsonParser.ParseClaimPayee(jsn : TJsonObject; ctxt : TFHIRObjectList);
 begin
   ctxt.add(ParseClaimPayee(jsn)); {2}
@@ -8080,13 +8481,13 @@ procedure TFHIRJsonParser.ParseClaimPayeeProperties(jsn : TJsonObject; result : 
 begin
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('type') then
-        result.type_ := ParseCoding(jsn.vObj['type']);{q}
+        result.type_ := ParseCoding(jsn.vObj['type']);{q3}
     if jsn.has('provider') then
-        result.provider := ParseReference{TFhirPractitioner}(jsn.vObj['provider']);{q}
+        result.provider := ParseReference{TFhirPractitioner}(jsn.vObj['provider']);{q3}
     if jsn.has('organization') then
-        result.organization := ParseReference{TFhirOrganization}(jsn.vObj['organization']);{q}
+        result.organization := ParseReference{TFhirOrganization}(jsn.vObj['organization']);{q3}
     if jsn.has('person') then
-        result.person := ParseReference{TFhirPatient}(jsn.vObj['person']);{q}
+        result.person := ParseReference{TFhirPatient}(jsn.vObj['person']);{q3}
 end;
 
 procedure TFHIRJsonComposer.ComposeClaimPayee(json : TJSONWriter; name : string; elem : TFhirClaimPayee; noObj : boolean = false);
@@ -8128,7 +8529,7 @@ begin
     if jsn.has('sequence') or jsn.has('_sequence') then
         result.sequenceElement := ParsePositiveInt(jsn['sequence'], jsn.vObj['_sequence']);{q}
     if jsn.has('diagnosis') then
-        result.diagnosis := ParseCoding(jsn.vObj['diagnosis']);{q}
+        result.diagnosis := ParseCoding(jsn.vObj['diagnosis']);{q3}
 end;
 
 procedure TFHIRJsonComposer.ComposeClaimDiagnosis(json : TJSONWriter; name : string; elem : TFhirClaimDiagnosis; noObj : boolean = false);
@@ -8170,17 +8571,17 @@ begin
     if jsn.has('focal') or jsn.has('_focal') then
         result.focalElement := ParseBoolean(jsn['focal'], jsn.vObj['_focal']);{q}
     if jsn.has('coverage') then
-        result.coverage := ParseReference{TFhirCoverage}(jsn.vObj['coverage']);{q}
+        result.coverage := ParseReference{TFhirCoverage}(jsn.vObj['coverage']);{q3}
     if jsn.has('businessArrangement') or jsn.has('_businessArrangement') then
         result.businessArrangementElement := ParseString(jsn['businessArrangement'], jsn.vObj['_businessArrangement']);{q}
     if jsn.has('relationship') then
-        result.relationship := ParseCoding(jsn.vObj['relationship']);{q}
+        result.relationship := ParseCoding(jsn.vObj['relationship']);{q3}
       if jsn.has('preAuthRef') or jsn.has('_preAuthRef') then
       iteratePrimitiveArray(jsn.vArr['preAuthRef'], jsn.vArr['_preAuthRef'], result.preAuthRefList, parseString);
     if jsn.has('claimResponse') then
-        result.claimResponse := ParseReference{TFhirClaimResponse}(jsn.vObj['claimResponse']);{q}
+        result.claimResponse := ParseReference{TFhirClaimResponse}(jsn.vObj['claimResponse']);{q3}
     if jsn.has('originalRuleset') then
-        result.originalRuleset := ParseCoding(jsn.vObj['originalRuleset']);{q}
+        result.originalRuleset := ParseCoding(jsn.vObj['originalRuleset']);{q3}
 end;
 
 procedure TFHIRJsonComposer.ComposeClaimCoverage(json : TJSONWriter; name : string; elem : TFhirClaimCoverage; noObj : boolean = false);
@@ -8262,29 +8663,29 @@ begin
     if jsn.has('sequence') or jsn.has('_sequence') then
         result.sequenceElement := ParsePositiveInt(jsn['sequence'], jsn.vObj['_sequence']);{q}
     if jsn.has('type') then
-        result.type_ := ParseCoding(jsn.vObj['type']);{q}
+        result.type_ := ParseCoding(jsn.vObj['type']);{q3}
     if jsn.has('provider') then
-        result.provider := ParseReference{TFhirPractitioner}(jsn.vObj['provider']);{q}
+        result.provider := ParseReference{TFhirPractitioner}(jsn.vObj['provider']);{q3}
       if jsn.has('diagnosisLinkId') or jsn.has('_diagnosisLinkId') then
       iteratePrimitiveArray(jsn.vArr['diagnosisLinkId'], jsn.vArr['_diagnosisLinkId'], result.diagnosisLinkIdList, parsePositiveInt);
     if jsn.has('service') then
-        result.service := ParseCoding(jsn.vObj['service']);{q}
+        result.service := ParseCoding(jsn.vObj['service']);{q3}
     if jsn.has('serviceDate') or jsn.has('_serviceDate') then
         result.serviceDateElement := ParseDate(jsn['serviceDate'], jsn.vObj['_serviceDate']);{q}
     if jsn.has('quantity') then
-        result.quantity := ParseQuantity(jsn.vObj['quantity']);{q}
+        result.quantity := ParseQuantity(jsn.vObj['quantity']);{q3}
     if jsn.has('unitPrice') then
-        result.unitPrice := ParseQuantity(jsn.vObj['unitPrice']);{q}
+        result.unitPrice := ParseQuantity(jsn.vObj['unitPrice']);{q3}
     if jsn.has('factor') or jsn.has('_factor') then
         result.factorElement := ParseDecimal(jsn['factor'], jsn.vObj['_factor']);{q}
     if jsn.has('points') or jsn.has('_points') then
         result.pointsElement := ParseDecimal(jsn['points'], jsn.vObj['_points']);{q}
     if jsn.has('net') then
-        result.net := ParseQuantity(jsn.vObj['net']);{q}
+        result.net := ParseQuantity(jsn.vObj['net']);{q3}
     if jsn.has('udi') then
-        result.udi := ParseCoding(jsn.vObj['udi']);{q}
+        result.udi := ParseCoding(jsn.vObj['udi']);{q3}
     if jsn.has('bodySite') then
-        result.bodySite := ParseCoding(jsn.vObj['bodySite']);{q}
+        result.bodySite := ParseCoding(jsn.vObj['bodySite']);{q3}
     if jsn.has('subSite') then
       iterateArray(jsn.vArr['subSite'], result.subSiteList, parseCoding);
     if jsn.has('modifier') then
@@ -8292,7 +8693,7 @@ begin
     if jsn.has('detail') then
       iterateArray(jsn.vArr['detail'], result.detailList, parseClaimItemDetail);
     if jsn.has('prosthesis') then
-        result.prosthesis := ParseClaimItemProsthesis(jsn.vObj['prosthesis']);{q}
+        result.prosthesis := ParseClaimItemProsthesis(jsn.vObj['prosthesis']);{q3}
 end;
 
 procedure TFHIRJsonComposer.ComposeClaimItem(json : TJSONWriter; name : string; elem : TFhirClaimItem; noObj : boolean = false);
@@ -8409,21 +8810,21 @@ begin
     if jsn.has('sequence') or jsn.has('_sequence') then
         result.sequenceElement := ParsePositiveInt(jsn['sequence'], jsn.vObj['_sequence']);{q}
     if jsn.has('type') then
-        result.type_ := ParseCoding(jsn.vObj['type']);{q}
+        result.type_ := ParseCoding(jsn.vObj['type']);{q3}
     if jsn.has('service') then
-        result.service := ParseCoding(jsn.vObj['service']);{q}
+        result.service := ParseCoding(jsn.vObj['service']);{q3}
     if jsn.has('quantity') then
-        result.quantity := ParseQuantity(jsn.vObj['quantity']);{q}
+        result.quantity := ParseQuantity(jsn.vObj['quantity']);{q3}
     if jsn.has('unitPrice') then
-        result.unitPrice := ParseQuantity(jsn.vObj['unitPrice']);{q}
+        result.unitPrice := ParseQuantity(jsn.vObj['unitPrice']);{q3}
     if jsn.has('factor') or jsn.has('_factor') then
         result.factorElement := ParseDecimal(jsn['factor'], jsn.vObj['_factor']);{q}
     if jsn.has('points') or jsn.has('_points') then
         result.pointsElement := ParseDecimal(jsn['points'], jsn.vObj['_points']);{q}
     if jsn.has('net') then
-        result.net := ParseQuantity(jsn.vObj['net']);{q}
+        result.net := ParseQuantity(jsn.vObj['net']);{q3}
     if jsn.has('udi') then
-        result.udi := ParseCoding(jsn.vObj['udi']);{q}
+        result.udi := ParseCoding(jsn.vObj['udi']);{q3}
     if jsn.has('subDetail') then
       iterateArray(jsn.vArr['subDetail'], result.subDetailList, parseClaimItemDetailSubDetail);
 end;
@@ -8492,21 +8893,21 @@ begin
     if jsn.has('sequence') or jsn.has('_sequence') then
         result.sequenceElement := ParsePositiveInt(jsn['sequence'], jsn.vObj['_sequence']);{q}
     if jsn.has('type') then
-        result.type_ := ParseCoding(jsn.vObj['type']);{q}
+        result.type_ := ParseCoding(jsn.vObj['type']);{q3}
     if jsn.has('service') then
-        result.service := ParseCoding(jsn.vObj['service']);{q}
+        result.service := ParseCoding(jsn.vObj['service']);{q3}
     if jsn.has('quantity') then
-        result.quantity := ParseQuantity(jsn.vObj['quantity']);{q}
+        result.quantity := ParseQuantity(jsn.vObj['quantity']);{q3}
     if jsn.has('unitPrice') then
-        result.unitPrice := ParseQuantity(jsn.vObj['unitPrice']);{q}
+        result.unitPrice := ParseQuantity(jsn.vObj['unitPrice']);{q3}
     if jsn.has('factor') or jsn.has('_factor') then
         result.factorElement := ParseDecimal(jsn['factor'], jsn.vObj['_factor']);{q}
     if jsn.has('points') or jsn.has('_points') then
         result.pointsElement := ParseDecimal(jsn['points'], jsn.vObj['_points']);{q}
     if jsn.has('net') then
-        result.net := ParseQuantity(jsn.vObj['net']);{q}
+        result.net := ParseQuantity(jsn.vObj['net']);{q3}
     if jsn.has('udi') then
-        result.udi := ParseCoding(jsn.vObj['udi']);{q}
+        result.udi := ParseCoding(jsn.vObj['udi']);{q3}
 end;
 
 procedure TFHIRJsonComposer.ComposeClaimItemDetailSubDetail(json : TJSONWriter; name : string; elem : TFhirClaimItemDetailSubDetail; noObj : boolean = false);
@@ -8566,7 +8967,7 @@ begin
     if jsn.has('priorDate') or jsn.has('_priorDate') then
         result.priorDateElement := ParseDate(jsn['priorDate'], jsn.vObj['_priorDate']);{q}
     if jsn.has('priorMaterial') then
-        result.priorMaterial := ParseCoding(jsn.vObj['priorMaterial']);{q}
+        result.priorMaterial := ParseCoding(jsn.vObj['priorMaterial']);{q3}
 end;
 
 procedure TFHIRJsonComposer.ComposeClaimItemProsthesis(json : TJSONWriter; name : string; elem : TFhirClaimItemProsthesis; noObj : boolean = false);
@@ -8608,9 +9009,9 @@ procedure TFHIRJsonParser.ParseClaimMissingTeethProperties(jsn : TJsonObject; re
 begin
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('tooth') then
-        result.tooth := ParseCoding(jsn.vObj['tooth']);{q}
+        result.tooth := ParseCoding(jsn.vObj['tooth']);{q3}
     if jsn.has('reason') then
-        result.reason := ParseCoding(jsn.vObj['reason']);{q}
+        result.reason := ParseCoding(jsn.vObj['reason']);{q3}
     if jsn.has('extractionDate') or jsn.has('_extractionDate') then
         result.extractionDateElement := ParseDate(jsn['extractionDate'], jsn.vObj['_extractionDate']);{q}
 end;
@@ -8656,41 +9057,41 @@ begin
     if jsn.has('identifier') then
       iterateArray(jsn.vArr['identifier'], result.identifierList, parseIdentifier);
     if jsn.has('ruleset') then
-        result.ruleset := ParseCoding(jsn.vObj['ruleset']);{q}
+        result.ruleset := ParseCoding(jsn.vObj['ruleset']);{q3}
     if jsn.has('originalRuleset') then
-        result.originalRuleset := ParseCoding(jsn.vObj['originalRuleset']);{q}
+        result.originalRuleset := ParseCoding(jsn.vObj['originalRuleset']);{q3}
     if jsn.has('created') or jsn.has('_created') then
         result.createdElement := ParseDateTime(jsn['created'], jsn.vObj['_created']);{q}
     if jsn.has('target') then
-        result.target := ParseReference{TFhirOrganization}(jsn.vObj['target']);{q}
+        result.target := ParseReference{TFhirOrganization}(jsn.vObj['target']);{q3}
     if jsn.has('provider') then
-        result.provider := ParseReference{TFhirPractitioner}(jsn.vObj['provider']);{q}
+        result.provider := ParseReference{TFhirPractitioner}(jsn.vObj['provider']);{q3}
     if jsn.has('organization') then
-        result.organization := ParseReference{TFhirOrganization}(jsn.vObj['organization']);{q}
+        result.organization := ParseReference{TFhirOrganization}(jsn.vObj['organization']);{q3}
     if jsn.has('use') or jsn.has('_use')  then
       result.useElement := parseEnum(jsn.path+'/use', jsn['use'], jsn.vObj['_use'], CODES_TFhirClaimUseLinkEnum, SYSTEMS_TFhirClaimUseLinkEnum);
     if jsn.has('priority') then
-        result.priority := ParseCoding(jsn.vObj['priority']);{q}
+        result.priority := ParseCoding(jsn.vObj['priority']);{q3}
     if jsn.has('fundsReserve') then
-        result.fundsReserve := ParseCoding(jsn.vObj['fundsReserve']);{q}
+        result.fundsReserve := ParseCoding(jsn.vObj['fundsReserve']);{q3}
     if jsn.has('enterer') then
-        result.enterer := ParseReference{TFhirPractitioner}(jsn.vObj['enterer']);{q}
+        result.enterer := ParseReference{TFhirPractitioner}(jsn.vObj['enterer']);{q3}
     if jsn.has('facility') then
-        result.facility := ParseReference{TFhirLocation}(jsn.vObj['facility']);{q}
+        result.facility := ParseReference{TFhirLocation}(jsn.vObj['facility']);{q3}
     if jsn.has('prescription') then
-        result.prescription := ParseReference{Resource}(jsn.vObj['prescription']);{q}
+        result.prescription := ParseReference{Resource}(jsn.vObj['prescription']);{q3}
     if jsn.has('originalPrescription') then
-        result.originalPrescription := ParseReference{TFhirMedicationOrder}(jsn.vObj['originalPrescription']);{q}
+        result.originalPrescription := ParseReference{TFhirMedicationOrder}(jsn.vObj['originalPrescription']);{q3}
     if jsn.has('payee') then
-        result.payee := ParseClaimPayee(jsn.vObj['payee']);{q}
+        result.payee := ParseClaimPayee(jsn.vObj['payee']);{q3}
     if jsn.has('referral') then
-        result.referral := ParseReference{TFhirReferralRequest}(jsn.vObj['referral']);{q}
+        result.referral := ParseReference{TFhirReferralRequest}(jsn.vObj['referral']);{q3}
     if jsn.has('diagnosis') then
       iterateArray(jsn.vArr['diagnosis'], result.diagnosisList, parseClaimDiagnosis);
     if jsn.has('condition') then
       iterateArray(jsn.vArr['condition'], result.conditionList, parseCoding);
     if jsn.has('patient') then
-        result.patient := ParseReference{TFhirPatient}(jsn.vObj['patient']);{q}
+        result.patient := ParseReference{TFhirPatient}(jsn.vObj['patient']);{q3}
     if jsn.has('coverage') then
       iterateArray(jsn.vArr['coverage'], result.coverageList, parseClaimCoverage);
     if jsn.has('exception') then
@@ -8700,7 +9101,7 @@ begin
     if jsn.has('accident') or jsn.has('_accident') then
         result.accidentElement := ParseDate(jsn['accident'], jsn.vObj['_accident']);{q}
     if jsn.has('accidentType') then
-        result.accidentType := ParseCoding(jsn.vObj['accidentType']);{q}
+        result.accidentType := ParseCoding(jsn.vObj['accidentType']);{q3}
     if jsn.has('interventionException') then
       iterateArray(jsn.vArr['interventionException'], result.interventionExceptionList, parseCoding);
     if jsn.has('item') then
@@ -8833,6 +9234,8 @@ begin
   end;
 end;
 
+{$ENDIF FHIR_CLAIM}
+{$IFDEF FHIR_CLAIMRESPONSE}
 procedure TFHIRJsonParser.ParseClaimResponseItem(jsn : TJsonObject; ctxt : TFHIRObjectList);
 begin
   ctxt.add(ParseClaimResponseItem(jsn)); {2}
@@ -8937,9 +9340,9 @@ procedure TFHIRJsonParser.ParseClaimResponseItemAdjudicationProperties(jsn : TJs
 begin
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('code') then
-        result.code := ParseCoding(jsn.vObj['code']);{q}
+        result.code := ParseCoding(jsn.vObj['code']);{q3}
     if jsn.has('amount') then
-        result.amount := ParseQuantity(jsn.vObj['amount']);{q}
+        result.amount := ParseQuantity(jsn.vObj['amount']);{q3}
     if jsn.has('value') or jsn.has('_value') then
         result.valueElement := ParseDecimal(jsn['value'], jsn.vObj['_value']);{q}
 end;
@@ -9037,9 +9440,9 @@ procedure TFHIRJsonParser.ParseClaimResponseItemDetailAdjudicationProperties(jsn
 begin
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('code') then
-        result.code := ParseCoding(jsn.vObj['code']);{q}
+        result.code := ParseCoding(jsn.vObj['code']);{q3}
     if jsn.has('amount') then
-        result.amount := ParseQuantity(jsn.vObj['amount']);{q}
+        result.amount := ParseQuantity(jsn.vObj['amount']);{q3}
     if jsn.has('value') or jsn.has('_value') then
         result.valueElement := ParseDecimal(jsn['value'], jsn.vObj['_value']);{q}
 end;
@@ -9128,9 +9531,9 @@ procedure TFHIRJsonParser.ParseClaimResponseItemDetailSubDetailAdjudicationPrope
 begin
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('code') then
-        result.code := ParseCoding(jsn.vObj['code']);{q}
+        result.code := ParseCoding(jsn.vObj['code']);{q3}
     if jsn.has('amount') then
-        result.amount := ParseQuantity(jsn.vObj['amount']);{q}
+        result.amount := ParseQuantity(jsn.vObj['amount']);{q3}
     if jsn.has('value') or jsn.has('_value') then
         result.valueElement := ParseDecimal(jsn['value'], jsn.vObj['_value']);{q}
 end;
@@ -9174,9 +9577,9 @@ begin
       if jsn.has('sequenceLinkId') or jsn.has('_sequenceLinkId') then
       iteratePrimitiveArray(jsn.vArr['sequenceLinkId'], jsn.vArr['_sequenceLinkId'], result.sequenceLinkIdList, parsePositiveInt);
     if jsn.has('service') then
-        result.service := ParseCoding(jsn.vObj['service']);{q}
+        result.service := ParseCoding(jsn.vObj['service']);{q3}
     if jsn.has('fee') then
-        result.fee := ParseQuantity(jsn.vObj['fee']);{q}
+        result.fee := ParseQuantity(jsn.vObj['fee']);{q3}
       if jsn.has('noteNumberLinkId') or jsn.has('_noteNumberLinkId') then
       iteratePrimitiveArray(jsn.vArr['noteNumberLinkId'], jsn.vArr['_noteNumberLinkId'], result.noteNumberLinkIdList, parsePositiveInt);
     if jsn.has('adjudication') then
@@ -9284,9 +9687,9 @@ procedure TFHIRJsonParser.ParseClaimResponseAddItemAdjudicationProperties(jsn : 
 begin
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('code') then
-        result.code := ParseCoding(jsn.vObj['code']);{q}
+        result.code := ParseCoding(jsn.vObj['code']);{q3}
     if jsn.has('amount') then
-        result.amount := ParseQuantity(jsn.vObj['amount']);{q}
+        result.amount := ParseQuantity(jsn.vObj['amount']);{q3}
     if jsn.has('value') or jsn.has('_value') then
         result.valueElement := ParseDecimal(jsn['value'], jsn.vObj['_value']);{q}
 end;
@@ -9328,9 +9731,9 @@ procedure TFHIRJsonParser.ParseClaimResponseAddItemDetailProperties(jsn : TJsonO
 begin
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('service') then
-        result.service := ParseCoding(jsn.vObj['service']);{q}
+        result.service := ParseCoding(jsn.vObj['service']);{q3}
     if jsn.has('fee') then
-        result.fee := ParseQuantity(jsn.vObj['fee']);{q}
+        result.fee := ParseQuantity(jsn.vObj['fee']);{q3}
     if jsn.has('adjudication') then
       iterateArray(jsn.vArr['adjudication'], result.adjudicationList, parseClaimResponseAddItemDetailAdjudication);
 end;
@@ -9377,9 +9780,9 @@ procedure TFHIRJsonParser.ParseClaimResponseAddItemDetailAdjudicationProperties(
 begin
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('code') then
-        result.code := ParseCoding(jsn.vObj['code']);{q}
+        result.code := ParseCoding(jsn.vObj['code']);{q3}
     if jsn.has('amount') then
-        result.amount := ParseQuantity(jsn.vObj['amount']);{q}
+        result.amount := ParseQuantity(jsn.vObj['amount']);{q3}
     if jsn.has('value') or jsn.has('_value') then
         result.valueElement := ParseDecimal(jsn['value'], jsn.vObj['_value']);{q}
 end;
@@ -9427,7 +9830,7 @@ begin
     if jsn.has('subdetailSequenceLinkId') or jsn.has('_subdetailSequenceLinkId') then
         result.subdetailSequenceLinkIdElement := ParsePositiveInt(jsn['subdetailSequenceLinkId'], jsn.vObj['_subdetailSequenceLinkId']);{q}
     if jsn.has('code') then
-        result.code := ParseCoding(jsn.vObj['code']);{q}
+        result.code := ParseCoding(jsn.vObj['code']);{q3}
 end;
 
 procedure TFHIRJsonComposer.ComposeClaimResponseError(json : TJSONWriter; name : string; elem : TFhirClaimResponseError; noObj : boolean = false);
@@ -9475,7 +9878,7 @@ begin
     if jsn.has('number') or jsn.has('_number') then
         result.numberElement := ParsePositiveInt(jsn['number'], jsn.vObj['_number']);{q}
     if jsn.has('type') then
-        result.type_ := ParseCoding(jsn.vObj['type']);{q}
+        result.type_ := ParseCoding(jsn.vObj['type']);{q3}
     if jsn.has('text') or jsn.has('_text') then
         result.textElement := ParseString(jsn['text'], jsn.vObj['_text']);{q}
 end;
@@ -9523,17 +9926,17 @@ begin
     if jsn.has('focal') or jsn.has('_focal') then
         result.focalElement := ParseBoolean(jsn['focal'], jsn.vObj['_focal']);{q}
     if jsn.has('coverage') then
-        result.coverage := ParseReference{TFhirCoverage}(jsn.vObj['coverage']);{q}
+        result.coverage := ParseReference{TFhirCoverage}(jsn.vObj['coverage']);{q3}
     if jsn.has('businessArrangement') or jsn.has('_businessArrangement') then
         result.businessArrangementElement := ParseString(jsn['businessArrangement'], jsn.vObj['_businessArrangement']);{q}
     if jsn.has('relationship') then
-        result.relationship := ParseCoding(jsn.vObj['relationship']);{q}
+        result.relationship := ParseCoding(jsn.vObj['relationship']);{q3}
       if jsn.has('preAuthRef') or jsn.has('_preAuthRef') then
       iteratePrimitiveArray(jsn.vArr['preAuthRef'], jsn.vArr['_preAuthRef'], result.preAuthRefList, parseString);
     if jsn.has('claimResponse') then
-        result.claimResponse := ParseReference{TFhirClaimResponse}(jsn.vObj['claimResponse']);{q}
+        result.claimResponse := ParseReference{TFhirClaimResponse}(jsn.vObj['claimResponse']);{q3}
     if jsn.has('originalRuleset') then
-        result.originalRuleset := ParseCoding(jsn.vObj['originalRuleset']);{q}
+        result.originalRuleset := ParseCoding(jsn.vObj['originalRuleset']);{q3}
 end;
 
 procedure TFHIRJsonComposer.ComposeClaimResponseCoverage(json : TJSONWriter; name : string; elem : TFhirClaimResponseCoverage; noObj : boolean = false);
@@ -9615,25 +10018,25 @@ begin
     if jsn.has('identifier') then
       iterateArray(jsn.vArr['identifier'], result.identifierList, parseIdentifier);
     if jsn.has('request') then
-        result.request := ParseReference{TFhirClaim}(jsn.vObj['request']);{q}
+        result.request := ParseReference{TFhirClaim}(jsn.vObj['request']);{q3}
     if jsn.has('ruleset') then
-        result.ruleset := ParseCoding(jsn.vObj['ruleset']);{q}
+        result.ruleset := ParseCoding(jsn.vObj['ruleset']);{q3}
     if jsn.has('originalRuleset') then
-        result.originalRuleset := ParseCoding(jsn.vObj['originalRuleset']);{q}
+        result.originalRuleset := ParseCoding(jsn.vObj['originalRuleset']);{q3}
     if jsn.has('created') or jsn.has('_created') then
         result.createdElement := ParseDateTime(jsn['created'], jsn.vObj['_created']);{q}
     if jsn.has('organization') then
-        result.organization := ParseReference{TFhirOrganization}(jsn.vObj['organization']);{q}
+        result.organization := ParseReference{TFhirOrganization}(jsn.vObj['organization']);{q3}
     if jsn.has('requestProvider') then
-        result.requestProvider := ParseReference{TFhirPractitioner}(jsn.vObj['requestProvider']);{q}
+        result.requestProvider := ParseReference{TFhirPractitioner}(jsn.vObj['requestProvider']);{q3}
     if jsn.has('requestOrganization') then
-        result.requestOrganization := ParseReference{TFhirOrganization}(jsn.vObj['requestOrganization']);{q}
+        result.requestOrganization := ParseReference{TFhirOrganization}(jsn.vObj['requestOrganization']);{q3}
     if jsn.has('outcome') or jsn.has('_outcome')  then
       result.outcomeElement := parseEnum(jsn.path+'/outcome', jsn['outcome'], jsn.vObj['_outcome'], CODES_TFhirRemittanceOutcomeEnum, SYSTEMS_TFhirRemittanceOutcomeEnum);
     if jsn.has('disposition') or jsn.has('_disposition') then
         result.dispositionElement := ParseString(jsn['disposition'], jsn.vObj['_disposition']);{q}
     if jsn.has('payeeType') then
-        result.payeeType := ParseCoding(jsn.vObj['payeeType']);{q}
+        result.payeeType := ParseCoding(jsn.vObj['payeeType']);{q3}
     if jsn.has('item') then
       iterateArray(jsn.vArr['item'], result.itemList, parseClaimResponseItem);
     if jsn.has('addItem') then
@@ -9641,25 +10044,25 @@ begin
     if jsn.has('error') then
       iterateArray(jsn.vArr['error'], result.errorList, parseClaimResponseError);
     if jsn.has('totalCost') then
-        result.totalCost := ParseQuantity(jsn.vObj['totalCost']);{q}
+        result.totalCost := ParseQuantity(jsn.vObj['totalCost']);{q3}
     if jsn.has('unallocDeductable') then
-        result.unallocDeductable := ParseQuantity(jsn.vObj['unallocDeductable']);{q}
+        result.unallocDeductable := ParseQuantity(jsn.vObj['unallocDeductable']);{q3}
     if jsn.has('totalBenefit') then
-        result.totalBenefit := ParseQuantity(jsn.vObj['totalBenefit']);{q}
+        result.totalBenefit := ParseQuantity(jsn.vObj['totalBenefit']);{q3}
     if jsn.has('paymentAdjustment') then
-        result.paymentAdjustment := ParseQuantity(jsn.vObj['paymentAdjustment']);{q}
+        result.paymentAdjustment := ParseQuantity(jsn.vObj['paymentAdjustment']);{q3}
     if jsn.has('paymentAdjustmentReason') then
-        result.paymentAdjustmentReason := ParseCoding(jsn.vObj['paymentAdjustmentReason']);{q}
+        result.paymentAdjustmentReason := ParseCoding(jsn.vObj['paymentAdjustmentReason']);{q3}
     if jsn.has('paymentDate') or jsn.has('_paymentDate') then
         result.paymentDateElement := ParseDate(jsn['paymentDate'], jsn.vObj['_paymentDate']);{q}
     if jsn.has('paymentAmount') then
-        result.paymentAmount := ParseQuantity(jsn.vObj['paymentAmount']);{q}
+        result.paymentAmount := ParseQuantity(jsn.vObj['paymentAmount']);{q3}
     if jsn.has('paymentRef') then
-        result.paymentRef := ParseIdentifier(jsn.vObj['paymentRef']);{q}
+        result.paymentRef := ParseIdentifier(jsn.vObj['paymentRef']);{q3}
     if jsn.has('reserved') then
-        result.reserved := ParseCoding(jsn.vObj['reserved']);{q}
+        result.reserved := ParseCoding(jsn.vObj['reserved']);{q3}
     if jsn.has('form') then
-        result.form := ParseCoding(jsn.vObj['form']);{q}
+        result.form := ParseCoding(jsn.vObj['form']);{q3}
     if jsn.has('note') then
       iterateArray(jsn.vArr['note'], result.noteList, parseClaimResponseNote);
     if jsn.has('coverage') then
@@ -9765,6 +10168,8 @@ begin
   end;
 end;
 
+{$ENDIF FHIR_CLAIMRESPONSE}
+{$IFDEF FHIR_CLINICALIMPRESSION}
 procedure TFHIRJsonParser.ParseClinicalImpressionInvestigations(jsn : TJsonObject; ctxt : TFHIRObjectList);
 begin
   ctxt.add(ParseClinicalImpressionInvestigations(jsn)); {2}
@@ -9785,7 +10190,7 @@ procedure TFHIRJsonParser.ParseClinicalImpressionInvestigationsProperties(jsn : 
 begin
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('code') then
-        result.code := ParseCodeableConcept(jsn.vObj['code']);{q}
+        result.code := ParseCodeableConcept(jsn.vObj['code']);{q3}
     if jsn.has('item') then
       iterateArray(jsn.vArr['item'], result.itemList, parseReference{Resource});
 end;
@@ -9830,7 +10235,7 @@ procedure TFHIRJsonParser.ParseClinicalImpressionFindingProperties(jsn : TJsonOb
 begin
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('item') then
-        result.item := ParseCodeableConcept(jsn.vObj['item']);{q}
+        result.item := ParseCodeableConcept(jsn.vObj['item']);{q3}
     if jsn.has('cause') or jsn.has('_cause') then
         result.causeElement := ParseString(jsn['cause'], jsn.vObj['_cause']);{q}
 end;
@@ -9870,7 +10275,7 @@ procedure TFHIRJsonParser.ParseClinicalImpressionRuledOutProperties(jsn : TJsonO
 begin
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('item') then
-        result.item := ParseCodeableConcept(jsn.vObj['item']);{q}
+        result.item := ParseCodeableConcept(jsn.vObj['item']);{q3}
     if jsn.has('reason') or jsn.has('_reason') then
         result.reasonElement := ParseString(jsn['reason'], jsn.vObj['_reason']);{q}
 end;
@@ -9910,9 +10315,9 @@ procedure TFHIRJsonParser.ParseClinicalImpressionProperties(jsn : TJsonObject; r
 begin
     ParseDomainResourceProperties(jsn, result);
     if jsn.has('patient') then
-        result.patient := ParseReference{TFhirPatient}(jsn.vObj['patient']);{q}
+        result.patient := ParseReference{TFhirPatient}(jsn.vObj['patient']);{q3}
     if jsn.has('assessor') then
-        result.assessor := ParseReference{TFhirPractitioner}(jsn.vObj['assessor']);{q}
+        result.assessor := ParseReference{TFhirPractitioner}(jsn.vObj['assessor']);{q3}
     if jsn.has('status') or jsn.has('_status')  then
       result.statusElement := parseEnum(jsn.path+'/status', jsn['status'], jsn.vObj['_status'], CODES_TFhirClinicalImpressionStatusEnum, SYSTEMS_TFhirClinicalImpressionStatusEnum);
     if jsn.has('date') or jsn.has('_date') then
@@ -9920,7 +10325,7 @@ begin
     if jsn.has('description') or jsn.has('_description') then
         result.descriptionElement := ParseString(jsn['description'], jsn.vObj['_description']);{q}
     if jsn.has('previous') then
-        result.previous := ParseReference{TFhirClinicalImpression}(jsn.vObj['previous']);{q}
+        result.previous := ParseReference{TFhirClinicalImpression}(jsn.vObj['previous']);{q3}
     if jsn.has('problem') then
       iterateArray(jsn.vArr['problem'], result.problemList, parseReference{Resource});
     if jsn.has('triggerCodeableConcept') {a4} then
@@ -10039,6 +10444,8 @@ begin
   end;
 end;
 
+{$ENDIF FHIR_CLINICALIMPRESSION}
+{$IFDEF FHIR_COMMUNICATION}
 procedure TFHIRJsonParser.ParseCommunicationPayload(jsn : TJsonObject; ctxt : TFHIRObjectList);
 begin
   ctxt.add(ParseCommunicationPayload(jsn)); {2}
@@ -10106,9 +10513,9 @@ begin
     if jsn.has('identifier') then
       iterateArray(jsn.vArr['identifier'], result.identifierList, parseIdentifier);
     if jsn.has('category') then
-        result.category := ParseCodeableConcept(jsn.vObj['category']);{q}
+        result.category := ParseCodeableConcept(jsn.vObj['category']);{q3}
     if jsn.has('sender') then
-        result.sender := ParseReference{Resource}(jsn.vObj['sender']);{q}
+        result.sender := ParseReference{Resource}(jsn.vObj['sender']);{q3}
     if jsn.has('recipient') then
       iterateArray(jsn.vArr['recipient'], result.recipientList, parseReference{Resource});
     if jsn.has('payload') then
@@ -10118,7 +10525,7 @@ begin
     if jsn.has('status') or jsn.has('_status')  then
       result.statusElement := parseEnum(jsn.path+'/status', jsn['status'], jsn.vObj['_status'], CODES_TFhirCommunicationStatusEnum, SYSTEMS_TFhirCommunicationStatusEnum);
     if jsn.has('encounter') then
-        result.encounter := ParseReference{TFhirEncounter}(jsn.vObj['encounter']);{q}
+        result.encounter := ParseReference{TFhirEncounter}(jsn.vObj['encounter']);{q3}
     if jsn.has('sent') or jsn.has('_sent') then
         result.sentElement := ParseDateTime(jsn['sent'], jsn.vObj['_sent']);{q}
     if jsn.has('received') or jsn.has('_received') then
@@ -10126,9 +10533,9 @@ begin
     if jsn.has('reason') then
       iterateArray(jsn.vArr['reason'], result.reasonList, parseCodeableConcept);
     if jsn.has('subject') then
-        result.subject := ParseReference{TFhirPatient}(jsn.vObj['subject']);{q}
+        result.subject := ParseReference{TFhirPatient}(jsn.vObj['subject']);{q3}
     if jsn.has('requestDetail') then
-        result.requestDetail := ParseReference{TFhirCommunicationRequest}(jsn.vObj['requestDetail']);{q}
+        result.requestDetail := ParseReference{TFhirCommunicationRequest}(jsn.vObj['requestDetail']);{q3}
 end;
 
 procedure TFHIRJsonComposer.ComposeCommunication(json : TJSONWriter; name : string; elem : TFhirCommunication; noObj : boolean = false);
@@ -10197,6 +10604,8 @@ begin
     ComposeReference{TFhirCommunicationRequest}(json, 'requestDetail', elem.requestDetail); {a}
 end;
 
+{$ENDIF FHIR_COMMUNICATION}
+{$IFDEF FHIR_COMMUNICATIONREQUEST}
 procedure TFHIRJsonParser.ParseCommunicationRequestPayload(jsn : TJsonObject; ctxt : TFHIRObjectList);
 begin
   ctxt.add(ParseCommunicationRequestPayload(jsn)); {2}
@@ -10264,9 +10673,9 @@ begin
     if jsn.has('identifier') then
       iterateArray(jsn.vArr['identifier'], result.identifierList, parseIdentifier);
     if jsn.has('category') then
-        result.category := ParseCodeableConcept(jsn.vObj['category']);{q}
+        result.category := ParseCodeableConcept(jsn.vObj['category']);{q3}
     if jsn.has('sender') then
-        result.sender := ParseReference{Resource}(jsn.vObj['sender']);{q}
+        result.sender := ParseReference{Resource}(jsn.vObj['sender']);{q3}
     if jsn.has('recipient') then
       iterateArray(jsn.vArr['recipient'], result.recipientList, parseReference{Resource});
     if jsn.has('payload') then
@@ -10274,11 +10683,11 @@ begin
     if jsn.has('medium') then
       iterateArray(jsn.vArr['medium'], result.mediumList, parseCodeableConcept);
     if jsn.has('requester') then
-        result.requester := ParseReference{Resource}(jsn.vObj['requester']);{q}
+        result.requester := ParseReference{Resource}(jsn.vObj['requester']);{q3}
     if jsn.has('status') or jsn.has('_status')  then
       result.statusElement := parseEnum(jsn.path+'/status', jsn['status'], jsn.vObj['_status'], CODES_TFhirCommunicationRequestStatusEnum, SYSTEMS_TFhirCommunicationRequestStatusEnum);
     if jsn.has('encounter') then
-        result.encounter := ParseReference{TFhirEncounter}(jsn.vObj['encounter']);{q}
+        result.encounter := ParseReference{TFhirEncounter}(jsn.vObj['encounter']);{q3}
     if jsn.has('scheduledPeriod') {a4} then
       result.scheduled := ParsePeriod(jsn.vObj['scheduledPeriod']);
     if jsn.has('scheduledDateTime') or jsn.has('_scheduledDateTime') then
@@ -10288,9 +10697,9 @@ begin
     if jsn.has('requestedOn') or jsn.has('_requestedOn') then
         result.requestedOnElement := ParseDateTime(jsn['requestedOn'], jsn.vObj['_requestedOn']);{q}
     if jsn.has('subject') then
-        result.subject := ParseReference{TFhirPatient}(jsn.vObj['subject']);{q}
+        result.subject := ParseReference{TFhirPatient}(jsn.vObj['subject']);{q3}
     if jsn.has('priority') then
-        result.priority := ParseCodeableConcept(jsn.vObj['priority']);{q}
+        result.priority := ParseCodeableConcept(jsn.vObj['priority']);{q3}
 end;
 
 procedure TFHIRJsonComposer.ComposeCommunicationRequest(json : TJSONWriter; name : string; elem : TFhirCommunicationRequest; noObj : boolean = false);
@@ -10364,6 +10773,8 @@ begin
     ComposeCodeableConcept(json, 'priority', elem.priority); {a}
 end;
 
+{$ENDIF FHIR_COMMUNICATIONREQUEST}
+{$IFDEF FHIR_COMPOSITION}
 procedure TFHIRJsonParser.ParseCompositionAttester(jsn : TJsonObject; ctxt : TFHIRObjectList);
 begin
   ctxt.add(ParseCompositionAttester(jsn)); {2}
@@ -10388,7 +10799,7 @@ begin
     if jsn.has('time') or jsn.has('_time') then
         result.timeElement := ParseDateTime(jsn['time'], jsn.vObj['_time']);{q}
     if jsn.has('party') then
-        result.party := ParseReference{Resource}(jsn.vObj['party']);{q}
+        result.party := ParseReference{Resource}(jsn.vObj['party']);{q3}
 end;
 
 procedure TFHIRJsonComposer.ComposeCompositionAttester(json : TJSONWriter; name : string; elem : TFhirCompositionAttester; noObj : boolean = false);
@@ -10456,7 +10867,7 @@ begin
     if jsn.has('code') then
       iterateArray(jsn.vArr['code'], result.codeList, parseCodeableConcept);
     if jsn.has('period') then
-        result.period := ParsePeriod(jsn.vObj['period']);{q}
+        result.period := ParsePeriod(jsn.vObj['period']);{q3}
     if jsn.has('detail') then
       iterateArray(jsn.vArr['detail'], result.detailList, parseReference{TFhirReference});
 end;
@@ -10510,17 +10921,17 @@ begin
     if jsn.has('title') or jsn.has('_title') then
         result.titleElement := ParseString(jsn['title'], jsn.vObj['_title']);{q}
     if jsn.has('code') then
-        result.code := ParseCodeableConcept(jsn.vObj['code']);{q}
+        result.code := ParseCodeableConcept(jsn.vObj['code']);{q3}
     if jsn.has('text') then
-        result.text := ParseNarrative(jsn.vObj['text']);{q}
+        result.text := ParseNarrative(jsn.vObj['text']);{q3}
     if jsn.has('mode') or jsn.has('_mode')  then
       result.modeElement := parseEnum(jsn.path+'/mode', jsn['mode'], jsn.vObj['_mode'], CODES_TFhirListModeEnum, SYSTEMS_TFhirListModeEnum);
     if jsn.has('orderedBy') then
-        result.orderedBy := ParseCodeableConcept(jsn.vObj['orderedBy']);{q}
+        result.orderedBy := ParseCodeableConcept(jsn.vObj['orderedBy']);{q3}
     if jsn.has('entry') then
       iterateArray(jsn.vArr['entry'], result.entryList, parseReference{TFhirReference});
     if jsn.has('emptyReason') then
-        result.emptyReason := ParseCodeableConcept(jsn.vObj['emptyReason']);{q}
+        result.emptyReason := ParseCodeableConcept(jsn.vObj['emptyReason']);{q3}
     if jsn.has('section') then
       iterateArray(jsn.vArr['section'], result.sectionList, parseCompositionSection);
 end;
@@ -10586,13 +10997,13 @@ procedure TFHIRJsonParser.ParseCompositionProperties(jsn : TJsonObject; result :
 begin
     ParseDomainResourceProperties(jsn, result);
     if jsn.has('identifier') then
-        result.identifier := ParseIdentifier(jsn.vObj['identifier']);{q}
+        result.identifier := ParseIdentifier(jsn.vObj['identifier']);{q3}
     if jsn.has('date') or jsn.has('_date') then
         result.dateElement := ParseDateTime(jsn['date'], jsn.vObj['_date']);{q}
     if jsn.has('type') then
-        result.type_ := ParseCodeableConcept(jsn.vObj['type']);{q}
+        result.type_ := ParseCodeableConcept(jsn.vObj['type']);{q3}
     if jsn.has('class') then
-        result.class_ := ParseCodeableConcept(jsn.vObj['class']);{q}
+        result.class_ := ParseCodeableConcept(jsn.vObj['class']);{q3}
     if jsn.has('title') or jsn.has('_title') then
         result.titleElement := ParseString(jsn['title'], jsn.vObj['_title']);{q}
     if jsn.has('status') or jsn.has('_status')  then
@@ -10600,17 +11011,17 @@ begin
     if jsn.has('confidentiality') or jsn.has('_confidentiality')  then
       result.confidentialityElement := parseEnum(jsn.path+'/confidentiality', jsn['confidentiality'], jsn.vObj['_confidentiality'], CODES_TFhirV3ConfidentialityEnum, SYSTEMS_TFhirV3ConfidentialityEnum);
     if jsn.has('subject') then
-        result.subject := ParseReference{TFhirReference}(jsn.vObj['subject']);{q}
+        result.subject := ParseReference{TFhirReference}(jsn.vObj['subject']);{q3}
     if jsn.has('author') then
       iterateArray(jsn.vArr['author'], result.authorList, parseReference{Resource});
     if jsn.has('attester') then
       iterateArray(jsn.vArr['attester'], result.attesterList, parseCompositionAttester);
     if jsn.has('custodian') then
-        result.custodian := ParseReference{TFhirOrganization}(jsn.vObj['custodian']);{q}
+        result.custodian := ParseReference{TFhirOrganization}(jsn.vObj['custodian']);{q3}
     if jsn.has('event') then
       iterateArray(jsn.vArr['event'], result.eventList, parseCompositionEvent);
     if jsn.has('encounter') then
-        result.encounter := ParseReference{TFhirEncounter}(jsn.vObj['encounter']);{q}
+        result.encounter := ParseReference{TFhirEncounter}(jsn.vObj['encounter']);{q3}
     if jsn.has('section') then
       iterateArray(jsn.vArr['section'], result.sectionList, parseCompositionSection);
 end;
@@ -10680,6 +11091,8 @@ begin
   end;
 end;
 
+{$ENDIF FHIR_COMPOSITION}
+{$IFDEF FHIR_CONCEPTMAP}
 procedure TFHIRJsonParser.ParseConceptMapContact(jsn : TJsonObject; ctxt : TFHIRObjectList);
 begin
   ctxt.add(ParseConceptMapContact(jsn)); {2}
@@ -10924,7 +11337,7 @@ begin
     if jsn.has('url') or jsn.has('_url') then
         result.urlElement := ParseUri(jsn['url'], jsn.vObj['_url']);{q}
     if jsn.has('identifier') then
-        result.identifier := ParseIdentifier(jsn.vObj['identifier']);{q}
+        result.identifier := ParseIdentifier(jsn.vObj['identifier']);{q3}
     if jsn.has('version') or jsn.has('_version') then
         result.versionElement := ParseString(jsn['version'], jsn.vObj['_version']);{q}
     if jsn.has('name') or jsn.has('_name') then
@@ -11045,6 +11458,8 @@ begin
   end;
 end;
 
+{$ENDIF FHIR_CONCEPTMAP}
+{$IFDEF FHIR_CONDITION}
 procedure TFHIRJsonParser.ParseConditionStage(jsn : TJsonObject; ctxt : TFHIRObjectList);
 begin
   ctxt.add(ParseConditionStage(jsn)); {2}
@@ -11065,7 +11480,7 @@ procedure TFHIRJsonParser.ParseConditionStageProperties(jsn : TJsonObject; resul
 begin
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('summary') then
-        result.summary := ParseCodeableConcept(jsn.vObj['summary']);{q}
+        result.summary := ParseCodeableConcept(jsn.vObj['summary']);{q3}
     if jsn.has('assessment') then
       iterateArray(jsn.vArr['assessment'], result.assessmentList, parseReference{Resource});
 end;
@@ -11110,7 +11525,7 @@ procedure TFHIRJsonParser.ParseConditionEvidenceProperties(jsn : TJsonObject; re
 begin
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('code') then
-        result.code := ParseCodeableConcept(jsn.vObj['code']);{q}
+        result.code := ParseCodeableConcept(jsn.vObj['code']);{q3}
     if jsn.has('detail') then
       iterateArray(jsn.vArr['detail'], result.detailList, parseReference{TFhirReference});
 end;
@@ -11157,23 +11572,23 @@ begin
     if jsn.has('identifier') then
       iterateArray(jsn.vArr['identifier'], result.identifierList, parseIdentifier);
     if jsn.has('patient') then
-        result.patient := ParseReference{TFhirPatient}(jsn.vObj['patient']);{q}
+        result.patient := ParseReference{TFhirPatient}(jsn.vObj['patient']);{q3}
     if jsn.has('encounter') then
-        result.encounter := ParseReference{TFhirEncounter}(jsn.vObj['encounter']);{q}
+        result.encounter := ParseReference{TFhirEncounter}(jsn.vObj['encounter']);{q3}
     if jsn.has('asserter') then
-        result.asserter := ParseReference{Resource}(jsn.vObj['asserter']);{q}
+        result.asserter := ParseReference{Resource}(jsn.vObj['asserter']);{q3}
     if jsn.has('dateRecorded') or jsn.has('_dateRecorded') then
         result.dateRecordedElement := ParseDate(jsn['dateRecorded'], jsn.vObj['_dateRecorded']);{q}
     if jsn.has('code') then
-        result.code := ParseCodeableConcept(jsn.vObj['code']);{q}
+        result.code := ParseCodeableConcept(jsn.vObj['code']);{q3}
     if jsn.has('category') then
-        result.category := ParseCodeableConcept(jsn.vObj['category']);{q}
+        result.category := ParseCodeableConcept(jsn.vObj['category']);{q3}
     if jsn.has('clinicalStatus') or jsn.has('_clinicalStatus') then
         result.clinicalStatusElement := ParseCode(jsn['clinicalStatus'], jsn.vObj['_clinicalStatus']);{q}
     if jsn.has('verificationStatus') or jsn.has('_verificationStatus')  then
       result.verificationStatusElement := parseEnum(jsn.path+'/verificationStatus', jsn['verificationStatus'], jsn.vObj['_verificationStatus'], CODES_TFhirConditionVerStatusEnum, SYSTEMS_TFhirConditionVerStatusEnum);
     if jsn.has('severity') then
-        result.severity := ParseCodeableConcept(jsn.vObj['severity']);{q}
+        result.severity := ParseCodeableConcept(jsn.vObj['severity']);{q3}
     if jsn.has('onsetQuantity') {a4} then
       result.onset := ParseQuantity(jsn.vObj['onsetQuantity']);
     if jsn.has('onsetPeriod') {a4} then
@@ -11197,7 +11612,7 @@ begin
     if jsn.has('abatementString') or jsn.has('_abatementString') then
       result.abatement := parseString(jsn['abatementString'], jsn.vObj['_abatementString']);
     if jsn.has('stage') then
-        result.stage := ParseConditionStage(jsn.vObj['stage']);{q}
+        result.stage := ParseConditionStage(jsn.vObj['stage']);{q3}
     if jsn.has('evidence') then
       iterateArray(jsn.vArr['evidence'], result.evidenceList, parseConditionEvidence);
     if jsn.has('bodySite') then
@@ -11303,6 +11718,8 @@ begin
     ComposeStringProps(json, 'notes', elem.notesElement, false);
 end;
 
+{$ENDIF FHIR_CONDITION}
+{$IFDEF FHIR_CONFORMANCE}
 procedure TFHIRJsonParser.ParseConformanceContact(jsn : TJsonObject; ctxt : TFHIRObjectList);
 begin
   ctxt.add(ParseConformanceContact(jsn)); {2}
@@ -11464,7 +11881,7 @@ begin
     if jsn.has('documentation') or jsn.has('_documentation') then
         result.documentationElement := ParseString(jsn['documentation'], jsn.vObj['_documentation']);{q}
     if jsn.has('security') then
-        result.security := ParseConformanceRestSecurity(jsn.vObj['security']);{q}
+        result.security := ParseConformanceRestSecurity(jsn.vObj['security']);{q3}
     if jsn.has('resource') then
       iterateArray(jsn.vArr['resource'], result.resourceList, parseConformanceRestResource);
     if jsn.has('interaction') then
@@ -11684,7 +12101,7 @@ begin
     if jsn.has('type') or jsn.has('_type')  then
       result.type_Element := parseEnum(jsn.path+'/type', jsn['type'], jsn.vObj['_type'], CODES_TFhirResourceTypesEnum, SYSTEMS_TFhirResourceTypesEnum);
     if jsn.has('profile') then
-        result.profile := ParseReference{TFhirStructureDefinition}(jsn.vObj['profile']);{q}
+        result.profile := ParseReference{TFhirStructureDefinition}(jsn.vObj['profile']);{q3}
     if jsn.has('interaction') then
       iterateArray(jsn.vArr['interaction'], result.interactionList, parseConformanceRestResourceInteraction);
     if jsn.has('versioning') or jsn.has('_versioning')  then
@@ -12054,7 +12471,7 @@ begin
     if jsn.has('name') or jsn.has('_name') then
         result.nameElement := ParseString(jsn['name'], jsn.vObj['_name']);{q}
     if jsn.has('definition') then
-        result.definition := ParseReference{TFhirOperationDefinition}(jsn.vObj['definition']);{q}
+        result.definition := ParseReference{TFhirOperationDefinition}(jsn.vObj['definition']);{q3}
 end;
 
 procedure TFHIRJsonComposer.ComposeConformanceRestOperation(json : TJSONWriter; name : string; elem : TFhirConformanceRestOperation; noObj : boolean = false);
@@ -12154,7 +12571,7 @@ procedure TFHIRJsonParser.ParseConformanceMessagingEndpointProperties(jsn : TJso
 begin
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('protocol') then
-        result.protocol := ParseCoding(jsn.vObj['protocol']);{q}
+        result.protocol := ParseCoding(jsn.vObj['protocol']);{q3}
     if jsn.has('address') or jsn.has('_address') then
         result.addressElement := ParseUri(jsn['address'], jsn.vObj['_address']);{q}
 end;
@@ -12194,7 +12611,7 @@ procedure TFHIRJsonParser.ParseConformanceMessagingEventProperties(jsn : TJsonOb
 begin
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('code') then
-        result.code := ParseCoding(jsn.vObj['code']);{q}
+        result.code := ParseCoding(jsn.vObj['code']);{q3}
     if jsn.has('category') or jsn.has('_category')  then
       result.categoryElement := parseEnum(jsn.path+'/category', jsn['category'], jsn.vObj['_category'], CODES_TFhirMessageSignificanceCategoryEnum, SYSTEMS_TFhirMessageSignificanceCategoryEnum);
     if jsn.has('mode') or jsn.has('_mode')  then
@@ -12202,9 +12619,9 @@ begin
     if jsn.has('focus') or jsn.has('_focus')  then
       result.focusElement := parseEnum(jsn.path+'/focus', jsn['focus'], jsn.vObj['_focus'], CODES_TFhirResourceTypesEnum, SYSTEMS_TFhirResourceTypesEnum);
     if jsn.has('request') then
-        result.request := ParseReference{TFhirStructureDefinition}(jsn.vObj['request']);{q}
+        result.request := ParseReference{TFhirStructureDefinition}(jsn.vObj['request']);{q3}
     if jsn.has('response') then
-        result.response := ParseReference{TFhirStructureDefinition}(jsn.vObj['response']);{q}
+        result.response := ParseReference{TFhirStructureDefinition}(jsn.vObj['response']);{q3}
     if jsn.has('documentation') or jsn.has('_documentation') then
         result.documentationElement := ParseString(jsn['documentation'], jsn.vObj['_documentation']);{q}
 end;
@@ -12264,7 +12681,7 @@ begin
     if jsn.has('documentation') or jsn.has('_documentation') then
         result.documentationElement := ParseString(jsn['documentation'], jsn.vObj['_documentation']);{q}
     if jsn.has('profile') then
-        result.profile := ParseReference{TFhirStructureDefinition}(jsn.vObj['profile']);{q}
+        result.profile := ParseReference{TFhirStructureDefinition}(jsn.vObj['profile']);{q3}
 end;
 
 procedure TFHIRJsonComposer.ComposeConformanceDocument(json : TJSONWriter; name : string; elem : TFhirConformanceDocument; noObj : boolean = false);
@@ -12330,9 +12747,9 @@ begin
     if jsn.has('kind') or jsn.has('_kind')  then
       result.kindElement := parseEnum(jsn.path+'/kind', jsn['kind'], jsn.vObj['_kind'], CODES_TFhirConformanceStatementKindEnum, SYSTEMS_TFhirConformanceStatementKindEnum);
     if jsn.has('software') then
-        result.software := ParseConformanceSoftware(jsn.vObj['software']);{q}
+        result.software := ParseConformanceSoftware(jsn.vObj['software']);{q3}
     if jsn.has('implementation') then
-        result.implementation_ := ParseConformanceImplementation(jsn.vObj['implementation']);{q}
+        result.implementation_ := ParseConformanceImplementation(jsn.vObj['implementation']);{q3}
     if jsn.has('fhirVersion') or jsn.has('_fhirVersion') then
         result.fhirVersionElement := ParseId(jsn['fhirVersion'], jsn.vObj['_fhirVersion']);{q}
     if jsn.has('acceptUnknown') or jsn.has('_acceptUnknown')  then
@@ -12475,6 +12892,8 @@ begin
   end;
 end;
 
+{$ENDIF FHIR_CONFORMANCE}
+{$IFDEF FHIR_CONTRACT}
 procedure TFHIRJsonParser.ParseContractActor(jsn : TJsonObject; ctxt : TFHIRObjectList);
 begin
   ctxt.add(ParseContractActor(jsn)); {2}
@@ -12495,7 +12914,7 @@ procedure TFHIRJsonParser.ParseContractActorProperties(jsn : TJsonObject; result
 begin
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('entity') then
-        result.entity := ParseReference{Resource}(jsn.vObj['entity']);{q}
+        result.entity := ParseReference{Resource}(jsn.vObj['entity']);{q3}
     if jsn.has('role') then
       iterateArray(jsn.vArr['role'], result.roleList, parseCodeableConcept);
 end;
@@ -12544,19 +12963,19 @@ begin
     if jsn.has('entityReference') {a3} then
       result.entity := ParseReference(jsn.vObj['entityReference']);
     if jsn.has('identifier') then
-        result.identifier := ParseIdentifier(jsn.vObj['identifier']);{q}
+        result.identifier := ParseIdentifier(jsn.vObj['identifier']);{q3}
     if jsn.has('effectiveTime') or jsn.has('_effectiveTime') then
         result.effectiveTimeElement := ParseDateTime(jsn['effectiveTime'], jsn.vObj['_effectiveTime']);{q}
     if jsn.has('quantity') then
-        result.quantity := ParseQuantity(jsn.vObj['quantity']);{q}
+        result.quantity := ParseQuantity(jsn.vObj['quantity']);{q3}
     if jsn.has('unitPrice') then
-        result.unitPrice := ParseQuantity(jsn.vObj['unitPrice']);{q}
+        result.unitPrice := ParseQuantity(jsn.vObj['unitPrice']);{q3}
     if jsn.has('factor') or jsn.has('_factor') then
         result.factorElement := ParseDecimal(jsn['factor'], jsn.vObj['_factor']);{q}
     if jsn.has('points') or jsn.has('_points') then
         result.pointsElement := ParseDecimal(jsn['points'], jsn.vObj['_points']);{q}
     if jsn.has('net') then
-        result.net := ParseQuantity(jsn.vObj['net']);{q}
+        result.net := ParseQuantity(jsn.vObj['net']);{q3}
 end;
 
 procedure TFHIRJsonComposer.ComposeContractValuedItem(json : TJSONWriter; name : string; elem : TFhirContractValuedItem; noObj : boolean = false);
@@ -12612,9 +13031,9 @@ procedure TFHIRJsonParser.ParseContractSignerProperties(jsn : TJsonObject; resul
 begin
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('type') then
-        result.type_ := ParseCoding(jsn.vObj['type']);{q}
+        result.type_ := ParseCoding(jsn.vObj['type']);{q3}
     if jsn.has('party') then
-        result.party := ParseReference{Resource}(jsn.vObj['party']);{q}
+        result.party := ParseReference{Resource}(jsn.vObj['party']);{q3}
     if jsn.has('signature') or jsn.has('_signature') then
         result.signatureElement := ParseString(jsn['signature'], jsn.vObj['_signature']);{q}
 end;
@@ -12656,17 +13075,17 @@ procedure TFHIRJsonParser.ParseContractTermProperties(jsn : TJsonObject; result 
 begin
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('identifier') then
-        result.identifier := ParseIdentifier(jsn.vObj['identifier']);{q}
+        result.identifier := ParseIdentifier(jsn.vObj['identifier']);{q3}
     if jsn.has('issued') or jsn.has('_issued') then
         result.issuedElement := ParseDateTime(jsn['issued'], jsn.vObj['_issued']);{q}
     if jsn.has('applies') then
-        result.applies := ParsePeriod(jsn.vObj['applies']);{q}
+        result.applies := ParsePeriod(jsn.vObj['applies']);{q3}
     if jsn.has('type') then
-        result.type_ := ParseCodeableConcept(jsn.vObj['type']);{q}
+        result.type_ := ParseCodeableConcept(jsn.vObj['type']);{q3}
     if jsn.has('subType') then
-        result.subType := ParseCodeableConcept(jsn.vObj['subType']);{q}
+        result.subType := ParseCodeableConcept(jsn.vObj['subType']);{q3}
     if jsn.has('subject') then
-        result.subject := ParseReference{TFhirReference}(jsn.vObj['subject']);{q}
+        result.subject := ParseReference{TFhirReference}(jsn.vObj['subject']);{q3}
     if jsn.has('action') then
       iterateArray(jsn.vArr['action'], result.actionList, parseCodeableConcept);
     if jsn.has('actionReason') then
@@ -12765,7 +13184,7 @@ procedure TFHIRJsonParser.ParseContractTermActorProperties(jsn : TJsonObject; re
 begin
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('entity') then
-        result.entity := ParseReference{Resource}(jsn.vObj['entity']);{q}
+        result.entity := ParseReference{Resource}(jsn.vObj['entity']);{q3}
     if jsn.has('role') then
       iterateArray(jsn.vArr['role'], result.roleList, parseCodeableConcept);
 end;
@@ -12814,19 +13233,19 @@ begin
     if jsn.has('entityReference') {a3} then
       result.entity := ParseReference(jsn.vObj['entityReference']);
     if jsn.has('identifier') then
-        result.identifier := ParseIdentifier(jsn.vObj['identifier']);{q}
+        result.identifier := ParseIdentifier(jsn.vObj['identifier']);{q3}
     if jsn.has('effectiveTime') or jsn.has('_effectiveTime') then
         result.effectiveTimeElement := ParseDateTime(jsn['effectiveTime'], jsn.vObj['_effectiveTime']);{q}
     if jsn.has('quantity') then
-        result.quantity := ParseQuantity(jsn.vObj['quantity']);{q}
+        result.quantity := ParseQuantity(jsn.vObj['quantity']);{q3}
     if jsn.has('unitPrice') then
-        result.unitPrice := ParseQuantity(jsn.vObj['unitPrice']);{q}
+        result.unitPrice := ParseQuantity(jsn.vObj['unitPrice']);{q3}
     if jsn.has('factor') or jsn.has('_factor') then
         result.factorElement := ParseDecimal(jsn['factor'], jsn.vObj['_factor']);{q}
     if jsn.has('points') or jsn.has('_points') then
         result.pointsElement := ParseDecimal(jsn['points'], jsn.vObj['_points']);{q}
     if jsn.has('net') then
-        result.net := ParseQuantity(jsn.vObj['net']);{q}
+        result.net := ParseQuantity(jsn.vObj['net']);{q3}
 end;
 
 procedure TFHIRJsonComposer.ComposeContractTermValuedItem(json : TJSONWriter; name : string; elem : TFhirContractTermValuedItem; noObj : boolean = false);
@@ -12996,11 +13415,11 @@ procedure TFHIRJsonParser.ParseContractProperties(jsn : TJsonObject; result : TF
 begin
     ParseDomainResourceProperties(jsn, result);
     if jsn.has('identifier') then
-        result.identifier := ParseIdentifier(jsn.vObj['identifier']);{q}
+        result.identifier := ParseIdentifier(jsn.vObj['identifier']);{q3}
     if jsn.has('issued') or jsn.has('_issued') then
         result.issuedElement := ParseDateTime(jsn['issued'], jsn.vObj['_issued']);{q}
     if jsn.has('applies') then
-        result.applies := ParsePeriod(jsn.vObj['applies']);{q}
+        result.applies := ParsePeriod(jsn.vObj['applies']);{q3}
     if jsn.has('subject') then
       iterateArray(jsn.vArr['subject'], result.subjectList, parseReference{TFhirReference});
     if jsn.has('authority') then
@@ -13008,7 +13427,7 @@ begin
     if jsn.has('domain') then
       iterateArray(jsn.vArr['domain'], result.domainList, parseReference{TFhirLocation});
     if jsn.has('type') then
-        result.type_ := ParseCodeableConcept(jsn.vObj['type']);{q}
+        result.type_ := ParseCodeableConcept(jsn.vObj['type']);{q3}
     if jsn.has('subType') then
       iterateArray(jsn.vArr['subType'], result.subTypeList, parseCodeableConcept);
     if jsn.has('action') then
@@ -13149,6 +13568,8 @@ begin
   end;
 end;
 
+{$ENDIF FHIR_CONTRACT}
+{$IFDEF FHIR_COVERAGE}
 procedure TFHIRJsonParser.ParseCoverage(jsn : TJsonObject; ctxt : TFHIRObjectList);
 begin
   ctxt.add(ParseCoverage(jsn)); {2}
@@ -13169,15 +13590,15 @@ procedure TFHIRJsonParser.ParseCoverageProperties(jsn : TJsonObject; result : TF
 begin
     ParseDomainResourceProperties(jsn, result);
     if jsn.has('issuer') then
-        result.issuer := ParseReference{TFhirOrganization}(jsn.vObj['issuer']);{q}
+        result.issuer := ParseReference{TFhirOrganization}(jsn.vObj['issuer']);{q3}
     if jsn.has('bin') then
-        result.bin := ParseIdentifier(jsn.vObj['bin']);{q}
+        result.bin := ParseIdentifier(jsn.vObj['bin']);{q3}
     if jsn.has('period') then
-        result.period := ParsePeriod(jsn.vObj['period']);{q}
+        result.period := ParsePeriod(jsn.vObj['period']);{q3}
     if jsn.has('type') then
-        result.type_ := ParseCoding(jsn.vObj['type']);{q}
+        result.type_ := ParseCoding(jsn.vObj['type']);{q3}
     if jsn.has('subscriberId') then
-        result.subscriberId := ParseIdentifier(jsn.vObj['subscriberId']);{q}
+        result.subscriberId := ParseIdentifier(jsn.vObj['subscriberId']);{q3}
     if jsn.has('identifier') then
       iterateArray(jsn.vArr['identifier'], result.identifierList, parseIdentifier);
     if jsn.has('group') or jsn.has('_group') then
@@ -13191,9 +13612,9 @@ begin
     if jsn.has('sequence') or jsn.has('_sequence') then
         result.sequenceElement := ParsePositiveInt(jsn['sequence'], jsn.vObj['_sequence']);{q}
     if jsn.has('subscriber') then
-        result.subscriber := ParseReference{TFhirPatient}(jsn.vObj['subscriber']);{q}
+        result.subscriber := ParseReference{TFhirPatient}(jsn.vObj['subscriber']);{q3}
     if jsn.has('network') then
-        result.network := ParseIdentifier(jsn.vObj['network']);{q}
+        result.network := ParseIdentifier(jsn.vObj['network']);{q3}
     if jsn.has('contract') then
       iterateArray(jsn.vArr['contract'], result.contractList, parseReference{TFhirContract});
 end;
@@ -13255,6 +13676,8 @@ begin
   end;
 end;
 
+{$ENDIF FHIR_COVERAGE}
+{$IFDEF FHIR_DATAELEMENT}
 procedure TFHIRJsonParser.ParseDataElementContact(jsn : TJsonObject; ctxt : TFHIRObjectList);
 begin
   ctxt.add(ParseDataElementContact(jsn)); {2}
@@ -13485,6 +13908,8 @@ begin
   end;
 end;
 
+{$ENDIF FHIR_DATAELEMENT}
+{$IFDEF FHIR_DETECTEDISSUE}
 procedure TFHIRJsonParser.ParseDetectedIssueMitigation(jsn : TJsonObject; ctxt : TFHIRObjectList);
 begin
   ctxt.add(ParseDetectedIssueMitigation(jsn)); {2}
@@ -13505,11 +13930,11 @@ procedure TFHIRJsonParser.ParseDetectedIssueMitigationProperties(jsn : TJsonObje
 begin
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('action') then
-        result.action := ParseCodeableConcept(jsn.vObj['action']);{q}
+        result.action := ParseCodeableConcept(jsn.vObj['action']);{q3}
     if jsn.has('date') or jsn.has('_date') then
         result.dateElement := ParseDateTime(jsn['date'], jsn.vObj['_date']);{q}
     if jsn.has('author') then
-        result.author := ParseReference{TFhirPractitioner}(jsn.vObj['author']);{q}
+        result.author := ParseReference{TFhirPractitioner}(jsn.vObj['author']);{q3}
 end;
 
 procedure TFHIRJsonComposer.ComposeDetectedIssueMitigation(json : TJSONWriter; name : string; elem : TFhirDetectedIssueMitigation; noObj : boolean = false);
@@ -13549,9 +13974,9 @@ procedure TFHIRJsonParser.ParseDetectedIssueProperties(jsn : TJsonObject; result
 begin
     ParseDomainResourceProperties(jsn, result);
     if jsn.has('patient') then
-        result.patient := ParseReference{TFhirPatient}(jsn.vObj['patient']);{q}
+        result.patient := ParseReference{TFhirPatient}(jsn.vObj['patient']);{q3}
     if jsn.has('category') then
-        result.category := ParseCodeableConcept(jsn.vObj['category']);{q}
+        result.category := ParseCodeableConcept(jsn.vObj['category']);{q3}
     if jsn.has('severity') or jsn.has('_severity')  then
       result.severityElement := parseEnum(jsn.path+'/severity', jsn['severity'], jsn.vObj['_severity'], CODES_TFhirDetectedissueSeverityEnum, SYSTEMS_TFhirDetectedissueSeverityEnum);
     if jsn.has('implicated') then
@@ -13561,9 +13986,9 @@ begin
     if jsn.has('date') or jsn.has('_date') then
         result.dateElement := ParseDateTime(jsn['date'], jsn.vObj['_date']);{q}
     if jsn.has('author') then
-        result.author := ParseReference{Resource}(jsn.vObj['author']);{q}
+        result.author := ParseReference{Resource}(jsn.vObj['author']);{q3}
     if jsn.has('identifier') then
-        result.identifier := ParseIdentifier(jsn.vObj['identifier']);{q}
+        result.identifier := ParseIdentifier(jsn.vObj['identifier']);{q3}
     if jsn.has('reference') or jsn.has('_reference') then
         result.referenceElement := ParseUri(jsn['reference'], jsn.vObj['_reference']);{q}
     if jsn.has('mitigation') then
@@ -13617,6 +14042,8 @@ begin
   end;
 end;
 
+{$ENDIF FHIR_DETECTEDISSUE}
+{$IFDEF FHIR_DEVICE}
 procedure TFHIRJsonParser.ParseDevice(jsn : TJsonObject; ctxt : TFHIRObjectList);
 begin
   ctxt.add(ParseDevice(jsn)); {2}
@@ -13639,7 +14066,7 @@ begin
     if jsn.has('identifier') then
       iterateArray(jsn.vArr['identifier'], result.identifierList, parseIdentifier);
     if jsn.has('type') then
-        result.type_ := ParseCodeableConcept(jsn.vObj['type']);{q}
+        result.type_ := ParseCodeableConcept(jsn.vObj['type']);{q3}
     if jsn.has('note') then
       iterateArray(jsn.vArr['note'], result.noteList, parseAnnotation);
     if jsn.has('status') or jsn.has('_status')  then
@@ -13659,11 +14086,11 @@ begin
     if jsn.has('lotNumber') or jsn.has('_lotNumber') then
         result.lotNumberElement := ParseString(jsn['lotNumber'], jsn.vObj['_lotNumber']);{q}
     if jsn.has('owner') then
-        result.owner := ParseReference{TFhirOrganization}(jsn.vObj['owner']);{q}
+        result.owner := ParseReference{TFhirOrganization}(jsn.vObj['owner']);{q3}
     if jsn.has('location') then
-        result.location := ParseReference{TFhirLocation}(jsn.vObj['location']);{q}
+        result.location := ParseReference{TFhirLocation}(jsn.vObj['location']);{q3}
     if jsn.has('patient') then
-        result.patient := ParseReference{TFhirPatient}(jsn.vObj['patient']);{q}
+        result.patient := ParseReference{TFhirPatient}(jsn.vObj['patient']);{q3}
     if jsn.has('contact') then
       iterateArray(jsn.vArr['contact'], result.contactList, parseContactPoint);
     if jsn.has('url') or jsn.has('_url') then
@@ -13744,6 +14171,8 @@ begin
     ComposeUriProps(json, 'url', elem.urlElement, false);
 end;
 
+{$ENDIF FHIR_DEVICE}
+{$IFDEF FHIR_DEVICECOMPONENT}
 procedure TFHIRJsonParser.ParseDeviceComponentProductionSpecification(jsn : TJsonObject; ctxt : TFHIRObjectList);
 begin
   ctxt.add(ParseDeviceComponentProductionSpecification(jsn)); {2}
@@ -13764,9 +14193,9 @@ procedure TFHIRJsonParser.ParseDeviceComponentProductionSpecificationProperties(
 begin
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('specType') then
-        result.specType := ParseCodeableConcept(jsn.vObj['specType']);{q}
+        result.specType := ParseCodeableConcept(jsn.vObj['specType']);{q3}
     if jsn.has('componentId') then
-        result.componentId := ParseIdentifier(jsn.vObj['componentId']);{q}
+        result.componentId := ParseIdentifier(jsn.vObj['componentId']);{q3}
     if jsn.has('productionSpec') or jsn.has('_productionSpec') then
         result.productionSpecElement := ParseString(jsn['productionSpec'], jsn.vObj['_productionSpec']);{q}
 end;
@@ -13808,25 +14237,25 @@ procedure TFHIRJsonParser.ParseDeviceComponentProperties(jsn : TJsonObject; resu
 begin
     ParseDomainResourceProperties(jsn, result);
     if jsn.has('type') then
-        result.type_ := ParseCodeableConcept(jsn.vObj['type']);{q}
+        result.type_ := ParseCodeableConcept(jsn.vObj['type']);{q3}
     if jsn.has('identifier') then
-        result.identifier := ParseIdentifier(jsn.vObj['identifier']);{q}
+        result.identifier := ParseIdentifier(jsn.vObj['identifier']);{q3}
     if jsn.has('lastSystemChange') or jsn.has('_lastSystemChange') then
         result.lastSystemChangeElement := ParseInstant(jsn['lastSystemChange'], jsn.vObj['_lastSystemChange']);{q}
     if jsn.has('source') then
-        result.source := ParseReference{TFhirDevice}(jsn.vObj['source']);{q}
+        result.source := ParseReference{TFhirDevice}(jsn.vObj['source']);{q3}
     if jsn.has('parent') then
-        result.parent := ParseReference{TFhirDeviceComponent}(jsn.vObj['parent']);{q}
+        result.parent := ParseReference{TFhirDeviceComponent}(jsn.vObj['parent']);{q3}
     if jsn.has('operationalStatus') then
       iterateArray(jsn.vArr['operationalStatus'], result.operationalStatusList, parseCodeableConcept);
     if jsn.has('parameterGroup') then
-        result.parameterGroup := ParseCodeableConcept(jsn.vObj['parameterGroup']);{q}
+        result.parameterGroup := ParseCodeableConcept(jsn.vObj['parameterGroup']);{q3}
     if jsn.has('measurementPrinciple') or jsn.has('_measurementPrinciple')  then
       result.measurementPrincipleElement := parseEnum(jsn.path+'/measurementPrinciple', jsn['measurementPrinciple'], jsn.vObj['_measurementPrinciple'], CODES_TFhirMeasurementPrincipleEnum, SYSTEMS_TFhirMeasurementPrincipleEnum);
     if jsn.has('productionSpecification') then
       iterateArray(jsn.vArr['productionSpecification'], result.productionSpecificationList, parseDeviceComponentProductionSpecification);
     if jsn.has('languageCode') then
-        result.languageCode := ParseCodeableConcept(jsn.vObj['languageCode']);{q}
+        result.languageCode := ParseCodeableConcept(jsn.vObj['languageCode']);{q3}
 end;
 
 procedure TFHIRJsonComposer.ComposeDeviceComponent(json : TJSONWriter; name : string; elem : TFhirDeviceComponent; noObj : boolean = false);
@@ -13872,6 +14301,8 @@ begin
     ComposeCodeableConcept(json, 'languageCode', elem.languageCode); {a}
 end;
 
+{$ENDIF FHIR_DEVICECOMPONENT}
+{$IFDEF FHIR_DEVICEMETRIC}
 procedure TFHIRJsonParser.ParseDeviceMetricCalibration(jsn : TJsonObject; ctxt : TFHIRObjectList);
 begin
   ctxt.add(ParseDeviceMetricCalibration(jsn)); {2}
@@ -13940,15 +14371,15 @@ procedure TFHIRJsonParser.ParseDeviceMetricProperties(jsn : TJsonObject; result 
 begin
     ParseDomainResourceProperties(jsn, result);
     if jsn.has('type') then
-        result.type_ := ParseCodeableConcept(jsn.vObj['type']);{q}
+        result.type_ := ParseCodeableConcept(jsn.vObj['type']);{q3}
     if jsn.has('identifier') then
-        result.identifier := ParseIdentifier(jsn.vObj['identifier']);{q}
+        result.identifier := ParseIdentifier(jsn.vObj['identifier']);{q3}
     if jsn.has('unit') then
-        result.unit_ := ParseCodeableConcept(jsn.vObj['unit']);{q}
+        result.unit_ := ParseCodeableConcept(jsn.vObj['unit']);{q3}
     if jsn.has('source') then
-        result.source := ParseReference{TFhirDevice}(jsn.vObj['source']);{q}
+        result.source := ParseReference{TFhirDevice}(jsn.vObj['source']);{q3}
     if jsn.has('parent') then
-        result.parent := ParseReference{TFhirDeviceComponent}(jsn.vObj['parent']);{q}
+        result.parent := ParseReference{TFhirDeviceComponent}(jsn.vObj['parent']);{q3}
     if jsn.has('operationalStatus') or jsn.has('_operationalStatus')  then
       result.operationalStatusElement := parseEnum(jsn.path+'/operationalStatus', jsn['operationalStatus'], jsn.vObj['_operationalStatus'], CODES_TFhirMetricOperationalStatusEnum, SYSTEMS_TFhirMetricOperationalStatusEnum);
     if jsn.has('color') or jsn.has('_color')  then
@@ -13956,7 +14387,7 @@ begin
     if jsn.has('category') or jsn.has('_category')  then
       result.categoryElement := parseEnum(jsn.path+'/category', jsn['category'], jsn.vObj['_category'], CODES_TFhirMetricCategoryEnum, SYSTEMS_TFhirMetricCategoryEnum);
     if jsn.has('measurementPeriod') then
-        result.measurementPeriod := ParseTiming(jsn.vObj['measurementPeriod']);{q}
+        result.measurementPeriod := ParseTiming(jsn.vObj['measurementPeriod']);{q3}
     if jsn.has('calibration') then
       iterateArray(jsn.vArr['calibration'], result.calibrationList, parseDeviceMetricCalibration);
 end;
@@ -14001,6 +14432,8 @@ begin
   end;
 end;
 
+{$ENDIF FHIR_DEVICEMETRIC}
+{$IFDEF FHIR_DEVICEUSEREQUEST}
 procedure TFHIRJsonParser.ParseDeviceUseRequest(jsn : TJsonObject; ctxt : TFHIRObjectList);
 begin
   ctxt.add(ParseDeviceUseRequest(jsn)); {2}
@@ -14027,9 +14460,9 @@ begin
     if jsn.has('status') or jsn.has('_status')  then
       result.statusElement := parseEnum(jsn.path+'/status', jsn['status'], jsn.vObj['_status'], CODES_TFhirDeviceUseRequestStatusEnum, SYSTEMS_TFhirDeviceUseRequestStatusEnum);
     if jsn.has('device') then
-        result.device := ParseReference{TFhirDevice}(jsn.vObj['device']);{q}
+        result.device := ParseReference{TFhirDevice}(jsn.vObj['device']);{q3}
     if jsn.has('encounter') then
-        result.encounter := ParseReference{TFhirEncounter}(jsn.vObj['encounter']);{q}
+        result.encounter := ParseReference{TFhirEncounter}(jsn.vObj['encounter']);{q3}
     if jsn.has('identifier') then
       iterateArray(jsn.vArr['identifier'], result.identifierList, parseIdentifier);
     if jsn.has('indication') then
@@ -14043,7 +14476,7 @@ begin
     if jsn.has('recordedOn') or jsn.has('_recordedOn') then
         result.recordedOnElement := ParseDateTime(jsn['recordedOn'], jsn.vObj['_recordedOn']);{q}
     if jsn.has('subject') then
-        result.subject := ParseReference{TFhirPatient}(jsn.vObj['subject']);{q}
+        result.subject := ParseReference{TFhirPatient}(jsn.vObj['subject']);{q3}
     if jsn.has('timingTiming') {a4} then
       result.timing := ParseTiming(jsn.vObj['timingTiming']);
     if jsn.has('timingPeriod') {a4} then
@@ -14145,6 +14578,8 @@ begin
      ComposeEnumProps(json, 'priority', elem.PriorityElement, CODES_TFhirDeviceUseRequestPriorityEnum, false);
 end;
 
+{$ENDIF FHIR_DEVICEUSEREQUEST}
+{$IFDEF FHIR_DEVICEUSESTATEMENT}
 procedure TFHIRJsonParser.ParseDeviceUseStatement(jsn : TJsonObject; ctxt : TFHIRObjectList);
 begin
   ctxt.add(ParseDeviceUseStatement(jsn)); {2}
@@ -14169,9 +14604,9 @@ begin
     if jsn.has('bodySiteReference') {a3} then
       result.bodySite := ParseReference(jsn.vObj['bodySiteReference']);
     if jsn.has('whenUsed') then
-        result.whenUsed := ParsePeriod(jsn.vObj['whenUsed']);{q}
+        result.whenUsed := ParsePeriod(jsn.vObj['whenUsed']);{q3}
     if jsn.has('device') then
-        result.device := ParseReference{TFhirDevice}(jsn.vObj['device']);{q}
+        result.device := ParseReference{TFhirDevice}(jsn.vObj['device']);{q3}
     if jsn.has('identifier') then
       iterateArray(jsn.vArr['identifier'], result.identifierList, parseIdentifier);
     if jsn.has('indication') then
@@ -14181,7 +14616,7 @@ begin
     if jsn.has('recordedOn') or jsn.has('_recordedOn') then
         result.recordedOnElement := ParseDateTime(jsn['recordedOn'], jsn.vObj['_recordedOn']);{q}
     if jsn.has('subject') then
-        result.subject := ParseReference{TFhirPatient}(jsn.vObj['subject']);{q}
+        result.subject := ParseReference{TFhirPatient}(jsn.vObj['subject']);{q3}
     if jsn.has('timingTiming') {a4} then
       result.timing := ParseTiming(jsn.vObj['timingTiming']);
     if jsn.has('timingPeriod') {a4} then
@@ -14262,6 +14697,8 @@ begin
   end;
 end;
 
+{$ENDIF FHIR_DEVICEUSESTATEMENT}
+{$IFDEF FHIR_DIAGNOSTICORDER}
 procedure TFHIRJsonParser.ParseDiagnosticOrderEvent(jsn : TJsonObject; ctxt : TFHIRObjectList);
 begin
   ctxt.add(ParseDiagnosticOrderEvent(jsn)); {2}
@@ -14284,11 +14721,11 @@ begin
     if jsn.has('status') or jsn.has('_status')  then
       result.statusElement := parseEnum(jsn.path+'/status', jsn['status'], jsn.vObj['_status'], CODES_TFhirDiagnosticOrderStatusEnum, SYSTEMS_TFhirDiagnosticOrderStatusEnum);
     if jsn.has('description') then
-        result.description := ParseCodeableConcept(jsn.vObj['description']);{q}
+        result.description := ParseCodeableConcept(jsn.vObj['description']);{q3}
     if jsn.has('dateTime') or jsn.has('_dateTime') then
         result.dateTimeElement := ParseDateTime(jsn['dateTime'], jsn.vObj['_dateTime']);{q}
     if jsn.has('actor') then
-        result.actor := ParseReference{Resource}(jsn.vObj['actor']);{q}
+        result.actor := ParseReference{Resource}(jsn.vObj['actor']);{q3}
 end;
 
 procedure TFHIRJsonComposer.ComposeDiagnosticOrderEvent(json : TJSONWriter; name : string; elem : TFhirDiagnosticOrderEvent; noObj : boolean = false);
@@ -14332,11 +14769,11 @@ procedure TFHIRJsonParser.ParseDiagnosticOrderItemProperties(jsn : TJsonObject; 
 begin
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('code') then
-        result.code := ParseCodeableConcept(jsn.vObj['code']);{q}
+        result.code := ParseCodeableConcept(jsn.vObj['code']);{q3}
     if jsn.has('specimen') then
       iterateArray(jsn.vArr['specimen'], result.specimenList, parseReference{TFhirSpecimen});
     if jsn.has('bodySite') then
-        result.bodySite := ParseCodeableConcept(jsn.vObj['bodySite']);{q}
+        result.bodySite := ParseCodeableConcept(jsn.vObj['bodySite']);{q3}
     if jsn.has('status') or jsn.has('_status')  then
       result.statusElement := parseEnum(jsn.path+'/status', jsn['status'], jsn.vObj['_status'], CODES_TFhirDiagnosticOrderStatusEnum, SYSTEMS_TFhirDiagnosticOrderStatusEnum);
     if jsn.has('event') then
@@ -14396,13 +14833,13 @@ procedure TFHIRJsonParser.ParseDiagnosticOrderProperties(jsn : TJsonObject; resu
 begin
     ParseDomainResourceProperties(jsn, result);
     if jsn.has('subject') then
-        result.subject := ParseReference{Resource}(jsn.vObj['subject']);{q}
+        result.subject := ParseReference{Resource}(jsn.vObj['subject']);{q3}
     if jsn.has('orderer') then
-        result.orderer := ParseReference{TFhirPractitioner}(jsn.vObj['orderer']);{q}
+        result.orderer := ParseReference{TFhirPractitioner}(jsn.vObj['orderer']);{q3}
     if jsn.has('identifier') then
       iterateArray(jsn.vArr['identifier'], result.identifierList, parseIdentifier);
     if jsn.has('encounter') then
-        result.encounter := ParseReference{TFhirEncounter}(jsn.vObj['encounter']);{q}
+        result.encounter := ParseReference{TFhirEncounter}(jsn.vObj['encounter']);{q3}
     if jsn.has('reason') then
       iterateArray(jsn.vArr['reason'], result.reasonList, parseCodeableConcept);
     if jsn.has('supportingInformation') then
@@ -14493,6 +14930,8 @@ begin
   end;
 end;
 
+{$ENDIF FHIR_DIAGNOSTICORDER}
+{$IFDEF FHIR_DIAGNOSTICREPORT}
 procedure TFHIRJsonParser.ParseDiagnosticReportImage(jsn : TJsonObject; ctxt : TFHIRObjectList);
 begin
   ctxt.add(ParseDiagnosticReportImage(jsn)); {2}
@@ -14515,7 +14954,7 @@ begin
     if jsn.has('comment') or jsn.has('_comment') then
         result.commentElement := ParseString(jsn['comment'], jsn.vObj['_comment']);{q}
     if jsn.has('link') then
-        result.link_ := ParseReference{TFhirMedia}(jsn.vObj['link']);{q}
+        result.link_ := ParseReference{TFhirMedia}(jsn.vObj['link']);{q3}
 end;
 
 procedure TFHIRJsonComposer.ComposeDiagnosticReportImage(json : TJSONWriter; name : string; elem : TFhirDiagnosticReportImage; noObj : boolean = false);
@@ -14557,13 +14996,13 @@ begin
     if jsn.has('status') or jsn.has('_status')  then
       result.statusElement := parseEnum(jsn.path+'/status', jsn['status'], jsn.vObj['_status'], CODES_TFhirDiagnosticReportStatusEnum, SYSTEMS_TFhirDiagnosticReportStatusEnum);
     if jsn.has('category') then
-        result.category := ParseCodeableConcept(jsn.vObj['category']);{q}
+        result.category := ParseCodeableConcept(jsn.vObj['category']);{q3}
     if jsn.has('code') then
-        result.code := ParseCodeableConcept(jsn.vObj['code']);{q}
+        result.code := ParseCodeableConcept(jsn.vObj['code']);{q3}
     if jsn.has('subject') then
-        result.subject := ParseReference{Resource}(jsn.vObj['subject']);{q}
+        result.subject := ParseReference{Resource}(jsn.vObj['subject']);{q3}
     if jsn.has('encounter') then
-        result.encounter := ParseReference{TFhirEncounter}(jsn.vObj['encounter']);{q}
+        result.encounter := ParseReference{TFhirEncounter}(jsn.vObj['encounter']);{q3}
     if jsn.has('effectivePeriod') {a4} then
       result.effective := ParsePeriod(jsn.vObj['effectivePeriod']);
     if jsn.has('effectiveDateTime') or jsn.has('_effectiveDateTime') then
@@ -14571,7 +15010,7 @@ begin
     if jsn.has('issued') or jsn.has('_issued') then
         result.issuedElement := ParseInstant(jsn['issued'], jsn.vObj['_issued']);{q}
     if jsn.has('performer') then
-        result.performer := ParseReference{Resource}(jsn.vObj['performer']);{q}
+        result.performer := ParseReference{Resource}(jsn.vObj['performer']);{q3}
     if jsn.has('request') then
       iterateArray(jsn.vArr['request'], result.requestList, parseReference{Resource});
     if jsn.has('specimen') then
@@ -14684,6 +15123,8 @@ begin
   end;
 end;
 
+{$ENDIF FHIR_DIAGNOSTICREPORT}
+{$IFDEF FHIR_DOCUMENTMANIFEST}
 procedure TFHIRJsonParser.ParseDocumentManifestContent(jsn : TJsonObject; ctxt : TFHIRObjectList);
 begin
   ctxt.add(ParseDocumentManifestContent(jsn)); {2}
@@ -14742,9 +15183,9 @@ procedure TFHIRJsonParser.ParseDocumentManifestRelatedProperties(jsn : TJsonObje
 begin
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('identifier') then
-        result.identifier := ParseIdentifier(jsn.vObj['identifier']);{q}
+        result.identifier := ParseIdentifier(jsn.vObj['identifier']);{q3}
     if jsn.has('ref') then
-        result.ref := ParseReference{TFhirReference}(jsn.vObj['ref']);{q}
+        result.ref := ParseReference{TFhirReference}(jsn.vObj['ref']);{q3}
 end;
 
 procedure TFHIRJsonComposer.ComposeDocumentManifestRelated(json : TJSONWriter; name : string; elem : TFhirDocumentManifestRelated; noObj : boolean = false);
@@ -14780,15 +15221,15 @@ procedure TFHIRJsonParser.ParseDocumentManifestProperties(jsn : TJsonObject; res
 begin
     ParseDomainResourceProperties(jsn, result);
     if jsn.has('masterIdentifier') then
-        result.masterIdentifier := ParseIdentifier(jsn.vObj['masterIdentifier']);{q}
+        result.masterIdentifier := ParseIdentifier(jsn.vObj['masterIdentifier']);{q3}
     if jsn.has('identifier') then
       iterateArray(jsn.vArr['identifier'], result.identifierList, parseIdentifier);
     if jsn.has('subject') then
-        result.subject := ParseReference{Resource}(jsn.vObj['subject']);{q}
+        result.subject := ParseReference{Resource}(jsn.vObj['subject']);{q3}
     if jsn.has('recipient') then
       iterateArray(jsn.vArr['recipient'], result.recipientList, parseReference{Resource});
     if jsn.has('type') then
-        result.type_ := ParseCodeableConcept(jsn.vObj['type']);{q}
+        result.type_ := ParseCodeableConcept(jsn.vObj['type']);{q3}
     if jsn.has('author') then
       iterateArray(jsn.vArr['author'], result.authorList, parseReference{Resource});
     if jsn.has('created') or jsn.has('_created') then
@@ -14871,6 +15312,8 @@ begin
   end;
 end;
 
+{$ENDIF FHIR_DOCUMENTMANIFEST}
+{$IFDEF FHIR_DOCUMENTREFERENCE}
 procedure TFHIRJsonParser.ParseDocumentReferenceRelatesTo(jsn : TJsonObject; ctxt : TFHIRObjectList);
 begin
   ctxt.add(ParseDocumentReferenceRelatesTo(jsn)); {2}
@@ -14893,7 +15336,7 @@ begin
     if jsn.has('code') or jsn.has('_code')  then
       result.codeElement := parseEnum(jsn.path+'/code', jsn['code'], jsn.vObj['_code'], CODES_TFhirDocumentRelationshipTypeEnum, SYSTEMS_TFhirDocumentRelationshipTypeEnum);
     if jsn.has('target') then
-        result.target := ParseReference{TFhirDocumentReference}(jsn.vObj['target']);{q}
+        result.target := ParseReference{TFhirDocumentReference}(jsn.vObj['target']);{q3}
 end;
 
 procedure TFHIRJsonComposer.ComposeDocumentReferenceRelatesTo(json : TJSONWriter; name : string; elem : TFhirDocumentReferenceRelatesTo; noObj : boolean = false);
@@ -14931,7 +15374,7 @@ procedure TFHIRJsonParser.ParseDocumentReferenceContentProperties(jsn : TJsonObj
 begin
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('attachment') then
-        result.attachment := ParseAttachment(jsn.vObj['attachment']);{q}
+        result.attachment := ParseAttachment(jsn.vObj['attachment']);{q3}
     if jsn.has('format') then
       iterateArray(jsn.vArr['format'], result.formatList, parseCoding);
 end;
@@ -14976,17 +15419,17 @@ procedure TFHIRJsonParser.ParseDocumentReferenceContextProperties(jsn : TJsonObj
 begin
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('encounter') then
-        result.encounter := ParseReference{TFhirEncounter}(jsn.vObj['encounter']);{q}
+        result.encounter := ParseReference{TFhirEncounter}(jsn.vObj['encounter']);{q3}
     if jsn.has('event') then
       iterateArray(jsn.vArr['event'], result.eventList, parseCodeableConcept);
     if jsn.has('period') then
-        result.period := ParsePeriod(jsn.vObj['period']);{q}
+        result.period := ParsePeriod(jsn.vObj['period']);{q3}
     if jsn.has('facilityType') then
-        result.facilityType := ParseCodeableConcept(jsn.vObj['facilityType']);{q}
+        result.facilityType := ParseCodeableConcept(jsn.vObj['facilityType']);{q3}
     if jsn.has('practiceSetting') then
-        result.practiceSetting := ParseCodeableConcept(jsn.vObj['practiceSetting']);{q}
+        result.practiceSetting := ParseCodeableConcept(jsn.vObj['practiceSetting']);{q3}
     if jsn.has('sourcePatientInfo') then
-        result.sourcePatientInfo := ParseReference{TFhirPatient}(jsn.vObj['sourcePatientInfo']);{q}
+        result.sourcePatientInfo := ParseReference{TFhirPatient}(jsn.vObj['sourcePatientInfo']);{q3}
     if jsn.has('related') then
       iterateArray(jsn.vArr['related'], result.relatedList, parseDocumentReferenceContextRelated);
 end;
@@ -15046,9 +15489,9 @@ procedure TFHIRJsonParser.ParseDocumentReferenceContextRelatedProperties(jsn : T
 begin
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('identifier') then
-        result.identifier := ParseIdentifier(jsn.vObj['identifier']);{q}
+        result.identifier := ParseIdentifier(jsn.vObj['identifier']);{q3}
     if jsn.has('ref') then
-        result.ref := ParseReference{TFhirReference}(jsn.vObj['ref']);{q}
+        result.ref := ParseReference{TFhirReference}(jsn.vObj['ref']);{q3}
 end;
 
 procedure TFHIRJsonComposer.ComposeDocumentReferenceContextRelated(json : TJSONWriter; name : string; elem : TFhirDocumentReferenceContextRelated; noObj : boolean = false);
@@ -15084,21 +15527,21 @@ procedure TFHIRJsonParser.ParseDocumentReferenceProperties(jsn : TJsonObject; re
 begin
     ParseDomainResourceProperties(jsn, result);
     if jsn.has('masterIdentifier') then
-        result.masterIdentifier := ParseIdentifier(jsn.vObj['masterIdentifier']);{q}
+        result.masterIdentifier := ParseIdentifier(jsn.vObj['masterIdentifier']);{q3}
     if jsn.has('identifier') then
       iterateArray(jsn.vArr['identifier'], result.identifierList, parseIdentifier);
     if jsn.has('subject') then
-        result.subject := ParseReference{Resource}(jsn.vObj['subject']);{q}
+        result.subject := ParseReference{Resource}(jsn.vObj['subject']);{q3}
     if jsn.has('type') then
-        result.type_ := ParseCodeableConcept(jsn.vObj['type']);{q}
+        result.type_ := ParseCodeableConcept(jsn.vObj['type']);{q3}
     if jsn.has('class') then
-        result.class_ := ParseCodeableConcept(jsn.vObj['class']);{q}
+        result.class_ := ParseCodeableConcept(jsn.vObj['class']);{q3}
     if jsn.has('author') then
       iterateArray(jsn.vArr['author'], result.authorList, parseReference{Resource});
     if jsn.has('custodian') then
-        result.custodian := ParseReference{TFhirOrganization}(jsn.vObj['custodian']);{q}
+        result.custodian := ParseReference{TFhirOrganization}(jsn.vObj['custodian']);{q3}
     if jsn.has('authenticator') then
-        result.authenticator := ParseReference{Resource}(jsn.vObj['authenticator']);{q}
+        result.authenticator := ParseReference{Resource}(jsn.vObj['authenticator']);{q3}
     if jsn.has('created') or jsn.has('_created') then
         result.createdElement := ParseDateTime(jsn['created'], jsn.vObj['_created']);{q}
     if jsn.has('indexed') or jsn.has('_indexed') then
@@ -15106,7 +15549,7 @@ begin
     if jsn.has('status') or jsn.has('_status')  then
       result.statusElement := parseEnum(jsn.path+'/status', jsn['status'], jsn.vObj['_status'], CODES_TFhirDocumentReferenceStatusEnum, SYSTEMS_TFhirDocumentReferenceStatusEnum);
     if jsn.has('docStatus') then
-        result.docStatus := ParseCodeableConcept(jsn.vObj['docStatus']);{q}
+        result.docStatus := ParseCodeableConcept(jsn.vObj['docStatus']);{q3}
     if jsn.has('relatesTo') then
       iterateArray(jsn.vArr['relatesTo'], result.relatesToList, parseDocumentReferenceRelatesTo);
     if jsn.has('description') or jsn.has('_description') then
@@ -15116,7 +15559,7 @@ begin
     if jsn.has('content') then
       iterateArray(jsn.vArr['content'], result.contentList, parseDocumentReferenceContent);
     if jsn.has('context') then
-        result.context := ParseDocumentReferenceContext(jsn.vObj['context']);{q}
+        result.context := ParseDocumentReferenceContext(jsn.vObj['context']);{q3}
 end;
 
 procedure TFHIRJsonComposer.ComposeDocumentReference(json : TJSONWriter; name : string; elem : TFhirDocumentReference; noObj : boolean = false);
@@ -15195,6 +15638,8 @@ begin
     ComposeDocumentReferenceContext(json, 'context', elem.context); {a}
 end;
 
+{$ENDIF FHIR_DOCUMENTREFERENCE}
+{$IFDEF FHIR_ELIGIBILITYREQUEST}
 procedure TFHIRJsonParser.ParseEligibilityRequest(jsn : TJsonObject; ctxt : TFHIRObjectList);
 begin
   ctxt.add(ParseEligibilityRequest(jsn)); {2}
@@ -15217,17 +15662,17 @@ begin
     if jsn.has('identifier') then
       iterateArray(jsn.vArr['identifier'], result.identifierList, parseIdentifier);
     if jsn.has('ruleset') then
-        result.ruleset := ParseCoding(jsn.vObj['ruleset']);{q}
+        result.ruleset := ParseCoding(jsn.vObj['ruleset']);{q3}
     if jsn.has('originalRuleset') then
-        result.originalRuleset := ParseCoding(jsn.vObj['originalRuleset']);{q}
+        result.originalRuleset := ParseCoding(jsn.vObj['originalRuleset']);{q3}
     if jsn.has('created') or jsn.has('_created') then
         result.createdElement := ParseDateTime(jsn['created'], jsn.vObj['_created']);{q}
     if jsn.has('target') then
-        result.target := ParseReference{TFhirOrganization}(jsn.vObj['target']);{q}
+        result.target := ParseReference{TFhirOrganization}(jsn.vObj['target']);{q3}
     if jsn.has('provider') then
-        result.provider := ParseReference{TFhirPractitioner}(jsn.vObj['provider']);{q}
+        result.provider := ParseReference{TFhirPractitioner}(jsn.vObj['provider']);{q3}
     if jsn.has('organization') then
-        result.organization := ParseReference{TFhirOrganization}(jsn.vObj['organization']);{q}
+        result.organization := ParseReference{TFhirOrganization}(jsn.vObj['organization']);{q3}
 end;
 
 procedure TFHIRJsonComposer.ComposeEligibilityRequest(json : TJSONWriter; name : string; elem : TFhirEligibilityRequest; noObj : boolean = false);
@@ -15260,6 +15705,8 @@ begin
     ComposeReference{TFhirOrganization}(json, 'organization', elem.organization); {a}
 end;
 
+{$ENDIF FHIR_ELIGIBILITYREQUEST}
+{$IFDEF FHIR_ELIGIBILITYRESPONSE}
 procedure TFHIRJsonParser.ParseEligibilityResponse(jsn : TJsonObject; ctxt : TFHIRObjectList);
 begin
   ctxt.add(ParseEligibilityResponse(jsn)); {2}
@@ -15282,23 +15729,23 @@ begin
     if jsn.has('identifier') then
       iterateArray(jsn.vArr['identifier'], result.identifierList, parseIdentifier);
     if jsn.has('request') then
-        result.request := ParseReference{TFhirEligibilityRequest}(jsn.vObj['request']);{q}
+        result.request := ParseReference{TFhirEligibilityRequest}(jsn.vObj['request']);{q3}
     if jsn.has('outcome') or jsn.has('_outcome')  then
       result.outcomeElement := parseEnum(jsn.path+'/outcome', jsn['outcome'], jsn.vObj['_outcome'], CODES_TFhirRemittanceOutcomeEnum, SYSTEMS_TFhirRemittanceOutcomeEnum);
     if jsn.has('disposition') or jsn.has('_disposition') then
         result.dispositionElement := ParseString(jsn['disposition'], jsn.vObj['_disposition']);{q}
     if jsn.has('ruleset') then
-        result.ruleset := ParseCoding(jsn.vObj['ruleset']);{q}
+        result.ruleset := ParseCoding(jsn.vObj['ruleset']);{q3}
     if jsn.has('originalRuleset') then
-        result.originalRuleset := ParseCoding(jsn.vObj['originalRuleset']);{q}
+        result.originalRuleset := ParseCoding(jsn.vObj['originalRuleset']);{q3}
     if jsn.has('created') or jsn.has('_created') then
         result.createdElement := ParseDateTime(jsn['created'], jsn.vObj['_created']);{q}
     if jsn.has('organization') then
-        result.organization := ParseReference{TFhirOrganization}(jsn.vObj['organization']);{q}
+        result.organization := ParseReference{TFhirOrganization}(jsn.vObj['organization']);{q3}
     if jsn.has('requestProvider') then
-        result.requestProvider := ParseReference{TFhirPractitioner}(jsn.vObj['requestProvider']);{q}
+        result.requestProvider := ParseReference{TFhirPractitioner}(jsn.vObj['requestProvider']);{q3}
     if jsn.has('requestOrganization') then
-        result.requestOrganization := ParseReference{TFhirOrganization}(jsn.vObj['requestOrganization']);{q}
+        result.requestOrganization := ParseReference{TFhirOrganization}(jsn.vObj['requestOrganization']);{q3}
 end;
 
 procedure TFHIRJsonComposer.ComposeEligibilityResponse(json : TJSONWriter; name : string; elem : TFhirEligibilityResponse; noObj : boolean = false);
@@ -15341,6 +15788,8 @@ begin
     ComposeReference{TFhirOrganization}(json, 'requestOrganization', elem.requestOrganization); {a}
 end;
 
+{$ENDIF FHIR_ELIGIBILITYRESPONSE}
+{$IFDEF FHIR_ENCOUNTER}
 procedure TFHIRJsonParser.ParseEncounterStatusHistory(jsn : TJsonObject; ctxt : TFHIRObjectList);
 begin
   ctxt.add(ParseEncounterStatusHistory(jsn)); {2}
@@ -15363,7 +15812,7 @@ begin
     if jsn.has('status') or jsn.has('_status')  then
       result.statusElement := parseEnum(jsn.path+'/status', jsn['status'], jsn.vObj['_status'], CODES_TFhirEncounterStateEnum, SYSTEMS_TFhirEncounterStateEnum);
     if jsn.has('period') then
-        result.period := ParsePeriod(jsn.vObj['period']);{q}
+        result.period := ParsePeriod(jsn.vObj['period']);{q3}
 end;
 
 procedure TFHIRJsonComposer.ComposeEncounterStatusHistory(json : TJSONWriter; name : string; elem : TFhirEncounterStatusHistory; noObj : boolean = false);
@@ -15403,9 +15852,9 @@ begin
     if jsn.has('type') then
       iterateArray(jsn.vArr['type'], result.type_List, parseCodeableConcept);
     if jsn.has('period') then
-        result.period := ParsePeriod(jsn.vObj['period']);{q}
+        result.period := ParsePeriod(jsn.vObj['period']);{q3}
     if jsn.has('individual') then
-        result.individual := ParseReference{Resource}(jsn.vObj['individual']);{q}
+        result.individual := ParseReference{Resource}(jsn.vObj['individual']);{q3}
 end;
 
 procedure TFHIRJsonComposer.ComposeEncounterParticipant(json : TJSONWriter; name : string; elem : TFhirEncounterParticipant; noObj : boolean = false);
@@ -15450,15 +15899,15 @@ procedure TFHIRJsonParser.ParseEncounterHospitalizationProperties(jsn : TJsonObj
 begin
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('preAdmissionIdentifier') then
-        result.preAdmissionIdentifier := ParseIdentifier(jsn.vObj['preAdmissionIdentifier']);{q}
+        result.preAdmissionIdentifier := ParseIdentifier(jsn.vObj['preAdmissionIdentifier']);{q3}
     if jsn.has('origin') then
-        result.origin := ParseReference{TFhirLocation}(jsn.vObj['origin']);{q}
+        result.origin := ParseReference{TFhirLocation}(jsn.vObj['origin']);{q3}
     if jsn.has('admitSource') then
-        result.admitSource := ParseCodeableConcept(jsn.vObj['admitSource']);{q}
+        result.admitSource := ParseCodeableConcept(jsn.vObj['admitSource']);{q3}
     if jsn.has('admittingDiagnosis') then
       iterateArray(jsn.vArr['admittingDiagnosis'], result.admittingDiagnosisList, parseReference{TFhirCondition});
     if jsn.has('reAdmission') then
-        result.reAdmission := ParseCodeableConcept(jsn.vObj['reAdmission']);{q}
+        result.reAdmission := ParseCodeableConcept(jsn.vObj['reAdmission']);{q3}
     if jsn.has('dietPreference') then
       iterateArray(jsn.vArr['dietPreference'], result.dietPreferenceList, parseCodeableConcept);
     if jsn.has('specialCourtesy') then
@@ -15466,9 +15915,9 @@ begin
     if jsn.has('specialArrangement') then
       iterateArray(jsn.vArr['specialArrangement'], result.specialArrangementList, parseCodeableConcept);
     if jsn.has('destination') then
-        result.destination := ParseReference{TFhirLocation}(jsn.vObj['destination']);{q}
+        result.destination := ParseReference{TFhirLocation}(jsn.vObj['destination']);{q3}
     if jsn.has('dischargeDisposition') then
-        result.dischargeDisposition := ParseCodeableConcept(jsn.vObj['dischargeDisposition']);{q}
+        result.dischargeDisposition := ParseCodeableConcept(jsn.vObj['dischargeDisposition']);{q3}
     if jsn.has('dischargeDiagnosis') then
       iterateArray(jsn.vArr['dischargeDiagnosis'], result.dischargeDiagnosisList, parseReference{TFhirCondition});
 end;
@@ -15551,11 +16000,11 @@ procedure TFHIRJsonParser.ParseEncounterLocationProperties(jsn : TJsonObject; re
 begin
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('location') then
-        result.location := ParseReference{TFhirLocation}(jsn.vObj['location']);{q}
+        result.location := ParseReference{TFhirLocation}(jsn.vObj['location']);{q3}
     if jsn.has('status') or jsn.has('_status')  then
       result.statusElement := parseEnum(jsn.path+'/status', jsn['status'], jsn.vObj['_status'], CODES_TFhirEncounterLocationStatusEnum, SYSTEMS_TFhirEncounterLocationStatusEnum);
     if jsn.has('period') then
-        result.period := ParsePeriod(jsn.vObj['period']);{q}
+        result.period := ParsePeriod(jsn.vObj['period']);{q3}
 end;
 
 procedure TFHIRJsonComposer.ComposeEncounterLocation(json : TJSONWriter; name : string; elem : TFhirEncounterLocation; noObj : boolean = false);
@@ -15605,9 +16054,9 @@ begin
     if jsn.has('type') then
       iterateArray(jsn.vArr['type'], result.type_List, parseCodeableConcept);
     if jsn.has('priority') then
-        result.priority := ParseCodeableConcept(jsn.vObj['priority']);{q}
+        result.priority := ParseCodeableConcept(jsn.vObj['priority']);{q3}
     if jsn.has('patient') then
-        result.patient := ParseReference{TFhirPatient}(jsn.vObj['patient']);{q}
+        result.patient := ParseReference{TFhirPatient}(jsn.vObj['patient']);{q3}
     if jsn.has('episodeOfCare') then
       iterateArray(jsn.vArr['episodeOfCare'], result.episodeOfCareList, parseReference{TFhirEpisodeOfCare});
     if jsn.has('incomingReferral') then
@@ -15615,23 +16064,23 @@ begin
     if jsn.has('participant') then
       iterateArray(jsn.vArr['participant'], result.participantList, parseEncounterParticipant);
     if jsn.has('appointment') then
-        result.appointment := ParseReference{TFhirAppointment}(jsn.vObj['appointment']);{q}
+        result.appointment := ParseReference{TFhirAppointment}(jsn.vObj['appointment']);{q3}
     if jsn.has('period') then
-        result.period := ParsePeriod(jsn.vObj['period']);{q}
+        result.period := ParsePeriod(jsn.vObj['period']);{q3}
     if jsn.has('length') then
-        result.length := ParseQuantity(jsn.vObj['length']);{q}
+        result.length := ParseQuantity(jsn.vObj['length']);{q3}
     if jsn.has('reason') then
       iterateArray(jsn.vArr['reason'], result.reasonList, parseCodeableConcept);
     if jsn.has('indication') then
       iterateArray(jsn.vArr['indication'], result.indicationList, parseReference{Resource});
     if jsn.has('hospitalization') then
-        result.hospitalization := ParseEncounterHospitalization(jsn.vObj['hospitalization']);{q}
+        result.hospitalization := ParseEncounterHospitalization(jsn.vObj['hospitalization']);{q3}
     if jsn.has('location') then
       iterateArray(jsn.vArr['location'], result.locationList, parseEncounterLocation);
     if jsn.has('serviceProvider') then
-        result.serviceProvider := ParseReference{TFhirOrganization}(jsn.vObj['serviceProvider']);{q}
+        result.serviceProvider := ParseReference{TFhirOrganization}(jsn.vObj['serviceProvider']);{q3}
     if jsn.has('partOf') then
-        result.partOf := ParseReference{TFhirEncounter}(jsn.vObj['partOf']);{q}
+        result.partOf := ParseReference{TFhirEncounter}(jsn.vObj['partOf']);{q3}
 end;
 
 procedure TFHIRJsonComposer.ComposeEncounter(json : TJSONWriter; name : string; elem : TFhirEncounter; noObj : boolean = false);
@@ -15730,6 +16179,8 @@ begin
     ComposeReference{TFhirEncounter}(json, 'partOf', elem.partOf); {a}
 end;
 
+{$ENDIF FHIR_ENCOUNTER}
+{$IFDEF FHIR_ENROLLMENTREQUEST}
 procedure TFHIRJsonParser.ParseEnrollmentRequest(jsn : TJsonObject; ctxt : TFHIRObjectList);
 begin
   ctxt.add(ParseEnrollmentRequest(jsn)); {2}
@@ -15752,23 +16203,23 @@ begin
     if jsn.has('identifier') then
       iterateArray(jsn.vArr['identifier'], result.identifierList, parseIdentifier);
     if jsn.has('ruleset') then
-        result.ruleset := ParseCoding(jsn.vObj['ruleset']);{q}
+        result.ruleset := ParseCoding(jsn.vObj['ruleset']);{q3}
     if jsn.has('originalRuleset') then
-        result.originalRuleset := ParseCoding(jsn.vObj['originalRuleset']);{q}
+        result.originalRuleset := ParseCoding(jsn.vObj['originalRuleset']);{q3}
     if jsn.has('created') or jsn.has('_created') then
         result.createdElement := ParseDateTime(jsn['created'], jsn.vObj['_created']);{q}
     if jsn.has('target') then
-        result.target := ParseReference{TFhirOrganization}(jsn.vObj['target']);{q}
+        result.target := ParseReference{TFhirOrganization}(jsn.vObj['target']);{q3}
     if jsn.has('provider') then
-        result.provider := ParseReference{TFhirPractitioner}(jsn.vObj['provider']);{q}
+        result.provider := ParseReference{TFhirPractitioner}(jsn.vObj['provider']);{q3}
     if jsn.has('organization') then
-        result.organization := ParseReference{TFhirOrganization}(jsn.vObj['organization']);{q}
+        result.organization := ParseReference{TFhirOrganization}(jsn.vObj['organization']);{q3}
     if jsn.has('subject') then
-        result.subject := ParseReference{TFhirPatient}(jsn.vObj['subject']);{q}
+        result.subject := ParseReference{TFhirPatient}(jsn.vObj['subject']);{q3}
     if jsn.has('coverage') then
-        result.coverage := ParseReference{TFhirCoverage}(jsn.vObj['coverage']);{q}
+        result.coverage := ParseReference{TFhirCoverage}(jsn.vObj['coverage']);{q3}
     if jsn.has('relationship') then
-        result.relationship := ParseCoding(jsn.vObj['relationship']);{q}
+        result.relationship := ParseCoding(jsn.vObj['relationship']);{q3}
 end;
 
 procedure TFHIRJsonComposer.ComposeEnrollmentRequest(json : TJSONWriter; name : string; elem : TFhirEnrollmentRequest; noObj : boolean = false);
@@ -15807,6 +16258,8 @@ begin
     ComposeCoding(json, 'relationship', elem.relationship); {a}
 end;
 
+{$ENDIF FHIR_ENROLLMENTREQUEST}
+{$IFDEF FHIR_ENROLLMENTRESPONSE}
 procedure TFHIRJsonParser.ParseEnrollmentResponse(jsn : TJsonObject; ctxt : TFHIRObjectList);
 begin
   ctxt.add(ParseEnrollmentResponse(jsn)); {2}
@@ -15829,23 +16282,23 @@ begin
     if jsn.has('identifier') then
       iterateArray(jsn.vArr['identifier'], result.identifierList, parseIdentifier);
     if jsn.has('request') then
-        result.request := ParseReference{TFhirEnrollmentRequest}(jsn.vObj['request']);{q}
+        result.request := ParseReference{TFhirEnrollmentRequest}(jsn.vObj['request']);{q3}
     if jsn.has('outcome') or jsn.has('_outcome')  then
       result.outcomeElement := parseEnum(jsn.path+'/outcome', jsn['outcome'], jsn.vObj['_outcome'], CODES_TFhirRemittanceOutcomeEnum, SYSTEMS_TFhirRemittanceOutcomeEnum);
     if jsn.has('disposition') or jsn.has('_disposition') then
         result.dispositionElement := ParseString(jsn['disposition'], jsn.vObj['_disposition']);{q}
     if jsn.has('ruleset') then
-        result.ruleset := ParseCoding(jsn.vObj['ruleset']);{q}
+        result.ruleset := ParseCoding(jsn.vObj['ruleset']);{q3}
     if jsn.has('originalRuleset') then
-        result.originalRuleset := ParseCoding(jsn.vObj['originalRuleset']);{q}
+        result.originalRuleset := ParseCoding(jsn.vObj['originalRuleset']);{q3}
     if jsn.has('created') or jsn.has('_created') then
         result.createdElement := ParseDateTime(jsn['created'], jsn.vObj['_created']);{q}
     if jsn.has('organization') then
-        result.organization := ParseReference{TFhirOrganization}(jsn.vObj['organization']);{q}
+        result.organization := ParseReference{TFhirOrganization}(jsn.vObj['organization']);{q3}
     if jsn.has('requestProvider') then
-        result.requestProvider := ParseReference{TFhirPractitioner}(jsn.vObj['requestProvider']);{q}
+        result.requestProvider := ParseReference{TFhirPractitioner}(jsn.vObj['requestProvider']);{q3}
     if jsn.has('requestOrganization') then
-        result.requestOrganization := ParseReference{TFhirOrganization}(jsn.vObj['requestOrganization']);{q}
+        result.requestOrganization := ParseReference{TFhirOrganization}(jsn.vObj['requestOrganization']);{q3}
 end;
 
 procedure TFHIRJsonComposer.ComposeEnrollmentResponse(json : TJSONWriter; name : string; elem : TFhirEnrollmentResponse; noObj : boolean = false);
@@ -15888,6 +16341,8 @@ begin
     ComposeReference{TFhirOrganization}(json, 'requestOrganization', elem.requestOrganization); {a}
 end;
 
+{$ENDIF FHIR_ENROLLMENTRESPONSE}
+{$IFDEF FHIR_EPISODEOFCARE}
 procedure TFHIRJsonParser.ParseEpisodeOfCareStatusHistory(jsn : TJsonObject; ctxt : TFHIRObjectList);
 begin
   ctxt.add(ParseEpisodeOfCareStatusHistory(jsn)); {2}
@@ -15910,7 +16365,7 @@ begin
     if jsn.has('status') or jsn.has('_status')  then
       result.statusElement := parseEnum(jsn.path+'/status', jsn['status'], jsn.vObj['_status'], CODES_TFhirEpisodeOfCareStatusEnum, SYSTEMS_TFhirEpisodeOfCareStatusEnum);
     if jsn.has('period') then
-        result.period := ParsePeriod(jsn.vObj['period']);{q}
+        result.period := ParsePeriod(jsn.vObj['period']);{q3}
 end;
 
 procedure TFHIRJsonComposer.ComposeEpisodeOfCareStatusHistory(json : TJSONWriter; name : string; elem : TFhirEpisodeOfCareStatusHistory; noObj : boolean = false);
@@ -15950,9 +16405,9 @@ begin
     if jsn.has('role') then
       iterateArray(jsn.vArr['role'], result.roleList, parseCodeableConcept);
     if jsn.has('period') then
-        result.period := ParsePeriod(jsn.vObj['period']);{q}
+        result.period := ParsePeriod(jsn.vObj['period']);{q3}
     if jsn.has('member') then
-        result.member := ParseReference{Resource}(jsn.vObj['member']);{q}
+        result.member := ParseReference{Resource}(jsn.vObj['member']);{q3}
 end;
 
 procedure TFHIRJsonComposer.ComposeEpisodeOfCareCareTeam(json : TJSONWriter; name : string; elem : TFhirEpisodeOfCareCareTeam; noObj : boolean = false);
@@ -16007,15 +16462,15 @@ begin
     if jsn.has('condition') then
       iterateArray(jsn.vArr['condition'], result.conditionList, parseReference{TFhirCondition});
     if jsn.has('patient') then
-        result.patient := ParseReference{TFhirPatient}(jsn.vObj['patient']);{q}
+        result.patient := ParseReference{TFhirPatient}(jsn.vObj['patient']);{q3}
     if jsn.has('managingOrganization') then
-        result.managingOrganization := ParseReference{TFhirOrganization}(jsn.vObj['managingOrganization']);{q}
+        result.managingOrganization := ParseReference{TFhirOrganization}(jsn.vObj['managingOrganization']);{q3}
     if jsn.has('period') then
-        result.period := ParsePeriod(jsn.vObj['period']);{q}
+        result.period := ParsePeriod(jsn.vObj['period']);{q3}
     if jsn.has('referralRequest') then
       iterateArray(jsn.vArr['referralRequest'], result.referralRequestList, parseReference{TFhirReferralRequest});
     if jsn.has('careManager') then
-        result.careManager := ParseReference{TFhirPractitioner}(jsn.vObj['careManager']);{q}
+        result.careManager := ParseReference{TFhirPractitioner}(jsn.vObj['careManager']);{q3}
     if jsn.has('careTeam') then
       iterateArray(jsn.vArr['careTeam'], result.careTeamList, parseEpisodeOfCareCareTeam);
 end;
@@ -16083,6 +16538,8 @@ begin
   end;
 end;
 
+{$ENDIF FHIR_EPISODEOFCARE}
+{$IFDEF FHIR_EXPLANATIONOFBENEFIT}
 procedure TFHIRJsonParser.ParseExplanationOfBenefit(jsn : TJsonObject; ctxt : TFHIRObjectList);
 begin
   ctxt.add(ParseExplanationOfBenefit(jsn)); {2}
@@ -16105,23 +16562,23 @@ begin
     if jsn.has('identifier') then
       iterateArray(jsn.vArr['identifier'], result.identifierList, parseIdentifier);
     if jsn.has('request') then
-        result.request := ParseReference{TFhirClaim}(jsn.vObj['request']);{q}
+        result.request := ParseReference{TFhirClaim}(jsn.vObj['request']);{q3}
     if jsn.has('outcome') or jsn.has('_outcome')  then
       result.outcomeElement := parseEnum(jsn.path+'/outcome', jsn['outcome'], jsn.vObj['_outcome'], CODES_TFhirRemittanceOutcomeEnum, SYSTEMS_TFhirRemittanceOutcomeEnum);
     if jsn.has('disposition') or jsn.has('_disposition') then
         result.dispositionElement := ParseString(jsn['disposition'], jsn.vObj['_disposition']);{q}
     if jsn.has('ruleset') then
-        result.ruleset := ParseCoding(jsn.vObj['ruleset']);{q}
+        result.ruleset := ParseCoding(jsn.vObj['ruleset']);{q3}
     if jsn.has('originalRuleset') then
-        result.originalRuleset := ParseCoding(jsn.vObj['originalRuleset']);{q}
+        result.originalRuleset := ParseCoding(jsn.vObj['originalRuleset']);{q3}
     if jsn.has('created') or jsn.has('_created') then
         result.createdElement := ParseDateTime(jsn['created'], jsn.vObj['_created']);{q}
     if jsn.has('organization') then
-        result.organization := ParseReference{TFhirOrganization}(jsn.vObj['organization']);{q}
+        result.organization := ParseReference{TFhirOrganization}(jsn.vObj['organization']);{q3}
     if jsn.has('requestProvider') then
-        result.requestProvider := ParseReference{TFhirPractitioner}(jsn.vObj['requestProvider']);{q}
+        result.requestProvider := ParseReference{TFhirPractitioner}(jsn.vObj['requestProvider']);{q3}
     if jsn.has('requestOrganization') then
-        result.requestOrganization := ParseReference{TFhirOrganization}(jsn.vObj['requestOrganization']);{q}
+        result.requestOrganization := ParseReference{TFhirOrganization}(jsn.vObj['requestOrganization']);{q3}
 end;
 
 procedure TFHIRJsonComposer.ComposeExplanationOfBenefit(json : TJSONWriter; name : string; elem : TFhirExplanationOfBenefit; noObj : boolean = false);
@@ -16164,6 +16621,8 @@ begin
     ComposeReference{TFhirOrganization}(json, 'requestOrganization', elem.requestOrganization); {a}
 end;
 
+{$ENDIF FHIR_EXPLANATIONOFBENEFIT}
+{$IFDEF FHIR_FAMILYMEMBERHISTORY}
 procedure TFHIRJsonParser.ParseFamilyMemberHistoryCondition(jsn : TJsonObject; ctxt : TFHIRObjectList);
 begin
   ctxt.add(ParseFamilyMemberHistoryCondition(jsn)); {2}
@@ -16184,9 +16643,9 @@ procedure TFHIRJsonParser.ParseFamilyMemberHistoryConditionProperties(jsn : TJso
 begin
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('code') then
-        result.code := ParseCodeableConcept(jsn.vObj['code']);{q}
+        result.code := ParseCodeableConcept(jsn.vObj['code']);{q3}
     if jsn.has('outcome') then
-        result.outcome := ParseCodeableConcept(jsn.vObj['outcome']);{q}
+        result.outcome := ParseCodeableConcept(jsn.vObj['outcome']);{q3}
     if jsn.has('onsetQuantity') {a4} then
       result.onset := ParseQuantity(jsn.vObj['onsetQuantity']);
     if jsn.has('onsetRange') {a4} then
@@ -16196,7 +16655,7 @@ begin
     if jsn.has('onsetString') or jsn.has('_onsetString') then
       result.onset := parseString(jsn['onsetString'], jsn.vObj['_onsetString']);
     if jsn.has('note') then
-        result.note := ParseAnnotation(jsn.vObj['note']);{q}
+        result.note := ParseAnnotation(jsn.vObj['note']);{q3}
 end;
 
 procedure TFHIRJsonComposer.ComposeFamilyMemberHistoryCondition(json : TJSONWriter; name : string; elem : TFhirFamilyMemberHistoryCondition; noObj : boolean = false);
@@ -16247,7 +16706,7 @@ begin
     if jsn.has('identifier') then
       iterateArray(jsn.vArr['identifier'], result.identifierList, parseIdentifier);
     if jsn.has('patient') then
-        result.patient := ParseReference{TFhirPatient}(jsn.vObj['patient']);{q}
+        result.patient := ParseReference{TFhirPatient}(jsn.vObj['patient']);{q3}
     if jsn.has('date') or jsn.has('_date') then
         result.dateElement := ParseDateTime(jsn['date'], jsn.vObj['_date']);{q}
     if jsn.has('status') or jsn.has('_status')  then
@@ -16255,7 +16714,7 @@ begin
     if jsn.has('name') or jsn.has('_name') then
         result.nameElement := ParseString(jsn['name'], jsn.vObj['_name']);{q}
     if jsn.has('relationship') then
-        result.relationship := ParseCodeableConcept(jsn.vObj['relationship']);{q}
+        result.relationship := ParseCodeableConcept(jsn.vObj['relationship']);{q3}
     if jsn.has('gender') or jsn.has('_gender')  then
       result.genderElement := parseEnum(jsn.path+'/gender', jsn['gender'], jsn.vObj['_gender'], CODES_TFhirAdministrativeGenderEnum, SYSTEMS_TFhirAdministrativeGenderEnum);
     if jsn.has('bornPeriod') {a4} then
@@ -16281,7 +16740,7 @@ begin
     if jsn.has('deceasedString') or jsn.has('_deceasedString') then
       result.deceased := parseString(jsn['deceasedString'], jsn.vObj['_deceasedString']);
     if jsn.has('note') then
-        result.note := ParseAnnotation(jsn.vObj['note']);{q}
+        result.note := ParseAnnotation(jsn.vObj['note']);{q3}
     if jsn.has('condition') then
       iterateArray(jsn.vArr['condition'], result.conditionList, parseFamilyMemberHistoryCondition);
 end;
@@ -16371,6 +16830,8 @@ begin
   end;
 end;
 
+{$ENDIF FHIR_FAMILYMEMBERHISTORY}
+{$IFDEF FHIR_FLAG}
 procedure TFHIRJsonParser.ParseFlag(jsn : TJsonObject; ctxt : TFHIRObjectList);
 begin
   ctxt.add(ParseFlag(jsn)); {2}
@@ -16393,19 +16854,19 @@ begin
     if jsn.has('identifier') then
       iterateArray(jsn.vArr['identifier'], result.identifierList, parseIdentifier);
     if jsn.has('category') then
-        result.category := ParseCodeableConcept(jsn.vObj['category']);{q}
+        result.category := ParseCodeableConcept(jsn.vObj['category']);{q3}
     if jsn.has('status') or jsn.has('_status')  then
       result.statusElement := parseEnum(jsn.path+'/status', jsn['status'], jsn.vObj['_status'], CODES_TFhirFlagStatusEnum, SYSTEMS_TFhirFlagStatusEnum);
     if jsn.has('period') then
-        result.period := ParsePeriod(jsn.vObj['period']);{q}
+        result.period := ParsePeriod(jsn.vObj['period']);{q3}
     if jsn.has('subject') then
-        result.subject := ParseReference{Resource}(jsn.vObj['subject']);{q}
+        result.subject := ParseReference{Resource}(jsn.vObj['subject']);{q3}
     if jsn.has('encounter') then
-        result.encounter := ParseReference{TFhirEncounter}(jsn.vObj['encounter']);{q}
+        result.encounter := ParseReference{TFhirEncounter}(jsn.vObj['encounter']);{q3}
     if jsn.has('author') then
-        result.author := ParseReference{Resource}(jsn.vObj['author']);{q}
+        result.author := ParseReference{Resource}(jsn.vObj['author']);{q3}
     if jsn.has('code') then
-        result.code := ParseCodeableConcept(jsn.vObj['code']);{q}
+        result.code := ParseCodeableConcept(jsn.vObj['code']);{q3}
 end;
 
 procedure TFHIRJsonComposer.ComposeFlag(json : TJSONWriter; name : string; elem : TFhirFlag; noObj : boolean = false);
@@ -16440,6 +16901,8 @@ begin
     ComposeCodeableConcept(json, 'code', elem.code); {a}
 end;
 
+{$ENDIF FHIR_FLAG}
+{$IFDEF FHIR_GOAL}
 procedure TFHIRJsonParser.ParseGoalOutcome(jsn : TJsonObject; ctxt : TFHIRObjectList);
 begin
   ctxt.add(ParseGoalOutcome(jsn)); {2}
@@ -16500,7 +16963,7 @@ begin
     if jsn.has('identifier') then
       iterateArray(jsn.vArr['identifier'], result.identifierList, parseIdentifier);
     if jsn.has('subject') then
-        result.subject := ParseReference{Resource}(jsn.vObj['subject']);{q}
+        result.subject := ParseReference{Resource}(jsn.vObj['subject']);{q3}
     if jsn.has('startCodeableConcept') {a4} then
       result.start := ParseCodeableConcept(jsn.vObj['startCodeableConcept']);
     if jsn.has('startDate') or jsn.has('_startDate') then
@@ -16518,11 +16981,11 @@ begin
     if jsn.has('statusDate') or jsn.has('_statusDate') then
         result.statusDateElement := ParseDate(jsn['statusDate'], jsn.vObj['_statusDate']);{q}
     if jsn.has('statusReason') then
-        result.statusReason := ParseCodeableConcept(jsn.vObj['statusReason']);{q}
+        result.statusReason := ParseCodeableConcept(jsn.vObj['statusReason']);{q3}
     if jsn.has('author') then
-        result.author := ParseReference{Resource}(jsn.vObj['author']);{q}
+        result.author := ParseReference{Resource}(jsn.vObj['author']);{q3}
     if jsn.has('priority') then
-        result.priority := ParseCodeableConcept(jsn.vObj['priority']);{q}
+        result.priority := ParseCodeableConcept(jsn.vObj['priority']);{q3}
     if jsn.has('addresses') then
       iterateArray(jsn.vArr['addresses'], result.addressesList, parseReference{Resource});
     if jsn.has('note') then
@@ -16609,6 +17072,8 @@ begin
   end;
 end;
 
+{$ENDIF FHIR_GOAL}
+{$IFDEF FHIR_GROUP}
 procedure TFHIRJsonParser.ParseGroupCharacteristic(jsn : TJsonObject; ctxt : TFHIRObjectList);
 begin
   ctxt.add(ParseGroupCharacteristic(jsn)); {2}
@@ -16629,7 +17094,7 @@ procedure TFHIRJsonParser.ParseGroupCharacteristicProperties(jsn : TJsonObject; 
 begin
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('code') then
-        result.code := ParseCodeableConcept(jsn.vObj['code']);{q}
+        result.code := ParseCodeableConcept(jsn.vObj['code']);{q3}
     if jsn.has('valueCodeableConcept') {a4} then
       result.value := ParseCodeableConcept(jsn.vObj['valueCodeableConcept']);
     if jsn.has('valueQuantity') {a4} then
@@ -16641,7 +17106,7 @@ begin
     if jsn.has('exclude') or jsn.has('_exclude') then
         result.excludeElement := ParseBoolean(jsn['exclude'], jsn.vObj['_exclude']);{q}
     if jsn.has('period') then
-        result.period := ParsePeriod(jsn.vObj['period']);{q}
+        result.period := ParsePeriod(jsn.vObj['period']);{q3}
 end;
 
 procedure TFHIRJsonComposer.ComposeGroupCharacteristic(json : TJSONWriter; name : string; elem : TFhirGroupCharacteristic; noObj : boolean = false);
@@ -16692,9 +17157,9 @@ procedure TFHIRJsonParser.ParseGroupMemberProperties(jsn : TJsonObject; result :
 begin
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('entity') then
-        result.entity := ParseReference{Resource}(jsn.vObj['entity']);{q}
+        result.entity := ParseReference{Resource}(jsn.vObj['entity']);{q3}
     if jsn.has('period') then
-        result.period := ParsePeriod(jsn.vObj['period']);{q}
+        result.period := ParsePeriod(jsn.vObj['period']);{q3}
     if jsn.has('inactive') or jsn.has('_inactive') then
         result.inactiveElement := ParseBoolean(jsn['inactive'], jsn.vObj['_inactive']);{q}
 end;
@@ -16742,7 +17207,7 @@ begin
     if jsn.has('actual') or jsn.has('_actual') then
         result.actualElement := ParseBoolean(jsn['actual'], jsn.vObj['_actual']);{q}
     if jsn.has('code') then
-        result.code := ParseCodeableConcept(jsn.vObj['code']);{q}
+        result.code := ParseCodeableConcept(jsn.vObj['code']);{q3}
     if jsn.has('name') or jsn.has('_name') then
         result.nameElement := ParseString(jsn['name'], jsn.vObj['_name']);{q}
     if jsn.has('quantity') or jsn.has('_quantity') then
@@ -16801,6 +17266,8 @@ begin
   end;
 end;
 
+{$ENDIF FHIR_GROUP}
+{$IFDEF FHIR_HEALTHCARESERVICE}
 procedure TFHIRJsonParser.ParseHealthcareServiceServiceType(jsn : TJsonObject; ctxt : TFHIRObjectList);
 begin
   ctxt.add(ParseHealthcareServiceServiceType(jsn)); {2}
@@ -16821,7 +17288,7 @@ procedure TFHIRJsonParser.ParseHealthcareServiceServiceTypeProperties(jsn : TJso
 begin
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('type') then
-        result.type_ := ParseCodeableConcept(jsn.vObj['type']);{q}
+        result.type_ := ParseCodeableConcept(jsn.vObj['type']);{q3}
     if jsn.has('specialty') then
       iterateArray(jsn.vArr['specialty'], result.specialtyList, parseCodeableConcept);
 end;
@@ -16946,7 +17413,7 @@ begin
     if jsn.has('description') or jsn.has('_description') then
         result.descriptionElement := ParseString(jsn['description'], jsn.vObj['_description']);{q}
     if jsn.has('during') then
-        result.during := ParsePeriod(jsn.vObj['during']);{q}
+        result.during := ParsePeriod(jsn.vObj['during']);{q3}
 end;
 
 procedure TFHIRJsonComposer.ComposeHealthcareServiceNotAvailable(json : TJSONWriter; name : string; elem : TFhirHealthcareServiceNotAvailable; noObj : boolean = false);
@@ -16986,13 +17453,13 @@ begin
     if jsn.has('identifier') then
       iterateArray(jsn.vArr['identifier'], result.identifierList, parseIdentifier);
     if jsn.has('providedBy') then
-        result.providedBy := ParseReference{TFhirOrganization}(jsn.vObj['providedBy']);{q}
+        result.providedBy := ParseReference{TFhirOrganization}(jsn.vObj['providedBy']);{q3}
     if jsn.has('serviceCategory') then
-        result.serviceCategory := ParseCodeableConcept(jsn.vObj['serviceCategory']);{q}
+        result.serviceCategory := ParseCodeableConcept(jsn.vObj['serviceCategory']);{q3}
     if jsn.has('serviceType') then
       iterateArray(jsn.vArr['serviceType'], result.serviceTypeList, parseHealthcareServiceServiceType);
     if jsn.has('location') then
-        result.location := ParseReference{TFhirLocation}(jsn.vObj['location']);{q}
+        result.location := ParseReference{TFhirLocation}(jsn.vObj['location']);{q3}
     if jsn.has('serviceName') or jsn.has('_serviceName') then
         result.serviceNameElement := ParseString(jsn['serviceName'], jsn.vObj['_serviceName']);{q}
     if jsn.has('comment') or jsn.has('_comment') then
@@ -17000,7 +17467,7 @@ begin
     if jsn.has('extraDetails') or jsn.has('_extraDetails') then
         result.extraDetailsElement := ParseString(jsn['extraDetails'], jsn.vObj['_extraDetails']);{q}
     if jsn.has('photo') then
-        result.photo := ParseAttachment(jsn.vObj['photo']);{q}
+        result.photo := ParseAttachment(jsn.vObj['photo']);{q3}
     if jsn.has('telecom') then
       iterateArray(jsn.vArr['telecom'], result.telecomList, parseContactPoint);
     if jsn.has('coverageArea') then
@@ -17008,7 +17475,7 @@ begin
     if jsn.has('serviceProvisionCode') then
       iterateArray(jsn.vArr['serviceProvisionCode'], result.serviceProvisionCodeList, parseCodeableConcept);
     if jsn.has('eligibility') then
-        result.eligibility := ParseCodeableConcept(jsn.vObj['eligibility']);{q}
+        result.eligibility := ParseCodeableConcept(jsn.vObj['eligibility']);{q3}
     if jsn.has('eligibilityNote') or jsn.has('_eligibilityNote') then
         result.eligibilityNoteElement := ParseString(jsn['eligibilityNote'], jsn.vObj['_eligibilityNote']);{q}
       if jsn.has('programName') or jsn.has('_programName') then
@@ -17165,6 +17632,8 @@ begin
     ComposeStringProps(json, 'availabilityExceptions', elem.availabilityExceptionsElement, false);
 end;
 
+{$ENDIF FHIR_HEALTHCARESERVICE}
+{$IFDEF FHIR_IMAGINGOBJECTSELECTION}
 procedure TFHIRJsonParser.ParseImagingObjectSelectionStudy(jsn : TJsonObject; ctxt : TFHIRObjectList);
 begin
   ctxt.add(ParseImagingObjectSelectionStudy(jsn)); {2}
@@ -17189,7 +17658,7 @@ begin
     if jsn.has('url') or jsn.has('_url') then
         result.urlElement := ParseUri(jsn['url'], jsn.vObj['_url']);{q}
     if jsn.has('imagingStudy') then
-        result.imagingStudy := ParseReference{TFhirImagingStudy}(jsn.vObj['imagingStudy']);{q}
+        result.imagingStudy := ParseReference{TFhirImagingStudy}(jsn.vObj['imagingStudy']);{q3}
     if jsn.has('series') then
       iterateArray(jsn.vArr['series'], result.seriesList, parseImagingObjectSelectionStudySeries);
 end;
@@ -17422,13 +17891,13 @@ begin
     if jsn.has('uid') or jsn.has('_uid') then
         result.uidElement := ParseOid(jsn['uid'], jsn.vObj['_uid']);{q}
     if jsn.has('patient') then
-        result.patient := ParseReference{TFhirPatient}(jsn.vObj['patient']);{q}
+        result.patient := ParseReference{TFhirPatient}(jsn.vObj['patient']);{q3}
     if jsn.has('title') then
-        result.title := ParseCodeableConcept(jsn.vObj['title']);{q}
+        result.title := ParseCodeableConcept(jsn.vObj['title']);{q3}
     if jsn.has('description') or jsn.has('_description') then
         result.descriptionElement := ParseString(jsn['description'], jsn.vObj['_description']);{q}
     if jsn.has('author') then
-        result.author := ParseReference{Resource}(jsn.vObj['author']);{q}
+        result.author := ParseReference{Resource}(jsn.vObj['author']);{q3}
     if jsn.has('authoringTime') or jsn.has('_authoringTime') then
         result.authoringTimeElement := ParseDateTime(jsn['authoringTime'], jsn.vObj['_authoringTime']);{q}
     if jsn.has('study') then
@@ -17469,6 +17938,8 @@ begin
   end;
 end;
 
+{$ENDIF FHIR_IMAGINGOBJECTSELECTION}
+{$IFDEF FHIR_IMAGINGSTUDY}
 procedure TFHIRJsonParser.ParseImagingStudySeries(jsn : TJsonObject; ctxt : TFHIRObjectList);
 begin
   ctxt.add(ParseImagingStudySeries(jsn)); {2}
@@ -17491,7 +17962,7 @@ begin
     if jsn.has('number') or jsn.has('_number') then
         result.numberElement := ParseUnsignedInt(jsn['number'], jsn.vObj['_number']);{q}
     if jsn.has('modality') then
-        result.modality := ParseCoding(jsn.vObj['modality']);{q}
+        result.modality := ParseCoding(jsn.vObj['modality']);{q3}
     if jsn.has('uid') or jsn.has('_uid') then
         result.uidElement := ParseOid(jsn['uid'], jsn.vObj['_uid']);{q}
     if jsn.has('description') or jsn.has('_description') then
@@ -17503,9 +17974,9 @@ begin
     if jsn.has('url') or jsn.has('_url') then
         result.urlElement := ParseUri(jsn['url'], jsn.vObj['_url']);{q}
     if jsn.has('bodySite') then
-        result.bodySite := ParseCoding(jsn.vObj['bodySite']);{q}
+        result.bodySite := ParseCoding(jsn.vObj['bodySite']);{q3}
     if jsn.has('laterality') then
-        result.laterality := ParseCoding(jsn.vObj['laterality']);{q}
+        result.laterality := ParseCoding(jsn.vObj['laterality']);{q3}
     if jsn.has('started') or jsn.has('_started') then
         result.startedElement := ParseDateTime(jsn['started'], jsn.vObj['_started']);{q}
     if jsn.has('instance') then
@@ -17657,11 +18128,11 @@ begin
     if jsn.has('started') or jsn.has('_started') then
         result.startedElement := ParseDateTime(jsn['started'], jsn.vObj['_started']);{q}
     if jsn.has('patient') then
-        result.patient := ParseReference{TFhirPatient}(jsn.vObj['patient']);{q}
+        result.patient := ParseReference{TFhirPatient}(jsn.vObj['patient']);{q3}
     if jsn.has('uid') or jsn.has('_uid') then
         result.uidElement := ParseOid(jsn['uid'], jsn.vObj['_uid']);{q}
     if jsn.has('accession') then
-        result.accession := ParseIdentifier(jsn.vObj['accession']);{q}
+        result.accession := ParseIdentifier(jsn.vObj['accession']);{q3}
     if jsn.has('identifier') then
       iterateArray(jsn.vArr['identifier'], result.identifierList, parseIdentifier);
     if jsn.has('order') then
@@ -17669,7 +18140,7 @@ begin
     if jsn.has('modalityList') then
       iterateArray(jsn.vArr['modalityList'], result.modalityListList, parseCoding);
     if jsn.has('referrer') then
-        result.referrer := ParseReference{TFhirPractitioner}(jsn.vObj['referrer']);{q}
+        result.referrer := ParseReference{TFhirPractitioner}(jsn.vObj['referrer']);{q3}
     if jsn.has('availability') or jsn.has('_availability')  then
       result.availabilityElement := parseEnum(jsn.path+'/availability', jsn['availability'], jsn.vObj['_availability'], CODES_TFhirInstanceAvailabilityEnum, SYSTEMS_TFhirInstanceAvailabilityEnum);
     if jsn.has('url') or jsn.has('_url') then
@@ -17681,7 +18152,7 @@ begin
     if jsn.has('procedure') then
       iterateArray(jsn.vArr['procedure'], result.procedure_List, parseReference{TFhirProcedure});
     if jsn.has('interpreter') then
-        result.interpreter := ParseReference{TFhirPractitioner}(jsn.vObj['interpreter']);{q}
+        result.interpreter := ParseReference{TFhirPractitioner}(jsn.vObj['interpreter']);{q3}
     if jsn.has('description') or jsn.has('_description') then
         result.descriptionElement := ParseString(jsn['description'], jsn.vObj['_description']);{q}
     if jsn.has('series') then
@@ -17768,6 +18239,8 @@ begin
   end;
 end;
 
+{$ENDIF FHIR_IMAGINGSTUDY}
+{$IFDEF FHIR_IMMUNIZATION}
 procedure TFHIRJsonParser.ParseImmunizationExplanation(jsn : TJsonObject; ctxt : TFHIRObjectList);
 begin
   ctxt.add(ParseImmunizationExplanation(jsn)); {2}
@@ -17840,7 +18313,7 @@ begin
     if jsn.has('date') or jsn.has('_date') then
         result.dateElement := ParseDateTime(jsn['date'], jsn.vObj['_date']);{q}
     if jsn.has('detail') then
-        result.detail := ParseReference{TFhirObservation}(jsn.vObj['detail']);{q}
+        result.detail := ParseReference{TFhirObservation}(jsn.vObj['detail']);{q3}
     if jsn.has('reported') or jsn.has('_reported') then
         result.reportedElement := ParseBoolean(jsn['reported'], jsn.vObj['_reported']);{q}
 end;
@@ -17888,7 +18361,7 @@ begin
     if jsn.has('description') or jsn.has('_description') then
         result.descriptionElement := ParseString(jsn['description'], jsn.vObj['_description']);{q}
     if jsn.has('authority') then
-        result.authority := ParseReference{TFhirOrganization}(jsn.vObj['authority']);{q}
+        result.authority := ParseReference{TFhirOrganization}(jsn.vObj['authority']);{q3}
     if jsn.has('series') or jsn.has('_series') then
         result.seriesElement := ParseString(jsn['series'], jsn.vObj['_series']);{q}
     if jsn.has('seriesDoses') or jsn.has('_seriesDoses') then
@@ -17896,9 +18369,9 @@ begin
     if jsn.has('targetDisease') then
       iterateArray(jsn.vArr['targetDisease'], result.targetDiseaseList, parseCodeableConcept);
     if jsn.has('doseStatus') then
-        result.doseStatus := ParseCodeableConcept(jsn.vObj['doseStatus']);{q}
+        result.doseStatus := ParseCodeableConcept(jsn.vObj['doseStatus']);{q3}
     if jsn.has('doseStatusReason') then
-        result.doseStatusReason := ParseCodeableConcept(jsn.vObj['doseStatusReason']);{q}
+        result.doseStatusReason := ParseCodeableConcept(jsn.vObj['doseStatusReason']);{q3}
 end;
 
 procedure TFHIRJsonComposer.ComposeImmunizationVaccinationProtocol(json : TJSONWriter; name : string; elem : TFhirImmunizationVaccinationProtocol; noObj : boolean = false);
@@ -17967,37 +18440,37 @@ begin
     if jsn.has('date') or jsn.has('_date') then
         result.dateElement := ParseDateTime(jsn['date'], jsn.vObj['_date']);{q}
     if jsn.has('vaccineCode') then
-        result.vaccineCode := ParseCodeableConcept(jsn.vObj['vaccineCode']);{q}
+        result.vaccineCode := ParseCodeableConcept(jsn.vObj['vaccineCode']);{q3}
     if jsn.has('patient') then
-        result.patient := ParseReference{TFhirPatient}(jsn.vObj['patient']);{q}
+        result.patient := ParseReference{TFhirPatient}(jsn.vObj['patient']);{q3}
     if jsn.has('wasNotGiven') or jsn.has('_wasNotGiven') then
         result.wasNotGivenElement := ParseBoolean(jsn['wasNotGiven'], jsn.vObj['_wasNotGiven']);{q}
     if jsn.has('reported') or jsn.has('_reported') then
         result.reportedElement := ParseBoolean(jsn['reported'], jsn.vObj['_reported']);{q}
     if jsn.has('performer') then
-        result.performer := ParseReference{TFhirPractitioner}(jsn.vObj['performer']);{q}
+        result.performer := ParseReference{TFhirPractitioner}(jsn.vObj['performer']);{q3}
     if jsn.has('requester') then
-        result.requester := ParseReference{TFhirPractitioner}(jsn.vObj['requester']);{q}
+        result.requester := ParseReference{TFhirPractitioner}(jsn.vObj['requester']);{q3}
     if jsn.has('encounter') then
-        result.encounter := ParseReference{TFhirEncounter}(jsn.vObj['encounter']);{q}
+        result.encounter := ParseReference{TFhirEncounter}(jsn.vObj['encounter']);{q3}
     if jsn.has('manufacturer') then
-        result.manufacturer := ParseReference{TFhirOrganization}(jsn.vObj['manufacturer']);{q}
+        result.manufacturer := ParseReference{TFhirOrganization}(jsn.vObj['manufacturer']);{q3}
     if jsn.has('location') then
-        result.location := ParseReference{TFhirLocation}(jsn.vObj['location']);{q}
+        result.location := ParseReference{TFhirLocation}(jsn.vObj['location']);{q3}
     if jsn.has('lotNumber') or jsn.has('_lotNumber') then
         result.lotNumberElement := ParseString(jsn['lotNumber'], jsn.vObj['_lotNumber']);{q}
     if jsn.has('expirationDate') or jsn.has('_expirationDate') then
         result.expirationDateElement := ParseDate(jsn['expirationDate'], jsn.vObj['_expirationDate']);{q}
     if jsn.has('site') then
-        result.site := ParseCodeableConcept(jsn.vObj['site']);{q}
+        result.site := ParseCodeableConcept(jsn.vObj['site']);{q3}
     if jsn.has('route') then
-        result.route := ParseCodeableConcept(jsn.vObj['route']);{q}
+        result.route := ParseCodeableConcept(jsn.vObj['route']);{q3}
     if jsn.has('doseQuantity') then
-        result.doseQuantity := ParseQuantity(jsn.vObj['doseQuantity']);{q}
+        result.doseQuantity := ParseQuantity(jsn.vObj['doseQuantity']);{q3}
     if jsn.has('note') then
       iterateArray(jsn.vArr['note'], result.noteList, parseAnnotation);
     if jsn.has('explanation') then
-        result.explanation := ParseImmunizationExplanation(jsn.vObj['explanation']);{q}
+        result.explanation := ParseImmunizationExplanation(jsn.vObj['explanation']);{q3}
     if jsn.has('reaction') then
       iterateArray(jsn.vArr['reaction'], result.reactionList, parseImmunizationReaction);
     if jsn.has('vaccinationProtocol') then
@@ -18087,6 +18560,8 @@ begin
   end;
 end;
 
+{$ENDIF FHIR_IMMUNIZATION}
+{$IFDEF FHIR_IMMUNIZATIONRECOMMENDATION}
 procedure TFHIRJsonParser.ParseImmunizationRecommendationRecommendation(jsn : TJsonObject; ctxt : TFHIRObjectList);
 begin
   ctxt.add(ParseImmunizationRecommendationRecommendation(jsn)); {2}
@@ -18109,15 +18584,15 @@ begin
     if jsn.has('date') or jsn.has('_date') then
         result.dateElement := ParseDateTime(jsn['date'], jsn.vObj['_date']);{q}
     if jsn.has('vaccineCode') then
-        result.vaccineCode := ParseCodeableConcept(jsn.vObj['vaccineCode']);{q}
+        result.vaccineCode := ParseCodeableConcept(jsn.vObj['vaccineCode']);{q3}
     if jsn.has('doseNumber') or jsn.has('_doseNumber') then
         result.doseNumberElement := ParsePositiveInt(jsn['doseNumber'], jsn.vObj['_doseNumber']);{q}
     if jsn.has('forecastStatus') then
-        result.forecastStatus := ParseCodeableConcept(jsn.vObj['forecastStatus']);{q}
+        result.forecastStatus := ParseCodeableConcept(jsn.vObj['forecastStatus']);{q3}
     if jsn.has('dateCriterion') then
       iterateArray(jsn.vArr['dateCriterion'], result.dateCriterionList, parseImmunizationRecommendationRecommendationDateCriterion);
     if jsn.has('protocol') then
-        result.protocol := ParseImmunizationRecommendationRecommendationProtocol(jsn.vObj['protocol']);{q}
+        result.protocol := ParseImmunizationRecommendationRecommendationProtocol(jsn.vObj['protocol']);{q3}
     if jsn.has('supportingImmunization') then
       iterateArray(jsn.vArr['supportingImmunization'], result.supportingImmunizationList, parseReference{TFhirImmunization});
     if jsn.has('supportingPatientInformation') then
@@ -18190,7 +18665,7 @@ procedure TFHIRJsonParser.ParseImmunizationRecommendationRecommendationDateCrite
 begin
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('code') then
-        result.code := ParseCodeableConcept(jsn.vObj['code']);{q}
+        result.code := ParseCodeableConcept(jsn.vObj['code']);{q3}
     if jsn.has('value') or jsn.has('_value') then
         result.valueElement := ParseDateTime(jsn['value'], jsn.vObj['_value']);{q}
 end;
@@ -18234,7 +18709,7 @@ begin
     if jsn.has('description') or jsn.has('_description') then
         result.descriptionElement := ParseString(jsn['description'], jsn.vObj['_description']);{q}
     if jsn.has('authority') then
-        result.authority := ParseReference{TFhirOrganization}(jsn.vObj['authority']);{q}
+        result.authority := ParseReference{TFhirOrganization}(jsn.vObj['authority']);{q3}
     if jsn.has('series') or jsn.has('_series') then
         result.seriesElement := ParseString(jsn['series'], jsn.vObj['_series']);{q}
 end;
@@ -18284,7 +18759,7 @@ begin
     if jsn.has('identifier') then
       iterateArray(jsn.vArr['identifier'], result.identifierList, parseIdentifier);
     if jsn.has('patient') then
-        result.patient := ParseReference{TFhirPatient}(jsn.vObj['patient']);{q}
+        result.patient := ParseReference{TFhirPatient}(jsn.vObj['patient']);{q3}
     if jsn.has('recommendation') then
       iterateArray(jsn.vArr['recommendation'], result.recommendationList, parseImmunizationRecommendationRecommendation);
 end;
@@ -18314,6 +18789,8 @@ begin
   end;
 end;
 
+{$ENDIF FHIR_IMMUNIZATIONRECOMMENDATION}
+{$IFDEF FHIR_IMPLEMENTATIONGUIDE}
 procedure TFHIRJsonParser.ParseImplementationGuideContact(jsn : TJsonObject; ctxt : TFHIRObjectList);
 begin
   ctxt.add(ParseImplementationGuideContact(jsn)); {2}
@@ -18488,7 +18965,7 @@ begin
     if jsn.has('sourceUri') or jsn.has('_sourceUri') then
       result.source := parseUri(jsn['sourceUri'], jsn.vObj['_sourceUri']);
     if jsn.has('exampleFor') then
-        result.exampleFor := ParseReference{TFhirStructureDefinition}(jsn.vObj['exampleFor']);{q}
+        result.exampleFor := ParseReference{TFhirStructureDefinition}(jsn.vObj['exampleFor']);{q3}
 end;
 
 procedure TFHIRJsonComposer.ComposeImplementationGuidePackageResource(json : TJSONWriter; name : string; elem : TFhirImplementationGuidePackageResource; noObj : boolean = false);
@@ -18547,7 +19024,7 @@ begin
     if jsn.has('type') or jsn.has('_type')  then
       result.type_Element := parseEnum(jsn.path+'/type', jsn['type'], jsn.vObj['_type'], CODES_TFhirResourceTypesEnum, SYSTEMS_TFhirResourceTypesEnum);
     if jsn.has('profile') then
-        result.profile := ParseReference{TFhirStructureDefinition}(jsn.vObj['profile']);{q}
+        result.profile := ParseReference{TFhirStructureDefinition}(jsn.vObj['profile']);{q3}
 end;
 
 procedure TFHIRJsonComposer.ComposeImplementationGuideGlobal(json : TJSONWriter; name : string; elem : TFhirImplementationGuideGlobal; noObj : boolean = false);
@@ -18736,7 +19213,7 @@ begin
       if jsn.has('binary') or jsn.has('_binary') then
       iteratePrimitiveArray(jsn.vArr['binary'], jsn.vArr['_binary'], result.binaryList, parseUri);
     if jsn.has('page') then
-        result.page := ParseImplementationGuidePage(jsn.vObj['page']);{q}
+        result.page := ParseImplementationGuidePage(jsn.vObj['page']);{q3}
 end;
 
 procedure TFHIRJsonComposer.ComposeImplementationGuide(json : TJSONWriter; name : string; elem : TFhirImplementationGuide; noObj : boolean = false);
@@ -18851,6 +19328,8 @@ begin
     ComposeImplementationGuidePage(json, 'page', elem.page); {a}
 end;
 
+{$ENDIF FHIR_IMPLEMENTATIONGUIDE}
+{$IFDEF FHIR_LIST}
 procedure TFHIRJsonParser.ParseListEntry(jsn : TJsonObject; ctxt : TFHIRObjectList);
 begin
   ctxt.add(ParseListEntry(jsn)); {2}
@@ -18871,13 +19350,13 @@ procedure TFHIRJsonParser.ParseListEntryProperties(jsn : TJsonObject; result : T
 begin
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('flag') then
-        result.flag := ParseCodeableConcept(jsn.vObj['flag']);{q}
+        result.flag := ParseCodeableConcept(jsn.vObj['flag']);{q3}
     if jsn.has('deleted') or jsn.has('_deleted') then
         result.deletedElement := ParseBoolean(jsn['deleted'], jsn.vObj['_deleted']);{q}
     if jsn.has('date') or jsn.has('_date') then
         result.dateElement := ParseDateTime(jsn['date'], jsn.vObj['_date']);{q}
     if jsn.has('item') then
-        result.item := ParseReference{TFhirReference}(jsn.vObj['item']);{q}
+        result.item := ParseReference{TFhirReference}(jsn.vObj['item']);{q3}
 end;
 
 procedure TFHIRJsonComposer.ComposeListEntry(json : TJSONWriter; name : string; elem : TFhirListEntry; noObj : boolean = false);
@@ -18925,19 +19404,19 @@ begin
     if jsn.has('title') or jsn.has('_title') then
         result.titleElement := ParseString(jsn['title'], jsn.vObj['_title']);{q}
     if jsn.has('code') then
-        result.code := ParseCodeableConcept(jsn.vObj['code']);{q}
+        result.code := ParseCodeableConcept(jsn.vObj['code']);{q3}
     if jsn.has('subject') then
-        result.subject := ParseReference{Resource}(jsn.vObj['subject']);{q}
+        result.subject := ParseReference{Resource}(jsn.vObj['subject']);{q3}
     if jsn.has('source') then
-        result.source := ParseReference{Resource}(jsn.vObj['source']);{q}
+        result.source := ParseReference{Resource}(jsn.vObj['source']);{q3}
     if jsn.has('encounter') then
-        result.encounter := ParseReference{TFhirEncounter}(jsn.vObj['encounter']);{q}
+        result.encounter := ParseReference{TFhirEncounter}(jsn.vObj['encounter']);{q3}
     if jsn.has('status') or jsn.has('_status')  then
       result.statusElement := parseEnum(jsn.path+'/status', jsn['status'], jsn.vObj['_status'], CODES_TFhirListStatusEnum, SYSTEMS_TFhirListStatusEnum);
     if jsn.has('date') or jsn.has('_date') then
         result.dateElement := ParseDateTime(jsn['date'], jsn.vObj['_date']);{q}
     if jsn.has('orderedBy') then
-        result.orderedBy := ParseCodeableConcept(jsn.vObj['orderedBy']);{q}
+        result.orderedBy := ParseCodeableConcept(jsn.vObj['orderedBy']);{q3}
     if jsn.has('mode') or jsn.has('_mode')  then
       result.modeElement := parseEnum(jsn.path+'/mode', jsn['mode'], jsn.vObj['_mode'], CODES_TFhirListModeEnum, SYSTEMS_TFhirListModeEnum);
     if jsn.has('note') or jsn.has('_note') then
@@ -18945,7 +19424,7 @@ begin
     if jsn.has('entry') then
       iterateArray(jsn.vArr['entry'], result.entryList, parseListEntry);
     if jsn.has('emptyReason') then
-        result.emptyReason := ParseCodeableConcept(jsn.vObj['emptyReason']);{q}
+        result.emptyReason := ParseCodeableConcept(jsn.vObj['emptyReason']);{q3}
 end;
 
 procedure TFHIRJsonComposer.ComposeList(json : TJSONWriter; name : string; elem : TFhirList; noObj : boolean = false);
@@ -19003,6 +19482,8 @@ begin
     ComposeCodeableConcept(json, 'emptyReason', elem.emptyReason); {a}
 end;
 
+{$ENDIF FHIR_LIST}
+{$IFDEF FHIR_LOCATION}
 procedure TFHIRJsonParser.ParseLocationPosition(jsn : TJsonObject; ctxt : TFHIRObjectList);
 begin
   ctxt.add(ParseLocationPosition(jsn)); {2}
@@ -19081,19 +19562,19 @@ begin
     if jsn.has('mode') or jsn.has('_mode')  then
       result.modeElement := parseEnum(jsn.path+'/mode', jsn['mode'], jsn.vObj['_mode'], CODES_TFhirLocationModeEnum, SYSTEMS_TFhirLocationModeEnum);
     if jsn.has('type') then
-        result.type_ := ParseCodeableConcept(jsn.vObj['type']);{q}
+        result.type_ := ParseCodeableConcept(jsn.vObj['type']);{q3}
     if jsn.has('telecom') then
       iterateArray(jsn.vArr['telecom'], result.telecomList, parseContactPoint);
     if jsn.has('address') then
-        result.address := ParseAddress(jsn.vObj['address']);{q}
+        result.address := ParseAddress(jsn.vObj['address']);{q3}
     if jsn.has('physicalType') then
-        result.physicalType := ParseCodeableConcept(jsn.vObj['physicalType']);{q}
+        result.physicalType := ParseCodeableConcept(jsn.vObj['physicalType']);{q3}
     if jsn.has('position') then
-        result.position := ParseLocationPosition(jsn.vObj['position']);{q}
+        result.position := ParseLocationPosition(jsn.vObj['position']);{q3}
     if jsn.has('managingOrganization') then
-        result.managingOrganization := ParseReference{TFhirOrganization}(jsn.vObj['managingOrganization']);{q}
+        result.managingOrganization := ParseReference{TFhirOrganization}(jsn.vObj['managingOrganization']);{q3}
     if jsn.has('partOf') then
-        result.partOf := ParseReference{TFhirLocation}(jsn.vObj['partOf']);{q}
+        result.partOf := ParseReference{TFhirLocation}(jsn.vObj['partOf']);{q3}
 end;
 
 procedure TFHIRJsonComposer.ComposeLocation(json : TJSONWriter; name : string; elem : TFhirLocation; noObj : boolean = false);
@@ -19147,6 +19628,8 @@ begin
     ComposeReference{TFhirLocation}(json, 'partOf', elem.partOf); {a}
 end;
 
+{$ENDIF FHIR_LOCATION}
+{$IFDEF FHIR_MEDIA}
 procedure TFHIRJsonParser.ParseMedia(jsn : TJsonObject; ctxt : TFHIRObjectList);
 begin
   ctxt.add(ParseMedia(jsn)); {2}
@@ -19169,15 +19652,15 @@ begin
     if jsn.has('type') or jsn.has('_type')  then
       result.type_Element := parseEnum(jsn.path+'/type', jsn['type'], jsn.vObj['_type'], CODES_TFhirDigitalMediaTypeEnum, SYSTEMS_TFhirDigitalMediaTypeEnum);
     if jsn.has('subtype') then
-        result.subtype := ParseCodeableConcept(jsn.vObj['subtype']);{q}
+        result.subtype := ParseCodeableConcept(jsn.vObj['subtype']);{q3}
     if jsn.has('identifier') then
       iterateArray(jsn.vArr['identifier'], result.identifierList, parseIdentifier);
     if jsn.has('subject') then
-        result.subject := ParseReference{Resource}(jsn.vObj['subject']);{q}
+        result.subject := ParseReference{Resource}(jsn.vObj['subject']);{q3}
     if jsn.has('operator') then
-        result.operator := ParseReference{TFhirPractitioner}(jsn.vObj['operator']);{q}
+        result.operator := ParseReference{TFhirPractitioner}(jsn.vObj['operator']);{q3}
     if jsn.has('view') then
-        result.view := ParseCodeableConcept(jsn.vObj['view']);{q}
+        result.view := ParseCodeableConcept(jsn.vObj['view']);{q3}
     if jsn.has('deviceName') or jsn.has('_deviceName') then
         result.deviceNameElement := ParseString(jsn['deviceName'], jsn.vObj['_deviceName']);{q}
     if jsn.has('height') or jsn.has('_height') then
@@ -19189,7 +19672,7 @@ begin
     if jsn.has('duration') or jsn.has('_duration') then
         result.durationElement := ParseUnsignedInt(jsn['duration'], jsn.vObj['_duration']);{q}
     if jsn.has('content') then
-        result.content := ParseAttachment(jsn.vObj['content']);{q}
+        result.content := ParseAttachment(jsn.vObj['content']);{q3}
 end;
 
 procedure TFHIRJsonComposer.ComposeMedia(json : TJSONWriter; name : string; elem : TFhirMedia; noObj : boolean = false);
@@ -19242,6 +19725,8 @@ begin
     ComposeAttachment(json, 'content', elem.content); {a}
 end;
 
+{$ENDIF FHIR_MEDIA}
+{$IFDEF FHIR_MEDICATION}
 procedure TFHIRJsonParser.ParseMedicationProduct(jsn : TJsonObject; ctxt : TFHIRObjectList);
 begin
   ctxt.add(ParseMedicationProduct(jsn)); {2}
@@ -19262,7 +19747,7 @@ procedure TFHIRJsonParser.ParseMedicationProductProperties(jsn : TJsonObject; re
 begin
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('form') then
-        result.form := ParseCodeableConcept(jsn.vObj['form']);{q}
+        result.form := ParseCodeableConcept(jsn.vObj['form']);{q3}
     if jsn.has('ingredient') then
       iterateArray(jsn.vArr['ingredient'], result.ingredientList, parseMedicationProductIngredient);
     if jsn.has('batch') then
@@ -19316,9 +19801,9 @@ procedure TFHIRJsonParser.ParseMedicationProductIngredientProperties(jsn : TJson
 begin
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('item') then
-        result.item := ParseReference{Resource}(jsn.vObj['item']);{q}
+        result.item := ParseReference{Resource}(jsn.vObj['item']);{q3}
     if jsn.has('amount') then
-        result.amount := ParseRatio(jsn.vObj['amount']);{q}
+        result.amount := ParseRatio(jsn.vObj['amount']);{q3}
 end;
 
 procedure TFHIRJsonComposer.ComposeMedicationProductIngredient(json : TJSONWriter; name : string; elem : TFhirMedicationProductIngredient; noObj : boolean = false);
@@ -19396,7 +19881,7 @@ procedure TFHIRJsonParser.ParseMedicationPackageProperties(jsn : TJsonObject; re
 begin
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('container') then
-        result.container := ParseCodeableConcept(jsn.vObj['container']);{q}
+        result.container := ParseCodeableConcept(jsn.vObj['container']);{q3}
     if jsn.has('content') then
       iterateArray(jsn.vArr['content'], result.contentList, parseMedicationPackageContent);
 end;
@@ -19441,9 +19926,9 @@ procedure TFHIRJsonParser.ParseMedicationPackageContentProperties(jsn : TJsonObj
 begin
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('item') then
-        result.item := ParseReference{TFhirMedication}(jsn.vObj['item']);{q}
+        result.item := ParseReference{TFhirMedication}(jsn.vObj['item']);{q3}
     if jsn.has('amount') then
-        result.amount := ParseQuantity(jsn.vObj['amount']);{q}
+        result.amount := ParseQuantity(jsn.vObj['amount']);{q3}
 end;
 
 procedure TFHIRJsonComposer.ComposeMedicationPackageContent(json : TJSONWriter; name : string; elem : TFhirMedicationPackageContent; noObj : boolean = false);
@@ -19479,15 +19964,15 @@ procedure TFHIRJsonParser.ParseMedicationProperties(jsn : TJsonObject; result : 
 begin
     ParseDomainResourceProperties(jsn, result);
     if jsn.has('code') then
-        result.code := ParseCodeableConcept(jsn.vObj['code']);{q}
+        result.code := ParseCodeableConcept(jsn.vObj['code']);{q3}
     if jsn.has('isBrand') or jsn.has('_isBrand') then
         result.isBrandElement := ParseBoolean(jsn['isBrand'], jsn.vObj['_isBrand']);{q}
     if jsn.has('manufacturer') then
-        result.manufacturer := ParseReference{TFhirOrganization}(jsn.vObj['manufacturer']);{q}
+        result.manufacturer := ParseReference{TFhirOrganization}(jsn.vObj['manufacturer']);{q3}
     if jsn.has('product') then
-        result.product := ParseMedicationProduct(jsn.vObj['product']);{q}
+        result.product := ParseMedicationProduct(jsn.vObj['product']);{q3}
     if jsn.has('package') then
-        result.package := ParseMedicationPackage(jsn.vObj['package']);{q}
+        result.package := ParseMedicationPackage(jsn.vObj['package']);{q3}
 end;
 
 procedure TFHIRJsonComposer.ComposeMedication(json : TJSONWriter; name : string; elem : TFhirMedication; noObj : boolean = false);
@@ -19509,6 +19994,8 @@ begin
     ComposeMedicationPackage(json, 'package', elem.package); {a}
 end;
 
+{$ENDIF FHIR_MEDICATION}
+{$IFDEF FHIR_MEDICATIONADMINISTRATION}
 procedure TFHIRJsonParser.ParseMedicationAdministrationDosage(jsn : TJsonObject; ctxt : TFHIRObjectList);
 begin
   ctxt.add(ParseMedicationAdministrationDosage(jsn)); {2}
@@ -19535,11 +20022,11 @@ begin
     if jsn.has('siteReference') {a3} then
       result.site := ParseReference(jsn.vObj['siteReference']);
     if jsn.has('route') then
-        result.route := ParseCodeableConcept(jsn.vObj['route']);{q}
+        result.route := ParseCodeableConcept(jsn.vObj['route']);{q3}
     if jsn.has('method') then
-        result.method := ParseCodeableConcept(jsn.vObj['method']);{q}
+        result.method := ParseCodeableConcept(jsn.vObj['method']);{q3}
     if jsn.has('quantity') then
-        result.quantity := ParseQuantity(jsn.vObj['quantity']);{q}
+        result.quantity := ParseQuantity(jsn.vObj['quantity']);{q3}
     if jsn.has('rateRatio') {a4} then
       result.rate := ParseRatio(jsn.vObj['rateRatio']);
     if jsn.has('rateRange') {a4} then
@@ -19597,13 +20084,13 @@ begin
     if jsn.has('status') or jsn.has('_status')  then
       result.statusElement := parseEnum(jsn.path+'/status', jsn['status'], jsn.vObj['_status'], CODES_TFhirMedicationAdminStatusEnum, SYSTEMS_TFhirMedicationAdminStatusEnum);
     if jsn.has('patient') then
-        result.patient := ParseReference{TFhirPatient}(jsn.vObj['patient']);{q}
+        result.patient := ParseReference{TFhirPatient}(jsn.vObj['patient']);{q3}
     if jsn.has('practitioner') then
-        result.practitioner := ParseReference{Resource}(jsn.vObj['practitioner']);{q}
+        result.practitioner := ParseReference{Resource}(jsn.vObj['practitioner']);{q3}
     if jsn.has('encounter') then
-        result.encounter := ParseReference{TFhirEncounter}(jsn.vObj['encounter']);{q}
+        result.encounter := ParseReference{TFhirEncounter}(jsn.vObj['encounter']);{q3}
     if jsn.has('prescription') then
-        result.prescription := ParseReference{TFhirMedicationOrder}(jsn.vObj['prescription']);{q}
+        result.prescription := ParseReference{TFhirMedicationOrder}(jsn.vObj['prescription']);{q3}
     if jsn.has('wasNotGiven') or jsn.has('_wasNotGiven') then
         result.wasNotGivenElement := ParseBoolean(jsn['wasNotGiven'], jsn.vObj['_wasNotGiven']);{q}
     if jsn.has('reasonNotGiven') then
@@ -19623,7 +20110,7 @@ begin
     if jsn.has('note') or jsn.has('_note') then
         result.noteElement := ParseString(jsn['note'], jsn.vObj['_note']);{q}
     if jsn.has('dosage') then
-        result.dosage := ParseMedicationAdministrationDosage(jsn.vObj['dosage']);{q}
+        result.dosage := ParseMedicationAdministrationDosage(jsn.vObj['dosage']);{q3}
 end;
 
 procedure TFHIRJsonComposer.ComposeMedicationAdministration(json : TJSONWriter; name : string; elem : TFhirMedicationAdministration; noObj : boolean = false);
@@ -19696,6 +20183,8 @@ begin
     ComposeMedicationAdministrationDosage(json, 'dosage', elem.dosage); {a}
 end;
 
+{$ENDIF FHIR_MEDICATIONADMINISTRATION}
+{$IFDEF FHIR_MEDICATIONDISPENSE}
 procedure TFHIRJsonParser.ParseMedicationDispenseDosageInstruction(jsn : TJsonObject; ctxt : TFHIRObjectList);
 begin
   ctxt.add(ParseMedicationDispenseDosageInstruction(jsn)); {2}
@@ -19718,9 +20207,9 @@ begin
     if jsn.has('text') or jsn.has('_text') then
         result.textElement := ParseString(jsn['text'], jsn.vObj['_text']);{q}
     if jsn.has('additionalInstructions') then
-        result.additionalInstructions := ParseCodeableConcept(jsn.vObj['additionalInstructions']);{q}
+        result.additionalInstructions := ParseCodeableConcept(jsn.vObj['additionalInstructions']);{q3}
     if jsn.has('timing') then
-        result.timing := ParseTiming(jsn.vObj['timing']);{q}
+        result.timing := ParseTiming(jsn.vObj['timing']);{q3}
     if jsn.has('asNeededCodeableConcept') {a4} then
       result.asNeeded := ParseCodeableConcept(jsn.vObj['asNeededCodeableConcept']);
     if jsn.has('asNeededBoolean') or jsn.has('_asNeededBoolean') then
@@ -19730,9 +20219,9 @@ begin
     if jsn.has('siteReference') {a3} then
       result.site := ParseReference(jsn.vObj['siteReference']);
     if jsn.has('route') then
-        result.route := ParseCodeableConcept(jsn.vObj['route']);{q}
+        result.route := ParseCodeableConcept(jsn.vObj['route']);{q3}
     if jsn.has('method') then
-        result.method := ParseCodeableConcept(jsn.vObj['method']);{q}
+        result.method := ParseCodeableConcept(jsn.vObj['method']);{q3}
     if jsn.has('doseRange') {a4} then
       result.dose := ParseRange(jsn.vObj['doseRange']);
     if jsn.has('doseQuantity') {a4} then
@@ -19742,7 +20231,7 @@ begin
     if jsn.has('rateRange') {a4} then
       result.rate := ParseRange(jsn.vObj['rateRange']);
     if jsn.has('maxDosePerPeriod') then
-        result.maxDosePerPeriod := ParseRatio(jsn.vObj['maxDosePerPeriod']);{q}
+        result.maxDosePerPeriod := ParseRatio(jsn.vObj['maxDosePerPeriod']);{q3}
 end;
 
 procedure TFHIRJsonComposer.ComposeMedicationDispenseDosageInstruction(json : TJSONWriter; name : string; elem : TFhirMedicationDispenseDosageInstruction; noObj : boolean = false);
@@ -19807,7 +20296,7 @@ procedure TFHIRJsonParser.ParseMedicationDispenseSubstitutionProperties(jsn : TJ
 begin
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('type') then
-        result.type_ := ParseCodeableConcept(jsn.vObj['type']);{q}
+        result.type_ := ParseCodeableConcept(jsn.vObj['type']);{q3}
     if jsn.has('reason') then
       iterateArray(jsn.vArr['reason'], result.reasonList, parseCodeableConcept);
     if jsn.has('responsibleParty') then
@@ -19861,21 +20350,21 @@ procedure TFHIRJsonParser.ParseMedicationDispenseProperties(jsn : TJsonObject; r
 begin
     ParseDomainResourceProperties(jsn, result);
     if jsn.has('identifier') then
-        result.identifier := ParseIdentifier(jsn.vObj['identifier']);{q}
+        result.identifier := ParseIdentifier(jsn.vObj['identifier']);{q3}
     if jsn.has('status') or jsn.has('_status')  then
       result.statusElement := parseEnum(jsn.path+'/status', jsn['status'], jsn.vObj['_status'], CODES_TFhirMedicationDispenseStatusEnum, SYSTEMS_TFhirMedicationDispenseStatusEnum);
     if jsn.has('patient') then
-        result.patient := ParseReference{TFhirPatient}(jsn.vObj['patient']);{q}
+        result.patient := ParseReference{TFhirPatient}(jsn.vObj['patient']);{q3}
     if jsn.has('dispenser') then
-        result.dispenser := ParseReference{TFhirPractitioner}(jsn.vObj['dispenser']);{q}
+        result.dispenser := ParseReference{TFhirPractitioner}(jsn.vObj['dispenser']);{q3}
     if jsn.has('authorizingPrescription') then
       iterateArray(jsn.vArr['authorizingPrescription'], result.authorizingPrescriptionList, parseReference{TFhirMedicationOrder});
     if jsn.has('type') then
-        result.type_ := ParseCodeableConcept(jsn.vObj['type']);{q}
+        result.type_ := ParseCodeableConcept(jsn.vObj['type']);{q3}
     if jsn.has('quantity') then
-        result.quantity := ParseQuantity(jsn.vObj['quantity']);{q}
+        result.quantity := ParseQuantity(jsn.vObj['quantity']);{q3}
     if jsn.has('daysSupply') then
-        result.daysSupply := ParseQuantity(jsn.vObj['daysSupply']);{q}
+        result.daysSupply := ParseQuantity(jsn.vObj['daysSupply']);{q3}
     if jsn.has('medicationCodeableConcept') {a4} then
       result.medication := ParseCodeableConcept(jsn.vObj['medicationCodeableConcept']);
     if jsn.has('medicationReference') {a3} then
@@ -19885,7 +20374,7 @@ begin
     if jsn.has('whenHandedOver') or jsn.has('_whenHandedOver') then
         result.whenHandedOverElement := ParseDateTime(jsn['whenHandedOver'], jsn.vObj['_whenHandedOver']);{q}
     if jsn.has('destination') then
-        result.destination := ParseReference{TFhirLocation}(jsn.vObj['destination']);{q}
+        result.destination := ParseReference{TFhirLocation}(jsn.vObj['destination']);{q3}
     if jsn.has('receiver') then
       iterateArray(jsn.vArr['receiver'], result.receiverList, parseReference{Resource});
     if jsn.has('note') or jsn.has('_note') then
@@ -19893,7 +20382,7 @@ begin
     if jsn.has('dosageInstruction') then
       iterateArray(jsn.vArr['dosageInstruction'], result.dosageInstructionList, parseMedicationDispenseDosageInstruction);
     if jsn.has('substitution') then
-        result.substitution := ParseMedicationDispenseSubstitution(jsn.vObj['substitution']);{q}
+        result.substitution := ParseMedicationDispenseSubstitution(jsn.vObj['substitution']);{q3}
 end;
 
 procedure TFHIRJsonComposer.ComposeMedicationDispense(json : TJSONWriter; name : string; elem : TFhirMedicationDispense; noObj : boolean = false);
@@ -19962,6 +20451,8 @@ begin
     ComposeMedicationDispenseSubstitution(json, 'substitution', elem.substitution); {a}
 end;
 
+{$ENDIF FHIR_MEDICATIONDISPENSE}
+{$IFDEF FHIR_MEDICATIONORDER}
 procedure TFHIRJsonParser.ParseMedicationOrderDosageInstruction(jsn : TJsonObject; ctxt : TFHIRObjectList);
 begin
   ctxt.add(ParseMedicationOrderDosageInstruction(jsn)); {2}
@@ -19984,9 +20475,9 @@ begin
     if jsn.has('text') or jsn.has('_text') then
         result.textElement := ParseString(jsn['text'], jsn.vObj['_text']);{q}
     if jsn.has('additionalInstructions') then
-        result.additionalInstructions := ParseCodeableConcept(jsn.vObj['additionalInstructions']);{q}
+        result.additionalInstructions := ParseCodeableConcept(jsn.vObj['additionalInstructions']);{q3}
     if jsn.has('timing') then
-        result.timing := ParseTiming(jsn.vObj['timing']);{q}
+        result.timing := ParseTiming(jsn.vObj['timing']);{q3}
     if jsn.has('asNeededCodeableConcept') {a4} then
       result.asNeeded := ParseCodeableConcept(jsn.vObj['asNeededCodeableConcept']);
     if jsn.has('asNeededBoolean') or jsn.has('_asNeededBoolean') then
@@ -19996,9 +20487,9 @@ begin
     if jsn.has('siteReference') {a3} then
       result.site := ParseReference(jsn.vObj['siteReference']);
     if jsn.has('route') then
-        result.route := ParseCodeableConcept(jsn.vObj['route']);{q}
+        result.route := ParseCodeableConcept(jsn.vObj['route']);{q3}
     if jsn.has('method') then
-        result.method := ParseCodeableConcept(jsn.vObj['method']);{q}
+        result.method := ParseCodeableConcept(jsn.vObj['method']);{q3}
     if jsn.has('doseRange') {a4} then
       result.dose := ParseRange(jsn.vObj['doseRange']);
     if jsn.has('doseQuantity') {a4} then
@@ -20008,7 +20499,7 @@ begin
     if jsn.has('rateRange') {a4} then
       result.rate := ParseRange(jsn.vObj['rateRange']);
     if jsn.has('maxDosePerPeriod') then
-        result.maxDosePerPeriod := ParseRatio(jsn.vObj['maxDosePerPeriod']);{q}
+        result.maxDosePerPeriod := ParseRatio(jsn.vObj['maxDosePerPeriod']);{q3}
 end;
 
 procedure TFHIRJsonComposer.ComposeMedicationOrderDosageInstruction(json : TJSONWriter; name : string; elem : TFhirMedicationOrderDosageInstruction; noObj : boolean = false);
@@ -20077,13 +20568,13 @@ begin
     if jsn.has('medicationReference') {a3} then
       result.medication := ParseReference(jsn.vObj['medicationReference']);
     if jsn.has('validityPeriod') then
-        result.validityPeriod := ParsePeriod(jsn.vObj['validityPeriod']);{q}
+        result.validityPeriod := ParsePeriod(jsn.vObj['validityPeriod']);{q3}
     if jsn.has('numberOfRepeatsAllowed') or jsn.has('_numberOfRepeatsAllowed') then
         result.numberOfRepeatsAllowedElement := ParsePositiveInt(jsn['numberOfRepeatsAllowed'], jsn.vObj['_numberOfRepeatsAllowed']);{q}
     if jsn.has('quantity') then
-        result.quantity := ParseQuantity(jsn.vObj['quantity']);{q}
+        result.quantity := ParseQuantity(jsn.vObj['quantity']);{q3}
     if jsn.has('expectedSupplyDuration') then
-        result.expectedSupplyDuration := ParseQuantity(jsn.vObj['expectedSupplyDuration']);{q}
+        result.expectedSupplyDuration := ParseQuantity(jsn.vObj['expectedSupplyDuration']);{q3}
 end;
 
 procedure TFHIRJsonComposer.ComposeMedicationOrderDispenseRequest(json : TJSONWriter; name : string; elem : TFhirMedicationOrderDispenseRequest; noObj : boolean = false);
@@ -20129,9 +20620,9 @@ procedure TFHIRJsonParser.ParseMedicationOrderSubstitutionProperties(jsn : TJson
 begin
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('type') then
-        result.type_ := ParseCodeableConcept(jsn.vObj['type']);{q}
+        result.type_ := ParseCodeableConcept(jsn.vObj['type']);{q3}
     if jsn.has('reason') then
-        result.reason := ParseCodeableConcept(jsn.vObj['reason']);{q}
+        result.reason := ParseCodeableConcept(jsn.vObj['reason']);{q3}
 end;
 
 procedure TFHIRJsonComposer.ComposeMedicationOrderSubstitution(json : TJSONWriter; name : string; elem : TFhirMedicationOrderSubstitution; noObj : boolean = false);
@@ -20175,13 +20666,13 @@ begin
     if jsn.has('dateEnded') or jsn.has('_dateEnded') then
         result.dateEndedElement := ParseDateTime(jsn['dateEnded'], jsn.vObj['_dateEnded']);{q}
     if jsn.has('reasonEnded') then
-        result.reasonEnded := ParseCodeableConcept(jsn.vObj['reasonEnded']);{q}
+        result.reasonEnded := ParseCodeableConcept(jsn.vObj['reasonEnded']);{q3}
     if jsn.has('patient') then
-        result.patient := ParseReference{TFhirPatient}(jsn.vObj['patient']);{q}
+        result.patient := ParseReference{TFhirPatient}(jsn.vObj['patient']);{q3}
     if jsn.has('prescriber') then
-        result.prescriber := ParseReference{TFhirPractitioner}(jsn.vObj['prescriber']);{q}
+        result.prescriber := ParseReference{TFhirPractitioner}(jsn.vObj['prescriber']);{q3}
     if jsn.has('encounter') then
-        result.encounter := ParseReference{TFhirEncounter}(jsn.vObj['encounter']);{q}
+        result.encounter := ParseReference{TFhirEncounter}(jsn.vObj['encounter']);{q3}
     if jsn.has('reasonCodeableConcept') {a4} then
       result.reason := ParseCodeableConcept(jsn.vObj['reasonCodeableConcept']);
     if jsn.has('reasonReference') {a3} then
@@ -20195,11 +20686,11 @@ begin
     if jsn.has('dosageInstruction') then
       iterateArray(jsn.vArr['dosageInstruction'], result.dosageInstructionList, parseMedicationOrderDosageInstruction);
     if jsn.has('dispenseRequest') then
-        result.dispenseRequest := ParseMedicationOrderDispenseRequest(jsn.vObj['dispenseRequest']);{q}
+        result.dispenseRequest := ParseMedicationOrderDispenseRequest(jsn.vObj['dispenseRequest']);{q3}
     if jsn.has('substitution') then
-        result.substitution := ParseMedicationOrderSubstitution(jsn.vObj['substitution']);{q}
+        result.substitution := ParseMedicationOrderSubstitution(jsn.vObj['substitution']);{q3}
     if jsn.has('priorPrescription') then
-        result.priorPrescription := ParseReference{TFhirMedicationOrder}(jsn.vObj['priorPrescription']);{q}
+        result.priorPrescription := ParseReference{TFhirMedicationOrder}(jsn.vObj['priorPrescription']);{q3}
 end;
 
 procedure TFHIRJsonComposer.ComposeMedicationOrder(json : TJSONWriter; name : string; elem : TFhirMedicationOrder; noObj : boolean = false);
@@ -20263,6 +20754,8 @@ begin
     ComposeReference{TFhirMedicationOrder}(json, 'priorPrescription', elem.priorPrescription); {a}
 end;
 
+{$ENDIF FHIR_MEDICATIONORDER}
+{$IFDEF FHIR_MEDICATIONSTATEMENT}
 procedure TFHIRJsonParser.ParseMedicationStatementDosage(jsn : TJsonObject; ctxt : TFHIRObjectList);
 begin
   ctxt.add(ParseMedicationStatementDosage(jsn)); {2}
@@ -20285,7 +20778,7 @@ begin
     if jsn.has('text') or jsn.has('_text') then
         result.textElement := ParseString(jsn['text'], jsn.vObj['_text']);{q}
     if jsn.has('timing') then
-        result.timing := ParseTiming(jsn.vObj['timing']);{q}
+        result.timing := ParseTiming(jsn.vObj['timing']);{q3}
     if jsn.has('asNeededCodeableConcept') {a4} then
       result.asNeeded := ParseCodeableConcept(jsn.vObj['asNeededCodeableConcept']);
     if jsn.has('asNeededBoolean') or jsn.has('_asNeededBoolean') then
@@ -20295,9 +20788,9 @@ begin
     if jsn.has('siteReference') {a3} then
       result.site := ParseReference(jsn.vObj['siteReference']);
     if jsn.has('route') then
-        result.route := ParseCodeableConcept(jsn.vObj['route']);{q}
+        result.route := ParseCodeableConcept(jsn.vObj['route']);{q3}
     if jsn.has('method') then
-        result.method := ParseCodeableConcept(jsn.vObj['method']);{q}
+        result.method := ParseCodeableConcept(jsn.vObj['method']);{q3}
     if jsn.has('quantityQuantity') {a4} then
       result.quantity := ParseQuantity(jsn.vObj['quantityQuantity']);
     if jsn.has('quantityRange') {a4} then
@@ -20307,7 +20800,7 @@ begin
     if jsn.has('rateRange') {a4} then
       result.rate := ParseRange(jsn.vObj['rateRange']);
     if jsn.has('maxDosePerPeriod') then
-        result.maxDosePerPeriod := ParseRatio(jsn.vObj['maxDosePerPeriod']);{q}
+        result.maxDosePerPeriod := ParseRatio(jsn.vObj['maxDosePerPeriod']);{q3}
 end;
 
 procedure TFHIRJsonComposer.ComposeMedicationStatementDosage(json : TJSONWriter; name : string; elem : TFhirMedicationStatementDosage; noObj : boolean = false);
@@ -20372,9 +20865,9 @@ begin
     if jsn.has('identifier') then
       iterateArray(jsn.vArr['identifier'], result.identifierList, parseIdentifier);
     if jsn.has('patient') then
-        result.patient := ParseReference{TFhirPatient}(jsn.vObj['patient']);{q}
+        result.patient := ParseReference{TFhirPatient}(jsn.vObj['patient']);{q3}
     if jsn.has('informationSource') then
-        result.informationSource := ParseReference{Resource}(jsn.vObj['informationSource']);{q}
+        result.informationSource := ParseReference{Resource}(jsn.vObj['informationSource']);{q3}
     if jsn.has('dateAsserted') or jsn.has('_dateAsserted') then
         result.dateAssertedElement := ParseDateTime(jsn['dateAsserted'], jsn.vObj['_dateAsserted']);{q}
     if jsn.has('status') or jsn.has('_status')  then
@@ -20475,6 +20968,8 @@ begin
   end;
 end;
 
+{$ENDIF FHIR_MEDICATIONSTATEMENT}
+{$IFDEF FHIR_MESSAGEHEADER}
 procedure TFHIRJsonParser.ParseMessageHeaderResponse(jsn : TJsonObject; ctxt : TFHIRObjectList);
 begin
   ctxt.add(ParseMessageHeaderResponse(jsn)); {2}
@@ -20499,7 +20994,7 @@ begin
     if jsn.has('code') or jsn.has('_code')  then
       result.codeElement := parseEnum(jsn.path+'/code', jsn['code'], jsn.vObj['_code'], CODES_TFhirResponseCodeEnum, SYSTEMS_TFhirResponseCodeEnum);
     if jsn.has('details') then
-        result.details := ParseReference{TFhirOperationOutcome}(jsn.vObj['details']);{q}
+        result.details := ParseReference{TFhirOperationOutcome}(jsn.vObj['details']);{q3}
 end;
 
 procedure TFHIRJsonComposer.ComposeMessageHeaderResponse(json : TJSONWriter; name : string; elem : TFhirMessageHeaderResponse; noObj : boolean = false);
@@ -20547,7 +21042,7 @@ begin
     if jsn.has('version') or jsn.has('_version') then
         result.versionElement := ParseString(jsn['version'], jsn.vObj['_version']);{q}
     if jsn.has('contact') then
-        result.contact := ParseContactPoint(jsn.vObj['contact']);{q}
+        result.contact := ParseContactPoint(jsn.vObj['contact']);{q3}
     if jsn.has('endpoint') or jsn.has('_endpoint') then
         result.endpointElement := ParseUri(jsn['endpoint'], jsn.vObj['_endpoint']);{q}
 end;
@@ -20601,7 +21096,7 @@ begin
     if jsn.has('name') or jsn.has('_name') then
         result.nameElement := ParseString(jsn['name'], jsn.vObj['_name']);{q}
     if jsn.has('target') then
-        result.target := ParseReference{TFhirDevice}(jsn.vObj['target']);{q}
+        result.target := ParseReference{TFhirDevice}(jsn.vObj['target']);{q3}
     if jsn.has('endpoint') or jsn.has('_endpoint') then
         result.endpointElement := ParseUri(jsn['endpoint'], jsn.vObj['_endpoint']);{q}
 end;
@@ -20647,23 +21142,23 @@ begin
     if jsn.has('timestamp') or jsn.has('_timestamp') then
         result.timestampElement := ParseInstant(jsn['timestamp'], jsn.vObj['_timestamp']);{q}
     if jsn.has('event') then
-        result.event := ParseCoding(jsn.vObj['event']);{q}
+        result.event := ParseCoding(jsn.vObj['event']);{q3}
     if jsn.has('response') then
-        result.response := ParseMessageHeaderResponse(jsn.vObj['response']);{q}
+        result.response := ParseMessageHeaderResponse(jsn.vObj['response']);{q3}
     if jsn.has('source') then
-        result.source := ParseMessageHeaderSource(jsn.vObj['source']);{q}
+        result.source := ParseMessageHeaderSource(jsn.vObj['source']);{q3}
     if jsn.has('destination') then
       iterateArray(jsn.vArr['destination'], result.destinationList, parseMessageHeaderDestination);
     if jsn.has('enterer') then
-        result.enterer := ParseReference{TFhirPractitioner}(jsn.vObj['enterer']);{q}
+        result.enterer := ParseReference{TFhirPractitioner}(jsn.vObj['enterer']);{q3}
     if jsn.has('author') then
-        result.author := ParseReference{TFhirPractitioner}(jsn.vObj['author']);{q}
+        result.author := ParseReference{TFhirPractitioner}(jsn.vObj['author']);{q3}
     if jsn.has('receiver') then
-        result.receiver := ParseReference{Resource}(jsn.vObj['receiver']);{q}
+        result.receiver := ParseReference{Resource}(jsn.vObj['receiver']);{q3}
     if jsn.has('responsible') then
-        result.responsible := ParseReference{Resource}(jsn.vObj['responsible']);{q}
+        result.responsible := ParseReference{Resource}(jsn.vObj['responsible']);{q3}
     if jsn.has('reason') then
-        result.reason := ParseCodeableConcept(jsn.vObj['reason']);{q}
+        result.reason := ParseCodeableConcept(jsn.vObj['reason']);{q3}
     if jsn.has('data') then
       iterateArray(jsn.vArr['data'], result.dataList, parseReference{TFhirReference});
 end;
@@ -20711,6 +21206,8 @@ begin
   end;
 end;
 
+{$ENDIF FHIR_MESSAGEHEADER}
+{$IFDEF FHIR_NAMINGSYSTEM}
 procedure TFHIRJsonParser.ParseNamingSystemContact(jsn : TJsonObject; ctxt : TFHIRObjectList);
 begin
   ctxt.add(ParseNamingSystemContact(jsn)); {2}
@@ -20784,7 +21281,7 @@ begin
     if jsn.has('preferred') or jsn.has('_preferred') then
         result.preferredElement := ParseBoolean(jsn['preferred'], jsn.vObj['_preferred']);{q}
     if jsn.has('period') then
-        result.period := ParsePeriod(jsn.vObj['period']);{q}
+        result.period := ParsePeriod(jsn.vObj['period']);{q3}
 end;
 
 procedure TFHIRJsonComposer.ComposeNamingSystemUniqueId(json : TJSONWriter; name : string; elem : TFhirNamingSystemUniqueId; noObj : boolean = false);
@@ -20844,7 +21341,7 @@ begin
     if jsn.has('date') or jsn.has('_date') then
         result.dateElement := ParseDateTime(jsn['date'], jsn.vObj['_date']);{q}
     if jsn.has('type') then
-        result.type_ := ParseCodeableConcept(jsn.vObj['type']);{q}
+        result.type_ := ParseCodeableConcept(jsn.vObj['type']);{q3}
     if jsn.has('description') or jsn.has('_description') then
         result.descriptionElement := ParseString(jsn['description'], jsn.vObj['_description']);{q}
     if jsn.has('useContext') then
@@ -20854,7 +21351,7 @@ begin
     if jsn.has('uniqueId') then
       iterateArray(jsn.vArr['uniqueId'], result.uniqueIdList, parseNamingSystemUniqueId);
     if jsn.has('replacedBy') then
-        result.replacedBy := ParseReference{TFhirNamingSystem}(jsn.vObj['replacedBy']);{q}
+        result.replacedBy := ParseReference{TFhirNamingSystem}(jsn.vObj['replacedBy']);{q3}
 end;
 
 procedure TFHIRJsonComposer.ComposeNamingSystem(json : TJSONWriter; name : string; elem : TFhirNamingSystem; noObj : boolean = false);
@@ -20923,6 +21420,8 @@ begin
     ComposeReference{TFhirNamingSystem}(json, 'replacedBy', elem.replacedBy); {a}
 end;
 
+{$ENDIF FHIR_NAMINGSYSTEM}
+{$IFDEF FHIR_NUTRITIONORDER}
 procedure TFHIRJsonParser.ParseNutritionOrderOralDiet(jsn : TJsonObject; ctxt : TFHIRObjectList);
 begin
   ctxt.add(ParseNutritionOrderOralDiet(jsn)); {2}
@@ -21026,9 +21525,9 @@ procedure TFHIRJsonParser.ParseNutritionOrderOralDietNutrientProperties(jsn : TJ
 begin
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('modifier') then
-        result.modifier := ParseCodeableConcept(jsn.vObj['modifier']);{q}
+        result.modifier := ParseCodeableConcept(jsn.vObj['modifier']);{q3}
     if jsn.has('amount') then
-        result.amount := ParseQuantity(jsn.vObj['amount']);{q}
+        result.amount := ParseQuantity(jsn.vObj['amount']);{q3}
 end;
 
 procedure TFHIRJsonComposer.ComposeNutritionOrderOralDietNutrient(json : TJSONWriter; name : string; elem : TFhirNutritionOrderOralDietNutrient; noObj : boolean = false);
@@ -21064,9 +21563,9 @@ procedure TFHIRJsonParser.ParseNutritionOrderOralDietTextureProperties(jsn : TJs
 begin
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('modifier') then
-        result.modifier := ParseCodeableConcept(jsn.vObj['modifier']);{q}
+        result.modifier := ParseCodeableConcept(jsn.vObj['modifier']);{q3}
     if jsn.has('foodType') then
-        result.foodType := ParseCodeableConcept(jsn.vObj['foodType']);{q}
+        result.foodType := ParseCodeableConcept(jsn.vObj['foodType']);{q3}
 end;
 
 procedure TFHIRJsonComposer.ComposeNutritionOrderOralDietTexture(json : TJSONWriter; name : string; elem : TFhirNutritionOrderOralDietTexture; noObj : boolean = false);
@@ -21102,13 +21601,13 @@ procedure TFHIRJsonParser.ParseNutritionOrderSupplementProperties(jsn : TJsonObj
 begin
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('type') then
-        result.type_ := ParseCodeableConcept(jsn.vObj['type']);{q}
+        result.type_ := ParseCodeableConcept(jsn.vObj['type']);{q3}
     if jsn.has('productName') or jsn.has('_productName') then
         result.productNameElement := ParseString(jsn['productName'], jsn.vObj['_productName']);{q}
     if jsn.has('schedule') then
       iterateArray(jsn.vArr['schedule'], result.scheduleList, parseTiming);
     if jsn.has('quantity') then
-        result.quantity := ParseQuantity(jsn.vObj['quantity']);{q}
+        result.quantity := ParseQuantity(jsn.vObj['quantity']);{q3}
     if jsn.has('instruction') or jsn.has('_instruction') then
         result.instructionElement := ParseString(jsn['instruction'], jsn.vObj['_instruction']);{q}
 end;
@@ -21163,21 +21662,21 @@ procedure TFHIRJsonParser.ParseNutritionOrderEnteralFormulaProperties(jsn : TJso
 begin
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('baseFormulaType') then
-        result.baseFormulaType := ParseCodeableConcept(jsn.vObj['baseFormulaType']);{q}
+        result.baseFormulaType := ParseCodeableConcept(jsn.vObj['baseFormulaType']);{q3}
     if jsn.has('baseFormulaProductName') or jsn.has('_baseFormulaProductName') then
         result.baseFormulaProductNameElement := ParseString(jsn['baseFormulaProductName'], jsn.vObj['_baseFormulaProductName']);{q}
     if jsn.has('additiveType') then
-        result.additiveType := ParseCodeableConcept(jsn.vObj['additiveType']);{q}
+        result.additiveType := ParseCodeableConcept(jsn.vObj['additiveType']);{q3}
     if jsn.has('additiveProductName') or jsn.has('_additiveProductName') then
         result.additiveProductNameElement := ParseString(jsn['additiveProductName'], jsn.vObj['_additiveProductName']);{q}
     if jsn.has('caloricDensity') then
-        result.caloricDensity := ParseQuantity(jsn.vObj['caloricDensity']);{q}
+        result.caloricDensity := ParseQuantity(jsn.vObj['caloricDensity']);{q3}
     if jsn.has('routeofAdministration') then
-        result.routeofAdministration := ParseCodeableConcept(jsn.vObj['routeofAdministration']);{q}
+        result.routeofAdministration := ParseCodeableConcept(jsn.vObj['routeofAdministration']);{q3}
     if jsn.has('administration') then
       iterateArray(jsn.vArr['administration'], result.administrationList, parseNutritionOrderEnteralFormulaAdministration);
     if jsn.has('maxVolumeToDeliver') then
-        result.maxVolumeToDeliver := ParseQuantity(jsn.vObj['maxVolumeToDeliver']);{q}
+        result.maxVolumeToDeliver := ParseQuantity(jsn.vObj['maxVolumeToDeliver']);{q3}
     if jsn.has('administrationInstruction') or jsn.has('_administrationInstruction') then
         result.administrationInstructionElement := ParseString(jsn['administrationInstruction'], jsn.vObj['_administrationInstruction']);{q}
 end;
@@ -21242,9 +21741,9 @@ procedure TFHIRJsonParser.ParseNutritionOrderEnteralFormulaAdministrationPropert
 begin
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('schedule') then
-        result.schedule := ParseTiming(jsn.vObj['schedule']);{q}
+        result.schedule := ParseTiming(jsn.vObj['schedule']);{q3}
     if jsn.has('quantity') then
-        result.quantity := ParseQuantity(jsn.vObj['quantity']);{q}
+        result.quantity := ParseQuantity(jsn.vObj['quantity']);{q3}
     if jsn.has('rateQuantity') {a4} then
       result.rate := ParseQuantity(jsn.vObj['rateQuantity']);
     if jsn.has('rateRatio') {a4} then
@@ -21288,13 +21787,13 @@ procedure TFHIRJsonParser.ParseNutritionOrderProperties(jsn : TJsonObject; resul
 begin
     ParseDomainResourceProperties(jsn, result);
     if jsn.has('patient') then
-        result.patient := ParseReference{TFhirPatient}(jsn.vObj['patient']);{q}
+        result.patient := ParseReference{TFhirPatient}(jsn.vObj['patient']);{q3}
     if jsn.has('orderer') then
-        result.orderer := ParseReference{TFhirPractitioner}(jsn.vObj['orderer']);{q}
+        result.orderer := ParseReference{TFhirPractitioner}(jsn.vObj['orderer']);{q3}
     if jsn.has('identifier') then
       iterateArray(jsn.vArr['identifier'], result.identifierList, parseIdentifier);
     if jsn.has('encounter') then
-        result.encounter := ParseReference{TFhirEncounter}(jsn.vObj['encounter']);{q}
+        result.encounter := ParseReference{TFhirEncounter}(jsn.vObj['encounter']);{q3}
     if jsn.has('dateTime') or jsn.has('_dateTime') then
         result.dateTimeElement := ParseDateTime(jsn['dateTime'], jsn.vObj['_dateTime']);{q}
     if jsn.has('status') or jsn.has('_status')  then
@@ -21306,11 +21805,11 @@ begin
     if jsn.has('excludeFoodModifier') then
       iterateArray(jsn.vArr['excludeFoodModifier'], result.excludeFoodModifierList, parseCodeableConcept);
     if jsn.has('oralDiet') then
-        result.oralDiet := ParseNutritionOrderOralDiet(jsn.vObj['oralDiet']);{q}
+        result.oralDiet := ParseNutritionOrderOralDiet(jsn.vObj['oralDiet']);{q3}
     if jsn.has('supplement') then
       iterateArray(jsn.vArr['supplement'], result.supplementList, parseNutritionOrderSupplement);
     if jsn.has('enteralFormula') then
-        result.enteralFormula := ParseNutritionOrderEnteralFormula(jsn.vObj['enteralFormula']);{q}
+        result.enteralFormula := ParseNutritionOrderEnteralFormula(jsn.vObj['enteralFormula']);{q3}
 end;
 
 procedure TFHIRJsonComposer.ComposeNutritionOrder(json : TJSONWriter; name : string; elem : TFhirNutritionOrder; noObj : boolean = false);
@@ -21375,6 +21874,8 @@ begin
     ComposeNutritionOrderEnteralFormula(json, 'enteralFormula', elem.enteralFormula); {a}
 end;
 
+{$ENDIF FHIR_NUTRITIONORDER}
+{$IFDEF FHIR_OBSERVATION}
 procedure TFHIRJsonParser.ParseObservationReferenceRange(jsn : TJsonObject; ctxt : TFHIRObjectList);
 begin
   ctxt.add(ParseObservationReferenceRange(jsn)); {2}
@@ -21395,13 +21896,13 @@ procedure TFHIRJsonParser.ParseObservationReferenceRangeProperties(jsn : TJsonOb
 begin
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('low') then
-        result.low := ParseQuantity(jsn.vObj['low']);{q}
+        result.low := ParseQuantity(jsn.vObj['low']);{q3}
     if jsn.has('high') then
-        result.high := ParseQuantity(jsn.vObj['high']);{q}
+        result.high := ParseQuantity(jsn.vObj['high']);{q3}
     if jsn.has('meaning') then
-        result.meaning := ParseCodeableConcept(jsn.vObj['meaning']);{q}
+        result.meaning := ParseCodeableConcept(jsn.vObj['meaning']);{q3}
     if jsn.has('age') then
-        result.age := ParseRange(jsn.vObj['age']);{q}
+        result.age := ParseRange(jsn.vObj['age']);{q3}
     if jsn.has('text') or jsn.has('_text') then
         result.textElement := ParseString(jsn['text'], jsn.vObj['_text']);{q}
 end;
@@ -21449,7 +21950,7 @@ begin
     if jsn.has('type') or jsn.has('_type')  then
       result.type_Element := parseEnum(jsn.path+'/type', jsn['type'], jsn.vObj['_type'], CODES_TFhirObservationRelationshiptypesEnum, SYSTEMS_TFhirObservationRelationshiptypesEnum);
     if jsn.has('target') then
-        result.target := ParseReference{Resource}(jsn.vObj['target']);{q}
+        result.target := ParseReference{Resource}(jsn.vObj['target']);{q3}
 end;
 
 procedure TFHIRJsonComposer.ComposeObservationRelated(json : TJSONWriter; name : string; elem : TFhirObservationRelated; noObj : boolean = false);
@@ -21487,7 +21988,7 @@ procedure TFHIRJsonParser.ParseObservationComponentProperties(jsn : TJsonObject;
 begin
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('code') then
-        result.code := ParseCodeableConcept(jsn.vObj['code']);{q}
+        result.code := ParseCodeableConcept(jsn.vObj['code']);{q3}
     if jsn.has('valueQuantity') {a4} then
       result.value := ParseQuantity(jsn.vObj['valueQuantity']);
     if jsn.has('valueCodeableConcept') {a4} then
@@ -21509,7 +22010,7 @@ begin
     if jsn.has('valueDateTime') or jsn.has('_valueDateTime') then
       result.value := parseDateTime(jsn['valueDateTime'], jsn.vObj['_valueDateTime']);
     if jsn.has('dataAbsentReason') then
-        result.dataAbsentReason := ParseCodeableConcept(jsn.vObj['dataAbsentReason']);{q}
+        result.dataAbsentReason := ParseCodeableConcept(jsn.vObj['dataAbsentReason']);{q3}
     if jsn.has('referenceRange') then
       iterateArray(jsn.vArr['referenceRange'], result.referenceRangeList, parseObservationReferenceRange);
 end;
@@ -21589,13 +22090,13 @@ begin
     if jsn.has('status') or jsn.has('_status')  then
       result.statusElement := parseEnum(jsn.path+'/status', jsn['status'], jsn.vObj['_status'], CODES_TFhirObservationStatusEnum, SYSTEMS_TFhirObservationStatusEnum);
     if jsn.has('category') then
-        result.category := ParseCodeableConcept(jsn.vObj['category']);{q}
+        result.category := ParseCodeableConcept(jsn.vObj['category']);{q3}
     if jsn.has('code') then
-        result.code := ParseCodeableConcept(jsn.vObj['code']);{q}
+        result.code := ParseCodeableConcept(jsn.vObj['code']);{q3}
     if jsn.has('subject') then
-        result.subject := ParseReference{Resource}(jsn.vObj['subject']);{q}
+        result.subject := ParseReference{Resource}(jsn.vObj['subject']);{q3}
     if jsn.has('encounter') then
-        result.encounter := ParseReference{TFhirEncounter}(jsn.vObj['encounter']);{q}
+        result.encounter := ParseReference{TFhirEncounter}(jsn.vObj['encounter']);{q3}
     if jsn.has('effectivePeriod') {a4} then
       result.effective := ParsePeriod(jsn.vObj['effectivePeriod']);
     if jsn.has('effectiveDateTime') or jsn.has('_effectiveDateTime') then
@@ -21625,19 +22126,19 @@ begin
     if jsn.has('valueDateTime') or jsn.has('_valueDateTime') then
       result.value := parseDateTime(jsn['valueDateTime'], jsn.vObj['_valueDateTime']);
     if jsn.has('dataAbsentReason') then
-        result.dataAbsentReason := ParseCodeableConcept(jsn.vObj['dataAbsentReason']);{q}
+        result.dataAbsentReason := ParseCodeableConcept(jsn.vObj['dataAbsentReason']);{q3}
     if jsn.has('interpretation') then
-        result.interpretation := ParseCodeableConcept(jsn.vObj['interpretation']);{q}
+        result.interpretation := ParseCodeableConcept(jsn.vObj['interpretation']);{q3}
     if jsn.has('comments') or jsn.has('_comments') then
         result.commentsElement := ParseString(jsn['comments'], jsn.vObj['_comments']);{q}
     if jsn.has('bodySite') then
-        result.bodySite := ParseCodeableConcept(jsn.vObj['bodySite']);{q}
+        result.bodySite := ParseCodeableConcept(jsn.vObj['bodySite']);{q3}
     if jsn.has('method') then
-        result.method := ParseCodeableConcept(jsn.vObj['method']);{q}
+        result.method := ParseCodeableConcept(jsn.vObj['method']);{q3}
     if jsn.has('specimen') then
-        result.specimen := ParseReference{TFhirSpecimen}(jsn.vObj['specimen']);{q}
+        result.specimen := ParseReference{TFhirSpecimen}(jsn.vObj['specimen']);{q3}
     if jsn.has('device') then
-        result.device := ParseReference{Resource}(jsn.vObj['device']);{q}
+        result.device := ParseReference{Resource}(jsn.vObj['device']);{q3}
     if jsn.has('referenceRange') then
       iterateArray(jsn.vArr['referenceRange'], result.referenceRangeList, parseObservationReferenceRange);
     if jsn.has('related') then
@@ -21758,6 +22259,8 @@ begin
   end;
 end;
 
+{$ENDIF FHIR_OBSERVATION}
+{$IFDEF FHIR_OPERATIONDEFINITION}
 procedure TFHIRJsonParser.ParseOperationDefinitionContact(jsn : TJsonObject; ctxt : TFHIRObjectList);
 begin
   ctxt.add(ParseOperationDefinitionContact(jsn)); {2}
@@ -21837,9 +22340,9 @@ begin
     if jsn.has('type') or jsn.has('_type')  then
       result.type_Element := parseEnum(jsn.path+'/type', jsn['type'], jsn.vObj['_type'], CODES_TFhirOperationParameterTypeEnum, SYSTEMS_TFhirOperationParameterTypeEnum);
     if jsn.has('profile') then
-        result.profile := ParseReference{TFhirStructureDefinition}(jsn.vObj['profile']);{q}
+        result.profile := ParseReference{TFhirStructureDefinition}(jsn.vObj['profile']);{q3}
     if jsn.has('binding') then
-        result.binding := ParseOperationDefinitionParameterBinding(jsn.vObj['binding']);{q}
+        result.binding := ParseOperationDefinitionParameterBinding(jsn.vObj['binding']);{q3}
     if jsn.has('part') then
       iterateArray(jsn.vArr['part'], result.partList, parseOperationDefinitionParameter);
 end;
@@ -21985,7 +22488,7 @@ begin
     if jsn.has('notes') or jsn.has('_notes') then
         result.notesElement := ParseString(jsn['notes'], jsn.vObj['_notes']);{q}
     if jsn.has('base') then
-        result.base := ParseReference{TFhirOperationDefinition}(jsn.vObj['base']);{q}
+        result.base := ParseReference{TFhirOperationDefinition}(jsn.vObj['base']);{q3}
     if jsn.has('system') or jsn.has('_system') then
         result.systemElement := ParseBoolean(jsn['system'], jsn.vObj['_system']);{q}
     if jsn.has('type') or jsn.has('_type') then
@@ -22107,6 +22610,8 @@ begin
   end;
 end;
 
+{$ENDIF FHIR_OPERATIONDEFINITION}
+{$IFDEF FHIR_OPERATIONOUTCOME}
 procedure TFHIRJsonParser.ParseOperationOutcomeIssue(jsn : TJsonObject; ctxt : TFHIRObjectList);
 begin
   ctxt.add(ParseOperationOutcomeIssue(jsn)); {2}
@@ -22131,7 +22636,7 @@ begin
     if jsn.has('code') or jsn.has('_code')  then
       result.codeElement := parseEnum(jsn.path+'/code', jsn['code'], jsn.vObj['_code'], CODES_TFhirIssueTypeEnum, SYSTEMS_TFhirIssueTypeEnum);
     if jsn.has('details') then
-        result.details := ParseCodeableConcept(jsn.vObj['details']);{q}
+        result.details := ParseCodeableConcept(jsn.vObj['details']);{q3}
     if jsn.has('diagnostics') or jsn.has('_diagnostics') then
         result.diagnosticsElement := ParseString(jsn['diagnostics'], jsn.vObj['_diagnostics']);{q}
       if jsn.has('location') or jsn.has('_location') then
@@ -22228,6 +22733,8 @@ begin
   end;
 end;
 
+{$ENDIF FHIR_OPERATIONOUTCOME}
+{$IFDEF FHIR_ORDER}
 procedure TFHIRJsonParser.ParseOrderWhen(jsn : TJsonObject; ctxt : TFHIRObjectList);
 begin
   ctxt.add(ParseOrderWhen(jsn)); {2}
@@ -22248,9 +22755,9 @@ procedure TFHIRJsonParser.ParseOrderWhenProperties(jsn : TJsonObject; result : T
 begin
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('code') then
-        result.code := ParseCodeableConcept(jsn.vObj['code']);{q}
+        result.code := ParseCodeableConcept(jsn.vObj['code']);{q3}
     if jsn.has('schedule') then
-        result.schedule := ParseTiming(jsn.vObj['schedule']);{q}
+        result.schedule := ParseTiming(jsn.vObj['schedule']);{q3}
 end;
 
 procedure TFHIRJsonComposer.ComposeOrderWhen(json : TJSONWriter; name : string; elem : TFhirOrderWhen; noObj : boolean = false);
@@ -22290,17 +22797,17 @@ begin
     if jsn.has('date') or jsn.has('_date') then
         result.dateElement := ParseDateTime(jsn['date'], jsn.vObj['_date']);{q}
     if jsn.has('subject') then
-        result.subject := ParseReference{Resource}(jsn.vObj['subject']);{q}
+        result.subject := ParseReference{Resource}(jsn.vObj['subject']);{q3}
     if jsn.has('source') then
-        result.source := ParseReference{Resource}(jsn.vObj['source']);{q}
+        result.source := ParseReference{Resource}(jsn.vObj['source']);{q3}
     if jsn.has('target') then
-        result.target := ParseReference{Resource}(jsn.vObj['target']);{q}
+        result.target := ParseReference{Resource}(jsn.vObj['target']);{q3}
     if jsn.has('reasonCodeableConcept') {a4} then
       result.reason := ParseCodeableConcept(jsn.vObj['reasonCodeableConcept']);
     if jsn.has('reasonReference') {a3} then
       result.reason := ParseReference(jsn.vObj['reasonReference']);
     if jsn.has('when') then
-        result.when := ParseOrderWhen(jsn.vObj['when']);{q}
+        result.when := ParseOrderWhen(jsn.vObj['when']);{q3}
     if jsn.has('detail') then
       iterateArray(jsn.vArr['detail'], result.detailList, parseReference{TFhirReference});
 end;
@@ -22344,6 +22851,8 @@ begin
   end;
 end;
 
+{$ENDIF FHIR_ORDER}
+{$IFDEF FHIR_ORDERRESPONSE}
 procedure TFHIRJsonParser.ParseOrderResponse(jsn : TJsonObject; ctxt : TFHIRObjectList);
 begin
   ctxt.add(ParseOrderResponse(jsn)); {2}
@@ -22366,11 +22875,11 @@ begin
     if jsn.has('identifier') then
       iterateArray(jsn.vArr['identifier'], result.identifierList, parseIdentifier);
     if jsn.has('request') then
-        result.request := ParseReference{TFhirOrder}(jsn.vObj['request']);{q}
+        result.request := ParseReference{TFhirOrder}(jsn.vObj['request']);{q3}
     if jsn.has('date') or jsn.has('_date') then
         result.dateElement := ParseDateTime(jsn['date'], jsn.vObj['_date']);{q}
     if jsn.has('who') then
-        result.who := ParseReference{Resource}(jsn.vObj['who']);{q}
+        result.who := ParseReference{Resource}(jsn.vObj['who']);{q3}
     if jsn.has('orderStatus') or jsn.has('_orderStatus')  then
       result.orderStatusElement := parseEnum(jsn.path+'/orderStatus', jsn['orderStatus'], jsn.vObj['_orderStatus'], CODES_TFhirOrderStatusEnum, SYSTEMS_TFhirOrderStatusEnum);
     if jsn.has('description') or jsn.has('_description') then
@@ -22418,6 +22927,8 @@ begin
   end;
 end;
 
+{$ENDIF FHIR_ORDERRESPONSE}
+{$IFDEF FHIR_ORGANIZATION}
 procedure TFHIRJsonParser.ParseOrganizationContact(jsn : TJsonObject; ctxt : TFHIRObjectList);
 begin
   ctxt.add(ParseOrganizationContact(jsn)); {2}
@@ -22438,13 +22949,13 @@ procedure TFHIRJsonParser.ParseOrganizationContactProperties(jsn : TJsonObject; 
 begin
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('purpose') then
-        result.purpose := ParseCodeableConcept(jsn.vObj['purpose']);{q}
+        result.purpose := ParseCodeableConcept(jsn.vObj['purpose']);{q3}
     if jsn.has('name') then
-        result.name := ParseHumanName(jsn.vObj['name']);{q}
+        result.name := ParseHumanName(jsn.vObj['name']);{q3}
     if jsn.has('telecom') then
       iterateArray(jsn.vArr['telecom'], result.telecomList, parseContactPoint);
     if jsn.has('address') then
-        result.address := ParseAddress(jsn.vObj['address']);{q}
+        result.address := ParseAddress(jsn.vObj['address']);{q3}
 end;
 
 procedure TFHIRJsonComposer.ComposeOrganizationContact(json : TJSONWriter; name : string; elem : TFhirOrganizationContact; noObj : boolean = false);
@@ -22495,7 +23006,7 @@ begin
     if jsn.has('active') or jsn.has('_active') then
         result.activeElement := ParseBoolean(jsn['active'], jsn.vObj['_active']);{q}
     if jsn.has('type') then
-        result.type_ := ParseCodeableConcept(jsn.vObj['type']);{q}
+        result.type_ := ParseCodeableConcept(jsn.vObj['type']);{q3}
     if jsn.has('name') or jsn.has('_name') then
         result.nameElement := ParseString(jsn['name'], jsn.vObj['_name']);{q}
     if jsn.has('telecom') then
@@ -22503,7 +23014,7 @@ begin
     if jsn.has('address') then
       iterateArray(jsn.vArr['address'], result.addressList, parseAddress);
     if jsn.has('partOf') then
-        result.partOf := ParseReference{TFhirOrganization}(jsn.vObj['partOf']);{q}
+        result.partOf := ParseReference{TFhirOrganization}(jsn.vObj['partOf']);{q3}
     if jsn.has('contact') then
       iterateArray(jsn.vArr['contact'], result.contactList, parseOrganizationContact);
 end;
@@ -22557,6 +23068,8 @@ begin
   end;
 end;
 
+{$ENDIF FHIR_ORGANIZATION}
+{$IFDEF FHIR_PATIENT}
 procedure TFHIRJsonParser.ParsePatientContact(jsn : TJsonObject; ctxt : TFHIRObjectList);
 begin
   ctxt.add(ParsePatientContact(jsn)); {2}
@@ -22579,17 +23092,17 @@ begin
     if jsn.has('relationship') then
       iterateArray(jsn.vArr['relationship'], result.relationshipList, parseCodeableConcept);
     if jsn.has('name') then
-        result.name := ParseHumanName(jsn.vObj['name']);{q}
+        result.name := ParseHumanName(jsn.vObj['name']);{q3}
     if jsn.has('telecom') then
       iterateArray(jsn.vArr['telecom'], result.telecomList, parseContactPoint);
     if jsn.has('address') then
-        result.address := ParseAddress(jsn.vObj['address']);{q}
+        result.address := ParseAddress(jsn.vObj['address']);{q3}
     if jsn.has('gender') or jsn.has('_gender')  then
       result.genderElement := parseEnum(jsn.path+'/gender', jsn['gender'], jsn.vObj['_gender'], CODES_TFhirAdministrativeGenderEnum, SYSTEMS_TFhirAdministrativeGenderEnum);
     if jsn.has('organization') then
-        result.organization := ParseReference{TFhirOrganization}(jsn.vObj['organization']);{q}
+        result.organization := ParseReference{TFhirOrganization}(jsn.vObj['organization']);{q3}
     if jsn.has('period') then
-        result.period := ParsePeriod(jsn.vObj['period']);{q}
+        result.period := ParsePeriod(jsn.vObj['period']);{q3}
 end;
 
 procedure TFHIRJsonComposer.ComposePatientContact(json : TJSONWriter; name : string; elem : TFhirPatientContact; noObj : boolean = false);
@@ -22649,11 +23162,11 @@ procedure TFHIRJsonParser.ParsePatientAnimalProperties(jsn : TJsonObject; result
 begin
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('species') then
-        result.species := ParseCodeableConcept(jsn.vObj['species']);{q}
+        result.species := ParseCodeableConcept(jsn.vObj['species']);{q3}
     if jsn.has('breed') then
-        result.breed := ParseCodeableConcept(jsn.vObj['breed']);{q}
+        result.breed := ParseCodeableConcept(jsn.vObj['breed']);{q3}
     if jsn.has('genderStatus') then
-        result.genderStatus := ParseCodeableConcept(jsn.vObj['genderStatus']);{q}
+        result.genderStatus := ParseCodeableConcept(jsn.vObj['genderStatus']);{q3}
 end;
 
 procedure TFHIRJsonComposer.ComposePatientAnimal(json : TJSONWriter; name : string; elem : TFhirPatientAnimal; noObj : boolean = false);
@@ -22691,7 +23204,7 @@ procedure TFHIRJsonParser.ParsePatientCommunicationProperties(jsn : TJsonObject;
 begin
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('language') then
-        result.language := ParseCodeableConcept(jsn.vObj['language']);{q}
+        result.language := ParseCodeableConcept(jsn.vObj['language']);{q3}
     if jsn.has('preferred') or jsn.has('_preferred') then
         result.preferredElement := ParseBoolean(jsn['preferred'], jsn.vObj['_preferred']);{q}
 end;
@@ -22731,7 +23244,7 @@ procedure TFHIRJsonParser.ParsePatientLinkProperties(jsn : TJsonObject; result :
 begin
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('other') then
-        result.other := ParseReference{TFhirPatient}(jsn.vObj['other']);{q}
+        result.other := ParseReference{TFhirPatient}(jsn.vObj['other']);{q3}
     if jsn.has('type') or jsn.has('_type')  then
       result.type_Element := parseEnum(jsn.path+'/type', jsn['type'], jsn.vObj['_type'], CODES_TFhirLinkTypeEnum, SYSTEMS_TFhirLinkTypeEnum);
 end;
@@ -22789,7 +23302,7 @@ begin
     if jsn.has('address') then
       iterateArray(jsn.vArr['address'], result.addressList, parseAddress);
     if jsn.has('maritalStatus') then
-        result.maritalStatus := ParseCodeableConcept(jsn.vObj['maritalStatus']);{q}
+        result.maritalStatus := ParseCodeableConcept(jsn.vObj['maritalStatus']);{q3}
     if jsn.has('multipleBirthBoolean') or jsn.has('_multipleBirthBoolean') then
       result.multipleBirth := parseBoolean(jsn['multipleBirthBoolean'], jsn.vObj['_multipleBirthBoolean']);
     if jsn.has('multipleBirthInteger') or jsn.has('_multipleBirthInteger') then
@@ -22799,13 +23312,13 @@ begin
     if jsn.has('contact') then
       iterateArray(jsn.vArr['contact'], result.contactList, parsePatientContact);
     if jsn.has('animal') then
-        result.animal := ParsePatientAnimal(jsn.vObj['animal']);{q}
+        result.animal := ParsePatientAnimal(jsn.vObj['animal']);{q3}
     if jsn.has('communication') then
       iterateArray(jsn.vArr['communication'], result.communicationList, parsePatientCommunication);
     if jsn.has('careProvider') then
       iterateArray(jsn.vArr['careProvider'], result.careProviderList, parseReference{Resource});
     if jsn.has('managingOrganization') then
-        result.managingOrganization := ParseReference{TFhirOrganization}(jsn.vObj['managingOrganization']);{q}
+        result.managingOrganization := ParseReference{TFhirOrganization}(jsn.vObj['managingOrganization']);{q3}
     if jsn.has('link') then
       iterateArray(jsn.vArr['link'], result.link_List, parsePatientLink);
 end;
@@ -22920,6 +23433,8 @@ begin
   end;
 end;
 
+{$ENDIF FHIR_PATIENT}
+{$IFDEF FHIR_PAYMENTNOTICE}
 procedure TFHIRJsonParser.ParsePaymentNotice(jsn : TJsonObject; ctxt : TFHIRObjectList);
 begin
   ctxt.add(ParsePaymentNotice(jsn)); {2}
@@ -22942,23 +23457,23 @@ begin
     if jsn.has('identifier') then
       iterateArray(jsn.vArr['identifier'], result.identifierList, parseIdentifier);
     if jsn.has('ruleset') then
-        result.ruleset := ParseCoding(jsn.vObj['ruleset']);{q}
+        result.ruleset := ParseCoding(jsn.vObj['ruleset']);{q3}
     if jsn.has('originalRuleset') then
-        result.originalRuleset := ParseCoding(jsn.vObj['originalRuleset']);{q}
+        result.originalRuleset := ParseCoding(jsn.vObj['originalRuleset']);{q3}
     if jsn.has('created') or jsn.has('_created') then
         result.createdElement := ParseDateTime(jsn['created'], jsn.vObj['_created']);{q}
     if jsn.has('target') then
-        result.target := ParseReference{TFhirOrganization}(jsn.vObj['target']);{q}
+        result.target := ParseReference{TFhirOrganization}(jsn.vObj['target']);{q3}
     if jsn.has('provider') then
-        result.provider := ParseReference{TFhirPractitioner}(jsn.vObj['provider']);{q}
+        result.provider := ParseReference{TFhirPractitioner}(jsn.vObj['provider']);{q3}
     if jsn.has('organization') then
-        result.organization := ParseReference{TFhirOrganization}(jsn.vObj['organization']);{q}
+        result.organization := ParseReference{TFhirOrganization}(jsn.vObj['organization']);{q3}
     if jsn.has('request') then
-        result.request := ParseReference{TFhirReference}(jsn.vObj['request']);{q}
+        result.request := ParseReference{TFhirReference}(jsn.vObj['request']);{q3}
     if jsn.has('response') then
-        result.response := ParseReference{TFhirReference}(jsn.vObj['response']);{q}
+        result.response := ParseReference{TFhirReference}(jsn.vObj['response']);{q3}
     if jsn.has('paymentStatus') then
-        result.paymentStatus := ParseCoding(jsn.vObj['paymentStatus']);{q}
+        result.paymentStatus := ParseCoding(jsn.vObj['paymentStatus']);{q3}
 end;
 
 procedure TFHIRJsonComposer.ComposePaymentNotice(json : TJSONWriter; name : string; elem : TFhirPaymentNotice; noObj : boolean = false);
@@ -22997,6 +23512,8 @@ begin
     ComposeCoding(json, 'paymentStatus', elem.paymentStatus); {a}
 end;
 
+{$ENDIF FHIR_PAYMENTNOTICE}
+{$IFDEF FHIR_PAYMENTRECONCILIATION}
 procedure TFHIRJsonParser.ParsePaymentReconciliationDetail(jsn : TJsonObject; ctxt : TFHIRObjectList);
 begin
   ctxt.add(ParsePaymentReconciliationDetail(jsn)); {2}
@@ -23017,19 +23534,19 @@ procedure TFHIRJsonParser.ParsePaymentReconciliationDetailProperties(jsn : TJson
 begin
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('type') then
-        result.type_ := ParseCoding(jsn.vObj['type']);{q}
+        result.type_ := ParseCoding(jsn.vObj['type']);{q3}
     if jsn.has('request') then
-        result.request := ParseReference{TFhirReference}(jsn.vObj['request']);{q}
+        result.request := ParseReference{TFhirReference}(jsn.vObj['request']);{q3}
     if jsn.has('responce') then
-        result.responce := ParseReference{TFhirReference}(jsn.vObj['responce']);{q}
+        result.responce := ParseReference{TFhirReference}(jsn.vObj['responce']);{q3}
     if jsn.has('submitter') then
-        result.submitter := ParseReference{TFhirOrganization}(jsn.vObj['submitter']);{q}
+        result.submitter := ParseReference{TFhirOrganization}(jsn.vObj['submitter']);{q3}
     if jsn.has('payee') then
-        result.payee := ParseReference{TFhirOrganization}(jsn.vObj['payee']);{q}
+        result.payee := ParseReference{TFhirOrganization}(jsn.vObj['payee']);{q3}
     if jsn.has('date') or jsn.has('_date') then
         result.dateElement := ParseDate(jsn['date'], jsn.vObj['_date']);{q}
     if jsn.has('amount') then
-        result.amount := ParseQuantity(jsn.vObj['amount']);{q}
+        result.amount := ParseQuantity(jsn.vObj['amount']);{q3}
 end;
 
 procedure TFHIRJsonComposer.ComposePaymentReconciliationDetail(json : TJSONWriter; name : string; elem : TFhirPaymentReconciliationDetail; noObj : boolean = false);
@@ -23077,7 +23594,7 @@ procedure TFHIRJsonParser.ParsePaymentReconciliationNoteProperties(jsn : TJsonOb
 begin
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('type') then
-        result.type_ := ParseCoding(jsn.vObj['type']);{q}
+        result.type_ := ParseCoding(jsn.vObj['type']);{q3}
     if jsn.has('text') or jsn.has('_text') then
         result.textElement := ParseString(jsn['text'], jsn.vObj['_text']);{q}
 end;
@@ -23119,31 +23636,31 @@ begin
     if jsn.has('identifier') then
       iterateArray(jsn.vArr['identifier'], result.identifierList, parseIdentifier);
     if jsn.has('request') then
-        result.request := ParseReference{TFhirProcessRequest}(jsn.vObj['request']);{q}
+        result.request := ParseReference{TFhirProcessRequest}(jsn.vObj['request']);{q3}
     if jsn.has('outcome') or jsn.has('_outcome')  then
       result.outcomeElement := parseEnum(jsn.path+'/outcome', jsn['outcome'], jsn.vObj['_outcome'], CODES_TFhirRemittanceOutcomeEnum, SYSTEMS_TFhirRemittanceOutcomeEnum);
     if jsn.has('disposition') or jsn.has('_disposition') then
         result.dispositionElement := ParseString(jsn['disposition'], jsn.vObj['_disposition']);{q}
     if jsn.has('ruleset') then
-        result.ruleset := ParseCoding(jsn.vObj['ruleset']);{q}
+        result.ruleset := ParseCoding(jsn.vObj['ruleset']);{q3}
     if jsn.has('originalRuleset') then
-        result.originalRuleset := ParseCoding(jsn.vObj['originalRuleset']);{q}
+        result.originalRuleset := ParseCoding(jsn.vObj['originalRuleset']);{q3}
     if jsn.has('created') or jsn.has('_created') then
         result.createdElement := ParseDateTime(jsn['created'], jsn.vObj['_created']);{q}
     if jsn.has('period') then
-        result.period := ParsePeriod(jsn.vObj['period']);{q}
+        result.period := ParsePeriod(jsn.vObj['period']);{q3}
     if jsn.has('organization') then
-        result.organization := ParseReference{TFhirOrganization}(jsn.vObj['organization']);{q}
+        result.organization := ParseReference{TFhirOrganization}(jsn.vObj['organization']);{q3}
     if jsn.has('requestProvider') then
-        result.requestProvider := ParseReference{TFhirPractitioner}(jsn.vObj['requestProvider']);{q}
+        result.requestProvider := ParseReference{TFhirPractitioner}(jsn.vObj['requestProvider']);{q3}
     if jsn.has('requestOrganization') then
-        result.requestOrganization := ParseReference{TFhirOrganization}(jsn.vObj['requestOrganization']);{q}
+        result.requestOrganization := ParseReference{TFhirOrganization}(jsn.vObj['requestOrganization']);{q3}
     if jsn.has('detail') then
       iterateArray(jsn.vArr['detail'], result.detailList, parsePaymentReconciliationDetail);
     if jsn.has('form') then
-        result.form := ParseCoding(jsn.vObj['form']);{q}
+        result.form := ParseCoding(jsn.vObj['form']);{q3}
     if jsn.has('total') then
-        result.total := ParseQuantity(jsn.vObj['total']);{q}
+        result.total := ParseQuantity(jsn.vObj['total']);{q3}
     if jsn.has('note') then
       iterateArray(jsn.vArr['note'], result.noteList, parsePaymentReconciliationNote);
 end;
@@ -23208,6 +23725,8 @@ begin
   end;
 end;
 
+{$ENDIF FHIR_PAYMENTRECONCILIATION}
+{$IFDEF FHIR_PERSON}
 procedure TFHIRJsonParser.ParsePersonLink(jsn : TJsonObject; ctxt : TFHIRObjectList);
 begin
   ctxt.add(ParsePersonLink(jsn)); {2}
@@ -23228,7 +23747,7 @@ procedure TFHIRJsonParser.ParsePersonLinkProperties(jsn : TJsonObject; result : 
 begin
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('target') then
-        result.target := ParseReference{Resource}(jsn.vObj['target']);{q}
+        result.target := ParseReference{Resource}(jsn.vObj['target']);{q3}
     if jsn.has('assurance') or jsn.has('_assurance')  then
       result.assuranceElement := parseEnum(jsn.path+'/assurance', jsn['assurance'], jsn.vObj['_assurance'], CODES_TFhirIdentityAssuranceLevelEnum, SYSTEMS_TFhirIdentityAssuranceLevelEnum);
 end;
@@ -23280,9 +23799,9 @@ begin
     if jsn.has('address') then
       iterateArray(jsn.vArr['address'], result.addressList, parseAddress);
     if jsn.has('photo') then
-        result.photo := ParseAttachment(jsn.vObj['photo']);{q}
+        result.photo := ParseAttachment(jsn.vObj['photo']);{q3}
     if jsn.has('managingOrganization') then
-        result.managingOrganization := ParseReference{TFhirOrganization}(jsn.vObj['managingOrganization']);{q}
+        result.managingOrganization := ParseReference{TFhirOrganization}(jsn.vObj['managingOrganization']);{q3}
     if jsn.has('active') or jsn.has('_active') then
         result.activeElement := ParseBoolean(jsn['active'], jsn.vObj['_active']);{q}
     if jsn.has('link') then
@@ -23349,6 +23868,8 @@ begin
   end;
 end;
 
+{$ENDIF FHIR_PERSON}
+{$IFDEF FHIR_PRACTITIONER}
 procedure TFHIRJsonParser.ParsePractitionerPractitionerRole(jsn : TJsonObject; ctxt : TFHIRObjectList);
 begin
   ctxt.add(ParsePractitionerPractitionerRole(jsn)); {2}
@@ -23369,13 +23890,13 @@ procedure TFHIRJsonParser.ParsePractitionerPractitionerRoleProperties(jsn : TJso
 begin
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('managingOrganization') then
-        result.managingOrganization := ParseReference{TFhirOrganization}(jsn.vObj['managingOrganization']);{q}
+        result.managingOrganization := ParseReference{TFhirOrganization}(jsn.vObj['managingOrganization']);{q3}
     if jsn.has('role') then
-        result.role := ParseCodeableConcept(jsn.vObj['role']);{q}
+        result.role := ParseCodeableConcept(jsn.vObj['role']);{q3}
     if jsn.has('specialty') then
       iterateArray(jsn.vArr['specialty'], result.specialtyList, parseCodeableConcept);
     if jsn.has('period') then
-        result.period := ParsePeriod(jsn.vObj['period']);{q}
+        result.period := ParsePeriod(jsn.vObj['period']);{q3}
     if jsn.has('location') then
       iterateArray(jsn.vArr['location'], result.locationList, parseReference{TFhirLocation});
     if jsn.has('healthcareService') then
@@ -23442,11 +23963,11 @@ begin
     if jsn.has('identifier') then
       iterateArray(jsn.vArr['identifier'], result.identifierList, parseIdentifier);
     if jsn.has('code') then
-        result.code := ParseCodeableConcept(jsn.vObj['code']);{q}
+        result.code := ParseCodeableConcept(jsn.vObj['code']);{q3}
     if jsn.has('period') then
-        result.period := ParsePeriod(jsn.vObj['period']);{q}
+        result.period := ParsePeriod(jsn.vObj['period']);{q3}
     if jsn.has('issuer') then
-        result.issuer := ParseReference{TFhirOrganization}(jsn.vObj['issuer']);{q}
+        result.issuer := ParseReference{TFhirOrganization}(jsn.vObj['issuer']);{q3}
 end;
 
 procedure TFHIRJsonComposer.ComposePractitionerQualification(json : TJSONWriter; name : string; elem : TFhirPractitionerQualification; noObj : boolean = false);
@@ -23497,7 +24018,7 @@ begin
     if jsn.has('active') or jsn.has('_active') then
         result.activeElement := ParseBoolean(jsn['active'], jsn.vObj['_active']);{q}
     if jsn.has('name') then
-        result.name := ParseHumanName(jsn.vObj['name']);{q}
+        result.name := ParseHumanName(jsn.vObj['name']);{q3}
     if jsn.has('telecom') then
       iterateArray(jsn.vArr['telecom'], result.telecomList, parseContactPoint);
     if jsn.has('address') then
@@ -23588,6 +24109,8 @@ begin
   end;
 end;
 
+{$ENDIF FHIR_PRACTITIONER}
+{$IFDEF FHIR_PROCEDURE}
 procedure TFHIRJsonParser.ParseProcedurePerformer(jsn : TJsonObject; ctxt : TFHIRObjectList);
 begin
   ctxt.add(ParseProcedurePerformer(jsn)); {2}
@@ -23608,9 +24131,9 @@ procedure TFHIRJsonParser.ParseProcedurePerformerProperties(jsn : TJsonObject; r
 begin
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('actor') then
-        result.actor := ParseReference{Resource}(jsn.vObj['actor']);{q}
+        result.actor := ParseReference{Resource}(jsn.vObj['actor']);{q3}
     if jsn.has('role') then
-        result.role := ParseCodeableConcept(jsn.vObj['role']);{q}
+        result.role := ParseCodeableConcept(jsn.vObj['role']);{q3}
 end;
 
 procedure TFHIRJsonComposer.ComposeProcedurePerformer(json : TJSONWriter; name : string; elem : TFhirProcedurePerformer; noObj : boolean = false);
@@ -23646,9 +24169,9 @@ procedure TFHIRJsonParser.ParseProcedureFocalDeviceProperties(jsn : TJsonObject;
 begin
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('action') then
-        result.action := ParseCodeableConcept(jsn.vObj['action']);{q}
+        result.action := ParseCodeableConcept(jsn.vObj['action']);{q3}
     if jsn.has('manipulated') then
-        result.manipulated := ParseReference{TFhirDevice}(jsn.vObj['manipulated']);{q}
+        result.manipulated := ParseReference{TFhirDevice}(jsn.vObj['manipulated']);{q3}
 end;
 
 procedure TFHIRJsonComposer.ComposeProcedureFocalDevice(json : TJSONWriter; name : string; elem : TFhirProcedureFocalDevice; noObj : boolean = false);
@@ -23686,13 +24209,13 @@ begin
     if jsn.has('identifier') then
       iterateArray(jsn.vArr['identifier'], result.identifierList, parseIdentifier);
     if jsn.has('subject') then
-        result.subject := ParseReference{Resource}(jsn.vObj['subject']);{q}
+        result.subject := ParseReference{Resource}(jsn.vObj['subject']);{q3}
     if jsn.has('status') or jsn.has('_status')  then
       result.statusElement := parseEnum(jsn.path+'/status', jsn['status'], jsn.vObj['_status'], CODES_TFhirProcedureStatusEnum, SYSTEMS_TFhirProcedureStatusEnum);
     if jsn.has('category') then
-        result.category := ParseCodeableConcept(jsn.vObj['category']);{q}
+        result.category := ParseCodeableConcept(jsn.vObj['category']);{q3}
     if jsn.has('code') then
-        result.code := ParseCodeableConcept(jsn.vObj['code']);{q}
+        result.code := ParseCodeableConcept(jsn.vObj['code']);{q3}
     if jsn.has('notPerformed') or jsn.has('_notPerformed') then
         result.notPerformedElement := ParseBoolean(jsn['notPerformed'], jsn.vObj['_notPerformed']);{q}
     if jsn.has('reasonNotPerformed') then
@@ -23710,11 +24233,11 @@ begin
     if jsn.has('performedDateTime') or jsn.has('_performedDateTime') then
       result.performed := parseDateTime(jsn['performedDateTime'], jsn.vObj['_performedDateTime']);
     if jsn.has('encounter') then
-        result.encounter := ParseReference{TFhirEncounter}(jsn.vObj['encounter']);{q}
+        result.encounter := ParseReference{TFhirEncounter}(jsn.vObj['encounter']);{q3}
     if jsn.has('location') then
-        result.location := ParseReference{TFhirLocation}(jsn.vObj['location']);{q}
+        result.location := ParseReference{TFhirLocation}(jsn.vObj['location']);{q3}
     if jsn.has('outcome') then
-        result.outcome := ParseCodeableConcept(jsn.vObj['outcome']);{q}
+        result.outcome := ParseCodeableConcept(jsn.vObj['outcome']);{q3}
     if jsn.has('report') then
       iterateArray(jsn.vArr['report'], result.reportList, parseReference{TFhirDiagnosticReport});
     if jsn.has('complication') then
@@ -23722,7 +24245,7 @@ begin
     if jsn.has('followUp') then
       iterateArray(jsn.vArr['followUp'], result.followUpList, parseCodeableConcept);
     if jsn.has('request') then
-        result.request := ParseReference{Resource}(jsn.vObj['request']);{q}
+        result.request := ParseReference{Resource}(jsn.vObj['request']);{q3}
     if jsn.has('notes') then
       iterateArray(jsn.vArr['notes'], result.notesList, parseAnnotation);
     if jsn.has('focalDevice') then
@@ -23843,6 +24366,8 @@ begin
   end;
 end;
 
+{$ENDIF FHIR_PROCEDURE}
+{$IFDEF FHIR_PROCEDUREREQUEST}
 procedure TFHIRJsonParser.ParseProcedureRequest(jsn : TJsonObject; ctxt : TFHIRObjectList);
 begin
   ctxt.add(ParseProcedureRequest(jsn)); {2}
@@ -23865,9 +24390,9 @@ begin
     if jsn.has('identifier') then
       iterateArray(jsn.vArr['identifier'], result.identifierList, parseIdentifier);
     if jsn.has('subject') then
-        result.subject := ParseReference{Resource}(jsn.vObj['subject']);{q}
+        result.subject := ParseReference{Resource}(jsn.vObj['subject']);{q3}
     if jsn.has('code') then
-        result.code := ParseCodeableConcept(jsn.vObj['code']);{q}
+        result.code := ParseCodeableConcept(jsn.vObj['code']);{q3}
     if jsn.has('bodySite') then
       iterateArray(jsn.vArr['bodySite'], result.bodySiteList, parseCodeableConcept);
     if jsn.has('reasonCodeableConcept') {a4} then
@@ -23881,9 +24406,9 @@ begin
     if jsn.has('scheduledDateTime') or jsn.has('_scheduledDateTime') then
       result.scheduled := parseDateTime(jsn['scheduledDateTime'], jsn.vObj['_scheduledDateTime']);
     if jsn.has('encounter') then
-        result.encounter := ParseReference{TFhirEncounter}(jsn.vObj['encounter']);{q}
+        result.encounter := ParseReference{TFhirEncounter}(jsn.vObj['encounter']);{q3}
     if jsn.has('performer') then
-        result.performer := ParseReference{Resource}(jsn.vObj['performer']);{q}
+        result.performer := ParseReference{Resource}(jsn.vObj['performer']);{q3}
     if jsn.has('status') or jsn.has('_status')  then
       result.statusElement := parseEnum(jsn.path+'/status', jsn['status'], jsn.vObj['_status'], CODES_TFhirProcedureRequestStatusEnum, SYSTEMS_TFhirProcedureRequestStatusEnum);
     if jsn.has('notes') then
@@ -23895,7 +24420,7 @@ begin
     if jsn.has('orderedOn') or jsn.has('_orderedOn') then
         result.orderedOnElement := ParseDateTime(jsn['orderedOn'], jsn.vObj['_orderedOn']);{q}
     if jsn.has('orderer') then
-        result.orderer := ParseReference{Resource}(jsn.vObj['orderer']);{q}
+        result.orderer := ParseReference{Resource}(jsn.vObj['orderer']);{q3}
     if jsn.has('priority') or jsn.has('_priority')  then
       result.priorityElement := parseEnum(jsn.path+'/priority', jsn['priority'], jsn.vObj['_priority'], CODES_TFhirProcedureRequestPriorityEnum, SYSTEMS_TFhirProcedureRequestPriorityEnum);
 end;
@@ -23972,6 +24497,8 @@ begin
      ComposeEnumProps(json, 'priority', elem.PriorityElement, CODES_TFhirProcedureRequestPriorityEnum, false);
 end;
 
+{$ENDIF FHIR_PROCEDUREREQUEST}
+{$IFDEF FHIR_PROCESSREQUEST}
 procedure TFHIRJsonParser.ParseProcessRequestItem(jsn : TJsonObject; ctxt : TFHIRObjectList);
 begin
   ctxt.add(ParseProcessRequestItem(jsn)); {2}
@@ -24032,21 +24559,21 @@ begin
     if jsn.has('identifier') then
       iterateArray(jsn.vArr['identifier'], result.identifierList, parseIdentifier);
     if jsn.has('ruleset') then
-        result.ruleset := ParseCoding(jsn.vObj['ruleset']);{q}
+        result.ruleset := ParseCoding(jsn.vObj['ruleset']);{q3}
     if jsn.has('originalRuleset') then
-        result.originalRuleset := ParseCoding(jsn.vObj['originalRuleset']);{q}
+        result.originalRuleset := ParseCoding(jsn.vObj['originalRuleset']);{q3}
     if jsn.has('created') or jsn.has('_created') then
         result.createdElement := ParseDateTime(jsn['created'], jsn.vObj['_created']);{q}
     if jsn.has('target') then
-        result.target := ParseReference{TFhirOrganization}(jsn.vObj['target']);{q}
+        result.target := ParseReference{TFhirOrganization}(jsn.vObj['target']);{q3}
     if jsn.has('provider') then
-        result.provider := ParseReference{TFhirPractitioner}(jsn.vObj['provider']);{q}
+        result.provider := ParseReference{TFhirPractitioner}(jsn.vObj['provider']);{q3}
     if jsn.has('organization') then
-        result.organization := ParseReference{TFhirOrganization}(jsn.vObj['organization']);{q}
+        result.organization := ParseReference{TFhirOrganization}(jsn.vObj['organization']);{q3}
     if jsn.has('request') then
-        result.request := ParseReference{TFhirReference}(jsn.vObj['request']);{q}
+        result.request := ParseReference{TFhirReference}(jsn.vObj['request']);{q3}
     if jsn.has('response') then
-        result.response := ParseReference{TFhirReference}(jsn.vObj['response']);{q}
+        result.response := ParseReference{TFhirReference}(jsn.vObj['response']);{q3}
     if jsn.has('nullify') or jsn.has('_nullify') then
         result.nullifyElement := ParseBoolean(jsn['nullify'], jsn.vObj['_nullify']);{q}
     if jsn.has('reference') or jsn.has('_reference') then
@@ -24058,7 +24585,7 @@ begin
       if jsn.has('exclude') or jsn.has('_exclude') then
       iteratePrimitiveArray(jsn.vArr['exclude'], jsn.vArr['_exclude'], result.excludeList, parseString);
     if jsn.has('period') then
-        result.period := ParsePeriod(jsn.vObj['period']);{q}
+        result.period := ParsePeriod(jsn.vObj['period']);{q3}
 end;
 
 procedure TFHIRJsonComposer.ComposeProcessRequest(json : TJSONWriter; name : string; elem : TFhirProcessRequest; noObj : boolean = false);
@@ -24166,6 +24693,8 @@ begin
     ComposePeriod(json, 'period', elem.period); {a}
 end;
 
+{$ENDIF FHIR_PROCESSREQUEST}
+{$IFDEF FHIR_PROCESSRESPONSE}
 procedure TFHIRJsonParser.ParseProcessResponseNotes(jsn : TJsonObject; ctxt : TFHIRObjectList);
 begin
   ctxt.add(ParseProcessResponseNotes(jsn)); {2}
@@ -24186,7 +24715,7 @@ procedure TFHIRJsonParser.ParseProcessResponseNotesProperties(jsn : TJsonObject;
 begin
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('type') then
-        result.type_ := ParseCoding(jsn.vObj['type']);{q}
+        result.type_ := ParseCoding(jsn.vObj['type']);{q3}
     if jsn.has('text') or jsn.has('_text') then
         result.textElement := ParseString(jsn['text'], jsn.vObj['_text']);{q}
 end;
@@ -24228,25 +24757,25 @@ begin
     if jsn.has('identifier') then
       iterateArray(jsn.vArr['identifier'], result.identifierList, parseIdentifier);
     if jsn.has('request') then
-        result.request := ParseReference{TFhirReference}(jsn.vObj['request']);{q}
+        result.request := ParseReference{TFhirReference}(jsn.vObj['request']);{q3}
     if jsn.has('outcome') then
-        result.outcome := ParseCoding(jsn.vObj['outcome']);{q}
+        result.outcome := ParseCoding(jsn.vObj['outcome']);{q3}
     if jsn.has('disposition') or jsn.has('_disposition') then
         result.dispositionElement := ParseString(jsn['disposition'], jsn.vObj['_disposition']);{q}
     if jsn.has('ruleset') then
-        result.ruleset := ParseCoding(jsn.vObj['ruleset']);{q}
+        result.ruleset := ParseCoding(jsn.vObj['ruleset']);{q3}
     if jsn.has('originalRuleset') then
-        result.originalRuleset := ParseCoding(jsn.vObj['originalRuleset']);{q}
+        result.originalRuleset := ParseCoding(jsn.vObj['originalRuleset']);{q3}
     if jsn.has('created') or jsn.has('_created') then
         result.createdElement := ParseDateTime(jsn['created'], jsn.vObj['_created']);{q}
     if jsn.has('organization') then
-        result.organization := ParseReference{TFhirOrganization}(jsn.vObj['organization']);{q}
+        result.organization := ParseReference{TFhirOrganization}(jsn.vObj['organization']);{q3}
     if jsn.has('requestProvider') then
-        result.requestProvider := ParseReference{TFhirPractitioner}(jsn.vObj['requestProvider']);{q}
+        result.requestProvider := ParseReference{TFhirPractitioner}(jsn.vObj['requestProvider']);{q3}
     if jsn.has('requestOrganization') then
-        result.requestOrganization := ParseReference{TFhirOrganization}(jsn.vObj['requestOrganization']);{q}
+        result.requestOrganization := ParseReference{TFhirOrganization}(jsn.vObj['requestOrganization']);{q3}
     if jsn.has('form') then
-        result.form := ParseCoding(jsn.vObj['form']);{q}
+        result.form := ParseCoding(jsn.vObj['form']);{q3}
     if jsn.has('notes') then
       iterateArray(jsn.vArr['notes'], result.notesList, parseProcessResponseNotes);
     if jsn.has('error') then
@@ -24307,6 +24836,8 @@ begin
   end;
 end;
 
+{$ENDIF FHIR_PROCESSRESPONSE}
+{$IFDEF FHIR_PROVENANCE}
 procedure TFHIRJsonParser.ParseProvenanceAgent(jsn : TJsonObject; ctxt : TFHIRObjectList);
 begin
   ctxt.add(ParseProvenanceAgent(jsn)); {2}
@@ -24327,11 +24858,11 @@ procedure TFHIRJsonParser.ParseProvenanceAgentProperties(jsn : TJsonObject; resu
 begin
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('role') then
-        result.role := ParseCoding(jsn.vObj['role']);{q}
+        result.role := ParseCoding(jsn.vObj['role']);{q3}
     if jsn.has('actor') then
-        result.actor := ParseReference{Resource}(jsn.vObj['actor']);{q}
+        result.actor := ParseReference{Resource}(jsn.vObj['actor']);{q3}
     if jsn.has('userId') then
-        result.userId := ParseIdentifier(jsn.vObj['userId']);{q}
+        result.userId := ParseIdentifier(jsn.vObj['userId']);{q3}
     if jsn.has('relatedAgent') then
       iterateArray(jsn.vArr['relatedAgent'], result.relatedAgentList, parseProvenanceAgentRelatedAgent);
 end;
@@ -24380,7 +24911,7 @@ procedure TFHIRJsonParser.ParseProvenanceAgentRelatedAgentProperties(jsn : TJson
 begin
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('type') then
-        result.type_ := ParseCodeableConcept(jsn.vObj['type']);{q}
+        result.type_ := ParseCodeableConcept(jsn.vObj['type']);{q3}
     if jsn.has('target') or jsn.has('_target') then
         result.targetElement := ParseUri(jsn['target'], jsn.vObj['_target']);{q}
 end;
@@ -24422,13 +24953,13 @@ begin
     if jsn.has('role') or jsn.has('_role')  then
       result.roleElement := parseEnum(jsn.path+'/role', jsn['role'], jsn.vObj['_role'], CODES_TFhirProvenanceEntityRoleEnum, SYSTEMS_TFhirProvenanceEntityRoleEnum);
     if jsn.has('type') then
-        result.type_ := ParseCoding(jsn.vObj['type']);{q}
+        result.type_ := ParseCoding(jsn.vObj['type']);{q3}
     if jsn.has('reference') or jsn.has('_reference') then
         result.referenceElement := ParseUri(jsn['reference'], jsn.vObj['_reference']);{q}
     if jsn.has('display') or jsn.has('_display') then
         result.displayElement := ParseString(jsn['display'], jsn.vObj['_display']);{q}
     if jsn.has('agent') then
-        result.agent := ParseProvenanceAgent(jsn.vObj['agent']);{q}
+        result.agent := ParseProvenanceAgent(jsn.vObj['agent']);{q3}
 end;
 
 procedure TFHIRJsonComposer.ComposeProvenanceEntity(json : TJSONWriter; name : string; elem : TFhirProvenanceEntity; noObj : boolean = false);
@@ -24478,15 +25009,15 @@ begin
     if jsn.has('target') then
       iterateArray(jsn.vArr['target'], result.targetList, parseReference{TFhirReference});
     if jsn.has('period') then
-        result.period := ParsePeriod(jsn.vObj['period']);{q}
+        result.period := ParsePeriod(jsn.vObj['period']);{q3}
     if jsn.has('recorded') or jsn.has('_recorded') then
         result.recordedElement := ParseInstant(jsn['recorded'], jsn.vObj['_recorded']);{q}
     if jsn.has('reason') then
       iterateArray(jsn.vArr['reason'], result.reasonList, parseCodeableConcept);
     if jsn.has('activity') then
-        result.activity := ParseCodeableConcept(jsn.vObj['activity']);{q}
+        result.activity := ParseCodeableConcept(jsn.vObj['activity']);{q3}
     if jsn.has('location') then
-        result.location := ParseReference{TFhirLocation}(jsn.vObj['location']);{q}
+        result.location := ParseReference{TFhirLocation}(jsn.vObj['location']);{q3}
       if jsn.has('policy') or jsn.has('_policy') then
       iteratePrimitiveArray(jsn.vArr['policy'], jsn.vArr['_policy'], result.policyList, parseUri);
     if jsn.has('agent') then
@@ -24577,6 +25108,8 @@ begin
   end;
 end;
 
+{$ENDIF FHIR_PROVENANCE}
+{$IFDEF FHIR_QUESTIONNAIRE}
 procedure TFHIRJsonParser.ParseQuestionnaireGroup(jsn : TJsonObject; ctxt : TFHIRObjectList);
 begin
   ctxt.add(ParseQuestionnaireGroup(jsn)); {2}
@@ -24698,7 +25231,7 @@ begin
     if jsn.has('repeats') or jsn.has('_repeats') then
         result.repeatsElement := ParseBoolean(jsn['repeats'], jsn.vObj['_repeats']);{q}
     if jsn.has('options') then
-        result.options := ParseReference{TFhirValueSet}(jsn.vObj['options']);{q}
+        result.options := ParseReference{TFhirValueSet}(jsn.vObj['options']);{q3}
     if jsn.has('option') then
       iterateArray(jsn.vArr['option'], result.optionList, parseCoding);
     if jsn.has('group') then
@@ -24793,7 +25326,7 @@ begin
     if jsn.has('subjectType') or jsn.has('_subjectType') then
       iterateEnumArray(jsn.vArr['subjectType'], jsn.vArr['_subjectType'], jsn.path+'/subjectType', result.subjectType, parseEnum, CODES_TFhirResourceTypesEnum, SYSTEMS_TFhirResourceTypesEnum);
     if jsn.has('group') then
-        result.group := ParseQuestionnaireGroup(jsn.vObj['group']);{q}
+        result.group := ParseQuestionnaireGroup(jsn.vObj['group']);{q3}
 end;
 
 procedure TFHIRJsonComposer.ComposeQuestionnaire(json : TJSONWriter; name : string; elem : TFhirQuestionnaire; noObj : boolean = false);
@@ -24863,6 +25396,8 @@ begin
     ComposeQuestionnaireGroup(json, 'group', elem.group); {a}
 end;
 
+{$ENDIF FHIR_QUESTIONNAIRE}
+{$IFDEF FHIR_QUESTIONNAIRERESPONSE}
 procedure TFHIRJsonParser.ParseQuestionnaireResponseGroup(jsn : TJsonObject; ctxt : TFHIRObjectList);
 begin
   ctxt.add(ParseQuestionnaireResponseGroup(jsn)); {2}
@@ -24889,7 +25424,7 @@ begin
     if jsn.has('text') or jsn.has('_text') then
         result.textElement := ParseString(jsn['text'], jsn.vObj['_text']);{q}
     if jsn.has('subject') then
-        result.subject := ParseReference{TFhirReference}(jsn.vObj['subject']);{q}
+        result.subject := ParseReference{TFhirReference}(jsn.vObj['subject']);{q3}
     if jsn.has('group') then
       iterateArray(jsn.vArr['group'], result.groupList, parseQuestionnaireResponseGroup);
     if jsn.has('question') then
@@ -25128,23 +25663,23 @@ procedure TFHIRJsonParser.ParseQuestionnaireResponseProperties(jsn : TJsonObject
 begin
     ParseDomainResourceProperties(jsn, result);
     if jsn.has('identifier') then
-        result.identifier := ParseIdentifier(jsn.vObj['identifier']);{q}
+        result.identifier := ParseIdentifier(jsn.vObj['identifier']);{q3}
     if jsn.has('questionnaire') then
-        result.questionnaire := ParseReference{TFhirQuestionnaire}(jsn.vObj['questionnaire']);{q}
+        result.questionnaire := ParseReference{TFhirQuestionnaire}(jsn.vObj['questionnaire']);{q3}
     if jsn.has('status') or jsn.has('_status')  then
       result.statusElement := parseEnum(jsn.path+'/status', jsn['status'], jsn.vObj['_status'], CODES_TFhirQuestionnaireAnswersStatusEnum, SYSTEMS_TFhirQuestionnaireAnswersStatusEnum);
     if jsn.has('subject') then
-        result.subject := ParseReference{TFhirReference}(jsn.vObj['subject']);{q}
+        result.subject := ParseReference{TFhirReference}(jsn.vObj['subject']);{q3}
     if jsn.has('author') then
-        result.author := ParseReference{Resource}(jsn.vObj['author']);{q}
+        result.author := ParseReference{Resource}(jsn.vObj['author']);{q3}
     if jsn.has('authored') or jsn.has('_authored') then
         result.authoredElement := ParseDateTime(jsn['authored'], jsn.vObj['_authored']);{q}
     if jsn.has('source') then
-        result.source := ParseReference{Resource}(jsn.vObj['source']);{q}
+        result.source := ParseReference{Resource}(jsn.vObj['source']);{q3}
     if jsn.has('encounter') then
-        result.encounter := ParseReference{TFhirEncounter}(jsn.vObj['encounter']);{q}
+        result.encounter := ParseReference{TFhirEncounter}(jsn.vObj['encounter']);{q3}
     if jsn.has('group') then
-        result.group := ParseQuestionnaireResponseGroup(jsn.vObj['group']);{q}
+        result.group := ParseQuestionnaireResponseGroup(jsn.vObj['group']);{q3}
 end;
 
 procedure TFHIRJsonComposer.ComposeQuestionnaireResponse(json : TJSONWriter; name : string; elem : TFhirQuestionnaireResponse; noObj : boolean = false);
@@ -25176,6 +25711,8 @@ begin
     ComposeQuestionnaireResponseGroup(json, 'group', elem.group); {a}
 end;
 
+{$ENDIF FHIR_QUESTIONNAIRERESPONSE}
+{$IFDEF FHIR_REFERRALREQUEST}
 procedure TFHIRJsonParser.ParseReferralRequest(jsn : TJsonObject; ctxt : TFHIRObjectList);
 begin
   ctxt.add(ParseReferralRequest(jsn)); {2}
@@ -25202,23 +25739,23 @@ begin
     if jsn.has('date') or jsn.has('_date') then
         result.dateElement := ParseDateTime(jsn['date'], jsn.vObj['_date']);{q}
     if jsn.has('type') then
-        result.type_ := ParseCodeableConcept(jsn.vObj['type']);{q}
+        result.type_ := ParseCodeableConcept(jsn.vObj['type']);{q3}
     if jsn.has('specialty') then
-        result.specialty := ParseCodeableConcept(jsn.vObj['specialty']);{q}
+        result.specialty := ParseCodeableConcept(jsn.vObj['specialty']);{q3}
     if jsn.has('priority') then
-        result.priority := ParseCodeableConcept(jsn.vObj['priority']);{q}
+        result.priority := ParseCodeableConcept(jsn.vObj['priority']);{q3}
     if jsn.has('patient') then
-        result.patient := ParseReference{TFhirPatient}(jsn.vObj['patient']);{q}
+        result.patient := ParseReference{TFhirPatient}(jsn.vObj['patient']);{q3}
     if jsn.has('requester') then
-        result.requester := ParseReference{Resource}(jsn.vObj['requester']);{q}
+        result.requester := ParseReference{Resource}(jsn.vObj['requester']);{q3}
     if jsn.has('recipient') then
       iterateArray(jsn.vArr['recipient'], result.recipientList, parseReference{Resource});
     if jsn.has('encounter') then
-        result.encounter := ParseReference{TFhirEncounter}(jsn.vObj['encounter']);{q}
+        result.encounter := ParseReference{TFhirEncounter}(jsn.vObj['encounter']);{q3}
     if jsn.has('dateSent') or jsn.has('_dateSent') then
         result.dateSentElement := ParseDateTime(jsn['dateSent'], jsn.vObj['_dateSent']);{q}
     if jsn.has('reason') then
-        result.reason := ParseCodeableConcept(jsn.vObj['reason']);{q}
+        result.reason := ParseCodeableConcept(jsn.vObj['reason']);{q3}
     if jsn.has('description') or jsn.has('_description') then
         result.descriptionElement := ParseString(jsn['description'], jsn.vObj['_description']);{q}
     if jsn.has('serviceRequested') then
@@ -25226,7 +25763,7 @@ begin
     if jsn.has('supportingInformation') then
       iterateArray(jsn.vArr['supportingInformation'], result.supportingInformationList, parseReference{TFhirReference});
     if jsn.has('fulfillmentTime') then
-        result.fulfillmentTime := ParsePeriod(jsn.vObj['fulfillmentTime']);{q}
+        result.fulfillmentTime := ParsePeriod(jsn.vObj['fulfillmentTime']);{q3}
 end;
 
 procedure TFHIRJsonComposer.ComposeReferralRequest(json : TJSONWriter; name : string; elem : TFhirReferralRequest; noObj : boolean = false);
@@ -25298,6 +25835,8 @@ begin
     ComposePeriod(json, 'fulfillmentTime', elem.fulfillmentTime); {a}
 end;
 
+{$ENDIF FHIR_REFERRALREQUEST}
+{$IFDEF FHIR_RELATEDPERSON}
 procedure TFHIRJsonParser.ParseRelatedPerson(jsn : TJsonObject; ctxt : TFHIRObjectList);
 begin
   ctxt.add(ParseRelatedPerson(jsn)); {2}
@@ -25320,11 +25859,11 @@ begin
     if jsn.has('identifier') then
       iterateArray(jsn.vArr['identifier'], result.identifierList, parseIdentifier);
     if jsn.has('patient') then
-        result.patient := ParseReference{TFhirPatient}(jsn.vObj['patient']);{q}
+        result.patient := ParseReference{TFhirPatient}(jsn.vObj['patient']);{q3}
     if jsn.has('relationship') then
-        result.relationship := ParseCodeableConcept(jsn.vObj['relationship']);{q}
+        result.relationship := ParseCodeableConcept(jsn.vObj['relationship']);{q3}
     if jsn.has('name') then
-        result.name := ParseHumanName(jsn.vObj['name']);{q}
+        result.name := ParseHumanName(jsn.vObj['name']);{q3}
     if jsn.has('telecom') then
       iterateArray(jsn.vArr['telecom'], result.telecomList, parseContactPoint);
     if jsn.has('gender') or jsn.has('_gender')  then
@@ -25336,7 +25875,7 @@ begin
     if jsn.has('photo') then
       iterateArray(jsn.vArr['photo'], result.photoList, parseAttachment);
     if jsn.has('period') then
-        result.period := ParsePeriod(jsn.vObj['period']);{q}
+        result.period := ParsePeriod(jsn.vObj['period']);{q3}
 end;
 
 procedure TFHIRJsonComposer.ComposeRelatedPerson(json : TJSONWriter; name : string; elem : TFhirRelatedPerson; noObj : boolean = false);
@@ -25392,6 +25931,8 @@ begin
     ComposePeriod(json, 'period', elem.period); {a}
 end;
 
+{$ENDIF FHIR_RELATEDPERSON}
+{$IFDEF FHIR_RISKASSESSMENT}
 procedure TFHIRJsonParser.ParseRiskAssessmentPrediction(jsn : TJsonObject; ctxt : TFHIRObjectList);
 begin
   ctxt.add(ParseRiskAssessmentPrediction(jsn)); {2}
@@ -25412,7 +25953,7 @@ procedure TFHIRJsonParser.ParseRiskAssessmentPredictionProperties(jsn : TJsonObj
 begin
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('outcome') then
-        result.outcome := ParseCodeableConcept(jsn.vObj['outcome']);{q}
+        result.outcome := ParseCodeableConcept(jsn.vObj['outcome']);{q3}
     if jsn.has('probabilityRange') {a4} then
       result.probability := ParseRange(jsn.vObj['probabilityRange']);
     if jsn.has('probabilityCodeableConcept') {a4} then
@@ -25481,19 +26022,19 @@ procedure TFHIRJsonParser.ParseRiskAssessmentProperties(jsn : TJsonObject; resul
 begin
     ParseDomainResourceProperties(jsn, result);
     if jsn.has('subject') then
-        result.subject := ParseReference{Resource}(jsn.vObj['subject']);{q}
+        result.subject := ParseReference{Resource}(jsn.vObj['subject']);{q3}
     if jsn.has('date') or jsn.has('_date') then
         result.dateElement := ParseDateTime(jsn['date'], jsn.vObj['_date']);{q}
     if jsn.has('condition') then
-        result.condition := ParseReference{TFhirCondition}(jsn.vObj['condition']);{q}
+        result.condition := ParseReference{TFhirCondition}(jsn.vObj['condition']);{q3}
     if jsn.has('encounter') then
-        result.encounter := ParseReference{TFhirEncounter}(jsn.vObj['encounter']);{q}
+        result.encounter := ParseReference{TFhirEncounter}(jsn.vObj['encounter']);{q3}
     if jsn.has('performer') then
-        result.performer := ParseReference{Resource}(jsn.vObj['performer']);{q}
+        result.performer := ParseReference{Resource}(jsn.vObj['performer']);{q3}
     if jsn.has('identifier') then
-        result.identifier := ParseIdentifier(jsn.vObj['identifier']);{q}
+        result.identifier := ParseIdentifier(jsn.vObj['identifier']);{q3}
     if jsn.has('method') then
-        result.method := ParseCodeableConcept(jsn.vObj['method']);{q}
+        result.method := ParseCodeableConcept(jsn.vObj['method']);{q3}
     if jsn.has('basis') then
       iterateArray(jsn.vArr['basis'], result.basisList, parseReference{TFhirReference});
     if jsn.has('prediction') then
@@ -25545,6 +26086,8 @@ begin
     ComposeStringProps(json, 'mitigation', elem.mitigationElement, false);
 end;
 
+{$ENDIF FHIR_RISKASSESSMENT}
+{$IFDEF FHIR_SCHEDULE}
 procedure TFHIRJsonParser.ParseSchedule(jsn : TJsonObject; ctxt : TFHIRObjectList);
 begin
   ctxt.add(ParseSchedule(jsn)); {2}
@@ -25569,9 +26112,9 @@ begin
     if jsn.has('type') then
       iterateArray(jsn.vArr['type'], result.type_List, parseCodeableConcept);
     if jsn.has('actor') then
-        result.actor := ParseReference{Resource}(jsn.vObj['actor']);{q}
+        result.actor := ParseReference{Resource}(jsn.vObj['actor']);{q3}
     if jsn.has('planningHorizon') then
-        result.planningHorizon := ParsePeriod(jsn.vObj['planningHorizon']);{q}
+        result.planningHorizon := ParsePeriod(jsn.vObj['planningHorizon']);{q3}
     if jsn.has('comment') or jsn.has('_comment') then
         result.commentElement := ParseString(jsn['comment'], jsn.vObj['_comment']);{q}
 end;
@@ -25607,6 +26150,8 @@ begin
     ComposeStringProps(json, 'comment', elem.commentElement, false);
 end;
 
+{$ENDIF FHIR_SCHEDULE}
+{$IFDEF FHIR_SEARCHPARAMETER}
 procedure TFHIRJsonParser.ParseSearchParameterContact(jsn : TJsonObject; ctxt : TFHIRObjectList);
 begin
   ctxt.add(ParseSearchParameterContact(jsn)); {2}
@@ -25799,6 +26344,8 @@ begin
   end;
 end;
 
+{$ENDIF FHIR_SEARCHPARAMETER}
+{$IFDEF FHIR_SLOT}
 procedure TFHIRJsonParser.ParseSlot(jsn : TJsonObject; ctxt : TFHIRObjectList);
 begin
   ctxt.add(ParseSlot(jsn)); {2}
@@ -25821,9 +26368,9 @@ begin
     if jsn.has('identifier') then
       iterateArray(jsn.vArr['identifier'], result.identifierList, parseIdentifier);
     if jsn.has('type') then
-        result.type_ := ParseCodeableConcept(jsn.vObj['type']);{q}
+        result.type_ := ParseCodeableConcept(jsn.vObj['type']);{q3}
     if jsn.has('schedule') then
-        result.schedule := ParseReference{TFhirSchedule}(jsn.vObj['schedule']);{q}
+        result.schedule := ParseReference{TFhirSchedule}(jsn.vObj['schedule']);{q3}
     if jsn.has('freeBusyType') or jsn.has('_freeBusyType')  then
       result.freeBusyTypeElement := parseEnum(jsn.path+'/freeBusyType', jsn['freeBusyType'], jsn.vObj['_freeBusyType'], CODES_TFhirSlotstatusEnum, SYSTEMS_TFhirSlotstatusEnum);
     if jsn.has('start') or jsn.has('_start') then
@@ -25876,6 +26423,8 @@ begin
     ComposeStringProps(json, 'comment', elem.commentElement, false);
 end;
 
+{$ENDIF FHIR_SLOT}
+{$IFDEF FHIR_SPECIMEN}
 procedure TFHIRJsonParser.ParseSpecimenCollection(jsn : TJsonObject; ctxt : TFHIRObjectList);
 begin
   ctxt.add(ParseSpecimenCollection(jsn)); {2}
@@ -25896,7 +26445,7 @@ procedure TFHIRJsonParser.ParseSpecimenCollectionProperties(jsn : TJsonObject; r
 begin
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('collector') then
-        result.collector := ParseReference{TFhirPractitioner}(jsn.vObj['collector']);{q}
+        result.collector := ParseReference{TFhirPractitioner}(jsn.vObj['collector']);{q3}
       if jsn.has('comment') or jsn.has('_comment') then
       iteratePrimitiveArray(jsn.vArr['comment'], jsn.vArr['_comment'], result.commentList, parseString);
     if jsn.has('collectedPeriod') {a4} then
@@ -25904,11 +26453,11 @@ begin
     if jsn.has('collectedDateTime') or jsn.has('_collectedDateTime') then
       result.collected := parseDateTime(jsn['collectedDateTime'], jsn.vObj['_collectedDateTime']);
     if jsn.has('quantity') then
-        result.quantity := ParseQuantity(jsn.vObj['quantity']);{q}
+        result.quantity := ParseQuantity(jsn.vObj['quantity']);{q3}
     if jsn.has('method') then
-        result.method := ParseCodeableConcept(jsn.vObj['method']);{q}
+        result.method := ParseCodeableConcept(jsn.vObj['method']);{q3}
     if jsn.has('bodySite') then
-        result.bodySite := ParseCodeableConcept(jsn.vObj['bodySite']);{q}
+        result.bodySite := ParseCodeableConcept(jsn.vObj['bodySite']);{q3}
 end;
 
 procedure TFHIRJsonComposer.ComposeSpecimenCollection(json : TJSONWriter; name : string; elem : TFhirSpecimenCollection; noObj : boolean = false);
@@ -25985,7 +26534,7 @@ begin
     if jsn.has('description') or jsn.has('_description') then
         result.descriptionElement := ParseString(jsn['description'], jsn.vObj['_description']);{q}
     if jsn.has('procedure') then
-        result.procedure_ := ParseCodeableConcept(jsn.vObj['procedure']);{q}
+        result.procedure_ := ParseCodeableConcept(jsn.vObj['procedure']);{q3}
     if jsn.has('additive') then
       iterateArray(jsn.vArr['additive'], result.additiveList, parseReference{TFhirSubstance});
 end;
@@ -26038,11 +26587,11 @@ begin
     if jsn.has('description') or jsn.has('_description') then
         result.descriptionElement := ParseString(jsn['description'], jsn.vObj['_description']);{q}
     if jsn.has('type') then
-        result.type_ := ParseCodeableConcept(jsn.vObj['type']);{q}
+        result.type_ := ParseCodeableConcept(jsn.vObj['type']);{q3}
     if jsn.has('capacity') then
-        result.capacity := ParseQuantity(jsn.vObj['capacity']);{q}
+        result.capacity := ParseQuantity(jsn.vObj['capacity']);{q3}
     if jsn.has('specimenQuantity') then
-        result.specimenQuantity := ParseQuantity(jsn.vObj['specimenQuantity']);{q}
+        result.specimenQuantity := ParseQuantity(jsn.vObj['specimenQuantity']);{q3}
     if jsn.has('additiveCodeableConcept') {a4} then
       result.additive := ParseCodeableConcept(jsn.vObj['additiveCodeableConcept']);
     if jsn.has('additiveReference') {a3} then
@@ -26105,17 +26654,17 @@ begin
     if jsn.has('status') or jsn.has('_status')  then
       result.statusElement := parseEnum(jsn.path+'/status', jsn['status'], jsn.vObj['_status'], CODES_TFhirSpecimenStatusEnum, SYSTEMS_TFhirSpecimenStatusEnum);
     if jsn.has('type') then
-        result.type_ := ParseCodeableConcept(jsn.vObj['type']);{q}
+        result.type_ := ParseCodeableConcept(jsn.vObj['type']);{q3}
     if jsn.has('parent') then
       iterateArray(jsn.vArr['parent'], result.parentList, parseReference{TFhirSpecimen});
     if jsn.has('subject') then
-        result.subject := ParseReference{Resource}(jsn.vObj['subject']);{q}
+        result.subject := ParseReference{Resource}(jsn.vObj['subject']);{q3}
     if jsn.has('accessionIdentifier') then
-        result.accessionIdentifier := ParseIdentifier(jsn.vObj['accessionIdentifier']);{q}
+        result.accessionIdentifier := ParseIdentifier(jsn.vObj['accessionIdentifier']);{q3}
     if jsn.has('receivedTime') or jsn.has('_receivedTime') then
         result.receivedTimeElement := ParseDateTime(jsn['receivedTime'], jsn.vObj['_receivedTime']);{q}
     if jsn.has('collection') then
-        result.collection := ParseSpecimenCollection(jsn.vObj['collection']);{q}
+        result.collection := ParseSpecimenCollection(jsn.vObj['collection']);{q3}
     if jsn.has('treatment') then
       iterateArray(jsn.vArr['treatment'], result.treatmentList, parseSpecimenTreatment);
     if jsn.has('container') then
@@ -26175,6 +26724,8 @@ begin
   end;
 end;
 
+{$ENDIF FHIR_SPECIMEN}
+{$IFDEF FHIR_STRUCTUREDEFINITION}
 procedure TFHIRJsonParser.ParseStructureDefinitionContact(jsn : TJsonObject; ctxt : TFHIRObjectList);
 begin
   ctxt.add(ParseStructureDefinitionContact(jsn)); {2}
@@ -26424,9 +26975,9 @@ begin
     if jsn.has('base') or jsn.has('_base') then
         result.baseElement := ParseUri(jsn['base'], jsn.vObj['_base']);{q}
     if jsn.has('snapshot') then
-        result.snapshot := ParseStructureDefinitionSnapshot(jsn.vObj['snapshot']);{q}
+        result.snapshot := ParseStructureDefinitionSnapshot(jsn.vObj['snapshot']);{q3}
     if jsn.has('differential') then
-        result.differential := ParseStructureDefinitionDifferential(jsn.vObj['differential']);{q}
+        result.differential := ParseStructureDefinitionDifferential(jsn.vObj['differential']);{q3}
 end;
 
 procedure TFHIRJsonComposer.ComposeStructureDefinition(json : TJSONWriter; name : string; elem : TFhirStructureDefinition; noObj : boolean = false);
@@ -26571,6 +27122,8 @@ begin
     ComposeStructureDefinitionDifferential(json, 'differential', elem.differential); {a}
 end;
 
+{$ENDIF FHIR_STRUCTUREDEFINITION}
+{$IFDEF FHIR_SUBSCRIPTION}
 procedure TFHIRJsonParser.ParseSubscriptionChannel(jsn : TJsonObject; ctxt : TFHIRObjectList);
 begin
   ctxt.add(ParseSubscriptionChannel(jsn)); {2}
@@ -26655,7 +27208,7 @@ begin
     if jsn.has('error') or jsn.has('_error') then
         result.errorElement := ParseString(jsn['error'], jsn.vObj['_error']);{q}
     if jsn.has('channel') then
-        result.channel := ParseSubscriptionChannel(jsn.vObj['channel']);{q}
+        result.channel := ParseSubscriptionChannel(jsn.vObj['channel']);{q3}
     if jsn.has('end') or jsn.has('_end') then
         result.end_Element := ParseInstant(jsn['end'], jsn.vObj['_end']);{q}
     if jsn.has('tag') then
@@ -26707,6 +27260,8 @@ begin
   end;
 end;
 
+{$ENDIF FHIR_SUBSCRIPTION}
+{$IFDEF FHIR_SUBSTANCE}
 procedure TFHIRJsonParser.ParseSubstanceInstance(jsn : TJsonObject; ctxt : TFHIRObjectList);
 begin
   ctxt.add(ParseSubstanceInstance(jsn)); {2}
@@ -26727,11 +27282,11 @@ procedure TFHIRJsonParser.ParseSubstanceInstanceProperties(jsn : TJsonObject; re
 begin
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('identifier') then
-        result.identifier := ParseIdentifier(jsn.vObj['identifier']);{q}
+        result.identifier := ParseIdentifier(jsn.vObj['identifier']);{q3}
     if jsn.has('expiry') or jsn.has('_expiry') then
         result.expiryElement := ParseDateTime(jsn['expiry'], jsn.vObj['_expiry']);{q}
     if jsn.has('quantity') then
-        result.quantity := ParseQuantity(jsn.vObj['quantity']);{q}
+        result.quantity := ParseQuantity(jsn.vObj['quantity']);{q3}
 end;
 
 procedure TFHIRJsonComposer.ComposeSubstanceInstance(json : TJSONWriter; name : string; elem : TFhirSubstanceInstance; noObj : boolean = false);
@@ -26771,9 +27326,9 @@ procedure TFHIRJsonParser.ParseSubstanceIngredientProperties(jsn : TJsonObject; 
 begin
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('quantity') then
-        result.quantity := ParseRatio(jsn.vObj['quantity']);{q}
+        result.quantity := ParseRatio(jsn.vObj['quantity']);{q3}
     if jsn.has('substance') then
-        result.substance := ParseReference{TFhirSubstance}(jsn.vObj['substance']);{q}
+        result.substance := ParseReference{TFhirSubstance}(jsn.vObj['substance']);{q3}
 end;
 
 procedure TFHIRJsonComposer.ComposeSubstanceIngredient(json : TJSONWriter; name : string; elem : TFhirSubstanceIngredient; noObj : boolean = false);
@@ -26813,7 +27368,7 @@ begin
     if jsn.has('category') then
       iterateArray(jsn.vArr['category'], result.categoryList, parseCodeableConcept);
     if jsn.has('code') then
-        result.code := ParseCodeableConcept(jsn.vObj['code']);{q}
+        result.code := ParseCodeableConcept(jsn.vObj['code']);{q3}
     if jsn.has('description') or jsn.has('_description') then
         result.descriptionElement := ParseString(jsn['description'], jsn.vObj['_description']);{q}
     if jsn.has('instance') then
@@ -26865,6 +27420,8 @@ begin
   end;
 end;
 
+{$ENDIF FHIR_SUBSTANCE}
+{$IFDEF FHIR_SUPPLYDELIVERY}
 procedure TFHIRJsonParser.ParseSupplyDelivery(jsn : TJsonObject; ctxt : TFHIRObjectList);
 begin
   ctxt.add(ParseSupplyDelivery(jsn)); {2}
@@ -26885,25 +27442,25 @@ procedure TFHIRJsonParser.ParseSupplyDeliveryProperties(jsn : TJsonObject; resul
 begin
     ParseDomainResourceProperties(jsn, result);
     if jsn.has('identifier') then
-        result.identifier := ParseIdentifier(jsn.vObj['identifier']);{q}
+        result.identifier := ParseIdentifier(jsn.vObj['identifier']);{q3}
     if jsn.has('status') or jsn.has('_status')  then
       result.statusElement := parseEnum(jsn.path+'/status', jsn['status'], jsn.vObj['_status'], CODES_TFhirSupplydeliveryStatusEnum, SYSTEMS_TFhirSupplydeliveryStatusEnum);
     if jsn.has('patient') then
-        result.patient := ParseReference{TFhirPatient}(jsn.vObj['patient']);{q}
+        result.patient := ParseReference{TFhirPatient}(jsn.vObj['patient']);{q3}
     if jsn.has('type') then
-        result.type_ := ParseCodeableConcept(jsn.vObj['type']);{q}
+        result.type_ := ParseCodeableConcept(jsn.vObj['type']);{q3}
     if jsn.has('quantity') then
-        result.quantity := ParseQuantity(jsn.vObj['quantity']);{q}
+        result.quantity := ParseQuantity(jsn.vObj['quantity']);{q3}
     if jsn.has('suppliedItem') then
-        result.suppliedItem := ParseReference{Resource}(jsn.vObj['suppliedItem']);{q}
+        result.suppliedItem := ParseReference{Resource}(jsn.vObj['suppliedItem']);{q3}
     if jsn.has('supplier') then
-        result.supplier := ParseReference{TFhirPractitioner}(jsn.vObj['supplier']);{q}
+        result.supplier := ParseReference{TFhirPractitioner}(jsn.vObj['supplier']);{q3}
     if jsn.has('whenPrepared') then
-        result.whenPrepared := ParsePeriod(jsn.vObj['whenPrepared']);{q}
+        result.whenPrepared := ParsePeriod(jsn.vObj['whenPrepared']);{q3}
     if jsn.has('time') or jsn.has('_time') then
         result.timeElement := ParseDateTime(jsn['time'], jsn.vObj['_time']);{q}
     if jsn.has('destination') then
-        result.destination := ParseReference{TFhirLocation}(jsn.vObj['destination']);{q}
+        result.destination := ParseReference{TFhirLocation}(jsn.vObj['destination']);{q3}
     if jsn.has('receiver') then
       iterateArray(jsn.vArr['receiver'], result.receiverList, parseReference{TFhirPractitioner});
 end;
@@ -26948,6 +27505,8 @@ begin
   end;
 end;
 
+{$ENDIF FHIR_SUPPLYDELIVERY}
+{$IFDEF FHIR_SUPPLYREQUEST}
 procedure TFHIRJsonParser.ParseSupplyRequestWhen(jsn : TJsonObject; ctxt : TFHIRObjectList);
 begin
   ctxt.add(ParseSupplyRequestWhen(jsn)); {2}
@@ -26968,9 +27527,9 @@ procedure TFHIRJsonParser.ParseSupplyRequestWhenProperties(jsn : TJsonObject; re
 begin
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('code') then
-        result.code := ParseCodeableConcept(jsn.vObj['code']);{q}
+        result.code := ParseCodeableConcept(jsn.vObj['code']);{q3}
     if jsn.has('schedule') then
-        result.schedule := ParseTiming(jsn.vObj['schedule']);{q}
+        result.schedule := ParseTiming(jsn.vObj['schedule']);{q3}
 end;
 
 procedure TFHIRJsonComposer.ComposeSupplyRequestWhen(json : TJSONWriter; name : string; elem : TFhirSupplyRequestWhen; noObj : boolean = false);
@@ -27006,19 +27565,19 @@ procedure TFHIRJsonParser.ParseSupplyRequestProperties(jsn : TJsonObject; result
 begin
     ParseDomainResourceProperties(jsn, result);
     if jsn.has('patient') then
-        result.patient := ParseReference{TFhirPatient}(jsn.vObj['patient']);{q}
+        result.patient := ParseReference{TFhirPatient}(jsn.vObj['patient']);{q3}
     if jsn.has('source') then
-        result.source := ParseReference{Resource}(jsn.vObj['source']);{q}
+        result.source := ParseReference{Resource}(jsn.vObj['source']);{q3}
     if jsn.has('date') or jsn.has('_date') then
         result.dateElement := ParseDateTime(jsn['date'], jsn.vObj['_date']);{q}
     if jsn.has('identifier') then
-        result.identifier := ParseIdentifier(jsn.vObj['identifier']);{q}
+        result.identifier := ParseIdentifier(jsn.vObj['identifier']);{q3}
     if jsn.has('status') or jsn.has('_status')  then
       result.statusElement := parseEnum(jsn.path+'/status', jsn['status'], jsn.vObj['_status'], CODES_TFhirSupplyrequestStatusEnum, SYSTEMS_TFhirSupplyrequestStatusEnum);
     if jsn.has('kind') then
-        result.kind := ParseCodeableConcept(jsn.vObj['kind']);{q}
+        result.kind := ParseCodeableConcept(jsn.vObj['kind']);{q3}
     if jsn.has('orderedItem') then
-        result.orderedItem := ParseReference{Resource}(jsn.vObj['orderedItem']);{q}
+        result.orderedItem := ParseReference{Resource}(jsn.vObj['orderedItem']);{q3}
     if jsn.has('supplier') then
       iterateArray(jsn.vArr['supplier'], result.supplierList, parseReference{TFhirOrganization});
     if jsn.has('reasonCodeableConcept') {a4} then
@@ -27026,7 +27585,7 @@ begin
     if jsn.has('reasonReference') {a3} then
       result.reason := ParseReference(jsn.vObj['reasonReference']);
     if jsn.has('when') then
-        result.when := ParseSupplyRequestWhen(jsn.vObj['when']);{q}
+        result.when := ParseSupplyRequestWhen(jsn.vObj['when']);{q3}
 end;
 
 procedure TFHIRJsonComposer.ComposeSupplyRequest(json : TJSONWriter; name : string; elem : TFhirSupplyRequest; noObj : boolean = false);
@@ -27069,6 +27628,8 @@ begin
     ComposeSupplyRequestWhen(json, 'when', elem.when); {a}
 end;
 
+{$ENDIF FHIR_SUPPLYREQUEST}
+{$IFDEF FHIR_TESTSCRIPT}
 procedure TFHIRJsonParser.ParseTestScriptContact(jsn : TJsonObject; ctxt : TFHIRObjectList);
 begin
   ctxt.add(ParseTestScriptContact(jsn)); {2}
@@ -27238,7 +27799,7 @@ begin
       if jsn.has('link') or jsn.has('_link') then
       iteratePrimitiveArray(jsn.vArr['link'], jsn.vArr['_link'], result.link_List, parseUri);
     if jsn.has('conformance') then
-        result.conformance := ParseReference{TFhirConformance}(jsn.vObj['conformance']);{q}
+        result.conformance := ParseReference{TFhirConformance}(jsn.vObj['conformance']);{q3}
 end;
 
 procedure TFHIRJsonComposer.ComposeTestScriptMetadataCapability(json : TJSONWriter; name : string; elem : TFhirTestScriptMetadataCapability; noObj : boolean = false);
@@ -27320,7 +27881,7 @@ begin
     if jsn.has('autodelete') or jsn.has('_autodelete') then
         result.autodeleteElement := ParseBoolean(jsn['autodelete'], jsn.vObj['_autodelete']);{q}
     if jsn.has('resource') then
-        result.resource := ParseReference{TFhirReference}(jsn.vObj['resource']);{q}
+        result.resource := ParseReference{TFhirReference}(jsn.vObj['resource']);{q3}
 end;
 
 procedure TFHIRJsonComposer.ComposeTestScriptFixture(json : TJSONWriter; name : string; elem : TFhirTestScriptFixture; noObj : boolean = false);
@@ -27416,7 +27977,7 @@ procedure TFHIRJsonParser.ParseTestScriptSetupProperties(jsn : TJsonObject; resu
 begin
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('metadata') then
-        result.metadata := ParseTestScriptMetadata(jsn.vObj['metadata']);{q}
+        result.metadata := ParseTestScriptMetadata(jsn.vObj['metadata']);{q3}
     if jsn.has('action') then
       iterateArray(jsn.vArr['action'], result.actionList, parseTestScriptSetupAction);
 end;
@@ -27461,9 +28022,9 @@ procedure TFHIRJsonParser.ParseTestScriptSetupActionProperties(jsn : TJsonObject
 begin
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('operation') then
-        result.operation := ParseTestScriptSetupActionOperation(jsn.vObj['operation']);{q}
+        result.operation := ParseTestScriptSetupActionOperation(jsn.vObj['operation']);{q3}
     if jsn.has('assert') then
-        result.assert := ParseTestScriptSetupActionAssert(jsn.vObj['assert']);{q}
+        result.assert := ParseTestScriptSetupActionAssert(jsn.vObj['assert']);{q3}
 end;
 
 procedure TFHIRJsonComposer.ComposeTestScriptSetupAction(json : TJSONWriter; name : string; elem : TFhirTestScriptSetupAction; noObj : boolean = false);
@@ -27499,7 +28060,7 @@ procedure TFHIRJsonParser.ParseTestScriptSetupActionOperationProperties(jsn : TJ
 begin
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('type') then
-        result.type_ := ParseCoding(jsn.vObj['type']);{q}
+        result.type_ := ParseCoding(jsn.vObj['type']);{q3}
     if jsn.has('resource') or jsn.has('_resource') then
         result.resourceElement := ParseCode(jsn['resource'], jsn.vObj['_resource']);{q}
     if jsn.has('label') or jsn.has('_label') then
@@ -27800,7 +28361,7 @@ begin
     if jsn.has('description') or jsn.has('_description') then
         result.descriptionElement := ParseString(jsn['description'], jsn.vObj['_description']);{q}
     if jsn.has('metadata') then
-        result.metadata := ParseTestScriptMetadata(jsn.vObj['metadata']);{q}
+        result.metadata := ParseTestScriptMetadata(jsn.vObj['metadata']);{q3}
     if jsn.has('action') then
       iterateArray(jsn.vArr['action'], result.actionList, parseTestScriptTestAction);
 end;
@@ -27853,9 +28414,9 @@ procedure TFHIRJsonParser.ParseTestScriptTestActionProperties(jsn : TJsonObject;
 begin
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('operation') then
-        result.operation := ParseTestScriptSetupActionOperation(jsn.vObj['operation']);{q}
+        result.operation := ParseTestScriptSetupActionOperation(jsn.vObj['operation']);{q3}
     if jsn.has('assert') then
-        result.assert := ParseTestScriptSetupActionAssert(jsn.vObj['assert']);{q}
+        result.assert := ParseTestScriptSetupActionAssert(jsn.vObj['assert']);{q3}
 end;
 
 procedure TFHIRJsonComposer.ComposeTestScriptTestAction(json : TJSONWriter; name : string; elem : TFhirTestScriptTestAction; noObj : boolean = false);
@@ -27932,7 +28493,7 @@ procedure TFHIRJsonParser.ParseTestScriptTeardownActionProperties(jsn : TJsonObj
 begin
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('operation') then
-        result.operation := ParseTestScriptSetupActionOperation(jsn.vObj['operation']);{q}
+        result.operation := ParseTestScriptSetupActionOperation(jsn.vObj['operation']);{q3}
 end;
 
 procedure TFHIRJsonComposer.ComposeTestScriptTeardownAction(json : TJSONWriter; name : string; elem : TFhirTestScriptTeardownAction; noObj : boolean = false);
@@ -27974,7 +28535,7 @@ begin
     if jsn.has('status') or jsn.has('_status')  then
       result.statusElement := parseEnum(jsn.path+'/status', jsn['status'], jsn.vObj['_status'], CODES_TFhirConformanceResourceStatusEnum, SYSTEMS_TFhirConformanceResourceStatusEnum);
     if jsn.has('identifier') then
-        result.identifier := ParseIdentifier(jsn.vObj['identifier']);{q}
+        result.identifier := ParseIdentifier(jsn.vObj['identifier']);{q3}
     if jsn.has('experimental') or jsn.has('_experimental') then
         result.experimentalElement := ParseBoolean(jsn['experimental'], jsn.vObj['_experimental']);{q}
     if jsn.has('publisher') or jsn.has('_publisher') then
@@ -27992,7 +28553,7 @@ begin
     if jsn.has('copyright') or jsn.has('_copyright') then
         result.copyrightElement := ParseString(jsn['copyright'], jsn.vObj['_copyright']);{q}
     if jsn.has('metadata') then
-        result.metadata := ParseTestScriptMetadata(jsn.vObj['metadata']);{q}
+        result.metadata := ParseTestScriptMetadata(jsn.vObj['metadata']);{q3}
     if jsn.has('multiserver') or jsn.has('_multiserver') then
         result.multiserverElement := ParseBoolean(jsn['multiserver'], jsn.vObj['_multiserver']);{q}
     if jsn.has('fixture') then
@@ -28002,11 +28563,11 @@ begin
     if jsn.has('variable') then
       iterateArray(jsn.vArr['variable'], result.variableList, parseTestScriptVariable);
     if jsn.has('setup') then
-        result.setup := ParseTestScriptSetup(jsn.vObj['setup']);{q}
+        result.setup := ParseTestScriptSetup(jsn.vObj['setup']);{q3}
     if jsn.has('test') then
       iterateArray(jsn.vArr['test'], result.testList, parseTestScriptTest);
     if jsn.has('teardown') then
-        result.teardown := ParseTestScriptTeardown(jsn.vObj['teardown']);{q}
+        result.teardown := ParseTestScriptTeardown(jsn.vObj['teardown']);{q3}
 end;
 
 procedure TFHIRJsonComposer.ComposeTestScript(json : TJSONWriter; name : string; elem : TFhirTestScript; noObj : boolean = false);
@@ -28112,6 +28673,8 @@ begin
     ComposeTestScriptTeardown(json, 'teardown', elem.teardown); {a}
 end;
 
+{$ENDIF FHIR_TESTSCRIPT}
+{$IFDEF FHIR_VALUESET}
 procedure TFHIRJsonParser.ParseValueSetContact(jsn : TJsonObject; ctxt : TFHIRObjectList);
 begin
   ctxt.add(ParseValueSetContact(jsn)); {2}
@@ -28314,7 +28877,7 @@ begin
     if jsn.has('language') or jsn.has('_language') then
         result.languageElement := ParseCode(jsn['language'], jsn.vObj['_language']);{q}
     if jsn.has('use') then
-        result.use := ParseCoding(jsn.vObj['use']);{q}
+        result.use := ParseCoding(jsn.vObj['use']);{q3}
     if jsn.has('value') or jsn.has('_value') then
         result.valueElement := ParseString(jsn['value'], jsn.vObj['_value']);{q}
 end;
@@ -28824,7 +29387,7 @@ begin
     if jsn.has('url') or jsn.has('_url') then
         result.urlElement := ParseUri(jsn['url'], jsn.vObj['_url']);{q}
     if jsn.has('identifier') then
-        result.identifier := ParseIdentifier(jsn.vObj['identifier']);{q}
+        result.identifier := ParseIdentifier(jsn.vObj['identifier']);{q3}
     if jsn.has('version') or jsn.has('_version') then
         result.versionElement := ParseString(jsn['version'], jsn.vObj['_version']);{q}
     if jsn.has('name') or jsn.has('_name') then
@@ -28854,11 +29417,11 @@ begin
     if jsn.has('extensible') or jsn.has('_extensible') then
         result.extensibleElement := ParseBoolean(jsn['extensible'], jsn.vObj['_extensible']);{q}
     if jsn.has('codeSystem') then
-        result.codeSystem := ParseValueSetCodeSystem(jsn.vObj['codeSystem']);{q}
+        result.codeSystem := ParseValueSetCodeSystem(jsn.vObj['codeSystem']);{q3}
     if jsn.has('compose') then
-        result.compose := ParseValueSetCompose(jsn.vObj['compose']);{q}
+        result.compose := ParseValueSetCompose(jsn.vObj['compose']);{q3}
     if jsn.has('expansion') then
-        result.expansion := ParseValueSetExpansion(jsn.vObj['expansion']);{q}
+        result.expansion := ParseValueSetExpansion(jsn.vObj['expansion']);{q3}
 end;
 
 procedure TFHIRJsonComposer.ComposeValueSet(json : TJSONWriter; name : string; elem : TFhirValueSet; noObj : boolean = false);
@@ -28944,6 +29507,8 @@ begin
     ComposeValueSetExpansion(json, 'expansion', elem.expansion); {a}
 end;
 
+{$ENDIF FHIR_VALUESET}
+{$IFDEF FHIR_VISIONPRESCRIPTION}
 procedure TFHIRJsonParser.ParseVisionPrescriptionDispense(jsn : TJsonObject; ctxt : TFHIRObjectList);
 begin
   ctxt.add(ParseVisionPrescriptionDispense(jsn)); {2}
@@ -28964,7 +29529,7 @@ procedure TFHIRJsonParser.ParseVisionPrescriptionDispenseProperties(jsn : TJsonO
 begin
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('product') then
-        result.product := ParseCoding(jsn.vObj['product']);{q}
+        result.product := ParseCoding(jsn.vObj['product']);{q3}
     if jsn.has('eye') or jsn.has('_eye')  then
       result.eyeElement := parseEnum(jsn.path+'/eye', jsn['eye'], jsn.vObj['_eye'], CODES_TFhirVisionEyeCodesEnum, SYSTEMS_TFhirVisionEyeCodesEnum);
     if jsn.has('sphere') or jsn.has('_sphere') then
@@ -28986,7 +29551,7 @@ begin
     if jsn.has('diameter') or jsn.has('_diameter') then
         result.diameterElement := ParseDecimal(jsn['diameter'], jsn.vObj['_diameter']);{q}
     if jsn.has('duration') then
-        result.duration := ParseQuantity(jsn.vObj['duration']);{q}
+        result.duration := ParseQuantity(jsn.vObj['duration']);{q3}
     if jsn.has('color') or jsn.has('_color') then
         result.colorElement := ParseString(jsn['color'], jsn.vObj['_color']);{q}
     if jsn.has('brand') or jsn.has('_brand') then
@@ -29084,11 +29649,11 @@ begin
     if jsn.has('dateWritten') or jsn.has('_dateWritten') then
         result.dateWrittenElement := ParseDateTime(jsn['dateWritten'], jsn.vObj['_dateWritten']);{q}
     if jsn.has('patient') then
-        result.patient := ParseReference{TFhirPatient}(jsn.vObj['patient']);{q}
+        result.patient := ParseReference{TFhirPatient}(jsn.vObj['patient']);{q3}
     if jsn.has('prescriber') then
-        result.prescriber := ParseReference{TFhirPractitioner}(jsn.vObj['prescriber']);{q}
+        result.prescriber := ParseReference{TFhirPractitioner}(jsn.vObj['prescriber']);{q3}
     if jsn.has('encounter') then
-        result.encounter := ParseReference{TFhirEncounter}(jsn.vObj['encounter']);{q}
+        result.encounter := ParseReference{TFhirEncounter}(jsn.vObj['encounter']);{q3}
     if jsn.has('reasonCodeableConcept') {a4} then
       result.reason := ParseCodeableConcept(jsn.vObj['reasonCodeableConcept']);
     if jsn.has('reasonReference') {a3} then
@@ -29134,199 +29699,574 @@ begin
   end;
 end;
 
+{$ENDIF FHIR_VISIONPRESCRIPTION}
 function TFHIRJsonParser.ParseResource(jsn : TJsonObject) : TFhirResource;
 var
   s : String;
 begin
   s := jsn['resourceType'];
+ {$IFDEF FHIR_PARAMETERS}
   if s = 'Parameters' Then
     result := ParseParameters(jsn)
-  else if s = 'Account' Then
-    result := ParseAccount(jsn)
-  else if s = 'AllergyIntolerance' Then
-    result := ParseAllergyIntolerance(jsn)
-  else if s = 'Appointment' Then
-    result := ParseAppointment(jsn)
-  else if s = 'AppointmentResponse' Then
-    result := ParseAppointmentResponse(jsn)
-  else if s = 'AuditEvent' Then
-    result := ParseAuditEvent(jsn)
-  else if s = 'Basic' Then
-    result := ParseBasic(jsn)
-  else if s = 'Binary' Then
-    result := ParseBinary(jsn)
-  else if s = 'BodySite' Then
-    result := ParseBodySite(jsn)
-  else if s = 'Bundle' Then
-    result := ParseBundle(jsn)
-  else if s = 'CarePlan' Then
-    result := ParseCarePlan(jsn)
-  else if s = 'Claim' Then
-    result := ParseClaim(jsn)
-  else if s = 'ClaimResponse' Then
-    result := ParseClaimResponse(jsn)
-  else if s = 'ClinicalImpression' Then
-    result := ParseClinicalImpression(jsn)
-  else if s = 'Communication' Then
-    result := ParseCommunication(jsn)
-  else if s = 'CommunicationRequest' Then
-    result := ParseCommunicationRequest(jsn)
-  else if s = 'Composition' Then
-    result := ParseComposition(jsn)
-  else if s = 'ConceptMap' Then
-    result := ParseConceptMap(jsn)
-  else if s = 'Condition' Then
-    result := ParseCondition(jsn)
-  else if s = 'Conformance' Then
-    result := ParseConformance(jsn)
-  else if s = 'Contract' Then
-    result := ParseContract(jsn)
-  else if s = 'Coverage' Then
-    result := ParseCoverage(jsn)
-  else if s = 'DataElement' Then
-    result := ParseDataElement(jsn)
-  else if s = 'DetectedIssue' Then
-    result := ParseDetectedIssue(jsn)
-  else if s = 'Device' Then
-    result := ParseDevice(jsn)
-  else if s = 'DeviceComponent' Then
-    result := ParseDeviceComponent(jsn)
-  else if s = 'DeviceMetric' Then
-    result := ParseDeviceMetric(jsn)
-  else if s = 'DeviceUseRequest' Then
-    result := ParseDeviceUseRequest(jsn)
-  else if s = 'DeviceUseStatement' Then
-    result := ParseDeviceUseStatement(jsn)
-  else if s = 'DiagnosticOrder' Then
-    result := ParseDiagnosticOrder(jsn)
-  else if s = 'DiagnosticReport' Then
-    result := ParseDiagnosticReport(jsn)
-  else if s = 'DocumentManifest' Then
-    result := ParseDocumentManifest(jsn)
-  else if s = 'DocumentReference' Then
-    result := ParseDocumentReference(jsn)
-  else if s = 'EligibilityRequest' Then
-    result := ParseEligibilityRequest(jsn)
-  else if s = 'EligibilityResponse' Then
-    result := ParseEligibilityResponse(jsn)
-  else if s = 'Encounter' Then
-    result := ParseEncounter(jsn)
-  else if s = 'EnrollmentRequest' Then
-    result := ParseEnrollmentRequest(jsn)
-  else if s = 'EnrollmentResponse' Then
-    result := ParseEnrollmentResponse(jsn)
-  else if s = 'EpisodeOfCare' Then
-    result := ParseEpisodeOfCare(jsn)
-  else if s = 'ExplanationOfBenefit' Then
-    result := ParseExplanationOfBenefit(jsn)
-  else if s = 'FamilyMemberHistory' Then
-    result := ParseFamilyMemberHistory(jsn)
-  else if s = 'Flag' Then
-    result := ParseFlag(jsn)
-  else if s = 'Goal' Then
-    result := ParseGoal(jsn)
-  else if s = 'Group' Then
-    result := ParseGroup(jsn)
-  else if s = 'HealthcareService' Then
-    result := ParseHealthcareService(jsn)
-  else if s = 'ImagingObjectSelection' Then
-    result := ParseImagingObjectSelection(jsn)
-  else if s = 'ImagingStudy' Then
-    result := ParseImagingStudy(jsn)
-  else if s = 'Immunization' Then
-    result := ParseImmunization(jsn)
-  else if s = 'ImmunizationRecommendation' Then
-    result := ParseImmunizationRecommendation(jsn)
-  else if s = 'ImplementationGuide' Then
-    result := ParseImplementationGuide(jsn)
-  else if s = 'List' Then
-    result := ParseList(jsn)
-  else if s = 'Location' Then
-    result := ParseLocation(jsn)
-  else if s = 'Media' Then
-    result := ParseMedia(jsn)
-  else if s = 'Medication' Then
-    result := ParseMedication(jsn)
-  else if s = 'MedicationAdministration' Then
-    result := ParseMedicationAdministration(jsn)
-  else if s = 'MedicationDispense' Then
-    result := ParseMedicationDispense(jsn)
-  else if s = 'MedicationOrder' Then
-    result := ParseMedicationOrder(jsn)
-  else if s = 'MedicationStatement' Then
-    result := ParseMedicationStatement(jsn)
-  else if s = 'MessageHeader' Then
-    result := ParseMessageHeader(jsn)
-  else if s = 'NamingSystem' Then
-    result := ParseNamingSystem(jsn)
-  else if s = 'NutritionOrder' Then
-    result := ParseNutritionOrder(jsn)
-  else if s = 'Observation' Then
-    result := ParseObservation(jsn)
-  else if s = 'OperationDefinition' Then
-    result := ParseOperationDefinition(jsn)
-  else if s = 'OperationOutcome' Then
-    result := ParseOperationOutcome(jsn)
-  else if s = 'Order' Then
-    result := ParseOrder(jsn)
-  else if s = 'OrderResponse' Then
-    result := ParseOrderResponse(jsn)
-  else if s = 'Organization' Then
-    result := ParseOrganization(jsn)
-  else if s = 'Patient' Then
-    result := ParsePatient(jsn)
-  else if s = 'PaymentNotice' Then
-    result := ParsePaymentNotice(jsn)
-  else if s = 'PaymentReconciliation' Then
-    result := ParsePaymentReconciliation(jsn)
-  else if s = 'Person' Then
-    result := ParsePerson(jsn)
-  else if s = 'Practitioner' Then
-    result := ParsePractitioner(jsn)
-  else if s = 'Procedure' Then
-    result := ParseProcedure(jsn)
-  else if s = 'ProcedureRequest' Then
-    result := ParseProcedureRequest(jsn)
-  else if s = 'ProcessRequest' Then
-    result := ParseProcessRequest(jsn)
-  else if s = 'ProcessResponse' Then
-    result := ParseProcessResponse(jsn)
-  else if s = 'Provenance' Then
-    result := ParseProvenance(jsn)
-  else if s = 'Questionnaire' Then
-    result := ParseQuestionnaire(jsn)
-  else if s = 'QuestionnaireResponse' Then
-    result := ParseQuestionnaireResponse(jsn)
-  else if s = 'ReferralRequest' Then
-    result := ParseReferralRequest(jsn)
-  else if s = 'RelatedPerson' Then
-    result := ParseRelatedPerson(jsn)
-  else if s = 'RiskAssessment' Then
-    result := ParseRiskAssessment(jsn)
-  else if s = 'Schedule' Then
-    result := ParseSchedule(jsn)
-  else if s = 'SearchParameter' Then
-    result := ParseSearchParameter(jsn)
-  else if s = 'Slot' Then
-    result := ParseSlot(jsn)
-  else if s = 'Specimen' Then
-    result := ParseSpecimen(jsn)
-  else if s = 'StructureDefinition' Then
-    result := ParseStructureDefinition(jsn)
-  else if s = 'Subscription' Then
-    result := ParseSubscription(jsn)
-  else if s = 'Substance' Then
-    result := ParseSubstance(jsn)
-  else if s = 'SupplyDelivery' Then
-    result := ParseSupplyDelivery(jsn)
-  else if s = 'SupplyRequest' Then
-    result := ParseSupplyRequest(jsn)
-  else if s = 'TestScript' Then
-    result := ParseTestScript(jsn)
-  else if s = 'ValueSet' Then
-    result := ParseValueSet(jsn)
-  else if s = 'VisionPrescription' Then
-    result := ParseVisionPrescription(jsn)
+{$ENDIF FHIR_PARAMETERS}
+{$IFDEF FHIR_ACCOUNT}
+  {$IFDEF FHIR_ACCOUNT}
+   else if s = 'Account' Then
+    result := ParseAccount(jsn) 
+  {$ENDIF}
+{$ENDIF FHIR_ACCOUNT}
+{$IFDEF FHIR_ALLERGYINTOLERANCE}
+  {$IFDEF FHIR_ALLERGYINTOLERANCE}
+   else if s = 'AllergyIntolerance' Then
+    result := ParseAllergyIntolerance(jsn) 
+  {$ENDIF}
+{$ENDIF FHIR_ALLERGYINTOLERANCE}
+{$IFDEF FHIR_APPOINTMENT}
+  {$IFDEF FHIR_APPOINTMENT}
+   else if s = 'Appointment' Then
+    result := ParseAppointment(jsn) 
+  {$ENDIF}
+{$ENDIF FHIR_APPOINTMENT}
+{$IFDEF FHIR_APPOINTMENTRESPONSE}
+  {$IFDEF FHIR_APPOINTMENTRESPONSE}
+   else if s = 'AppointmentResponse' Then
+    result := ParseAppointmentResponse(jsn) 
+  {$ENDIF}
+{$ENDIF FHIR_APPOINTMENTRESPONSE}
+{$IFDEF FHIR_AUDITEVENT}
+  {$IFDEF FHIR_AUDITEVENT}
+   else if s = 'AuditEvent' Then
+    result := ParseAuditEvent(jsn) 
+  {$ENDIF}
+{$ENDIF FHIR_AUDITEVENT}
+{$IFDEF FHIR_BASIC}
+  {$IFDEF FHIR_BASIC}
+   else if s = 'Basic' Then
+    result := ParseBasic(jsn) 
+  {$ENDIF}
+{$ENDIF FHIR_BASIC}
+{$IFDEF FHIR_BINARY}
+  {$IFDEF FHIR_BINARY}
+   else if s = 'Binary' Then
+    result := ParseBinary(jsn) 
+  {$ENDIF}
+{$ENDIF FHIR_BINARY}
+{$IFDEF FHIR_BODYSITE}
+  {$IFDEF FHIR_BODYSITE}
+   else if s = 'BodySite' Then
+    result := ParseBodySite(jsn) 
+  {$ENDIF}
+{$ENDIF FHIR_BODYSITE}
+{$IFDEF FHIR_BUNDLE}
+  {$IFDEF FHIR_BUNDLE}
+   else if s = 'Bundle' Then
+    result := ParseBundle(jsn) 
+  {$ENDIF}
+{$ENDIF FHIR_BUNDLE}
+{$IFDEF FHIR_CAREPLAN}
+  {$IFDEF FHIR_CAREPLAN}
+   else if s = 'CarePlan' Then
+    result := ParseCarePlan(jsn) 
+  {$ENDIF}
+{$ENDIF FHIR_CAREPLAN}
+{$IFDEF FHIR_CLAIM}
+  {$IFDEF FHIR_CLAIM}
+   else if s = 'Claim' Then
+    result := ParseClaim(jsn) 
+  {$ENDIF}
+{$ENDIF FHIR_CLAIM}
+{$IFDEF FHIR_CLAIMRESPONSE}
+  {$IFDEF FHIR_CLAIMRESPONSE}
+   else if s = 'ClaimResponse' Then
+    result := ParseClaimResponse(jsn) 
+  {$ENDIF}
+{$ENDIF FHIR_CLAIMRESPONSE}
+{$IFDEF FHIR_CLINICALIMPRESSION}
+  {$IFDEF FHIR_CLINICALIMPRESSION}
+   else if s = 'ClinicalImpression' Then
+    result := ParseClinicalImpression(jsn) 
+  {$ENDIF}
+{$ENDIF FHIR_CLINICALIMPRESSION}
+{$IFDEF FHIR_COMMUNICATION}
+  {$IFDEF FHIR_COMMUNICATION}
+   else if s = 'Communication' Then
+    result := ParseCommunication(jsn) 
+  {$ENDIF}
+{$ENDIF FHIR_COMMUNICATION}
+{$IFDEF FHIR_COMMUNICATIONREQUEST}
+  {$IFDEF FHIR_COMMUNICATIONREQUEST}
+   else if s = 'CommunicationRequest' Then
+    result := ParseCommunicationRequest(jsn) 
+  {$ENDIF}
+{$ENDIF FHIR_COMMUNICATIONREQUEST}
+{$IFDEF FHIR_COMPOSITION}
+  {$IFDEF FHIR_COMPOSITION}
+   else if s = 'Composition' Then
+    result := ParseComposition(jsn) 
+  {$ENDIF}
+{$ENDIF FHIR_COMPOSITION}
+{$IFDEF FHIR_CONCEPTMAP}
+  {$IFDEF FHIR_CONCEPTMAP}
+   else if s = 'ConceptMap' Then
+    result := ParseConceptMap(jsn) 
+  {$ENDIF}
+{$ENDIF FHIR_CONCEPTMAP}
+{$IFDEF FHIR_CONDITION}
+  {$IFDEF FHIR_CONDITION}
+   else if s = 'Condition' Then
+    result := ParseCondition(jsn) 
+  {$ENDIF}
+{$ENDIF FHIR_CONDITION}
+{$IFDEF FHIR_CONFORMANCE}
+  {$IFDEF FHIR_CONFORMANCE}
+   else if s = 'Conformance' Then
+    result := ParseConformance(jsn) 
+  {$ENDIF}
+{$ENDIF FHIR_CONFORMANCE}
+{$IFDEF FHIR_CONTRACT}
+  {$IFDEF FHIR_CONTRACT}
+   else if s = 'Contract' Then
+    result := ParseContract(jsn) 
+  {$ENDIF}
+{$ENDIF FHIR_CONTRACT}
+{$IFDEF FHIR_COVERAGE}
+  {$IFDEF FHIR_COVERAGE}
+   else if s = 'Coverage' Then
+    result := ParseCoverage(jsn) 
+  {$ENDIF}
+{$ENDIF FHIR_COVERAGE}
+{$IFDEF FHIR_DATAELEMENT}
+  {$IFDEF FHIR_DATAELEMENT}
+   else if s = 'DataElement' Then
+    result := ParseDataElement(jsn) 
+  {$ENDIF}
+{$ENDIF FHIR_DATAELEMENT}
+{$IFDEF FHIR_DETECTEDISSUE}
+  {$IFDEF FHIR_DETECTEDISSUE}
+   else if s = 'DetectedIssue' Then
+    result := ParseDetectedIssue(jsn) 
+  {$ENDIF}
+{$ENDIF FHIR_DETECTEDISSUE}
+{$IFDEF FHIR_DEVICE}
+  {$IFDEF FHIR_DEVICE}
+   else if s = 'Device' Then
+    result := ParseDevice(jsn) 
+  {$ENDIF}
+{$ENDIF FHIR_DEVICE}
+{$IFDEF FHIR_DEVICECOMPONENT}
+  {$IFDEF FHIR_DEVICECOMPONENT}
+   else if s = 'DeviceComponent' Then
+    result := ParseDeviceComponent(jsn) 
+  {$ENDIF}
+{$ENDIF FHIR_DEVICECOMPONENT}
+{$IFDEF FHIR_DEVICEMETRIC}
+  {$IFDEF FHIR_DEVICEMETRIC}
+   else if s = 'DeviceMetric' Then
+    result := ParseDeviceMetric(jsn) 
+  {$ENDIF}
+{$ENDIF FHIR_DEVICEMETRIC}
+{$IFDEF FHIR_DEVICEUSEREQUEST}
+  {$IFDEF FHIR_DEVICEUSEREQUEST}
+   else if s = 'DeviceUseRequest' Then
+    result := ParseDeviceUseRequest(jsn) 
+  {$ENDIF}
+{$ENDIF FHIR_DEVICEUSEREQUEST}
+{$IFDEF FHIR_DEVICEUSESTATEMENT}
+  {$IFDEF FHIR_DEVICEUSESTATEMENT}
+   else if s = 'DeviceUseStatement' Then
+    result := ParseDeviceUseStatement(jsn) 
+  {$ENDIF}
+{$ENDIF FHIR_DEVICEUSESTATEMENT}
+{$IFDEF FHIR_DIAGNOSTICORDER}
+  {$IFDEF FHIR_DIAGNOSTICORDER}
+   else if s = 'DiagnosticOrder' Then
+    result := ParseDiagnosticOrder(jsn) 
+  {$ENDIF}
+{$ENDIF FHIR_DIAGNOSTICORDER}
+{$IFDEF FHIR_DIAGNOSTICREPORT}
+  {$IFDEF FHIR_DIAGNOSTICREPORT}
+   else if s = 'DiagnosticReport' Then
+    result := ParseDiagnosticReport(jsn) 
+  {$ENDIF}
+{$ENDIF FHIR_DIAGNOSTICREPORT}
+{$IFDEF FHIR_DOCUMENTMANIFEST}
+  {$IFDEF FHIR_DOCUMENTMANIFEST}
+   else if s = 'DocumentManifest' Then
+    result := ParseDocumentManifest(jsn) 
+  {$ENDIF}
+{$ENDIF FHIR_DOCUMENTMANIFEST}
+{$IFDEF FHIR_DOCUMENTREFERENCE}
+  {$IFDEF FHIR_DOCUMENTREFERENCE}
+   else if s = 'DocumentReference' Then
+    result := ParseDocumentReference(jsn) 
+  {$ENDIF}
+{$ENDIF FHIR_DOCUMENTREFERENCE}
+{$IFDEF FHIR_ELIGIBILITYREQUEST}
+  {$IFDEF FHIR_ELIGIBILITYREQUEST}
+   else if s = 'EligibilityRequest' Then
+    result := ParseEligibilityRequest(jsn) 
+  {$ENDIF}
+{$ENDIF FHIR_ELIGIBILITYREQUEST}
+{$IFDEF FHIR_ELIGIBILITYRESPONSE}
+  {$IFDEF FHIR_ELIGIBILITYRESPONSE}
+   else if s = 'EligibilityResponse' Then
+    result := ParseEligibilityResponse(jsn) 
+  {$ENDIF}
+{$ENDIF FHIR_ELIGIBILITYRESPONSE}
+{$IFDEF FHIR_ENCOUNTER}
+  {$IFDEF FHIR_ENCOUNTER}
+   else if s = 'Encounter' Then
+    result := ParseEncounter(jsn) 
+  {$ENDIF}
+{$ENDIF FHIR_ENCOUNTER}
+{$IFDEF FHIR_ENROLLMENTREQUEST}
+  {$IFDEF FHIR_ENROLLMENTREQUEST}
+   else if s = 'EnrollmentRequest' Then
+    result := ParseEnrollmentRequest(jsn) 
+  {$ENDIF}
+{$ENDIF FHIR_ENROLLMENTREQUEST}
+{$IFDEF FHIR_ENROLLMENTRESPONSE}
+  {$IFDEF FHIR_ENROLLMENTRESPONSE}
+   else if s = 'EnrollmentResponse' Then
+    result := ParseEnrollmentResponse(jsn) 
+  {$ENDIF}
+{$ENDIF FHIR_ENROLLMENTRESPONSE}
+{$IFDEF FHIR_EPISODEOFCARE}
+  {$IFDEF FHIR_EPISODEOFCARE}
+   else if s = 'EpisodeOfCare' Then
+    result := ParseEpisodeOfCare(jsn) 
+  {$ENDIF}
+{$ENDIF FHIR_EPISODEOFCARE}
+{$IFDEF FHIR_EXPLANATIONOFBENEFIT}
+  {$IFDEF FHIR_EXPLANATIONOFBENEFIT}
+   else if s = 'ExplanationOfBenefit' Then
+    result := ParseExplanationOfBenefit(jsn) 
+  {$ENDIF}
+{$ENDIF FHIR_EXPLANATIONOFBENEFIT}
+{$IFDEF FHIR_FAMILYMEMBERHISTORY}
+  {$IFDEF FHIR_FAMILYMEMBERHISTORY}
+   else if s = 'FamilyMemberHistory' Then
+    result := ParseFamilyMemberHistory(jsn) 
+  {$ENDIF}
+{$ENDIF FHIR_FAMILYMEMBERHISTORY}
+{$IFDEF FHIR_FLAG}
+  {$IFDEF FHIR_FLAG}
+   else if s = 'Flag' Then
+    result := ParseFlag(jsn) 
+  {$ENDIF}
+{$ENDIF FHIR_FLAG}
+{$IFDEF FHIR_GOAL}
+  {$IFDEF FHIR_GOAL}
+   else if s = 'Goal' Then
+    result := ParseGoal(jsn) 
+  {$ENDIF}
+{$ENDIF FHIR_GOAL}
+{$IFDEF FHIR_GROUP}
+  {$IFDEF FHIR_GROUP}
+   else if s = 'Group' Then
+    result := ParseGroup(jsn) 
+  {$ENDIF}
+{$ENDIF FHIR_GROUP}
+{$IFDEF FHIR_HEALTHCARESERVICE}
+  {$IFDEF FHIR_HEALTHCARESERVICE}
+   else if s = 'HealthcareService' Then
+    result := ParseHealthcareService(jsn) 
+  {$ENDIF}
+{$ENDIF FHIR_HEALTHCARESERVICE}
+{$IFDEF FHIR_IMAGINGOBJECTSELECTION}
+  {$IFDEF FHIR_IMAGINGOBJECTSELECTION}
+   else if s = 'ImagingObjectSelection' Then
+    result := ParseImagingObjectSelection(jsn) 
+  {$ENDIF}
+{$ENDIF FHIR_IMAGINGOBJECTSELECTION}
+{$IFDEF FHIR_IMAGINGSTUDY}
+  {$IFDEF FHIR_IMAGINGSTUDY}
+   else if s = 'ImagingStudy' Then
+    result := ParseImagingStudy(jsn) 
+  {$ENDIF}
+{$ENDIF FHIR_IMAGINGSTUDY}
+{$IFDEF FHIR_IMMUNIZATION}
+  {$IFDEF FHIR_IMMUNIZATION}
+   else if s = 'Immunization' Then
+    result := ParseImmunization(jsn) 
+  {$ENDIF}
+{$ENDIF FHIR_IMMUNIZATION}
+{$IFDEF FHIR_IMMUNIZATIONRECOMMENDATION}
+  {$IFDEF FHIR_IMMUNIZATIONRECOMMENDATION}
+   else if s = 'ImmunizationRecommendation' Then
+    result := ParseImmunizationRecommendation(jsn) 
+  {$ENDIF}
+{$ENDIF FHIR_IMMUNIZATIONRECOMMENDATION}
+{$IFDEF FHIR_IMPLEMENTATIONGUIDE}
+  {$IFDEF FHIR_IMPLEMENTATIONGUIDE}
+   else if s = 'ImplementationGuide' Then
+    result := ParseImplementationGuide(jsn) 
+  {$ENDIF}
+{$ENDIF FHIR_IMPLEMENTATIONGUIDE}
+{$IFDEF FHIR_LIST}
+  {$IFDEF FHIR_LIST}
+   else if s = 'List' Then
+    result := ParseList(jsn) 
+  {$ENDIF}
+{$ENDIF FHIR_LIST}
+{$IFDEF FHIR_LOCATION}
+  {$IFDEF FHIR_LOCATION}
+   else if s = 'Location' Then
+    result := ParseLocation(jsn) 
+  {$ENDIF}
+{$ENDIF FHIR_LOCATION}
+{$IFDEF FHIR_MEDIA}
+  {$IFDEF FHIR_MEDIA}
+   else if s = 'Media' Then
+    result := ParseMedia(jsn) 
+  {$ENDIF}
+{$ENDIF FHIR_MEDIA}
+{$IFDEF FHIR_MEDICATION}
+  {$IFDEF FHIR_MEDICATION}
+   else if s = 'Medication' Then
+    result := ParseMedication(jsn) 
+  {$ENDIF}
+{$ENDIF FHIR_MEDICATION}
+{$IFDEF FHIR_MEDICATIONADMINISTRATION}
+  {$IFDEF FHIR_MEDICATIONADMINISTRATION}
+   else if s = 'MedicationAdministration' Then
+    result := ParseMedicationAdministration(jsn) 
+  {$ENDIF}
+{$ENDIF FHIR_MEDICATIONADMINISTRATION}
+{$IFDEF FHIR_MEDICATIONDISPENSE}
+  {$IFDEF FHIR_MEDICATIONDISPENSE}
+   else if s = 'MedicationDispense' Then
+    result := ParseMedicationDispense(jsn) 
+  {$ENDIF}
+{$ENDIF FHIR_MEDICATIONDISPENSE}
+{$IFDEF FHIR_MEDICATIONORDER}
+  {$IFDEF FHIR_MEDICATIONORDER}
+   else if s = 'MedicationOrder' Then
+    result := ParseMedicationOrder(jsn) 
+  {$ENDIF}
+{$ENDIF FHIR_MEDICATIONORDER}
+{$IFDEF FHIR_MEDICATIONSTATEMENT}
+  {$IFDEF FHIR_MEDICATIONSTATEMENT}
+   else if s = 'MedicationStatement' Then
+    result := ParseMedicationStatement(jsn) 
+  {$ENDIF}
+{$ENDIF FHIR_MEDICATIONSTATEMENT}
+{$IFDEF FHIR_MESSAGEHEADER}
+  {$IFDEF FHIR_MESSAGEHEADER}
+   else if s = 'MessageHeader' Then
+    result := ParseMessageHeader(jsn) 
+  {$ENDIF}
+{$ENDIF FHIR_MESSAGEHEADER}
+{$IFDEF FHIR_NAMINGSYSTEM}
+  {$IFDEF FHIR_NAMINGSYSTEM}
+   else if s = 'NamingSystem' Then
+    result := ParseNamingSystem(jsn) 
+  {$ENDIF}
+{$ENDIF FHIR_NAMINGSYSTEM}
+{$IFDEF FHIR_NUTRITIONORDER}
+  {$IFDEF FHIR_NUTRITIONORDER}
+   else if s = 'NutritionOrder' Then
+    result := ParseNutritionOrder(jsn) 
+  {$ENDIF}
+{$ENDIF FHIR_NUTRITIONORDER}
+{$IFDEF FHIR_OBSERVATION}
+  {$IFDEF FHIR_OBSERVATION}
+   else if s = 'Observation' Then
+    result := ParseObservation(jsn) 
+  {$ENDIF}
+{$ENDIF FHIR_OBSERVATION}
+{$IFDEF FHIR_OPERATIONDEFINITION}
+  {$IFDEF FHIR_OPERATIONDEFINITION}
+   else if s = 'OperationDefinition' Then
+    result := ParseOperationDefinition(jsn) 
+  {$ENDIF}
+{$ENDIF FHIR_OPERATIONDEFINITION}
+{$IFDEF FHIR_OPERATIONOUTCOME}
+  {$IFDEF FHIR_OPERATIONOUTCOME}
+   else if s = 'OperationOutcome' Then
+    result := ParseOperationOutcome(jsn) 
+  {$ENDIF}
+{$ENDIF FHIR_OPERATIONOUTCOME}
+{$IFDEF FHIR_ORDER}
+  {$IFDEF FHIR_ORDER}
+   else if s = 'Order' Then
+    result := ParseOrder(jsn) 
+  {$ENDIF}
+{$ENDIF FHIR_ORDER}
+{$IFDEF FHIR_ORDERRESPONSE}
+  {$IFDEF FHIR_ORDERRESPONSE}
+   else if s = 'OrderResponse' Then
+    result := ParseOrderResponse(jsn) 
+  {$ENDIF}
+{$ENDIF FHIR_ORDERRESPONSE}
+{$IFDEF FHIR_ORGANIZATION}
+  {$IFDEF FHIR_ORGANIZATION}
+   else if s = 'Organization' Then
+    result := ParseOrganization(jsn) 
+  {$ENDIF}
+{$ENDIF FHIR_ORGANIZATION}
+{$IFDEF FHIR_PATIENT}
+  {$IFDEF FHIR_PATIENT}
+   else if s = 'Patient' Then
+    result := ParsePatient(jsn) 
+  {$ENDIF}
+{$ENDIF FHIR_PATIENT}
+{$IFDEF FHIR_PAYMENTNOTICE}
+  {$IFDEF FHIR_PAYMENTNOTICE}
+   else if s = 'PaymentNotice' Then
+    result := ParsePaymentNotice(jsn) 
+  {$ENDIF}
+{$ENDIF FHIR_PAYMENTNOTICE}
+{$IFDEF FHIR_PAYMENTRECONCILIATION}
+  {$IFDEF FHIR_PAYMENTRECONCILIATION}
+   else if s = 'PaymentReconciliation' Then
+    result := ParsePaymentReconciliation(jsn) 
+  {$ENDIF}
+{$ENDIF FHIR_PAYMENTRECONCILIATION}
+{$IFDEF FHIR_PERSON}
+  {$IFDEF FHIR_PERSON}
+   else if s = 'Person' Then
+    result := ParsePerson(jsn) 
+  {$ENDIF}
+{$ENDIF FHIR_PERSON}
+{$IFDEF FHIR_PRACTITIONER}
+  {$IFDEF FHIR_PRACTITIONER}
+   else if s = 'Practitioner' Then
+    result := ParsePractitioner(jsn) 
+  {$ENDIF}
+{$ENDIF FHIR_PRACTITIONER}
+{$IFDEF FHIR_PROCEDURE}
+  {$IFDEF FHIR_PROCEDURE}
+   else if s = 'Procedure' Then
+    result := ParseProcedure(jsn) 
+  {$ENDIF}
+{$ENDIF FHIR_PROCEDURE}
+{$IFDEF FHIR_PROCEDUREREQUEST}
+  {$IFDEF FHIR_PROCEDUREREQUEST}
+   else if s = 'ProcedureRequest' Then
+    result := ParseProcedureRequest(jsn) 
+  {$ENDIF}
+{$ENDIF FHIR_PROCEDUREREQUEST}
+{$IFDEF FHIR_PROCESSREQUEST}
+  {$IFDEF FHIR_PROCESSREQUEST}
+   else if s = 'ProcessRequest' Then
+    result := ParseProcessRequest(jsn) 
+  {$ENDIF}
+{$ENDIF FHIR_PROCESSREQUEST}
+{$IFDEF FHIR_PROCESSRESPONSE}
+  {$IFDEF FHIR_PROCESSRESPONSE}
+   else if s = 'ProcessResponse' Then
+    result := ParseProcessResponse(jsn) 
+  {$ENDIF}
+{$ENDIF FHIR_PROCESSRESPONSE}
+{$IFDEF FHIR_PROVENANCE}
+  {$IFDEF FHIR_PROVENANCE}
+   else if s = 'Provenance' Then
+    result := ParseProvenance(jsn) 
+  {$ENDIF}
+{$ENDIF FHIR_PROVENANCE}
+{$IFDEF FHIR_QUESTIONNAIRE}
+  {$IFDEF FHIR_QUESTIONNAIRE}
+   else if s = 'Questionnaire' Then
+    result := ParseQuestionnaire(jsn) 
+  {$ENDIF}
+{$ENDIF FHIR_QUESTIONNAIRE}
+{$IFDEF FHIR_QUESTIONNAIRERESPONSE}
+  {$IFDEF FHIR_QUESTIONNAIRERESPONSE}
+   else if s = 'QuestionnaireResponse' Then
+    result := ParseQuestionnaireResponse(jsn) 
+  {$ENDIF}
+{$ENDIF FHIR_QUESTIONNAIRERESPONSE}
+{$IFDEF FHIR_REFERRALREQUEST}
+  {$IFDEF FHIR_REFERRALREQUEST}
+   else if s = 'ReferralRequest' Then
+    result := ParseReferralRequest(jsn) 
+  {$ENDIF}
+{$ENDIF FHIR_REFERRALREQUEST}
+{$IFDEF FHIR_RELATEDPERSON}
+  {$IFDEF FHIR_RELATEDPERSON}
+   else if s = 'RelatedPerson' Then
+    result := ParseRelatedPerson(jsn) 
+  {$ENDIF}
+{$ENDIF FHIR_RELATEDPERSON}
+{$IFDEF FHIR_RISKASSESSMENT}
+  {$IFDEF FHIR_RISKASSESSMENT}
+   else if s = 'RiskAssessment' Then
+    result := ParseRiskAssessment(jsn) 
+  {$ENDIF}
+{$ENDIF FHIR_RISKASSESSMENT}
+{$IFDEF FHIR_SCHEDULE}
+  {$IFDEF FHIR_SCHEDULE}
+   else if s = 'Schedule' Then
+    result := ParseSchedule(jsn) 
+  {$ENDIF}
+{$ENDIF FHIR_SCHEDULE}
+{$IFDEF FHIR_SEARCHPARAMETER}
+  {$IFDEF FHIR_SEARCHPARAMETER}
+   else if s = 'SearchParameter' Then
+    result := ParseSearchParameter(jsn) 
+  {$ENDIF}
+{$ENDIF FHIR_SEARCHPARAMETER}
+{$IFDEF FHIR_SLOT}
+  {$IFDEF FHIR_SLOT}
+   else if s = 'Slot' Then
+    result := ParseSlot(jsn) 
+  {$ENDIF}
+{$ENDIF FHIR_SLOT}
+{$IFDEF FHIR_SPECIMEN}
+  {$IFDEF FHIR_SPECIMEN}
+   else if s = 'Specimen' Then
+    result := ParseSpecimen(jsn) 
+  {$ENDIF}
+{$ENDIF FHIR_SPECIMEN}
+{$IFDEF FHIR_STRUCTUREDEFINITION}
+  {$IFDEF FHIR_STRUCTUREDEFINITION}
+   else if s = 'StructureDefinition' Then
+    result := ParseStructureDefinition(jsn) 
+  {$ENDIF}
+{$ENDIF FHIR_STRUCTUREDEFINITION}
+{$IFDEF FHIR_SUBSCRIPTION}
+  {$IFDEF FHIR_SUBSCRIPTION}
+   else if s = 'Subscription' Then
+    result := ParseSubscription(jsn) 
+  {$ENDIF}
+{$ENDIF FHIR_SUBSCRIPTION}
+{$IFDEF FHIR_SUBSTANCE}
+  {$IFDEF FHIR_SUBSTANCE}
+   else if s = 'Substance' Then
+    result := ParseSubstance(jsn) 
+  {$ENDIF}
+{$ENDIF FHIR_SUBSTANCE}
+{$IFDEF FHIR_SUPPLYDELIVERY}
+  {$IFDEF FHIR_SUPPLYDELIVERY}
+   else if s = 'SupplyDelivery' Then
+    result := ParseSupplyDelivery(jsn) 
+  {$ENDIF}
+{$ENDIF FHIR_SUPPLYDELIVERY}
+{$IFDEF FHIR_SUPPLYREQUEST}
+  {$IFDEF FHIR_SUPPLYREQUEST}
+   else if s = 'SupplyRequest' Then
+    result := ParseSupplyRequest(jsn) 
+  {$ENDIF}
+{$ENDIF FHIR_SUPPLYREQUEST}
+{$IFDEF FHIR_TESTSCRIPT}
+  {$IFDEF FHIR_TESTSCRIPT}
+   else if s = 'TestScript' Then
+    result := ParseTestScript(jsn) 
+  {$ENDIF}
+{$ENDIF FHIR_TESTSCRIPT}
+{$IFDEF FHIR_VALUESET}
+  {$IFDEF FHIR_VALUESET}
+   else if s = 'ValueSet' Then
+    result := ParseValueSet(jsn) 
+  {$ENDIF}
+{$ENDIF FHIR_VALUESET}
+{$IFDEF FHIR_VISIONPRESCRIPTION}
+  {$IFDEF FHIR_VISIONPRESCRIPTION}
+   else if s = 'VisionPrescription' Then
+    result := ParseVisionPrescription(jsn) 
+  {$ENDIF}
+{$ENDIF FHIR_VISIONPRESCRIPTION}
   else
     raise Exception.create('error: the element '+s+' is not a valid resource name');
 end;
@@ -29337,8 +30277,10 @@ begin
     result := parseElement(jsn)
   else if (type_ = 'TFhirBackboneElement') then
     result := parseBackboneElement(jsn)
+{$IFDEF FHIR_PARAMETERS}
   else if (type_ = 'TFhirParameters') then
     result := parseParameters(jsn)
+{$ENDIF FHIR_PARAMETERS}
   else if (type_ = 'TFhirExtension') then
     result := parseExtension(jsn)
   else if (type_ = 'TFhirNarrative') then
@@ -29379,192 +30321,378 @@ begin
     result := parseElementDefinition(jsn)
   else if (type_ = 'TFhirTiming') then
     result := parseTiming(jsn)
+{$IFDEF FHIR_ACCOUNT}
   else if (type_ = 'TFhirAccount') then
     result := parseAccount(jsn)
+{$ENDIF FHIR_ACCOUNT}
+{$IFDEF FHIR_ALLERGYINTOLERANCE}
   else if (type_ = 'TFhirAllergyIntolerance') then
     result := parseAllergyIntolerance(jsn)
+{$ENDIF FHIR_ALLERGYINTOLERANCE}
+{$IFDEF FHIR_APPOINTMENT}
   else if (type_ = 'TFhirAppointment') then
     result := parseAppointment(jsn)
+{$ENDIF FHIR_APPOINTMENT}
+{$IFDEF FHIR_APPOINTMENTRESPONSE}
   else if (type_ = 'TFhirAppointmentResponse') then
     result := parseAppointmentResponse(jsn)
+{$ENDIF FHIR_APPOINTMENTRESPONSE}
+{$IFDEF FHIR_AUDITEVENT}
   else if (type_ = 'TFhirAuditEvent') then
     result := parseAuditEvent(jsn)
+{$ENDIF FHIR_AUDITEVENT}
+{$IFDEF FHIR_BASIC}
   else if (type_ = 'TFhirBasic') then
     result := parseBasic(jsn)
+{$ENDIF FHIR_BASIC}
+{$IFDEF FHIR_BINARY}
   else if (type_ = 'TFhirBinary') then
     result := parseBinary(jsn)
+{$ENDIF FHIR_BINARY}
+{$IFDEF FHIR_BODYSITE}
   else if (type_ = 'TFhirBodySite') then
     result := parseBodySite(jsn)
+{$ENDIF FHIR_BODYSITE}
+{$IFDEF FHIR_BUNDLE}
   else if (type_ = 'TFhirBundle') then
     result := parseBundle(jsn)
+{$ENDIF FHIR_BUNDLE}
+{$IFDEF FHIR_CAREPLAN}
   else if (type_ = 'TFhirCarePlan') then
     result := parseCarePlan(jsn)
+{$ENDIF FHIR_CAREPLAN}
+{$IFDEF FHIR_CLAIM}
   else if (type_ = 'TFhirClaim') then
     result := parseClaim(jsn)
+{$ENDIF FHIR_CLAIM}
+{$IFDEF FHIR_CLAIMRESPONSE}
   else if (type_ = 'TFhirClaimResponse') then
     result := parseClaimResponse(jsn)
+{$ENDIF FHIR_CLAIMRESPONSE}
+{$IFDEF FHIR_CLINICALIMPRESSION}
   else if (type_ = 'TFhirClinicalImpression') then
     result := parseClinicalImpression(jsn)
+{$ENDIF FHIR_CLINICALIMPRESSION}
+{$IFDEF FHIR_COMMUNICATION}
   else if (type_ = 'TFhirCommunication') then
     result := parseCommunication(jsn)
+{$ENDIF FHIR_COMMUNICATION}
+{$IFDEF FHIR_COMMUNICATIONREQUEST}
   else if (type_ = 'TFhirCommunicationRequest') then
     result := parseCommunicationRequest(jsn)
+{$ENDIF FHIR_COMMUNICATIONREQUEST}
+{$IFDEF FHIR_COMPOSITION}
   else if (type_ = 'TFhirComposition') then
     result := parseComposition(jsn)
+{$ENDIF FHIR_COMPOSITION}
+{$IFDEF FHIR_CONCEPTMAP}
   else if (type_ = 'TFhirConceptMap') then
     result := parseConceptMap(jsn)
+{$ENDIF FHIR_CONCEPTMAP}
+{$IFDEF FHIR_CONDITION}
   else if (type_ = 'TFhirCondition') then
     result := parseCondition(jsn)
+{$ENDIF FHIR_CONDITION}
+{$IFDEF FHIR_CONFORMANCE}
   else if (type_ = 'TFhirConformance') then
     result := parseConformance(jsn)
+{$ENDIF FHIR_CONFORMANCE}
+{$IFDEF FHIR_CONTRACT}
   else if (type_ = 'TFhirContract') then
     result := parseContract(jsn)
+{$ENDIF FHIR_CONTRACT}
+{$IFDEF FHIR_COVERAGE}
   else if (type_ = 'TFhirCoverage') then
     result := parseCoverage(jsn)
+{$ENDIF FHIR_COVERAGE}
+{$IFDEF FHIR_DATAELEMENT}
   else if (type_ = 'TFhirDataElement') then
     result := parseDataElement(jsn)
+{$ENDIF FHIR_DATAELEMENT}
+{$IFDEF FHIR_DETECTEDISSUE}
   else if (type_ = 'TFhirDetectedIssue') then
     result := parseDetectedIssue(jsn)
+{$ENDIF FHIR_DETECTEDISSUE}
+{$IFDEF FHIR_DEVICE}
   else if (type_ = 'TFhirDevice') then
     result := parseDevice(jsn)
+{$ENDIF FHIR_DEVICE}
+{$IFDEF FHIR_DEVICECOMPONENT}
   else if (type_ = 'TFhirDeviceComponent') then
     result := parseDeviceComponent(jsn)
+{$ENDIF FHIR_DEVICECOMPONENT}
+{$IFDEF FHIR_DEVICEMETRIC}
   else if (type_ = 'TFhirDeviceMetric') then
     result := parseDeviceMetric(jsn)
+{$ENDIF FHIR_DEVICEMETRIC}
+{$IFDEF FHIR_DEVICEUSEREQUEST}
   else if (type_ = 'TFhirDeviceUseRequest') then
     result := parseDeviceUseRequest(jsn)
+{$ENDIF FHIR_DEVICEUSEREQUEST}
+{$IFDEF FHIR_DEVICEUSESTATEMENT}
   else if (type_ = 'TFhirDeviceUseStatement') then
     result := parseDeviceUseStatement(jsn)
+{$ENDIF FHIR_DEVICEUSESTATEMENT}
+{$IFDEF FHIR_DIAGNOSTICORDER}
   else if (type_ = 'TFhirDiagnosticOrder') then
     result := parseDiagnosticOrder(jsn)
+{$ENDIF FHIR_DIAGNOSTICORDER}
+{$IFDEF FHIR_DIAGNOSTICREPORT}
   else if (type_ = 'TFhirDiagnosticReport') then
     result := parseDiagnosticReport(jsn)
+{$ENDIF FHIR_DIAGNOSTICREPORT}
+{$IFDEF FHIR_DOCUMENTMANIFEST}
   else if (type_ = 'TFhirDocumentManifest') then
     result := parseDocumentManifest(jsn)
+{$ENDIF FHIR_DOCUMENTMANIFEST}
+{$IFDEF FHIR_DOCUMENTREFERENCE}
   else if (type_ = 'TFhirDocumentReference') then
     result := parseDocumentReference(jsn)
+{$ENDIF FHIR_DOCUMENTREFERENCE}
+{$IFDEF FHIR_ELIGIBILITYREQUEST}
   else if (type_ = 'TFhirEligibilityRequest') then
     result := parseEligibilityRequest(jsn)
+{$ENDIF FHIR_ELIGIBILITYREQUEST}
+{$IFDEF FHIR_ELIGIBILITYRESPONSE}
   else if (type_ = 'TFhirEligibilityResponse') then
     result := parseEligibilityResponse(jsn)
+{$ENDIF FHIR_ELIGIBILITYRESPONSE}
+{$IFDEF FHIR_ENCOUNTER}
   else if (type_ = 'TFhirEncounter') then
     result := parseEncounter(jsn)
+{$ENDIF FHIR_ENCOUNTER}
+{$IFDEF FHIR_ENROLLMENTREQUEST}
   else if (type_ = 'TFhirEnrollmentRequest') then
     result := parseEnrollmentRequest(jsn)
+{$ENDIF FHIR_ENROLLMENTREQUEST}
+{$IFDEF FHIR_ENROLLMENTRESPONSE}
   else if (type_ = 'TFhirEnrollmentResponse') then
     result := parseEnrollmentResponse(jsn)
+{$ENDIF FHIR_ENROLLMENTRESPONSE}
+{$IFDEF FHIR_EPISODEOFCARE}
   else if (type_ = 'TFhirEpisodeOfCare') then
     result := parseEpisodeOfCare(jsn)
+{$ENDIF FHIR_EPISODEOFCARE}
+{$IFDEF FHIR_EXPLANATIONOFBENEFIT}
   else if (type_ = 'TFhirExplanationOfBenefit') then
     result := parseExplanationOfBenefit(jsn)
+{$ENDIF FHIR_EXPLANATIONOFBENEFIT}
+{$IFDEF FHIR_FAMILYMEMBERHISTORY}
   else if (type_ = 'TFhirFamilyMemberHistory') then
     result := parseFamilyMemberHistory(jsn)
+{$ENDIF FHIR_FAMILYMEMBERHISTORY}
+{$IFDEF FHIR_FLAG}
   else if (type_ = 'TFhirFlag') then
     result := parseFlag(jsn)
+{$ENDIF FHIR_FLAG}
+{$IFDEF FHIR_GOAL}
   else if (type_ = 'TFhirGoal') then
     result := parseGoal(jsn)
+{$ENDIF FHIR_GOAL}
+{$IFDEF FHIR_GROUP}
   else if (type_ = 'TFhirGroup') then
     result := parseGroup(jsn)
+{$ENDIF FHIR_GROUP}
+{$IFDEF FHIR_HEALTHCARESERVICE}
   else if (type_ = 'TFhirHealthcareService') then
     result := parseHealthcareService(jsn)
+{$ENDIF FHIR_HEALTHCARESERVICE}
+{$IFDEF FHIR_IMAGINGOBJECTSELECTION}
   else if (type_ = 'TFhirImagingObjectSelection') then
     result := parseImagingObjectSelection(jsn)
+{$ENDIF FHIR_IMAGINGOBJECTSELECTION}
+{$IFDEF FHIR_IMAGINGSTUDY}
   else if (type_ = 'TFhirImagingStudy') then
     result := parseImagingStudy(jsn)
+{$ENDIF FHIR_IMAGINGSTUDY}
+{$IFDEF FHIR_IMMUNIZATION}
   else if (type_ = 'TFhirImmunization') then
     result := parseImmunization(jsn)
+{$ENDIF FHIR_IMMUNIZATION}
+{$IFDEF FHIR_IMMUNIZATIONRECOMMENDATION}
   else if (type_ = 'TFhirImmunizationRecommendation') then
     result := parseImmunizationRecommendation(jsn)
+{$ENDIF FHIR_IMMUNIZATIONRECOMMENDATION}
+{$IFDEF FHIR_IMPLEMENTATIONGUIDE}
   else if (type_ = 'TFhirImplementationGuide') then
     result := parseImplementationGuide(jsn)
+{$ENDIF FHIR_IMPLEMENTATIONGUIDE}
+{$IFDEF FHIR_LIST}
   else if (type_ = 'TFhirList') then
     result := parseList(jsn)
+{$ENDIF FHIR_LIST}
+{$IFDEF FHIR_LOCATION}
   else if (type_ = 'TFhirLocation') then
     result := parseLocation(jsn)
+{$ENDIF FHIR_LOCATION}
+{$IFDEF FHIR_MEDIA}
   else if (type_ = 'TFhirMedia') then
     result := parseMedia(jsn)
+{$ENDIF FHIR_MEDIA}
+{$IFDEF FHIR_MEDICATION}
   else if (type_ = 'TFhirMedication') then
     result := parseMedication(jsn)
+{$ENDIF FHIR_MEDICATION}
+{$IFDEF FHIR_MEDICATIONADMINISTRATION}
   else if (type_ = 'TFhirMedicationAdministration') then
     result := parseMedicationAdministration(jsn)
+{$ENDIF FHIR_MEDICATIONADMINISTRATION}
+{$IFDEF FHIR_MEDICATIONDISPENSE}
   else if (type_ = 'TFhirMedicationDispense') then
     result := parseMedicationDispense(jsn)
+{$ENDIF FHIR_MEDICATIONDISPENSE}
+{$IFDEF FHIR_MEDICATIONORDER}
   else if (type_ = 'TFhirMedicationOrder') then
     result := parseMedicationOrder(jsn)
+{$ENDIF FHIR_MEDICATIONORDER}
+{$IFDEF FHIR_MEDICATIONSTATEMENT}
   else if (type_ = 'TFhirMedicationStatement') then
     result := parseMedicationStatement(jsn)
+{$ENDIF FHIR_MEDICATIONSTATEMENT}
+{$IFDEF FHIR_MESSAGEHEADER}
   else if (type_ = 'TFhirMessageHeader') then
     result := parseMessageHeader(jsn)
+{$ENDIF FHIR_MESSAGEHEADER}
+{$IFDEF FHIR_NAMINGSYSTEM}
   else if (type_ = 'TFhirNamingSystem') then
     result := parseNamingSystem(jsn)
+{$ENDIF FHIR_NAMINGSYSTEM}
+{$IFDEF FHIR_NUTRITIONORDER}
   else if (type_ = 'TFhirNutritionOrder') then
     result := parseNutritionOrder(jsn)
+{$ENDIF FHIR_NUTRITIONORDER}
+{$IFDEF FHIR_OBSERVATION}
   else if (type_ = 'TFhirObservation') then
     result := parseObservation(jsn)
+{$ENDIF FHIR_OBSERVATION}
+{$IFDEF FHIR_OPERATIONDEFINITION}
   else if (type_ = 'TFhirOperationDefinition') then
     result := parseOperationDefinition(jsn)
+{$ENDIF FHIR_OPERATIONDEFINITION}
+{$IFDEF FHIR_OPERATIONOUTCOME}
   else if (type_ = 'TFhirOperationOutcome') then
     result := parseOperationOutcome(jsn)
+{$ENDIF FHIR_OPERATIONOUTCOME}
+{$IFDEF FHIR_ORDER}
   else if (type_ = 'TFhirOrder') then
     result := parseOrder(jsn)
+{$ENDIF FHIR_ORDER}
+{$IFDEF FHIR_ORDERRESPONSE}
   else if (type_ = 'TFhirOrderResponse') then
     result := parseOrderResponse(jsn)
+{$ENDIF FHIR_ORDERRESPONSE}
+{$IFDEF FHIR_ORGANIZATION}
   else if (type_ = 'TFhirOrganization') then
     result := parseOrganization(jsn)
+{$ENDIF FHIR_ORGANIZATION}
+{$IFDEF FHIR_PATIENT}
   else if (type_ = 'TFhirPatient') then
     result := parsePatient(jsn)
+{$ENDIF FHIR_PATIENT}
+{$IFDEF FHIR_PAYMENTNOTICE}
   else if (type_ = 'TFhirPaymentNotice') then
     result := parsePaymentNotice(jsn)
+{$ENDIF FHIR_PAYMENTNOTICE}
+{$IFDEF FHIR_PAYMENTRECONCILIATION}
   else if (type_ = 'TFhirPaymentReconciliation') then
     result := parsePaymentReconciliation(jsn)
+{$ENDIF FHIR_PAYMENTRECONCILIATION}
+{$IFDEF FHIR_PERSON}
   else if (type_ = 'TFhirPerson') then
     result := parsePerson(jsn)
+{$ENDIF FHIR_PERSON}
+{$IFDEF FHIR_PRACTITIONER}
   else if (type_ = 'TFhirPractitioner') then
     result := parsePractitioner(jsn)
+{$ENDIF FHIR_PRACTITIONER}
+{$IFDEF FHIR_PROCEDURE}
   else if (type_ = 'TFhirProcedure') then
     result := parseProcedure(jsn)
+{$ENDIF FHIR_PROCEDURE}
+{$IFDEF FHIR_PROCEDUREREQUEST}
   else if (type_ = 'TFhirProcedureRequest') then
     result := parseProcedureRequest(jsn)
+{$ENDIF FHIR_PROCEDUREREQUEST}
+{$IFDEF FHIR_PROCESSREQUEST}
   else if (type_ = 'TFhirProcessRequest') then
     result := parseProcessRequest(jsn)
+{$ENDIF FHIR_PROCESSREQUEST}
+{$IFDEF FHIR_PROCESSRESPONSE}
   else if (type_ = 'TFhirProcessResponse') then
     result := parseProcessResponse(jsn)
+{$ENDIF FHIR_PROCESSRESPONSE}
+{$IFDEF FHIR_PROVENANCE}
   else if (type_ = 'TFhirProvenance') then
     result := parseProvenance(jsn)
+{$ENDIF FHIR_PROVENANCE}
+{$IFDEF FHIR_QUESTIONNAIRE}
   else if (type_ = 'TFhirQuestionnaire') then
     result := parseQuestionnaire(jsn)
+{$ENDIF FHIR_QUESTIONNAIRE}
+{$IFDEF FHIR_QUESTIONNAIRERESPONSE}
   else if (type_ = 'TFhirQuestionnaireResponse') then
     result := parseQuestionnaireResponse(jsn)
+{$ENDIF FHIR_QUESTIONNAIRERESPONSE}
+{$IFDEF FHIR_REFERRALREQUEST}
   else if (type_ = 'TFhirReferralRequest') then
     result := parseReferralRequest(jsn)
+{$ENDIF FHIR_REFERRALREQUEST}
+{$IFDEF FHIR_RELATEDPERSON}
   else if (type_ = 'TFhirRelatedPerson') then
     result := parseRelatedPerson(jsn)
+{$ENDIF FHIR_RELATEDPERSON}
+{$IFDEF FHIR_RISKASSESSMENT}
   else if (type_ = 'TFhirRiskAssessment') then
     result := parseRiskAssessment(jsn)
+{$ENDIF FHIR_RISKASSESSMENT}
+{$IFDEF FHIR_SCHEDULE}
   else if (type_ = 'TFhirSchedule') then
     result := parseSchedule(jsn)
+{$ENDIF FHIR_SCHEDULE}
+{$IFDEF FHIR_SEARCHPARAMETER}
   else if (type_ = 'TFhirSearchParameter') then
     result := parseSearchParameter(jsn)
+{$ENDIF FHIR_SEARCHPARAMETER}
+{$IFDEF FHIR_SLOT}
   else if (type_ = 'TFhirSlot') then
     result := parseSlot(jsn)
+{$ENDIF FHIR_SLOT}
+{$IFDEF FHIR_SPECIMEN}
   else if (type_ = 'TFhirSpecimen') then
     result := parseSpecimen(jsn)
+{$ENDIF FHIR_SPECIMEN}
+{$IFDEF FHIR_STRUCTUREDEFINITION}
   else if (type_ = 'TFhirStructureDefinition') then
     result := parseStructureDefinition(jsn)
+{$ENDIF FHIR_STRUCTUREDEFINITION}
+{$IFDEF FHIR_SUBSCRIPTION}
   else if (type_ = 'TFhirSubscription') then
     result := parseSubscription(jsn)
+{$ENDIF FHIR_SUBSCRIPTION}
+{$IFDEF FHIR_SUBSTANCE}
   else if (type_ = 'TFhirSubstance') then
     result := parseSubstance(jsn)
+{$ENDIF FHIR_SUBSTANCE}
+{$IFDEF FHIR_SUPPLYDELIVERY}
   else if (type_ = 'TFhirSupplyDelivery') then
     result := parseSupplyDelivery(jsn)
+{$ENDIF FHIR_SUPPLYDELIVERY}
+{$IFDEF FHIR_SUPPLYREQUEST}
   else if (type_ = 'TFhirSupplyRequest') then
     result := parseSupplyRequest(jsn)
+{$ENDIF FHIR_SUPPLYREQUEST}
+{$IFDEF FHIR_TESTSCRIPT}
   else if (type_ = 'TFhirTestScript') then
     result := parseTestScript(jsn)
+{$ENDIF FHIR_TESTSCRIPT}
+{$IFDEF FHIR_VALUESET}
   else if (type_ = 'TFhirValueSet') then
     result := parseValueSet(jsn)
+{$ENDIF FHIR_VALUESET}
+{$IFDEF FHIR_VISIONPRESCRIPTION}
   else if (type_ = 'TFhirVisionPrescription') then
     result := parseVisionPrescription(jsn)
+{$ENDIF FHIR_VISIONPRESCRIPTION}
   else
     raise Exception.create('error: the element '+type_+' is not a valid fragment name');
 end;
@@ -29651,10 +30779,12 @@ begin
     composeIdValue(json, name, TFhirId(base), false)
   else if (base is TFhirPositiveInt) then
     composePositiveIntValue(json, name, TFhirPositiveInt(base), false)
+{$IFDEF FHIR_PARAMETERS}
   else if (base is TFhirParametersParameter) then
     composeParametersParameter(json, name, TFhirParametersParameter(base), false)
   else if (base is TFhirParameters) then
     composeParameters(json, name, TFhirParameters(base), false)
+{$ENDIF FHIR_PARAMETERS}
   else if (base is TFhirExtension) then
     composeExtension(json, name, TFhirExtension(base), false)
   else if (base is TFhirNarrative) then
@@ -29709,18 +30839,27 @@ begin
     composeTimingRepeat(json, name, TFhirTimingRepeat(base), false)
   else if (base is TFhirTiming) then
     composeTiming(json, name, TFhirTiming(base), false)
+{$IFDEF FHIR_ACCOUNT}
   else if (base is TFhirAccount) then
     composeAccount(json, name, TFhirAccount(base), false)
+{$ENDIF FHIR_ACCOUNT}
+{$IFDEF FHIR_ALLERGYINTOLERANCE}
   else if (base is TFhirAllergyIntoleranceReaction) then
     composeAllergyIntoleranceReaction(json, name, TFhirAllergyIntoleranceReaction(base), false)
   else if (base is TFhirAllergyIntolerance) then
     composeAllergyIntolerance(json, name, TFhirAllergyIntolerance(base), false)
+{$ENDIF FHIR_ALLERGYINTOLERANCE}
+{$IFDEF FHIR_APPOINTMENT}
   else if (base is TFhirAppointmentParticipant) then
     composeAppointmentParticipant(json, name, TFhirAppointmentParticipant(base), false)
   else if (base is TFhirAppointment) then
     composeAppointment(json, name, TFhirAppointment(base), false)
+{$ENDIF FHIR_APPOINTMENT}
+{$IFDEF FHIR_APPOINTMENTRESPONSE}
   else if (base is TFhirAppointmentResponse) then
     composeAppointmentResponse(json, name, TFhirAppointmentResponse(base), false)
+{$ENDIF FHIR_APPOINTMENTRESPONSE}
+{$IFDEF FHIR_AUDITEVENT}
   else if (base is TFhirAuditEventEvent) then
     composeAuditEventEvent(json, name, TFhirAuditEventEvent(base), false)
   else if (base is TFhirAuditEventParticipant) then
@@ -29735,12 +30874,20 @@ begin
     composeAuditEventObjectDetail(json, name, TFhirAuditEventObjectDetail(base), false)
   else if (base is TFhirAuditEvent) then
     composeAuditEvent(json, name, TFhirAuditEvent(base), false)
+{$ENDIF FHIR_AUDITEVENT}
+{$IFDEF FHIR_BASIC}
   else if (base is TFhirBasic) then
     composeBasic(json, name, TFhirBasic(base), false)
+{$ENDIF FHIR_BASIC}
+{$IFDEF FHIR_BINARY}
   else if (base is TFhirBinary) then
     composeBinary(json, name, TFhirBinary(base), false)
+{$ENDIF FHIR_BINARY}
+{$IFDEF FHIR_BODYSITE}
   else if (base is TFhirBodySite) then
     composeBodySite(json, name, TFhirBodySite(base), false)
+{$ENDIF FHIR_BODYSITE}
+{$IFDEF FHIR_BUNDLE}
   else if (base is TFhirBundleLink) then
     composeBundleLink(json, name, TFhirBundleLink(base), false)
   else if (base is TFhirBundleEntry) then
@@ -29753,6 +30900,8 @@ begin
     composeBundleEntryResponse(json, name, TFhirBundleEntryResponse(base), false)
   else if (base is TFhirBundle) then
     composeBundle(json, name, TFhirBundle(base), false)
+{$ENDIF FHIR_BUNDLE}
+{$IFDEF FHIR_CAREPLAN}
   else if (base is TFhirCarePlanRelatedPlan) then
     composeCarePlanRelatedPlan(json, name, TFhirCarePlanRelatedPlan(base), false)
   else if (base is TFhirCarePlanParticipant) then
@@ -29763,6 +30912,8 @@ begin
     composeCarePlanActivityDetail(json, name, TFhirCarePlanActivityDetail(base), false)
   else if (base is TFhirCarePlan) then
     composeCarePlan(json, name, TFhirCarePlan(base), false)
+{$ENDIF FHIR_CAREPLAN}
+{$IFDEF FHIR_CLAIM}
   else if (base is TFhirClaimPayee) then
     composeClaimPayee(json, name, TFhirClaimPayee(base), false)
   else if (base is TFhirClaimDiagnosis) then
@@ -29781,6 +30932,8 @@ begin
     composeClaimMissingTeeth(json, name, TFhirClaimMissingTeeth(base), false)
   else if (base is TFhirClaim) then
     composeClaim(json, name, TFhirClaim(base), false)
+{$ENDIF FHIR_CLAIM}
+{$IFDEF FHIR_CLAIMRESPONSE}
   else if (base is TFhirClaimResponseItem) then
     composeClaimResponseItem(json, name, TFhirClaimResponseItem(base), false)
   else if (base is TFhirClaimResponseItemAdjudication) then
@@ -29809,6 +30962,8 @@ begin
     composeClaimResponseCoverage(json, name, TFhirClaimResponseCoverage(base), false)
   else if (base is TFhirClaimResponse) then
     composeClaimResponse(json, name, TFhirClaimResponse(base), false)
+{$ENDIF FHIR_CLAIMRESPONSE}
+{$IFDEF FHIR_CLINICALIMPRESSION}
   else if (base is TFhirClinicalImpressionInvestigations) then
     composeClinicalImpressionInvestigations(json, name, TFhirClinicalImpressionInvestigations(base), false)
   else if (base is TFhirClinicalImpressionFinding) then
@@ -29817,14 +30972,20 @@ begin
     composeClinicalImpressionRuledOut(json, name, TFhirClinicalImpressionRuledOut(base), false)
   else if (base is TFhirClinicalImpression) then
     composeClinicalImpression(json, name, TFhirClinicalImpression(base), false)
+{$ENDIF FHIR_CLINICALIMPRESSION}
+{$IFDEF FHIR_COMMUNICATION}
   else if (base is TFhirCommunicationPayload) then
     composeCommunicationPayload(json, name, TFhirCommunicationPayload(base), false)
   else if (base is TFhirCommunication) then
     composeCommunication(json, name, TFhirCommunication(base), false)
+{$ENDIF FHIR_COMMUNICATION}
+{$IFDEF FHIR_COMMUNICATIONREQUEST}
   else if (base is TFhirCommunicationRequestPayload) then
     composeCommunicationRequestPayload(json, name, TFhirCommunicationRequestPayload(base), false)
   else if (base is TFhirCommunicationRequest) then
     composeCommunicationRequest(json, name, TFhirCommunicationRequest(base), false)
+{$ENDIF FHIR_COMMUNICATIONREQUEST}
+{$IFDEF FHIR_COMPOSITION}
   else if (base is TFhirCompositionAttester) then
     composeCompositionAttester(json, name, TFhirCompositionAttester(base), false)
   else if (base is TFhirCompositionEvent) then
@@ -29833,6 +30994,8 @@ begin
     composeCompositionSection(json, name, TFhirCompositionSection(base), false)
   else if (base is TFhirComposition) then
     composeComposition(json, name, TFhirComposition(base), false)
+{$ENDIF FHIR_COMPOSITION}
+{$IFDEF FHIR_CONCEPTMAP}
   else if (base is TFhirConceptMapContact) then
     composeConceptMapContact(json, name, TFhirConceptMapContact(base), false)
   else if (base is TFhirConceptMapElement) then
@@ -29843,12 +31006,16 @@ begin
     composeConceptMapElementTargetDependsOn(json, name, TFhirConceptMapElementTargetDependsOn(base), false)
   else if (base is TFhirConceptMap) then
     composeConceptMap(json, name, TFhirConceptMap(base), false)
+{$ENDIF FHIR_CONCEPTMAP}
+{$IFDEF FHIR_CONDITION}
   else if (base is TFhirConditionStage) then
     composeConditionStage(json, name, TFhirConditionStage(base), false)
   else if (base is TFhirConditionEvidence) then
     composeConditionEvidence(json, name, TFhirConditionEvidence(base), false)
   else if (base is TFhirCondition) then
     composeCondition(json, name, TFhirCondition(base), false)
+{$ENDIF FHIR_CONDITION}
+{$IFDEF FHIR_CONFORMANCE}
   else if (base is TFhirConformanceContact) then
     composeConformanceContact(json, name, TFhirConformanceContact(base), false)
   else if (base is TFhirConformanceSoftware) then
@@ -29881,6 +31048,8 @@ begin
     composeConformanceDocument(json, name, TFhirConformanceDocument(base), false)
   else if (base is TFhirConformance) then
     composeConformance(json, name, TFhirConformance(base), false)
+{$ENDIF FHIR_CONFORMANCE}
+{$IFDEF FHIR_CONTRACT}
   else if (base is TFhirContractActor) then
     composeContractActor(json, name, TFhirContractActor(base), false)
   else if (base is TFhirContractValuedItem) then
@@ -29901,48 +31070,72 @@ begin
     composeContractRule(json, name, TFhirContractRule(base), false)
   else if (base is TFhirContract) then
     composeContract(json, name, TFhirContract(base), false)
+{$ENDIF FHIR_CONTRACT}
+{$IFDEF FHIR_COVERAGE}
   else if (base is TFhirCoverage) then
     composeCoverage(json, name, TFhirCoverage(base), false)
+{$ENDIF FHIR_COVERAGE}
+{$IFDEF FHIR_DATAELEMENT}
   else if (base is TFhirDataElementContact) then
     composeDataElementContact(json, name, TFhirDataElementContact(base), false)
   else if (base is TFhirDataElementMapping) then
     composeDataElementMapping(json, name, TFhirDataElementMapping(base), false)
   else if (base is TFhirDataElement) then
     composeDataElement(json, name, TFhirDataElement(base), false)
+{$ENDIF FHIR_DATAELEMENT}
+{$IFDEF FHIR_DETECTEDISSUE}
   else if (base is TFhirDetectedIssueMitigation) then
     composeDetectedIssueMitigation(json, name, TFhirDetectedIssueMitigation(base), false)
   else if (base is TFhirDetectedIssue) then
     composeDetectedIssue(json, name, TFhirDetectedIssue(base), false)
+{$ENDIF FHIR_DETECTEDISSUE}
+{$IFDEF FHIR_DEVICE}
   else if (base is TFhirDevice) then
     composeDevice(json, name, TFhirDevice(base), false)
+{$ENDIF FHIR_DEVICE}
+{$IFDEF FHIR_DEVICECOMPONENT}
   else if (base is TFhirDeviceComponentProductionSpecification) then
     composeDeviceComponentProductionSpecification(json, name, TFhirDeviceComponentProductionSpecification(base), false)
   else if (base is TFhirDeviceComponent) then
     composeDeviceComponent(json, name, TFhirDeviceComponent(base), false)
+{$ENDIF FHIR_DEVICECOMPONENT}
+{$IFDEF FHIR_DEVICEMETRIC}
   else if (base is TFhirDeviceMetricCalibration) then
     composeDeviceMetricCalibration(json, name, TFhirDeviceMetricCalibration(base), false)
   else if (base is TFhirDeviceMetric) then
     composeDeviceMetric(json, name, TFhirDeviceMetric(base), false)
+{$ENDIF FHIR_DEVICEMETRIC}
+{$IFDEF FHIR_DEVICEUSEREQUEST}
   else if (base is TFhirDeviceUseRequest) then
     composeDeviceUseRequest(json, name, TFhirDeviceUseRequest(base), false)
+{$ENDIF FHIR_DEVICEUSEREQUEST}
+{$IFDEF FHIR_DEVICEUSESTATEMENT}
   else if (base is TFhirDeviceUseStatement) then
     composeDeviceUseStatement(json, name, TFhirDeviceUseStatement(base), false)
+{$ENDIF FHIR_DEVICEUSESTATEMENT}
+{$IFDEF FHIR_DIAGNOSTICORDER}
   else if (base is TFhirDiagnosticOrderEvent) then
     composeDiagnosticOrderEvent(json, name, TFhirDiagnosticOrderEvent(base), false)
   else if (base is TFhirDiagnosticOrderItem) then
     composeDiagnosticOrderItem(json, name, TFhirDiagnosticOrderItem(base), false)
   else if (base is TFhirDiagnosticOrder) then
     composeDiagnosticOrder(json, name, TFhirDiagnosticOrder(base), false)
+{$ENDIF FHIR_DIAGNOSTICORDER}
+{$IFDEF FHIR_DIAGNOSTICREPORT}
   else if (base is TFhirDiagnosticReportImage) then
     composeDiagnosticReportImage(json, name, TFhirDiagnosticReportImage(base), false)
   else if (base is TFhirDiagnosticReport) then
     composeDiagnosticReport(json, name, TFhirDiagnosticReport(base), false)
+{$ENDIF FHIR_DIAGNOSTICREPORT}
+{$IFDEF FHIR_DOCUMENTMANIFEST}
   else if (base is TFhirDocumentManifestContent) then
     composeDocumentManifestContent(json, name, TFhirDocumentManifestContent(base), false)
   else if (base is TFhirDocumentManifestRelated) then
     composeDocumentManifestRelated(json, name, TFhirDocumentManifestRelated(base), false)
   else if (base is TFhirDocumentManifest) then
     composeDocumentManifest(json, name, TFhirDocumentManifest(base), false)
+{$ENDIF FHIR_DOCUMENTMANIFEST}
+{$IFDEF FHIR_DOCUMENTREFERENCE}
   else if (base is TFhirDocumentReferenceRelatesTo) then
     composeDocumentReferenceRelatesTo(json, name, TFhirDocumentReferenceRelatesTo(base), false)
   else if (base is TFhirDocumentReferenceContent) then
@@ -29953,10 +31146,16 @@ begin
     composeDocumentReferenceContextRelated(json, name, TFhirDocumentReferenceContextRelated(base), false)
   else if (base is TFhirDocumentReference) then
     composeDocumentReference(json, name, TFhirDocumentReference(base), false)
+{$ENDIF FHIR_DOCUMENTREFERENCE}
+{$IFDEF FHIR_ELIGIBILITYREQUEST}
   else if (base is TFhirEligibilityRequest) then
     composeEligibilityRequest(json, name, TFhirEligibilityRequest(base), false)
+{$ENDIF FHIR_ELIGIBILITYREQUEST}
+{$IFDEF FHIR_ELIGIBILITYRESPONSE}
   else if (base is TFhirEligibilityResponse) then
     composeEligibilityResponse(json, name, TFhirEligibilityResponse(base), false)
+{$ENDIF FHIR_ELIGIBILITYRESPONSE}
+{$IFDEF FHIR_ENCOUNTER}
   else if (base is TFhirEncounterStatusHistory) then
     composeEncounterStatusHistory(json, name, TFhirEncounterStatusHistory(base), false)
   else if (base is TFhirEncounterParticipant) then
@@ -29967,34 +31166,52 @@ begin
     composeEncounterLocation(json, name, TFhirEncounterLocation(base), false)
   else if (base is TFhirEncounter) then
     composeEncounter(json, name, TFhirEncounter(base), false)
+{$ENDIF FHIR_ENCOUNTER}
+{$IFDEF FHIR_ENROLLMENTREQUEST}
   else if (base is TFhirEnrollmentRequest) then
     composeEnrollmentRequest(json, name, TFhirEnrollmentRequest(base), false)
+{$ENDIF FHIR_ENROLLMENTREQUEST}
+{$IFDEF FHIR_ENROLLMENTRESPONSE}
   else if (base is TFhirEnrollmentResponse) then
     composeEnrollmentResponse(json, name, TFhirEnrollmentResponse(base), false)
+{$ENDIF FHIR_ENROLLMENTRESPONSE}
+{$IFDEF FHIR_EPISODEOFCARE}
   else if (base is TFhirEpisodeOfCareStatusHistory) then
     composeEpisodeOfCareStatusHistory(json, name, TFhirEpisodeOfCareStatusHistory(base), false)
   else if (base is TFhirEpisodeOfCareCareTeam) then
     composeEpisodeOfCareCareTeam(json, name, TFhirEpisodeOfCareCareTeam(base), false)
   else if (base is TFhirEpisodeOfCare) then
     composeEpisodeOfCare(json, name, TFhirEpisodeOfCare(base), false)
+{$ENDIF FHIR_EPISODEOFCARE}
+{$IFDEF FHIR_EXPLANATIONOFBENEFIT}
   else if (base is TFhirExplanationOfBenefit) then
     composeExplanationOfBenefit(json, name, TFhirExplanationOfBenefit(base), false)
+{$ENDIF FHIR_EXPLANATIONOFBENEFIT}
+{$IFDEF FHIR_FAMILYMEMBERHISTORY}
   else if (base is TFhirFamilyMemberHistoryCondition) then
     composeFamilyMemberHistoryCondition(json, name, TFhirFamilyMemberHistoryCondition(base), false)
   else if (base is TFhirFamilyMemberHistory) then
     composeFamilyMemberHistory(json, name, TFhirFamilyMemberHistory(base), false)
+{$ENDIF FHIR_FAMILYMEMBERHISTORY}
+{$IFDEF FHIR_FLAG}
   else if (base is TFhirFlag) then
     composeFlag(json, name, TFhirFlag(base), false)
+{$ENDIF FHIR_FLAG}
+{$IFDEF FHIR_GOAL}
   else if (base is TFhirGoalOutcome) then
     composeGoalOutcome(json, name, TFhirGoalOutcome(base), false)
   else if (base is TFhirGoal) then
     composeGoal(json, name, TFhirGoal(base), false)
+{$ENDIF FHIR_GOAL}
+{$IFDEF FHIR_GROUP}
   else if (base is TFhirGroupCharacteristic) then
     composeGroupCharacteristic(json, name, TFhirGroupCharacteristic(base), false)
   else if (base is TFhirGroupMember) then
     composeGroupMember(json, name, TFhirGroupMember(base), false)
   else if (base is TFhirGroup) then
     composeGroup(json, name, TFhirGroup(base), false)
+{$ENDIF FHIR_GROUP}
+{$IFDEF FHIR_HEALTHCARESERVICE}
   else if (base is TFhirHealthcareServiceServiceType) then
     composeHealthcareServiceServiceType(json, name, TFhirHealthcareServiceServiceType(base), false)
   else if (base is TFhirHealthcareServiceAvailableTime) then
@@ -30003,6 +31220,8 @@ begin
     composeHealthcareServiceNotAvailable(json, name, TFhirHealthcareServiceNotAvailable(base), false)
   else if (base is TFhirHealthcareService) then
     composeHealthcareService(json, name, TFhirHealthcareService(base), false)
+{$ENDIF FHIR_HEALTHCARESERVICE}
+{$IFDEF FHIR_IMAGINGOBJECTSELECTION}
   else if (base is TFhirImagingObjectSelectionStudy) then
     composeImagingObjectSelectionStudy(json, name, TFhirImagingObjectSelectionStudy(base), false)
   else if (base is TFhirImagingObjectSelectionStudySeries) then
@@ -30013,12 +31232,16 @@ begin
     composeImagingObjectSelectionStudySeriesInstanceFrames(json, name, TFhirImagingObjectSelectionStudySeriesInstanceFrames(base), false)
   else if (base is TFhirImagingObjectSelection) then
     composeImagingObjectSelection(json, name, TFhirImagingObjectSelection(base), false)
+{$ENDIF FHIR_IMAGINGOBJECTSELECTION}
+{$IFDEF FHIR_IMAGINGSTUDY}
   else if (base is TFhirImagingStudySeries) then
     composeImagingStudySeries(json, name, TFhirImagingStudySeries(base), false)
   else if (base is TFhirImagingStudySeriesInstance) then
     composeImagingStudySeriesInstance(json, name, TFhirImagingStudySeriesInstance(base), false)
   else if (base is TFhirImagingStudy) then
     composeImagingStudy(json, name, TFhirImagingStudy(base), false)
+{$ENDIF FHIR_IMAGINGSTUDY}
+{$IFDEF FHIR_IMMUNIZATION}
   else if (base is TFhirImmunizationExplanation) then
     composeImmunizationExplanation(json, name, TFhirImmunizationExplanation(base), false)
   else if (base is TFhirImmunizationReaction) then
@@ -30027,6 +31250,8 @@ begin
     composeImmunizationVaccinationProtocol(json, name, TFhirImmunizationVaccinationProtocol(base), false)
   else if (base is TFhirImmunization) then
     composeImmunization(json, name, TFhirImmunization(base), false)
+{$ENDIF FHIR_IMMUNIZATION}
+{$IFDEF FHIR_IMMUNIZATIONRECOMMENDATION}
   else if (base is TFhirImmunizationRecommendationRecommendation) then
     composeImmunizationRecommendationRecommendation(json, name, TFhirImmunizationRecommendationRecommendation(base), false)
   else if (base is TFhirImmunizationRecommendationRecommendationDateCriterion) then
@@ -30035,6 +31260,8 @@ begin
     composeImmunizationRecommendationRecommendationProtocol(json, name, TFhirImmunizationRecommendationRecommendationProtocol(base), false)
   else if (base is TFhirImmunizationRecommendation) then
     composeImmunizationRecommendation(json, name, TFhirImmunizationRecommendation(base), false)
+{$ENDIF FHIR_IMMUNIZATIONRECOMMENDATION}
+{$IFDEF FHIR_IMPLEMENTATIONGUIDE}
   else if (base is TFhirImplementationGuideContact) then
     composeImplementationGuideContact(json, name, TFhirImplementationGuideContact(base), false)
   else if (base is TFhirImplementationGuideDependency) then
@@ -30049,16 +31276,24 @@ begin
     composeImplementationGuidePage(json, name, TFhirImplementationGuidePage(base), false)
   else if (base is TFhirImplementationGuide) then
     composeImplementationGuide(json, name, TFhirImplementationGuide(base), false)
+{$ENDIF FHIR_IMPLEMENTATIONGUIDE}
+{$IFDEF FHIR_LIST}
   else if (base is TFhirListEntry) then
     composeListEntry(json, name, TFhirListEntry(base), false)
   else if (base is TFhirList) then
     composeList(json, name, TFhirList(base), false)
+{$ENDIF FHIR_LIST}
+{$IFDEF FHIR_LOCATION}
   else if (base is TFhirLocationPosition) then
     composeLocationPosition(json, name, TFhirLocationPosition(base), false)
   else if (base is TFhirLocation) then
     composeLocation(json, name, TFhirLocation(base), false)
+{$ENDIF FHIR_LOCATION}
+{$IFDEF FHIR_MEDIA}
   else if (base is TFhirMedia) then
     composeMedia(json, name, TFhirMedia(base), false)
+{$ENDIF FHIR_MEDIA}
+{$IFDEF FHIR_MEDICATION}
   else if (base is TFhirMedicationProduct) then
     composeMedicationProduct(json, name, TFhirMedicationProduct(base), false)
   else if (base is TFhirMedicationProductIngredient) then
@@ -30071,16 +31306,22 @@ begin
     composeMedicationPackageContent(json, name, TFhirMedicationPackageContent(base), false)
   else if (base is TFhirMedication) then
     composeMedication(json, name, TFhirMedication(base), false)
+{$ENDIF FHIR_MEDICATION}
+{$IFDEF FHIR_MEDICATIONADMINISTRATION}
   else if (base is TFhirMedicationAdministrationDosage) then
     composeMedicationAdministrationDosage(json, name, TFhirMedicationAdministrationDosage(base), false)
   else if (base is TFhirMedicationAdministration) then
     composeMedicationAdministration(json, name, TFhirMedicationAdministration(base), false)
+{$ENDIF FHIR_MEDICATIONADMINISTRATION}
+{$IFDEF FHIR_MEDICATIONDISPENSE}
   else if (base is TFhirMedicationDispenseDosageInstruction) then
     composeMedicationDispenseDosageInstruction(json, name, TFhirMedicationDispenseDosageInstruction(base), false)
   else if (base is TFhirMedicationDispenseSubstitution) then
     composeMedicationDispenseSubstitution(json, name, TFhirMedicationDispenseSubstitution(base), false)
   else if (base is TFhirMedicationDispense) then
     composeMedicationDispense(json, name, TFhirMedicationDispense(base), false)
+{$ENDIF FHIR_MEDICATIONDISPENSE}
+{$IFDEF FHIR_MEDICATIONORDER}
   else if (base is TFhirMedicationOrderDosageInstruction) then
     composeMedicationOrderDosageInstruction(json, name, TFhirMedicationOrderDosageInstruction(base), false)
   else if (base is TFhirMedicationOrderDispenseRequest) then
@@ -30089,10 +31330,14 @@ begin
     composeMedicationOrderSubstitution(json, name, TFhirMedicationOrderSubstitution(base), false)
   else if (base is TFhirMedicationOrder) then
     composeMedicationOrder(json, name, TFhirMedicationOrder(base), false)
+{$ENDIF FHIR_MEDICATIONORDER}
+{$IFDEF FHIR_MEDICATIONSTATEMENT}
   else if (base is TFhirMedicationStatementDosage) then
     composeMedicationStatementDosage(json, name, TFhirMedicationStatementDosage(base), false)
   else if (base is TFhirMedicationStatement) then
     composeMedicationStatement(json, name, TFhirMedicationStatement(base), false)
+{$ENDIF FHIR_MEDICATIONSTATEMENT}
+{$IFDEF FHIR_MESSAGEHEADER}
   else if (base is TFhirMessageHeaderResponse) then
     composeMessageHeaderResponse(json, name, TFhirMessageHeaderResponse(base), false)
   else if (base is TFhirMessageHeaderSource) then
@@ -30101,12 +31346,16 @@ begin
     composeMessageHeaderDestination(json, name, TFhirMessageHeaderDestination(base), false)
   else if (base is TFhirMessageHeader) then
     composeMessageHeader(json, name, TFhirMessageHeader(base), false)
+{$ENDIF FHIR_MESSAGEHEADER}
+{$IFDEF FHIR_NAMINGSYSTEM}
   else if (base is TFhirNamingSystemContact) then
     composeNamingSystemContact(json, name, TFhirNamingSystemContact(base), false)
   else if (base is TFhirNamingSystemUniqueId) then
     composeNamingSystemUniqueId(json, name, TFhirNamingSystemUniqueId(base), false)
   else if (base is TFhirNamingSystem) then
     composeNamingSystem(json, name, TFhirNamingSystem(base), false)
+{$ENDIF FHIR_NAMINGSYSTEM}
+{$IFDEF FHIR_NUTRITIONORDER}
   else if (base is TFhirNutritionOrderOralDiet) then
     composeNutritionOrderOralDiet(json, name, TFhirNutritionOrderOralDiet(base), false)
   else if (base is TFhirNutritionOrderOralDietNutrient) then
@@ -30121,6 +31370,8 @@ begin
     composeNutritionOrderEnteralFormulaAdministration(json, name, TFhirNutritionOrderEnteralFormulaAdministration(base), false)
   else if (base is TFhirNutritionOrder) then
     composeNutritionOrder(json, name, TFhirNutritionOrder(base), false)
+{$ENDIF FHIR_NUTRITIONORDER}
+{$IFDEF FHIR_OBSERVATION}
   else if (base is TFhirObservationReferenceRange) then
     composeObservationReferenceRange(json, name, TFhirObservationReferenceRange(base), false)
   else if (base is TFhirObservationRelated) then
@@ -30129,6 +31380,8 @@ begin
     composeObservationComponent(json, name, TFhirObservationComponent(base), false)
   else if (base is TFhirObservation) then
     composeObservation(json, name, TFhirObservation(base), false)
+{$ENDIF FHIR_OBSERVATION}
+{$IFDEF FHIR_OPERATIONDEFINITION}
   else if (base is TFhirOperationDefinitionContact) then
     composeOperationDefinitionContact(json, name, TFhirOperationDefinitionContact(base), false)
   else if (base is TFhirOperationDefinitionParameter) then
@@ -30137,20 +31390,30 @@ begin
     composeOperationDefinitionParameterBinding(json, name, TFhirOperationDefinitionParameterBinding(base), false)
   else if (base is TFhirOperationDefinition) then
     composeOperationDefinition(json, name, TFhirOperationDefinition(base), false)
+{$ENDIF FHIR_OPERATIONDEFINITION}
+{$IFDEF FHIR_OPERATIONOUTCOME}
   else if (base is TFhirOperationOutcomeIssue) then
     composeOperationOutcomeIssue(json, name, TFhirOperationOutcomeIssue(base), false)
   else if (base is TFhirOperationOutcome) then
     composeOperationOutcome(json, name, TFhirOperationOutcome(base), false)
+{$ENDIF FHIR_OPERATIONOUTCOME}
+{$IFDEF FHIR_ORDER}
   else if (base is TFhirOrderWhen) then
     composeOrderWhen(json, name, TFhirOrderWhen(base), false)
   else if (base is TFhirOrder) then
     composeOrder(json, name, TFhirOrder(base), false)
+{$ENDIF FHIR_ORDER}
+{$IFDEF FHIR_ORDERRESPONSE}
   else if (base is TFhirOrderResponse) then
     composeOrderResponse(json, name, TFhirOrderResponse(base), false)
+{$ENDIF FHIR_ORDERRESPONSE}
+{$IFDEF FHIR_ORGANIZATION}
   else if (base is TFhirOrganizationContact) then
     composeOrganizationContact(json, name, TFhirOrganizationContact(base), false)
   else if (base is TFhirOrganization) then
     composeOrganization(json, name, TFhirOrganization(base), false)
+{$ENDIF FHIR_ORGANIZATION}
+{$IFDEF FHIR_PATIENT}
   else if (base is TFhirPatientContact) then
     composePatientContact(json, name, TFhirPatientContact(base), false)
   else if (base is TFhirPatientAnimal) then
@@ -30161,40 +31424,58 @@ begin
     composePatientLink(json, name, TFhirPatientLink(base), false)
   else if (base is TFhirPatient) then
     composePatient(json, name, TFhirPatient(base), false)
+{$ENDIF FHIR_PATIENT}
+{$IFDEF FHIR_PAYMENTNOTICE}
   else if (base is TFhirPaymentNotice) then
     composePaymentNotice(json, name, TFhirPaymentNotice(base), false)
+{$ENDIF FHIR_PAYMENTNOTICE}
+{$IFDEF FHIR_PAYMENTRECONCILIATION}
   else if (base is TFhirPaymentReconciliationDetail) then
     composePaymentReconciliationDetail(json, name, TFhirPaymentReconciliationDetail(base), false)
   else if (base is TFhirPaymentReconciliationNote) then
     composePaymentReconciliationNote(json, name, TFhirPaymentReconciliationNote(base), false)
   else if (base is TFhirPaymentReconciliation) then
     composePaymentReconciliation(json, name, TFhirPaymentReconciliation(base), false)
+{$ENDIF FHIR_PAYMENTRECONCILIATION}
+{$IFDEF FHIR_PERSON}
   else if (base is TFhirPersonLink) then
     composePersonLink(json, name, TFhirPersonLink(base), false)
   else if (base is TFhirPerson) then
     composePerson(json, name, TFhirPerson(base), false)
+{$ENDIF FHIR_PERSON}
+{$IFDEF FHIR_PRACTITIONER}
   else if (base is TFhirPractitionerPractitionerRole) then
     composePractitionerPractitionerRole(json, name, TFhirPractitionerPractitionerRole(base), false)
   else if (base is TFhirPractitionerQualification) then
     composePractitionerQualification(json, name, TFhirPractitionerQualification(base), false)
   else if (base is TFhirPractitioner) then
     composePractitioner(json, name, TFhirPractitioner(base), false)
+{$ENDIF FHIR_PRACTITIONER}
+{$IFDEF FHIR_PROCEDURE}
   else if (base is TFhirProcedurePerformer) then
     composeProcedurePerformer(json, name, TFhirProcedurePerformer(base), false)
   else if (base is TFhirProcedureFocalDevice) then
     composeProcedureFocalDevice(json, name, TFhirProcedureFocalDevice(base), false)
   else if (base is TFhirProcedure) then
     composeProcedure(json, name, TFhirProcedure(base), false)
+{$ENDIF FHIR_PROCEDURE}
+{$IFDEF FHIR_PROCEDUREREQUEST}
   else if (base is TFhirProcedureRequest) then
     composeProcedureRequest(json, name, TFhirProcedureRequest(base), false)
+{$ENDIF FHIR_PROCEDUREREQUEST}
+{$IFDEF FHIR_PROCESSREQUEST}
   else if (base is TFhirProcessRequestItem) then
     composeProcessRequestItem(json, name, TFhirProcessRequestItem(base), false)
   else if (base is TFhirProcessRequest) then
     composeProcessRequest(json, name, TFhirProcessRequest(base), false)
+{$ENDIF FHIR_PROCESSREQUEST}
+{$IFDEF FHIR_PROCESSRESPONSE}
   else if (base is TFhirProcessResponseNotes) then
     composeProcessResponseNotes(json, name, TFhirProcessResponseNotes(base), false)
   else if (base is TFhirProcessResponse) then
     composeProcessResponse(json, name, TFhirProcessResponse(base), false)
+{$ENDIF FHIR_PROCESSRESPONSE}
+{$IFDEF FHIR_PROVENANCE}
   else if (base is TFhirProvenanceAgent) then
     composeProvenanceAgent(json, name, TFhirProvenanceAgent(base), false)
   else if (base is TFhirProvenanceAgentRelatedAgent) then
@@ -30203,12 +31484,16 @@ begin
     composeProvenanceEntity(json, name, TFhirProvenanceEntity(base), false)
   else if (base is TFhirProvenance) then
     composeProvenance(json, name, TFhirProvenance(base), false)
+{$ENDIF FHIR_PROVENANCE}
+{$IFDEF FHIR_QUESTIONNAIRE}
   else if (base is TFhirQuestionnaireGroup) then
     composeQuestionnaireGroup(json, name, TFhirQuestionnaireGroup(base), false)
   else if (base is TFhirQuestionnaireGroupQuestion) then
     composeQuestionnaireGroupQuestion(json, name, TFhirQuestionnaireGroupQuestion(base), false)
   else if (base is TFhirQuestionnaire) then
     composeQuestionnaire(json, name, TFhirQuestionnaire(base), false)
+{$ENDIF FHIR_QUESTIONNAIRE}
+{$IFDEF FHIR_QUESTIONNAIRERESPONSE}
   else if (base is TFhirQuestionnaireResponseGroup) then
     composeQuestionnaireResponseGroup(json, name, TFhirQuestionnaireResponseGroup(base), false)
   else if (base is TFhirQuestionnaireResponseGroupQuestion) then
@@ -30217,22 +31502,36 @@ begin
     composeQuestionnaireResponseGroupQuestionAnswer(json, name, TFhirQuestionnaireResponseGroupQuestionAnswer(base), false)
   else if (base is TFhirQuestionnaireResponse) then
     composeQuestionnaireResponse(json, name, TFhirQuestionnaireResponse(base), false)
+{$ENDIF FHIR_QUESTIONNAIRERESPONSE}
+{$IFDEF FHIR_REFERRALREQUEST}
   else if (base is TFhirReferralRequest) then
     composeReferralRequest(json, name, TFhirReferralRequest(base), false)
+{$ENDIF FHIR_REFERRALREQUEST}
+{$IFDEF FHIR_RELATEDPERSON}
   else if (base is TFhirRelatedPerson) then
     composeRelatedPerson(json, name, TFhirRelatedPerson(base), false)
+{$ENDIF FHIR_RELATEDPERSON}
+{$IFDEF FHIR_RISKASSESSMENT}
   else if (base is TFhirRiskAssessmentPrediction) then
     composeRiskAssessmentPrediction(json, name, TFhirRiskAssessmentPrediction(base), false)
   else if (base is TFhirRiskAssessment) then
     composeRiskAssessment(json, name, TFhirRiskAssessment(base), false)
+{$ENDIF FHIR_RISKASSESSMENT}
+{$IFDEF FHIR_SCHEDULE}
   else if (base is TFhirSchedule) then
     composeSchedule(json, name, TFhirSchedule(base), false)
+{$ENDIF FHIR_SCHEDULE}
+{$IFDEF FHIR_SEARCHPARAMETER}
   else if (base is TFhirSearchParameterContact) then
     composeSearchParameterContact(json, name, TFhirSearchParameterContact(base), false)
   else if (base is TFhirSearchParameter) then
     composeSearchParameter(json, name, TFhirSearchParameter(base), false)
+{$ENDIF FHIR_SEARCHPARAMETER}
+{$IFDEF FHIR_SLOT}
   else if (base is TFhirSlot) then
     composeSlot(json, name, TFhirSlot(base), false)
+{$ENDIF FHIR_SLOT}
+{$IFDEF FHIR_SPECIMEN}
   else if (base is TFhirSpecimenCollection) then
     composeSpecimenCollection(json, name, TFhirSpecimenCollection(base), false)
   else if (base is TFhirSpecimenTreatment) then
@@ -30241,6 +31540,8 @@ begin
     composeSpecimenContainer(json, name, TFhirSpecimenContainer(base), false)
   else if (base is TFhirSpecimen) then
     composeSpecimen(json, name, TFhirSpecimen(base), false)
+{$ENDIF FHIR_SPECIMEN}
+{$IFDEF FHIR_STRUCTUREDEFINITION}
   else if (base is TFhirStructureDefinitionContact) then
     composeStructureDefinitionContact(json, name, TFhirStructureDefinitionContact(base), false)
   else if (base is TFhirStructureDefinitionMapping) then
@@ -30251,22 +31552,32 @@ begin
     composeStructureDefinitionDifferential(json, name, TFhirStructureDefinitionDifferential(base), false)
   else if (base is TFhirStructureDefinition) then
     composeStructureDefinition(json, name, TFhirStructureDefinition(base), false)
+{$ENDIF FHIR_STRUCTUREDEFINITION}
+{$IFDEF FHIR_SUBSCRIPTION}
   else if (base is TFhirSubscriptionChannel) then
     composeSubscriptionChannel(json, name, TFhirSubscriptionChannel(base), false)
   else if (base is TFhirSubscription) then
     composeSubscription(json, name, TFhirSubscription(base), false)
+{$ENDIF FHIR_SUBSCRIPTION}
+{$IFDEF FHIR_SUBSTANCE}
   else if (base is TFhirSubstanceInstance) then
     composeSubstanceInstance(json, name, TFhirSubstanceInstance(base), false)
   else if (base is TFhirSubstanceIngredient) then
     composeSubstanceIngredient(json, name, TFhirSubstanceIngredient(base), false)
   else if (base is TFhirSubstance) then
     composeSubstance(json, name, TFhirSubstance(base), false)
+{$ENDIF FHIR_SUBSTANCE}
+{$IFDEF FHIR_SUPPLYDELIVERY}
   else if (base is TFhirSupplyDelivery) then
     composeSupplyDelivery(json, name, TFhirSupplyDelivery(base), false)
+{$ENDIF FHIR_SUPPLYDELIVERY}
+{$IFDEF FHIR_SUPPLYREQUEST}
   else if (base is TFhirSupplyRequestWhen) then
     composeSupplyRequestWhen(json, name, TFhirSupplyRequestWhen(base), false)
   else if (base is TFhirSupplyRequest) then
     composeSupplyRequest(json, name, TFhirSupplyRequest(base), false)
+{$ENDIF FHIR_SUPPLYREQUEST}
+{$IFDEF FHIR_TESTSCRIPT}
   else if (base is TFhirTestScriptContact) then
     composeTestScriptContact(json, name, TFhirTestScriptContact(base), false)
   else if (base is TFhirTestScriptMetadata) then
@@ -30299,6 +31610,8 @@ begin
     composeTestScriptTeardownAction(json, name, TFhirTestScriptTeardownAction(base), false)
   else if (base is TFhirTestScript) then
     composeTestScript(json, name, TFhirTestScript(base), false)
+{$ENDIF FHIR_TESTSCRIPT}
+{$IFDEF FHIR_VALUESET}
   else if (base is TFhirValueSetContact) then
     composeValueSetContact(json, name, TFhirValueSetContact(base), false)
   else if (base is TFhirValueSetCodeSystem) then
@@ -30323,10 +31636,13 @@ begin
     composeValueSetExpansionContains(json, name, TFhirValueSetExpansionContains(base), false)
   else if (base is TFhirValueSet) then
     composeValueSet(json, name, TFhirValueSet(base), false)
+{$ENDIF FHIR_VALUESET}
+{$IFDEF FHIR_VISIONPRESCRIPTION}
   else if (base is TFhirVisionPrescriptionDispense) then
     composeVisionPrescriptionDispense(json, name, TFhirVisionPrescriptionDispense(base), false)
   else if (base is TFhirVisionPrescription) then
     composeVisionPrescription(json, name, TFhirVisionPrescription(base), false)
+{$ENDIF FHIR_VISIONPRESCRIPTION}
   else
     raise Exception.create('Unknown Type '+base.className);
 end;
@@ -30337,100 +31653,474 @@ begin
     Raise Exception.Create('error - resource is nil');
   json.value('resourceType', CODES_TFhirResourceType[resource.ResourceType]);
   Case resource.ResourceType of
+{$IFDEF FHIR_PARAMETERS}
     frtParameters: ComposeParameters(json, 'Parameters', TFhirParameters(resource));
-    frtAccount: ComposeAccount(json, 'Account', TFhirAccount(resource));
-    frtAllergyIntolerance: ComposeAllergyIntolerance(json, 'AllergyIntolerance', TFhirAllergyIntolerance(resource));
-    frtAppointment: ComposeAppointment(json, 'Appointment', TFhirAppointment(resource));
-    frtAppointmentResponse: ComposeAppointmentResponse(json, 'AppointmentResponse', TFhirAppointmentResponse(resource));
-    frtAuditEvent: ComposeAuditEvent(json, 'AuditEvent', TFhirAuditEvent(resource));
-    frtBasic: ComposeBasic(json, 'Basic', TFhirBasic(resource));
-    frtBinary: ComposeBinary(json, 'Binary', TFhirBinary(resource));
-    frtBodySite: ComposeBodySite(json, 'BodySite', TFhirBodySite(resource));
-    frtBundle: ComposeBundle(json, 'Bundle', TFhirBundle(resource));
-    frtCarePlan: ComposeCarePlan(json, 'CarePlan', TFhirCarePlan(resource));
-    frtClaim: ComposeClaim(json, 'Claim', TFhirClaim(resource));
-    frtClaimResponse: ComposeClaimResponse(json, 'ClaimResponse', TFhirClaimResponse(resource));
-    frtClinicalImpression: ComposeClinicalImpression(json, 'ClinicalImpression', TFhirClinicalImpression(resource));
-    frtCommunication: ComposeCommunication(json, 'Communication', TFhirCommunication(resource));
-    frtCommunicationRequest: ComposeCommunicationRequest(json, 'CommunicationRequest', TFhirCommunicationRequest(resource));
-    frtComposition: ComposeComposition(json, 'Composition', TFhirComposition(resource));
-    frtConceptMap: ComposeConceptMap(json, 'ConceptMap', TFhirConceptMap(resource));
-    frtCondition: ComposeCondition(json, 'Condition', TFhirCondition(resource));
-    frtConformance: ComposeConformance(json, 'Conformance', TFhirConformance(resource));
-    frtContract: ComposeContract(json, 'Contract', TFhirContract(resource));
-    frtCoverage: ComposeCoverage(json, 'Coverage', TFhirCoverage(resource));
-    frtDataElement: ComposeDataElement(json, 'DataElement', TFhirDataElement(resource));
-    frtDetectedIssue: ComposeDetectedIssue(json, 'DetectedIssue', TFhirDetectedIssue(resource));
-    frtDevice: ComposeDevice(json, 'Device', TFhirDevice(resource));
-    frtDeviceComponent: ComposeDeviceComponent(json, 'DeviceComponent', TFhirDeviceComponent(resource));
-    frtDeviceMetric: ComposeDeviceMetric(json, 'DeviceMetric', TFhirDeviceMetric(resource));
-    frtDeviceUseRequest: ComposeDeviceUseRequest(json, 'DeviceUseRequest', TFhirDeviceUseRequest(resource));
-    frtDeviceUseStatement: ComposeDeviceUseStatement(json, 'DeviceUseStatement', TFhirDeviceUseStatement(resource));
-    frtDiagnosticOrder: ComposeDiagnosticOrder(json, 'DiagnosticOrder', TFhirDiagnosticOrder(resource));
-    frtDiagnosticReport: ComposeDiagnosticReport(json, 'DiagnosticReport', TFhirDiagnosticReport(resource));
-    frtDocumentManifest: ComposeDocumentManifest(json, 'DocumentManifest', TFhirDocumentManifest(resource));
-    frtDocumentReference: ComposeDocumentReference(json, 'DocumentReference', TFhirDocumentReference(resource));
-    frtEligibilityRequest: ComposeEligibilityRequest(json, 'EligibilityRequest', TFhirEligibilityRequest(resource));
-    frtEligibilityResponse: ComposeEligibilityResponse(json, 'EligibilityResponse', TFhirEligibilityResponse(resource));
-    frtEncounter: ComposeEncounter(json, 'Encounter', TFhirEncounter(resource));
-    frtEnrollmentRequest: ComposeEnrollmentRequest(json, 'EnrollmentRequest', TFhirEnrollmentRequest(resource));
-    frtEnrollmentResponse: ComposeEnrollmentResponse(json, 'EnrollmentResponse', TFhirEnrollmentResponse(resource));
-    frtEpisodeOfCare: ComposeEpisodeOfCare(json, 'EpisodeOfCare', TFhirEpisodeOfCare(resource));
-    frtExplanationOfBenefit: ComposeExplanationOfBenefit(json, 'ExplanationOfBenefit', TFhirExplanationOfBenefit(resource));
-    frtFamilyMemberHistory: ComposeFamilyMemberHistory(json, 'FamilyMemberHistory', TFhirFamilyMemberHistory(resource));
-    frtFlag: ComposeFlag(json, 'Flag', TFhirFlag(resource));
-    frtGoal: ComposeGoal(json, 'Goal', TFhirGoal(resource));
-    frtGroup: ComposeGroup(json, 'Group', TFhirGroup(resource));
-    frtHealthcareService: ComposeHealthcareService(json, 'HealthcareService', TFhirHealthcareService(resource));
-    frtImagingObjectSelection: ComposeImagingObjectSelection(json, 'ImagingObjectSelection', TFhirImagingObjectSelection(resource));
-    frtImagingStudy: ComposeImagingStudy(json, 'ImagingStudy', TFhirImagingStudy(resource));
-    frtImmunization: ComposeImmunization(json, 'Immunization', TFhirImmunization(resource));
-    frtImmunizationRecommendation: ComposeImmunizationRecommendation(json, 'ImmunizationRecommendation', TFhirImmunizationRecommendation(resource));
-    frtImplementationGuide: ComposeImplementationGuide(json, 'ImplementationGuide', TFhirImplementationGuide(resource));
-    frtList: ComposeList(json, 'List', TFhirList(resource));
-    frtLocation: ComposeLocation(json, 'Location', TFhirLocation(resource));
-    frtMedia: ComposeMedia(json, 'Media', TFhirMedia(resource));
-    frtMedication: ComposeMedication(json, 'Medication', TFhirMedication(resource));
-    frtMedicationAdministration: ComposeMedicationAdministration(json, 'MedicationAdministration', TFhirMedicationAdministration(resource));
-    frtMedicationDispense: ComposeMedicationDispense(json, 'MedicationDispense', TFhirMedicationDispense(resource));
-    frtMedicationOrder: ComposeMedicationOrder(json, 'MedicationOrder', TFhirMedicationOrder(resource));
-    frtMedicationStatement: ComposeMedicationStatement(json, 'MedicationStatement', TFhirMedicationStatement(resource));
-    frtMessageHeader: ComposeMessageHeader(json, 'MessageHeader', TFhirMessageHeader(resource));
-    frtNamingSystem: ComposeNamingSystem(json, 'NamingSystem', TFhirNamingSystem(resource));
-    frtNutritionOrder: ComposeNutritionOrder(json, 'NutritionOrder', TFhirNutritionOrder(resource));
-    frtObservation: ComposeObservation(json, 'Observation', TFhirObservation(resource));
-    frtOperationDefinition: ComposeOperationDefinition(json, 'OperationDefinition', TFhirOperationDefinition(resource));
-    frtOperationOutcome: ComposeOperationOutcome(json, 'OperationOutcome', TFhirOperationOutcome(resource));
-    frtOrder: ComposeOrder(json, 'Order', TFhirOrder(resource));
-    frtOrderResponse: ComposeOrderResponse(json, 'OrderResponse', TFhirOrderResponse(resource));
-    frtOrganization: ComposeOrganization(json, 'Organization', TFhirOrganization(resource));
-    frtPatient: ComposePatient(json, 'Patient', TFhirPatient(resource));
-    frtPaymentNotice: ComposePaymentNotice(json, 'PaymentNotice', TFhirPaymentNotice(resource));
-    frtPaymentReconciliation: ComposePaymentReconciliation(json, 'PaymentReconciliation', TFhirPaymentReconciliation(resource));
-    frtPerson: ComposePerson(json, 'Person', TFhirPerson(resource));
-    frtPractitioner: ComposePractitioner(json, 'Practitioner', TFhirPractitioner(resource));
-    frtProcedure: ComposeProcedure(json, 'Procedure', TFhirProcedure(resource));
-    frtProcedureRequest: ComposeProcedureRequest(json, 'ProcedureRequest', TFhirProcedureRequest(resource));
-    frtProcessRequest: ComposeProcessRequest(json, 'ProcessRequest', TFhirProcessRequest(resource));
-    frtProcessResponse: ComposeProcessResponse(json, 'ProcessResponse', TFhirProcessResponse(resource));
-    frtProvenance: ComposeProvenance(json, 'Provenance', TFhirProvenance(resource));
-    frtQuestionnaire: ComposeQuestionnaire(json, 'Questionnaire', TFhirQuestionnaire(resource));
-    frtQuestionnaireResponse: ComposeQuestionnaireResponse(json, 'QuestionnaireResponse', TFhirQuestionnaireResponse(resource));
-    frtReferralRequest: ComposeReferralRequest(json, 'ReferralRequest', TFhirReferralRequest(resource));
-    frtRelatedPerson: ComposeRelatedPerson(json, 'RelatedPerson', TFhirRelatedPerson(resource));
-    frtRiskAssessment: ComposeRiskAssessment(json, 'RiskAssessment', TFhirRiskAssessment(resource));
-    frtSchedule: ComposeSchedule(json, 'Schedule', TFhirSchedule(resource));
-    frtSearchParameter: ComposeSearchParameter(json, 'SearchParameter', TFhirSearchParameter(resource));
-    frtSlot: ComposeSlot(json, 'Slot', TFhirSlot(resource));
-    frtSpecimen: ComposeSpecimen(json, 'Specimen', TFhirSpecimen(resource));
-    frtStructureDefinition: ComposeStructureDefinition(json, 'StructureDefinition', TFhirStructureDefinition(resource));
-    frtSubscription: ComposeSubscription(json, 'Subscription', TFhirSubscription(resource));
-    frtSubstance: ComposeSubstance(json, 'Substance', TFhirSubstance(resource));
-    frtSupplyDelivery: ComposeSupplyDelivery(json, 'SupplyDelivery', TFhirSupplyDelivery(resource));
-    frtSupplyRequest: ComposeSupplyRequest(json, 'SupplyRequest', TFhirSupplyRequest(resource));
-    frtTestScript: ComposeTestScript(json, 'TestScript', TFhirTestScript(resource));
-    frtValueSet: ComposeValueSet(json, 'ValueSet', TFhirValueSet(resource));
-    frtVisionPrescription: ComposeVisionPrescription(json, 'VisionPrescription', TFhirVisionPrescription(resource));
+{$ENDIF FHIR_PARAMETERS}
+{$IFDEF FHIR_ACCOUNT}
+  {$IFDEF FHIR_ACCOUNT}
+     frtAccount: ComposeAccount(json, 'Account', TFhirAccount(resource));
+   {$ENDIF}
+{$ENDIF FHIR_ACCOUNT}
+{$IFDEF FHIR_ALLERGYINTOLERANCE}
+  {$IFDEF FHIR_ALLERGYINTOLERANCE}
+     frtAllergyIntolerance: ComposeAllergyIntolerance(json, 'AllergyIntolerance', TFhirAllergyIntolerance(resource));
+   {$ENDIF}
+{$ENDIF FHIR_ALLERGYINTOLERANCE}
+{$IFDEF FHIR_APPOINTMENT}
+  {$IFDEF FHIR_APPOINTMENT}
+     frtAppointment: ComposeAppointment(json, 'Appointment', TFhirAppointment(resource));
+   {$ENDIF}
+{$ENDIF FHIR_APPOINTMENT}
+{$IFDEF FHIR_APPOINTMENTRESPONSE}
+  {$IFDEF FHIR_APPOINTMENTRESPONSE}
+     frtAppointmentResponse: ComposeAppointmentResponse(json, 'AppointmentResponse', TFhirAppointmentResponse(resource));
+   {$ENDIF}
+{$ENDIF FHIR_APPOINTMENTRESPONSE}
+{$IFDEF FHIR_AUDITEVENT}
+  {$IFDEF FHIR_AUDITEVENT}
+     frtAuditEvent: ComposeAuditEvent(json, 'AuditEvent', TFhirAuditEvent(resource));
+   {$ENDIF}
+{$ENDIF FHIR_AUDITEVENT}
+{$IFDEF FHIR_BASIC}
+  {$IFDEF FHIR_BASIC}
+     frtBasic: ComposeBasic(json, 'Basic', TFhirBasic(resource));
+   {$ENDIF}
+{$ENDIF FHIR_BASIC}
+{$IFDEF FHIR_BINARY}
+  {$IFDEF FHIR_BINARY}
+     frtBinary: ComposeBinary(json, 'Binary', TFhirBinary(resource));
+   {$ENDIF}
+{$ENDIF FHIR_BINARY}
+{$IFDEF FHIR_BODYSITE}
+  {$IFDEF FHIR_BODYSITE}
+     frtBodySite: ComposeBodySite(json, 'BodySite', TFhirBodySite(resource));
+   {$ENDIF}
+{$ENDIF FHIR_BODYSITE}
+{$IFDEF FHIR_BUNDLE}
+  {$IFDEF FHIR_BUNDLE}
+     frtBundle: ComposeBundle(json, 'Bundle', TFhirBundle(resource));
+   {$ENDIF}
+{$ENDIF FHIR_BUNDLE}
+{$IFDEF FHIR_CAREPLAN}
+  {$IFDEF FHIR_CAREPLAN}
+     frtCarePlan: ComposeCarePlan(json, 'CarePlan', TFhirCarePlan(resource));
+   {$ENDIF}
+{$ENDIF FHIR_CAREPLAN}
+{$IFDEF FHIR_CLAIM}
+  {$IFDEF FHIR_CLAIM}
+     frtClaim: ComposeClaim(json, 'Claim', TFhirClaim(resource));
+   {$ENDIF}
+{$ENDIF FHIR_CLAIM}
+{$IFDEF FHIR_CLAIMRESPONSE}
+  {$IFDEF FHIR_CLAIMRESPONSE}
+     frtClaimResponse: ComposeClaimResponse(json, 'ClaimResponse', TFhirClaimResponse(resource));
+   {$ENDIF}
+{$ENDIF FHIR_CLAIMRESPONSE}
+{$IFDEF FHIR_CLINICALIMPRESSION}
+  {$IFDEF FHIR_CLINICALIMPRESSION}
+     frtClinicalImpression: ComposeClinicalImpression(json, 'ClinicalImpression', TFhirClinicalImpression(resource));
+   {$ENDIF}
+{$ENDIF FHIR_CLINICALIMPRESSION}
+{$IFDEF FHIR_COMMUNICATION}
+  {$IFDEF FHIR_COMMUNICATION}
+     frtCommunication: ComposeCommunication(json, 'Communication', TFhirCommunication(resource));
+   {$ENDIF}
+{$ENDIF FHIR_COMMUNICATION}
+{$IFDEF FHIR_COMMUNICATIONREQUEST}
+  {$IFDEF FHIR_COMMUNICATIONREQUEST}
+     frtCommunicationRequest: ComposeCommunicationRequest(json, 'CommunicationRequest', TFhirCommunicationRequest(resource));
+   {$ENDIF}
+{$ENDIF FHIR_COMMUNICATIONREQUEST}
+{$IFDEF FHIR_COMPOSITION}
+  {$IFDEF FHIR_COMPOSITION}
+     frtComposition: ComposeComposition(json, 'Composition', TFhirComposition(resource));
+   {$ENDIF}
+{$ENDIF FHIR_COMPOSITION}
+{$IFDEF FHIR_CONCEPTMAP}
+  {$IFDEF FHIR_CONCEPTMAP}
+     frtConceptMap: ComposeConceptMap(json, 'ConceptMap', TFhirConceptMap(resource));
+   {$ENDIF}
+{$ENDIF FHIR_CONCEPTMAP}
+{$IFDEF FHIR_CONDITION}
+  {$IFDEF FHIR_CONDITION}
+     frtCondition: ComposeCondition(json, 'Condition', TFhirCondition(resource));
+   {$ENDIF}
+{$ENDIF FHIR_CONDITION}
+{$IFDEF FHIR_CONFORMANCE}
+  {$IFDEF FHIR_CONFORMANCE}
+     frtConformance: ComposeConformance(json, 'Conformance', TFhirConformance(resource));
+   {$ENDIF}
+{$ENDIF FHIR_CONFORMANCE}
+{$IFDEF FHIR_CONTRACT}
+  {$IFDEF FHIR_CONTRACT}
+     frtContract: ComposeContract(json, 'Contract', TFhirContract(resource));
+   {$ENDIF}
+{$ENDIF FHIR_CONTRACT}
+{$IFDEF FHIR_COVERAGE}
+  {$IFDEF FHIR_COVERAGE}
+     frtCoverage: ComposeCoverage(json, 'Coverage', TFhirCoverage(resource));
+   {$ENDIF}
+{$ENDIF FHIR_COVERAGE}
+{$IFDEF FHIR_DATAELEMENT}
+  {$IFDEF FHIR_DATAELEMENT}
+     frtDataElement: ComposeDataElement(json, 'DataElement', TFhirDataElement(resource));
+   {$ENDIF}
+{$ENDIF FHIR_DATAELEMENT}
+{$IFDEF FHIR_DETECTEDISSUE}
+  {$IFDEF FHIR_DETECTEDISSUE}
+     frtDetectedIssue: ComposeDetectedIssue(json, 'DetectedIssue', TFhirDetectedIssue(resource));
+   {$ENDIF}
+{$ENDIF FHIR_DETECTEDISSUE}
+{$IFDEF FHIR_DEVICE}
+  {$IFDEF FHIR_DEVICE}
+     frtDevice: ComposeDevice(json, 'Device', TFhirDevice(resource));
+   {$ENDIF}
+{$ENDIF FHIR_DEVICE}
+{$IFDEF FHIR_DEVICECOMPONENT}
+  {$IFDEF FHIR_DEVICECOMPONENT}
+     frtDeviceComponent: ComposeDeviceComponent(json, 'DeviceComponent', TFhirDeviceComponent(resource));
+   {$ENDIF}
+{$ENDIF FHIR_DEVICECOMPONENT}
+{$IFDEF FHIR_DEVICEMETRIC}
+  {$IFDEF FHIR_DEVICEMETRIC}
+     frtDeviceMetric: ComposeDeviceMetric(json, 'DeviceMetric', TFhirDeviceMetric(resource));
+   {$ENDIF}
+{$ENDIF FHIR_DEVICEMETRIC}
+{$IFDEF FHIR_DEVICEUSEREQUEST}
+  {$IFDEF FHIR_DEVICEUSEREQUEST}
+     frtDeviceUseRequest: ComposeDeviceUseRequest(json, 'DeviceUseRequest', TFhirDeviceUseRequest(resource));
+   {$ENDIF}
+{$ENDIF FHIR_DEVICEUSEREQUEST}
+{$IFDEF FHIR_DEVICEUSESTATEMENT}
+  {$IFDEF FHIR_DEVICEUSESTATEMENT}
+     frtDeviceUseStatement: ComposeDeviceUseStatement(json, 'DeviceUseStatement', TFhirDeviceUseStatement(resource));
+   {$ENDIF}
+{$ENDIF FHIR_DEVICEUSESTATEMENT}
+{$IFDEF FHIR_DIAGNOSTICORDER}
+  {$IFDEF FHIR_DIAGNOSTICORDER}
+     frtDiagnosticOrder: ComposeDiagnosticOrder(json, 'DiagnosticOrder', TFhirDiagnosticOrder(resource));
+   {$ENDIF}
+{$ENDIF FHIR_DIAGNOSTICORDER}
+{$IFDEF FHIR_DIAGNOSTICREPORT}
+  {$IFDEF FHIR_DIAGNOSTICREPORT}
+     frtDiagnosticReport: ComposeDiagnosticReport(json, 'DiagnosticReport', TFhirDiagnosticReport(resource));
+   {$ENDIF}
+{$ENDIF FHIR_DIAGNOSTICREPORT}
+{$IFDEF FHIR_DOCUMENTMANIFEST}
+  {$IFDEF FHIR_DOCUMENTMANIFEST}
+     frtDocumentManifest: ComposeDocumentManifest(json, 'DocumentManifest', TFhirDocumentManifest(resource));
+   {$ENDIF}
+{$ENDIF FHIR_DOCUMENTMANIFEST}
+{$IFDEF FHIR_DOCUMENTREFERENCE}
+  {$IFDEF FHIR_DOCUMENTREFERENCE}
+     frtDocumentReference: ComposeDocumentReference(json, 'DocumentReference', TFhirDocumentReference(resource));
+   {$ENDIF}
+{$ENDIF FHIR_DOCUMENTREFERENCE}
+{$IFDEF FHIR_ELIGIBILITYREQUEST}
+  {$IFDEF FHIR_ELIGIBILITYREQUEST}
+     frtEligibilityRequest: ComposeEligibilityRequest(json, 'EligibilityRequest', TFhirEligibilityRequest(resource));
+   {$ENDIF}
+{$ENDIF FHIR_ELIGIBILITYREQUEST}
+{$IFDEF FHIR_ELIGIBILITYRESPONSE}
+  {$IFDEF FHIR_ELIGIBILITYRESPONSE}
+     frtEligibilityResponse: ComposeEligibilityResponse(json, 'EligibilityResponse', TFhirEligibilityResponse(resource));
+   {$ENDIF}
+{$ENDIF FHIR_ELIGIBILITYRESPONSE}
+{$IFDEF FHIR_ENCOUNTER}
+  {$IFDEF FHIR_ENCOUNTER}
+     frtEncounter: ComposeEncounter(json, 'Encounter', TFhirEncounter(resource));
+   {$ENDIF}
+{$ENDIF FHIR_ENCOUNTER}
+{$IFDEF FHIR_ENROLLMENTREQUEST}
+  {$IFDEF FHIR_ENROLLMENTREQUEST}
+     frtEnrollmentRequest: ComposeEnrollmentRequest(json, 'EnrollmentRequest', TFhirEnrollmentRequest(resource));
+   {$ENDIF}
+{$ENDIF FHIR_ENROLLMENTREQUEST}
+{$IFDEF FHIR_ENROLLMENTRESPONSE}
+  {$IFDEF FHIR_ENROLLMENTRESPONSE}
+     frtEnrollmentResponse: ComposeEnrollmentResponse(json, 'EnrollmentResponse', TFhirEnrollmentResponse(resource));
+   {$ENDIF}
+{$ENDIF FHIR_ENROLLMENTRESPONSE}
+{$IFDEF FHIR_EPISODEOFCARE}
+  {$IFDEF FHIR_EPISODEOFCARE}
+     frtEpisodeOfCare: ComposeEpisodeOfCare(json, 'EpisodeOfCare', TFhirEpisodeOfCare(resource));
+   {$ENDIF}
+{$ENDIF FHIR_EPISODEOFCARE}
+{$IFDEF FHIR_EXPLANATIONOFBENEFIT}
+  {$IFDEF FHIR_EXPLANATIONOFBENEFIT}
+     frtExplanationOfBenefit: ComposeExplanationOfBenefit(json, 'ExplanationOfBenefit', TFhirExplanationOfBenefit(resource));
+   {$ENDIF}
+{$ENDIF FHIR_EXPLANATIONOFBENEFIT}
+{$IFDEF FHIR_FAMILYMEMBERHISTORY}
+  {$IFDEF FHIR_FAMILYMEMBERHISTORY}
+     frtFamilyMemberHistory: ComposeFamilyMemberHistory(json, 'FamilyMemberHistory', TFhirFamilyMemberHistory(resource));
+   {$ENDIF}
+{$ENDIF FHIR_FAMILYMEMBERHISTORY}
+{$IFDEF FHIR_FLAG}
+  {$IFDEF FHIR_FLAG}
+     frtFlag: ComposeFlag(json, 'Flag', TFhirFlag(resource));
+   {$ENDIF}
+{$ENDIF FHIR_FLAG}
+{$IFDEF FHIR_GOAL}
+  {$IFDEF FHIR_GOAL}
+     frtGoal: ComposeGoal(json, 'Goal', TFhirGoal(resource));
+   {$ENDIF}
+{$ENDIF FHIR_GOAL}
+{$IFDEF FHIR_GROUP}
+  {$IFDEF FHIR_GROUP}
+     frtGroup: ComposeGroup(json, 'Group', TFhirGroup(resource));
+   {$ENDIF}
+{$ENDIF FHIR_GROUP}
+{$IFDEF FHIR_HEALTHCARESERVICE}
+  {$IFDEF FHIR_HEALTHCARESERVICE}
+     frtHealthcareService: ComposeHealthcareService(json, 'HealthcareService', TFhirHealthcareService(resource));
+   {$ENDIF}
+{$ENDIF FHIR_HEALTHCARESERVICE}
+{$IFDEF FHIR_IMAGINGOBJECTSELECTION}
+  {$IFDEF FHIR_IMAGINGOBJECTSELECTION}
+     frtImagingObjectSelection: ComposeImagingObjectSelection(json, 'ImagingObjectSelection', TFhirImagingObjectSelection(resource));
+   {$ENDIF}
+{$ENDIF FHIR_IMAGINGOBJECTSELECTION}
+{$IFDEF FHIR_IMAGINGSTUDY}
+  {$IFDEF FHIR_IMAGINGSTUDY}
+     frtImagingStudy: ComposeImagingStudy(json, 'ImagingStudy', TFhirImagingStudy(resource));
+   {$ENDIF}
+{$ENDIF FHIR_IMAGINGSTUDY}
+{$IFDEF FHIR_IMMUNIZATION}
+  {$IFDEF FHIR_IMMUNIZATION}
+     frtImmunization: ComposeImmunization(json, 'Immunization', TFhirImmunization(resource));
+   {$ENDIF}
+{$ENDIF FHIR_IMMUNIZATION}
+{$IFDEF FHIR_IMMUNIZATIONRECOMMENDATION}
+  {$IFDEF FHIR_IMMUNIZATIONRECOMMENDATION}
+     frtImmunizationRecommendation: ComposeImmunizationRecommendation(json, 'ImmunizationRecommendation', TFhirImmunizationRecommendation(resource));
+   {$ENDIF}
+{$ENDIF FHIR_IMMUNIZATIONRECOMMENDATION}
+{$IFDEF FHIR_IMPLEMENTATIONGUIDE}
+  {$IFDEF FHIR_IMPLEMENTATIONGUIDE}
+     frtImplementationGuide: ComposeImplementationGuide(json, 'ImplementationGuide', TFhirImplementationGuide(resource));
+   {$ENDIF}
+{$ENDIF FHIR_IMPLEMENTATIONGUIDE}
+{$IFDEF FHIR_LIST}
+  {$IFDEF FHIR_LIST}
+     frtList: ComposeList(json, 'List', TFhirList(resource));
+   {$ENDIF}
+{$ENDIF FHIR_LIST}
+{$IFDEF FHIR_LOCATION}
+  {$IFDEF FHIR_LOCATION}
+     frtLocation: ComposeLocation(json, 'Location', TFhirLocation(resource));
+   {$ENDIF}
+{$ENDIF FHIR_LOCATION}
+{$IFDEF FHIR_MEDIA}
+  {$IFDEF FHIR_MEDIA}
+     frtMedia: ComposeMedia(json, 'Media', TFhirMedia(resource));
+   {$ENDIF}
+{$ENDIF FHIR_MEDIA}
+{$IFDEF FHIR_MEDICATION}
+  {$IFDEF FHIR_MEDICATION}
+     frtMedication: ComposeMedication(json, 'Medication', TFhirMedication(resource));
+   {$ENDIF}
+{$ENDIF FHIR_MEDICATION}
+{$IFDEF FHIR_MEDICATIONADMINISTRATION}
+  {$IFDEF FHIR_MEDICATIONADMINISTRATION}
+     frtMedicationAdministration: ComposeMedicationAdministration(json, 'MedicationAdministration', TFhirMedicationAdministration(resource));
+   {$ENDIF}
+{$ENDIF FHIR_MEDICATIONADMINISTRATION}
+{$IFDEF FHIR_MEDICATIONDISPENSE}
+  {$IFDEF FHIR_MEDICATIONDISPENSE}
+     frtMedicationDispense: ComposeMedicationDispense(json, 'MedicationDispense', TFhirMedicationDispense(resource));
+   {$ENDIF}
+{$ENDIF FHIR_MEDICATIONDISPENSE}
+{$IFDEF FHIR_MEDICATIONORDER}
+  {$IFDEF FHIR_MEDICATIONORDER}
+     frtMedicationOrder: ComposeMedicationOrder(json, 'MedicationOrder', TFhirMedicationOrder(resource));
+   {$ENDIF}
+{$ENDIF FHIR_MEDICATIONORDER}
+{$IFDEF FHIR_MEDICATIONSTATEMENT}
+  {$IFDEF FHIR_MEDICATIONSTATEMENT}
+     frtMedicationStatement: ComposeMedicationStatement(json, 'MedicationStatement', TFhirMedicationStatement(resource));
+   {$ENDIF}
+{$ENDIF FHIR_MEDICATIONSTATEMENT}
+{$IFDEF FHIR_MESSAGEHEADER}
+  {$IFDEF FHIR_MESSAGEHEADER}
+     frtMessageHeader: ComposeMessageHeader(json, 'MessageHeader', TFhirMessageHeader(resource));
+   {$ENDIF}
+{$ENDIF FHIR_MESSAGEHEADER}
+{$IFDEF FHIR_NAMINGSYSTEM}
+  {$IFDEF FHIR_NAMINGSYSTEM}
+     frtNamingSystem: ComposeNamingSystem(json, 'NamingSystem', TFhirNamingSystem(resource));
+   {$ENDIF}
+{$ENDIF FHIR_NAMINGSYSTEM}
+{$IFDEF FHIR_NUTRITIONORDER}
+  {$IFDEF FHIR_NUTRITIONORDER}
+     frtNutritionOrder: ComposeNutritionOrder(json, 'NutritionOrder', TFhirNutritionOrder(resource));
+   {$ENDIF}
+{$ENDIF FHIR_NUTRITIONORDER}
+{$IFDEF FHIR_OBSERVATION}
+  {$IFDEF FHIR_OBSERVATION}
+     frtObservation: ComposeObservation(json, 'Observation', TFhirObservation(resource));
+   {$ENDIF}
+{$ENDIF FHIR_OBSERVATION}
+{$IFDEF FHIR_OPERATIONDEFINITION}
+  {$IFDEF FHIR_OPERATIONDEFINITION}
+     frtOperationDefinition: ComposeOperationDefinition(json, 'OperationDefinition', TFhirOperationDefinition(resource));
+   {$ENDIF}
+{$ENDIF FHIR_OPERATIONDEFINITION}
+{$IFDEF FHIR_OPERATIONOUTCOME}
+  {$IFDEF FHIR_OPERATIONOUTCOME}
+     frtOperationOutcome: ComposeOperationOutcome(json, 'OperationOutcome', TFhirOperationOutcome(resource));
+   {$ENDIF}
+{$ENDIF FHIR_OPERATIONOUTCOME}
+{$IFDEF FHIR_ORDER}
+  {$IFDEF FHIR_ORDER}
+     frtOrder: ComposeOrder(json, 'Order', TFhirOrder(resource));
+   {$ENDIF}
+{$ENDIF FHIR_ORDER}
+{$IFDEF FHIR_ORDERRESPONSE}
+  {$IFDEF FHIR_ORDERRESPONSE}
+     frtOrderResponse: ComposeOrderResponse(json, 'OrderResponse', TFhirOrderResponse(resource));
+   {$ENDIF}
+{$ENDIF FHIR_ORDERRESPONSE}
+{$IFDEF FHIR_ORGANIZATION}
+  {$IFDEF FHIR_ORGANIZATION}
+     frtOrganization: ComposeOrganization(json, 'Organization', TFhirOrganization(resource));
+   {$ENDIF}
+{$ENDIF FHIR_ORGANIZATION}
+{$IFDEF FHIR_PATIENT}
+  {$IFDEF FHIR_PATIENT}
+     frtPatient: ComposePatient(json, 'Patient', TFhirPatient(resource));
+   {$ENDIF}
+{$ENDIF FHIR_PATIENT}
+{$IFDEF FHIR_PAYMENTNOTICE}
+  {$IFDEF FHIR_PAYMENTNOTICE}
+     frtPaymentNotice: ComposePaymentNotice(json, 'PaymentNotice', TFhirPaymentNotice(resource));
+   {$ENDIF}
+{$ENDIF FHIR_PAYMENTNOTICE}
+{$IFDEF FHIR_PAYMENTRECONCILIATION}
+  {$IFDEF FHIR_PAYMENTRECONCILIATION}
+     frtPaymentReconciliation: ComposePaymentReconciliation(json, 'PaymentReconciliation', TFhirPaymentReconciliation(resource));
+   {$ENDIF}
+{$ENDIF FHIR_PAYMENTRECONCILIATION}
+{$IFDEF FHIR_PERSON}
+  {$IFDEF FHIR_PERSON}
+     frtPerson: ComposePerson(json, 'Person', TFhirPerson(resource));
+   {$ENDIF}
+{$ENDIF FHIR_PERSON}
+{$IFDEF FHIR_PRACTITIONER}
+  {$IFDEF FHIR_PRACTITIONER}
+     frtPractitioner: ComposePractitioner(json, 'Practitioner', TFhirPractitioner(resource));
+   {$ENDIF}
+{$ENDIF FHIR_PRACTITIONER}
+{$IFDEF FHIR_PROCEDURE}
+  {$IFDEF FHIR_PROCEDURE}
+     frtProcedure: ComposeProcedure(json, 'Procedure', TFhirProcedure(resource));
+   {$ENDIF}
+{$ENDIF FHIR_PROCEDURE}
+{$IFDEF FHIR_PROCEDUREREQUEST}
+  {$IFDEF FHIR_PROCEDUREREQUEST}
+     frtProcedureRequest: ComposeProcedureRequest(json, 'ProcedureRequest', TFhirProcedureRequest(resource));
+   {$ENDIF}
+{$ENDIF FHIR_PROCEDUREREQUEST}
+{$IFDEF FHIR_PROCESSREQUEST}
+  {$IFDEF FHIR_PROCESSREQUEST}
+     frtProcessRequest: ComposeProcessRequest(json, 'ProcessRequest', TFhirProcessRequest(resource));
+   {$ENDIF}
+{$ENDIF FHIR_PROCESSREQUEST}
+{$IFDEF FHIR_PROCESSRESPONSE}
+  {$IFDEF FHIR_PROCESSRESPONSE}
+     frtProcessResponse: ComposeProcessResponse(json, 'ProcessResponse', TFhirProcessResponse(resource));
+   {$ENDIF}
+{$ENDIF FHIR_PROCESSRESPONSE}
+{$IFDEF FHIR_PROVENANCE}
+  {$IFDEF FHIR_PROVENANCE}
+     frtProvenance: ComposeProvenance(json, 'Provenance', TFhirProvenance(resource));
+   {$ENDIF}
+{$ENDIF FHIR_PROVENANCE}
+{$IFDEF FHIR_QUESTIONNAIRE}
+  {$IFDEF FHIR_QUESTIONNAIRE}
+     frtQuestionnaire: ComposeQuestionnaire(json, 'Questionnaire', TFhirQuestionnaire(resource));
+   {$ENDIF}
+{$ENDIF FHIR_QUESTIONNAIRE}
+{$IFDEF FHIR_QUESTIONNAIRERESPONSE}
+  {$IFDEF FHIR_QUESTIONNAIRERESPONSE}
+     frtQuestionnaireResponse: ComposeQuestionnaireResponse(json, 'QuestionnaireResponse', TFhirQuestionnaireResponse(resource));
+   {$ENDIF}
+{$ENDIF FHIR_QUESTIONNAIRERESPONSE}
+{$IFDEF FHIR_REFERRALREQUEST}
+  {$IFDEF FHIR_REFERRALREQUEST}
+     frtReferralRequest: ComposeReferralRequest(json, 'ReferralRequest', TFhirReferralRequest(resource));
+   {$ENDIF}
+{$ENDIF FHIR_REFERRALREQUEST}
+{$IFDEF FHIR_RELATEDPERSON}
+  {$IFDEF FHIR_RELATEDPERSON}
+     frtRelatedPerson: ComposeRelatedPerson(json, 'RelatedPerson', TFhirRelatedPerson(resource));
+   {$ENDIF}
+{$ENDIF FHIR_RELATEDPERSON}
+{$IFDEF FHIR_RISKASSESSMENT}
+  {$IFDEF FHIR_RISKASSESSMENT}
+     frtRiskAssessment: ComposeRiskAssessment(json, 'RiskAssessment', TFhirRiskAssessment(resource));
+   {$ENDIF}
+{$ENDIF FHIR_RISKASSESSMENT}
+{$IFDEF FHIR_SCHEDULE}
+  {$IFDEF FHIR_SCHEDULE}
+     frtSchedule: ComposeSchedule(json, 'Schedule', TFhirSchedule(resource));
+   {$ENDIF}
+{$ENDIF FHIR_SCHEDULE}
+{$IFDEF FHIR_SEARCHPARAMETER}
+  {$IFDEF FHIR_SEARCHPARAMETER}
+     frtSearchParameter: ComposeSearchParameter(json, 'SearchParameter', TFhirSearchParameter(resource));
+   {$ENDIF}
+{$ENDIF FHIR_SEARCHPARAMETER}
+{$IFDEF FHIR_SLOT}
+  {$IFDEF FHIR_SLOT}
+     frtSlot: ComposeSlot(json, 'Slot', TFhirSlot(resource));
+   {$ENDIF}
+{$ENDIF FHIR_SLOT}
+{$IFDEF FHIR_SPECIMEN}
+  {$IFDEF FHIR_SPECIMEN}
+     frtSpecimen: ComposeSpecimen(json, 'Specimen', TFhirSpecimen(resource));
+   {$ENDIF}
+{$ENDIF FHIR_SPECIMEN}
+{$IFDEF FHIR_STRUCTUREDEFINITION}
+  {$IFDEF FHIR_STRUCTUREDEFINITION}
+     frtStructureDefinition: ComposeStructureDefinition(json, 'StructureDefinition', TFhirStructureDefinition(resource));
+   {$ENDIF}
+{$ENDIF FHIR_STRUCTUREDEFINITION}
+{$IFDEF FHIR_SUBSCRIPTION}
+  {$IFDEF FHIR_SUBSCRIPTION}
+     frtSubscription: ComposeSubscription(json, 'Subscription', TFhirSubscription(resource));
+   {$ENDIF}
+{$ENDIF FHIR_SUBSCRIPTION}
+{$IFDEF FHIR_SUBSTANCE}
+  {$IFDEF FHIR_SUBSTANCE}
+     frtSubstance: ComposeSubstance(json, 'Substance', TFhirSubstance(resource));
+   {$ENDIF}
+{$ENDIF FHIR_SUBSTANCE}
+{$IFDEF FHIR_SUPPLYDELIVERY}
+  {$IFDEF FHIR_SUPPLYDELIVERY}
+     frtSupplyDelivery: ComposeSupplyDelivery(json, 'SupplyDelivery', TFhirSupplyDelivery(resource));
+   {$ENDIF}
+{$ENDIF FHIR_SUPPLYDELIVERY}
+{$IFDEF FHIR_SUPPLYREQUEST}
+  {$IFDEF FHIR_SUPPLYREQUEST}
+     frtSupplyRequest: ComposeSupplyRequest(json, 'SupplyRequest', TFhirSupplyRequest(resource));
+   {$ENDIF}
+{$ENDIF FHIR_SUPPLYREQUEST}
+{$IFDEF FHIR_TESTSCRIPT}
+  {$IFDEF FHIR_TESTSCRIPT}
+     frtTestScript: ComposeTestScript(json, 'TestScript', TFhirTestScript(resource));
+   {$ENDIF}
+{$ENDIF FHIR_TESTSCRIPT}
+{$IFDEF FHIR_VALUESET}
+  {$IFDEF FHIR_VALUESET}
+     frtValueSet: ComposeValueSet(json, 'ValueSet', TFhirValueSet(resource));
+   {$ENDIF}
+{$ENDIF FHIR_VALUESET}
+{$IFDEF FHIR_VISIONPRESCRIPTION}
+  {$IFDEF FHIR_VISIONPRESCRIPTION}
+     frtVisionPrescription: ComposeVisionPrescription(json, 'VisionPrescription', TFhirVisionPrescription(resource));
+   {$ENDIF}
+{$ENDIF FHIR_VISIONPRESCRIPTION}
   else
     raise Exception.create('Internal error: the resource type '+CODES_TFhirResourceType[resource.ResourceType]+' is not a valid resource type');
   end;

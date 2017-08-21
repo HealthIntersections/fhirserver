@@ -133,6 +133,8 @@ public class DelphiCodeGenerator extends OutputStreamWriter {
     }
     write("unit "+name+";\r\n");
     write("\r\n");
+    write("{$I fhir.inc}\r\n");
+    write("\r\n");
     write("{\r\n"+FULL_LICENSE_CODE+"}\r\n");
     write("\r\n"+VERSION_MARK.replace("%%", Integer.toString(dstuID))+"\r\n");
     write("\r\n");
@@ -225,6 +227,19 @@ public class DelphiCodeGenerator extends OutputStreamWriter {
     write("\r\n");
     flush();
     close();
+  }
+
+  public void ifdef(String n) {
+    classFwds.add("{$IFDEF FHIR_"+n+"}\r\n");
+    classDefs.add("{$IFDEF FHIR_"+n+"}\r\n");
+    classImpls.add("{$IFDEF FHIR_"+n+"}\r\n");
+
+  }
+
+  public void endif(String n) {
+    classFwds.add("{$ENDIF FHIR_"+n+"}\r\n");
+    classDefs.add("{$ENDIF FHIR_"+n+"}\r\n");
+    classImpls.add("{$ENDIF FHIR_"+n+"}\r\n");
   }
 
 

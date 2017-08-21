@@ -1,5 +1,7 @@
 unit FHIRParserXml;
 
+{$I fhir.inc}
+
 {
   Copyright (c) 2011+, HL7 and Health Intersections Pty Ltd (http://www.healthintersections.com.au)
   All rights reserved.
@@ -75,10 +77,12 @@ Type
     Function ParseResourceChild(resource : TFhirResource; path : string; child : TMXmlElement) : boolean;
     Procedure ParseDomainResourceAttributes(resource : TFhirDomainResource; path : string; element : TMXmlElement);
     Function ParseDomainResourceChild(resource : TFhirDomainResource; path : string; child : TMXmlElement) : boolean;
+{$IFDEF FHIR_PARAMETERS}
     function ParseParametersParameter(element : TMXmlElement; path : string) : TFhirParametersParameter;
     function ParseParametersParameterChild(element : TFhirParametersParameter; path : string; child : TMXmlElement) : boolean;
     function ParseParameters(element : TMXmlElement; path : string) : TFhirParameters;
     function ParseParametersChild(element : TFhirParameters; path : string; child : TMXmlElement) : boolean;
+{$ENDIF FHIR_PARAMETERS}
 
     function ParseExtension(element : TMXmlElement; path : string) : TFhirExtension;
     function ParseExtensionChild(element : TFhirExtension; path : string; child : TMXmlElement) : boolean;
@@ -169,32 +173,45 @@ Type
     function ParseDuration(element : TMXmlElement; path : string) : TFhirDuration;
     function ParseDurationChild(element : TFhirDuration; path : string; child : TMXmlElement) : boolean;
 
+{$IFDEF FHIR_ACCOUNT}
     function ParseAccountCoverage(element : TMXmlElement; path : string) : TFhirAccountCoverage;
     function ParseAccountCoverageChild(element : TFhirAccountCoverage; path : string; child : TMXmlElement) : boolean;
     function ParseAccountGuarantor(element : TMXmlElement; path : string) : TFhirAccountGuarantor;
     function ParseAccountGuarantorChild(element : TFhirAccountGuarantor; path : string; child : TMXmlElement) : boolean;
     function ParseAccount(element : TMXmlElement; path : string) : TFhirAccount;
     function ParseAccountChild(element : TFhirAccount; path : string; child : TMXmlElement) : boolean;
+{$ENDIF FHIR_ACCOUNT}
+{$IFDEF FHIR_ACTIVITYDEFINITION}
     function ParseActivityDefinitionParticipant(element : TMXmlElement; path : string) : TFhirActivityDefinitionParticipant;
     function ParseActivityDefinitionParticipantChild(element : TFhirActivityDefinitionParticipant; path : string; child : TMXmlElement) : boolean;
     function ParseActivityDefinitionDynamicValue(element : TMXmlElement; path : string) : TFhirActivityDefinitionDynamicValue;
     function ParseActivityDefinitionDynamicValueChild(element : TFhirActivityDefinitionDynamicValue; path : string; child : TMXmlElement) : boolean;
     function ParseActivityDefinition(element : TMXmlElement; path : string) : TFhirActivityDefinition;
     function ParseActivityDefinitionChild(element : TFhirActivityDefinition; path : string; child : TMXmlElement) : boolean;
+{$ENDIF FHIR_ACTIVITYDEFINITION}
+{$IFDEF FHIR_ADVERSEEVENT}
     function ParseAdverseEventSuspectEntity(element : TMXmlElement; path : string) : TFhirAdverseEventSuspectEntity;
     function ParseAdverseEventSuspectEntityChild(element : TFhirAdverseEventSuspectEntity; path : string; child : TMXmlElement) : boolean;
     function ParseAdverseEvent(element : TMXmlElement; path : string) : TFhirAdverseEvent;
     function ParseAdverseEventChild(element : TFhirAdverseEvent; path : string; child : TMXmlElement) : boolean;
+{$ENDIF FHIR_ADVERSEEVENT}
+{$IFDEF FHIR_ALLERGYINTOLERANCE}
     function ParseAllergyIntoleranceReaction(element : TMXmlElement; path : string) : TFhirAllergyIntoleranceReaction;
     function ParseAllergyIntoleranceReactionChild(element : TFhirAllergyIntoleranceReaction; path : string; child : TMXmlElement) : boolean;
     function ParseAllergyIntolerance(element : TMXmlElement; path : string) : TFhirAllergyIntolerance;
     function ParseAllergyIntoleranceChild(element : TFhirAllergyIntolerance; path : string; child : TMXmlElement) : boolean;
+{$ENDIF FHIR_ALLERGYINTOLERANCE}
+{$IFDEF FHIR_APPOINTMENT}
     function ParseAppointmentParticipant(element : TMXmlElement; path : string) : TFhirAppointmentParticipant;
     function ParseAppointmentParticipantChild(element : TFhirAppointmentParticipant; path : string; child : TMXmlElement) : boolean;
     function ParseAppointment(element : TMXmlElement; path : string) : TFhirAppointment;
     function ParseAppointmentChild(element : TFhirAppointment; path : string; child : TMXmlElement) : boolean;
+{$ENDIF FHIR_APPOINTMENT}
+{$IFDEF FHIR_APPOINTMENTRESPONSE}
     function ParseAppointmentResponse(element : TMXmlElement; path : string) : TFhirAppointmentResponse;
     function ParseAppointmentResponseChild(element : TFhirAppointmentResponse; path : string; child : TMXmlElement) : boolean;
+{$ENDIF FHIR_APPOINTMENTRESPONSE}
+{$IFDEF FHIR_AUDITEVENT}
     function ParseAuditEventAgent(element : TMXmlElement; path : string) : TFhirAuditEventAgent;
     function ParseAuditEventAgentChild(element : TFhirAuditEventAgent; path : string; child : TMXmlElement) : boolean;
     function ParseAuditEventAgentNetwork(element : TMXmlElement; path : string) : TFhirAuditEventAgentNetwork;
@@ -207,12 +224,20 @@ Type
     function ParseAuditEventEntityDetailChild(element : TFhirAuditEventEntityDetail; path : string; child : TMXmlElement) : boolean;
     function ParseAuditEvent(element : TMXmlElement; path : string) : TFhirAuditEvent;
     function ParseAuditEventChild(element : TFhirAuditEvent; path : string; child : TMXmlElement) : boolean;
+{$ENDIF FHIR_AUDITEVENT}
+{$IFDEF FHIR_BASIC}
     function ParseBasic(element : TMXmlElement; path : string) : TFhirBasic;
     function ParseBasicChild(element : TFhirBasic; path : string; child : TMXmlElement) : boolean;
+{$ENDIF FHIR_BASIC}
+{$IFDEF FHIR_BINARY}
     function ParseBinary(element : TMXmlElement; path : string) : TFhirBinary;
     function ParseBinaryChild(element : TFhirBinary; path : string; child : TMXmlElement) : boolean;
+{$ENDIF FHIR_BINARY}
+{$IFDEF FHIR_BODYSITE}
     function ParseBodySite(element : TMXmlElement; path : string) : TFhirBodySite;
     function ParseBodySiteChild(element : TFhirBodySite; path : string; child : TMXmlElement) : boolean;
+{$ENDIF FHIR_BODYSITE}
+{$IFDEF FHIR_BUNDLE}
     function ParseBundleLink(element : TMXmlElement; path : string) : TFhirBundleLink;
     function ParseBundleLinkChild(element : TFhirBundleLink; path : string; child : TMXmlElement) : boolean;
     function ParseBundleEntry(element : TMXmlElement; path : string) : TFhirBundleEntry;
@@ -225,6 +250,8 @@ Type
     function ParseBundleEntryResponseChild(element : TFhirBundleEntryResponse; path : string; child : TMXmlElement) : boolean;
     function ParseBundle(element : TMXmlElement; path : string) : TFhirBundle;
     function ParseBundleChild(element : TFhirBundle; path : string; child : TMXmlElement) : boolean;
+{$ENDIF FHIR_BUNDLE}
+{$IFDEF FHIR_CAPABILITYSTATEMENT}
     function ParseCapabilityStatementSoftware(element : TMXmlElement; path : string) : TFhirCapabilityStatementSoftware;
     function ParseCapabilityStatementSoftwareChild(element : TFhirCapabilityStatementSoftware; path : string; child : TMXmlElement) : boolean;
     function ParseCapabilityStatementImplementation(element : TMXmlElement; path : string) : TFhirCapabilityStatementImplementation;
@@ -257,20 +284,28 @@ Type
     function ParseCapabilityStatementDocumentChild(element : TFhirCapabilityStatementDocument; path : string; child : TMXmlElement) : boolean;
     function ParseCapabilityStatement(element : TMXmlElement; path : string) : TFhirCapabilityStatement;
     function ParseCapabilityStatementChild(element : TFhirCapabilityStatement; path : string; child : TMXmlElement) : boolean;
+{$ENDIF FHIR_CAPABILITYSTATEMENT}
+{$IFDEF FHIR_CAREPLAN}
     function ParseCarePlanActivity(element : TMXmlElement; path : string) : TFhirCarePlanActivity;
     function ParseCarePlanActivityChild(element : TFhirCarePlanActivity; path : string; child : TMXmlElement) : boolean;
     function ParseCarePlanActivityDetail(element : TMXmlElement; path : string) : TFhirCarePlanActivityDetail;
     function ParseCarePlanActivityDetailChild(element : TFhirCarePlanActivityDetail; path : string; child : TMXmlElement) : boolean;
     function ParseCarePlan(element : TMXmlElement; path : string) : TFhirCarePlan;
     function ParseCarePlanChild(element : TFhirCarePlan; path : string; child : TMXmlElement) : boolean;
+{$ENDIF FHIR_CAREPLAN}
+{$IFDEF FHIR_CARETEAM}
     function ParseCareTeamParticipant(element : TMXmlElement; path : string) : TFhirCareTeamParticipant;
     function ParseCareTeamParticipantChild(element : TFhirCareTeamParticipant; path : string; child : TMXmlElement) : boolean;
     function ParseCareTeam(element : TMXmlElement; path : string) : TFhirCareTeam;
     function ParseCareTeamChild(element : TFhirCareTeam; path : string; child : TMXmlElement) : boolean;
+{$ENDIF FHIR_CARETEAM}
+{$IFDEF FHIR_CHARGEITEM}
     function ParseChargeItemParticipant(element : TMXmlElement; path : string) : TFhirChargeItemParticipant;
     function ParseChargeItemParticipantChild(element : TFhirChargeItemParticipant; path : string; child : TMXmlElement) : boolean;
     function ParseChargeItem(element : TMXmlElement; path : string) : TFhirChargeItem;
     function ParseChargeItemChild(element : TFhirChargeItem; path : string; child : TMXmlElement) : boolean;
+{$ENDIF FHIR_CHARGEITEM}
+{$IFDEF FHIR_CLAIM}
     function ParseClaimRelated(element : TMXmlElement; path : string) : TFhirClaimRelated;
     function ParseClaimRelatedChild(element : TFhirClaimRelated; path : string; child : TMXmlElement) : boolean;
     function ParseClaimPayee(element : TMXmlElement; path : string) : TFhirClaimPayee;
@@ -295,6 +330,8 @@ Type
     function ParseClaimItemDetailSubDetailChild(element : TFhirClaimItemDetailSubDetail; path : string; child : TMXmlElement) : boolean;
     function ParseClaim(element : TMXmlElement; path : string) : TFhirClaim;
     function ParseClaimChild(element : TFhirClaim; path : string; child : TMXmlElement) : boolean;
+{$ENDIF FHIR_CLAIM}
+{$IFDEF FHIR_CLAIMRESPONSE}
     function ParseClaimResponseItem(element : TMXmlElement; path : string) : TFhirClaimResponseItem;
     function ParseClaimResponseItemChild(element : TFhirClaimResponseItem; path : string; child : TMXmlElement) : boolean;
     function ParseClaimResponseItemAdjudication(element : TMXmlElement; path : string) : TFhirClaimResponseItemAdjudication;
@@ -317,12 +354,16 @@ Type
     function ParseClaimResponseInsuranceChild(element : TFhirClaimResponseInsurance; path : string; child : TMXmlElement) : boolean;
     function ParseClaimResponse(element : TMXmlElement; path : string) : TFhirClaimResponse;
     function ParseClaimResponseChild(element : TFhirClaimResponse; path : string; child : TMXmlElement) : boolean;
+{$ENDIF FHIR_CLAIMRESPONSE}
+{$IFDEF FHIR_CLINICALIMPRESSION}
     function ParseClinicalImpressionInvestigation(element : TMXmlElement; path : string) : TFhirClinicalImpressionInvestigation;
     function ParseClinicalImpressionInvestigationChild(element : TFhirClinicalImpressionInvestigation; path : string; child : TMXmlElement) : boolean;
     function ParseClinicalImpressionFinding(element : TMXmlElement; path : string) : TFhirClinicalImpressionFinding;
     function ParseClinicalImpressionFindingChild(element : TFhirClinicalImpressionFinding; path : string; child : TMXmlElement) : boolean;
     function ParseClinicalImpression(element : TMXmlElement; path : string) : TFhirClinicalImpression;
     function ParseClinicalImpressionChild(element : TFhirClinicalImpression; path : string; child : TMXmlElement) : boolean;
+{$ENDIF FHIR_CLINICALIMPRESSION}
+{$IFDEF FHIR_CODESYSTEM}
     function ParseCodeSystemFilter(element : TMXmlElement; path : string) : TFhirCodeSystemFilter;
     function ParseCodeSystemFilterChild(element : TFhirCodeSystemFilter; path : string; child : TMXmlElement) : boolean;
     function ParseCodeSystemProperty(element : TMXmlElement; path : string) : TFhirCodeSystemProperty;
@@ -335,20 +376,28 @@ Type
     function ParseCodeSystemConceptPropertyChild(element : TFhirCodeSystemConceptProperty; path : string; child : TMXmlElement) : boolean;
     function ParseCodeSystem(element : TMXmlElement; path : string) : TFhirCodeSystem;
     function ParseCodeSystemChild(element : TFhirCodeSystem; path : string; child : TMXmlElement) : boolean;
+{$ENDIF FHIR_CODESYSTEM}
+{$IFDEF FHIR_COMMUNICATION}
     function ParseCommunicationPayload(element : TMXmlElement; path : string) : TFhirCommunicationPayload;
     function ParseCommunicationPayloadChild(element : TFhirCommunicationPayload; path : string; child : TMXmlElement) : boolean;
     function ParseCommunication(element : TMXmlElement; path : string) : TFhirCommunication;
     function ParseCommunicationChild(element : TFhirCommunication; path : string; child : TMXmlElement) : boolean;
+{$ENDIF FHIR_COMMUNICATION}
+{$IFDEF FHIR_COMMUNICATIONREQUEST}
     function ParseCommunicationRequestPayload(element : TMXmlElement; path : string) : TFhirCommunicationRequestPayload;
     function ParseCommunicationRequestPayloadChild(element : TFhirCommunicationRequestPayload; path : string; child : TMXmlElement) : boolean;
     function ParseCommunicationRequestRequester(element : TMXmlElement; path : string) : TFhirCommunicationRequestRequester;
     function ParseCommunicationRequestRequesterChild(element : TFhirCommunicationRequestRequester; path : string; child : TMXmlElement) : boolean;
     function ParseCommunicationRequest(element : TMXmlElement; path : string) : TFhirCommunicationRequest;
     function ParseCommunicationRequestChild(element : TFhirCommunicationRequest; path : string; child : TMXmlElement) : boolean;
+{$ENDIF FHIR_COMMUNICATIONREQUEST}
+{$IFDEF FHIR_COMPARTMENTDEFINITION}
     function ParseCompartmentDefinitionResource(element : TMXmlElement; path : string) : TFhirCompartmentDefinitionResource;
     function ParseCompartmentDefinitionResourceChild(element : TFhirCompartmentDefinitionResource; path : string; child : TMXmlElement) : boolean;
     function ParseCompartmentDefinition(element : TMXmlElement; path : string) : TFhirCompartmentDefinition;
     function ParseCompartmentDefinitionChild(element : TFhirCompartmentDefinition; path : string; child : TMXmlElement) : boolean;
+{$ENDIF FHIR_COMPARTMENTDEFINITION}
+{$IFDEF FHIR_COMPOSITION}
     function ParseCompositionAttester(element : TMXmlElement; path : string) : TFhirCompositionAttester;
     function ParseCompositionAttesterChild(element : TFhirCompositionAttester; path : string; child : TMXmlElement) : boolean;
     function ParseCompositionRelatesTo(element : TMXmlElement; path : string) : TFhirCompositionRelatesTo;
@@ -359,6 +408,8 @@ Type
     function ParseCompositionSectionChild(element : TFhirCompositionSection; path : string; child : TMXmlElement) : boolean;
     function ParseComposition(element : TMXmlElement; path : string) : TFhirComposition;
     function ParseCompositionChild(element : TFhirComposition; path : string; child : TMXmlElement) : boolean;
+{$ENDIF FHIR_COMPOSITION}
+{$IFDEF FHIR_CONCEPTMAP}
     function ParseConceptMapGroup(element : TMXmlElement; path : string) : TFhirConceptMapGroup;
     function ParseConceptMapGroupChild(element : TFhirConceptMapGroup; path : string; child : TMXmlElement) : boolean;
     function ParseConceptMapGroupElement(element : TMXmlElement; path : string) : TFhirConceptMapGroupElement;
@@ -371,12 +422,16 @@ Type
     function ParseConceptMapGroupUnmappedChild(element : TFhirConceptMapGroupUnmapped; path : string; child : TMXmlElement) : boolean;
     function ParseConceptMap(element : TMXmlElement; path : string) : TFhirConceptMap;
     function ParseConceptMapChild(element : TFhirConceptMap; path : string; child : TMXmlElement) : boolean;
+{$ENDIF FHIR_CONCEPTMAP}
+{$IFDEF FHIR_CONDITION}
     function ParseConditionStage(element : TMXmlElement; path : string) : TFhirConditionStage;
     function ParseConditionStageChild(element : TFhirConditionStage; path : string; child : TMXmlElement) : boolean;
     function ParseConditionEvidence(element : TMXmlElement; path : string) : TFhirConditionEvidence;
     function ParseConditionEvidenceChild(element : TFhirConditionEvidence; path : string; child : TMXmlElement) : boolean;
     function ParseCondition(element : TMXmlElement; path : string) : TFhirCondition;
     function ParseConditionChild(element : TFhirCondition; path : string; child : TMXmlElement) : boolean;
+{$ENDIF FHIR_CONDITION}
+{$IFDEF FHIR_CONSENT}
     function ParseConsentActor(element : TMXmlElement; path : string) : TFhirConsentActor;
     function ParseConsentActorChild(element : TFhirConsentActor; path : string; child : TMXmlElement) : boolean;
     function ParseConsentPolicy(element : TMXmlElement; path : string) : TFhirConsentPolicy;
@@ -391,6 +446,8 @@ Type
     function ParseConsentExceptDataChild(element : TFhirConsentExceptData; path : string; child : TMXmlElement) : boolean;
     function ParseConsent(element : TMXmlElement; path : string) : TFhirConsent;
     function ParseConsentChild(element : TFhirConsent; path : string; child : TMXmlElement) : boolean;
+{$ENDIF FHIR_CONSENT}
+{$IFDEF FHIR_CONTRACT}
     function ParseContractAgent(element : TMXmlElement; path : string) : TFhirContractAgent;
     function ParseContractAgentChild(element : TFhirContractAgent; path : string; child : TMXmlElement) : boolean;
     function ParseContractSigner(element : TMXmlElement; path : string) : TFhirContractSigner;
@@ -411,48 +468,70 @@ Type
     function ParseContractRuleChild(element : TFhirContractRule; path : string; child : TMXmlElement) : boolean;
     function ParseContract(element : TMXmlElement; path : string) : TFhirContract;
     function ParseContractChild(element : TFhirContract; path : string; child : TMXmlElement) : boolean;
+{$ENDIF FHIR_CONTRACT}
+{$IFDEF FHIR_COVERAGE}
     function ParseCoverageGrouping(element : TMXmlElement; path : string) : TFhirCoverageGrouping;
     function ParseCoverageGroupingChild(element : TFhirCoverageGrouping; path : string; child : TMXmlElement) : boolean;
     function ParseCoverage(element : TMXmlElement; path : string) : TFhirCoverage;
     function ParseCoverageChild(element : TFhirCoverage; path : string; child : TMXmlElement) : boolean;
+{$ENDIF FHIR_COVERAGE}
+{$IFDEF FHIR_DATAELEMENT}
     function ParseDataElementMapping(element : TMXmlElement; path : string) : TFhirDataElementMapping;
     function ParseDataElementMappingChild(element : TFhirDataElementMapping; path : string; child : TMXmlElement) : boolean;
     function ParseDataElement(element : TMXmlElement; path : string) : TFhirDataElement;
     function ParseDataElementChild(element : TFhirDataElement; path : string; child : TMXmlElement) : boolean;
+{$ENDIF FHIR_DATAELEMENT}
+{$IFDEF FHIR_DETECTEDISSUE}
     function ParseDetectedIssueMitigation(element : TMXmlElement; path : string) : TFhirDetectedIssueMitigation;
     function ParseDetectedIssueMitigationChild(element : TFhirDetectedIssueMitigation; path : string; child : TMXmlElement) : boolean;
     function ParseDetectedIssue(element : TMXmlElement; path : string) : TFhirDetectedIssue;
     function ParseDetectedIssueChild(element : TFhirDetectedIssue; path : string; child : TMXmlElement) : boolean;
+{$ENDIF FHIR_DETECTEDISSUE}
+{$IFDEF FHIR_DEVICE}
     function ParseDeviceUdi(element : TMXmlElement; path : string) : TFhirDeviceUdi;
     function ParseDeviceUdiChild(element : TFhirDeviceUdi; path : string; child : TMXmlElement) : boolean;
     function ParseDevice(element : TMXmlElement; path : string) : TFhirDevice;
     function ParseDeviceChild(element : TFhirDevice; path : string; child : TMXmlElement) : boolean;
+{$ENDIF FHIR_DEVICE}
+{$IFDEF FHIR_DEVICECOMPONENT}
     function ParseDeviceComponentProductionSpecification(element : TMXmlElement; path : string) : TFhirDeviceComponentProductionSpecification;
     function ParseDeviceComponentProductionSpecificationChild(element : TFhirDeviceComponentProductionSpecification; path : string; child : TMXmlElement) : boolean;
     function ParseDeviceComponent(element : TMXmlElement; path : string) : TFhirDeviceComponent;
     function ParseDeviceComponentChild(element : TFhirDeviceComponent; path : string; child : TMXmlElement) : boolean;
+{$ENDIF FHIR_DEVICECOMPONENT}
+{$IFDEF FHIR_DEVICEMETRIC}
     function ParseDeviceMetricCalibration(element : TMXmlElement; path : string) : TFhirDeviceMetricCalibration;
     function ParseDeviceMetricCalibrationChild(element : TFhirDeviceMetricCalibration; path : string; child : TMXmlElement) : boolean;
     function ParseDeviceMetric(element : TMXmlElement; path : string) : TFhirDeviceMetric;
     function ParseDeviceMetricChild(element : TFhirDeviceMetric; path : string; child : TMXmlElement) : boolean;
+{$ENDIF FHIR_DEVICEMETRIC}
+{$IFDEF FHIR_DEVICEREQUEST}
     function ParseDeviceRequestRequester(element : TMXmlElement; path : string) : TFhirDeviceRequestRequester;
     function ParseDeviceRequestRequesterChild(element : TFhirDeviceRequestRequester; path : string; child : TMXmlElement) : boolean;
     function ParseDeviceRequest(element : TMXmlElement; path : string) : TFhirDeviceRequest;
     function ParseDeviceRequestChild(element : TFhirDeviceRequest; path : string; child : TMXmlElement) : boolean;
+{$ENDIF FHIR_DEVICEREQUEST}
+{$IFDEF FHIR_DEVICEUSESTATEMENT}
     function ParseDeviceUseStatement(element : TMXmlElement; path : string) : TFhirDeviceUseStatement;
     function ParseDeviceUseStatementChild(element : TFhirDeviceUseStatement; path : string; child : TMXmlElement) : boolean;
+{$ENDIF FHIR_DEVICEUSESTATEMENT}
+{$IFDEF FHIR_DIAGNOSTICREPORT}
     function ParseDiagnosticReportPerformer(element : TMXmlElement; path : string) : TFhirDiagnosticReportPerformer;
     function ParseDiagnosticReportPerformerChild(element : TFhirDiagnosticReportPerformer; path : string; child : TMXmlElement) : boolean;
     function ParseDiagnosticReportImage(element : TMXmlElement; path : string) : TFhirDiagnosticReportImage;
     function ParseDiagnosticReportImageChild(element : TFhirDiagnosticReportImage; path : string; child : TMXmlElement) : boolean;
     function ParseDiagnosticReport(element : TMXmlElement; path : string) : TFhirDiagnosticReport;
     function ParseDiagnosticReportChild(element : TFhirDiagnosticReport; path : string; child : TMXmlElement) : boolean;
+{$ENDIF FHIR_DIAGNOSTICREPORT}
+{$IFDEF FHIR_DOCUMENTMANIFEST}
     function ParseDocumentManifestContent(element : TMXmlElement; path : string) : TFhirDocumentManifestContent;
     function ParseDocumentManifestContentChild(element : TFhirDocumentManifestContent; path : string; child : TMXmlElement) : boolean;
     function ParseDocumentManifestRelated(element : TMXmlElement; path : string) : TFhirDocumentManifestRelated;
     function ParseDocumentManifestRelatedChild(element : TFhirDocumentManifestRelated; path : string; child : TMXmlElement) : boolean;
     function ParseDocumentManifest(element : TMXmlElement; path : string) : TFhirDocumentManifest;
     function ParseDocumentManifestChild(element : TFhirDocumentManifest; path : string; child : TMXmlElement) : boolean;
+{$ENDIF FHIR_DOCUMENTMANIFEST}
+{$IFDEF FHIR_DOCUMENTREFERENCE}
     function ParseDocumentReferenceRelatesTo(element : TMXmlElement; path : string) : TFhirDocumentReferenceRelatesTo;
     function ParseDocumentReferenceRelatesToChild(element : TFhirDocumentReferenceRelatesTo; path : string; child : TMXmlElement) : boolean;
     function ParseDocumentReferenceContent(element : TMXmlElement; path : string) : TFhirDocumentReferenceContent;
@@ -463,8 +542,12 @@ Type
     function ParseDocumentReferenceContextRelatedChild(element : TFhirDocumentReferenceContextRelated; path : string; child : TMXmlElement) : boolean;
     function ParseDocumentReference(element : TMXmlElement; path : string) : TFhirDocumentReference;
     function ParseDocumentReferenceChild(element : TFhirDocumentReference; path : string; child : TMXmlElement) : boolean;
+{$ENDIF FHIR_DOCUMENTREFERENCE}
+{$IFDEF FHIR_ELIGIBILITYREQUEST}
     function ParseEligibilityRequest(element : TMXmlElement; path : string) : TFhirEligibilityRequest;
     function ParseEligibilityRequestChild(element : TFhirEligibilityRequest; path : string; child : TMXmlElement) : boolean;
+{$ENDIF FHIR_ELIGIBILITYREQUEST}
+{$IFDEF FHIR_ELIGIBILITYRESPONSE}
     function ParseEligibilityResponseInsurance(element : TMXmlElement; path : string) : TFhirEligibilityResponseInsurance;
     function ParseEligibilityResponseInsuranceChild(element : TFhirEligibilityResponseInsurance; path : string; child : TMXmlElement) : boolean;
     function ParseEligibilityResponseInsuranceBenefitBalance(element : TMXmlElement; path : string) : TFhirEligibilityResponseInsuranceBenefitBalance;
@@ -475,6 +558,8 @@ Type
     function ParseEligibilityResponseErrorChild(element : TFhirEligibilityResponseError; path : string; child : TMXmlElement) : boolean;
     function ParseEligibilityResponse(element : TMXmlElement; path : string) : TFhirEligibilityResponse;
     function ParseEligibilityResponseChild(element : TFhirEligibilityResponse; path : string; child : TMXmlElement) : boolean;
+{$ENDIF FHIR_ELIGIBILITYRESPONSE}
+{$IFDEF FHIR_ENCOUNTER}
     function ParseEncounterStatusHistory(element : TMXmlElement; path : string) : TFhirEncounterStatusHistory;
     function ParseEncounterStatusHistoryChild(element : TFhirEncounterStatusHistory; path : string; child : TMXmlElement) : boolean;
     function ParseEncounterClassHistory(element : TMXmlElement; path : string) : TFhirEncounterClassHistory;
@@ -489,18 +574,28 @@ Type
     function ParseEncounterLocationChild(element : TFhirEncounterLocation; path : string; child : TMXmlElement) : boolean;
     function ParseEncounter(element : TMXmlElement; path : string) : TFhirEncounter;
     function ParseEncounterChild(element : TFhirEncounter; path : string; child : TMXmlElement) : boolean;
+{$ENDIF FHIR_ENCOUNTER}
+{$IFDEF FHIR_ENDPOINT}
     function ParseEndpoint(element : TMXmlElement; path : string) : TFhirEndpoint;
     function ParseEndpointChild(element : TFhirEndpoint; path : string; child : TMXmlElement) : boolean;
+{$ENDIF FHIR_ENDPOINT}
+{$IFDEF FHIR_ENROLLMENTREQUEST}
     function ParseEnrollmentRequest(element : TMXmlElement; path : string) : TFhirEnrollmentRequest;
     function ParseEnrollmentRequestChild(element : TFhirEnrollmentRequest; path : string; child : TMXmlElement) : boolean;
+{$ENDIF FHIR_ENROLLMENTREQUEST}
+{$IFDEF FHIR_ENROLLMENTRESPONSE}
     function ParseEnrollmentResponse(element : TMXmlElement; path : string) : TFhirEnrollmentResponse;
     function ParseEnrollmentResponseChild(element : TFhirEnrollmentResponse; path : string; child : TMXmlElement) : boolean;
+{$ENDIF FHIR_ENROLLMENTRESPONSE}
+{$IFDEF FHIR_EPISODEOFCARE}
     function ParseEpisodeOfCareStatusHistory(element : TMXmlElement; path : string) : TFhirEpisodeOfCareStatusHistory;
     function ParseEpisodeOfCareStatusHistoryChild(element : TFhirEpisodeOfCareStatusHistory; path : string; child : TMXmlElement) : boolean;
     function ParseEpisodeOfCareDiagnosis(element : TMXmlElement; path : string) : TFhirEpisodeOfCareDiagnosis;
     function ParseEpisodeOfCareDiagnosisChild(element : TFhirEpisodeOfCareDiagnosis; path : string; child : TMXmlElement) : boolean;
     function ParseEpisodeOfCare(element : TMXmlElement; path : string) : TFhirEpisodeOfCare;
     function ParseEpisodeOfCareChild(element : TFhirEpisodeOfCare; path : string; child : TMXmlElement) : boolean;
+{$ENDIF FHIR_EPISODEOFCARE}
+{$IFDEF FHIR_EXPANSIONPROFILE}
     function ParseExpansionProfileFixedVersion(element : TMXmlElement; path : string) : TFhirExpansionProfileFixedVersion;
     function ParseExpansionProfileFixedVersionChild(element : TFhirExpansionProfileFixedVersion; path : string; child : TMXmlElement) : boolean;
     function ParseExpansionProfileExcludedSystem(element : TMXmlElement; path : string) : TFhirExpansionProfileExcludedSystem;
@@ -517,6 +612,8 @@ Type
     function ParseExpansionProfileDesignationExcludeDesignationChild(element : TFhirExpansionProfileDesignationExcludeDesignation; path : string; child : TMXmlElement) : boolean;
     function ParseExpansionProfile(element : TMXmlElement; path : string) : TFhirExpansionProfile;
     function ParseExpansionProfileChild(element : TFhirExpansionProfile; path : string; child : TMXmlElement) : boolean;
+{$ENDIF FHIR_EXPANSIONPROFILE}
+{$IFDEF FHIR_EXPLANATIONOFBENEFIT}
     function ParseExplanationOfBenefitRelated(element : TMXmlElement; path : string) : TFhirExplanationOfBenefitRelated;
     function ParseExplanationOfBenefitRelatedChild(element : TFhirExplanationOfBenefitRelated; path : string; child : TMXmlElement) : boolean;
     function ParseExplanationOfBenefitPayee(element : TMXmlElement; path : string) : TFhirExplanationOfBenefitPayee;
@@ -555,16 +652,24 @@ Type
     function ParseExplanationOfBenefitBenefitBalanceFinancialChild(element : TFhirExplanationOfBenefitBenefitBalanceFinancial; path : string; child : TMXmlElement) : boolean;
     function ParseExplanationOfBenefit(element : TMXmlElement; path : string) : TFhirExplanationOfBenefit;
     function ParseExplanationOfBenefitChild(element : TFhirExplanationOfBenefit; path : string; child : TMXmlElement) : boolean;
+{$ENDIF FHIR_EXPLANATIONOFBENEFIT}
+{$IFDEF FHIR_FAMILYMEMBERHISTORY}
     function ParseFamilyMemberHistoryCondition(element : TMXmlElement; path : string) : TFhirFamilyMemberHistoryCondition;
     function ParseFamilyMemberHistoryConditionChild(element : TFhirFamilyMemberHistoryCondition; path : string; child : TMXmlElement) : boolean;
     function ParseFamilyMemberHistory(element : TMXmlElement; path : string) : TFhirFamilyMemberHistory;
     function ParseFamilyMemberHistoryChild(element : TFhirFamilyMemberHistory; path : string; child : TMXmlElement) : boolean;
+{$ENDIF FHIR_FAMILYMEMBERHISTORY}
+{$IFDEF FHIR_FLAG}
     function ParseFlag(element : TMXmlElement; path : string) : TFhirFlag;
     function ParseFlagChild(element : TFhirFlag; path : string; child : TMXmlElement) : boolean;
+{$ENDIF FHIR_FLAG}
+{$IFDEF FHIR_GOAL}
     function ParseGoalTarget(element : TMXmlElement; path : string) : TFhirGoalTarget;
     function ParseGoalTargetChild(element : TFhirGoalTarget; path : string; child : TMXmlElement) : boolean;
     function ParseGoal(element : TMXmlElement; path : string) : TFhirGoal;
     function ParseGoalChild(element : TFhirGoal; path : string; child : TMXmlElement) : boolean;
+{$ENDIF FHIR_GOAL}
+{$IFDEF FHIR_GRAPHDEFINITION}
     function ParseGraphDefinitionLink(element : TMXmlElement; path : string) : TFhirGraphDefinitionLink;
     function ParseGraphDefinitionLinkChild(element : TFhirGraphDefinitionLink; path : string; child : TMXmlElement) : boolean;
     function ParseGraphDefinitionLinkTarget(element : TMXmlElement; path : string) : TFhirGraphDefinitionLinkTarget;
@@ -573,20 +678,28 @@ Type
     function ParseGraphDefinitionLinkTargetCompartmentChild(element : TFhirGraphDefinitionLinkTargetCompartment; path : string; child : TMXmlElement) : boolean;
     function ParseGraphDefinition(element : TMXmlElement; path : string) : TFhirGraphDefinition;
     function ParseGraphDefinitionChild(element : TFhirGraphDefinition; path : string; child : TMXmlElement) : boolean;
+{$ENDIF FHIR_GRAPHDEFINITION}
+{$IFDEF FHIR_GROUP}
     function ParseGroupCharacteristic(element : TMXmlElement; path : string) : TFhirGroupCharacteristic;
     function ParseGroupCharacteristicChild(element : TFhirGroupCharacteristic; path : string; child : TMXmlElement) : boolean;
     function ParseGroupMember(element : TMXmlElement; path : string) : TFhirGroupMember;
     function ParseGroupMemberChild(element : TFhirGroupMember; path : string; child : TMXmlElement) : boolean;
     function ParseGroup(element : TMXmlElement; path : string) : TFhirGroup;
     function ParseGroupChild(element : TFhirGroup; path : string; child : TMXmlElement) : boolean;
+{$ENDIF FHIR_GROUP}
+{$IFDEF FHIR_GUIDANCERESPONSE}
     function ParseGuidanceResponse(element : TMXmlElement; path : string) : TFhirGuidanceResponse;
     function ParseGuidanceResponseChild(element : TFhirGuidanceResponse; path : string; child : TMXmlElement) : boolean;
+{$ENDIF FHIR_GUIDANCERESPONSE}
+{$IFDEF FHIR_HEALTHCARESERVICE}
     function ParseHealthcareServiceAvailableTime(element : TMXmlElement; path : string) : TFhirHealthcareServiceAvailableTime;
     function ParseHealthcareServiceAvailableTimeChild(element : TFhirHealthcareServiceAvailableTime; path : string; child : TMXmlElement) : boolean;
     function ParseHealthcareServiceNotAvailable(element : TMXmlElement; path : string) : TFhirHealthcareServiceNotAvailable;
     function ParseHealthcareServiceNotAvailableChild(element : TFhirHealthcareServiceNotAvailable; path : string; child : TMXmlElement) : boolean;
     function ParseHealthcareService(element : TMXmlElement; path : string) : TFhirHealthcareService;
     function ParseHealthcareServiceChild(element : TFhirHealthcareService; path : string; child : TMXmlElement) : boolean;
+{$ENDIF FHIR_HEALTHCARESERVICE}
+{$IFDEF FHIR_IMAGINGMANIFEST}
     function ParseImagingManifestStudy(element : TMXmlElement; path : string) : TFhirImagingManifestStudy;
     function ParseImagingManifestStudyChild(element : TFhirImagingManifestStudy; path : string; child : TMXmlElement) : boolean;
     function ParseImagingManifestStudySeries(element : TMXmlElement; path : string) : TFhirImagingManifestStudySeries;
@@ -595,12 +708,16 @@ Type
     function ParseImagingManifestStudySeriesInstanceChild(element : TFhirImagingManifestStudySeriesInstance; path : string; child : TMXmlElement) : boolean;
     function ParseImagingManifest(element : TMXmlElement; path : string) : TFhirImagingManifest;
     function ParseImagingManifestChild(element : TFhirImagingManifest; path : string; child : TMXmlElement) : boolean;
+{$ENDIF FHIR_IMAGINGMANIFEST}
+{$IFDEF FHIR_IMAGINGSTUDY}
     function ParseImagingStudySeries(element : TMXmlElement; path : string) : TFhirImagingStudySeries;
     function ParseImagingStudySeriesChild(element : TFhirImagingStudySeries; path : string; child : TMXmlElement) : boolean;
     function ParseImagingStudySeriesInstance(element : TMXmlElement; path : string) : TFhirImagingStudySeriesInstance;
     function ParseImagingStudySeriesInstanceChild(element : TFhirImagingStudySeriesInstance; path : string; child : TMXmlElement) : boolean;
     function ParseImagingStudy(element : TMXmlElement; path : string) : TFhirImagingStudy;
     function ParseImagingStudyChild(element : TFhirImagingStudy; path : string; child : TMXmlElement) : boolean;
+{$ENDIF FHIR_IMAGINGSTUDY}
+{$IFDEF FHIR_IMMUNIZATION}
     function ParseImmunizationPractitioner(element : TMXmlElement; path : string) : TFhirImmunizationPractitioner;
     function ParseImmunizationPractitionerChild(element : TFhirImmunizationPractitioner; path : string; child : TMXmlElement) : boolean;
     function ParseImmunizationExplanation(element : TMXmlElement; path : string) : TFhirImmunizationExplanation;
@@ -611,6 +728,8 @@ Type
     function ParseImmunizationVaccinationProtocolChild(element : TFhirImmunizationVaccinationProtocol; path : string; child : TMXmlElement) : boolean;
     function ParseImmunization(element : TMXmlElement; path : string) : TFhirImmunization;
     function ParseImmunizationChild(element : TFhirImmunization; path : string; child : TMXmlElement) : boolean;
+{$ENDIF FHIR_IMMUNIZATION}
+{$IFDEF FHIR_IMMUNIZATIONRECOMMENDATION}
     function ParseImmunizationRecommendationRecommendation(element : TMXmlElement; path : string) : TFhirImmunizationRecommendationRecommendation;
     function ParseImmunizationRecommendationRecommendationChild(element : TFhirImmunizationRecommendationRecommendation; path : string; child : TMXmlElement) : boolean;
     function ParseImmunizationRecommendationRecommendationDateCriterion(element : TMXmlElement; path : string) : TFhirImmunizationRecommendationRecommendationDateCriterion;
@@ -619,6 +738,8 @@ Type
     function ParseImmunizationRecommendationRecommendationProtocolChild(element : TFhirImmunizationRecommendationRecommendationProtocol; path : string; child : TMXmlElement) : boolean;
     function ParseImmunizationRecommendation(element : TMXmlElement; path : string) : TFhirImmunizationRecommendation;
     function ParseImmunizationRecommendationChild(element : TFhirImmunizationRecommendation; path : string; child : TMXmlElement) : boolean;
+{$ENDIF FHIR_IMMUNIZATIONRECOMMENDATION}
+{$IFDEF FHIR_IMPLEMENTATIONGUIDE}
     function ParseImplementationGuideDependency(element : TMXmlElement; path : string) : TFhirImplementationGuideDependency;
     function ParseImplementationGuideDependencyChild(element : TFhirImplementationGuideDependency; path : string; child : TMXmlElement) : boolean;
     function ParseImplementationGuidePackage(element : TMXmlElement; path : string) : TFhirImplementationGuidePackage;
@@ -631,20 +752,30 @@ Type
     function ParseImplementationGuidePageChild(element : TFhirImplementationGuidePage; path : string; child : TMXmlElement) : boolean;
     function ParseImplementationGuide(element : TMXmlElement; path : string) : TFhirImplementationGuide;
     function ParseImplementationGuideChild(element : TFhirImplementationGuide; path : string; child : TMXmlElement) : boolean;
+{$ENDIF FHIR_IMPLEMENTATIONGUIDE}
+{$IFDEF FHIR_LIBRARY}
     function ParseLibrary(element : TMXmlElement; path : string) : TFhirLibrary;
     function ParseLibraryChild(element : TFhirLibrary; path : string; child : TMXmlElement) : boolean;
+{$ENDIF FHIR_LIBRARY}
+{$IFDEF FHIR_LINKAGE}
     function ParseLinkageItem(element : TMXmlElement; path : string) : TFhirLinkageItem;
     function ParseLinkageItemChild(element : TFhirLinkageItem; path : string; child : TMXmlElement) : boolean;
     function ParseLinkage(element : TMXmlElement; path : string) : TFhirLinkage;
     function ParseLinkageChild(element : TFhirLinkage; path : string; child : TMXmlElement) : boolean;
+{$ENDIF FHIR_LINKAGE}
+{$IFDEF FHIR_LIST}
     function ParseListEntry(element : TMXmlElement; path : string) : TFhirListEntry;
     function ParseListEntryChild(element : TFhirListEntry; path : string; child : TMXmlElement) : boolean;
     function ParseList(element : TMXmlElement; path : string) : TFhirList;
     function ParseListChild(element : TFhirList; path : string; child : TMXmlElement) : boolean;
+{$ENDIF FHIR_LIST}
+{$IFDEF FHIR_LOCATION}
     function ParseLocationPosition(element : TMXmlElement; path : string) : TFhirLocationPosition;
     function ParseLocationPositionChild(element : TFhirLocationPosition; path : string; child : TMXmlElement) : boolean;
     function ParseLocation(element : TMXmlElement; path : string) : TFhirLocation;
     function ParseLocationChild(element : TFhirLocation; path : string; child : TMXmlElement) : boolean;
+{$ENDIF FHIR_LOCATION}
+{$IFDEF FHIR_MEASURE}
     function ParseMeasureGroup(element : TMXmlElement; path : string) : TFhirMeasureGroup;
     function ParseMeasureGroupChild(element : TFhirMeasureGroup; path : string; child : TMXmlElement) : boolean;
     function ParseMeasureGroupPopulation(element : TMXmlElement; path : string) : TFhirMeasureGroupPopulation;
@@ -655,6 +786,8 @@ Type
     function ParseMeasureSupplementalDataChild(element : TFhirMeasureSupplementalData; path : string; child : TMXmlElement) : boolean;
     function ParseMeasure(element : TMXmlElement; path : string) : TFhirMeasure;
     function ParseMeasureChild(element : TFhirMeasure; path : string; child : TMXmlElement) : boolean;
+{$ENDIF FHIR_MEASURE}
+{$IFDEF FHIR_MEASUREREPORT}
     function ParseMeasureReportGroup(element : TMXmlElement; path : string) : TFhirMeasureReportGroup;
     function ParseMeasureReportGroupChild(element : TFhirMeasureReportGroup; path : string; child : TMXmlElement) : boolean;
     function ParseMeasureReportGroupPopulation(element : TMXmlElement; path : string) : TFhirMeasureReportGroupPopulation;
@@ -667,8 +800,12 @@ Type
     function ParseMeasureReportGroupStratifierStratumPopulationChild(element : TFhirMeasureReportGroupStratifierStratumPopulation; path : string; child : TMXmlElement) : boolean;
     function ParseMeasureReport(element : TMXmlElement; path : string) : TFhirMeasureReport;
     function ParseMeasureReportChild(element : TFhirMeasureReport; path : string; child : TMXmlElement) : boolean;
+{$ENDIF FHIR_MEASUREREPORT}
+{$IFDEF FHIR_MEDIA}
     function ParseMedia(element : TMXmlElement; path : string) : TFhirMedia;
     function ParseMediaChild(element : TFhirMedia; path : string; child : TMXmlElement) : boolean;
+{$ENDIF FHIR_MEDIA}
+{$IFDEF FHIR_MEDICATION}
     function ParseMedicationIngredient(element : TMXmlElement; path : string) : TFhirMedicationIngredient;
     function ParseMedicationIngredientChild(element : TFhirMedicationIngredient; path : string; child : TMXmlElement) : boolean;
     function ParseMedicationPackage(element : TMXmlElement; path : string) : TFhirMedicationPackage;
@@ -679,18 +816,24 @@ Type
     function ParseMedicationPackageBatchChild(element : TFhirMedicationPackageBatch; path : string; child : TMXmlElement) : boolean;
     function ParseMedication(element : TMXmlElement; path : string) : TFhirMedication;
     function ParseMedicationChild(element : TFhirMedication; path : string; child : TMXmlElement) : boolean;
+{$ENDIF FHIR_MEDICATION}
+{$IFDEF FHIR_MEDICATIONADMINISTRATION}
     function ParseMedicationAdministrationPerformer(element : TMXmlElement; path : string) : TFhirMedicationAdministrationPerformer;
     function ParseMedicationAdministrationPerformerChild(element : TFhirMedicationAdministrationPerformer; path : string; child : TMXmlElement) : boolean;
     function ParseMedicationAdministrationDosage(element : TMXmlElement; path : string) : TFhirMedicationAdministrationDosage;
     function ParseMedicationAdministrationDosageChild(element : TFhirMedicationAdministrationDosage; path : string; child : TMXmlElement) : boolean;
     function ParseMedicationAdministration(element : TMXmlElement; path : string) : TFhirMedicationAdministration;
     function ParseMedicationAdministrationChild(element : TFhirMedicationAdministration; path : string; child : TMXmlElement) : boolean;
+{$ENDIF FHIR_MEDICATIONADMINISTRATION}
+{$IFDEF FHIR_MEDICATIONDISPENSE}
     function ParseMedicationDispensePerformer(element : TMXmlElement; path : string) : TFhirMedicationDispensePerformer;
     function ParseMedicationDispensePerformerChild(element : TFhirMedicationDispensePerformer; path : string; child : TMXmlElement) : boolean;
     function ParseMedicationDispenseSubstitution(element : TMXmlElement; path : string) : TFhirMedicationDispenseSubstitution;
     function ParseMedicationDispenseSubstitutionChild(element : TFhirMedicationDispenseSubstitution; path : string; child : TMXmlElement) : boolean;
     function ParseMedicationDispense(element : TMXmlElement; path : string) : TFhirMedicationDispense;
     function ParseMedicationDispenseChild(element : TFhirMedicationDispense; path : string; child : TMXmlElement) : boolean;
+{$ENDIF FHIR_MEDICATIONDISPENSE}
+{$IFDEF FHIR_MEDICATIONREQUEST}
     function ParseMedicationRequestRequester(element : TMXmlElement; path : string) : TFhirMedicationRequestRequester;
     function ParseMedicationRequestRequesterChild(element : TFhirMedicationRequestRequester; path : string; child : TMXmlElement) : boolean;
     function ParseMedicationRequestDispenseRequest(element : TMXmlElement; path : string) : TFhirMedicationRequestDispenseRequest;
@@ -699,14 +842,20 @@ Type
     function ParseMedicationRequestSubstitutionChild(element : TFhirMedicationRequestSubstitution; path : string; child : TMXmlElement) : boolean;
     function ParseMedicationRequest(element : TMXmlElement; path : string) : TFhirMedicationRequest;
     function ParseMedicationRequestChild(element : TFhirMedicationRequest; path : string; child : TMXmlElement) : boolean;
+{$ENDIF FHIR_MEDICATIONREQUEST}
+{$IFDEF FHIR_MEDICATIONSTATEMENT}
     function ParseMedicationStatement(element : TMXmlElement; path : string) : TFhirMedicationStatement;
     function ParseMedicationStatementChild(element : TFhirMedicationStatement; path : string; child : TMXmlElement) : boolean;
+{$ENDIF FHIR_MEDICATIONSTATEMENT}
+{$IFDEF FHIR_MESSAGEDEFINITION}
     function ParseMessageDefinitionFocus(element : TMXmlElement; path : string) : TFhirMessageDefinitionFocus;
     function ParseMessageDefinitionFocusChild(element : TFhirMessageDefinitionFocus; path : string; child : TMXmlElement) : boolean;
     function ParseMessageDefinitionAllowedResponse(element : TMXmlElement; path : string) : TFhirMessageDefinitionAllowedResponse;
     function ParseMessageDefinitionAllowedResponseChild(element : TFhirMessageDefinitionAllowedResponse; path : string; child : TMXmlElement) : boolean;
     function ParseMessageDefinition(element : TMXmlElement; path : string) : TFhirMessageDefinition;
     function ParseMessageDefinitionChild(element : TFhirMessageDefinition; path : string; child : TMXmlElement) : boolean;
+{$ENDIF FHIR_MESSAGEDEFINITION}
+{$IFDEF FHIR_MESSAGEHEADER}
     function ParseMessageHeaderDestination(element : TMXmlElement; path : string) : TFhirMessageHeaderDestination;
     function ParseMessageHeaderDestinationChild(element : TFhirMessageHeaderDestination; path : string; child : TMXmlElement) : boolean;
     function ParseMessageHeaderSource(element : TMXmlElement; path : string) : TFhirMessageHeaderSource;
@@ -715,10 +864,14 @@ Type
     function ParseMessageHeaderResponseChild(element : TFhirMessageHeaderResponse; path : string; child : TMXmlElement) : boolean;
     function ParseMessageHeader(element : TMXmlElement; path : string) : TFhirMessageHeader;
     function ParseMessageHeaderChild(element : TFhirMessageHeader; path : string; child : TMXmlElement) : boolean;
+{$ENDIF FHIR_MESSAGEHEADER}
+{$IFDEF FHIR_NAMINGSYSTEM}
     function ParseNamingSystemUniqueId(element : TMXmlElement; path : string) : TFhirNamingSystemUniqueId;
     function ParseNamingSystemUniqueIdChild(element : TFhirNamingSystemUniqueId; path : string; child : TMXmlElement) : boolean;
     function ParseNamingSystem(element : TMXmlElement; path : string) : TFhirNamingSystem;
     function ParseNamingSystemChild(element : TFhirNamingSystem; path : string; child : TMXmlElement) : boolean;
+{$ENDIF FHIR_NAMINGSYSTEM}
+{$IFDEF FHIR_NUTRITIONORDER}
     function ParseNutritionOrderOralDiet(element : TMXmlElement; path : string) : TFhirNutritionOrderOralDiet;
     function ParseNutritionOrderOralDietChild(element : TFhirNutritionOrderOralDiet; path : string; child : TMXmlElement) : boolean;
     function ParseNutritionOrderOralDietNutrient(element : TMXmlElement; path : string) : TFhirNutritionOrderOralDietNutrient;
@@ -733,6 +886,8 @@ Type
     function ParseNutritionOrderEnteralFormulaAdministrationChild(element : TFhirNutritionOrderEnteralFormulaAdministration; path : string; child : TMXmlElement) : boolean;
     function ParseNutritionOrder(element : TMXmlElement; path : string) : TFhirNutritionOrder;
     function ParseNutritionOrderChild(element : TFhirNutritionOrder; path : string; child : TMXmlElement) : boolean;
+{$ENDIF FHIR_NUTRITIONORDER}
+{$IFDEF FHIR_OBSERVATION}
     function ParseObservationReferenceRange(element : TMXmlElement; path : string) : TFhirObservationReferenceRange;
     function ParseObservationReferenceRangeChild(element : TFhirObservationReferenceRange; path : string; child : TMXmlElement) : boolean;
     function ParseObservationRelated(element : TMXmlElement; path : string) : TFhirObservationRelated;
@@ -741,6 +896,8 @@ Type
     function ParseObservationComponentChild(element : TFhirObservationComponent; path : string; child : TMXmlElement) : boolean;
     function ParseObservation(element : TMXmlElement; path : string) : TFhirObservation;
     function ParseObservationChild(element : TFhirObservation; path : string; child : TMXmlElement) : boolean;
+{$ENDIF FHIR_OBSERVATION}
+{$IFDEF FHIR_OPERATIONDEFINITION}
     function ParseOperationDefinitionParameter(element : TMXmlElement; path : string) : TFhirOperationDefinitionParameter;
     function ParseOperationDefinitionParameterChild(element : TFhirOperationDefinitionParameter; path : string; child : TMXmlElement) : boolean;
     function ParseOperationDefinitionParameterBinding(element : TMXmlElement; path : string) : TFhirOperationDefinitionParameterBinding;
@@ -749,14 +906,20 @@ Type
     function ParseOperationDefinitionOverloadChild(element : TFhirOperationDefinitionOverload; path : string; child : TMXmlElement) : boolean;
     function ParseOperationDefinition(element : TMXmlElement; path : string) : TFhirOperationDefinition;
     function ParseOperationDefinitionChild(element : TFhirOperationDefinition; path : string; child : TMXmlElement) : boolean;
+{$ENDIF FHIR_OPERATIONDEFINITION}
+{$IFDEF FHIR_OPERATIONOUTCOME}
     function ParseOperationOutcomeIssue(element : TMXmlElement; path : string) : TFhirOperationOutcomeIssue;
     function ParseOperationOutcomeIssueChild(element : TFhirOperationOutcomeIssue; path : string; child : TMXmlElement) : boolean;
     function ParseOperationOutcome(element : TMXmlElement; path : string) : TFhirOperationOutcome;
     function ParseOperationOutcomeChild(element : TFhirOperationOutcome; path : string; child : TMXmlElement) : boolean;
+{$ENDIF FHIR_OPERATIONOUTCOME}
+{$IFDEF FHIR_ORGANIZATION}
     function ParseOrganizationContact(element : TMXmlElement; path : string) : TFhirOrganizationContact;
     function ParseOrganizationContactChild(element : TFhirOrganizationContact; path : string; child : TMXmlElement) : boolean;
     function ParseOrganization(element : TMXmlElement; path : string) : TFhirOrganization;
     function ParseOrganizationChild(element : TFhirOrganization; path : string; child : TMXmlElement) : boolean;
+{$ENDIF FHIR_ORGANIZATION}
+{$IFDEF FHIR_PATIENT}
     function ParsePatientContact(element : TMXmlElement; path : string) : TFhirPatientContact;
     function ParsePatientContactChild(element : TFhirPatientContact; path : string; child : TMXmlElement) : boolean;
     function ParsePatientAnimal(element : TMXmlElement; path : string) : TFhirPatientAnimal;
@@ -767,18 +930,26 @@ Type
     function ParsePatientLinkChild(element : TFhirPatientLink; path : string; child : TMXmlElement) : boolean;
     function ParsePatient(element : TMXmlElement; path : string) : TFhirPatient;
     function ParsePatientChild(element : TFhirPatient; path : string; child : TMXmlElement) : boolean;
+{$ENDIF FHIR_PATIENT}
+{$IFDEF FHIR_PAYMENTNOTICE}
     function ParsePaymentNotice(element : TMXmlElement; path : string) : TFhirPaymentNotice;
     function ParsePaymentNoticeChild(element : TFhirPaymentNotice; path : string; child : TMXmlElement) : boolean;
+{$ENDIF FHIR_PAYMENTNOTICE}
+{$IFDEF FHIR_PAYMENTRECONCILIATION}
     function ParsePaymentReconciliationDetail(element : TMXmlElement; path : string) : TFhirPaymentReconciliationDetail;
     function ParsePaymentReconciliationDetailChild(element : TFhirPaymentReconciliationDetail; path : string; child : TMXmlElement) : boolean;
     function ParsePaymentReconciliationProcessNote(element : TMXmlElement; path : string) : TFhirPaymentReconciliationProcessNote;
     function ParsePaymentReconciliationProcessNoteChild(element : TFhirPaymentReconciliationProcessNote; path : string; child : TMXmlElement) : boolean;
     function ParsePaymentReconciliation(element : TMXmlElement; path : string) : TFhirPaymentReconciliation;
     function ParsePaymentReconciliationChild(element : TFhirPaymentReconciliation; path : string; child : TMXmlElement) : boolean;
+{$ENDIF FHIR_PAYMENTRECONCILIATION}
+{$IFDEF FHIR_PERSON}
     function ParsePersonLink(element : TMXmlElement; path : string) : TFhirPersonLink;
     function ParsePersonLinkChild(element : TFhirPersonLink; path : string; child : TMXmlElement) : boolean;
     function ParsePerson(element : TMXmlElement; path : string) : TFhirPerson;
     function ParsePersonChild(element : TFhirPerson; path : string; child : TMXmlElement) : boolean;
+{$ENDIF FHIR_PERSON}
+{$IFDEF FHIR_PLANDEFINITION}
     function ParsePlanDefinitionGoal(element : TMXmlElement; path : string) : TFhirPlanDefinitionGoal;
     function ParsePlanDefinitionGoalChild(element : TFhirPlanDefinitionGoal; path : string; child : TMXmlElement) : boolean;
     function ParsePlanDefinitionGoalTarget(element : TMXmlElement; path : string) : TFhirPlanDefinitionGoalTarget;
@@ -795,40 +966,56 @@ Type
     function ParsePlanDefinitionActionDynamicValueChild(element : TFhirPlanDefinitionActionDynamicValue; path : string; child : TMXmlElement) : boolean;
     function ParsePlanDefinition(element : TMXmlElement; path : string) : TFhirPlanDefinition;
     function ParsePlanDefinitionChild(element : TFhirPlanDefinition; path : string; child : TMXmlElement) : boolean;
+{$ENDIF FHIR_PLANDEFINITION}
+{$IFDEF FHIR_PRACTITIONER}
     function ParsePractitionerQualification(element : TMXmlElement; path : string) : TFhirPractitionerQualification;
     function ParsePractitionerQualificationChild(element : TFhirPractitionerQualification; path : string; child : TMXmlElement) : boolean;
     function ParsePractitioner(element : TMXmlElement; path : string) : TFhirPractitioner;
     function ParsePractitionerChild(element : TFhirPractitioner; path : string; child : TMXmlElement) : boolean;
+{$ENDIF FHIR_PRACTITIONER}
+{$IFDEF FHIR_PRACTITIONERROLE}
     function ParsePractitionerRoleAvailableTime(element : TMXmlElement; path : string) : TFhirPractitionerRoleAvailableTime;
     function ParsePractitionerRoleAvailableTimeChild(element : TFhirPractitionerRoleAvailableTime; path : string; child : TMXmlElement) : boolean;
     function ParsePractitionerRoleNotAvailable(element : TMXmlElement; path : string) : TFhirPractitionerRoleNotAvailable;
     function ParsePractitionerRoleNotAvailableChild(element : TFhirPractitionerRoleNotAvailable; path : string; child : TMXmlElement) : boolean;
     function ParsePractitionerRole(element : TMXmlElement; path : string) : TFhirPractitionerRole;
     function ParsePractitionerRoleChild(element : TFhirPractitionerRole; path : string; child : TMXmlElement) : boolean;
+{$ENDIF FHIR_PRACTITIONERROLE}
+{$IFDEF FHIR_PROCEDURE}
     function ParseProcedurePerformer(element : TMXmlElement; path : string) : TFhirProcedurePerformer;
     function ParseProcedurePerformerChild(element : TFhirProcedurePerformer; path : string; child : TMXmlElement) : boolean;
     function ParseProcedureFocalDevice(element : TMXmlElement; path : string) : TFhirProcedureFocalDevice;
     function ParseProcedureFocalDeviceChild(element : TFhirProcedureFocalDevice; path : string; child : TMXmlElement) : boolean;
     function ParseProcedure(element : TMXmlElement; path : string) : TFhirProcedure;
     function ParseProcedureChild(element : TFhirProcedure; path : string; child : TMXmlElement) : boolean;
+{$ENDIF FHIR_PROCEDURE}
+{$IFDEF FHIR_PROCEDUREREQUEST}
     function ParseProcedureRequestRequester(element : TMXmlElement; path : string) : TFhirProcedureRequestRequester;
     function ParseProcedureRequestRequesterChild(element : TFhirProcedureRequestRequester; path : string; child : TMXmlElement) : boolean;
     function ParseProcedureRequest(element : TMXmlElement; path : string) : TFhirProcedureRequest;
     function ParseProcedureRequestChild(element : TFhirProcedureRequest; path : string; child : TMXmlElement) : boolean;
+{$ENDIF FHIR_PROCEDUREREQUEST}
+{$IFDEF FHIR_PROCESSREQUEST}
     function ParseProcessRequestItem(element : TMXmlElement; path : string) : TFhirProcessRequestItem;
     function ParseProcessRequestItemChild(element : TFhirProcessRequestItem; path : string; child : TMXmlElement) : boolean;
     function ParseProcessRequest(element : TMXmlElement; path : string) : TFhirProcessRequest;
     function ParseProcessRequestChild(element : TFhirProcessRequest; path : string; child : TMXmlElement) : boolean;
+{$ENDIF FHIR_PROCESSREQUEST}
+{$IFDEF FHIR_PROCESSRESPONSE}
     function ParseProcessResponseProcessNote(element : TMXmlElement; path : string) : TFhirProcessResponseProcessNote;
     function ParseProcessResponseProcessNoteChild(element : TFhirProcessResponseProcessNote; path : string; child : TMXmlElement) : boolean;
     function ParseProcessResponse(element : TMXmlElement; path : string) : TFhirProcessResponse;
     function ParseProcessResponseChild(element : TFhirProcessResponse; path : string; child : TMXmlElement) : boolean;
+{$ENDIF FHIR_PROCESSRESPONSE}
+{$IFDEF FHIR_PROVENANCE}
     function ParseProvenanceAgent(element : TMXmlElement; path : string) : TFhirProvenanceAgent;
     function ParseProvenanceAgentChild(element : TFhirProvenanceAgent; path : string; child : TMXmlElement) : boolean;
     function ParseProvenanceEntity(element : TMXmlElement; path : string) : TFhirProvenanceEntity;
     function ParseProvenanceEntityChild(element : TFhirProvenanceEntity; path : string; child : TMXmlElement) : boolean;
     function ParseProvenance(element : TMXmlElement; path : string) : TFhirProvenance;
     function ParseProvenanceChild(element : TFhirProvenance; path : string; child : TMXmlElement) : boolean;
+{$ENDIF FHIR_PROVENANCE}
+{$IFDEF FHIR_QUESTIONNAIRE}
     function ParseQuestionnaireItem(element : TMXmlElement; path : string) : TFhirQuestionnaireItem;
     function ParseQuestionnaireItemChild(element : TFhirQuestionnaireItem; path : string; child : TMXmlElement) : boolean;
     function ParseQuestionnaireItemEnableWhen(element : TMXmlElement; path : string) : TFhirQuestionnaireItemEnableWhen;
@@ -837,18 +1024,26 @@ Type
     function ParseQuestionnaireItemOptionChild(element : TFhirQuestionnaireItemOption; path : string; child : TMXmlElement) : boolean;
     function ParseQuestionnaire(element : TMXmlElement; path : string) : TFhirQuestionnaire;
     function ParseQuestionnaireChild(element : TFhirQuestionnaire; path : string; child : TMXmlElement) : boolean;
+{$ENDIF FHIR_QUESTIONNAIRE}
+{$IFDEF FHIR_QUESTIONNAIRERESPONSE}
     function ParseQuestionnaireResponseItem(element : TMXmlElement; path : string) : TFhirQuestionnaireResponseItem;
     function ParseQuestionnaireResponseItemChild(element : TFhirQuestionnaireResponseItem; path : string; child : TMXmlElement) : boolean;
     function ParseQuestionnaireResponseItemAnswer(element : TMXmlElement; path : string) : TFhirQuestionnaireResponseItemAnswer;
     function ParseQuestionnaireResponseItemAnswerChild(element : TFhirQuestionnaireResponseItemAnswer; path : string; child : TMXmlElement) : boolean;
     function ParseQuestionnaireResponse(element : TMXmlElement; path : string) : TFhirQuestionnaireResponse;
     function ParseQuestionnaireResponseChild(element : TFhirQuestionnaireResponse; path : string; child : TMXmlElement) : boolean;
+{$ENDIF FHIR_QUESTIONNAIRERESPONSE}
+{$IFDEF FHIR_REFERRALREQUEST}
     function ParseReferralRequestRequester(element : TMXmlElement; path : string) : TFhirReferralRequestRequester;
     function ParseReferralRequestRequesterChild(element : TFhirReferralRequestRequester; path : string; child : TMXmlElement) : boolean;
     function ParseReferralRequest(element : TMXmlElement; path : string) : TFhirReferralRequest;
     function ParseReferralRequestChild(element : TFhirReferralRequest; path : string; child : TMXmlElement) : boolean;
+{$ENDIF FHIR_REFERRALREQUEST}
+{$IFDEF FHIR_RELATEDPERSON}
     function ParseRelatedPerson(element : TMXmlElement; path : string) : TFhirRelatedPerson;
     function ParseRelatedPersonChild(element : TFhirRelatedPerson; path : string; child : TMXmlElement) : boolean;
+{$ENDIF FHIR_RELATEDPERSON}
+{$IFDEF FHIR_REQUESTGROUP}
     function ParseRequestGroupAction(element : TMXmlElement; path : string) : TFhirRequestGroupAction;
     function ParseRequestGroupActionChild(element : TFhirRequestGroupAction; path : string; child : TMXmlElement) : boolean;
     function ParseRequestGroupActionCondition(element : TMXmlElement; path : string) : TFhirRequestGroupActionCondition;
@@ -857,22 +1052,34 @@ Type
     function ParseRequestGroupActionRelatedActionChild(element : TFhirRequestGroupActionRelatedAction; path : string; child : TMXmlElement) : boolean;
     function ParseRequestGroup(element : TMXmlElement; path : string) : TFhirRequestGroup;
     function ParseRequestGroupChild(element : TFhirRequestGroup; path : string; child : TMXmlElement) : boolean;
+{$ENDIF FHIR_REQUESTGROUP}
+{$IFDEF FHIR_RESEARCHSTUDY}
     function ParseResearchStudyArm(element : TMXmlElement; path : string) : TFhirResearchStudyArm;
     function ParseResearchStudyArmChild(element : TFhirResearchStudyArm; path : string; child : TMXmlElement) : boolean;
     function ParseResearchStudy(element : TMXmlElement; path : string) : TFhirResearchStudy;
     function ParseResearchStudyChild(element : TFhirResearchStudy; path : string; child : TMXmlElement) : boolean;
+{$ENDIF FHIR_RESEARCHSTUDY}
+{$IFDEF FHIR_RESEARCHSUBJECT}
     function ParseResearchSubject(element : TMXmlElement; path : string) : TFhirResearchSubject;
     function ParseResearchSubjectChild(element : TFhirResearchSubject; path : string; child : TMXmlElement) : boolean;
+{$ENDIF FHIR_RESEARCHSUBJECT}
+{$IFDEF FHIR_RISKASSESSMENT}
     function ParseRiskAssessmentPrediction(element : TMXmlElement; path : string) : TFhirRiskAssessmentPrediction;
     function ParseRiskAssessmentPredictionChild(element : TFhirRiskAssessmentPrediction; path : string; child : TMXmlElement) : boolean;
     function ParseRiskAssessment(element : TMXmlElement; path : string) : TFhirRiskAssessment;
     function ParseRiskAssessmentChild(element : TFhirRiskAssessment; path : string; child : TMXmlElement) : boolean;
+{$ENDIF FHIR_RISKASSESSMENT}
+{$IFDEF FHIR_SCHEDULE}
     function ParseSchedule(element : TMXmlElement; path : string) : TFhirSchedule;
     function ParseScheduleChild(element : TFhirSchedule; path : string; child : TMXmlElement) : boolean;
+{$ENDIF FHIR_SCHEDULE}
+{$IFDEF FHIR_SEARCHPARAMETER}
     function ParseSearchParameterComponent(element : TMXmlElement; path : string) : TFhirSearchParameterComponent;
     function ParseSearchParameterComponentChild(element : TFhirSearchParameterComponent; path : string; child : TMXmlElement) : boolean;
     function ParseSearchParameter(element : TMXmlElement; path : string) : TFhirSearchParameter;
     function ParseSearchParameterChild(element : TFhirSearchParameter; path : string; child : TMXmlElement) : boolean;
+{$ENDIF FHIR_SEARCHPARAMETER}
+{$IFDEF FHIR_SEQUENCE}
     function ParseSequenceReferenceSeq(element : TMXmlElement; path : string) : TFhirSequenceReferenceSeq;
     function ParseSequenceReferenceSeqChild(element : TFhirSequenceReferenceSeq; path : string; child : TMXmlElement) : boolean;
     function ParseSequenceVariant(element : TMXmlElement; path : string) : TFhirSequenceVariant;
@@ -883,10 +1090,16 @@ Type
     function ParseSequenceRepositoryChild(element : TFhirSequenceRepository; path : string; child : TMXmlElement) : boolean;
     function ParseSequence(element : TMXmlElement; path : string) : TFhirSequence;
     function ParseSequenceChild(element : TFhirSequence; path : string; child : TMXmlElement) : boolean;
+{$ENDIF FHIR_SEQUENCE}
+{$IFDEF FHIR_SERVICEDEFINITION}
     function ParseServiceDefinition(element : TMXmlElement; path : string) : TFhirServiceDefinition;
     function ParseServiceDefinitionChild(element : TFhirServiceDefinition; path : string; child : TMXmlElement) : boolean;
+{$ENDIF FHIR_SERVICEDEFINITION}
+{$IFDEF FHIR_SLOT}
     function ParseSlot(element : TMXmlElement; path : string) : TFhirSlot;
     function ParseSlotChild(element : TFhirSlot; path : string; child : TMXmlElement) : boolean;
+{$ENDIF FHIR_SLOT}
+{$IFDEF FHIR_SPECIMEN}
     function ParseSpecimenCollection(element : TMXmlElement; path : string) : TFhirSpecimenCollection;
     function ParseSpecimenCollectionChild(element : TFhirSpecimenCollection; path : string; child : TMXmlElement) : boolean;
     function ParseSpecimenProcessing(element : TMXmlElement; path : string) : TFhirSpecimenProcessing;
@@ -895,6 +1108,8 @@ Type
     function ParseSpecimenContainerChild(element : TFhirSpecimenContainer; path : string; child : TMXmlElement) : boolean;
     function ParseSpecimen(element : TMXmlElement; path : string) : TFhirSpecimen;
     function ParseSpecimenChild(element : TFhirSpecimen; path : string; child : TMXmlElement) : boolean;
+{$ENDIF FHIR_SPECIMEN}
+{$IFDEF FHIR_STRUCTUREDEFINITION}
     function ParseStructureDefinitionMapping(element : TMXmlElement; path : string) : TFhirStructureDefinitionMapping;
     function ParseStructureDefinitionMappingChild(element : TFhirStructureDefinitionMapping; path : string; child : TMXmlElement) : boolean;
     function ParseStructureDefinitionSnapshot(element : TMXmlElement; path : string) : TFhirStructureDefinitionSnapshot;
@@ -903,6 +1118,8 @@ Type
     function ParseStructureDefinitionDifferentialChild(element : TFhirStructureDefinitionDifferential; path : string; child : TMXmlElement) : boolean;
     function ParseStructureDefinition(element : TMXmlElement; path : string) : TFhirStructureDefinition;
     function ParseStructureDefinitionChild(element : TFhirStructureDefinition; path : string; child : TMXmlElement) : boolean;
+{$ENDIF FHIR_STRUCTUREDEFINITION}
+{$IFDEF FHIR_STRUCTUREMAP}
     function ParseStructureMapStructure(element : TMXmlElement; path : string) : TFhirStructureMapStructure;
     function ParseStructureMapStructureChild(element : TFhirStructureMapStructure; path : string; child : TMXmlElement) : boolean;
     function ParseStructureMapGroup(element : TMXmlElement; path : string) : TFhirStructureMapGroup;
@@ -921,26 +1138,36 @@ Type
     function ParseStructureMapGroupRuleDependentChild(element : TFhirStructureMapGroupRuleDependent; path : string; child : TMXmlElement) : boolean;
     function ParseStructureMap(element : TMXmlElement; path : string) : TFhirStructureMap;
     function ParseStructureMapChild(element : TFhirStructureMap; path : string; child : TMXmlElement) : boolean;
+{$ENDIF FHIR_STRUCTUREMAP}
+{$IFDEF FHIR_SUBSCRIPTION}
     function ParseSubscriptionChannel(element : TMXmlElement; path : string) : TFhirSubscriptionChannel;
     function ParseSubscriptionChannelChild(element : TFhirSubscriptionChannel; path : string; child : TMXmlElement) : boolean;
     function ParseSubscription(element : TMXmlElement; path : string) : TFhirSubscription;
     function ParseSubscriptionChild(element : TFhirSubscription; path : string; child : TMXmlElement) : boolean;
+{$ENDIF FHIR_SUBSCRIPTION}
+{$IFDEF FHIR_SUBSTANCE}
     function ParseSubstanceInstance(element : TMXmlElement; path : string) : TFhirSubstanceInstance;
     function ParseSubstanceInstanceChild(element : TFhirSubstanceInstance; path : string; child : TMXmlElement) : boolean;
     function ParseSubstanceIngredient(element : TMXmlElement; path : string) : TFhirSubstanceIngredient;
     function ParseSubstanceIngredientChild(element : TFhirSubstanceIngredient; path : string; child : TMXmlElement) : boolean;
     function ParseSubstance(element : TMXmlElement; path : string) : TFhirSubstance;
     function ParseSubstanceChild(element : TFhirSubstance; path : string; child : TMXmlElement) : boolean;
+{$ENDIF FHIR_SUBSTANCE}
+{$IFDEF FHIR_SUPPLYDELIVERY}
     function ParseSupplyDeliverySuppliedItem(element : TMXmlElement; path : string) : TFhirSupplyDeliverySuppliedItem;
     function ParseSupplyDeliverySuppliedItemChild(element : TFhirSupplyDeliverySuppliedItem; path : string; child : TMXmlElement) : boolean;
     function ParseSupplyDelivery(element : TMXmlElement; path : string) : TFhirSupplyDelivery;
     function ParseSupplyDeliveryChild(element : TFhirSupplyDelivery; path : string; child : TMXmlElement) : boolean;
+{$ENDIF FHIR_SUPPLYDELIVERY}
+{$IFDEF FHIR_SUPPLYREQUEST}
     function ParseSupplyRequestOrderedItem(element : TMXmlElement; path : string) : TFhirSupplyRequestOrderedItem;
     function ParseSupplyRequestOrderedItemChild(element : TFhirSupplyRequestOrderedItem; path : string; child : TMXmlElement) : boolean;
     function ParseSupplyRequestRequester(element : TMXmlElement; path : string) : TFhirSupplyRequestRequester;
     function ParseSupplyRequestRequesterChild(element : TFhirSupplyRequestRequester; path : string; child : TMXmlElement) : boolean;
     function ParseSupplyRequest(element : TMXmlElement; path : string) : TFhirSupplyRequest;
     function ParseSupplyRequestChild(element : TFhirSupplyRequest; path : string; child : TMXmlElement) : boolean;
+{$ENDIF FHIR_SUPPLYREQUEST}
+{$IFDEF FHIR_TASK}
     function ParseTaskRequester(element : TMXmlElement; path : string) : TFhirTaskRequester;
     function ParseTaskRequesterChild(element : TFhirTaskRequester; path : string; child : TMXmlElement) : boolean;
     function ParseTaskRestriction(element : TMXmlElement; path : string) : TFhirTaskRestriction;
@@ -951,6 +1178,8 @@ Type
     function ParseTaskOutputChild(element : TFhirTaskOutput; path : string; child : TMXmlElement) : boolean;
     function ParseTask(element : TMXmlElement; path : string) : TFhirTask;
     function ParseTaskChild(element : TFhirTask; path : string; child : TMXmlElement) : boolean;
+{$ENDIF FHIR_TASK}
+{$IFDEF FHIR_TESTREPORT}
     function ParseTestReportParticipant(element : TMXmlElement; path : string) : TFhirTestReportParticipant;
     function ParseTestReportParticipantChild(element : TFhirTestReportParticipant; path : string; child : TMXmlElement) : boolean;
     function ParseTestReportSetup(element : TMXmlElement; path : string) : TFhirTestReportSetup;
@@ -971,6 +1200,8 @@ Type
     function ParseTestReportTeardownActionChild(element : TFhirTestReportTeardownAction; path : string; child : TMXmlElement) : boolean;
     function ParseTestReport(element : TMXmlElement; path : string) : TFhirTestReport;
     function ParseTestReportChild(element : TFhirTestReport; path : string; child : TMXmlElement) : boolean;
+{$ENDIF FHIR_TESTREPORT}
+{$IFDEF FHIR_TESTSCRIPT}
     function ParseTestScriptOrigin(element : TMXmlElement; path : string) : TFhirTestScriptOrigin;
     function ParseTestScriptOriginChild(element : TFhirTestScriptOrigin; path : string; child : TMXmlElement) : boolean;
     function ParseTestScriptDestination(element : TMXmlElement; path : string) : TFhirTestScriptDestination;
@@ -1025,6 +1256,8 @@ Type
     function ParseTestScriptTeardownActionChild(element : TFhirTestScriptTeardownAction; path : string; child : TMXmlElement) : boolean;
     function ParseTestScript(element : TMXmlElement; path : string) : TFhirTestScript;
     function ParseTestScriptChild(element : TFhirTestScript; path : string; child : TMXmlElement) : boolean;
+{$ENDIF FHIR_TESTSCRIPT}
+{$IFDEF FHIR_VALUESET}
     function ParseValueSetCompose(element : TMXmlElement; path : string) : TFhirValueSetCompose;
     function ParseValueSetComposeChild(element : TFhirValueSetCompose; path : string; child : TMXmlElement) : boolean;
     function ParseValueSetComposeInclude(element : TMXmlElement; path : string) : TFhirValueSetComposeInclude;
@@ -1043,10 +1276,13 @@ Type
     function ParseValueSetExpansionContainsChild(element : TFhirValueSetExpansionContains; path : string; child : TMXmlElement) : boolean;
     function ParseValueSet(element : TMXmlElement; path : string) : TFhirValueSet;
     function ParseValueSetChild(element : TFhirValueSet; path : string; child : TMXmlElement) : boolean;
+{$ENDIF FHIR_VALUESET}
+{$IFDEF FHIR_VISIONPRESCRIPTION}
     function ParseVisionPrescriptionDispense(element : TMXmlElement; path : string) : TFhirVisionPrescriptionDispense;
     function ParseVisionPrescriptionDispenseChild(element : TFhirVisionPrescriptionDispense; path : string; child : TMXmlElement) : boolean;
     function ParseVisionPrescription(element : TMXmlElement; path : string) : TFhirVisionPrescription;
     function ParseVisionPrescriptionChild(element : TFhirVisionPrescription; path : string; child : TMXmlElement) : boolean;
+{$ENDIF FHIR_VISIONPRESCRIPTION}
     function ParseResource(element : TMXmlElement; path : String) : TFhirResource; override;
     function ParseDataType(element : TMXmlElement; name : String; type_ : TFHIRTypeClass) : TFHIRType; override;
   public
@@ -1085,10 +1321,12 @@ Type
     Procedure ComposeResourceChildren(xml : TXmlBuilder; elem : TFhirResource);
     Procedure ComposeDomainResourceAttributes(xml : TXmlBuilder; resource : TFhirDomainResource);
     Procedure ComposeDomainResourceChildren(xml : TXmlBuilder; elem : TFhirDomainResource);
+{$IFDEF FHIR_PARAMETERS}
     procedure ComposeParametersParameter(xml : TXmlBuilder; name : string; elem : TFhirParametersParameter);
     procedure ComposeParametersParameterChildren(xml : TXmlBuilder; elem : TFhirParametersParameter);
     procedure ComposeParameters(xml : TXmlBuilder; name : string; elem : TFhirParameters);
     procedure ComposeParametersChildren(xml : TXmlBuilder; elem : TFhirParameters);
+{$ENDIF FHIR_PARAMETERS}
 
     procedure ComposeExtension(xml : TXmlBuilder; name : string; elem : TFhirExtension);
     procedure ComposeExtensionChildren(xml : TXmlBuilder; elem : TFhirExtension);
@@ -1179,32 +1417,45 @@ Type
     procedure ComposeDuration(xml : TXmlBuilder; name : string; elem : TFhirDuration);
     procedure ComposeDurationChildren(xml : TXmlBuilder; elem : TFhirDuration);
 
+{$IFDEF FHIR_ACCOUNT}
     procedure ComposeAccountCoverage(xml : TXmlBuilder; name : string; elem : TFhirAccountCoverage);
     procedure ComposeAccountCoverageChildren(xml : TXmlBuilder; elem : TFhirAccountCoverage);
     procedure ComposeAccountGuarantor(xml : TXmlBuilder; name : string; elem : TFhirAccountGuarantor);
     procedure ComposeAccountGuarantorChildren(xml : TXmlBuilder; elem : TFhirAccountGuarantor);
     procedure ComposeAccount(xml : TXmlBuilder; name : string; elem : TFhirAccount);
     procedure ComposeAccountChildren(xml : TXmlBuilder; elem : TFhirAccount);
+{$ENDIF FHIR_ACCOUNT}
+{$IFDEF FHIR_ACTIVITYDEFINITION}
     procedure ComposeActivityDefinitionParticipant(xml : TXmlBuilder; name : string; elem : TFhirActivityDefinitionParticipant);
     procedure ComposeActivityDefinitionParticipantChildren(xml : TXmlBuilder; elem : TFhirActivityDefinitionParticipant);
     procedure ComposeActivityDefinitionDynamicValue(xml : TXmlBuilder; name : string; elem : TFhirActivityDefinitionDynamicValue);
     procedure ComposeActivityDefinitionDynamicValueChildren(xml : TXmlBuilder; elem : TFhirActivityDefinitionDynamicValue);
     procedure ComposeActivityDefinition(xml : TXmlBuilder; name : string; elem : TFhirActivityDefinition);
     procedure ComposeActivityDefinitionChildren(xml : TXmlBuilder; elem : TFhirActivityDefinition);
+{$ENDIF FHIR_ACTIVITYDEFINITION}
+{$IFDEF FHIR_ADVERSEEVENT}
     procedure ComposeAdverseEventSuspectEntity(xml : TXmlBuilder; name : string; elem : TFhirAdverseEventSuspectEntity);
     procedure ComposeAdverseEventSuspectEntityChildren(xml : TXmlBuilder; elem : TFhirAdverseEventSuspectEntity);
     procedure ComposeAdverseEvent(xml : TXmlBuilder; name : string; elem : TFhirAdverseEvent);
     procedure ComposeAdverseEventChildren(xml : TXmlBuilder; elem : TFhirAdverseEvent);
+{$ENDIF FHIR_ADVERSEEVENT}
+{$IFDEF FHIR_ALLERGYINTOLERANCE}
     procedure ComposeAllergyIntoleranceReaction(xml : TXmlBuilder; name : string; elem : TFhirAllergyIntoleranceReaction);
     procedure ComposeAllergyIntoleranceReactionChildren(xml : TXmlBuilder; elem : TFhirAllergyIntoleranceReaction);
     procedure ComposeAllergyIntolerance(xml : TXmlBuilder; name : string; elem : TFhirAllergyIntolerance);
     procedure ComposeAllergyIntoleranceChildren(xml : TXmlBuilder; elem : TFhirAllergyIntolerance);
+{$ENDIF FHIR_ALLERGYINTOLERANCE}
+{$IFDEF FHIR_APPOINTMENT}
     procedure ComposeAppointmentParticipant(xml : TXmlBuilder; name : string; elem : TFhirAppointmentParticipant);
     procedure ComposeAppointmentParticipantChildren(xml : TXmlBuilder; elem : TFhirAppointmentParticipant);
     procedure ComposeAppointment(xml : TXmlBuilder; name : string; elem : TFhirAppointment);
     procedure ComposeAppointmentChildren(xml : TXmlBuilder; elem : TFhirAppointment);
+{$ENDIF FHIR_APPOINTMENT}
+{$IFDEF FHIR_APPOINTMENTRESPONSE}
     procedure ComposeAppointmentResponse(xml : TXmlBuilder; name : string; elem : TFhirAppointmentResponse);
     procedure ComposeAppointmentResponseChildren(xml : TXmlBuilder; elem : TFhirAppointmentResponse);
+{$ENDIF FHIR_APPOINTMENTRESPONSE}
+{$IFDEF FHIR_AUDITEVENT}
     procedure ComposeAuditEventAgent(xml : TXmlBuilder; name : string; elem : TFhirAuditEventAgent);
     procedure ComposeAuditEventAgentChildren(xml : TXmlBuilder; elem : TFhirAuditEventAgent);
     procedure ComposeAuditEventAgentNetwork(xml : TXmlBuilder; name : string; elem : TFhirAuditEventAgentNetwork);
@@ -1217,12 +1468,20 @@ Type
     procedure ComposeAuditEventEntityDetailChildren(xml : TXmlBuilder; elem : TFhirAuditEventEntityDetail);
     procedure ComposeAuditEvent(xml : TXmlBuilder; name : string; elem : TFhirAuditEvent);
     procedure ComposeAuditEventChildren(xml : TXmlBuilder; elem : TFhirAuditEvent);
+{$ENDIF FHIR_AUDITEVENT}
+{$IFDEF FHIR_BASIC}
     procedure ComposeBasic(xml : TXmlBuilder; name : string; elem : TFhirBasic);
     procedure ComposeBasicChildren(xml : TXmlBuilder; elem : TFhirBasic);
+{$ENDIF FHIR_BASIC}
+{$IFDEF FHIR_BINARY}
     procedure ComposeBinary(xml : TXmlBuilder; name : string; elem : TFhirBinary);
     procedure ComposeBinaryChildren(xml : TXmlBuilder; elem : TFhirBinary);
+{$ENDIF FHIR_BINARY}
+{$IFDEF FHIR_BODYSITE}
     procedure ComposeBodySite(xml : TXmlBuilder; name : string; elem : TFhirBodySite);
     procedure ComposeBodySiteChildren(xml : TXmlBuilder; elem : TFhirBodySite);
+{$ENDIF FHIR_BODYSITE}
+{$IFDEF FHIR_BUNDLE}
     procedure ComposeBundleLink(xml : TXmlBuilder; name : string; elem : TFhirBundleLink);
     procedure ComposeBundleLinkChildren(xml : TXmlBuilder; elem : TFhirBundleLink);
     procedure ComposeBundleEntry(xml : TXmlBuilder; name : string; elem : TFhirBundleEntry);
@@ -1235,6 +1494,8 @@ Type
     procedure ComposeBundleEntryResponseChildren(xml : TXmlBuilder; elem : TFhirBundleEntryResponse);
     procedure ComposeBundle(xml : TXmlBuilder; name : string; elem : TFhirBundle);
     procedure ComposeBundleChildren(xml : TXmlBuilder; elem : TFhirBundle);
+{$ENDIF FHIR_BUNDLE}
+{$IFDEF FHIR_CAPABILITYSTATEMENT}
     procedure ComposeCapabilityStatementSoftware(xml : TXmlBuilder; name : string; elem : TFhirCapabilityStatementSoftware);
     procedure ComposeCapabilityStatementSoftwareChildren(xml : TXmlBuilder; elem : TFhirCapabilityStatementSoftware);
     procedure ComposeCapabilityStatementImplementation(xml : TXmlBuilder; name : string; elem : TFhirCapabilityStatementImplementation);
@@ -1267,20 +1528,28 @@ Type
     procedure ComposeCapabilityStatementDocumentChildren(xml : TXmlBuilder; elem : TFhirCapabilityStatementDocument);
     procedure ComposeCapabilityStatement(xml : TXmlBuilder; name : string; elem : TFhirCapabilityStatement);
     procedure ComposeCapabilityStatementChildren(xml : TXmlBuilder; elem : TFhirCapabilityStatement);
+{$ENDIF FHIR_CAPABILITYSTATEMENT}
+{$IFDEF FHIR_CAREPLAN}
     procedure ComposeCarePlanActivity(xml : TXmlBuilder; name : string; elem : TFhirCarePlanActivity);
     procedure ComposeCarePlanActivityChildren(xml : TXmlBuilder; elem : TFhirCarePlanActivity);
     procedure ComposeCarePlanActivityDetail(xml : TXmlBuilder; name : string; elem : TFhirCarePlanActivityDetail);
     procedure ComposeCarePlanActivityDetailChildren(xml : TXmlBuilder; elem : TFhirCarePlanActivityDetail);
     procedure ComposeCarePlan(xml : TXmlBuilder; name : string; elem : TFhirCarePlan);
     procedure ComposeCarePlanChildren(xml : TXmlBuilder; elem : TFhirCarePlan);
+{$ENDIF FHIR_CAREPLAN}
+{$IFDEF FHIR_CARETEAM}
     procedure ComposeCareTeamParticipant(xml : TXmlBuilder; name : string; elem : TFhirCareTeamParticipant);
     procedure ComposeCareTeamParticipantChildren(xml : TXmlBuilder; elem : TFhirCareTeamParticipant);
     procedure ComposeCareTeam(xml : TXmlBuilder; name : string; elem : TFhirCareTeam);
     procedure ComposeCareTeamChildren(xml : TXmlBuilder; elem : TFhirCareTeam);
+{$ENDIF FHIR_CARETEAM}
+{$IFDEF FHIR_CHARGEITEM}
     procedure ComposeChargeItemParticipant(xml : TXmlBuilder; name : string; elem : TFhirChargeItemParticipant);
     procedure ComposeChargeItemParticipantChildren(xml : TXmlBuilder; elem : TFhirChargeItemParticipant);
     procedure ComposeChargeItem(xml : TXmlBuilder; name : string; elem : TFhirChargeItem);
     procedure ComposeChargeItemChildren(xml : TXmlBuilder; elem : TFhirChargeItem);
+{$ENDIF FHIR_CHARGEITEM}
+{$IFDEF FHIR_CLAIM}
     procedure ComposeClaimRelated(xml : TXmlBuilder; name : string; elem : TFhirClaimRelated);
     procedure ComposeClaimRelatedChildren(xml : TXmlBuilder; elem : TFhirClaimRelated);
     procedure ComposeClaimPayee(xml : TXmlBuilder; name : string; elem : TFhirClaimPayee);
@@ -1305,6 +1574,8 @@ Type
     procedure ComposeClaimItemDetailSubDetailChildren(xml : TXmlBuilder; elem : TFhirClaimItemDetailSubDetail);
     procedure ComposeClaim(xml : TXmlBuilder; name : string; elem : TFhirClaim);
     procedure ComposeClaimChildren(xml : TXmlBuilder; elem : TFhirClaim);
+{$ENDIF FHIR_CLAIM}
+{$IFDEF FHIR_CLAIMRESPONSE}
     procedure ComposeClaimResponseItem(xml : TXmlBuilder; name : string; elem : TFhirClaimResponseItem);
     procedure ComposeClaimResponseItemChildren(xml : TXmlBuilder; elem : TFhirClaimResponseItem);
     procedure ComposeClaimResponseItemAdjudication(xml : TXmlBuilder; name : string; elem : TFhirClaimResponseItemAdjudication);
@@ -1327,12 +1598,16 @@ Type
     procedure ComposeClaimResponseInsuranceChildren(xml : TXmlBuilder; elem : TFhirClaimResponseInsurance);
     procedure ComposeClaimResponse(xml : TXmlBuilder; name : string; elem : TFhirClaimResponse);
     procedure ComposeClaimResponseChildren(xml : TXmlBuilder; elem : TFhirClaimResponse);
+{$ENDIF FHIR_CLAIMRESPONSE}
+{$IFDEF FHIR_CLINICALIMPRESSION}
     procedure ComposeClinicalImpressionInvestigation(xml : TXmlBuilder; name : string; elem : TFhirClinicalImpressionInvestigation);
     procedure ComposeClinicalImpressionInvestigationChildren(xml : TXmlBuilder; elem : TFhirClinicalImpressionInvestigation);
     procedure ComposeClinicalImpressionFinding(xml : TXmlBuilder; name : string; elem : TFhirClinicalImpressionFinding);
     procedure ComposeClinicalImpressionFindingChildren(xml : TXmlBuilder; elem : TFhirClinicalImpressionFinding);
     procedure ComposeClinicalImpression(xml : TXmlBuilder; name : string; elem : TFhirClinicalImpression);
     procedure ComposeClinicalImpressionChildren(xml : TXmlBuilder; elem : TFhirClinicalImpression);
+{$ENDIF FHIR_CLINICALIMPRESSION}
+{$IFDEF FHIR_CODESYSTEM}
     procedure ComposeCodeSystemFilter(xml : TXmlBuilder; name : string; elem : TFhirCodeSystemFilter);
     procedure ComposeCodeSystemFilterChildren(xml : TXmlBuilder; elem : TFhirCodeSystemFilter);
     procedure ComposeCodeSystemProperty(xml : TXmlBuilder; name : string; elem : TFhirCodeSystemProperty);
@@ -1345,20 +1620,28 @@ Type
     procedure ComposeCodeSystemConceptPropertyChildren(xml : TXmlBuilder; elem : TFhirCodeSystemConceptProperty);
     procedure ComposeCodeSystem(xml : TXmlBuilder; name : string; elem : TFhirCodeSystem);
     procedure ComposeCodeSystemChildren(xml : TXmlBuilder; elem : TFhirCodeSystem);
+{$ENDIF FHIR_CODESYSTEM}
+{$IFDEF FHIR_COMMUNICATION}
     procedure ComposeCommunicationPayload(xml : TXmlBuilder; name : string; elem : TFhirCommunicationPayload);
     procedure ComposeCommunicationPayloadChildren(xml : TXmlBuilder; elem : TFhirCommunicationPayload);
     procedure ComposeCommunication(xml : TXmlBuilder; name : string; elem : TFhirCommunication);
     procedure ComposeCommunicationChildren(xml : TXmlBuilder; elem : TFhirCommunication);
+{$ENDIF FHIR_COMMUNICATION}
+{$IFDEF FHIR_COMMUNICATIONREQUEST}
     procedure ComposeCommunicationRequestPayload(xml : TXmlBuilder; name : string; elem : TFhirCommunicationRequestPayload);
     procedure ComposeCommunicationRequestPayloadChildren(xml : TXmlBuilder; elem : TFhirCommunicationRequestPayload);
     procedure ComposeCommunicationRequestRequester(xml : TXmlBuilder; name : string; elem : TFhirCommunicationRequestRequester);
     procedure ComposeCommunicationRequestRequesterChildren(xml : TXmlBuilder; elem : TFhirCommunicationRequestRequester);
     procedure ComposeCommunicationRequest(xml : TXmlBuilder; name : string; elem : TFhirCommunicationRequest);
     procedure ComposeCommunicationRequestChildren(xml : TXmlBuilder; elem : TFhirCommunicationRequest);
+{$ENDIF FHIR_COMMUNICATIONREQUEST}
+{$IFDEF FHIR_COMPARTMENTDEFINITION}
     procedure ComposeCompartmentDefinitionResource(xml : TXmlBuilder; name : string; elem : TFhirCompartmentDefinitionResource);
     procedure ComposeCompartmentDefinitionResourceChildren(xml : TXmlBuilder; elem : TFhirCompartmentDefinitionResource);
     procedure ComposeCompartmentDefinition(xml : TXmlBuilder; name : string; elem : TFhirCompartmentDefinition);
     procedure ComposeCompartmentDefinitionChildren(xml : TXmlBuilder; elem : TFhirCompartmentDefinition);
+{$ENDIF FHIR_COMPARTMENTDEFINITION}
+{$IFDEF FHIR_COMPOSITION}
     procedure ComposeCompositionAttester(xml : TXmlBuilder; name : string; elem : TFhirCompositionAttester);
     procedure ComposeCompositionAttesterChildren(xml : TXmlBuilder; elem : TFhirCompositionAttester);
     procedure ComposeCompositionRelatesTo(xml : TXmlBuilder; name : string; elem : TFhirCompositionRelatesTo);
@@ -1369,6 +1652,8 @@ Type
     procedure ComposeCompositionSectionChildren(xml : TXmlBuilder; elem : TFhirCompositionSection);
     procedure ComposeComposition(xml : TXmlBuilder; name : string; elem : TFhirComposition);
     procedure ComposeCompositionChildren(xml : TXmlBuilder; elem : TFhirComposition);
+{$ENDIF FHIR_COMPOSITION}
+{$IFDEF FHIR_CONCEPTMAP}
     procedure ComposeConceptMapGroup(xml : TXmlBuilder; name : string; elem : TFhirConceptMapGroup);
     procedure ComposeConceptMapGroupChildren(xml : TXmlBuilder; elem : TFhirConceptMapGroup);
     procedure ComposeConceptMapGroupElement(xml : TXmlBuilder; name : string; elem : TFhirConceptMapGroupElement);
@@ -1381,12 +1666,16 @@ Type
     procedure ComposeConceptMapGroupUnmappedChildren(xml : TXmlBuilder; elem : TFhirConceptMapGroupUnmapped);
     procedure ComposeConceptMap(xml : TXmlBuilder; name : string; elem : TFhirConceptMap);
     procedure ComposeConceptMapChildren(xml : TXmlBuilder; elem : TFhirConceptMap);
+{$ENDIF FHIR_CONCEPTMAP}
+{$IFDEF FHIR_CONDITION}
     procedure ComposeConditionStage(xml : TXmlBuilder; name : string; elem : TFhirConditionStage);
     procedure ComposeConditionStageChildren(xml : TXmlBuilder; elem : TFhirConditionStage);
     procedure ComposeConditionEvidence(xml : TXmlBuilder; name : string; elem : TFhirConditionEvidence);
     procedure ComposeConditionEvidenceChildren(xml : TXmlBuilder; elem : TFhirConditionEvidence);
     procedure ComposeCondition(xml : TXmlBuilder; name : string; elem : TFhirCondition);
     procedure ComposeConditionChildren(xml : TXmlBuilder; elem : TFhirCondition);
+{$ENDIF FHIR_CONDITION}
+{$IFDEF FHIR_CONSENT}
     procedure ComposeConsentActor(xml : TXmlBuilder; name : string; elem : TFhirConsentActor);
     procedure ComposeConsentActorChildren(xml : TXmlBuilder; elem : TFhirConsentActor);
     procedure ComposeConsentPolicy(xml : TXmlBuilder; name : string; elem : TFhirConsentPolicy);
@@ -1401,6 +1690,8 @@ Type
     procedure ComposeConsentExceptDataChildren(xml : TXmlBuilder; elem : TFhirConsentExceptData);
     procedure ComposeConsent(xml : TXmlBuilder; name : string; elem : TFhirConsent);
     procedure ComposeConsentChildren(xml : TXmlBuilder; elem : TFhirConsent);
+{$ENDIF FHIR_CONSENT}
+{$IFDEF FHIR_CONTRACT}
     procedure ComposeContractAgent(xml : TXmlBuilder; name : string; elem : TFhirContractAgent);
     procedure ComposeContractAgentChildren(xml : TXmlBuilder; elem : TFhirContractAgent);
     procedure ComposeContractSigner(xml : TXmlBuilder; name : string; elem : TFhirContractSigner);
@@ -1421,48 +1712,70 @@ Type
     procedure ComposeContractRuleChildren(xml : TXmlBuilder; elem : TFhirContractRule);
     procedure ComposeContract(xml : TXmlBuilder; name : string; elem : TFhirContract);
     procedure ComposeContractChildren(xml : TXmlBuilder; elem : TFhirContract);
+{$ENDIF FHIR_CONTRACT}
+{$IFDEF FHIR_COVERAGE}
     procedure ComposeCoverageGrouping(xml : TXmlBuilder; name : string; elem : TFhirCoverageGrouping);
     procedure ComposeCoverageGroupingChildren(xml : TXmlBuilder; elem : TFhirCoverageGrouping);
     procedure ComposeCoverage(xml : TXmlBuilder; name : string; elem : TFhirCoverage);
     procedure ComposeCoverageChildren(xml : TXmlBuilder; elem : TFhirCoverage);
+{$ENDIF FHIR_COVERAGE}
+{$IFDEF FHIR_DATAELEMENT}
     procedure ComposeDataElementMapping(xml : TXmlBuilder; name : string; elem : TFhirDataElementMapping);
     procedure ComposeDataElementMappingChildren(xml : TXmlBuilder; elem : TFhirDataElementMapping);
     procedure ComposeDataElement(xml : TXmlBuilder; name : string; elem : TFhirDataElement);
     procedure ComposeDataElementChildren(xml : TXmlBuilder; elem : TFhirDataElement);
+{$ENDIF FHIR_DATAELEMENT}
+{$IFDEF FHIR_DETECTEDISSUE}
     procedure ComposeDetectedIssueMitigation(xml : TXmlBuilder; name : string; elem : TFhirDetectedIssueMitigation);
     procedure ComposeDetectedIssueMitigationChildren(xml : TXmlBuilder; elem : TFhirDetectedIssueMitigation);
     procedure ComposeDetectedIssue(xml : TXmlBuilder; name : string; elem : TFhirDetectedIssue);
     procedure ComposeDetectedIssueChildren(xml : TXmlBuilder; elem : TFhirDetectedIssue);
+{$ENDIF FHIR_DETECTEDISSUE}
+{$IFDEF FHIR_DEVICE}
     procedure ComposeDeviceUdi(xml : TXmlBuilder; name : string; elem : TFhirDeviceUdi);
     procedure ComposeDeviceUdiChildren(xml : TXmlBuilder; elem : TFhirDeviceUdi);
     procedure ComposeDevice(xml : TXmlBuilder; name : string; elem : TFhirDevice);
     procedure ComposeDeviceChildren(xml : TXmlBuilder; elem : TFhirDevice);
+{$ENDIF FHIR_DEVICE}
+{$IFDEF FHIR_DEVICECOMPONENT}
     procedure ComposeDeviceComponentProductionSpecification(xml : TXmlBuilder; name : string; elem : TFhirDeviceComponentProductionSpecification);
     procedure ComposeDeviceComponentProductionSpecificationChildren(xml : TXmlBuilder; elem : TFhirDeviceComponentProductionSpecification);
     procedure ComposeDeviceComponent(xml : TXmlBuilder; name : string; elem : TFhirDeviceComponent);
     procedure ComposeDeviceComponentChildren(xml : TXmlBuilder; elem : TFhirDeviceComponent);
+{$ENDIF FHIR_DEVICECOMPONENT}
+{$IFDEF FHIR_DEVICEMETRIC}
     procedure ComposeDeviceMetricCalibration(xml : TXmlBuilder; name : string; elem : TFhirDeviceMetricCalibration);
     procedure ComposeDeviceMetricCalibrationChildren(xml : TXmlBuilder; elem : TFhirDeviceMetricCalibration);
     procedure ComposeDeviceMetric(xml : TXmlBuilder; name : string; elem : TFhirDeviceMetric);
     procedure ComposeDeviceMetricChildren(xml : TXmlBuilder; elem : TFhirDeviceMetric);
+{$ENDIF FHIR_DEVICEMETRIC}
+{$IFDEF FHIR_DEVICEREQUEST}
     procedure ComposeDeviceRequestRequester(xml : TXmlBuilder; name : string; elem : TFhirDeviceRequestRequester);
     procedure ComposeDeviceRequestRequesterChildren(xml : TXmlBuilder; elem : TFhirDeviceRequestRequester);
     procedure ComposeDeviceRequest(xml : TXmlBuilder; name : string; elem : TFhirDeviceRequest);
     procedure ComposeDeviceRequestChildren(xml : TXmlBuilder; elem : TFhirDeviceRequest);
+{$ENDIF FHIR_DEVICEREQUEST}
+{$IFDEF FHIR_DEVICEUSESTATEMENT}
     procedure ComposeDeviceUseStatement(xml : TXmlBuilder; name : string; elem : TFhirDeviceUseStatement);
     procedure ComposeDeviceUseStatementChildren(xml : TXmlBuilder; elem : TFhirDeviceUseStatement);
+{$ENDIF FHIR_DEVICEUSESTATEMENT}
+{$IFDEF FHIR_DIAGNOSTICREPORT}
     procedure ComposeDiagnosticReportPerformer(xml : TXmlBuilder; name : string; elem : TFhirDiagnosticReportPerformer);
     procedure ComposeDiagnosticReportPerformerChildren(xml : TXmlBuilder; elem : TFhirDiagnosticReportPerformer);
     procedure ComposeDiagnosticReportImage(xml : TXmlBuilder; name : string; elem : TFhirDiagnosticReportImage);
     procedure ComposeDiagnosticReportImageChildren(xml : TXmlBuilder; elem : TFhirDiagnosticReportImage);
     procedure ComposeDiagnosticReport(xml : TXmlBuilder; name : string; elem : TFhirDiagnosticReport);
     procedure ComposeDiagnosticReportChildren(xml : TXmlBuilder; elem : TFhirDiagnosticReport);
+{$ENDIF FHIR_DIAGNOSTICREPORT}
+{$IFDEF FHIR_DOCUMENTMANIFEST}
     procedure ComposeDocumentManifestContent(xml : TXmlBuilder; name : string; elem : TFhirDocumentManifestContent);
     procedure ComposeDocumentManifestContentChildren(xml : TXmlBuilder; elem : TFhirDocumentManifestContent);
     procedure ComposeDocumentManifestRelated(xml : TXmlBuilder; name : string; elem : TFhirDocumentManifestRelated);
     procedure ComposeDocumentManifestRelatedChildren(xml : TXmlBuilder; elem : TFhirDocumentManifestRelated);
     procedure ComposeDocumentManifest(xml : TXmlBuilder; name : string; elem : TFhirDocumentManifest);
     procedure ComposeDocumentManifestChildren(xml : TXmlBuilder; elem : TFhirDocumentManifest);
+{$ENDIF FHIR_DOCUMENTMANIFEST}
+{$IFDEF FHIR_DOCUMENTREFERENCE}
     procedure ComposeDocumentReferenceRelatesTo(xml : TXmlBuilder; name : string; elem : TFhirDocumentReferenceRelatesTo);
     procedure ComposeDocumentReferenceRelatesToChildren(xml : TXmlBuilder; elem : TFhirDocumentReferenceRelatesTo);
     procedure ComposeDocumentReferenceContent(xml : TXmlBuilder; name : string; elem : TFhirDocumentReferenceContent);
@@ -1473,8 +1786,12 @@ Type
     procedure ComposeDocumentReferenceContextRelatedChildren(xml : TXmlBuilder; elem : TFhirDocumentReferenceContextRelated);
     procedure ComposeDocumentReference(xml : TXmlBuilder; name : string; elem : TFhirDocumentReference);
     procedure ComposeDocumentReferenceChildren(xml : TXmlBuilder; elem : TFhirDocumentReference);
+{$ENDIF FHIR_DOCUMENTREFERENCE}
+{$IFDEF FHIR_ELIGIBILITYREQUEST}
     procedure ComposeEligibilityRequest(xml : TXmlBuilder; name : string; elem : TFhirEligibilityRequest);
     procedure ComposeEligibilityRequestChildren(xml : TXmlBuilder; elem : TFhirEligibilityRequest);
+{$ENDIF FHIR_ELIGIBILITYREQUEST}
+{$IFDEF FHIR_ELIGIBILITYRESPONSE}
     procedure ComposeEligibilityResponseInsurance(xml : TXmlBuilder; name : string; elem : TFhirEligibilityResponseInsurance);
     procedure ComposeEligibilityResponseInsuranceChildren(xml : TXmlBuilder; elem : TFhirEligibilityResponseInsurance);
     procedure ComposeEligibilityResponseInsuranceBenefitBalance(xml : TXmlBuilder; name : string; elem : TFhirEligibilityResponseInsuranceBenefitBalance);
@@ -1485,6 +1802,8 @@ Type
     procedure ComposeEligibilityResponseErrorChildren(xml : TXmlBuilder; elem : TFhirEligibilityResponseError);
     procedure ComposeEligibilityResponse(xml : TXmlBuilder; name : string; elem : TFhirEligibilityResponse);
     procedure ComposeEligibilityResponseChildren(xml : TXmlBuilder; elem : TFhirEligibilityResponse);
+{$ENDIF FHIR_ELIGIBILITYRESPONSE}
+{$IFDEF FHIR_ENCOUNTER}
     procedure ComposeEncounterStatusHistory(xml : TXmlBuilder; name : string; elem : TFhirEncounterStatusHistory);
     procedure ComposeEncounterStatusHistoryChildren(xml : TXmlBuilder; elem : TFhirEncounterStatusHistory);
     procedure ComposeEncounterClassHistory(xml : TXmlBuilder; name : string; elem : TFhirEncounterClassHistory);
@@ -1499,18 +1818,28 @@ Type
     procedure ComposeEncounterLocationChildren(xml : TXmlBuilder; elem : TFhirEncounterLocation);
     procedure ComposeEncounter(xml : TXmlBuilder; name : string; elem : TFhirEncounter);
     procedure ComposeEncounterChildren(xml : TXmlBuilder; elem : TFhirEncounter);
+{$ENDIF FHIR_ENCOUNTER}
+{$IFDEF FHIR_ENDPOINT}
     procedure ComposeEndpoint(xml : TXmlBuilder; name : string; elem : TFhirEndpoint);
     procedure ComposeEndpointChildren(xml : TXmlBuilder; elem : TFhirEndpoint);
+{$ENDIF FHIR_ENDPOINT}
+{$IFDEF FHIR_ENROLLMENTREQUEST}
     procedure ComposeEnrollmentRequest(xml : TXmlBuilder; name : string; elem : TFhirEnrollmentRequest);
     procedure ComposeEnrollmentRequestChildren(xml : TXmlBuilder; elem : TFhirEnrollmentRequest);
+{$ENDIF FHIR_ENROLLMENTREQUEST}
+{$IFDEF FHIR_ENROLLMENTRESPONSE}
     procedure ComposeEnrollmentResponse(xml : TXmlBuilder; name : string; elem : TFhirEnrollmentResponse);
     procedure ComposeEnrollmentResponseChildren(xml : TXmlBuilder; elem : TFhirEnrollmentResponse);
+{$ENDIF FHIR_ENROLLMENTRESPONSE}
+{$IFDEF FHIR_EPISODEOFCARE}
     procedure ComposeEpisodeOfCareStatusHistory(xml : TXmlBuilder; name : string; elem : TFhirEpisodeOfCareStatusHistory);
     procedure ComposeEpisodeOfCareStatusHistoryChildren(xml : TXmlBuilder; elem : TFhirEpisodeOfCareStatusHistory);
     procedure ComposeEpisodeOfCareDiagnosis(xml : TXmlBuilder; name : string; elem : TFhirEpisodeOfCareDiagnosis);
     procedure ComposeEpisodeOfCareDiagnosisChildren(xml : TXmlBuilder; elem : TFhirEpisodeOfCareDiagnosis);
     procedure ComposeEpisodeOfCare(xml : TXmlBuilder; name : string; elem : TFhirEpisodeOfCare);
     procedure ComposeEpisodeOfCareChildren(xml : TXmlBuilder; elem : TFhirEpisodeOfCare);
+{$ENDIF FHIR_EPISODEOFCARE}
+{$IFDEF FHIR_EXPANSIONPROFILE}
     procedure ComposeExpansionProfileFixedVersion(xml : TXmlBuilder; name : string; elem : TFhirExpansionProfileFixedVersion);
     procedure ComposeExpansionProfileFixedVersionChildren(xml : TXmlBuilder; elem : TFhirExpansionProfileFixedVersion);
     procedure ComposeExpansionProfileExcludedSystem(xml : TXmlBuilder; name : string; elem : TFhirExpansionProfileExcludedSystem);
@@ -1527,6 +1856,8 @@ Type
     procedure ComposeExpansionProfileDesignationExcludeDesignationChildren(xml : TXmlBuilder; elem : TFhirExpansionProfileDesignationExcludeDesignation);
     procedure ComposeExpansionProfile(xml : TXmlBuilder; name : string; elem : TFhirExpansionProfile);
     procedure ComposeExpansionProfileChildren(xml : TXmlBuilder; elem : TFhirExpansionProfile);
+{$ENDIF FHIR_EXPANSIONPROFILE}
+{$IFDEF FHIR_EXPLANATIONOFBENEFIT}
     procedure ComposeExplanationOfBenefitRelated(xml : TXmlBuilder; name : string; elem : TFhirExplanationOfBenefitRelated);
     procedure ComposeExplanationOfBenefitRelatedChildren(xml : TXmlBuilder; elem : TFhirExplanationOfBenefitRelated);
     procedure ComposeExplanationOfBenefitPayee(xml : TXmlBuilder; name : string; elem : TFhirExplanationOfBenefitPayee);
@@ -1565,16 +1896,24 @@ Type
     procedure ComposeExplanationOfBenefitBenefitBalanceFinancialChildren(xml : TXmlBuilder; elem : TFhirExplanationOfBenefitBenefitBalanceFinancial);
     procedure ComposeExplanationOfBenefit(xml : TXmlBuilder; name : string; elem : TFhirExplanationOfBenefit);
     procedure ComposeExplanationOfBenefitChildren(xml : TXmlBuilder; elem : TFhirExplanationOfBenefit);
+{$ENDIF FHIR_EXPLANATIONOFBENEFIT}
+{$IFDEF FHIR_FAMILYMEMBERHISTORY}
     procedure ComposeFamilyMemberHistoryCondition(xml : TXmlBuilder; name : string; elem : TFhirFamilyMemberHistoryCondition);
     procedure ComposeFamilyMemberHistoryConditionChildren(xml : TXmlBuilder; elem : TFhirFamilyMemberHistoryCondition);
     procedure ComposeFamilyMemberHistory(xml : TXmlBuilder; name : string; elem : TFhirFamilyMemberHistory);
     procedure ComposeFamilyMemberHistoryChildren(xml : TXmlBuilder; elem : TFhirFamilyMemberHistory);
+{$ENDIF FHIR_FAMILYMEMBERHISTORY}
+{$IFDEF FHIR_FLAG}
     procedure ComposeFlag(xml : TXmlBuilder; name : string; elem : TFhirFlag);
     procedure ComposeFlagChildren(xml : TXmlBuilder; elem : TFhirFlag);
+{$ENDIF FHIR_FLAG}
+{$IFDEF FHIR_GOAL}
     procedure ComposeGoalTarget(xml : TXmlBuilder; name : string; elem : TFhirGoalTarget);
     procedure ComposeGoalTargetChildren(xml : TXmlBuilder; elem : TFhirGoalTarget);
     procedure ComposeGoal(xml : TXmlBuilder; name : string; elem : TFhirGoal);
     procedure ComposeGoalChildren(xml : TXmlBuilder; elem : TFhirGoal);
+{$ENDIF FHIR_GOAL}
+{$IFDEF FHIR_GRAPHDEFINITION}
     procedure ComposeGraphDefinitionLink(xml : TXmlBuilder; name : string; elem : TFhirGraphDefinitionLink);
     procedure ComposeGraphDefinitionLinkChildren(xml : TXmlBuilder; elem : TFhirGraphDefinitionLink);
     procedure ComposeGraphDefinitionLinkTarget(xml : TXmlBuilder; name : string; elem : TFhirGraphDefinitionLinkTarget);
@@ -1583,20 +1922,28 @@ Type
     procedure ComposeGraphDefinitionLinkTargetCompartmentChildren(xml : TXmlBuilder; elem : TFhirGraphDefinitionLinkTargetCompartment);
     procedure ComposeGraphDefinition(xml : TXmlBuilder; name : string; elem : TFhirGraphDefinition);
     procedure ComposeGraphDefinitionChildren(xml : TXmlBuilder; elem : TFhirGraphDefinition);
+{$ENDIF FHIR_GRAPHDEFINITION}
+{$IFDEF FHIR_GROUP}
     procedure ComposeGroupCharacteristic(xml : TXmlBuilder; name : string; elem : TFhirGroupCharacteristic);
     procedure ComposeGroupCharacteristicChildren(xml : TXmlBuilder; elem : TFhirGroupCharacteristic);
     procedure ComposeGroupMember(xml : TXmlBuilder; name : string; elem : TFhirGroupMember);
     procedure ComposeGroupMemberChildren(xml : TXmlBuilder; elem : TFhirGroupMember);
     procedure ComposeGroup(xml : TXmlBuilder; name : string; elem : TFhirGroup);
     procedure ComposeGroupChildren(xml : TXmlBuilder; elem : TFhirGroup);
+{$ENDIF FHIR_GROUP}
+{$IFDEF FHIR_GUIDANCERESPONSE}
     procedure ComposeGuidanceResponse(xml : TXmlBuilder; name : string; elem : TFhirGuidanceResponse);
     procedure ComposeGuidanceResponseChildren(xml : TXmlBuilder; elem : TFhirGuidanceResponse);
+{$ENDIF FHIR_GUIDANCERESPONSE}
+{$IFDEF FHIR_HEALTHCARESERVICE}
     procedure ComposeHealthcareServiceAvailableTime(xml : TXmlBuilder; name : string; elem : TFhirHealthcareServiceAvailableTime);
     procedure ComposeHealthcareServiceAvailableTimeChildren(xml : TXmlBuilder; elem : TFhirHealthcareServiceAvailableTime);
     procedure ComposeHealthcareServiceNotAvailable(xml : TXmlBuilder; name : string; elem : TFhirHealthcareServiceNotAvailable);
     procedure ComposeHealthcareServiceNotAvailableChildren(xml : TXmlBuilder; elem : TFhirHealthcareServiceNotAvailable);
     procedure ComposeHealthcareService(xml : TXmlBuilder; name : string; elem : TFhirHealthcareService);
     procedure ComposeHealthcareServiceChildren(xml : TXmlBuilder; elem : TFhirHealthcareService);
+{$ENDIF FHIR_HEALTHCARESERVICE}
+{$IFDEF FHIR_IMAGINGMANIFEST}
     procedure ComposeImagingManifestStudy(xml : TXmlBuilder; name : string; elem : TFhirImagingManifestStudy);
     procedure ComposeImagingManifestStudyChildren(xml : TXmlBuilder; elem : TFhirImagingManifestStudy);
     procedure ComposeImagingManifestStudySeries(xml : TXmlBuilder; name : string; elem : TFhirImagingManifestStudySeries);
@@ -1605,12 +1952,16 @@ Type
     procedure ComposeImagingManifestStudySeriesInstanceChildren(xml : TXmlBuilder; elem : TFhirImagingManifestStudySeriesInstance);
     procedure ComposeImagingManifest(xml : TXmlBuilder; name : string; elem : TFhirImagingManifest);
     procedure ComposeImagingManifestChildren(xml : TXmlBuilder; elem : TFhirImagingManifest);
+{$ENDIF FHIR_IMAGINGMANIFEST}
+{$IFDEF FHIR_IMAGINGSTUDY}
     procedure ComposeImagingStudySeries(xml : TXmlBuilder; name : string; elem : TFhirImagingStudySeries);
     procedure ComposeImagingStudySeriesChildren(xml : TXmlBuilder; elem : TFhirImagingStudySeries);
     procedure ComposeImagingStudySeriesInstance(xml : TXmlBuilder; name : string; elem : TFhirImagingStudySeriesInstance);
     procedure ComposeImagingStudySeriesInstanceChildren(xml : TXmlBuilder; elem : TFhirImagingStudySeriesInstance);
     procedure ComposeImagingStudy(xml : TXmlBuilder; name : string; elem : TFhirImagingStudy);
     procedure ComposeImagingStudyChildren(xml : TXmlBuilder; elem : TFhirImagingStudy);
+{$ENDIF FHIR_IMAGINGSTUDY}
+{$IFDEF FHIR_IMMUNIZATION}
     procedure ComposeImmunizationPractitioner(xml : TXmlBuilder; name : string; elem : TFhirImmunizationPractitioner);
     procedure ComposeImmunizationPractitionerChildren(xml : TXmlBuilder; elem : TFhirImmunizationPractitioner);
     procedure ComposeImmunizationExplanation(xml : TXmlBuilder; name : string; elem : TFhirImmunizationExplanation);
@@ -1621,6 +1972,8 @@ Type
     procedure ComposeImmunizationVaccinationProtocolChildren(xml : TXmlBuilder; elem : TFhirImmunizationVaccinationProtocol);
     procedure ComposeImmunization(xml : TXmlBuilder; name : string; elem : TFhirImmunization);
     procedure ComposeImmunizationChildren(xml : TXmlBuilder; elem : TFhirImmunization);
+{$ENDIF FHIR_IMMUNIZATION}
+{$IFDEF FHIR_IMMUNIZATIONRECOMMENDATION}
     procedure ComposeImmunizationRecommendationRecommendation(xml : TXmlBuilder; name : string; elem : TFhirImmunizationRecommendationRecommendation);
     procedure ComposeImmunizationRecommendationRecommendationChildren(xml : TXmlBuilder; elem : TFhirImmunizationRecommendationRecommendation);
     procedure ComposeImmunizationRecommendationRecommendationDateCriterion(xml : TXmlBuilder; name : string; elem : TFhirImmunizationRecommendationRecommendationDateCriterion);
@@ -1629,6 +1982,8 @@ Type
     procedure ComposeImmunizationRecommendationRecommendationProtocolChildren(xml : TXmlBuilder; elem : TFhirImmunizationRecommendationRecommendationProtocol);
     procedure ComposeImmunizationRecommendation(xml : TXmlBuilder; name : string; elem : TFhirImmunizationRecommendation);
     procedure ComposeImmunizationRecommendationChildren(xml : TXmlBuilder; elem : TFhirImmunizationRecommendation);
+{$ENDIF FHIR_IMMUNIZATIONRECOMMENDATION}
+{$IFDEF FHIR_IMPLEMENTATIONGUIDE}
     procedure ComposeImplementationGuideDependency(xml : TXmlBuilder; name : string; elem : TFhirImplementationGuideDependency);
     procedure ComposeImplementationGuideDependencyChildren(xml : TXmlBuilder; elem : TFhirImplementationGuideDependency);
     procedure ComposeImplementationGuidePackage(xml : TXmlBuilder; name : string; elem : TFhirImplementationGuidePackage);
@@ -1641,20 +1996,30 @@ Type
     procedure ComposeImplementationGuidePageChildren(xml : TXmlBuilder; elem : TFhirImplementationGuidePage);
     procedure ComposeImplementationGuide(xml : TXmlBuilder; name : string; elem : TFhirImplementationGuide);
     procedure ComposeImplementationGuideChildren(xml : TXmlBuilder; elem : TFhirImplementationGuide);
+{$ENDIF FHIR_IMPLEMENTATIONGUIDE}
+{$IFDEF FHIR_LIBRARY}
     procedure ComposeLibrary(xml : TXmlBuilder; name : string; elem : TFhirLibrary);
     procedure ComposeLibraryChildren(xml : TXmlBuilder; elem : TFhirLibrary);
+{$ENDIF FHIR_LIBRARY}
+{$IFDEF FHIR_LINKAGE}
     procedure ComposeLinkageItem(xml : TXmlBuilder; name : string; elem : TFhirLinkageItem);
     procedure ComposeLinkageItemChildren(xml : TXmlBuilder; elem : TFhirLinkageItem);
     procedure ComposeLinkage(xml : TXmlBuilder; name : string; elem : TFhirLinkage);
     procedure ComposeLinkageChildren(xml : TXmlBuilder; elem : TFhirLinkage);
+{$ENDIF FHIR_LINKAGE}
+{$IFDEF FHIR_LIST}
     procedure ComposeListEntry(xml : TXmlBuilder; name : string; elem : TFhirListEntry);
     procedure ComposeListEntryChildren(xml : TXmlBuilder; elem : TFhirListEntry);
     procedure ComposeList(xml : TXmlBuilder; name : string; elem : TFhirList);
     procedure ComposeListChildren(xml : TXmlBuilder; elem : TFhirList);
+{$ENDIF FHIR_LIST}
+{$IFDEF FHIR_LOCATION}
     procedure ComposeLocationPosition(xml : TXmlBuilder; name : string; elem : TFhirLocationPosition);
     procedure ComposeLocationPositionChildren(xml : TXmlBuilder; elem : TFhirLocationPosition);
     procedure ComposeLocation(xml : TXmlBuilder; name : string; elem : TFhirLocation);
     procedure ComposeLocationChildren(xml : TXmlBuilder; elem : TFhirLocation);
+{$ENDIF FHIR_LOCATION}
+{$IFDEF FHIR_MEASURE}
     procedure ComposeMeasureGroup(xml : TXmlBuilder; name : string; elem : TFhirMeasureGroup);
     procedure ComposeMeasureGroupChildren(xml : TXmlBuilder; elem : TFhirMeasureGroup);
     procedure ComposeMeasureGroupPopulation(xml : TXmlBuilder; name : string; elem : TFhirMeasureGroupPopulation);
@@ -1665,6 +2030,8 @@ Type
     procedure ComposeMeasureSupplementalDataChildren(xml : TXmlBuilder; elem : TFhirMeasureSupplementalData);
     procedure ComposeMeasure(xml : TXmlBuilder; name : string; elem : TFhirMeasure);
     procedure ComposeMeasureChildren(xml : TXmlBuilder; elem : TFhirMeasure);
+{$ENDIF FHIR_MEASURE}
+{$IFDEF FHIR_MEASUREREPORT}
     procedure ComposeMeasureReportGroup(xml : TXmlBuilder; name : string; elem : TFhirMeasureReportGroup);
     procedure ComposeMeasureReportGroupChildren(xml : TXmlBuilder; elem : TFhirMeasureReportGroup);
     procedure ComposeMeasureReportGroupPopulation(xml : TXmlBuilder; name : string; elem : TFhirMeasureReportGroupPopulation);
@@ -1677,8 +2044,12 @@ Type
     procedure ComposeMeasureReportGroupStratifierStratumPopulationChildren(xml : TXmlBuilder; elem : TFhirMeasureReportGroupStratifierStratumPopulation);
     procedure ComposeMeasureReport(xml : TXmlBuilder; name : string; elem : TFhirMeasureReport);
     procedure ComposeMeasureReportChildren(xml : TXmlBuilder; elem : TFhirMeasureReport);
+{$ENDIF FHIR_MEASUREREPORT}
+{$IFDEF FHIR_MEDIA}
     procedure ComposeMedia(xml : TXmlBuilder; name : string; elem : TFhirMedia);
     procedure ComposeMediaChildren(xml : TXmlBuilder; elem : TFhirMedia);
+{$ENDIF FHIR_MEDIA}
+{$IFDEF FHIR_MEDICATION}
     procedure ComposeMedicationIngredient(xml : TXmlBuilder; name : string; elem : TFhirMedicationIngredient);
     procedure ComposeMedicationIngredientChildren(xml : TXmlBuilder; elem : TFhirMedicationIngredient);
     procedure ComposeMedicationPackage(xml : TXmlBuilder; name : string; elem : TFhirMedicationPackage);
@@ -1689,18 +2060,24 @@ Type
     procedure ComposeMedicationPackageBatchChildren(xml : TXmlBuilder; elem : TFhirMedicationPackageBatch);
     procedure ComposeMedication(xml : TXmlBuilder; name : string; elem : TFhirMedication);
     procedure ComposeMedicationChildren(xml : TXmlBuilder; elem : TFhirMedication);
+{$ENDIF FHIR_MEDICATION}
+{$IFDEF FHIR_MEDICATIONADMINISTRATION}
     procedure ComposeMedicationAdministrationPerformer(xml : TXmlBuilder; name : string; elem : TFhirMedicationAdministrationPerformer);
     procedure ComposeMedicationAdministrationPerformerChildren(xml : TXmlBuilder; elem : TFhirMedicationAdministrationPerformer);
     procedure ComposeMedicationAdministrationDosage(xml : TXmlBuilder; name : string; elem : TFhirMedicationAdministrationDosage);
     procedure ComposeMedicationAdministrationDosageChildren(xml : TXmlBuilder; elem : TFhirMedicationAdministrationDosage);
     procedure ComposeMedicationAdministration(xml : TXmlBuilder; name : string; elem : TFhirMedicationAdministration);
     procedure ComposeMedicationAdministrationChildren(xml : TXmlBuilder; elem : TFhirMedicationAdministration);
+{$ENDIF FHIR_MEDICATIONADMINISTRATION}
+{$IFDEF FHIR_MEDICATIONDISPENSE}
     procedure ComposeMedicationDispensePerformer(xml : TXmlBuilder; name : string; elem : TFhirMedicationDispensePerformer);
     procedure ComposeMedicationDispensePerformerChildren(xml : TXmlBuilder; elem : TFhirMedicationDispensePerformer);
     procedure ComposeMedicationDispenseSubstitution(xml : TXmlBuilder; name : string; elem : TFhirMedicationDispenseSubstitution);
     procedure ComposeMedicationDispenseSubstitutionChildren(xml : TXmlBuilder; elem : TFhirMedicationDispenseSubstitution);
     procedure ComposeMedicationDispense(xml : TXmlBuilder; name : string; elem : TFhirMedicationDispense);
     procedure ComposeMedicationDispenseChildren(xml : TXmlBuilder; elem : TFhirMedicationDispense);
+{$ENDIF FHIR_MEDICATIONDISPENSE}
+{$IFDEF FHIR_MEDICATIONREQUEST}
     procedure ComposeMedicationRequestRequester(xml : TXmlBuilder; name : string; elem : TFhirMedicationRequestRequester);
     procedure ComposeMedicationRequestRequesterChildren(xml : TXmlBuilder; elem : TFhirMedicationRequestRequester);
     procedure ComposeMedicationRequestDispenseRequest(xml : TXmlBuilder; name : string; elem : TFhirMedicationRequestDispenseRequest);
@@ -1709,14 +2086,20 @@ Type
     procedure ComposeMedicationRequestSubstitutionChildren(xml : TXmlBuilder; elem : TFhirMedicationRequestSubstitution);
     procedure ComposeMedicationRequest(xml : TXmlBuilder; name : string; elem : TFhirMedicationRequest);
     procedure ComposeMedicationRequestChildren(xml : TXmlBuilder; elem : TFhirMedicationRequest);
+{$ENDIF FHIR_MEDICATIONREQUEST}
+{$IFDEF FHIR_MEDICATIONSTATEMENT}
     procedure ComposeMedicationStatement(xml : TXmlBuilder; name : string; elem : TFhirMedicationStatement);
     procedure ComposeMedicationStatementChildren(xml : TXmlBuilder; elem : TFhirMedicationStatement);
+{$ENDIF FHIR_MEDICATIONSTATEMENT}
+{$IFDEF FHIR_MESSAGEDEFINITION}
     procedure ComposeMessageDefinitionFocus(xml : TXmlBuilder; name : string; elem : TFhirMessageDefinitionFocus);
     procedure ComposeMessageDefinitionFocusChildren(xml : TXmlBuilder; elem : TFhirMessageDefinitionFocus);
     procedure ComposeMessageDefinitionAllowedResponse(xml : TXmlBuilder; name : string; elem : TFhirMessageDefinitionAllowedResponse);
     procedure ComposeMessageDefinitionAllowedResponseChildren(xml : TXmlBuilder; elem : TFhirMessageDefinitionAllowedResponse);
     procedure ComposeMessageDefinition(xml : TXmlBuilder; name : string; elem : TFhirMessageDefinition);
     procedure ComposeMessageDefinitionChildren(xml : TXmlBuilder; elem : TFhirMessageDefinition);
+{$ENDIF FHIR_MESSAGEDEFINITION}
+{$IFDEF FHIR_MESSAGEHEADER}
     procedure ComposeMessageHeaderDestination(xml : TXmlBuilder; name : string; elem : TFhirMessageHeaderDestination);
     procedure ComposeMessageHeaderDestinationChildren(xml : TXmlBuilder; elem : TFhirMessageHeaderDestination);
     procedure ComposeMessageHeaderSource(xml : TXmlBuilder; name : string; elem : TFhirMessageHeaderSource);
@@ -1725,10 +2108,14 @@ Type
     procedure ComposeMessageHeaderResponseChildren(xml : TXmlBuilder; elem : TFhirMessageHeaderResponse);
     procedure ComposeMessageHeader(xml : TXmlBuilder; name : string; elem : TFhirMessageHeader);
     procedure ComposeMessageHeaderChildren(xml : TXmlBuilder; elem : TFhirMessageHeader);
+{$ENDIF FHIR_MESSAGEHEADER}
+{$IFDEF FHIR_NAMINGSYSTEM}
     procedure ComposeNamingSystemUniqueId(xml : TXmlBuilder; name : string; elem : TFhirNamingSystemUniqueId);
     procedure ComposeNamingSystemUniqueIdChildren(xml : TXmlBuilder; elem : TFhirNamingSystemUniqueId);
     procedure ComposeNamingSystem(xml : TXmlBuilder; name : string; elem : TFhirNamingSystem);
     procedure ComposeNamingSystemChildren(xml : TXmlBuilder; elem : TFhirNamingSystem);
+{$ENDIF FHIR_NAMINGSYSTEM}
+{$IFDEF FHIR_NUTRITIONORDER}
     procedure ComposeNutritionOrderOralDiet(xml : TXmlBuilder; name : string; elem : TFhirNutritionOrderOralDiet);
     procedure ComposeNutritionOrderOralDietChildren(xml : TXmlBuilder; elem : TFhirNutritionOrderOralDiet);
     procedure ComposeNutritionOrderOralDietNutrient(xml : TXmlBuilder; name : string; elem : TFhirNutritionOrderOralDietNutrient);
@@ -1743,6 +2130,8 @@ Type
     procedure ComposeNutritionOrderEnteralFormulaAdministrationChildren(xml : TXmlBuilder; elem : TFhirNutritionOrderEnteralFormulaAdministration);
     procedure ComposeNutritionOrder(xml : TXmlBuilder; name : string; elem : TFhirNutritionOrder);
     procedure ComposeNutritionOrderChildren(xml : TXmlBuilder; elem : TFhirNutritionOrder);
+{$ENDIF FHIR_NUTRITIONORDER}
+{$IFDEF FHIR_OBSERVATION}
     procedure ComposeObservationReferenceRange(xml : TXmlBuilder; name : string; elem : TFhirObservationReferenceRange);
     procedure ComposeObservationReferenceRangeChildren(xml : TXmlBuilder; elem : TFhirObservationReferenceRange);
     procedure ComposeObservationRelated(xml : TXmlBuilder; name : string; elem : TFhirObservationRelated);
@@ -1751,6 +2140,8 @@ Type
     procedure ComposeObservationComponentChildren(xml : TXmlBuilder; elem : TFhirObservationComponent);
     procedure ComposeObservation(xml : TXmlBuilder; name : string; elem : TFhirObservation);
     procedure ComposeObservationChildren(xml : TXmlBuilder; elem : TFhirObservation);
+{$ENDIF FHIR_OBSERVATION}
+{$IFDEF FHIR_OPERATIONDEFINITION}
     procedure ComposeOperationDefinitionParameter(xml : TXmlBuilder; name : string; elem : TFhirOperationDefinitionParameter);
     procedure ComposeOperationDefinitionParameterChildren(xml : TXmlBuilder; elem : TFhirOperationDefinitionParameter);
     procedure ComposeOperationDefinitionParameterBinding(xml : TXmlBuilder; name : string; elem : TFhirOperationDefinitionParameterBinding);
@@ -1759,14 +2150,20 @@ Type
     procedure ComposeOperationDefinitionOverloadChildren(xml : TXmlBuilder; elem : TFhirOperationDefinitionOverload);
     procedure ComposeOperationDefinition(xml : TXmlBuilder; name : string; elem : TFhirOperationDefinition);
     procedure ComposeOperationDefinitionChildren(xml : TXmlBuilder; elem : TFhirOperationDefinition);
+{$ENDIF FHIR_OPERATIONDEFINITION}
+{$IFDEF FHIR_OPERATIONOUTCOME}
     procedure ComposeOperationOutcomeIssue(xml : TXmlBuilder; name : string; elem : TFhirOperationOutcomeIssue);
     procedure ComposeOperationOutcomeIssueChildren(xml : TXmlBuilder; elem : TFhirOperationOutcomeIssue);
     procedure ComposeOperationOutcome(xml : TXmlBuilder; name : string; elem : TFhirOperationOutcome);
     procedure ComposeOperationOutcomeChildren(xml : TXmlBuilder; elem : TFhirOperationOutcome);
+{$ENDIF FHIR_OPERATIONOUTCOME}
+{$IFDEF FHIR_ORGANIZATION}
     procedure ComposeOrganizationContact(xml : TXmlBuilder; name : string; elem : TFhirOrganizationContact);
     procedure ComposeOrganizationContactChildren(xml : TXmlBuilder; elem : TFhirOrganizationContact);
     procedure ComposeOrganization(xml : TXmlBuilder; name : string; elem : TFhirOrganization);
     procedure ComposeOrganizationChildren(xml : TXmlBuilder; elem : TFhirOrganization);
+{$ENDIF FHIR_ORGANIZATION}
+{$IFDEF FHIR_PATIENT}
     procedure ComposePatientContact(xml : TXmlBuilder; name : string; elem : TFhirPatientContact);
     procedure ComposePatientContactChildren(xml : TXmlBuilder; elem : TFhirPatientContact);
     procedure ComposePatientAnimal(xml : TXmlBuilder; name : string; elem : TFhirPatientAnimal);
@@ -1777,18 +2174,26 @@ Type
     procedure ComposePatientLinkChildren(xml : TXmlBuilder; elem : TFhirPatientLink);
     procedure ComposePatient(xml : TXmlBuilder; name : string; elem : TFhirPatient);
     procedure ComposePatientChildren(xml : TXmlBuilder; elem : TFhirPatient);
+{$ENDIF FHIR_PATIENT}
+{$IFDEF FHIR_PAYMENTNOTICE}
     procedure ComposePaymentNotice(xml : TXmlBuilder; name : string; elem : TFhirPaymentNotice);
     procedure ComposePaymentNoticeChildren(xml : TXmlBuilder; elem : TFhirPaymentNotice);
+{$ENDIF FHIR_PAYMENTNOTICE}
+{$IFDEF FHIR_PAYMENTRECONCILIATION}
     procedure ComposePaymentReconciliationDetail(xml : TXmlBuilder; name : string; elem : TFhirPaymentReconciliationDetail);
     procedure ComposePaymentReconciliationDetailChildren(xml : TXmlBuilder; elem : TFhirPaymentReconciliationDetail);
     procedure ComposePaymentReconciliationProcessNote(xml : TXmlBuilder; name : string; elem : TFhirPaymentReconciliationProcessNote);
     procedure ComposePaymentReconciliationProcessNoteChildren(xml : TXmlBuilder; elem : TFhirPaymentReconciliationProcessNote);
     procedure ComposePaymentReconciliation(xml : TXmlBuilder; name : string; elem : TFhirPaymentReconciliation);
     procedure ComposePaymentReconciliationChildren(xml : TXmlBuilder; elem : TFhirPaymentReconciliation);
+{$ENDIF FHIR_PAYMENTRECONCILIATION}
+{$IFDEF FHIR_PERSON}
     procedure ComposePersonLink(xml : TXmlBuilder; name : string; elem : TFhirPersonLink);
     procedure ComposePersonLinkChildren(xml : TXmlBuilder; elem : TFhirPersonLink);
     procedure ComposePerson(xml : TXmlBuilder; name : string; elem : TFhirPerson);
     procedure ComposePersonChildren(xml : TXmlBuilder; elem : TFhirPerson);
+{$ENDIF FHIR_PERSON}
+{$IFDEF FHIR_PLANDEFINITION}
     procedure ComposePlanDefinitionGoal(xml : TXmlBuilder; name : string; elem : TFhirPlanDefinitionGoal);
     procedure ComposePlanDefinitionGoalChildren(xml : TXmlBuilder; elem : TFhirPlanDefinitionGoal);
     procedure ComposePlanDefinitionGoalTarget(xml : TXmlBuilder; name : string; elem : TFhirPlanDefinitionGoalTarget);
@@ -1805,40 +2210,56 @@ Type
     procedure ComposePlanDefinitionActionDynamicValueChildren(xml : TXmlBuilder; elem : TFhirPlanDefinitionActionDynamicValue);
     procedure ComposePlanDefinition(xml : TXmlBuilder; name : string; elem : TFhirPlanDefinition);
     procedure ComposePlanDefinitionChildren(xml : TXmlBuilder; elem : TFhirPlanDefinition);
+{$ENDIF FHIR_PLANDEFINITION}
+{$IFDEF FHIR_PRACTITIONER}
     procedure ComposePractitionerQualification(xml : TXmlBuilder; name : string; elem : TFhirPractitionerQualification);
     procedure ComposePractitionerQualificationChildren(xml : TXmlBuilder; elem : TFhirPractitionerQualification);
     procedure ComposePractitioner(xml : TXmlBuilder; name : string; elem : TFhirPractitioner);
     procedure ComposePractitionerChildren(xml : TXmlBuilder; elem : TFhirPractitioner);
+{$ENDIF FHIR_PRACTITIONER}
+{$IFDEF FHIR_PRACTITIONERROLE}
     procedure ComposePractitionerRoleAvailableTime(xml : TXmlBuilder; name : string; elem : TFhirPractitionerRoleAvailableTime);
     procedure ComposePractitionerRoleAvailableTimeChildren(xml : TXmlBuilder; elem : TFhirPractitionerRoleAvailableTime);
     procedure ComposePractitionerRoleNotAvailable(xml : TXmlBuilder; name : string; elem : TFhirPractitionerRoleNotAvailable);
     procedure ComposePractitionerRoleNotAvailableChildren(xml : TXmlBuilder; elem : TFhirPractitionerRoleNotAvailable);
     procedure ComposePractitionerRole(xml : TXmlBuilder; name : string; elem : TFhirPractitionerRole);
     procedure ComposePractitionerRoleChildren(xml : TXmlBuilder; elem : TFhirPractitionerRole);
+{$ENDIF FHIR_PRACTITIONERROLE}
+{$IFDEF FHIR_PROCEDURE}
     procedure ComposeProcedurePerformer(xml : TXmlBuilder; name : string; elem : TFhirProcedurePerformer);
     procedure ComposeProcedurePerformerChildren(xml : TXmlBuilder; elem : TFhirProcedurePerformer);
     procedure ComposeProcedureFocalDevice(xml : TXmlBuilder; name : string; elem : TFhirProcedureFocalDevice);
     procedure ComposeProcedureFocalDeviceChildren(xml : TXmlBuilder; elem : TFhirProcedureFocalDevice);
     procedure ComposeProcedure(xml : TXmlBuilder; name : string; elem : TFhirProcedure);
     procedure ComposeProcedureChildren(xml : TXmlBuilder; elem : TFhirProcedure);
+{$ENDIF FHIR_PROCEDURE}
+{$IFDEF FHIR_PROCEDUREREQUEST}
     procedure ComposeProcedureRequestRequester(xml : TXmlBuilder; name : string; elem : TFhirProcedureRequestRequester);
     procedure ComposeProcedureRequestRequesterChildren(xml : TXmlBuilder; elem : TFhirProcedureRequestRequester);
     procedure ComposeProcedureRequest(xml : TXmlBuilder; name : string; elem : TFhirProcedureRequest);
     procedure ComposeProcedureRequestChildren(xml : TXmlBuilder; elem : TFhirProcedureRequest);
+{$ENDIF FHIR_PROCEDUREREQUEST}
+{$IFDEF FHIR_PROCESSREQUEST}
     procedure ComposeProcessRequestItem(xml : TXmlBuilder; name : string; elem : TFhirProcessRequestItem);
     procedure ComposeProcessRequestItemChildren(xml : TXmlBuilder; elem : TFhirProcessRequestItem);
     procedure ComposeProcessRequest(xml : TXmlBuilder; name : string; elem : TFhirProcessRequest);
     procedure ComposeProcessRequestChildren(xml : TXmlBuilder; elem : TFhirProcessRequest);
+{$ENDIF FHIR_PROCESSREQUEST}
+{$IFDEF FHIR_PROCESSRESPONSE}
     procedure ComposeProcessResponseProcessNote(xml : TXmlBuilder; name : string; elem : TFhirProcessResponseProcessNote);
     procedure ComposeProcessResponseProcessNoteChildren(xml : TXmlBuilder; elem : TFhirProcessResponseProcessNote);
     procedure ComposeProcessResponse(xml : TXmlBuilder; name : string; elem : TFhirProcessResponse);
     procedure ComposeProcessResponseChildren(xml : TXmlBuilder; elem : TFhirProcessResponse);
+{$ENDIF FHIR_PROCESSRESPONSE}
+{$IFDEF FHIR_PROVENANCE}
     procedure ComposeProvenanceAgent(xml : TXmlBuilder; name : string; elem : TFhirProvenanceAgent);
     procedure ComposeProvenanceAgentChildren(xml : TXmlBuilder; elem : TFhirProvenanceAgent);
     procedure ComposeProvenanceEntity(xml : TXmlBuilder; name : string; elem : TFhirProvenanceEntity);
     procedure ComposeProvenanceEntityChildren(xml : TXmlBuilder; elem : TFhirProvenanceEntity);
     procedure ComposeProvenance(xml : TXmlBuilder; name : string; elem : TFhirProvenance);
     procedure ComposeProvenanceChildren(xml : TXmlBuilder; elem : TFhirProvenance);
+{$ENDIF FHIR_PROVENANCE}
+{$IFDEF FHIR_QUESTIONNAIRE}
     procedure ComposeQuestionnaireItem(xml : TXmlBuilder; name : string; elem : TFhirQuestionnaireItem);
     procedure ComposeQuestionnaireItemChildren(xml : TXmlBuilder; elem : TFhirQuestionnaireItem);
     procedure ComposeQuestionnaireItemEnableWhen(xml : TXmlBuilder; name : string; elem : TFhirQuestionnaireItemEnableWhen);
@@ -1847,18 +2268,26 @@ Type
     procedure ComposeQuestionnaireItemOptionChildren(xml : TXmlBuilder; elem : TFhirQuestionnaireItemOption);
     procedure ComposeQuestionnaire(xml : TXmlBuilder; name : string; elem : TFhirQuestionnaire);
     procedure ComposeQuestionnaireChildren(xml : TXmlBuilder; elem : TFhirQuestionnaire);
+{$ENDIF FHIR_QUESTIONNAIRE}
+{$IFDEF FHIR_QUESTIONNAIRERESPONSE}
     procedure ComposeQuestionnaireResponseItem(xml : TXmlBuilder; name : string; elem : TFhirQuestionnaireResponseItem);
     procedure ComposeQuestionnaireResponseItemChildren(xml : TXmlBuilder; elem : TFhirQuestionnaireResponseItem);
     procedure ComposeQuestionnaireResponseItemAnswer(xml : TXmlBuilder; name : string; elem : TFhirQuestionnaireResponseItemAnswer);
     procedure ComposeQuestionnaireResponseItemAnswerChildren(xml : TXmlBuilder; elem : TFhirQuestionnaireResponseItemAnswer);
     procedure ComposeQuestionnaireResponse(xml : TXmlBuilder; name : string; elem : TFhirQuestionnaireResponse);
     procedure ComposeQuestionnaireResponseChildren(xml : TXmlBuilder; elem : TFhirQuestionnaireResponse);
+{$ENDIF FHIR_QUESTIONNAIRERESPONSE}
+{$IFDEF FHIR_REFERRALREQUEST}
     procedure ComposeReferralRequestRequester(xml : TXmlBuilder; name : string; elem : TFhirReferralRequestRequester);
     procedure ComposeReferralRequestRequesterChildren(xml : TXmlBuilder; elem : TFhirReferralRequestRequester);
     procedure ComposeReferralRequest(xml : TXmlBuilder; name : string; elem : TFhirReferralRequest);
     procedure ComposeReferralRequestChildren(xml : TXmlBuilder; elem : TFhirReferralRequest);
+{$ENDIF FHIR_REFERRALREQUEST}
+{$IFDEF FHIR_RELATEDPERSON}
     procedure ComposeRelatedPerson(xml : TXmlBuilder; name : string; elem : TFhirRelatedPerson);
     procedure ComposeRelatedPersonChildren(xml : TXmlBuilder; elem : TFhirRelatedPerson);
+{$ENDIF FHIR_RELATEDPERSON}
+{$IFDEF FHIR_REQUESTGROUP}
     procedure ComposeRequestGroupAction(xml : TXmlBuilder; name : string; elem : TFhirRequestGroupAction);
     procedure ComposeRequestGroupActionChildren(xml : TXmlBuilder; elem : TFhirRequestGroupAction);
     procedure ComposeRequestGroupActionCondition(xml : TXmlBuilder; name : string; elem : TFhirRequestGroupActionCondition);
@@ -1867,22 +2296,34 @@ Type
     procedure ComposeRequestGroupActionRelatedActionChildren(xml : TXmlBuilder; elem : TFhirRequestGroupActionRelatedAction);
     procedure ComposeRequestGroup(xml : TXmlBuilder; name : string; elem : TFhirRequestGroup);
     procedure ComposeRequestGroupChildren(xml : TXmlBuilder; elem : TFhirRequestGroup);
+{$ENDIF FHIR_REQUESTGROUP}
+{$IFDEF FHIR_RESEARCHSTUDY}
     procedure ComposeResearchStudyArm(xml : TXmlBuilder; name : string; elem : TFhirResearchStudyArm);
     procedure ComposeResearchStudyArmChildren(xml : TXmlBuilder; elem : TFhirResearchStudyArm);
     procedure ComposeResearchStudy(xml : TXmlBuilder; name : string; elem : TFhirResearchStudy);
     procedure ComposeResearchStudyChildren(xml : TXmlBuilder; elem : TFhirResearchStudy);
+{$ENDIF FHIR_RESEARCHSTUDY}
+{$IFDEF FHIR_RESEARCHSUBJECT}
     procedure ComposeResearchSubject(xml : TXmlBuilder; name : string; elem : TFhirResearchSubject);
     procedure ComposeResearchSubjectChildren(xml : TXmlBuilder; elem : TFhirResearchSubject);
+{$ENDIF FHIR_RESEARCHSUBJECT}
+{$IFDEF FHIR_RISKASSESSMENT}
     procedure ComposeRiskAssessmentPrediction(xml : TXmlBuilder; name : string; elem : TFhirRiskAssessmentPrediction);
     procedure ComposeRiskAssessmentPredictionChildren(xml : TXmlBuilder; elem : TFhirRiskAssessmentPrediction);
     procedure ComposeRiskAssessment(xml : TXmlBuilder; name : string; elem : TFhirRiskAssessment);
     procedure ComposeRiskAssessmentChildren(xml : TXmlBuilder; elem : TFhirRiskAssessment);
+{$ENDIF FHIR_RISKASSESSMENT}
+{$IFDEF FHIR_SCHEDULE}
     procedure ComposeSchedule(xml : TXmlBuilder; name : string; elem : TFhirSchedule);
     procedure ComposeScheduleChildren(xml : TXmlBuilder; elem : TFhirSchedule);
+{$ENDIF FHIR_SCHEDULE}
+{$IFDEF FHIR_SEARCHPARAMETER}
     procedure ComposeSearchParameterComponent(xml : TXmlBuilder; name : string; elem : TFhirSearchParameterComponent);
     procedure ComposeSearchParameterComponentChildren(xml : TXmlBuilder; elem : TFhirSearchParameterComponent);
     procedure ComposeSearchParameter(xml : TXmlBuilder; name : string; elem : TFhirSearchParameter);
     procedure ComposeSearchParameterChildren(xml : TXmlBuilder; elem : TFhirSearchParameter);
+{$ENDIF FHIR_SEARCHPARAMETER}
+{$IFDEF FHIR_SEQUENCE}
     procedure ComposeSequenceReferenceSeq(xml : TXmlBuilder; name : string; elem : TFhirSequenceReferenceSeq);
     procedure ComposeSequenceReferenceSeqChildren(xml : TXmlBuilder; elem : TFhirSequenceReferenceSeq);
     procedure ComposeSequenceVariant(xml : TXmlBuilder; name : string; elem : TFhirSequenceVariant);
@@ -1893,10 +2334,16 @@ Type
     procedure ComposeSequenceRepositoryChildren(xml : TXmlBuilder; elem : TFhirSequenceRepository);
     procedure ComposeSequence(xml : TXmlBuilder; name : string; elem : TFhirSequence);
     procedure ComposeSequenceChildren(xml : TXmlBuilder; elem : TFhirSequence);
+{$ENDIF FHIR_SEQUENCE}
+{$IFDEF FHIR_SERVICEDEFINITION}
     procedure ComposeServiceDefinition(xml : TXmlBuilder; name : string; elem : TFhirServiceDefinition);
     procedure ComposeServiceDefinitionChildren(xml : TXmlBuilder; elem : TFhirServiceDefinition);
+{$ENDIF FHIR_SERVICEDEFINITION}
+{$IFDEF FHIR_SLOT}
     procedure ComposeSlot(xml : TXmlBuilder; name : string; elem : TFhirSlot);
     procedure ComposeSlotChildren(xml : TXmlBuilder; elem : TFhirSlot);
+{$ENDIF FHIR_SLOT}
+{$IFDEF FHIR_SPECIMEN}
     procedure ComposeSpecimenCollection(xml : TXmlBuilder; name : string; elem : TFhirSpecimenCollection);
     procedure ComposeSpecimenCollectionChildren(xml : TXmlBuilder; elem : TFhirSpecimenCollection);
     procedure ComposeSpecimenProcessing(xml : TXmlBuilder; name : string; elem : TFhirSpecimenProcessing);
@@ -1905,6 +2352,8 @@ Type
     procedure ComposeSpecimenContainerChildren(xml : TXmlBuilder; elem : TFhirSpecimenContainer);
     procedure ComposeSpecimen(xml : TXmlBuilder; name : string; elem : TFhirSpecimen);
     procedure ComposeSpecimenChildren(xml : TXmlBuilder; elem : TFhirSpecimen);
+{$ENDIF FHIR_SPECIMEN}
+{$IFDEF FHIR_STRUCTUREDEFINITION}
     procedure ComposeStructureDefinitionMapping(xml : TXmlBuilder; name : string; elem : TFhirStructureDefinitionMapping);
     procedure ComposeStructureDefinitionMappingChildren(xml : TXmlBuilder; elem : TFhirStructureDefinitionMapping);
     procedure ComposeStructureDefinitionSnapshot(xml : TXmlBuilder; name : string; elem : TFhirStructureDefinitionSnapshot);
@@ -1913,6 +2362,8 @@ Type
     procedure ComposeStructureDefinitionDifferentialChildren(xml : TXmlBuilder; elem : TFhirStructureDefinitionDifferential);
     procedure ComposeStructureDefinition(xml : TXmlBuilder; name : string; elem : TFhirStructureDefinition);
     procedure ComposeStructureDefinitionChildren(xml : TXmlBuilder; elem : TFhirStructureDefinition);
+{$ENDIF FHIR_STRUCTUREDEFINITION}
+{$IFDEF FHIR_STRUCTUREMAP}
     procedure ComposeStructureMapStructure(xml : TXmlBuilder; name : string; elem : TFhirStructureMapStructure);
     procedure ComposeStructureMapStructureChildren(xml : TXmlBuilder; elem : TFhirStructureMapStructure);
     procedure ComposeStructureMapGroup(xml : TXmlBuilder; name : string; elem : TFhirStructureMapGroup);
@@ -1931,26 +2382,36 @@ Type
     procedure ComposeStructureMapGroupRuleDependentChildren(xml : TXmlBuilder; elem : TFhirStructureMapGroupRuleDependent);
     procedure ComposeStructureMap(xml : TXmlBuilder; name : string; elem : TFhirStructureMap);
     procedure ComposeStructureMapChildren(xml : TXmlBuilder; elem : TFhirStructureMap);
+{$ENDIF FHIR_STRUCTUREMAP}
+{$IFDEF FHIR_SUBSCRIPTION}
     procedure ComposeSubscriptionChannel(xml : TXmlBuilder; name : string; elem : TFhirSubscriptionChannel);
     procedure ComposeSubscriptionChannelChildren(xml : TXmlBuilder; elem : TFhirSubscriptionChannel);
     procedure ComposeSubscription(xml : TXmlBuilder; name : string; elem : TFhirSubscription);
     procedure ComposeSubscriptionChildren(xml : TXmlBuilder; elem : TFhirSubscription);
+{$ENDIF FHIR_SUBSCRIPTION}
+{$IFDEF FHIR_SUBSTANCE}
     procedure ComposeSubstanceInstance(xml : TXmlBuilder; name : string; elem : TFhirSubstanceInstance);
     procedure ComposeSubstanceInstanceChildren(xml : TXmlBuilder; elem : TFhirSubstanceInstance);
     procedure ComposeSubstanceIngredient(xml : TXmlBuilder; name : string; elem : TFhirSubstanceIngredient);
     procedure ComposeSubstanceIngredientChildren(xml : TXmlBuilder; elem : TFhirSubstanceIngredient);
     procedure ComposeSubstance(xml : TXmlBuilder; name : string; elem : TFhirSubstance);
     procedure ComposeSubstanceChildren(xml : TXmlBuilder; elem : TFhirSubstance);
+{$ENDIF FHIR_SUBSTANCE}
+{$IFDEF FHIR_SUPPLYDELIVERY}
     procedure ComposeSupplyDeliverySuppliedItem(xml : TXmlBuilder; name : string; elem : TFhirSupplyDeliverySuppliedItem);
     procedure ComposeSupplyDeliverySuppliedItemChildren(xml : TXmlBuilder; elem : TFhirSupplyDeliverySuppliedItem);
     procedure ComposeSupplyDelivery(xml : TXmlBuilder; name : string; elem : TFhirSupplyDelivery);
     procedure ComposeSupplyDeliveryChildren(xml : TXmlBuilder; elem : TFhirSupplyDelivery);
+{$ENDIF FHIR_SUPPLYDELIVERY}
+{$IFDEF FHIR_SUPPLYREQUEST}
     procedure ComposeSupplyRequestOrderedItem(xml : TXmlBuilder; name : string; elem : TFhirSupplyRequestOrderedItem);
     procedure ComposeSupplyRequestOrderedItemChildren(xml : TXmlBuilder; elem : TFhirSupplyRequestOrderedItem);
     procedure ComposeSupplyRequestRequester(xml : TXmlBuilder; name : string; elem : TFhirSupplyRequestRequester);
     procedure ComposeSupplyRequestRequesterChildren(xml : TXmlBuilder; elem : TFhirSupplyRequestRequester);
     procedure ComposeSupplyRequest(xml : TXmlBuilder; name : string; elem : TFhirSupplyRequest);
     procedure ComposeSupplyRequestChildren(xml : TXmlBuilder; elem : TFhirSupplyRequest);
+{$ENDIF FHIR_SUPPLYREQUEST}
+{$IFDEF FHIR_TASK}
     procedure ComposeTaskRequester(xml : TXmlBuilder; name : string; elem : TFhirTaskRequester);
     procedure ComposeTaskRequesterChildren(xml : TXmlBuilder; elem : TFhirTaskRequester);
     procedure ComposeTaskRestriction(xml : TXmlBuilder; name : string; elem : TFhirTaskRestriction);
@@ -1961,6 +2422,8 @@ Type
     procedure ComposeTaskOutputChildren(xml : TXmlBuilder; elem : TFhirTaskOutput);
     procedure ComposeTask(xml : TXmlBuilder; name : string; elem : TFhirTask);
     procedure ComposeTaskChildren(xml : TXmlBuilder; elem : TFhirTask);
+{$ENDIF FHIR_TASK}
+{$IFDEF FHIR_TESTREPORT}
     procedure ComposeTestReportParticipant(xml : TXmlBuilder; name : string; elem : TFhirTestReportParticipant);
     procedure ComposeTestReportParticipantChildren(xml : TXmlBuilder; elem : TFhirTestReportParticipant);
     procedure ComposeTestReportSetup(xml : TXmlBuilder; name : string; elem : TFhirTestReportSetup);
@@ -1981,6 +2444,8 @@ Type
     procedure ComposeTestReportTeardownActionChildren(xml : TXmlBuilder; elem : TFhirTestReportTeardownAction);
     procedure ComposeTestReport(xml : TXmlBuilder; name : string; elem : TFhirTestReport);
     procedure ComposeTestReportChildren(xml : TXmlBuilder; elem : TFhirTestReport);
+{$ENDIF FHIR_TESTREPORT}
+{$IFDEF FHIR_TESTSCRIPT}
     procedure ComposeTestScriptOrigin(xml : TXmlBuilder; name : string; elem : TFhirTestScriptOrigin);
     procedure ComposeTestScriptOriginChildren(xml : TXmlBuilder; elem : TFhirTestScriptOrigin);
     procedure ComposeTestScriptDestination(xml : TXmlBuilder; name : string; elem : TFhirTestScriptDestination);
@@ -2035,6 +2500,8 @@ Type
     procedure ComposeTestScriptTeardownActionChildren(xml : TXmlBuilder; elem : TFhirTestScriptTeardownAction);
     procedure ComposeTestScript(xml : TXmlBuilder; name : string; elem : TFhirTestScript);
     procedure ComposeTestScriptChildren(xml : TXmlBuilder; elem : TFhirTestScript);
+{$ENDIF FHIR_TESTSCRIPT}
+{$IFDEF FHIR_VALUESET}
     procedure ComposeValueSetCompose(xml : TXmlBuilder; name : string; elem : TFhirValueSetCompose);
     procedure ComposeValueSetComposeChildren(xml : TXmlBuilder; elem : TFhirValueSetCompose);
     procedure ComposeValueSetComposeInclude(xml : TXmlBuilder; name : string; elem : TFhirValueSetComposeInclude);
@@ -2053,10 +2520,13 @@ Type
     procedure ComposeValueSetExpansionContainsChildren(xml : TXmlBuilder; elem : TFhirValueSetExpansionContains);
     procedure ComposeValueSet(xml : TXmlBuilder; name : string; elem : TFhirValueSet);
     procedure ComposeValueSetChildren(xml : TXmlBuilder; elem : TFhirValueSet);
+{$ENDIF FHIR_VALUESET}
+{$IFDEF FHIR_VISIONPRESCRIPTION}
     procedure ComposeVisionPrescriptionDispense(xml : TXmlBuilder; name : string; elem : TFhirVisionPrescriptionDispense);
     procedure ComposeVisionPrescriptionDispenseChildren(xml : TXmlBuilder; elem : TFhirVisionPrescriptionDispense);
     procedure ComposeVisionPrescription(xml : TXmlBuilder; name : string; elem : TFhirVisionPrescription);
     procedure ComposeVisionPrescriptionChildren(xml : TXmlBuilder; elem : TFhirVisionPrescription);
+{$ENDIF FHIR_VISIONPRESCRIPTION}
     procedure ComposeResource(xml : TXmlBuilder; resource : TFhirResource; links : TFhirBundleLinkList); override;
     procedure ComposeBase(xml : TXmlBuilder; name : String; base : TFHIRObject); override;
   end;
@@ -2933,6 +3403,7 @@ begin
       ComposeExtension(xml, 'modifierExtension', elem.modifierExtensionList[i]);
 end;
 
+{$IFDEF FHIR_PARAMETERS}
 function TFHIRXmlParser.ParseParametersParameter(element : TMXmlElement; path : string) : TFhirParametersParameter;
 var
   child : TMXmlElement;
@@ -3197,6 +3668,7 @@ begin
       ComposeParametersParameter(xml, 'parameter', elem.parameterList[i]);
 end;
 
+{$ENDIF FHIR_PARAMETERS}
 function TFHIRXmlParser.ParseExtension(element : TMXmlElement; path : string) : TFhirExtension;
 var
   child : TMXmlElement;
@@ -6962,6 +7434,7 @@ begin
   composeQuantityChildren(xml, elem);
 end;
 
+{$IFDEF FHIR_ACCOUNT}
 function TFHIRXmlParser.ParseAccountCoverage(element : TMXmlElement; path : string) : TFhirAccountCoverage;
 var
   child : TMXmlElement;
@@ -7170,6 +7643,8 @@ begin
       ComposeAccountGuarantor(xml, 'guarantor', elem.guarantorList[i]);
 end;
 
+{$ENDIF FHIR_ACCOUNT}
+{$IFDEF FHIR_ACTIVITYDEFINITION}
 function TFHIRXmlParser.ParseActivityDefinitionParticipant(element : TMXmlElement; path : string) : TFhirActivityDefinitionParticipant;
 var
   child : TMXmlElement;
@@ -7495,6 +7970,8 @@ begin
       ComposeActivityDefinitionDynamicValue(xml, 'dynamicValue', elem.dynamicValueList[i]);
 end;
 
+{$ENDIF FHIR_ACTIVITYDEFINITION}
+{$IFDEF FHIR_ADVERSEEVENT}
 function TFHIRXmlParser.ParseAdverseEventSuspectEntity(element : TMXmlElement; path : string) : TFhirAdverseEventSuspectEntity;
 var
   child : TMXmlElement;
@@ -7684,6 +8161,8 @@ begin
       ComposeReference{TFhirResearchStudy}(xml, 'study', elem.studyList[i]);
 end;
 
+{$ENDIF FHIR_ADVERSEEVENT}
+{$IFDEF FHIR_ALLERGYINTOLERANCE}
 function TFHIRXmlParser.ParseAllergyIntoleranceReaction(element : TMXmlElement; path : string) : TFhirAllergyIntoleranceReaction;
 var
   child : TMXmlElement;
@@ -7888,6 +8367,8 @@ begin
       ComposeAllergyIntoleranceReaction(xml, 'reaction', elem.reactionList[i]);
 end;
 
+{$ENDIF FHIR_ALLERGYINTOLERANCE}
+{$IFDEF FHIR_APPOINTMENT}
 function TFHIRXmlParser.ParseAppointmentParticipant(element : TMXmlElement; path : string) : TFhirAppointmentParticipant;
 var
   child : TMXmlElement;
@@ -8089,6 +8570,8 @@ begin
       ComposePeriod(xml, 'requestedPeriod', elem.requestedPeriodList[i]);
 end;
 
+{$ENDIF FHIR_APPOINTMENT}
+{$IFDEF FHIR_APPOINTMENTRESPONSE}
 function TFHIRXmlParser.ParseAppointmentResponse(element : TMXmlElement; path : string) : TFhirAppointmentResponse;
 var
   child : TMXmlElement;
@@ -8170,6 +8653,8 @@ begin
     ComposeString(xml, 'comment', elem.commentElement);{x.2b}
 end;
 
+{$ENDIF FHIR_APPOINTMENTRESPONSE}
+{$IFDEF FHIR_AUDITEVENT}
 function TFHIRXmlParser.ParseAuditEventAgent(element : TMXmlElement; path : string) : TFhirAuditEventAgent;
 var
   child : TMXmlElement;
@@ -8610,6 +9095,8 @@ begin
       ComposeAuditEventEntity(xml, 'entity', elem.entityList[i]);
 end;
 
+{$ENDIF FHIR_AUDITEVENT}
+{$IFDEF FHIR_BASIC}
 function TFHIRXmlParser.ParseBasic(element : TMXmlElement; path : string) : TFhirBasic;
 var
   child : TMXmlElement;
@@ -8678,6 +9165,8 @@ begin
     ComposeReference{Resource}(xml, 'author', elem.author);{x.2a}
 end;
 
+{$ENDIF FHIR_BASIC}
+{$IFDEF FHIR_BINARY}
 function TFHIRXmlParser.ParseBinary(element : TMXmlElement; path : string) : TFhirBinary;
 var
   child : TMXmlElement;
@@ -8735,6 +9224,8 @@ begin
     ComposeBase64Binary(xml, 'content', elem.contentElement);{x.2b}
 end;
 
+{$ENDIF FHIR_BINARY}
+{$IFDEF FHIR_BODYSITE}
 function TFHIRXmlParser.ParseBodySite(element : TMXmlElement; path : string) : TFhirBodySite;
 var
   child : TMXmlElement;
@@ -8813,6 +9304,8 @@ begin
     ComposeReference{TFhirPatient}(xml, 'patient', elem.patient);{x.2a}
 end;
 
+{$ENDIF FHIR_BODYSITE}
+{$IFDEF FHIR_BUNDLE}
 function TFHIRXmlParser.ParseBundleLink(element : TMXmlElement; path : string) : TFhirBundleLink;
 var
   child : TMXmlElement;
@@ -9198,6 +9691,8 @@ begin
     ComposeSignature(xml, 'signature', elem.signature);{x.2a}
 end;
 
+{$ENDIF FHIR_BUNDLE}
+{$IFDEF FHIR_CAPABILITYSTATEMENT}
 function TFHIRXmlParser.ParseCapabilityStatementSoftware(element : TMXmlElement; path : string) : TFhirCapabilityStatementSoftware;
 var
   child : TMXmlElement;
@@ -10314,6 +10809,8 @@ begin
       ComposeCapabilityStatementDocument(xml, 'document', elem.documentList[i]);
 end;
 
+{$ENDIF FHIR_CAPABILITYSTATEMENT}
+{$IFDEF FHIR_CAREPLAN}
 function TFHIRXmlParser.ParseCarePlanActivity(element : TMXmlElement; path : string) : TFhirCarePlanActivity;
 var
   child : TMXmlElement;
@@ -10651,6 +11148,8 @@ begin
       ComposeAnnotation(xml, 'note', elem.noteList[i]);
 end;
 
+{$ENDIF FHIR_CAREPLAN}
+{$IFDEF FHIR_CARETEAM}
 function TFHIRXmlParser.ParseCareTeamParticipant(element : TMXmlElement; path : string) : TFhirCareTeamParticipant;
 var
   child : TMXmlElement;
@@ -10814,6 +11313,8 @@ begin
       ComposeAnnotation(xml, 'note', elem.noteList[i]);
 end;
 
+{$ENDIF FHIR_CARETEAM}
+{$IFDEF FHIR_CHARGEITEM}
 function TFHIRXmlParser.ParseChargeItemParticipant(element : TMXmlElement; path : string) : TFhirChargeItemParticipant;
 var
   child : TMXmlElement;
@@ -11023,6 +11524,8 @@ begin
       ComposeReference{TFhirReference}(xml, 'supportingInformation', elem.supportingInformationList[i]);
 end;
 
+{$ENDIF FHIR_CHARGEITEM}
+{$IFDEF FHIR_CLAIM}
 function TFHIRXmlParser.ParseClaimRelated(element : TMXmlElement; path : string) : TFhirClaimRelated;
 var
   child : TMXmlElement;
@@ -12071,6 +12574,8 @@ begin
     ComposeMoney(xml, 'total', elem.total);{x.2a}
 end;
 
+{$ENDIF FHIR_CLAIM}
+{$IFDEF FHIR_CLAIMRESPONSE}
 function TFHIRXmlParser.ParseClaimResponseItem(element : TMXmlElement; path : string) : TFhirClaimResponseItem;
 var
   child : TMXmlElement;
@@ -12900,6 +13405,8 @@ begin
       ComposeClaimResponseInsurance(xml, 'insurance', elem.insuranceList[i]);
 end;
 
+{$ENDIF FHIR_CLAIMRESPONSE}
+{$IFDEF FHIR_CLINICALIMPRESSION}
 function TFHIRXmlParser.ParseClinicalImpressionInvestigation(element : TMXmlElement; path : string) : TFhirClinicalImpressionInvestigation;
 var
   child : TMXmlElement;
@@ -13149,6 +13656,8 @@ begin
       ComposeAnnotation(xml, 'note', elem.noteList[i]);
 end;
 
+{$ENDIF FHIR_CLINICALIMPRESSION}
+{$IFDEF FHIR_CODESYSTEM}
 function TFHIRXmlParser.ParseCodeSystemFilter(element : TMXmlElement; path : string) : TFhirCodeSystemFilter;
 var
   child : TMXmlElement;
@@ -13631,6 +14140,8 @@ begin
       ComposeCodeSystemConcept(xml, 'concept', elem.conceptList[i]);
 end;
 
+{$ENDIF FHIR_CODESYSTEM}
+{$IFDEF FHIR_COMMUNICATION}
 function TFHIRXmlParser.ParseCommunicationPayload(element : TMXmlElement; path : string) : TFhirCommunicationPayload;
 var
   child : TMXmlElement;
@@ -13827,6 +14338,8 @@ begin
       ComposeAnnotation(xml, 'note', elem.noteList[i]);
 end;
 
+{$ENDIF FHIR_COMMUNICATION}
+{$IFDEF FHIR_COMMUNICATIONREQUEST}
 function TFHIRXmlParser.ParseCommunicationRequestPayload(element : TMXmlElement; path : string) : TFhirCommunicationRequestPayload;
 var
   child : TMXmlElement;
@@ -14079,6 +14592,8 @@ begin
       ComposeAnnotation(xml, 'note', elem.noteList[i]);
 end;
 
+{$ENDIF FHIR_COMMUNICATIONREQUEST}
+{$IFDEF FHIR_COMPARTMENTDEFINITION}
 function TFHIRXmlParser.ParseCompartmentDefinitionResource(element : TMXmlElement; path : string) : TFhirCompartmentDefinitionResource;
 var
   child : TMXmlElement;
@@ -14250,6 +14765,8 @@ begin
       ComposeCompartmentDefinitionResource(xml, 'resource', elem.resourceList[i]);
 end;
 
+{$ENDIF FHIR_COMPARTMENTDEFINITION}
+{$IFDEF FHIR_COMPOSITION}
 function TFHIRXmlParser.ParseCompositionAttester(element : TMXmlElement; path : string) : TFhirCompositionAttester;
 var
   child : TMXmlElement;
@@ -14621,6 +15138,8 @@ begin
       ComposeCompositionSection(xml, 'section', elem.sectionList[i]);
 end;
 
+{$ENDIF FHIR_COMPOSITION}
+{$IFDEF FHIR_CONCEPTMAP}
 function TFHIRXmlParser.ParseConceptMapGroup(element : TMXmlElement; path : string) : TFhirConceptMapGroup;
 var
   child : TMXmlElement;
@@ -15079,6 +15598,8 @@ begin
       ComposeConceptMapGroup(xml, 'group', elem.groupList[i]);
 end;
 
+{$ENDIF FHIR_CONCEPTMAP}
+{$IFDEF FHIR_CONDITION}
 function TFHIRXmlParser.ParseConditionStage(element : TMXmlElement; path : string) : TFhirConditionStage;
 var
   child : TMXmlElement;
@@ -15344,6 +15865,8 @@ begin
       ComposeAnnotation(xml, 'note', elem.noteList[i]);
 end;
 
+{$ENDIF FHIR_CONDITION}
+{$IFDEF FHIR_CONSENT}
 function TFHIRXmlParser.ParseConsentActor(element : TMXmlElement; path : string) : TFhirConsentActor;
 var
   child : TMXmlElement;
@@ -15840,6 +16363,8 @@ begin
       ComposeConsentExcept(xml, 'except', elem.except_List[i]);
 end;
 
+{$ENDIF FHIR_CONSENT}
+{$IFDEF FHIR_CONTRACT}
 function TFHIRXmlParser.ParseContractAgent(element : TMXmlElement; path : string) : TFhirContractAgent;
 var
   child : TMXmlElement;
@@ -16597,6 +17122,8 @@ begin
       ComposeContractRule(xml, 'rule', elem.ruleList[i]);
 end;
 
+{$ENDIF FHIR_CONTRACT}
+{$IFDEF FHIR_COVERAGE}
 function TFHIRXmlParser.ParseCoverageGrouping(element : TMXmlElement; path : string) : TFhirCoverageGrouping;
 var
   child : TMXmlElement;
@@ -16804,6 +17331,8 @@ begin
       ComposeReference{TFhirContract}(xml, 'contract', elem.contractList[i]);
 end;
 
+{$ENDIF FHIR_COVERAGE}
+{$IFDEF FHIR_DATAELEMENT}
 function TFHIRXmlParser.ParseDataElementMapping(element : TMXmlElement; path : string) : TFhirDataElementMapping;
 var
   child : TMXmlElement;
@@ -16982,6 +17511,8 @@ begin
       ComposeElementDefinition(xml, 'element', elem.elementList[i]);
 end;
 
+{$ENDIF FHIR_DATAELEMENT}
+{$IFDEF FHIR_DETECTEDISSUE}
 function TFHIRXmlParser.ParseDetectedIssueMitigation(element : TMXmlElement; path : string) : TFhirDetectedIssueMitigation;
 var
   child : TMXmlElement;
@@ -17132,6 +17663,8 @@ begin
       ComposeDetectedIssueMitigation(xml, 'mitigation', elem.mitigationList[i]);
 end;
 
+{$ENDIF FHIR_DETECTEDISSUE}
+{$IFDEF FHIR_DEVICE}
 function TFHIRXmlParser.ParseDeviceUdi(element : TMXmlElement; path : string) : TFhirDeviceUdi;
 var
   child : TMXmlElement;
@@ -17324,6 +17857,8 @@ begin
       ComposeCodeableConcept(xml, 'safety', elem.safetyList[i]);
 end;
 
+{$ENDIF FHIR_DEVICE}
+{$IFDEF FHIR_DEVICECOMPONENT}
 function TFHIRXmlParser.ParseDeviceComponentProductionSpecification(element : TMXmlElement; path : string) : TFhirDeviceComponentProductionSpecification;
 var
   child : TMXmlElement;
@@ -17470,6 +18005,8 @@ begin
     ComposeCodeableConcept(xml, 'languageCode', elem.languageCode);{x.2a}
 end;
 
+{$ENDIF FHIR_DEVICECOMPONENT}
+{$IFDEF FHIR_DEVICEMETRIC}
 function TFHIRXmlParser.ParseDeviceMetricCalibration(element : TMXmlElement; path : string) : TFhirDeviceMetricCalibration;
 var
   child : TMXmlElement;
@@ -17615,6 +18152,8 @@ begin
       ComposeDeviceMetricCalibration(xml, 'calibration', elem.calibrationList[i]);
 end;
 
+{$ENDIF FHIR_DEVICEMETRIC}
+{$IFDEF FHIR_DEVICEREQUEST}
 function TFHIRXmlParser.ParseDeviceRequestRequester(element : TMXmlElement; path : string) : TFhirDeviceRequestRequester;
 var
   child : TMXmlElement;
@@ -17820,6 +18359,8 @@ begin
       ComposeReference{TFhirProvenance}(xml, 'relevantHistory', elem.relevantHistoryList[i]);
 end;
 
+{$ENDIF FHIR_DEVICEREQUEST}
+{$IFDEF FHIR_DEVICEUSESTATEMENT}
 function TFHIRXmlParser.ParseDeviceUseStatement(element : TMXmlElement; path : string) : TFhirDeviceUseStatement;
 var
   child : TMXmlElement;
@@ -17922,6 +18463,8 @@ begin
       ComposeAnnotation(xml, 'note', elem.noteList[i]);
 end;
 
+{$ENDIF FHIR_DEVICEUSESTATEMENT}
+{$IFDEF FHIR_DIAGNOSTICREPORT}
 function TFHIRXmlParser.ParseDiagnosticReportPerformer(element : TMXmlElement; path : string) : TFhirDiagnosticReportPerformer;
 var
   child : TMXmlElement;
@@ -18156,6 +18699,8 @@ begin
       ComposeAttachment(xml, 'presentedForm', elem.presentedFormList[i]);
 end;
 
+{$ENDIF FHIR_DIAGNOSTICREPORT}
+{$IFDEF FHIR_DOCUMENTMANIFEST}
 function TFHIRXmlParser.ParseDocumentManifestContent(element : TMXmlElement; path : string) : TFhirDocumentManifestContent;
 var
   child : TMXmlElement;
@@ -18362,6 +18907,8 @@ begin
       ComposeDocumentManifestRelated(xml, 'related', elem.relatedList[i]);
 end;
 
+{$ENDIF FHIR_DOCUMENTMANIFEST}
+{$IFDEF FHIR_DOCUMENTREFERENCE}
 function TFHIRXmlParser.ParseDocumentReferenceRelatesTo(element : TMXmlElement; path : string) : TFhirDocumentReferenceRelatesTo;
 var
   child : TMXmlElement;
@@ -18718,6 +19265,8 @@ begin
     ComposeDocumentReferenceContext(xml, 'context', elem.context);{x.2a}
 end;
 
+{$ENDIF FHIR_DOCUMENTREFERENCE}
+{$IFDEF FHIR_ELIGIBILITYREQUEST}
 function TFHIRXmlParser.ParseEligibilityRequest(element : TMXmlElement; path : string) : TFhirEligibilityRequest;
 var
   child : TMXmlElement;
@@ -18830,6 +19379,8 @@ begin
     ComposeCodeableConcept(xml, 'benefitSubCategory', elem.benefitSubCategory);{x.2a}
 end;
 
+{$ENDIF FHIR_ELIGIBILITYREQUEST}
+{$IFDEF FHIR_ELIGIBILITYRESPONSE}
 function TFHIRXmlParser.ParseEligibilityResponseInsurance(element : TMXmlElement; path : string) : TFhirEligibilityResponseInsurance;
 var
   child : TMXmlElement;
@@ -19194,6 +19745,8 @@ begin
       ComposeEligibilityResponseError(xml, 'error', elem.errorList[i]);
 end;
 
+{$ENDIF FHIR_ELIGIBILITYRESPONSE}
+{$IFDEF FHIR_ENCOUNTER}
 function TFHIRXmlParser.ParseEncounterStatusHistory(element : TMXmlElement; path : string) : TFhirEncounterStatusHistory;
 var
   child : TMXmlElement;
@@ -19702,6 +20255,8 @@ begin
     ComposeReference{TFhirEncounter}(xml, 'partOf', elem.partOf);{x.2a}
 end;
 
+{$ENDIF FHIR_ENCOUNTER}
+{$IFDEF FHIR_ENDPOINT}
 function TFHIRXmlParser.ParseEndpoint(element : TMXmlElement; path : string) : TFhirEndpoint;
 var
   child : TMXmlElement;
@@ -19798,6 +20353,8 @@ begin
       ComposeString(xml, 'header', elem.headerList[i]);
 end;
 
+{$ENDIF FHIR_ENDPOINT}
+{$IFDEF FHIR_ENROLLMENTREQUEST}
 function TFHIRXmlParser.ParseEnrollmentRequest(element : TMXmlElement; path : string) : TFhirEnrollmentRequest;
 var
   child : TMXmlElement;
@@ -19878,6 +20435,8 @@ begin
     ComposeReference{TFhirCoverage}(xml, 'coverage', elem.coverage);{x.2a}
 end;
 
+{$ENDIF FHIR_ENROLLMENTREQUEST}
+{$IFDEF FHIR_ENROLLMENTRESPONSE}
 function TFHIRXmlParser.ParseEnrollmentResponse(element : TMXmlElement; path : string) : TFhirEnrollmentResponse;
 var
   child : TMXmlElement;
@@ -19962,6 +20521,8 @@ begin
     ComposeReference{TFhirOrganization}(xml, 'requestOrganization', elem.requestOrganization);{x.2a}
 end;
 
+{$ENDIF FHIR_ENROLLMENTRESPONSE}
+{$IFDEF FHIR_EPISODEOFCARE}
 function TFHIRXmlParser.ParseEpisodeOfCareStatusHistory(element : TMXmlElement; path : string) : TFhirEpisodeOfCareStatusHistory;
 var
   child : TMXmlElement;
@@ -20174,6 +20735,8 @@ begin
       ComposeReference{TFhirAccount}(xml, 'account', elem.accountList[i]);
 end;
 
+{$ENDIF FHIR_EPISODEOFCARE}
+{$IFDEF FHIR_EXPANSIONPROFILE}
 function TFHIRXmlParser.ParseExpansionProfileFixedVersion(element : TMXmlElement; path : string) : TFhirExpansionProfileFixedVersion;
 var
   child : TMXmlElement;
@@ -20690,6 +21253,8 @@ begin
     ComposeBoolean(xml, 'limitedExpansion', elem.limitedExpansionElement);{x.2b}
 end;
 
+{$ENDIF FHIR_EXPANSIONPROFILE}
+{$IFDEF FHIR_EXPLANATIONOFBENEFIT}
 function TFHIRXmlParser.ParseExplanationOfBenefitRelated(element : TMXmlElement; path : string) : TFhirExplanationOfBenefitRelated;
 var
   child : TMXmlElement;
@@ -22308,6 +22873,8 @@ begin
       ComposeExplanationOfBenefitBenefitBalance(xml, 'benefitBalance', elem.benefitBalanceList[i]);
 end;
 
+{$ENDIF FHIR_EXPLANATIONOFBENEFIT}
+{$IFDEF FHIR_FAMILYMEMBERHISTORY}
 function TFHIRXmlParser.ParseFamilyMemberHistoryCondition(element : TMXmlElement; path : string) : TFhirFamilyMemberHistoryCondition;
 var
   child : TMXmlElement;
@@ -22541,6 +23108,8 @@ begin
       ComposeFamilyMemberHistoryCondition(xml, 'condition', elem.conditionList[i]);
 end;
 
+{$ENDIF FHIR_FAMILYMEMBERHISTORY}
+{$IFDEF FHIR_FLAG}
 function TFHIRXmlParser.ParseFlag(element : TMXmlElement; path : string) : TFhirFlag;
 var
   child : TMXmlElement;
@@ -22621,6 +23190,8 @@ begin
     ComposeReference{Resource}(xml, 'author', elem.author);{x.2a}
 end;
 
+{$ENDIF FHIR_FLAG}
+{$IFDEF FHIR_GOAL}
 function TFHIRXmlParser.ParseGoalTarget(element : TMXmlElement; path : string) : TFhirGoalTarget;
 var
   child : TMXmlElement;
@@ -22807,6 +23378,8 @@ begin
       ComposeReference{TFhirObservation}(xml, 'outcomeReference', elem.outcomeReferenceList[i]);
 end;
 
+{$ENDIF FHIR_GOAL}
+{$IFDEF FHIR_GRAPHDEFINITION}
 function TFHIRXmlParser.ParseGraphDefinitionLink(element : TMXmlElement; path : string) : TFhirGraphDefinitionLink;
 var
   child : TMXmlElement;
@@ -23116,6 +23689,8 @@ begin
       ComposeGraphDefinitionLink(xml, 'link', elem.link_List[i]);
 end;
 
+{$ENDIF FHIR_GRAPHDEFINITION}
+{$IFDEF FHIR_GROUP}
 function TFHIRXmlParser.ParseGroupCharacteristic(element : TMXmlElement; path : string) : TFhirGroupCharacteristic;
 var
   child : TMXmlElement;
@@ -23332,6 +23907,8 @@ begin
       ComposeGroupMember(xml, 'member', elem.memberList[i]);
 end;
 
+{$ENDIF FHIR_GROUP}
+{$IFDEF FHIR_GUIDANCERESPONSE}
 function TFHIRXmlParser.ParseGuidanceResponse(element : TMXmlElement; path : string) : TFhirGuidanceResponse;
 var
   child : TMXmlElement;
@@ -23442,6 +24019,8 @@ begin
       ComposeDataRequirement(xml, 'dataRequirement', elem.dataRequirementList[i]);
 end;
 
+{$ENDIF FHIR_GUIDANCERESPONSE}
+{$IFDEF FHIR_HEALTHCARESERVICE}
 function TFHIRXmlParser.ParseHealthcareServiceAvailableTime(element : TMXmlElement; path : string) : TFhirHealthcareServiceAvailableTime;
 var
   child : TMXmlElement;
@@ -23715,6 +24294,8 @@ begin
       ComposeReference{TFhirEndpoint}(xml, 'endpoint', elem.endpointList[i]);
 end;
 
+{$ENDIF FHIR_HEALTHCARESERVICE}
+{$IFDEF FHIR_IMAGINGMANIFEST}
 function TFHIRXmlParser.ParseImagingManifestStudy(element : TMXmlElement; path : string) : TFhirImagingManifestStudy;
 var
   child : TMXmlElement;
@@ -23966,6 +24547,8 @@ begin
       ComposeImagingManifestStudy(xml, 'study', elem.studyList[i]);
 end;
 
+{$ENDIF FHIR_IMAGINGMANIFEST}
+{$IFDEF FHIR_IMAGINGSTUDY}
 function TFHIRXmlParser.ParseImagingStudySeries(element : TMXmlElement; path : string) : TFhirImagingStudySeries;
 var
   child : TMXmlElement;
@@ -24256,6 +24839,8 @@ begin
       ComposeImagingStudySeries(xml, 'series', elem.seriesList[i]);
 end;
 
+{$ENDIF FHIR_IMAGINGSTUDY}
+{$IFDEF FHIR_IMMUNIZATION}
 function TFHIRXmlParser.ParseImmunizationPractitioner(element : TMXmlElement; path : string) : TFhirImmunizationPractitioner;
 var
   child : TMXmlElement;
@@ -24639,6 +25224,8 @@ begin
       ComposeImmunizationVaccinationProtocol(xml, 'vaccinationProtocol', elem.vaccinationProtocolList[i]);
 end;
 
+{$ENDIF FHIR_IMMUNIZATION}
+{$IFDEF FHIR_IMMUNIZATIONRECOMMENDATION}
 function TFHIRXmlParser.ParseImmunizationRecommendationRecommendation(element : TMXmlElement; path : string) : TFhirImmunizationRecommendationRecommendation;
 var
   child : TMXmlElement;
@@ -24900,6 +25487,8 @@ begin
       ComposeImmunizationRecommendationRecommendation(xml, 'recommendation', elem.recommendationList[i]);
 end;
 
+{$ENDIF FHIR_IMMUNIZATIONRECOMMENDATION}
+{$IFDEF FHIR_IMPLEMENTATIONGUIDE}
 function TFHIRXmlParser.ParseImplementationGuideDependency(element : TMXmlElement; path : string) : TFhirImplementationGuideDependency;
 var
   child : TMXmlElement;
@@ -25343,6 +25932,8 @@ begin
     ComposeImplementationGuidePage(xml, 'page', elem.page);{x.2a}
 end;
 
+{$ENDIF FHIR_IMPLEMENTATIONGUIDE}
+{$IFDEF FHIR_LIBRARY}
 function TFHIRXmlParser.ParseLibrary(element : TMXmlElement; path : string) : TFhirLibrary;
 var
   child : TMXmlElement;
@@ -25504,6 +26095,8 @@ begin
       ComposeAttachment(xml, 'content', elem.contentList[i]);
 end;
 
+{$ENDIF FHIR_LIBRARY}
+{$IFDEF FHIR_LINKAGE}
 function TFHIRXmlParser.ParseLinkageItem(element : TMXmlElement; path : string) : TFhirLinkageItem;
 var
   child : TMXmlElement;
@@ -25617,6 +26210,8 @@ begin
       ComposeLinkageItem(xml, 'item', elem.itemList[i]);
 end;
 
+{$ENDIF FHIR_LINKAGE}
+{$IFDEF FHIR_LIST}
 function TFHIRXmlParser.ParseListEntry(element : TMXmlElement; path : string) : TFhirListEntry;
 var
   child : TMXmlElement;
@@ -25780,6 +26375,8 @@ begin
     ComposeCodeableConcept(xml, 'emptyReason', elem.emptyReason);{x.2a}
 end;
 
+{$ENDIF FHIR_LIST}
+{$IFDEF FHIR_LOCATION}
 function TFHIRXmlParser.ParseLocationPosition(element : TMXmlElement; path : string) : TFhirLocationPosition;
 var
   child : TMXmlElement;
@@ -25948,6 +26545,8 @@ begin
       ComposeReference{TFhirEndpoint}(xml, 'endpoint', elem.endpointList[i]);
 end;
 
+{$ENDIF FHIR_LOCATION}
+{$IFDEF FHIR_MEASURE}
 function TFHIRXmlParser.ParseMeasureGroup(element : TMXmlElement; path : string) : TFhirMeasureGroup;
 var
   child : TMXmlElement;
@@ -26410,6 +27009,8 @@ begin
       ComposeMeasureSupplementalData(xml, 'supplementalData', elem.supplementalDataList[i]);
 end;
 
+{$ENDIF FHIR_MEASURE}
+{$IFDEF FHIR_MEASUREREPORT}
 function TFHIRXmlParser.ParseMeasureReportGroup(element : TMXmlElement; path : string) : TFhirMeasureReportGroup;
 var
   child : TMXmlElement;
@@ -26801,6 +27402,8 @@ begin
     ComposeReference{TFhirBundle}(xml, 'evaluatedResources', elem.evaluatedResources);{x.2a}
 end;
 
+{$ENDIF FHIR_MEASUREREPORT}
+{$IFDEF FHIR_MEDIA}
 function TFHIRXmlParser.ParseMedia(element : TMXmlElement; path : string) : TFhirMedia;
 var
   child : TMXmlElement;
@@ -26928,6 +27531,8 @@ begin
       ComposeAnnotation(xml, 'note', elem.noteList[i]);
 end;
 
+{$ENDIF FHIR_MEDIA}
+{$IFDEF FHIR_MEDICATION}
 function TFHIRXmlParser.ParseMedicationIngredient(element : TMXmlElement; path : string) : TFhirMedicationIngredient;
 var
   child : TMXmlElement;
@@ -27245,6 +27850,8 @@ begin
       ComposeAttachment(xml, 'image', elem.imageList[i]);
 end;
 
+{$ENDIF FHIR_MEDICATION}
+{$IFDEF FHIR_MEDICATIONADMINISTRATION}
 function TFHIRXmlParser.ParseMedicationAdministrationPerformer(element : TMXmlElement; path : string) : TFhirMedicationAdministrationPerformer;
 var
   child : TMXmlElement;
@@ -27517,6 +28124,8 @@ begin
       ComposeReference{TFhirProvenance}(xml, 'eventHistory', elem.eventHistoryList[i]);
 end;
 
+{$ENDIF FHIR_MEDICATIONADMINISTRATION}
+{$IFDEF FHIR_MEDICATIONDISPENSE}
 function TFHIRXmlParser.ParseMedicationDispensePerformer(element : TMXmlElement; path : string) : TFhirMedicationDispensePerformer;
 var
   child : TMXmlElement;
@@ -27796,6 +28405,8 @@ begin
       ComposeReference{TFhirProvenance}(xml, 'eventHistory', elem.eventHistoryList[i]);
 end;
 
+{$ENDIF FHIR_MEDICATIONDISPENSE}
+{$IFDEF FHIR_MEDICATIONREQUEST}
 function TFHIRXmlParser.ParseMedicationRequestRequester(element : TMXmlElement; path : string) : TFhirMedicationRequestRequester;
 var
   child : TMXmlElement;
@@ -28124,6 +28735,8 @@ begin
       ComposeReference{TFhirProvenance}(xml, 'eventHistory', elem.eventHistoryList[i]);
 end;
 
+{$ENDIF FHIR_MEDICATIONREQUEST}
+{$IFDEF FHIR_MEDICATIONSTATEMENT}
 function TFHIRXmlParser.ParseMedicationStatement(element : TMXmlElement; path : string) : TFhirMedicationStatement;
 var
   child : TMXmlElement;
@@ -28260,6 +28873,8 @@ begin
       ComposeDosage(xml, 'dosage', elem.dosageList[i]);
 end;
 
+{$ENDIF FHIR_MEDICATIONSTATEMENT}
+{$IFDEF FHIR_MESSAGEDEFINITION}
 function TFHIRXmlParser.ParseMessageDefinitionFocus(element : TMXmlElement; path : string) : TFhirMessageDefinitionFocus;
 var
   child : TMXmlElement;
@@ -28520,6 +29135,8 @@ begin
       ComposeMessageDefinitionAllowedResponse(xml, 'allowedResponse', elem.allowedResponseList[i]);
 end;
 
+{$ENDIF FHIR_MESSAGEDEFINITION}
+{$IFDEF FHIR_MESSAGEHEADER}
 function TFHIRXmlParser.ParseMessageHeaderDestination(element : TMXmlElement; path : string) : TFhirMessageHeaderDestination;
 var
   child : TMXmlElement;
@@ -28796,6 +29413,8 @@ begin
       ComposeReference{TFhirReference}(xml, 'focus', elem.focusList[i]);
 end;
 
+{$ENDIF FHIR_MESSAGEHEADER}
+{$IFDEF FHIR_NAMINGSYSTEM}
 function TFHIRXmlParser.ParseNamingSystemUniqueId(element : TMXmlElement; path : string) : TFhirNamingSystemUniqueId;
 var
   child : TMXmlElement;
@@ -28968,6 +29587,8 @@ begin
     ComposeReference{TFhirNamingSystem}(xml, 'replacedBy', elem.replacedBy);{x.2a}
 end;
 
+{$ENDIF FHIR_NAMINGSYSTEM}
+{$IFDEF FHIR_NUTRITIONORDER}
 function TFHIRXmlParser.ParseNutritionOrderOralDiet(element : TMXmlElement; path : string) : TFhirNutritionOrderOralDiet;
 var
   child : TMXmlElement;
@@ -29463,6 +30084,8 @@ begin
     ComposeNutritionOrderEnteralFormula(xml, 'enteralFormula', elem.enteralFormula);{x.2a}
 end;
 
+{$ENDIF FHIR_NUTRITIONORDER}
+{$IFDEF FHIR_OBSERVATION}
 function TFHIRXmlParser.ParseObservationReferenceRange(element : TMXmlElement; path : string) : TFhirObservationReferenceRange;
 var
   child : TMXmlElement;
@@ -29874,6 +30497,8 @@ begin
       ComposeObservationComponent(xml, 'component', elem.componentList[i]);
 end;
 
+{$ENDIF FHIR_OBSERVATION}
+{$IFDEF FHIR_OPERATIONDEFINITION}
 function TFHIRXmlParser.ParseOperationDefinitionParameter(element : TMXmlElement; path : string) : TFhirOperationDefinitionParameter;
 var
   child : TMXmlElement;
@@ -30220,6 +30845,8 @@ begin
       ComposeOperationDefinitionOverload(xml, 'overload', elem.overloadList[i]);
 end;
 
+{$ENDIF FHIR_OPERATIONDEFINITION}
+{$IFDEF FHIR_OPERATIONOUTCOME}
 function TFHIRXmlParser.ParseOperationOutcomeIssue(element : TMXmlElement; path : string) : TFhirOperationOutcomeIssue;
 var
   child : TMXmlElement;
@@ -30345,6 +30972,8 @@ begin
       ComposeOperationOutcomeIssue(xml, 'issue', elem.issueList[i]);
 end;
 
+{$ENDIF FHIR_OPERATIONOUTCOME}
+{$IFDEF FHIR_ORGANIZATION}
 function TFHIRXmlParser.ParseOrganizationContact(element : TMXmlElement; path : string) : TFhirOrganizationContact;
 var
   child : TMXmlElement;
@@ -30503,6 +31132,8 @@ begin
       ComposeReference{TFhirEndpoint}(xml, 'endpoint', elem.endpointList[i]);
 end;
 
+{$ENDIF FHIR_ORGANIZATION}
+{$IFDEF FHIR_PATIENT}
 function TFHIRXmlParser.ParsePatientContact(element : TMXmlElement; path : string) : TFhirPatientContact;
 var
   child : TMXmlElement;
@@ -30875,6 +31506,8 @@ begin
       ComposePatientLink(xml, 'link', elem.link_List[i]);
 end;
 
+{$ENDIF FHIR_PATIENT}
+{$IFDEF FHIR_PAYMENTNOTICE}
 function TFHIRXmlParser.ParsePaymentNotice(element : TMXmlElement; path : string) : TFhirPaymentNotice;
 var
   child : TMXmlElement;
@@ -30963,6 +31596,8 @@ begin
     ComposeCodeableConcept(xml, 'paymentStatus', elem.paymentStatus);{x.2a}
 end;
 
+{$ENDIF FHIR_PAYMENTNOTICE}
+{$IFDEF FHIR_PAYMENTRECONCILIATION}
 function TFHIRXmlParser.ParsePaymentReconciliationDetail(element : TMXmlElement; path : string) : TFhirPaymentReconciliationDetail;
 var
   child : TMXmlElement;
@@ -31195,6 +31830,8 @@ begin
       ComposePaymentReconciliationProcessNote(xml, 'processNote', elem.processNoteList[i]);
 end;
 
+{$ENDIF FHIR_PAYMENTRECONCILIATION}
+{$IFDEF FHIR_PERSON}
 function TFHIRXmlParser.ParsePersonLink(element : TMXmlElement; path : string) : TFhirPersonLink;
 var
   child : TMXmlElement;
@@ -31340,6 +31977,8 @@ begin
       ComposePersonLink(xml, 'link', elem.link_List[i]);
 end;
 
+{$ENDIF FHIR_PERSON}
+{$IFDEF FHIR_PLANDEFINITION}
 function TFHIRXmlParser.ParsePlanDefinitionGoal(element : TMXmlElement; path : string) : TFhirPlanDefinitionGoal;
 var
   child : TMXmlElement;
@@ -32055,6 +32694,8 @@ begin
       ComposePlanDefinitionAction(xml, 'action', elem.actionList[i]);
 end;
 
+{$ENDIF FHIR_PLANDEFINITION}
+{$IFDEF FHIR_PRACTITIONER}
 function TFHIRXmlParser.ParsePractitionerQualification(element : TMXmlElement; path : string) : TFhirPractitionerQualification;
 var
   child : TMXmlElement;
@@ -32213,6 +32854,8 @@ begin
       ComposeCodeableConcept(xml, 'communication', elem.communicationList[i]);
 end;
 
+{$ENDIF FHIR_PRACTITIONER}
+{$IFDEF FHIR_PRACTITIONERROLE}
 function TFHIRXmlParser.ParsePractitionerRoleAvailableTime(element : TMXmlElement; path : string) : TFhirPractitionerRoleAvailableTime;
 var
   child : TMXmlElement;
@@ -32442,6 +33085,8 @@ begin
       ComposeReference{TFhirEndpoint}(xml, 'endpoint', elem.endpointList[i]);
 end;
 
+{$ENDIF FHIR_PRACTITIONERROLE}
+{$IFDEF FHIR_PROCEDURE}
 function TFHIRXmlParser.ParseProcedurePerformer(element : TMXmlElement; path : string) : TFhirProcedurePerformer;
 var
   child : TMXmlElement;
@@ -32723,6 +33368,8 @@ begin
       ComposeCodeableConcept(xml, 'usedCode', elem.usedCodeList[i]);
 end;
 
+{$ENDIF FHIR_PROCEDURE}
+{$IFDEF FHIR_PROCEDUREREQUEST}
 function TFHIRXmlParser.ParseProcedureRequestRequester(element : TMXmlElement; path : string) : TFhirProcedureRequestRequester;
 var
   child : TMXmlElement;
@@ -32951,6 +33598,8 @@ begin
       ComposeReference{TFhirProvenance}(xml, 'relevantHistory', elem.relevantHistoryList[i]);
 end;
 
+{$ENDIF FHIR_PROCEDUREREQUEST}
+{$IFDEF FHIR_PROCESSREQUEST}
 function TFHIRXmlParser.ParseProcessRequestItem(element : TMXmlElement; path : string) : TFhirProcessRequestItem;
 var
   child : TMXmlElement;
@@ -33111,6 +33760,8 @@ begin
     ComposePeriod(xml, 'period', elem.period);{x.2a}
 end;
 
+{$ENDIF FHIR_PROCESSREQUEST}
+{$IFDEF FHIR_PROCESSRESPONSE}
 function TFHIRXmlParser.ParseProcessResponseProcessNote(element : TMXmlElement; path : string) : TFhirProcessResponseProcessNote;
 var
   child : TMXmlElement;
@@ -33267,6 +33918,8 @@ begin
       ComposeReference{TFhirCommunicationRequest}(xml, 'communicationRequest', elem.communicationRequestList[i]);
 end;
 
+{$ENDIF FHIR_PROCESSRESPONSE}
+{$IFDEF FHIR_PROVENANCE}
 function TFHIRXmlParser.ParseProvenanceAgent(element : TMXmlElement; path : string) : TFhirProvenanceAgent;
 var
   child : TMXmlElement;
@@ -33500,6 +34153,8 @@ begin
       ComposeSignature(xml, 'signature', elem.signatureList[i]);
 end;
 
+{$ENDIF FHIR_PROVENANCE}
+{$IFDEF FHIR_QUESTIONNAIRE}
 function TFHIRXmlParser.ParseQuestionnaireItem(element : TMXmlElement; path : string) : TFhirQuestionnaireItem;
 var
   child : TMXmlElement;
@@ -33959,6 +34614,8 @@ begin
       ComposeQuestionnaireItem(xml, 'item', elem.itemList[i]);
 end;
 
+{$ENDIF FHIR_QUESTIONNAIRE}
+{$IFDEF FHIR_QUESTIONNAIRERESPONSE}
 function TFHIRXmlParser.ParseQuestionnaireResponseItem(element : TMXmlElement; path : string) : TFhirQuestionnaireResponseItem;
 var
   child : TMXmlElement;
@@ -34226,6 +34883,8 @@ begin
       ComposeQuestionnaireResponseItem(xml, 'item', elem.itemList[i]);
 end;
 
+{$ENDIF FHIR_QUESTIONNAIRERESPONSE}
+{$IFDEF FHIR_REFERRALREQUEST}
 function TFHIRXmlParser.ParseReferralRequestRequester(element : TMXmlElement; path : string) : TFhirReferralRequestRequester;
 var
   child : TMXmlElement;
@@ -34433,6 +35092,8 @@ begin
       ComposeReference{TFhirProvenance}(xml, 'relevantHistory', elem.relevantHistoryList[i]);
 end;
 
+{$ENDIF FHIR_REFERRALREQUEST}
+{$IFDEF FHIR_RELATEDPERSON}
 function TFHIRXmlParser.ParseRelatedPerson(element : TMXmlElement; path : string) : TFhirRelatedPerson;
 var
   child : TMXmlElement;
@@ -34529,6 +35190,8 @@ begin
     ComposePeriod(xml, 'period', elem.period);{x.2a}
 end;
 
+{$ENDIF FHIR_RELATEDPERSON}
+{$IFDEF FHIR_REQUESTGROUP}
 function TFHIRXmlParser.ParseRequestGroupAction(element : TMXmlElement; path : string) : TFhirRequestGroupAction;
 var
   child : TMXmlElement;
@@ -34909,6 +35572,8 @@ begin
       ComposeRequestGroupAction(xml, 'action', elem.actionList[i]);
 end;
 
+{$ENDIF FHIR_REQUESTGROUP}
+{$IFDEF FHIR_RESEARCHSTUDY}
 function TFHIRXmlParser.ParseResearchStudyArm(element : TMXmlElement; path : string) : TFhirResearchStudyArm;
 var
   child : TMXmlElement;
@@ -35106,6 +35771,8 @@ begin
       ComposeResearchStudyArm(xml, 'arm', elem.armList[i]);
 end;
 
+{$ENDIF FHIR_RESEARCHSTUDY}
+{$IFDEF FHIR_RESEARCHSUBJECT}
 function TFHIRXmlParser.ParseResearchSubject(element : TMXmlElement; path : string) : TFhirResearchSubject;
 var
   child : TMXmlElement;
@@ -35183,6 +35850,8 @@ begin
     ComposeReference{TFhirConsent}(xml, 'consent', elem.consent);{x.2a}
 end;
 
+{$ENDIF FHIR_RESEARCHSUBJECT}
+{$IFDEF FHIR_RISKASSESSMENT}
 function TFHIRXmlParser.ParseRiskAssessmentPrediction(element : TMXmlElement; path : string) : TFhirRiskAssessmentPrediction;
 var
   child : TMXmlElement;
@@ -35381,6 +36050,8 @@ begin
     ComposeString(xml, 'comment', elem.commentElement);{x.2b}
 end;
 
+{$ENDIF FHIR_RISKASSESSMENT}
+{$IFDEF FHIR_SCHEDULE}
 function TFHIRXmlParser.ParseSchedule(element : TMXmlElement; path : string) : TFhirSchedule;
 var
   child : TMXmlElement;
@@ -35464,6 +36135,8 @@ begin
     ComposeString(xml, 'comment', elem.commentElement);{x.2b}
 end;
 
+{$ENDIF FHIR_SCHEDULE}
+{$IFDEF FHIR_SEARCHPARAMETER}
 function TFHIRXmlParser.ParseSearchParameterComponent(element : TMXmlElement; path : string) : TFhirSearchParameterComponent;
 var
   child : TMXmlElement;
@@ -35669,6 +36342,8 @@ begin
       ComposeSearchParameterComponent(xml, 'component', elem.componentList[i]);
 end;
 
+{$ENDIF FHIR_SEARCHPARAMETER}
+{$IFDEF FHIR_SEQUENCE}
 function TFHIRXmlParser.ParseSequenceReferenceSeq(element : TMXmlElement; path : string) : TFhirSequenceReferenceSeq;
 var
   child : TMXmlElement;
@@ -36097,6 +36772,8 @@ begin
       ComposeReference{TFhirSequence}(xml, 'pointer', elem.pointerList[i]);
 end;
 
+{$ENDIF FHIR_SEQUENCE}
+{$IFDEF FHIR_SERVICEDEFINITION}
 function TFHIRXmlParser.ParseServiceDefinition(element : TMXmlElement; path : string) : TFhirServiceDefinition;
 var
   child : TMXmlElement;
@@ -36253,6 +36930,8 @@ begin
     ComposeReference{TFhirOperationDefinition}(xml, 'operationDefinition', elem.operationDefinition);{x.2a}
 end;
 
+{$ENDIF FHIR_SERVICEDEFINITION}
+{$IFDEF FHIR_SLOT}
 function TFHIRXmlParser.ParseSlot(element : TMXmlElement; path : string) : TFhirSlot;
 var
   child : TMXmlElement;
@@ -36347,6 +37026,8 @@ begin
     ComposeString(xml, 'comment', elem.commentElement);{x.2b}
 end;
 
+{$ENDIF FHIR_SLOT}
+{$IFDEF FHIR_SPECIMEN}
 function TFHIRXmlParser.ParseSpecimenCollection(element : TMXmlElement; path : string) : TFhirSpecimenCollection;
 var
   child : TMXmlElement;
@@ -36661,6 +37342,8 @@ begin
       ComposeAnnotation(xml, 'note', elem.noteList[i]);
 end;
 
+{$ENDIF FHIR_SPECIMEN}
+{$IFDEF FHIR_STRUCTUREDEFINITION}
 function TFHIRXmlParser.ParseStructureDefinitionMapping(element : TMXmlElement; path : string) : TFhirStructureDefinitionMapping;
 var
   child : TMXmlElement;
@@ -36993,6 +37676,8 @@ begin
     ComposeStructureDefinitionDifferential(xml, 'differential', elem.differential);{x.2a}
 end;
 
+{$ENDIF FHIR_STRUCTUREDEFINITION}
+{$IFDEF FHIR_STRUCTUREMAP}
 function TFHIRXmlParser.ParseStructureMapStructure(element : TMXmlElement; path : string) : TFhirStructureMapStructure;
 var
   child : TMXmlElement;
@@ -37824,6 +38509,8 @@ begin
       ComposeStructureMapGroup(xml, 'group', elem.groupList[i]);
 end;
 
+{$ENDIF FHIR_STRUCTUREMAP}
+{$IFDEF FHIR_SUBSCRIPTION}
 function TFHIRXmlParser.ParseSubscriptionChannel(element : TMXmlElement; path : string) : TFhirSubscriptionChannel;
 var
   child : TMXmlElement;
@@ -37969,6 +38656,8 @@ begin
       ComposeCoding(xml, 'tag', elem.tagList[i]);
 end;
 
+{$ENDIF FHIR_SUBSCRIPTION}
+{$IFDEF FHIR_SUBSTANCE}
 function TFHIRXmlParser.ParseSubstanceInstance(element : TMXmlElement; path : string) : TFhirSubstanceInstance;
 var
   child : TMXmlElement;
@@ -38162,6 +38851,8 @@ begin
       ComposeSubstanceIngredient(xml, 'ingredient', elem.ingredientList[i]);
 end;
 
+{$ENDIF FHIR_SUBSTANCE}
+{$IFDEF FHIR_SUPPLYDELIVERY}
 function TFHIRXmlParser.ParseSupplyDeliverySuppliedItem(element : TMXmlElement; path : string) : TFhirSupplyDeliverySuppliedItem;
 var
   child : TMXmlElement;
@@ -38321,6 +39012,8 @@ begin
       ComposeReference{TFhirPractitioner}(xml, 'receiver', elem.receiverList[i]);
 end;
 
+{$ENDIF FHIR_SUPPLYDELIVERY}
+{$IFDEF FHIR_SUPPLYREQUEST}
 function TFHIRXmlParser.ParseSupplyRequestOrderedItem(element : TMXmlElement; path : string) : TFhirSupplyRequestOrderedItem;
 var
   child : TMXmlElement;
@@ -38539,6 +39232,8 @@ begin
     ComposeReference{Resource}(xml, 'deliverTo', elem.deliverTo);{x.2a}
 end;
 
+{$ENDIF FHIR_SUPPLYREQUEST}
+{$IFDEF FHIR_TASK}
 function TFHIRXmlParser.ParseTaskRequester(element : TMXmlElement; path : string) : TFhirTaskRequester;
 var
   child : TMXmlElement;
@@ -39221,6 +39916,8 @@ begin
       ComposeTaskOutput(xml, 'output', elem.outputList[i]);
 end;
 
+{$ENDIF FHIR_TASK}
+{$IFDEF FHIR_TESTREPORT}
 function TFHIRXmlParser.ParseTestReportParticipant(element : TMXmlElement; path : string) : TFhirTestReportParticipant;
 var
   child : TMXmlElement;
@@ -39808,6 +40505,8 @@ begin
     ComposeTestReportTeardown(xml, 'teardown', elem.teardown);{x.2a}
 end;
 
+{$ENDIF FHIR_TESTREPORT}
+{$IFDEF FHIR_TESTSCRIPT}
 function TFHIRXmlParser.ParseTestScriptOrigin(element : TMXmlElement; path : string) : TFhirTestScriptOrigin;
 var
   child : TMXmlElement;
@@ -41570,6 +42269,8 @@ begin
     ComposeTestScriptTeardown(xml, 'teardown', elem.teardown);{x.2a}
 end;
 
+{$ENDIF FHIR_TESTSCRIPT}
+{$IFDEF FHIR_VALUESET}
 function TFHIRXmlParser.ParseValueSetCompose(element : TMXmlElement; path : string) : TFhirValueSetCompose;
 var
   child : TMXmlElement;
@@ -42233,6 +42934,8 @@ begin
     ComposeValueSetExpansion(xml, 'expansion', elem.expansion);{x.2a}
 end;
 
+{$ENDIF FHIR_VALUESET}
+{$IFDEF FHIR_VISIONPRESCRIPTION}
 function TFHIRXmlParser.ParseVisionPrescriptionDispense(element : TMXmlElement; path : string) : TFhirVisionPrescriptionDispense;
 var
   child : TMXmlElement;
@@ -42426,244 +43129,711 @@ begin
       ComposeVisionPrescriptionDispense(xml, 'dispense', elem.dispenseList[i]);
 end;
 
+{$ENDIF FHIR_VISIONPRESCRIPTION}
 function TFHIRXmlParser.ParseResource(element : TMXmlElement; path : String) : TFhirResource;
 begin
   if (element = nil) Then
     Raise Exception.Create('error - element is nil')
+{$IFDEF FHIR_PARAMETERS}
   else if element.localName = 'Parameters' Then
     result := ParseParameters(element, path+'/Parameters')
-  else if element.localName = 'Account' Then
-    result := ParseAccount(element, path+'/Account')
-  else if element.localName = 'ActivityDefinition' Then
-    result := ParseActivityDefinition(element, path+'/ActivityDefinition')
-  else if element.localName = 'AdverseEvent' Then
-    result := ParseAdverseEvent(element, path+'/AdverseEvent')
-  else if element.localName = 'AllergyIntolerance' Then
-    result := ParseAllergyIntolerance(element, path+'/AllergyIntolerance')
-  else if element.localName = 'Appointment' Then
-    result := ParseAppointment(element, path+'/Appointment')
-  else if element.localName = 'AppointmentResponse' Then
-    result := ParseAppointmentResponse(element, path+'/AppointmentResponse')
-  else if element.localName = 'AuditEvent' Then
-    result := ParseAuditEvent(element, path+'/AuditEvent')
-  else if element.localName = 'Basic' Then
-    result := ParseBasic(element, path+'/Basic')
-  else if element.localName = 'Binary' Then
-    result := ParseBinary(element, path+'/Binary')
-  else if element.localName = 'BodySite' Then
-    result := ParseBodySite(element, path+'/BodySite')
-  else if element.localName = 'Bundle' Then
-    result := ParseBundle(element, path+'/Bundle')
-  else if element.localName = 'CapabilityStatement' Then
-    result := ParseCapabilityStatement(element, path+'/CapabilityStatement')
-  else if element.localName = 'CarePlan' Then
-    result := ParseCarePlan(element, path+'/CarePlan')
-  else if element.localName = 'CareTeam' Then
-    result := ParseCareTeam(element, path+'/CareTeam')
-  else if element.localName = 'ChargeItem' Then
-    result := ParseChargeItem(element, path+'/ChargeItem')
-  else if element.localName = 'Claim' Then
-    result := ParseClaim(element, path+'/Claim')
-  else if element.localName = 'ClaimResponse' Then
-    result := ParseClaimResponse(element, path+'/ClaimResponse')
-  else if element.localName = 'ClinicalImpression' Then
-    result := ParseClinicalImpression(element, path+'/ClinicalImpression')
-  else if element.localName = 'CodeSystem' Then
-    result := ParseCodeSystem(element, path+'/CodeSystem')
-  else if element.localName = 'Communication' Then
-    result := ParseCommunication(element, path+'/Communication')
-  else if element.localName = 'CommunicationRequest' Then
-    result := ParseCommunicationRequest(element, path+'/CommunicationRequest')
-  else if element.localName = 'CompartmentDefinition' Then
-    result := ParseCompartmentDefinition(element, path+'/CompartmentDefinition')
-  else if element.localName = 'Composition' Then
-    result := ParseComposition(element, path+'/Composition')
-  else if element.localName = 'ConceptMap' Then
-    result := ParseConceptMap(element, path+'/ConceptMap')
-  else if element.localName = 'Condition' Then
-    result := ParseCondition(element, path+'/Condition')
-  else if element.localName = 'Consent' Then
-    result := ParseConsent(element, path+'/Consent')
-  else if element.localName = 'Contract' Then
-    result := ParseContract(element, path+'/Contract')
-  else if element.localName = 'Coverage' Then
-    result := ParseCoverage(element, path+'/Coverage')
-  else if element.localName = 'DataElement' Then
-    result := ParseDataElement(element, path+'/DataElement')
-  else if element.localName = 'DetectedIssue' Then
-    result := ParseDetectedIssue(element, path+'/DetectedIssue')
-  else if element.localName = 'Device' Then
-    result := ParseDevice(element, path+'/Device')
-  else if element.localName = 'DeviceComponent' Then
-    result := ParseDeviceComponent(element, path+'/DeviceComponent')
-  else if element.localName = 'DeviceMetric' Then
-    result := ParseDeviceMetric(element, path+'/DeviceMetric')
-  else if element.localName = 'DeviceRequest' Then
-    result := ParseDeviceRequest(element, path+'/DeviceRequest')
-  else if element.localName = 'DeviceUseStatement' Then
-    result := ParseDeviceUseStatement(element, path+'/DeviceUseStatement')
-  else if element.localName = 'DiagnosticReport' Then
-    result := ParseDiagnosticReport(element, path+'/DiagnosticReport')
-  else if element.localName = 'DocumentManifest' Then
-    result := ParseDocumentManifest(element, path+'/DocumentManifest')
-  else if element.localName = 'DocumentReference' Then
-    result := ParseDocumentReference(element, path+'/DocumentReference')
-  else if element.localName = 'EligibilityRequest' Then
-    result := ParseEligibilityRequest(element, path+'/EligibilityRequest')
-  else if element.localName = 'EligibilityResponse' Then
-    result := ParseEligibilityResponse(element, path+'/EligibilityResponse')
-  else if element.localName = 'Encounter' Then
-    result := ParseEncounter(element, path+'/Encounter')
-  else if element.localName = 'Endpoint' Then
-    result := ParseEndpoint(element, path+'/Endpoint')
-  else if element.localName = 'EnrollmentRequest' Then
-    result := ParseEnrollmentRequest(element, path+'/EnrollmentRequest')
-  else if element.localName = 'EnrollmentResponse' Then
-    result := ParseEnrollmentResponse(element, path+'/EnrollmentResponse')
-  else if element.localName = 'EpisodeOfCare' Then
-    result := ParseEpisodeOfCare(element, path+'/EpisodeOfCare')
-  else if element.localName = 'ExpansionProfile' Then
-    result := ParseExpansionProfile(element, path+'/ExpansionProfile')
-  else if element.localName = 'ExplanationOfBenefit' Then
-    result := ParseExplanationOfBenefit(element, path+'/ExplanationOfBenefit')
-  else if element.localName = 'FamilyMemberHistory' Then
-    result := ParseFamilyMemberHistory(element, path+'/FamilyMemberHistory')
-  else if element.localName = 'Flag' Then
-    result := ParseFlag(element, path+'/Flag')
-  else if element.localName = 'Goal' Then
-    result := ParseGoal(element, path+'/Goal')
-  else if element.localName = 'GraphDefinition' Then
-    result := ParseGraphDefinition(element, path+'/GraphDefinition')
-  else if element.localName = 'Group' Then
-    result := ParseGroup(element, path+'/Group')
-  else if element.localName = 'GuidanceResponse' Then
-    result := ParseGuidanceResponse(element, path+'/GuidanceResponse')
-  else if element.localName = 'HealthcareService' Then
-    result := ParseHealthcareService(element, path+'/HealthcareService')
-  else if element.localName = 'ImagingManifest' Then
-    result := ParseImagingManifest(element, path+'/ImagingManifest')
-  else if element.localName = 'ImagingStudy' Then
-    result := ParseImagingStudy(element, path+'/ImagingStudy')
-  else if element.localName = 'Immunization' Then
-    result := ParseImmunization(element, path+'/Immunization')
-  else if element.localName = 'ImmunizationRecommendation' Then
-    result := ParseImmunizationRecommendation(element, path+'/ImmunizationRecommendation')
-  else if element.localName = 'ImplementationGuide' Then
-    result := ParseImplementationGuide(element, path+'/ImplementationGuide')
-  else if element.localName = 'Library' Then
-    result := ParseLibrary(element, path+'/Library')
-  else if element.localName = 'Linkage' Then
-    result := ParseLinkage(element, path+'/Linkage')
-  else if element.localName = 'List' Then
-    result := ParseList(element, path+'/List')
-  else if element.localName = 'Location' Then
-    result := ParseLocation(element, path+'/Location')
-  else if element.localName = 'Measure' Then
-    result := ParseMeasure(element, path+'/Measure')
-  else if element.localName = 'MeasureReport' Then
-    result := ParseMeasureReport(element, path+'/MeasureReport')
-  else if element.localName = 'Media' Then
-    result := ParseMedia(element, path+'/Media')
-  else if element.localName = 'Medication' Then
-    result := ParseMedication(element, path+'/Medication')
-  else if element.localName = 'MedicationAdministration' Then
-    result := ParseMedicationAdministration(element, path+'/MedicationAdministration')
-  else if element.localName = 'MedicationDispense' Then
-    result := ParseMedicationDispense(element, path+'/MedicationDispense')
-  else if element.localName = 'MedicationRequest' Then
-    result := ParseMedicationRequest(element, path+'/MedicationRequest')
-  else if element.localName = 'MedicationStatement' Then
-    result := ParseMedicationStatement(element, path+'/MedicationStatement')
-  else if element.localName = 'MessageDefinition' Then
-    result := ParseMessageDefinition(element, path+'/MessageDefinition')
-  else if element.localName = 'MessageHeader' Then
-    result := ParseMessageHeader(element, path+'/MessageHeader')
-  else if element.localName = 'NamingSystem' Then
-    result := ParseNamingSystem(element, path+'/NamingSystem')
-  else if element.localName = 'NutritionOrder' Then
-    result := ParseNutritionOrder(element, path+'/NutritionOrder')
-  else if element.localName = 'Observation' Then
-    result := ParseObservation(element, path+'/Observation')
-  else if element.localName = 'OperationDefinition' Then
-    result := ParseOperationDefinition(element, path+'/OperationDefinition')
-  else if element.localName = 'OperationOutcome' Then
-    result := ParseOperationOutcome(element, path+'/OperationOutcome')
-  else if element.localName = 'Organization' Then
-    result := ParseOrganization(element, path+'/Organization')
-  else if element.localName = 'Patient' Then
-    result := ParsePatient(element, path+'/Patient')
-  else if element.localName = 'PaymentNotice' Then
-    result := ParsePaymentNotice(element, path+'/PaymentNotice')
-  else if element.localName = 'PaymentReconciliation' Then
-    result := ParsePaymentReconciliation(element, path+'/PaymentReconciliation')
-  else if element.localName = 'Person' Then
-    result := ParsePerson(element, path+'/Person')
-  else if element.localName = 'PlanDefinition' Then
-    result := ParsePlanDefinition(element, path+'/PlanDefinition')
-  else if element.localName = 'Practitioner' Then
-    result := ParsePractitioner(element, path+'/Practitioner')
-  else if element.localName = 'PractitionerRole' Then
-    result := ParsePractitionerRole(element, path+'/PractitionerRole')
-  else if element.localName = 'Procedure' Then
-    result := ParseProcedure(element, path+'/Procedure')
-  else if element.localName = 'ProcedureRequest' Then
-    result := ParseProcedureRequest(element, path+'/ProcedureRequest')
-  else if element.localName = 'ProcessRequest' Then
-    result := ParseProcessRequest(element, path+'/ProcessRequest')
-  else if element.localName = 'ProcessResponse' Then
-    result := ParseProcessResponse(element, path+'/ProcessResponse')
-  else if element.localName = 'Provenance' Then
-    result := ParseProvenance(element, path+'/Provenance')
-  else if element.localName = 'Questionnaire' Then
-    result := ParseQuestionnaire(element, path+'/Questionnaire')
-  else if element.localName = 'QuestionnaireResponse' Then
-    result := ParseQuestionnaireResponse(element, path+'/QuestionnaireResponse')
-  else if element.localName = 'ReferralRequest' Then
-    result := ParseReferralRequest(element, path+'/ReferralRequest')
-  else if element.localName = 'RelatedPerson' Then
-    result := ParseRelatedPerson(element, path+'/RelatedPerson')
-  else if element.localName = 'RequestGroup' Then
-    result := ParseRequestGroup(element, path+'/RequestGroup')
-  else if element.localName = 'ResearchStudy' Then
-    result := ParseResearchStudy(element, path+'/ResearchStudy')
-  else if element.localName = 'ResearchSubject' Then
-    result := ParseResearchSubject(element, path+'/ResearchSubject')
-  else if element.localName = 'RiskAssessment' Then
-    result := ParseRiskAssessment(element, path+'/RiskAssessment')
-  else if element.localName = 'Schedule' Then
-    result := ParseSchedule(element, path+'/Schedule')
-  else if element.localName = 'SearchParameter' Then
-    result := ParseSearchParameter(element, path+'/SearchParameter')
-  else if element.localName = 'Sequence' Then
-    result := ParseSequence(element, path+'/Sequence')
-  else if element.localName = 'ServiceDefinition' Then
-    result := ParseServiceDefinition(element, path+'/ServiceDefinition')
-  else if element.localName = 'Slot' Then
-    result := ParseSlot(element, path+'/Slot')
-  else if element.localName = 'Specimen' Then
-    result := ParseSpecimen(element, path+'/Specimen')
-  else if element.localName = 'StructureDefinition' Then
-    result := ParseStructureDefinition(element, path+'/StructureDefinition')
-  else if element.localName = 'StructureMap' Then
-    result := ParseStructureMap(element, path+'/StructureMap')
-  else if element.localName = 'Subscription' Then
-    result := ParseSubscription(element, path+'/Subscription')
-  else if element.localName = 'Substance' Then
-    result := ParseSubstance(element, path+'/Substance')
-  else if element.localName = 'SupplyDelivery' Then
-    result := ParseSupplyDelivery(element, path+'/SupplyDelivery')
-  else if element.localName = 'SupplyRequest' Then
-    result := ParseSupplyRequest(element, path+'/SupplyRequest')
-  else if element.localName = 'Task' Then
-    result := ParseTask(element, path+'/Task')
-  else if element.localName = 'TestReport' Then
-    result := ParseTestReport(element, path+'/TestReport')
-  else if element.localName = 'TestScript' Then
-    result := ParseTestScript(element, path+'/TestScript')
-  else if element.localName = 'ValueSet' Then
-    result := ParseValueSet(element, path+'/ValueSet')
-  else if element.localName = 'VisionPrescription' Then
-    result := ParseVisionPrescription(element, path+'/VisionPrescription')
+{$ENDIF FHIR_PARAMETERS}
+{$IFDEF FHIR_ACCOUNT}
+  {$IFDEF FHIR_ACCOUNT}
+   else if element.localName = 'Account' Then
+    result := ParseAccount(element, path+'/Account') 
+  {$ENDIF}
+{$ENDIF FHIR_ACCOUNT}
+{$IFDEF FHIR_ACTIVITYDEFINITION}
+  {$IFDEF FHIR_ACTIVITYDEFINITION}
+   else if element.localName = 'ActivityDefinition' Then
+    result := ParseActivityDefinition(element, path+'/ActivityDefinition') 
+  {$ENDIF}
+{$ENDIF FHIR_ACTIVITYDEFINITION}
+{$IFDEF FHIR_ADVERSEEVENT}
+  {$IFDEF FHIR_ADVERSEEVENT}
+   else if element.localName = 'AdverseEvent' Then
+    result := ParseAdverseEvent(element, path+'/AdverseEvent') 
+  {$ENDIF}
+{$ENDIF FHIR_ADVERSEEVENT}
+{$IFDEF FHIR_ALLERGYINTOLERANCE}
+  {$IFDEF FHIR_ALLERGYINTOLERANCE}
+   else if element.localName = 'AllergyIntolerance' Then
+    result := ParseAllergyIntolerance(element, path+'/AllergyIntolerance') 
+  {$ENDIF}
+{$ENDIF FHIR_ALLERGYINTOLERANCE}
+{$IFDEF FHIR_APPOINTMENT}
+  {$IFDEF FHIR_APPOINTMENT}
+   else if element.localName = 'Appointment' Then
+    result := ParseAppointment(element, path+'/Appointment') 
+  {$ENDIF}
+{$ENDIF FHIR_APPOINTMENT}
+{$IFDEF FHIR_APPOINTMENTRESPONSE}
+  {$IFDEF FHIR_APPOINTMENTRESPONSE}
+   else if element.localName = 'AppointmentResponse' Then
+    result := ParseAppointmentResponse(element, path+'/AppointmentResponse') 
+  {$ENDIF}
+{$ENDIF FHIR_APPOINTMENTRESPONSE}
+{$IFDEF FHIR_AUDITEVENT}
+  {$IFDEF FHIR_AUDITEVENT}
+   else if element.localName = 'AuditEvent' Then
+    result := ParseAuditEvent(element, path+'/AuditEvent') 
+  {$ENDIF}
+{$ENDIF FHIR_AUDITEVENT}
+{$IFDEF FHIR_BASIC}
+  {$IFDEF FHIR_BASIC}
+   else if element.localName = 'Basic' Then
+    result := ParseBasic(element, path+'/Basic') 
+  {$ENDIF}
+{$ENDIF FHIR_BASIC}
+{$IFDEF FHIR_BINARY}
+  {$IFDEF FHIR_BINARY}
+   else if element.localName = 'Binary' Then
+    result := ParseBinary(element, path+'/Binary') 
+  {$ENDIF}
+{$ENDIF FHIR_BINARY}
+{$IFDEF FHIR_BODYSITE}
+  {$IFDEF FHIR_BODYSITE}
+   else if element.localName = 'BodySite' Then
+    result := ParseBodySite(element, path+'/BodySite') 
+  {$ENDIF}
+{$ENDIF FHIR_BODYSITE}
+{$IFDEF FHIR_BUNDLE}
+  {$IFDEF FHIR_BUNDLE}
+   else if element.localName = 'Bundle' Then
+    result := ParseBundle(element, path+'/Bundle') 
+  {$ENDIF}
+{$ENDIF FHIR_BUNDLE}
+{$IFDEF FHIR_CAPABILITYSTATEMENT}
+  {$IFDEF FHIR_CAPABILITYSTATEMENT}
+   else if element.localName = 'CapabilityStatement' Then
+    result := ParseCapabilityStatement(element, path+'/CapabilityStatement') 
+  {$ENDIF}
+{$ENDIF FHIR_CAPABILITYSTATEMENT}
+{$IFDEF FHIR_CAREPLAN}
+  {$IFDEF FHIR_CAREPLAN}
+   else if element.localName = 'CarePlan' Then
+    result := ParseCarePlan(element, path+'/CarePlan') 
+  {$ENDIF}
+{$ENDIF FHIR_CAREPLAN}
+{$IFDEF FHIR_CARETEAM}
+  {$IFDEF FHIR_CARETEAM}
+   else if element.localName = 'CareTeam' Then
+    result := ParseCareTeam(element, path+'/CareTeam') 
+  {$ENDIF}
+{$ENDIF FHIR_CARETEAM}
+{$IFDEF FHIR_CHARGEITEM}
+  {$IFDEF FHIR_CHARGEITEM}
+   else if element.localName = 'ChargeItem' Then
+    result := ParseChargeItem(element, path+'/ChargeItem') 
+  {$ENDIF}
+{$ENDIF FHIR_CHARGEITEM}
+{$IFDEF FHIR_CLAIM}
+  {$IFDEF FHIR_CLAIM}
+   else if element.localName = 'Claim' Then
+    result := ParseClaim(element, path+'/Claim') 
+  {$ENDIF}
+{$ENDIF FHIR_CLAIM}
+{$IFDEF FHIR_CLAIMRESPONSE}
+  {$IFDEF FHIR_CLAIMRESPONSE}
+   else if element.localName = 'ClaimResponse' Then
+    result := ParseClaimResponse(element, path+'/ClaimResponse') 
+  {$ENDIF}
+{$ENDIF FHIR_CLAIMRESPONSE}
+{$IFDEF FHIR_CLINICALIMPRESSION}
+  {$IFDEF FHIR_CLINICALIMPRESSION}
+   else if element.localName = 'ClinicalImpression' Then
+    result := ParseClinicalImpression(element, path+'/ClinicalImpression') 
+  {$ENDIF}
+{$ENDIF FHIR_CLINICALIMPRESSION}
+{$IFDEF FHIR_CODESYSTEM}
+  {$IFDEF FHIR_CODESYSTEM}
+   else if element.localName = 'CodeSystem' Then
+    result := ParseCodeSystem(element, path+'/CodeSystem') 
+  {$ENDIF}
+{$ENDIF FHIR_CODESYSTEM}
+{$IFDEF FHIR_COMMUNICATION}
+  {$IFDEF FHIR_COMMUNICATION}
+   else if element.localName = 'Communication' Then
+    result := ParseCommunication(element, path+'/Communication') 
+  {$ENDIF}
+{$ENDIF FHIR_COMMUNICATION}
+{$IFDEF FHIR_COMMUNICATIONREQUEST}
+  {$IFDEF FHIR_COMMUNICATIONREQUEST}
+   else if element.localName = 'CommunicationRequest' Then
+    result := ParseCommunicationRequest(element, path+'/CommunicationRequest') 
+  {$ENDIF}
+{$ENDIF FHIR_COMMUNICATIONREQUEST}
+{$IFDEF FHIR_COMPARTMENTDEFINITION}
+  {$IFDEF FHIR_COMPARTMENTDEFINITION}
+   else if element.localName = 'CompartmentDefinition' Then
+    result := ParseCompartmentDefinition(element, path+'/CompartmentDefinition') 
+  {$ENDIF}
+{$ENDIF FHIR_COMPARTMENTDEFINITION}
+{$IFDEF FHIR_COMPOSITION}
+  {$IFDEF FHIR_COMPOSITION}
+   else if element.localName = 'Composition' Then
+    result := ParseComposition(element, path+'/Composition') 
+  {$ENDIF}
+{$ENDIF FHIR_COMPOSITION}
+{$IFDEF FHIR_CONCEPTMAP}
+  {$IFDEF FHIR_CONCEPTMAP}
+   else if element.localName = 'ConceptMap' Then
+    result := ParseConceptMap(element, path+'/ConceptMap') 
+  {$ENDIF}
+{$ENDIF FHIR_CONCEPTMAP}
+{$IFDEF FHIR_CONDITION}
+  {$IFDEF FHIR_CONDITION}
+   else if element.localName = 'Condition' Then
+    result := ParseCondition(element, path+'/Condition') 
+  {$ENDIF}
+{$ENDIF FHIR_CONDITION}
+{$IFDEF FHIR_CONSENT}
+  {$IFDEF FHIR_CONSENT}
+   else if element.localName = 'Consent' Then
+    result := ParseConsent(element, path+'/Consent') 
+  {$ENDIF}
+{$ENDIF FHIR_CONSENT}
+{$IFDEF FHIR_CONTRACT}
+  {$IFDEF FHIR_CONTRACT}
+   else if element.localName = 'Contract' Then
+    result := ParseContract(element, path+'/Contract') 
+  {$ENDIF}
+{$ENDIF FHIR_CONTRACT}
+{$IFDEF FHIR_COVERAGE}
+  {$IFDEF FHIR_COVERAGE}
+   else if element.localName = 'Coverage' Then
+    result := ParseCoverage(element, path+'/Coverage') 
+  {$ENDIF}
+{$ENDIF FHIR_COVERAGE}
+{$IFDEF FHIR_DATAELEMENT}
+  {$IFDEF FHIR_DATAELEMENT}
+   else if element.localName = 'DataElement' Then
+    result := ParseDataElement(element, path+'/DataElement') 
+  {$ENDIF}
+{$ENDIF FHIR_DATAELEMENT}
+{$IFDEF FHIR_DETECTEDISSUE}
+  {$IFDEF FHIR_DETECTEDISSUE}
+   else if element.localName = 'DetectedIssue' Then
+    result := ParseDetectedIssue(element, path+'/DetectedIssue') 
+  {$ENDIF}
+{$ENDIF FHIR_DETECTEDISSUE}
+{$IFDEF FHIR_DEVICE}
+  {$IFDEF FHIR_DEVICE}
+   else if element.localName = 'Device' Then
+    result := ParseDevice(element, path+'/Device') 
+  {$ENDIF}
+{$ENDIF FHIR_DEVICE}
+{$IFDEF FHIR_DEVICECOMPONENT}
+  {$IFDEF FHIR_DEVICECOMPONENT}
+   else if element.localName = 'DeviceComponent' Then
+    result := ParseDeviceComponent(element, path+'/DeviceComponent') 
+  {$ENDIF}
+{$ENDIF FHIR_DEVICECOMPONENT}
+{$IFDEF FHIR_DEVICEMETRIC}
+  {$IFDEF FHIR_DEVICEMETRIC}
+   else if element.localName = 'DeviceMetric' Then
+    result := ParseDeviceMetric(element, path+'/DeviceMetric') 
+  {$ENDIF}
+{$ENDIF FHIR_DEVICEMETRIC}
+{$IFDEF FHIR_DEVICEREQUEST}
+  {$IFDEF FHIR_DEVICEREQUEST}
+   else if element.localName = 'DeviceRequest' Then
+    result := ParseDeviceRequest(element, path+'/DeviceRequest') 
+  {$ENDIF}
+{$ENDIF FHIR_DEVICEREQUEST}
+{$IFDEF FHIR_DEVICEUSESTATEMENT}
+  {$IFDEF FHIR_DEVICEUSESTATEMENT}
+   else if element.localName = 'DeviceUseStatement' Then
+    result := ParseDeviceUseStatement(element, path+'/DeviceUseStatement') 
+  {$ENDIF}
+{$ENDIF FHIR_DEVICEUSESTATEMENT}
+{$IFDEF FHIR_DIAGNOSTICREPORT}
+  {$IFDEF FHIR_DIAGNOSTICREPORT}
+   else if element.localName = 'DiagnosticReport' Then
+    result := ParseDiagnosticReport(element, path+'/DiagnosticReport') 
+  {$ENDIF}
+{$ENDIF FHIR_DIAGNOSTICREPORT}
+{$IFDEF FHIR_DOCUMENTMANIFEST}
+  {$IFDEF FHIR_DOCUMENTMANIFEST}
+   else if element.localName = 'DocumentManifest' Then
+    result := ParseDocumentManifest(element, path+'/DocumentManifest') 
+  {$ENDIF}
+{$ENDIF FHIR_DOCUMENTMANIFEST}
+{$IFDEF FHIR_DOCUMENTREFERENCE}
+  {$IFDEF FHIR_DOCUMENTREFERENCE}
+   else if element.localName = 'DocumentReference' Then
+    result := ParseDocumentReference(element, path+'/DocumentReference') 
+  {$ENDIF}
+{$ENDIF FHIR_DOCUMENTREFERENCE}
+{$IFDEF FHIR_ELIGIBILITYREQUEST}
+  {$IFDEF FHIR_ELIGIBILITYREQUEST}
+   else if element.localName = 'EligibilityRequest' Then
+    result := ParseEligibilityRequest(element, path+'/EligibilityRequest') 
+  {$ENDIF}
+{$ENDIF FHIR_ELIGIBILITYREQUEST}
+{$IFDEF FHIR_ELIGIBILITYRESPONSE}
+  {$IFDEF FHIR_ELIGIBILITYRESPONSE}
+   else if element.localName = 'EligibilityResponse' Then
+    result := ParseEligibilityResponse(element, path+'/EligibilityResponse') 
+  {$ENDIF}
+{$ENDIF FHIR_ELIGIBILITYRESPONSE}
+{$IFDEF FHIR_ENCOUNTER}
+  {$IFDEF FHIR_ENCOUNTER}
+   else if element.localName = 'Encounter' Then
+    result := ParseEncounter(element, path+'/Encounter') 
+  {$ENDIF}
+{$ENDIF FHIR_ENCOUNTER}
+{$IFDEF FHIR_ENDPOINT}
+  {$IFDEF FHIR_ENDPOINT}
+   else if element.localName = 'Endpoint' Then
+    result := ParseEndpoint(element, path+'/Endpoint') 
+  {$ENDIF}
+{$ENDIF FHIR_ENDPOINT}
+{$IFDEF FHIR_ENROLLMENTREQUEST}
+  {$IFDEF FHIR_ENROLLMENTREQUEST}
+   else if element.localName = 'EnrollmentRequest' Then
+    result := ParseEnrollmentRequest(element, path+'/EnrollmentRequest') 
+  {$ENDIF}
+{$ENDIF FHIR_ENROLLMENTREQUEST}
+{$IFDEF FHIR_ENROLLMENTRESPONSE}
+  {$IFDEF FHIR_ENROLLMENTRESPONSE}
+   else if element.localName = 'EnrollmentResponse' Then
+    result := ParseEnrollmentResponse(element, path+'/EnrollmentResponse') 
+  {$ENDIF}
+{$ENDIF FHIR_ENROLLMENTRESPONSE}
+{$IFDEF FHIR_EPISODEOFCARE}
+  {$IFDEF FHIR_EPISODEOFCARE}
+   else if element.localName = 'EpisodeOfCare' Then
+    result := ParseEpisodeOfCare(element, path+'/EpisodeOfCare') 
+  {$ENDIF}
+{$ENDIF FHIR_EPISODEOFCARE}
+{$IFDEF FHIR_EXPANSIONPROFILE}
+  {$IFDEF FHIR_EXPANSIONPROFILE}
+   else if element.localName = 'ExpansionProfile' Then
+    result := ParseExpansionProfile(element, path+'/ExpansionProfile') 
+  {$ENDIF}
+{$ENDIF FHIR_EXPANSIONPROFILE}
+{$IFDEF FHIR_EXPLANATIONOFBENEFIT}
+  {$IFDEF FHIR_EXPLANATIONOFBENEFIT}
+   else if element.localName = 'ExplanationOfBenefit' Then
+    result := ParseExplanationOfBenefit(element, path+'/ExplanationOfBenefit') 
+  {$ENDIF}
+{$ENDIF FHIR_EXPLANATIONOFBENEFIT}
+{$IFDEF FHIR_FAMILYMEMBERHISTORY}
+  {$IFDEF FHIR_FAMILYMEMBERHISTORY}
+   else if element.localName = 'FamilyMemberHistory' Then
+    result := ParseFamilyMemberHistory(element, path+'/FamilyMemberHistory') 
+  {$ENDIF}
+{$ENDIF FHIR_FAMILYMEMBERHISTORY}
+{$IFDEF FHIR_FLAG}
+  {$IFDEF FHIR_FLAG}
+   else if element.localName = 'Flag' Then
+    result := ParseFlag(element, path+'/Flag') 
+  {$ENDIF}
+{$ENDIF FHIR_FLAG}
+{$IFDEF FHIR_GOAL}
+  {$IFDEF FHIR_GOAL}
+   else if element.localName = 'Goal' Then
+    result := ParseGoal(element, path+'/Goal') 
+  {$ENDIF}
+{$ENDIF FHIR_GOAL}
+{$IFDEF FHIR_GRAPHDEFINITION}
+  {$IFDEF FHIR_GRAPHDEFINITION}
+   else if element.localName = 'GraphDefinition' Then
+    result := ParseGraphDefinition(element, path+'/GraphDefinition') 
+  {$ENDIF}
+{$ENDIF FHIR_GRAPHDEFINITION}
+{$IFDEF FHIR_GROUP}
+  {$IFDEF FHIR_GROUP}
+   else if element.localName = 'Group' Then
+    result := ParseGroup(element, path+'/Group') 
+  {$ENDIF}
+{$ENDIF FHIR_GROUP}
+{$IFDEF FHIR_GUIDANCERESPONSE}
+  {$IFDEF FHIR_GUIDANCERESPONSE}
+   else if element.localName = 'GuidanceResponse' Then
+    result := ParseGuidanceResponse(element, path+'/GuidanceResponse') 
+  {$ENDIF}
+{$ENDIF FHIR_GUIDANCERESPONSE}
+{$IFDEF FHIR_HEALTHCARESERVICE}
+  {$IFDEF FHIR_HEALTHCARESERVICE}
+   else if element.localName = 'HealthcareService' Then
+    result := ParseHealthcareService(element, path+'/HealthcareService') 
+  {$ENDIF}
+{$ENDIF FHIR_HEALTHCARESERVICE}
+{$IFDEF FHIR_IMAGINGMANIFEST}
+  {$IFDEF FHIR_IMAGINGMANIFEST}
+   else if element.localName = 'ImagingManifest' Then
+    result := ParseImagingManifest(element, path+'/ImagingManifest') 
+  {$ENDIF}
+{$ENDIF FHIR_IMAGINGMANIFEST}
+{$IFDEF FHIR_IMAGINGSTUDY}
+  {$IFDEF FHIR_IMAGINGSTUDY}
+   else if element.localName = 'ImagingStudy' Then
+    result := ParseImagingStudy(element, path+'/ImagingStudy') 
+  {$ENDIF}
+{$ENDIF FHIR_IMAGINGSTUDY}
+{$IFDEF FHIR_IMMUNIZATION}
+  {$IFDEF FHIR_IMMUNIZATION}
+   else if element.localName = 'Immunization' Then
+    result := ParseImmunization(element, path+'/Immunization') 
+  {$ENDIF}
+{$ENDIF FHIR_IMMUNIZATION}
+{$IFDEF FHIR_IMMUNIZATIONRECOMMENDATION}
+  {$IFDEF FHIR_IMMUNIZATIONRECOMMENDATION}
+   else if element.localName = 'ImmunizationRecommendation' Then
+    result := ParseImmunizationRecommendation(element, path+'/ImmunizationRecommendation') 
+  {$ENDIF}
+{$ENDIF FHIR_IMMUNIZATIONRECOMMENDATION}
+{$IFDEF FHIR_IMPLEMENTATIONGUIDE}
+  {$IFDEF FHIR_IMPLEMENTATIONGUIDE}
+   else if element.localName = 'ImplementationGuide' Then
+    result := ParseImplementationGuide(element, path+'/ImplementationGuide') 
+  {$ENDIF}
+{$ENDIF FHIR_IMPLEMENTATIONGUIDE}
+{$IFDEF FHIR_LIBRARY}
+  {$IFDEF FHIR_LIBRARY}
+   else if element.localName = 'Library' Then
+    result := ParseLibrary(element, path+'/Library') 
+  {$ENDIF}
+{$ENDIF FHIR_LIBRARY}
+{$IFDEF FHIR_LINKAGE}
+  {$IFDEF FHIR_LINKAGE}
+   else if element.localName = 'Linkage' Then
+    result := ParseLinkage(element, path+'/Linkage') 
+  {$ENDIF}
+{$ENDIF FHIR_LINKAGE}
+{$IFDEF FHIR_LIST}
+  {$IFDEF FHIR_LIST}
+   else if element.localName = 'List' Then
+    result := ParseList(element, path+'/List') 
+  {$ENDIF}
+{$ENDIF FHIR_LIST}
+{$IFDEF FHIR_LOCATION}
+  {$IFDEF FHIR_LOCATION}
+   else if element.localName = 'Location' Then
+    result := ParseLocation(element, path+'/Location') 
+  {$ENDIF}
+{$ENDIF FHIR_LOCATION}
+{$IFDEF FHIR_MEASURE}
+  {$IFDEF FHIR_MEASURE}
+   else if element.localName = 'Measure' Then
+    result := ParseMeasure(element, path+'/Measure') 
+  {$ENDIF}
+{$ENDIF FHIR_MEASURE}
+{$IFDEF FHIR_MEASUREREPORT}
+  {$IFDEF FHIR_MEASUREREPORT}
+   else if element.localName = 'MeasureReport' Then
+    result := ParseMeasureReport(element, path+'/MeasureReport') 
+  {$ENDIF}
+{$ENDIF FHIR_MEASUREREPORT}
+{$IFDEF FHIR_MEDIA}
+  {$IFDEF FHIR_MEDIA}
+   else if element.localName = 'Media' Then
+    result := ParseMedia(element, path+'/Media') 
+  {$ENDIF}
+{$ENDIF FHIR_MEDIA}
+{$IFDEF FHIR_MEDICATION}
+  {$IFDEF FHIR_MEDICATION}
+   else if element.localName = 'Medication' Then
+    result := ParseMedication(element, path+'/Medication') 
+  {$ENDIF}
+{$ENDIF FHIR_MEDICATION}
+{$IFDEF FHIR_MEDICATIONADMINISTRATION}
+  {$IFDEF FHIR_MEDICATIONADMINISTRATION}
+   else if element.localName = 'MedicationAdministration' Then
+    result := ParseMedicationAdministration(element, path+'/MedicationAdministration') 
+  {$ENDIF}
+{$ENDIF FHIR_MEDICATIONADMINISTRATION}
+{$IFDEF FHIR_MEDICATIONDISPENSE}
+  {$IFDEF FHIR_MEDICATIONDISPENSE}
+   else if element.localName = 'MedicationDispense' Then
+    result := ParseMedicationDispense(element, path+'/MedicationDispense') 
+  {$ENDIF}
+{$ENDIF FHIR_MEDICATIONDISPENSE}
+{$IFDEF FHIR_MEDICATIONREQUEST}
+  {$IFDEF FHIR_MEDICATIONREQUEST}
+   else if element.localName = 'MedicationRequest' Then
+    result := ParseMedicationRequest(element, path+'/MedicationRequest') 
+  {$ENDIF}
+{$ENDIF FHIR_MEDICATIONREQUEST}
+{$IFDEF FHIR_MEDICATIONSTATEMENT}
+  {$IFDEF FHIR_MEDICATIONSTATEMENT}
+   else if element.localName = 'MedicationStatement' Then
+    result := ParseMedicationStatement(element, path+'/MedicationStatement') 
+  {$ENDIF}
+{$ENDIF FHIR_MEDICATIONSTATEMENT}
+{$IFDEF FHIR_MESSAGEDEFINITION}
+  {$IFDEF FHIR_MESSAGEDEFINITION}
+   else if element.localName = 'MessageDefinition' Then
+    result := ParseMessageDefinition(element, path+'/MessageDefinition') 
+  {$ENDIF}
+{$ENDIF FHIR_MESSAGEDEFINITION}
+{$IFDEF FHIR_MESSAGEHEADER}
+  {$IFDEF FHIR_MESSAGEHEADER}
+   else if element.localName = 'MessageHeader' Then
+    result := ParseMessageHeader(element, path+'/MessageHeader') 
+  {$ENDIF}
+{$ENDIF FHIR_MESSAGEHEADER}
+{$IFDEF FHIR_NAMINGSYSTEM}
+  {$IFDEF FHIR_NAMINGSYSTEM}
+   else if element.localName = 'NamingSystem' Then
+    result := ParseNamingSystem(element, path+'/NamingSystem') 
+  {$ENDIF}
+{$ENDIF FHIR_NAMINGSYSTEM}
+{$IFDEF FHIR_NUTRITIONORDER}
+  {$IFDEF FHIR_NUTRITIONORDER}
+   else if element.localName = 'NutritionOrder' Then
+    result := ParseNutritionOrder(element, path+'/NutritionOrder') 
+  {$ENDIF}
+{$ENDIF FHIR_NUTRITIONORDER}
+{$IFDEF FHIR_OBSERVATION}
+  {$IFDEF FHIR_OBSERVATION}
+   else if element.localName = 'Observation' Then
+    result := ParseObservation(element, path+'/Observation') 
+  {$ENDIF}
+{$ENDIF FHIR_OBSERVATION}
+{$IFDEF FHIR_OPERATIONDEFINITION}
+  {$IFDEF FHIR_OPERATIONDEFINITION}
+   else if element.localName = 'OperationDefinition' Then
+    result := ParseOperationDefinition(element, path+'/OperationDefinition') 
+  {$ENDIF}
+{$ENDIF FHIR_OPERATIONDEFINITION}
+{$IFDEF FHIR_OPERATIONOUTCOME}
+  {$IFDEF FHIR_OPERATIONOUTCOME}
+   else if element.localName = 'OperationOutcome' Then
+    result := ParseOperationOutcome(element, path+'/OperationOutcome') 
+  {$ENDIF}
+{$ENDIF FHIR_OPERATIONOUTCOME}
+{$IFDEF FHIR_ORGANIZATION}
+  {$IFDEF FHIR_ORGANIZATION}
+   else if element.localName = 'Organization' Then
+    result := ParseOrganization(element, path+'/Organization') 
+  {$ENDIF}
+{$ENDIF FHIR_ORGANIZATION}
+{$IFDEF FHIR_PATIENT}
+  {$IFDEF FHIR_PATIENT}
+   else if element.localName = 'Patient' Then
+    result := ParsePatient(element, path+'/Patient') 
+  {$ENDIF}
+{$ENDIF FHIR_PATIENT}
+{$IFDEF FHIR_PAYMENTNOTICE}
+  {$IFDEF FHIR_PAYMENTNOTICE}
+   else if element.localName = 'PaymentNotice' Then
+    result := ParsePaymentNotice(element, path+'/PaymentNotice') 
+  {$ENDIF}
+{$ENDIF FHIR_PAYMENTNOTICE}
+{$IFDEF FHIR_PAYMENTRECONCILIATION}
+  {$IFDEF FHIR_PAYMENTRECONCILIATION}
+   else if element.localName = 'PaymentReconciliation' Then
+    result := ParsePaymentReconciliation(element, path+'/PaymentReconciliation') 
+  {$ENDIF}
+{$ENDIF FHIR_PAYMENTRECONCILIATION}
+{$IFDEF FHIR_PERSON}
+  {$IFDEF FHIR_PERSON}
+   else if element.localName = 'Person' Then
+    result := ParsePerson(element, path+'/Person') 
+  {$ENDIF}
+{$ENDIF FHIR_PERSON}
+{$IFDEF FHIR_PLANDEFINITION}
+  {$IFDEF FHIR_PLANDEFINITION}
+   else if element.localName = 'PlanDefinition' Then
+    result := ParsePlanDefinition(element, path+'/PlanDefinition') 
+  {$ENDIF}
+{$ENDIF FHIR_PLANDEFINITION}
+{$IFDEF FHIR_PRACTITIONER}
+  {$IFDEF FHIR_PRACTITIONER}
+   else if element.localName = 'Practitioner' Then
+    result := ParsePractitioner(element, path+'/Practitioner') 
+  {$ENDIF}
+{$ENDIF FHIR_PRACTITIONER}
+{$IFDEF FHIR_PRACTITIONERROLE}
+  {$IFDEF FHIR_PRACTITIONERROLE}
+   else if element.localName = 'PractitionerRole' Then
+    result := ParsePractitionerRole(element, path+'/PractitionerRole') 
+  {$ENDIF}
+{$ENDIF FHIR_PRACTITIONERROLE}
+{$IFDEF FHIR_PROCEDURE}
+  {$IFDEF FHIR_PROCEDURE}
+   else if element.localName = 'Procedure' Then
+    result := ParseProcedure(element, path+'/Procedure') 
+  {$ENDIF}
+{$ENDIF FHIR_PROCEDURE}
+{$IFDEF FHIR_PROCEDUREREQUEST}
+  {$IFDEF FHIR_PROCEDUREREQUEST}
+   else if element.localName = 'ProcedureRequest' Then
+    result := ParseProcedureRequest(element, path+'/ProcedureRequest') 
+  {$ENDIF}
+{$ENDIF FHIR_PROCEDUREREQUEST}
+{$IFDEF FHIR_PROCESSREQUEST}
+  {$IFDEF FHIR_PROCESSREQUEST}
+   else if element.localName = 'ProcessRequest' Then
+    result := ParseProcessRequest(element, path+'/ProcessRequest') 
+  {$ENDIF}
+{$ENDIF FHIR_PROCESSREQUEST}
+{$IFDEF FHIR_PROCESSRESPONSE}
+  {$IFDEF FHIR_PROCESSRESPONSE}
+   else if element.localName = 'ProcessResponse' Then
+    result := ParseProcessResponse(element, path+'/ProcessResponse') 
+  {$ENDIF}
+{$ENDIF FHIR_PROCESSRESPONSE}
+{$IFDEF FHIR_PROVENANCE}
+  {$IFDEF FHIR_PROVENANCE}
+   else if element.localName = 'Provenance' Then
+    result := ParseProvenance(element, path+'/Provenance') 
+  {$ENDIF}
+{$ENDIF FHIR_PROVENANCE}
+{$IFDEF FHIR_QUESTIONNAIRE}
+  {$IFDEF FHIR_QUESTIONNAIRE}
+   else if element.localName = 'Questionnaire' Then
+    result := ParseQuestionnaire(element, path+'/Questionnaire') 
+  {$ENDIF}
+{$ENDIF FHIR_QUESTIONNAIRE}
+{$IFDEF FHIR_QUESTIONNAIRERESPONSE}
+  {$IFDEF FHIR_QUESTIONNAIRERESPONSE}
+   else if element.localName = 'QuestionnaireResponse' Then
+    result := ParseQuestionnaireResponse(element, path+'/QuestionnaireResponse') 
+  {$ENDIF}
+{$ENDIF FHIR_QUESTIONNAIRERESPONSE}
+{$IFDEF FHIR_REFERRALREQUEST}
+  {$IFDEF FHIR_REFERRALREQUEST}
+   else if element.localName = 'ReferralRequest' Then
+    result := ParseReferralRequest(element, path+'/ReferralRequest') 
+  {$ENDIF}
+{$ENDIF FHIR_REFERRALREQUEST}
+{$IFDEF FHIR_RELATEDPERSON}
+  {$IFDEF FHIR_RELATEDPERSON}
+   else if element.localName = 'RelatedPerson' Then
+    result := ParseRelatedPerson(element, path+'/RelatedPerson') 
+  {$ENDIF}
+{$ENDIF FHIR_RELATEDPERSON}
+{$IFDEF FHIR_REQUESTGROUP}
+  {$IFDEF FHIR_REQUESTGROUP}
+   else if element.localName = 'RequestGroup' Then
+    result := ParseRequestGroup(element, path+'/RequestGroup') 
+  {$ENDIF}
+{$ENDIF FHIR_REQUESTGROUP}
+{$IFDEF FHIR_RESEARCHSTUDY}
+  {$IFDEF FHIR_RESEARCHSTUDY}
+   else if element.localName = 'ResearchStudy' Then
+    result := ParseResearchStudy(element, path+'/ResearchStudy') 
+  {$ENDIF}
+{$ENDIF FHIR_RESEARCHSTUDY}
+{$IFDEF FHIR_RESEARCHSUBJECT}
+  {$IFDEF FHIR_RESEARCHSUBJECT}
+   else if element.localName = 'ResearchSubject' Then
+    result := ParseResearchSubject(element, path+'/ResearchSubject') 
+  {$ENDIF}
+{$ENDIF FHIR_RESEARCHSUBJECT}
+{$IFDEF FHIR_RISKASSESSMENT}
+  {$IFDEF FHIR_RISKASSESSMENT}
+   else if element.localName = 'RiskAssessment' Then
+    result := ParseRiskAssessment(element, path+'/RiskAssessment') 
+  {$ENDIF}
+{$ENDIF FHIR_RISKASSESSMENT}
+{$IFDEF FHIR_SCHEDULE}
+  {$IFDEF FHIR_SCHEDULE}
+   else if element.localName = 'Schedule' Then
+    result := ParseSchedule(element, path+'/Schedule') 
+  {$ENDIF}
+{$ENDIF FHIR_SCHEDULE}
+{$IFDEF FHIR_SEARCHPARAMETER}
+  {$IFDEF FHIR_SEARCHPARAMETER}
+   else if element.localName = 'SearchParameter' Then
+    result := ParseSearchParameter(element, path+'/SearchParameter') 
+  {$ENDIF}
+{$ENDIF FHIR_SEARCHPARAMETER}
+{$IFDEF FHIR_SEQUENCE}
+  {$IFDEF FHIR_SEQUENCE}
+   else if element.localName = 'Sequence' Then
+    result := ParseSequence(element, path+'/Sequence') 
+  {$ENDIF}
+{$ENDIF FHIR_SEQUENCE}
+{$IFDEF FHIR_SERVICEDEFINITION}
+  {$IFDEF FHIR_SERVICEDEFINITION}
+   else if element.localName = 'ServiceDefinition' Then
+    result := ParseServiceDefinition(element, path+'/ServiceDefinition') 
+  {$ENDIF}
+{$ENDIF FHIR_SERVICEDEFINITION}
+{$IFDEF FHIR_SLOT}
+  {$IFDEF FHIR_SLOT}
+   else if element.localName = 'Slot' Then
+    result := ParseSlot(element, path+'/Slot') 
+  {$ENDIF}
+{$ENDIF FHIR_SLOT}
+{$IFDEF FHIR_SPECIMEN}
+  {$IFDEF FHIR_SPECIMEN}
+   else if element.localName = 'Specimen' Then
+    result := ParseSpecimen(element, path+'/Specimen') 
+  {$ENDIF}
+{$ENDIF FHIR_SPECIMEN}
+{$IFDEF FHIR_STRUCTUREDEFINITION}
+  {$IFDEF FHIR_STRUCTUREDEFINITION}
+   else if element.localName = 'StructureDefinition' Then
+    result := ParseStructureDefinition(element, path+'/StructureDefinition') 
+  {$ENDIF}
+{$ENDIF FHIR_STRUCTUREDEFINITION}
+{$IFDEF FHIR_STRUCTUREMAP}
+  {$IFDEF FHIR_STRUCTUREMAP}
+   else if element.localName = 'StructureMap' Then
+    result := ParseStructureMap(element, path+'/StructureMap') 
+  {$ENDIF}
+{$ENDIF FHIR_STRUCTUREMAP}
+{$IFDEF FHIR_SUBSCRIPTION}
+  {$IFDEF FHIR_SUBSCRIPTION}
+   else if element.localName = 'Subscription' Then
+    result := ParseSubscription(element, path+'/Subscription') 
+  {$ENDIF}
+{$ENDIF FHIR_SUBSCRIPTION}
+{$IFDEF FHIR_SUBSTANCE}
+  {$IFDEF FHIR_SUBSTANCE}
+   else if element.localName = 'Substance' Then
+    result := ParseSubstance(element, path+'/Substance') 
+  {$ENDIF}
+{$ENDIF FHIR_SUBSTANCE}
+{$IFDEF FHIR_SUPPLYDELIVERY}
+  {$IFDEF FHIR_SUPPLYDELIVERY}
+   else if element.localName = 'SupplyDelivery' Then
+    result := ParseSupplyDelivery(element, path+'/SupplyDelivery') 
+  {$ENDIF}
+{$ENDIF FHIR_SUPPLYDELIVERY}
+{$IFDEF FHIR_SUPPLYREQUEST}
+  {$IFDEF FHIR_SUPPLYREQUEST}
+   else if element.localName = 'SupplyRequest' Then
+    result := ParseSupplyRequest(element, path+'/SupplyRequest') 
+  {$ENDIF}
+{$ENDIF FHIR_SUPPLYREQUEST}
+{$IFDEF FHIR_TASK}
+  {$IFDEF FHIR_TASK}
+   else if element.localName = 'Task' Then
+    result := ParseTask(element, path+'/Task') 
+  {$ENDIF}
+{$ENDIF FHIR_TASK}
+{$IFDEF FHIR_TESTREPORT}
+  {$IFDEF FHIR_TESTREPORT}
+   else if element.localName = 'TestReport' Then
+    result := ParseTestReport(element, path+'/TestReport') 
+  {$ENDIF}
+{$ENDIF FHIR_TESTREPORT}
+{$IFDEF FHIR_TESTSCRIPT}
+  {$IFDEF FHIR_TESTSCRIPT}
+   else if element.localName = 'TestScript' Then
+    result := ParseTestScript(element, path+'/TestScript') 
+  {$ENDIF}
+{$ENDIF FHIR_TESTSCRIPT}
+{$IFDEF FHIR_VALUESET}
+  {$IFDEF FHIR_VALUESET}
+   else if element.localName = 'ValueSet' Then
+    result := ParseValueSet(element, path+'/ValueSet') 
+  {$ENDIF}
+{$ENDIF FHIR_VALUESET}
+{$IFDEF FHIR_VISIONPRESCRIPTION}
+  {$IFDEF FHIR_VISIONPRESCRIPTION}
+   else if element.localName = 'VisionPrescription' Then
+    result := ParseVisionPrescription(element, path+'/VisionPrescription') 
+  {$ENDIF}
+{$ENDIF FHIR_VISIONPRESCRIPTION}
   else
     raise Exception.create('Error: the element '+element.localName+' is not recognised as a valid resource name');
 end;
@@ -42673,123 +43843,589 @@ begin
   if (resource = nil) Then
     Raise Exception.Create('error - resource is nil');
   Case resource.ResourceType of
+{$IFDEF FHIR_PARAMETERS}
     frtParameters: ComposeParameters(xml, 'Parameters', TFhirParameters(resource));
-    frtAccount: ComposeAccount(xml, 'Account', TFhirAccount(resource));
-    frtActivityDefinition: ComposeActivityDefinition(xml, 'ActivityDefinition', TFhirActivityDefinition(resource));
-    frtAdverseEvent: ComposeAdverseEvent(xml, 'AdverseEvent', TFhirAdverseEvent(resource));
-    frtAllergyIntolerance: ComposeAllergyIntolerance(xml, 'AllergyIntolerance', TFhirAllergyIntolerance(resource));
-    frtAppointment: ComposeAppointment(xml, 'Appointment', TFhirAppointment(resource));
-    frtAppointmentResponse: ComposeAppointmentResponse(xml, 'AppointmentResponse', TFhirAppointmentResponse(resource));
-    frtAuditEvent: ComposeAuditEvent(xml, 'AuditEvent', TFhirAuditEvent(resource));
-    frtBasic: ComposeBasic(xml, 'Basic', TFhirBasic(resource));
-    frtBinary: ComposeBinary(xml, 'Binary', TFhirBinary(resource));
-    frtBodySite: ComposeBodySite(xml, 'BodySite', TFhirBodySite(resource));
-    frtBundle: ComposeBundle(xml, 'Bundle', TFhirBundle(resource));
-    frtCapabilityStatement: ComposeCapabilityStatement(xml, 'CapabilityStatement', TFhirCapabilityStatement(resource));
-    frtCarePlan: ComposeCarePlan(xml, 'CarePlan', TFhirCarePlan(resource));
-    frtCareTeam: ComposeCareTeam(xml, 'CareTeam', TFhirCareTeam(resource));
-    frtChargeItem: ComposeChargeItem(xml, 'ChargeItem', TFhirChargeItem(resource));
-    frtClaim: ComposeClaim(xml, 'Claim', TFhirClaim(resource));
-    frtClaimResponse: ComposeClaimResponse(xml, 'ClaimResponse', TFhirClaimResponse(resource));
-    frtClinicalImpression: ComposeClinicalImpression(xml, 'ClinicalImpression', TFhirClinicalImpression(resource));
-    frtCodeSystem: ComposeCodeSystem(xml, 'CodeSystem', TFhirCodeSystem(resource));
-    frtCommunication: ComposeCommunication(xml, 'Communication', TFhirCommunication(resource));
-    frtCommunicationRequest: ComposeCommunicationRequest(xml, 'CommunicationRequest', TFhirCommunicationRequest(resource));
-    frtCompartmentDefinition: ComposeCompartmentDefinition(xml, 'CompartmentDefinition', TFhirCompartmentDefinition(resource));
-    frtComposition: ComposeComposition(xml, 'Composition', TFhirComposition(resource));
-    frtConceptMap: ComposeConceptMap(xml, 'ConceptMap', TFhirConceptMap(resource));
-    frtCondition: ComposeCondition(xml, 'Condition', TFhirCondition(resource));
-    frtConsent: ComposeConsent(xml, 'Consent', TFhirConsent(resource));
-    frtContract: ComposeContract(xml, 'Contract', TFhirContract(resource));
-    frtCoverage: ComposeCoverage(xml, 'Coverage', TFhirCoverage(resource));
-    frtDataElement: ComposeDataElement(xml, 'DataElement', TFhirDataElement(resource));
-    frtDetectedIssue: ComposeDetectedIssue(xml, 'DetectedIssue', TFhirDetectedIssue(resource));
-    frtDevice: ComposeDevice(xml, 'Device', TFhirDevice(resource));
-    frtDeviceComponent: ComposeDeviceComponent(xml, 'DeviceComponent', TFhirDeviceComponent(resource));
-    frtDeviceMetric: ComposeDeviceMetric(xml, 'DeviceMetric', TFhirDeviceMetric(resource));
-    frtDeviceRequest: ComposeDeviceRequest(xml, 'DeviceRequest', TFhirDeviceRequest(resource));
-    frtDeviceUseStatement: ComposeDeviceUseStatement(xml, 'DeviceUseStatement', TFhirDeviceUseStatement(resource));
-    frtDiagnosticReport: ComposeDiagnosticReport(xml, 'DiagnosticReport', TFhirDiagnosticReport(resource));
-    frtDocumentManifest: ComposeDocumentManifest(xml, 'DocumentManifest', TFhirDocumentManifest(resource));
-    frtDocumentReference: ComposeDocumentReference(xml, 'DocumentReference', TFhirDocumentReference(resource));
-    frtEligibilityRequest: ComposeEligibilityRequest(xml, 'EligibilityRequest', TFhirEligibilityRequest(resource));
-    frtEligibilityResponse: ComposeEligibilityResponse(xml, 'EligibilityResponse', TFhirEligibilityResponse(resource));
-    frtEncounter: ComposeEncounter(xml, 'Encounter', TFhirEncounter(resource));
-    frtEndpoint: ComposeEndpoint(xml, 'Endpoint', TFhirEndpoint(resource));
-    frtEnrollmentRequest: ComposeEnrollmentRequest(xml, 'EnrollmentRequest', TFhirEnrollmentRequest(resource));
-    frtEnrollmentResponse: ComposeEnrollmentResponse(xml, 'EnrollmentResponse', TFhirEnrollmentResponse(resource));
-    frtEpisodeOfCare: ComposeEpisodeOfCare(xml, 'EpisodeOfCare', TFhirEpisodeOfCare(resource));
-    frtExpansionProfile: ComposeExpansionProfile(xml, 'ExpansionProfile', TFhirExpansionProfile(resource));
-    frtExplanationOfBenefit: ComposeExplanationOfBenefit(xml, 'ExplanationOfBenefit', TFhirExplanationOfBenefit(resource));
-    frtFamilyMemberHistory: ComposeFamilyMemberHistory(xml, 'FamilyMemberHistory', TFhirFamilyMemberHistory(resource));
-    frtFlag: ComposeFlag(xml, 'Flag', TFhirFlag(resource));
-    frtGoal: ComposeGoal(xml, 'Goal', TFhirGoal(resource));
-    frtGraphDefinition: ComposeGraphDefinition(xml, 'GraphDefinition', TFhirGraphDefinition(resource));
-    frtGroup: ComposeGroup(xml, 'Group', TFhirGroup(resource));
-    frtGuidanceResponse: ComposeGuidanceResponse(xml, 'GuidanceResponse', TFhirGuidanceResponse(resource));
-    frtHealthcareService: ComposeHealthcareService(xml, 'HealthcareService', TFhirHealthcareService(resource));
-    frtImagingManifest: ComposeImagingManifest(xml, 'ImagingManifest', TFhirImagingManifest(resource));
-    frtImagingStudy: ComposeImagingStudy(xml, 'ImagingStudy', TFhirImagingStudy(resource));
-    frtImmunization: ComposeImmunization(xml, 'Immunization', TFhirImmunization(resource));
-    frtImmunizationRecommendation: ComposeImmunizationRecommendation(xml, 'ImmunizationRecommendation', TFhirImmunizationRecommendation(resource));
-    frtImplementationGuide: ComposeImplementationGuide(xml, 'ImplementationGuide', TFhirImplementationGuide(resource));
-    frtLibrary: ComposeLibrary(xml, 'Library', TFhirLibrary(resource));
-    frtLinkage: ComposeLinkage(xml, 'Linkage', TFhirLinkage(resource));
-    frtList: ComposeList(xml, 'List', TFhirList(resource));
-    frtLocation: ComposeLocation(xml, 'Location', TFhirLocation(resource));
-    frtMeasure: ComposeMeasure(xml, 'Measure', TFhirMeasure(resource));
-    frtMeasureReport: ComposeMeasureReport(xml, 'MeasureReport', TFhirMeasureReport(resource));
-    frtMedia: ComposeMedia(xml, 'Media', TFhirMedia(resource));
-    frtMedication: ComposeMedication(xml, 'Medication', TFhirMedication(resource));
-    frtMedicationAdministration: ComposeMedicationAdministration(xml, 'MedicationAdministration', TFhirMedicationAdministration(resource));
-    frtMedicationDispense: ComposeMedicationDispense(xml, 'MedicationDispense', TFhirMedicationDispense(resource));
-    frtMedicationRequest: ComposeMedicationRequest(xml, 'MedicationRequest', TFhirMedicationRequest(resource));
-    frtMedicationStatement: ComposeMedicationStatement(xml, 'MedicationStatement', TFhirMedicationStatement(resource));
-    frtMessageDefinition: ComposeMessageDefinition(xml, 'MessageDefinition', TFhirMessageDefinition(resource));
-    frtMessageHeader: ComposeMessageHeader(xml, 'MessageHeader', TFhirMessageHeader(resource));
-    frtNamingSystem: ComposeNamingSystem(xml, 'NamingSystem', TFhirNamingSystem(resource));
-    frtNutritionOrder: ComposeNutritionOrder(xml, 'NutritionOrder', TFhirNutritionOrder(resource));
-    frtObservation: ComposeObservation(xml, 'Observation', TFhirObservation(resource));
-    frtOperationDefinition: ComposeOperationDefinition(xml, 'OperationDefinition', TFhirOperationDefinition(resource));
-    frtOperationOutcome: ComposeOperationOutcome(xml, 'OperationOutcome', TFhirOperationOutcome(resource));
-    frtOrganization: ComposeOrganization(xml, 'Organization', TFhirOrganization(resource));
-    frtPatient: ComposePatient(xml, 'Patient', TFhirPatient(resource));
-    frtPaymentNotice: ComposePaymentNotice(xml, 'PaymentNotice', TFhirPaymentNotice(resource));
-    frtPaymentReconciliation: ComposePaymentReconciliation(xml, 'PaymentReconciliation', TFhirPaymentReconciliation(resource));
-    frtPerson: ComposePerson(xml, 'Person', TFhirPerson(resource));
-    frtPlanDefinition: ComposePlanDefinition(xml, 'PlanDefinition', TFhirPlanDefinition(resource));
-    frtPractitioner: ComposePractitioner(xml, 'Practitioner', TFhirPractitioner(resource));
-    frtPractitionerRole: ComposePractitionerRole(xml, 'PractitionerRole', TFhirPractitionerRole(resource));
-    frtProcedure: ComposeProcedure(xml, 'Procedure', TFhirProcedure(resource));
-    frtProcedureRequest: ComposeProcedureRequest(xml, 'ProcedureRequest', TFhirProcedureRequest(resource));
-    frtProcessRequest: ComposeProcessRequest(xml, 'ProcessRequest', TFhirProcessRequest(resource));
-    frtProcessResponse: ComposeProcessResponse(xml, 'ProcessResponse', TFhirProcessResponse(resource));
-    frtProvenance: ComposeProvenance(xml, 'Provenance', TFhirProvenance(resource));
-    frtQuestionnaire: ComposeQuestionnaire(xml, 'Questionnaire', TFhirQuestionnaire(resource));
-    frtQuestionnaireResponse: ComposeQuestionnaireResponse(xml, 'QuestionnaireResponse', TFhirQuestionnaireResponse(resource));
-    frtReferralRequest: ComposeReferralRequest(xml, 'ReferralRequest', TFhirReferralRequest(resource));
-    frtRelatedPerson: ComposeRelatedPerson(xml, 'RelatedPerson', TFhirRelatedPerson(resource));
-    frtRequestGroup: ComposeRequestGroup(xml, 'RequestGroup', TFhirRequestGroup(resource));
-    frtResearchStudy: ComposeResearchStudy(xml, 'ResearchStudy', TFhirResearchStudy(resource));
-    frtResearchSubject: ComposeResearchSubject(xml, 'ResearchSubject', TFhirResearchSubject(resource));
-    frtRiskAssessment: ComposeRiskAssessment(xml, 'RiskAssessment', TFhirRiskAssessment(resource));
-    frtSchedule: ComposeSchedule(xml, 'Schedule', TFhirSchedule(resource));
-    frtSearchParameter: ComposeSearchParameter(xml, 'SearchParameter', TFhirSearchParameter(resource));
-    frtSequence: ComposeSequence(xml, 'Sequence', TFhirSequence(resource));
-    frtServiceDefinition: ComposeServiceDefinition(xml, 'ServiceDefinition', TFhirServiceDefinition(resource));
-    frtSlot: ComposeSlot(xml, 'Slot', TFhirSlot(resource));
-    frtSpecimen: ComposeSpecimen(xml, 'Specimen', TFhirSpecimen(resource));
-    frtStructureDefinition: ComposeStructureDefinition(xml, 'StructureDefinition', TFhirStructureDefinition(resource));
-    frtStructureMap: ComposeStructureMap(xml, 'StructureMap', TFhirStructureMap(resource));
-    frtSubscription: ComposeSubscription(xml, 'Subscription', TFhirSubscription(resource));
-    frtSubstance: ComposeSubstance(xml, 'Substance', TFhirSubstance(resource));
-    frtSupplyDelivery: ComposeSupplyDelivery(xml, 'SupplyDelivery', TFhirSupplyDelivery(resource));
-    frtSupplyRequest: ComposeSupplyRequest(xml, 'SupplyRequest', TFhirSupplyRequest(resource));
-    frtTask: ComposeTask(xml, 'Task', TFhirTask(resource));
-    frtTestReport: ComposeTestReport(xml, 'TestReport', TFhirTestReport(resource));
-    frtTestScript: ComposeTestScript(xml, 'TestScript', TFhirTestScript(resource));
-    frtValueSet: ComposeValueSet(xml, 'ValueSet', TFhirValueSet(resource));
-    frtVisionPrescription: ComposeVisionPrescription(xml, 'VisionPrescription', TFhirVisionPrescription(resource));
+{$ENDIF FHIR_PARAMETERS}
+{$IFDEF FHIR_ACCOUNT}
+  {$IFDEF FHIR_ACCOUNT}
+     frtAccount: ComposeAccount(xml, 'Account', TFhirAccount(resource)); 
+  {$ENDIF}
+{$ENDIF FHIR_ACCOUNT}
+{$IFDEF FHIR_ACTIVITYDEFINITION}
+  {$IFDEF FHIR_ACTIVITYDEFINITION}
+     frtActivityDefinition: ComposeActivityDefinition(xml, 'ActivityDefinition', TFhirActivityDefinition(resource)); 
+  {$ENDIF}
+{$ENDIF FHIR_ACTIVITYDEFINITION}
+{$IFDEF FHIR_ADVERSEEVENT}
+  {$IFDEF FHIR_ADVERSEEVENT}
+     frtAdverseEvent: ComposeAdverseEvent(xml, 'AdverseEvent', TFhirAdverseEvent(resource)); 
+  {$ENDIF}
+{$ENDIF FHIR_ADVERSEEVENT}
+{$IFDEF FHIR_ALLERGYINTOLERANCE}
+  {$IFDEF FHIR_ALLERGYINTOLERANCE}
+     frtAllergyIntolerance: ComposeAllergyIntolerance(xml, 'AllergyIntolerance', TFhirAllergyIntolerance(resource)); 
+  {$ENDIF}
+{$ENDIF FHIR_ALLERGYINTOLERANCE}
+{$IFDEF FHIR_APPOINTMENT}
+  {$IFDEF FHIR_APPOINTMENT}
+     frtAppointment: ComposeAppointment(xml, 'Appointment', TFhirAppointment(resource)); 
+  {$ENDIF}
+{$ENDIF FHIR_APPOINTMENT}
+{$IFDEF FHIR_APPOINTMENTRESPONSE}
+  {$IFDEF FHIR_APPOINTMENTRESPONSE}
+     frtAppointmentResponse: ComposeAppointmentResponse(xml, 'AppointmentResponse', TFhirAppointmentResponse(resource)); 
+  {$ENDIF}
+{$ENDIF FHIR_APPOINTMENTRESPONSE}
+{$IFDEF FHIR_AUDITEVENT}
+  {$IFDEF FHIR_AUDITEVENT}
+     frtAuditEvent: ComposeAuditEvent(xml, 'AuditEvent', TFhirAuditEvent(resource)); 
+  {$ENDIF}
+{$ENDIF FHIR_AUDITEVENT}
+{$IFDEF FHIR_BASIC}
+  {$IFDEF FHIR_BASIC}
+     frtBasic: ComposeBasic(xml, 'Basic', TFhirBasic(resource)); 
+  {$ENDIF}
+{$ENDIF FHIR_BASIC}
+{$IFDEF FHIR_BINARY}
+  {$IFDEF FHIR_BINARY}
+     frtBinary: ComposeBinary(xml, 'Binary', TFhirBinary(resource)); 
+  {$ENDIF}
+{$ENDIF FHIR_BINARY}
+{$IFDEF FHIR_BODYSITE}
+  {$IFDEF FHIR_BODYSITE}
+     frtBodySite: ComposeBodySite(xml, 'BodySite', TFhirBodySite(resource)); 
+  {$ENDIF}
+{$ENDIF FHIR_BODYSITE}
+{$IFDEF FHIR_BUNDLE}
+  {$IFDEF FHIR_BUNDLE}
+     frtBundle: ComposeBundle(xml, 'Bundle', TFhirBundle(resource)); 
+  {$ENDIF}
+{$ENDIF FHIR_BUNDLE}
+{$IFDEF FHIR_CAPABILITYSTATEMENT}
+  {$IFDEF FHIR_CAPABILITYSTATEMENT}
+     frtCapabilityStatement: ComposeCapabilityStatement(xml, 'CapabilityStatement', TFhirCapabilityStatement(resource)); 
+  {$ENDIF}
+{$ENDIF FHIR_CAPABILITYSTATEMENT}
+{$IFDEF FHIR_CAREPLAN}
+  {$IFDEF FHIR_CAREPLAN}
+     frtCarePlan: ComposeCarePlan(xml, 'CarePlan', TFhirCarePlan(resource)); 
+  {$ENDIF}
+{$ENDIF FHIR_CAREPLAN}
+{$IFDEF FHIR_CARETEAM}
+  {$IFDEF FHIR_CARETEAM}
+     frtCareTeam: ComposeCareTeam(xml, 'CareTeam', TFhirCareTeam(resource)); 
+  {$ENDIF}
+{$ENDIF FHIR_CARETEAM}
+{$IFDEF FHIR_CHARGEITEM}
+  {$IFDEF FHIR_CHARGEITEM}
+     frtChargeItem: ComposeChargeItem(xml, 'ChargeItem', TFhirChargeItem(resource)); 
+  {$ENDIF}
+{$ENDIF FHIR_CHARGEITEM}
+{$IFDEF FHIR_CLAIM}
+  {$IFDEF FHIR_CLAIM}
+     frtClaim: ComposeClaim(xml, 'Claim', TFhirClaim(resource)); 
+  {$ENDIF}
+{$ENDIF FHIR_CLAIM}
+{$IFDEF FHIR_CLAIMRESPONSE}
+  {$IFDEF FHIR_CLAIMRESPONSE}
+     frtClaimResponse: ComposeClaimResponse(xml, 'ClaimResponse', TFhirClaimResponse(resource)); 
+  {$ENDIF}
+{$ENDIF FHIR_CLAIMRESPONSE}
+{$IFDEF FHIR_CLINICALIMPRESSION}
+  {$IFDEF FHIR_CLINICALIMPRESSION}
+     frtClinicalImpression: ComposeClinicalImpression(xml, 'ClinicalImpression', TFhirClinicalImpression(resource)); 
+  {$ENDIF}
+{$ENDIF FHIR_CLINICALIMPRESSION}
+{$IFDEF FHIR_CODESYSTEM}
+  {$IFDEF FHIR_CODESYSTEM}
+     frtCodeSystem: ComposeCodeSystem(xml, 'CodeSystem', TFhirCodeSystem(resource)); 
+  {$ENDIF}
+{$ENDIF FHIR_CODESYSTEM}
+{$IFDEF FHIR_COMMUNICATION}
+  {$IFDEF FHIR_COMMUNICATION}
+     frtCommunication: ComposeCommunication(xml, 'Communication', TFhirCommunication(resource)); 
+  {$ENDIF}
+{$ENDIF FHIR_COMMUNICATION}
+{$IFDEF FHIR_COMMUNICATIONREQUEST}
+  {$IFDEF FHIR_COMMUNICATIONREQUEST}
+     frtCommunicationRequest: ComposeCommunicationRequest(xml, 'CommunicationRequest', TFhirCommunicationRequest(resource)); 
+  {$ENDIF}
+{$ENDIF FHIR_COMMUNICATIONREQUEST}
+{$IFDEF FHIR_COMPARTMENTDEFINITION}
+  {$IFDEF FHIR_COMPARTMENTDEFINITION}
+     frtCompartmentDefinition: ComposeCompartmentDefinition(xml, 'CompartmentDefinition', TFhirCompartmentDefinition(resource)); 
+  {$ENDIF}
+{$ENDIF FHIR_COMPARTMENTDEFINITION}
+{$IFDEF FHIR_COMPOSITION}
+  {$IFDEF FHIR_COMPOSITION}
+     frtComposition: ComposeComposition(xml, 'Composition', TFhirComposition(resource)); 
+  {$ENDIF}
+{$ENDIF FHIR_COMPOSITION}
+{$IFDEF FHIR_CONCEPTMAP}
+  {$IFDEF FHIR_CONCEPTMAP}
+     frtConceptMap: ComposeConceptMap(xml, 'ConceptMap', TFhirConceptMap(resource)); 
+  {$ENDIF}
+{$ENDIF FHIR_CONCEPTMAP}
+{$IFDEF FHIR_CONDITION}
+  {$IFDEF FHIR_CONDITION}
+     frtCondition: ComposeCondition(xml, 'Condition', TFhirCondition(resource)); 
+  {$ENDIF}
+{$ENDIF FHIR_CONDITION}
+{$IFDEF FHIR_CONSENT}
+  {$IFDEF FHIR_CONSENT}
+     frtConsent: ComposeConsent(xml, 'Consent', TFhirConsent(resource)); 
+  {$ENDIF}
+{$ENDIF FHIR_CONSENT}
+{$IFDEF FHIR_CONTRACT}
+  {$IFDEF FHIR_CONTRACT}
+     frtContract: ComposeContract(xml, 'Contract', TFhirContract(resource)); 
+  {$ENDIF}
+{$ENDIF FHIR_CONTRACT}
+{$IFDEF FHIR_COVERAGE}
+  {$IFDEF FHIR_COVERAGE}
+     frtCoverage: ComposeCoverage(xml, 'Coverage', TFhirCoverage(resource)); 
+  {$ENDIF}
+{$ENDIF FHIR_COVERAGE}
+{$IFDEF FHIR_DATAELEMENT}
+  {$IFDEF FHIR_DATAELEMENT}
+     frtDataElement: ComposeDataElement(xml, 'DataElement', TFhirDataElement(resource)); 
+  {$ENDIF}
+{$ENDIF FHIR_DATAELEMENT}
+{$IFDEF FHIR_DETECTEDISSUE}
+  {$IFDEF FHIR_DETECTEDISSUE}
+     frtDetectedIssue: ComposeDetectedIssue(xml, 'DetectedIssue', TFhirDetectedIssue(resource)); 
+  {$ENDIF}
+{$ENDIF FHIR_DETECTEDISSUE}
+{$IFDEF FHIR_DEVICE}
+  {$IFDEF FHIR_DEVICE}
+     frtDevice: ComposeDevice(xml, 'Device', TFhirDevice(resource)); 
+  {$ENDIF}
+{$ENDIF FHIR_DEVICE}
+{$IFDEF FHIR_DEVICECOMPONENT}
+  {$IFDEF FHIR_DEVICECOMPONENT}
+     frtDeviceComponent: ComposeDeviceComponent(xml, 'DeviceComponent', TFhirDeviceComponent(resource)); 
+  {$ENDIF}
+{$ENDIF FHIR_DEVICECOMPONENT}
+{$IFDEF FHIR_DEVICEMETRIC}
+  {$IFDEF FHIR_DEVICEMETRIC}
+     frtDeviceMetric: ComposeDeviceMetric(xml, 'DeviceMetric', TFhirDeviceMetric(resource)); 
+  {$ENDIF}
+{$ENDIF FHIR_DEVICEMETRIC}
+{$IFDEF FHIR_DEVICEREQUEST}
+  {$IFDEF FHIR_DEVICEREQUEST}
+     frtDeviceRequest: ComposeDeviceRequest(xml, 'DeviceRequest', TFhirDeviceRequest(resource)); 
+  {$ENDIF}
+{$ENDIF FHIR_DEVICEREQUEST}
+{$IFDEF FHIR_DEVICEUSESTATEMENT}
+  {$IFDEF FHIR_DEVICEUSESTATEMENT}
+     frtDeviceUseStatement: ComposeDeviceUseStatement(xml, 'DeviceUseStatement', TFhirDeviceUseStatement(resource)); 
+  {$ENDIF}
+{$ENDIF FHIR_DEVICEUSESTATEMENT}
+{$IFDEF FHIR_DIAGNOSTICREPORT}
+  {$IFDEF FHIR_DIAGNOSTICREPORT}
+     frtDiagnosticReport: ComposeDiagnosticReport(xml, 'DiagnosticReport', TFhirDiagnosticReport(resource)); 
+  {$ENDIF}
+{$ENDIF FHIR_DIAGNOSTICREPORT}
+{$IFDEF FHIR_DOCUMENTMANIFEST}
+  {$IFDEF FHIR_DOCUMENTMANIFEST}
+     frtDocumentManifest: ComposeDocumentManifest(xml, 'DocumentManifest', TFhirDocumentManifest(resource)); 
+  {$ENDIF}
+{$ENDIF FHIR_DOCUMENTMANIFEST}
+{$IFDEF FHIR_DOCUMENTREFERENCE}
+  {$IFDEF FHIR_DOCUMENTREFERENCE}
+     frtDocumentReference: ComposeDocumentReference(xml, 'DocumentReference', TFhirDocumentReference(resource)); 
+  {$ENDIF}
+{$ENDIF FHIR_DOCUMENTREFERENCE}
+{$IFDEF FHIR_ELIGIBILITYREQUEST}
+  {$IFDEF FHIR_ELIGIBILITYREQUEST}
+     frtEligibilityRequest: ComposeEligibilityRequest(xml, 'EligibilityRequest', TFhirEligibilityRequest(resource)); 
+  {$ENDIF}
+{$ENDIF FHIR_ELIGIBILITYREQUEST}
+{$IFDEF FHIR_ELIGIBILITYRESPONSE}
+  {$IFDEF FHIR_ELIGIBILITYRESPONSE}
+     frtEligibilityResponse: ComposeEligibilityResponse(xml, 'EligibilityResponse', TFhirEligibilityResponse(resource)); 
+  {$ENDIF}
+{$ENDIF FHIR_ELIGIBILITYRESPONSE}
+{$IFDEF FHIR_ENCOUNTER}
+  {$IFDEF FHIR_ENCOUNTER}
+     frtEncounter: ComposeEncounter(xml, 'Encounter', TFhirEncounter(resource)); 
+  {$ENDIF}
+{$ENDIF FHIR_ENCOUNTER}
+{$IFDEF FHIR_ENDPOINT}
+  {$IFDEF FHIR_ENDPOINT}
+     frtEndpoint: ComposeEndpoint(xml, 'Endpoint', TFhirEndpoint(resource)); 
+  {$ENDIF}
+{$ENDIF FHIR_ENDPOINT}
+{$IFDEF FHIR_ENROLLMENTREQUEST}
+  {$IFDEF FHIR_ENROLLMENTREQUEST}
+     frtEnrollmentRequest: ComposeEnrollmentRequest(xml, 'EnrollmentRequest', TFhirEnrollmentRequest(resource)); 
+  {$ENDIF}
+{$ENDIF FHIR_ENROLLMENTREQUEST}
+{$IFDEF FHIR_ENROLLMENTRESPONSE}
+  {$IFDEF FHIR_ENROLLMENTRESPONSE}
+     frtEnrollmentResponse: ComposeEnrollmentResponse(xml, 'EnrollmentResponse', TFhirEnrollmentResponse(resource)); 
+  {$ENDIF}
+{$ENDIF FHIR_ENROLLMENTRESPONSE}
+{$IFDEF FHIR_EPISODEOFCARE}
+  {$IFDEF FHIR_EPISODEOFCARE}
+     frtEpisodeOfCare: ComposeEpisodeOfCare(xml, 'EpisodeOfCare', TFhirEpisodeOfCare(resource)); 
+  {$ENDIF}
+{$ENDIF FHIR_EPISODEOFCARE}
+{$IFDEF FHIR_EXPANSIONPROFILE}
+  {$IFDEF FHIR_EXPANSIONPROFILE}
+     frtExpansionProfile: ComposeExpansionProfile(xml, 'ExpansionProfile', TFhirExpansionProfile(resource)); 
+  {$ENDIF}
+{$ENDIF FHIR_EXPANSIONPROFILE}
+{$IFDEF FHIR_EXPLANATIONOFBENEFIT}
+  {$IFDEF FHIR_EXPLANATIONOFBENEFIT}
+     frtExplanationOfBenefit: ComposeExplanationOfBenefit(xml, 'ExplanationOfBenefit', TFhirExplanationOfBenefit(resource)); 
+  {$ENDIF}
+{$ENDIF FHIR_EXPLANATIONOFBENEFIT}
+{$IFDEF FHIR_FAMILYMEMBERHISTORY}
+  {$IFDEF FHIR_FAMILYMEMBERHISTORY}
+     frtFamilyMemberHistory: ComposeFamilyMemberHistory(xml, 'FamilyMemberHistory', TFhirFamilyMemberHistory(resource)); 
+  {$ENDIF}
+{$ENDIF FHIR_FAMILYMEMBERHISTORY}
+{$IFDEF FHIR_FLAG}
+  {$IFDEF FHIR_FLAG}
+     frtFlag: ComposeFlag(xml, 'Flag', TFhirFlag(resource)); 
+  {$ENDIF}
+{$ENDIF FHIR_FLAG}
+{$IFDEF FHIR_GOAL}
+  {$IFDEF FHIR_GOAL}
+     frtGoal: ComposeGoal(xml, 'Goal', TFhirGoal(resource)); 
+  {$ENDIF}
+{$ENDIF FHIR_GOAL}
+{$IFDEF FHIR_GRAPHDEFINITION}
+  {$IFDEF FHIR_GRAPHDEFINITION}
+     frtGraphDefinition: ComposeGraphDefinition(xml, 'GraphDefinition', TFhirGraphDefinition(resource)); 
+  {$ENDIF}
+{$ENDIF FHIR_GRAPHDEFINITION}
+{$IFDEF FHIR_GROUP}
+  {$IFDEF FHIR_GROUP}
+     frtGroup: ComposeGroup(xml, 'Group', TFhirGroup(resource)); 
+  {$ENDIF}
+{$ENDIF FHIR_GROUP}
+{$IFDEF FHIR_GUIDANCERESPONSE}
+  {$IFDEF FHIR_GUIDANCERESPONSE}
+     frtGuidanceResponse: ComposeGuidanceResponse(xml, 'GuidanceResponse', TFhirGuidanceResponse(resource)); 
+  {$ENDIF}
+{$ENDIF FHIR_GUIDANCERESPONSE}
+{$IFDEF FHIR_HEALTHCARESERVICE}
+  {$IFDEF FHIR_HEALTHCARESERVICE}
+     frtHealthcareService: ComposeHealthcareService(xml, 'HealthcareService', TFhirHealthcareService(resource)); 
+  {$ENDIF}
+{$ENDIF FHIR_HEALTHCARESERVICE}
+{$IFDEF FHIR_IMAGINGMANIFEST}
+  {$IFDEF FHIR_IMAGINGMANIFEST}
+     frtImagingManifest: ComposeImagingManifest(xml, 'ImagingManifest', TFhirImagingManifest(resource)); 
+  {$ENDIF}
+{$ENDIF FHIR_IMAGINGMANIFEST}
+{$IFDEF FHIR_IMAGINGSTUDY}
+  {$IFDEF FHIR_IMAGINGSTUDY}
+     frtImagingStudy: ComposeImagingStudy(xml, 'ImagingStudy', TFhirImagingStudy(resource)); 
+  {$ENDIF}
+{$ENDIF FHIR_IMAGINGSTUDY}
+{$IFDEF FHIR_IMMUNIZATION}
+  {$IFDEF FHIR_IMMUNIZATION}
+     frtImmunization: ComposeImmunization(xml, 'Immunization', TFhirImmunization(resource)); 
+  {$ENDIF}
+{$ENDIF FHIR_IMMUNIZATION}
+{$IFDEF FHIR_IMMUNIZATIONRECOMMENDATION}
+  {$IFDEF FHIR_IMMUNIZATIONRECOMMENDATION}
+     frtImmunizationRecommendation: ComposeImmunizationRecommendation(xml, 'ImmunizationRecommendation', TFhirImmunizationRecommendation(resource)); 
+  {$ENDIF}
+{$ENDIF FHIR_IMMUNIZATIONRECOMMENDATION}
+{$IFDEF FHIR_IMPLEMENTATIONGUIDE}
+  {$IFDEF FHIR_IMPLEMENTATIONGUIDE}
+     frtImplementationGuide: ComposeImplementationGuide(xml, 'ImplementationGuide', TFhirImplementationGuide(resource)); 
+  {$ENDIF}
+{$ENDIF FHIR_IMPLEMENTATIONGUIDE}
+{$IFDEF FHIR_LIBRARY}
+  {$IFDEF FHIR_LIBRARY}
+     frtLibrary: ComposeLibrary(xml, 'Library', TFhirLibrary(resource)); 
+  {$ENDIF}
+{$ENDIF FHIR_LIBRARY}
+{$IFDEF FHIR_LINKAGE}
+  {$IFDEF FHIR_LINKAGE}
+     frtLinkage: ComposeLinkage(xml, 'Linkage', TFhirLinkage(resource)); 
+  {$ENDIF}
+{$ENDIF FHIR_LINKAGE}
+{$IFDEF FHIR_LIST}
+  {$IFDEF FHIR_LIST}
+     frtList: ComposeList(xml, 'List', TFhirList(resource)); 
+  {$ENDIF}
+{$ENDIF FHIR_LIST}
+{$IFDEF FHIR_LOCATION}
+  {$IFDEF FHIR_LOCATION}
+     frtLocation: ComposeLocation(xml, 'Location', TFhirLocation(resource)); 
+  {$ENDIF}
+{$ENDIF FHIR_LOCATION}
+{$IFDEF FHIR_MEASURE}
+  {$IFDEF FHIR_MEASURE}
+     frtMeasure: ComposeMeasure(xml, 'Measure', TFhirMeasure(resource)); 
+  {$ENDIF}
+{$ENDIF FHIR_MEASURE}
+{$IFDEF FHIR_MEASUREREPORT}
+  {$IFDEF FHIR_MEASUREREPORT}
+     frtMeasureReport: ComposeMeasureReport(xml, 'MeasureReport', TFhirMeasureReport(resource)); 
+  {$ENDIF}
+{$ENDIF FHIR_MEASUREREPORT}
+{$IFDEF FHIR_MEDIA}
+  {$IFDEF FHIR_MEDIA}
+     frtMedia: ComposeMedia(xml, 'Media', TFhirMedia(resource)); 
+  {$ENDIF}
+{$ENDIF FHIR_MEDIA}
+{$IFDEF FHIR_MEDICATION}
+  {$IFDEF FHIR_MEDICATION}
+     frtMedication: ComposeMedication(xml, 'Medication', TFhirMedication(resource)); 
+  {$ENDIF}
+{$ENDIF FHIR_MEDICATION}
+{$IFDEF FHIR_MEDICATIONADMINISTRATION}
+  {$IFDEF FHIR_MEDICATIONADMINISTRATION}
+     frtMedicationAdministration: ComposeMedicationAdministration(xml, 'MedicationAdministration', TFhirMedicationAdministration(resource)); 
+  {$ENDIF}
+{$ENDIF FHIR_MEDICATIONADMINISTRATION}
+{$IFDEF FHIR_MEDICATIONDISPENSE}
+  {$IFDEF FHIR_MEDICATIONDISPENSE}
+     frtMedicationDispense: ComposeMedicationDispense(xml, 'MedicationDispense', TFhirMedicationDispense(resource)); 
+  {$ENDIF}
+{$ENDIF FHIR_MEDICATIONDISPENSE}
+{$IFDEF FHIR_MEDICATIONREQUEST}
+  {$IFDEF FHIR_MEDICATIONREQUEST}
+     frtMedicationRequest: ComposeMedicationRequest(xml, 'MedicationRequest', TFhirMedicationRequest(resource)); 
+  {$ENDIF}
+{$ENDIF FHIR_MEDICATIONREQUEST}
+{$IFDEF FHIR_MEDICATIONSTATEMENT}
+  {$IFDEF FHIR_MEDICATIONSTATEMENT}
+     frtMedicationStatement: ComposeMedicationStatement(xml, 'MedicationStatement', TFhirMedicationStatement(resource)); 
+  {$ENDIF}
+{$ENDIF FHIR_MEDICATIONSTATEMENT}
+{$IFDEF FHIR_MESSAGEDEFINITION}
+  {$IFDEF FHIR_MESSAGEDEFINITION}
+     frtMessageDefinition: ComposeMessageDefinition(xml, 'MessageDefinition', TFhirMessageDefinition(resource)); 
+  {$ENDIF}
+{$ENDIF FHIR_MESSAGEDEFINITION}
+{$IFDEF FHIR_MESSAGEHEADER}
+  {$IFDEF FHIR_MESSAGEHEADER}
+     frtMessageHeader: ComposeMessageHeader(xml, 'MessageHeader', TFhirMessageHeader(resource)); 
+  {$ENDIF}
+{$ENDIF FHIR_MESSAGEHEADER}
+{$IFDEF FHIR_NAMINGSYSTEM}
+  {$IFDEF FHIR_NAMINGSYSTEM}
+     frtNamingSystem: ComposeNamingSystem(xml, 'NamingSystem', TFhirNamingSystem(resource)); 
+  {$ENDIF}
+{$ENDIF FHIR_NAMINGSYSTEM}
+{$IFDEF FHIR_NUTRITIONORDER}
+  {$IFDEF FHIR_NUTRITIONORDER}
+     frtNutritionOrder: ComposeNutritionOrder(xml, 'NutritionOrder', TFhirNutritionOrder(resource)); 
+  {$ENDIF}
+{$ENDIF FHIR_NUTRITIONORDER}
+{$IFDEF FHIR_OBSERVATION}
+  {$IFDEF FHIR_OBSERVATION}
+     frtObservation: ComposeObservation(xml, 'Observation', TFhirObservation(resource)); 
+  {$ENDIF}
+{$ENDIF FHIR_OBSERVATION}
+{$IFDEF FHIR_OPERATIONDEFINITION}
+  {$IFDEF FHIR_OPERATIONDEFINITION}
+     frtOperationDefinition: ComposeOperationDefinition(xml, 'OperationDefinition', TFhirOperationDefinition(resource)); 
+  {$ENDIF}
+{$ENDIF FHIR_OPERATIONDEFINITION}
+{$IFDEF FHIR_OPERATIONOUTCOME}
+  {$IFDEF FHIR_OPERATIONOUTCOME}
+     frtOperationOutcome: ComposeOperationOutcome(xml, 'OperationOutcome', TFhirOperationOutcome(resource)); 
+  {$ENDIF}
+{$ENDIF FHIR_OPERATIONOUTCOME}
+{$IFDEF FHIR_ORGANIZATION}
+  {$IFDEF FHIR_ORGANIZATION}
+     frtOrganization: ComposeOrganization(xml, 'Organization', TFhirOrganization(resource)); 
+  {$ENDIF}
+{$ENDIF FHIR_ORGANIZATION}
+{$IFDEF FHIR_PATIENT}
+  {$IFDEF FHIR_PATIENT}
+     frtPatient: ComposePatient(xml, 'Patient', TFhirPatient(resource)); 
+  {$ENDIF}
+{$ENDIF FHIR_PATIENT}
+{$IFDEF FHIR_PAYMENTNOTICE}
+  {$IFDEF FHIR_PAYMENTNOTICE}
+     frtPaymentNotice: ComposePaymentNotice(xml, 'PaymentNotice', TFhirPaymentNotice(resource)); 
+  {$ENDIF}
+{$ENDIF FHIR_PAYMENTNOTICE}
+{$IFDEF FHIR_PAYMENTRECONCILIATION}
+  {$IFDEF FHIR_PAYMENTRECONCILIATION}
+     frtPaymentReconciliation: ComposePaymentReconciliation(xml, 'PaymentReconciliation', TFhirPaymentReconciliation(resource)); 
+  {$ENDIF}
+{$ENDIF FHIR_PAYMENTRECONCILIATION}
+{$IFDEF FHIR_PERSON}
+  {$IFDEF FHIR_PERSON}
+     frtPerson: ComposePerson(xml, 'Person', TFhirPerson(resource)); 
+  {$ENDIF}
+{$ENDIF FHIR_PERSON}
+{$IFDEF FHIR_PLANDEFINITION}
+  {$IFDEF FHIR_PLANDEFINITION}
+     frtPlanDefinition: ComposePlanDefinition(xml, 'PlanDefinition', TFhirPlanDefinition(resource)); 
+  {$ENDIF}
+{$ENDIF FHIR_PLANDEFINITION}
+{$IFDEF FHIR_PRACTITIONER}
+  {$IFDEF FHIR_PRACTITIONER}
+     frtPractitioner: ComposePractitioner(xml, 'Practitioner', TFhirPractitioner(resource)); 
+  {$ENDIF}
+{$ENDIF FHIR_PRACTITIONER}
+{$IFDEF FHIR_PRACTITIONERROLE}
+  {$IFDEF FHIR_PRACTITIONERROLE}
+     frtPractitionerRole: ComposePractitionerRole(xml, 'PractitionerRole', TFhirPractitionerRole(resource)); 
+  {$ENDIF}
+{$ENDIF FHIR_PRACTITIONERROLE}
+{$IFDEF FHIR_PROCEDURE}
+  {$IFDEF FHIR_PROCEDURE}
+     frtProcedure: ComposeProcedure(xml, 'Procedure', TFhirProcedure(resource)); 
+  {$ENDIF}
+{$ENDIF FHIR_PROCEDURE}
+{$IFDEF FHIR_PROCEDUREREQUEST}
+  {$IFDEF FHIR_PROCEDUREREQUEST}
+     frtProcedureRequest: ComposeProcedureRequest(xml, 'ProcedureRequest', TFhirProcedureRequest(resource)); 
+  {$ENDIF}
+{$ENDIF FHIR_PROCEDUREREQUEST}
+{$IFDEF FHIR_PROCESSREQUEST}
+  {$IFDEF FHIR_PROCESSREQUEST}
+     frtProcessRequest: ComposeProcessRequest(xml, 'ProcessRequest', TFhirProcessRequest(resource)); 
+  {$ENDIF}
+{$ENDIF FHIR_PROCESSREQUEST}
+{$IFDEF FHIR_PROCESSRESPONSE}
+  {$IFDEF FHIR_PROCESSRESPONSE}
+     frtProcessResponse: ComposeProcessResponse(xml, 'ProcessResponse', TFhirProcessResponse(resource)); 
+  {$ENDIF}
+{$ENDIF FHIR_PROCESSRESPONSE}
+{$IFDEF FHIR_PROVENANCE}
+  {$IFDEF FHIR_PROVENANCE}
+     frtProvenance: ComposeProvenance(xml, 'Provenance', TFhirProvenance(resource)); 
+  {$ENDIF}
+{$ENDIF FHIR_PROVENANCE}
+{$IFDEF FHIR_QUESTIONNAIRE}
+  {$IFDEF FHIR_QUESTIONNAIRE}
+     frtQuestionnaire: ComposeQuestionnaire(xml, 'Questionnaire', TFhirQuestionnaire(resource)); 
+  {$ENDIF}
+{$ENDIF FHIR_QUESTIONNAIRE}
+{$IFDEF FHIR_QUESTIONNAIRERESPONSE}
+  {$IFDEF FHIR_QUESTIONNAIRERESPONSE}
+     frtQuestionnaireResponse: ComposeQuestionnaireResponse(xml, 'QuestionnaireResponse', TFhirQuestionnaireResponse(resource)); 
+  {$ENDIF}
+{$ENDIF FHIR_QUESTIONNAIRERESPONSE}
+{$IFDEF FHIR_REFERRALREQUEST}
+  {$IFDEF FHIR_REFERRALREQUEST}
+     frtReferralRequest: ComposeReferralRequest(xml, 'ReferralRequest', TFhirReferralRequest(resource)); 
+  {$ENDIF}
+{$ENDIF FHIR_REFERRALREQUEST}
+{$IFDEF FHIR_RELATEDPERSON}
+  {$IFDEF FHIR_RELATEDPERSON}
+     frtRelatedPerson: ComposeRelatedPerson(xml, 'RelatedPerson', TFhirRelatedPerson(resource)); 
+  {$ENDIF}
+{$ENDIF FHIR_RELATEDPERSON}
+{$IFDEF FHIR_REQUESTGROUP}
+  {$IFDEF FHIR_REQUESTGROUP}
+     frtRequestGroup: ComposeRequestGroup(xml, 'RequestGroup', TFhirRequestGroup(resource)); 
+  {$ENDIF}
+{$ENDIF FHIR_REQUESTGROUP}
+{$IFDEF FHIR_RESEARCHSTUDY}
+  {$IFDEF FHIR_RESEARCHSTUDY}
+     frtResearchStudy: ComposeResearchStudy(xml, 'ResearchStudy', TFhirResearchStudy(resource)); 
+  {$ENDIF}
+{$ENDIF FHIR_RESEARCHSTUDY}
+{$IFDEF FHIR_RESEARCHSUBJECT}
+  {$IFDEF FHIR_RESEARCHSUBJECT}
+     frtResearchSubject: ComposeResearchSubject(xml, 'ResearchSubject', TFhirResearchSubject(resource)); 
+  {$ENDIF}
+{$ENDIF FHIR_RESEARCHSUBJECT}
+{$IFDEF FHIR_RISKASSESSMENT}
+  {$IFDEF FHIR_RISKASSESSMENT}
+     frtRiskAssessment: ComposeRiskAssessment(xml, 'RiskAssessment', TFhirRiskAssessment(resource)); 
+  {$ENDIF}
+{$ENDIF FHIR_RISKASSESSMENT}
+{$IFDEF FHIR_SCHEDULE}
+  {$IFDEF FHIR_SCHEDULE}
+     frtSchedule: ComposeSchedule(xml, 'Schedule', TFhirSchedule(resource)); 
+  {$ENDIF}
+{$ENDIF FHIR_SCHEDULE}
+{$IFDEF FHIR_SEARCHPARAMETER}
+  {$IFDEF FHIR_SEARCHPARAMETER}
+     frtSearchParameter: ComposeSearchParameter(xml, 'SearchParameter', TFhirSearchParameter(resource)); 
+  {$ENDIF}
+{$ENDIF FHIR_SEARCHPARAMETER}
+{$IFDEF FHIR_SEQUENCE}
+  {$IFDEF FHIR_SEQUENCE}
+     frtSequence: ComposeSequence(xml, 'Sequence', TFhirSequence(resource)); 
+  {$ENDIF}
+{$ENDIF FHIR_SEQUENCE}
+{$IFDEF FHIR_SERVICEDEFINITION}
+  {$IFDEF FHIR_SERVICEDEFINITION}
+     frtServiceDefinition: ComposeServiceDefinition(xml, 'ServiceDefinition', TFhirServiceDefinition(resource)); 
+  {$ENDIF}
+{$ENDIF FHIR_SERVICEDEFINITION}
+{$IFDEF FHIR_SLOT}
+  {$IFDEF FHIR_SLOT}
+     frtSlot: ComposeSlot(xml, 'Slot', TFhirSlot(resource)); 
+  {$ENDIF}
+{$ENDIF FHIR_SLOT}
+{$IFDEF FHIR_SPECIMEN}
+  {$IFDEF FHIR_SPECIMEN}
+     frtSpecimen: ComposeSpecimen(xml, 'Specimen', TFhirSpecimen(resource)); 
+  {$ENDIF}
+{$ENDIF FHIR_SPECIMEN}
+{$IFDEF FHIR_STRUCTUREDEFINITION}
+  {$IFDEF FHIR_STRUCTUREDEFINITION}
+     frtStructureDefinition: ComposeStructureDefinition(xml, 'StructureDefinition', TFhirStructureDefinition(resource)); 
+  {$ENDIF}
+{$ENDIF FHIR_STRUCTUREDEFINITION}
+{$IFDEF FHIR_STRUCTUREMAP}
+  {$IFDEF FHIR_STRUCTUREMAP}
+     frtStructureMap: ComposeStructureMap(xml, 'StructureMap', TFhirStructureMap(resource)); 
+  {$ENDIF}
+{$ENDIF FHIR_STRUCTUREMAP}
+{$IFDEF FHIR_SUBSCRIPTION}
+  {$IFDEF FHIR_SUBSCRIPTION}
+     frtSubscription: ComposeSubscription(xml, 'Subscription', TFhirSubscription(resource)); 
+  {$ENDIF}
+{$ENDIF FHIR_SUBSCRIPTION}
+{$IFDEF FHIR_SUBSTANCE}
+  {$IFDEF FHIR_SUBSTANCE}
+     frtSubstance: ComposeSubstance(xml, 'Substance', TFhirSubstance(resource)); 
+  {$ENDIF}
+{$ENDIF FHIR_SUBSTANCE}
+{$IFDEF FHIR_SUPPLYDELIVERY}
+  {$IFDEF FHIR_SUPPLYDELIVERY}
+     frtSupplyDelivery: ComposeSupplyDelivery(xml, 'SupplyDelivery', TFhirSupplyDelivery(resource)); 
+  {$ENDIF}
+{$ENDIF FHIR_SUPPLYDELIVERY}
+{$IFDEF FHIR_SUPPLYREQUEST}
+  {$IFDEF FHIR_SUPPLYREQUEST}
+     frtSupplyRequest: ComposeSupplyRequest(xml, 'SupplyRequest', TFhirSupplyRequest(resource)); 
+  {$ENDIF}
+{$ENDIF FHIR_SUPPLYREQUEST}
+{$IFDEF FHIR_TASK}
+  {$IFDEF FHIR_TASK}
+     frtTask: ComposeTask(xml, 'Task', TFhirTask(resource)); 
+  {$ENDIF}
+{$ENDIF FHIR_TASK}
+{$IFDEF FHIR_TESTREPORT}
+  {$IFDEF FHIR_TESTREPORT}
+     frtTestReport: ComposeTestReport(xml, 'TestReport', TFhirTestReport(resource)); 
+  {$ENDIF}
+{$ENDIF FHIR_TESTREPORT}
+{$IFDEF FHIR_TESTSCRIPT}
+  {$IFDEF FHIR_TESTSCRIPT}
+     frtTestScript: ComposeTestScript(xml, 'TestScript', TFhirTestScript(resource)); 
+  {$ENDIF}
+{$ENDIF FHIR_TESTSCRIPT}
+{$IFDEF FHIR_VALUESET}
+  {$IFDEF FHIR_VALUESET}
+     frtValueSet: ComposeValueSet(xml, 'ValueSet', TFhirValueSet(resource)); 
+  {$ENDIF}
+{$ENDIF FHIR_VALUESET}
+{$IFDEF FHIR_VISIONPRESCRIPTION}
+  {$IFDEF FHIR_VISIONPRESCRIPTION}
+     frtVisionPrescription: ComposeVisionPrescription(xml, 'VisionPrescription', TFhirVisionPrescription(resource)); 
+  {$ENDIF}
+{$ENDIF FHIR_VISIONPRESCRIPTION}
   else
     raise Exception.create('Internal error: the resource type '+CODES_TFhirResourceType[resource.ResourceType]+' is not a valid resource type');
   end;
@@ -42801,8 +44437,10 @@ begin
     result := parseElement(element, element.Name)
   else if SameText(element.Name, 'TFhirBackboneElement') then
     result := parseBackboneElement(element, element.Name)
+{$IFDEF FHIR_PARAMETERS}
   else if SameText(element.Name, 'TFhirParameters') then
     result := parseParameters(element, element.Name)
+{$ENDIF FHIR_PARAMETERS}
   else if SameText(element.Name, 'TFhirExtension') then
     result := parseExtension(element, element.Name)
   else if SameText(element.Name, 'TFhirNarrative') then
@@ -42869,238 +44507,470 @@ begin
     result := parseDistance(element, element.Name)
   else if SameText(element.Name, 'TFhirDuration') then
     result := parseDuration(element, element.Name)
+{$IFDEF FHIR_ACCOUNT}
   else if SameText(element.Name, 'TFhirAccount') then
     result := parseAccount(element, element.Name)
+{$ENDIF FHIR_ACCOUNT}
+{$IFDEF FHIR_ACTIVITYDEFINITION}
   else if SameText(element.Name, 'TFhirActivityDefinition') then
     result := parseActivityDefinition(element, element.Name)
+{$ENDIF FHIR_ACTIVITYDEFINITION}
+{$IFDEF FHIR_ADVERSEEVENT}
   else if SameText(element.Name, 'TFhirAdverseEvent') then
     result := parseAdverseEvent(element, element.Name)
+{$ENDIF FHIR_ADVERSEEVENT}
+{$IFDEF FHIR_ALLERGYINTOLERANCE}
   else if SameText(element.Name, 'TFhirAllergyIntolerance') then
     result := parseAllergyIntolerance(element, element.Name)
+{$ENDIF FHIR_ALLERGYINTOLERANCE}
+{$IFDEF FHIR_APPOINTMENT}
   else if SameText(element.Name, 'TFhirAppointment') then
     result := parseAppointment(element, element.Name)
+{$ENDIF FHIR_APPOINTMENT}
+{$IFDEF FHIR_APPOINTMENTRESPONSE}
   else if SameText(element.Name, 'TFhirAppointmentResponse') then
     result := parseAppointmentResponse(element, element.Name)
+{$ENDIF FHIR_APPOINTMENTRESPONSE}
+{$IFDEF FHIR_AUDITEVENT}
   else if SameText(element.Name, 'TFhirAuditEvent') then
     result := parseAuditEvent(element, element.Name)
+{$ENDIF FHIR_AUDITEVENT}
+{$IFDEF FHIR_BASIC}
   else if SameText(element.Name, 'TFhirBasic') then
     result := parseBasic(element, element.Name)
+{$ENDIF FHIR_BASIC}
+{$IFDEF FHIR_BINARY}
   else if SameText(element.Name, 'TFhirBinary') then
     result := parseBinary(element, element.Name)
+{$ENDIF FHIR_BINARY}
+{$IFDEF FHIR_BODYSITE}
   else if SameText(element.Name, 'TFhirBodySite') then
     result := parseBodySite(element, element.Name)
+{$ENDIF FHIR_BODYSITE}
+{$IFDEF FHIR_BUNDLE}
   else if SameText(element.Name, 'TFhirBundle') then
     result := parseBundle(element, element.Name)
+{$ENDIF FHIR_BUNDLE}
+{$IFDEF FHIR_CAPABILITYSTATEMENT}
   else if SameText(element.Name, 'TFhirCapabilityStatement') then
     result := parseCapabilityStatement(element, element.Name)
+{$ENDIF FHIR_CAPABILITYSTATEMENT}
+{$IFDEF FHIR_CAREPLAN}
   else if SameText(element.Name, 'TFhirCarePlan') then
     result := parseCarePlan(element, element.Name)
+{$ENDIF FHIR_CAREPLAN}
+{$IFDEF FHIR_CARETEAM}
   else if SameText(element.Name, 'TFhirCareTeam') then
     result := parseCareTeam(element, element.Name)
+{$ENDIF FHIR_CARETEAM}
+{$IFDEF FHIR_CHARGEITEM}
   else if SameText(element.Name, 'TFhirChargeItem') then
     result := parseChargeItem(element, element.Name)
+{$ENDIF FHIR_CHARGEITEM}
+{$IFDEF FHIR_CLAIM}
   else if SameText(element.Name, 'TFhirClaim') then
     result := parseClaim(element, element.Name)
+{$ENDIF FHIR_CLAIM}
+{$IFDEF FHIR_CLAIMRESPONSE}
   else if SameText(element.Name, 'TFhirClaimResponse') then
     result := parseClaimResponse(element, element.Name)
+{$ENDIF FHIR_CLAIMRESPONSE}
+{$IFDEF FHIR_CLINICALIMPRESSION}
   else if SameText(element.Name, 'TFhirClinicalImpression') then
     result := parseClinicalImpression(element, element.Name)
+{$ENDIF FHIR_CLINICALIMPRESSION}
+{$IFDEF FHIR_CODESYSTEM}
   else if SameText(element.Name, 'TFhirCodeSystem') then
     result := parseCodeSystem(element, element.Name)
+{$ENDIF FHIR_CODESYSTEM}
+{$IFDEF FHIR_COMMUNICATION}
   else if SameText(element.Name, 'TFhirCommunication') then
     result := parseCommunication(element, element.Name)
+{$ENDIF FHIR_COMMUNICATION}
+{$IFDEF FHIR_COMMUNICATIONREQUEST}
   else if SameText(element.Name, 'TFhirCommunicationRequest') then
     result := parseCommunicationRequest(element, element.Name)
+{$ENDIF FHIR_COMMUNICATIONREQUEST}
+{$IFDEF FHIR_COMPARTMENTDEFINITION}
   else if SameText(element.Name, 'TFhirCompartmentDefinition') then
     result := parseCompartmentDefinition(element, element.Name)
+{$ENDIF FHIR_COMPARTMENTDEFINITION}
+{$IFDEF FHIR_COMPOSITION}
   else if SameText(element.Name, 'TFhirComposition') then
     result := parseComposition(element, element.Name)
+{$ENDIF FHIR_COMPOSITION}
+{$IFDEF FHIR_CONCEPTMAP}
   else if SameText(element.Name, 'TFhirConceptMap') then
     result := parseConceptMap(element, element.Name)
+{$ENDIF FHIR_CONCEPTMAP}
+{$IFDEF FHIR_CONDITION}
   else if SameText(element.Name, 'TFhirCondition') then
     result := parseCondition(element, element.Name)
+{$ENDIF FHIR_CONDITION}
+{$IFDEF FHIR_CONSENT}
   else if SameText(element.Name, 'TFhirConsent') then
     result := parseConsent(element, element.Name)
+{$ENDIF FHIR_CONSENT}
+{$IFDEF FHIR_CONTRACT}
   else if SameText(element.Name, 'TFhirContract') then
     result := parseContract(element, element.Name)
+{$ENDIF FHIR_CONTRACT}
+{$IFDEF FHIR_COVERAGE}
   else if SameText(element.Name, 'TFhirCoverage') then
     result := parseCoverage(element, element.Name)
+{$ENDIF FHIR_COVERAGE}
+{$IFDEF FHIR_DATAELEMENT}
   else if SameText(element.Name, 'TFhirDataElement') then
     result := parseDataElement(element, element.Name)
+{$ENDIF FHIR_DATAELEMENT}
+{$IFDEF FHIR_DETECTEDISSUE}
   else if SameText(element.Name, 'TFhirDetectedIssue') then
     result := parseDetectedIssue(element, element.Name)
+{$ENDIF FHIR_DETECTEDISSUE}
+{$IFDEF FHIR_DEVICE}
   else if SameText(element.Name, 'TFhirDevice') then
     result := parseDevice(element, element.Name)
+{$ENDIF FHIR_DEVICE}
+{$IFDEF FHIR_DEVICECOMPONENT}
   else if SameText(element.Name, 'TFhirDeviceComponent') then
     result := parseDeviceComponent(element, element.Name)
+{$ENDIF FHIR_DEVICECOMPONENT}
+{$IFDEF FHIR_DEVICEMETRIC}
   else if SameText(element.Name, 'TFhirDeviceMetric') then
     result := parseDeviceMetric(element, element.Name)
+{$ENDIF FHIR_DEVICEMETRIC}
+{$IFDEF FHIR_DEVICEREQUEST}
   else if SameText(element.Name, 'TFhirDeviceRequest') then
     result := parseDeviceRequest(element, element.Name)
+{$ENDIF FHIR_DEVICEREQUEST}
+{$IFDEF FHIR_DEVICEUSESTATEMENT}
   else if SameText(element.Name, 'TFhirDeviceUseStatement') then
     result := parseDeviceUseStatement(element, element.Name)
+{$ENDIF FHIR_DEVICEUSESTATEMENT}
+{$IFDEF FHIR_DIAGNOSTICREPORT}
   else if SameText(element.Name, 'TFhirDiagnosticReport') then
     result := parseDiagnosticReport(element, element.Name)
+{$ENDIF FHIR_DIAGNOSTICREPORT}
+{$IFDEF FHIR_DOCUMENTMANIFEST}
   else if SameText(element.Name, 'TFhirDocumentManifest') then
     result := parseDocumentManifest(element, element.Name)
+{$ENDIF FHIR_DOCUMENTMANIFEST}
+{$IFDEF FHIR_DOCUMENTREFERENCE}
   else if SameText(element.Name, 'TFhirDocumentReference') then
     result := parseDocumentReference(element, element.Name)
+{$ENDIF FHIR_DOCUMENTREFERENCE}
+{$IFDEF FHIR_ELIGIBILITYREQUEST}
   else if SameText(element.Name, 'TFhirEligibilityRequest') then
     result := parseEligibilityRequest(element, element.Name)
+{$ENDIF FHIR_ELIGIBILITYREQUEST}
+{$IFDEF FHIR_ELIGIBILITYRESPONSE}
   else if SameText(element.Name, 'TFhirEligibilityResponse') then
     result := parseEligibilityResponse(element, element.Name)
+{$ENDIF FHIR_ELIGIBILITYRESPONSE}
+{$IFDEF FHIR_ENCOUNTER}
   else if SameText(element.Name, 'TFhirEncounter') then
     result := parseEncounter(element, element.Name)
+{$ENDIF FHIR_ENCOUNTER}
+{$IFDEF FHIR_ENDPOINT}
   else if SameText(element.Name, 'TFhirEndpoint') then
     result := parseEndpoint(element, element.Name)
+{$ENDIF FHIR_ENDPOINT}
+{$IFDEF FHIR_ENROLLMENTREQUEST}
   else if SameText(element.Name, 'TFhirEnrollmentRequest') then
     result := parseEnrollmentRequest(element, element.Name)
+{$ENDIF FHIR_ENROLLMENTREQUEST}
+{$IFDEF FHIR_ENROLLMENTRESPONSE}
   else if SameText(element.Name, 'TFhirEnrollmentResponse') then
     result := parseEnrollmentResponse(element, element.Name)
+{$ENDIF FHIR_ENROLLMENTRESPONSE}
+{$IFDEF FHIR_EPISODEOFCARE}
   else if SameText(element.Name, 'TFhirEpisodeOfCare') then
     result := parseEpisodeOfCare(element, element.Name)
+{$ENDIF FHIR_EPISODEOFCARE}
+{$IFDEF FHIR_EXPANSIONPROFILE}
   else if SameText(element.Name, 'TFhirExpansionProfile') then
     result := parseExpansionProfile(element, element.Name)
+{$ENDIF FHIR_EXPANSIONPROFILE}
+{$IFDEF FHIR_EXPLANATIONOFBENEFIT}
   else if SameText(element.Name, 'TFhirExplanationOfBenefit') then
     result := parseExplanationOfBenefit(element, element.Name)
+{$ENDIF FHIR_EXPLANATIONOFBENEFIT}
+{$IFDEF FHIR_FAMILYMEMBERHISTORY}
   else if SameText(element.Name, 'TFhirFamilyMemberHistory') then
     result := parseFamilyMemberHistory(element, element.Name)
+{$ENDIF FHIR_FAMILYMEMBERHISTORY}
+{$IFDEF FHIR_FLAG}
   else if SameText(element.Name, 'TFhirFlag') then
     result := parseFlag(element, element.Name)
+{$ENDIF FHIR_FLAG}
+{$IFDEF FHIR_GOAL}
   else if SameText(element.Name, 'TFhirGoal') then
     result := parseGoal(element, element.Name)
+{$ENDIF FHIR_GOAL}
+{$IFDEF FHIR_GRAPHDEFINITION}
   else if SameText(element.Name, 'TFhirGraphDefinition') then
     result := parseGraphDefinition(element, element.Name)
+{$ENDIF FHIR_GRAPHDEFINITION}
+{$IFDEF FHIR_GROUP}
   else if SameText(element.Name, 'TFhirGroup') then
     result := parseGroup(element, element.Name)
+{$ENDIF FHIR_GROUP}
+{$IFDEF FHIR_GUIDANCERESPONSE}
   else if SameText(element.Name, 'TFhirGuidanceResponse') then
     result := parseGuidanceResponse(element, element.Name)
+{$ENDIF FHIR_GUIDANCERESPONSE}
+{$IFDEF FHIR_HEALTHCARESERVICE}
   else if SameText(element.Name, 'TFhirHealthcareService') then
     result := parseHealthcareService(element, element.Name)
+{$ENDIF FHIR_HEALTHCARESERVICE}
+{$IFDEF FHIR_IMAGINGMANIFEST}
   else if SameText(element.Name, 'TFhirImagingManifest') then
     result := parseImagingManifest(element, element.Name)
+{$ENDIF FHIR_IMAGINGMANIFEST}
+{$IFDEF FHIR_IMAGINGSTUDY}
   else if SameText(element.Name, 'TFhirImagingStudy') then
     result := parseImagingStudy(element, element.Name)
+{$ENDIF FHIR_IMAGINGSTUDY}
+{$IFDEF FHIR_IMMUNIZATION}
   else if SameText(element.Name, 'TFhirImmunization') then
     result := parseImmunization(element, element.Name)
+{$ENDIF FHIR_IMMUNIZATION}
+{$IFDEF FHIR_IMMUNIZATIONRECOMMENDATION}
   else if SameText(element.Name, 'TFhirImmunizationRecommendation') then
     result := parseImmunizationRecommendation(element, element.Name)
+{$ENDIF FHIR_IMMUNIZATIONRECOMMENDATION}
+{$IFDEF FHIR_IMPLEMENTATIONGUIDE}
   else if SameText(element.Name, 'TFhirImplementationGuide') then
     result := parseImplementationGuide(element, element.Name)
+{$ENDIF FHIR_IMPLEMENTATIONGUIDE}
+{$IFDEF FHIR_LIBRARY}
   else if SameText(element.Name, 'TFhirLibrary') then
     result := parseLibrary(element, element.Name)
+{$ENDIF FHIR_LIBRARY}
+{$IFDEF FHIR_LINKAGE}
   else if SameText(element.Name, 'TFhirLinkage') then
     result := parseLinkage(element, element.Name)
+{$ENDIF FHIR_LINKAGE}
+{$IFDEF FHIR_LIST}
   else if SameText(element.Name, 'TFhirList') then
     result := parseList(element, element.Name)
+{$ENDIF FHIR_LIST}
+{$IFDEF FHIR_LOCATION}
   else if SameText(element.Name, 'TFhirLocation') then
     result := parseLocation(element, element.Name)
+{$ENDIF FHIR_LOCATION}
+{$IFDEF FHIR_MEASURE}
   else if SameText(element.Name, 'TFhirMeasure') then
     result := parseMeasure(element, element.Name)
+{$ENDIF FHIR_MEASURE}
+{$IFDEF FHIR_MEASUREREPORT}
   else if SameText(element.Name, 'TFhirMeasureReport') then
     result := parseMeasureReport(element, element.Name)
+{$ENDIF FHIR_MEASUREREPORT}
+{$IFDEF FHIR_MEDIA}
   else if SameText(element.Name, 'TFhirMedia') then
     result := parseMedia(element, element.Name)
+{$ENDIF FHIR_MEDIA}
+{$IFDEF FHIR_MEDICATION}
   else if SameText(element.Name, 'TFhirMedication') then
     result := parseMedication(element, element.Name)
+{$ENDIF FHIR_MEDICATION}
+{$IFDEF FHIR_MEDICATIONADMINISTRATION}
   else if SameText(element.Name, 'TFhirMedicationAdministration') then
     result := parseMedicationAdministration(element, element.Name)
+{$ENDIF FHIR_MEDICATIONADMINISTRATION}
+{$IFDEF FHIR_MEDICATIONDISPENSE}
   else if SameText(element.Name, 'TFhirMedicationDispense') then
     result := parseMedicationDispense(element, element.Name)
+{$ENDIF FHIR_MEDICATIONDISPENSE}
+{$IFDEF FHIR_MEDICATIONREQUEST}
   else if SameText(element.Name, 'TFhirMedicationRequest') then
     result := parseMedicationRequest(element, element.Name)
+{$ENDIF FHIR_MEDICATIONREQUEST}
+{$IFDEF FHIR_MEDICATIONSTATEMENT}
   else if SameText(element.Name, 'TFhirMedicationStatement') then
     result := parseMedicationStatement(element, element.Name)
+{$ENDIF FHIR_MEDICATIONSTATEMENT}
+{$IFDEF FHIR_MESSAGEDEFINITION}
   else if SameText(element.Name, 'TFhirMessageDefinition') then
     result := parseMessageDefinition(element, element.Name)
+{$ENDIF FHIR_MESSAGEDEFINITION}
+{$IFDEF FHIR_MESSAGEHEADER}
   else if SameText(element.Name, 'TFhirMessageHeader') then
     result := parseMessageHeader(element, element.Name)
+{$ENDIF FHIR_MESSAGEHEADER}
+{$IFDEF FHIR_NAMINGSYSTEM}
   else if SameText(element.Name, 'TFhirNamingSystem') then
     result := parseNamingSystem(element, element.Name)
+{$ENDIF FHIR_NAMINGSYSTEM}
+{$IFDEF FHIR_NUTRITIONORDER}
   else if SameText(element.Name, 'TFhirNutritionOrder') then
     result := parseNutritionOrder(element, element.Name)
+{$ENDIF FHIR_NUTRITIONORDER}
+{$IFDEF FHIR_OBSERVATION}
   else if SameText(element.Name, 'TFhirObservation') then
     result := parseObservation(element, element.Name)
+{$ENDIF FHIR_OBSERVATION}
+{$IFDEF FHIR_OPERATIONDEFINITION}
   else if SameText(element.Name, 'TFhirOperationDefinition') then
     result := parseOperationDefinition(element, element.Name)
+{$ENDIF FHIR_OPERATIONDEFINITION}
+{$IFDEF FHIR_OPERATIONOUTCOME}
   else if SameText(element.Name, 'TFhirOperationOutcome') then
     result := parseOperationOutcome(element, element.Name)
+{$ENDIF FHIR_OPERATIONOUTCOME}
+{$IFDEF FHIR_ORGANIZATION}
   else if SameText(element.Name, 'TFhirOrganization') then
     result := parseOrganization(element, element.Name)
+{$ENDIF FHIR_ORGANIZATION}
+{$IFDEF FHIR_PATIENT}
   else if SameText(element.Name, 'TFhirPatient') then
     result := parsePatient(element, element.Name)
+{$ENDIF FHIR_PATIENT}
+{$IFDEF FHIR_PAYMENTNOTICE}
   else if SameText(element.Name, 'TFhirPaymentNotice') then
     result := parsePaymentNotice(element, element.Name)
+{$ENDIF FHIR_PAYMENTNOTICE}
+{$IFDEF FHIR_PAYMENTRECONCILIATION}
   else if SameText(element.Name, 'TFhirPaymentReconciliation') then
     result := parsePaymentReconciliation(element, element.Name)
+{$ENDIF FHIR_PAYMENTRECONCILIATION}
+{$IFDEF FHIR_PERSON}
   else if SameText(element.Name, 'TFhirPerson') then
     result := parsePerson(element, element.Name)
+{$ENDIF FHIR_PERSON}
+{$IFDEF FHIR_PLANDEFINITION}
   else if SameText(element.Name, 'TFhirPlanDefinition') then
     result := parsePlanDefinition(element, element.Name)
+{$ENDIF FHIR_PLANDEFINITION}
+{$IFDEF FHIR_PRACTITIONER}
   else if SameText(element.Name, 'TFhirPractitioner') then
     result := parsePractitioner(element, element.Name)
+{$ENDIF FHIR_PRACTITIONER}
+{$IFDEF FHIR_PRACTITIONERROLE}
   else if SameText(element.Name, 'TFhirPractitionerRole') then
     result := parsePractitionerRole(element, element.Name)
+{$ENDIF FHIR_PRACTITIONERROLE}
+{$IFDEF FHIR_PROCEDURE}
   else if SameText(element.Name, 'TFhirProcedure') then
     result := parseProcedure(element, element.Name)
+{$ENDIF FHIR_PROCEDURE}
+{$IFDEF FHIR_PROCEDUREREQUEST}
   else if SameText(element.Name, 'TFhirProcedureRequest') then
     result := parseProcedureRequest(element, element.Name)
+{$ENDIF FHIR_PROCEDUREREQUEST}
+{$IFDEF FHIR_PROCESSREQUEST}
   else if SameText(element.Name, 'TFhirProcessRequest') then
     result := parseProcessRequest(element, element.Name)
+{$ENDIF FHIR_PROCESSREQUEST}
+{$IFDEF FHIR_PROCESSRESPONSE}
   else if SameText(element.Name, 'TFhirProcessResponse') then
     result := parseProcessResponse(element, element.Name)
+{$ENDIF FHIR_PROCESSRESPONSE}
+{$IFDEF FHIR_PROVENANCE}
   else if SameText(element.Name, 'TFhirProvenance') then
     result := parseProvenance(element, element.Name)
+{$ENDIF FHIR_PROVENANCE}
+{$IFDEF FHIR_QUESTIONNAIRE}
   else if SameText(element.Name, 'TFhirQuestionnaire') then
     result := parseQuestionnaire(element, element.Name)
+{$ENDIF FHIR_QUESTIONNAIRE}
+{$IFDEF FHIR_QUESTIONNAIRERESPONSE}
   else if SameText(element.Name, 'TFhirQuestionnaireResponse') then
     result := parseQuestionnaireResponse(element, element.Name)
+{$ENDIF FHIR_QUESTIONNAIRERESPONSE}
+{$IFDEF FHIR_REFERRALREQUEST}
   else if SameText(element.Name, 'TFhirReferralRequest') then
     result := parseReferralRequest(element, element.Name)
+{$ENDIF FHIR_REFERRALREQUEST}
+{$IFDEF FHIR_RELATEDPERSON}
   else if SameText(element.Name, 'TFhirRelatedPerson') then
     result := parseRelatedPerson(element, element.Name)
+{$ENDIF FHIR_RELATEDPERSON}
+{$IFDEF FHIR_REQUESTGROUP}
   else if SameText(element.Name, 'TFhirRequestGroup') then
     result := parseRequestGroup(element, element.Name)
+{$ENDIF FHIR_REQUESTGROUP}
+{$IFDEF FHIR_RESEARCHSTUDY}
   else if SameText(element.Name, 'TFhirResearchStudy') then
     result := parseResearchStudy(element, element.Name)
+{$ENDIF FHIR_RESEARCHSTUDY}
+{$IFDEF FHIR_RESEARCHSUBJECT}
   else if SameText(element.Name, 'TFhirResearchSubject') then
     result := parseResearchSubject(element, element.Name)
+{$ENDIF FHIR_RESEARCHSUBJECT}
+{$IFDEF FHIR_RISKASSESSMENT}
   else if SameText(element.Name, 'TFhirRiskAssessment') then
     result := parseRiskAssessment(element, element.Name)
+{$ENDIF FHIR_RISKASSESSMENT}
+{$IFDEF FHIR_SCHEDULE}
   else if SameText(element.Name, 'TFhirSchedule') then
     result := parseSchedule(element, element.Name)
+{$ENDIF FHIR_SCHEDULE}
+{$IFDEF FHIR_SEARCHPARAMETER}
   else if SameText(element.Name, 'TFhirSearchParameter') then
     result := parseSearchParameter(element, element.Name)
+{$ENDIF FHIR_SEARCHPARAMETER}
+{$IFDEF FHIR_SEQUENCE}
   else if SameText(element.Name, 'TFhirSequence') then
     result := parseSequence(element, element.Name)
+{$ENDIF FHIR_SEQUENCE}
+{$IFDEF FHIR_SERVICEDEFINITION}
   else if SameText(element.Name, 'TFhirServiceDefinition') then
     result := parseServiceDefinition(element, element.Name)
+{$ENDIF FHIR_SERVICEDEFINITION}
+{$IFDEF FHIR_SLOT}
   else if SameText(element.Name, 'TFhirSlot') then
     result := parseSlot(element, element.Name)
+{$ENDIF FHIR_SLOT}
+{$IFDEF FHIR_SPECIMEN}
   else if SameText(element.Name, 'TFhirSpecimen') then
     result := parseSpecimen(element, element.Name)
+{$ENDIF FHIR_SPECIMEN}
+{$IFDEF FHIR_STRUCTUREDEFINITION}
   else if SameText(element.Name, 'TFhirStructureDefinition') then
     result := parseStructureDefinition(element, element.Name)
+{$ENDIF FHIR_STRUCTUREDEFINITION}
+{$IFDEF FHIR_STRUCTUREMAP}
   else if SameText(element.Name, 'TFhirStructureMap') then
     result := parseStructureMap(element, element.Name)
+{$ENDIF FHIR_STRUCTUREMAP}
+{$IFDEF FHIR_SUBSCRIPTION}
   else if SameText(element.Name, 'TFhirSubscription') then
     result := parseSubscription(element, element.Name)
+{$ENDIF FHIR_SUBSCRIPTION}
+{$IFDEF FHIR_SUBSTANCE}
   else if SameText(element.Name, 'TFhirSubstance') then
     result := parseSubstance(element, element.Name)
+{$ENDIF FHIR_SUBSTANCE}
+{$IFDEF FHIR_SUPPLYDELIVERY}
   else if SameText(element.Name, 'TFhirSupplyDelivery') then
     result := parseSupplyDelivery(element, element.Name)
+{$ENDIF FHIR_SUPPLYDELIVERY}
+{$IFDEF FHIR_SUPPLYREQUEST}
   else if SameText(element.Name, 'TFhirSupplyRequest') then
     result := parseSupplyRequest(element, element.Name)
+{$ENDIF FHIR_SUPPLYREQUEST}
+{$IFDEF FHIR_TASK}
   else if SameText(element.Name, 'TFhirTask') then
     result := parseTask(element, element.Name)
+{$ENDIF FHIR_TASK}
+{$IFDEF FHIR_TESTREPORT}
   else if SameText(element.Name, 'TFhirTestReport') then
     result := parseTestReport(element, element.Name)
+{$ENDIF FHIR_TESTREPORT}
+{$IFDEF FHIR_TESTSCRIPT}
   else if SameText(element.Name, 'TFhirTestScript') then
     result := parseTestScript(element, element.Name)
+{$ENDIF FHIR_TESTSCRIPT}
+{$IFDEF FHIR_VALUESET}
   else if SameText(element.Name, 'TFhirValueSet') then
     result := parseValueSet(element, element.Name)
+{$ENDIF FHIR_VALUESET}
+{$IFDEF FHIR_VISIONPRESCRIPTION}
   else if SameText(element.Name, 'TFhirVisionPrescription') then
     result := parseVisionPrescription(element, element.Name)
+{$ENDIF FHIR_VISIONPRESCRIPTION}
   else
     raise Exception.create('error: the element '+element.Name+' is not a valid fragment name');
 end;
@@ -43217,10 +45087,12 @@ begin
     composeId(xml, name,  TFhirId(base))
   else if (base is TFhirPositiveInt) then
     composePositiveInt(xml, name,  TFhirPositiveInt(base))
+{$IFDEF FHIR_PARAMETERS}
   else if (base is TFhirParametersParameter) then
     composeParametersParameter(xml, name,  TFhirParametersParameter(base))
   else if (base is TFhirParameters) then
     composeParameters(xml, name,  TFhirParameters(base))
+{$ENDIF FHIR_PARAMETERS}
   else if (base is TFhirExtension) then
     composeExtension(xml, name,  TFhirExtension(base))
   else if (base is TFhirNarrative) then
@@ -43309,32 +45181,45 @@ begin
     composeDistance(xml, name,  TFhirDistance(base))
   else if (base is TFhirDuration) then
     composeDuration(xml, name,  TFhirDuration(base))
+{$IFDEF FHIR_ACCOUNT}
   else if (base is TFhirAccountCoverage) then
     composeAccountCoverage(xml, name,  TFhirAccountCoverage(base))
   else if (base is TFhirAccountGuarantor) then
     composeAccountGuarantor(xml, name,  TFhirAccountGuarantor(base))
   else if (base is TFhirAccount) then
     composeAccount(xml, name,  TFhirAccount(base))
+{$ENDIF FHIR_ACCOUNT}
+{$IFDEF FHIR_ACTIVITYDEFINITION}
   else if (base is TFhirActivityDefinitionParticipant) then
     composeActivityDefinitionParticipant(xml, name,  TFhirActivityDefinitionParticipant(base))
   else if (base is TFhirActivityDefinitionDynamicValue) then
     composeActivityDefinitionDynamicValue(xml, name,  TFhirActivityDefinitionDynamicValue(base))
   else if (base is TFhirActivityDefinition) then
     composeActivityDefinition(xml, name,  TFhirActivityDefinition(base))
+{$ENDIF FHIR_ACTIVITYDEFINITION}
+{$IFDEF FHIR_ADVERSEEVENT}
   else if (base is TFhirAdverseEventSuspectEntity) then
     composeAdverseEventSuspectEntity(xml, name,  TFhirAdverseEventSuspectEntity(base))
   else if (base is TFhirAdverseEvent) then
     composeAdverseEvent(xml, name,  TFhirAdverseEvent(base))
+{$ENDIF FHIR_ADVERSEEVENT}
+{$IFDEF FHIR_ALLERGYINTOLERANCE}
   else if (base is TFhirAllergyIntoleranceReaction) then
     composeAllergyIntoleranceReaction(xml, name,  TFhirAllergyIntoleranceReaction(base))
   else if (base is TFhirAllergyIntolerance) then
     composeAllergyIntolerance(xml, name,  TFhirAllergyIntolerance(base))
+{$ENDIF FHIR_ALLERGYINTOLERANCE}
+{$IFDEF FHIR_APPOINTMENT}
   else if (base is TFhirAppointmentParticipant) then
     composeAppointmentParticipant(xml, name,  TFhirAppointmentParticipant(base))
   else if (base is TFhirAppointment) then
     composeAppointment(xml, name,  TFhirAppointment(base))
+{$ENDIF FHIR_APPOINTMENT}
+{$IFDEF FHIR_APPOINTMENTRESPONSE}
   else if (base is TFhirAppointmentResponse) then
     composeAppointmentResponse(xml, name,  TFhirAppointmentResponse(base))
+{$ENDIF FHIR_APPOINTMENTRESPONSE}
+{$IFDEF FHIR_AUDITEVENT}
   else if (base is TFhirAuditEventAgent) then
     composeAuditEventAgent(xml, name,  TFhirAuditEventAgent(base))
   else if (base is TFhirAuditEventAgentNetwork) then
@@ -43347,12 +45232,20 @@ begin
     composeAuditEventEntityDetail(xml, name,  TFhirAuditEventEntityDetail(base))
   else if (base is TFhirAuditEvent) then
     composeAuditEvent(xml, name,  TFhirAuditEvent(base))
+{$ENDIF FHIR_AUDITEVENT}
+{$IFDEF FHIR_BASIC}
   else if (base is TFhirBasic) then
     composeBasic(xml, name,  TFhirBasic(base))
+{$ENDIF FHIR_BASIC}
+{$IFDEF FHIR_BINARY}
   else if (base is TFhirBinary) then
     composeBinary(xml, name,  TFhirBinary(base))
+{$ENDIF FHIR_BINARY}
+{$IFDEF FHIR_BODYSITE}
   else if (base is TFhirBodySite) then
     composeBodySite(xml, name,  TFhirBodySite(base))
+{$ENDIF FHIR_BODYSITE}
+{$IFDEF FHIR_BUNDLE}
   else if (base is TFhirBundleLink) then
     composeBundleLink(xml, name,  TFhirBundleLink(base))
   else if (base is TFhirBundleEntry) then
@@ -43365,6 +45258,8 @@ begin
     composeBundleEntryResponse(xml, name,  TFhirBundleEntryResponse(base))
   else if (base is TFhirBundle) then
     composeBundle(xml, name,  TFhirBundle(base))
+{$ENDIF FHIR_BUNDLE}
+{$IFDEF FHIR_CAPABILITYSTATEMENT}
   else if (base is TFhirCapabilityStatementSoftware) then
     composeCapabilityStatementSoftware(xml, name,  TFhirCapabilityStatementSoftware(base))
   else if (base is TFhirCapabilityStatementImplementation) then
@@ -43397,20 +45292,28 @@ begin
     composeCapabilityStatementDocument(xml, name,  TFhirCapabilityStatementDocument(base))
   else if (base is TFhirCapabilityStatement) then
     composeCapabilityStatement(xml, name,  TFhirCapabilityStatement(base))
+{$ENDIF FHIR_CAPABILITYSTATEMENT}
+{$IFDEF FHIR_CAREPLAN}
   else if (base is TFhirCarePlanActivity) then
     composeCarePlanActivity(xml, name,  TFhirCarePlanActivity(base))
   else if (base is TFhirCarePlanActivityDetail) then
     composeCarePlanActivityDetail(xml, name,  TFhirCarePlanActivityDetail(base))
   else if (base is TFhirCarePlan) then
     composeCarePlan(xml, name,  TFhirCarePlan(base))
+{$ENDIF FHIR_CAREPLAN}
+{$IFDEF FHIR_CARETEAM}
   else if (base is TFhirCareTeamParticipant) then
     composeCareTeamParticipant(xml, name,  TFhirCareTeamParticipant(base))
   else if (base is TFhirCareTeam) then
     composeCareTeam(xml, name,  TFhirCareTeam(base))
+{$ENDIF FHIR_CARETEAM}
+{$IFDEF FHIR_CHARGEITEM}
   else if (base is TFhirChargeItemParticipant) then
     composeChargeItemParticipant(xml, name,  TFhirChargeItemParticipant(base))
   else if (base is TFhirChargeItem) then
     composeChargeItem(xml, name,  TFhirChargeItem(base))
+{$ENDIF FHIR_CHARGEITEM}
+{$IFDEF FHIR_CLAIM}
   else if (base is TFhirClaimRelated) then
     composeClaimRelated(xml, name,  TFhirClaimRelated(base))
   else if (base is TFhirClaimPayee) then
@@ -43435,6 +45338,8 @@ begin
     composeClaimItemDetailSubDetail(xml, name,  TFhirClaimItemDetailSubDetail(base))
   else if (base is TFhirClaim) then
     composeClaim(xml, name,  TFhirClaim(base))
+{$ENDIF FHIR_CLAIM}
+{$IFDEF FHIR_CLAIMRESPONSE}
   else if (base is TFhirClaimResponseItem) then
     composeClaimResponseItem(xml, name,  TFhirClaimResponseItem(base))
   else if (base is TFhirClaimResponseItemAdjudication) then
@@ -43457,12 +45362,16 @@ begin
     composeClaimResponseInsurance(xml, name,  TFhirClaimResponseInsurance(base))
   else if (base is TFhirClaimResponse) then
     composeClaimResponse(xml, name,  TFhirClaimResponse(base))
+{$ENDIF FHIR_CLAIMRESPONSE}
+{$IFDEF FHIR_CLINICALIMPRESSION}
   else if (base is TFhirClinicalImpressionInvestigation) then
     composeClinicalImpressionInvestigation(xml, name,  TFhirClinicalImpressionInvestigation(base))
   else if (base is TFhirClinicalImpressionFinding) then
     composeClinicalImpressionFinding(xml, name,  TFhirClinicalImpressionFinding(base))
   else if (base is TFhirClinicalImpression) then
     composeClinicalImpression(xml, name,  TFhirClinicalImpression(base))
+{$ENDIF FHIR_CLINICALIMPRESSION}
+{$IFDEF FHIR_CODESYSTEM}
   else if (base is TFhirCodeSystemFilter) then
     composeCodeSystemFilter(xml, name,  TFhirCodeSystemFilter(base))
   else if (base is TFhirCodeSystemProperty) then
@@ -43475,20 +45384,28 @@ begin
     composeCodeSystemConceptProperty(xml, name,  TFhirCodeSystemConceptProperty(base))
   else if (base is TFhirCodeSystem) then
     composeCodeSystem(xml, name,  TFhirCodeSystem(base))
+{$ENDIF FHIR_CODESYSTEM}
+{$IFDEF FHIR_COMMUNICATION}
   else if (base is TFhirCommunicationPayload) then
     composeCommunicationPayload(xml, name,  TFhirCommunicationPayload(base))
   else if (base is TFhirCommunication) then
     composeCommunication(xml, name,  TFhirCommunication(base))
+{$ENDIF FHIR_COMMUNICATION}
+{$IFDEF FHIR_COMMUNICATIONREQUEST}
   else if (base is TFhirCommunicationRequestPayload) then
     composeCommunicationRequestPayload(xml, name,  TFhirCommunicationRequestPayload(base))
   else if (base is TFhirCommunicationRequestRequester) then
     composeCommunicationRequestRequester(xml, name,  TFhirCommunicationRequestRequester(base))
   else if (base is TFhirCommunicationRequest) then
     composeCommunicationRequest(xml, name,  TFhirCommunicationRequest(base))
+{$ENDIF FHIR_COMMUNICATIONREQUEST}
+{$IFDEF FHIR_COMPARTMENTDEFINITION}
   else if (base is TFhirCompartmentDefinitionResource) then
     composeCompartmentDefinitionResource(xml, name,  TFhirCompartmentDefinitionResource(base))
   else if (base is TFhirCompartmentDefinition) then
     composeCompartmentDefinition(xml, name,  TFhirCompartmentDefinition(base))
+{$ENDIF FHIR_COMPARTMENTDEFINITION}
+{$IFDEF FHIR_COMPOSITION}
   else if (base is TFhirCompositionAttester) then
     composeCompositionAttester(xml, name,  TFhirCompositionAttester(base))
   else if (base is TFhirCompositionRelatesTo) then
@@ -43499,6 +45416,8 @@ begin
     composeCompositionSection(xml, name,  TFhirCompositionSection(base))
   else if (base is TFhirComposition) then
     composeComposition(xml, name,  TFhirComposition(base))
+{$ENDIF FHIR_COMPOSITION}
+{$IFDEF FHIR_CONCEPTMAP}
   else if (base is TFhirConceptMapGroup) then
     composeConceptMapGroup(xml, name,  TFhirConceptMapGroup(base))
   else if (base is TFhirConceptMapGroupElement) then
@@ -43511,12 +45430,16 @@ begin
     composeConceptMapGroupUnmapped(xml, name,  TFhirConceptMapGroupUnmapped(base))
   else if (base is TFhirConceptMap) then
     composeConceptMap(xml, name,  TFhirConceptMap(base))
+{$ENDIF FHIR_CONCEPTMAP}
+{$IFDEF FHIR_CONDITION}
   else if (base is TFhirConditionStage) then
     composeConditionStage(xml, name,  TFhirConditionStage(base))
   else if (base is TFhirConditionEvidence) then
     composeConditionEvidence(xml, name,  TFhirConditionEvidence(base))
   else if (base is TFhirCondition) then
     composeCondition(xml, name,  TFhirCondition(base))
+{$ENDIF FHIR_CONDITION}
+{$IFDEF FHIR_CONSENT}
   else if (base is TFhirConsentActor) then
     composeConsentActor(xml, name,  TFhirConsentActor(base))
   else if (base is TFhirConsentPolicy) then
@@ -43531,6 +45454,8 @@ begin
     composeConsentExceptData(xml, name,  TFhirConsentExceptData(base))
   else if (base is TFhirConsent) then
     composeConsent(xml, name,  TFhirConsent(base))
+{$ENDIF FHIR_CONSENT}
+{$IFDEF FHIR_CONTRACT}
   else if (base is TFhirContractAgent) then
     composeContractAgent(xml, name,  TFhirContractAgent(base))
   else if (base is TFhirContractSigner) then
@@ -43551,48 +45476,70 @@ begin
     composeContractRule(xml, name,  TFhirContractRule(base))
   else if (base is TFhirContract) then
     composeContract(xml, name,  TFhirContract(base))
+{$ENDIF FHIR_CONTRACT}
+{$IFDEF FHIR_COVERAGE}
   else if (base is TFhirCoverageGrouping) then
     composeCoverageGrouping(xml, name,  TFhirCoverageGrouping(base))
   else if (base is TFhirCoverage) then
     composeCoverage(xml, name,  TFhirCoverage(base))
+{$ENDIF FHIR_COVERAGE}
+{$IFDEF FHIR_DATAELEMENT}
   else if (base is TFhirDataElementMapping) then
     composeDataElementMapping(xml, name,  TFhirDataElementMapping(base))
   else if (base is TFhirDataElement) then
     composeDataElement(xml, name,  TFhirDataElement(base))
+{$ENDIF FHIR_DATAELEMENT}
+{$IFDEF FHIR_DETECTEDISSUE}
   else if (base is TFhirDetectedIssueMitigation) then
     composeDetectedIssueMitigation(xml, name,  TFhirDetectedIssueMitigation(base))
   else if (base is TFhirDetectedIssue) then
     composeDetectedIssue(xml, name,  TFhirDetectedIssue(base))
+{$ENDIF FHIR_DETECTEDISSUE}
+{$IFDEF FHIR_DEVICE}
   else if (base is TFhirDeviceUdi) then
     composeDeviceUdi(xml, name,  TFhirDeviceUdi(base))
   else if (base is TFhirDevice) then
     composeDevice(xml, name,  TFhirDevice(base))
+{$ENDIF FHIR_DEVICE}
+{$IFDEF FHIR_DEVICECOMPONENT}
   else if (base is TFhirDeviceComponentProductionSpecification) then
     composeDeviceComponentProductionSpecification(xml, name,  TFhirDeviceComponentProductionSpecification(base))
   else if (base is TFhirDeviceComponent) then
     composeDeviceComponent(xml, name,  TFhirDeviceComponent(base))
+{$ENDIF FHIR_DEVICECOMPONENT}
+{$IFDEF FHIR_DEVICEMETRIC}
   else if (base is TFhirDeviceMetricCalibration) then
     composeDeviceMetricCalibration(xml, name,  TFhirDeviceMetricCalibration(base))
   else if (base is TFhirDeviceMetric) then
     composeDeviceMetric(xml, name,  TFhirDeviceMetric(base))
+{$ENDIF FHIR_DEVICEMETRIC}
+{$IFDEF FHIR_DEVICEREQUEST}
   else if (base is TFhirDeviceRequestRequester) then
     composeDeviceRequestRequester(xml, name,  TFhirDeviceRequestRequester(base))
   else if (base is TFhirDeviceRequest) then
     composeDeviceRequest(xml, name,  TFhirDeviceRequest(base))
+{$ENDIF FHIR_DEVICEREQUEST}
+{$IFDEF FHIR_DEVICEUSESTATEMENT}
   else if (base is TFhirDeviceUseStatement) then
     composeDeviceUseStatement(xml, name,  TFhirDeviceUseStatement(base))
+{$ENDIF FHIR_DEVICEUSESTATEMENT}
+{$IFDEF FHIR_DIAGNOSTICREPORT}
   else if (base is TFhirDiagnosticReportPerformer) then
     composeDiagnosticReportPerformer(xml, name,  TFhirDiagnosticReportPerformer(base))
   else if (base is TFhirDiagnosticReportImage) then
     composeDiagnosticReportImage(xml, name,  TFhirDiagnosticReportImage(base))
   else if (base is TFhirDiagnosticReport) then
     composeDiagnosticReport(xml, name,  TFhirDiagnosticReport(base))
+{$ENDIF FHIR_DIAGNOSTICREPORT}
+{$IFDEF FHIR_DOCUMENTMANIFEST}
   else if (base is TFhirDocumentManifestContent) then
     composeDocumentManifestContent(xml, name,  TFhirDocumentManifestContent(base))
   else if (base is TFhirDocumentManifestRelated) then
     composeDocumentManifestRelated(xml, name,  TFhirDocumentManifestRelated(base))
   else if (base is TFhirDocumentManifest) then
     composeDocumentManifest(xml, name,  TFhirDocumentManifest(base))
+{$ENDIF FHIR_DOCUMENTMANIFEST}
+{$IFDEF FHIR_DOCUMENTREFERENCE}
   else if (base is TFhirDocumentReferenceRelatesTo) then
     composeDocumentReferenceRelatesTo(xml, name,  TFhirDocumentReferenceRelatesTo(base))
   else if (base is TFhirDocumentReferenceContent) then
@@ -43603,8 +45550,12 @@ begin
     composeDocumentReferenceContextRelated(xml, name,  TFhirDocumentReferenceContextRelated(base))
   else if (base is TFhirDocumentReference) then
     composeDocumentReference(xml, name,  TFhirDocumentReference(base))
+{$ENDIF FHIR_DOCUMENTREFERENCE}
+{$IFDEF FHIR_ELIGIBILITYREQUEST}
   else if (base is TFhirEligibilityRequest) then
     composeEligibilityRequest(xml, name,  TFhirEligibilityRequest(base))
+{$ENDIF FHIR_ELIGIBILITYREQUEST}
+{$IFDEF FHIR_ELIGIBILITYRESPONSE}
   else if (base is TFhirEligibilityResponseInsurance) then
     composeEligibilityResponseInsurance(xml, name,  TFhirEligibilityResponseInsurance(base))
   else if (base is TFhirEligibilityResponseInsuranceBenefitBalance) then
@@ -43615,6 +45566,8 @@ begin
     composeEligibilityResponseError(xml, name,  TFhirEligibilityResponseError(base))
   else if (base is TFhirEligibilityResponse) then
     composeEligibilityResponse(xml, name,  TFhirEligibilityResponse(base))
+{$ENDIF FHIR_ELIGIBILITYRESPONSE}
+{$IFDEF FHIR_ENCOUNTER}
   else if (base is TFhirEncounterStatusHistory) then
     composeEncounterStatusHistory(xml, name,  TFhirEncounterStatusHistory(base))
   else if (base is TFhirEncounterClassHistory) then
@@ -43629,18 +45582,28 @@ begin
     composeEncounterLocation(xml, name,  TFhirEncounterLocation(base))
   else if (base is TFhirEncounter) then
     composeEncounter(xml, name,  TFhirEncounter(base))
+{$ENDIF FHIR_ENCOUNTER}
+{$IFDEF FHIR_ENDPOINT}
   else if (base is TFhirEndpoint) then
     composeEndpoint(xml, name,  TFhirEndpoint(base))
+{$ENDIF FHIR_ENDPOINT}
+{$IFDEF FHIR_ENROLLMENTREQUEST}
   else if (base is TFhirEnrollmentRequest) then
     composeEnrollmentRequest(xml, name,  TFhirEnrollmentRequest(base))
+{$ENDIF FHIR_ENROLLMENTREQUEST}
+{$IFDEF FHIR_ENROLLMENTRESPONSE}
   else if (base is TFhirEnrollmentResponse) then
     composeEnrollmentResponse(xml, name,  TFhirEnrollmentResponse(base))
+{$ENDIF FHIR_ENROLLMENTRESPONSE}
+{$IFDEF FHIR_EPISODEOFCARE}
   else if (base is TFhirEpisodeOfCareStatusHistory) then
     composeEpisodeOfCareStatusHistory(xml, name,  TFhirEpisodeOfCareStatusHistory(base))
   else if (base is TFhirEpisodeOfCareDiagnosis) then
     composeEpisodeOfCareDiagnosis(xml, name,  TFhirEpisodeOfCareDiagnosis(base))
   else if (base is TFhirEpisodeOfCare) then
     composeEpisodeOfCare(xml, name,  TFhirEpisodeOfCare(base))
+{$ENDIF FHIR_EPISODEOFCARE}
+{$IFDEF FHIR_EXPANSIONPROFILE}
   else if (base is TFhirExpansionProfileFixedVersion) then
     composeExpansionProfileFixedVersion(xml, name,  TFhirExpansionProfileFixedVersion(base))
   else if (base is TFhirExpansionProfileExcludedSystem) then
@@ -43657,6 +45620,8 @@ begin
     composeExpansionProfileDesignationExcludeDesignation(xml, name,  TFhirExpansionProfileDesignationExcludeDesignation(base))
   else if (base is TFhirExpansionProfile) then
     composeExpansionProfile(xml, name,  TFhirExpansionProfile(base))
+{$ENDIF FHIR_EXPANSIONPROFILE}
+{$IFDEF FHIR_EXPLANATIONOFBENEFIT}
   else if (base is TFhirExplanationOfBenefitRelated) then
     composeExplanationOfBenefitRelated(xml, name,  TFhirExplanationOfBenefitRelated(base))
   else if (base is TFhirExplanationOfBenefitPayee) then
@@ -43695,16 +45660,24 @@ begin
     composeExplanationOfBenefitBenefitBalanceFinancial(xml, name,  TFhirExplanationOfBenefitBenefitBalanceFinancial(base))
   else if (base is TFhirExplanationOfBenefit) then
     composeExplanationOfBenefit(xml, name,  TFhirExplanationOfBenefit(base))
+{$ENDIF FHIR_EXPLANATIONOFBENEFIT}
+{$IFDEF FHIR_FAMILYMEMBERHISTORY}
   else if (base is TFhirFamilyMemberHistoryCondition) then
     composeFamilyMemberHistoryCondition(xml, name,  TFhirFamilyMemberHistoryCondition(base))
   else if (base is TFhirFamilyMemberHistory) then
     composeFamilyMemberHistory(xml, name,  TFhirFamilyMemberHistory(base))
+{$ENDIF FHIR_FAMILYMEMBERHISTORY}
+{$IFDEF FHIR_FLAG}
   else if (base is TFhirFlag) then
     composeFlag(xml, name,  TFhirFlag(base))
+{$ENDIF FHIR_FLAG}
+{$IFDEF FHIR_GOAL}
   else if (base is TFhirGoalTarget) then
     composeGoalTarget(xml, name,  TFhirGoalTarget(base))
   else if (base is TFhirGoal) then
     composeGoal(xml, name,  TFhirGoal(base))
+{$ENDIF FHIR_GOAL}
+{$IFDEF FHIR_GRAPHDEFINITION}
   else if (base is TFhirGraphDefinitionLink) then
     composeGraphDefinitionLink(xml, name,  TFhirGraphDefinitionLink(base))
   else if (base is TFhirGraphDefinitionLinkTarget) then
@@ -43713,20 +45686,28 @@ begin
     composeGraphDefinitionLinkTargetCompartment(xml, name,  TFhirGraphDefinitionLinkTargetCompartment(base))
   else if (base is TFhirGraphDefinition) then
     composeGraphDefinition(xml, name,  TFhirGraphDefinition(base))
+{$ENDIF FHIR_GRAPHDEFINITION}
+{$IFDEF FHIR_GROUP}
   else if (base is TFhirGroupCharacteristic) then
     composeGroupCharacteristic(xml, name,  TFhirGroupCharacteristic(base))
   else if (base is TFhirGroupMember) then
     composeGroupMember(xml, name,  TFhirGroupMember(base))
   else if (base is TFhirGroup) then
     composeGroup(xml, name,  TFhirGroup(base))
+{$ENDIF FHIR_GROUP}
+{$IFDEF FHIR_GUIDANCERESPONSE}
   else if (base is TFhirGuidanceResponse) then
     composeGuidanceResponse(xml, name,  TFhirGuidanceResponse(base))
+{$ENDIF FHIR_GUIDANCERESPONSE}
+{$IFDEF FHIR_HEALTHCARESERVICE}
   else if (base is TFhirHealthcareServiceAvailableTime) then
     composeHealthcareServiceAvailableTime(xml, name,  TFhirHealthcareServiceAvailableTime(base))
   else if (base is TFhirHealthcareServiceNotAvailable) then
     composeHealthcareServiceNotAvailable(xml, name,  TFhirHealthcareServiceNotAvailable(base))
   else if (base is TFhirHealthcareService) then
     composeHealthcareService(xml, name,  TFhirHealthcareService(base))
+{$ENDIF FHIR_HEALTHCARESERVICE}
+{$IFDEF FHIR_IMAGINGMANIFEST}
   else if (base is TFhirImagingManifestStudy) then
     composeImagingManifestStudy(xml, name,  TFhirImagingManifestStudy(base))
   else if (base is TFhirImagingManifestStudySeries) then
@@ -43735,12 +45716,16 @@ begin
     composeImagingManifestStudySeriesInstance(xml, name,  TFhirImagingManifestStudySeriesInstance(base))
   else if (base is TFhirImagingManifest) then
     composeImagingManifest(xml, name,  TFhirImagingManifest(base))
+{$ENDIF FHIR_IMAGINGMANIFEST}
+{$IFDEF FHIR_IMAGINGSTUDY}
   else if (base is TFhirImagingStudySeries) then
     composeImagingStudySeries(xml, name,  TFhirImagingStudySeries(base))
   else if (base is TFhirImagingStudySeriesInstance) then
     composeImagingStudySeriesInstance(xml, name,  TFhirImagingStudySeriesInstance(base))
   else if (base is TFhirImagingStudy) then
     composeImagingStudy(xml, name,  TFhirImagingStudy(base))
+{$ENDIF FHIR_IMAGINGSTUDY}
+{$IFDEF FHIR_IMMUNIZATION}
   else if (base is TFhirImmunizationPractitioner) then
     composeImmunizationPractitioner(xml, name,  TFhirImmunizationPractitioner(base))
   else if (base is TFhirImmunizationExplanation) then
@@ -43751,6 +45736,8 @@ begin
     composeImmunizationVaccinationProtocol(xml, name,  TFhirImmunizationVaccinationProtocol(base))
   else if (base is TFhirImmunization) then
     composeImmunization(xml, name,  TFhirImmunization(base))
+{$ENDIF FHIR_IMMUNIZATION}
+{$IFDEF FHIR_IMMUNIZATIONRECOMMENDATION}
   else if (base is TFhirImmunizationRecommendationRecommendation) then
     composeImmunizationRecommendationRecommendation(xml, name,  TFhirImmunizationRecommendationRecommendation(base))
   else if (base is TFhirImmunizationRecommendationRecommendationDateCriterion) then
@@ -43759,6 +45746,8 @@ begin
     composeImmunizationRecommendationRecommendationProtocol(xml, name,  TFhirImmunizationRecommendationRecommendationProtocol(base))
   else if (base is TFhirImmunizationRecommendation) then
     composeImmunizationRecommendation(xml, name,  TFhirImmunizationRecommendation(base))
+{$ENDIF FHIR_IMMUNIZATIONRECOMMENDATION}
+{$IFDEF FHIR_IMPLEMENTATIONGUIDE}
   else if (base is TFhirImplementationGuideDependency) then
     composeImplementationGuideDependency(xml, name,  TFhirImplementationGuideDependency(base))
   else if (base is TFhirImplementationGuidePackage) then
@@ -43771,20 +45760,30 @@ begin
     composeImplementationGuidePage(xml, name,  TFhirImplementationGuidePage(base))
   else if (base is TFhirImplementationGuide) then
     composeImplementationGuide(xml, name,  TFhirImplementationGuide(base))
+{$ENDIF FHIR_IMPLEMENTATIONGUIDE}
+{$IFDEF FHIR_LIBRARY}
   else if (base is TFhirLibrary) then
     composeLibrary(xml, name,  TFhirLibrary(base))
+{$ENDIF FHIR_LIBRARY}
+{$IFDEF FHIR_LINKAGE}
   else if (base is TFhirLinkageItem) then
     composeLinkageItem(xml, name,  TFhirLinkageItem(base))
   else if (base is TFhirLinkage) then
     composeLinkage(xml, name,  TFhirLinkage(base))
+{$ENDIF FHIR_LINKAGE}
+{$IFDEF FHIR_LIST}
   else if (base is TFhirListEntry) then
     composeListEntry(xml, name,  TFhirListEntry(base))
   else if (base is TFhirList) then
     composeList(xml, name,  TFhirList(base))
+{$ENDIF FHIR_LIST}
+{$IFDEF FHIR_LOCATION}
   else if (base is TFhirLocationPosition) then
     composeLocationPosition(xml, name,  TFhirLocationPosition(base))
   else if (base is TFhirLocation) then
     composeLocation(xml, name,  TFhirLocation(base))
+{$ENDIF FHIR_LOCATION}
+{$IFDEF FHIR_MEASURE}
   else if (base is TFhirMeasureGroup) then
     composeMeasureGroup(xml, name,  TFhirMeasureGroup(base))
   else if (base is TFhirMeasureGroupPopulation) then
@@ -43795,6 +45794,8 @@ begin
     composeMeasureSupplementalData(xml, name,  TFhirMeasureSupplementalData(base))
   else if (base is TFhirMeasure) then
     composeMeasure(xml, name,  TFhirMeasure(base))
+{$ENDIF FHIR_MEASURE}
+{$IFDEF FHIR_MEASUREREPORT}
   else if (base is TFhirMeasureReportGroup) then
     composeMeasureReportGroup(xml, name,  TFhirMeasureReportGroup(base))
   else if (base is TFhirMeasureReportGroupPopulation) then
@@ -43807,8 +45808,12 @@ begin
     composeMeasureReportGroupStratifierStratumPopulation(xml, name,  TFhirMeasureReportGroupStratifierStratumPopulation(base))
   else if (base is TFhirMeasureReport) then
     composeMeasureReport(xml, name,  TFhirMeasureReport(base))
+{$ENDIF FHIR_MEASUREREPORT}
+{$IFDEF FHIR_MEDIA}
   else if (base is TFhirMedia) then
     composeMedia(xml, name,  TFhirMedia(base))
+{$ENDIF FHIR_MEDIA}
+{$IFDEF FHIR_MEDICATION}
   else if (base is TFhirMedicationIngredient) then
     composeMedicationIngredient(xml, name,  TFhirMedicationIngredient(base))
   else if (base is TFhirMedicationPackage) then
@@ -43819,18 +45824,24 @@ begin
     composeMedicationPackageBatch(xml, name,  TFhirMedicationPackageBatch(base))
   else if (base is TFhirMedication) then
     composeMedication(xml, name,  TFhirMedication(base))
+{$ENDIF FHIR_MEDICATION}
+{$IFDEF FHIR_MEDICATIONADMINISTRATION}
   else if (base is TFhirMedicationAdministrationPerformer) then
     composeMedicationAdministrationPerformer(xml, name,  TFhirMedicationAdministrationPerformer(base))
   else if (base is TFhirMedicationAdministrationDosage) then
     composeMedicationAdministrationDosage(xml, name,  TFhirMedicationAdministrationDosage(base))
   else if (base is TFhirMedicationAdministration) then
     composeMedicationAdministration(xml, name,  TFhirMedicationAdministration(base))
+{$ENDIF FHIR_MEDICATIONADMINISTRATION}
+{$IFDEF FHIR_MEDICATIONDISPENSE}
   else if (base is TFhirMedicationDispensePerformer) then
     composeMedicationDispensePerformer(xml, name,  TFhirMedicationDispensePerformer(base))
   else if (base is TFhirMedicationDispenseSubstitution) then
     composeMedicationDispenseSubstitution(xml, name,  TFhirMedicationDispenseSubstitution(base))
   else if (base is TFhirMedicationDispense) then
     composeMedicationDispense(xml, name,  TFhirMedicationDispense(base))
+{$ENDIF FHIR_MEDICATIONDISPENSE}
+{$IFDEF FHIR_MEDICATIONREQUEST}
   else if (base is TFhirMedicationRequestRequester) then
     composeMedicationRequestRequester(xml, name,  TFhirMedicationRequestRequester(base))
   else if (base is TFhirMedicationRequestDispenseRequest) then
@@ -43839,14 +45850,20 @@ begin
     composeMedicationRequestSubstitution(xml, name,  TFhirMedicationRequestSubstitution(base))
   else if (base is TFhirMedicationRequest) then
     composeMedicationRequest(xml, name,  TFhirMedicationRequest(base))
+{$ENDIF FHIR_MEDICATIONREQUEST}
+{$IFDEF FHIR_MEDICATIONSTATEMENT}
   else if (base is TFhirMedicationStatement) then
     composeMedicationStatement(xml, name,  TFhirMedicationStatement(base))
+{$ENDIF FHIR_MEDICATIONSTATEMENT}
+{$IFDEF FHIR_MESSAGEDEFINITION}
   else if (base is TFhirMessageDefinitionFocus) then
     composeMessageDefinitionFocus(xml, name,  TFhirMessageDefinitionFocus(base))
   else if (base is TFhirMessageDefinitionAllowedResponse) then
     composeMessageDefinitionAllowedResponse(xml, name,  TFhirMessageDefinitionAllowedResponse(base))
   else if (base is TFhirMessageDefinition) then
     composeMessageDefinition(xml, name,  TFhirMessageDefinition(base))
+{$ENDIF FHIR_MESSAGEDEFINITION}
+{$IFDEF FHIR_MESSAGEHEADER}
   else if (base is TFhirMessageHeaderDestination) then
     composeMessageHeaderDestination(xml, name,  TFhirMessageHeaderDestination(base))
   else if (base is TFhirMessageHeaderSource) then
@@ -43855,10 +45872,14 @@ begin
     composeMessageHeaderResponse(xml, name,  TFhirMessageHeaderResponse(base))
   else if (base is TFhirMessageHeader) then
     composeMessageHeader(xml, name,  TFhirMessageHeader(base))
+{$ENDIF FHIR_MESSAGEHEADER}
+{$IFDEF FHIR_NAMINGSYSTEM}
   else if (base is TFhirNamingSystemUniqueId) then
     composeNamingSystemUniqueId(xml, name,  TFhirNamingSystemUniqueId(base))
   else if (base is TFhirNamingSystem) then
     composeNamingSystem(xml, name,  TFhirNamingSystem(base))
+{$ENDIF FHIR_NAMINGSYSTEM}
+{$IFDEF FHIR_NUTRITIONORDER}
   else if (base is TFhirNutritionOrderOralDiet) then
     composeNutritionOrderOralDiet(xml, name,  TFhirNutritionOrderOralDiet(base))
   else if (base is TFhirNutritionOrderOralDietNutrient) then
@@ -43873,6 +45894,8 @@ begin
     composeNutritionOrderEnteralFormulaAdministration(xml, name,  TFhirNutritionOrderEnteralFormulaAdministration(base))
   else if (base is TFhirNutritionOrder) then
     composeNutritionOrder(xml, name,  TFhirNutritionOrder(base))
+{$ENDIF FHIR_NUTRITIONORDER}
+{$IFDEF FHIR_OBSERVATION}
   else if (base is TFhirObservationReferenceRange) then
     composeObservationReferenceRange(xml, name,  TFhirObservationReferenceRange(base))
   else if (base is TFhirObservationRelated) then
@@ -43881,6 +45904,8 @@ begin
     composeObservationComponent(xml, name,  TFhirObservationComponent(base))
   else if (base is TFhirObservation) then
     composeObservation(xml, name,  TFhirObservation(base))
+{$ENDIF FHIR_OBSERVATION}
+{$IFDEF FHIR_OPERATIONDEFINITION}
   else if (base is TFhirOperationDefinitionParameter) then
     composeOperationDefinitionParameter(xml, name,  TFhirOperationDefinitionParameter(base))
   else if (base is TFhirOperationDefinitionParameterBinding) then
@@ -43889,14 +45914,20 @@ begin
     composeOperationDefinitionOverload(xml, name,  TFhirOperationDefinitionOverload(base))
   else if (base is TFhirOperationDefinition) then
     composeOperationDefinition(xml, name,  TFhirOperationDefinition(base))
+{$ENDIF FHIR_OPERATIONDEFINITION}
+{$IFDEF FHIR_OPERATIONOUTCOME}
   else if (base is TFhirOperationOutcomeIssue) then
     composeOperationOutcomeIssue(xml, name,  TFhirOperationOutcomeIssue(base))
   else if (base is TFhirOperationOutcome) then
     composeOperationOutcome(xml, name,  TFhirOperationOutcome(base))
+{$ENDIF FHIR_OPERATIONOUTCOME}
+{$IFDEF FHIR_ORGANIZATION}
   else if (base is TFhirOrganizationContact) then
     composeOrganizationContact(xml, name,  TFhirOrganizationContact(base))
   else if (base is TFhirOrganization) then
     composeOrganization(xml, name,  TFhirOrganization(base))
+{$ENDIF FHIR_ORGANIZATION}
+{$IFDEF FHIR_PATIENT}
   else if (base is TFhirPatientContact) then
     composePatientContact(xml, name,  TFhirPatientContact(base))
   else if (base is TFhirPatientAnimal) then
@@ -43907,18 +45938,26 @@ begin
     composePatientLink(xml, name,  TFhirPatientLink(base))
   else if (base is TFhirPatient) then
     composePatient(xml, name,  TFhirPatient(base))
+{$ENDIF FHIR_PATIENT}
+{$IFDEF FHIR_PAYMENTNOTICE}
   else if (base is TFhirPaymentNotice) then
     composePaymentNotice(xml, name,  TFhirPaymentNotice(base))
+{$ENDIF FHIR_PAYMENTNOTICE}
+{$IFDEF FHIR_PAYMENTRECONCILIATION}
   else if (base is TFhirPaymentReconciliationDetail) then
     composePaymentReconciliationDetail(xml, name,  TFhirPaymentReconciliationDetail(base))
   else if (base is TFhirPaymentReconciliationProcessNote) then
     composePaymentReconciliationProcessNote(xml, name,  TFhirPaymentReconciliationProcessNote(base))
   else if (base is TFhirPaymentReconciliation) then
     composePaymentReconciliation(xml, name,  TFhirPaymentReconciliation(base))
+{$ENDIF FHIR_PAYMENTRECONCILIATION}
+{$IFDEF FHIR_PERSON}
   else if (base is TFhirPersonLink) then
     composePersonLink(xml, name,  TFhirPersonLink(base))
   else if (base is TFhirPerson) then
     composePerson(xml, name,  TFhirPerson(base))
+{$ENDIF FHIR_PERSON}
+{$IFDEF FHIR_PLANDEFINITION}
   else if (base is TFhirPlanDefinitionGoal) then
     composePlanDefinitionGoal(xml, name,  TFhirPlanDefinitionGoal(base))
   else if (base is TFhirPlanDefinitionGoalTarget) then
@@ -43935,40 +45974,56 @@ begin
     composePlanDefinitionActionDynamicValue(xml, name,  TFhirPlanDefinitionActionDynamicValue(base))
   else if (base is TFhirPlanDefinition) then
     composePlanDefinition(xml, name,  TFhirPlanDefinition(base))
+{$ENDIF FHIR_PLANDEFINITION}
+{$IFDEF FHIR_PRACTITIONER}
   else if (base is TFhirPractitionerQualification) then
     composePractitionerQualification(xml, name,  TFhirPractitionerQualification(base))
   else if (base is TFhirPractitioner) then
     composePractitioner(xml, name,  TFhirPractitioner(base))
+{$ENDIF FHIR_PRACTITIONER}
+{$IFDEF FHIR_PRACTITIONERROLE}
   else if (base is TFhirPractitionerRoleAvailableTime) then
     composePractitionerRoleAvailableTime(xml, name,  TFhirPractitionerRoleAvailableTime(base))
   else if (base is TFhirPractitionerRoleNotAvailable) then
     composePractitionerRoleNotAvailable(xml, name,  TFhirPractitionerRoleNotAvailable(base))
   else if (base is TFhirPractitionerRole) then
     composePractitionerRole(xml, name,  TFhirPractitionerRole(base))
+{$ENDIF FHIR_PRACTITIONERROLE}
+{$IFDEF FHIR_PROCEDURE}
   else if (base is TFhirProcedurePerformer) then
     composeProcedurePerformer(xml, name,  TFhirProcedurePerformer(base))
   else if (base is TFhirProcedureFocalDevice) then
     composeProcedureFocalDevice(xml, name,  TFhirProcedureFocalDevice(base))
   else if (base is TFhirProcedure) then
     composeProcedure(xml, name,  TFhirProcedure(base))
+{$ENDIF FHIR_PROCEDURE}
+{$IFDEF FHIR_PROCEDUREREQUEST}
   else if (base is TFhirProcedureRequestRequester) then
     composeProcedureRequestRequester(xml, name,  TFhirProcedureRequestRequester(base))
   else if (base is TFhirProcedureRequest) then
     composeProcedureRequest(xml, name,  TFhirProcedureRequest(base))
+{$ENDIF FHIR_PROCEDUREREQUEST}
+{$IFDEF FHIR_PROCESSREQUEST}
   else if (base is TFhirProcessRequestItem) then
     composeProcessRequestItem(xml, name,  TFhirProcessRequestItem(base))
   else if (base is TFhirProcessRequest) then
     composeProcessRequest(xml, name,  TFhirProcessRequest(base))
+{$ENDIF FHIR_PROCESSREQUEST}
+{$IFDEF FHIR_PROCESSRESPONSE}
   else if (base is TFhirProcessResponseProcessNote) then
     composeProcessResponseProcessNote(xml, name,  TFhirProcessResponseProcessNote(base))
   else if (base is TFhirProcessResponse) then
     composeProcessResponse(xml, name,  TFhirProcessResponse(base))
+{$ENDIF FHIR_PROCESSRESPONSE}
+{$IFDEF FHIR_PROVENANCE}
   else if (base is TFhirProvenanceAgent) then
     composeProvenanceAgent(xml, name,  TFhirProvenanceAgent(base))
   else if (base is TFhirProvenanceEntity) then
     composeProvenanceEntity(xml, name,  TFhirProvenanceEntity(base))
   else if (base is TFhirProvenance) then
     composeProvenance(xml, name,  TFhirProvenance(base))
+{$ENDIF FHIR_PROVENANCE}
+{$IFDEF FHIR_QUESTIONNAIRE}
   else if (base is TFhirQuestionnaireItem) then
     composeQuestionnaireItem(xml, name,  TFhirQuestionnaireItem(base))
   else if (base is TFhirQuestionnaireItemEnableWhen) then
@@ -43977,18 +46032,26 @@ begin
     composeQuestionnaireItemOption(xml, name,  TFhirQuestionnaireItemOption(base))
   else if (base is TFhirQuestionnaire) then
     composeQuestionnaire(xml, name,  TFhirQuestionnaire(base))
+{$ENDIF FHIR_QUESTIONNAIRE}
+{$IFDEF FHIR_QUESTIONNAIRERESPONSE}
   else if (base is TFhirQuestionnaireResponseItem) then
     composeQuestionnaireResponseItem(xml, name,  TFhirQuestionnaireResponseItem(base))
   else if (base is TFhirQuestionnaireResponseItemAnswer) then
     composeQuestionnaireResponseItemAnswer(xml, name,  TFhirQuestionnaireResponseItemAnswer(base))
   else if (base is TFhirQuestionnaireResponse) then
     composeQuestionnaireResponse(xml, name,  TFhirQuestionnaireResponse(base))
+{$ENDIF FHIR_QUESTIONNAIRERESPONSE}
+{$IFDEF FHIR_REFERRALREQUEST}
   else if (base is TFhirReferralRequestRequester) then
     composeReferralRequestRequester(xml, name,  TFhirReferralRequestRequester(base))
   else if (base is TFhirReferralRequest) then
     composeReferralRequest(xml, name,  TFhirReferralRequest(base))
+{$ENDIF FHIR_REFERRALREQUEST}
+{$IFDEF FHIR_RELATEDPERSON}
   else if (base is TFhirRelatedPerson) then
     composeRelatedPerson(xml, name,  TFhirRelatedPerson(base))
+{$ENDIF FHIR_RELATEDPERSON}
+{$IFDEF FHIR_REQUESTGROUP}
   else if (base is TFhirRequestGroupAction) then
     composeRequestGroupAction(xml, name,  TFhirRequestGroupAction(base))
   else if (base is TFhirRequestGroupActionCondition) then
@@ -43997,22 +46060,34 @@ begin
     composeRequestGroupActionRelatedAction(xml, name,  TFhirRequestGroupActionRelatedAction(base))
   else if (base is TFhirRequestGroup) then
     composeRequestGroup(xml, name,  TFhirRequestGroup(base))
+{$ENDIF FHIR_REQUESTGROUP}
+{$IFDEF FHIR_RESEARCHSTUDY}
   else if (base is TFhirResearchStudyArm) then
     composeResearchStudyArm(xml, name,  TFhirResearchStudyArm(base))
   else if (base is TFhirResearchStudy) then
     composeResearchStudy(xml, name,  TFhirResearchStudy(base))
+{$ENDIF FHIR_RESEARCHSTUDY}
+{$IFDEF FHIR_RESEARCHSUBJECT}
   else if (base is TFhirResearchSubject) then
     composeResearchSubject(xml, name,  TFhirResearchSubject(base))
+{$ENDIF FHIR_RESEARCHSUBJECT}
+{$IFDEF FHIR_RISKASSESSMENT}
   else if (base is TFhirRiskAssessmentPrediction) then
     composeRiskAssessmentPrediction(xml, name,  TFhirRiskAssessmentPrediction(base))
   else if (base is TFhirRiskAssessment) then
     composeRiskAssessment(xml, name,  TFhirRiskAssessment(base))
+{$ENDIF FHIR_RISKASSESSMENT}
+{$IFDEF FHIR_SCHEDULE}
   else if (base is TFhirSchedule) then
     composeSchedule(xml, name,  TFhirSchedule(base))
+{$ENDIF FHIR_SCHEDULE}
+{$IFDEF FHIR_SEARCHPARAMETER}
   else if (base is TFhirSearchParameterComponent) then
     composeSearchParameterComponent(xml, name,  TFhirSearchParameterComponent(base))
   else if (base is TFhirSearchParameter) then
     composeSearchParameter(xml, name,  TFhirSearchParameter(base))
+{$ENDIF FHIR_SEARCHPARAMETER}
+{$IFDEF FHIR_SEQUENCE}
   else if (base is TFhirSequenceReferenceSeq) then
     composeSequenceReferenceSeq(xml, name,  TFhirSequenceReferenceSeq(base))
   else if (base is TFhirSequenceVariant) then
@@ -44023,10 +46098,16 @@ begin
     composeSequenceRepository(xml, name,  TFhirSequenceRepository(base))
   else if (base is TFhirSequence) then
     composeSequence(xml, name,  TFhirSequence(base))
+{$ENDIF FHIR_SEQUENCE}
+{$IFDEF FHIR_SERVICEDEFINITION}
   else if (base is TFhirServiceDefinition) then
     composeServiceDefinition(xml, name,  TFhirServiceDefinition(base))
+{$ENDIF FHIR_SERVICEDEFINITION}
+{$IFDEF FHIR_SLOT}
   else if (base is TFhirSlot) then
     composeSlot(xml, name,  TFhirSlot(base))
+{$ENDIF FHIR_SLOT}
+{$IFDEF FHIR_SPECIMEN}
   else if (base is TFhirSpecimenCollection) then
     composeSpecimenCollection(xml, name,  TFhirSpecimenCollection(base))
   else if (base is TFhirSpecimenProcessing) then
@@ -44035,6 +46116,8 @@ begin
     composeSpecimenContainer(xml, name,  TFhirSpecimenContainer(base))
   else if (base is TFhirSpecimen) then
     composeSpecimen(xml, name,  TFhirSpecimen(base))
+{$ENDIF FHIR_SPECIMEN}
+{$IFDEF FHIR_STRUCTUREDEFINITION}
   else if (base is TFhirStructureDefinitionMapping) then
     composeStructureDefinitionMapping(xml, name,  TFhirStructureDefinitionMapping(base))
   else if (base is TFhirStructureDefinitionSnapshot) then
@@ -44043,6 +46126,8 @@ begin
     composeStructureDefinitionDifferential(xml, name,  TFhirStructureDefinitionDifferential(base))
   else if (base is TFhirStructureDefinition) then
     composeStructureDefinition(xml, name,  TFhirStructureDefinition(base))
+{$ENDIF FHIR_STRUCTUREDEFINITION}
+{$IFDEF FHIR_STRUCTUREMAP}
   else if (base is TFhirStructureMapStructure) then
     composeStructureMapStructure(xml, name,  TFhirStructureMapStructure(base))
   else if (base is TFhirStructureMapGroup) then
@@ -44061,26 +46146,36 @@ begin
     composeStructureMapGroupRuleDependent(xml, name,  TFhirStructureMapGroupRuleDependent(base))
   else if (base is TFhirStructureMap) then
     composeStructureMap(xml, name,  TFhirStructureMap(base))
+{$ENDIF FHIR_STRUCTUREMAP}
+{$IFDEF FHIR_SUBSCRIPTION}
   else if (base is TFhirSubscriptionChannel) then
     composeSubscriptionChannel(xml, name,  TFhirSubscriptionChannel(base))
   else if (base is TFhirSubscription) then
     composeSubscription(xml, name,  TFhirSubscription(base))
+{$ENDIF FHIR_SUBSCRIPTION}
+{$IFDEF FHIR_SUBSTANCE}
   else if (base is TFhirSubstanceInstance) then
     composeSubstanceInstance(xml, name,  TFhirSubstanceInstance(base))
   else if (base is TFhirSubstanceIngredient) then
     composeSubstanceIngredient(xml, name,  TFhirSubstanceIngredient(base))
   else if (base is TFhirSubstance) then
     composeSubstance(xml, name,  TFhirSubstance(base))
+{$ENDIF FHIR_SUBSTANCE}
+{$IFDEF FHIR_SUPPLYDELIVERY}
   else if (base is TFhirSupplyDeliverySuppliedItem) then
     composeSupplyDeliverySuppliedItem(xml, name,  TFhirSupplyDeliverySuppliedItem(base))
   else if (base is TFhirSupplyDelivery) then
     composeSupplyDelivery(xml, name,  TFhirSupplyDelivery(base))
+{$ENDIF FHIR_SUPPLYDELIVERY}
+{$IFDEF FHIR_SUPPLYREQUEST}
   else if (base is TFhirSupplyRequestOrderedItem) then
     composeSupplyRequestOrderedItem(xml, name,  TFhirSupplyRequestOrderedItem(base))
   else if (base is TFhirSupplyRequestRequester) then
     composeSupplyRequestRequester(xml, name,  TFhirSupplyRequestRequester(base))
   else if (base is TFhirSupplyRequest) then
     composeSupplyRequest(xml, name,  TFhirSupplyRequest(base))
+{$ENDIF FHIR_SUPPLYREQUEST}
+{$IFDEF FHIR_TASK}
   else if (base is TFhirTaskRequester) then
     composeTaskRequester(xml, name,  TFhirTaskRequester(base))
   else if (base is TFhirTaskRestriction) then
@@ -44091,6 +46186,8 @@ begin
     composeTaskOutput(xml, name,  TFhirTaskOutput(base))
   else if (base is TFhirTask) then
     composeTask(xml, name,  TFhirTask(base))
+{$ENDIF FHIR_TASK}
+{$IFDEF FHIR_TESTREPORT}
   else if (base is TFhirTestReportParticipant) then
     composeTestReportParticipant(xml, name,  TFhirTestReportParticipant(base))
   else if (base is TFhirTestReportSetup) then
@@ -44111,6 +46208,8 @@ begin
     composeTestReportTeardownAction(xml, name,  TFhirTestReportTeardownAction(base))
   else if (base is TFhirTestReport) then
     composeTestReport(xml, name,  TFhirTestReport(base))
+{$ENDIF FHIR_TESTREPORT}
+{$IFDEF FHIR_TESTSCRIPT}
   else if (base is TFhirTestScriptOrigin) then
     composeTestScriptOrigin(xml, name,  TFhirTestScriptOrigin(base))
   else if (base is TFhirTestScriptDestination) then
@@ -44165,6 +46264,8 @@ begin
     composeTestScriptTeardownAction(xml, name,  TFhirTestScriptTeardownAction(base))
   else if (base is TFhirTestScript) then
     composeTestScript(xml, name,  TFhirTestScript(base))
+{$ENDIF FHIR_TESTSCRIPT}
+{$IFDEF FHIR_VALUESET}
   else if (base is TFhirValueSetCompose) then
     composeValueSetCompose(xml, name,  TFhirValueSetCompose(base))
   else if (base is TFhirValueSetComposeInclude) then
@@ -44183,10 +46284,13 @@ begin
     composeValueSetExpansionContains(xml, name,  TFhirValueSetExpansionContains(base))
   else if (base is TFhirValueSet) then
     composeValueSet(xml, name,  TFhirValueSet(base))
+{$ENDIF FHIR_VALUESET}
+{$IFDEF FHIR_VISIONPRESCRIPTION}
   else if (base is TFhirVisionPrescriptionDispense) then
     composeVisionPrescriptionDispense(xml, name,  TFhirVisionPrescriptionDispense(base))
   else if (base is TFhirVisionPrescription) then
     composeVisionPrescription(xml, name,  TFhirVisionPrescription(base))
+{$ENDIF FHIR_VISIONPRESCRIPTION}
   else
     raise Exception.create('Unknown Type '+base.className);
 end;

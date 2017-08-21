@@ -1,5 +1,7 @@
 unit FHIRParserTurtle;
 
+{$I fhir.inc}
+
 {
   Copyright (c) 2011+, HL7 and Health Intersections Pty Ltd (http://www.healthintersections.com.au)
   All rights reserved.
@@ -72,10 +74,12 @@ Type
 
     procedure ParseResourceProperties(obj : TTurtleComplex; resource : TFhirResource);
     procedure ParseDomainResourceProperties(obj : TTurtleComplex; resource : TFhirDomainResource);
+{$IFDEF FHIR_PARAMETERS}
     function ParseParametersParameter(obj : TTurtleComplex) : TFhirParametersParameter; overload; {b\}
     procedure ParseParametersParameterProperties(obj : TTurtleComplex; result : TFhirParametersParameter); overload; {b\}
     function ParseParameters(obj : TTurtleComplex) : TFhirParameters; overload;
     procedure ParseParametersProperties(obj : TTurtleComplex; result : TFhirParameters); overload;
+{$ENDIF FHIR_PARAMETERS}
 
     function ParseExtension(obj : TTurtleComplex) : TFhirExtension; overload;
     procedure ParseExtensionProperties(obj : TTurtleComplex; result : TFhirExtension); overload;
@@ -168,34 +172,47 @@ Type
     function ParseDuration(obj : TTurtleComplex) : TFhirDuration; overload;
     procedure ParseDurationProperties(obj : TTurtleComplex; result : TFhirDuration); overload;
 
+{$IFDEF FHIR_ACCOUNT}
     function ParseAccountCoverage(obj : TTurtleComplex) : TFhirAccountCoverage; overload; {b\}
     procedure ParseAccountCoverageProperties(obj : TTurtleComplex; result : TFhirAccountCoverage); overload; {b\}
     function ParseAccountGuarantor(obj : TTurtleComplex) : TFhirAccountGuarantor; overload; {b\}
     procedure ParseAccountGuarantorProperties(obj : TTurtleComplex; result : TFhirAccountGuarantor); overload; {b\}
     function ParseAccount(obj : TTurtleComplex) : TFhirAccount; overload;
     procedure ParseAccountProperties(obj : TTurtleComplex; result : TFhirAccount); overload;
+{$ENDIF FHIR_ACCOUNT}
+{$IFDEF FHIR_ACTIVITYDEFINITION}
     function ParseActivityDefinitionParticipant(obj : TTurtleComplex) : TFhirActivityDefinitionParticipant; overload; {b\}
     procedure ParseActivityDefinitionParticipantProperties(obj : TTurtleComplex; result : TFhirActivityDefinitionParticipant); overload; {b\}
     function ParseActivityDefinitionDynamicValue(obj : TTurtleComplex) : TFhirActivityDefinitionDynamicValue; overload; {b\}
     procedure ParseActivityDefinitionDynamicValueProperties(obj : TTurtleComplex; result : TFhirActivityDefinitionDynamicValue); overload; {b\}
     function ParseActivityDefinition(obj : TTurtleComplex) : TFhirActivityDefinition; overload;
     procedure ParseActivityDefinitionProperties(obj : TTurtleComplex; result : TFhirActivityDefinition); overload;
+{$ENDIF FHIR_ACTIVITYDEFINITION}
+{$IFDEF FHIR_ADVERSEEVENT}
     function ParseAdverseEventSuspectEntity(obj : TTurtleComplex) : TFhirAdverseEventSuspectEntity; overload; {b\}
     procedure ParseAdverseEventSuspectEntityProperties(obj : TTurtleComplex; result : TFhirAdverseEventSuspectEntity); overload; {b\}
     function ParseAdverseEventSuspectEntityCausality(obj : TTurtleComplex) : TFhirAdverseEventSuspectEntityCausality; overload; {b\}
     procedure ParseAdverseEventSuspectEntityCausalityProperties(obj : TTurtleComplex; result : TFhirAdverseEventSuspectEntityCausality); overload; {b\}
     function ParseAdverseEvent(obj : TTurtleComplex) : TFhirAdverseEvent; overload;
     procedure ParseAdverseEventProperties(obj : TTurtleComplex; result : TFhirAdverseEvent); overload;
+{$ENDIF FHIR_ADVERSEEVENT}
+{$IFDEF FHIR_ALLERGYINTOLERANCE}
     function ParseAllergyIntoleranceReaction(obj : TTurtleComplex) : TFhirAllergyIntoleranceReaction; overload; {b\}
     procedure ParseAllergyIntoleranceReactionProperties(obj : TTurtleComplex; result : TFhirAllergyIntoleranceReaction); overload; {b\}
     function ParseAllergyIntolerance(obj : TTurtleComplex) : TFhirAllergyIntolerance; overload;
     procedure ParseAllergyIntoleranceProperties(obj : TTurtleComplex; result : TFhirAllergyIntolerance); overload;
+{$ENDIF FHIR_ALLERGYINTOLERANCE}
+{$IFDEF FHIR_APPOINTMENT}
     function ParseAppointmentParticipant(obj : TTurtleComplex) : TFhirAppointmentParticipant; overload; {b\}
     procedure ParseAppointmentParticipantProperties(obj : TTurtleComplex; result : TFhirAppointmentParticipant); overload; {b\}
     function ParseAppointment(obj : TTurtleComplex) : TFhirAppointment; overload;
     procedure ParseAppointmentProperties(obj : TTurtleComplex; result : TFhirAppointment); overload;
+{$ENDIF FHIR_APPOINTMENT}
+{$IFDEF FHIR_APPOINTMENTRESPONSE}
     function ParseAppointmentResponse(obj : TTurtleComplex) : TFhirAppointmentResponse; overload;
     procedure ParseAppointmentResponseProperties(obj : TTurtleComplex; result : TFhirAppointmentResponse); overload;
+{$ENDIF FHIR_APPOINTMENTRESPONSE}
+{$IFDEF FHIR_AUDITEVENT}
     function ParseAuditEventAgent(obj : TTurtleComplex) : TFhirAuditEventAgent; overload; {b\}
     procedure ParseAuditEventAgentProperties(obj : TTurtleComplex; result : TFhirAuditEventAgent); overload; {b\}
     function ParseAuditEventAgentNetwork(obj : TTurtleComplex) : TFhirAuditEventAgentNetwork; overload; {b\}
@@ -208,12 +225,20 @@ Type
     procedure ParseAuditEventEntityDetailProperties(obj : TTurtleComplex; result : TFhirAuditEventEntityDetail); overload; {b\}
     function ParseAuditEvent(obj : TTurtleComplex) : TFhirAuditEvent; overload;
     procedure ParseAuditEventProperties(obj : TTurtleComplex; result : TFhirAuditEvent); overload;
+{$ENDIF FHIR_AUDITEVENT}
+{$IFDEF FHIR_BASIC}
     function ParseBasic(obj : TTurtleComplex) : TFhirBasic; overload;
     procedure ParseBasicProperties(obj : TTurtleComplex; result : TFhirBasic); overload;
+{$ENDIF FHIR_BASIC}
+{$IFDEF FHIR_BINARY}
     function ParseBinary(obj : TTurtleComplex) : TFhirBinary; overload;
     procedure ParseBinaryProperties(obj : TTurtleComplex; result : TFhirBinary); overload;
+{$ENDIF FHIR_BINARY}
+{$IFDEF FHIR_BODYSTRUCTURE}
     function ParseBodyStructure(obj : TTurtleComplex) : TFhirBodyStructure; overload;
     procedure ParseBodyStructureProperties(obj : TTurtleComplex; result : TFhirBodyStructure); overload;
+{$ENDIF FHIR_BODYSTRUCTURE}
+{$IFDEF FHIR_BUNDLE}
     function ParseBundleLink(obj : TTurtleComplex) : TFhirBundleLink; overload; {b\}
     procedure ParseBundleLinkProperties(obj : TTurtleComplex; result : TFhirBundleLink); overload; {b\}
     function ParseBundleEntry(obj : TTurtleComplex) : TFhirBundleEntry; overload; {b\}
@@ -226,6 +251,8 @@ Type
     procedure ParseBundleEntryResponseProperties(obj : TTurtleComplex; result : TFhirBundleEntryResponse); overload; {b\}
     function ParseBundle(obj : TTurtleComplex) : TFhirBundle; overload;
     procedure ParseBundleProperties(obj : TTurtleComplex; result : TFhirBundle); overload;
+{$ENDIF FHIR_BUNDLE}
+{$IFDEF FHIR_CAPABILITYSTATEMENT}
     function ParseCapabilityStatementSoftware(obj : TTurtleComplex) : TFhirCapabilityStatementSoftware; overload; {b\}
     procedure ParseCapabilityStatementSoftwareProperties(obj : TTurtleComplex; result : TFhirCapabilityStatementSoftware); overload; {b\}
     function ParseCapabilityStatementImplementation(obj : TTurtleComplex) : TFhirCapabilityStatementImplementation; overload; {b\}
@@ -258,24 +285,34 @@ Type
     procedure ParseCapabilityStatementDocumentProperties(obj : TTurtleComplex; result : TFhirCapabilityStatementDocument); overload; {b\}
     function ParseCapabilityStatement(obj : TTurtleComplex) : TFhirCapabilityStatement; overload;
     procedure ParseCapabilityStatementProperties(obj : TTurtleComplex; result : TFhirCapabilityStatement); overload;
+{$ENDIF FHIR_CAPABILITYSTATEMENT}
+{$IFDEF FHIR_CAREPLAN}
     function ParseCarePlanActivity(obj : TTurtleComplex) : TFhirCarePlanActivity; overload; {b\}
     procedure ParseCarePlanActivityProperties(obj : TTurtleComplex; result : TFhirCarePlanActivity); overload; {b\}
     function ParseCarePlanActivityDetail(obj : TTurtleComplex) : TFhirCarePlanActivityDetail; overload; {b\}
     procedure ParseCarePlanActivityDetailProperties(obj : TTurtleComplex; result : TFhirCarePlanActivityDetail); overload; {b\}
     function ParseCarePlan(obj : TTurtleComplex) : TFhirCarePlan; overload;
     procedure ParseCarePlanProperties(obj : TTurtleComplex; result : TFhirCarePlan); overload;
+{$ENDIF FHIR_CAREPLAN}
+{$IFDEF FHIR_CARETEAM}
     function ParseCareTeamParticipant(obj : TTurtleComplex) : TFhirCareTeamParticipant; overload; {b\}
     procedure ParseCareTeamParticipantProperties(obj : TTurtleComplex; result : TFhirCareTeamParticipant); overload; {b\}
     function ParseCareTeam(obj : TTurtleComplex) : TFhirCareTeam; overload;
     procedure ParseCareTeamProperties(obj : TTurtleComplex; result : TFhirCareTeam); overload;
+{$ENDIF FHIR_CARETEAM}
+{$IFDEF FHIR_CATALOGENTRY}
     function ParseCatalogEntryRelatedItem(obj : TTurtleComplex) : TFhirCatalogEntryRelatedItem; overload; {b\}
     procedure ParseCatalogEntryRelatedItemProperties(obj : TTurtleComplex; result : TFhirCatalogEntryRelatedItem); overload; {b\}
     function ParseCatalogEntry(obj : TTurtleComplex) : TFhirCatalogEntry; overload;
     procedure ParseCatalogEntryProperties(obj : TTurtleComplex; result : TFhirCatalogEntry); overload;
+{$ENDIF FHIR_CATALOGENTRY}
+{$IFDEF FHIR_CHARGEITEM}
     function ParseChargeItemParticipant(obj : TTurtleComplex) : TFhirChargeItemParticipant; overload; {b\}
     procedure ParseChargeItemParticipantProperties(obj : TTurtleComplex; result : TFhirChargeItemParticipant); overload; {b\}
     function ParseChargeItem(obj : TTurtleComplex) : TFhirChargeItem; overload;
     procedure ParseChargeItemProperties(obj : TTurtleComplex; result : TFhirChargeItem); overload;
+{$ENDIF FHIR_CHARGEITEM}
+{$IFDEF FHIR_CLAIM}
     function ParseClaimRelated(obj : TTurtleComplex) : TFhirClaimRelated; overload; {b\}
     procedure ParseClaimRelatedProperties(obj : TTurtleComplex; result : TFhirClaimRelated); overload; {b\}
     function ParseClaimPayee(obj : TTurtleComplex) : TFhirClaimPayee; overload; {b\}
@@ -300,6 +337,8 @@ Type
     procedure ParseClaimItemDetailSubDetailProperties(obj : TTurtleComplex; result : TFhirClaimItemDetailSubDetail); overload; {b\}
     function ParseClaim(obj : TTurtleComplex) : TFhirClaim; overload;
     procedure ParseClaimProperties(obj : TTurtleComplex; result : TFhirClaim); overload;
+{$ENDIF FHIR_CLAIM}
+{$IFDEF FHIR_CLAIMRESPONSE}
     function ParseClaimResponseItem(obj : TTurtleComplex) : TFhirClaimResponseItem; overload; {b\}
     procedure ParseClaimResponseItemProperties(obj : TTurtleComplex; result : TFhirClaimResponseItem); overload; {b\}
     function ParseClaimResponseItemAdjudication(obj : TTurtleComplex) : TFhirClaimResponseItemAdjudication; overload; {b\}
@@ -320,12 +359,16 @@ Type
     procedure ParseClaimResponseInsuranceProperties(obj : TTurtleComplex; result : TFhirClaimResponseInsurance); overload; {b\}
     function ParseClaimResponse(obj : TTurtleComplex) : TFhirClaimResponse; overload;
     procedure ParseClaimResponseProperties(obj : TTurtleComplex; result : TFhirClaimResponse); overload;
+{$ENDIF FHIR_CLAIMRESPONSE}
+{$IFDEF FHIR_CLINICALIMPRESSION}
     function ParseClinicalImpressionInvestigation(obj : TTurtleComplex) : TFhirClinicalImpressionInvestigation; overload; {b\}
     procedure ParseClinicalImpressionInvestigationProperties(obj : TTurtleComplex; result : TFhirClinicalImpressionInvestigation); overload; {b\}
     function ParseClinicalImpressionFinding(obj : TTurtleComplex) : TFhirClinicalImpressionFinding; overload; {b\}
     procedure ParseClinicalImpressionFindingProperties(obj : TTurtleComplex; result : TFhirClinicalImpressionFinding); overload; {b\}
     function ParseClinicalImpression(obj : TTurtleComplex) : TFhirClinicalImpression; overload;
     procedure ParseClinicalImpressionProperties(obj : TTurtleComplex; result : TFhirClinicalImpression); overload;
+{$ENDIF FHIR_CLINICALIMPRESSION}
+{$IFDEF FHIR_CODESYSTEM}
     function ParseCodeSystemFilter(obj : TTurtleComplex) : TFhirCodeSystemFilter; overload; {b\}
     procedure ParseCodeSystemFilterProperties(obj : TTurtleComplex; result : TFhirCodeSystemFilter); overload; {b\}
     function ParseCodeSystemProperty(obj : TTurtleComplex) : TFhirCodeSystemProperty; overload; {b\}
@@ -338,20 +381,28 @@ Type
     procedure ParseCodeSystemConceptPropertyProperties(obj : TTurtleComplex; result : TFhirCodeSystemConceptProperty); overload; {b\}
     function ParseCodeSystem(obj : TTurtleComplex) : TFhirCodeSystem; overload;
     procedure ParseCodeSystemProperties(obj : TTurtleComplex; result : TFhirCodeSystem); overload;
+{$ENDIF FHIR_CODESYSTEM}
+{$IFDEF FHIR_COMMUNICATION}
     function ParseCommunicationPayload(obj : TTurtleComplex) : TFhirCommunicationPayload; overload; {b\}
     procedure ParseCommunicationPayloadProperties(obj : TTurtleComplex; result : TFhirCommunicationPayload); overload; {b\}
     function ParseCommunication(obj : TTurtleComplex) : TFhirCommunication; overload;
     procedure ParseCommunicationProperties(obj : TTurtleComplex; result : TFhirCommunication); overload;
+{$ENDIF FHIR_COMMUNICATION}
+{$IFDEF FHIR_COMMUNICATIONREQUEST}
     function ParseCommunicationRequestPayload(obj : TTurtleComplex) : TFhirCommunicationRequestPayload; overload; {b\}
     procedure ParseCommunicationRequestPayloadProperties(obj : TTurtleComplex; result : TFhirCommunicationRequestPayload); overload; {b\}
     function ParseCommunicationRequestRequester(obj : TTurtleComplex) : TFhirCommunicationRequestRequester; overload; {b\}
     procedure ParseCommunicationRequestRequesterProperties(obj : TTurtleComplex; result : TFhirCommunicationRequestRequester); overload; {b\}
     function ParseCommunicationRequest(obj : TTurtleComplex) : TFhirCommunicationRequest; overload;
     procedure ParseCommunicationRequestProperties(obj : TTurtleComplex; result : TFhirCommunicationRequest); overload;
+{$ENDIF FHIR_COMMUNICATIONREQUEST}
+{$IFDEF FHIR_COMPARTMENTDEFINITION}
     function ParseCompartmentDefinitionResource(obj : TTurtleComplex) : TFhirCompartmentDefinitionResource; overload; {b\}
     procedure ParseCompartmentDefinitionResourceProperties(obj : TTurtleComplex; result : TFhirCompartmentDefinitionResource); overload; {b\}
     function ParseCompartmentDefinition(obj : TTurtleComplex) : TFhirCompartmentDefinition; overload;
     procedure ParseCompartmentDefinitionProperties(obj : TTurtleComplex; result : TFhirCompartmentDefinition); overload;
+{$ENDIF FHIR_COMPARTMENTDEFINITION}
+{$IFDEF FHIR_COMPOSITION}
     function ParseCompositionAttester(obj : TTurtleComplex) : TFhirCompositionAttester; overload; {b\}
     procedure ParseCompositionAttesterProperties(obj : TTurtleComplex; result : TFhirCompositionAttester); overload; {b\}
     function ParseCompositionRelatesTo(obj : TTurtleComplex) : TFhirCompositionRelatesTo; overload; {b\}
@@ -362,6 +413,8 @@ Type
     procedure ParseCompositionSectionProperties(obj : TTurtleComplex; result : TFhirCompositionSection); overload; {b\}
     function ParseComposition(obj : TTurtleComplex) : TFhirComposition; overload;
     procedure ParseCompositionProperties(obj : TTurtleComplex; result : TFhirComposition); overload;
+{$ENDIF FHIR_COMPOSITION}
+{$IFDEF FHIR_CONCEPTMAP}
     function ParseConceptMapGroup(obj : TTurtleComplex) : TFhirConceptMapGroup; overload; {b\}
     procedure ParseConceptMapGroupProperties(obj : TTurtleComplex; result : TFhirConceptMapGroup); overload; {b\}
     function ParseConceptMapGroupElement(obj : TTurtleComplex) : TFhirConceptMapGroupElement; overload; {b\}
@@ -374,12 +427,16 @@ Type
     procedure ParseConceptMapGroupUnmappedProperties(obj : TTurtleComplex; result : TFhirConceptMapGroupUnmapped); overload; {b\}
     function ParseConceptMap(obj : TTurtleComplex) : TFhirConceptMap; overload;
     procedure ParseConceptMapProperties(obj : TTurtleComplex; result : TFhirConceptMap); overload;
+{$ENDIF FHIR_CONCEPTMAP}
+{$IFDEF FHIR_CONDITION}
     function ParseConditionStage(obj : TTurtleComplex) : TFhirConditionStage; overload; {b\}
     procedure ParseConditionStageProperties(obj : TTurtleComplex; result : TFhirConditionStage); overload; {b\}
     function ParseConditionEvidence(obj : TTurtleComplex) : TFhirConditionEvidence; overload; {b\}
     procedure ParseConditionEvidenceProperties(obj : TTurtleComplex; result : TFhirConditionEvidence); overload; {b\}
     function ParseCondition(obj : TTurtleComplex) : TFhirCondition; overload;
     procedure ParseConditionProperties(obj : TTurtleComplex; result : TFhirCondition); overload;
+{$ENDIF FHIR_CONDITION}
+{$IFDEF FHIR_CONSENT}
     function ParseConsentPolicy(obj : TTurtleComplex) : TFhirConsentPolicy; overload; {b\}
     procedure ParseConsentPolicyProperties(obj : TTurtleComplex; result : TFhirConsentPolicy); overload; {b\}
     function ParseConsentVerification(obj : TTurtleComplex) : TFhirConsentVerification; overload; {b\}
@@ -392,6 +449,8 @@ Type
     procedure ParseConsentProvisionDataProperties(obj : TTurtleComplex; result : TFhirConsentProvisionData); overload; {b\}
     function ParseConsent(obj : TTurtleComplex) : TFhirConsent; overload;
     procedure ParseConsentProperties(obj : TTurtleComplex; result : TFhirConsent); overload;
+{$ENDIF FHIR_CONSENT}
+{$IFDEF FHIR_CONTRACT}
     function ParseContractTerm(obj : TTurtleComplex) : TFhirContractTerm; overload; {b\}
     procedure ParseContractTermProperties(obj : TTurtleComplex; result : TFhirContractTerm); overload; {b\}
     function ParseContractTermOffer(obj : TTurtleComplex) : TFhirContractTermOffer; overload; {b\}
@@ -414,42 +473,62 @@ Type
     procedure ParseContractRuleProperties(obj : TTurtleComplex; result : TFhirContractRule); overload; {b\}
     function ParseContract(obj : TTurtleComplex) : TFhirContract; overload;
     procedure ParseContractProperties(obj : TTurtleComplex; result : TFhirContract); overload;
+{$ENDIF FHIR_CONTRACT}
+{$IFDEF FHIR_COVERAGE}
     function ParseCoverageGrouping(obj : TTurtleComplex) : TFhirCoverageGrouping; overload; {b\}
     procedure ParseCoverageGroupingProperties(obj : TTurtleComplex; result : TFhirCoverageGrouping); overload; {b\}
     function ParseCoverage(obj : TTurtleComplex) : TFhirCoverage; overload;
     procedure ParseCoverageProperties(obj : TTurtleComplex; result : TFhirCoverage); overload;
+{$ENDIF FHIR_COVERAGE}
+{$IFDEF FHIR_DETECTEDISSUE}
     function ParseDetectedIssueMitigation(obj : TTurtleComplex) : TFhirDetectedIssueMitigation; overload; {b\}
     procedure ParseDetectedIssueMitigationProperties(obj : TTurtleComplex; result : TFhirDetectedIssueMitigation); overload; {b\}
     function ParseDetectedIssue(obj : TTurtleComplex) : TFhirDetectedIssue; overload;
     procedure ParseDetectedIssueProperties(obj : TTurtleComplex; result : TFhirDetectedIssue); overload;
+{$ENDIF FHIR_DETECTEDISSUE}
+{$IFDEF FHIR_DEVICE}
     function ParseDeviceUdi(obj : TTurtleComplex) : TFhirDeviceUdi; overload; {b\}
     procedure ParseDeviceUdiProperties(obj : TTurtleComplex; result : TFhirDeviceUdi); overload; {b\}
     function ParseDevice(obj : TTurtleComplex) : TFhirDevice; overload;
     procedure ParseDeviceProperties(obj : TTurtleComplex; result : TFhirDevice); overload;
+{$ENDIF FHIR_DEVICE}
+{$IFDEF FHIR_DEVICECOMPONENT}
     function ParseDeviceComponentProductionSpecification(obj : TTurtleComplex) : TFhirDeviceComponentProductionSpecification; overload; {b\}
     procedure ParseDeviceComponentProductionSpecificationProperties(obj : TTurtleComplex; result : TFhirDeviceComponentProductionSpecification); overload; {b\}
     function ParseDeviceComponent(obj : TTurtleComplex) : TFhirDeviceComponent; overload;
     procedure ParseDeviceComponentProperties(obj : TTurtleComplex; result : TFhirDeviceComponent); overload;
+{$ENDIF FHIR_DEVICECOMPONENT}
+{$IFDEF FHIR_DEVICEMETRIC}
     function ParseDeviceMetricCalibration(obj : TTurtleComplex) : TFhirDeviceMetricCalibration; overload; {b\}
     procedure ParseDeviceMetricCalibrationProperties(obj : TTurtleComplex; result : TFhirDeviceMetricCalibration); overload; {b\}
     function ParseDeviceMetric(obj : TTurtleComplex) : TFhirDeviceMetric; overload;
     procedure ParseDeviceMetricProperties(obj : TTurtleComplex; result : TFhirDeviceMetric); overload;
+{$ENDIF FHIR_DEVICEMETRIC}
+{$IFDEF FHIR_DEVICEREQUEST}
     function ParseDeviceRequestRequester(obj : TTurtleComplex) : TFhirDeviceRequestRequester; overload; {b\}
     procedure ParseDeviceRequestRequesterProperties(obj : TTurtleComplex; result : TFhirDeviceRequestRequester); overload; {b\}
     function ParseDeviceRequest(obj : TTurtleComplex) : TFhirDeviceRequest; overload;
     procedure ParseDeviceRequestProperties(obj : TTurtleComplex; result : TFhirDeviceRequest); overload;
+{$ENDIF FHIR_DEVICEREQUEST}
+{$IFDEF FHIR_DEVICEUSESTATEMENT}
     function ParseDeviceUseStatement(obj : TTurtleComplex) : TFhirDeviceUseStatement; overload;
     procedure ParseDeviceUseStatementProperties(obj : TTurtleComplex; result : TFhirDeviceUseStatement); overload;
+{$ENDIF FHIR_DEVICEUSESTATEMENT}
+{$IFDEF FHIR_DIAGNOSTICREPORT}
     function ParseDiagnosticReportImage(obj : TTurtleComplex) : TFhirDiagnosticReportImage; overload; {b\}
     procedure ParseDiagnosticReportImageProperties(obj : TTurtleComplex; result : TFhirDiagnosticReportImage); overload; {b\}
     function ParseDiagnosticReport(obj : TTurtleComplex) : TFhirDiagnosticReport; overload;
     procedure ParseDiagnosticReportProperties(obj : TTurtleComplex; result : TFhirDiagnosticReport); overload;
+{$ENDIF FHIR_DIAGNOSTICREPORT}
+{$IFDEF FHIR_DOCUMENTMANIFEST}
     function ParseDocumentManifestContent(obj : TTurtleComplex) : TFhirDocumentManifestContent; overload; {b\}
     procedure ParseDocumentManifestContentProperties(obj : TTurtleComplex; result : TFhirDocumentManifestContent); overload; {b\}
     function ParseDocumentManifestRelated(obj : TTurtleComplex) : TFhirDocumentManifestRelated; overload; {b\}
     procedure ParseDocumentManifestRelatedProperties(obj : TTurtleComplex; result : TFhirDocumentManifestRelated); overload; {b\}
     function ParseDocumentManifest(obj : TTurtleComplex) : TFhirDocumentManifest; overload;
     procedure ParseDocumentManifestProperties(obj : TTurtleComplex; result : TFhirDocumentManifest); overload;
+{$ENDIF FHIR_DOCUMENTMANIFEST}
+{$IFDEF FHIR_DOCUMENTREFERENCE}
     function ParseDocumentReferenceRelatesTo(obj : TTurtleComplex) : TFhirDocumentReferenceRelatesTo; overload; {b\}
     procedure ParseDocumentReferenceRelatesToProperties(obj : TTurtleComplex; result : TFhirDocumentReferenceRelatesTo); overload; {b\}
     function ParseDocumentReferenceContent(obj : TTurtleComplex) : TFhirDocumentReferenceContent; overload; {b\}
@@ -460,8 +539,12 @@ Type
     procedure ParseDocumentReferenceContextRelatedProperties(obj : TTurtleComplex; result : TFhirDocumentReferenceContextRelated); overload; {b\}
     function ParseDocumentReference(obj : TTurtleComplex) : TFhirDocumentReference; overload;
     procedure ParseDocumentReferenceProperties(obj : TTurtleComplex; result : TFhirDocumentReference); overload;
+{$ENDIF FHIR_DOCUMENTREFERENCE}
+{$IFDEF FHIR_ELIGIBILITYREQUEST}
     function ParseEligibilityRequest(obj : TTurtleComplex) : TFhirEligibilityRequest; overload;
     procedure ParseEligibilityRequestProperties(obj : TTurtleComplex; result : TFhirEligibilityRequest); overload;
+{$ENDIF FHIR_ELIGIBILITYREQUEST}
+{$IFDEF FHIR_ELIGIBILITYRESPONSE}
     function ParseEligibilityResponseInsurance(obj : TTurtleComplex) : TFhirEligibilityResponseInsurance; overload; {b\}
     procedure ParseEligibilityResponseInsuranceProperties(obj : TTurtleComplex; result : TFhirEligibilityResponseInsurance); overload; {b\}
     function ParseEligibilityResponseInsuranceBenefitBalance(obj : TTurtleComplex) : TFhirEligibilityResponseInsuranceBenefitBalance; overload; {b\}
@@ -472,6 +555,8 @@ Type
     procedure ParseEligibilityResponseErrorProperties(obj : TTurtleComplex; result : TFhirEligibilityResponseError); overload; {b\}
     function ParseEligibilityResponse(obj : TTurtleComplex) : TFhirEligibilityResponse; overload;
     procedure ParseEligibilityResponseProperties(obj : TTurtleComplex; result : TFhirEligibilityResponse); overload;
+{$ENDIF FHIR_ELIGIBILITYRESPONSE}
+{$IFDEF FHIR_ENCOUNTER}
     function ParseEncounterStatusHistory(obj : TTurtleComplex) : TFhirEncounterStatusHistory; overload; {b\}
     procedure ParseEncounterStatusHistoryProperties(obj : TTurtleComplex; result : TFhirEncounterStatusHistory); overload; {b\}
     function ParseEncounterClassHistory(obj : TTurtleComplex) : TFhirEncounterClassHistory; overload; {b\}
@@ -486,20 +571,32 @@ Type
     procedure ParseEncounterLocationProperties(obj : TTurtleComplex; result : TFhirEncounterLocation); overload; {b\}
     function ParseEncounter(obj : TTurtleComplex) : TFhirEncounter; overload;
     procedure ParseEncounterProperties(obj : TTurtleComplex; result : TFhirEncounter); overload;
+{$ENDIF FHIR_ENCOUNTER}
+{$IFDEF FHIR_ENDPOINT}
     function ParseEndpoint(obj : TTurtleComplex) : TFhirEndpoint; overload;
     procedure ParseEndpointProperties(obj : TTurtleComplex; result : TFhirEndpoint); overload;
+{$ENDIF FHIR_ENDPOINT}
+{$IFDEF FHIR_ENROLLMENTREQUEST}
     function ParseEnrollmentRequest(obj : TTurtleComplex) : TFhirEnrollmentRequest; overload;
     procedure ParseEnrollmentRequestProperties(obj : TTurtleComplex; result : TFhirEnrollmentRequest); overload;
+{$ENDIF FHIR_ENROLLMENTREQUEST}
+{$IFDEF FHIR_ENROLLMENTRESPONSE}
     function ParseEnrollmentResponse(obj : TTurtleComplex) : TFhirEnrollmentResponse; overload;
     procedure ParseEnrollmentResponseProperties(obj : TTurtleComplex; result : TFhirEnrollmentResponse); overload;
+{$ENDIF FHIR_ENROLLMENTRESPONSE}
+{$IFDEF FHIR_EPISODEOFCARE}
     function ParseEpisodeOfCareStatusHistory(obj : TTurtleComplex) : TFhirEpisodeOfCareStatusHistory; overload; {b\}
     procedure ParseEpisodeOfCareStatusHistoryProperties(obj : TTurtleComplex; result : TFhirEpisodeOfCareStatusHistory); overload; {b\}
     function ParseEpisodeOfCareDiagnosis(obj : TTurtleComplex) : TFhirEpisodeOfCareDiagnosis; overload; {b\}
     procedure ParseEpisodeOfCareDiagnosisProperties(obj : TTurtleComplex; result : TFhirEpisodeOfCareDiagnosis); overload; {b\}
     function ParseEpisodeOfCare(obj : TTurtleComplex) : TFhirEpisodeOfCare; overload;
     procedure ParseEpisodeOfCareProperties(obj : TTurtleComplex; result : TFhirEpisodeOfCare); overload;
+{$ENDIF FHIR_EPISODEOFCARE}
+{$IFDEF FHIR_EVENTDEFINITION}
     function ParseEventDefinition(obj : TTurtleComplex) : TFhirEventDefinition; overload;
     procedure ParseEventDefinitionProperties(obj : TTurtleComplex; result : TFhirEventDefinition); overload;
+{$ENDIF FHIR_EVENTDEFINITION}
+{$IFDEF FHIR_EXPANSIONPROFILE}
     function ParseExpansionProfileFixedVersion(obj : TTurtleComplex) : TFhirExpansionProfileFixedVersion; overload; {b\}
     procedure ParseExpansionProfileFixedVersionProperties(obj : TTurtleComplex; result : TFhirExpansionProfileFixedVersion); overload; {b\}
     function ParseExpansionProfileExcludedSystem(obj : TTurtleComplex) : TFhirExpansionProfileExcludedSystem; overload; {b\}
@@ -516,6 +613,8 @@ Type
     procedure ParseExpansionProfileDesignationExcludeDesignationProperties(obj : TTurtleComplex; result : TFhirExpansionProfileDesignationExcludeDesignation); overload; {b\}
     function ParseExpansionProfile(obj : TTurtleComplex) : TFhirExpansionProfile; overload;
     procedure ParseExpansionProfileProperties(obj : TTurtleComplex; result : TFhirExpansionProfile); overload;
+{$ENDIF FHIR_EXPANSIONPROFILE}
+{$IFDEF FHIR_EXPLANATIONOFBENEFIT}
     function ParseExplanationOfBenefitRelated(obj : TTurtleComplex) : TFhirExplanationOfBenefitRelated; overload; {b\}
     procedure ParseExplanationOfBenefitRelatedProperties(obj : TTurtleComplex; result : TFhirExplanationOfBenefitRelated); overload; {b\}
     function ParseExplanationOfBenefitPayee(obj : TTurtleComplex) : TFhirExplanationOfBenefitPayee; overload; {b\}
@@ -552,16 +651,24 @@ Type
     procedure ParseExplanationOfBenefitBenefitBalanceFinancialProperties(obj : TTurtleComplex; result : TFhirExplanationOfBenefitBenefitBalanceFinancial); overload; {b\}
     function ParseExplanationOfBenefit(obj : TTurtleComplex) : TFhirExplanationOfBenefit; overload;
     procedure ParseExplanationOfBenefitProperties(obj : TTurtleComplex; result : TFhirExplanationOfBenefit); overload;
+{$ENDIF FHIR_EXPLANATIONOFBENEFIT}
+{$IFDEF FHIR_FAMILYMEMBERHISTORY}
     function ParseFamilyMemberHistoryCondition(obj : TTurtleComplex) : TFhirFamilyMemberHistoryCondition; overload; {b\}
     procedure ParseFamilyMemberHistoryConditionProperties(obj : TTurtleComplex; result : TFhirFamilyMemberHistoryCondition); overload; {b\}
     function ParseFamilyMemberHistory(obj : TTurtleComplex) : TFhirFamilyMemberHistory; overload;
     procedure ParseFamilyMemberHistoryProperties(obj : TTurtleComplex; result : TFhirFamilyMemberHistory); overload;
+{$ENDIF FHIR_FAMILYMEMBERHISTORY}
+{$IFDEF FHIR_FLAG}
     function ParseFlag(obj : TTurtleComplex) : TFhirFlag; overload;
     procedure ParseFlagProperties(obj : TTurtleComplex; result : TFhirFlag); overload;
+{$ENDIF FHIR_FLAG}
+{$IFDEF FHIR_GOAL}
     function ParseGoalTarget(obj : TTurtleComplex) : TFhirGoalTarget; overload; {b\}
     procedure ParseGoalTargetProperties(obj : TTurtleComplex; result : TFhirGoalTarget); overload; {b\}
     function ParseGoal(obj : TTurtleComplex) : TFhirGoal; overload;
     procedure ParseGoalProperties(obj : TTurtleComplex; result : TFhirGoal); overload;
+{$ENDIF FHIR_GOAL}
+{$IFDEF FHIR_GRAPHDEFINITION}
     function ParseGraphDefinitionLink(obj : TTurtleComplex) : TFhirGraphDefinitionLink; overload; {b\}
     procedure ParseGraphDefinitionLinkProperties(obj : TTurtleComplex; result : TFhirGraphDefinitionLink); overload; {b\}
     function ParseGraphDefinitionLinkTarget(obj : TTurtleComplex) : TFhirGraphDefinitionLinkTarget; overload; {b\}
@@ -570,20 +677,28 @@ Type
     procedure ParseGraphDefinitionLinkTargetCompartmentProperties(obj : TTurtleComplex; result : TFhirGraphDefinitionLinkTargetCompartment); overload; {b\}
     function ParseGraphDefinition(obj : TTurtleComplex) : TFhirGraphDefinition; overload;
     procedure ParseGraphDefinitionProperties(obj : TTurtleComplex; result : TFhirGraphDefinition); overload;
+{$ENDIF FHIR_GRAPHDEFINITION}
+{$IFDEF FHIR_GROUP}
     function ParseGroupCharacteristic(obj : TTurtleComplex) : TFhirGroupCharacteristic; overload; {b\}
     procedure ParseGroupCharacteristicProperties(obj : TTurtleComplex; result : TFhirGroupCharacteristic); overload; {b\}
     function ParseGroupMember(obj : TTurtleComplex) : TFhirGroupMember; overload; {b\}
     procedure ParseGroupMemberProperties(obj : TTurtleComplex; result : TFhirGroupMember); overload; {b\}
     function ParseGroup(obj : TTurtleComplex) : TFhirGroup; overload;
     procedure ParseGroupProperties(obj : TTurtleComplex; result : TFhirGroup); overload;
+{$ENDIF FHIR_GROUP}
+{$IFDEF FHIR_GUIDANCERESPONSE}
     function ParseGuidanceResponse(obj : TTurtleComplex) : TFhirGuidanceResponse; overload;
     procedure ParseGuidanceResponseProperties(obj : TTurtleComplex; result : TFhirGuidanceResponse); overload;
+{$ENDIF FHIR_GUIDANCERESPONSE}
+{$IFDEF FHIR_HEALTHCARESERVICE}
     function ParseHealthcareServiceAvailableTime(obj : TTurtleComplex) : TFhirHealthcareServiceAvailableTime; overload; {b\}
     procedure ParseHealthcareServiceAvailableTimeProperties(obj : TTurtleComplex; result : TFhirHealthcareServiceAvailableTime); overload; {b\}
     function ParseHealthcareServiceNotAvailable(obj : TTurtleComplex) : TFhirHealthcareServiceNotAvailable; overload; {b\}
     procedure ParseHealthcareServiceNotAvailableProperties(obj : TTurtleComplex; result : TFhirHealthcareServiceNotAvailable); overload; {b\}
     function ParseHealthcareService(obj : TTurtleComplex) : TFhirHealthcareService; overload;
     procedure ParseHealthcareServiceProperties(obj : TTurtleComplex; result : TFhirHealthcareService); overload;
+{$ENDIF FHIR_HEALTHCARESERVICE}
+{$IFDEF FHIR_IMAGINGMANIFEST}
     function ParseImagingManifestStudy(obj : TTurtleComplex) : TFhirImagingManifestStudy; overload; {b\}
     procedure ParseImagingManifestStudyProperties(obj : TTurtleComplex; result : TFhirImagingManifestStudy); overload; {b\}
     function ParseImagingManifestStudySeries(obj : TTurtleComplex) : TFhirImagingManifestStudySeries; overload; {b\}
@@ -592,12 +707,16 @@ Type
     procedure ParseImagingManifestStudySeriesInstanceProperties(obj : TTurtleComplex; result : TFhirImagingManifestStudySeriesInstance); overload; {b\}
     function ParseImagingManifest(obj : TTurtleComplex) : TFhirImagingManifest; overload;
     procedure ParseImagingManifestProperties(obj : TTurtleComplex; result : TFhirImagingManifest); overload;
+{$ENDIF FHIR_IMAGINGMANIFEST}
+{$IFDEF FHIR_IMAGINGSTUDY}
     function ParseImagingStudySeries(obj : TTurtleComplex) : TFhirImagingStudySeries; overload; {b\}
     procedure ParseImagingStudySeriesProperties(obj : TTurtleComplex; result : TFhirImagingStudySeries); overload; {b\}
     function ParseImagingStudySeriesInstance(obj : TTurtleComplex) : TFhirImagingStudySeriesInstance; overload; {b\}
     procedure ParseImagingStudySeriesInstanceProperties(obj : TTurtleComplex; result : TFhirImagingStudySeriesInstance); overload; {b\}
     function ParseImagingStudy(obj : TTurtleComplex) : TFhirImagingStudy; overload;
     procedure ParseImagingStudyProperties(obj : TTurtleComplex; result : TFhirImagingStudy); overload;
+{$ENDIF FHIR_IMAGINGSTUDY}
+{$IFDEF FHIR_IMMUNIZATION}
     function ParseImmunizationPractitioner(obj : TTurtleComplex) : TFhirImmunizationPractitioner; overload; {b\}
     procedure ParseImmunizationPractitionerProperties(obj : TTurtleComplex; result : TFhirImmunizationPractitioner); overload; {b\}
     function ParseImmunizationExplanation(obj : TTurtleComplex) : TFhirImmunizationExplanation; overload; {b\}
@@ -608,6 +727,8 @@ Type
     procedure ParseImmunizationVaccinationProtocolProperties(obj : TTurtleComplex; result : TFhirImmunizationVaccinationProtocol); overload; {b\}
     function ParseImmunization(obj : TTurtleComplex) : TFhirImmunization; overload;
     procedure ParseImmunizationProperties(obj : TTurtleComplex; result : TFhirImmunization); overload;
+{$ENDIF FHIR_IMMUNIZATION}
+{$IFDEF FHIR_IMMUNIZATIONRECOMMENDATION}
     function ParseImmunizationRecommendationRecommendation(obj : TTurtleComplex) : TFhirImmunizationRecommendationRecommendation; overload; {b\}
     procedure ParseImmunizationRecommendationRecommendationProperties(obj : TTurtleComplex; result : TFhirImmunizationRecommendationRecommendation); overload; {b\}
     function ParseImmunizationRecommendationRecommendationDateCriterion(obj : TTurtleComplex) : TFhirImmunizationRecommendationRecommendationDateCriterion; overload; {b\}
@@ -616,6 +737,8 @@ Type
     procedure ParseImmunizationRecommendationRecommendationProtocolProperties(obj : TTurtleComplex; result : TFhirImmunizationRecommendationRecommendationProtocol); overload; {b\}
     function ParseImmunizationRecommendation(obj : TTurtleComplex) : TFhirImmunizationRecommendation; overload;
     procedure ParseImmunizationRecommendationProperties(obj : TTurtleComplex; result : TFhirImmunizationRecommendation); overload;
+{$ENDIF FHIR_IMMUNIZATIONRECOMMENDATION}
+{$IFDEF FHIR_IMPLEMENTATIONGUIDE}
     function ParseImplementationGuideDependency(obj : TTurtleComplex) : TFhirImplementationGuideDependency; overload; {b\}
     procedure ParseImplementationGuideDependencyProperties(obj : TTurtleComplex; result : TFhirImplementationGuideDependency); overload; {b\}
     function ParseImplementationGuidePackage(obj : TTurtleComplex) : TFhirImplementationGuidePackage; overload; {b\}
@@ -628,20 +751,30 @@ Type
     procedure ParseImplementationGuidePageProperties(obj : TTurtleComplex; result : TFhirImplementationGuidePage); overload; {b\}
     function ParseImplementationGuide(obj : TTurtleComplex) : TFhirImplementationGuide; overload;
     procedure ParseImplementationGuideProperties(obj : TTurtleComplex; result : TFhirImplementationGuide); overload;
+{$ENDIF FHIR_IMPLEMENTATIONGUIDE}
+{$IFDEF FHIR_LIBRARY}
     function ParseLibrary(obj : TTurtleComplex) : TFhirLibrary; overload;
     procedure ParseLibraryProperties(obj : TTurtleComplex; result : TFhirLibrary); overload;
+{$ENDIF FHIR_LIBRARY}
+{$IFDEF FHIR_LINKAGE}
     function ParseLinkageItem(obj : TTurtleComplex) : TFhirLinkageItem; overload; {b\}
     procedure ParseLinkageItemProperties(obj : TTurtleComplex; result : TFhirLinkageItem); overload; {b\}
     function ParseLinkage(obj : TTurtleComplex) : TFhirLinkage; overload;
     procedure ParseLinkageProperties(obj : TTurtleComplex; result : TFhirLinkage); overload;
+{$ENDIF FHIR_LINKAGE}
+{$IFDEF FHIR_LIST}
     function ParseListEntry(obj : TTurtleComplex) : TFhirListEntry; overload; {b\}
     procedure ParseListEntryProperties(obj : TTurtleComplex; result : TFhirListEntry); overload; {b\}
     function ParseList(obj : TTurtleComplex) : TFhirList; overload;
     procedure ParseListProperties(obj : TTurtleComplex; result : TFhirList); overload;
+{$ENDIF FHIR_LIST}
+{$IFDEF FHIR_LOCATION}
     function ParseLocationPosition(obj : TTurtleComplex) : TFhirLocationPosition; overload; {b\}
     procedure ParseLocationPositionProperties(obj : TTurtleComplex; result : TFhirLocationPosition); overload; {b\}
     function ParseLocation(obj : TTurtleComplex) : TFhirLocation; overload;
     procedure ParseLocationProperties(obj : TTurtleComplex; result : TFhirLocation); overload;
+{$ENDIF FHIR_LOCATION}
+{$IFDEF FHIR_MEASURE}
     function ParseMeasureGroup(obj : TTurtleComplex) : TFhirMeasureGroup; overload; {b\}
     procedure ParseMeasureGroupProperties(obj : TTurtleComplex; result : TFhirMeasureGroup); overload; {b\}
     function ParseMeasureGroupPopulation(obj : TTurtleComplex) : TFhirMeasureGroupPopulation; overload; {b\}
@@ -652,6 +785,8 @@ Type
     procedure ParseMeasureSupplementalDataProperties(obj : TTurtleComplex; result : TFhirMeasureSupplementalData); overload; {b\}
     function ParseMeasure(obj : TTurtleComplex) : TFhirMeasure; overload;
     procedure ParseMeasureProperties(obj : TTurtleComplex; result : TFhirMeasure); overload;
+{$ENDIF FHIR_MEASURE}
+{$IFDEF FHIR_MEASUREREPORT}
     function ParseMeasureReportGroup(obj : TTurtleComplex) : TFhirMeasureReportGroup; overload; {b\}
     procedure ParseMeasureReportGroupProperties(obj : TTurtleComplex; result : TFhirMeasureReportGroup); overload; {b\}
     function ParseMeasureReportGroupPopulation(obj : TTurtleComplex) : TFhirMeasureReportGroupPopulation; overload; {b\}
@@ -664,8 +799,12 @@ Type
     procedure ParseMeasureReportGroupStratifierStratumPopulationProperties(obj : TTurtleComplex; result : TFhirMeasureReportGroupStratifierStratumPopulation); overload; {b\}
     function ParseMeasureReport(obj : TTurtleComplex) : TFhirMeasureReport; overload;
     procedure ParseMeasureReportProperties(obj : TTurtleComplex; result : TFhirMeasureReport); overload;
+{$ENDIF FHIR_MEASUREREPORT}
+{$IFDEF FHIR_MEDIA}
     function ParseMedia(obj : TTurtleComplex) : TFhirMedia; overload;
     procedure ParseMediaProperties(obj : TTurtleComplex; result : TFhirMedia); overload;
+{$ENDIF FHIR_MEDIA}
+{$IFDEF FHIR_MEDICATION}
     function ParseMedicationIngredient(obj : TTurtleComplex) : TFhirMedicationIngredient; overload; {b\}
     procedure ParseMedicationIngredientProperties(obj : TTurtleComplex; result : TFhirMedicationIngredient); overload; {b\}
     function ParseMedicationPackage(obj : TTurtleComplex) : TFhirMedicationPackage; overload; {b\}
@@ -676,18 +815,24 @@ Type
     procedure ParseMedicationPackageBatchProperties(obj : TTurtleComplex; result : TFhirMedicationPackageBatch); overload; {b\}
     function ParseMedication(obj : TTurtleComplex) : TFhirMedication; overload;
     procedure ParseMedicationProperties(obj : TTurtleComplex; result : TFhirMedication); overload;
+{$ENDIF FHIR_MEDICATION}
+{$IFDEF FHIR_MEDICATIONADMINISTRATION}
     function ParseMedicationAdministrationPerformer(obj : TTurtleComplex) : TFhirMedicationAdministrationPerformer; overload; {b\}
     procedure ParseMedicationAdministrationPerformerProperties(obj : TTurtleComplex; result : TFhirMedicationAdministrationPerformer); overload; {b\}
     function ParseMedicationAdministrationDosage(obj : TTurtleComplex) : TFhirMedicationAdministrationDosage; overload; {b\}
     procedure ParseMedicationAdministrationDosageProperties(obj : TTurtleComplex; result : TFhirMedicationAdministrationDosage); overload; {b\}
     function ParseMedicationAdministration(obj : TTurtleComplex) : TFhirMedicationAdministration; overload;
     procedure ParseMedicationAdministrationProperties(obj : TTurtleComplex; result : TFhirMedicationAdministration); overload;
+{$ENDIF FHIR_MEDICATIONADMINISTRATION}
+{$IFDEF FHIR_MEDICATIONDISPENSE}
     function ParseMedicationDispensePerformer(obj : TTurtleComplex) : TFhirMedicationDispensePerformer; overload; {b\}
     procedure ParseMedicationDispensePerformerProperties(obj : TTurtleComplex; result : TFhirMedicationDispensePerformer); overload; {b\}
     function ParseMedicationDispenseSubstitution(obj : TTurtleComplex) : TFhirMedicationDispenseSubstitution; overload; {b\}
     procedure ParseMedicationDispenseSubstitutionProperties(obj : TTurtleComplex; result : TFhirMedicationDispenseSubstitution); overload; {b\}
     function ParseMedicationDispense(obj : TTurtleComplex) : TFhirMedicationDispense; overload;
     procedure ParseMedicationDispenseProperties(obj : TTurtleComplex; result : TFhirMedicationDispense); overload;
+{$ENDIF FHIR_MEDICATIONDISPENSE}
+{$IFDEF FHIR_MEDICATIONREQUEST}
     function ParseMedicationRequestRequester(obj : TTurtleComplex) : TFhirMedicationRequestRequester; overload; {b\}
     procedure ParseMedicationRequestRequesterProperties(obj : TTurtleComplex; result : TFhirMedicationRequestRequester); overload; {b\}
     function ParseMedicationRequestDispenseRequest(obj : TTurtleComplex) : TFhirMedicationRequestDispenseRequest; overload; {b\}
@@ -696,14 +841,20 @@ Type
     procedure ParseMedicationRequestSubstitutionProperties(obj : TTurtleComplex; result : TFhirMedicationRequestSubstitution); overload; {b\}
     function ParseMedicationRequest(obj : TTurtleComplex) : TFhirMedicationRequest; overload;
     procedure ParseMedicationRequestProperties(obj : TTurtleComplex; result : TFhirMedicationRequest); overload;
+{$ENDIF FHIR_MEDICATIONREQUEST}
+{$IFDEF FHIR_MEDICATIONSTATEMENT}
     function ParseMedicationStatement(obj : TTurtleComplex) : TFhirMedicationStatement; overload;
     procedure ParseMedicationStatementProperties(obj : TTurtleComplex; result : TFhirMedicationStatement); overload;
+{$ENDIF FHIR_MEDICATIONSTATEMENT}
+{$IFDEF FHIR_MESSAGEDEFINITION}
     function ParseMessageDefinitionFocus(obj : TTurtleComplex) : TFhirMessageDefinitionFocus; overload; {b\}
     procedure ParseMessageDefinitionFocusProperties(obj : TTurtleComplex; result : TFhirMessageDefinitionFocus); overload; {b\}
     function ParseMessageDefinitionAllowedResponse(obj : TTurtleComplex) : TFhirMessageDefinitionAllowedResponse; overload; {b\}
     procedure ParseMessageDefinitionAllowedResponseProperties(obj : TTurtleComplex; result : TFhirMessageDefinitionAllowedResponse); overload; {b\}
     function ParseMessageDefinition(obj : TTurtleComplex) : TFhirMessageDefinition; overload;
     procedure ParseMessageDefinitionProperties(obj : TTurtleComplex; result : TFhirMessageDefinition); overload;
+{$ENDIF FHIR_MESSAGEDEFINITION}
+{$IFDEF FHIR_MESSAGEHEADER}
     function ParseMessageHeaderDestination(obj : TTurtleComplex) : TFhirMessageHeaderDestination; overload; {b\}
     procedure ParseMessageHeaderDestinationProperties(obj : TTurtleComplex; result : TFhirMessageHeaderDestination); overload; {b\}
     function ParseMessageHeaderSource(obj : TTurtleComplex) : TFhirMessageHeaderSource; overload; {b\}
@@ -712,10 +863,14 @@ Type
     procedure ParseMessageHeaderResponseProperties(obj : TTurtleComplex; result : TFhirMessageHeaderResponse); overload; {b\}
     function ParseMessageHeader(obj : TTurtleComplex) : TFhirMessageHeader; overload;
     procedure ParseMessageHeaderProperties(obj : TTurtleComplex; result : TFhirMessageHeader); overload;
+{$ENDIF FHIR_MESSAGEHEADER}
+{$IFDEF FHIR_NAMINGSYSTEM}
     function ParseNamingSystemUniqueId(obj : TTurtleComplex) : TFhirNamingSystemUniqueId; overload; {b\}
     procedure ParseNamingSystemUniqueIdProperties(obj : TTurtleComplex; result : TFhirNamingSystemUniqueId); overload; {b\}
     function ParseNamingSystem(obj : TTurtleComplex) : TFhirNamingSystem; overload;
     procedure ParseNamingSystemProperties(obj : TTurtleComplex; result : TFhirNamingSystem); overload;
+{$ENDIF FHIR_NAMINGSYSTEM}
+{$IFDEF FHIR_NUTRITIONORDER}
     function ParseNutritionOrderOralDiet(obj : TTurtleComplex) : TFhirNutritionOrderOralDiet; overload; {b\}
     procedure ParseNutritionOrderOralDietProperties(obj : TTurtleComplex; result : TFhirNutritionOrderOralDiet); overload; {b\}
     function ParseNutritionOrderOralDietNutrient(obj : TTurtleComplex) : TFhirNutritionOrderOralDietNutrient; overload; {b\}
@@ -730,6 +885,8 @@ Type
     procedure ParseNutritionOrderEnteralFormulaAdministrationProperties(obj : TTurtleComplex; result : TFhirNutritionOrderEnteralFormulaAdministration); overload; {b\}
     function ParseNutritionOrder(obj : TTurtleComplex) : TFhirNutritionOrder; overload;
     procedure ParseNutritionOrderProperties(obj : TTurtleComplex; result : TFhirNutritionOrder); overload;
+{$ENDIF FHIR_NUTRITIONORDER}
+{$IFDEF FHIR_OBSERVATION}
     function ParseObservationReferenceRange(obj : TTurtleComplex) : TFhirObservationReferenceRange; overload; {b\}
     procedure ParseObservationReferenceRangeProperties(obj : TTurtleComplex; result : TFhirObservationReferenceRange); overload; {b\}
     function ParseObservationRelated(obj : TTurtleComplex) : TFhirObservationRelated; overload; {b\}
@@ -738,6 +895,8 @@ Type
     procedure ParseObservationComponentProperties(obj : TTurtleComplex; result : TFhirObservationComponent); overload; {b\}
     function ParseObservation(obj : TTurtleComplex) : TFhirObservation; overload;
     procedure ParseObservationProperties(obj : TTurtleComplex; result : TFhirObservation); overload;
+{$ENDIF FHIR_OBSERVATION}
+{$IFDEF FHIR_OPERATIONDEFINITION}
     function ParseOperationDefinitionParameter(obj : TTurtleComplex) : TFhirOperationDefinitionParameter; overload; {b\}
     procedure ParseOperationDefinitionParameterProperties(obj : TTurtleComplex; result : TFhirOperationDefinitionParameter); overload; {b\}
     function ParseOperationDefinitionParameterBinding(obj : TTurtleComplex) : TFhirOperationDefinitionParameterBinding; overload; {b\}
@@ -746,14 +905,20 @@ Type
     procedure ParseOperationDefinitionOverloadProperties(obj : TTurtleComplex; result : TFhirOperationDefinitionOverload); overload; {b\}
     function ParseOperationDefinition(obj : TTurtleComplex) : TFhirOperationDefinition; overload;
     procedure ParseOperationDefinitionProperties(obj : TTurtleComplex; result : TFhirOperationDefinition); overload;
+{$ENDIF FHIR_OPERATIONDEFINITION}
+{$IFDEF FHIR_OPERATIONOUTCOME}
     function ParseOperationOutcomeIssue(obj : TTurtleComplex) : TFhirOperationOutcomeIssue; overload; {b\}
     procedure ParseOperationOutcomeIssueProperties(obj : TTurtleComplex; result : TFhirOperationOutcomeIssue); overload; {b\}
     function ParseOperationOutcome(obj : TTurtleComplex) : TFhirOperationOutcome; overload;
     procedure ParseOperationOutcomeProperties(obj : TTurtleComplex; result : TFhirOperationOutcome); overload;
+{$ENDIF FHIR_OPERATIONOUTCOME}
+{$IFDEF FHIR_ORGANIZATION}
     function ParseOrganizationContact(obj : TTurtleComplex) : TFhirOrganizationContact; overload; {b\}
     procedure ParseOrganizationContactProperties(obj : TTurtleComplex; result : TFhirOrganizationContact); overload; {b\}
     function ParseOrganization(obj : TTurtleComplex) : TFhirOrganization; overload;
     procedure ParseOrganizationProperties(obj : TTurtleComplex; result : TFhirOrganization); overload;
+{$ENDIF FHIR_ORGANIZATION}
+{$IFDEF FHIR_PATIENT}
     function ParsePatientContact(obj : TTurtleComplex) : TFhirPatientContact; overload; {b\}
     procedure ParsePatientContactProperties(obj : TTurtleComplex; result : TFhirPatientContact); overload; {b\}
     function ParsePatientAnimal(obj : TTurtleComplex) : TFhirPatientAnimal; overload; {b\}
@@ -764,18 +929,26 @@ Type
     procedure ParsePatientLinkProperties(obj : TTurtleComplex; result : TFhirPatientLink); overload; {b\}
     function ParsePatient(obj : TTurtleComplex) : TFhirPatient; overload;
     procedure ParsePatientProperties(obj : TTurtleComplex; result : TFhirPatient); overload;
+{$ENDIF FHIR_PATIENT}
+{$IFDEF FHIR_PAYMENTNOTICE}
     function ParsePaymentNotice(obj : TTurtleComplex) : TFhirPaymentNotice; overload;
     procedure ParsePaymentNoticeProperties(obj : TTurtleComplex; result : TFhirPaymentNotice); overload;
+{$ENDIF FHIR_PAYMENTNOTICE}
+{$IFDEF FHIR_PAYMENTRECONCILIATION}
     function ParsePaymentReconciliationDetail(obj : TTurtleComplex) : TFhirPaymentReconciliationDetail; overload; {b\}
     procedure ParsePaymentReconciliationDetailProperties(obj : TTurtleComplex; result : TFhirPaymentReconciliationDetail); overload; {b\}
     function ParsePaymentReconciliationProcessNote(obj : TTurtleComplex) : TFhirPaymentReconciliationProcessNote; overload; {b\}
     procedure ParsePaymentReconciliationProcessNoteProperties(obj : TTurtleComplex; result : TFhirPaymentReconciliationProcessNote); overload; {b\}
     function ParsePaymentReconciliation(obj : TTurtleComplex) : TFhirPaymentReconciliation; overload;
     procedure ParsePaymentReconciliationProperties(obj : TTurtleComplex; result : TFhirPaymentReconciliation); overload;
+{$ENDIF FHIR_PAYMENTRECONCILIATION}
+{$IFDEF FHIR_PERSON}
     function ParsePersonLink(obj : TTurtleComplex) : TFhirPersonLink; overload; {b\}
     procedure ParsePersonLinkProperties(obj : TTurtleComplex; result : TFhirPersonLink); overload; {b\}
     function ParsePerson(obj : TTurtleComplex) : TFhirPerson; overload;
     procedure ParsePersonProperties(obj : TTurtleComplex; result : TFhirPerson); overload;
+{$ENDIF FHIR_PERSON}
+{$IFDEF FHIR_PLANDEFINITION}
     function ParsePlanDefinitionGoal(obj : TTurtleComplex) : TFhirPlanDefinitionGoal; overload; {b\}
     procedure ParsePlanDefinitionGoalProperties(obj : TTurtleComplex; result : TFhirPlanDefinitionGoal); overload; {b\}
     function ParsePlanDefinitionGoalTarget(obj : TTurtleComplex) : TFhirPlanDefinitionGoalTarget; overload; {b\}
@@ -792,40 +965,56 @@ Type
     procedure ParsePlanDefinitionActionDynamicValueProperties(obj : TTurtleComplex; result : TFhirPlanDefinitionActionDynamicValue); overload; {b\}
     function ParsePlanDefinition(obj : TTurtleComplex) : TFhirPlanDefinition; overload;
     procedure ParsePlanDefinitionProperties(obj : TTurtleComplex; result : TFhirPlanDefinition); overload;
+{$ENDIF FHIR_PLANDEFINITION}
+{$IFDEF FHIR_PRACTITIONER}
     function ParsePractitionerQualification(obj : TTurtleComplex) : TFhirPractitionerQualification; overload; {b\}
     procedure ParsePractitionerQualificationProperties(obj : TTurtleComplex; result : TFhirPractitionerQualification); overload; {b\}
     function ParsePractitioner(obj : TTurtleComplex) : TFhirPractitioner; overload;
     procedure ParsePractitionerProperties(obj : TTurtleComplex; result : TFhirPractitioner); overload;
+{$ENDIF FHIR_PRACTITIONER}
+{$IFDEF FHIR_PRACTITIONERROLE}
     function ParsePractitionerRoleAvailableTime(obj : TTurtleComplex) : TFhirPractitionerRoleAvailableTime; overload; {b\}
     procedure ParsePractitionerRoleAvailableTimeProperties(obj : TTurtleComplex; result : TFhirPractitionerRoleAvailableTime); overload; {b\}
     function ParsePractitionerRoleNotAvailable(obj : TTurtleComplex) : TFhirPractitionerRoleNotAvailable; overload; {b\}
     procedure ParsePractitionerRoleNotAvailableProperties(obj : TTurtleComplex; result : TFhirPractitionerRoleNotAvailable); overload; {b\}
     function ParsePractitionerRole(obj : TTurtleComplex) : TFhirPractitionerRole; overload;
     procedure ParsePractitionerRoleProperties(obj : TTurtleComplex; result : TFhirPractitionerRole); overload;
+{$ENDIF FHIR_PRACTITIONERROLE}
+{$IFDEF FHIR_PROCEDURE}
     function ParseProcedurePerformer(obj : TTurtleComplex) : TFhirProcedurePerformer; overload; {b\}
     procedure ParseProcedurePerformerProperties(obj : TTurtleComplex; result : TFhirProcedurePerformer); overload; {b\}
     function ParseProcedureFocalDevice(obj : TTurtleComplex) : TFhirProcedureFocalDevice; overload; {b\}
     procedure ParseProcedureFocalDeviceProperties(obj : TTurtleComplex; result : TFhirProcedureFocalDevice); overload; {b\}
     function ParseProcedure(obj : TTurtleComplex) : TFhirProcedure; overload;
     procedure ParseProcedureProperties(obj : TTurtleComplex; result : TFhirProcedure); overload;
+{$ENDIF FHIR_PROCEDURE}
+{$IFDEF FHIR_PROCEDUREREQUEST}
     function ParseProcedureRequestRequester(obj : TTurtleComplex) : TFhirProcedureRequestRequester; overload; {b\}
     procedure ParseProcedureRequestRequesterProperties(obj : TTurtleComplex; result : TFhirProcedureRequestRequester); overload; {b\}
     function ParseProcedureRequest(obj : TTurtleComplex) : TFhirProcedureRequest; overload;
     procedure ParseProcedureRequestProperties(obj : TTurtleComplex; result : TFhirProcedureRequest); overload;
+{$ENDIF FHIR_PROCEDUREREQUEST}
+{$IFDEF FHIR_PROCESSREQUEST}
     function ParseProcessRequestItem(obj : TTurtleComplex) : TFhirProcessRequestItem; overload; {b\}
     procedure ParseProcessRequestItemProperties(obj : TTurtleComplex; result : TFhirProcessRequestItem); overload; {b\}
     function ParseProcessRequest(obj : TTurtleComplex) : TFhirProcessRequest; overload;
     procedure ParseProcessRequestProperties(obj : TTurtleComplex; result : TFhirProcessRequest); overload;
+{$ENDIF FHIR_PROCESSREQUEST}
+{$IFDEF FHIR_PROCESSRESPONSE}
     function ParseProcessResponseProcessNote(obj : TTurtleComplex) : TFhirProcessResponseProcessNote; overload; {b\}
     procedure ParseProcessResponseProcessNoteProperties(obj : TTurtleComplex; result : TFhirProcessResponseProcessNote); overload; {b\}
     function ParseProcessResponse(obj : TTurtleComplex) : TFhirProcessResponse; overload;
     procedure ParseProcessResponseProperties(obj : TTurtleComplex; result : TFhirProcessResponse); overload;
+{$ENDIF FHIR_PROCESSRESPONSE}
+{$IFDEF FHIR_PROVENANCE}
     function ParseProvenanceAgent(obj : TTurtleComplex) : TFhirProvenanceAgent; overload; {b\}
     procedure ParseProvenanceAgentProperties(obj : TTurtleComplex; result : TFhirProvenanceAgent); overload; {b\}
     function ParseProvenanceEntity(obj : TTurtleComplex) : TFhirProvenanceEntity; overload; {b\}
     procedure ParseProvenanceEntityProperties(obj : TTurtleComplex; result : TFhirProvenanceEntity); overload; {b\}
     function ParseProvenance(obj : TTurtleComplex) : TFhirProvenance; overload;
     procedure ParseProvenanceProperties(obj : TTurtleComplex; result : TFhirProvenance); overload;
+{$ENDIF FHIR_PROVENANCE}
+{$IFDEF FHIR_QUESTIONNAIRE}
     function ParseQuestionnaireItem(obj : TTurtleComplex) : TFhirQuestionnaireItem; overload; {b\}
     procedure ParseQuestionnaireItemProperties(obj : TTurtleComplex; result : TFhirQuestionnaireItem); overload; {b\}
     function ParseQuestionnaireItemEnableWhen(obj : TTurtleComplex) : TFhirQuestionnaireItemEnableWhen; overload; {b\}
@@ -834,14 +1023,20 @@ Type
     procedure ParseQuestionnaireItemOptionProperties(obj : TTurtleComplex; result : TFhirQuestionnaireItemOption); overload; {b\}
     function ParseQuestionnaire(obj : TTurtleComplex) : TFhirQuestionnaire; overload;
     procedure ParseQuestionnaireProperties(obj : TTurtleComplex; result : TFhirQuestionnaire); overload;
+{$ENDIF FHIR_QUESTIONNAIRE}
+{$IFDEF FHIR_QUESTIONNAIRERESPONSE}
     function ParseQuestionnaireResponseItem(obj : TTurtleComplex) : TFhirQuestionnaireResponseItem; overload; {b\}
     procedure ParseQuestionnaireResponseItemProperties(obj : TTurtleComplex; result : TFhirQuestionnaireResponseItem); overload; {b\}
     function ParseQuestionnaireResponseItemAnswer(obj : TTurtleComplex) : TFhirQuestionnaireResponseItemAnswer; overload; {b\}
     procedure ParseQuestionnaireResponseItemAnswerProperties(obj : TTurtleComplex; result : TFhirQuestionnaireResponseItemAnswer); overload; {b\}
     function ParseQuestionnaireResponse(obj : TTurtleComplex) : TFhirQuestionnaireResponse; overload;
     procedure ParseQuestionnaireResponseProperties(obj : TTurtleComplex; result : TFhirQuestionnaireResponse); overload;
+{$ENDIF FHIR_QUESTIONNAIRERESPONSE}
+{$IFDEF FHIR_RELATEDPERSON}
     function ParseRelatedPerson(obj : TTurtleComplex) : TFhirRelatedPerson; overload;
     procedure ParseRelatedPersonProperties(obj : TTurtleComplex; result : TFhirRelatedPerson); overload;
+{$ENDIF FHIR_RELATEDPERSON}
+{$IFDEF FHIR_REQUESTGROUP}
     function ParseRequestGroupAction(obj : TTurtleComplex) : TFhirRequestGroupAction; overload; {b\}
     procedure ParseRequestGroupActionProperties(obj : TTurtleComplex; result : TFhirRequestGroupAction); overload; {b\}
     function ParseRequestGroupActionCondition(obj : TTurtleComplex) : TFhirRequestGroupActionCondition; overload; {b\}
@@ -850,22 +1045,34 @@ Type
     procedure ParseRequestGroupActionRelatedActionProperties(obj : TTurtleComplex; result : TFhirRequestGroupActionRelatedAction); overload; {b\}
     function ParseRequestGroup(obj : TTurtleComplex) : TFhirRequestGroup; overload;
     procedure ParseRequestGroupProperties(obj : TTurtleComplex; result : TFhirRequestGroup); overload;
+{$ENDIF FHIR_REQUESTGROUP}
+{$IFDEF FHIR_RESEARCHSTUDY}
     function ParseResearchStudyArm(obj : TTurtleComplex) : TFhirResearchStudyArm; overload; {b\}
     procedure ParseResearchStudyArmProperties(obj : TTurtleComplex; result : TFhirResearchStudyArm); overload; {b\}
     function ParseResearchStudy(obj : TTurtleComplex) : TFhirResearchStudy; overload;
     procedure ParseResearchStudyProperties(obj : TTurtleComplex; result : TFhirResearchStudy); overload;
+{$ENDIF FHIR_RESEARCHSTUDY}
+{$IFDEF FHIR_RESEARCHSUBJECT}
     function ParseResearchSubject(obj : TTurtleComplex) : TFhirResearchSubject; overload;
     procedure ParseResearchSubjectProperties(obj : TTurtleComplex; result : TFhirResearchSubject); overload;
+{$ENDIF FHIR_RESEARCHSUBJECT}
+{$IFDEF FHIR_RISKASSESSMENT}
     function ParseRiskAssessmentPrediction(obj : TTurtleComplex) : TFhirRiskAssessmentPrediction; overload; {b\}
     procedure ParseRiskAssessmentPredictionProperties(obj : TTurtleComplex; result : TFhirRiskAssessmentPrediction); overload; {b\}
     function ParseRiskAssessment(obj : TTurtleComplex) : TFhirRiskAssessment; overload;
     procedure ParseRiskAssessmentProperties(obj : TTurtleComplex; result : TFhirRiskAssessment); overload;
+{$ENDIF FHIR_RISKASSESSMENT}
+{$IFDEF FHIR_SCHEDULE}
     function ParseSchedule(obj : TTurtleComplex) : TFhirSchedule; overload;
     procedure ParseScheduleProperties(obj : TTurtleComplex; result : TFhirSchedule); overload;
+{$ENDIF FHIR_SCHEDULE}
+{$IFDEF FHIR_SEARCHPARAMETER}
     function ParseSearchParameterComponent(obj : TTurtleComplex) : TFhirSearchParameterComponent; overload; {b\}
     procedure ParseSearchParameterComponentProperties(obj : TTurtleComplex; result : TFhirSearchParameterComponent); overload; {b\}
     function ParseSearchParameter(obj : TTurtleComplex) : TFhirSearchParameter; overload;
     procedure ParseSearchParameterProperties(obj : TTurtleComplex; result : TFhirSearchParameter); overload;
+{$ENDIF FHIR_SEARCHPARAMETER}
+{$IFDEF FHIR_SEQUENCE}
     function ParseSequenceReferenceSeq(obj : TTurtleComplex) : TFhirSequenceReferenceSeq; overload; {b\}
     procedure ParseSequenceReferenceSeqProperties(obj : TTurtleComplex; result : TFhirSequenceReferenceSeq); overload; {b\}
     function ParseSequenceVariant(obj : TTurtleComplex) : TFhirSequenceVariant; overload; {b\}
@@ -884,10 +1091,16 @@ Type
     procedure ParseSequenceStructureVariantInnerProperties(obj : TTurtleComplex; result : TFhirSequenceStructureVariantInner); overload; {b\}
     function ParseSequence(obj : TTurtleComplex) : TFhirSequence; overload;
     procedure ParseSequenceProperties(obj : TTurtleComplex; result : TFhirSequence); overload;
+{$ENDIF FHIR_SEQUENCE}
+{$IFDEF FHIR_SERVICEDEFINITION}
     function ParseServiceDefinition(obj : TTurtleComplex) : TFhirServiceDefinition; overload;
     procedure ParseServiceDefinitionProperties(obj : TTurtleComplex; result : TFhirServiceDefinition); overload;
+{$ENDIF FHIR_SERVICEDEFINITION}
+{$IFDEF FHIR_SLOT}
     function ParseSlot(obj : TTurtleComplex) : TFhirSlot; overload;
     procedure ParseSlotProperties(obj : TTurtleComplex; result : TFhirSlot); overload;
+{$ENDIF FHIR_SLOT}
+{$IFDEF FHIR_SPECIMEN}
     function ParseSpecimenCollection(obj : TTurtleComplex) : TFhirSpecimenCollection; overload; {b\}
     procedure ParseSpecimenCollectionProperties(obj : TTurtleComplex; result : TFhirSpecimenCollection); overload; {b\}
     function ParseSpecimenProcessing(obj : TTurtleComplex) : TFhirSpecimenProcessing; overload; {b\}
@@ -896,6 +1109,8 @@ Type
     procedure ParseSpecimenContainerProperties(obj : TTurtleComplex; result : TFhirSpecimenContainer); overload; {b\}
     function ParseSpecimen(obj : TTurtleComplex) : TFhirSpecimen; overload;
     procedure ParseSpecimenProperties(obj : TTurtleComplex; result : TFhirSpecimen); overload;
+{$ENDIF FHIR_SPECIMEN}
+{$IFDEF FHIR_SPECIMENDEFINITION}
     function ParseSpecimenDefinitionSpecimenToLab(obj : TTurtleComplex) : TFhirSpecimenDefinitionSpecimenToLab; overload; {b\}
     procedure ParseSpecimenDefinitionSpecimenToLabProperties(obj : TTurtleComplex; result : TFhirSpecimenDefinitionSpecimenToLab); overload; {b\}
     function ParseSpecimenDefinitionSpecimenToLabContainerAdditive(obj : TTurtleComplex) : TFhirSpecimenDefinitionSpecimenToLabContainerAdditive; overload; {b\}
@@ -904,6 +1119,8 @@ Type
     procedure ParseSpecimenDefinitionSpecimenToLabHandlingProperties(obj : TTurtleComplex; result : TFhirSpecimenDefinitionSpecimenToLabHandling); overload; {b\}
     function ParseSpecimenDefinition(obj : TTurtleComplex) : TFhirSpecimenDefinition; overload;
     procedure ParseSpecimenDefinitionProperties(obj : TTurtleComplex; result : TFhirSpecimenDefinition); overload;
+{$ENDIF FHIR_SPECIMENDEFINITION}
+{$IFDEF FHIR_STRUCTUREDEFINITION}
     function ParseStructureDefinitionMapping(obj : TTurtleComplex) : TFhirStructureDefinitionMapping; overload; {b\}
     procedure ParseStructureDefinitionMappingProperties(obj : TTurtleComplex; result : TFhirStructureDefinitionMapping); overload; {b\}
     function ParseStructureDefinitionSnapshot(obj : TTurtleComplex) : TFhirStructureDefinitionSnapshot; overload; {b\}
@@ -912,6 +1129,8 @@ Type
     procedure ParseStructureDefinitionDifferentialProperties(obj : TTurtleComplex; result : TFhirStructureDefinitionDifferential); overload; {b\}
     function ParseStructureDefinition(obj : TTurtleComplex) : TFhirStructureDefinition; overload;
     procedure ParseStructureDefinitionProperties(obj : TTurtleComplex; result : TFhirStructureDefinition); overload;
+{$ENDIF FHIR_STRUCTUREDEFINITION}
+{$IFDEF FHIR_STRUCTUREMAP}
     function ParseStructureMapStructure(obj : TTurtleComplex) : TFhirStructureMapStructure; overload; {b\}
     procedure ParseStructureMapStructureProperties(obj : TTurtleComplex; result : TFhirStructureMapStructure); overload; {b\}
     function ParseStructureMapGroup(obj : TTurtleComplex) : TFhirStructureMapGroup; overload; {b\}
@@ -930,26 +1149,36 @@ Type
     procedure ParseStructureMapGroupRuleDependentProperties(obj : TTurtleComplex; result : TFhirStructureMapGroupRuleDependent); overload; {b\}
     function ParseStructureMap(obj : TTurtleComplex) : TFhirStructureMap; overload;
     procedure ParseStructureMapProperties(obj : TTurtleComplex; result : TFhirStructureMap); overload;
+{$ENDIF FHIR_STRUCTUREMAP}
+{$IFDEF FHIR_SUBSCRIPTION}
     function ParseSubscriptionChannel(obj : TTurtleComplex) : TFhirSubscriptionChannel; overload; {b\}
     procedure ParseSubscriptionChannelProperties(obj : TTurtleComplex; result : TFhirSubscriptionChannel); overload; {b\}
     function ParseSubscription(obj : TTurtleComplex) : TFhirSubscription; overload;
     procedure ParseSubscriptionProperties(obj : TTurtleComplex; result : TFhirSubscription); overload;
+{$ENDIF FHIR_SUBSCRIPTION}
+{$IFDEF FHIR_SUBSTANCE}
     function ParseSubstanceInstance(obj : TTurtleComplex) : TFhirSubstanceInstance; overload; {b\}
     procedure ParseSubstanceInstanceProperties(obj : TTurtleComplex; result : TFhirSubstanceInstance); overload; {b\}
     function ParseSubstanceIngredient(obj : TTurtleComplex) : TFhirSubstanceIngredient; overload; {b\}
     procedure ParseSubstanceIngredientProperties(obj : TTurtleComplex; result : TFhirSubstanceIngredient); overload; {b\}
     function ParseSubstance(obj : TTurtleComplex) : TFhirSubstance; overload;
     procedure ParseSubstanceProperties(obj : TTurtleComplex; result : TFhirSubstance); overload;
+{$ENDIF FHIR_SUBSTANCE}
+{$IFDEF FHIR_SUPPLYDELIVERY}
     function ParseSupplyDeliverySuppliedItem(obj : TTurtleComplex) : TFhirSupplyDeliverySuppliedItem; overload; {b\}
     procedure ParseSupplyDeliverySuppliedItemProperties(obj : TTurtleComplex; result : TFhirSupplyDeliverySuppliedItem); overload; {b\}
     function ParseSupplyDelivery(obj : TTurtleComplex) : TFhirSupplyDelivery; overload;
     procedure ParseSupplyDeliveryProperties(obj : TTurtleComplex; result : TFhirSupplyDelivery); overload;
+{$ENDIF FHIR_SUPPLYDELIVERY}
+{$IFDEF FHIR_SUPPLYREQUEST}
     function ParseSupplyRequestOrderedItem(obj : TTurtleComplex) : TFhirSupplyRequestOrderedItem; overload; {b\}
     procedure ParseSupplyRequestOrderedItemProperties(obj : TTurtleComplex; result : TFhirSupplyRequestOrderedItem); overload; {b\}
     function ParseSupplyRequestRequester(obj : TTurtleComplex) : TFhirSupplyRequestRequester; overload; {b\}
     procedure ParseSupplyRequestRequesterProperties(obj : TTurtleComplex; result : TFhirSupplyRequestRequester); overload; {b\}
     function ParseSupplyRequest(obj : TTurtleComplex) : TFhirSupplyRequest; overload;
     procedure ParseSupplyRequestProperties(obj : TTurtleComplex; result : TFhirSupplyRequest); overload;
+{$ENDIF FHIR_SUPPLYREQUEST}
+{$IFDEF FHIR_TASK}
     function ParseTaskRequester(obj : TTurtleComplex) : TFhirTaskRequester; overload; {b\}
     procedure ParseTaskRequesterProperties(obj : TTurtleComplex; result : TFhirTaskRequester); overload; {b\}
     function ParseTaskRestriction(obj : TTurtleComplex) : TFhirTaskRestriction; overload; {b\}
@@ -960,6 +1189,8 @@ Type
     procedure ParseTaskOutputProperties(obj : TTurtleComplex; result : TFhirTaskOutput); overload; {b\}
     function ParseTask(obj : TTurtleComplex) : TFhirTask; overload;
     procedure ParseTaskProperties(obj : TTurtleComplex; result : TFhirTask); overload;
+{$ENDIF FHIR_TASK}
+{$IFDEF FHIR_TESTREPORT}
     function ParseTestReportParticipant(obj : TTurtleComplex) : TFhirTestReportParticipant; overload; {b\}
     procedure ParseTestReportParticipantProperties(obj : TTurtleComplex; result : TFhirTestReportParticipant); overload; {b\}
     function ParseTestReportSetup(obj : TTurtleComplex) : TFhirTestReportSetup; overload; {b\}
@@ -980,6 +1211,8 @@ Type
     procedure ParseTestReportTeardownActionProperties(obj : TTurtleComplex; result : TFhirTestReportTeardownAction); overload; {b\}
     function ParseTestReport(obj : TTurtleComplex) : TFhirTestReport; overload;
     procedure ParseTestReportProperties(obj : TTurtleComplex; result : TFhirTestReport); overload;
+{$ENDIF FHIR_TESTREPORT}
+{$IFDEF FHIR_TESTSCRIPT}
     function ParseTestScriptOrigin(obj : TTurtleComplex) : TFhirTestScriptOrigin; overload; {b\}
     procedure ParseTestScriptOriginProperties(obj : TTurtleComplex; result : TFhirTestScriptOrigin); overload; {b\}
     function ParseTestScriptDestination(obj : TTurtleComplex) : TFhirTestScriptDestination; overload; {b\}
@@ -1034,6 +1267,8 @@ Type
     procedure ParseTestScriptTeardownActionProperties(obj : TTurtleComplex; result : TFhirTestScriptTeardownAction); overload; {b\}
     function ParseTestScript(obj : TTurtleComplex) : TFhirTestScript; overload;
     procedure ParseTestScriptProperties(obj : TTurtleComplex; result : TFhirTestScript); overload;
+{$ENDIF FHIR_TESTSCRIPT}
+{$IFDEF FHIR_VALUESET}
     function ParseValueSetCompose(obj : TTurtleComplex) : TFhirValueSetCompose; overload; {b\}
     procedure ParseValueSetComposeProperties(obj : TTurtleComplex; result : TFhirValueSetCompose); overload; {b\}
     function ParseValueSetComposeInclude(obj : TTurtleComplex) : TFhirValueSetComposeInclude; overload; {b\}
@@ -1052,10 +1287,14 @@ Type
     procedure ParseValueSetExpansionContainsProperties(obj : TTurtleComplex; result : TFhirValueSetExpansionContains); overload; {b\}
     function ParseValueSet(obj : TTurtleComplex) : TFhirValueSet; overload;
     procedure ParseValueSetProperties(obj : TTurtleComplex; result : TFhirValueSet); overload;
+{$ENDIF FHIR_VALUESET}
+{$IFDEF FHIR_VISIONPRESCRIPTION}
     function ParseVisionPrescriptionDispense(obj : TTurtleComplex) : TFhirVisionPrescriptionDispense; overload; {b\}
     procedure ParseVisionPrescriptionDispenseProperties(obj : TTurtleComplex; result : TFhirVisionPrescriptionDispense); overload; {b\}
     function ParseVisionPrescription(obj : TTurtleComplex) : TFhirVisionPrescription; overload;
     procedure ParseVisionPrescriptionProperties(obj : TTurtleComplex; result : TFhirVisionPrescription); overload;
+{$ENDIF FHIR_VISIONPRESCRIPTION}
+{$IFDEF FHIR_WORKFLOWEXAMPLE}
     function ParseWorkflowExampleActor(obj : TTurtleComplex) : TFhirWorkflowExampleActor; overload; {b\}
     procedure ParseWorkflowExampleActorProperties(obj : TTurtleComplex; result : TFhirWorkflowExampleActor); overload; {b\}
     function ParseWorkflowExampleInstance(obj : TTurtleComplex) : TFhirWorkflowExampleInstance; overload; {b\}
@@ -1076,6 +1315,7 @@ Type
     procedure ParseWorkflowExampleProcessStepAlternativeOptionProperties(obj : TTurtleComplex; result : TFhirWorkflowExampleProcessStepAlternativeOption); overload; {b\}
     function ParseWorkflowExample(obj : TTurtleComplex) : TFhirWorkflowExample; overload;
     procedure ParseWorkflowExampleProperties(obj : TTurtleComplex; result : TFhirWorkflowExample); overload;
+{$ENDIF FHIR_WORKFLOWEXAMPLE}
     function ParseResource(obj : TTurtleComplex) : TFhirResource; override;
     function ParseDataType(obj : TTurtleComplex; name : String; type_ : TFHIRTypeClass) : TFHIRType; override;
   public
@@ -1111,8 +1351,10 @@ Type
 
     Procedure ComposeResource(this : TTurtleComplex; parentType, name : String; elem : TFhirResource; useType : boolean; index : integer); overload;
     Procedure ComposeDomainResource(this : TTurtleComplex; parentType, name : String; elem : TFhirDomainResource; useType : boolean; index : integer); overload;
+{$IFDEF FHIR_PARAMETERS}
     procedure ComposeParametersParameter(parent :  TTurtleComplex; parentType, name : String; elem : TFhirParametersParameter; useType : boolean; index : integer);
     procedure ComposeParameters(parent :  TTurtleComplex; parentType, name : String; elem : TFhirParameters; useType : boolean; index : integer);
+{$ENDIF FHIR_PARAMETERS}
 
 
     procedure ComposeExtension(parent :  TTurtleComplex; parentType, name : String; elem : TFhirExtension; useType : boolean; index : integer);
@@ -1162,35 +1404,58 @@ Type
     procedure ComposeDuration(parent :  TTurtleComplex; parentType, name : String; elem : TFhirDuration; useType : boolean; index : integer);
 
 
+{$IFDEF FHIR_ACCOUNT}
     procedure ComposeAccountCoverage(parent :  TTurtleComplex; parentType, name : String; elem : TFhirAccountCoverage; useType : boolean; index : integer);
     procedure ComposeAccountGuarantor(parent :  TTurtleComplex; parentType, name : String; elem : TFhirAccountGuarantor; useType : boolean; index : integer);
     procedure ComposeAccount(parent :  TTurtleComplex; parentType, name : String; elem : TFhirAccount; useType : boolean; index : integer);
+{$ENDIF FHIR_ACCOUNT}
+{$IFDEF FHIR_ACTIVITYDEFINITION}
     procedure ComposeActivityDefinitionParticipant(parent :  TTurtleComplex; parentType, name : String; elem : TFhirActivityDefinitionParticipant; useType : boolean; index : integer);
     procedure ComposeActivityDefinitionDynamicValue(parent :  TTurtleComplex; parentType, name : String; elem : TFhirActivityDefinitionDynamicValue; useType : boolean; index : integer);
     procedure ComposeActivityDefinition(parent :  TTurtleComplex; parentType, name : String; elem : TFhirActivityDefinition; useType : boolean; index : integer);
+{$ENDIF FHIR_ACTIVITYDEFINITION}
+{$IFDEF FHIR_ADVERSEEVENT}
     procedure ComposeAdverseEventSuspectEntity(parent :  TTurtleComplex; parentType, name : String; elem : TFhirAdverseEventSuspectEntity; useType : boolean; index : integer);
     procedure ComposeAdverseEventSuspectEntityCausality(parent :  TTurtleComplex; parentType, name : String; elem : TFhirAdverseEventSuspectEntityCausality; useType : boolean; index : integer);
     procedure ComposeAdverseEvent(parent :  TTurtleComplex; parentType, name : String; elem : TFhirAdverseEvent; useType : boolean; index : integer);
+{$ENDIF FHIR_ADVERSEEVENT}
+{$IFDEF FHIR_ALLERGYINTOLERANCE}
     procedure ComposeAllergyIntoleranceReaction(parent :  TTurtleComplex; parentType, name : String; elem : TFhirAllergyIntoleranceReaction; useType : boolean; index : integer);
     procedure ComposeAllergyIntolerance(parent :  TTurtleComplex; parentType, name : String; elem : TFhirAllergyIntolerance; useType : boolean; index : integer);
+{$ENDIF FHIR_ALLERGYINTOLERANCE}
+{$IFDEF FHIR_APPOINTMENT}
     procedure ComposeAppointmentParticipant(parent :  TTurtleComplex; parentType, name : String; elem : TFhirAppointmentParticipant; useType : boolean; index : integer);
     procedure ComposeAppointment(parent :  TTurtleComplex; parentType, name : String; elem : TFhirAppointment; useType : boolean; index : integer);
+{$ENDIF FHIR_APPOINTMENT}
+{$IFDEF FHIR_APPOINTMENTRESPONSE}
     procedure ComposeAppointmentResponse(parent :  TTurtleComplex; parentType, name : String; elem : TFhirAppointmentResponse; useType : boolean; index : integer);
+{$ENDIF FHIR_APPOINTMENTRESPONSE}
+{$IFDEF FHIR_AUDITEVENT}
     procedure ComposeAuditEventAgent(parent :  TTurtleComplex; parentType, name : String; elem : TFhirAuditEventAgent; useType : boolean; index : integer);
     procedure ComposeAuditEventAgentNetwork(parent :  TTurtleComplex; parentType, name : String; elem : TFhirAuditEventAgentNetwork; useType : boolean; index : integer);
     procedure ComposeAuditEventSource(parent :  TTurtleComplex; parentType, name : String; elem : TFhirAuditEventSource; useType : boolean; index : integer);
     procedure ComposeAuditEventEntity(parent :  TTurtleComplex; parentType, name : String; elem : TFhirAuditEventEntity; useType : boolean; index : integer);
     procedure ComposeAuditEventEntityDetail(parent :  TTurtleComplex; parentType, name : String; elem : TFhirAuditEventEntityDetail; useType : boolean; index : integer);
     procedure ComposeAuditEvent(parent :  TTurtleComplex; parentType, name : String; elem : TFhirAuditEvent; useType : boolean; index : integer);
+{$ENDIF FHIR_AUDITEVENT}
+{$IFDEF FHIR_BASIC}
     procedure ComposeBasic(parent :  TTurtleComplex; parentType, name : String; elem : TFhirBasic; useType : boolean; index : integer);
+{$ENDIF FHIR_BASIC}
+{$IFDEF FHIR_BINARY}
     procedure ComposeBinary(parent :  TTurtleComplex; parentType, name : String; elem : TFhirBinary; useType : boolean; index : integer);
+{$ENDIF FHIR_BINARY}
+{$IFDEF FHIR_BODYSTRUCTURE}
     procedure ComposeBodyStructure(parent :  TTurtleComplex; parentType, name : String; elem : TFhirBodyStructure; useType : boolean; index : integer);
+{$ENDIF FHIR_BODYSTRUCTURE}
+{$IFDEF FHIR_BUNDLE}
     procedure ComposeBundleLink(parent :  TTurtleComplex; parentType, name : String; elem : TFhirBundleLink; useType : boolean; index : integer);
     procedure ComposeBundleEntry(parent :  TTurtleComplex; parentType, name : String; elem : TFhirBundleEntry; useType : boolean; index : integer);
     procedure ComposeBundleEntrySearch(parent :  TTurtleComplex; parentType, name : String; elem : TFhirBundleEntrySearch; useType : boolean; index : integer);
     procedure ComposeBundleEntryRequest(parent :  TTurtleComplex; parentType, name : String; elem : TFhirBundleEntryRequest; useType : boolean; index : integer);
     procedure ComposeBundleEntryResponse(parent :  TTurtleComplex; parentType, name : String; elem : TFhirBundleEntryResponse; useType : boolean; index : integer);
     procedure ComposeBundle(parent :  TTurtleComplex; parentType, name : String; elem : TFhirBundle; useType : boolean; index : integer);
+{$ENDIF FHIR_BUNDLE}
+{$IFDEF FHIR_CAPABILITYSTATEMENT}
     procedure ComposeCapabilityStatementSoftware(parent :  TTurtleComplex; parentType, name : String; elem : TFhirCapabilityStatementSoftware; useType : boolean; index : integer);
     procedure ComposeCapabilityStatementImplementation(parent :  TTurtleComplex; parentType, name : String; elem : TFhirCapabilityStatementImplementation; useType : boolean; index : integer);
     procedure ComposeCapabilityStatementRest(parent :  TTurtleComplex; parentType, name : String; elem : TFhirCapabilityStatementRest; useType : boolean; index : integer);
@@ -1207,15 +1472,25 @@ Type
     procedure ComposeCapabilityStatementMessagingEvent(parent :  TTurtleComplex; parentType, name : String; elem : TFhirCapabilityStatementMessagingEvent; useType : boolean; index : integer);
     procedure ComposeCapabilityStatementDocument(parent :  TTurtleComplex; parentType, name : String; elem : TFhirCapabilityStatementDocument; useType : boolean; index : integer);
     procedure ComposeCapabilityStatement(parent :  TTurtleComplex; parentType, name : String; elem : TFhirCapabilityStatement; useType : boolean; index : integer);
+{$ENDIF FHIR_CAPABILITYSTATEMENT}
+{$IFDEF FHIR_CAREPLAN}
     procedure ComposeCarePlanActivity(parent :  TTurtleComplex; parentType, name : String; elem : TFhirCarePlanActivity; useType : boolean; index : integer);
     procedure ComposeCarePlanActivityDetail(parent :  TTurtleComplex; parentType, name : String; elem : TFhirCarePlanActivityDetail; useType : boolean; index : integer);
     procedure ComposeCarePlan(parent :  TTurtleComplex; parentType, name : String; elem : TFhirCarePlan; useType : boolean; index : integer);
+{$ENDIF FHIR_CAREPLAN}
+{$IFDEF FHIR_CARETEAM}
     procedure ComposeCareTeamParticipant(parent :  TTurtleComplex; parentType, name : String; elem : TFhirCareTeamParticipant; useType : boolean; index : integer);
     procedure ComposeCareTeam(parent :  TTurtleComplex; parentType, name : String; elem : TFhirCareTeam; useType : boolean; index : integer);
+{$ENDIF FHIR_CARETEAM}
+{$IFDEF FHIR_CATALOGENTRY}
     procedure ComposeCatalogEntryRelatedItem(parent :  TTurtleComplex; parentType, name : String; elem : TFhirCatalogEntryRelatedItem; useType : boolean; index : integer);
     procedure ComposeCatalogEntry(parent :  TTurtleComplex; parentType, name : String; elem : TFhirCatalogEntry; useType : boolean; index : integer);
+{$ENDIF FHIR_CATALOGENTRY}
+{$IFDEF FHIR_CHARGEITEM}
     procedure ComposeChargeItemParticipant(parent :  TTurtleComplex; parentType, name : String; elem : TFhirChargeItemParticipant; useType : boolean; index : integer);
     procedure ComposeChargeItem(parent :  TTurtleComplex; parentType, name : String; elem : TFhirChargeItem; useType : boolean; index : integer);
+{$ENDIF FHIR_CHARGEITEM}
+{$IFDEF FHIR_CLAIM}
     procedure ComposeClaimRelated(parent :  TTurtleComplex; parentType, name : String; elem : TFhirClaimRelated; useType : boolean; index : integer);
     procedure ComposeClaimPayee(parent :  TTurtleComplex; parentType, name : String; elem : TFhirClaimPayee; useType : boolean; index : integer);
     procedure ComposeClaimCareTeam(parent :  TTurtleComplex; parentType, name : String; elem : TFhirClaimCareTeam; useType : boolean; index : integer);
@@ -1228,6 +1503,8 @@ Type
     procedure ComposeClaimItemDetail(parent :  TTurtleComplex; parentType, name : String; elem : TFhirClaimItemDetail; useType : boolean; index : integer);
     procedure ComposeClaimItemDetailSubDetail(parent :  TTurtleComplex; parentType, name : String; elem : TFhirClaimItemDetailSubDetail; useType : boolean; index : integer);
     procedure ComposeClaim(parent :  TTurtleComplex; parentType, name : String; elem : TFhirClaim; useType : boolean; index : integer);
+{$ENDIF FHIR_CLAIM}
+{$IFDEF FHIR_CLAIMRESPONSE}
     procedure ComposeClaimResponseItem(parent :  TTurtleComplex; parentType, name : String; elem : TFhirClaimResponseItem; useType : boolean; index : integer);
     procedure ComposeClaimResponseItemAdjudication(parent :  TTurtleComplex; parentType, name : String; elem : TFhirClaimResponseItemAdjudication; useType : boolean; index : integer);
     procedure ComposeClaimResponseItemDetail(parent :  TTurtleComplex; parentType, name : String; elem : TFhirClaimResponseItemDetail; useType : boolean; index : integer);
@@ -1238,42 +1515,62 @@ Type
     procedure ComposeClaimResponseProcessNote(parent :  TTurtleComplex; parentType, name : String; elem : TFhirClaimResponseProcessNote; useType : boolean; index : integer);
     procedure ComposeClaimResponseInsurance(parent :  TTurtleComplex; parentType, name : String; elem : TFhirClaimResponseInsurance; useType : boolean; index : integer);
     procedure ComposeClaimResponse(parent :  TTurtleComplex; parentType, name : String; elem : TFhirClaimResponse; useType : boolean; index : integer);
+{$ENDIF FHIR_CLAIMRESPONSE}
+{$IFDEF FHIR_CLINICALIMPRESSION}
     procedure ComposeClinicalImpressionInvestigation(parent :  TTurtleComplex; parentType, name : String; elem : TFhirClinicalImpressionInvestigation; useType : boolean; index : integer);
     procedure ComposeClinicalImpressionFinding(parent :  TTurtleComplex; parentType, name : String; elem : TFhirClinicalImpressionFinding; useType : boolean; index : integer);
     procedure ComposeClinicalImpression(parent :  TTurtleComplex; parentType, name : String; elem : TFhirClinicalImpression; useType : boolean; index : integer);
+{$ENDIF FHIR_CLINICALIMPRESSION}
+{$IFDEF FHIR_CODESYSTEM}
     procedure ComposeCodeSystemFilter(parent :  TTurtleComplex; parentType, name : String; elem : TFhirCodeSystemFilter; useType : boolean; index : integer);
     procedure ComposeCodeSystemProperty(parent :  TTurtleComplex; parentType, name : String; elem : TFhirCodeSystemProperty; useType : boolean; index : integer);
     procedure ComposeCodeSystemConcept(parent :  TTurtleComplex; parentType, name : String; elem : TFhirCodeSystemConcept; useType : boolean; index : integer);
     procedure ComposeCodeSystemConceptDesignation(parent :  TTurtleComplex; parentType, name : String; elem : TFhirCodeSystemConceptDesignation; useType : boolean; index : integer);
     procedure ComposeCodeSystemConceptProperty(parent :  TTurtleComplex; parentType, name : String; elem : TFhirCodeSystemConceptProperty; useType : boolean; index : integer);
     procedure ComposeCodeSystem(parent :  TTurtleComplex; parentType, name : String; elem : TFhirCodeSystem; useType : boolean; index : integer);
+{$ENDIF FHIR_CODESYSTEM}
+{$IFDEF FHIR_COMMUNICATION}
     procedure ComposeCommunicationPayload(parent :  TTurtleComplex; parentType, name : String; elem : TFhirCommunicationPayload; useType : boolean; index : integer);
     procedure ComposeCommunication(parent :  TTurtleComplex; parentType, name : String; elem : TFhirCommunication; useType : boolean; index : integer);
+{$ENDIF FHIR_COMMUNICATION}
+{$IFDEF FHIR_COMMUNICATIONREQUEST}
     procedure ComposeCommunicationRequestPayload(parent :  TTurtleComplex; parentType, name : String; elem : TFhirCommunicationRequestPayload; useType : boolean; index : integer);
     procedure ComposeCommunicationRequestRequester(parent :  TTurtleComplex; parentType, name : String; elem : TFhirCommunicationRequestRequester; useType : boolean; index : integer);
     procedure ComposeCommunicationRequest(parent :  TTurtleComplex; parentType, name : String; elem : TFhirCommunicationRequest; useType : boolean; index : integer);
+{$ENDIF FHIR_COMMUNICATIONREQUEST}
+{$IFDEF FHIR_COMPARTMENTDEFINITION}
     procedure ComposeCompartmentDefinitionResource(parent :  TTurtleComplex; parentType, name : String; elem : TFhirCompartmentDefinitionResource; useType : boolean; index : integer);
     procedure ComposeCompartmentDefinition(parent :  TTurtleComplex; parentType, name : String; elem : TFhirCompartmentDefinition; useType : boolean; index : integer);
+{$ENDIF FHIR_COMPARTMENTDEFINITION}
+{$IFDEF FHIR_COMPOSITION}
     procedure ComposeCompositionAttester(parent :  TTurtleComplex; parentType, name : String; elem : TFhirCompositionAttester; useType : boolean; index : integer);
     procedure ComposeCompositionRelatesTo(parent :  TTurtleComplex; parentType, name : String; elem : TFhirCompositionRelatesTo; useType : boolean; index : integer);
     procedure ComposeCompositionEvent(parent :  TTurtleComplex; parentType, name : String; elem : TFhirCompositionEvent; useType : boolean; index : integer);
     procedure ComposeCompositionSection(parent :  TTurtleComplex; parentType, name : String; elem : TFhirCompositionSection; useType : boolean; index : integer);
     procedure ComposeComposition(parent :  TTurtleComplex; parentType, name : String; elem : TFhirComposition; useType : boolean; index : integer);
+{$ENDIF FHIR_COMPOSITION}
+{$IFDEF FHIR_CONCEPTMAP}
     procedure ComposeConceptMapGroup(parent :  TTurtleComplex; parentType, name : String; elem : TFhirConceptMapGroup; useType : boolean; index : integer);
     procedure ComposeConceptMapGroupElement(parent :  TTurtleComplex; parentType, name : String; elem : TFhirConceptMapGroupElement; useType : boolean; index : integer);
     procedure ComposeConceptMapGroupElementTarget(parent :  TTurtleComplex; parentType, name : String; elem : TFhirConceptMapGroupElementTarget; useType : boolean; index : integer);
     procedure ComposeConceptMapGroupElementTargetDependsOn(parent :  TTurtleComplex; parentType, name : String; elem : TFhirConceptMapGroupElementTargetDependsOn; useType : boolean; index : integer);
     procedure ComposeConceptMapGroupUnmapped(parent :  TTurtleComplex; parentType, name : String; elem : TFhirConceptMapGroupUnmapped; useType : boolean; index : integer);
     procedure ComposeConceptMap(parent :  TTurtleComplex; parentType, name : String; elem : TFhirConceptMap; useType : boolean; index : integer);
+{$ENDIF FHIR_CONCEPTMAP}
+{$IFDEF FHIR_CONDITION}
     procedure ComposeConditionStage(parent :  TTurtleComplex; parentType, name : String; elem : TFhirConditionStage; useType : boolean; index : integer);
     procedure ComposeConditionEvidence(parent :  TTurtleComplex; parentType, name : String; elem : TFhirConditionEvidence; useType : boolean; index : integer);
     procedure ComposeCondition(parent :  TTurtleComplex; parentType, name : String; elem : TFhirCondition; useType : boolean; index : integer);
+{$ENDIF FHIR_CONDITION}
+{$IFDEF FHIR_CONSENT}
     procedure ComposeConsentPolicy(parent :  TTurtleComplex; parentType, name : String; elem : TFhirConsentPolicy; useType : boolean; index : integer);
     procedure ComposeConsentVerification(parent :  TTurtleComplex; parentType, name : String; elem : TFhirConsentVerification; useType : boolean; index : integer);
     procedure ComposeConsentProvision(parent :  TTurtleComplex; parentType, name : String; elem : TFhirConsentProvision; useType : boolean; index : integer);
     procedure ComposeConsentProvisionActor(parent :  TTurtleComplex; parentType, name : String; elem : TFhirConsentProvisionActor; useType : boolean; index : integer);
     procedure ComposeConsentProvisionData(parent :  TTurtleComplex; parentType, name : String; elem : TFhirConsentProvisionData; useType : boolean; index : integer);
     procedure ComposeConsent(parent :  TTurtleComplex; parentType, name : String; elem : TFhirConsent; useType : boolean; index : integer);
+{$ENDIF FHIR_CONSENT}
+{$IFDEF FHIR_CONTRACT}
     procedure ComposeContractTerm(parent :  TTurtleComplex; parentType, name : String; elem : TFhirContractTerm; useType : boolean; index : integer);
     procedure ComposeContractTermOffer(parent :  TTurtleComplex; parentType, name : String; elem : TFhirContractTermOffer; useType : boolean; index : integer);
     procedure ComposeContractTermAsset(parent :  TTurtleComplex; parentType, name : String; elem : TFhirContractTermAsset; useType : boolean; index : integer);
@@ -1285,35 +1582,61 @@ Type
     procedure ComposeContractLegal(parent :  TTurtleComplex; parentType, name : String; elem : TFhirContractLegal; useType : boolean; index : integer);
     procedure ComposeContractRule(parent :  TTurtleComplex; parentType, name : String; elem : TFhirContractRule; useType : boolean; index : integer);
     procedure ComposeContract(parent :  TTurtleComplex; parentType, name : String; elem : TFhirContract; useType : boolean; index : integer);
+{$ENDIF FHIR_CONTRACT}
+{$IFDEF FHIR_COVERAGE}
     procedure ComposeCoverageGrouping(parent :  TTurtleComplex; parentType, name : String; elem : TFhirCoverageGrouping; useType : boolean; index : integer);
     procedure ComposeCoverage(parent :  TTurtleComplex; parentType, name : String; elem : TFhirCoverage; useType : boolean; index : integer);
+{$ENDIF FHIR_COVERAGE}
+{$IFDEF FHIR_DETECTEDISSUE}
     procedure ComposeDetectedIssueMitigation(parent :  TTurtleComplex; parentType, name : String; elem : TFhirDetectedIssueMitigation; useType : boolean; index : integer);
     procedure ComposeDetectedIssue(parent :  TTurtleComplex; parentType, name : String; elem : TFhirDetectedIssue; useType : boolean; index : integer);
+{$ENDIF FHIR_DETECTEDISSUE}
+{$IFDEF FHIR_DEVICE}
     procedure ComposeDeviceUdi(parent :  TTurtleComplex; parentType, name : String; elem : TFhirDeviceUdi; useType : boolean; index : integer);
     procedure ComposeDevice(parent :  TTurtleComplex; parentType, name : String; elem : TFhirDevice; useType : boolean; index : integer);
+{$ENDIF FHIR_DEVICE}
+{$IFDEF FHIR_DEVICECOMPONENT}
     procedure ComposeDeviceComponentProductionSpecification(parent :  TTurtleComplex; parentType, name : String; elem : TFhirDeviceComponentProductionSpecification; useType : boolean; index : integer);
     procedure ComposeDeviceComponent(parent :  TTurtleComplex; parentType, name : String; elem : TFhirDeviceComponent; useType : boolean; index : integer);
+{$ENDIF FHIR_DEVICECOMPONENT}
+{$IFDEF FHIR_DEVICEMETRIC}
     procedure ComposeDeviceMetricCalibration(parent :  TTurtleComplex; parentType, name : String; elem : TFhirDeviceMetricCalibration; useType : boolean; index : integer);
     procedure ComposeDeviceMetric(parent :  TTurtleComplex; parentType, name : String; elem : TFhirDeviceMetric; useType : boolean; index : integer);
+{$ENDIF FHIR_DEVICEMETRIC}
+{$IFDEF FHIR_DEVICEREQUEST}
     procedure ComposeDeviceRequestRequester(parent :  TTurtleComplex; parentType, name : String; elem : TFhirDeviceRequestRequester; useType : boolean; index : integer);
     procedure ComposeDeviceRequest(parent :  TTurtleComplex; parentType, name : String; elem : TFhirDeviceRequest; useType : boolean; index : integer);
+{$ENDIF FHIR_DEVICEREQUEST}
+{$IFDEF FHIR_DEVICEUSESTATEMENT}
     procedure ComposeDeviceUseStatement(parent :  TTurtleComplex; parentType, name : String; elem : TFhirDeviceUseStatement; useType : boolean; index : integer);
+{$ENDIF FHIR_DEVICEUSESTATEMENT}
+{$IFDEF FHIR_DIAGNOSTICREPORT}
     procedure ComposeDiagnosticReportImage(parent :  TTurtleComplex; parentType, name : String; elem : TFhirDiagnosticReportImage; useType : boolean; index : integer);
     procedure ComposeDiagnosticReport(parent :  TTurtleComplex; parentType, name : String; elem : TFhirDiagnosticReport; useType : boolean; index : integer);
+{$ENDIF FHIR_DIAGNOSTICREPORT}
+{$IFDEF FHIR_DOCUMENTMANIFEST}
     procedure ComposeDocumentManifestContent(parent :  TTurtleComplex; parentType, name : String; elem : TFhirDocumentManifestContent; useType : boolean; index : integer);
     procedure ComposeDocumentManifestRelated(parent :  TTurtleComplex; parentType, name : String; elem : TFhirDocumentManifestRelated; useType : boolean; index : integer);
     procedure ComposeDocumentManifest(parent :  TTurtleComplex; parentType, name : String; elem : TFhirDocumentManifest; useType : boolean; index : integer);
+{$ENDIF FHIR_DOCUMENTMANIFEST}
+{$IFDEF FHIR_DOCUMENTREFERENCE}
     procedure ComposeDocumentReferenceRelatesTo(parent :  TTurtleComplex; parentType, name : String; elem : TFhirDocumentReferenceRelatesTo; useType : boolean; index : integer);
     procedure ComposeDocumentReferenceContent(parent :  TTurtleComplex; parentType, name : String; elem : TFhirDocumentReferenceContent; useType : boolean; index : integer);
     procedure ComposeDocumentReferenceContext(parent :  TTurtleComplex; parentType, name : String; elem : TFhirDocumentReferenceContext; useType : boolean; index : integer);
     procedure ComposeDocumentReferenceContextRelated(parent :  TTurtleComplex; parentType, name : String; elem : TFhirDocumentReferenceContextRelated; useType : boolean; index : integer);
     procedure ComposeDocumentReference(parent :  TTurtleComplex; parentType, name : String; elem : TFhirDocumentReference; useType : boolean; index : integer);
+{$ENDIF FHIR_DOCUMENTREFERENCE}
+{$IFDEF FHIR_ELIGIBILITYREQUEST}
     procedure ComposeEligibilityRequest(parent :  TTurtleComplex; parentType, name : String; elem : TFhirEligibilityRequest; useType : boolean; index : integer);
+{$ENDIF FHIR_ELIGIBILITYREQUEST}
+{$IFDEF FHIR_ELIGIBILITYRESPONSE}
     procedure ComposeEligibilityResponseInsurance(parent :  TTurtleComplex; parentType, name : String; elem : TFhirEligibilityResponseInsurance; useType : boolean; index : integer);
     procedure ComposeEligibilityResponseInsuranceBenefitBalance(parent :  TTurtleComplex; parentType, name : String; elem : TFhirEligibilityResponseInsuranceBenefitBalance; useType : boolean; index : integer);
     procedure ComposeEligibilityResponseInsuranceBenefitBalanceFinancial(parent :  TTurtleComplex; parentType, name : String; elem : TFhirEligibilityResponseInsuranceBenefitBalanceFinancial; useType : boolean; index : integer);
     procedure ComposeEligibilityResponseError(parent :  TTurtleComplex; parentType, name : String; elem : TFhirEligibilityResponseError; useType : boolean; index : integer);
     procedure ComposeEligibilityResponse(parent :  TTurtleComplex; parentType, name : String; elem : TFhirEligibilityResponse; useType : boolean; index : integer);
+{$ENDIF FHIR_ELIGIBILITYRESPONSE}
+{$IFDEF FHIR_ENCOUNTER}
     procedure ComposeEncounterStatusHistory(parent :  TTurtleComplex; parentType, name : String; elem : TFhirEncounterStatusHistory; useType : boolean; index : integer);
     procedure ComposeEncounterClassHistory(parent :  TTurtleComplex; parentType, name : String; elem : TFhirEncounterClassHistory; useType : boolean; index : integer);
     procedure ComposeEncounterParticipant(parent :  TTurtleComplex; parentType, name : String; elem : TFhirEncounterParticipant; useType : boolean; index : integer);
@@ -1321,13 +1644,25 @@ Type
     procedure ComposeEncounterHospitalization(parent :  TTurtleComplex; parentType, name : String; elem : TFhirEncounterHospitalization; useType : boolean; index : integer);
     procedure ComposeEncounterLocation(parent :  TTurtleComplex; parentType, name : String; elem : TFhirEncounterLocation; useType : boolean; index : integer);
     procedure ComposeEncounter(parent :  TTurtleComplex; parentType, name : String; elem : TFhirEncounter; useType : boolean; index : integer);
+{$ENDIF FHIR_ENCOUNTER}
+{$IFDEF FHIR_ENDPOINT}
     procedure ComposeEndpoint(parent :  TTurtleComplex; parentType, name : String; elem : TFhirEndpoint; useType : boolean; index : integer);
+{$ENDIF FHIR_ENDPOINT}
+{$IFDEF FHIR_ENROLLMENTREQUEST}
     procedure ComposeEnrollmentRequest(parent :  TTurtleComplex; parentType, name : String; elem : TFhirEnrollmentRequest; useType : boolean; index : integer);
+{$ENDIF FHIR_ENROLLMENTREQUEST}
+{$IFDEF FHIR_ENROLLMENTRESPONSE}
     procedure ComposeEnrollmentResponse(parent :  TTurtleComplex; parentType, name : String; elem : TFhirEnrollmentResponse; useType : boolean; index : integer);
+{$ENDIF FHIR_ENROLLMENTRESPONSE}
+{$IFDEF FHIR_EPISODEOFCARE}
     procedure ComposeEpisodeOfCareStatusHistory(parent :  TTurtleComplex; parentType, name : String; elem : TFhirEpisodeOfCareStatusHistory; useType : boolean; index : integer);
     procedure ComposeEpisodeOfCareDiagnosis(parent :  TTurtleComplex; parentType, name : String; elem : TFhirEpisodeOfCareDiagnosis; useType : boolean; index : integer);
     procedure ComposeEpisodeOfCare(parent :  TTurtleComplex; parentType, name : String; elem : TFhirEpisodeOfCare; useType : boolean; index : integer);
+{$ENDIF FHIR_EPISODEOFCARE}
+{$IFDEF FHIR_EVENTDEFINITION}
     procedure ComposeEventDefinition(parent :  TTurtleComplex; parentType, name : String; elem : TFhirEventDefinition; useType : boolean; index : integer);
+{$ENDIF FHIR_EVENTDEFINITION}
+{$IFDEF FHIR_EXPANSIONPROFILE}
     procedure ComposeExpansionProfileFixedVersion(parent :  TTurtleComplex; parentType, name : String; elem : TFhirExpansionProfileFixedVersion; useType : boolean; index : integer);
     procedure ComposeExpansionProfileExcludedSystem(parent :  TTurtleComplex; parentType, name : String; elem : TFhirExpansionProfileExcludedSystem; useType : boolean; index : integer);
     procedure ComposeExpansionProfileDesignation(parent :  TTurtleComplex; parentType, name : String; elem : TFhirExpansionProfileDesignation; useType : boolean; index : integer);
@@ -1336,6 +1671,8 @@ Type
     procedure ComposeExpansionProfileDesignationExclude(parent :  TTurtleComplex; parentType, name : String; elem : TFhirExpansionProfileDesignationExclude; useType : boolean; index : integer);
     procedure ComposeExpansionProfileDesignationExcludeDesignation(parent :  TTurtleComplex; parentType, name : String; elem : TFhirExpansionProfileDesignationExcludeDesignation; useType : boolean; index : integer);
     procedure ComposeExpansionProfile(parent :  TTurtleComplex; parentType, name : String; elem : TFhirExpansionProfile; useType : boolean; index : integer);
+{$ENDIF FHIR_EXPANSIONPROFILE}
+{$IFDEF FHIR_EXPLANATIONOFBENEFIT}
     procedure ComposeExplanationOfBenefitRelated(parent :  TTurtleComplex; parentType, name : String; elem : TFhirExplanationOfBenefitRelated; useType : boolean; index : integer);
     procedure ComposeExplanationOfBenefitPayee(parent :  TTurtleComplex; parentType, name : String; elem : TFhirExplanationOfBenefitPayee; useType : boolean; index : integer);
     procedure ComposeExplanationOfBenefitInformation(parent :  TTurtleComplex; parentType, name : String; elem : TFhirExplanationOfBenefitInformation; useType : boolean; index : integer);
@@ -1354,88 +1691,144 @@ Type
     procedure ComposeExplanationOfBenefitBenefitBalance(parent :  TTurtleComplex; parentType, name : String; elem : TFhirExplanationOfBenefitBenefitBalance; useType : boolean; index : integer);
     procedure ComposeExplanationOfBenefitBenefitBalanceFinancial(parent :  TTurtleComplex; parentType, name : String; elem : TFhirExplanationOfBenefitBenefitBalanceFinancial; useType : boolean; index : integer);
     procedure ComposeExplanationOfBenefit(parent :  TTurtleComplex; parentType, name : String; elem : TFhirExplanationOfBenefit; useType : boolean; index : integer);
+{$ENDIF FHIR_EXPLANATIONOFBENEFIT}
+{$IFDEF FHIR_FAMILYMEMBERHISTORY}
     procedure ComposeFamilyMemberHistoryCondition(parent :  TTurtleComplex; parentType, name : String; elem : TFhirFamilyMemberHistoryCondition; useType : boolean; index : integer);
     procedure ComposeFamilyMemberHistory(parent :  TTurtleComplex; parentType, name : String; elem : TFhirFamilyMemberHistory; useType : boolean; index : integer);
+{$ENDIF FHIR_FAMILYMEMBERHISTORY}
+{$IFDEF FHIR_FLAG}
     procedure ComposeFlag(parent :  TTurtleComplex; parentType, name : String; elem : TFhirFlag; useType : boolean; index : integer);
+{$ENDIF FHIR_FLAG}
+{$IFDEF FHIR_GOAL}
     procedure ComposeGoalTarget(parent :  TTurtleComplex; parentType, name : String; elem : TFhirGoalTarget; useType : boolean; index : integer);
     procedure ComposeGoal(parent :  TTurtleComplex; parentType, name : String; elem : TFhirGoal; useType : boolean; index : integer);
+{$ENDIF FHIR_GOAL}
+{$IFDEF FHIR_GRAPHDEFINITION}
     procedure ComposeGraphDefinitionLink(parent :  TTurtleComplex; parentType, name : String; elem : TFhirGraphDefinitionLink; useType : boolean; index : integer);
     procedure ComposeGraphDefinitionLinkTarget(parent :  TTurtleComplex; parentType, name : String; elem : TFhirGraphDefinitionLinkTarget; useType : boolean; index : integer);
     procedure ComposeGraphDefinitionLinkTargetCompartment(parent :  TTurtleComplex; parentType, name : String; elem : TFhirGraphDefinitionLinkTargetCompartment; useType : boolean; index : integer);
     procedure ComposeGraphDefinition(parent :  TTurtleComplex; parentType, name : String; elem : TFhirGraphDefinition; useType : boolean; index : integer);
+{$ENDIF FHIR_GRAPHDEFINITION}
+{$IFDEF FHIR_GROUP}
     procedure ComposeGroupCharacteristic(parent :  TTurtleComplex; parentType, name : String; elem : TFhirGroupCharacteristic; useType : boolean; index : integer);
     procedure ComposeGroupMember(parent :  TTurtleComplex; parentType, name : String; elem : TFhirGroupMember; useType : boolean; index : integer);
     procedure ComposeGroup(parent :  TTurtleComplex; parentType, name : String; elem : TFhirGroup; useType : boolean; index : integer);
+{$ENDIF FHIR_GROUP}
+{$IFDEF FHIR_GUIDANCERESPONSE}
     procedure ComposeGuidanceResponse(parent :  TTurtleComplex; parentType, name : String; elem : TFhirGuidanceResponse; useType : boolean; index : integer);
+{$ENDIF FHIR_GUIDANCERESPONSE}
+{$IFDEF FHIR_HEALTHCARESERVICE}
     procedure ComposeHealthcareServiceAvailableTime(parent :  TTurtleComplex; parentType, name : String; elem : TFhirHealthcareServiceAvailableTime; useType : boolean; index : integer);
     procedure ComposeHealthcareServiceNotAvailable(parent :  TTurtleComplex; parentType, name : String; elem : TFhirHealthcareServiceNotAvailable; useType : boolean; index : integer);
     procedure ComposeHealthcareService(parent :  TTurtleComplex; parentType, name : String; elem : TFhirHealthcareService; useType : boolean; index : integer);
+{$ENDIF FHIR_HEALTHCARESERVICE}
+{$IFDEF FHIR_IMAGINGMANIFEST}
     procedure ComposeImagingManifestStudy(parent :  TTurtleComplex; parentType, name : String; elem : TFhirImagingManifestStudy; useType : boolean; index : integer);
     procedure ComposeImagingManifestStudySeries(parent :  TTurtleComplex; parentType, name : String; elem : TFhirImagingManifestStudySeries; useType : boolean; index : integer);
     procedure ComposeImagingManifestStudySeriesInstance(parent :  TTurtleComplex; parentType, name : String; elem : TFhirImagingManifestStudySeriesInstance; useType : boolean; index : integer);
     procedure ComposeImagingManifest(parent :  TTurtleComplex; parentType, name : String; elem : TFhirImagingManifest; useType : boolean; index : integer);
+{$ENDIF FHIR_IMAGINGMANIFEST}
+{$IFDEF FHIR_IMAGINGSTUDY}
     procedure ComposeImagingStudySeries(parent :  TTurtleComplex; parentType, name : String; elem : TFhirImagingStudySeries; useType : boolean; index : integer);
     procedure ComposeImagingStudySeriesInstance(parent :  TTurtleComplex; parentType, name : String; elem : TFhirImagingStudySeriesInstance; useType : boolean; index : integer);
     procedure ComposeImagingStudy(parent :  TTurtleComplex; parentType, name : String; elem : TFhirImagingStudy; useType : boolean; index : integer);
+{$ENDIF FHIR_IMAGINGSTUDY}
+{$IFDEF FHIR_IMMUNIZATION}
     procedure ComposeImmunizationPractitioner(parent :  TTurtleComplex; parentType, name : String; elem : TFhirImmunizationPractitioner; useType : boolean; index : integer);
     procedure ComposeImmunizationExplanation(parent :  TTurtleComplex; parentType, name : String; elem : TFhirImmunizationExplanation; useType : boolean; index : integer);
     procedure ComposeImmunizationReaction(parent :  TTurtleComplex; parentType, name : String; elem : TFhirImmunizationReaction; useType : boolean; index : integer);
     procedure ComposeImmunizationVaccinationProtocol(parent :  TTurtleComplex; parentType, name : String; elem : TFhirImmunizationVaccinationProtocol; useType : boolean; index : integer);
     procedure ComposeImmunization(parent :  TTurtleComplex; parentType, name : String; elem : TFhirImmunization; useType : boolean; index : integer);
+{$ENDIF FHIR_IMMUNIZATION}
+{$IFDEF FHIR_IMMUNIZATIONRECOMMENDATION}
     procedure ComposeImmunizationRecommendationRecommendation(parent :  TTurtleComplex; parentType, name : String; elem : TFhirImmunizationRecommendationRecommendation; useType : boolean; index : integer);
     procedure ComposeImmunizationRecommendationRecommendationDateCriterion(parent :  TTurtleComplex; parentType, name : String; elem : TFhirImmunizationRecommendationRecommendationDateCriterion; useType : boolean; index : integer);
     procedure ComposeImmunizationRecommendationRecommendationProtocol(parent :  TTurtleComplex; parentType, name : String; elem : TFhirImmunizationRecommendationRecommendationProtocol; useType : boolean; index : integer);
     procedure ComposeImmunizationRecommendation(parent :  TTurtleComplex; parentType, name : String; elem : TFhirImmunizationRecommendation; useType : boolean; index : integer);
+{$ENDIF FHIR_IMMUNIZATIONRECOMMENDATION}
+{$IFDEF FHIR_IMPLEMENTATIONGUIDE}
     procedure ComposeImplementationGuideDependency(parent :  TTurtleComplex; parentType, name : String; elem : TFhirImplementationGuideDependency; useType : boolean; index : integer);
     procedure ComposeImplementationGuidePackage(parent :  TTurtleComplex; parentType, name : String; elem : TFhirImplementationGuidePackage; useType : boolean; index : integer);
     procedure ComposeImplementationGuidePackageResource(parent :  TTurtleComplex; parentType, name : String; elem : TFhirImplementationGuidePackageResource; useType : boolean; index : integer);
     procedure ComposeImplementationGuideGlobal(parent :  TTurtleComplex; parentType, name : String; elem : TFhirImplementationGuideGlobal; useType : boolean; index : integer);
     procedure ComposeImplementationGuidePage(parent :  TTurtleComplex; parentType, name : String; elem : TFhirImplementationGuidePage; useType : boolean; index : integer);
     procedure ComposeImplementationGuide(parent :  TTurtleComplex; parentType, name : String; elem : TFhirImplementationGuide; useType : boolean; index : integer);
+{$ENDIF FHIR_IMPLEMENTATIONGUIDE}
+{$IFDEF FHIR_LIBRARY}
     procedure ComposeLibrary(parent :  TTurtleComplex; parentType, name : String; elem : TFhirLibrary; useType : boolean; index : integer);
+{$ENDIF FHIR_LIBRARY}
+{$IFDEF FHIR_LINKAGE}
     procedure ComposeLinkageItem(parent :  TTurtleComplex; parentType, name : String; elem : TFhirLinkageItem; useType : boolean; index : integer);
     procedure ComposeLinkage(parent :  TTurtleComplex; parentType, name : String; elem : TFhirLinkage; useType : boolean; index : integer);
+{$ENDIF FHIR_LINKAGE}
+{$IFDEF FHIR_LIST}
     procedure ComposeListEntry(parent :  TTurtleComplex; parentType, name : String; elem : TFhirListEntry; useType : boolean; index : integer);
     procedure ComposeList(parent :  TTurtleComplex; parentType, name : String; elem : TFhirList; useType : boolean; index : integer);
+{$ENDIF FHIR_LIST}
+{$IFDEF FHIR_LOCATION}
     procedure ComposeLocationPosition(parent :  TTurtleComplex; parentType, name : String; elem : TFhirLocationPosition; useType : boolean; index : integer);
     procedure ComposeLocation(parent :  TTurtleComplex; parentType, name : String; elem : TFhirLocation; useType : boolean; index : integer);
+{$ENDIF FHIR_LOCATION}
+{$IFDEF FHIR_MEASURE}
     procedure ComposeMeasureGroup(parent :  TTurtleComplex; parentType, name : String; elem : TFhirMeasureGroup; useType : boolean; index : integer);
     procedure ComposeMeasureGroupPopulation(parent :  TTurtleComplex; parentType, name : String; elem : TFhirMeasureGroupPopulation; useType : boolean; index : integer);
     procedure ComposeMeasureGroupStratifier(parent :  TTurtleComplex; parentType, name : String; elem : TFhirMeasureGroupStratifier; useType : boolean; index : integer);
     procedure ComposeMeasureSupplementalData(parent :  TTurtleComplex; parentType, name : String; elem : TFhirMeasureSupplementalData; useType : boolean; index : integer);
     procedure ComposeMeasure(parent :  TTurtleComplex; parentType, name : String; elem : TFhirMeasure; useType : boolean; index : integer);
+{$ENDIF FHIR_MEASURE}
+{$IFDEF FHIR_MEASUREREPORT}
     procedure ComposeMeasureReportGroup(parent :  TTurtleComplex; parentType, name : String; elem : TFhirMeasureReportGroup; useType : boolean; index : integer);
     procedure ComposeMeasureReportGroupPopulation(parent :  TTurtleComplex; parentType, name : String; elem : TFhirMeasureReportGroupPopulation; useType : boolean; index : integer);
     procedure ComposeMeasureReportGroupStratifier(parent :  TTurtleComplex; parentType, name : String; elem : TFhirMeasureReportGroupStratifier; useType : boolean; index : integer);
     procedure ComposeMeasureReportGroupStratifierStratum(parent :  TTurtleComplex; parentType, name : String; elem : TFhirMeasureReportGroupStratifierStratum; useType : boolean; index : integer);
     procedure ComposeMeasureReportGroupStratifierStratumPopulation(parent :  TTurtleComplex; parentType, name : String; elem : TFhirMeasureReportGroupStratifierStratumPopulation; useType : boolean; index : integer);
     procedure ComposeMeasureReport(parent :  TTurtleComplex; parentType, name : String; elem : TFhirMeasureReport; useType : boolean; index : integer);
+{$ENDIF FHIR_MEASUREREPORT}
+{$IFDEF FHIR_MEDIA}
     procedure ComposeMedia(parent :  TTurtleComplex; parentType, name : String; elem : TFhirMedia; useType : boolean; index : integer);
+{$ENDIF FHIR_MEDIA}
+{$IFDEF FHIR_MEDICATION}
     procedure ComposeMedicationIngredient(parent :  TTurtleComplex; parentType, name : String; elem : TFhirMedicationIngredient; useType : boolean; index : integer);
     procedure ComposeMedicationPackage(parent :  TTurtleComplex; parentType, name : String; elem : TFhirMedicationPackage; useType : boolean; index : integer);
     procedure ComposeMedicationPackageContent(parent :  TTurtleComplex; parentType, name : String; elem : TFhirMedicationPackageContent; useType : boolean; index : integer);
     procedure ComposeMedicationPackageBatch(parent :  TTurtleComplex; parentType, name : String; elem : TFhirMedicationPackageBatch; useType : boolean; index : integer);
     procedure ComposeMedication(parent :  TTurtleComplex; parentType, name : String; elem : TFhirMedication; useType : boolean; index : integer);
+{$ENDIF FHIR_MEDICATION}
+{$IFDEF FHIR_MEDICATIONADMINISTRATION}
     procedure ComposeMedicationAdministrationPerformer(parent :  TTurtleComplex; parentType, name : String; elem : TFhirMedicationAdministrationPerformer; useType : boolean; index : integer);
     procedure ComposeMedicationAdministrationDosage(parent :  TTurtleComplex; parentType, name : String; elem : TFhirMedicationAdministrationDosage; useType : boolean; index : integer);
     procedure ComposeMedicationAdministration(parent :  TTurtleComplex; parentType, name : String; elem : TFhirMedicationAdministration; useType : boolean; index : integer);
+{$ENDIF FHIR_MEDICATIONADMINISTRATION}
+{$IFDEF FHIR_MEDICATIONDISPENSE}
     procedure ComposeMedicationDispensePerformer(parent :  TTurtleComplex; parentType, name : String; elem : TFhirMedicationDispensePerformer; useType : boolean; index : integer);
     procedure ComposeMedicationDispenseSubstitution(parent :  TTurtleComplex; parentType, name : String; elem : TFhirMedicationDispenseSubstitution; useType : boolean; index : integer);
     procedure ComposeMedicationDispense(parent :  TTurtleComplex; parentType, name : String; elem : TFhirMedicationDispense; useType : boolean; index : integer);
+{$ENDIF FHIR_MEDICATIONDISPENSE}
+{$IFDEF FHIR_MEDICATIONREQUEST}
     procedure ComposeMedicationRequestRequester(parent :  TTurtleComplex; parentType, name : String; elem : TFhirMedicationRequestRequester; useType : boolean; index : integer);
     procedure ComposeMedicationRequestDispenseRequest(parent :  TTurtleComplex; parentType, name : String; elem : TFhirMedicationRequestDispenseRequest; useType : boolean; index : integer);
     procedure ComposeMedicationRequestSubstitution(parent :  TTurtleComplex; parentType, name : String; elem : TFhirMedicationRequestSubstitution; useType : boolean; index : integer);
     procedure ComposeMedicationRequest(parent :  TTurtleComplex; parentType, name : String; elem : TFhirMedicationRequest; useType : boolean; index : integer);
+{$ENDIF FHIR_MEDICATIONREQUEST}
+{$IFDEF FHIR_MEDICATIONSTATEMENT}
     procedure ComposeMedicationStatement(parent :  TTurtleComplex; parentType, name : String; elem : TFhirMedicationStatement; useType : boolean; index : integer);
+{$ENDIF FHIR_MEDICATIONSTATEMENT}
+{$IFDEF FHIR_MESSAGEDEFINITION}
     procedure ComposeMessageDefinitionFocus(parent :  TTurtleComplex; parentType, name : String; elem : TFhirMessageDefinitionFocus; useType : boolean; index : integer);
     procedure ComposeMessageDefinitionAllowedResponse(parent :  TTurtleComplex; parentType, name : String; elem : TFhirMessageDefinitionAllowedResponse; useType : boolean; index : integer);
     procedure ComposeMessageDefinition(parent :  TTurtleComplex; parentType, name : String; elem : TFhirMessageDefinition; useType : boolean; index : integer);
+{$ENDIF FHIR_MESSAGEDEFINITION}
+{$IFDEF FHIR_MESSAGEHEADER}
     procedure ComposeMessageHeaderDestination(parent :  TTurtleComplex; parentType, name : String; elem : TFhirMessageHeaderDestination; useType : boolean; index : integer);
     procedure ComposeMessageHeaderSource(parent :  TTurtleComplex; parentType, name : String; elem : TFhirMessageHeaderSource; useType : boolean; index : integer);
     procedure ComposeMessageHeaderResponse(parent :  TTurtleComplex; parentType, name : String; elem : TFhirMessageHeaderResponse; useType : boolean; index : integer);
     procedure ComposeMessageHeader(parent :  TTurtleComplex; parentType, name : String; elem : TFhirMessageHeader; useType : boolean; index : integer);
+{$ENDIF FHIR_MESSAGEHEADER}
+{$IFDEF FHIR_NAMINGSYSTEM}
     procedure ComposeNamingSystemUniqueId(parent :  TTurtleComplex; parentType, name : String; elem : TFhirNamingSystemUniqueId; useType : boolean; index : integer);
     procedure ComposeNamingSystem(parent :  TTurtleComplex; parentType, name : String; elem : TFhirNamingSystem; useType : boolean; index : integer);
+{$ENDIF FHIR_NAMINGSYSTEM}
+{$IFDEF FHIR_NUTRITIONORDER}
     procedure ComposeNutritionOrderOralDiet(parent :  TTurtleComplex; parentType, name : String; elem : TFhirNutritionOrderOralDiet; useType : boolean; index : integer);
     procedure ComposeNutritionOrderOralDietNutrient(parent :  TTurtleComplex; parentType, name : String; elem : TFhirNutritionOrderOralDietNutrient; useType : boolean; index : integer);
     procedure ComposeNutritionOrderOralDietTexture(parent :  TTurtleComplex; parentType, name : String; elem : TFhirNutritionOrderOralDietTexture; useType : boolean; index : integer);
@@ -1443,29 +1836,47 @@ Type
     procedure ComposeNutritionOrderEnteralFormula(parent :  TTurtleComplex; parentType, name : String; elem : TFhirNutritionOrderEnteralFormula; useType : boolean; index : integer);
     procedure ComposeNutritionOrderEnteralFormulaAdministration(parent :  TTurtleComplex; parentType, name : String; elem : TFhirNutritionOrderEnteralFormulaAdministration; useType : boolean; index : integer);
     procedure ComposeNutritionOrder(parent :  TTurtleComplex; parentType, name : String; elem : TFhirNutritionOrder; useType : boolean; index : integer);
+{$ENDIF FHIR_NUTRITIONORDER}
+{$IFDEF FHIR_OBSERVATION}
     procedure ComposeObservationReferenceRange(parent :  TTurtleComplex; parentType, name : String; elem : TFhirObservationReferenceRange; useType : boolean; index : integer);
     procedure ComposeObservationRelated(parent :  TTurtleComplex; parentType, name : String; elem : TFhirObservationRelated; useType : boolean; index : integer);
     procedure ComposeObservationComponent(parent :  TTurtleComplex; parentType, name : String; elem : TFhirObservationComponent; useType : boolean; index : integer);
     procedure ComposeObservation(parent :  TTurtleComplex; parentType, name : String; elem : TFhirObservation; useType : boolean; index : integer);
+{$ENDIF FHIR_OBSERVATION}
+{$IFDEF FHIR_OPERATIONDEFINITION}
     procedure ComposeOperationDefinitionParameter(parent :  TTurtleComplex; parentType, name : String; elem : TFhirOperationDefinitionParameter; useType : boolean; index : integer);
     procedure ComposeOperationDefinitionParameterBinding(parent :  TTurtleComplex; parentType, name : String; elem : TFhirOperationDefinitionParameterBinding; useType : boolean; index : integer);
     procedure ComposeOperationDefinitionOverload(parent :  TTurtleComplex; parentType, name : String; elem : TFhirOperationDefinitionOverload; useType : boolean; index : integer);
     procedure ComposeOperationDefinition(parent :  TTurtleComplex; parentType, name : String; elem : TFhirOperationDefinition; useType : boolean; index : integer);
+{$ENDIF FHIR_OPERATIONDEFINITION}
+{$IFDEF FHIR_OPERATIONOUTCOME}
     procedure ComposeOperationOutcomeIssue(parent :  TTurtleComplex; parentType, name : String; elem : TFhirOperationOutcomeIssue; useType : boolean; index : integer);
     procedure ComposeOperationOutcome(parent :  TTurtleComplex; parentType, name : String; elem : TFhirOperationOutcome; useType : boolean; index : integer);
+{$ENDIF FHIR_OPERATIONOUTCOME}
+{$IFDEF FHIR_ORGANIZATION}
     procedure ComposeOrganizationContact(parent :  TTurtleComplex; parentType, name : String; elem : TFhirOrganizationContact; useType : boolean; index : integer);
     procedure ComposeOrganization(parent :  TTurtleComplex; parentType, name : String; elem : TFhirOrganization; useType : boolean; index : integer);
+{$ENDIF FHIR_ORGANIZATION}
+{$IFDEF FHIR_PATIENT}
     procedure ComposePatientContact(parent :  TTurtleComplex; parentType, name : String; elem : TFhirPatientContact; useType : boolean; index : integer);
     procedure ComposePatientAnimal(parent :  TTurtleComplex; parentType, name : String; elem : TFhirPatientAnimal; useType : boolean; index : integer);
     procedure ComposePatientCommunication(parent :  TTurtleComplex; parentType, name : String; elem : TFhirPatientCommunication; useType : boolean; index : integer);
     procedure ComposePatientLink(parent :  TTurtleComplex; parentType, name : String; elem : TFhirPatientLink; useType : boolean; index : integer);
     procedure ComposePatient(parent :  TTurtleComplex; parentType, name : String; elem : TFhirPatient; useType : boolean; index : integer);
+{$ENDIF FHIR_PATIENT}
+{$IFDEF FHIR_PAYMENTNOTICE}
     procedure ComposePaymentNotice(parent :  TTurtleComplex; parentType, name : String; elem : TFhirPaymentNotice; useType : boolean; index : integer);
+{$ENDIF FHIR_PAYMENTNOTICE}
+{$IFDEF FHIR_PAYMENTRECONCILIATION}
     procedure ComposePaymentReconciliationDetail(parent :  TTurtleComplex; parentType, name : String; elem : TFhirPaymentReconciliationDetail; useType : boolean; index : integer);
     procedure ComposePaymentReconciliationProcessNote(parent :  TTurtleComplex; parentType, name : String; elem : TFhirPaymentReconciliationProcessNote; useType : boolean; index : integer);
     procedure ComposePaymentReconciliation(parent :  TTurtleComplex; parentType, name : String; elem : TFhirPaymentReconciliation; useType : boolean; index : integer);
+{$ENDIF FHIR_PAYMENTRECONCILIATION}
+{$IFDEF FHIR_PERSON}
     procedure ComposePersonLink(parent :  TTurtleComplex; parentType, name : String; elem : TFhirPersonLink; useType : boolean; index : integer);
     procedure ComposePerson(parent :  TTurtleComplex; parentType, name : String; elem : TFhirPerson; useType : boolean; index : integer);
+{$ENDIF FHIR_PERSON}
+{$IFDEF FHIR_PLANDEFINITION}
     procedure ComposePlanDefinitionGoal(parent :  TTurtleComplex; parentType, name : String; elem : TFhirPlanDefinitionGoal; useType : boolean; index : integer);
     procedure ComposePlanDefinitionGoalTarget(parent :  TTurtleComplex; parentType, name : String; elem : TFhirPlanDefinitionGoalTarget; useType : boolean; index : integer);
     procedure ComposePlanDefinitionAction(parent :  TTurtleComplex; parentType, name : String; elem : TFhirPlanDefinitionAction; useType : boolean; index : integer);
@@ -1474,43 +1885,77 @@ Type
     procedure ComposePlanDefinitionActionParticipant(parent :  TTurtleComplex; parentType, name : String; elem : TFhirPlanDefinitionActionParticipant; useType : boolean; index : integer);
     procedure ComposePlanDefinitionActionDynamicValue(parent :  TTurtleComplex; parentType, name : String; elem : TFhirPlanDefinitionActionDynamicValue; useType : boolean; index : integer);
     procedure ComposePlanDefinition(parent :  TTurtleComplex; parentType, name : String; elem : TFhirPlanDefinition; useType : boolean; index : integer);
+{$ENDIF FHIR_PLANDEFINITION}
+{$IFDEF FHIR_PRACTITIONER}
     procedure ComposePractitionerQualification(parent :  TTurtleComplex; parentType, name : String; elem : TFhirPractitionerQualification; useType : boolean; index : integer);
     procedure ComposePractitioner(parent :  TTurtleComplex; parentType, name : String; elem : TFhirPractitioner; useType : boolean; index : integer);
+{$ENDIF FHIR_PRACTITIONER}
+{$IFDEF FHIR_PRACTITIONERROLE}
     procedure ComposePractitionerRoleAvailableTime(parent :  TTurtleComplex; parentType, name : String; elem : TFhirPractitionerRoleAvailableTime; useType : boolean; index : integer);
     procedure ComposePractitionerRoleNotAvailable(parent :  TTurtleComplex; parentType, name : String; elem : TFhirPractitionerRoleNotAvailable; useType : boolean; index : integer);
     procedure ComposePractitionerRole(parent :  TTurtleComplex; parentType, name : String; elem : TFhirPractitionerRole; useType : boolean; index : integer);
+{$ENDIF FHIR_PRACTITIONERROLE}
+{$IFDEF FHIR_PROCEDURE}
     procedure ComposeProcedurePerformer(parent :  TTurtleComplex; parentType, name : String; elem : TFhirProcedurePerformer; useType : boolean; index : integer);
     procedure ComposeProcedureFocalDevice(parent :  TTurtleComplex; parentType, name : String; elem : TFhirProcedureFocalDevice; useType : boolean; index : integer);
     procedure ComposeProcedure(parent :  TTurtleComplex; parentType, name : String; elem : TFhirProcedure; useType : boolean; index : integer);
+{$ENDIF FHIR_PROCEDURE}
+{$IFDEF FHIR_PROCEDUREREQUEST}
     procedure ComposeProcedureRequestRequester(parent :  TTurtleComplex; parentType, name : String; elem : TFhirProcedureRequestRequester; useType : boolean; index : integer);
     procedure ComposeProcedureRequest(parent :  TTurtleComplex; parentType, name : String; elem : TFhirProcedureRequest; useType : boolean; index : integer);
+{$ENDIF FHIR_PROCEDUREREQUEST}
+{$IFDEF FHIR_PROCESSREQUEST}
     procedure ComposeProcessRequestItem(parent :  TTurtleComplex; parentType, name : String; elem : TFhirProcessRequestItem; useType : boolean; index : integer);
     procedure ComposeProcessRequest(parent :  TTurtleComplex; parentType, name : String; elem : TFhirProcessRequest; useType : boolean; index : integer);
+{$ENDIF FHIR_PROCESSREQUEST}
+{$IFDEF FHIR_PROCESSRESPONSE}
     procedure ComposeProcessResponseProcessNote(parent :  TTurtleComplex; parentType, name : String; elem : TFhirProcessResponseProcessNote; useType : boolean; index : integer);
     procedure ComposeProcessResponse(parent :  TTurtleComplex; parentType, name : String; elem : TFhirProcessResponse; useType : boolean; index : integer);
+{$ENDIF FHIR_PROCESSRESPONSE}
+{$IFDEF FHIR_PROVENANCE}
     procedure ComposeProvenanceAgent(parent :  TTurtleComplex; parentType, name : String; elem : TFhirProvenanceAgent; useType : boolean; index : integer);
     procedure ComposeProvenanceEntity(parent :  TTurtleComplex; parentType, name : String; elem : TFhirProvenanceEntity; useType : boolean; index : integer);
     procedure ComposeProvenance(parent :  TTurtleComplex; parentType, name : String; elem : TFhirProvenance; useType : boolean; index : integer);
+{$ENDIF FHIR_PROVENANCE}
+{$IFDEF FHIR_QUESTIONNAIRE}
     procedure ComposeQuestionnaireItem(parent :  TTurtleComplex; parentType, name : String; elem : TFhirQuestionnaireItem; useType : boolean; index : integer);
     procedure ComposeQuestionnaireItemEnableWhen(parent :  TTurtleComplex; parentType, name : String; elem : TFhirQuestionnaireItemEnableWhen; useType : boolean; index : integer);
     procedure ComposeQuestionnaireItemOption(parent :  TTurtleComplex; parentType, name : String; elem : TFhirQuestionnaireItemOption; useType : boolean; index : integer);
     procedure ComposeQuestionnaire(parent :  TTurtleComplex; parentType, name : String; elem : TFhirQuestionnaire; useType : boolean; index : integer);
+{$ENDIF FHIR_QUESTIONNAIRE}
+{$IFDEF FHIR_QUESTIONNAIRERESPONSE}
     procedure ComposeQuestionnaireResponseItem(parent :  TTurtleComplex; parentType, name : String; elem : TFhirQuestionnaireResponseItem; useType : boolean; index : integer);
     procedure ComposeQuestionnaireResponseItemAnswer(parent :  TTurtleComplex; parentType, name : String; elem : TFhirQuestionnaireResponseItemAnswer; useType : boolean; index : integer);
     procedure ComposeQuestionnaireResponse(parent :  TTurtleComplex; parentType, name : String; elem : TFhirQuestionnaireResponse; useType : boolean; index : integer);
+{$ENDIF FHIR_QUESTIONNAIRERESPONSE}
+{$IFDEF FHIR_RELATEDPERSON}
     procedure ComposeRelatedPerson(parent :  TTurtleComplex; parentType, name : String; elem : TFhirRelatedPerson; useType : boolean; index : integer);
+{$ENDIF FHIR_RELATEDPERSON}
+{$IFDEF FHIR_REQUESTGROUP}
     procedure ComposeRequestGroupAction(parent :  TTurtleComplex; parentType, name : String; elem : TFhirRequestGroupAction; useType : boolean; index : integer);
     procedure ComposeRequestGroupActionCondition(parent :  TTurtleComplex; parentType, name : String; elem : TFhirRequestGroupActionCondition; useType : boolean; index : integer);
     procedure ComposeRequestGroupActionRelatedAction(parent :  TTurtleComplex; parentType, name : String; elem : TFhirRequestGroupActionRelatedAction; useType : boolean; index : integer);
     procedure ComposeRequestGroup(parent :  TTurtleComplex; parentType, name : String; elem : TFhirRequestGroup; useType : boolean; index : integer);
+{$ENDIF FHIR_REQUESTGROUP}
+{$IFDEF FHIR_RESEARCHSTUDY}
     procedure ComposeResearchStudyArm(parent :  TTurtleComplex; parentType, name : String; elem : TFhirResearchStudyArm; useType : boolean; index : integer);
     procedure ComposeResearchStudy(parent :  TTurtleComplex; parentType, name : String; elem : TFhirResearchStudy; useType : boolean; index : integer);
+{$ENDIF FHIR_RESEARCHSTUDY}
+{$IFDEF FHIR_RESEARCHSUBJECT}
     procedure ComposeResearchSubject(parent :  TTurtleComplex; parentType, name : String; elem : TFhirResearchSubject; useType : boolean; index : integer);
+{$ENDIF FHIR_RESEARCHSUBJECT}
+{$IFDEF FHIR_RISKASSESSMENT}
     procedure ComposeRiskAssessmentPrediction(parent :  TTurtleComplex; parentType, name : String; elem : TFhirRiskAssessmentPrediction; useType : boolean; index : integer);
     procedure ComposeRiskAssessment(parent :  TTurtleComplex; parentType, name : String; elem : TFhirRiskAssessment; useType : boolean; index : integer);
+{$ENDIF FHIR_RISKASSESSMENT}
+{$IFDEF FHIR_SCHEDULE}
     procedure ComposeSchedule(parent :  TTurtleComplex; parentType, name : String; elem : TFhirSchedule; useType : boolean; index : integer);
+{$ENDIF FHIR_SCHEDULE}
+{$IFDEF FHIR_SEARCHPARAMETER}
     procedure ComposeSearchParameterComponent(parent :  TTurtleComplex; parentType, name : String; elem : TFhirSearchParameterComponent; useType : boolean; index : integer);
     procedure ComposeSearchParameter(parent :  TTurtleComplex; parentType, name : String; elem : TFhirSearchParameter; useType : boolean; index : integer);
+{$ENDIF FHIR_SEARCHPARAMETER}
+{$IFDEF FHIR_SEQUENCE}
     procedure ComposeSequenceReferenceSeq(parent :  TTurtleComplex; parentType, name : String; elem : TFhirSequenceReferenceSeq; useType : boolean; index : integer);
     procedure ComposeSequenceVariant(parent :  TTurtleComplex; parentType, name : String; elem : TFhirSequenceVariant; useType : boolean; index : integer);
     procedure ComposeSequenceQuality(parent :  TTurtleComplex; parentType, name : String; elem : TFhirSequenceQuality; useType : boolean; index : integer);
@@ -1520,20 +1965,32 @@ Type
     procedure ComposeSequenceStructureVariantOuter(parent :  TTurtleComplex; parentType, name : String; elem : TFhirSequenceStructureVariantOuter; useType : boolean; index : integer);
     procedure ComposeSequenceStructureVariantInner(parent :  TTurtleComplex; parentType, name : String; elem : TFhirSequenceStructureVariantInner; useType : boolean; index : integer);
     procedure ComposeSequence(parent :  TTurtleComplex; parentType, name : String; elem : TFhirSequence; useType : boolean; index : integer);
+{$ENDIF FHIR_SEQUENCE}
+{$IFDEF FHIR_SERVICEDEFINITION}
     procedure ComposeServiceDefinition(parent :  TTurtleComplex; parentType, name : String; elem : TFhirServiceDefinition; useType : boolean; index : integer);
+{$ENDIF FHIR_SERVICEDEFINITION}
+{$IFDEF FHIR_SLOT}
     procedure ComposeSlot(parent :  TTurtleComplex; parentType, name : String; elem : TFhirSlot; useType : boolean; index : integer);
+{$ENDIF FHIR_SLOT}
+{$IFDEF FHIR_SPECIMEN}
     procedure ComposeSpecimenCollection(parent :  TTurtleComplex; parentType, name : String; elem : TFhirSpecimenCollection; useType : boolean; index : integer);
     procedure ComposeSpecimenProcessing(parent :  TTurtleComplex; parentType, name : String; elem : TFhirSpecimenProcessing; useType : boolean; index : integer);
     procedure ComposeSpecimenContainer(parent :  TTurtleComplex; parentType, name : String; elem : TFhirSpecimenContainer; useType : boolean; index : integer);
     procedure ComposeSpecimen(parent :  TTurtleComplex; parentType, name : String; elem : TFhirSpecimen; useType : boolean; index : integer);
+{$ENDIF FHIR_SPECIMEN}
+{$IFDEF FHIR_SPECIMENDEFINITION}
     procedure ComposeSpecimenDefinitionSpecimenToLab(parent :  TTurtleComplex; parentType, name : String; elem : TFhirSpecimenDefinitionSpecimenToLab; useType : boolean; index : integer);
     procedure ComposeSpecimenDefinitionSpecimenToLabContainerAdditive(parent :  TTurtleComplex; parentType, name : String; elem : TFhirSpecimenDefinitionSpecimenToLabContainerAdditive; useType : boolean; index : integer);
     procedure ComposeSpecimenDefinitionSpecimenToLabHandling(parent :  TTurtleComplex; parentType, name : String; elem : TFhirSpecimenDefinitionSpecimenToLabHandling; useType : boolean; index : integer);
     procedure ComposeSpecimenDefinition(parent :  TTurtleComplex; parentType, name : String; elem : TFhirSpecimenDefinition; useType : boolean; index : integer);
+{$ENDIF FHIR_SPECIMENDEFINITION}
+{$IFDEF FHIR_STRUCTUREDEFINITION}
     procedure ComposeStructureDefinitionMapping(parent :  TTurtleComplex; parentType, name : String; elem : TFhirStructureDefinitionMapping; useType : boolean; index : integer);
     procedure ComposeStructureDefinitionSnapshot(parent :  TTurtleComplex; parentType, name : String; elem : TFhirStructureDefinitionSnapshot; useType : boolean; index : integer);
     procedure ComposeStructureDefinitionDifferential(parent :  TTurtleComplex; parentType, name : String; elem : TFhirStructureDefinitionDifferential; useType : boolean; index : integer);
     procedure ComposeStructureDefinition(parent :  TTurtleComplex; parentType, name : String; elem : TFhirStructureDefinition; useType : boolean; index : integer);
+{$ENDIF FHIR_STRUCTUREDEFINITION}
+{$IFDEF FHIR_STRUCTUREMAP}
     procedure ComposeStructureMapStructure(parent :  TTurtleComplex; parentType, name : String; elem : TFhirStructureMapStructure; useType : boolean; index : integer);
     procedure ComposeStructureMapGroup(parent :  TTurtleComplex; parentType, name : String; elem : TFhirStructureMapGroup; useType : boolean; index : integer);
     procedure ComposeStructureMapGroupInput(parent :  TTurtleComplex; parentType, name : String; elem : TFhirStructureMapGroupInput; useType : boolean; index : integer);
@@ -1543,21 +2000,33 @@ Type
     procedure ComposeStructureMapGroupRuleTargetParameter(parent :  TTurtleComplex; parentType, name : String; elem : TFhirStructureMapGroupRuleTargetParameter; useType : boolean; index : integer);
     procedure ComposeStructureMapGroupRuleDependent(parent :  TTurtleComplex; parentType, name : String; elem : TFhirStructureMapGroupRuleDependent; useType : boolean; index : integer);
     procedure ComposeStructureMap(parent :  TTurtleComplex; parentType, name : String; elem : TFhirStructureMap; useType : boolean; index : integer);
+{$ENDIF FHIR_STRUCTUREMAP}
+{$IFDEF FHIR_SUBSCRIPTION}
     procedure ComposeSubscriptionChannel(parent :  TTurtleComplex; parentType, name : String; elem : TFhirSubscriptionChannel; useType : boolean; index : integer);
     procedure ComposeSubscription(parent :  TTurtleComplex; parentType, name : String; elem : TFhirSubscription; useType : boolean; index : integer);
+{$ENDIF FHIR_SUBSCRIPTION}
+{$IFDEF FHIR_SUBSTANCE}
     procedure ComposeSubstanceInstance(parent :  TTurtleComplex; parentType, name : String; elem : TFhirSubstanceInstance; useType : boolean; index : integer);
     procedure ComposeSubstanceIngredient(parent :  TTurtleComplex; parentType, name : String; elem : TFhirSubstanceIngredient; useType : boolean; index : integer);
     procedure ComposeSubstance(parent :  TTurtleComplex; parentType, name : String; elem : TFhirSubstance; useType : boolean; index : integer);
+{$ENDIF FHIR_SUBSTANCE}
+{$IFDEF FHIR_SUPPLYDELIVERY}
     procedure ComposeSupplyDeliverySuppliedItem(parent :  TTurtleComplex; parentType, name : String; elem : TFhirSupplyDeliverySuppliedItem; useType : boolean; index : integer);
     procedure ComposeSupplyDelivery(parent :  TTurtleComplex; parentType, name : String; elem : TFhirSupplyDelivery; useType : boolean; index : integer);
+{$ENDIF FHIR_SUPPLYDELIVERY}
+{$IFDEF FHIR_SUPPLYREQUEST}
     procedure ComposeSupplyRequestOrderedItem(parent :  TTurtleComplex; parentType, name : String; elem : TFhirSupplyRequestOrderedItem; useType : boolean; index : integer);
     procedure ComposeSupplyRequestRequester(parent :  TTurtleComplex; parentType, name : String; elem : TFhirSupplyRequestRequester; useType : boolean; index : integer);
     procedure ComposeSupplyRequest(parent :  TTurtleComplex; parentType, name : String; elem : TFhirSupplyRequest; useType : boolean; index : integer);
+{$ENDIF FHIR_SUPPLYREQUEST}
+{$IFDEF FHIR_TASK}
     procedure ComposeTaskRequester(parent :  TTurtleComplex; parentType, name : String; elem : TFhirTaskRequester; useType : boolean; index : integer);
     procedure ComposeTaskRestriction(parent :  TTurtleComplex; parentType, name : String; elem : TFhirTaskRestriction; useType : boolean; index : integer);
     procedure ComposeTaskInput(parent :  TTurtleComplex; parentType, name : String; elem : TFhirTaskInput; useType : boolean; index : integer);
     procedure ComposeTaskOutput(parent :  TTurtleComplex; parentType, name : String; elem : TFhirTaskOutput; useType : boolean; index : integer);
     procedure ComposeTask(parent :  TTurtleComplex; parentType, name : String; elem : TFhirTask; useType : boolean; index : integer);
+{$ENDIF FHIR_TASK}
+{$IFDEF FHIR_TESTREPORT}
     procedure ComposeTestReportParticipant(parent :  TTurtleComplex; parentType, name : String; elem : TFhirTestReportParticipant; useType : boolean; index : integer);
     procedure ComposeTestReportSetup(parent :  TTurtleComplex; parentType, name : String; elem : TFhirTestReportSetup; useType : boolean; index : integer);
     procedure ComposeTestReportSetupAction(parent :  TTurtleComplex; parentType, name : String; elem : TFhirTestReportSetupAction; useType : boolean; index : integer);
@@ -1568,6 +2037,8 @@ Type
     procedure ComposeTestReportTeardown(parent :  TTurtleComplex; parentType, name : String; elem : TFhirTestReportTeardown; useType : boolean; index : integer);
     procedure ComposeTestReportTeardownAction(parent :  TTurtleComplex; parentType, name : String; elem : TFhirTestReportTeardownAction; useType : boolean; index : integer);
     procedure ComposeTestReport(parent :  TTurtleComplex; parentType, name : String; elem : TFhirTestReport; useType : boolean; index : integer);
+{$ENDIF FHIR_TESTREPORT}
+{$IFDEF FHIR_TESTSCRIPT}
     procedure ComposeTestScriptOrigin(parent :  TTurtleComplex; parentType, name : String; elem : TFhirTestScriptOrigin; useType : boolean; index : integer);
     procedure ComposeTestScriptDestination(parent :  TTurtleComplex; parentType, name : String; elem : TFhirTestScriptDestination; useType : boolean; index : integer);
     procedure ComposeTestScriptMetadata(parent :  TTurtleComplex; parentType, name : String; elem : TFhirTestScriptMetadata; useType : boolean; index : integer);
@@ -1595,6 +2066,8 @@ Type
     procedure ComposeTestScriptTeardown(parent :  TTurtleComplex; parentType, name : String; elem : TFhirTestScriptTeardown; useType : boolean; index : integer);
     procedure ComposeTestScriptTeardownAction(parent :  TTurtleComplex; parentType, name : String; elem : TFhirTestScriptTeardownAction; useType : boolean; index : integer);
     procedure ComposeTestScript(parent :  TTurtleComplex; parentType, name : String; elem : TFhirTestScript; useType : boolean; index : integer);
+{$ENDIF FHIR_TESTSCRIPT}
+{$IFDEF FHIR_VALUESET}
     procedure ComposeValueSetCompose(parent :  TTurtleComplex; parentType, name : String; elem : TFhirValueSetCompose; useType : boolean; index : integer);
     procedure ComposeValueSetComposeInclude(parent :  TTurtleComplex; parentType, name : String; elem : TFhirValueSetComposeInclude; useType : boolean; index : integer);
     procedure ComposeValueSetComposeIncludeConcept(parent :  TTurtleComplex; parentType, name : String; elem : TFhirValueSetComposeIncludeConcept; useType : boolean; index : integer);
@@ -1604,8 +2077,12 @@ Type
     procedure ComposeValueSetExpansionParameter(parent :  TTurtleComplex; parentType, name : String; elem : TFhirValueSetExpansionParameter; useType : boolean; index : integer);
     procedure ComposeValueSetExpansionContains(parent :  TTurtleComplex; parentType, name : String; elem : TFhirValueSetExpansionContains; useType : boolean; index : integer);
     procedure ComposeValueSet(parent :  TTurtleComplex; parentType, name : String; elem : TFhirValueSet; useType : boolean; index : integer);
+{$ENDIF FHIR_VALUESET}
+{$IFDEF FHIR_VISIONPRESCRIPTION}
     procedure ComposeVisionPrescriptionDispense(parent :  TTurtleComplex; parentType, name : String; elem : TFhirVisionPrescriptionDispense; useType : boolean; index : integer);
     procedure ComposeVisionPrescription(parent :  TTurtleComplex; parentType, name : String; elem : TFhirVisionPrescription; useType : boolean; index : integer);
+{$ENDIF FHIR_VISIONPRESCRIPTION}
+{$IFDEF FHIR_WORKFLOWEXAMPLE}
     procedure ComposeWorkflowExampleActor(parent :  TTurtleComplex; parentType, name : String; elem : TFhirWorkflowExampleActor; useType : boolean; index : integer);
     procedure ComposeWorkflowExampleInstance(parent :  TTurtleComplex; parentType, name : String; elem : TFhirWorkflowExampleInstance; useType : boolean; index : integer);
     procedure ComposeWorkflowExampleInstanceVersion(parent :  TTurtleComplex; parentType, name : String; elem : TFhirWorkflowExampleInstanceVersion; useType : boolean; index : integer);
@@ -1616,6 +2093,7 @@ Type
     procedure ComposeWorkflowExampleProcessStepAlternative(parent :  TTurtleComplex; parentType, name : String; elem : TFhirWorkflowExampleProcessStepAlternative; useType : boolean; index : integer);
     procedure ComposeWorkflowExampleProcessStepAlternativeOption(parent :  TTurtleComplex; parentType, name : String; elem : TFhirWorkflowExampleProcessStepAlternativeOption; useType : boolean; index : integer);
     procedure ComposeWorkflowExample(parent :  TTurtleComplex; parentType, name : String; elem : TFhirWorkflowExample; useType : boolean; index : integer);
+{$ENDIF FHIR_WORKFLOWEXAMPLE}
   
     procedure ComposeResource(parent :  TTurtleComplex; resource : TFhirResource); overload; override;
   end;
@@ -2304,6 +2782,7 @@ begin
       ComposeExtension(this, 'DomainResource', 'modifierExtension', elem.modifierExtensionList[i], false, i);{x.d3}
 end;
 
+{$IFDEF FHIR_PARAMETERS}
 function TFHIRTurtleParser.ParseParametersParameter(obj : TTurtleComplex) : TFhirParametersParameter;
 begin
   if (obj = nil) then
@@ -2548,6 +3027,7 @@ begin
       ComposeParametersParameter(this, 'Parameters', 'parameter', elem.parameterList[i], false, i);{x.d3}
 end;
 
+{$ENDIF FHIR_PARAMETERS}
 function TFHIRTurtleParser.ParseExtension(obj : TTurtleComplex) : TFhirExtension;
 begin
   if (obj = nil) then
@@ -5795,6 +6275,7 @@ begin
   composeElement(this, '', name, elem, false, index);
 end;
 
+{$IFDEF FHIR_ACCOUNT}
 function TFHIRTurtleParser.ParseAccountCoverage(obj : TTurtleComplex) : TFhirAccountCoverage;
 begin
   if (obj = nil) then
@@ -5960,6 +6441,8 @@ begin
       ComposeAccountGuarantor(this, 'Account', 'guarantor', elem.guarantorList[i], false, i);{x.d3}
 end;
 
+{$ENDIF FHIR_ACCOUNT}
+{$IFDEF FHIR_ACTIVITYDEFINITION}
 function TFHIRTurtleParser.ParseActivityDefinitionParticipant(obj : TTurtleComplex) : TFhirActivityDefinitionParticipant;
 begin
   if (obj = nil) then
@@ -6230,6 +6713,8 @@ begin
       ComposeActivityDefinitionDynamicValue(this, 'ActivityDefinition', 'dynamicValue', elem.dynamicValueList[i], false, i);{x.d3}
 end;
 
+{$ENDIF FHIR_ACTIVITYDEFINITION}
+{$IFDEF FHIR_ADVERSEEVENT}
 function TFHIRTurtleParser.ParseAdverseEventSuspectEntity(obj : TTurtleComplex) : TFhirAdverseEventSuspectEntity;
 begin
   if (obj = nil) then
@@ -6425,6 +6910,8 @@ begin
       ComposeReference{TFhirResearchStudy}(this, 'AdverseEvent', 'study', elem.studyList[i], false, i);{x.d3}
 end;
 
+{$ENDIF FHIR_ADVERSEEVENT}
+{$IFDEF FHIR_ALLERGYINTOLERANCE}
 function TFHIRTurtleParser.ParseAllergyIntoleranceReaction(obj : TTurtleComplex) : TFhirAllergyIntoleranceReaction;
 begin
   if (obj = nil) then
@@ -6599,6 +7086,8 @@ begin
       ComposeAllergyIntoleranceReaction(this, 'AllergyIntolerance', 'reaction', elem.reactionList[i], false, i);{x.d3}
 end;
 
+{$ENDIF FHIR_ALLERGYINTOLERANCE}
+{$IFDEF FHIR_APPOINTMENT}
 function TFHIRTurtleParser.ParseAppointmentParticipant(obj : TTurtleComplex) : TFhirAppointmentParticipant;
 begin
   if (obj = nil) then
@@ -6769,6 +7258,8 @@ begin
       ComposePeriod(this, 'Appointment', 'requestedPeriod', elem.requestedPeriodList[i], false, i);{x.d3}
 end;
 
+{$ENDIF FHIR_APPOINTMENT}
+{$IFDEF FHIR_APPOINTMENTRESPONSE}
 function TFHIRTurtleParser.ParseAppointmentResponse(obj : TTurtleComplex) : TFhirAppointmentResponse;
 begin
   if (obj = nil) then
@@ -6835,6 +7326,8 @@ begin
     ComposeString(this, 'AppointmentResponse', 'comment', elem.commentElement, false, -1);{x.2ea}
 end;
 
+{$ENDIF FHIR_APPOINTMENTRESPONSE}
+{$IFDEF FHIR_AUDITEVENT}
 function TFHIRTurtleParser.ParseAuditEventAgent(obj : TTurtleComplex) : TFhirAuditEventAgent;
 begin
   if (obj = nil) then
@@ -7191,6 +7684,8 @@ begin
       ComposeAuditEventEntity(this, 'AuditEvent', 'entity', elem.entityList[i], false, i);{x.d3}
 end;
 
+{$ENDIF FHIR_AUDITEVENT}
+{$IFDEF FHIR_BASIC}
 function TFHIRTurtleParser.ParseBasic(obj : TTurtleComplex) : TFhirBasic;
 begin
   if (obj = nil) then
@@ -7246,6 +7741,8 @@ begin
     ComposeReference{Resource}(this, 'Basic', 'author', elem.authorElement, false, -1);{x.2f}
 end;
 
+{$ENDIF FHIR_BASIC}
+{$IFDEF FHIR_BINARY}
 function TFHIRTurtleParser.ParseBinary(obj : TTurtleComplex) : TFhirBinary;
 begin
   if (obj = nil) then
@@ -7290,6 +7787,8 @@ begin
     ComposeBase64Binary(this, 'Binary', 'content', elem.contentElement, false, -1);{x.2ea}
 end;
 
+{$ENDIF FHIR_BINARY}
+{$IFDEF FHIR_BODYSTRUCTURE}
 function TFHIRTurtleParser.ParseBodyStructure(obj : TTurtleComplex) : TFhirBodyStructure;
 begin
   if (obj = nil) then
@@ -7358,6 +7857,8 @@ begin
     ComposeReference{TFhirPatient}(this, 'BodyStructure', 'patient', elem.patientElement, false, -1);{x.2f}
 end;
 
+{$ENDIF FHIR_BODYSTRUCTURE}
+{$IFDEF FHIR_BUNDLE}
 function TFHIRTurtleParser.ParseBundleLink(obj : TTurtleComplex) : TFhirBundleLink;
 begin
   if (obj = nil) then
@@ -7661,6 +8162,8 @@ begin
     ComposeSignature(this, 'Bundle', 'signature', elem.signatureElement, false, -1);{x.2f}
 end;
 
+{$ENDIF FHIR_BUNDLE}
+{$IFDEF FHIR_CAPABILITYSTATEMENT}
 function TFHIRTurtleParser.ParseCapabilityStatementSoftware(obj : TTurtleComplex) : TFhirCapabilityStatementSoftware;
 begin
   if (obj = nil) then
@@ -8561,6 +9064,8 @@ begin
       ComposeCapabilityStatementDocument(this, 'CapabilityStatement', 'document', elem.documentList[i], false, i);{x.d3}
 end;
 
+{$ENDIF FHIR_CAPABILITYSTATEMENT}
+{$IFDEF FHIR_CAREPLAN}
 function TFHIRTurtleParser.ParseCarePlanActivity(obj : TTurtleComplex) : TFhirCarePlanActivity;
 begin
   if (obj = nil) then
@@ -8852,6 +9357,8 @@ begin
       ComposeAnnotation(this, 'CarePlan', 'note', elem.noteList[i], false, i);{x.d3}
 end;
 
+{$ENDIF FHIR_CAREPLAN}
+{$IFDEF FHIR_CARETEAM}
 function TFHIRTurtleParser.ParseCareTeamParticipant(obj : TTurtleComplex) : TFhirCareTeamParticipant;
 begin
   if (obj = nil) then
@@ -8992,6 +9499,8 @@ begin
       ComposeAnnotation(this, 'CareTeam', 'note', elem.noteList[i], false, i);{x.d3}
 end;
 
+{$ENDIF FHIR_CARETEAM}
+{$IFDEF FHIR_CATALOGENTRY}
 function TFHIRTurtleParser.ParseCatalogEntryRelatedItem(obj : TTurtleComplex) : TFhirCatalogEntryRelatedItem;
 begin
   if (obj = nil) then
@@ -9120,6 +9629,8 @@ begin
       ComposeCatalogEntryRelatedItem(this, 'CatalogEntry', 'relatedItem', elem.relatedItemList[i], false, i);{x.d3}
 end;
 
+{$ENDIF FHIR_CATALOGENTRY}
+{$IFDEF FHIR_CHARGEITEM}
 function TFHIRTurtleParser.ParseChargeItemParticipant(obj : TTurtleComplex) : TFhirChargeItemParticipant;
 begin
   if (obj = nil) then
@@ -9295,6 +9806,8 @@ begin
       ComposeReference{TFhirReference}(this, 'ChargeItem', 'supportingInformation', elem.supportingInformationList[i], false, i);{x.d3}
 end;
 
+{$ENDIF FHIR_CHARGEITEM}
+{$IFDEF FHIR_CLAIM}
 function TFHIRTurtleParser.ParseClaimRelated(obj : TTurtleComplex) : TFhirClaimRelated;
 begin
   if (obj = nil) then
@@ -10166,6 +10679,8 @@ begin
     ComposeMoney(this, 'Claim', 'total', elem.totalElement, false, -1);{x.2f}
 end;
 
+{$ENDIF FHIR_CLAIM}
+{$IFDEF FHIR_CLAIMRESPONSE}
 function TFHIRTurtleParser.ParseClaimResponseItem(obj : TTurtleComplex) : TFhirClaimResponseItem;
 begin
   if (obj = nil) then
@@ -10776,6 +11291,8 @@ begin
       ComposeClaimResponseInsurance(this, 'ClaimResponse', 'insurance', elem.insuranceList[i], false, i);{x.d3}
 end;
 
+{$ENDIF FHIR_CLAIMRESPONSE}
+{$IFDEF FHIR_CLINICALIMPRESSION}
 function TFHIRTurtleParser.ParseClinicalImpressionInvestigation(obj : TTurtleComplex) : TFhirClinicalImpressionInvestigation;
 begin
   if (obj = nil) then
@@ -10988,6 +11505,8 @@ begin
       ComposeAnnotation(this, 'ClinicalImpression', 'note', elem.noteList[i], false, i);{x.d3}
 end;
 
+{$ENDIF FHIR_CLINICALIMPRESSION}
+{$IFDEF FHIR_CODESYSTEM}
 function TFHIRTurtleParser.ParseCodeSystemFilter(obj : TTurtleComplex) : TFhirCodeSystemFilter;
 begin
   if (obj = nil) then
@@ -11385,6 +11904,8 @@ begin
       ComposeCodeSystemConcept(this, 'CodeSystem', 'concept', elem.conceptList[i], false, i);{x.d3}
 end;
 
+{$ENDIF FHIR_CODESYSTEM}
+{$IFDEF FHIR_COMMUNICATION}
 function TFHIRTurtleParser.ParseCommunicationPayload(obj : TTurtleComplex) : TFhirCommunicationPayload;
 begin
   if (obj = nil) then
@@ -11564,6 +12085,8 @@ begin
       ComposeAnnotation(this, 'Communication', 'note', elem.noteList[i], false, i);{x.d3}
 end;
 
+{$ENDIF FHIR_COMMUNICATION}
+{$IFDEF FHIR_COMMUNICATIONREQUEST}
 function TFHIRTurtleParser.ParseCommunicationRequestPayload(obj : TTurtleComplex) : TFhirCommunicationRequestPayload;
 begin
   if (obj = nil) then
@@ -11779,6 +12302,8 @@ begin
       ComposeAnnotation(this, 'CommunicationRequest', 'note', elem.noteList[i], false, i);{x.d3}
 end;
 
+{$ENDIF FHIR_COMMUNICATIONREQUEST}
+{$IFDEF FHIR_COMPARTMENTDEFINITION}
 function TFHIRTurtleParser.ParseCompartmentDefinitionResource(obj : TTurtleComplex) : TFhirCompartmentDefinitionResource;
 begin
   if (obj = nil) then
@@ -11919,6 +12444,8 @@ begin
       ComposeCompartmentDefinitionResource(this, 'CompartmentDefinition', 'resource', elem.resourceList[i], false, i);{x.d3}
 end;
 
+{$ENDIF FHIR_COMPARTMENTDEFINITION}
+{$IFDEF FHIR_COMPOSITION}
 function TFHIRTurtleParser.ParseCompositionAttester(obj : TTurtleComplex) : TFhirCompositionAttester;
 begin
   if (obj = nil) then
@@ -12229,6 +12756,8 @@ begin
       ComposeCompositionSection(this, 'Composition', 'section', elem.sectionList[i], false, i);{x.d3}
 end;
 
+{$ENDIF FHIR_COMPOSITION}
+{$IFDEF FHIR_CONCEPTMAP}
 function TFHIRTurtleParser.ParseConceptMapGroup(obj : TTurtleComplex) : TFhirConceptMapGroup;
 begin
   if (obj = nil) then
@@ -12600,6 +13129,8 @@ begin
       ComposeConceptMapGroup(this, 'ConceptMap', 'group', elem.groupList[i], false, i);{x.d3}
 end;
 
+{$ENDIF FHIR_CONCEPTMAP}
+{$IFDEF FHIR_CONDITION}
 function TFHIRTurtleParser.ParseConditionStage(obj : TTurtleComplex) : TFhirConditionStage;
 begin
   if (obj = nil) then
@@ -12829,6 +13360,8 @@ begin
       ComposeAnnotation(this, 'Condition', 'note', elem.noteList[i], false, i);{x.d3}
 end;
 
+{$ENDIF FHIR_CONDITION}
+{$IFDEF FHIR_CONSENT}
 function TFHIRTurtleParser.ParseConsentPolicy(obj : TTurtleComplex) : TFhirConsentPolicy;
 begin
   if (obj = nil) then
@@ -13178,6 +13711,8 @@ begin
       ComposeConsentProvision(this, 'Consent', 'provision', elem.provisionList[i], false, i);{x.d3}
 end;
 
+{$ENDIF FHIR_CONSENT}
+{$IFDEF FHIR_CONTRACT}
 function TFHIRTurtleParser.ParseContractTerm(obj : TTurtleComplex) : TFhirContractTerm;
 begin
   if (obj = nil) then
@@ -13818,6 +14353,8 @@ begin
     ComposeReference(this, 'Contract', 'legallyBindingReference', TFhirReference(elem.legallyBinding), false,-1);{x.d8}
 end;
 
+{$ENDIF FHIR_CONTRACT}
+{$IFDEF FHIR_COVERAGE}
 function TFHIRTurtleParser.ParseCoverageGrouping(obj : TTurtleComplex) : TFhirCoverageGrouping;
 begin
   if (obj = nil) then
@@ -13981,6 +14518,8 @@ begin
       ComposeReference{TFhirContract}(this, 'Coverage', 'contract', elem.contractList[i], false, i);{x.d3}
 end;
 
+{$ENDIF FHIR_COVERAGE}
+{$IFDEF FHIR_DETECTEDISSUE}
 function TFHIRTurtleParser.ParseDetectedIssueMitigation(obj : TTurtleComplex) : TFhirDetectedIssueMitigation;
 begin
   if (obj = nil) then
@@ -14100,6 +14639,8 @@ begin
       ComposeDetectedIssueMitigation(this, 'DetectedIssue', 'mitigation', elem.mitigationList[i], false, i);{x.d3}
 end;
 
+{$ENDIF FHIR_DETECTEDISSUE}
+{$IFDEF FHIR_DEVICE}
 function TFHIRTurtleParser.ParseDeviceUdi(obj : TTurtleComplex) : TFhirDeviceUdi;
 begin
   if (obj = nil) then
@@ -14253,6 +14794,8 @@ begin
       ComposeCodeableConcept(this, 'Device', 'safety', elem.safetyList[i], false, i);{x.d3}
 end;
 
+{$ENDIF FHIR_DEVICE}
+{$IFDEF FHIR_DEVICECOMPONENT}
 function TFHIRTurtleParser.ParseDeviceComponentProductionSpecification(obj : TTurtleComplex) : TFhirDeviceComponentProductionSpecification;
 begin
   if (obj = nil) then
@@ -14369,6 +14912,8 @@ begin
     ComposeCodeableConcept(this, 'DeviceComponent', 'languageCode', elem.languageCodeElement, false, -1);{x.2f}
 end;
 
+{$ENDIF FHIR_DEVICECOMPONENT}
+{$IFDEF FHIR_DEVICEMETRIC}
 function TFHIRTurtleParser.ParseDeviceMetricCalibration(obj : TTurtleComplex) : TFhirDeviceMetricCalibration;
 begin
   if (obj = nil) then
@@ -14483,6 +15028,8 @@ begin
       ComposeDeviceMetricCalibration(this, 'DeviceMetric', 'calibration', elem.calibrationList[i], false, i);{x.d3}
 end;
 
+{$ENDIF FHIR_DEVICEMETRIC}
+{$IFDEF FHIR_DEVICEREQUEST}
 function TFHIRTurtleParser.ParseDeviceRequestRequester(obj : TTurtleComplex) : TFhirDeviceRequestRequester;
 begin
   if (obj = nil) then
@@ -14657,6 +15204,8 @@ begin
       ComposeReference{TFhirProvenance}(this, 'DeviceRequest', 'relevantHistory', elem.relevantHistoryList[i], false, i);{x.d3}
 end;
 
+{$ENDIF FHIR_DEVICEREQUEST}
+{$IFDEF FHIR_DEVICEUSESTATEMENT}
 function TFHIRTurtleParser.ParseDeviceUseStatement(obj : TTurtleComplex) : TFhirDeviceUseStatement;
 begin
   if (obj = nil) then
@@ -14743,6 +15292,8 @@ begin
       ComposeAnnotation(this, 'DeviceUseStatement', 'note', elem.noteList[i], false, i);{x.d3}
 end;
 
+{$ENDIF FHIR_DEVICEUSESTATEMENT}
+{$IFDEF FHIR_DIAGNOSTICREPORT}
 function TFHIRTurtleParser.ParseDiagnosticReportImage(obj : TTurtleComplex) : TFhirDiagnosticReportImage;
 begin
   if (obj = nil) then
@@ -14901,6 +15452,8 @@ begin
       ComposeAttachment(this, 'DiagnosticReport', 'presentedForm', elem.presentedFormList[i], false, i);{x.d3}
 end;
 
+{$ENDIF FHIR_DIAGNOSTICREPORT}
+{$IFDEF FHIR_DOCUMENTMANIFEST}
 function TFHIRTurtleParser.ParseDocumentManifestContent(obj : TTurtleComplex) : TFhirDocumentManifestContent;
 begin
   if (obj = nil) then
@@ -15071,6 +15624,8 @@ begin
       ComposeDocumentManifestRelated(this, 'DocumentManifest', 'related', elem.relatedList[i], false, i);{x.d3}
 end;
 
+{$ENDIF FHIR_DOCUMENTMANIFEST}
+{$IFDEF FHIR_DOCUMENTREFERENCE}
 function TFHIRTurtleParser.ParseDocumentReferenceRelatesTo(obj : TTurtleComplex) : TFhirDocumentReferenceRelatesTo;
 begin
   if (obj = nil) then
@@ -15356,6 +15911,8 @@ begin
     ComposeDocumentReferenceContext(this, 'DocumentReference', 'context', elem.contextElement, false, -1);{x.2f}
 end;
 
+{$ENDIF FHIR_DOCUMENTREFERENCE}
+{$IFDEF FHIR_ELIGIBILITYREQUEST}
 function TFHIRTurtleParser.ParseEligibilityRequest(obj : TTurtleComplex) : TFhirEligibilityRequest;
 begin
   if (obj = nil) then
@@ -15446,6 +16003,8 @@ begin
     ComposeCodeableConcept(this, 'EligibilityRequest', 'benefitSubCategory', elem.benefitSubCategoryElement, false, -1);{x.2f}
 end;
 
+{$ENDIF FHIR_ELIGIBILITYREQUEST}
+{$IFDEF FHIR_ELIGIBILITYRESPONSE}
 function TFHIRTurtleParser.ParseEligibilityResponseInsurance(obj : TTurtleComplex) : TFhirEligibilityResponseInsurance;
 begin
   if (obj = nil) then
@@ -15743,6 +16302,8 @@ begin
       ComposeEligibilityResponseError(this, 'EligibilityResponse', 'error', elem.errorList[i], false, i);{x.d3}
 end;
 
+{$ENDIF FHIR_ELIGIBILITYRESPONSE}
+{$IFDEF FHIR_ENCOUNTER}
 function TFHIRTurtleParser.ParseEncounterStatusHistory(obj : TTurtleComplex) : TFhirEncounterStatusHistory;
 begin
   if (obj = nil) then
@@ -16156,6 +16717,8 @@ begin
     ComposeReference{TFhirEncounter}(this, 'Encounter', 'partOf', elem.partOfElement, false, -1);{x.2f}
 end;
 
+{$ENDIF FHIR_ENCOUNTER}
+{$IFDEF FHIR_ENDPOINT}
 function TFHIRTurtleParser.ParseEndpoint(obj : TTurtleComplex) : TFhirEndpoint;
 begin
   if (obj = nil) then
@@ -16237,6 +16800,8 @@ begin
       ComposeString(this, 'Endpoint', 'header', elem.headerList[i], false, i);{x.d3}
 end;
 
+{$ENDIF FHIR_ENDPOINT}
+{$IFDEF FHIR_ENROLLMENTREQUEST}
 function TFHIRTurtleParser.ParseEnrollmentRequest(obj : TTurtleComplex) : TFhirEnrollmentRequest;
 begin
   if (obj = nil) then
@@ -16301,6 +16866,8 @@ begin
     ComposeReference{TFhirCoverage}(this, 'EnrollmentRequest', 'coverage', elem.coverageElement, false, -1);{x.2f}
 end;
 
+{$ENDIF FHIR_ENROLLMENTREQUEST}
+{$IFDEF FHIR_ENROLLMENTRESPONSE}
 function TFHIRTurtleParser.ParseEnrollmentResponse(obj : TTurtleComplex) : TFhirEnrollmentResponse;
 begin
   if (obj = nil) then
@@ -16368,6 +16935,8 @@ begin
     ComposeReference{TFhirOrganization}(this, 'EnrollmentResponse', 'requestOrganization', elem.requestOrganizationElement, false, -1);{x.2f}
 end;
 
+{$ENDIF FHIR_ENROLLMENTRESPONSE}
+{$IFDEF FHIR_EPISODEOFCARE}
 function TFHIRTurtleParser.ParseEpisodeOfCareStatusHistory(obj : TTurtleComplex) : TFhirEpisodeOfCareStatusHistory;
 begin
   if (obj = nil) then
@@ -16541,6 +17110,8 @@ begin
       ComposeReference{TFhirAccount}(this, 'EpisodeOfCare', 'account', elem.accountList[i], false, i);{x.d3}
 end;
 
+{$ENDIF FHIR_EPISODEOFCARE}
+{$IFDEF FHIR_EVENTDEFINITION}
 function TFHIRTurtleParser.ParseEventDefinition(obj : TTurtleComplex) : TFhirEventDefinition;
 begin
   if (obj = nil) then
@@ -16662,6 +17233,8 @@ begin
     ComposeTriggerDefinition(this, 'EventDefinition', 'trigger', elem.triggerElement, false, -1);{x.2f}
 end;
 
+{$ENDIF FHIR_EVENTDEFINITION}
+{$IFDEF FHIR_EXPANSIONPROFILE}
 function TFHIRTurtleParser.ParseExpansionProfileFixedVersion(obj : TTurtleComplex) : TFhirExpansionProfileFixedVersion;
 begin
   if (obj = nil) then
@@ -17071,6 +17644,8 @@ begin
     ComposeBoolean(this, 'ExpansionProfile', 'limitedExpansion', elem.limitedExpansionElement, false, -1);{x.2ea}
 end;
 
+{$ENDIF FHIR_EXPANSIONPROFILE}
+{$IFDEF FHIR_EXPLANATIONOFBENEFIT}
 function TFHIRTurtleParser.ParseExplanationOfBenefitRelated(obj : TTurtleComplex) : TFhirExplanationOfBenefitRelated;
 begin
   if (obj = nil) then
@@ -18336,6 +18911,8 @@ begin
       ComposeExplanationOfBenefitBenefitBalance(this, 'ExplanationOfBenefit', 'benefitBalance', elem.benefitBalanceList[i], false, i);{x.d3}
 end;
 
+{$ENDIF FHIR_EXPLANATIONOFBENEFIT}
+{$IFDEF FHIR_FAMILYMEMBERHISTORY}
 function TFHIRTurtleParser.ParseFamilyMemberHistoryCondition(obj : TTurtleComplex) : TFhirFamilyMemberHistoryCondition;
 begin
   if (obj = nil) then
@@ -18537,6 +19114,8 @@ begin
       ComposeFamilyMemberHistoryCondition(this, 'FamilyMemberHistory', 'condition', elem.conditionList[i], false, i);{x.d3}
 end;
 
+{$ENDIF FHIR_FAMILYMEMBERHISTORY}
+{$IFDEF FHIR_FLAG}
 function TFHIRTurtleParser.ParseFlag(obj : TTurtleComplex) : TFhirFlag;
 begin
   if (obj = nil) then
@@ -18603,6 +19182,8 @@ begin
     ComposeReference{Resource}(this, 'Flag', 'author', elem.authorElement, false, -1);{x.2f}
 end;
 
+{$ENDIF FHIR_FLAG}
+{$IFDEF FHIR_GOAL}
 function TFHIRTurtleParser.ParseGoalTarget(obj : TTurtleComplex) : TFhirGoalTarget;
 begin
   if (obj = nil) then
@@ -18763,6 +19344,8 @@ begin
       ComposeReference{TFhirObservation}(this, 'Goal', 'outcomeReference', elem.outcomeReferenceList[i], false, i);{x.d3}
 end;
 
+{$ENDIF FHIR_GOAL}
+{$IFDEF FHIR_GRAPHDEFINITION}
 function TFHIRTurtleParser.ParseGraphDefinitionLink(obj : TTurtleComplex) : TFhirGraphDefinitionLink;
 begin
   if (obj = nil) then
@@ -19019,6 +19602,8 @@ begin
       ComposeGraphDefinitionLink(this, 'GraphDefinition', 'link', elem.link_List[i], false, i);{x.d3}
 end;
 
+{$ENDIF FHIR_GRAPHDEFINITION}
+{$IFDEF FHIR_GROUP}
 function TFHIRTurtleParser.ParseGroupCharacteristic(obj : TTurtleComplex) : TFhirGroupCharacteristic;
 begin
   if (obj = nil) then
@@ -19196,6 +19781,8 @@ begin
       ComposeGroupMember(this, 'Group', 'member', elem.memberList[i], false, i);{x.d3}
 end;
 
+{$ENDIF FHIR_GROUP}
+{$IFDEF FHIR_GUIDANCERESPONSE}
 function TFHIRTurtleParser.ParseGuidanceResponse(obj : TTurtleComplex) : TFhirGuidanceResponse;
 begin
   if (obj = nil) then
@@ -19287,6 +19874,8 @@ begin
       ComposeDataRequirement(this, 'GuidanceResponse', 'dataRequirement', elem.dataRequirementList[i], false, i);{x.d3}
 end;
 
+{$ENDIF FHIR_GUIDANCERESPONSE}
+{$IFDEF FHIR_HEALTHCARESERVICE}
 function TFHIRTurtleParser.ParseHealthcareServiceAvailableTime(obj : TTurtleComplex) : TFhirHealthcareServiceAvailableTime;
 begin
   if (obj = nil) then
@@ -19519,6 +20108,8 @@ begin
       ComposeReference{TFhirEndpoint}(this, 'HealthcareService', 'endpoint', elem.endpointList[i], false, i);{x.d3}
 end;
 
+{$ENDIF FHIR_HEALTHCARESERVICE}
+{$IFDEF FHIR_IMAGINGMANIFEST}
 function TFHIRTurtleParser.ParseImagingManifestStudy(obj : TTurtleComplex) : TFhirImagingManifestStudy;
 begin
   if (obj = nil) then
@@ -19731,6 +20322,8 @@ begin
       ComposeImagingManifestStudy(this, 'ImagingManifest', 'study', elem.studyList[i], false, i);{x.d3}
 end;
 
+{$ENDIF FHIR_IMAGINGMANIFEST}
+{$IFDEF FHIR_IMAGINGSTUDY}
 function TFHIRTurtleParser.ParseImagingStudySeries(obj : TTurtleComplex) : TFhirImagingStudySeries;
 begin
   if (obj = nil) then
@@ -19969,6 +20562,8 @@ begin
       ComposeImagingStudySeries(this, 'ImagingStudy', 'series', elem.seriesList[i], false, i);{x.d3}
 end;
 
+{$ENDIF FHIR_IMAGINGSTUDY}
+{$IFDEF FHIR_IMMUNIZATION}
 function TFHIRTurtleParser.ParseImmunizationPractitioner(obj : TTurtleComplex) : TFhirImmunizationPractitioner;
 begin
   if (obj = nil) then
@@ -20277,6 +20872,8 @@ begin
       ComposeImmunizationVaccinationProtocol(this, 'Immunization', 'vaccinationProtocol', elem.vaccinationProtocolList[i], false, i);{x.d3}
 end;
 
+{$ENDIF FHIR_IMMUNIZATION}
+{$IFDEF FHIR_IMMUNIZATIONRECOMMENDATION}
 function TFHIRTurtleParser.ParseImmunizationRecommendationRecommendation(obj : TTurtleComplex) : TFhirImmunizationRecommendationRecommendation;
 begin
   if (obj = nil) then
@@ -20487,6 +21084,8 @@ begin
       ComposeImmunizationRecommendationRecommendation(this, 'ImmunizationRecommendation', 'recommendation', elem.recommendationList[i], false, i);{x.d3}
 end;
 
+{$ENDIF FHIR_IMMUNIZATIONRECOMMENDATION}
+{$IFDEF FHIR_IMPLEMENTATIONGUIDE}
 function TFHIRTurtleParser.ParseImplementationGuideDependency(obj : TTurtleComplex) : TFhirImplementationGuideDependency;
 begin
   if (obj = nil) then
@@ -20852,6 +21451,8 @@ begin
     ComposeImplementationGuidePage(this, 'ImplementationGuide', 'page', elem.pageElement, false, -1);{x.2f}
 end;
 
+{$ENDIF FHIR_IMPLEMENTATIONGUIDE}
+{$IFDEF FHIR_LIBRARY}
 function TFHIRTurtleParser.ParseLibrary(obj : TTurtleComplex) : TFhirLibrary;
 begin
   if (obj = nil) then
@@ -20988,6 +21589,8 @@ begin
       ComposeAttachment(this, 'Library', 'content', elem.contentList[i], false, i);{x.d3}
 end;
 
+{$ENDIF FHIR_LIBRARY}
+{$IFDEF FHIR_LINKAGE}
 function TFHIRTurtleParser.ParseLinkageItem(obj : TTurtleComplex) : TFhirLinkageItem;
 begin
   if (obj = nil) then
@@ -21078,6 +21681,8 @@ begin
       ComposeLinkageItem(this, 'Linkage', 'item', elem.itemList[i], false, i);{x.d3}
 end;
 
+{$ENDIF FHIR_LINKAGE}
+{$IFDEF FHIR_LIST}
 function TFHIRTurtleParser.ParseListEntry(obj : TTurtleComplex) : TFhirListEntry;
 begin
   if (obj = nil) then
@@ -21208,6 +21813,8 @@ begin
     ComposeCodeableConcept(this, 'List', 'emptyReason', elem.emptyReasonElement, false, -1);{x.2f}
 end;
 
+{$ENDIF FHIR_LIST}
+{$IFDEF FHIR_LOCATION}
 function TFHIRTurtleParser.ParseLocationPosition(obj : TTurtleComplex) : TFhirLocationPosition;
 begin
   if (obj = nil) then
@@ -21343,6 +21950,8 @@ begin
       ComposeReference{TFhirEndpoint}(this, 'Location', 'endpoint', elem.endpointList[i], false, i);{x.d3}
 end;
 
+{$ENDIF FHIR_LOCATION}
+{$IFDEF FHIR_MEASURE}
 function TFHIRTurtleParser.ParseMeasureGroup(obj : TTurtleComplex) : TFhirMeasureGroup;
 begin
   if (obj = nil) then
@@ -21719,6 +22328,8 @@ begin
       ComposeMeasureSupplementalData(this, 'Measure', 'supplementalData', elem.supplementalDataList[i], false, i);{x.d3}
 end;
 
+{$ENDIF FHIR_MEASURE}
+{$IFDEF FHIR_MEASUREREPORT}
 function TFHIRTurtleParser.ParseMeasureReportGroup(obj : TTurtleComplex) : TFhirMeasureReportGroup;
 begin
   if (obj = nil) then
@@ -22032,6 +22643,8 @@ begin
     ComposeReference{TFhirBundle}(this, 'MeasureReport', 'evaluatedResources', elem.evaluatedResourcesElement, false, -1);{x.2f}
 end;
 
+{$ENDIF FHIR_MEASUREREPORT}
+{$IFDEF FHIR_MEDIA}
 function TFHIRTurtleParser.ParseMedia(obj : TTurtleComplex) : TFhirMedia;
 begin
   if (obj = nil) then
@@ -22137,6 +22750,8 @@ begin
       ComposeAnnotation(this, 'Media', 'note', elem.noteList[i], false, i);{x.d3}
 end;
 
+{$ENDIF FHIR_MEDIA}
+{$IFDEF FHIR_MEDICATION}
 function TFHIRTurtleParser.ParseMedicationIngredient(obj : TTurtleComplex) : TFhirMedicationIngredient;
 begin
   if (obj = nil) then
@@ -22397,6 +23012,8 @@ begin
       ComposeAttachment(this, 'Medication', 'image', elem.imageList[i], false, i);{x.d3}
 end;
 
+{$ENDIF FHIR_MEDICATION}
+{$IFDEF FHIR_MEDICATIONADMINISTRATION}
 function TFHIRTurtleParser.ParseMedicationAdministrationPerformer(obj : TTurtleComplex) : TFhirMedicationAdministrationPerformer;
 begin
   if (obj = nil) then
@@ -22628,6 +23245,8 @@ begin
       ComposeReference{TFhirProvenance}(this, 'MedicationAdministration', 'eventHistory', elem.eventHistoryList[i], false, i);{x.d3}
 end;
 
+{$ENDIF FHIR_MEDICATIONADMINISTRATION}
+{$IFDEF FHIR_MEDICATIONDISPENSE}
 function TFHIRTurtleParser.ParseMedicationDispensePerformer(obj : TTurtleComplex) : TFhirMedicationDispensePerformer;
 begin
   if (obj = nil) then
@@ -22863,6 +23482,8 @@ begin
       ComposeReference{TFhirProvenance}(this, 'MedicationDispense', 'eventHistory', elem.eventHistoryList[i], false, i);{x.d3}
 end;
 
+{$ENDIF FHIR_MEDICATIONDISPENSE}
+{$IFDEF FHIR_MEDICATIONREQUEST}
 function TFHIRTurtleParser.ParseMedicationRequestRequester(obj : TTurtleComplex) : TFhirMedicationRequestRequester;
 begin
   if (obj = nil) then
@@ -23133,6 +23754,8 @@ begin
       ComposeReference{TFhirProvenance}(this, 'MedicationRequest', 'eventHistory', elem.eventHistoryList[i], false, i);{x.d3}
 end;
 
+{$ENDIF FHIR_MEDICATIONREQUEST}
+{$IFDEF FHIR_MEDICATIONSTATEMENT}
 function TFHIRTurtleParser.ParseMedicationStatement(obj : TTurtleComplex) : TFhirMedicationStatement;
 begin
   if (obj = nil) then
@@ -23253,6 +23876,8 @@ begin
       ComposeDosage(this, 'MedicationStatement', 'dosage', elem.dosageList[i], false, i);{x.d3}
 end;
 
+{$ENDIF FHIR_MEDICATIONSTATEMENT}
+{$IFDEF FHIR_MESSAGEDEFINITION}
 function TFHIRTurtleParser.ParseMessageDefinitionFocus(obj : TTurtleComplex) : TFhirMessageDefinitionFocus;
 begin
   if (obj = nil) then
@@ -23462,6 +24087,8 @@ begin
       ComposeMessageDefinitionAllowedResponse(this, 'MessageDefinition', 'allowedResponse', elem.allowedResponseList[i], false, i);{x.d3}
 end;
 
+{$ENDIF FHIR_MESSAGEDEFINITION}
+{$IFDEF FHIR_MESSAGEHEADER}
 function TFHIRTurtleParser.ParseMessageHeaderDestination(obj : TTurtleComplex) : TFhirMessageHeaderDestination;
 begin
   if (obj = nil) then
@@ -23678,6 +24305,8 @@ begin
       ComposeReference{TFhirReference}(this, 'MessageHeader', 'focus', elem.focusList[i], false, i);{x.d3}
 end;
 
+{$ENDIF FHIR_MESSAGEHEADER}
+{$IFDEF FHIR_NAMINGSYSTEM}
 function TFHIRTurtleParser.ParseNamingSystemUniqueId(obj : TTurtleComplex) : TFhirNamingSystemUniqueId;
 begin
   if (obj = nil) then
@@ -23816,6 +24445,8 @@ begin
     ComposeReference{TFhirNamingSystem}(this, 'NamingSystem', 'replacedBy', elem.replacedByElement, false, -1);{x.2f}
 end;
 
+{$ENDIF FHIR_NAMINGSYSTEM}
+{$IFDEF FHIR_NUTRITIONORDER}
 function TFHIRTurtleParser.ParseNutritionOrderOralDiet(obj : TTurtleComplex) : TFhirNutritionOrderOralDiet;
 begin
   if (obj = nil) then
@@ -24221,6 +24852,8 @@ begin
     ComposeNutritionOrderEnteralFormula(this, 'NutritionOrder', 'enteralFormula', elem.enteralFormulaElement, false, -1);{x.2f}
 end;
 
+{$ENDIF FHIR_NUTRITIONORDER}
+{$IFDEF FHIR_OBSERVATION}
 function TFHIRTurtleParser.ParseObservationReferenceRange(obj : TTurtleComplex) : TFhirObservationReferenceRange;
 begin
   if (obj = nil) then
@@ -24585,6 +25218,8 @@ begin
       ComposeObservationComponent(this, 'Observation', 'component', elem.componentList[i], false, i);{x.d3}
 end;
 
+{$ENDIF FHIR_OBSERVATION}
+{$IFDEF FHIR_OPERATIONDEFINITION}
 function TFHIRTurtleParser.ParseOperationDefinitionParameter(obj : TTurtleComplex) : TFhirOperationDefinitionParameter;
 begin
   if (obj = nil) then
@@ -24871,6 +25506,8 @@ begin
       ComposeOperationDefinitionOverload(this, 'OperationDefinition', 'overload', elem.overloadList[i], false, i);{x.d3}
 end;
 
+{$ENDIF FHIR_OPERATIONDEFINITION}
+{$IFDEF FHIR_OPERATIONOUTCOME}
 function TFHIRTurtleParser.ParseOperationOutcomeIssue(obj : TTurtleComplex) : TFhirOperationOutcomeIssue;
 begin
   if (obj = nil) then
@@ -24974,6 +25611,8 @@ begin
       ComposeOperationOutcomeIssue(this, 'OperationOutcome', 'issue', elem.issueList[i], false, i);{x.d3}
 end;
 
+{$ENDIF FHIR_OPERATIONOUTCOME}
+{$IFDEF FHIR_ORGANIZATION}
 function TFHIRTurtleParser.ParseOrganizationContact(obj : TTurtleComplex) : TFhirOrganizationContact;
 begin
   if (obj = nil) then
@@ -25108,6 +25747,8 @@ begin
       ComposeReference{TFhirEndpoint}(this, 'Organization', 'endpoint', elem.endpointList[i], false, i);{x.d3}
 end;
 
+{$ENDIF FHIR_ORGANIZATION}
+{$IFDEF FHIR_PATIENT}
 function TFHIRTurtleParser.ParsePatientContact(obj : TTurtleComplex) : TFhirPatientContact;
 begin
   if (obj = nil) then
@@ -25414,6 +26055,8 @@ begin
       ComposePatientLink(this, 'Patient', 'link', elem.link_List[i], false, i);{x.d3}
 end;
 
+{$ENDIF FHIR_PATIENT}
+{$IFDEF FHIR_PAYMENTNOTICE}
 function TFHIRTurtleParser.ParsePaymentNotice(obj : TTurtleComplex) : TFhirPaymentNotice;
 begin
   if (obj = nil) then
@@ -25484,6 +26127,8 @@ begin
     ComposeCodeableConcept(this, 'PaymentNotice', 'paymentStatus', elem.paymentStatusElement, false, -1);{x.2f}
 end;
 
+{$ENDIF FHIR_PAYMENTNOTICE}
+{$IFDEF FHIR_PAYMENTRECONCILIATION}
 function TFHIRTurtleParser.ParsePaymentReconciliationDetail(obj : TTurtleComplex) : TFhirPaymentReconciliationDetail;
 begin
   if (obj = nil) then
@@ -25667,6 +26312,8 @@ begin
       ComposePaymentReconciliationProcessNote(this, 'PaymentReconciliation', 'processNote', elem.processNoteList[i], false, i);{x.d3}
 end;
 
+{$ENDIF FHIR_PAYMENTRECONCILIATION}
+{$IFDEF FHIR_PERSON}
 function TFHIRTurtleParser.ParsePersonLink(obj : TTurtleComplex) : TFhirPersonLink;
 begin
   if (obj = nil) then
@@ -25786,6 +26433,8 @@ begin
       ComposePersonLink(this, 'Person', 'link', elem.link_List[i], false, i);{x.d3}
 end;
 
+{$ENDIF FHIR_PERSON}
+{$IFDEF FHIR_PLANDEFINITION}
 function TFHIRTurtleParser.ParsePlanDefinitionGoal(obj : TTurtleComplex) : TFhirPlanDefinitionGoal;
 begin
   if (obj = nil) then
@@ -26382,6 +27031,8 @@ begin
       ComposePlanDefinitionAction(this, 'PlanDefinition', 'action', elem.actionList[i], false, i);{x.d3}
 end;
 
+{$ENDIF FHIR_PLANDEFINITION}
+{$IFDEF FHIR_PRACTITIONER}
 function TFHIRTurtleParser.ParsePractitionerQualification(obj : TTurtleComplex) : TFhirPractitionerQualification;
 begin
   if (obj = nil) then
@@ -26516,6 +27167,8 @@ begin
       ComposeCodeableConcept(this, 'Practitioner', 'communication', elem.communicationList[i], false, i);{x.d3}
 end;
 
+{$ENDIF FHIR_PRACTITIONER}
+{$IFDEF FHIR_PRACTITIONERROLE}
 function TFHIRTurtleParser.ParsePractitionerRoleAvailableTime(obj : TTurtleComplex) : TFhirPractitionerRoleAvailableTime;
 begin
   if (obj = nil) then
@@ -26710,6 +27363,8 @@ begin
       ComposeReference{TFhirEndpoint}(this, 'PractitionerRole', 'endpoint', elem.endpointList[i], false, i);{x.d3}
 end;
 
+{$ENDIF FHIR_PRACTITIONERROLE}
+{$IFDEF FHIR_PROCEDURE}
 function TFHIRTurtleParser.ParseProcedurePerformer(obj : TTurtleComplex) : TFhirProcedurePerformer;
 begin
   if (obj = nil) then
@@ -26960,6 +27615,8 @@ begin
       ComposeCodeableConcept(this, 'Procedure', 'usedCode', elem.usedCodeList[i], false, i);{x.d3}
 end;
 
+{$ENDIF FHIR_PROCEDURE}
+{$IFDEF FHIR_PROCEDUREREQUEST}
 function TFHIRTurtleParser.ParseProcedureRequestRequester(obj : TTurtleComplex) : TFhirProcedureRequestRequester;
 begin
   if (obj = nil) then
@@ -27158,6 +27815,8 @@ begin
       ComposeReference{TFhirProvenance}(this, 'ProcedureRequest', 'relevantHistory', elem.relevantHistoryList[i], false, i);{x.d3}
 end;
 
+{$ENDIF FHIR_PROCEDUREREQUEST}
+{$IFDEF FHIR_PROCESSREQUEST}
 function TFHIRTurtleParser.ParseProcessRequestItem(obj : TTurtleComplex) : TFhirProcessRequestItem;
 begin
   if (obj = nil) then
@@ -27287,6 +27946,8 @@ begin
     ComposePeriod(this, 'ProcessRequest', 'period', elem.periodElement, false, -1);{x.2f}
 end;
 
+{$ENDIF FHIR_PROCESSREQUEST}
+{$IFDEF FHIR_PROCESSRESPONSE}
 function TFHIRTurtleParser.ParseProcessResponseProcessNote(obj : TTurtleComplex) : TFhirProcessResponseProcessNote;
 begin
   if (obj = nil) then
@@ -27413,6 +28074,8 @@ begin
       ComposeReference{TFhirCommunicationRequest}(this, 'ProcessResponse', 'communicationRequest', elem.communicationRequestList[i], false, i);{x.d3}
 end;
 
+{$ENDIF FHIR_PROCESSRESPONSE}
+{$IFDEF FHIR_PROVENANCE}
 function TFHIRTurtleParser.ParseProvenanceAgent(obj : TTurtleComplex) : TFhirProvenanceAgent;
 begin
   if (obj = nil) then
@@ -27613,6 +28276,8 @@ begin
       ComposeSignature(this, 'Provenance', 'signature', elem.signatureList[i], false, i);{x.d3}
 end;
 
+{$ENDIF FHIR_PROVENANCE}
+{$IFDEF FHIR_QUESTIONNAIRE}
 function TFHIRTurtleParser.ParseQuestionnaireItem(obj : TTurtleComplex) : TFhirQuestionnaireItem;
 begin
   if (obj = nil) then
@@ -28015,6 +28680,8 @@ begin
       ComposeQuestionnaireItem(this, 'Questionnaire', 'item', elem.itemList[i], false, i);{x.d3}
 end;
 
+{$ENDIF FHIR_QUESTIONNAIRE}
+{$IFDEF FHIR_QUESTIONNAIRERESPONSE}
 function TFHIRTurtleParser.ParseQuestionnaireResponseItem(obj : TTurtleComplex) : TFhirQuestionnaireResponseItem;
 begin
   if (obj = nil) then
@@ -28243,6 +28910,8 @@ begin
       ComposeQuestionnaireResponseItem(this, 'QuestionnaireResponse', 'item', elem.itemList[i], false, i);{x.d3}
 end;
 
+{$ENDIF FHIR_QUESTIONNAIRERESPONSE}
+{$IFDEF FHIR_RELATEDPERSON}
 function TFHIRTurtleParser.ParseRelatedPerson(obj : TTurtleComplex) : TFhirRelatedPerson;
 begin
   if (obj = nil) then
@@ -28324,6 +28993,8 @@ begin
     ComposePeriod(this, 'RelatedPerson', 'period', elem.periodElement, false, -1);{x.2f}
 end;
 
+{$ENDIF FHIR_RELATEDPERSON}
+{$IFDEF FHIR_REQUESTGROUP}
 function TFHIRTurtleParser.ParseRequestGroupAction(obj : TTurtleComplex) : TFhirRequestGroupAction;
 begin
   if (obj = nil) then
@@ -28648,6 +29319,8 @@ begin
       ComposeRequestGroupAction(this, 'RequestGroup', 'action', elem.actionList[i], false, i);{x.d3}
 end;
 
+{$ENDIF FHIR_REQUESTGROUP}
+{$IFDEF FHIR_RESEARCHSTUDY}
 function TFHIRTurtleParser.ParseResearchStudyArm(obj : TTurtleComplex) : TFhirResearchStudyArm;
 begin
   if (obj = nil) then
@@ -28816,6 +29489,8 @@ begin
       ComposeResearchStudyArm(this, 'ResearchStudy', 'arm', elem.armList[i], false, i);{x.d3}
 end;
 
+{$ENDIF FHIR_RESEARCHSTUDY}
+{$IFDEF FHIR_RESEARCHSUBJECT}
 function TFHIRTurtleParser.ParseResearchSubject(obj : TTurtleComplex) : TFhirResearchSubject;
 begin
   if (obj = nil) then
@@ -28875,6 +29550,8 @@ begin
     ComposeReference{TFhirConsent}(this, 'ResearchSubject', 'consent', elem.consentElement, false, -1);{x.2f}
 end;
 
+{$ENDIF FHIR_RESEARCHSUBJECT}
+{$IFDEF FHIR_RISKASSESSMENT}
 function TFHIRTurtleParser.ParseRiskAssessmentPrediction(obj : TTurtleComplex) : TFhirRiskAssessmentPrediction;
 begin
   if (obj = nil) then
@@ -29040,6 +29717,8 @@ begin
     ComposeString(this, 'RiskAssessment', 'comment', elem.commentElement, false, -1);{x.2ea}
 end;
 
+{$ENDIF FHIR_RISKASSESSMENT}
+{$IFDEF FHIR_SCHEDULE}
 function TFHIRTurtleParser.ParseSchedule(obj : TTurtleComplex) : TFhirSchedule;
 begin
   if (obj = nil) then
@@ -29110,6 +29789,8 @@ begin
     ComposeString(this, 'Schedule', 'comment', elem.commentElement, false, -1);{x.2ea}
 end;
 
+{$ENDIF FHIR_SCHEDULE}
+{$IFDEF FHIR_SEARCHPARAMETER}
 function TFHIRTurtleParser.ParseSearchParameterComponent(obj : TTurtleComplex) : TFhirSearchParameterComponent;
 begin
   if (obj = nil) then
@@ -29291,6 +29972,8 @@ begin
       ComposeSearchParameterComponent(this, 'SearchParameter', 'component', elem.componentList[i], false, i);{x.d3}
 end;
 
+{$ENDIF FHIR_SEARCHPARAMETER}
+{$IFDEF FHIR_SEQUENCE}
 function TFHIRTurtleParser.ParseSequenceReferenceSeq(obj : TTurtleComplex) : TFhirSequenceReferenceSeq;
 begin
   if (obj = nil) then
@@ -29839,6 +30522,8 @@ begin
       ComposeSequenceStructureVariant(this, 'Sequence', 'structureVariant', elem.structureVariantList[i], false, i);{x.d3}
 end;
 
+{$ENDIF FHIR_SEQUENCE}
+{$IFDEF FHIR_SERVICEDEFINITION}
 function TFHIRTurtleParser.ParseServiceDefinition(obj : TTurtleComplex) : TFhirServiceDefinition;
 begin
   if (obj = nil) then
@@ -29970,6 +30655,8 @@ begin
     ComposeReference{TFhirOperationDefinition}(this, 'ServiceDefinition', 'operationDefinition', elem.operationDefinitionElement, false, -1);{x.2f}
 end;
 
+{$ENDIF FHIR_SERVICEDEFINITION}
+{$IFDEF FHIR_SLOT}
 function TFHIRTurtleParser.ParseSlot(obj : TTurtleComplex) : TFhirSlot;
 begin
   if (obj = nil) then
@@ -30047,6 +30734,8 @@ begin
     ComposeString(this, 'Slot', 'comment', elem.commentElement, false, -1);{x.2ea}
 end;
 
+{$ENDIF FHIR_SLOT}
+{$IFDEF FHIR_SPECIMEN}
 function TFHIRTurtleParser.ParseSpecimenCollection(obj : TTurtleComplex) : TFhirSpecimenCollection;
 begin
   if (obj = nil) then
@@ -30310,6 +30999,8 @@ begin
       ComposeAnnotation(this, 'Specimen', 'note', elem.noteList[i], false, i);{x.d3}
 end;
 
+{$ENDIF FHIR_SPECIMEN}
+{$IFDEF FHIR_SPECIMENDEFINITION}
 function TFHIRTurtleParser.ParseSpecimenDefinitionSpecimenToLab(obj : TTurtleComplex) : TFhirSpecimenDefinitionSpecimenToLab;
 begin
   if (obj = nil) then
@@ -30554,6 +31245,8 @@ begin
       ComposeSpecimenDefinitionSpecimenToLab(this, 'SpecimenDefinition', 'specimenToLab', elem.specimenToLabList[i], false, i);{x.d3}
 end;
 
+{$ENDIF FHIR_SPECIMENDEFINITION}
+{$IFDEF FHIR_STRUCTUREDEFINITION}
 function TFHIRTurtleParser.ParseStructureDefinitionMapping(obj : TTurtleComplex) : TFhirStructureDefinitionMapping;
 begin
   if (obj = nil) then
@@ -30825,6 +31518,8 @@ begin
     ComposeStructureDefinitionDifferential(this, 'StructureDefinition', 'differential', elem.differentialElement, false, -1);{x.2f}
 end;
 
+{$ENDIF FHIR_STRUCTUREDEFINITION}
+{$IFDEF FHIR_STRUCTUREMAP}
 function TFHIRTurtleParser.ParseStructureMapStructure(obj : TTurtleComplex) : TFhirStructureMapStructure;
 begin
   if (obj = nil) then
@@ -31537,6 +32232,8 @@ begin
       ComposeStructureMapGroup(this, 'StructureMap', 'group', elem.groupList[i], false, i);{x.d3}
 end;
 
+{$ENDIF FHIR_STRUCTUREMAP}
+{$IFDEF FHIR_SUBSCRIPTION}
 function TFHIRTurtleParser.ParseSubscriptionChannel(obj : TTurtleComplex) : TFhirSubscriptionChannel;
 begin
   if (obj = nil) then
@@ -31655,6 +32352,8 @@ begin
       ComposeCoding(this, 'Subscription', 'tag', elem.tagList[i], false, i);{x.d3}
 end;
 
+{$ENDIF FHIR_SUBSCRIPTION}
+{$IFDEF FHIR_SUBSTANCE}
 function TFHIRTurtleParser.ParseSubstanceInstance(obj : TTurtleComplex) : TFhirSubstanceInstance;
 begin
   if (obj = nil) then
@@ -31814,6 +32513,8 @@ begin
       ComposeSubstanceIngredient(this, 'Substance', 'ingredient', elem.ingredientList[i], false, i);{x.d3}
 end;
 
+{$ENDIF FHIR_SUBSTANCE}
+{$IFDEF FHIR_SUPPLYDELIVERY}
 function TFHIRTurtleParser.ParseSupplyDeliverySuppliedItem(obj : TTurtleComplex) : TFhirSupplyDeliverySuppliedItem;
 begin
   if (obj = nil) then
@@ -31948,6 +32649,8 @@ begin
       ComposeReference{TFhirPractitioner}(this, 'SupplyDelivery', 'receiver', elem.receiverList[i], false, i);{x.d3}
 end;
 
+{$ENDIF FHIR_SUPPLYDELIVERY}
+{$IFDEF FHIR_SUPPLYREQUEST}
 function TFHIRTurtleParser.ParseSupplyRequestOrderedItem(obj : TTurtleComplex) : TFhirSupplyRequestOrderedItem;
 begin
   if (obj = nil) then
@@ -32127,6 +32830,8 @@ begin
     ComposeReference{Resource}(this, 'SupplyRequest', 'deliverTo', elem.deliverToElement, false, -1);{x.2f}
 end;
 
+{$ENDIF FHIR_SUPPLYREQUEST}
+{$IFDEF FHIR_TASK}
 function TFHIRTurtleParser.ParseTaskRequester(obj : TTurtleComplex) : TFhirTaskRequester;
 begin
   if (obj = nil) then
@@ -32741,6 +33446,8 @@ begin
       ComposeTaskOutput(this, 'Task', 'output', elem.outputList[i], false, i);{x.d3}
 end;
 
+{$ENDIF FHIR_TASK}
+{$IFDEF FHIR_TESTREPORT}
 function TFHIRTurtleParser.ParseTestReportParticipant(obj : TTurtleComplex) : TFhirTestReportParticipant;
 begin
   if (obj = nil) then
@@ -33206,6 +33913,8 @@ begin
     ComposeTestReportTeardown(this, 'TestReport', 'teardown', elem.teardownElement, false, -1);{x.2f}
 end;
 
+{$ENDIF FHIR_TESTREPORT}
+{$IFDEF FHIR_TESTSCRIPT}
 function TFHIRTurtleParser.ParseTestScriptOrigin(obj : TTurtleComplex) : TFhirTestScriptOrigin;
 begin
   if (obj = nil) then
@@ -34612,6 +35321,8 @@ begin
     ComposeTestScriptTeardown(this, 'TestScript', 'teardown', elem.teardownElement, false, -1);{x.2f}
 end;
 
+{$ENDIF FHIR_TESTSCRIPT}
+{$IFDEF FHIR_VALUESET}
 function TFHIRTurtleParser.ParseValueSetCompose(obj : TTurtleComplex) : TFhirValueSetCompose;
 begin
   if (obj = nil) then
@@ -35155,6 +35866,8 @@ begin
     ComposeValueSetExpansion(this, 'ValueSet', 'expansion', elem.expansionElement, false, -1);{x.2f}
 end;
 
+{$ENDIF FHIR_VALUESET}
+{$IFDEF FHIR_VISIONPRESCRIPTION}
 function TFHIRTurtleParser.ParseVisionPrescriptionDispense(obj : TTurtleComplex) : TFhirVisionPrescriptionDispense;
 begin
   if (obj = nil) then
@@ -35311,6 +36024,8 @@ begin
       ComposeVisionPrescriptionDispense(this, 'VisionPrescription', 'dispense', elem.dispenseList[i], false, i);{x.d3}
 end;
 
+{$ENDIF FHIR_VISIONPRESCRIPTION}
+{$IFDEF FHIR_WORKFLOWEXAMPLE}
 function TFHIRTurtleParser.ParseWorkflowExampleActor(obj : TTurtleComplex) : TFhirWorkflowExampleActor;
 begin
   if (obj = nil) then
@@ -35882,14 +36597,17 @@ begin
       ComposeReference{TFhirWorkflowExample}(this, 'WorkflowExample', 'workflow', elem.workflowList[i], false, i);{x.d3}
 end;
 
+{$ENDIF FHIR_WORKFLOWEXAMPLE}
 function TFHIRTurtleParser.ParseFragment(obj : TTurtleComplex; type_ : String) : TFHIRObject;
 begin
    if SameText(type_, 'Element') then
     result := parseElement(obj)
   else if SameText(type_, 'BackboneElement') then
     result := parseBackboneElement(obj)
+{$IFDEF FHIR_PARAMETERS}
   else if SameText(type_, 'Parameters') then
     result := parseParameters(obj)
+{$ENDIF FHIR_PARAMETERS}
   else if SameText(type_, 'Extension') then
     result := parseExtension(obj)
   else if SameText(type_, 'Narrative') then
@@ -35956,242 +36674,478 @@ begin
     result := parseDistance(obj)
   else if SameText(type_, 'Duration') then
     result := parseDuration(obj)
+{$IFDEF FHIR_ACCOUNT}
   else if SameText(type_, 'Account') then
     result := parseAccount(obj)
+{$ENDIF FHIR_ACCOUNT}
+{$IFDEF FHIR_ACTIVITYDEFINITION}
   else if SameText(type_, 'ActivityDefinition') then
     result := parseActivityDefinition(obj)
+{$ENDIF FHIR_ACTIVITYDEFINITION}
+{$IFDEF FHIR_ADVERSEEVENT}
   else if SameText(type_, 'AdverseEvent') then
     result := parseAdverseEvent(obj)
+{$ENDIF FHIR_ADVERSEEVENT}
+{$IFDEF FHIR_ALLERGYINTOLERANCE}
   else if SameText(type_, 'AllergyIntolerance') then
     result := parseAllergyIntolerance(obj)
+{$ENDIF FHIR_ALLERGYINTOLERANCE}
+{$IFDEF FHIR_APPOINTMENT}
   else if SameText(type_, 'Appointment') then
     result := parseAppointment(obj)
+{$ENDIF FHIR_APPOINTMENT}
+{$IFDEF FHIR_APPOINTMENTRESPONSE}
   else if SameText(type_, 'AppointmentResponse') then
     result := parseAppointmentResponse(obj)
+{$ENDIF FHIR_APPOINTMENTRESPONSE}
+{$IFDEF FHIR_AUDITEVENT}
   else if SameText(type_, 'AuditEvent') then
     result := parseAuditEvent(obj)
+{$ENDIF FHIR_AUDITEVENT}
+{$IFDEF FHIR_BASIC}
   else if SameText(type_, 'Basic') then
     result := parseBasic(obj)
+{$ENDIF FHIR_BASIC}
+{$IFDEF FHIR_BINARY}
   else if SameText(type_, 'Binary') then
     result := parseBinary(obj)
+{$ENDIF FHIR_BINARY}
+{$IFDEF FHIR_BODYSTRUCTURE}
   else if SameText(type_, 'BodyStructure') then
     result := parseBodyStructure(obj)
+{$ENDIF FHIR_BODYSTRUCTURE}
+{$IFDEF FHIR_BUNDLE}
   else if SameText(type_, 'Bundle') then
     result := parseBundle(obj)
+{$ENDIF FHIR_BUNDLE}
+{$IFDEF FHIR_CAPABILITYSTATEMENT}
   else if SameText(type_, 'CapabilityStatement') then
     result := parseCapabilityStatement(obj)
+{$ENDIF FHIR_CAPABILITYSTATEMENT}
+{$IFDEF FHIR_CAREPLAN}
   else if SameText(type_, 'CarePlan') then
     result := parseCarePlan(obj)
+{$ENDIF FHIR_CAREPLAN}
+{$IFDEF FHIR_CARETEAM}
   else if SameText(type_, 'CareTeam') then
     result := parseCareTeam(obj)
+{$ENDIF FHIR_CARETEAM}
+{$IFDEF FHIR_CATALOGENTRY}
   else if SameText(type_, 'CatalogEntry') then
     result := parseCatalogEntry(obj)
+{$ENDIF FHIR_CATALOGENTRY}
+{$IFDEF FHIR_CHARGEITEM}
   else if SameText(type_, 'ChargeItem') then
     result := parseChargeItem(obj)
+{$ENDIF FHIR_CHARGEITEM}
+{$IFDEF FHIR_CLAIM}
   else if SameText(type_, 'Claim') then
     result := parseClaim(obj)
+{$ENDIF FHIR_CLAIM}
+{$IFDEF FHIR_CLAIMRESPONSE}
   else if SameText(type_, 'ClaimResponse') then
     result := parseClaimResponse(obj)
+{$ENDIF FHIR_CLAIMRESPONSE}
+{$IFDEF FHIR_CLINICALIMPRESSION}
   else if SameText(type_, 'ClinicalImpression') then
     result := parseClinicalImpression(obj)
+{$ENDIF FHIR_CLINICALIMPRESSION}
+{$IFDEF FHIR_CODESYSTEM}
   else if SameText(type_, 'CodeSystem') then
     result := parseCodeSystem(obj)
+{$ENDIF FHIR_CODESYSTEM}
+{$IFDEF FHIR_COMMUNICATION}
   else if SameText(type_, 'Communication') then
     result := parseCommunication(obj)
+{$ENDIF FHIR_COMMUNICATION}
+{$IFDEF FHIR_COMMUNICATIONREQUEST}
   else if SameText(type_, 'CommunicationRequest') then
     result := parseCommunicationRequest(obj)
+{$ENDIF FHIR_COMMUNICATIONREQUEST}
+{$IFDEF FHIR_COMPARTMENTDEFINITION}
   else if SameText(type_, 'CompartmentDefinition') then
     result := parseCompartmentDefinition(obj)
+{$ENDIF FHIR_COMPARTMENTDEFINITION}
+{$IFDEF FHIR_COMPOSITION}
   else if SameText(type_, 'Composition') then
     result := parseComposition(obj)
+{$ENDIF FHIR_COMPOSITION}
+{$IFDEF FHIR_CONCEPTMAP}
   else if SameText(type_, 'ConceptMap') then
     result := parseConceptMap(obj)
+{$ENDIF FHIR_CONCEPTMAP}
+{$IFDEF FHIR_CONDITION}
   else if SameText(type_, 'Condition') then
     result := parseCondition(obj)
+{$ENDIF FHIR_CONDITION}
+{$IFDEF FHIR_CONSENT}
   else if SameText(type_, 'Consent') then
     result := parseConsent(obj)
+{$ENDIF FHIR_CONSENT}
+{$IFDEF FHIR_CONTRACT}
   else if SameText(type_, 'Contract') then
     result := parseContract(obj)
+{$ENDIF FHIR_CONTRACT}
+{$IFDEF FHIR_COVERAGE}
   else if SameText(type_, 'Coverage') then
     result := parseCoverage(obj)
+{$ENDIF FHIR_COVERAGE}
+{$IFDEF FHIR_DETECTEDISSUE}
   else if SameText(type_, 'DetectedIssue') then
     result := parseDetectedIssue(obj)
+{$ENDIF FHIR_DETECTEDISSUE}
+{$IFDEF FHIR_DEVICE}
   else if SameText(type_, 'Device') then
     result := parseDevice(obj)
+{$ENDIF FHIR_DEVICE}
+{$IFDEF FHIR_DEVICECOMPONENT}
   else if SameText(type_, 'DeviceComponent') then
     result := parseDeviceComponent(obj)
+{$ENDIF FHIR_DEVICECOMPONENT}
+{$IFDEF FHIR_DEVICEMETRIC}
   else if SameText(type_, 'DeviceMetric') then
     result := parseDeviceMetric(obj)
+{$ENDIF FHIR_DEVICEMETRIC}
+{$IFDEF FHIR_DEVICEREQUEST}
   else if SameText(type_, 'DeviceRequest') then
     result := parseDeviceRequest(obj)
+{$ENDIF FHIR_DEVICEREQUEST}
+{$IFDEF FHIR_DEVICEUSESTATEMENT}
   else if SameText(type_, 'DeviceUseStatement') then
     result := parseDeviceUseStatement(obj)
+{$ENDIF FHIR_DEVICEUSESTATEMENT}
+{$IFDEF FHIR_DIAGNOSTICREPORT}
   else if SameText(type_, 'DiagnosticReport') then
     result := parseDiagnosticReport(obj)
+{$ENDIF FHIR_DIAGNOSTICREPORT}
+{$IFDEF FHIR_DOCUMENTMANIFEST}
   else if SameText(type_, 'DocumentManifest') then
     result := parseDocumentManifest(obj)
+{$ENDIF FHIR_DOCUMENTMANIFEST}
+{$IFDEF FHIR_DOCUMENTREFERENCE}
   else if SameText(type_, 'DocumentReference') then
     result := parseDocumentReference(obj)
+{$ENDIF FHIR_DOCUMENTREFERENCE}
+{$IFDEF FHIR_ELIGIBILITYREQUEST}
   else if SameText(type_, 'EligibilityRequest') then
     result := parseEligibilityRequest(obj)
+{$ENDIF FHIR_ELIGIBILITYREQUEST}
+{$IFDEF FHIR_ELIGIBILITYRESPONSE}
   else if SameText(type_, 'EligibilityResponse') then
     result := parseEligibilityResponse(obj)
+{$ENDIF FHIR_ELIGIBILITYRESPONSE}
+{$IFDEF FHIR_ENCOUNTER}
   else if SameText(type_, 'Encounter') then
     result := parseEncounter(obj)
+{$ENDIF FHIR_ENCOUNTER}
+{$IFDEF FHIR_ENDPOINT}
   else if SameText(type_, 'Endpoint') then
     result := parseEndpoint(obj)
+{$ENDIF FHIR_ENDPOINT}
+{$IFDEF FHIR_ENROLLMENTREQUEST}
   else if SameText(type_, 'EnrollmentRequest') then
     result := parseEnrollmentRequest(obj)
+{$ENDIF FHIR_ENROLLMENTREQUEST}
+{$IFDEF FHIR_ENROLLMENTRESPONSE}
   else if SameText(type_, 'EnrollmentResponse') then
     result := parseEnrollmentResponse(obj)
+{$ENDIF FHIR_ENROLLMENTRESPONSE}
+{$IFDEF FHIR_EPISODEOFCARE}
   else if SameText(type_, 'EpisodeOfCare') then
     result := parseEpisodeOfCare(obj)
+{$ENDIF FHIR_EPISODEOFCARE}
+{$IFDEF FHIR_EVENTDEFINITION}
   else if SameText(type_, 'EventDefinition') then
     result := parseEventDefinition(obj)
+{$ENDIF FHIR_EVENTDEFINITION}
+{$IFDEF FHIR_EXPANSIONPROFILE}
   else if SameText(type_, 'ExpansionProfile') then
     result := parseExpansionProfile(obj)
+{$ENDIF FHIR_EXPANSIONPROFILE}
+{$IFDEF FHIR_EXPLANATIONOFBENEFIT}
   else if SameText(type_, 'ExplanationOfBenefit') then
     result := parseExplanationOfBenefit(obj)
+{$ENDIF FHIR_EXPLANATIONOFBENEFIT}
+{$IFDEF FHIR_FAMILYMEMBERHISTORY}
   else if SameText(type_, 'FamilyMemberHistory') then
     result := parseFamilyMemberHistory(obj)
+{$ENDIF FHIR_FAMILYMEMBERHISTORY}
+{$IFDEF FHIR_FLAG}
   else if SameText(type_, 'Flag') then
     result := parseFlag(obj)
+{$ENDIF FHIR_FLAG}
+{$IFDEF FHIR_GOAL}
   else if SameText(type_, 'Goal') then
     result := parseGoal(obj)
+{$ENDIF FHIR_GOAL}
+{$IFDEF FHIR_GRAPHDEFINITION}
   else if SameText(type_, 'GraphDefinition') then
     result := parseGraphDefinition(obj)
+{$ENDIF FHIR_GRAPHDEFINITION}
+{$IFDEF FHIR_GROUP}
   else if SameText(type_, 'Group') then
     result := parseGroup(obj)
+{$ENDIF FHIR_GROUP}
+{$IFDEF FHIR_GUIDANCERESPONSE}
   else if SameText(type_, 'GuidanceResponse') then
     result := parseGuidanceResponse(obj)
+{$ENDIF FHIR_GUIDANCERESPONSE}
+{$IFDEF FHIR_HEALTHCARESERVICE}
   else if SameText(type_, 'HealthcareService') then
     result := parseHealthcareService(obj)
+{$ENDIF FHIR_HEALTHCARESERVICE}
+{$IFDEF FHIR_IMAGINGMANIFEST}
   else if SameText(type_, 'ImagingManifest') then
     result := parseImagingManifest(obj)
+{$ENDIF FHIR_IMAGINGMANIFEST}
+{$IFDEF FHIR_IMAGINGSTUDY}
   else if SameText(type_, 'ImagingStudy') then
     result := parseImagingStudy(obj)
+{$ENDIF FHIR_IMAGINGSTUDY}
+{$IFDEF FHIR_IMMUNIZATION}
   else if SameText(type_, 'Immunization') then
     result := parseImmunization(obj)
+{$ENDIF FHIR_IMMUNIZATION}
+{$IFDEF FHIR_IMMUNIZATIONRECOMMENDATION}
   else if SameText(type_, 'ImmunizationRecommendation') then
     result := parseImmunizationRecommendation(obj)
+{$ENDIF FHIR_IMMUNIZATIONRECOMMENDATION}
+{$IFDEF FHIR_IMPLEMENTATIONGUIDE}
   else if SameText(type_, 'ImplementationGuide') then
     result := parseImplementationGuide(obj)
+{$ENDIF FHIR_IMPLEMENTATIONGUIDE}
+{$IFDEF FHIR_LIBRARY}
   else if SameText(type_, 'Library') then
     result := parseLibrary(obj)
+{$ENDIF FHIR_LIBRARY}
+{$IFDEF FHIR_LINKAGE}
   else if SameText(type_, 'Linkage') then
     result := parseLinkage(obj)
+{$ENDIF FHIR_LINKAGE}
+{$IFDEF FHIR_LIST}
   else if SameText(type_, 'List') then
     result := parseList(obj)
+{$ENDIF FHIR_LIST}
+{$IFDEF FHIR_LOCATION}
   else if SameText(type_, 'Location') then
     result := parseLocation(obj)
+{$ENDIF FHIR_LOCATION}
+{$IFDEF FHIR_MEASURE}
   else if SameText(type_, 'Measure') then
     result := parseMeasure(obj)
+{$ENDIF FHIR_MEASURE}
+{$IFDEF FHIR_MEASUREREPORT}
   else if SameText(type_, 'MeasureReport') then
     result := parseMeasureReport(obj)
+{$ENDIF FHIR_MEASUREREPORT}
+{$IFDEF FHIR_MEDIA}
   else if SameText(type_, 'Media') then
     result := parseMedia(obj)
+{$ENDIF FHIR_MEDIA}
+{$IFDEF FHIR_MEDICATION}
   else if SameText(type_, 'Medication') then
     result := parseMedication(obj)
+{$ENDIF FHIR_MEDICATION}
+{$IFDEF FHIR_MEDICATIONADMINISTRATION}
   else if SameText(type_, 'MedicationAdministration') then
     result := parseMedicationAdministration(obj)
+{$ENDIF FHIR_MEDICATIONADMINISTRATION}
+{$IFDEF FHIR_MEDICATIONDISPENSE}
   else if SameText(type_, 'MedicationDispense') then
     result := parseMedicationDispense(obj)
+{$ENDIF FHIR_MEDICATIONDISPENSE}
+{$IFDEF FHIR_MEDICATIONREQUEST}
   else if SameText(type_, 'MedicationRequest') then
     result := parseMedicationRequest(obj)
+{$ENDIF FHIR_MEDICATIONREQUEST}
+{$IFDEF FHIR_MEDICATIONSTATEMENT}
   else if SameText(type_, 'MedicationStatement') then
     result := parseMedicationStatement(obj)
+{$ENDIF FHIR_MEDICATIONSTATEMENT}
+{$IFDEF FHIR_MESSAGEDEFINITION}
   else if SameText(type_, 'MessageDefinition') then
     result := parseMessageDefinition(obj)
+{$ENDIF FHIR_MESSAGEDEFINITION}
+{$IFDEF FHIR_MESSAGEHEADER}
   else if SameText(type_, 'MessageHeader') then
     result := parseMessageHeader(obj)
+{$ENDIF FHIR_MESSAGEHEADER}
+{$IFDEF FHIR_NAMINGSYSTEM}
   else if SameText(type_, 'NamingSystem') then
     result := parseNamingSystem(obj)
+{$ENDIF FHIR_NAMINGSYSTEM}
+{$IFDEF FHIR_NUTRITIONORDER}
   else if SameText(type_, 'NutritionOrder') then
     result := parseNutritionOrder(obj)
+{$ENDIF FHIR_NUTRITIONORDER}
+{$IFDEF FHIR_OBSERVATION}
   else if SameText(type_, 'Observation') then
     result := parseObservation(obj)
+{$ENDIF FHIR_OBSERVATION}
+{$IFDEF FHIR_OPERATIONDEFINITION}
   else if SameText(type_, 'OperationDefinition') then
     result := parseOperationDefinition(obj)
+{$ENDIF FHIR_OPERATIONDEFINITION}
+{$IFDEF FHIR_OPERATIONOUTCOME}
   else if SameText(type_, 'OperationOutcome') then
     result := parseOperationOutcome(obj)
+{$ENDIF FHIR_OPERATIONOUTCOME}
+{$IFDEF FHIR_ORGANIZATION}
   else if SameText(type_, 'Organization') then
     result := parseOrganization(obj)
+{$ENDIF FHIR_ORGANIZATION}
+{$IFDEF FHIR_PATIENT}
   else if SameText(type_, 'Patient') then
     result := parsePatient(obj)
+{$ENDIF FHIR_PATIENT}
+{$IFDEF FHIR_PAYMENTNOTICE}
   else if SameText(type_, 'PaymentNotice') then
     result := parsePaymentNotice(obj)
+{$ENDIF FHIR_PAYMENTNOTICE}
+{$IFDEF FHIR_PAYMENTRECONCILIATION}
   else if SameText(type_, 'PaymentReconciliation') then
     result := parsePaymentReconciliation(obj)
+{$ENDIF FHIR_PAYMENTRECONCILIATION}
+{$IFDEF FHIR_PERSON}
   else if SameText(type_, 'Person') then
     result := parsePerson(obj)
+{$ENDIF FHIR_PERSON}
+{$IFDEF FHIR_PLANDEFINITION}
   else if SameText(type_, 'PlanDefinition') then
     result := parsePlanDefinition(obj)
+{$ENDIF FHIR_PLANDEFINITION}
+{$IFDEF FHIR_PRACTITIONER}
   else if SameText(type_, 'Practitioner') then
     result := parsePractitioner(obj)
+{$ENDIF FHIR_PRACTITIONER}
+{$IFDEF FHIR_PRACTITIONERROLE}
   else if SameText(type_, 'PractitionerRole') then
     result := parsePractitionerRole(obj)
+{$ENDIF FHIR_PRACTITIONERROLE}
+{$IFDEF FHIR_PROCEDURE}
   else if SameText(type_, 'Procedure') then
     result := parseProcedure(obj)
+{$ENDIF FHIR_PROCEDURE}
+{$IFDEF FHIR_PROCEDUREREQUEST}
   else if SameText(type_, 'ProcedureRequest') then
     result := parseProcedureRequest(obj)
+{$ENDIF FHIR_PROCEDUREREQUEST}
+{$IFDEF FHIR_PROCESSREQUEST}
   else if SameText(type_, 'ProcessRequest') then
     result := parseProcessRequest(obj)
+{$ENDIF FHIR_PROCESSREQUEST}
+{$IFDEF FHIR_PROCESSRESPONSE}
   else if SameText(type_, 'ProcessResponse') then
     result := parseProcessResponse(obj)
+{$ENDIF FHIR_PROCESSRESPONSE}
+{$IFDEF FHIR_PROVENANCE}
   else if SameText(type_, 'Provenance') then
     result := parseProvenance(obj)
+{$ENDIF FHIR_PROVENANCE}
+{$IFDEF FHIR_QUESTIONNAIRE}
   else if SameText(type_, 'Questionnaire') then
     result := parseQuestionnaire(obj)
+{$ENDIF FHIR_QUESTIONNAIRE}
+{$IFDEF FHIR_QUESTIONNAIRERESPONSE}
   else if SameText(type_, 'QuestionnaireResponse') then
     result := parseQuestionnaireResponse(obj)
+{$ENDIF FHIR_QUESTIONNAIRERESPONSE}
+{$IFDEF FHIR_RELATEDPERSON}
   else if SameText(type_, 'RelatedPerson') then
     result := parseRelatedPerson(obj)
+{$ENDIF FHIR_RELATEDPERSON}
+{$IFDEF FHIR_REQUESTGROUP}
   else if SameText(type_, 'RequestGroup') then
     result := parseRequestGroup(obj)
+{$ENDIF FHIR_REQUESTGROUP}
+{$IFDEF FHIR_RESEARCHSTUDY}
   else if SameText(type_, 'ResearchStudy') then
     result := parseResearchStudy(obj)
+{$ENDIF FHIR_RESEARCHSTUDY}
+{$IFDEF FHIR_RESEARCHSUBJECT}
   else if SameText(type_, 'ResearchSubject') then
     result := parseResearchSubject(obj)
+{$ENDIF FHIR_RESEARCHSUBJECT}
+{$IFDEF FHIR_RISKASSESSMENT}
   else if SameText(type_, 'RiskAssessment') then
     result := parseRiskAssessment(obj)
+{$ENDIF FHIR_RISKASSESSMENT}
+{$IFDEF FHIR_SCHEDULE}
   else if SameText(type_, 'Schedule') then
     result := parseSchedule(obj)
+{$ENDIF FHIR_SCHEDULE}
+{$IFDEF FHIR_SEARCHPARAMETER}
   else if SameText(type_, 'SearchParameter') then
     result := parseSearchParameter(obj)
+{$ENDIF FHIR_SEARCHPARAMETER}
+{$IFDEF FHIR_SEQUENCE}
   else if SameText(type_, 'Sequence') then
     result := parseSequence(obj)
+{$ENDIF FHIR_SEQUENCE}
+{$IFDEF FHIR_SERVICEDEFINITION}
   else if SameText(type_, 'ServiceDefinition') then
     result := parseServiceDefinition(obj)
+{$ENDIF FHIR_SERVICEDEFINITION}
+{$IFDEF FHIR_SLOT}
   else if SameText(type_, 'Slot') then
     result := parseSlot(obj)
+{$ENDIF FHIR_SLOT}
+{$IFDEF FHIR_SPECIMEN}
   else if SameText(type_, 'Specimen') then
     result := parseSpecimen(obj)
+{$ENDIF FHIR_SPECIMEN}
+{$IFDEF FHIR_SPECIMENDEFINITION}
   else if SameText(type_, 'SpecimenDefinition') then
     result := parseSpecimenDefinition(obj)
+{$ENDIF FHIR_SPECIMENDEFINITION}
+{$IFDEF FHIR_STRUCTUREDEFINITION}
   else if SameText(type_, 'StructureDefinition') then
     result := parseStructureDefinition(obj)
+{$ENDIF FHIR_STRUCTUREDEFINITION}
+{$IFDEF FHIR_STRUCTUREMAP}
   else if SameText(type_, 'StructureMap') then
     result := parseStructureMap(obj)
+{$ENDIF FHIR_STRUCTUREMAP}
+{$IFDEF FHIR_SUBSCRIPTION}
   else if SameText(type_, 'Subscription') then
     result := parseSubscription(obj)
+{$ENDIF FHIR_SUBSCRIPTION}
+{$IFDEF FHIR_SUBSTANCE}
   else if SameText(type_, 'Substance') then
     result := parseSubstance(obj)
+{$ENDIF FHIR_SUBSTANCE}
+{$IFDEF FHIR_SUPPLYDELIVERY}
   else if SameText(type_, 'SupplyDelivery') then
     result := parseSupplyDelivery(obj)
+{$ENDIF FHIR_SUPPLYDELIVERY}
+{$IFDEF FHIR_SUPPLYREQUEST}
   else if SameText(type_, 'SupplyRequest') then
     result := parseSupplyRequest(obj)
+{$ENDIF FHIR_SUPPLYREQUEST}
+{$IFDEF FHIR_TASK}
   else if SameText(type_, 'Task') then
     result := parseTask(obj)
+{$ENDIF FHIR_TASK}
+{$IFDEF FHIR_TESTREPORT}
   else if SameText(type_, 'TestReport') then
     result := parseTestReport(obj)
+{$ENDIF FHIR_TESTREPORT}
+{$IFDEF FHIR_TESTSCRIPT}
   else if SameText(type_, 'TestScript') then
     result := parseTestScript(obj)
+{$ENDIF FHIR_TESTSCRIPT}
+{$IFDEF FHIR_VALUESET}
   else if SameText(type_, 'ValueSet') then
     result := parseValueSet(obj)
+{$ENDIF FHIR_VALUESET}
+{$IFDEF FHIR_VISIONPRESCRIPTION}
   else if SameText(type_, 'VisionPrescription') then
     result := parseVisionPrescription(obj)
+{$ENDIF FHIR_VISIONPRESCRIPTION}
+{$IFDEF FHIR_WORKFLOWEXAMPLE}
   else if SameText(type_, 'WorkflowExample') then
     result := parseWorkflowExample(obj)
+{$ENDIF FHIR_WORKFLOWEXAMPLE}
   else
     raise Exception.create('error: the element '+type_+' is not a valid fragment name');
 end;
@@ -36276,125 +37230,599 @@ begin
     Raise Exception.Create('error - resource is nil');
   this := parent;
   Case resource.ResourceType of
+{$IFDEF FHIR_PARAMETERS}
     frtParameters: ComposeParameters(this, '', 'Parameters', TFhirParameters(resource), true, -1);
-    frtAccount: ComposeAccount(this, '', 'Account', TFhirAccount(resource), true, -1);
-    frtActivityDefinition: ComposeActivityDefinition(this, '', 'ActivityDefinition', TFhirActivityDefinition(resource), true, -1);
-    frtAdverseEvent: ComposeAdverseEvent(this, '', 'AdverseEvent', TFhirAdverseEvent(resource), true, -1);
-    frtAllergyIntolerance: ComposeAllergyIntolerance(this, '', 'AllergyIntolerance', TFhirAllergyIntolerance(resource), true, -1);
-    frtAppointment: ComposeAppointment(this, '', 'Appointment', TFhirAppointment(resource), true, -1);
-    frtAppointmentResponse: ComposeAppointmentResponse(this, '', 'AppointmentResponse', TFhirAppointmentResponse(resource), true, -1);
-    frtAuditEvent: ComposeAuditEvent(this, '', 'AuditEvent', TFhirAuditEvent(resource), true, -1);
-    frtBasic: ComposeBasic(this, '', 'Basic', TFhirBasic(resource), true, -1);
-    frtBinary: ComposeBinary(this, '', 'Binary', TFhirBinary(resource), true, -1);
-    frtBodyStructure: ComposeBodyStructure(this, '', 'BodyStructure', TFhirBodyStructure(resource), true, -1);
-    frtBundle: ComposeBundle(this, '', 'Bundle', TFhirBundle(resource), true, -1);
-    frtCapabilityStatement: ComposeCapabilityStatement(this, '', 'CapabilityStatement', TFhirCapabilityStatement(resource), true, -1);
-    frtCarePlan: ComposeCarePlan(this, '', 'CarePlan', TFhirCarePlan(resource), true, -1);
-    frtCareTeam: ComposeCareTeam(this, '', 'CareTeam', TFhirCareTeam(resource), true, -1);
-    frtCatalogEntry: ComposeCatalogEntry(this, '', 'CatalogEntry', TFhirCatalogEntry(resource), true, -1);
-    frtChargeItem: ComposeChargeItem(this, '', 'ChargeItem', TFhirChargeItem(resource), true, -1);
-    frtClaim: ComposeClaim(this, '', 'Claim', TFhirClaim(resource), true, -1);
-    frtClaimResponse: ComposeClaimResponse(this, '', 'ClaimResponse', TFhirClaimResponse(resource), true, -1);
-    frtClinicalImpression: ComposeClinicalImpression(this, '', 'ClinicalImpression', TFhirClinicalImpression(resource), true, -1);
-    frtCodeSystem: ComposeCodeSystem(this, '', 'CodeSystem', TFhirCodeSystem(resource), true, -1);
-    frtCommunication: ComposeCommunication(this, '', 'Communication', TFhirCommunication(resource), true, -1);
-    frtCommunicationRequest: ComposeCommunicationRequest(this, '', 'CommunicationRequest', TFhirCommunicationRequest(resource), true, -1);
-    frtCompartmentDefinition: ComposeCompartmentDefinition(this, '', 'CompartmentDefinition', TFhirCompartmentDefinition(resource), true, -1);
-    frtComposition: ComposeComposition(this, '', 'Composition', TFhirComposition(resource), true, -1);
-    frtConceptMap: ComposeConceptMap(this, '', 'ConceptMap', TFhirConceptMap(resource), true, -1);
-    frtCondition: ComposeCondition(this, '', 'Condition', TFhirCondition(resource), true, -1);
-    frtConsent: ComposeConsent(this, '', 'Consent', TFhirConsent(resource), true, -1);
-    frtContract: ComposeContract(this, '', 'Contract', TFhirContract(resource), true, -1);
-    frtCoverage: ComposeCoverage(this, '', 'Coverage', TFhirCoverage(resource), true, -1);
-    frtDetectedIssue: ComposeDetectedIssue(this, '', 'DetectedIssue', TFhirDetectedIssue(resource), true, -1);
-    frtDevice: ComposeDevice(this, '', 'Device', TFhirDevice(resource), true, -1);
-    frtDeviceComponent: ComposeDeviceComponent(this, '', 'DeviceComponent', TFhirDeviceComponent(resource), true, -1);
-    frtDeviceMetric: ComposeDeviceMetric(this, '', 'DeviceMetric', TFhirDeviceMetric(resource), true, -1);
-    frtDeviceRequest: ComposeDeviceRequest(this, '', 'DeviceRequest', TFhirDeviceRequest(resource), true, -1);
-    frtDeviceUseStatement: ComposeDeviceUseStatement(this, '', 'DeviceUseStatement', TFhirDeviceUseStatement(resource), true, -1);
-    frtDiagnosticReport: ComposeDiagnosticReport(this, '', 'DiagnosticReport', TFhirDiagnosticReport(resource), true, -1);
-    frtDocumentManifest: ComposeDocumentManifest(this, '', 'DocumentManifest', TFhirDocumentManifest(resource), true, -1);
-    frtDocumentReference: ComposeDocumentReference(this, '', 'DocumentReference', TFhirDocumentReference(resource), true, -1);
-    frtEligibilityRequest: ComposeEligibilityRequest(this, '', 'EligibilityRequest', TFhirEligibilityRequest(resource), true, -1);
-    frtEligibilityResponse: ComposeEligibilityResponse(this, '', 'EligibilityResponse', TFhirEligibilityResponse(resource), true, -1);
-    frtEncounter: ComposeEncounter(this, '', 'Encounter', TFhirEncounter(resource), true, -1);
-    frtEndpoint: ComposeEndpoint(this, '', 'Endpoint', TFhirEndpoint(resource), true, -1);
-    frtEnrollmentRequest: ComposeEnrollmentRequest(this, '', 'EnrollmentRequest', TFhirEnrollmentRequest(resource), true, -1);
-    frtEnrollmentResponse: ComposeEnrollmentResponse(this, '', 'EnrollmentResponse', TFhirEnrollmentResponse(resource), true, -1);
-    frtEpisodeOfCare: ComposeEpisodeOfCare(this, '', 'EpisodeOfCare', TFhirEpisodeOfCare(resource), true, -1);
-    frtEventDefinition: ComposeEventDefinition(this, '', 'EventDefinition', TFhirEventDefinition(resource), true, -1);
-    frtExpansionProfile: ComposeExpansionProfile(this, '', 'ExpansionProfile', TFhirExpansionProfile(resource), true, -1);
-    frtExplanationOfBenefit: ComposeExplanationOfBenefit(this, '', 'ExplanationOfBenefit', TFhirExplanationOfBenefit(resource), true, -1);
-    frtFamilyMemberHistory: ComposeFamilyMemberHistory(this, '', 'FamilyMemberHistory', TFhirFamilyMemberHistory(resource), true, -1);
-    frtFlag: ComposeFlag(this, '', 'Flag', TFhirFlag(resource), true, -1);
-    frtGoal: ComposeGoal(this, '', 'Goal', TFhirGoal(resource), true, -1);
-    frtGraphDefinition: ComposeGraphDefinition(this, '', 'GraphDefinition', TFhirGraphDefinition(resource), true, -1);
-    frtGroup: ComposeGroup(this, '', 'Group', TFhirGroup(resource), true, -1);
-    frtGuidanceResponse: ComposeGuidanceResponse(this, '', 'GuidanceResponse', TFhirGuidanceResponse(resource), true, -1);
-    frtHealthcareService: ComposeHealthcareService(this, '', 'HealthcareService', TFhirHealthcareService(resource), true, -1);
-    frtImagingManifest: ComposeImagingManifest(this, '', 'ImagingManifest', TFhirImagingManifest(resource), true, -1);
-    frtImagingStudy: ComposeImagingStudy(this, '', 'ImagingStudy', TFhirImagingStudy(resource), true, -1);
-    frtImmunization: ComposeImmunization(this, '', 'Immunization', TFhirImmunization(resource), true, -1);
-    frtImmunizationRecommendation: ComposeImmunizationRecommendation(this, '', 'ImmunizationRecommendation', TFhirImmunizationRecommendation(resource), true, -1);
-    frtImplementationGuide: ComposeImplementationGuide(this, '', 'ImplementationGuide', TFhirImplementationGuide(resource), true, -1);
-    frtLibrary: ComposeLibrary(this, '', 'Library', TFhirLibrary(resource), true, -1);
-    frtLinkage: ComposeLinkage(this, '', 'Linkage', TFhirLinkage(resource), true, -1);
-    frtList: ComposeList(this, '', 'List', TFhirList(resource), true, -1);
-    frtLocation: ComposeLocation(this, '', 'Location', TFhirLocation(resource), true, -1);
-    frtMeasure: ComposeMeasure(this, '', 'Measure', TFhirMeasure(resource), true, -1);
-    frtMeasureReport: ComposeMeasureReport(this, '', 'MeasureReport', TFhirMeasureReport(resource), true, -1);
-    frtMedia: ComposeMedia(this, '', 'Media', TFhirMedia(resource), true, -1);
-    frtMedication: ComposeMedication(this, '', 'Medication', TFhirMedication(resource), true, -1);
-    frtMedicationAdministration: ComposeMedicationAdministration(this, '', 'MedicationAdministration', TFhirMedicationAdministration(resource), true, -1);
-    frtMedicationDispense: ComposeMedicationDispense(this, '', 'MedicationDispense', TFhirMedicationDispense(resource), true, -1);
-    frtMedicationRequest: ComposeMedicationRequest(this, '', 'MedicationRequest', TFhirMedicationRequest(resource), true, -1);
-    frtMedicationStatement: ComposeMedicationStatement(this, '', 'MedicationStatement', TFhirMedicationStatement(resource), true, -1);
-    frtMessageDefinition: ComposeMessageDefinition(this, '', 'MessageDefinition', TFhirMessageDefinition(resource), true, -1);
-    frtMessageHeader: ComposeMessageHeader(this, '', 'MessageHeader', TFhirMessageHeader(resource), true, -1);
-    frtNamingSystem: ComposeNamingSystem(this, '', 'NamingSystem', TFhirNamingSystem(resource), true, -1);
-    frtNutritionOrder: ComposeNutritionOrder(this, '', 'NutritionOrder', TFhirNutritionOrder(resource), true, -1);
-    frtObservation: ComposeObservation(this, '', 'Observation', TFhirObservation(resource), true, -1);
-    frtOperationDefinition: ComposeOperationDefinition(this, '', 'OperationDefinition', TFhirOperationDefinition(resource), true, -1);
-    frtOperationOutcome: ComposeOperationOutcome(this, '', 'OperationOutcome', TFhirOperationOutcome(resource), true, -1);
-    frtOrganization: ComposeOrganization(this, '', 'Organization', TFhirOrganization(resource), true, -1);
-    frtPatient: ComposePatient(this, '', 'Patient', TFhirPatient(resource), true, -1);
-    frtPaymentNotice: ComposePaymentNotice(this, '', 'PaymentNotice', TFhirPaymentNotice(resource), true, -1);
-    frtPaymentReconciliation: ComposePaymentReconciliation(this, '', 'PaymentReconciliation', TFhirPaymentReconciliation(resource), true, -1);
-    frtPerson: ComposePerson(this, '', 'Person', TFhirPerson(resource), true, -1);
-    frtPlanDefinition: ComposePlanDefinition(this, '', 'PlanDefinition', TFhirPlanDefinition(resource), true, -1);
-    frtPractitioner: ComposePractitioner(this, '', 'Practitioner', TFhirPractitioner(resource), true, -1);
-    frtPractitionerRole: ComposePractitionerRole(this, '', 'PractitionerRole', TFhirPractitionerRole(resource), true, -1);
-    frtProcedure: ComposeProcedure(this, '', 'Procedure', TFhirProcedure(resource), true, -1);
-    frtProcedureRequest: ComposeProcedureRequest(this, '', 'ProcedureRequest', TFhirProcedureRequest(resource), true, -1);
-    frtProcessRequest: ComposeProcessRequest(this, '', 'ProcessRequest', TFhirProcessRequest(resource), true, -1);
-    frtProcessResponse: ComposeProcessResponse(this, '', 'ProcessResponse', TFhirProcessResponse(resource), true, -1);
-    frtProvenance: ComposeProvenance(this, '', 'Provenance', TFhirProvenance(resource), true, -1);
-    frtQuestionnaire: ComposeQuestionnaire(this, '', 'Questionnaire', TFhirQuestionnaire(resource), true, -1);
-    frtQuestionnaireResponse: ComposeQuestionnaireResponse(this, '', 'QuestionnaireResponse', TFhirQuestionnaireResponse(resource), true, -1);
-    frtRelatedPerson: ComposeRelatedPerson(this, '', 'RelatedPerson', TFhirRelatedPerson(resource), true, -1);
-    frtRequestGroup: ComposeRequestGroup(this, '', 'RequestGroup', TFhirRequestGroup(resource), true, -1);
-    frtResearchStudy: ComposeResearchStudy(this, '', 'ResearchStudy', TFhirResearchStudy(resource), true, -1);
-    frtResearchSubject: ComposeResearchSubject(this, '', 'ResearchSubject', TFhirResearchSubject(resource), true, -1);
-    frtRiskAssessment: ComposeRiskAssessment(this, '', 'RiskAssessment', TFhirRiskAssessment(resource), true, -1);
-    frtSchedule: ComposeSchedule(this, '', 'Schedule', TFhirSchedule(resource), true, -1);
-    frtSearchParameter: ComposeSearchParameter(this, '', 'SearchParameter', TFhirSearchParameter(resource), true, -1);
-    frtSequence: ComposeSequence(this, '', 'Sequence', TFhirSequence(resource), true, -1);
-    frtServiceDefinition: ComposeServiceDefinition(this, '', 'ServiceDefinition', TFhirServiceDefinition(resource), true, -1);
-    frtSlot: ComposeSlot(this, '', 'Slot', TFhirSlot(resource), true, -1);
-    frtSpecimen: ComposeSpecimen(this, '', 'Specimen', TFhirSpecimen(resource), true, -1);
-    frtSpecimenDefinition: ComposeSpecimenDefinition(this, '', 'SpecimenDefinition', TFhirSpecimenDefinition(resource), true, -1);
-    frtStructureDefinition: ComposeStructureDefinition(this, '', 'StructureDefinition', TFhirStructureDefinition(resource), true, -1);
-    frtStructureMap: ComposeStructureMap(this, '', 'StructureMap', TFhirStructureMap(resource), true, -1);
-    frtSubscription: ComposeSubscription(this, '', 'Subscription', TFhirSubscription(resource), true, -1);
-    frtSubstance: ComposeSubstance(this, '', 'Substance', TFhirSubstance(resource), true, -1);
-    frtSupplyDelivery: ComposeSupplyDelivery(this, '', 'SupplyDelivery', TFhirSupplyDelivery(resource), true, -1);
-    frtSupplyRequest: ComposeSupplyRequest(this, '', 'SupplyRequest', TFhirSupplyRequest(resource), true, -1);
-    frtTask: ComposeTask(this, '', 'Task', TFhirTask(resource), true, -1);
-    frtTestReport: ComposeTestReport(this, '', 'TestReport', TFhirTestReport(resource), true, -1);
-    frtTestScript: ComposeTestScript(this, '', 'TestScript', TFhirTestScript(resource), true, -1);
-    frtValueSet: ComposeValueSet(this, '', 'ValueSet', TFhirValueSet(resource), true, -1);
-    frtVisionPrescription: ComposeVisionPrescription(this, '', 'VisionPrescription', TFhirVisionPrescription(resource), true, -1);
-    frtWorkflowExample: ComposeWorkflowExample(this, '', 'WorkflowExample', TFhirWorkflowExample(resource), true, -1);
+{$ENDIF FHIR_PARAMETERS}
+{$IFDEF FHIR_ACCOUNT}
+  {$IFDEF FHIR_ACCOUNT}
+     frtAccount: ComposeAccount(this, '', 'Account', TFhirAccount(resource), true, -1); 
+  {$ENDIF}
+{$ENDIF FHIR_ACCOUNT}
+{$IFDEF FHIR_ACTIVITYDEFINITION}
+  {$IFDEF FHIR_ACTIVITYDEFINITION}
+     frtActivityDefinition: ComposeActivityDefinition(this, '', 'ActivityDefinition', TFhirActivityDefinition(resource), true, -1); 
+  {$ENDIF}
+{$ENDIF FHIR_ACTIVITYDEFINITION}
+{$IFDEF FHIR_ADVERSEEVENT}
+  {$IFDEF FHIR_ADVERSEEVENT}
+     frtAdverseEvent: ComposeAdverseEvent(this, '', 'AdverseEvent', TFhirAdverseEvent(resource), true, -1); 
+  {$ENDIF}
+{$ENDIF FHIR_ADVERSEEVENT}
+{$IFDEF FHIR_ALLERGYINTOLERANCE}
+  {$IFDEF FHIR_ALLERGYINTOLERANCE}
+     frtAllergyIntolerance: ComposeAllergyIntolerance(this, '', 'AllergyIntolerance', TFhirAllergyIntolerance(resource), true, -1); 
+  {$ENDIF}
+{$ENDIF FHIR_ALLERGYINTOLERANCE}
+{$IFDEF FHIR_APPOINTMENT}
+  {$IFDEF FHIR_APPOINTMENT}
+     frtAppointment: ComposeAppointment(this, '', 'Appointment', TFhirAppointment(resource), true, -1); 
+  {$ENDIF}
+{$ENDIF FHIR_APPOINTMENT}
+{$IFDEF FHIR_APPOINTMENTRESPONSE}
+  {$IFDEF FHIR_APPOINTMENTRESPONSE}
+     frtAppointmentResponse: ComposeAppointmentResponse(this, '', 'AppointmentResponse', TFhirAppointmentResponse(resource), true, -1); 
+  {$ENDIF}
+{$ENDIF FHIR_APPOINTMENTRESPONSE}
+{$IFDEF FHIR_AUDITEVENT}
+  {$IFDEF FHIR_AUDITEVENT}
+     frtAuditEvent: ComposeAuditEvent(this, '', 'AuditEvent', TFhirAuditEvent(resource), true, -1); 
+  {$ENDIF}
+{$ENDIF FHIR_AUDITEVENT}
+{$IFDEF FHIR_BASIC}
+  {$IFDEF FHIR_BASIC}
+     frtBasic: ComposeBasic(this, '', 'Basic', TFhirBasic(resource), true, -1); 
+  {$ENDIF}
+{$ENDIF FHIR_BASIC}
+{$IFDEF FHIR_BINARY}
+  {$IFDEF FHIR_BINARY}
+     frtBinary: ComposeBinary(this, '', 'Binary', TFhirBinary(resource), true, -1); 
+  {$ENDIF}
+{$ENDIF FHIR_BINARY}
+{$IFDEF FHIR_BODYSTRUCTURE}
+  {$IFDEF FHIR_BODYSTRUCTURE}
+     frtBodyStructure: ComposeBodyStructure(this, '', 'BodyStructure', TFhirBodyStructure(resource), true, -1); 
+  {$ENDIF}
+{$ENDIF FHIR_BODYSTRUCTURE}
+{$IFDEF FHIR_BUNDLE}
+  {$IFDEF FHIR_BUNDLE}
+     frtBundle: ComposeBundle(this, '', 'Bundle', TFhirBundle(resource), true, -1); 
+  {$ENDIF}
+{$ENDIF FHIR_BUNDLE}
+{$IFDEF FHIR_CAPABILITYSTATEMENT}
+  {$IFDEF FHIR_CAPABILITYSTATEMENT}
+     frtCapabilityStatement: ComposeCapabilityStatement(this, '', 'CapabilityStatement', TFhirCapabilityStatement(resource), true, -1); 
+  {$ENDIF}
+{$ENDIF FHIR_CAPABILITYSTATEMENT}
+{$IFDEF FHIR_CAREPLAN}
+  {$IFDEF FHIR_CAREPLAN}
+     frtCarePlan: ComposeCarePlan(this, '', 'CarePlan', TFhirCarePlan(resource), true, -1); 
+  {$ENDIF}
+{$ENDIF FHIR_CAREPLAN}
+{$IFDEF FHIR_CARETEAM}
+  {$IFDEF FHIR_CARETEAM}
+     frtCareTeam: ComposeCareTeam(this, '', 'CareTeam', TFhirCareTeam(resource), true, -1); 
+  {$ENDIF}
+{$ENDIF FHIR_CARETEAM}
+{$IFDEF FHIR_CATALOGENTRY}
+  {$IFDEF FHIR_CATALOGENTRY}
+     frtCatalogEntry: ComposeCatalogEntry(this, '', 'CatalogEntry', TFhirCatalogEntry(resource), true, -1); 
+  {$ENDIF}
+{$ENDIF FHIR_CATALOGENTRY}
+{$IFDEF FHIR_CHARGEITEM}
+  {$IFDEF FHIR_CHARGEITEM}
+     frtChargeItem: ComposeChargeItem(this, '', 'ChargeItem', TFhirChargeItem(resource), true, -1); 
+  {$ENDIF}
+{$ENDIF FHIR_CHARGEITEM}
+{$IFDEF FHIR_CLAIM}
+  {$IFDEF FHIR_CLAIM}
+     frtClaim: ComposeClaim(this, '', 'Claim', TFhirClaim(resource), true, -1); 
+  {$ENDIF}
+{$ENDIF FHIR_CLAIM}
+{$IFDEF FHIR_CLAIMRESPONSE}
+  {$IFDEF FHIR_CLAIMRESPONSE}
+     frtClaimResponse: ComposeClaimResponse(this, '', 'ClaimResponse', TFhirClaimResponse(resource), true, -1); 
+  {$ENDIF}
+{$ENDIF FHIR_CLAIMRESPONSE}
+{$IFDEF FHIR_CLINICALIMPRESSION}
+  {$IFDEF FHIR_CLINICALIMPRESSION}
+     frtClinicalImpression: ComposeClinicalImpression(this, '', 'ClinicalImpression', TFhirClinicalImpression(resource), true, -1); 
+  {$ENDIF}
+{$ENDIF FHIR_CLINICALIMPRESSION}
+{$IFDEF FHIR_CODESYSTEM}
+  {$IFDEF FHIR_CODESYSTEM}
+     frtCodeSystem: ComposeCodeSystem(this, '', 'CodeSystem', TFhirCodeSystem(resource), true, -1); 
+  {$ENDIF}
+{$ENDIF FHIR_CODESYSTEM}
+{$IFDEF FHIR_COMMUNICATION}
+  {$IFDEF FHIR_COMMUNICATION}
+     frtCommunication: ComposeCommunication(this, '', 'Communication', TFhirCommunication(resource), true, -1); 
+  {$ENDIF}
+{$ENDIF FHIR_COMMUNICATION}
+{$IFDEF FHIR_COMMUNICATIONREQUEST}
+  {$IFDEF FHIR_COMMUNICATIONREQUEST}
+     frtCommunicationRequest: ComposeCommunicationRequest(this, '', 'CommunicationRequest', TFhirCommunicationRequest(resource), true, -1); 
+  {$ENDIF}
+{$ENDIF FHIR_COMMUNICATIONREQUEST}
+{$IFDEF FHIR_COMPARTMENTDEFINITION}
+  {$IFDEF FHIR_COMPARTMENTDEFINITION}
+     frtCompartmentDefinition: ComposeCompartmentDefinition(this, '', 'CompartmentDefinition', TFhirCompartmentDefinition(resource), true, -1); 
+  {$ENDIF}
+{$ENDIF FHIR_COMPARTMENTDEFINITION}
+{$IFDEF FHIR_COMPOSITION}
+  {$IFDEF FHIR_COMPOSITION}
+     frtComposition: ComposeComposition(this, '', 'Composition', TFhirComposition(resource), true, -1); 
+  {$ENDIF}
+{$ENDIF FHIR_COMPOSITION}
+{$IFDEF FHIR_CONCEPTMAP}
+  {$IFDEF FHIR_CONCEPTMAP}
+     frtConceptMap: ComposeConceptMap(this, '', 'ConceptMap', TFhirConceptMap(resource), true, -1); 
+  {$ENDIF}
+{$ENDIF FHIR_CONCEPTMAP}
+{$IFDEF FHIR_CONDITION}
+  {$IFDEF FHIR_CONDITION}
+     frtCondition: ComposeCondition(this, '', 'Condition', TFhirCondition(resource), true, -1); 
+  {$ENDIF}
+{$ENDIF FHIR_CONDITION}
+{$IFDEF FHIR_CONSENT}
+  {$IFDEF FHIR_CONSENT}
+     frtConsent: ComposeConsent(this, '', 'Consent', TFhirConsent(resource), true, -1); 
+  {$ENDIF}
+{$ENDIF FHIR_CONSENT}
+{$IFDEF FHIR_CONTRACT}
+  {$IFDEF FHIR_CONTRACT}
+     frtContract: ComposeContract(this, '', 'Contract', TFhirContract(resource), true, -1); 
+  {$ENDIF}
+{$ENDIF FHIR_CONTRACT}
+{$IFDEF FHIR_COVERAGE}
+  {$IFDEF FHIR_COVERAGE}
+     frtCoverage: ComposeCoverage(this, '', 'Coverage', TFhirCoverage(resource), true, -1); 
+  {$ENDIF}
+{$ENDIF FHIR_COVERAGE}
+{$IFDEF FHIR_DETECTEDISSUE}
+  {$IFDEF FHIR_DETECTEDISSUE}
+     frtDetectedIssue: ComposeDetectedIssue(this, '', 'DetectedIssue', TFhirDetectedIssue(resource), true, -1); 
+  {$ENDIF}
+{$ENDIF FHIR_DETECTEDISSUE}
+{$IFDEF FHIR_DEVICE}
+  {$IFDEF FHIR_DEVICE}
+     frtDevice: ComposeDevice(this, '', 'Device', TFhirDevice(resource), true, -1); 
+  {$ENDIF}
+{$ENDIF FHIR_DEVICE}
+{$IFDEF FHIR_DEVICECOMPONENT}
+  {$IFDEF FHIR_DEVICECOMPONENT}
+     frtDeviceComponent: ComposeDeviceComponent(this, '', 'DeviceComponent', TFhirDeviceComponent(resource), true, -1); 
+  {$ENDIF}
+{$ENDIF FHIR_DEVICECOMPONENT}
+{$IFDEF FHIR_DEVICEMETRIC}
+  {$IFDEF FHIR_DEVICEMETRIC}
+     frtDeviceMetric: ComposeDeviceMetric(this, '', 'DeviceMetric', TFhirDeviceMetric(resource), true, -1); 
+  {$ENDIF}
+{$ENDIF FHIR_DEVICEMETRIC}
+{$IFDEF FHIR_DEVICEREQUEST}
+  {$IFDEF FHIR_DEVICEREQUEST}
+     frtDeviceRequest: ComposeDeviceRequest(this, '', 'DeviceRequest', TFhirDeviceRequest(resource), true, -1); 
+  {$ENDIF}
+{$ENDIF FHIR_DEVICEREQUEST}
+{$IFDEF FHIR_DEVICEUSESTATEMENT}
+  {$IFDEF FHIR_DEVICEUSESTATEMENT}
+     frtDeviceUseStatement: ComposeDeviceUseStatement(this, '', 'DeviceUseStatement', TFhirDeviceUseStatement(resource), true, -1); 
+  {$ENDIF}
+{$ENDIF FHIR_DEVICEUSESTATEMENT}
+{$IFDEF FHIR_DIAGNOSTICREPORT}
+  {$IFDEF FHIR_DIAGNOSTICREPORT}
+     frtDiagnosticReport: ComposeDiagnosticReport(this, '', 'DiagnosticReport', TFhirDiagnosticReport(resource), true, -1); 
+  {$ENDIF}
+{$ENDIF FHIR_DIAGNOSTICREPORT}
+{$IFDEF FHIR_DOCUMENTMANIFEST}
+  {$IFDEF FHIR_DOCUMENTMANIFEST}
+     frtDocumentManifest: ComposeDocumentManifest(this, '', 'DocumentManifest', TFhirDocumentManifest(resource), true, -1); 
+  {$ENDIF}
+{$ENDIF FHIR_DOCUMENTMANIFEST}
+{$IFDEF FHIR_DOCUMENTREFERENCE}
+  {$IFDEF FHIR_DOCUMENTREFERENCE}
+     frtDocumentReference: ComposeDocumentReference(this, '', 'DocumentReference', TFhirDocumentReference(resource), true, -1); 
+  {$ENDIF}
+{$ENDIF FHIR_DOCUMENTREFERENCE}
+{$IFDEF FHIR_ELIGIBILITYREQUEST}
+  {$IFDEF FHIR_ELIGIBILITYREQUEST}
+     frtEligibilityRequest: ComposeEligibilityRequest(this, '', 'EligibilityRequest', TFhirEligibilityRequest(resource), true, -1); 
+  {$ENDIF}
+{$ENDIF FHIR_ELIGIBILITYREQUEST}
+{$IFDEF FHIR_ELIGIBILITYRESPONSE}
+  {$IFDEF FHIR_ELIGIBILITYRESPONSE}
+     frtEligibilityResponse: ComposeEligibilityResponse(this, '', 'EligibilityResponse', TFhirEligibilityResponse(resource), true, -1); 
+  {$ENDIF}
+{$ENDIF FHIR_ELIGIBILITYRESPONSE}
+{$IFDEF FHIR_ENCOUNTER}
+  {$IFDEF FHIR_ENCOUNTER}
+     frtEncounter: ComposeEncounter(this, '', 'Encounter', TFhirEncounter(resource), true, -1); 
+  {$ENDIF}
+{$ENDIF FHIR_ENCOUNTER}
+{$IFDEF FHIR_ENDPOINT}
+  {$IFDEF FHIR_ENDPOINT}
+     frtEndpoint: ComposeEndpoint(this, '', 'Endpoint', TFhirEndpoint(resource), true, -1); 
+  {$ENDIF}
+{$ENDIF FHIR_ENDPOINT}
+{$IFDEF FHIR_ENROLLMENTREQUEST}
+  {$IFDEF FHIR_ENROLLMENTREQUEST}
+     frtEnrollmentRequest: ComposeEnrollmentRequest(this, '', 'EnrollmentRequest', TFhirEnrollmentRequest(resource), true, -1); 
+  {$ENDIF}
+{$ENDIF FHIR_ENROLLMENTREQUEST}
+{$IFDEF FHIR_ENROLLMENTRESPONSE}
+  {$IFDEF FHIR_ENROLLMENTRESPONSE}
+     frtEnrollmentResponse: ComposeEnrollmentResponse(this, '', 'EnrollmentResponse', TFhirEnrollmentResponse(resource), true, -1); 
+  {$ENDIF}
+{$ENDIF FHIR_ENROLLMENTRESPONSE}
+{$IFDEF FHIR_EPISODEOFCARE}
+  {$IFDEF FHIR_EPISODEOFCARE}
+     frtEpisodeOfCare: ComposeEpisodeOfCare(this, '', 'EpisodeOfCare', TFhirEpisodeOfCare(resource), true, -1); 
+  {$ENDIF}
+{$ENDIF FHIR_EPISODEOFCARE}
+{$IFDEF FHIR_EVENTDEFINITION}
+  {$IFDEF FHIR_EVENTDEFINITION}
+     frtEventDefinition: ComposeEventDefinition(this, '', 'EventDefinition', TFhirEventDefinition(resource), true, -1); 
+  {$ENDIF}
+{$ENDIF FHIR_EVENTDEFINITION}
+{$IFDEF FHIR_EXPANSIONPROFILE}
+  {$IFDEF FHIR_EXPANSIONPROFILE}
+     frtExpansionProfile: ComposeExpansionProfile(this, '', 'ExpansionProfile', TFhirExpansionProfile(resource), true, -1); 
+  {$ENDIF}
+{$ENDIF FHIR_EXPANSIONPROFILE}
+{$IFDEF FHIR_EXPLANATIONOFBENEFIT}
+  {$IFDEF FHIR_EXPLANATIONOFBENEFIT}
+     frtExplanationOfBenefit: ComposeExplanationOfBenefit(this, '', 'ExplanationOfBenefit', TFhirExplanationOfBenefit(resource), true, -1); 
+  {$ENDIF}
+{$ENDIF FHIR_EXPLANATIONOFBENEFIT}
+{$IFDEF FHIR_FAMILYMEMBERHISTORY}
+  {$IFDEF FHIR_FAMILYMEMBERHISTORY}
+     frtFamilyMemberHistory: ComposeFamilyMemberHistory(this, '', 'FamilyMemberHistory', TFhirFamilyMemberHistory(resource), true, -1); 
+  {$ENDIF}
+{$ENDIF FHIR_FAMILYMEMBERHISTORY}
+{$IFDEF FHIR_FLAG}
+  {$IFDEF FHIR_FLAG}
+     frtFlag: ComposeFlag(this, '', 'Flag', TFhirFlag(resource), true, -1); 
+  {$ENDIF}
+{$ENDIF FHIR_FLAG}
+{$IFDEF FHIR_GOAL}
+  {$IFDEF FHIR_GOAL}
+     frtGoal: ComposeGoal(this, '', 'Goal', TFhirGoal(resource), true, -1); 
+  {$ENDIF}
+{$ENDIF FHIR_GOAL}
+{$IFDEF FHIR_GRAPHDEFINITION}
+  {$IFDEF FHIR_GRAPHDEFINITION}
+     frtGraphDefinition: ComposeGraphDefinition(this, '', 'GraphDefinition', TFhirGraphDefinition(resource), true, -1); 
+  {$ENDIF}
+{$ENDIF FHIR_GRAPHDEFINITION}
+{$IFDEF FHIR_GROUP}
+  {$IFDEF FHIR_GROUP}
+     frtGroup: ComposeGroup(this, '', 'Group', TFhirGroup(resource), true, -1); 
+  {$ENDIF}
+{$ENDIF FHIR_GROUP}
+{$IFDEF FHIR_GUIDANCERESPONSE}
+  {$IFDEF FHIR_GUIDANCERESPONSE}
+     frtGuidanceResponse: ComposeGuidanceResponse(this, '', 'GuidanceResponse', TFhirGuidanceResponse(resource), true, -1); 
+  {$ENDIF}
+{$ENDIF FHIR_GUIDANCERESPONSE}
+{$IFDEF FHIR_HEALTHCARESERVICE}
+  {$IFDEF FHIR_HEALTHCARESERVICE}
+     frtHealthcareService: ComposeHealthcareService(this, '', 'HealthcareService', TFhirHealthcareService(resource), true, -1); 
+  {$ENDIF}
+{$ENDIF FHIR_HEALTHCARESERVICE}
+{$IFDEF FHIR_IMAGINGMANIFEST}
+  {$IFDEF FHIR_IMAGINGMANIFEST}
+     frtImagingManifest: ComposeImagingManifest(this, '', 'ImagingManifest', TFhirImagingManifest(resource), true, -1); 
+  {$ENDIF}
+{$ENDIF FHIR_IMAGINGMANIFEST}
+{$IFDEF FHIR_IMAGINGSTUDY}
+  {$IFDEF FHIR_IMAGINGSTUDY}
+     frtImagingStudy: ComposeImagingStudy(this, '', 'ImagingStudy', TFhirImagingStudy(resource), true, -1); 
+  {$ENDIF}
+{$ENDIF FHIR_IMAGINGSTUDY}
+{$IFDEF FHIR_IMMUNIZATION}
+  {$IFDEF FHIR_IMMUNIZATION}
+     frtImmunization: ComposeImmunization(this, '', 'Immunization', TFhirImmunization(resource), true, -1); 
+  {$ENDIF}
+{$ENDIF FHIR_IMMUNIZATION}
+{$IFDEF FHIR_IMMUNIZATIONRECOMMENDATION}
+  {$IFDEF FHIR_IMMUNIZATIONRECOMMENDATION}
+     frtImmunizationRecommendation: ComposeImmunizationRecommendation(this, '', 'ImmunizationRecommendation', TFhirImmunizationRecommendation(resource), true, -1); 
+  {$ENDIF}
+{$ENDIF FHIR_IMMUNIZATIONRECOMMENDATION}
+{$IFDEF FHIR_IMPLEMENTATIONGUIDE}
+  {$IFDEF FHIR_IMPLEMENTATIONGUIDE}
+     frtImplementationGuide: ComposeImplementationGuide(this, '', 'ImplementationGuide', TFhirImplementationGuide(resource), true, -1); 
+  {$ENDIF}
+{$ENDIF FHIR_IMPLEMENTATIONGUIDE}
+{$IFDEF FHIR_LIBRARY}
+  {$IFDEF FHIR_LIBRARY}
+     frtLibrary: ComposeLibrary(this, '', 'Library', TFhirLibrary(resource), true, -1); 
+  {$ENDIF}
+{$ENDIF FHIR_LIBRARY}
+{$IFDEF FHIR_LINKAGE}
+  {$IFDEF FHIR_LINKAGE}
+     frtLinkage: ComposeLinkage(this, '', 'Linkage', TFhirLinkage(resource), true, -1); 
+  {$ENDIF}
+{$ENDIF FHIR_LINKAGE}
+{$IFDEF FHIR_LIST}
+  {$IFDEF FHIR_LIST}
+     frtList: ComposeList(this, '', 'List', TFhirList(resource), true, -1); 
+  {$ENDIF}
+{$ENDIF FHIR_LIST}
+{$IFDEF FHIR_LOCATION}
+  {$IFDEF FHIR_LOCATION}
+     frtLocation: ComposeLocation(this, '', 'Location', TFhirLocation(resource), true, -1); 
+  {$ENDIF}
+{$ENDIF FHIR_LOCATION}
+{$IFDEF FHIR_MEASURE}
+  {$IFDEF FHIR_MEASURE}
+     frtMeasure: ComposeMeasure(this, '', 'Measure', TFhirMeasure(resource), true, -1); 
+  {$ENDIF}
+{$ENDIF FHIR_MEASURE}
+{$IFDEF FHIR_MEASUREREPORT}
+  {$IFDEF FHIR_MEASUREREPORT}
+     frtMeasureReport: ComposeMeasureReport(this, '', 'MeasureReport', TFhirMeasureReport(resource), true, -1); 
+  {$ENDIF}
+{$ENDIF FHIR_MEASUREREPORT}
+{$IFDEF FHIR_MEDIA}
+  {$IFDEF FHIR_MEDIA}
+     frtMedia: ComposeMedia(this, '', 'Media', TFhirMedia(resource), true, -1); 
+  {$ENDIF}
+{$ENDIF FHIR_MEDIA}
+{$IFDEF FHIR_MEDICATION}
+  {$IFDEF FHIR_MEDICATION}
+     frtMedication: ComposeMedication(this, '', 'Medication', TFhirMedication(resource), true, -1); 
+  {$ENDIF}
+{$ENDIF FHIR_MEDICATION}
+{$IFDEF FHIR_MEDICATIONADMINISTRATION}
+  {$IFDEF FHIR_MEDICATIONADMINISTRATION}
+     frtMedicationAdministration: ComposeMedicationAdministration(this, '', 'MedicationAdministration', TFhirMedicationAdministration(resource), true, -1); 
+  {$ENDIF}
+{$ENDIF FHIR_MEDICATIONADMINISTRATION}
+{$IFDEF FHIR_MEDICATIONDISPENSE}
+  {$IFDEF FHIR_MEDICATIONDISPENSE}
+     frtMedicationDispense: ComposeMedicationDispense(this, '', 'MedicationDispense', TFhirMedicationDispense(resource), true, -1); 
+  {$ENDIF}
+{$ENDIF FHIR_MEDICATIONDISPENSE}
+{$IFDEF FHIR_MEDICATIONREQUEST}
+  {$IFDEF FHIR_MEDICATIONREQUEST}
+     frtMedicationRequest: ComposeMedicationRequest(this, '', 'MedicationRequest', TFhirMedicationRequest(resource), true, -1); 
+  {$ENDIF}
+{$ENDIF FHIR_MEDICATIONREQUEST}
+{$IFDEF FHIR_MEDICATIONSTATEMENT}
+  {$IFDEF FHIR_MEDICATIONSTATEMENT}
+     frtMedicationStatement: ComposeMedicationStatement(this, '', 'MedicationStatement', TFhirMedicationStatement(resource), true, -1); 
+  {$ENDIF}
+{$ENDIF FHIR_MEDICATIONSTATEMENT}
+{$IFDEF FHIR_MESSAGEDEFINITION}
+  {$IFDEF FHIR_MESSAGEDEFINITION}
+     frtMessageDefinition: ComposeMessageDefinition(this, '', 'MessageDefinition', TFhirMessageDefinition(resource), true, -1); 
+  {$ENDIF}
+{$ENDIF FHIR_MESSAGEDEFINITION}
+{$IFDEF FHIR_MESSAGEHEADER}
+  {$IFDEF FHIR_MESSAGEHEADER}
+     frtMessageHeader: ComposeMessageHeader(this, '', 'MessageHeader', TFhirMessageHeader(resource), true, -1); 
+  {$ENDIF}
+{$ENDIF FHIR_MESSAGEHEADER}
+{$IFDEF FHIR_NAMINGSYSTEM}
+  {$IFDEF FHIR_NAMINGSYSTEM}
+     frtNamingSystem: ComposeNamingSystem(this, '', 'NamingSystem', TFhirNamingSystem(resource), true, -1); 
+  {$ENDIF}
+{$ENDIF FHIR_NAMINGSYSTEM}
+{$IFDEF FHIR_NUTRITIONORDER}
+  {$IFDEF FHIR_NUTRITIONORDER}
+     frtNutritionOrder: ComposeNutritionOrder(this, '', 'NutritionOrder', TFhirNutritionOrder(resource), true, -1); 
+  {$ENDIF}
+{$ENDIF FHIR_NUTRITIONORDER}
+{$IFDEF FHIR_OBSERVATION}
+  {$IFDEF FHIR_OBSERVATION}
+     frtObservation: ComposeObservation(this, '', 'Observation', TFhirObservation(resource), true, -1); 
+  {$ENDIF}
+{$ENDIF FHIR_OBSERVATION}
+{$IFDEF FHIR_OPERATIONDEFINITION}
+  {$IFDEF FHIR_OPERATIONDEFINITION}
+     frtOperationDefinition: ComposeOperationDefinition(this, '', 'OperationDefinition', TFhirOperationDefinition(resource), true, -1); 
+  {$ENDIF}
+{$ENDIF FHIR_OPERATIONDEFINITION}
+{$IFDEF FHIR_OPERATIONOUTCOME}
+  {$IFDEF FHIR_OPERATIONOUTCOME}
+     frtOperationOutcome: ComposeOperationOutcome(this, '', 'OperationOutcome', TFhirOperationOutcome(resource), true, -1); 
+  {$ENDIF}
+{$ENDIF FHIR_OPERATIONOUTCOME}
+{$IFDEF FHIR_ORGANIZATION}
+  {$IFDEF FHIR_ORGANIZATION}
+     frtOrganization: ComposeOrganization(this, '', 'Organization', TFhirOrganization(resource), true, -1); 
+  {$ENDIF}
+{$ENDIF FHIR_ORGANIZATION}
+{$IFDEF FHIR_PATIENT}
+  {$IFDEF FHIR_PATIENT}
+     frtPatient: ComposePatient(this, '', 'Patient', TFhirPatient(resource), true, -1); 
+  {$ENDIF}
+{$ENDIF FHIR_PATIENT}
+{$IFDEF FHIR_PAYMENTNOTICE}
+  {$IFDEF FHIR_PAYMENTNOTICE}
+     frtPaymentNotice: ComposePaymentNotice(this, '', 'PaymentNotice', TFhirPaymentNotice(resource), true, -1); 
+  {$ENDIF}
+{$ENDIF FHIR_PAYMENTNOTICE}
+{$IFDEF FHIR_PAYMENTRECONCILIATION}
+  {$IFDEF FHIR_PAYMENTRECONCILIATION}
+     frtPaymentReconciliation: ComposePaymentReconciliation(this, '', 'PaymentReconciliation', TFhirPaymentReconciliation(resource), true, -1); 
+  {$ENDIF}
+{$ENDIF FHIR_PAYMENTRECONCILIATION}
+{$IFDEF FHIR_PERSON}
+  {$IFDEF FHIR_PERSON}
+     frtPerson: ComposePerson(this, '', 'Person', TFhirPerson(resource), true, -1); 
+  {$ENDIF}
+{$ENDIF FHIR_PERSON}
+{$IFDEF FHIR_PLANDEFINITION}
+  {$IFDEF FHIR_PLANDEFINITION}
+     frtPlanDefinition: ComposePlanDefinition(this, '', 'PlanDefinition', TFhirPlanDefinition(resource), true, -1); 
+  {$ENDIF}
+{$ENDIF FHIR_PLANDEFINITION}
+{$IFDEF FHIR_PRACTITIONER}
+  {$IFDEF FHIR_PRACTITIONER}
+     frtPractitioner: ComposePractitioner(this, '', 'Practitioner', TFhirPractitioner(resource), true, -1); 
+  {$ENDIF}
+{$ENDIF FHIR_PRACTITIONER}
+{$IFDEF FHIR_PRACTITIONERROLE}
+  {$IFDEF FHIR_PRACTITIONERROLE}
+     frtPractitionerRole: ComposePractitionerRole(this, '', 'PractitionerRole', TFhirPractitionerRole(resource), true, -1); 
+  {$ENDIF}
+{$ENDIF FHIR_PRACTITIONERROLE}
+{$IFDEF FHIR_PROCEDURE}
+  {$IFDEF FHIR_PROCEDURE}
+     frtProcedure: ComposeProcedure(this, '', 'Procedure', TFhirProcedure(resource), true, -1); 
+  {$ENDIF}
+{$ENDIF FHIR_PROCEDURE}
+{$IFDEF FHIR_PROCEDUREREQUEST}
+  {$IFDEF FHIR_PROCEDUREREQUEST}
+     frtProcedureRequest: ComposeProcedureRequest(this, '', 'ProcedureRequest', TFhirProcedureRequest(resource), true, -1); 
+  {$ENDIF}
+{$ENDIF FHIR_PROCEDUREREQUEST}
+{$IFDEF FHIR_PROCESSREQUEST}
+  {$IFDEF FHIR_PROCESSREQUEST}
+     frtProcessRequest: ComposeProcessRequest(this, '', 'ProcessRequest', TFhirProcessRequest(resource), true, -1); 
+  {$ENDIF}
+{$ENDIF FHIR_PROCESSREQUEST}
+{$IFDEF FHIR_PROCESSRESPONSE}
+  {$IFDEF FHIR_PROCESSRESPONSE}
+     frtProcessResponse: ComposeProcessResponse(this, '', 'ProcessResponse', TFhirProcessResponse(resource), true, -1); 
+  {$ENDIF}
+{$ENDIF FHIR_PROCESSRESPONSE}
+{$IFDEF FHIR_PROVENANCE}
+  {$IFDEF FHIR_PROVENANCE}
+     frtProvenance: ComposeProvenance(this, '', 'Provenance', TFhirProvenance(resource), true, -1); 
+  {$ENDIF}
+{$ENDIF FHIR_PROVENANCE}
+{$IFDEF FHIR_QUESTIONNAIRE}
+  {$IFDEF FHIR_QUESTIONNAIRE}
+     frtQuestionnaire: ComposeQuestionnaire(this, '', 'Questionnaire', TFhirQuestionnaire(resource), true, -1); 
+  {$ENDIF}
+{$ENDIF FHIR_QUESTIONNAIRE}
+{$IFDEF FHIR_QUESTIONNAIRERESPONSE}
+  {$IFDEF FHIR_QUESTIONNAIRERESPONSE}
+     frtQuestionnaireResponse: ComposeQuestionnaireResponse(this, '', 'QuestionnaireResponse', TFhirQuestionnaireResponse(resource), true, -1); 
+  {$ENDIF}
+{$ENDIF FHIR_QUESTIONNAIRERESPONSE}
+{$IFDEF FHIR_RELATEDPERSON}
+  {$IFDEF FHIR_RELATEDPERSON}
+     frtRelatedPerson: ComposeRelatedPerson(this, '', 'RelatedPerson', TFhirRelatedPerson(resource), true, -1); 
+  {$ENDIF}
+{$ENDIF FHIR_RELATEDPERSON}
+{$IFDEF FHIR_REQUESTGROUP}
+  {$IFDEF FHIR_REQUESTGROUP}
+     frtRequestGroup: ComposeRequestGroup(this, '', 'RequestGroup', TFhirRequestGroup(resource), true, -1); 
+  {$ENDIF}
+{$ENDIF FHIR_REQUESTGROUP}
+{$IFDEF FHIR_RESEARCHSTUDY}
+  {$IFDEF FHIR_RESEARCHSTUDY}
+     frtResearchStudy: ComposeResearchStudy(this, '', 'ResearchStudy', TFhirResearchStudy(resource), true, -1); 
+  {$ENDIF}
+{$ENDIF FHIR_RESEARCHSTUDY}
+{$IFDEF FHIR_RESEARCHSUBJECT}
+  {$IFDEF FHIR_RESEARCHSUBJECT}
+     frtResearchSubject: ComposeResearchSubject(this, '', 'ResearchSubject', TFhirResearchSubject(resource), true, -1); 
+  {$ENDIF}
+{$ENDIF FHIR_RESEARCHSUBJECT}
+{$IFDEF FHIR_RISKASSESSMENT}
+  {$IFDEF FHIR_RISKASSESSMENT}
+     frtRiskAssessment: ComposeRiskAssessment(this, '', 'RiskAssessment', TFhirRiskAssessment(resource), true, -1); 
+  {$ENDIF}
+{$ENDIF FHIR_RISKASSESSMENT}
+{$IFDEF FHIR_SCHEDULE}
+  {$IFDEF FHIR_SCHEDULE}
+     frtSchedule: ComposeSchedule(this, '', 'Schedule', TFhirSchedule(resource), true, -1); 
+  {$ENDIF}
+{$ENDIF FHIR_SCHEDULE}
+{$IFDEF FHIR_SEARCHPARAMETER}
+  {$IFDEF FHIR_SEARCHPARAMETER}
+     frtSearchParameter: ComposeSearchParameter(this, '', 'SearchParameter', TFhirSearchParameter(resource), true, -1); 
+  {$ENDIF}
+{$ENDIF FHIR_SEARCHPARAMETER}
+{$IFDEF FHIR_SEQUENCE}
+  {$IFDEF FHIR_SEQUENCE}
+     frtSequence: ComposeSequence(this, '', 'Sequence', TFhirSequence(resource), true, -1); 
+  {$ENDIF}
+{$ENDIF FHIR_SEQUENCE}
+{$IFDEF FHIR_SERVICEDEFINITION}
+  {$IFDEF FHIR_SERVICEDEFINITION}
+     frtServiceDefinition: ComposeServiceDefinition(this, '', 'ServiceDefinition', TFhirServiceDefinition(resource), true, -1); 
+  {$ENDIF}
+{$ENDIF FHIR_SERVICEDEFINITION}
+{$IFDEF FHIR_SLOT}
+  {$IFDEF FHIR_SLOT}
+     frtSlot: ComposeSlot(this, '', 'Slot', TFhirSlot(resource), true, -1); 
+  {$ENDIF}
+{$ENDIF FHIR_SLOT}
+{$IFDEF FHIR_SPECIMEN}
+  {$IFDEF FHIR_SPECIMEN}
+     frtSpecimen: ComposeSpecimen(this, '', 'Specimen', TFhirSpecimen(resource), true, -1); 
+  {$ENDIF}
+{$ENDIF FHIR_SPECIMEN}
+{$IFDEF FHIR_SPECIMENDEFINITION}
+  {$IFDEF FHIR_SPECIMENDEFINITION}
+     frtSpecimenDefinition: ComposeSpecimenDefinition(this, '', 'SpecimenDefinition', TFhirSpecimenDefinition(resource), true, -1); 
+  {$ENDIF}
+{$ENDIF FHIR_SPECIMENDEFINITION}
+{$IFDEF FHIR_STRUCTUREDEFINITION}
+  {$IFDEF FHIR_STRUCTUREDEFINITION}
+     frtStructureDefinition: ComposeStructureDefinition(this, '', 'StructureDefinition', TFhirStructureDefinition(resource), true, -1); 
+  {$ENDIF}
+{$ENDIF FHIR_STRUCTUREDEFINITION}
+{$IFDEF FHIR_STRUCTUREMAP}
+  {$IFDEF FHIR_STRUCTUREMAP}
+     frtStructureMap: ComposeStructureMap(this, '', 'StructureMap', TFhirStructureMap(resource), true, -1); 
+  {$ENDIF}
+{$ENDIF FHIR_STRUCTUREMAP}
+{$IFDEF FHIR_SUBSCRIPTION}
+  {$IFDEF FHIR_SUBSCRIPTION}
+     frtSubscription: ComposeSubscription(this, '', 'Subscription', TFhirSubscription(resource), true, -1); 
+  {$ENDIF}
+{$ENDIF FHIR_SUBSCRIPTION}
+{$IFDEF FHIR_SUBSTANCE}
+  {$IFDEF FHIR_SUBSTANCE}
+     frtSubstance: ComposeSubstance(this, '', 'Substance', TFhirSubstance(resource), true, -1); 
+  {$ENDIF}
+{$ENDIF FHIR_SUBSTANCE}
+{$IFDEF FHIR_SUPPLYDELIVERY}
+  {$IFDEF FHIR_SUPPLYDELIVERY}
+     frtSupplyDelivery: ComposeSupplyDelivery(this, '', 'SupplyDelivery', TFhirSupplyDelivery(resource), true, -1); 
+  {$ENDIF}
+{$ENDIF FHIR_SUPPLYDELIVERY}
+{$IFDEF FHIR_SUPPLYREQUEST}
+  {$IFDEF FHIR_SUPPLYREQUEST}
+     frtSupplyRequest: ComposeSupplyRequest(this, '', 'SupplyRequest', TFhirSupplyRequest(resource), true, -1); 
+  {$ENDIF}
+{$ENDIF FHIR_SUPPLYREQUEST}
+{$IFDEF FHIR_TASK}
+  {$IFDEF FHIR_TASK}
+     frtTask: ComposeTask(this, '', 'Task', TFhirTask(resource), true, -1); 
+  {$ENDIF}
+{$ENDIF FHIR_TASK}
+{$IFDEF FHIR_TESTREPORT}
+  {$IFDEF FHIR_TESTREPORT}
+     frtTestReport: ComposeTestReport(this, '', 'TestReport', TFhirTestReport(resource), true, -1); 
+  {$ENDIF}
+{$ENDIF FHIR_TESTREPORT}
+{$IFDEF FHIR_TESTSCRIPT}
+  {$IFDEF FHIR_TESTSCRIPT}
+     frtTestScript: ComposeTestScript(this, '', 'TestScript', TFhirTestScript(resource), true, -1); 
+  {$ENDIF}
+{$ENDIF FHIR_TESTSCRIPT}
+{$IFDEF FHIR_VALUESET}
+  {$IFDEF FHIR_VALUESET}
+     frtValueSet: ComposeValueSet(this, '', 'ValueSet', TFhirValueSet(resource), true, -1); 
+  {$ENDIF}
+{$ENDIF FHIR_VALUESET}
+{$IFDEF FHIR_VISIONPRESCRIPTION}
+  {$IFDEF FHIR_VISIONPRESCRIPTION}
+     frtVisionPrescription: ComposeVisionPrescription(this, '', 'VisionPrescription', TFhirVisionPrescription(resource), true, -1); 
+  {$ENDIF}
+{$ENDIF FHIR_VISIONPRESCRIPTION}
+{$IFDEF FHIR_WORKFLOWEXAMPLE}
+  {$IFDEF FHIR_WORKFLOWEXAMPLE}
+     frtWorkflowExample: ComposeWorkflowExample(this, '', 'WorkflowExample', TFhirWorkflowExample(resource), true, -1); 
+  {$ENDIF}
+{$ENDIF FHIR_WORKFLOWEXAMPLE}
   else
     raise Exception.create('Internal error: the resource type '+CODES_TFhirResourceType[resource.ResourceType]+' is not a valid resource type');
   end;
@@ -36405,244 +37833,718 @@ var
   s : String;
 begin
   s := rdfsType(obj);
+ {$IFDEF FHIR_PARAMETERS}
   if s = 'Parameters' Then
     result := ParseParameters(obj)
-  else if s = 'Account' Then
-    result := ParseAccount(obj)
-  else if s = 'ActivityDefinition' Then
-    result := ParseActivityDefinition(obj)
-  else if s = 'AdverseEvent' Then
-    result := ParseAdverseEvent(obj)
-  else if s = 'AllergyIntolerance' Then
-    result := ParseAllergyIntolerance(obj)
-  else if s = 'Appointment' Then
-    result := ParseAppointment(obj)
-  else if s = 'AppointmentResponse' Then
-    result := ParseAppointmentResponse(obj)
-  else if s = 'AuditEvent' Then
-    result := ParseAuditEvent(obj)
-  else if s = 'Basic' Then
-    result := ParseBasic(obj)
-  else if s = 'Binary' Then
-    result := ParseBinary(obj)
-  else if s = 'BodyStructure' Then
-    result := ParseBodyStructure(obj)
-  else if s = 'Bundle' Then
-    result := ParseBundle(obj)
-  else if s = 'CapabilityStatement' Then
-    result := ParseCapabilityStatement(obj)
-  else if s = 'CarePlan' Then
-    result := ParseCarePlan(obj)
-  else if s = 'CareTeam' Then
-    result := ParseCareTeam(obj)
-  else if s = 'CatalogEntry' Then
-    result := ParseCatalogEntry(obj)
-  else if s = 'ChargeItem' Then
-    result := ParseChargeItem(obj)
-  else if s = 'Claim' Then
-    result := ParseClaim(obj)
-  else if s = 'ClaimResponse' Then
-    result := ParseClaimResponse(obj)
-  else if s = 'ClinicalImpression' Then
-    result := ParseClinicalImpression(obj)
-  else if s = 'CodeSystem' Then
-    result := ParseCodeSystem(obj)
-  else if s = 'Communication' Then
-    result := ParseCommunication(obj)
-  else if s = 'CommunicationRequest' Then
-    result := ParseCommunicationRequest(obj)
-  else if s = 'CompartmentDefinition' Then
-    result := ParseCompartmentDefinition(obj)
-  else if s = 'Composition' Then
-    result := ParseComposition(obj)
-  else if s = 'ConceptMap' Then
-    result := ParseConceptMap(obj)
-  else if s = 'Condition' Then
-    result := ParseCondition(obj)
-  else if s = 'Consent' Then
-    result := ParseConsent(obj)
-  else if s = 'Contract' Then
-    result := ParseContract(obj)
-  else if s = 'Coverage' Then
-    result := ParseCoverage(obj)
-  else if s = 'DetectedIssue' Then
-    result := ParseDetectedIssue(obj)
-  else if s = 'Device' Then
-    result := ParseDevice(obj)
-  else if s = 'DeviceComponent' Then
-    result := ParseDeviceComponent(obj)
-  else if s = 'DeviceMetric' Then
-    result := ParseDeviceMetric(obj)
-  else if s = 'DeviceRequest' Then
-    result := ParseDeviceRequest(obj)
-  else if s = 'DeviceUseStatement' Then
-    result := ParseDeviceUseStatement(obj)
-  else if s = 'DiagnosticReport' Then
-    result := ParseDiagnosticReport(obj)
-  else if s = 'DocumentManifest' Then
-    result := ParseDocumentManifest(obj)
-  else if s = 'DocumentReference' Then
-    result := ParseDocumentReference(obj)
-  else if s = 'EligibilityRequest' Then
-    result := ParseEligibilityRequest(obj)
-  else if s = 'EligibilityResponse' Then
-    result := ParseEligibilityResponse(obj)
-  else if s = 'Encounter' Then
-    result := ParseEncounter(obj)
-  else if s = 'Endpoint' Then
-    result := ParseEndpoint(obj)
-  else if s = 'EnrollmentRequest' Then
-    result := ParseEnrollmentRequest(obj)
-  else if s = 'EnrollmentResponse' Then
-    result := ParseEnrollmentResponse(obj)
-  else if s = 'EpisodeOfCare' Then
-    result := ParseEpisodeOfCare(obj)
-  else if s = 'EventDefinition' Then
-    result := ParseEventDefinition(obj)
-  else if s = 'ExpansionProfile' Then
-    result := ParseExpansionProfile(obj)
-  else if s = 'ExplanationOfBenefit' Then
-    result := ParseExplanationOfBenefit(obj)
-  else if s = 'FamilyMemberHistory' Then
-    result := ParseFamilyMemberHistory(obj)
-  else if s = 'Flag' Then
-    result := ParseFlag(obj)
-  else if s = 'Goal' Then
-    result := ParseGoal(obj)
-  else if s = 'GraphDefinition' Then
-    result := ParseGraphDefinition(obj)
-  else if s = 'Group' Then
-    result := ParseGroup(obj)
-  else if s = 'GuidanceResponse' Then
-    result := ParseGuidanceResponse(obj)
-  else if s = 'HealthcareService' Then
-    result := ParseHealthcareService(obj)
-  else if s = 'ImagingManifest' Then
-    result := ParseImagingManifest(obj)
-  else if s = 'ImagingStudy' Then
-    result := ParseImagingStudy(obj)
-  else if s = 'Immunization' Then
-    result := ParseImmunization(obj)
-  else if s = 'ImmunizationRecommendation' Then
-    result := ParseImmunizationRecommendation(obj)
-  else if s = 'ImplementationGuide' Then
-    result := ParseImplementationGuide(obj)
-  else if s = 'Library' Then
-    result := ParseLibrary(obj)
-  else if s = 'Linkage' Then
-    result := ParseLinkage(obj)
-  else if s = 'List' Then
-    result := ParseList(obj)
-  else if s = 'Location' Then
-    result := ParseLocation(obj)
-  else if s = 'Measure' Then
-    result := ParseMeasure(obj)
-  else if s = 'MeasureReport' Then
-    result := ParseMeasureReport(obj)
-  else if s = 'Media' Then
-    result := ParseMedia(obj)
-  else if s = 'Medication' Then
-    result := ParseMedication(obj)
-  else if s = 'MedicationAdministration' Then
-    result := ParseMedicationAdministration(obj)
-  else if s = 'MedicationDispense' Then
-    result := ParseMedicationDispense(obj)
-  else if s = 'MedicationRequest' Then
-    result := ParseMedicationRequest(obj)
-  else if s = 'MedicationStatement' Then
-    result := ParseMedicationStatement(obj)
-  else if s = 'MessageDefinition' Then
-    result := ParseMessageDefinition(obj)
-  else if s = 'MessageHeader' Then
-    result := ParseMessageHeader(obj)
-  else if s = 'NamingSystem' Then
-    result := ParseNamingSystem(obj)
-  else if s = 'NutritionOrder' Then
-    result := ParseNutritionOrder(obj)
-  else if s = 'Observation' Then
-    result := ParseObservation(obj)
-  else if s = 'OperationDefinition' Then
-    result := ParseOperationDefinition(obj)
-  else if s = 'OperationOutcome' Then
-    result := ParseOperationOutcome(obj)
-  else if s = 'Organization' Then
-    result := ParseOrganization(obj)
-  else if s = 'Patient' Then
-    result := ParsePatient(obj)
-  else if s = 'PaymentNotice' Then
-    result := ParsePaymentNotice(obj)
-  else if s = 'PaymentReconciliation' Then
-    result := ParsePaymentReconciliation(obj)
-  else if s = 'Person' Then
-    result := ParsePerson(obj)
-  else if s = 'PlanDefinition' Then
-    result := ParsePlanDefinition(obj)
-  else if s = 'Practitioner' Then
-    result := ParsePractitioner(obj)
-  else if s = 'PractitionerRole' Then
-    result := ParsePractitionerRole(obj)
-  else if s = 'Procedure' Then
-    result := ParseProcedure(obj)
-  else if s = 'ProcedureRequest' Then
-    result := ParseProcedureRequest(obj)
-  else if s = 'ProcessRequest' Then
-    result := ParseProcessRequest(obj)
-  else if s = 'ProcessResponse' Then
-    result := ParseProcessResponse(obj)
-  else if s = 'Provenance' Then
-    result := ParseProvenance(obj)
-  else if s = 'Questionnaire' Then
-    result := ParseQuestionnaire(obj)
-  else if s = 'QuestionnaireResponse' Then
-    result := ParseQuestionnaireResponse(obj)
-  else if s = 'RelatedPerson' Then
-    result := ParseRelatedPerson(obj)
-  else if s = 'RequestGroup' Then
-    result := ParseRequestGroup(obj)
-  else if s = 'ResearchStudy' Then
-    result := ParseResearchStudy(obj)
-  else if s = 'ResearchSubject' Then
-    result := ParseResearchSubject(obj)
-  else if s = 'RiskAssessment' Then
-    result := ParseRiskAssessment(obj)
-  else if s = 'Schedule' Then
-    result := ParseSchedule(obj)
-  else if s = 'SearchParameter' Then
-    result := ParseSearchParameter(obj)
-  else if s = 'Sequence' Then
-    result := ParseSequence(obj)
-  else if s = 'ServiceDefinition' Then
-    result := ParseServiceDefinition(obj)
-  else if s = 'Slot' Then
-    result := ParseSlot(obj)
-  else if s = 'Specimen' Then
-    result := ParseSpecimen(obj)
-  else if s = 'SpecimenDefinition' Then
-    result := ParseSpecimenDefinition(obj)
-  else if s = 'StructureDefinition' Then
-    result := ParseStructureDefinition(obj)
-  else if s = 'StructureMap' Then
-    result := ParseStructureMap(obj)
-  else if s = 'Subscription' Then
-    result := ParseSubscription(obj)
-  else if s = 'Substance' Then
-    result := ParseSubstance(obj)
-  else if s = 'SupplyDelivery' Then
-    result := ParseSupplyDelivery(obj)
-  else if s = 'SupplyRequest' Then
-    result := ParseSupplyRequest(obj)
-  else if s = 'Task' Then
-    result := ParseTask(obj)
-  else if s = 'TestReport' Then
-    result := ParseTestReport(obj)
-  else if s = 'TestScript' Then
-    result := ParseTestScript(obj)
-  else if s = 'ValueSet' Then
-    result := ParseValueSet(obj)
-  else if s = 'VisionPrescription' Then
-    result := ParseVisionPrescription(obj)
-  else if s = 'WorkflowExample' Then
-    result := ParseWorkflowExample(obj)
+{$ENDIF FHIR_PARAMETERS}
+{$IFDEF FHIR_ACCOUNT}
+  {$IFDEF FHIR_ACCOUNT}
+   else if s = 'Account' Then
+    result := ParseAccount(obj) 
+  {$ENDIF}
+{$ENDIF FHIR_ACCOUNT}
+{$IFDEF FHIR_ACTIVITYDEFINITION}
+  {$IFDEF FHIR_ACTIVITYDEFINITION}
+   else if s = 'ActivityDefinition' Then
+    result := ParseActivityDefinition(obj) 
+  {$ENDIF}
+{$ENDIF FHIR_ACTIVITYDEFINITION}
+{$IFDEF FHIR_ADVERSEEVENT}
+  {$IFDEF FHIR_ADVERSEEVENT}
+   else if s = 'AdverseEvent' Then
+    result := ParseAdverseEvent(obj) 
+  {$ENDIF}
+{$ENDIF FHIR_ADVERSEEVENT}
+{$IFDEF FHIR_ALLERGYINTOLERANCE}
+  {$IFDEF FHIR_ALLERGYINTOLERANCE}
+   else if s = 'AllergyIntolerance' Then
+    result := ParseAllergyIntolerance(obj) 
+  {$ENDIF}
+{$ENDIF FHIR_ALLERGYINTOLERANCE}
+{$IFDEF FHIR_APPOINTMENT}
+  {$IFDEF FHIR_APPOINTMENT}
+   else if s = 'Appointment' Then
+    result := ParseAppointment(obj) 
+  {$ENDIF}
+{$ENDIF FHIR_APPOINTMENT}
+{$IFDEF FHIR_APPOINTMENTRESPONSE}
+  {$IFDEF FHIR_APPOINTMENTRESPONSE}
+   else if s = 'AppointmentResponse' Then
+    result := ParseAppointmentResponse(obj) 
+  {$ENDIF}
+{$ENDIF FHIR_APPOINTMENTRESPONSE}
+{$IFDEF FHIR_AUDITEVENT}
+  {$IFDEF FHIR_AUDITEVENT}
+   else if s = 'AuditEvent' Then
+    result := ParseAuditEvent(obj) 
+  {$ENDIF}
+{$ENDIF FHIR_AUDITEVENT}
+{$IFDEF FHIR_BASIC}
+  {$IFDEF FHIR_BASIC}
+   else if s = 'Basic' Then
+    result := ParseBasic(obj) 
+  {$ENDIF}
+{$ENDIF FHIR_BASIC}
+{$IFDEF FHIR_BINARY}
+  {$IFDEF FHIR_BINARY}
+   else if s = 'Binary' Then
+    result := ParseBinary(obj) 
+  {$ENDIF}
+{$ENDIF FHIR_BINARY}
+{$IFDEF FHIR_BODYSTRUCTURE}
+  {$IFDEF FHIR_BODYSTRUCTURE}
+   else if s = 'BodyStructure' Then
+    result := ParseBodyStructure(obj) 
+  {$ENDIF}
+{$ENDIF FHIR_BODYSTRUCTURE}
+{$IFDEF FHIR_BUNDLE}
+  {$IFDEF FHIR_BUNDLE}
+   else if s = 'Bundle' Then
+    result := ParseBundle(obj) 
+  {$ENDIF}
+{$ENDIF FHIR_BUNDLE}
+{$IFDEF FHIR_CAPABILITYSTATEMENT}
+  {$IFDEF FHIR_CAPABILITYSTATEMENT}
+   else if s = 'CapabilityStatement' Then
+    result := ParseCapabilityStatement(obj) 
+  {$ENDIF}
+{$ENDIF FHIR_CAPABILITYSTATEMENT}
+{$IFDEF FHIR_CAREPLAN}
+  {$IFDEF FHIR_CAREPLAN}
+   else if s = 'CarePlan' Then
+    result := ParseCarePlan(obj) 
+  {$ENDIF}
+{$ENDIF FHIR_CAREPLAN}
+{$IFDEF FHIR_CARETEAM}
+  {$IFDEF FHIR_CARETEAM}
+   else if s = 'CareTeam' Then
+    result := ParseCareTeam(obj) 
+  {$ENDIF}
+{$ENDIF FHIR_CARETEAM}
+{$IFDEF FHIR_CATALOGENTRY}
+  {$IFDEF FHIR_CATALOGENTRY}
+   else if s = 'CatalogEntry' Then
+    result := ParseCatalogEntry(obj) 
+  {$ENDIF}
+{$ENDIF FHIR_CATALOGENTRY}
+{$IFDEF FHIR_CHARGEITEM}
+  {$IFDEF FHIR_CHARGEITEM}
+   else if s = 'ChargeItem' Then
+    result := ParseChargeItem(obj) 
+  {$ENDIF}
+{$ENDIF FHIR_CHARGEITEM}
+{$IFDEF FHIR_CLAIM}
+  {$IFDEF FHIR_CLAIM}
+   else if s = 'Claim' Then
+    result := ParseClaim(obj) 
+  {$ENDIF}
+{$ENDIF FHIR_CLAIM}
+{$IFDEF FHIR_CLAIMRESPONSE}
+  {$IFDEF FHIR_CLAIMRESPONSE}
+   else if s = 'ClaimResponse' Then
+    result := ParseClaimResponse(obj) 
+  {$ENDIF}
+{$ENDIF FHIR_CLAIMRESPONSE}
+{$IFDEF FHIR_CLINICALIMPRESSION}
+  {$IFDEF FHIR_CLINICALIMPRESSION}
+   else if s = 'ClinicalImpression' Then
+    result := ParseClinicalImpression(obj) 
+  {$ENDIF}
+{$ENDIF FHIR_CLINICALIMPRESSION}
+{$IFDEF FHIR_CODESYSTEM}
+  {$IFDEF FHIR_CODESYSTEM}
+   else if s = 'CodeSystem' Then
+    result := ParseCodeSystem(obj) 
+  {$ENDIF}
+{$ENDIF FHIR_CODESYSTEM}
+{$IFDEF FHIR_COMMUNICATION}
+  {$IFDEF FHIR_COMMUNICATION}
+   else if s = 'Communication' Then
+    result := ParseCommunication(obj) 
+  {$ENDIF}
+{$ENDIF FHIR_COMMUNICATION}
+{$IFDEF FHIR_COMMUNICATIONREQUEST}
+  {$IFDEF FHIR_COMMUNICATIONREQUEST}
+   else if s = 'CommunicationRequest' Then
+    result := ParseCommunicationRequest(obj) 
+  {$ENDIF}
+{$ENDIF FHIR_COMMUNICATIONREQUEST}
+{$IFDEF FHIR_COMPARTMENTDEFINITION}
+  {$IFDEF FHIR_COMPARTMENTDEFINITION}
+   else if s = 'CompartmentDefinition' Then
+    result := ParseCompartmentDefinition(obj) 
+  {$ENDIF}
+{$ENDIF FHIR_COMPARTMENTDEFINITION}
+{$IFDEF FHIR_COMPOSITION}
+  {$IFDEF FHIR_COMPOSITION}
+   else if s = 'Composition' Then
+    result := ParseComposition(obj) 
+  {$ENDIF}
+{$ENDIF FHIR_COMPOSITION}
+{$IFDEF FHIR_CONCEPTMAP}
+  {$IFDEF FHIR_CONCEPTMAP}
+   else if s = 'ConceptMap' Then
+    result := ParseConceptMap(obj) 
+  {$ENDIF}
+{$ENDIF FHIR_CONCEPTMAP}
+{$IFDEF FHIR_CONDITION}
+  {$IFDEF FHIR_CONDITION}
+   else if s = 'Condition' Then
+    result := ParseCondition(obj) 
+  {$ENDIF}
+{$ENDIF FHIR_CONDITION}
+{$IFDEF FHIR_CONSENT}
+  {$IFDEF FHIR_CONSENT}
+   else if s = 'Consent' Then
+    result := ParseConsent(obj) 
+  {$ENDIF}
+{$ENDIF FHIR_CONSENT}
+{$IFDEF FHIR_CONTRACT}
+  {$IFDEF FHIR_CONTRACT}
+   else if s = 'Contract' Then
+    result := ParseContract(obj) 
+  {$ENDIF}
+{$ENDIF FHIR_CONTRACT}
+{$IFDEF FHIR_COVERAGE}
+  {$IFDEF FHIR_COVERAGE}
+   else if s = 'Coverage' Then
+    result := ParseCoverage(obj) 
+  {$ENDIF}
+{$ENDIF FHIR_COVERAGE}
+{$IFDEF FHIR_DETECTEDISSUE}
+  {$IFDEF FHIR_DETECTEDISSUE}
+   else if s = 'DetectedIssue' Then
+    result := ParseDetectedIssue(obj) 
+  {$ENDIF}
+{$ENDIF FHIR_DETECTEDISSUE}
+{$IFDEF FHIR_DEVICE}
+  {$IFDEF FHIR_DEVICE}
+   else if s = 'Device' Then
+    result := ParseDevice(obj) 
+  {$ENDIF}
+{$ENDIF FHIR_DEVICE}
+{$IFDEF FHIR_DEVICECOMPONENT}
+  {$IFDEF FHIR_DEVICECOMPONENT}
+   else if s = 'DeviceComponent' Then
+    result := ParseDeviceComponent(obj) 
+  {$ENDIF}
+{$ENDIF FHIR_DEVICECOMPONENT}
+{$IFDEF FHIR_DEVICEMETRIC}
+  {$IFDEF FHIR_DEVICEMETRIC}
+   else if s = 'DeviceMetric' Then
+    result := ParseDeviceMetric(obj) 
+  {$ENDIF}
+{$ENDIF FHIR_DEVICEMETRIC}
+{$IFDEF FHIR_DEVICEREQUEST}
+  {$IFDEF FHIR_DEVICEREQUEST}
+   else if s = 'DeviceRequest' Then
+    result := ParseDeviceRequest(obj) 
+  {$ENDIF}
+{$ENDIF FHIR_DEVICEREQUEST}
+{$IFDEF FHIR_DEVICEUSESTATEMENT}
+  {$IFDEF FHIR_DEVICEUSESTATEMENT}
+   else if s = 'DeviceUseStatement' Then
+    result := ParseDeviceUseStatement(obj) 
+  {$ENDIF}
+{$ENDIF FHIR_DEVICEUSESTATEMENT}
+{$IFDEF FHIR_DIAGNOSTICREPORT}
+  {$IFDEF FHIR_DIAGNOSTICREPORT}
+   else if s = 'DiagnosticReport' Then
+    result := ParseDiagnosticReport(obj) 
+  {$ENDIF}
+{$ENDIF FHIR_DIAGNOSTICREPORT}
+{$IFDEF FHIR_DOCUMENTMANIFEST}
+  {$IFDEF FHIR_DOCUMENTMANIFEST}
+   else if s = 'DocumentManifest' Then
+    result := ParseDocumentManifest(obj) 
+  {$ENDIF}
+{$ENDIF FHIR_DOCUMENTMANIFEST}
+{$IFDEF FHIR_DOCUMENTREFERENCE}
+  {$IFDEF FHIR_DOCUMENTREFERENCE}
+   else if s = 'DocumentReference' Then
+    result := ParseDocumentReference(obj) 
+  {$ENDIF}
+{$ENDIF FHIR_DOCUMENTREFERENCE}
+{$IFDEF FHIR_ELIGIBILITYREQUEST}
+  {$IFDEF FHIR_ELIGIBILITYREQUEST}
+   else if s = 'EligibilityRequest' Then
+    result := ParseEligibilityRequest(obj) 
+  {$ENDIF}
+{$ENDIF FHIR_ELIGIBILITYREQUEST}
+{$IFDEF FHIR_ELIGIBILITYRESPONSE}
+  {$IFDEF FHIR_ELIGIBILITYRESPONSE}
+   else if s = 'EligibilityResponse' Then
+    result := ParseEligibilityResponse(obj) 
+  {$ENDIF}
+{$ENDIF FHIR_ELIGIBILITYRESPONSE}
+{$IFDEF FHIR_ENCOUNTER}
+  {$IFDEF FHIR_ENCOUNTER}
+   else if s = 'Encounter' Then
+    result := ParseEncounter(obj) 
+  {$ENDIF}
+{$ENDIF FHIR_ENCOUNTER}
+{$IFDEF FHIR_ENDPOINT}
+  {$IFDEF FHIR_ENDPOINT}
+   else if s = 'Endpoint' Then
+    result := ParseEndpoint(obj) 
+  {$ENDIF}
+{$ENDIF FHIR_ENDPOINT}
+{$IFDEF FHIR_ENROLLMENTREQUEST}
+  {$IFDEF FHIR_ENROLLMENTREQUEST}
+   else if s = 'EnrollmentRequest' Then
+    result := ParseEnrollmentRequest(obj) 
+  {$ENDIF}
+{$ENDIF FHIR_ENROLLMENTREQUEST}
+{$IFDEF FHIR_ENROLLMENTRESPONSE}
+  {$IFDEF FHIR_ENROLLMENTRESPONSE}
+   else if s = 'EnrollmentResponse' Then
+    result := ParseEnrollmentResponse(obj) 
+  {$ENDIF}
+{$ENDIF FHIR_ENROLLMENTRESPONSE}
+{$IFDEF FHIR_EPISODEOFCARE}
+  {$IFDEF FHIR_EPISODEOFCARE}
+   else if s = 'EpisodeOfCare' Then
+    result := ParseEpisodeOfCare(obj) 
+  {$ENDIF}
+{$ENDIF FHIR_EPISODEOFCARE}
+{$IFDEF FHIR_EVENTDEFINITION}
+  {$IFDEF FHIR_EVENTDEFINITION}
+   else if s = 'EventDefinition' Then
+    result := ParseEventDefinition(obj) 
+  {$ENDIF}
+{$ENDIF FHIR_EVENTDEFINITION}
+{$IFDEF FHIR_EXPANSIONPROFILE}
+  {$IFDEF FHIR_EXPANSIONPROFILE}
+   else if s = 'ExpansionProfile' Then
+    result := ParseExpansionProfile(obj) 
+  {$ENDIF}
+{$ENDIF FHIR_EXPANSIONPROFILE}
+{$IFDEF FHIR_EXPLANATIONOFBENEFIT}
+  {$IFDEF FHIR_EXPLANATIONOFBENEFIT}
+   else if s = 'ExplanationOfBenefit' Then
+    result := ParseExplanationOfBenefit(obj) 
+  {$ENDIF}
+{$ENDIF FHIR_EXPLANATIONOFBENEFIT}
+{$IFDEF FHIR_FAMILYMEMBERHISTORY}
+  {$IFDEF FHIR_FAMILYMEMBERHISTORY}
+   else if s = 'FamilyMemberHistory' Then
+    result := ParseFamilyMemberHistory(obj) 
+  {$ENDIF}
+{$ENDIF FHIR_FAMILYMEMBERHISTORY}
+{$IFDEF FHIR_FLAG}
+  {$IFDEF FHIR_FLAG}
+   else if s = 'Flag' Then
+    result := ParseFlag(obj) 
+  {$ENDIF}
+{$ENDIF FHIR_FLAG}
+{$IFDEF FHIR_GOAL}
+  {$IFDEF FHIR_GOAL}
+   else if s = 'Goal' Then
+    result := ParseGoal(obj) 
+  {$ENDIF}
+{$ENDIF FHIR_GOAL}
+{$IFDEF FHIR_GRAPHDEFINITION}
+  {$IFDEF FHIR_GRAPHDEFINITION}
+   else if s = 'GraphDefinition' Then
+    result := ParseGraphDefinition(obj) 
+  {$ENDIF}
+{$ENDIF FHIR_GRAPHDEFINITION}
+{$IFDEF FHIR_GROUP}
+  {$IFDEF FHIR_GROUP}
+   else if s = 'Group' Then
+    result := ParseGroup(obj) 
+  {$ENDIF}
+{$ENDIF FHIR_GROUP}
+{$IFDEF FHIR_GUIDANCERESPONSE}
+  {$IFDEF FHIR_GUIDANCERESPONSE}
+   else if s = 'GuidanceResponse' Then
+    result := ParseGuidanceResponse(obj) 
+  {$ENDIF}
+{$ENDIF FHIR_GUIDANCERESPONSE}
+{$IFDEF FHIR_HEALTHCARESERVICE}
+  {$IFDEF FHIR_HEALTHCARESERVICE}
+   else if s = 'HealthcareService' Then
+    result := ParseHealthcareService(obj) 
+  {$ENDIF}
+{$ENDIF FHIR_HEALTHCARESERVICE}
+{$IFDEF FHIR_IMAGINGMANIFEST}
+  {$IFDEF FHIR_IMAGINGMANIFEST}
+   else if s = 'ImagingManifest' Then
+    result := ParseImagingManifest(obj) 
+  {$ENDIF}
+{$ENDIF FHIR_IMAGINGMANIFEST}
+{$IFDEF FHIR_IMAGINGSTUDY}
+  {$IFDEF FHIR_IMAGINGSTUDY}
+   else if s = 'ImagingStudy' Then
+    result := ParseImagingStudy(obj) 
+  {$ENDIF}
+{$ENDIF FHIR_IMAGINGSTUDY}
+{$IFDEF FHIR_IMMUNIZATION}
+  {$IFDEF FHIR_IMMUNIZATION}
+   else if s = 'Immunization' Then
+    result := ParseImmunization(obj) 
+  {$ENDIF}
+{$ENDIF FHIR_IMMUNIZATION}
+{$IFDEF FHIR_IMMUNIZATIONRECOMMENDATION}
+  {$IFDEF FHIR_IMMUNIZATIONRECOMMENDATION}
+   else if s = 'ImmunizationRecommendation' Then
+    result := ParseImmunizationRecommendation(obj) 
+  {$ENDIF}
+{$ENDIF FHIR_IMMUNIZATIONRECOMMENDATION}
+{$IFDEF FHIR_IMPLEMENTATIONGUIDE}
+  {$IFDEF FHIR_IMPLEMENTATIONGUIDE}
+   else if s = 'ImplementationGuide' Then
+    result := ParseImplementationGuide(obj) 
+  {$ENDIF}
+{$ENDIF FHIR_IMPLEMENTATIONGUIDE}
+{$IFDEF FHIR_LIBRARY}
+  {$IFDEF FHIR_LIBRARY}
+   else if s = 'Library' Then
+    result := ParseLibrary(obj) 
+  {$ENDIF}
+{$ENDIF FHIR_LIBRARY}
+{$IFDEF FHIR_LINKAGE}
+  {$IFDEF FHIR_LINKAGE}
+   else if s = 'Linkage' Then
+    result := ParseLinkage(obj) 
+  {$ENDIF}
+{$ENDIF FHIR_LINKAGE}
+{$IFDEF FHIR_LIST}
+  {$IFDEF FHIR_LIST}
+   else if s = 'List' Then
+    result := ParseList(obj) 
+  {$ENDIF}
+{$ENDIF FHIR_LIST}
+{$IFDEF FHIR_LOCATION}
+  {$IFDEF FHIR_LOCATION}
+   else if s = 'Location' Then
+    result := ParseLocation(obj) 
+  {$ENDIF}
+{$ENDIF FHIR_LOCATION}
+{$IFDEF FHIR_MEASURE}
+  {$IFDEF FHIR_MEASURE}
+   else if s = 'Measure' Then
+    result := ParseMeasure(obj) 
+  {$ENDIF}
+{$ENDIF FHIR_MEASURE}
+{$IFDEF FHIR_MEASUREREPORT}
+  {$IFDEF FHIR_MEASUREREPORT}
+   else if s = 'MeasureReport' Then
+    result := ParseMeasureReport(obj) 
+  {$ENDIF}
+{$ENDIF FHIR_MEASUREREPORT}
+{$IFDEF FHIR_MEDIA}
+  {$IFDEF FHIR_MEDIA}
+   else if s = 'Media' Then
+    result := ParseMedia(obj) 
+  {$ENDIF}
+{$ENDIF FHIR_MEDIA}
+{$IFDEF FHIR_MEDICATION}
+  {$IFDEF FHIR_MEDICATION}
+   else if s = 'Medication' Then
+    result := ParseMedication(obj) 
+  {$ENDIF}
+{$ENDIF FHIR_MEDICATION}
+{$IFDEF FHIR_MEDICATIONADMINISTRATION}
+  {$IFDEF FHIR_MEDICATIONADMINISTRATION}
+   else if s = 'MedicationAdministration' Then
+    result := ParseMedicationAdministration(obj) 
+  {$ENDIF}
+{$ENDIF FHIR_MEDICATIONADMINISTRATION}
+{$IFDEF FHIR_MEDICATIONDISPENSE}
+  {$IFDEF FHIR_MEDICATIONDISPENSE}
+   else if s = 'MedicationDispense' Then
+    result := ParseMedicationDispense(obj) 
+  {$ENDIF}
+{$ENDIF FHIR_MEDICATIONDISPENSE}
+{$IFDEF FHIR_MEDICATIONREQUEST}
+  {$IFDEF FHIR_MEDICATIONREQUEST}
+   else if s = 'MedicationRequest' Then
+    result := ParseMedicationRequest(obj) 
+  {$ENDIF}
+{$ENDIF FHIR_MEDICATIONREQUEST}
+{$IFDEF FHIR_MEDICATIONSTATEMENT}
+  {$IFDEF FHIR_MEDICATIONSTATEMENT}
+   else if s = 'MedicationStatement' Then
+    result := ParseMedicationStatement(obj) 
+  {$ENDIF}
+{$ENDIF FHIR_MEDICATIONSTATEMENT}
+{$IFDEF FHIR_MESSAGEDEFINITION}
+  {$IFDEF FHIR_MESSAGEDEFINITION}
+   else if s = 'MessageDefinition' Then
+    result := ParseMessageDefinition(obj) 
+  {$ENDIF}
+{$ENDIF FHIR_MESSAGEDEFINITION}
+{$IFDEF FHIR_MESSAGEHEADER}
+  {$IFDEF FHIR_MESSAGEHEADER}
+   else if s = 'MessageHeader' Then
+    result := ParseMessageHeader(obj) 
+  {$ENDIF}
+{$ENDIF FHIR_MESSAGEHEADER}
+{$IFDEF FHIR_NAMINGSYSTEM}
+  {$IFDEF FHIR_NAMINGSYSTEM}
+   else if s = 'NamingSystem' Then
+    result := ParseNamingSystem(obj) 
+  {$ENDIF}
+{$ENDIF FHIR_NAMINGSYSTEM}
+{$IFDEF FHIR_NUTRITIONORDER}
+  {$IFDEF FHIR_NUTRITIONORDER}
+   else if s = 'NutritionOrder' Then
+    result := ParseNutritionOrder(obj) 
+  {$ENDIF}
+{$ENDIF FHIR_NUTRITIONORDER}
+{$IFDEF FHIR_OBSERVATION}
+  {$IFDEF FHIR_OBSERVATION}
+   else if s = 'Observation' Then
+    result := ParseObservation(obj) 
+  {$ENDIF}
+{$ENDIF FHIR_OBSERVATION}
+{$IFDEF FHIR_OPERATIONDEFINITION}
+  {$IFDEF FHIR_OPERATIONDEFINITION}
+   else if s = 'OperationDefinition' Then
+    result := ParseOperationDefinition(obj) 
+  {$ENDIF}
+{$ENDIF FHIR_OPERATIONDEFINITION}
+{$IFDEF FHIR_OPERATIONOUTCOME}
+  {$IFDEF FHIR_OPERATIONOUTCOME}
+   else if s = 'OperationOutcome' Then
+    result := ParseOperationOutcome(obj) 
+  {$ENDIF}
+{$ENDIF FHIR_OPERATIONOUTCOME}
+{$IFDEF FHIR_ORGANIZATION}
+  {$IFDEF FHIR_ORGANIZATION}
+   else if s = 'Organization' Then
+    result := ParseOrganization(obj) 
+  {$ENDIF}
+{$ENDIF FHIR_ORGANIZATION}
+{$IFDEF FHIR_PATIENT}
+  {$IFDEF FHIR_PATIENT}
+   else if s = 'Patient' Then
+    result := ParsePatient(obj) 
+  {$ENDIF}
+{$ENDIF FHIR_PATIENT}
+{$IFDEF FHIR_PAYMENTNOTICE}
+  {$IFDEF FHIR_PAYMENTNOTICE}
+   else if s = 'PaymentNotice' Then
+    result := ParsePaymentNotice(obj) 
+  {$ENDIF}
+{$ENDIF FHIR_PAYMENTNOTICE}
+{$IFDEF FHIR_PAYMENTRECONCILIATION}
+  {$IFDEF FHIR_PAYMENTRECONCILIATION}
+   else if s = 'PaymentReconciliation' Then
+    result := ParsePaymentReconciliation(obj) 
+  {$ENDIF}
+{$ENDIF FHIR_PAYMENTRECONCILIATION}
+{$IFDEF FHIR_PERSON}
+  {$IFDEF FHIR_PERSON}
+   else if s = 'Person' Then
+    result := ParsePerson(obj) 
+  {$ENDIF}
+{$ENDIF FHIR_PERSON}
+{$IFDEF FHIR_PLANDEFINITION}
+  {$IFDEF FHIR_PLANDEFINITION}
+   else if s = 'PlanDefinition' Then
+    result := ParsePlanDefinition(obj) 
+  {$ENDIF}
+{$ENDIF FHIR_PLANDEFINITION}
+{$IFDEF FHIR_PRACTITIONER}
+  {$IFDEF FHIR_PRACTITIONER}
+   else if s = 'Practitioner' Then
+    result := ParsePractitioner(obj) 
+  {$ENDIF}
+{$ENDIF FHIR_PRACTITIONER}
+{$IFDEF FHIR_PRACTITIONERROLE}
+  {$IFDEF FHIR_PRACTITIONERROLE}
+   else if s = 'PractitionerRole' Then
+    result := ParsePractitionerRole(obj) 
+  {$ENDIF}
+{$ENDIF FHIR_PRACTITIONERROLE}
+{$IFDEF FHIR_PROCEDURE}
+  {$IFDEF FHIR_PROCEDURE}
+   else if s = 'Procedure' Then
+    result := ParseProcedure(obj) 
+  {$ENDIF}
+{$ENDIF FHIR_PROCEDURE}
+{$IFDEF FHIR_PROCEDUREREQUEST}
+  {$IFDEF FHIR_PROCEDUREREQUEST}
+   else if s = 'ProcedureRequest' Then
+    result := ParseProcedureRequest(obj) 
+  {$ENDIF}
+{$ENDIF FHIR_PROCEDUREREQUEST}
+{$IFDEF FHIR_PROCESSREQUEST}
+  {$IFDEF FHIR_PROCESSREQUEST}
+   else if s = 'ProcessRequest' Then
+    result := ParseProcessRequest(obj) 
+  {$ENDIF}
+{$ENDIF FHIR_PROCESSREQUEST}
+{$IFDEF FHIR_PROCESSRESPONSE}
+  {$IFDEF FHIR_PROCESSRESPONSE}
+   else if s = 'ProcessResponse' Then
+    result := ParseProcessResponse(obj) 
+  {$ENDIF}
+{$ENDIF FHIR_PROCESSRESPONSE}
+{$IFDEF FHIR_PROVENANCE}
+  {$IFDEF FHIR_PROVENANCE}
+   else if s = 'Provenance' Then
+    result := ParseProvenance(obj) 
+  {$ENDIF}
+{$ENDIF FHIR_PROVENANCE}
+{$IFDEF FHIR_QUESTIONNAIRE}
+  {$IFDEF FHIR_QUESTIONNAIRE}
+   else if s = 'Questionnaire' Then
+    result := ParseQuestionnaire(obj) 
+  {$ENDIF}
+{$ENDIF FHIR_QUESTIONNAIRE}
+{$IFDEF FHIR_QUESTIONNAIRERESPONSE}
+  {$IFDEF FHIR_QUESTIONNAIRERESPONSE}
+   else if s = 'QuestionnaireResponse' Then
+    result := ParseQuestionnaireResponse(obj) 
+  {$ENDIF}
+{$ENDIF FHIR_QUESTIONNAIRERESPONSE}
+{$IFDEF FHIR_RELATEDPERSON}
+  {$IFDEF FHIR_RELATEDPERSON}
+   else if s = 'RelatedPerson' Then
+    result := ParseRelatedPerson(obj) 
+  {$ENDIF}
+{$ENDIF FHIR_RELATEDPERSON}
+{$IFDEF FHIR_REQUESTGROUP}
+  {$IFDEF FHIR_REQUESTGROUP}
+   else if s = 'RequestGroup' Then
+    result := ParseRequestGroup(obj) 
+  {$ENDIF}
+{$ENDIF FHIR_REQUESTGROUP}
+{$IFDEF FHIR_RESEARCHSTUDY}
+  {$IFDEF FHIR_RESEARCHSTUDY}
+   else if s = 'ResearchStudy' Then
+    result := ParseResearchStudy(obj) 
+  {$ENDIF}
+{$ENDIF FHIR_RESEARCHSTUDY}
+{$IFDEF FHIR_RESEARCHSUBJECT}
+  {$IFDEF FHIR_RESEARCHSUBJECT}
+   else if s = 'ResearchSubject' Then
+    result := ParseResearchSubject(obj) 
+  {$ENDIF}
+{$ENDIF FHIR_RESEARCHSUBJECT}
+{$IFDEF FHIR_RISKASSESSMENT}
+  {$IFDEF FHIR_RISKASSESSMENT}
+   else if s = 'RiskAssessment' Then
+    result := ParseRiskAssessment(obj) 
+  {$ENDIF}
+{$ENDIF FHIR_RISKASSESSMENT}
+{$IFDEF FHIR_SCHEDULE}
+  {$IFDEF FHIR_SCHEDULE}
+   else if s = 'Schedule' Then
+    result := ParseSchedule(obj) 
+  {$ENDIF}
+{$ENDIF FHIR_SCHEDULE}
+{$IFDEF FHIR_SEARCHPARAMETER}
+  {$IFDEF FHIR_SEARCHPARAMETER}
+   else if s = 'SearchParameter' Then
+    result := ParseSearchParameter(obj) 
+  {$ENDIF}
+{$ENDIF FHIR_SEARCHPARAMETER}
+{$IFDEF FHIR_SEQUENCE}
+  {$IFDEF FHIR_SEQUENCE}
+   else if s = 'Sequence' Then
+    result := ParseSequence(obj) 
+  {$ENDIF}
+{$ENDIF FHIR_SEQUENCE}
+{$IFDEF FHIR_SERVICEDEFINITION}
+  {$IFDEF FHIR_SERVICEDEFINITION}
+   else if s = 'ServiceDefinition' Then
+    result := ParseServiceDefinition(obj) 
+  {$ENDIF}
+{$ENDIF FHIR_SERVICEDEFINITION}
+{$IFDEF FHIR_SLOT}
+  {$IFDEF FHIR_SLOT}
+   else if s = 'Slot' Then
+    result := ParseSlot(obj) 
+  {$ENDIF}
+{$ENDIF FHIR_SLOT}
+{$IFDEF FHIR_SPECIMEN}
+  {$IFDEF FHIR_SPECIMEN}
+   else if s = 'Specimen' Then
+    result := ParseSpecimen(obj) 
+  {$ENDIF}
+{$ENDIF FHIR_SPECIMEN}
+{$IFDEF FHIR_SPECIMENDEFINITION}
+  {$IFDEF FHIR_SPECIMENDEFINITION}
+   else if s = 'SpecimenDefinition' Then
+    result := ParseSpecimenDefinition(obj) 
+  {$ENDIF}
+{$ENDIF FHIR_SPECIMENDEFINITION}
+{$IFDEF FHIR_STRUCTUREDEFINITION}
+  {$IFDEF FHIR_STRUCTUREDEFINITION}
+   else if s = 'StructureDefinition' Then
+    result := ParseStructureDefinition(obj) 
+  {$ENDIF}
+{$ENDIF FHIR_STRUCTUREDEFINITION}
+{$IFDEF FHIR_STRUCTUREMAP}
+  {$IFDEF FHIR_STRUCTUREMAP}
+   else if s = 'StructureMap' Then
+    result := ParseStructureMap(obj) 
+  {$ENDIF}
+{$ENDIF FHIR_STRUCTUREMAP}
+{$IFDEF FHIR_SUBSCRIPTION}
+  {$IFDEF FHIR_SUBSCRIPTION}
+   else if s = 'Subscription' Then
+    result := ParseSubscription(obj) 
+  {$ENDIF}
+{$ENDIF FHIR_SUBSCRIPTION}
+{$IFDEF FHIR_SUBSTANCE}
+  {$IFDEF FHIR_SUBSTANCE}
+   else if s = 'Substance' Then
+    result := ParseSubstance(obj) 
+  {$ENDIF}
+{$ENDIF FHIR_SUBSTANCE}
+{$IFDEF FHIR_SUPPLYDELIVERY}
+  {$IFDEF FHIR_SUPPLYDELIVERY}
+   else if s = 'SupplyDelivery' Then
+    result := ParseSupplyDelivery(obj) 
+  {$ENDIF}
+{$ENDIF FHIR_SUPPLYDELIVERY}
+{$IFDEF FHIR_SUPPLYREQUEST}
+  {$IFDEF FHIR_SUPPLYREQUEST}
+   else if s = 'SupplyRequest' Then
+    result := ParseSupplyRequest(obj) 
+  {$ENDIF}
+{$ENDIF FHIR_SUPPLYREQUEST}
+{$IFDEF FHIR_TASK}
+  {$IFDEF FHIR_TASK}
+   else if s = 'Task' Then
+    result := ParseTask(obj) 
+  {$ENDIF}
+{$ENDIF FHIR_TASK}
+{$IFDEF FHIR_TESTREPORT}
+  {$IFDEF FHIR_TESTREPORT}
+   else if s = 'TestReport' Then
+    result := ParseTestReport(obj) 
+  {$ENDIF}
+{$ENDIF FHIR_TESTREPORT}
+{$IFDEF FHIR_TESTSCRIPT}
+  {$IFDEF FHIR_TESTSCRIPT}
+   else if s = 'TestScript' Then
+    result := ParseTestScript(obj) 
+  {$ENDIF}
+{$ENDIF FHIR_TESTSCRIPT}
+{$IFDEF FHIR_VALUESET}
+  {$IFDEF FHIR_VALUESET}
+   else if s = 'ValueSet' Then
+    result := ParseValueSet(obj) 
+  {$ENDIF}
+{$ENDIF FHIR_VALUESET}
+{$IFDEF FHIR_VISIONPRESCRIPTION}
+  {$IFDEF FHIR_VISIONPRESCRIPTION}
+   else if s = 'VisionPrescription' Then
+    result := ParseVisionPrescription(obj) 
+  {$ENDIF}
+{$ENDIF FHIR_VISIONPRESCRIPTION}
+{$IFDEF FHIR_WORKFLOWEXAMPLE}
+  {$IFDEF FHIR_WORKFLOWEXAMPLE}
+   else if s = 'WorkflowExample' Then
+    result := ParseWorkflowExample(obj) 
+  {$ENDIF}
+{$ENDIF FHIR_WORKFLOWEXAMPLE}
   else
     raise Exception.create('error: the element '+s+' is not a valid resource name');
 end;

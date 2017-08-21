@@ -1,5 +1,7 @@
 unit FHIRIndexInformation;
 
+{$I fhir.inc}
+
 {
   Copyright (c) 2011+, HL7 and Health Intersections Pty Ltd (http://www.healthintersections.com.au)
   All rights reserved.
@@ -45,130 +47,367 @@ Type
 
   TFHIRIndexBuilder = class (TAdvObject)
   private
+    {$IFDEF FHIR_ACCOUNT}
     procedure buildIndexesForAccount(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+    {$ENDIF}
+    {$IFDEF FHIR_ACTIVITYDEFINITION}
     procedure buildIndexesForActivityDefinition(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+    {$ENDIF}
+    {$IFDEF FHIR_ADVERSEEVENT}
     procedure buildIndexesForAdverseEvent(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+    {$ENDIF}
+    {$IFDEF FHIR_ALLERGYINTOLERANCE}
     procedure buildIndexesForAllergyIntolerance(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+    {$ENDIF}
+    {$IFDEF FHIR_APPOINTMENT}
     procedure buildIndexesForAppointment(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+    {$ENDIF}
+    {$IFDEF FHIR_APPOINTMENTRESPONSE}
     procedure buildIndexesForAppointmentResponse(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+    {$ENDIF}
+    {$IFDEF FHIR_AUDITEVENT}
     procedure buildIndexesForAuditEvent(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+    {$ENDIF}
+    {$IFDEF FHIR_BASIC}
     procedure buildIndexesForBasic(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+    {$ENDIF}
+    {$IFDEF FHIR_BINARY}
     procedure buildIndexesForBinary(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+    {$ENDIF}
+    {$IFDEF FHIR_BODYSTRUCTURE}
     procedure buildIndexesForBodyStructure(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+    {$ENDIF}
+    {$IFDEF FHIR_BUNDLE}
     procedure buildIndexesForBundle(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+    {$ENDIF}
+    {$IFDEF FHIR_CAPABILITYSTATEMENT}
     procedure buildIndexesForCapabilityStatement(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+    {$ENDIF}
+    {$IFDEF FHIR_CAREPLAN}
     procedure buildIndexesForCarePlan(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+    {$ENDIF}
+    {$IFDEF FHIR_CARETEAM}
     procedure buildIndexesForCareTeam(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+    {$ENDIF}
+    {$IFDEF FHIR_CATALOGENTRY}
     procedure buildIndexesForCatalogEntry(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+    {$ENDIF}
+    {$IFDEF FHIR_CHARGEITEM}
     procedure buildIndexesForChargeItem(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+    {$ENDIF}
+    {$IFDEF FHIR_CLAIM}
     procedure buildIndexesForClaim(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+    {$ENDIF}
+    {$IFDEF FHIR_CLAIMRESPONSE}
     procedure buildIndexesForClaimResponse(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+    {$ENDIF}
+    {$IFDEF FHIR_CLINICALIMPRESSION}
     procedure buildIndexesForClinicalImpression(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+    {$ENDIF}
+    {$IFDEF FHIR_CODESYSTEM}
     procedure buildIndexesForCodeSystem(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+    {$ENDIF}
+    {$IFDEF FHIR_COMMUNICATION}
     procedure buildIndexesForCommunication(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+    {$ENDIF}
+    {$IFDEF FHIR_COMMUNICATIONREQUEST}
     procedure buildIndexesForCommunicationRequest(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+    {$ENDIF}
+    {$IFDEF FHIR_COMPARTMENTDEFINITION}
     procedure buildIndexesForCompartmentDefinition(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+    {$ENDIF}
+    {$IFDEF FHIR_COMPOSITION}
     procedure buildIndexesForComposition(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+    {$ENDIF}
+    {$IFDEF FHIR_CONCEPTMAP}
     procedure buildIndexesForConceptMap(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+    {$ENDIF}
+    {$IFDEF FHIR_CONDITION}
     procedure buildIndexesForCondition(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+    {$ENDIF}
+    {$IFDEF FHIR_CONSENT}
     procedure buildIndexesForConsent(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+    {$ENDIF}
+    {$IFDEF FHIR_CONTRACT}
     procedure buildIndexesForContract(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+    {$ENDIF}
+    {$IFDEF FHIR_COVERAGE}
     procedure buildIndexesForCoverage(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+    {$ENDIF}
+    {$IFDEF FHIR_DETECTEDISSUE}
     procedure buildIndexesForDetectedIssue(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+    {$ENDIF}
+    {$IFDEF FHIR_DEVICE}
     procedure buildIndexesForDevice(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+    {$ENDIF}
+    {$IFDEF FHIR_DEVICECOMPONENT}
     procedure buildIndexesForDeviceComponent(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+    {$ENDIF}
+    {$IFDEF FHIR_DEVICEMETRIC}
     procedure buildIndexesForDeviceMetric(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+    {$ENDIF}
+    {$IFDEF FHIR_DEVICEREQUEST}
     procedure buildIndexesForDeviceRequest(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+    {$ENDIF}
+    {$IFDEF FHIR_DEVICEUSESTATEMENT}
     procedure buildIndexesForDeviceUseStatement(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+    {$ENDIF}
+    {$IFDEF FHIR_DIAGNOSTICREPORT}
     procedure buildIndexesForDiagnosticReport(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+    {$ENDIF}
+    {$IFDEF FHIR_DOCUMENTMANIFEST}
     procedure buildIndexesForDocumentManifest(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+    {$ENDIF}
+    {$IFDEF FHIR_DOCUMENTREFERENCE}
     procedure buildIndexesForDocumentReference(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+    {$ENDIF}
+    {$IFDEF FHIR_ELIGIBILITYREQUEST}
     procedure buildIndexesForEligibilityRequest(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+    {$ENDIF}
+    {$IFDEF FHIR_ELIGIBILITYRESPONSE}
     procedure buildIndexesForEligibilityResponse(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+    {$ENDIF}
+    {$IFDEF FHIR_ENCOUNTER}
     procedure buildIndexesForEncounter(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+    {$ENDIF}
+    {$IFDEF FHIR_ENDPOINT}
     procedure buildIndexesForEndpoint(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+    {$ENDIF}
+    {$IFDEF FHIR_ENROLLMENTREQUEST}
     procedure buildIndexesForEnrollmentRequest(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+    {$ENDIF}
+    {$IFDEF FHIR_ENROLLMENTRESPONSE}
     procedure buildIndexesForEnrollmentResponse(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+    {$ENDIF}
+    {$IFDEF FHIR_EPISODEOFCARE}
     procedure buildIndexesForEpisodeOfCare(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+    {$ENDIF}
+    {$IFDEF FHIR_EVENTDEFINITION}
     procedure buildIndexesForEventDefinition(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+    {$ENDIF}
+    {$IFDEF FHIR_EXPANSIONPROFILE}
     procedure buildIndexesForExpansionProfile(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+    {$ENDIF}
+    {$IFDEF FHIR_EXPLANATIONOFBENEFIT}
     procedure buildIndexesForExplanationOfBenefit(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+    {$ENDIF}
+    {$IFDEF FHIR_FAMILYMEMBERHISTORY}
     procedure buildIndexesForFamilyMemberHistory(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+    {$ENDIF}
+    {$IFDEF FHIR_FLAG}
     procedure buildIndexesForFlag(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+    {$ENDIF}
+    {$IFDEF FHIR_GOAL}
     procedure buildIndexesForGoal(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+    {$ENDIF}
+    {$IFDEF FHIR_GRAPHDEFINITION}
     procedure buildIndexesForGraphDefinition(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+    {$ENDIF}
+    {$IFDEF FHIR_GROUP}
     procedure buildIndexesForGroup(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+    {$ENDIF}
+    {$IFDEF FHIR_GUIDANCERESPONSE}
     procedure buildIndexesForGuidanceResponse(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+    {$ENDIF}
+    {$IFDEF FHIR_HEALTHCARESERVICE}
     procedure buildIndexesForHealthcareService(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+    {$ENDIF}
+    {$IFDEF FHIR_IMAGINGMANIFEST}
     procedure buildIndexesForImagingManifest(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+    {$ENDIF}
+    {$IFDEF FHIR_IMAGINGSTUDY}
     procedure buildIndexesForImagingStudy(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+    {$ENDIF}
+    {$IFDEF FHIR_IMMUNIZATION}
     procedure buildIndexesForImmunization(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+    {$ENDIF}
+    {$IFDEF FHIR_IMMUNIZATIONRECOMMENDATION}
     procedure buildIndexesForImmunizationRecommendation(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+    {$ENDIF}
+    {$IFDEF FHIR_IMPLEMENTATIONGUIDE}
     procedure buildIndexesForImplementationGuide(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+    {$ENDIF}
+    {$IFDEF FHIR_LIBRARY}
     procedure buildIndexesForLibrary(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+    {$ENDIF}
+    {$IFDEF FHIR_LINKAGE}
     procedure buildIndexesForLinkage(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+    {$ENDIF}
+    {$IFDEF FHIR_LIST}
     procedure buildIndexesForList(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+    {$ENDIF}
+    {$IFDEF FHIR_LOCATION}
     procedure buildIndexesForLocation(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+    {$ENDIF}
+    {$IFDEF FHIR_MEASURE}
     procedure buildIndexesForMeasure(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+    {$ENDIF}
+    {$IFDEF FHIR_MEASUREREPORT}
     procedure buildIndexesForMeasureReport(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+    {$ENDIF}
+    {$IFDEF FHIR_MEDIA}
     procedure buildIndexesForMedia(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+    {$ENDIF}
+    {$IFDEF FHIR_MEDICATION}
     procedure buildIndexesForMedication(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+    {$ENDIF}
+    {$IFDEF FHIR_MEDICATIONADMINISTRATION}
     procedure buildIndexesForMedicationAdministration(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+    {$ENDIF}
+    {$IFDEF FHIR_MEDICATIONDISPENSE}
     procedure buildIndexesForMedicationDispense(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+    {$ENDIF}
+    {$IFDEF FHIR_MEDICATIONREQUEST}
     procedure buildIndexesForMedicationRequest(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+    {$ENDIF}
+    {$IFDEF FHIR_MEDICATIONSTATEMENT}
     procedure buildIndexesForMedicationStatement(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+    {$ENDIF}
+    {$IFDEF FHIR_MESSAGEDEFINITION}
     procedure buildIndexesForMessageDefinition(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+    {$ENDIF}
+    {$IFDEF FHIR_MESSAGEHEADER}
     procedure buildIndexesForMessageHeader(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+    {$ENDIF}
+    {$IFDEF FHIR_NAMINGSYSTEM}
     procedure buildIndexesForNamingSystem(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+    {$ENDIF}
+    {$IFDEF FHIR_NUTRITIONORDER}
     procedure buildIndexesForNutritionOrder(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+    {$ENDIF}
+    {$IFDEF FHIR_OBSERVATION}
     procedure buildIndexesForObservation(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+    {$ENDIF}
+    {$IFDEF FHIR_OPERATIONDEFINITION}
     procedure buildIndexesForOperationDefinition(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+    {$ENDIF}
+    {$IFDEF FHIR_OPERATIONOUTCOME}
     procedure buildIndexesForOperationOutcome(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+    {$ENDIF}
+    {$IFDEF FHIR_ORGANIZATION}
     procedure buildIndexesForOrganization(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+    {$ENDIF}
+    {$IFDEF FHIR_PATIENT}
     procedure buildIndexesForPatient(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+    {$ENDIF}
+    {$IFDEF FHIR_PAYMENTNOTICE}
     procedure buildIndexesForPaymentNotice(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+    {$ENDIF}
+    {$IFDEF FHIR_PAYMENTRECONCILIATION}
     procedure buildIndexesForPaymentReconciliation(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+    {$ENDIF}
+    {$IFDEF FHIR_PERSON}
     procedure buildIndexesForPerson(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+    {$ENDIF}
+    {$IFDEF FHIR_PLANDEFINITION}
     procedure buildIndexesForPlanDefinition(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+    {$ENDIF}
+    {$IFDEF FHIR_PRACTITIONER}
     procedure buildIndexesForPractitioner(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+    {$ENDIF}
+    {$IFDEF FHIR_PRACTITIONERROLE}
     procedure buildIndexesForPractitionerRole(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+    {$ENDIF}
+    {$IFDEF FHIR_PROCEDURE}
     procedure buildIndexesForProcedure(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+    {$ENDIF}
+    {$IFDEF FHIR_PROCEDUREREQUEST}
     procedure buildIndexesForProcedureRequest(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+    {$ENDIF}
+    {$IFDEF FHIR_PROCESSREQUEST}
     procedure buildIndexesForProcessRequest(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+    {$ENDIF}
+    {$IFDEF FHIR_PROCESSRESPONSE}
     procedure buildIndexesForProcessResponse(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+    {$ENDIF}
+    {$IFDEF FHIR_PROVENANCE}
     procedure buildIndexesForProvenance(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+    {$ENDIF}
+    {$IFDEF FHIR_QUESTIONNAIRE}
     procedure buildIndexesForQuestionnaire(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+    {$ENDIF}
+    {$IFDEF FHIR_QUESTIONNAIRERESPONSE}
     procedure buildIndexesForQuestionnaireResponse(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+    {$ENDIF}
+    {$IFDEF FHIR_RELATEDPERSON}
     procedure buildIndexesForRelatedPerson(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+    {$ENDIF}
+    {$IFDEF FHIR_REQUESTGROUP}
     procedure buildIndexesForRequestGroup(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+    {$ENDIF}
+    {$IFDEF FHIR_RESEARCHSTUDY}
     procedure buildIndexesForResearchStudy(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+    {$ENDIF}
+    {$IFDEF FHIR_RESEARCHSUBJECT}
     procedure buildIndexesForResearchSubject(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+    {$ENDIF}
+    {$IFDEF FHIR_RISKASSESSMENT}
     procedure buildIndexesForRiskAssessment(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+    {$ENDIF}
+    {$IFDEF FHIR_SCHEDULE}
     procedure buildIndexesForSchedule(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+    {$ENDIF}
+    {$IFDEF FHIR_SEARCHPARAMETER}
     procedure buildIndexesForSearchParameter(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+    {$ENDIF}
+    {$IFDEF FHIR_SEQUENCE}
     procedure buildIndexesForSequence(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+    {$ENDIF}
+    {$IFDEF FHIR_SERVICEDEFINITION}
     procedure buildIndexesForServiceDefinition(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+    {$ENDIF}
+    {$IFDEF FHIR_SLOT}
     procedure buildIndexesForSlot(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+    {$ENDIF}
+    {$IFDEF FHIR_SPECIMEN}
     procedure buildIndexesForSpecimen(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+    {$ENDIF}
+    {$IFDEF FHIR_SPECIMENDEFINITION}
     procedure buildIndexesForSpecimenDefinition(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+    {$ENDIF}
+    {$IFDEF FHIR_STRUCTUREDEFINITION}
     procedure buildIndexesForStructureDefinition(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+    {$ENDIF}
+    {$IFDEF FHIR_STRUCTUREMAP}
     procedure buildIndexesForStructureMap(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+    {$ENDIF}
+    {$IFDEF FHIR_SUBSCRIPTION}
     procedure buildIndexesForSubscription(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+    {$ENDIF}
+    {$IFDEF FHIR_SUBSTANCE}
     procedure buildIndexesForSubstance(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+    {$ENDIF}
+    {$IFDEF FHIR_SUPPLYDELIVERY}
     procedure buildIndexesForSupplyDelivery(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+    {$ENDIF}
+    {$IFDEF FHIR_SUPPLYREQUEST}
     procedure buildIndexesForSupplyRequest(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+    {$ENDIF}
+    {$IFDEF FHIR_TASK}
     procedure buildIndexesForTask(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+    {$ENDIF}
+    {$IFDEF FHIR_TESTREPORT}
     procedure buildIndexesForTestReport(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+    {$ENDIF}
+    {$IFDEF FHIR_TESTSCRIPT}
     procedure buildIndexesForTestScript(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+    {$ENDIF}
+    {$IFDEF FHIR_VALUESET}
     procedure buildIndexesForValueSet(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+    {$ENDIF}
+    {$IFDEF FHIR_VISIONPRESCRIPTION}
     procedure buildIndexesForVisionPrescription(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+    {$ENDIF}
+    {$IFDEF FHIR_WORKFLOWEXAMPLE}
     procedure buildIndexesForWorkflowExample(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+    {$ENDIF}
   public
     procedure registerIndexes(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
  end;
 
 implementation
 
+{$IFDEF FHIR_ACCOUNT}
 procedure TFHIRIndexBuilder.buildIndexesForAccount(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('Account', '_content', 'Search on the entire content of the resource', SearchParamTypeSTRING, [], '', SearchXpathUsageNormal);
@@ -192,7 +431,9 @@ begin
   compartments.register(frtPatient, 'Account', ['subject']);
   compartments.register(frtPractitioner, 'Account', ['subject']);
 end;
+{$ENDIF}
 
+{$IFDEF FHIR_ACTIVITYDEFINITION}
 procedure TFHIRIndexBuilder.buildIndexesForActivityDefinition(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('ActivityDefinition', '_content', 'Search on the entire content of the resource', SearchParamTypeSTRING, [], '', SearchXpathUsageNormal);
@@ -221,7 +462,9 @@ begin
   indexes.add('ActivityDefinition', 'url', 'The uri that identifies the activity definition', SearchParamTypeURI, [], 'ActivityDefinition.url', SearchXpathUsageNormal);
   indexes.add('ActivityDefinition', 'version', 'The business version of the activity definition', SearchParamTypeTOKEN, [], 'ActivityDefinition.version', SearchXpathUsageNormal);
 end;
+{$ENDIF}
 
+{$IFDEF FHIR_ADVERSEEVENT}
 procedure TFHIRIndexBuilder.buildIndexesForAdverseEvent(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('AdverseEvent', '_content', 'Search on the entire content of the resource', SearchParamTypeSTRING, [], '', SearchXpathUsageNormal);
@@ -248,7 +491,9 @@ begin
   compartments.register(frtPractitioner, 'AdverseEvent', ['recorder']);
   compartments.register(frtRelatedPerson, 'AdverseEvent', ['recorder']);
 end;
+{$ENDIF}
 
+{$IFDEF FHIR_ALLERGYINTOLERANCE}
 procedure TFHIRIndexBuilder.buildIndexesForAllergyIntolerance(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('AllergyIntolerance', '_content', 'Search on the entire content of the resource', SearchParamTypeSTRING, [], '', SearchXpathUsageNormal);
@@ -281,7 +526,9 @@ begin
   compartments.register(frtPractitioner, 'AllergyIntolerance', ['recorder', 'asserter']);
   compartments.register(frtRelatedPerson, 'AllergyIntolerance', ['asserter']);
 end;
+{$ENDIF}
 
+{$IFDEF FHIR_APPOINTMENT}
 procedure TFHIRIndexBuilder.buildIndexesForAppointment(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('Appointment', '_content', 'Search on the entire content of the resource', SearchParamTypeSTRING, [], '', SearchXpathUsageNormal);
@@ -308,7 +555,9 @@ begin
   compartments.register(frtPractitioner, 'Appointment', ['actor']);
   compartments.register(frtRelatedPerson, 'Appointment', ['actor']);
 end;
+{$ENDIF}
 
+{$IFDEF FHIR_APPOINTMENTRESPONSE}
 procedure TFHIRIndexBuilder.buildIndexesForAppointmentResponse(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('AppointmentResponse', '_content', 'Search on the entire content of the resource', SearchParamTypeSTRING, [], '', SearchXpathUsageNormal);
@@ -331,7 +580,9 @@ begin
   compartments.register(frtPractitioner, 'AppointmentResponse', ['actor']);
   compartments.register(frtRelatedPerson, 'AppointmentResponse', ['actor']);
 end;
+{$ENDIF}
 
+{$IFDEF FHIR_AUDITEVENT}
 procedure TFHIRIndexBuilder.buildIndexesForAuditEvent(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('AuditEvent', '_content', 'Search on the entire content of the resource', SearchParamTypeSTRING, [], '', SearchXpathUsageNormal);
@@ -366,7 +617,9 @@ begin
   compartments.register(frtPatient, 'AuditEvent', ['patient', 'agent.patient', 'entity.patient']);
   compartments.register(frtPractitioner, 'AuditEvent', ['agent']);
 end;
+{$ENDIF}
 
+{$IFDEF FHIR_BASIC}
 procedure TFHIRIndexBuilder.buildIndexesForBasic(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('Basic', '_content', 'Search on the entire content of the resource', SearchParamTypeSTRING, [], '', SearchXpathUsageNormal);
@@ -387,7 +640,9 @@ begin
   compartments.register(frtPractitioner, 'Basic', ['author']);
   compartments.register(frtRelatedPerson, 'Basic', ['author']);
 end;
+{$ENDIF}
 
+{$IFDEF FHIR_BINARY}
 procedure TFHIRIndexBuilder.buildIndexesForBinary(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('Binary', '_content', 'Search on the entire content of the resource', SearchParamTypeSTRING, [], '', SearchXpathUsageNormal);
@@ -399,7 +654,9 @@ begin
   indexes.add('Binary', '_tag', 'Tags applied to this resource', SearchParamTypeTOKEN, [], 'Resource.meta.tag', SearchXpathUsageNormal);
   indexes.add('Binary', 'contenttype', 'MimeType of the binary content', SearchParamTypeTOKEN, [], 'Binary.contentType', SearchXpathUsageNormal);
 end;
+{$ENDIF}
 
+{$IFDEF FHIR_BODYSTRUCTURE}
 procedure TFHIRIndexBuilder.buildIndexesForBodyStructure(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('BodyStructure', '_content', 'Search on the entire content of the resource', SearchParamTypeSTRING, [], '', SearchXpathUsageNormal);
@@ -416,7 +673,9 @@ begin
   indexes.add('BodyStructure', 'patient', 'Who this is about', SearchParamTypeREFERENCE, ['Patient'], 'BodyStructure.patient', SearchXpathUsageNormal);
   compartments.register(frtPatient, 'BodyStructure', ['patient']);
 end;
+{$ENDIF}
 
+{$IFDEF FHIR_BUNDLE}
 procedure TFHIRIndexBuilder.buildIndexesForBundle(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('Bundle', '_content', 'Search on the entire content of the resource', SearchParamTypeSTRING, [], '', SearchXpathUsageNormal);
@@ -431,7 +690,9 @@ begin
   indexes.add('Bundle', 'message', 'The first resource in the bundle, if the bundle type is "message" - this is a message header, and this parameter provides access to search its contents', SearchParamTypeREFERENCE, ['MessageHeader'], 'Bundle.entry[0].resource', SearchXpathUsageNormal);
   indexes.add('Bundle', 'type', 'document | message | transaction | transaction-response | batch | batch-response | history | searchset | collection', SearchParamTypeTOKEN, [], 'Bundle.type', SearchXpathUsageNormal);
 end;
+{$ENDIF}
 
+{$IFDEF FHIR_CAPABILITYSTATEMENT}
 procedure TFHIRIndexBuilder.buildIndexesForCapabilityStatement(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('CapabilityStatement', '_content', 'Search on the entire content of the resource', SearchParamTypeSTRING, [], '', SearchXpathUsageNormal);
@@ -462,7 +723,9 @@ begin
   indexes.add('CapabilityStatement', 'url', 'The uri that identifies the capability statement', SearchParamTypeURI, [], 'CapabilityStatement.url', SearchXpathUsageNormal);
   indexes.add('CapabilityStatement', 'version', 'The business version of the capability statement', SearchParamTypeTOKEN, [], 'CapabilityStatement.version', SearchXpathUsageNormal);
 end;
+{$ENDIF}
 
+{$IFDEF FHIR_CAREPLAN}
 procedure TFHIRIndexBuilder.buildIndexesForCarePlan(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('CarePlan', '_content', 'Search on the entire content of the resource', SearchParamTypeSTRING, [], '', SearchXpathUsageNormal);
@@ -499,7 +762,9 @@ begin
   compartments.register(frtPractitioner, 'CarePlan', ['performer']);
   compartments.register(frtRelatedPerson, 'CarePlan', ['performer']);
 end;
+{$ENDIF}
 
+{$IFDEF FHIR_CARETEAM}
 procedure TFHIRIndexBuilder.buildIndexesForCareTeam(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('CareTeam', '_content', 'Search on the entire content of the resource', SearchParamTypeSTRING, [], '', SearchXpathUsageNormal);
@@ -525,7 +790,9 @@ begin
   compartments.register(frtPractitioner, 'CareTeam', ['participant']);
   compartments.register(frtRelatedPerson, 'CareTeam', ['participant']);
 end;
+{$ENDIF}
 
+{$IFDEF FHIR_CATALOGENTRY}
 procedure TFHIRIndexBuilder.buildIndexesForCatalogEntry(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('CatalogEntry', '_content', 'Search on the entire content of the resource', SearchParamTypeSTRING, [], '', SearchXpathUsageNormal);
@@ -537,7 +804,9 @@ begin
   indexes.add('CatalogEntry', '_tag', 'Tags applied to this resource', SearchParamTypeTOKEN, [], 'Resource.meta.tag', SearchXpathUsageNormal);
   indexes.add('CatalogEntry', '_text', 'Search on the narrative of the resource', SearchParamTypeSTRING, [], '', SearchXpathUsageNormal);
 end;
+{$ENDIF}
 
+{$IFDEF FHIR_CHARGEITEM}
 procedure TFHIRIndexBuilder.buildIndexesForChargeItem(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('ChargeItem', '_content', 'Search on the entire content of the resource', SearchParamTypeSTRING, [], '', SearchXpathUsageNormal);
@@ -571,7 +840,9 @@ begin
   compartments.register(frtPractitioner, 'ChargeItem', ['enterer', 'participant-actor']);
   compartments.register(frtRelatedPerson, 'ChargeItem', ['enterer', 'participant-actor']);
 end;
+{$ENDIF}
 
+{$IFDEF FHIR_CLAIM}
 procedure TFHIRIndexBuilder.buildIndexesForClaim(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('Claim', '_content', 'Search on the entire content of the resource', SearchParamTypeSTRING, [], '', SearchXpathUsageNormal);
@@ -601,7 +872,9 @@ begin
   compartments.register(frtPractitioner, 'Claim', ['enterer', 'provider', 'payee', 'care-team']);
   compartments.register(frtRelatedPerson, 'Claim', ['payee']);
 end;
+{$ENDIF}
 
+{$IFDEF FHIR_CLAIMRESPONSE}
 procedure TFHIRIndexBuilder.buildIndexesForClaimResponse(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('ClaimResponse', '_content', 'Search on the entire content of the resource', SearchParamTypeSTRING, [], '', SearchXpathUsageNormal);
@@ -625,7 +898,9 @@ begin
   compartments.register(frtPatient, 'ClaimResponse', ['patient']);
   compartments.register(frtPractitioner, 'ClaimResponse', ['request-provider']);
 end;
+{$ENDIF}
 
+{$IFDEF FHIR_CLINICALIMPRESSION}
 procedure TFHIRIndexBuilder.buildIndexesForClinicalImpression(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('ClinicalImpression', '_content', 'Search on the entire content of the resource', SearchParamTypeSTRING, [], '', SearchXpathUsageNormal);
@@ -654,7 +929,9 @@ begin
   compartments.register(frtPatient, 'ClinicalImpression', ['subject']);
   compartments.register(frtPractitioner, 'ClinicalImpression', ['assessor']);
 end;
+{$ENDIF}
 
+{$IFDEF FHIR_CODESYSTEM}
 procedure TFHIRIndexBuilder.buildIndexesForCodeSystem(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('CodeSystem', '_content', 'Search on the entire content of the resource', SearchParamTypeSTRING, [], '', SearchXpathUsageNormal);
@@ -680,7 +957,9 @@ begin
   indexes.add('CodeSystem', 'url', 'The uri that identifies the code system', SearchParamTypeURI, [], 'CodeSystem.url', SearchXpathUsageNormal);
   indexes.add('CodeSystem', 'version', 'The business version of the code system', SearchParamTypeTOKEN, [], 'CodeSystem.version', SearchXpathUsageNormal);
 end;
+{$ENDIF}
 
+{$IFDEF FHIR_COMMUNICATION}
 procedure TFHIRIndexBuilder.buildIndexesForCommunication(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('Communication', '_content', 'Search on the entire content of the resource', SearchParamTypeSTRING, [], '', SearchXpathUsageNormal);
@@ -712,7 +991,9 @@ begin
   compartments.register(frtPractitioner, 'Communication', ['sender', 'recipient']);
   compartments.register(frtRelatedPerson, 'Communication', ['sender', 'recipient']);
 end;
+{$ENDIF}
 
+{$IFDEF FHIR_COMMUNICATIONREQUEST}
 procedure TFHIRIndexBuilder.buildIndexesForCommunicationRequest(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('CommunicationRequest', '_content', 'Search on the entire content of the resource', SearchParamTypeSTRING, [], '', SearchXpathUsageNormal);
@@ -746,7 +1027,9 @@ begin
   compartments.register(frtPractitioner, 'CommunicationRequest', ['sender', 'recipient', 'requester']);
   compartments.register(frtRelatedPerson, 'CommunicationRequest', ['sender', 'recipient', 'requester']);
 end;
+{$ENDIF}
 
+{$IFDEF FHIR_COMPARTMENTDEFINITION}
 procedure TFHIRIndexBuilder.buildIndexesForCompartmentDefinition(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('CompartmentDefinition', '_content', 'Search on the entire content of the resource', SearchParamTypeSTRING, [], '', SearchXpathUsageNormal);
@@ -768,7 +1051,9 @@ begin
   indexes.add('CompartmentDefinition', 'title', 'The human-friendly name of the compartment definition', SearchParamTypeSTRING, [], 'CompartmentDefinition.title', SearchXpathUsageNormal);
   indexes.add('CompartmentDefinition', 'url', 'The uri that identifies the compartment definition', SearchParamTypeURI, [], 'CompartmentDefinition.url', SearchXpathUsageNormal);
 end;
+{$ENDIF}
 
+{$IFDEF FHIR_COMPOSITION}
 procedure TFHIRIndexBuilder.buildIndexesForComposition(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('Composition', '_content', 'Search on the entire content of the resource', SearchParamTypeSTRING, [], '', SearchXpathUsageNormal);
@@ -805,7 +1090,9 @@ begin
   compartments.register(frtPractitioner, 'Composition', ['subject', 'author', 'attester']);
   compartments.register(frtRelatedPerson, 'Composition', ['author']);
 end;
+{$ENDIF}
 
+{$IFDEF FHIR_CONCEPTMAP}
 procedure TFHIRIndexBuilder.buildIndexesForConceptMap(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('ConceptMap', '_content', 'Search on the entire content of the resource', SearchParamTypeSTRING, [], '', SearchXpathUsageNormal);
@@ -838,7 +1125,9 @@ begin
   indexes.add('ConceptMap', 'url', 'The uri that identifies the concept map', SearchParamTypeURI, [], 'ConceptMap.url', SearchXpathUsageNormal);
   indexes.add('ConceptMap', 'version', 'The business version of the concept map', SearchParamTypeTOKEN, [], 'ConceptMap.version', SearchXpathUsageNormal);
 end;
+{$ENDIF}
 
+{$IFDEF FHIR_CONDITION}
 procedure TFHIRIndexBuilder.buildIndexesForCondition(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('Condition', '_content', 'Search on the entire content of the resource', SearchParamTypeSTRING, [], '', SearchXpathUsageNormal);
@@ -878,7 +1167,9 @@ begin
   compartments.register(frtPractitioner, 'Condition', ['asserter']);
   compartments.register(frtRelatedPerson, 'Condition', ['asserter']);
 end;
+{$ENDIF}
 
+{$IFDEF FHIR_CONSENT}
 procedure TFHIRIndexBuilder.buildIndexesForConsent(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('Consent', '_content', 'Search on the entire content of the resource', SearchParamTypeSTRING, [], '', SearchXpathUsageNormal);
@@ -907,7 +1198,9 @@ begin
   indexes.add('Consent', 'status', 'draft | proposed | active | rejected | inactive | entered-in-error', SearchParamTypeTOKEN, [], 'Consent.status', SearchXpathUsageNormal);
   compartments.register(frtPatient, 'Consent', ['patient']);
 end;
+{$ENDIF}
 
+{$IFDEF FHIR_CONTRACT}
 procedure TFHIRIndexBuilder.buildIndexesForContract(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('Contract', '_content', 'Search on the entire content of the resource', SearchParamTypeSTRING, [], '', SearchXpathUsageNormal);
@@ -927,7 +1220,9 @@ begin
   indexes.add('Contract', 'status', 'The status of the contract', SearchParamTypeTOKEN, [], 'Contract.status', SearchXpathUsageNormal);
   indexes.add('Contract', 'subject', 'The identity of the subject of the contract', SearchParamTypeREFERENCE, ALL_RESOURCE_TYPE_NAMES, 'Contract.subject', SearchXpathUsageNormal);
 end;
+{$ENDIF}
 
+{$IFDEF FHIR_COVERAGE}
 procedure TFHIRIndexBuilder.buildIndexesForCoverage(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('Coverage', '_content', 'Search on the entire content of the resource', SearchParamTypeSTRING, [], '', SearchXpathUsageNormal);
@@ -956,7 +1251,9 @@ begin
   compartments.register(frtPatient, 'Coverage', ['policy-holder', 'subscriber', 'beneficiary', 'payor']);
   compartments.register(frtRelatedPerson, 'Coverage', ['policy-holder', 'subscriber', 'payor']);
 end;
+{$ENDIF}
 
+{$IFDEF FHIR_DETECTEDISSUE}
 procedure TFHIRIndexBuilder.buildIndexesForDetectedIssue(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('DetectedIssue', '_content', 'Search on the entire content of the resource', SearchParamTypeSTRING, [], '', SearchXpathUsageNormal);
@@ -979,7 +1276,9 @@ begin
   compartments.register(frtPatient, 'DetectedIssue', ['patient']);
   compartments.register(frtPractitioner, 'DetectedIssue', ['author']);
 end;
+{$ENDIF}
 
+{$IFDEF FHIR_DEVICE}
 procedure TFHIRIndexBuilder.buildIndexesForDevice(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('Device', '_content', 'Search on the entire content of the resource', SearchParamTypeSTRING, [], '', SearchXpathUsageNormal);
@@ -1004,7 +1303,9 @@ begin
   indexes.add('Device', 'url', 'Network address to contact device', SearchParamTypeURI, [], 'Device.url', SearchXpathUsageNormal);
   compartments.register(frtDevice, 'Device', ['{def}']);
 end;
+{$ENDIF}
 
+{$IFDEF FHIR_DEVICECOMPONENT}
 procedure TFHIRIndexBuilder.buildIndexesForDeviceComponent(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('DeviceComponent', '_content', 'Search on the entire content of the resource', SearchParamTypeSTRING, [], '', SearchXpathUsageNormal);
@@ -1021,7 +1322,9 @@ begin
   indexes.add('DeviceComponent', 'type', 'The device component type', SearchParamTypeTOKEN, [], 'DeviceComponent.type', SearchXpathUsageNormal);
   compartments.register(frtDevice, 'DeviceComponent', ['source']);
 end;
+{$ENDIF}
 
+{$IFDEF FHIR_DEVICEMETRIC}
 procedure TFHIRIndexBuilder.buildIndexesForDeviceMetric(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('DeviceMetric', '_content', 'Search on the entire content of the resource', SearchParamTypeSTRING, [], '', SearchXpathUsageNormal);
@@ -1039,7 +1342,9 @@ begin
   indexes.add('DeviceMetric', 'type', 'The component type', SearchParamTypeTOKEN, [], 'DeviceMetric.type', SearchXpathUsageNormal);
   compartments.register(frtDevice, 'DeviceMetric', ['source']);
 end;
+{$ENDIF}
 
+{$IFDEF FHIR_DEVICEREQUEST}
 procedure TFHIRIndexBuilder.buildIndexesForDeviceRequest(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('DeviceRequest', '_content', 'Search on the entire content of the resource', SearchParamTypeSTRING, [], '', SearchXpathUsageNormal);
@@ -1073,7 +1378,9 @@ begin
   compartments.register(frtPatient, 'DeviceRequest', ['subject', 'requester', 'performer']);
   compartments.register(frtPractitioner, 'DeviceRequest', ['requester', 'performer']);
 end;
+{$ENDIF}
 
+{$IFDEF FHIR_DEVICEUSESTATEMENT}
 procedure TFHIRIndexBuilder.buildIndexesForDeviceUseStatement(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('DeviceUseStatement', '_content', 'Search on the entire content of the resource', SearchParamTypeSTRING, [], '', SearchXpathUsageNormal);
@@ -1092,7 +1399,9 @@ begin
   compartments.register(frtDevice, 'DeviceUseStatement', ['device']);
   compartments.register(frtPatient, 'DeviceUseStatement', ['subject']);
 end;
+{$ENDIF}
 
+{$IFDEF FHIR_DIAGNOSTICREPORT}
 procedure TFHIRIndexBuilder.buildIndexesForDiagnosticReport(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('DiagnosticReport', '_content', 'Search on the entire content of the resource', SearchParamTypeSTRING, [], '', SearchXpathUsageNormal);
@@ -1127,7 +1436,9 @@ begin
   compartments.register(frtPatient, 'DiagnosticReport', ['subject']);
   compartments.register(frtPractitioner, 'DiagnosticReport', ['performer']);
 end;
+{$ENDIF}
 
+{$IFDEF FHIR_DOCUMENTMANIFEST}
 procedure TFHIRIndexBuilder.buildIndexesForDocumentManifest(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('DocumentManifest', '_content', 'Search on the entire content of the resource', SearchParamTypeSTRING, [], '', SearchXpathUsageNormal);
@@ -1158,7 +1469,9 @@ begin
   compartments.register(frtPractitioner, 'DocumentManifest', ['subject', 'author', 'recipient']);
   compartments.register(frtRelatedPerson, 'DocumentManifest', ['author']);
 end;
+{$ENDIF}
 
+{$IFDEF FHIR_DOCUMENTREFERENCE}
 procedure TFHIRIndexBuilder.buildIndexesForDocumentReference(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('DocumentReference', '_content', 'Search on the entire content of the resource', SearchParamTypeSTRING, [], '', SearchXpathUsageNormal);
@@ -1203,7 +1516,9 @@ begin
   compartments.register(frtPractitioner, 'DocumentReference', ['subject', 'author', 'authenticator']);
   compartments.register(frtRelatedPerson, 'DocumentReference', ['author']);
 end;
+{$ENDIF}
 
+{$IFDEF FHIR_ELIGIBILITYREQUEST}
 procedure TFHIRIndexBuilder.buildIndexesForEligibilityRequest(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('EligibilityRequest', '_content', 'Search on the entire content of the resource', SearchParamTypeSTRING, [], '', SearchXpathUsageNormal);
@@ -1225,7 +1540,9 @@ begin
   compartments.register(frtPatient, 'EligibilityRequest', ['patient']);
   compartments.register(frtPractitioner, 'EligibilityRequest', ['enterer', 'provider']);
 end;
+{$ENDIF}
 
+{$IFDEF FHIR_ELIGIBILITYRESPONSE}
 procedure TFHIRIndexBuilder.buildIndexesForEligibilityResponse(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('EligibilityResponse', '_content', 'Search on the entire content of the resource', SearchParamTypeSTRING, [], '', SearchXpathUsageNormal);
@@ -1247,7 +1564,9 @@ begin
   indexes.add('EligibilityResponse', 'status', 'The EligibilityRequest status', SearchParamTypeTOKEN, [], 'EligibilityResponse.status', SearchXpathUsageNormal);
   compartments.register(frtPractitioner, 'EligibilityResponse', ['request-provider']);
 end;
+{$ENDIF}
 
+{$IFDEF FHIR_ENCOUNTER}
 procedure TFHIRIndexBuilder.buildIndexesForEncounter(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('Encounter', '_content', 'Search on the entire content of the resource', SearchParamTypeSTRING, [], '', SearchXpathUsageNormal);
@@ -1286,7 +1605,9 @@ begin
   compartments.register(frtPractitioner, 'Encounter', ['practitioner', 'participant']);
   compartments.register(frtRelatedPerson, 'Encounter', ['participant']);
 end;
+{$ENDIF}
 
+{$IFDEF FHIR_ENDPOINT}
 procedure TFHIRIndexBuilder.buildIndexesForEndpoint(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('Endpoint', '_content', 'Search on the entire content of the resource', SearchParamTypeSTRING, [], '', SearchXpathUsageNormal);
@@ -1304,7 +1625,9 @@ begin
   indexes.add('Endpoint', 'payload-type', 'The type of content that may be used at this endpoint (e.g. XDS Discharge summaries)', SearchParamTypeTOKEN, [], 'Endpoint.payloadType', SearchXpathUsageNormal);
   indexes.add('Endpoint', 'status', 'The current status of the Endpoint (usually expected to be active)', SearchParamTypeTOKEN, [], 'Endpoint.status', SearchXpathUsageNormal);
 end;
+{$ENDIF}
 
+{$IFDEF FHIR_ENROLLMENTREQUEST}
 procedure TFHIRIndexBuilder.buildIndexesForEnrollmentRequest(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('EnrollmentRequest', '_content', 'Search on the entire content of the resource', SearchParamTypeSTRING, [], '', SearchXpathUsageNormal);
@@ -1322,7 +1645,9 @@ begin
   indexes.add('EnrollmentRequest', 'subject', 'The party to be enrolled', SearchParamTypeREFERENCE, ['Patient'], 'EnrollmentRequest.candidate', SearchXpathUsageNormal);
   compartments.register(frtPatient, 'EnrollmentRequest', ['subject']);
 end;
+{$ENDIF}
 
+{$IFDEF FHIR_ENROLLMENTRESPONSE}
 procedure TFHIRIndexBuilder.buildIndexesForEnrollmentResponse(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('EnrollmentResponse', '_content', 'Search on the entire content of the resource', SearchParamTypeSTRING, [], '', SearchXpathUsageNormal);
@@ -1338,7 +1663,9 @@ begin
   indexes.add('EnrollmentResponse', 'request', 'The reference to the claim', SearchParamTypeREFERENCE, ['EnrollmentRequest'], 'EnrollmentResponse.request', SearchXpathUsageNormal);
   indexes.add('EnrollmentResponse', 'status', 'The status of the enrollment response', SearchParamTypeTOKEN, [], 'EnrollmentResponse.status', SearchXpathUsageNormal);
 end;
+{$ENDIF}
 
+{$IFDEF FHIR_EPISODEOFCARE}
 procedure TFHIRIndexBuilder.buildIndexesForEpisodeOfCare(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('EpisodeOfCare', '_content', 'Search on the entire content of the resource', SearchParamTypeSTRING, [], '', SearchXpathUsageNormal);
@@ -1363,7 +1690,9 @@ begin
   compartments.register(frtPatient, 'EpisodeOfCare', ['patient']);
   compartments.register(frtPractitioner, 'EpisodeOfCare', ['care-manager']);
 end;
+{$ENDIF}
 
+{$IFDEF FHIR_EVENTDEFINITION}
 procedure TFHIRIndexBuilder.buildIndexesForEventDefinition(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('EventDefinition', '_content', 'Search on the entire content of the resource', SearchParamTypeSTRING, [], '', SearchXpathUsageNormal);
@@ -1392,7 +1721,9 @@ begin
   indexes.add('EventDefinition', 'url', 'The uri that identifies the event definition', SearchParamTypeURI, [], 'EventDefinition.url', SearchXpathUsageNormal);
   indexes.add('EventDefinition', 'version', 'The business version of the event definition', SearchParamTypeTOKEN, [], 'EventDefinition.version', SearchXpathUsageNormal);
 end;
+{$ENDIF}
 
+{$IFDEF FHIR_EXPANSIONPROFILE}
 procedure TFHIRIndexBuilder.buildIndexesForExpansionProfile(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('ExpansionProfile', '_content', 'Search on the entire content of the resource', SearchParamTypeSTRING, [], '', SearchXpathUsageNormal);
@@ -1413,7 +1744,9 @@ begin
   indexes.add('ExpansionProfile', 'url', 'The uri that identifies the expansion profile', SearchParamTypeURI, [], 'ExpansionProfile.url', SearchXpathUsageNormal);
   indexes.add('ExpansionProfile', 'version', 'The business version of the expansion profile', SearchParamTypeTOKEN, [], 'ExpansionProfile.version', SearchXpathUsageNormal);
 end;
+{$ENDIF}
 
+{$IFDEF FHIR_EXPLANATIONOFBENEFIT}
 procedure TFHIRIndexBuilder.buildIndexesForExplanationOfBenefit(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('ExplanationOfBenefit', '_content', 'Search on the entire content of the resource', SearchParamTypeSTRING, [], '', SearchXpathUsageNormal);
@@ -1443,7 +1776,9 @@ begin
   compartments.register(frtPractitioner, 'ExplanationOfBenefit', ['enterer', 'provider', 'payee', 'care-team']);
   compartments.register(frtRelatedPerson, 'ExplanationOfBenefit', ['payee']);
 end;
+{$ENDIF}
 
+{$IFDEF FHIR_FAMILYMEMBERHISTORY}
 procedure TFHIRIndexBuilder.buildIndexesForFamilyMemberHistory(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('FamilyMemberHistory', '_content', 'Search on the entire content of the resource', SearchParamTypeSTRING, [], '', SearchXpathUsageNormal);
@@ -1466,7 +1801,9 @@ begin
   indexes.add('FamilyMemberHistory', 'status', 'partial | completed | entered-in-error | health-unknown', SearchParamTypeTOKEN, [], 'FamilyMemberHistory.status', SearchXpathUsageNormal);
   compartments.register(frtPatient, 'FamilyMemberHistory', ['patient']);
 end;
+{$ENDIF}
 
+{$IFDEF FHIR_FLAG}
 procedure TFHIRIndexBuilder.buildIndexesForFlag(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('Flag', '_content', 'Search on the entire content of the resource', SearchParamTypeSTRING, [], '', SearchXpathUsageNormal);
@@ -1488,7 +1825,9 @@ begin
   compartments.register(frtPatient, 'Flag', ['patient']);
   compartments.register(frtPractitioner, 'Flag', ['author']);
 end;
+{$ENDIF}
 
+{$IFDEF FHIR_GOAL}
 procedure TFHIRIndexBuilder.buildIndexesForGoal(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('Goal', '_content', 'Search on the entire content of the resource', SearchParamTypeSTRING, [], '', SearchXpathUsageNormal);
@@ -1510,7 +1849,9 @@ begin
   indexes.add('Goal', 'target-date', 'Reach goal on or before', SearchParamTypeDATE, [], 'Goal.target.due.as(Date)', SearchXpathUsageNormal);
   compartments.register(frtPatient, 'Goal', ['patient']);
 end;
+{$ENDIF}
 
+{$IFDEF FHIR_GRAPHDEFINITION}
 procedure TFHIRIndexBuilder.buildIndexesForGraphDefinition(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('GraphDefinition', '_content', 'Search on the entire content of the resource', SearchParamTypeSTRING, [], '', SearchXpathUsageNormal);
@@ -1531,7 +1872,9 @@ begin
   indexes.add('GraphDefinition', 'url', 'The uri that identifies the graph definition', SearchParamTypeURI, [], 'GraphDefinition.url', SearchXpathUsageNormal);
   indexes.add('GraphDefinition', 'version', 'The business version of the graph definition', SearchParamTypeTOKEN, [], 'GraphDefinition.version', SearchXpathUsageNormal);
 end;
+{$ENDIF}
 
+{$IFDEF FHIR_GROUP}
 procedure TFHIRIndexBuilder.buildIndexesForGroup(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('Group', '_content', 'Search on the entire content of the resource', SearchParamTypeSTRING, [], '', SearchXpathUsageNormal);
@@ -1555,7 +1898,9 @@ begin
   compartments.register(frtPatient, 'Group', ['member']);
   compartments.register(frtPractitioner, 'Group', ['member']);
 end;
+{$ENDIF}
 
+{$IFDEF FHIR_GUIDANCERESPONSE}
 procedure TFHIRIndexBuilder.buildIndexesForGuidanceResponse(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('GuidanceResponse', '_content', 'Search on the entire content of the resource', SearchParamTypeSTRING, [], '', SearchXpathUsageNormal);
@@ -1571,7 +1916,9 @@ begin
   indexes.add('GuidanceResponse', 'request', 'The identifier of the request associated with the response', SearchParamTypeTOKEN, [], 'GuidanceResponse.requestId', SearchXpathUsageNormal);
   indexes.add('GuidanceResponse', 'subject', 'The subject that the guidance response is about', SearchParamTypeREFERENCE, ['Group', 'Patient'], 'GuidanceResponse.subject', SearchXpathUsageNormal);
 end;
+{$ENDIF}
 
+{$IFDEF FHIR_HEALTHCARESERVICE}
 procedure TFHIRIndexBuilder.buildIndexesForHealthcareService(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('HealthcareService', '_content', 'Search on the entire content of the resource', SearchParamTypeSTRING, [], '', SearchXpathUsageNormal);
@@ -1593,7 +1940,9 @@ begin
   indexes.add('HealthcareService', 'programname', 'One of the Program Names serviced by this HealthcareService', SearchParamTypeSTRING, [], 'HealthcareService.programName', SearchXpathUsageNormal);
   indexes.add('HealthcareService', 'type', 'The type of service provided by this healthcare service', SearchParamTypeTOKEN, [], 'HealthcareService.type', SearchXpathUsageNormal);
 end;
+{$ENDIF}
 
+{$IFDEF FHIR_IMAGINGMANIFEST}
 procedure TFHIRIndexBuilder.buildIndexesForImagingManifest(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('ImagingManifest', '_content', 'Search on the entire content of the resource', SearchParamTypeSTRING, [], '', SearchXpathUsageNormal);
@@ -1617,7 +1966,9 @@ begin
   compartments.register(frtPractitioner, 'ImagingManifest', ['author']);
   compartments.register(frtRelatedPerson, 'ImagingManifest', ['author']);
 end;
+{$ENDIF}
 
+{$IFDEF FHIR_IMAGINGSTUDY}
 procedure TFHIRIndexBuilder.buildIndexesForImagingStudy(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('ImagingStudy', '_content', 'Search on the entire content of the resource', SearchParamTypeSTRING, [], '', SearchXpathUsageNormal);
@@ -1647,7 +1998,9 @@ begin
   indexes.add('ImagingStudy', 'uid', 'The instance unique identifier', SearchParamTypeURI, [], 'ImagingStudy.series.instance.uid', SearchXpathUsageNormal);
   compartments.register(frtPatient, 'ImagingStudy', ['patient']);
 end;
+{$ENDIF}
 
+{$IFDEF FHIR_IMMUNIZATION}
 procedure TFHIRIndexBuilder.buildIndexesForImmunization(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('Immunization', '_content', 'Search on the entire content of the resource', SearchParamTypeSTRING, [], '', SearchXpathUsageNormal);
@@ -1678,7 +2031,9 @@ begin
   compartments.register(frtPatient, 'Immunization', ['patient']);
   compartments.register(frtPractitioner, 'Immunization', ['practitioner']);
 end;
+{$ENDIF}
 
+{$IFDEF FHIR_IMMUNIZATIONRECOMMENDATION}
 procedure TFHIRIndexBuilder.buildIndexesForImmunizationRecommendation(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('ImmunizationRecommendation', '_content', 'Search on the entire content of the resource', SearchParamTypeSTRING, [], '', SearchXpathUsageNormal);
@@ -1701,7 +2056,9 @@ begin
   indexes.add('ImmunizationRecommendation', 'vaccine-type', 'Vaccine recommendation applies to', SearchParamTypeTOKEN, [], 'ImmunizationRecommendation.recommendation.vaccineCode', SearchXpathUsageNormal);
   compartments.register(frtPatient, 'ImmunizationRecommendation', ['patient']);
 end;
+{$ENDIF}
 
+{$IFDEF FHIR_IMPLEMENTATIONGUIDE}
 procedure TFHIRIndexBuilder.buildIndexesForImplementationGuide(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('ImplementationGuide', '_content', 'Search on the entire content of the resource', SearchParamTypeSTRING, [], '', SearchXpathUsageNormal);
@@ -1724,7 +2081,9 @@ begin
   indexes.add('ImplementationGuide', 'url', 'The uri that identifies the implementation guide', SearchParamTypeURI, [], 'ImplementationGuide.url', SearchXpathUsageNormal);
   indexes.add('ImplementationGuide', 'version', 'The business version of the implementation guide', SearchParamTypeTOKEN, [], 'ImplementationGuide.version', SearchXpathUsageNormal);
 end;
+{$ENDIF}
 
+{$IFDEF FHIR_LIBRARY}
 procedure TFHIRIndexBuilder.buildIndexesForLibrary(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('Library', '_content', 'Search on the entire content of the resource', SearchParamTypeSTRING, [], '', SearchXpathUsageNormal);
@@ -1753,7 +2112,9 @@ begin
   indexes.add('Library', 'url', 'The uri that identifies the library', SearchParamTypeURI, [], 'Library.url', SearchXpathUsageNormal);
   indexes.add('Library', 'version', 'The business version of the library', SearchParamTypeTOKEN, [], 'Library.version', SearchXpathUsageNormal);
 end;
+{$ENDIF}
 
+{$IFDEF FHIR_LINKAGE}
 procedure TFHIRIndexBuilder.buildIndexesForLinkage(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('Linkage', '_content', 'Search on the entire content of the resource', SearchParamTypeSTRING, [], '', SearchXpathUsageNormal);
@@ -1769,7 +2130,9 @@ begin
   indexes.add('Linkage', 'source', 'Matches on any item in the Linkage with a type of ''source''', SearchParamTypeREFERENCE, [], 'Linkage.item.resource', SearchXpathUsageNormal);
   compartments.register(frtPractitioner, 'Linkage', ['author']);
 end;
+{$ENDIF}
 
+{$IFDEF FHIR_LIST}
 procedure TFHIRIndexBuilder.buildIndexesForList(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('List', '_content', 'Search on the entire content of the resource', SearchParamTypeSTRING, [], '', SearchXpathUsageNormal);
@@ -1798,7 +2161,9 @@ begin
   compartments.register(frtPatient, 'List', ['subject', 'source']);
   compartments.register(frtPractitioner, 'List', ['source']);
 end;
+{$ENDIF}
 
+{$IFDEF FHIR_LOCATION}
 procedure TFHIRIndexBuilder.buildIndexesForLocation(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('Location', '_content', 'Search on the entire content of the resource', SearchParamTypeSTRING, [], '', SearchXpathUsageNormal);
@@ -1826,7 +2191,9 @@ begin
   indexes.add('Location', 'status', 'Searches for locations with a specific kind of status', SearchParamTypeTOKEN, [], 'Location.status', SearchXpathUsageNormal);
   indexes.add('Location', 'type', 'A code for the type of location', SearchParamTypeTOKEN, [], 'Location.type', SearchXpathUsageNormal);
 end;
+{$ENDIF}
 
+{$IFDEF FHIR_MEASURE}
 procedure TFHIRIndexBuilder.buildIndexesForMeasure(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('Measure', '_content', 'Search on the entire content of the resource', SearchParamTypeSTRING, [], '', SearchXpathUsageNormal);
@@ -1855,7 +2222,9 @@ begin
   indexes.add('Measure', 'url', 'The uri that identifies the measure', SearchParamTypeURI, [], 'Measure.url', SearchXpathUsageNormal);
   indexes.add('Measure', 'version', 'The business version of the measure', SearchParamTypeTOKEN, [], 'Measure.version', SearchXpathUsageNormal);
 end;
+{$ENDIF}
 
+{$IFDEF FHIR_MEASUREREPORT}
 procedure TFHIRIndexBuilder.buildIndexesForMeasureReport(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('MeasureReport', '_content', 'Search on the entire content of the resource', SearchParamTypeSTRING, [], '', SearchXpathUsageNormal);
@@ -1871,7 +2240,9 @@ begin
   indexes.add('MeasureReport', 'status', 'The status of the measure report', SearchParamTypeTOKEN, [], 'MeasureReport.status', SearchXpathUsageNormal);
   compartments.register(frtPatient, 'MeasureReport', ['patient']);
 end;
+{$ENDIF}
 
+{$IFDEF FHIR_MEDIA}
 procedure TFHIRIndexBuilder.buildIndexesForMedia(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('Media', '_content', 'Search on the entire content of the resource', SearchParamTypeSTRING, [], '', SearchXpathUsageNormal);
@@ -1899,7 +2270,9 @@ begin
   compartments.register(frtPatient, 'Media', ['subject']);
   compartments.register(frtPractitioner, 'Media', ['subject', 'operator']);
 end;
+{$ENDIF}
 
+{$IFDEF FHIR_MEDICATION}
 procedure TFHIRIndexBuilder.buildIndexesForMedication(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('Medication', '_content', 'Search on the entire content of the resource', SearchParamTypeSTRING, [], '', SearchXpathUsageNormal);
@@ -1921,7 +2294,9 @@ begin
   indexes.add('Medication', 'package-item-code', 'The item in the package', SearchParamTypeTOKEN, [], 'Medication.package.content.item.as(CodeableConcept)', SearchXpathUsageNormal);
   indexes.add('Medication', 'status', 'active | inactive | entered-in-error', SearchParamTypeTOKEN, [], 'Medication.status', SearchXpathUsageNormal);
 end;
+{$ENDIF}
 
+{$IFDEF FHIR_MEDICATIONADMINISTRATION}
 procedure TFHIRIndexBuilder.buildIndexesForMedicationAdministration(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('MedicationAdministration', '_content', 'Search on the entire content of the resource', SearchParamTypeSTRING, [], '', SearchXpathUsageNormal);
@@ -1952,7 +2327,9 @@ begin
   compartments.register(frtPractitioner, 'MedicationAdministration', ['performer']);
   compartments.register(frtRelatedPerson, 'MedicationAdministration', ['performer']);
 end;
+{$ENDIF}
 
+{$IFDEF FHIR_MEDICATIONDISPENSE}
 procedure TFHIRIndexBuilder.buildIndexesForMedicationDispense(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('MedicationDispense', '_content', 'Search on the entire content of the resource', SearchParamTypeSTRING, [], '', SearchXpathUsageNormal);
@@ -1981,7 +2358,9 @@ begin
   compartments.register(frtPatient, 'MedicationDispense', ['subject', 'patient', 'receiver']);
   compartments.register(frtPractitioner, 'MedicationDispense', ['performer', 'receiver']);
 end;
+{$ENDIF}
 
+{$IFDEF FHIR_MEDICATIONREQUEST}
 procedure TFHIRIndexBuilder.buildIndexesForMedicationRequest(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('MedicationRequest', '_content', 'Search on the entire content of the resource', SearchParamTypeSTRING, [], '', SearchXpathUsageNormal);
@@ -2011,7 +2390,9 @@ begin
   compartments.register(frtPatient, 'MedicationRequest', ['subject']);
   compartments.register(frtPractitioner, 'MedicationRequest', ['requester']);
 end;
+{$ENDIF}
 
+{$IFDEF FHIR_MEDICATIONSTATEMENT}
 procedure TFHIRIndexBuilder.buildIndexesForMedicationStatement(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('MedicationStatement', '_content', 'Search on the entire content of the resource', SearchParamTypeSTRING, [], '', SearchXpathUsageNormal);
@@ -2037,7 +2418,9 @@ begin
   compartments.register(frtPractitioner, 'MedicationStatement', ['source']);
   compartments.register(frtRelatedPerson, 'MedicationStatement', ['source']);
 end;
+{$ENDIF}
 
+{$IFDEF FHIR_MESSAGEDEFINITION}
 procedure TFHIRIndexBuilder.buildIndexesForMessageDefinition(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('MessageDefinition', '_content', 'Search on the entire content of the resource', SearchParamTypeSTRING, [], '', SearchXpathUsageNormal);
@@ -2062,7 +2445,9 @@ begin
   indexes.add('MessageDefinition', 'url', 'The uri that identifies the message definition', SearchParamTypeURI, [], 'MessageDefinition.url', SearchXpathUsageNormal);
   indexes.add('MessageDefinition', 'version', 'The business version of the message definition', SearchParamTypeTOKEN, [], 'MessageDefinition.version', SearchXpathUsageNormal);
 end;
+{$ENDIF}
 
+{$IFDEF FHIR_MESSAGEHEADER}
 procedure TFHIRIndexBuilder.buildIndexesForMessageHeader(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('MessageHeader', '_content', 'Search on the entire content of the resource', SearchParamTypeSTRING, [], '', SearchXpathUsageNormal);
@@ -2091,7 +2476,9 @@ begin
   compartments.register(frtDevice, 'MessageHeader', ['target']);
   compartments.register(frtPractitioner, 'MessageHeader', ['receiver', 'author', 'responsible', 'enterer']);
 end;
+{$ENDIF}
 
+{$IFDEF FHIR_NAMINGSYSTEM}
 procedure TFHIRIndexBuilder.buildIndexesForNamingSystem(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('NamingSystem', '_content', 'Search on the entire content of the resource', SearchParamTypeSTRING, [], '', SearchXpathUsageNormal);
@@ -2118,7 +2505,9 @@ begin
   indexes.add('NamingSystem', 'type', 'e.g. driver,  provider,  patient, bank etc.', SearchParamTypeTOKEN, [], 'NamingSystem.type', SearchXpathUsageNormal);
   indexes.add('NamingSystem', 'value', 'The unique identifier', SearchParamTypeSTRING, [], 'NamingSystem.uniqueId.value', SearchXpathUsageNormal);
 end;
+{$ENDIF}
 
+{$IFDEF FHIR_NUTRITIONORDER}
 procedure TFHIRIndexBuilder.buildIndexesForNutritionOrder(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('NutritionOrder', '_content', 'Search on the entire content of the resource', SearchParamTypeSTRING, [], '', SearchXpathUsageNormal);
@@ -2145,7 +2534,9 @@ begin
   compartments.register(frtPatient, 'NutritionOrder', ['patient']);
   compartments.register(frtPractitioner, 'NutritionOrder', ['provider']);
 end;
+{$ENDIF}
 
+{$IFDEF FHIR_OBSERVATION}
 procedure TFHIRIndexBuilder.buildIndexesForObservation(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('Observation', '_content', 'Search on the entire content of the resource', SearchParamTypeSTRING, [], '', SearchXpathUsageNormal);
@@ -2202,7 +2593,9 @@ begin
   compartments.register(frtPractitioner, 'Observation', ['performer']);
   compartments.register(frtRelatedPerson, 'Observation', ['performer']);
 end;
+{$ENDIF}
 
+{$IFDEF FHIR_OPERATIONDEFINITION}
 procedure TFHIRIndexBuilder.buildIndexesForOperationDefinition(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('OperationDefinition', '_content', 'Search on the entire content of the resource', SearchParamTypeSTRING, [], '', SearchXpathUsageNormal);
@@ -2229,7 +2622,9 @@ begin
   indexes.add('OperationDefinition', 'url', 'The uri that identifies the operation definition', SearchParamTypeURI, [], 'OperationDefinition.url', SearchXpathUsageNormal);
   indexes.add('OperationDefinition', 'version', 'The business version of the operation definition', SearchParamTypeTOKEN, [], 'OperationDefinition.version', SearchXpathUsageNormal);
 end;
+{$ENDIF}
 
+{$IFDEF FHIR_OPERATIONOUTCOME}
 procedure TFHIRIndexBuilder.buildIndexesForOperationOutcome(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('OperationOutcome', '_content', 'Search on the entire content of the resource', SearchParamTypeSTRING, [], '', SearchXpathUsageNormal);
@@ -2241,7 +2636,9 @@ begin
   indexes.add('OperationOutcome', '_tag', 'Tags applied to this resource', SearchParamTypeTOKEN, [], 'Resource.meta.tag', SearchXpathUsageNormal);
   indexes.add('OperationOutcome', '_text', 'Search on the narrative of the resource', SearchParamTypeSTRING, [], '', SearchXpathUsageNormal);
 end;
+{$ENDIF}
 
+{$IFDEF FHIR_ORGANIZATION}
 procedure TFHIRIndexBuilder.buildIndexesForOrganization(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('Organization', '_content', 'Search on the entire content of the resource', SearchParamTypeSTRING, [], '', SearchXpathUsageNormal);
@@ -2266,7 +2663,9 @@ begin
   indexes.add('Organization', 'phonetic', 'A portion of the organization''s name using some kind of phonetic matching algorithm', SearchParamTypeSTRING, [], 'Organization.name', SearchXpathUsagePhonetic);
   indexes.add('Organization', 'type', 'A code for the type of organization', SearchParamTypeTOKEN, [], 'Organization.type', SearchXpathUsageNormal);
 end;
+{$ENDIF}
 
+{$IFDEF FHIR_PATIENT}
 procedure TFHIRIndexBuilder.buildIndexesForPatient(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('Patient', '_content', 'Search on the entire content of the resource', SearchParamTypeSTRING, [], '', SearchXpathUsageNormal);
@@ -2306,7 +2705,9 @@ begin
   compartments.register(frtPractitioner, 'Patient', ['general-practitioner']);
   compartments.register(frtRelatedPerson, 'Patient', ['link']);
 end;
+{$ENDIF}
 
+{$IFDEF FHIR_PAYMENTNOTICE}
 procedure TFHIRIndexBuilder.buildIndexesForPaymentNotice(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('PaymentNotice', '_content', 'Search on the entire content of the resource', SearchParamTypeSTRING, [], '', SearchXpathUsageNormal);
@@ -2328,7 +2729,9 @@ begin
   indexes.add('PaymentNotice', 'statusdate', 'The date of the payment action', SearchParamTypeDATE, [], 'PaymentNotice.statusDate', SearchXpathUsageNormal);
   compartments.register(frtPractitioner, 'PaymentNotice', ['provider']);
 end;
+{$ENDIF}
 
+{$IFDEF FHIR_PAYMENTRECONCILIATION}
 procedure TFHIRIndexBuilder.buildIndexesForPaymentReconciliation(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('PaymentReconciliation', '_content', 'Search on the entire content of the resource', SearchParamTypeSTRING, [], '', SearchXpathUsageNormal);
@@ -2350,7 +2753,9 @@ begin
   indexes.add('PaymentReconciliation', 'status', 'The status of the payment reconciliation', SearchParamTypeTOKEN, [], 'PaymentReconciliation.status', SearchXpathUsageNormal);
   compartments.register(frtPractitioner, 'PaymentReconciliation', ['request-provider']);
 end;
+{$ENDIF}
 
+{$IFDEF FHIR_PERSON}
 procedure TFHIRIndexBuilder.buildIndexesForPerson(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('Person', '_content', 'Search on the entire content of the resource', SearchParamTypeSTRING, [], '', SearchXpathUsageNormal);
@@ -2384,7 +2789,9 @@ begin
   compartments.register(frtPractitioner, 'Person', ['practitioner']);
   compartments.register(frtRelatedPerson, 'Person', ['link']);
 end;
+{$ENDIF}
 
+{$IFDEF FHIR_PLANDEFINITION}
 procedure TFHIRIndexBuilder.buildIndexesForPlanDefinition(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('PlanDefinition', '_content', 'Search on the entire content of the resource', SearchParamTypeSTRING, [], '', SearchXpathUsageNormal);
@@ -2413,7 +2820,9 @@ begin
   indexes.add('PlanDefinition', 'url', 'The uri that identifies the plan definition', SearchParamTypeURI, [], 'PlanDefinition.url', SearchXpathUsageNormal);
   indexes.add('PlanDefinition', 'version', 'The business version of the plan definition', SearchParamTypeTOKEN, [], 'PlanDefinition.version', SearchXpathUsageNormal);
 end;
+{$ENDIF}
 
+{$IFDEF FHIR_PRACTITIONER}
 procedure TFHIRIndexBuilder.buildIndexesForPractitioner(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('Practitioner', '_content', 'Search on the entire content of the resource', SearchParamTypeSTRING, [], '', SearchXpathUsageNormal);
@@ -2443,7 +2852,9 @@ begin
   indexes.add('Practitioner', 'telecom', 'The value in any kind of contact', SearchParamTypeTOKEN, [], 'PractitionerRole.telecom | RelatedPerson.telecom | Practitioner.telecom | Person.telecom | Patient.telecom | Practitioner.telecom | RelatedPerson.telecom | Patient.telecom | Person.telecom', SearchXpathUsageNormal);
   compartments.register(frtPractitioner, 'Practitioner', ['{def}']);
 end;
+{$ENDIF}
 
+{$IFDEF FHIR_PRACTITIONERROLE}
 procedure TFHIRIndexBuilder.buildIndexesForPractitionerRole(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('PractitionerRole', '_content', 'Search on the entire content of the resource', SearchParamTypeSTRING, [], '', SearchXpathUsageNormal);
@@ -2469,7 +2880,9 @@ begin
   indexes.add('PractitionerRole', 'telecom', 'The value in any kind of contact', SearchParamTypeTOKEN, [], 'PractitionerRole.telecom | RelatedPerson.telecom | Practitioner.telecom | Person.telecom | Patient.telecom | Practitioner.telecom | RelatedPerson.telecom | Patient.telecom | Person.telecom', SearchXpathUsageNormal);
   compartments.register(frtPractitioner, 'PractitionerRole', ['practitioner']);
 end;
+{$ENDIF}
 
+{$IFDEF FHIR_PROCEDURE}
 procedure TFHIRIndexBuilder.buildIndexesForProcedure(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('Procedure', '_content', 'Search on the entire content of the resource', SearchParamTypeSTRING, [], '', SearchXpathUsageNormal);
@@ -2501,7 +2914,9 @@ begin
   compartments.register(frtPractitioner, 'Procedure', ['performer']);
   compartments.register(frtRelatedPerson, 'Procedure', ['performer']);
 end;
+{$ENDIF}
 
+{$IFDEF FHIR_PROCEDUREREQUEST}
 procedure TFHIRIndexBuilder.buildIndexesForProcedureRequest(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('ProcedureRequest', '_content', 'Search on the entire content of the resource', SearchParamTypeSTRING, [], '', SearchXpathUsageNormal);
@@ -2541,7 +2956,9 @@ begin
   compartments.register(frtPractitioner, 'ProcedureRequest', ['performer', 'requester']);
   compartments.register(frtRelatedPerson, 'ProcedureRequest', ['performer']);
 end;
+{$ENDIF}
 
+{$IFDEF FHIR_PROCESSREQUEST}
 procedure TFHIRIndexBuilder.buildIndexesForProcessRequest(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('ProcessRequest', '_content', 'Search on the entire content of the resource', SearchParamTypeSTRING, [], '', SearchXpathUsageNormal);
@@ -2559,7 +2976,9 @@ begin
   indexes.add('ProcessRequest', 'status', 'The status of the process request', SearchParamTypeTOKEN, [], 'ProcessRequest.status', SearchXpathUsageNormal);
   compartments.register(frtPractitioner, 'ProcessRequest', ['provider']);
 end;
+{$ENDIF}
 
+{$IFDEF FHIR_PROCESSRESPONSE}
 procedure TFHIRIndexBuilder.buildIndexesForProcessResponse(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('ProcessResponse', '_content', 'Search on the entire content of the resource', SearchParamTypeSTRING, [], '', SearchXpathUsageNormal);
@@ -2578,7 +2997,9 @@ begin
   indexes.add('ProcessResponse', 'status', 'The status of the process response', SearchParamTypeTOKEN, [], 'ProcessResponse.status', SearchXpathUsageNormal);
   compartments.register(frtPractitioner, 'ProcessResponse', ['request-provider']);
 end;
+{$ENDIF}
 
+{$IFDEF FHIR_PROVENANCE}
 procedure TFHIRIndexBuilder.buildIndexesForProvenance(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('Provenance', '_content', 'Search on the entire content of the resource', SearchParamTypeSTRING, [], '', SearchXpathUsageNormal);
@@ -2605,7 +3026,9 @@ begin
   compartments.register(frtPractitioner, 'Provenance', ['agent']);
   compartments.register(frtRelatedPerson, 'Provenance', ['agent']);
 end;
+{$ENDIF}
 
+{$IFDEF FHIR_QUESTIONNAIRE}
 procedure TFHIRIndexBuilder.buildIndexesForQuestionnaire(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('Questionnaire', '_content', 'Search on the entire content of the resource', SearchParamTypeSTRING, [], '', SearchXpathUsageNormal);
@@ -2629,7 +3052,9 @@ begin
   indexes.add('Questionnaire', 'url', 'The uri that identifies the questionnaire', SearchParamTypeURI, [], 'Questionnaire.url', SearchXpathUsageNormal);
   indexes.add('Questionnaire', 'version', 'The business version of the questionnaire', SearchParamTypeTOKEN, [], 'Questionnaire.version', SearchXpathUsageNormal);
 end;
+{$ENDIF}
 
+{$IFDEF FHIR_QUESTIONNAIRERESPONSE}
 procedure TFHIRIndexBuilder.buildIndexesForQuestionnaireResponse(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('QuestionnaireResponse', '_content', 'Search on the entire content of the resource', SearchParamTypeSTRING, [], '', SearchXpathUsageNormal);
@@ -2657,7 +3082,9 @@ begin
   compartments.register(frtPractitioner, 'QuestionnaireResponse', ['author', 'source']);
   compartments.register(frtRelatedPerson, 'QuestionnaireResponse', ['author', 'source']);
 end;
+{$ENDIF}
 
+{$IFDEF FHIR_RELATEDPERSON}
 procedure TFHIRIndexBuilder.buildIndexesForRelatedPerson(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('RelatedPerson', '_content', 'Search on the entire content of the resource', SearchParamTypeSTRING, [], '', SearchXpathUsageNormal);
@@ -2687,7 +3114,9 @@ begin
   compartments.register(frtPatient, 'RelatedPerson', ['patient']);
   compartments.register(frtRelatedPerson, 'RelatedPerson', ['{def}']);
 end;
+{$ENDIF}
 
+{$IFDEF FHIR_REQUESTGROUP}
 procedure TFHIRIndexBuilder.buildIndexesForRequestGroup(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('RequestGroup', '_content', 'Search on the entire content of the resource', SearchParamTypeSTRING, [], '', SearchXpathUsageNormal);
@@ -2718,7 +3147,9 @@ begin
   compartments.register(frtPractitioner, 'RequestGroup', ['participant', 'author']);
   compartments.register(frtRelatedPerson, 'RequestGroup', ['participant']);
 end;
+{$ENDIF}
 
+{$IFDEF FHIR_RESEARCHSTUDY}
 procedure TFHIRIndexBuilder.buildIndexesForResearchStudy(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('ResearchStudy', '_content', 'Search on the entire content of the resource', SearchParamTypeSTRING, [], '', SearchXpathUsageNormal);
@@ -2744,7 +3175,9 @@ begin
   indexes.add('ResearchStudy', 'title', 'Name for this study', SearchParamTypeSTRING, [], 'ResearchStudy.title', SearchXpathUsageNormal);
   compartments.register(frtPractitioner, 'ResearchStudy', ['principalinvestigator']);
 end;
+{$ENDIF}
 
+{$IFDEF FHIR_RESEARCHSUBJECT}
 procedure TFHIRIndexBuilder.buildIndexesForResearchSubject(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('ResearchSubject', '_content', 'Search on the entire content of the resource', SearchParamTypeSTRING, [], '', SearchXpathUsageNormal);
@@ -2762,7 +3195,9 @@ begin
   indexes.add('ResearchSubject', 'status', 'candidate | enrolled | active | suspended | withdrawn | completed', SearchParamTypeTOKEN, [], 'ResearchSubject.status', SearchXpathUsageNormal);
   compartments.register(frtPatient, 'ResearchSubject', ['individual']);
 end;
+{$ENDIF}
 
+{$IFDEF FHIR_RISKASSESSMENT}
 procedure TFHIRIndexBuilder.buildIndexesForRiskAssessment(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('RiskAssessment', '_content', 'Search on the entire content of the resource', SearchParamTypeSTRING, [], '', SearchXpathUsageNormal);
@@ -2789,7 +3224,9 @@ begin
   compartments.register(frtPatient, 'RiskAssessment', ['subject']);
   compartments.register(frtPractitioner, 'RiskAssessment', ['performer']);
 end;
+{$ENDIF}
 
+{$IFDEF FHIR_SCHEDULE}
 procedure TFHIRIndexBuilder.buildIndexesForSchedule(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('Schedule', '_content', 'Search on the entire content of the resource', SearchParamTypeSTRING, [], '', SearchXpathUsageNormal);
@@ -2810,7 +3247,9 @@ begin
   compartments.register(frtPractitioner, 'Schedule', ['actor']);
   compartments.register(frtRelatedPerson, 'Schedule', ['actor']);
 end;
+{$ENDIF}
 
+{$IFDEF FHIR_SEARCHPARAMETER}
 procedure TFHIRIndexBuilder.buildIndexesForSearchParameter(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('SearchParameter', '_content', 'Search on the entire content of the resource', SearchParamTypeSTRING, [], '', SearchXpathUsageNormal);
@@ -2836,7 +3275,9 @@ begin
   indexes.add('SearchParameter', 'url', 'The uri that identifies the search parameter', SearchParamTypeURI, [], 'SearchParameter.url', SearchXpathUsageNormal);
   indexes.add('SearchParameter', 'version', 'The business version of the search parameter', SearchParamTypeTOKEN, [], 'SearchParameter.version', SearchXpathUsageNormal);
 end;
+{$ENDIF}
 
+{$IFDEF FHIR_SEQUENCE}
 procedure TFHIRIndexBuilder.buildIndexesForSequence(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('Sequence', '_content', 'Search on the entire content of the resource', SearchParamTypeSTRING, [], '', SearchXpathUsageNormal);
@@ -2855,7 +3296,9 @@ begin
   indexes.add('Sequence', 'start', 'Start position (0-based inclusive, 1-based inclusive, that means the nucleic acid or amino acid at this position will be included) of the reference sequence.', SearchParamTypeNUMBER, [], 'Sequence.referenceSeq.windowStart', SearchXpathUsageNormal);
   indexes.add('Sequence', 'type', 'Amino Acid Sequence/ DNA Sequence / RNA Sequence', SearchParamTypeTOKEN, [], 'Sequence.type', SearchXpathUsageNormal);
 end;
+{$ENDIF}
 
+{$IFDEF FHIR_SERVICEDEFINITION}
 procedure TFHIRIndexBuilder.buildIndexesForServiceDefinition(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('ServiceDefinition', '_content', 'Search on the entire content of the resource', SearchParamTypeSTRING, [], '', SearchXpathUsageNormal);
@@ -2884,7 +3327,9 @@ begin
   indexes.add('ServiceDefinition', 'url', 'The uri that identifies the service definition', SearchParamTypeURI, [], 'ServiceDefinition.url', SearchXpathUsageNormal);
   indexes.add('ServiceDefinition', 'version', 'The business version of the service definition', SearchParamTypeTOKEN, [], 'ServiceDefinition.version', SearchXpathUsageNormal);
 end;
+{$ENDIF}
 
+{$IFDEF FHIR_SLOT}
 procedure TFHIRIndexBuilder.buildIndexesForSlot(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('Slot', '_content', 'Search on the entire content of the resource', SearchParamTypeSTRING, [], '', SearchXpathUsageNormal);
@@ -2901,7 +3346,9 @@ begin
   indexes.add('Slot', 'start', 'Appointment date/time.', SearchParamTypeDATE, [], 'Slot.start', SearchXpathUsageNormal);
   indexes.add('Slot', 'status', 'The free/busy status of the appointment', SearchParamTypeTOKEN, [], 'Slot.status', SearchXpathUsageNormal);
 end;
+{$ENDIF}
 
+{$IFDEF FHIR_SPECIMEN}
 procedure TFHIRIndexBuilder.buildIndexesForSpecimen(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('Specimen', '_content', 'Search on the entire content of the resource', SearchParamTypeSTRING, [], '', SearchXpathUsageNormal);
@@ -2928,7 +3375,9 @@ begin
   compartments.register(frtPatient, 'Specimen', ['subject']);
   compartments.register(frtPractitioner, 'Specimen', ['collector']);
 end;
+{$ENDIF}
 
+{$IFDEF FHIR_SPECIMENDEFINITION}
 procedure TFHIRIndexBuilder.buildIndexesForSpecimenDefinition(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('SpecimenDefinition', '_content', 'Search on the entire content of the resource', SearchParamTypeSTRING, [], '', SearchXpathUsageNormal);
@@ -2943,7 +3392,9 @@ begin
   indexes.add('SpecimenDefinition', 'identifier', 'The unique identifier associated with the specimen', SearchParamTypeTOKEN, [], 'SpecimenDefinition.identifier', SearchXpathUsageNormal);
   indexes.add('SpecimenDefinition', 'type', 'The type of collected specimen', SearchParamTypeTOKEN, [], 'SpecimenDefinition.typeCollected', SearchXpathUsageNormal);
 end;
+{$ENDIF}
 
+{$IFDEF FHIR_STRUCTUREDEFINITION}
 procedure TFHIRIndexBuilder.buildIndexesForStructureDefinition(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('StructureDefinition', '_content', 'Search on the entire content of the resource', SearchParamTypeSTRING, [], '', SearchXpathUsageNormal);
@@ -2977,7 +3428,9 @@ begin
   indexes.add('StructureDefinition', 'valueset', 'A vocabulary binding reference', SearchParamTypeREFERENCE, ['ValueSet'], 'StructureDefinition.snapshot.element.binding.valueSet', SearchXpathUsageNormal);
   indexes.add('StructureDefinition', 'version', 'The business version of the structure definition', SearchParamTypeTOKEN, [], 'StructureDefinition.version', SearchXpathUsageNormal);
 end;
+{$ENDIF}
 
+{$IFDEF FHIR_STRUCTUREMAP}
 procedure TFHIRIndexBuilder.buildIndexesForStructureMap(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('StructureMap', '_content', 'Search on the entire content of the resource', SearchParamTypeSTRING, [], '', SearchXpathUsageNormal);
@@ -2999,7 +3452,9 @@ begin
   indexes.add('StructureMap', 'url', 'The uri that identifies the structure map', SearchParamTypeURI, [], 'StructureMap.url', SearchXpathUsageNormal);
   indexes.add('StructureMap', 'version', 'The business version of the structure map', SearchParamTypeTOKEN, [], 'StructureMap.version', SearchXpathUsageNormal);
 end;
+{$ENDIF}
 
+{$IFDEF FHIR_SUBSCRIPTION}
 procedure TFHIRIndexBuilder.buildIndexesForSubscription(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('Subscription', '_content', 'Search on the entire content of the resource', SearchParamTypeSTRING, [], '', SearchXpathUsageNormal);
@@ -3018,7 +3473,9 @@ begin
   indexes.add('Subscription', 'type', 'The type of channel for the sent notifications', SearchParamTypeTOKEN, [], 'Subscription.channel.type', SearchXpathUsageNormal);
   indexes.add('Subscription', 'url', 'The uri that will receive the notifications', SearchParamTypeURI, [], 'Subscription.channel.endpoint', SearchXpathUsageNormal);
 end;
+{$ENDIF}
 
+{$IFDEF FHIR_SUBSTANCE}
 procedure TFHIRIndexBuilder.buildIndexesForSubstance(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('Substance', '_content', 'Search on the entire content of the resource', SearchParamTypeSTRING, [], '', SearchXpathUsageNormal);
@@ -3038,7 +3495,9 @@ begin
   indexes.add('Substance', 'status', 'active | inactive | entered-in-error', SearchParamTypeTOKEN, [], 'Substance.status', SearchXpathUsageNormal);
   indexes.add('Substance', 'substance-reference', 'A component of the substance', SearchParamTypeREFERENCE, ['Substance'], 'Substance.ingredient.substance.as(Reference)', SearchXpathUsageNormal);
 end;
+{$ENDIF}
 
+{$IFDEF FHIR_SUPPLYDELIVERY}
 procedure TFHIRIndexBuilder.buildIndexesForSupplyDelivery(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('SupplyDelivery', '_content', 'Search on the entire content of the resource', SearchParamTypeSTRING, [], '', SearchXpathUsageNormal);
@@ -3059,7 +3518,9 @@ begin
   compartments.register(frtPatient, 'SupplyDelivery', ['patient']);
   compartments.register(frtPractitioner, 'SupplyDelivery', ['supplier', 'receiver']);
 end;
+{$ENDIF}
 
+{$IFDEF FHIR_SUPPLYREQUEST}
 procedure TFHIRIndexBuilder.buildIndexesForSupplyRequest(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('SupplyRequest', '_content', 'Search on the entire content of the resource', SearchParamTypeSTRING, [], '', SearchXpathUsageNormal);
@@ -3082,7 +3543,9 @@ begin
   compartments.register(frtPractitioner, 'SupplyRequest', ['requester']);
   compartments.register(frtRelatedPerson, 'SupplyRequest', ['requester']);
 end;
+{$ENDIF}
 
+{$IFDEF FHIR_TASK}
 procedure TFHIRIndexBuilder.buildIndexesForTask(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('Task', '_content', 'Search on the entire content of the resource', SearchParamTypeSTRING, [], '', SearchXpathUsageNormal);
@@ -3114,7 +3577,9 @@ begin
   indexes.add('Task', 'status', 'Search by task status', SearchParamTypeTOKEN, [], 'Task.status', SearchXpathUsageNormal);
   indexes.add('Task', 'subject', 'Search by subject', SearchParamTypeREFERENCE, ALL_RESOURCE_TYPE_NAMES, 'Task.for', SearchXpathUsageNormal);
 end;
+{$ENDIF}
 
+{$IFDEF FHIR_TESTREPORT}
 procedure TFHIRIndexBuilder.buildIndexesForTestReport(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('TestReport', '_content', 'Search on the entire content of the resource', SearchParamTypeSTRING, [], '', SearchXpathUsageNormal);
@@ -3132,7 +3597,9 @@ begin
   indexes.add('TestReport', 'tester', 'The name of the testing organization', SearchParamTypeSTRING, [], 'TestReport.tester', SearchXpathUsageNormal);
   indexes.add('TestReport', 'testscript', 'The test script executed to produce this report', SearchParamTypeREFERENCE, ['TestScript'], 'TestReport.testScript', SearchXpathUsageNormal);
 end;
+{$ENDIF}
 
+{$IFDEF FHIR_TESTSCRIPT}
 procedure TFHIRIndexBuilder.buildIndexesForTestScript(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('TestScript', '_content', 'Search on the entire content of the resource', SearchParamTypeSTRING, [], '', SearchXpathUsageNormal);
@@ -3155,7 +3622,9 @@ begin
   indexes.add('TestScript', 'url', 'The uri that identifies the test script', SearchParamTypeURI, [], 'TestScript.url', SearchXpathUsageNormal);
   indexes.add('TestScript', 'version', 'The business version of the test script', SearchParamTypeTOKEN, [], 'TestScript.version', SearchXpathUsageNormal);
 end;
+{$ENDIF}
 
+{$IFDEF FHIR_VALUESET}
 procedure TFHIRIndexBuilder.buildIndexesForValueSet(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('ValueSet', '_content', 'Search on the entire content of the resource', SearchParamTypeSTRING, [], '', SearchXpathUsageNormal);
@@ -3179,7 +3648,9 @@ begin
   indexes.add('ValueSet', 'url', 'The uri that identifies the value set', SearchParamTypeURI, [], 'ValueSet.url', SearchXpathUsageNormal);
   indexes.add('ValueSet', 'version', 'The business version of the value set', SearchParamTypeTOKEN, [], 'ValueSet.version', SearchXpathUsageNormal);
 end;
+{$ENDIF}
 
+{$IFDEF FHIR_VISIONPRESCRIPTION}
 procedure TFHIRIndexBuilder.buildIndexesForVisionPrescription(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('VisionPrescription', '_content', 'Search on the entire content of the resource', SearchParamTypeSTRING, [], '', SearchXpathUsageNormal);
@@ -3202,7 +3673,9 @@ begin
   compartments.register(frtPatient, 'VisionPrescription', ['patient']);
   compartments.register(frtPractitioner, 'VisionPrescription', ['prescriber']);
 end;
+{$ENDIF}
 
+{$IFDEF FHIR_WORKFLOWEXAMPLE}
 procedure TFHIRIndexBuilder.buildIndexesForWorkflowExample(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   indexes.add('WorkflowExample', '_content', 'Search on the entire content of the resource', SearchParamTypeSTRING, [], '', SearchXpathUsageNormal);
@@ -3224,127 +3697,364 @@ begin
   indexes.add('WorkflowExample', 'url', 'The uri that identifies the workflow example', SearchParamTypeURI, [], 'WorkflowExample.url', SearchXpathUsageNormal);
   indexes.add('WorkflowExample', 'version', 'The business version of the workflow example', SearchParamTypeTOKEN, [], 'WorkflowExample.version', SearchXpathUsageNormal);
 end;
+{$ENDIF}
 
 procedure TFHIRIndexBuilder.registerIndexes(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
+  {$IFDEF FHIR_ACCOUNT}
   buildIndexesForAccount(Indexes, compartments);
+  {$ENDIF}
+  {$IFDEF FHIR_ACTIVITYDEFINITION}
   buildIndexesForActivityDefinition(Indexes, compartments);
+  {$ENDIF}
+  {$IFDEF FHIR_ADVERSEEVENT}
   buildIndexesForAdverseEvent(Indexes, compartments);
+  {$ENDIF}
+  {$IFDEF FHIR_ALLERGYINTOLERANCE}
   buildIndexesForAllergyIntolerance(Indexes, compartments);
+  {$ENDIF}
+  {$IFDEF FHIR_APPOINTMENT}
   buildIndexesForAppointment(Indexes, compartments);
+  {$ENDIF}
+  {$IFDEF FHIR_APPOINTMENTRESPONSE}
   buildIndexesForAppointmentResponse(Indexes, compartments);
+  {$ENDIF}
+  {$IFDEF FHIR_AUDITEVENT}
   buildIndexesForAuditEvent(Indexes, compartments);
+  {$ENDIF}
+  {$IFDEF FHIR_BASIC}
   buildIndexesForBasic(Indexes, compartments);
+  {$ENDIF}
+  {$IFDEF FHIR_BINARY}
   buildIndexesForBinary(Indexes, compartments);
+  {$ENDIF}
+  {$IFDEF FHIR_BODYSTRUCTURE}
   buildIndexesForBodyStructure(Indexes, compartments);
+  {$ENDIF}
+  {$IFDEF FHIR_BUNDLE}
   buildIndexesForBundle(Indexes, compartments);
+  {$ENDIF}
+  {$IFDEF FHIR_CAPABILITYSTATEMENT}
   buildIndexesForCapabilityStatement(Indexes, compartments);
+  {$ENDIF}
+  {$IFDEF FHIR_CAREPLAN}
   buildIndexesForCarePlan(Indexes, compartments);
+  {$ENDIF}
+  {$IFDEF FHIR_CARETEAM}
   buildIndexesForCareTeam(Indexes, compartments);
+  {$ENDIF}
+  {$IFDEF FHIR_CATALOGENTRY}
   buildIndexesForCatalogEntry(Indexes, compartments);
+  {$ENDIF}
+  {$IFDEF FHIR_CHARGEITEM}
   buildIndexesForChargeItem(Indexes, compartments);
+  {$ENDIF}
+  {$IFDEF FHIR_CLAIM}
   buildIndexesForClaim(Indexes, compartments);
+  {$ENDIF}
+  {$IFDEF FHIR_CLAIMRESPONSE}
   buildIndexesForClaimResponse(Indexes, compartments);
+  {$ENDIF}
+  {$IFDEF FHIR_CLINICALIMPRESSION}
   buildIndexesForClinicalImpression(Indexes, compartments);
+  {$ENDIF}
+  {$IFDEF FHIR_CODESYSTEM}
   buildIndexesForCodeSystem(Indexes, compartments);
+  {$ENDIF}
+  {$IFDEF FHIR_COMMUNICATION}
   buildIndexesForCommunication(Indexes, compartments);
+  {$ENDIF}
+  {$IFDEF FHIR_COMMUNICATIONREQUEST}
   buildIndexesForCommunicationRequest(Indexes, compartments);
+  {$ENDIF}
+  {$IFDEF FHIR_COMPARTMENTDEFINITION}
   buildIndexesForCompartmentDefinition(Indexes, compartments);
+  {$ENDIF}
+  {$IFDEF FHIR_COMPOSITION}
   buildIndexesForComposition(Indexes, compartments);
+  {$ENDIF}
+  {$IFDEF FHIR_CONCEPTMAP}
   buildIndexesForConceptMap(Indexes, compartments);
+  {$ENDIF}
+  {$IFDEF FHIR_CONDITION}
   buildIndexesForCondition(Indexes, compartments);
+  {$ENDIF}
+  {$IFDEF FHIR_CONSENT}
   buildIndexesForConsent(Indexes, compartments);
+  {$ENDIF}
+  {$IFDEF FHIR_CONTRACT}
   buildIndexesForContract(Indexes, compartments);
+  {$ENDIF}
+  {$IFDEF FHIR_COVERAGE}
   buildIndexesForCoverage(Indexes, compartments);
+  {$ENDIF}
+  {$IFDEF FHIR_DETECTEDISSUE}
   buildIndexesForDetectedIssue(Indexes, compartments);
+  {$ENDIF}
+  {$IFDEF FHIR_DEVICE}
   buildIndexesForDevice(Indexes, compartments);
+  {$ENDIF}
+  {$IFDEF FHIR_DEVICECOMPONENT}
   buildIndexesForDeviceComponent(Indexes, compartments);
+  {$ENDIF}
+  {$IFDEF FHIR_DEVICEMETRIC}
   buildIndexesForDeviceMetric(Indexes, compartments);
+  {$ENDIF}
+  {$IFDEF FHIR_DEVICEREQUEST}
   buildIndexesForDeviceRequest(Indexes, compartments);
+  {$ENDIF}
+  {$IFDEF FHIR_DEVICEUSESTATEMENT}
   buildIndexesForDeviceUseStatement(Indexes, compartments);
+  {$ENDIF}
+  {$IFDEF FHIR_DIAGNOSTICREPORT}
   buildIndexesForDiagnosticReport(Indexes, compartments);
+  {$ENDIF}
+  {$IFDEF FHIR_DOCUMENTMANIFEST}
   buildIndexesForDocumentManifest(Indexes, compartments);
+  {$ENDIF}
+  {$IFDEF FHIR_DOCUMENTREFERENCE}
   buildIndexesForDocumentReference(Indexes, compartments);
+  {$ENDIF}
+  {$IFDEF FHIR_ELIGIBILITYREQUEST}
   buildIndexesForEligibilityRequest(Indexes, compartments);
+  {$ENDIF}
+  {$IFDEF FHIR_ELIGIBILITYRESPONSE}
   buildIndexesForEligibilityResponse(Indexes, compartments);
+  {$ENDIF}
+  {$IFDEF FHIR_ENCOUNTER}
   buildIndexesForEncounter(Indexes, compartments);
+  {$ENDIF}
+  {$IFDEF FHIR_ENDPOINT}
   buildIndexesForEndpoint(Indexes, compartments);
+  {$ENDIF}
+  {$IFDEF FHIR_ENROLLMENTREQUEST}
   buildIndexesForEnrollmentRequest(Indexes, compartments);
+  {$ENDIF}
+  {$IFDEF FHIR_ENROLLMENTRESPONSE}
   buildIndexesForEnrollmentResponse(Indexes, compartments);
+  {$ENDIF}
+  {$IFDEF FHIR_EPISODEOFCARE}
   buildIndexesForEpisodeOfCare(Indexes, compartments);
+  {$ENDIF}
+  {$IFDEF FHIR_EVENTDEFINITION}
   buildIndexesForEventDefinition(Indexes, compartments);
+  {$ENDIF}
+  {$IFDEF FHIR_EXPANSIONPROFILE}
   buildIndexesForExpansionProfile(Indexes, compartments);
+  {$ENDIF}
+  {$IFDEF FHIR_EXPLANATIONOFBENEFIT}
   buildIndexesForExplanationOfBenefit(Indexes, compartments);
+  {$ENDIF}
+  {$IFDEF FHIR_FAMILYMEMBERHISTORY}
   buildIndexesForFamilyMemberHistory(Indexes, compartments);
+  {$ENDIF}
+  {$IFDEF FHIR_FLAG}
   buildIndexesForFlag(Indexes, compartments);
+  {$ENDIF}
+  {$IFDEF FHIR_GOAL}
   buildIndexesForGoal(Indexes, compartments);
+  {$ENDIF}
+  {$IFDEF FHIR_GRAPHDEFINITION}
   buildIndexesForGraphDefinition(Indexes, compartments);
+  {$ENDIF}
+  {$IFDEF FHIR_GROUP}
   buildIndexesForGroup(Indexes, compartments);
+  {$ENDIF}
+  {$IFDEF FHIR_GUIDANCERESPONSE}
   buildIndexesForGuidanceResponse(Indexes, compartments);
+  {$ENDIF}
+  {$IFDEF FHIR_HEALTHCARESERVICE}
   buildIndexesForHealthcareService(Indexes, compartments);
+  {$ENDIF}
+  {$IFDEF FHIR_IMAGINGMANIFEST}
   buildIndexesForImagingManifest(Indexes, compartments);
+  {$ENDIF}
+  {$IFDEF FHIR_IMAGINGSTUDY}
   buildIndexesForImagingStudy(Indexes, compartments);
+  {$ENDIF}
+  {$IFDEF FHIR_IMMUNIZATION}
   buildIndexesForImmunization(Indexes, compartments);
+  {$ENDIF}
+  {$IFDEF FHIR_IMMUNIZATIONRECOMMENDATION}
   buildIndexesForImmunizationRecommendation(Indexes, compartments);
+  {$ENDIF}
+  {$IFDEF FHIR_IMPLEMENTATIONGUIDE}
   buildIndexesForImplementationGuide(Indexes, compartments);
+  {$ENDIF}
+  {$IFDEF FHIR_LIBRARY}
   buildIndexesForLibrary(Indexes, compartments);
+  {$ENDIF}
+  {$IFDEF FHIR_LINKAGE}
   buildIndexesForLinkage(Indexes, compartments);
+  {$ENDIF}
+  {$IFDEF FHIR_LIST}
   buildIndexesForList(Indexes, compartments);
+  {$ENDIF}
+  {$IFDEF FHIR_LOCATION}
   buildIndexesForLocation(Indexes, compartments);
+  {$ENDIF}
+  {$IFDEF FHIR_MEASURE}
   buildIndexesForMeasure(Indexes, compartments);
+  {$ENDIF}
+  {$IFDEF FHIR_MEASUREREPORT}
   buildIndexesForMeasureReport(Indexes, compartments);
+  {$ENDIF}
+  {$IFDEF FHIR_MEDIA}
   buildIndexesForMedia(Indexes, compartments);
+  {$ENDIF}
+  {$IFDEF FHIR_MEDICATION}
   buildIndexesForMedication(Indexes, compartments);
+  {$ENDIF}
+  {$IFDEF FHIR_MEDICATIONADMINISTRATION}
   buildIndexesForMedicationAdministration(Indexes, compartments);
+  {$ENDIF}
+  {$IFDEF FHIR_MEDICATIONDISPENSE}
   buildIndexesForMedicationDispense(Indexes, compartments);
+  {$ENDIF}
+  {$IFDEF FHIR_MEDICATIONREQUEST}
   buildIndexesForMedicationRequest(Indexes, compartments);
+  {$ENDIF}
+  {$IFDEF FHIR_MEDICATIONSTATEMENT}
   buildIndexesForMedicationStatement(Indexes, compartments);
+  {$ENDIF}
+  {$IFDEF FHIR_MESSAGEDEFINITION}
   buildIndexesForMessageDefinition(Indexes, compartments);
+  {$ENDIF}
+  {$IFDEF FHIR_MESSAGEHEADER}
   buildIndexesForMessageHeader(Indexes, compartments);
+  {$ENDIF}
+  {$IFDEF FHIR_NAMINGSYSTEM}
   buildIndexesForNamingSystem(Indexes, compartments);
+  {$ENDIF}
+  {$IFDEF FHIR_NUTRITIONORDER}
   buildIndexesForNutritionOrder(Indexes, compartments);
+  {$ENDIF}
+  {$IFDEF FHIR_OBSERVATION}
   buildIndexesForObservation(Indexes, compartments);
+  {$ENDIF}
+  {$IFDEF FHIR_OPERATIONDEFINITION}
   buildIndexesForOperationDefinition(Indexes, compartments);
+  {$ENDIF}
+  {$IFDEF FHIR_OPERATIONOUTCOME}
   buildIndexesForOperationOutcome(Indexes, compartments);
+  {$ENDIF}
+  {$IFDEF FHIR_ORGANIZATION}
   buildIndexesForOrganization(Indexes, compartments);
+  {$ENDIF}
+  {$IFDEF FHIR_PATIENT}
   buildIndexesForPatient(Indexes, compartments);
+  {$ENDIF}
+  {$IFDEF FHIR_PAYMENTNOTICE}
   buildIndexesForPaymentNotice(Indexes, compartments);
+  {$ENDIF}
+  {$IFDEF FHIR_PAYMENTRECONCILIATION}
   buildIndexesForPaymentReconciliation(Indexes, compartments);
+  {$ENDIF}
+  {$IFDEF FHIR_PERSON}
   buildIndexesForPerson(Indexes, compartments);
+  {$ENDIF}
+  {$IFDEF FHIR_PLANDEFINITION}
   buildIndexesForPlanDefinition(Indexes, compartments);
+  {$ENDIF}
+  {$IFDEF FHIR_PRACTITIONER}
   buildIndexesForPractitioner(Indexes, compartments);
+  {$ENDIF}
+  {$IFDEF FHIR_PRACTITIONERROLE}
   buildIndexesForPractitionerRole(Indexes, compartments);
+  {$ENDIF}
+  {$IFDEF FHIR_PROCEDURE}
   buildIndexesForProcedure(Indexes, compartments);
+  {$ENDIF}
+  {$IFDEF FHIR_PROCEDUREREQUEST}
   buildIndexesForProcedureRequest(Indexes, compartments);
+  {$ENDIF}
+  {$IFDEF FHIR_PROCESSREQUEST}
   buildIndexesForProcessRequest(Indexes, compartments);
+  {$ENDIF}
+  {$IFDEF FHIR_PROCESSRESPONSE}
   buildIndexesForProcessResponse(Indexes, compartments);
+  {$ENDIF}
+  {$IFDEF FHIR_PROVENANCE}
   buildIndexesForProvenance(Indexes, compartments);
+  {$ENDIF}
+  {$IFDEF FHIR_QUESTIONNAIRE}
   buildIndexesForQuestionnaire(Indexes, compartments);
+  {$ENDIF}
+  {$IFDEF FHIR_QUESTIONNAIRERESPONSE}
   buildIndexesForQuestionnaireResponse(Indexes, compartments);
+  {$ENDIF}
+  {$IFDEF FHIR_RELATEDPERSON}
   buildIndexesForRelatedPerson(Indexes, compartments);
+  {$ENDIF}
+  {$IFDEF FHIR_REQUESTGROUP}
   buildIndexesForRequestGroup(Indexes, compartments);
+  {$ENDIF}
+  {$IFDEF FHIR_RESEARCHSTUDY}
   buildIndexesForResearchStudy(Indexes, compartments);
+  {$ENDIF}
+  {$IFDEF FHIR_RESEARCHSUBJECT}
   buildIndexesForResearchSubject(Indexes, compartments);
+  {$ENDIF}
+  {$IFDEF FHIR_RISKASSESSMENT}
   buildIndexesForRiskAssessment(Indexes, compartments);
+  {$ENDIF}
+  {$IFDEF FHIR_SCHEDULE}
   buildIndexesForSchedule(Indexes, compartments);
+  {$ENDIF}
+  {$IFDEF FHIR_SEARCHPARAMETER}
   buildIndexesForSearchParameter(Indexes, compartments);
+  {$ENDIF}
+  {$IFDEF FHIR_SEQUENCE}
   buildIndexesForSequence(Indexes, compartments);
+  {$ENDIF}
+  {$IFDEF FHIR_SERVICEDEFINITION}
   buildIndexesForServiceDefinition(Indexes, compartments);
+  {$ENDIF}
+  {$IFDEF FHIR_SLOT}
   buildIndexesForSlot(Indexes, compartments);
+  {$ENDIF}
+  {$IFDEF FHIR_SPECIMEN}
   buildIndexesForSpecimen(Indexes, compartments);
+  {$ENDIF}
+  {$IFDEF FHIR_SPECIMENDEFINITION}
   buildIndexesForSpecimenDefinition(Indexes, compartments);
+  {$ENDIF}
+  {$IFDEF FHIR_STRUCTUREDEFINITION}
   buildIndexesForStructureDefinition(Indexes, compartments);
+  {$ENDIF}
+  {$IFDEF FHIR_STRUCTUREMAP}
   buildIndexesForStructureMap(Indexes, compartments);
+  {$ENDIF}
+  {$IFDEF FHIR_SUBSCRIPTION}
   buildIndexesForSubscription(Indexes, compartments);
+  {$ENDIF}
+  {$IFDEF FHIR_SUBSTANCE}
   buildIndexesForSubstance(Indexes, compartments);
+  {$ENDIF}
+  {$IFDEF FHIR_SUPPLYDELIVERY}
   buildIndexesForSupplyDelivery(Indexes, compartments);
+  {$ENDIF}
+  {$IFDEF FHIR_SUPPLYREQUEST}
   buildIndexesForSupplyRequest(Indexes, compartments);
+  {$ENDIF}
+  {$IFDEF FHIR_TASK}
   buildIndexesForTask(Indexes, compartments);
+  {$ENDIF}
+  {$IFDEF FHIR_TESTREPORT}
   buildIndexesForTestReport(Indexes, compartments);
+  {$ENDIF}
+  {$IFDEF FHIR_TESTSCRIPT}
   buildIndexesForTestScript(Indexes, compartments);
+  {$ENDIF}
+  {$IFDEF FHIR_VALUESET}
   buildIndexesForValueSet(Indexes, compartments);
+  {$ENDIF}
+  {$IFDEF FHIR_VISIONPRESCRIPTION}
   buildIndexesForVisionPrescription(Indexes, compartments);
+  {$ENDIF}
+  {$IFDEF FHIR_WORKFLOWEXAMPLE}
   buildIndexesForWorkflowExample(Indexes, compartments);
+  {$ENDIF}
 end;
 
 end.

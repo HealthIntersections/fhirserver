@@ -2,6 +2,8 @@
 
 unit FHIRTypes;
 
+{$I fhir.inc}
+
 {
   Copyright (c) 2011+, HL7 and Health Intersections Pty Ltd (http://www.healthintersections.com.au)
   All rights reserved.
@@ -10476,7 +10478,8 @@ begin
   end
   else
   begin
-    FExtensionList := TFhirExtensionList.Create;
+    if FExtensionList = nil then
+      FExtensionList := TFhirExtensionList.Create;
     FExtensionList.Assign(TFhirElement(oSource).FExtensionList);
   end;
 end;
@@ -10778,7 +10781,8 @@ begin
   end
   else
   begin
-    FModifierExtensionList := TFhirExtensionList.Create;
+    if FModifierExtensionList = nil then
+      FModifierExtensionList := TFhirExtensionList.Create;
     FModifierExtensionList.Assign(TFhirBackboneElement(oSource).FModifierExtensionList);
   end;
 end;
@@ -16439,7 +16443,8 @@ begin
   end
   else
   begin
-    FType_List := TFhirCodingList.Create;
+    if FType_List = nil then
+      FType_List := TFhirCodingList.Create;
     FType_List.Assign(TFhirSignature(oSource).FType_List);
   end;
   whenElement := TFhirSignature(oSource).whenElement.Clone;
@@ -19365,7 +19370,8 @@ begin
   end
   else
   begin
-    FCodingList := TFhirCodingList.Create;
+    if FCodingList = nil then
+      FCodingList := TFhirCodingList.Create;
     FCodingList.Assign(TFhirCodeableConcept(oSource).FCodingList);
   end;
   textElement := TFhirCodeableConcept(oSource).textElement.Clone;
@@ -19703,7 +19709,8 @@ begin
   end
   else
   begin
-    FFamilyList := TFhirStringList.Create;
+    if FFamilyList = nil then
+      FFamilyList := TFhirStringList.Create;
     FFamilyList.Assign(TFhirHumanName(oSource).FFamilyList);
   end;
   if (TFhirHumanName(oSource).FGivenList = nil) then
@@ -19713,7 +19720,8 @@ begin
   end
   else
   begin
-    FGivenList := TFhirStringList.Create;
+    if FGivenList = nil then
+      FGivenList := TFhirStringList.Create;
     FGivenList.Assign(TFhirHumanName(oSource).FGivenList);
   end;
   if (TFhirHumanName(oSource).FPrefixList = nil) then
@@ -19723,7 +19731,8 @@ begin
   end
   else
   begin
-    FPrefixList := TFhirStringList.Create;
+    if FPrefixList = nil then
+      FPrefixList := TFhirStringList.Create;
     FPrefixList.Assign(TFhirHumanName(oSource).FPrefixList);
   end;
   if (TFhirHumanName(oSource).FSuffixList = nil) then
@@ -19733,7 +19742,8 @@ begin
   end
   else
   begin
-    FSuffixList := TFhirStringList.Create;
+    if FSuffixList = nil then
+      FSuffixList := TFhirStringList.Create;
     FSuffixList.Assign(TFhirHumanName(oSource).FSuffixList);
   end;
   period := TFhirHumanName(oSource).period.Clone;
@@ -20151,7 +20161,8 @@ begin
   end
   else
   begin
-    FProfileList := TFhirUriList.Create;
+    if FProfileList = nil then
+      FProfileList := TFhirUriList.Create;
     FProfileList.Assign(TFhirMeta(oSource).FProfileList);
   end;
   if (TFhirMeta(oSource).FSecurityList = nil) then
@@ -20161,7 +20172,8 @@ begin
   end
   else
   begin
-    FSecurityList := TFhirCodingList.Create;
+    if FSecurityList = nil then
+      FSecurityList := TFhirCodingList.Create;
     FSecurityList.Assign(TFhirMeta(oSource).FSecurityList);
   end;
   if (TFhirMeta(oSource).FTagList = nil) then
@@ -20171,7 +20183,8 @@ begin
   end
   else
   begin
-    FTagList := TFhirCodingList.Create;
+    if FTagList = nil then
+      FTagList := TFhirCodingList.Create;
     FTagList.Assign(TFhirMeta(oSource).FTagList);
   end;
 end;
@@ -21048,7 +21061,8 @@ begin
   end
   else
   begin
-    FLineList := TFhirStringList.Create;
+    if FLineList = nil then
+      FLineList := TFhirStringList.Create;
     FLineList.Assign(TFhirAddress(oSource).FLineList);
   end;
   cityElement := TFhirAddress(oSource).cityElement.Clone;
@@ -21731,7 +21745,8 @@ begin
   end
   else
   begin
-    FDiscriminatorList := TFhirStringList.Create;
+    if FDiscriminatorList = nil then
+      FDiscriminatorList := TFhirStringList.Create;
     FDiscriminatorList.Assign(TFhirElementDefinitionSlicing(oSource).FDiscriminatorList);
   end;
   descriptionElement := TFhirElementDefinitionSlicing(oSource).descriptionElement.Clone;
@@ -22437,7 +22452,8 @@ begin
   end
   else
   begin
-    FProfileList := TFhirUriList.Create;
+    if FProfileList = nil then
+      FProfileList := TFhirUriList.Create;
     FProfileList.Assign(TFhirElementDefinitionType(oSource).FProfileList);
   end;
   if (TFhirElementDefinitionType(oSource).FAggregation = nil) then
@@ -22475,7 +22491,7 @@ procedure TFhirElementDefinitionType.setProperty(propName : string; propValue: T
 begin
   if (propName = 'code') then CodeElement := asCode(propValue)
   else if (propName = 'profile') then ProfileList.add(asUri(propValue)){2}
-  else if (propName = 'aggregation') then FAggregation.add(asEnum(SYSTEMS_TFhirResourceAggregationModeEnum, CODES_TFhirResourceAggregationModeEnum, propValue)) {1}
+  else if (propName = 'aggregation') then AggregationList.add(asEnum(SYSTEMS_TFhirResourceAggregationModeEnum, CODES_TFhirResourceAggregationModeEnum, propValue)) {1}
   else inherited;
 end;
 
@@ -23898,7 +23914,8 @@ begin
   end
   else
   begin
-    FCodeList := TFhirCodingList.Create;
+    if FCodeList = nil then
+      FCodeList := TFhirCodingList.Create;
     FCodeList.Assign(TFhirElementDefinition(oSource).FCodeList);
   end;
   slicing := TFhirElementDefinition(oSource).slicing.Clone;
@@ -23913,7 +23930,8 @@ begin
   end
   else
   begin
-    FAliasList := TFhirStringList.Create;
+    if FAliasList = nil then
+      FAliasList := TFhirStringList.Create;
     FAliasList.Assign(TFhirElementDefinition(oSource).FAliasList);
   end;
   minElement := TFhirElementDefinition(oSource).minElement.Clone;
@@ -23926,7 +23944,8 @@ begin
   end
   else
   begin
-    FType_List := TFhirElementDefinitionTypeList.Create;
+    if FType_List = nil then
+      FType_List := TFhirElementDefinitionTypeList.Create;
     FType_List.Assign(TFhirElementDefinition(oSource).FType_List);
   end;
   nameReferenceElement := TFhirElementDefinition(oSource).nameReferenceElement.Clone;
@@ -23945,7 +23964,8 @@ begin
   end
   else
   begin
-    FConditionList := TFhirIdList.Create;
+    if FConditionList = nil then
+      FConditionList := TFhirIdList.Create;
     FConditionList.Assign(TFhirElementDefinition(oSource).FConditionList);
   end;
   if (TFhirElementDefinition(oSource).FConstraintList = nil) then
@@ -23955,7 +23975,8 @@ begin
   end
   else
   begin
-    FConstraintList := TFhirElementDefinitionConstraintList.Create;
+    if FConstraintList = nil then
+      FConstraintList := TFhirElementDefinitionConstraintList.Create;
     FConstraintList.Assign(TFhirElementDefinition(oSource).FConstraintList);
   end;
   mustSupportElement := TFhirElementDefinition(oSource).mustSupportElement.Clone;
@@ -23969,7 +23990,8 @@ begin
   end
   else
   begin
-    FMappingList := TFhirElementDefinitionMappingList.Create;
+    if FMappingList = nil then
+      FMappingList := TFhirElementDefinitionMappingList.Create;
     FMappingList.Assign(TFhirElementDefinition(oSource).FMappingList);
   end;
 end;
@@ -24080,7 +24102,7 @@ end;
 procedure TFhirElementDefinition.setProperty(propName: string; propValue: TFHIRObject);
 begin
   if (propName = 'path') then PathElement := asString(propValue){5a}
-  else if (propName = 'representation') then FRepresentation.add(asEnum(SYSTEMS_TFhirPropertyRepresentationEnum, CODES_TFhirPropertyRepresentationEnum, propValue)) {1}
+  else if (propName = 'representation') then RepresentationList.add(asEnum(SYSTEMS_TFhirPropertyRepresentationEnum, CODES_TFhirPropertyRepresentationEnum, propValue)) {1}
   else if (propName = 'name') then NameElement := asString(propValue){5a}
   else if (propName = 'label') then Label_Element := asString(propValue){5a}
   else if (propName = 'code') then CodeList.add(propValue as TFhirCoding){2a}
@@ -25616,7 +25638,8 @@ begin
   end
   else
   begin
-    FEventList := TFhirDateTimeList.Create;
+    if FEventList = nil then
+      FEventList := TFhirDateTimeList.Create;
     FEventList.Assign(TFhirTiming(oSource).FEventList);
   end;
   repeat_ := TFhirTiming(oSource).repeat_.Clone;
