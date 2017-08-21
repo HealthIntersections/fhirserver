@@ -290,12 +290,12 @@ begin
               compartments.Free;
             end;
 
+          end;
           tiRes := TTreeViewItem.Create(tvStructure.Selected);
           tiRes.text := CODES_TFhirResourceTypesEnum[res.type_];
           tvStructure.Selected.AddObject(tiRes);
           tiRes.TagObject := res;
           res.TagObject := tiRes;
-          end;
         end;
       ResourceIsDirty := true;
     end;

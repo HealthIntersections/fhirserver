@@ -367,7 +367,7 @@ begin
   begin
     if sdFile.execute then
     begin
-      if frame.canSave then
+      if frame.canSaveAs then
       begin
         cs := frame.markbusy;
         try
@@ -385,7 +385,7 @@ begin
         end;
       end
       else
-        result := doSaveAs;
+        raise Exception.create('Unable to save file');
     end;
   end;
 end;
