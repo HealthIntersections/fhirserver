@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<rss version="2.0">
+	<channel>
+		<title>FHIR Toolkit Release history</title>
+		<link>http://www.healthintersections.com.au/FhirServer</link>
+		<item><title>FHIR Toolkit release 0.0.2 21/08/2017 4:41:40 PM</title>
+			<link>http://www.healthintersections.com.au/FhirServer/fhir-toolkit-install-0.0.2.exe</link>
+			<description>21/08/2017 4:41:40 PM (v0.0.2): Testing Release Cycle</description>
+		</item>
+</channel>
+</rss>
