@@ -72,6 +72,7 @@ begin
   appForm.TagObject := tab;
   appForm.Parent := tab;
   appForm.Tabs := tabs;
+  appForm.Ini := Ini;
   appForm.tab := tab;
   appForm.Align := TAlignLayout.Client;
   appForm.Client := client.link;
@@ -95,6 +96,7 @@ begin
     FCsForm.TagObject := FCSTab;
     FcsForm.Parent := FCSTab;
     FcsForm.Tabs := tabs;
+    FcsForm.Ini := Ini;
     FcsForm.tab := FCSTab;
     FcsForm.Align := TAlignLayout.Client;
     FcsForm.Client := client.link;

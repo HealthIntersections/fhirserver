@@ -116,12 +116,18 @@ uses
   ServerForm in 'ServerForm.pas' {ServerFrameForm: TFrame},
   AppEndorserFrame in 'AppEndorserFrame.pas' {AppEndorsementFrame: TFrame},
   BaseFrame in 'BaseFrame.pas',
-  CapabilityStatementEditor in 'CapabilityStatementEditor.pas' {CapabilityStatementEditorFrame: TFrame},
+  ValueSetEditor in 'ValueSetEditor.pas' {ValueSetEditorFrame: TFrame},
   SearchParameterEditor in 'SearchParameterEditor.pas' {SearchParameterEditorForm},
   ListSelector in 'ListSelector.pas' {ListSelectorForm},
   FHIRIndexInformation in '..\reference-platform\dstu3\FHIRIndexInformation.pas',
   FHIRIndexBase in '..\reference-platform\support\FHIRIndexBase.pas',
-  AddRestResourceDialog in 'AddRestResourceDialog.pas' {AddRestResourceForm};
+  AddRestResourceDialog in 'AddRestResourceDialog.pas' {AddRestResourceForm},
+  SourceViewer in 'SourceViewer.pas' {SourceViewerForm},
+  DifferenceEngine in '..\reference-platform\support\DifferenceEngine.pas',
+  BaseResourceFrame in 'BaseResourceFrame.pas',
+  BaseServerFrame in 'BaseServerFrame.pas',
+  CapabilityStatementEditor in 'CapabilityStatementEditor.pas' {CapabilityStatementEditorFrame: TFrame},
+  ValuesetExpansion in 'ValuesetExpansion.pas' {ValuesetExpansionForm};
 
 {$R *.res}
 
@@ -132,5 +138,7 @@ begin
   Application.CreateForm(TSearchParameterEditorForm, SearchParameterEditorForm);
   Application.CreateForm(TListSelectorForm, ListSelectorForm);
   Application.CreateForm(TAddRestResourceForm, AddRestResourceForm);
+  Application.CreateForm(TSourceViewerForm, SourceViewerForm);
+  Application.CreateForm(TValuesetExpansionForm, ValuesetExpansionForm);
   Application.Run;
 end.

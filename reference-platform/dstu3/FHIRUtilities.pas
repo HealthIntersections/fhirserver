@@ -548,6 +548,11 @@ type
     function summary : String;
   end;
 
+  TFhirValueSetComposeIncludeHelper = class helper for TFhirValueSetComposeInclude
+  public
+    function summary : String;
+  end;
+
 function Path(const parts : array of String) : String;
 
 
@@ -4931,6 +4936,20 @@ begin
   for i := 0 to self.interactionList.count - 1 do
     if (self.interactionList[i].code = type_) then
       result := self.interactionList[i];
+end;
+
+{ TFhirValueSetComposeIncludeHelper }
+
+function TFhirValueSetComposeIncludeHelper.summary: String;
+begin
+  if valueSetList.Count > 0 then
+    result := 'from valueset '+valueSetList[0].value
+  else if conceptList.Count > 0 then
+    result := 'enumerated concepts from '+system
+  else if filterList.Count > 0 then
+    result := 'select concepts from '+system
+  else
+    result := 'all concepts from '+system;
 end;
 
 end.

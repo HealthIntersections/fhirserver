@@ -6,11 +6,11 @@ uses
   System.SysUtils, System.Types, System.UITypes, System.Classes, System.Variants,
   FMX.Types, FMX.Controls, FMX.Forms, FMX.Graphics, FMX.Dialogs, FMX.StdCtrls, FMX.Platform,
   FMX.Layouts, FMX.ListBox, FMX.TabControl, FMX.Controls.Presentation, FMX.DialogService,
-  System.ImageList, FMX.ImgList,
+  System.ImageList, FMX.ImgList, FMX.Menus,
   IniFiles,
   SystemSupport,
   FHIRBase, FHIRTypes, FHIRResources, FHIRClient, FHIRUtilities,
-  ServerForm, CapabilityStatementEditor, BaseResourceFrame, BaseFrame;
+  ServerForm, CapabilityStatementEditor, BaseResourceFrame, BaseFrame, SourceViewer, ListSelector, ValueSetEditor;
 
 type
 
@@ -44,6 +44,18 @@ type
     tbnClose: TButton;
     Timer1: TTimer;
     sdFile: TSaveDialog;
+    MainMenu1: TMainMenu;
+    mnuFile: TMenuItem;
+    mnuFileNew: TMenuItem;
+    mnuFileOpen: TMenuItem;
+    mnuFileSave: TMenuItem;
+    mnuFileSaveAs: TMenuItem;
+    mnuFileClose: TMenuItem;
+    MenuItem1: TMenuItem;
+    mnuFileExit: TMenuItem;
+    tbnSource: TButton;
+    mnuFileSource: TMenuItem;
+    MenuItem3: TMenuItem;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure lbServersClick(Sender: TObject);
@@ -60,6 +72,8 @@ type
     procedure Timer1Timer(Sender: TObject);
     procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
     procedure btnRemoveFileClick(Sender: TObject);
+    procedure tbnSourceClick(Sender: TObject);
+    procedure btnNewClick(Sender: TObject);
   private
     { Private declarations }
     FIni : TIniFile;
@@ -67,6 +81,7 @@ type
     procedure saveServers;
     procedure saveFiles;
     procedure openResourceFromFile(filename : String; res : TFHIRResource; format : TFHIRFormat; frameClass : TBaseResourceFrameClass);
+    procedure newResource(rClass : TFhirResourceClass; frameClass : TBaseResourceFrameClass);
     procedure addFileToList(filename : String);
     function doSave : boolean;
     function doSaveAs : boolean;
@@ -135,6 +150,7 @@ begin
         serverForm.TagObject := tab;
         serverForm.Parent := tab;
         serverForm.tabs := tbMain;
+        serverForm.Ini := FIni;
         serverForm.Tab := tab;
         serverForm.Align := TAlignLayout.Client;
         serverForm.Client := client.link;
@@ -152,6 +168,26 @@ begin
   end;
 end;
 
+procedure TMasterToolsForm.btnNewClick(Sender: TObject);
+var
+  form : TListSelectorForm;
+begin
+  form := TListSelectorForm.create(nil);
+  try
+    form.ListBox1.ShowCheckboxes := false;
+    form.ListBox1.items.Add('CapabilityStatement');
+    form.ListBox1.items.Add('ValueSet');
+    form.caption := 'Create New File';
+    if (form.ShowModal = mrOk) then
+      case form.ListBox1.ItemIndex of
+        0 : newResource(TFhirCapabilityStatement, TCapabilityStatementEditorFrame);
+        1 : newResource(TFhirValueSet, TValueSetEditorFrame);
+      end;
+  finally
+    form.Free;
+  end;
+end;
+
 procedure TMasterToolsForm.btnOpenClick(Sender: TObject);
 var
   res : TFhirResource;
@@ -165,6 +201,8 @@ begin
       try
         if res is TFhirCapabilityStatement then
           openResourceFromFile(odFile.Filename, res, format, TCapabilityStatementEditorFrame)
+        else if res is TFhirValueSet then
+          openResourceFromFile(odFile.Filename, res, format, TValueSetEditorFrame)
         else
           MessageDlg('Unsupported Resource Type: '+res.fhirType, TMsgDlgType.mtError, [TMsgDlgBtn.mbOK], 0);
       finally
@@ -216,6 +254,8 @@ begin
     try
       if res is TFhirCapabilityStatement then
         openResourceFromFile(fn, res, format, TCapabilityStatementEditorFrame)
+      else if res is TFhirValueSet then
+        openResourceFromFile(fn, res, format, TValueSetEditorFrame)
       else
         MessageDlg('Unsupported Resource Type: '+res.fhirType, TMsgDlgType.mtError, [TMsgDlgBtn.mbOK], 0);
     finally
@@ -230,6 +270,25 @@ end;
 procedure TMasterToolsForm.tbnSaveClick(Sender: TObject);
 begin
   doSave;
+end;
+
+procedure TMasterToolsForm.tbnSourceClick(Sender: TObject);
+var
+  form : TSourceViewerForm;
+  frame : TBaseFrame;
+begin
+  frame := tbMain.ActiveTab.TagObject as TBaseFrame;
+  if (frame <> nil) and frame.hasResource then
+  begin
+    form := TSourceViewerForm.create(self);
+    try
+      form.current := frame.currentResource.Link;
+      form.original := frame.originalResource.Link;
+      form.ShowModal;
+    finally
+      form.Free;
+    end;
+  end;
 end;
 
 procedure TMasterToolsForm.tbnSaveAsClick(Sender: TObject);
@@ -271,7 +330,7 @@ end;
 
 procedure TMasterToolsForm.CloseButtonClick(Sender: TObject);
 begin
-  showMessage('duh');
+  Close;
 end;
 
 function TMasterToolsForm.doSave: boolean;
@@ -338,16 +397,37 @@ var
   dirty : boolean;
   i : integer;
   obj : TBaseFrame;
+  form : TListSelectorForm;
 begin
   dirty := false;
-  for i := 1 to tbMain.TabCount - 1 do
-  begin
-    obj := tbMain.Tabs[i].TagObject as TBaseFrame;
-    if (obj.isDirty) then
-      dirty := true;
+  form := TListSelectorForm.Create(self);
+  try
+    form.Caption := 'Unsaved Content found. Which files do you want to save?';
+    form.okWithNoneSelected := true;
+    form.button1.Text := 'Close';
+    for i := 1 to tbMain.TabCount - 1 do
+    begin
+      obj := tbMain.Tabs[i].TagObject as TBaseFrame;
+      if (obj.isDirty) then
+      begin
+        dirty := true;
+        form.ListBox1.Items.AddObject(obj.nameForSaveDialog, obj)
+      end;
+    end;
+    if not dirty then
+      CanClose := true
+    else
+      CanClose := form.ShowModal = mrOk;
+      for i := 0 to form.ListBox1.Items.Count - 1 do
+        if form.ListBox1.ListItems[i].IsChecked then
+          if not TBaseFrame(form.ListBox1.Items.Objects[i]).save then
+          begin
+            CanClose := false;
+            exit;
+          end;
+  finally
+    form.Free;
   end;
-  if dirty then
-    CanClose := false;
 end;
 
 procedure TMasterToolsForm.FormCreate(Sender: TObject);
@@ -394,6 +474,44 @@ begin
   btnRemoveServer.Enabled := lbServers.ItemIndex >= 0;
 end;
 
+procedure TMasterToolsForm.newResource(rClass : TFhirResourceClass; frameClass : TBaseResourceFrameClass);
+var
+  tab : TTabItem;
+  frame : TFrame;
+  fcs : IFMXCursorService;
+begin
+  if TPlatformServices.Current.SupportsPlatformService(IFMXCursorService) then
+    fcs := TPlatformServices.Current.GetPlatformService(IFMXCursorService) as IFMXCursorService
+  else
+    fcs := nil;
+  if Assigned(fcs) then
+  begin
+    Cursor := fcs.GetCursor;
+    fcs.SetCursor(crHourGlass);
+  end;
+  try
+    tab := tbMain.Add(TTabItem);
+    tbMain.ActiveTab := tab;
+    tab.Text := 'New '+rClass.ClassName.Substring(5);
+    tab.Hint := tab.Text;
+    tab.ShowHint := true;
+    frame := frameClass.create(tab);
+    tab.TagObject := frame;
+    frame.TagObject := tab;
+    frame.Parent := tab;
+    frame.tabs := tbMain;
+    frame.Ini := FIni;
+    frame.Tab := tab;
+    frame.Align := TAlignLayout.Client;
+    frame.Filename := '';
+    frame.resource := rClass.Create;
+    frame.load;
+  finally
+    if Assigned(fCS) then
+      fcs.setCursor(Cursor);
+  end;
+end;
+
 procedure TMasterToolsForm.openResourceFromFile(filename: String; res: TFHIRResource; format : TFHIRFormat; frameClass: TBaseResourceFrameClass);
 var
   tab : TTabItem;
@@ -420,6 +538,7 @@ begin
     frame.TagObject := tab;
     frame.Parent := tab;
     frame.tabs := tbMain;
+    frame.Ini := FIni;
     frame.Tab := tab;
     frame.Align := TAlignLayout.Client;
     frame.Filename := filename;
@@ -467,11 +586,13 @@ begin
   tbnSave.Enabled := false;
   tbnSaveAs.Enabled := false;
   tbnClose.Enabled := false;
+  tbnSource.Enabled := false;
   if (frame <> nil) then
   begin
     tbnClose.Enabled := true;
     tbnSave.Enabled := frame.canSave;
     tbnSaveAs.Enabled := frame.canSaveAs;
+    tbnSource.Enabled := frame.hasResource;
   end;
 end;
 

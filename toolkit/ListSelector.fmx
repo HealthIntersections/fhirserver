@@ -8,6 +8,8 @@ object ListSelectorForm: TListSelectorForm
   FormFactor.Width = 320
   FormFactor.Height = 480
   FormFactor.Devices = [Desktop]
+  OnActivate = ListBox1ChangeCheck
+  OnShow = FormShow
   DesignerMasterStyle = 0
   object Panel1: TPanel
     Align = Bottom
@@ -19,6 +21,7 @@ object ListSelectorForm: TListSelectorForm
     object Button1: TButton
       Anchors = [akTop, akRight]
       Default = True
+      Enabled = False
       ModalResult = 1
       Position.X = 326.000000000000000000
       Position.Y = 8.000000000000000000
@@ -34,6 +37,13 @@ object ListSelectorForm: TListSelectorForm
       TabOrder = 1
       Text = 'Cancel'
     end
+    object CheckBox1: TCheckBox
+      Position.X = 8.000000000000000000
+      Position.Y = 8.000000000000000000
+      TabOrder = 2
+      Text = 'Select All'
+      OnChange = CheckBox1Change
+    end
   end
   object ListBox1: TListBox
     Anchors = [akLeft, akTop, akRight, akBottom]
@@ -43,11 +53,13 @@ object ListSelectorForm: TListSelectorForm
     Size.Height = 417.000000000000000000
     Size.PlatformDefault = False
     TabOrder = 1
+    OnClick = ListBox1ChangeCheck
     DisableFocusEffect = True
     DefaultItemStyles.ItemStyle = ''
     DefaultItemStyles.GroupHeaderStyle = ''
     DefaultItemStyles.GroupFooterStyle = ''
     ShowCheckboxes = True
+    OnChangeCheck = ListBox1ChangeCheck
     Viewport.Width = 483.000000000000000000
     Viewport.Height = 413.000000000000000000
   end

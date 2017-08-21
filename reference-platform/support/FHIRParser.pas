@@ -38,6 +38,9 @@ uses
   FHIRParserBase, FHIRParserXml, FHIRParserJson{$IFNDEF FHIR2}, FHIRParserTurtle{$ENDIF};
 
 Type
+  TFHIRParser = FHIRParserBase.TFHIRParser;
+  TFHIRComposer = FHIRParserBase.TFHIRComposer;
+
   TFHIRXmlParser = FHIRParserXml.TFHIRXmlParser;
   TFHIRXmlComposer = FHIRParserXml.TFHIRXmlComposer;
   TFHIRJsonParser = FHIRParserJson.TFHIRJsonParser;

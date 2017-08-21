@@ -28,8 +28,8 @@ object CapabilityStatementEditorFrame: TCapabilityStatementEditorFrame
       Size.PlatformDefault = False
       TabOrder = 1
       OnClick = tvStructureClick
-      Viewport.Width = 201.000000000000000000
-      Viewport.Height = 754.000000000000000000
+      Viewport.Width = 197.000000000000000000
+      Viewport.Height = 750.000000000000000000
       object tvMetadata: TTreeViewItem
         IsChecked = False
         IsExpanded = False
@@ -60,7 +60,7 @@ object CapabilityStatementEditorFrame: TCapabilityStatementEditorFrame
       Size.Width = 614.000000000000000000
       Size.Height = 779.000000000000000000
       Size.PlatformDefault = False
-      TabIndex = 1
+      TabIndex = 2
       TabOrder = 0
       TabPosition = None
       Sizes = (
@@ -451,7 +451,7 @@ object CapabilityStatementEditorFrame: TCapabilityStatementEditorFrame
         CustomIcon = <
           item
           end>
-        IsSelected = True
+        IsSelected = False
         Size.Width = 8.000000000000000000
         Size.Height = 8.000000000000000000
         Size.PlatformDefault = False
@@ -665,7 +665,7 @@ object CapabilityStatementEditorFrame: TCapabilityStatementEditorFrame
         CustomIcon = <
           item
           end>
-        IsSelected = False
+        IsSelected = True
         Size.Width = 8.000000000000000000
         Size.Height = 8.000000000000000000
         Size.PlatformDefault = False
@@ -676,32 +676,32 @@ object CapabilityStatementEditorFrame: TCapabilityStatementEditorFrame
         ExplicitSize.cy = 8.000000000000000000
         object btnParamAdd: TButton
           Anchors = [akTop, akRight]
-          Position.X = 521.226013183593800000
-          Position.Y = 544.000000000000000000
+          Position.X = 521.000000000000000000
+          Position.Y = 536.000000000000000000
           TabOrder = 6
           Text = 'Add'
           OnClick = btnParamAddClick
         end
         object btnParamAddStd: TButton
           Anchors = [akTop, akRight]
-          Position.X = 521.226013183593800000
-          Position.Y = 568.000000000000000000
+          Position.X = 521.000000000000000000
+          Position.Y = 560.000000000000000000
           TabOrder = 7
           Text = 'Add Std.'
           OnClick = btnParamAddStdClick
         end
         object btnParamDelete: TButton
           Anchors = [akTop, akRight]
-          Position.X = 521.226013183593800000
-          Position.Y = 617.000000000000000000
+          Position.X = 521.000000000000000000
+          Position.Y = 609.000000000000000000
           TabOrder = 8
           Text = 'Delete'
           OnClick = btnParamDeleteClick
         end
         object btnParamEdit: TButton
           Anchors = [akTop, akRight]
-          Position.X = 521.226013183593800000
-          Position.Y = 592.000000000000000000
+          Position.X = 521.000000000000000000
+          Position.Y = 584.000000000000000000
           TabOrder = 9
           Text = 'Edit'
           OnClick = btnParamEditClick
@@ -1076,23 +1076,6 @@ object CapabilityStatementEditorFrame: TCapabilityStatementEditorFrame
           Text = 'Search Parameters'
           TabOrder = 47
         end
-        object lbSearch: TListBox
-          Anchors = [akLeft, akTop, akRight]
-          Position.X = 32.000000000000000000
-          Position.Y = 544.000000000000000000
-          Size.Width = 480.000000000000000000
-          Size.Height = 199.000000000000000000
-          Size.PlatformDefault = False
-          TabOrder = 48
-          OnClick = lbSearchClick
-          OnDblClick = btnParamEditClick
-          DisableFocusEffect = True
-          DefaultItemStyles.ItemStyle = ''
-          DefaultItemStyles.GroupHeaderStyle = ''
-          DefaultItemStyles.GroupFooterStyle = ''
-          Viewport.Width = 480.000000000000000000
-          Viewport.Height = 199.000000000000000000
-        end
         object mDocoRes: TMemo
           Touch.InteractiveGestures = [Pan, LongTap, DoubleTap]
           DataDetectorTypes = []
@@ -1104,9 +1087,50 @@ object CapabilityStatementEditorFrame: TCapabilityStatementEditorFrame
           Size.Width = 585.000000000000000000
           Size.Height = 57.000000000000000000
           Size.PlatformDefault = False
+          TabOrder = 48
+          Viewport.Width = 581.000000000000000000
+          Viewport.Height = 53.000000000000000000
+        end
+        object gridSearch: TGrid
+          Anchors = [akLeft, akTop, akRight]
+          CanFocus = True
+          ClipChildren = True
+          Position.X = 16.000000000000000000
+          Position.Y = 536.000000000000000000
+          Size.Width = 497.000000000000000000
+          Size.Height = 217.000000000000000000
+          Size.PlatformDefault = False
           TabOrder = 49
-          Viewport.Width = 585.000000000000000000
-          Viewport.Height = 57.000000000000000000
+          RowCount = 10
+          OnGetValue = gridSearchGetValue
+          OnSetValue = gridSearchSetValue
+          Viewport.Width = 477.000000000000000000
+          Viewport.Height = 176.000000000000000000
+          object Column1: TColumn
+            Header = 'Name'
+            Size.Width = 85.000000000000000000
+          end
+          object PopupColumn1: TPopupColumn
+            Header = 'Type'
+            PopupMenu = PopupMenu1
+            Items.Strings = (
+              'number'
+              'date'
+              'string'
+              'token'
+              'reference'
+              'composite'
+              'quantity'
+              'uri')
+          end
+          object StringColumn1: TStringColumn
+            Header = 'Definition (URL)'
+            Size.Width = 138.000000000000000000
+          end
+          object StringColumn2: TStringColumn
+            Header = 'Documentation'
+            Size.Width = 250.000000000000000000
+          end
         end
       end
     end
@@ -1118,5 +1142,15 @@ object CapabilityStatementEditorFrame: TCapabilityStatementEditorFrame
     Size.Height = 29.000000000000000000
     Size.PlatformDefault = False
     TabOrder = 25
+  end
+  object PopupMenu1: TPopupMenu
+    Left = 769
+    Top = 720
+    object MenuItem1: TMenuItem
+      Text = 'MenuItem1'
+    end
+    object MenuItem2: TMenuItem
+      Text = 'MenuItem2'
+    end
   end
 end

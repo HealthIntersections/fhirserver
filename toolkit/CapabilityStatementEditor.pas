@@ -11,7 +11,8 @@ uses
   DateSupport, StringSupport,
   AdvGenerics,
   FHIRBase, FHIRConstants, FHIRTypes, FHIRResources, FHIRUtilities, FHIRIndexBase, FHIRIndexInformation, FHIRSupport,
-  SearchParameterEditor, ListSelector, AddRestResourceDialog;
+  SearchParameterEditor, ListSelector, AddRestResourceDialog, System.Rtti,
+  FMX.Grid.Style, FMX.Grid, FMX.Menus;
 
 type
   TFrame = TBaseResourceFrame; // re-aliasing the Frame to work around a designer bug
@@ -108,7 +109,6 @@ type
     Label24: TLabel;
     cbxVersioning: TComboBox;
     Label25: TLabel;
-    lbSearch: TListBox;
     btnParamAdd: TButton;
     btnParamAddStd: TButton;
     btnParamEdit: TButton;
@@ -128,6 +128,14 @@ type
     btnAddResources: TButton;
     VertScrollBox1: TVertScrollBox;
     btnDeleteResources: TButton;
+    gridSearch: TGrid;
+    Column1: TColumn;
+    StringColumn1: TStringColumn;
+    StringColumn2: TStringColumn;
+    PopupColumn1: TPopupColumn;
+    PopupMenu1: TPopupMenu;
+    MenuItem1: TMenuItem;
+    MenuItem2: TMenuItem;
     procedure tvStructureClick(Sender: TObject);
     procedure btnCancelClick(Sender: TObject);
     procedure inputChanged(Sender: TObject);
@@ -140,6 +148,8 @@ type
     procedure btnAddServerClick(Sender: TObject);
     procedure btnAddResourcesClick(Sender: TObject);
     procedure btnDeleteResourcesClick(Sender: TObject);
+    procedure gridSearchGetValue(Sender: TObject; const ACol, ARow: Integer; var Value: TValue);
+    procedure gridSearchSetValue(Sender: TObject; const ACol, ARow: Integer; const Value: TValue);
   private
     function GetCapabilityStatement: TFHIRCapabilityStatement;
     function readJurisdiction : Integer;
@@ -153,12 +163,13 @@ type
     procedure commitRest(rest : TFhirCapabilityStatementRest);
     procedure commitResource(res : TFhirCapabilityStatementRestResource);
 
-    procedure commit; override;
-    procedure cancel; override;
   public
     { Public declarations }
     property CapabilityStatement : TFHIRCapabilityStatement read GetCapabilityStatement;
     procedure load; override;
+
+    procedure commit; override;
+    procedure cancel; override;
 
   end;
 
@@ -341,6 +352,7 @@ begin
           tvStructure.Selected.RemoveObject(r.TagObject as TFmxObject);
           rest.resourceList.DeleteByReference(r);
         end;
+      ResourceIsDirty := true;
     end;
   finally
     form.free;
@@ -362,8 +374,7 @@ begin
       if form.showModal = mrOk then
       begin
         res.searchParamList.Add(p.link);
-        lbSearch.Items.AddObject(p.summary, p);
-        lbSearch.ItemIndex := lbSearch.Items.Count - 1;
+        gridSearch.RowCount := res.searchParamList.Count;
         ResourceIsDirty := true;
       end;
     finally
@@ -427,12 +438,11 @@ begin
                 p.definition := index.URI;
                 p.documentation := index.Description;
                 res.searchParamList.Add(p.Link);
-                lbSearch.Items.AddObject(p.summary, p);
               finally
                 p.Free;
               end;
             end;
-          lbSearch.ItemIndex := lbSearch.Items.Count - 1;
+          gridSearch.RowCount := res.searchParamList.Count;
           lbSearchClick(nil);
         end;
       finally
@@ -449,28 +459,32 @@ end;
 
 procedure TCapabilityStatementEditorFrame.btnParamDeleteClick(Sender: TObject);
 var
+  sp : TFhirCapabilityStatementRestResourceSearchParamList;
   p : TFhirCapabilityStatementRestResourceSearchParam;
-  res : TFhirCapabilityStatementRestResource;
+  form : TSearchParameterEditorForm;
 begin
-  p := lbSearch.Items.Objects[lbSearch.ItemIndex] as TFhirCapabilityStatementRestResourceSearchParam;
-  res := tvStructure.Selected.TagObject as TFhirCapabilityStatementRestResource;
-  res.searchParamList.DeleteByReference(p);
-  lbSearch.Items.Delete(lbSearch.ItemIndex);
-  lbSearchClick(nil);
+  sp := gridSearch.TagObject as TFhirCapabilityStatementRestResourceSearchParamList;
+  p := sp[gridSearch.Selected];
+  sp.DeleteByReference(p);
+  gridSearch.RowCount := 0;
+  gridSearch.RowCount := sp.Count;
 end;
 
 procedure TCapabilityStatementEditorFrame.btnParamEditClick(Sender: TObject);
 var
+  sp : TFhirCapabilityStatementRestResourceSearchParamList;
   p : TFhirCapabilityStatementRestResourceSearchParam;
   form : TSearchParameterEditorForm;
 begin
-  p := lbSearch.Items.Objects[lbSearch.ItemIndex] as TFhirCapabilityStatementRestResourceSearchParam;
+  sp := gridSearch.TagObject as TFhirCapabilityStatementRestResourceSearchParamList;
+  p := sp[gridSearch.Selected];
   form := TSearchParameterEditorForm.create(self);
   try
     form.param := p.link;
     if form.showModal = mrOk then
     begin
-      lbSearch.Items[lbSearch.ItemIndex] := p.summary;
+      gridSearch.RowCount := 0;
+      gridSearch.RowCount := sp.Count;
       ResourceIsDirty := true;
     end;
   finally
@@ -678,6 +692,37 @@ begin
   end;
 end;
 
+procedure TCapabilityStatementEditorFrame.gridSearchGetValue(Sender: TObject; const ACol, ARow: Integer; var Value: TValue);
+var
+  sp : TFhirCapabilityStatementRestResourceSearchParamList;
+  p : TFhirCapabilityStatementRestResourceSearchParam;
+begin
+  sp := gridSearch.TagObject as TFhirCapabilityStatementRestResourceSearchParamList;
+  p := sp[ARow];
+  case aCol of
+    0: value := p.name;
+    1: value := CODES_TFhirSearchParamTypeEnum[p.type_];
+    2: value := p.definition;
+    3: value := p.documentation;
+  end;
+end;
+
+procedure TCapabilityStatementEditorFrame.gridSearchSetValue(Sender: TObject; const ACol, ARow: Integer; const Value: TValue);
+var
+  sp : TFhirCapabilityStatementRestResourceSearchParamList;
+  p : TFhirCapabilityStatementRestResourceSearchParam;
+begin
+  sp := gridSearch.TagObject as TFhirCapabilityStatementRestResourceSearchParamList;
+  p := sp[ARow];
+  case aCol of
+    0: p.name := value.AsString;
+    1: p.type_ := TFhirSearchParamTypeEnum(StringArrayIndexOfSensitive(CODES_TFhirSearchParamTypeEnum, value.AsString));
+    2: p.definition := value.AsString;
+    3: p.documentation := value.AsString;
+  end;
+  ResourceIsDirty := true;
+end;
+
 procedure TCapabilityStatementEditorFrame.inputChanged(Sender: TObject);
 begin
   if not Loading then
@@ -686,8 +731,8 @@ end;
 
 procedure TCapabilityStatementEditorFrame.lbSearchClick(Sender: TObject);
 begin
-  btnParamEdit.enabled := lbSearch.ItemIndex > -1;
-  btnParamDelete.enabled := lbSearch.ItemIndex > -1;
+//  btnParamEdit.enabled := lbSearch.ItemIndex > -1;
+//  btnParamDelete.enabled := lbSearch.ItemIndex > -1;
 end;
 
 procedure TCapabilityStatementEditorFrame.load;
@@ -756,7 +801,10 @@ begin
   edtPurpose.Text := CapabilityStatement.purpose;
   edtCopyright.Text := CapabilityStatement.copyright;
   cbxStatus.ItemIndex := ord(CapabilityStatement.status);
-  dedDate.DateTime := CapabilityStatement.date.DateTime;
+  if CapabilityStatement.dateElement = nil then
+    dedDate.Text := ''
+  else
+    dedDate.DateTime := CapabilityStatement.date.DateTime;
   cbxKind.ItemIndex := ord(CapabilityStatement.kind);
   cbxJurisdiction.ItemIndex := readJurisdiction;
 
@@ -806,13 +854,10 @@ begin
   cbRefEnforced.IsChecked := ReferenceHandlingPolicyEnforced in res.referencePolicy;
   cbRefLocal.IsChecked := ReferenceHandlingPolicyLocal in res.referencePolicy;
 
-  lbSearch.Items.Clear;
-  for search in res.searchParamList do
-    lbSearch.Items.AddObject(search.summary, search);
-  if lbSearch.Items.Count > 0 then
-    lbSearch.ItemIndex := 0;
+  gridSearch.tagObject := res.searchParamList;
+  gridSearch.RowCount := res.searchParamList.Count;
+  gridSearch.RealignContent;
   lbSearchClick(nil);
-
 end;
 
 

@@ -7,16 +7,19 @@ uses
   FMX.Types, FMX.Graphics, FMX.Controls, FMX.Forms, FMX.Dialogs, FMX.StdCtrls,
   FMX.ListBox, FMX.Edit, FMX.TabControl, FMX.TreeView, FMX.Layouts,
   FMX.Controls.Presentation, FMX.Platform,
-  FHIRBase;
+  IniFiles,
+  FHIRBase, FHIRResources;
 
 type
   TBaseFrame = class(TFrame)
   private
     FTabs : TTabControl;
     FTab  : TTabItem;
+    FIni: TIniFile;
   public
     property Tabs : TTabControl read FTabs write FTabs;
     property Tab : TTabItem read FTab write FTab;
+    property Ini : TIniFile read FIni write FIni;
 
     procedure load; virtual;
     procedure Close;
@@ -24,8 +27,12 @@ type
     function canSave : boolean; virtual;
     function canSaveAs : boolean; virtual;
     function isDirty : boolean; virtual;
+    function nameForSaveDialog : String; virtual;
     function save : boolean; virtual;
     function saveAs(filename : String; format : TFHIRFormat) : boolean; virtual;
+    function hasResource : boolean; virtual;
+    function currentResource : TFHIRResource; virtual;
+    function originalResource : TFHIRResource; virtual;
 
     function markbusy : IFMXCursorService;
     procedure markNotBusy(cs : IFMXCursorService);
@@ -57,6 +64,16 @@ begin
     tabs.TabIndex := 0;
 end;
 
+function TBaseFrame.currentResource: TFHIRResource;
+begin
+  result := nil;
+end;
+
+function TBaseFrame.hasResource: boolean;
+begin
+  result := false;
+end;
+
 function TBaseFrame.isDirty: boolean;
 begin
   result := false;
@@ -84,6 +101,16 @@ procedure TBaseFrame.markNotBusy(cs: IFMXCursorService);
 begin
   if Assigned(CS) then
     cs.setCursor(TForm(Tabs.Owner).Cursor);
+end;
+
+function TBaseFrame.nameForSaveDialog: String;
+begin
+  result := '';
+end;
+
+function TBaseFrame.originalResource: TFHIRResource;
+begin
+  result := nil;
 end;
 
 function TBaseFrame.save : boolean;

@@ -15,6 +15,7 @@ type
   private
     FFilename : String;
     FResource : TFHIRResource;
+    FOriginal : TFHIRResource;
     FFormat: TFHIRFormat;
     FInputIsDirty: boolean;
     FResourceIsDirty: boolean;
@@ -31,6 +32,10 @@ type
     function save : boolean; override;
     function saveAs(filename : String; format : TFHIRFormat) : boolean; override;
     function isDirty : boolean; override;
+    function nameForSaveDialog : String; override;
+    function hasResource : boolean; override;
+    function currentResource : TFHIRResource; override;
+    function originalResource : TFHIRResource; override;
 
     procedure commit; virtual;
     procedure cancel; virtual;
@@ -65,15 +70,39 @@ begin
   // nothing
 end;
 
+function TBaseResourceFrame.currentResource: TFHIRResource;
+begin
+  result := FResource;
+end;
+
 destructor TBaseResourceFrame.Destroy;
 begin
   FResource.Free;
+  FOriginal.Free;
   inherited;
+end;
+
+function TBaseResourceFrame.hasResource: boolean;
+begin
+  result := true;
 end;
 
 function TBaseResourceFrame.isDirty: boolean;
 begin
   result := FResourceIsDirty or FInputIsDirty;
+end;
+
+function TBaseResourceFrame.nameForSaveDialog: String;
+begin
+  if Filename <> '' then
+    result := filename
+  else
+    result := 'new '+resource.fhirType;
+end;
+
+function TBaseResourceFrame.originalResource: TFHIRResource;
+begin
+  result := FOriginal;
 end;
 
 function TBaseResourceFrame.save : boolean;
@@ -102,6 +131,7 @@ procedure TBaseResourceFrame.SetResource(const Value: TFHIRResource);
 begin
   FResource.Free;
   FResource := Value;
+  FOriginal := FResource.Clone;
 end;
 
 end.
