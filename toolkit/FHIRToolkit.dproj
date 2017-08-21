@@ -6,7 +6,7 @@
         <MainSource>FHIRToolkit.dpr</MainSource>
         <Base>True</Base>
         <Config Condition="'$(Config)'==''">Debug</Config>
-        <Platform Condition="'$(Platform)'==''">Win64</Platform>
+        <Platform Condition="'$(Platform)'==''">OSX32</Platform>
         <TargetedPlatforms>6</TargetedPlatforms>
         <AppType>Application</AppType>
     </PropertyGroup>
@@ -257,9 +257,6 @@
         <DCCReference Include="..\reference-platform\support\HashSupport.pas"/>
         <DCCReference Include="..\reference-platform\support\CDSHooksUtilities.pas"/>
         <DCCReference Include="..\reference-platform\support\AfsStreamManagers.pas"/>
-        <DCCReference Include="..\reference-platform\support\AfsVolumes.pas"/>
-        <DCCReference Include="..\reference-platform\support\AfsResourceVolumes.pas"/>
-        <DCCReference Include="..\reference-platform\support\AdvWinInetClients.pas"/>
         <DCCReference Include="..\reference-platform\support\AdvStringHashes.pas"/>
         <DCCReference Include="..\reference-platform\support\AdvHashes.pas"/>
         <DCCReference Include="..\Libraries\FMM\FastMM4Messages.pas"/>
@@ -342,7 +339,7 @@
                 </Excluded_Packages>
             </Delphi.Personality>
             <Deployment Version="3">
-                <DeployFile LocalName="OSX32\Debug\AppEndorser.entitlements" Configuration="Debug" Class="ProjectOSXEntitlements">
+                <DeployFile LocalName="OSX32\Debug\FHIRToolkit.entitlements" Configuration="Debug" Class="ProjectOSXEntitlements">
                     <Platform Name="OSX32">
                         <Overwrite>true</Overwrite>
                     </Platform>
@@ -352,15 +349,16 @@
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
-                <DeployFile LocalName="OSX32\Debug\AppEndorser.rsm" Configuration="Debug" Class="DebugSymbols">
+                <DeployFile LocalName="OSX32\Debug\FHIRToolkit.rsm" Configuration="Debug" Class="DebugSymbols">
                     <Platform Name="OSX32">
                         <RemoteDir>Contents\MacOS\</RemoteDir>
-                        <RemoteName>AppEndorser.rsm</RemoteName>
+                        <RemoteName>FHIRToolkit.rsm</RemoteName>
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
-                <DeployFile LocalName="$(BDS)\Redist\iossimulator\libPCRE.dylib" Class="DependencyModule">
-                    <Platform Name="iOSSimulator">
+                <DeployFile LocalName="Win32\Debug\FHIRToolkit.exe" Configuration="Debug" Class="ProjectOutput">
+                    <Platform Name="Win32">
+                        <RemoteName>FHIRToolkit.exe</RemoteName>
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
@@ -370,9 +368,14 @@
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
+                <DeployFile LocalName="$(BDS)\Redist\iossimulator\libPCRE.dylib" Class="DependencyModule">
+                    <Platform Name="iOSSimulator">
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
                 <DeployFile LocalName="$(BDS)\bin\delphi_PROJECTICNS.icns" Configuration="Debug" Class="ProjectOSXResource">
                     <Platform Name="OSX32">
-                        <RemoteName>AppEndorser.icns</RemoteName>
+                        <RemoteName>FHIRToolkit.icns</RemoteName>
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
@@ -387,7 +390,7 @@
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
-                <DeployFile LocalName="OSX32\Debug\AppEndorser.info.plist" Configuration="Debug" Class="ProjectOSXInfoPList">
+                <DeployFile LocalName="OSX32\Debug\FHIRToolkit.info.plist" Configuration="Debug" Class="ProjectOSXInfoPList">
                     <Platform Name="OSX32">
                         <RemoteName>Info.plist</RemoteName>
                         <Overwrite>true</Overwrite>
@@ -400,12 +403,6 @@
                 </DeployFile>
                 <DeployFile LocalName="Win64\Debug\FHIRToolkit.exe" Configuration="Debug" Class="ProjectOutput">
                     <Platform Name="Win64">
-                        <RemoteName>FHIRToolkit.exe</RemoteName>
-                        <Overwrite>true</Overwrite>
-                    </Platform>
-                </DeployFile>
-                <DeployFile LocalName="Win32\Debug\FHIRToolkit.exe" Configuration="Debug" Class="ProjectOutput">
-                    <Platform Name="Win32">
                         <RemoteName>FHIRToolkit.exe</RemoteName>
                         <Overwrite>true</Overwrite>
                     </Platform>

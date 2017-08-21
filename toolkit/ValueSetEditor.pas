@@ -185,6 +185,8 @@ type
     procedure gridParametersSetValue(Sender: TObject; const ACol, ARow: Integer; const Value: TValue);
     procedure gridParametersSelChanged(Sender: TObject);
     procedure btnDeleteParameterClick(Sender: TObject);
+    procedure rbListClick(Sender: TObject);
+    procedure rbFilterClick(Sender: TObject);
   private
     tvCompose, tvExpansion : TTreeViewItem;
     function GetValueSet: TFHIRValueSet;
@@ -314,6 +316,8 @@ begin
 end;
 
 procedure TValueSetEditorFrame.btnFlipExpansionClick(Sender: TObject);
+var
+  tiSubItem : TTreeViewItem;
 begin
   if ValueSet.expansion = nil then
   begin
@@ -323,6 +327,10 @@ begin
     tvExpansion.text := 'Expansion';
     tvStructure.AddObject(tvExpansion);
     tvExpansion.TagObject := ValueSet.expansion;
+    tiSubItem := TTreeViewItem.Create(tvExpansion);
+    tiSubItem.text := 'Parameters';
+    tvExpansion.AddObject(tiSubItem);
+    tiSubItem.TagObject := ValueSet.expansion.parameterList;
     ValueSet.compose.TagObject := tvExpansion;
     btnFlipExpansion.text := 'Remove Fixed Expansion';
     tvStructure.Selected := tvExpansion;
@@ -1224,7 +1232,7 @@ begin
   else
   begin
     rbList.IsChecked := true;
-    tabSelect.TabIndex := 0;
+    tabSelect.TabIndex := 1;
     rbList.Enabled := true;
     rbFilter.Enabled := true;
   end;
@@ -1266,6 +1274,17 @@ begin
   btnAddContainsDesignation.Enabled := false;
   btnDeleteContainsDesignation.Enabled := false;
 end;
+
+procedure TValueSetEditorFrame.rbListClick(Sender: TObject);
+begin
+  tabSelect.TabIndex := 1;
+end;
+
+procedure TValueSetEditorFrame.rbFilterClick(Sender: TObject);
+begin
+  tabSelect.TabIndex := 0;
+end;
+
 
 function TValueSetEditorFrame.readJurisdiction: Integer;
 var

@@ -17,6 +17,7 @@ type
     procedure ListBox1ChangeCheck(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure CheckBox1Change(Sender: TObject);
+    procedure ListBox1DblClick(Sender: TObject);
   private
     FOkWithNoneSelected: boolean;
     { Private declarations }
@@ -58,6 +59,12 @@ begin
       if ListBox1.ListItems[i].IsChecked then
         Button1.Enabled := true;
   end;
+end;
+
+procedure TListSelectorForm.ListBox1DblClick(Sender: TObject);
+begin
+  if not ListBox1.ShowCheckboxes then
+   ModalResult := mrOk;
 end;
 
 end.

@@ -5,7 +5,7 @@ object AddRestResourceForm: TAddRestResourceForm
   BorderStyle = Single
   Caption = 'Form1'
   ClientHeight = 594
-  ClientWidth = 496
+  ClientWidth = 552
   FormFactor.Width = 320
   FormFactor.Height = 480
   FormFactor.Devices = [Desktop]
@@ -14,7 +14,7 @@ object AddRestResourceForm: TAddRestResourceForm
   object Panel1: TPanel
     Align = Bottom
     Position.Y = 554.000000000000000000
-    Size.Width = 496.000000000000000000
+    Size.Width = 552.000000000000000000
     Size.Height = 40.000000000000000000
     Size.PlatformDefault = False
     TabOrder = 0
@@ -22,7 +22,7 @@ object AddRestResourceForm: TAddRestResourceForm
       Anchors = [akTop, akRight]
       Default = True
       ModalResult = 1
-      Position.X = 319.000000000000000000
+      Position.X = 375.000000000000000000
       Position.Y = 8.000000000000000000
       TabOrder = 0
       Text = 'OK'
@@ -31,7 +31,7 @@ object AddRestResourceForm: TAddRestResourceForm
       Anchors = [akTop, akRight]
       Cancel = True
       ModalResult = 2
-      Position.X = 407.000000000000000000
+      Position.X = 463.000000000000000000
       Position.Y = 8.000000000000000000
       TabOrder = 1
       Text = 'Cancel'
@@ -40,7 +40,7 @@ object AddRestResourceForm: TAddRestResourceForm
   object Panel2: TPanel
     Align = Bottom
     Position.Y = 329.000000000000000000
-    Size.Width = 496.000000000000000000
+    Size.Width = 552.000000000000000000
     Size.Height = 225.000000000000000000
     Size.PlatformDefault = False
     TabOrder = 24
@@ -54,7 +54,7 @@ object AddRestResourceForm: TAddRestResourceForm
       Text = 'Create'
     end
     object cbDelete: TCheckBox
-      Position.X = 240.000000000000000000
+      Position.X = 272.000000000000000000
       Position.Y = 56.000000000000000000
       Size.Width = 73.000000000000000000
       Size.Height = 19.000000000000000000
@@ -63,16 +63,16 @@ object AddRestResourceForm: TAddRestResourceForm
       Text = 'Delete'
     end
     object cbHistoryInstance: TCheckBox
-      Position.X = 240.000000000000000000
+      Position.X = 272.000000000000000000
       Position.Y = 32.000000000000000000
-      Size.Width = 113.000000000000000000
+      Size.Width = 137.000000000000000000
       Size.Height = 19.000000000000000000
       Size.PlatformDefault = False
       TabOrder = 2
       Text = 'History (Instance)'
     end
     object cbHistoryType: TCheckBox
-      Position.X = 368.000000000000000000
+      Position.X = 424.000000000000000000
       Position.Y = 32.000000000000000000
       Size.Width = 113.000000000000000000
       Size.Height = 19.000000000000000000
@@ -81,7 +81,7 @@ object AddRestResourceForm: TAddRestResourceForm
       Text = 'History (Type)'
     end
     object cbPatch: TCheckBox
-      Position.X = 160.000000000000000000
+      Position.X = 176.000000000000000000
       Position.Y = 56.000000000000000000
       Size.Width = 73.000000000000000000
       Size.Height = 19.000000000000000000
@@ -99,7 +99,7 @@ object AddRestResourceForm: TAddRestResourceForm
       Text = 'Read'
     end
     object cbSearch: TCheckBox
-      Position.X = 80.000000000000000000
+      Position.X = 96.000000000000000000
       Position.Y = 32.000000000000000000
       Size.Width = 73.000000000000000000
       Size.Height = 19.000000000000000000
@@ -108,7 +108,7 @@ object AddRestResourceForm: TAddRestResourceForm
       Text = 'Search'
     end
     object cbUpdate: TCheckBox
-      Position.X = 80.000000000000000000
+      Position.X = 96.000000000000000000
       Position.Y = 56.000000000000000000
       Size.Width = 73.000000000000000000
       Size.Height = 19.000000000000000000
@@ -117,7 +117,7 @@ object AddRestResourceForm: TAddRestResourceForm
       Text = 'Update'
     end
     object cbVRead: TCheckBox
-      Position.X = 160.000000000000000000
+      Position.X = 176.000000000000000000
       Position.Y = 32.000000000000000000
       Size.Width = 73.000000000000000000
       Size.Height = 19.000000000000000000
@@ -132,7 +132,7 @@ object AddRestResourceForm: TAddRestResourceForm
       TabOrder = 9
     end
     object cbCondCreate: TCheckBox
-      Position.X = 96.000000000000000000
+      Position.X = 104.000000000000000000
       Position.Y = 116.000000000000000000
       Size.Width = 65.000000000000000000
       Size.Height = 19.000000000000000000
@@ -156,13 +156,16 @@ object AddRestResourceForm: TAddRestResourceForm
       Text = 'Update'
     end
     object cbRefEnforced: TCheckBox
-      Position.X = 312.000000000000000000
+      Position.X = 352.000000000000000000
       Position.Y = 156.000000000000000000
+      Size.Width = 89.000000000000000000
+      Size.Height = 19.000000000000000000
+      Size.PlatformDefault = False
       TabOrder = 13
       Text = 'Enforced'
     end
     object cbRefLocal: TCheckBox
-      Position.X = 384.000000000000000000
+      Position.X = 448.000000000000000000
       Position.Y = 156.000000000000000000
       Size.Width = 89.000000000000000000
       Size.Height = 19.000000000000000000
@@ -171,19 +174,22 @@ object AddRestResourceForm: TAddRestResourceForm
       Text = 'Local Only'
     end
     object cbRefLogical: TCheckBox
-      Position.X = 136.000000000000000000
+      Position.X = 152.000000000000000000
       Position.Y = 156.000000000000000000
       TabOrder = 15
       Text = 'Logical'
     end
     object cbRefResolve: TCheckBox
-      Position.X = 200.000000000000000000
+      Position.X = 224.000000000000000000
       Position.Y = 156.000000000000000000
+      Size.Width = 129.000000000000000000
+      Size.Height = 19.000000000000000000
+      Size.PlatformDefault = False
       TabOrder = 16
       Text = 'Resolves Logical'
     end
     object cbUpdateCreate: TCheckBox
-      Position.X = 320.000000000000000000
+      Position.X = 384.000000000000000000
       Position.Y = 56.000000000000000000
       Size.Width = 161.000000000000000000
       Size.Height = 19.000000000000000000
@@ -201,24 +207,10 @@ object AddRestResourceForm: TAddRestResourceForm
         'Fully supported')
       Position.X = 360.000000000000000000
       Position.Y = 116.000000000000000000
-      Size.Width = 104.000000000000000000
+      Size.Width = 177.000000000000000000
       Size.Height = 22.000000000000000000
       Size.PlatformDefault = False
       TabOrder = 18
-    end
-    object cbxVersioning: TComboBox
-      Anchors = [akLeft, akTop, akRight]
-      Items.Strings = (
-        ''
-        'None'
-        'Versions Tracked'
-        'Versioned Update Required')
-      Position.X = 82.000000000000000000
-      Position.Y = 88.000000000000000000
-      Size.Width = 383.000000000000000000
-      Size.Height = 22.000000000000000000
-      Size.PlatformDefault = False
-      TabOrder = 19
     end
     object Label22: TLabel
       Position.X = 326.000000000000000000
@@ -235,7 +227,7 @@ object AddRestResourceForm: TAddRestResourceForm
     object Label21: TLabel
       Position.X = 16.000000000000000000
       Position.Y = 117.000000000000000000
-      Size.Width = 73.000000000000000000
+      Size.Width = 81.000000000000000000
       Size.Height = 17.000000000000000000
       Size.PlatformDefault = False
       Text = 'Conditional: '
@@ -248,8 +240,11 @@ object AddRestResourceForm: TAddRestResourceForm
       TabOrder = 46
     end
     object cbRefLiteral: TCheckBox
-      Position.X = 80.000000000000000000
+      Position.X = 88.000000000000000000
       Position.Y = 156.000000000000000000
+      Size.Width = 73.000000000000000000
+      Size.Height = 19.000000000000000000
+      Size.PlatformDefault = False
       TabOrder = 20
       Text = 'Literal'
     end
@@ -262,6 +257,20 @@ object AddRestResourceForm: TAddRestResourceForm
       TabOrder = 47
       Text = 'Add standard search parameters'
     end
+    object cbxVersioning: TComboBox
+      Anchors = [akLeft, akTop, akRight]
+      Items.Strings = (
+        ''
+        'None'
+        'Versions Tracked'
+        'Versioned Update Required')
+      Position.X = 88.000000000000000000
+      Position.Y = 88.000000000000000000
+      Size.Width = 449.000000000000000000
+      Size.Height = 22.000000000000000000
+      Size.PlatformDefault = False
+      TabOrder = 19
+    end
   end
   object Panel3: TPanel
     Align = Client
@@ -269,13 +278,13 @@ object AddRestResourceForm: TAddRestResourceForm
     Margins.Top = 10.000000000000000000
     Margins.Right = 10.000000000000000000
     Margins.Bottom = 10.000000000000000000
-    Size.Width = 476.000000000000000000
+    Size.Width = 532.000000000000000000
     Size.Height = 309.000000000000000000
     Size.PlatformDefault = False
     TabOrder = 25
     object ListBox1: TListBox
       Align = Client
-      Size.Width = 476.000000000000000000
+      Size.Width = 532.000000000000000000
       Size.Height = 309.000000000000000000
       Size.PlatformDefault = False
       TabOrder = 0
@@ -288,8 +297,8 @@ object AddRestResourceForm: TAddRestResourceForm
       ShowCheckboxes = True
       OnChange = ListBox1Click
       OnChangeCheck = ListBox1Click
-      Viewport.Width = 472.000000000000000000
-      Viewport.Height = 305.000000000000000000
+      Viewport.Width = 532.000000000000000000
+      Viewport.Height = 309.000000000000000000
     end
   end
 end

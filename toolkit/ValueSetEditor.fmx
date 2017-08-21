@@ -28,8 +28,8 @@ object ValueSetEditorFrame: TValueSetEditorFrame
       Size.PlatformDefault = False
       TabOrder = 1
       OnClick = tvStructureClick
-      Viewport.Width = 197.000000000000000000
-      Viewport.Height = 683.000000000000000000
+      Viewport.Width = 201.000000000000000000
+      Viewport.Height = 687.000000000000000000
       object tvMetadata: TTreeViewItem
         IsChecked = False
         IsExpanded = False
@@ -60,7 +60,7 @@ object ValueSetEditorFrame: TValueSetEditorFrame
       Size.Width = 674.000000000000000000
       Size.Height = 712.000000000000000000
       Size.PlatformDefault = False
-      TabIndex = 4
+      TabIndex = 2
       TabOrder = 0
       TabPosition = None
       Sizes = (
@@ -109,9 +109,9 @@ object ValueSetEditorFrame: TValueSetEditorFrame
         end
         object cbExperimental: TCheckBox
           Anchors = [akTop, akRight]
-          Position.X = 569.000000000000000000
+          Position.X = 544.000000000000000000
           Position.Y = 120.000000000000000000
-          Size.Width = 97.000000000000000000
+          Size.Width = 122.000000000000000000
           Size.Height = 19.000000000000000000
           Size.PlatformDefault = False
           TabOrder = 2
@@ -155,7 +155,7 @@ object ValueSetEditorFrame: TValueSetEditorFrame
           Anchors = [akTop, akRight]
           Position.X = 506.000000000000000000
           Position.Y = 50.000000000000000000
-          Size.Width = 48.000000000000000000
+          Size.Width = 55.000000000000000000
           Size.Height = 17.000000000000000000
           Size.PlatformDefault = False
           Text = 'Version:'
@@ -249,7 +249,7 @@ object ValueSetEditorFrame: TValueSetEditorFrame
             'unknown')
           Position.X = 84.000000000000000000
           Position.Y = 120.000000000000000000
-          Size.Width = 472.000000000000000000
+          Size.Width = 453.000000000000000000
           Size.Height = 22.000000000000000000
           Size.PlatformDefault = False
           TabOrder = 4
@@ -501,7 +501,7 @@ object ValueSetEditorFrame: TValueSetEditorFrame
         CustomIcon = <
           item
           end>
-        IsSelected = False
+        IsSelected = True
         Size.Width = 8.000000000000000000
         Size.Height = 8.000000000000000000
         Size.PlatformDefault = False
@@ -533,7 +533,7 @@ object ValueSetEditorFrame: TValueSetEditorFrame
           Anchors = [akTop, akRight]
           Position.X = 498.000000000000000000
           Position.Y = 18.000000000000000000
-          Size.Width = 48.000000000000000000
+          Size.Width = 55.000000000000000000
           Size.Height = 17.000000000000000000
           Size.PlatformDefault = False
           Text = 'Version:'
@@ -597,7 +597,7 @@ object ValueSetEditorFrame: TValueSetEditorFrame
           Size.Width = 664.000000000000000000
           Size.Height = 537.000000000000000000
           Size.PlatformDefault = False
-          TabIndex = 1
+          TabIndex = 0
           TabOrder = 25
           TabPosition = None
           Sizes = (
@@ -609,7 +609,7 @@ object ValueSetEditorFrame: TValueSetEditorFrame
             CustomIcon = <
               item
               end>
-            IsSelected = False
+            IsSelected = True
             Size.Width = 8.000000000000000000
             Size.Height = 8.000000000000000000
             Size.PlatformDefault = False
@@ -620,7 +620,7 @@ object ValueSetEditorFrame: TValueSetEditorFrame
             ExplicitSize.cy = 8.000000000000000000
             object btnAddFilter: TButton
               Anchors = [akTop, akRight]
-              Position.X = 567.000000000000000000
+              Position.X = 569.000000000000000000
               Position.Y = 6.000000000000000000
               TabOrder = 0
               Text = 'Add'
@@ -628,7 +628,7 @@ object ValueSetEditorFrame: TValueSetEditorFrame
             end
             object btnDeleteFilter: TButton
               Anchors = [akTop, akRight]
-              Position.X = 567.000000000000000000
+              Position.X = 569.000000000000000000
               Position.Y = 30.000000000000000000
               TabOrder = 1
               Text = 'Delete'
@@ -678,7 +678,7 @@ object ValueSetEditorFrame: TValueSetEditorFrame
             CustomIcon = <
               item
               end>
-            IsSelected = True
+            IsSelected = False
             Size.Width = 8.000000000000000000
             Size.Height = 8.000000000000000000
             Size.PlatformDefault = False
@@ -689,7 +689,7 @@ object ValueSetEditorFrame: TValueSetEditorFrame
             ExplicitSize.cy = 8.000000000000000000
             object btnAddConcept: TButton
               Anchors = [akTop, akRight]
-              Position.X = 571.000000000000000000
+              Position.X = 569.000000000000000000
               Position.Y = 6.000000000000000000
               TabOrder = 0
               Text = 'Add'
@@ -697,7 +697,7 @@ object ValueSetEditorFrame: TValueSetEditorFrame
             end
             object btnAddDesignation: TButton
               Anchors = [akRight, akBottom]
-              Position.X = 571.000000000000000000
+              Position.X = 569.000000000000000000
               Position.Y = 449.000000000000000000
               TabOrder = 1
               Text = 'Add'
@@ -705,7 +705,7 @@ object ValueSetEditorFrame: TValueSetEditorFrame
             end
             object btnDeleteConcept: TButton
               Anchors = [akTop, akRight]
-              Position.X = 571.000000000000000000
+              Position.X = 569.000000000000000000
               Position.Y = 30.000000000000000000
               TabOrder = 2
               Text = 'Delete'
@@ -713,7 +713,7 @@ object ValueSetEditorFrame: TValueSetEditorFrame
             end
             object btnDeleteDesignation: TButton
               Anchors = [akRight, akBottom]
-              Position.X = 571.000000000000000000
+              Position.X = 569.000000000000000000
               Position.Y = 475.000000000000000000
               TabOrder = 3
               Text = 'Delete'
@@ -822,10 +822,14 @@ object ValueSetEditorFrame: TValueSetEditorFrame
           Position.Y = 128.000000000000000000
           TabOrder = 26
           Text = 'Enumerated'
+          OnClick = rbListClick
         end
         object Concepts: TLabel
           Position.X = 8.000000000000000000
           Position.Y = 128.000000000000000000
+          Size.Width = 81.000000000000000000
+          Size.Height = 17.000000000000000000
+          Size.PlatformDefault = False
           Text = 'Concepts'
           TabOrder = 27
         end
@@ -834,6 +838,7 @@ object ValueSetEditorFrame: TValueSetEditorFrame
           Position.Y = 128.000000000000000000
           TabOrder = 28
           Text = 'Selected'
+          OnClick = rbFilterClick
         end
       end
       object tabExpansion: TTabItem
@@ -1084,7 +1089,7 @@ object ValueSetEditorFrame: TValueSetEditorFrame
         CustomIcon = <
           item
           end>
-        IsSelected = True
+        IsSelected = False
         Size.Width = 8.000000000000000000
         Size.Height = 8.000000000000000000
         Size.PlatformDefault = False
@@ -1119,8 +1124,8 @@ object ValueSetEditorFrame: TValueSetEditorFrame
           OnSelChanged = gridParametersSelChanged
           OnGetValue = gridParametersGetValue
           OnSetValue = gridParametersSetValue
-          Viewport.Width = 541.000000000000000000
-          Viewport.Height = 600.000000000000000000
+          Viewport.Width = 561.000000000000000000
+          Viewport.Height = 625.000000000000000000
           object StringColumn14: TStringColumn
             Header = 'Name'
           end

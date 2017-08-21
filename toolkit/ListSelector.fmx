@@ -54,6 +54,7 @@ object ListSelectorForm: TListSelectorForm
     Size.PlatformDefault = False
     TabOrder = 1
     OnClick = ListBox1ChangeCheck
+    OnDblClick = ListBox1DblClick
     DisableFocusEffect = True
     DefaultItemStyles.ItemStyle = ''
     DefaultItemStyles.GroupHeaderStyle = ''
