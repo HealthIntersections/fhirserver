@@ -36,13 +36,13 @@
         <Projects Include="Server\fhirserverOSX4.dproj">
             <Dependencies/>
         </Projects>
-        <Projects Include="npp\fhirnpp.dproj">
-            <Dependencies/>
-        </Projects>
-        <Projects Include="utils\AppEndorserUI\AppEndorser.dproj">
+        <Projects Include="toolkit\FHIRToolkit.dproj">
             <Dependencies/>
         </Projects>
         <Projects Include="utils\VocabTxServer\VocabTxServer.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="npp\fhirnpp.dproj">
             <Dependencies/>
         </Projects>
     </ItemGroup>
@@ -152,23 +152,14 @@
     <Target Name="fhirserverOSX4:Make">
         <MSBuild Projects="Server\fhirserverOSX4.dproj" Targets="Make"/>
     </Target>
-    <Target Name="fhirnpp">
-        <MSBuild Projects="npp\fhirnpp.dproj"/>
+    <Target Name="FHIRToolkit">
+        <MSBuild Projects="toolkit\FHIRToolkit.dproj"/>
     </Target>
-    <Target Name="fhirnpp:Clean">
-        <MSBuild Projects="npp\fhirnpp.dproj" Targets="Clean"/>
+    <Target Name="FHIRToolkit:Clean">
+        <MSBuild Projects="toolkit\FHIRToolkit.dproj" Targets="Clean"/>
     </Target>
-    <Target Name="fhirnpp:Make">
-        <MSBuild Projects="npp\fhirnpp.dproj" Targets="Make"/>
-    </Target>
-    <Target Name="AppEndorser">
-        <MSBuild Projects="utils\AppEndorserUI\AppEndorser.dproj"/>
-    </Target>
-    <Target Name="AppEndorser:Clean">
-        <MSBuild Projects="utils\AppEndorserUI\AppEndorser.dproj" Targets="Clean"/>
-    </Target>
-    <Target Name="AppEndorser:Make">
-        <MSBuild Projects="utils\AppEndorserUI\AppEndorser.dproj" Targets="Make"/>
+    <Target Name="FHIRToolkit:Make">
+        <MSBuild Projects="toolkit\FHIRToolkit.dproj" Targets="Make"/>
     </Target>
     <Target Name="VocabTxServer">
         <MSBuild Projects="utils\VocabTxServer\VocabTxServer.dproj"/>
@@ -179,14 +170,23 @@
     <Target Name="VocabTxServer:Make">
         <MSBuild Projects="utils\VocabTxServer\VocabTxServer.dproj" Targets="Make"/>
     </Target>
+    <Target Name="fhirnpp">
+        <MSBuild Projects="npp\fhirnpp.dproj"/>
+    </Target>
+    <Target Name="fhirnpp:Clean">
+        <MSBuild Projects="npp\fhirnpp.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="fhirnpp:Make">
+        <MSBuild Projects="npp\fhirnpp.dproj" Targets="Make"/>
+    </Target>
     <Target Name="Build">
-        <CallTarget Targets="fhirserver4;FHIRServerTests;FhirServerUtils;installer;fhirtests4;FHIRServer3;fhirtests3;FHIRServer2;fhirtests2;ExampleBridgeServer;fhirserverOSX4;fhirnpp;AppEndorser;VocabTxServer"/>
+        <CallTarget Targets="fhirserver4;FHIRServerTests;FhirServerUtils;installer;fhirtests4;FHIRServer3;fhirtests3;FHIRServer2;fhirtests2;ExampleBridgeServer;fhirserverOSX4;FHIRToolkit;VocabTxServer;fhirnpp"/>
     </Target>
     <Target Name="Clean">
-        <CallTarget Targets="fhirserver4:Clean;FHIRServerTests:Clean;FhirServerUtils:Clean;installer:Clean;fhirtests4:Clean;FHIRServer3:Clean;fhirtests3:Clean;FHIRServer2:Clean;fhirtests2:Clean;ExampleBridgeServer:Clean;fhirserverOSX4:Clean;fhirnpp:Clean;AppEndorser:Clean;VocabTxServer:Clean"/>
+        <CallTarget Targets="fhirserver4:Clean;FHIRServerTests:Clean;FhirServerUtils:Clean;installer:Clean;fhirtests4:Clean;FHIRServer3:Clean;fhirtests3:Clean;FHIRServer2:Clean;fhirtests2:Clean;ExampleBridgeServer:Clean;fhirserverOSX4:Clean;FHIRToolkit:Clean;VocabTxServer:Clean;fhirnpp:Clean"/>
     </Target>
     <Target Name="Make">
-        <CallTarget Targets="fhirserver4:Make;FHIRServerTests:Make;FhirServerUtils:Make;installer:Make;fhirtests4:Make;FHIRServer3:Make;fhirtests3:Make;FHIRServer2:Make;fhirtests2:Make;ExampleBridgeServer:Make;fhirserverOSX4:Make;fhirnpp:Make;AppEndorser:Make;VocabTxServer:Make"/>
+        <CallTarget Targets="fhirserver4:Make;FHIRServerTests:Make;FhirServerUtils:Make;installer:Make;fhirtests4:Make;FHIRServer3:Make;fhirtests3:Make;FHIRServer2:Make;fhirtests2:Make;ExampleBridgeServer:Make;fhirserverOSX4:Make;FHIRToolkit:Make;VocabTxServer:Make;fhirnpp:Make"/>
     </Target>
     <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
 </Project>

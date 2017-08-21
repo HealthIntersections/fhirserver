@@ -3,6 +3,8 @@
 
 unit FHIRConstants;
 
+{$I fhir.inc}
+
 {
   Copyright (c) 2011+, HL7 and Health Intersections Pty Ltd (http://www.healthintersections.com.au)
   All rights reserved.
@@ -45,6 +47,7 @@ uses
   SysUtils, Classes, StringSupport, DecimalSupport, AdvBuffers, DateSupport, FHIRBase, FHIRTypes, FHIRResources;
 
 Type
+{$IFDEF FHIR_ACCOUNT}
   {@Enum TSearchParamsAccount
     Search Parameters for Account
   }
@@ -66,7 +69,9 @@ Type
     spAccount_Status, {@enum.value "status" spAccount_Status active | inactive | entered-in-error }
     spAccount_Subject, {@enum.value "subject" spAccount_Subject What is account tied to? }
     spAccount_Type); {@enum.value "type" spAccount_Type E.g. patient, expense, depreciation }
+{$ENDIF}
 
+{$IFDEF FHIR_ACTIVITYDEFINITION}
   {@Enum TSearchParamsActivityDefinition
     Search Parameters for ActivityDefinition
   }
@@ -96,7 +101,9 @@ Type
     spActivityDefinition_Topic, {@enum.value "topic" spActivityDefinition_Topic Topics associated with the module }
     spActivityDefinition_Url, {@enum.value "url" spActivityDefinition_Url The uri that identifies the activity definition }
     spActivityDefinition_Version); {@enum.value "version" spActivityDefinition_Version The business version of the activity definition }
+{$ENDIF}
 
+{$IFDEF FHIR_ADVERSEEVENT}
   {@Enum TSearchParamsAdverseEvent
     Search Parameters for AdverseEvent
   }
@@ -120,7 +127,9 @@ An adverse event is an event that caused harm to a patient,  an adverse reaction
     spAdverseEvent_Subject, {@enum.value "subject" spAdverseEvent_Subject Subject or group impacted by event }
     spAdverseEvent_Substance, {@enum.value "substance" spAdverseEvent_Substance Refers to the specific entity that caused the adverse event }
     spAdverseEvent_Type); {@enum.value "type" spAdverseEvent_Type actual | potential }
+{$ENDIF}
 
+{$IFDEF FHIR_ALLERGYINTOLERANCE}
   {@Enum TSearchParamsAllergyIntolerance
     Search Parameters for AllergyIntolerance
   }
@@ -149,7 +158,9 @@ An adverse event is an event that caused harm to a patient,  an adverse reaction
     spAllergyIntolerance_Severity, {@enum.value "severity" spAllergyIntolerance_Severity mild | moderate | severe (of event as a whole) }
     spAllergyIntolerance_Type, {@enum.value "type" spAllergyIntolerance_Type allergy | intolerance - Underlying mechanism (if known) }
     spAllergyIntolerance_Verificationstatus); {@enum.value "verification-status" spAllergyIntolerance_Verificationstatus unconfirmed | confirmed | refuted | entered-in-error }
+{$ENDIF}
 
+{$IFDEF FHIR_APPOINTMENT}
   {@Enum TSearchParamsAppointment
     Search Parameters for Appointment
   }
@@ -173,7 +184,9 @@ An adverse event is an event that caused harm to a patient,  an adverse reaction
     spAppointment_Practitioner, {@enum.value "practitioner" spAppointment_Practitioner One of the individuals of the appointment is this practitioner }
     spAppointment_Servicetype, {@enum.value "service-type" spAppointment_Servicetype The specific service that is to be performed during this appointment }
     spAppointment_Status); {@enum.value "status" spAppointment_Status The overall status of the appointment }
+{$ENDIF}
 
+{$IFDEF FHIR_APPOINTMENTRESPONSE}
   {@Enum TSearchParamsAppointmentResponse
     Search Parameters for AppointmentResponse
   }
@@ -193,7 +206,9 @@ An adverse event is an event that caused harm to a patient,  an adverse reaction
     spAppointmentResponse_Partstatus, {@enum.value "part-status" spAppointmentResponse_Partstatus The participants acceptance status for this appointment }
     spAppointmentResponse_Patient, {@enum.value "patient" spAppointmentResponse_Patient This Response is for this Patient }
     spAppointmentResponse_Practitioner); {@enum.value "practitioner" spAppointmentResponse_Practitioner This Response is for this Practitioner }
+{$ENDIF}
 
+{$IFDEF FHIR_AUDITEVENT}
   {@Enum TSearchParamsAuditEvent
     Search Parameters for AuditEvent
   }
@@ -226,7 +241,9 @@ An adverse event is an event that caused harm to a patient,  an adverse reaction
     spAuditEvent_Subtype, {@enum.value "subtype" spAuditEvent_Subtype More specific type/id for the event }
     spAuditEvent_Type, {@enum.value "type" spAuditEvent_Type Type/identifier of event }
     spAuditEvent_User); {@enum.value "user" spAuditEvent_User Unique identifier for the user }
+{$ENDIF}
 
+{$IFDEF FHIR_BASIC}
   {@Enum TSearchParamsBasic
     Search Parameters for Basic
   }
@@ -245,7 +262,9 @@ An adverse event is an event that caused harm to a patient,  an adverse reaction
     spBasic_Identifier, {@enum.value "identifier" spBasic_Identifier Business identifier }
     spBasic_Patient, {@enum.value "patient" spBasic_Patient Identifies the focus of this resource }
     spBasic_Subject); {@enum.value "subject" spBasic_Subject Identifies the focus of this resource }
+{$ENDIF}
 
+{$IFDEF FHIR_BINARY}
   {@Enum TSearchParamsBinary
     Search Parameters for Binary
   }
@@ -258,7 +277,9 @@ An adverse event is an event that caused harm to a patient,  an adverse reaction
     spBinary__security, {@enum.value "_security" spBinary__security Security Labels applied to this resource }
     spBinary__tag, {@enum.value "_tag" spBinary__tag Tags applied to this resource }
     spBinary_Contenttype); {@enum.value "contenttype" spBinary_Contenttype MimeType of the binary content }
+{$ENDIF}
 
+{$IFDEF FHIR_BODYSITE}
   {@Enum TSearchParamsBodySite
     Search Parameters for BodySite
   }
@@ -274,7 +295,9 @@ An adverse event is an event that caused harm to a patient,  an adverse reaction
     spBodySite_Code, {@enum.value "code" spBodySite_Code Named anatomical location }
     spBodySite_Identifier, {@enum.value "identifier" spBodySite_Identifier Identifier for this instance of the anatomical location }
     spBodySite_Patient); {@enum.value "patient" spBodySite_Patient Patient to whom bodysite belongs }
+{$ENDIF}
 
+{$IFDEF FHIR_BUNDLE}
   {@Enum TSearchParamsBundle
     Search Parameters for Bundle
   }
@@ -290,7 +313,9 @@ An adverse event is an event that caused harm to a patient,  an adverse reaction
     spBundle_Identifier, {@enum.value "identifier" spBundle_Identifier Persistent identifier for the bundle }
     spBundle_Message, {@enum.value "message" spBundle_Message The first resource in the bundle, if the bundle type is "message" - this is a message header, and this parameter provides access to search its contents }
     spBundle_Type); {@enum.value "type" spBundle_Type document | message | transaction | transaction-response | batch | batch-response | history | searchset | collection }
+{$ENDIF}
 
+{$IFDEF FHIR_CAPABILITYSTATEMENT}
   {@Enum TSearchParamsCapabilityStatement
     Search Parameters for CapabilityStatement
   }
@@ -322,7 +347,9 @@ An adverse event is an event that caused harm to a patient,  an adverse reaction
     spCapabilityStatement_Title, {@enum.value "title" spCapabilityStatement_Title The human-friendly name of the capability statement }
     spCapabilityStatement_Url, {@enum.value "url" spCapabilityStatement_Url The uri that identifies the capability statement }
     spCapabilityStatement_Version); {@enum.value "version" spCapabilityStatement_Version The business version of the capability statement }
+{$ENDIF}
 
+{$IFDEF FHIR_CAREPLAN}
   {@Enum TSearchParamsCarePlan
     Search Parameters for CarePlan
   }
@@ -355,7 +382,9 @@ An adverse event is an event that caused harm to a patient,  an adverse reaction
     spCarePlan_Replaces, {@enum.value "replaces" spCarePlan_Replaces CarePlan replaced by this CarePlan }
     spCarePlan_Status, {@enum.value "status" spCarePlan_Status draft | active | suspended | completed | entered-in-error | cancelled | unknown }
     spCarePlan_Subject); {@enum.value "subject" spCarePlan_Subject Who care plan is for }
+{$ENDIF}
 
+{$IFDEF FHIR_CARETEAM}
   {@Enum TSearchParamsCareTeam
     Search Parameters for CareTeam
   }
@@ -377,7 +406,9 @@ An adverse event is an event that caused harm to a patient,  an adverse reaction
     spCareTeam_Patient, {@enum.value "patient" spCareTeam_Patient Who care team is for }
     spCareTeam_Status, {@enum.value "status" spCareTeam_Status proposed | active | suspended | inactive | entered-in-error }
     spCareTeam_Subject); {@enum.value "subject" spCareTeam_Subject Who care team is for }
+{$ENDIF}
 
+{$IFDEF FHIR_CHARGEITEM}
   {@Enum TSearchParamsChargeItem
     Search Parameters for ChargeItem
   }
@@ -407,7 +438,9 @@ An adverse event is an event that caused harm to a patient,  an adverse reaction
     spChargeItem_Requestingorganization, {@enum.value "requesting-organization" spChargeItem_Requestingorganization Organization requesting the charged service }
     spChargeItem_Service, {@enum.value "service" spChargeItem_Service Which rendered service is being charged? }
     spChargeItem_Subject); {@enum.value "subject" spChargeItem_Subject Individual service was done for/to }
+{$ENDIF}
 
+{$IFDEF FHIR_CLAIM}
   {@Enum TSearchParamsClaim
     Search Parameters for Claim
   }
@@ -433,7 +466,9 @@ An adverse event is an event that caused harm to a patient,  an adverse reaction
     spClaim_Priority, {@enum.value "priority" spClaim_Priority Processing priority requested }
     spClaim_Provider, {@enum.value "provider" spClaim_Provider Provider responsible for the Claim }
     spClaim_Use); {@enum.value "use" spClaim_Use The kind of financial resource }
+{$ENDIF}
 
+{$IFDEF FHIR_CLAIMRESPONSE}
   {@Enum TSearchParamsClaimResponse
     Search Parameters for ClaimResponse
   }
@@ -455,7 +490,9 @@ An adverse event is an event that caused harm to a patient,  an adverse reaction
     spClaimResponse_Paymentdate, {@enum.value "payment-date" spClaimResponse_Paymentdate The expected paymentDate }
     spClaimResponse_Request, {@enum.value "request" spClaimResponse_Request The claim reference }
     spClaimResponse_Requestprovider); {@enum.value "request-provider" spClaimResponse_Requestprovider The Provider of the claim }
+{$ENDIF}
 
+{$IFDEF FHIR_CLINICALIMPRESSION}
   {@Enum TSearchParamsClinicalImpression
     Search Parameters for ClinicalImpression
   }
@@ -481,7 +518,9 @@ An adverse event is an event that caused harm to a patient,  an adverse reaction
     spClinicalImpression_Problem, {@enum.value "problem" spClinicalImpression_Problem Relevant impressions of patient state }
     spClinicalImpression_Status, {@enum.value "status" spClinicalImpression_Status draft | completed | entered-in-error }
     spClinicalImpression_Subject); {@enum.value "subject" spClinicalImpression_Subject Patient or group assessed }
+{$ENDIF}
 
+{$IFDEF FHIR_CODESYSTEM}
   {@Enum TSearchParamsCodeSystem
     Search Parameters for CodeSystem
   }
@@ -508,7 +547,9 @@ An adverse event is an event that caused harm to a patient,  an adverse reaction
     spCodeSystem_Title, {@enum.value "title" spCodeSystem_Title The human-friendly name of the code system }
     spCodeSystem_Url, {@enum.value "url" spCodeSystem_Url The uri that identifies the code system }
     spCodeSystem_Version); {@enum.value "version" spCodeSystem_Version The business version of the code system }
+{$ENDIF}
 
+{$IFDEF FHIR_COMMUNICATION}
   {@Enum TSearchParamsCommunication
     Search Parameters for Communication
   }
@@ -536,7 +577,9 @@ An adverse event is an event that caused harm to a patient,  an adverse reaction
     spCommunication_Sent, {@enum.value "sent" spCommunication_Sent When sent }
     spCommunication_Status, {@enum.value "status" spCommunication_Status preparation | in-progress | suspended | aborted | completed | entered-in-error }
     spCommunication_Subject); {@enum.value "subject" spCommunication_Subject Focus of message }
+{$ENDIF}
 
+{$IFDEF FHIR_COMMUNICATIONREQUEST}
   {@Enum TSearchParamsCommunicationRequest
     Search Parameters for CommunicationRequest
   }
@@ -566,7 +609,9 @@ An adverse event is an event that caused harm to a patient,  an adverse reaction
     spCommunicationRequest_Sender, {@enum.value "sender" spCommunicationRequest_Sender Message sender }
     spCommunicationRequest_Status, {@enum.value "status" spCommunicationRequest_Status draft | active | suspended | cancelled | completed | entered-in-error | unknown }
     spCommunicationRequest_Subject); {@enum.value "subject" spCommunicationRequest_Subject Focus of message }
+{$ENDIF}
 
+{$IFDEF FHIR_COMPARTMENTDEFINITION}
   {@Enum TSearchParamsCompartmentDefinition
     Search Parameters for CompartmentDefinition
   }
@@ -589,7 +634,9 @@ An adverse event is an event that caused harm to a patient,  an adverse reaction
     spCompartmentDefinition_Status, {@enum.value "status" spCompartmentDefinition_Status The current status of the compartment definition }
     spCompartmentDefinition_Title, {@enum.value "title" spCompartmentDefinition_Title The human-friendly name of the compartment definition }
     spCompartmentDefinition_Url); {@enum.value "url" spCompartmentDefinition_Url The uri that identifies the compartment definition }
+{$ENDIF}
 
+{$IFDEF FHIR_COMPOSITION}
   {@Enum TSearchParamsComposition
     Search Parameters for Composition
   }
@@ -620,7 +667,9 @@ An adverse event is an event that caused harm to a patient,  an adverse reaction
     spComposition_Subject, {@enum.value "subject" spComposition_Subject Who and/or what the composition is about }
     spComposition_Title, {@enum.value "title" spComposition_Title Human Readable name/title }
     spComposition_Type); {@enum.value "type" spComposition_Type Kind of composition (LOINC if possible) }
+{$ENDIF}
 
+{$IFDEF FHIR_CONCEPTMAP}
   {@Enum TSearchParamsConceptMap
     Search Parameters for ConceptMap
   }
@@ -654,7 +703,9 @@ An adverse event is an event that caused harm to a patient,  an adverse reaction
     spConceptMap_Title, {@enum.value "title" spConceptMap_Title The human-friendly name of the concept map }
     spConceptMap_Url, {@enum.value "url" spConceptMap_Url The uri that identifies the concept map }
     spConceptMap_Version); {@enum.value "version" spConceptMap_Version The business version of the concept map }
+{$ENDIF}
 
+{$IFDEF FHIR_CONDITION}
   {@Enum TSearchParamsCondition
     Search Parameters for Condition
   }
@@ -690,7 +741,9 @@ An adverse event is an event that caused harm to a patient,  an adverse reaction
     spCondition_Stage, {@enum.value "stage" spCondition_Stage Simple summary (disease specific) }
     spCondition_Subject, {@enum.value "subject" spCondition_Subject Who has the condition? }
     spCondition_Verificationstatus); {@enum.value "verification-status" spCondition_Verificationstatus provisional | differential | confirmed | refuted | entered-in-error | unknown }
+{$ENDIF}
 
+{$IFDEF FHIR_CONSENT}
   {@Enum TSearchParamsConsent
     Search Parameters for Consent
   }
@@ -717,7 +770,9 @@ An adverse event is an event that caused harm to a patient,  an adverse reaction
     spConsent_Securitylabel, {@enum.value "securitylabel" spConsent_Securitylabel Security Labels that define affected resources }
     spConsent_Source, {@enum.value "source" spConsent_Source Source from which this consent is taken }
     spConsent_Status); {@enum.value "status" spConsent_Status draft | proposed | active | rejected | inactive | entered-in-error }
+{$ENDIF}
 
+{$IFDEF FHIR_CONTRACT}
   {@Enum TSearchParamsContract
     Search Parameters for Contract
   }
@@ -739,7 +794,9 @@ An adverse event is an event that caused harm to a patient,  an adverse reaction
     spContract_Signer, {@enum.value "signer" spContract_Signer Contract Signatory Party }
     spContract_Subject, {@enum.value "subject" spContract_Subject The identity of the subject of the contract }
     spContract_Termtopic); {@enum.value "term-topic" spContract_Termtopic The identity of the topic of the contract terms }
+{$ENDIF}
 
+{$IFDEF FHIR_COVERAGE}
   {@Enum TSearchParamsCoverage
     Search Parameters for Coverage
   }
@@ -766,7 +823,9 @@ An adverse event is an event that caused harm to a patient,  an adverse reaction
     spCoverage_Subplan, {@enum.value "subplan" spCoverage_Subplan Sub-plan identifier }
     spCoverage_Subscriber, {@enum.value "subscriber" spCoverage_Subscriber Reference to the subscriber }
     spCoverage_Type); {@enum.value "type" spCoverage_Type The kind of coverage (health plan, auto, Workers Compensation) }
+{$ENDIF}
 
+{$IFDEF FHIR_DATAELEMENT}
   {@Enum TSearchParamsDataElement
     Search Parameters for DataElement
   }
@@ -793,7 +852,9 @@ An adverse event is an event that caused harm to a patient,  an adverse reaction
     spDataElement_Title, {@enum.value "title" spDataElement_Title The human-friendly name of the data element }
     spDataElement_Url, {@enum.value "url" spDataElement_Url The uri that identifies the data element }
     spDataElement_Version); {@enum.value "version" spDataElement_Version The business version of the data element }
+{$ENDIF}
 
+{$IFDEF FHIR_DETECTEDISSUE}
   {@Enum TSearchParamsDetectedIssue
     Search Parameters for DetectedIssue
   }
@@ -812,7 +873,9 @@ An adverse event is an event that caused harm to a patient,  an adverse reaction
     spDetectedIssue_Identifier, {@enum.value "identifier" spDetectedIssue_Identifier Unique id for the detected issue }
     spDetectedIssue_Implicated, {@enum.value "implicated" spDetectedIssue_Implicated Problem resource }
     spDetectedIssue_Patient); {@enum.value "patient" spDetectedIssue_Patient Associated patient }
+{$ENDIF}
 
+{$IFDEF FHIR_DEVICE}
   {@Enum TSearchParamsDevice
     Search Parameters for Device
   }
@@ -837,7 +900,9 @@ An adverse event is an event that caused harm to a patient,  an adverse reaction
     spDevice_Udicarrier, {@enum.value "udi-carrier" spDevice_Udicarrier UDI Barcode (RFID or other technology) string either in HRF format or AIDC format converted to base64 string. }
     spDevice_Udidi, {@enum.value "udi-di" spDevice_Udidi The udi Device Identifier (DI) }
     spDevice_Url); {@enum.value "url" spDevice_Url Network address to contact device }
+{$ENDIF}
 
+{$IFDEF FHIR_DEVICECOMPONENT}
   {@Enum TSearchParamsDeviceComponent
     Search Parameters for DeviceComponent
   }
@@ -854,7 +919,9 @@ An adverse event is an event that caused harm to a patient,  an adverse reaction
     spDeviceComponent_Parent, {@enum.value "parent" spDeviceComponent_Parent The parent DeviceComponent resource }
     spDeviceComponent_Source, {@enum.value "source" spDeviceComponent_Source The device source }
     spDeviceComponent_Type); {@enum.value "type" spDeviceComponent_Type The device component type }
+{$ENDIF}
 
+{$IFDEF FHIR_DEVICEMETRIC}
   {@Enum TSearchParamsDeviceMetric
     Search Parameters for DeviceMetric
   }
@@ -872,7 +939,9 @@ An adverse event is an event that caused harm to a patient,  an adverse reaction
     spDeviceMetric_Parent, {@enum.value "parent" spDeviceMetric_Parent The parent DeviceMetric resource }
     spDeviceMetric_Source, {@enum.value "source" spDeviceMetric_Source The device resource }
     spDeviceMetric_Type); {@enum.value "type" spDeviceMetric_Type The component type }
+{$ENDIF}
 
+{$IFDEF FHIR_DEVICEREQUEST}
   {@Enum TSearchParamsDeviceRequest
     Search Parameters for DeviceRequest
   }
@@ -901,7 +970,9 @@ An adverse event is an event that caused harm to a patient,  an adverse reaction
     spDeviceRequest_Requester, {@enum.value "requester" spDeviceRequest_Requester Who/what is requesting service? }
     spDeviceRequest_Status, {@enum.value "status" spDeviceRequest_Status entered-in-error | draft | active |suspended | completed? }
     spDeviceRequest_Subject); {@enum.value "subject" spDeviceRequest_Subject Individual the service is ordered for }
+{$ENDIF}
 
+{$IFDEF FHIR_DEVICEUSESTATEMENT}
   {@Enum TSearchParamsDeviceUseStatement
     Search Parameters for DeviceUseStatement
   }
@@ -918,7 +989,9 @@ An adverse event is an event that caused harm to a patient,  an adverse reaction
     spDeviceUseStatement_Identifier, {@enum.value "identifier" spDeviceUseStatement_Identifier Search by identifier }
     spDeviceUseStatement_Patient, {@enum.value "patient" spDeviceUseStatement_Patient Search by subject - a patient }
     spDeviceUseStatement_Subject); {@enum.value "subject" spDeviceUseStatement_Subject Search by subject }
+{$ENDIF}
 
+{$IFDEF FHIR_DIAGNOSTICREPORT}
   {@Enum TSearchParamsDiagnosticReport
     Search Parameters for DiagnosticReport
   }
@@ -947,7 +1020,9 @@ An adverse event is an event that caused harm to a patient,  an adverse reaction
     spDiagnosticReport_Specimen, {@enum.value "specimen" spDiagnosticReport_Specimen The specimen details }
     spDiagnosticReport_Status, {@enum.value "status" spDiagnosticReport_Status The status of the report }
     spDiagnosticReport_Subject); {@enum.value "subject" spDiagnosticReport_Subject The subject of the report }
+{$ENDIF}
 
+{$IFDEF FHIR_DOCUMENTMANIFEST}
   {@Enum TSearchParamsDocumentManifest
     Search Parameters for DocumentManifest
   }
@@ -973,7 +1048,9 @@ An adverse event is an event that caused harm to a patient,  an adverse reaction
     spDocumentManifest_Status, {@enum.value "status" spDocumentManifest_Status current | superseded | entered-in-error }
     spDocumentManifest_Subject, {@enum.value "subject" spDocumentManifest_Subject The subject of the set of documents }
     spDocumentManifest_Type); {@enum.value "type" spDocumentManifest_Type Kind of document set }
+{$ENDIF}
 
+{$IFDEF FHIR_DOCUMENTREFERENCE}
   {@Enum TSearchParamsDocumentReference
     Search Parameters for DocumentReference
   }
@@ -1012,7 +1089,9 @@ An adverse event is an event that caused harm to a patient,  an adverse reaction
     spDocumentReference_Status, {@enum.value "status" spDocumentReference_Status current | superseded | entered-in-error }
     spDocumentReference_Subject, {@enum.value "subject" spDocumentReference_Subject Who/what is the subject of the document }
     spDocumentReference_Type); {@enum.value "type" spDocumentReference_Type Kind of document (LOINC if possible) }
+{$ENDIF}
 
+{$IFDEF FHIR_ELIGIBILITYREQUEST}
   {@Enum TSearchParamsEligibilityRequest
     Search Parameters for EligibilityRequest
   }
@@ -1032,7 +1111,9 @@ An adverse event is an event that caused harm to a patient,  an adverse reaction
     spEligibilityRequest_Organization, {@enum.value "organization" spEligibilityRequest_Organization The reference to the providing organization }
     spEligibilityRequest_Patient, {@enum.value "patient" spEligibilityRequest_Patient The reference to the patient }
     spEligibilityRequest_Provider); {@enum.value "provider" spEligibilityRequest_Provider The reference to the provider }
+{$ENDIF}
 
+{$IFDEF FHIR_ELIGIBILITYRESPONSE}
   {@Enum TSearchParamsEligibilityResponse
     Search Parameters for EligibilityResponse
   }
@@ -1053,7 +1134,9 @@ An adverse event is an event that caused harm to a patient,  an adverse reaction
     spEligibilityResponse_Request, {@enum.value "request" spEligibilityResponse_Request The EligibilityRequest reference }
     spEligibilityResponse_Requestorganization, {@enum.value "request-organization" spEligibilityResponse_Requestorganization The EligibilityRequest organization }
     spEligibilityResponse_Requestprovider); {@enum.value "request-provider" spEligibilityResponse_Requestprovider The EligibilityRequest provider }
+{$ENDIF}
 
+{$IFDEF FHIR_ENCOUNTER}
   {@Enum TSearchParamsEncounter
     Search Parameters for Encounter
   }
@@ -1087,7 +1170,9 @@ An adverse event is an event that caused harm to a patient,  an adverse reaction
     spEncounter_Status, {@enum.value "status" spEncounter_Status planned | arrived | triaged | in-progress | onleave | finished | cancelled + }
     spEncounter_Subject, {@enum.value "subject" spEncounter_Subject The patient ro group present at the encounter }
     spEncounter_Type); {@enum.value "type" spEncounter_Type Specific type of encounter }
+{$ENDIF}
 
+{$IFDEF FHIR_ENDPOINT}
   {@Enum TSearchParamsEndpoint
     Search Parameters for Endpoint
   }
@@ -1106,7 +1191,9 @@ An adverse event is an event that caused harm to a patient,  an adverse reaction
     spEndpoint_Organization, {@enum.value "organization" spEndpoint_Organization The organization that is managing the endpoint }
     spEndpoint_Payloadtype, {@enum.value "payload-type" spEndpoint_Payloadtype The type of content that may be used at this endpoint (e.g. XDS Discharge summaries) }
     spEndpoint_Status); {@enum.value "status" spEndpoint_Status The current status of the Endpoint (usually expected to be active) }
+{$ENDIF}
 
+{$IFDEF FHIR_ENROLLMENTREQUEST}
   {@Enum TSearchParamsEnrollmentRequest
     Search Parameters for EnrollmentRequest
   }
@@ -1123,7 +1210,9 @@ An adverse event is an event that caused harm to a patient,  an adverse reaction
     spEnrollmentRequest_Organization, {@enum.value "organization" spEnrollmentRequest_Organization The organization who generated this resource }
     spEnrollmentRequest_Patient, {@enum.value "patient" spEnrollmentRequest_Patient The party to be enrolled }
     spEnrollmentRequest_Subject); {@enum.value "subject" spEnrollmentRequest_Subject The party to be enrolled }
+{$ENDIF}
 
+{$IFDEF FHIR_ENROLLMENTRESPONSE}
   {@Enum TSearchParamsEnrollmentResponse
     Search Parameters for EnrollmentResponse
   }
@@ -1139,7 +1228,9 @@ An adverse event is an event that caused harm to a patient,  an adverse reaction
     spEnrollmentResponse_Identifier, {@enum.value "identifier" spEnrollmentResponse_Identifier The business identifier of the EnrollmentResponse }
     spEnrollmentResponse_Organization, {@enum.value "organization" spEnrollmentResponse_Organization The organization who generated this resource }
     spEnrollmentResponse_Request); {@enum.value "request" spEnrollmentResponse_Request The reference to the claim }
+{$ENDIF}
 
+{$IFDEF FHIR_EPISODEOFCARE}
   {@Enum TSearchParamsEpisodeOfCare
     Search Parameters for EpisodeOfCare
   }
@@ -1161,7 +1252,9 @@ An adverse event is an event that caused harm to a patient,  an adverse reaction
     spEpisodeOfCare_Patient, {@enum.value "patient" spEpisodeOfCare_Patient The patient who is the focus of this episode of care }
     spEpisodeOfCare_Status, {@enum.value "status" spEpisodeOfCare_Status The current status of the Episode of Care as provided (does not check the status history collection) }
     spEpisodeOfCare_Type); {@enum.value "type" spEpisodeOfCare_Type Type/class  - e.g. specialist referral, disease management }
+{$ENDIF}
 
+{$IFDEF FHIR_EXPANSIONPROFILE}
   {@Enum TSearchParamsExpansionProfile
     Search Parameters for ExpansionProfile
   }
@@ -1183,7 +1276,9 @@ An adverse event is an event that caused harm to a patient,  an adverse reaction
     spExpansionProfile_Status, {@enum.value "status" spExpansionProfile_Status The current status of the expansion profile }
     spExpansionProfile_Url, {@enum.value "url" spExpansionProfile_Url The uri that identifies the expansion profile }
     spExpansionProfile_Version); {@enum.value "version" spExpansionProfile_Version The business version of the expansion profile }
+{$ENDIF}
 
+{$IFDEF FHIR_EXPLANATIONOFBENEFIT}
   {@Enum TSearchParamsExplanationOfBenefit
     Search Parameters for ExplanationOfBenefit
   }
@@ -1209,7 +1304,9 @@ An adverse event is an event that caused harm to a patient,  an adverse reaction
     spExplanationOfBenefit_Patient, {@enum.value "patient" spExplanationOfBenefit_Patient The reference to the patient }
     spExplanationOfBenefit_Payee, {@enum.value "payee" spExplanationOfBenefit_Payee The party receiving any payment for the Claim }
     spExplanationOfBenefit_Provider); {@enum.value "provider" spExplanationOfBenefit_Provider The reference to the provider }
+{$ENDIF}
 
+{$IFDEF FHIR_FAMILYMEMBERHISTORY}
   {@Enum TSearchParamsFamilyMemberHistory
     Search Parameters for FamilyMemberHistory
   }
@@ -1230,7 +1327,9 @@ An adverse event is an event that caused harm to a patient,  an adverse reaction
     spFamilyMemberHistory_Patient, {@enum.value "patient" spFamilyMemberHistory_Patient The identity of a subject to list family member history items for }
     spFamilyMemberHistory_Relationship, {@enum.value "relationship" spFamilyMemberHistory_Relationship A search by a relationship type }
     spFamilyMemberHistory_Status); {@enum.value "status" spFamilyMemberHistory_Status partial | completed | entered-in-error | health-unknown }
+{$ENDIF}
 
+{$IFDEF FHIR_FLAG}
   {@Enum TSearchParamsFlag
     Search Parameters for Flag
   }
@@ -1249,7 +1348,9 @@ An adverse event is an event that caused harm to a patient,  an adverse reaction
     spFlag_Identifier, {@enum.value "identifier" spFlag_Identifier Business identifier }
     spFlag_Patient, {@enum.value "patient" spFlag_Patient The identity of a subject to list flags for }
     spFlag_Subject); {@enum.value "subject" spFlag_Subject The identity of a subject to list flags for }
+{$ENDIF}
 
+{$IFDEF FHIR_GOAL}
   {@Enum TSearchParamsGoal
     Search Parameters for Goal
   }
@@ -1269,7 +1370,9 @@ An adverse event is an event that caused harm to a patient,  an adverse reaction
     spGoal_Status, {@enum.value "status" spGoal_Status proposed | accepted | planned | in-progress | on-target | ahead-of-target | behind-target | sustaining | achieved | on-hold | cancelled | entered-in-error | rejected }
     spGoal_Subject, {@enum.value "subject" spGoal_Subject Who this goal is intended for }
     spGoal_Targetdate); {@enum.value "target-date" spGoal_Targetdate Reach goal on or before }
+{$ENDIF}
 
+{$IFDEF FHIR_GRAPHDEFINITION}
   {@Enum TSearchParamsGraphDefinition
     Search Parameters for GraphDefinition
   }
@@ -1291,7 +1394,9 @@ An adverse event is an event that caused harm to a patient,  an adverse reaction
     spGraphDefinition_Status, {@enum.value "status" spGraphDefinition_Status The current status of the graph definition }
     spGraphDefinition_Url, {@enum.value "url" spGraphDefinition_Url The uri that identifies the graph definition }
     spGraphDefinition_Version); {@enum.value "version" spGraphDefinition_Version The business version of the graph definition }
+{$ENDIF}
 
+{$IFDEF FHIR_GROUP}
   {@Enum TSearchParamsGroup
     Search Parameters for Group
   }
@@ -1313,7 +1418,9 @@ An adverse event is an event that caused harm to a patient,  an adverse reaction
     spGroup_Member, {@enum.value "member" spGroup_Member Reference to the group member }
     spGroup_Type, {@enum.value "type" spGroup_Type The type of resources the group contains }
     spGroup_Value); {@enum.value "value" spGroup_Value Value held by characteristic }
+{$ENDIF}
 
+{$IFDEF FHIR_GUIDANCERESPONSE}
   {@Enum TSearchParamsGuidanceResponse
     Search Parameters for GuidanceResponse
   }
@@ -1330,7 +1437,9 @@ An adverse event is an event that caused harm to a patient,  an adverse reaction
     spGuidanceResponse_Patient, {@enum.value "patient" spGuidanceResponse_Patient The identity of a patient to search for guidance response results }
     spGuidanceResponse_Request, {@enum.value "request" spGuidanceResponse_Request The identifier of the request associated with the response }
     spGuidanceResponse_Subject); {@enum.value "subject" spGuidanceResponse_Subject The subject that the guidance response is about }
+{$ENDIF}
 
+{$IFDEF FHIR_HEALTHCARESERVICE}
   {@Enum TSearchParamsHealthcareService
     Search Parameters for HealthcareService
   }
@@ -1353,7 +1462,9 @@ An adverse event is an event that caused harm to a patient,  an adverse reaction
     spHealthcareService_Organization, {@enum.value "organization" spHealthcareService_Organization The organization that provides this Healthcare Service }
     spHealthcareService_Programname, {@enum.value "programname" spHealthcareService_Programname One of the Program Names serviced by this HealthcareService }
     spHealthcareService_Type); {@enum.value "type" spHealthcareService_Type The type of service provided by this healthcare service }
+{$ENDIF}
 
+{$IFDEF FHIR_IMAGINGMANIFEST}
   {@Enum TSearchParamsImagingManifest
     Search Parameters for ImagingManifest
   }
@@ -1373,7 +1484,9 @@ An adverse event is an event that caused harm to a patient,  an adverse reaction
     spImagingManifest_Imagingstudy, {@enum.value "imaging-study" spImagingManifest_Imagingstudy ImagingStudy resource selected in the ImagingManifest (or a DICOM Key Object Selection which it represents) }
     spImagingManifest_Patient, {@enum.value "patient" spImagingManifest_Patient Subject of the ImagingManifest (or a DICOM Key Object Selection which it represents) }
     spImagingManifest_Selectedstudy); {@enum.value "selected-study" spImagingManifest_Selectedstudy Study selected in the ImagingManifest (or a DICOM Key Object Selection which it represents) }
+{$ENDIF}
 
+{$IFDEF FHIR_IMAGINGSTUDY}
   {@Enum TSearchParamsImagingStudy
     Search Parameters for ImagingStudy
   }
@@ -1401,7 +1514,9 @@ An adverse event is an event that caused harm to a patient,  an adverse reaction
     spImagingStudy_Started, {@enum.value "started" spImagingStudy_Started When the study was started }
     spImagingStudy_Study, {@enum.value "study" spImagingStudy_Study The study identifier for the image }
     spImagingStudy_Uid); {@enum.value "uid" spImagingStudy_Uid The instance unique identifier }
+{$ENDIF}
 
+{$IFDEF FHIR_IMMUNIZATION}
   {@Enum TSearchParamsImmunization
     Search Parameters for Immunization
   }
@@ -1429,7 +1544,9 @@ An adverse event is an event that caused harm to a patient,  an adverse reaction
     spImmunization_Reasonnotgiven, {@enum.value "reason-not-given" spImmunization_Reasonnotgiven Explanation of reason vaccination was not administered }
     spImmunization_Status, {@enum.value "status" spImmunization_Status Immunization event status }
     spImmunization_Vaccinecode); {@enum.value "vaccine-code" spImmunization_Vaccinecode Vaccine Product Administered }
+{$ENDIF}
 
+{$IFDEF FHIR_IMMUNIZATIONRECOMMENDATION}
   {@Enum TSearchParamsImmunizationRecommendation
     Search Parameters for ImmunizationRecommendation
   }
@@ -1452,7 +1569,9 @@ An adverse event is an event that caused harm to a patient,  an adverse reaction
     spImmunizationRecommendation_Support, {@enum.value "support" spImmunizationRecommendation_Support Past immunizations supporting recommendation }
     spImmunizationRecommendation_Targetdisease, {@enum.value "target-disease" spImmunizationRecommendation_Targetdisease Disease to be immunized against }
     spImmunizationRecommendation_Vaccinetype); {@enum.value "vaccine-type" spImmunizationRecommendation_Vaccinetype Vaccine recommendation applies to }
+{$ENDIF}
 
+{$IFDEF FHIR_IMPLEMENTATIONGUIDE}
   {@Enum TSearchParamsImplementationGuide
     Search Parameters for ImplementationGuide
   }
@@ -1476,7 +1595,9 @@ An adverse event is an event that caused harm to a patient,  an adverse reaction
     spImplementationGuide_Status, {@enum.value "status" spImplementationGuide_Status The current status of the implementation guide }
     spImplementationGuide_Url, {@enum.value "url" spImplementationGuide_Url The uri that identifies the implementation guide }
     spImplementationGuide_Version); {@enum.value "version" spImplementationGuide_Version The business version of the implementation guide }
+{$ENDIF}
 
+{$IFDEF FHIR_LIBRARY}
   {@Enum TSearchParamsLibrary
     Search Parameters for Library
   }
@@ -1506,7 +1627,9 @@ An adverse event is an event that caused harm to a patient,  an adverse reaction
     spLibrary_Topic, {@enum.value "topic" spLibrary_Topic Topics associated with the module }
     spLibrary_Url, {@enum.value "url" spLibrary_Url The uri that identifies the library }
     spLibrary_Version); {@enum.value "version" spLibrary_Version The business version of the library }
+{$ENDIF}
 
+{$IFDEF FHIR_LINKAGE}
   {@Enum TSearchParamsLinkage
     Search Parameters for Linkage
   }
@@ -1522,7 +1645,9 @@ An adverse event is an event that caused harm to a patient,  an adverse reaction
     spLinkage_Author, {@enum.value "author" spLinkage_Author Author of the Linkage }
     spLinkage_Item, {@enum.value "item" spLinkage_Item Matches on any item in the Linkage }
     spLinkage_Source); {@enum.value "source" spLinkage_Source Matches on any item in the Linkage with a type of 'source' }
+{$ENDIF}
 
+{$IFDEF FHIR_LIST}
   {@Enum TSearchParamsList
     Search Parameters for List
   }
@@ -1547,7 +1672,9 @@ An adverse event is an event that caused harm to a patient,  an adverse reaction
     spList_Status, {@enum.value "status" spList_Status current | retired | entered-in-error }
     spList_Subject, {@enum.value "subject" spList_Subject If all resources have the same subject }
     spList_Title); {@enum.value "title" spList_Title Descriptive name for the list }
+{$ENDIF}
 
+{$IFDEF FHIR_LOCATION}
   {@Enum TSearchParamsLocation
     Search Parameters for Location
   }
@@ -1580,7 +1707,9 @@ Requires the near parameter to also be included }
     spLocation_Partof, {@enum.value "partof" spLocation_Partof A location of which this location is a part }
     spLocation_Status, {@enum.value "status" spLocation_Status Searches for locations with a specific kind of status }
     spLocation_Type); {@enum.value "type" spLocation_Type A code for the type of location }
+{$ENDIF}
 
+{$IFDEF FHIR_MEASURE}
   {@Enum TSearchParamsMeasure
     Search Parameters for Measure
   }
@@ -1610,7 +1739,9 @@ Requires the near parameter to also be included }
     spMeasure_Topic, {@enum.value "topic" spMeasure_Topic Topics associated with the module }
     spMeasure_Url, {@enum.value "url" spMeasure_Url The uri that identifies the measure }
     spMeasure_Version); {@enum.value "version" spMeasure_Version The business version of the measure }
+{$ENDIF}
 
+{$IFDEF FHIR_MEASUREREPORT}
   {@Enum TSearchParamsMeasureReport
     Search Parameters for MeasureReport
   }
@@ -1626,7 +1757,9 @@ Requires the near parameter to also be included }
     spMeasureReport_Identifier, {@enum.value "identifier" spMeasureReport_Identifier External identifier of the measure report to be returned }
     spMeasureReport_Patient, {@enum.value "patient" spMeasureReport_Patient The identity of a patient to search for individual measure report results for }
     spMeasureReport_Status); {@enum.value "status" spMeasureReport_Status The status of the measure report }
+{$ENDIF}
 
+{$IFDEF FHIR_MEDIA}
   {@Enum TSearchParamsMedia
     Search Parameters for Media
   }
@@ -1652,7 +1785,9 @@ Requires the near parameter to also be included }
     spMedia_Subtype, {@enum.value "subtype" spMedia_Subtype The type of acquisition equipment/process }
     spMedia_Type, {@enum.value "type" spMedia_Type photo | video | audio }
     spMedia_View); {@enum.value "view" spMedia_View Imaging view, e.g. Lateral or Antero-posterior }
+{$ENDIF}
 
+{$IFDEF FHIR_MEDICATION}
   {@Enum TSearchParamsMedication
     Search Parameters for Medication
   }
@@ -1675,7 +1810,9 @@ Requires the near parameter to also be included }
     spMedication_Packageitem, {@enum.value "package-item" spMedication_Packageitem The item in the package }
     spMedication_Packageitemcode, {@enum.value "package-item-code" spMedication_Packageitemcode The item in the package }
     spMedication_Status); {@enum.value "status" spMedication_Status active | inactive | entered-in-error }
+{$ENDIF}
 
+{$IFDEF FHIR_MEDICATIONADMINISTRATION}
   {@Enum TSearchParamsMedicationAdministration
     Search Parameters for MedicationAdministration
   }
@@ -1702,7 +1839,9 @@ Requires the near parameter to also be included }
     spMedicationAdministration_Reasonnotgiven, {@enum.value "reason-not-given" spMedicationAdministration_Reasonnotgiven Reasons for not administering the medication }
     spMedicationAdministration_Status, {@enum.value "status" spMedicationAdministration_Status MedicationAdministration event status (for example one of active/paused/completed/nullified) }
     spMedicationAdministration_Subject); {@enum.value "subject" spMedicationAdministration_Subject The identify of the individual or group to list administrations for }
+{$ENDIF}
 
+{$IFDEF FHIR_MEDICATIONDISPENSE}
   {@Enum TSearchParamsMedicationDispense
     Search Parameters for MedicationDispense
   }
@@ -1730,7 +1869,9 @@ Requires the near parameter to also be included }
     spMedicationDispense_Type, {@enum.value "type" spMedicationDispense_Type Return dispenses of a specific type }
     spMedicationDispense_Whenhandedover, {@enum.value "whenhandedover" spMedicationDispense_Whenhandedover Returns dispenses handed over on this date }
     spMedicationDispense_Whenprepared); {@enum.value "whenprepared" spMedicationDispense_Whenprepared Returns dispenses prepared on this date }
+{$ENDIF}
 
+{$IFDEF FHIR_MEDICATIONREQUEST}
   {@Enum TSearchParamsMedicationRequest
     Search Parameters for MedicationRequest
   }
@@ -1757,7 +1898,9 @@ Requires the near parameter to also be included }
     spMedicationRequest_Requester, {@enum.value "requester" spMedicationRequest_Requester Returns prescriptions prescribed by this prescriber }
     spMedicationRequest_Status, {@enum.value "status" spMedicationRequest_Status Status of the prescription }
     spMedicationRequest_Subject); {@enum.value "subject" spMedicationRequest_Subject The identity of a patient to list orders  for }
+{$ENDIF}
 
+{$IFDEF FHIR_MEDICATIONSTATEMENT}
   {@Enum TSearchParamsMedicationStatement
     Search Parameters for MedicationStatement
   }
@@ -1781,7 +1924,9 @@ Requires the near parameter to also be included }
     spMedicationStatement_Source, {@enum.value "source" spMedicationStatement_Source Who or where the information in the statement came from }
     spMedicationStatement_Status, {@enum.value "status" spMedicationStatement_Status Return statements that match the given status }
     spMedicationStatement_Subject); {@enum.value "subject" spMedicationStatement_Subject The identity of a patient, animal or group to list statements for }
+{$ENDIF}
 
+{$IFDEF FHIR_MESSAGEDEFINITION}
   {@Enum TSearchParamsMessageDefinition
     Search Parameters for MessageDefinition
   }
@@ -1807,7 +1952,9 @@ Requires the near parameter to also be included }
     spMessageDefinition_Title, {@enum.value "title" spMessageDefinition_Title The human-friendly name of the message definition }
     spMessageDefinition_Url, {@enum.value "url" spMessageDefinition_Url The uri that identifies the message definition }
     spMessageDefinition_Version); {@enum.value "version" spMessageDefinition_Version The business version of the message definition }
+{$ENDIF}
 
+{$IFDEF FHIR_MESSAGEHEADER}
   {@Enum TSearchParamsMessageHeader
     Search Parameters for MessageHeader
   }
@@ -1835,7 +1982,9 @@ Requires the near parameter to also be included }
     spMessageHeader_Sourceuri, {@enum.value "source-uri" spMessageHeader_Sourceuri Actual message source address or id }
     spMessageHeader_Target, {@enum.value "target" spMessageHeader_Target Particular delivery destination within the destination }
     spMessageHeader_Timestamp); {@enum.value "timestamp" spMessageHeader_Timestamp Time that the message was sent }
+{$ENDIF}
 
+{$IFDEF FHIR_NAMINGSYSTEM}
   {@Enum TSearchParamsNamingSystem
     Search Parameters for NamingSystem
   }
@@ -1863,7 +2012,9 @@ Requires the near parameter to also be included }
     spNamingSystem_Telecom, {@enum.value "telecom" spNamingSystem_Telecom Contact details for individual or organization }
     spNamingSystem_Type, {@enum.value "type" spNamingSystem_Type e.g. driver,  provider,  patient, bank etc. }
     spNamingSystem_Value); {@enum.value "value" spNamingSystem_Value The unique identifier }
+{$ENDIF}
 
+{$IFDEF FHIR_NUTRITIONORDER}
   {@Enum TSearchParamsNutritionOrder
     Search Parameters for NutritionOrder
   }
@@ -1886,7 +2037,9 @@ Requires the near parameter to also be included }
     spNutritionOrder_Provider, {@enum.value "provider" spNutritionOrder_Provider The identify of the provider who placed the nutrition order }
     spNutritionOrder_Status, {@enum.value "status" spNutritionOrder_Status Status of the nutrition order. }
     spNutritionOrder_Supplement); {@enum.value "supplement" spNutritionOrder_Supplement Type of supplement product requested }
+{$ENDIF}
 
+{$IFDEF FHIR_OBSERVATION}
   {@Enum TSearchParamsObservation
     Search Parameters for Observation
   }
@@ -1937,7 +2090,9 @@ Requires the near parameter to also be included }
     spObservation_Valuedate, {@enum.value "value-date" spObservation_Valuedate The value of the observation, if the value is a date or period of time }
     spObservation_Valuequantity, {@enum.value "value-quantity" spObservation_Valuequantity The value of the observation, if the value is a Quantity, or a SampledData (just search on the bounds of the values in sampled data) }
     spObservation_Valuestring); {@enum.value "value-string" spObservation_Valuestring The value of the observation, if the value is a string, and also searches in CodeableConcept.text }
+{$ENDIF}
 
+{$IFDEF FHIR_OPERATIONDEFINITION}
   {@Enum TSearchParamsOperationDefinition
     Search Parameters for OperationDefinition
   }
@@ -1965,7 +2120,9 @@ Requires the near parameter to also be included }
     spOperationDefinition_Type, {@enum.value "type" spOperationDefinition_Type Invole at the type level? }
     spOperationDefinition_Url, {@enum.value "url" spOperationDefinition_Url The uri that identifies the operation definition }
     spOperationDefinition_Version); {@enum.value "version" spOperationDefinition_Version The business version of the operation definition }
+{$ENDIF}
 
+{$IFDEF FHIR_OPERATIONOUTCOME}
   {@Enum TSearchParamsOperationOutcome
     Search Parameters for OperationOutcome
   }
@@ -1978,7 +2135,9 @@ Requires the near parameter to also be included }
     spOperationOutcome__security, {@enum.value "_security" spOperationOutcome__security Security Labels applied to this resource }
     spOperationOutcome__tag, {@enum.value "_tag" spOperationOutcome__tag Tags applied to this resource }
     spOperationOutcome__text); {@enum.value "_text" spOperationOutcome__text Search on the narrative of the resource }
+{$ENDIF}
 
+{$IFDEF FHIR_ORGANIZATION}
   {@Enum TSearchParamsOrganization
     Search Parameters for Organization
   }
@@ -2004,7 +2163,9 @@ Requires the near parameter to also be included }
     spOrganization_Partof, {@enum.value "partof" spOrganization_Partof An organization of which this organization forms a part }
     spOrganization_Phonetic, {@enum.value "phonetic" spOrganization_Phonetic A portion of the organization's name using some kind of phonetic matching algorithm }
     spOrganization_Type); {@enum.value "type" spOrganization_Type A code for the type of organization }
+{$ENDIF}
 
+{$IFDEF FHIR_PATIENT}
   {@Enum TSearchParamsPatient
     Search Parameters for Patient
   }
@@ -2042,7 +2203,9 @@ Requires the near parameter to also be included }
     spPatient_Phone, {@enum.value "phone" spPatient_Phone A value in a phone contact }
     spPatient_Phonetic, {@enum.value "phonetic" spPatient_Phonetic A portion of either family or given name using some kind of phonetic matching algorithm }
     spPatient_Telecom); {@enum.value "telecom" spPatient_Telecom The value in any kind of telecom details of the patient }
+{$ENDIF}
 
+{$IFDEF FHIR_PAYMENTNOTICE}
   {@Enum TSearchParamsPaymentNotice
     Search Parameters for PaymentNotice
   }
@@ -2063,7 +2226,9 @@ Requires the near parameter to also be included }
     spPaymentNotice_Request, {@enum.value "request" spPaymentNotice_Request The Claim }
     spPaymentNotice_Response, {@enum.value "response" spPaymentNotice_Response The ClaimResponse }
     spPaymentNotice_Statusdate); {@enum.value "statusdate" spPaymentNotice_Statusdate The date of the payment action }
+{$ENDIF}
 
+{$IFDEF FHIR_PAYMENTRECONCILIATION}
   {@Enum TSearchParamsPaymentReconciliation
     Search Parameters for PaymentReconciliation
   }
@@ -2084,7 +2249,9 @@ Requires the near parameter to also be included }
     spPaymentReconciliation_Request, {@enum.value "request" spPaymentReconciliation_Request The reference to the claim }
     spPaymentReconciliation_Requestorganization, {@enum.value "request-organization" spPaymentReconciliation_Requestorganization The organization who generated this resource }
     spPaymentReconciliation_Requestprovider); {@enum.value "request-provider" spPaymentReconciliation_Requestprovider The reference to the provider who sumbitted the claim }
+{$ENDIF}
 
+{$IFDEF FHIR_PERSON}
   {@Enum TSearchParamsPerson
     Search Parameters for Person
   }
@@ -2116,7 +2283,9 @@ Requires the near parameter to also be included }
     spPerson_Practitioner, {@enum.value "practitioner" spPerson_Practitioner The Person links to this Practitioner }
     spPerson_Relatedperson, {@enum.value "relatedperson" spPerson_Relatedperson The Person links to this RelatedPerson }
     spPerson_Telecom); {@enum.value "telecom" spPerson_Telecom The value in any kind of contact }
+{$ENDIF}
 
+{$IFDEF FHIR_PLANDEFINITION}
   {@Enum TSearchParamsPlanDefinition
     Search Parameters for PlanDefinition
   }
@@ -2146,7 +2315,9 @@ Requires the near parameter to also be included }
     spPlanDefinition_Topic, {@enum.value "topic" spPlanDefinition_Topic Topics associated with the module }
     spPlanDefinition_Url, {@enum.value "url" spPlanDefinition_Url The uri that identifies the plan definition }
     spPlanDefinition_Version); {@enum.value "version" spPlanDefinition_Version The business version of the plan definition }
+{$ENDIF}
 
+{$IFDEF FHIR_PRACTITIONER}
   {@Enum TSearchParamsPractitioner
     Search Parameters for Practitioner
   }
@@ -2176,7 +2347,9 @@ Requires the near parameter to also be included }
     spPractitioner_Phone, {@enum.value "phone" spPractitioner_Phone A value in a phone contact }
     spPractitioner_Phonetic, {@enum.value "phonetic" spPractitioner_Phonetic A portion of either family or given name using some kind of phonetic matching algorithm }
     spPractitioner_Telecom); {@enum.value "telecom" spPractitioner_Telecom The value in any kind of contact }
+{$ENDIF}
 
+{$IFDEF FHIR_PRACTITIONERROLE}
   {@Enum TSearchParamsPractitionerRole
     Search Parameters for PractitionerRole
   }
@@ -2202,7 +2375,9 @@ Requires the near parameter to also be included }
     spPractitionerRole_Service, {@enum.value "service" spPractitionerRole_Service The list of healthcare services that this worker provides for this role's Organization/Location(s) }
     spPractitionerRole_Specialty, {@enum.value "specialty" spPractitionerRole_Specialty The practitioner has this specialty at an organization }
     spPractitionerRole_Telecom); {@enum.value "telecom" spPractitionerRole_Telecom The value in any kind of contact }
+{$ENDIF}
 
+{$IFDEF FHIR_PROCEDURE}
   {@Enum TSearchParamsProcedure
     Search Parameters for Procedure
   }
@@ -2229,7 +2404,9 @@ Requires the near parameter to also be included }
     spProcedure_Performer, {@enum.value "performer" spProcedure_Performer The reference to the practitioner }
     spProcedure_Status, {@enum.value "status" spProcedure_Status preparation | in-progress | suspended | aborted | completed | entered-in-error | unknown }
     spProcedure_Subject); {@enum.value "subject" spProcedure_Subject Search by subject }
+{$ENDIF}
 
+{$IFDEF FHIR_PROCEDUREREQUEST}
   {@Enum TSearchParamsProcedureRequest
     Search Parameters for ProcedureRequest
   }
@@ -2262,7 +2439,9 @@ Requires the near parameter to also be included }
     spProcedureRequest_Specimen, {@enum.value "specimen" spProcedureRequest_Specimen Specimen to be tested }
     spProcedureRequest_Status, {@enum.value "status" spProcedureRequest_Status draft | active | suspended | completed | entered-in-error | cancelled }
     spProcedureRequest_Subject); {@enum.value "subject" spProcedureRequest_Subject Search by subject }
+{$ENDIF}
 
+{$IFDEF FHIR_PROCESSREQUEST}
   {@Enum TSearchParamsProcessRequest
     Search Parameters for ProcessRequest
   }
@@ -2279,7 +2458,9 @@ Requires the near parameter to also be included }
     spProcessRequest_Identifier, {@enum.value "identifier" spProcessRequest_Identifier The business identifier of the ProcessRequest }
     spProcessRequest_Organization, {@enum.value "organization" spProcessRequest_Organization The organization who generated this request }
     spProcessRequest_Provider); {@enum.value "provider" spProcessRequest_Provider The provider who regenerated this request }
+{$ENDIF}
 
+{$IFDEF FHIR_PROCESSRESPONSE}
   {@Enum TSearchParamsProcessResponse
     Search Parameters for ProcessResponse
   }
@@ -2297,7 +2478,9 @@ Requires the near parameter to also be included }
     spProcessResponse_Request, {@enum.value "request" spProcessResponse_Request The reference to the claim }
     spProcessResponse_Requestorganization, {@enum.value "request-organization" spProcessResponse_Requestorganization The Organization who is responsible the request transaction }
     spProcessResponse_Requestprovider); {@enum.value "request-provider" spProcessResponse_Requestprovider The Provider who is responsible the request transaction }
+{$ENDIF}
 
+{$IFDEF FHIR_PROVENANCE}
   {@Enum TSearchParamsProvenance
     Search Parameters for Provenance
   }
@@ -2321,7 +2504,9 @@ Requires the near parameter to also be included }
     spProvenance_Signaturetype, {@enum.value "signature-type" spProvenance_Signaturetype Indication of the reason the entity signed the object(s) }
     spProvenance_Start, {@enum.value "start" spProvenance_Start Starting time with inclusive boundary }
     spProvenance_Target); {@enum.value "target" spProvenance_Target Target Reference(s) (usually version specific) }
+{$ENDIF}
 
+{$IFDEF FHIR_QUESTIONNAIRE}
   {@Enum TSearchParamsQuestionnaire
     Search Parameters for Questionnaire
   }
@@ -2346,7 +2531,9 @@ Requires the near parameter to also be included }
     spQuestionnaire_Title, {@enum.value "title" spQuestionnaire_Title The human-friendly name of the questionnaire }
     spQuestionnaire_Url, {@enum.value "url" spQuestionnaire_Url The uri that identifies the questionnaire }
     spQuestionnaire_Version); {@enum.value "version" spQuestionnaire_Version The business version of the questionnaire }
+{$ENDIF}
 
+{$IFDEF FHIR_QUESTIONNAIRERESPONSE}
   {@Enum TSearchParamsQuestionnaireResponse
     Search Parameters for QuestionnaireResponse
   }
@@ -2370,7 +2557,9 @@ Requires the near parameter to also be included }
     spQuestionnaireResponse_Source, {@enum.value "source" spQuestionnaireResponse_Source The individual providing the information reflected in the questionnaire respose }
     spQuestionnaireResponse_Status, {@enum.value "status" spQuestionnaireResponse_Status The status of the questionnaire response }
     spQuestionnaireResponse_Subject); {@enum.value "subject" spQuestionnaireResponse_Subject The subject of the questionnaire response }
+{$ENDIF}
 
+{$IFDEF FHIR_REFERRALREQUEST}
   {@Enum TSearchParamsReferralRequest
     Search Parameters for ReferralRequest
   }
@@ -2402,7 +2591,9 @@ Requires the near parameter to also be included }
     spReferralRequest_Status, {@enum.value "status" spReferralRequest_Status The status of the referral }
     spReferralRequest_Subject, {@enum.value "subject" spReferralRequest_Subject Patient referred to care or transfer }
     spReferralRequest_Type); {@enum.value "type" spReferralRequest_Type The type of the referral }
+{$ENDIF}
 
+{$IFDEF FHIR_RELATEDPERSON}
   {@Enum TSearchParamsRelatedPerson
     Search Parameters for RelatedPerson
   }
@@ -2431,7 +2622,9 @@ Requires the near parameter to also be included }
     spRelatedPerson_Phone, {@enum.value "phone" spRelatedPerson_Phone A value in a phone contact }
     spRelatedPerson_Phonetic, {@enum.value "phonetic" spRelatedPerson_Phonetic A portion of name using some kind of phonetic matching algorithm }
     spRelatedPerson_Telecom); {@enum.value "telecom" spRelatedPerson_Telecom The value in any kind of contact }
+{$ENDIF}
 
+{$IFDEF FHIR_REQUESTGROUP}
   {@Enum TSearchParamsRequestGroup
     Search Parameters for RequestGroup
   }
@@ -2457,7 +2650,9 @@ Requires the near parameter to also be included }
     spRequestGroup_Priority, {@enum.value "priority" spRequestGroup_Priority The priority of the request group }
     spRequestGroup_Status, {@enum.value "status" spRequestGroup_Status The status of the request group }
     spRequestGroup_Subject); {@enum.value "subject" spRequestGroup_Subject The subject that the request group is about }
+{$ENDIF}
 
+{$IFDEF FHIR_RESEARCHSTUDY}
   {@Enum TSearchParamsResearchStudy
     Search Parameters for ResearchStudy
   }
@@ -2483,7 +2678,9 @@ Requires the near parameter to also be included }
     spResearchStudy_Sponsor, {@enum.value "sponsor" spResearchStudy_Sponsor Organization responsible for the study }
     spResearchStudy_Status, {@enum.value "status" spResearchStudy_Status draft | in-progress | suspended | stopped | completed | entered-in-error }
     spResearchStudy_Title); {@enum.value "title" spResearchStudy_Title Name for this study }
+{$ENDIF}
 
+{$IFDEF FHIR_RESEARCHSUBJECT}
   {@Enum TSearchParamsResearchSubject
     Search Parameters for ResearchSubject
   }
@@ -2501,7 +2698,9 @@ Requires the near parameter to also be included }
     spResearchSubject_Individual, {@enum.value "individual" spResearchSubject_Individual Who is part of study }
     spResearchSubject_Patient, {@enum.value "patient" spResearchSubject_Patient Who is part of study }
     spResearchSubject_Status); {@enum.value "status" spResearchSubject_Status candidate | enrolled | active | suspended | withdrawn | completed }
+{$ENDIF}
 
+{$IFDEF FHIR_RISKASSESSMENT}
   {@Enum TSearchParamsRiskAssessment
     Search Parameters for RiskAssessment
   }
@@ -2524,7 +2723,9 @@ Requires the near parameter to also be included }
     spRiskAssessment_Probability, {@enum.value "probability" spRiskAssessment_Probability Likelihood of specified outcome }
     spRiskAssessment_Risk, {@enum.value "risk" spRiskAssessment_Risk Likelihood of specified outcome as a qualitative value }
     spRiskAssessment_Subject); {@enum.value "subject" spRiskAssessment_Subject Who/what does assessment apply to? }
+{$ENDIF}
 
+{$IFDEF FHIR_SCHEDULE}
   {@Enum TSearchParamsSchedule
     Search Parameters for Schedule
   }
@@ -2542,7 +2743,9 @@ Requires the near parameter to also be included }
     spSchedule_Date, {@enum.value "date" spSchedule_Date Search for Schedule resources that have a period that contains this date specified }
     spSchedule_Identifier, {@enum.value "identifier" spSchedule_Identifier A Schedule Identifier }
     spSchedule_Type); {@enum.value "type" spSchedule_Type The type of appointments that can be booked into associated slot(s) }
+{$ENDIF}
 
+{$IFDEF FHIR_SEARCHPARAMETER}
   {@Enum TSearchParamsSearchParameter
     Search Parameters for SearchParameter
   }
@@ -2569,7 +2772,9 @@ Requires the near parameter to also be included }
     spSearchParameter_Type, {@enum.value "type" spSearchParameter_Type number | date | string | token | reference | composite | quantity | uri }
     spSearchParameter_Url, {@enum.value "url" spSearchParameter_Url The uri that identifies the search parameter }
     spSearchParameter_Version); {@enum.value "version" spSearchParameter_Version The business version of the search parameter }
+{$ENDIF}
 
+{$IFDEF FHIR_SEQUENCE}
   {@Enum TSearchParamsSequence
     Search Parameters for Sequence
   }
@@ -2589,7 +2794,9 @@ Requires the near parameter to also be included }
     spSequence_Patient, {@enum.value "patient" spSequence_Patient The subject that the observation is about }
     spSequence_Start, {@enum.value "start" spSequence_Start Start position (0-based inclusive, 1-based inclusive, that means the nucleic acid or amino acid at this position will be included) of the reference sequence. }
     spSequence_Type); {@enum.value "type" spSequence_Type Amino Acid Sequence/ DNA Sequence / RNA Sequence }
+{$ENDIF}
 
+{$IFDEF FHIR_SERVICEDEFINITION}
   {@Enum TSearchParamsServiceDefinition
     Search Parameters for ServiceDefinition
   }
@@ -2619,7 +2826,9 @@ Requires the near parameter to also be included }
     spServiceDefinition_Topic, {@enum.value "topic" spServiceDefinition_Topic Topics associated with the module }
     spServiceDefinition_Url, {@enum.value "url" spServiceDefinition_Url The uri that identifies the service definition }
     spServiceDefinition_Version); {@enum.value "version" spServiceDefinition_Version The business version of the service definition }
+{$ENDIF}
 
+{$IFDEF FHIR_SLOT}
   {@Enum TSearchParamsSlot
     Search Parameters for Slot
   }
@@ -2637,7 +2846,9 @@ Requires the near parameter to also be included }
     spSlot_Slottype, {@enum.value "slot-type" spSlot_Slottype The type of appointments that can be booked into the slot }
     spSlot_Start, {@enum.value "start" spSlot_Start Appointment date/time. }
     spSlot_Status); {@enum.value "status" spSlot_Status The free/busy status of the appointment }
+{$ENDIF}
 
+{$IFDEF FHIR_SPECIMEN}
   {@Enum TSearchParamsSpecimen
     Search Parameters for Specimen
   }
@@ -2662,7 +2873,9 @@ Requires the near parameter to also be included }
     spSpecimen_Status, {@enum.value "status" spSpecimen_Status available | unavailable | unsatisfactory | entered-in-error }
     spSpecimen_Subject, {@enum.value "subject" spSpecimen_Subject The subject of the specimen }
     spSpecimen_Type); {@enum.value "type" spSpecimen_Type The specimen type }
+{$ENDIF}
 
+{$IFDEF FHIR_STRUCTUREDEFINITION}
   {@Enum TSearchParamsStructureDefinition
     Search Parameters for StructureDefinition
   }
@@ -2697,7 +2910,9 @@ Requires the near parameter to also be included }
     spStructureDefinition_Url, {@enum.value "url" spStructureDefinition_Url The uri that identifies the structure definition }
     spStructureDefinition_Valueset, {@enum.value "valueset" spStructureDefinition_Valueset A vocabulary binding reference }
     spStructureDefinition_Version); {@enum.value "version" spStructureDefinition_Version The business version of the structure definition }
+{$ENDIF}
 
+{$IFDEF FHIR_STRUCTUREMAP}
   {@Enum TSearchParamsStructureMap
     Search Parameters for StructureMap
   }
@@ -2720,7 +2935,9 @@ Requires the near parameter to also be included }
     spStructureMap_Title, {@enum.value "title" spStructureMap_Title The human-friendly name of the structure map }
     spStructureMap_Url, {@enum.value "url" spStructureMap_Url The uri that identifies the structure map }
     spStructureMap_Version); {@enum.value "version" spStructureMap_Version The business version of the structure map }
+{$ENDIF}
 
+{$IFDEF FHIR_SUBSCRIPTION}
   {@Enum TSearchParamsSubscription
     Search Parameters for Subscription
   }
@@ -2740,7 +2957,9 @@ Requires the near parameter to also be included }
     spSubscription_Status, {@enum.value "status" spSubscription_Status The current state of the subscription }
     spSubscription_Type, {@enum.value "type" spSubscription_Type The type of channel for the sent notifications }
     spSubscription_Url); {@enum.value "url" spSubscription_Url The uri that will receive the notifications }
+{$ENDIF}
 
+{$IFDEF FHIR_SUBSTANCE}
   {@Enum TSearchParamsSubstance
     Search Parameters for Substance
   }
@@ -2761,7 +2980,9 @@ Requires the near parameter to also be included }
     spSubstance_Quantity, {@enum.value "quantity" spSubstance_Quantity Amount of substance in the package }
     spSubstance_Status, {@enum.value "status" spSubstance_Status active | inactive | entered-in-error }
     spSubstance_Substancereference); {@enum.value "substance-reference" spSubstance_Substancereference A component of the substance }
+{$ENDIF}
 
+{$IFDEF FHIR_SUPPLYDELIVERY}
   {@Enum TSearchParamsSupplyDelivery
     Search Parameters for SupplyDelivery
   }
@@ -2779,7 +3000,9 @@ Requires the near parameter to also be included }
     spSupplyDelivery_Receiver, {@enum.value "receiver" spSupplyDelivery_Receiver Who collected the Supply }
     spSupplyDelivery_Status, {@enum.value "status" spSupplyDelivery_Status in-progress | completed | abandoned | entered-in-error }
     spSupplyDelivery_Supplier); {@enum.value "supplier" spSupplyDelivery_Supplier Dispenser }
+{$ENDIF}
 
+{$IFDEF FHIR_SUPPLYREQUEST}
   {@Enum TSearchParamsSupplyRequest
     Search Parameters for SupplyRequest
   }
@@ -2798,7 +3021,9 @@ Requires the near parameter to also be included }
     spSupplyRequest_Requester, {@enum.value "requester" spSupplyRequest_Requester Individual making the request }
     spSupplyRequest_Status, {@enum.value "status" spSupplyRequest_Status draft | active | suspended + }
     spSupplyRequest_Supplier); {@enum.value "supplier" spSupplyRequest_Supplier Who is intended to fulfill the request }
+{$ENDIF}
 
+{$IFDEF FHIR_TASK}
   {@Enum TSearchParamsTask
     Search Parameters for Task
   }
@@ -2831,7 +3056,9 @@ Requires the near parameter to also be included }
     spTask_Requester, {@enum.value "requester" spTask_Requester Search by task requester }
     spTask_Status, {@enum.value "status" spTask_Status Search by task status }
     spTask_Subject); {@enum.value "subject" spTask_Subject Search by subject }
+{$ENDIF}
 
+{$IFDEF FHIR_TESTREPORT}
   {@Enum TSearchParamsTestReport
     Search Parameters for TestReport
   }
@@ -2850,7 +3077,9 @@ Requires the near parameter to also be included }
     spTestReport_Result, {@enum.value "result" spTestReport_Result The result disposition of the test execution }
     spTestReport_Tester, {@enum.value "tester" spTestReport_Tester The name of the testing organization }
     spTestReport_Testscript); {@enum.value "testscript" spTestReport_Testscript The test script executed to produce this report }
+{$ENDIF}
 
+{$IFDEF FHIR_TESTSCRIPT}
   {@Enum TSearchParamsTestScript
     Search Parameters for TestScript
   }
@@ -2874,7 +3103,9 @@ Requires the near parameter to also be included }
     spTestScript_Title, {@enum.value "title" spTestScript_Title The human-friendly name of the test script }
     spTestScript_Url, {@enum.value "url" spTestScript_Url The uri that identifies the test script }
     spTestScript_Version); {@enum.value "version" spTestScript_Version The business version of the test script }
+{$ENDIF}
 
+{$IFDEF FHIR_VALUESET}
   {@Enum TSearchParamsValueSet
     Search Parameters for ValueSet
   }
@@ -2899,7 +3130,9 @@ Requires the near parameter to also be included }
     spValueSet_Title, {@enum.value "title" spValueSet_Title The human-friendly name of the value set }
     spValueSet_Url, {@enum.value "url" spValueSet_Url The uri that identifies the value set }
     spValueSet_Version); {@enum.value "version" spValueSet_Version The business version of the value set }
+{$ENDIF}
 
+{$IFDEF FHIR_VISIONPRESCRIPTION}
   {@Enum TSearchParamsVisionPrescription
     Search Parameters for VisionPrescription
   }
@@ -2917,603 +3150,953 @@ Requires the near parameter to also be included }
     spVisionPrescription_Identifier, {@enum.value "identifier" spVisionPrescription_Identifier Return prescriptions with this external identifier }
     spVisionPrescription_Patient, {@enum.value "patient" spVisionPrescription_Patient The identity of a patient to list dispenses for }
     spVisionPrescription_Prescriber); {@enum.value "prescriber" spVisionPrescription_Prescriber Who authorizes the vision product }
+{$ENDIF}
 
 Const
-  CODES_TFhirResourceType : Array[TFhirResourceType] of String = ('', 'Account', 'ActivityDefinition', 'AdverseEvent', 'AllergyIntolerance', 'Appointment', 'AppointmentResponse', 'AuditEvent', 'Basic', 'Binary', 'BodySite', 'Bundle', 'CapabilityStatement', 'CarePlan', 'CareTeam', 'ChargeItem', 'Claim', 'ClaimResponse', 'ClinicalImpression', 'CodeSystem', 'Communication', 'CommunicationRequest', 'CompartmentDefinition', 'Composition', 'ConceptMap', 'Condition', 'Consent', 'Contract', 'Coverage', 'DataElement', 'DetectedIssue', 'Device', 'DeviceComponent', 'DeviceMetric', 'DeviceRequest', 'DeviceUseStatement', 'DiagnosticReport', 'DocumentManifest', 'DocumentReference', 'EligibilityRequest', 'EligibilityResponse', 'Encounter', 'Endpoint', 'EnrollmentRequest', 'EnrollmentResponse', 'EpisodeOfCare', 'ExpansionProfile', 'ExplanationOfBenefit', 'FamilyMemberHistory', 'Flag', 'Goal', 'GraphDefinition', 'Group', 'GuidanceResponse', 'HealthcareService', 'ImagingManifest', 'ImagingStudy', 'Immunization', 
-      'ImmunizationRecommendation', 'ImplementationGuide', 'Library', 'Linkage', 'List', 'Location', 'Measure', 'MeasureReport', 'Media', 'Medication', 'MedicationAdministration', 'MedicationDispense', 'MedicationRequest', 'MedicationStatement', 'MessageDefinition', 'MessageHeader', 'NamingSystem', 'NutritionOrder', 'Observation', 'OperationDefinition', 'OperationOutcome', 'Organization', 'Parameters', 'Patient', 'PaymentNotice', 'PaymentReconciliation', 'Person', 'PlanDefinition', 'Practitioner', 'PractitionerRole', 'Procedure', 'ProcedureRequest', 'ProcessRequest', 'ProcessResponse', 'Provenance', 'Questionnaire', 'QuestionnaireResponse', 'ReferralRequest', 'RelatedPerson', 'RequestGroup', 'ResearchStudy', 'ResearchSubject', 'RiskAssessment', 'Schedule', 'SearchParameter', 'Sequence', 'ServiceDefinition', 'Slot', 'Specimen', 'StructureDefinition', 'StructureMap', 'Subscription', 'Substance', 'SupplyDelivery', 'SupplyRequest', 'Task', 'TestReport', 'TestScript', 'ValueSet', 'VisionPrescription', 
+  CODES_TFhirResourceType : Array[TFhirResourceType] of String = ('', {$IFDEF FHIR_ACCOUNT}'Account',{$ENDIF}
+      {$IFDEF FHIR_ACTIVITYDEFINITION}'ActivityDefinition',{$ENDIF}
+      {$IFDEF FHIR_ADVERSEEVENT}'AdverseEvent',{$ENDIF}
+      {$IFDEF FHIR_ALLERGYINTOLERANCE}'AllergyIntolerance',{$ENDIF}
+      {$IFDEF FHIR_APPOINTMENT}'Appointment',{$ENDIF}
+      {$IFDEF FHIR_APPOINTMENTRESPONSE}'AppointmentResponse',{$ENDIF}
+      {$IFDEF FHIR_AUDITEVENT}'AuditEvent',{$ENDIF}
+      {$IFDEF FHIR_BASIC}'Basic',{$ENDIF}
+      {$IFDEF FHIR_BINARY}'Binary',{$ENDIF}
+      {$IFDEF FHIR_BODYSITE}'BodySite',{$ENDIF}
+      {$IFDEF FHIR_BUNDLE}'Bundle',{$ENDIF}
+      {$IFDEF FHIR_CAPABILITYSTATEMENT}'CapabilityStatement',{$ENDIF}
+      {$IFDEF FHIR_CAREPLAN}'CarePlan',{$ENDIF}
+      {$IFDEF FHIR_CARETEAM}'CareTeam',{$ENDIF}
+      {$IFDEF FHIR_CHARGEITEM}'ChargeItem',{$ENDIF}
+      {$IFDEF FHIR_CLAIM}'Claim',{$ENDIF}
+      {$IFDEF FHIR_CLAIMRESPONSE}'ClaimResponse',{$ENDIF}
+      {$IFDEF FHIR_CLINICALIMPRESSION}'ClinicalImpression',{$ENDIF}
+      {$IFDEF FHIR_CODESYSTEM}'CodeSystem',{$ENDIF}
+      {$IFDEF FHIR_COMMUNICATION}'Communication',{$ENDIF}
+      {$IFDEF FHIR_COMMUNICATIONREQUEST}'CommunicationRequest',{$ENDIF}
+      {$IFDEF FHIR_COMPARTMENTDEFINITION}'CompartmentDefinition',{$ENDIF}
+      {$IFDEF FHIR_COMPOSITION}'Composition',{$ENDIF}
+      {$IFDEF FHIR_CONCEPTMAP}'ConceptMap',{$ENDIF}
+      {$IFDEF FHIR_CONDITION}'Condition',{$ENDIF}
+      {$IFDEF FHIR_CONSENT}'Consent',{$ENDIF}
+      {$IFDEF FHIR_CONTRACT}'Contract',{$ENDIF}
+      {$IFDEF FHIR_COVERAGE}'Coverage',{$ENDIF}
+      {$IFDEF FHIR_DATAELEMENT}'DataElement',{$ENDIF}
+      {$IFDEF FHIR_DETECTEDISSUE}'DetectedIssue',{$ENDIF}
+      {$IFDEF FHIR_DEVICE}'Device',{$ENDIF}
+      {$IFDEF FHIR_DEVICECOMPONENT}'DeviceComponent',{$ENDIF}
+      {$IFDEF FHIR_DEVICEMETRIC}'DeviceMetric',{$ENDIF}
+      {$IFDEF FHIR_DEVICEREQUEST}'DeviceRequest',{$ENDIF}
+      {$IFDEF FHIR_DEVICEUSESTATEMENT}'DeviceUseStatement',{$ENDIF}
+      {$IFDEF FHIR_DIAGNOSTICREPORT}'DiagnosticReport',{$ENDIF}
+      {$IFDEF FHIR_DOCUMENTMANIFEST}'DocumentManifest',{$ENDIF}
+      {$IFDEF FHIR_DOCUMENTREFERENCE}'DocumentReference',{$ENDIF}
+      {$IFDEF FHIR_ELIGIBILITYREQUEST}'EligibilityRequest',{$ENDIF}
+      {$IFDEF FHIR_ELIGIBILITYRESPONSE}'EligibilityResponse',{$ENDIF}
+      {$IFDEF FHIR_ENCOUNTER}'Encounter',{$ENDIF}
+      {$IFDEF FHIR_ENDPOINT}'Endpoint',{$ENDIF}
+      {$IFDEF FHIR_ENROLLMENTREQUEST}'EnrollmentRequest',{$ENDIF}
+      {$IFDEF FHIR_ENROLLMENTRESPONSE}'EnrollmentResponse',{$ENDIF}
+      {$IFDEF FHIR_EPISODEOFCARE}'EpisodeOfCare',{$ENDIF}
+      {$IFDEF FHIR_EXPANSIONPROFILE}'ExpansionProfile',{$ENDIF}
+      {$IFDEF FHIR_EXPLANATIONOFBENEFIT}'ExplanationOfBenefit',{$ENDIF}
+      {$IFDEF FHIR_FAMILYMEMBERHISTORY}'FamilyMemberHistory',{$ENDIF}
+      {$IFDEF FHIR_FLAG}'Flag',{$ENDIF}
+      {$IFDEF FHIR_GOAL}'Goal',{$ENDIF}
+      {$IFDEF FHIR_GRAPHDEFINITION}'GraphDefinition',{$ENDIF}
+      {$IFDEF FHIR_GROUP}'Group',{$ENDIF}
+      {$IFDEF FHIR_GUIDANCERESPONSE}'GuidanceResponse',{$ENDIF}
+      {$IFDEF FHIR_HEALTHCARESERVICE}'HealthcareService',{$ENDIF}
+      {$IFDEF FHIR_IMAGINGMANIFEST}'ImagingManifest',{$ENDIF}
+      {$IFDEF FHIR_IMAGINGSTUDY}'ImagingStudy',{$ENDIF}
+      {$IFDEF FHIR_IMMUNIZATION}'Immunization',{$ENDIF}
+      
+      {$IFDEF FHIR_IMMUNIZATIONRECOMMENDATION}'ImmunizationRecommendation',{$ENDIF}
+      {$IFDEF FHIR_IMPLEMENTATIONGUIDE}'ImplementationGuide',{$ENDIF}
+      {$IFDEF FHIR_LIBRARY}'Library',{$ENDIF}
+      {$IFDEF FHIR_LINKAGE}'Linkage',{$ENDIF}
+      {$IFDEF FHIR_LIST}'List',{$ENDIF}
+      {$IFDEF FHIR_LOCATION}'Location',{$ENDIF}
+      {$IFDEF FHIR_MEASURE}'Measure',{$ENDIF}
+      {$IFDEF FHIR_MEASUREREPORT}'MeasureReport',{$ENDIF}
+      {$IFDEF FHIR_MEDIA}'Media',{$ENDIF}
+      {$IFDEF FHIR_MEDICATION}'Medication',{$ENDIF}
+      {$IFDEF FHIR_MEDICATIONADMINISTRATION}'MedicationAdministration',{$ENDIF}
+      {$IFDEF FHIR_MEDICATIONDISPENSE}'MedicationDispense',{$ENDIF}
+      {$IFDEF FHIR_MEDICATIONREQUEST}'MedicationRequest',{$ENDIF}
+      {$IFDEF FHIR_MEDICATIONSTATEMENT}'MedicationStatement',{$ENDIF}
+      {$IFDEF FHIR_MESSAGEDEFINITION}'MessageDefinition',{$ENDIF}
+      {$IFDEF FHIR_MESSAGEHEADER}'MessageHeader',{$ENDIF}
+      {$IFDEF FHIR_NAMINGSYSTEM}'NamingSystem',{$ENDIF}
+      {$IFDEF FHIR_NUTRITIONORDER}'NutritionOrder',{$ENDIF}
+      {$IFDEF FHIR_OBSERVATION}'Observation',{$ENDIF}
+      {$IFDEF FHIR_OPERATIONDEFINITION}'OperationDefinition',{$ENDIF}
+      {$IFDEF FHIR_OPERATIONOUTCOME}'OperationOutcome',{$ENDIF}
+      {$IFDEF FHIR_ORGANIZATION}'Organization',{$ENDIF}
+      {$IFDEF FHIR_PARAMETERS}'Parameters',{$ENDIF}
+      {$IFDEF FHIR_PATIENT}'Patient',{$ENDIF}
+      {$IFDEF FHIR_PAYMENTNOTICE}'PaymentNotice',{$ENDIF}
+      {$IFDEF FHIR_PAYMENTRECONCILIATION}'PaymentReconciliation',{$ENDIF}
+      {$IFDEF FHIR_PERSON}'Person',{$ENDIF}
+      {$IFDEF FHIR_PLANDEFINITION}'PlanDefinition',{$ENDIF}
+      {$IFDEF FHIR_PRACTITIONER}'Practitioner',{$ENDIF}
+      {$IFDEF FHIR_PRACTITIONERROLE}'PractitionerRole',{$ENDIF}
+      {$IFDEF FHIR_PROCEDURE}'Procedure',{$ENDIF}
+      {$IFDEF FHIR_PROCEDUREREQUEST}'ProcedureRequest',{$ENDIF}
+      {$IFDEF FHIR_PROCESSREQUEST}'ProcessRequest',{$ENDIF}
+      {$IFDEF FHIR_PROCESSRESPONSE}'ProcessResponse',{$ENDIF}
+      {$IFDEF FHIR_PROVENANCE}'Provenance',{$ENDIF}
+      {$IFDEF FHIR_QUESTIONNAIRE}'Questionnaire',{$ENDIF}
+      {$IFDEF FHIR_QUESTIONNAIRERESPONSE}'QuestionnaireResponse',{$ENDIF}
+      {$IFDEF FHIR_REFERRALREQUEST}'ReferralRequest',{$ENDIF}
+      {$IFDEF FHIR_RELATEDPERSON}'RelatedPerson',{$ENDIF}
+      {$IFDEF FHIR_REQUESTGROUP}'RequestGroup',{$ENDIF}
+      {$IFDEF FHIR_RESEARCHSTUDY}'ResearchStudy',{$ENDIF}
+      {$IFDEF FHIR_RESEARCHSUBJECT}'ResearchSubject',{$ENDIF}
+      {$IFDEF FHIR_RISKASSESSMENT}'RiskAssessment',{$ENDIF}
+      {$IFDEF FHIR_SCHEDULE}'Schedule',{$ENDIF}
+      {$IFDEF FHIR_SEARCHPARAMETER}'SearchParameter',{$ENDIF}
+      {$IFDEF FHIR_SEQUENCE}'Sequence',{$ENDIF}
+      {$IFDEF FHIR_SERVICEDEFINITION}'ServiceDefinition',{$ENDIF}
+      {$IFDEF FHIR_SLOT}'Slot',{$ENDIF}
+      {$IFDEF FHIR_SPECIMEN}'Specimen',{$ENDIF}
+      {$IFDEF FHIR_STRUCTUREDEFINITION}'StructureDefinition',{$ENDIF}
+      {$IFDEF FHIR_STRUCTUREMAP}'StructureMap',{$ENDIF}
+      {$IFDEF FHIR_SUBSCRIPTION}'Subscription',{$ENDIF}
+      {$IFDEF FHIR_SUBSTANCE}'Substance',{$ENDIF}
+      {$IFDEF FHIR_SUPPLYDELIVERY}'SupplyDelivery',{$ENDIF}
+      {$IFDEF FHIR_SUPPLYREQUEST}'SupplyRequest',{$ENDIF}
+      {$IFDEF FHIR_TASK}'Task',{$ENDIF}
+      {$IFDEF FHIR_TESTREPORT}'TestReport',{$ENDIF}
+      {$IFDEF FHIR_TESTSCRIPT}'TestScript',{$ENDIF}
+      {$IFDEF FHIR_VALUESET}'ValueSet',{$ENDIF}
+      {$IFDEF FHIR_VISIONPRESCRIPTION}'VisionPrescription',{$ENDIF}
+      
        'Custom');
-  LOWERCASE_CODES_TFhirResourceType : Array[TFhirResourceType] of String = ('', 'account',
-     'activitydefinition',
-     'adverseevent',
-     'allergyintolerance',
-     'appointment',
-     'appointmentresponse',
-     'auditevent',
-     'basic',
-     'binary',
-     'bodysite',
-     'bundle',
-     'capabilitystatement',
-     'careplan',
-     'careteam',
-     'chargeitem',
-     'claim',
-     'claimresponse',
-     'clinicalimpression',
-     'codesystem',
-     'communication',
-     'communicationrequest',
-     'compartmentdefinition',
-     'composition',
-     'conceptmap',
-     'condition',
-     'consent',
-     'contract',
-     'coverage',
-     'dataelement',
-     'detectedissue',
-     'device',
-     'devicecomponent',
-     'devicemetric',
-     'devicerequest',
-     'deviceusestatement',
-     'diagnosticreport',
-     'documentmanifest',
-     'documentreference',
-     'eligibilityrequest',
-     'eligibilityresponse',
-     'encounter',
-     'endpoint',
-     'enrollmentrequest',
-     'enrollmentresponse',
-     'episodeofcare',
-     'expansionprofile',
-     'explanationofbenefit',
-     'familymemberhistory',
-     'flag',
-     'goal',
-     'graphdefinition',
-     'group',
-     'guidanceresponse',
-     'healthcareservice',
-     'imagingmanifest',
-     'imagingstudy',
-     'immunization',
-     'immunizationrecommendation',
-     'implementationguide',
-     'library',
-     'linkage',
-     'list',
-     'location',
-     'measure',
-     'measurereport',
-     'media',
-     'medication',
-     'medicationadministration',
-     'medicationdispense',
-     'medicationrequest',
-     'medicationstatement',
-     'messagedefinition',
-     'messageheader',
-     'namingsystem',
-     'nutritionorder',
-     'observation',
-     'operationdefinition',
-     'operationoutcome',
-     'organization',
-     'parameters',
-     'patient',
-     'paymentnotice',
-     'paymentreconciliation',
-     'person',
-     'plandefinition',
-     'practitioner',
-     'practitionerrole',
-     'procedure',
-     'procedurerequest',
-     'processrequest',
-     'processresponse',
-     'provenance',
-     'questionnaire',
-     'questionnaireresponse',
-     'referralrequest',
-     'relatedperson',
-     'requestgroup',
-     'researchstudy',
-     'researchsubject',
-     'riskassessment',
-     'schedule',
-     'searchparameter',
-     'sequence',
-     'servicedefinition',
-     'slot',
-     'specimen',
-     'structuredefinition',
-     'structuremap',
-     'subscription',
-     'substance',
-     'supplydelivery',
-     'supplyrequest',
-     'task',
-     'testreport',
-     'testscript',
-     'valueset',
-     'visionprescription',
+  LOWERCASE_CODES_TFhirResourceType : Array[TFhirResourceType] of String = ('', {$IFDEF FHIR_ACCOUNT}'account',{$ENDIF}
+     {$IFDEF FHIR_ACTIVITYDEFINITION}'activitydefinition',{$ENDIF}
+     {$IFDEF FHIR_ADVERSEEVENT}'adverseevent',{$ENDIF}
+     {$IFDEF FHIR_ALLERGYINTOLERANCE}'allergyintolerance',{$ENDIF}
+     {$IFDEF FHIR_APPOINTMENT}'appointment',{$ENDIF}
+     {$IFDEF FHIR_APPOINTMENTRESPONSE}'appointmentresponse',{$ENDIF}
+     {$IFDEF FHIR_AUDITEVENT}'auditevent',{$ENDIF}
+     {$IFDEF FHIR_BASIC}'basic',{$ENDIF}
+     {$IFDEF FHIR_BINARY}'binary',{$ENDIF}
+     {$IFDEF FHIR_BODYSITE}'bodysite',{$ENDIF}
+     {$IFDEF FHIR_BUNDLE}'bundle',{$ENDIF}
+     {$IFDEF FHIR_CAPABILITYSTATEMENT}'capabilitystatement',{$ENDIF}
+     {$IFDEF FHIR_CAREPLAN}'careplan',{$ENDIF}
+     {$IFDEF FHIR_CARETEAM}'careteam',{$ENDIF}
+     {$IFDEF FHIR_CHARGEITEM}'chargeitem',{$ENDIF}
+     {$IFDEF FHIR_CLAIM}'claim',{$ENDIF}
+     {$IFDEF FHIR_CLAIMRESPONSE}'claimresponse',{$ENDIF}
+     {$IFDEF FHIR_CLINICALIMPRESSION}'clinicalimpression',{$ENDIF}
+     {$IFDEF FHIR_CODESYSTEM}'codesystem',{$ENDIF}
+     {$IFDEF FHIR_COMMUNICATION}'communication',{$ENDIF}
+     {$IFDEF FHIR_COMMUNICATIONREQUEST}'communicationrequest',{$ENDIF}
+     {$IFDEF FHIR_COMPARTMENTDEFINITION}'compartmentdefinition',{$ENDIF}
+     {$IFDEF FHIR_COMPOSITION}'composition',{$ENDIF}
+     {$IFDEF FHIR_CONCEPTMAP}'conceptmap',{$ENDIF}
+     {$IFDEF FHIR_CONDITION}'condition',{$ENDIF}
+     {$IFDEF FHIR_CONSENT}'consent',{$ENDIF}
+     {$IFDEF FHIR_CONTRACT}'contract',{$ENDIF}
+     {$IFDEF FHIR_COVERAGE}'coverage',{$ENDIF}
+     {$IFDEF FHIR_DATAELEMENT}'dataelement',{$ENDIF}
+     {$IFDEF FHIR_DETECTEDISSUE}'detectedissue',{$ENDIF}
+     {$IFDEF FHIR_DEVICE}'device',{$ENDIF}
+     {$IFDEF FHIR_DEVICECOMPONENT}'devicecomponent',{$ENDIF}
+     {$IFDEF FHIR_DEVICEMETRIC}'devicemetric',{$ENDIF}
+     {$IFDEF FHIR_DEVICEREQUEST}'devicerequest',{$ENDIF}
+     {$IFDEF FHIR_DEVICEUSESTATEMENT}'deviceusestatement',{$ENDIF}
+     {$IFDEF FHIR_DIAGNOSTICREPORT}'diagnosticreport',{$ENDIF}
+     {$IFDEF FHIR_DOCUMENTMANIFEST}'documentmanifest',{$ENDIF}
+     {$IFDEF FHIR_DOCUMENTREFERENCE}'documentreference',{$ENDIF}
+     {$IFDEF FHIR_ELIGIBILITYREQUEST}'eligibilityrequest',{$ENDIF}
+     {$IFDEF FHIR_ELIGIBILITYRESPONSE}'eligibilityresponse',{$ENDIF}
+     {$IFDEF FHIR_ENCOUNTER}'encounter',{$ENDIF}
+     {$IFDEF FHIR_ENDPOINT}'endpoint',{$ENDIF}
+     {$IFDEF FHIR_ENROLLMENTREQUEST}'enrollmentrequest',{$ENDIF}
+     {$IFDEF FHIR_ENROLLMENTRESPONSE}'enrollmentresponse',{$ENDIF}
+     {$IFDEF FHIR_EPISODEOFCARE}'episodeofcare',{$ENDIF}
+     {$IFDEF FHIR_EXPANSIONPROFILE}'expansionprofile',{$ENDIF}
+     {$IFDEF FHIR_EXPLANATIONOFBENEFIT}'explanationofbenefit',{$ENDIF}
+     {$IFDEF FHIR_FAMILYMEMBERHISTORY}'familymemberhistory',{$ENDIF}
+     {$IFDEF FHIR_FLAG}'flag',{$ENDIF}
+     {$IFDEF FHIR_GOAL}'goal',{$ENDIF}
+     {$IFDEF FHIR_GRAPHDEFINITION}'graphdefinition',{$ENDIF}
+     {$IFDEF FHIR_GROUP}'group',{$ENDIF}
+     {$IFDEF FHIR_GUIDANCERESPONSE}'guidanceresponse',{$ENDIF}
+     {$IFDEF FHIR_HEALTHCARESERVICE}'healthcareservice',{$ENDIF}
+     {$IFDEF FHIR_IMAGINGMANIFEST}'imagingmanifest',{$ENDIF}
+     {$IFDEF FHIR_IMAGINGSTUDY}'imagingstudy',{$ENDIF}
+     {$IFDEF FHIR_IMMUNIZATION}'immunization',{$ENDIF}
+     {$IFDEF FHIR_IMMUNIZATIONRECOMMENDATION}'immunizationrecommendation',{$ENDIF}
+     {$IFDEF FHIR_IMPLEMENTATIONGUIDE}'implementationguide',{$ENDIF}
+     {$IFDEF FHIR_LIBRARY}'library',{$ENDIF}
+     {$IFDEF FHIR_LINKAGE}'linkage',{$ENDIF}
+     {$IFDEF FHIR_LIST}'list',{$ENDIF}
+     {$IFDEF FHIR_LOCATION}'location',{$ENDIF}
+     {$IFDEF FHIR_MEASURE}'measure',{$ENDIF}
+     {$IFDEF FHIR_MEASUREREPORT}'measurereport',{$ENDIF}
+     {$IFDEF FHIR_MEDIA}'media',{$ENDIF}
+     {$IFDEF FHIR_MEDICATION}'medication',{$ENDIF}
+     {$IFDEF FHIR_MEDICATIONADMINISTRATION}'medicationadministration',{$ENDIF}
+     {$IFDEF FHIR_MEDICATIONDISPENSE}'medicationdispense',{$ENDIF}
+     {$IFDEF FHIR_MEDICATIONREQUEST}'medicationrequest',{$ENDIF}
+     {$IFDEF FHIR_MEDICATIONSTATEMENT}'medicationstatement',{$ENDIF}
+     {$IFDEF FHIR_MESSAGEDEFINITION}'messagedefinition',{$ENDIF}
+     {$IFDEF FHIR_MESSAGEHEADER}'messageheader',{$ENDIF}
+     {$IFDEF FHIR_NAMINGSYSTEM}'namingsystem',{$ENDIF}
+     {$IFDEF FHIR_NUTRITIONORDER}'nutritionorder',{$ENDIF}
+     {$IFDEF FHIR_OBSERVATION}'observation',{$ENDIF}
+     {$IFDEF FHIR_OPERATIONDEFINITION}'operationdefinition',{$ENDIF}
+     {$IFDEF FHIR_OPERATIONOUTCOME}'operationoutcome',{$ENDIF}
+     {$IFDEF FHIR_ORGANIZATION}'organization',{$ENDIF}
+     {$IFDEF FHIR_PARAMETERS}'parameters',{$ENDIF}
+     {$IFDEF FHIR_PATIENT}'patient',{$ENDIF}
+     {$IFDEF FHIR_PAYMENTNOTICE}'paymentnotice',{$ENDIF}
+     {$IFDEF FHIR_PAYMENTRECONCILIATION}'paymentreconciliation',{$ENDIF}
+     {$IFDEF FHIR_PERSON}'person',{$ENDIF}
+     {$IFDEF FHIR_PLANDEFINITION}'plandefinition',{$ENDIF}
+     {$IFDEF FHIR_PRACTITIONER}'practitioner',{$ENDIF}
+     {$IFDEF FHIR_PRACTITIONERROLE}'practitionerrole',{$ENDIF}
+     {$IFDEF FHIR_PROCEDURE}'procedure',{$ENDIF}
+     {$IFDEF FHIR_PROCEDUREREQUEST}'procedurerequest',{$ENDIF}
+     {$IFDEF FHIR_PROCESSREQUEST}'processrequest',{$ENDIF}
+     {$IFDEF FHIR_PROCESSRESPONSE}'processresponse',{$ENDIF}
+     {$IFDEF FHIR_PROVENANCE}'provenance',{$ENDIF}
+     {$IFDEF FHIR_QUESTIONNAIRE}'questionnaire',{$ENDIF}
+     {$IFDEF FHIR_QUESTIONNAIRERESPONSE}'questionnaireresponse',{$ENDIF}
+     {$IFDEF FHIR_REFERRALREQUEST}'referralrequest',{$ENDIF}
+     {$IFDEF FHIR_RELATEDPERSON}'relatedperson',{$ENDIF}
+     {$IFDEF FHIR_REQUESTGROUP}'requestgroup',{$ENDIF}
+     {$IFDEF FHIR_RESEARCHSTUDY}'researchstudy',{$ENDIF}
+     {$IFDEF FHIR_RESEARCHSUBJECT}'researchsubject',{$ENDIF}
+     {$IFDEF FHIR_RISKASSESSMENT}'riskassessment',{$ENDIF}
+     {$IFDEF FHIR_SCHEDULE}'schedule',{$ENDIF}
+     {$IFDEF FHIR_SEARCHPARAMETER}'searchparameter',{$ENDIF}
+     {$IFDEF FHIR_SEQUENCE}'sequence',{$ENDIF}
+     {$IFDEF FHIR_SERVICEDEFINITION}'servicedefinition',{$ENDIF}
+     {$IFDEF FHIR_SLOT}'slot',{$ENDIF}
+     {$IFDEF FHIR_SPECIMEN}'specimen',{$ENDIF}
+     {$IFDEF FHIR_STRUCTUREDEFINITION}'structuredefinition',{$ENDIF}
+     {$IFDEF FHIR_STRUCTUREMAP}'structuremap',{$ENDIF}
+     {$IFDEF FHIR_SUBSCRIPTION}'subscription',{$ENDIF}
+     {$IFDEF FHIR_SUBSTANCE}'substance',{$ENDIF}
+     {$IFDEF FHIR_SUPPLYDELIVERY}'supplydelivery',{$ENDIF}
+     {$IFDEF FHIR_SUPPLYREQUEST}'supplyrequest',{$ENDIF}
+     {$IFDEF FHIR_TASK}'task',{$ENDIF}
+     {$IFDEF FHIR_TESTREPORT}'testreport',{$ENDIF}
+     {$IFDEF FHIR_TESTSCRIPT}'testscript',{$ENDIF}
+     {$IFDEF FHIR_VALUESET}'valueset',{$ENDIF}
+     {$IFDEF FHIR_VISIONPRESCRIPTION}'visionprescription',{$ENDIF}
      'custom');
      
-  CLASSES_TFhirResourceType : Array[TFhirResourceType] of TFhirResourceClass = (nil, TFhirAccount,
-     TFhirActivityDefinition,
-     TFhirAdverseEvent,
-     TFhirAllergyIntolerance,
-     TFhirAppointment,
-     TFhirAppointmentResponse,
-     TFhirAuditEvent,
-     TFhirBasic,
-     TFhirBinary,
-     TFhirBodySite,
-     TFhirBundle,
-     TFhirCapabilityStatement,
-     TFhirCarePlan,
-     TFhirCareTeam,
-     TFhirChargeItem,
-     TFhirClaim,
-     TFhirClaimResponse,
-     TFhirClinicalImpression,
-     TFhirCodeSystem,
-     TFhirCommunication,
-     TFhirCommunicationRequest,
-     TFhirCompartmentDefinition,
-     TFhirComposition,
-     TFhirConceptMap,
-     TFhirCondition,
-     TFhirConsent,
-     TFhirContract,
-     TFhirCoverage,
-     TFhirDataElement,
-     TFhirDetectedIssue,
-     TFhirDevice,
-     TFhirDeviceComponent,
-     TFhirDeviceMetric,
-     TFhirDeviceRequest,
-     TFhirDeviceUseStatement,
-     TFhirDiagnosticReport,
-     TFhirDocumentManifest,
-     TFhirDocumentReference,
-     TFhirEligibilityRequest,
-     TFhirEligibilityResponse,
-     TFhirEncounter,
-     TFhirEndpoint,
-     TFhirEnrollmentRequest,
-     TFhirEnrollmentResponse,
-     TFhirEpisodeOfCare,
-     TFhirExpansionProfile,
-     TFhirExplanationOfBenefit,
-     TFhirFamilyMemberHistory,
-     TFhirFlag,
-     TFhirGoal,
-     TFhirGraphDefinition,
-     TFhirGroup,
-     TFhirGuidanceResponse,
-     TFhirHealthcareService,
-     TFhirImagingManifest,
-     TFhirImagingStudy,
-     TFhirImmunization,
-     TFhirImmunizationRecommendation,
-     TFhirImplementationGuide,
-     TFhirLibrary,
-     TFhirLinkage,
-     TFhirList,
-     TFhirLocation,
-     TFhirMeasure,
-     TFhirMeasureReport,
-     TFhirMedia,
-     TFhirMedication,
-     TFhirMedicationAdministration,
-     TFhirMedicationDispense,
-     TFhirMedicationRequest,
-     TFhirMedicationStatement,
-     TFhirMessageDefinition,
-     TFhirMessageHeader,
-     TFhirNamingSystem,
-     TFhirNutritionOrder,
-     TFhirObservation,
-     TFhirOperationDefinition,
-     TFhirOperationOutcome,
-     TFhirOrganization,
-     TFhirParameters,
-     TFhirPatient,
-     TFhirPaymentNotice,
-     TFhirPaymentReconciliation,
-     TFhirPerson,
-     TFhirPlanDefinition,
-     TFhirPractitioner,
-     TFhirPractitionerRole,
-     TFhirProcedure,
-     TFhirProcedureRequest,
-     TFhirProcessRequest,
-     TFhirProcessResponse,
-     TFhirProvenance,
-     TFhirQuestionnaire,
-     TFhirQuestionnaireResponse,
-     TFhirReferralRequest,
-     TFhirRelatedPerson,
-     TFhirRequestGroup,
-     TFhirResearchStudy,
-     TFhirResearchSubject,
-     TFhirRiskAssessment,
-     TFhirSchedule,
-     TFhirSearchParameter,
-     TFhirSequence,
-     TFhirServiceDefinition,
-     TFhirSlot,
-     TFhirSpecimen,
-     TFhirStructureDefinition,
-     TFhirStructureMap,
-     TFhirSubscription,
-     TFhirSubstance,
-     TFhirSupplyDelivery,
-     TFhirSupplyRequest,
-     TFhirTask,
-     TFhirTestReport,
-     TFhirTestScript,
-     TFhirValueSet,
-     TFhirVisionPrescription,
+  CLASSES_TFhirResourceType : Array[TFhirResourceType] of TFhirResourceClass = (nil, {$IFDEF FHIR_ACCOUNT}TFhirAccount,{$ENDIF}
+     {$IFDEF FHIR_ACTIVITYDEFINITION}TFhirActivityDefinition,{$ENDIF}
+     {$IFDEF FHIR_ADVERSEEVENT}TFhirAdverseEvent,{$ENDIF}
+     {$IFDEF FHIR_ALLERGYINTOLERANCE}TFhirAllergyIntolerance,{$ENDIF}
+     {$IFDEF FHIR_APPOINTMENT}TFhirAppointment,{$ENDIF}
+     {$IFDEF FHIR_APPOINTMENTRESPONSE}TFhirAppointmentResponse,{$ENDIF}
+     {$IFDEF FHIR_AUDITEVENT}TFhirAuditEvent,{$ENDIF}
+     {$IFDEF FHIR_BASIC}TFhirBasic,{$ENDIF}
+     {$IFDEF FHIR_BINARY}TFhirBinary,{$ENDIF}
+     {$IFDEF FHIR_BODYSITE}TFhirBodySite,{$ENDIF}
+     {$IFDEF FHIR_BUNDLE}TFhirBundle,{$ENDIF}
+     {$IFDEF FHIR_CAPABILITYSTATEMENT}TFhirCapabilityStatement,{$ENDIF}
+     {$IFDEF FHIR_CAREPLAN}TFhirCarePlan,{$ENDIF}
+     {$IFDEF FHIR_CARETEAM}TFhirCareTeam,{$ENDIF}
+     {$IFDEF FHIR_CHARGEITEM}TFhirChargeItem,{$ENDIF}
+     {$IFDEF FHIR_CLAIM}TFhirClaim,{$ENDIF}
+     {$IFDEF FHIR_CLAIMRESPONSE}TFhirClaimResponse,{$ENDIF}
+     {$IFDEF FHIR_CLINICALIMPRESSION}TFhirClinicalImpression,{$ENDIF}
+     {$IFDEF FHIR_CODESYSTEM}TFhirCodeSystem,{$ENDIF}
+     {$IFDEF FHIR_COMMUNICATION}TFhirCommunication,{$ENDIF}
+     {$IFDEF FHIR_COMMUNICATIONREQUEST}TFhirCommunicationRequest,{$ENDIF}
+     {$IFDEF FHIR_COMPARTMENTDEFINITION}TFhirCompartmentDefinition,{$ENDIF}
+     {$IFDEF FHIR_COMPOSITION}TFhirComposition,{$ENDIF}
+     {$IFDEF FHIR_CONCEPTMAP}TFhirConceptMap,{$ENDIF}
+     {$IFDEF FHIR_CONDITION}TFhirCondition,{$ENDIF}
+     {$IFDEF FHIR_CONSENT}TFhirConsent,{$ENDIF}
+     {$IFDEF FHIR_CONTRACT}TFhirContract,{$ENDIF}
+     {$IFDEF FHIR_COVERAGE}TFhirCoverage,{$ENDIF}
+     {$IFDEF FHIR_DATAELEMENT}TFhirDataElement,{$ENDIF}
+     {$IFDEF FHIR_DETECTEDISSUE}TFhirDetectedIssue,{$ENDIF}
+     {$IFDEF FHIR_DEVICE}TFhirDevice,{$ENDIF}
+     {$IFDEF FHIR_DEVICECOMPONENT}TFhirDeviceComponent,{$ENDIF}
+     {$IFDEF FHIR_DEVICEMETRIC}TFhirDeviceMetric,{$ENDIF}
+     {$IFDEF FHIR_DEVICEREQUEST}TFhirDeviceRequest,{$ENDIF}
+     {$IFDEF FHIR_DEVICEUSESTATEMENT}TFhirDeviceUseStatement,{$ENDIF}
+     {$IFDEF FHIR_DIAGNOSTICREPORT}TFhirDiagnosticReport,{$ENDIF}
+     {$IFDEF FHIR_DOCUMENTMANIFEST}TFhirDocumentManifest,{$ENDIF}
+     {$IFDEF FHIR_DOCUMENTREFERENCE}TFhirDocumentReference,{$ENDIF}
+     {$IFDEF FHIR_ELIGIBILITYREQUEST}TFhirEligibilityRequest,{$ENDIF}
+     {$IFDEF FHIR_ELIGIBILITYRESPONSE}TFhirEligibilityResponse,{$ENDIF}
+     {$IFDEF FHIR_ENCOUNTER}TFhirEncounter,{$ENDIF}
+     {$IFDEF FHIR_ENDPOINT}TFhirEndpoint,{$ENDIF}
+     {$IFDEF FHIR_ENROLLMENTREQUEST}TFhirEnrollmentRequest,{$ENDIF}
+     {$IFDEF FHIR_ENROLLMENTRESPONSE}TFhirEnrollmentResponse,{$ENDIF}
+     {$IFDEF FHIR_EPISODEOFCARE}TFhirEpisodeOfCare,{$ENDIF}
+     {$IFDEF FHIR_EXPANSIONPROFILE}TFhirExpansionProfile,{$ENDIF}
+     {$IFDEF FHIR_EXPLANATIONOFBENEFIT}TFhirExplanationOfBenefit,{$ENDIF}
+     {$IFDEF FHIR_FAMILYMEMBERHISTORY}TFhirFamilyMemberHistory,{$ENDIF}
+     {$IFDEF FHIR_FLAG}TFhirFlag,{$ENDIF}
+     {$IFDEF FHIR_GOAL}TFhirGoal,{$ENDIF}
+     {$IFDEF FHIR_GRAPHDEFINITION}TFhirGraphDefinition,{$ENDIF}
+     {$IFDEF FHIR_GROUP}TFhirGroup,{$ENDIF}
+     {$IFDEF FHIR_GUIDANCERESPONSE}TFhirGuidanceResponse,{$ENDIF}
+     {$IFDEF FHIR_HEALTHCARESERVICE}TFhirHealthcareService,{$ENDIF}
+     {$IFDEF FHIR_IMAGINGMANIFEST}TFhirImagingManifest,{$ENDIF}
+     {$IFDEF FHIR_IMAGINGSTUDY}TFhirImagingStudy,{$ENDIF}
+     {$IFDEF FHIR_IMMUNIZATION}TFhirImmunization,{$ENDIF}
+     {$IFDEF FHIR_IMMUNIZATIONRECOMMENDATION}TFhirImmunizationRecommendation,{$ENDIF}
+     {$IFDEF FHIR_IMPLEMENTATIONGUIDE}TFhirImplementationGuide,{$ENDIF}
+     {$IFDEF FHIR_LIBRARY}TFhirLibrary,{$ENDIF}
+     {$IFDEF FHIR_LINKAGE}TFhirLinkage,{$ENDIF}
+     {$IFDEF FHIR_LIST}TFhirList,{$ENDIF}
+     {$IFDEF FHIR_LOCATION}TFhirLocation,{$ENDIF}
+     {$IFDEF FHIR_MEASURE}TFhirMeasure,{$ENDIF}
+     {$IFDEF FHIR_MEASUREREPORT}TFhirMeasureReport,{$ENDIF}
+     {$IFDEF FHIR_MEDIA}TFhirMedia,{$ENDIF}
+     {$IFDEF FHIR_MEDICATION}TFhirMedication,{$ENDIF}
+     {$IFDEF FHIR_MEDICATIONADMINISTRATION}TFhirMedicationAdministration,{$ENDIF}
+     {$IFDEF FHIR_MEDICATIONDISPENSE}TFhirMedicationDispense,{$ENDIF}
+     {$IFDEF FHIR_MEDICATIONREQUEST}TFhirMedicationRequest,{$ENDIF}
+     {$IFDEF FHIR_MEDICATIONSTATEMENT}TFhirMedicationStatement,{$ENDIF}
+     {$IFDEF FHIR_MESSAGEDEFINITION}TFhirMessageDefinition,{$ENDIF}
+     {$IFDEF FHIR_MESSAGEHEADER}TFhirMessageHeader,{$ENDIF}
+     {$IFDEF FHIR_NAMINGSYSTEM}TFhirNamingSystem,{$ENDIF}
+     {$IFDEF FHIR_NUTRITIONORDER}TFhirNutritionOrder,{$ENDIF}
+     {$IFDEF FHIR_OBSERVATION}TFhirObservation,{$ENDIF}
+     {$IFDEF FHIR_OPERATIONDEFINITION}TFhirOperationDefinition,{$ENDIF}
+     {$IFDEF FHIR_OPERATIONOUTCOME}TFhirOperationOutcome,{$ENDIF}
+     {$IFDEF FHIR_ORGANIZATION}TFhirOrganization,{$ENDIF}
+     {$IFDEF FHIR_PARAMETERS}TFhirParameters,{$ENDIF}
+     {$IFDEF FHIR_PATIENT}TFhirPatient,{$ENDIF}
+     {$IFDEF FHIR_PAYMENTNOTICE}TFhirPaymentNotice,{$ENDIF}
+     {$IFDEF FHIR_PAYMENTRECONCILIATION}TFhirPaymentReconciliation,{$ENDIF}
+     {$IFDEF FHIR_PERSON}TFhirPerson,{$ENDIF}
+     {$IFDEF FHIR_PLANDEFINITION}TFhirPlanDefinition,{$ENDIF}
+     {$IFDEF FHIR_PRACTITIONER}TFhirPractitioner,{$ENDIF}
+     {$IFDEF FHIR_PRACTITIONERROLE}TFhirPractitionerRole,{$ENDIF}
+     {$IFDEF FHIR_PROCEDURE}TFhirProcedure,{$ENDIF}
+     {$IFDEF FHIR_PROCEDUREREQUEST}TFhirProcedureRequest,{$ENDIF}
+     {$IFDEF FHIR_PROCESSREQUEST}TFhirProcessRequest,{$ENDIF}
+     {$IFDEF FHIR_PROCESSRESPONSE}TFhirProcessResponse,{$ENDIF}
+     {$IFDEF FHIR_PROVENANCE}TFhirProvenance,{$ENDIF}
+     {$IFDEF FHIR_QUESTIONNAIRE}TFhirQuestionnaire,{$ENDIF}
+     {$IFDEF FHIR_QUESTIONNAIRERESPONSE}TFhirQuestionnaireResponse,{$ENDIF}
+     {$IFDEF FHIR_REFERRALREQUEST}TFhirReferralRequest,{$ENDIF}
+     {$IFDEF FHIR_RELATEDPERSON}TFhirRelatedPerson,{$ENDIF}
+     {$IFDEF FHIR_REQUESTGROUP}TFhirRequestGroup,{$ENDIF}
+     {$IFDEF FHIR_RESEARCHSTUDY}TFhirResearchStudy,{$ENDIF}
+     {$IFDEF FHIR_RESEARCHSUBJECT}TFhirResearchSubject,{$ENDIF}
+     {$IFDEF FHIR_RISKASSESSMENT}TFhirRiskAssessment,{$ENDIF}
+     {$IFDEF FHIR_SCHEDULE}TFhirSchedule,{$ENDIF}
+     {$IFDEF FHIR_SEARCHPARAMETER}TFhirSearchParameter,{$ENDIF}
+     {$IFDEF FHIR_SEQUENCE}TFhirSequence,{$ENDIF}
+     {$IFDEF FHIR_SERVICEDEFINITION}TFhirServiceDefinition,{$ENDIF}
+     {$IFDEF FHIR_SLOT}TFhirSlot,{$ENDIF}
+     {$IFDEF FHIR_SPECIMEN}TFhirSpecimen,{$ENDIF}
+     {$IFDEF FHIR_STRUCTUREDEFINITION}TFhirStructureDefinition,{$ENDIF}
+     {$IFDEF FHIR_STRUCTUREMAP}TFhirStructureMap,{$ENDIF}
+     {$IFDEF FHIR_SUBSCRIPTION}TFhirSubscription,{$ENDIF}
+     {$IFDEF FHIR_SUBSTANCE}TFhirSubstance,{$ENDIF}
+     {$IFDEF FHIR_SUPPLYDELIVERY}TFhirSupplyDelivery,{$ENDIF}
+     {$IFDEF FHIR_SUPPLYREQUEST}TFhirSupplyRequest,{$ENDIF}
+     {$IFDEF FHIR_TASK}TFhirTask,{$ENDIF}
+     {$IFDEF FHIR_TESTREPORT}TFhirTestReport,{$ENDIF}
+     {$IFDEF FHIR_TESTSCRIPT}TFhirTestScript,{$ENDIF}
+     {$IFDEF FHIR_VALUESET}TFhirValueSet,{$ENDIF}
+     {$IFDEF FHIR_VISIONPRESCRIPTION}TFhirVisionPrescription,{$ENDIF}
      nil);
      
-  ALL_RESOURCE_TYPES = [frtAccount,
-     frtActivityDefinition,
-     frtAdverseEvent,
-     frtAllergyIntolerance,
-     frtAppointment,
-     frtAppointmentResponse,
-     frtAuditEvent,
-     frtBasic,
-     frtBinary,
-     frtBodySite,
-     frtBundle,
-     frtCapabilityStatement,
-     frtCarePlan,
-     frtCareTeam,
-     frtChargeItem,
-     frtClaim,
-     frtClaimResponse,
-     frtClinicalImpression,
-     frtCodeSystem,
-     frtCommunication,
-     frtCommunicationRequest,
-     frtCompartmentDefinition,
-     frtComposition,
-     frtConceptMap,
-     frtCondition,
-     frtConsent,
-     frtContract,
-     frtCoverage,
-     frtDataElement,
-     frtDetectedIssue,
-     frtDevice,
-     frtDeviceComponent,
-     frtDeviceMetric,
-     frtDeviceRequest,
-     frtDeviceUseStatement,
-     frtDiagnosticReport,
-     frtDocumentManifest,
-     frtDocumentReference,
-     frtEligibilityRequest,
-     frtEligibilityResponse,
-     frtEncounter,
-     frtEndpoint,
-     frtEnrollmentRequest,
-     frtEnrollmentResponse,
-     frtEpisodeOfCare,
-     frtExpansionProfile,
-     frtExplanationOfBenefit,
-     frtFamilyMemberHistory,
-     frtFlag,
-     frtGoal,
-     frtGraphDefinition,
-     frtGroup,
-     frtGuidanceResponse,
-     frtHealthcareService,
-     frtImagingManifest,
-     frtImagingStudy,
-     frtImmunization,
-     frtImmunizationRecommendation,
-     frtImplementationGuide,
-     frtLibrary,
-     frtLinkage,
-     frtList,
-     frtLocation,
-     frtMeasure,
-     frtMeasureReport,
-     frtMedia,
-     frtMedication,
-     frtMedicationAdministration,
-     frtMedicationDispense,
-     frtMedicationRequest,
-     frtMedicationStatement,
-     frtMessageDefinition,
-     frtMessageHeader,
-     frtNamingSystem,
-     frtNutritionOrder,
-     frtObservation,
-     frtOperationDefinition,
-     frtOperationOutcome,
-     frtOrganization,
-     frtParameters,
-     frtPatient,
-     frtPaymentNotice,
-     frtPaymentReconciliation,
-     frtPerson,
-     frtPlanDefinition,
-     frtPractitioner,
-     frtPractitionerRole,
-     frtProcedure,
-     frtProcedureRequest,
-     frtProcessRequest,
-     frtProcessResponse,
-     frtProvenance,
-     frtQuestionnaire,
-     frtQuestionnaireResponse,
-     frtReferralRequest,
-     frtRelatedPerson,
-     frtRequestGroup,
-     frtResearchStudy,
-     frtResearchSubject,
-     frtRiskAssessment,
-     frtSchedule,
-     frtSearchParameter,
-     frtSequence,
-     frtServiceDefinition,
-     frtSlot,
-     frtSpecimen,
-     frtStructureDefinition,
-     frtStructureMap,
-     frtSubscription,
-     frtSubstance,
-     frtSupplyDelivery,
-     frtSupplyRequest,
-     frtTask,
-     frtTestReport,
-     frtTestScript,
-     frtValueSet,
-     frtVisionPrescription,
+  ALL_RESOURCE_TYPES = [{$IFDEF FHIR_ACCOUNT}frtAccount,{$ENDIF}
+     {$IFDEF FHIR_ACTIVITYDEFINITION}frtActivityDefinition,{$ENDIF}
+     {$IFDEF FHIR_ADVERSEEVENT}frtAdverseEvent,{$ENDIF}
+     {$IFDEF FHIR_ALLERGYINTOLERANCE}frtAllergyIntolerance,{$ENDIF}
+     {$IFDEF FHIR_APPOINTMENT}frtAppointment,{$ENDIF}
+     {$IFDEF FHIR_APPOINTMENTRESPONSE}frtAppointmentResponse,{$ENDIF}
+     {$IFDEF FHIR_AUDITEVENT}frtAuditEvent,{$ENDIF}
+     {$IFDEF FHIR_BASIC}frtBasic,{$ENDIF}
+     {$IFDEF FHIR_BINARY}frtBinary,{$ENDIF}
+     {$IFDEF FHIR_BODYSITE}frtBodySite,{$ENDIF}
+     {$IFDEF FHIR_BUNDLE}frtBundle,{$ENDIF}
+     {$IFDEF FHIR_CAPABILITYSTATEMENT}frtCapabilityStatement,{$ENDIF}
+     {$IFDEF FHIR_CAREPLAN}frtCarePlan,{$ENDIF}
+     {$IFDEF FHIR_CARETEAM}frtCareTeam,{$ENDIF}
+     {$IFDEF FHIR_CHARGEITEM}frtChargeItem,{$ENDIF}
+     {$IFDEF FHIR_CLAIM}frtClaim,{$ENDIF}
+     {$IFDEF FHIR_CLAIMRESPONSE}frtClaimResponse,{$ENDIF}
+     {$IFDEF FHIR_CLINICALIMPRESSION}frtClinicalImpression,{$ENDIF}
+     {$IFDEF FHIR_CODESYSTEM}frtCodeSystem,{$ENDIF}
+     {$IFDEF FHIR_COMMUNICATION}frtCommunication,{$ENDIF}
+     {$IFDEF FHIR_COMMUNICATIONREQUEST}frtCommunicationRequest,{$ENDIF}
+     {$IFDEF FHIR_COMPARTMENTDEFINITION}frtCompartmentDefinition,{$ENDIF}
+     {$IFDEF FHIR_COMPOSITION}frtComposition,{$ENDIF}
+     {$IFDEF FHIR_CONCEPTMAP}frtConceptMap,{$ENDIF}
+     {$IFDEF FHIR_CONDITION}frtCondition,{$ENDIF}
+     {$IFDEF FHIR_CONSENT}frtConsent,{$ENDIF}
+     {$IFDEF FHIR_CONTRACT}frtContract,{$ENDIF}
+     {$IFDEF FHIR_COVERAGE}frtCoverage,{$ENDIF}
+     {$IFDEF FHIR_DATAELEMENT}frtDataElement,{$ENDIF}
+     {$IFDEF FHIR_DETECTEDISSUE}frtDetectedIssue,{$ENDIF}
+     {$IFDEF FHIR_DEVICE}frtDevice,{$ENDIF}
+     {$IFDEF FHIR_DEVICECOMPONENT}frtDeviceComponent,{$ENDIF}
+     {$IFDEF FHIR_DEVICEMETRIC}frtDeviceMetric,{$ENDIF}
+     {$IFDEF FHIR_DEVICEREQUEST}frtDeviceRequest,{$ENDIF}
+     {$IFDEF FHIR_DEVICEUSESTATEMENT}frtDeviceUseStatement,{$ENDIF}
+     {$IFDEF FHIR_DIAGNOSTICREPORT}frtDiagnosticReport,{$ENDIF}
+     {$IFDEF FHIR_DOCUMENTMANIFEST}frtDocumentManifest,{$ENDIF}
+     {$IFDEF FHIR_DOCUMENTREFERENCE}frtDocumentReference,{$ENDIF}
+     {$IFDEF FHIR_ELIGIBILITYREQUEST}frtEligibilityRequest,{$ENDIF}
+     {$IFDEF FHIR_ELIGIBILITYRESPONSE}frtEligibilityResponse,{$ENDIF}
+     {$IFDEF FHIR_ENCOUNTER}frtEncounter,{$ENDIF}
+     {$IFDEF FHIR_ENDPOINT}frtEndpoint,{$ENDIF}
+     {$IFDEF FHIR_ENROLLMENTREQUEST}frtEnrollmentRequest,{$ENDIF}
+     {$IFDEF FHIR_ENROLLMENTRESPONSE}frtEnrollmentResponse,{$ENDIF}
+     {$IFDEF FHIR_EPISODEOFCARE}frtEpisodeOfCare,{$ENDIF}
+     {$IFDEF FHIR_EXPANSIONPROFILE}frtExpansionProfile,{$ENDIF}
+     {$IFDEF FHIR_EXPLANATIONOFBENEFIT}frtExplanationOfBenefit,{$ENDIF}
+     {$IFDEF FHIR_FAMILYMEMBERHISTORY}frtFamilyMemberHistory,{$ENDIF}
+     {$IFDEF FHIR_FLAG}frtFlag,{$ENDIF}
+     {$IFDEF FHIR_GOAL}frtGoal,{$ENDIF}
+     {$IFDEF FHIR_GRAPHDEFINITION}frtGraphDefinition,{$ENDIF}
+     {$IFDEF FHIR_GROUP}frtGroup,{$ENDIF}
+     {$IFDEF FHIR_GUIDANCERESPONSE}frtGuidanceResponse,{$ENDIF}
+     {$IFDEF FHIR_HEALTHCARESERVICE}frtHealthcareService,{$ENDIF}
+     {$IFDEF FHIR_IMAGINGMANIFEST}frtImagingManifest,{$ENDIF}
+     {$IFDEF FHIR_IMAGINGSTUDY}frtImagingStudy,{$ENDIF}
+     {$IFDEF FHIR_IMMUNIZATION}frtImmunization,{$ENDIF}
+     {$IFDEF FHIR_IMMUNIZATIONRECOMMENDATION}frtImmunizationRecommendation,{$ENDIF}
+     {$IFDEF FHIR_IMPLEMENTATIONGUIDE}frtImplementationGuide,{$ENDIF}
+     {$IFDEF FHIR_LIBRARY}frtLibrary,{$ENDIF}
+     {$IFDEF FHIR_LINKAGE}frtLinkage,{$ENDIF}
+     {$IFDEF FHIR_LIST}frtList,{$ENDIF}
+     {$IFDEF FHIR_LOCATION}frtLocation,{$ENDIF}
+     {$IFDEF FHIR_MEASURE}frtMeasure,{$ENDIF}
+     {$IFDEF FHIR_MEASUREREPORT}frtMeasureReport,{$ENDIF}
+     {$IFDEF FHIR_MEDIA}frtMedia,{$ENDIF}
+     {$IFDEF FHIR_MEDICATION}frtMedication,{$ENDIF}
+     {$IFDEF FHIR_MEDICATIONADMINISTRATION}frtMedicationAdministration,{$ENDIF}
+     {$IFDEF FHIR_MEDICATIONDISPENSE}frtMedicationDispense,{$ENDIF}
+     {$IFDEF FHIR_MEDICATIONREQUEST}frtMedicationRequest,{$ENDIF}
+     {$IFDEF FHIR_MEDICATIONSTATEMENT}frtMedicationStatement,{$ENDIF}
+     {$IFDEF FHIR_MESSAGEDEFINITION}frtMessageDefinition,{$ENDIF}
+     {$IFDEF FHIR_MESSAGEHEADER}frtMessageHeader,{$ENDIF}
+     {$IFDEF FHIR_NAMINGSYSTEM}frtNamingSystem,{$ENDIF}
+     {$IFDEF FHIR_NUTRITIONORDER}frtNutritionOrder,{$ENDIF}
+     {$IFDEF FHIR_OBSERVATION}frtObservation,{$ENDIF}
+     {$IFDEF FHIR_OPERATIONDEFINITION}frtOperationDefinition,{$ENDIF}
+     {$IFDEF FHIR_OPERATIONOUTCOME}frtOperationOutcome,{$ENDIF}
+     {$IFDEF FHIR_ORGANIZATION}frtOrganization,{$ENDIF}
+     {$IFDEF FHIR_PARAMETERS}frtParameters,{$ENDIF}
+     {$IFDEF FHIR_PATIENT}frtPatient,{$ENDIF}
+     {$IFDEF FHIR_PAYMENTNOTICE}frtPaymentNotice,{$ENDIF}
+     {$IFDEF FHIR_PAYMENTRECONCILIATION}frtPaymentReconciliation,{$ENDIF}
+     {$IFDEF FHIR_PERSON}frtPerson,{$ENDIF}
+     {$IFDEF FHIR_PLANDEFINITION}frtPlanDefinition,{$ENDIF}
+     {$IFDEF FHIR_PRACTITIONER}frtPractitioner,{$ENDIF}
+     {$IFDEF FHIR_PRACTITIONERROLE}frtPractitionerRole,{$ENDIF}
+     {$IFDEF FHIR_PROCEDURE}frtProcedure,{$ENDIF}
+     {$IFDEF FHIR_PROCEDUREREQUEST}frtProcedureRequest,{$ENDIF}
+     {$IFDEF FHIR_PROCESSREQUEST}frtProcessRequest,{$ENDIF}
+     {$IFDEF FHIR_PROCESSRESPONSE}frtProcessResponse,{$ENDIF}
+     {$IFDEF FHIR_PROVENANCE}frtProvenance,{$ENDIF}
+     {$IFDEF FHIR_QUESTIONNAIRE}frtQuestionnaire,{$ENDIF}
+     {$IFDEF FHIR_QUESTIONNAIRERESPONSE}frtQuestionnaireResponse,{$ENDIF}
+     {$IFDEF FHIR_REFERRALREQUEST}frtReferralRequest,{$ENDIF}
+     {$IFDEF FHIR_RELATEDPERSON}frtRelatedPerson,{$ENDIF}
+     {$IFDEF FHIR_REQUESTGROUP}frtRequestGroup,{$ENDIF}
+     {$IFDEF FHIR_RESEARCHSTUDY}frtResearchStudy,{$ENDIF}
+     {$IFDEF FHIR_RESEARCHSUBJECT}frtResearchSubject,{$ENDIF}
+     {$IFDEF FHIR_RISKASSESSMENT}frtRiskAssessment,{$ENDIF}
+     {$IFDEF FHIR_SCHEDULE}frtSchedule,{$ENDIF}
+     {$IFDEF FHIR_SEARCHPARAMETER}frtSearchParameter,{$ENDIF}
+     {$IFDEF FHIR_SEQUENCE}frtSequence,{$ENDIF}
+     {$IFDEF FHIR_SERVICEDEFINITION}frtServiceDefinition,{$ENDIF}
+     {$IFDEF FHIR_SLOT}frtSlot,{$ENDIF}
+     {$IFDEF FHIR_SPECIMEN}frtSpecimen,{$ENDIF}
+     {$IFDEF FHIR_STRUCTUREDEFINITION}frtStructureDefinition,{$ENDIF}
+     {$IFDEF FHIR_STRUCTUREMAP}frtStructureMap,{$ENDIF}
+     {$IFDEF FHIR_SUBSCRIPTION}frtSubscription,{$ENDIF}
+     {$IFDEF FHIR_SUBSTANCE}frtSubstance,{$ENDIF}
+     {$IFDEF FHIR_SUPPLYDELIVERY}frtSupplyDelivery,{$ENDIF}
+     {$IFDEF FHIR_SUPPLYREQUEST}frtSupplyRequest,{$ENDIF}
+     {$IFDEF FHIR_TASK}frtTask,{$ENDIF}
+     {$IFDEF FHIR_TESTREPORT}frtTestReport,{$ENDIF}
+     {$IFDEF FHIR_TESTSCRIPT}frtTestScript,{$ENDIF}
+     {$IFDEF FHIR_VALUESET}frtValueSet,{$ENDIF}
+     {$IFDEF FHIR_VISIONPRESCRIPTION}frtVisionPrescription,{$ENDIF}
      frtCustom];
      
-  ALL_RESOURCE_TYPE_NAMES : Array [TFHIRResourceType] of String = ('--None--', 'Account',
-     'ActivityDefinition',
-     'AdverseEvent',
-     'AllergyIntolerance',
-     'Appointment',
-     'AppointmentResponse',
-     'AuditEvent',
-     'Basic',
-     'Binary',
-     'BodySite',
-     'Bundle',
-     'CapabilityStatement',
-     'CarePlan',
-     'CareTeam',
-     'ChargeItem',
-     'Claim',
-     'ClaimResponse',
-     'ClinicalImpression',
-     'CodeSystem',
-     'Communication',
-     'CommunicationRequest',
-     'CompartmentDefinition',
-     'Composition',
-     'ConceptMap',
-     'Condition',
-     'Consent',
-     'Contract',
-     'Coverage',
-     'DataElement',
-     'DetectedIssue',
-     'Device',
-     'DeviceComponent',
-     'DeviceMetric',
-     'DeviceRequest',
-     'DeviceUseStatement',
-     'DiagnosticReport',
-     'DocumentManifest',
-     'DocumentReference',
-     'EligibilityRequest',
-     'EligibilityResponse',
-     'Encounter',
-     'Endpoint',
-     'EnrollmentRequest',
-     'EnrollmentResponse',
-     'EpisodeOfCare',
-     'ExpansionProfile',
-     'ExplanationOfBenefit',
-     'FamilyMemberHistory',
-     'Flag',
-     'Goal',
-     'GraphDefinition',
-     'Group',
-     'GuidanceResponse',
-     'HealthcareService',
-     'ImagingManifest',
-     'ImagingStudy',
-     'Immunization',
-     'ImmunizationRecommendation',
-     'ImplementationGuide',
-     'Library',
-     'Linkage',
-     'List',
-     'Location',
-     'Measure',
-     'MeasureReport',
-     'Media',
-     'Medication',
-     'MedicationAdministration',
-     'MedicationDispense',
-     'MedicationRequest',
-     'MedicationStatement',
-     'MessageDefinition',
-     'MessageHeader',
-     'NamingSystem',
-     'NutritionOrder',
-     'Observation',
-     'OperationDefinition',
-     'OperationOutcome',
-     'Organization',
-     'Parameters',
-     'Patient',
-     'PaymentNotice',
-     'PaymentReconciliation',
-     'Person',
-     'PlanDefinition',
-     'Practitioner',
-     'PractitionerRole',
-     'Procedure',
-     'ProcedureRequest',
-     'ProcessRequest',
-     'ProcessResponse',
-     'Provenance',
-     'Questionnaire',
-     'QuestionnaireResponse',
-     'ReferralRequest',
-     'RelatedPerson',
-     'RequestGroup',
-     'ResearchStudy',
-     'ResearchSubject',
-     'RiskAssessment',
-     'Schedule',
-     'SearchParameter',
-     'Sequence',
-     'ServiceDefinition',
-     'Slot',
-     'Specimen',
-     'StructureDefinition',
-     'StructureMap',
-     'Subscription',
-     'Substance',
-     'SupplyDelivery',
-     'SupplyRequest',
-     'Task',
-     'TestReport',
-     'TestScript',
-     'ValueSet',
-     'VisionPrescription',
+  ALL_RESOURCE_TYPE_NAMES : Array [TFHIRResourceType] of String = ('--None--', {$IFDEF FHIR_ACCOUNT}'Account',{$ENDIF}
+     {$IFDEF FHIR_ACTIVITYDEFINITION}'ActivityDefinition',{$ENDIF}
+     {$IFDEF FHIR_ADVERSEEVENT}'AdverseEvent',{$ENDIF}
+     {$IFDEF FHIR_ALLERGYINTOLERANCE}'AllergyIntolerance',{$ENDIF}
+     {$IFDEF FHIR_APPOINTMENT}'Appointment',{$ENDIF}
+     {$IFDEF FHIR_APPOINTMENTRESPONSE}'AppointmentResponse',{$ENDIF}
+     {$IFDEF FHIR_AUDITEVENT}'AuditEvent',{$ENDIF}
+     {$IFDEF FHIR_BASIC}'Basic',{$ENDIF}
+     {$IFDEF FHIR_BINARY}'Binary',{$ENDIF}
+     {$IFDEF FHIR_BODYSITE}'BodySite',{$ENDIF}
+     {$IFDEF FHIR_BUNDLE}'Bundle',{$ENDIF}
+     {$IFDEF FHIR_CAPABILITYSTATEMENT}'CapabilityStatement',{$ENDIF}
+     {$IFDEF FHIR_CAREPLAN}'CarePlan',{$ENDIF}
+     {$IFDEF FHIR_CARETEAM}'CareTeam',{$ENDIF}
+     {$IFDEF FHIR_CHARGEITEM}'ChargeItem',{$ENDIF}
+     {$IFDEF FHIR_CLAIM}'Claim',{$ENDIF}
+     {$IFDEF FHIR_CLAIMRESPONSE}'ClaimResponse',{$ENDIF}
+     {$IFDEF FHIR_CLINICALIMPRESSION}'ClinicalImpression',{$ENDIF}
+     {$IFDEF FHIR_CODESYSTEM}'CodeSystem',{$ENDIF}
+     {$IFDEF FHIR_COMMUNICATION}'Communication',{$ENDIF}
+     {$IFDEF FHIR_COMMUNICATIONREQUEST}'CommunicationRequest',{$ENDIF}
+     {$IFDEF FHIR_COMPARTMENTDEFINITION}'CompartmentDefinition',{$ENDIF}
+     {$IFDEF FHIR_COMPOSITION}'Composition',{$ENDIF}
+     {$IFDEF FHIR_CONCEPTMAP}'ConceptMap',{$ENDIF}
+     {$IFDEF FHIR_CONDITION}'Condition',{$ENDIF}
+     {$IFDEF FHIR_CONSENT}'Consent',{$ENDIF}
+     {$IFDEF FHIR_CONTRACT}'Contract',{$ENDIF}
+     {$IFDEF FHIR_COVERAGE}'Coverage',{$ENDIF}
+     {$IFDEF FHIR_DATAELEMENT}'DataElement',{$ENDIF}
+     {$IFDEF FHIR_DETECTEDISSUE}'DetectedIssue',{$ENDIF}
+     {$IFDEF FHIR_DEVICE}'Device',{$ENDIF}
+     {$IFDEF FHIR_DEVICECOMPONENT}'DeviceComponent',{$ENDIF}
+     {$IFDEF FHIR_DEVICEMETRIC}'DeviceMetric',{$ENDIF}
+     {$IFDEF FHIR_DEVICEREQUEST}'DeviceRequest',{$ENDIF}
+     {$IFDEF FHIR_DEVICEUSESTATEMENT}'DeviceUseStatement',{$ENDIF}
+     {$IFDEF FHIR_DIAGNOSTICREPORT}'DiagnosticReport',{$ENDIF}
+     {$IFDEF FHIR_DOCUMENTMANIFEST}'DocumentManifest',{$ENDIF}
+     {$IFDEF FHIR_DOCUMENTREFERENCE}'DocumentReference',{$ENDIF}
+     {$IFDEF FHIR_ELIGIBILITYREQUEST}'EligibilityRequest',{$ENDIF}
+     {$IFDEF FHIR_ELIGIBILITYRESPONSE}'EligibilityResponse',{$ENDIF}
+     {$IFDEF FHIR_ENCOUNTER}'Encounter',{$ENDIF}
+     {$IFDEF FHIR_ENDPOINT}'Endpoint',{$ENDIF}
+     {$IFDEF FHIR_ENROLLMENTREQUEST}'EnrollmentRequest',{$ENDIF}
+     {$IFDEF FHIR_ENROLLMENTRESPONSE}'EnrollmentResponse',{$ENDIF}
+     {$IFDEF FHIR_EPISODEOFCARE}'EpisodeOfCare',{$ENDIF}
+     {$IFDEF FHIR_EXPANSIONPROFILE}'ExpansionProfile',{$ENDIF}
+     {$IFDEF FHIR_EXPLANATIONOFBENEFIT}'ExplanationOfBenefit',{$ENDIF}
+     {$IFDEF FHIR_FAMILYMEMBERHISTORY}'FamilyMemberHistory',{$ENDIF}
+     {$IFDEF FHIR_FLAG}'Flag',{$ENDIF}
+     {$IFDEF FHIR_GOAL}'Goal',{$ENDIF}
+     {$IFDEF FHIR_GRAPHDEFINITION}'GraphDefinition',{$ENDIF}
+     {$IFDEF FHIR_GROUP}'Group',{$ENDIF}
+     {$IFDEF FHIR_GUIDANCERESPONSE}'GuidanceResponse',{$ENDIF}
+     {$IFDEF FHIR_HEALTHCARESERVICE}'HealthcareService',{$ENDIF}
+     {$IFDEF FHIR_IMAGINGMANIFEST}'ImagingManifest',{$ENDIF}
+     {$IFDEF FHIR_IMAGINGSTUDY}'ImagingStudy',{$ENDIF}
+     {$IFDEF FHIR_IMMUNIZATION}'Immunization',{$ENDIF}
+     {$IFDEF FHIR_IMMUNIZATIONRECOMMENDATION}'ImmunizationRecommendation',{$ENDIF}
+     {$IFDEF FHIR_IMPLEMENTATIONGUIDE}'ImplementationGuide',{$ENDIF}
+     {$IFDEF FHIR_LIBRARY}'Library',{$ENDIF}
+     {$IFDEF FHIR_LINKAGE}'Linkage',{$ENDIF}
+     {$IFDEF FHIR_LIST}'List',{$ENDIF}
+     {$IFDEF FHIR_LOCATION}'Location',{$ENDIF}
+     {$IFDEF FHIR_MEASURE}'Measure',{$ENDIF}
+     {$IFDEF FHIR_MEASUREREPORT}'MeasureReport',{$ENDIF}
+     {$IFDEF FHIR_MEDIA}'Media',{$ENDIF}
+     {$IFDEF FHIR_MEDICATION}'Medication',{$ENDIF}
+     {$IFDEF FHIR_MEDICATIONADMINISTRATION}'MedicationAdministration',{$ENDIF}
+     {$IFDEF FHIR_MEDICATIONDISPENSE}'MedicationDispense',{$ENDIF}
+     {$IFDEF FHIR_MEDICATIONREQUEST}'MedicationRequest',{$ENDIF}
+     {$IFDEF FHIR_MEDICATIONSTATEMENT}'MedicationStatement',{$ENDIF}
+     {$IFDEF FHIR_MESSAGEDEFINITION}'MessageDefinition',{$ENDIF}
+     {$IFDEF FHIR_MESSAGEHEADER}'MessageHeader',{$ENDIF}
+     {$IFDEF FHIR_NAMINGSYSTEM}'NamingSystem',{$ENDIF}
+     {$IFDEF FHIR_NUTRITIONORDER}'NutritionOrder',{$ENDIF}
+     {$IFDEF FHIR_OBSERVATION}'Observation',{$ENDIF}
+     {$IFDEF FHIR_OPERATIONDEFINITION}'OperationDefinition',{$ENDIF}
+     {$IFDEF FHIR_OPERATIONOUTCOME}'OperationOutcome',{$ENDIF}
+     {$IFDEF FHIR_ORGANIZATION}'Organization',{$ENDIF}
+     {$IFDEF FHIR_PARAMETERS}'Parameters',{$ENDIF}
+     {$IFDEF FHIR_PATIENT}'Patient',{$ENDIF}
+     {$IFDEF FHIR_PAYMENTNOTICE}'PaymentNotice',{$ENDIF}
+     {$IFDEF FHIR_PAYMENTRECONCILIATION}'PaymentReconciliation',{$ENDIF}
+     {$IFDEF FHIR_PERSON}'Person',{$ENDIF}
+     {$IFDEF FHIR_PLANDEFINITION}'PlanDefinition',{$ENDIF}
+     {$IFDEF FHIR_PRACTITIONER}'Practitioner',{$ENDIF}
+     {$IFDEF FHIR_PRACTITIONERROLE}'PractitionerRole',{$ENDIF}
+     {$IFDEF FHIR_PROCEDURE}'Procedure',{$ENDIF}
+     {$IFDEF FHIR_PROCEDUREREQUEST}'ProcedureRequest',{$ENDIF}
+     {$IFDEF FHIR_PROCESSREQUEST}'ProcessRequest',{$ENDIF}
+     {$IFDEF FHIR_PROCESSRESPONSE}'ProcessResponse',{$ENDIF}
+     {$IFDEF FHIR_PROVENANCE}'Provenance',{$ENDIF}
+     {$IFDEF FHIR_QUESTIONNAIRE}'Questionnaire',{$ENDIF}
+     {$IFDEF FHIR_QUESTIONNAIRERESPONSE}'QuestionnaireResponse',{$ENDIF}
+     {$IFDEF FHIR_REFERRALREQUEST}'ReferralRequest',{$ENDIF}
+     {$IFDEF FHIR_RELATEDPERSON}'RelatedPerson',{$ENDIF}
+     {$IFDEF FHIR_REQUESTGROUP}'RequestGroup',{$ENDIF}
+     {$IFDEF FHIR_RESEARCHSTUDY}'ResearchStudy',{$ENDIF}
+     {$IFDEF FHIR_RESEARCHSUBJECT}'ResearchSubject',{$ENDIF}
+     {$IFDEF FHIR_RISKASSESSMENT}'RiskAssessment',{$ENDIF}
+     {$IFDEF FHIR_SCHEDULE}'Schedule',{$ENDIF}
+     {$IFDEF FHIR_SEARCHPARAMETER}'SearchParameter',{$ENDIF}
+     {$IFDEF FHIR_SEQUENCE}'Sequence',{$ENDIF}
+     {$IFDEF FHIR_SERVICEDEFINITION}'ServiceDefinition',{$ENDIF}
+     {$IFDEF FHIR_SLOT}'Slot',{$ENDIF}
+     {$IFDEF FHIR_SPECIMEN}'Specimen',{$ENDIF}
+     {$IFDEF FHIR_STRUCTUREDEFINITION}'StructureDefinition',{$ENDIF}
+     {$IFDEF FHIR_STRUCTUREMAP}'StructureMap',{$ENDIF}
+     {$IFDEF FHIR_SUBSCRIPTION}'Subscription',{$ENDIF}
+     {$IFDEF FHIR_SUBSTANCE}'Substance',{$ENDIF}
+     {$IFDEF FHIR_SUPPLYDELIVERY}'SupplyDelivery',{$ENDIF}
+     {$IFDEF FHIR_SUPPLYREQUEST}'SupplyRequest',{$ENDIF}
+     {$IFDEF FHIR_TASK}'Task',{$ENDIF}
+     {$IFDEF FHIR_TESTREPORT}'TestReport',{$ENDIF}
+     {$IFDEF FHIR_TESTSCRIPT}'TestScript',{$ENDIF}
+     {$IFDEF FHIR_VALUESET}'ValueSet',{$ENDIF}
+     {$IFDEF FHIR_VISIONPRESCRIPTION}'VisionPrescription',{$ENDIF}
      'Custom');
      
+{$IFDEF FHIR_ACCOUNT}
   CODES_TSearchParamsAccount : Array[TSearchParamsAccount] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'balance', 'identifier', 'name', 'owner', 'patient', 'period', 'status', 'subject', 'type');
+{$ENDIF}
+{$IFDEF FHIR_ACTIVITYDEFINITION}
   CODES_TSearchParamsActivityDefinition : Array[TSearchParamsActivityDefinition] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'composed-of', 'date', 'depends-on', 'derived-from', 'description', 'effective', 'identifier', 'jurisdiction', 'name', 'predecessor', 'publisher', 'status', 'successor', 'title', 'topic', 'url', 'version');
+{$ENDIF}
+{$IFDEF FHIR_ADVERSEEVENT}
   CODES_TSearchParamsAdverseEvent : Array[TSearchParamsAdverseEvent] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'category', 'date', 'location', 'reaction', 'recorder', 'seriousness', 'study', 'subject', 'substance', 'type');
+{$ENDIF}
+{$IFDEF FHIR_ALLERGYINTOLERANCE}
   CODES_TSearchParamsAllergyIntolerance : Array[TSearchParamsAllergyIntolerance] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'asserter', 'category', 'clinical-status', 'code', 'criticality', 'date', 'identifier', 'last-date', 'manifestation', 'onset', 'patient', 'recorder', 'route', 'severity', 'type', 'verification-status');
+{$ENDIF}
+{$IFDEF FHIR_APPOINTMENT}
   CODES_TSearchParamsAppointment : Array[TSearchParamsAppointment] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'actor', 'appointment-type', 'date', 'identifier', 'incomingreferral', 'location', 'part-status', 'patient', 'practitioner', 'service-type', 'status');
+{$ENDIF}
+{$IFDEF FHIR_APPOINTMENTRESPONSE}
   CODES_TSearchParamsAppointmentResponse : Array[TSearchParamsAppointmentResponse] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'actor', 'appointment', 'identifier', 'location', 'part-status', 'patient', 'practitioner');
+{$ENDIF}
+{$IFDEF FHIR_AUDITEVENT}
   CODES_TSearchParamsAuditEvent : Array[TSearchParamsAuditEvent] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'action', 'address', 'agent', 'agent-name', 'agent-role', 'altid', 'date', 'entity', 'entity-id', 'entity-name', 'entity-role', 'entity-type', 'outcome', 'patient', 'policy', 'site', 'source', 'subtype', 'type', 'user');
+{$ENDIF}
+{$IFDEF FHIR_BASIC}
   CODES_TSearchParamsBasic : Array[TSearchParamsBasic] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'author', 'code', 'created', 'identifier', 'patient', 'subject');
+{$ENDIF}
+{$IFDEF FHIR_BINARY}
   CODES_TSearchParamsBinary : Array[TSearchParamsBinary] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', 'contenttype');
+{$ENDIF}
+{$IFDEF FHIR_BODYSITE}
   CODES_TSearchParamsBodySite : Array[TSearchParamsBodySite] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'code', 'identifier', 'patient');
+{$ENDIF}
+{$IFDEF FHIR_BUNDLE}
   CODES_TSearchParamsBundle : Array[TSearchParamsBundle] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', 'composition', 'identifier', 'message', 'type');
+{$ENDIF}
+{$IFDEF FHIR_CAPABILITYSTATEMENT}
   CODES_TSearchParamsCapabilityStatement : Array[TSearchParamsCapabilityStatement] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'date', 'description', 'event', 'fhirversion', 'format', 'guide', 'jurisdiction', 'mode', 'name', 'publisher', 'resource', 'resource-profile', 'security-service', 'software', 'status', 'supported-profile', 'title', 'url', 'version');
+{$ENDIF}
+{$IFDEF FHIR_CAREPLAN}
   CODES_TSearchParamsCarePlan : Array[TSearchParamsCarePlan] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'activity-code', 'activity-date', 'activity-reference', 'based-on', 'care-team', 'category', 'condition', 'context', 'date', 'definition', 'encounter', 'goal', 'identifier', 'intent', 'part-of', 'patient', 'performer', 'replaces', 'status', 'subject');
+{$ENDIF}
+{$IFDEF FHIR_CARETEAM}
   CODES_TSearchParamsCareTeam : Array[TSearchParamsCareTeam] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'category', 'context', 'date', 'encounter', 'identifier', 'participant', 'patient', 'status', 'subject');
+{$ENDIF}
+{$IFDEF FHIR_CHARGEITEM}
   CODES_TSearchParamsChargeItem : Array[TSearchParamsChargeItem] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'account', 'code', 'context', 'entered-date', 'enterer', 'factor-override', 'identifier', 'occurrence', 'participant-actor', 'participant-role', 'patient', 'performing-organization', 'price-override', 'quantity', 'requesting-organization', 'service', 'subject');
+{$ENDIF}
+{$IFDEF FHIR_CLAIM}
   CODES_TSearchParamsClaim : Array[TSearchParamsClaim] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'care-team', 'created', 'encounter', 'enterer', 'facility', 'identifier', 'insurer', 'organization', 'patient', 'payee', 'priority', 'provider', 'use');
+{$ENDIF}
+{$IFDEF FHIR_CLAIMRESPONSE}
   CODES_TSearchParamsClaimResponse : Array[TSearchParamsClaimResponse] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'created', 'disposition', 'identifier', 'insurer', 'outcome', 'patient', 'payment-date', 'request', 'request-provider');
+{$ENDIF}
+{$IFDEF FHIR_CLINICALIMPRESSION}
   CODES_TSearchParamsClinicalImpression : Array[TSearchParamsClinicalImpression] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'action', 'assessor', 'context', 'date', 'finding-code', 'finding-ref', 'identifier', 'investigation', 'patient', 'previous', 'problem', 'status', 'subject');
+{$ENDIF}
+{$IFDEF FHIR_CODESYSTEM}
   CODES_TSearchParamsCodeSystem : Array[TSearchParamsCodeSystem] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'code', 'content-mode', 'date', 'description', 'identifier', 'jurisdiction', 'language', 'name', 'publisher', 'status', 'system', 'title', 'url', 'version');
+{$ENDIF}
+{$IFDEF FHIR_COMMUNICATION}
   CODES_TSearchParamsCommunication : Array[TSearchParamsCommunication] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'based-on', 'category', 'context', 'definition', 'encounter', 'identifier', 'medium', 'part-of', 'patient', 'received', 'recipient', 'sender', 'sent', 'status', 'subject');
+{$ENDIF}
+{$IFDEF FHIR_COMMUNICATIONREQUEST}
   CODES_TSearchParamsCommunicationRequest : Array[TSearchParamsCommunicationRequest] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'authored', 'based-on', 'category', 'context', 'encounter', 'group-identifier', 'identifier', 'medium', 'occurrence', 'patient', 'priority', 'recipient', 'replaces', 'requester', 'sender', 'status', 'subject');
+{$ENDIF}
+{$IFDEF FHIR_COMPARTMENTDEFINITION}
   CODES_TSearchParamsCompartmentDefinition : Array[TSearchParamsCompartmentDefinition] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'code', 'date', 'description', 'jurisdiction', 'name', 'publisher', 'resource', 'status', 'title', 'url');
+{$ENDIF}
+{$IFDEF FHIR_COMPOSITION}
   CODES_TSearchParamsComposition : Array[TSearchParamsComposition] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'attester', 'author', 'class', 'confidentiality', 'context', 'date', 'encounter', 'entry', 'identifier', 'patient', 'period', 'related-id', 'related-ref', 'section', 'status', 'subject', 'title', 'type');
+{$ENDIF}
+{$IFDEF FHIR_CONCEPTMAP}
   CODES_TSearchParamsConceptMap : Array[TSearchParamsConceptMap] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'date', 'dependson', 'description', 'identifier', 'jurisdiction', 'name', 'other', 'product', 'publisher', 'source', 'source-code', 'source-system', 'source-uri', 'status', 'target', 'target-code', 'target-system', 'target-uri', 'title', 'url', 'version');
+{$ENDIF}
+{$IFDEF FHIR_CONDITION}
   CODES_TSearchParamsCondition : Array[TSearchParamsCondition] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'abatement-age', 'abatement-boolean', 'abatement-date', 'abatement-string', 'asserted-date', 'asserter', 'body-site', 'category', 'clinical-status', 'code', 'context', 'encounter', 'evidence', 'evidence-detail', 'identifier', 'onset-age', 'onset-date', 'onset-info', 'patient', 'severity', 'stage', 'subject', 'verification-status');
+{$ENDIF}
+{$IFDEF FHIR_CONSENT}
   CODES_TSearchParamsConsent : Array[TSearchParamsConsent] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'action', 'actor', 'category', 'consentor', 'data', 'date', 'identifier', 'organization', 'patient', 'period', 'purpose', 'securitylabel', 'source', 'status');
+{$ENDIF}
+{$IFDEF FHIR_CONTRACT}
   CODES_TSearchParamsContract : Array[TSearchParamsContract] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'agent', 'authority', 'domain', 'identifier', 'issued', 'patient', 'signer', 'subject', 'term-topic');
+{$ENDIF}
+{$IFDEF FHIR_COVERAGE}
   CODES_TSearchParamsCoverage : Array[TSearchParamsCoverage] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'beneficiary', 'class', 'dependent', 'group', 'identifier', 'payor', 'plan', 'policy-holder', 'sequence', 'subclass', 'subgroup', 'subplan', 'subscriber', 'type');
+{$ENDIF}
+{$IFDEF FHIR_DATAELEMENT}
   CODES_TSearchParamsDataElement : Array[TSearchParamsDataElement] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'code', 'date', 'description', 'identifier', 'jurisdiction', 'name', 'objectClass', 'objectClassProperty', 'publisher', 'status', 'stringency', 'title', 'url', 'version');
+{$ENDIF}
+{$IFDEF FHIR_DETECTEDISSUE}
   CODES_TSearchParamsDetectedIssue : Array[TSearchParamsDetectedIssue] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'author', 'category', 'date', 'identifier', 'implicated', 'patient');
+{$ENDIF}
+{$IFDEF FHIR_DEVICE}
   CODES_TSearchParamsDevice : Array[TSearchParamsDevice] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'device-name', 'identifier', 'location', 'manufacturer', 'model', 'organization', 'patient', 'status', 'type', 'udi-carrier', 'udi-di', 'url');
+{$ENDIF}
+{$IFDEF FHIR_DEVICECOMPONENT}
   CODES_TSearchParamsDeviceComponent : Array[TSearchParamsDeviceComponent] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'identifier', 'parent', 'source', 'type');
+{$ENDIF}
+{$IFDEF FHIR_DEVICEMETRIC}
   CODES_TSearchParamsDeviceMetric : Array[TSearchParamsDeviceMetric] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'category', 'identifier', 'parent', 'source', 'type');
+{$ENDIF}
+{$IFDEF FHIR_DEVICEREQUEST}
   CODES_TSearchParamsDeviceRequest : Array[TSearchParamsDeviceRequest] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'authored-on', 'based-on', 'code', 'definition', 'device', 'encounter', 'event-date', 'group-identifier', 'identifier', 'intent', 'patient', 'performer', 'priorrequest', 'requester', 'status', 'subject');
+{$ENDIF}
+{$IFDEF FHIR_DEVICEUSESTATEMENT}
   CODES_TSearchParamsDeviceUseStatement : Array[TSearchParamsDeviceUseStatement] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'device', 'identifier', 'patient', 'subject');
+{$ENDIF}
+{$IFDEF FHIR_DIAGNOSTICREPORT}
   CODES_TSearchParamsDiagnosticReport : Array[TSearchParamsDiagnosticReport] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'based-on', 'category', 'code', 'context', 'date', 'diagnosis', 'encounter', 'identifier', 'image', 'issued', 'patient', 'performer', 'result', 'specimen', 'status', 'subject');
+{$ENDIF}
+{$IFDEF FHIR_DOCUMENTMANIFEST}
   CODES_TSearchParamsDocumentManifest : Array[TSearchParamsDocumentManifest] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'author', 'content-ref', 'created', 'description', 'identifier', 'patient', 'recipient', 'related-id', 'related-ref', 'source', 'status', 'subject', 'type');
+{$ENDIF}
+{$IFDEF FHIR_DOCUMENTREFERENCE}
   CODES_TSearchParamsDocumentReference : Array[TSearchParamsDocumentReference] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'authenticator', 'author', 'class', 'created', 'custodian', 'description', 'encounter', 'event', 'facility', 'format', 'identifier', 'indexed', 'language', 'location', 'patient', 'period', 'related-id', 'related-ref', 'relatesto', 'relation', 'relationship', 'securitylabel', 'setting', 'status', 'subject', 'type');
+{$ENDIF}
+{$IFDEF FHIR_ELIGIBILITYREQUEST}
   CODES_TSearchParamsEligibilityRequest : Array[TSearchParamsEligibilityRequest] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'created', 'enterer', 'facility', 'identifier', 'organization', 'patient', 'provider');
+{$ENDIF}
+{$IFDEF FHIR_ELIGIBILITYRESPONSE}
   CODES_TSearchParamsEligibilityResponse : Array[TSearchParamsEligibilityResponse] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'created', 'disposition', 'identifier', 'insurer', 'outcome', 'request', 'request-organization', 'request-provider');
+{$ENDIF}
+{$IFDEF FHIR_ENCOUNTER}
   CODES_TSearchParamsEncounter : Array[TSearchParamsEncounter] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'appointment', 'class', 'date', 'diagnosis', 'episodeofcare', 'identifier', 'incomingreferral', 'length', 'location', 'location-period', 'part-of', 'participant', 'participant-type', 'patient', 'practitioner', 'reason', 'service-provider', 'special-arrangement', 'status', 'subject', 'type');
+{$ENDIF}
+{$IFDEF FHIR_ENDPOINT}
   CODES_TSearchParamsEndpoint : Array[TSearchParamsEndpoint] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'connection-type', 'identifier', 'name', 'organization', 'payload-type', 'status');
+{$ENDIF}
+{$IFDEF FHIR_ENROLLMENTREQUEST}
   CODES_TSearchParamsEnrollmentRequest : Array[TSearchParamsEnrollmentRequest] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'identifier', 'organization', 'patient', 'subject');
+{$ENDIF}
+{$IFDEF FHIR_ENROLLMENTRESPONSE}
   CODES_TSearchParamsEnrollmentResponse : Array[TSearchParamsEnrollmentResponse] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'identifier', 'organization', 'request');
+{$ENDIF}
+{$IFDEF FHIR_EPISODEOFCARE}
   CODES_TSearchParamsEpisodeOfCare : Array[TSearchParamsEpisodeOfCare] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'care-manager', 'condition', 'date', 'identifier', 'incomingreferral', 'organization', 'patient', 'status', 'type');
+{$ENDIF}
+{$IFDEF FHIR_EXPANSIONPROFILE}
   CODES_TSearchParamsExpansionProfile : Array[TSearchParamsExpansionProfile] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'date', 'description', 'identifier', 'jurisdiction', 'name', 'publisher', 'status', 'url', 'version');
+{$ENDIF}
+{$IFDEF FHIR_EXPLANATIONOFBENEFIT}
   CODES_TSearchParamsExplanationOfBenefit : Array[TSearchParamsExplanationOfBenefit] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'care-team', 'claim', 'coverage', 'created', 'disposition', 'encounter', 'enterer', 'facility', 'identifier', 'organization', 'patient', 'payee', 'provider');
+{$ENDIF}
+{$IFDEF FHIR_FAMILYMEMBERHISTORY}
   CODES_TSearchParamsFamilyMemberHistory : Array[TSearchParamsFamilyMemberHistory] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'code', 'date', 'definition', 'gender', 'identifier', 'patient', 'relationship', 'status');
+{$ENDIF}
+{$IFDEF FHIR_FLAG}
   CODES_TSearchParamsFlag : Array[TSearchParamsFlag] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'author', 'date', 'encounter', 'identifier', 'patient', 'subject');
+{$ENDIF}
+{$IFDEF FHIR_GOAL}
   CODES_TSearchParamsGoal : Array[TSearchParamsGoal] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'category', 'identifier', 'patient', 'start-date', 'status', 'subject', 'target-date');
+{$ENDIF}
+{$IFDEF FHIR_GRAPHDEFINITION}
   CODES_TSearchParamsGraphDefinition : Array[TSearchParamsGraphDefinition] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'date', 'description', 'jurisdiction', 'name', 'publisher', 'start', 'status', 'url', 'version');
+{$ENDIF}
+{$IFDEF FHIR_GROUP}
   CODES_TSearchParamsGroup : Array[TSearchParamsGroup] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'actual', 'characteristic', 'characteristic-value', 'code', 'exclude', 'identifier', 'member', 'type', 'value');
+{$ENDIF}
+{$IFDEF FHIR_GUIDANCERESPONSE}
   CODES_TSearchParamsGuidanceResponse : Array[TSearchParamsGuidanceResponse] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'identifier', 'patient', 'request', 'subject');
+{$ENDIF}
+{$IFDEF FHIR_HEALTHCARESERVICE}
   CODES_TSearchParamsHealthcareService : Array[TSearchParamsHealthcareService] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'active', 'category', 'characteristic', 'endpoint', 'identifier', 'location', 'name', 'organization', 'programname', 'type');
+{$ENDIF}
+{$IFDEF FHIR_IMAGINGMANIFEST}
   CODES_TSearchParamsImagingManifest : Array[TSearchParamsImagingManifest] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'author', 'authoring-time', 'endpoint', 'identifier', 'imaging-study', 'patient', 'selected-study');
+{$ENDIF}
+{$IFDEF FHIR_IMAGINGSTUDY}
   CODES_TSearchParamsImagingStudy : Array[TSearchParamsImagingStudy] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'accession', 'basedon', 'bodysite', 'context', 'dicom-class', 'endpoint', 'identifier', 'modality', 'patient', 'performer', 'reason', 'series', 'started', 'study', 'uid');
+{$ENDIF}
+{$IFDEF FHIR_IMMUNIZATION}
   CODES_TSearchParamsImmunization : Array[TSearchParamsImmunization] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'date', 'dose-sequence', 'identifier', 'location', 'lot-number', 'manufacturer', 'notgiven', 'patient', 'practitioner', 'reaction', 'reaction-date', 'reason', 'reason-not-given', 'status', 'vaccine-code');
+{$ENDIF}
+{$IFDEF FHIR_IMMUNIZATIONRECOMMENDATION}
   CODES_TSearchParamsImmunizationRecommendation : Array[TSearchParamsImmunizationRecommendation] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'date', 'dose-number', 'dose-sequence', 'identifier', 'information', 'patient', 'status', 'support', 'target-disease', 'vaccine-type');
+{$ENDIF}
+{$IFDEF FHIR_IMPLEMENTATIONGUIDE}
   CODES_TSearchParamsImplementationGuide : Array[TSearchParamsImplementationGuide] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'date', 'dependency', 'description', 'experimental', 'jurisdiction', 'name', 'publisher', 'resource', 'status', 'url', 'version');
+{$ENDIF}
+{$IFDEF FHIR_LIBRARY}
   CODES_TSearchParamsLibrary : Array[TSearchParamsLibrary] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'composed-of', 'date', 'depends-on', 'derived-from', 'description', 'effective', 'identifier', 'jurisdiction', 'name', 'predecessor', 'publisher', 'status', 'successor', 'title', 'topic', 'url', 'version');
+{$ENDIF}
+{$IFDEF FHIR_LINKAGE}
   CODES_TSearchParamsLinkage : Array[TSearchParamsLinkage] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'author', 'item', 'source');
+{$ENDIF}
+{$IFDEF FHIR_LIST}
   CODES_TSearchParamsList : Array[TSearchParamsList] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'code', 'date', 'empty-reason', 'encounter', 'identifier', 'item', 'notes', 'patient', 'source', 'status', 'subject', 'title');
+{$ENDIF}
+{$IFDEF FHIR_LOCATION}
   CODES_TSearchParamsLocation : Array[TSearchParamsLocation] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'address', 'address-city', 'address-country', 'address-postalcode', 'address-state', 'address-use', 'endpoint', 'identifier', 'name', 'near', 'near-distance', 'operational-status', 'organization', 'partof', 'status', 'type');
+{$ENDIF}
+{$IFDEF FHIR_MEASURE}
   CODES_TSearchParamsMeasure : Array[TSearchParamsMeasure] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'composed-of', 'date', 'depends-on', 'derived-from', 'description', 'effective', 'identifier', 'jurisdiction', 'name', 'predecessor', 'publisher', 'status', 'successor', 'title', 'topic', 'url', 'version');
+{$ENDIF}
+{$IFDEF FHIR_MEASUREREPORT}
   CODES_TSearchParamsMeasureReport : Array[TSearchParamsMeasureReport] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'identifier', 'patient', 'status');
+{$ENDIF}
+{$IFDEF FHIR_MEDIA}
   CODES_TSearchParamsMedia : Array[TSearchParamsMedia] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'based-on', 'context', 'created', 'date', 'device', 'identifier', 'operator', 'patient', 'site', 'subject', 'subtype', 'type', 'view');
+{$ENDIF}
+{$IFDEF FHIR_MEDICATION}
   CODES_TSearchParamsMedication : Array[TSearchParamsMedication] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'code', 'container', 'form', 'ingredient', 'ingredient-code', 'manufacturer', 'over-the-counter', 'package-item', 'package-item-code', 'status');
+{$ENDIF}
+{$IFDEF FHIR_MEDICATIONADMINISTRATION}
   CODES_TSearchParamsMedicationAdministration : Array[TSearchParamsMedicationAdministration] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'code', 'context', 'device', 'effective-time', 'identifier', 'medication', 'not-given', 'patient', 'performer', 'prescription', 'reason-given', 'reason-not-given', 'status', 'subject');
+{$ENDIF}
+{$IFDEF FHIR_MEDICATIONDISPENSE}
   CODES_TSearchParamsMedicationDispense : Array[TSearchParamsMedicationDispense] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'code', 'context', 'destination', 'identifier', 'medication', 'patient', 'performer', 'prescription', 'receiver', 'responsibleparty', 'status', 'subject', 'type', 'whenhandedover', 'whenprepared');
+{$ENDIF}
+{$IFDEF FHIR_MEDICATIONREQUEST}
   CODES_TSearchParamsMedicationRequest : Array[TSearchParamsMedicationRequest] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'authoredon', 'category', 'code', 'context', 'date', 'identifier', 'intended-dispenser', 'intent', 'medication', 'patient', 'priority', 'requester', 'status', 'subject');
+{$ENDIF}
+{$IFDEF FHIR_MEDICATIONSTATEMENT}
   CODES_TSearchParamsMedicationStatement : Array[TSearchParamsMedicationStatement] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'category', 'code', 'context', 'effective', 'identifier', 'medication', 'part-of', 'patient', 'source', 'status', 'subject');
+{$ENDIF}
+{$IFDEF FHIR_MESSAGEDEFINITION}
   CODES_TSearchParamsMessageDefinition : Array[TSearchParamsMessageDefinition] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'category', 'date', 'description', 'event', 'focus', 'identifier', 'jurisdiction', 'name', 'publisher', 'status', 'title', 'url', 'version');
+{$ENDIF}
+{$IFDEF FHIR_MESSAGEHEADER}
   CODES_TSearchParamsMessageHeader : Array[TSearchParamsMessageHeader] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'author', 'code', 'destination', 'destination-uri', 'enterer', 'event', 'focus', 'receiver', 'response-id', 'responsible', 'sender', 'source', 'source-uri', 'target', 'timestamp');
+{$ENDIF}
+{$IFDEF FHIR_NAMINGSYSTEM}
   CODES_TSearchParamsNamingSystem : Array[TSearchParamsNamingSystem] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'contact', 'date', 'description', 'id-type', 'jurisdiction', 'kind', 'name', 'period', 'publisher', 'replaced-by', 'responsible', 'status', 'telecom', 'type', 'value');
+{$ENDIF}
+{$IFDEF FHIR_NUTRITIONORDER}
   CODES_TSearchParamsNutritionOrder : Array[TSearchParamsNutritionOrder] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'additive', 'datetime', 'encounter', 'formula', 'identifier', 'oraldiet', 'patient', 'provider', 'status', 'supplement');
+{$ENDIF}
+{$IFDEF FHIR_OBSERVATION}
   CODES_TSearchParamsObservation : Array[TSearchParamsObservation] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'based-on', 'category', 'code', 'code-value-concept', 'code-value-date', 'code-value-quantity', 'code-value-string', 'combo-code', 'combo-code-value-concept', 'combo-code-value-quantity', 'combo-data-absent-reason', 'combo-value-concept', 'combo-value-quantity', 'component-code', 'component-code-value-concept', 'component-code-value-quantity', 'component-data-absent-reason', 'component-value-concept', 'component-value-quantity', 'context', 'data-absent-reason', 'date', 'device', 'encounter', 'identifier', 'method', 'patient', 'performer', 'related', 'related-target', 'related-type', 'specimen', 'status', 'subject', 'value-concept', 'value-date', 'value-quantity', 'value-string');
+{$ENDIF}
+{$IFDEF FHIR_OPERATIONDEFINITION}
   CODES_TSearchParamsOperationDefinition : Array[TSearchParamsOperationDefinition] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'base', 'code', 'date', 'description', 'instance', 'jurisdiction', 'kind', 'name', 'param-profile', 'publisher', 'status', 'system', 'type', 'url', 'version');
+{$ENDIF}
+{$IFDEF FHIR_OPERATIONOUTCOME}
   CODES_TSearchParamsOperationOutcome : Array[TSearchParamsOperationOutcome] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text');
+{$ENDIF}
+{$IFDEF FHIR_ORGANIZATION}
   CODES_TSearchParamsOrganization : Array[TSearchParamsOrganization] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'active', 'address', 'address-city', 'address-country', 'address-postalcode', 'address-state', 'address-use', 'endpoint', 'identifier', 'name', 'partof', 'phonetic', 'type');
+{$ENDIF}
+{$IFDEF FHIR_PATIENT}
   CODES_TSearchParamsPatient : Array[TSearchParamsPatient] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'active', 'address', 'address-city', 'address-country', 'address-postalcode', 'address-state', 'address-use', 'animal-breed', 'animal-species', 'birthdate', 'death-date', 'deceased', 'email', 'family', 'gender', 'general-practitioner', 'given', 'identifier', 'language', 'link', 'name', 'organization', 'phone', 'phonetic', 'telecom');
+{$ENDIF}
+{$IFDEF FHIR_PAYMENTNOTICE}
   CODES_TSearchParamsPaymentNotice : Array[TSearchParamsPaymentNotice] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'created', 'identifier', 'organization', 'payment-status', 'provider', 'request', 'response', 'statusdate');
+{$ENDIF}
+{$IFDEF FHIR_PAYMENTRECONCILIATION}
   CODES_TSearchParamsPaymentReconciliation : Array[TSearchParamsPaymentReconciliation] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'created', 'disposition', 'identifier', 'organization', 'outcome', 'request', 'request-organization', 'request-provider');
+{$ENDIF}
+{$IFDEF FHIR_PERSON}
   CODES_TSearchParamsPerson : Array[TSearchParamsPerson] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'address', 'address-city', 'address-country', 'address-postalcode', 'address-state', 'address-use', 'birthdate', 'email', 'gender', 'identifier', 'link', 'name', 'organization', 'patient', 'phone', 'phonetic', 'practitioner', 'relatedperson', 'telecom');
+{$ENDIF}
+{$IFDEF FHIR_PLANDEFINITION}
   CODES_TSearchParamsPlanDefinition : Array[TSearchParamsPlanDefinition] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'composed-of', 'date', 'depends-on', 'derived-from', 'description', 'effective', 'identifier', 'jurisdiction', 'name', 'predecessor', 'publisher', 'status', 'successor', 'title', 'topic', 'url', 'version');
+{$ENDIF}
+{$IFDEF FHIR_PRACTITIONER}
   CODES_TSearchParamsPractitioner : Array[TSearchParamsPractitioner] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'active', 'address', 'address-city', 'address-country', 'address-postalcode', 'address-state', 'address-use', 'communication', 'email', 'family', 'gender', 'given', 'identifier', 'name', 'phone', 'phonetic', 'telecom');
+{$ENDIF}
+{$IFDEF FHIR_PRACTITIONERROLE}
   CODES_TSearchParamsPractitionerRole : Array[TSearchParamsPractitionerRole] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'active', 'date', 'email', 'endpoint', 'identifier', 'location', 'organization', 'phone', 'practitioner', 'role', 'service', 'specialty', 'telecom');
+{$ENDIF}
+{$IFDEF FHIR_PROCEDURE}
   CODES_TSearchParamsProcedure : Array[TSearchParamsProcedure] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'based-on', 'category', 'code', 'context', 'date', 'definition', 'encounter', 'identifier', 'location', 'part-of', 'patient', 'performer', 'status', 'subject');
+{$ENDIF}
+{$IFDEF FHIR_PROCEDUREREQUEST}
   CODES_TSearchParamsProcedureRequest : Array[TSearchParamsProcedureRequest] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'authored', 'based-on', 'body-site', 'code', 'context', 'definition', 'encounter', 'identifier', 'intent', 'occurrence', 'patient', 'performer', 'performer-type', 'priority', 'replaces', 'requester', 'requisition', 'specimen', 'status', 'subject');
+{$ENDIF}
+{$IFDEF FHIR_PROCESSREQUEST}
   CODES_TSearchParamsProcessRequest : Array[TSearchParamsProcessRequest] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'action', 'identifier', 'organization', 'provider');
+{$ENDIF}
+{$IFDEF FHIR_PROCESSRESPONSE}
   CODES_TSearchParamsProcessResponse : Array[TSearchParamsProcessResponse] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'identifier', 'organization', 'request', 'request-organization', 'request-provider');
+{$ENDIF}
+{$IFDEF FHIR_PROVENANCE}
   CODES_TSearchParamsProvenance : Array[TSearchParamsProvenance] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'agent', 'agent-role', 'end', 'entity-id', 'entity-ref', 'location', 'patient', 'recorded', 'signature-type', 'start', 'target');
+{$ENDIF}
+{$IFDEF FHIR_QUESTIONNAIRE}
   CODES_TSearchParamsQuestionnaire : Array[TSearchParamsQuestionnaire] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'code', 'date', 'description', 'effective', 'identifier', 'jurisdiction', 'name', 'publisher', 'status', 'title', 'url', 'version');
+{$ENDIF}
+{$IFDEF FHIR_QUESTIONNAIRERESPONSE}
   CODES_TSearchParamsQuestionnaireResponse : Array[TSearchParamsQuestionnaireResponse] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'author', 'authored', 'based-on', 'context', 'identifier', 'parent', 'patient', 'questionnaire', 'source', 'status', 'subject');
+{$ENDIF}
+{$IFDEF FHIR_REFERRALREQUEST}
   CODES_TSearchParamsReferralRequest : Array[TSearchParamsReferralRequest] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'authored-on', 'based-on', 'context', 'definition', 'encounter', 'group-identifier', 'identifier', 'intent', 'occurrence-date', 'patient', 'priority', 'recipient', 'replaces', 'requester', 'service', 'specialty', 'status', 'subject', 'type');
+{$ENDIF}
+{$IFDEF FHIR_RELATEDPERSON}
   CODES_TSearchParamsRelatedPerson : Array[TSearchParamsRelatedPerson] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'active', 'address', 'address-city', 'address-country', 'address-postalcode', 'address-state', 'address-use', 'birthdate', 'email', 'gender', 'identifier', 'name', 'patient', 'phone', 'phonetic', 'telecom');
+{$ENDIF}
+{$IFDEF FHIR_REQUESTGROUP}
   CODES_TSearchParamsRequestGroup : Array[TSearchParamsRequestGroup] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'author', 'authored', 'context', 'definition', 'encounter', 'group-identifier', 'identifier', 'intent', 'participant', 'patient', 'priority', 'status', 'subject');
+{$ENDIF}
+{$IFDEF FHIR_RESEARCHSTUDY}
   CODES_TSearchParamsResearchStudy : Array[TSearchParamsResearchStudy] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'category', 'date', 'focus', 'identifier', 'jurisdiction', 'keyword', 'partof', 'principalinvestigator', 'protocol', 'site', 'sponsor', 'status', 'title');
+{$ENDIF}
+{$IFDEF FHIR_RESEARCHSUBJECT}
   CODES_TSearchParamsResearchSubject : Array[TSearchParamsResearchSubject] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'date', 'identifier', 'individual', 'patient', 'status');
+{$ENDIF}
+{$IFDEF FHIR_RISKASSESSMENT}
   CODES_TSearchParamsRiskAssessment : Array[TSearchParamsRiskAssessment] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'condition', 'date', 'encounter', 'identifier', 'method', 'patient', 'performer', 'probability', 'risk', 'subject');
+{$ENDIF}
+{$IFDEF FHIR_SCHEDULE}
   CODES_TSearchParamsSchedule : Array[TSearchParamsSchedule] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'active', 'actor', 'date', 'identifier', 'type');
+{$ENDIF}
+{$IFDEF FHIR_SEARCHPARAMETER}
   CODES_TSearchParamsSearchParameter : Array[TSearchParamsSearchParameter] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'base', 'code', 'component', 'date', 'derived-from', 'description', 'jurisdiction', 'name', 'publisher', 'status', 'target', 'type', 'url', 'version');
+{$ENDIF}
+{$IFDEF FHIR_SEQUENCE}
   CODES_TSearchParamsSequence : Array[TSearchParamsSequence] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'chromosome', 'coordinate', 'end', 'identifier', 'patient', 'start', 'type');
+{$ENDIF}
+{$IFDEF FHIR_SERVICEDEFINITION}
   CODES_TSearchParamsServiceDefinition : Array[TSearchParamsServiceDefinition] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'composed-of', 'date', 'depends-on', 'derived-from', 'description', 'effective', 'identifier', 'jurisdiction', 'name', 'predecessor', 'publisher', 'status', 'successor', 'title', 'topic', 'url', 'version');
+{$ENDIF}
+{$IFDEF FHIR_SLOT}
   CODES_TSearchParamsSlot : Array[TSearchParamsSlot] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'identifier', 'schedule', 'slot-type', 'start', 'status');
+{$ENDIF}
+{$IFDEF FHIR_SPECIMEN}
   CODES_TSearchParamsSpecimen : Array[TSearchParamsSpecimen] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'accession', 'bodysite', 'collected', 'collector', 'container', 'container-id', 'identifier', 'parent', 'patient', 'status', 'subject', 'type');
+{$ENDIF}
+{$IFDEF FHIR_STRUCTUREDEFINITION}
   CODES_TSearchParamsStructureDefinition : Array[TSearchParamsStructureDefinition] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'abstract', 'base', 'base-path', 'context-type', 'date', 'derivation', 'description', 'experimental', 'ext-context', 'identifier', 'jurisdiction', 'keyword', 'kind', 'name', 'path', 'publisher', 'status', 'title', 'type', 'url', 'valueset', 'version');
+{$ENDIF}
+{$IFDEF FHIR_STRUCTUREMAP}
   CODES_TSearchParamsStructureMap : Array[TSearchParamsStructureMap] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'date', 'description', 'identifier', 'jurisdiction', 'name', 'publisher', 'status', 'title', 'url', 'version');
+{$ENDIF}
+{$IFDEF FHIR_SUBSCRIPTION}
   CODES_TSearchParamsSubscription : Array[TSearchParamsSubscription] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'add-tag', 'contact', 'criteria', 'payload', 'status', 'type', 'url');
+{$ENDIF}
+{$IFDEF FHIR_SUBSTANCE}
   CODES_TSearchParamsSubstance : Array[TSearchParamsSubstance] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'category', 'code', 'container-identifier', 'expiry', 'identifier', 'quantity', 'status', 'substance-reference');
+{$ENDIF}
+{$IFDEF FHIR_SUPPLYDELIVERY}
   CODES_TSearchParamsSupplyDelivery : Array[TSearchParamsSupplyDelivery] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'identifier', 'patient', 'receiver', 'status', 'supplier');
+{$ENDIF}
+{$IFDEF FHIR_SUPPLYREQUEST}
   CODES_TSearchParamsSupplyRequest : Array[TSearchParamsSupplyRequest] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'category', 'date', 'identifier', 'requester', 'status', 'supplier');
+{$ENDIF}
+{$IFDEF FHIR_TASK}
   CODES_TSearchParamsTask : Array[TSearchParamsTask] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'authored-on', 'based-on', 'business-status', 'code', 'context', 'focus', 'group-identifier', 'identifier', 'intent', 'modified', 'organization', 'owner', 'part-of', 'patient', 'performer', 'period', 'priority', 'requester', 'status', 'subject');
+{$ENDIF}
+{$IFDEF FHIR_TESTREPORT}
   CODES_TSearchParamsTestReport : Array[TSearchParamsTestReport] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'identifier', 'issued', 'participant', 'result', 'tester', 'testscript');
+{$ENDIF}
+{$IFDEF FHIR_TESTSCRIPT}
   CODES_TSearchParamsTestScript : Array[TSearchParamsTestScript] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'date', 'description', 'identifier', 'jurisdiction', 'name', 'publisher', 'status', 'testscript-capability', 'title', 'url', 'version');
+{$ENDIF}
+{$IFDEF FHIR_VALUESET}
   CODES_TSearchParamsValueSet : Array[TSearchParamsValueSet] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'date', 'description', 'expansion', 'identifier', 'jurisdiction', 'name', 'publisher', 'reference', 'status', 'title', 'url', 'version');
+{$ENDIF}
+{$IFDEF FHIR_VISIONPRESCRIPTION}
   CODES_TSearchParamsVisionPrescription : Array[TSearchParamsVisionPrescription] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'datewritten', 'encounter', 'identifier', 'patient', 'prescriber');
+{$ENDIF}
   FHIR_GENERATED_VERSION = '3.0.1';
 
   FHIR_GENERATED_PUBLICATION = '3';

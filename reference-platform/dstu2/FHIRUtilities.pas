@@ -539,6 +539,14 @@ type
     function getUri : String;
   end;
 
+ TFhirReferenceHelper = class helper for TFhirReference
+  public
+    Constructor Create(ref : String); overload;
+    function isRelative : boolean;
+    function getType : String;
+    function getId : String;
+  end;
+
 const
   frtCodeSystem = frtValueSet;
   RestfulCapabilityModeServer = RestfulConformanceModeServer;
@@ -4429,4 +4437,46 @@ begin
   end;
 end;
 
+{ TFhirReferenceHelper }
+
+constructor TFhirReferenceHelper.Create(ref: String);
+begin
+  inherited Create;
+  reference := ref;
+end;
+
+function TFhirReferenceHelper.getId: String;
+var
+  parts : TArray<String>;
+begin
+  parts := reference.Split(['/']);
+  if (length(parts) < 2) then
+    result := ''
+  else if isResourceName(parts[length(parts) - 2]) then
+    result := parts[length(parts) - 1]
+  else if (length(parts) >= 4) and isResourceName(parts[length(parts) - 4]) then
+    result := parts[length(parts) - 3]
+  else
+    result := '';
+end;
+
+function TFhirReferenceHelper.getType: String;
+var
+  parts : TArray<String>;
+begin
+  parts := reference.Split(['/']);
+  if (length(parts) < 2) then
+    result := ''
+  else if isResourceName(parts[length(parts) - 2]) then
+    result := parts[length(parts) - 2]
+  else if (length(parts) >= 4) and isResourceName(parts[length(parts) - 4]) then
+    result := parts[length(parts) - 4]
+  else
+    result := '';
+end;
+
+function TFhirReferenceHelper.isRelative: boolean;
+begin
+  result := not (reference.startsWith('http:') or reference.startsWith('https:') or reference.startsWith('urn:uuid:') or reference.startsWith('urn:oid:'));
+end;
 end.

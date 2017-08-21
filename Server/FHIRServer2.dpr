@@ -188,8 +188,6 @@ uses
   XMLSupport in '..\reference-platform\Support\XMLSupport.pas',
   DigitalSignatures in '..\reference-platform\Support\DigitalSignatures.pas',
   UriServices in 'UriServices.pas',
-  CvxServices in 'CvxServices.pas',
-  USStateCodeServices in 'USStateCodeServices.pas',
   UniiServices in 'UniiServices.pas',
   RxNormServices in 'RxNormServices.pas',
   OIDSupport in '..\reference-platform\Support\OIDSupport.pas',
@@ -263,7 +261,8 @@ uses
   CDSHooksClientManager in '..\reference-platform\support\CDSHooksClientManager.pas',
   SCrypt in '..\Libraries\security\SCrypt.pas',
   TerminologyOperations in 'TerminologyOperations.pas',
-  WebSourceProvider in 'WebSourceProvider.pas';
+  WebSourceProvider in 'WebSourceProvider.pas',
+  FHIRIndexBase in '..\reference-platform\support\FHIRIndexBase.pas';
 
 begin
   logfile := Path([SystemTemp, 'fhirserver.log']);

@@ -67,8 +67,9 @@ uses
   XMLBuilder in '..\reference-platform\support\XMLBuilder.pas',
   libeay32 in '..\reference-platform\support\libeay32.pas',
   HMAC in '..\reference-platform\support\HMAC.pas',
-  JWT in '..\reference-platform\support\JWT.pas',
+  TurtleParser in '..\reference-platform\support\TurtleParser.pas',
   AdvStringMatches in '..\reference-platform\support\AdvStringMatches.pas',
+  JWT in '..\reference-platform\support\JWT.pas' {,
   FHIRParser in '..\reference-platform\support\FHIRParser.pas',
   FHIRParserXml in '..\reference-platform\r4\FHIRParserXml.pas',
   FHIRParserJson in '..\reference-platform\r4\FHIRParserJson.pas',
@@ -89,7 +90,7 @@ uses
   AdvZipParts in '..\reference-platform\support\AdvZipParts.pas',
   AdvZipUtilities in '..\reference-platform\support\AdvZipUtilities.pas',
   AdvZipWorkers in '..\reference-platform\support\AdvZipWorkers.pas',
-  InternetFetcher in '..\reference-platform\support\InternetFetcher.pas',
+  InternetFetcher in '..\reference-platform\support\InternetFetcher.pas'{,
   FHIRContext in '..\reference-platform\r4\FHIRContext.pas',
   FHIRSupport in '..\reference-platform\r4\FHIRSupport.pas',
   SCIMObjects in '..\reference-platform\support\SCIMObjects.pas',
@@ -102,8 +103,7 @@ uses
   FHIRMetaModel in '..\reference-platform\r4\FHIRMetaModel.pas',
   FHIRProfileUtilities in '..\reference-platform\r4\FHIRProfileUtilities.pas',
   AdvZipReaders in '..\reference-platform\support\AdvZipReaders.pas',
-  FhirPath in '..\reference-platform\r4\FhirPath.pas',
-  TurtleParser in '..\reference-platform\support\TurtleParser.pas';
+  FhirPath in '..\reference-platform\r4\FhirPath.pas'};
 
 var
   runner : ITestRunner;

@@ -151,15 +151,12 @@ uses
   AdvSignals in '..\..\reference-platform\support\AdvSignals.pas',
   SystemService in '..\..\reference-platform\support\SystemService.pas',
   ServiceController in '..\..\reference-platform\support\ServiceController.pas',
-  CvxServices in '..\..\Server\CvxServices.pas',
   ACIRServices in '..\..\Server\ACIRServices.pas',
-  CountryCodeServices in '..\..\Server\CountryCodeServices.pas',
   AreaCodeServices in '..\..\Server\AreaCodeServices.pas',
   IETFLanguageCodeServices in '..\..\Server\IETFLanguageCodeServices.pas',
   FHIRValueSetChecker in '..\..\Server\FHIRValueSetChecker.pas',
   TerminologyServerStore in '..\..\Server\TerminologyServerStore.pas',
   UriServices in '..\..\Server\UriServices.pas',
-  USStateCodeServices in '..\..\Server\USStateCodeServices.pas',
   ClosureManager in '..\..\Server\ClosureManager.pas',
   ServerAdaptations in '..\..\Server\ServerAdaptations.pas',
   FHIRValueSetExpander in '..\..\Server\FHIRValueSetExpander.pas',
@@ -205,7 +202,8 @@ uses
   FHIRSearch in '..\..\reference-platform\support\FHIRSearch.pas',
   TerminologyOperations in '..\..\Server\TerminologyOperations.pas',
   WebSourceProvider in '..\..\Server\WebSourceProvider.pas',
-  vpocversion in 'vpocversion.pas';
+  vpocversion in 'vpocversion.pas',
+  FHIRIndexBase in '..\..\reference-platform\support\FHIRIndexBase.pas';
 
 {$R *.res}
 

@@ -38,7 +38,7 @@ uses
   AdvObjects, DateSupport, DecimalSupport, AdvGenerics,
   FHIRBase, FHIRResources, FHIRLang, FHIRConstants, FHIRTypes,
   KDBManager, KDBDialects,
-  FHIRIndexManagers, FHIRUtilities, FHIRSearchSyntax, FHIRSupport, ServerUtilities, FHIRServerContext,
+  FHIRIndexBase, FHIRIndexManagers, FHIRUtilities, FHIRSearchSyntax, FHIRSupport, ServerUtilities, FHIRServerContext,
   UcumServices;
 
 type
@@ -939,13 +939,22 @@ begin
     bHandled := true;
     result:= processSearchFilter(value);
   end
+  else if (name = '_type') then
+  begin
+    types := value.Split([',']);
+    for a in types do
+      tl := tl+','+inttostr(TFHIRServerContext(ServerContext).ResConfig[a].key);
+    if (tl <> '') then
+      tl := tl.Substring(1);
+    result := result + '(ResourceTypeKey in ('+tl+'))';
+    bHandled := true;
+  end
   else if (name = '_text') then
   begin
-
     if Connection.owner.platform = kdbSQLServer then
-    result := '(IndexKey = '+inttostr(FIndexes.NarrativeIndex)+' and CONTAINS(Xhtml, '''+SQLWrapString(value)+'''))';
+      result := '(IndexKey = '+inttostr(FIndexes.NarrativeIndex)+' and CONTAINS(Xhtml, '''+SQLWrapString(value)+'''))';
     if Connection.owner.platform = kdbMySQL then
-    result := '(IndexKey = '+inttostr(FIndexes.NarrativeIndex)+' and MATCH (Xhtml) AGAINST ('''+SQLWrapString(value)+'''))';
+      result := '(IndexKey = '+inttostr(FIndexes.NarrativeIndex)+' and MATCH (Xhtml) AGAINST ('''+SQLWrapString(value)+'''))';
   end
   else if pos('.', name) > 0 then
   begin

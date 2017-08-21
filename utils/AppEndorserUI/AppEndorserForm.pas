@@ -14,7 +14,6 @@ uses
 
 type
   TAppEndorsementForm = class(TForm)
-    Panel1: TPanel;
     Panel2: TPanel;
     Panel3: TPanel;
     Panel4: TPanel;
@@ -22,9 +21,6 @@ type
     Panel6: TPanel;
     tvEntities: TTreeView;
     Splitter1: TSplitter;
-    Label1: TLabel;
-    btnConnect: TButton;
-    edtServer: TEdit;
     btnClose: TButton;
     Label2: TLabel;
     Label3: TLabel;
@@ -71,7 +67,6 @@ type
     edtOrgURL: TEdit;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
-    procedure btnConnectClick(Sender: TObject);
     procedure btnCloseClick(Sender: TObject);
     procedure tvEntitiesClick(Sender: TObject);
     procedure editorGeneralChange(Sender: TObject);
@@ -88,8 +83,7 @@ type
     procedure btnUploadClick(Sender: TObject);
   private
     { Private declarations }
-    FIni : TIniFile;
-    FClient : TFhirHTTPClient;
+    FClient : TFhirClient;
     FOrganizations : TFhirOrganizationList;
     FApplications : TFhirDeviceList;
     FEndorsements : TFhirObservationList;
@@ -124,6 +118,7 @@ type
     procedure saveEndorsement;
   public
     { Public declarations }
+    procedure Load(client : TFhirClient);
   end;
 
 var
@@ -140,63 +135,34 @@ const
   MAGIC_OBS = 'http://healthintersections.com.au/fhir/codes/obs';
   EXT_JWT = 'http://www.healthintersections.com.au/fhir/StructureDefinition/JWT';
 
-procedure TAppEndorsementForm.btnConnectClick(Sender: TObject);
-  procedure connected;
-  var
-    cs : IFMXCursorService;
+procedure TAppEndorsementForm.Load(client : TFhirClient);
+var
+  cs : IFMXCursorService;
+begin
+  FClient := client.link;
+  if TPlatformServices.Current.SupportsPlatformService(IFMXCursorService) then
+    cs := TPlatformServices.Current.GetPlatformService(IFMXCursorService) as IFMXCursorService
+  else
+    cs := nil;
+  if Assigned(CS) then
   begin
-    btnConnect.Text := 'Disconnect';
-    edtServer.ReadOnly := true;
-    edtServer.Enabled := false;
+    Cursor := CS.GetCursor;
+    CS.SetCursor(crHourGlass);
+  end;
+  try
+    ClearEndorsements;
+    ClearApplications;
+    ClearOrganizations;
+
     btnDownload.Enabled := true;
     btnUpload.Enabled := true;
-    if TPlatformServices.Current.SupportsPlatformService(IFMXCursorService) then
-      cs := TPlatformServices.Current.GetPlatformService(IFMXCursorService) as IFMXCursorService
-    else
-      cs := nil;
-    if Assigned(CS) then
-    begin
-      Cursor := CS.GetCursor;
-      CS.SetCursor(crHourGlass);
-    end;
-    try
-      LoadApplications;
-      LoadOrganizations;
-      LoadEndorsements;
-    finally
-      if Assigned(CS) then
-        cs.setCursor(Cursor);
-    end;
+    LoadApplications;
+    LoadOrganizations;
+    LoadEndorsements;
     EnableTreeView;
-  end;
-
-  procedure disconnected;
-  begin
-    btnConnect.Text := 'Connect';
-    edtServer.ReadOnly := false;
-    edtServer.Enabled := true;
-    btnDownload.Enabled := false;
-    btnUpload.Enabled := false;
-    disableTreeView;
-  end;
-begin
-  ClearEndorsements;
-  ClearApplications;
-  ClearOrganizations;
-  if edtServer.ReadOnly then
-  begin
-    FClient.Free;
-    FClient := nil;
-  end
-  else
-  begin
-    try
-      FClient := TFhirHTTPClient.create(nil, edtServer.Text, true);
-      connected;
-    except
-      disconnected;
-      raise;
-    end;
+  finally
+    if Assigned(CS) then
+      cs.setCursor(Cursor);
   end;
   tvEntitiesClick(nil);
 end;
@@ -510,8 +476,6 @@ end;
 
 procedure TAppEndorsementForm.FormCreate(Sender: TObject);
 begin
-  FIni := TIniFile.Create(IncludeTrailingPathDelimiter(SystemTemp) + 'settings.ini');
-  edtServer.Text := FIni.ReadString('Server', 'URL', 'http://test.fhir.org/r3');
   tabPages.ActiveTab := tabNull;
   disableTreeView;
 end;
@@ -523,11 +487,6 @@ begin
   ClearOrganizations;
   FActive.Free;
   FClient.Free;
-  try
-    FIni.WriteString('Server', 'URL', edtServer.Text);
-  except
-  end;
-  FIni.Free;
 end;
 
 procedure TAppEndorsementForm.LoadApplication(app: TFhirDevice);
@@ -811,7 +770,6 @@ procedure TAppEndorsementForm.SetIsDirty;
 begin
   btnSave.Enabled := true;
   btnClose.Text := 'Cancel';
-  btnConnect.Enabled := false;
   tvEntities.Enabled := false;
   btnNewOrganization.Enabled := false;
   btnLeftNewOrganization.Enabled := false;
@@ -824,7 +782,6 @@ procedure TAppEndorsementForm.SetNotDirty;
 begin
   btnSave.Enabled := false;
   btnClose.Text := 'Close';
-  btnConnect.Enabled := true;
   tvEntities.Enabled := true;
   btnNewOrganization.Enabled := true;
   btnLeftNewOrganization.Enabled := true;
@@ -903,19 +860,19 @@ begin
         with bnd.entryList.Append do
         begin
           resource := app.Link;
-          fullUrl := URLPath([edtServer.Text, 'Device', app.id]);
+          fullUrl := URLPath([FClient.address, 'Device', app.id]);
         end;
       for org in FOrganizations do
         with bnd.entryList.Append do
         begin
           resource := org.Link;
-          fullUrl := URLPath([edtServer.Text, 'Organization', org.id]);
+          fullUrl := URLPath([FClient.address, 'Organization', org.id]);
         end;
       for endorsement in FEndorsements do
         with bnd.entryList.Append do
         begin
           resource := endorsement.Link;
-          fullUrl := URLPath([edtServer.Text, 'Observation', endorsement.id]);
+          fullUrl := URLPath([FClient.address, 'Observation', endorsement.id]);
         end;
       TFHIRJsonComposer.composeFile(nil, bnd, 'en', sdPack.FileName, true);
     finally

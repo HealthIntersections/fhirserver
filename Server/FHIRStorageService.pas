@@ -37,7 +37,7 @@ uses
   AdvObjects, AdvGenerics, AdvStringMatches, AdvNames, AdvStringBuilders, AdvExceptions,
   KDBDialects, DateSupport,
 
-  FHIRBase, FHIRSupport, FHIRTypes, FHIRResources, FHIRConstants, FHIRUtilities, FHIRLang, FHIRClient, FHIRContext, FHIRXhtml, FHIRIndexInformation, FHIRParserBase,
+  FHIRBase, FHIRSupport, FHIRTypes, FHIRResources, FHIRConstants, FHIRUtilities, FHIRLang, FHIRClient, FHIRContext, FHIRXhtml, FHIRIndexInformation, FHIRParserBase, FHIRIndexBase,
   CDSHooksUtilities,
   FHIRValidator, ServerValidator, FHIRSubscriptionManager, ServerUtilities, FHIRServerConstants, FHIRIndexManagers;
 
@@ -170,11 +170,12 @@ Type
     function readResource(atype : TFhirResourceType; id : String) : TFHIRResource; override;
     function updateResource(resource : TFhirResource) : TFHIRResource; overload; override;
     procedure deleteResource(atype : TFhirResourceType; id : String); override;
-    function search(atype : TFhirResourceType; allRecords : boolean; params : TAdvStringMatch) : TFHIRBundle; overload; override;
+    function search(allRecords : boolean; params : TDictionary<String, String>) : TFHIRBundle; overload; override;
+    function search(atype : TFhirResourceType; allRecords : boolean; params : TDictionary<String, String>) : TFHIRBundle; overload; override;
     function search(atype : TFhirResourceType; allRecords : boolean; params : string) : TFHIRBundle; overload; override;
-    function searchPost(atype : TFhirResourceType; allRecords : boolean; params : TAdvStringMatch; resource : TFhirResource) : TFHIRBundle; override;
+    function searchPost(atype : TFhirResourceType; allRecords : boolean; params : TDictionary<String, String>; resource : TFhirResource) : TFHIRBundle; override;
     function operation(atype : TFhirResourceType; opName : String; params : TFhirParameters) : TFHIRResource; override;
-    function historyType(atype : TFhirResourceType; allRecords : boolean; params : TAdvStringMatch) : TFHIRBundle; override;
+    function historyType(atype : TFhirResourceType; allRecords : boolean; params : TDictionary<String, String>) : TFHIRBundle; override;
   end;
 
   TFHIRStorageService = class (TAdvObject)
@@ -1143,7 +1144,7 @@ begin
 end;
 
 function TFHIRInternalClient.historyType(atype: TFhirResourceType;
-  allRecords: boolean; params: TAdvStringMatch): TFHIRBundle;
+  allRecords: boolean; params: TDictionary<String, String>): TFHIRBundle;
 begin
   raise Exception.Create('Not done yet');
 
@@ -1164,7 +1165,7 @@ begin
 end;
 
 function TFHIRInternalClient.search(atype: TFhirResourceType;
-  allRecords: boolean; params: TAdvStringMatch): TFHIRBundle;
+  allRecords: boolean; params: TDictionary<String, String>): TFHIRBundle;
 begin
   raise Exception.Create('Not done yet');
 
@@ -1177,8 +1178,14 @@ begin
 
 end;
 
+function TFHIRInternalClient.search(allRecords: boolean;
+  params: TDictionary<String, String>): TFHIRBundle;
+begin
+  raise Exception.Create('Not done yet');
+end;
+
 function TFHIRInternalClient.searchPost(atype: TFhirResourceType;
-  allRecords: boolean; params: TAdvStringMatch;
+  allRecords: boolean; params: TDictionary<String, String>;
   resource: TFhirResource): TFHIRBundle;
 begin
   raise Exception.Create('Not done yet');

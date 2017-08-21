@@ -1,0 +1,510 @@
+object AppEndorsementFrame: TAppEndorsementFrame
+  Size.Width = 650.000000000000000000
+  Size.Height = 427.000000000000000000
+  Size.PlatformDefault = False
+  object Panel2: TPanel
+    Align = Left
+    Size.Width = 153.000000000000000000
+    Size.Height = 395.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 0
+    object Panel3: TPanel
+      Align = Top
+      Size.Width = 153.000000000000000000
+      Size.Height = 22.000000000000000000
+      Size.PlatformDefault = False
+      TabOrder = 0
+      object Label2: TLabel
+        Position.X = 5.000000000000000000
+        Position.Y = 2.000000000000000000
+        Size.Width = 73.000000000000000000
+        Size.Height = 17.000000000000000000
+        Size.PlatformDefault = False
+        Text = 'Catalog'
+      end
+    end
+    object tvEntities: TTreeView
+      Align = Client
+      Enabled = False
+      Size.Width = 153.000000000000000000
+      Size.Height = 342.000000000000000000
+      Size.PlatformDefault = False
+      TabOrder = 1
+      OnClick = tvEntitiesClick
+      Viewport.Width = 153.000000000000000000
+      Viewport.Height = 342.000000000000000000
+      object tiApplications: TTreeViewItem
+        IsChecked = False
+        IsExpanded = False
+        IsSelected = False
+        TabOrder = 0
+        Text = 'Applications'
+      end
+      object tiOrganizations: TTreeViewItem
+        IsChecked = False
+        IsExpanded = False
+        IsSelected = False
+        TabOrder = 1
+        Text = 'Organizations'
+      end
+    end
+    object Panel7: TPanel
+      Align = Bottom
+      Position.Y = 364.000000000000000000
+      Size.Width = 153.000000000000000000
+      Size.Height = 31.000000000000000000
+      Size.PlatformDefault = False
+      TabOrder = 2
+      OnResize = Panel7Resize
+      object btnLeftNewApplication: TButton
+        Align = Left
+        Enabled = False
+        Size.Width = 80.000000000000000000
+        Size.Height = 31.000000000000000000
+        Size.PlatformDefault = False
+        TabOrder = 1
+        Text = 'New App'
+        OnClick = btnLeftNewApplicationClick
+      end
+      object btnLeftNewOrganization: TButton
+        Align = Client
+        Enabled = False
+        Size.Width = 73.000000000000000000
+        Size.Height = 31.000000000000000000
+        Size.PlatformDefault = False
+        TabOrder = 0
+        Text = 'New Org'
+        OnClick = btnLeftNewOrganizationClick
+      end
+    end
+  end
+  object Panel4: TPanel
+    Align = Client
+    Size.Width = 489.000000000000000000
+    Size.Height = 395.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 1
+    object Panel6: TPanel
+      Align = Top
+      Size.Width = 489.000000000000000000
+      Size.Height = 25.000000000000000000
+      Size.PlatformDefault = False
+      TabOrder = 0
+      object Label3: TLabel
+        Position.X = 5.000000000000000000
+        Position.Y = 3.000000000000000000
+        Text = 'Details'
+      end
+    end
+    object tabPages: TTabControl
+      Align = Client
+      Size.Width = 489.000000000000000000
+      Size.Height = 370.000000000000000000
+      Size.PlatformDefault = False
+      TabIndex = 3
+      TabOrder = 1
+      TabPosition = None
+      Sizes = (
+        489s
+        370s
+        489s
+        370s
+        489s
+        370s
+        489s
+        370s)
+      object tabNull: TTabItem
+        CustomIcon = <
+          item
+          end>
+        IsSelected = False
+        Size.Width = 8.000000000000000000
+        Size.Height = 8.000000000000000000
+        Size.PlatformDefault = False
+        StyleLookup = ''
+        TabOrder = 0
+        Text = 'Null Item'
+        ExplicitSize.cx = 8.000000000000000000
+        ExplicitSize.cy = 8.000000000000000000
+        object btnNewApplication: TButton
+          Enabled = False
+          Position.X = 16.000000000000000000
+          Position.Y = 24.000000000000000000
+          Size.Width = 121.000000000000000000
+          Size.Height = 33.000000000000000000
+          Size.PlatformDefault = False
+          TabOrder = 0
+          Text = 'New Application'
+          OnClick = btnNewApplicationClick
+        end
+        object btnNewOrganization: TButton
+          Enabled = False
+          Position.X = 16.000000000000000000
+          Position.Y = 64.000000000000000000
+          Size.Width = 121.000000000000000000
+          Size.Height = 33.000000000000000000
+          Size.PlatformDefault = False
+          TabOrder = 1
+          Text = 'New Organization'
+          OnClick = btnNewOrganizationClick
+        end
+      end
+      object tabOrganization: TTabItem
+        CustomIcon = <
+          item
+          end>
+        IsSelected = False
+        Size.Width = 8.000000000000000000
+        Size.Height = 8.000000000000000000
+        Size.PlatformDefault = False
+        StyleLookup = ''
+        TabOrder = 0
+        Text = 'Device Details'
+        ExplicitSize.cx = 8.000000000000000000
+        ExplicitSize.cy = 8.000000000000000000
+        object Label5: TLabel
+          Position.X = 16.000000000000000000
+          Position.Y = 16.000000000000000000
+          Size.Width = 41.000000000000000000
+          Size.Height = 17.000000000000000000
+          Size.PlatformDefault = False
+          Text = 'Name:'
+          TabOrder = 0
+        end
+        object edtOrgName: TEdit
+          Touch.InteractiveGestures = [LongTap, DoubleTap]
+          Anchors = [akLeft, akTop, akRight]
+          TabOrder = 2
+          Position.X = 60.000000000000000000
+          Position.Y = 16.000000000000000000
+          Size.Width = 419.000000000000000000
+          Size.Height = 22.000000000000000000
+          Size.PlatformDefault = False
+          OnChange = editorGeneralChange
+          OnChangeTracking = editorGeneralChange
+        end
+        object cbOrgActive: TCheckBox
+          Anchors = [akLeft, akTop, akRight]
+          Position.X = 16.000000000000000000
+          Position.Y = 48.000000000000000000
+          Size.Width = 467.000000000000000000
+          Size.Height = 19.000000000000000000
+          Size.PlatformDefault = False
+          TabOrder = 3
+          Text = 'Active'
+          OnChange = editorGeneralChange
+        end
+        object Label13: TLabel
+          Position.X = 16.000000000000000000
+          Position.Y = 80.000000000000000000
+          Size.Width = 41.000000000000000000
+          Size.Height = 17.000000000000000000
+          Size.PlatformDefault = False
+          Text = 'URL:'
+          TabOrder = 4
+        end
+        object edtOrgURL: TEdit
+          Touch.InteractiveGestures = [LongTap, DoubleTap]
+          Anchors = [akLeft, akTop, akRight]
+          TabOrder = 1
+          Position.X = 60.000000000000000000
+          Position.Y = 80.000000000000000000
+          Size.Width = 419.000000000000000000
+          Size.Height = 22.000000000000000000
+          Size.PlatformDefault = False
+          OnChange = editorGeneralChange
+          OnChangeTracking = editorGeneralChange
+        end
+      end
+      object tabApplication: TTabItem
+        CustomIcon = <
+          item
+          end>
+        IsSelected = False
+        Size.Width = 8.000000000000000000
+        Size.Height = 8.000000000000000000
+        Size.PlatformDefault = False
+        StyleLookup = ''
+        TabOrder = 0
+        Text = 'Application Details'
+        ExplicitSize.cx = 8.000000000000000000
+        ExplicitSize.cy = 8.000000000000000000
+        object Label7: TLabel
+          Position.X = 8.000000000000000000
+          Position.Y = 8.000000000000000000
+          Size.Width = 49.000000000000000000
+          Size.Height = 17.000000000000000000
+          Size.PlatformDefault = False
+          Text = 'Name:'
+          TabOrder = 0
+        end
+        object edtAppName: TEdit
+          Touch.InteractiveGestures = [LongTap, DoubleTap]
+          Anchors = [akLeft, akTop, akRight]
+          TabOrder = 1
+          Position.X = 56.000000000000000000
+          Position.Y = 8.000000000000000000
+          Size.Width = 419.000000000000000000
+          Size.Height = 22.000000000000000000
+          Size.PlatformDefault = False
+          OnChange = editorGeneralChange
+          OnChangeTracking = editorGeneralChange
+        end
+        object Label6: TLabel
+          Position.X = 8.000000000000000000
+          Position.Y = 40.000000000000000000
+          Text = 'Status:'
+          TabOrder = 2
+        end
+        object cbxAppStatus: TComboBox
+          Anchors = [akLeft, akTop, akRight]
+          Items.Strings = (
+            'Active'
+            'Inactive'
+            'Entered in Error'
+            'Unknown')
+          Position.X = 56.000000000000000000
+          Position.Y = 40.000000000000000000
+          Size.Width = 419.000000000000000000
+          Size.Height = 22.000000000000000000
+          Size.PlatformDefault = False
+          TabOrder = 3
+          OnChange = editorGeneralChange
+        end
+        object Label8: TLabel
+          Position.X = 8.000000000000000000
+          Position.Y = 72.000000000000000000
+          Text = 'JWT:'
+          TabOrder = 4
+        end
+        object edtAppJWT: TEdit
+          Touch.InteractiveGestures = [LongTap, DoubleTap]
+          Anchors = [akLeft, akTop, akRight]
+          TabOrder = 5
+          Position.X = 56.000000000000000000
+          Position.Y = 72.000000000000000000
+          Size.Width = 339.000000000000000000
+          Size.Height = 22.000000000000000000
+          Size.PlatformDefault = False
+          OnChange = editorGeneralChange
+          OnChangeTracking = editorGeneralChange
+        end
+        object Button1: TButton
+          Anchors = [akTop, akRight]
+          Position.X = 402.000000000000000000
+          Position.Y = 72.000000000000000000
+          Size.Width = 72.000000000000000000
+          Size.Height = 22.000000000000000000
+          Size.PlatformDefault = False
+          TabOrder = 6
+          Text = 'Generate'
+          OnClick = Button1Click
+        end
+        object btnAppNewEndorsement: TButton
+          Position.X = 8.000000000000000000
+          Position.Y = 112.000000000000000000
+          Size.Width = 121.000000000000000000
+          Size.Height = 33.000000000000000000
+          Size.PlatformDefault = False
+          TabOrder = 7
+          Text = 'New Endorsement'
+          OnClick = btnAppNewEndorsementClick
+        end
+      end
+      object tabObservation: TTabItem
+        CustomIcon = <
+          item
+          end>
+        IsSelected = True
+        Size.Width = 8.000000000000000000
+        Size.Height = 8.000000000000000000
+        Size.PlatformDefault = False
+        StyleLookup = ''
+        TabOrder = 0
+        Text = 'tabObservation'
+        ExplicitSize.cx = 8.000000000000000000
+        ExplicitSize.cy = 8.000000000000000000
+        object Label4: TLabel
+          Position.X = 8.000000000000000000
+          Position.Y = 16.000000000000000000
+          Size.Width = 49.000000000000000000
+          Size.Height = 17.000000000000000000
+          Size.PlatformDefault = False
+          Text = 'App:'
+          TabOrder = 0
+        end
+        object edtEndAppName: TEdit
+          Touch.InteractiveGestures = [LongTap, DoubleTap]
+          Anchors = [akLeft, akTop, akRight]
+          TabOrder = 4
+          Position.X = 48.000000000000000000
+          Position.Y = 16.000000000000000000
+          Enabled = False
+          Size.Width = 427.000000000000000000
+          Size.Height = 22.000000000000000000
+          Size.PlatformDefault = False
+          OnChange = editorGeneralChange
+          OnChangeTracking = editorGeneralChange
+        end
+        object Label9: TLabel
+          Position.X = 8.000000000000000000
+          Position.Y = 48.000000000000000000
+          Size.Width = 49.000000000000000000
+          Size.Height = 17.000000000000000000
+          Size.PlatformDefault = False
+          Text = 'Org:'
+          TabOrder = 5
+        end
+        object edtEndOrgName: TEdit
+          Touch.InteractiveGestures = [LongTap, DoubleTap]
+          Anchors = [akLeft, akTop, akRight]
+          TabOrder = 2
+          Position.X = 48.000000000000000000
+          Position.Y = 48.000000000000000000
+          Enabled = False
+          Size.Width = 427.000000000000000000
+          Size.Height = 22.000000000000000000
+          Size.PlatformDefault = False
+          OnChange = editorGeneralChange
+          OnChangeTracking = editorGeneralChange
+        end
+        object Label10: TLabel
+          Position.X = 8.000000000000000000
+          Position.Y = 112.000000000000000000
+          Text = 'Type:'
+          TabOrder = 6
+        end
+        object cbxEndorsementType: TComboBox
+          Anchors = [akLeft, akTop, akRight]
+          Items.Strings = (
+            'Approval'
+            'Warning'
+            'Usage Note')
+          Position.X = 48.000000000000000000
+          Position.Y = 112.000000000000000000
+          Size.Width = 427.000000000000000000
+          Size.Height = 22.000000000000000000
+          Size.PlatformDefault = False
+          TabOrder = 7
+          OnChange = editorGeneralChange
+        end
+        object Label11: TLabel
+          Position.X = 8.000000000000000000
+          Position.Y = 144.000000000000000000
+          Size.Width = 49.000000000000000000
+          Size.Height = 17.000000000000000000
+          Size.PlatformDefault = False
+          Text = 'Text:'
+          TabOrder = 8
+        end
+        object edtEndorsementText: TEdit
+          Touch.InteractiveGestures = [LongTap, DoubleTap]
+          Anchors = [akLeft, akTop, akRight]
+          TabOrder = 1
+          Position.X = 48.000000000000000000
+          Position.Y = 144.000000000000000000
+          Size.Width = 427.000000000000000000
+          Size.Height = 22.000000000000000000
+          Size.PlatformDefault = False
+          OnChange = editorGeneralChange
+          OnChangeTracking = editorGeneralChange
+        end
+        object Label12: TLabel
+          Position.X = 8.000000000000000000
+          Position.Y = 80.000000000000000000
+          Text = 'Status:'
+          TabOrder = 9
+        end
+        object cbxEndorsementStatus: TComboBox
+          Anchors = [akLeft, akTop, akRight]
+          Items.Strings = (
+            'registered'
+            'preliminary'
+            'final'
+            'amended'
+            'corrected'
+            'cancelled'
+            'entered-in-error'
+            'unknown')
+          Position.X = 48.000000000000000000
+          Position.Y = 80.000000000000000000
+          Size.Width = 427.000000000000000000
+          Size.Height = 22.000000000000000000
+          Size.PlatformDefault = False
+          TabOrder = 3
+          OnChange = editorGeneralChange
+        end
+      end
+    end
+  end
+  object Panel5: TPanel
+    Align = Bottom
+    Position.Y = 395.000000000000000000
+    Size.Width = 650.000000000000000000
+    Size.Height = 32.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 2
+    object btnCancel: TButton
+      Anchors = [akTop, akRight]
+      Cancel = True
+      Enabled = False
+      Position.X = 563.000000000000000000
+      Position.Y = 5.000000000000000000
+      TabOrder = 0
+      Text = 'Cancel'
+      OnClick = btnCancelClick
+    end
+    object btnSave: TButton
+      Anchors = [akTop, akRight]
+      Enabled = False
+      Position.X = 479.000000000000000000
+      Position.Y = 5.000000000000000000
+      TabOrder = 1
+      Text = 'Save'
+      OnClick = btnSaveClick
+    end
+    object btnDownload: TButton
+      Enabled = False
+      Position.X = 5.000000000000000000
+      Position.Y = 5.000000000000000000
+      TabOrder = 3
+      Text = 'Download'
+      OnClick = btnDownloadClick
+    end
+    object btnUpload: TButton
+      Enabled = False
+      Position.X = 90.000000000000000000
+      Position.Y = 5.000000000000000000
+      TabOrder = 2
+      Text = 'Upload'
+      OnClick = btnUploadClick
+    end
+  end
+  object Splitter1: TSplitter
+    Align = Left
+    Cursor = crHSplit
+    MinSize = 20.000000000000000000
+    Position.X = 153.000000000000000000
+    Size.Width = 8.000000000000000000
+    Size.Height = 395.000000000000000000
+    Size.PlatformDefault = False
+  end
+  object ComboBox2: TComboBox
+    Position.X = 776.000000000000000000
+    Position.Y = 344.000000000000000000
+  end
+  object sdPack: TSaveDialog
+    DefaultExt = '.json'
+    Filter = '*.json|*.*'
+    Title = 'Save Download Package'
+    Left = 24
+    Top = 456
+  end
+  object odUpload: TOpenDialog
+    DefaultExt = 'json'
+    Filter = '*.json|*.*'
+    Title = 'Upload Previously Saved Package'
+    Left = 120
+    Top = 456
+  end
+end

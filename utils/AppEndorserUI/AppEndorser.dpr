@@ -108,16 +108,19 @@ uses
   AfsVolumes in '..\..\reference-platform\support\AfsVolumes.pas',
   AfsResourceVolumes in '..\..\reference-platform\support\AfsResourceVolumes.pas',
   AdvWinInetClients in '..\..\reference-platform\support\AdvWinInetClients.pas',
-  {$ENDIF}
+  {$ENDIF }
   AdvStringHashes in '..\..\reference-platform\support\AdvStringHashes.pas',
   AdvHashes in '..\..\reference-platform\support\AdvHashes.pas',
   FastMM4Messages in '..\..\Libraries\FMM\FastMM4Messages.pas',
-  OrganizationChooser in 'OrganizationChooser.pas' {OrganizationSelectionForm};
+  OrganizationChooser in 'OrganizationChooser.pas' {OrganizationSelectionForm},
+  MasterForm in 'MasterForm.pas' {MasterToolsForm},
+  ServerForm in 'ServerForm.pas' {ServerFrameForm: TFrame};
 
 {$R *.res}
 
 begin
   Application.Initialize;
+  Application.CreateForm(TMasterToolsForm, MasterToolsForm);
   Application.CreateForm(TAppEndorsementForm, AppEndorsementForm);
   Application.CreateForm(TOrganizationSelectionForm, OrganizationSelectionForm);
   Application.Run;

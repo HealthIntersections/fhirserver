@@ -1,0 +1,231 @@
+object ValuesetExpansionForm: TValuesetExpansionForm
+  Left = 0
+  Top = 0
+  BorderIcons = [biSystemMenu, biMaximize]
+  Caption = 'Value Set Expansion'
+  ClientHeight = 480
+  ClientWidth = 640
+  FormFactor.Width = 320
+  FormFactor.Height = 480
+  FormFactor.Devices = [Desktop]
+  OnClose = FormClose
+  OnShow = FormShow
+  DesignerMasterStyle = 0
+  object Panel1: TPanel
+    Align = Bottom
+    Position.Y = 440.000000000000000000
+    Size.Width = 640.000000000000000000
+    Size.Height = 40.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 0
+    object Button1: TButton
+      Default = True
+      Enabled = False
+      ModalResult = 1
+      Position.X = 8.000000000000000000
+      Position.Y = 8.000000000000000000
+      Size.Width = 175.000000000000000000
+      Size.Height = 22.000000000000000000
+      Size.PlatformDefault = False
+      TabOrder = 0
+      Text = 'Use Expansion in Value Set'
+    end
+    object Button2: TButton
+      Anchors = [akTop, akRight]
+      Cancel = True
+      ModalResult = 2
+      Position.X = 551.000000000000000000
+      Position.Y = 8.000000000000000000
+      TabOrder = 1
+      Text = 'Close'
+    end
+  end
+  object Panel2: TPanel
+    Align = Top
+    Size.Width = 640.000000000000000000
+    Size.Height = 97.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 1
+    object Label1: TLabel
+      Position.X = 8.000000000000000000
+      Position.Y = 8.000000000000000000
+      Size.Width = 49.000000000000000000
+      Size.Height = 17.000000000000000000
+      Size.PlatformDefault = False
+      Text = 'Server:'
+      TabOrder = 0
+    end
+    object edtServer: TEdit
+      Touch.InteractiveGestures = [LongTap, DoubleTap]
+      TabOrder = 1
+      Position.X = 56.000000000000000000
+      Position.Y = 8.000000000000000000
+      Size.Width = 577.000000000000000000
+      Size.Height = 22.000000000000000000
+      Size.PlatformDefault = False
+    end
+    object Go: TButton
+      Position.X = 584.000000000000000000
+      Position.Y = 40.000000000000000000
+      Size.Width = 49.000000000000000000
+      Size.Height = 49.000000000000000000
+      Size.PlatformDefault = False
+      TabOrder = 2
+      Text = 'Go'
+      OnClick = GoClick
+    end
+    object Label2: TLabel
+      Position.X = 8.000000000000000000
+      Position.Y = 43.000000000000000000
+      Size.Width = 41.000000000000000000
+      Size.Height = 17.000000000000000000
+      Size.PlatformDefault = False
+      Text = 'Filter:'
+      TabOrder = 4
+    end
+    object edtFilter: TEdit
+      Touch.InteractiveGestures = [LongTap, DoubleTap]
+      TabOrder = 8
+      Position.X = 56.000000000000000000
+      Position.Y = 40.000000000000000000
+    end
+    object Label3: TLabel
+      Position.X = 168.000000000000000000
+      Position.Y = 43.000000000000000000
+      Size.Width = 33.000000000000000000
+      Size.Height = 17.000000000000000000
+      Size.PlatformDefault = False
+      Text = 'Date'
+      TabOrder = 11
+    end
+    object dedDate: TDateEdit
+      Date = 42968.000000000000000000
+      Position.X = 208.000000000000000000
+      Position.Y = 40.000000000000000000
+      Size.Width = 89.000000000000000000
+      Size.Height = 22.000000000000000000
+      Size.PlatformDefault = False
+      TabOrder = 12
+    end
+    object Label4: TLabel
+      Position.X = 320.000000000000000000
+      Position.Y = 43.000000000000000000
+      Size.Width = 49.000000000000000000
+      Size.Height = 17.000000000000000000
+      Size.PlatformDefault = False
+      Text = 'Offset:'
+      TabOrder = 10
+    end
+    object edtOffset: TEdit
+      Touch.InteractiveGestures = [LongTap, DoubleTap]
+      TabOrder = 7
+      Position.X = 360.000000000000000000
+      Position.Y = 40.000000000000000000
+      Size.Width = 25.000000000000000000
+      Size.Height = 22.000000000000000000
+      Size.PlatformDefault = False
+    end
+    object Label5: TLabel
+      Position.X = 392.000000000000000000
+      Position.Y = 43.000000000000000000
+      Size.Width = 49.000000000000000000
+      Size.Height = 17.000000000000000000
+      Size.PlatformDefault = False
+      Text = 'Count:'
+      TabOrder = 9
+    end
+    object edtCount: TEdit
+      Touch.InteractiveGestures = [LongTap, DoubleTap]
+      TabOrder = 5
+      Position.X = 432.000000000000000000
+      Position.Y = 40.000000000000000000
+      Size.Width = 25.000000000000000000
+      Size.Height = 22.000000000000000000
+      Size.PlatformDefault = False
+    end
+    object Label6: TLabel
+      Position.X = 472.000000000000000000
+      Position.Y = 43.000000000000000000
+      Size.Width = 41.000000000000000000
+      Size.Height = 17.000000000000000000
+      Size.PlatformDefault = False
+      Text = 'Lang:'
+      TabOrder = 3
+    end
+    object edtLang: TEdit
+      Touch.InteractiveGestures = [LongTap, DoubleTap]
+      TabOrder = 6
+      Position.X = 512.000000000000000000
+      Position.Y = 40.000000000000000000
+      Size.Width = 60.000000000000000000
+      Size.Height = 22.000000000000000000
+      Size.PlatformDefault = False
+    end
+    object cbDesignations: TCheckBox
+      Position.X = 8.000000000000000000
+      Position.Y = 72.000000000000000000
+      TabOrder = 13
+      Text = 'Designations'
+    end
+    object cbActiveOnly: TCheckBox
+      Position.X = 124.000000000000000000
+      Position.Y = 72.000000000000000000
+      TabOrder = 14
+      Text = 'Active Only'
+    end
+    object cbUIOnly: TCheckBox
+      Position.X = 240.000000000000000000
+      Position.Y = 72.000000000000000000
+      TabOrder = 15
+      Text = 'For UI Only'
+    end
+    object cbNoExpressions: TCheckBox
+      Position.X = 356.000000000000000000
+      Position.Y = 72.000000000000000000
+      TabOrder = 16
+      Text = 'No Expressions'
+    end
+    object cbAllowSubset: TCheckBox
+      Position.X = 472.000000000000000000
+      Position.Y = 72.000000000000000000
+      Size.Width = 105.000000000000000000
+      Size.Height = 19.000000000000000000
+      Size.PlatformDefault = False
+      TabOrder = 17
+      Text = 'Allow subset'
+    end
+  end
+  object gridContains: TGrid
+    Align = Client
+    CanFocus = True
+    ClipChildren = True
+    Size.Width = 640.000000000000000000
+    Size.Height = 343.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 29
+    RowCount = 0
+    OnGetValue = gridContainsGetValue
+    Viewport.Width = 636.000000000000000000
+    Viewport.Height = 318.000000000000000000
+    object StringColumn10: TStringColumn
+      Header = 'Code'
+    end
+    object CheckColumn1: TCheckColumn
+      Header = 'Sel'
+    end
+    object CheckColumn2: TCheckColumn
+      Header = 'InA'
+    end
+    object StringColumn11: TStringColumn
+      Header = 'Display'
+      Size.Width = 202.000000000000000000
+    end
+    object StringColumn12: TStringColumn
+      Header = 'System'
+      Size.Width = 183.000000000000000000
+    end
+    object StringColumn13: TStringColumn
+      Header = 'Version'
+    end
+  end
+end

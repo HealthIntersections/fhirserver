@@ -39,7 +39,7 @@ uses
   SysUtils, Classes, Generics.Collections, Soap.EncdDecd,
   StringSupport, EncodeSupport, GuidSupport, DateSupport,
   IdHTTP, IdSSLOpenSSL, MimeMessage,
-  AdvObjects, AdvBuffers, {$IFNDEF OSX}AdvWinInetClients, {$ENDIF}AdvStringMatches, AdvJson,
+  AdvObjects, AdvBuffers, {$IFNDEF OSX}AdvWinInetClients, {$ENDIF}AdvJson,
   FHIRParser, FHIRResources, FHIRTypes, FHIRUtilities, 
   FHIRConstants, FHIRContext, FHIRSupport, FHIRParserBase, FHIRBase,
   SmartOnFhirUtilities, CdsHooksUtilities;
@@ -66,11 +66,14 @@ Type
     function readResource(atype : TFhirResourceType; id : String) : TFHIRResource; virtual;
     function updateResource(resource : TFhirResource) : TFHIRResource; overload; virtual;
     procedure deleteResource(atype : TFhirResourceType; id : String); virtual;
-    function search(atype : TFhirResourceType; allRecords : boolean; params : TAdvStringMatch) : TFHIRBundle; overload; virtual;
+    function search(allRecords : boolean; params : TDictionary<String, String>) : TFHIRBundle; overload; virtual;
+    function search(atype : TFhirResourceType; allRecords : boolean; params : TDictionary<String, String>) : TFHIRBundle; overload; virtual;
     function search(atype : TFhirResourceType; allRecords : boolean; params : string) : TFHIRBundle; overload; virtual;
-    function searchPost(atype : TFhirResourceType; allRecords : boolean; params : TAdvStringMatch; resource : TFhirResource) : TFHIRBundle; virtual;
+    function searchPost(atype : TFhirResourceType; allRecords : boolean; params : TDictionary<String, String>; resource : TFhirResource) : TFHIRBundle; virtual;
     function operation(atype : TFhirResourceType; opName : String; params : TFhirParameters) : TFHIRResource; virtual;
-    function historyType(atype : TFhirResourceType; allRecords : boolean; params : TAdvStringMatch) : TFHIRBundle; virtual;
+    function historyType(atype : TFhirResourceType; allRecords : boolean; params : TDictionary<String, String>) : TFHIRBundle; virtual;
+
+    function address : String; virtual;
   end;
 
   TFhirHTTPClientHTTPVerb = (get, post, put, delete, options, patch);
@@ -100,12 +103,12 @@ Type
     procedure status(msg : String);
     procedure getSSLpassword(var Password: String);
     function serialise(resource : TFhirResource):TStream; overload;
-    function makeUrl(tail : String; params : TAdvStringMatch = nil) : String;
+    function makeUrl(tail : String; params : TDictionary<String, String> = nil) : String;
     function makeUrlPath(tail : String) : String;
     function CreateParser(stream : TStream) : TFHIRParser;
     function exchange(url : String; verb : TFhirHTTPClientHTTPVerb; source : TStream; ct : String = '') : TStream;
     function fetchResource(url : String; verb : TFhirHTTPClientHTTPVerb; source : TStream; ct : String = '') : TFhirResource;
-    function makeMultipart(stream: TStream; streamName: string; params: TAdvStringMatch; var mp : TStream) : String;
+    function makeMultipart(stream: TStream; streamName: string; params: TDictionary<String, String>; var mp : TStream) : String;
     procedure SetSmartToken(const Value: TSmartOnFhirAccessToken);
     procedure SetTimeout(const Value: cardinal);
     procedure createClient;
@@ -140,17 +143,19 @@ Type
 //    procedure doRequest(request : TFHIRRequest; response : TFHIRResponse);
     procedure cancelOperation;
 
+    function address : String; override;
     function conformance(summary : boolean) : TFhirCapabilityStatement; override;
     function transaction(bundle : TFHIRBundle) : TFHIRBundle; override;
     function createResource(resource : TFhirResource; var id : String) : TFHIRResource; override;
     function readResource(atype : TFhirResourceType; id : String) : TFHIRResource; override;
     function updateResource(resource : TFhirResource) : TFHIRResource; overload; override;
     procedure deleteResource(atype : TFhirResourceType; id : String); override;
-    function search(atype : TFhirResourceType; allRecords : boolean; params : TAdvStringMatch) : TFHIRBundle; overload; override;
+    function search(allRecords : boolean; params : TDictionary<String, String>) : TFHIRBundle; overload; override;
+    function search(atype : TFhirResourceType; allRecords : boolean; params : TDictionary<String, String>) : TFHIRBundle; overload; override;
     function search(atype : TFhirResourceType; allRecords : boolean; params : string) : TFHIRBundle; overload; override;
-    function searchPost(atype : TFhirResourceType; allRecords : boolean; params : TAdvStringMatch; resource : TFhirResource) : TFHIRBundle; override;
+    function searchPost(atype : TFhirResourceType; allRecords : boolean; params : TDictionary<String, String>; resource : TFhirResource) : TFHIRBundle; override;
     function operation(atype : TFhirResourceType; opName : String; params : TFhirParameters) : TFHIRResource; override;
-    function historyType(atype : TFhirResourceType; allRecords : boolean; params : TAdvStringMatch) : TFHIRBundle; override;
+    function historyType(atype : TFhirResourceType; allRecords : boolean; params : TDictionary<String, String>) : TFHIRBundle; override;
     function cdshook(id : String; request : TCDSHookRequest) : TCDSHookResponse;
 
     //authorization support
@@ -232,9 +237,9 @@ end;
 
 function TFhirHTTPClient.conformance(summary : boolean): TFhirCapabilityStatement;
 var
-  params : TAdvStringMatch;
+  params : TDictionary<String, String>;
 begin
-  params := TAdvStringMatch.create;
+  params := TDictionary<String, String>.create;
   try
     if summary then
       params.Add('_summary', 'true');
@@ -380,16 +385,16 @@ begin
     FOnClientStatus(self, msg);
 end;
 
-function encodeParams(params : TAdvStringMatch) : String;
+function encodeParams(params : TDictionary<String, String>) : String;
 var
-  i : integer;
+  s : String;
 begin
   result := '';
-  for i := 0 to params.Count - 1 do
-    result := result + params.KeyByIndex[i]+'='+EncodeMIME(params.ValueByIndex[i])+'&';
+  for s in params.Keys do
+    result := result + s+'='+EncodeMIME(params[s])+'&';
 end;
 
-function TFhirHTTPClient.search(atype: TFhirResourceType; allRecords: boolean; params: TAdvStringMatch): TFHIRBundle;
+function TFhirHTTPClient.search(atype: TFhirResourceType; allRecords: boolean; params: TDictionary<String, String>): TFHIRBundle;
 begin
   result := search(atype, allrecords, encodeParams(params));
 end;
@@ -421,7 +426,12 @@ begin
   end;
 end;
 
-function TFhirHTTPClient.searchPost(atype: TFhirResourceType; allRecords: boolean; params: TAdvStringMatch; resource: TFhirResource): TFHIRBundle;
+function TFhirHTTPClient.search(allRecords: boolean; params: TDictionary<String, String>): TFHIRBundle;
+begin
+  result := search(frtNull, allrecords, encodeParams(params));
+end;
+
+function TFhirHTTPClient.searchPost(atype: TFhirResourceType; allRecords: boolean; params: TDictionary<String, String>; resource: TFhirResource): TFHIRBundle;
 var
   src, frm : TStream;
   ct : String;
@@ -489,22 +499,22 @@ begin
   end;
 end;
 
-function TFhirHTTPClient.makeMultipart(stream: TStream; streamName: string; params: TAdvStringMatch; var mp : TStream) : String;
+function TFhirHTTPClient.makeMultipart(stream: TStream; streamName: string; params: TDictionary<String, String>; var mp : TStream) : String;
 var
   m : TMimeMessage;
   p : TMimePart;
-  i : integer;
+  s : String;
 begin
   m := TMimeMessage.create;
   try
     p := m.AddPart(NewGuidURN);
     p.ContentDisposition := 'form-data; name="'+streamName+'"';
     p.Content.LoadFromStream(stream);
-    for i := 0 to params.Count - 1 do
+    for s in params.Keys do
     begin
       p := m.AddPart(NewGuidURN);
-      p.ContentDisposition := 'form-data; name="'+params.Keys[i]+'"';
-      p.Content.AsBytes := TEncoding.UTF8.GetBytes(params.Matches[params.Keys[i]]);
+      p.ContentDisposition := 'form-data; name="'+s+'"';
+      p.Content.AsBytes := TEncoding.UTF8.GetBytes(params[s]);
     end;
     m.Boundary := '---'+AnsiString(copy(GUIDToString(CreateGUID), 2, 36));
     m.start := m.parts[0].Id;
@@ -516,10 +526,10 @@ begin
   end;
 end;
 
-function TFhirHTTPClient.makeUrl(tail: String; params : TAdvStringMatch = nil): String;
+function TFhirHTTPClient.makeUrl(tail: String; params : TDictionary<String, String> = nil): String;
 begin
   result := FURL;
-  if not result.EndsWith('/') then
+  if not result.EndsWith('/') and (tail <> '') then
     result := result + '/';
   result := result + tail;
   if params <> nil then
@@ -565,7 +575,7 @@ begin
   result.source := stream;
 end;
 
-function TFhirHTTPClient.historyType(atype: TFhirResourceType; allRecords: boolean; params: TAdvStringMatch): TFHIRBundle;
+function TFhirHTTPClient.historyType(atype: TFhirResourceType; allRecords: boolean; params: TDictionary<String, String>): TFHIRBundle;
 var
   s : String;
   feed : TFHIRBundle;
@@ -882,6 +892,11 @@ begin
   {$ENDIF}
 end;
 
+function TFhirHTTPClient.address: String;
+begin
+  result := FUrl;
+end;
+
 procedure TFhirHTTPClient.authoriseByOWin(server, username, password: String);
 var
   token : TJsonObject;
@@ -950,6 +965,11 @@ begin
   result := TFhirClient(inherited Link);
 end;
 
+function TFhirClient.address: String;
+begin
+  raise Exception.Create('Must override address in '+className);
+end;
+
 function TFhirClient.conformance(summary: boolean): TFhirCapabilityStatement;
 begin
   raise Exception.Create('Must override conformance() in '+className);
@@ -965,7 +985,7 @@ begin
   raise Exception.Create('Must override deleteResource() in '+className);
 end;
 
-function TFhirClient.historyType(atype: TFhirResourceType; allRecords: boolean; params: TAdvStringMatch): TFHIRBundle;
+function TFhirClient.historyType(atype: TFhirResourceType; allRecords: boolean; params: TDictionary<String, String>): TFHIRBundle;
 begin
   raise Exception.Create('Must override historyType() in '+className);
 end;
@@ -985,12 +1005,17 @@ begin
   raise Exception.Create('Must override search() in '+className);
 end;
 
-function TFhirClient.search(atype: TFhirResourceType; allRecords: boolean; params: TAdvStringMatch): TFHIRBundle;
+function TFhirClient.search(allRecords: boolean; params: TDictionary<String, String>): TFHIRBundle;
 begin
   raise Exception.Create('Must override search() in '+className);
 end;
 
-function TFhirClient.searchPost(atype: TFhirResourceType; allRecords: boolean; params: TAdvStringMatch; resource: TFhirResource): TFHIRBundle;
+function TFhirClient.search(atype: TFhirResourceType; allRecords: boolean; params: TDictionary<String, String>): TFHIRBundle;
+begin
+  raise Exception.Create('Must override search() in '+className);
+end;
+
+function TFhirClient.searchPost(atype: TFhirResourceType; allRecords: boolean; params: TDictionary<String, String>; resource: TFhirResource): TFHIRBundle;
 begin
   raise Exception.Create('Must override searchPost() in '+className);
 end;

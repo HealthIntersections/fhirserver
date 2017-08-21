@@ -147,8 +147,8 @@ function getConformanceResourceUrl(res : TFHIRResource) : string;
 Function removeCaseAndAccents(s : String) : String;
 
 function CustomResourceNameIsOk(name : String) : boolean;
-function fileToResource(name : String; format : TFHIRFormat) : TFhirResource;
-function streamToResource(stream : TStream; format : TFHIRFormat) : TFhirResource;
+function fileToResource(name : String; var format : TFHIRFormat) : TFhirResource;
+function streamToResource(stream : TStream; var format : TFHIRFormat) : TFhirResource;
 procedure resourceToFile(res : TFhirResource; name : String; format : TFHIRFormat);
 procedure resourceToStream(res : TFhirResource; stream : TStream; format : TFHIRFormat);
 
@@ -293,24 +293,41 @@ type
   end;
 
   TFHIRCapabilityStatementHelper = class helper (TFHIRDomainResourceHelper) for TFHIRCapabilityStatement
+  private
+    function hasFormat(fmt: TFHIRFormat): boolean;
+    procedure SetHasFormat(fmt: TFHIRFormat; const Value: boolean);
+    function GetInstantiates(url: String): boolean;
+    procedure SetInstantiates(url: String; const Value: boolean);
   public
     function rest(type_ : TFhirResourceType) : TFhirCapabilityStatementRestResource;
     procedure checkCompatible;
+
+    property Format[fmt : TFHIRFormat] : boolean read HasFormat write SetHasFormat;
+    property instantiates[url : String] : boolean read GetInstantiates write SetInstantiates;
   end;
 
   TFHIRCodeableConceptHelper = class helper (TFHIRElementHelper) for TFHIRCodeableConcept
   public
+    Constructor Create(system, code : String); overload;
     function hasCode(System, Code : String) : boolean;
   end;
 
   TFHIRCodeableConceptListHelper = class helper for TFHIRCodeableConceptList
+  private
+    function GetHasCode(System, Code: String): boolean;
+    procedure SetHasCode(System, Code: String; const Value: boolean);
   public
-    function hasCode(System, Code : String) : boolean;
+    property hasCode[System, Code : String] : boolean read GetHasCode write SetHasCode;
   end;
 
   TFhirConformanceRestResourceHelper = class helper (TFHIRElementHelper) for TFhirCapabilityStatementRestResource
   public
     function interaction(type_ : TFhirTypeRestfulInteractionEnum) : TFhirCapabilityStatementRestResourceInteraction;
+  end;
+
+  TFhirConformanceRestHelper = class helper (TFHIRElementHelper) for TFhirCapabilityStatementRest
+  public
+    function interaction(type_ : TFhirSystemRestfulInteractionEnum) : TFhirCapabilityStatementRestInteraction;
   end;
 
   TFHIRContactPointListHelper = class helper for TFhirContactPointList
@@ -526,6 +543,16 @@ type
     function getId : String;
   end;
 
+  TFhirCapabilityStatementRestResourceSearchParamHelper = class helper for TFhirCapabilityStatementRestResourceSearchParam
+  public
+    function summary : String;
+  end;
+
+  TFhirValueSetComposeIncludeHelper = class helper for TFhirValueSetComposeInclude
+  public
+    function summary : String;
+  end;
+
 function Path(const parts : array of String) : String;
 
 
@@ -601,7 +628,7 @@ end;
 function DetectFormat(oContent : TStream) : TFHIRParserClass; overload;
 var
   i : integer;
-  s : String;
+  s : AnsiString;
 begin
   i := oContent.Position;
   setlength(s, ocontent.Size - oContent.Position);
@@ -609,8 +636,12 @@ begin
   oContent.Position := i;
   if (pos('<', s) > 0) and ((pos('<', s) < 10)) then
     result := TFHIRXmlParser
+  else if (pos('{', s) > 0) and ((pos('{', s) < 10)) then
+    result := TFHIRJsonParser
+  else if (pos('@', s) > 0) and ((pos('@', s) < 10)) then
+    result := TFHIRTurtleParser
   else
-    result := TFHIRJsonParser;
+    result := nil;
 end;
 
 function DetectFormat(bytes : TBytes) : TFHIRParserClass; overload;
@@ -1709,7 +1740,7 @@ end;
         for (Code c : inc.Code) begin
           TFhirXHtmlNode tr := t.addTag('tr');
           TFhirXHtmlNode td := tr.addTag('td');
-          td.addText(c.Value);         
+          td.addText(c.Value);
           ValueSetDefineConceptComponent cc := getConceptForCode(e, c.Value);
           if (cc <> nil) begin then
             td := tr.addTag('td');
@@ -2224,6 +2255,26 @@ begin
     raise Exception.Create('Version Mismatch - this code is at version '+FHIR_GENERATED_VERSION+', but the server is version '+fhirVersion);
 end;
 
+function TFHIRCapabilityStatementHelper.hasFormat(fmt: TFHIRFormat): boolean;
+var
+  c : TFhirCode;
+begin
+  result := false;
+  for c in formatList do
+    if (c.value = CODES_TFHIRFormat[fmt]) or (c.value = MIMETYPES_TFHIRFormat[fmt]) then
+      exit(true);
+end;
+
+function TFHIRCapabilityStatementHelper.GetInstantiates(url: String): boolean;
+var
+  u : TFhirUri;
+begin
+  result := false;
+  for u in instantiatesList do
+    if u.value = url then
+      exit(true);
+end;
+
 function TFHIRCapabilityStatementHelper.rest(type_: TFhirResourceType): TFhirCapabilityStatementRestResource;
 var
   i : integer;
@@ -2238,6 +2289,36 @@ begin
           result := self.restlist[i].resourceList[j];
           exit;
         end;
+end;
+
+procedure TFHIRCapabilityStatementHelper.SetHasFormat(fmt: TFHIRFormat; const Value: boolean);
+var
+  c : TFhirCode;
+  i : integer;
+begin
+  for I := formatList.Count - 1 downto 0 do
+  begin
+    c := formatList[i];
+    if (c.value = CODES_TFHIRFormat[fmt]) or (c.value = MIMETYPES_TFHIRFormat[fmt]) then
+      formatList.DeleteByIndex(i);
+  end;
+  if value then
+    formatList.Append.value := MIMETYPES_TFHIRFormat[fmt];
+end;
+
+procedure TFHIRCapabilityStatementHelper.SetInstantiates(url: String; const Value: boolean);
+var
+  u : TFhirUri;
+  i : integer;
+begin
+  for I := instantiatesList.Count - 1 downto 0 do
+  begin
+    u := instantiatesList[i];
+    if u.value = url then
+      instantiatesList.DeleteByIndex(i);
+  end;
+  if value then
+    instantiatesList.Append.value := url;
 end;
 
 { TFhirCapabilityStatementRestResourceHelper }
@@ -2891,7 +2972,13 @@ end;
 
 { TFHIRCodeableConceptHelper }
 
-function TFHIRCodeableConceptHelper.hasCode(System, Code: String): boolean;
+constructor TFHIRCodeableConceptHelper.Create(system, code: String);
+begin
+  Create;
+  CodingList.Add(TFHIRCoding.create(system, code));
+end;
+
+function TFHIRCodeableConceptHelper.HasCode(System, Code: String): boolean;
 var
   i : integer;
 begin
@@ -4676,7 +4763,7 @@ begin
   result := not (reference.startsWith('http:') or reference.startsWith('https:') or reference.startsWith('urn:uuid:') or reference.startsWith('urn:oid:'));
 end;
 
-function fileToResource(name : String; format : TFHIRFormat) : TFhirResource;
+function fileToResource(name : String; var format : TFHIRFormat) : TFhirResource;
 var
   f : TFileStream;
 begin
@@ -4688,14 +4775,23 @@ begin
   end;
 end;
 
-function streamToResource(stream : TStream; format : TFHIRFormat) : TFhirResource;
+function streamToResource(stream : TStream; var format : TFHIRFormat) : TFhirResource;
 var
   p :  TFHIRParser;
+  pc : TFHIRParserClass;
 begin
   case format of
     ffXml : p := TFHIRXmlParser.Create(nil, 'en');
     ffJson : p := TFHIRJsonParser.Create(nil, 'en');
     ffTurtle : p := TFHIRTurtleParser.Create(nil, 'en');
+    ffUnspecified :
+    begin
+      pc := DetectFormat(stream);
+      if pc = nil then
+        raise Exception.Create('Format Not identified');
+      p := pc.Create(nil, 'en');
+      format := p.Format;
+    end
   else
     raise Exception.Create('Format Not supported');
   end;
@@ -4794,7 +4890,8 @@ end;
 
 { TFHIRCodeableConceptListHelper }
 
-function TFHIRCodeableConceptListHelper.hasCode(System, Code: String): boolean;
+
+function TFHIRCodeableConceptListHelper.GetHasCode(System, Code: String): boolean;
 var
   cc : TFHIRCodeableConcept;
 begin
@@ -4802,6 +4899,57 @@ begin
   for cc in self do
     if cc.hasCode(system, code) then
       exit(true);
+end;
+
+procedure TFHIRCodeableConceptListHelper.SetHasCode(System, Code: String; const Value: boolean);
+var
+  i : integer;
+begin
+  if value then
+  begin
+    if not getHasCode(system, code) then
+      Add(TFhirCodeableConcept.Create(system, code));
+  end
+  else
+    for i := Count - 1 downto 0 do
+      if Item(i).hasCode(system, code) then
+        DeleteByIndex(i);
+end;
+
+{ TFhirCapabilityStatementRestResourceSearchParamHelper }
+
+function TFhirCapabilityStatementRestResourceSearchParamHelper.summary: String;
+begin
+  if (definition <> '') then
+    result := name +' : '+CODES_TFhirSearchParamTypeEnum[type_]+' ('+definition+')'
+  else
+    result := name +' : '+CODES_TFhirSearchParamTypeEnum[type_];
+end;
+
+{ TFhirConformanceRestHelper }
+
+function TFhirConformanceRestHelper.interaction(type_: TFhirSystemRestfulInteractionEnum): TFhirCapabilityStatementRestInteraction;
+var
+  i : integer;
+begin
+  result := nil;
+  for i := 0 to self.interactionList.count - 1 do
+    if (self.interactionList[i].code = type_) then
+      result := self.interactionList[i];
+end;
+
+{ TFhirValueSetComposeIncludeHelper }
+
+function TFhirValueSetComposeIncludeHelper.summary: String;
+begin
+  if valueSetList.Count > 0 then
+    result := 'from valueset '+valueSetList[0].value
+  else if conceptList.Count > 0 then
+    result := 'enumerated concepts from '+system
+  else if filterList.Count > 0 then
+    result := 'select concepts from '+system
+  else
+    result := 'all concepts from '+system;
 end;
 
 end.

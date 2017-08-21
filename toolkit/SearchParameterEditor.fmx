@@ -1,0 +1,115 @@
+object SearchParameterEditorForm: TSearchParameterEditorForm
+  Left = 0
+  Top = 0
+  Caption = 'Search Parameter Details'
+  ClientHeight = 264
+  ClientWidth = 434
+  FormFactor.Width = 320
+  FormFactor.Height = 480
+  FormFactor.Devices = [Desktop]
+  OnShow = FormShow
+  DesignerMasterStyle = 0
+  object Panel1: TPanel
+    Align = Bottom
+    Position.Y = 224.000000000000000000
+    Size.Width = 434.000000000000000000
+    Size.Height = 40.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 0
+    object Button1: TButton
+      Anchors = [akTop, akRight]
+      Default = True
+      ModalResult = 1
+      Position.X = 257.000000000000000000
+      Position.Y = 8.000000000000000000
+      TabOrder = 0
+      Text = 'OK'
+      OnClick = Button1Click
+    end
+    object Button2: TButton
+      Anchors = [akTop, akRight]
+      Cancel = True
+      ModalResult = 2
+      Position.X = 345.000000000000000000
+      Position.Y = 8.000000000000000000
+      TabOrder = 1
+      Text = 'Cancel'
+    end
+  end
+  object Label1: TLabel
+    Position.X = 16.000000000000000000
+    Position.Y = 10.000000000000000000
+    Text = 'Name:'
+    TabOrder = 1
+  end
+  object Label2: TLabel
+    Position.X = 16.000000000000000000
+    Position.Y = 42.000000000000000000
+    Text = 'Type:'
+    TabOrder = 2
+  end
+  object Label3: TLabel
+    Position.X = 16.000000000000000000
+    Position.Y = 74.000000000000000000
+    Text = 'Definition:'
+    TabOrder = 3
+  end
+  object Label4: TLabel
+    Position.X = 16.000000000000000000
+    Position.Y = 104.000000000000000000
+    Text = 'Documentation:'
+    TabOrder = 4
+  end
+  object edtName: TEdit
+    Touch.InteractiveGestures = [LongTap, DoubleTap]
+    Anchors = [akLeft, akTop, akRight]
+    TabOrder = 5
+    Position.X = 80.000000000000000000
+    Position.Y = 8.000000000000000000
+    Size.Width = 341.000000000000000000
+    Size.Height = 22.000000000000000000
+    Size.PlatformDefault = False
+  end
+  object edtDefinition: TEdit
+    Touch.InteractiveGestures = [LongTap, DoubleTap]
+    Anchors = [akLeft, akTop, akRight]
+    TabOrder = 6
+    Position.X = 80.000000000000000000
+    Position.Y = 72.000000000000000000
+    Size.Width = 341.000000000000000000
+    Size.Height = 22.000000000000000000
+    Size.PlatformDefault = False
+  end
+  object cbxType: TComboBox
+    Anchors = [akLeft, akTop, akRight]
+    Items.Strings = (
+      ''
+      'number'
+      'date'
+      'string'
+      'token'
+      'reference'
+      'composite'
+      'quantity'
+      'uri')
+    Position.X = 80.000000000000000000
+    Position.Y = 40.000000000000000000
+    Size.Width = 341.000000000000000000
+    Size.Height = 22.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 7
+  end
+  object mDocumentation: TMemo
+    Touch.InteractiveGestures = [Pan, LongTap, DoubleTap]
+    DataDetectorTypes = []
+    Anchors = [akLeft, akTop, akRight, akBottom]
+    Position.X = 16.000000000000000000
+    Position.Y = 128.000000000000000000
+    Size.Width = 405.000000000000000000
+    Size.Height = 82.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 8
+    Viewport.Width = 405.000000000000000000
+    Viewport.Height = 82.000000000000000000
+  end
+end

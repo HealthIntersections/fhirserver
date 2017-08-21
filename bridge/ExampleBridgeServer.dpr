@@ -172,8 +172,6 @@ uses
   AreaCodeServices in '..\Server\AreaCodeServices.pas',
   AuthServer in '..\Server\AuthServer.pas',
   ClosureManager in '..\Server\ClosureManager.pas',
-  CountryCodeServices in '..\Server\CountryCodeServices.pas',
-  CvxServices in '..\Server\CvxServices.pas',
   FHIRIndexManagers in '..\Server\FHIRIndexManagers.pas',
   FHIRLog in '..\Server\FHIRLog.pas',
   FHIRRestServer in '..\Server\FHIRRestServer.pas',
@@ -198,7 +196,6 @@ uses
   TerminologyServer in '..\Server\TerminologyServer.pas',
   TerminologyServerStore in '..\Server\TerminologyServerStore.pas',
   TerminologyWebServer in '..\Server\TerminologyWebServer.pas',
-  USStateCodeServices in '..\Server\USStateCodeServices.pas',
   UniiServices in '..\Server\UniiServices.pas',
   UriServices in '..\Server\UriServices.pas',
   logging in '..\Server\logging.pas',
@@ -217,7 +214,8 @@ uses
   SCrypt in '..\Libraries\security\SCrypt.pas',
   ApplicationCache in '..\Server\ApplicationCache.pas',
   CDSHooksClientManager in '..\reference-platform\support\CDSHooksClientManager.pas',
-  WebSourceProvider in '..\Server\WebSourceProvider.pas';
+  WebSourceProvider in '..\Server\WebSourceProvider.pas',
+  FHIRIndexBase in '..\reference-platform\support\FHIRIndexBase.pas';
 
 var
   gsrv : TExampleFhirServer;

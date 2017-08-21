@@ -1,5 +1,7 @@
 unit FHIRParserJson;
 
+{$I fhir.inc}
+
 {
   Copyright (c) 2011+, HL7 and Health Intersections Pty Ltd (http://www.healthintersections.com.au)
   All rights reserved.
@@ -93,12 +95,14 @@ Type
 
     procedure ParseResourceProperties(jsn : TJsonObject; resource : TFhirResource);
     procedure ParseDomainResourceProperties(jsn : TJsonObject; resource : TFhirDomainResource);
+{$IFDEF FHIR_PARAMETERS}
     function ParseParametersParameter(jsn : TJsonObject) : TFhirParametersParameter; overload; {b\}
     procedure ParseParametersParameterProperties(jsn : TJsonObject; result : TFhirParametersParameter); overload; {b\}
     procedure ParseParametersParameter(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
     function ParseParameters(jsn : TJsonObject) : TFhirParameters; overload;
     procedure ParseParametersProperties(jsn : TJsonObject; result : TFhirParameters); overload;
     procedure ParseParameters(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+{$ENDIF FHIR_PARAMETERS}
 
     function ParseExtension(jsn : TJsonObject) : TFhirExtension; overload;
     procedure ParseExtensionProperties(jsn : TJsonObject; result : TFhirExtension); overload;
@@ -233,6 +237,7 @@ Type
     procedure ParseDurationProperties(jsn : TJsonObject; result : TFhirDuration); overload;
     procedure ParseDuration(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
 
+{$IFDEF FHIR_ACCOUNT}
     function ParseAccountCoverage(jsn : TJsonObject) : TFhirAccountCoverage; overload; {b\}
     procedure ParseAccountCoverageProperties(jsn : TJsonObject; result : TFhirAccountCoverage); overload; {b\}
     procedure ParseAccountCoverage(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
@@ -242,6 +247,8 @@ Type
     function ParseAccount(jsn : TJsonObject) : TFhirAccount; overload;
     procedure ParseAccountProperties(jsn : TJsonObject; result : TFhirAccount); overload;
     procedure ParseAccount(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+{$ENDIF FHIR_ACCOUNT}
+{$IFDEF FHIR_ACTIVITYDEFINITION}
     function ParseActivityDefinitionParticipant(jsn : TJsonObject) : TFhirActivityDefinitionParticipant; overload; {b\}
     procedure ParseActivityDefinitionParticipantProperties(jsn : TJsonObject; result : TFhirActivityDefinitionParticipant); overload; {b\}
     procedure ParseActivityDefinitionParticipant(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
@@ -251,27 +258,37 @@ Type
     function ParseActivityDefinition(jsn : TJsonObject) : TFhirActivityDefinition; overload;
     procedure ParseActivityDefinitionProperties(jsn : TJsonObject; result : TFhirActivityDefinition); overload;
     procedure ParseActivityDefinition(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+{$ENDIF FHIR_ACTIVITYDEFINITION}
+{$IFDEF FHIR_ADVERSEEVENT}
     function ParseAdverseEventSuspectEntity(jsn : TJsonObject) : TFhirAdverseEventSuspectEntity; overload; {b\}
     procedure ParseAdverseEventSuspectEntityProperties(jsn : TJsonObject; result : TFhirAdverseEventSuspectEntity); overload; {b\}
     procedure ParseAdverseEventSuspectEntity(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
     function ParseAdverseEvent(jsn : TJsonObject) : TFhirAdverseEvent; overload;
     procedure ParseAdverseEventProperties(jsn : TJsonObject; result : TFhirAdverseEvent); overload;
     procedure ParseAdverseEvent(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+{$ENDIF FHIR_ADVERSEEVENT}
+{$IFDEF FHIR_ALLERGYINTOLERANCE}
     function ParseAllergyIntoleranceReaction(jsn : TJsonObject) : TFhirAllergyIntoleranceReaction; overload; {b\}
     procedure ParseAllergyIntoleranceReactionProperties(jsn : TJsonObject; result : TFhirAllergyIntoleranceReaction); overload; {b\}
     procedure ParseAllergyIntoleranceReaction(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
     function ParseAllergyIntolerance(jsn : TJsonObject) : TFhirAllergyIntolerance; overload;
     procedure ParseAllergyIntoleranceProperties(jsn : TJsonObject; result : TFhirAllergyIntolerance); overload;
     procedure ParseAllergyIntolerance(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+{$ENDIF FHIR_ALLERGYINTOLERANCE}
+{$IFDEF FHIR_APPOINTMENT}
     function ParseAppointmentParticipant(jsn : TJsonObject) : TFhirAppointmentParticipant; overload; {b\}
     procedure ParseAppointmentParticipantProperties(jsn : TJsonObject; result : TFhirAppointmentParticipant); overload; {b\}
     procedure ParseAppointmentParticipant(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
     function ParseAppointment(jsn : TJsonObject) : TFhirAppointment; overload;
     procedure ParseAppointmentProperties(jsn : TJsonObject; result : TFhirAppointment); overload;
     procedure ParseAppointment(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+{$ENDIF FHIR_APPOINTMENT}
+{$IFDEF FHIR_APPOINTMENTRESPONSE}
     function ParseAppointmentResponse(jsn : TJsonObject) : TFhirAppointmentResponse; overload;
     procedure ParseAppointmentResponseProperties(jsn : TJsonObject; result : TFhirAppointmentResponse); overload;
     procedure ParseAppointmentResponse(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+{$ENDIF FHIR_APPOINTMENTRESPONSE}
+{$IFDEF FHIR_AUDITEVENT}
     function ParseAuditEventAgent(jsn : TJsonObject) : TFhirAuditEventAgent; overload; {b\}
     procedure ParseAuditEventAgentProperties(jsn : TJsonObject; result : TFhirAuditEventAgent); overload; {b\}
     procedure ParseAuditEventAgent(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
@@ -290,15 +307,23 @@ Type
     function ParseAuditEvent(jsn : TJsonObject) : TFhirAuditEvent; overload;
     procedure ParseAuditEventProperties(jsn : TJsonObject; result : TFhirAuditEvent); overload;
     procedure ParseAuditEvent(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+{$ENDIF FHIR_AUDITEVENT}
+{$IFDEF FHIR_BASIC}
     function ParseBasic(jsn : TJsonObject) : TFhirBasic; overload;
     procedure ParseBasicProperties(jsn : TJsonObject; result : TFhirBasic); overload;
     procedure ParseBasic(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+{$ENDIF FHIR_BASIC}
+{$IFDEF FHIR_BINARY}
     function ParseBinary(jsn : TJsonObject) : TFhirBinary; overload;
     procedure ParseBinaryProperties(jsn : TJsonObject; result : TFhirBinary); overload;
     procedure ParseBinary(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+{$ENDIF FHIR_BINARY}
+{$IFDEF FHIR_BODYSITE}
     function ParseBodySite(jsn : TJsonObject) : TFhirBodySite; overload;
     procedure ParseBodySiteProperties(jsn : TJsonObject; result : TFhirBodySite); overload;
     procedure ParseBodySite(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+{$ENDIF FHIR_BODYSITE}
+{$IFDEF FHIR_BUNDLE}
     function ParseBundleLink(jsn : TJsonObject) : TFhirBundleLink; overload; {b\}
     procedure ParseBundleLinkProperties(jsn : TJsonObject; result : TFhirBundleLink); overload; {b\}
     procedure ParseBundleLink(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
@@ -317,6 +342,8 @@ Type
     function ParseBundle(jsn : TJsonObject) : TFhirBundle; overload;
     procedure ParseBundleProperties(jsn : TJsonObject; result : TFhirBundle); overload;
     procedure ParseBundle(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+{$ENDIF FHIR_BUNDLE}
+{$IFDEF FHIR_CAPABILITYSTATEMENT}
     function ParseCapabilityStatementSoftware(jsn : TJsonObject) : TFhirCapabilityStatementSoftware; overload; {b\}
     procedure ParseCapabilityStatementSoftwareProperties(jsn : TJsonObject; result : TFhirCapabilityStatementSoftware); overload; {b\}
     procedure ParseCapabilityStatementSoftware(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
@@ -365,6 +392,8 @@ Type
     function ParseCapabilityStatement(jsn : TJsonObject) : TFhirCapabilityStatement; overload;
     procedure ParseCapabilityStatementProperties(jsn : TJsonObject; result : TFhirCapabilityStatement); overload;
     procedure ParseCapabilityStatement(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+{$ENDIF FHIR_CAPABILITYSTATEMENT}
+{$IFDEF FHIR_CAREPLAN}
     function ParseCarePlanActivity(jsn : TJsonObject) : TFhirCarePlanActivity; overload; {b\}
     procedure ParseCarePlanActivityProperties(jsn : TJsonObject; result : TFhirCarePlanActivity); overload; {b\}
     procedure ParseCarePlanActivity(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
@@ -374,18 +403,24 @@ Type
     function ParseCarePlan(jsn : TJsonObject) : TFhirCarePlan; overload;
     procedure ParseCarePlanProperties(jsn : TJsonObject; result : TFhirCarePlan); overload;
     procedure ParseCarePlan(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+{$ENDIF FHIR_CAREPLAN}
+{$IFDEF FHIR_CARETEAM}
     function ParseCareTeamParticipant(jsn : TJsonObject) : TFhirCareTeamParticipant; overload; {b\}
     procedure ParseCareTeamParticipantProperties(jsn : TJsonObject; result : TFhirCareTeamParticipant); overload; {b\}
     procedure ParseCareTeamParticipant(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
     function ParseCareTeam(jsn : TJsonObject) : TFhirCareTeam; overload;
     procedure ParseCareTeamProperties(jsn : TJsonObject; result : TFhirCareTeam); overload;
     procedure ParseCareTeam(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+{$ENDIF FHIR_CARETEAM}
+{$IFDEF FHIR_CHARGEITEM}
     function ParseChargeItemParticipant(jsn : TJsonObject) : TFhirChargeItemParticipant; overload; {b\}
     procedure ParseChargeItemParticipantProperties(jsn : TJsonObject; result : TFhirChargeItemParticipant); overload; {b\}
     procedure ParseChargeItemParticipant(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
     function ParseChargeItem(jsn : TJsonObject) : TFhirChargeItem; overload;
     procedure ParseChargeItemProperties(jsn : TJsonObject; result : TFhirChargeItem); overload;
     procedure ParseChargeItem(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+{$ENDIF FHIR_CHARGEITEM}
+{$IFDEF FHIR_CLAIM}
     function ParseClaimRelated(jsn : TJsonObject) : TFhirClaimRelated; overload; {b\}
     procedure ParseClaimRelatedProperties(jsn : TJsonObject; result : TFhirClaimRelated); overload; {b\}
     procedure ParseClaimRelated(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
@@ -422,6 +457,8 @@ Type
     function ParseClaim(jsn : TJsonObject) : TFhirClaim; overload;
     procedure ParseClaimProperties(jsn : TJsonObject; result : TFhirClaim); overload;
     procedure ParseClaim(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+{$ENDIF FHIR_CLAIM}
+{$IFDEF FHIR_CLAIMRESPONSE}
     function ParseClaimResponseItem(jsn : TJsonObject) : TFhirClaimResponseItem; overload; {b\}
     procedure ParseClaimResponseItemProperties(jsn : TJsonObject; result : TFhirClaimResponseItem); overload; {b\}
     procedure ParseClaimResponseItem(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
@@ -455,6 +492,8 @@ Type
     function ParseClaimResponse(jsn : TJsonObject) : TFhirClaimResponse; overload;
     procedure ParseClaimResponseProperties(jsn : TJsonObject; result : TFhirClaimResponse); overload;
     procedure ParseClaimResponse(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+{$ENDIF FHIR_CLAIMRESPONSE}
+{$IFDEF FHIR_CLINICALIMPRESSION}
     function ParseClinicalImpressionInvestigation(jsn : TJsonObject) : TFhirClinicalImpressionInvestigation; overload; {b\}
     procedure ParseClinicalImpressionInvestigationProperties(jsn : TJsonObject; result : TFhirClinicalImpressionInvestigation); overload; {b\}
     procedure ParseClinicalImpressionInvestigation(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
@@ -464,6 +503,8 @@ Type
     function ParseClinicalImpression(jsn : TJsonObject) : TFhirClinicalImpression; overload;
     procedure ParseClinicalImpressionProperties(jsn : TJsonObject; result : TFhirClinicalImpression); overload;
     procedure ParseClinicalImpression(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+{$ENDIF FHIR_CLINICALIMPRESSION}
+{$IFDEF FHIR_CODESYSTEM}
     function ParseCodeSystemFilter(jsn : TJsonObject) : TFhirCodeSystemFilter; overload; {b\}
     procedure ParseCodeSystemFilterProperties(jsn : TJsonObject; result : TFhirCodeSystemFilter); overload; {b\}
     procedure ParseCodeSystemFilter(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
@@ -482,12 +523,16 @@ Type
     function ParseCodeSystem(jsn : TJsonObject) : TFhirCodeSystem; overload;
     procedure ParseCodeSystemProperties(jsn : TJsonObject; result : TFhirCodeSystem); overload;
     procedure ParseCodeSystem(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+{$ENDIF FHIR_CODESYSTEM}
+{$IFDEF FHIR_COMMUNICATION}
     function ParseCommunicationPayload(jsn : TJsonObject) : TFhirCommunicationPayload; overload; {b\}
     procedure ParseCommunicationPayloadProperties(jsn : TJsonObject; result : TFhirCommunicationPayload); overload; {b\}
     procedure ParseCommunicationPayload(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
     function ParseCommunication(jsn : TJsonObject) : TFhirCommunication; overload;
     procedure ParseCommunicationProperties(jsn : TJsonObject; result : TFhirCommunication); overload;
     procedure ParseCommunication(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+{$ENDIF FHIR_COMMUNICATION}
+{$IFDEF FHIR_COMMUNICATIONREQUEST}
     function ParseCommunicationRequestPayload(jsn : TJsonObject) : TFhirCommunicationRequestPayload; overload; {b\}
     procedure ParseCommunicationRequestPayloadProperties(jsn : TJsonObject; result : TFhirCommunicationRequestPayload); overload; {b\}
     procedure ParseCommunicationRequestPayload(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
@@ -497,12 +542,16 @@ Type
     function ParseCommunicationRequest(jsn : TJsonObject) : TFhirCommunicationRequest; overload;
     procedure ParseCommunicationRequestProperties(jsn : TJsonObject; result : TFhirCommunicationRequest); overload;
     procedure ParseCommunicationRequest(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+{$ENDIF FHIR_COMMUNICATIONREQUEST}
+{$IFDEF FHIR_COMPARTMENTDEFINITION}
     function ParseCompartmentDefinitionResource(jsn : TJsonObject) : TFhirCompartmentDefinitionResource; overload; {b\}
     procedure ParseCompartmentDefinitionResourceProperties(jsn : TJsonObject; result : TFhirCompartmentDefinitionResource); overload; {b\}
     procedure ParseCompartmentDefinitionResource(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
     function ParseCompartmentDefinition(jsn : TJsonObject) : TFhirCompartmentDefinition; overload;
     procedure ParseCompartmentDefinitionProperties(jsn : TJsonObject; result : TFhirCompartmentDefinition); overload;
     procedure ParseCompartmentDefinition(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+{$ENDIF FHIR_COMPARTMENTDEFINITION}
+{$IFDEF FHIR_COMPOSITION}
     function ParseCompositionAttester(jsn : TJsonObject) : TFhirCompositionAttester; overload; {b\}
     procedure ParseCompositionAttesterProperties(jsn : TJsonObject; result : TFhirCompositionAttester); overload; {b\}
     procedure ParseCompositionAttester(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
@@ -518,6 +567,8 @@ Type
     function ParseComposition(jsn : TJsonObject) : TFhirComposition; overload;
     procedure ParseCompositionProperties(jsn : TJsonObject; result : TFhirComposition); overload;
     procedure ParseComposition(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+{$ENDIF FHIR_COMPOSITION}
+{$IFDEF FHIR_CONCEPTMAP}
     function ParseConceptMapGroup(jsn : TJsonObject) : TFhirConceptMapGroup; overload; {b\}
     procedure ParseConceptMapGroupProperties(jsn : TJsonObject; result : TFhirConceptMapGroup); overload; {b\}
     procedure ParseConceptMapGroup(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
@@ -536,6 +587,8 @@ Type
     function ParseConceptMap(jsn : TJsonObject) : TFhirConceptMap; overload;
     procedure ParseConceptMapProperties(jsn : TJsonObject; result : TFhirConceptMap); overload;
     procedure ParseConceptMap(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+{$ENDIF FHIR_CONCEPTMAP}
+{$IFDEF FHIR_CONDITION}
     function ParseConditionStage(jsn : TJsonObject) : TFhirConditionStage; overload; {b\}
     procedure ParseConditionStageProperties(jsn : TJsonObject; result : TFhirConditionStage); overload; {b\}
     procedure ParseConditionStage(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
@@ -545,6 +598,8 @@ Type
     function ParseCondition(jsn : TJsonObject) : TFhirCondition; overload;
     procedure ParseConditionProperties(jsn : TJsonObject; result : TFhirCondition); overload;
     procedure ParseCondition(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+{$ENDIF FHIR_CONDITION}
+{$IFDEF FHIR_CONSENT}
     function ParseConsentActor(jsn : TJsonObject) : TFhirConsentActor; overload; {b\}
     procedure ParseConsentActorProperties(jsn : TJsonObject; result : TFhirConsentActor); overload; {b\}
     procedure ParseConsentActor(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
@@ -566,6 +621,8 @@ Type
     function ParseConsent(jsn : TJsonObject) : TFhirConsent; overload;
     procedure ParseConsentProperties(jsn : TJsonObject; result : TFhirConsent); overload;
     procedure ParseConsent(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+{$ENDIF FHIR_CONSENT}
+{$IFDEF FHIR_CONTRACT}
     function ParseContractAgent(jsn : TJsonObject) : TFhirContractAgent; overload; {b\}
     procedure ParseContractAgentProperties(jsn : TJsonObject; result : TFhirContractAgent); overload; {b\}
     procedure ParseContractAgent(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
@@ -596,51 +653,69 @@ Type
     function ParseContract(jsn : TJsonObject) : TFhirContract; overload;
     procedure ParseContractProperties(jsn : TJsonObject; result : TFhirContract); overload;
     procedure ParseContract(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+{$ENDIF FHIR_CONTRACT}
+{$IFDEF FHIR_COVERAGE}
     function ParseCoverageGrouping(jsn : TJsonObject) : TFhirCoverageGrouping; overload; {b\}
     procedure ParseCoverageGroupingProperties(jsn : TJsonObject; result : TFhirCoverageGrouping); overload; {b\}
     procedure ParseCoverageGrouping(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
     function ParseCoverage(jsn : TJsonObject) : TFhirCoverage; overload;
     procedure ParseCoverageProperties(jsn : TJsonObject; result : TFhirCoverage); overload;
     procedure ParseCoverage(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+{$ENDIF FHIR_COVERAGE}
+{$IFDEF FHIR_DATAELEMENT}
     function ParseDataElementMapping(jsn : TJsonObject) : TFhirDataElementMapping; overload; {b\}
     procedure ParseDataElementMappingProperties(jsn : TJsonObject; result : TFhirDataElementMapping); overload; {b\}
     procedure ParseDataElementMapping(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
     function ParseDataElement(jsn : TJsonObject) : TFhirDataElement; overload;
     procedure ParseDataElementProperties(jsn : TJsonObject; result : TFhirDataElement); overload;
     procedure ParseDataElement(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+{$ENDIF FHIR_DATAELEMENT}
+{$IFDEF FHIR_DETECTEDISSUE}
     function ParseDetectedIssueMitigation(jsn : TJsonObject) : TFhirDetectedIssueMitigation; overload; {b\}
     procedure ParseDetectedIssueMitigationProperties(jsn : TJsonObject; result : TFhirDetectedIssueMitigation); overload; {b\}
     procedure ParseDetectedIssueMitigation(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
     function ParseDetectedIssue(jsn : TJsonObject) : TFhirDetectedIssue; overload;
     procedure ParseDetectedIssueProperties(jsn : TJsonObject; result : TFhirDetectedIssue); overload;
     procedure ParseDetectedIssue(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+{$ENDIF FHIR_DETECTEDISSUE}
+{$IFDEF FHIR_DEVICE}
     function ParseDeviceUdi(jsn : TJsonObject) : TFhirDeviceUdi; overload; {b\}
     procedure ParseDeviceUdiProperties(jsn : TJsonObject; result : TFhirDeviceUdi); overload; {b\}
     procedure ParseDeviceUdi(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
     function ParseDevice(jsn : TJsonObject) : TFhirDevice; overload;
     procedure ParseDeviceProperties(jsn : TJsonObject; result : TFhirDevice); overload;
     procedure ParseDevice(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+{$ENDIF FHIR_DEVICE}
+{$IFDEF FHIR_DEVICECOMPONENT}
     function ParseDeviceComponentProductionSpecification(jsn : TJsonObject) : TFhirDeviceComponentProductionSpecification; overload; {b\}
     procedure ParseDeviceComponentProductionSpecificationProperties(jsn : TJsonObject; result : TFhirDeviceComponentProductionSpecification); overload; {b\}
     procedure ParseDeviceComponentProductionSpecification(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
     function ParseDeviceComponent(jsn : TJsonObject) : TFhirDeviceComponent; overload;
     procedure ParseDeviceComponentProperties(jsn : TJsonObject; result : TFhirDeviceComponent); overload;
     procedure ParseDeviceComponent(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+{$ENDIF FHIR_DEVICECOMPONENT}
+{$IFDEF FHIR_DEVICEMETRIC}
     function ParseDeviceMetricCalibration(jsn : TJsonObject) : TFhirDeviceMetricCalibration; overload; {b\}
     procedure ParseDeviceMetricCalibrationProperties(jsn : TJsonObject; result : TFhirDeviceMetricCalibration); overload; {b\}
     procedure ParseDeviceMetricCalibration(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
     function ParseDeviceMetric(jsn : TJsonObject) : TFhirDeviceMetric; overload;
     procedure ParseDeviceMetricProperties(jsn : TJsonObject; result : TFhirDeviceMetric); overload;
     procedure ParseDeviceMetric(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+{$ENDIF FHIR_DEVICEMETRIC}
+{$IFDEF FHIR_DEVICEREQUEST}
     function ParseDeviceRequestRequester(jsn : TJsonObject) : TFhirDeviceRequestRequester; overload; {b\}
     procedure ParseDeviceRequestRequesterProperties(jsn : TJsonObject; result : TFhirDeviceRequestRequester); overload; {b\}
     procedure ParseDeviceRequestRequester(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
     function ParseDeviceRequest(jsn : TJsonObject) : TFhirDeviceRequest; overload;
     procedure ParseDeviceRequestProperties(jsn : TJsonObject; result : TFhirDeviceRequest); overload;
     procedure ParseDeviceRequest(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+{$ENDIF FHIR_DEVICEREQUEST}
+{$IFDEF FHIR_DEVICEUSESTATEMENT}
     function ParseDeviceUseStatement(jsn : TJsonObject) : TFhirDeviceUseStatement; overload;
     procedure ParseDeviceUseStatementProperties(jsn : TJsonObject; result : TFhirDeviceUseStatement); overload;
     procedure ParseDeviceUseStatement(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+{$ENDIF FHIR_DEVICEUSESTATEMENT}
+{$IFDEF FHIR_DIAGNOSTICREPORT}
     function ParseDiagnosticReportPerformer(jsn : TJsonObject) : TFhirDiagnosticReportPerformer; overload; {b\}
     procedure ParseDiagnosticReportPerformerProperties(jsn : TJsonObject; result : TFhirDiagnosticReportPerformer); overload; {b\}
     procedure ParseDiagnosticReportPerformer(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
@@ -650,6 +725,8 @@ Type
     function ParseDiagnosticReport(jsn : TJsonObject) : TFhirDiagnosticReport; overload;
     procedure ParseDiagnosticReportProperties(jsn : TJsonObject; result : TFhirDiagnosticReport); overload;
     procedure ParseDiagnosticReport(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+{$ENDIF FHIR_DIAGNOSTICREPORT}
+{$IFDEF FHIR_DOCUMENTMANIFEST}
     function ParseDocumentManifestContent(jsn : TJsonObject) : TFhirDocumentManifestContent; overload; {b\}
     procedure ParseDocumentManifestContentProperties(jsn : TJsonObject; result : TFhirDocumentManifestContent); overload; {b\}
     procedure ParseDocumentManifestContent(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
@@ -659,6 +736,8 @@ Type
     function ParseDocumentManifest(jsn : TJsonObject) : TFhirDocumentManifest; overload;
     procedure ParseDocumentManifestProperties(jsn : TJsonObject; result : TFhirDocumentManifest); overload;
     procedure ParseDocumentManifest(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+{$ENDIF FHIR_DOCUMENTMANIFEST}
+{$IFDEF FHIR_DOCUMENTREFERENCE}
     function ParseDocumentReferenceRelatesTo(jsn : TJsonObject) : TFhirDocumentReferenceRelatesTo; overload; {b\}
     procedure ParseDocumentReferenceRelatesToProperties(jsn : TJsonObject; result : TFhirDocumentReferenceRelatesTo); overload; {b\}
     procedure ParseDocumentReferenceRelatesTo(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
@@ -674,9 +753,13 @@ Type
     function ParseDocumentReference(jsn : TJsonObject) : TFhirDocumentReference; overload;
     procedure ParseDocumentReferenceProperties(jsn : TJsonObject; result : TFhirDocumentReference); overload;
     procedure ParseDocumentReference(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+{$ENDIF FHIR_DOCUMENTREFERENCE}
+{$IFDEF FHIR_ELIGIBILITYREQUEST}
     function ParseEligibilityRequest(jsn : TJsonObject) : TFhirEligibilityRequest; overload;
     procedure ParseEligibilityRequestProperties(jsn : TJsonObject; result : TFhirEligibilityRequest); overload;
     procedure ParseEligibilityRequest(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+{$ENDIF FHIR_ELIGIBILITYREQUEST}
+{$IFDEF FHIR_ELIGIBILITYRESPONSE}
     function ParseEligibilityResponseInsurance(jsn : TJsonObject) : TFhirEligibilityResponseInsurance; overload; {b\}
     procedure ParseEligibilityResponseInsuranceProperties(jsn : TJsonObject; result : TFhirEligibilityResponseInsurance); overload; {b\}
     procedure ParseEligibilityResponseInsurance(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
@@ -692,6 +775,8 @@ Type
     function ParseEligibilityResponse(jsn : TJsonObject) : TFhirEligibilityResponse; overload;
     procedure ParseEligibilityResponseProperties(jsn : TJsonObject; result : TFhirEligibilityResponse); overload;
     procedure ParseEligibilityResponse(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+{$ENDIF FHIR_ELIGIBILITYRESPONSE}
+{$IFDEF FHIR_ENCOUNTER}
     function ParseEncounterStatusHistory(jsn : TJsonObject) : TFhirEncounterStatusHistory; overload; {b\}
     procedure ParseEncounterStatusHistoryProperties(jsn : TJsonObject; result : TFhirEncounterStatusHistory); overload; {b\}
     procedure ParseEncounterStatusHistory(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
@@ -713,15 +798,23 @@ Type
     function ParseEncounter(jsn : TJsonObject) : TFhirEncounter; overload;
     procedure ParseEncounterProperties(jsn : TJsonObject; result : TFhirEncounter); overload;
     procedure ParseEncounter(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+{$ENDIF FHIR_ENCOUNTER}
+{$IFDEF FHIR_ENDPOINT}
     function ParseEndpoint(jsn : TJsonObject) : TFhirEndpoint; overload;
     procedure ParseEndpointProperties(jsn : TJsonObject; result : TFhirEndpoint); overload;
     procedure ParseEndpoint(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+{$ENDIF FHIR_ENDPOINT}
+{$IFDEF FHIR_ENROLLMENTREQUEST}
     function ParseEnrollmentRequest(jsn : TJsonObject) : TFhirEnrollmentRequest; overload;
     procedure ParseEnrollmentRequestProperties(jsn : TJsonObject; result : TFhirEnrollmentRequest); overload;
     procedure ParseEnrollmentRequest(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+{$ENDIF FHIR_ENROLLMENTREQUEST}
+{$IFDEF FHIR_ENROLLMENTRESPONSE}
     function ParseEnrollmentResponse(jsn : TJsonObject) : TFhirEnrollmentResponse; overload;
     procedure ParseEnrollmentResponseProperties(jsn : TJsonObject; result : TFhirEnrollmentResponse); overload;
     procedure ParseEnrollmentResponse(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+{$ENDIF FHIR_ENROLLMENTRESPONSE}
+{$IFDEF FHIR_EPISODEOFCARE}
     function ParseEpisodeOfCareStatusHistory(jsn : TJsonObject) : TFhirEpisodeOfCareStatusHistory; overload; {b\}
     procedure ParseEpisodeOfCareStatusHistoryProperties(jsn : TJsonObject; result : TFhirEpisodeOfCareStatusHistory); overload; {b\}
     procedure ParseEpisodeOfCareStatusHistory(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
@@ -731,6 +824,8 @@ Type
     function ParseEpisodeOfCare(jsn : TJsonObject) : TFhirEpisodeOfCare; overload;
     procedure ParseEpisodeOfCareProperties(jsn : TJsonObject; result : TFhirEpisodeOfCare); overload;
     procedure ParseEpisodeOfCare(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+{$ENDIF FHIR_EPISODEOFCARE}
+{$IFDEF FHIR_EXPANSIONPROFILE}
     function ParseExpansionProfileFixedVersion(jsn : TJsonObject) : TFhirExpansionProfileFixedVersion; overload; {b\}
     procedure ParseExpansionProfileFixedVersionProperties(jsn : TJsonObject; result : TFhirExpansionProfileFixedVersion); overload; {b\}
     procedure ParseExpansionProfileFixedVersion(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
@@ -755,6 +850,8 @@ Type
     function ParseExpansionProfile(jsn : TJsonObject) : TFhirExpansionProfile; overload;
     procedure ParseExpansionProfileProperties(jsn : TJsonObject; result : TFhirExpansionProfile); overload;
     procedure ParseExpansionProfile(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+{$ENDIF FHIR_EXPANSIONPROFILE}
+{$IFDEF FHIR_EXPLANATIONOFBENEFIT}
     function ParseExplanationOfBenefitRelated(jsn : TJsonObject) : TFhirExplanationOfBenefitRelated; overload; {b\}
     procedure ParseExplanationOfBenefitRelatedProperties(jsn : TJsonObject; result : TFhirExplanationOfBenefitRelated); overload; {b\}
     procedure ParseExplanationOfBenefitRelated(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
@@ -812,21 +909,29 @@ Type
     function ParseExplanationOfBenefit(jsn : TJsonObject) : TFhirExplanationOfBenefit; overload;
     procedure ParseExplanationOfBenefitProperties(jsn : TJsonObject; result : TFhirExplanationOfBenefit); overload;
     procedure ParseExplanationOfBenefit(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+{$ENDIF FHIR_EXPLANATIONOFBENEFIT}
+{$IFDEF FHIR_FAMILYMEMBERHISTORY}
     function ParseFamilyMemberHistoryCondition(jsn : TJsonObject) : TFhirFamilyMemberHistoryCondition; overload; {b\}
     procedure ParseFamilyMemberHistoryConditionProperties(jsn : TJsonObject; result : TFhirFamilyMemberHistoryCondition); overload; {b\}
     procedure ParseFamilyMemberHistoryCondition(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
     function ParseFamilyMemberHistory(jsn : TJsonObject) : TFhirFamilyMemberHistory; overload;
     procedure ParseFamilyMemberHistoryProperties(jsn : TJsonObject; result : TFhirFamilyMemberHistory); overload;
     procedure ParseFamilyMemberHistory(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+{$ENDIF FHIR_FAMILYMEMBERHISTORY}
+{$IFDEF FHIR_FLAG}
     function ParseFlag(jsn : TJsonObject) : TFhirFlag; overload;
     procedure ParseFlagProperties(jsn : TJsonObject; result : TFhirFlag); overload;
     procedure ParseFlag(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+{$ENDIF FHIR_FLAG}
+{$IFDEF FHIR_GOAL}
     function ParseGoalTarget(jsn : TJsonObject) : TFhirGoalTarget; overload; {b\}
     procedure ParseGoalTargetProperties(jsn : TJsonObject; result : TFhirGoalTarget); overload; {b\}
     procedure ParseGoalTarget(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
     function ParseGoal(jsn : TJsonObject) : TFhirGoal; overload;
     procedure ParseGoalProperties(jsn : TJsonObject; result : TFhirGoal); overload;
     procedure ParseGoal(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+{$ENDIF FHIR_GOAL}
+{$IFDEF FHIR_GRAPHDEFINITION}
     function ParseGraphDefinitionLink(jsn : TJsonObject) : TFhirGraphDefinitionLink; overload; {b\}
     procedure ParseGraphDefinitionLinkProperties(jsn : TJsonObject; result : TFhirGraphDefinitionLink); overload; {b\}
     procedure ParseGraphDefinitionLink(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
@@ -839,6 +944,8 @@ Type
     function ParseGraphDefinition(jsn : TJsonObject) : TFhirGraphDefinition; overload;
     procedure ParseGraphDefinitionProperties(jsn : TJsonObject; result : TFhirGraphDefinition); overload;
     procedure ParseGraphDefinition(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+{$ENDIF FHIR_GRAPHDEFINITION}
+{$IFDEF FHIR_GROUP}
     function ParseGroupCharacteristic(jsn : TJsonObject) : TFhirGroupCharacteristic; overload; {b\}
     procedure ParseGroupCharacteristicProperties(jsn : TJsonObject; result : TFhirGroupCharacteristic); overload; {b\}
     procedure ParseGroupCharacteristic(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
@@ -848,9 +955,13 @@ Type
     function ParseGroup(jsn : TJsonObject) : TFhirGroup; overload;
     procedure ParseGroupProperties(jsn : TJsonObject; result : TFhirGroup); overload;
     procedure ParseGroup(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+{$ENDIF FHIR_GROUP}
+{$IFDEF FHIR_GUIDANCERESPONSE}
     function ParseGuidanceResponse(jsn : TJsonObject) : TFhirGuidanceResponse; overload;
     procedure ParseGuidanceResponseProperties(jsn : TJsonObject; result : TFhirGuidanceResponse); overload;
     procedure ParseGuidanceResponse(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+{$ENDIF FHIR_GUIDANCERESPONSE}
+{$IFDEF FHIR_HEALTHCARESERVICE}
     function ParseHealthcareServiceAvailableTime(jsn : TJsonObject) : TFhirHealthcareServiceAvailableTime; overload; {b\}
     procedure ParseHealthcareServiceAvailableTimeProperties(jsn : TJsonObject; result : TFhirHealthcareServiceAvailableTime); overload; {b\}
     procedure ParseHealthcareServiceAvailableTime(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
@@ -860,6 +971,8 @@ Type
     function ParseHealthcareService(jsn : TJsonObject) : TFhirHealthcareService; overload;
     procedure ParseHealthcareServiceProperties(jsn : TJsonObject; result : TFhirHealthcareService); overload;
     procedure ParseHealthcareService(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+{$ENDIF FHIR_HEALTHCARESERVICE}
+{$IFDEF FHIR_IMAGINGMANIFEST}
     function ParseImagingManifestStudy(jsn : TJsonObject) : TFhirImagingManifestStudy; overload; {b\}
     procedure ParseImagingManifestStudyProperties(jsn : TJsonObject; result : TFhirImagingManifestStudy); overload; {b\}
     procedure ParseImagingManifestStudy(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
@@ -872,6 +985,8 @@ Type
     function ParseImagingManifest(jsn : TJsonObject) : TFhirImagingManifest; overload;
     procedure ParseImagingManifestProperties(jsn : TJsonObject; result : TFhirImagingManifest); overload;
     procedure ParseImagingManifest(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+{$ENDIF FHIR_IMAGINGMANIFEST}
+{$IFDEF FHIR_IMAGINGSTUDY}
     function ParseImagingStudySeries(jsn : TJsonObject) : TFhirImagingStudySeries; overload; {b\}
     procedure ParseImagingStudySeriesProperties(jsn : TJsonObject; result : TFhirImagingStudySeries); overload; {b\}
     procedure ParseImagingStudySeries(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
@@ -881,6 +996,8 @@ Type
     function ParseImagingStudy(jsn : TJsonObject) : TFhirImagingStudy; overload;
     procedure ParseImagingStudyProperties(jsn : TJsonObject; result : TFhirImagingStudy); overload;
     procedure ParseImagingStudy(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+{$ENDIF FHIR_IMAGINGSTUDY}
+{$IFDEF FHIR_IMMUNIZATION}
     function ParseImmunizationPractitioner(jsn : TJsonObject) : TFhirImmunizationPractitioner; overload; {b\}
     procedure ParseImmunizationPractitionerProperties(jsn : TJsonObject; result : TFhirImmunizationPractitioner); overload; {b\}
     procedure ParseImmunizationPractitioner(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
@@ -896,6 +1013,8 @@ Type
     function ParseImmunization(jsn : TJsonObject) : TFhirImmunization; overload;
     procedure ParseImmunizationProperties(jsn : TJsonObject; result : TFhirImmunization); overload;
     procedure ParseImmunization(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+{$ENDIF FHIR_IMMUNIZATION}
+{$IFDEF FHIR_IMMUNIZATIONRECOMMENDATION}
     function ParseImmunizationRecommendationRecommendation(jsn : TJsonObject) : TFhirImmunizationRecommendationRecommendation; overload; {b\}
     procedure ParseImmunizationRecommendationRecommendationProperties(jsn : TJsonObject; result : TFhirImmunizationRecommendationRecommendation); overload; {b\}
     procedure ParseImmunizationRecommendationRecommendation(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
@@ -908,6 +1027,8 @@ Type
     function ParseImmunizationRecommendation(jsn : TJsonObject) : TFhirImmunizationRecommendation; overload;
     procedure ParseImmunizationRecommendationProperties(jsn : TJsonObject; result : TFhirImmunizationRecommendation); overload;
     procedure ParseImmunizationRecommendation(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+{$ENDIF FHIR_IMMUNIZATIONRECOMMENDATION}
+{$IFDEF FHIR_IMPLEMENTATIONGUIDE}
     function ParseImplementationGuideDependency(jsn : TJsonObject) : TFhirImplementationGuideDependency; overload; {b\}
     procedure ParseImplementationGuideDependencyProperties(jsn : TJsonObject; result : TFhirImplementationGuideDependency); overload; {b\}
     procedure ParseImplementationGuideDependency(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
@@ -926,27 +1047,37 @@ Type
     function ParseImplementationGuide(jsn : TJsonObject) : TFhirImplementationGuide; overload;
     procedure ParseImplementationGuideProperties(jsn : TJsonObject; result : TFhirImplementationGuide); overload;
     procedure ParseImplementationGuide(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+{$ENDIF FHIR_IMPLEMENTATIONGUIDE}
+{$IFDEF FHIR_LIBRARY}
     function ParseLibrary(jsn : TJsonObject) : TFhirLibrary; overload;
     procedure ParseLibraryProperties(jsn : TJsonObject; result : TFhirLibrary); overload;
     procedure ParseLibrary(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+{$ENDIF FHIR_LIBRARY}
+{$IFDEF FHIR_LINKAGE}
     function ParseLinkageItem(jsn : TJsonObject) : TFhirLinkageItem; overload; {b\}
     procedure ParseLinkageItemProperties(jsn : TJsonObject; result : TFhirLinkageItem); overload; {b\}
     procedure ParseLinkageItem(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
     function ParseLinkage(jsn : TJsonObject) : TFhirLinkage; overload;
     procedure ParseLinkageProperties(jsn : TJsonObject; result : TFhirLinkage); overload;
     procedure ParseLinkage(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+{$ENDIF FHIR_LINKAGE}
+{$IFDEF FHIR_LIST}
     function ParseListEntry(jsn : TJsonObject) : TFhirListEntry; overload; {b\}
     procedure ParseListEntryProperties(jsn : TJsonObject; result : TFhirListEntry); overload; {b\}
     procedure ParseListEntry(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
     function ParseList(jsn : TJsonObject) : TFhirList; overload;
     procedure ParseListProperties(jsn : TJsonObject; result : TFhirList); overload;
     procedure ParseList(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+{$ENDIF FHIR_LIST}
+{$IFDEF FHIR_LOCATION}
     function ParseLocationPosition(jsn : TJsonObject) : TFhirLocationPosition; overload; {b\}
     procedure ParseLocationPositionProperties(jsn : TJsonObject; result : TFhirLocationPosition); overload; {b\}
     procedure ParseLocationPosition(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
     function ParseLocation(jsn : TJsonObject) : TFhirLocation; overload;
     procedure ParseLocationProperties(jsn : TJsonObject; result : TFhirLocation); overload;
     procedure ParseLocation(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+{$ENDIF FHIR_LOCATION}
+{$IFDEF FHIR_MEASURE}
     function ParseMeasureGroup(jsn : TJsonObject) : TFhirMeasureGroup; overload; {b\}
     procedure ParseMeasureGroupProperties(jsn : TJsonObject; result : TFhirMeasureGroup); overload; {b\}
     procedure ParseMeasureGroup(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
@@ -962,6 +1093,8 @@ Type
     function ParseMeasure(jsn : TJsonObject) : TFhirMeasure; overload;
     procedure ParseMeasureProperties(jsn : TJsonObject; result : TFhirMeasure); overload;
     procedure ParseMeasure(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+{$ENDIF FHIR_MEASURE}
+{$IFDEF FHIR_MEASUREREPORT}
     function ParseMeasureReportGroup(jsn : TJsonObject) : TFhirMeasureReportGroup; overload; {b\}
     procedure ParseMeasureReportGroupProperties(jsn : TJsonObject; result : TFhirMeasureReportGroup); overload; {b\}
     procedure ParseMeasureReportGroup(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
@@ -980,9 +1113,13 @@ Type
     function ParseMeasureReport(jsn : TJsonObject) : TFhirMeasureReport; overload;
     procedure ParseMeasureReportProperties(jsn : TJsonObject; result : TFhirMeasureReport); overload;
     procedure ParseMeasureReport(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+{$ENDIF FHIR_MEASUREREPORT}
+{$IFDEF FHIR_MEDIA}
     function ParseMedia(jsn : TJsonObject) : TFhirMedia; overload;
     procedure ParseMediaProperties(jsn : TJsonObject; result : TFhirMedia); overload;
     procedure ParseMedia(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+{$ENDIF FHIR_MEDIA}
+{$IFDEF FHIR_MEDICATION}
     function ParseMedicationIngredient(jsn : TJsonObject) : TFhirMedicationIngredient; overload; {b\}
     procedure ParseMedicationIngredientProperties(jsn : TJsonObject; result : TFhirMedicationIngredient); overload; {b\}
     procedure ParseMedicationIngredient(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
@@ -998,6 +1135,8 @@ Type
     function ParseMedication(jsn : TJsonObject) : TFhirMedication; overload;
     procedure ParseMedicationProperties(jsn : TJsonObject; result : TFhirMedication); overload;
     procedure ParseMedication(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+{$ENDIF FHIR_MEDICATION}
+{$IFDEF FHIR_MEDICATIONADMINISTRATION}
     function ParseMedicationAdministrationPerformer(jsn : TJsonObject) : TFhirMedicationAdministrationPerformer; overload; {b\}
     procedure ParseMedicationAdministrationPerformerProperties(jsn : TJsonObject; result : TFhirMedicationAdministrationPerformer); overload; {b\}
     procedure ParseMedicationAdministrationPerformer(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
@@ -1007,6 +1146,8 @@ Type
     function ParseMedicationAdministration(jsn : TJsonObject) : TFhirMedicationAdministration; overload;
     procedure ParseMedicationAdministrationProperties(jsn : TJsonObject; result : TFhirMedicationAdministration); overload;
     procedure ParseMedicationAdministration(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+{$ENDIF FHIR_MEDICATIONADMINISTRATION}
+{$IFDEF FHIR_MEDICATIONDISPENSE}
     function ParseMedicationDispensePerformer(jsn : TJsonObject) : TFhirMedicationDispensePerformer; overload; {b\}
     procedure ParseMedicationDispensePerformerProperties(jsn : TJsonObject; result : TFhirMedicationDispensePerformer); overload; {b\}
     procedure ParseMedicationDispensePerformer(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
@@ -1016,6 +1157,8 @@ Type
     function ParseMedicationDispense(jsn : TJsonObject) : TFhirMedicationDispense; overload;
     procedure ParseMedicationDispenseProperties(jsn : TJsonObject; result : TFhirMedicationDispense); overload;
     procedure ParseMedicationDispense(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+{$ENDIF FHIR_MEDICATIONDISPENSE}
+{$IFDEF FHIR_MEDICATIONREQUEST}
     function ParseMedicationRequestRequester(jsn : TJsonObject) : TFhirMedicationRequestRequester; overload; {b\}
     procedure ParseMedicationRequestRequesterProperties(jsn : TJsonObject; result : TFhirMedicationRequestRequester); overload; {b\}
     procedure ParseMedicationRequestRequester(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
@@ -1028,9 +1171,13 @@ Type
     function ParseMedicationRequest(jsn : TJsonObject) : TFhirMedicationRequest; overload;
     procedure ParseMedicationRequestProperties(jsn : TJsonObject; result : TFhirMedicationRequest); overload;
     procedure ParseMedicationRequest(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+{$ENDIF FHIR_MEDICATIONREQUEST}
+{$IFDEF FHIR_MEDICATIONSTATEMENT}
     function ParseMedicationStatement(jsn : TJsonObject) : TFhirMedicationStatement; overload;
     procedure ParseMedicationStatementProperties(jsn : TJsonObject; result : TFhirMedicationStatement); overload;
     procedure ParseMedicationStatement(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+{$ENDIF FHIR_MEDICATIONSTATEMENT}
+{$IFDEF FHIR_MESSAGEDEFINITION}
     function ParseMessageDefinitionFocus(jsn : TJsonObject) : TFhirMessageDefinitionFocus; overload; {b\}
     procedure ParseMessageDefinitionFocusProperties(jsn : TJsonObject; result : TFhirMessageDefinitionFocus); overload; {b\}
     procedure ParseMessageDefinitionFocus(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
@@ -1040,6 +1187,8 @@ Type
     function ParseMessageDefinition(jsn : TJsonObject) : TFhirMessageDefinition; overload;
     procedure ParseMessageDefinitionProperties(jsn : TJsonObject; result : TFhirMessageDefinition); overload;
     procedure ParseMessageDefinition(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+{$ENDIF FHIR_MESSAGEDEFINITION}
+{$IFDEF FHIR_MESSAGEHEADER}
     function ParseMessageHeaderDestination(jsn : TJsonObject) : TFhirMessageHeaderDestination; overload; {b\}
     procedure ParseMessageHeaderDestinationProperties(jsn : TJsonObject; result : TFhirMessageHeaderDestination); overload; {b\}
     procedure ParseMessageHeaderDestination(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
@@ -1052,12 +1201,16 @@ Type
     function ParseMessageHeader(jsn : TJsonObject) : TFhirMessageHeader; overload;
     procedure ParseMessageHeaderProperties(jsn : TJsonObject; result : TFhirMessageHeader); overload;
     procedure ParseMessageHeader(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+{$ENDIF FHIR_MESSAGEHEADER}
+{$IFDEF FHIR_NAMINGSYSTEM}
     function ParseNamingSystemUniqueId(jsn : TJsonObject) : TFhirNamingSystemUniqueId; overload; {b\}
     procedure ParseNamingSystemUniqueIdProperties(jsn : TJsonObject; result : TFhirNamingSystemUniqueId); overload; {b\}
     procedure ParseNamingSystemUniqueId(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
     function ParseNamingSystem(jsn : TJsonObject) : TFhirNamingSystem; overload;
     procedure ParseNamingSystemProperties(jsn : TJsonObject; result : TFhirNamingSystem); overload;
     procedure ParseNamingSystem(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+{$ENDIF FHIR_NAMINGSYSTEM}
+{$IFDEF FHIR_NUTRITIONORDER}
     function ParseNutritionOrderOralDiet(jsn : TJsonObject) : TFhirNutritionOrderOralDiet; overload; {b\}
     procedure ParseNutritionOrderOralDietProperties(jsn : TJsonObject; result : TFhirNutritionOrderOralDiet); overload; {b\}
     procedure ParseNutritionOrderOralDiet(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
@@ -1079,6 +1232,8 @@ Type
     function ParseNutritionOrder(jsn : TJsonObject) : TFhirNutritionOrder; overload;
     procedure ParseNutritionOrderProperties(jsn : TJsonObject; result : TFhirNutritionOrder); overload;
     procedure ParseNutritionOrder(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+{$ENDIF FHIR_NUTRITIONORDER}
+{$IFDEF FHIR_OBSERVATION}
     function ParseObservationReferenceRange(jsn : TJsonObject) : TFhirObservationReferenceRange; overload; {b\}
     procedure ParseObservationReferenceRangeProperties(jsn : TJsonObject; result : TFhirObservationReferenceRange); overload; {b\}
     procedure ParseObservationReferenceRange(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
@@ -1091,6 +1246,8 @@ Type
     function ParseObservation(jsn : TJsonObject) : TFhirObservation; overload;
     procedure ParseObservationProperties(jsn : TJsonObject; result : TFhirObservation); overload;
     procedure ParseObservation(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+{$ENDIF FHIR_OBSERVATION}
+{$IFDEF FHIR_OPERATIONDEFINITION}
     function ParseOperationDefinitionParameter(jsn : TJsonObject) : TFhirOperationDefinitionParameter; overload; {b\}
     procedure ParseOperationDefinitionParameterProperties(jsn : TJsonObject; result : TFhirOperationDefinitionParameter); overload; {b\}
     procedure ParseOperationDefinitionParameter(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
@@ -1103,18 +1260,24 @@ Type
     function ParseOperationDefinition(jsn : TJsonObject) : TFhirOperationDefinition; overload;
     procedure ParseOperationDefinitionProperties(jsn : TJsonObject; result : TFhirOperationDefinition); overload;
     procedure ParseOperationDefinition(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+{$ENDIF FHIR_OPERATIONDEFINITION}
+{$IFDEF FHIR_OPERATIONOUTCOME}
     function ParseOperationOutcomeIssue(jsn : TJsonObject) : TFhirOperationOutcomeIssue; overload; {b\}
     procedure ParseOperationOutcomeIssueProperties(jsn : TJsonObject; result : TFhirOperationOutcomeIssue); overload; {b\}
     procedure ParseOperationOutcomeIssue(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
     function ParseOperationOutcome(jsn : TJsonObject) : TFhirOperationOutcome; overload;
     procedure ParseOperationOutcomeProperties(jsn : TJsonObject; result : TFhirOperationOutcome); overload;
     procedure ParseOperationOutcome(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+{$ENDIF FHIR_OPERATIONOUTCOME}
+{$IFDEF FHIR_ORGANIZATION}
     function ParseOrganizationContact(jsn : TJsonObject) : TFhirOrganizationContact; overload; {b\}
     procedure ParseOrganizationContactProperties(jsn : TJsonObject; result : TFhirOrganizationContact); overload; {b\}
     procedure ParseOrganizationContact(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
     function ParseOrganization(jsn : TJsonObject) : TFhirOrganization; overload;
     procedure ParseOrganizationProperties(jsn : TJsonObject; result : TFhirOrganization); overload;
     procedure ParseOrganization(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+{$ENDIF FHIR_ORGANIZATION}
+{$IFDEF FHIR_PATIENT}
     function ParsePatientContact(jsn : TJsonObject) : TFhirPatientContact; overload; {b\}
     procedure ParsePatientContactProperties(jsn : TJsonObject; result : TFhirPatientContact); overload; {b\}
     procedure ParsePatientContact(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
@@ -1130,9 +1293,13 @@ Type
     function ParsePatient(jsn : TJsonObject) : TFhirPatient; overload;
     procedure ParsePatientProperties(jsn : TJsonObject; result : TFhirPatient); overload;
     procedure ParsePatient(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+{$ENDIF FHIR_PATIENT}
+{$IFDEF FHIR_PAYMENTNOTICE}
     function ParsePaymentNotice(jsn : TJsonObject) : TFhirPaymentNotice; overload;
     procedure ParsePaymentNoticeProperties(jsn : TJsonObject; result : TFhirPaymentNotice); overload;
     procedure ParsePaymentNotice(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+{$ENDIF FHIR_PAYMENTNOTICE}
+{$IFDEF FHIR_PAYMENTRECONCILIATION}
     function ParsePaymentReconciliationDetail(jsn : TJsonObject) : TFhirPaymentReconciliationDetail; overload; {b\}
     procedure ParsePaymentReconciliationDetailProperties(jsn : TJsonObject; result : TFhirPaymentReconciliationDetail); overload; {b\}
     procedure ParsePaymentReconciliationDetail(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
@@ -1142,12 +1309,16 @@ Type
     function ParsePaymentReconciliation(jsn : TJsonObject) : TFhirPaymentReconciliation; overload;
     procedure ParsePaymentReconciliationProperties(jsn : TJsonObject; result : TFhirPaymentReconciliation); overload;
     procedure ParsePaymentReconciliation(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+{$ENDIF FHIR_PAYMENTRECONCILIATION}
+{$IFDEF FHIR_PERSON}
     function ParsePersonLink(jsn : TJsonObject) : TFhirPersonLink; overload; {b\}
     procedure ParsePersonLinkProperties(jsn : TJsonObject; result : TFhirPersonLink); overload; {b\}
     procedure ParsePersonLink(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
     function ParsePerson(jsn : TJsonObject) : TFhirPerson; overload;
     procedure ParsePersonProperties(jsn : TJsonObject; result : TFhirPerson); overload;
     procedure ParsePerson(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+{$ENDIF FHIR_PERSON}
+{$IFDEF FHIR_PLANDEFINITION}
     function ParsePlanDefinitionGoal(jsn : TJsonObject) : TFhirPlanDefinitionGoal; overload; {b\}
     procedure ParsePlanDefinitionGoalProperties(jsn : TJsonObject; result : TFhirPlanDefinitionGoal); overload; {b\}
     procedure ParsePlanDefinitionGoal(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
@@ -1172,12 +1343,16 @@ Type
     function ParsePlanDefinition(jsn : TJsonObject) : TFhirPlanDefinition; overload;
     procedure ParsePlanDefinitionProperties(jsn : TJsonObject; result : TFhirPlanDefinition); overload;
     procedure ParsePlanDefinition(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+{$ENDIF FHIR_PLANDEFINITION}
+{$IFDEF FHIR_PRACTITIONER}
     function ParsePractitionerQualification(jsn : TJsonObject) : TFhirPractitionerQualification; overload; {b\}
     procedure ParsePractitionerQualificationProperties(jsn : TJsonObject; result : TFhirPractitionerQualification); overload; {b\}
     procedure ParsePractitionerQualification(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
     function ParsePractitioner(jsn : TJsonObject) : TFhirPractitioner; overload;
     procedure ParsePractitionerProperties(jsn : TJsonObject; result : TFhirPractitioner); overload;
     procedure ParsePractitioner(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+{$ENDIF FHIR_PRACTITIONER}
+{$IFDEF FHIR_PRACTITIONERROLE}
     function ParsePractitionerRoleAvailableTime(jsn : TJsonObject) : TFhirPractitionerRoleAvailableTime; overload; {b\}
     procedure ParsePractitionerRoleAvailableTimeProperties(jsn : TJsonObject; result : TFhirPractitionerRoleAvailableTime); overload; {b\}
     procedure ParsePractitionerRoleAvailableTime(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
@@ -1187,6 +1362,8 @@ Type
     function ParsePractitionerRole(jsn : TJsonObject) : TFhirPractitionerRole; overload;
     procedure ParsePractitionerRoleProperties(jsn : TJsonObject; result : TFhirPractitionerRole); overload;
     procedure ParsePractitionerRole(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+{$ENDIF FHIR_PRACTITIONERROLE}
+{$IFDEF FHIR_PROCEDURE}
     function ParseProcedurePerformer(jsn : TJsonObject) : TFhirProcedurePerformer; overload; {b\}
     procedure ParseProcedurePerformerProperties(jsn : TJsonObject; result : TFhirProcedurePerformer); overload; {b\}
     procedure ParseProcedurePerformer(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
@@ -1196,24 +1373,32 @@ Type
     function ParseProcedure(jsn : TJsonObject) : TFhirProcedure; overload;
     procedure ParseProcedureProperties(jsn : TJsonObject; result : TFhirProcedure); overload;
     procedure ParseProcedure(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+{$ENDIF FHIR_PROCEDURE}
+{$IFDEF FHIR_PROCEDUREREQUEST}
     function ParseProcedureRequestRequester(jsn : TJsonObject) : TFhirProcedureRequestRequester; overload; {b\}
     procedure ParseProcedureRequestRequesterProperties(jsn : TJsonObject; result : TFhirProcedureRequestRequester); overload; {b\}
     procedure ParseProcedureRequestRequester(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
     function ParseProcedureRequest(jsn : TJsonObject) : TFhirProcedureRequest; overload;
     procedure ParseProcedureRequestProperties(jsn : TJsonObject; result : TFhirProcedureRequest); overload;
     procedure ParseProcedureRequest(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+{$ENDIF FHIR_PROCEDUREREQUEST}
+{$IFDEF FHIR_PROCESSREQUEST}
     function ParseProcessRequestItem(jsn : TJsonObject) : TFhirProcessRequestItem; overload; {b\}
     procedure ParseProcessRequestItemProperties(jsn : TJsonObject; result : TFhirProcessRequestItem); overload; {b\}
     procedure ParseProcessRequestItem(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
     function ParseProcessRequest(jsn : TJsonObject) : TFhirProcessRequest; overload;
     procedure ParseProcessRequestProperties(jsn : TJsonObject; result : TFhirProcessRequest); overload;
     procedure ParseProcessRequest(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+{$ENDIF FHIR_PROCESSREQUEST}
+{$IFDEF FHIR_PROCESSRESPONSE}
     function ParseProcessResponseProcessNote(jsn : TJsonObject) : TFhirProcessResponseProcessNote; overload; {b\}
     procedure ParseProcessResponseProcessNoteProperties(jsn : TJsonObject; result : TFhirProcessResponseProcessNote); overload; {b\}
     procedure ParseProcessResponseProcessNote(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
     function ParseProcessResponse(jsn : TJsonObject) : TFhirProcessResponse; overload;
     procedure ParseProcessResponseProperties(jsn : TJsonObject; result : TFhirProcessResponse); overload;
     procedure ParseProcessResponse(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+{$ENDIF FHIR_PROCESSRESPONSE}
+{$IFDEF FHIR_PROVENANCE}
     function ParseProvenanceAgent(jsn : TJsonObject) : TFhirProvenanceAgent; overload; {b\}
     procedure ParseProvenanceAgentProperties(jsn : TJsonObject; result : TFhirProvenanceAgent); overload; {b\}
     procedure ParseProvenanceAgent(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
@@ -1223,6 +1408,8 @@ Type
     function ParseProvenance(jsn : TJsonObject) : TFhirProvenance; overload;
     procedure ParseProvenanceProperties(jsn : TJsonObject; result : TFhirProvenance); overload;
     procedure ParseProvenance(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+{$ENDIF FHIR_PROVENANCE}
+{$IFDEF FHIR_QUESTIONNAIRE}
     function ParseQuestionnaireItem(jsn : TJsonObject) : TFhirQuestionnaireItem; overload; {b\}
     procedure ParseQuestionnaireItemProperties(jsn : TJsonObject; result : TFhirQuestionnaireItem); overload; {b\}
     procedure ParseQuestionnaireItem(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
@@ -1235,6 +1422,8 @@ Type
     function ParseQuestionnaire(jsn : TJsonObject) : TFhirQuestionnaire; overload;
     procedure ParseQuestionnaireProperties(jsn : TJsonObject; result : TFhirQuestionnaire); overload;
     procedure ParseQuestionnaire(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+{$ENDIF FHIR_QUESTIONNAIRE}
+{$IFDEF FHIR_QUESTIONNAIRERESPONSE}
     function ParseQuestionnaireResponseItem(jsn : TJsonObject) : TFhirQuestionnaireResponseItem; overload; {b\}
     procedure ParseQuestionnaireResponseItemProperties(jsn : TJsonObject; result : TFhirQuestionnaireResponseItem); overload; {b\}
     procedure ParseQuestionnaireResponseItem(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
@@ -1244,15 +1433,21 @@ Type
     function ParseQuestionnaireResponse(jsn : TJsonObject) : TFhirQuestionnaireResponse; overload;
     procedure ParseQuestionnaireResponseProperties(jsn : TJsonObject; result : TFhirQuestionnaireResponse); overload;
     procedure ParseQuestionnaireResponse(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+{$ENDIF FHIR_QUESTIONNAIRERESPONSE}
+{$IFDEF FHIR_REFERRALREQUEST}
     function ParseReferralRequestRequester(jsn : TJsonObject) : TFhirReferralRequestRequester; overload; {b\}
     procedure ParseReferralRequestRequesterProperties(jsn : TJsonObject; result : TFhirReferralRequestRequester); overload; {b\}
     procedure ParseReferralRequestRequester(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
     function ParseReferralRequest(jsn : TJsonObject) : TFhirReferralRequest; overload;
     procedure ParseReferralRequestProperties(jsn : TJsonObject; result : TFhirReferralRequest); overload;
     procedure ParseReferralRequest(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+{$ENDIF FHIR_REFERRALREQUEST}
+{$IFDEF FHIR_RELATEDPERSON}
     function ParseRelatedPerson(jsn : TJsonObject) : TFhirRelatedPerson; overload;
     procedure ParseRelatedPersonProperties(jsn : TJsonObject; result : TFhirRelatedPerson); overload;
     procedure ParseRelatedPerson(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+{$ENDIF FHIR_RELATEDPERSON}
+{$IFDEF FHIR_REQUESTGROUP}
     function ParseRequestGroupAction(jsn : TJsonObject) : TFhirRequestGroupAction; overload; {b\}
     procedure ParseRequestGroupActionProperties(jsn : TJsonObject; result : TFhirRequestGroupAction); overload; {b\}
     procedure ParseRequestGroupAction(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
@@ -1265,30 +1460,42 @@ Type
     function ParseRequestGroup(jsn : TJsonObject) : TFhirRequestGroup; overload;
     procedure ParseRequestGroupProperties(jsn : TJsonObject; result : TFhirRequestGroup); overload;
     procedure ParseRequestGroup(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+{$ENDIF FHIR_REQUESTGROUP}
+{$IFDEF FHIR_RESEARCHSTUDY}
     function ParseResearchStudyArm(jsn : TJsonObject) : TFhirResearchStudyArm; overload; {b\}
     procedure ParseResearchStudyArmProperties(jsn : TJsonObject; result : TFhirResearchStudyArm); overload; {b\}
     procedure ParseResearchStudyArm(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
     function ParseResearchStudy(jsn : TJsonObject) : TFhirResearchStudy; overload;
     procedure ParseResearchStudyProperties(jsn : TJsonObject; result : TFhirResearchStudy); overload;
     procedure ParseResearchStudy(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+{$ENDIF FHIR_RESEARCHSTUDY}
+{$IFDEF FHIR_RESEARCHSUBJECT}
     function ParseResearchSubject(jsn : TJsonObject) : TFhirResearchSubject; overload;
     procedure ParseResearchSubjectProperties(jsn : TJsonObject; result : TFhirResearchSubject); overload;
     procedure ParseResearchSubject(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+{$ENDIF FHIR_RESEARCHSUBJECT}
+{$IFDEF FHIR_RISKASSESSMENT}
     function ParseRiskAssessmentPrediction(jsn : TJsonObject) : TFhirRiskAssessmentPrediction; overload; {b\}
     procedure ParseRiskAssessmentPredictionProperties(jsn : TJsonObject; result : TFhirRiskAssessmentPrediction); overload; {b\}
     procedure ParseRiskAssessmentPrediction(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
     function ParseRiskAssessment(jsn : TJsonObject) : TFhirRiskAssessment; overload;
     procedure ParseRiskAssessmentProperties(jsn : TJsonObject; result : TFhirRiskAssessment); overload;
     procedure ParseRiskAssessment(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+{$ENDIF FHIR_RISKASSESSMENT}
+{$IFDEF FHIR_SCHEDULE}
     function ParseSchedule(jsn : TJsonObject) : TFhirSchedule; overload;
     procedure ParseScheduleProperties(jsn : TJsonObject; result : TFhirSchedule); overload;
     procedure ParseSchedule(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+{$ENDIF FHIR_SCHEDULE}
+{$IFDEF FHIR_SEARCHPARAMETER}
     function ParseSearchParameterComponent(jsn : TJsonObject) : TFhirSearchParameterComponent; overload; {b\}
     procedure ParseSearchParameterComponentProperties(jsn : TJsonObject; result : TFhirSearchParameterComponent); overload; {b\}
     procedure ParseSearchParameterComponent(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
     function ParseSearchParameter(jsn : TJsonObject) : TFhirSearchParameter; overload;
     procedure ParseSearchParameterProperties(jsn : TJsonObject; result : TFhirSearchParameter); overload;
     procedure ParseSearchParameter(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+{$ENDIF FHIR_SEARCHPARAMETER}
+{$IFDEF FHIR_SEQUENCE}
     function ParseSequenceReferenceSeq(jsn : TJsonObject) : TFhirSequenceReferenceSeq; overload; {b\}
     procedure ParseSequenceReferenceSeqProperties(jsn : TJsonObject; result : TFhirSequenceReferenceSeq); overload; {b\}
     procedure ParseSequenceReferenceSeq(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
@@ -1304,12 +1511,18 @@ Type
     function ParseSequence(jsn : TJsonObject) : TFhirSequence; overload;
     procedure ParseSequenceProperties(jsn : TJsonObject; result : TFhirSequence); overload;
     procedure ParseSequence(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+{$ENDIF FHIR_SEQUENCE}
+{$IFDEF FHIR_SERVICEDEFINITION}
     function ParseServiceDefinition(jsn : TJsonObject) : TFhirServiceDefinition; overload;
     procedure ParseServiceDefinitionProperties(jsn : TJsonObject; result : TFhirServiceDefinition); overload;
     procedure ParseServiceDefinition(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+{$ENDIF FHIR_SERVICEDEFINITION}
+{$IFDEF FHIR_SLOT}
     function ParseSlot(jsn : TJsonObject) : TFhirSlot; overload;
     procedure ParseSlotProperties(jsn : TJsonObject; result : TFhirSlot); overload;
     procedure ParseSlot(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+{$ENDIF FHIR_SLOT}
+{$IFDEF FHIR_SPECIMEN}
     function ParseSpecimenCollection(jsn : TJsonObject) : TFhirSpecimenCollection; overload; {b\}
     procedure ParseSpecimenCollectionProperties(jsn : TJsonObject; result : TFhirSpecimenCollection); overload; {b\}
     procedure ParseSpecimenCollection(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
@@ -1322,6 +1535,8 @@ Type
     function ParseSpecimen(jsn : TJsonObject) : TFhirSpecimen; overload;
     procedure ParseSpecimenProperties(jsn : TJsonObject; result : TFhirSpecimen); overload;
     procedure ParseSpecimen(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+{$ENDIF FHIR_SPECIMEN}
+{$IFDEF FHIR_STRUCTUREDEFINITION}
     function ParseStructureDefinitionMapping(jsn : TJsonObject) : TFhirStructureDefinitionMapping; overload; {b\}
     procedure ParseStructureDefinitionMappingProperties(jsn : TJsonObject; result : TFhirStructureDefinitionMapping); overload; {b\}
     procedure ParseStructureDefinitionMapping(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
@@ -1334,6 +1549,8 @@ Type
     function ParseStructureDefinition(jsn : TJsonObject) : TFhirStructureDefinition; overload;
     procedure ParseStructureDefinitionProperties(jsn : TJsonObject; result : TFhirStructureDefinition); overload;
     procedure ParseStructureDefinition(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+{$ENDIF FHIR_STRUCTUREDEFINITION}
+{$IFDEF FHIR_STRUCTUREMAP}
     function ParseStructureMapStructure(jsn : TJsonObject) : TFhirStructureMapStructure; overload; {b\}
     procedure ParseStructureMapStructureProperties(jsn : TJsonObject; result : TFhirStructureMapStructure); overload; {b\}
     procedure ParseStructureMapStructure(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
@@ -1361,12 +1578,16 @@ Type
     function ParseStructureMap(jsn : TJsonObject) : TFhirStructureMap; overload;
     procedure ParseStructureMapProperties(jsn : TJsonObject; result : TFhirStructureMap); overload;
     procedure ParseStructureMap(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+{$ENDIF FHIR_STRUCTUREMAP}
+{$IFDEF FHIR_SUBSCRIPTION}
     function ParseSubscriptionChannel(jsn : TJsonObject) : TFhirSubscriptionChannel; overload; {b\}
     procedure ParseSubscriptionChannelProperties(jsn : TJsonObject; result : TFhirSubscriptionChannel); overload; {b\}
     procedure ParseSubscriptionChannel(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
     function ParseSubscription(jsn : TJsonObject) : TFhirSubscription; overload;
     procedure ParseSubscriptionProperties(jsn : TJsonObject; result : TFhirSubscription); overload;
     procedure ParseSubscription(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+{$ENDIF FHIR_SUBSCRIPTION}
+{$IFDEF FHIR_SUBSTANCE}
     function ParseSubstanceInstance(jsn : TJsonObject) : TFhirSubstanceInstance; overload; {b\}
     procedure ParseSubstanceInstanceProperties(jsn : TJsonObject; result : TFhirSubstanceInstance); overload; {b\}
     procedure ParseSubstanceInstance(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
@@ -1376,12 +1597,16 @@ Type
     function ParseSubstance(jsn : TJsonObject) : TFhirSubstance; overload;
     procedure ParseSubstanceProperties(jsn : TJsonObject; result : TFhirSubstance); overload;
     procedure ParseSubstance(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+{$ENDIF FHIR_SUBSTANCE}
+{$IFDEF FHIR_SUPPLYDELIVERY}
     function ParseSupplyDeliverySuppliedItem(jsn : TJsonObject) : TFhirSupplyDeliverySuppliedItem; overload; {b\}
     procedure ParseSupplyDeliverySuppliedItemProperties(jsn : TJsonObject; result : TFhirSupplyDeliverySuppliedItem); overload; {b\}
     procedure ParseSupplyDeliverySuppliedItem(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
     function ParseSupplyDelivery(jsn : TJsonObject) : TFhirSupplyDelivery; overload;
     procedure ParseSupplyDeliveryProperties(jsn : TJsonObject; result : TFhirSupplyDelivery); overload;
     procedure ParseSupplyDelivery(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+{$ENDIF FHIR_SUPPLYDELIVERY}
+{$IFDEF FHIR_SUPPLYREQUEST}
     function ParseSupplyRequestOrderedItem(jsn : TJsonObject) : TFhirSupplyRequestOrderedItem; overload; {b\}
     procedure ParseSupplyRequestOrderedItemProperties(jsn : TJsonObject; result : TFhirSupplyRequestOrderedItem); overload; {b\}
     procedure ParseSupplyRequestOrderedItem(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
@@ -1391,6 +1616,8 @@ Type
     function ParseSupplyRequest(jsn : TJsonObject) : TFhirSupplyRequest; overload;
     procedure ParseSupplyRequestProperties(jsn : TJsonObject; result : TFhirSupplyRequest); overload;
     procedure ParseSupplyRequest(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+{$ENDIF FHIR_SUPPLYREQUEST}
+{$IFDEF FHIR_TASK}
     function ParseTaskRequester(jsn : TJsonObject) : TFhirTaskRequester; overload; {b\}
     procedure ParseTaskRequesterProperties(jsn : TJsonObject; result : TFhirTaskRequester); overload; {b\}
     procedure ParseTaskRequester(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
@@ -1406,6 +1633,8 @@ Type
     function ParseTask(jsn : TJsonObject) : TFhirTask; overload;
     procedure ParseTaskProperties(jsn : TJsonObject; result : TFhirTask); overload;
     procedure ParseTask(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+{$ENDIF FHIR_TASK}
+{$IFDEF FHIR_TESTREPORT}
     function ParseTestReportParticipant(jsn : TJsonObject) : TFhirTestReportParticipant; overload; {b\}
     procedure ParseTestReportParticipantProperties(jsn : TJsonObject; result : TFhirTestReportParticipant); overload; {b\}
     procedure ParseTestReportParticipant(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
@@ -1436,6 +1665,8 @@ Type
     function ParseTestReport(jsn : TJsonObject) : TFhirTestReport; overload;
     procedure ParseTestReportProperties(jsn : TJsonObject; result : TFhirTestReport); overload;
     procedure ParseTestReport(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+{$ENDIF FHIR_TESTREPORT}
+{$IFDEF FHIR_TESTSCRIPT}
     function ParseTestScriptOrigin(jsn : TJsonObject) : TFhirTestScriptOrigin; overload; {b\}
     procedure ParseTestScriptOriginProperties(jsn : TJsonObject; result : TFhirTestScriptOrigin); overload; {b\}
     procedure ParseTestScriptOrigin(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
@@ -1517,6 +1748,8 @@ Type
     function ParseTestScript(jsn : TJsonObject) : TFhirTestScript; overload;
     procedure ParseTestScriptProperties(jsn : TJsonObject; result : TFhirTestScript); overload;
     procedure ParseTestScript(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+{$ENDIF FHIR_TESTSCRIPT}
+{$IFDEF FHIR_VALUESET}
     function ParseValueSetCompose(jsn : TJsonObject) : TFhirValueSetCompose; overload; {b\}
     procedure ParseValueSetComposeProperties(jsn : TJsonObject; result : TFhirValueSetCompose); overload; {b\}
     procedure ParseValueSetCompose(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
@@ -1544,12 +1777,15 @@ Type
     function ParseValueSet(jsn : TJsonObject) : TFhirValueSet; overload;
     procedure ParseValueSetProperties(jsn : TJsonObject; result : TFhirValueSet); overload;
     procedure ParseValueSet(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+{$ENDIF FHIR_VALUESET}
+{$IFDEF FHIR_VISIONPRESCRIPTION}
     function ParseVisionPrescriptionDispense(jsn : TJsonObject) : TFhirVisionPrescriptionDispense; overload; {b\}
     procedure ParseVisionPrescriptionDispenseProperties(jsn : TJsonObject; result : TFhirVisionPrescriptionDispense); overload; {b\}
     procedure ParseVisionPrescriptionDispense(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
     function ParseVisionPrescription(jsn : TJsonObject) : TFhirVisionPrescription; overload;
     procedure ParseVisionPrescriptionProperties(jsn : TJsonObject; result : TFhirVisionPrescription); overload;
     procedure ParseVisionPrescription(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+{$ENDIF FHIR_VISIONPRESCRIPTION}
     function ParseResource(jsn : TJsonObject) : TFhirResource; override;
     function ParseDataType(jsn : TJsonObject; name : String; type_ : TFHIRTypeClass) : TFHIRType; override;
   public
@@ -1604,8 +1840,10 @@ Type
 
     Procedure ComposeResourceProperties(json : TJSONWriter; elem : TFhirResource);
     Procedure ComposeDomainResourceProperties(json : TJSONWriter; elem : TFhirDomainResource);
+{$IFDEF FHIR_PARAMETERS}
     procedure ComposeParametersParameter(json : TJSONWriter; name : string; elem : TFhirParametersParameter; noObj : boolean = false);
     procedure ComposeParameters(json : TJSONWriter; name : string; elem : TFhirParameters; noObj : boolean = false);
+{$ENDIF FHIR_PARAMETERS}
 
     procedure ComposeExtension(json : TJSONWriter; name : string; elem : TFhirExtension; noObj : boolean = false);
     procedure ComposeNarrative(json : TJSONWriter; name : string; elem : TFhirNarrative; noObj : boolean = false);
@@ -1652,34 +1890,57 @@ Type
     procedure ComposeDistance(json : TJSONWriter; name : string; elem : TFhirDistance; noObj : boolean = false);
     procedure ComposeDuration(json : TJSONWriter; name : string; elem : TFhirDuration; noObj : boolean = false);
 
+{$IFDEF FHIR_ACCOUNT}
     procedure ComposeAccountCoverage(json : TJSONWriter; name : string; elem : TFhirAccountCoverage; noObj : boolean = false);
     procedure ComposeAccountGuarantor(json : TJSONWriter; name : string; elem : TFhirAccountGuarantor; noObj : boolean = false);
     procedure ComposeAccount(json : TJSONWriter; name : string; elem : TFhirAccount; noObj : boolean = false);
+{$ENDIF FHIR_ACCOUNT}
+{$IFDEF FHIR_ACTIVITYDEFINITION}
     procedure ComposeActivityDefinitionParticipant(json : TJSONWriter; name : string; elem : TFhirActivityDefinitionParticipant; noObj : boolean = false);
     procedure ComposeActivityDefinitionDynamicValue(json : TJSONWriter; name : string; elem : TFhirActivityDefinitionDynamicValue; noObj : boolean = false);
     procedure ComposeActivityDefinition(json : TJSONWriter; name : string; elem : TFhirActivityDefinition; noObj : boolean = false);
+{$ENDIF FHIR_ACTIVITYDEFINITION}
+{$IFDEF FHIR_ADVERSEEVENT}
     procedure ComposeAdverseEventSuspectEntity(json : TJSONWriter; name : string; elem : TFhirAdverseEventSuspectEntity; noObj : boolean = false);
     procedure ComposeAdverseEvent(json : TJSONWriter; name : string; elem : TFhirAdverseEvent; noObj : boolean = false);
+{$ENDIF FHIR_ADVERSEEVENT}
+{$IFDEF FHIR_ALLERGYINTOLERANCE}
     procedure ComposeAllergyIntoleranceReaction(json : TJSONWriter; name : string; elem : TFhirAllergyIntoleranceReaction; noObj : boolean = false);
     procedure ComposeAllergyIntolerance(json : TJSONWriter; name : string; elem : TFhirAllergyIntolerance; noObj : boolean = false);
+{$ENDIF FHIR_ALLERGYINTOLERANCE}
+{$IFDEF FHIR_APPOINTMENT}
     procedure ComposeAppointmentParticipant(json : TJSONWriter; name : string; elem : TFhirAppointmentParticipant; noObj : boolean = false);
     procedure ComposeAppointment(json : TJSONWriter; name : string; elem : TFhirAppointment; noObj : boolean = false);
+{$ENDIF FHIR_APPOINTMENT}
+{$IFDEF FHIR_APPOINTMENTRESPONSE}
     procedure ComposeAppointmentResponse(json : TJSONWriter; name : string; elem : TFhirAppointmentResponse; noObj : boolean = false);
+{$ENDIF FHIR_APPOINTMENTRESPONSE}
+{$IFDEF FHIR_AUDITEVENT}
     procedure ComposeAuditEventAgent(json : TJSONWriter; name : string; elem : TFhirAuditEventAgent; noObj : boolean = false);
     procedure ComposeAuditEventAgentNetwork(json : TJSONWriter; name : string; elem : TFhirAuditEventAgentNetwork; noObj : boolean = false);
     procedure ComposeAuditEventSource(json : TJSONWriter; name : string; elem : TFhirAuditEventSource; noObj : boolean = false);
     procedure ComposeAuditEventEntity(json : TJSONWriter; name : string; elem : TFhirAuditEventEntity; noObj : boolean = false);
     procedure ComposeAuditEventEntityDetail(json : TJSONWriter; name : string; elem : TFhirAuditEventEntityDetail; noObj : boolean = false);
     procedure ComposeAuditEvent(json : TJSONWriter; name : string; elem : TFhirAuditEvent; noObj : boolean = false);
+{$ENDIF FHIR_AUDITEVENT}
+{$IFDEF FHIR_BASIC}
     procedure ComposeBasic(json : TJSONWriter; name : string; elem : TFhirBasic; noObj : boolean = false);
+{$ENDIF FHIR_BASIC}
+{$IFDEF FHIR_BINARY}
     procedure ComposeBinary(json : TJSONWriter; name : string; elem : TFhirBinary; noObj : boolean = false);
+{$ENDIF FHIR_BINARY}
+{$IFDEF FHIR_BODYSITE}
     procedure ComposeBodySite(json : TJSONWriter; name : string; elem : TFhirBodySite; noObj : boolean = false);
+{$ENDIF FHIR_BODYSITE}
+{$IFDEF FHIR_BUNDLE}
     procedure ComposeBundleLink(json : TJSONWriter; name : string; elem : TFhirBundleLink; noObj : boolean = false);
     procedure ComposeBundleEntry(json : TJSONWriter; name : string; elem : TFhirBundleEntry; noObj : boolean = false);
     procedure ComposeBundleEntrySearch(json : TJSONWriter; name : string; elem : TFhirBundleEntrySearch; noObj : boolean = false);
     procedure ComposeBundleEntryRequest(json : TJSONWriter; name : string; elem : TFhirBundleEntryRequest; noObj : boolean = false);
     procedure ComposeBundleEntryResponse(json : TJSONWriter; name : string; elem : TFhirBundleEntryResponse; noObj : boolean = false);
     procedure ComposeBundle(json : TJSONWriter; name : string; elem : TFhirBundle; noObj : boolean = false);
+{$ENDIF FHIR_BUNDLE}
+{$IFDEF FHIR_CAPABILITYSTATEMENT}
     procedure ComposeCapabilityStatementSoftware(json : TJSONWriter; name : string; elem : TFhirCapabilityStatementSoftware; noObj : boolean = false);
     procedure ComposeCapabilityStatementImplementation(json : TJSONWriter; name : string; elem : TFhirCapabilityStatementImplementation; noObj : boolean = false);
     procedure ComposeCapabilityStatementRest(json : TJSONWriter; name : string; elem : TFhirCapabilityStatementRest; noObj : boolean = false);
@@ -1696,13 +1957,21 @@ Type
     procedure ComposeCapabilityStatementMessagingEvent(json : TJSONWriter; name : string; elem : TFhirCapabilityStatementMessagingEvent; noObj : boolean = false);
     procedure ComposeCapabilityStatementDocument(json : TJSONWriter; name : string; elem : TFhirCapabilityStatementDocument; noObj : boolean = false);
     procedure ComposeCapabilityStatement(json : TJSONWriter; name : string; elem : TFhirCapabilityStatement; noObj : boolean = false);
+{$ENDIF FHIR_CAPABILITYSTATEMENT}
+{$IFDEF FHIR_CAREPLAN}
     procedure ComposeCarePlanActivity(json : TJSONWriter; name : string; elem : TFhirCarePlanActivity; noObj : boolean = false);
     procedure ComposeCarePlanActivityDetail(json : TJSONWriter; name : string; elem : TFhirCarePlanActivityDetail; noObj : boolean = false);
     procedure ComposeCarePlan(json : TJSONWriter; name : string; elem : TFhirCarePlan; noObj : boolean = false);
+{$ENDIF FHIR_CAREPLAN}
+{$IFDEF FHIR_CARETEAM}
     procedure ComposeCareTeamParticipant(json : TJSONWriter; name : string; elem : TFhirCareTeamParticipant; noObj : boolean = false);
     procedure ComposeCareTeam(json : TJSONWriter; name : string; elem : TFhirCareTeam; noObj : boolean = false);
+{$ENDIF FHIR_CARETEAM}
+{$IFDEF FHIR_CHARGEITEM}
     procedure ComposeChargeItemParticipant(json : TJSONWriter; name : string; elem : TFhirChargeItemParticipant; noObj : boolean = false);
     procedure ComposeChargeItem(json : TJSONWriter; name : string; elem : TFhirChargeItem; noObj : boolean = false);
+{$ENDIF FHIR_CHARGEITEM}
+{$IFDEF FHIR_CLAIM}
     procedure ComposeClaimRelated(json : TJSONWriter; name : string; elem : TFhirClaimRelated; noObj : boolean = false);
     procedure ComposeClaimPayee(json : TJSONWriter; name : string; elem : TFhirClaimPayee; noObj : boolean = false);
     procedure ComposeClaimCareTeam(json : TJSONWriter; name : string; elem : TFhirClaimCareTeam; noObj : boolean = false);
@@ -1715,6 +1984,8 @@ Type
     procedure ComposeClaimItemDetail(json : TJSONWriter; name : string; elem : TFhirClaimItemDetail; noObj : boolean = false);
     procedure ComposeClaimItemDetailSubDetail(json : TJSONWriter; name : string; elem : TFhirClaimItemDetailSubDetail; noObj : boolean = false);
     procedure ComposeClaim(json : TJSONWriter; name : string; elem : TFhirClaim; noObj : boolean = false);
+{$ENDIF FHIR_CLAIM}
+{$IFDEF FHIR_CLAIMRESPONSE}
     procedure ComposeClaimResponseItem(json : TJSONWriter; name : string; elem : TFhirClaimResponseItem; noObj : boolean = false);
     procedure ComposeClaimResponseItemAdjudication(json : TJSONWriter; name : string; elem : TFhirClaimResponseItemAdjudication; noObj : boolean = false);
     procedure ComposeClaimResponseItemDetail(json : TJSONWriter; name : string; elem : TFhirClaimResponseItemDetail; noObj : boolean = false);
@@ -1726,36 +1997,54 @@ Type
     procedure ComposeClaimResponseProcessNote(json : TJSONWriter; name : string; elem : TFhirClaimResponseProcessNote; noObj : boolean = false);
     procedure ComposeClaimResponseInsurance(json : TJSONWriter; name : string; elem : TFhirClaimResponseInsurance; noObj : boolean = false);
     procedure ComposeClaimResponse(json : TJSONWriter; name : string; elem : TFhirClaimResponse; noObj : boolean = false);
+{$ENDIF FHIR_CLAIMRESPONSE}
+{$IFDEF FHIR_CLINICALIMPRESSION}
     procedure ComposeClinicalImpressionInvestigation(json : TJSONWriter; name : string; elem : TFhirClinicalImpressionInvestigation; noObj : boolean = false);
     procedure ComposeClinicalImpressionFinding(json : TJSONWriter; name : string; elem : TFhirClinicalImpressionFinding; noObj : boolean = false);
     procedure ComposeClinicalImpression(json : TJSONWriter; name : string; elem : TFhirClinicalImpression; noObj : boolean = false);
+{$ENDIF FHIR_CLINICALIMPRESSION}
+{$IFDEF FHIR_CODESYSTEM}
     procedure ComposeCodeSystemFilter(json : TJSONWriter; name : string; elem : TFhirCodeSystemFilter; noObj : boolean = false);
     procedure ComposeCodeSystemProperty(json : TJSONWriter; name : string; elem : TFhirCodeSystemProperty; noObj : boolean = false);
     procedure ComposeCodeSystemConcept(json : TJSONWriter; name : string; elem : TFhirCodeSystemConcept; noObj : boolean = false);
     procedure ComposeCodeSystemConceptDesignation(json : TJSONWriter; name : string; elem : TFhirCodeSystemConceptDesignation; noObj : boolean = false);
     procedure ComposeCodeSystemConceptProperty(json : TJSONWriter; name : string; elem : TFhirCodeSystemConceptProperty; noObj : boolean = false);
     procedure ComposeCodeSystem(json : TJSONWriter; name : string; elem : TFhirCodeSystem; noObj : boolean = false);
+{$ENDIF FHIR_CODESYSTEM}
+{$IFDEF FHIR_COMMUNICATION}
     procedure ComposeCommunicationPayload(json : TJSONWriter; name : string; elem : TFhirCommunicationPayload; noObj : boolean = false);
     procedure ComposeCommunication(json : TJSONWriter; name : string; elem : TFhirCommunication; noObj : boolean = false);
+{$ENDIF FHIR_COMMUNICATION}
+{$IFDEF FHIR_COMMUNICATIONREQUEST}
     procedure ComposeCommunicationRequestPayload(json : TJSONWriter; name : string; elem : TFhirCommunicationRequestPayload; noObj : boolean = false);
     procedure ComposeCommunicationRequestRequester(json : TJSONWriter; name : string; elem : TFhirCommunicationRequestRequester; noObj : boolean = false);
     procedure ComposeCommunicationRequest(json : TJSONWriter; name : string; elem : TFhirCommunicationRequest; noObj : boolean = false);
+{$ENDIF FHIR_COMMUNICATIONREQUEST}
+{$IFDEF FHIR_COMPARTMENTDEFINITION}
     procedure ComposeCompartmentDefinitionResource(json : TJSONWriter; name : string; elem : TFhirCompartmentDefinitionResource; noObj : boolean = false);
     procedure ComposeCompartmentDefinition(json : TJSONWriter; name : string; elem : TFhirCompartmentDefinition; noObj : boolean = false);
+{$ENDIF FHIR_COMPARTMENTDEFINITION}
+{$IFDEF FHIR_COMPOSITION}
     procedure ComposeCompositionAttester(json : TJSONWriter; name : string; elem : TFhirCompositionAttester; noObj : boolean = false);
     procedure ComposeCompositionRelatesTo(json : TJSONWriter; name : string; elem : TFhirCompositionRelatesTo; noObj : boolean = false);
     procedure ComposeCompositionEvent(json : TJSONWriter; name : string; elem : TFhirCompositionEvent; noObj : boolean = false);
     procedure ComposeCompositionSection(json : TJSONWriter; name : string; elem : TFhirCompositionSection; noObj : boolean = false);
     procedure ComposeComposition(json : TJSONWriter; name : string; elem : TFhirComposition; noObj : boolean = false);
+{$ENDIF FHIR_COMPOSITION}
+{$IFDEF FHIR_CONCEPTMAP}
     procedure ComposeConceptMapGroup(json : TJSONWriter; name : string; elem : TFhirConceptMapGroup; noObj : boolean = false);
     procedure ComposeConceptMapGroupElement(json : TJSONWriter; name : string; elem : TFhirConceptMapGroupElement; noObj : boolean = false);
     procedure ComposeConceptMapGroupElementTarget(json : TJSONWriter; name : string; elem : TFhirConceptMapGroupElementTarget; noObj : boolean = false);
     procedure ComposeConceptMapGroupElementTargetDependsOn(json : TJSONWriter; name : string; elem : TFhirConceptMapGroupElementTargetDependsOn; noObj : boolean = false);
     procedure ComposeConceptMapGroupUnmapped(json : TJSONWriter; name : string; elem : TFhirConceptMapGroupUnmapped; noObj : boolean = false);
     procedure ComposeConceptMap(json : TJSONWriter; name : string; elem : TFhirConceptMap; noObj : boolean = false);
+{$ENDIF FHIR_CONCEPTMAP}
+{$IFDEF FHIR_CONDITION}
     procedure ComposeConditionStage(json : TJSONWriter; name : string; elem : TFhirConditionStage; noObj : boolean = false);
     procedure ComposeConditionEvidence(json : TJSONWriter; name : string; elem : TFhirConditionEvidence; noObj : boolean = false);
     procedure ComposeCondition(json : TJSONWriter; name : string; elem : TFhirCondition; noObj : boolean = false);
+{$ENDIF FHIR_CONDITION}
+{$IFDEF FHIR_CONSENT}
     procedure ComposeConsentActor(json : TJSONWriter; name : string; elem : TFhirConsentActor; noObj : boolean = false);
     procedure ComposeConsentPolicy(json : TJSONWriter; name : string; elem : TFhirConsentPolicy; noObj : boolean = false);
     procedure ComposeConsentData(json : TJSONWriter; name : string; elem : TFhirConsentData; noObj : boolean = false);
@@ -1763,6 +2052,8 @@ Type
     procedure ComposeConsentExceptActor(json : TJSONWriter; name : string; elem : TFhirConsentExceptActor; noObj : boolean = false);
     procedure ComposeConsentExceptData(json : TJSONWriter; name : string; elem : TFhirConsentExceptData; noObj : boolean = false);
     procedure ComposeConsent(json : TJSONWriter; name : string; elem : TFhirConsent; noObj : boolean = false);
+{$ENDIF FHIR_CONSENT}
+{$IFDEF FHIR_CONTRACT}
     procedure ComposeContractAgent(json : TJSONWriter; name : string; elem : TFhirContractAgent; noObj : boolean = false);
     procedure ComposeContractSigner(json : TJSONWriter; name : string; elem : TFhirContractSigner; noObj : boolean = false);
     procedure ComposeContractValuedItem(json : TJSONWriter; name : string; elem : TFhirContractValuedItem; noObj : boolean = false);
@@ -1773,38 +2064,66 @@ Type
     procedure ComposeContractLegal(json : TJSONWriter; name : string; elem : TFhirContractLegal; noObj : boolean = false);
     procedure ComposeContractRule(json : TJSONWriter; name : string; elem : TFhirContractRule; noObj : boolean = false);
     procedure ComposeContract(json : TJSONWriter; name : string; elem : TFhirContract; noObj : boolean = false);
+{$ENDIF FHIR_CONTRACT}
+{$IFDEF FHIR_COVERAGE}
     procedure ComposeCoverageGrouping(json : TJSONWriter; name : string; elem : TFhirCoverageGrouping; noObj : boolean = false);
     procedure ComposeCoverage(json : TJSONWriter; name : string; elem : TFhirCoverage; noObj : boolean = false);
+{$ENDIF FHIR_COVERAGE}
+{$IFDEF FHIR_DATAELEMENT}
     procedure ComposeDataElementMapping(json : TJSONWriter; name : string; elem : TFhirDataElementMapping; noObj : boolean = false);
     procedure ComposeDataElement(json : TJSONWriter; name : string; elem : TFhirDataElement; noObj : boolean = false);
+{$ENDIF FHIR_DATAELEMENT}
+{$IFDEF FHIR_DETECTEDISSUE}
     procedure ComposeDetectedIssueMitigation(json : TJSONWriter; name : string; elem : TFhirDetectedIssueMitigation; noObj : boolean = false);
     procedure ComposeDetectedIssue(json : TJSONWriter; name : string; elem : TFhirDetectedIssue; noObj : boolean = false);
+{$ENDIF FHIR_DETECTEDISSUE}
+{$IFDEF FHIR_DEVICE}
     procedure ComposeDeviceUdi(json : TJSONWriter; name : string; elem : TFhirDeviceUdi; noObj : boolean = false);
     procedure ComposeDevice(json : TJSONWriter; name : string; elem : TFhirDevice; noObj : boolean = false);
+{$ENDIF FHIR_DEVICE}
+{$IFDEF FHIR_DEVICECOMPONENT}
     procedure ComposeDeviceComponentProductionSpecification(json : TJSONWriter; name : string; elem : TFhirDeviceComponentProductionSpecification; noObj : boolean = false);
     procedure ComposeDeviceComponent(json : TJSONWriter; name : string; elem : TFhirDeviceComponent; noObj : boolean = false);
+{$ENDIF FHIR_DEVICECOMPONENT}
+{$IFDEF FHIR_DEVICEMETRIC}
     procedure ComposeDeviceMetricCalibration(json : TJSONWriter; name : string; elem : TFhirDeviceMetricCalibration; noObj : boolean = false);
     procedure ComposeDeviceMetric(json : TJSONWriter; name : string; elem : TFhirDeviceMetric; noObj : boolean = false);
+{$ENDIF FHIR_DEVICEMETRIC}
+{$IFDEF FHIR_DEVICEREQUEST}
     procedure ComposeDeviceRequestRequester(json : TJSONWriter; name : string; elem : TFhirDeviceRequestRequester; noObj : boolean = false);
     procedure ComposeDeviceRequest(json : TJSONWriter; name : string; elem : TFhirDeviceRequest; noObj : boolean = false);
+{$ENDIF FHIR_DEVICEREQUEST}
+{$IFDEF FHIR_DEVICEUSESTATEMENT}
     procedure ComposeDeviceUseStatement(json : TJSONWriter; name : string; elem : TFhirDeviceUseStatement; noObj : boolean = false);
+{$ENDIF FHIR_DEVICEUSESTATEMENT}
+{$IFDEF FHIR_DIAGNOSTICREPORT}
     procedure ComposeDiagnosticReportPerformer(json : TJSONWriter; name : string; elem : TFhirDiagnosticReportPerformer; noObj : boolean = false);
     procedure ComposeDiagnosticReportImage(json : TJSONWriter; name : string; elem : TFhirDiagnosticReportImage; noObj : boolean = false);
     procedure ComposeDiagnosticReport(json : TJSONWriter; name : string; elem : TFhirDiagnosticReport; noObj : boolean = false);
+{$ENDIF FHIR_DIAGNOSTICREPORT}
+{$IFDEF FHIR_DOCUMENTMANIFEST}
     procedure ComposeDocumentManifestContent(json : TJSONWriter; name : string; elem : TFhirDocumentManifestContent; noObj : boolean = false);
     procedure ComposeDocumentManifestRelated(json : TJSONWriter; name : string; elem : TFhirDocumentManifestRelated; noObj : boolean = false);
     procedure ComposeDocumentManifest(json : TJSONWriter; name : string; elem : TFhirDocumentManifest; noObj : boolean = false);
+{$ENDIF FHIR_DOCUMENTMANIFEST}
+{$IFDEF FHIR_DOCUMENTREFERENCE}
     procedure ComposeDocumentReferenceRelatesTo(json : TJSONWriter; name : string; elem : TFhirDocumentReferenceRelatesTo; noObj : boolean = false);
     procedure ComposeDocumentReferenceContent(json : TJSONWriter; name : string; elem : TFhirDocumentReferenceContent; noObj : boolean = false);
     procedure ComposeDocumentReferenceContext(json : TJSONWriter; name : string; elem : TFhirDocumentReferenceContext; noObj : boolean = false);
     procedure ComposeDocumentReferenceContextRelated(json : TJSONWriter; name : string; elem : TFhirDocumentReferenceContextRelated; noObj : boolean = false);
     procedure ComposeDocumentReference(json : TJSONWriter; name : string; elem : TFhirDocumentReference; noObj : boolean = false);
+{$ENDIF FHIR_DOCUMENTREFERENCE}
+{$IFDEF FHIR_ELIGIBILITYREQUEST}
     procedure ComposeEligibilityRequest(json : TJSONWriter; name : string; elem : TFhirEligibilityRequest; noObj : boolean = false);
+{$ENDIF FHIR_ELIGIBILITYREQUEST}
+{$IFDEF FHIR_ELIGIBILITYRESPONSE}
     procedure ComposeEligibilityResponseInsurance(json : TJSONWriter; name : string; elem : TFhirEligibilityResponseInsurance; noObj : boolean = false);
     procedure ComposeEligibilityResponseInsuranceBenefitBalance(json : TJSONWriter; name : string; elem : TFhirEligibilityResponseInsuranceBenefitBalance; noObj : boolean = false);
     procedure ComposeEligibilityResponseInsuranceBenefitBalanceFinancial(json : TJSONWriter; name : string; elem : TFhirEligibilityResponseInsuranceBenefitBalanceFinancial; noObj : boolean = false);
     procedure ComposeEligibilityResponseError(json : TJSONWriter; name : string; elem : TFhirEligibilityResponseError; noObj : boolean = false);
     procedure ComposeEligibilityResponse(json : TJSONWriter; name : string; elem : TFhirEligibilityResponse; noObj : boolean = false);
+{$ENDIF FHIR_ELIGIBILITYRESPONSE}
+{$IFDEF FHIR_ENCOUNTER}
     procedure ComposeEncounterStatusHistory(json : TJSONWriter; name : string; elem : TFhirEncounterStatusHistory; noObj : boolean = false);
     procedure ComposeEncounterClassHistory(json : TJSONWriter; name : string; elem : TFhirEncounterClassHistory; noObj : boolean = false);
     procedure ComposeEncounterParticipant(json : TJSONWriter; name : string; elem : TFhirEncounterParticipant; noObj : boolean = false);
@@ -1812,12 +2131,22 @@ Type
     procedure ComposeEncounterHospitalization(json : TJSONWriter; name : string; elem : TFhirEncounterHospitalization; noObj : boolean = false);
     procedure ComposeEncounterLocation(json : TJSONWriter; name : string; elem : TFhirEncounterLocation; noObj : boolean = false);
     procedure ComposeEncounter(json : TJSONWriter; name : string; elem : TFhirEncounter; noObj : boolean = false);
+{$ENDIF FHIR_ENCOUNTER}
+{$IFDEF FHIR_ENDPOINT}
     procedure ComposeEndpoint(json : TJSONWriter; name : string; elem : TFhirEndpoint; noObj : boolean = false);
+{$ENDIF FHIR_ENDPOINT}
+{$IFDEF FHIR_ENROLLMENTREQUEST}
     procedure ComposeEnrollmentRequest(json : TJSONWriter; name : string; elem : TFhirEnrollmentRequest; noObj : boolean = false);
+{$ENDIF FHIR_ENROLLMENTREQUEST}
+{$IFDEF FHIR_ENROLLMENTRESPONSE}
     procedure ComposeEnrollmentResponse(json : TJSONWriter; name : string; elem : TFhirEnrollmentResponse; noObj : boolean = false);
+{$ENDIF FHIR_ENROLLMENTRESPONSE}
+{$IFDEF FHIR_EPISODEOFCARE}
     procedure ComposeEpisodeOfCareStatusHistory(json : TJSONWriter; name : string; elem : TFhirEpisodeOfCareStatusHistory; noObj : boolean = false);
     procedure ComposeEpisodeOfCareDiagnosis(json : TJSONWriter; name : string; elem : TFhirEpisodeOfCareDiagnosis; noObj : boolean = false);
     procedure ComposeEpisodeOfCare(json : TJSONWriter; name : string; elem : TFhirEpisodeOfCare; noObj : boolean = false);
+{$ENDIF FHIR_EPISODEOFCARE}
+{$IFDEF FHIR_EXPANSIONPROFILE}
     procedure ComposeExpansionProfileFixedVersion(json : TJSONWriter; name : string; elem : TFhirExpansionProfileFixedVersion; noObj : boolean = false);
     procedure ComposeExpansionProfileExcludedSystem(json : TJSONWriter; name : string; elem : TFhirExpansionProfileExcludedSystem; noObj : boolean = false);
     procedure ComposeExpansionProfileDesignation(json : TJSONWriter; name : string; elem : TFhirExpansionProfileDesignation; noObj : boolean = false);
@@ -1826,6 +2155,8 @@ Type
     procedure ComposeExpansionProfileDesignationExclude(json : TJSONWriter; name : string; elem : TFhirExpansionProfileDesignationExclude; noObj : boolean = false);
     procedure ComposeExpansionProfileDesignationExcludeDesignation(json : TJSONWriter; name : string; elem : TFhirExpansionProfileDesignationExcludeDesignation; noObj : boolean = false);
     procedure ComposeExpansionProfile(json : TJSONWriter; name : string; elem : TFhirExpansionProfile; noObj : boolean = false);
+{$ENDIF FHIR_EXPANSIONPROFILE}
+{$IFDEF FHIR_EXPLANATIONOFBENEFIT}
     procedure ComposeExplanationOfBenefitRelated(json : TJSONWriter; name : string; elem : TFhirExplanationOfBenefitRelated; noObj : boolean = false);
     procedure ComposeExplanationOfBenefitPayee(json : TJSONWriter; name : string; elem : TFhirExplanationOfBenefitPayee; noObj : boolean = false);
     procedure ComposeExplanationOfBenefitInformation(json : TJSONWriter; name : string; elem : TFhirExplanationOfBenefitInformation; noObj : boolean = false);
@@ -1845,88 +2176,144 @@ Type
     procedure ComposeExplanationOfBenefitBenefitBalance(json : TJSONWriter; name : string; elem : TFhirExplanationOfBenefitBenefitBalance; noObj : boolean = false);
     procedure ComposeExplanationOfBenefitBenefitBalanceFinancial(json : TJSONWriter; name : string; elem : TFhirExplanationOfBenefitBenefitBalanceFinancial; noObj : boolean = false);
     procedure ComposeExplanationOfBenefit(json : TJSONWriter; name : string; elem : TFhirExplanationOfBenefit; noObj : boolean = false);
+{$ENDIF FHIR_EXPLANATIONOFBENEFIT}
+{$IFDEF FHIR_FAMILYMEMBERHISTORY}
     procedure ComposeFamilyMemberHistoryCondition(json : TJSONWriter; name : string; elem : TFhirFamilyMemberHistoryCondition; noObj : boolean = false);
     procedure ComposeFamilyMemberHistory(json : TJSONWriter; name : string; elem : TFhirFamilyMemberHistory; noObj : boolean = false);
+{$ENDIF FHIR_FAMILYMEMBERHISTORY}
+{$IFDEF FHIR_FLAG}
     procedure ComposeFlag(json : TJSONWriter; name : string; elem : TFhirFlag; noObj : boolean = false);
+{$ENDIF FHIR_FLAG}
+{$IFDEF FHIR_GOAL}
     procedure ComposeGoalTarget(json : TJSONWriter; name : string; elem : TFhirGoalTarget; noObj : boolean = false);
     procedure ComposeGoal(json : TJSONWriter; name : string; elem : TFhirGoal; noObj : boolean = false);
+{$ENDIF FHIR_GOAL}
+{$IFDEF FHIR_GRAPHDEFINITION}
     procedure ComposeGraphDefinitionLink(json : TJSONWriter; name : string; elem : TFhirGraphDefinitionLink; noObj : boolean = false);
     procedure ComposeGraphDefinitionLinkTarget(json : TJSONWriter; name : string; elem : TFhirGraphDefinitionLinkTarget; noObj : boolean = false);
     procedure ComposeGraphDefinitionLinkTargetCompartment(json : TJSONWriter; name : string; elem : TFhirGraphDefinitionLinkTargetCompartment; noObj : boolean = false);
     procedure ComposeGraphDefinition(json : TJSONWriter; name : string; elem : TFhirGraphDefinition; noObj : boolean = false);
+{$ENDIF FHIR_GRAPHDEFINITION}
+{$IFDEF FHIR_GROUP}
     procedure ComposeGroupCharacteristic(json : TJSONWriter; name : string; elem : TFhirGroupCharacteristic; noObj : boolean = false);
     procedure ComposeGroupMember(json : TJSONWriter; name : string; elem : TFhirGroupMember; noObj : boolean = false);
     procedure ComposeGroup(json : TJSONWriter; name : string; elem : TFhirGroup; noObj : boolean = false);
+{$ENDIF FHIR_GROUP}
+{$IFDEF FHIR_GUIDANCERESPONSE}
     procedure ComposeGuidanceResponse(json : TJSONWriter; name : string; elem : TFhirGuidanceResponse; noObj : boolean = false);
+{$ENDIF FHIR_GUIDANCERESPONSE}
+{$IFDEF FHIR_HEALTHCARESERVICE}
     procedure ComposeHealthcareServiceAvailableTime(json : TJSONWriter; name : string; elem : TFhirHealthcareServiceAvailableTime; noObj : boolean = false);
     procedure ComposeHealthcareServiceNotAvailable(json : TJSONWriter; name : string; elem : TFhirHealthcareServiceNotAvailable; noObj : boolean = false);
     procedure ComposeHealthcareService(json : TJSONWriter; name : string; elem : TFhirHealthcareService; noObj : boolean = false);
+{$ENDIF FHIR_HEALTHCARESERVICE}
+{$IFDEF FHIR_IMAGINGMANIFEST}
     procedure ComposeImagingManifestStudy(json : TJSONWriter; name : string; elem : TFhirImagingManifestStudy; noObj : boolean = false);
     procedure ComposeImagingManifestStudySeries(json : TJSONWriter; name : string; elem : TFhirImagingManifestStudySeries; noObj : boolean = false);
     procedure ComposeImagingManifestStudySeriesInstance(json : TJSONWriter; name : string; elem : TFhirImagingManifestStudySeriesInstance; noObj : boolean = false);
     procedure ComposeImagingManifest(json : TJSONWriter; name : string; elem : TFhirImagingManifest; noObj : boolean = false);
+{$ENDIF FHIR_IMAGINGMANIFEST}
+{$IFDEF FHIR_IMAGINGSTUDY}
     procedure ComposeImagingStudySeries(json : TJSONWriter; name : string; elem : TFhirImagingStudySeries; noObj : boolean = false);
     procedure ComposeImagingStudySeriesInstance(json : TJSONWriter; name : string; elem : TFhirImagingStudySeriesInstance; noObj : boolean = false);
     procedure ComposeImagingStudy(json : TJSONWriter; name : string; elem : TFhirImagingStudy; noObj : boolean = false);
+{$ENDIF FHIR_IMAGINGSTUDY}
+{$IFDEF FHIR_IMMUNIZATION}
     procedure ComposeImmunizationPractitioner(json : TJSONWriter; name : string; elem : TFhirImmunizationPractitioner; noObj : boolean = false);
     procedure ComposeImmunizationExplanation(json : TJSONWriter; name : string; elem : TFhirImmunizationExplanation; noObj : boolean = false);
     procedure ComposeImmunizationReaction(json : TJSONWriter; name : string; elem : TFhirImmunizationReaction; noObj : boolean = false);
     procedure ComposeImmunizationVaccinationProtocol(json : TJSONWriter; name : string; elem : TFhirImmunizationVaccinationProtocol; noObj : boolean = false);
     procedure ComposeImmunization(json : TJSONWriter; name : string; elem : TFhirImmunization; noObj : boolean = false);
+{$ENDIF FHIR_IMMUNIZATION}
+{$IFDEF FHIR_IMMUNIZATIONRECOMMENDATION}
     procedure ComposeImmunizationRecommendationRecommendation(json : TJSONWriter; name : string; elem : TFhirImmunizationRecommendationRecommendation; noObj : boolean = false);
     procedure ComposeImmunizationRecommendationRecommendationDateCriterion(json : TJSONWriter; name : string; elem : TFhirImmunizationRecommendationRecommendationDateCriterion; noObj : boolean = false);
     procedure ComposeImmunizationRecommendationRecommendationProtocol(json : TJSONWriter; name : string; elem : TFhirImmunizationRecommendationRecommendationProtocol; noObj : boolean = false);
     procedure ComposeImmunizationRecommendation(json : TJSONWriter; name : string; elem : TFhirImmunizationRecommendation; noObj : boolean = false);
+{$ENDIF FHIR_IMMUNIZATIONRECOMMENDATION}
+{$IFDEF FHIR_IMPLEMENTATIONGUIDE}
     procedure ComposeImplementationGuideDependency(json : TJSONWriter; name : string; elem : TFhirImplementationGuideDependency; noObj : boolean = false);
     procedure ComposeImplementationGuidePackage(json : TJSONWriter; name : string; elem : TFhirImplementationGuidePackage; noObj : boolean = false);
     procedure ComposeImplementationGuidePackageResource(json : TJSONWriter; name : string; elem : TFhirImplementationGuidePackageResource; noObj : boolean = false);
     procedure ComposeImplementationGuideGlobal(json : TJSONWriter; name : string; elem : TFhirImplementationGuideGlobal; noObj : boolean = false);
     procedure ComposeImplementationGuidePage(json : TJSONWriter; name : string; elem : TFhirImplementationGuidePage; noObj : boolean = false);
     procedure ComposeImplementationGuide(json : TJSONWriter; name : string; elem : TFhirImplementationGuide; noObj : boolean = false);
+{$ENDIF FHIR_IMPLEMENTATIONGUIDE}
+{$IFDEF FHIR_LIBRARY}
     procedure ComposeLibrary(json : TJSONWriter; name : string; elem : TFhirLibrary; noObj : boolean = false);
+{$ENDIF FHIR_LIBRARY}
+{$IFDEF FHIR_LINKAGE}
     procedure ComposeLinkageItem(json : TJSONWriter; name : string; elem : TFhirLinkageItem; noObj : boolean = false);
     procedure ComposeLinkage(json : TJSONWriter; name : string; elem : TFhirLinkage; noObj : boolean = false);
+{$ENDIF FHIR_LINKAGE}
+{$IFDEF FHIR_LIST}
     procedure ComposeListEntry(json : TJSONWriter; name : string; elem : TFhirListEntry; noObj : boolean = false);
     procedure ComposeList(json : TJSONWriter; name : string; elem : TFhirList; noObj : boolean = false);
+{$ENDIF FHIR_LIST}
+{$IFDEF FHIR_LOCATION}
     procedure ComposeLocationPosition(json : TJSONWriter; name : string; elem : TFhirLocationPosition; noObj : boolean = false);
     procedure ComposeLocation(json : TJSONWriter; name : string; elem : TFhirLocation; noObj : boolean = false);
+{$ENDIF FHIR_LOCATION}
+{$IFDEF FHIR_MEASURE}
     procedure ComposeMeasureGroup(json : TJSONWriter; name : string; elem : TFhirMeasureGroup; noObj : boolean = false);
     procedure ComposeMeasureGroupPopulation(json : TJSONWriter; name : string; elem : TFhirMeasureGroupPopulation; noObj : boolean = false);
     procedure ComposeMeasureGroupStratifier(json : TJSONWriter; name : string; elem : TFhirMeasureGroupStratifier; noObj : boolean = false);
     procedure ComposeMeasureSupplementalData(json : TJSONWriter; name : string; elem : TFhirMeasureSupplementalData; noObj : boolean = false);
     procedure ComposeMeasure(json : TJSONWriter; name : string; elem : TFhirMeasure; noObj : boolean = false);
+{$ENDIF FHIR_MEASURE}
+{$IFDEF FHIR_MEASUREREPORT}
     procedure ComposeMeasureReportGroup(json : TJSONWriter; name : string; elem : TFhirMeasureReportGroup; noObj : boolean = false);
     procedure ComposeMeasureReportGroupPopulation(json : TJSONWriter; name : string; elem : TFhirMeasureReportGroupPopulation; noObj : boolean = false);
     procedure ComposeMeasureReportGroupStratifier(json : TJSONWriter; name : string; elem : TFhirMeasureReportGroupStratifier; noObj : boolean = false);
     procedure ComposeMeasureReportGroupStratifierStratum(json : TJSONWriter; name : string; elem : TFhirMeasureReportGroupStratifierStratum; noObj : boolean = false);
     procedure ComposeMeasureReportGroupStratifierStratumPopulation(json : TJSONWriter; name : string; elem : TFhirMeasureReportGroupStratifierStratumPopulation; noObj : boolean = false);
     procedure ComposeMeasureReport(json : TJSONWriter; name : string; elem : TFhirMeasureReport; noObj : boolean = false);
+{$ENDIF FHIR_MEASUREREPORT}
+{$IFDEF FHIR_MEDIA}
     procedure ComposeMedia(json : TJSONWriter; name : string; elem : TFhirMedia; noObj : boolean = false);
+{$ENDIF FHIR_MEDIA}
+{$IFDEF FHIR_MEDICATION}
     procedure ComposeMedicationIngredient(json : TJSONWriter; name : string; elem : TFhirMedicationIngredient; noObj : boolean = false);
     procedure ComposeMedicationPackage(json : TJSONWriter; name : string; elem : TFhirMedicationPackage; noObj : boolean = false);
     procedure ComposeMedicationPackageContent(json : TJSONWriter; name : string; elem : TFhirMedicationPackageContent; noObj : boolean = false);
     procedure ComposeMedicationPackageBatch(json : TJSONWriter; name : string; elem : TFhirMedicationPackageBatch; noObj : boolean = false);
     procedure ComposeMedication(json : TJSONWriter; name : string; elem : TFhirMedication; noObj : boolean = false);
+{$ENDIF FHIR_MEDICATION}
+{$IFDEF FHIR_MEDICATIONADMINISTRATION}
     procedure ComposeMedicationAdministrationPerformer(json : TJSONWriter; name : string; elem : TFhirMedicationAdministrationPerformer; noObj : boolean = false);
     procedure ComposeMedicationAdministrationDosage(json : TJSONWriter; name : string; elem : TFhirMedicationAdministrationDosage; noObj : boolean = false);
     procedure ComposeMedicationAdministration(json : TJSONWriter; name : string; elem : TFhirMedicationAdministration; noObj : boolean = false);
+{$ENDIF FHIR_MEDICATIONADMINISTRATION}
+{$IFDEF FHIR_MEDICATIONDISPENSE}
     procedure ComposeMedicationDispensePerformer(json : TJSONWriter; name : string; elem : TFhirMedicationDispensePerformer; noObj : boolean = false);
     procedure ComposeMedicationDispenseSubstitution(json : TJSONWriter; name : string; elem : TFhirMedicationDispenseSubstitution; noObj : boolean = false);
     procedure ComposeMedicationDispense(json : TJSONWriter; name : string; elem : TFhirMedicationDispense; noObj : boolean = false);
+{$ENDIF FHIR_MEDICATIONDISPENSE}
+{$IFDEF FHIR_MEDICATIONREQUEST}
     procedure ComposeMedicationRequestRequester(json : TJSONWriter; name : string; elem : TFhirMedicationRequestRequester; noObj : boolean = false);
     procedure ComposeMedicationRequestDispenseRequest(json : TJSONWriter; name : string; elem : TFhirMedicationRequestDispenseRequest; noObj : boolean = false);
     procedure ComposeMedicationRequestSubstitution(json : TJSONWriter; name : string; elem : TFhirMedicationRequestSubstitution; noObj : boolean = false);
     procedure ComposeMedicationRequest(json : TJSONWriter; name : string; elem : TFhirMedicationRequest; noObj : boolean = false);
+{$ENDIF FHIR_MEDICATIONREQUEST}
+{$IFDEF FHIR_MEDICATIONSTATEMENT}
     procedure ComposeMedicationStatement(json : TJSONWriter; name : string; elem : TFhirMedicationStatement; noObj : boolean = false);
+{$ENDIF FHIR_MEDICATIONSTATEMENT}
+{$IFDEF FHIR_MESSAGEDEFINITION}
     procedure ComposeMessageDefinitionFocus(json : TJSONWriter; name : string; elem : TFhirMessageDefinitionFocus; noObj : boolean = false);
     procedure ComposeMessageDefinitionAllowedResponse(json : TJSONWriter; name : string; elem : TFhirMessageDefinitionAllowedResponse; noObj : boolean = false);
     procedure ComposeMessageDefinition(json : TJSONWriter; name : string; elem : TFhirMessageDefinition; noObj : boolean = false);
+{$ENDIF FHIR_MESSAGEDEFINITION}
+{$IFDEF FHIR_MESSAGEHEADER}
     procedure ComposeMessageHeaderDestination(json : TJSONWriter; name : string; elem : TFhirMessageHeaderDestination; noObj : boolean = false);
     procedure ComposeMessageHeaderSource(json : TJSONWriter; name : string; elem : TFhirMessageHeaderSource; noObj : boolean = false);
     procedure ComposeMessageHeaderResponse(json : TJSONWriter; name : string; elem : TFhirMessageHeaderResponse; noObj : boolean = false);
     procedure ComposeMessageHeader(json : TJSONWriter; name : string; elem : TFhirMessageHeader; noObj : boolean = false);
+{$ENDIF FHIR_MESSAGEHEADER}
+{$IFDEF FHIR_NAMINGSYSTEM}
     procedure ComposeNamingSystemUniqueId(json : TJSONWriter; name : string; elem : TFhirNamingSystemUniqueId; noObj : boolean = false);
     procedure ComposeNamingSystem(json : TJSONWriter; name : string; elem : TFhirNamingSystem; noObj : boolean = false);
+{$ENDIF FHIR_NAMINGSYSTEM}
+{$IFDEF FHIR_NUTRITIONORDER}
     procedure ComposeNutritionOrderOralDiet(json : TJSONWriter; name : string; elem : TFhirNutritionOrderOralDiet; noObj : boolean = false);
     procedure ComposeNutritionOrderOralDietNutrient(json : TJSONWriter; name : string; elem : TFhirNutritionOrderOralDietNutrient; noObj : boolean = false);
     procedure ComposeNutritionOrderOralDietTexture(json : TJSONWriter; name : string; elem : TFhirNutritionOrderOralDietTexture; noObj : boolean = false);
@@ -1934,29 +2321,47 @@ Type
     procedure ComposeNutritionOrderEnteralFormula(json : TJSONWriter; name : string; elem : TFhirNutritionOrderEnteralFormula; noObj : boolean = false);
     procedure ComposeNutritionOrderEnteralFormulaAdministration(json : TJSONWriter; name : string; elem : TFhirNutritionOrderEnteralFormulaAdministration; noObj : boolean = false);
     procedure ComposeNutritionOrder(json : TJSONWriter; name : string; elem : TFhirNutritionOrder; noObj : boolean = false);
+{$ENDIF FHIR_NUTRITIONORDER}
+{$IFDEF FHIR_OBSERVATION}
     procedure ComposeObservationReferenceRange(json : TJSONWriter; name : string; elem : TFhirObservationReferenceRange; noObj : boolean = false);
     procedure ComposeObservationRelated(json : TJSONWriter; name : string; elem : TFhirObservationRelated; noObj : boolean = false);
     procedure ComposeObservationComponent(json : TJSONWriter; name : string; elem : TFhirObservationComponent; noObj : boolean = false);
     procedure ComposeObservation(json : TJSONWriter; name : string; elem : TFhirObservation; noObj : boolean = false);
+{$ENDIF FHIR_OBSERVATION}
+{$IFDEF FHIR_OPERATIONDEFINITION}
     procedure ComposeOperationDefinitionParameter(json : TJSONWriter; name : string; elem : TFhirOperationDefinitionParameter; noObj : boolean = false);
     procedure ComposeOperationDefinitionParameterBinding(json : TJSONWriter; name : string; elem : TFhirOperationDefinitionParameterBinding; noObj : boolean = false);
     procedure ComposeOperationDefinitionOverload(json : TJSONWriter; name : string; elem : TFhirOperationDefinitionOverload; noObj : boolean = false);
     procedure ComposeOperationDefinition(json : TJSONWriter; name : string; elem : TFhirOperationDefinition; noObj : boolean = false);
+{$ENDIF FHIR_OPERATIONDEFINITION}
+{$IFDEF FHIR_OPERATIONOUTCOME}
     procedure ComposeOperationOutcomeIssue(json : TJSONWriter; name : string; elem : TFhirOperationOutcomeIssue; noObj : boolean = false);
     procedure ComposeOperationOutcome(json : TJSONWriter; name : string; elem : TFhirOperationOutcome; noObj : boolean = false);
+{$ENDIF FHIR_OPERATIONOUTCOME}
+{$IFDEF FHIR_ORGANIZATION}
     procedure ComposeOrganizationContact(json : TJSONWriter; name : string; elem : TFhirOrganizationContact; noObj : boolean = false);
     procedure ComposeOrganization(json : TJSONWriter; name : string; elem : TFhirOrganization; noObj : boolean = false);
+{$ENDIF FHIR_ORGANIZATION}
+{$IFDEF FHIR_PATIENT}
     procedure ComposePatientContact(json : TJSONWriter; name : string; elem : TFhirPatientContact; noObj : boolean = false);
     procedure ComposePatientAnimal(json : TJSONWriter; name : string; elem : TFhirPatientAnimal; noObj : boolean = false);
     procedure ComposePatientCommunication(json : TJSONWriter; name : string; elem : TFhirPatientCommunication; noObj : boolean = false);
     procedure ComposePatientLink(json : TJSONWriter; name : string; elem : TFhirPatientLink; noObj : boolean = false);
     procedure ComposePatient(json : TJSONWriter; name : string; elem : TFhirPatient; noObj : boolean = false);
+{$ENDIF FHIR_PATIENT}
+{$IFDEF FHIR_PAYMENTNOTICE}
     procedure ComposePaymentNotice(json : TJSONWriter; name : string; elem : TFhirPaymentNotice; noObj : boolean = false);
+{$ENDIF FHIR_PAYMENTNOTICE}
+{$IFDEF FHIR_PAYMENTRECONCILIATION}
     procedure ComposePaymentReconciliationDetail(json : TJSONWriter; name : string; elem : TFhirPaymentReconciliationDetail; noObj : boolean = false);
     procedure ComposePaymentReconciliationProcessNote(json : TJSONWriter; name : string; elem : TFhirPaymentReconciliationProcessNote; noObj : boolean = false);
     procedure ComposePaymentReconciliation(json : TJSONWriter; name : string; elem : TFhirPaymentReconciliation; noObj : boolean = false);
+{$ENDIF FHIR_PAYMENTRECONCILIATION}
+{$IFDEF FHIR_PERSON}
     procedure ComposePersonLink(json : TJSONWriter; name : string; elem : TFhirPersonLink; noObj : boolean = false);
     procedure ComposePerson(json : TJSONWriter; name : string; elem : TFhirPerson; noObj : boolean = false);
+{$ENDIF FHIR_PERSON}
+{$IFDEF FHIR_PLANDEFINITION}
     procedure ComposePlanDefinitionGoal(json : TJSONWriter; name : string; elem : TFhirPlanDefinitionGoal; noObj : boolean = false);
     procedure ComposePlanDefinitionGoalTarget(json : TJSONWriter; name : string; elem : TFhirPlanDefinitionGoalTarget; noObj : boolean = false);
     procedure ComposePlanDefinitionAction(json : TJSONWriter; name : string; elem : TFhirPlanDefinitionAction; noObj : boolean = false);
@@ -1965,60 +2370,106 @@ Type
     procedure ComposePlanDefinitionActionParticipant(json : TJSONWriter; name : string; elem : TFhirPlanDefinitionActionParticipant; noObj : boolean = false);
     procedure ComposePlanDefinitionActionDynamicValue(json : TJSONWriter; name : string; elem : TFhirPlanDefinitionActionDynamicValue; noObj : boolean = false);
     procedure ComposePlanDefinition(json : TJSONWriter; name : string; elem : TFhirPlanDefinition; noObj : boolean = false);
+{$ENDIF FHIR_PLANDEFINITION}
+{$IFDEF FHIR_PRACTITIONER}
     procedure ComposePractitionerQualification(json : TJSONWriter; name : string; elem : TFhirPractitionerQualification; noObj : boolean = false);
     procedure ComposePractitioner(json : TJSONWriter; name : string; elem : TFhirPractitioner; noObj : boolean = false);
+{$ENDIF FHIR_PRACTITIONER}
+{$IFDEF FHIR_PRACTITIONERROLE}
     procedure ComposePractitionerRoleAvailableTime(json : TJSONWriter; name : string; elem : TFhirPractitionerRoleAvailableTime; noObj : boolean = false);
     procedure ComposePractitionerRoleNotAvailable(json : TJSONWriter; name : string; elem : TFhirPractitionerRoleNotAvailable; noObj : boolean = false);
     procedure ComposePractitionerRole(json : TJSONWriter; name : string; elem : TFhirPractitionerRole; noObj : boolean = false);
+{$ENDIF FHIR_PRACTITIONERROLE}
+{$IFDEF FHIR_PROCEDURE}
     procedure ComposeProcedurePerformer(json : TJSONWriter; name : string; elem : TFhirProcedurePerformer; noObj : boolean = false);
     procedure ComposeProcedureFocalDevice(json : TJSONWriter; name : string; elem : TFhirProcedureFocalDevice; noObj : boolean = false);
     procedure ComposeProcedure(json : TJSONWriter; name : string; elem : TFhirProcedure; noObj : boolean = false);
+{$ENDIF FHIR_PROCEDURE}
+{$IFDEF FHIR_PROCEDUREREQUEST}
     procedure ComposeProcedureRequestRequester(json : TJSONWriter; name : string; elem : TFhirProcedureRequestRequester; noObj : boolean = false);
     procedure ComposeProcedureRequest(json : TJSONWriter; name : string; elem : TFhirProcedureRequest; noObj : boolean = false);
+{$ENDIF FHIR_PROCEDUREREQUEST}
+{$IFDEF FHIR_PROCESSREQUEST}
     procedure ComposeProcessRequestItem(json : TJSONWriter; name : string; elem : TFhirProcessRequestItem; noObj : boolean = false);
     procedure ComposeProcessRequest(json : TJSONWriter; name : string; elem : TFhirProcessRequest; noObj : boolean = false);
+{$ENDIF FHIR_PROCESSREQUEST}
+{$IFDEF FHIR_PROCESSRESPONSE}
     procedure ComposeProcessResponseProcessNote(json : TJSONWriter; name : string; elem : TFhirProcessResponseProcessNote; noObj : boolean = false);
     procedure ComposeProcessResponse(json : TJSONWriter; name : string; elem : TFhirProcessResponse; noObj : boolean = false);
+{$ENDIF FHIR_PROCESSRESPONSE}
+{$IFDEF FHIR_PROVENANCE}
     procedure ComposeProvenanceAgent(json : TJSONWriter; name : string; elem : TFhirProvenanceAgent; noObj : boolean = false);
     procedure ComposeProvenanceEntity(json : TJSONWriter; name : string; elem : TFhirProvenanceEntity; noObj : boolean = false);
     procedure ComposeProvenance(json : TJSONWriter; name : string; elem : TFhirProvenance; noObj : boolean = false);
+{$ENDIF FHIR_PROVENANCE}
+{$IFDEF FHIR_QUESTIONNAIRE}
     procedure ComposeQuestionnaireItem(json : TJSONWriter; name : string; elem : TFhirQuestionnaireItem; noObj : boolean = false);
     procedure ComposeQuestionnaireItemEnableWhen(json : TJSONWriter; name : string; elem : TFhirQuestionnaireItemEnableWhen; noObj : boolean = false);
     procedure ComposeQuestionnaireItemOption(json : TJSONWriter; name : string; elem : TFhirQuestionnaireItemOption; noObj : boolean = false);
     procedure ComposeQuestionnaire(json : TJSONWriter; name : string; elem : TFhirQuestionnaire; noObj : boolean = false);
+{$ENDIF FHIR_QUESTIONNAIRE}
+{$IFDEF FHIR_QUESTIONNAIRERESPONSE}
     procedure ComposeQuestionnaireResponseItem(json : TJSONWriter; name : string; elem : TFhirQuestionnaireResponseItem; noObj : boolean = false);
     procedure ComposeQuestionnaireResponseItemAnswer(json : TJSONWriter; name : string; elem : TFhirQuestionnaireResponseItemAnswer; noObj : boolean = false);
     procedure ComposeQuestionnaireResponse(json : TJSONWriter; name : string; elem : TFhirQuestionnaireResponse; noObj : boolean = false);
+{$ENDIF FHIR_QUESTIONNAIRERESPONSE}
+{$IFDEF FHIR_REFERRALREQUEST}
     procedure ComposeReferralRequestRequester(json : TJSONWriter; name : string; elem : TFhirReferralRequestRequester; noObj : boolean = false);
     procedure ComposeReferralRequest(json : TJSONWriter; name : string; elem : TFhirReferralRequest; noObj : boolean = false);
+{$ENDIF FHIR_REFERRALREQUEST}
+{$IFDEF FHIR_RELATEDPERSON}
     procedure ComposeRelatedPerson(json : TJSONWriter; name : string; elem : TFhirRelatedPerson; noObj : boolean = false);
+{$ENDIF FHIR_RELATEDPERSON}
+{$IFDEF FHIR_REQUESTGROUP}
     procedure ComposeRequestGroupAction(json : TJSONWriter; name : string; elem : TFhirRequestGroupAction; noObj : boolean = false);
     procedure ComposeRequestGroupActionCondition(json : TJSONWriter; name : string; elem : TFhirRequestGroupActionCondition; noObj : boolean = false);
     procedure ComposeRequestGroupActionRelatedAction(json : TJSONWriter; name : string; elem : TFhirRequestGroupActionRelatedAction; noObj : boolean = false);
     procedure ComposeRequestGroup(json : TJSONWriter; name : string; elem : TFhirRequestGroup; noObj : boolean = false);
+{$ENDIF FHIR_REQUESTGROUP}
+{$IFDEF FHIR_RESEARCHSTUDY}
     procedure ComposeResearchStudyArm(json : TJSONWriter; name : string; elem : TFhirResearchStudyArm; noObj : boolean = false);
     procedure ComposeResearchStudy(json : TJSONWriter; name : string; elem : TFhirResearchStudy; noObj : boolean = false);
+{$ENDIF FHIR_RESEARCHSTUDY}
+{$IFDEF FHIR_RESEARCHSUBJECT}
     procedure ComposeResearchSubject(json : TJSONWriter; name : string; elem : TFhirResearchSubject; noObj : boolean = false);
+{$ENDIF FHIR_RESEARCHSUBJECT}
+{$IFDEF FHIR_RISKASSESSMENT}
     procedure ComposeRiskAssessmentPrediction(json : TJSONWriter; name : string; elem : TFhirRiskAssessmentPrediction; noObj : boolean = false);
     procedure ComposeRiskAssessment(json : TJSONWriter; name : string; elem : TFhirRiskAssessment; noObj : boolean = false);
+{$ENDIF FHIR_RISKASSESSMENT}
+{$IFDEF FHIR_SCHEDULE}
     procedure ComposeSchedule(json : TJSONWriter; name : string; elem : TFhirSchedule; noObj : boolean = false);
+{$ENDIF FHIR_SCHEDULE}
+{$IFDEF FHIR_SEARCHPARAMETER}
     procedure ComposeSearchParameterComponent(json : TJSONWriter; name : string; elem : TFhirSearchParameterComponent; noObj : boolean = false);
     procedure ComposeSearchParameter(json : TJSONWriter; name : string; elem : TFhirSearchParameter; noObj : boolean = false);
+{$ENDIF FHIR_SEARCHPARAMETER}
+{$IFDEF FHIR_SEQUENCE}
     procedure ComposeSequenceReferenceSeq(json : TJSONWriter; name : string; elem : TFhirSequenceReferenceSeq; noObj : boolean = false);
     procedure ComposeSequenceVariant(json : TJSONWriter; name : string; elem : TFhirSequenceVariant; noObj : boolean = false);
     procedure ComposeSequenceQuality(json : TJSONWriter; name : string; elem : TFhirSequenceQuality; noObj : boolean = false);
     procedure ComposeSequenceRepository(json : TJSONWriter; name : string; elem : TFhirSequenceRepository; noObj : boolean = false);
     procedure ComposeSequence(json : TJSONWriter; name : string; elem : TFhirSequence; noObj : boolean = false);
+{$ENDIF FHIR_SEQUENCE}
+{$IFDEF FHIR_SERVICEDEFINITION}
     procedure ComposeServiceDefinition(json : TJSONWriter; name : string; elem : TFhirServiceDefinition; noObj : boolean = false);
+{$ENDIF FHIR_SERVICEDEFINITION}
+{$IFDEF FHIR_SLOT}
     procedure ComposeSlot(json : TJSONWriter; name : string; elem : TFhirSlot; noObj : boolean = false);
+{$ENDIF FHIR_SLOT}
+{$IFDEF FHIR_SPECIMEN}
     procedure ComposeSpecimenCollection(json : TJSONWriter; name : string; elem : TFhirSpecimenCollection; noObj : boolean = false);
     procedure ComposeSpecimenProcessing(json : TJSONWriter; name : string; elem : TFhirSpecimenProcessing; noObj : boolean = false);
     procedure ComposeSpecimenContainer(json : TJSONWriter; name : string; elem : TFhirSpecimenContainer; noObj : boolean = false);
     procedure ComposeSpecimen(json : TJSONWriter; name : string; elem : TFhirSpecimen; noObj : boolean = false);
+{$ENDIF FHIR_SPECIMEN}
+{$IFDEF FHIR_STRUCTUREDEFINITION}
     procedure ComposeStructureDefinitionMapping(json : TJSONWriter; name : string; elem : TFhirStructureDefinitionMapping; noObj : boolean = false);
     procedure ComposeStructureDefinitionSnapshot(json : TJSONWriter; name : string; elem : TFhirStructureDefinitionSnapshot; noObj : boolean = false);
     procedure ComposeStructureDefinitionDifferential(json : TJSONWriter; name : string; elem : TFhirStructureDefinitionDifferential; noObj : boolean = false);
     procedure ComposeStructureDefinition(json : TJSONWriter; name : string; elem : TFhirStructureDefinition; noObj : boolean = false);
+{$ENDIF FHIR_STRUCTUREDEFINITION}
+{$IFDEF FHIR_STRUCTUREMAP}
     procedure ComposeStructureMapStructure(json : TJSONWriter; name : string; elem : TFhirStructureMapStructure; noObj : boolean = false);
     procedure ComposeStructureMapGroup(json : TJSONWriter; name : string; elem : TFhirStructureMapGroup; noObj : boolean = false);
     procedure ComposeStructureMapGroupInput(json : TJSONWriter; name : string; elem : TFhirStructureMapGroupInput; noObj : boolean = false);
@@ -2028,21 +2479,33 @@ Type
     procedure ComposeStructureMapGroupRuleTargetParameter(json : TJSONWriter; name : string; elem : TFhirStructureMapGroupRuleTargetParameter; noObj : boolean = false);
     procedure ComposeStructureMapGroupRuleDependent(json : TJSONWriter; name : string; elem : TFhirStructureMapGroupRuleDependent; noObj : boolean = false);
     procedure ComposeStructureMap(json : TJSONWriter; name : string; elem : TFhirStructureMap; noObj : boolean = false);
+{$ENDIF FHIR_STRUCTUREMAP}
+{$IFDEF FHIR_SUBSCRIPTION}
     procedure ComposeSubscriptionChannel(json : TJSONWriter; name : string; elem : TFhirSubscriptionChannel; noObj : boolean = false);
     procedure ComposeSubscription(json : TJSONWriter; name : string; elem : TFhirSubscription; noObj : boolean = false);
+{$ENDIF FHIR_SUBSCRIPTION}
+{$IFDEF FHIR_SUBSTANCE}
     procedure ComposeSubstanceInstance(json : TJSONWriter; name : string; elem : TFhirSubstanceInstance; noObj : boolean = false);
     procedure ComposeSubstanceIngredient(json : TJSONWriter; name : string; elem : TFhirSubstanceIngredient; noObj : boolean = false);
     procedure ComposeSubstance(json : TJSONWriter; name : string; elem : TFhirSubstance; noObj : boolean = false);
+{$ENDIF FHIR_SUBSTANCE}
+{$IFDEF FHIR_SUPPLYDELIVERY}
     procedure ComposeSupplyDeliverySuppliedItem(json : TJSONWriter; name : string; elem : TFhirSupplyDeliverySuppliedItem; noObj : boolean = false);
     procedure ComposeSupplyDelivery(json : TJSONWriter; name : string; elem : TFhirSupplyDelivery; noObj : boolean = false);
+{$ENDIF FHIR_SUPPLYDELIVERY}
+{$IFDEF FHIR_SUPPLYREQUEST}
     procedure ComposeSupplyRequestOrderedItem(json : TJSONWriter; name : string; elem : TFhirSupplyRequestOrderedItem; noObj : boolean = false);
     procedure ComposeSupplyRequestRequester(json : TJSONWriter; name : string; elem : TFhirSupplyRequestRequester; noObj : boolean = false);
     procedure ComposeSupplyRequest(json : TJSONWriter; name : string; elem : TFhirSupplyRequest; noObj : boolean = false);
+{$ENDIF FHIR_SUPPLYREQUEST}
+{$IFDEF FHIR_TASK}
     procedure ComposeTaskRequester(json : TJSONWriter; name : string; elem : TFhirTaskRequester; noObj : boolean = false);
     procedure ComposeTaskRestriction(json : TJSONWriter; name : string; elem : TFhirTaskRestriction; noObj : boolean = false);
     procedure ComposeTaskInput(json : TJSONWriter; name : string; elem : TFhirTaskInput; noObj : boolean = false);
     procedure ComposeTaskOutput(json : TJSONWriter; name : string; elem : TFhirTaskOutput; noObj : boolean = false);
     procedure ComposeTask(json : TJSONWriter; name : string; elem : TFhirTask; noObj : boolean = false);
+{$ENDIF FHIR_TASK}
+{$IFDEF FHIR_TESTREPORT}
     procedure ComposeTestReportParticipant(json : TJSONWriter; name : string; elem : TFhirTestReportParticipant; noObj : boolean = false);
     procedure ComposeTestReportSetup(json : TJSONWriter; name : string; elem : TFhirTestReportSetup; noObj : boolean = false);
     procedure ComposeTestReportSetupAction(json : TJSONWriter; name : string; elem : TFhirTestReportSetupAction; noObj : boolean = false);
@@ -2053,6 +2516,8 @@ Type
     procedure ComposeTestReportTeardown(json : TJSONWriter; name : string; elem : TFhirTestReportTeardown; noObj : boolean = false);
     procedure ComposeTestReportTeardownAction(json : TJSONWriter; name : string; elem : TFhirTestReportTeardownAction; noObj : boolean = false);
     procedure ComposeTestReport(json : TJSONWriter; name : string; elem : TFhirTestReport; noObj : boolean = false);
+{$ENDIF FHIR_TESTREPORT}
+{$IFDEF FHIR_TESTSCRIPT}
     procedure ComposeTestScriptOrigin(json : TJSONWriter; name : string; elem : TFhirTestScriptOrigin; noObj : boolean = false);
     procedure ComposeTestScriptDestination(json : TJSONWriter; name : string; elem : TFhirTestScriptDestination; noObj : boolean = false);
     procedure ComposeTestScriptMetadata(json : TJSONWriter; name : string; elem : TFhirTestScriptMetadata; noObj : boolean = false);
@@ -2080,6 +2545,8 @@ Type
     procedure ComposeTestScriptTeardown(json : TJSONWriter; name : string; elem : TFhirTestScriptTeardown; noObj : boolean = false);
     procedure ComposeTestScriptTeardownAction(json : TJSONWriter; name : string; elem : TFhirTestScriptTeardownAction; noObj : boolean = false);
     procedure ComposeTestScript(json : TJSONWriter; name : string; elem : TFhirTestScript; noObj : boolean = false);
+{$ENDIF FHIR_TESTSCRIPT}
+{$IFDEF FHIR_VALUESET}
     procedure ComposeValueSetCompose(json : TJSONWriter; name : string; elem : TFhirValueSetCompose; noObj : boolean = false);
     procedure ComposeValueSetComposeInclude(json : TJSONWriter; name : string; elem : TFhirValueSetComposeInclude; noObj : boolean = false);
     procedure ComposeValueSetComposeIncludeConcept(json : TJSONWriter; name : string; elem : TFhirValueSetComposeIncludeConcept; noObj : boolean = false);
@@ -2089,8 +2556,11 @@ Type
     procedure ComposeValueSetExpansionParameter(json : TJSONWriter; name : string; elem : TFhirValueSetExpansionParameter; noObj : boolean = false);
     procedure ComposeValueSetExpansionContains(json : TJSONWriter; name : string; elem : TFhirValueSetExpansionContains; noObj : boolean = false);
     procedure ComposeValueSet(json : TJSONWriter; name : string; elem : TFhirValueSet; noObj : boolean = false);
+{$ENDIF FHIR_VALUESET}
+{$IFDEF FHIR_VISIONPRESCRIPTION}
     procedure ComposeVisionPrescriptionDispense(json : TJSONWriter; name : string; elem : TFhirVisionPrescriptionDispense; noObj : boolean = false);
     procedure ComposeVisionPrescription(json : TJSONWriter; name : string; elem : TFhirVisionPrescription; noObj : boolean = false);
+{$ENDIF FHIR_VISIONPRESCRIPTION}
     procedure ComposeResource(json : TJSONWriter; resource : TFhirResource; links : TFhirBundleLinkList); override;
     procedure ComposeBase(json : TJSONWriter; name : String; base : TFHIRObject); override;
   end;
@@ -3234,6 +3704,7 @@ begin
   end;
 end;
 
+{$IFDEF FHIR_PARAMETERS}
 procedure TFHIRJsonParser.ParseParametersParameter(jsn : TJsonObject; ctxt : TFHIRObjectList);
 begin
   ctxt.add(ParseParametersParameter(jsn)); {2}
@@ -3524,6 +3995,7 @@ begin
   end;
 end;
 
+{$ENDIF FHIR_PARAMETERS}
 procedure TFHIRJsonParser.ParseExtension(jsn : TJsonObject; ctxt : TFHIRObjectList);
 begin
   ctxt.add(ParseExtension(jsn)); {2}
@@ -7628,6 +8100,7 @@ begin
   if not noObj then json.finishObject;
 end;
 
+{$IFDEF FHIR_ACCOUNT}
 procedure TFHIRJsonParser.ParseAccountCoverage(jsn : TJsonObject; ctxt : TFHIRObjectList);
 begin
   ctxt.add(ParseAccountCoverage(jsn)); {2}
@@ -7811,6 +8284,8 @@ begin
   end;
 end;
 
+{$ENDIF FHIR_ACCOUNT}
+{$IFDEF FHIR_ACTIVITYDEFINITION}
 procedure TFHIRJsonParser.ParseActivityDefinitionParticipant(jsn : TJsonObject; ctxt : TFHIRObjectList);
 begin
   ctxt.add(ParseActivityDefinitionParticipant(jsn)); {2}
@@ -8180,6 +8655,8 @@ begin
   end;
 end;
 
+{$ENDIF FHIR_ACTIVITYDEFINITION}
+{$IFDEF FHIR_ADVERSEEVENT}
 procedure TFHIRJsonParser.ParseAdverseEventSuspectEntity(jsn : TJsonObject; ctxt : TFHIRObjectList);
 begin
   ctxt.add(ParseAdverseEventSuspectEntity(jsn)); {2}
@@ -8367,6 +8844,8 @@ begin
   end;
 end;
 
+{$ENDIF FHIR_ADVERSEEVENT}
+{$IFDEF FHIR_ALLERGYINTOLERANCE}
 procedure TFHIRJsonParser.ParseAllergyIntoleranceReaction(jsn : TJsonObject; ctxt : TFHIRObjectList);
 begin
   ctxt.add(ParseAllergyIntoleranceReaction(jsn)); {2}
@@ -8606,6 +9085,8 @@ begin
   end;
 end;
 
+{$ENDIF FHIR_ALLERGYINTOLERANCE}
+{$IFDEF FHIR_APPOINTMENT}
 procedure TFHIRJsonParser.ParseAppointmentParticipant(jsn : TJsonObject; ctxt : TFHIRObjectList);
 begin
   ctxt.add(ParseAppointmentParticipant(jsn)); {2}
@@ -8839,6 +9320,8 @@ begin
   end;
 end;
 
+{$ENDIF FHIR_APPOINTMENT}
+{$IFDEF FHIR_APPOINTMENTRESPONSE}
 procedure TFHIRJsonParser.ParseAppointmentResponse(jsn : TJsonObject; ctxt : TFHIRObjectList);
 begin
   ctxt.add(ParseAppointmentResponse(jsn)); {2}
@@ -8919,6 +9402,8 @@ begin
     ComposeStringProps(json, 'comment', elem.commentElement, false);
 end;
 
+{$ENDIF FHIR_APPOINTMENTRESPONSE}
+{$IFDEF FHIR_AUDITEVENT}
 procedure TFHIRJsonParser.ParseAuditEventAgent(jsn : TJsonObject; ctxt : TFHIRObjectList);
 begin
   ctxt.add(ParseAuditEventAgent(jsn)); {2}
@@ -9356,6 +9841,8 @@ begin
   end;
 end;
 
+{$ENDIF FHIR_AUDITEVENT}
+{$IFDEF FHIR_BASIC}
 procedure TFHIRJsonParser.ParseBasic(jsn : TJsonObject; ctxt : TFHIRObjectList);
 begin
   ctxt.add(ParseBasic(jsn)); {2}
@@ -9413,6 +9900,8 @@ begin
     ComposeReference{Resource}(json, 'author', elem.author); {a}
 end;
 
+{$ENDIF FHIR_BASIC}
+{$IFDEF FHIR_BINARY}
 procedure TFHIRJsonParser.ParseBinary(jsn : TJsonObject; ctxt : TFHIRObjectList);
 begin
   ctxt.add(ParseBinary(jsn)); {2}
@@ -9457,6 +9946,8 @@ begin
     ComposeBase64BinaryProps(json, 'content', elem.contentElement, false);
 end;
 
+{$ENDIF FHIR_BINARY}
+{$IFDEF FHIR_BODYSITE}
 procedure TFHIRJsonParser.ParseBodySite(jsn : TJsonObject; ctxt : TFHIRObjectList);
 begin
   ctxt.add(ParseBodySite(jsn)); {2}
@@ -9534,6 +10025,8 @@ begin
     ComposeReference{TFhirPatient}(json, 'patient', elem.patient); {a}
 end;
 
+{$ENDIF FHIR_BODYSITE}
+{$IFDEF FHIR_BUNDLE}
 procedure TFHIRJsonParser.ParseBundleLink(jsn : TJsonObject; ctxt : TFHIRObjectList);
 begin
   ctxt.add(ParseBundleLink(jsn)); {2}
@@ -9873,6 +10366,8 @@ begin
     ComposeSignature(json, 'signature', elem.signature); {a}
 end;
 
+{$ENDIF FHIR_BUNDLE}
+{$IFDEF FHIR_CAPABILITYSTATEMENT}
 procedure TFHIRJsonParser.ParseCapabilityStatementSoftware(jsn : TJsonObject; ctxt : TFHIRObjectList);
 begin
   ctxt.add(ParseCapabilityStatementSoftware(jsn)); {2}
@@ -11099,6 +11594,8 @@ begin
   end;
 end;
 
+{$ENDIF FHIR_CAPABILITYSTATEMENT}
+{$IFDEF FHIR_CAREPLAN}
 procedure TFHIRJsonParser.ParseCarePlanActivity(jsn : TJsonObject; ctxt : TFHIRObjectList);
 begin
   ctxt.add(ParseCarePlanActivity(jsn)); {2}
@@ -11488,6 +11985,8 @@ begin
   end;
 end;
 
+{$ENDIF FHIR_CAREPLAN}
+{$IFDEF FHIR_CARETEAM}
 procedure TFHIRJsonParser.ParseCareTeamParticipant(jsn : TJsonObject; ctxt : TFHIRObjectList);
 begin
   ctxt.add(ParseCareTeamParticipant(jsn)); {2}
@@ -11651,6 +12150,8 @@ begin
   end;
 end;
 
+{$ENDIF FHIR_CARETEAM}
+{$IFDEF FHIR_CHARGEITEM}
 procedure TFHIRJsonParser.ParseChargeItemParticipant(jsn : TJsonObject; ctxt : TFHIRObjectList);
 begin
   ctxt.add(ParseChargeItemParticipant(jsn)); {2}
@@ -11894,6 +12395,8 @@ begin
   end;
 end;
 
+{$ENDIF FHIR_CHARGEITEM}
+{$IFDEF FHIR_CLAIM}
 procedure TFHIRJsonParser.ParseClaimRelated(jsn : TJsonObject; ctxt : TFHIRObjectList);
 begin
   ctxt.add(ParseClaimRelated(jsn)); {2}
@@ -13008,6 +13511,8 @@ begin
     ComposeMoney(json, 'total', elem.total); {a}
 end;
 
+{$ENDIF FHIR_CLAIM}
+{$IFDEF FHIR_CLAIMRESPONSE}
 procedure TFHIRJsonParser.ParseClaimResponseItem(jsn : TJsonObject; ctxt : TFHIRObjectList);
 begin
   ctxt.add(ParseClaimResponseItem(jsn)); {2}
@@ -13929,6 +14434,8 @@ begin
   end;
 end;
 
+{$ENDIF FHIR_CLAIMRESPONSE}
+{$IFDEF FHIR_CLINICALIMPRESSION}
 procedure TFHIRJsonParser.ParseClinicalImpressionInvestigation(jsn : TJsonObject; ctxt : TFHIRObjectList);
 begin
   ctxt.add(ParseClinicalImpressionInvestigation(jsn)); {2}
@@ -14203,6 +14710,8 @@ begin
   end;
 end;
 
+{$ENDIF FHIR_CLINICALIMPRESSION}
+{$IFDEF FHIR_CODESYSTEM}
 procedure TFHIRJsonParser.ParseCodeSystemFilter(jsn : TJsonObject; ctxt : TFHIRObjectList);
 begin
   ctxt.add(ParseCodeSystemFilter(jsn)); {2}
@@ -14729,6 +15238,8 @@ begin
   end;
 end;
 
+{$ENDIF FHIR_CODESYSTEM}
+{$IFDEF FHIR_COMMUNICATION}
 procedure TFHIRJsonParser.ParseCommunicationPayload(jsn : TJsonObject; ctxt : TFHIRObjectList);
 begin
   ctxt.add(ParseCommunicationPayload(jsn)); {2}
@@ -14952,6 +15463,8 @@ begin
   end;
 end;
 
+{$ENDIF FHIR_COMMUNICATION}
+{$IFDEF FHIR_COMMUNICATIONREQUEST}
 procedure TFHIRJsonParser.ParseCommunicationRequestPayload(jsn : TJsonObject; ctxt : TFHIRObjectList);
 begin
   ctxt.add(ParseCommunicationRequestPayload(jsn)); {2}
@@ -15213,6 +15726,8 @@ begin
   end;
 end;
 
+{$ENDIF FHIR_COMMUNICATIONREQUEST}
+{$IFDEF FHIR_COMPARTMENTDEFINITION}
 procedure TFHIRJsonParser.ParseCompartmentDefinitionResource(jsn : TJsonObject; ctxt : TFHIRObjectList);
 begin
   ctxt.add(ParseCompartmentDefinitionResource(jsn)); {2}
@@ -15417,6 +15932,8 @@ begin
   end;
 end;
 
+{$ENDIF FHIR_COMPARTMENTDEFINITION}
+{$IFDEF FHIR_COMPOSITION}
 procedure TFHIRJsonParser.ParseCompositionAttester(jsn : TJsonObject; ctxt : TFHIRObjectList);
 begin
   ctxt.add(ParseCompositionAttester(jsn)); {2}
@@ -15786,6 +16303,8 @@ begin
   end;
 end;
 
+{$ENDIF FHIR_COMPOSITION}
+{$IFDEF FHIR_CONCEPTMAP}
 procedure TFHIRJsonParser.ParseConceptMapGroup(jsn : TJsonObject; ctxt : TFHIRObjectList);
 begin
   ctxt.add(ParseConceptMapGroup(jsn)); {2}
@@ -16248,6 +16767,8 @@ begin
   end;
 end;
 
+{$ENDIF FHIR_CONCEPTMAP}
+{$IFDEF FHIR_CONDITION}
 procedure TFHIRJsonParser.ParseConditionStage(jsn : TJsonObject; ctxt : TFHIRObjectList);
 begin
   ctxt.add(ParseConditionStage(jsn)); {2}
@@ -16519,6 +17040,8 @@ begin
   end;
 end;
 
+{$ENDIF FHIR_CONDITION}
+{$IFDEF FHIR_CONSENT}
 procedure TFHIRJsonParser.ParseConsentActor(jsn : TJsonObject; ctxt : TFHIRObjectList);
 begin
   ctxt.add(ParseConsentActor(jsn)); {2}
@@ -16992,6 +17515,8 @@ begin
   end;
 end;
 
+{$ENDIF FHIR_CONSENT}
+{$IFDEF FHIR_CONTRACT}
 procedure TFHIRJsonParser.ParseContractAgent(jsn : TJsonObject; ctxt : TFHIRObjectList);
 begin
   ctxt.add(ParseContractAgent(jsn)); {2}
@@ -17717,6 +18242,8 @@ begin
   end;
 end;
 
+{$ENDIF FHIR_CONTRACT}
+{$IFDEF FHIR_COVERAGE}
 procedure TFHIRJsonParser.ParseCoverageGrouping(jsn : TJsonObject; ctxt : TFHIRObjectList);
 begin
   ctxt.add(ParseCoverageGrouping(jsn)); {2}
@@ -17940,6 +18467,8 @@ begin
   end;
 end;
 
+{$ENDIF FHIR_COVERAGE}
+{$IFDEF FHIR_DATAELEMENT}
 procedure TFHIRJsonParser.ParseDataElementMapping(jsn : TJsonObject; ctxt : TFHIRObjectList);
 begin
   ctxt.add(ParseDataElementMapping(jsn)); {2}
@@ -18138,6 +18667,8 @@ begin
   end;
 end;
 
+{$ENDIF FHIR_DATAELEMENT}
+{$IFDEF FHIR_DETECTEDISSUE}
 procedure TFHIRJsonParser.ParseDetectedIssueMitigation(jsn : TJsonObject; ctxt : TFHIRObjectList);
 begin
   ctxt.add(ParseDetectedIssueMitigation(jsn)); {2}
@@ -18276,6 +18807,8 @@ begin
   end;
 end;
 
+{$ENDIF FHIR_DETECTEDISSUE}
+{$IFDEF FHIR_DEVICE}
 procedure TFHIRJsonParser.ParseDeviceUdi(jsn : TJsonObject; ctxt : TFHIRObjectList);
 begin
   ctxt.add(ParseDeviceUdi(jsn)); {2}
@@ -18482,6 +19015,8 @@ begin
   end;
 end;
 
+{$ENDIF FHIR_DEVICE}
+{$IFDEF FHIR_DEVICECOMPONENT}
 procedure TFHIRJsonParser.ParseDeviceComponentProductionSpecification(jsn : TJsonObject; ctxt : TFHIRObjectList);
 begin
   ctxt.add(ParseDeviceComponentProductionSpecification(jsn)); {2}
@@ -18610,6 +19145,8 @@ begin
     ComposeCodeableConcept(json, 'languageCode', elem.languageCode); {a}
 end;
 
+{$ENDIF FHIR_DEVICECOMPONENT}
+{$IFDEF FHIR_DEVICEMETRIC}
 procedure TFHIRJsonParser.ParseDeviceMetricCalibration(jsn : TJsonObject; ctxt : TFHIRObjectList);
 begin
   ctxt.add(ParseDeviceMetricCalibration(jsn)); {2}
@@ -18739,6 +19276,8 @@ begin
   end;
 end;
 
+{$ENDIF FHIR_DEVICEMETRIC}
+{$IFDEF FHIR_DEVICEREQUEST}
 procedure TFHIRJsonParser.ParseDeviceRequestRequester(jsn : TJsonObject; ctxt : TFHIRObjectList);
 begin
   ctxt.add(ParseDeviceRequestRequester(jsn)); {2}
@@ -18957,6 +19496,8 @@ begin
   end;
 end;
 
+{$ENDIF FHIR_DEVICEREQUEST}
+{$IFDEF FHIR_DEVICEUSESTATEMENT}
 procedure TFHIRJsonParser.ParseDeviceUseStatement(jsn : TJsonObject; ctxt : TFHIRObjectList);
 begin
   ctxt.add(ParseDeviceUseStatement(jsn)); {2}
@@ -19061,6 +19602,8 @@ begin
   end;
 end;
 
+{$ENDIF FHIR_DEVICEUSESTATEMENT}
+{$IFDEF FHIR_DIAGNOSTICREPORT}
 procedure TFHIRJsonParser.ParseDiagnosticReportPerformer(jsn : TJsonObject; ctxt : TFHIRObjectList);
 begin
   ctxt.add(ParseDiagnosticReportPerformer(jsn)); {2}
@@ -19295,6 +19838,8 @@ begin
   end;
 end;
 
+{$ENDIF FHIR_DIAGNOSTICREPORT}
+{$IFDEF FHIR_DOCUMENTMANIFEST}
 procedure TFHIRJsonParser.ParseDocumentManifestContent(jsn : TJsonObject; ctxt : TFHIRObjectList);
 begin
   ctxt.add(ParseDocumentManifestContent(jsn)); {2}
@@ -19482,6 +20027,8 @@ begin
   end;
 end;
 
+{$ENDIF FHIR_DOCUMENTMANIFEST}
+{$IFDEF FHIR_DOCUMENTREFERENCE}
 procedure TFHIRJsonParser.ParseDocumentReferenceRelatesTo(jsn : TJsonObject; ctxt : TFHIRObjectList);
 begin
   ctxt.add(ParseDocumentReferenceRelatesTo(jsn)); {2}
@@ -19801,6 +20348,8 @@ begin
     ComposeDocumentReferenceContext(json, 'context', elem.context); {a}
 end;
 
+{$ENDIF FHIR_DOCUMENTREFERENCE}
+{$IFDEF FHIR_ELIGIBILITYREQUEST}
 procedure TFHIRJsonParser.ParseEligibilityRequest(jsn : TJsonObject; ctxt : TFHIRObjectList);
 begin
   ctxt.add(ParseEligibilityRequest(jsn)); {2}
@@ -19909,6 +20458,8 @@ begin
     ComposeCodeableConcept(json, 'benefitSubCategory', elem.benefitSubCategory); {a}
 end;
 
+{$ENDIF FHIR_ELIGIBILITYREQUEST}
+{$IFDEF FHIR_ELIGIBILITYRESPONSE}
 procedure TFHIRJsonParser.ParseEligibilityResponseInsurance(jsn : TJsonObject; ctxt : TFHIRObjectList);
 begin
   ctxt.add(ParseEligibilityResponseInsurance(jsn)); {2}
@@ -20239,6 +20790,8 @@ begin
   end;
 end;
 
+{$ENDIF FHIR_ELIGIBILITYRESPONSE}
+{$IFDEF FHIR_ENCOUNTER}
 procedure TFHIRJsonParser.ParseEncounterStatusHistory(jsn : TJsonObject; ctxt : TFHIRObjectList);
 begin
   ctxt.add(ParseEncounterStatusHistory(jsn)); {2}
@@ -20708,6 +21261,8 @@ begin
     ComposeReference{TFhirEncounter}(json, 'partOf', elem.partOf); {a}
 end;
 
+{$ENDIF FHIR_ENCOUNTER}
+{$IFDEF FHIR_ENDPOINT}
 procedure TFHIRJsonParser.ParseEndpoint(jsn : TJsonObject; ctxt : TFHIRObjectList);
 begin
   ctxt.add(ParseEndpoint(jsn)); {2}
@@ -20849,6 +21404,8 @@ begin
   end;
 end;
 
+{$ENDIF FHIR_ENDPOINT}
+{$IFDEF FHIR_ENROLLMENTREQUEST}
 procedure TFHIRJsonParser.ParseEnrollmentRequest(jsn : TJsonObject; ctxt : TFHIRObjectList);
 begin
   ctxt.add(ParseEnrollmentRequest(jsn)); {2}
@@ -20920,6 +21477,8 @@ begin
     ComposeReference{TFhirCoverage}(json, 'coverage', elem.coverage); {a}
 end;
 
+{$ENDIF FHIR_ENROLLMENTREQUEST}
+{$IFDEF FHIR_ENROLLMENTRESPONSE}
 procedure TFHIRJsonParser.ParseEnrollmentResponse(jsn : TJsonObject; ctxt : TFHIRObjectList);
 begin
   ctxt.add(ParseEnrollmentResponse(jsn)); {2}
@@ -20997,6 +21556,8 @@ begin
     ComposeReference{TFhirOrganization}(json, 'requestOrganization', elem.requestOrganization); {a}
 end;
 
+{$ENDIF FHIR_ENROLLMENTRESPONSE}
+{$IFDEF FHIR_EPISODEOFCARE}
 procedure TFHIRJsonParser.ParseEpisodeOfCareStatusHistory(jsn : TJsonObject; ctxt : TFHIRObjectList);
 begin
   ctxt.add(ParseEpisodeOfCareStatusHistory(jsn)); {2}
@@ -21196,6 +21757,8 @@ begin
   end;
 end;
 
+{$ENDIF FHIR_EPISODEOFCARE}
+{$IFDEF FHIR_EXPANSIONPROFILE}
 procedure TFHIRJsonParser.ParseExpansionProfileFixedVersion(jsn : TJsonObject; ctxt : TFHIRObjectList);
 begin
   ctxt.add(ParseExpansionProfileFixedVersion(jsn)); {2}
@@ -21660,6 +22223,8 @@ begin
     ComposeBooleanProps(json, 'limitedExpansion', elem.limitedExpansionElement, false);
 end;
 
+{$ENDIF FHIR_EXPANSIONPROFILE}
+{$IFDEF FHIR_EXPLANATIONOFBENEFIT}
 procedure TFHIRJsonParser.ParseExplanationOfBenefitRelated(jsn : TJsonObject; ctxt : TFHIRObjectList);
 begin
   ctxt.add(ParseExplanationOfBenefitRelated(jsn)); {2}
@@ -23436,6 +24001,8 @@ begin
   end;
 end;
 
+{$ENDIF FHIR_EXPLANATIONOFBENEFIT}
+{$IFDEF FHIR_FAMILYMEMBERHISTORY}
 procedure TFHIRJsonParser.ParseFamilyMemberHistoryCondition(jsn : TJsonObject; ctxt : TFHIRObjectList);
 begin
   ctxt.add(ParseFamilyMemberHistoryCondition(jsn)); {2}
@@ -23698,6 +24265,8 @@ begin
   end;
 end;
 
+{$ENDIF FHIR_FAMILYMEMBERHISTORY}
+{$IFDEF FHIR_FLAG}
 procedure TFHIRJsonParser.ParseFlag(jsn : TJsonObject; ctxt : TFHIRObjectList);
 begin
   ctxt.add(ParseFlag(jsn)); {2}
@@ -23767,6 +24336,8 @@ begin
     ComposeReference{Resource}(json, 'author', elem.author); {a}
 end;
 
+{$ENDIF FHIR_FLAG}
+{$IFDEF FHIR_GOAL}
 procedure TFHIRJsonParser.ParseGoalTarget(jsn : TJsonObject; ctxt : TFHIRObjectList);
 begin
   ctxt.add(ParseGoalTarget(jsn)); {2}
@@ -23957,6 +24528,8 @@ begin
   end;
 end;
 
+{$ENDIF FHIR_GOAL}
+{$IFDEF FHIR_GRAPHDEFINITION}
 procedure TFHIRJsonParser.ParseGraphDefinitionLink(jsn : TJsonObject; ctxt : TFHIRObjectList);
 begin
   ctxt.add(ParseGraphDefinitionLink(jsn)); {2}
@@ -24276,6 +24849,8 @@ begin
   end;
 end;
 
+{$ENDIF FHIR_GRAPHDEFINITION}
+{$IFDEF FHIR_GROUP}
 procedure TFHIRJsonParser.ParseGroupCharacteristic(jsn : TJsonObject; ctxt : TFHIRObjectList);
 begin
   ctxt.add(ParseGroupCharacteristic(jsn)); {2}
@@ -24474,6 +25049,8 @@ begin
   end;
 end;
 
+{$ENDIF FHIR_GROUP}
+{$IFDEF FHIR_GUIDANCERESPONSE}
 procedure TFHIRJsonParser.ParseGuidanceResponse(jsn : TJsonObject; ctxt : TFHIRObjectList);
 begin
   ctxt.add(ParseGuidanceResponse(jsn)); {2}
@@ -24585,6 +25162,8 @@ begin
   end;
 end;
 
+{$ENDIF FHIR_GUIDANCERESPONSE}
+{$IFDEF FHIR_HEALTHCARESERVICE}
 procedure TFHIRJsonParser.ParseHealthcareServiceAvailableTime(jsn : TJsonObject; ctxt : TFHIRObjectList);
 begin
   ctxt.add(ParseHealthcareServiceAvailableTime(jsn)); {2}
@@ -24927,6 +25506,8 @@ begin
   end;
 end;
 
+{$ENDIF FHIR_HEALTHCARESERVICE}
+{$IFDEF FHIR_IMAGINGMANIFEST}
 procedure TFHIRJsonParser.ParseImagingManifestStudy(jsn : TJsonObject; ctxt : TFHIRObjectList);
 begin
   ctxt.add(ParseImagingManifestStudy(jsn)); {2}
@@ -25148,6 +25729,8 @@ begin
   end;
 end;
 
+{$ENDIF FHIR_IMAGINGMANIFEST}
+{$IFDEF FHIR_IMAGINGSTUDY}
 procedure TFHIRJsonParser.ParseImagingStudySeries(jsn : TJsonObject; ctxt : TFHIRObjectList);
 begin
   ctxt.add(ParseImagingStudySeries(jsn)); {2}
@@ -25467,6 +26050,8 @@ begin
   end;
 end;
 
+{$ENDIF FHIR_IMAGINGSTUDY}
+{$IFDEF FHIR_IMMUNIZATION}
 procedure TFHIRJsonParser.ParseImmunizationPractitioner(jsn : TJsonObject; ctxt : TFHIRObjectList);
 begin
   ctxt.add(ParseImmunizationPractitioner(jsn)); {2}
@@ -25829,6 +26414,8 @@ begin
   end;
 end;
 
+{$ENDIF FHIR_IMMUNIZATION}
+{$IFDEF FHIR_IMMUNIZATIONRECOMMENDATION}
 procedure TFHIRJsonParser.ParseImmunizationRecommendationRecommendation(jsn : TJsonObject; ctxt : TFHIRObjectList);
 begin
   ctxt.add(ParseImmunizationRecommendationRecommendation(jsn)); {2}
@@ -26060,6 +26647,8 @@ begin
   end;
 end;
 
+{$ENDIF FHIR_IMMUNIZATIONRECOMMENDATION}
+{$IFDEF FHIR_IMPLEMENTATIONGUIDE}
 procedure TFHIRJsonParser.ParseImplementationGuideDependency(jsn : TJsonObject; ctxt : TFHIRObjectList);
 begin
   ctxt.add(ParseImplementationGuideDependency(jsn)); {2}
@@ -26559,6 +27148,8 @@ begin
     ComposeImplementationGuidePage(json, 'page', elem.page); {a}
 end;
 
+{$ENDIF FHIR_IMPLEMENTATIONGUIDE}
+{$IFDEF FHIR_LIBRARY}
 procedure TFHIRJsonParser.ParseLibrary(jsn : TJsonObject; ctxt : TFHIRObjectList);
 begin
   ctxt.add(ParseLibrary(jsn)); {2}
@@ -26771,6 +27362,8 @@ begin
   end;
 end;
 
+{$ENDIF FHIR_LIBRARY}
+{$IFDEF FHIR_LINKAGE}
 procedure TFHIRJsonParser.ParseLinkageItem(jsn : TJsonObject; ctxt : TFHIRObjectList);
 begin
   ctxt.add(ParseLinkageItem(jsn)); {2}
@@ -26860,6 +27453,8 @@ begin
   end;
 end;
 
+{$ENDIF FHIR_LINKAGE}
+{$IFDEF FHIR_LIST}
 procedure TFHIRJsonParser.ParseListEntry(jsn : TJsonObject; ctxt : TFHIRObjectList);
 begin
   ctxt.add(ParseListEntry(jsn)); {2}
@@ -27015,6 +27610,8 @@ begin
     ComposeCodeableConcept(json, 'emptyReason', elem.emptyReason); {a}
 end;
 
+{$ENDIF FHIR_LIST}
+{$IFDEF FHIR_LOCATION}
 procedure TFHIRJsonParser.ParseLocationPosition(jsn : TJsonObject; ctxt : TFHIRObjectList);
 begin
   ctxt.add(ParseLocationPosition(jsn)); {2}
@@ -27200,6 +27797,8 @@ begin
   end;
 end;
 
+{$ENDIF FHIR_LOCATION}
+{$IFDEF FHIR_MEASURE}
 procedure TFHIRJsonParser.ParseMeasureGroup(jsn : TJsonObject; ctxt : TFHIRObjectList);
 begin
   ctxt.add(ParseMeasureGroup(jsn)); {2}
@@ -27726,6 +28325,8 @@ begin
   end;
 end;
 
+{$ENDIF FHIR_MEASURE}
+{$IFDEF FHIR_MEASUREREPORT}
 procedure TFHIRJsonParser.ParseMeasureReportGroup(jsn : TJsonObject; ctxt : TFHIRObjectList);
 begin
   ctxt.add(ParseMeasureReportGroup(jsn)); {2}
@@ -28061,6 +28662,8 @@ begin
     ComposeReference{TFhirBundle}(json, 'evaluatedResources', elem.evaluatedResources); {a}
 end;
 
+{$ENDIF FHIR_MEASUREREPORT}
+{$IFDEF FHIR_MEDIA}
 procedure TFHIRJsonParser.ParseMedia(jsn : TJsonObject; ctxt : TFHIRObjectList);
 begin
   ctxt.add(ParseMedia(jsn)); {2}
@@ -28200,6 +28803,8 @@ begin
   end;
 end;
 
+{$ENDIF FHIR_MEDIA}
+{$IFDEF FHIR_MEDICATION}
 procedure TFHIRJsonParser.ParseMedicationIngredient(jsn : TJsonObject; ctxt : TFHIRObjectList);
 begin
   ctxt.add(ParseMedicationIngredient(jsn)); {2}
@@ -28468,6 +29073,8 @@ begin
   end;
 end;
 
+{$ENDIF FHIR_MEDICATION}
+{$IFDEF FHIR_MEDICATIONADMINISTRATION}
 procedure TFHIRJsonParser.ParseMedicationAdministrationPerformer(jsn : TJsonObject; ctxt : TFHIRObjectList);
 begin
   ctxt.add(ParseMedicationAdministrationPerformer(jsn)); {2}
@@ -28746,6 +29353,8 @@ begin
   end;
 end;
 
+{$ENDIF FHIR_MEDICATIONADMINISTRATION}
+{$IFDEF FHIR_MEDICATIONDISPENSE}
 procedure TFHIRJsonParser.ParseMedicationDispensePerformer(jsn : TJsonObject; ctxt : TFHIRObjectList);
 begin
   ctxt.add(ParseMedicationDispensePerformer(jsn)); {2}
@@ -29036,6 +29645,8 @@ begin
   end;
 end;
 
+{$ENDIF FHIR_MEDICATIONDISPENSE}
+{$IFDEF FHIR_MEDICATIONREQUEST}
 procedure TFHIRJsonParser.ParseMedicationRequestRequester(jsn : TJsonObject; ctxt : TFHIRObjectList);
 begin
   ctxt.add(ParseMedicationRequestRequester(jsn)); {2}
@@ -29354,6 +29965,8 @@ begin
   end;
 end;
 
+{$ENDIF FHIR_MEDICATIONREQUEST}
+{$IFDEF FHIR_MEDICATIONSTATEMENT}
 procedure TFHIRJsonParser.ParseMedicationStatement(jsn : TJsonObject; ctxt : TFHIRObjectList);
 begin
   ctxt.add(ParseMedicationStatement(jsn)); {2}
@@ -29518,6 +30131,8 @@ begin
   end;
 end;
 
+{$ENDIF FHIR_MEDICATIONSTATEMENT}
+{$IFDEF FHIR_MESSAGEDEFINITION}
 procedure TFHIRJsonParser.ParseMessageDefinitionFocus(jsn : TJsonObject; ctxt : TFHIRObjectList);
 begin
   ctxt.add(ParseMessageDefinitionFocus(jsn)); {2}
@@ -29793,6 +30408,8 @@ begin
   end;
 end;
 
+{$ENDIF FHIR_MESSAGEDEFINITION}
+{$IFDEF FHIR_MESSAGEHEADER}
 procedure TFHIRJsonParser.ParseMessageHeaderDestination(jsn : TJsonObject; ctxt : TFHIRObjectList);
 begin
   ctxt.add(ParseMessageHeaderDestination(jsn)); {2}
@@ -30033,6 +30650,8 @@ begin
   end;
 end;
 
+{$ENDIF FHIR_MESSAGEHEADER}
+{$IFDEF FHIR_NAMINGSYSTEM}
 procedure TFHIRJsonParser.ParseNamingSystemUniqueId(jsn : TJsonObject; ctxt : TFHIRObjectList);
 begin
   ctxt.add(ParseNamingSystemUniqueId(jsn)); {2}
@@ -30213,6 +30832,8 @@ begin
     ComposeReference{TFhirNamingSystem}(json, 'replacedBy', elem.replacedBy); {a}
 end;
 
+{$ENDIF FHIR_NAMINGSYSTEM}
+{$IFDEF FHIR_NUTRITIONORDER}
 procedure TFHIRJsonParser.ParseNutritionOrderOralDiet(jsn : TJsonObject; ctxt : TFHIRObjectList);
 begin
   ctxt.add(ParseNutritionOrderOralDiet(jsn)); {2}
@@ -30665,6 +31286,8 @@ begin
     ComposeNutritionOrderEnteralFormula(json, 'enteralFormula', elem.enteralFormula); {a}
 end;
 
+{$ENDIF FHIR_NUTRITIONORDER}
+{$IFDEF FHIR_OBSERVATION}
 procedure TFHIRJsonParser.ParseObservationReferenceRange(jsn : TJsonObject; ctxt : TFHIRObjectList);
 begin
   ctxt.add(ParseObservationReferenceRange(jsn)); {2}
@@ -31084,6 +31707,8 @@ begin
   end;
 end;
 
+{$ENDIF FHIR_OBSERVATION}
+{$IFDEF FHIR_OPERATIONDEFINITION}
 procedure TFHIRJsonParser.ParseOperationDefinitionParameter(jsn : TJsonObject; ctxt : TFHIRObjectList);
 begin
   ctxt.add(ParseOperationDefinitionParameter(jsn)); {2}
@@ -31491,6 +32116,8 @@ begin
   end;
 end;
 
+{$ENDIF FHIR_OPERATIONDEFINITION}
+{$IFDEF FHIR_OPERATIONOUTCOME}
 procedure TFHIRJsonParser.ParseOperationOutcomeIssue(jsn : TJsonObject; ctxt : TFHIRObjectList);
 begin
   ctxt.add(ParseOperationOutcomeIssue(jsn)); {2}
@@ -31638,6 +32265,8 @@ begin
   end;
 end;
 
+{$ENDIF FHIR_OPERATIONOUTCOME}
+{$IFDEF FHIR_ORGANIZATION}
 procedure TFHIRJsonParser.ParseOrganizationContact(jsn : TJsonObject; ctxt : TFHIRObjectList);
 begin
   ctxt.add(ParseOrganizationContact(jsn)); {2}
@@ -31819,6 +32448,8 @@ begin
   end;
 end;
 
+{$ENDIF FHIR_ORGANIZATION}
+{$IFDEF FHIR_PATIENT}
 procedure TFHIRJsonParser.ParsePatientContact(jsn : TJsonObject; ctxt : TFHIRObjectList);
 begin
   ctxt.add(ParsePatientContact(jsn)); {2}
@@ -32182,6 +32813,8 @@ begin
   end;
 end;
 
+{$ENDIF FHIR_PATIENT}
+{$IFDEF FHIR_PAYMENTNOTICE}
 procedure TFHIRJsonParser.ParsePaymentNotice(jsn : TJsonObject; ctxt : TFHIRObjectList);
 begin
   ctxt.add(ParsePaymentNotice(jsn)); {2}
@@ -32263,6 +32896,8 @@ begin
     ComposeCodeableConcept(json, 'paymentStatus', elem.paymentStatus); {a}
 end;
 
+{$ENDIF FHIR_PAYMENTNOTICE}
+{$IFDEF FHIR_PAYMENTRECONCILIATION}
 procedure TFHIRJsonParser.ParsePaymentReconciliationDetail(jsn : TJsonObject; ctxt : TFHIRObjectList);
 begin
   ctxt.add(ParsePaymentReconciliationDetail(jsn)); {2}
@@ -32470,6 +33105,8 @@ begin
   end;
 end;
 
+{$ENDIF FHIR_PAYMENTRECONCILIATION}
+{$IFDEF FHIR_PERSON}
 procedure TFHIRJsonParser.ParsePersonLink(jsn : TJsonObject; ctxt : TFHIRObjectList);
 begin
   ctxt.add(ParsePersonLink(jsn)); {2}
@@ -32611,6 +33248,8 @@ begin
   end;
 end;
 
+{$ENDIF FHIR_PERSON}
+{$IFDEF FHIR_PLANDEFINITION}
 procedure TFHIRJsonParser.ParsePlanDefinitionGoal(jsn : TJsonObject; ctxt : TFHIRObjectList);
 begin
   ctxt.add(ParsePlanDefinitionGoal(jsn)); {2}
@@ -33394,6 +34033,8 @@ begin
   end;
 end;
 
+{$ENDIF FHIR_PLANDEFINITION}
+{$IFDEF FHIR_PRACTITIONER}
 procedure TFHIRJsonParser.ParsePractitionerQualification(jsn : TJsonObject; ctxt : TFHIRObjectList);
 begin
   ctxt.add(ParsePractitionerQualification(jsn)); {2}
@@ -33558,6 +34199,8 @@ begin
   end;
 end;
 
+{$ENDIF FHIR_PRACTITIONER}
+{$IFDEF FHIR_PRACTITIONERROLE}
 procedure TFHIRJsonParser.ParsePractitionerRoleAvailableTime(jsn : TJsonObject; ctxt : TFHIRObjectList);
 begin
   ctxt.add(ParsePractitionerRoleAvailableTime(jsn)); {2}
@@ -33811,6 +34454,8 @@ begin
   end;
 end;
 
+{$ENDIF FHIR_PRACTITIONERROLE}
+{$IFDEF FHIR_PROCEDURE}
 procedure TFHIRJsonParser.ParseProcedurePerformer(jsn : TJsonObject; ctxt : TFHIRObjectList);
 begin
   ctxt.add(ParseProcedurePerformer(jsn)); {2}
@@ -34116,6 +34761,8 @@ begin
   end;
 end;
 
+{$ENDIF FHIR_PROCEDURE}
+{$IFDEF FHIR_PROCEDUREREQUEST}
 procedure TFHIRJsonParser.ParseProcedureRequestRequester(jsn : TJsonObject; ctxt : TFHIRObjectList);
 begin
   ctxt.add(ParseProcedureRequestRequester(jsn)); {2}
@@ -34376,6 +35023,8 @@ begin
   end;
 end;
 
+{$ENDIF FHIR_PROCEDUREREQUEST}
+{$IFDEF FHIR_PROCESSREQUEST}
 procedure TFHIRJsonParser.ParseProcessRequestItem(jsn : TJsonObject; ctxt : TFHIRObjectList);
 begin
   ctxt.add(ParseProcessRequestItem(jsn)); {2}
@@ -34568,6 +35217,8 @@ begin
     ComposePeriod(json, 'period', elem.period); {a}
 end;
 
+{$ENDIF FHIR_PROCESSREQUEST}
+{$IFDEF FHIR_PROCESSRESPONSE}
 procedure TFHIRJsonParser.ParseProcessResponseProcessNote(jsn : TJsonObject; ctxt : TFHIRObjectList);
 begin
   ctxt.add(ParseProcessResponseProcessNote(jsn)); {2}
@@ -34716,6 +35367,8 @@ begin
   end;
 end;
 
+{$ENDIF FHIR_PROCESSRESPONSE}
+{$IFDEF FHIR_PROVENANCE}
 procedure TFHIRJsonParser.ParseProvenanceAgent(jsn : TJsonObject; ctxt : TFHIRObjectList);
 begin
   ctxt.add(ParseProvenanceAgent(jsn)); {2}
@@ -34966,6 +35619,8 @@ begin
   end;
 end;
 
+{$ENDIF FHIR_PROVENANCE}
+{$IFDEF FHIR_QUESTIONNAIRE}
 procedure TFHIRJsonParser.ParseQuestionnaireItem(jsn : TJsonObject; ctxt : TFHIRObjectList);
 begin
   ctxt.add(ParseQuestionnaireItem(jsn)); {2}
@@ -35534,6 +36189,8 @@ begin
   end;
 end;
 
+{$ENDIF FHIR_QUESTIONNAIRE}
+{$IFDEF FHIR_QUESTIONNAIRERESPONSE}
 procedure TFHIRJsonParser.ParseQuestionnaireResponseItem(jsn : TJsonObject; ctxt : TFHIRObjectList);
 begin
   ctxt.add(ParseQuestionnaireResponseItem(jsn)); {2}
@@ -35812,6 +36469,8 @@ begin
   end;
 end;
 
+{$ENDIF FHIR_QUESTIONNAIRERESPONSE}
+{$IFDEF FHIR_REFERRALREQUEST}
 procedure TFHIRJsonParser.ParseReferralRequestRequester(jsn : TJsonObject; ctxt : TFHIRObjectList);
 begin
   ctxt.add(ParseReferralRequestRequester(jsn)); {2}
@@ -36044,6 +36703,8 @@ begin
   end;
 end;
 
+{$ENDIF FHIR_REFERRALREQUEST}
+{$IFDEF FHIR_RELATEDPERSON}
 procedure TFHIRJsonParser.ParseRelatedPerson(jsn : TJsonObject; ctxt : TFHIRObjectList);
 begin
   ctxt.add(ParseRelatedPerson(jsn)); {2}
@@ -36149,6 +36810,8 @@ begin
     ComposePeriod(json, 'period', elem.period); {a}
 end;
 
+{$ENDIF FHIR_RELATEDPERSON}
+{$IFDEF FHIR_REQUESTGROUP}
 procedure TFHIRJsonParser.ParseRequestGroupAction(jsn : TJsonObject; ctxt : TFHIRObjectList);
 begin
   ctxt.add(ParseRequestGroupAction(jsn)); {2}
@@ -36556,6 +37219,8 @@ begin
   end;
 end;
 
+{$ENDIF FHIR_REQUESTGROUP}
+{$IFDEF FHIR_RESEARCHSTUDY}
 procedure TFHIRJsonParser.ParseResearchStudyArm(jsn : TJsonObject; ctxt : TFHIRObjectList);
 begin
   ctxt.add(ParseResearchStudyArm(jsn)); {2}
@@ -36783,6 +37448,8 @@ begin
   end;
 end;
 
+{$ENDIF FHIR_RESEARCHSTUDY}
+{$IFDEF FHIR_RESEARCHSUBJECT}
 procedure TFHIRJsonParser.ParseResearchSubject(jsn : TJsonObject; ctxt : TFHIRObjectList);
 begin
   ctxt.add(ParseResearchSubject(jsn)); {2}
@@ -36849,6 +37516,8 @@ begin
     ComposeReference{TFhirConsent}(json, 'consent', elem.consent); {a}
 end;
 
+{$ENDIF FHIR_RESEARCHSUBJECT}
+{$IFDEF FHIR_RISKASSESSMENT}
 procedure TFHIRJsonParser.ParseRiskAssessmentPrediction(jsn : TJsonObject; ctxt : TFHIRObjectList);
 begin
   ctxt.add(ParseRiskAssessmentPrediction(jsn)); {2}
@@ -37039,6 +37708,8 @@ begin
     ComposeStringProps(json, 'comment', elem.commentElement, false);
 end;
 
+{$ENDIF FHIR_RISKASSESSMENT}
+{$IFDEF FHIR_SCHEDULE}
 procedure TFHIRJsonParser.ParseSchedule(jsn : TJsonObject; ctxt : TFHIRObjectList);
 begin
   ctxt.add(ParseSchedule(jsn)); {2}
@@ -37125,6 +37796,8 @@ begin
     ComposeStringProps(json, 'comment', elem.commentElement, false);
 end;
 
+{$ENDIF FHIR_SCHEDULE}
+{$IFDEF FHIR_SEARCHPARAMETER}
 procedure TFHIRJsonParser.ParseSearchParameterComponent(jsn : TJsonObject; ctxt : TFHIRObjectList);
 begin
   ctxt.add(ParseSearchParameterComponent(jsn)); {2}
@@ -37453,6 +38126,8 @@ begin
   end;
 end;
 
+{$ENDIF FHIR_SEARCHPARAMETER}
+{$IFDEF FHIR_SEQUENCE}
 procedure TFHIRJsonParser.ParseSequenceReferenceSeq(jsn : TJsonObject; ctxt : TFHIRObjectList);
 begin
   ctxt.add(ParseSequenceReferenceSeq(jsn)); {2}
@@ -37886,6 +38561,8 @@ begin
   end;
 end;
 
+{$ENDIF FHIR_SEQUENCE}
+{$IFDEF FHIR_SERVICEDEFINITION}
 procedure TFHIRJsonParser.ParseServiceDefinition(jsn : TJsonObject; ctxt : TFHIRObjectList);
 begin
   ctxt.add(ParseServiceDefinition(jsn)); {2}
@@ -38089,6 +38766,8 @@ begin
     ComposeReference{TFhirOperationDefinition}(json, 'operationDefinition', elem.operationDefinition); {a}
 end;
 
+{$ENDIF FHIR_SERVICEDEFINITION}
+{$IFDEF FHIR_SLOT}
 procedure TFHIRJsonParser.ParseSlot(jsn : TJsonObject; ctxt : TFHIRObjectList);
 begin
   ctxt.add(ParseSlot(jsn)); {2}
@@ -38188,6 +38867,8 @@ begin
     ComposeStringProps(json, 'comment', elem.commentElement, false);
 end;
 
+{$ENDIF FHIR_SLOT}
+{$IFDEF FHIR_SPECIMEN}
 procedure TFHIRJsonParser.ParseSpecimenCollection(jsn : TJsonObject; ctxt : TFHIRObjectList);
 begin
   ctxt.add(ParseSpecimenCollection(jsn)); {2}
@@ -38486,6 +39167,8 @@ begin
   end;
 end;
 
+{$ENDIF FHIR_SPECIMEN}
+{$IFDEF FHIR_STRUCTUREDEFINITION}
 procedure TFHIRJsonParser.ParseStructureDefinitionMapping(jsn : TJsonObject; ctxt : TFHIRObjectList);
 begin
   ctxt.add(ParseStructureDefinitionMapping(jsn)); {2}
@@ -38876,6 +39559,8 @@ begin
     ComposeStructureDefinitionDifferential(json, 'differential', elem.differential); {a}
 end;
 
+{$ENDIF FHIR_STRUCTUREDEFINITION}
+{$IFDEF FHIR_STRUCTUREMAP}
 procedure TFHIRJsonParser.ParseStructureMapStructure(jsn : TJsonObject; ctxt : TFHIRObjectList);
 begin
   ctxt.add(ParseStructureMapStructure(jsn)); {2}
@@ -39836,6 +40521,8 @@ begin
   end;
 end;
 
+{$ENDIF FHIR_STRUCTUREMAP}
+{$IFDEF FHIR_SUBSCRIPTION}
 procedure TFHIRJsonParser.ParseSubscriptionChannel(jsn : TJsonObject; ctxt : TFHIRObjectList);
 begin
   ctxt.add(ParseSubscriptionChannel(jsn)); {2}
@@ -39996,6 +40683,8 @@ begin
   end;
 end;
 
+{$ENDIF FHIR_SUBSCRIPTION}
+{$IFDEF FHIR_SUBSTANCE}
 procedure TFHIRJsonParser.ParseSubstanceInstance(jsn : TJsonObject; ctxt : TFHIRObjectList);
 begin
   ctxt.add(ParseSubstanceInstance(jsn)); {2}
@@ -40164,6 +40853,8 @@ begin
   end;
 end;
 
+{$ENDIF FHIR_SUBSTANCE}
+{$IFDEF FHIR_SUPPLYDELIVERY}
 procedure TFHIRJsonParser.ParseSupplyDeliverySuppliedItem(jsn : TJsonObject; ctxt : TFHIRObjectList);
 begin
   ctxt.add(ParseSupplyDeliverySuppliedItem(jsn)); {2}
@@ -40308,6 +40999,8 @@ begin
   end;
 end;
 
+{$ENDIF FHIR_SUPPLYDELIVERY}
+{$IFDEF FHIR_SUPPLYREQUEST}
 procedure TFHIRJsonParser.ParseSupplyRequestOrderedItem(jsn : TJsonObject; ctxt : TFHIRObjectList);
 begin
   ctxt.add(ParseSupplyRequestOrderedItem(jsn)); {2}
@@ -40492,6 +41185,8 @@ begin
     ComposeReference{Resource}(json, 'deliverTo', elem.deliverTo); {a}
 end;
 
+{$ENDIF FHIR_SUPPLYREQUEST}
+{$IFDEF FHIR_TASK}
 procedure TFHIRJsonParser.ParseTaskRequester(jsn : TJsonObject; ctxt : TFHIRObjectList);
 begin
   ctxt.add(ParseTaskRequester(jsn)); {2}
@@ -41246,6 +41941,8 @@ begin
   end;
 end;
 
+{$ENDIF FHIR_TASK}
+{$IFDEF FHIR_TESTREPORT}
 procedure TFHIRJsonParser.ParseTestReportParticipant(jsn : TJsonObject; ctxt : TFHIRObjectList);
 begin
   ctxt.add(ParseTestReportParticipant(jsn)); {2}
@@ -41735,6 +42432,8 @@ begin
     ComposeTestReportTeardown(json, 'teardown', elem.teardown); {a}
 end;
 
+{$ENDIF FHIR_TESTREPORT}
+{$IFDEF FHIR_TESTSCRIPT}
 procedure TFHIRJsonParser.ParseTestScriptOrigin(jsn : TJsonObject; ctxt : TFHIRObjectList);
 begin
   ctxt.add(ParseTestScriptOrigin(jsn)); {2}
@@ -43388,6 +44087,8 @@ begin
     ComposeTestScriptTeardown(json, 'teardown', elem.teardown); {a}
 end;
 
+{$ENDIF FHIR_TESTSCRIPT}
+{$IFDEF FHIR_VALUESET}
 procedure TFHIRJsonParser.ParseValueSetCompose(jsn : TJsonObject; ctxt : TFHIRObjectList);
 begin
   ctxt.add(ParseValueSetCompose(jsn)); {2}
@@ -44077,6 +44778,8 @@ begin
     ComposeValueSetExpansion(json, 'expansion', elem.expansion); {a}
 end;
 
+{$ENDIF FHIR_VALUESET}
+{$IFDEF FHIR_VISIONPRESCRIPTION}
 procedure TFHIRJsonParser.ParseVisionPrescriptionDispense(jsn : TJsonObject; ctxt : TFHIRObjectList);
 begin
   ctxt.add(ParseVisionPrescriptionDispense(jsn)); {2}
@@ -44278,245 +44981,712 @@ begin
   end;
 end;
 
+{$ENDIF FHIR_VISIONPRESCRIPTION}
 function TFHIRJsonParser.ParseResource(jsn : TJsonObject) : TFhirResource;
 var
   s : String;
 begin
   s := jsn['resourceType'];
+ {$IFDEF FHIR_PARAMETERS}
   if s = 'Parameters' Then
     result := ParseParameters(jsn)
-  else if s = 'Account' Then
-    result := ParseAccount(jsn)
-  else if s = 'ActivityDefinition' Then
-    result := ParseActivityDefinition(jsn)
-  else if s = 'AdverseEvent' Then
-    result := ParseAdverseEvent(jsn)
-  else if s = 'AllergyIntolerance' Then
-    result := ParseAllergyIntolerance(jsn)
-  else if s = 'Appointment' Then
-    result := ParseAppointment(jsn)
-  else if s = 'AppointmentResponse' Then
-    result := ParseAppointmentResponse(jsn)
-  else if s = 'AuditEvent' Then
-    result := ParseAuditEvent(jsn)
-  else if s = 'Basic' Then
-    result := ParseBasic(jsn)
-  else if s = 'Binary' Then
-    result := ParseBinary(jsn)
-  else if s = 'BodySite' Then
-    result := ParseBodySite(jsn)
-  else if s = 'Bundle' Then
-    result := ParseBundle(jsn)
-  else if s = 'CapabilityStatement' Then
-    result := ParseCapabilityStatement(jsn)
-  else if s = 'CarePlan' Then
-    result := ParseCarePlan(jsn)
-  else if s = 'CareTeam' Then
-    result := ParseCareTeam(jsn)
-  else if s = 'ChargeItem' Then
-    result := ParseChargeItem(jsn)
-  else if s = 'Claim' Then
-    result := ParseClaim(jsn)
-  else if s = 'ClaimResponse' Then
-    result := ParseClaimResponse(jsn)
-  else if s = 'ClinicalImpression' Then
-    result := ParseClinicalImpression(jsn)
-  else if s = 'CodeSystem' Then
-    result := ParseCodeSystem(jsn)
-  else if s = 'Communication' Then
-    result := ParseCommunication(jsn)
-  else if s = 'CommunicationRequest' Then
-    result := ParseCommunicationRequest(jsn)
-  else if s = 'CompartmentDefinition' Then
-    result := ParseCompartmentDefinition(jsn)
-  else if s = 'Composition' Then
-    result := ParseComposition(jsn)
-  else if s = 'ConceptMap' Then
-    result := ParseConceptMap(jsn)
-  else if s = 'Condition' Then
-    result := ParseCondition(jsn)
-  else if s = 'Consent' Then
-    result := ParseConsent(jsn)
-  else if s = 'Contract' Then
-    result := ParseContract(jsn)
-  else if s = 'Coverage' Then
-    result := ParseCoverage(jsn)
-  else if s = 'DataElement' Then
-    result := ParseDataElement(jsn)
-  else if s = 'DetectedIssue' Then
-    result := ParseDetectedIssue(jsn)
-  else if s = 'Device' Then
-    result := ParseDevice(jsn)
-  else if s = 'DeviceComponent' Then
-    result := ParseDeviceComponent(jsn)
-  else if s = 'DeviceMetric' Then
-    result := ParseDeviceMetric(jsn)
-  else if s = 'DeviceRequest' Then
-    result := ParseDeviceRequest(jsn)
-  else if s = 'DeviceUseStatement' Then
-    result := ParseDeviceUseStatement(jsn)
-  else if s = 'DiagnosticReport' Then
-    result := ParseDiagnosticReport(jsn)
-  else if s = 'DocumentManifest' Then
-    result := ParseDocumentManifest(jsn)
-  else if s = 'DocumentReference' Then
-    result := ParseDocumentReference(jsn)
-  else if s = 'EligibilityRequest' Then
-    result := ParseEligibilityRequest(jsn)
-  else if s = 'EligibilityResponse' Then
-    result := ParseEligibilityResponse(jsn)
-  else if s = 'Encounter' Then
-    result := ParseEncounter(jsn)
-  else if s = 'Endpoint' Then
-    result := ParseEndpoint(jsn)
-  else if s = 'EnrollmentRequest' Then
-    result := ParseEnrollmentRequest(jsn)
-  else if s = 'EnrollmentResponse' Then
-    result := ParseEnrollmentResponse(jsn)
-  else if s = 'EpisodeOfCare' Then
-    result := ParseEpisodeOfCare(jsn)
-  else if s = 'ExpansionProfile' Then
-    result := ParseExpansionProfile(jsn)
-  else if s = 'ExplanationOfBenefit' Then
-    result := ParseExplanationOfBenefit(jsn)
-  else if s = 'FamilyMemberHistory' Then
-    result := ParseFamilyMemberHistory(jsn)
-  else if s = 'Flag' Then
-    result := ParseFlag(jsn)
-  else if s = 'Goal' Then
-    result := ParseGoal(jsn)
-  else if s = 'GraphDefinition' Then
-    result := ParseGraphDefinition(jsn)
-  else if s = 'Group' Then
-    result := ParseGroup(jsn)
-  else if s = 'GuidanceResponse' Then
-    result := ParseGuidanceResponse(jsn)
-  else if s = 'HealthcareService' Then
-    result := ParseHealthcareService(jsn)
-  else if s = 'ImagingManifest' Then
-    result := ParseImagingManifest(jsn)
-  else if s = 'ImagingStudy' Then
-    result := ParseImagingStudy(jsn)
-  else if s = 'Immunization' Then
-    result := ParseImmunization(jsn)
-  else if s = 'ImmunizationRecommendation' Then
-    result := ParseImmunizationRecommendation(jsn)
-  else if s = 'ImplementationGuide' Then
-    result := ParseImplementationGuide(jsn)
-  else if s = 'Library' Then
-    result := ParseLibrary(jsn)
-  else if s = 'Linkage' Then
-    result := ParseLinkage(jsn)
-  else if s = 'List' Then
-    result := ParseList(jsn)
-  else if s = 'Location' Then
-    result := ParseLocation(jsn)
-  else if s = 'Measure' Then
-    result := ParseMeasure(jsn)
-  else if s = 'MeasureReport' Then
-    result := ParseMeasureReport(jsn)
-  else if s = 'Media' Then
-    result := ParseMedia(jsn)
-  else if s = 'Medication' Then
-    result := ParseMedication(jsn)
-  else if s = 'MedicationAdministration' Then
-    result := ParseMedicationAdministration(jsn)
-  else if s = 'MedicationDispense' Then
-    result := ParseMedicationDispense(jsn)
-  else if s = 'MedicationRequest' Then
-    result := ParseMedicationRequest(jsn)
-  else if s = 'MedicationStatement' Then
-    result := ParseMedicationStatement(jsn)
-  else if s = 'MessageDefinition' Then
-    result := ParseMessageDefinition(jsn)
-  else if s = 'MessageHeader' Then
-    result := ParseMessageHeader(jsn)
-  else if s = 'NamingSystem' Then
-    result := ParseNamingSystem(jsn)
-  else if s = 'NutritionOrder' Then
-    result := ParseNutritionOrder(jsn)
-  else if s = 'Observation' Then
-    result := ParseObservation(jsn)
-  else if s = 'OperationDefinition' Then
-    result := ParseOperationDefinition(jsn)
-  else if s = 'OperationOutcome' Then
-    result := ParseOperationOutcome(jsn)
-  else if s = 'Organization' Then
-    result := ParseOrganization(jsn)
-  else if s = 'Patient' Then
-    result := ParsePatient(jsn)
-  else if s = 'PaymentNotice' Then
-    result := ParsePaymentNotice(jsn)
-  else if s = 'PaymentReconciliation' Then
-    result := ParsePaymentReconciliation(jsn)
-  else if s = 'Person' Then
-    result := ParsePerson(jsn)
-  else if s = 'PlanDefinition' Then
-    result := ParsePlanDefinition(jsn)
-  else if s = 'Practitioner' Then
-    result := ParsePractitioner(jsn)
-  else if s = 'PractitionerRole' Then
-    result := ParsePractitionerRole(jsn)
-  else if s = 'Procedure' Then
-    result := ParseProcedure(jsn)
-  else if s = 'ProcedureRequest' Then
-    result := ParseProcedureRequest(jsn)
-  else if s = 'ProcessRequest' Then
-    result := ParseProcessRequest(jsn)
-  else if s = 'ProcessResponse' Then
-    result := ParseProcessResponse(jsn)
-  else if s = 'Provenance' Then
-    result := ParseProvenance(jsn)
-  else if s = 'Questionnaire' Then
-    result := ParseQuestionnaire(jsn)
-  else if s = 'QuestionnaireResponse' Then
-    result := ParseQuestionnaireResponse(jsn)
-  else if s = 'ReferralRequest' Then
-    result := ParseReferralRequest(jsn)
-  else if s = 'RelatedPerson' Then
-    result := ParseRelatedPerson(jsn)
-  else if s = 'RequestGroup' Then
-    result := ParseRequestGroup(jsn)
-  else if s = 'ResearchStudy' Then
-    result := ParseResearchStudy(jsn)
-  else if s = 'ResearchSubject' Then
-    result := ParseResearchSubject(jsn)
-  else if s = 'RiskAssessment' Then
-    result := ParseRiskAssessment(jsn)
-  else if s = 'Schedule' Then
-    result := ParseSchedule(jsn)
-  else if s = 'SearchParameter' Then
-    result := ParseSearchParameter(jsn)
-  else if s = 'Sequence' Then
-    result := ParseSequence(jsn)
-  else if s = 'ServiceDefinition' Then
-    result := ParseServiceDefinition(jsn)
-  else if s = 'Slot' Then
-    result := ParseSlot(jsn)
-  else if s = 'Specimen' Then
-    result := ParseSpecimen(jsn)
-  else if s = 'StructureDefinition' Then
-    result := ParseStructureDefinition(jsn)
-  else if s = 'StructureMap' Then
-    result := ParseStructureMap(jsn)
-  else if s = 'Subscription' Then
-    result := ParseSubscription(jsn)
-  else if s = 'Substance' Then
-    result := ParseSubstance(jsn)
-  else if s = 'SupplyDelivery' Then
-    result := ParseSupplyDelivery(jsn)
-  else if s = 'SupplyRequest' Then
-    result := ParseSupplyRequest(jsn)
-  else if s = 'Task' Then
-    result := ParseTask(jsn)
-  else if s = 'TestReport' Then
-    result := ParseTestReport(jsn)
-  else if s = 'TestScript' Then
-    result := ParseTestScript(jsn)
-  else if s = 'ValueSet' Then
-    result := ParseValueSet(jsn)
-  else if s = 'VisionPrescription' Then
-    result := ParseVisionPrescription(jsn)
+{$ENDIF FHIR_PARAMETERS}
+{$IFDEF FHIR_ACCOUNT}
+  {$IFDEF FHIR_ACCOUNT}
+   else if s = 'Account' Then
+    result := ParseAccount(jsn) 
+  {$ENDIF}
+{$ENDIF FHIR_ACCOUNT}
+{$IFDEF FHIR_ACTIVITYDEFINITION}
+  {$IFDEF FHIR_ACTIVITYDEFINITION}
+   else if s = 'ActivityDefinition' Then
+    result := ParseActivityDefinition(jsn) 
+  {$ENDIF}
+{$ENDIF FHIR_ACTIVITYDEFINITION}
+{$IFDEF FHIR_ADVERSEEVENT}
+  {$IFDEF FHIR_ADVERSEEVENT}
+   else if s = 'AdverseEvent' Then
+    result := ParseAdverseEvent(jsn) 
+  {$ENDIF}
+{$ENDIF FHIR_ADVERSEEVENT}
+{$IFDEF FHIR_ALLERGYINTOLERANCE}
+  {$IFDEF FHIR_ALLERGYINTOLERANCE}
+   else if s = 'AllergyIntolerance' Then
+    result := ParseAllergyIntolerance(jsn) 
+  {$ENDIF}
+{$ENDIF FHIR_ALLERGYINTOLERANCE}
+{$IFDEF FHIR_APPOINTMENT}
+  {$IFDEF FHIR_APPOINTMENT}
+   else if s = 'Appointment' Then
+    result := ParseAppointment(jsn) 
+  {$ENDIF}
+{$ENDIF FHIR_APPOINTMENT}
+{$IFDEF FHIR_APPOINTMENTRESPONSE}
+  {$IFDEF FHIR_APPOINTMENTRESPONSE}
+   else if s = 'AppointmentResponse' Then
+    result := ParseAppointmentResponse(jsn) 
+  {$ENDIF}
+{$ENDIF FHIR_APPOINTMENTRESPONSE}
+{$IFDEF FHIR_AUDITEVENT}
+  {$IFDEF FHIR_AUDITEVENT}
+   else if s = 'AuditEvent' Then
+    result := ParseAuditEvent(jsn) 
+  {$ENDIF}
+{$ENDIF FHIR_AUDITEVENT}
+{$IFDEF FHIR_BASIC}
+  {$IFDEF FHIR_BASIC}
+   else if s = 'Basic' Then
+    result := ParseBasic(jsn) 
+  {$ENDIF}
+{$ENDIF FHIR_BASIC}
+{$IFDEF FHIR_BINARY}
+  {$IFDEF FHIR_BINARY}
+   else if s = 'Binary' Then
+    result := ParseBinary(jsn) 
+  {$ENDIF}
+{$ENDIF FHIR_BINARY}
+{$IFDEF FHIR_BODYSITE}
+  {$IFDEF FHIR_BODYSITE}
+   else if s = 'BodySite' Then
+    result := ParseBodySite(jsn) 
+  {$ENDIF}
+{$ENDIF FHIR_BODYSITE}
+{$IFDEF FHIR_BUNDLE}
+  {$IFDEF FHIR_BUNDLE}
+   else if s = 'Bundle' Then
+    result := ParseBundle(jsn) 
+  {$ENDIF}
+{$ENDIF FHIR_BUNDLE}
+{$IFDEF FHIR_CAPABILITYSTATEMENT}
+  {$IFDEF FHIR_CAPABILITYSTATEMENT}
+   else if s = 'CapabilityStatement' Then
+    result := ParseCapabilityStatement(jsn) 
+  {$ENDIF}
+{$ENDIF FHIR_CAPABILITYSTATEMENT}
+{$IFDEF FHIR_CAREPLAN}
+  {$IFDEF FHIR_CAREPLAN}
+   else if s = 'CarePlan' Then
+    result := ParseCarePlan(jsn) 
+  {$ENDIF}
+{$ENDIF FHIR_CAREPLAN}
+{$IFDEF FHIR_CARETEAM}
+  {$IFDEF FHIR_CARETEAM}
+   else if s = 'CareTeam' Then
+    result := ParseCareTeam(jsn) 
+  {$ENDIF}
+{$ENDIF FHIR_CARETEAM}
+{$IFDEF FHIR_CHARGEITEM}
+  {$IFDEF FHIR_CHARGEITEM}
+   else if s = 'ChargeItem' Then
+    result := ParseChargeItem(jsn) 
+  {$ENDIF}
+{$ENDIF FHIR_CHARGEITEM}
+{$IFDEF FHIR_CLAIM}
+  {$IFDEF FHIR_CLAIM}
+   else if s = 'Claim' Then
+    result := ParseClaim(jsn) 
+  {$ENDIF}
+{$ENDIF FHIR_CLAIM}
+{$IFDEF FHIR_CLAIMRESPONSE}
+  {$IFDEF FHIR_CLAIMRESPONSE}
+   else if s = 'ClaimResponse' Then
+    result := ParseClaimResponse(jsn) 
+  {$ENDIF}
+{$ENDIF FHIR_CLAIMRESPONSE}
+{$IFDEF FHIR_CLINICALIMPRESSION}
+  {$IFDEF FHIR_CLINICALIMPRESSION}
+   else if s = 'ClinicalImpression' Then
+    result := ParseClinicalImpression(jsn) 
+  {$ENDIF}
+{$ENDIF FHIR_CLINICALIMPRESSION}
+{$IFDEF FHIR_CODESYSTEM}
+  {$IFDEF FHIR_CODESYSTEM}
+   else if s = 'CodeSystem' Then
+    result := ParseCodeSystem(jsn) 
+  {$ENDIF}
+{$ENDIF FHIR_CODESYSTEM}
+{$IFDEF FHIR_COMMUNICATION}
+  {$IFDEF FHIR_COMMUNICATION}
+   else if s = 'Communication' Then
+    result := ParseCommunication(jsn) 
+  {$ENDIF}
+{$ENDIF FHIR_COMMUNICATION}
+{$IFDEF FHIR_COMMUNICATIONREQUEST}
+  {$IFDEF FHIR_COMMUNICATIONREQUEST}
+   else if s = 'CommunicationRequest' Then
+    result := ParseCommunicationRequest(jsn) 
+  {$ENDIF}
+{$ENDIF FHIR_COMMUNICATIONREQUEST}
+{$IFDEF FHIR_COMPARTMENTDEFINITION}
+  {$IFDEF FHIR_COMPARTMENTDEFINITION}
+   else if s = 'CompartmentDefinition' Then
+    result := ParseCompartmentDefinition(jsn) 
+  {$ENDIF}
+{$ENDIF FHIR_COMPARTMENTDEFINITION}
+{$IFDEF FHIR_COMPOSITION}
+  {$IFDEF FHIR_COMPOSITION}
+   else if s = 'Composition' Then
+    result := ParseComposition(jsn) 
+  {$ENDIF}
+{$ENDIF FHIR_COMPOSITION}
+{$IFDEF FHIR_CONCEPTMAP}
+  {$IFDEF FHIR_CONCEPTMAP}
+   else if s = 'ConceptMap' Then
+    result := ParseConceptMap(jsn) 
+  {$ENDIF}
+{$ENDIF FHIR_CONCEPTMAP}
+{$IFDEF FHIR_CONDITION}
+  {$IFDEF FHIR_CONDITION}
+   else if s = 'Condition' Then
+    result := ParseCondition(jsn) 
+  {$ENDIF}
+{$ENDIF FHIR_CONDITION}
+{$IFDEF FHIR_CONSENT}
+  {$IFDEF FHIR_CONSENT}
+   else if s = 'Consent' Then
+    result := ParseConsent(jsn) 
+  {$ENDIF}
+{$ENDIF FHIR_CONSENT}
+{$IFDEF FHIR_CONTRACT}
+  {$IFDEF FHIR_CONTRACT}
+   else if s = 'Contract' Then
+    result := ParseContract(jsn) 
+  {$ENDIF}
+{$ENDIF FHIR_CONTRACT}
+{$IFDEF FHIR_COVERAGE}
+  {$IFDEF FHIR_COVERAGE}
+   else if s = 'Coverage' Then
+    result := ParseCoverage(jsn) 
+  {$ENDIF}
+{$ENDIF FHIR_COVERAGE}
+{$IFDEF FHIR_DATAELEMENT}
+  {$IFDEF FHIR_DATAELEMENT}
+   else if s = 'DataElement' Then
+    result := ParseDataElement(jsn) 
+  {$ENDIF}
+{$ENDIF FHIR_DATAELEMENT}
+{$IFDEF FHIR_DETECTEDISSUE}
+  {$IFDEF FHIR_DETECTEDISSUE}
+   else if s = 'DetectedIssue' Then
+    result := ParseDetectedIssue(jsn) 
+  {$ENDIF}
+{$ENDIF FHIR_DETECTEDISSUE}
+{$IFDEF FHIR_DEVICE}
+  {$IFDEF FHIR_DEVICE}
+   else if s = 'Device' Then
+    result := ParseDevice(jsn) 
+  {$ENDIF}
+{$ENDIF FHIR_DEVICE}
+{$IFDEF FHIR_DEVICECOMPONENT}
+  {$IFDEF FHIR_DEVICECOMPONENT}
+   else if s = 'DeviceComponent' Then
+    result := ParseDeviceComponent(jsn) 
+  {$ENDIF}
+{$ENDIF FHIR_DEVICECOMPONENT}
+{$IFDEF FHIR_DEVICEMETRIC}
+  {$IFDEF FHIR_DEVICEMETRIC}
+   else if s = 'DeviceMetric' Then
+    result := ParseDeviceMetric(jsn) 
+  {$ENDIF}
+{$ENDIF FHIR_DEVICEMETRIC}
+{$IFDEF FHIR_DEVICEREQUEST}
+  {$IFDEF FHIR_DEVICEREQUEST}
+   else if s = 'DeviceRequest' Then
+    result := ParseDeviceRequest(jsn) 
+  {$ENDIF}
+{$ENDIF FHIR_DEVICEREQUEST}
+{$IFDEF FHIR_DEVICEUSESTATEMENT}
+  {$IFDEF FHIR_DEVICEUSESTATEMENT}
+   else if s = 'DeviceUseStatement' Then
+    result := ParseDeviceUseStatement(jsn) 
+  {$ENDIF}
+{$ENDIF FHIR_DEVICEUSESTATEMENT}
+{$IFDEF FHIR_DIAGNOSTICREPORT}
+  {$IFDEF FHIR_DIAGNOSTICREPORT}
+   else if s = 'DiagnosticReport' Then
+    result := ParseDiagnosticReport(jsn) 
+  {$ENDIF}
+{$ENDIF FHIR_DIAGNOSTICREPORT}
+{$IFDEF FHIR_DOCUMENTMANIFEST}
+  {$IFDEF FHIR_DOCUMENTMANIFEST}
+   else if s = 'DocumentManifest' Then
+    result := ParseDocumentManifest(jsn) 
+  {$ENDIF}
+{$ENDIF FHIR_DOCUMENTMANIFEST}
+{$IFDEF FHIR_DOCUMENTREFERENCE}
+  {$IFDEF FHIR_DOCUMENTREFERENCE}
+   else if s = 'DocumentReference' Then
+    result := ParseDocumentReference(jsn) 
+  {$ENDIF}
+{$ENDIF FHIR_DOCUMENTREFERENCE}
+{$IFDEF FHIR_ELIGIBILITYREQUEST}
+  {$IFDEF FHIR_ELIGIBILITYREQUEST}
+   else if s = 'EligibilityRequest' Then
+    result := ParseEligibilityRequest(jsn) 
+  {$ENDIF}
+{$ENDIF FHIR_ELIGIBILITYREQUEST}
+{$IFDEF FHIR_ELIGIBILITYRESPONSE}
+  {$IFDEF FHIR_ELIGIBILITYRESPONSE}
+   else if s = 'EligibilityResponse' Then
+    result := ParseEligibilityResponse(jsn) 
+  {$ENDIF}
+{$ENDIF FHIR_ELIGIBILITYRESPONSE}
+{$IFDEF FHIR_ENCOUNTER}
+  {$IFDEF FHIR_ENCOUNTER}
+   else if s = 'Encounter' Then
+    result := ParseEncounter(jsn) 
+  {$ENDIF}
+{$ENDIF FHIR_ENCOUNTER}
+{$IFDEF FHIR_ENDPOINT}
+  {$IFDEF FHIR_ENDPOINT}
+   else if s = 'Endpoint' Then
+    result := ParseEndpoint(jsn) 
+  {$ENDIF}
+{$ENDIF FHIR_ENDPOINT}
+{$IFDEF FHIR_ENROLLMENTREQUEST}
+  {$IFDEF FHIR_ENROLLMENTREQUEST}
+   else if s = 'EnrollmentRequest' Then
+    result := ParseEnrollmentRequest(jsn) 
+  {$ENDIF}
+{$ENDIF FHIR_ENROLLMENTREQUEST}
+{$IFDEF FHIR_ENROLLMENTRESPONSE}
+  {$IFDEF FHIR_ENROLLMENTRESPONSE}
+   else if s = 'EnrollmentResponse' Then
+    result := ParseEnrollmentResponse(jsn) 
+  {$ENDIF}
+{$ENDIF FHIR_ENROLLMENTRESPONSE}
+{$IFDEF FHIR_EPISODEOFCARE}
+  {$IFDEF FHIR_EPISODEOFCARE}
+   else if s = 'EpisodeOfCare' Then
+    result := ParseEpisodeOfCare(jsn) 
+  {$ENDIF}
+{$ENDIF FHIR_EPISODEOFCARE}
+{$IFDEF FHIR_EXPANSIONPROFILE}
+  {$IFDEF FHIR_EXPANSIONPROFILE}
+   else if s = 'ExpansionProfile' Then
+    result := ParseExpansionProfile(jsn) 
+  {$ENDIF}
+{$ENDIF FHIR_EXPANSIONPROFILE}
+{$IFDEF FHIR_EXPLANATIONOFBENEFIT}
+  {$IFDEF FHIR_EXPLANATIONOFBENEFIT}
+   else if s = 'ExplanationOfBenefit' Then
+    result := ParseExplanationOfBenefit(jsn) 
+  {$ENDIF}
+{$ENDIF FHIR_EXPLANATIONOFBENEFIT}
+{$IFDEF FHIR_FAMILYMEMBERHISTORY}
+  {$IFDEF FHIR_FAMILYMEMBERHISTORY}
+   else if s = 'FamilyMemberHistory' Then
+    result := ParseFamilyMemberHistory(jsn) 
+  {$ENDIF}
+{$ENDIF FHIR_FAMILYMEMBERHISTORY}
+{$IFDEF FHIR_FLAG}
+  {$IFDEF FHIR_FLAG}
+   else if s = 'Flag' Then
+    result := ParseFlag(jsn) 
+  {$ENDIF}
+{$ENDIF FHIR_FLAG}
+{$IFDEF FHIR_GOAL}
+  {$IFDEF FHIR_GOAL}
+   else if s = 'Goal' Then
+    result := ParseGoal(jsn) 
+  {$ENDIF}
+{$ENDIF FHIR_GOAL}
+{$IFDEF FHIR_GRAPHDEFINITION}
+  {$IFDEF FHIR_GRAPHDEFINITION}
+   else if s = 'GraphDefinition' Then
+    result := ParseGraphDefinition(jsn) 
+  {$ENDIF}
+{$ENDIF FHIR_GRAPHDEFINITION}
+{$IFDEF FHIR_GROUP}
+  {$IFDEF FHIR_GROUP}
+   else if s = 'Group' Then
+    result := ParseGroup(jsn) 
+  {$ENDIF}
+{$ENDIF FHIR_GROUP}
+{$IFDEF FHIR_GUIDANCERESPONSE}
+  {$IFDEF FHIR_GUIDANCERESPONSE}
+   else if s = 'GuidanceResponse' Then
+    result := ParseGuidanceResponse(jsn) 
+  {$ENDIF}
+{$ENDIF FHIR_GUIDANCERESPONSE}
+{$IFDEF FHIR_HEALTHCARESERVICE}
+  {$IFDEF FHIR_HEALTHCARESERVICE}
+   else if s = 'HealthcareService' Then
+    result := ParseHealthcareService(jsn) 
+  {$ENDIF}
+{$ENDIF FHIR_HEALTHCARESERVICE}
+{$IFDEF FHIR_IMAGINGMANIFEST}
+  {$IFDEF FHIR_IMAGINGMANIFEST}
+   else if s = 'ImagingManifest' Then
+    result := ParseImagingManifest(jsn) 
+  {$ENDIF}
+{$ENDIF FHIR_IMAGINGMANIFEST}
+{$IFDEF FHIR_IMAGINGSTUDY}
+  {$IFDEF FHIR_IMAGINGSTUDY}
+   else if s = 'ImagingStudy' Then
+    result := ParseImagingStudy(jsn) 
+  {$ENDIF}
+{$ENDIF FHIR_IMAGINGSTUDY}
+{$IFDEF FHIR_IMMUNIZATION}
+  {$IFDEF FHIR_IMMUNIZATION}
+   else if s = 'Immunization' Then
+    result := ParseImmunization(jsn) 
+  {$ENDIF}
+{$ENDIF FHIR_IMMUNIZATION}
+{$IFDEF FHIR_IMMUNIZATIONRECOMMENDATION}
+  {$IFDEF FHIR_IMMUNIZATIONRECOMMENDATION}
+   else if s = 'ImmunizationRecommendation' Then
+    result := ParseImmunizationRecommendation(jsn) 
+  {$ENDIF}
+{$ENDIF FHIR_IMMUNIZATIONRECOMMENDATION}
+{$IFDEF FHIR_IMPLEMENTATIONGUIDE}
+  {$IFDEF FHIR_IMPLEMENTATIONGUIDE}
+   else if s = 'ImplementationGuide' Then
+    result := ParseImplementationGuide(jsn) 
+  {$ENDIF}
+{$ENDIF FHIR_IMPLEMENTATIONGUIDE}
+{$IFDEF FHIR_LIBRARY}
+  {$IFDEF FHIR_LIBRARY}
+   else if s = 'Library' Then
+    result := ParseLibrary(jsn) 
+  {$ENDIF}
+{$ENDIF FHIR_LIBRARY}
+{$IFDEF FHIR_LINKAGE}
+  {$IFDEF FHIR_LINKAGE}
+   else if s = 'Linkage' Then
+    result := ParseLinkage(jsn) 
+  {$ENDIF}
+{$ENDIF FHIR_LINKAGE}
+{$IFDEF FHIR_LIST}
+  {$IFDEF FHIR_LIST}
+   else if s = 'List' Then
+    result := ParseList(jsn) 
+  {$ENDIF}
+{$ENDIF FHIR_LIST}
+{$IFDEF FHIR_LOCATION}
+  {$IFDEF FHIR_LOCATION}
+   else if s = 'Location' Then
+    result := ParseLocation(jsn) 
+  {$ENDIF}
+{$ENDIF FHIR_LOCATION}
+{$IFDEF FHIR_MEASURE}
+  {$IFDEF FHIR_MEASURE}
+   else if s = 'Measure' Then
+    result := ParseMeasure(jsn) 
+  {$ENDIF}
+{$ENDIF FHIR_MEASURE}
+{$IFDEF FHIR_MEASUREREPORT}
+  {$IFDEF FHIR_MEASUREREPORT}
+   else if s = 'MeasureReport' Then
+    result := ParseMeasureReport(jsn) 
+  {$ENDIF}
+{$ENDIF FHIR_MEASUREREPORT}
+{$IFDEF FHIR_MEDIA}
+  {$IFDEF FHIR_MEDIA}
+   else if s = 'Media' Then
+    result := ParseMedia(jsn) 
+  {$ENDIF}
+{$ENDIF FHIR_MEDIA}
+{$IFDEF FHIR_MEDICATION}
+  {$IFDEF FHIR_MEDICATION}
+   else if s = 'Medication' Then
+    result := ParseMedication(jsn) 
+  {$ENDIF}
+{$ENDIF FHIR_MEDICATION}
+{$IFDEF FHIR_MEDICATIONADMINISTRATION}
+  {$IFDEF FHIR_MEDICATIONADMINISTRATION}
+   else if s = 'MedicationAdministration' Then
+    result := ParseMedicationAdministration(jsn) 
+  {$ENDIF}
+{$ENDIF FHIR_MEDICATIONADMINISTRATION}
+{$IFDEF FHIR_MEDICATIONDISPENSE}
+  {$IFDEF FHIR_MEDICATIONDISPENSE}
+   else if s = 'MedicationDispense' Then
+    result := ParseMedicationDispense(jsn) 
+  {$ENDIF}
+{$ENDIF FHIR_MEDICATIONDISPENSE}
+{$IFDEF FHIR_MEDICATIONREQUEST}
+  {$IFDEF FHIR_MEDICATIONREQUEST}
+   else if s = 'MedicationRequest' Then
+    result := ParseMedicationRequest(jsn) 
+  {$ENDIF}
+{$ENDIF FHIR_MEDICATIONREQUEST}
+{$IFDEF FHIR_MEDICATIONSTATEMENT}
+  {$IFDEF FHIR_MEDICATIONSTATEMENT}
+   else if s = 'MedicationStatement' Then
+    result := ParseMedicationStatement(jsn) 
+  {$ENDIF}
+{$ENDIF FHIR_MEDICATIONSTATEMENT}
+{$IFDEF FHIR_MESSAGEDEFINITION}
+  {$IFDEF FHIR_MESSAGEDEFINITION}
+   else if s = 'MessageDefinition' Then
+    result := ParseMessageDefinition(jsn) 
+  {$ENDIF}
+{$ENDIF FHIR_MESSAGEDEFINITION}
+{$IFDEF FHIR_MESSAGEHEADER}
+  {$IFDEF FHIR_MESSAGEHEADER}
+   else if s = 'MessageHeader' Then
+    result := ParseMessageHeader(jsn) 
+  {$ENDIF}
+{$ENDIF FHIR_MESSAGEHEADER}
+{$IFDEF FHIR_NAMINGSYSTEM}
+  {$IFDEF FHIR_NAMINGSYSTEM}
+   else if s = 'NamingSystem' Then
+    result := ParseNamingSystem(jsn) 
+  {$ENDIF}
+{$ENDIF FHIR_NAMINGSYSTEM}
+{$IFDEF FHIR_NUTRITIONORDER}
+  {$IFDEF FHIR_NUTRITIONORDER}
+   else if s = 'NutritionOrder' Then
+    result := ParseNutritionOrder(jsn) 
+  {$ENDIF}
+{$ENDIF FHIR_NUTRITIONORDER}
+{$IFDEF FHIR_OBSERVATION}
+  {$IFDEF FHIR_OBSERVATION}
+   else if s = 'Observation' Then
+    result := ParseObservation(jsn) 
+  {$ENDIF}
+{$ENDIF FHIR_OBSERVATION}
+{$IFDEF FHIR_OPERATIONDEFINITION}
+  {$IFDEF FHIR_OPERATIONDEFINITION}
+   else if s = 'OperationDefinition' Then
+    result := ParseOperationDefinition(jsn) 
+  {$ENDIF}
+{$ENDIF FHIR_OPERATIONDEFINITION}
+{$IFDEF FHIR_OPERATIONOUTCOME}
+  {$IFDEF FHIR_OPERATIONOUTCOME}
+   else if s = 'OperationOutcome' Then
+    result := ParseOperationOutcome(jsn) 
+  {$ENDIF}
+{$ENDIF FHIR_OPERATIONOUTCOME}
+{$IFDEF FHIR_ORGANIZATION}
+  {$IFDEF FHIR_ORGANIZATION}
+   else if s = 'Organization' Then
+    result := ParseOrganization(jsn) 
+  {$ENDIF}
+{$ENDIF FHIR_ORGANIZATION}
+{$IFDEF FHIR_PATIENT}
+  {$IFDEF FHIR_PATIENT}
+   else if s = 'Patient' Then
+    result := ParsePatient(jsn) 
+  {$ENDIF}
+{$ENDIF FHIR_PATIENT}
+{$IFDEF FHIR_PAYMENTNOTICE}
+  {$IFDEF FHIR_PAYMENTNOTICE}
+   else if s = 'PaymentNotice' Then
+    result := ParsePaymentNotice(jsn) 
+  {$ENDIF}
+{$ENDIF FHIR_PAYMENTNOTICE}
+{$IFDEF FHIR_PAYMENTRECONCILIATION}
+  {$IFDEF FHIR_PAYMENTRECONCILIATION}
+   else if s = 'PaymentReconciliation' Then
+    result := ParsePaymentReconciliation(jsn) 
+  {$ENDIF}
+{$ENDIF FHIR_PAYMENTRECONCILIATION}
+{$IFDEF FHIR_PERSON}
+  {$IFDEF FHIR_PERSON}
+   else if s = 'Person' Then
+    result := ParsePerson(jsn) 
+  {$ENDIF}
+{$ENDIF FHIR_PERSON}
+{$IFDEF FHIR_PLANDEFINITION}
+  {$IFDEF FHIR_PLANDEFINITION}
+   else if s = 'PlanDefinition' Then
+    result := ParsePlanDefinition(jsn) 
+  {$ENDIF}
+{$ENDIF FHIR_PLANDEFINITION}
+{$IFDEF FHIR_PRACTITIONER}
+  {$IFDEF FHIR_PRACTITIONER}
+   else if s = 'Practitioner' Then
+    result := ParsePractitioner(jsn) 
+  {$ENDIF}
+{$ENDIF FHIR_PRACTITIONER}
+{$IFDEF FHIR_PRACTITIONERROLE}
+  {$IFDEF FHIR_PRACTITIONERROLE}
+   else if s = 'PractitionerRole' Then
+    result := ParsePractitionerRole(jsn) 
+  {$ENDIF}
+{$ENDIF FHIR_PRACTITIONERROLE}
+{$IFDEF FHIR_PROCEDURE}
+  {$IFDEF FHIR_PROCEDURE}
+   else if s = 'Procedure' Then
+    result := ParseProcedure(jsn) 
+  {$ENDIF}
+{$ENDIF FHIR_PROCEDURE}
+{$IFDEF FHIR_PROCEDUREREQUEST}
+  {$IFDEF FHIR_PROCEDUREREQUEST}
+   else if s = 'ProcedureRequest' Then
+    result := ParseProcedureRequest(jsn) 
+  {$ENDIF}
+{$ENDIF FHIR_PROCEDUREREQUEST}
+{$IFDEF FHIR_PROCESSREQUEST}
+  {$IFDEF FHIR_PROCESSREQUEST}
+   else if s = 'ProcessRequest' Then
+    result := ParseProcessRequest(jsn) 
+  {$ENDIF}
+{$ENDIF FHIR_PROCESSREQUEST}
+{$IFDEF FHIR_PROCESSRESPONSE}
+  {$IFDEF FHIR_PROCESSRESPONSE}
+   else if s = 'ProcessResponse' Then
+    result := ParseProcessResponse(jsn) 
+  {$ENDIF}
+{$ENDIF FHIR_PROCESSRESPONSE}
+{$IFDEF FHIR_PROVENANCE}
+  {$IFDEF FHIR_PROVENANCE}
+   else if s = 'Provenance' Then
+    result := ParseProvenance(jsn) 
+  {$ENDIF}
+{$ENDIF FHIR_PROVENANCE}
+{$IFDEF FHIR_QUESTIONNAIRE}
+  {$IFDEF FHIR_QUESTIONNAIRE}
+   else if s = 'Questionnaire' Then
+    result := ParseQuestionnaire(jsn) 
+  {$ENDIF}
+{$ENDIF FHIR_QUESTIONNAIRE}
+{$IFDEF FHIR_QUESTIONNAIRERESPONSE}
+  {$IFDEF FHIR_QUESTIONNAIRERESPONSE}
+   else if s = 'QuestionnaireResponse' Then
+    result := ParseQuestionnaireResponse(jsn) 
+  {$ENDIF}
+{$ENDIF FHIR_QUESTIONNAIRERESPONSE}
+{$IFDEF FHIR_REFERRALREQUEST}
+  {$IFDEF FHIR_REFERRALREQUEST}
+   else if s = 'ReferralRequest' Then
+    result := ParseReferralRequest(jsn) 
+  {$ENDIF}
+{$ENDIF FHIR_REFERRALREQUEST}
+{$IFDEF FHIR_RELATEDPERSON}
+  {$IFDEF FHIR_RELATEDPERSON}
+   else if s = 'RelatedPerson' Then
+    result := ParseRelatedPerson(jsn) 
+  {$ENDIF}
+{$ENDIF FHIR_RELATEDPERSON}
+{$IFDEF FHIR_REQUESTGROUP}
+  {$IFDEF FHIR_REQUESTGROUP}
+   else if s = 'RequestGroup' Then
+    result := ParseRequestGroup(jsn) 
+  {$ENDIF}
+{$ENDIF FHIR_REQUESTGROUP}
+{$IFDEF FHIR_RESEARCHSTUDY}
+  {$IFDEF FHIR_RESEARCHSTUDY}
+   else if s = 'ResearchStudy' Then
+    result := ParseResearchStudy(jsn) 
+  {$ENDIF}
+{$ENDIF FHIR_RESEARCHSTUDY}
+{$IFDEF FHIR_RESEARCHSUBJECT}
+  {$IFDEF FHIR_RESEARCHSUBJECT}
+   else if s = 'ResearchSubject' Then
+    result := ParseResearchSubject(jsn) 
+  {$ENDIF}
+{$ENDIF FHIR_RESEARCHSUBJECT}
+{$IFDEF FHIR_RISKASSESSMENT}
+  {$IFDEF FHIR_RISKASSESSMENT}
+   else if s = 'RiskAssessment' Then
+    result := ParseRiskAssessment(jsn) 
+  {$ENDIF}
+{$ENDIF FHIR_RISKASSESSMENT}
+{$IFDEF FHIR_SCHEDULE}
+  {$IFDEF FHIR_SCHEDULE}
+   else if s = 'Schedule' Then
+    result := ParseSchedule(jsn) 
+  {$ENDIF}
+{$ENDIF FHIR_SCHEDULE}
+{$IFDEF FHIR_SEARCHPARAMETER}
+  {$IFDEF FHIR_SEARCHPARAMETER}
+   else if s = 'SearchParameter' Then
+    result := ParseSearchParameter(jsn) 
+  {$ENDIF}
+{$ENDIF FHIR_SEARCHPARAMETER}
+{$IFDEF FHIR_SEQUENCE}
+  {$IFDEF FHIR_SEQUENCE}
+   else if s = 'Sequence' Then
+    result := ParseSequence(jsn) 
+  {$ENDIF}
+{$ENDIF FHIR_SEQUENCE}
+{$IFDEF FHIR_SERVICEDEFINITION}
+  {$IFDEF FHIR_SERVICEDEFINITION}
+   else if s = 'ServiceDefinition' Then
+    result := ParseServiceDefinition(jsn) 
+  {$ENDIF}
+{$ENDIF FHIR_SERVICEDEFINITION}
+{$IFDEF FHIR_SLOT}
+  {$IFDEF FHIR_SLOT}
+   else if s = 'Slot' Then
+    result := ParseSlot(jsn) 
+  {$ENDIF}
+{$ENDIF FHIR_SLOT}
+{$IFDEF FHIR_SPECIMEN}
+  {$IFDEF FHIR_SPECIMEN}
+   else if s = 'Specimen' Then
+    result := ParseSpecimen(jsn) 
+  {$ENDIF}
+{$ENDIF FHIR_SPECIMEN}
+{$IFDEF FHIR_STRUCTUREDEFINITION}
+  {$IFDEF FHIR_STRUCTUREDEFINITION}
+   else if s = 'StructureDefinition' Then
+    result := ParseStructureDefinition(jsn) 
+  {$ENDIF}
+{$ENDIF FHIR_STRUCTUREDEFINITION}
+{$IFDEF FHIR_STRUCTUREMAP}
+  {$IFDEF FHIR_STRUCTUREMAP}
+   else if s = 'StructureMap' Then
+    result := ParseStructureMap(jsn) 
+  {$ENDIF}
+{$ENDIF FHIR_STRUCTUREMAP}
+{$IFDEF FHIR_SUBSCRIPTION}
+  {$IFDEF FHIR_SUBSCRIPTION}
+   else if s = 'Subscription' Then
+    result := ParseSubscription(jsn) 
+  {$ENDIF}
+{$ENDIF FHIR_SUBSCRIPTION}
+{$IFDEF FHIR_SUBSTANCE}
+  {$IFDEF FHIR_SUBSTANCE}
+   else if s = 'Substance' Then
+    result := ParseSubstance(jsn) 
+  {$ENDIF}
+{$ENDIF FHIR_SUBSTANCE}
+{$IFDEF FHIR_SUPPLYDELIVERY}
+  {$IFDEF FHIR_SUPPLYDELIVERY}
+   else if s = 'SupplyDelivery' Then
+    result := ParseSupplyDelivery(jsn) 
+  {$ENDIF}
+{$ENDIF FHIR_SUPPLYDELIVERY}
+{$IFDEF FHIR_SUPPLYREQUEST}
+  {$IFDEF FHIR_SUPPLYREQUEST}
+   else if s = 'SupplyRequest' Then
+    result := ParseSupplyRequest(jsn) 
+  {$ENDIF}
+{$ENDIF FHIR_SUPPLYREQUEST}
+{$IFDEF FHIR_TASK}
+  {$IFDEF FHIR_TASK}
+   else if s = 'Task' Then
+    result := ParseTask(jsn) 
+  {$ENDIF}
+{$ENDIF FHIR_TASK}
+{$IFDEF FHIR_TESTREPORT}
+  {$IFDEF FHIR_TESTREPORT}
+   else if s = 'TestReport' Then
+    result := ParseTestReport(jsn) 
+  {$ENDIF}
+{$ENDIF FHIR_TESTREPORT}
+{$IFDEF FHIR_TESTSCRIPT}
+  {$IFDEF FHIR_TESTSCRIPT}
+   else if s = 'TestScript' Then
+    result := ParseTestScript(jsn) 
+  {$ENDIF}
+{$ENDIF FHIR_TESTSCRIPT}
+{$IFDEF FHIR_VALUESET}
+  {$IFDEF FHIR_VALUESET}
+   else if s = 'ValueSet' Then
+    result := ParseValueSet(jsn) 
+  {$ENDIF}
+{$ENDIF FHIR_VALUESET}
+{$IFDEF FHIR_VISIONPRESCRIPTION}
+  {$IFDEF FHIR_VISIONPRESCRIPTION}
+   else if s = 'VisionPrescription' Then
+    result := ParseVisionPrescription(jsn) 
+  {$ENDIF}
+{$ENDIF FHIR_VISIONPRESCRIPTION}
   else
     raise Exception.create('error: the element '+s+' is not a valid resource name');
 end;
@@ -44527,8 +45697,10 @@ begin
     result := parseElement(jsn)
   else if (type_ = 'TFhirBackboneElement') then
     result := parseBackboneElement(jsn)
+{$IFDEF FHIR_PARAMETERS}
   else if (type_ = 'TFhirParameters') then
     result := parseParameters(jsn)
+{$ENDIF FHIR_PARAMETERS}
   else if (type_ = 'TFhirExtension') then
     result := parseExtension(jsn)
   else if (type_ = 'TFhirNarrative') then
@@ -44595,238 +45767,470 @@ begin
     result := parseDistance(jsn)
   else if (type_ = 'TFhirDuration') then
     result := parseDuration(jsn)
+{$IFDEF FHIR_ACCOUNT}
   else if (type_ = 'TFhirAccount') then
     result := parseAccount(jsn)
+{$ENDIF FHIR_ACCOUNT}
+{$IFDEF FHIR_ACTIVITYDEFINITION}
   else if (type_ = 'TFhirActivityDefinition') then
     result := parseActivityDefinition(jsn)
+{$ENDIF FHIR_ACTIVITYDEFINITION}
+{$IFDEF FHIR_ADVERSEEVENT}
   else if (type_ = 'TFhirAdverseEvent') then
     result := parseAdverseEvent(jsn)
+{$ENDIF FHIR_ADVERSEEVENT}
+{$IFDEF FHIR_ALLERGYINTOLERANCE}
   else if (type_ = 'TFhirAllergyIntolerance') then
     result := parseAllergyIntolerance(jsn)
+{$ENDIF FHIR_ALLERGYINTOLERANCE}
+{$IFDEF FHIR_APPOINTMENT}
   else if (type_ = 'TFhirAppointment') then
     result := parseAppointment(jsn)
+{$ENDIF FHIR_APPOINTMENT}
+{$IFDEF FHIR_APPOINTMENTRESPONSE}
   else if (type_ = 'TFhirAppointmentResponse') then
     result := parseAppointmentResponse(jsn)
+{$ENDIF FHIR_APPOINTMENTRESPONSE}
+{$IFDEF FHIR_AUDITEVENT}
   else if (type_ = 'TFhirAuditEvent') then
     result := parseAuditEvent(jsn)
+{$ENDIF FHIR_AUDITEVENT}
+{$IFDEF FHIR_BASIC}
   else if (type_ = 'TFhirBasic') then
     result := parseBasic(jsn)
+{$ENDIF FHIR_BASIC}
+{$IFDEF FHIR_BINARY}
   else if (type_ = 'TFhirBinary') then
     result := parseBinary(jsn)
+{$ENDIF FHIR_BINARY}
+{$IFDEF FHIR_BODYSITE}
   else if (type_ = 'TFhirBodySite') then
     result := parseBodySite(jsn)
+{$ENDIF FHIR_BODYSITE}
+{$IFDEF FHIR_BUNDLE}
   else if (type_ = 'TFhirBundle') then
     result := parseBundle(jsn)
+{$ENDIF FHIR_BUNDLE}
+{$IFDEF FHIR_CAPABILITYSTATEMENT}
   else if (type_ = 'TFhirCapabilityStatement') then
     result := parseCapabilityStatement(jsn)
+{$ENDIF FHIR_CAPABILITYSTATEMENT}
+{$IFDEF FHIR_CAREPLAN}
   else if (type_ = 'TFhirCarePlan') then
     result := parseCarePlan(jsn)
+{$ENDIF FHIR_CAREPLAN}
+{$IFDEF FHIR_CARETEAM}
   else if (type_ = 'TFhirCareTeam') then
     result := parseCareTeam(jsn)
+{$ENDIF FHIR_CARETEAM}
+{$IFDEF FHIR_CHARGEITEM}
   else if (type_ = 'TFhirChargeItem') then
     result := parseChargeItem(jsn)
+{$ENDIF FHIR_CHARGEITEM}
+{$IFDEF FHIR_CLAIM}
   else if (type_ = 'TFhirClaim') then
     result := parseClaim(jsn)
+{$ENDIF FHIR_CLAIM}
+{$IFDEF FHIR_CLAIMRESPONSE}
   else if (type_ = 'TFhirClaimResponse') then
     result := parseClaimResponse(jsn)
+{$ENDIF FHIR_CLAIMRESPONSE}
+{$IFDEF FHIR_CLINICALIMPRESSION}
   else if (type_ = 'TFhirClinicalImpression') then
     result := parseClinicalImpression(jsn)
+{$ENDIF FHIR_CLINICALIMPRESSION}
+{$IFDEF FHIR_CODESYSTEM}
   else if (type_ = 'TFhirCodeSystem') then
     result := parseCodeSystem(jsn)
+{$ENDIF FHIR_CODESYSTEM}
+{$IFDEF FHIR_COMMUNICATION}
   else if (type_ = 'TFhirCommunication') then
     result := parseCommunication(jsn)
+{$ENDIF FHIR_COMMUNICATION}
+{$IFDEF FHIR_COMMUNICATIONREQUEST}
   else if (type_ = 'TFhirCommunicationRequest') then
     result := parseCommunicationRequest(jsn)
+{$ENDIF FHIR_COMMUNICATIONREQUEST}
+{$IFDEF FHIR_COMPARTMENTDEFINITION}
   else if (type_ = 'TFhirCompartmentDefinition') then
     result := parseCompartmentDefinition(jsn)
+{$ENDIF FHIR_COMPARTMENTDEFINITION}
+{$IFDEF FHIR_COMPOSITION}
   else if (type_ = 'TFhirComposition') then
     result := parseComposition(jsn)
+{$ENDIF FHIR_COMPOSITION}
+{$IFDEF FHIR_CONCEPTMAP}
   else if (type_ = 'TFhirConceptMap') then
     result := parseConceptMap(jsn)
+{$ENDIF FHIR_CONCEPTMAP}
+{$IFDEF FHIR_CONDITION}
   else if (type_ = 'TFhirCondition') then
     result := parseCondition(jsn)
+{$ENDIF FHIR_CONDITION}
+{$IFDEF FHIR_CONSENT}
   else if (type_ = 'TFhirConsent') then
     result := parseConsent(jsn)
+{$ENDIF FHIR_CONSENT}
+{$IFDEF FHIR_CONTRACT}
   else if (type_ = 'TFhirContract') then
     result := parseContract(jsn)
+{$ENDIF FHIR_CONTRACT}
+{$IFDEF FHIR_COVERAGE}
   else if (type_ = 'TFhirCoverage') then
     result := parseCoverage(jsn)
+{$ENDIF FHIR_COVERAGE}
+{$IFDEF FHIR_DATAELEMENT}
   else if (type_ = 'TFhirDataElement') then
     result := parseDataElement(jsn)
+{$ENDIF FHIR_DATAELEMENT}
+{$IFDEF FHIR_DETECTEDISSUE}
   else if (type_ = 'TFhirDetectedIssue') then
     result := parseDetectedIssue(jsn)
+{$ENDIF FHIR_DETECTEDISSUE}
+{$IFDEF FHIR_DEVICE}
   else if (type_ = 'TFhirDevice') then
     result := parseDevice(jsn)
+{$ENDIF FHIR_DEVICE}
+{$IFDEF FHIR_DEVICECOMPONENT}
   else if (type_ = 'TFhirDeviceComponent') then
     result := parseDeviceComponent(jsn)
+{$ENDIF FHIR_DEVICECOMPONENT}
+{$IFDEF FHIR_DEVICEMETRIC}
   else if (type_ = 'TFhirDeviceMetric') then
     result := parseDeviceMetric(jsn)
+{$ENDIF FHIR_DEVICEMETRIC}
+{$IFDEF FHIR_DEVICEREQUEST}
   else if (type_ = 'TFhirDeviceRequest') then
     result := parseDeviceRequest(jsn)
+{$ENDIF FHIR_DEVICEREQUEST}
+{$IFDEF FHIR_DEVICEUSESTATEMENT}
   else if (type_ = 'TFhirDeviceUseStatement') then
     result := parseDeviceUseStatement(jsn)
+{$ENDIF FHIR_DEVICEUSESTATEMENT}
+{$IFDEF FHIR_DIAGNOSTICREPORT}
   else if (type_ = 'TFhirDiagnosticReport') then
     result := parseDiagnosticReport(jsn)
+{$ENDIF FHIR_DIAGNOSTICREPORT}
+{$IFDEF FHIR_DOCUMENTMANIFEST}
   else if (type_ = 'TFhirDocumentManifest') then
     result := parseDocumentManifest(jsn)
+{$ENDIF FHIR_DOCUMENTMANIFEST}
+{$IFDEF FHIR_DOCUMENTREFERENCE}
   else if (type_ = 'TFhirDocumentReference') then
     result := parseDocumentReference(jsn)
+{$ENDIF FHIR_DOCUMENTREFERENCE}
+{$IFDEF FHIR_ELIGIBILITYREQUEST}
   else if (type_ = 'TFhirEligibilityRequest') then
     result := parseEligibilityRequest(jsn)
+{$ENDIF FHIR_ELIGIBILITYREQUEST}
+{$IFDEF FHIR_ELIGIBILITYRESPONSE}
   else if (type_ = 'TFhirEligibilityResponse') then
     result := parseEligibilityResponse(jsn)
+{$ENDIF FHIR_ELIGIBILITYRESPONSE}
+{$IFDEF FHIR_ENCOUNTER}
   else if (type_ = 'TFhirEncounter') then
     result := parseEncounter(jsn)
+{$ENDIF FHIR_ENCOUNTER}
+{$IFDEF FHIR_ENDPOINT}
   else if (type_ = 'TFhirEndpoint') then
     result := parseEndpoint(jsn)
+{$ENDIF FHIR_ENDPOINT}
+{$IFDEF FHIR_ENROLLMENTREQUEST}
   else if (type_ = 'TFhirEnrollmentRequest') then
     result := parseEnrollmentRequest(jsn)
+{$ENDIF FHIR_ENROLLMENTREQUEST}
+{$IFDEF FHIR_ENROLLMENTRESPONSE}
   else if (type_ = 'TFhirEnrollmentResponse') then
     result := parseEnrollmentResponse(jsn)
+{$ENDIF FHIR_ENROLLMENTRESPONSE}
+{$IFDEF FHIR_EPISODEOFCARE}
   else if (type_ = 'TFhirEpisodeOfCare') then
     result := parseEpisodeOfCare(jsn)
+{$ENDIF FHIR_EPISODEOFCARE}
+{$IFDEF FHIR_EXPANSIONPROFILE}
   else if (type_ = 'TFhirExpansionProfile') then
     result := parseExpansionProfile(jsn)
+{$ENDIF FHIR_EXPANSIONPROFILE}
+{$IFDEF FHIR_EXPLANATIONOFBENEFIT}
   else if (type_ = 'TFhirExplanationOfBenefit') then
     result := parseExplanationOfBenefit(jsn)
+{$ENDIF FHIR_EXPLANATIONOFBENEFIT}
+{$IFDEF FHIR_FAMILYMEMBERHISTORY}
   else if (type_ = 'TFhirFamilyMemberHistory') then
     result := parseFamilyMemberHistory(jsn)
+{$ENDIF FHIR_FAMILYMEMBERHISTORY}
+{$IFDEF FHIR_FLAG}
   else if (type_ = 'TFhirFlag') then
     result := parseFlag(jsn)
+{$ENDIF FHIR_FLAG}
+{$IFDEF FHIR_GOAL}
   else if (type_ = 'TFhirGoal') then
     result := parseGoal(jsn)
+{$ENDIF FHIR_GOAL}
+{$IFDEF FHIR_GRAPHDEFINITION}
   else if (type_ = 'TFhirGraphDefinition') then
     result := parseGraphDefinition(jsn)
+{$ENDIF FHIR_GRAPHDEFINITION}
+{$IFDEF FHIR_GROUP}
   else if (type_ = 'TFhirGroup') then
     result := parseGroup(jsn)
+{$ENDIF FHIR_GROUP}
+{$IFDEF FHIR_GUIDANCERESPONSE}
   else if (type_ = 'TFhirGuidanceResponse') then
     result := parseGuidanceResponse(jsn)
+{$ENDIF FHIR_GUIDANCERESPONSE}
+{$IFDEF FHIR_HEALTHCARESERVICE}
   else if (type_ = 'TFhirHealthcareService') then
     result := parseHealthcareService(jsn)
+{$ENDIF FHIR_HEALTHCARESERVICE}
+{$IFDEF FHIR_IMAGINGMANIFEST}
   else if (type_ = 'TFhirImagingManifest') then
     result := parseImagingManifest(jsn)
+{$ENDIF FHIR_IMAGINGMANIFEST}
+{$IFDEF FHIR_IMAGINGSTUDY}
   else if (type_ = 'TFhirImagingStudy') then
     result := parseImagingStudy(jsn)
+{$ENDIF FHIR_IMAGINGSTUDY}
+{$IFDEF FHIR_IMMUNIZATION}
   else if (type_ = 'TFhirImmunization') then
     result := parseImmunization(jsn)
+{$ENDIF FHIR_IMMUNIZATION}
+{$IFDEF FHIR_IMMUNIZATIONRECOMMENDATION}
   else if (type_ = 'TFhirImmunizationRecommendation') then
     result := parseImmunizationRecommendation(jsn)
+{$ENDIF FHIR_IMMUNIZATIONRECOMMENDATION}
+{$IFDEF FHIR_IMPLEMENTATIONGUIDE}
   else if (type_ = 'TFhirImplementationGuide') then
     result := parseImplementationGuide(jsn)
+{$ENDIF FHIR_IMPLEMENTATIONGUIDE}
+{$IFDEF FHIR_LIBRARY}
   else if (type_ = 'TFhirLibrary') then
     result := parseLibrary(jsn)
+{$ENDIF FHIR_LIBRARY}
+{$IFDEF FHIR_LINKAGE}
   else if (type_ = 'TFhirLinkage') then
     result := parseLinkage(jsn)
+{$ENDIF FHIR_LINKAGE}
+{$IFDEF FHIR_LIST}
   else if (type_ = 'TFhirList') then
     result := parseList(jsn)
+{$ENDIF FHIR_LIST}
+{$IFDEF FHIR_LOCATION}
   else if (type_ = 'TFhirLocation') then
     result := parseLocation(jsn)
+{$ENDIF FHIR_LOCATION}
+{$IFDEF FHIR_MEASURE}
   else if (type_ = 'TFhirMeasure') then
     result := parseMeasure(jsn)
+{$ENDIF FHIR_MEASURE}
+{$IFDEF FHIR_MEASUREREPORT}
   else if (type_ = 'TFhirMeasureReport') then
     result := parseMeasureReport(jsn)
+{$ENDIF FHIR_MEASUREREPORT}
+{$IFDEF FHIR_MEDIA}
   else if (type_ = 'TFhirMedia') then
     result := parseMedia(jsn)
+{$ENDIF FHIR_MEDIA}
+{$IFDEF FHIR_MEDICATION}
   else if (type_ = 'TFhirMedication') then
     result := parseMedication(jsn)
+{$ENDIF FHIR_MEDICATION}
+{$IFDEF FHIR_MEDICATIONADMINISTRATION}
   else if (type_ = 'TFhirMedicationAdministration') then
     result := parseMedicationAdministration(jsn)
+{$ENDIF FHIR_MEDICATIONADMINISTRATION}
+{$IFDEF FHIR_MEDICATIONDISPENSE}
   else if (type_ = 'TFhirMedicationDispense') then
     result := parseMedicationDispense(jsn)
+{$ENDIF FHIR_MEDICATIONDISPENSE}
+{$IFDEF FHIR_MEDICATIONREQUEST}
   else if (type_ = 'TFhirMedicationRequest') then
     result := parseMedicationRequest(jsn)
+{$ENDIF FHIR_MEDICATIONREQUEST}
+{$IFDEF FHIR_MEDICATIONSTATEMENT}
   else if (type_ = 'TFhirMedicationStatement') then
     result := parseMedicationStatement(jsn)
+{$ENDIF FHIR_MEDICATIONSTATEMENT}
+{$IFDEF FHIR_MESSAGEDEFINITION}
   else if (type_ = 'TFhirMessageDefinition') then
     result := parseMessageDefinition(jsn)
+{$ENDIF FHIR_MESSAGEDEFINITION}
+{$IFDEF FHIR_MESSAGEHEADER}
   else if (type_ = 'TFhirMessageHeader') then
     result := parseMessageHeader(jsn)
+{$ENDIF FHIR_MESSAGEHEADER}
+{$IFDEF FHIR_NAMINGSYSTEM}
   else if (type_ = 'TFhirNamingSystem') then
     result := parseNamingSystem(jsn)
+{$ENDIF FHIR_NAMINGSYSTEM}
+{$IFDEF FHIR_NUTRITIONORDER}
   else if (type_ = 'TFhirNutritionOrder') then
     result := parseNutritionOrder(jsn)
+{$ENDIF FHIR_NUTRITIONORDER}
+{$IFDEF FHIR_OBSERVATION}
   else if (type_ = 'TFhirObservation') then
     result := parseObservation(jsn)
+{$ENDIF FHIR_OBSERVATION}
+{$IFDEF FHIR_OPERATIONDEFINITION}
   else if (type_ = 'TFhirOperationDefinition') then
     result := parseOperationDefinition(jsn)
+{$ENDIF FHIR_OPERATIONDEFINITION}
+{$IFDEF FHIR_OPERATIONOUTCOME}
   else if (type_ = 'TFhirOperationOutcome') then
     result := parseOperationOutcome(jsn)
+{$ENDIF FHIR_OPERATIONOUTCOME}
+{$IFDEF FHIR_ORGANIZATION}
   else if (type_ = 'TFhirOrganization') then
     result := parseOrganization(jsn)
+{$ENDIF FHIR_ORGANIZATION}
+{$IFDEF FHIR_PATIENT}
   else if (type_ = 'TFhirPatient') then
     result := parsePatient(jsn)
+{$ENDIF FHIR_PATIENT}
+{$IFDEF FHIR_PAYMENTNOTICE}
   else if (type_ = 'TFhirPaymentNotice') then
     result := parsePaymentNotice(jsn)
+{$ENDIF FHIR_PAYMENTNOTICE}
+{$IFDEF FHIR_PAYMENTRECONCILIATION}
   else if (type_ = 'TFhirPaymentReconciliation') then
     result := parsePaymentReconciliation(jsn)
+{$ENDIF FHIR_PAYMENTRECONCILIATION}
+{$IFDEF FHIR_PERSON}
   else if (type_ = 'TFhirPerson') then
     result := parsePerson(jsn)
+{$ENDIF FHIR_PERSON}
+{$IFDEF FHIR_PLANDEFINITION}
   else if (type_ = 'TFhirPlanDefinition') then
     result := parsePlanDefinition(jsn)
+{$ENDIF FHIR_PLANDEFINITION}
+{$IFDEF FHIR_PRACTITIONER}
   else if (type_ = 'TFhirPractitioner') then
     result := parsePractitioner(jsn)
+{$ENDIF FHIR_PRACTITIONER}
+{$IFDEF FHIR_PRACTITIONERROLE}
   else if (type_ = 'TFhirPractitionerRole') then
     result := parsePractitionerRole(jsn)
+{$ENDIF FHIR_PRACTITIONERROLE}
+{$IFDEF FHIR_PROCEDURE}
   else if (type_ = 'TFhirProcedure') then
     result := parseProcedure(jsn)
+{$ENDIF FHIR_PROCEDURE}
+{$IFDEF FHIR_PROCEDUREREQUEST}
   else if (type_ = 'TFhirProcedureRequest') then
     result := parseProcedureRequest(jsn)
+{$ENDIF FHIR_PROCEDUREREQUEST}
+{$IFDEF FHIR_PROCESSREQUEST}
   else if (type_ = 'TFhirProcessRequest') then
     result := parseProcessRequest(jsn)
+{$ENDIF FHIR_PROCESSREQUEST}
+{$IFDEF FHIR_PROCESSRESPONSE}
   else if (type_ = 'TFhirProcessResponse') then
     result := parseProcessResponse(jsn)
+{$ENDIF FHIR_PROCESSRESPONSE}
+{$IFDEF FHIR_PROVENANCE}
   else if (type_ = 'TFhirProvenance') then
     result := parseProvenance(jsn)
+{$ENDIF FHIR_PROVENANCE}
+{$IFDEF FHIR_QUESTIONNAIRE}
   else if (type_ = 'TFhirQuestionnaire') then
     result := parseQuestionnaire(jsn)
+{$ENDIF FHIR_QUESTIONNAIRE}
+{$IFDEF FHIR_QUESTIONNAIRERESPONSE}
   else if (type_ = 'TFhirQuestionnaireResponse') then
     result := parseQuestionnaireResponse(jsn)
+{$ENDIF FHIR_QUESTIONNAIRERESPONSE}
+{$IFDEF FHIR_REFERRALREQUEST}
   else if (type_ = 'TFhirReferralRequest') then
     result := parseReferralRequest(jsn)
+{$ENDIF FHIR_REFERRALREQUEST}
+{$IFDEF FHIR_RELATEDPERSON}
   else if (type_ = 'TFhirRelatedPerson') then
     result := parseRelatedPerson(jsn)
+{$ENDIF FHIR_RELATEDPERSON}
+{$IFDEF FHIR_REQUESTGROUP}
   else if (type_ = 'TFhirRequestGroup') then
     result := parseRequestGroup(jsn)
+{$ENDIF FHIR_REQUESTGROUP}
+{$IFDEF FHIR_RESEARCHSTUDY}
   else if (type_ = 'TFhirResearchStudy') then
     result := parseResearchStudy(jsn)
+{$ENDIF FHIR_RESEARCHSTUDY}
+{$IFDEF FHIR_RESEARCHSUBJECT}
   else if (type_ = 'TFhirResearchSubject') then
     result := parseResearchSubject(jsn)
+{$ENDIF FHIR_RESEARCHSUBJECT}
+{$IFDEF FHIR_RISKASSESSMENT}
   else if (type_ = 'TFhirRiskAssessment') then
     result := parseRiskAssessment(jsn)
+{$ENDIF FHIR_RISKASSESSMENT}
+{$IFDEF FHIR_SCHEDULE}
   else if (type_ = 'TFhirSchedule') then
     result := parseSchedule(jsn)
+{$ENDIF FHIR_SCHEDULE}
+{$IFDEF FHIR_SEARCHPARAMETER}
   else if (type_ = 'TFhirSearchParameter') then
     result := parseSearchParameter(jsn)
+{$ENDIF FHIR_SEARCHPARAMETER}
+{$IFDEF FHIR_SEQUENCE}
   else if (type_ = 'TFhirSequence') then
     result := parseSequence(jsn)
+{$ENDIF FHIR_SEQUENCE}
+{$IFDEF FHIR_SERVICEDEFINITION}
   else if (type_ = 'TFhirServiceDefinition') then
     result := parseServiceDefinition(jsn)
+{$ENDIF FHIR_SERVICEDEFINITION}
+{$IFDEF FHIR_SLOT}
   else if (type_ = 'TFhirSlot') then
     result := parseSlot(jsn)
+{$ENDIF FHIR_SLOT}
+{$IFDEF FHIR_SPECIMEN}
   else if (type_ = 'TFhirSpecimen') then
     result := parseSpecimen(jsn)
+{$ENDIF FHIR_SPECIMEN}
+{$IFDEF FHIR_STRUCTUREDEFINITION}
   else if (type_ = 'TFhirStructureDefinition') then
     result := parseStructureDefinition(jsn)
+{$ENDIF FHIR_STRUCTUREDEFINITION}
+{$IFDEF FHIR_STRUCTUREMAP}
   else if (type_ = 'TFhirStructureMap') then
     result := parseStructureMap(jsn)
+{$ENDIF FHIR_STRUCTUREMAP}
+{$IFDEF FHIR_SUBSCRIPTION}
   else if (type_ = 'TFhirSubscription') then
     result := parseSubscription(jsn)
+{$ENDIF FHIR_SUBSCRIPTION}
+{$IFDEF FHIR_SUBSTANCE}
   else if (type_ = 'TFhirSubstance') then
     result := parseSubstance(jsn)
+{$ENDIF FHIR_SUBSTANCE}
+{$IFDEF FHIR_SUPPLYDELIVERY}
   else if (type_ = 'TFhirSupplyDelivery') then
     result := parseSupplyDelivery(jsn)
+{$ENDIF FHIR_SUPPLYDELIVERY}
+{$IFDEF FHIR_SUPPLYREQUEST}
   else if (type_ = 'TFhirSupplyRequest') then
     result := parseSupplyRequest(jsn)
+{$ENDIF FHIR_SUPPLYREQUEST}
+{$IFDEF FHIR_TASK}
   else if (type_ = 'TFhirTask') then
     result := parseTask(jsn)
+{$ENDIF FHIR_TASK}
+{$IFDEF FHIR_TESTREPORT}
   else if (type_ = 'TFhirTestReport') then
     result := parseTestReport(jsn)
+{$ENDIF FHIR_TESTREPORT}
+{$IFDEF FHIR_TESTSCRIPT}
   else if (type_ = 'TFhirTestScript') then
     result := parseTestScript(jsn)
+{$ENDIF FHIR_TESTSCRIPT}
+{$IFDEF FHIR_VALUESET}
   else if (type_ = 'TFhirValueSet') then
     result := parseValueSet(jsn)
+{$ENDIF FHIR_VALUESET}
+{$IFDEF FHIR_VISIONPRESCRIPTION}
   else if (type_ = 'TFhirVisionPrescription') then
     result := parseVisionPrescription(jsn)
+{$ENDIF FHIR_VISIONPRESCRIPTION}
   else
     raise Exception.create('error: the element '+type_+' is not a valid fragment name');
 end;
@@ -44941,10 +46345,12 @@ begin
     composeIdValue(json, name, TFhirId(base), false)
   else if (base is TFhirPositiveInt) then
     composePositiveIntValue(json, name, TFhirPositiveInt(base), false)
+{$IFDEF FHIR_PARAMETERS}
   else if (base is TFhirParametersParameter) then
     composeParametersParameter(json, name, TFhirParametersParameter(base), false)
   else if (base is TFhirParameters) then
     composeParameters(json, name, TFhirParameters(base), false)
+{$ENDIF FHIR_PARAMETERS}
   else if (base is TFhirExtension) then
     composeExtension(json, name, TFhirExtension(base), false)
   else if (base is TFhirNarrative) then
@@ -45033,32 +46439,45 @@ begin
     composeDistance(json, name, TFhirDistance(base), false)
   else if (base is TFhirDuration) then
     composeDuration(json, name, TFhirDuration(base), false)
+{$IFDEF FHIR_ACCOUNT}
   else if (base is TFhirAccountCoverage) then
     composeAccountCoverage(json, name, TFhirAccountCoverage(base), false)
   else if (base is TFhirAccountGuarantor) then
     composeAccountGuarantor(json, name, TFhirAccountGuarantor(base), false)
   else if (base is TFhirAccount) then
     composeAccount(json, name, TFhirAccount(base), false)
+{$ENDIF FHIR_ACCOUNT}
+{$IFDEF FHIR_ACTIVITYDEFINITION}
   else if (base is TFhirActivityDefinitionParticipant) then
     composeActivityDefinitionParticipant(json, name, TFhirActivityDefinitionParticipant(base), false)
   else if (base is TFhirActivityDefinitionDynamicValue) then
     composeActivityDefinitionDynamicValue(json, name, TFhirActivityDefinitionDynamicValue(base), false)
   else if (base is TFhirActivityDefinition) then
     composeActivityDefinition(json, name, TFhirActivityDefinition(base), false)
+{$ENDIF FHIR_ACTIVITYDEFINITION}
+{$IFDEF FHIR_ADVERSEEVENT}
   else if (base is TFhirAdverseEventSuspectEntity) then
     composeAdverseEventSuspectEntity(json, name, TFhirAdverseEventSuspectEntity(base), false)
   else if (base is TFhirAdverseEvent) then
     composeAdverseEvent(json, name, TFhirAdverseEvent(base), false)
+{$ENDIF FHIR_ADVERSEEVENT}
+{$IFDEF FHIR_ALLERGYINTOLERANCE}
   else if (base is TFhirAllergyIntoleranceReaction) then
     composeAllergyIntoleranceReaction(json, name, TFhirAllergyIntoleranceReaction(base), false)
   else if (base is TFhirAllergyIntolerance) then
     composeAllergyIntolerance(json, name, TFhirAllergyIntolerance(base), false)
+{$ENDIF FHIR_ALLERGYINTOLERANCE}
+{$IFDEF FHIR_APPOINTMENT}
   else if (base is TFhirAppointmentParticipant) then
     composeAppointmentParticipant(json, name, TFhirAppointmentParticipant(base), false)
   else if (base is TFhirAppointment) then
     composeAppointment(json, name, TFhirAppointment(base), false)
+{$ENDIF FHIR_APPOINTMENT}
+{$IFDEF FHIR_APPOINTMENTRESPONSE}
   else if (base is TFhirAppointmentResponse) then
     composeAppointmentResponse(json, name, TFhirAppointmentResponse(base), false)
+{$ENDIF FHIR_APPOINTMENTRESPONSE}
+{$IFDEF FHIR_AUDITEVENT}
   else if (base is TFhirAuditEventAgent) then
     composeAuditEventAgent(json, name, TFhirAuditEventAgent(base), false)
   else if (base is TFhirAuditEventAgentNetwork) then
@@ -45071,12 +46490,20 @@ begin
     composeAuditEventEntityDetail(json, name, TFhirAuditEventEntityDetail(base), false)
   else if (base is TFhirAuditEvent) then
     composeAuditEvent(json, name, TFhirAuditEvent(base), false)
+{$ENDIF FHIR_AUDITEVENT}
+{$IFDEF FHIR_BASIC}
   else if (base is TFhirBasic) then
     composeBasic(json, name, TFhirBasic(base), false)
+{$ENDIF FHIR_BASIC}
+{$IFDEF FHIR_BINARY}
   else if (base is TFhirBinary) then
     composeBinary(json, name, TFhirBinary(base), false)
+{$ENDIF FHIR_BINARY}
+{$IFDEF FHIR_BODYSITE}
   else if (base is TFhirBodySite) then
     composeBodySite(json, name, TFhirBodySite(base), false)
+{$ENDIF FHIR_BODYSITE}
+{$IFDEF FHIR_BUNDLE}
   else if (base is TFhirBundleLink) then
     composeBundleLink(json, name, TFhirBundleLink(base), false)
   else if (base is TFhirBundleEntry) then
@@ -45089,6 +46516,8 @@ begin
     composeBundleEntryResponse(json, name, TFhirBundleEntryResponse(base), false)
   else if (base is TFhirBundle) then
     composeBundle(json, name, TFhirBundle(base), false)
+{$ENDIF FHIR_BUNDLE}
+{$IFDEF FHIR_CAPABILITYSTATEMENT}
   else if (base is TFhirCapabilityStatementSoftware) then
     composeCapabilityStatementSoftware(json, name, TFhirCapabilityStatementSoftware(base), false)
   else if (base is TFhirCapabilityStatementImplementation) then
@@ -45121,20 +46550,28 @@ begin
     composeCapabilityStatementDocument(json, name, TFhirCapabilityStatementDocument(base), false)
   else if (base is TFhirCapabilityStatement) then
     composeCapabilityStatement(json, name, TFhirCapabilityStatement(base), false)
+{$ENDIF FHIR_CAPABILITYSTATEMENT}
+{$IFDEF FHIR_CAREPLAN}
   else if (base is TFhirCarePlanActivity) then
     composeCarePlanActivity(json, name, TFhirCarePlanActivity(base), false)
   else if (base is TFhirCarePlanActivityDetail) then
     composeCarePlanActivityDetail(json, name, TFhirCarePlanActivityDetail(base), false)
   else if (base is TFhirCarePlan) then
     composeCarePlan(json, name, TFhirCarePlan(base), false)
+{$ENDIF FHIR_CAREPLAN}
+{$IFDEF FHIR_CARETEAM}
   else if (base is TFhirCareTeamParticipant) then
     composeCareTeamParticipant(json, name, TFhirCareTeamParticipant(base), false)
   else if (base is TFhirCareTeam) then
     composeCareTeam(json, name, TFhirCareTeam(base), false)
+{$ENDIF FHIR_CARETEAM}
+{$IFDEF FHIR_CHARGEITEM}
   else if (base is TFhirChargeItemParticipant) then
     composeChargeItemParticipant(json, name, TFhirChargeItemParticipant(base), false)
   else if (base is TFhirChargeItem) then
     composeChargeItem(json, name, TFhirChargeItem(base), false)
+{$ENDIF FHIR_CHARGEITEM}
+{$IFDEF FHIR_CLAIM}
   else if (base is TFhirClaimRelated) then
     composeClaimRelated(json, name, TFhirClaimRelated(base), false)
   else if (base is TFhirClaimPayee) then
@@ -45159,6 +46596,8 @@ begin
     composeClaimItemDetailSubDetail(json, name, TFhirClaimItemDetailSubDetail(base), false)
   else if (base is TFhirClaim) then
     composeClaim(json, name, TFhirClaim(base), false)
+{$ENDIF FHIR_CLAIM}
+{$IFDEF FHIR_CLAIMRESPONSE}
   else if (base is TFhirClaimResponseItem) then
     composeClaimResponseItem(json, name, TFhirClaimResponseItem(base), false)
   else if (base is TFhirClaimResponseItemAdjudication) then
@@ -45181,12 +46620,16 @@ begin
     composeClaimResponseInsurance(json, name, TFhirClaimResponseInsurance(base), false)
   else if (base is TFhirClaimResponse) then
     composeClaimResponse(json, name, TFhirClaimResponse(base), false)
+{$ENDIF FHIR_CLAIMRESPONSE}
+{$IFDEF FHIR_CLINICALIMPRESSION}
   else if (base is TFhirClinicalImpressionInvestigation) then
     composeClinicalImpressionInvestigation(json, name, TFhirClinicalImpressionInvestigation(base), false)
   else if (base is TFhirClinicalImpressionFinding) then
     composeClinicalImpressionFinding(json, name, TFhirClinicalImpressionFinding(base), false)
   else if (base is TFhirClinicalImpression) then
     composeClinicalImpression(json, name, TFhirClinicalImpression(base), false)
+{$ENDIF FHIR_CLINICALIMPRESSION}
+{$IFDEF FHIR_CODESYSTEM}
   else if (base is TFhirCodeSystemFilter) then
     composeCodeSystemFilter(json, name, TFhirCodeSystemFilter(base), false)
   else if (base is TFhirCodeSystemProperty) then
@@ -45199,20 +46642,28 @@ begin
     composeCodeSystemConceptProperty(json, name, TFhirCodeSystemConceptProperty(base), false)
   else if (base is TFhirCodeSystem) then
     composeCodeSystem(json, name, TFhirCodeSystem(base), false)
+{$ENDIF FHIR_CODESYSTEM}
+{$IFDEF FHIR_COMMUNICATION}
   else if (base is TFhirCommunicationPayload) then
     composeCommunicationPayload(json, name, TFhirCommunicationPayload(base), false)
   else if (base is TFhirCommunication) then
     composeCommunication(json, name, TFhirCommunication(base), false)
+{$ENDIF FHIR_COMMUNICATION}
+{$IFDEF FHIR_COMMUNICATIONREQUEST}
   else if (base is TFhirCommunicationRequestPayload) then
     composeCommunicationRequestPayload(json, name, TFhirCommunicationRequestPayload(base), false)
   else if (base is TFhirCommunicationRequestRequester) then
     composeCommunicationRequestRequester(json, name, TFhirCommunicationRequestRequester(base), false)
   else if (base is TFhirCommunicationRequest) then
     composeCommunicationRequest(json, name, TFhirCommunicationRequest(base), false)
+{$ENDIF FHIR_COMMUNICATIONREQUEST}
+{$IFDEF FHIR_COMPARTMENTDEFINITION}
   else if (base is TFhirCompartmentDefinitionResource) then
     composeCompartmentDefinitionResource(json, name, TFhirCompartmentDefinitionResource(base), false)
   else if (base is TFhirCompartmentDefinition) then
     composeCompartmentDefinition(json, name, TFhirCompartmentDefinition(base), false)
+{$ENDIF FHIR_COMPARTMENTDEFINITION}
+{$IFDEF FHIR_COMPOSITION}
   else if (base is TFhirCompositionAttester) then
     composeCompositionAttester(json, name, TFhirCompositionAttester(base), false)
   else if (base is TFhirCompositionRelatesTo) then
@@ -45223,6 +46674,8 @@ begin
     composeCompositionSection(json, name, TFhirCompositionSection(base), false)
   else if (base is TFhirComposition) then
     composeComposition(json, name, TFhirComposition(base), false)
+{$ENDIF FHIR_COMPOSITION}
+{$IFDEF FHIR_CONCEPTMAP}
   else if (base is TFhirConceptMapGroup) then
     composeConceptMapGroup(json, name, TFhirConceptMapGroup(base), false)
   else if (base is TFhirConceptMapGroupElement) then
@@ -45235,12 +46688,16 @@ begin
     composeConceptMapGroupUnmapped(json, name, TFhirConceptMapGroupUnmapped(base), false)
   else if (base is TFhirConceptMap) then
     composeConceptMap(json, name, TFhirConceptMap(base), false)
+{$ENDIF FHIR_CONCEPTMAP}
+{$IFDEF FHIR_CONDITION}
   else if (base is TFhirConditionStage) then
     composeConditionStage(json, name, TFhirConditionStage(base), false)
   else if (base is TFhirConditionEvidence) then
     composeConditionEvidence(json, name, TFhirConditionEvidence(base), false)
   else if (base is TFhirCondition) then
     composeCondition(json, name, TFhirCondition(base), false)
+{$ENDIF FHIR_CONDITION}
+{$IFDEF FHIR_CONSENT}
   else if (base is TFhirConsentActor) then
     composeConsentActor(json, name, TFhirConsentActor(base), false)
   else if (base is TFhirConsentPolicy) then
@@ -45255,6 +46712,8 @@ begin
     composeConsentExceptData(json, name, TFhirConsentExceptData(base), false)
   else if (base is TFhirConsent) then
     composeConsent(json, name, TFhirConsent(base), false)
+{$ENDIF FHIR_CONSENT}
+{$IFDEF FHIR_CONTRACT}
   else if (base is TFhirContractAgent) then
     composeContractAgent(json, name, TFhirContractAgent(base), false)
   else if (base is TFhirContractSigner) then
@@ -45275,48 +46734,70 @@ begin
     composeContractRule(json, name, TFhirContractRule(base), false)
   else if (base is TFhirContract) then
     composeContract(json, name, TFhirContract(base), false)
+{$ENDIF FHIR_CONTRACT}
+{$IFDEF FHIR_COVERAGE}
   else if (base is TFhirCoverageGrouping) then
     composeCoverageGrouping(json, name, TFhirCoverageGrouping(base), false)
   else if (base is TFhirCoverage) then
     composeCoverage(json, name, TFhirCoverage(base), false)
+{$ENDIF FHIR_COVERAGE}
+{$IFDEF FHIR_DATAELEMENT}
   else if (base is TFhirDataElementMapping) then
     composeDataElementMapping(json, name, TFhirDataElementMapping(base), false)
   else if (base is TFhirDataElement) then
     composeDataElement(json, name, TFhirDataElement(base), false)
+{$ENDIF FHIR_DATAELEMENT}
+{$IFDEF FHIR_DETECTEDISSUE}
   else if (base is TFhirDetectedIssueMitigation) then
     composeDetectedIssueMitigation(json, name, TFhirDetectedIssueMitigation(base), false)
   else if (base is TFhirDetectedIssue) then
     composeDetectedIssue(json, name, TFhirDetectedIssue(base), false)
+{$ENDIF FHIR_DETECTEDISSUE}
+{$IFDEF FHIR_DEVICE}
   else if (base is TFhirDeviceUdi) then
     composeDeviceUdi(json, name, TFhirDeviceUdi(base), false)
   else if (base is TFhirDevice) then
     composeDevice(json, name, TFhirDevice(base), false)
+{$ENDIF FHIR_DEVICE}
+{$IFDEF FHIR_DEVICECOMPONENT}
   else if (base is TFhirDeviceComponentProductionSpecification) then
     composeDeviceComponentProductionSpecification(json, name, TFhirDeviceComponentProductionSpecification(base), false)
   else if (base is TFhirDeviceComponent) then
     composeDeviceComponent(json, name, TFhirDeviceComponent(base), false)
+{$ENDIF FHIR_DEVICECOMPONENT}
+{$IFDEF FHIR_DEVICEMETRIC}
   else if (base is TFhirDeviceMetricCalibration) then
     composeDeviceMetricCalibration(json, name, TFhirDeviceMetricCalibration(base), false)
   else if (base is TFhirDeviceMetric) then
     composeDeviceMetric(json, name, TFhirDeviceMetric(base), false)
+{$ENDIF FHIR_DEVICEMETRIC}
+{$IFDEF FHIR_DEVICEREQUEST}
   else if (base is TFhirDeviceRequestRequester) then
     composeDeviceRequestRequester(json, name, TFhirDeviceRequestRequester(base), false)
   else if (base is TFhirDeviceRequest) then
     composeDeviceRequest(json, name, TFhirDeviceRequest(base), false)
+{$ENDIF FHIR_DEVICEREQUEST}
+{$IFDEF FHIR_DEVICEUSESTATEMENT}
   else if (base is TFhirDeviceUseStatement) then
     composeDeviceUseStatement(json, name, TFhirDeviceUseStatement(base), false)
+{$ENDIF FHIR_DEVICEUSESTATEMENT}
+{$IFDEF FHIR_DIAGNOSTICREPORT}
   else if (base is TFhirDiagnosticReportPerformer) then
     composeDiagnosticReportPerformer(json, name, TFhirDiagnosticReportPerformer(base), false)
   else if (base is TFhirDiagnosticReportImage) then
     composeDiagnosticReportImage(json, name, TFhirDiagnosticReportImage(base), false)
   else if (base is TFhirDiagnosticReport) then
     composeDiagnosticReport(json, name, TFhirDiagnosticReport(base), false)
+{$ENDIF FHIR_DIAGNOSTICREPORT}
+{$IFDEF FHIR_DOCUMENTMANIFEST}
   else if (base is TFhirDocumentManifestContent) then
     composeDocumentManifestContent(json, name, TFhirDocumentManifestContent(base), false)
   else if (base is TFhirDocumentManifestRelated) then
     composeDocumentManifestRelated(json, name, TFhirDocumentManifestRelated(base), false)
   else if (base is TFhirDocumentManifest) then
     composeDocumentManifest(json, name, TFhirDocumentManifest(base), false)
+{$ENDIF FHIR_DOCUMENTMANIFEST}
+{$IFDEF FHIR_DOCUMENTREFERENCE}
   else if (base is TFhirDocumentReferenceRelatesTo) then
     composeDocumentReferenceRelatesTo(json, name, TFhirDocumentReferenceRelatesTo(base), false)
   else if (base is TFhirDocumentReferenceContent) then
@@ -45327,8 +46808,12 @@ begin
     composeDocumentReferenceContextRelated(json, name, TFhirDocumentReferenceContextRelated(base), false)
   else if (base is TFhirDocumentReference) then
     composeDocumentReference(json, name, TFhirDocumentReference(base), false)
+{$ENDIF FHIR_DOCUMENTREFERENCE}
+{$IFDEF FHIR_ELIGIBILITYREQUEST}
   else if (base is TFhirEligibilityRequest) then
     composeEligibilityRequest(json, name, TFhirEligibilityRequest(base), false)
+{$ENDIF FHIR_ELIGIBILITYREQUEST}
+{$IFDEF FHIR_ELIGIBILITYRESPONSE}
   else if (base is TFhirEligibilityResponseInsurance) then
     composeEligibilityResponseInsurance(json, name, TFhirEligibilityResponseInsurance(base), false)
   else if (base is TFhirEligibilityResponseInsuranceBenefitBalance) then
@@ -45339,6 +46824,8 @@ begin
     composeEligibilityResponseError(json, name, TFhirEligibilityResponseError(base), false)
   else if (base is TFhirEligibilityResponse) then
     composeEligibilityResponse(json, name, TFhirEligibilityResponse(base), false)
+{$ENDIF FHIR_ELIGIBILITYRESPONSE}
+{$IFDEF FHIR_ENCOUNTER}
   else if (base is TFhirEncounterStatusHistory) then
     composeEncounterStatusHistory(json, name, TFhirEncounterStatusHistory(base), false)
   else if (base is TFhirEncounterClassHistory) then
@@ -45353,18 +46840,28 @@ begin
     composeEncounterLocation(json, name, TFhirEncounterLocation(base), false)
   else if (base is TFhirEncounter) then
     composeEncounter(json, name, TFhirEncounter(base), false)
+{$ENDIF FHIR_ENCOUNTER}
+{$IFDEF FHIR_ENDPOINT}
   else if (base is TFhirEndpoint) then
     composeEndpoint(json, name, TFhirEndpoint(base), false)
+{$ENDIF FHIR_ENDPOINT}
+{$IFDEF FHIR_ENROLLMENTREQUEST}
   else if (base is TFhirEnrollmentRequest) then
     composeEnrollmentRequest(json, name, TFhirEnrollmentRequest(base), false)
+{$ENDIF FHIR_ENROLLMENTREQUEST}
+{$IFDEF FHIR_ENROLLMENTRESPONSE}
   else if (base is TFhirEnrollmentResponse) then
     composeEnrollmentResponse(json, name, TFhirEnrollmentResponse(base), false)
+{$ENDIF FHIR_ENROLLMENTRESPONSE}
+{$IFDEF FHIR_EPISODEOFCARE}
   else if (base is TFhirEpisodeOfCareStatusHistory) then
     composeEpisodeOfCareStatusHistory(json, name, TFhirEpisodeOfCareStatusHistory(base), false)
   else if (base is TFhirEpisodeOfCareDiagnosis) then
     composeEpisodeOfCareDiagnosis(json, name, TFhirEpisodeOfCareDiagnosis(base), false)
   else if (base is TFhirEpisodeOfCare) then
     composeEpisodeOfCare(json, name, TFhirEpisodeOfCare(base), false)
+{$ENDIF FHIR_EPISODEOFCARE}
+{$IFDEF FHIR_EXPANSIONPROFILE}
   else if (base is TFhirExpansionProfileFixedVersion) then
     composeExpansionProfileFixedVersion(json, name, TFhirExpansionProfileFixedVersion(base), false)
   else if (base is TFhirExpansionProfileExcludedSystem) then
@@ -45381,6 +46878,8 @@ begin
     composeExpansionProfileDesignationExcludeDesignation(json, name, TFhirExpansionProfileDesignationExcludeDesignation(base), false)
   else if (base is TFhirExpansionProfile) then
     composeExpansionProfile(json, name, TFhirExpansionProfile(base), false)
+{$ENDIF FHIR_EXPANSIONPROFILE}
+{$IFDEF FHIR_EXPLANATIONOFBENEFIT}
   else if (base is TFhirExplanationOfBenefitRelated) then
     composeExplanationOfBenefitRelated(json, name, TFhirExplanationOfBenefitRelated(base), false)
   else if (base is TFhirExplanationOfBenefitPayee) then
@@ -45419,16 +46918,24 @@ begin
     composeExplanationOfBenefitBenefitBalanceFinancial(json, name, TFhirExplanationOfBenefitBenefitBalanceFinancial(base), false)
   else if (base is TFhirExplanationOfBenefit) then
     composeExplanationOfBenefit(json, name, TFhirExplanationOfBenefit(base), false)
+{$ENDIF FHIR_EXPLANATIONOFBENEFIT}
+{$IFDEF FHIR_FAMILYMEMBERHISTORY}
   else if (base is TFhirFamilyMemberHistoryCondition) then
     composeFamilyMemberHistoryCondition(json, name, TFhirFamilyMemberHistoryCondition(base), false)
   else if (base is TFhirFamilyMemberHistory) then
     composeFamilyMemberHistory(json, name, TFhirFamilyMemberHistory(base), false)
+{$ENDIF FHIR_FAMILYMEMBERHISTORY}
+{$IFDEF FHIR_FLAG}
   else if (base is TFhirFlag) then
     composeFlag(json, name, TFhirFlag(base), false)
+{$ENDIF FHIR_FLAG}
+{$IFDEF FHIR_GOAL}
   else if (base is TFhirGoalTarget) then
     composeGoalTarget(json, name, TFhirGoalTarget(base), false)
   else if (base is TFhirGoal) then
     composeGoal(json, name, TFhirGoal(base), false)
+{$ENDIF FHIR_GOAL}
+{$IFDEF FHIR_GRAPHDEFINITION}
   else if (base is TFhirGraphDefinitionLink) then
     composeGraphDefinitionLink(json, name, TFhirGraphDefinitionLink(base), false)
   else if (base is TFhirGraphDefinitionLinkTarget) then
@@ -45437,20 +46944,28 @@ begin
     composeGraphDefinitionLinkTargetCompartment(json, name, TFhirGraphDefinitionLinkTargetCompartment(base), false)
   else if (base is TFhirGraphDefinition) then
     composeGraphDefinition(json, name, TFhirGraphDefinition(base), false)
+{$ENDIF FHIR_GRAPHDEFINITION}
+{$IFDEF FHIR_GROUP}
   else if (base is TFhirGroupCharacteristic) then
     composeGroupCharacteristic(json, name, TFhirGroupCharacteristic(base), false)
   else if (base is TFhirGroupMember) then
     composeGroupMember(json, name, TFhirGroupMember(base), false)
   else if (base is TFhirGroup) then
     composeGroup(json, name, TFhirGroup(base), false)
+{$ENDIF FHIR_GROUP}
+{$IFDEF FHIR_GUIDANCERESPONSE}
   else if (base is TFhirGuidanceResponse) then
     composeGuidanceResponse(json, name, TFhirGuidanceResponse(base), false)
+{$ENDIF FHIR_GUIDANCERESPONSE}
+{$IFDEF FHIR_HEALTHCARESERVICE}
   else if (base is TFhirHealthcareServiceAvailableTime) then
     composeHealthcareServiceAvailableTime(json, name, TFhirHealthcareServiceAvailableTime(base), false)
   else if (base is TFhirHealthcareServiceNotAvailable) then
     composeHealthcareServiceNotAvailable(json, name, TFhirHealthcareServiceNotAvailable(base), false)
   else if (base is TFhirHealthcareService) then
     composeHealthcareService(json, name, TFhirHealthcareService(base), false)
+{$ENDIF FHIR_HEALTHCARESERVICE}
+{$IFDEF FHIR_IMAGINGMANIFEST}
   else if (base is TFhirImagingManifestStudy) then
     composeImagingManifestStudy(json, name, TFhirImagingManifestStudy(base), false)
   else if (base is TFhirImagingManifestStudySeries) then
@@ -45459,12 +46974,16 @@ begin
     composeImagingManifestStudySeriesInstance(json, name, TFhirImagingManifestStudySeriesInstance(base), false)
   else if (base is TFhirImagingManifest) then
     composeImagingManifest(json, name, TFhirImagingManifest(base), false)
+{$ENDIF FHIR_IMAGINGMANIFEST}
+{$IFDEF FHIR_IMAGINGSTUDY}
   else if (base is TFhirImagingStudySeries) then
     composeImagingStudySeries(json, name, TFhirImagingStudySeries(base), false)
   else if (base is TFhirImagingStudySeriesInstance) then
     composeImagingStudySeriesInstance(json, name, TFhirImagingStudySeriesInstance(base), false)
   else if (base is TFhirImagingStudy) then
     composeImagingStudy(json, name, TFhirImagingStudy(base), false)
+{$ENDIF FHIR_IMAGINGSTUDY}
+{$IFDEF FHIR_IMMUNIZATION}
   else if (base is TFhirImmunizationPractitioner) then
     composeImmunizationPractitioner(json, name, TFhirImmunizationPractitioner(base), false)
   else if (base is TFhirImmunizationExplanation) then
@@ -45475,6 +46994,8 @@ begin
     composeImmunizationVaccinationProtocol(json, name, TFhirImmunizationVaccinationProtocol(base), false)
   else if (base is TFhirImmunization) then
     composeImmunization(json, name, TFhirImmunization(base), false)
+{$ENDIF FHIR_IMMUNIZATION}
+{$IFDEF FHIR_IMMUNIZATIONRECOMMENDATION}
   else if (base is TFhirImmunizationRecommendationRecommendation) then
     composeImmunizationRecommendationRecommendation(json, name, TFhirImmunizationRecommendationRecommendation(base), false)
   else if (base is TFhirImmunizationRecommendationRecommendationDateCriterion) then
@@ -45483,6 +47004,8 @@ begin
     composeImmunizationRecommendationRecommendationProtocol(json, name, TFhirImmunizationRecommendationRecommendationProtocol(base), false)
   else if (base is TFhirImmunizationRecommendation) then
     composeImmunizationRecommendation(json, name, TFhirImmunizationRecommendation(base), false)
+{$ENDIF FHIR_IMMUNIZATIONRECOMMENDATION}
+{$IFDEF FHIR_IMPLEMENTATIONGUIDE}
   else if (base is TFhirImplementationGuideDependency) then
     composeImplementationGuideDependency(json, name, TFhirImplementationGuideDependency(base), false)
   else if (base is TFhirImplementationGuidePackage) then
@@ -45495,20 +47018,30 @@ begin
     composeImplementationGuidePage(json, name, TFhirImplementationGuidePage(base), false)
   else if (base is TFhirImplementationGuide) then
     composeImplementationGuide(json, name, TFhirImplementationGuide(base), false)
+{$ENDIF FHIR_IMPLEMENTATIONGUIDE}
+{$IFDEF FHIR_LIBRARY}
   else if (base is TFhirLibrary) then
     composeLibrary(json, name, TFhirLibrary(base), false)
+{$ENDIF FHIR_LIBRARY}
+{$IFDEF FHIR_LINKAGE}
   else if (base is TFhirLinkageItem) then
     composeLinkageItem(json, name, TFhirLinkageItem(base), false)
   else if (base is TFhirLinkage) then
     composeLinkage(json, name, TFhirLinkage(base), false)
+{$ENDIF FHIR_LINKAGE}
+{$IFDEF FHIR_LIST}
   else if (base is TFhirListEntry) then
     composeListEntry(json, name, TFhirListEntry(base), false)
   else if (base is TFhirList) then
     composeList(json, name, TFhirList(base), false)
+{$ENDIF FHIR_LIST}
+{$IFDEF FHIR_LOCATION}
   else if (base is TFhirLocationPosition) then
     composeLocationPosition(json, name, TFhirLocationPosition(base), false)
   else if (base is TFhirLocation) then
     composeLocation(json, name, TFhirLocation(base), false)
+{$ENDIF FHIR_LOCATION}
+{$IFDEF FHIR_MEASURE}
   else if (base is TFhirMeasureGroup) then
     composeMeasureGroup(json, name, TFhirMeasureGroup(base), false)
   else if (base is TFhirMeasureGroupPopulation) then
@@ -45519,6 +47052,8 @@ begin
     composeMeasureSupplementalData(json, name, TFhirMeasureSupplementalData(base), false)
   else if (base is TFhirMeasure) then
     composeMeasure(json, name, TFhirMeasure(base), false)
+{$ENDIF FHIR_MEASURE}
+{$IFDEF FHIR_MEASUREREPORT}
   else if (base is TFhirMeasureReportGroup) then
     composeMeasureReportGroup(json, name, TFhirMeasureReportGroup(base), false)
   else if (base is TFhirMeasureReportGroupPopulation) then
@@ -45531,8 +47066,12 @@ begin
     composeMeasureReportGroupStratifierStratumPopulation(json, name, TFhirMeasureReportGroupStratifierStratumPopulation(base), false)
   else if (base is TFhirMeasureReport) then
     composeMeasureReport(json, name, TFhirMeasureReport(base), false)
+{$ENDIF FHIR_MEASUREREPORT}
+{$IFDEF FHIR_MEDIA}
   else if (base is TFhirMedia) then
     composeMedia(json, name, TFhirMedia(base), false)
+{$ENDIF FHIR_MEDIA}
+{$IFDEF FHIR_MEDICATION}
   else if (base is TFhirMedicationIngredient) then
     composeMedicationIngredient(json, name, TFhirMedicationIngredient(base), false)
   else if (base is TFhirMedicationPackage) then
@@ -45543,18 +47082,24 @@ begin
     composeMedicationPackageBatch(json, name, TFhirMedicationPackageBatch(base), false)
   else if (base is TFhirMedication) then
     composeMedication(json, name, TFhirMedication(base), false)
+{$ENDIF FHIR_MEDICATION}
+{$IFDEF FHIR_MEDICATIONADMINISTRATION}
   else if (base is TFhirMedicationAdministrationPerformer) then
     composeMedicationAdministrationPerformer(json, name, TFhirMedicationAdministrationPerformer(base), false)
   else if (base is TFhirMedicationAdministrationDosage) then
     composeMedicationAdministrationDosage(json, name, TFhirMedicationAdministrationDosage(base), false)
   else if (base is TFhirMedicationAdministration) then
     composeMedicationAdministration(json, name, TFhirMedicationAdministration(base), false)
+{$ENDIF FHIR_MEDICATIONADMINISTRATION}
+{$IFDEF FHIR_MEDICATIONDISPENSE}
   else if (base is TFhirMedicationDispensePerformer) then
     composeMedicationDispensePerformer(json, name, TFhirMedicationDispensePerformer(base), false)
   else if (base is TFhirMedicationDispenseSubstitution) then
     composeMedicationDispenseSubstitution(json, name, TFhirMedicationDispenseSubstitution(base), false)
   else if (base is TFhirMedicationDispense) then
     composeMedicationDispense(json, name, TFhirMedicationDispense(base), false)
+{$ENDIF FHIR_MEDICATIONDISPENSE}
+{$IFDEF FHIR_MEDICATIONREQUEST}
   else if (base is TFhirMedicationRequestRequester) then
     composeMedicationRequestRequester(json, name, TFhirMedicationRequestRequester(base), false)
   else if (base is TFhirMedicationRequestDispenseRequest) then
@@ -45563,14 +47108,20 @@ begin
     composeMedicationRequestSubstitution(json, name, TFhirMedicationRequestSubstitution(base), false)
   else if (base is TFhirMedicationRequest) then
     composeMedicationRequest(json, name, TFhirMedicationRequest(base), false)
+{$ENDIF FHIR_MEDICATIONREQUEST}
+{$IFDEF FHIR_MEDICATIONSTATEMENT}
   else if (base is TFhirMedicationStatement) then
     composeMedicationStatement(json, name, TFhirMedicationStatement(base), false)
+{$ENDIF FHIR_MEDICATIONSTATEMENT}
+{$IFDEF FHIR_MESSAGEDEFINITION}
   else if (base is TFhirMessageDefinitionFocus) then
     composeMessageDefinitionFocus(json, name, TFhirMessageDefinitionFocus(base), false)
   else if (base is TFhirMessageDefinitionAllowedResponse) then
     composeMessageDefinitionAllowedResponse(json, name, TFhirMessageDefinitionAllowedResponse(base), false)
   else if (base is TFhirMessageDefinition) then
     composeMessageDefinition(json, name, TFhirMessageDefinition(base), false)
+{$ENDIF FHIR_MESSAGEDEFINITION}
+{$IFDEF FHIR_MESSAGEHEADER}
   else if (base is TFhirMessageHeaderDestination) then
     composeMessageHeaderDestination(json, name, TFhirMessageHeaderDestination(base), false)
   else if (base is TFhirMessageHeaderSource) then
@@ -45579,10 +47130,14 @@ begin
     composeMessageHeaderResponse(json, name, TFhirMessageHeaderResponse(base), false)
   else if (base is TFhirMessageHeader) then
     composeMessageHeader(json, name, TFhirMessageHeader(base), false)
+{$ENDIF FHIR_MESSAGEHEADER}
+{$IFDEF FHIR_NAMINGSYSTEM}
   else if (base is TFhirNamingSystemUniqueId) then
     composeNamingSystemUniqueId(json, name, TFhirNamingSystemUniqueId(base), false)
   else if (base is TFhirNamingSystem) then
     composeNamingSystem(json, name, TFhirNamingSystem(base), false)
+{$ENDIF FHIR_NAMINGSYSTEM}
+{$IFDEF FHIR_NUTRITIONORDER}
   else if (base is TFhirNutritionOrderOralDiet) then
     composeNutritionOrderOralDiet(json, name, TFhirNutritionOrderOralDiet(base), false)
   else if (base is TFhirNutritionOrderOralDietNutrient) then
@@ -45597,6 +47152,8 @@ begin
     composeNutritionOrderEnteralFormulaAdministration(json, name, TFhirNutritionOrderEnteralFormulaAdministration(base), false)
   else if (base is TFhirNutritionOrder) then
     composeNutritionOrder(json, name, TFhirNutritionOrder(base), false)
+{$ENDIF FHIR_NUTRITIONORDER}
+{$IFDEF FHIR_OBSERVATION}
   else if (base is TFhirObservationReferenceRange) then
     composeObservationReferenceRange(json, name, TFhirObservationReferenceRange(base), false)
   else if (base is TFhirObservationRelated) then
@@ -45605,6 +47162,8 @@ begin
     composeObservationComponent(json, name, TFhirObservationComponent(base), false)
   else if (base is TFhirObservation) then
     composeObservation(json, name, TFhirObservation(base), false)
+{$ENDIF FHIR_OBSERVATION}
+{$IFDEF FHIR_OPERATIONDEFINITION}
   else if (base is TFhirOperationDefinitionParameter) then
     composeOperationDefinitionParameter(json, name, TFhirOperationDefinitionParameter(base), false)
   else if (base is TFhirOperationDefinitionParameterBinding) then
@@ -45613,14 +47172,20 @@ begin
     composeOperationDefinitionOverload(json, name, TFhirOperationDefinitionOverload(base), false)
   else if (base is TFhirOperationDefinition) then
     composeOperationDefinition(json, name, TFhirOperationDefinition(base), false)
+{$ENDIF FHIR_OPERATIONDEFINITION}
+{$IFDEF FHIR_OPERATIONOUTCOME}
   else if (base is TFhirOperationOutcomeIssue) then
     composeOperationOutcomeIssue(json, name, TFhirOperationOutcomeIssue(base), false)
   else if (base is TFhirOperationOutcome) then
     composeOperationOutcome(json, name, TFhirOperationOutcome(base), false)
+{$ENDIF FHIR_OPERATIONOUTCOME}
+{$IFDEF FHIR_ORGANIZATION}
   else if (base is TFhirOrganizationContact) then
     composeOrganizationContact(json, name, TFhirOrganizationContact(base), false)
   else if (base is TFhirOrganization) then
     composeOrganization(json, name, TFhirOrganization(base), false)
+{$ENDIF FHIR_ORGANIZATION}
+{$IFDEF FHIR_PATIENT}
   else if (base is TFhirPatientContact) then
     composePatientContact(json, name, TFhirPatientContact(base), false)
   else if (base is TFhirPatientAnimal) then
@@ -45631,18 +47196,26 @@ begin
     composePatientLink(json, name, TFhirPatientLink(base), false)
   else if (base is TFhirPatient) then
     composePatient(json, name, TFhirPatient(base), false)
+{$ENDIF FHIR_PATIENT}
+{$IFDEF FHIR_PAYMENTNOTICE}
   else if (base is TFhirPaymentNotice) then
     composePaymentNotice(json, name, TFhirPaymentNotice(base), false)
+{$ENDIF FHIR_PAYMENTNOTICE}
+{$IFDEF FHIR_PAYMENTRECONCILIATION}
   else if (base is TFhirPaymentReconciliationDetail) then
     composePaymentReconciliationDetail(json, name, TFhirPaymentReconciliationDetail(base), false)
   else if (base is TFhirPaymentReconciliationProcessNote) then
     composePaymentReconciliationProcessNote(json, name, TFhirPaymentReconciliationProcessNote(base), false)
   else if (base is TFhirPaymentReconciliation) then
     composePaymentReconciliation(json, name, TFhirPaymentReconciliation(base), false)
+{$ENDIF FHIR_PAYMENTRECONCILIATION}
+{$IFDEF FHIR_PERSON}
   else if (base is TFhirPersonLink) then
     composePersonLink(json, name, TFhirPersonLink(base), false)
   else if (base is TFhirPerson) then
     composePerson(json, name, TFhirPerson(base), false)
+{$ENDIF FHIR_PERSON}
+{$IFDEF FHIR_PLANDEFINITION}
   else if (base is TFhirPlanDefinitionGoal) then
     composePlanDefinitionGoal(json, name, TFhirPlanDefinitionGoal(base), false)
   else if (base is TFhirPlanDefinitionGoalTarget) then
@@ -45659,40 +47232,56 @@ begin
     composePlanDefinitionActionDynamicValue(json, name, TFhirPlanDefinitionActionDynamicValue(base), false)
   else if (base is TFhirPlanDefinition) then
     composePlanDefinition(json, name, TFhirPlanDefinition(base), false)
+{$ENDIF FHIR_PLANDEFINITION}
+{$IFDEF FHIR_PRACTITIONER}
   else if (base is TFhirPractitionerQualification) then
     composePractitionerQualification(json, name, TFhirPractitionerQualification(base), false)
   else if (base is TFhirPractitioner) then
     composePractitioner(json, name, TFhirPractitioner(base), false)
+{$ENDIF FHIR_PRACTITIONER}
+{$IFDEF FHIR_PRACTITIONERROLE}
   else if (base is TFhirPractitionerRoleAvailableTime) then
     composePractitionerRoleAvailableTime(json, name, TFhirPractitionerRoleAvailableTime(base), false)
   else if (base is TFhirPractitionerRoleNotAvailable) then
     composePractitionerRoleNotAvailable(json, name, TFhirPractitionerRoleNotAvailable(base), false)
   else if (base is TFhirPractitionerRole) then
     composePractitionerRole(json, name, TFhirPractitionerRole(base), false)
+{$ENDIF FHIR_PRACTITIONERROLE}
+{$IFDEF FHIR_PROCEDURE}
   else if (base is TFhirProcedurePerformer) then
     composeProcedurePerformer(json, name, TFhirProcedurePerformer(base), false)
   else if (base is TFhirProcedureFocalDevice) then
     composeProcedureFocalDevice(json, name, TFhirProcedureFocalDevice(base), false)
   else if (base is TFhirProcedure) then
     composeProcedure(json, name, TFhirProcedure(base), false)
+{$ENDIF FHIR_PROCEDURE}
+{$IFDEF FHIR_PROCEDUREREQUEST}
   else if (base is TFhirProcedureRequestRequester) then
     composeProcedureRequestRequester(json, name, TFhirProcedureRequestRequester(base), false)
   else if (base is TFhirProcedureRequest) then
     composeProcedureRequest(json, name, TFhirProcedureRequest(base), false)
+{$ENDIF FHIR_PROCEDUREREQUEST}
+{$IFDEF FHIR_PROCESSREQUEST}
   else if (base is TFhirProcessRequestItem) then
     composeProcessRequestItem(json, name, TFhirProcessRequestItem(base), false)
   else if (base is TFhirProcessRequest) then
     composeProcessRequest(json, name, TFhirProcessRequest(base), false)
+{$ENDIF FHIR_PROCESSREQUEST}
+{$IFDEF FHIR_PROCESSRESPONSE}
   else if (base is TFhirProcessResponseProcessNote) then
     composeProcessResponseProcessNote(json, name, TFhirProcessResponseProcessNote(base), false)
   else if (base is TFhirProcessResponse) then
     composeProcessResponse(json, name, TFhirProcessResponse(base), false)
+{$ENDIF FHIR_PROCESSRESPONSE}
+{$IFDEF FHIR_PROVENANCE}
   else if (base is TFhirProvenanceAgent) then
     composeProvenanceAgent(json, name, TFhirProvenanceAgent(base), false)
   else if (base is TFhirProvenanceEntity) then
     composeProvenanceEntity(json, name, TFhirProvenanceEntity(base), false)
   else if (base is TFhirProvenance) then
     composeProvenance(json, name, TFhirProvenance(base), false)
+{$ENDIF FHIR_PROVENANCE}
+{$IFDEF FHIR_QUESTIONNAIRE}
   else if (base is TFhirQuestionnaireItem) then
     composeQuestionnaireItem(json, name, TFhirQuestionnaireItem(base), false)
   else if (base is TFhirQuestionnaireItemEnableWhen) then
@@ -45701,18 +47290,26 @@ begin
     composeQuestionnaireItemOption(json, name, TFhirQuestionnaireItemOption(base), false)
   else if (base is TFhirQuestionnaire) then
     composeQuestionnaire(json, name, TFhirQuestionnaire(base), false)
+{$ENDIF FHIR_QUESTIONNAIRE}
+{$IFDEF FHIR_QUESTIONNAIRERESPONSE}
   else if (base is TFhirQuestionnaireResponseItem) then
     composeQuestionnaireResponseItem(json, name, TFhirQuestionnaireResponseItem(base), false)
   else if (base is TFhirQuestionnaireResponseItemAnswer) then
     composeQuestionnaireResponseItemAnswer(json, name, TFhirQuestionnaireResponseItemAnswer(base), false)
   else if (base is TFhirQuestionnaireResponse) then
     composeQuestionnaireResponse(json, name, TFhirQuestionnaireResponse(base), false)
+{$ENDIF FHIR_QUESTIONNAIRERESPONSE}
+{$IFDEF FHIR_REFERRALREQUEST}
   else if (base is TFhirReferralRequestRequester) then
     composeReferralRequestRequester(json, name, TFhirReferralRequestRequester(base), false)
   else if (base is TFhirReferralRequest) then
     composeReferralRequest(json, name, TFhirReferralRequest(base), false)
+{$ENDIF FHIR_REFERRALREQUEST}
+{$IFDEF FHIR_RELATEDPERSON}
   else if (base is TFhirRelatedPerson) then
     composeRelatedPerson(json, name, TFhirRelatedPerson(base), false)
+{$ENDIF FHIR_RELATEDPERSON}
+{$IFDEF FHIR_REQUESTGROUP}
   else if (base is TFhirRequestGroupAction) then
     composeRequestGroupAction(json, name, TFhirRequestGroupAction(base), false)
   else if (base is TFhirRequestGroupActionCondition) then
@@ -45721,22 +47318,34 @@ begin
     composeRequestGroupActionRelatedAction(json, name, TFhirRequestGroupActionRelatedAction(base), false)
   else if (base is TFhirRequestGroup) then
     composeRequestGroup(json, name, TFhirRequestGroup(base), false)
+{$ENDIF FHIR_REQUESTGROUP}
+{$IFDEF FHIR_RESEARCHSTUDY}
   else if (base is TFhirResearchStudyArm) then
     composeResearchStudyArm(json, name, TFhirResearchStudyArm(base), false)
   else if (base is TFhirResearchStudy) then
     composeResearchStudy(json, name, TFhirResearchStudy(base), false)
+{$ENDIF FHIR_RESEARCHSTUDY}
+{$IFDEF FHIR_RESEARCHSUBJECT}
   else if (base is TFhirResearchSubject) then
     composeResearchSubject(json, name, TFhirResearchSubject(base), false)
+{$ENDIF FHIR_RESEARCHSUBJECT}
+{$IFDEF FHIR_RISKASSESSMENT}
   else if (base is TFhirRiskAssessmentPrediction) then
     composeRiskAssessmentPrediction(json, name, TFhirRiskAssessmentPrediction(base), false)
   else if (base is TFhirRiskAssessment) then
     composeRiskAssessment(json, name, TFhirRiskAssessment(base), false)
+{$ENDIF FHIR_RISKASSESSMENT}
+{$IFDEF FHIR_SCHEDULE}
   else if (base is TFhirSchedule) then
     composeSchedule(json, name, TFhirSchedule(base), false)
+{$ENDIF FHIR_SCHEDULE}
+{$IFDEF FHIR_SEARCHPARAMETER}
   else if (base is TFhirSearchParameterComponent) then
     composeSearchParameterComponent(json, name, TFhirSearchParameterComponent(base), false)
   else if (base is TFhirSearchParameter) then
     composeSearchParameter(json, name, TFhirSearchParameter(base), false)
+{$ENDIF FHIR_SEARCHPARAMETER}
+{$IFDEF FHIR_SEQUENCE}
   else if (base is TFhirSequenceReferenceSeq) then
     composeSequenceReferenceSeq(json, name, TFhirSequenceReferenceSeq(base), false)
   else if (base is TFhirSequenceVariant) then
@@ -45747,10 +47356,16 @@ begin
     composeSequenceRepository(json, name, TFhirSequenceRepository(base), false)
   else if (base is TFhirSequence) then
     composeSequence(json, name, TFhirSequence(base), false)
+{$ENDIF FHIR_SEQUENCE}
+{$IFDEF FHIR_SERVICEDEFINITION}
   else if (base is TFhirServiceDefinition) then
     composeServiceDefinition(json, name, TFhirServiceDefinition(base), false)
+{$ENDIF FHIR_SERVICEDEFINITION}
+{$IFDEF FHIR_SLOT}
   else if (base is TFhirSlot) then
     composeSlot(json, name, TFhirSlot(base), false)
+{$ENDIF FHIR_SLOT}
+{$IFDEF FHIR_SPECIMEN}
   else if (base is TFhirSpecimenCollection) then
     composeSpecimenCollection(json, name, TFhirSpecimenCollection(base), false)
   else if (base is TFhirSpecimenProcessing) then
@@ -45759,6 +47374,8 @@ begin
     composeSpecimenContainer(json, name, TFhirSpecimenContainer(base), false)
   else if (base is TFhirSpecimen) then
     composeSpecimen(json, name, TFhirSpecimen(base), false)
+{$ENDIF FHIR_SPECIMEN}
+{$IFDEF FHIR_STRUCTUREDEFINITION}
   else if (base is TFhirStructureDefinitionMapping) then
     composeStructureDefinitionMapping(json, name, TFhirStructureDefinitionMapping(base), false)
   else if (base is TFhirStructureDefinitionSnapshot) then
@@ -45767,6 +47384,8 @@ begin
     composeStructureDefinitionDifferential(json, name, TFhirStructureDefinitionDifferential(base), false)
   else if (base is TFhirStructureDefinition) then
     composeStructureDefinition(json, name, TFhirStructureDefinition(base), false)
+{$ENDIF FHIR_STRUCTUREDEFINITION}
+{$IFDEF FHIR_STRUCTUREMAP}
   else if (base is TFhirStructureMapStructure) then
     composeStructureMapStructure(json, name, TFhirStructureMapStructure(base), false)
   else if (base is TFhirStructureMapGroup) then
@@ -45785,26 +47404,36 @@ begin
     composeStructureMapGroupRuleDependent(json, name, TFhirStructureMapGroupRuleDependent(base), false)
   else if (base is TFhirStructureMap) then
     composeStructureMap(json, name, TFhirStructureMap(base), false)
+{$ENDIF FHIR_STRUCTUREMAP}
+{$IFDEF FHIR_SUBSCRIPTION}
   else if (base is TFhirSubscriptionChannel) then
     composeSubscriptionChannel(json, name, TFhirSubscriptionChannel(base), false)
   else if (base is TFhirSubscription) then
     composeSubscription(json, name, TFhirSubscription(base), false)
+{$ENDIF FHIR_SUBSCRIPTION}
+{$IFDEF FHIR_SUBSTANCE}
   else if (base is TFhirSubstanceInstance) then
     composeSubstanceInstance(json, name, TFhirSubstanceInstance(base), false)
   else if (base is TFhirSubstanceIngredient) then
     composeSubstanceIngredient(json, name, TFhirSubstanceIngredient(base), false)
   else if (base is TFhirSubstance) then
     composeSubstance(json, name, TFhirSubstance(base), false)
+{$ENDIF FHIR_SUBSTANCE}
+{$IFDEF FHIR_SUPPLYDELIVERY}
   else if (base is TFhirSupplyDeliverySuppliedItem) then
     composeSupplyDeliverySuppliedItem(json, name, TFhirSupplyDeliverySuppliedItem(base), false)
   else if (base is TFhirSupplyDelivery) then
     composeSupplyDelivery(json, name, TFhirSupplyDelivery(base), false)
+{$ENDIF FHIR_SUPPLYDELIVERY}
+{$IFDEF FHIR_SUPPLYREQUEST}
   else if (base is TFhirSupplyRequestOrderedItem) then
     composeSupplyRequestOrderedItem(json, name, TFhirSupplyRequestOrderedItem(base), false)
   else if (base is TFhirSupplyRequestRequester) then
     composeSupplyRequestRequester(json, name, TFhirSupplyRequestRequester(base), false)
   else if (base is TFhirSupplyRequest) then
     composeSupplyRequest(json, name, TFhirSupplyRequest(base), false)
+{$ENDIF FHIR_SUPPLYREQUEST}
+{$IFDEF FHIR_TASK}
   else if (base is TFhirTaskRequester) then
     composeTaskRequester(json, name, TFhirTaskRequester(base), false)
   else if (base is TFhirTaskRestriction) then
@@ -45815,6 +47444,8 @@ begin
     composeTaskOutput(json, name, TFhirTaskOutput(base), false)
   else if (base is TFhirTask) then
     composeTask(json, name, TFhirTask(base), false)
+{$ENDIF FHIR_TASK}
+{$IFDEF FHIR_TESTREPORT}
   else if (base is TFhirTestReportParticipant) then
     composeTestReportParticipant(json, name, TFhirTestReportParticipant(base), false)
   else if (base is TFhirTestReportSetup) then
@@ -45835,6 +47466,8 @@ begin
     composeTestReportTeardownAction(json, name, TFhirTestReportTeardownAction(base), false)
   else if (base is TFhirTestReport) then
     composeTestReport(json, name, TFhirTestReport(base), false)
+{$ENDIF FHIR_TESTREPORT}
+{$IFDEF FHIR_TESTSCRIPT}
   else if (base is TFhirTestScriptOrigin) then
     composeTestScriptOrigin(json, name, TFhirTestScriptOrigin(base), false)
   else if (base is TFhirTestScriptDestination) then
@@ -45889,6 +47522,8 @@ begin
     composeTestScriptTeardownAction(json, name, TFhirTestScriptTeardownAction(base), false)
   else if (base is TFhirTestScript) then
     composeTestScript(json, name, TFhirTestScript(base), false)
+{$ENDIF FHIR_TESTSCRIPT}
+{$IFDEF FHIR_VALUESET}
   else if (base is TFhirValueSetCompose) then
     composeValueSetCompose(json, name, TFhirValueSetCompose(base), false)
   else if (base is TFhirValueSetComposeInclude) then
@@ -45907,10 +47542,13 @@ begin
     composeValueSetExpansionContains(json, name, TFhirValueSetExpansionContains(base), false)
   else if (base is TFhirValueSet) then
     composeValueSet(json, name, TFhirValueSet(base), false)
+{$ENDIF FHIR_VALUESET}
+{$IFDEF FHIR_VISIONPRESCRIPTION}
   else if (base is TFhirVisionPrescriptionDispense) then
     composeVisionPrescriptionDispense(json, name, TFhirVisionPrescriptionDispense(base), false)
   else if (base is TFhirVisionPrescription) then
     composeVisionPrescription(json, name, TFhirVisionPrescription(base), false)
+{$ENDIF FHIR_VISIONPRESCRIPTION}
   else
     raise Exception.create('Unknown Type '+base.className);
 end;
@@ -45921,123 +47559,589 @@ begin
     Raise Exception.Create('error - resource is nil');
   json.value('resourceType', CODES_TFhirResourceType[resource.ResourceType]);
   Case resource.ResourceType of
+{$IFDEF FHIR_PARAMETERS}
     frtParameters: ComposeParameters(json, 'Parameters', TFhirParameters(resource));
-    frtAccount: ComposeAccount(json, 'Account', TFhirAccount(resource));
-    frtActivityDefinition: ComposeActivityDefinition(json, 'ActivityDefinition', TFhirActivityDefinition(resource));
-    frtAdverseEvent: ComposeAdverseEvent(json, 'AdverseEvent', TFhirAdverseEvent(resource));
-    frtAllergyIntolerance: ComposeAllergyIntolerance(json, 'AllergyIntolerance', TFhirAllergyIntolerance(resource));
-    frtAppointment: ComposeAppointment(json, 'Appointment', TFhirAppointment(resource));
-    frtAppointmentResponse: ComposeAppointmentResponse(json, 'AppointmentResponse', TFhirAppointmentResponse(resource));
-    frtAuditEvent: ComposeAuditEvent(json, 'AuditEvent', TFhirAuditEvent(resource));
-    frtBasic: ComposeBasic(json, 'Basic', TFhirBasic(resource));
-    frtBinary: ComposeBinary(json, 'Binary', TFhirBinary(resource));
-    frtBodySite: ComposeBodySite(json, 'BodySite', TFhirBodySite(resource));
-    frtBundle: ComposeBundle(json, 'Bundle', TFhirBundle(resource));
-    frtCapabilityStatement: ComposeCapabilityStatement(json, 'CapabilityStatement', TFhirCapabilityStatement(resource));
-    frtCarePlan: ComposeCarePlan(json, 'CarePlan', TFhirCarePlan(resource));
-    frtCareTeam: ComposeCareTeam(json, 'CareTeam', TFhirCareTeam(resource));
-    frtChargeItem: ComposeChargeItem(json, 'ChargeItem', TFhirChargeItem(resource));
-    frtClaim: ComposeClaim(json, 'Claim', TFhirClaim(resource));
-    frtClaimResponse: ComposeClaimResponse(json, 'ClaimResponse', TFhirClaimResponse(resource));
-    frtClinicalImpression: ComposeClinicalImpression(json, 'ClinicalImpression', TFhirClinicalImpression(resource));
-    frtCodeSystem: ComposeCodeSystem(json, 'CodeSystem', TFhirCodeSystem(resource));
-    frtCommunication: ComposeCommunication(json, 'Communication', TFhirCommunication(resource));
-    frtCommunicationRequest: ComposeCommunicationRequest(json, 'CommunicationRequest', TFhirCommunicationRequest(resource));
-    frtCompartmentDefinition: ComposeCompartmentDefinition(json, 'CompartmentDefinition', TFhirCompartmentDefinition(resource));
-    frtComposition: ComposeComposition(json, 'Composition', TFhirComposition(resource));
-    frtConceptMap: ComposeConceptMap(json, 'ConceptMap', TFhirConceptMap(resource));
-    frtCondition: ComposeCondition(json, 'Condition', TFhirCondition(resource));
-    frtConsent: ComposeConsent(json, 'Consent', TFhirConsent(resource));
-    frtContract: ComposeContract(json, 'Contract', TFhirContract(resource));
-    frtCoverage: ComposeCoverage(json, 'Coverage', TFhirCoverage(resource));
-    frtDataElement: ComposeDataElement(json, 'DataElement', TFhirDataElement(resource));
-    frtDetectedIssue: ComposeDetectedIssue(json, 'DetectedIssue', TFhirDetectedIssue(resource));
-    frtDevice: ComposeDevice(json, 'Device', TFhirDevice(resource));
-    frtDeviceComponent: ComposeDeviceComponent(json, 'DeviceComponent', TFhirDeviceComponent(resource));
-    frtDeviceMetric: ComposeDeviceMetric(json, 'DeviceMetric', TFhirDeviceMetric(resource));
-    frtDeviceRequest: ComposeDeviceRequest(json, 'DeviceRequest', TFhirDeviceRequest(resource));
-    frtDeviceUseStatement: ComposeDeviceUseStatement(json, 'DeviceUseStatement', TFhirDeviceUseStatement(resource));
-    frtDiagnosticReport: ComposeDiagnosticReport(json, 'DiagnosticReport', TFhirDiagnosticReport(resource));
-    frtDocumentManifest: ComposeDocumentManifest(json, 'DocumentManifest', TFhirDocumentManifest(resource));
-    frtDocumentReference: ComposeDocumentReference(json, 'DocumentReference', TFhirDocumentReference(resource));
-    frtEligibilityRequest: ComposeEligibilityRequest(json, 'EligibilityRequest', TFhirEligibilityRequest(resource));
-    frtEligibilityResponse: ComposeEligibilityResponse(json, 'EligibilityResponse', TFhirEligibilityResponse(resource));
-    frtEncounter: ComposeEncounter(json, 'Encounter', TFhirEncounter(resource));
-    frtEndpoint: ComposeEndpoint(json, 'Endpoint', TFhirEndpoint(resource));
-    frtEnrollmentRequest: ComposeEnrollmentRequest(json, 'EnrollmentRequest', TFhirEnrollmentRequest(resource));
-    frtEnrollmentResponse: ComposeEnrollmentResponse(json, 'EnrollmentResponse', TFhirEnrollmentResponse(resource));
-    frtEpisodeOfCare: ComposeEpisodeOfCare(json, 'EpisodeOfCare', TFhirEpisodeOfCare(resource));
-    frtExpansionProfile: ComposeExpansionProfile(json, 'ExpansionProfile', TFhirExpansionProfile(resource));
-    frtExplanationOfBenefit: ComposeExplanationOfBenefit(json, 'ExplanationOfBenefit', TFhirExplanationOfBenefit(resource));
-    frtFamilyMemberHistory: ComposeFamilyMemberHistory(json, 'FamilyMemberHistory', TFhirFamilyMemberHistory(resource));
-    frtFlag: ComposeFlag(json, 'Flag', TFhirFlag(resource));
-    frtGoal: ComposeGoal(json, 'Goal', TFhirGoal(resource));
-    frtGraphDefinition: ComposeGraphDefinition(json, 'GraphDefinition', TFhirGraphDefinition(resource));
-    frtGroup: ComposeGroup(json, 'Group', TFhirGroup(resource));
-    frtGuidanceResponse: ComposeGuidanceResponse(json, 'GuidanceResponse', TFhirGuidanceResponse(resource));
-    frtHealthcareService: ComposeHealthcareService(json, 'HealthcareService', TFhirHealthcareService(resource));
-    frtImagingManifest: ComposeImagingManifest(json, 'ImagingManifest', TFhirImagingManifest(resource));
-    frtImagingStudy: ComposeImagingStudy(json, 'ImagingStudy', TFhirImagingStudy(resource));
-    frtImmunization: ComposeImmunization(json, 'Immunization', TFhirImmunization(resource));
-    frtImmunizationRecommendation: ComposeImmunizationRecommendation(json, 'ImmunizationRecommendation', TFhirImmunizationRecommendation(resource));
-    frtImplementationGuide: ComposeImplementationGuide(json, 'ImplementationGuide', TFhirImplementationGuide(resource));
-    frtLibrary: ComposeLibrary(json, 'Library', TFhirLibrary(resource));
-    frtLinkage: ComposeLinkage(json, 'Linkage', TFhirLinkage(resource));
-    frtList: ComposeList(json, 'List', TFhirList(resource));
-    frtLocation: ComposeLocation(json, 'Location', TFhirLocation(resource));
-    frtMeasure: ComposeMeasure(json, 'Measure', TFhirMeasure(resource));
-    frtMeasureReport: ComposeMeasureReport(json, 'MeasureReport', TFhirMeasureReport(resource));
-    frtMedia: ComposeMedia(json, 'Media', TFhirMedia(resource));
-    frtMedication: ComposeMedication(json, 'Medication', TFhirMedication(resource));
-    frtMedicationAdministration: ComposeMedicationAdministration(json, 'MedicationAdministration', TFhirMedicationAdministration(resource));
-    frtMedicationDispense: ComposeMedicationDispense(json, 'MedicationDispense', TFhirMedicationDispense(resource));
-    frtMedicationRequest: ComposeMedicationRequest(json, 'MedicationRequest', TFhirMedicationRequest(resource));
-    frtMedicationStatement: ComposeMedicationStatement(json, 'MedicationStatement', TFhirMedicationStatement(resource));
-    frtMessageDefinition: ComposeMessageDefinition(json, 'MessageDefinition', TFhirMessageDefinition(resource));
-    frtMessageHeader: ComposeMessageHeader(json, 'MessageHeader', TFhirMessageHeader(resource));
-    frtNamingSystem: ComposeNamingSystem(json, 'NamingSystem', TFhirNamingSystem(resource));
-    frtNutritionOrder: ComposeNutritionOrder(json, 'NutritionOrder', TFhirNutritionOrder(resource));
-    frtObservation: ComposeObservation(json, 'Observation', TFhirObservation(resource));
-    frtOperationDefinition: ComposeOperationDefinition(json, 'OperationDefinition', TFhirOperationDefinition(resource));
-    frtOperationOutcome: ComposeOperationOutcome(json, 'OperationOutcome', TFhirOperationOutcome(resource));
-    frtOrganization: ComposeOrganization(json, 'Organization', TFhirOrganization(resource));
-    frtPatient: ComposePatient(json, 'Patient', TFhirPatient(resource));
-    frtPaymentNotice: ComposePaymentNotice(json, 'PaymentNotice', TFhirPaymentNotice(resource));
-    frtPaymentReconciliation: ComposePaymentReconciliation(json, 'PaymentReconciliation', TFhirPaymentReconciliation(resource));
-    frtPerson: ComposePerson(json, 'Person', TFhirPerson(resource));
-    frtPlanDefinition: ComposePlanDefinition(json, 'PlanDefinition', TFhirPlanDefinition(resource));
-    frtPractitioner: ComposePractitioner(json, 'Practitioner', TFhirPractitioner(resource));
-    frtPractitionerRole: ComposePractitionerRole(json, 'PractitionerRole', TFhirPractitionerRole(resource));
-    frtProcedure: ComposeProcedure(json, 'Procedure', TFhirProcedure(resource));
-    frtProcedureRequest: ComposeProcedureRequest(json, 'ProcedureRequest', TFhirProcedureRequest(resource));
-    frtProcessRequest: ComposeProcessRequest(json, 'ProcessRequest', TFhirProcessRequest(resource));
-    frtProcessResponse: ComposeProcessResponse(json, 'ProcessResponse', TFhirProcessResponse(resource));
-    frtProvenance: ComposeProvenance(json, 'Provenance', TFhirProvenance(resource));
-    frtQuestionnaire: ComposeQuestionnaire(json, 'Questionnaire', TFhirQuestionnaire(resource));
-    frtQuestionnaireResponse: ComposeQuestionnaireResponse(json, 'QuestionnaireResponse', TFhirQuestionnaireResponse(resource));
-    frtReferralRequest: ComposeReferralRequest(json, 'ReferralRequest', TFhirReferralRequest(resource));
-    frtRelatedPerson: ComposeRelatedPerson(json, 'RelatedPerson', TFhirRelatedPerson(resource));
-    frtRequestGroup: ComposeRequestGroup(json, 'RequestGroup', TFhirRequestGroup(resource));
-    frtResearchStudy: ComposeResearchStudy(json, 'ResearchStudy', TFhirResearchStudy(resource));
-    frtResearchSubject: ComposeResearchSubject(json, 'ResearchSubject', TFhirResearchSubject(resource));
-    frtRiskAssessment: ComposeRiskAssessment(json, 'RiskAssessment', TFhirRiskAssessment(resource));
-    frtSchedule: ComposeSchedule(json, 'Schedule', TFhirSchedule(resource));
-    frtSearchParameter: ComposeSearchParameter(json, 'SearchParameter', TFhirSearchParameter(resource));
-    frtSequence: ComposeSequence(json, 'Sequence', TFhirSequence(resource));
-    frtServiceDefinition: ComposeServiceDefinition(json, 'ServiceDefinition', TFhirServiceDefinition(resource));
-    frtSlot: ComposeSlot(json, 'Slot', TFhirSlot(resource));
-    frtSpecimen: ComposeSpecimen(json, 'Specimen', TFhirSpecimen(resource));
-    frtStructureDefinition: ComposeStructureDefinition(json, 'StructureDefinition', TFhirStructureDefinition(resource));
-    frtStructureMap: ComposeStructureMap(json, 'StructureMap', TFhirStructureMap(resource));
-    frtSubscription: ComposeSubscription(json, 'Subscription', TFhirSubscription(resource));
-    frtSubstance: ComposeSubstance(json, 'Substance', TFhirSubstance(resource));
-    frtSupplyDelivery: ComposeSupplyDelivery(json, 'SupplyDelivery', TFhirSupplyDelivery(resource));
-    frtSupplyRequest: ComposeSupplyRequest(json, 'SupplyRequest', TFhirSupplyRequest(resource));
-    frtTask: ComposeTask(json, 'Task', TFhirTask(resource));
-    frtTestReport: ComposeTestReport(json, 'TestReport', TFhirTestReport(resource));
-    frtTestScript: ComposeTestScript(json, 'TestScript', TFhirTestScript(resource));
-    frtValueSet: ComposeValueSet(json, 'ValueSet', TFhirValueSet(resource));
-    frtVisionPrescription: ComposeVisionPrescription(json, 'VisionPrescription', TFhirVisionPrescription(resource));
+{$ENDIF FHIR_PARAMETERS}
+{$IFDEF FHIR_ACCOUNT}
+  {$IFDEF FHIR_ACCOUNT}
+     frtAccount: ComposeAccount(json, 'Account', TFhirAccount(resource));
+   {$ENDIF}
+{$ENDIF FHIR_ACCOUNT}
+{$IFDEF FHIR_ACTIVITYDEFINITION}
+  {$IFDEF FHIR_ACTIVITYDEFINITION}
+     frtActivityDefinition: ComposeActivityDefinition(json, 'ActivityDefinition', TFhirActivityDefinition(resource));
+   {$ENDIF}
+{$ENDIF FHIR_ACTIVITYDEFINITION}
+{$IFDEF FHIR_ADVERSEEVENT}
+  {$IFDEF FHIR_ADVERSEEVENT}
+     frtAdverseEvent: ComposeAdverseEvent(json, 'AdverseEvent', TFhirAdverseEvent(resource));
+   {$ENDIF}
+{$ENDIF FHIR_ADVERSEEVENT}
+{$IFDEF FHIR_ALLERGYINTOLERANCE}
+  {$IFDEF FHIR_ALLERGYINTOLERANCE}
+     frtAllergyIntolerance: ComposeAllergyIntolerance(json, 'AllergyIntolerance', TFhirAllergyIntolerance(resource));
+   {$ENDIF}
+{$ENDIF FHIR_ALLERGYINTOLERANCE}
+{$IFDEF FHIR_APPOINTMENT}
+  {$IFDEF FHIR_APPOINTMENT}
+     frtAppointment: ComposeAppointment(json, 'Appointment', TFhirAppointment(resource));
+   {$ENDIF}
+{$ENDIF FHIR_APPOINTMENT}
+{$IFDEF FHIR_APPOINTMENTRESPONSE}
+  {$IFDEF FHIR_APPOINTMENTRESPONSE}
+     frtAppointmentResponse: ComposeAppointmentResponse(json, 'AppointmentResponse', TFhirAppointmentResponse(resource));
+   {$ENDIF}
+{$ENDIF FHIR_APPOINTMENTRESPONSE}
+{$IFDEF FHIR_AUDITEVENT}
+  {$IFDEF FHIR_AUDITEVENT}
+     frtAuditEvent: ComposeAuditEvent(json, 'AuditEvent', TFhirAuditEvent(resource));
+   {$ENDIF}
+{$ENDIF FHIR_AUDITEVENT}
+{$IFDEF FHIR_BASIC}
+  {$IFDEF FHIR_BASIC}
+     frtBasic: ComposeBasic(json, 'Basic', TFhirBasic(resource));
+   {$ENDIF}
+{$ENDIF FHIR_BASIC}
+{$IFDEF FHIR_BINARY}
+  {$IFDEF FHIR_BINARY}
+     frtBinary: ComposeBinary(json, 'Binary', TFhirBinary(resource));
+   {$ENDIF}
+{$ENDIF FHIR_BINARY}
+{$IFDEF FHIR_BODYSITE}
+  {$IFDEF FHIR_BODYSITE}
+     frtBodySite: ComposeBodySite(json, 'BodySite', TFhirBodySite(resource));
+   {$ENDIF}
+{$ENDIF FHIR_BODYSITE}
+{$IFDEF FHIR_BUNDLE}
+  {$IFDEF FHIR_BUNDLE}
+     frtBundle: ComposeBundle(json, 'Bundle', TFhirBundle(resource));
+   {$ENDIF}
+{$ENDIF FHIR_BUNDLE}
+{$IFDEF FHIR_CAPABILITYSTATEMENT}
+  {$IFDEF FHIR_CAPABILITYSTATEMENT}
+     frtCapabilityStatement: ComposeCapabilityStatement(json, 'CapabilityStatement', TFhirCapabilityStatement(resource));
+   {$ENDIF}
+{$ENDIF FHIR_CAPABILITYSTATEMENT}
+{$IFDEF FHIR_CAREPLAN}
+  {$IFDEF FHIR_CAREPLAN}
+     frtCarePlan: ComposeCarePlan(json, 'CarePlan', TFhirCarePlan(resource));
+   {$ENDIF}
+{$ENDIF FHIR_CAREPLAN}
+{$IFDEF FHIR_CARETEAM}
+  {$IFDEF FHIR_CARETEAM}
+     frtCareTeam: ComposeCareTeam(json, 'CareTeam', TFhirCareTeam(resource));
+   {$ENDIF}
+{$ENDIF FHIR_CARETEAM}
+{$IFDEF FHIR_CHARGEITEM}
+  {$IFDEF FHIR_CHARGEITEM}
+     frtChargeItem: ComposeChargeItem(json, 'ChargeItem', TFhirChargeItem(resource));
+   {$ENDIF}
+{$ENDIF FHIR_CHARGEITEM}
+{$IFDEF FHIR_CLAIM}
+  {$IFDEF FHIR_CLAIM}
+     frtClaim: ComposeClaim(json, 'Claim', TFhirClaim(resource));
+   {$ENDIF}
+{$ENDIF FHIR_CLAIM}
+{$IFDEF FHIR_CLAIMRESPONSE}
+  {$IFDEF FHIR_CLAIMRESPONSE}
+     frtClaimResponse: ComposeClaimResponse(json, 'ClaimResponse', TFhirClaimResponse(resource));
+   {$ENDIF}
+{$ENDIF FHIR_CLAIMRESPONSE}
+{$IFDEF FHIR_CLINICALIMPRESSION}
+  {$IFDEF FHIR_CLINICALIMPRESSION}
+     frtClinicalImpression: ComposeClinicalImpression(json, 'ClinicalImpression', TFhirClinicalImpression(resource));
+   {$ENDIF}
+{$ENDIF FHIR_CLINICALIMPRESSION}
+{$IFDEF FHIR_CODESYSTEM}
+  {$IFDEF FHIR_CODESYSTEM}
+     frtCodeSystem: ComposeCodeSystem(json, 'CodeSystem', TFhirCodeSystem(resource));
+   {$ENDIF}
+{$ENDIF FHIR_CODESYSTEM}
+{$IFDEF FHIR_COMMUNICATION}
+  {$IFDEF FHIR_COMMUNICATION}
+     frtCommunication: ComposeCommunication(json, 'Communication', TFhirCommunication(resource));
+   {$ENDIF}
+{$ENDIF FHIR_COMMUNICATION}
+{$IFDEF FHIR_COMMUNICATIONREQUEST}
+  {$IFDEF FHIR_COMMUNICATIONREQUEST}
+     frtCommunicationRequest: ComposeCommunicationRequest(json, 'CommunicationRequest', TFhirCommunicationRequest(resource));
+   {$ENDIF}
+{$ENDIF FHIR_COMMUNICATIONREQUEST}
+{$IFDEF FHIR_COMPARTMENTDEFINITION}
+  {$IFDEF FHIR_COMPARTMENTDEFINITION}
+     frtCompartmentDefinition: ComposeCompartmentDefinition(json, 'CompartmentDefinition', TFhirCompartmentDefinition(resource));
+   {$ENDIF}
+{$ENDIF FHIR_COMPARTMENTDEFINITION}
+{$IFDEF FHIR_COMPOSITION}
+  {$IFDEF FHIR_COMPOSITION}
+     frtComposition: ComposeComposition(json, 'Composition', TFhirComposition(resource));
+   {$ENDIF}
+{$ENDIF FHIR_COMPOSITION}
+{$IFDEF FHIR_CONCEPTMAP}
+  {$IFDEF FHIR_CONCEPTMAP}
+     frtConceptMap: ComposeConceptMap(json, 'ConceptMap', TFhirConceptMap(resource));
+   {$ENDIF}
+{$ENDIF FHIR_CONCEPTMAP}
+{$IFDEF FHIR_CONDITION}
+  {$IFDEF FHIR_CONDITION}
+     frtCondition: ComposeCondition(json, 'Condition', TFhirCondition(resource));
+   {$ENDIF}
+{$ENDIF FHIR_CONDITION}
+{$IFDEF FHIR_CONSENT}
+  {$IFDEF FHIR_CONSENT}
+     frtConsent: ComposeConsent(json, 'Consent', TFhirConsent(resource));
+   {$ENDIF}
+{$ENDIF FHIR_CONSENT}
+{$IFDEF FHIR_CONTRACT}
+  {$IFDEF FHIR_CONTRACT}
+     frtContract: ComposeContract(json, 'Contract', TFhirContract(resource));
+   {$ENDIF}
+{$ENDIF FHIR_CONTRACT}
+{$IFDEF FHIR_COVERAGE}
+  {$IFDEF FHIR_COVERAGE}
+     frtCoverage: ComposeCoverage(json, 'Coverage', TFhirCoverage(resource));
+   {$ENDIF}
+{$ENDIF FHIR_COVERAGE}
+{$IFDEF FHIR_DATAELEMENT}
+  {$IFDEF FHIR_DATAELEMENT}
+     frtDataElement: ComposeDataElement(json, 'DataElement', TFhirDataElement(resource));
+   {$ENDIF}
+{$ENDIF FHIR_DATAELEMENT}
+{$IFDEF FHIR_DETECTEDISSUE}
+  {$IFDEF FHIR_DETECTEDISSUE}
+     frtDetectedIssue: ComposeDetectedIssue(json, 'DetectedIssue', TFhirDetectedIssue(resource));
+   {$ENDIF}
+{$ENDIF FHIR_DETECTEDISSUE}
+{$IFDEF FHIR_DEVICE}
+  {$IFDEF FHIR_DEVICE}
+     frtDevice: ComposeDevice(json, 'Device', TFhirDevice(resource));
+   {$ENDIF}
+{$ENDIF FHIR_DEVICE}
+{$IFDEF FHIR_DEVICECOMPONENT}
+  {$IFDEF FHIR_DEVICECOMPONENT}
+     frtDeviceComponent: ComposeDeviceComponent(json, 'DeviceComponent', TFhirDeviceComponent(resource));
+   {$ENDIF}
+{$ENDIF FHIR_DEVICECOMPONENT}
+{$IFDEF FHIR_DEVICEMETRIC}
+  {$IFDEF FHIR_DEVICEMETRIC}
+     frtDeviceMetric: ComposeDeviceMetric(json, 'DeviceMetric', TFhirDeviceMetric(resource));
+   {$ENDIF}
+{$ENDIF FHIR_DEVICEMETRIC}
+{$IFDEF FHIR_DEVICEREQUEST}
+  {$IFDEF FHIR_DEVICEREQUEST}
+     frtDeviceRequest: ComposeDeviceRequest(json, 'DeviceRequest', TFhirDeviceRequest(resource));
+   {$ENDIF}
+{$ENDIF FHIR_DEVICEREQUEST}
+{$IFDEF FHIR_DEVICEUSESTATEMENT}
+  {$IFDEF FHIR_DEVICEUSESTATEMENT}
+     frtDeviceUseStatement: ComposeDeviceUseStatement(json, 'DeviceUseStatement', TFhirDeviceUseStatement(resource));
+   {$ENDIF}
+{$ENDIF FHIR_DEVICEUSESTATEMENT}
+{$IFDEF FHIR_DIAGNOSTICREPORT}
+  {$IFDEF FHIR_DIAGNOSTICREPORT}
+     frtDiagnosticReport: ComposeDiagnosticReport(json, 'DiagnosticReport', TFhirDiagnosticReport(resource));
+   {$ENDIF}
+{$ENDIF FHIR_DIAGNOSTICREPORT}
+{$IFDEF FHIR_DOCUMENTMANIFEST}
+  {$IFDEF FHIR_DOCUMENTMANIFEST}
+     frtDocumentManifest: ComposeDocumentManifest(json, 'DocumentManifest', TFhirDocumentManifest(resource));
+   {$ENDIF}
+{$ENDIF FHIR_DOCUMENTMANIFEST}
+{$IFDEF FHIR_DOCUMENTREFERENCE}
+  {$IFDEF FHIR_DOCUMENTREFERENCE}
+     frtDocumentReference: ComposeDocumentReference(json, 'DocumentReference', TFhirDocumentReference(resource));
+   {$ENDIF}
+{$ENDIF FHIR_DOCUMENTREFERENCE}
+{$IFDEF FHIR_ELIGIBILITYREQUEST}
+  {$IFDEF FHIR_ELIGIBILITYREQUEST}
+     frtEligibilityRequest: ComposeEligibilityRequest(json, 'EligibilityRequest', TFhirEligibilityRequest(resource));
+   {$ENDIF}
+{$ENDIF FHIR_ELIGIBILITYREQUEST}
+{$IFDEF FHIR_ELIGIBILITYRESPONSE}
+  {$IFDEF FHIR_ELIGIBILITYRESPONSE}
+     frtEligibilityResponse: ComposeEligibilityResponse(json, 'EligibilityResponse', TFhirEligibilityResponse(resource));
+   {$ENDIF}
+{$ENDIF FHIR_ELIGIBILITYRESPONSE}
+{$IFDEF FHIR_ENCOUNTER}
+  {$IFDEF FHIR_ENCOUNTER}
+     frtEncounter: ComposeEncounter(json, 'Encounter', TFhirEncounter(resource));
+   {$ENDIF}
+{$ENDIF FHIR_ENCOUNTER}
+{$IFDEF FHIR_ENDPOINT}
+  {$IFDEF FHIR_ENDPOINT}
+     frtEndpoint: ComposeEndpoint(json, 'Endpoint', TFhirEndpoint(resource));
+   {$ENDIF}
+{$ENDIF FHIR_ENDPOINT}
+{$IFDEF FHIR_ENROLLMENTREQUEST}
+  {$IFDEF FHIR_ENROLLMENTREQUEST}
+     frtEnrollmentRequest: ComposeEnrollmentRequest(json, 'EnrollmentRequest', TFhirEnrollmentRequest(resource));
+   {$ENDIF}
+{$ENDIF FHIR_ENROLLMENTREQUEST}
+{$IFDEF FHIR_ENROLLMENTRESPONSE}
+  {$IFDEF FHIR_ENROLLMENTRESPONSE}
+     frtEnrollmentResponse: ComposeEnrollmentResponse(json, 'EnrollmentResponse', TFhirEnrollmentResponse(resource));
+   {$ENDIF}
+{$ENDIF FHIR_ENROLLMENTRESPONSE}
+{$IFDEF FHIR_EPISODEOFCARE}
+  {$IFDEF FHIR_EPISODEOFCARE}
+     frtEpisodeOfCare: ComposeEpisodeOfCare(json, 'EpisodeOfCare', TFhirEpisodeOfCare(resource));
+   {$ENDIF}
+{$ENDIF FHIR_EPISODEOFCARE}
+{$IFDEF FHIR_EXPANSIONPROFILE}
+  {$IFDEF FHIR_EXPANSIONPROFILE}
+     frtExpansionProfile: ComposeExpansionProfile(json, 'ExpansionProfile', TFhirExpansionProfile(resource));
+   {$ENDIF}
+{$ENDIF FHIR_EXPANSIONPROFILE}
+{$IFDEF FHIR_EXPLANATIONOFBENEFIT}
+  {$IFDEF FHIR_EXPLANATIONOFBENEFIT}
+     frtExplanationOfBenefit: ComposeExplanationOfBenefit(json, 'ExplanationOfBenefit', TFhirExplanationOfBenefit(resource));
+   {$ENDIF}
+{$ENDIF FHIR_EXPLANATIONOFBENEFIT}
+{$IFDEF FHIR_FAMILYMEMBERHISTORY}
+  {$IFDEF FHIR_FAMILYMEMBERHISTORY}
+     frtFamilyMemberHistory: ComposeFamilyMemberHistory(json, 'FamilyMemberHistory', TFhirFamilyMemberHistory(resource));
+   {$ENDIF}
+{$ENDIF FHIR_FAMILYMEMBERHISTORY}
+{$IFDEF FHIR_FLAG}
+  {$IFDEF FHIR_FLAG}
+     frtFlag: ComposeFlag(json, 'Flag', TFhirFlag(resource));
+   {$ENDIF}
+{$ENDIF FHIR_FLAG}
+{$IFDEF FHIR_GOAL}
+  {$IFDEF FHIR_GOAL}
+     frtGoal: ComposeGoal(json, 'Goal', TFhirGoal(resource));
+   {$ENDIF}
+{$ENDIF FHIR_GOAL}
+{$IFDEF FHIR_GRAPHDEFINITION}
+  {$IFDEF FHIR_GRAPHDEFINITION}
+     frtGraphDefinition: ComposeGraphDefinition(json, 'GraphDefinition', TFhirGraphDefinition(resource));
+   {$ENDIF}
+{$ENDIF FHIR_GRAPHDEFINITION}
+{$IFDEF FHIR_GROUP}
+  {$IFDEF FHIR_GROUP}
+     frtGroup: ComposeGroup(json, 'Group', TFhirGroup(resource));
+   {$ENDIF}
+{$ENDIF FHIR_GROUP}
+{$IFDEF FHIR_GUIDANCERESPONSE}
+  {$IFDEF FHIR_GUIDANCERESPONSE}
+     frtGuidanceResponse: ComposeGuidanceResponse(json, 'GuidanceResponse', TFhirGuidanceResponse(resource));
+   {$ENDIF}
+{$ENDIF FHIR_GUIDANCERESPONSE}
+{$IFDEF FHIR_HEALTHCARESERVICE}
+  {$IFDEF FHIR_HEALTHCARESERVICE}
+     frtHealthcareService: ComposeHealthcareService(json, 'HealthcareService', TFhirHealthcareService(resource));
+   {$ENDIF}
+{$ENDIF FHIR_HEALTHCARESERVICE}
+{$IFDEF FHIR_IMAGINGMANIFEST}
+  {$IFDEF FHIR_IMAGINGMANIFEST}
+     frtImagingManifest: ComposeImagingManifest(json, 'ImagingManifest', TFhirImagingManifest(resource));
+   {$ENDIF}
+{$ENDIF FHIR_IMAGINGMANIFEST}
+{$IFDEF FHIR_IMAGINGSTUDY}
+  {$IFDEF FHIR_IMAGINGSTUDY}
+     frtImagingStudy: ComposeImagingStudy(json, 'ImagingStudy', TFhirImagingStudy(resource));
+   {$ENDIF}
+{$ENDIF FHIR_IMAGINGSTUDY}
+{$IFDEF FHIR_IMMUNIZATION}
+  {$IFDEF FHIR_IMMUNIZATION}
+     frtImmunization: ComposeImmunization(json, 'Immunization', TFhirImmunization(resource));
+   {$ENDIF}
+{$ENDIF FHIR_IMMUNIZATION}
+{$IFDEF FHIR_IMMUNIZATIONRECOMMENDATION}
+  {$IFDEF FHIR_IMMUNIZATIONRECOMMENDATION}
+     frtImmunizationRecommendation: ComposeImmunizationRecommendation(json, 'ImmunizationRecommendation', TFhirImmunizationRecommendation(resource));
+   {$ENDIF}
+{$ENDIF FHIR_IMMUNIZATIONRECOMMENDATION}
+{$IFDEF FHIR_IMPLEMENTATIONGUIDE}
+  {$IFDEF FHIR_IMPLEMENTATIONGUIDE}
+     frtImplementationGuide: ComposeImplementationGuide(json, 'ImplementationGuide', TFhirImplementationGuide(resource));
+   {$ENDIF}
+{$ENDIF FHIR_IMPLEMENTATIONGUIDE}
+{$IFDEF FHIR_LIBRARY}
+  {$IFDEF FHIR_LIBRARY}
+     frtLibrary: ComposeLibrary(json, 'Library', TFhirLibrary(resource));
+   {$ENDIF}
+{$ENDIF FHIR_LIBRARY}
+{$IFDEF FHIR_LINKAGE}
+  {$IFDEF FHIR_LINKAGE}
+     frtLinkage: ComposeLinkage(json, 'Linkage', TFhirLinkage(resource));
+   {$ENDIF}
+{$ENDIF FHIR_LINKAGE}
+{$IFDEF FHIR_LIST}
+  {$IFDEF FHIR_LIST}
+     frtList: ComposeList(json, 'List', TFhirList(resource));
+   {$ENDIF}
+{$ENDIF FHIR_LIST}
+{$IFDEF FHIR_LOCATION}
+  {$IFDEF FHIR_LOCATION}
+     frtLocation: ComposeLocation(json, 'Location', TFhirLocation(resource));
+   {$ENDIF}
+{$ENDIF FHIR_LOCATION}
+{$IFDEF FHIR_MEASURE}
+  {$IFDEF FHIR_MEASURE}
+     frtMeasure: ComposeMeasure(json, 'Measure', TFhirMeasure(resource));
+   {$ENDIF}
+{$ENDIF FHIR_MEASURE}
+{$IFDEF FHIR_MEASUREREPORT}
+  {$IFDEF FHIR_MEASUREREPORT}
+     frtMeasureReport: ComposeMeasureReport(json, 'MeasureReport', TFhirMeasureReport(resource));
+   {$ENDIF}
+{$ENDIF FHIR_MEASUREREPORT}
+{$IFDEF FHIR_MEDIA}
+  {$IFDEF FHIR_MEDIA}
+     frtMedia: ComposeMedia(json, 'Media', TFhirMedia(resource));
+   {$ENDIF}
+{$ENDIF FHIR_MEDIA}
+{$IFDEF FHIR_MEDICATION}
+  {$IFDEF FHIR_MEDICATION}
+     frtMedication: ComposeMedication(json, 'Medication', TFhirMedication(resource));
+   {$ENDIF}
+{$ENDIF FHIR_MEDICATION}
+{$IFDEF FHIR_MEDICATIONADMINISTRATION}
+  {$IFDEF FHIR_MEDICATIONADMINISTRATION}
+     frtMedicationAdministration: ComposeMedicationAdministration(json, 'MedicationAdministration', TFhirMedicationAdministration(resource));
+   {$ENDIF}
+{$ENDIF FHIR_MEDICATIONADMINISTRATION}
+{$IFDEF FHIR_MEDICATIONDISPENSE}
+  {$IFDEF FHIR_MEDICATIONDISPENSE}
+     frtMedicationDispense: ComposeMedicationDispense(json, 'MedicationDispense', TFhirMedicationDispense(resource));
+   {$ENDIF}
+{$ENDIF FHIR_MEDICATIONDISPENSE}
+{$IFDEF FHIR_MEDICATIONREQUEST}
+  {$IFDEF FHIR_MEDICATIONREQUEST}
+     frtMedicationRequest: ComposeMedicationRequest(json, 'MedicationRequest', TFhirMedicationRequest(resource));
+   {$ENDIF}
+{$ENDIF FHIR_MEDICATIONREQUEST}
+{$IFDEF FHIR_MEDICATIONSTATEMENT}
+  {$IFDEF FHIR_MEDICATIONSTATEMENT}
+     frtMedicationStatement: ComposeMedicationStatement(json, 'MedicationStatement', TFhirMedicationStatement(resource));
+   {$ENDIF}
+{$ENDIF FHIR_MEDICATIONSTATEMENT}
+{$IFDEF FHIR_MESSAGEDEFINITION}
+  {$IFDEF FHIR_MESSAGEDEFINITION}
+     frtMessageDefinition: ComposeMessageDefinition(json, 'MessageDefinition', TFhirMessageDefinition(resource));
+   {$ENDIF}
+{$ENDIF FHIR_MESSAGEDEFINITION}
+{$IFDEF FHIR_MESSAGEHEADER}
+  {$IFDEF FHIR_MESSAGEHEADER}
+     frtMessageHeader: ComposeMessageHeader(json, 'MessageHeader', TFhirMessageHeader(resource));
+   {$ENDIF}
+{$ENDIF FHIR_MESSAGEHEADER}
+{$IFDEF FHIR_NAMINGSYSTEM}
+  {$IFDEF FHIR_NAMINGSYSTEM}
+     frtNamingSystem: ComposeNamingSystem(json, 'NamingSystem', TFhirNamingSystem(resource));
+   {$ENDIF}
+{$ENDIF FHIR_NAMINGSYSTEM}
+{$IFDEF FHIR_NUTRITIONORDER}
+  {$IFDEF FHIR_NUTRITIONORDER}
+     frtNutritionOrder: ComposeNutritionOrder(json, 'NutritionOrder', TFhirNutritionOrder(resource));
+   {$ENDIF}
+{$ENDIF FHIR_NUTRITIONORDER}
+{$IFDEF FHIR_OBSERVATION}
+  {$IFDEF FHIR_OBSERVATION}
+     frtObservation: ComposeObservation(json, 'Observation', TFhirObservation(resource));
+   {$ENDIF}
+{$ENDIF FHIR_OBSERVATION}
+{$IFDEF FHIR_OPERATIONDEFINITION}
+  {$IFDEF FHIR_OPERATIONDEFINITION}
+     frtOperationDefinition: ComposeOperationDefinition(json, 'OperationDefinition', TFhirOperationDefinition(resource));
+   {$ENDIF}
+{$ENDIF FHIR_OPERATIONDEFINITION}
+{$IFDEF FHIR_OPERATIONOUTCOME}
+  {$IFDEF FHIR_OPERATIONOUTCOME}
+     frtOperationOutcome: ComposeOperationOutcome(json, 'OperationOutcome', TFhirOperationOutcome(resource));
+   {$ENDIF}
+{$ENDIF FHIR_OPERATIONOUTCOME}
+{$IFDEF FHIR_ORGANIZATION}
+  {$IFDEF FHIR_ORGANIZATION}
+     frtOrganization: ComposeOrganization(json, 'Organization', TFhirOrganization(resource));
+   {$ENDIF}
+{$ENDIF FHIR_ORGANIZATION}
+{$IFDEF FHIR_PATIENT}
+  {$IFDEF FHIR_PATIENT}
+     frtPatient: ComposePatient(json, 'Patient', TFhirPatient(resource));
+   {$ENDIF}
+{$ENDIF FHIR_PATIENT}
+{$IFDEF FHIR_PAYMENTNOTICE}
+  {$IFDEF FHIR_PAYMENTNOTICE}
+     frtPaymentNotice: ComposePaymentNotice(json, 'PaymentNotice', TFhirPaymentNotice(resource));
+   {$ENDIF}
+{$ENDIF FHIR_PAYMENTNOTICE}
+{$IFDEF FHIR_PAYMENTRECONCILIATION}
+  {$IFDEF FHIR_PAYMENTRECONCILIATION}
+     frtPaymentReconciliation: ComposePaymentReconciliation(json, 'PaymentReconciliation', TFhirPaymentReconciliation(resource));
+   {$ENDIF}
+{$ENDIF FHIR_PAYMENTRECONCILIATION}
+{$IFDEF FHIR_PERSON}
+  {$IFDEF FHIR_PERSON}
+     frtPerson: ComposePerson(json, 'Person', TFhirPerson(resource));
+   {$ENDIF}
+{$ENDIF FHIR_PERSON}
+{$IFDEF FHIR_PLANDEFINITION}
+  {$IFDEF FHIR_PLANDEFINITION}
+     frtPlanDefinition: ComposePlanDefinition(json, 'PlanDefinition', TFhirPlanDefinition(resource));
+   {$ENDIF}
+{$ENDIF FHIR_PLANDEFINITION}
+{$IFDEF FHIR_PRACTITIONER}
+  {$IFDEF FHIR_PRACTITIONER}
+     frtPractitioner: ComposePractitioner(json, 'Practitioner', TFhirPractitioner(resource));
+   {$ENDIF}
+{$ENDIF FHIR_PRACTITIONER}
+{$IFDEF FHIR_PRACTITIONERROLE}
+  {$IFDEF FHIR_PRACTITIONERROLE}
+     frtPractitionerRole: ComposePractitionerRole(json, 'PractitionerRole', TFhirPractitionerRole(resource));
+   {$ENDIF}
+{$ENDIF FHIR_PRACTITIONERROLE}
+{$IFDEF FHIR_PROCEDURE}
+  {$IFDEF FHIR_PROCEDURE}
+     frtProcedure: ComposeProcedure(json, 'Procedure', TFhirProcedure(resource));
+   {$ENDIF}
+{$ENDIF FHIR_PROCEDURE}
+{$IFDEF FHIR_PROCEDUREREQUEST}
+  {$IFDEF FHIR_PROCEDUREREQUEST}
+     frtProcedureRequest: ComposeProcedureRequest(json, 'ProcedureRequest', TFhirProcedureRequest(resource));
+   {$ENDIF}
+{$ENDIF FHIR_PROCEDUREREQUEST}
+{$IFDEF FHIR_PROCESSREQUEST}
+  {$IFDEF FHIR_PROCESSREQUEST}
+     frtProcessRequest: ComposeProcessRequest(json, 'ProcessRequest', TFhirProcessRequest(resource));
+   {$ENDIF}
+{$ENDIF FHIR_PROCESSREQUEST}
+{$IFDEF FHIR_PROCESSRESPONSE}
+  {$IFDEF FHIR_PROCESSRESPONSE}
+     frtProcessResponse: ComposeProcessResponse(json, 'ProcessResponse', TFhirProcessResponse(resource));
+   {$ENDIF}
+{$ENDIF FHIR_PROCESSRESPONSE}
+{$IFDEF FHIR_PROVENANCE}
+  {$IFDEF FHIR_PROVENANCE}
+     frtProvenance: ComposeProvenance(json, 'Provenance', TFhirProvenance(resource));
+   {$ENDIF}
+{$ENDIF FHIR_PROVENANCE}
+{$IFDEF FHIR_QUESTIONNAIRE}
+  {$IFDEF FHIR_QUESTIONNAIRE}
+     frtQuestionnaire: ComposeQuestionnaire(json, 'Questionnaire', TFhirQuestionnaire(resource));
+   {$ENDIF}
+{$ENDIF FHIR_QUESTIONNAIRE}
+{$IFDEF FHIR_QUESTIONNAIRERESPONSE}
+  {$IFDEF FHIR_QUESTIONNAIRERESPONSE}
+     frtQuestionnaireResponse: ComposeQuestionnaireResponse(json, 'QuestionnaireResponse', TFhirQuestionnaireResponse(resource));
+   {$ENDIF}
+{$ENDIF FHIR_QUESTIONNAIRERESPONSE}
+{$IFDEF FHIR_REFERRALREQUEST}
+  {$IFDEF FHIR_REFERRALREQUEST}
+     frtReferralRequest: ComposeReferralRequest(json, 'ReferralRequest', TFhirReferralRequest(resource));
+   {$ENDIF}
+{$ENDIF FHIR_REFERRALREQUEST}
+{$IFDEF FHIR_RELATEDPERSON}
+  {$IFDEF FHIR_RELATEDPERSON}
+     frtRelatedPerson: ComposeRelatedPerson(json, 'RelatedPerson', TFhirRelatedPerson(resource));
+   {$ENDIF}
+{$ENDIF FHIR_RELATEDPERSON}
+{$IFDEF FHIR_REQUESTGROUP}
+  {$IFDEF FHIR_REQUESTGROUP}
+     frtRequestGroup: ComposeRequestGroup(json, 'RequestGroup', TFhirRequestGroup(resource));
+   {$ENDIF}
+{$ENDIF FHIR_REQUESTGROUP}
+{$IFDEF FHIR_RESEARCHSTUDY}
+  {$IFDEF FHIR_RESEARCHSTUDY}
+     frtResearchStudy: ComposeResearchStudy(json, 'ResearchStudy', TFhirResearchStudy(resource));
+   {$ENDIF}
+{$ENDIF FHIR_RESEARCHSTUDY}
+{$IFDEF FHIR_RESEARCHSUBJECT}
+  {$IFDEF FHIR_RESEARCHSUBJECT}
+     frtResearchSubject: ComposeResearchSubject(json, 'ResearchSubject', TFhirResearchSubject(resource));
+   {$ENDIF}
+{$ENDIF FHIR_RESEARCHSUBJECT}
+{$IFDEF FHIR_RISKASSESSMENT}
+  {$IFDEF FHIR_RISKASSESSMENT}
+     frtRiskAssessment: ComposeRiskAssessment(json, 'RiskAssessment', TFhirRiskAssessment(resource));
+   {$ENDIF}
+{$ENDIF FHIR_RISKASSESSMENT}
+{$IFDEF FHIR_SCHEDULE}
+  {$IFDEF FHIR_SCHEDULE}
+     frtSchedule: ComposeSchedule(json, 'Schedule', TFhirSchedule(resource));
+   {$ENDIF}
+{$ENDIF FHIR_SCHEDULE}
+{$IFDEF FHIR_SEARCHPARAMETER}
+  {$IFDEF FHIR_SEARCHPARAMETER}
+     frtSearchParameter: ComposeSearchParameter(json, 'SearchParameter', TFhirSearchParameter(resource));
+   {$ENDIF}
+{$ENDIF FHIR_SEARCHPARAMETER}
+{$IFDEF FHIR_SEQUENCE}
+  {$IFDEF FHIR_SEQUENCE}
+     frtSequence: ComposeSequence(json, 'Sequence', TFhirSequence(resource));
+   {$ENDIF}
+{$ENDIF FHIR_SEQUENCE}
+{$IFDEF FHIR_SERVICEDEFINITION}
+  {$IFDEF FHIR_SERVICEDEFINITION}
+     frtServiceDefinition: ComposeServiceDefinition(json, 'ServiceDefinition', TFhirServiceDefinition(resource));
+   {$ENDIF}
+{$ENDIF FHIR_SERVICEDEFINITION}
+{$IFDEF FHIR_SLOT}
+  {$IFDEF FHIR_SLOT}
+     frtSlot: ComposeSlot(json, 'Slot', TFhirSlot(resource));
+   {$ENDIF}
+{$ENDIF FHIR_SLOT}
+{$IFDEF FHIR_SPECIMEN}
+  {$IFDEF FHIR_SPECIMEN}
+     frtSpecimen: ComposeSpecimen(json, 'Specimen', TFhirSpecimen(resource));
+   {$ENDIF}
+{$ENDIF FHIR_SPECIMEN}
+{$IFDEF FHIR_STRUCTUREDEFINITION}
+  {$IFDEF FHIR_STRUCTUREDEFINITION}
+     frtStructureDefinition: ComposeStructureDefinition(json, 'StructureDefinition', TFhirStructureDefinition(resource));
+   {$ENDIF}
+{$ENDIF FHIR_STRUCTUREDEFINITION}
+{$IFDEF FHIR_STRUCTUREMAP}
+  {$IFDEF FHIR_STRUCTUREMAP}
+     frtStructureMap: ComposeStructureMap(json, 'StructureMap', TFhirStructureMap(resource));
+   {$ENDIF}
+{$ENDIF FHIR_STRUCTUREMAP}
+{$IFDEF FHIR_SUBSCRIPTION}
+  {$IFDEF FHIR_SUBSCRIPTION}
+     frtSubscription: ComposeSubscription(json, 'Subscription', TFhirSubscription(resource));
+   {$ENDIF}
+{$ENDIF FHIR_SUBSCRIPTION}
+{$IFDEF FHIR_SUBSTANCE}
+  {$IFDEF FHIR_SUBSTANCE}
+     frtSubstance: ComposeSubstance(json, 'Substance', TFhirSubstance(resource));
+   {$ENDIF}
+{$ENDIF FHIR_SUBSTANCE}
+{$IFDEF FHIR_SUPPLYDELIVERY}
+  {$IFDEF FHIR_SUPPLYDELIVERY}
+     frtSupplyDelivery: ComposeSupplyDelivery(json, 'SupplyDelivery', TFhirSupplyDelivery(resource));
+   {$ENDIF}
+{$ENDIF FHIR_SUPPLYDELIVERY}
+{$IFDEF FHIR_SUPPLYREQUEST}
+  {$IFDEF FHIR_SUPPLYREQUEST}
+     frtSupplyRequest: ComposeSupplyRequest(json, 'SupplyRequest', TFhirSupplyRequest(resource));
+   {$ENDIF}
+{$ENDIF FHIR_SUPPLYREQUEST}
+{$IFDEF FHIR_TASK}
+  {$IFDEF FHIR_TASK}
+     frtTask: ComposeTask(json, 'Task', TFhirTask(resource));
+   {$ENDIF}
+{$ENDIF FHIR_TASK}
+{$IFDEF FHIR_TESTREPORT}
+  {$IFDEF FHIR_TESTREPORT}
+     frtTestReport: ComposeTestReport(json, 'TestReport', TFhirTestReport(resource));
+   {$ENDIF}
+{$ENDIF FHIR_TESTREPORT}
+{$IFDEF FHIR_TESTSCRIPT}
+  {$IFDEF FHIR_TESTSCRIPT}
+     frtTestScript: ComposeTestScript(json, 'TestScript', TFhirTestScript(resource));
+   {$ENDIF}
+{$ENDIF FHIR_TESTSCRIPT}
+{$IFDEF FHIR_VALUESET}
+  {$IFDEF FHIR_VALUESET}
+     frtValueSet: ComposeValueSet(json, 'ValueSet', TFhirValueSet(resource));
+   {$ENDIF}
+{$ENDIF FHIR_VALUESET}
+{$IFDEF FHIR_VISIONPRESCRIPTION}
+  {$IFDEF FHIR_VISIONPRESCRIPTION}
+     frtVisionPrescription: ComposeVisionPrescription(json, 'VisionPrescription', TFhirVisionPrescription(resource));
+   {$ENDIF}
+{$ENDIF FHIR_VISIONPRESCRIPTION}
   else
     raise Exception.create('Internal error: the resource type '+CODES_TFhirResourceType[resource.ResourceType]+' is not a valid resource type');
   end;

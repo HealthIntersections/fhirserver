@@ -20,6 +20,7 @@ import org.hl7.fhir.dstu3.model.OperationDefinition;
 import org.hl7.fhir.dstu3.model.OperationDefinition.OperationDefinitionParameterComponent;
 import org.hl7.fhir.dstu3.model.OperationDefinition.OperationParameterUse;
 import org.hl7.fhir.dstu3.model.StructureDefinition;
+import org.hl7.fhir.utilities.TextFile;
 import org.hl7.fhir.utilities.Utilities;
 
 /**
@@ -118,6 +119,7 @@ public class DelphiGenerator {
   public void generate(Definitions definitions, String version, DateTimeType dateTimeType, int dstuID)  throws Exception {
     simpleTypes.put("TFhirId", "String");
     this.pubVersion = Integer.toString(dstuID);
+    StringBuilder include = new StringBuilder();
 
     start(destDir, version, dateTimeType, dstuID);
     initParser(version, dateTimeType);
@@ -149,6 +151,10 @@ public class DelphiGenerator {
         ResourceDefn n = definitions.getBaseResources().get(s);
         if (!done.contains(n.getName())) {
           if (Utilities.noString(n.getRoot().typeCode()) || done.contains(n.getRoot().typeCode())) { 
+            if (!n.isAbstract()) { 
+              include.append("{$DEFINE FHIR_"+s.toUpperCase()+"}\r\n");
+              ifdef(s.toUpperCase());
+            }
             generate(n.getRoot(), Utilities.noString(n.getRoot().typeCode()) ? "TFHIRObject" : "TFhir"+n.getRoot().typeCode(), true, n.isAbstract() ? ClassCategory.AbstractResource : ClassCategory.Resource, n.isAbstract(), n.isSpecial());
             if (!n.isAbstract()) {
               prsrRegX.append("  else if element.localName = '"+n.getName()+"' Then\r\n    result := Parse"+n.getName()+"(element, path+'/"+n.getName()+"')\r\n");
@@ -157,6 +163,7 @@ public class DelphiGenerator {
               srlsRegJ.append("    frt"+n.getName()+": Compose"+n.getName()+"(json, '"+n.getName()+"', TFhir"+n.getName()+"(resource));\r\n");
               srlsRegR.append("    frt"+n.getName()+": Compose"+n.getName()+"(this, '%%%%', '"+n.getName()+"', TFhir"+n.getName()+"(resource), true, -1);\r\n");
               prsrRegT.append("  else if s = '"+n.getName()+"' Then\r\n    result := Parse"+n.getName()+"(obj)\r\n");
+              endif(s.toUpperCase());
             }
             done.add(n.getName());
           } else
@@ -203,16 +210,19 @@ public class DelphiGenerator {
 
     parserGap();
     for (String s : definitions.sortedResourceNames()) {
+      include.append("{$DEFINE FHIR_"+s.toUpperCase()+"}\r\n");
+      ifdef(s.toUpperCase());
       ResourceDefn n = definitions.getResources().get(s);
       generate(n.getRoot(), "TFhir"+n.getRoot().typeCode(), true, ClassCategory.Resource, false, false);
       generateSearchEnums(n);
       generateIndexInformation(n);
-      prsrRegX.append("  else if element.localName = '"+n.getName()+"' Then\r\n    result := Parse"+n.getName()+"(element, path+'/"+n.getName()+"')\r\n");
-      srlsRegX.append("    frt"+n.getName()+": Compose"+n.getName()+"(xml, '"+n.getName()+"', TFhir"+n.getName()+"(resource));\r\n");
-      prsrRegJ.append("  else if s = '"+n.getName()+"' Then\r\n    result := Parse"+n.getName()+"(jsn)\r\n");
-      srlsRegJ.append("    frt"+n.getName()+": Compose"+n.getName()+"(json, '"+n.getName()+"', TFhir"+n.getName()+"(resource));\r\n");
-      srlsRegR.append("    frt"+n.getName()+": Compose"+n.getName()+"(this, '%%%%', '"+n.getName()+"', TFhir"+n.getName()+"(resource), true, -1);\r\n");
-      prsrRegT.append("  else if s = '"+n.getName()+"' Then\r\n    result := Parse"+n.getName()+"(obj)\r\n");
+      prsrRegX.append("  {$IFDEF FHIR_"+s.toUpperCase()+"}\r\n   else if element.localName = '"+n.getName()+"' Then\r\n    result := Parse"+n.getName()+"(element, path+'/"+n.getName()+"') \r\n  {$ENDIF}\r\n");
+      srlsRegX.append("  {$IFDEF FHIR_"+s.toUpperCase()+"}\r\n     frt"+n.getName()+": Compose"+n.getName()+"(xml, '"+n.getName()+"', TFhir"+n.getName()+"(resource)); \r\n  {$ENDIF}\r\n");
+      prsrRegJ.append("  {$IFDEF FHIR_"+s.toUpperCase()+"}\r\n   else if s = '"+n.getName()+"' Then\r\n    result := Parse"+n.getName()+"(jsn) \r\n  {$ENDIF}\r\n");
+      srlsRegJ.append("  {$IFDEF FHIR_"+s.toUpperCase()+"}\r\n     frt"+n.getName()+": Compose"+n.getName()+"(json, '"+n.getName()+"', TFhir"+n.getName()+"(resource));\r\n   {$ENDIF}\r\n");
+      srlsRegR.append("  {$IFDEF FHIR_"+s.toUpperCase()+"}\r\n     frt"+n.getName()+": Compose"+n.getName()+"(this, '%%%%', '"+n.getName()+"', TFhir"+n.getName()+"(resource), true, -1); \r\n  {$ENDIF}\r\n");
+      prsrRegT.append("  {$IFDEF FHIR_"+s.toUpperCase()+"}\r\n   else if s = '"+n.getName()+"' Then\r\n    result := Parse"+n.getName()+"(obj) \r\n  {$ENDIF}\r\n");
+      endif(s.toUpperCase());
     }
 
     opStart();
@@ -221,6 +231,8 @@ public class DelphiGenerator {
 
     finishIndexer();
 
+    TextFile.stringToFile(include.toString(), Utilities.path(destDir, "fhir.inc"));
+    
     defCodeConstGen.enumConsts.add("  FHIR_GENERATED_VERSION = '"+version+"';\r\n");
     defCodeConstGen.enumConsts.add("  FHIR_GENERATED_PUBLICATION = '"+pubVersion+"';\r\n");
     defCodeConstGen.enumConsts.add("  FHIR_GENERATED_DATE = '"+dateTimeType.asStringValue()+"';\r\n");
@@ -246,6 +258,65 @@ public class DelphiGenerator {
     prsrCodeT.classDefs.add(buildParserTurtle());
     prsrCodeT.classImpls.add(prsrImplT.toString());
     prsrCodeT.finish();
+  }
+
+  private void ifdef(String n) {
+    defCodeRes.ifdef(n);
+    prsrRegX.append("{$IFDEF FHIR_"+n+"}\r\n");
+    srlsRegX.append("{$IFDEF FHIR_"+n+"}\r\n");
+    prsrRegJ.append("{$IFDEF FHIR_"+n+"}\r\n");
+    srlsRegJ.append("{$IFDEF FHIR_"+n+"}\r\n");
+    srlsRegR.append("{$IFDEF FHIR_"+n+"}\r\n");
+    prsrRegT.append("{$IFDEF FHIR_"+n+"}\r\n");
+    prsrImplX.append("{$IFDEF FHIR_"+n+"}\r\n");
+    prsrImplJ.append("{$IFDEF FHIR_"+n+"}\r\n");
+    prsrImplT.append("{$IFDEF FHIR_"+n+"}\r\n");
+    prsrdefX.append("{$IFDEF FHIR_"+n+"}\r\n");
+    srlsdefX.append("{$IFDEF FHIR_"+n+"}\r\n");
+    prsrdefJ.append("{$IFDEF FHIR_"+n+"}\r\n");
+    prsrdefT.append("{$IFDEF FHIR_"+n+"}\r\n");
+    srlsdefJ.append("{$IFDEF FHIR_"+n+"}\r\n");
+    prsrdefR.append("{$IFDEF FHIR_"+n+"}\r\n");
+    srlsdefR.append("{$IFDEF FHIR_"+n+"}\r\n");
+    prsrFragJ.append("{$IFDEF FHIR_"+n+"}\r\n");
+    prsrFragX.append("{$IFDEF FHIR_"+n+"}\r\n");
+    prsrFragR.append("{$IFDEF FHIR_"+n+"}\r\n");
+    compXBase.append("{$IFDEF FHIR_"+n+"}\r\n");
+    compJBase.append("{$IFDEF FHIR_"+n+"}\r\n");
+    compRBase.append("{$IFDEF FHIR_"+n+"}\r\n");
+    factoryIntf.append("{$IFDEF FHIR_"+n+"}\r\n");   
+    factoryImpl.append("{$IFDEF FHIR_"+n+"}\r\n");
+    factoryByName.append("{$IFDEF FHIR_"+n+"}\r\n");
+
+  }
+
+  private void endif(String n) {
+    defCodeRes.endif(n);
+    prsrRegX.append("{$ENDIF FHIR_"+n+"}\r\n");
+    srlsRegX.append("{$ENDIF FHIR_"+n+"}\r\n");
+    prsrRegJ.append("{$ENDIF FHIR_"+n+"}\r\n");
+    srlsRegJ.append("{$ENDIF FHIR_"+n+"}\r\n");
+    srlsRegR.append("{$ENDIF FHIR_"+n+"}\r\n");
+    prsrRegT.append("{$ENDIF FHIR_"+n+"}\r\n");
+    prsrImplX.append("{$ENDIF FHIR_"+n+"}\r\n");
+    prsrImplJ.append("{$ENDIF FHIR_"+n+"}\r\n");
+    prsrImplT.append("{$ENDIF FHIR_"+n+"}\r\n");
+    prsrdefX.append("{$ENDIF FHIR_"+n+"}\r\n");
+    srlsdefX.append("{$ENDIF FHIR_"+n+"}\r\n");
+    prsrdefJ.append("{$ENDIF FHIR_"+n+"}\r\n");
+    prsrdefT.append("{$ENDIF FHIR_"+n+"}\r\n");
+    srlsdefJ.append("{$ENDIF FHIR_"+n+"}\r\n");
+    prsrdefR.append("{$ENDIF FHIR_"+n+"}\r\n");
+    srlsdefR.append("{$ENDIF FHIR_"+n+"}\r\n");
+    prsrFragJ.append("{$ENDIF FHIR_"+n+"}\r\n");
+    prsrFragX.append("{$ENDIF FHIR_"+n+"}\r\n");
+    prsrFragR.append("{$ENDIF FHIR_"+n+"}\r\n");
+    compXBase.append("{$ENDIF FHIR_"+n+"}\r\n");
+    compJBase.append("{$ENDIF FHIR_"+n+"}\r\n");
+    compRBase.append("{$ENDIF FHIR_"+n+"}\r\n");    
+    factoryIntf.append("{$ENDIF FHIR_"+n+"}\r\n");   
+    factoryImpl.append("{$ENDIF FHIR_"+n+"}\r\n");
+    factoryByName.append("{$ENDIF FHIR_"+n+"}\r\n");
   }
 
   private void finishIndexer() {
@@ -588,7 +659,7 @@ public class DelphiGenerator {
     defIndexer.uses.add("DecimalSupport");
     defIndexer.uses.add("AdvBuffers");
     defIndexer.uses.add("DateSupport");
-    defIndexer.uses.add("FHIRIndexManagers");
+    defIndexer.uses.add("FHIRIndexBase");
     defIndexer.uses.add("FHIRResources");
     defIndexer.uses.add("FHIRTypes");
     defIndexer.uses.add("FHIRConstants");
@@ -1350,10 +1421,11 @@ public class DelphiGenerator {
   //  }
 
   private void generateIndexInformation(ResourceDefn r) throws Exception {
+    
     StringBuilder b = new StringBuilder();
-    indexHeaders.append("    procedure buildIndexesFor"+r.getName()+"(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);\r\n");
-    indexBody.append("  buildIndexesFor"+r.getName()+"(Indexes, compartments);\r\n");
-    b.append("procedure TFHIRIndexBuilder.buildIndexesFor"+r.getName()+"(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);\r\n");
+    indexHeaders.append("    {$IFDEF FHIR_"+r.getName().toUpperCase()+"}\r\n    procedure buildIndexesFor"+r.getName()+"(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);\r\n    {$ENDIF}\r\n");
+    indexBody.append("  {$IFDEF FHIR_"+r.getName().toUpperCase()+"}\r\n  buildIndexesFor"+r.getName()+"(Indexes, compartments);\r\n  {$ENDIF}\r\n");
+    b.append("{$IFDEF FHIR_"+r.getName().toUpperCase()+"}\r\nprocedure TFHIRIndexBuilder.buildIndexesFor"+r.getName()+"(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);\r\n");
     b.append("begin\r\n");
     List<String> names = new ArrayList<String>();
     Map<String, SearchParameterDefn> params = new HashMap<String, SearchParameterDefn>();
@@ -1393,7 +1465,7 @@ public class DelphiGenerator {
       }
     }
 
-    b.append("end;\r\n\r\n");
+    b.append("end;\r\n{$ENDIF}\r\n\r\n");
     indexMethods.append(b.toString());
   }
 
@@ -1479,8 +1551,8 @@ public class DelphiGenerator {
         }
       }
 
-      defCodeConstGen.enumDefs.add(def.toString());
-      defCodeConstGen.enumConsts.add(Utilities.splitLineForLength(con3.toString(), 2, 6, 1023));
+      defCodeConstGen.enumDefs.add("{$IFDEF FHIR_"+r.getName().toUpperCase()+"}\r\n"+def.toString()+"{$ENDIF}\r\n");
+      defCodeConstGen.enumConsts.add("{$IFDEF FHIR_"+r.getName().toUpperCase()+"}\r\n"+Utilities.splitLineForLength(con3.toString(), 2, 6, 1023)+"\r\n{$ENDIF}");
     }
   }
 
@@ -2503,7 +2575,7 @@ public class DelphiGenerator {
             getprops.append("  oList.add(TFHIRProperty.create(self, '"+e.getName()+"', '"+breakConstant(e.typeCode())+"', true, TFHIREnum, F"+getTitle(s)+".Link)){3};\r\n");
           if (e.getName().endsWith("[x]"))
             throw new Exception("Not done yet");
-          setprops.append("  else if (propName = '"+e.getName()+"') then F"+getTitle(s)+".add(asEnum(SYSTEMS_"+tn+", CODES_"+tn+", propValue)) {1}\r\n");
+          setprops.append("  else if (propName = '"+e.getName()+"') then "+getTitle(s)+"List.add(asEnum(SYSTEMS_"+tn+", CODES_"+tn+", propValue)) {1}\r\n");
           insprops.append("  else if (propName = '"+e.getName()+"') then F"+getTitle(s)+".insertItem(index, asEnum(SYSTEMS_"+tn+", CODES_"+tn+", propValue)) {1}\r\n");
           reorderprops.append("  else if (propName = '"+e.getName()+"') then F"+getTitle(s)+".move(source, destination) {1}\r\n");
         }
@@ -4344,9 +4416,9 @@ public class DelphiGenerator {
       String s2 = prefix + getTitle(s);
       if (GeneratorUtils.isDelphiReservedWord(s2))
         s2 = s2 + "_";
-      con.append("'"+s);
-      def.append("    "+s2+", {@enum.value "+makeDocoSafe(definitions.getResourceByName(s).getDefinition())+" }\r\n");
-      con.append("', ");
+      con.append("{$IFDEF FHIR_"+s.toUpperCase()+"}'"+s);
+      def.append("    {$IFDEF FHIR_"+s.toUpperCase()+"}"+s2+", {@enum.value "+makeDocoSafe(definitions.getResourceByName(s).getDefinition())+" }{$ENDIF}\r\n");
+      con.append("',{$ENDIF}\r\n      ");
       conl = conl + s.length()+4;
       if (conl > 1000) {
         con.append("\r\n      ");
@@ -4357,15 +4429,11 @@ public class DelphiGenerator {
     con.append(" 'Custom');");
     def.append("    frtCustom);\r\n  TFhirResourceTypeSet = set of TFhirResourceType;");
 
-    int last = 0;
-
-
-
     con.append("\r\n  LOWERCASE_CODES_TFhirResourceType : Array[TFhirResourceType] of String = (");
     con.append("'', ");
     for (int i = 0; i < types.size(); i++) {
       String s = types.get(i);
-      con.append("'"+s.toLowerCase()+"',\r\n     ");
+      con.append("{$IFDEF FHIR_"+s.toUpperCase()+"}'"+s.toLowerCase()+"',{$ENDIF}\r\n     ");
     }
     con.append("'custom');\r\n     ");
 
@@ -4373,7 +4441,7 @@ public class DelphiGenerator {
     con.append("nil, ");
     for (int i = 0; i < types.size(); i++) {
       String s = types.get(i);
-      con.append("TFhir"+getTitle(s)+",\r\n     ");
+      con.append("{$IFDEF FHIR_"+s.toUpperCase()+"}TFhir"+getTitle(s)+",{$ENDIF}\r\n     ");
     }
     con.append("nil);\r\n     ");
 
@@ -4383,7 +4451,7 @@ public class DelphiGenerator {
       String s2 = prefix + getTitle(s);
       if (GeneratorUtils.isDelphiReservedWord(s2))
         s2 = s2 + "_";
-      con.append(s2+",\r\n     ");
+      con.append("{$IFDEF FHIR_"+s.toUpperCase()+"}"+s2+",{$ENDIF}\r\n     ");
     }
     con.append("frtCustom];\r\n     ");
 
@@ -4391,7 +4459,7 @@ public class DelphiGenerator {
     for (int i = 0; i < types.size(); i++) {
       String s = types.get(i);
       String s2 = getTitle(s);
-      con.append("'"+s2+"',\r\n     ");
+      con.append("{$IFDEF FHIR_"+s.toUpperCase()+"}'"+s2+"',{$ENDIF}\r\n     ");
     }
     con.append("'Custom');\r\n     ");
 
@@ -4559,7 +4627,7 @@ public class DelphiGenerator {
             "  s : String;\r\n" +
             "begin\r\n"+
             "  s := jsn['resourceType'];\r\n "+
-            prsrRegJ.toString().substring(6)+
+            removeFirst(prsrRegJ.toString(), "else ")+
             "  else\r\n"+
             "    raise Exception.create('error: the element '+s+' is not a valid resource name');\r\n" +
             "end;\r\n\r\n"
@@ -4622,6 +4690,11 @@ public class DelphiGenerator {
         "  end;\r\n\r\n";
   }
 
+  private String removeFirst(String string, String find) {
+    int i = string.indexOf(find);
+    return string.substring(0, i) + string.substring(i+find.length());
+  }
+
   private String buildParserTurtle() {
     prsrImplT.append(
         "function TFHIRTurtleParser.ParseFragment(obj : TTurtleComplex; type_ : String) : TFHIRObject;\r\n"+
@@ -4665,7 +4738,7 @@ public class DelphiGenerator {
             "  s : String;\r\n" +
             "begin\r\n"+
             "  s := rdfsType(obj);\r\n "+
-            prsrRegT.toString().substring(6)+
+            removeFirst(prsrRegT.toString(), "else ")+
             "  else\r\n"+
             "    raise Exception.create('error: the element '+s+' is not a valid resource name');\r\n" +
             "end;\r\n\r\n"

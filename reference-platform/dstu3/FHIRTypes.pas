@@ -2,6 +2,8 @@
 
 unit FHIRTypes;
 
+{$I fhir.inc}
+
 {
   Copyright (c) 2011+, HL7 and Health Intersections Pty Ltd (http://www.healthintersections.com.au)
   All rights reserved.
@@ -30926,7 +30928,7 @@ begin
   if (propName = 'code') then CodeElement := asUri(propValue){5a}
   else if (propName = 'profile') then ProfileElement := asUri(propValue){5a}
   else if (propName = 'targetProfile') then TargetProfileElement := asUri(propValue){5a}
-  else if (propName = 'aggregation') then FAggregation.add(asEnum(SYSTEMS_TFhirResourceAggregationModeEnum, CODES_TFhirResourceAggregationModeEnum, propValue)) {1}
+  else if (propName = 'aggregation') then AggregationList.add(asEnum(SYSTEMS_TFhirResourceAggregationModeEnum, CODES_TFhirResourceAggregationModeEnum, propValue)) {1}
   else if (propName = 'versioning') then VersioningElement := asEnum(SYSTEMS_TFhirReferenceVersionRulesEnum, CODES_TFhirReferenceVersionRulesEnum, propValue)
   else inherited;
 end;
@@ -33005,7 +33007,7 @@ end;
 procedure TFhirElementDefinition.setProperty(propName: string; propValue: TFHIRObject);
 begin
   if (propName = 'path') then PathElement := asString(propValue){5a}
-  else if (propName = 'representation') then FRepresentation.add(asEnum(SYSTEMS_TFhirPropertyRepresentationEnum, CODES_TFhirPropertyRepresentationEnum, propValue)) {1}
+  else if (propName = 'representation') then RepresentationList.add(asEnum(SYSTEMS_TFhirPropertyRepresentationEnum, CODES_TFhirPropertyRepresentationEnum, propValue)) {1}
   else if (propName = 'sliceName') then SliceNameElement := asString(propValue){5a}
   else if (propName = 'label') then Label_Element := asString(propValue){5a}
   else if (propName = 'code') then CodeList.add(propValue as TFhirCoding){2a}
@@ -34140,9 +34142,9 @@ begin
   else if (propName = 'period') then PeriodElement := asDecimal(propValue){5a}
   else if (propName = 'periodMax') then PeriodMaxElement := asDecimal(propValue){5a}
   else if (propName = 'periodUnit') then PeriodUnitElement := asEnum(SYSTEMS_TFhirUnitsOfTimeEnum, CODES_TFhirUnitsOfTimeEnum, propValue)
-  else if (propName = 'dayOfWeek') then FDayOfWeek.add(asEnum(SYSTEMS_TFhirDaysOfWeekEnum, CODES_TFhirDaysOfWeekEnum, propValue)) {1}
+  else if (propName = 'dayOfWeek') then DayOfWeekList.add(asEnum(SYSTEMS_TFhirDaysOfWeekEnum, CODES_TFhirDaysOfWeekEnum, propValue)) {1}
   else if (propName = 'timeOfDay') then TimeOfDayList.add(asTime(propValue)){2}
-  else if (propName = 'when') then FWhen.add(asEnum(SYSTEMS_TFhirEventTimingEnum, CODES_TFhirEventTimingEnum, propValue)) {1}
+  else if (propName = 'when') then WhenList.add(asEnum(SYSTEMS_TFhirEventTimingEnum, CODES_TFhirEventTimingEnum, propValue)) {1}
   else if (propName = 'offset') then OffsetElement := asUnsignedInt(propValue){5a}
   else inherited;
 end;
