@@ -4,27 +4,27 @@ Unit AdvFiles;
 Copyright (c) 2001-2013, Kestral Computing Pty Ltd (http://www.kestral.com.au)
 All rights reserved.
 
-Redistribution and use in source and binary forms, with or without modification, 
+Redistribution and use in source and binary forms, with or without modification,
 are permitted provided that the following conditions are met:
 
- * Redistributions of source code must retain the above copyright notice, this 
+ * Redistributions of source code must retain the above copyright notice, this
    list of conditions and the following disclaimer.
- * Redistributions in binary form must reproduce the above copyright notice, 
-   this list of conditions and the following disclaimer in the documentation 
+ * Redistributions in binary form must reproduce the above copyright notice,
+   this list of conditions and the following disclaimer in the documentation
    and/or other materials provided with the distribution.
- * Neither the name of HL7 nor the names of its contributors may be used to 
-   endorse or promote products derived from this software without specific 
+ * Neither the name of HL7 nor the names of its contributors may be used to
+   endorse or promote products derived from this software without specific
    prior written permission.
 
-THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
-ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED 
-WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. 
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
 IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
 INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
-NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR 
-PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, 
-WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
-ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
+NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 }
 
@@ -36,133 +36,41 @@ Uses
   FileSupport, StringSupport, MathSupport, ErrorSupport,
   AdvStreams, AdvObjects, AdvExceptions;
 
-
 Type
-  TAdvFileShare = (AdvFileShareNone, AdvFileShareRead, AdvFileShareWrite, AdvFileShareAll);
-
-  TAdvFileMode = (AdvFileModeRead, AdvFileModeWrite, AdvFileModeReadWrite, AdvFileModeCreate, AdvFileModeNew, AdvFileModeTruncate, AdvFileModeAppend);
-
-Type
-//  TFileAttribute =
-//    (FileAttributeArchive, FileAttributeHidden, FileAttributeNormal, FileAttributeOffline, FileAttributeCompressed, FileAttributeReadOnly,
-//     FileAttributeSystem, FileAttributeTemporary, FileAttributeFolder, FileAttributeWriteThrough);
-//
-//  TFileAttributes = Set Of TFileAttribute;
-
-  TAdvFileAttributes = Cardinal;
-  TAdvFileHandle = TFileHandle;
-//  TAdvFileAttributes = TFileAttributes;
-//  TAdvFileAttribute = TFileAttribute;
-
-  TAdvFileTime = Int64;
 
   TAdvFile = Class(TAdvAccessStream)
-    Private
-      FHandle : TAdvFileHandle;
-      FName : String;
-      FDefaultMode : TAdvFileMode;
-      FDefaultShare : TAdvFileShare;
-      FDefaultAttributes : TAdvFileAttributes;
+  Private
+    FStream : TFileStream;
+    function GetHandle: THandle;
+  Protected
+    Function GetPosition : Int64; Override;
+    Procedure SetPosition(Const Value : Int64); Override;
 
-      Procedure SetName(Const Value : String);
+    Function GetSize : Int64; Override;
+    Procedure SetSize(Const iValue : Int64); Override;
 
-//      Function GetCreated : TAdvFileTime;
-//      Procedure SetCreated(Const aValue : TAdvFileTime);
-//
-//      Function GetAccessed : TAdvFileTime;
-//      Procedure SetAccessed(Const aValue : TAdvFileTime);
-//
-//      Function GetModified : TAdvFileTime;
-//      Procedure SetModified(Const aValue : TAdvFileTime);
-//
-//      Function GetAttributes : TAdvFileAttributes;
-//      Procedure SetAttributes(Const Value : TAdvFileAttributes);
-//
-//      Function GetAttributeWriteThrough: Boolean;
-//      Procedure SetAttributeWriteThrough(Const Value: Boolean);
-//
-//      Function GetAttributeReadOnly: Boolean;
-//      Procedure SetAttributeReadOnly(Const Value: Boolean);
+    Procedure RaiseError(aException : EAdvExceptionClass; Const sMethod, sMessage : String); Overload; Override;
 
-    Protected
-      Function GetPosition : Int64; Override;
-      Procedure SetPosition(Const Value : Int64); Override;
+    Function ErrorClass : EAdvExceptionClass; Override;
 
-      Function GetSize : Int64; Override;
-      Procedure SetSize(Const iValue : Int64); Override;
+  Public
+    constructor Create(const AFileName: string; Mode: Word); overload;
 
-//      Procedure AttributeToggle(Const aAttribute : TAdvFileAttribute; Const bValue : Boolean);
-//      Procedure AttributeInclude(Const aAttribute : TAdvFileAttribute);
-//      Procedure AttributeExclude(Const aAttribute : TAdvFileAttribute);
-//      Function HasAttribute(Const aAttribute : TAdvFileAttribute) : Boolean;
+    function Link : TAdvFile; overload;
 
-      Procedure RaiseError(aException : EAdvExceptionClass; Const sMethod, sMessage : String); Overload; Override;
+    Procedure Read(Var aBuffer; iCount : Cardinal); Override;
+    Procedure Write(Const aBuffer; iCount : Cardinal); Override;
+    Function Readable : Int64; Override;
+    Function Writeable : Int64; Override;
 
-      Function ErrorClass : EAdvExceptionClass; Override;
-
-      Function TryOpenHandle(Const sName : String; aMode : TAdvFileMode; aShare : TAdvFileShare; aAttributes : TAdvFileAttributes) : Boolean;
-      Procedure OpenHandle(Const sName : String; aMode : TAdvFileMode; aShare : TAdvFileShare; aAttributes : TAdvFileAttributes);
-//      Property Created : TAdvFileTime Read GetCreated Write SetCreated;
-//      Property Accessed : TAdvFileTime Read GetAccessed Write SetAccessed;
-//      Property Attributes : TAdvFileAttributes Read GetAttributes Write SetAttributes;
-//      Property AttributeWriteThrough : Boolean Read GetAttributeWriteThrough Write SetAttributeWriteThrough;
-//      Property AttributeReadOnly : Boolean Read GetAttributeReadOnly Write SetAttributeReadOnly;
-//      Property DefaultMode : TAdvFileMode Read FDefaultMode Write FDefaultMode;
-//      Property DefaultShare : TAdvFileShare Read FDefaultShare Write FDefaultShare;
-//      Property Modified : TAdvFileTime Read GetModified Write SetModified;
-//      Property DefaultAttributes : TAdvFileAttributes Read FDefaultAttributes Write FDefaultAttributes;
-
-    Public
-      Constructor Create; Override;
-      Constructor CreateOpen(name : String);
-      Procedure BeforeDestruction; Override;
-
-      Function Exists : Boolean;
-      Function Active : Boolean;
-
-      Function TryOpen : Boolean;
-      Function TryOpenCreate : Boolean;
-
-      Procedure OpenCreate;
-      Procedure OpenNew;
-      Procedure OpenRead;
-      Procedure OpenWrite;
-      Procedure OpenReadWrite;
-      Procedure OpenTruncate;
-
-      Procedure Append;
-      Procedure Open;
-      Procedure Close;
-      Procedure Delete;
-      Procedure Flush;
-
-      Procedure Seek(iIndex : Int64); 
-
-      Procedure Receive(Var aBuffer; iCount : Cardinal; Var iActual : Cardinal); Virtual;
-      Procedure Send(Const aBuffer; iCount : Cardinal; Var iActual : Cardinal); Virtual;
-
-      Procedure Read(Var aBuffer; iCount : Cardinal); Override;
-      Procedure Write(Const aBuffer; iCount : Cardinal); Override;
-
-      Procedure Lock(Const iStart, iFinish : Int64);
-      Procedure Unlock(Const iStart, iFinish : Int64);
-
-      Function Readable : Int64; Override;
-      Function Writeable : Int64; Override;
-
-      Function IsReadOnly : Boolean;
-
-      Property Handle : TAdvFileHandle Read FHandle;
-      Property Name : String Read FName Write SetName;
-      Property Position : Int64 Read GetPosition Write SetPosition;
-      Property Size : Int64 Read GetSize Write SetSize;
+    property Handle: THandle read GetHandle;
   End;
 
   EAdvFile = Class(EAdvStream);
 
 
 Implementation
-
+(*
 {$IFNDEF MACOS}
 Function FileTimeZero : TAdvFileTime;
 Begin
@@ -282,9 +190,9 @@ End;
 
 
 Function TAdvFile.ErrorClass : EAdvExceptionClass;
-Begin 
+Begin
   Result := EAdvFile;
-End;  
+End;
 
 
 Function TAdvFile.Exists : Boolean;
@@ -333,8 +241,29 @@ End;
 {$R-}
 Function TAdvFile.TryOpen : Boolean;
 {$IFDEF MACOS}
+  function ModeFromSettings : LongWord;
+  begin
+    result := 0;
+    case FDefaultMode of
+      AdvFileModeRead : result := fmOpenRead;
+      AdvFileModeWrite : result := fmOpenWrite;
+      AdvFileModeReadWrite : result := fmOpenReadWrite;
+    else
+      raise Exception.Create('File Mode not supported on OSX'); // AdvFileModeNew, AdvFileModeTruncate, AdvFileModeAppend
+    end;
+    case FDefaultShare of
+      AdvFileShareNone: result := result + fmShareExclusive; // nothing
+      AdvFileShareRead: result := result + fmShareDenyWrite;
+      AdvFileShareWrite: result := result + fmShareDenyWrite;
+      AdvFileShareAll: result := result + fmShareDenyNone;
+    end;
+  end;
 begin
-  result := false;
+  if FDefaultMode = AdvFileModeCreate then
+    FHandle := FileCreate(FName, fmShareExclusive, FileAccessRights)
+  else
+    FHandle := FileOpen(FName, ModeFromSettings());
+  result := FHandle <> INVALID_HANDLE_VALUE;
 end;
 {$ELSE}
 Const
@@ -413,6 +342,7 @@ End;
 Procedure TAdvFile.Append;
 Begin
   {$IFDEF MACOS}
+  raise Exception.Create('Operation not supported on OSX');
   {$ELSE}
   SetFilePointer(FHandle.Value, 0, Nil, FILE_END);
   {$ENDIF}
@@ -430,6 +360,7 @@ End;
 Procedure TAdvFile.Flush;
 Begin
   {$IFDEF MACOS}
+  // nothing on OSX
   {$ELSE}
   FlushFileBuffers(FHandle.Value);
   {$ENDIF}
@@ -450,37 +381,42 @@ End;
 Procedure TAdvFile.Write(Const aBuffer; iCount : Cardinal);
 Var
   iActual : Cardinal;
-Begin 
+Begin
   Send(aBuffer, iCount, iActual);
 
   If (iActual < iCount) Then
     RaiseError('Read', 'Unable to write the entire buffer');
-End;  
+End;
 
 
 Procedure TAdvFile.Receive(Var aBuffer; iCount : Cardinal; Var iActual : Cardinal);
 Begin
   {$IFDEF MACOS}
+  iActual := FileRead(FHandle, aBuffer, iCount);
+  if iActual = -1 then
   {$ELSE}
   If Not ReadFile(FHandle.Value, aBuffer, iCount, iActual, Nil) Then
-    RaiseError('Read', StringFormat('Unable to read the requested number of bytes [%s]', [ErrorAsString]))
   {$ENDIF}
-End;  
+    RaiseError('Read', StringFormat('Unable to read the requested number of bytes [%s]', [ErrorAsString]))
+End;
 
 
 Procedure TAdvFile.Send(Const aBuffer; iCount : Cardinal; Var iActual : Cardinal);
-Begin 
+Begin
   {$IFDEF MACOS}
+  iActual := FileWrite(FHandle, aBuffer, iCount);
+  if iActual = -1 then
   {$ELSE}
   If Not WriteFile(FHandle.Value, aBuffer, iCount, iActual, Nil) Then
-    RaiseError('Write', StringFormat('Unable to write the requested number of bytes [%s]', [ErrorAsString]));
   {$ENDIF}
+    RaiseError('Write', StringFormat('Unable to write the requested number of bytes [%s]', [ErrorAsString]));
 End;
 
 
 Procedure TAdvFile.Lock(Const iStart, iFinish: Int64);
   {$IFDEF MACOS}
 begin
+  raise Exception.Create('Not supported on OSX');
 end;
   {$ELSE}
 Var
@@ -498,6 +434,7 @@ End;
 Procedure TAdvFile.Unlock(Const iStart, iFinish: Int64);
   {$IFDEF MACOS}
 begin
+  raise Exception.Create('Not supported on OSX');
 end;
   {$ELSE}
 Var
@@ -515,6 +452,7 @@ End;
 Procedure TAdvFile.Seek(iIndex : Int64);
   {$IFDEF MACOS}
 begin
+  FileSeek(FHandle, iIndex, 0);
 end;
   {$ELSE}
 Var
@@ -600,6 +538,8 @@ End;
 Function TAdvFile.GetSize : Int64;
   {$IFDEF MACOS}
 begin
+  if ftruncate(FHandle, Position) = -1 then
+    RaiseError('GetSize', StringFormat('Unable to get the size of the file [%s]', [ErrorAsString]));
 end;
   {$ELSE}
 Var
@@ -617,6 +557,7 @@ End;
 Procedure TAdvFile.SetSize(Const iValue : Int64);
   {$IFDEF MACOS}
 begin
+  raise Exception.Create('Not supported on OSX');
 end;
   {$ELSE}
 Var
@@ -685,5 +626,76 @@ Function TAdvFile.IsReadOnly : Boolean;
 Begin
 //  Result := HasAttribute(FileAttributeReadOnly);
 End;
+  *)
 
-End. // AdvFiles //
+{ TAdvFile }
+
+constructor TAdvFile.Create(const AFileName: string; Mode: Word);
+begin
+  inherited create;
+  FStream := TFileStream.Create(AFileName, mode);
+end;
+
+function TAdvFile.ErrorClass: EAdvExceptionClass;
+begin
+  Result := EAdvFile;
+end;
+
+function TAdvFile.GetHandle: THandle;
+begin
+  result := FStream.Handle;
+end;
+
+function TAdvFile.GetPosition: Int64;
+begin
+  result := FStream.Position;
+end;
+
+function TAdvFile.GetSize: Int64;
+begin
+  result := FStream.Size;
+end;
+
+function TAdvFile.Link: TAdvFile;
+begin
+  result := TAdvFile(Inherited Link);
+end;
+
+procedure TAdvFile.RaiseError(aException: EAdvExceptionClass; const sMethod, sMessage: String);
+begin
+  Inherited RaiseError(aException, sMethod, StringFormat('%s: ''%s''', [sMessage, FStream.FileName]));
+end;
+
+procedure TAdvFile.Read(var aBuffer; iCount: Cardinal);
+begin
+  if FStream.Read(aBuffer, iCount) < iCount then
+    RaiseError('Read', 'Unable to read past end of file');
+end;
+
+function TAdvFile.Readable: Int64;
+begin
+  result := FStream.Size - FStream.Position;
+end;
+
+procedure TAdvFile.SetPosition(const Value: Int64);
+begin
+  FStream.Position := value;
+end;
+
+procedure TAdvFile.SetSize(const iValue: Int64);
+begin
+  FStream.Size := iValue;
+end;
+
+procedure TAdvFile.Write(const aBuffer; iCount: Cardinal);
+begin
+  If (FStream.Write(aBuffer, iCount) < iCount) Then
+    RaiseError('Read', 'Unable to write the entire buffer');
+end;
+
+function TAdvFile.Writeable: Int64;
+begin
+  result := 0; // ?
+end;
+
+end.

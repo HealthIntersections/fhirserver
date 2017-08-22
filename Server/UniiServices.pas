@@ -217,11 +217,8 @@ begin
     map := TAdvStringIntegerMatch.create;
     try
       map.forced := true;
-      f := TAdvFile.Create;
+      f := TAdvFile.Create(filename, fmOpenRead);
       try
-        f.Name := filename;
-        f.OpenRead;
-
         tab := TAdvTextExtractor.Create(f.Link, TEncoding.UTF8);
         try
           s := tab.ConsumeLine;

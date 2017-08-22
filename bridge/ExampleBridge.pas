@@ -215,10 +215,8 @@ var
 begin
   if FileExists(path) then
   begin
-    f := TAdvFile.Create;
+    f := TAdvFile.Create(path, fmOpenRead);
     try
-      f.Name := path;
-      f.OpenRead;
       csv := TAdvCSVExtractor.Create(f.Link, TEncoding.UTF8);
       try
         while csv.More do
@@ -250,10 +248,8 @@ var
   f : TAdvFile;
   ts : TAdvStringList;
 begin
-  f := TAdvFile.Create;
+  f := TAdvFile.Create(path, fmCreate);
   try
-    f.Name := path;
-    f.OpenCreate;
     csv := TAdvCSVFormatter.Create;
     try
       csv.Stream := f.Link;

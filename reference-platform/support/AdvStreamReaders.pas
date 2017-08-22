@@ -152,9 +152,8 @@ constructor TAdvStreamReader.Create(const Filename: string; Encoding: TEncoding;
 var
   oFile : TAdvFile;
 begin
-  oFile := TAdvFile.Create;
+  oFile := TAdvFile.Create(FileName, fmOpenRead);
   Try
-    oFile.OpenRead;
     Create(oFile.Link, Encoding, DetectBOM, BufferSize);
   Finally
     oFile.Free;

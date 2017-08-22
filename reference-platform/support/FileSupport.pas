@@ -31,7 +31,7 @@ POSSIBILITY OF SUCH DAMAGE.
 Interface
 
 Uses
-  {$IFDEF MACOS} OSXUtils, {$ELSE} Windows, {$ENDIF} SysUtils,
+  {$IFDEF MACOS} OSXUtils, {$ELSE} Windows, {$ENDIF} SysUtils, Classes,
   StringSupport, MathSupport, MemorySupport, DateSupport;
 
 Type
@@ -110,6 +110,11 @@ End;
 
 Function FileDelete(Const sFilename : String) : Boolean;
 Begin
+  {$IFDEF MACOS}
+  if FileIsReadOnly(sFileName) then
+    result := false
+  else
+  {$ENDIF}
   Result := SysUtils.DeleteFile(sFilename);
 End;
 
@@ -139,8 +144,15 @@ End;
 
 Function FileSize(Const sFileName : String) : Int64;
 {$IFDEF MACOS}
+var
+  f : TFileStream;
 begin
-  result := 0;
+  f := TFileStream.create(sFileName, fmOpenRead);
+  try
+    result := f.size;
+  finally
+    f.free;
+  end;
 end;
 {$ELSE}
 Var

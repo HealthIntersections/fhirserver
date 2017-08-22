@@ -305,15 +305,9 @@ Procedure TAdvBuffer.LoadFromFileName(Const sFilename: String);
 Var
   oFile : TAdvFile;
 Begin
-  oFile := TAdvFile.Create;
+  oFile := TAdvFile.Create(sFilename, fmOpenRead);
   Try
-    oFile.Name := sFilename;
-    oFile.OpenRead;
-    Try
-      LoadFromFile(oFile);
-    Finally
-      oFile.Close;
-    End;
+    LoadFromFile(oFile);
   Finally
     oFile.Free;
   End;
@@ -324,20 +318,13 @@ Procedure TAdvBuffer.SaveToFileName(Const sFilename: String);
 Var
   oFile : TAdvFile;
 Begin
-  oFile := TAdvFile.Create;
+  oFile := TAdvFile.Create(sFilename, fmCreate);
   Try
-    oFile.Name := sFilename;
-
-    oFile.OpenCreate;
-    Try
-      SaveToFile(oFile);
-    Finally
-      oFile.Close;
-    End;  
+    SaveToFile(oFile);
   Finally
     oFile.Free;
-  End;  
-End;  
+  End;
+End;
 
 
 Procedure TAdvBuffer.Clear;

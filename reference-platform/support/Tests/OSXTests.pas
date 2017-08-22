@@ -62,27 +62,24 @@ var
 begin
   filename := Path([SystemTemp, 'delphi.file.test.txt']);
   if FileExists(filename) then
+  begin
+    FileSetReadOnly(filename, false);
     FileDelete(filename);
+  end;
   Assert.IsFalse(FileExists(filename));
-  f := TAdvFile.Create;
+  f := TAdvFile.Create(filename, fmCreate);
   try
-    f.Name := filename;
-    f.OpenCreate;
     f.Write(TEST_FILE_CONTENT[1], length(TEST_FILE_CONTENT));
-    f.Close;
   finally
     f.Free;
   end;
   Assert.IsTrue(FileExists(filename));
   Assert.IsTrue(FileSize(filename) = 27);
-  f := TAdvFile.Create;
+  f := TAdvFile.Create(filename, fmOpenRead);
   try
-    f.Name := filename;
-    f.OpenRead;
     SetLength(s, f.Size);
     f.Read(s[1], f.Size);
     Assert.IsTrue(s = TEST_FILE_CONTENT);
-    f.Close;
   finally
     f.Free;
   end;
@@ -206,37 +203,6 @@ begin
   end;
 end;
 
-procedure TOSXTests.TestSemaphore;
-var
-  thread : TTestSemaphoreThread;
-begin
-  globalInt := 0;
-  sem := TKSemaphore.Create(0);
-  try
-    thread := TTestSemaphoreThread.Create;
-    try
-      thread.FreeOnTerminate := true;
-      while (globalInt = 0) do
-        sleep(10);
-      Assert.IsTrue(globalInt = 1, '1');
-      sem.Release;
-      sleep(10);
-      Assert.IsTrue(globalInt = 2, '2');
-      sem.Release;
-      sleep(10);
-      Assert.IsTrue(globalInt = 3, '3');
-      sleep(900);
-      Assert.IsTrue(globalInt = 4, '4');
-    finally
-      thread.Terminate;
-    end;
-    sleep(900);
-    Assert.IsTrue(globalInt = 100, '100');
-  finally
-    sem.Free;
-  end;
-end;
-
 procedure TOSXTests.TestTemp;
 begin
   Assert.IsNotEmpty(SystemTemp);
@@ -268,7 +234,9 @@ begin
   // Date Time conversion
   Assert.IsTrue(TDateTimeEx.make(EncodeDate(2013, 4, 5) + EncodeTime(12, 34,56, 0), dttzUnknown).toHL7 = '20130405123456');
   Assert.WillRaise(test60Sec);
-  Assert.IsTrue(TDateTimeEx.fromHL7('20130405123456').DateTime = EncodeDate(2013, 4, 5) + EncodeTime(12, 34,56, 0));
+  dt1 := EncodeDate(2013, 4, 5) + EncodeTime(12, 34,56, 0);
+  dt2 := TDateTimeEx.fromHL7('20130405123456').DateTime;
+  Assert.IsTrue(dt1 = dt2);
 
   // Timezone Wrangling
   d1 := TDateTimeEx.make(EncodeDate(2011, 2, 2)+ EncodeTime(14, 0, 0, 0), dttzLocal); // during daylight savings (+11)
@@ -315,6 +283,37 @@ begin
     globalInt := GetCurrentThreadId;
   finally
     LeaveCriticalSection(cs);
+  end;
+end;
+
+procedure TOSXTests.TestSemaphore;
+var
+  thread : TTestSemaphoreThread;
+begin
+  globalInt := 0;
+  sem := TKSemaphore.Create(0);
+  try
+    thread := TTestSemaphoreThread.Create;
+    try
+      thread.FreeOnTerminate := true;
+      while (globalInt = 0) do
+        sleep(10);
+      Assert.IsTrue(globalInt = 1, '1');
+      sem.Release;
+      sleep(10);
+      Assert.IsTrue(globalInt = 2, '2');
+      sem.Release;
+      sleep(10);
+      Assert.IsTrue(globalInt = 3, '3');
+      sleep(900);
+      Assert.IsTrue(globalInt = 4, '4');
+    finally
+      thread.Terminate;
+    end;
+    sleep(900);
+    Assert.IsTrue(globalInt = 100, '100');
+  finally
+    sem.Free;
   end;
 end;
 

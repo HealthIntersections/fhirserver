@@ -120,7 +120,7 @@ begin
   FZip := TAdvMap<TAdvBuffer>.create;
   zip := TAdvZipReader.Create;
   try
-    zip.Stream := TAdvFile.CreateOpen(path);
+    zip.Stream := TAdvFile.Create(path, fmOpenRead);
     zip.ReadZip;
     for i := 0 to zip.Parts.Count - 1 do
       FZip.Add(zip.Parts[i].Name, zip.Parts[i].Link);

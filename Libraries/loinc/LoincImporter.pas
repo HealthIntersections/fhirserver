@@ -547,10 +547,8 @@ begin
     iCount := 0;
     Progress(0, 0, 'Loading Concepts');
     items := TAdvStringList.create;
-    f := TAdvFile.Create;
+    f := TAdvFile.Create(IncludeTrailingPathDelimiter(folder)+ 'loinc.csv', fmOpenRead);
     try
-      f.Name := IncludeTrailingPathDelimiter(folder)+ 'loinc.csv';
-      f.OpenRead;
       csv := TAdvCSVExtractor.Create(f.Link, TEncoding.UTF8);
       Try
         // headers
@@ -993,10 +991,8 @@ var
   i : integer;
 begin
   items := TAdvStringList.create;
-  f := TAdvFile.Create;
+  f := TAdvFile.Create(IncludeTrailingPathDelimiter(folder)+ 'LOINC_'+version+'_LinguisticVariants.csv', fmOpenRead);
   try
-    f.Name := IncludeTrailingPathDelimiter(folder)+ 'LOINC_'+version+'_LinguisticVariants.csv';
-    f.OpenRead;
     csv := TAdvCSVExtractor.Create(f.Link, TEncoding.UTF8);
     Try
       csv.ConsumeEntries(items);
@@ -1325,10 +1321,8 @@ var
 begin
   Progress(i, 0, 'Loading Language '+lang.Lang+'-'+lang.Country);
   items := TAdvStringList.create;
-  f := TAdvFile.Create;
+  f := TAdvFile.Create(IncludeTrailingPathDelimiter(folder)+ 'LOINC_'+version+'_'+lang.Lang+'_'+lang.Country+'_'+index+'_LinguisticVariant.csv', fmOpenRead);
   try
-    f.Name := IncludeTrailingPathDelimiter(folder)+ 'LOINC_'+version+'_'+lang.Lang+'_'+lang.Country+'_'+index+'_LinguisticVariant.csv';
-    f.OpenRead;
     csv := TAdvCSVExtractor.Create(f.Link, TEncoding.UTF8, false, f.Size);
     Try
       csv.ConsumeEntries(items);
