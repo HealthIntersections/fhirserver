@@ -55,6 +55,7 @@ Type
 
   Public
     constructor Create(const AFileName: string; Mode: Word); overload;
+    Destructor Destroy; override;
 
     function Link : TAdvFile; overload;
 
@@ -634,6 +635,12 @@ constructor TAdvFile.Create(const AFileName: string; Mode: Word);
 begin
   inherited create;
   FStream := TFileStream.Create(AFileName, mode);
+end;
+
+destructor TAdvFile.Destroy;
+begin
+  FStream.Free;
+  inherited;
 end;
 
 function TAdvFile.ErrorClass: EAdvExceptionClass;

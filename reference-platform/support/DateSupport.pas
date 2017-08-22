@@ -105,6 +105,7 @@ type
     TimeZoneHours : Integer;
     TimezoneMins : Integer;
   private
+    procedure clear;
     procedure check;
     function checkNoException : boolean;
     procedure RollUp;
@@ -273,6 +274,23 @@ begin
   result := err = '';
 end;
 
+procedure TDateTimeEx.clear;
+begin
+  Source := '';
+  year := 0;
+  month := 0;
+  day := 0;
+  hour := 0;
+  minute := 0;
+  second := 0;
+  fraction := 0;
+  FPrecision := dtpYear;
+  FractionPrecision := 0;
+  TimezoneType := dttzUnknown;
+  TimeZoneHours := 0;
+  TimezoneMins := 0;
+end;
+
 function TDateTimeEx.DateTime: TDateTime;
 begin
   check;
@@ -334,6 +352,7 @@ var
   s: String;
   tmp: String;
 begin
+  result.clear;
   Result.year := 0;
   Result.month := 0;
   Result.day := 0;
@@ -645,6 +664,7 @@ begin
   if value = '' then
     exit(makeNull);
 
+  result.clear;
   result.Source := Value;
 
   if pos('Z', value) = length(value) then
@@ -720,6 +740,7 @@ begin
   if value = '' then
     exit(makeNull);
 
+  result.clear;
   result.Source := Value;
   if pos('Z', value) = length(value) then
   begin
@@ -1095,6 +1116,7 @@ end;
 
 class function TDateTimeEx.makeNull: TDateTimeEx;
 begin
+  result.clear;
   result.Source := '';
 end;
 
@@ -1106,6 +1128,7 @@ end;
 
 class function TDateTimeEx.fromTS(value: TTimestamp; tz : TDateTimeExTimezone): TDateTimeEx;
 begin
+  result.clear;
   result.Year := value.year;
   result.month := value.month;
   result.day := value.day;

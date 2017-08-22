@@ -133,9 +133,7 @@ type
     StringColumn1: TStringColumn;
     StringColumn2: TStringColumn;
     PopupColumn1: TPopupColumn;
-    PopupMenu1: TPopupMenu;
-    MenuItem1: TMenuItem;
-    MenuItem2: TMenuItem;
+    VertScrollBox2: TVertScrollBox;
     procedure tvStructureClick(Sender: TObject);
     procedure btnCancelClick(Sender: TObject);
     procedure inputChanged(Sender: TObject);
@@ -743,7 +741,7 @@ var
   bClient, bServer : boolean;
 begin
   inherited;
-  tvMetadata.DeleteChildren;
+//  tvMetadata.DeleteChildren;
   tvMetadata.TagObject := CapabilityStatement;
   bClient := false;
   bServer := false;
