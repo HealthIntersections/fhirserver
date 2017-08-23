@@ -123,3 +123,10 @@ toolkit/install/toookit\.fb8lck
 Server/win64_3/Debug/FHIRServer3\.exe - Shortcut\.lnk
 
 tests/Win64/Debug/TestInsightSettings\.ini
+
+toolkit/install/fhir-toolkit-osx-0\.0\.3\.zip
+
+toolkit/install/fhir-toolkit-osx-0\.0\.4\.zip
+
+toolkit/install/osx/FHIRToolkit\.app/Contents/MacOS/FHIRToolkit
+toolkit/install/*.zip

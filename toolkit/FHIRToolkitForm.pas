@@ -479,6 +479,10 @@ begin
       form := TProcessingForm.Create(self);
       try
         form.Show;
+        {$IFNDEF MACOS}
+        Application.ProcessMessages;
+        {$ENDIF}
+
         FContext := TBaseWorkerContext.Create;
         FContext.LoadFromFile(IncludeTrailingPathDelimiter(ExtractFilePath(ParamStr(0)))+'profiles-types.xml');
         FContext.LoadFromFile(IncludeTrailingPathDelimiter(ExtractFilePath(ParamStr(0)))+'profiles-resources.xml');

@@ -104,6 +104,9 @@ uses
   CDSHooksUtilities in '..\reference-platform\support\CDSHooksUtilities.pas',
   {$IFNDEF OSX}
   AfsStreamManagers in '..\reference-platform\support\AfsStreamManagers.pas',
+  AfsVolumes in '..\reference-platform\support\AfsVolumes.pas',
+  AfsResourceVolumes in '..\reference-platform\support\AfsResourceVolumes.pas',
+  AdvWinInetClients in '..\reference-platform\support\AdvWinInetClients.pas',
   {$ENDIF }
   AdvStringHashes in '..\reference-platform\support\AdvStringHashes.pas',
   AdvHashes in '..\reference-platform\support\AdvHashes.pas',
