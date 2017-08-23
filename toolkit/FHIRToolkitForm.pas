@@ -6,11 +6,12 @@ uses
   System.SysUtils, System.Types, System.UITypes, System.Classes, System.Variants,
   FMX.Types, FMX.Controls, FMX.Forms, FMX.Graphics, FMX.Dialogs, FMX.StdCtrls, FMX.Platform,
   FMX.Layouts, FMX.ListBox, FMX.TabControl, FMX.Controls.Presentation, FMX.DialogService,
-  System.ImageList, FMX.ImgList, FMX.Menus,
+  System.ImageList, FMX.ImgList, FMX.Menus, FMX.WebBrowser,
   IniFiles,
-  SystemSupport,
-  FHIRBase, FHIRTypes, FHIRResources, FHIRClient, FHIRUtilities,
-  ServerForm, CapabilityStatementEditor, BaseResourceFrame, BaseFrame, SourceViewer, ListSelector, ValueSetEditor;
+  SystemSupport, TextUtilities,
+  FHIRBase, FHIRTypes, FHIRResources, FHIRClient, FHIRUtilities, FHIRIndexBase, FHIRIndexInformation, FHIRSupport,
+  FHIRContext, FHIRProfileUtilities,
+  ServerForm, CapabilityStatementEditor, BaseResourceFrame, BaseFrame, SourceViewer, ListSelector, ValueSetEditor, HelpContexts;
 
 type
 
@@ -56,6 +57,12 @@ type
     tbnSource: TButton;
     mnuFileSource: TMenuItem;
     MenuItem3: TMenuItem;
+    pnlHelp: TPanel;
+    webHelp: TWebBrowser;
+    tbnHelpContext: TButton;
+    mnuHelp: TMenuItem;
+    mnuHelpContext: TMenuItem;
+    splitHelp: TSplitter;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure lbServersClick(Sender: TObject);
@@ -74,9 +81,15 @@ type
     procedure btnRemoveFileClick(Sender: TObject);
     procedure tbnSourceClick(Sender: TObject);
     procedure btnNewClick(Sender: TObject);
+    procedure tbnHelpContextClick(Sender: TObject);
+    procedure FormActivate(Sender: TObject);
   private
     { Private declarations }
     FIni : TIniFile;
+    FShowHelp : boolean;
+    FFocus : TStyledControl;
+    FIndexes : TFhirIndexList;
+    FContext : TBaseWorkerContext;
 
     procedure saveServers;
     procedure saveFiles;
@@ -84,9 +97,15 @@ type
     procedure OpenResourcefromClient(sender : TObject; client : TFHIRClient; format : TFHIRFormat; resource : TFHIRResource);
     procedure newResource(rClass : TFhirResourceClass; frameClass : TBaseResourceFrameClass);
     procedure addFileToList(filename : String);
+    procedure addServerToList(url : String);
     function frameForResource(res : TFhirResource) : TBaseResourceFrameClass;
     function doSave : boolean;
     function doSaveAs : boolean;
+    procedure updateHelpStatus;
+    procedure updateHelpText;
+    function processHelpContext(helpContext : String) : String;
+    function searchDesc(s : String) : String;
+    procedure fhirDefn(s : String; b : TStringBuilder);
   public
     { Public declarations }
   end;
@@ -110,15 +129,25 @@ begin
   lbFilesClick(nil);
 end;
 
+procedure TMasterToolsForm.addServerToList(url: String);
+var
+  i : integer;
+begin
+  for i := lbServers.Count - 1 downto 0 do
+    if lbServers.items[i] = url then
+      lbServers.Items.Delete(i);
+  lbServers.Items.Insert(0, url);
+  saveServers;
+  lbServersClick(nil);
+end;
+
 procedure TMasterToolsForm.btnAddServerClick(Sender: TObject);
 begin
   TDialogService.InputQuery('Server Address', ['URL'], [''],
     procedure(const AResult: TModalResult; const AValues: array of string)
     begin
       if (AResult = mrOK) and (aValues[0] <> '') then
-      begin
-        lbServers.Items.Insert(0, aValues[0]);
-      end;
+        addServerToList(AValues[0]);
     end);
 end;
 
@@ -159,6 +188,7 @@ begin
         serverForm.CapabilityStatement := cs.link;
         serverForm.OnOpenResource := OpenResourcefromClient;
         serverForm.load;
+        addServerToList(client.address);
       finally
         cs.free;
       end;
@@ -326,6 +356,14 @@ begin
     end;
 end;
 
+procedure TMasterToolsForm.tbnHelpContextClick(Sender: TObject);
+begin
+  FShowHelp := not FShowHelp;
+  FIni.WriteBool('Help', 'context', FShowHelp);
+  FFocus := nil;
+  updateHelpStatus;
+end;
+
 procedure TMasterToolsForm.CloseButtonClick(Sender: TObject);
 begin
   Close;
@@ -390,6 +428,46 @@ begin
   end;
 end;
 
+procedure TMasterToolsForm.fhirDefn(s: String; b : TStringBuilder);
+var
+  n : string;
+  sd : TFhirStructureDefinition;
+  ed : TFhirElementDefinition;
+begin
+  if s.Contains('.') then
+    n := s.Substring(0, s.IndexOf('.'))
+  else
+    n := s;
+  sd := FContext.fetchResource(frtStructureDefinition, 'http://hl7.org/fhir/StructureDefinition/'+n) as TFhirStructureDefinition;
+  if sd = nil then
+    b.Append('<p>uUnknown path:' +s+'</p>')
+  else
+  begin
+    for ed in sd.snapshot.elementList do
+    begin
+      if ed.path = s then
+      begin
+        b.Append('<p><b>'+s+'</b></p>');
+        b.Append('<p>Definition: '+ed.definition+'</p>');
+        if ed.comment <> '' then
+          b.Append('<p>Comments: '+ed.comment+'</p>');
+        exit;
+      end;
+    end;
+    b.Append('<p>Unknown path:' +s+'</p>')
+  end;
+end;
+
+procedure TMasterToolsForm.FormActivate(Sender: TObject);
+begin
+  if FContext = nil then
+  begin
+    FContext := TBaseWorkerContext.Create;
+    FContext.LoadFromFile(IncludeTrailingPathDelimiter(ExtractFilePath(ParamStr(0)))+'profiles-types.xml');
+    FContext.LoadFromFile(IncludeTrailingPathDelimiter(ExtractFilePath(ParamStr(0)))+'profiles-resources.xml');
+  end;
+end;
+
 procedure TMasterToolsForm.FormCloseQuery(Sender: TObject; var CanClose: Boolean);
 var
   dirty : boolean;
@@ -444,6 +522,8 @@ begin
   Top := FIni.ReadInteger('Window', 'top', top);
   Width := FIni.ReadInteger('Window', 'width', width);
   Height := FIni.ReadInteger('Window', 'height', height);
+  FShowHelp := FIni.ReadBool('Help', 'context', false);
+  updateHelpStatus;
 end;
 
 procedure TMasterToolsForm.FormDestroy(Sender: TObject);
@@ -458,6 +538,8 @@ begin
   except
   end;
   FIni.Free;
+  FIndexes.Free;
+  FContext.Free;
 end;
 
 function TMasterToolsForm.frameForResource(res: TFhirResource): TBaseResourceFrameClass;
@@ -626,6 +708,32 @@ begin
   end;
 end;
 
+function TMasterToolsForm.searchDesc(s: String): String;
+var
+  builder : TFHIRIndexBuilder;
+  comps : TFHIRCompartmentList;
+  index : TFHIRIndex;
+  parts : TArray<string>;
+begin
+  if FIndexes = nil then
+  begin
+    FIndexes := TFhirIndexList.Create;
+    comps := TFHIRCompartmentList.Create;
+    builder := TFHIRIndexBuilder.Create;
+    try
+      builder.registerIndexes(Findexes, comps);
+    finally
+      builder.Free;
+      comps.free;
+    end;
+  end;
+  result := '';
+  parts := s.Split(['.']);
+  index := FIndexes.getByName(parts[0], parts[1]);
+  if index <> nil then
+    result := '<p>'+FormatTextToHTML(index.Description)+'</p>'+'<p>'+index.Name+' : '+CODES_TFhirSearchParamTypeEnum[index.SearchType]+'</p>';
+end;
+
 procedure TMasterToolsForm.Timer1Timer(Sender: TObject);
 var
   frame : TBaseFrame;
@@ -642,7 +750,105 @@ begin
     tbnSaveAs.Enabled := frame.canSaveAs;
     tbnSource.Enabled := frame.hasResource;
   end;
+  updateHelpText;
 end;
+
+function template(fragment : String) : String;
+begin
+result :=
+'<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">'+#13#10+
+'<head>'+#13#10+
+'  <meta charset="utf-8" http-equiv="X-UA-Compatible" content="IE=edge" />'+#13#10+
+' <style>'+#13#10+
+'  body { background-color: rgb(255, 254, 245);'+#13#10+
+'	margin: 0px;'+#13#10+
+'	padding: 0px;'+#13#10+
+'	height: 100%;'+#13#10+
+'	font-size: 10px;'+#13#10+
+'	font-family: verdana;'+#13#10+
+'}'+#13#10+
+' </style>'+#13#10+
+'</head>'+#13#10+
+fragment+#13#10+
+'<body>'+#13#10+
+''+#13#10+
+'</body>'+#13#10+
+'</html>'+#13#10;
+end;
+
+procedure TMasterToolsForm.updateHelpStatus;
+begin
+  if FShowHelp then
+  begin
+    pnlHelp.visible := FShowHelp;
+    splitHelp.visible := FShowHelp;
+  end
+  else
+  begin
+    splitHelp.visible := FShowHelp;
+    pnlHelp.visible := FShowHelp;
+  end;
+
+  if (pnlHelp.visible) then
+    webHelp.LoadFromStrings(template(''), 'help:');
+end;
+
+procedure TMasterToolsForm.updateHelpText;
+var
+  focus : IControl;
+  obj : TStyledControl;
+  s : String;
+begin
+  if FShowHelp then
+  begin
+    obj := nil;
+    focus := Focused;
+    if (focus <> nil) and (focus.GetObject is TStyledControl) then
+      obj := focus.GetObject as TStyledControl;
+    if (focus <> nil) and (focus.GetObject = webHelp) then
+      exit;
+
+    if obj <> FFocus then
+    begin
+      FFocus := obj;
+      if (obj = nil) or (obj.HelpContext = 0) then
+        webHelp.LoadFromStrings(template(''), 'help:')
+      else
+      begin
+        s := Help_Strings[obj.HelpContext];
+        if s <> '' then
+          webHelp.LoadFromStrings(template(processHelpContext(s)), 'help:')
+        else
+          webHelp.LoadFromStrings(template(''), 'help:');
+      end;
+    end;
+  end;
+end;
+
+function TMasterToolsForm.processHelpContext(helpContext: String): String;
+var
+  b : TStringBuilder;
+  parts : TArray<String>;
+  s : String;
+begin
+  b := TStringBuilder.Create;
+  try
+    parts := helpContext.Split([',']);
+    for s in parts do
+      if s.StartsWith('ui:') then
+        b.Append('<p>'+FormatTextToHTML(s.Substring(3).trim)+'</p>')
+      else if s.StartsWith('search:') then
+        b.Append(searchDesc(s.Substring(7)))
+      else if s.StartsWith('fhir:') then
+        fhirDefn(s.Substring(5), b)
+      else
+        b.Append('<p>Unknown context '+s+'</p>');
+    result := b.ToString;
+  finally
+    b.Free;
+  end;
+end;
+
 
 end.
 

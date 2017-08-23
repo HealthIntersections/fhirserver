@@ -1117,7 +1117,6 @@ var
   item : TFhirValueSetComposeInclude;
 begin
   inherited;
-  tvMetadata.DeleteChildren;
   tvMetadata.TagObject := ValueSet;
   if (tvCompose <> nil) then
   begin

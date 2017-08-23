@@ -70,6 +70,7 @@ Type
     function search(atype : TFhirResourceType; allRecords : boolean; params : TDictionary<String, String>) : TFHIRBundle; overload; virtual;
     function search(atype : TFhirResourceType; allRecords : boolean; params : string) : TFHIRBundle; overload; virtual;
     function searchPost(atype : TFhirResourceType; allRecords : boolean; params : TDictionary<String, String>; resource : TFhirResource) : TFHIRBundle; virtual;
+    function searchAgain(link : String) : TFHIRBundle; overload; virtual;
     function operation(atype : TFhirResourceType; opName : String; params : TFhirParameters) : TFHIRResource; virtual;
     function historyType(atype : TFhirResourceType; allRecords : boolean; params : TDictionary<String, String>) : TFHIRBundle; virtual;
 
@@ -157,6 +158,7 @@ Type
     function search(atype : TFhirResourceType; allRecords : boolean; params : TDictionary<String, String>) : TFHIRBundle; overload; override;
     function search(atype : TFhirResourceType; allRecords : boolean; params : string) : TFHIRBundle; overload; override;
     function searchPost(atype : TFhirResourceType; allRecords : boolean; params : TDictionary<String, String>; resource : TFhirResource) : TFHIRBundle; override;
+    function searchAgain(link : String) : TFHIRBundle; overload; override;
     function operation(atype : TFhirResourceType; opName : String; params : TFhirParameters) : TFHIRResource; override;
     function historyType(atype : TFhirResourceType; allRecords : boolean; params : TDictionary<String, String>) : TFHIRBundle; override;
     function cdshook(id : String; request : TCDSHookRequest) : TCDSHookResponse;
@@ -427,6 +429,11 @@ begin
   finally
     result.Free;
   end;
+end;
+
+function TFhirHTTPClient.searchAgain(link: String): TFHIRBundle;
+begin
+  result := fetchResource(link, get, nil) as TFHIRBundle;
 end;
 
 function TFhirHTTPClient.search(allRecords: boolean; params: TDictionary<String, String>): TFHIRBundle;
@@ -1019,6 +1026,11 @@ end;
 function TFhirClient.search(atype: TFhirResourceType; allRecords: boolean; params: string): TFHIRBundle;
 begin
   raise Exception.Create('Must override search() in '+className);
+end;
+
+function TFhirClient.searchAgain(link: String): TFHIRBundle;
+begin
+  raise Exception.Create('Must override searchAgain() in '+className);
 end;
 
 function TFhirClient.search(allRecords: boolean; params: TDictionary<String, String>): TFHIRBundle;

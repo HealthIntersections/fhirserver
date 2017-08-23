@@ -626,9 +626,21 @@ end;
 
 function TDateTimeEx.ToString(format: String): String;
 begin
+  if Source = '' then
+    exit('');
   check;
   if (format = 'c') then
-    format := FormatSettings.shortDateFormat+' '+FormatSettings.LongTimeFormat;
+    format := FormatSettings.shortDateFormat+' '+FormatSettings.ShortTimeFormat
+  else if (format = 'cd') then
+    format := FormatSettings.shortDateFormat
+  else if (format = 'ct') then
+    format := FormatSettings.ShortTimeFormat
+  else if (format = 'C') then
+    format := FormatSettings.longDateFormat+' '+FormatSettings.LongTimeFormat
+  else if (format = 'CD') then
+    format := FormatSettings.LongDateFormat
+  else if (format = 'CC') then
+    format := FormatSettings.LongTimeFormat;
   Result := format;
   if not ReplaceSubString(Result, 'yyyy', StringPadRight(IntToStr(year), '0', 4)) then
     replaceSubstring(Result, 'yy', copy(IntToStr(year), 3, 2));
@@ -638,9 +650,16 @@ begin
         ReplaceSubString(Result, 'm', IntToStr(month));
   if not ReplaceSubString(Result, 'dd', StringPadLeft(IntToStr(day), '0', 2)) then
     ReplaceSubString(Result, 'd', IntToStr(day));
-  ReplaceSubString(Result, 'hh', StringPadLeft(IntToStr(hour), '0', 2));
+  ReplaceSubString(Result, 'HH', StringPadLeft(IntToStr(hour), '0', 2));
+  ReplaceSubString(Result, 'H', IntToStr(hour));
+  ReplaceSubString(Result, 'hh', StringPadLeft(IntToStr(hour mod 12), '0', 2));
+  ReplaceSubString(Result, 'h', IntToStr(hour mod 12));
   ReplaceSubString(Result, 'nn', StringPadLeft(IntToStr(minute), '0', 2));
   ReplaceSubString(Result, 'ss', StringPadLeft(IntToStr(second), '0', 2));
+  if hour < 12 then
+    ReplaceSubString(Result, 'AMPM', 'AM')
+  else
+    ReplaceSubString(Result, 'AMPM', 'PM');
 end;
 
 function vs(value : String; start, len, min, max : Integer; name : String):Integer;

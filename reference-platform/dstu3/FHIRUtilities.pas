@@ -181,6 +181,7 @@ type
   TFhirIdentifierListHelper = class helper for TFhirIdentifierList
   public
     function BySystem(uri : String) : TFhirIdentifier;
+    function withCommas : String;
   end;
 
   TFhirAuditEventHelper = class helper for TFhirAuditEvent
@@ -350,6 +351,11 @@ type
   TFhirCodingHelper = class helper for TFhirCoding
   public
     Constructor Create(system, code : String); overload;
+  end;
+
+  TFhirHumanNameHelper = class helper for TFhirHumanName
+  public
+    function given : string;
   end;
 
   TFhirValueSetHelper = class helper for TFhirValueSet
@@ -4534,6 +4540,16 @@ begin
       exit(id);
 end;
 
+function TFhirIdentifierListHelper.withCommas: String;
+var
+  id : TFhirIdentifier;
+begin
+  result := '';
+  for id in self do
+    result := result + id.value+' ';
+  result := result.Trim;
+end;
+
 { TFHIRDocumentReferenceHelper }
 
 function makeFileName(s : String) : String;
@@ -4950,6 +4966,18 @@ begin
     result := 'select concepts from '+system
   else
     result := 'all concepts from '+system;
+end;
+
+{ TFhirHumanNameHelper }
+
+function TFhirHumanNameHelper.given: string;
+var
+  g : TFHIRString;
+begin
+  result := '';
+  for g in givenList do
+    result := result + g.value+' ';
+  result := result.Trim;
 end;
 
 end.
