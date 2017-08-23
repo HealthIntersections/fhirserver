@@ -63,7 +63,7 @@ begin
         as.defaultvalue = %npp-purpose%
         as.xpos = -1
         as.ypos = -1
-        as.returnvalue = "First actual Release"
+        as.returnvalue = "Fix html presentation"
         as.returnvariable = npp-purpose
       end
       action.variables.savetoini
@@ -136,7 +136,7 @@ begin
         configname = Release
         debugversionnumbers = false
         delphiversion = Delphi10Berlin
-        description = "Compile the Server"
+        description = "Compile the Toolkit (win64)"
         eurekalogverboselogging = false
         frameworktype = VCL
         hintsaserror = false
@@ -265,6 +265,125 @@ begin
         useerrordialogmonitor = false
         waitforcompletion = true
       end
+      action.delphi.build
+      begin
+        allowimplicitimport = true
+        alwaysuseconditionalsfromdof = false
+        autoincbuild = false
+        autoupdatefileversion = true
+        autoupdateproductversion = false
+        buildall = true
+        buildversion = 1
+        codepage = 1252
+        compileprojectresources = false
+        compileridl = true
+        configname = Release
+        debugversionnumbers = false
+        delphiversion = Delphi10Berlin
+        description = "Compile the Toolkit (osx)"
+        eurekalogverboselogging = false
+        frameworktype = VCL
+        hintsaserror = false
+        iconfile = C:\\work\\fhirserver\\toolkit\\AppEndorser_Icon.ico
+        id = {D500EE21-C7AA-4758-ACB7-2ECF7543E7F8}
+        includecompiledate = false
+        includemanifest = false
+        includeverinfo = true
+        isdebug = false
+        isdll = false
+        isprerelease = false
+        isprivate = false
+        isspecial = false
+        keepcfg = false
+        linkproductversiontofileversion = true
+        locale = 1033
+        majorversion = 1
+        minorversion = 0
+        platform = OSX32
+        projectfile = C:\\work\\fhirserver\\toolkit\\FHIRToolkit.dpr
+        regenerateresource = true
+        releaseversion = 0
+        resourcecompilertype = rcBorland
+        startingdir = C:\\work\\fhirserver\\toolkit
+        updatedoffile = false
+        updatepackagesource = false
+        updateversioninfokeys = false
+        useeurekalogcompiler = false
+        useprojectsettings = []
+        usepropertyset = false
+        useversionfromdof = false
+        versioninfokeys = "CompanyName\=" +
+                          "FileDescription\=" +
+                          "FileVersion\=1.0.0.1" +
+                          "InternalName\=" +
+                          "LegalCopyright\=" +
+                          "LegalTrademarks\=" +
+                          "OriginalFilename\=" +
+                          "ProductName\=" +
+                          "ProductVersion\=1.0.0.0" +
+                          "Comments\=" +
+                          ""
+        warningsaserror = false
+        workaroundd5bug = false
+        delphi.compileroptions
+        begin
+          alwaysuseconditionalsfromdof = false
+          alwaysusedelphilibrarypath = true
+          alwaysusedofsearchpath = false
+          assertions = true
+          assignableconst = false
+          booleval = false
+          compilerwarnings = "-w-UNSAFE_TYPE\=0" +
+                             "-w-UNSAFE_CODE\=0" +
+                             "-w-UNSAFE_CAST\=0" +
+                             ""
+          conditionals = RELEASE;FHIR3
+          consoleapp = false
+          debuginfo = false
+          definitionsonly = false
+          emitruntimetypeinformation = false
+          exportallsymbols = false
+          extendedsyntax = true
+          externaltd32 = false
+          frameworktype = FMX
+          generatedocumentation = false
+          generatehpp = false
+          hugestrings = true
+          imagebase = 4194304
+          includenamespaces = false
+          includeremotesymbols = false
+          includetd32 = false
+          inlining = inOn
+          iochecking = true
+          librarypath = $(BDSLIB)\\win32\\release;$(BDSUSERDIR)\\Imports;$(BDS)\\Imports;$(BDSCOMMONDIR)\\Dcp\\win32;$(BDS)\\include;C:\\work\\fhirserver\\Libraries\\jcl;C:\\work\\Components\\vtree\\Source
+          linkeroutput = 0
+          localsymbols = false
+          mapfile = 0
+          maxstacksize = 1048576
+          minstacksize = 16384
+          namespaceprefixes = System;Xml;Data;Datasnap;Web;Soap;System.Mac;Macapi;Posix;FMX;
+          openstrings = true
+          optimisation = true
+          outputdir = C:\\work\\fhirserver\\toolkit\\install\\osx\\FHIRToolkit.app\\Contents\\MacOS
+          overflowchecking = false
+          packages = vcl;rtl;dbrtl;adortl;vcldb;vclx;bdertl;vcldbx;ibxpress;dsnap;cds;bdecds;qrpt;teeui;teedb;tee;dss;teeqr;visualclx;visualdbclx;dsnapcrba;dsnapcon;vclsmp;vclshlctrls;vclie;xmlrtl;inet;inetdbbde;inetdbxpress;inetdb;nmfast;webdsnap;websnap;soaprtl;dbexpress;dbxcds;indy;dcloffice2k;doci6;cooltrayicon_d6plus;curlpkg;thememanagerd6;virtualtreesd6;jcl;jclvcl;jvcored6r;jvsystemd6r;jvstdctrlsd6r;jvappfrmd6r;jvbandsd6r;jvdbd6r;jvdlgsd6r;jvbded6r;jvcmpd6r;jvcryptd6r;jvctrlsd6r;jvcustomd6r;jvdockingd6r;jvdotnetctrlsd6r;jvedid6r;jvglobusd6r;jvhmid6r;jvinterpreterd6r;jvjansd6r;jvmanagedthreadsd6r;jvmmd6r;jvnetd6r;jvpagecompsd6r;jvplugind6r;jvprintpreviewd6r;jvruntimedesignd6r;jvtimeframeworkd6r;jvuibd6r;jvvalidatorsd6r;jvwizardd6r;jvxpctrlsd6r
+          rangechecking = false
+          recordfieldalign = fa8
+          referenceinfo = false
+          safedivide = false
+          searchpath = $(DELPHI)\\Lib\\Debug;C:\\PROGRA~1\\Jedi\\jcl\\lib\\d6\\debug;C:\\work\\Components\\treeview\\Source
+          showhints = true
+          showwarnings = true
+          stackframes = false
+          stringchecks = true
+          typedpointers = false
+          unitaliases = WinTypes\=Windows;WinProcs\=Windows;DbiTypes\=BDE;DbiProcs\=BDE;DbiErrs\=BDE
+          unitoutputdir = C:\\work\\fhirserver\\utils\\VocabTxServer\\install\\units\\macos
+          usedebugdcu = false
+          usepackages = false
+          varstringchecks = true
+        end
+      end
       action.ini.write
       begin
         allowcreate = false
@@ -300,10 +419,32 @@ begin
         usecommandline = true
         usepreprocessor = false
       end
-      action.delay
+      action.7zip.create
       begin
-        delay = 5000
-        id = {09771FF6-15E3-45B4-A126-FB1C5E483552}
+        archivename = C:\\work\\fhirserver\\toolkit\\install\\fhir-toolkit-osx-0.0.%BuildCount%.zip
+        archivetype = zZip
+        compressionlevel = clUltra
+        createsfxarchive = false
+        description = "Build OSX installer"
+        enabletimeout = false
+        expandimpersonationtoken = false
+        fileslist = "C:\\work\\fhirserver\\toolkit\\install\\osx\\*.*" +
+                    ""
+        id = {0D77CEC3-00B7-40AB-8F58-014EC8068D85}
+        ifarchiveexists = exUpdate
+        impersonateusenetcredonly = false
+        impersonateuser = false
+        logprocessparameters = true
+        multithreaded = false
+        recurse = zrOn
+        rootdirectory = C:\\work\\fhirserver\\toolkit\\install\\
+        solidmode = true
+        terminateontimeout = false
+        timeoutlength = 2
+        useerrordialogmonitor = false
+        usevolumesize = false
+        volumesize = 4000
+        volumesizeunits = m
       end
       action.process.execute
       begin
@@ -373,6 +514,30 @@ begin
         updateonly = false
         usefilespec = true
       end
+      action.ftp.upload.file
+      begin
+        allowgap = true
+        autoreconnect = true
+        autoupdateskew = true
+        checkfilesizes = false
+        connectionname = HealthIntersections
+        detailedlogging = false
+        enabletimeout = false
+        filespec = fhir-toolkit-osx-0.0.%BuildCount%.zip
+        forcenextclockskewupdate = true
+        gaplength = 5
+        id = {1F93DC91-5199-43F0-949D-826D1254284A}
+        localdir = C:\\work\\fhirserver\\toolkit\\install
+        recursive = false
+        remotefile = public_html/FhirServer/fhir-toolkit-osx-0.0.%BuildCount%.zip
+        retryifuploadfails = true
+        serverclockskew = 0
+        throttlespeed = 128
+        throttleupload = false
+        timeoutlength = 10
+        updateonly = false
+        usefilespec = true
+      end
       action.xml.node.create
       begin
         addnewline = true
@@ -388,8 +553,10 @@ begin
         nodetext = "" +
                    "      <title\>FHIR Toolkit release 0.0.%BuildCount% %BuildDate%</title\>" +
                    "      <link\>http://www.healthintersections.com.au/FhirServer/fhir-toolkit-install-0.0.%BuildCount%.exe</link\>" +
+                   "      <mlink\>http://www.healthintersections.com.au/FhirServer/fhir-toolkit-osx-0.0.%BuildCount%.zip</mlink\>" +
                    "      <description\>%BuildDate% (v0.0.%BuildCount%): %npp-purpose%</description\>" +
-                   "" +
+                   "      <ptitle\>0.0.%BuildCount%, %BuildDate%</ptitle\>" +
+                   "      <comment\>%npp-purpose%</comment\>" +
                    ""
         parentxpath = /rss/channel
         parserver = HighestMSXML
@@ -447,7 +614,7 @@ begin
         usexmldocobject = false
         validateonparse = true
         xmlfile = C:\\work\\fhirserver\\toolkit\\install\\toolkit.rss
-        xsltfile = C:\\work\\fhirserver\\install\\rssn.xslt
+        xsltfile = C:\\work\\fhirserver\\toolkit\\install\\rssn.xslt
       end
       action.ftp.upload.file
       begin
