@@ -104,9 +104,6 @@ uses
   CDSHooksUtilities in '..\reference-platform\support\CDSHooksUtilities.pas',
   {$IFNDEF OSX}
   AfsStreamManagers in '..\reference-platform\support\AfsStreamManagers.pas',
-  AfsVolumes in '..\reference-platform\support\AfsVolumes.pas',
-  AfsResourceVolumes in '..\reference-platform\support\AfsResourceVolumes.pas',
-  AdvWinInetClients in '..\reference-platform\support\AdvWinInetClients.pas',
   {$ENDIF }
   AdvStringHashes in '..\reference-platform\support\AdvStringHashes.pas',
   AdvHashes in '..\reference-platform\support\AdvHashes.pas',
@@ -128,7 +125,8 @@ uses
   BaseServerFrame in 'BaseServerFrame.pas',
   CapabilityStatementEditor in 'CapabilityStatementEditor.pas' {CapabilityStatementEditorFrame: TFrame},
   ValuesetExpansion in 'ValuesetExpansion.pas' {ValuesetExpansionForm},
-  HelpContexts in 'HelpContexts.pas';
+  HelpContexts in 'HelpContexts.pas',
+  ProcessForm in 'ProcessForm.pas' {ProcessingForm};
 
 {$R *.res}
 
@@ -141,5 +139,6 @@ begin
   Application.CreateForm(TAddRestResourceForm, AddRestResourceForm);
   Application.CreateForm(TSourceViewerForm, SourceViewerForm);
   Application.CreateForm(TValuesetExpansionForm, ValuesetExpansionForm);
+  Application.CreateForm(TProcessingForm, ProcessingForm);
   Application.Run;
 end.

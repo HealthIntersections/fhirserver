@@ -1,11 +1,7 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
-
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
-
 <plist version="1.0">
-
 <dict>
-
 	<key>CFBundleName</key>
 	<string>FHIRToolkit</string>
 	<key>CFBundleDisplayName</key>
@@ -33,7 +29,6 @@
 	<key>NSContactsUsageDescription</key>
 	<string>The reason for accessing the contacts</string>
 
-
 	<key>CFBundleIconFile</key>
 	<string>FHIRToolkit.icns</string>
 	<key>CFBundleShortVersionString</key>
@@ -43,8 +38,5 @@
 		<string>MacOSX</string>
 	</array>
 
-
 </dict>
-
 </plist>
-
