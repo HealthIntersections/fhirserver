@@ -5,11 +5,11 @@
 	<key>CFBundleName</key>
 	<string>FHIRToolkit</string>
 	<key>CFBundleDisplayName</key>
-	<string>FHIRToolkit</string>
+	<string>FHIR Toolkit</string>
 	<key>CFBundleIdentifier</key>
-	<string>FHIRToolkit</string>
+	<string>org.fhir.tools.toolkit</string>
 	<key>CFBundleVersion</key>
-	<string>1.0.0</string>
+	<string>0.0.1</string>
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleSignature</key>
@@ -32,7 +32,7 @@
 	<key>CFBundleIconFile</key>
 	<string>FHIRToolkit.icns</string>
 	<key>CFBundleShortVersionString</key>
-	<string>1.0.0</string>
+	<string>0.0.1</string>
 	<key>CFBundleSupportedPlatforms</key>
 	<array>
 		<string>MacOSX</string>
