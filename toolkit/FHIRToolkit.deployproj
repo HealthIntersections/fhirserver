@@ -92,6 +92,15 @@
             <RemoteCommand/>
             <Overwrite>True</Overwrite>
         </DeployFile>
+        <DeployFile Include="Win64\Debug\profiles-resources.xml" Condition="'$(Config)'=='Debug'">
+            <RemoteDir>FHIRToolkit.app\Contents\MacOS\</RemoteDir>
+            <RemoteName>profiles-resources.xml</RemoteName>
+            <DeployClass>File</DeployClass>
+            <Operation>0</Operation>
+            <LocalCommand/>
+            <RemoteCommand/>
+            <Overwrite>True</Overwrite>
+        </DeployFile>
         <DeployFile Include="$(BDS)\Redist\osx32\libcgunwind.1.0.dylib">
             <RemoteDir>FHIRToolkit.app\Contents\MacOS\</RemoteDir>
             <RemoteName>libcgunwind.1.0.dylib</RemoteName>
@@ -105,6 +114,15 @@
             <RemoteDir>FHIRToolkit.app\Assets\</RemoteDir>
             <RemoteName>Logo150x150.png</RemoteName>
             <DeployClass>UWP_DelphiLogo150</DeployClass>
+            <Operation>0</Operation>
+            <LocalCommand/>
+            <RemoteCommand/>
+            <Overwrite>True</Overwrite>
+        </DeployFile>
+        <DeployFile Include="Win64\Debug\profiles-types.xml" Condition="'$(Config)'=='Debug'">
+            <RemoteDir>FHIRToolkit.app\Contents\MacOS\</RemoteDir>
+            <RemoteName>profiles-types.xml</RemoteName>
+            <DeployClass>File</DeployClass>
             <Operation>0</Operation>
             <LocalCommand/>
             <RemoteCommand/>

@@ -122,8 +122,4 @@ toolkit/install/toookit\.fb8lck
 
 Server/win64_3/Debug/FHIRServer3\.exe - Shortcut\.lnk
 
-*.zip
-
-toolkit/install/osx/FHIRToolkit\.app/Contents/MacOS/FHIRToolkit
-
-toolkit/install/toookit\.fbp8
+tests/Win64/Debug/TestInsightSettings\.ini

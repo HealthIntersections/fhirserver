@@ -11,7 +11,8 @@ uses
   SystemSupport, TextUtilities,
   FHIRBase, FHIRTypes, FHIRResources, FHIRClient, FHIRUtilities, FHIRIndexBase, FHIRIndexInformation, FHIRSupport,
   FHIRContext, FHIRProfileUtilities,
-  ServerForm, CapabilityStatementEditor, BaseResourceFrame, BaseFrame, SourceViewer, ListSelector, ValueSetEditor, HelpContexts;
+  ServerForm, CapabilityStatementEditor, BaseResourceFrame, BaseFrame, SourceViewer, ListSelector,
+  ValueSetEditor, HelpContexts, ProcessForm;
 
 type
 
@@ -459,12 +460,35 @@ begin
 end;
 
 procedure TMasterToolsForm.FormActivate(Sender: TObject);
+var
+  form : TProcessingForm;
+  fcs : IFMXCursorService;
 begin
   if FContext = nil then
   begin
-    FContext := TBaseWorkerContext.Create;
-    FContext.LoadFromFile(IncludeTrailingPathDelimiter(ExtractFilePath(ParamStr(0)))+'profiles-types.xml');
-    FContext.LoadFromFile(IncludeTrailingPathDelimiter(ExtractFilePath(ParamStr(0)))+'profiles-resources.xml');
+    if TPlatformServices.Current.SupportsPlatformService(IFMXCursorService) then
+      fcs := TPlatformServices.Current.GetPlatformService(IFMXCursorService) as IFMXCursorService
+    else
+      fcs := nil;
+    if Assigned(fcs) then
+    begin
+      Cursor := fcs.GetCursor;
+      fcs.SetCursor(crHourGlass);
+    end;
+    try
+      form := TProcessingForm.Create(self);
+      try
+        form.Show;
+        FContext := TBaseWorkerContext.Create;
+        FContext.LoadFromFile(IncludeTrailingPathDelimiter(ExtractFilePath(ParamStr(0)))+'profiles-types.xml');
+        FContext.LoadFromFile(IncludeTrailingPathDelimiter(ExtractFilePath(ParamStr(0)))+'profiles-resources.xml');
+      finally
+        form.Free;
+      end;
+    finally
+      if Assigned(fCS) then
+        fcs.setCursor(Cursor);
+    end;
   end;
 end;
 
@@ -790,7 +814,7 @@ begin
   end;
 
   if (pnlHelp.visible) then
-    webHelp.LoadFromStrings(template(''), 'help:');
+    webHelp.LoadFromStrings(template(''), 'my.html');
 end;
 
 procedure TMasterToolsForm.updateHelpText;
@@ -812,14 +836,14 @@ begin
     begin
       FFocus := obj;
       if (obj = nil) or (obj.HelpContext = 0) then
-        webHelp.LoadFromStrings(template(''), 'help:')
+        webHelp.LoadFromStrings(template(''), 'my.html')
       else
       begin
         s := Help_Strings[obj.HelpContext];
         if s <> '' then
-          webHelp.LoadFromStrings(template(processHelpContext(s)), 'help:')
+          webHelp.LoadFromStrings(template(processHelpContext(s)), 'my.html')
         else
-          webHelp.LoadFromStrings(template(''), 'help:');
+          webHelp.LoadFromStrings(template(''), 'my.html');
       end;
     end;
   end;

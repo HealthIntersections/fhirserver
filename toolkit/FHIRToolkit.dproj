@@ -6,7 +6,7 @@
         <MainSource>FHIRToolkit.dpr</MainSource>
         <Base>True</Base>
         <Config Condition="'$(Config)'==''">Debug</Config>
-        <Platform Condition="'$(Platform)'==''">Win64</Platform>
+        <Platform Condition="'$(Platform)'==''">OSX32</Platform>
         <TargetedPlatforms>6</TargetedPlatforms>
         <AppType>Application</AppType>
     </PropertyGroup>
@@ -265,9 +265,6 @@
         <DCCReference Include="..\reference-platform\support\HashSupport.pas"/>
         <DCCReference Include="..\reference-platform\support\CDSHooksUtilities.pas"/>
         <DCCReference Include="..\reference-platform\support\AfsStreamManagers.pas"/>
-        <DCCReference Include="..\reference-platform\support\AfsVolumes.pas"/>
-        <DCCReference Include="..\reference-platform\support\AfsResourceVolumes.pas"/>
-        <DCCReference Include="..\reference-platform\support\AdvWinInetClients.pas"/>
         <DCCReference Include="..\reference-platform\support\AdvStringHashes.pas"/>
         <DCCReference Include="..\reference-platform\support\AdvHashes.pas"/>
         <DCCReference Include="..\Libraries\FMM\FastMM4Messages.pas"/>
@@ -276,55 +273,48 @@
         </DCCReference>
         <DCCReference Include="FHIRToolkitForm.pas">
             <Form>MasterToolsForm</Form>
-            <FormType>fmx</FormType>
         </DCCReference>
         <DCCReference Include="ServerForm.pas">
             <Form>ServerFrameForm</Form>
-            <FormType>fmx</FormType>
             <DesignClass>TFrame</DesignClass>
         </DCCReference>
         <DCCReference Include="AppEndorserFrame.pas">
             <Form>AppEndorsementFrame</Form>
-            <FormType>fmx</FormType>
             <DesignClass>TFrame</DesignClass>
         </DCCReference>
         <DCCReference Include="BaseFrame.pas"/>
         <DCCReference Include="ValueSetEditor.pas">
             <Form>ValueSetEditorFrame</Form>
-            <FormType>fmx</FormType>
             <DesignClass>TFrame</DesignClass>
         </DCCReference>
         <DCCReference Include="SearchParameterEditor.pas">
             <Form>SearchParameterEditorForm</Form>
-            <FormType>fmx</FormType>
         </DCCReference>
         <DCCReference Include="ListSelector.pas">
             <Form>ListSelectorForm</Form>
-            <FormType>fmx</FormType>
         </DCCReference>
         <DCCReference Include="..\reference-platform\dstu3\FHIRIndexInformation.pas"/>
         <DCCReference Include="..\reference-platform\support\FHIRIndexBase.pas"/>
         <DCCReference Include="AddRestResourceDialog.pas">
             <Form>AddRestResourceForm</Form>
-            <FormType>fmx</FormType>
         </DCCReference>
         <DCCReference Include="SourceViewer.pas">
             <Form>SourceViewerForm</Form>
-            <FormType>fmx</FormType>
         </DCCReference>
         <DCCReference Include="..\reference-platform\support\DifferenceEngine.pas"/>
         <DCCReference Include="BaseResourceFrame.pas"/>
         <DCCReference Include="BaseServerFrame.pas"/>
         <DCCReference Include="CapabilityStatementEditor.pas">
             <Form>CapabilityStatementEditorFrame</Form>
-            <FormType>fmx</FormType>
             <DesignClass>TFrame</DesignClass>
         </DCCReference>
         <DCCReference Include="ValuesetExpansion.pas">
             <Form>ValuesetExpansionForm</Form>
-            <FormType>fmx</FormType>
         </DCCReference>
         <DCCReference Include="HelpContexts.pas"/>
+        <DCCReference Include="ProcessForm.pas">
+            <Form>ProcessingForm</Form>
+        </DCCReference>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>
@@ -406,6 +396,13 @@
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
+                <DeployFile LocalName="Win64\Debug\profiles-resources.xml" Configuration="Debug" Class="File">
+                    <Platform Name="OSX32">
+                        <RemoteDir>Contents\MacOS\</RemoteDir>
+                        <RemoteName>profiles-resources.xml</RemoteName>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
                 <DeployFile LocalName="$(BDS)\Redist\osx32\libcgunwind.1.0.dylib" Class="DependencyModule">
                     <Platform Name="OSX32">
                         <Overwrite>true</Overwrite>
@@ -415,6 +412,13 @@
                     <Platform Name="OSX32">
                         <RemoteDir>Assets\</RemoteDir>
                         <RemoteName>Logo150x150.png</RemoteName>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
+                <DeployFile LocalName="Win64\Debug\profiles-types.xml" Configuration="Debug" Class="File">
+                    <Platform Name="OSX32">
+                        <RemoteDir>Contents\MacOS\</RemoteDir>
+                        <RemoteName>profiles-types.xml</RemoteName>
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
