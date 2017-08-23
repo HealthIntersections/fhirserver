@@ -28,8 +28,8 @@ object ValueSetEditorFrame: TValueSetEditorFrame
       Size.PlatformDefault = False
       TabOrder = 1
       OnClick = tvStructureClick
-      Viewport.Width = 201.000000000000000000
-      Viewport.Height = 687.000000000000000000
+      Viewport.Width = 197.000000000000000000
+      Viewport.Height = 683.000000000000000000
       object tvMetadata: TTreeViewItem
         IsChecked = False
         IsExpanded = False
@@ -60,7 +60,7 @@ object ValueSetEditorFrame: TValueSetEditorFrame
       Size.Width = 674.000000000000000000
       Size.Height = 712.000000000000000000
       Size.PlatformDefault = False
-      TabIndex = 2
+      TabIndex = 3
       TabOrder = 0
       TabPosition = None
       Sizes = (
@@ -78,7 +78,7 @@ object ValueSetEditorFrame: TValueSetEditorFrame
         CustomIcon = <
           item
           end>
-        IsSelected = True
+        IsSelected = False
         Size.Width = 8.000000000000000000
         Size.Height = 8.000000000000000000
         Size.PlatformDefault = False
@@ -88,6 +88,7 @@ object ValueSetEditorFrame: TValueSetEditorFrame
         ExplicitSize.cx = 8.000000000000000000
         ExplicitSize.cy = 8.000000000000000000
         object btnFlipCompose: TButton
+          HelpContext = 34
           Position.X = 16.000000000000000000
           Position.Y = 584.000000000000000000
           Size.Width = 169.000000000000000000
@@ -98,6 +99,7 @@ object ValueSetEditorFrame: TValueSetEditorFrame
           OnClick = btnFlipComposeClick
         end
         object btnFlipExpansion: TButton
+          HelpContext = 42
           Position.X = 16.000000000000000000
           Position.Y = 608.000000000000000000
           Size.Width = 169.000000000000000000
@@ -109,6 +111,7 @@ object ValueSetEditorFrame: TValueSetEditorFrame
         end
         object cbExperimental: TCheckBox
           Anchors = [akTop, akRight]
+          HelpContext = 23
           Position.X = 544.000000000000000000
           Position.Y = 120.000000000000000000
           Size.Width = 122.000000000000000000
@@ -197,6 +200,7 @@ object ValueSetEditorFrame: TValueSetEditorFrame
           TabOrder = 15
           Position.X = 566.000000000000000000
           Position.Y = 50.000000000000000000
+          HelpContext = 19
           Size.Width = 100.000000000000000000
           Size.Height = 22.000000000000000000
           Size.PlatformDefault = False
@@ -209,6 +213,7 @@ object ValueSetEditorFrame: TValueSetEditorFrame
           TabOrder = 14
           Position.X = 84.000000000000000000
           Position.Y = 16.000000000000000000
+          HelpContext = 17
           Size.Width = 584.000000000000000000
           Size.Height = 22.000000000000000000
           Size.PlatformDefault = False
@@ -221,6 +226,7 @@ object ValueSetEditorFrame: TValueSetEditorFrame
           TabOrder = 10
           Position.X = 84.000000000000000000
           Position.Y = 50.000000000000000000
+          HelpContext = 20
           Size.Width = 411.000000000000000000
           Size.Height = 22.000000000000000000
           Size.PlatformDefault = False
@@ -233,6 +239,7 @@ object ValueSetEditorFrame: TValueSetEditorFrame
           TabOrder = 13
           Position.X = 84.000000000000000000
           Position.Y = 85.000000000000000000
+          HelpContext = 21
           Size.Width = 584.000000000000000000
           Size.Height = 22.000000000000000000
           Size.PlatformDefault = False
@@ -241,6 +248,7 @@ object ValueSetEditorFrame: TValueSetEditorFrame
         end
         object cbxStatus: TComboBox
           Anchors = [akLeft, akTop, akRight]
+          HelpContext = 22
           Items.Strings = (
             ''
             'draft'
@@ -260,6 +268,7 @@ object ValueSetEditorFrame: TValueSetEditorFrame
           OnChange = inputChanged
           OnCheckChanged = inputChanged
           Anchors = [akLeft, akTop, akRight]
+          HelpContext = 24
           Position.X = 84.000000000000000000
           Position.Y = 154.000000000000000000
           Size.Width = 584.000000000000000000
@@ -273,6 +282,7 @@ object ValueSetEditorFrame: TValueSetEditorFrame
           TabOrder = 11
           Position.X = 84.000000000000000000
           Position.Y = 189.000000000000000000
+          HelpContext = 25
           Size.Width = 584.000000000000000000
           Size.Height = 22.000000000000000000
           Size.PlatformDefault = False
@@ -285,6 +295,7 @@ object ValueSetEditorFrame: TValueSetEditorFrame
           TabOrder = 9
           Position.X = 84.000000000000000000
           Position.Y = 224.000000000000000000
+          HelpContext = 27
           Size.Width = 584.000000000000000000
           Size.Height = 22.000000000000000000
           Size.PlatformDefault = False
@@ -297,6 +308,7 @@ object ValueSetEditorFrame: TValueSetEditorFrame
           TabOrder = 12
           Position.X = 84.000000000000000000
           Position.Y = 258.000000000000000000
+          HelpContext = 31
           Size.Width = 584.000000000000000000
           Size.Height = 22.000000000000000000
           Size.PlatformDefault = False
@@ -309,6 +321,7 @@ object ValueSetEditorFrame: TValueSetEditorFrame
           TabOrder = 7
           Position.X = 84.000000000000000000
           Position.Y = 293.000000000000000000
+          HelpContext = 32
           Size.Width = 584.000000000000000000
           Size.Height = 22.000000000000000000
           Size.PlatformDefault = False
@@ -317,6 +330,7 @@ object ValueSetEditorFrame: TValueSetEditorFrame
         end
         object cbxJurisdiction: TComboBox
           Anchors = [akLeft, akTop, akRight]
+          HelpContext = 29
           Items.Strings = (
             ''
             'Austria (AT)'
@@ -355,6 +369,7 @@ object ValueSetEditorFrame: TValueSetEditorFrame
           OnChange = inputChanged
         end
         object cbImmutable: TCheckBox
+          HelpContext = 30
           Position.X = 16.000000000000000000
           Position.Y = 520.000000000000000000
           TabOrder = 28
@@ -362,6 +377,7 @@ object ValueSetEditorFrame: TValueSetEditorFrame
           OnChange = inputChanged
         end
         object cbExtensible: TCheckBox
+          HelpContext = 33
           Position.X = 16.000000000000000000
           Position.Y = 544.000000000000000000
           TabOrder = 27
@@ -388,6 +404,7 @@ object ValueSetEditorFrame: TValueSetEditorFrame
           Anchors = [akLeft, akTop, akRight]
           CanFocus = True
           ClipChildren = True
+          HelpContext = 18
           Position.X = 16.000000000000000000
           Position.Y = 384.000000000000000000
           Size.Width = 565.000000000000000000
@@ -397,8 +414,8 @@ object ValueSetEditorFrame: TValueSetEditorFrame
           OnSelChanged = gridIdentifiersSelChanged
           OnGetValue = gridIdentifiersGetValue
           OnSetValue = gridIdentifiersSetValue
-          Viewport.Width = 545.000000000000000000
-          Viewport.Height = 96.000000000000000000
+          Viewport.Width = 565.000000000000000000
+          Viewport.Height = 121.000000000000000000
           object StringColumn1: TStringColumn
             Header = 'System'
             Size.Width = 297.000000000000000000
@@ -439,6 +456,7 @@ object ValueSetEditorFrame: TValueSetEditorFrame
           Viewport.Height = 712.000000000000000000
         end
         object cbInactive: TCheckBox
+          HelpContext = 36
           Position.X = 16.000000000000000000
           Position.Y = 56.000000000000000000
           Size.Width = 201.000000000000000000
@@ -453,6 +471,7 @@ object ValueSetEditorFrame: TValueSetEditorFrame
           OnChange = inputChanged
           OnCheckChanged = inputChanged
           Anchors = [akLeft, akTop, akRight]
+          HelpContext = 35
           Position.X = 96.000000000000000000
           Position.Y = 26.000000000000000000
           Size.Width = 565.000000000000000000
@@ -501,7 +520,7 @@ object ValueSetEditorFrame: TValueSetEditorFrame
         CustomIcon = <
           item
           end>
-        IsSelected = True
+        IsSelected = False
         Size.Width = 8.000000000000000000
         Size.Height = 8.000000000000000000
         Size.PlatformDefault = False
@@ -513,7 +532,7 @@ object ValueSetEditorFrame: TValueSetEditorFrame
         object Label15: TLabel
           Position.X = 8.000000000000000000
           Position.Y = 18.000000000000000000
-          Text = 'Name:'
+          Text = 'System:'
           TabOrder = 18
         end
         object edtSystem: TEdit
@@ -522,7 +541,7 @@ object ValueSetEditorFrame: TValueSetEditorFrame
           TabOrder = 9
           Position.X = 76.000000000000000000
           Position.Y = 18.000000000000000000
-          HelpType = htKeyword
+          HelpContext = 37
           Size.Width = 411.000000000000000000
           Size.Height = 22.000000000000000000
           Size.PlatformDefault = False
@@ -545,6 +564,7 @@ object ValueSetEditorFrame: TValueSetEditorFrame
           TabOrder = 14
           Position.X = 558.000000000000000000
           Position.Y = 18.000000000000000000
+          HelpContext = 38
           Size.Width = 100.000000000000000000
           Size.Height = 22.000000000000000000
           Size.PlatformDefault = False
@@ -569,6 +589,7 @@ object ValueSetEditorFrame: TValueSetEditorFrame
         end
         object lbImports: TListBox
           Anchors = [akLeft, akTop, akRight]
+          HelpContext = 50
           Position.X = 8.000000000000000000
           Position.Y = 70.000000000000000000
           Size.Width = 557.000000000000000000
@@ -597,7 +618,7 @@ object ValueSetEditorFrame: TValueSetEditorFrame
           Size.Width = 664.000000000000000000
           Size.Height = 537.000000000000000000
           Size.PlatformDefault = False
-          TabIndex = 0
+          TabIndex = 1
           TabOrder = 25
           TabPosition = None
           Sizes = (
@@ -609,7 +630,7 @@ object ValueSetEditorFrame: TValueSetEditorFrame
             CustomIcon = <
               item
               end>
-            IsSelected = True
+            IsSelected = False
             Size.Width = 8.000000000000000000
             Size.Height = 8.000000000000000000
             Size.PlatformDefault = False
@@ -638,6 +659,7 @@ object ValueSetEditorFrame: TValueSetEditorFrame
               Anchors = [akLeft, akTop, akRight]
               CanFocus = True
               ClipChildren = True
+              HelpContext = 43
               Position.X = 8.000000000000000000
               Position.Y = 6.000000000000000000
               Size.Width = 548.000000000000000000
@@ -678,7 +700,7 @@ object ValueSetEditorFrame: TValueSetEditorFrame
             CustomIcon = <
               item
               end>
-            IsSelected = False
+            IsSelected = True
             Size.Width = 8.000000000000000000
             Size.Height = 8.000000000000000000
             Size.PlatformDefault = False
@@ -723,6 +745,7 @@ object ValueSetEditorFrame: TValueSetEditorFrame
               Anchors = [akLeft, akTop, akRight, akBottom]
               CanFocus = True
               ClipChildren = True
+              HelpContext = 39
               Position.X = 8.000000000000000000
               Position.Y = 6.000000000000000000
               Size.Width = 549.000000000000000000
@@ -751,6 +774,7 @@ object ValueSetEditorFrame: TValueSetEditorFrame
               Anchors = [akLeft, akRight, akBottom]
               CanFocus = True
               ClipChildren = True
+              HelpContext = 40
               Position.X = 8.000000000000000000
               Position.Y = 451.000000000000000000
               Size.Width = 549.000000000000000000
@@ -845,7 +869,7 @@ object ValueSetEditorFrame: TValueSetEditorFrame
         CustomIcon = <
           item
           end>
-        IsSelected = False
+        IsSelected = True
         Size.Width = 8.000000000000000000
         Size.Height = 8.000000000000000000
         Size.PlatformDefault = False
@@ -866,6 +890,7 @@ object ValueSetEditorFrame: TValueSetEditorFrame
           TabOrder = 15
           Position.X = 88.000000000000000000
           Position.Y = 16.000000000000000000
+          HelpContext = 43
           Size.Width = 570.000000000000000000
           Size.Height = 22.000000000000000000
           Size.PlatformDefault = False
@@ -890,6 +915,7 @@ object ValueSetEditorFrame: TValueSetEditorFrame
           TabOrder = 10
           Position.X = 88.000000000000000000
           Position.Y = 80.000000000000000000
+          HelpContext = 45
           Size.Width = 225.000000000000000000
           Size.Height = 22.000000000000000000
           Size.PlatformDefault = False
@@ -909,6 +935,7 @@ object ValueSetEditorFrame: TValueSetEditorFrame
           TabOrder = 13
           Position.X = 376.000000000000000000
           Position.Y = 82.000000000000000000
+          HelpContext = 46
           Size.Width = 282.000000000000000000
           Size.Height = 22.000000000000000000
           Size.PlatformDefault = False
@@ -919,6 +946,7 @@ object ValueSetEditorFrame: TValueSetEditorFrame
           Anchors = [akLeft, akTop, akRight, akBottom]
           CanFocus = True
           ClipChildren = True
+          HelpContext = 48
           Position.X = 8.000000000000000000
           Position.Y = 144.000000000000000000
           Size.Width = 657.000000000000000000
@@ -928,8 +956,8 @@ object ValueSetEditorFrame: TValueSetEditorFrame
           OnSelChanged = gridContainsSelChanged
           OnGetValue = gridContainsGetValue
           OnSetValue = gridContainsSetValue
-          Viewport.Width = 657.000000000000000000
-          Viewport.Height = 457.000000000000000000
+          Viewport.Width = 637.000000000000000000
+          Viewport.Height = 416.000000000000000000
           object StringColumn10: TStringColumn
             Header = 'Code'
           end
@@ -975,6 +1003,7 @@ object ValueSetEditorFrame: TValueSetEditorFrame
           Anchors = [akLeft, akRight, akBottom]
           CanFocus = True
           ClipChildren = True
+          HelpContext = 49
           Position.X = 8.000000000000000000
           Position.Y = 635.000000000000000000
           Size.Width = 549.000000000000000000
@@ -984,8 +1013,8 @@ object ValueSetEditorFrame: TValueSetEditorFrame
           OnSelChanged = gridContainsDesignationsSelChanged
           OnGetValue = gridContainsDesignationsGetValue
           OnSetValue = gridContainsDesignationsSetValue
-          Viewport.Width = 549.000000000000000000
-          Viewport.Height = 73.000000000000000000
+          Viewport.Width = 529.000000000000000000
+          Viewport.Height = 48.000000000000000000
           object PopupColumn4: TPopupColumn
             Header = 'Language'
             Items.Strings = (
@@ -1059,6 +1088,7 @@ object ValueSetEditorFrame: TValueSetEditorFrame
           Date = 42968.000000000000000000
           OnChange = inputChanged
           Anchors = [akLeft, akTop, akRight]
+          HelpContext = 44
           Position.X = 88.000000000000000000
           Position.Y = 48.000000000000000000
           Size.Width = 425.000000000000000000
@@ -1070,6 +1100,7 @@ object ValueSetEditorFrame: TValueSetEditorFrame
           Time = 0.556830983796296300
           OnChange = inputChanged
           Anchors = [akTop, akRight]
+          HelpContext = 44
           Position.X = 560.000000000000000000
           Position.Y = 48.000000000000000000
           TabOrder = 30
@@ -1115,6 +1146,7 @@ object ValueSetEditorFrame: TValueSetEditorFrame
           Anchors = [akLeft, akTop, akRight]
           CanFocus = True
           ClipChildren = True
+          HelpContext = 40
           Position.X = 16.000000000000000000
           Position.Y = 8.000000000000000000
           Size.Width = 561.000000000000000000
@@ -1176,6 +1208,7 @@ object ValueSetEditorFrame: TValueSetEditorFrame
     Size.PlatformDefault = False
     TabOrder = 24
     object btnExpand: TButton
+      HelpContext = 51
       Position.X = 8.000000000000000000
       Position.Y = 8.000000000000000000
       Size.Width = 80.000000000000000000

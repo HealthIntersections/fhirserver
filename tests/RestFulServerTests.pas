@@ -11,7 +11,7 @@ uses
   FHIRClient, SCIMObjects,
   SmartOnFhirUtilities, SmartOnFhirTestingLogin,
   FHIRServerConstants, ServerUtilities, FHIRServerContext, FHIRStorageService, FHIRUserProvider,
-  FHIRRestServer;
+  FHIRRestServer, WebSourceProvider;
 
 Const
   TEST_USER_NAME = 'DunitX-test-user';
@@ -372,6 +372,7 @@ begin
   FServer.ServeMissingCertificate := true;
   FServer.ServeUnknownCertificate := true;
   FServer.Start(true);
+  FServer.SourceProvider := TFHIRWebServerSourceFolderProvider.Create('C:\work\fhirserver\web');
 
   FClientXml := TFhirHTTPClient.Create(FContext.ValidatorContext.Link, FServer.ClientAddress(false), false);
   FClientXml.UseIndy := true;

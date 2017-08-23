@@ -105,6 +105,7 @@ type
     TimeZoneHours : Integer;
     TimezoneMins : Integer;
   private
+    procedure clear;
     procedure check;
     function checkNoException : boolean;
     procedure RollUp;
@@ -273,6 +274,23 @@ begin
   result := err = '';
 end;
 
+procedure TDateTimeEx.clear;
+begin
+  Source := '';
+  year := 0;
+  month := 0;
+  day := 0;
+  hour := 0;
+  minute := 0;
+  second := 0;
+  fraction := 0;
+  FPrecision := dtpYear;
+  FractionPrecision := 0;
+  TimezoneType := dttzUnknown;
+  TimeZoneHours := 0;
+  TimezoneMins := 0;
+end;
+
 function TDateTimeEx.DateTime: TDateTime;
 begin
   check;
@@ -334,6 +352,7 @@ var
   s: String;
   tmp: String;
 begin
+  result.clear;
   Result.year := 0;
   Result.month := 0;
   Result.day := 0;
@@ -607,9 +626,21 @@ end;
 
 function TDateTimeEx.ToString(format: String): String;
 begin
+  if Source = '' then
+    exit('');
   check;
   if (format = 'c') then
-    format := FormatSettings.shortDateFormat+' '+FormatSettings.LongTimeFormat;
+    format := FormatSettings.shortDateFormat+' '+FormatSettings.ShortTimeFormat
+  else if (format = 'cd') then
+    format := FormatSettings.shortDateFormat
+  else if (format = 'ct') then
+    format := FormatSettings.ShortTimeFormat
+  else if (format = 'C') then
+    format := FormatSettings.longDateFormat+' '+FormatSettings.LongTimeFormat
+  else if (format = 'CD') then
+    format := FormatSettings.LongDateFormat
+  else if (format = 'CC') then
+    format := FormatSettings.LongTimeFormat;
   Result := format;
   if not ReplaceSubString(Result, 'yyyy', StringPadRight(IntToStr(year), '0', 4)) then
     replaceSubstring(Result, 'yy', copy(IntToStr(year), 3, 2));
@@ -619,9 +650,16 @@ begin
         ReplaceSubString(Result, 'm', IntToStr(month));
   if not ReplaceSubString(Result, 'dd', StringPadLeft(IntToStr(day), '0', 2)) then
     ReplaceSubString(Result, 'd', IntToStr(day));
-  ReplaceSubString(Result, 'hh', StringPadLeft(IntToStr(hour), '0', 2));
+  ReplaceSubString(Result, 'HH', StringPadLeft(IntToStr(hour), '0', 2));
+  ReplaceSubString(Result, 'H', IntToStr(hour));
+  ReplaceSubString(Result, 'hh', StringPadLeft(IntToStr(hour mod 12), '0', 2));
+  ReplaceSubString(Result, 'h', IntToStr(hour mod 12));
   ReplaceSubString(Result, 'nn', StringPadLeft(IntToStr(minute), '0', 2));
   ReplaceSubString(Result, 'ss', StringPadLeft(IntToStr(second), '0', 2));
+  if hour < 12 then
+    ReplaceSubString(Result, 'AMPM', 'AM')
+  else
+    ReplaceSubString(Result, 'AMPM', 'PM');
 end;
 
 function vs(value : String; start, len, min, max : Integer; name : String):Integer;
@@ -645,6 +683,7 @@ begin
   if value = '' then
     exit(makeNull);
 
+  result.clear;
   result.Source := Value;
 
   if pos('Z', value) = length(value) then
@@ -720,6 +759,7 @@ begin
   if value = '' then
     exit(makeNull);
 
+  result.clear;
   result.Source := Value;
   if pos('Z', value) = length(value) then
   begin
@@ -1095,6 +1135,7 @@ end;
 
 class function TDateTimeEx.makeNull: TDateTimeEx;
 begin
+  result.clear;
   result.Source := '';
 end;
 
@@ -1106,6 +1147,7 @@ end;
 
 class function TDateTimeEx.fromTS(value: TTimestamp; tz : TDateTimeExTimezone): TDateTimeEx;
 begin
+  result.clear;
   result.Year := value.year;
   result.month := value.month;
   result.day := value.day;

@@ -863,7 +863,7 @@ class function TMXmlParser.parseFile(name: String; options : TMXmlParserOptions)
 var
   s : TAdvFile;
 begin
-  s := TAdvFile.create(name, fmOpenRead);
+  s := TAdvFile.create(name, fmOpenRead + fmShareDenyWrite);
   try
     result := parse(s, options);
   finally

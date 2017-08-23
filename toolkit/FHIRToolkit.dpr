@@ -127,7 +127,8 @@ uses
   BaseResourceFrame in 'BaseResourceFrame.pas',
   BaseServerFrame in 'BaseServerFrame.pas',
   CapabilityStatementEditor in 'CapabilityStatementEditor.pas' {CapabilityStatementEditorFrame: TFrame},
-  ValuesetExpansion in 'ValuesetExpansion.pas' {ValuesetExpansionForm};
+  ValuesetExpansion in 'ValuesetExpansion.pas' {ValuesetExpansionForm},
+  HelpContexts in 'HelpContexts.pas';
 
 {$R *.res}
 

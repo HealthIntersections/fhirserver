@@ -7,9 +7,9 @@ uses
   FMX.Types, FMX.Graphics, FMX.Controls, FMX.Forms, FMX.Dialogs, FMX.StdCtrls,
   FMX.Controls.Presentation, FMX.TabControl, FMX.ListBox, FMX.Layouts, FMX.DateTimeCtrls,
   FMX.Edit, System.Rtti, FMX.Grid.Style, FMX.Grid, FMX.ScrollBox, FMX.Platform,
-  DateSupport,
+  DateSupport, StringSupport,
   AdvGenerics,
-  FHIRTypes, FHIRResources, FHIRClient,
+  FHIRTypes, FHIRResources, FHIRClient, FHIRUtilities,
   BaseFrame, AppEndorserFrame, CapabilityStatementEditor;
 
 type
@@ -66,6 +66,50 @@ type
     StringColumn8: TStringColumn;
     Panel3: TPanel;
     lblOutcome: TLabel;
+    Label17: TLabel;
+    edtPText: TEdit;
+    Label18: TLabel;
+    dedPLastEdit: TDateEdit;
+    Label19: TLabel;
+    Label23: TLabel;
+    edtPTag: TEdit;
+    btnSearchPatients: TButton;
+    Label15: TLabel;
+    Label16: TLabel;
+    Label20: TLabel;
+    Label21: TLabel;
+    Label22: TLabel;
+    Label24: TLabel;
+    Label25: TLabel;
+    Label26: TLabel;
+    edtPName: TEdit;
+    edtPTelecom: TEdit;
+    cbxPDob: TComboBox;
+    dedPDob: TDateEdit;
+    cbxPGender: TComboBox;
+    cbxPDeceased: TComboBox;
+    dedPDeceased: TDateEdit;
+    cbxPActive: TComboBox;
+    edtPIdentifier: TEdit;
+    cbxPSpecies: TComboBox;
+    cbxPLanguage: TComboBox;
+    cbPUseLastUpdated: TCheckBox;
+    cbConfUseLastUpdated: TCheckBox;
+    gridPMatches: TGrid;
+    StringColumn9: TStringColumn;
+    StringColumn10: TStringColumn;
+    StringColumn11: TStringColumn;
+    StringColumn12: TStringColumn;
+    StringColumn13: TStringColumn;
+    StringColumn14: TStringColumn;
+    StringColumn15: TStringColumn;
+    StringColumn16: TStringColumn;
+    StringColumn17: TStringColumn;
+    tabMatches: TTabControl;
+    TabItem4: TTabItem;
+    TabItem5: TTabItem;
+    TabItem6: TTabItem;
+    btnFetchMore: TButton;
     procedure btnTestClick(Sender: TObject);
     procedure btnCloseClick(Sender: TObject);
     procedure Button1Click(Sender: TObject);
@@ -73,13 +117,21 @@ type
     procedure gridConfMatchesGetValue(Sender: TObject; const ACol, ARow: Integer; var Value: TValue);
     procedure gridConfMatchesCellDblClick(const Column: TColumn; const Row: Integer);
     procedure cbxSearchTypeChange(Sender: TObject);
+    procedure cbxPDobChange(Sender: TObject);
+    procedure cbxPDeceasedChange(Sender: TObject);
+    procedure cbConfUseLastUpdatedChange(Sender: TObject);
+    procedure cbPUseLastUpdatedChange(Sender: TObject);
+    procedure btnSearchPatientsClick(Sender: TObject);
+    procedure gridPMatchesGetValue(Sender: TObject; const ACol, ARow: Integer; var Value: TValue);
+    procedure btnFetchMoreClick(Sender: TObject);
   private
     FClient: TFHIRClient;
     FCapabilityStatement: TFhirCapabilityStatement;
     FCSTab : TTabItem;
     FCsForm : TCapabilityStatementEditorFrame;
-    FBundle : TFhirBundle;
-    FMatches : TAdvList<TFHIRResource>;
+    FPatBundle, FConfBundle : TFhirBundle;
+    FConfMatches : TAdvList<TFHIRResource>;
+    FPatMatches : TAdvList<TFHIRPatient>;
     procedure SetClient(const Value: TFHIRClient);
     procedure SetCapabilityStatement(const Value: TFhirCapabilityStatement);
     { Private declarations }
@@ -113,6 +165,23 @@ begin
     Ini.WriteInteger('Conformance-search', 'status', cbxConfStatus.ItemIndex);
     Ini.WriteString('Conformance-search', 'updated', edtConfUpdated.Text);
     Ini.WriteString('Conformance-search', 'tag', edtConfTag.Text);
+    Ini.WriteBool('Conformance-search', 'updated-opt', cbConfUseLastUpdated.IsChecked);
+
+    Ini.WriteString('Patient-search', 'text', edtPText.Text);
+    Ini.WriteString('Patient-search', 'updated', dedPLastEdit.Text);
+    Ini.WriteString('Patient-search', 'tag', edtPTag.Text);
+    Ini.WriteString('Patient-search', 'name', edtPName.Text);
+    Ini.WriteString('Patient-search', 'telecom', edtPTelecom.Text);
+    Ini.WriteInteger('Patient-search', 'dobopt', cbxPDob.ItemIndex);
+    Ini.WriteString('Patient-search', 'dob', dedPDob.Text);
+    Ini.WriteInteger('Patient-search', 'gender', cbxPGender.ItemIndex);
+    Ini.WriteInteger('Patient-search', 'dod', cbxPDeceased.ItemIndex);
+    Ini.WriteString('Patient-search', 'dodopt', dedPDeceased.Text);
+    Ini.WriteInteger('Patient-search', 'active', cbxPActive.ItemIndex);
+    Ini.WriteString('Patient-search', 'id', edtPIdentifier.Text);
+    Ini.WriteInteger('Patient-search', 'species', cbxPSpecies.ItemIndex);
+    Ini.WriteInteger('Patient-search', 'lang', cbxPLanguage.ItemIndex);
+    Ini.WriteBool('Patient-search', 'updated-opt', cbPUseLastUpdated.IsChecked);
   except
   end;
   Close;
@@ -165,9 +234,30 @@ begin
   end;
 end;
 
+procedure TServerFrame.cbConfUseLastUpdatedChange(Sender: TObject);
+begin
+  dedConfDate.Enabled := cbConfUseLastUpdated.IsChecked;
+end;
+
+procedure TServerFrame.cbPUseLastUpdatedChange(Sender: TObject);
+begin
+  dedPLastEdit.Enabled := cbPUseLastUpdated.IsChecked;
+end;
+
+procedure TServerFrame.cbxPDeceasedChange(Sender: TObject);
+begin
+  dedPDeceased.Enabled := cbxPDeceased.ItemIndex > 2;
+end;
+
+procedure TServerFrame.cbxPDobChange(Sender: TObject);
+begin
+  dedPDob.Enabled := cbxPDob.ItemIndex > 0;
+end;
+
 procedure TServerFrame.cbxSearchTypeChange(Sender: TObject);
 begin
   tabSearch.TabIndex := cbxSearchType.ItemIndex;
+  tabMatches.TabIndex := cbxSearchType.ItemIndex;
 end;
 
 function getJurisdictionSearch(i: integer): string;
@@ -268,10 +358,10 @@ begin
     fcs.SetCursor(crHourGlass);
   end;
   try
-    FMatches.Clear;
-    gridConfMatches.RowCount := FMatches.Count;
-    FBundle.Free;
-    FBundle := nil;
+    FConfMatches.Clear;
+    gridConfMatches.RowCount := FConfMatches.Count;
+    FConfBundle.Free;
+    FConfBundle := nil;
 
     params := TDictionary<String, String>.create;
     try
@@ -298,18 +388,149 @@ begin
         params.add('publisher', edtConfPub.Text);
       if cbxConfStatus.ItemIndex <> -1 then
         params.add('status', cbxConfStatus.Items[cbxConfStatus.ItemIndex]);
-      if edtConfUpdated.Text <> '' then
+      if cbConfUseLastUpdated.IsChecked then
         params.add('_lastUpdated', edtConfUpdated.Text);
       if edtConfTag.Text <> '' then
         params.add('_tag', edtConfTag.Text);
 
       start := now;
-      FBundle := FClient.search(false, params);
-      for be in FBundle.entryList do
+      FConfBundle := FClient.search(false, params);
+      for be in FConfBundle.entryList do
         if (be.search.mode = SearchEntryModeMatch) and (be.resource <> nil) then
-          FMatches.Add(be.resource.Link);
-      gridConfMatches.RowCount := FMatches.Count;
-      lblOutcome.Text := inttostr(FMatches.Count)+' resources in '+describePeriod(now - start);
+          FConfMatches.Add(be.resource.Link);
+      gridConfMatches.RowCount := FConfMatches.Count;
+      lblOutcome.Text := 'Fetched '+inttostr(FConfMatches.Count)+' of '+FConfBundle.total+' resources in '+describePeriod(now - start);
+    finally
+      params.Free;
+    end;
+  finally
+    if Assigned(fCS) then
+      fcs.setCursor(Cursor);
+  end;
+end;
+
+procedure TServerFrame.btnFetchMoreClick(Sender: TObject);
+var
+  fcs : IFMXCursorService;
+  be : TFhirBundleEntry;
+  start : TDateTime;
+  l : TFhirBundleLink;
+  i : integer;
+  url : String;
+begin
+  if Assigned(fcs) then
+  begin
+    Cursor := fcs.GetCursor;
+    fcs.SetCursor(crHourGlass);
+  end;
+  try
+    btnFetchMore.Visible := false;
+    case cbxSearchType.ItemIndex of
+      0:
+        begin
+        url := FPatBundle.Links['next'];
+        FPatBundle.Free;
+        FPatBundle := nil;
+        start := now;
+        FPatBundle := FClient.searchAgain(url);
+        i := 0;
+        for be in FPatBundle.entryList do
+          if (be.search.mode = SearchEntryModeMatch) and (be.resource <> nil) then
+          begin
+            FPatMatches.Add(be.resource.Link as TFHIRPatient);
+            inc(i);
+          end;
+        gridPMatches.RowCount := FpatMatches.Count;
+        lblOutcome.Text := 'Fetched '+inttostr(i)+' of '+FPatBundle.total+' patients in '+describePeriod(now - start);
+        btnFetchMore.Visible := FPatBundle.Links['next'] <> '';
+        end;
+    end;
+  finally
+    if Assigned(fCS) then
+      fcs.setCursor(Cursor);
+  end;
+end;
+
+procedure TServerFrame.btnSearchPatientsClick(Sender: TObject);
+var
+  params : TDictionary<String, String>;
+  be : TFhirBundleEntry;
+  fcs : IFMXCursorService;
+  start : TDateTime;
+  l : TFhirBundleLink;
+begin
+  if TPlatformServices.Current.SupportsPlatformService(IFMXCursorService) then
+    fcs := TPlatformServices.Current.GetPlatformService(IFMXCursorService) as IFMXCursorService
+  else
+    fcs := nil;
+  if Assigned(fcs) then
+  begin
+    Cursor := fcs.GetCursor;
+    fcs.SetCursor(crHourGlass);
+  end;
+  try
+    FPatMatches.Clear;
+    gridPMatches.RowCount := FConfMatches.Count;
+    FPatBundle.Free;
+    FPatBundle := nil;
+
+    params := TDictionary<String, String>.create;
+    try
+      params.Add('_summary', 'true');
+      if edtPName.Text <> '' then
+        params.add('name', edtPName.Text);
+      if edtPTelecom.Text <> '' then
+        params.add('telecom', edtPTelecom.Text);
+      if edtPIdentifier.Text <> '' then
+        params.add('identifier', edtPIdentifier.Text);
+
+      case cbxPDob.ItemIndex of
+        1: {on} params.add('birthdate', TDateTimeEx.make(dedPDob.Date, dttzUnknown).toXML);
+        2: {before} params.add('birthdate', 'le'+TDateTimeEx.make(dedPDob.Date, dttzUnknown).toXML);
+        3: {after}  params.add('birthdate', 'ge'+TDateTimeEx.make(dedPDob.Date, dttzUnknown).toXML);
+        4: {around} params.add('birthdate', 'ap'+TDateTimeEx.make(dedPDob.Date, dttzUnknown).toXML);
+      end;
+      case cbxPGender.ItemIndex of
+        1: { Male } params.add('gender', 'male');
+        2: { Female } params.add('gender', 'female');
+        3: { Other } params.add('gender', 'other');
+        4: { Unknown } params.add('gender', 'unknown');
+      end;
+      case cbxPDeceased.ItemIndex of
+        1: { Alive} params.add('deceased', 'false');
+        2: { Deceased} params.add('deceased', 'true');
+        3: { On} params.add('death-date', TDateTimeEx.make(dedPDob.Date, dttzUnknown).toXML);
+        4: { Before} params.add('death-date', 'le'+TDateTimeEx.make(dedPDob.Date, dttzUnknown).toXML);
+        5: { After} params.add('death-date', 'ge'+TDateTimeEx.make(dedPDob.Date, dttzUnknown).toXML);
+        6: { Around} params.add('death-date', 'ap'+TDateTimeEx.make(dedPDob.Date, dttzUnknown).toXML);
+      end;
+      case cbxPActive.ItemIndex of
+        1: { true } params.add('gender', 'true');
+        2: { false } params.add('gender', 'false');
+      end;
+      case cbxPActive.ItemIndex of
+        1: { human } params.add('animal-species:missing', 'true');
+        2: { non-human } params.add('animal-species:missing', 'false');
+      end;
+      if cbxPLanguage.ItemIndex > 0 then
+        params.add('language', cbxPLanguage.Items[cbxPLanguage.ItemIndex].Substring(0, 2));
+
+      if cbPUseLastUpdated.IsChecked then
+        params.add('_lastUpdated', dedPLastEdit.Text);
+
+      if edtPTag.Text <> '' then
+        params.add('_tag', edtPTag.Text);
+      if edtPText.Text <> '' then
+        params.add('_text', edtPText.Text);
+
+      start := now;
+      FPatBundle := FClient.search(frtPatient, false, params);
+      for be in FPatBundle.entryList do
+        if (be.search.mode = SearchEntryModeMatch) and (be.resource <> nil) then
+          FPatMatches.Add(be.resource.Link as TFHIRPatient);
+      gridPMatches.RowCount := FpatMatches.Count;
+      lblOutcome.Text := 'Fetched '+inttostr(FPatMatches.Count)+' of '+FPatBundle.total+' patients in '+describePeriod(now - start);
+      btnFetchMore.Visible := FPatBundle.Links['next'] <> '';
     finally
       params.Free;
     end;
@@ -323,8 +544,10 @@ destructor TServerFrame.Destroy;
 begin
   FClient.free;
   FCapabilityStatement.free;
-  FBundle.Free;
-  FMatches.Free;
+  FConfBundle.Free;
+  FPatBundle.Free;
+  FConfMatches.Free;
+  FPatMatches.Free;
 
   inherited;
 end;
@@ -333,7 +556,7 @@ procedure TServerFrame.gridConfMatchesCellDblClick(const Column: TColumn; const 
 var
   res : TFhirResource;
 begin
-  res := Client.readResource(FMatches[Row].ResourceType, FMatches[Row].id);
+  res := Client.readResource(FConfMatches[Row].ResourceType, FConfMatches[Row].id);
   try
     OnOpenResource(self, client, client.format, res);
   finally
@@ -345,16 +568,16 @@ procedure TServerFrame.gridConfMatchesGetValue(Sender: TObject; const ACol, ARow
 var
   res : TFhirMetadataResource;
 begin
-  if not (FMatches[aRow] is TFhirMetadataResource) then
+  if not (FConfMatches[aRow] is TFhirMetadataResource) then
   begin
     case ACol of
-      0: Value := FMatches[aRow].fhirType;
-      1: Value := FMatches[aRow].id;
+      0: Value := FConfMatches[aRow].fhirType;
+      1: Value := FConfMatches[aRow].id;
     end;
   end
   else
   begin
-    res := FMatches[aRow] as TFhirMetadataResource;
+    res := FConfMatches[aRow] as TFhirMetadataResource;
     case ACol of
       0: Value := res.fhirType;
       1: Value := res.id;
@@ -368,6 +591,24 @@ begin
   end;
 end;
 
+procedure TServerFrame.gridPMatchesGetValue(Sender: TObject; const ACol, ARow: Integer; var Value: TValue);
+var
+  pat : TFhirPatient;
+begin
+  pat := FPatMatches[ARow];
+  case ACol of
+    0: Value := pat.id;
+    1: if pat.nameList.Count > 0 then Value := pat.nameList[0].family;
+    2: if pat.nameList.Count > 0 then Value := pat.nameList[0].given;
+    3: Value := CODES_TFhirAdministrativeGenderEnum[pat.gender];
+    4: Value := pat.birthDate.toString('cd');
+    5: if pat.activeElement <> nil then Value := BooleanToString(pat.active);
+    6: if pat.deceased <> nil then if pat.deceased is TFhirBoolean then Value := BooleanToString(pat.active) else Value := (pat.deceased as TFhirDateTime).value.toString('c');
+    7: if pat.animal = nil then Value := '(human)' else Value := gen(pat.animal.species);
+    8: Value := pat.identifierList.withCommas;
+  end;
+end;
+
 procedure TServerFrame.load;
 begin
   edtConfUrl.Text := Ini.ReadString('Conformance-search', 'url', '');
@@ -377,14 +618,39 @@ begin
   edtConfTitle.Text := Ini.ReadString('Conformance-search', 'title', '');
   edtConfText.Text := Ini.ReadString('Conformance-search', 'text', '');
   dedConfDate.Text := Ini.ReadString('Conformance-search', 'date', '');
-  edtConfJurisdiction.ItemIndex := Ini.ReadInteger('Conformance-search', 'jurisdiction', -1);
+  edtConfJurisdiction.ItemIndex := Ini.ReadInteger('Conformance-search', 'jurisdiction', 0);
   edtConfPub.Text := Ini.ReadString('Conformance-search', 'publisher', '');
-  cbxConfStatus.ItemIndex := Ini.ReadInteger('Conformance-search', 'status', -1);
+  cbxConfStatus.ItemIndex := Ini.ReadInteger('Conformance-search', 'status', 0);
   edtConfUpdated.Text := Ini.ReadString('Conformance-search', 'updated', '');
+  cbConfUseLastUpdated.IsChecked := Ini.ReadBool('Conformance-search', 'updated-opt', false);
   edtConfTag.Text := Ini.ReadString('Conformance-search', 'tag', '');
-  FMatches := TAdvList<TFHIRResource>.create;
+
+  edtPText.Text := Ini.ReadString('Patient-search', 'text', '');
+  dedPLastEdit.Text := Ini.ReadString('Patient-search', 'updated', '');
+  edtPTag.Text := Ini.ReadString('Patient-search', 'tag', '');
+  edtPName.Text := Ini.ReadString('Patient-search', 'name', '');
+  edtPTelecom.Text := Ini.ReadString('Patient-search', 'telecom', '');
+  cbxPDob.ItemIndex := Ini.ReadInteger('Patient-search', 'dobopt', 0);
+  dedPDob.Text := Ini.ReadString('Patient-search', 'dob', '');
+  cbxPGender.ItemIndex := Ini.ReadInteger('Patient-search', 'gender', 0);
+  cbxPDeceased.ItemIndex := Ini.ReadInteger('Patient-search', 'dod', 0);
+  dedPDeceased.Text := Ini.ReadString('Patient-search', 'dodopt', '');
+  cbxPActive.ItemIndex := Ini.ReadInteger('Patient-search', 'active', 0);
+  edtPIdentifier.Text := Ini.ReadString('Patient-search', 'id', '');
+  cbxPSpecies.ItemIndex := Ini.ReadInteger('Patient-search', 'species', 0);
+  cbxPLanguage.ItemIndex := Ini.ReadInteger('Patient-search', 'lang', 0);
+  cbPUseLastUpdated.IsChecked := Ini.ReadBool('Patient-search', 'updated-opt', false);
+
+  btnFetchMore.Visible := false;
+  FConfMatches := TAdvList<TFHIRResource>.create;
+  FPatMatches := TAdvList<TFHIRPatient>.create;
   cbxSearchTypeChange(nil);
+  cbxPDobChange(nil);
+  cbxPDeceasedChange(nil);
+  cbPUseLastUpdatedChange(nil);
+  cbConfUseLastUpdatedChange(nil);
 end;
+
 
 procedure TServerFrame.SetCapabilityStatement(const Value: TFhirCapabilityStatement);
 begin
