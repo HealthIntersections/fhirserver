@@ -140,8 +140,7 @@ var
   src : TAdvBuffer;
 begin
   if not FZip.TryGetValue('web/'+filename, src) then
-    raise Exception.Create('Unable to find '+filename);
-  result := src <> nil;
+    result := false;
 end;
 
 function TFHIRWebServerSourceZipProvider.getSource(filename: String): String;

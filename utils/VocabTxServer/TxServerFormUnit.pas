@@ -140,6 +140,7 @@ begin
     FServer.FIni.WriteString('admin', 'email', 'grahame@hl7.org');
     FServer.FIni.WriteString('ucum', 'source', path([ExtractFilePath(paramstr(0)), 'ucum-essence.xml']));
     FServer.FIni.WriteString('loinc', 'cache', path([ExtractFilePath(paramstr(0)), 'loinc_261.cache']));
+    FServer.FIni.WriteString('lang', 'source', path([ExtractFilePath(paramstr(0)), 'lang.txt']));
     FServer.FIni.WriteString('snomed', 'cache', edtSnomed.text);
     FServer.start;
   end
@@ -197,7 +198,7 @@ begin
   FServer.Free;
   Fini.WriteString('server', 'folder', edtFolder.Text);
   Fini.WriteString('server', 'port', edtPort.Text);
-  Fini.WriteString('snomed', 'snomed', edtSnomed.Text);
+  Fini.WriteString('server', 'snomed', edtSnomed.Text);
   Fini.WriteBool('view', 'settings', mnuViewSettings.IsChecked);
   FIni.Free;
 end;
