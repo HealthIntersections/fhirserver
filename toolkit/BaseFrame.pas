@@ -12,11 +12,10 @@ uses
   FHIRBase, FHIRResources, FHIRClient;
 
 type
+  TWorkProc = reference to procedure;
+  TWorkEvent = procedure (Sender : TObject; opName : String; proc : TWorkProc) of object;
   TOnOpenResourceEvent = procedure (sender : TObject; client : TFHIRClient; format : TFHIRFormat; resource : TFHIRResource) of object;
-
-  TIsStoppedFunction = reference to function : boolean;
-  TWorkProc = reference to procedure(isStopped : TIsStoppedFunction);
-  TWorkEvent = procedure (Sender : TObject; proc : TWorkProc) of object;
+  TIsStoppedEvent = reference to function : boolean;
 
   TBaseFrame = class(TFrame)
   private
@@ -25,15 +24,14 @@ type
     FIni: TIniFile;
     FOnOpenResource : TOnOpenResourceEvent;
     FOnWork : TWorkEvent;
-    FStopped: TIsStoppedFunction;
-    function StoppedStub : boolean;
+    FOnStopped: TIsStoppedEvent;
   public
     property Tabs : TTabControl read FTabs write FTabs;
     property Tab : TTabItem read FTab write FTab;
     property Ini : TIniFile read FIni write FIni;
     property OnOpenResource : TOnOpenResourceEvent read FOnOpenResource write FOnOpenResource;
     property OnWork : TWorkEvent read FOnWork write FOnWork;
-    property Stopped : TIsStoppedFunction read FStopped write FStopped;
+    property OnStopped : TIsStoppedEvent read FOnStopped write FOnStopped;
 
     procedure load; virtual;
     procedure Close;
@@ -49,7 +47,7 @@ type
     function originalResource : TFHIRResource; virtual;
 
     procedure ClientWork(ASender: TObject; AWorkMode: TWorkMode; AWorkCount: Int64);
-    procedure work(proc : TWorkProc);
+    procedure work(opName : String; proc : TWorkProc);
   end;
 
 implementation
@@ -68,7 +66,7 @@ end;
 
 procedure TBaseFrame.ClientWork(ASender: TObject; AWorkMode: TWorkMode; AWorkCount: Int64);
 begin
-  if Stopped then
+  if assigned(OnStopped) and OnStopped then
     abort;
 end;
 
@@ -125,15 +123,9 @@ begin
   raise Exception.Create('Not implemented');
 end;
 
-function TBaseFrame.StoppedStub: boolean;
+procedure TBaseFrame.work(opName : String; proc: TWorkProc);
 begin
-  result := false;
-end;
-
-procedure TBaseFrame.work(proc: TWorkProc);
-begin
-  OnWork(self, proc);
-  FStopped := StoppedStub;
+  OnWork(self, opname, proc);
 end;
 
 end.

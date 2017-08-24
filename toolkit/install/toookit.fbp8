@@ -63,7 +63,7 @@ begin
         as.defaultvalue = %npp-purpose%
         as.xpos = -1
         as.ypos = -1
-        as.returnvalue = "Fix html presentation"
+        as.returnvalue = "Fix Bug in OSX"
         as.returnvariable = npp-purpose
       end
       action.variables.savetoini
@@ -135,12 +135,11 @@ begin
         compileridl = true
         configname = Release
         debugversionnumbers = false
-        delphiversion = Delphi10Berlin
+        delphiversion = Delphi10Tokyo
         description = "Compile the Toolkit (win64)"
         eurekalogverboselogging = false
         frameworktype = VCL
         hintsaserror = false
-        iconfile = C:\\work\\fhirserver\\toolkit\\AppEndorser_Icon.ico
         id = {217F3077-B26C-48A2-B7CF-5FE7B5106B4B}
         includecompiledate = false
         includemanifest = false
@@ -156,11 +155,12 @@ begin
         majorversion = 1
         minorversion = 0
         platform = Win64
+        platformsdktype = ProjectSDK
         projectfile = C:\\work\\fhirserver\\toolkit\\FHIRToolkit.dpr
         regenerateresource = true
         releaseversion = 0
         resourcecompilertype = rcBorland
-        startingdir = C:\\work\\fhirserver\\toolkit
+        startingdir = C:\\work\\fhirserver\\toolkit\\
         updatedoffile = false
         updatepackagesource = false
         updateversioninfokeys = false
@@ -168,6 +168,7 @@ begin
         useprojectsettings = []
         usepropertyset = false
         useversionfromdof = false
+        verboseoutput = false
         versioninfokeys = "CompanyName\=" +
                           "FileDescription\=" +
                           "FileVersion\=1.0.0.1" +
@@ -279,12 +280,11 @@ begin
         compileridl = true
         configname = Release
         debugversionnumbers = false
-        delphiversion = Delphi10Berlin
+        delphiversion = Delphi10Tokyo
         description = "Compile the Toolkit (osx)"
         eurekalogverboselogging = false
         frameworktype = VCL
         hintsaserror = false
-        iconfile = C:\\work\\fhirserver\\toolkit\\AppEndorser_Icon.ico
         id = {D500EE21-C7AA-4758-ACB7-2ECF7543E7F8}
         includecompiledate = false
         includemanifest = false
@@ -300,11 +300,12 @@ begin
         majorversion = 1
         minorversion = 0
         platform = OSX32
+        platformsdktype = ProjectSDK
         projectfile = C:\\work\\fhirserver\\toolkit\\FHIRToolkit.dpr
         regenerateresource = true
         releaseversion = 0
         resourcecompilertype = rcBorland
-        startingdir = C:\\work\\fhirserver\\toolkit
+        startingdir = C:\\work\\fhirserver\\toolkit\\
         updatedoffile = false
         updatepackagesource = false
         updateversioninfokeys = false
@@ -312,6 +313,7 @@ begin
         useprojectsettings = []
         usepropertyset = false
         useversionfromdof = false
+        verboseoutput = false
         versioninfokeys = "CompanyName\=" +
                           "FileDescription\=" +
                           "FileVersion\=1.0.0.1" +
@@ -695,6 +697,13 @@ begin
   variable
   begin
     name = npp-purpose
+    variablescope = vtProject
+    variabletype = btString
+  end
+  variable
+  begin
+    defaultvalue = "C:\\Users\\Grahame Grieve\\Documents\\Embarcadero\\Studio\\SDKs"
+    name = SDKROOT
     variablescope = vtProject
     variabletype = btString
   end

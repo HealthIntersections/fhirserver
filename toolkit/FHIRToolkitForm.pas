@@ -63,7 +63,6 @@ type
     mnuHelp: TMenuItem;
     mnuHelpContext: TMenuItem;
     splitHelp: TSplitter;
-    btnStop: TButton;
     btnSettings: TButton;
     MenuItem2: TMenuItem;
     MenuItem4: TMenuItem;
@@ -116,7 +115,9 @@ type
     function processHelpContext(helpContext : String) : String;
     function searchDesc(s : String) : String;
     procedure fhirDefn(s : String; b : TStringBuilder);
-    procedure dowork(Sender : TObject; proc : TWorkProc);
+    procedure dowork(Sender : TObject; opName : String; proc : TWorkProc);
+    function GetStopped: boolean;
+    procedure threadMonitorProc(sender : TFhirClient; var stop : boolean);
   public
     { Public declarations }
   end;
@@ -164,32 +165,28 @@ end;
 
 procedure TMasterToolsForm.btnConnectClick(Sender: TObject);
 var
-  client : TFhirHTTPClient;
+  client : TFhirClient;
   tab : TTabItem;
   serverForm : TServerFrame;
   cs : TFhirCapabilityStatement;
-  fcs : IFMXCursorService;
+  ok : boolean;
 begin
-  if TPlatformServices.Current.SupportsPlatformService(IFMXCursorService) then
-    fcs := TPlatformServices.Current.GetPlatformService(IFMXCursorService) as IFMXCursorService
-  else
-    fcs := nil;
-  if Assigned(fcs) then
-  begin
-    Cursor := fcs.GetCursor;
-    fcs.SetCursor(crHourGlass);
-  end;
+  ok := false;
+  serverForm := TServerFrame.create(tab);
   try
-    client := TFhirHTTPClient.Create(nil, lbServers.Items[lbServers.ItemIndex], false);
+    serverForm.OnWork := dowork;
+    client := TFhirThreadedClient.create(TFhirHTTPClient.Create(nil, lbServers.Items[lbServers.ItemIndex], false, FIni.ReadInteger('HTTP', 'timeout', 5) * 1000, FIni.ReadString('HTTP', 'proxy', '')), threadMonitorProc);
     try
-      client.timeout := FIni.ReadInteger('HTTP', 'timeout', 5) * 1000;
-      client.proxy := FIni.ReadString('HTTP', 'proxy', '');
-      cs := client.conformance(false);
+      serverForm.work('Connect',
+        procedure
+        begin
+          cs := client.conformance(false);
+        end);
       try
+        ok := true;
         tab := tbMain.Add(TTabItem);
         tbMain.ActiveTab := tab;
         tab.Text := lbServers.Items[lbServers.ItemIndex];
-        serverForm := TServerFrame.create(tab);
         tab.TagObject := serverForm;
         serverForm.TagObject := tab;
         serverForm.Parent := tab;
@@ -200,6 +197,7 @@ begin
         serverForm.Client := client.link;
         serverForm.CapabilityStatement := cs.link;
         serverForm.OnOpenResource := OpenResourcefromClient;
+        serverForm.OnWork :=  dowork;
         serverForm.load;
         addServerToList(client.address);
       finally
@@ -209,8 +207,8 @@ begin
       client.Free;
     end;
   finally
-    if Assigned(fCS) then
-      fcs.setCursor(Cursor);
+    if not ok then
+      serverForm.Free;
   end;
 end;
 
@@ -350,6 +348,12 @@ begin
   end;
 end;
 
+procedure TMasterToolsForm.threadMonitorProc(sender: TFhirClient; var stop: boolean);
+begin
+  Application.ProcessMessages;
+  stop :=  FIsStopped;
+end;
+
 procedure TMasterToolsForm.tbnSaveAsClick(Sender: TObject);
 begin
   doSaveAs;
@@ -400,6 +404,12 @@ begin
   Close;
 end;
 
+function TMasterToolsForm.GetStopped: boolean;
+begin
+  result := FIsStopped;
+end;
+
+
 function TMasterToolsForm.doSave: boolean;
 var
   frame : TBaseFrame;
@@ -413,8 +423,9 @@ begin
     if frame.canSave then
     begin
       ok := false;
-      frame.work(
-        procedure (isStopped : TIsStoppedFunction)
+      frame.OnStopped := GetStopped;
+      frame.work('Save',
+        procedure
         begin;
           ok := frame.save;
         end);
@@ -440,8 +451,8 @@ begin
       if frame.canSaveAs then
       begin
         ok := false;
-        frame.work(
-          procedure (isStopped : TIsStoppedFunction)
+        frame.work('Save As',
+          procedure
           begin
             if sdFile.FilterIndex = 0 then
               ok := frame.saveAs(sdFile.Filename, ffXml)
@@ -461,9 +472,10 @@ begin
   end;
 end;
 
-procedure TMasterToolsForm.dowork(Sender: TObject; proc: TWorkProc);
+procedure TMasterToolsForm.dowork(Sender: TObject; opName : String; proc: TWorkProc);
 var
   fcs : IFMXCursorService;
+  form : TProcessingForm;
 begin
   if TPlatformServices.Current.SupportsPlatformService(IFMXCursorService) then
     fcs := TPlatformServices.Current.GetPlatformService(IFMXCursorService) as IFMXCursorService
@@ -476,14 +488,18 @@ begin
   end;
   try
     FIsStopped := false;
-    btnStop.Enabled := true;
+    TBaseFrame(sender).OnStopped := GetStopped;
+    form := TProcessingForm.Create(self);
     try
-      proc(function : boolean
-        begin
-          result := FIsStopped;
-        end);
+      form.lblOperation.text := opName;
+      form.Button1.OnClick := btnStopClick;
+      form.Show;
+      {$IFNDEF MACOS}
+      Application.ProcessMessages;
+      {$ENDIF}
+      proc;
     finally
-      btnStop.Enabled := false;
+      form.Free;
     end;
   finally
     if Assigned(fCS) then
@@ -540,6 +556,8 @@ begin
     try
       form := TProcessingForm.Create(self);
       try
+        form.lblOperation.text := 'Loading Data';
+        form.Button1.enabled := false;
         form.Show;
         {$IFNDEF MACOS}
         Application.ProcessMessages;
@@ -692,6 +710,7 @@ begin
     frame.TagObject := tab;
     frame.Parent := tab;
     frame.tabs := tbMain;
+    frame.OnWork := dowork;
     frame.Ini := FIni;
     frame.Tab := tab;
     frame.Align := TAlignLayout.Client;
@@ -730,6 +749,7 @@ begin
     frame.TagObject := tab;
     frame.Parent := tab;
     frame.tabs := tbMain;
+    frame.OnWork := dowork;
     frame.Ini := FIni;
     frame.Tab := tab;
     frame.Align := TAlignLayout.Client;
@@ -770,6 +790,7 @@ begin
     frame.TagObject := tab;
     frame.Parent := tab;
     frame.tabs := tbMain;
+    frame.OnWork := dowork;
     frame.Ini := FIni;
     frame.Tab := tab;
     frame.Align := TAlignLayout.Client;

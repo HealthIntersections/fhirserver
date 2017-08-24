@@ -32,7 +32,7 @@ interface
 {
 [toolkit-settings]
 } const
-BuildCount=7
+BuildCount=9
 ;
 
 implementation

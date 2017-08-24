@@ -489,8 +489,8 @@ end;
 
 procedure TAppEndorsementFrame.Load;
 begin
-  work(
-    procedure (isStopped : TIsStoppedFunction)
+  work('Load Endorsements',
+    procedure
     begin
       ClearEndorsements;
       ClearApplications;

@@ -200,6 +200,7 @@ begin
   appForm.TagObject := tab;
   appForm.Parent := tab;
   appForm.Tabs := tabs;
+  appForm.OnWork := onwork;
   appForm.Ini := Ini;
   appForm.tab := tab;
   appForm.Align := TAlignLayout.Client;
@@ -224,6 +225,7 @@ begin
     FCsForm.TagObject := FCSTab;
     FcsForm.Parent := FCSTab;
     FcsForm.Tabs := tabs;
+    FcsForm.OnWork := onwork;
     FcsForm.Ini := Ini;
     FcsForm.tab := FCSTab;
     FcsForm.Align := TAlignLayout.Client;
@@ -343,14 +345,13 @@ end;
 
 procedure TServerFrame.btnConfSearchClick(Sender: TObject);
 begin
-  work(
-    procedure (isStopped : TIsStoppedFunction)
+  work('Fetch Resources',
+    procedure
     var
       be : TFhirBundleEntry;
       params : TDictionary<String, String>;
       start : TDateTime;
     begin
-      Stopped := isStopped;
       FConfMatches.Clear;
       gridConfMatches.RowCount := FConfMatches.Count;
       FConfBundle.Free;
@@ -393,6 +394,7 @@ begin
             FConfMatches.Add(be.resource.Link);
         gridConfMatches.RowCount := FConfMatches.Count;
         lblOutcome.Text := 'Fetched '+inttostr(FConfMatches.Count)+' of '+FConfBundle.total+' resources in '+describePeriod(now - start);
+        btnFetchMore.Visible := FConfBundle.Links['next'] <> '';
       finally
         params.Free;
       end;
@@ -400,135 +402,134 @@ begin
 end;
 
 procedure TServerFrame.btnFetchMoreClick(Sender: TObject);
-var
-  fcs : IFMXCursorService;
-  be : TFhirBundleEntry;
-  start : TDateTime;
-  l : TFhirBundleLink;
-  i : integer;
-  url : String;
 begin
-  if Assigned(fcs) then
-  begin
-    Cursor := fcs.GetCursor;
-    fcs.SetCursor(crHourGlass);
-  end;
-  try
-    btnFetchMore.Visible := false;
-    case cbxSearchType.ItemIndex of
-      0:
-        begin
-        url := FPatBundle.Links['next'];
-        FPatBundle.Free;
-        FPatBundle := nil;
-        start := now;
-        FPatBundle := FClient.searchAgain(url);
-        i := 0;
-        for be in FPatBundle.entryList do
-          if (be.search.mode = SearchEntryModeMatch) and (be.resource <> nil) then
+  work('Fetch More',
+    procedure
+    var
+      be : TFhirBundleEntry;
+      start : TDateTime;
+      l : TFhirBundleLink;
+      i : integer;
+      url : String;
+    begin
+      btnFetchMore.Visible := false;
+      case cbxSearchType.ItemIndex of
+        0:
           begin
-            FPatMatches.Add(be.resource.Link as TFHIRPatient);
-            inc(i);
+          url := FPatBundle.Links['next'];
+          FPatBundle.Free;
+          FPatBundle := nil;
+          start := now;
+          FPatBundle := FClient.searchAgain(url);
+          i := 0;
+          for be in FPatBundle.entryList do
+            if (be.search.mode = SearchEntryModeMatch) and (be.resource <> nil) then
+            begin
+              FPatMatches.Add(be.resource.Link as TFHIRPatient);
+              inc(i);
+            end;
+          gridPMatches.RowCount := FpatMatches.Count;
+          lblOutcome.Text := 'Fetched '+inttostr(i)+' of '+FPatBundle.total+' patients in '+describePeriod(now - start);
+          btnFetchMore.Visible := FPatBundle.Links['next'] <> '';
           end;
-        gridPMatches.RowCount := FpatMatches.Count;
-        lblOutcome.Text := 'Fetched '+inttostr(i)+' of '+FPatBundle.total+' patients in '+describePeriod(now - start);
-        btnFetchMore.Visible := FPatBundle.Links['next'] <> '';
-        end;
-    end;
-  finally
-    if Assigned(fCS) then
-      fcs.setCursor(Cursor);
-  end;
+        1:
+          begin
+          url := FConfBundle.Links['next'];
+          FConfBundle.Free;
+          FConfBundle := nil;
+          start := now;
+          FConfBundle := FClient.searchAgain(url);
+          i := 0;
+          for be in FConfBundle.entryList do
+            if (be.search.mode = SearchEntryModeMatch) and (be.resource <> nil) then
+            begin
+              FConfMatches.Add(be.resource.Link);
+              inc(i);
+            end;
+          gridConfMatches.RowCount := FConfMatches.Count;
+          lblOutcome.Text := 'Fetched '+inttostr(i)+' of '+FConfBundle.total+' resources in '+describePeriod(now - start);
+          btnFetchMore.Visible := FConfBundle.Links['next'] <> '';
+          end;
+      end;
+    end);
 end;
 
 procedure TServerFrame.btnSearchPatientsClick(Sender: TObject);
-var
-  params : TDictionary<String, String>;
-  be : TFhirBundleEntry;
-  fcs : IFMXCursorService;
-  start : TDateTime;
-  l : TFhirBundleLink;
 begin
-  if TPlatformServices.Current.SupportsPlatformService(IFMXCursorService) then
-    fcs := TPlatformServices.Current.GetPlatformService(IFMXCursorService) as IFMXCursorService
-  else
-    fcs := nil;
-  if Assigned(fcs) then
-  begin
-    Cursor := fcs.GetCursor;
-    fcs.SetCursor(crHourGlass);
-  end;
-  try
-    FPatMatches.Clear;
-    gridPMatches.RowCount := FConfMatches.Count;
-    FPatBundle.Free;
-    FPatBundle := nil;
+  work('Search Patients',
+    procedure
+    var
+      params : TDictionary<String, String>;
+      be : TFhirBundleEntry;
+      start : TDateTime;
+      l : TFhirBundleLink;
+    begin
+      FPatMatches.Clear;
+      gridPMatches.RowCount := FConfMatches.Count;
+      FPatBundle.Free;
+      FPatBundle := nil;
 
-    params := TDictionary<String, String>.create;
-    try
-      params.Add('_summary', 'true');
-      if edtPName.Text <> '' then
-        params.add('name', edtPName.Text);
-      if edtPTelecom.Text <> '' then
-        params.add('telecom', edtPTelecom.Text);
-      if edtPIdentifier.Text <> '' then
-        params.add('identifier', edtPIdentifier.Text);
+      params := TDictionary<String, String>.create;
+      try
+        params.Add('_summary', 'true');
+        if edtPName.Text <> '' then
+          params.add('name', edtPName.Text);
+        if edtPTelecom.Text <> '' then
+          params.add('telecom', edtPTelecom.Text);
+        if edtPIdentifier.Text <> '' then
+          params.add('identifier', edtPIdentifier.Text);
 
-      case cbxPDob.ItemIndex of
-        1: {on} params.add('birthdate', TDateTimeEx.make(dedPDob.Date, dttzUnknown).toXML);
-        2: {before} params.add('birthdate', 'le'+TDateTimeEx.make(dedPDob.Date, dttzUnknown).toXML);
-        3: {after}  params.add('birthdate', 'ge'+TDateTimeEx.make(dedPDob.Date, dttzUnknown).toXML);
-        4: {around} params.add('birthdate', 'ap'+TDateTimeEx.make(dedPDob.Date, dttzUnknown).toXML);
-      end;
-      case cbxPGender.ItemIndex of
-        1: { Male } params.add('gender', 'male');
-        2: { Female } params.add('gender', 'female');
-        3: { Other } params.add('gender', 'other');
-        4: { Unknown } params.add('gender', 'unknown');
-      end;
-      case cbxPDeceased.ItemIndex of
-        1: { Alive} params.add('deceased', 'false');
-        2: { Deceased} params.add('deceased', 'true');
-        3: { On} params.add('death-date', TDateTimeEx.make(dedPDob.Date, dttzUnknown).toXML);
-        4: { Before} params.add('death-date', 'le'+TDateTimeEx.make(dedPDob.Date, dttzUnknown).toXML);
-        5: { After} params.add('death-date', 'ge'+TDateTimeEx.make(dedPDob.Date, dttzUnknown).toXML);
-        6: { Around} params.add('death-date', 'ap'+TDateTimeEx.make(dedPDob.Date, dttzUnknown).toXML);
-      end;
-      case cbxPActive.ItemIndex of
-        1: { true } params.add('gender', 'true');
-        2: { false } params.add('gender', 'false');
-      end;
-      case cbxPActive.ItemIndex of
-        1: { human } params.add('animal-species:missing', 'true');
-        2: { non-human } params.add('animal-species:missing', 'false');
-      end;
-      if cbxPLanguage.ItemIndex > 0 then
-        params.add('language', cbxPLanguage.Items[cbxPLanguage.ItemIndex].Substring(0, 2));
+        case cbxPDob.ItemIndex of
+          1: {on} params.add('birthdate', TDateTimeEx.make(dedPDob.Date, dttzUnknown).toXML);
+          2: {before} params.add('birthdate', 'le'+TDateTimeEx.make(dedPDob.Date, dttzUnknown).toXML);
+          3: {after}  params.add('birthdate', 'ge'+TDateTimeEx.make(dedPDob.Date, dttzUnknown).toXML);
+          4: {around} params.add('birthdate', 'ap'+TDateTimeEx.make(dedPDob.Date, dttzUnknown).toXML);
+        end;
+        case cbxPGender.ItemIndex of
+          1: { Male } params.add('gender', 'male');
+          2: { Female } params.add('gender', 'female');
+          3: { Other } params.add('gender', 'other');
+          4: { Unknown } params.add('gender', 'unknown');
+        end;
+        case cbxPDeceased.ItemIndex of
+          1: { Alive} params.add('deceased', 'false');
+          2: { Deceased} params.add('deceased', 'true');
+          3: { On} params.add('death-date', TDateTimeEx.make(dedPDob.Date, dttzUnknown).toXML);
+          4: { Before} params.add('death-date', 'le'+TDateTimeEx.make(dedPDob.Date, dttzUnknown).toXML);
+          5: { After} params.add('death-date', 'ge'+TDateTimeEx.make(dedPDob.Date, dttzUnknown).toXML);
+          6: { Around} params.add('death-date', 'ap'+TDateTimeEx.make(dedPDob.Date, dttzUnknown).toXML);
+        end;
+        case cbxPActive.ItemIndex of
+          1: { true } params.add('gender', 'true');
+          2: { false } params.add('gender', 'false');
+        end;
+        case cbxPActive.ItemIndex of
+          1: { human } params.add('animal-species:missing', 'true');
+          2: { non-human } params.add('animal-species:missing', 'false');
+        end;
+        if cbxPLanguage.ItemIndex > 0 then
+          params.add('language', cbxPLanguage.Items[cbxPLanguage.ItemIndex].Substring(0, 2));
 
-      if cbPUseLastUpdated.IsChecked then
-        params.add('_lastUpdated', dedPLastEdit.Text);
+        if cbPUseLastUpdated.IsChecked then
+          params.add('_lastUpdated', dedPLastEdit.Text);
 
-      if edtPTag.Text <> '' then
-        params.add('_tag', edtPTag.Text);
-      if edtPText.Text <> '' then
-        params.add('_text', edtPText.Text);
+        if edtPTag.Text <> '' then
+          params.add('_tag', edtPTag.Text);
+        if edtPText.Text <> '' then
+          params.add('_text', edtPText.Text);
 
-      start := now;
-      FClient.OnWork := doWork;
-      FPatBundle := FClient.search(frtPatient, false, params);
-      for be in FPatBundle.entryList do
-        if (be.search.mode = SearchEntryModeMatch) and (be.resource <> nil) then
-          FPatMatches.Add(be.resource.Link as TFHIRPatient);
-      gridPMatches.RowCount := FpatMatches.Count;
-      lblOutcome.Text := 'Fetched '+inttostr(FPatMatches.Count)+' of '+FPatBundle.total+' patients in '+describePeriod(now - start);
-      btnFetchMore.Visible := FPatBundle.Links['next'] <> '';
-    finally
-      params.Free;
-    end;
-  finally
-    if Assigned(fCS) then
-      fcs.setCursor(Cursor);
-  end;
+        start := now;
+        FPatBundle := FClient.search(frtPatient, false, params);
+        for be in FPatBundle.entryList do
+          if (be.search.mode = SearchEntryModeMatch) and (be.resource <> nil) then
+            FPatMatches.Add(be.resource.Link as TFHIRPatient);
+        gridPMatches.RowCount := FpatMatches.Count;
+        lblOutcome.Text := 'Fetched '+inttostr(FPatMatches.Count)+' of '+FPatBundle.total+' patients in '+describePeriod(now - start);
+        btnFetchMore.Visible := FPatBundle.Links['next'] <> '';
+      finally
+        params.Free;
+      end;
+    end);
 end;
 
 destructor TServerFrame.Destroy;
@@ -546,7 +547,7 @@ end;
 procedure TServerFrame.DoWork(ASender: TObject; AWorkMode: TWorkMode; AWorkCount: Int64);
 begin
   Application.ProcessMessages;
-  if Stopped then
+  if assigned(OnStopped) and OnStopped then
     abort;
 end;
 

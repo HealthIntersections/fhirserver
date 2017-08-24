@@ -56,8 +56,6 @@ Type
   end;
 
   TFhirClient = {abstract} class (TAdvObject)
-  private
-    FOnWork: TWorkEvent;
   public
     function link : TFhirClient; overload;
 
@@ -75,16 +73,16 @@ Type
     function operation(atype : TFhirResourceType; opName : String; params : TFhirParameters) : TFHIRResource; virtual;
     function historyType(atype : TFhirResourceType; allRecords : boolean; params : TDictionary<String, String>) : TFHIRBundle; virtual;
 
+    procedure terminate; virtual;
     function address : String; virtual;
     function format : TFHIRFormat; virtual;
-    property OnWork: TWorkEvent read FOnWork write FOnWork;
   end;
 
   TFhirHTTPClientHTTPVerb = (get, post, put, delete, options, patch);
 
   TFhirHTTPClientStatusEvent = procedure (client : TObject; details : String) of Object;
 
-  // this is meant ot be used once, and then disposed of
+  // use only in one thread at a time
   TFhirHTTPClient = class (TFhirClient)
   private
     FUrl : String;
@@ -130,9 +128,10 @@ Type
     procedure SetCertPWord(const Value: String);
     procedure SetUseIndy(const Value: boolean);  protected
     function Convert(stream : TStream) : TStream; virtual;
-    procedure DoWork(ASender: TObject; AWorkMode: TWorkMode; AWorkCount: Int64);
   public
     constructor Create(worker : TFHIRWorkerContext; url : String; json : boolean); overload;
+    constructor Create(worker : TFHIRWorkerContext; url : String; json : boolean; timeout : integer); overload;
+    constructor Create(worker : TFHIRWorkerContext; url : String; json : boolean; timeout : integer; proxy : String); overload;
     destructor Destroy; override;
     property url : String read FUrl;
 
@@ -168,10 +167,91 @@ Type
     function historyType(atype : TFhirResourceType; allRecords : boolean; params : TDictionary<String, String>) : TFHIRBundle; override;
     function cdshook(id : String; request : TCDSHookRequest) : TCDSHookResponse;
 
+    procedure terminate; override;
+
     //authorization support
     procedure authoriseByOWin(server, username, password : String);
 
     property OnClientStatus : TFhirHTTPClientStatusEvent read FOnClientStatus write FOnClientStatus;
+  end;
+
+  TThreadManagementEvent = procedure (sender : TFhirClient; var stop : boolean) of object;
+
+  TFhirThreadedClientPackage = class (TAdvObject)
+  private
+    FCommand: TFHIRCommandType;
+    FSummary: boolean;
+    FError: String;
+    FResult: TFhirResource;
+    FDone: Boolean;
+    FThread: TThread;
+    FResourceType: TFhirResourceType;
+    FAllRecords: boolean;
+    FParams: TDictionary<String, String>;
+    FUrl: String;
+    FId: String;
+    FResource: TFhirResource;
+    procedure SetResult(const Value: TFhirResource);
+    procedure SetResource(const Value: TFhirResource);
+  public
+    destructor Destroy; override;
+    function Link : TFhirThreadedClientPackage; overload;
+
+    property Thread : TThread read FThread write FThread;
+    property Done : Boolean read FDone write FDone;
+
+    property command : TFHIRCommandType read FCommand write FCommand;
+    property summary : boolean read FSummary write FSummary;
+    property resourceType : TFhirResourceType read FResourceType write FResourceType;
+    property allRecords : boolean read FAllRecords write FAllRecords;
+    property params: TDictionary<String, String> read FParams write FParams;
+    property url : String read FUrl write FUrl;
+    property id : String read FId write FId;
+    property resource : TFhirResource read FResource write SetResource;
+
+    property result : TFhirResource read FResult write SetResult;
+    property error : String read FError write FError;
+  end;
+
+  TThreadClientThread = class (TThread)
+  private
+    FPackage : TFHIRThreadedClientPackage;
+    FDone : boolean;
+    FClient : TFhirClient;
+  protected
+    procedure execute; override;
+  public
+    Constructor Create(client: TFhirClient; pack : TFhirThreadedClientPackage);
+    destructor Destroy; override;
+  end;
+
+  TFhirThreadedClient = class (TFhirClient)
+  private
+    FInternal : TFhirClient;
+    FEvent : TThreadManagementEvent;
+    procedure wait(Package : TFHIRThreadedClientPackage);
+  public
+    Constructor Create(internal : TFhirClient; event : TThreadManagementEvent);
+    Destructor Destroy; override;
+
+    function Link : TFhirThreadedClient; overload;
+
+    function conformance(summary : boolean) : TFhirCapabilityStatement; override;
+    function transaction(bundle : TFHIRBundle) : TFHIRBundle; override;
+    function createResource(resource : TFhirResource; var id : String) : TFHIRResource; override;
+    function readResource(atype : TFhirResourceType; id : String) : TFHIRResource; override;
+    function updateResource(resource : TFhirResource) : TFHIRResource; overload; override;
+    procedure deleteResource(atype : TFhirResourceType; id : String); override;
+    function search(allRecords : boolean; params : TDictionary<String, String>) : TFHIRBundle; overload; override;
+    function search(atype : TFhirResourceType; allRecords : boolean; params : TDictionary<String, String>) : TFHIRBundle; overload; override;
+    function search(atype : TFhirResourceType; allRecords : boolean; params : string) : TFHIRBundle; overload; override;
+    function searchPost(atype : TFhirResourceType; allRecords : boolean; params : TDictionary<String, String>; resource : TFhirResource) : TFHIRBundle; override;
+    function searchAgain(link : String) : TFHIRBundle; overload; override;
+    function operation(atype : TFhirResourceType; opName : String; params : TFhirParameters) : TFHIRResource; override;
+    function historyType(atype : TFhirResourceType; allRecords : boolean; params : TDictionary<String, String>) : TFHIRBundle; override;
+
+    function address : String; override;
+    function format : TFHIRFormat; override;
   end;
 
 implementation
@@ -215,6 +295,19 @@ begin
     result := stream;
 end;
 
+constructor TFhirHTTPClient.Create(worker: TFHIRWorkerContext; url: String; json: boolean; timeout: integer);
+begin
+  Create(worker, url, json);
+  FTimeout := timeout;
+end;
+
+constructor TFhirHTTPClient.Create(worker: TFHIRWorkerContext; url: String; json: boolean; timeout: integer; proxy: String);
+begin
+  Create(worker, url, json);
+  FTimeout := timeout;
+  FProxy := proxy;
+end;
+
 constructor TFhirHTTPClient.create(worker : TFHIRWorkerContext; url: String; json : boolean);
 begin
   Create;
@@ -239,12 +332,6 @@ begin
 end;
 
 
-procedure TFhirHTTPClient.DoWork(ASender: TObject; AWorkMode: TWorkMode; AWorkCount: Int64);
-begin
-  if assigned(OnWork) then
-    OnWork(Self, AWorkMode, AWorkCount);
-end;
-
 function TFhirHTTPClient.link: TFhirHTTPClient;
 begin
   result := TFhirHTTPClient(inherited Link);
@@ -264,6 +351,13 @@ begin
   end;
 end;
 
+
+procedure TFhirHTTPClient.terminate;
+begin
+  if FUseIndy and (indy <> nil) then
+    indy.Disconnect;
+  inherited;
+end;
 
 function TFhirHTTPClient.transaction(bundle : TFHIRBundle) : TFHIRBundle;
 Var
@@ -643,7 +737,6 @@ begin
     begin
       indy := TIdHTTP.create(nil);
       indy.HandleRedirects := true;
-      indy.OnWork := DoWork;
       if (proxy <> '') then
       begin
         try
@@ -1068,6 +1161,11 @@ begin
   raise Exception.Create('Must override searchPost() in '+className);
 end;
 
+procedure TFhirClient.terminate;
+begin
+
+end;
+
 function TFhirClient.transaction(bundle: TFHIRBundle): TFHIRBundle;
 begin
   raise Exception.Create('Must override transaction() in '+className);
@@ -1076,6 +1174,263 @@ end;
 function TFhirClient.updateResource(resource: TFhirResource): TFHIRResource;
 begin
   raise Exception.Create('Must override updateResource() in '+className);
+end;
+
+{ TFhirThreadedClient }
+
+function TFhirThreadedClient.address: String;
+begin
+  result := FInternal.address;
+end;
+
+function TFhirThreadedClient.conformance(summary: boolean): TFhirCapabilityStatement;
+var
+  pack : TFHIRThreadedClientPackage;
+begin
+  pack := TFHIRThreadedClientPackage.create;
+  try
+    pack.command := fcmdConformanceStmt;
+    pack.summary := summary;
+    pack.Thread := TThreadClientThread.create(FInternal.link, pack.Link);
+    wait(pack);
+    result := pack.result.link as TFhirCapabilityStatement;
+  finally
+    pack.free;
+  end;
+end;
+
+constructor TFhirThreadedClient.Create(internal: TFhirClient; event: TThreadManagementEvent);
+begin
+  Inherited Create;
+  FInternal := internal;
+  FEvent := event;
+end;
+
+function TFhirThreadedClient.createResource(resource: TFhirResource; var id: String): TFHIRResource;
+begin
+  raise Exception.Create('Not Done Yet');
+end;
+
+procedure TFhirThreadedClient.deleteResource(atype: TFhirResourceType; id: String);
+begin
+ raise Exception.Create('Not Done Yet');
+end;
+
+destructor TFhirThreadedClient.Destroy;
+begin
+  FInternal.free;
+  inherited;
+end;
+
+function TFhirThreadedClient.format: TFHIRFormat;
+begin
+  result := FInternal.format;
+end;
+
+function TFhirThreadedClient.historyType(atype: TFhirResourceType; allRecords: boolean; params: TDictionary<String, String>): TFHIRBundle;
+begin
+  raise Exception.Create('Not Done Yet');
+end;
+
+function TFhirThreadedClient.link: TFhirThreadedClient;
+begin
+  result := TFhirThreadedClient(inherited Link);
+end;
+
+function TFhirThreadedClient.operation(atype: TFhirResourceType; opName: String; params: TFhirParameters): TFHIRResource;
+begin
+  raise Exception.Create('Not Done Yet');
+end;
+
+function TFhirThreadedClient.readResource(atype: TFhirResourceType; id: String): TFHIRResource;
+var
+  pack : TFHIRThreadedClientPackage;
+begin
+  pack := TFHIRThreadedClientPackage.create;
+  try
+    pack.command := fcmdRead;
+    pack.resourceType := aType;
+    pack.id := id;
+    pack.Thread := TThreadClientThread.create(FInternal.link, pack.Link);
+    wait(pack);
+    result := pack.result.link;
+  finally
+    pack.free;
+  end;
+end;
+
+function TFhirThreadedClient.search(atype: TFhirResourceType; allRecords: boolean; params: TDictionary<String, String>): TFHIRBundle;
+var
+  pack : TFHIRThreadedClientPackage;
+begin
+  pack := TFHIRThreadedClientPackage.create;
+  try
+    pack.command := fcmdSearch;
+    pack.resourceType := aType;
+    pack.allRecords := allRecords;
+    pack.params := params;
+    pack.Thread := TThreadClientThread.create(FInternal.link, pack.Link);
+    wait(pack);
+    result := pack.result.link as TFHIRBundle;
+  finally
+    pack.free;
+  end;
+end;
+
+function TFhirThreadedClient.search(atype: TFhirResourceType; allRecords: boolean; params: string): TFHIRBundle;
+begin
+  raise Exception.Create('Not Done Yet');
+end;
+
+function TFhirThreadedClient.search(allRecords: boolean; params: TDictionary<String, String>): TFHIRBundle;
+var
+  pack : TFHIRThreadedClientPackage;
+begin
+  pack := TFHIRThreadedClientPackage.create;
+  try
+    pack.command := fcmdSearch;
+    pack.resourceType := frtNull;
+    pack.allRecords := allRecords;
+    pack.params := params;
+    pack.Thread := TThreadClientThread.create(FInternal.link, pack.Link);
+    wait(pack);
+    result := pack.result.link as TFHIRBundle;
+  finally
+    pack.free;
+  end;
+end;
+
+function TFhirThreadedClient.searchAgain(link: String): TFHIRBundle;
+var
+  pack : TFHIRThreadedClientPackage;
+begin
+  pack := TFHIRThreadedClientPackage.create;
+  try
+    pack.command := fcmdSearch;
+    pack.url := link;
+    pack.Thread := TThreadClientThread.create(FInternal.link, pack.Link);
+    wait(pack);
+    result := pack.result.link as TFHIRBundle;
+  finally
+    pack.free;
+  end;
+end;
+
+function TFhirThreadedClient.searchPost(atype: TFhirResourceType; allRecords: boolean; params: TDictionary<String, String>; resource: TFhirResource): TFHIRBundle;
+begin
+  raise Exception.Create('Not Done Yet');
+end;
+
+function TFhirThreadedClient.transaction(bundle: TFHIRBundle): TFHIRBundle;
+begin
+  raise Exception.Create('Not Done Yet');
+end;
+
+function TFhirThreadedClient.updateResource(resource: TFhirResource): TFHIRResource;
+var
+  pack : TFHIRThreadedClientPackage;
+begin
+  pack := TFHIRThreadedClientPackage.create;
+  try
+    pack.command := fcmdUpdate;
+    pack.resource := resource.link;
+    pack.Thread := TThreadClientThread.create(FInternal.link, pack.Link);
+    wait(pack);
+    result := pack.result.link as TFHIRBundle;
+  finally
+    pack.free;
+  end;
+end;
+
+procedure TFhirThreadedClient.wait(Package : TFHIRThreadedClientPackage);
+var
+  stop : boolean;
+begin
+  repeat
+    stop := false;
+    FEvent(self, stop);
+    if stop then
+    begin
+      try
+        Package.Thread.Terminate;
+        FInternal.terminate;
+      except
+      end;
+      abort;
+    end;
+  until Package.Done;
+  if Package.error <> '' then
+    raise Exception.Create(Package.error);
+end;
+
+{ TFHIRThreadedClientPackage }
+
+destructor TFHIRThreadedClientPackage.Destroy;
+begin
+  FResource.Free;
+  FResult.Free;
+  inherited;
+end;
+
+function TFhirThreadedClientPackage.Link: TFhirThreadedClientPackage;
+begin
+  result := TFhirThreadedClientPackage(inherited Link);
+end;
+
+procedure TFhirThreadedClientPackage.SetResource(const Value: TFhirResource);
+begin
+  FResource.Free;
+  FResource := Value;
+end;
+
+procedure TFHIRThreadedClientPackage.SetResult(const Value: TFhirResource);
+begin
+  FResult.Free;
+  FResult := Value;
+end;
+
+{ TThreadClientThread }
+
+constructor TThreadClientThread.Create(client: TFhirClient; pack: TFhirThreadedClientPackage);
+begin
+  FClient := client;
+  FPackage := pack;
+  FreeOnTerminate := true;
+  inherited create(false);
+end;
+
+destructor TThreadClientThread.Destroy;
+begin
+  FClient.Free;
+  FPackage.Free;
+  inherited;
+end;
+
+procedure TThreadClientThread.execute;
+begin
+  try
+    try
+      case FPackage.command of
+        fcmdConformanceStmt: FPackage.result := FClient.conformance(FPackage.summary);
+        fcmdRead : FPackage.result := FClient.readResource(FPackage.ResourceType, FPackage.id);
+        fcmdSearch :
+          if FPackage.FUrl <> '' then
+            FPackage.result := FClient.searchAgain(FPackage.url)
+          else if FPackage.resourceType = frtNull then
+            FPackage.result := FClient.search(FPackage.allRecords, FPackage.params)
+          else
+            FPackage.result := FClient.search(FPackage.resourceType, FPackage.allRecords, FPackage.params);
+        fcmdUpdate : FPackage.result := FClient.updateResource(FPackage.Resource);
+      else
+        raise Exception.Create('Not done yet');
+      end;
+    except
+      on e : exception do
+        FPackage.error := e.Message;
+    end;
+  finally
+    FPackage.FDone := true;
+  end;
 end;
 
 end.
