@@ -104,7 +104,7 @@ function TFHIRWebServerSourceZipProvider.asStream(filename: String): TStream;
 var
   src : TAdvBuffer;
 begin
-  if not FZip.TryGetValue('web/'+filename, src) then
+  if not FZip.TryGetValue('web/'+filename.replace('\', '/'), src) then
     raise Exception.Create('Unable to find '+filename);
   result := TMemoryStream.Create;
   src.SaveToStream(result);
@@ -136,18 +136,15 @@ begin
 end;
 
 function TFHIRWebServerSourceZipProvider.exists(filename: String): boolean;
-var
-  src : TAdvBuffer;
 begin
-  if not FZip.TryGetValue('web/'+filename, src) then
-    result := false;
+  result := FZip.ContainsKey('web/'+filename.replace('\', '/'));
 end;
 
 function TFHIRWebServerSourceZipProvider.getSource(filename: String): String;
 var
   src : TAdvBuffer;
 begin
-  if not FZip.TryGetValue('web/'+filename, src) then
+  if not FZip.TryGetValue('web/'+filename.replace('\', '/'), src) then
     raise Exception.Create('Unable to find '+filename);
   result := src.AsUnicode;
 end;

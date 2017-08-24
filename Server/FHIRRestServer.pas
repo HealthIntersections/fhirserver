@@ -1033,7 +1033,7 @@ begin
       HandleRequest(AContext, request, response, false, false, FBasePath, session, nil)
     else if request.Document.StartsWith(AppendForwardSlash(FBasePath)+'FSecurePath', false) then
       HandleWebSockets(AContext, request, response, false, false, FSecurePath)
-    else if request.Document.StartsWith(FSecurePath, false) and hasInternalSSLToken(request) then
+    else if (FSecurePath <> '') and (request.Document.StartsWith(FSecurePath, false) and hasInternalSSLToken(request)) then
       HandleRequest(AContext, request, response, true, true, FSecurePath, session, nil)
     else if request.Document = '/diagnostics' then
       ReturnDiagnostics(AContext, request, response, false, false, FSecurePath)
