@@ -132,7 +132,8 @@ uses
   ProcessForm in 'ProcessForm.pas' {ProcessingForm},
   SettingsDialog in 'SettingsDialog.pas' {SettingsForm},
   AboutDialog in 'AboutDialog.pas' {AboutForm},
-  OSXUIUtils in '..\Libraries\ui\OSXUIUtils.pas';
+  OSXUIUtils in '..\Libraries\ui\OSXUIUtils.pas',
+  ValuesetSelectDialog in 'ValuesetSelectDialog.pas' {ValuesetSelectForm};
 
 {$R *.res}
 

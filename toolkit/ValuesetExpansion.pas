@@ -7,7 +7,8 @@ uses
   FMX.Types, FMX.Controls, FMX.Forms, FMX.Graphics, FMX.Dialogs, System.Rtti,
   FMX.Grid.Style, FMX.Grid, FMX.ScrollBox, FMX.StdCtrls, FMX.DateTimeCtrls,
   FMX.Edit, FMX.Controls.Presentation, IniFiles,
-  FHIRResources, FHIRUtilities, FHIRClient;
+  FHIRResources, FHIRUtilities, FHIRClient, FMX.ListBox,
+  SettingsDialog;
 
 type
   TValuesetExpansionForm = class(TForm)
@@ -16,7 +17,6 @@ type
     Button2: TButton;
     Panel2: TPanel;
     Label1: TLabel;
-    edtServer: TEdit;
     Go: TButton;
     Label2: TLabel;
     edtFilter: TEdit;
@@ -40,15 +40,18 @@ type
     StringColumn11: TStringColumn;
     StringColumn12: TStringColumn;
     StringColumn13: TStringColumn;
+    cbxServer: TComboBox;
+    btnSettings: TButton;
     procedure FormShow(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure GoClick(Sender: TObject);
-    procedure gridContainsGetValue(Sender: TObject; const ACol, ARow: Integer;
-      var Value: TValue);
+    procedure gridContainsGetValue(Sender: TObject; const ACol, ARow: Integer; var Value: TValue);
+    procedure btnSettingsClick(Sender: TObject);
   private
     FValueSet: TFHIRValueSet;
     FExpansion : TFHIRValueSet;
     FIni: TIniFile;
+    FClient : TFhirClient;
     procedure SetValueSet(const Value: TFHIRValueSet);
     procedure SetExpansion(const Value: TFHIRValueSet);
   public
@@ -65,17 +68,40 @@ implementation
 
 {$R *.fmx}
 
+Uses
+  FHIRToolkitForm;
+
 { TValuesetExpansionForm }
+
+procedure TValuesetExpansionForm.btnSettingsClick(Sender: TObject);
+var
+  form : TSettingsForm;
+begin
+  form := TSettingsForm.create(self);
+  try
+    form.Ini := FIni;
+    form.TabControl1.TabIndex := 1;
+    if form.showmodal = mrOk then
+    begin
+      FIni.ReadSection('Terminology-Servers', cbxServer.Items);
+      cbxServer.ItemIndex := 0;
+    end;
+  finally
+    form.free;
+  end;
+end;
 
 destructor TValuesetExpansionForm.Destroy;
 begin
   FExpansion.Free;
   FValueSet.Free;
+  FClient.Free;
   inherited;
 end;
 
-procedure TValuesetExpansionForm.FormClose(Sender: TObject;
-  var Action: TCloseAction);
+procedure TValuesetExpansionForm.FormClose(Sender: TObject; var Action: TCloseAction);
+var
+  s : String;
 begin
   try
     FIni.WriteInteger('Expansion.Window', 'left', left);
@@ -83,7 +109,6 @@ begin
     FIni.WriteInteger('Expansion.Window', 'width', width);
     FIni.WriteInteger('Expansion.Window', 'height', height);
 
-    FIni.WriteString('Expansion', 'Server', edtServer.Text);
     FIni.WriteString('Expansion', 'Filter', edtFilter.Text);
     FIni.WriteString('Expansion', 'Date', dedDate.Text);
     FIni.WriteString('Expansion', 'Offset', edtOffset.Text);
@@ -112,7 +137,11 @@ begin
   Width := FIni.ReadInteger('Expansion.Window', 'width', width);
   Height := FIni.ReadInteger('Expansion.Window', 'height', height);
 
-  edtServer.Text := FIni.ReadString('Expansion', 'Server', 'http://tx.fhir.org/r3');
+  FIni.ReadSection('Terminology-Servers', cbxServer.Items);
+  if cbxServer.Items.Count = 0 then
+    cbxServer.Items.Add('http://tx.fhir.org/r3');
+  cbxServer.ItemIndex := 0;
+
   edtFilter.Text := FIni.ReadString('Expansion', 'Filter', '');
   dedDate.Text := FIni.ReadString('Expansion', 'Date', '');
   edtOffset.Text := FIni.ReadString('Expansion', 'Offset', '');
@@ -134,7 +163,6 @@ end;
 
 procedure TValuesetExpansionForm.GoClick(Sender: TObject);
 var
-  client : TFhirHTTPClient;
   params :  TFHIRParameters;
 begin
   FExpansion.Free;
@@ -142,44 +170,46 @@ begin
   gridContains.RowCount := 0;
   button1.Enabled := false;
 
-  client := TFhirHTTPClient.Create(nil, edtServer.Text, false);
-  try
-    client.timeout := FIni.ReadInteger('HTTP', 'timeout', 5) * 1000;
-    client.proxy := FIni.ReadString('HTTP', 'proxy', '');
-    params := TFhirParameters.Create;
-    try
-      params.AddParameter('valueSet', FValueSet.Link);
-      if edtFilter.Text <> '' then
-        params.AddParameter('filter', edtFilter.Text);
-      if dedDate.Text <> '' then
-        params.AddParameter('date', dedDate.Text);
-      if edtOffset.Text <> '' then
-        params.AddParameter('offset', edtOffset.Text);
-      if edtCount.Text <> '' then
-        params.AddParameter('count', edtCount.Text);
-      if edtLang.Text <> '' then
-        params.AddParameter('displayLanguage', edtLang.Text);
+  if FClient = nil then
+    FClient := TFhirThreadedClient.Create(TFhirHTTPClient.Create(nil, cbxServer.items[cbxServer.itemIndex], false, FIni.ReadInteger('HTTP', 'timeout', 5) * 1000, FIni.ReadString('HTTP', 'proxy', '')), MasterToolsForm.threadMonitorProc);
 
-      if cbDesignations.IsChecked then
-        params.AddParameter('includeDesignations', true);
-      if cbActiveOnly.IsChecked then
-        params.AddParameter('activeOnly', true);
-      if cbUIOnly.IsChecked then
-        params.AddParameter('excludeNotForUI', true);
-      if cbNoExpressions.IsChecked then
-        params.AddParameter('excludePostCoordinated', true);
-      if cbAllowSubset.IsChecked then
-        params.AddParameter('limitedExpansion', true);
+  MasterToolsForm.dowork(self, 'Expanding',
+    procedure
+    var
+      params :  TFHIRParameters;
+    begin
+      params := TFhirParameters.Create;
+      try
+        params.AddParameter('valueSet', FValueSet.Link);
+        if edtFilter.Text <> '' then
+          params.AddParameter('filter', edtFilter.Text);
+        if dedDate.Text <> '' then
+          params.AddParameter('date', dedDate.Text);
+        if edtOffset.Text <> '' then
+          params.AddParameter('offset', edtOffset.Text);
+        if edtCount.Text <> '' then
+          params.AddParameter('count', edtCount.Text);
+        if edtLang.Text <> '' then
+          params.AddParameter('displayLanguage', edtLang.Text);
 
-      FExpansion := client.operation(frtValueSet, 'expand', params) as TFHIRValueSet;
-      gridContains.RowCount := FExpansion.expansion.containsList.Count;
-      button1.Enabled := FExpansion.expansion.containsList.Count > 0;
-    finally
-      params.Free;
-    end;
-  finally
-    client.free;
-  end;
+        if cbDesignations.IsChecked then
+          params.AddParameter('includeDesignations', true);
+        if cbActiveOnly.IsChecked then
+          params.AddParameter('activeOnly', true);
+        if cbUIOnly.IsChecked then
+          params.AddParameter('excludeNotForUI', true);
+        if cbNoExpressions.IsChecked then
+          params.AddParameter('excludePostCoordinated', true);
+        if cbAllowSubset.IsChecked then
+          params.AddParameter('limitedExpansion', true);
+
+        FExpansion := FClient.operation(frtValueSet, 'expand', params) as TFHIRValueSet;
+        gridContains.RowCount := FExpansion.expansion.containsList.Count;
+        button1.Enabled := FExpansion.expansion.containsList.Count > 0;
+      finally
+        params.Free;
+      end;
+    end);
 end;
 
 procedure TValuesetExpansionForm.gridContainsGetValue(Sender: TObject; const ACol, ARow: Integer; var Value: TValue);

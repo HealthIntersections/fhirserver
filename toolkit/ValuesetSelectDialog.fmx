@@ -1,0 +1,247 @@
+object ValuesetSelectForm: TValuesetSelectForm
+  Left = 0
+  Top = 0
+  BorderIcons = [biSystemMenu, biMaximize]
+  Caption = 'Value Set Expansion'
+  ClientHeight = 480
+  ClientWidth = 643
+  FormFactor.Width = 320
+  FormFactor.Height = 480
+  FormFactor.Devices = [Desktop]
+  OnClose = FormClose
+  OnShow = FormShow
+  DesignerMasterStyle = 0
+  object Panel1: TPanel
+    Align = Bottom
+    Position.Y = 440.000000000000000000
+    Size.Width = 643.000000000000000000
+    Size.Height = 40.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 0
+    object Button2: TButton
+      Anchors = [akTop, akRight]
+      Cancel = True
+      ModalResult = 2
+      Position.X = 554.000000000000000000
+      Position.Y = 8.000000000000000000
+      TabOrder = 0
+      Text = 'Cancel'
+    end
+    object btnAppend: TButton
+      Anchors = [akTop, akRight]
+      Position.X = 360.000000000000000000
+      Position.Y = 8.000000000000000000
+      Size.Width = 96.000000000000000000
+      Size.Height = 22.000000000000000000
+      Size.PlatformDefault = False
+      TabOrder = 2
+      Text = 'Use (Add)'
+      OnClick = btnAppendClick
+    end
+    object btnReplace: TButton
+      Anchors = [akTop, akRight]
+      Position.X = 456.000000000000000000
+      Position.Y = 8.000000000000000000
+      Size.Width = 96.000000000000000000
+      Size.Height = 22.000000000000000000
+      Size.PlatformDefault = False
+      TabOrder = 1
+      Text = 'Use (Replace)'
+      OnClick = btnReplaceClick
+    end
+    object Label4: TLabel
+      Position.X = 8.000000000000000000
+      Position.Y = 10.000000000000000000
+      Size.Width = 49.000000000000000000
+      Size.Height = 17.000000000000000000
+      Size.PlatformDefault = False
+      Text = 'Select:'
+      TabOrder = 3
+    end
+    object btnAll: TButton
+      Position.X = 48.000000000000000000
+      Position.Y = 8.000000000000000000
+      Size.Width = 41.000000000000000000
+      Size.Height = 22.000000000000000000
+      Size.PlatformDefault = False
+      TabOrder = 7
+      Text = 'All'
+      OnClick = btnAllClick
+    end
+    object btnActive: TButton
+      Position.X = 88.000000000000000000
+      Position.Y = 8.000000000000000000
+      Size.Width = 49.000000000000000000
+      Size.Height = 22.000000000000000000
+      Size.PlatformDefault = False
+      TabOrder = 6
+      Text = 'Active'
+      OnClick = btnActiveClick
+    end
+    object btnSelectable: TButton
+      Position.X = 136.000000000000000000
+      Position.Y = 8.000000000000000000
+      Size.Width = 49.000000000000000000
+      Size.Height = 22.000000000000000000
+      Size.PlatformDefault = False
+      TabOrder = 5
+      Text = 'Sel'
+      OnClick = btnSelectableClick
+    end
+    object btnNone: TButton
+      Position.X = 184.000000000000000000
+      Position.Y = 8.000000000000000000
+      Size.Width = 49.000000000000000000
+      Size.Height = 22.000000000000000000
+      Size.PlatformDefault = False
+      TabOrder = 4
+      Text = 'None'
+      OnClick = btnNoneClick
+    end
+    object cbUseDisplays: TCheckBox
+      Position.X = 248.000000000000000000
+      Position.Y = 10.000000000000000000
+      TabOrder = 8
+      Text = 'Use Displays'
+    end
+  end
+  object Panel2: TPanel
+    Align = Top
+    Size.Width = 643.000000000000000000
+    Size.Height = 73.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 1
+    object Label1: TLabel
+      Position.X = 8.000000000000000000
+      Position.Y = 8.000000000000000000
+      Size.Width = 49.000000000000000000
+      Size.Height = 17.000000000000000000
+      Size.PlatformDefault = False
+      Text = 'Server:'
+      TabOrder = 0
+    end
+    object Go: TButton
+      Position.X = 584.000000000000000000
+      Position.Y = 40.000000000000000000
+      Size.Width = 49.000000000000000000
+      Size.Height = 25.000000000000000000
+      Size.PlatformDefault = False
+      TabOrder = 1
+      Text = 'Go'
+      OnClick = GoClick
+    end
+    object Label2: TLabel
+      Position.X = 8.000000000000000000
+      Position.Y = 43.000000000000000000
+      Size.Width = 65.000000000000000000
+      Size.Height = 17.000000000000000000
+      Size.PlatformDefault = False
+      Text = 'Property:'
+      TabOrder = 3
+    end
+    object edtProperty: TEdit
+      Touch.InteractiveGestures = [LongTap, DoubleTap]
+      TabOrder = 5
+      Position.X = 72.000000000000000000
+      Position.Y = 40.000000000000000000
+    end
+    object Label3: TLabel
+      Position.X = 184.000000000000000000
+      Position.Y = 43.000000000000000000
+      Size.Width = 57.000000000000000000
+      Size.Height = 17.000000000000000000
+      Size.PlatformDefault = False
+      Text = 'Operation'
+      TabOrder = 6
+    end
+    object Label6: TLabel
+      Position.X = 368.000000000000000000
+      Position.Y = 43.000000000000000000
+      Size.Width = 65.000000000000000000
+      Size.Height = 17.000000000000000000
+      Size.PlatformDefault = False
+      Text = 'Value:'
+      TabOrder = 2
+    end
+    object edtValue: TEdit
+      Touch.InteractiveGestures = [LongTap, DoubleTap]
+      TabOrder = 4
+      Position.X = 424.000000000000000000
+      Position.Y = 40.000000000000000000
+      Size.Width = 148.000000000000000000
+      Size.Height = 22.000000000000000000
+      Size.PlatformDefault = False
+    end
+    object cbxServer: TComboBox
+      Position.X = 72.000000000000000000
+      Position.Y = 8.000000000000000000
+      Size.Width = 529.000000000000000000
+      Size.Height = 22.000000000000000000
+      Size.PlatformDefault = False
+      TabOrder = 7
+    end
+    object btnSettings: TButton
+      Position.X = 608.000000000000000000
+      Position.Y = 8.000000000000000000
+      Size.Width = 24.000000000000000000
+      Size.Height = 22.000000000000000000
+      Size.PlatformDefault = False
+      TabOrder = 8
+      Text = '...'
+      OnClick = btnSettingsClick
+    end
+    object cbxOperation: TComboBox
+      Items.Strings = (
+        ''
+        '='
+        'is-a'
+        'descendent-of'
+        'is-not-a'
+        'regex'
+        'in'
+        'not-in'
+        'generalizes'
+        'exists')
+      Position.X = 248.000000000000000000
+      Position.Y = 40.000000000000000000
+      Size.Width = 105.000000000000000000
+      Size.Height = 22.000000000000000000
+      Size.PlatformDefault = False
+      TabOrder = 9
+    end
+  end
+  object gridContains: TGrid
+    Align = Client
+    CanFocus = True
+    ClipChildren = True
+    Size.Width = 643.000000000000000000
+    Size.Height = 367.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 29
+    RowCount = 0
+    Options = [AlternatingRowBackground, Editing, ColumnResize, ColumnMove, ColLines, RowLines, RowSelect, Tabs, Header, HeaderClick, AutoDisplacement]
+    OnGetValue = gridContainsGetValue
+    OnSetValue = gridContainsSetValue
+    Viewport.Width = 639.000000000000000000
+    Viewport.Height = 342.000000000000000000
+    object CheckColumn1: TCheckColumn
+      Header = 'Use'
+      Size.Width = 33.000000000000000000
+    end
+    object StringColumn1: TStringColumn
+      Header = 'Code'
+    end
+    object StringColumn2: TStringColumn
+      Header = 'Display'
+      Size.Width = 322.000000000000000000
+    end
+    object CheckColumn2: TCheckColumn
+      Header = 'Select'
+      Size.Width = 39.000000000000000000
+    end
+    object CheckColumn3: TCheckColumn
+      Header = 'Active'
+      Size.Width = 39.000000000000000000
+    end
+  end
+end

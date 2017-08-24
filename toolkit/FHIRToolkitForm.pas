@@ -115,11 +115,10 @@ type
     function processHelpContext(helpContext : String) : String;
     function searchDesc(s : String) : String;
     procedure fhirDefn(s : String; b : TStringBuilder);
-    procedure dowork(Sender : TObject; opName : String; proc : TWorkProc);
     function GetStopped: boolean;
-    procedure threadMonitorProc(sender : TFhirClient; var stop : boolean);
   public
-    { Public declarations }
+    procedure dowork(Sender : TObject; opName : String; proc : TWorkProc);
+    procedure threadMonitorProc(sender : TFhirClient; var stop : boolean);
   end;
 
 var
@@ -480,7 +479,7 @@ begin
   end;
   try
     FIsStopped := false;
-    if assigned(sender) then
+    if assigned(sender) and (sender is TBaseFrame) then
       TBaseFrame(sender).OnStopped := GetStopped;
     form := TProcessingForm.Create(self);
     try

@@ -192,6 +192,7 @@ Type
     FUrl: String;
     FId: String;
     FResource: TFhirResource;
+    FName: String;
     procedure SetResult(const Value: TFhirResource);
     procedure SetResource(const Value: TFhirResource);
   public
@@ -208,6 +209,7 @@ Type
     property params: TDictionary<String, String> read FParams write FParams;
     property url : String read FUrl write FUrl;
     property id : String read FId write FId;
+    property name : String read FName write FName;
     property resource : TFhirResource read FResource write SetResource;
 
     property result : TFhirResource read FResult write SetResult;
@@ -1242,8 +1244,21 @@ begin
 end;
 
 function TFhirThreadedClient.operation(atype: TFhirResourceType; opName: String; params: TFhirParameters): TFHIRResource;
+var
+  pack : TFHIRThreadedClientPackage;
 begin
-  raise Exception.Create('Not Done Yet');
+  pack := TFHIRThreadedClientPackage.create;
+  try
+    pack.command := fcmdOperation;
+    pack.resourceType := aType;
+    pack.Name := opName;
+    pack.resource := params.Link;
+    pack.Thread := TThreadClientThread.create(FInternal.link, pack.Link);
+    wait(pack);
+    result := pack.result.link;
+  finally
+    pack.free;
+  end;
 end;
 
 function TFhirThreadedClient.readResource(atype: TFhirResourceType; id: String): TFHIRResource;
@@ -1425,6 +1440,7 @@ begin
           else
             FPackage.result := FClient.search(FPackage.resourceType, FPackage.allRecords, FPackage.params);
         fcmdUpdate : FPackage.result := FClient.updateResource(FPackage.Resource);
+        fcmdOperation : FPackage.result := FClient.operation(FPackage.resourceType, FPackage.name, FPackage.resource as TFhirParameters);
       else
         raise Exception.Create('Not done yet');
       end;

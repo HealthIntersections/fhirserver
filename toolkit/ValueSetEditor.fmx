@@ -60,7 +60,7 @@ object ValueSetEditorFrame: TValueSetEditorFrame
       Size.Width = 674.000000000000000000
       Size.Height = 712.000000000000000000
       Size.PlatformDefault = False
-      TabIndex = 3
+      TabIndex = 2
       TabOrder = 0
       TabPosition = None
       Sizes = (
@@ -520,7 +520,7 @@ object ValueSetEditorFrame: TValueSetEditorFrame
         CustomIcon = <
           item
           end>
-        IsSelected = False
+        IsSelected = True
         Size.Width = 8.000000000000000000
         Size.Height = 8.000000000000000000
         Size.PlatformDefault = False
@@ -602,8 +602,8 @@ object ValueSetEditorFrame: TValueSetEditorFrame
           DefaultItemStyles.GroupHeaderStyle = ''
           DefaultItemStyles.GroupFooterStyle = ''
           OnChange = lbImportsClick
-          Viewport.Width = 557.000000000000000000
-          Viewport.Height = 43.000000000000000000
+          Viewport.Width = 553.000000000000000000
+          Viewport.Height = 39.000000000000000000
         end
         object Label18: TLabel
           Position.X = 8.000000000000000000
@@ -713,7 +713,7 @@ object ValueSetEditorFrame: TValueSetEditorFrame
               Anchors = [akTop, akRight]
               Position.X = 569.000000000000000000
               Position.Y = 6.000000000000000000
-              TabOrder = 0
+              TabOrder = 1
               Text = 'Add'
               OnClick = btnAddConceptClick
             end
@@ -721,7 +721,7 @@ object ValueSetEditorFrame: TValueSetEditorFrame
               Anchors = [akRight, akBottom]
               Position.X = 569.000000000000000000
               Position.Y = 449.000000000000000000
-              TabOrder = 1
+              TabOrder = 2
               Text = 'Add'
               OnClick = btnAddDesignationClick
             end
@@ -729,7 +729,7 @@ object ValueSetEditorFrame: TValueSetEditorFrame
               Anchors = [akTop, akRight]
               Position.X = 569.000000000000000000
               Position.Y = 30.000000000000000000
-              TabOrder = 2
+              TabOrder = 3
               Text = 'Delete'
               OnClick = btnDeleteConceptClick
             end
@@ -737,7 +737,7 @@ object ValueSetEditorFrame: TValueSetEditorFrame
               Anchors = [akRight, akBottom]
               Position.X = 569.000000000000000000
               Position.Y = 475.000000000000000000
-              TabOrder = 3
+              TabOrder = 4
               Text = 'Delete'
               OnClick = btnDeleteDesignationClick
             end
@@ -751,12 +751,12 @@ object ValueSetEditorFrame: TValueSetEditorFrame
               Size.Width = 549.000000000000000000
               Size.Height = 407.000000000000000000
               Size.PlatformDefault = False
-              TabOrder = 4
+              TabOrder = 5
               OnSelChanged = gridConceptsSelChanged
               OnGetValue = gridConceptsGetValue
               OnSetValue = gridConceptsSetValue
-              Viewport.Width = 549.000000000000000000
-              Viewport.Height = 407.000000000000000000
+              Viewport.Width = 529.000000000000000000
+              Viewport.Height = 382.000000000000000000
               object StringColumn5: TStringColumn
                 Header = 'Code'
                 Size.Width = 73.000000000000000000
@@ -780,12 +780,12 @@ object ValueSetEditorFrame: TValueSetEditorFrame
               Size.Width = 549.000000000000000000
               Size.Height = 73.000000000000000000
               Size.PlatformDefault = False
-              TabOrder = 5
+              TabOrder = 6
               OnSelChanged = gridDesignationsSelChanged
               OnGetValue = gridDesignationsGetValue
               OnSetValue = gridDesignationsSetValue
-              Viewport.Width = 549.000000000000000000
-              Viewport.Height = 73.000000000000000000
+              Viewport.Width = 529.000000000000000000
+              Viewport.Height = 48.000000000000000000
               object PopupColumn2: TPopupColumn
                 Header = 'Language'
                 Items.Strings = (
@@ -837,7 +837,15 @@ object ValueSetEditorFrame: TValueSetEditorFrame
               Size.Height = 17.000000000000000000
               Size.PlatformDefault = False
               Text = 'Designations for selected Concept'
-              TabOrder = 6
+              TabOrder = 7
+            end
+            object btnSelectConcepts: TButton
+              Anchors = [akTop, akRight]
+              Position.X = 569.000000000000000000
+              Position.Y = 70.000000000000000000
+              TabOrder = 0
+              Text = 'Select'
+              OnClick = btnSelectConceptsClick
             end
           end
         end
@@ -869,7 +877,7 @@ object ValueSetEditorFrame: TValueSetEditorFrame
         CustomIcon = <
           item
           end>
-        IsSelected = True
+        IsSelected = False
         Size.Width = 8.000000000000000000
         Size.Height = 8.000000000000000000
         Size.PlatformDefault = False
@@ -878,16 +886,58 @@ object ValueSetEditorFrame: TValueSetEditorFrame
         Text = 'tabExpansion'
         ExplicitSize.cx = 8.000000000000000000
         ExplicitSize.cy = 8.000000000000000000
-        object Label17: TLabel
+        object btnAddContains: TButton
           Position.X = 8.000000000000000000
-          Position.Y = 16.000000000000000000
-          Text = 'Identifier:'
-          TabOrder = 21
+          Position.Y = 112.000000000000000000
+          Size.Width = 89.000000000000000000
+          Size.Height = 22.000000000000000000
+          Size.PlatformDefault = False
+          TabOrder = 15
+          Text = 'Add Row'
+          OnClick = btnAddContainsClick
+        end
+        object btnAddContainsDesignation: TButton
+          Anchors = [akRight, akBottom]
+          Position.X = 571.000000000000000000
+          Position.Y = 633.000000000000000000
+          TabOrder = 16
+          Text = 'Add'
+          OnClick = btnAddContainsDesignationClick
+        end
+        object btnDeleteContains: TButton
+          Position.X = 104.000000000000000000
+          Position.Y = 112.000000000000000000
+          Size.Width = 97.000000000000000000
+          Size.Height = 22.000000000000000000
+          Size.PlatformDefault = False
+          TabOrder = 17
+          Text = 'Delete Row'
+          OnClick = btnDeleteContainsClick
+        end
+        object btnDeleteContainsDesignation: TButton
+          Anchors = [akRight, akBottom]
+          Position.X = 571.000000000000000000
+          Position.Y = 659.000000000000000000
+          TabOrder = 18
+          Text = 'Delete'
+          OnClick = btnDeleteContainsDesignationClick
+        end
+        object dedTimestamp: TDateEdit
+          Date = 42968.000000000000000000
+          OnChange = inputChanged
+          Anchors = [akLeft, akTop, akRight]
+          HelpContext = 44
+          Position.X = 88.000000000000000000
+          Position.Y = 48.000000000000000000
+          Size.Width = 425.000000000000000000
+          Size.Height = 22.000000000000000000
+          Size.PlatformDefault = False
+          TabOrder = 19
         end
         object edtIdentifier: TEdit
           Touch.InteractiveGestures = [LongTap, DoubleTap]
           Anchors = [akLeft, akTop, akRight]
-          TabOrder = 15
+          TabOrder = 20
           Position.X = 88.000000000000000000
           Position.Y = 16.000000000000000000
           HelpContext = 43
@@ -897,46 +947,27 @@ object ValueSetEditorFrame: TValueSetEditorFrame
           OnChange = inputChanged
           OnChangeTracking = inputChanged
         end
-        object Label19: TLabel
-          Position.X = 8.000000000000000000
-          Position.Y = 50.000000000000000000
-          Text = 'TimeStamp:'
-          TabOrder = 26
-        end
-        object Label21: TLabel
-          Position.X = 8.000000000000000000
-          Position.Y = 80.000000000000000000
-          Text = 'Total:'
-          TabOrder = 27
-        end
-        object edtTotal: TEdit
+        object edtOffset: TEdit
           Touch.InteractiveGestures = [LongTap, DoubleTap]
-          Anchors = [akLeft, akTop, akRight]
-          TabOrder = 10
-          Position.X = 88.000000000000000000
-          Position.Y = 80.000000000000000000
-          HelpContext = 45
-          Size.Width = 225.000000000000000000
+          Anchors = [akTop, akRight]
+          TabOrder = 21
+          Position.X = 376.000000000000000000
+          Position.Y = 82.000000000000000000
+          HelpContext = 46
+          Size.Width = 282.000000000000000000
           Size.Height = 22.000000000000000000
           Size.PlatformDefault = False
           OnChange = inputChanged
           OnChangeTracking = inputChanged
         end
-        object Label22: TLabel
-          Anchors = [akTop, akRight]
-          Position.X = 328.000000000000000000
-          Position.Y = 82.000000000000000000
-          Text = 'Offset:'
-          TabOrder = 17
-        end
-        object edtOffset: TEdit
+        object edtTotal: TEdit
           Touch.InteractiveGestures = [LongTap, DoubleTap]
-          Anchors = [akTop, akRight]
-          TabOrder = 13
-          Position.X = 376.000000000000000000
-          Position.Y = 82.000000000000000000
-          HelpContext = 46
-          Size.Width = 282.000000000000000000
+          Anchors = [akLeft, akTop, akRight]
+          TabOrder = 22
+          Position.X = 88.000000000000000000
+          Position.Y = 80.000000000000000000
+          HelpContext = 45
+          Size.Width = 225.000000000000000000
           Size.Height = 22.000000000000000000
           Size.PlatformDefault = False
           OnChange = inputChanged
@@ -952,12 +983,12 @@ object ValueSetEditorFrame: TValueSetEditorFrame
           Size.Width = 657.000000000000000000
           Size.Height = 457.000000000000000000
           Size.PlatformDefault = False
-          TabOrder = 28
+          TabOrder = 23
           OnSelChanged = gridContainsSelChanged
           OnGetValue = gridContainsGetValue
           OnSetValue = gridContainsSetValue
-          Viewport.Width = 637.000000000000000000
-          Viewport.Height = 416.000000000000000000
+          Viewport.Width = 657.000000000000000000
+          Viewport.Height = 457.000000000000000000
           object StringColumn10: TStringColumn
             Header = 'Code'
           end
@@ -979,26 +1010,6 @@ object ValueSetEditorFrame: TValueSetEditorFrame
             Header = 'Version'
           end
         end
-        object btnAddContains: TButton
-          Position.X = 8.000000000000000000
-          Position.Y = 112.000000000000000000
-          Size.Width = 89.000000000000000000
-          Size.Height = 22.000000000000000000
-          Size.PlatformDefault = False
-          TabOrder = 2
-          Text = 'Add Row'
-          OnClick = btnAddContainsClick
-        end
-        object btnDeleteContains: TButton
-          Position.X = 104.000000000000000000
-          Position.Y = 112.000000000000000000
-          Size.Width = 97.000000000000000000
-          Size.Height = 22.000000000000000000
-          Size.PlatformDefault = False
-          TabOrder = 0
-          Text = 'Delete Row'
-          OnClick = btnDeleteContainsClick
-        end
         object gridContainsDesignations: TGrid
           Anchors = [akLeft, akRight, akBottom]
           CanFocus = True
@@ -1009,12 +1020,12 @@ object ValueSetEditorFrame: TValueSetEditorFrame
           Size.Width = 549.000000000000000000
           Size.Height = 73.000000000000000000
           Size.PlatformDefault = False
-          TabOrder = 5
+          TabOrder = 24
           OnSelChanged = gridContainsDesignationsSelChanged
           OnGetValue = gridContainsDesignationsGetValue
           OnSetValue = gridContainsDesignationsSetValue
-          Viewport.Width = 529.000000000000000000
-          Viewport.Height = 48.000000000000000000
+          Viewport.Width = 549.000000000000000000
+          Viewport.Height = 73.000000000000000000
           object PopupColumn4: TPopupColumn
             Header = 'Language'
             Items.Strings = (
@@ -1058,6 +1069,31 @@ object ValueSetEditorFrame: TValueSetEditorFrame
             Size.Width = 319.000000000000000000
           end
         end
+        object Label17: TLabel
+          Position.X = 8.000000000000000000
+          Position.Y = 16.000000000000000000
+          Text = 'Identifier:'
+          TabOrder = 25
+        end
+        object Label19: TLabel
+          Position.X = 8.000000000000000000
+          Position.Y = 50.000000000000000000
+          Text = 'TimeStamp:'
+          TabOrder = 26
+        end
+        object Label21: TLabel
+          Position.X = 8.000000000000000000
+          Position.Y = 80.000000000000000000
+          Text = 'Total:'
+          TabOrder = 27
+        end
+        object Label22: TLabel
+          Anchors = [akTop, akRight]
+          Position.X = 328.000000000000000000
+          Position.Y = 82.000000000000000000
+          Text = 'Offset:'
+          TabOrder = 28
+        end
         object Label23: TLabel
           Anchors = [akLeft, akBottom]
           Position.X = 8.000000000000000000
@@ -1066,44 +1102,7 @@ object ValueSetEditorFrame: TValueSetEditorFrame
           Size.Height = 17.000000000000000000
           Size.PlatformDefault = False
           Text = 'Designations for selected Row'
-          TabOrder = 6
-        end
-        object btnAddContainsDesignation: TButton
-          Anchors = [akRight, akBottom]
-          Position.X = 571.000000000000000000
-          Position.Y = 633.000000000000000000
-          TabOrder = 1
-          Text = 'Add'
-          OnClick = btnAddContainsDesignationClick
-        end
-        object btnDeleteContainsDesignation: TButton
-          Anchors = [akRight, akBottom]
-          Position.X = 571.000000000000000000
-          Position.Y = 659.000000000000000000
-          TabOrder = 3
-          Text = 'Delete'
-          OnClick = btnDeleteContainsDesignationClick
-        end
-        object dedTimestamp: TDateEdit
-          Date = 42968.000000000000000000
-          OnChange = inputChanged
-          Anchors = [akLeft, akTop, akRight]
-          HelpContext = 44
-          Position.X = 88.000000000000000000
-          Position.Y = 48.000000000000000000
-          Size.Width = 425.000000000000000000
-          Size.Height = 22.000000000000000000
-          Size.PlatformDefault = False
           TabOrder = 29
-        end
-        object tmTimestamp: TTimeEdit
-          Time = 0.556830983796296300
-          OnChange = inputChanged
-          Anchors = [akTop, akRight]
-          HelpContext = 44
-          Position.X = 560.000000000000000000
-          Position.Y = 48.000000000000000000
-          TabOrder = 30
         end
         object Label24: TLabel
           Anchors = [akTop, akRight]
@@ -1113,6 +1112,15 @@ object ValueSetEditorFrame: TValueSetEditorFrame
           Size.Height = 17.000000000000000000
           Size.PlatformDefault = False
           Text = 'Time:'
+          TabOrder = 30
+        end
+        object tmTimestamp: TTimeEdit
+          Time = 0.556830983796296300
+          OnChange = inputChanged
+          Anchors = [akTop, akRight]
+          HelpContext = 44
+          Position.X = 560.000000000000000000
+          Position.Y = 48.000000000000000000
           TabOrder = 31
         end
       end
@@ -1129,21 +1137,30 @@ object ValueSetEditorFrame: TValueSetEditorFrame
         Text = 'tabParameter'
         ExplicitSize.cx = 8.000000000000000000
         ExplicitSize.cy = 8.000000000000000000
-        object lblError: TLabel
-          Anchors = [akLeft, akRight, akBottom]
-          StyledSettings = [Family, Size]
-          Position.X = 16.000000000000000000
-          Position.Y = 640.000000000000000000
-          Size.Width = 641.000000000000000000
-          Size.Height = 33.000000000000000000
+        object btnAddParameter: TButton
+          Anchors = [akTop, akRight]
+          Position.X = 584.000000000000000000
+          Position.Y = 8.000000000000000000
+          Size.Width = 81.000000000000000000
+          Size.Height = 22.000000000000000000
           Size.PlatformDefault = False
-          TextSettings.Font.StyleExt = {00070000000000000004000000}
-          TextSettings.FontColor = claMaroon
-          Text = 'Error: message'
-          TabOrder = 20
+          TabOrder = 18
+          Text = 'Add'
+          OnClick = btnAddParameterClick
+        end
+        object btnDeleteParameter: TButton
+          Anchors = [akTop, akRight]
+          Position.X = 584.000000000000000000
+          Position.Y = 32.000000000000000000
+          Size.Width = 81.000000000000000000
+          Size.Height = 22.000000000000000000
+          Size.PlatformDefault = False
+          TabOrder = 19
+          Text = 'Remove'
+          OnClick = btnDeleteParameterClick
         end
         object gridParameters: TGrid
-          Anchors = [akLeft, akTop, akRight]
+          Anchors = [akLeft, akTop, akRight, akBottom]
           CanFocus = True
           ClipChildren = True
           HelpContext = 40
@@ -1152,7 +1169,7 @@ object ValueSetEditorFrame: TValueSetEditorFrame
           Size.Width = 561.000000000000000000
           Size.Height = 625.000000000000000000
           Size.PlatformDefault = False
-          TabOrder = 21
+          TabOrder = 20
           OnSelChanged = gridParametersSelChanged
           OnGetValue = gridParametersGetValue
           OnSetValue = gridParametersSetValue
@@ -1175,27 +1192,18 @@ object ValueSetEditorFrame: TValueSetEditorFrame
               'code')
           end
         end
-        object btnAddParameter: TButton
-          Anchors = [akTop, akRight]
-          Position.X = 584.000000000000000000
-          Position.Y = 8.000000000000000000
-          Size.Width = 81.000000000000000000
-          Size.Height = 22.000000000000000000
+        object lblError: TLabel
+          Anchors = [akLeft, akRight, akBottom]
+          StyledSettings = [Family, Size]
+          Position.X = 16.000000000000000000
+          Position.Y = 640.000000000000000000
+          Size.Width = 641.000000000000000000
+          Size.Height = 33.000000000000000000
           Size.PlatformDefault = False
-          TabOrder = 4
-          Text = 'Add'
-          OnClick = btnAddParameterClick
-        end
-        object btnDeleteParameter: TButton
-          Anchors = [akTop, akRight]
-          Position.X = 584.000000000000000000
-          Position.Y = 32.000000000000000000
-          Size.Width = 81.000000000000000000
-          Size.Height = 22.000000000000000000
-          Size.PlatformDefault = False
-          TabOrder = 5
-          Text = 'Remove'
-          OnClick = btnDeleteParameterClick
+          TextSettings.Font.StyleExt = {00070000000000000004000000}
+          TextSettings.FontColor = claMaroon
+          Text = 'Error: message'
+          TabOrder = 21
         end
       end
     end

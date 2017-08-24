@@ -12,7 +12,8 @@ uses
   AdvGenerics,
   FHIRBase, FHIRConstants, FHIRTypes, FHIRResources, FHIRUtilities, FHIRIndexBase, FHIRIndexInformation, FHIRSupport,
   BaseResourceFrame,
-  SearchParameterEditor, ListSelector, AddRestResourceDialog, ValuesetExpansion;
+  SearchParameterEditor, ListSelector, AddRestResourceDialog, ValuesetExpansion, ValuesetSelectDialog,
+  Soap.SOAPDomConv, Soap.OPToSOAPDomConv;
 
 type
   TFrame = TBaseResourceFrame; // re-aliasing the Frame to work around a designer bug
@@ -139,6 +140,7 @@ type
     PopupColumn6: TPopupColumn;
     btnAddParameter: TButton;
     btnDeleteParameter: TButton;
+    btnSelectConcepts: TButton;
     procedure tvStructureClick(Sender: TObject);
     procedure inputChanged(Sender: TObject);
     procedure btnFlipComposeClick(Sender: TObject);
@@ -187,6 +189,7 @@ type
     procedure btnDeleteParameterClick(Sender: TObject);
     procedure rbListClick(Sender: TObject);
     procedure rbFilterClick(Sender: TObject);
+    procedure btnSelectConceptsClick(Sender: TObject);
   private
     tvCompose, tvExpansion : TTreeViewItem;
     function GetValueSet: TFHIRValueSet;
@@ -558,6 +561,44 @@ begin
   ValueSet.identifierList.Remove(gridIdentifiers.Selected);
   gridIdentifiers.RowCount := 0;
   gridIdentifiers.RowCount := ValueSet.identifierList.count;
+end;
+
+procedure TValueSetEditorFrame.btnSelectConceptsClick(Sender: TObject);
+var
+  form : TValuesetSelectForm;
+  rule : TFHIRValueSetComposeInclude;
+  contains : TFhirValueSetExpansionContains;
+  concept : TFhirValueSetComposeIncludeConcept;
+begin
+  rule := tbResource.TagObject as TFHIRValueSetComposeInclude;
+  form := TValuesetSelectForm.Create(self);
+  try
+    form.Ini := Ini;
+    form.system := edtSystem.Text;
+    form.version :=  edtSystemVersion.Text;
+    form.hasConcepts := rule.conceptList.Count > 0;
+    if form.ShowModal = mrOk then
+    begin
+      if form.replace then
+        rule.conceptList.Clear;
+      for contains in form.expansion.expansion.containsList do
+        if contains.TagInt > 0 then
+        begin
+          concept := rule.conceptList.Append;
+          concept.code := contains.code;
+          if form.cbUseDisplays.IsChecked then
+            concept.display := contains.display;
+        end;
+      gridConcepts.RowCount := 0;
+      gridConcepts.RowCount := rule.conceptList.count;
+      ResourceIsDirty := true;
+      btnDeleteConcept.Enabled := gridConcepts.Row > -1;
+      rbList.Enabled := false;
+      rbFilter.Enabled := false;
+    end;
+  finally
+    form.Free;
+  end;
 end;
 
 procedure TValueSetEditorFrame.btnExpandClick(Sender: TObject);

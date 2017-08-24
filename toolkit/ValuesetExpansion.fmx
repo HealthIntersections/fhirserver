@@ -55,22 +55,13 @@ object ValuesetExpansionForm: TValuesetExpansionForm
       Text = 'Server:'
       TabOrder = 0
     end
-    object edtServer: TEdit
-      Touch.InteractiveGestures = [LongTap, DoubleTap]
-      TabOrder = 1
-      Position.X = 56.000000000000000000
-      Position.Y = 8.000000000000000000
-      Size.Width = 577.000000000000000000
-      Size.Height = 22.000000000000000000
-      Size.PlatformDefault = False
-    end
     object Go: TButton
       Position.X = 584.000000000000000000
       Position.Y = 40.000000000000000000
       Size.Width = 49.000000000000000000
       Size.Height = 49.000000000000000000
       Size.PlatformDefault = False
-      TabOrder = 2
+      TabOrder = 1
       Text = 'Go'
       OnClick = GoClick
     end
@@ -81,11 +72,11 @@ object ValuesetExpansionForm: TValuesetExpansionForm
       Size.Height = 17.000000000000000000
       Size.PlatformDefault = False
       Text = 'Filter:'
-      TabOrder = 4
+      TabOrder = 3
     end
     object edtFilter: TEdit
       Touch.InteractiveGestures = [LongTap, DoubleTap]
-      TabOrder = 8
+      TabOrder = 7
       Position.X = 56.000000000000000000
       Position.Y = 40.000000000000000000
     end
@@ -96,7 +87,7 @@ object ValuesetExpansionForm: TValuesetExpansionForm
       Size.Height = 17.000000000000000000
       Size.PlatformDefault = False
       Text = 'Date'
-      TabOrder = 11
+      TabOrder = 10
     end
     object dedDate: TDateEdit
       Date = 42968.000000000000000000
@@ -105,7 +96,7 @@ object ValuesetExpansionForm: TValuesetExpansionForm
       Size.Width = 89.000000000000000000
       Size.Height = 22.000000000000000000
       Size.PlatformDefault = False
-      TabOrder = 12
+      TabOrder = 11
     end
     object Label4: TLabel
       Position.X = 320.000000000000000000
@@ -114,11 +105,11 @@ object ValuesetExpansionForm: TValuesetExpansionForm
       Size.Height = 17.000000000000000000
       Size.PlatformDefault = False
       Text = 'Offset:'
-      TabOrder = 10
+      TabOrder = 9
     end
     object edtOffset: TEdit
       Touch.InteractiveGestures = [LongTap, DoubleTap]
-      TabOrder = 7
+      TabOrder = 6
       Position.X = 360.000000000000000000
       Position.Y = 40.000000000000000000
       Size.Width = 25.000000000000000000
@@ -132,11 +123,11 @@ object ValuesetExpansionForm: TValuesetExpansionForm
       Size.Height = 17.000000000000000000
       Size.PlatformDefault = False
       Text = 'Count:'
-      TabOrder = 9
+      TabOrder = 8
     end
     object edtCount: TEdit
       Touch.InteractiveGestures = [LongTap, DoubleTap]
-      TabOrder = 5
+      TabOrder = 4
       Position.X = 432.000000000000000000
       Position.Y = 40.000000000000000000
       Size.Width = 25.000000000000000000
@@ -150,11 +141,11 @@ object ValuesetExpansionForm: TValuesetExpansionForm
       Size.Height = 17.000000000000000000
       Size.PlatformDefault = False
       Text = 'Lang:'
-      TabOrder = 3
+      TabOrder = 2
     end
     object edtLang: TEdit
       Touch.InteractiveGestures = [LongTap, DoubleTap]
-      TabOrder = 6
+      TabOrder = 5
       Position.X = 512.000000000000000000
       Position.Y = 40.000000000000000000
       Size.Width = 60.000000000000000000
@@ -164,25 +155,25 @@ object ValuesetExpansionForm: TValuesetExpansionForm
     object cbDesignations: TCheckBox
       Position.X = 8.000000000000000000
       Position.Y = 72.000000000000000000
-      TabOrder = 13
+      TabOrder = 12
       Text = 'Designations'
     end
     object cbActiveOnly: TCheckBox
       Position.X = 124.000000000000000000
       Position.Y = 72.000000000000000000
-      TabOrder = 14
+      TabOrder = 13
       Text = 'Active Only'
     end
     object cbUIOnly: TCheckBox
       Position.X = 240.000000000000000000
       Position.Y = 72.000000000000000000
-      TabOrder = 15
+      TabOrder = 14
       Text = 'For UI Only'
     end
     object cbNoExpressions: TCheckBox
       Position.X = 356.000000000000000000
       Position.Y = 72.000000000000000000
-      TabOrder = 16
+      TabOrder = 15
       Text = 'No Expressions'
     end
     object cbAllowSubset: TCheckBox
@@ -191,8 +182,26 @@ object ValuesetExpansionForm: TValuesetExpansionForm
       Size.Width = 105.000000000000000000
       Size.Height = 19.000000000000000000
       Size.PlatformDefault = False
-      TabOrder = 17
+      TabOrder = 16
       Text = 'Allow subset'
+    end
+    object cbxServer: TComboBox
+      Position.X = 56.000000000000000000
+      Position.Y = 8.000000000000000000
+      Size.Width = 545.000000000000000000
+      Size.Height = 22.000000000000000000
+      Size.PlatformDefault = False
+      TabOrder = 17
+    end
+    object btnSettings: TButton
+      Position.X = 608.000000000000000000
+      Position.Y = 8.000000000000000000
+      Size.Width = 24.000000000000000000
+      Size.Height = 22.000000000000000000
+      Size.PlatformDefault = False
+      TabOrder = 18
+      Text = '...'
+      OnClick = btnSettingsClick
     end
   end
   object gridContains: TGrid
@@ -205,8 +214,8 @@ object ValuesetExpansionForm: TValuesetExpansionForm
     TabOrder = 29
     RowCount = 0
     OnGetValue = gridContainsGetValue
-    Viewport.Width = 636.000000000000000000
-    Viewport.Height = 318.000000000000000000
+    Viewport.Width = 640.000000000000000000
+    Viewport.Height = 343.000000000000000000
     object StringColumn10: TStringColumn
       Header = 'Code'
     end
