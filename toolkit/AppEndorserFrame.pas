@@ -488,24 +488,21 @@ begin
 end;
 
 procedure TAppEndorsementFrame.Load;
-var
-  cs : IFMXCursorService;
 begin
-  cs := markBusy;
-  try
-    ClearEndorsements;
-    ClearApplications;
-    ClearOrganizations;
+  work(
+    procedure (isStopped : TIsStoppedFunction)
+    begin
+      ClearEndorsements;
+      ClearApplications;
+      ClearOrganizations;
 
-    btnDownload.Enabled := true;
-    btnUpload.Enabled := true;
-    LoadApplications;
-    LoadOrganizations;
-    LoadEndorsements;
-    EnableTreeView;
-  finally
-    markNotBusy(cs);
-  end;
+      btnDownload.Enabled := true;
+      btnUpload.Enabled := true;
+      LoadApplications;
+      LoadOrganizations;
+      LoadEndorsements;
+      EnableTreeView;
+    end);
   tvEntitiesClick(nil);
 end;
 

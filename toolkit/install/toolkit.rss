@@ -3,6 +3,20 @@
 	<channel>
 		<title>FHIR Toolkit Release history</title>
 		<link>http://www.healthintersections.com.au/FhirServer</link>
+		<item><title>FHIR Toolkit release 0.0.7 24/08/2017 9:37:48 AM</title>
+			<link>http://www.healthintersections.com.au/FhirServer/fhir-toolkit-install-0.0.7.exe</link>
+			<mlink>http://www.healthintersections.com.au/FhirServer/fhir-toolkit-osx-0.0.7.zip</mlink>
+			<description>24/08/2017 9:37:48 AM (v0.0.7): Fix screen update problem</description>
+			<ptitle>0.0.7, 24/08/2017 9:37:48 AM</ptitle>
+			<comment>Fix screen update problem</comment>
+		</item>
+<item><title>FHIR Toolkit release 0.0.6 24/08/2017 7:52:04 AM</title>
+			<link>http://www.healthintersections.com.au/FhirServer/fhir-toolkit-install-0.0.6.exe</link>
+			<mlink>http://www.healthintersections.com.au/FhirServer/fhir-toolkit-osx-0.0.6.zip</mlink>
+			<description>24/08/2017 7:52:04 AM (v0.0.6): Work on debugging timeouts</description>
+			<ptitle>0.0.6, 24/08/2017 7:52:04 AM</ptitle>
+			<comment>Work on debugging timeouts</comment>
+		</item>
 		<item><title>FHIR Toolkit release 0.0.5 23/08/2017 4:00:40 PM</title>
 			<link>http://www.healthintersections.com.au/FhirServer/fhir-toolkit-install-0.0.5.exe</link>
 			<mlink>http://www.healthintersections.com.au/FhirServer/fhir-toolkit-osx-0.0.5.zip</mlink>
@@ -10,7 +24,7 @@
 			<ptitle>0.0.5, 23/08/2017 4:00:40 PM</ptitle>
 			<comment>fix Toolkit website</comment>
 		</item>
-<item><title>FHIR Toolkit release 0.0.4 23/08/2017 3:34:46 PM</title>
+		<item><title>FHIR Toolkit release 0.0.4 23/08/2017 3:34:46 PM</title>
 			<link>http://www.healthintersections.com.au/FhirServer/fhir-toolkit-install-0.0.4.exe</link>
 			<mlink>http://www.healthintersections.com.au/FhirServer/fhir-toolkit-osx-0.0.4.zip</mlink>
 			<description>23/08/2017 3:34:46 PM (v0.0.4): First OSX release</description>

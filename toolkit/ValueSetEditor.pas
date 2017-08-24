@@ -1247,8 +1247,10 @@ begin
     rbFilter.Enabled := true;
   end;
 
+  gridFilters.RowCount := 0;
   gridFilters.RowCount := rule.filterList.Count;
   btnDeleteFilter.Enabled := false;
+  gridConcepts.RowCount := 0;
   gridConcepts.RowCount := rule.conceptList.Count;
   btnDeleteConcept.Enabled := false;
   gridDesignations.RowCount := 0;

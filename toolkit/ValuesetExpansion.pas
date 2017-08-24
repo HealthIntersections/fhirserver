@@ -144,6 +144,8 @@ begin
 
   client := TFhirHTTPClient.Create(nil, edtServer.Text, false);
   try
+    client.timeout := FIni.ReadInteger('HTTP', 'timeout', 5) * 1000;
+    client.proxy := FIni.ReadString('HTTP', 'proxy', '');
     params := TFhirParameters.Create;
     try
       params.AddParameter('valueSet', FValueSet.Link);

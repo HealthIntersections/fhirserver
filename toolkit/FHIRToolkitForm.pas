@@ -12,7 +12,7 @@ uses
   FHIRBase, FHIRTypes, FHIRResources, FHIRClient, FHIRUtilities, FHIRIndexBase, FHIRIndexInformation, FHIRSupport,
   FHIRContext, FHIRProfileUtilities,
   ServerForm, CapabilityStatementEditor, BaseResourceFrame, BaseFrame, SourceViewer, ListSelector,
-  ValueSetEditor, HelpContexts, ProcessForm;
+  ValueSetEditor, HelpContexts, ProcessForm, SettingsDialog, AboutDialog;
 
 type
 
@@ -57,13 +57,18 @@ type
     mnuFileExit: TMenuItem;
     tbnSource: TButton;
     mnuFileSource: TMenuItem;
-    MenuItem3: TMenuItem;
     pnlHelp: TPanel;
     webHelp: TWebBrowser;
     tbnHelpContext: TButton;
     mnuHelp: TMenuItem;
     mnuHelpContext: TMenuItem;
     splitHelp: TSplitter;
+    btnStop: TButton;
+    btnSettings: TButton;
+    MenuItem2: TMenuItem;
+    MenuItem4: TMenuItem;
+    MenuItem6: TMenuItem;
+    mnuHelpAbout: TMenuItem;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure lbServersClick(Sender: TObject);
@@ -84,6 +89,9 @@ type
     procedure btnNewClick(Sender: TObject);
     procedure tbnHelpContextClick(Sender: TObject);
     procedure FormActivate(Sender: TObject);
+    procedure btnSettingsClick(Sender: TObject);
+    procedure btnStopClick(Sender: TObject);
+    procedure mnuHelpAboutClick(Sender: TObject);
   private
     { Private declarations }
     FIni : TIniFile;
@@ -91,6 +99,7 @@ type
     FFocus : TStyledControl;
     FIndexes : TFhirIndexList;
     FContext : TBaseWorkerContext;
+    FIsStopped : boolean;
 
     procedure saveServers;
     procedure saveFiles;
@@ -107,6 +116,7 @@ type
     function processHelpContext(helpContext : String) : String;
     function searchDesc(s : String) : String;
     procedure fhirDefn(s : String; b : TStringBuilder);
+    procedure dowork(Sender : TObject; proc : TWorkProc);
   public
     { Public declarations }
   end;
@@ -172,6 +182,8 @@ begin
   try
     client := TFhirHTTPClient.Create(nil, lbServers.Items[lbServers.ItemIndex], false);
     try
+      client.timeout := FIni.ReadInteger('HTTP', 'timeout', 5) * 1000;
+      client.proxy := FIni.ReadString('HTTP', 'proxy', '');
       cs := client.conformance(false);
       try
         tab := tbMain.Add(TTabItem);
@@ -296,6 +308,24 @@ begin
   end;
 end;
 
+procedure TMasterToolsForm.btnSettingsClick(Sender: TObject);
+var
+  form : TSettingsForm;
+begin
+  form := TSettingsForm.create(self);
+  try
+    form.Ini := FIni;
+    form.showmodal;
+  finally
+    form.free;
+  end;
+end;
+
+procedure TMasterToolsForm.btnStopClick(Sender: TObject);
+begin
+  FIsStopped := true;
+end;
+
 procedure TMasterToolsForm.tbnSaveClick(Sender: TObject);
 begin
   doSave;
@@ -373,7 +403,7 @@ end;
 function TMasterToolsForm.doSave: boolean;
 var
   frame : TBaseFrame;
-  cs : IFMXCursorService;
+  ok : boolean;
 begin
   result := false;
   frame := tbMain.ActiveTab.TagObject as TBaseFrame;
@@ -382,12 +412,13 @@ begin
   begin
     if frame.canSave then
     begin
-      cs := frame.markbusy;
-      try
-        result := frame.save;
-      finally
-        frame.markNotBusy(cs);
-      end;
+      ok := false;
+      frame.work(
+        procedure (isStopped : TIsStoppedFunction)
+        begin;
+          ok := frame.save;
+        end);
+      result := ok;
     end
     else
       result := doSaveAs;
@@ -397,7 +428,7 @@ end;
 function TMasterToolsForm.doSaveAs: boolean;
 var
   frame : TBaseFrame;
-  cs : IFMXCursorService;
+  ok : boolean;
 begin
   result := false;
   frame := tbMain.ActiveTab.TagObject as TBaseFrame;
@@ -408,24 +439,55 @@ begin
     begin
       if frame.canSaveAs then
       begin
-        cs := frame.markbusy;
-        try
-          if sdFile.FilterIndex = 0 then
-            result := frame.saveAs(sdFile.Filename, ffXml)
-          else if sdFile.FilterIndex = 1 then
-            result := frame.saveAs(sdFile.Filename, ffJson)
-          else if sdFile.FilterIndex = 2 then
-            result := frame.saveAs(sdFile.Filename, ffTurtle)
-          else
-            raise Exception.Create('Unknown format');
-          addFileToList(sdFile.FileName);
-        finally
-          frame.markNotBusy(cs);
-        end;
+        ok := false;
+        frame.work(
+          procedure (isStopped : TIsStoppedFunction)
+          begin
+            if sdFile.FilterIndex = 0 then
+              ok := frame.saveAs(sdFile.Filename, ffXml)
+            else if sdFile.FilterIndex = 1 then
+              ok := frame.saveAs(sdFile.Filename, ffJson)
+            else if sdFile.FilterIndex = 2 then
+              ok := frame.saveAs(sdFile.Filename, ffTurtle)
+            else
+              raise Exception.Create('Unknown format');
+            addFileToList(sdFile.FileName);
+          end);
+        result := ok;
       end
       else
         raise Exception.create('Unable to save file');
     end;
+  end;
+end;
+
+procedure TMasterToolsForm.dowork(Sender: TObject; proc: TWorkProc);
+var
+  fcs : IFMXCursorService;
+begin
+  if TPlatformServices.Current.SupportsPlatformService(IFMXCursorService) then
+    fcs := TPlatformServices.Current.GetPlatformService(IFMXCursorService) as IFMXCursorService
+  else
+    fcs := nil;
+  if Assigned(fcs) then
+  begin
+    Cursor := fcs.GetCursor;
+    fcs.SetCursor(crHourGlass);
+  end;
+  try
+    FIsStopped := false;
+    btnStop.Enabled := true;
+    try
+      proc(function : boolean
+        begin
+          result := FIsStopped;
+        end);
+    finally
+      btnStop.Enabled := false;
+    end;
+  finally
+    if Assigned(fCS) then
+      fcs.setCursor(Cursor);
   end;
 end;
 
@@ -590,6 +652,18 @@ procedure TMasterToolsForm.lbServersClick(Sender: TObject);
 begin
   btnConnect.Enabled := lbServers.ItemIndex >= 0;
   btnRemoveServer.Enabled := lbServers.ItemIndex >= 0;
+end;
+
+procedure TMasterToolsForm.mnuHelpAboutClick(Sender: TObject);
+var
+  form : TAboutForm;
+begin
+  form := TAboutForm.Create(self);
+  try
+    form.ShowModal;
+  finally
+    form.Free;
+  end;
 end;
 
 procedure TMasterToolsForm.newResource(rClass : TFhirResourceClass; frameClass : TBaseResourceFrameClass);

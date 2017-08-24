@@ -129,19 +129,15 @@ uses
   CapabilityStatementEditor in 'CapabilityStatementEditor.pas' {CapabilityStatementEditorFrame: TFrame},
   ValuesetExpansion in 'ValuesetExpansion.pas' {ValuesetExpansionForm},
   HelpContexts in 'HelpContexts.pas',
-  ProcessForm in 'ProcessForm.pas' {ProcessingForm};
+  ProcessForm in 'ProcessForm.pas' {ProcessingForm},
+  SettingsDialog in 'SettingsDialog.pas' {SettingsForm},
+  AboutDialog in 'AboutDialog.pas' {AboutForm},
+  OSXUIUtils in '..\Libraries\ui\OSXUIUtils.pas';
 
 {$R *.res}
 
 begin
   Application.Initialize;
   Application.CreateForm(TMasterToolsForm, MasterToolsForm);
-  Application.CreateForm(TOrganizationSelectionForm, OrganizationSelectionForm);
-  Application.CreateForm(TSearchParameterEditorForm, SearchParameterEditorForm);
-  Application.CreateForm(TListSelectorForm, ListSelectorForm);
-  Application.CreateForm(TAddRestResourceForm, AddRestResourceForm);
-  Application.CreateForm(TSourceViewerForm, SourceViewerForm);
-  Application.CreateForm(TValuesetExpansionForm, ValuesetExpansionForm);
-  Application.CreateForm(TProcessingForm, ProcessingForm);
   Application.Run;
 end.

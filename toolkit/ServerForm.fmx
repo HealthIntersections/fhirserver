@@ -715,7 +715,7 @@ object ServerFrame: TServerFrame
       Size.Width = 715.000000000000000000
       Size.Height = 215.000000000000000000
       Size.PlatformDefault = False
-      TabIndex = 0
+      TabIndex = 1
       TabOrder = 1
       TabPosition = None
       Sizes = (
@@ -729,13 +729,15 @@ object ServerFrame: TServerFrame
         CustomIcon = <
           item
           end>
-        IsSelected = True
+        IsSelected = False
         Size.Width = 8.000000000000000000
         Size.Height = 8.000000000000000000
         Size.PlatformDefault = False
         StyleLookup = ''
         TabOrder = 0
         Text = 'TabItem4'
+        ExplicitSize.cx = 8.000000000000000000
+        ExplicitSize.cy = 8.000000000000000000
         object gridPMatches: TGrid
           Align = Client
           CanFocus = True
@@ -750,8 +752,8 @@ object ServerFrame: TServerFrame
           RowCount = 0
           Options = [ColumnResize, ColumnMove, ColLines, RowLines, RowSelect, Tabs, Header, HeaderClick, AutoDisplacement]
           OnGetValue = gridPMatchesGetValue
-          Viewport.Width = 699.000000000000000000
-          Viewport.Height = 184.000000000000000000
+          Viewport.Width = 703.000000000000000000
+          Viewport.Height = 209.000000000000000000
           object StringColumn9: TStringColumn
             Header = 'Id'
             Size.Width = 57.000000000000000000
@@ -792,15 +794,17 @@ object ServerFrame: TServerFrame
         CustomIcon = <
           item
           end>
-        IsSelected = False
+        IsSelected = True
         Size.Width = 8.000000000000000000
         Size.Height = 8.000000000000000000
         Size.PlatformDefault = False
         StyleLookup = ''
         TabOrder = 0
         Text = 'TabItem5'
+        ExplicitSize.cx = 8.000000000000000000
+        ExplicitSize.cy = 8.000000000000000000
         object gridConfMatches: TGrid
-          Align = Center
+          Align = Client
           CanFocus = True
           ClipChildren = True
           Margins.Left = 6.000000000000000000
@@ -814,8 +818,8 @@ object ServerFrame: TServerFrame
           Options = [ColumnResize, ColumnMove, ColLines, RowLines, RowSelect, Tabs, Header, HeaderClick, AutoDisplacement]
           OnGetValue = gridConfMatchesGetValue
           OnCellDblClick = gridConfMatchesCellDblClick
-          Viewport.Width = 703.000000000000000000
-          Viewport.Height = 209.000000000000000000
+          Viewport.Width = 699.000000000000000000
+          Viewport.Height = 184.000000000000000000
           object StringColumn1: TStringColumn
             Header = 'Type'
             Size.Width = 65.000000000000000000
@@ -858,6 +862,8 @@ object ServerFrame: TServerFrame
         StyleLookup = ''
         TabOrder = 0
         Text = 'TabItem6'
+        ExplicitSize.cx = 8.000000000000000000
+        ExplicitSize.cy = 8.000000000000000000
       end
     end
   end

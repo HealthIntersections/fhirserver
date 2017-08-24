@@ -7,6 +7,7 @@ uses
   FMX.Types, FMX.Graphics, FMX.Controls, FMX.Forms, FMX.Dialogs, FMX.StdCtrls,
   FMX.Controls.Presentation, FMX.TabControl, FMX.ListBox, FMX.Layouts, FMX.DateTimeCtrls,
   FMX.Edit, System.Rtti, FMX.Grid.Style, FMX.Grid, FMX.ScrollBox, FMX.Platform,
+  IdComponent,
   DateSupport, StringSupport,
   AdvGenerics,
   FHIRTypes, FHIRResources, FHIRClient, FHIRUtilities,
@@ -134,9 +135,8 @@ type
     FPatMatches : TAdvList<TFHIRPatient>;
     procedure SetClient(const Value: TFHIRClient);
     procedure SetCapabilityStatement(const Value: TFhirCapabilityStatement);
-    { Private declarations }
+    procedure DoWork(ASender: TObject; AWorkMode: TWorkMode; AWorkCount: Int64);
   public
-    { Public declarations }
     Destructor Destroy; override;
     property Client : TFHIRClient read FClient write SetClient;
     property CapabilityStatement : TFhirCapabilityStatement read FCapabilityStatement write SetCapabilityStatement;
@@ -342,71 +342,61 @@ end;
 
 
 procedure TServerFrame.btnConfSearchClick(Sender: TObject);
-var
-  params : TDictionary<String, String>;
-  be : TFhirBundleEntry;
-  fcs : IFMXCursorService;
-  start : TDateTime;
 begin
-  if TPlatformServices.Current.SupportsPlatformService(IFMXCursorService) then
-    fcs := TPlatformServices.Current.GetPlatformService(IFMXCursorService) as IFMXCursorService
-  else
-    fcs := nil;
-  if Assigned(fcs) then
-  begin
-    Cursor := fcs.GetCursor;
-    fcs.SetCursor(crHourGlass);
-  end;
-  try
-    FConfMatches.Clear;
-    gridConfMatches.RowCount := FConfMatches.Count;
-    FConfBundle.Free;
-    FConfBundle := nil;
-
-    params := TDictionary<String, String>.create;
-    try
-      params.Add('_type', 'CapabilityStatement,StructureDefinition,ImplementationGuide,SearchParameter,MessageDefinition,OperationDefinition,CompartmentDefinition,StructureMap,GraphDefinition,CodeSystem,ValueSet,ConceptMap,ExpansionProfile,NamingSystem');
-      params.Add('_summary', 'true');
-
-      if edtConfUrl.Text <> '' then
-        params.add('url', edtConfUrl.Text);
-      if edtConfId.Text <> '' then
-        params.add('identifier', edtConfId.Text);
-      if edtConfVersion.Text <> '' then
-        params.add('version', edtConfVersion.Text);
-      if edtConfName.Text <> '' then
-        params.add('name', edtConfName.Text);
-      if edtConfTitle.Text <> '' then
-        params.add('title', edtConfTitle.Text);
-      if edtConfText.Text <> '' then
-        params.add('_text', edtConfText.Text);
-      if dedConfDate.Text <> '' then
-        params.add('date', dedConfDate.Text);
-      if edtConfJurisdiction.ItemIndex <> -1 then
-        params.add('jurisdiction', getJurisdictionSearch(edtConfJurisdiction.ItemIndex));
-      if edtConfPub.Text <> '' then
-        params.add('publisher', edtConfPub.Text);
-      if cbxConfStatus.ItemIndex <> -1 then
-        params.add('status', cbxConfStatus.Items[cbxConfStatus.ItemIndex]);
-      if cbConfUseLastUpdated.IsChecked then
-        params.add('_lastUpdated', edtConfUpdated.Text);
-      if edtConfTag.Text <> '' then
-        params.add('_tag', edtConfTag.Text);
-
-      start := now;
-      FConfBundle := FClient.search(false, params);
-      for be in FConfBundle.entryList do
-        if (be.search.mode = SearchEntryModeMatch) and (be.resource <> nil) then
-          FConfMatches.Add(be.resource.Link);
+  work(
+    procedure (isStopped : TIsStoppedFunction)
+    var
+      be : TFhirBundleEntry;
+      params : TDictionary<String, String>;
+      start : TDateTime;
+    begin
+      Stopped := isStopped;
+      FConfMatches.Clear;
       gridConfMatches.RowCount := FConfMatches.Count;
-      lblOutcome.Text := 'Fetched '+inttostr(FConfMatches.Count)+' of '+FConfBundle.total+' resources in '+describePeriod(now - start);
-    finally
-      params.Free;
-    end;
-  finally
-    if Assigned(fCS) then
-      fcs.setCursor(Cursor);
-  end;
+      FConfBundle.Free;
+      FConfBundle := nil;
+
+      params := TDictionary<String, String>.create;
+      try
+        params.Add('_type', 'CapabilityStatement,StructureDefinition,ImplementationGuide,SearchParameter,MessageDefinition,OperationDefinition,CompartmentDefinition,StructureMap,GraphDefinition,CodeSystem,ValueSet,ConceptMap,ExpansionProfile,NamingSystem');
+        params.Add('_summary', 'true');
+
+        if edtConfUrl.Text <> '' then
+          params.add('url', edtConfUrl.Text);
+        if edtConfId.Text <> '' then
+          params.add('identifier', edtConfId.Text);
+        if edtConfVersion.Text <> '' then
+          params.add('version', edtConfVersion.Text);
+        if edtConfName.Text <> '' then
+          params.add('name', edtConfName.Text);
+        if edtConfTitle.Text <> '' then
+          params.add('title', edtConfTitle.Text);
+        if edtConfText.Text <> '' then
+          params.add('_text', edtConfText.Text);
+        if dedConfDate.Text <> '' then
+          params.add('date', dedConfDate.Text);
+        if edtConfJurisdiction.ItemIndex <> -1 then
+          params.add('jurisdiction', getJurisdictionSearch(edtConfJurisdiction.ItemIndex));
+        if edtConfPub.Text <> '' then
+          params.add('publisher', edtConfPub.Text);
+        if cbxConfStatus.ItemIndex <> -1 then
+          params.add('status', cbxConfStatus.Items[cbxConfStatus.ItemIndex]);
+        if cbConfUseLastUpdated.IsChecked then
+          params.add('_lastUpdated', edtConfUpdated.Text);
+        if edtConfTag.Text <> '' then
+          params.add('_tag', edtConfTag.Text);
+
+        start := now;
+        FConfBundle := FClient.search(false, params);
+        for be in FConfBundle.entryList do
+          if (be.search.mode = SearchEntryModeMatch) and (be.resource <> nil) then
+            FConfMatches.Add(be.resource.Link);
+        gridConfMatches.RowCount := FConfMatches.Count;
+        lblOutcome.Text := 'Fetched '+inttostr(FConfMatches.Count)+' of '+FConfBundle.total+' resources in '+describePeriod(now - start);
+      finally
+        params.Free;
+      end;
+    end);
 end;
 
 procedure TServerFrame.btnFetchMoreClick(Sender: TObject);
@@ -524,6 +514,7 @@ begin
         params.add('_text', edtPText.Text);
 
       start := now;
+      FClient.OnWork := doWork;
       FPatBundle := FClient.search(frtPatient, false, params);
       for be in FPatBundle.entryList do
         if (be.search.mode = SearchEntryModeMatch) and (be.resource <> nil) then
@@ -550,6 +541,13 @@ begin
   FPatMatches.Free;
 
   inherited;
+end;
+
+procedure TServerFrame.DoWork(ASender: TObject; AWorkMode: TWorkMode; AWorkCount: Int64);
+begin
+  Application.ProcessMessages;
+  if Stopped then
+    abort;
 end;
 
 procedure TServerFrame.gridConfMatchesCellDblClick(const Column: TColumn; const Row: Integer);

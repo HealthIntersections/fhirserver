@@ -7,11 +7,16 @@ uses
   FMX.Types, FMX.Graphics, FMX.Controls, FMX.Forms, FMX.Dialogs, FMX.StdCtrls,
   FMX.ListBox, FMX.Edit, FMX.TabControl, FMX.TreeView, FMX.Layouts,
   FMX.Controls.Presentation, FMX.Platform,
+  IdComponent,
   IniFiles,
   FHIRBase, FHIRResources, FHIRClient;
 
 type
   TOnOpenResourceEvent = procedure (sender : TObject; client : TFHIRClient; format : TFHIRFormat; resource : TFHIRResource) of object;
+
+  TIsStoppedFunction = reference to function : boolean;
+  TWorkProc = reference to procedure(isStopped : TIsStoppedFunction);
+  TWorkEvent = procedure (Sender : TObject; proc : TWorkProc) of object;
 
   TBaseFrame = class(TFrame)
   private
@@ -19,11 +24,16 @@ type
     FTab  : TTabItem;
     FIni: TIniFile;
     FOnOpenResource : TOnOpenResourceEvent;
+    FOnWork : TWorkEvent;
+    FStopped: TIsStoppedFunction;
+    function StoppedStub : boolean;
   public
     property Tabs : TTabControl read FTabs write FTabs;
     property Tab : TTabItem read FTab write FTab;
     property Ini : TIniFile read FIni write FIni;
     property OnOpenResource : TOnOpenResourceEvent read FOnOpenResource write FOnOpenResource;
+    property OnWork : TWorkEvent read FOnWork write FOnWork;
+    property Stopped : TIsStoppedFunction read FStopped write FStopped;
 
     procedure load; virtual;
     procedure Close;
@@ -38,8 +48,8 @@ type
     function currentResource : TFHIRResource; virtual;
     function originalResource : TFHIRResource; virtual;
 
-    function markbusy : IFMXCursorService;
-    procedure markNotBusy(cs : IFMXCursorService);
+    procedure ClientWork(ASender: TObject; AWorkMode: TWorkMode; AWorkCount: Int64);
+    procedure work(proc : TWorkProc);
   end;
 
 implementation
@@ -54,6 +64,12 @@ end;
 function TBaseFrame.canSaveAs: boolean;
 begin
   result := false;
+end;
+
+procedure TBaseFrame.ClientWork(ASender: TObject; AWorkMode: TWorkMode; AWorkCount: Int64);
+begin
+  if Stopped then
+    abort;
 end;
 
 procedure TBaseFrame.Close;
@@ -88,24 +104,6 @@ begin
 
 end;
 
-function TBaseFrame.markbusy : IFMXCursorService;
-begin
-  if TPlatformServices.Current.SupportsPlatformService(IFMXCursorService) then
-    result := TPlatformServices.Current.GetPlatformService(IFMXCursorService) as IFMXCursorService
-  else
-    result := nil;
-  if Assigned(result) then
-  begin
-    TForm(Tabs.Owner).Cursor := result.GetCursor;
-    result.SetCursor(crHourGlass);
-  end;
-end;
-
-procedure TBaseFrame.markNotBusy(cs: IFMXCursorService);
-begin
-  if Assigned(CS) then
-    cs.setCursor(TForm(Tabs.Owner).Cursor);
-end;
 
 function TBaseFrame.nameForSaveDialog: String;
 begin
@@ -125,6 +123,17 @@ end;
 function TBaseFrame.saveAs(filename: String; format: TFHIRFormat): boolean;
 begin
   raise Exception.Create('Not implemented');
+end;
+
+function TBaseFrame.StoppedStub: boolean;
+begin
+  result := false;
+end;
+
+procedure TBaseFrame.work(proc: TWorkProc);
+begin
+  OnWork(self, proc);
+  FStopped := StoppedStub;
 end;
 
 end.

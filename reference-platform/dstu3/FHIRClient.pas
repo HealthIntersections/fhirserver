@@ -37,8 +37,8 @@ interface
 
 uses
   SysUtils, Classes, Generics.Collections, Soap.EncdDecd,
-  StringSupport, EncodeSupport, GuidSupport, DateSupport,
-  IdHTTP, IdSSLOpenSSL, MimeMessage,
+  IdHTTP, IdSSLOpenSSL, IdComponent,
+  StringSupport, EncodeSupport, GuidSupport, DateSupport, MimeMessage,
   AdvObjects, AdvBuffers, {$IFNDEF OSX}AdvWinInetClients, {$ENDIF}AdvJson,
   FHIRParser, FHIRResources, FHIRTypes, FHIRUtilities,
   FHIRConstants, FHIRContext, FHIRSupport, FHIRParserBase, FHIRBase,
@@ -57,6 +57,7 @@ Type
 
   TFhirClient = {abstract} class (TAdvObject)
   private
+    FOnWork: TWorkEvent;
   public
     function link : TFhirClient; overload;
 
@@ -76,6 +77,7 @@ Type
 
     function address : String; virtual;
     function format : TFHIRFormat; virtual;
+    property OnWork: TWorkEvent read FOnWork write FOnWork;
   end;
 
   TFhirHTTPClientHTTPVerb = (get, post, put, delete, options, patch);
@@ -101,6 +103,7 @@ Type
     FCertPWord: String;
 
     FCertFile: String;
+    FProxy: String;
 //    FLastUpdated : TDateTimeEx;
     procedure status(msg : String);
     procedure getSSLpassword(var Password: String);
@@ -127,6 +130,7 @@ Type
     procedure SetCertPWord(const Value: String);
     procedure SetUseIndy(const Value: boolean);  protected
     function Convert(stream : TStream) : TStream; virtual;
+    procedure DoWork(ASender: TObject; AWorkMode: TWorkMode; AWorkCount: Int64);
   public
     constructor Create(worker : TFHIRWorkerContext; url : String; json : boolean); overload;
     destructor Destroy; override;
@@ -141,6 +145,7 @@ Type
     property allowR2 : boolean read FAllowR2 write FAllowR2;
     property certFile : String read FCertFile write SetCertFile;
     property certPWord : String read FCertPWord write SetCertPWord;
+    property proxy : String read FProxy write FProxy;
 
 //    procedure doRequest(request : TFHIRRequest; response : TFHIRResponse);
     procedure cancelOperation;
@@ -167,7 +172,6 @@ Type
     procedure authoriseByOWin(server, username, password : String);
 
     property OnClientStatus : TFhirHTTPClientStatusEvent read FOnClientStatus write FOnClientStatus;
-
   end;
 
 implementation
@@ -234,6 +238,12 @@ begin
   inherited;
 end;
 
+
+procedure TFhirHTTPClient.DoWork(ASender: TObject; AWorkMode: TWorkMode; AWorkCount: Int64);
+begin
+  if assigned(OnWork) then
+    OnWork(Self, AWorkMode, AWorkCount);
+end;
 
 function TFhirHTTPClient.link: TFhirHTTPClient;
 begin
@@ -633,6 +643,16 @@ begin
     begin
       indy := TIdHTTP.create(nil);
       indy.HandleRedirects := true;
+      indy.OnWork := DoWork;
+      if (proxy <> '') then
+      begin
+        try
+          indy.ProxyParams.ProxyServer := proxy.Split([':'])[0];
+          indy.ProxyParams.ProxyPort := StrToInt(proxy.Split([':'])[1]);
+        except
+          raise Exception.Create('Unabel to process proxy "'+proxy+'" - use address:port');
+        end;
+      end;
       ssl := TIdSSLIOHandlerSocketOpenSSL.Create(nil);
       indy.IOHandler := ssl;
       ssl.SSLOptions.Mode := sslmClient;
