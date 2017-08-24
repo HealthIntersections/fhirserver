@@ -169,46 +169,38 @@ var
   tab : TTabItem;
   serverForm : TServerFrame;
   cs : TFhirCapabilityStatement;
-  ok : boolean;
 begin
-  ok := false;
-  serverForm := TServerFrame.create(tab);
+  client := TFhirThreadedClient.create(TFhirHTTPClient.Create(nil, lbServers.Items[lbServers.ItemIndex], false, FIni.ReadInteger('HTTP', 'timeout', 5) * 1000, FIni.ReadString('HTTP', 'proxy', '')), threadMonitorProc);
   try
-    serverForm.OnWork := dowork;
-    client := TFhirThreadedClient.create(TFhirHTTPClient.Create(nil, lbServers.Items[lbServers.ItemIndex], false, FIni.ReadInteger('HTTP', 'timeout', 5) * 1000, FIni.ReadString('HTTP', 'proxy', '')), threadMonitorProc);
+    doWork(nil, 'Connect',
+      procedure
+      begin
+        cs := client.conformance(false);
+      end);
     try
-      serverForm.work('Connect',
-        procedure
-        begin
-          cs := client.conformance(false);
-        end);
-      try
-        ok := true;
-        tab := tbMain.Add(TTabItem);
-        tbMain.ActiveTab := tab;
-        tab.Text := lbServers.Items[lbServers.ItemIndex];
-        tab.TagObject := serverForm;
-        serverForm.TagObject := tab;
-        serverForm.Parent := tab;
-        serverForm.tabs := tbMain;
-        serverForm.Ini := FIni;
-        serverForm.Tab := tab;
-        serverForm.Align := TAlignLayout.Client;
-        serverForm.Client := client.link;
-        serverForm.CapabilityStatement := cs.link;
-        serverForm.OnOpenResource := OpenResourcefromClient;
-        serverForm.OnWork :=  dowork;
-        serverForm.load;
-        addServerToList(client.address);
-      finally
-        cs.free;
-      end;
+      tab := tbMain.Add(TTabItem);
+      tab.Text := lbServers.Items[lbServers.ItemIndex];
+      tbMain.ActiveTab := tab;
+      serverForm := TServerFrame.create(tab);
+      serverForm.Parent := tab;
+      tab.TagObject := serverForm;
+      serverForm.OnWork := dowork;
+      serverForm.TagObject := tab;
+      serverForm.tabs := tbMain;
+      serverForm.Ini := FIni;
+      serverForm.Tab := tab;
+      serverForm.Align := TAlignLayout.Client;
+      serverForm.Client := client.link;
+      serverForm.CapabilityStatement := cs.link;
+      serverForm.OnOpenResource := OpenResourcefromClient;
+      serverForm.OnWork :=  dowork;
+      serverForm.load;
+      addServerToList(client.address);
     finally
-      client.Free;
+      cs.free;
     end;
   finally
-    if not ok then
-      serverForm.Free;
+    client.Free;
   end;
 end;
 
@@ -488,7 +480,8 @@ begin
   end;
   try
     FIsStopped := false;
-    TBaseFrame(sender).OnStopped := GetStopped;
+    if assigned(sender) then
+      TBaseFrame(sender).OnStopped := GetStopped;
     form := TProcessingForm.Create(self);
     try
       form.lblOperation.text := opName;

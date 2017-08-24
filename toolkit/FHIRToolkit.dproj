@@ -6,7 +6,7 @@
         <MainSource>FHIRToolkit.dpr</MainSource>
         <Base>True</Base>
         <Config Condition="'$(Config)'==''">Debug</Config>
-        <Platform Condition="'$(Platform)'==''">Win64</Platform>
+        <Platform Condition="'$(Platform)'==''">OSX32</Platform>
         <TargetedPlatforms>6</TargetedPlatforms>
         <AppType>Application</AppType>
     </PropertyGroup>
@@ -265,9 +265,6 @@
         <DCCReference Include="..\reference-platform\support\HashSupport.pas"/>
         <DCCReference Include="..\reference-platform\support\CDSHooksUtilities.pas"/>
         <DCCReference Include="..\reference-platform\support\AfsStreamManagers.pas"/>
-        <DCCReference Include="..\reference-platform\support\AfsVolumes.pas"/>
-        <DCCReference Include="..\reference-platform\support\AfsResourceVolumes.pas"/>
-        <DCCReference Include="..\reference-platform\support\AdvWinInetClients.pas"/>
         <DCCReference Include="..\reference-platform\support\AdvStringHashes.pas"/>
         <DCCReference Include="..\reference-platform\support\AdvHashes.pas"/>
         <DCCReference Include="..\Libraries\FMM\FastMM4Messages.pas"/>

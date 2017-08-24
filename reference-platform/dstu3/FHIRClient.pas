@@ -99,6 +99,7 @@ Type
     FWorker : TFHIRWorkerContext;
     FAllowR2: boolean;
     FCertPWord: String;
+    FTerminated : boolean;
 
     FCertFile: String;
     FProxy: String;
@@ -354,9 +355,9 @@ end;
 
 procedure TFhirHTTPClient.terminate;
 begin
+  FTerminated := true;
   if FUseIndy and (indy <> nil) then
     indy.Disconnect;
-  inherited;
 end;
 
 function TFhirHTTPClient.transaction(bundle : TFHIRBundle) : TFHIRBundle;
@@ -586,7 +587,10 @@ var
   ret, conv : TStream;
   p : TFHIRParser;
 begin
+  FTerminated := false;
   ret := exchange(url, verb, source, ct);
+  if FTerminated then
+    abort;
   try
     if ret.Size = 0 then
       result := nil
