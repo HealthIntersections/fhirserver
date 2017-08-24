@@ -151,7 +151,7 @@ type
 implementation
 
 uses
-  FHIRLog, SystemService, FHIRAuthMap;
+  FHIRLog, FHIRAuthMap;
 
 
 { TAuth2Server }

@@ -111,7 +111,6 @@ implementation
 
 uses
   FHIRLog,
-  SystemService,
   FHIRParser;
 
 { TTerminologyWebServer }

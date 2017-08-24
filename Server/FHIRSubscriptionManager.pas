@@ -46,7 +46,7 @@ interface
 uses
   SysUtils, Classes, DateSupport, StringSupport, GuidSupport, BytesSupport,
   kCritSct, KDBManager, KDBDialects,  ParseMap,
-  AdvObjects, AdvObjectLists, AdvGenerics, AdvSignals, AdvBuffers, AdvJson,
+  AdvObjects, AdvObjectLists, AdvGenerics, {$IFNDEF MACOS}AdvSignals, {$ENDIF}AdvBuffers, AdvJson,
   IdHTTP, IdSSLOpenSSL, IdSMTP, IdMessage, IdExplicitTLSClientServerBase, idGlobal, IdWebSocket, IdText, IdAttachment, IdPop3, IdMessageParts,
   FHIRBase, FhirResources, FHIRTypes, FHIRConstants, FHIRUtilities, FHIRClient,
   FhirSupport, FHIRIndexManagers, FHIRServerUtilities, FHIRParser, FHIRParserBase, FHIRPath, FHIRContext, FHIRLog, ServerUtilities;
@@ -86,7 +86,9 @@ Type
   private
     FConnected: boolean;
     FQueue: TAdvList<TAdvBuffer>;
+    {$IFNDEF MACOS}
     FSignal: TAdvSignal;
+    {$ENDIF}
     FPersistent: boolean;
   public
     constructor Create; override;
@@ -95,7 +97,9 @@ Type
 
     property Connected : boolean read FConnected write FConnected;
     property Persistent : boolean read FPersistent write FPersistent;
+    {$IFNDEF MACOS}
     property Signal : TAdvSignal read FSignal;
+    {$ENDIF}
     property Queue : TAdvList<TAdvBuffer> read FQueue;
   end;
 
@@ -1932,7 +1936,11 @@ begin
     FLock.Unlock;
   end;
   // this - using the signal outside the lock - is safe because only the thread waiting here will remove the info from the list
+  {$IFDEF MSWINDOWS}
   result := info.Signal.WaitTimeout(100);
+  {$ELSE}
+  raise Exception.Create('not done yet');
+  {$ENDIF}
 end;
 
 function TSubscriptionManager.wsPersists(id : String; s : TStream) : boolean;
@@ -1962,6 +1970,7 @@ end;
 
 procedure TSubscriptionManager.wsWake(id : String);
 begin
+  {$IFDEF MSWINDOWS}
   FLock.Lock;
   try
     if FSemaphores.ContainsKey(id) then
@@ -1969,6 +1978,9 @@ begin
   finally
     FLock.Unlock;
   end;
+  {$ELSE}
+  raise Exception.Create('not done yet');
+  {$ENDIF}
 end;
 
 procedure TSubscriptionManager.wsWakeAll;
@@ -1976,6 +1988,7 @@ var
   info : TWebSocketQueueInfo;
   ok : boolean;
 begin
+ {$IFDEF MSWINDOWS}
   FCloseAll := true;
   FLock.Lock;
   try
@@ -1993,6 +2006,9 @@ begin
       FLock.Unlock;
     end;
   until ok;
+  {$ELSE}
+  raise Exception.Create('Not done yet');
+  {$ENDIF}
 end;
 
 function TSubscriptionManager.chooseSMTPPort(direct : boolean): String;
@@ -2073,14 +2089,18 @@ begin
   inherited;
   FConnected := false;
   FQueue := TAdvList<TAdvBuffer>.create;
+  {$IFDEF MSWINDOWS}
   FSignal := TAdvSignal.Create;
   FSignal.OpenHide;
+  {$ENDIF}
 end;
 
 destructor TWebSocketQueueInfo.destroy;
 begin
   FQueue.Free;
+   {$IFDEF MSWINDOWS}
   FSignal.Free;
+  {$ENDIF}
   inherited;
 end;
 

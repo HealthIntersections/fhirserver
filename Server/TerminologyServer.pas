@@ -122,7 +122,6 @@ Type
 implementation
 
 uses
-  SystemService,
   FHIRLog,
   FHIRConstants,
   FHIRValueSetExpander;

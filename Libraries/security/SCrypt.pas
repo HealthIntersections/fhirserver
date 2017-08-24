@@ -366,6 +366,7 @@ type
 	PLongWordArray = ^TLongWordArray_Unsafe;
 	TLongWordArray_Unsafe = array[0..79] of LongWord; //SHA uses an array of 80 elements
 
+{$IFDEF MSWINDOWS}
 const
 	//Cryptography Service Provider (CSP) items
 	CALG_SHA1 = $00008004;
@@ -453,6 +454,7 @@ begin
 			FormatNTStatusMessage(Status)
 	]);
 end;
+{$ENDIF}
 
 function RRot32(const X: LongWord; const c: Byte): LongWord; //inline;
 begin
@@ -496,6 +498,7 @@ begin
 			( X shl 24);
 end;
 
+{$IFDEF MSWINDOWS}
 procedure RaiseOSError(ErrorCode: DWORD; Msg: string);
 var
 	ex: EOSError;
@@ -504,6 +507,7 @@ begin
 	ex.ErrorCode := error;
 	raise Ex;
 end;
+{$ENDIF}
 
 type
 	HCRYPTPROV = THandle;

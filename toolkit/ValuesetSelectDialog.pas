@@ -8,7 +8,7 @@ uses
   FMX.Grid.Style, FMX.Grid, FMX.ScrollBox, FMX.StdCtrls, FMX.DateTimeCtrls, FMX.ListBox,
   FMX.Edit, FMX.Controls.Presentation, IniFiles, GuidSupport,
   FHIRTypes, FHIRResources, FHIRUtilities, FHIRClient,
-  SettingsDialog;
+  SettingsDialog, FMX.ComboEdit;
 
 type
   TValuesetSelectForm = class(TForm)
@@ -18,7 +18,6 @@ type
     Label1: TLabel;
     Go: TButton;
     Label2: TLabel;
-    edtProperty: TEdit;
     Label3: TLabel;
     Label6: TLabel;
     edtValue: TEdit;
@@ -39,6 +38,7 @@ type
     btnSelectable: TButton;
     btnNone: TButton;
     cbUseDisplays: TCheckBox;
+    cbeProperty: TComboEdit;
     procedure FormShow(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure GoClick(Sender: TObject);
@@ -191,7 +191,7 @@ begin
     FIni.WriteInteger('ValueSet.Select.Window', 'width', width);
     FIni.WriteInteger('ValueSet.Select.Window', 'height', height);
 
-    FIni.WriteString('ValueSet.Select', 'Property', edtProperty.Text);
+    FIni.WriteString('ValueSet.Select', 'Property', cbeProperty.Text);
     FIni.WriteInteger('ValueSet.Select', 'Operation', cbxOperation.ItemIndex);
     FIni.WriteString('ValueSet.Select', 'Value', edtValue.Text);
   except

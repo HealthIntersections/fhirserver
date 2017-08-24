@@ -33,7 +33,8 @@ POSSIBILITY OF SUCH DAMAGE.
 interface
 
 uses
-  Windows, SysUtils, Classes, ActiveX,
+  {$IFDEF MSWINDOWS} Windows, ActiveX, {$ENDIF}
+  SysUtils, Classes,
   TextUtilities, MarkDownProcessor, KCritSct, HashSupport, EncodeSupport,
   AdvObjects, AdvGenerics, AdvThreads, AdvJson, AdvStringStreams,
   FHIRBase, FHIRTypes, FHIRResources, FHIRUtilities, SmartOnFhirUtilities, FHIRParser,

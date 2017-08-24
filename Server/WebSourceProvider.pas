@@ -131,7 +131,7 @@ end;
 
 destructor TFHIRWebServerSourceZipProvider.Destroy;
 begin
-
+  FZip.Free;
   inherited;
 end;
 

@@ -32,7 +32,7 @@ POSSIBILITY OF SUCH DAMAGE.
 Interface
 
 Uses
-  SysUtils, Classes, ActiveX, ComObj,
+  SysUtils, Classes,
   StringSupport, kCritSct,
   AdvObjects, AdvGenerics, AdvBuffers, AdvNameBuffers, AdvMemories, AdvVclStreams, AdvZipReaders, AdvZipParts,
   FHIRTypes, FHIRResources, FHIRValidator, FHIRParser, FHIRContext, FHIRUtilities, FHIRSupport, FHIRProfileUtilities, FHIRConstants,

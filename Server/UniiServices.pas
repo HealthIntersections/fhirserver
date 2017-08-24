@@ -107,8 +107,7 @@ Procedure ImportUnii(filename : String; dbm : TKDBManager);
 implementation
 
 uses
-  FHIRLog,
-  SystemService;
+  FHIRLog;
 
 { TUniiServices }
 

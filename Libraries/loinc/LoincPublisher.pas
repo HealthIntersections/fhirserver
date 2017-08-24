@@ -31,8 +31,8 @@ POSSIBILITY OF SUCH DAMAGE.
 Interface
 
 Uses
-  SysUtils, Classes, Math,
-  AdvObjects, AdvStringMatches, AdvExclusiveCriticalSections,
+  SysUtils, Classes, Math, KCritSct,
+  AdvObjects, AdvStringMatches,
   HTMLPublisher, LOINCServices;
 
 Const
@@ -41,7 +41,7 @@ Const
 Type
   TloincPublisher = class (TAdvObject)
   Private
-    Lock : TAdvExclusiveCriticalSection;
+    Lock : TCriticalSection;
     FSearchCache : TStringList;
     FLoinc : TLOINCServices;
     FFHIRPath : String;
@@ -828,7 +828,7 @@ end;
 constructor TloincPublisher.Create;
 begin
   inherited Create;
-  Lock := TAdvExclusiveCriticalSection.Create;
+  Lock := TCriticalSection.Create;
   FSearchCache := TStringList.Create;
   FSearchCache.Sorted := true;
   FLoinc := oLoinc.Link;

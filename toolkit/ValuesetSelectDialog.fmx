@@ -139,12 +139,6 @@ object ValuesetSelectForm: TValuesetSelectForm
       Text = 'Property:'
       TabOrder = 3
     end
-    object edtProperty: TEdit
-      Touch.InteractiveGestures = [LongTap, DoubleTap]
-      TabOrder = 5
-      Position.X = 72.000000000000000000
-      Position.Y = 40.000000000000000000
-    end
     object Label3: TLabel
       Position.X = 184.000000000000000000
       Position.Y = 43.000000000000000000
@@ -152,7 +146,7 @@ object ValuesetSelectForm: TValuesetSelectForm
       Size.Height = 17.000000000000000000
       Size.PlatformDefault = False
       Text = 'Operation'
-      TabOrder = 6
+      TabOrder = 5
     end
     object Label6: TLabel
       Position.X = 368.000000000000000000
@@ -178,7 +172,7 @@ object ValuesetSelectForm: TValuesetSelectForm
       Size.Width = 529.000000000000000000
       Size.Height = 22.000000000000000000
       Size.PlatformDefault = False
-      TabOrder = 7
+      TabOrder = 6
     end
     object btnSettings: TButton
       Position.X = 608.000000000000000000
@@ -186,13 +180,12 @@ object ValuesetSelectForm: TValuesetSelectForm
       Size.Width = 24.000000000000000000
       Size.Height = 22.000000000000000000
       Size.PlatformDefault = False
-      TabOrder = 8
+      TabOrder = 7
       Text = '...'
       OnClick = btnSettingsClick
     end
     object cbxOperation: TComboBox
       Items.Strings = (
-        ''
         '='
         'is-a'
         'descendent-of'
@@ -202,12 +195,24 @@ object ValuesetSelectForm: TValuesetSelectForm
         'not-in'
         'generalizes'
         'exists')
+      ItemIndex = 0
       Position.X = 248.000000000000000000
       Position.Y = 40.000000000000000000
       Size.Width = 105.000000000000000000
       Size.Height = 22.000000000000000000
       Size.PlatformDefault = False
-      TabOrder = 9
+      TabOrder = 8
+    end
+    object cbeProperty: TComboEdit
+      Touch.InteractiveGestures = [LongTap, DoubleTap]
+      TabOrder = 10
+      ItemHeight = 19.000000000000000000
+      Items.Strings = (
+        'code'
+        'display')
+      ItemIndex = -1
+      Position.X = 72.000000000000000000
+      Position.Y = 40.000000000000000000
     end
   end
   object gridContains: TGrid

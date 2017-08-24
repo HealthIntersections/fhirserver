@@ -3,14 +3,21 @@
 	<channel>
 		<title>FHIR Toolkit Release history</title>
 		<link>http://www.healthintersections.com.au/FhirServer</link>
-		<item><title>FHIR Toolkit release 0.0.10 24/08/2017 4:00:36 PM</title>
+		<item><title>FHIR Toolkit release 0.0.11 24/08/2017 6:07:29 PM</title>
+			<link>http://www.healthintersections.com.au/FhirServer/fhir-toolkit-install-0.0.11.exe</link>
+			<mlink>http://www.healthintersections.com.au/FhirServer/fhir-toolkit-osx-0.0.11.zip</mlink>
+			<description>24/08/2017 6:07:29 PM (v0.0.11): Allow to select concepts to enumerate</description>
+			<ptitle>0.0.11, 24/08/2017 6:07:29 PM</ptitle>
+			<comment>Allow to select concepts to enumerate</comment>
+		</item>
+<item><title>FHIR Toolkit release 0.0.10 24/08/2017 4:00:36 PM</title>
 			<link>http://www.healthintersections.com.au/FhirServer/fhir-toolkit-install-0.0.10.exe</link>
 			<mlink>http://www.healthintersections.com.au/FhirServer/fhir-toolkit-osx-0.0.10.zip</mlink>
 			<description>24/08/2017 4:00:36 PM (v0.0.10): fix problem with window management on OSX</description>
 			<ptitle>0.0.10, 24/08/2017 4:00:36 PM</ptitle>
 			<comment>fix problem with window management on OSX</comment>
 		</item>
-<item><title>FHIR Toolkit release 0.0.9 24/08/2017 3:23:20 PM</title>
+		<item><title>FHIR Toolkit release 0.0.9 24/08/2017 3:23:20 PM</title>
 			<link>http://www.healthintersections.com.au/FhirServer/fhir-toolkit-install-0.0.9.exe</link>
 			<mlink>http://www.healthintersections.com.au/FhirServer/fhir-toolkit-osx-0.0.9.zip</mlink>
 			<description>24/08/2017 3:23:20 PM (v0.0.9): Better handling of communications problems</description>

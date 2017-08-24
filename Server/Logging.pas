@@ -32,12 +32,12 @@ POSSIBILITY OF SUCH DAMAGE.
 Interface
 
 Uses
-  Windows,
+  {$IFDEF MACOS} OSXUtils, {$ELSE} Windows, {$ENDIF}
+  kCritSct,
   FileSupport,
   StringSupport,
   AdvObjects,
   AdvObjectLists,
-  AdvExclusiveCriticalSections,
   AdvStringBuilders,
   AdvStringLists;
 
@@ -89,7 +89,7 @@ Type
 
   TLogger = Class (TAdvObject)
   Private
-    FLock : TAdvExclusiveCriticalSection;
+    FLock : TCriticalSection;
     FBuffer : TAdvStringList;
     FFilename : String;
     FFilenameCanChange : Boolean;
@@ -124,7 +124,7 @@ uses
 Constructor TLogger.Create(filename : String);
 Begin
   Inherited Create;
-  FLock := TAdvExclusiveCriticalSection.Create;
+  FLock := TCriticalSection.Create('Log '+filename);
   FPolicy := TLoggerPolicy.Create;
   FFilename := filename;
 End;
@@ -213,16 +213,17 @@ End;
 
 
 Procedure TLogger.ActualLog(Const s: String);
+{$IFDEF MACOS}
+begin
+  raise Exception.Create('Not done yet');
+end;
+{$ELSE}
 Var
   sName : string;
   res: Boolean;
   done: Cardinal;
   d: Integer;
-  {$IFNDEF LINUX}
   f: HFile;
-  {$ELSE}
-  f: Integer;
-  {$ENDIF}
   FileSize: Cardinal;
   bytes : TBytes;
 Begin
@@ -264,8 +265,14 @@ Begin
   If FPolicy.AllowExceptions And Not res Or (d <> Length(s)) Then
     Raise Exception.Create('Unable to write to file "' + sName + '": ' + SysErrorMessage(GetLastError));
 End;
+{$ENDIF}
 
 Procedure TLogger.CutFile(sName : String);
+{$IFDEF MACOS}
+begin
+  raise Exception.Create('Not done yet');
+end;
+{$ELSE}
 Var
   src, dst: THandle;
   buf: Array [0..65536] Of Byte;
@@ -299,7 +306,7 @@ Begin
   End;
   DeleteFile(PChar(sName + '.tmp'));
 End;
-
+{$ENDIF}
 
 Procedure TLogger.CycleFile(sName : String);
 Var

@@ -33,8 +33,8 @@ Interface
 
 Uses
   SysUtils, Classes, Math,
-  MathSupport,
-  AdvObjects, AdvStringMatches, AdvExclusiveCriticalSections,
+  MathSupport, kCritSct,
+  AdvObjects, AdvStringMatches,
   HTMLPublisher, SnomedServices;
 
 Const
@@ -49,7 +49,7 @@ Type
   TSnomedPublisher = class (TAdvObject)
   Private
     FSnomed : TSnomedServices;
-    Lock : TAdvExclusiveCriticalSection;
+    Lock : TCriticalSection;
     FSearchCache : TStringList;
     FFHIRPath : String;
     Function GetPaths(iIndex : Cardinal) : TArrayofIdArray;
@@ -1466,7 +1466,7 @@ end;
 constructor TSnomedPublisher.Create;
 begin
   inherited Create;
-  Lock := TAdvExclusiveCriticalSection.Create;
+  Lock := TCriticalSection.Create;
   FSearchCache := TStringList.Create;
   FSearchCache.Sorted := true;
   FSnomed := oSnomed.Link;

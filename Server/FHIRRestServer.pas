@@ -78,7 +78,8 @@ cert - Client must provide an SSL certificate, which must be pre-registered on t
 Interface
 
 Uses
-  Windows, SysUtils, Classes, IniFiles, ActiveX, System.Generics.Collections, ComObj, {JCL JclDebug, }EncdDecd,  HMAC,  {$IFNDEF VER260} System.NetEncoding, {$ENDIF}
+  {$IFDEF MSWINDOWS} Windows, ActiveX, ComObj, {$ELSE} OSXUtils, {$ENDIF}
+  SysUtils, Classes, IniFiles, System.Generics.Collections, {JCL JclDebug, }EncdDecd,  HMAC,  {$IFNDEF VER260} System.NetEncoding, {$ENDIF}
 
   IdMultipartFormData, IdHeaderList, IdCustomHTTPServer, IdHTTPServer,
   IdTCPServer, IdContext, IdSSLOpenSSL, IdHTTP, MimeMessage, IdCookie,
@@ -91,11 +92,11 @@ Uses
   kCritSct, ParseMap, TextUtilities, KDBManager, HTMLPublisher, KDBDialects,
   AdvJSON, libeay32, RDFUtilities, JWT,
 
-  MXML, GraphQL, MsXml, MsXmlParser,
+  MXML, GraphQL,  {$IFDEF MSWINDOWS} MsXml, MsXmlParser, {$ENDIF}
 
   FHIRTypes, FHIRResources, FHIRParser, FHIRConstants,
   FHIRBase, FHIRParserBase, FHIRTags, FHIRSupport, FHIRLang, FHIRStorageService, FHIRUtilities, FHIRSecurity, SmartOnFhirUtilities,
-  QuestionnaireBuilder, FHIRClient, CDSHooksUtilities, CDSHooksClientManager, FHIRXhtml, FHIRGraphQL,
+  QuestionnaireBuilder, FHIRClient, CDSHooksUtilities,  {$IFDEF MSWINDOWS} CDSHooksClientManager, {$ENDIF} FHIRXhtml, FHIRGraphQL,
 
   TerminologyServer, TerminologyServerStore, SnomedServices, SnomedPublisher, SnomedExpressions, LoincServices, LoincPublisher,
   TerminologyWebServer, AuthServer, TwilioClient, ReverseClient, CDSHooksServer, WebSourceProvider,
@@ -160,11 +161,12 @@ Type
     property Count : integer read FCount write FCount;
   end;
 
+    {$IFDEF MSWINDOWS}
   TFHIRWebServerPatientViewContext = class (TAdvObject)
   private
     FCards: TAdvList<TCDSHookCard>;
-    FManager: TCDSHooksManager;
     FErrors : TStringList;
+    FManager: TCDSHooksManager;
     procedure SetManager(const Value: TCDSHooksManager);
   public
     constructor Create; Override;
@@ -173,6 +175,7 @@ Type
     property Errors : TStringList read FErrors;
     property cards : TAdvList<TCDSHookCard> read FCards;
   end;
+    {$ENDIF}
 
 
   TFhirWebServer = Class(TAdvObject)
@@ -236,7 +239,9 @@ Type
     carry : TAdvZipReader; // for uploading support
     carryName : String;
     FPatientViewServers : TDictionary<String, String>;
+    {$IFDEF MSWINDOWS}
     FPatientHooks : TAdvMap<TFHIRWebServerPatientViewContext>;
+    {$ENDIF}
     FReverseProxyList : TAdvList<TReverseProxyInfo>;
     FCDSHooksServer : TCDSHooksServer;
     FIsTerminologyServerOnly : boolean;
@@ -248,23 +253,29 @@ Type
 
     function hasInternalSSLToken(request : TIdHTTPRequestInfo) : boolean;
     procedure cacheResponse(response : TIdHTTPResponseInfo; caching : TFHIRCacheControl);
+    {$IFDEF MSWINDOWS}
     procedure OnCDSResponse(manager : TCDSHooksManager; server : TRegisteredFHIRServer; context : TObject; response : TCDSHookResponse; error : String);
+    {$ENDIF}
     function GetResource(session : TFhirSession; rtype : String; lang, id, ver, op : String) : TFhirResource;
     function FindResource(session : TFhirSession; rtype : String; lang, params : String) : TFhirResource;
     function DoSearch(session : TFhirSession; rtype : string; lang, params : String) : TFHIRBundle;
     function LookupReference(context : TFHIRRequest; id : String) : TResourceWithReference;
+    {$IFDEF MSWINDOWS}
     function transform1(resource : TFhirResource; lang, xslt : String; saveOnly : boolean) : string;
-    function HandleWebUIRequest(request : TFHIRRequest; response : TFHIRResponse; secure : boolean) : TDateTime;
     function HandleWebQuestionnaire(request : TFHIRRequest; response : TFHIRResponse) : TDateTime;
     function HandleWebQuestionnaireInstance(request : TFHIRRequest; response : TFHIRResponse) : TDateTime;
-    function HandleWebEdit(request : TFHIRRequest; response : TFHIRResponse) : TDateTime;
-    function HandleWebPost(request : TFHIRRequest; response : TFHIRResponse) : TDateTime;
     function HandleWebProfile(request: TFHIRRequest; response: TFHIRResponse) : TDateTime;
+    {$ENDIF}
+    function HandleWebPost(request : TFHIRRequest; response : TFHIRResponse) : TDateTime;
+    function HandleWebEdit(request : TFHIRRequest; response : TFHIRResponse) : TDateTime;
+    function HandleWebUIRequest(request : TFHIRRequest; response : TFHIRResponse; secure : boolean) : TDateTime;
+    {$IFDEF MSWINDOWS}
     procedure startHooks(ctxt: TFHIRWebServerPatientViewContext; patient : TFHIRPatient; url : String);
-
-    function HandleWebPatient(request: TFHIRRequest; response: TFHIRResponse; secure : boolean) : TDateTime;
     function HandleWebPatientHooks(request: TFHIRRequest; response: TFHIRResponse; secure : boolean) : TDateTime;
     function HandleWebCreate(request: TFHIRRequest; response: TFHIRResponse) : TDateTime;
+    {$ENDIF}
+
+    function HandleWebPatient(request: TFHIRRequest; response: TFHIRResponse; secure : boolean) : TDateTime;
 
     Procedure ReturnSpecFile(response : TIdHTTPResponseInfo; stated, path : String);
 //    Procedure ReadTags(Headers: TIdHeaderList; Request : TFHIRRequest); overload;
@@ -343,17 +354,22 @@ Implementation
 
 
 Uses
+  {$IFDEF MSWINDOWS}
   Registry,
+  {$ENDIF}
 
-  FHIRLog, SystemService,
+  FHIRLog,
 
   FileSupport,
   FacebookSupport;
 
 Function GetMimeTypeForExt(AExt: String): String;
+{$IFDEF MSWINDOWS}
 Var
   fReg: TRegistry;
+{$ENDIF}
 Begin
+  result := '';
   AExt := lowercase(AExt);
   if (AExt = '.css') Then
     result := 'text/css'
@@ -371,6 +387,7 @@ Begin
     result := 'text/javascript'
   Else
   Begin
+  {$IFDEF MSWINDOWS}
     Try
       fReg := TRegistry.Create;
       Try
@@ -383,10 +400,11 @@ Begin
       End;
     Except
     End;
+  {$ENDIF}
   End;
   If Result = '' Then
     Result := 'application/octet-stream';
-End;
+end;
 
 { TFhirWebServer }
 
@@ -492,7 +510,9 @@ Begin
 
   FClients := TAdvList<TFHIRWebServerClientInfo>.create;
   FPatientViewServers := TDictionary<String, String>.create;
+    {$IFDEF MSWINDOWS}
   FPatientHooks := TAdvMap<TFHIRWebServerPatientViewContext>.create;
+  {$ENDIF}
   FReverseProxyList := TAdvList<TReverseProxyInfo>.create;
   FServerContext := context;
 
@@ -582,7 +602,9 @@ Begin
   FAuthServer.Free;
   FPatientViewServers.Free;
   FClients.Free;
+  {$IFDEF MSWINDOWS}
   FPatientHooks.Free;
+  {$ENDIF}
   FReverseProxyList.Free;
   FServerContext.free;
   FLock.Free;
@@ -595,7 +617,9 @@ procedure TFhirWebServer.DoConnect(AContext: TIdContext);
 var
   ci : TFHIRWebServerClientInfo;
 begin
+  {$IFDEF MSWINDOWS}
   CoInitialize(nil);
+  {$ENDIF}
   FLock.Lock;
   try
     ci := TFHIRWebServerClientInfo.create;
@@ -616,7 +640,9 @@ begin
   finally
     FLock.Unlock;
   end;
+  {$IFDEF MSWINDOWS}
   CoUninitialize;
+  {$ENDIF}
 end;
 
 function TFhirWebServer.DoSearch(session: TFhirSession; rtype: string; lang, params: String): TFHIRBundle;
@@ -718,6 +744,7 @@ begin
 end;
 
 
+{$IFDEF MSWINDOWS}
 procedure TFhirWebServer.startHooks(ctxt: TFHIRWebServerPatientViewContext; patient: TFHIRPatient; url : String);
 var
   server : TRegisteredFHIRServer;
@@ -751,6 +778,7 @@ begin
     req.Free;
   end;
 end;
+{$ENDIF}
 
 Procedure TFhirWebServer.Stop;
 Begin
@@ -1547,6 +1575,7 @@ Begin
   end;
 end;
 
+{$IFDEF MSWINDOWS}
 function TFhirWebServer.HandleWebCreate(request: TFHIRRequest; response: TFHIRResponse) : TDateTime;
 var
   profile : TFhirStructureDefinition;
@@ -1610,6 +1639,7 @@ begin
     profile.free;
   end;
 end;
+{$ENDIF}
 
 function TFhirWebServer.HandleWebEdit(request: TFHIRRequest; response: TFHIRResponse) : TDateTime;
 var
@@ -1729,6 +1759,7 @@ begin
   end;
 end;
 
+{$IFDEF MSWINDOWS}
 function TFhirWebServer.HandleWebProfile(request: TFHIRRequest; response: TFHIRResponse) : TDateTime;
 var
   id, ver, fullid : String;
@@ -1783,6 +1814,7 @@ begin
     profile.free;
   end;
 end;
+{$ENDIF}
 
 function TFhirWebServer.HandleWebPatient(request: TFHIRRequest; response: TFHIRResponse; secure : boolean) : TDateTime;
 var
@@ -1790,11 +1822,14 @@ var
   s, xhtml : String;
   patient : TFHIRPatient;
   hookid : String;
+{$IFDEF MSWINDOWS}
   hooks : TFHIRWebServerPatientViewContext;
+{$ENDIF}
 begin
   result := 0;
   StringSplit(request.Id.Substring(8), '/', id, ver);
   hookid := NewGuidId;
+  {$IFDEF MSWINDOWS}
   hooks := TFHIRWebServerPatientViewContext.Create;
   hooks.manager := TCDSHooksManager.Create;
   FLock.Lock;
@@ -1803,11 +1838,14 @@ begin
   finally
     FLock.Unlock;
   end;
+  {$ENDIF}
 
   patient := GetResource(request.Session, 'Patient', request.Lang, id, ver, '') as TFHIRPatient;
   try
     xhtml := patient.text.div_.AsPlainText;
+    {$IFDEF MSWINDOWS}
     startHooks(hooks, patient, request.baseUrl);
+    {$ENDIF}
   finally
     patient.Free;
   end;
@@ -1848,6 +1886,7 @@ begin
   response.ContentType := 'text/html; charset=UTF-8';
 end;
 
+{$IFDEF MSWINDOWS}
 function TFhirWebServer.HandleWebPatientHooks(request: TFHIRRequest; response: TFHIRResponse; secure: boolean): TDateTime;
 var
   id : String;
@@ -1855,6 +1894,7 @@ var
 //  patient : TFHIRPatient;
 //  hookid : String;
   hooks : TFHIRWebServerPatientViewContext;
+
 begin
   result := 0;
 
@@ -1973,6 +2013,7 @@ begin
     r.free;
   end;
 end;
+{$ENDIF}
 
 procedure TFhirWebServer.HandleWebSockets(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; ssl, secure: Boolean; path: String);
 var
@@ -1989,22 +2030,24 @@ end;
 
 function TFhirWebServer.HandleWebUIRequest(request: TFHIRRequest; response: TFHIRResponse; secure : boolean) : TDateTime;
 begin
-  if request.Id.EndsWith('$qa-edit') then
-    result := HandleWebQuestionnaireInstance(request, response)
-  else if request.Id.EndsWith('$edit') then
+  if request.Id.EndsWith('$edit') then
     result := HandleWebEdit(request, response)
   else if request.Id.EndsWith('$post') then
     result := HandleWebPost(request, response)
+  {$IFDEF MSWINDOWS}
+  else if request.Id.EndsWith('$qa-edit') then
+    result := HandleWebQuestionnaireInstance(request, response)
   else if request.Id.StartsWith('Questionnaire/') then
     result := HandleWebQuestionnaire(request, response)
   else if request.Id.StartsWith('StructureDefinition/') then
     result := HandleWebProfile(request, response)
-  else if request.Id.StartsWith('Patient/') then
-    result := HandleWebPatient(request, response, secure)
   else if request.Id.StartsWith('PatientHooks/') then
     result := HandleWebPatientHooks(request, response, secure)
   else if request.Id ='Create' then
     result := HandleWebCreate(request, response)
+  {$ENDIF}
+  else if request.Id.StartsWith('Patient/') then
+    result := HandleWebPatient(request, response, secure)
   else
     raise Exception.Create('Unknown request: '+request.Id);
 end;
@@ -3244,6 +3287,7 @@ begin
   end;
 end;
 
+{$IFDEF MSWINDOWS}
 procedure TFhirWebServer.OnCDSResponse(manager: TCDSHooksManager;
   server: TRegisteredFHIRServer; context: TObject; response: TCDSHookResponse;
   error: String);
@@ -3262,6 +3306,7 @@ begin
     FLock.Unlock;
   end;
 end;
+{$ENDIF}
 
 constructor ERestfulAuthenticationNeeded.Create(const sSender, sMethod, sReason, sMsg: String; aStatus : Word);
 begin
@@ -3368,7 +3413,9 @@ begin
     vars.Add('status.web-rest-count', inttostr(FRestCount));
     vars.Add('status.web-total-time', inttostr(FTotalTime));
     vars.Add('status.web-rest-time', inttostr(FRestTime));
+{$IFDEF MSWINDOWS}
     vars.Add('status.cds.client', inttostr(FPatientHooks.count));
+{$ENDIF}
     vars.Add('status.run-time', DescribePeriod((GetTickCount - FStartTime) * DATETIME_MILLISECOND_ONE));
     vars.Add('status.run-time.ms', inttostr(GetTickCount - FStartTime));
     ReturnProcessedFile(response, nil, 'Diagnostics', FSourceProvider.AltFile('/diagnostics.html'), false, vars);
@@ -3483,6 +3530,7 @@ end;
 //end;
 //
 
+{$IFDEF MSWINDOWS}
 function TFhirWebServer.transform1(resource: TFhirResource; lang, xslt: String; saveOnly : boolean): string;
 var
   xml : TFHIRXmlComposer;
@@ -3549,7 +3597,7 @@ begin
   Proc.Transform;
   result := Proc.Output;
 end;
-
+{$ENDIF}
 
 //function TFhirWebServer.transform2(resource: TFhirResource; lang, xslt: String): string;
 //var
@@ -3588,6 +3636,7 @@ begin
   FSession := Value;
 end;
 
+{$IFDEF MSWINDOWS}
 { TFHIRWebServerPatientViewContext }
 
 constructor TFHIRWebServerPatientViewContext.create;
@@ -3610,6 +3659,7 @@ begin
   FManager.Free;
   FManager := Value;
 end;
+    {$ENDIF}
 
 { TFhirServerMaintenanceThread }
 
@@ -3626,7 +3676,9 @@ begin
   Writeln('Starting TFhirServerMaintenanceThread');
   try
     FServer.ServerContext.TerminologyServer.MaintenanceThreadStatus := 'starting';
+    {$IFDEF MSWINDOWS}
     CoInitialize(nil);
+    {$ENDIF}
     repeat
       FServer.ServerContext.TerminologyServer.MaintenanceThreadStatus := 'sleeping';
       sleep(1000);
@@ -3663,7 +3715,9 @@ begin
       FServer.FMaintenanceThread := nil;
     except
     end;
+    {$IFDEF MSWINDOWS}
     CoUninitialize;
+    {$ENDIF}
     Writeln('Ending TFhirServerMaintenanceThread');
   except
     Writeln('Failing TFhirServerMaintenanceThread');

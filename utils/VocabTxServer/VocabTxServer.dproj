@@ -160,6 +160,13 @@
             <Form>TxServerForm</Form>
         </DCCReference>
         <DCCReference Include="..\..\Libraries\ui\OSXUIUtils.pas"/>
+        <DCCReference Include="..\..\reference-platform\support\AfsResourceVolumes.pas"/>
+        <DCCReference Include="..\..\reference-platform\support\AdvWinInetClients.pas"/>
+        <DCCReference Include="..\..\reference-platform\support\AdvSignals.pas"/>
+        <DCCReference Include="..\..\Libraries\security\SCrypt.pas"/>
+        <DCCReference Include="..\..\reference-platform\support\MsXmlParser.pas"/>
+        <DCCReference Include="..\..\reference-platform\support\CDSHooksClientManager.pas"/>
+        <DCCReference Include="..\..\reference-platform\support\AdvThreads.pas"/>
         <DCCReference Include="..\..\reference-platform\support\FileSupport.pas"/>
         <DCCReference Include="..\..\reference-platform\support\OSXUtils.pas"/>
         <DCCReference Include="..\..\reference-platform\support\StringSupport.pas"/>
@@ -236,7 +243,6 @@
         <DCCReference Include="..\..\reference-platform\support\FHIRSecurity.pas"/>
         <DCCReference Include="..\..\reference-platform\r4\FHIRTags.pas"/>
         <DCCReference Include="..\..\reference-platform\support\FHIRLang.pas"/>
-        <DCCReference Include="..\..\reference-platform\support\AfsResourceVolumes.pas"/>
         <DCCReference Include="..\..\reference-platform\support\AfsVolumes.pas"/>
         <DCCReference Include="..\..\reference-platform\support\AdvStringHashes.pas"/>
         <DCCReference Include="..\..\reference-platform\support\HashSupport.pas"/>
@@ -280,7 +286,6 @@
         <DCCReference Include="..\..\..\markdown\source\MarkdownCommonMark.pas"/>
         <DCCReference Include="..\..\reference-platform\support\SmartOnFhirUtilities.pas"/>
         <DCCReference Include="..\..\reference-platform\r4\FHIRClient.pas"/>
-        <DCCReference Include="..\..\reference-platform\support\AdvWinInetClients.pas"/>
         <DCCReference Include="..\..\reference-platform\r4\FHIROperations.pas"/>
         <DCCReference Include="..\..\reference-platform\r4\FhirOpBase.pas"/>
         <DCCReference Include="..\..\Libraries\TerminologyServices.pas"/>
@@ -300,11 +305,6 @@
         <DCCReference Include="..\..\reference-platform\support\AdvStringIntegerMatches.pas"/>
         <DCCReference Include="..\..\Server\FHIRLog.pas"/>
         <DCCReference Include="..\..\Server\logging.pas"/>
-        <DCCReference Include="..\..\reference-platform\support\AdvExclusiveCriticalSections.pas"/>
-        <DCCReference Include="..\..\reference-platform\support\AdvThreads.pas"/>
-        <DCCReference Include="..\..\reference-platform\support\AdvSignals.pas"/>
-        <DCCReference Include="..\..\reference-platform\support\SystemService.pas"/>
-        <DCCReference Include="..\..\reference-platform\support\ServiceController.pas"/>
         <DCCReference Include="..\..\Server\ACIRServices.pas"/>
         <DCCReference Include="..\..\Server\AreaCodeServices.pas"/>
         <DCCReference Include="..\..\Server\IETFLanguageCodeServices.pas"/>
@@ -322,7 +322,6 @@
         <DCCReference Include="..\..\Server\FHIRServerUtilities.pas"/>
         <DCCReference Include="..\..\Server\FHIRSessionManager.pas"/>
         <DCCReference Include="..\..\Server\SCIMServer.pas"/>
-        <DCCReference Include="..\..\Libraries\security\SCrypt.pas"/>
         <DCCReference Include="..\..\Server\SCIMSearch.pas"/>
         <DCCReference Include="..\..\Server\FHIRTagManager.pas"/>
         <DCCReference Include="..\..\Server\JWTService.pas"/>
@@ -334,10 +333,8 @@
         <DCCReference Include="..\..\reference-platform\support\AdvIntegerObjectMatches.pas"/>
         <DCCReference Include="..\..\reference-platform\support\HTMLPublisher.pas"/>
         <DCCReference Include="..\..\reference-platform\support\RDFUtilities.pas"/>
-        <DCCReference Include="..\..\reference-platform\support\MsXmlParser.pas"/>
         <DCCReference Include="..\..\reference-platform\r4\QuestionnaireBuilder.pas"/>
         <DCCReference Include="..\..\reference-platform\r4\NarrativeGenerator.pas"/>
-        <DCCReference Include="..\..\reference-platform\support\CDSHooksClientManager.pas"/>
         <DCCReference Include="..\..\reference-platform\support\FHIRGraphQL.pas"/>
         <DCCReference Include="..\..\Libraries\snomed\SnomedPublisher.pas"/>
         <DCCReference Include="..\..\Libraries\loinc\LoincPublisher.pas"/>
@@ -396,9 +393,9 @@
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
-                <DeployFile LocalName="OSX32\Debug\VocabTxServer.info.plist" Configuration="Debug" Class="ProjectOSXInfoPList">
-                    <Platform Name="OSX32">
-                        <RemoteName>Info.plist</RemoteName>
+                <DeployFile LocalName="Win64\Debug\VocabTxServer.rsm" Configuration="Debug" Class="DebugSymbols">
+                    <Platform Name="Win64">
+                        <RemoteName>VocabTxServer.rsm</RemoteName>
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
@@ -419,6 +416,12 @@
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
+                <DeployFile LocalName="OSX32\Debug\VocabTxServer.info.plist" Configuration="Debug" Class="ProjectOSXInfoPList">
+                    <Platform Name="OSX32">
+                        <RemoteName>Info.plist</RemoteName>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
                 <DeployFile LocalName="$(BDS)\Redist\iossimulator\libPCRE.dylib" Class="DependencyModule">
                     <Platform Name="iOSSimulator">
                         <Overwrite>true</Overwrite>
@@ -431,12 +434,6 @@
                 </DeployFile>
                 <DeployFile LocalName="$(BDS)\Redist\osx32\libcgsqlite3.dylib" Class="DependencyModule">
                     <Platform Name="OSX32">
-                        <Overwrite>true</Overwrite>
-                    </Platform>
-                </DeployFile>
-                <DeployFile LocalName="Win64\Debug\VocabTxServer.rsm" Configuration="Debug" Class="DebugSymbols">
-                    <Platform Name="Win64">
-                        <RemoteName>VocabTxServer.rsm</RemoteName>
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>

@@ -37,7 +37,7 @@ interface
 
 
 Uses
-  SysUtils, Classes, System.Character, RegularExpressions, ActiveX, ComObj,
+  SysUtils, Classes, System.Character, RegularExpressions,
 
   StringSupport, MathSupport, TextUtilities,
   AdvObjects, AdvGenerics, AdvObjectLists, Advbuffers, AdvMemories, AdvVCLStreams, AdvNameBuffers,

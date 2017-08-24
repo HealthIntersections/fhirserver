@@ -34,7 +34,7 @@ interface
 uses
   SysUtils, Classes, System.Generics.Collections,
   IdContext, IdCustomHTTPServer, IdHashSHA,
-  SCrypt, ParseMap, TextUtilities,
+  {$IFDEF MSWINDOWS} SCrypt, {$ENDIF} ParseMap, TextUtilities,
   KDBManager, AdvJSON, KCritSct, DateSupport,
   StringSupport, EncodeSupport,  FHIRSupport,
   AdvObjects, AdvObjectLists, AdvExceptions,
@@ -395,7 +395,11 @@ end;
 
 function TSCIMServer.HashPassword(uk : integer; pw: String): String;
 begin
+  {$IFDEF MSWINDOWS}
   result := TSCrypt.HashPassword(inttostr(uk)+':'+pw);
+  {$ELSE}
+  raise Exception.Create('Not done yet');
+  {$ENDIF}
 end;
 
 
