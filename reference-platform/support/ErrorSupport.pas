@@ -72,8 +72,8 @@ Begin
     If FormatMessage(FORMAT_MESSAGE_FROM_SYSTEM Or FORMAT_MESSAGE_ARGUMENT_ARRAY, Nil, DWORD(iError), LANG_NEUTRAL, sTemp, iSize, Nil) <> 0 Then
       Result := StringTrimWhitespace(Copy(StrPas(sTemp), 1, iSize))
     Else
- {$ENDIF}{mac-to-do}
-      Result := '';
+ {$ENDIF}
+      Result := 'Error Message missing on OSX';
 
   Finally
     MemoryDestroy(sTemp, iSize);

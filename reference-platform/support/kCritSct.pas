@@ -105,7 +105,6 @@ type
     property LockThread: Thread Read FLockThread;
   end;
 
-
 Function CriticalSectionChecksPass(Var sMessage : String) : Boolean;
 
 function DumpLocks : String;

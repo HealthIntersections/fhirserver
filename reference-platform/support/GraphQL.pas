@@ -899,15 +899,6 @@ begin
     finally
       op.Free;
     end;
-
-//    consumePunctuation('{');
-//    if FLexType <> gqlltName then
-//      raise EGraphQLException.Create('Found "'+FToken.ToString+'" expecting a name"');
-//    s := consumeName;
-//    if (s = 'fragment') then
-//       raise Exception.Create('Not done yet')
-//    else
-//      doc.Operations.Add(parseOperation(s));
   end
   else
   begin

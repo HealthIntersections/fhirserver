@@ -687,12 +687,12 @@ type
     {@member SQL
       The SQL string to execute
     }
-    property SQL: String Read FSQl Write FSql;
+    property SQL: String Read FSql Write FSql;
   end;
 
   TKDBManager = class(TAdvObject)
   Private
-    FSemaphore : TKSemaphore;
+    FSemaphore : TSemaphore;
     FWaitCreate : boolean;
     FConnections : TAdvList<TKDBConnection>;
     FAvail: TAdvList<TKDBConnection>;
@@ -1428,7 +1428,7 @@ begin
 
   FLock := TCriticalSection.create;
   FDBLogger := TKDBLogger.create;
-  FSemaphore := TKSemaphore.Create(0);
+  FSemaphore := TSemaphore.Create(nil, 0, $FFFF, '');
   FWaitCreate := false;
 
   FConnections := TAdvList<TKDBConnection>.create;

@@ -99,7 +99,6 @@ uses
   SystemSupport in '..\reference-platform\Support\SystemSupport.pas',
   DateSupport in '..\reference-platform\Support\DateSupport.pas',
   MemorySupport in '..\reference-platform\Support\MemorySupport.pas',
-  ErrorSupport in '..\reference-platform\Support\ErrorSupport.pas',
   ThreadSupport in '..\reference-platform\Support\ThreadSupport.pas',
   BytesSupport in '..\reference-platform\Support\BytesSupport.pas',
   AdvStringBuilders in '..\reference-platform\Support\AdvStringBuilders.pas',
@@ -323,7 +322,8 @@ uses
   SCrypt in '..\Libraries\security\SCrypt.pas',
   TerminologyOperations in 'TerminologyOperations.pas',
   WebSourceProvider in 'WebSourceProvider.pas',
-  FHIRIndexBase in '..\reference-platform\support\FHIRIndexBase.pas';
+  FHIRIndexBase in '..\reference-platform\support\FHIRIndexBase.pas',
+  ErrorSupport in '..\reference-platform\Support\ErrorSupport.pas';
 
 begin
   logfile := IncludeTrailingPathDelimiter(SystemTemp)+'fhirserver.log';

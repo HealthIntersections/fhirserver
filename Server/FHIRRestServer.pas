@@ -78,7 +78,7 @@ cert - Client must provide an SSL certificate, which must be pre-registered on t
 Interface
 
 Uses
-  {$IFDEF MSWINDOWS} Windows, ActiveX, ComObj, {$ELSE} OSXUtils, {$ENDIF}
+  {$IFDEF MSWINDOWS} Windows, ActiveX, ComObj, {$ELSE} OSXUtils, {$ENDIF} SyncObjs,
   SysUtils, Classes, IniFiles, System.Generics.Collections, {JCL JclDebug, }EncdDecd,  HMAC,  {$IFNDEF VER260} System.NetEncoding, {$ENDIF}
 
   IdMultipartFormData, IdHeaderList, IdCustomHTTPServer, IdHTTPServer,
@@ -96,7 +96,7 @@ Uses
 
   FHIRTypes, FHIRResources, FHIRParser, FHIRConstants,
   FHIRBase, FHIRParserBase, FHIRTags, FHIRSupport, FHIRLang, FHIRStorageService, FHIRUtilities, FHIRSecurity, SmartOnFhirUtilities,
-  QuestionnaireBuilder, FHIRClient, CDSHooksUtilities,  {$IFDEF MSWINDOWS}{mac-to-do} CDSHooksClientManager, {$ENDIF} FHIRXhtml, FHIRGraphQL,
+  QuestionnaireBuilder, FHIRClient, CDSHooksUtilities,  CDSHooksClientManager, FHIRXhtml, FHIRGraphQL,
 
   TerminologyServer, TerminologyServerStore, SnomedServices, SnomedPublisher, SnomedExpressions, LoincServices, LoincPublisher,
   TerminologyWebServer, AuthServer, TwilioClient, ReverseClient, CDSHooksServer, WebSourceProvider,

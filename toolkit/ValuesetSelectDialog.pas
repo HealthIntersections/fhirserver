@@ -210,7 +210,7 @@ begin
     cbxServer.Items.Add('http://tx.fhir.org/r3');
   cbxServer.ItemIndex := 0;
 
-  edtProperty.Text := FIni.ReadString('ValueSet.Select', 'Property', '');
+  cbeProperty.Text := FIni.ReadString('ValueSet.Select', 'Property', '');
   cbxOperation.ItemIndex := FIni.ReadInteger('ValueSet.Select', 'Operation', 0);
   edtValue.Text := FIni.ReadString('ValueSet.Select', 'Value', '');
 end;
@@ -230,7 +230,7 @@ begin
     inc.system := system;
     inc.version := version;
     filter := inc.filterList.Append;
-    filter.property_ := edtProperty.Text;
+    filter.property_ := cbeProperty.Text;
     filter.op := TFhirFilterOperatorEnum(cbxOperation.ItemIndex);
     filter.value := edtValue.Text;
 

@@ -50,8 +50,8 @@ Var
   gNTDLLDebugBreakPointIssuePatched : Boolean = False;
 
 Function SystemManualTemp : String;
-  {$IFDEF MACOS}
 Begin
+  {$IFDEF MACOS}
   result := '/tmp';
   {$ELSE}
   result := 'c:/temp';
