@@ -42,6 +42,8 @@ type
   protected
     procedure Execute; override;
   public
+    Constructor Create;
+    Destructor Destroy; override;
     procedure start;
     procedure stop;
   end;
@@ -249,6 +251,9 @@ procedure TTxServerForm.tmrStatusTimer(Sender: TObject);
 var
   b : boolean;
 begin
+  if FServer = nil then
+    exit;
+
   if FServer.FStatus <> FStatus then
   begin
     FStatus := FServer.FStatus;
@@ -336,9 +341,20 @@ end;
 
 procedure TServerControl.close;
 begin
-  FLock.Free;
   FMsgs.Free;
   FIni.Free;
+end;
+
+constructor TServerControl.Create;
+begin
+  inherited Create;
+  FLock := TCriticalSection.Create('Control Thread');
+end;
+
+destructor TServerControl.Destroy;
+begin
+  FLock.Free;
+  inherited;
 end;
 
 procedure TServerControl.DoStart;
@@ -445,7 +461,6 @@ end;
 procedure TServerControl.init;
 begin
   FMsgs := TStringList.create;
-  FLock := TCriticalSection.Create('Control Thread');
   FIni := TFHIRServerIniFile.Create('');
   logevent := log;
 end;
