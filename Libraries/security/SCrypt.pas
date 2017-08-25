@@ -306,7 +306,7 @@ implementation
 
 uses
 	{$IFDEF ScryptUnitTests}ScryptTests,{$ENDIF}
-	{$IFDEF MSWINDOWS}Windows, ComObj, ActiveX,{$ENDIF}
+	{$IFDEF MSWINDOWS}{mac-to-do}Windows, ComObj, ActiveX,{$ENDIF}
 	Math;
 
 {$IFDEF COMPILER_7_DOWN}

@@ -486,7 +486,7 @@ begin
       form.lblOperation.text := opName;
       form.Button1.OnClick := btnStopClick;
       form.Show;
-      {$IFNDEF MACOS}
+      {$IFDEF MSWINDOWS}
       Application.ProcessMessages;
       {$ENDIF}
       proc;
@@ -551,7 +551,7 @@ begin
         form.lblOperation.text := 'Loading Data';
         form.Button1.enabled := false;
         form.Show;
-        {$IFNDEF MACOS}
+        {$IFDEF MSWINDOWS}
         Application.ProcessMessages;
         {$ENDIF}
 

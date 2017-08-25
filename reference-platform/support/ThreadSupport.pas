@@ -44,7 +44,7 @@ Type
 
 Procedure ThreadSleep(iTime : Cardinal); Overload;
 Function ThreadID : TThreadID; Overload;
-{$IFNDEF MACOS}
+{$IFDEF MSWINDOWS}
 Function ThreadHandle : TThreadHandle; Overload;
 {$ENDIF}
 Procedure ThreadYield; Overload;
@@ -66,7 +66,7 @@ Begin
 End;
 
 
-{$IFNDEF MACOS}
+{$IFDEF MSWINDOWS}
 Function ThreadHandle : TThreadHandle;
 Begin
   Result := GetCurrentThread;

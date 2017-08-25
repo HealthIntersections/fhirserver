@@ -42,14 +42,14 @@ Function ProgData : String;
 Implementation
 
 Var
-{$IFNDEF MACOS}
+{$IFDEF MSWINDOWS}
   gOSInfo : TOSVersionInfo;
   gSystemInfo : TSystemInfo;
 {$ENDIF}
   gNTDLLDebugBreakPointIssuePatched : Boolean = False;
 
 Function SystemTemp : String;
-  {$IFDEF MACOS}
+  {$IFDEF MACOS}{mac-to-do}
 Begin
   result := '/tmp';
 //  result := UTF8ToString(TNSString.Wrap(NSString(NSTemporaryDirectory)).UTF8String); {todo-osx}
@@ -121,7 +121,7 @@ End;
 
 
 Initialization
-  {$IFNDEF MACOS}
+  {$IFDEF MSWINDOWS}
   FillChar(gSystemInfo, SizeOf(gSystemInfo), 0);
   FillChar(gOSInfo, SizeOf(gOSInfo), 0);
 

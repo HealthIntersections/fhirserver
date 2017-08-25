@@ -46,7 +46,7 @@ uses
   SysUtils, classes, Generics.Collections,
   StringSupport, TextUtilities,
   AdvObjects, AdvGenerics, AdvExceptions,
-  {$IFNDEF MACOS}AfsResourceVolumes, AfsVolumes,{$ENDIF}
+  {$IFDEF MSWINDOWS}AfsResourceVolumes, AfsVolumes,{$ENDIF}
   MXML;
 
 Type

@@ -96,7 +96,7 @@ Uses
 
   FHIRTypes, FHIRResources, FHIRParser, FHIRConstants,
   FHIRBase, FHIRParserBase, FHIRTags, FHIRSupport, FHIRLang, FHIRStorageService, FHIRUtilities, FHIRSecurity, SmartOnFhirUtilities,
-  QuestionnaireBuilder, FHIRClient, CDSHooksUtilities,  {$IFDEF MSWINDOWS} CDSHooksClientManager, {$ENDIF} FHIRXhtml, FHIRGraphQL,
+  QuestionnaireBuilder, FHIRClient, CDSHooksUtilities,  {$IFDEF MSWINDOWS}{mac-to-do} CDSHooksClientManager, {$ENDIF} FHIRXhtml, FHIRGraphQL,
 
   TerminologyServer, TerminologyServerStore, SnomedServices, SnomedPublisher, SnomedExpressions, LoincServices, LoincPublisher,
   TerminologyWebServer, AuthServer, TwilioClient, ReverseClient, CDSHooksServer, WebSourceProvider,

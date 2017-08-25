@@ -33,7 +33,7 @@ POSSIBILITY OF SUCH DAMAGE.
 interface
 
 uses
-  {$IFDEF MSWINDOWS} Windows, ActiveX, {$ENDIF}
+  {$IFDEF MSWINDOWS} Windows, ActiveX, {$ENDIF}{mac-to-do}
   SysUtils, Classes,
   TextUtilities, MarkDownProcessor, KCritSct, HashSupport, EncodeSupport,
   AdvObjects, AdvGenerics, AdvThreads, AdvJson, AdvStringStreams,

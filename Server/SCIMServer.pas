@@ -34,7 +34,7 @@ interface
 uses
   SysUtils, Classes, System.Generics.Collections,
   IdContext, IdCustomHTTPServer, IdHashSHA,
-  {$IFDEF MSWINDOWS} SCrypt, {$ENDIF} ParseMap, TextUtilities,
+  {$IFDEF MSWINDOWS}{mac-to-do} SCrypt, {$ENDIF} ParseMap, TextUtilities,
   KDBManager, AdvJSON, KCritSct, DateSupport,
   StringSupport, EncodeSupport,  FHIRSupport,
   AdvObjects, AdvObjectLists, AdvExceptions,

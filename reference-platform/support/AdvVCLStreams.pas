@@ -90,7 +90,7 @@ Type
   TStreamLargeUInt = LargeUInt; // or largeint
   {$ENDIF}
 
-  {$IFNDEF MACOS}
+  {$IFDEF MSWINDOWS}
   TAdvStreamAdapter = Class(TStreamAdapter)
     Public
       Function Stat(Out statstg: TStatStg; grfStatFlag: TStreamDWord): HResult; Override; Stdcall;
@@ -249,7 +249,7 @@ Begin
   Result := iCount;
 End;
 
-{$IFNDEF MACOS}
+{$IFDEF MSWINDOWS}
 Function TAdvStreamAdapter.Stat(Out statstg: TStatStg; grfStatFlag: TStreamDWord): HResult;
 Begin
   // TStreamAdapter.stat does not clear the STATSTG structure.

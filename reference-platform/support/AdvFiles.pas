@@ -72,7 +72,7 @@ Type
 
 Implementation
 (*
-{$IFNDEF MACOS}
+{$IFDEF MSWINDOWS}
 Function FileTimeZero : TAdvFileTime;
 Begin
   Result := 0;

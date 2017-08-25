@@ -31,7 +31,8 @@ POSSIBILITY OF SUCH DAMAGE.
 interface
 
 uses
-  {$IFNDEF MACOS} Windows, {$ENDIF}Classes,
+//  {$IFDEF MSWINDOWS} Windows, {$ENDIF}
+  Classes,
   EncodeSupport, StringSupport,
   AdvObjects;
 
@@ -90,6 +91,7 @@ uses
 
 const 
   unitname = 'Parsemap';
+  
   {------------------------------------------------------------------------------}
 constructor TMultiValList.Create;
 begin

@@ -46,7 +46,7 @@ interface
 uses
   SysUtils, Classes, DateSupport, StringSupport, GuidSupport, BytesSupport,
   kCritSct, KDBManager, KDBDialects,  ParseMap,
-  AdvObjects, AdvObjectLists, AdvGenerics, {$IFNDEF MACOS}AdvSignals, {$ENDIF}AdvBuffers, AdvJson,
+  AdvObjects, AdvObjectLists, AdvGenerics, {$IFDEF MSWINDOWS}{mac-to-do}AdvSignals, {$ENDIF}AdvBuffers, AdvJson,
   IdHTTP, IdSSLOpenSSL, IdSMTP, IdMessage, IdExplicitTLSClientServerBase, idGlobal, IdWebSocket, IdText, IdAttachment, IdPop3, IdMessageParts,
   FHIRBase, FhirResources, FHIRTypes, FHIRConstants, FHIRUtilities, FHIRClient,
   FhirSupport, FHIRIndexManagers, FHIRServerUtilities, FHIRParser, FHIRParserBase, FHIRPath, FHIRContext, FHIRLog, ServerUtilities;
@@ -86,7 +86,7 @@ Type
   private
     FConnected: boolean;
     FQueue: TAdvList<TAdvBuffer>;
-    {$IFNDEF MACOS}
+    {$IFDEF MSWINDOWS}
     FSignal: TAdvSignal;
     {$ENDIF}
     FPersistent: boolean;
@@ -97,7 +97,7 @@ Type
 
     property Connected : boolean read FConnected write FConnected;
     property Persistent : boolean read FPersistent write FPersistent;
-    {$IFNDEF MACOS}
+    {$IFDEF MSWINDOWS}
     property Signal : TAdvSignal read FSignal;
     {$ENDIF}
     property Queue : TAdvList<TAdvBuffer> read FQueue;

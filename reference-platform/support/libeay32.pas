@@ -20,7 +20,7 @@ unit libeay32;
 interface
 
 uses
-  SysUtils, {$IFNDEF MACOS} Windows, {$ENDIF}
+  SysUtils, {$IFDEF MSWINDOWS} Windows, {$ENDIF}{mac-to-do}
   IdSSLOpenSSLHeaders;
 
 (*

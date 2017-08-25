@@ -68,11 +68,11 @@ Begin
   MemoryCreate(sTemp, iSize);
   Try
     // Get the last error number and convert it to text
- {$IFNDEF MACOS}
+ {$IFDEF MSWINDOWS}
     If FormatMessage(FORMAT_MESSAGE_FROM_SYSTEM Or FORMAT_MESSAGE_ARGUMENT_ARRAY, Nil, DWORD(iError), LANG_NEUTRAL, sTemp, iSize, Nil) <> 0 Then
       Result := StringTrimWhitespace(Copy(StrPas(sTemp), 1, iSize))
     Else
- {$ENDIF}
+ {$ENDIF}{mac-to-do}
       Result := '';
 
   Finally

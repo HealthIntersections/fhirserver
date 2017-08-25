@@ -36,7 +36,7 @@ This is the dstu4 version of the FHIR code
 interface
 
 uses
-  {$IFNDEF MACOS} Windows, {$ENDIF}
+  {$IFDEF MSWINDOWS} Windows, {$ENDIF}
   SysUtils, Classes, Soap.EncdDecd, Generics.Collections,
 
   StringSupport, GuidSupport, DateSupport, BytesSupport, OidSupport, EncodeSupport, DecimalSupport, ParseMap,
@@ -580,7 +580,7 @@ uses
  {$IFDEF STACK_DUMPS}
   JclDebug,
   {$ENDIF}
-  {$IFNDEF MACOS}
+  {$IFDEF MSWINDOWS}
   Registry,
   {$ENDIF}
   FHIRMetaModel;
