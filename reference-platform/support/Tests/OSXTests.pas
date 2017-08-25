@@ -35,7 +35,7 @@ type
 implementation
 
 uses
-  SysUtils, Classes,
+  SysUtils, Classes, SyncObjs,
   {$IFDEF MACOS} OSXUtils, {$ELSE} Windows, {$ENDIF}
   SystemSupport, DateSupport, FileSupport, kCritSct,
   AdvObjects, AdvFiles;
@@ -44,7 +44,7 @@ var
   globalInt : cardinal;
   cs : TRTLCriticalSection;
   kcs : TCriticalSection;
-  sem : TKSemaphore;
+  sem : TSemaphore;
 
 Const
   TEST_FILE_CONTENT : AnsiString = 'this is some test content'+#13#10;
@@ -291,7 +291,7 @@ var
   thread : TTestSemaphoreThread;
 begin
   globalInt := 0;
-  sem := TKSemaphore.Create(0);
+  sem := TSemaphore.Create(nil, 0, 1, '');
   try
     thread := TTestSemaphoreThread.Create;
     try
