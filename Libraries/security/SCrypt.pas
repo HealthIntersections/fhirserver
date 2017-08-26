@@ -307,7 +307,7 @@ implementation
 uses
 	{$IFDEF ScryptUnitTests}ScryptTests,{$ENDIF}
 	{$IFDEF MSWINDOWS}{mac-to-do}Windows, ComObj, ActiveX,{$ENDIF}
-	Math;
+	Math, GuidSupport;
 
 {$IFDEF COMPILER_7_DOWN}
 function MAKELANGID(p, s: WORD): WORD;
@@ -521,7 +521,7 @@ type
 	TSHA1 = class(TInterfacedObject, IHashAlgorithm)
 	private
 		FInitialized: Boolean;
-		FHashLength: TULargeInteger; //Number of bits put into the hash
+		FHashLength: UInt64; //Number of bits put into the hash
 		FHashBuffer: array[0..63] of Byte;  //one step before W0..W15
 		FHashBufferIndex: Integer;  //Current position in HashBuffer
 		FABCDEBuffer: array[0..4] of LongWord; //working hash buffer is 160 bits (20 bytes)
@@ -570,6 +570,7 @@ type
 		function Finalize: TBytes;
 	end;
 
+  {$IFDEF MSWINDOWS}
 {
 	Hash algorithms provided by the Microsoft Cryptography Next Generation (Cng) Provider
 }
@@ -607,6 +608,7 @@ type
 		{ IHmacAlgoritm }
 		function HashData(const Key; KeyLen: Integer; const Data; DataLen: Integer): TBytes; overload;
 	end;
+  {$ENDIF}
 
 {
 	SHA256 implemented in Pascal
@@ -615,7 +617,7 @@ type
 	TSHA256 = class(TInterfacedObject, IHashAlgorithm)
 	private
 		FInitialized: Boolean;
-		FHashLength: TULargeInteger; //Number of bits put into the hash
+		FHashLength: UInt64; //Number of bits put into the hash
 		FHashBuffer: array[0..63] of Byte;  //one step before W0..W15
 		FHashBufferIndex: Integer;  //Current position in HashBuffer
 		FCurrentHash: array[0..7] of LongWord;
@@ -658,6 +660,7 @@ type
 		function GetBytes(const Password: UnicodeString; const Salt; const SaltLength: Integer; IterationCount, DesiredBytes: Integer): TBytes;
 	end;
 
+  {$IFDEF MSWINDOWS}
 	TBCryptDeriveKeyPBKDF2 = class(TInterfacedObject, IPBKDF2Algorithm)
 	private
 		FAlgorithm: BCRYPT_ALG_HANDLE;
@@ -666,6 +669,7 @@ type
 
 		function GetBytes(const Password: UnicodeString; const Salt; const SaltLength: Integer; IterationCount, DesiredBytes: Integer): TBytes;
 	end;
+  {$ENDIF}
 
 { TScrypt }
 
@@ -712,11 +716,13 @@ begin
 	ParallelizationFactor := 1;
 
 	//Benchmark the current computer, and see if it could be faster than 250ms to compute a hash
+  {$IFDEF MSWINDOWS}
 	testCostFactor := 11;
 	QueryPerformanceCounter(t1);
 	TScrypt.HashPassword('Benchmark', testCostFactor, 8, 1);
 	QueryPerformanceCounter(t2);
 	if not QueryPerformanceFrequency({var}freq) then Exit;
+  {$ENDIF}
 
 	duration := (t2-t1)/freq*1000;
 
@@ -731,7 +737,9 @@ begin
 	//And we certainly won't go any lower than the default 14,8,1 (anyone remember 8,N,1 anymore?)
 	if testCostFactor > CostFactor then
 	begin
+    {$IFDEF MSWINDOWS}
 		OutputDebugString(PChar(Format('Increasing scrypt cost factor from default %d up to %d', [CostFactor, testCostFactor])));
+    {$ENDIF}
 		CostFactor := testCostFactor;
 	end;
 end;
@@ -989,9 +997,13 @@ begin
 		if not scrypt.TryParseHashString(ExpectedHashString, {out}costFactor, blockSizeFactor, parallelizationFactor, salt, expected) then
 			raise EScryptException.Create(SCouldNotParsePassword);
 		try
+      {$IFDEF MSWINDOWS}
 			QueryPerformanceCounter(t1);
+      {$ENDIF}
 			actual := scrypt.DeriveBytes(Passphrase, salt, costFactor, blockSizeFactor, ParallelizationFactor, Length(expected));
+      {$IFDEF MSWINDOWS}
 			QueryPerformanceCounter(t2);
+      {$ENDIF}
 
 			if Length(actual) <> Length(expected) then
 				Exit;
@@ -1003,12 +1015,16 @@ begin
 				//Only advertise a rehash being needed if they got the correct password.
 				//Don't want someone blindly re-hashing with a bad password because they forgot to check the result,
 				//or because they decided to handle "PasswordRehashNeeded" first.
+        {$IFDEF MSWINDOWS}
 				if QueryPerformanceFrequency(freq) then
 				begin
+        {$ENDIF}
 					duration := (t2-t1)/freq * 1000; //ms
 					if duration < 250 then
 						PasswordRehashNeeded := True;
+        {$IFDEF MSWINDOWS}
 				end;
+        {$ENDIF}
 			end;
 		finally
 			scrypt.BurnBytes(actual);
@@ -1189,45 +1205,61 @@ begin
 
 	{ SHA1 }
 	if      IsAlgo('SHA1.PurePascal')        then Result := TSHA1.Create
+  {$IFDEF MSWINDOWS}
 	else if IsAlgo('SHA1.Csp')               then Result := TCspHash.Create(CALG_SHA1, 64)
 	else if IsAlgo('SHA1.Cng')               then Result := TCngHash.Create(BCRYPT_SHA1_ALGORITHM, nil, False)
+  {$ENDIF}
 
 	{ SHA256 }
 	else if IsAlgo('SHA256.PurePascal')      then Result := TSHA256.Create
+  {$IFDEF MSWINDOWS}
 	else if IsAlgo('SHA256.Csp')             then Result := TCspHash.Create(CALG_SHA_256, 64)
 	else if IsAlgo('SHA256.Cng')             then Result := TCngHash.Create(BCRYPT_SHA256_ALGORITHM, nil, False)
+  {$ENDIF}
 
 	{ HMAC - SHA1 }
 	else if IsAlgo('HMAC.SHA1.PurePascal')   then Result := THmac.Create(TSHA1.Create)
+  {$IFDEF MSWINDOWS}
 	else if IsAlgo('HMAC.SHA1.csp')          then Result := THmac.Create(TCspHash.Create(CALG_SHA1, 64))
 	else if IsAlgo('HMAC.SHA1.Cng')          then Result := TCngHash.Create(BCRYPT_SHA1_ALGORITHM, nil, True)
+  {$ENDIF}
 
 	{ HMAC - SHA256 }
 	else if IsAlgo('HMAC.SHA256.PurePascal') then Result := THmac.Create(TSHA256.Create)
+  {$IFDEF MSWINDOWS}
 	else if IsAlgo('HMAC.SHA256.csp')        then Result := THmac.Create(TCspHash.Create(CALG_SHA_256, 64))
 	else if IsAlgo('HMAC.SHA256.Cng')        then Result := TCngHash.Create(BCRYPT_SHA256_ALGORITHM, nil, True)
+  {$ENDIF}
 
 	{ PBKDF2 - SHA1 }
 	else if IsAlgo('PBKDF2.SHA1') then
 	begin
+    {$IFDEF MSWINDOWS}
 		if TCngHash.IsAvailable then
 			Result := TScrypt.CreateObject('PBKDF2.SHA1.Cng')
 		else
+    {$ENDIF}
 			Result := TScrypt.CreateObject('PBKDF2.SHA1.PurePascal');
 	end
 	else if IsAlgo('PBKDF2.SHA1.PurePascal') then Result := TRfc2898DeriveBytes.Create(THmac.Create(TSHA1.Create))
+  {$IFDEF MSWINDOWS}
 	else if IsAlgo('PBKDF2.SHA1.Cng')        then Result := TBCryptDeriveKeyPBKDF2.Create(BCRYPT_SHA1_ALGORITHM, nil)
+  {$ENDIF}
 
 	{ PBKDF2 - SHA256 }
 	else if IsAlgo('PBKDF2.SHA256') then
 	begin
+    {$IFDEF MSWINDOWS}
 		if TCngHash.IsAvailable then
 			Result := TScrypt.CreateObject('PBKDF2.SHA256.Cng')
 		else
+    {$ENDIF}
 			Result := TScrypt.CreateObject('PBKDF2.SHA256.PurePascal');
 	end
 	else if IsAlgo('PBKDF2.SHA256.PurePascal') then Result := TRfc2898DeriveBytes.Create(THmac.Create(TSHA256.Create))
+  {$IFDEF MSWINDOWS}
 	else if IsAlgo('PBKDF2.SHA256.Cng')        then Result := TBCryptDeriveKeyPBKDF2.Create(BCRYPT_SHA256_ALGORITHM, nil)
+  {$ENDIF}
 
 	else
 		raise Exception.CreateFmt(SUnknownAlgorithm, [ObjectName]);
@@ -1245,7 +1277,7 @@ begin
 
 	//Type 4 UUID (RFC 4122) is a handy source of (almost) 128-bits of random data (actually 120 bits)
 	//But the security doesn't come from the salt being secret, it comes from the salt being different each time
-	OleCheck(CoCreateGUID(type4Uuid));
+  type4Uuid := CreateGUID;
 
 	Move(type4Uuid.D1, salt[0], SCRYPT_SALT_LEN); //i.e. move 16 bytes
 
@@ -1809,38 +1841,7 @@ begin
 {
 	For scrypt passwords we will use UTF-8 encoding.
 }
-//	Result := TEncoding.UTF8.GetBytes(s);
-
-	if Length(Source) = 0 then
-	begin
-		SetLength(Result, 0);
-		Exit;
-	end;
-
-	// Determine real size of destination string, in bytes
-	strLen := WideCharToMultiByte(CodePage, 0,
-			PWideChar(Source), Length(Source), //Source
-			nil, 0, //Destination
-			nil, nil);
-	if strLen = 0 then
-	begin
-		dw := GetLastError;
-		raise EConvertError.Create('[StringToUtf8] Could not get length of destination string. Error '+IntToStr(dw)+' ('+SysErrorMessage(dw)+')');
-	end;
-
-	// Allocate memory for destination string
-	SetLength(Result, strLen);
-
-	// Convert source UTF-16 string (UnicodeString) to the destination using the code-page
-	strLen := WideCharToMultiByte(CodePage, 0,
-			PWideChar(Source), Length(Source), //Source
-			PAnsiChar(@Result[0]), strLen, //Destination
-			nil, nil);
-	if strLen = 0 then
-	begin
-		dw := GetLastError;
-		raise EConvertError.Create('[WideStringToUtf8] Could not convert utf16 to utf8 string. Error '+IntToStr(dw)+' ('+SysErrorMessage(dw)+')');
-	end;
+	Result := TEncoding.UTF8.GetBytes(source);
 end;
 
 class function TScrypt.Tokenize(const s: string; Delimiter: Char): TStringDynArray;
@@ -2088,7 +2089,7 @@ end;
 procedure TSHA1.Burn;
 begin
 	//Empty the hash buffer
-	LARGE_INTEGER(FHashLength).QuadPart := 0;
+	FHashLength := 0;
 	FHashBufferIndex := 0;
 	FillChar(FHashBuffer[0], Length(FHashBuffer), 0);
 
