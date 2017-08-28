@@ -288,7 +288,7 @@ uses
   FHIRStructureMapUtilities in '..\reference-platform\dstu3\FHIRStructureMapUtilities.pas',
   FHIRContext in '..\reference-platform\dstu3\FHIRContext.pas',
   XmlPatch in '..\reference-platform\support\XmlPatch.pas',
-  FHIRLog in 'FHIRLog.pas',
+  FHIRLog in '..\reference-platform\support\FHIRLog.pas',
   FHIRAuthMap in '..\reference-platform\dstu3\FHIRAuthMap.pas',
   AdvZipWriters in '..\reference-platform\support\AdvZipWriters.pas',
   ObservationStatsEvaluator in 'ObservationStatsEvaluator.pas',

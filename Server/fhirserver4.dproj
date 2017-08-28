@@ -341,7 +341,7 @@
         <DCCReference Include="..\reference-platform\r4\FHIRStructureMapUtilities.pas"/>
         <DCCReference Include="..\reference-platform\r4\FHIRContext.pas"/>
         <DCCReference Include="..\reference-platform\support\XmlPatch.pas"/>
-        <DCCReference Include="FHIRLog.pas"/>
+        <DCCReference Include="..\reference-platform\support\FHIRLog.pas"/>
         <DCCReference Include="..\reference-platform\r4\FHIRAuthMap.pas"/>
         <DCCReference Include="..\reference-platform\support\AdvZipWriters.pas"/>
         <DCCReference Include="ObservationStatsEvaluator.pas"/>

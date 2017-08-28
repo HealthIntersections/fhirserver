@@ -326,7 +326,7 @@
         <DCCReference Include="..\reference-platform\r4\FHIRStructureMapUtilities.pas"/>
         <DCCReference Include="..\reference-platform\r4\FHIRContext.pas"/>
         <DCCReference Include="..\reference-platform\support\XmlPatch.pas"/>
-        <DCCReference Include="..\server\FHIRLog.pas"/>
+        <DCCReference Include="..\reference-platform\support\FHIRLog.pas"/>
         <DCCReference Include="..\reference-platform\r4\FHIRAuthMap.pas"/>
         <DCCReference Include="..\Server\Logging.pas"/>
         <DCCReference Include="..\Server\FHIRIndexManagers.pas"/>
@@ -404,14 +404,14 @@
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
-                <DeployFile LocalName="Win32\Debug\FhirServerUtils.exe" Configuration="Debug" Class="ProjectOutput">
-                    <Platform Name="Win32">
+                <DeployFile LocalName="..\Server\win64_3\Debug\FhirServerUtils.exe" Configuration="Debug" Class="ProjectOutput">
+                    <Platform Name="Win64">
                         <RemoteName>FhirServerUtils.exe</RemoteName>
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
-                <DeployFile LocalName="..\Server\win64_3\Debug\FhirServerUtils.exe" Configuration="Debug" Class="ProjectOutput">
-                    <Platform Name="Win64">
+                <DeployFile LocalName="Win32\Debug\FhirServerUtils.exe" Configuration="Debug" Class="ProjectOutput">
+                    <Platform Name="Win32">
                         <RemoteName>FhirServerUtils.exe</RemoteName>
                         <Overwrite>true</Overwrite>
                     </Platform>

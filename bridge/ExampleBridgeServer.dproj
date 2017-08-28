@@ -249,7 +249,7 @@
         <DCCReference Include="..\Server\AuthServer.pas"/>
         <DCCReference Include="..\Server\ClosureManager.pas"/>
         <DCCReference Include="..\Server\FHIRIndexManagers.pas"/>
-        <DCCReference Include="..\Server\FHIRLog.pas"/>
+        <DCCReference Include="..\reference-platform\support\FHIRLog.pas"/>
         <DCCReference Include="..\Server\FHIRRestServer.pas"/>
         <DCCReference Include="..\Server\FHIRServerConstants.pas"/>
         <DCCReference Include="..\Server\FHIRServerContext.pas"/>

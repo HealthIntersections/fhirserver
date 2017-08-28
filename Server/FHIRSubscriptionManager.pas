@@ -1103,7 +1103,7 @@ begin
       EmptyQueue := true;
   except
     on e:exception do
-      WriteLn('Error handling subscriptions: '+e.Message);
+      logt('Error handling subscriptions: '+e.Message);
   end;
 end;
 
