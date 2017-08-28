@@ -308,7 +308,7 @@ begin
     kdbInterbase: Result := '';
     kdbDB2: Result := '';
     kdbOracle8: Result := '';
-    kdbMySQL: Result := '';
+    kdbMySQL: Result := 'MySQL ODBC 5.3 Unicode Driver';
     kdbASA: result := 'Adaptive Server Anywhere';
     kdbSybase12: Result := 'Sybase ASE ODBC Driver';
   else
