@@ -9,12 +9,8 @@ uses
   {$IFDEF MSWINDOWS}
   AfsResourceVolumes in '..\..\reference-platform\support\AfsResourceVolumes.pas',
   AdvWinInetClients in '..\..\reference-platform\support\AdvWinInetClients.pas',
-  AdvSignals in '..\..\reference-platform\support\AdvSignals.pas',
-  SCrypt in '..\..\Libraries\security\SCrypt.pas',
-  MsXmlParser in '..\..\reference-platform\support\MsXmlParser.pas',
+  {$ENDIF }
   CDSHooksClientManager in '..\..\reference-platform\support\CDSHooksClientManager.pas',
-  AdvThreads in '..\..\reference-platform\support\AdvThreads.pas',
-  {$ENDIF}
   FileSupport in '..\..\reference-platform\support\FileSupport.pas',
   OSXUtils in '..\..\reference-platform\support\OSXUtils.pas',
   StringSupport in '..\..\reference-platform\support\StringSupport.pas',
@@ -202,7 +198,10 @@ uses
   TerminologyOperations in '..\..\Server\TerminologyOperations.pas',
   WebSourceProvider in '..\..\Server\WebSourceProvider.pas',
   vpocversion in 'vpocversion.pas',
-  FHIRIndexBase in '..\..\reference-platform\support\FHIRIndexBase.pas';
+  FHIRIndexBase in '..\..\reference-platform\support\FHIRIndexBase.pas',
+  AdvThreads in '..\..\reference-platform\support\AdvThreads.pas',
+  SCrypt in '..\..\Libraries\security\SCrypt.pas',
+  MsXmlParser in '..\..\reference-platform\support\MsXmlParser.pas';
 
 {$R *.res}
 

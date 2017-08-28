@@ -1071,7 +1071,7 @@ begin
     jpitEof :
         FLex.JsonError('JSON Syntax Error - attempt to read past end of json stream');
   else
-    FLex.JsonError('not done yet (a): '+Codes_TJsonParserItemType[ItemType]);
+    FLex.JsonError('error (a): '+Codes_TJsonParserItemType[ItemType]);
   End;
 end;
 
@@ -1248,7 +1248,7 @@ Begin
       End;
     // jltClose, , jltColon, jltComma, jltOpenArray,       !
   else
-    FLex.JsonError('not done yet (b): '+Codes_TJSONLexType[FLex.LexType]);
+    FLex.JsonError('error (b): '+Codes_TJSONLexType[FLex.LexType]);
   End;
 End;
 

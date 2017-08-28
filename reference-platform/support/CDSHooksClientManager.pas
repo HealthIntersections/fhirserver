@@ -33,7 +33,7 @@ POSSIBILITY OF SUCH DAMAGE.
 interface
 
 uses
-  {$IFDEF MSWINDOWS} Windows, ActiveX, {$ENDIF}{mac-to-do}
+  {$IFDEF MSWINDOWS} Windows, ActiveX, {$ENDIF}
   SysUtils, Classes,
   TextUtilities, MarkDownProcessor, KCritSct, HashSupport, EncodeSupport,
   AdvObjects, AdvGenerics, AdvThreads, AdvJson, AdvStringStreams,
@@ -428,7 +428,7 @@ begin
   try
     for thread in FThreads do
       if thread.FAlive then
-      list.Add(thread.server.name);
+        list.Add(thread.server.name);
   finally
     FLock.Unlock;
   end;
@@ -680,7 +680,9 @@ var
   resp : TCDSHookResponse;
   client : TFhirHTTPClient;
 begin
+  {$IFDEF MSWINDOWS}
   CoInitialize(nil);
+  {$ENDIF}
   try
     try
       try
@@ -723,7 +725,9 @@ begin
       // nothing. just suppress this
     end;
   finally
+    {$IFDEF MSWINDOWS}
     CoUninitialize;
+    {$ENDIF}
   end;
 end;
 
