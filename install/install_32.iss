@@ -84,7 +84,7 @@ Source: "C:\work\fhirserver\install\LOINC_short_license.txt";         DestDir: "
 Source: "C:\work\fhirserver\Exec\win32\FHIRServer2.exe";        DestDir: "{app}";     DestName: "FHIRServer.exe";       Components: r2; Flags: ignoreversion
 Source: "C:\work\fhirserver\Exec\win32\FHIRServer3.exe";        DestDir: "{app}";     DestName: "FHIRServer.exe";       Components: r3; Flags: ignoreversion
 Source: "C:\work\fhirserver\Exec\win32\FHIRServer4.exe";        DestDir: "{app}";     DestName: "FHIRServer.exe";       Components: r4; Flags: ignoreversion
-Source: "C:\work\fhirserver\Exec\FHIRServerUtils.exe";    DestDir: "{app}";     DestName: "FHIRServerUtils.exe";                  Flags: ignoreversion
+Source: "C:\work\fhirserver\Exec\win32\FHIRServerUtils.exe";    DestDir: "{app}";     DestName: "FHIRServerUtils.exe";                  Flags: ignoreversion
 
 Source: "C:\work\fhirserver\Exec\fhir.ini";                           DestDir: "{app}";            Flags: ignoreversion onlyifdoesntexist;       DestName: "fhirserver.ini" 
 Source: "C:\work\fhirserver\Exec\auth.example.ini";                   DestDir: "{app}";            Flags: ignoreversion onlyifdoesntexist;       DestName: "auth.ini" 
@@ -1323,7 +1323,7 @@ Begin
 
 
 
-  if RegGetSubkeyNames(HKLM, 'SOFTWARE\ODBC\ODBCINST.INI', Names) then
+  if RegGetValueNames(HKLM, 'SOFTWARE\ODBC\ODBCINST.INI\ODBC Drivers', Names) then
   begin
     for iI := 0 to GetArrayLength(Names)-1 do
        dbDriver.Items.Add(Names[Ii]);
