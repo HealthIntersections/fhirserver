@@ -132,7 +132,7 @@ begin
   result := StrToPChar(GetString(name));
 end;
 
-Function MyDllCheckDatabase(Server, Database, Username, Password, Version : PAnsiChar) : PAnsiChar; stdcall;
+Function MyDllCheckDatabase(DBType, Server, Database, Username, Password, Version : PAnsiChar) : PAnsiChar; stdcall;
 var
   conn : TKDBManager;
   db : TKDBConnection;
@@ -140,7 +140,11 @@ var
   ver : String;
 begin
   try
+// To do: Can we get the driver names from the ini file instead?
+if DBType='mssql' then
     conn := TKDBOdbcDirect.Create('config', 1, 0, 'SQL Server Native Client 11.0', server, database, username, password);
+if DBType='mysql' then
+    conn := TKDBOdbcDirect.Create('config', 1, 0, 'MySQL ODBC 5.3 Unicode Driver', server, database, username, password);
     try
       db := conn.GetConnection('test');
       try

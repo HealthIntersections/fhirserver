@@ -664,6 +664,7 @@ begin
     btnProcessUMLS.enabled := false;
     btnUMLSClose.enabled := false;
     try
+// TO DO: Add MySQL option
       db := TKDBOdbcDirect.create('umls', 4, 0, 'SQL Server Native Client 11.0', edtUMLSServer.text, edtUMLSDatabase.Text, edtUMLSUsername.Text, edtUMLSPassword.Text);
       generateRxStems(db, umlsCallback);
     finally

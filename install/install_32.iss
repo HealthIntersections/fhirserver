@@ -1,4 +1,4 @@
-ï»¿[Setup]
+[Setup]
 ; identification.
 ; AppID can never be changed as subsequent installations require the same installation ID each time
 AppID=FHIRServer
@@ -7,12 +7,12 @@ AppVerName=FHIR Server 1.0.164
 
 ; compilation control
 OutputDir=C:\work\fhirserver\install\build
-OutputBaseFilename=fhirserver3-1.0.164
+OutputBaseFilename=fhirserver3_32-1.0.164
 Compression=lzma2/ultra64
 
 ; 64 bit
-ArchitecturesInstallIn64BitMode=x64
-ArchitecturesAllowed=x64
+;ArchitecturesInstallIn64BitMode=x64
+;ArchitecturesAllowed=x86
 
 ; we will be creating a service so we do need this privilege
 PrivilegesRequired=admin
@@ -37,7 +37,7 @@ AppPublisherURL=http://www.healthintersections.com.au
 AppVersion=0.01
 AppSupportURL=https://github.com/grahamegrieve/fhirserver
 AppUpdatesURL=https://github.com/grahamegrieve/fhirserver
-AppCopyright=Copyright ï¿½ Health Intersections Pty Ltd 2011+
+AppCopyright=Copyright © Health Intersections Pty Ltd 2011+
 VersionInfoVersion=0.0.0.1
 
 ; dialog support
@@ -81,9 +81,9 @@ Source: "C:\work\fhirserver\install\readme.rtf";                      DestDir: "
 Source: "C:\work\fhirserver\install\LOINC_short_license.txt";         DestDir: "{app}";            Flags: ignoreversion;
 
 ; Executable files
-Source: "C:\work\fhirserver\Exec\FHIRServer2.exe";        DestDir: "{app}";     DestName: "FHIRServer.exe";       Components: r2; Flags: ignoreversion
-Source: "C:\work\fhirserver\Exec\FHIRServer3.exe";        DestDir: "{app}";     DestName: "FHIRServer.exe";       Components: r3; Flags: ignoreversion
-Source: "C:\work\fhirserver\Exec\FHIRServer4.exe";        DestDir: "{app}";     DestName: "FHIRServer.exe";       Components: r4; Flags: ignoreversion
+Source: "C:\work\fhirserver\Exec\win32\FHIRServer2.exe";        DestDir: "{app}";     DestName: "FHIRServer.exe";       Components: r2; Flags: ignoreversion
+Source: "C:\work\fhirserver\Exec\win32\FHIRServer3.exe";        DestDir: "{app}";     DestName: "FHIRServer.exe";       Components: r3; Flags: ignoreversion
+Source: "C:\work\fhirserver\Exec\win32\FHIRServer4.exe";        DestDir: "{app}";     DestName: "FHIRServer.exe";       Components: r4; Flags: ignoreversion
 Source: "C:\work\fhirserver\Exec\FHIRServerUtils.exe";    DestDir: "{app}";     DestName: "FHIRServerUtils.exe";                  Flags: ignoreversion
 
 Source: "C:\work\fhirserver\Exec\fhir.ini";                           DestDir: "{app}";            Flags: ignoreversion onlyifdoesntexist;       DestName: "fhirserver.ini" 
@@ -123,9 +123,9 @@ Source: "C:\work\fhirserver\sql\*.sql";                               DestDir: "
 Source: "C:\work\fhirserver\sql\*.txt";                               DestDir: "{app}\sql"
 
 ; ssl support files - put in app dir because these may be different to ones already on the machine.
-Source: "C:\work\fhirserver\Exec\ssleay64.dll";  DestName: "ssleay32.dll";   DestDir: "{app}";      Flags: ignoreversion
-Source: "C:\work\fhirserver\Exec\libeay64.dll";  DestName: "libeay32.dll";   DestDir: "{app}";      Flags: ignoreversion
-Source: "C:\work\fhirserver\Exec\openssl64.exe"; DestName: "openssl.dll";    DestDir: "{app}";      Flags: ignoreversion
+Source: "C:\work\fhirserver\Exec\win32\ssleay32.dll";  DestName: "ssleay32.dll";   DestDir: "{app}";      Flags: ignoreversion
+Source: "C:\work\fhirserver\Exec\win32\libeay32.dll";  DestName: "libeay32.dll";   DestDir: "{app}";      Flags: ignoreversion
+Source: "C:\work\fhirserver\Exec\win32\openssl.exe"; DestName: "openssl.dll";    DestDir: "{app}";      Flags: ignoreversion
 
 [INI]
 Filename: "{app}\fhirserver.ini"; Section: "fhir";  Key: "web";  String: "{app}\web"

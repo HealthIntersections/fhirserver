@@ -165,14 +165,14 @@ begin
   if ini.ReadString(voVersioningNotApplicable, 'RxNorm', 'database', '') <> '' then
   begin
     logt('Connect to RxNorm');
-    RxNorm := TRxNormServices.Create(FOnConnectDB('rxnorm', 100, 0, 'SQL Server Native Client 11.0',
+    RxNorm := TRxNormServices.Create(FOnConnectDB('rxnorm', 100, 0, Ini.ReadString(voMaybeVersioned, 'database', 'driver', ''),
         Ini.ReadString(voVersioningNotApplicable, 'database', 'server', ''), Ini.ReadString(voVersioningNotApplicable, 'RxNorm', 'database', ''),
         Ini.ReadString(voVersioningNotApplicable, 'database', 'username', ''), Ini.ReadString(voVersioningNotApplicable, 'database', 'password', '')));
   end;
   if ini.ReadString(voVersioningNotApplicable, 'NciMeta', 'database', '') <> '' then
   begin
     logt('Connect to NciMeta');
-    NciMeta := TNciMetaServices.Create(FOnConnectDB('ncimeta', 100, 0, 'SQL Server Native Client 11.0',
+    NciMeta := TNciMetaServices.Create(FOnConnectDB('ncimeta', 100, 0, Ini.ReadString(voMaybeVersioned, 'database', 'driver', ''),
         Ini.ReadString(voVersioningNotApplicable, 'database', 'server', ''), Ini.ReadString(voVersioningNotApplicable, 'NciMeta', 'database', ''),
         Ini.ReadString(voVersioningNotApplicable, 'database', 'username', ''), Ini.ReadString(voVersioningNotApplicable, 'database', 'password', '')));
   end;
