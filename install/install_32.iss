@@ -1323,7 +1323,7 @@ Begin
 
 
 
-  if RegGetSubkeyNames(HKLM, 'SOFTWARE\ODBC\ODBCINST.INI', Names) then
+  if RegGetValueNames(HKLM, 'SOFTWARE\ODBC\ODBCINST.INI\ODBC Drivers', Names) then
   begin
     for iI := 0 to GetArrayLength(Names)-1 do
        dbDriver.Items.Add(Names[Ii]);
