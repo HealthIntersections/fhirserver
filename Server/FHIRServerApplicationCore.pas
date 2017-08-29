@@ -229,13 +229,13 @@ begin
         svc.FIni.WriteString('loinc', 'cache', importLoinc(dir, lver, svc.FIni.ReadString(voVersioningNotApplicable, 'internal', 'store', IncludeTrailingPathDelimiter(ProgData)+'fhirserver')))
       else if FindCmdLineSwitch('rxstems', dir, true, []) then
       begin
-        generateRxStems(TKDBOdbcDirect.create('fhir', 100, 0, 'SQL Server Native Client 11.0',
+        generateRxStems(TKDBOdbcDirect.create('fhir', 100, 0, svc.FIni.ReadString(voMaybeVersioned, 'database', 'driver', ''),
           svc.FIni.ReadString(voVersioningNotApplicable, 'database', 'server', ''), svc.FIni.ReadString(voVersioningNotApplicable, 'RxNorm', 'database', ''),
           svc.FIni.ReadString(voVersioningNotApplicable, 'database', 'username', ''), svc.FIni.ReadString(voVersioningNotApplicable, 'database', 'password', '')))
       end
       else if FindCmdLineSwitch('ncistems', dir, true, []) then
       begin
-        generateRxStems(TKDBOdbcDirect.create('fhir', 100, 0, 'SQL Server Native Client 11.0',
+        generateRxStems(TKDBOdbcDirect.create('fhir', 100, 0, svc.FIni.ReadString(voMaybeVersioned, 'database', 'driver', ''),
           svc.FIni.ReadString(voVersioningNotApplicable, 'database', 'server', ''), svc.FIni.ReadString(voVersioningNotApplicable, 'NciMeta', 'database', ''),
           svc.FIni.ReadString(voVersioningNotApplicable, 'database', 'username', ''), svc.FIni.ReadString(voVersioningNotApplicable, 'database', 'password', '')))
       end
