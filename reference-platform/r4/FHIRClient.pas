@@ -39,8 +39,8 @@ uses
   SysUtils, Classes, Generics.Collections, Soap.EncdDecd,
   StringSupport, EncodeSupport, GuidSupport, DateSupport,
   IdHTTP, IdSSLOpenSSL, MimeMessage,
-  AdvObjects, AdvBuffers, {$IFNDEF OSX}AdvWinInetClients, {$ENDIF}AdvJson,
-  FHIRParser, FHIRResources, FHIRTypes, FHIRUtilities, 
+  AdvObjects, AdvBuffers, {$IFDEF MSWINDOWS}AdvWinInetClients, {$ENDIF}AdvJson,
+  FHIRParser, FHIRResources, FHIRTypes, FHIRUtilities,
   FHIRConstants, FHIRContext, FHIRSupport, FHIRParserBase, FHIRBase,
   SmartOnFhirUtilities, CdsHooksUtilities;
 
@@ -85,7 +85,7 @@ Type
   private
     FUrl : String;
     FJson : Boolean;
-    {$IFNDEF OSX}
+    {$IFDEF MSWINDOWS}
     http : TAdvWinInetClient;
     {$ENDIF}
     indy : TIdHTTP;
@@ -115,7 +115,7 @@ Type
     procedure setHeader(name, value : String);
     function GetHeader(name : String) : String;
     function exchangeIndy(url: String; verb: TFhirHTTPClientHTTPVerb; source: TStream; ct: String): TStream;
-    {$IFNDEF OSX}
+    {$IFDEF MSWINDOWS}
     function exchangeHTTP(url: String; verb: TFhirHTTPClientHTTPVerb; source: TStream; ct: String): TStream;
     {$ENDIF}
 
@@ -223,7 +223,7 @@ begin
   FSmartToken.Free;
   ssl.Free;
   indy.free;
-  {$IFNDEF OSX}
+  {$IFDEF MSWINDOWS}
   http.Free;
   {$ENDIF}
   inherited;
@@ -355,7 +355,7 @@ begin
   FCertFile := Value;
   indy.free;
   indy := nil;
-  {$IFNDEF OSX}
+  {$IFDEF MSWINDOWS}
   http.Free;
   http := nil;
   {$ENDIF}
@@ -366,7 +366,7 @@ begin
   FCertPWord := Value;
   indy.free;
   indy := nil;
-  {$IFNDEF OSX}
+  {$IFDEF MSWINDOWS}
   http.Free;
   http := nil;
   {$ENDIF}
@@ -627,7 +627,7 @@ begin
       end;
     end;
   end
-  {$IFNDEF OSX}
+  {$IFDEF MSWINDOWS}
   else if http = nil then
   begin
     if certFile <> '' then
@@ -644,7 +644,7 @@ begin
   createClient;
   if FUseIndy then
     indy.Request.RawHeaders.Values[name] := value
-  {$IFNDEF OSX}
+  {$IFDEF MSWINDOWS}
   else
     http.Headers.AddOrSetValue(name, value);
   {$ENDIF}
@@ -655,7 +655,7 @@ begin
   createClient;
   if FUseIndy then
     result := indy.Response.RawHeaders.Values[name]
-  {$IFNDEF OSX}
+  {$IFDEF MSWINDOWS}
   else
     result := http.getResponseHeader(name);
   {$ENDIF}
@@ -672,13 +672,13 @@ begin
   createClient;
   if FUseIndy then
     result := exchangeIndy(url, verb, source, ct)
-  {$IFNDEF OSX}
+  {$IFDEF MSWINDOWS}
   else
     result := exchangeHTTP(url, verb, source, ct)
   {$ENDIF}
 end;
 
-{$IFNDEF OSX}
+{$IFDEF MSWINDOWS}
 function TFhirHTTPClient.exchangeHTTP(url: String; verb: TFhirHTTPClientHTTPVerb; source: TStream; ct: String): TStream;
 var
   ok : boolean;
@@ -885,7 +885,7 @@ end;
 
 procedure TFhirHTTPClient.SetUseIndy(const Value: boolean);
 begin
-  {$IFNDEF OSX}
+  {$IFDEF MSWINDOWS}
   FUseIndy := Value;
   {$ELSE}
   // ignore...?

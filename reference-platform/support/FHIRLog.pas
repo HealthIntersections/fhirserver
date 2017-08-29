@@ -83,14 +83,24 @@ begin
     if filelog then
       log.WriteToLog(FormatDateTime('yyyy-mm-dd', today)+ '--------------------------------'+#13#10);
     if consolelog then
-      System.Writeln(FormatDateTime('yyyy-mm-dd', today)+ '--------------------------------');
+    begin
+      try
+        System.Writeln(FormatDateTime('yyyy-mm-dd', today)+ '--------------------------------');
+      except
+        consolelog := false;
+      end;
+    end;
     lastDay := today;
   end;
 
   if filelog then
     log.WriteToLog(FormatDateTime('hh:nn:ss', now)+ ' '+FormatDateTime('hh:nn:ss', now - startTime)+' '+s+#13#10);
   if consolelog then
-    System.Writeln(FormatDateTime('hh:nn:ss', now)+ ' '+FormatDateTime('hh:nn:ss', now - startTime)+' '+s);
+    try
+      System.Writeln(FormatDateTime('hh:nn:ss', now)+ ' '+FormatDateTime('hh:nn:ss', now - startTime)+' '+s);
+    except
+      consolelog := false;
+    end;
   if (assigned(logEvent)) then
     logEvent(s);
 end;
@@ -106,14 +116,22 @@ begin
     if filelog then
       log.WriteToLog(FormatDateTime('yyyy-mm-dd', today)+ '--------------------------------'+#13#10);
     if consolelog then
-      System.Writeln(FormatDateTime('yyyy-mm-dd', today)+ '--------------------------------');
+      try
+        System.Writeln(FormatDateTime('yyyy-mm-dd', today)+ '--------------------------------');
+      except
+        consolelog := false;
+      end;
     lastDay := today;
   end;
 
   if filelog then
     log.WriteToLog(FormatDateTime('hh:nn:ss', now)+ ' '+s+#13#10);
   if consolelog then
-    System.Write(FormatDateTime('hh:nn:ss', now)+ ' '+s);
+    try
+      System.Write(FormatDateTime('hh:nn:ss', now)+ ' '+s);
+    except
+      consolelog := false;
+    end;
   if (assigned(logEvent)) then
     logEvent(s);
 end;

@@ -9479,10 +9479,10 @@ begin
       ServerContext.Validator.validate(ctxt, bufXml, ffXml);
       ServerContext.Validator.validate(ctxt, bufJson, ffJson);
       if (ctxt.Errors.Count = 0) then
-        writeln(inttostr(i)+': '+rtype+'/'+id+': passed validation')
+        logt(inttostr(i)+': '+rtype+'/'+id+': passed validation')
       else
       begin
-        writeln(inttostr(i)+': '+rtype+'/'+id+': failed validation');
+        logt(inttostr(i)+': '+rtype+'/'+id+': failed validation');
         b.Append(inttostr(i)+': '+'http://local.healthintersections.com.au:960/open/'+rtype+'/'+id+' : failed validation'+#13#10);
         for issue in ctxt.Errors do
           if (issue.severity in [IssueSeverityFatal, IssueSeverityError]) then
@@ -9495,7 +9495,7 @@ begin
     on e:exception do
     begin
       recordStack(e);
-      writeln(inttostr(i)+': '+rtype+'/'+id+': exception validating: '+e.message);
+      logt(inttostr(i)+': '+rtype+'/'+id+': exception validating: '+e.message);
       b.Append(inttostr(i)+': '+'http://fhir2.healthintersections.com.au/open/'+rtype+'/'+id+' : exception validating: '+e.message+#13#10);
     end;
   end;

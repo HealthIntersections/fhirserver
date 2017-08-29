@@ -173,7 +173,7 @@ uses
   AuthServer in '..\Server\AuthServer.pas',
   ClosureManager in '..\Server\ClosureManager.pas',
   FHIRIndexManagers in '..\Server\FHIRIndexManagers.pas',
-  FHIRLog in '..\Server\FHIRLog.pas',
+  FHIRLog in '..\reference-platform\support\FHIRLog.pas',
   FHIRRestServer in '..\Server\FHIRRestServer.pas',
   FHIRServerConstants in '..\Server\FHIRServerConstants.pas',
   FHIRServerContext in '..\Server\FHIRServerContext.pas',

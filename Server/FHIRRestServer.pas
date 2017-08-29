@@ -3673,7 +3673,7 @@ end;
 
 procedure TFhirServerMaintenanceThread.Execute;
 begin
-  Writeln('Starting TFhirServerMaintenanceThread');
+  logt('Starting TFhirServerMaintenanceThread');
   try
     FServer.ServerContext.TerminologyServer.MaintenanceThreadStatus := 'starting';
     {$IFDEF MSWINDOWS}
@@ -3718,9 +3718,9 @@ begin
     {$IFDEF MSWINDOWS}
     CoUninitialize;
     {$ENDIF}
-    Writeln('Ending TFhirServerMaintenanceThread');
+    logt('Ending TFhirServerMaintenanceThread');
   except
-    Writeln('Failing TFhirServerMaintenanceThread');
+    logt('Failing TFhirServerMaintenanceThread');
   end;
 end;
 
@@ -3735,7 +3735,7 @@ end;
 
 procedure TFhirServerSubscriptionThread.Execute;
 begin
-  Writeln('Starting TFhirServerSubscriptionThread');
+  logt('Starting TFhirServerSubscriptionThread');
   try
     FServer.ServerContext.TerminologyServer.SubscriptionThreadStatus := 'starting';
     repeat
@@ -3755,9 +3755,9 @@ begin
       FServer.FMaintenanceThread := nil;
     except
     end;
-    Writeln('Ending TFhirServerSubscriptionThread');
+    logt('Ending TFhirServerSubscriptionThread');
   except
-    Writeln('Failing TFhirServerSubscriptionThread');
+    logt('Failing TFhirServerSubscriptionThread');
   end;
 end;
 
@@ -3774,7 +3774,7 @@ procedure TFhirServerEmailThread.Execute;
 var
   i : integer;
 begin
-  Writeln('Starting TFhirServerEmailThread');
+  logt('Starting TFhirServerEmailThread');
   try
     FServer.ServerContext.TerminologyServer.EmailThreadStatus := 'starting';
     repeat
@@ -3799,9 +3799,9 @@ begin
       FServer.FMaintenanceThread := nil;
     except
     end;
-    Writeln('Ending TFhirServerEmailThread');
+    logt('Ending TFhirServerEmailThread');
   except
-    Writeln('Failing TFhirServerEmailThread');
+    logt('Failing TFhirServerEmailThread');
   end;
 end;
 

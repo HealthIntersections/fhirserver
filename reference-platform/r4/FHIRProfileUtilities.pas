@@ -42,7 +42,8 @@ uses
   AdvObjects, AdvGenerics, AdvStringMatches, AdvBuffers, ADvMemories,
   AdvObjectLists, AdvNameBuffers,
   AdvFiles, AdvVclStreams, AdvZipReaders, AdvZipParts,
-  FHIRBase, FHIRResources, FHIRTypes, FHIRContext, FHIRUtilities, FHIRConstants, FHIRParser, FHIRParserBase;
+  FHIRBase, FHIRResources, FHIRTypes, FHIRContext, FHIRUtilities, FHIRConstants, FHIRParser, FHIRParserBase,
+  FHIRLog;
 
 Const
   DERIVATION_EQUALS = 'derivation.equals';
@@ -845,7 +846,7 @@ begin
   if (result = nil) then
     result := context.fetchResource(frtStructureDefinition, 'http://hl7.org/fhir/StructureDefinition/'+type_.code) as TFhirStructureDefinition;
   if (result = nil) then
-    writeln('XX: failed to find profile for type: ' + type_.code); // debug GJM
+    logt('XX: failed to find profile for type: ' + type_.code); // debug GJM
 end;
 
 function TProfileUtilities.typeCode(types : TFhirElementDefinitionTypeList) : String;

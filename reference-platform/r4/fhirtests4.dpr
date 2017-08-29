@@ -116,7 +116,9 @@ uses
   FHIRParserXml in 'FHIRParserXml.pas',
   FHIRParserJson in 'FHIRParserJson.pas',
   TurtleParser in '..\support\TurtleParser.pas',
-  FHIRParserTurtle in 'FHIRParserTurtle.pas';
+  FHIRParserTurtle in 'FHIRParserTurtle.pas',
+  FHIRLog in '..\support\FHIRLog.pas',
+  Logging in '..\..\Server\Logging.pas';
 
 var
   s: String;

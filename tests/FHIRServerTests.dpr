@@ -203,7 +203,7 @@ uses
   FHIRStructureMapUtilities in '..\reference-platform\r4\FHIRStructureMapUtilities.pas',
   FHIRContext in '..\reference-platform\r4\FHIRContext.pas',
   XmlPatch in '..\reference-platform\support\XmlPatch.pas',
-  FHIRLog in '..\server\FHIRLog.pas',
+  FHIRLog in '..\reference-platform\support\FHIRLog.pas',
   FHIRAuthMap in '..\reference-platform\r4\FHIRAuthMap.pas',
   {$IFDEF TESTINSIGHT}
   TestInsight.DUnitX,

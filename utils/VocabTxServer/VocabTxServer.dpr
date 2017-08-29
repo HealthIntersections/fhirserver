@@ -147,7 +147,7 @@ uses
   RxNormServices in '..\..\Server\RxNormServices.pas',
   UniiServices in '..\..\Server\UniiServices.pas',
   AdvStringIntegerMatches in '..\..\reference-platform\support\AdvStringIntegerMatches.pas',
-  FHIRLog in '..\..\Server\FHIRLog.pas',
+  FHIRLog in '..\..\reference-platform\support\FHIRLog.pas',
   logging in '..\..\Server\logging.pas',
   ACIRServices in '..\..\Server\ACIRServices.pas',
   AreaCodeServices in '..\..\Server\AreaCodeServices.pas',

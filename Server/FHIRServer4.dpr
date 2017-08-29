@@ -280,7 +280,7 @@ uses
   FHIRStructureMapUtilities in '..\reference-platform\r4\FHIRStructureMapUtilities.pas',
   FHIRContext in '..\reference-platform\r4\FHIRContext.pas',
   XmlPatch in '..\reference-platform\support\XmlPatch.pas',
-  FHIRLog in 'FHIRLog.pas',
+  FHIRLog in '..\reference-platform\support\FHIRLog.pas',
   FHIRAuthMap in '..\reference-platform\r4\FHIRAuthMap.pas',
   AdvZipWriters in '..\reference-platform\support\AdvZipWriters.pas',
   ObservationStatsEvaluator in 'ObservationStatsEvaluator.pas',

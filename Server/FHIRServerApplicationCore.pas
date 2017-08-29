@@ -147,6 +147,13 @@ var
   svc : TFHIRService;
 begin
   try
+    Consolelog := true;
+    if FindCmdLineSwitch('log', fn, true, [clstValueNextParam]) then
+    begin
+      filelog := true;
+      logfile := fn;
+    end;
+
     CoInitialize(nil);
     if not FindCmdLineSwitch('ini', iniName, true, [clstValueNextParam]) then
       iniName := IncludeTrailingPathDelimiter(ExtractFilePath(ParamStr(0)))+'fhirserver.ini';
@@ -161,6 +168,8 @@ begin
       logt('FHIR Service '+SERVER_VERSION+'. Using ini file '+iniName+' with stack dumps on')
     else
       logt('FHIR Service '+SERVER_VERSION+'. Using ini file '+iniName+' (no stack dumps)');
+    if filelog then
+      logt('Log File = '+logfile);
     logt('FHIR Version '+FHIR_GENERATED_VERSION);
     dispName := dispName + ' '+SERVER_VERSION+' (FHIR v '+FHIR_GENERATED_VERSION+')';
 
@@ -261,7 +270,6 @@ end;
 constructor TFHIRService.Create(const ASystemName, ADisplayName, AIniName: String);
 begin
   FStartTime := GetTickCount;
-  Consolelog := true;
   inherited create(ASystemName, ADisplayName);
   FIni := TFHIRServerIniFile.Create(AIniName);
 end;
@@ -276,7 +284,10 @@ end;
 function TFHIRService.CanStart: boolean;
 begin
   if not DebugMode then
+  begin
     filelog := true;
+    Consolelog := true;
+  end;
 
   result := false;
   try

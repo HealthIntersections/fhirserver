@@ -237,7 +237,7 @@ uses
   FHIRXhtml in '..\reference-platform\support\FHIRXhtml.pas',
   FHIRContext in '..\reference-platform\dstu2\FHIRContext.pas',
   XmlPatch in '..\reference-platform\support\XmlPatch.pas',
-  FHIRLog in 'FHIRLog.pas',
+  FHIRLog in '..\reference-platform\support\FHIRLog.pas',
   Logging in 'Logging.pas',
   FHIRAuthMap in '..\reference-platform\dstu2\FHIRAuthMap.pas',
   AdvZipWriters in '..\reference-platform\support\AdvZipWriters.pas',
