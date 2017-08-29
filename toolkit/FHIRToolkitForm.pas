@@ -431,6 +431,7 @@ function TMasterToolsForm.doSaveAs: boolean;
 var
   frame : TBaseFrame;
   ok : boolean;
+  fn, ext : String;
 begin
   result := false;
   frame := tbMain.ActiveTab.TagObject as TBaseFrame;
@@ -445,12 +446,20 @@ begin
         frame.work('Save As',
           procedure
           begin
-            if sdFile.FilterIndex = 0 then
-              ok := frame.saveAs(sdFile.Filename, ffXml)
+            fn := sdFile.Filename;
+            ext := ExtractFileExt(fn).ToLower;
+            if (ext = '.xml') then
+              ok := frame.saveAs(fn, ffXml)
+            else if (ext = '.json') then
+              ok := frame.saveAs(fn, ffJson)
+            else if (ext = '.ttl') then
+              ok := frame.saveAs(fn, ffTurtle)
             else if sdFile.FilterIndex = 1 then
-              ok := frame.saveAs(sdFile.Filename, ffJson)
+              ok := frame.saveAs(fn, ffXml)
             else if sdFile.FilterIndex = 2 then
-              ok := frame.saveAs(sdFile.Filename, ffTurtle)
+              ok := frame.saveAs(fn, ffJson)
+            else if sdFile.FilterIndex = 3 then
+              ok := frame.saveAs(fn, ffTurtle)
             else
               raise Exception.Create('Unknown format');
             addFileToList(sdFile.FileName);
