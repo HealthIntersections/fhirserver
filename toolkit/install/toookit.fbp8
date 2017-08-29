@@ -45,7 +45,7 @@ begin
         id = {0F85BD3E-237A-4675-9E67-5D73A445C023}
         manipulationtype = Add
         manipulationunit = Seconds
-        thedate = 42335.7506611574
+        thedate = 42976.9554015394
         usenow = true
       end
       action.gui.inputbox
@@ -63,7 +63,7 @@ begin
         as.defaultvalue = %npp-purpose%
         as.xpos = -1
         as.ypos = -1
-        as.returnvalue = "Fix Bug in OSX"
+        as.returnvalue = "fix release package"
         as.returnvariable = npp-purpose
       end
       action.variables.savetoini
@@ -98,6 +98,7 @@ begin
         id = {090E89B2-F656-41EE-BFAA-DF4B4535A231}
         logallvariables = false
         variablestoragestring = "BuildCount" +
+                                "BuildDate" +
                                 "FhirVersion" +
                                 "npp-purpose" +
                                 ""
@@ -618,6 +619,20 @@ begin
         xmlfile = C:\\work\\fhirserver\\toolkit\\install\\toolkit.rss
         xsltfile = C:\\work\\fhirserver\\toolkit\\install\\rssn.xslt
       end
+      action.textfile.create
+      begin
+        createdirectory = true
+        encoding = ANSI
+        filecontents = "   <td\>v0.0.%BuildCount%</td\>" +
+                       "   <td\>%BuildDate%</td\>" +
+                       "   <td\><a href\=\"http://www.healthintersections.com.au/FhirServer/fhir-toolkit-install-0.0.%BuildCount%.exe\"\><img src\=\"windows.ico\"\> Install (64)</a\></td\>" +
+                       "   <td\><a href\=\"http://www.healthintersections.com.au/FhirServer/fhir-toolkit-osx-0.0.%BuildCount%.zip\"\><img src\=\"apple.png\"\> App</a\></td\>" +
+                       ""
+        id = {058B75F6-AA98-47B9-A380-8070023C5CC4}
+        newfilename = C:\\work\\fhirserver\\toolkit\\install\\toolkit.inc
+        overwriteexisting = true
+        writebom = true
+      end
       action.ftp.upload.file
       begin
         allowgap = true
@@ -634,6 +649,30 @@ begin
         localdir = C:\\work\\fhirserver\\toolkit\\install
         recursive = false
         remotefile = public_html/FhirServer/toolkit.htm
+        retryifuploadfails = true
+        serverclockskew = 0
+        throttlespeed = 128
+        throttleupload = false
+        timeoutlength = 10
+        updateonly = false
+        usefilespec = true
+      end
+      action.ftp.upload.file
+      begin
+        allowgap = true
+        autoreconnect = true
+        autoupdateskew = true
+        checkfilesizes = false
+        connectionname = HealthIntersections
+        detailedlogging = false
+        enabletimeout = false
+        filespec = toolkit.inc
+        forcenextclockskewupdate = true
+        gaplength = 5
+        id = {8D12FAF4-6CB5-4F68-A7D1-EC2AFC06273B}
+        localdir = C:\\work\\fhirserver\\toolkit\\install
+        recursive = false
+        remotefile = public_html/FhirServer/toolkit.inc
         retryifuploadfails = true
         serverclockskew = 0
         throttlespeed = 128
@@ -670,6 +709,12 @@ begin
   begin
     name = certpword
     variablescope = vtProject
+  end
+  variable
+  begin
+    name = DateOfBuild
+    variablescope = vtProject
+    variabletype = btString
   end
   variable
   begin
