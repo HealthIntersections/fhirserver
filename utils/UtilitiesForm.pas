@@ -32,10 +32,10 @@ POSSIBILITY OF SUCH DAMAGE.
 interface
 
 uses
-  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.strUtils, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.Buttons, Vcl.ComCtrls, Vcl.StdCtrls,
   Vcl.ExtCtrls, Vcl.ImgList, FileSupport, SystemSupport, Inifiles, ShellSupport,
-  Vcl.Imaging.pngimage, Vcl.Imaging.jpeg, DifferenceEngine;
+  Vcl.Imaging.pngimage, Vcl.Imaging.jpeg, DifferenceEngine, Registry;
 
 type
   TForm4 = class(TForm)
@@ -147,6 +147,10 @@ type
     Label15: TLabel;
     edtCombinedStore: TEdit;
     btnCombinedStore: TSpeedButton;
+    Label20: TLabel;
+    cbUMLSDriver: TComboBox;
+    cbUMLSType: TComboBox;
+    Label21: TLabel;
     procedure btnDestinationClick(Sender: TObject);
     procedure btnSourceClick(Sender: TObject);
     procedure btnCloseClick(Sender: TObject);
@@ -169,6 +173,9 @@ type
     procedure Image1Click(Sender: TObject);
     procedure btnCombinedDestinationClick(Sender: TObject);
     procedure btnCombinedStoreClick(Sender: TObject);
+    procedure FormShow(Sender: TObject);
+    function GetODBCDriversList: TStrings;
+    procedure cbUMLSDriverChange(Sender: TObject);
   private
     { Private declarations }
     ini : TIniFile;
@@ -237,6 +244,8 @@ procedure TForm4.FormDestroy(Sender: TObject);
 begin
   ini.Free;
 end;
+
+
 
 procedure TForm4.btnCloseClick(Sender: TObject);
 begin
@@ -640,6 +649,10 @@ var
   db : TKDBManager;
   start : TDateTime;
 begin
+  if cbUMLSDriver.Text = '' then
+    ShowMessage('No Database Driver specified') else
+  if not MatchText(cbUMLSType.Text, ['mssql', 'mysql']) then
+    ShowMessage('No valid Server Type specified') else
   if edtUMLSServer.Text = '' then
     ShowMessage('No Server specified')
   else if edtUMLSDatabase.Text = '' then
@@ -664,8 +677,8 @@ begin
     btnProcessUMLS.enabled := false;
     btnUMLSClose.enabled := false;
     try
-// TO DO: Add MySQL option
-      db := TKDBOdbcDirect.create('umls', 4, 0, 'SQL Server Native Client 11.0', edtUMLSServer.text, edtUMLSDatabase.Text, edtUMLSUsername.Text, edtUMLSPassword.Text);
+
+      db := TKDBOdbcDirect.create('umls', 4, 0, cbUMLSDriver.Text, edtUMLSServer.text, edtUMLSDatabase.Text, edtUMLSUsername.Text, edtUMLSPassword.Text);
       generateRxStems(db, umlsCallback);
     finally
       cursor := crDefault;
@@ -696,6 +709,43 @@ begin
     abort;
 end;
 
+
+procedure TForm4.cbUMLSDriverChange(Sender: TObject);
+begin
+//
+cbUMLSType.itemindex:=-1;
+if (pos('MySQL',cbUMLSDriver.text)<>0) then cbUMLSType.itemIndex:=1;
+if (pos('SQL Server',cbUMLSDriver.text)<>0) then cbUMLSType.itemIndex:=0;
+
+end;
+
+
+procedure TForm4.FormShow(Sender: TObject);
+begin
+cbUMLSDriver.items.Assign(GetODBCDriversList);
+end;
+
+
+function TForm4.GetODBCDriversList: TStrings;
+var
+  aStringlist   : TStringlist;
+  aRegistry   : TRegistry;
+Begin
+  aStringlist:= Tstringlist.Create;
+  aRegistry:= TRegistry.Create;
+  Result:= Tstringlist.Create;
+
+  with aRegistry do
+  Begin
+    rootkey:= HKEY_LOCAL_MACHINE;
+    OpenKey('Software\ODBC\ODBCINST.INI\ODBC Drivers',False);
+    GetValueNames(aStringlist);
+  End;
+  aRegistry.Free;
+  aStringlist.Sort;
+  result.AddStrings(aStringlist);
+  aStringlist.Free;
+End;
 
 
 
