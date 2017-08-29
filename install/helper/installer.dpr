@@ -108,13 +108,28 @@ var
   rex : TRegex;
   i : integer;
 Begin
-  if name = 'dbcfg-drivers' then
+  if name = 'dbcfg-drivers' then // for mssql
   begin
     result := '';
     odbc := TOEAdministrator.create(THenv.create);
     try
       odbc.DataSourceType := dsSystem;
       rex := TRegEx.create('^.*sql.*$', [roCompiled]);
+      for i := 0 to odbc.Drivers.count - 1  do
+        if rex.isMatch(lowercase(odbc.Drivers[i])) then
+          CommaAdd(result, ansiString(odbc.Drivers[i]));
+//      showmessage('drivers = '+result);
+    finally
+      odbc.free;
+    end;
+  end
+  else if name = 'dbcfg-drivers-mysql' then
+  begin
+    result := '';
+    odbc := TOEAdministrator.create(THenv.create);
+    try
+      odbc.DataSourceType := dsSystem;
+      rex := TRegEx.create('^.*mysql.*$', [roCompiled]);
       for i := 0 to odbc.Drivers.count -1  do
         if rex.isMatch(lowercase(odbc.Drivers[i])) then
           CommaAdd(result, ansiString(odbc.Drivers[i]));
@@ -124,6 +139,7 @@ Begin
     end;
   end
   else
+
     result := 'Unknown ('+name+')';
 end;
 
