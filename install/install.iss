@@ -1,4 +1,5 @@
 ﻿[Setup]
+[Setup]
 ; identification.
 ; AppID can never be changed as subsequent installations require the same installation ID each time
 AppID=FHIRServer
@@ -150,6 +151,7 @@ var
   cbxStartup : TNewComboBox;
 
   ConnectionPage : TInputQueryWizardPage;
+  dbDriver : TNewComboBox;
   dbType : TNewComboBox;
 
   WebPage : TWizardPage;
@@ -177,7 +179,7 @@ type
   TMyCallback = procedure(IntParam: Integer; StrParam: WideString);
 
 Function MyDllGetString(name : pansichar) : pansichar; external 'MyDllGetString@files:installer.dll stdcall setuponly';
-Function MyDllCheckDatabase(DBType, Server, Database, Username, Password, Version : PAnsiChar) : PAnsiChar; external 'MyDllCheckDatabase@files:installer.dll stdcall setuponly';
+Function MyDllCheckDatabase(DBDriver, Server, Database, Username, Password, Version : PAnsiChar) : PAnsiChar; external 'MyDllCheckDatabase@files:installer.dll stdcall setuponly';
 Function MyDllInstallSnomed(ExeName, Source, Dest, Version : PAnsiChar; callback : TMyCallback) : PAnsiChar; external 'MyDllInstallSnomed@files:installer.dll stdcall setuponly';
 Function MyDllInstallDatabase(ExeName, IniName, Password : PAnsiChar; load : PAnsiChar; callback : TMyCallback) : PAnsiChar; external 'MyDllInstallDatabase@files:installer.dll stdcall setuponly';
 
@@ -853,6 +855,11 @@ End;
 
 
 
+procedure dbDriver_OnChange(Sender: TObject);
+begin
+if (pos('MySQL',dbdriver.text)<>0) then dbtype.itemIndex:=1;
+if (pos('SQL Server',dbdriver.text)<>0) then dbtype.itemIndex:=0;
+end;
 
 Procedure CreateServiceUserPage;
 var
@@ -917,6 +924,7 @@ var
   dbtypestr, s : String;
   p : integer;
 begin
+
   if (CurpageID = ServicePage.Id) Then
   Begin
     // check service page entries
@@ -937,9 +945,10 @@ begin
       ConnectionPage.values[1] := GetIniString('database', 'database', '', ExpandConstant('{app}')+'\fhirserver.ini');
       ConnectionPage.values[2] := GetIniString('database', 'username', '', ExpandConstant('{app}')+'\fhirserver.ini');
       ConnectionPage.values[3] := GetIniString('database', 'password', '', ExpandConstant('{app}')+'\fhirserver.ini');
-      ConnectionPage.values[4] := GetIniString('database', 'driver', '', ExpandConstant('{app}')+'\fhirserver.ini');
-dbtype.itemindex:=0; if GetIniString('database', 'type', '', ExpandConstant('{app}')+'\fhirserver.ini')='mysql' then dbtype.itemindex:=1;
+      dbDriver.itemindex:=dbDriver.items.indexof(GetIniString('database', 'driver', '', ExpandConstant('{app}')+'\fhirserver.ini'));
 
+      if (GetIniString('database', 'type', '', ExpandConstant('{app}')+'\fhirserver.ini') = '') then dbDriver_OnChange(dbDriver) else
+      dbType.itemindex:=dbType.items.indexof(GetIniString('database', 'type', '', ExpandConstant('{app}')+'\fhirserver.ini'));
 
       webHostName.Text := GetIniString('web', 'host', '', ExpandConstant('{app}')+'\fhirserver.ini');
       webOpenPort.Text := GetIniString('web', 'http', '', ExpandConstant('{app}')+'\fhirserver.ini');
@@ -956,20 +965,12 @@ dbtype.itemindex:=0; if GetIniString('database', 'type', '', ExpandConstant('{ap
   End
   Else if (ConnectionPage <> Nil) And (CurPageID = ConnectionPage.ID) then
   begin
-if dbtype.itemIndex=0 then dbtypestr:= 'mssql';
-if dbtype.itemIndex=1 then dbtypestr:= 'mysql';
-
-if ConnectionPage.Values[4]='' then begin
-if dbtype.itemIndex=0 then ConnectionPage.Values[4]:= 'SQL Server Native Client 11.0';
-if dbtype.itemIndex=1 then ConnectionPage.Values[4]:= 'MySQL ODBC 5.3 Unicode Driver';
-end;
-
 
 
     if IsComponentSelected('r3') then
-      s := MyDllCheckDatabase(dbtypestr, ConnectionPage.values[0], ConnectionPage.values[1], ConnectionPage.values[2], ConnectionPage.values[3], '3.0.1')
+      s := MyDllCheckDatabase(dbDriver.text, ConnectionPage.values[0], ConnectionPage.values[1], ConnectionPage.values[2], ConnectionPage.values[3], '3.0.1')
     else
-      s := MyDllCheckDatabase(dbtypestr, ConnectionPage.values[0], ConnectionPage.values[1], ConnectionPage.values[2], ConnectionPage.values[3], '1.0.2');
+      s := MyDllCheckDatabase(dbDriver.text, ConnectionPage.values[0], ConnectionPage.values[1], ConnectionPage.values[2], ConnectionPage.values[3], '1.0.2');
     result := s = '';
     if not result then
       if (s = 'dbi') then
@@ -1289,6 +1290,11 @@ var
   shrinkspace: integer;
   index:integer;
 
+  Names: TArrayOfString;
+  Ii: Integer;
+  Ss: String;
+
+
 Begin
 
   shrinkSpace:=scalex(8);    //move each edit a few pixels off so that they fit
@@ -1298,22 +1304,46 @@ Begin
   ConnectionPage.add('Database', false);
   ConnectionPage.add('UserName', false);
   ConnectionPage.add('Password', true);
-  ConnectionPage.add('Driver (default = SQL Server Native Client 11.0 / MySQL ODBC 5.3 Unicode Driver)', false);
+//  ConnectionPage.add('Driver (default = SQL Server Native Client 11.0 / MySQL ODBC 5.3 Unicode Driver)', false);
+
+
+
+  dbDriver := TNewComboBox.Create(ConnectionPage);
+  dbDriver.Width := ConnectionPage.SurfaceWidth;
+  dbDriver.Parent := ConnectionPage.Surface;
+  dbDriver.Style := csDropDownList;
+
+  dbDriver.OnChange := @dbDriver_OnChange;
 
 
   dbType := TNewComboBox.Create(ConnectionPage);
   dbType.Width := ConnectionPage.SurfaceWidth;
   dbType.Parent := ConnectionPage.Surface;
   dbType.Style := csDropDownList;
-  dbType.Items.Add('Microsoft SQL Server');
-  dbType.Items.Add('MySQL or MariaDB');
-//  dbType.ItemIndex:=0);
+  dbtype.enabled:=false;
 
 
-for index:=0 to 4 do begin
+
+  if RegGetSubkeyNames(HKLM, 'SOFTWARE\ODBC\ODBCINST.INI', Names) then
+  begin
+    for iI := 0 to GetArrayLength(Names)-1 do
+       dbDriver.Items.Add(Names[Ii]);
+  end else
+  begin
+    // add any code to handle failure here
+  end;
+
+       dbType.Items.Add('mssql');
+       dbType.Items.Add('mysql');
+
+for index:=0 to 3 do begin
   ConnectionPage.Edits[Index].Top := ConnectionPage.Edits[Index].Top - ShrinkSpace*(index);
   ConnectionPage.PromptLabels[Index].Top := ConnectionPage.PromptLabels[Index].Top - ShrinkSpace*(index) +2;
 end;
+
+
+  dbtype.top:= ConnectionPage.PromptLabels[3].Top + ConnectionPage.PromptLabels[3].Top - ConnectionPage.PromptLabels[2].Top
+
 
 
 
@@ -1433,7 +1463,7 @@ begin
     SetIniString('database', 'database', ConnectionPage.Values[1], ExpandConstant('{app}')+'\fhirserver.ini');
     SetIniString('database', 'username', ConnectionPage.Values[2], ExpandConstant('{app}')+'\fhirserver.ini');
     SetIniString('database', 'password', ConnectionPage.Values[3], ExpandConstant('{app}')+'\fhirserver.ini');
-    SetIniString('database', 'driver', ConnectionPage.Values[4], ExpandConstant('{app}')+'\fhirserver.ini');
+    SetIniString('database', 'driver', dbDriver.text, ExpandConstant('{app}')+'\fhirserver.ini');
  if dbType.ItemIndex=0 then SetIniString('database', 'type',  'mssql' , ExpandConstant('{app}')+'\fhirserver.ini');
  if dbType.ItemIndex=1 then SetIniString('database', 'type',  'mysql' , ExpandConstant('{app}')+'\fhirserver.ini');
     
@@ -1524,6 +1554,9 @@ var
   noauto : integer;
   disp : string;
 Begin
+
+
+
   if (CurStep = ssInstall) Then
   Begin
     if ServiceExists('FHIRServer') Then
@@ -1538,6 +1571,8 @@ Begin
     if IsTaskSelected('sct') Then
       LoadSnomed;
     if IsTaskSelected('db') Then
+
+
        InitialiseDatabase(isTaskSelected('db\pop'));                                                        
     if IsTaskSelected('svcInst') Then
     begin
@@ -1570,4 +1605,5 @@ Begin
     RemoveFirewallException(ExpandConstant('{app}')+'FHIRServer.exe');
   End;
 End;
+
 
