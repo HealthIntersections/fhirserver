@@ -133,7 +133,8 @@ uses
   SettingsDialog in 'SettingsDialog.pas' {SettingsForm},
   AboutDialog in 'AboutDialog.pas' {AboutForm},
   OSXUIUtils in '..\Libraries\ui\OSXUIUtils.pas',
-  ValuesetSelectDialog in 'ValuesetSelectDialog.pas' {ValuesetSelectForm};
+  ValuesetSelectDialog in 'ValuesetSelectDialog.pas' {ValuesetSelectForm},
+  MemoEditorDialog in 'MemoEditorDialog.pas' {MemoEditorForm};
 
 {$R *.res}
 

@@ -12,8 +12,7 @@ uses
   AdvGenerics,
   FHIRBase, FHIRConstants, FHIRTypes, FHIRResources, FHIRUtilities, FHIRIndexBase, FHIRIndexInformation, FHIRSupport,
   BaseResourceFrame,
-  SearchParameterEditor, ListSelector, AddRestResourceDialog, ValuesetExpansion, ValuesetSelectDialog,
-  Soap.SOAPDomConv, Soap.OPToSOAPDomConv;
+  SearchParameterEditor, ListSelector, AddRestResourceDialog, ValuesetExpansion, ValuesetSelectDialog, MemoEditorDialog;
 
 type
   TFrame = TBaseResourceFrame; // re-aliasing the Frame to work around a designer bug
@@ -141,6 +140,10 @@ type
     btnAddParameter: TButton;
     btnDeleteParameter: TButton;
     btnSelectConcepts: TButton;
+    btnMemoForDesc: TButton;
+    btnMemoPurpose: TButton;
+    btnMemoCopyright: TButton;
+    VertScrollBox2: TVertScrollBox;
     procedure tvStructureClick(Sender: TObject);
     procedure inputChanged(Sender: TObject);
     procedure btnFlipComposeClick(Sender: TObject);
@@ -190,6 +193,9 @@ type
     procedure rbListClick(Sender: TObject);
     procedure rbFilterClick(Sender: TObject);
     procedure btnSelectConceptsClick(Sender: TObject);
+    procedure btnMemoForDescClick(Sender: TObject);
+    procedure btnMemoPurposeClick(Sender: TObject);
+    procedure btnMemoCopyrightClick(Sender: TObject);
   private
     tvCompose, tvExpansion : TTreeViewItem;
     function GetValueSet: TFHIRValueSet;
@@ -563,6 +569,16 @@ begin
   gridIdentifiers.RowCount := ValueSet.identifierList.count;
 end;
 
+procedure TValueSetEditorFrame.btnMemoCopyrightClick(Sender: TObject);
+begin
+  editMemo(self, 'ValueSet Copyright', edtCopyright);
+end;
+
+procedure TValueSetEditorFrame.btnMemoForDescClick(Sender: TObject);
+begin
+  editMemo(self, 'ValueSet Description', edtDescription);
+end;
+
 procedure TValueSetEditorFrame.btnSelectConceptsClick(Sender: TObject);
 var
   form : TValuesetSelectForm;
@@ -599,6 +615,11 @@ begin
   finally
     form.Free;
   end;
+end;
+
+procedure TValueSetEditorFrame.btnMemoPurposeClick(Sender: TObject);
+begin
+  editMemo(self, 'ValueSet Purpose', edtPurpose);
 end;
 
 procedure TValueSetEditorFrame.btnExpandClick(Sender: TObject);

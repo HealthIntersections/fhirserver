@@ -68,6 +68,7 @@ type
     MenuItem4: TMenuItem;
     MenuItem6: TMenuItem;
     mnuHelpAbout: TMenuItem;
+    btnCopy: TButton;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure lbServersClick(Sender: TObject);
@@ -91,6 +92,7 @@ type
     procedure btnSettingsClick(Sender: TObject);
     procedure btnStopClick(Sender: TObject);
     procedure mnuHelpAboutClick(Sender: TObject);
+    procedure btnCopyClick(Sender: TObject);
   private
     { Private declarations }
     FIni : TIniFile;
@@ -201,6 +203,16 @@ begin
   finally
     client.Free;
   end;
+end;
+
+procedure TMasterToolsForm.btnCopyClick(Sender: TObject);
+var
+  Svc: IFMXClipboardService;
+begin
+  if TPlatformServices.Current.SupportsPlatformService(IFMXClipboardService, Svc) then
+    Svc.SetClipboard(lbFiles.Items[lbFiles.ItemIndex])
+  else
+    Beep;
 end;
 
 procedure TMasterToolsForm.btnNewClick(Sender: TObject);
@@ -665,6 +677,7 @@ procedure TMasterToolsForm.lbFilesClick(Sender: TObject);
 begin
   btnReopen.Enabled := lbFiles.ItemIndex >= 0;
   btnRemoveFile.Enabled := lbFiles.ItemIndex >= 0;
+  btnCopy.Enabled := lbFiles.ItemIndex >= 0;
 end;
 
 procedure TMasterToolsForm.lbServersClick(Sender: TObject);
