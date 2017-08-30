@@ -733,7 +733,7 @@ begin
 
     if FConn.owner.platform = kdbMySQL then
     begin
-      FConn.ExecSQL('ALTER TABLE IndexEntries MODIFY Xhtml LONGTEXT;');
+//      FConn.ExecSQL('ALTER TABLE IndexEntries MODIFY Xhtml LONGTEXT;');
       FConn.ExecSQL('ALTER TABLE IndexEntries ADD FULLTEXT INDEX `PK_IndexEntries` (Xhtml);');
     end;
     if FConn.owner.platform = kdbSQLServer then

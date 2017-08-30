@@ -167,6 +167,10 @@ begin
     begin
     Result := kdbMySQL
     end
+  else if ADriverDesc = 'mariadb odbc 3.0 driver' then
+    begin
+    Result := kdbMySQL
+    end
   else
     begin
     // standard Kestral names
@@ -308,7 +312,7 @@ begin
     kdbInterbase: Result := '';
     kdbDB2: Result := '';
     kdbOracle8: Result := '';
-    kdbMySQL: Result := 'MySQL ODBC 5.3 Unicode Driver';
+    kdbMySQL: Result := 'MariaDB ODBC 3.0 Driver';
     kdbASA: result := 'Adaptive Server Anywhere';
     kdbSybase12: Result := 'Sybase ASE ODBC Driver';
   else
@@ -529,13 +533,17 @@ begin
     kdbInterbase: Result := 'blob';
     kdbDB2: Result := 'blob';
     kdbOracle8: Result := 'blob default empty_blob()';
-    kdbMySQL: Result := 'LongBlob';
+    kdbMySQL: Result := 'LONGTEXT';
   else
     begin
     raise Exception.Create('Internal Error in Database Configuration, Database Platform in Error');
     end;
   end;
 end;
+
+
+
+
 
 function DBBlobStorageType(ADBPlatform: TKDBPlatform; ADBColumnName: String): String;
 begin
