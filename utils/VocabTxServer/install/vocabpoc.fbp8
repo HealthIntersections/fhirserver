@@ -63,7 +63,7 @@ begin
         as.defaultvalue = %npp-purpose%
         as.xpos = -1
         as.ypos = -1
-        as.returnvalue = "First actual Release"
+        as.returnvalue = "OSX Release"
         as.returnvariable = npp-purpose
       end
       action.variables.savetoini
@@ -135,12 +135,12 @@ begin
         compileridl = true
         configname = Release
         debugversionnumbers = false
-        delphiversion = Delphi10Berlin
-        description = "Compile the Server"
+        delphiversion = Delphi10Tokyo
+        description = "Compile the Server (Win64)"
         eurekalogverboselogging = false
         frameworktype = VCL
         hintsaserror = false
-        iconfile = C:\\work\\fhirserver\\utils\\VocabTxServer\\VocabTxServer_Icon.ico
+        iconfile = C:\\work\\fhirserver\\utils\\VocabTxServer\\mainicon.ico
         id = {217F3077-B26C-48A2-B7CF-5FE7B5106B4B}
         includecompiledate = false
         includemanifest = false
@@ -156,6 +156,7 @@ begin
         majorversion = 1
         minorversion = 0
         platform = Win64
+        platformsdktype = ProjectSDK
         projectfile = C:\\work\\fhirserver\\utils\\VocabTxServer\\VocabTxServer.dpr
         regenerateresource = true
         releaseversion = 0
@@ -168,6 +169,7 @@ begin
         useprojectsettings = []
         usepropertyset = false
         useversionfromdof = false
+        verboseoutput = false
         versioninfokeys = "CompanyName\=" +
                           "FileDescription\=" +
                           "FileVersion\=1.0.0.1" +
@@ -221,6 +223,127 @@ begin
           openstrings = true
           optimisation = true
           outputdir = C:\\work\\fhirserver\\utils\\VocabTxServer\\install
+          overflowchecking = false
+          packages = vcl;rtl;dbrtl;adortl;vcldb;vclx;bdertl;vcldbx;ibxpress;dsnap;cds;bdecds;qrpt;teeui;teedb;tee;dss;teeqr;visualclx;visualdbclx;dsnapcrba;dsnapcon;vclsmp;vclshlctrls;vclie;xmlrtl;inet;inetdbbde;inetdbxpress;inetdb;nmfast;webdsnap;websnap;soaprtl;dbexpress;dbxcds;indy;dcloffice2k;doci6;cooltrayicon_d6plus;curlpkg;thememanagerd6;virtualtreesd6;jcl;jclvcl;jvcored6r;jvsystemd6r;jvstdctrlsd6r;jvappfrmd6r;jvbandsd6r;jvdbd6r;jvdlgsd6r;jvbded6r;jvcmpd6r;jvcryptd6r;jvctrlsd6r;jvcustomd6r;jvdockingd6r;jvdotnetctrlsd6r;jvedid6r;jvglobusd6r;jvhmid6r;jvinterpreterd6r;jvjansd6r;jvmanagedthreadsd6r;jvmmd6r;jvnetd6r;jvpagecompsd6r;jvplugind6r;jvprintpreviewd6r;jvruntimedesignd6r;jvtimeframeworkd6r;jvuibd6r;jvvalidatorsd6r;jvwizardd6r;jvxpctrlsd6r
+          rangechecking = false
+          recordfieldalign = fa8
+          referenceinfo = false
+          safedivide = false
+          searchpath = $(DELPHI)\\Lib\\Debug;C:\\PROGRA~1\\Jedi\\jcl\\lib\\d6\\debug;C:\\work\\Components\\treeview\\Source
+          showhints = true
+          showwarnings = true
+          stackframes = false
+          stringchecks = true
+          typedpointers = false
+          unitaliases = WinTypes\=Windows;WinProcs\=Windows;DbiTypes\=BDE;DbiProcs\=BDE;DbiErrs\=BDE
+          unitoutputdir = C:\\work\\fhirserver\\utils\\VocabTxServer\\install\\units
+          usedebugdcu = false
+          usepackages = false
+          varstringchecks = true
+        end
+      end
+      action.delphi.build
+      begin
+        allowimplicitimport = true
+        alwaysuseconditionalsfromdof = false
+        autoincbuild = false
+        autoupdatefileversion = true
+        autoupdateproductversion = false
+        buildall = true
+        buildversion = 1
+        codepage = 1252
+        compileprojectresources = false
+        compileridl = true
+        configname = Release
+        debugversionnumbers = false
+        delphiversion = Delphi10Tokyo
+        description = "Compile the Server (OSX)"
+        eurekalogverboselogging = false
+        frameworktype = VCL
+        hintsaserror = false
+        iconfile = C:\\work\\fhirserver\\utils\\VocabTxServer\\mainicon.ico
+        id = {0BA1029F-F898-43B0-8236-274ED8BC9977}
+        includecompiledate = false
+        includemanifest = false
+        includeverinfo = true
+        isdebug = false
+        isdll = false
+        isprerelease = false
+        isprivate = false
+        isspecial = false
+        keepcfg = false
+        linkproductversiontofileversion = true
+        locale = 1033
+        majorversion = 1
+        minorversion = 0
+        platform = OSX32
+        platformsdktype = ProjectSDK
+        projectfile = C:\\work\\fhirserver\\utils\\VocabTxServer\\VocabTxServer.dpr
+        regenerateresource = true
+        releaseversion = 0
+        resourcecompilertype = rcBorland
+        startingdir = C:\\work\\fhirserver\\utils\\VocabTxServer\\
+        updatedoffile = false
+        updatepackagesource = false
+        updateversioninfokeys = false
+        useeurekalogcompiler = false
+        useprojectsettings = []
+        usepropertyset = false
+        useversionfromdof = false
+        verboseoutput = false
+        versioninfokeys = "CompanyName\=" +
+                          "FileDescription\=" +
+                          "FileVersion\=1.0.0.1" +
+                          "InternalName\=" +
+                          "LegalCopyright\=" +
+                          "LegalTrademarks\=" +
+                          "OriginalFilename\=" +
+                          "ProductName\=" +
+                          "ProductVersion\=1.0.0.0" +
+                          "Comments\=" +
+                          ""
+        warningsaserror = false
+        workaroundd5bug = false
+        delphi.compileroptions
+        begin
+          alwaysuseconditionalsfromdof = false
+          alwaysusedelphilibrarypath = true
+          alwaysusedofsearchpath = false
+          assertions = true
+          assignableconst = false
+          booleval = false
+          compilerwarnings = "-w-UNSAFE_TYPE\=0" +
+                             "-w-UNSAFE_CODE\=0" +
+                             "-w-UNSAFE_CAST\=0" +
+                             ""
+          conditionals = RELEASE;FHIR4
+          consoleapp = false
+          debuginfo = false
+          definitionsonly = false
+          emitruntimetypeinformation = false
+          exportallsymbols = false
+          extendedsyntax = true
+          externaltd32 = false
+          frameworktype = FMX
+          generatedocumentation = false
+          generatehpp = false
+          hugestrings = true
+          imagebase = 4194304
+          includenamespaces = false
+          includeremotesymbols = false
+          includetd32 = false
+          inlining = inOn
+          iochecking = true
+          librarypath = $(BDSLIB)\\win32\\release;$(BDSUSERDIR)\\Imports;$(BDS)\\Imports;$(BDSCOMMONDIR)\\Dcp\\win32;$(BDS)\\include;C:\\work\\fhirserver\\Libraries\\jcl;C:\\work\\Components\\vtree\\Source
+          linkeroutput = 0
+          localsymbols = false
+          mapfile = 0
+          maxstacksize = 1048576
+          minstacksize = 16384
+          namespaceprefixes = System;Xml;Data;Datasnap;Web;Soap;System.Mac;Macapi;Posix;FMX;
+          openstrings = true
+          optimisation = true
+          outputdir = C:\\work\\fhirserver\\utils\\VocabTxServer\\install\\osx\\VocabTxServer.app\\Contents\\MacOS
           overflowchecking = false
           packages = vcl;rtl;dbrtl;adortl;vcldb;vclx;bdertl;vcldbx;ibxpress;dsnap;cds;bdecds;qrpt;teeui;teedb;tee;dss;teeqr;visualclx;visualdbclx;dsnapcrba;dsnapcon;vclsmp;vclshlctrls;vclie;xmlrtl;inet;inetdbbde;inetdbxpress;inetdb;nmfast;webdsnap;websnap;soaprtl;dbexpress;dbxcds;indy;dcloffice2k;doci6;cooltrayicon_d6plus;curlpkg;thememanagerd6;virtualtreesd6;jcl;jclvcl;jvcored6r;jvsystemd6r;jvstdctrlsd6r;jvappfrmd6r;jvbandsd6r;jvdbd6r;jvdlgsd6r;jvbded6r;jvcmpd6r;jvcryptd6r;jvctrlsd6r;jvcustomd6r;jvdockingd6r;jvdotnetctrlsd6r;jvedid6r;jvglobusd6r;jvhmid6r;jvinterpreterd6r;jvjansd6r;jvmanagedthreadsd6r;jvmmd6r;jvnetd6r;jvpagecompsd6r;jvplugind6r;jvprintpreviewd6r;jvruntimedesignd6r;jvtimeframeworkd6r;jvuibd6r;jvvalidatorsd6r;jvwizardd6r;jvxpctrlsd6r
           rangechecking = false
@@ -300,10 +423,32 @@ begin
         usecommandline = true
         usepreprocessor = false
       end
-      action.delay
+      action.7zip.create
       begin
-        delay = 5000
-        id = {09771FF6-15E3-45B4-A126-FB1C5E483552}
+        archivename = C:\\work\\fhirserver\\utils\\VocabTxServer\\install\\vocabpoc-osx-0.0.%BuildCount%.zip
+        archivetype = zZip
+        compressionlevel = clUltra
+        createsfxarchive = false
+        description = "Build OSX installer"
+        enabletimeout = false
+        expandimpersonationtoken = false
+        fileslist = "C:\\work\\fhirserver\\utils\\VocabTxServer\\install\\osx\\*.*" +
+                    ""
+        id = {711301E7-8F96-4F4F-ACF7-F6D1B822D112}
+        ifarchiveexists = exUpdate
+        impersonateusenetcredonly = false
+        impersonateuser = false
+        logprocessparameters = true
+        multithreaded = false
+        recurse = zrOn
+        rootdirectory = C:\\work\\fhirserver\\toolkit\\install\\
+        solidmode = true
+        terminateontimeout = false
+        timeoutlength = 2
+        useerrordialogmonitor = false
+        usevolumesize = false
+        volumesize = 4000
+        volumesizeunits = m
       end
       action.process.execute
       begin
@@ -373,6 +518,30 @@ begin
         updateonly = false
         usefilespec = true
       end
+      action.ftp.upload.file
+      begin
+        allowgap = true
+        autoreconnect = true
+        autoupdateskew = true
+        checkfilesizes = false
+        connectionname = HealthIntersections
+        detailedlogging = false
+        enabletimeout = false
+        filespec = vocabpoc-osx-0.0.%BuildCount%.zip
+        forcenextclockskewupdate = true
+        gaplength = 5
+        id = {8291D4AA-4069-4256-ABF6-08D8A33AA442}
+        localdir = C:\\work\\fhirserver\\utils\\VocabTxServer\\install
+        recursive = false
+        remotefile = public_html/FhirServer/vocabpoc-osx-0.0.%BuildCount%.zip
+        retryifuploadfails = true
+        serverclockskew = 0
+        throttlespeed = 128
+        throttleupload = false
+        timeoutlength = 10
+        updateonly = false
+        usefilespec = true
+      end
       action.xml.node.create
       begin
         addnewline = true
@@ -385,11 +554,12 @@ begin
         insertat = inAfterXPath
         insertatxpath = /rss/channel/link
         nodename = item
-        nodetext = "" +
-                   "      <title\>Vocab PoC Terminology Server release 0.0.%BuildCount% %BuildDate%</title\>" +
+        nodetext = "      <title\>Vocab PoC Terminology Server release 0.0.%BuildCount% %BuildDate%</title\>" +
                    "      <link\>http://www.healthintersections.com.au/FhirServer/vocabpoc-install-0.0.%BuildCount%.exe</link\>" +
+                   "      <mlink\>http://www.healthintersections.com.au/FhirServer/vocabpoc-osx-0.0.%BuildCount%.zip</mlink\>" +
                    "      <description\>%BuildDate% (v0.0.%BuildCount%): %npp-purpose%</description\>" +
-                   "" +
+                   "      <ptitle\>0.0.%BuildCount%, %BuildDate%</ptitle\>" +
+                   "      <comment\>%npp-purpose%</comment\>" +
                    ""
         parentxpath = /rss/channel
         parserver = HighestMSXML
@@ -406,7 +576,7 @@ begin
         id = {0332261A-0FBA-47CB-A1B9-B8ABA26A4AD0}
         inifile = C:\\work\\ftp.ini
         saveall = false
-        sectionname = npp-settings
+        sectionname = vpoc-settings
         variables = "BuildCount" +
                     ""
       end
@@ -447,7 +617,45 @@ begin
         usexmldocobject = false
         validateonparse = true
         xmlfile = C:\\work\\fhirserver\\utils\\VocabTxServer\\install\\vocabpoc.rss
-        xsltfile = C:\\work\\fhirserver\\install\\rssn.xslt
+        xsltfile = C:\\work\\fhirserver\\toolkit\\install\\rssn.xslt
+      end
+      action.textfile.create
+      begin
+        createdirectory = true
+        encoding = ANSI
+        filecontents = "   <td\>v0.0.%BuildCount%</td\>" +
+                       "   <td\>%BuildDate%</td\>" +
+                       "   <td\><a href\=\"http://www.healthintersections.com.au/FhirServer/vocabpoc-install-0.0.%BuildCount%.exe\"\><img src\=\"windows.ico\"\> Install (64)</a\></td\>" +
+                       "   <td\><a href\=\"http://www.healthintersections.com.au/FhirServer/vocabpoc-osx-0.0.%BuildCount%.zip\"\><img src\=\"apple.png\"\> App</a\></td\>" +
+                       ""
+        id = {8412312A-E16E-49E2-AB55-57A1952ED208}
+        newfilename = C:\\work\\fhirserver\\utils\\VocabTxServer\\install\\vocabpoc.inc
+        overwriteexisting = true
+        writebom = true
+      end
+      action.ftp.upload.file
+      begin
+        allowgap = true
+        autoreconnect = true
+        autoupdateskew = true
+        checkfilesizes = false
+        connectionname = HealthIntersections
+        detailedlogging = false
+        enabletimeout = false
+        filespec = vocabpoc.inc
+        forcenextclockskewupdate = true
+        gaplength = 5
+        id = {854F2FA2-2018-4854-B543-E3DCBC8A7DA3}
+        localdir = C:\\work\\fhirserver\\utils\\VocabTxServer\\install
+        recursive = false
+        remotefile = public_html/FhirServer/vocabpoc.inc
+        retryifuploadfails = true
+        serverclockskew = 0
+        throttlespeed = 128
+        throttleupload = false
+        timeoutlength = 10
+        updateonly = false
+        usefilespec = true
       end
       action.ftp.upload.file
       begin
@@ -530,5 +738,11 @@ begin
     name = npp-purpose
     variablescope = vtProject
     variabletype = btString
+  end
+  variable
+  begin
+    defaultvalue = "C:\\Users\\Grahame Grieve\\Documents\\Embarcadero\\Studio\\SDKs"
+    name = SDKROOT
+    variablescope = vtProject
   end
 end

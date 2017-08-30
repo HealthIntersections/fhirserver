@@ -9,6 +9,7 @@ uses
   {$IFDEF MSWINDOWS}
   AfsResourceVolumes in '..\..\reference-platform\support\AfsResourceVolumes.pas',
   AdvWinInetClients in '..\..\reference-platform\support\AdvWinInetClients.pas',
+  MsXmlParser in '..\..\reference-platform\support\MsXmlParser.pas',
   {$ENDIF }
   CDSHooksClientManager in '..\..\reference-platform\support\CDSHooksClientManager.pas',
   FileSupport in '..\..\reference-platform\support\FileSupport.pas',
@@ -200,8 +201,7 @@ uses
   vpocversion in 'vpocversion.pas',
   FHIRIndexBase in '..\..\reference-platform\support\FHIRIndexBase.pas',
   AdvThreads in '..\..\reference-platform\support\AdvThreads.pas',
-  SCrypt in '..\..\Libraries\security\SCrypt.pas',
-  MsXmlParser in '..\..\reference-platform\support\MsXmlParser.pas';
+  SCrypt in '..\..\Libraries\security\SCrypt.pas';
 
 {$R *.res}
 

@@ -8,7 +8,7 @@
 AppId={{9FD61024-BC9A-4226-ADA5-E72254250B6C}
 AppName=Vocab PoC Terminology Server
 AppVersion=0.1
-AppVerName=0.0.1 (FHIR Version 1.0.2.7475)
+AppVerName=0.0.3 (FHIR Version 1.0.2.7475)
 AppPublisher=Health Intersections
 AppPublisherURL=http://www.healthintersections.com.au/FhirServer
 AppSupportURL=http://www.healthintersections.com.au/FhirServer
@@ -18,7 +18,7 @@ DefaultGroupName=Vocab PoC Terminology Server
 AllowNoIcons=yes
 LicenseFile=C:\work\fhirserver\utils\VocabTxServer\licence.txt
 OutputDir=C:\work\fhirserver\utils\VocabTxServer\install
-OutputBaseFilename=vocabpoc-install-0.0.1
+OutputBaseFilename=vocabpoc-install-0.0.3
 SetupIconFile=C:\work\fhirserver\utils\VocabTxServer\VocabTxServer_Icon.ico
 Compression=lzma
 SolidCompression=yes
@@ -30,10 +30,10 @@ Name: "english"; MessagesFile: "compiler:Default.isl"
 
 [Files]
 Source: "C:\work\fhirserver\utils\VocabTxServer\install\VocabTxServer.exe"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\work\fhirserver\utils\VocabTxServer\Win64\Debug\web.zip"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\work\fhirserver\utils\VocabTxServer\Win64\Debug\ucum-essence.xml"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\work\fhirserver\utils\VocabTxServer\Win64\Debug\loinc_261.cache"; DestDir: "{app}"; Flags: ignoreversion
-; NOTE: Don't use "Flags: ignoreversion" on any shared system files
+Source: "C:\work\fhirserver\utils\VocabTxServer\install\osx\VocabTxServer.app\Contents\MacOS\ucum-essence.xml"; DestDir: "{app}"; Flags: ignoreversion
+Source: "C:\work\fhirserver\utils\VocabTxServer\install\osx\VocabTxServer.app\Contents\MacOS\web.zip"; DestDir: "{app}"; Flags: ignoreversion
+Source: "C:\work\fhirserver\utils\VocabTxServer\install\osx\VocabTxServer.app\Contents\MacOS\lang.txt"; DestDir: "{app}"; Flags: ignoreversion
+Source: "C:\work\fhirserver\utils\VocabTxServer\install\osx\VocabTxServer.app\Contents\MacOS\loinc_261.cache"; DestDir: "{app}"; Flags: ignoreversion
 
 [Icons]
 Name: "{group}\Vocab PoC Terminology Server"; Filename: "{app}\VocabTxServer.exe"
