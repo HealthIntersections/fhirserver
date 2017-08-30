@@ -185,7 +185,7 @@ Type
     procedure wsDisconnect(id : String);
     procedure wsWakeAll;
     procedure wsWake(id : String);
-    function wsPersists(id : String; s : TStream) : boolean;
+    function wsPersists(id : String; b : TBytes) : boolean;
 
 //    procedure go(id : String; content : TAdvBuffer);
 //    procedure goAll;
@@ -935,50 +935,46 @@ procedure TSubscriptionManager.sendByWebSocket(conn : TKDBConnection; id: String
 var
   key : integer;
   comp : TFHIRComposer;
-  b : TMemoryStream;
+  b : TBytes;
 begin
-  b := TMemoryStream.Create;
+  comp := nil;
+  if (subst.channel.payload = 'application/xml+fhir') or (subst.channel.payload = 'application/fhir+xml') or (subst.channel.payload = 'application/xml') then
+    comp := TFHIRXmlComposer.Create(TFHIRServerContext(ServerContext).ValidatorContext.link, 'en')
+  else if (subst.channel.payload = 'application/json+fhir') or (subst.channel.payload = 'application/fhir+json') or (subst.channel.payload = 'application/json') then
+    comp := TFHIRJsonComposer.Create(TFHIRServerContext(ServerContext).ValidatorContext.link, 'en')
+  else if subst.channel.payload <> '' then
+    raise Exception.Create('unknown payload type '+subst.channel.payload);
   try
-    comp := nil;
-    if (subst.channel.payload = 'application/xml+fhir') or (subst.channel.payload = 'application/fhir+xml') or (subst.channel.payload = 'application/xml') then
-      comp := TFHIRXmlComposer.Create(TFHIRServerContext(ServerContext).ValidatorContext.link, 'en')
-    else if (subst.channel.payload = 'application/json+fhir') or (subst.channel.payload = 'application/fhir+json') or (subst.channel.payload = 'application/json') then
-      comp := TFHIRJsonComposer.Create(TFHIRServerContext(ServerContext).ValidatorContext.link, 'en')
-    else if subst.channel.payload <> '' then
-      raise Exception.Create('unknown payload type '+subst.channel.payload);
-    try
-      if comp <> nil then
-        comp.Compose(b, package, false);
-    finally
-      comp.Free;
-    end;
-    b.position := 0;
-
-    if wsPersists(subst.id, b) then
-    begin
-      FLock.Lock;
-      try
-        inc(FLastWebSocketKey);
-        key := FLastWebSocketKey;
-      finally
-        FLock.Unlock;
-      end;
-
-      conn.SQL := 'insert into WebSocketsQueue (WebSocketsQueueKey, SubscriptionId, Handled, Content) values ('+inttostr(key)+', '''+SQLWrapString(subst.id)+''', 0, :c)';
-      conn.Prepare;
-      if subst.channel.payload = '' then
-        conn.BindNull('c')
-      else
-      begin
-        conn.BindBlob('c', b);
-      end;
-      conn.Execute;
-      conn.Terminate;
-    end;
-    wsWake(subst.id);
+    if comp <> nil then
+      b := TEncoding.UTF8.GetBytes(comp.Compose(package, false))
+    else
+     SetLength(b, 0);
   finally
-    b.Free;
+    comp.Free;
   end;
+
+  if wsPersists(subst.id, b) then
+  begin
+    FLock.Lock;
+    try
+      inc(FLastWebSocketKey);
+      key := FLastWebSocketKey;
+    finally
+      FLock.Unlock;
+    end;
+
+    conn.SQL := 'insert into WebSocketsQueue (WebSocketsQueueKey, SubscriptionId, Handled, Content) values ('+inttostr(key)+', '''+SQLWrapString(subst.id)+''', 0, :c)';
+    conn.Prepare;
+    if subst.channel.payload = '' then
+      conn.BindNull('c')
+    else
+    begin
+      conn.BindBlob('c', b);
+    end;
+    conn.Execute;
+    conn.Terminate;
+  end;
+  wsWake(subst.id);
 end;
 
 procedure TSubscriptionManager.sendDirectResponse(id, address, message: String; ok: boolean);
@@ -1936,7 +1932,7 @@ begin
   result := info.Event.WaitFor(100) = wrSignaled;
 end;
 
-function TSubscriptionManager.wsPersists(id : String; s : TStream) : boolean;
+function TSubscriptionManager.wsPersists(id : String; b : TBytes) : boolean;
 var
   info : TWebSocketQueueInfo;
   buf : TAdvBuffer;
@@ -1953,7 +1949,7 @@ begin
       begin
         buf := TAdvBuffer.Create;
         info.FQueue.Add(buf);
-        buf.LoadFromStream(s);
+        buf.AsBytes := b;
       end;
     end;
   finally

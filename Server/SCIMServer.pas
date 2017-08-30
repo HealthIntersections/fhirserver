@@ -246,7 +246,7 @@ begin
       conn.BindInteger('uk', key);
       conn.BindString('un', un);
       conn.BindString('pw', HashPassword(key, pw));
-      conn.BindBlobFromBytes('cnt', TJSONWriter.writeObject(user.json, false));
+      conn.BindBlob('cnt', TJSONWriter.writeObject(user.json, false));
       conn.Execute;
     finally
       conn.Terminate;
@@ -294,7 +294,7 @@ begin
       conn.BindInteger('uk', key);
       conn.BindString('un', user.username);
       conn.BindNull('pw');
-      conn.BindBlobFromBytes('cnt', TJSONWriter.writeObject(user.json, false));
+      conn.BindBlob('cnt', TJSONWriter.writeObject(user.json, false));
       conn.Execute;
     finally
       conn.Terminate;
@@ -334,7 +334,7 @@ begin
       conn.BindInteger('uk', key);
       conn.BindString('un', user.username);
       conn.BindNull('pw');
-      conn.BindBlobFromBytes('cnt', TJSONWriter.writeObject(user.json, false));
+      conn.BindBlob('cnt', TJSONWriter.writeObject(user.json, false));
       conn.Execute;
     finally
       conn.Terminate;
@@ -500,7 +500,7 @@ begin
             conn.BindInteger('uk', key);
             if new then
               conn.BindString('un', id);
-            conn.BindBlobFromBytes('cnt', TJSONWriter.writeObject(result.json, false));
+            conn.BindBlob('cnt', TJSONWriter.writeObject(result.json, false));
             conn.Execute;
           finally
             conn.Terminate;
@@ -728,7 +728,7 @@ begin
             conn.BindString('pw', HashPassword(key, password))
           else
             conn.BindNull('pw');
-          conn.BindBlobFromBytes('cnt', TJSONWriter.writeObject(user.json, false));
+          conn.BindBlob('cnt', TJSONWriter.writeObject(user.json, false));
           conn.Execute;
         finally
           conn.Terminate;
@@ -820,7 +820,7 @@ begin
               conn.BindString('pw', HashPassword(StrToInt(id), password))
             else
               conn.BindNull('pw');
-            conn.BindBlobFromBytes('cnt', TJSONWriter.writeObject(nUser.json, false));
+            conn.BindBlob('cnt', TJSONWriter.writeObject(nUser.json, false));
             conn.Execute;
           finally
             conn.Terminate;
@@ -1064,7 +1064,7 @@ begin
               else
                 conn.SQL := 'Update Users set Content = :c where UserKey = '+inttostr(uk);
               conn.prepare;
-              conn.BindBlobFromBytes('c', TJSONWriter.writeObject(user.json));
+              conn.BindBlob('c', TJSONWriter.writeObject(user.json));
               conn.Execute;
               conn.Terminate;
               IndexUser(conn, user, uk);

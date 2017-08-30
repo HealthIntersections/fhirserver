@@ -61,7 +61,6 @@ type
     function GetColIntegerV(ACol: Word): Integer; Override;
     function GetColInt64V(ACol: Word): Int64; Override;
     function GetColDoubleV(ACol: Word): Double; Override;
-    function GetColMemoryV(ACol: Word): TMemoryStream; Override;
     function GetColBlobV(ACol: Word): TBytes; Override;
     function GetColNullV(ACol: Word): Boolean; Override;
     function GetColTimestampV(ACol: Word): TTimestamp; Override;
@@ -86,7 +85,7 @@ type
     procedure BindDoubleV(AParamName: String; AParamValue: Double); Override;
     procedure BindStringV(AParamName: String; AParamValue: String); Override;
     procedure BindTimeStampV(AParamName: String; AParamValue: TTimeStamp); Override;
-    procedure BindBlobV(AParamName: String; AParamValue: TMemoryStream); Override;
+    procedure BindBlobV(AParamName: String; AParamValue: TBytes); Override;
     procedure BindNullV(AParamName: String); Override;
     function CheckConnection : Integer; Override;
     function DatabaseSizeV : int64; Override;
@@ -225,11 +224,6 @@ end;
 function TOdbcConnection.GetColDoubleV(ACol: Word): Double;
 begin
   Result := FStmt.ColDouble[ACol];
-end;
-
-function TOdbcConnection.GetColMemoryV(ACol: Word): TMemoryStream;
-begin
-  Result := FStmt.ColMemory[ACol];
 end;
 
 function TOdbcConnection.GetColNullV(ACol: Word): Boolean;
@@ -474,31 +468,37 @@ begin
 end;
 
 type
-  TOdbcBoundParam = class (TAdvObject);
 
-  TOdbcBoundString = class (TOdbcBoundParam)
+  TOdbcBoundString = class (TKDBBoundParam)
   private
     FString: String;
   end;
 
-  TOdbcBoundInt = class (TOdbcBoundParam)
+  TOdbcBoundInt = class (TKDBBoundParam)
   private
     FInt: Integer;
   end;
 
-  TOdbcBoundInt64 = class (TOdbcBoundParam)
+  TOdbcBoundInt64 = class (TKDBBoundParam)
   private
     FInt64: Int64;
   end;
 
-  TOdbcBoundDate = class (TOdbcBoundParam)
+  TOdbcBoundDate = class (TKDBBoundParam)
   private
     FDate: DateSupport.TTimeStamp
   end;
 
-  TOdbcBoundDouble = class (TOdbcBoundParam)
+  TOdbcBoundDouble = class (TKDBBoundParam)
   private
     FDouble: Double
+  end;
+
+  TOdbcBoundBytes  = class (TKDBBoundParam)
+  private
+    FBytes: TMemoryStream;
+  public
+    destructor Destroy; override;
   end;
 
 procedure TOdbcConnection.BindInt64V(AParamName: String; AParamValue: Int64);
@@ -560,14 +560,18 @@ begin
   KeepBoundObj(aParamName, LBind);
 end;
 
-procedure TOdbcConnection.BindBlobV(AParamName: String; AParamValue: TMemoryStream);
+procedure TOdbcConnection.BindBlobV(AParamName: String; AParamValue: TBytes);
 var
-  LBind: TMemoryStream;
+  LBind: TOdbcBoundBytes;
 begin
-  LBind := TMemoryStream.Create;
-  LBind.CopyFrom(AParamValue, 0);
-  LBind.Position := 0;
-  FStmt.BindBinaryByName(AParamName, LBind);
+  LBind := TOdbcBoundBytes.Create;
+  LBind.FBytes := TMemoryStream.Create;
+  if Length(AParamValue) > 0 then
+  begin
+    LBind.FBytes.Write(AParamValue[0], Length(AParamValue));
+    LBind.FBytes.Position := 0;;
+  end;
+  FStmt.BindBinaryByName(AParamName, LBind.FBytes);
   KeepBoundObj(aParamName, LBind);
 end;
 
@@ -1066,6 +1070,14 @@ begin
     end;
 end;
                             }
+
+{ TOdbcBoundBytes }
+
+destructor TOdbcBoundBytes.Destroy;
+begin
+  FBytes.Free;
+  inherited;
+end;
 
 end.
 

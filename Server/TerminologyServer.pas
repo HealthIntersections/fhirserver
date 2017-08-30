@@ -38,6 +38,7 @@ interface
 
 uses
   SysUtils, Classes, IniFiles, Generics.Collections,
+
   StringSupport, DateSupport,
   AdvObjects, AdvStringObjectMatches, AdvStringLists, AdvGenerics,
   KDBManager,
@@ -165,14 +166,14 @@ begin
   if ini.ReadString(voVersioningNotApplicable, 'RxNorm', 'database', '') <> '' then
   begin
     logt('Connect to RxNorm');
-    RxNorm := TRxNormServices.Create(FOnConnectDB('rxnorm', 100, 0, Ini.ReadString(voMaybeVersioned, 'database', 'driver', ''),
+    RxNorm := TRxNormServices.Create(FOnConnectDB('rxnorm', 100, 0, Ini.ReadString(voVersioningNotApplicable, 'database', 'driver', ''),
         Ini.ReadString(voVersioningNotApplicable, 'database', 'server', ''), Ini.ReadString(voVersioningNotApplicable, 'RxNorm', 'database', ''),
         Ini.ReadString(voVersioningNotApplicable, 'database', 'username', ''), Ini.ReadString(voVersioningNotApplicable, 'database', 'password', '')));
   end;
   if ini.ReadString(voVersioningNotApplicable, 'NciMeta', 'database', '') <> '' then
   begin
     logt('Connect to NciMeta');
-    NciMeta := TNciMetaServices.Create(FOnConnectDB('ncimeta', 100, 0, Ini.ReadString(voMaybeVersioned, 'database', 'driver', ''),
+    NciMeta := TNciMetaServices.Create(FOnConnectDB('ncimeta', 100, 0, Ini.ReadString(voVersioningNotApplicable, 'database', 'driver', ''),
         Ini.ReadString(voVersioningNotApplicable, 'database', 'server', ''), Ini.ReadString(voVersioningNotApplicable, 'NciMeta', 'database', ''),
         Ini.ReadString(voVersioningNotApplicable, 'database', 'username', ''), Ini.ReadString(voVersioningNotApplicable, 'database', 'password', '')));
   end;
@@ -1102,6 +1103,7 @@ begin
         conn1.Prepare;
         conn1.Execute;
         i := 0;
+
         while conn1.FetchNext do
         begin
           inc(i);
@@ -1115,6 +1117,7 @@ begin
         if (prog) then Writeln;
         if finish < now then
           exit;
+
 
         // second, for each concept that needs indexing, check it's value set information
         if (prog) then logtn('Indexing Concepts');
@@ -1160,6 +1163,7 @@ begin
 
         if (prog) then logt('Done');
         MaintenanceThreadStatus := 'BI: ';
+
         conn3.Release;
       except
         on e : exception do

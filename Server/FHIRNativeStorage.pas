@@ -130,8 +130,6 @@ type
     FIndexer : TFHIRIndexManager;
     FTestServer : Boolean;
 
-    FSpaces: TFHIRIndexSpaces;
-
     procedure checkNotRedacted(meta : TFhirMeta; msg : String);
     procedure markRedacted(meta : TFhirMeta);
     procedure unmarkRedacted(meta : TFhirMeta);
@@ -591,6 +589,7 @@ type
     FTotalResourceCount: integer;
     FNextSearchSweep: TDateTime;
     FServerContext : TFHIRServerContext; // not linked
+    FSpaces : TFHIRIndexSpaces;
 
     FClaimQueue: TFHIRClaimList;
     FQueue: TFhirResourceList;
@@ -598,6 +597,7 @@ type
     FAppFolder : String;
 
     procedure LoadExistingResources(conn: TKDBConnection);
+    procedure LoadSpaces(conn: TKDBConnection);
     procedure checkDefinitions;
 
     procedure DoExecuteOperation(request: TFHIRRequest; response: TFHIRResponse; bWantSession: Boolean);
@@ -814,7 +814,6 @@ end;
 destructor TFHIRNativeOperationEngine.Destroy;
 begin
   FIndexer.Free;
-  FSpaces.free;
   FFactory.Free;
   FRepository.Free;
   inherited;
@@ -1091,13 +1090,13 @@ begin
             else
               FConnection.BindInteger('s', 0);
             FConnection.BindInteger('f', 2);
-            FConnection.BindBlobFromBytes('tb', tags.json);
+            FConnection.BindBlob('tb', tags.json);
             FConnection.BindIntegerFromBoolean('ft', tags.hasTestingTag);
-            FConnection.BindBlobFromBytes('xc', EncodeResource(request.Resource, true, soFull));
-            FConnection.BindBlobFromBytes('jc', EncodeResource(request.Resource, false, soFull));
+            FConnection.BindBlob('xc', EncodeResource(request.Resource, true, soFull));
+            FConnection.BindBlob('jc', EncodeResource(request.Resource, false, soFull));
             markRedacted(request.Resource.meta);
-            FConnection.BindBlobFromBytes('xs', EncodeResource(request.Resource, true, soSummary));
-            FConnection.BindBlobFromBytes('js', EncodeResource(request.Resource, false, soSummary));
+            FConnection.BindBlob('xs', EncodeResource(request.Resource, true, soSummary));
+            FConnection.BindBlob('js', EncodeResource(request.Resource, false, soSummary));
             unmarkRedacted(request.Resource.meta);
             FConnection.Execute;
             CommitTags(tags, key);
@@ -1246,7 +1245,7 @@ begin
           else
             FConnection.BindInteger('s', request.Session.Key);
           FConnection.BindInteger('f', 0);
-          FConnection.BindBlobFromBytes('t', tags.json);
+          FConnection.BindBlob('t', tags.json);
 
           FConnection.Execute;
         finally
@@ -2386,12 +2385,12 @@ begin
               FConnection.BindInteger('s', request.Session.Key);
             FConnection.BindInteger('f', 2);
             FConnection.BindIntegerFromBoolean('ft', tags.hasTestingTag);
-            FConnection.BindBlobFromBytes('tb', tags.json);
-            FConnection.BindBlobFromBytes('xc', EncodeResource(request.Resource, true, soFull));
-            FConnection.BindBlobFromBytes('jc', EncodeResource(request.Resource, false, soFull));
+            FConnection.BindBlob('tb', tags.json);
+            FConnection.BindBlob('xc', EncodeResource(request.Resource, true, soFull));
+            FConnection.BindBlob('jc', EncodeResource(request.Resource, false, soFull));
             markRedacted(request.Resource.meta);
-            FConnection.BindBlobFromBytes('xs', EncodeResource(request.Resource, true, soSummary));
-            FConnection.BindBlobFromBytes('js', EncodeResource(request.Resource, false, soSummary));
+            FConnection.BindBlob('xs', EncodeResource(request.Resource, true, soSummary));
+            FConnection.BindBlob('js', EncodeResource(request.Resource, false, soSummary));
             unmarkRedacted(request.Resource.meta);
             FConnection.Execute;
           finally
@@ -2610,12 +2609,12 @@ begin
             else
               FConnection.BindInteger('s', request.Session.Key);
             FConnection.BindInteger('f', 2);
-            FConnection.BindBlobFromBytes('tb', tags.json);
-            FConnection.BindBlobFromBytes('xc', EncodeResource(request.resource, true, soFull));
-            FConnection.BindBlobFromBytes('jc', EncodeResource(request.resource, false, soFull));
+            FConnection.BindBlob('tb', tags.json);
+            FConnection.BindBlob('xc', EncodeResource(request.resource, true, soFull));
+            FConnection.BindBlob('jc', EncodeResource(request.resource, false, soFull));
             markRedacted(request.resource.meta);
-            FConnection.BindBlobFromBytes('xs', EncodeResource(request.resource, true, soSummary));
-            FConnection.BindBlobFromBytes('js', EncodeResource(request.resource, false, soSummary));
+            FConnection.BindBlob('xs', EncodeResource(request.resource, true, soSummary));
+            FConnection.BindBlob('js', EncodeResource(request.resource, false, soSummary));
             unmarkRedacted(request.resource.meta);
             FConnection.Execute;
           finally
@@ -3150,8 +3149,7 @@ procedure TFHIRNativeOperationEngine.CreateIndexer;
 begin
   if FIndexer = nil then
   begin
-    FSpaces := TFHIRIndexSpaces.Create(FConnection);
-    FIndexer := TFHIRIndexManager.Create(FSpaces.Link as TFhirIndexSpaces, ServerContext.Indexes.Link, ServerContext.ValidatorContext.Link, ServerContext.ResConfig.Link);
+    FIndexer := TFHIRIndexManager.Create(Repository.FSpaces.Link as TFhirIndexSpaces, FConnection.Link, ServerContext.Indexes.Link, ServerContext.ValidatorContext.Link, ServerContext.ResConfig.Link);
     FIndexer.TerminologyServer := ServerContext.TerminologyServer.Link;
     FIndexer.Bases := ServerContext.Bases;
     FIndexer.KeyEvent := FRepository.GetNextKey;
@@ -4640,8 +4638,7 @@ begin
       FConnection.Execute;
       while FConnection.FetchNext do
       begin
-        json.source := FConnection.ColMemoryByName['JsonContent'];
-        json.source.Position := 0;
+        json.source := TBytesStream.Create(FConnection.ColBlobByName['JsonContent']);
         json.Parse;
         list.Add(json.resource.Link);
       end;
@@ -5181,7 +5178,7 @@ begin
       begin
         tags := TFHIRTagList.create;
         try
-          parser := MakeParser(ServerContext.Validator.Context, 'en', ffJson, Connection.ColMemoryByName['JsonContent'], xppDrop);
+          parser := MakeParser(ServerContext.Validator.Context, 'en', ffJson, Connection.ColBlobByName['JsonContent'], xppDrop);
           try
             r := parser.resource;
             FConnection.terminate;
@@ -7824,7 +7821,7 @@ begin
         try
           native(manager).FConnection.SQL := 'Update Versions set XmlContent = :xc, XmlSummary = :xs, JsonContent = :jc, JsonSummary = :js, Tags = :tb where ResourceVersionKey = '+inttostr(resourceVersionKey);
           native(manager).FConnection.prepare;
-          native(manager).FConnection.BindBlobFromBytes('tb', tags.json);
+          native(manager).FConnection.BindBlob('tb', tags.json);
           response.resource := TFHIRParameters.create;
           if deleted then
           begin
@@ -7841,11 +7838,11 @@ begin
             if parser.resource.meta = nil then
               parser.resource.meta := TFHIRMeta.Create;
             tags.writeTags(parser.resource.meta);
-            native(manager).FConnection.BindBlobFromBytes('xc', native(manager).EncodeResource(parser.Resource, true, soFull));
-            native(manager).FConnection.BindBlobFromBytes('jc', native(manager).EncodeResource(parser.Resource, false, soFull));
+            native(manager).FConnection.BindBlob('xc', native(manager).EncodeResource(parser.Resource, true, soFull));
+            native(manager).FConnection.BindBlob('jc', native(manager).EncodeResource(parser.Resource, false, soFull));
             native(manager).markRedacted(parser.resource.meta);
-            native(manager).FConnection.BindBlobFromBytes('xs', native(manager).EncodeResource(parser.Resource, true, soSummary));
-            native(manager).FConnection.BindBlobFromBytes('js', native(manager).EncodeResource(parser.Resource, false, soSummary));
+            native(manager).FConnection.BindBlob('xs', native(manager).EncodeResource(parser.Resource, true, soSummary));
+            native(manager).FConnection.BindBlob('js', native(manager).EncodeResource(parser.Resource, false, soSummary));
             native(manager).unmarkRedacted(parser.resource.meta);
             TFHIRParameters(response.Resource).AddParameter('return', parser.resource.meta.link);
           end;
@@ -7982,7 +7979,7 @@ begin
         try
           native(manager).FConnection.SQL := 'Update Versions set XmlContent = :xc, XmlSummary = :xs, JsonContent = :jc, JsonSummary = :js, Tags = :tb where ResourceVersionKey = '+inttostr(resourceVersionKey);
           native(manager).FConnection.prepare;
-          native(manager).FConnection.BindBlobFromBytes('tb', tags.json);
+          native(manager).FConnection.BindBlob('tb', tags.json);
           response.resource := TFHIRParameters.create;
           if deleted then
           begin
@@ -7999,11 +7996,11 @@ begin
             if parser.resource.meta = nil then
               parser.resource.meta := TFHIRMeta.Create;
             tags.writeTags(parser.resource.meta);
-            native(manager).FConnection.BindBlobFromBytes('xc', native(manager).EncodeResource(parser.Resource, true, soFull));
-            native(manager).FConnection.BindBlobFromBytes('jc', native(manager).EncodeResource(parser.Resource, false, soFull));
+            native(manager).FConnection.BindBlob('xc', native(manager).EncodeResource(parser.Resource, true, soFull));
+            native(manager).FConnection.BindBlob('jc', native(manager).EncodeResource(parser.Resource, false, soFull));
             native(manager).markRedacted(parser.resource.meta);
-            native(manager).FConnection.BindBlobFromBytes('xs', native(manager).EncodeResource(parser.Resource, true, soSummary));
-            native(manager).FConnection.BindBlobFromBytes('js', native(manager).EncodeResource(parser.Resource, false, soSummary));
+            native(manager).FConnection.BindBlob('xs', native(manager).EncodeResource(parser.Resource, true, soSummary));
+            native(manager).FConnection.BindBlob('js', native(manager).EncodeResource(parser.Resource, false, soSummary));
             native(manager).unmarkRedacted(parser.resource.meta);
             TFHIRParameters(response.Resource).AddParameter('return', parser.resource.meta.link);
           end;
@@ -8470,6 +8467,7 @@ begin
   FDB := DB;
   FLock := TCriticalSection.Create('fhir-store');
   FQueue := TFhirResourceList.Create;
+  FSpaces := TFHIRIndexSpaces.create;
 
   FClaimQueue := TFHIRClaimList.Create;
 End;
@@ -8532,6 +8530,7 @@ begin
       end;
       conn.terminate;
 
+      LoadSpaces(conn);
       conn.SQL := 'Select * from Config';
       conn.Prepare;
       conn.Execute;
@@ -8635,8 +8634,8 @@ begin
           LoadCustomResources(implGuides);
           logt('Load Store');
           LoadExistingResources(conn);
-          logt('Check Definitions');
-          checkDefinitions();
+//          logt('Check Definitions');
+//          checkDefinitions();
         end;
         logt('Load Subscription Queue');
         ServerContext.SubscriptionManager.LoadQueue(conn);
@@ -8738,6 +8737,7 @@ destructor TFHIRNativeStorageService.Destroy;
 begin
   FQueue.free;
   FClaimQueue.free;
+  FSpaces.Free;
   FLock.free;
   FDB.Free;
   inherited;
@@ -8776,34 +8776,26 @@ begin
   end;
 end;
 
-function TFHIRNativeStorageService.DoExecuteSearch(typekey: integer;
-  compartmentId, compartments: String; params: TParseMap;
-  conn: TKDBConnection): String;
+function TFHIRNativeStorageService.DoExecuteSearch(typekey: integer; compartmentId, compartments: String; params: TParseMap; conn: TKDBConnection): String;
 var
   sp: TSearchProcessor;
-  spaces: TFHIRIndexSpaces;
 begin
-  spaces := TFHIRIndexSpaces.Create(conn);
+  sp := TSearchProcessor.Create(ServerContext);
   try
-    sp := TSearchProcessor.Create(ServerContext);
-    try
-      sp.typekey := typekey;
-      sp.type_ := getTypeForKey(typekey);
-      sp.compartmentId := compartmentId;
-      sp.compartments := compartments;
-      sp.baseURL := ServerContext.FormalURLPlainOpen; // todo: what?
-      sp.lang := 'en';
-      sp.params := params;
-      sp.indexes := ServerContext.Indexes.Link;
-      sp.countAllowed := false;
-      sp.Connection := conn.link;
-      sp.build;
-      result := sp.filter;
-    finally
-      sp.free;
-    end;
+    sp.typekey := typekey;
+    sp.type_ := getTypeForKey(typekey);
+    sp.compartmentId := compartmentId;
+    sp.compartments := compartments;
+    sp.baseURL := ServerContext.FormalURLPlainOpen; // todo: what?
+    sp.lang := 'en';
+    sp.params := params;
+    sp.indexes := ServerContext.Indexes.Link;
+    sp.countAllowed := false;
+    sp.Connection := conn.link;
+    sp.build;
+    result := sp.filter;
   finally
-    spaces.free;
+    sp.free;
   end;
 end;
 
@@ -10393,6 +10385,16 @@ begin
   finally
     parser.Free;
   end;
+  conn.terminate;
+end;
+
+procedure TFHIRNativeStorageService.LoadSpaces(conn: TKDBConnection);
+begin
+  conn.SQL := 'select * from Spaces';
+  conn.prepare;
+  conn.execute;
+  while conn.FetchNext do
+    FSpaces.RecordSpace(conn.ColStringByName['Space'], conn.ColIntegerByName['SpaceKey']);
   conn.terminate;
 end;
 

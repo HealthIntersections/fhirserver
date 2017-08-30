@@ -48,7 +48,7 @@ combinations to enable:
 uses
   SysUtils, Classes, Generics.Collections,
   AdvObjects, AdvObjectLists, AdvNames, AdvXmlBuilders, AdvGenerics,
-  EncodeSupport, DecimalSupport, HL7v2dateSupport, StringSupport, GuidSupport, DateSupport,
+  EncodeSupport, DecimalSupport, HL7v2dateSupport, StringSupport, GuidSupport, DateSupport, KCritSct,
   KDBManager,
   FHIRBase, FHIRIndexBase, FHIRContext, FhirSupport, FHIRResources, FHIRConstants, FHIRTypes, FHIRTags, FHIRUtilities, FHIRParser, FHIRPath, FHIRProfileUtilities, FHIRXhtml,
   TerminologyServer, ServerUtilities,
@@ -127,12 +127,14 @@ Type
 
   TFhirIndexSpaces = class (TAdvObject)
   private
-    FDB : TKDBConnection;
+    FLock : TCriticalSection;
     FSpaces : TStringList;
+    FLast : integer;
   public
-    constructor Create(db : TKDBConnection);
+    constructor Create;
     destructor Destroy; override;
-    function ResolveSpace(space : String):integer;
+    procedure RecordSpace(space : String; key:integer);
+    function ResolveSpace(space : String; var key :integer) : boolean;
   end;
 
   TFHIRIndexInformation = class (TAdvObject)
@@ -165,6 +167,7 @@ Type
     FInfo : TFHIRIndexInformation;
     FKeyEvent : TFHIRGetNextKey;
     FSpaces : TFhirIndexSpaces;
+    FConnection : TKDBConnection;
     FCompartments : TFhirCompartmentEntryList;
     FEntries : TFhirIndexEntryList;
     FMasterKey : Integer;
@@ -177,6 +180,7 @@ Type
     procedure GetBoundaries(value : String; comparator: TFhirQuantityComparatorEnum; var low, high : String);
 
     function EncodeXhtml(r : TFhirDomainResource) : TBytes;
+    procedure recordSpace(space : string; key : integer);
 
               // addToCompartment
     procedure patientCompartment(key : integer; reference : TFhirReference); overload;
@@ -331,7 +335,7 @@ Type
     procedure evaluateByFHIRPath(key : integer; context, resource : TFhirResource);
     function transform(base : TFHIRObject; uri : String) : TFHIRObject;
   public
-    constructor Create(aSpaces : TFhirIndexSpaces; aInfo : TFHIRIndexInformation; ValidationInfo : TFHIRWorkerContext; ResConfig: TAdvMap<TFHIRResourceConfig>);
+    constructor Create(aSpaces : TFhirIndexSpaces; connection : TKDBConnection; aInfo : TFHIRIndexInformation; ValidationInfo : TFHIRWorkerContext; ResConfig: TAdvMap<TFHIRResourceConfig>);
     destructor Destroy; override;
     function Link : TFHIRIndexManager; overload;
     property TerminologyServer : TTerminologyServer read FTerminologyServer write SetTerminologyServer;
@@ -481,10 +485,11 @@ end;
 
 { TFhirIndexManager }
 
-constructor TFhirIndexManager.Create(aSpaces : TFhirIndexSpaces; aInfo : TFHIRIndexInformation; ValidationInfo : TFHIRWorkerContext; ResConfig: TAdvMap<TFHIRResourceConfig>);
+constructor TFhirIndexManager.Create(aSpaces : TFhirIndexSpaces; connection : TKDBConnection; aInfo : TFHIRIndexInformation; ValidationInfo : TFHIRWorkerContext; ResConfig: TAdvMap<TFHIRResourceConfig>);
 begin
   inherited Create;
   FCompartments := TFhirCompartmentEntryList.create;
+  FConnection := connection;
   FValidationInfo := ValidationInfo;
   FSpaces := aSpaces;
   FInfo := aInfo;
@@ -500,6 +505,7 @@ begin
   FSpaces.Free;
   FEntries.Free;
   FInfo.Free;
+  FConnection.Free;
   FResConfig.Free;
   inherited;
 end;
@@ -639,7 +645,7 @@ begin
     raise Exception.create('Unknown index '+name+' on type '+aType);
   if not (ndx.SearchType in [SearchParamTypeToken, SearchParamTypeString]) then //todo: fix up text
     raise Exception.create('Unsuitable index '+name+' of type '+CODES_TFhirSearchParamTypeEnum[ndx.SearchType]+' indexing enumeration on '+aType);
-  concept := TerminologyServer.enterIntoClosure(FSpaces.FDB, aType+'.'+name, 'http://hl7.org/fhir/special-values', BooleanToString(value));
+  concept := TerminologyServer.enterIntoClosure(FConnection, aType+'.'+name, 'http://hl7.org/fhir/special-values', BooleanToString(value));
   assert(concept <> 0);
   FEntries.add(key, parent, ndx, 0, BooleanToString(value), '', 0, frtNull, ndx.SearchType, false, concept);
 end;
@@ -666,7 +672,7 @@ begin
      raise exception.create('string too long for indexing: '+value.value+ ' ('+inttostr(length(value.value))+' chars)');
   if value.system <> '' then
   begin
-    concept := TerminologyServer.enterIntoClosure(FSpaces.FDB, aType+'.'+name, value.system, value.value);
+    concept := TerminologyServer.enterIntoClosure(FConnection, aType+'.'+name, value.system, value.value);
     assert(concept <> 0);
   end
   else
@@ -850,20 +856,20 @@ begin
 
   FMasterKey := key;
   keys := '';
-  FSpaces.FDB.sql := 'select ResourceKey from Ids where MasterResourceKey = '+inttostr(key);
-  FSpaces.FDB.prepare;
-  FSpaces.FDB.execute;
-  while FSpaces.FDB.fetchnext do
-    CommaAdd(keys, FSpaces.FDB.ColStringByName['ResourceKey']);
-  FSpaces.FDB.terminate;
+  FConnection.sql := 'select ResourceKey from Ids where MasterResourceKey = '+inttostr(key);
+  FConnection.prepare;
+  FConnection.execute;
+  while FConnection.fetchnext do
+    CommaAdd(keys, FConnection.ColStringByName['ResourceKey']);
+  FConnection.terminate;
 
   if keys <> '' then
   begin
-    FSpaces.FDB.ExecSQL('delete from Compartments where ResourceKey in ('+keys+')');
-    FSpaces.FDB.ExecSQL('update IndexEntries set Flag = 2 where ResourceKey in ('+keys+') or Target in ('+keys+')');
-    FSpaces.FDB.ExecSQL('delete from SearchEntries where ResourceKey in ('+keys+')');
+    FConnection.ExecSQL('delete from Compartments where ResourceKey in ('+keys+')');
+    FConnection.ExecSQL('update IndexEntries set Flag = 2 where ResourceKey in ('+keys+') or Target in ('+keys+')');
+    FConnection.ExecSQL('delete from SearchEntries where ResourceKey in ('+keys+')');
   end;
-  FSpaces.FDB.ExecSQL('update Ids set deleted = 1 where MasterResourceKey = '+inttostr(key));
+  FConnection.ExecSQL('update Ids set deleted = 1 where MasterResourceKey = '+inttostr(key));
   FCompartments.Clear;
 
   processCompartmentTags(key, id, tags);
@@ -894,85 +900,85 @@ begin
 
   if resource is TFhirDomainResource then
   begin
-    FSpaces.FDB.SQL := 'insert into IndexEntries (EntryKey, IndexKey, ResourceKey, SrcTesting, Flag, Extension, Xhtml) values (:k, :i, :r, :ft, 1, ''html'', :xb)';
-    FSpaces.FDB.prepare;
-    FSpaces.FDB.BindInteger('k', FKeyEvent(ktEntries, '', dummy));
-    FSpaces.FDB.BindInteger('i', FInfo.FNarrativeIndex);
-    FSpaces.FDB.BindInteger('r', key);
-    FSpaces.FDB.BindIntegerFromBoolean('ft', FforTesting);
-    FSpaces.FDB.BindBlobFromBytes('xb', EncodeXhtml(TFhirDomainResource(resource)));
-    FSpaces.FDB.execute;
-    FSpaces.FDB.terminate;
+    FConnection.SQL := 'insert into IndexEntries (EntryKey, IndexKey, ResourceKey, SrcTesting, Flag, Extension, Xhtml) values (:k, :i, :r, :ft, 1, ''html'', :xb)';
+    FConnection.prepare;
+    FConnection.BindInteger('k', FKeyEvent(ktEntries, '', dummy));
+    FConnection.BindInteger('i', FInfo.FNarrativeIndex);
+    FConnection.BindInteger('r', key);
+    FConnection.BindIntegerFromBoolean('ft', FforTesting);
+    FConnection.BindBlob('xb', EncodeXhtml(TFhirDomainResource(resource)));
+    FConnection.execute;
+    FConnection.terminate;
   end;
 
-  FSpaces.FDB.SQL := 'insert into IndexEntries (EntryKey, IndexKey, ResourceKey, Parent, MasterResourceKey, SpaceKey, Value, Value2, SrcTesting, Flag, target, concept) values (:k, :i, :r, :p, :m, :s, :v, :v2, :ft, :f, :t, :c)';
-  FSpaces.FDB.prepare;
+  FConnection.SQL := 'insert into IndexEntries (EntryKey, IndexKey, ResourceKey, Parent, MasterResourceKey, SpaceKey, Value, Value2, SrcTesting, Flag, target, concept) values (:k, :i, :r, :p, :m, :s, :v, :v2, :ft, :f, :t, :c)';
+  FConnection.prepare;
   for i := 0 to FEntries.Count - 1 Do
   begin
     entry := FEntries[i];
-    FSpaces.FDB.BindInteger('k', FEntries[i].EntryKey);
-    FSpaces.FDB.BindInteger('i', entry.IndexKey);
-    FSpaces.FDB.BindInteger('r', entry.key);
+    FConnection.BindInteger('k', FEntries[i].EntryKey);
+    FConnection.BindInteger('i', entry.IndexKey);
+    FConnection.BindInteger('r', entry.key);
     if entry.parent = 0 then
-      FSpaces.FDB.BindNull('p')
+      FConnection.BindNull('p')
     else
-      FSpaces.FDB.BindInteger('p', entry.parent);
+      FConnection.BindInteger('p', entry.parent);
     if entry.key <> key then
-      FSpaces.FDB.BindInteger('m', key)
+      FConnection.BindInteger('m', key)
     else
-      FSpaces.FDB.BindNull('m');
+      FConnection.BindNull('m');
     if entry.Flag then
-      FSpaces.FDB.BindInteger('f', 1)
+      FConnection.BindInteger('f', 1)
     else
-      FSpaces.FDB.BindInteger('f', 0);
+      FConnection.BindInteger('f', 0);
     if entry.concept = 0 then
-      FSpaces.FDB.BindNull('c')
+      FConnection.BindNull('c')
     else
-      FSpaces.FDB.BindInteger('c', entry.concept);
+      FConnection.BindInteger('c', entry.concept);
 
     if entry.FRefType = 0 then
-      FSpaces.FDB.BindNull('s')
+      FConnection.BindNull('s')
     else
-      FSpaces.FDB.BindInteger('s', entry.FRefType);
-    FSpaces.FDB.BindIntegerFromBoolean('ft', FforTesting);
-    FSpaces.FDB.BindString('v', entry.FValue1);
-    FSpaces.FDB.BindString('v2', entry.FValue2);
+      FConnection.BindInteger('s', entry.FRefType);
+    FConnection.BindIntegerFromBoolean('ft', FforTesting);
+    FConnection.BindString('v', entry.FValue1);
+    FConnection.BindString('v2', entry.FValue2);
     if (entry.Target = 0) or (entry.Target = FMasterKey) then
-      FSpaces.FDB.BindNull('t')
+      FConnection.BindNull('t')
     else
-      FSpaces.FDB.BindInteger('t', entry.target);
+      FConnection.BindInteger('t', entry.target);
     try
-      FSpaces.FDB.execute;
+      FConnection.execute;
     except
       on e:exception do
         raise Exception.Create('Exception storing values "'+entry.FValue1+'" and "'+entry.FValue2+'": '+e.message);
 
     end;
   end;
-  FSpaces.FDB.terminate;
+  FConnection.terminate;
 
   result := '';
   if FCompartments.Count > 0 then
   begin
-    FSpaces.FDB.SQL := 'insert into Compartments (ResourceCompartmentKey, ResourceKey, TypeKey, CompartmentKey, Id) values (:pk, :r, :ct, :ck, :id)';
-    FSpaces.FDB.prepare;
+    FConnection.SQL := 'insert into Compartments (ResourceCompartmentKey, ResourceKey, TypeKey, CompartmentKey, Id) values (:pk, :r, :ct, :ck, :id)';
+    FConnection.prepare;
     for i := 0 to FCompartments.Count - 1 Do
     begin
       if i > 0 then
         result := result + ', ';
       result := result + ''''+FCompartments[i].id+'''';
 
-      FSpaces.FDB.BindInteger('pk', FKeyEvent(ktCompartment, '', dummy));
-      FSpaces.FDB.BindInteger('r', FCompartments[i].key);
-      FSpaces.FDB.BindInteger('ct', FCompartments[i].tkey);
-      FSpaces.FDB.BindString('id', FCompartments[i].id);
+      FConnection.BindInteger('pk', FKeyEvent(ktCompartment, '', dummy));
+      FConnection.BindInteger('r', FCompartments[i].key);
+      FConnection.BindInteger('ct', FCompartments[i].tkey);
+      FConnection.BindString('id', FCompartments[i].id);
       if FCompartments[i].ckey > 0 then
-        FSpaces.FDB.BindInteger('ck', FCompartments[i].ckey)
+        FConnection.BindInteger('ck', FCompartments[i].ckey)
       else
-        FSpaces.FDB.BindNull('ck');
-      FSpaces.FDB.execute;
+        FConnection.BindNull('ck');
+      FConnection.execute;
     end;
-    FSpaces.FDB.terminate;
+    FConnection.terminate;
   end;
 end;
 
@@ -993,8 +999,9 @@ begin
     raise Exception.create('Unsuitable index '+name+' '+CODES_TFhirSearchParamTypeEnum[ndx.SearchType]+' indexing Coding');
   if (value.system <> '') then
   begin
-    ref := FSpaces.ResolveSpace(value.system);
-    concept := TerminologyServer.enterIntoClosure(FSpaces.FDB, aType+'.'+name, value.system, value.code);
+    if not FSpaces.ResolveSpace(value.system, ref) then
+      RecordSpace(value.system, ref);
+    concept := TerminologyServer.enterIntoClosure(FConnection, aType+'.'+name, value.system, value.code);
   end
   else
   begin
@@ -1082,11 +1089,13 @@ begin
       raise exception.create('quantity.value too long for indexing: "'+v1+ '" ('+inttostr(length(v1))+' chars, limit '+inttostr(INDEX_ENTRY_LENGTH)+')');
   if (length(v2) > INDEX_ENTRY_LENGTH) then
       raise exception.create('quantity.value too long for indexing: "'+v2+ '" ('+inttostr(length(v2))+' chars, limit '+inttostr(INDEX_ENTRY_LENGTH)+')');
-  ref := FSpaces.ResolveSpace(value.low.unit_);
+  if not FSpaces.ResolveSpace(value.low.unit_, ref) then
+    recordSpace(value.low.unit_, ref);
   FEntries.add(key, parent, ndx, ref, v1, v2, 0, frtNull, ndx.SearchType);
   if value.low.system <> '' then
   begin
-    ref := FSpaces.ResolveSpace(value.low.system+'#'+value.low.code);
+    if not FSpaces.ResolveSpace(value.low.system+'#'+value.low.code, ref) then
+      recordSpace(value.low.system, ref);
     FEntries.add(key, parent, ndx, ref, v1, v2, 0, frtNull, ndx.SearchType);
   end;
 
@@ -1104,7 +1113,8 @@ begin
           raise exception.create('quantity.value too long for indexing: "'+v1+ '" ('+inttostr(length(v1))+' chars, limit '+inttostr(INDEX_ENTRY_LENGTH)+')');
         if (length(v2) > INDEX_ENTRY_LENGTH) then
           raise exception.create('quantity.value too long for indexing: "'+v2+ '" ('+inttostr(length(v2))+' chars, limit '+inttostr(INDEX_ENTRY_LENGTH)+')');
-        ref := FSpaces.ResolveSpace('urn:ucum-canonical#'+canonical.UnitCode);
+        if not FSpaces.ResolveSpace('urn:ucum-canonical#'+canonical.UnitCode, ref) then
+          recordSpace('urn:ucum-canonical#'+canonical.UnitCode, ref);
         FEntries.add(key, parent, ndx, ref, v1, v2, 0, frtNull, ndx.SearchType, true);
       finally
         canonical.free;
@@ -1141,11 +1151,13 @@ begin
       raise exception.create('quantity.value too long for indexing: "'+v1+ '" ('+inttostr(length(v1))+' chars, limit '+inttostr(INDEX_ENTRY_LENGTH)+')');
   if (length(v2) > INDEX_ENTRY_LENGTH) then
       raise exception.create('quantity.value too long for indexing: "'+v2+ '" ('+inttostr(length(v2))+' chars, limit '+inttostr(INDEX_ENTRY_LENGTH)+')');
-  ref := FSpaces.ResolveSpace(value.unit_);
+  if not FSpaces.ResolveSpace(value.unit_, ref) then
+    recordSpace(value.unit_, ref);
   FEntries.add(key, parent, ndx, ref, v1, v2, 0, frtNull, ndx.SearchType);
   if value.system <> '' then
   begin
-    ref := FSpaces.ResolveSpace(value.system+'#'+value.code);
+    if not FSpaces.ResolveSpace(value.system+'#'+value.code, ref) then
+      recordSpace(value.system+'#'+value.code, ref);
     FEntries.add(key, parent, ndx, ref, v1, v2, 0, frtNull, ndx.SearchType);
   end;
 
@@ -1163,7 +1175,8 @@ begin
           raise exception.create('quantity.value too long for indexing: "'+v1+ '" ('+inttostr(length(v1))+' chars, limit '+inttostr(INDEX_ENTRY_LENGTH)+')');
         if (length(v2) > INDEX_ENTRY_LENGTH) then
           raise exception.create('quantity.value too long for indexing: "'+v2+ '" ('+inttostr(length(v2))+' chars, limit '+inttostr(INDEX_ENTRY_LENGTH)+')');
-        ref := FSpaces.ResolveSpace('urn:ucum-canonical#'+canonical.UnitCode);
+        if not FSpaces.ResolveSpace('urn:ucum-canonical#'+canonical.UnitCode, ref) then
+          recordSpace('urn:ucum-canonical#'+canonical.UnitCode, ref);
         FEntries.add(key, parent, ndx, ref, v1, v2, 0, frtNull, ndx.SearchType, true);
       finally
         canonical.free;
@@ -1222,7 +1235,8 @@ begin
     raise Exception.create('Unsuitable index '+name+' '+CODES_TFhirSearchParamTypeEnum[ndx.SearchType]+' indexing Identifier');
   ref := 0;
   if (value.system <> '') then
-    ref := FSpaces.ResolveSpace(value.system);
+    if not FSpaces.ResolveSpace(value.system, ref) then
+      recordSpace(value.system, ref);
   if (length(value.value) > INDEX_ENTRY_LENGTH) then
     raise exception.create('id too long for indexing: '+value.value);
   FEntries.add(key, parent, ndx, ref, value.value, '', 0, frtNull, ndx.SearchType);
@@ -1264,7 +1278,8 @@ begin
     raise Exception.create('Unsuitable index '+name+':'+CODES_TFhirSearchParamTypeEnum[ndx.SearchType]+' indexing Contact on '+aType);
   ref := 0;
   if (value.systemElement <> nil) and (value.systemElement.value <> '') then
-    ref := FSpaces.ResolveSpace(value.systemElement.value);
+    if not FSpaces.ResolveSpace(value.systemElement.value, ref) then
+      recordSpace(value.systemElement.value, ref);
   if (length(value.value) > INDEX_ENTRY_LENGTH) then
     raise exception.create('contact value too long for indexing: '+value.value);
   FEntries.add(key, parent, ndx, ref, value.value, '', 0, frtNull, ndx.SearchType);
@@ -1452,17 +1467,18 @@ begin
     if (specificType = '') or (contained.fhirType = specificType) then
     begin
       ttype := contained.ResourceType;
-      ref := FSpaces.ResolveSpace(CODES_TFHIRResourceType[contained.ResourceType]);
+      if not FSpaces.ResolveSpace(CODES_TFHIRResourceType[contained.ResourceType], ref) then
+        recordSpace(CODES_TFHIRResourceType[contained.ResourceType], ref);
       target := FKeyEvent(ktResource, contained.fhirType, id);
-      FSpaces.FDB.execSql('update Types set LastId = '+id+' where ResourceTypeKey = '+inttostr(ref)+' and LastId < '+id);
-      FSpaces.FDB.SQL := 'insert into Ids (ResourceKey, ResourceTypeKey, Id, MostRecent, MasterResourceKey, ForTesting) values (:k, :r, :i, null, '+inttostr(FMasterKey)+', :ft)';
-      FSpaces.FDB.Prepare;
-      FSpaces.FDB.BindInteger('k', target);
-      FSpaces.FDB.BindInteger('r', ref);
-      FSpaces.FDB.BindString('i', id);
-      FSpaces.FDB.BindIntegerFromBoolean('ft', FforTesting);
-      FSpaces.FDB.Execute;
-      FSpaces.FDB.Terminate;
+      FConnection.execSql('update Types set LastId = '+id+' where ResourceTypeKey = '+inttostr(ref)+' and LastId < '+id);
+      FConnection.SQL := 'insert into Ids (ResourceKey, ResourceTypeKey, Id, MostRecent, MasterResourceKey, ForTesting) values (:k, :r, :i, null, '+inttostr(FMasterKey)+', :ft)';
+      FConnection.Prepare;
+      FConnection.BindInteger('k', target);
+      FConnection.BindInteger('r', ref);
+      FConnection.BindString('i', id);
+      FConnection.BindIntegerFromBoolean('ft', FforTesting);
+      FConnection.Execute;
+      FConnection.Terminate;
       {$IFNDEF FHIR2}
       evaluateByFHIRPath(target, context, contained);
       {$ELSE}
@@ -1484,15 +1500,17 @@ begin
       if (specificType = '') or (type_ = specificType) then
       begin
         ttype := ResourceTypeByName(type_);
-        ref := FSpaces.ResolveSpace(type_);
-        FSpaces.FDB.sql := 'Select ResourceKey from Ids as i, Types as t where i.ResourceTypeKey = t.ResourceTypeKey and ResourceName = :t and Id = :id';
-        FSpaces.FDB.Prepare;
-        FSpaces.FDB.BindString('t', type_);
-        FSpaces.FDB.BindString('id', id);
-        FSpaces.FDB.Execute;
-        if FSpaces.FDB.FetchNext then
-          target := FSpaces.FDB.ColIntegerByName['ResourceKey']; // otherwise we try and link it up if we ever see the resource that this refers to
-        FSpaces.FDB.Terminate;
+        if not FSpaces.ResolveSpace(type_.Empty, ref) then
+          recordSpace(type_.Empty, ref);
+
+        FConnection.sql := 'Select ResourceKey from Ids as i, Types as t where i.ResourceTypeKey = t.ResourceTypeKey and ResourceName = :t and Id = :id';
+        FConnection.Prepare;
+        FConnection.BindString('t', type_);
+        FConnection.BindString('id', id);
+        FConnection.Execute;
+        if FConnection.FetchNext then
+          target := FConnection.ColIntegerByName['ResourceKey']; // otherwise we try and link it up if we ever see the resource that this refers to
+        FConnection.Terminate;
         ok := true;
       end;
     end
@@ -1562,14 +1580,14 @@ end;
 
 procedure TFhirIndexManager.patientCompartment(key : integer; type_, id : String);
 begin
-  FSpaces.FDB.sql := 'Select i.ResourceTypeKey, ResourceKey from Ids as i, Types as t where i.ResourceTypeKey = t.ResourceTypeKey and ResourceName = :t and Id = :id';
-  FSpaces.FDB.Prepare;
-  FSpaces.FDB.BindString('t', type_);
-  FSpaces.FDB.BindString('id', id);
-  FSpaces.FDB.Execute;
-  if FSpaces.FDB.FetchNext then
-    FCompartments.add(key, FSpaces.FDB.ColIntegerByName['ResourceTypeKey'], FSpaces.FDB.ColIntegerByName['ResourceKey'], id);
-  FSpaces.FDB.Terminate;
+  FConnection.sql := 'Select i.ResourceTypeKey, ResourceKey from Ids as i, Types as t where i.ResourceTypeKey = t.ResourceTypeKey and ResourceName = :t and Id = :id';
+  FConnection.Prepare;
+  FConnection.BindString('t', type_);
+  FConnection.BindString('id', id);
+  FConnection.Execute;
+  if FConnection.FetchNext then
+    FCompartments.add(key, FConnection.ColIntegerByName['ResourceTypeKey'], FConnection.ColIntegerByName['ResourceKey'], id);
+  FConnection.Terminate;
 end;
 
 procedure TFhirIndexManager.patientCompartmentNot(key : integer; type_, id : String);
@@ -1595,6 +1613,15 @@ begin
     if (tags[i].system = TAG_FHIR_SYSTEM) and (tags[i].code = TAG_COMPARTMENT_OUT) then
       patientCompartmentNot(key, 'Patient', tags[i].display);
 
+end;
+
+procedure TFhirIndexManager.recordSpace(space: string; key: integer);
+begin
+  FConnection.SQL := 'insert into Spaces (SpaceKey, Space) values ('+inttostr(key)+', :s)';
+  FConnection.prepare;
+  FConnection.BindString('s', space);
+  FConnection.execute;
+  FConnection.terminate;
 end;
 
 function TFhirIndexManager.index(aType: String; key, parent: integer; name: String): Integer;
@@ -1636,57 +1663,63 @@ end;
 
 { TFhirIndexSpaces }
 
-constructor TFhirIndexSpaces.Create(db: TKDBConnection);
+constructor TFhirIndexSpaces.Create();
 var
   i : integer;
 begin
   inherited create;
   FSpaces := TStringList.Create;
   FSpaces.Sorted := true;
-
-  FDB := db;
-  FDB.SQL := 'select * from Spaces';
-  FDb.prepare;
-  FDb.execute;
-  i := 0;
-  while FDb.FetchNext do
-  begin
-    inc(i);
-    try
-      FSpaces.addObject(FDb.ColStringByName['Space'], TObject(FDb.ColIntegerByName['SpaceKey']));
-    except
-      raise Exception.Create('itereation '+inttostr(i));
-    end;
-  end;
-  FDb.terminate;
+  FLock := TCriticalSection.Create('Spaces');
 end;
 
 
 destructor TFhirIndexSpaces.destroy;
 begin
   FSpaces.free;
+  FLock.Free;
   inherited;
 end;
 
-function TFhirIndexSpaces.ResolveSpace(space: String): integer;
+procedure TFhirIndexSpaces.RecordSpace(space: String; key: integer);
 var
   i : integer;
 begin
   if space.trim <> space then
     raise Exception.Create('Illegal System Value "'+space+'" - cannot have leading or trailing whitespace');
-  if FSpaces.Find(space, i) then
-    result := integer(FSpaces.objects[i])
-  else
-  begin
-    result := FDB.countSQL('select max(SpaceKey) from Spaces')+1;
-    FDB.SQL := 'insert into Spaces (SpaceKey, Space) values ('+inttostr(result)+', :s)';
-    FDb.prepare;
-    FDB.BindString('s', space);
-    FDb.execute;
-    FDb.terminate;
-    FSpaces.addObject(space, TObject(result));
+  FLock.Lock;
+  try
+    FSpaces.AddObject(space, TObject(key));
+    if key > FLast then
+      FLast := Key;
+  finally
+    FLock.Unlock;
+  end;
+
+end;
+
+function TFhirIndexSpaces.ResolveSpace(space : String; var key :integer) : boolean;
+var
+  i : integer;
+begin
+  if space.trim <> space then
+    raise Exception.Create('Illegal System Value "'+space+'" - cannot have leading or trailing whitespace');
+  FLock.Lock;
+  try
+    result := FSpaces.Find(space, i);
+    if result then
+      key := integer(FSpaces.objects[i])
+    else
+    begin
+      inc(FLast);
+      key := FLast;
+      FSpaces.AddObject(space, TObject(key));
+    end;
+  finally
+    FLock.Unlock;
   end;
 end;
+
 
 
 
@@ -2415,14 +2448,14 @@ begin
 
     ref := FSpaces.ResolveSpace(CODES_TFHIRResourceType[inner.ResourceType]);
     // ignore the existing id because this is a virtual entry; we don't want the real id to appear twice if the resource also really exists
-    target := FKeyEvent(ktResource, inner.FHIRType, id); //FSpaces.FDB.CountSQL('select Max(ResourceKey) from Ids') + 1;
-    FSpaces.FDB.SQL := 'insert into Ids (ResourceKey, ResourceTypeKey, Id, MostRecent, MasterResourceKey) values (:k, :r, :i, null, '+inttostr(FMasterKey)+')';
-    FSpaces.FDB.Prepare;
-    FSpaces.FDB.BindInteger('k', target);
-    FSpaces.FDB.BindInteger('r', ref);
-    FSpaces.FDB.BindString('i', id);
-    FSpaces.FDB.Execute;
-    FSpaces.FDB.Terminate;
+    target := FKeyEvent(ktResource, inner.FHIRType, id); //FConnection.CountSQL('select Max(ResourceKey) from Ids') + 1;
+    FConnection.SQL := 'insert into Ids (ResourceKey, ResourceTypeKey, Id, MostRecent, MasterResourceKey) values (:k, :r, :i, null, '+inttostr(FMasterKey)+')';
+    FConnection.Prepare;
+    FConnection.BindInteger('k', target);
+    FConnection.BindInteger('r', ref);
+    FConnection.BindString('i', id);
+    FConnection.Execute;
+    FConnection.Terminate;
     buildIndexValues(target, '', context, inner);
     FEntries.add(key, 0, ndx, ref, id, '', target, frtNull, ndx.SearchType);
   end;
