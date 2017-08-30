@@ -1720,10 +1720,6 @@ begin
   end;
 end;
 
-
-
-
-
 { TFhirCompartmentEntryList }
 
 procedure TFhirCompartmentEntryList.add(key, tkey, ckey: integer; id: string);
@@ -2446,7 +2442,9 @@ begin
     if ndx.SearchType <> SearchParamTypeReference then
       raise Exception.create('Unsuitable index Bundle.'+name+' '+CODES_TFhirSearchParamTypeEnum[ndx.SearchType]+' indexing inner');
 
-    ref := FSpaces.ResolveSpace(CODES_TFHIRResourceType[inner.ResourceType]);
+    if not FSpaces.ResolveSpace(CODES_TFHIRResourceType[inner.ResourceType], ref) then
+      recordSpace(CODES_TFHIRResourceType[inner.ResourceType], ref);
+
     // ignore the existing id because this is a virtual entry; we don't want the real id to appear twice if the resource also really exists
     target := FKeyEvent(ktResource, inner.FHIRType, id); //FConnection.CountSQL('select Max(ResourceKey) from Ids') + 1;
     FConnection.SQL := 'insert into Ids (ResourceKey, ResourceTypeKey, Id, MostRecent, MasterResourceKey) values (:k, :r, :i, null, '+inttostr(FMasterKey)+')';

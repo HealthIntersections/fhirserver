@@ -31,9 +31,9 @@ POSSIBILITY OF SUCH DAMAGE.
 Interface
 
 Uses
-  SysUtils, Classes, Generics.Collections,
-  StringSupport, FileSupport, BytesSupport,
-  AdvObjects, AdvObjectLists,
+  SysUtils, Classes, Generics.Collections, IOUtils,
+  StringSupport, FileSupport, BytesSupport, TextUtilities,
+  AdvObjects, AdvObjectLists, AdvZipWriters, AdvFiles,
   RegularExpressions, YuStemmer,
   FHIRTypes, FHIRResources, FHIRUtilities, FHIROperations, CDSHooksUtilities,
   TerminologyServices, DateSupport;
@@ -357,7 +357,7 @@ Type
     Function Link : TLOINCServices; Overload;
 
     Procedure Load(Const sFilename : String);
-    Procedure Save(Const sFilename : String);
+    Procedure Save(Const sFilename : String; statedDate : String);
     function langsForLang(lang : String): TLangArray;
     function supportsLang(lang : String): boolean;
 
@@ -1094,17 +1094,20 @@ begin
   Loaded := true;
 end;
 
-procedure TLOINCServices.Save(const sFilename: String);
+procedure TLOINCServices.Save(const sFilename: String; statedDate : String);
 var
   oFile : Tfilestream;
   oWrite : TWriter;
   aLoop : TLoincPropertyType;
   a : TLoincSubsetId;
   i : integer;
+  v : String;
+  zip : TAdvZipWriter;
   procedure WriteBytes(b : TBytes);
   begin
    oWrite.WriteInteger(length(b));
-   oWrite.Write(b[0], length(b));
+   if length(b) > 0 then
+     oWrite.Write(b[0], length(b));
   end;
 begin
   if FileExists(sFilename) Then
@@ -1142,6 +1145,22 @@ begin
   Finally
     oFile.Free;
   End;
+  // set up website upload
+  if FileExists('C:\work\com.healthintersections.fhir\website\FhirServer\loinc.inc') then
+  begin
+    v := FVersion.Replace('.', '');
+    StringToFile('    <td>'+FVersion+'</td>'+#13#10+
+                 '    <td>'+statedDate+'</td>'+#13#10+
+                 '    <td><a href="loinc_'+v+'.zip"><img src="zip.gif"/> Zip</a></td>'+#13#10, path([ExtractFileDir(sFilename), 'loinc.inc']), TEncoding.ASCII);
+    zip := TAdvZipWriter.Create;
+    try
+      zip.Stream := TAdvFile.create(path(['C:\work\com.healthintersections.fhir\website\FhirServer', 'loinc_'+v+'.zip']), fmCreate);
+      zip.addFile('loinc_'+v+'.cache', sFilename);
+      zip.WriteZip;
+    finally
+      zip.Free;
+    end;
+  end;
 end;
 
 function TLOINCServices.SearchFilter(filter : TSearchFilterText; prep : TCodeSystemProviderFilterPreparationContext; sort : boolean): TCodeSystemProviderFilterContext;

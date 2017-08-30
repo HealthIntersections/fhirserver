@@ -258,6 +258,7 @@ Type
     FStemList : TStringList;
     FStemmer : TYuStemmer_8;
     FOutputFile: String;
+    FDate: String;
 
     procedure SeeDesc(sDesc: String; oObj : TDescribed; iFlags: Byte);
     procedure SeeWord(sDesc: String; oObj : TDescribed; iFlags: Byte);
@@ -278,9 +279,10 @@ Type
     Property Folder : String read FFolder write FFolder;
     Property OutputFile : String read FOutputFile write FOutputFile;
     Property Version : String read FVersion write FVersion;
+    Property Date : String read FDate write FDate;
   end;
 
-function importLoinc(folder, version, dest : String; callback : TInstallerCallback = nil) : String;
+function importLoinc(folder, version, date, dest : String; callback : TInstallerCallback = nil) : String;
 
 Implementation
 
@@ -308,7 +310,7 @@ begin
     raise Exception.Create('Unable to read the version from '+txtFile);
 end;
 
-function importLoinc(folder, version, dest : String; callback : TInstallerCallback = nil) : String;
+function importLoinc(folder, version, date, dest : String; callback : TInstallerCallback = nil) : String;
 var
   imp : TLoincImporter;
 begin
@@ -1100,7 +1102,7 @@ begin
     end;
 
     Progress(15, 0, 'Save');
-    oSvc.Save(FOutputFile);
+    oSvc.Save(FOutputFile, Date);
 
     Progress(15, 0.5, 'Cleanup');
   Finally

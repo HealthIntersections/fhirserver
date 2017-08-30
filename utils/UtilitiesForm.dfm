@@ -678,7 +678,7 @@ object Form4: TForm4
     Top = 0
     Width = 678
     Height = 436
-    ActivePage = TabSheet3
+    ActivePage = TabSheet2
     Align = alClient
     Style = tsButtons
     TabOrder = 1
@@ -1783,7 +1783,7 @@ object Form4: TForm4
           670
           193)
         object Label10: TLabel
-          Left = 10
+          Left = 2
           Top = 6
           Width = 33
           Height = 13
@@ -1875,6 +1875,13 @@ object Form4: TForm4
           OnClick = btnLoincDestClick
           ExplicitLeft = 549
         end
+        object Label22: TLabel
+          Left = 12
+          Top = 106
+          Width = 35
+          Height = 13
+          Caption = 'Version'
+        end
         object edtLoincSource: TEdit
           Left = 80
           Top = 6
@@ -1898,6 +1905,15 @@ object Form4: TForm4
           Height = 21
           Anchors = [akLeft, akTop, akRight]
           TabOrder = 1
+          TextHint = '2.56'
+        end
+        object edtLoincDate: TEdit
+          Left = 80
+          Top = 104
+          Width = 584
+          Height = 21
+          Anchors = [akLeft, akTop, akRight]
+          TabOrder = 3
           TextHint = '2.56'
         end
       end

@@ -151,6 +151,8 @@ type
     cbUMLSDriver: TComboBox;
     cbUMLSType: TComboBox;
     Label21: TLabel;
+    Label22: TLabel;
+    edtLoincDate: TEdit;
     procedure btnDestinationClick(Sender: TObject);
     procedure btnSourceClick(Sender: TObject);
     procedure btnCloseClick(Sender: TObject);
@@ -214,8 +216,9 @@ begin
   edtDestination.text := ini.ReadString('snomed-import', 'dest', '');
 
   edtLoincSource.text := ini.ReadString('loinc-import', 'source', '');
-  edtLoincVersion.Text := ini.ReadString('loinc-import', 'date', '');
+  edtLoincVersion.Text := ini.ReadString('loinc-import', 'date', ''); // should not be date for is for legacy reasons
   edtLoincDest.text := ini.ReadString('loinc-import', 'dest', '');
+  edtLoincDate.Text := ini.ReadString('loinc-import', 'tdate', '');
 
   edtUMLSServer.text := ini.ReadString('umls-process', 'server', '');
   edtUMLSDatabase.text := ini.ReadString('umls-process', 'database', '');
@@ -598,17 +601,20 @@ procedure TForm4.btnImportLoincClick(Sender: TObject);
 var
   start : TDateTime;
 begin
+  ini.WriteString('loinc-import', 'source', edtLoincSource.text);
+  ini.WriteString('loinc-import', 'date', edtLoincVersion.Text);
+  ini.WriteString('loinc-import', 'tdate', edtLoincDate.Text);
+  ini.WriteString('loinc-import', 'dest', edtLoincDest.text);
   if not FolderExists(edtloincSource.Text) then
     ShowMessage('Folder "'+edtSource.Text+'" not found')
-  else if edtDestination.Text = '' then
+  else if edtLoincDest.Text = '' then
     ShowMessage('Please Choose a Destination')
   else if (Length(edtLoincVersion.Text) <> 4) then
     ShowMessage('Please provide a version in the form X.YY')
+  else if (edtLoincDate.Text = '') then
+    ShowMessage('Please provide a date')
   else if not FileExists(edtLoincDest.Text) or (MessageDlg('Overwrite "'+edtLoincDest.Text+'"?', mtConfirmation, mbYesNo, 0) = mrYes) then
   begin
-    ini.WriteString('loinc-import', 'source', edtLoincSource.text);
-    ini.WriteString('loinc-import', 'date', edtLoincVersion.Text);
-    ini.WriteString('loinc-import', 'dest', edtLoincDest.text);
     start := now;
 
     wantStop := false;
@@ -617,19 +623,21 @@ begin
     running := true;
     edtLoincSource.enabled := false;
     edtLoincVersion.enabled := false;
+    edtLoincDate.enabled := false;
     edtLoincDest.enabled := false;
     btnImportLoinc.enabled := false;
     btnCloseLoinc.enabled := false;
     btnLoincSource.enabled := false;
     btnLoincDest.enabled := false;
     try
-      importLoinc(edtloincSource.Text, edtLoincVersion.Text, edtLoincDest.text, loincCallBack);
+      importLoinc(edtloincSource.Text, edtLoincVersion.Text, edtLoincDate.Text, edtLoincDest.text, loincCallBack);
     finally
       cursor := crDefault;
       btnUMLSStop.Visible := false;
       running := false;
       edtLoincSource.enabled := true;
       edtLoincVersion.enabled := true;
+      edtLoincDate.enabled := true;
       edtLoincDest.enabled := true;
       btnImportLoinc.enabled := true;
       btnCloseLoinc.enabled := true;

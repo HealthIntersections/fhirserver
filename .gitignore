@@ -134,3 +134,4 @@ toolkit/install/*.zip
 utils/VocabTxServer/OSX32/Debug/VocabTxServer
 
 utils/VocabTxServer/install/osx/VocabTxServer\.app/Contents/MacOS/
+utils/VocabTxServer/install/vocabpoc-*.zip

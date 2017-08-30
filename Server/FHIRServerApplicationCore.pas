@@ -143,7 +143,7 @@ var
   iniName : String;
   svcName : String;
   dispName : String;
-  dir, fn, ver, lver, dest : String;
+  dir, fn, ver, ldate, lver, dest : String;
   svc : TFHIRService;
 begin
   try
@@ -225,8 +225,15 @@ begin
           dest := svc.FIni.ReadString(voVersioningNotApplicable, 'internal', 'store', IncludeTrailingPathDelimiter(ProgData)+'fhirserver');
         svc.FIni.WriteString('snomed', 'cache', importSnomedRF2(dir, dest, ver, svc.callback));
       end
-      else if FindCmdLineSwitch('loinc', dir, true, [clstValueNextParam]) and FindCmdLineSwitch('lver', lver, true, [clstValueNextParam]) then
-        svc.FIni.WriteString('loinc', 'cache', importLoinc(dir, lver, svc.FIni.ReadString(voVersioningNotApplicable, 'internal', 'store', IncludeTrailingPathDelimiter(ProgData)+'fhirserver')))
+      else if FindCmdLineSwitch('loinc', dir, true, [clstValueNextParam]) then
+      begin
+        if not FindCmdLineSwitch('lver', lver, true, [clstValueNextParam]) then
+          writeln('LOINC Version parameter needed: -lver X.XX')
+        else if not FindCmdLineSwitch('ldate', ldate, true, [clstValueNextParam]) then
+          writeln('LOINC Date parameter needed: -ldate MONTH 20XX')
+       else
+          svc.FIni.WriteString('loinc', 'cache', importLoinc(dir, lver, ldate, svc.FIni.ReadString(voVersioningNotApplicable, 'internal', 'store', IncludeTrailingPathDelimiter(ProgData)+'fhirserver')))
+      end
       else if FindCmdLineSwitch('rxstems', dir, true, []) then
       begin
         generateRxStems(TKDBOdbcDirect.create('fhir', 100, 0, svc.FIni.ReadString(voMaybeVersioned, 'database', 'driver', ''),
