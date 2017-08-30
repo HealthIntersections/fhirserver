@@ -306,7 +306,7 @@ implementation
 
 uses
 	{$IFDEF ScryptUnitTests}ScryptTests,{$ENDIF}
-	{$IFDEF MSWINDOWS}{mac-to-do}Windows, ComObj, ActiveX,{$ENDIF}
+	{$IFDEF MSWINDOWS}Windows, ComObj, ActiveX,{$ENDIF}
 	Math, GuidSupport;
 
 {$IFDEF COMPILER_7_DOWN}
@@ -323,6 +323,26 @@ end;
 type
 	UInt64 = Int64;
 	PUInt64 = ^UInt64;
+{$ENDIF}
+
+{$IFNDEF MSWINDOWS}
+type
+  LARGE_INTEGER = record
+    case Integer of
+    0: (
+      LowPart: DWORD;
+      HighPart: Longint);
+    1: (
+      QuadPart: Int64);
+  end;
+  ULARGE_INTEGER = record
+    case Integer of
+    0: (
+      LowPart: DWORD;
+      HighPart: DWORD);
+    1: (
+      QuadPart: UInt64);
+  end;
 {$ENDIF}
 
 const
@@ -545,6 +565,7 @@ type
 		procedure SelfTest;
 	end;
 
+{$IFDEF MSWINDOWS}
 {
 	SHA-1 implemented by Microsoft Crypto Service Provider (CSP)
 }
@@ -570,7 +591,6 @@ type
 		function Finalize: TBytes;
 	end;
 
-  {$IFDEF MSWINDOWS}
 {
 	Hash algorithms provided by the Microsoft Cryptography Next Generation (Cng) Provider
 }
@@ -2668,6 +2688,8 @@ begin
 	Inc(LARGE_INTEGER(FHashLength).QuadPart, NumBytes * 8);
 end;
 
+{$IFDEF MSWINDOWS}
+
 { TSHA256CryptoServiceProvider }
 
 const
@@ -3116,6 +3138,8 @@ begin
 		raise Exception.Create('BCrypt not available. Requires Windows Vista or greater');
 end;
 
+{$ENDIF}
+
 { THmac }
 
 constructor THmac.Create(Hash: IHashAlgorithm);
@@ -3271,7 +3295,7 @@ begin
 
 	for i := 1 to l do
 	begin
-		ZeroMemory(@Ti[0], hLen);
+		FillChar(Ti[0], hLen, $0);
 		for j := 1 to IterationCount do
 		begin
 			if j = 1 then
@@ -3312,6 +3336,8 @@ begin
 	Result := derivedKey;
 end;
 
+{$IFDEF MSWINDOWS}
+
 { TBCryptDeriveKeyPBKDF2 }
 
 constructor TBCryptDeriveKeyPBKDF2.Create(const AlgorithmID: UnicodeString; const Provider: PWideChar);
@@ -3349,5 +3375,6 @@ begin
 			0);
 	NTStatusCheck(hr);
 end;
+{$ENDIF}
 
 end.
