@@ -313,7 +313,9 @@ uses
   SCrypt in '..\Libraries\security\SCrypt.pas',
   TerminologyOperations in 'TerminologyOperations.pas',
   WebSourceProvider in 'WebSourceProvider.pas',
-  FHIRIndexBase in '..\reference-platform\support\FHIRIndexBase.pas';
+  FHIRIndexBase in '..\reference-platform\support\FHIRIndexBase.pas',
+  KDBOdbc in '..\Libraries\db\KDBOdbc.pas',
+  ODBCObjects in '..\Libraries\db\ODBCObjects.pas';
 
 begin
   logfile := IncludeTrailingPathDelimiter(SystemTemp)+'fhirserver.log';

@@ -3,6 +3,20 @@
 	<channel>
 		<title>FHIR Toolkit Release history</title>
 		<link>http://www.healthintersections.com.au/FhirServer</link>
+		<item><title>FHIR Toolkit release 0.0.17 31/08/2017 10:41:03 AM</title>
+			<link>http://www.healthintersections.com.au/FhirServer/fhir-toolkit-install-0.0.17.exe</link>
+			<mlink>http://www.healthintersections.com.au/FhirServer/fhir-toolkit-osx-0.0.17.zip</mlink>
+			<description>31/08/2017 10:41:03 AM (v0.0.17): fix error editing settings</description>
+			<ptitle>0.0.17, 31/08/2017 10:41:03 AM</ptitle>
+			<comment>fix error editing settings</comment>
+		</item>
+<item><title>FHIR Toolkit release 0.0.16 31/08/2017 9:35:13 AM</title>
+			<link>http://www.healthintersections.com.au/FhirServer/fhir-toolkit-install-0.0.16.exe</link>
+			<mlink>http://www.healthintersections.com.au/FhirServer/fhir-toolkit-osx-0.0.16.zip</mlink>
+			<description>31/08/2017 9:35:13 AM (v0.0.16): allow editing multi-line descriptions on value sets</description>
+			<ptitle>0.0.16, 31/08/2017 9:35:13 AM</ptitle>
+			<comment>allow editing multi-line descriptions on value sets</comment>
+		</item>
 		<item><title>FHIR Toolkit release 0.0.15 2017-08-29</title>
 			<link>http://www.healthintersections.com.au/FhirServer/fhir-toolkit-install-0.0.15.exe</link>
 			<mlink>http://www.healthintersections.com.au/FhirServer/fhir-toolkit-osx-0.0.15.zip</mlink>
@@ -10,7 +24,7 @@
 			<ptitle>0.0.15, 2017-08-29</ptitle>
 			<comment>fix for issue #84</comment>
 		</item>
-<item><title>FHIR Toolkit release 0.0.11 24/08/2017 6:07:29 PM</title>
+		<item><title>FHIR Toolkit release 0.0.11 24/08/2017 6:07:29 PM</title>
 			<link>http://www.healthintersections.com.au/FhirServer/fhir-toolkit-install-0.0.11.exe</link>
 			<mlink>http://www.healthintersections.com.au/FhirServer/fhir-toolkit-osx-0.0.11.zip</mlink>
 			<description>24/08/2017 6:07:29 PM (v0.0.11): Allow to select concepts to enumerate</description>

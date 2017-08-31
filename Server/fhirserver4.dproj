@@ -375,6 +375,8 @@
         <DCCReference Include="TerminologyOperations.pas"/>
         <DCCReference Include="WebSourceProvider.pas"/>
         <DCCReference Include="..\reference-platform\support\FHIRIndexBase.pas"/>
+        <DCCReference Include="..\Libraries\db\KDBOdbc.pas"/>
+        <DCCReference Include="..\Libraries\db\ODBCObjects.pas"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>

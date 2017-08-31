@@ -274,7 +274,9 @@ uses
   TerminologyOperations in '..\Server\TerminologyOperations.pas',
   WebSourceProvider in '..\Server\WebSourceProvider.pas',
   FHIRIndexBase in '..\reference-platform\support\FHIRIndexBase.pas',
-  KDBTests in '..\Libraries\db\KDBTests.pas';
+  KDBTests in '..\Libraries\db\KDBTests.pas',
+  KDBOdbc in '..\Libraries\db\KDBOdbc.pas',
+  ODBCObjects in '..\Libraries\db\ODBCObjects.pas';
 
 var
   runner : ITestRunner;

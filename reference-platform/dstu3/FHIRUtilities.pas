@@ -708,7 +708,9 @@ begin
 end;
 function MakeParser(oWorker : TFHIRWorkerContext; lang : String; aFormat: TFHIRFormat; oContent: TStream; policy : TFHIRXhtmlParserPolicy): TFHIRParser;
 begin
-  if aFormat = ffJSON Then
+  if aFormat = ffUnspecified then
+    result := DetectFormat(oContent).Create(oWorker.Link, lang)
+  else if aFormat = ffJSON Then
     result := TFHIRJsonParser.Create(oWorker.Link, lang)
   else if aFormat = ffXhtml then
     result := DetectFormat(oContent).create(oWorker.Link, lang)
