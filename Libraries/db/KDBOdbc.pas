@@ -97,7 +97,7 @@ type
     destructor Destroy; override;
   end;
 
-  TKDbcOdbcManager = class (TKDBManager)
+  TKDBOdbcManager = class (TKDBManager)
   private
     FPlatform : TKDBPlatform;
     FDriver : String;
@@ -795,16 +795,16 @@ begin
     end;
 end;
 
-{ TKDbcOdbcManager }
+{ TKDBOdbcManager }
 
-constructor TKDbcOdbcManager.create(AName : String; ASettings : TSettingsAdapter; AIdent : String = '');
+constructor TKDBOdbcManager.create(AName : String; ASettings : TSettingsAdapter; AIdent : String = '');
 begin
   create(AName, ASettings.ReadInteger('MaxConnections', 20), ASettings.ReadInteger('Timeout', 0), ASettings.ReadString('ODBCDriver', ''),
                 ASettings.ReadString('Server', ''),  ASettings.ReadString('Database', ''),
                 ASettings.ReadString('Username', ''), ASettings.ReadEncryptedString('Password', ''));
 end;
 
-procedure TKDbcOdbcManager.SaveSettings(ASettings : TSettingsAdapter);
+procedure TKDBOdbcManager.SaveSettings(ASettings : TSettingsAdapter);
 begin
   ASettings.WriteString('Platform', EnumToString(TypeInfo(TKDBPlatform), ord(GetDBPlatform)));
   ASettings.WriteString('Provider', EnumToString(TypeInfo(TKDBProvider), ord(kdbpODBC)));
@@ -816,7 +816,7 @@ begin
   ASettings.WriteEncryptedString('Password', FPassword);
 end;
 
-constructor TKDbcOdbcManager.create(AName : String; AMaxConnCount, ATimeout: Integer; ADriver, AServer, ADatabase, AUsername, APassword: String);
+constructor TKDBOdbcManager.create(AName : String; AMaxConnCount, ATimeout: Integer; ADriver, AServer, ADatabase, AUsername, APassword: String);
 begin
   inherited create(Aname, AMaxConnCount);
   FAttributes := TStringList.create;
@@ -854,25 +854,25 @@ begin
     end;
 end;
 
-function TKDbcOdbcManager.GetDBProvider: TKDBProvider;
+function TKDBOdbcManager.GetDBProvider: TKDBProvider;
 begin
   result := kdbpODBC;
 end;
 
 
-destructor TKDbcOdbcManager.Destroy;
+destructor TKDBOdbcManager.Destroy;
 begin
   FAttributes.free;
   inherited;
   FEnv.Free;
 end;
 
-procedure TKDbcOdbcManager.init;
+procedure TKDBOdbcManager.init;
 begin
   FEnv := TOdbcEnv.create;
 end;
 
-function TKDbcOdbcManager.ConnectionFactory: TKDBConnection;
+function TKDBOdbcManager.ConnectionFactory: TKDBConnection;
 var
   LHdbc : TOdbcConnection;
   LStmt : TOdbcStatement;
@@ -920,17 +920,17 @@ begin
   end;
 end;
 
-function TKDbcOdbcManager.GetDBPlatform: TKDBPlatform;
+function TKDBOdbcManager.GetDBPlatform: TKDBPlatform;
 begin
   result := FPlatform;
 end;
 
-function TKDbcOdbcManager.GetDBDetails: String;
+function TKDBOdbcManager.GetDBDetails: String;
 begin
   Result := '\\' + FDriver + '\' + FServer + '\' + FDatabase + ' [' + FUsername + ']';
 end;
 
-class function TKDbcOdbcManager.IsSupportAvailable(APlatform : TKDBPlatform; Var VMsg : String):Boolean;
+class function TKDBOdbcManager.IsSupportAvailable(APlatform : TKDBPlatform; Var VMsg : String):Boolean;
 begin
   result := false;
   VMsg := 'develop this bit';

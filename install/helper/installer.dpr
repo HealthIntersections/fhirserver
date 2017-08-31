@@ -1,4 +1,4 @@
-{
+﻿{
 Copyright (c) 2017+, Health Intersections Pty Ltd (http://www.healthintersections.com.au)
 All rights reserved.
 
@@ -32,11 +32,7 @@ uses
   WIndows,
   SysUtils,
   RegularExpressions,
-  OdbcCore in '..\..\Libraries\db\OdbcCore.pas',
-  OdbcExtras in '..\..\Libraries\db\OdbcExtras.pas',
-  OdbcHeaders in '..\..\Libraries\db\OdbcHeaders.pas',
   IdSoapResourceStrings in '..\..\Libraries\indysoap\IdSoapResourceStrings.pas',
-  OdbcImplementation in '..\..\Libraries\db\OdbcImplementation.pas',
   EncodeSupport in '..\..\reference-platform\Support\EncodeSupport.pas',
   StringSupport in '..\..\reference-platform\Support\StringSupport.pas',
   MathSupport in '..\..\reference-platform\Support\MathSupport.pas',
@@ -106,8 +102,9 @@ uses
   GUIDSupport in '..\..\reference-platform\support\GUIDSupport.pas',
   HL7V2DateSupport in '..\..\reference-platform\support\HL7V2DateSupport.pas',
   AdvGenerics in '..\..\reference-platform\support\AdvGenerics.pas',
-  KDBOdbcExpress in '..\..\Libraries\db\KDBOdbcExpress.pas',
-  FastMM4Messages in '..\..\Libraries\FMM\FastMM4Messages.pas';
+  FastMM4Messages in '..\..\Libraries\FMM\FastMM4Messages.pas',
+  ODBCObjects in '..\..\Libraries\db\ODBCObjects.pas',
+  KDBOdbc in '..\..\Libraries\db\KDBOdbc.pas';
 
 function StrToPChar(AStr: AnsiString): PAnsiChar;
 begin
@@ -131,14 +128,14 @@ end;
 
 function GetString(name : AnsiString):AnsiString;
 var
-  odbc: TOEAdministrator;
+  odbc: TOdbcAdministrator;
   rex : TRegex;
   i : integer;
 Begin
   if name = 'dbcfg-drivers' then // for mssql
   begin
     result := '';
-    odbc := TOEAdministrator.create(THenv.create);
+    odbc := TOdbcAdministrator.create(TOdbcEnv.create);
     try
       odbc.DataSourceType := dsSystem;
       rex := TRegEx.create('^.*sql.*$', [roCompiled]);
@@ -153,7 +150,7 @@ Begin
   else if name = 'dbcfg-drivers-mysql' then
   begin
     result := '';
-    odbc := TOEAdministrator.create(THenv.create);
+    odbc := TOdbcAdministrator.create(TOdbcEnv.create);
     try
       odbc.DataSourceType := dsSystem;
       rex := TRegEx.create('^.*mysql.*$', [roCompiled]);
@@ -183,7 +180,7 @@ var
   ver : String;
 begin
   try
-    conn := TKDBOdbcDirect.Create('config', 1, 0, dbDriver, server, database, username, password);
+    conn := TKDBOdbcManager.Create('config', 1, 0, dbDriver, server, database, username, password);
     try
       db := conn.GetConnection('test');
       try

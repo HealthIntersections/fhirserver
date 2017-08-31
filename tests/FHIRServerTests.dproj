@@ -222,13 +222,8 @@
         <DCCReference Include="..\reference-platform\Support\KDBDialects.pas"/>
         <DCCReference Include="..\Libraries\db\KDBLogging.pas"/>
         <DCCReference Include="..\Libraries\db\KDBManager.pas"/>
-        <DCCReference Include="..\Libraries\db\KDBOdbcExpress.pas"/>
         <DCCReference Include="..\Libraries\db\KDBUtils.pas"/>
         <DCCReference Include="..\Libraries\db\KSettings.pas"/>
-        <DCCReference Include="..\Libraries\db\OdbcCore.pas"/>
-        <DCCReference Include="..\Libraries\db\OdbcExtras.pas"/>
-        <DCCReference Include="..\Libraries\db\OdbcHeaders.pas"/>
-        <DCCReference Include="..\Libraries\db\OdbcImplementation.pas"/>
         <DCCReference Include="..\reference-platform\Support\CurrencySupport.pas"/>
         <DCCReference Include="..\Server\FHIRNativeStorage.pas"/>
         <DCCReference Include="..\Libraries\snomed\SnomedImporter.pas"/>
@@ -799,7 +794,6 @@
                 <ProjectRoot Platform="iOSSimulator" Name="$(PROJECTNAME).app"/>
             </Deployment>
             <Platforms>
-                <Platform value="Linux64">False</Platform>
                 <Platform value="Win32">True</Platform>
                 <Platform value="Win64">True</Platform>
             </Platforms>

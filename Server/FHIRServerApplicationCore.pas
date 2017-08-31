@@ -236,13 +236,13 @@ begin
       end
       else if FindCmdLineSwitch('rxstems', dir, true, []) then
       begin
-        generateRxStems(TKDbcOdbcManager.create('fhir', 100, 0, svc.FIni.ReadString(voMaybeVersioned, 'database', 'driver', ''),
+        generateRxStems(TKDBOdbcManager.create('fhir', 100, 0, svc.FIni.ReadString(voMaybeVersioned, 'database', 'driver', ''),
           svc.FIni.ReadString(voVersioningNotApplicable, 'database', 'server', ''), svc.FIni.ReadString(voVersioningNotApplicable, 'RxNorm', 'database', ''),
           svc.FIni.ReadString(voVersioningNotApplicable, 'database', 'username', ''), svc.FIni.ReadString(voVersioningNotApplicable, 'database', 'password', '')))
       end
       else if FindCmdLineSwitch('ncistems', dir, true, []) then
       begin
-        generateRxStems(TKDbcOdbcManager.create('fhir', 100, 0, svc.FIni.ReadString(voMaybeVersioned, 'database', 'driver', ''),
+        generateRxStems(TKDBOdbcManager.create('fhir', 100, 0, svc.FIni.ReadString(voMaybeVersioned, 'database', 'driver', ''),
           svc.FIni.ReadString(voVersioningNotApplicable, 'database', 'server', ''), svc.FIni.ReadString(voVersioningNotApplicable, 'NciMeta', 'database', ''),
           svc.FIni.ReadString(voVersioningNotApplicable, 'database', 'username', ''), svc.FIni.ReadString(voVersioningNotApplicable, 'database', 'password', '')))
       end
@@ -347,18 +347,18 @@ begin
   dbn := FIni.ReadString(voMaybeVersioned, 'database', 'database', '');
   ddr := FIni.ReadString(voMaybeVersioned, 'database', 'driver', 'SQL Server Native Client 11.0');
   if TestMode then
-    FDb := TKDbcOdbcManager.create('fhir', 100, 0, ddr, '(local)', 'fhir-test', '', '')
+    FDb := TKDBOdbcManager.create('fhir', 100, 0, ddr, '(local)', 'fhir-test', '', '')
   else if FIni.ReadString(voMaybeVersioned, 'database', 'type', '') = 'mssql' then
   begin
     logt('Database mssql://'+FIni.ReadString(voMaybeVersioned, 'database', 'server', '')+'/'+dbn);
-    FDb := TKDbcOdbcManager.create('fhir', 100, 0, ddr,
+    FDb := TKDBOdbcManager.create('fhir', 100, 0, ddr,
       FIni.ReadString(voMaybeVersioned, 'database', 'server', ''), dbn,
       FIni.ReadString(voMaybeVersioned, 'database', 'username', ''), FIni.ReadString(voMaybeVersioned, 'database', 'password', ''));
   end
   else if FIni.ReadString(voMaybeVersioned, 'database', 'type', '') = 'mysql' then
   begin
     logt('Database mysql://'+FIni.ReadString(voMaybeVersioned, 'database', 'server', '')+'/'+dbn);
-    FDb := TKDbcOdbcManager.create('fhir', 100, 0, ddr,
+    FDb := TKDBOdbcManager.create('fhir', 100, 0, ddr,
       FIni.ReadString(voMaybeVersioned, 'database', 'server', ''), dbn,
       FIni.ReadString(voMaybeVersioned, 'database', 'username', ''), FIni.ReadString(voMaybeVersioned, 'database', 'password', ''));
   end
@@ -406,7 +406,7 @@ end;
 
 function TFHIRService.connectToDB(name: String; max, timeout: integer; driver, server, database, username, password: String): TKDBManager;
 begin
-  result := TKDBcOdbcManager.create(name, max, timeout, driver, server, database, username, password);
+  result := TKDBOdbcManager.create(name, max, timeout, driver, server, database, username, password);
 end;
 
 procedure TFHIRService.cb(i: integer; s: WideString);

@@ -223,12 +223,7 @@
         <DCCReference Include="..\Libraries\TerminologyServices.pas"/>
         <DCCReference Include="..\Libraries\db\KDBLogging.pas"/>
         <DCCReference Include="..\Libraries\db\KDBManager.pas"/>
-        <DCCReference Include="..\Libraries\db\KDBOdbcExpress.pas"/>
         <DCCReference Include="..\Libraries\db\KSettings.pas"/>
-        <DCCReference Include="..\Libraries\db\OdbcCore.pas"/>
-        <DCCReference Include="..\Libraries\db\OdbcExtras.pas"/>
-        <DCCReference Include="..\Libraries\db\OdbcHeaders.pas"/>
-        <DCCReference Include="..\Libraries\db\OdbcImplementation.pas"/>
         <DCCReference Include="..\Libraries\loinc\LoincPublisher.pas"/>
         <DCCReference Include="..\Libraries\loinc\LoincServices.pas"/>
         <DCCReference Include="..\Libraries\security\TwilioClient.pas"/>
@@ -811,7 +806,6 @@
                 <ProjectRoot Platform="iOSSimulator" Name="$(PROJECTNAME).app"/>
             </Deployment>
             <Platforms>
-                <Platform value="Linux64">False</Platform>
                 <Platform value="Win32">True</Platform>
             </Platforms>
         </BorlandProject>

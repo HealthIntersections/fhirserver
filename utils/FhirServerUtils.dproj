@@ -241,13 +241,8 @@
         <DCCReference Include="..\reference-platform\Support\KDBDialects.pas"/>
         <DCCReference Include="..\Libraries\db\KDBLogging.pas"/>
         <DCCReference Include="..\Libraries\db\KDBManager.pas"/>
-        <DCCReference Include="..\Libraries\db\KDBOdbcExpress.pas"/>
         <DCCReference Include="..\Libraries\db\KDBUtils.pas"/>
         <DCCReference Include="..\Libraries\db\KSettings.pas"/>
-        <DCCReference Include="..\Libraries\db\OdbcCore.pas"/>
-        <DCCReference Include="..\Libraries\db\OdbcExtras.pas"/>
-        <DCCReference Include="..\Libraries\db\OdbcHeaders.pas"/>
-        <DCCReference Include="..\Libraries\db\OdbcImplementation.pas"/>
         <DCCReference Include="..\reference-platform\Support\CurrencySupport.pas"/>
         <DCCReference Include="..\Libraries\snomed\SnomedImporter.pas"/>
         <DCCReference Include="..\reference-platform\Support\AdvProfilers.pas"/>
@@ -406,14 +401,14 @@
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
-                <DeployFile LocalName="Win32\Debug\FhirServerUtils.exe" Configuration="Debug" Class="ProjectOutput">
-                    <Platform Name="Win32">
+                <DeployFile LocalName="..\Server\win64_3\Debug\FhirServerUtils.exe" Configuration="Debug" Class="ProjectOutput">
+                    <Platform Name="Win64">
                         <RemoteName>FhirServerUtils.exe</RemoteName>
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
-                <DeployFile LocalName="..\Server\win64_3\Debug\FhirServerUtils.exe" Configuration="Debug" Class="ProjectOutput">
-                    <Platform Name="Win64">
+                <DeployFile LocalName="Win32\Debug\FhirServerUtils.exe" Configuration="Debug" Class="ProjectOutput">
+                    <Platform Name="Win32">
                         <RemoteName>FhirServerUtils.exe</RemoteName>
                         <Overwrite>true</Overwrite>
                     </Platform>

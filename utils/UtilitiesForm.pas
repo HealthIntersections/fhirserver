@@ -201,7 +201,7 @@ implementation
 
 Uses
   EncodeSupport, DateSupport,
-  KDBManager, KDBOdbcExpress,
+  KDBManager, KDBOdbc,
   SnomedImporter, SnomedCombiner, SnomedServices,
   LoincImporter, RxNormServices;
 
@@ -686,7 +686,7 @@ begin
     btnUMLSClose.enabled := false;
     try
 
-      db := TKDBOdbcDirect.create('umls', 4, 0, cbUMLSDriver.Text, edtUMLSServer.text, edtUMLSDatabase.Text, edtUMLSUsername.Text, edtUMLSPassword.Text);
+      db := TKDBOdbcManager.create('umls', 4, 0, cbUMLSDriver.Text, edtUMLSServer.text, edtUMLSDatabase.Text, edtUMLSUsername.Text, edtUMLSPassword.Text);
       generateRxStems(db, umlsCallback);
     finally
       cursor := crDefault;

@@ -37,7 +37,7 @@ Uses
   SysUtils, Classes,
   DateSupport, TextUtilities,
   KDBDialects,
-  KDBManager, KDBOdbcExpress, KDBOdbc,
+  KDBManager, KDBOdbc,
   DUnitX.TestFramework;
 
 Type
@@ -46,12 +46,9 @@ Type
   private
     procedure test(manager : TKDBManager);
   Published
-    [TestCase] procedure TestMSSQLOld;
-    [TestCase] procedure TestMySQLOld;
-    [TestCase] procedure TestMySQLMariaOld;
-    [TestCase] procedure TestMSSQLNew;
-    [TestCase] procedure TestMySQLNew;
-    [TestCase] procedure TestMySQLMariaNew;
+    [TestCase] procedure TestMSSQL;
+    [TestCase] procedure TestMySQL;
+    [TestCase] procedure TestMySQLMaria;
   End;
 
 implementation
@@ -231,11 +228,11 @@ begin
   end;
 end;
 
-procedure TKDBTests.TestMSSQLOld;
+procedure TKDBTests.TestMSSQL;
 var
   db : TKDBManager;
 begin
-  db := TKDBOdbcDirect.create('test', 8, 200, 'SQL Server', 'localhost', 'test', '', '');
+  db := TKDBOdbcManager.create('test', 8, 200, 'SQL Server', 'localhost', 'test', '', '');
   try
     test(db);
   finally
@@ -243,11 +240,11 @@ begin
   end;
 end;
 
-procedure TKDBTests.TestMySQLOld;
+procedure TKDBTests.TestMySQL;
 var
   db : TKDBManager;
 begin
-  db := TKDBOdbcDirect.create('test', 8, 0, 'MySQL ODBC 5.3 Unicode Driver', 'localhost', 'test', 'root', 'h_Erp3ChJ![~C7~oL|61');
+  db := TKDBOdbcManager.create('test', 8, 0, 'MySQL ODBC 5.3 Unicode Driver', 'localhost', 'test', 'root', 'h_Erp3ChJ![~C7~oL|61');
   try
     test(db);
   finally
@@ -255,47 +252,11 @@ begin
   end;
 end;
 
-procedure TKDBTests.TestMySQLMariaOld;
+procedure TKDBTests.TestMySQLMaria;
 var
   db : TKDBManager;
 begin
-  db := TKDBOdbcDirect.create('test', 8, 0, 'MariaDB ODBC 3.0 Driver', 'localhost', 'test', 'root', 'h_Erp3ChJ![~C7~oL|61');
-  try
-    test(db);
-  finally
-    db.Free;
-  end;
-end;
-
-procedure TKDBTests.TestMSSQLNew;
-var
-  db : TKDBManager;
-begin
-  db := TKDbcOdbcManager.create('test', 8, 200, 'SQL Server', 'localhost', 'test', '', '');
-  try
-    test(db);
-  finally
-    db.Free;
-  end;
-end;
-
-procedure TKDBTests.TestMySQLNew;
-var
-  db : TKDBManager;
-begin
-  db := TKDbcOdbcManager.create('test', 8, 0, 'MySQL ODBC 5.3 Unicode Driver', 'localhost', 'test', 'root', 'h_Erp3ChJ![~C7~oL|61');
-  try
-    test(db);
-  finally
-    db.Free;
-  end;
-end;
-
-procedure TKDBTests.TestMySQLMariaNew;
-var
-  db : TKDBManager;
-begin
-  db := TKDbcOdbcManager.create('test', 8, 0, 'MariaDB ODBC 3.0 Driver', 'localhost', 'test', 'root', 'h_Erp3ChJ![~C7~oL|61');
+  db := TKDBOdbcManager.create('test', 8, 0, 'MariaDB ODBC 3.0 Driver', 'localhost', 'test', 'root', 'h_Erp3ChJ![~C7~oL|61');
   try
     test(db);
   finally
