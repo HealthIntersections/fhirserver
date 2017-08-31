@@ -6,7 +6,7 @@
         <MainSource>VocabTxServer.dpr</MainSource>
         <Base>True</Base>
         <Config Condition="'$(Config)'==''">Debug</Config>
-        <Platform Condition="'$(Platform)'==''">Win64</Platform>
+        <Platform Condition="'$(Platform)'==''">OSX32</Platform>
         <TargetedPlatforms>6</TargetedPlatforms>
         <AppType>Application</AppType>
     </PropertyGroup>
@@ -161,8 +161,6 @@
         </DCCReference>
         <DCCReference Include="..\..\Libraries\ui\OSXUIUtils.pas"/>
         <DCCReference Include="..\..\reference-platform\support\AfsResourceVolumes.pas"/>
-        <DCCReference Include="..\..\reference-platform\support\AdvWinInetClients.pas"/>
-        <DCCReference Include="..\..\reference-platform\support\MsXmlParser.pas"/>
         <DCCReference Include="..\..\reference-platform\support\CDSHooksClientManager.pas"/>
         <DCCReference Include="..\..\reference-platform\support\FileSupport.pas"/>
         <DCCReference Include="..\..\reference-platform\support\OSXUtils.pas"/>
@@ -412,6 +410,12 @@
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
+                <DeployFile LocalName="Win64\Debug\VocabTxServer.rsm" Configuration="Debug" Class="DebugSymbols">
+                    <Platform Name="Win64">
+                        <RemoteName>VocabTxServer.rsm</RemoteName>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
                 <DeployFile LocalName="$(BDS)\Redist\osx32\libcgsqlite3.dylib" Class="DependencyModule">
                     <Platform Name="OSX32">
                         <Overwrite>true</Overwrite>
@@ -433,12 +437,6 @@
                 <DeployFile LocalName="OSX32\Debug\VocabTxServer.rsm" Configuration="Debug" Class="DebugSymbols">
                     <Platform Name="OSX32">
                         <RemoteDir>Contents\MacOS\</RemoteDir>
-                        <RemoteName>VocabTxServer.rsm</RemoteName>
-                        <Overwrite>true</Overwrite>
-                    </Platform>
-                </DeployFile>
-                <DeployFile LocalName="Win64\Debug\VocabTxServer.rsm" Configuration="Debug" Class="DebugSymbols">
-                    <Platform Name="Win64">
                         <RemoteName>VocabTxServer.rsm</RemoteName>
                         <Overwrite>true</Overwrite>
                     </Platform>
