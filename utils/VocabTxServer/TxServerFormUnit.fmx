@@ -127,6 +127,7 @@ object TxServerForm: TTxServerForm
   object mLog: TMemo
     Touch.InteractiveGestures = [Pan, LongTap, DoubleTap]
     DataDetectorTypes = []
+    TextSettings.WordWrap = True
     Align = Client
     Size.Width = 796.000000000000000000
     Size.Height = 510.000000000000000000

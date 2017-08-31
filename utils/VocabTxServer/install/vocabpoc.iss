@@ -8,7 +8,7 @@
 AppId={{9FD61024-BC9A-4226-ADA5-E72254250B6C}
 AppName=Vocab PoC Terminology Server
 AppVersion=0.1
-AppVerName=0.0.3 (FHIR Version 1.0.2.7475)
+AppVerName=0.0.4 (FHIR Version 1.0.2.7475)
 AppPublisher=Health Intersections
 AppPublisherURL=http://www.healthintersections.com.au/FhirServer
 AppSupportURL=http://www.healthintersections.com.au/FhirServer
@@ -18,7 +18,7 @@ DefaultGroupName=Vocab PoC Terminology Server
 AllowNoIcons=yes
 LicenseFile=C:\work\fhirserver\utils\VocabTxServer\licence.txt
 OutputDir=C:\work\fhirserver\utils\VocabTxServer\install
-OutputBaseFilename=vocabpoc-install-0.0.3
+OutputBaseFilename=vocabpoc-install-0.0.4
 SetupIconFile=C:\work\fhirserver\utils\VocabTxServer\VocabTxServer_Icon.ico
 Compression=lzma
 SolidCompression=yes

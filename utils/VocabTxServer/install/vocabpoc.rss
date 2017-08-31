@@ -3,14 +3,21 @@
 	<channel>
 		<title>Vocabulary PoC Terminology Server Release history</title>
 		<link>http://www.healthintersections.com.au/FhirServer</link>
-		<item><title>Vocab PoC Terminology Server release 0.0.3 30/08/2017 8:19:00 AM</title>
+		<item><title>Vocab PoC Terminology Server release 0.0.4 31/08/2017 10:20:20 AM</title>
+			<link>http://www.healthintersections.com.au/FhirServer/vocabpoc-install-0.0.4.exe</link>
+			<mlink>http://www.healthintersections.com.au/FhirServer/vocabpoc-osx-0.0.4.zip</mlink>
+			<description>31/08/2017 10:20:20 AM (v0.0.4): Add missing file to OSX release</description>
+			<ptitle>0.0.4, 31/08/2017 10:20:20 AM</ptitle>
+			<comment>Add missing file to OSX release</comment>
+		</item>
+<item><title>Vocab PoC Terminology Server release 0.0.3 30/08/2017 8:19:00 AM</title>
 			<link>http://www.healthintersections.com.au/FhirServer/vocabpoc-install-0.0.3.exe</link>
 			<mlink>http://www.healthintersections.com.au/FhirServer/vocabpoc-osx-0.0.3.zip</mlink>
 			<description>30/08/2017 8:19:00 AM (v0.0.3): Fix OSX Release</description>
 			<ptitle>0.0.3, 30/08/2017 8:19:00 AM</ptitle>
 			<comment>Fix OSX Release</comment>
 		</item>
-<item><title>Vocab PoC Terminology Server release 0.0.2 30/08/2017 7:24:29 AM</title>
+		<item><title>Vocab PoC Terminology Server release 0.0.2 30/08/2017 7:24:29 AM</title>
 			<link>http://www.healthintersections.com.au/FhirServer/vocabpoc-install-0.0.2.exe</link>
 			<mlink>http://www.healthintersections.com.au/FhirServer/vocabpoc-osx-0.0.2.zip</mlink>
 			<description>30/08/2017 7:24:29 AM (v0.0.2): OSX Release</description>
