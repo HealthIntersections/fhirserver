@@ -132,6 +132,8 @@ object SettingsForm: TSettingsForm
       StyleLookup = ''
       TabOrder = 0
       Text = 'Terminology Servers'
+      ExplicitSize.cx = 127.000000000000000000
+      ExplicitSize.cy = 26.000000000000000000
       object Grid1: TGrid
         CanFocus = True
         ClipChildren = True
@@ -141,7 +143,7 @@ object SettingsForm: TSettingsForm
         Size.Height = 123.000000000000000000
         Size.PlatformDefault = False
         TabOrder = 0
-        RowCount = 2
+        RowCount = 0
         Options = [Editing, ColumnResize, ColumnMove, ColLines, RowLines, RowSelect, AlwaysShowSelection, Tabs, Header, HeaderClick, AutoDisplacement]
         OnSelChanged = Grid1SelChanged
         OnGetValue = Grid1GetValue
@@ -151,7 +153,7 @@ object SettingsForm: TSettingsForm
         Viewport.Height = 98.000000000000000000
         object StringColumn1: TStringColumn
           Header = 'Base URL'
-          Size.Width = 397.000000000000000000
+          Size.Width = 353.000000000000000000
         end
       end
       object btnAdd: TButton
