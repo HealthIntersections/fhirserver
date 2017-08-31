@@ -312,7 +312,7 @@ begin
     kdbInterbase: Result := '';
     kdbDB2: Result := '';
     kdbOracle8: Result := '';
-    kdbMySQL: Result := 'MariaDB ODBC 3.0 Driver';
+    kdbMySQL: Result := 'MySQL ODBC 5.3 ANSI Driver'; // 'MariaDB ODBC 3.0 Driver';
     kdbASA: result := 'Adaptive Server Anywhere';
     kdbSybase12: Result := 'Sybase ASE ODBC Driver';
   else

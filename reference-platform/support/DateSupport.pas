@@ -116,6 +116,7 @@ type
     class function makeUTC(value : TDateTime) : TDateTimeEx; overload; static;
     class function makeToday : TDateTimeEx; overload; static;
     class function makeLocal : TDateTimeEx; overload; static;
+    class function makeLocal(precision : TDateTimeExPrecision) : TDateTimeEx; overload; static;
     class function makeLocal(value : TDateTime) : TDateTimeEx; overload; static;
     class function make(value : TDateTime; tz : TDateTimeExTimezone) : TDateTimeEx; static;
     class function fromHL7(value : String) : TDateTimeEx; static;
@@ -334,6 +335,7 @@ var
   ms: Word;
   yr: Word;
 begin
+  result.clear;
   DecodeTime(value, result.Hour, result.Minute, result.Second, ms);
   result.Fraction := ms * 1000000;
   if result.second > 59 then
@@ -344,6 +346,11 @@ begin
   result.FractionPrecision := 0;
   result.TimezoneType := tz;
   result.Source := 'makeDT';
+end;
+
+class function TDateTimeEx.makeLocal(precision: TDateTimeExPrecision): TDateTimeEx;
+begin
+  result := TDateTimeEx.makeLocal(now).fixPrecision(precision);
 end;
 
 class function TDateTimeEx.fromFormat(format, date: String; AllowBlankTimes: Boolean = False; allowNoDay: Boolean = False; allownodate: Boolean = False; noFixYear : boolean = false) : TDateTimeEx;
@@ -1262,13 +1269,20 @@ end;
 
 function TDateTimeEx.TimeStamp: TTimeStamp;
 begin
+  FillChar(result, sizeof(result), 0);
   result.Year := year;
-  result.month := month;
-  result.day := day;
-  result.hour := hour;
-  result.minute := minute;
-  result.second := second;
-  result.Fraction := fraction;
+  if FPrecision >= dtpMonth then
+    result.month := month;
+  if FPrecision >= dtpDay then
+    result.day := day;
+  if FPrecision >= dtpHour then
+    result.hour := hour;
+  if FPrecision >= dtpMin then
+    result.minute := minute;
+  if FPrecision >= dtpSec then
+    result.second := second;
+  if FPrecision >= dtpNanoSeconds then
+    result.Fraction := fraction;
 end;
 
 function TDateTimeEx.after(other : TDateTimeEx; inclusive : boolean) : boolean;

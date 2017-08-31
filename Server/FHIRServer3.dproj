@@ -385,6 +385,8 @@
         <DCCReference Include="WebSourceProvider.pas"/>
         <DCCReference Include="..\reference-platform\support\FHIRIndexBase.pas"/>
         <DCCReference Include="..\reference-platform\Support\ErrorSupport.pas"/>
+        <DCCReference Include="..\Libraries\db\KDBOdbc.pas"/>
+        <DCCReference Include="..\Libraries\db\ODBCObjects.pas"/>
         <None Include="..\reference-platform\r4\fhirtests4.dpr"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>

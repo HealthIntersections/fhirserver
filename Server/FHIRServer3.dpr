@@ -323,7 +323,9 @@ uses
   TerminologyOperations in 'TerminologyOperations.pas',
   WebSourceProvider in 'WebSourceProvider.pas',
   FHIRIndexBase in '..\reference-platform\support\FHIRIndexBase.pas',
-  ErrorSupport in '..\reference-platform\Support\ErrorSupport.pas';
+  ErrorSupport in '..\reference-platform\Support\ErrorSupport.pas',
+  KDBOdbc in '..\Libraries\db\KDBOdbc.pas',
+  ODBCObjects in '..\Libraries\db\ODBCObjects.pas';
 
 begin
   logfile := IncludeTrailingPathDelimiter(SystemTemp)+'fhirserver.log';
