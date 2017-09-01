@@ -2146,26 +2146,87 @@ begin
 end;
 
 function TLoincServices.FilterByPropertyId(prop : TLoincPropertyType; op: TFhirFilterOperatorEnum; value: String): TCodeSystemProviderFilterContext;
+  function getProp(i : integer) : String;
+  var
+    langs : TLangArray;
+    lang : byte;
+    code : String;
+    idesc, names, entry, stems : Cardinal;
+    comp, iprop, time, system, scale, method, clss : Cardinal;
+    flags : Byte;
+  begin
+    CodeList.GetInformation(i, langs, code, idesc, names, entry, stems, comp, iprop, time, system, scale, method, clss, flags);
+    case prop of
+      lptComponents: result := GetConceptDesc(comp, langs);
+      lptProperties: result := GetConceptDesc(iprop, langs);
+      lptTimeAspects: result := GetConceptDesc(time, langs);
+      lptSystems: result := GetConceptDesc(system, langs);
+      lptScales: result := GetConceptDesc(scale, langs);
+      lptMethods: result := GetConceptDesc(method, langs);
+      lptClasses: result := GetConceptDesc(clss, langs);
+    else
+      result := '';
+    end;
+  end;
 var
-  id : Cardinal;
+  id, offset: Cardinal;
   iName, iChildren, iCodes : Cardinal;
-  aChildren : LoincServices.TCardinalArray;
+  aMatches, aChildren : LoincServices.TCardinalArray;
+  p : TArray<String>;
+  v : String;
+  regex : TRegEx;
+  i, t : integer;
 begin
-  if op <> FilterOperatorEqual then
+  if not (op in [FilterOperatorEqual, FilterOperatorIn, FilterOperatorRegex]) then
     raise Exception.Create('Unsupported operator type '+CODES_TFhirFilterOperatorEnum[op]);
 
-  result := THolder.create;
-  try
-    id := GetPropertyId(prop, noLang, value);
-    if (id <> 0) then
+  if op = FilterOperatorRegex then
+  begin
+    SetLength(aMatches, CodeList.Count);
+    t := 0;
+    regex := TRegEx.Create(value);
+    for i := 0 to CodeList.Count - 1 do
     begin
-      Concepts.GetConcept(id, noLang, iName, iChildren, iCodes);
-      aChildren := Refs.GetCardinals(iCodes);
-      THolder(result).Children := aChildren;
+      v := getProp(i);
+      if regex.IsMatch(v) then
+      begin
+        aMatches[t] := i;
+        inc(t);
+      end;
     end;
-    result.link;
-  finally
-    result.free;
+    SetLength(aMatches, t);
+    result := THolder.create;
+    THolder(result).Children := aMatches;
+  end
+  else
+  begin
+    if op = FilterOperatorEqual then
+      p := value.Split([#1])
+    else
+      p := value.Split([',']);
+    result := THolder.create;
+    try
+      SetLength(aMatches, 0);
+      for v in p do
+      begin
+        id := GetPropertyId(prop, noLang, v);
+        if (id <> 0) then
+        begin
+          Concepts.GetConcept(id, noLang, iName, iChildren, iCodes);
+          aChildren := Refs.GetCardinals(iCodes);
+          if length(aChildren) > 0 then
+          begin
+            offset := length(aMatches);
+            SetLength(aMatches, offset + length(aChildren));
+            move(aChildren[0], aMatches[offset], length(aChildren) * SizeOf(cardinal));
+          end;
+        end;
+      end;
+      THolder(result).Children := aMatches;
+      result.link;
+    finally
+      result.free;
+    end;
   end;
 end;
 
