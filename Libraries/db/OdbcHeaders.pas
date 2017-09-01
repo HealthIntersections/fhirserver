@@ -4692,3 +4692,4 @@ function SQLSetStmtOptionA; external odbcdll name {$IFDEF MACOS}'_SQLSetStmtOpti
 function SQLDescribeParamA; external odbcdll name {$IFDEF MACOS}'_SQLDescribeParamA'{$ELSE}'SQLDescribeParamA'{$ENDIF};
 
 end.
+
