@@ -46,9 +46,9 @@ Type
   private
     procedure test(manager : TKDBManager);
   Published
-    [TestCase] procedure TestMSSQL;
+    {[TestCase] }procedure TestMSSQL;
     [TestCase] procedure TestMySQL;
-    [TestCase] procedure TestMySQLMaria;
+    {[TestCase] }procedure TestMySQLMaria;
   End;
 
 implementation
@@ -244,7 +244,7 @@ procedure TKDBTests.TestMySQL;
 var
   db : TKDBManager;
 begin
-  db := TKDBOdbcManager.create('test', 8, 0, 'MySQL ODBC 5.3 Unicode Driver', 'localhost', 'test', 'root', 'h_Erp3ChJ![~C7~oL|61');
+  db := TKDBOdbcManager.create('test', 8, 0, 'MySQL ODBC 5.3 Unicode Driver', 'localhost', 'test', 'test', 'test');
   try
     test(db);
   finally

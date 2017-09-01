@@ -39,7 +39,7 @@ POSSIBILITY OF SUCH DAMAGE.
 interface
 
 Uses
-  SysUtils, Classes, System.ODBC,
+  SysUtils, Classes, ODBCHeaders,
   StringSupport, MathSupport, DateSupport,
   KDBDialects;
 
