@@ -1,4 +1,4 @@
-unit NewServerForm;
+unit EditRegisteredServerDialog;
 
 
 {
@@ -38,7 +38,7 @@ uses
   CDSHooksUtilities, SmartOnFHIRUtilities;
 
 type
-  TRegisterServerForm = class(TNppForm)
+  TEditRegisteredServerForm = class(TNppForm)
     PageControl1: TPageControl;
     TabSheet1: TTabSheet;
     TabSheet2: TTabSheet;
@@ -90,18 +90,21 @@ type
     { Private declarations }
     FIndex : integer;
     FCapabilityStatement : TFhirCapabilityStatement;
+    FServer: TRegisteredFHIRServer;
     procedure loadCapabilityStatement;
     function hookIndex(c : TFHIRCoding) : integer;
     procedure listHooks(list : TAdvList<TRegisteredCDSHook>);
     procedure loadHooks;
     procedure readExtension(ext: TFHIRExtension; preFetch: TStringList; var name: String; var c: String);
+    procedure SetServer(const Value: TRegisteredFHIRServer);
   public
     { Public declarations }
     procedure LoadFrom(i : integer);
+
   end;
 
 var
-  RegisterServerForm: TRegisterServerForm;
+  EditRegisteredServerForm: TEditRegisteredServerForm;
 
 implementation
 
@@ -110,7 +113,7 @@ implementation
 uses
   FHIRPluginSettings, FHIRClient;
 
-procedure TRegisterServerForm.btnFetchClick(Sender: TObject);
+procedure TEditRegisteredServerForm.btnFetchClick(Sender: TObject);
 var
   authorize, token : String;
 begin
@@ -125,7 +128,7 @@ begin
     ShowMessage('This end point doesn''t support SMART on FHIR');
 end;
 
-procedure TRegisterServerForm.listHooks(list : TAdvList<TRegisteredCDSHook>);
+procedure TEditRegisteredServerForm.listHooks(list : TAdvList<TRegisteredCDSHook>);
 var
   i : integer;
   cds : TRegisteredCDSHook;
@@ -148,7 +151,7 @@ begin
     end;
 end;
 
-procedure TRegisterServerForm.loadCapabilityStatement;
+procedure TEditRegisteredServerForm.loadCapabilityStatement;
 var
   client : TFhirHTTPClient;
 begin
@@ -175,7 +178,7 @@ begin
   end;
 end;
 
-procedure TRegisterServerForm.btnOkClick(Sender: TObject);
+procedure TEditRegisteredServerForm.btnOkClick(Sender: TObject);
 var
   server : TRegisteredFHIRServer;
 begin
@@ -192,15 +195,15 @@ begin
     server.redirectport := StrToIntDef(edtRedirect.Text, 0);
     listHooks(server.cdshooks);
     if FIndex = -1 then
-      Settings.registerServer(server)
+      Settings.registerServer('', server)
     else
-      Settings.updateServerInfo(FIndex, server);
+      Settings.updateServerInfo('', FIndex, server);
   finally
     server.Free;
   end;
 end;
 
-procedure TRegisterServerForm.Button1Click(Sender: TObject);
+procedure TEditRegisteredServerForm.Button1Click(Sender: TObject);
 var
   ext : TFHIRExtension;
   i : integer;
@@ -218,7 +221,7 @@ begin
     end;
 end;
 
-procedure TRegisterServerForm.Button3Click(Sender: TObject);
+procedure TEditRegisteredServerForm.Button3Click(Sender: TObject);
 begin
   if FCapabilityStatement = nil then
     loadCapabilityStatement;
@@ -238,7 +241,7 @@ begin
     ShowMessage('This end point doens''t have any compatible formats in it''s conformance statement');
 end;
 
-procedure TRegisterServerForm.edtNameChange(Sender: TObject);
+procedure TEditRegisteredServerForm.edtNameChange(Sender: TObject);
 begin
   if (edtAuthorize.Text <> '') then
     btnOk.Enabled := (edtName.text <> '') and (edtServer.text <> '') and (edtAuthorize.Text <> '') and (edtToken.Text <> '') and (edtClientId.Text <> '') and StringIsInteger16(edtRedirect.Text)
@@ -247,25 +250,25 @@ begin
   btnOk.Enabled := edtServer.text <> '';
 end;
 
-procedure TRegisterServerForm.FormCreate(Sender: TObject);
+procedure TEditRegisteredServerForm.FormCreate(Sender: TObject);
 begin
   FIndex := -1;
   inherited;
 end;
 
-procedure TRegisterServerForm.FormDestroy(Sender: TObject);
+procedure TEditRegisteredServerForm.FormDestroy(Sender: TObject);
 begin
   FCapabilityStatement.Free;
   inherited;
 end;
 
-procedure TRegisterServerForm.FormShow(Sender: TObject);
+procedure TEditRegisteredServerForm.FormShow(Sender: TObject);
 begin
   if FIndex = -1 then
     loadHooks;
 end;
 
-procedure TRegisterServerForm.readExtension(ext : TFHIRExtension; preFetch : TStringList; var name : String; var c : String);
+procedure TEditRegisteredServerForm.readExtension(ext : TFHIRExtension; preFetch : TStringList; var name : String; var c : String);
 var
   iext : TFhirExtension;
 begin
@@ -279,7 +282,12 @@ begin
        preFetch.add(TFHIRPrimitiveType(iext.value).primitiveValue);
 end;
 
-procedure TRegisterServerForm.loadHooks;
+procedure TEditRegisteredServerForm.SetServer(const Value: TRegisteredFHIRServer);
+begin
+  FServer := Value;
+end;
+
+procedure TEditRegisteredServerForm.loadHooks;
 var
   ext, iext : TFhirExtension;
   rest : TFhirCapabilityStatementRest;
@@ -324,7 +332,7 @@ begin
   end;
 end;
 
-function TRegisterServerForm.hookIndex(c: TFHIRCoding): integer;
+function TEditRegisteredServerForm.hookIndex(c: TFHIRCoding): integer;
 var
   i : integer;
   h : TFhirCoding;
@@ -340,7 +348,7 @@ begin
   exit(-1);
 end;
 
-procedure TRegisterServerForm.LoadFrom(i: integer);
+procedure TEditRegisteredServerForm.LoadFrom(i: integer);
 var
   server : TRegisteredFHIRServer;
   c : TRegisteredCDSHook;
@@ -349,7 +357,7 @@ var
 begin
   Caption := 'Edit Server';
   FIndex := i;
-  server := settings.serverInfo(FIndex);
+  server := settings.serverInfo('', FIndex);
   try
     edtName.Text := server.name;
     edtServer.Text := server.fhirEndpoint;

@@ -5,7 +5,7 @@ object SettingsForm: TSettingsForm
   BorderStyle = Single
   Caption = 'Form1'
   ClientHeight = 243
-  ClientWidth = 416
+  ClientWidth = 449
   FormFactor.Width = 320
   FormFactor.Height = 480
   FormFactor.Devices = [Desktop]
@@ -16,7 +16,7 @@ object SettingsForm: TSettingsForm
   object Panel1: TPanel
     Align = Bottom
     Position.Y = 203.000000000000000000
-    Size.Width = 416.000000000000000000
+    Size.Width = 449.000000000000000000
     Size.Height = 40.000000000000000000
     Size.PlatformDefault = False
     TabOrder = 0
@@ -24,7 +24,7 @@ object SettingsForm: TSettingsForm
       Anchors = [akTop, akRight]
       Default = True
       ModalResult = 1
-      Position.X = 239.000000000000000000
+      Position.X = 272.000000000000000000
       Position.Y = 8.000000000000000000
       TabOrder = 0
       Text = 'OK'
@@ -33,7 +33,7 @@ object SettingsForm: TSettingsForm
       Anchors = [akTop, akRight]
       Cancel = True
       ModalResult = 2
-      Position.X = 327.000000000000000000
+      Position.X = 360.000000000000000000
       Position.Y = 8.000000000000000000
       TabOrder = 1
       Text = 'Cancel'
@@ -41,16 +41,16 @@ object SettingsForm: TSettingsForm
   end
   object TabControl1: TTabControl
     Align = Client
-    Size.Width = 416.000000000000000000
+    Size.Width = 449.000000000000000000
     Size.Height = 203.000000000000000000
     Size.PlatformDefault = False
     TabIndex = 1
     TabOrder = 1
     TabPosition = PlatformDefault
     Sizes = (
-      416s
+      449s
       177s
-      416s
+      449s
       177s)
     object TabItem1: TTabItem
       CustomIcon = <
@@ -88,7 +88,7 @@ object SettingsForm: TSettingsForm
         TabOrder = 2
         Position.X = 96.000000000000000000
         Position.Y = 22.000000000000000000
-        Size.Width = 305.000000000000000000
+        Size.Width = 337.000000000000000000
         Size.Height = 22.000000000000000000
         Size.PlatformDefault = False
       end
@@ -134,55 +134,56 @@ object SettingsForm: TSettingsForm
       Text = 'Terminology Servers'
       ExplicitSize.cx = 127.000000000000000000
       ExplicitSize.cy = 26.000000000000000000
-      object Grid1: TGrid
-        CanFocus = True
-        ClipChildren = True
-        Position.X = 8.000000000000000000
-        Position.Y = 14.000000000000000000
-        Size.Width = 401.000000000000000000
-        Size.Height = 123.000000000000000000
-        Size.PlatformDefault = False
-        TabOrder = 0
-        RowCount = 0
-        Options = [Editing, ColumnResize, ColumnMove, ColLines, RowLines, RowSelect, AlwaysShowSelection, Tabs, Header, HeaderClick, AutoDisplacement]
-        OnSelChanged = Grid1SelChanged
-        OnGetValue = Grid1GetValue
-        OnSetValue = Grid1SetValue
-        OnResize = Grid1Resize
-        Viewport.Width = 397.000000000000000000
-        Viewport.Height = 98.000000000000000000
-        object StringColumn1: TStringColumn
-          Header = 'Base URL'
-          Size.Width = 353.000000000000000000
-        end
-      end
       object btnAdd: TButton
         Position.X = 8.000000000000000000
         Position.Y = 142.000000000000000000
-        TabOrder = 1
+        TabOrder = 0
         Text = 'Add'
         OnClick = btnAddClick
       end
       object btnUp: TButton
-        Position.X = 96.000000000000000000
+        Position.X = 184.000000000000000000
         Position.Y = 142.000000000000000000
         TabOrder = 2
         Text = 'Up'
         OnClick = btnUpClick
       end
       object btnDown: TButton
-        Position.X = 184.000000000000000000
+        Position.X = 272.000000000000000000
         Position.Y = 142.000000000000000000
         TabOrder = 3
         Text = 'Down'
         OnClick = btnDownClick
       end
       object btnDelete: TButton
-        Position.X = 272.000000000000000000
+        Position.X = 360.000000000000000000
         Position.Y = 142.000000000000000000
         TabOrder = 4
         Text = 'Delete'
         OnClick = btnDeleteClick
+      end
+      object lbServers: TListBox
+        Position.X = 8.000000000000000000
+        Position.Y = 16.000000000000000000
+        Size.Width = 433.000000000000000000
+        Size.Height = 121.000000000000000000
+        Size.PlatformDefault = False
+        TabOrder = 5
+        OnClick = lbServersClick
+        OnDblClick = btnEditClick
+        DisableFocusEffect = True
+        DefaultItemStyles.ItemStyle = ''
+        DefaultItemStyles.GroupHeaderStyle = ''
+        DefaultItemStyles.GroupFooterStyle = ''
+        Viewport.Width = 429.000000000000000000
+        Viewport.Height = 117.000000000000000000
+      end
+      object btnEdit: TButton
+        Position.X = 96.000000000000000000
+        Position.Y = 142.000000000000000000
+        TabOrder = 1
+        Text = 'Edit'
+        OnClick = btnEditClick
       end
     end
   end

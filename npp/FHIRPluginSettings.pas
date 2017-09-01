@@ -34,7 +34,8 @@ interface
 uses
   Windows, SysUtils, Classes,
   AdvObjects, AdvJson,
-  FHIRTypes, SmartOnFhirUtilities, CDSHooksUtilities;
+  FHIRTypes,
+  SmartOnFhirUtilities, CDSHooksUtilities, FHIRClientSettings;
 
 const
   DEF_ActivePage = 0;
@@ -46,13 +47,8 @@ const
 type
   TDefinitionsVersion = (defV2, defV3);
 
-  TFHIRPluginSettings = class
+  TFHIRPluginSettings = class (TFHIRClientSettings)
   private
-    filename : String;
-    json : TJsonObject;
-    copy :  TJsonObject;
-    FShuttingDown: boolean;
-    procedure Save;
     function GetToolboxVisible: boolean;
     function GetVisualiserVisible: boolean;
     function GetDefinitionsVersion: TDefinitionsVersion;
@@ -88,27 +84,9 @@ type
     procedure SetBackgroundValidation(const Value: boolean);
     procedure SetNoWelcomeScreen(const Value: boolean);
     procedure SetBuildPrompt(const Value: String);
-
-    procedure RegisterKnownServers;
+  protected
+    procedure initSettings; virtual;
   public
-    Constructor Create(folder: String);
-    Destructor Destroy; override;
-
-    procedure holdChanges;
-    procedure CommitChanges;
-    procedure AbandonChanges;
-    property ShuttingDown : boolean read FShuttingDown write FShuttingDown;
-
-    function SourceFile : String;
-
-    procedure ListServers(items : TStrings);
-    procedure registerServer(server : TRegisteredFHIRServer);
-    procedure updateServerInfo(index : integer; server : TRegisteredFHIRServer);
-    function serverInfo(index : integer) : TRegisteredFHIRServer;
-    function ServerCount : integer;
-    procedure DeleteServer(index : integer);
-    procedure moveServer(index, delta : integer);
-
     function FontName : String;
     Function FontSize : integer;
 
@@ -139,55 +117,13 @@ implementation
 
 { TFHIRPluginSettings }
 
-procedure TFHIRPluginSettings.AbandonChanges;
-begin
-  json.Free;
-  json := copy;
-  copy := nil;
-end;
 
-procedure TFHIRPluginSettings.CommitChanges;
+procedure TFHIRPluginSettings.initSettings;
 begin
-  copy.Free;
-  copy := nil;
-  Save;
-end;
-
-constructor TFHIRPluginSettings.Create(folder: String);
-var
-  f : TFileStream;
-begin
-  Inherited Create;
-  filename := IncludeTrailingPathDelimiter(folder)+'fhirplugin.json';
-  if not FileExists(filename) then
-  begin
-    json := TJsonObject.Create;
-    json.vStr['DefinitionsVersion'] := 'r3';
-    json.vStr['TerminologyServer'] := 'http://tx.fhir.org/r3';
-    json.bool['BackgroundValidation'] := true;
-
-    RegisterKnownServers;
-  end
-  else
-  begin
-    f := TFileStream.Create(filename, fmOpenRead + fmShareDenyWrite);
-    try
-      json := TJSONParser.Parse(f)
-    finally
-      f.Free;
-    end;
-  end;
-end;
-
-procedure TFHIRPluginSettings.DeleteServer(index: integer);
-begin
-  json.forceArr['Servers'].remove(index);
-end;
-
-destructor TFHIRPluginSettings.Destroy;
-begin
-  json.Free;
   inherited;
+  json.vStr['DefinitionsVersion'] := 'r3';
+  json.vStr['TerminologyServer'] := 'http://tx.fhir.org/r3';
+  json.bool['BackgroundValidation'] := true;
 end;
 
 function TFHIRPluginSettings.FontName: String;
@@ -327,18 +263,6 @@ begin
   result := json.bool['Visualiser'];
 end;
 
-procedure TFHIRPluginSettings.holdChanges;
-var
-  f : TFileStream;
-begin
-  f := TFileStream.Create(filename, fmOpenRead + fmShareDenyWrite);
-  try
-    copy := TJSONParser.Parse(f)
-  finally
-    f.Free;
-  end;
-end;
-
 procedure TFHIRPluginSettings.SetAdditionalDefinitions(const Value: string);
 begin
   if FShuttingDown then exit;
@@ -476,131 +400,5 @@ begin
   json.bool['Visualiser'] := Value;
   Save;
 end;
-
-function TFHIRPluginSettings.SourceFile: String;
-begin
-  result := filename;
-end;
-
-procedure TFHIRPluginSettings.updateServerInfo(index: integer; server: TRegisteredFHIRServer);
-var
-  arr : TJsonArray;
-  o : TJsonObject;
-  i : integer;
-  c : TFHIRCoding;
-begin
-  arr := json.arr['Servers'];
-
-  for i := 0 to arr.Count - 1 do
-    if i <> index then
-      if (arr.Obj[i].str['Name'] = server.name) then
-        raise exception.Create('Duplicate Server Name '+server.name);
-
-  o := arr.Obj[index];
-  server.writeToJson(o);
-  Save;
-end;
-
-procedure TFHIRPluginSettings.ListServers(items: TStrings);
-var
-  arr : TJsonArray;
-  i : integer;
-begin
-  arr := json.forceArr['Servers'];
-  for i := 0 to arr.Count - 1 do
-    items.add(arr.Obj[i].str['name'] +' ('+arr.Obj[i].str['fhirEndpoint']+')');
-end;
-
-procedure TFHIRPluginSettings.moveServer(index, delta: integer);
-var
-  arr : TJsonArray;
-  i : integer;
-begin
-  arr := json.forceArr['Servers'];
-  arr.move(index, delta);
-end;
-
-procedure TFHIRPluginSettings.RegisterKnownServers;
-var
-  server : TRegisteredFHIRServer;
-begin
-  server := TRegisteredFHIRServer.Create;
-  try
-    server.name := 'Reference Server';
-    server.fhirEndpoint := 'http://test.fhir.org/r3';
-    server.addCdsHook('Get Terminology Information', TCDSHooks.codeView);
-    server.addCdsHook('Get Identifier Information', TCDSHooks.identifierView);
-    server.addCdsHook('Fetch Patient Alerts', TCDSHooks.patientView).preFetch.Add('Patient/{{Patient.id}}');
-    server.autoUseHooks := true;
-    registerServer(server);
-
-    server.clear;
-    server.name := 'Secure Reference Server';
-    server.fhirEndpoint := 'https://test.fhir.org/secure/r3';
-    server.SmartOnFHIR := true;
-    server.clientid := '458EA027-CDCC-4E89-B103-997965132D0C';
-    server.redirectport := 23145;
-    server.tokenEndpoint := 'https://authorize-dstu2.smarthealthit.org/token';
-    server.authorizeEndpoint := 'https://authorize-dstu2.smarthealthit.org/authorize';
-    server.addCdsHook('Get Terminology Information', TCDSHooks.codeView);
-    server.addCdsHook('Get Identifier Information', TCDSHooks.identifierView);
-    server.addCdsHook('Fetch Patient Alerts', TCDSHooks.patientView).preFetch.Add('Patient/{{Patient.id}}');
-    registerServer(server);
-  finally
-    server.free;
-  end;
-end;
-
-procedure TFHIRPluginSettings.registerServer(server : TRegisteredFHIRServer);
-var
-  arr : TJsonArray;
-  i : integer;
-  o : TJsonObject;
-  c : TFHIRCoding;
-begin
-  arr := json.forceArr['Servers'];
-  for i := 0 to arr.Count - 1 do
-    if (arr.Obj[i].str['Name'] = server.name) then
-      raise exception.Create('Duplicate Server Name '+server.name);
-  o := arr.addObject;
-  server.writeToJson(o);
-  Save;
-end;
-
-
-procedure TFHIRPluginSettings.Save;
-var
-  f : TFileStream;
-begin
-  if copy <> nil then
-    exit;
-
-  f := TFileStream.Create(filename, fmCreate);
-  try
-    TJSONWriter.writeObject(f, json, true);
-  finally
-    f.Free;
-  end;
-end;
-
-function TFHIRPluginSettings.ServerCount: integer;
-begin
-  result := json.forceArr['Servers'].Count;
-end;
-
-function TFHIRPluginSettings.serverInfo(index: integer): TRegisteredFHIRServer;
-var
-  o : TJsonObject;
-begin
-  result := TRegisteredFHIRServer.Create;
-  try
-    o := json.forceArr['Servers'].Obj[index];
-    result.readFromJson(o);
-    result.Link;
-  finally
-    result.Free;
-  end;
-end;
-
 
 end.

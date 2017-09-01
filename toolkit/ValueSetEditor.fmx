@@ -28,8 +28,8 @@ object ValueSetEditorFrame: TValueSetEditorFrame
       Size.PlatformDefault = False
       TabOrder = 1
       OnClick = tvStructureClick
-      Viewport.Width = 197.000000000000000000
-      Viewport.Height = 683.000000000000000000
+      Viewport.Width = 201.000000000000000000
+      Viewport.Height = 687.000000000000000000
       object tvMetadata: TTreeViewItem
         IsChecked = False
         IsExpanded = False
@@ -229,8 +229,8 @@ object ValueSetEditorFrame: TValueSetEditorFrame
             OnSelChanged = gridIdentifiersSelChanged
             OnGetValue = gridIdentifiersGetValue
             OnSetValue = gridIdentifiersSetValue
-            Viewport.Width = 545.000000000000000000
-            Viewport.Height = 96.000000000000000000
+            Viewport.Width = 565.000000000000000000
+            Viewport.Height = 121.000000000000000000
             object StringColumn1: TStringColumn
               Header = 'System'
               Size.Width = 297.000000000000000000

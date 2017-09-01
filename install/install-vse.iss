@@ -18,7 +18,7 @@ AppPublisherURL=http://healthintersections.com.au
 AppSupportURL=http://wiki.hl7.org/index.php?title=FHIR_ValueSet_Editor_Documentation
 AppUpdatesURL=http://healthintersections.com.au/FhirServer
 DefaultDirName={pf32}\Health Intersections\ValueSetEditor
-DefaultGroupName=FHIR ValueSet Editor
+DefaultGroupName=FHIR Applications
 DisableProgramGroupPage=yes
 LicenseFile=C:\work\fhirserver\install\vselicense.txt
 InfoBeforeFile=C:\work\fhirserver\install\vsereadme.txt

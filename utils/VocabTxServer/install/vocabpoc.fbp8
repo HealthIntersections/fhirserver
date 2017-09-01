@@ -700,10 +700,9 @@ begin
   variable
   begin
     defaultvalue = 0
-    formatstring = c
     name = BuildDate
     variablescope = vtProject
-    variabletype = btDateTime
+    variabletype = btString
   end
   variable
   begin

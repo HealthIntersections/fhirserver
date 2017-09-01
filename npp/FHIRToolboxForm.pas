@@ -123,7 +123,7 @@ implementation
 
 Uses
   FHIRPluginSettings,
-  NewServerForm,
+  EditRegisteredServerDialog,
   FHIRPlugin,
   FHIRPath;
 
@@ -177,17 +177,17 @@ begin
   _FuncDisconnect;
   if cbxServers.ItemIndex = cbxServers.Items.Count - 1 then
   begin
-    RegisterServerForm := TRegisterServerForm.create(npp);
+    EditRegisteredServerForm := TEditRegisteredServerForm.create(npp);
     try
-      if RegisterServerForm.ShowModal = mrOk then
+      if EditRegisteredServerForm.ShowModal = mrOk then
       begin
-        cbxServers.items.Insert(cbxServers.ItemIndex, RegisterServerForm.edtName.Text+' ('+RegisterServerForm.edtServer.Text+')');
+        cbxServers.items.Insert(cbxServers.ItemIndex, EditRegisteredServerForm.edtName.Text+' ('+EditRegisteredServerForm.edtServer.Text+')');
         cbxServers.ItemIndex := cbxServers.Items.Count - 2;
       end
       else
         cbxServers.ItemIndex := 0;
     finally
-      RegisterServerForm.Free;
+      EditRegisteredServerForm.Free;
     end;
   end;
 end;
@@ -269,7 +269,7 @@ end;
 procedure TFHIRToolbox.loadServers;
 begin
   cbxServers.Items.Clear;
-  Settings.listServers(cbxServers.Items);
+  Settings.listServers('', cbxServers.Items);
   cbxServers.Items.Add('Register...');
   cbxServers.ItemIndex := 0;
   SendMessage(cbxServers.Handle, CB_SETDROPPEDWIDTH, 300, 0);

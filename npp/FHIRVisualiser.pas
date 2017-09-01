@@ -258,9 +258,9 @@ var
   server : TRegisteredFHIRServer;
 begin
   FCDSManager.clearServers;
-  for i := 0 to Settings.ServerCount - 1 do
+  for i := 0 to Settings.ServerCount('') - 1 do
   begin
-    server := Settings.serverInfo(i);
+    server := Settings.serverInfo('', i);
     try
       if server.cdshooks.Count > 0 then
         FCDSManager.registerServer(server);

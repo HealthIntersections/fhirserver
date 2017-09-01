@@ -180,35 +180,36 @@ implementation
 procedure TServerFrame.btnCloseClick(Sender: TObject);
 begin
   try
-    Ini.WriteString('Conformance-search', 'url', edtConfUrl.Text);
-    Ini.WriteString('Conformance-search', 'id', edtConfId.Text);
-    Ini.WriteString('Conformance-search', 'version', edtConfVersion.Text);
-    Ini.WriteString('Conformance-search', 'name', edtConfName.Text);
-    Ini.WriteString('Conformance-search', 'title', edtConfTitle.Text);
-    Ini.WriteString('Conformance-search', 'text', edtConfText.Text);
-    Ini.WriteString('Conformance-search', 'date', dedConfDate.Text);
-    Ini.WriteInteger('Conformance-search', 'jurisdiction', edtConfJurisdiction.ItemIndex);
-    Ini.WriteString('Conformance-search', 'publisher', edtConfPub.Text);
-    Ini.WriteInteger('Conformance-search', 'status', cbxConfStatus.ItemIndex);
-    Ini.WriteString('Conformance-search', 'updated', edtConfUpdated.Text);
-    Ini.WriteString('Conformance-search', 'tag', edtConfTag.Text);
-    Ini.WriteBool('Conformance-search', 'updated-opt', cbConfUseLastUpdated.IsChecked);
+    Settings.storeValue('Conformance-search', 'url', edtConfUrl.Text);
+    Settings.storeValue('Conformance-search', 'id', edtConfId.Text);
+    Settings.storeValue('Conformance-search', 'version', edtConfVersion.Text);
+    Settings.storeValue('Conformance-search', 'name', edtConfName.Text);
+    Settings.storeValue('Conformance-search', 'title', edtConfTitle.Text);
+    Settings.storeValue('Conformance-search', 'text', edtConfText.Text);
+    Settings.storeValue('Conformance-search', 'date', dedConfDate.Text);
+    Settings.storeValue('Conformance-search', 'jurisdiction', edtConfJurisdiction.ItemIndex);
+    Settings.storeValue('Conformance-search', 'publisher', edtConfPub.Text);
+    Settings.storeValue('Conformance-search', 'status', cbxConfStatus.ItemIndex);
+    Settings.storeValue('Conformance-search', 'updated', edtConfUpdated.Text);
+    Settings.storeValue('Conformance-search', 'tag', edtConfTag.Text);
+    Settings.storeValue('Conformance-search', 'updated-opt', cbConfUseLastUpdated.IsChecked);
 
-    Ini.WriteString('Patient-search', 'text', edtPText.Text);
-    Ini.WriteString('Patient-search', 'updated', dedPLastEdit.Text);
-    Ini.WriteString('Patient-search', 'tag', edtPTag.Text);
-    Ini.WriteString('Patient-search', 'name', edtPName.Text);
-    Ini.WriteString('Patient-search', 'telecom', edtPTelecom.Text);
-    Ini.WriteInteger('Patient-search', 'dobopt', cbxPDob.ItemIndex);
-    Ini.WriteString('Patient-search', 'dob', dedPDob.Text);
-    Ini.WriteInteger('Patient-search', 'gender', cbxPGender.ItemIndex);
-    Ini.WriteInteger('Patient-search', 'dod', cbxPDeceased.ItemIndex);
-    Ini.WriteString('Patient-search', 'dodopt', dedPDeceased.Text);
-    Ini.WriteInteger('Patient-search', 'active', cbxPActive.ItemIndex);
-    Ini.WriteString('Patient-search', 'id', edtPIdentifier.Text);
-    Ini.WriteInteger('Patient-search', 'species', cbxPSpecies.ItemIndex);
-    Ini.WriteInteger('Patient-search', 'lang', cbxPLanguage.ItemIndex);
-    Ini.WriteBool('Patient-search', 'updated-opt', cbPUseLastUpdated.IsChecked);
+    Settings.storeValue('Patient-search', 'text', edtPText.Text);
+    Settings.storeValue('Patient-search', 'updated', dedPLastEdit.Text);
+    Settings.storeValue('Patient-search', 'tag', edtPTag.Text);
+    Settings.storeValue('Patient-search', 'name', edtPName.Text);
+    Settings.storeValue('Patient-search', 'telecom', edtPTelecom.Text);
+    Settings.storeValue('Patient-search', 'dobopt', cbxPDob.ItemIndex);
+    Settings.storeValue('Patient-search', 'dob', dedPDob.Text);
+    Settings.storeValue('Patient-search', 'gender', cbxPGender.ItemIndex);
+    Settings.storeValue('Patient-search', 'dod', cbxPDeceased.ItemIndex);
+    Settings.storeValue('Patient-search', 'dodopt', dedPDeceased.Text);
+    Settings.storeValue('Patient-search', 'active', cbxPActive.ItemIndex);
+    Settings.storeValue('Patient-search', 'id', edtPIdentifier.Text);
+    Settings.storeValue('Patient-search', 'species', cbxPSpecies.ItemIndex);
+    Settings.storeValue('Patient-search', 'lang', cbxPLanguage.ItemIndex);
+    Settings.storeValue('Patient-search', 'updated-opt', cbPUseLastUpdated.IsChecked);
+    Settings.save;
   except
   end;
   Close;
@@ -228,7 +229,7 @@ begin
   appForm.Parent := tab;
   appForm.Tabs := tabs;
   appForm.OnWork := onwork;
-  appForm.Ini := Ini;
+  appForm.Settings := Settings.Link;
   appForm.tab := tab;
   appForm.Align := TAlignLayout.Client;
   appForm.Client := client.link;
@@ -253,7 +254,7 @@ begin
     FcsForm.Parent := FCSTab;
     FcsForm.Tabs := tabs;
     FcsForm.OnWork := onwork;
-    FcsForm.Ini := Ini;
+    FcsForm.Settings := Settings.link;
     FcsForm.tab := FCSTab;
     FcsForm.Align := TAlignLayout.Client;
     FcsForm.Client := client.link;
@@ -372,7 +373,7 @@ end;
 
 procedure TServerFrame.btnConfSearchClick(Sender: TObject);
 begin
-  work('Fetch Resources',
+  work('Fetch Resources', true,
     procedure
     var
       be : TFhirBundleEntry;
@@ -430,7 +431,7 @@ end;
 
 procedure TServerFrame.btnFetchMoreClick(Sender: TObject);
 begin
-  work('Fetch More',
+  work('Fetch More', true,
     procedure
     var
       be : TFhirBundleEntry;
@@ -483,7 +484,7 @@ end;
 
 procedure TServerFrame.btnSearchPatientsClick(Sender: TObject);
 begin
-  work('Search Patients',
+  work('Search Patients', true,
     procedure
     var
       params : TDictionary<String, String>;
@@ -637,35 +638,35 @@ end;
 
 procedure TServerFrame.load;
 begin
-  edtConfUrl.Text := Ini.ReadString('Conformance-search', 'url', '');
-  edtConfId.Text := Ini.ReadString('Conformance-search', 'id', '');
-  edtConfVersion.Text := Ini.ReadString('Conformance-search', 'version', '');
-  edtConfName.Text := Ini.ReadString('Conformance-search', 'name', '');
-  edtConfTitle.Text := Ini.ReadString('Conformance-search', 'title', '');
-  edtConfText.Text := Ini.ReadString('Conformance-search', 'text', '');
-  dedConfDate.Text := Ini.ReadString('Conformance-search', 'date', '');
-  edtConfJurisdiction.ItemIndex := Ini.ReadInteger('Conformance-search', 'jurisdiction', 0);
-  edtConfPub.Text := Ini.ReadString('Conformance-search', 'publisher', '');
-  cbxConfStatus.ItemIndex := Ini.ReadInteger('Conformance-search', 'status', 0);
-  edtConfUpdated.Text := Ini.ReadString('Conformance-search', 'updated', '');
-  cbConfUseLastUpdated.IsChecked := Ini.ReadBool('Conformance-search', 'updated-opt', false);
-  edtConfTag.Text := Ini.ReadString('Conformance-search', 'tag', '');
+  edtConfUrl.Text := Settings.getValue('Conformance-search', 'url', '');
+  edtConfId.Text := Settings.getValue('Conformance-search', 'id', '');
+  edtConfVersion.Text := Settings.getValue('Conformance-search', 'version', '');
+  edtConfName.Text := Settings.getValue('Conformance-search', 'name', '');
+  edtConfTitle.Text := Settings.getValue('Conformance-search', 'title', '');
+  edtConfText.Text := Settings.getValue('Conformance-search', 'text', '');
+  dedConfDate.Text := Settings.getValue('Conformance-search', 'date', '');
+  edtConfJurisdiction.ItemIndex := Settings.getValue('Conformance-search', 'jurisdiction', 0);
+  edtConfPub.Text := Settings.getValue('Conformance-search', 'publisher', '');
+  cbxConfStatus.ItemIndex := Settings.getValue('Conformance-search', 'status', 0);
+  edtConfUpdated.Text := Settings.getValue('Conformance-search', 'updated', '');
+  cbConfUseLastUpdated.IsChecked := Settings.getValue('Conformance-search', 'updated-opt', false);
+  edtConfTag.Text := Settings.getValue('Conformance-search', 'tag', '');
 
-  edtPText.Text := Ini.ReadString('Patient-search', 'text', '');
-  dedPLastEdit.Text := Ini.ReadString('Patient-search', 'updated', '');
-  edtPTag.Text := Ini.ReadString('Patient-search', 'tag', '');
-  edtPName.Text := Ini.ReadString('Patient-search', 'name', '');
-  edtPTelecom.Text := Ini.ReadString('Patient-search', 'telecom', '');
-  cbxPDob.ItemIndex := Ini.ReadInteger('Patient-search', 'dobopt', 0);
-  dedPDob.Text := Ini.ReadString('Patient-search', 'dob', '');
-  cbxPGender.ItemIndex := Ini.ReadInteger('Patient-search', 'gender', 0);
-  cbxPDeceased.ItemIndex := Ini.ReadInteger('Patient-search', 'dod', 0);
-  dedPDeceased.Text := Ini.ReadString('Patient-search', 'dodopt', '');
-  cbxPActive.ItemIndex := Ini.ReadInteger('Patient-search', 'active', 0);
-  edtPIdentifier.Text := Ini.ReadString('Patient-search', 'id', '');
-  cbxPSpecies.ItemIndex := Ini.ReadInteger('Patient-search', 'species', 0);
-  cbxPLanguage.ItemIndex := Ini.ReadInteger('Patient-search', 'lang', 0);
-  cbPUseLastUpdated.IsChecked := Ini.ReadBool('Patient-search', 'updated-opt', false);
+  edtPText.Text := Settings.getValue('Patient-search', 'text', '');
+  dedPLastEdit.Text := Settings.getValue('Patient-search', 'updated', '');
+  edtPTag.Text := Settings.getValue('Patient-search', 'tag', '');
+  edtPName.Text := Settings.getValue('Patient-search', 'name', '');
+  edtPTelecom.Text := Settings.getValue('Patient-search', 'telecom', '');
+  cbxPDob.ItemIndex := Settings.getValue('Patient-search', 'dobopt', 0);
+  dedPDob.Text := Settings.getValue('Patient-search', 'dob', '');
+  cbxPGender.ItemIndex := Settings.getValue('Patient-search', 'gender', 0);
+  cbxPDeceased.ItemIndex := Settings.getValue('Patient-search', 'dod', 0);
+  dedPDeceased.Text := Settings.getValue('Patient-search', 'dodopt', '');
+  cbxPActive.ItemIndex := Settings.getValue('Patient-search', 'active', 0);
+  edtPIdentifier.Text := Settings.getValue('Patient-search', 'id', '');
+  cbxPSpecies.ItemIndex := Settings.getValue('Patient-search', 'species', 0);
+  cbxPLanguage.ItemIndex := Settings.getValue('Patient-search', 'lang', 0);
+  cbPUseLastUpdated.IsChecked := Settings.getValue('Patient-search', 'updated-opt', false);
 
   btnFetchMore.Visible := false;
   FConfMatches := TAdvList<TFHIRResource>.create;

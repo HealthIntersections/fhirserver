@@ -310,7 +310,7 @@
         <DCCReference Include="..\reference-platform\dstu2\NarrativeGenerator.pas"/>
         <DCCReference Include="..\reference-platform\support\FHIRSecurity.pas"/>
         <DCCReference Include="..\reference-platform\dstu2\FHIRNarrativeGenerator.pas"/>
-        <DCCReference Include="..\reference-platform\support\SmartOnFhirUtilities.pas"/>
+        <DCCReference Include="..\reference-platform\client\SmartOnFhirUtilities.pas"/>
         <DCCReference Include="..\reference-platform\dstu2\FHIRPath.pas"/>
         <DCCReference Include="..\reference-platform\dstu2\FHIRTags.pas"/>
         <DCCReference Include="..\reference-platform\dstu2\FHIRProfileUtilities.pas"/>
@@ -325,7 +325,7 @@
         <DCCReference Include="..\reference-platform\dstu2\FHIRSupport.pas"/>
         <DCCReference Include="..\reference-platform\support\FHIRLang.pas"/>
         <DCCReference Include="..\reference-platform\dstu2\FHIRUtilities.pas"/>
-        <DCCReference Include="..\reference-platform\dstu2\FHIRClient.pas"/>
+        <DCCReference Include="..\reference-platform\client\FHIRClient.pas"/>
         <DCCReference Include="..\reference-platform\dstu2\FHIRValidator.pas"/>
         <DCCReference Include="ClosureManager.pas"/>
         <DCCReference Include="..\reference-platform\support\CDSHooksUtilities.pas"/>

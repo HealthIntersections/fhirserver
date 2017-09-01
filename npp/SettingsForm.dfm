@@ -25,7 +25,7 @@ inherited SettingForm: TSettingForm
     Top = 0
     Width = 699
     Height = 373
-    ActivePage = TabSheet1
+    ActivePage = TabSheet2
     Align = alClient
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
@@ -36,6 +36,10 @@ inherited SettingForm: TSettingForm
     TabOrder = 1
     object TabSheet1: TTabSheet
       Caption = 'General'
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object Panel2: TPanel
         Left = 0
         Top = 0
@@ -244,6 +248,10 @@ inherited SettingForm: TSettingForm
     object TabSheet3: TTabSheet
       Caption = 'Misc'
       ImageIndex = 2
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object Panel4: TPanel
         Left = 0
         Top = 0
@@ -328,6 +336,10 @@ inherited SettingForm: TSettingForm
     object TabSheet2: TTabSheet
       Caption = 'Servers'
       ImageIndex = 1
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object Panel3: TPanel
         Left = 0
         Top = 0
@@ -382,44 +394,6 @@ inherited SettingForm: TSettingForm
           TabOrder = 4
           OnClick = btnDownClick
         end
-      end
-      object vtServers: TVirtualStringTree
-        Left = 0
-        Top = 37
-        Width = 691
-        Height = 308
-        Align = alClient
-        Header.AutoSizeIndex = 1
-        Header.Font.Charset = DEFAULT_CHARSET
-        Header.Font.Color = clWindowText
-        Header.Font.Height = -11
-        Header.Font.Name = 'Tahoma'
-        Header.Font.Style = []
-        Header.Options = [hoAutoResize, hoColumnResize, hoDrag, hoShowSortGlyphs, hoVisible]
-        TabOrder = 1
-        TreeOptions.SelectionOptions = [toFullRowSelect]
-        OnGetText = vtServersGetText
-        Columns = <
-          item
-            Position = 0
-            Width = 150
-            WideText = 'Name'
-          end
-          item
-            Position = 1
-            Width = 337
-            WideText = 'URL'
-          end
-          item
-            Position = 2
-            Width = 100
-            WideText = 'Smart on FHIR'
-          end
-          item
-            Position = 3
-            Width = 100
-            WideText = 'CDS-Hooks'
-          end>
       end
     end
   end

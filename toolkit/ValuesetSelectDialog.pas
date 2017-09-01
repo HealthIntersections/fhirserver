@@ -33,9 +33,10 @@ uses
   System.SysUtils, System.Types, System.UITypes, System.Classes, System.Variants,
   FMX.Types, FMX.Controls, FMX.Forms, FMX.Graphics, FMX.Dialogs, System.Rtti,
   FMX.Grid.Style, FMX.Grid, FMX.ScrollBox, FMX.StdCtrls, FMX.DateTimeCtrls, FMX.ListBox,
-  FMX.Edit, FMX.Controls.Presentation, IniFiles, GuidSupport,
+  FMX.Edit, FMX.Controls.Presentation, GuidSupport,
   FHIRTypes, FHIRResources, FHIRUtilities, FHIRClient,
-  SettingsDialog, FMX.ComboEdit;
+  SettingsDialog, FMX.ComboEdit,
+  ToolkitSettings;
 
 type
   TValuesetSelectForm = class(TForm)
@@ -80,7 +81,7 @@ type
     procedure gridContainsSetValue(Sender: TObject; const ACol, ARow: Integer; const Value: TValue);
   private
     FExpansion : TFHIRValueSet;
-    FIni: TIniFile;
+    FSettings: TFHIRToolkitSettings;
     FClient : TFhirClient;
     FVersion: String;
     FSystem: String;
@@ -88,10 +89,11 @@ type
     FReplace: boolean;
     function selectedCount : integer;
     procedure SetExpansion(const Value: TFHIRValueSet);
+    procedure SetSettings(const Value: TFHIRToolkitSettings);
   public
     destructor Destroy; override;
 
-    property ini : TIniFile read FIni write FIni;
+    property Settings : TFHIRToolkitSettings read FSettings write SetSettings;
     property system : String read FSystem write FSystem;
     property version : String read FVersion write FVersion;
     property hasConcepts : boolean read FHasConcepts write FHasConcepts;
@@ -132,11 +134,11 @@ var
 begin
   form := TSettingsForm.create(self);
   try
-    form.Ini := FIni;
+    form.Settings := FSettings.link;
     form.TabControl1.TabIndex := 1;
     if form.showmodal = mrOk then
     begin
-      FIni.ReadSection('Terminology-Servers', cbxServer.Items);
+      FSettings.ListServers('Terminology', cbxServer.Items);
       cbxServer.ItemIndex := 0;
     end;
   finally
@@ -203,6 +205,7 @@ end;
 
 destructor TValuesetSelectForm.Destroy;
 begin
+  FSettings.Free;
   FExpansion.Free;
   FClient.Free;
   inherited;
@@ -213,33 +216,32 @@ var
   s : String;
 begin
   try
-    FIni.WriteInteger('ValueSet.Select.Window', 'left', left);
-    FIni.WriteInteger('ValueSet.Select.Window', 'top', top);
-    FIni.WriteInteger('ValueSet.Select.Window', 'width', width);
-    FIni.WriteInteger('ValueSet.Select.Window', 'height', height);
+    FSettings.storeValue('ValueSet.Select.Window', 'left', left);
+    FSettings.storeValue('ValueSet.Select.Window', 'top', top);
+    FSettings.storeValue('ValueSet.Select.Window', 'width', width);
+    FSettings.storeValue('ValueSet.Select.Window', 'height', height);
 
-    FIni.WriteString('ValueSet.Select', 'Property', cbeProperty.Text);
-    FIni.WriteInteger('ValueSet.Select', 'Operation', cbxOperation.ItemIndex);
-    FIni.WriteString('ValueSet.Select', 'Value', edtValue.Text);
+    FSettings.storeValue('ValueSet.Select', 'Property', cbeProperty.Text);
+    FSettings.storeValue('ValueSet.Select', 'Operation', cbxOperation.ItemIndex);
+    FSettings.storeValue('ValueSet.Select', 'Value', edtValue.Text);
+    FSettings.save;
   except
   end;
 end;
 
 procedure TValuesetSelectForm.FormShow(Sender: TObject);
 begin
-  Left := FIni.ReadInteger('ValueSet.Select.Window', 'left', left);
-  Top := FIni.ReadInteger('ValueSet.Select.Window', 'top', top);
-  Width := FIni.ReadInteger('ValueSet.Select.Window', 'width', width);
-  Height := FIni.ReadInteger('ValueSet.Select.Window', 'height', height);
+  Left := FSettings.getValue('ValueSet.Select.Window', 'left', left);
+  Top := FSettings.getValue('ValueSet.Select.Window', 'top', top);
+  Width := FSettings.getValue('ValueSet.Select.Window', 'width', width);
+  Height := FSettings.getValue('ValueSet.Select.Window', 'height', height);
 
-  FIni.ReadSection('Terminology-Servers', cbxServer.Items);
-  if cbxServer.Items.Count = 0 then
-    cbxServer.Items.Add('http://tx.fhir.org/r3');
+  FSettings.ListServers('Terminology', cbxServer.Items);
   cbxServer.ItemIndex := 0;
 
-  cbeProperty.Text := FIni.ReadString('ValueSet.Select', 'Property', '');
-  cbxOperation.ItemIndex := FIni.ReadInteger('ValueSet.Select', 'Operation', 0);
-  edtValue.Text := FIni.ReadString('ValueSet.Select', 'Value', '');
+  cbeProperty.Text := FSettings.getValue('ValueSet.Select', 'Property', '');
+  cbxOperation.ItemIndex := FSettings.getValue('ValueSet.Select', 'Operation', 0);
+  edtValue.Text := FSettings.getValue('ValueSet.Select', 'Value', '');
 end;
 
 procedure TValuesetSelectForm.GoClick(Sender: TObject);
@@ -268,9 +270,9 @@ begin
     btnReplace.Enabled := false;
 
     if FClient = nil then
-      FClient := TFhirThreadedClient.Create(TFhirHTTPClient.Create(nil, cbxServer.items[cbxServer.itemIndex], false, FIni.ReadInteger('HTTP', 'timeout', 5) * 1000, FIni.ReadString('HTTP', 'proxy', '')), MasterToolsForm.threadMonitorProc);
+      FClient := TFhirThreadedClient.Create(TFhirHTTPClient.Create(nil, FSettings.serverAddress('Terminology', cbxServer.itemIndex), false, FSettings.timeout * 1000, FSettings.proxy), MasterToolsForm.threadMonitorProc);
 
-    MasterToolsForm.dowork(self, 'Searching',
+    MasterToolsForm.dowork(self, 'Searching', true,
       procedure
       var
         params :  TFHIRParameters;
@@ -336,5 +338,11 @@ begin
   FExpansion := Value;
 end;
 
+
+procedure TValuesetSelectForm.SetSettings(const Value: TFHIRToolkitSettings);
+begin
+  FSettings.Free;
+  FSettings := Value;
+end;
 
 end.

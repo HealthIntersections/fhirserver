@@ -749,7 +749,7 @@ begin
   index := 0;
   if (Assigned(FHIRToolbox)) then
     index := FHIRToolbox.cbxServers.ItemIndex;
-  server := Settings.serverInfo(index);
+  server := Settings.serverInfo('', index);
   try
     try
       try
@@ -1451,7 +1451,7 @@ end;
 
 procedure TFHIRPlugin.DoNppnReady;
 begin
-  Settings := TFHIRPluginSettings.create(GetPluginsConfigDir);
+  Settings := TFHIRPluginSettings.create(IncludeTrailingPathDelimiter(GetPluginsConfigDir)+'fhirplugin.json');
   FWorker := TFHIRPluginValidatorContext.Create(Settings.TerminologyServer);
   if not Settings.NoWelcomeScreen then
     ShowWelcomeScreen(self);

@@ -1,4 +1,4 @@
-object RegisterServerForm: TRegisterServerForm
+object EditRegisteredServerForm: TEditRegisteredServerForm
   Left = 0
   Top = 0
   Caption = 'Register a new Server'
@@ -22,15 +22,11 @@ object RegisterServerForm: TRegisterServerForm
     Top = 0
     Width = 449
     Height = 404
-    ActivePage = TabSheet1
+    ActivePage = TabSheet2
     Align = alClient
     TabOrder = 0
     object TabSheet1: TTabSheet
       Caption = 'Server Identity'
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Panel3: TPanel
         Left = 0
         Top = 0
@@ -58,7 +54,7 @@ object RegisterServerForm: TRegisterServerForm
           Caption = 'URL:'
         end
         object Label2: TLabel
-          Left = 52
+          Left = 62
           Top = 70
           Width = 207
           Height = 13
@@ -118,10 +114,6 @@ object RegisterServerForm: TRegisterServerForm
     object TabSheet2: TTabSheet
       Caption = 'Smart on FHIR'
       ImageIndex = 1
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Panel2: TPanel
         Left = 0
         Top = 0
@@ -277,10 +269,6 @@ object RegisterServerForm: TRegisterServerForm
     object TabSheet3: TTabSheet
       Caption = 'CDS-Hooks'
       ImageIndex = 2
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Panel4: TPanel
         Left = 0
         Top = 0

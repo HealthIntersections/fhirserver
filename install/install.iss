@@ -29,7 +29,7 @@ WizardStyle=modern
 
 ; directory management
 DefaultDirName={pf}\FHIRServer
-DefaultGroupName=FHIRServer
+DefaultGroupName=FHIR Applications
 UninstallFilesDir={app}
 
 ; win2000+ add/remove programs support

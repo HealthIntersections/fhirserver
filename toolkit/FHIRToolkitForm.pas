@@ -34,15 +34,14 @@ uses
   FMX.Types, FMX.Controls, FMX.Forms, FMX.Graphics, FMX.Dialogs, FMX.StdCtrls, FMX.Platform,
   FMX.Layouts, FMX.ListBox, FMX.TabControl, FMX.Controls.Presentation, FMX.DialogService,
   System.ImageList, FMX.ImgList, FMX.Menus, FMX.WebBrowser,
-  IniFiles,
   SystemSupport, TextUtilities,
   FHIRBase, FHIRTypes, FHIRResources, FHIRClient, FHIRUtilities, FHIRIndexBase, FHIRIndexInformation, FHIRSupport,
   FHIRContext, FHIRProfileUtilities,
-  ServerForm, CapabilityStatementEditor, BaseResourceFrame, BaseFrame, SourceViewer, ListSelector,
-  ValueSetEditor, HelpContexts, ProcessForm, SettingsDialog, AboutDialog;
+  SmartOnFHIRUtilities, EditRegisteredServerDialogFMX, OSXUIUtils,
+  ToolkitSettings, ServerForm, CapabilityStatementEditor, BaseResourceFrame, BaseFrame, SourceViewer, ListSelector,
+  ValueSetEditor, HelpContexts, ProcessForm, SettingsDialog, AboutDialog, ToolKitVersion;
 
 type
-
   TMasterToolsForm = class(TForm)
     tbMain: TTabControl;
     Label2: TLabel;
@@ -96,6 +95,7 @@ type
     MenuItem6: TMenuItem;
     mnuHelpAbout: TMenuItem;
     btnCopy: TButton;
+    btnEditServer: TButton;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure lbServersClick(Sender: TObject);
@@ -120,22 +120,21 @@ type
     procedure btnStopClick(Sender: TObject);
     procedure mnuHelpAboutClick(Sender: TObject);
     procedure btnCopyClick(Sender: TObject);
+    procedure btnEditServerClick(Sender: TObject);
   private
     { Private declarations }
-    FIni : TIniFile;
+    FSettings : TFHIRToolkitSettings;
     FShowHelp : boolean;
     FFocus : TStyledControl;
     FIndexes : TFhirIndexList;
     FContext : TBaseWorkerContext;
     FIsStopped : boolean;
 
-    procedure saveServers;
     procedure saveFiles;
     procedure openResourceFromFile(filename : String; res : TFHIRResource; format : TFHIRFormat; frameClass : TBaseResourceFrameClass);
     procedure OpenResourcefromClient(sender : TObject; client : TFHIRClient; format : TFHIRFormat; resource : TFHIRResource);
     procedure newResource(rClass : TFhirResourceClass; frameClass : TBaseResourceFrameClass);
     procedure addFileToList(filename : String);
-    procedure addServerToList(url : String);
     function frameForResource(res : TFhirResource) : TBaseResourceFrameClass;
     function doSave : boolean;
     function doSaveAs : boolean;
@@ -145,8 +144,10 @@ type
     function searchDesc(s : String) : String;
     procedure fhirDefn(s : String; b : TStringBuilder);
     function GetStopped: boolean;
+    procedure DoIdle(out stop : boolean);
+    procedure DoOpenURL(url : String);
   public
-    procedure dowork(Sender : TObject; opName : String; proc : TWorkProc);
+    procedure dowork(Sender : TObject; opName : String; canCancel : boolean; proc : TWorkProc);
     procedure threadMonitorProc(sender : TFhirClient; var stop : boolean);
   end;
 
@@ -169,66 +170,106 @@ begin
   lbFilesClick(nil);
 end;
 
-procedure TMasterToolsForm.addServerToList(url: String);
-var
-  i : integer;
-begin
-  for i := lbServers.Count - 1 downto 0 do
-    if lbServers.items[i] = url then
-      lbServers.Items.Delete(i);
-  lbServers.Items.Insert(0, url);
-  saveServers;
-  lbServersClick(nil);
-end;
-
 procedure TMasterToolsForm.btnAddServerClick(Sender: TObject);
+var
+  form : TEditRegisteredServerForm;
 begin
-  TDialogService.InputQuery('Server Address', ['URL'], [''],
-    procedure(const AResult: TModalResult; const AValues: array of string)
+  form := TEditRegisteredServerForm.create(self);
+  try
+    form.Server := TRegisteredFHIRServer.Create;
+    if form.ShowModal = mrOk then
     begin
-      if (AResult = mrOK) and (aValues[0] <> '') then
-        addServerToList(AValues[0]);
-    end);
+      FSettings.registerServer('', form.Server);
+      FSettings.ListServers('', lbServers.Items);
+      lbServersClick(nil);
+    end;
+  finally
+    form.Free;
+  end;
 end;
 
 procedure TMasterToolsForm.btnConnectClick(Sender: TObject);
 var
+  http: TFhirHTTPClient;
   client : TFhirClient;
   tab : TTabItem;
   serverForm : TServerFrame;
   cs : TFhirCapabilityStatement;
+  server : TRegisteredFHIRServer;
+  smart : TSmartAppLaunchLogin;
+  ok : boolean;
 begin
-  client := TFhirThreadedClient.create(TFhirHTTPClient.Create(nil, lbServers.Items[lbServers.ItemIndex], false, FIni.ReadInteger('HTTP', 'timeout', 5) * 1000, FIni.ReadString('HTTP', 'proxy', '')), threadMonitorProc);
+  server := FSettings.serverInfo('', lbServers.ItemIndex);
   try
-    doWork(nil, 'Connect',
-      procedure
-      begin
-        cs := client.conformance(false);
-      end);
+    http := TFhirHTTPClient.Create(nil, server.fhirEndpoint, false, FSettings.Timeout* 1000, FSettings.proxy);
     try
-      tab := tbMain.Add(TTabItem);
-      tab.Text := lbServers.Items[lbServers.ItemIndex];
-      tbMain.ActiveTab := tab;
-      serverForm := TServerFrame.create(tab);
-      serverForm.Parent := tab;
-      tab.TagObject := serverForm;
-      serverForm.OnWork := dowork;
-      serverForm.TagObject := tab;
-      serverForm.tabs := tbMain;
-      serverForm.Ini := FIni;
-      serverForm.Tab := tab;
-      serverForm.Align := TAlignLayout.Client;
-      serverForm.Client := client.link;
-      serverForm.CapabilityStatement := cs.link;
-      serverForm.OnOpenResource := OpenResourcefromClient;
-      serverForm.OnWork :=  dowork;
-      serverForm.load;
-      addServerToList(client.address);
+      ok := true;
+      if server.SmartOnFHIR then
+      begin
+        dowork(self, 'Logging in', true,
+          procedure
+          begin
+            smart := TSmartAppLaunchLogin.Create;
+            try
+              smart.server := server.Link;
+              smart.scopes := ['User/*.*'];
+              smart.OnIdle := DoIdle;
+              smart.OnOpenURL := DoOpenURL;
+              smart.name := 'FHIR Toolkit';
+              smart.version := '0.0.'+inttostr(BuildCount);
+              ok := smart.login;
+              if ok then
+                http.smartToken := smart.token.link;
+            finally
+              smart.Free;
+            end;
+          end);
+      end;
+      if not ok then
+        exit;
+      client := TFhirThreadedClient.create(http.link, threadMonitorProc);
+      try
+        doWork(nil, 'Connect', true,
+          procedure
+          begin
+            cs := client.conformance(false);
+          end);
+        try
+          tab := tbMain.Add(TTabItem);
+          tab.Text := server.name;
+          tbMain.ActiveTab := tab;
+          serverForm := TServerFrame.create(tab);
+          serverForm.Parent := tab;
+          tab.TagObject := serverForm;
+          serverForm.OnWork := dowork;
+          serverForm.TagObject := tab;
+          serverForm.tabs := tbMain;
+          serverForm.Settings := FSettings.Link;
+          serverForm.Tab := tab;
+          serverForm.Align := TAlignLayout.Client;
+          serverForm.Client := client.link;
+          serverForm.CapabilityStatement := cs.link;
+          serverForm.OnOpenResource := OpenResourcefromClient;
+          serverForm.OnWork :=  dowork;
+          serverForm.load;
+
+          if lbServers.ItemIndex > 0 then
+          begin
+            lbServers.Items.Exchange(0, lbServers.ItemIndex);
+            FSettings.moveServer('', lbServers.ItemIndex, -lbServers.ItemIndex);
+            lbServers.ItemIndex := 0;
+          end;
+        finally
+          cs.free;
+        end;
+      finally
+        client.Free;
+      end;
     finally
-      cs.free;
+      http.Free;
     end;
   finally
-    client.Free;
+    server.free;
   end;
 end;
 
@@ -240,6 +281,25 @@ begin
     Svc.SetClipboard(lbFiles.Items[lbFiles.ItemIndex])
   else
     Beep;
+end;
+
+procedure TMasterToolsForm.btnEditServerClick(Sender: TObject);
+var
+  i : integer;
+  form : TEditRegisteredServerForm;
+begin
+  form := TEditRegisteredServerForm.create(self);
+  try
+    form.Server := FSettings.serverInfo('', lbServers.ItemIndex);
+    if form.ShowModal = mrOk then
+    begin
+      FSettings.updateServerInfo('', lbServers.ItemIndex, form.Server);
+      FSettings.ListServers('', lbServers.Items);
+      lbServersClick(nil);
+    end;
+  finally
+    form.Free;
+  end;
 end;
 
 procedure TMasterToolsForm.btnNewClick(Sender: TObject);
@@ -307,11 +367,11 @@ var
   i : integer;
 begin
   i := lbServers.ItemIndex;
+  FSettings.DeleteServer('', lbServers.ItemIndex);
   lbServers.items.Delete(i);
   if i = lbServers.items.Count then
     dec(i);
   lbServers.ItemIndex := i;
-  saveServers;
   lbServersClick(nil);
 end;
 
@@ -342,7 +402,7 @@ var
 begin
   form := TSettingsForm.create(self);
   try
-    form.Ini := FIni;
+    form.Settings := FSettings.link;
     form.showmodal;
   finally
     form.free;
@@ -424,7 +484,7 @@ end;
 procedure TMasterToolsForm.tbnHelpContextClick(Sender: TObject);
 begin
   FShowHelp := not FShowHelp;
-  FIni.WriteBool('Help', 'context', FShowHelp);
+  FSettings.ShowHelp := FShowHelp;
   FFocus := nil;
   updateHelpStatus;
 end;
@@ -432,6 +492,17 @@ end;
 procedure TMasterToolsForm.CloseButtonClick(Sender: TObject);
 begin
   Close;
+end;
+
+procedure TMasterToolsForm.DoIdle(out stop: boolean);
+begin
+  Application.ProcessMessages;
+  stop := GetStopped;
+end;
+
+procedure TMasterToolsForm.DoOpenURL(url: String);
+begin
+  openURL(url);
 end;
 
 function TMasterToolsForm.GetStopped: boolean;
@@ -454,7 +525,7 @@ begin
     begin
       ok := false;
       frame.OnStopped := GetStopped;
-      frame.work('Save',
+      frame.work('Save', false,
         procedure
         begin;
           ok := frame.save;
@@ -482,7 +553,7 @@ begin
       if frame.canSaveAs then
       begin
         ok := false;
-        frame.work('Save As',
+        frame.work('Save As', false,
           procedure
           begin
             fn := sdFile.Filename;
@@ -511,7 +582,7 @@ begin
   end;
 end;
 
-procedure TMasterToolsForm.dowork(Sender: TObject; opName : String; proc: TWorkProc);
+procedure TMasterToolsForm.dowork(Sender: TObject; opName : String; canCancel : boolean; proc: TWorkProc);
 var
   fcs : IFMXCursorService;
   form : TProcessingForm;
@@ -532,12 +603,10 @@ begin
     form := TProcessingForm.Create(self);
     try
       form.lblOperation.text := opName;
+      form.Button1.enabled := canCancel;
       form.Button1.OnClick := btnStopClick;
-      form.Show;
-      {$IFDEF MSWINDOWS}
-      Application.ProcessMessages;
-      {$ENDIF}
-      proc;
+      form.proc := proc;
+      form.ShowModal;
     finally
       form.Free;
     end;
@@ -578,42 +647,15 @@ begin
 end;
 
 procedure TMasterToolsForm.FormActivate(Sender: TObject);
-var
-  form : TProcessingForm;
-  fcs : IFMXCursorService;
 begin
   if FContext = nil then
-  begin
-    if TPlatformServices.Current.SupportsPlatformService(IFMXCursorService) then
-      fcs := TPlatformServices.Current.GetPlatformService(IFMXCursorService) as IFMXCursorService
-    else
-      fcs := nil;
-    if Assigned(fcs) then
-    begin
-      Cursor := fcs.GetCursor;
-      fcs.SetCursor(crHourGlass);
-    end;
-    try
-      form := TProcessingForm.Create(self);
-      try
-        form.lblOperation.text := 'Loading Data';
-        form.Button1.enabled := false;
-        form.Show;
-        {$IFDEF MSWINDOWS}
-        Application.ProcessMessages;
-        {$ENDIF}
-
+    doWork(nil, 'Loading Data', false,
+      procedure
+      begin
         FContext := TBaseWorkerContext.Create;
         FContext.LoadFromFile(IncludeTrailingPathDelimiter(ExtractFilePath(ParamStr(0)))+'profiles-types.xml');
         FContext.LoadFromFile(IncludeTrailingPathDelimiter(ExtractFilePath(ParamStr(0)))+'profiles-resources.xml');
-      finally
-        form.Free;
-      end;
-    finally
-      if Assigned(fCS) then
-        fcs.setCursor(Cursor);
-    end;
-  end;
+      end);
 end;
 
 procedure TMasterToolsForm.FormCloseQuery(Sender: TObject; var CanClose: Boolean);
@@ -656,36 +698,34 @@ end;
 
 procedure TMasterToolsForm.FormCreate(Sender: TObject);
 begin
-  FIni := TIniFile.Create(IncludeTrailingPathDelimiter(SystemTemp) + 'settings.ini');
-  FIni.ReadSection('Servers', lbServers.Items);
-  if lbServers.Items.count = 0 then
-    lbServers.Items.add('http://test.fhir.org/r3');
+  FSettings := TFHIRToolkitSettings.Create(IncludeTrailingPathDelimiter(SystemTemp) + 'fhir-toolkit-settings.json');
+  FSettings.ListServers('', lbServers.Items);
   lbServers.ItemIndex := 0;
   lbServersClick(self);
-  FIni.ReadSection('Files', lbFiles.Items);
+  FSettings.getValues('Files', lbFiles.Items);
   if lbFiles.Items.count > 0 then
     lbFiles.ItemIndex := 0;
   lbFilesClick(self);
-  Left := FIni.ReadInteger('Window', 'left', left);
-  Top := FIni.ReadInteger('Window', 'top', top);
-  Width := FIni.ReadInteger('Window', 'width', width);
-  Height := FIni.ReadInteger('Window', 'height', height);
-  FShowHelp := FIni.ReadBool('Help', 'context', false);
+  Left := FSettings.getValue('Window', 'left', left);
+  Top := FSettings.getValue('Window', 'top', top);
+  Width := FSettings.getValue('Window', 'width', width);
+  Height := FSettings.getValue('Window', 'height', height);
+  FShowHelp := FSettings.ShowHelp;
   updateHelpStatus;
 end;
 
 procedure TMasterToolsForm.FormDestroy(Sender: TObject);
 begin
-  saveServers;
   saveFiles;
   try
-    FIni.WriteInteger('Window', 'left', left);
-    FIni.WriteInteger('Window', 'top', top);
-    FIni.WriteInteger('Window', 'width', width);
-    FIni.WriteInteger('Window', 'height', height);
+    FSettings.storeValue('Window', 'left', left);
+    FSettings.storeValue('Window', 'top', top);
+    FSettings.storeValue('Window', 'width', width);
+    FSettings.storeValue('Window', 'height', height);
+    FSettings.Save;
   except
   end;
-  FIni.Free;
+  FSettings.Free;
   FIndexes.Free;
   FContext.Free;
 end;
@@ -711,6 +751,7 @@ procedure TMasterToolsForm.lbServersClick(Sender: TObject);
 begin
   btnConnect.Enabled := lbServers.ItemIndex >= 0;
   btnRemoveServer.Enabled := lbServers.ItemIndex >= 0;
+  btnEditServer.Enabled := lbServers.ItemIndex >= 0;
 end;
 
 procedure TMasterToolsForm.mnuHelpAboutClick(Sender: TObject);
@@ -752,7 +793,7 @@ begin
     frame.Parent := tab;
     frame.tabs := tbMain;
     frame.OnWork := dowork;
-    frame.Ini := FIni;
+    frame.Settings := FSettings.link;
     frame.Tab := tab;
     frame.Align := TAlignLayout.Client;
     frame.Filename := '';
@@ -791,7 +832,7 @@ begin
     frame.Parent := tab;
     frame.tabs := tbMain;
     frame.OnWork := dowork;
-    frame.Ini := FIni;
+    frame.Settings := FSettings.link;
     frame.Tab := tab;
     frame.Align := TAlignLayout.Client;
     frame.Filename := filename;
@@ -832,7 +873,7 @@ begin
     frame.Parent := tab;
     frame.tabs := tbMain;
     frame.OnWork := dowork;
-    frame.Ini := FIni;
+    frame.Settings := FSettings.link;
     frame.Tab := tab;
     frame.Align := TAlignLayout.Client;
     frame.Client := client.link;
@@ -851,26 +892,13 @@ var
   s : String;
 begin
   try
-    FIni.EraseSection('Files');
-    for s in lbFiles.Items do
-      FIni.WriteString('Files', s, '');
+    FSettings.storeValues('Files', lbFiles.Items);
+    FSettings.save;
   except
     // nothing we can do
   end;
 end;
 
-procedure TMasterToolsForm.saveServers;
-var
-  s : String;
-begin
-  try
-    FIni.EraseSection('Servers');
-    for s in lbServers.Items do
-      FIni.WriteString('Servers', s, '');
-  except
-    // nothing we can do
-  end;
-end;
 
 function TMasterToolsForm.searchDesc(s: String): String;
 var

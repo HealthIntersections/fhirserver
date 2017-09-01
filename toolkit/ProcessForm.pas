@@ -32,7 +32,8 @@ interface
 uses
   System.SysUtils, System.Types, System.UITypes, System.Classes, System.Variants,
   FMX.Types, FMX.Controls, FMX.Forms, FMX.Graphics, FMX.Dialogs,
-  FMX.Controls.Presentation, FMX.StdCtrls, System.ImageList, FMX.ImgList;
+  FMX.Controls.Presentation, FMX.StdCtrls, System.ImageList, FMX.ImgList,
+  BaseFrame;
 
 type
   TProcessingForm = class(TForm)
@@ -40,10 +41,12 @@ type
     Button1: TButton;
     ImageList1: TImageList;
     StyleBook1: TStyleBook;
+    Timer1: TTimer;
+    procedure Timer1Timer(Sender: TObject);
   private
-    { Private declarations }
+    FProc: TWorkProc;
   public
-    { Public declarations }
+    property proc : TWorkProc read FProc write FProc;
   end;
 
 var
@@ -52,5 +55,18 @@ var
 implementation
 
 {$R *.fmx}
+
+procedure TProcessingForm.Timer1Timer(Sender: TObject);
+begin
+  Timer1.Enabled := false;
+  {$IFDEF MSWINDOWS}
+  Application.ProcessMessages;
+  {$ENDIF}
+  try
+    proc;
+  finally
+    ModalResult := mrClose;
+  end;
+end;
 
 end.

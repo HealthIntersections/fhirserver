@@ -273,7 +273,7 @@
         <DCCReference Include="..\reference-platform\r4\NarrativeGenerator.pas"/>
         <DCCReference Include="..\reference-platform\support\FHIRSecurity.pas"/>
         <DCCReference Include="..\reference-platform\r4\FHIRNarrativeGenerator.pas"/>
-        <DCCReference Include="..\reference-platform\support\SmartOnFhirUtilities.pas"/>
+        <DCCReference Include="..\reference-platform\client\SmartOnFhirUtilities.pas"/>
         <DCCReference Include="..\reference-platform\r4\FhirPath.pas"/>
         <DCCReference Include="..\reference-platform\r4\FHIRTags.pas"/>
         <DCCReference Include="..\reference-platform\r4\FHIRProfileUtilities.pas"/>
@@ -286,7 +286,7 @@
         <DCCReference Include="..\reference-platform\r4\FHIRSupport.pas"/>
         <DCCReference Include="..\reference-platform\support\FHIRLang.pas"/>
         <DCCReference Include="..\reference-platform\r4\FHIRUtilities.pas"/>
-        <DCCReference Include="..\reference-platform\r4\FHIRClient.pas"/>
+        <DCCReference Include="..\reference-platform\client\FHIRClient.pas"/>
         <DCCReference Include="..\reference-platform\r4\FHIRValidator.pas"/>
         <DCCReference Include="..\server\ClosureManager.pas"/>
         <DCCReference Include="..\reference-platform\support\CDSHooksUtilities.pas"/>
@@ -794,6 +794,7 @@
                 <ProjectRoot Platform="iOSSimulator" Name="$(PROJECTNAME).app"/>
             </Deployment>
             <Platforms>
+                <Platform value="Linux64">False</Platform>
                 <Platform value="Win32">True</Platform>
                 <Platform value="Win64">True</Platform>
             </Platforms>

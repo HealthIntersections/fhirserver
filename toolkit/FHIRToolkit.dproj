@@ -166,7 +166,7 @@
             <MainSource>MainSource</MainSource>
         </DelphiCompile>
         <DCCReference Include="..\Libraries\FMM\FastMM4.pas"/>
-        <DCCReference Include="..\reference-platform\dstu3\FHIRClient.pas"/>
+        <DCCReference Include="..\reference-platform\client\FHIRClient.pas"/>
         <DCCReference Include="..\reference-platform\support\StringSupport.pas"/>
         <DCCReference Include="..\reference-platform\support\MathSupport.pas"/>
         <DCCReference Include="..\reference-platform\support\EncodeSupport.pas"/>
@@ -258,7 +258,7 @@
         <DCCReference Include="..\reference-platform\dstu3\FhirPath.pas"/>
         <DCCReference Include="..\reference-platform\support\SystemSupport.pas"/>
         <DCCReference Include="..\reference-platform\support\ThreadSupport.pas"/>
-        <DCCReference Include="..\reference-platform\support\SmartOnFhirUtilities.pas"/>
+        <DCCReference Include="..\reference-platform\client\SmartOnFhirUtilities.pas"/>
         <DCCReference Include="..\..\markdown\source\MarkdownProcessor.pas"/>
         <DCCReference Include="..\..\markdown\source\MarkdownDaringFireball.pas"/>
         <DCCReference Include="..\..\markdown\source\MarkdownCommonMark.pas"/>
@@ -335,6 +335,12 @@
             <Form>MemoEditorForm</Form>
             <FormType>fmx</FormType>
         </DCCReference>
+        <DCCReference Include="..\reference-platform\client\FHIRClientSettings.pas"/>
+        <DCCReference Include="..\reference-platform\client\EditRegisteredServerDialogFMX.pas">
+            <Form>EditRegisteredServerForm</Form>
+            <FormType>fmx</FormType>
+        </DCCReference>
+        <DCCReference Include="ToolkitSettings.pas"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>

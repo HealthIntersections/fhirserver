@@ -35,12 +35,12 @@ uses
   FMX.ListBox, FMX.Edit, FMX.TabControl, FMX.TreeView, FMX.Layouts,
   FMX.Controls.Presentation, FMX.Platform,
   IdComponent,
-  IniFiles,
-  FHIRBase, FHIRResources, FHIRClient;
+  FHIRBase, FHIRResources, FHIRClient,
+  ToolkitSettings;
 
 type
   TWorkProc = reference to procedure;
-  TWorkEvent = procedure (Sender : TObject; opName : String; proc : TWorkProc) of object;
+  TWorkEvent = procedure (Sender : TObject; opName : String; canCancel : boolean; proc : TWorkProc) of object;
   TOnOpenResourceEvent = procedure (sender : TObject; client : TFHIRClient; format : TFHIRFormat; resource : TFHIRResource) of object;
   TIsStoppedEvent = reference to function : boolean;
 
@@ -48,14 +48,17 @@ type
   private
     FTabs : TTabControl;
     FTab  : TTabItem;
-    FIni: TIniFile;
+    FSettings: TFHIRToolkitSettings;
     FOnOpenResource : TOnOpenResourceEvent;
     FOnWork : TWorkEvent;
     FOnStopped: TIsStoppedEvent;
+    procedure SetSettings(const Value: TFHIRToolkitSettings);
   public
+    destructor Destroy; override;
+
     property Tabs : TTabControl read FTabs write FTabs;
     property Tab : TTabItem read FTab write FTab;
-    property Ini : TIniFile read FIni write FIni;
+    property Settings : TFHIRToolkitSettings read FSettings write SetSettings;
     property OnOpenResource : TOnOpenResourceEvent read FOnOpenResource write FOnOpenResource;
     property OnWork : TWorkEvent read FOnWork write FOnWork;
     property OnStopped : TIsStoppedEvent read FOnStopped write FOnStopped;
@@ -74,7 +77,7 @@ type
     function originalResource : TFHIRResource; virtual;
 
     procedure ClientWork(ASender: TObject; AWorkMode: TWorkMode; AWorkCount: Int64);
-    procedure work(opName : String; proc : TWorkProc);
+    procedure work(opName : String; canCancel : boolean; proc : TWorkProc);
   end;
 
 implementation
@@ -114,6 +117,12 @@ begin
   result := nil;
 end;
 
+destructor TBaseFrame.Destroy;
+begin
+  FSettings.Free;
+  inherited;
+end;
+
 function TBaseFrame.hasResource: boolean;
 begin
   result := false;
@@ -150,9 +159,15 @@ begin
   raise Exception.Create('Not implemented');
 end;
 
-procedure TBaseFrame.work(opName : String; proc: TWorkProc);
+procedure TBaseFrame.SetSettings(const Value: TFHIRToolkitSettings);
 begin
-  OnWork(self, opname, proc);
+  FSettings.Free;
+  FSettings := Value;
+end;
+
+procedure TBaseFrame.work(opName : String; canCancel : boolean; proc: TWorkProc);
+begin
+  OnWork(self, opname, canCancel, proc);
 end;
 
 end.

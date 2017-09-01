@@ -516,7 +516,7 @@ end;
 
 procedure TAppEndorsementFrame.Load;
 begin
-  work('Load Endorsements',
+  work('Load Endorsements', false,
     procedure
     begin
       ClearEndorsements;

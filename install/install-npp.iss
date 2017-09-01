@@ -18,7 +18,7 @@ AppPublisherURL=http://healthintersections.com.au
 AppSupportURL=http://wiki.hl7.org/index.php?title=FHIR_Notepad%2B%2B_Plugin_Documentation
 AppUpdatesURL=http://healthintersections.com.au/FhirServer
 DefaultDirName={pf32}\Notepad++
-DefaultGroupName=Notepad++
+DefaultGroupName=FHIR Applications
 DisableProgramGroupPage=yes
 LicenseFile=C:\work\fhirserver\install\npplicense.txt
 InfoBeforeFile=C:\work\fhirserver\install\nppreadme.txt

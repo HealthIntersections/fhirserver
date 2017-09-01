@@ -1,0 +1,42 @@
+object SmartOnFhirLoginForm: TSmartOnFhirLoginForm
+  Left = 0
+  Top = 0
+  BorderIcons = [biSystemMenu, biMaximize]
+  Caption = 'Login to [Server]'
+  ClientHeight = 480
+  ClientWidth = 640
+  FormFactor.Width = 320
+  FormFactor.Height = 480
+  FormFactor.Devices = [Desktop]
+  OnShow = FormShow
+  OnHide = FormHide
+  DesignerMasterStyle = 0
+  object Panel1: TPanel
+    Align = Bottom
+    Position.Y = 440.000000000000000000
+    Size.Width = 640.000000000000000000
+    Size.Height = 40.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 0
+    object Button2: TButton
+      Anchors = [akTop, akRight]
+      Cancel = True
+      ModalResult = 2
+      Position.X = 551.000000000000000000
+      Position.Y = 8.000000000000000000
+      TabOrder = 0
+      Text = 'Cancel'
+      OnClick = Button2Click
+    end
+  end
+  object browser: TWebBrowser
+    Align = Client
+    Size.Width = 628.000000000000000000
+    Size.Height = 428.000000000000000000
+    Size.PlatformDefault = False
+    Margins.Left = 6.000000000000000000
+    Margins.Top = 6.000000000000000000
+    Margins.Right = 6.000000000000000000
+    Margins.Bottom = 6.000000000000000000
+  end
+end

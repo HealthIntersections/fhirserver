@@ -34,7 +34,7 @@ interface
 uses
   Windows, Messages, SysUtils, Variants, Classes, Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Buttons,
   Vcl.Dialogs, NppForms, Vcl.StdCtrls, Vcl.Imaging.pngimage, Vcl.ExtCtrls,
-  VirtualTrees, Vcl.ComCtrls, SmartOnFhirUtilities, NewServerForm;
+  VirtualTrees, Vcl.ComCtrls, SmartOnFhirUtilities, EditRegisteredServerDialog;
 
 type
   TSettingForm = class(TNppForm)
@@ -110,7 +110,7 @@ uses
 
 procedure TSettingForm.btnEditAsTextClick(Sender: TObject);
 begin
-  FNpp.DoOpen(Settings.SourceFile);
+  FNpp.DoOpen(Settings.Filename);
   showmessage('Note that this file is only read at start up, and changes you make will be overwritten by by the plug-in if you make setting changes');
 end;
 
@@ -156,7 +156,7 @@ begin
   if (vtServers.GetFirstSelected() <> nil) and (vtServers.GetFirstSelected().Index > 0) then
   begin
     c := vtServers.GetFirstSelected().Index;
-    Settings.moveServer(c, -1);
+    Settings.moveServer('', c, -1);
     vtServers.Invalidate;
     vtServers.ClearSelection;
     n := vtServers.RootNode.FirstChild;
@@ -186,8 +186,8 @@ begin
   if (vtServers.GetFirstSelected() <> nil) then
   begin
     i := vtServers.GetFirstSelected().Index;
-    Settings.deleteServer(i);
-    vtServers.RootNodeCount := Settings.ServerCount;
+    Settings.deleteServer('', i);
+    vtServers.RootNodeCount := Settings.ServerCount('');
     vtServers.Invalidate;
   end;
 end;
@@ -197,10 +197,10 @@ var
   i, c : integer;
   n : PVirtualNode;
 begin
-  if (vtServers.GetFirstSelected() <> nil) and (vtServers.GetFirstSelected().Index < Settings.ServerCount - 1) then
+  if (vtServers.GetFirstSelected() <> nil) and (vtServers.GetFirstSelected().Index < Settings.ServerCount('') - 1) then
   begin
     c := vtServers.GetFirstSelected().Index;
-    Settings.moveServer(c, +2); // because +1 is immediately after, so no change
+    Settings.moveServer('', c, +2); // because +1 is immediately after, so no change
     vtServers.Invalidate;
     vtServers.ClearSelection;
     n := vtServers.RootNode.FirstChild;
@@ -217,31 +217,31 @@ begin
   if (vtServers.GetFirstSelected() <> nil) then
   begin
     i := vtServers.GetFirstSelected().Index;
-    RegisterServerForm := TRegisterServerForm.create(npp);
+    EditRegisteredServerForm := TEditRegisteredServerForm.create(npp);
     try
-      RegisterServerForm.loadFrom(i);
-      if RegisterServerForm.ShowModal = mrOk then
+      EditRegisteredServerForm.loadFrom(i);
+      if EditRegisteredServerForm.ShowModal = mrOk then
       begin
-        vtServers.RootNodeCount := Settings.ServerCount;
+        vtServers.RootNodeCount := Settings.ServerCount('');
         vtServers.Invalidate;
       end;
     finally
-      RegisterServerForm.Free;
+      EditRegisteredServerForm.Free;
     end;
   end;
 end;
 
 procedure TSettingForm.btnAddClick(Sender: TObject);
 begin
-  RegisterServerForm := TRegisterServerForm.create(npp);
+  EditRegisteredServerForm := TEditRegisteredServerForm.create(npp);
   try
-    if RegisterServerForm.ShowModal = mrOk then
+    if EditRegisteredServerForm.ShowModal = mrOk then
     begin
-      vtServers.RootNodeCount := Settings.ServerCount;
+      vtServers.RootNodeCount := Settings.ServerCount('');
       vtServers.Invalidate;
     end;
   finally
-    RegisterServerForm.Free;
+    EditRegisteredServerForm.Free;
   end;
 end;
 
@@ -260,7 +260,7 @@ begin
     rbR2.Checked := true
   else
     rbr3.Checked := true;
-  vtServers.RootNodeCount := Settings.ServerCount;
+  vtServers.RootNodeCount := Settings.ServerCount('');
   cbPathSummary.checked := not Settings.NoPathSummary;
   cbValidationSummary.checked := not Settings.NoValidationSummary;
   for s in Settings.AdditionalDefinitions.Split([',']) do
@@ -271,7 +271,7 @@ procedure TSettingForm.vtServersGetText(Sender: TBaseVirtualTree; Node: PVirtual
 var
   server : TRegisteredFHIRServer;
 begin
-  server := Settings.serverInfo(Node.Index);
+  server := Settings.serverInfo('', Node.Index);
   try
     case Column of
     0: CellText := server.name;

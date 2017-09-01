@@ -103,6 +103,7 @@ Type
 
     procedure remove(index : integer);
     procedure move(index, delta : integer);
+    procedure clear;
 
     function GetEnumerator : TJsonArrayEnumerator; // can only use this when the array members are objects
   end;
@@ -1066,7 +1067,13 @@ begin
       Begin
       FLex.next;
       FLex.FStates.InsertObject(0, ItemName+'[]', Self);
-      ParseProperty;
+      if FLex.LexType = jltCloseArray Then
+      Begin
+        FItemType := jpitEnd;
+        FLex.Next;
+      End
+      else
+        ParseProperty;
       End;
     jpitEof :
         FLex.JsonError('JSON Syntax Error - attempt to read past end of json stream');
@@ -1586,6 +1593,11 @@ function TJsonArray.addObject: TJsonObject;
 begin
   result := TJsonObject.Create;
   add(result);
+end;
+
+procedure TJsonArray.clear;
+begin
+  FItems.Clear;
 end;
 
 function TJsonArray.compare(other: TJsonNode): boolean;

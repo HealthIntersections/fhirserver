@@ -33,9 +33,10 @@ uses
   System.SysUtils, System.Types, System.UITypes, System.Classes, System.Variants,
   FMX.Types, FMX.Controls, FMX.Forms, FMX.Graphics, FMX.Dialogs, System.Rtti,
   FMX.Grid.Style, FMX.Grid, FMX.ScrollBox, FMX.StdCtrls, FMX.DateTimeCtrls,
-  FMX.Edit, FMX.Controls.Presentation, IniFiles,
+  FMX.Edit, FMX.Controls.Presentation,
   FHIRResources, FHIRUtilities, FHIRClient, FMX.ListBox,
-  SettingsDialog;
+  SettingsDialog,
+  ToolkitSettings;
 
 type
   TValuesetExpansionForm = class(TForm)
@@ -77,15 +78,16 @@ type
   private
     FValueSet: TFHIRValueSet;
     FExpansion : TFHIRValueSet;
-    FIni: TIniFile;
+    FSettings : TFHIRToolkitSettings;
     FClient : TFhirClient;
     procedure SetValueSet(const Value: TFHIRValueSet);
     procedure SetExpansion(const Value: TFHIRValueSet);
+    procedure SetSettings(const Value: TFHIRToolkitSettings);
   public
     destructor Destroy; override;
     property ValueSet : TFHIRValueSet read FValueSet write SetValueSet;
     property Expansion : TFHIRValueSet read FExpansion write SetExpansion;
-    property Ini : TIniFile read FIni write FIni;
+    property Settings : TFHIRToolkitSettings read FSettings write SetSettings;
   end;
 
 var
@@ -106,11 +108,11 @@ var
 begin
   form := TSettingsForm.create(self);
   try
-    form.Ini := FIni;
+    form.Settings := FSettings.link;
     form.TabControl1.TabIndex := 1;
     if form.showmodal = mrOk then
     begin
-      FIni.ReadSection('Terminology-Servers', cbxServer.Items);
+      FSettings.ListServers('Terminology', cbxServer.Items);
       cbxServer.ItemIndex := 0;
     end;
   finally
@@ -120,6 +122,7 @@ end;
 
 destructor TValuesetExpansionForm.Destroy;
 begin
+  FSettings.Free;
   FExpansion.Free;
   FValueSet.Free;
   FClient.Free;
@@ -131,61 +134,60 @@ var
   s : String;
 begin
   try
-    FIni.WriteInteger('Expansion.Window', 'left', left);
-    FIni.WriteInteger('Expansion.Window', 'top', top);
-    FIni.WriteInteger('Expansion.Window', 'width', width);
-    FIni.WriteInteger('Expansion.Window', 'height', height);
+    FSettings.storeValue('Expansion.Window', 'left', left);
+    FSettings.storeValue('Expansion.Window', 'top', top);
+    FSettings.storeValue('Expansion.Window', 'width', width);
+    FSettings.storeValue('Expansion.Window', 'height', height);
 
-    FIni.WriteString('Expansion', 'Filter', edtFilter.Text);
-    FIni.WriteString('Expansion', 'Date', dedDate.Text);
-    FIni.WriteString('Expansion', 'Offset', edtOffset.Text);
-    FIni.WriteString('Expansion', 'Count', edtCount.Text);
-    FIni.WriteString('Expansion', 'Lang', edtLang.Text);
-    FIni.WriteBool('Expansion', 'Designations', cbDesignations.IsChecked);
-    FIni.WriteBool('Expansion', 'ActiveOnly', cbActiveOnly.IsChecked);
-    FIni.WriteBool('Expansion', 'UIOnly', cbUIOnly.IsChecked);
-    FIni.WriteBool('Expansion', 'NoExpressions', cbNoExpressions.IsChecked);
-    FIni.WriteBool('Expansion', 'AllowSubset', cbAllowSubset.IsChecked);
+    FSettings.storeValue('Expansion', 'Filter', edtFilter.Text);
+    FSettings.storeValue('Expansion', 'Date', dedDate.Text);
+    FSettings.storeValue('Expansion', 'Offset', edtOffset.Text);
+    FSettings.storeValue('Expansion', 'Count', edtCount.Text);
+    FSettings.storeValue('Expansion', 'Lang', edtLang.Text);
+    FSettings.storeValue('Expansion', 'Designations', cbDesignations.IsChecked);
+    FSettings.storeValue('Expansion', 'ActiveOnly', cbActiveOnly.IsChecked);
+    FSettings.storeValue('Expansion', 'UIOnly', cbUIOnly.IsChecked);
+    FSettings.storeValue('Expansion', 'NoExpressions', cbNoExpressions.IsChecked);
+    FSettings.storeValue('Expansion', 'AllowSubset', cbAllowSubset.IsChecked);
 
-    FIni.WriteInteger('Expansion', 'width-col-1', trunc(StringColumn10.Width));
-    FIni.WriteInteger('Expansion', 'width-col-1', trunc(CheckColumn1.Width));
-    FIni.WriteInteger('Expansion', 'width-col-1', trunc(CheckColumn2.Width));
-    FIni.WriteInteger('Expansion', 'width-col-1', trunc(StringColumn11.Width));
-    FIni.WriteInteger('Expansion', 'width-col-1', trunc(StringColumn12.Width));
-    FIni.WriteInteger('Expansion', 'width-col-1', trunc(StringColumn13.Width));
+    FSettings.storeValue('Expansion', 'width-col-1', trunc(StringColumn10.Width));
+    FSettings.storeValue('Expansion', 'width-col-1', trunc(CheckColumn1.Width));
+    FSettings.storeValue('Expansion', 'width-col-1', trunc(CheckColumn2.Width));
+    FSettings.storeValue('Expansion', 'width-col-1', trunc(StringColumn11.Width));
+    FSettings.storeValue('Expansion', 'width-col-1', trunc(StringColumn12.Width));
+    FSettings.storeValue('Expansion', 'width-col-1', trunc(StringColumn13.Width));
+    FSettings.Save;
   except
   end;
 end;
 
 procedure TValuesetExpansionForm.FormShow(Sender: TObject);
 begin
-  Left := FIni.ReadInteger('Expansion.Window', 'left', left);
-  Top := FIni.ReadInteger('Expansion.Window', 'top', top);
-  Width := FIni.ReadInteger('Expansion.Window', 'width', width);
-  Height := FIni.ReadInteger('Expansion.Window', 'height', height);
+  Left := FSettings.getValue('Expansion.Window', 'left', left);
+  Top := FSettings.getValue('Expansion.Window', 'top', top);
+  Width := FSettings.getValue('Expansion.Window', 'width', width);
+  Height := FSettings.getValue('Expansion.Window', 'height', height);
 
-  FIni.ReadSection('Terminology-Servers', cbxServer.Items);
-  if cbxServer.Items.Count = 0 then
-    cbxServer.Items.Add('http://tx.fhir.org/r3');
+  FSettings.ListServers('Terminology', cbxServer.Items);
   cbxServer.ItemIndex := 0;
 
-  edtFilter.Text := FIni.ReadString('Expansion', 'Filter', '');
-  dedDate.Text := FIni.ReadString('Expansion', 'Date', '');
-  edtOffset.Text := FIni.ReadString('Expansion', 'Offset', '');
-  edtCount.Text := FIni.ReadString('Expansion', 'Count', '');
-  edtLang.Text := FIni.ReadString('Expansion', 'Lang', '');
-  cbDesignations.IsChecked := FIni.ReadBool('Expansion', 'Designations', false);
-  cbActiveOnly.IsChecked := FIni.ReadBool('Expansion', 'ActiveOnly', false);
-  cbUIOnly.IsChecked := FIni.ReadBool('Expansion', 'UIOnly', false);
-  cbNoExpressions.IsChecked := FIni.ReadBool('Expansion', 'NoExpressions', false);
-  cbAllowSubset.IsChecked := FIni.ReadBool('Expansion', 'AllowSubset', false);
+  edtFilter.Text := FSettings.getValue('Expansion', 'Filter', '');
+  dedDate.Text := FSettings.getValue('Expansion', 'Date', '');
+  edtOffset.Text := FSettings.getValue('Expansion', 'Offset', '');
+  edtCount.Text := FSettings.getValue('Expansion', 'Count', '');
+  edtLang.Text := FSettings.getValue('Expansion', 'Lang', '');
+  cbDesignations.IsChecked := FSettings.getValue('Expansion', 'Designations', false);
+  cbActiveOnly.IsChecked := FSettings.getValue('Expansion', 'ActiveOnly', false);
+  cbUIOnly.IsChecked := FSettings.getValue('Expansion', 'UIOnly', false);
+  cbNoExpressions.IsChecked := FSettings.getValue('Expansion', 'NoExpressions', false);
+  cbAllowSubset.IsChecked := FSettings.getValue('Expansion', 'AllowSubset', false);
 
-  StringColumn10.Width := FIni.ReadInteger('Expansion', 'width-col-1', trunc(StringColumn10.Width));
-  CheckColumn1.Width := FIni.ReadInteger('Expansion', 'width-col-1', trunc(CheckColumn1.Width));
-  CheckColumn2.Width := FIni.ReadInteger('Expansion', 'width-col-1', trunc(CheckColumn2.Width));
-  StringColumn11.Width := FIni.ReadInteger('Expansion', 'width-col-1', trunc(StringColumn11.Width));
-  StringColumn12.Width := FIni.ReadInteger('Expansion', 'width-col-1', trunc(StringColumn12.Width));
-  StringColumn13.Width := FIni.ReadInteger('Expansion', 'width-col-1', trunc(StringColumn13.Width));
+  StringColumn10.Width := FSettings.getValue('Expansion', 'width-col-1', trunc(StringColumn10.Width));
+  CheckColumn1.Width := FSettings.getValue('Expansion', 'width-col-1', trunc(CheckColumn1.Width));
+  CheckColumn2.Width := FSettings.getValue('Expansion', 'width-col-1', trunc(CheckColumn2.Width));
+  StringColumn11.Width := FSettings.getValue('Expansion', 'width-col-1', trunc(StringColumn11.Width));
+  StringColumn12.Width := FSettings.getValue('Expansion', 'width-col-1', trunc(StringColumn12.Width));
+  StringColumn13.Width := FSettings.getValue('Expansion', 'width-col-1', trunc(StringColumn13.Width));
 end;
 
 procedure TValuesetExpansionForm.GoClick(Sender: TObject);
@@ -198,9 +200,9 @@ begin
   button1.Enabled := false;
 
   if FClient = nil then
-    FClient := TFhirThreadedClient.Create(TFhirHTTPClient.Create(nil, cbxServer.items[cbxServer.itemIndex], false, FIni.ReadInteger('HTTP', 'timeout', 5) * 1000, FIni.ReadString('HTTP', 'proxy', '')), MasterToolsForm.threadMonitorProc);
+    FClient := TFhirThreadedClient.Create(TFhirHTTPClient.Create(nil, FSettings.serverAddress('Terminology', cbxServer.itemIndex), false, FSettings.timeout * 1000, FSettings.proxy), MasterToolsForm.threadMonitorProc);
 
-  MasterToolsForm.dowork(self, 'Expanding',
+  MasterToolsForm.dowork(self, 'Expanding', true,
     procedure
     var
       params :  TFHIRParameters;
@@ -258,6 +260,12 @@ procedure TValuesetExpansionForm.SetExpansion(const Value: TFHIRValueSet);
 begin
   FExpansion.Free;
   FExpansion := Value;
+end;
+
+procedure TValuesetExpansionForm.SetSettings(const Value: TFHIRToolkitSettings);
+begin
+  FSettings.Free;
+  FSettings := Value;
 end;
 
 procedure TValuesetExpansionForm.SetValueSet(const Value: TFHIRValueSet);

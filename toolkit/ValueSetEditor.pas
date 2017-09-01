@@ -616,7 +616,7 @@ begin
   rule := tbResource.TagObject as TFHIRValueSetComposeInclude;
   form := TValuesetSelectForm.Create(self);
   try
-    form.Ini := Ini;
+    form.Settings := Settings.link;
     form.system := edtSystem.Text;
     form.version :=  edtSystemVersion.Text;
     form.hasConcepts := rule.conceptList.Count > 0;
@@ -657,7 +657,7 @@ var
 begin
   form := TValuesetExpansionForm.Create(self);
   try
-    form.Ini := Ini;
+    form.Settings := Settings.link;
     form.ValueSet := ValueSet.Link;
     if form.ShowModal = mrOk then
     begin

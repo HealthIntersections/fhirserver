@@ -31,7 +31,7 @@ uses
   FastMM4 in '..\Libraries\FMM\FastMM4.pas',
   System.StartUpCopy,
   FMX.Forms,
-  FHIRClient in '..\reference-platform\dstu3\FHIRClient.pas',
+  FHIRClient in '..\reference-platform\client\FHIRClient.pas',
   StringSupport in '..\reference-platform\support\StringSupport.pas',
   MathSupport in '..\reference-platform\support\MathSupport.pas',
   EncodeSupport in '..\reference-platform\support\EncodeSupport.pas',
@@ -123,7 +123,7 @@ uses
   FhirPath in '..\reference-platform\dstu3\FhirPath.pas',
   SystemSupport in '..\reference-platform\support\SystemSupport.pas',
   ThreadSupport in '..\reference-platform\support\ThreadSupport.pas',
-  SmartOnFhirUtilities in '..\reference-platform\support\SmartOnFhirUtilities.pas',
+  SmartOnFhirUtilities in '..\reference-platform\client\SmartOnFhirUtilities.pas',
   MarkdownProcessor in '..\..\markdown\source\MarkdownProcessor.pas',
   MarkdownDaringFireball in '..\..\markdown\source\MarkdownDaringFireball.pas',
   MarkdownCommonMark in '..\..\markdown\source\MarkdownCommonMark.pas',
@@ -161,12 +161,16 @@ uses
   AboutDialog in 'AboutDialog.pas' {AboutForm},
   OSXUIUtils in '..\Libraries\ui\OSXUIUtils.pas',
   ValuesetSelectDialog in 'ValuesetSelectDialog.pas' {ValuesetSelectForm},
-  MemoEditorDialog in 'MemoEditorDialog.pas' {MemoEditorForm};
+  MemoEditorDialog in 'MemoEditorDialog.pas' {MemoEditorForm},
+  FHIRClientSettings in '..\reference-platform\client\FHIRClientSettings.pas',
+  EditRegisteredServerDialogFMX in '..\reference-platform\client\EditRegisteredServerDialogFMX.pas' {EditRegisteredServerForm},
+  ToolkitSettings in 'ToolkitSettings.pas';
 
 {$R *.res}
 
 begin
   Application.Initialize;
   Application.CreateForm(TMasterToolsForm, MasterToolsForm);
+  Application.CreateForm(TEditRegisteredServerForm, EditRegisteredServerForm);
   Application.Run;
 end.

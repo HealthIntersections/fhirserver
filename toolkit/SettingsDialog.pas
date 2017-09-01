@@ -33,7 +33,8 @@ uses
   System.SysUtils, System.Types, System.UITypes, System.Classes, System.Variants,
   FMX.Types, FMX.Controls, FMX.Forms, FMX.Graphics, FMX.Dialogs, FMX.EditBox,
   FMX.SpinBox, FMX.Edit, FMX.StdCtrls, FMX.TabControl, FMX.Controls.Presentation,
-  IniFiles, System.Rtti, FMX.Grid.Style, FMX.Grid, FMX.ScrollBox;
+  IniFiles, System.Rtti, FMX.Grid.Style, FMX.Grid, FMX.ScrollBox, FMX.Layouts, FMX.ListBox,
+  ToolkitSettings, EditRegisteredServerDialogFMX, SmartOnFhirUtilities;
 
 type
   TSettingsForm = class(TForm)
@@ -49,30 +50,27 @@ type
     Label3: TLabel;
     Label4: TLabel;
     TabItem2: TTabItem;
-    Grid1: TGrid;
-    StringColumn1: TStringColumn;
     btnAdd: TButton;
     btnUp: TButton;
     btnDown: TButton;
     btnDelete: TButton;
+    lbServers: TListBox;
+    btnEdit: TButton;
     procedure FormShow(Sender: TObject);
     procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
-    procedure Grid1GetValue(Sender: TObject; const ACol, ARow: Integer;
-      var Value: TValue);
-    procedure Grid1Resize(Sender: TObject);
-    procedure Grid1SelChanged(Sender: TObject);
     procedure btnAddClick(Sender: TObject);
     procedure btnDeleteClick(Sender: TObject);
     procedure btnUpClick(Sender: TObject);
     procedure btnDownClick(Sender: TObject);
-    procedure Grid1SetValue(Sender: TObject; const ACol, ARow: Integer;
-      const Value: TValue);
+    procedure lbServersClick(Sender: TObject);
+    procedure btnEditClick(Sender: TObject);
   private
-    FIni : TIniFile;
-    FServers : TStringList;
+    FSettings :  TFHIRToolkitSettings;
+    procedure SetSettings(const Value: TFHIRToolkitSettings);
   public
-    Property Ini : TIniFile read FIni write FIni;
+    Destructor Destroy; override;
+    Property Settings : TFHIRToolkitSettings read FSettings write SetSettings;
   end;
 
 var
@@ -83,48 +81,81 @@ implementation
 {$R *.fmx}
 
 procedure TSettingsForm.btnAddClick(Sender: TObject);
+var
+  form : TEditRegisteredServerForm;
 begin
-  FServers.Add('http://...');
-  Grid1.RowCount := 0;
-  Grid1.RowCount := FServers.Count;
-  Grid1.Row := FServers.Count - 1;
-  Grid1SelChanged(nil);
+  form := TEditRegisteredServerForm.create(self);
+  try
+    form.Server := TRegisteredFHIRServer.Create;
+    if form.ShowModal = mrOk then
+    begin
+      FSettings.registerServer('Terminology', form.Server);
+      FSettings.ListServers('Terminology', lbServers.Items);
+      lbServersClick(nil);
+    end;
+  finally
+    form.Free;
+  end;
 end;
 
 procedure TSettingsForm.btnDeleteClick(Sender: TObject);
 var
   i : integer;
 begin
-  i := Grid1.Row;
-  FServers.Delete(i);
-  Grid1.RowCount := 0;
-  Grid1.RowCount := FServers.Count;
-  Grid1.Row := i - 1;
-  Grid1SelChanged(nil);
+  i := lbServers.ItemIndex;
+  FSettings.DeleteServer('Terminology', lbServers.ItemIndex);
+  lbServers.items.Delete(i);
+  if i = lbServers.items.Count then
+    dec(i);
+  lbServers.ItemIndex := i;
+  lbServersClick(nil);
 end;
 
 procedure TSettingsForm.btnDownClick(Sender: TObject);
 var
   i : integer;
 begin
-  i := Grid1.Row;
-  FServers.Exchange(i, i+1);
-  Grid1.RowCount := 0;
-  Grid1.RowCount := FServers.Count;
-  Grid1.Row := i - 1;
-  Grid1SelChanged(nil);
+  i := lbServers.ItemIndex;
+  FSettings.moveServer('Terminology', i, 2);
+  FSettings.ListServers('Terminology', lbServers.Items);
+  lbServers.ItemIndex := i+1;
+  lbServersClick(nil);
+end;
+
+procedure TSettingsForm.btnEditClick(Sender: TObject);
+var
+  i : integer;
+  form : TEditRegisteredServerForm;
+begin
+  form := TEditRegisteredServerForm.create(self);
+  try
+    form.Server := FSettings.serverInfo('Terminology', lbServers.ItemIndex);
+    if form.ShowModal = mrOk then
+    begin
+      FSettings.updateServerInfo('Terminology', lbServers.ItemIndex, form.Server);
+      FSettings.ListServers('Terminology', lbServers.Items);
+      lbServersClick(nil);
+    end;
+  finally
+    form.Free;
+  end;
 end;
 
 procedure TSettingsForm.btnUpClick(Sender: TObject);
 var
   i : integer;
 begin
-  i := Grid1.Row;
-  FServers.Exchange(i, i-1);
-  Grid1.RowCount := 0;
-  Grid1.RowCount := FServers.Count;
-  Grid1.Row := i - 1;
-  Grid1SelChanged(nil);
+  i := lbServers.ItemIndex;
+  FSettings.moveServer('Terminology', i, -1);
+  FSettings.ListServers('Terminology', lbServers.Items);
+  lbServers.ItemIndex := i-1;
+  lbServersClick(nil);
+end;
+
+destructor TSettingsForm.Destroy;
+begin
+  FSettings.Free;
+  inherited;
 end;
 
 procedure TSettingsForm.FormClose(Sender: TObject; var Action: TCloseAction);
@@ -133,13 +164,9 @@ var
 begin
   if ModalResult = mrOk then
   begin
-    FIni.WriteString('HTTP', 'proxy', edtProxy.Text);
-    FIni.WriteInteger('HTTP', 'timeout', trunc(edtTimeout.Value));
-    FIni.EraseSection('Terminology-Servers');
-    for s in FServers do
-      FIni.WriteString('Terminology-Servers', s, '');
+    FSettings.Proxy := edtProxy.Text;
+    FSettings.timeout := trunc(edtTimeout.Value);
   end;
-  FServers.free;
 end;
 
 procedure TSettingsForm.FormCloseQuery(Sender: TObject; var CanClose: Boolean);
@@ -149,42 +176,27 @@ end;
 
 procedure TSettingsForm.FormShow(Sender: TObject);
 begin
-  edtProxy.Text := FIni.ReadString('HTTP', 'proxy', '');
-  edtTimeout.Value := FIni.ReadInteger('HTTP', 'timeout', 5);
-  FServers := TStringList.create;
-  FIni.ReadSection('Terminology-Servers', FServers);
-  if FServers.Count = 0 then
-  begin
-    FServers.add('http://tx.fhir.org/r3');
-    FIni.WriteString('Terminology-Servers', 'http://tx.fhir.org/r3', '');
-  end;
-  Grid1.RowCount := 0;
-  Grid1.RowCount := FServers.Count;
-  Grid1SelChanged(nil);
+  TabControl1.ActiveTab := TabItem1;
+  edtProxy.Text := FSettings.Proxy;
+  edtTimeout.Value := FSettings.timeout;
+  FSettings.ListServers('Terminology', lbServers.Items);
+  lbServers.ItemIndex := 0;
+  lbServersClick(nil);
 end;
 
-procedure TSettingsForm.Grid1GetValue(Sender: TObject; const ACol, ARow: Integer; var Value: TValue);
+procedure TSettingsForm.lbServersClick(Sender: TObject);
 begin
-  Value := FServers[aRow];
-end;
-
-procedure TSettingsForm.Grid1Resize(Sender: TObject);
-begin
-  Grid1.Columns[0].Width := Grid1.Width - 4;
-end;
-
-procedure TSettingsForm.Grid1SelChanged(Sender: TObject);
-begin
+  btnEdit.Enabled := lbServers.ItemIndex >= 0;
   btnAdd.enabled := true;
-  btnDown.enabled := (grid1.Row > -1) and (grid1.Row < FServers.Count - 1);
-  btnUp.enabled := grid1.Row > 0;
-  btnDelete.enabled := (grid1.Row > -1) and (FServers.Count > 1);
+  btnDown.enabled := (lbServers.ItemIndex > -1) and (lbServers.ItemIndex < FSettings.ServerCount('Terminology') - 1);
+  btnUp.enabled := lbServers.ItemIndex > 0;
+  btnDelete.enabled := (lbServers.ItemIndex >= 0) and (FSettings.ServerCount('Terminology') > 1);
 end;
 
-procedure TSettingsForm.Grid1SetValue(Sender: TObject; const ACol, ARow: Integer; const Value: TValue);
+procedure TSettingsForm.SetSettings(const Value: TFHIRToolkitSettings);
 begin
-  FServers[aRow] := Value.AsString;
-
+  FSettings.Free;
+  FSettings := Value;
 end;
 
 end.
