@@ -903,8 +903,6 @@ begin
     LStmt.hDbc := LHdbc;
     LStmt.ConcurrencyType := SQL_CONCUR_READ_ONLY;
     LStmt.CursorType := SQL_CURSOR_FORWARD_ONLY;
-    LStmt.RowSetSize := 1;
-    LStmt.BindBookMarks := False;
     if FTimeout <> 0 then
       LStmt.QueryTimeOut := FTimeout;
     result := TKDBOdbcConnection.create(self, FEnv, LHdbc, LStmt);

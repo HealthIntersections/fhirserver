@@ -103,7 +103,6 @@ Const
   DefSQLParsing = True;
   DefConcurrencyType = SQL_CONCUR_READ_ONLY;
   DefCursorType = SQL_CURSOR_FORWARD_ONLY;
-  DefRowSetSize = 1;
   DefBlobSize = 32768;
   DefBlobDeferral = False;
   DefBlobPlacement = bpDetect;
@@ -116,8 +115,6 @@ Const
   DefFormatStyle = fsNone;
   DefFormatMask = '';
   DefSkipByMethod = False;
-  DefBindBookmarks = False;
-  DefBookmarkSize = SizeOf(SQLINTEGER);
   DefPrimary = False;
   DefIgnore = False;
   DefCore = False;
@@ -495,15 +492,12 @@ Type
 
     FRowStatus: TColPtr;
     FRowFlags: TColPtr;
-    FRowBookmark: TColPtr;
     FNumCols: SQLSMALLINT;    //#cols in result set
     FNumRows: SQLUINTEGER;    //#values per col
     FNumParams: SQLUINTEGER;  //#values per param
     FBulkData: Boolean;
     FBlobs: Boolean;
     FColumnsBound: Boolean;
-    FBindBookmarks: Boolean;
-    FBookmarkSize: SQLLEN;
     FPrepared: Boolean;
     FExecuted: Boolean;
     FParamType: SQLSMALLINT;
@@ -518,7 +512,6 @@ Type
     FCursorAttr: SQLUINTEGER;
     FConcurrencyType: SQLUINTEGER;
     FCursorType: SQLUINTEGER;
-    FRowSetSize: SQLUINTEGER; { Set Before Prepare }
     FBlobSize: LongInt;
     FBlobDeferral: Boolean;
     FBlobPlacement: TBlobPlacement;
@@ -671,8 +664,6 @@ Type
     Function GetRowValid(Row: SQLUSMALLINT): Boolean;
     Function GetParamNames: TStringList;
     Function GetColNames: TStringList;
-    Function GetBookmark: SQLPOINTER;
-    Procedure SetBookmark(ABookmark: SQLPOINTER);
     Function GetQueryTimeOut: SQLUINTEGER;
     Procedure SetQueryTimeOut(AQueryTimeOut: SQLUINTEGER);
     Function GetMaxRows: SQLUINTEGER;
@@ -683,7 +674,6 @@ Type
     Function GetRowsAffected: SQLLEN;
     Procedure SetConcurrencyType(AConcurrencyType: SQLUINTEGER);
     Procedure SetCursorType(ACursorType: SQLUINTEGER);
-    Procedure SetRowSetSize(ARowSetSize: SQLUINTEGER);
     Procedure SetSkipByCursor(ASkipByCursor: Boolean);
     Procedure SetSkipByPosition(ASkipByPosition: Boolean);
     Procedure SetBlobSize(ABlobSize: LongInt);
@@ -990,7 +980,6 @@ Type
     Procedure NullCols(Const Cols: Array Of String);
     Procedure IgnoreCols(Const Cols: Array Of String);
     Procedure PrimaryCols(Const Cols: Array Of String);
-    Procedure FreeBookmark(ABookmark: SQLPOINTER);
 
     Procedure Prepare;
     Procedure BindParam(Param: SQLUSMALLINT;
@@ -1010,14 +999,12 @@ Type
                          Bulk: Integer);
     Procedure Execute;
     Procedure BindCol(Col: SQLUSMALLINT; SqlType: SQLSMALLINT);
-    Procedure DynamicallySetRowSetSize(ARowSetSize: SQLUINTEGER);
     Function FetchFirst: Boolean;
     Function FetchNext: Boolean;
     Function FetchLast: Boolean;
     Function FetchPrev: Boolean;
     Function FetchAbsolute(Row: SQLINTEGER): Boolean;
     Function FetchRelative(Row: SQLINTEGER): Boolean;
-    Function FetchBookmark(Bookmark: SQLPOINTER): Boolean;
     Function MoreResults: Boolean;
     Procedure AbortQuery;
     Procedure ColStream(Col: SQLUSMALLINT;
@@ -1220,8 +1207,6 @@ Type
     Property RowValid[Row: SQLUSMALLINT]: Boolean Read GetRowValid;
     Property ParamNames: TStringList Read GetParamNames;
     Property ColNames: TStringList Read GetColNames;
-    Property Bookmark: SQLPOINTER Read GetBookmark Write SetBookmark;
-    Property BookmarkSize: SQLLEN Read FBookmarkSize;
     Property QueryTimeOut: SQLUINTEGER Read GetQueryTimeOut Write SetQueryTimeOut;
     Property MaxRows: SQLUINTEGER Read GetMaxRows Write SetMaxRows;
     Property ColCount: SQLSMALLINT Read GetColCount;
@@ -1335,14 +1320,10 @@ Type
       Default DefConcurrencyType;
     Property CursorType: SQLUINTEGER Read FCursorType Write SetCursorType
       Default DefCursorType;
-    Property RowSetSize: SQLUINTEGER Read FRowSetSize Write SetRowSetSize
-      Default DefRowSetSize;
     Property SkipByPosition: Boolean Read FSkipByPosition Write SetSkipByPosition
       Default DefSkipByMethod;
     Property SkipByCursor: Boolean Read FSkipByCursor Write SetSkipByCursor
       Default DefSkipByMethod;
-    Property BindBookmarks: Boolean Read FBindBookmarks Write FBindBookmarks
-      Default DefBindBookmarks;
     Property BlobSize: LongInt Read FBlobSize Write SetBlobSize
       Default DefBlobSize;
     Property BlobDeferral: Boolean Read FBlobDeferral Write FBlobDeferral
@@ -3819,13 +3800,13 @@ Begin
         End;
 
       If (FCols^.FSql = SQL_CHAR) Or (FCols^.FSql = SQL_VARCHAR) Then
-        FreeMem(FCols^.FValue, FRowSetSize*(FCols^.FColumnSize+1))
+        FreeMem(FCols^.FValue, (FCols^.FColumnSize+1))
       Else If (FCols^.FSql = SQL_BINARY) Or (FCols^.FSql = SQL_VARBINARY) Then
-        FreeMem(FCols^.FValue, FRowSetSize*FCols^.FColumnSize)
+        FreeMem(FCols^.FValue, FCols^.FColumnSize)
       Else
-        FreeMem(FCols^.FValue, FRowSetSize*PhysSize(FCols^.FType));
+        FreeMem(FCols^.FValue, PhysSize(FCols^.FType));
     End;
-    FreeMem(FCols^.FSize, FRowSetSize*PhysSize(SQL_C_SLONG));
+    FreeMem(FCols^.FSize, PhysSize(SQL_C_SLONG));
     Dispose(FCols);
     FCols:= temp;
   End;
@@ -3912,7 +3893,7 @@ Begin
   temp^.FType:= FType;
   temp^.FSql:= FSql;
   temp^.FValue:= FValue;
-  GetMem(temp^.FSize, FRowSetSize*PhysSize(SQL_C_SLONG));
+  GetMem(temp^.FSize, PhysSize(SQL_C_SLONG));
   temp^.FSize^:= SQL_NULL_DATA;
   temp^.FBlob:= (FSql = SQL_LONGVARCHAR) Or (FSql = SQL_LONGVARBINARY) Or (FSql = SQL_VARBINARY);
   temp^.FBlobFetched:= False;
@@ -4095,7 +4076,7 @@ Begin
   tempCol:= ColRec(Col);
 
   If (tempCol <> Nil) And
-     (Row > 0) And (Row <= FRowSetSize) Then
+     (Row > 0) And (Row <= 1) Then
     Begin
     If tempCol^.FBlob Then
       Begin
@@ -4393,7 +4374,7 @@ End;
 
 Function TOdbcStatement.GetRowStatus(Row: SQLUSMALLINT): SQLUSMALLINT;
 Begin
-  If (Row > 0) And (Row <= FRowSetSize) Then
+  If (Row > 0) And (Row <= 1) Then
     Result:= SQLUSMALLINT(OffsetRow(FRowStatus^.FValue, Row, PhysSize(SQL_C_USHORT))^)
   Else
     Result:= SQL_ROW_NOROW;
@@ -4440,46 +4421,6 @@ Begin
   Result:= FColNames;
 End;
 
-Function TOdbcStatement.GetBookmark: SQLPOINTER;
-Var
-  StringLength: SQLLEN;
-Begin
-  Log(1, 'TOdbcStatement.GetBookmark');
-
-  Result:= Nil;
-  If ((FCursorAttr And SQL_CA1_BOOKMARK) = SQL_CA1_BOOKMARK) And RowValid[1] Then
-  Begin
-    GetMem(Result, BookmarkSize);
-    If FBindBookmarks Then
-      Move(FRowBookmark^.FValue^, Result^, BookmarkSize)
-    Else
-    Begin
-      FRetCode:= SQLSetPos(FHstmt, 1, SQL_POSITION, SQL_LOCK_NO_CHANGE);
-      If Not FEnv.Error.Success(FRetCode) Then
-      Begin
-        FreeMem(Result, BookmarkSize);
-        Result:= Nil;
-        Exit;
-      End;
-
-      //depreciated FRetCode:= SQLGetStmtOption(FHstmt, SQL_GET_BOOKMARK, @Bookmark);
-      FRetCode:= SQLGetData(FHstmt, 0, SQL_C_VARBOOKMARK, Result, BookmarkSize, @StringLength);
-      If Not FEnv.Error.Success(FRetCode) Then
-        FEnv.Error.RaiseError(Self, FRetCode);
-    End;
-  End;
-End;
-
-Procedure TOdbcStatement.SetBookmark(ABookmark: SQLPOINTER);
-Begin
-  FetchBookmark(ABookmark);
-End;
-
-Procedure TOdbcStatement.FreeBookmark(ABookmark: SQLPOINTER);
-Begin
-  If ABookmark <> Nil Then
-    FreeMem(ABookmark, BookmarkSize);
-End;
 
 Function TOdbcStatement.GetRowValid(Row: SQLUSMALLINT): Boolean;
 Begin
@@ -4600,52 +4541,6 @@ Begin
   End;
 End;
 
-Procedure TOdbcStatement.SetRowSetSize(ARowSetSize: SQLUINTEGER);
-Var
-  LRowSetSize: SQLUINTEGER;
-  len : integer;
-Begin
-  Log(1, 'TOdbcStatement.SetRowSetSize');
-
-  If ARowSetSize > 0 Then
-  Begin
-    FRowSetSize:= ARowSetSize;
-
-    If FActive Then
-    Begin
-      { Dispose Data Before Changing RowSetSize }
-      Close;
-
-      FRetCode:= SQLGetStmtAttr(FHstmt, SQL_ATTR_ROW_ARRAY_SIZE, @LRowSetSize, SizeOf(LRowSetSize), len);
-      If FEnv.Error.Success(FRetCode) And (LRowSetSize <> FRowSetSize) Then
-      Begin
-        FRetCode:= SQLSetStmtAttr(FHstmt, SQL_ATTR_ROW_ARRAY_SIZE, Pointer(FRowSetSize), SizeOf(FRowSetSize));
-        If Not FEnv.Error.Success(FRetCode) Then
-          FEnv.Error.RaiseError(Self, FRetCode);
-      End;
-    End;
-  End;
-End;
-
-Procedure TOdbcStatement.DynamicallySetRowSetSize(ARowSetSize: SQLUINTEGER);
-Begin
-  If (ARowSetSize > 0) And FActive And (FRowSetSize <> ARowSetSize) Then
-    Begin
-    FRowSetSize:= ARowSetSize;
-
-    //Storage buffers need to be Rebound
-    FreeCols;
-    Try
-      //Set the row array size to the new value
-      FRetCode:= SQLSetStmtAttr(FHstmt, SQL_ATTR_ROW_ARRAY_SIZE, Pointer(FRowSetSize), SizeOf(FRowSetSize));
-      If Not FEnv.Error.Success(FRetCode) Then
-        FEnv.Error.RaiseError(Self, FRetCode);
-    Finally
-      BindCols;
-      End;
-    End;
-End;
-
 Procedure TOdbcStatement.SetBlobSize(ABlobSize: LongInt);
 Begin
   Log(1, 'TOdbcStatement.SetBlobSize');
@@ -4672,15 +4567,12 @@ Begin
 
   FRowStatus:= Nil;
   FRowFlags:= Nil;
-  FRowBookmark:= Nil;
   FNumCols:= 0;
   FNumRows:= 0;
   FNumParams:= 0;
   FBulkData:= DefBulkData;
   FBlobs:= False;
   FColumnsBound:= False;
-  FBindBookmarks:= DefBindBookmarks;
-  FBookmarkSize:= DefBookmarkSize;
 
   FPrepared:= DefPrepared;
   FExecuted:= DefExecuted;
@@ -4702,7 +4594,6 @@ Begin
   FCursorAttr:= 0;
   FConcurrencyType:= DefConcurrencyType;
   FCursorType:= DefCursorType;
-  FRowSetSize:= DefRowSetSize;
   FBlobSize:= DefBlobSize;
   FBlobDeferral:= DefBlobDeferral;
   FBlobPlacement:= DefBlobPlacement;
@@ -4765,19 +4656,8 @@ Begin
   { Set ODBC Properties }
   ConcurrencyType:= FConcurrencyType;
   CursorType:= FCursorType;
-  RowSetSize:= FRowSetSize;
 
-  Init;  //call before enabling bookmarks to avoid bookmarksize retrieval problem
-
-  If (FCursorAttr And SQL_CA1_BOOKMARK) = SQL_CA1_BOOKMARK Then
-  Begin
-    FRetCode:= SQLSetStmtAttr(FHstmt, SQL_ATTR_USE_BOOKMARKS, Pointer(SQL_UB_VARIABLE), SizeOf(SQLUINTEGER));
-    If FBindBookmarks Then
-      FBindBookmarks:= FEnv.Error.Success(FRetCode);
-  End
-  Else
-    FBindBookmarks:= False;
-
+  Init;
   Result:= FActive;
 End;
 
@@ -6181,7 +6061,7 @@ Begin
             BufferLength:= MaxNullString+1
           Else
             BufferLength:= ColumnSize+1;
-          GetMem(SqlValue, Integer(FRowSetSize)*BufferLength);
+          GetMem(SqlValue, BufferLength);
         End;
         SQL_VARCHAR:
         Begin
@@ -6190,7 +6070,7 @@ Begin
             BufferLength:= MaxNullString+1
           Else
             BufferLength:= ColumnSize+1;
-          GetMem(SqlValue, Integer(FRowSetSize)*BufferLength);
+          GetMem(SqlValue, BufferLength);
         End;
         SQL_LONGVARCHAR:
         Begin
@@ -6202,7 +6082,7 @@ Begin
         Begin
           CType:= SQL_C_BINARY;
           BufferLength:= ColumnSize;
-          GetMem(SqlValue, Integer(FRowSetSize)*BufferLength);
+          GetMem(SqlValue, BufferLength);
         End;
         SQL_VARBINARY:
         Begin
@@ -6210,7 +6090,7 @@ Begin
           SqlValue:= Nil;
 
           //BufferLength:= ColumnSize;
-          //GetMem(SqlValue, Integer(FRowSetSize)*BufferLength);
+          //GetMem(SqlValue, BufferLength);
         End;
         SQL_LONGVARBINARY:
         Begin
@@ -6221,34 +6101,34 @@ Begin
         SQL_REAL:
         Begin
           CType:= SQL_C_FLOAT;
-          GetMem(SqlValue, FRowSetSize*PhysSize(CType));
+          GetMem(SqlValue, PhysSize(CType));
         End;
         SQL_DOUBLE:
         Begin
           CType:= SQL_C_DOUBLE;
-          GetMem(SqlValue, FRowSetSize*PhysSize(CType));
+          GetMem(SqlValue, PhysSize(CType));
         End;
         SQL_FLOAT:
         Begin
           CType:= SQL_C_DOUBLE;
-          GetMem(SqlValue, FRowSetSize*PhysSize(CType));
+          GetMem(SqlValue, PhysSize(CType));
         End;
         SQL_DECIMAL:
         Begin
           CType:= SQL_C_DOUBLE;
           BufferLength := 8; // (GM) work around bug in sql 2008 driver 2007.100.1600.22
-          GetMem(SqlValue, FRowSetSize*PhysSize(CType));
+          GetMem(SqlValue, PhysSize(CType));
         End;
         SQL_NUMERIC:
         Begin
           CType:= SQL_C_DOUBLE;
-          GetMem(SqlValue, FRowSetSize*PhysSize(CType));
+          GetMem(SqlValue, PhysSize(CType));
         End;
 
         SQL_BIT:
         Begin
           CType:= SQL_C_BIT;
-          GetMem(SqlValue, FRowSetSize*PhysSize(CType));
+          GetMem(SqlValue, PhysSize(CType));
         End;
         SQL_TINYINT:
         Begin
@@ -6256,7 +6136,7 @@ Begin
             CType:= SQL_C_STINYINT
           Else
             CType:= SQL_C_UTINYINT;
-          GetMem(SqlValue, FRowSetSize*PhysSize(CType));
+          GetMem(SqlValue, PhysSize(CType));
         End;
         SQL_SMALLINT:
         Begin
@@ -6264,7 +6144,7 @@ Begin
             CType:= SQL_C_SSHORT
           Else
             CType:= SQL_C_USHORT;
-          GetMem(SqlValue, FRowSetSize*PhysSize(CType));
+          GetMem(SqlValue, PhysSize(CType));
         End;
         SQL_INTEGER:
         Begin
@@ -6272,7 +6152,7 @@ Begin
             CType:= SQL_C_SLONG
           Else
             CType:= SQL_C_ULONG;
-          GetMem(SqlValue, FRowSetSize*PhysSize(CType));
+          GetMem(SqlValue, PhysSize(CType));
         End;
         SQL_BIGINT:
         Begin
@@ -6280,23 +6160,23 @@ Begin
             CType:= SQL_C_SBIGINT
           Else
             CType:= SQL_C_UBIGINT;
-          GetMem(SqlValue, FRowSetSize*PhysSize(CType));
+          GetMem(SqlValue, PhysSize(CType));
         End;
 
         SQL_TYPE_DATE:
         Begin
           CType:= SQL_C_TYPE_DATE;
-          GetMem(SqlValue, FRowSetSize*PhysSize(CType));
+          GetMem(SqlValue, PhysSize(CType));
         End;
         SQL_TYPE_TIME:
         Begin
           CType:= SQL_C_TYPE_TIME;
-          GetMem(SqlValue, FRowSetSize*PhysSize(CType));
+          GetMem(SqlValue, PhysSize(CType));
         End;
         SQL_TYPE_TIMESTAMP:
         Begin
           CType:= SQL_C_TYPE_TIMESTAMP;
-          GetMem(SqlValue, FRowSetSize*PhysSize(CType));
+          GetMem(SqlValue, PhysSize(CType));
         End;
         Else
         Begin
@@ -6324,41 +6204,17 @@ Begin
 
     { Add RowStatus Column }
     CType:= SQL_C_USHORT;
-    GetMem(SqlValue, FRowSetSize*PhysSize(CType));
+    GetMem(SqlValue, PhysSize(CType));
     InsertTail(FTail, CType, ColTypeToSqlType(CType), SqlValue);
     SQLUSMALLINT(SqlValue^):= SQL_ROW_SUCCESS;
     FRowStatus:= FTail;
 
     { Add RowFlags Column }
     CType:= SQL_C_USHORT;
-    GetMem(SqlValue, FRowSetSize*PhysSize(CType));
+    GetMem(SqlValue, PhysSize(CType));
     InsertTail(FTail, CType, ColTypeToSqlType(CType), SqlValue);
-    FillChar(SqlValue^, FRowSetSize*PhysSize(CType), rfNone);
+    FillChar(SqlValue^, PhysSize(CType), rfNone);
     FRowFlags:= FTail;
-
-    { Determine Bookmark Size }
-    If (FCursorAttr And SQL_CA1_BOOKMARK) = SQL_CA1_BOOKMARK Then
-      FBookmarkSize:= ColAttrInteger(0, SQL_DESC_OCTET_LENGTH);
-
-    { Add Bookmarks Column }
-    If FBindBookmarks Then
-    Begin
-      CType:= SQL_C_VARBOOKMARK;
-      BufferLength:= BookmarkSize;
-      GetMem(SqlValue, Integer(FRowSetSize)*BufferLength);
-      InsertTail(FTail, CType, ColTypeToSqlType(CType), SqlValue);
-      FRowBookmark:= FTail;
-
-      FRetCode:= SQLBindCol(FHstmt, 0, CType, SqlValue, BufferLength, FTail^.FSize);
-      If Not FEnv.Error.Success(FRetCode) Then
-        FEnv.Error.RaiseError(Self, FRetCode);
-    End
-    Else
-      FRowBookmark:= Nil;
-
-    { Verify FBlobs }
-    If FBlobs And (FRowSetSize > 1) Then
-      FBlobs:= False;
 
     { Bind RowStatus }
     //depreciated FRetCode:= SQLExtendedFetch(FHstmt, FetchType, Row, @FNumRows, FRowStatus^.FValue);
@@ -6485,45 +6341,17 @@ Var
   temp: TColPtr;
 Begin
   Result:= CellSize[Col,Row];
-  If FRowSetSize > 1 Then
+  If Not RowValid[1] Then
   Begin
-    If (FCursorAttr And SQL_CA1_POS_POSITION) = SQL_CA1_POS_POSITION Then
-    Begin
-      FRetCode:= SQLSetPos(FHstmt, Row, SQL_POSITION, SQL_LOCK_NO_CHANGE);
-      If Not FEnv.Error.Success(FRetCode) Then
-        FEnv.Error.RaiseError(Self, FRetCode);
-    End
-    Else
-      Exit;
+    Result:= SQL_NULL_DATA;
+    Exit;
+  End;
 
-    If Not RowValid[Row] Then
-    Begin
-      Result:= SQL_NULL_DATA;
-      Exit;
-    End;
-
-    Try
-      Result:= FetchCol(Col, ColType, ColStream);
-    Except
-      On E: EODBC Do  //skip "already fetched" exception
-        If EODBC(E).RetCode <> SQL_NO_DATA Then
-          Raise;
-    End;
-  End
-  Else
+  temp:= ColRec(Col);
+  If (temp <> Nil) And (Not temp^.FBlobFetched) Then
   Begin
-    If Not RowValid[1] Then
-    Begin
-      Result:= SQL_NULL_DATA;
-      Exit;
-    End;
-
-    temp:= ColRec(Col);
-    If (temp <> Nil) And (Not temp^.FBlobFetched) Then
-    Begin
-      Result:= FetchCol(Col, ColType, ColStream);
-      temp^.FBlobFetched:= True;
-    End;
+    Result:= FetchCol(Col, ColType, ColStream);
+    temp^.FBlobFetched:= True;
   End;
 End;
 
@@ -6591,7 +6419,7 @@ Begin
   Else
     FRetCode:= SQLFetchScroll(FHstmt, FetchType, Row);
 
-  FillChar(FRowFlags^.FValue^, FRowSetSize*PhysSize(SQL_C_USHORT), rfNone);
+  FillChar(FRowFlags^.FValue^, PhysSize(SQL_C_USHORT), rfNone);
   If FRetCode = SQL_NO_DATA Then
   Begin
     Result:= False;
@@ -6655,15 +6483,6 @@ End;
 Function TOdbcStatement.FetchRelative(Row: SQLINTEGER): Boolean;
 Begin
   Result:= Fetch(SQL_FETCH_RELATIVE, Row);
-End;
-
-Function TOdbcStatement.FetchBookmark(Bookmark: SQLPOINTER): Boolean;
-Begin
-  FRetCode:= SQLSetStmtAttr(FHstmt, SQL_ATTR_FETCH_BOOKMARK_PTR, Bookmark, BookmarkSize);
-  If Not FEnv.Error.Success(FRetCode) Then
-    FEnv.Error.RaiseError(Self, FRetCode);
-
-  Result:= Fetch(SQL_FETCH_BOOKMARK, 0);
 End;
 
 Function TOdbcStatement.MoreResults: Boolean;
@@ -7292,7 +7111,6 @@ Begin
   Begin
     BindBlobCols(True);
 
-    //depreciated FRetCode:= SQLSetPos(FHstmt, Row, SQL_ADD, SQL_LOCK_NO_CHANGE);
     FRetCode:= SQLBulkOperations(FHstmt, SQL_ADD);
     If (Not FEnv.Error.Success(FRetCode)) And
        (FRetCode <> SQL_NEED_DATA) And
@@ -7325,24 +7143,7 @@ Var
 Begin
   DetermineIgnoreCols;  //non-updatable columns
 
-  If (GetPosOpts And SQL_CA1_POS_UPDATE) = SQL_CA1_POS_UPDATE Then
-  Begin
-    BindBlobCols(True);
-
-    FRetCode:= SQLSetPos(FHstmt, Row, SQL_UPDATE, SQL_LOCK_NO_CHANGE);
-    If (Not FEnv.Error.Success(FRetCode)) And
-       (FRetCode <> SQL_NEED_DATA) And
-       ((FRetCode <> SQL_NO_DATA) Or ((FRetCode = SQL_NO_DATA) And (nrByUpdate In NoRowsAffected))) Then
-      FEnv.Error.RaiseError(Self, FRetCode);
-
-    { Handle Data-At-Execution Parameters }
-    If FRetCode = SQL_NEED_DATA Then
-      DataAtExecution(TCommonPtr(FCols));
-
-    BindBlobCols(False);
-  End
-  Else
-    UpdateFields(WhereClause, BindWhere);
+  UpdateFields(WhereClause, BindWhere);
 End;
 
 Procedure TOdbcStatement.DeleteRow(Row: SQLUSMALLINT);
@@ -7359,24 +7160,7 @@ Var
   End;
 
 Begin
-  If (GetPosOpts And SQL_CA1_POS_DELETE) = SQL_CA1_POS_DELETE Then
-  Begin
-    BindBlobCols(True);
-
-    FRetCode:= SQLSetPos(FHstmt, Row, SQL_DELETE, SQL_LOCK_NO_CHANGE);
-    If (Not FEnv.Error.Success(FRetCode)) And
-       (FRetCode <> SQL_NEED_DATA) And
-       ((FRetCode <> SQL_NO_DATA) Or ((FRetCode = SQL_NO_DATA) And (nrByDelete In NoRowsAffected))) Then
-      FEnv.Error.RaiseError(Self, FRetCode);
-
-    { Handle Data-At-Execution Parameters }
-    If FRetCode = SQL_NEED_DATA Then
-      DataAtExecution(TCommonPtr(FCols));
-
-    BindBlobCols(False);
-  End
-  Else
-    DeleteFields(WhereClause, BindWhere);
+  DeleteFields(WhereClause, BindWhere);
 End;
 
 Procedure TOdbcStatement.RefreshRow(Row: SQLUSMALLINT);
@@ -7387,15 +7171,7 @@ Procedure TOdbcStatement.RefreshRow(Row: SQLUSMALLINT);
   End;
 
 Begin
-  If (GetPosOpts And SQL_CA1_POS_REFRESH) = SQL_CA1_POS_REFRESH Then
-  Begin
-    FRetCode:= SQLSetPos(FHstmt, Row, SQL_REFRESH, SQL_LOCK_NO_CHANGE);
-    If (Not FEnv.Error.Success(FRetCode)) And
-       ((FRetCode <> SQL_NO_DATA) Or ((FRetCode = SQL_NO_DATA) And (nrByRefresh In NoRowsAffected))) Then
-      FEnv.Error.RaiseError(Self, FRetCode);
-  End
-  Else
-    RefreshFields(WhereClause);
+  RefreshFields(WhereClause);
 End;
 
 { ActionRows }
@@ -7445,10 +7221,7 @@ Begin
   If (Not Assigned(FOnInsert)) Or
      (Assigned(FOnInsert) And FOnInsert(Self, 'Insert row(s)?')) Then
     Begin
-      If (RowSetSize > 1) And (FNumRows > 0) Then
-        InsertRows
-      Else
-        InsertRow(1);
+      InsertRow(1);
     End;
 End;
 
@@ -7459,10 +7232,7 @@ Begin
   If (Not Assigned(FOnUpdate)) Or
      (Assigned(FOnUpdate) And FOnUpdate(Self, 'Update row(s)?')) Then
     Begin
-      If (RowSetSize > 1) And (FNumRows > 0) Then
-        UpdateRows
-      Else
-        UpdateRow(1);
+      UpdateRow(1);
     End;
 End;
 
@@ -7473,10 +7243,7 @@ Begin
   If (Not Assigned(FOnDelete)) Or
      (Assigned(FOnDelete) And FOnDelete(Self, 'Delete row(s)?')) Then
     Begin
-      If (RowSetSize > 1) And (FNumRows > 0) Then
-        DeleteRows
-      Else
-        DeleteRow(1);
+      DeleteRow(1);
     End;
 End;
 
@@ -7487,10 +7254,7 @@ Begin
   If (Not Assigned(FOnRefresh)) Or
      (Assigned(FOnRefresh) And FOnRefresh(Self, 'Refresh row(s)?')) Then
     Begin
-      If (RowSetSize > 1) And (FNumRows > 0) Then
-        RefreshRows
-      Else
-        RefreshRow(1);
+      RefreshRow(1);
     End;
 End;
 
@@ -7632,7 +7396,7 @@ Begin
 
   tempRow:= Nil;
   If (tempCol <> Nil) And
-     (Row > 0) And (Row <= FRowSetSize) Then
+     (Row > 0) And (Row <= 1) Then
   Begin
     New(tempRow);
     tempRow^.FType:= tempCol^.FType;
@@ -7663,7 +7427,7 @@ Begin
   tempCol:= ColRec(Col);
 
   If (tempCol <> Nil) And
-     (Row > 0) And (Row <= FRowSetSize) Then
+     (Row > 0) And (Row <= 1) Then
     Begin
     VrRowRec.FType:= tempCol^.FType;
 
@@ -7705,7 +7469,7 @@ Function TOdbcStatement.RowFlags(Row: SQLUSMALLINT): SQLUSMALLINTPtr;
 Begin
   Log(1, 'TOdbcStatement.RowFlags');
 
-  If (Row > 0) And (Row <= FRowSetSize) Then
+  If (Row > 0) And (Row <= 1) Then
     Result:= SQLUSMALLINTPtr(OffsetRow(FRowFlags^.FValue, Row, PhysSize(SQL_C_USHORT)))
   Else
     Result:= Nil;
