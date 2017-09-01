@@ -70,6 +70,7 @@ Type
     function isOkSource(cm: TLoadedConceptMap; vs: TFHIRValueSet; coding: TFHIRCoding; out group : TFhirConceptMapGroup; out match : TFhirConceptMapGroupElement): boolean; overload;
     function isOkSource(cm: TLoadedConceptMap; coding: TFHIRCoding; out group : TFhirConceptMapGroup; out match : TFhirConceptMapGroupElement): boolean; overload;
     procedure LoadClosures;
+    procedure BuildIndexesInternal(prog : boolean; conn1, conn2, conn3 : TKDBConnection);
   protected
     procedure invalidateVS(id : String); override;
   public
@@ -1079,91 +1080,96 @@ begin
 end;
 *)
 
-procedure TTerminologyServer.BuildIndexes(prog : boolean);
+procedure TTerminologyServer.BuildIndexesInternal(prog: boolean; conn1, conn2, conn3: TKDBConnection);
 var
-  conn1, conn2, conn3 : TKDBConnection;
   i : integer;
   finish : TDateTime;
 begin
   finish := now + DATETIME_SECOND_ONE * 30;
+  MaintenanceThreadStatus := 'BI: counting';
+  if conn1.CountSQL('Select Count(*) from ValueSets where NeedsIndexing = 0') = 0 then
+    conn1.ExecSQL('Update Concepts set NeedsIndexing = 0'); // we're going to index them all anwyay
+
+  // first, update value set member information
+  MaintenanceThreadStatus := 'BI: Updating ValueSet Members';
+  if (prog) then logtn('Updating ValueSet Members');
+  conn1.SQL := 'Select ValueSetKey, URL from ValueSets where NeedsIndexing = 1';
+  conn1.Prepare;
+  conn1.Execute;
+  i := 0;
+
+  while conn1.FetchNext do
+  begin
+    inc(i);
+    if (prog and (i mod 10 = 0)) then Write('.');
+    MaintenanceThreadStatus := 'BI: Updating ValueSet Members for '+conn1.ColStringByName['ValueSetKey'];
+    processValueSet(conn1.ColIntegerByName['ValueSetKey'], conn1.ColStringByName['URL'], conn2, conn3);
+    if finish < now then
+      break;
+  end;
+  conn1.Terminate;
+  if (prog) then Writeln;
+  if finish < now then
+    exit;
+
+
+  // second, for each concept that needs indexing, check it's value set information
+  if (prog) then logtn('Indexing Concepts');
+  MaintenanceThreadStatus := 'BI: Indexing Concepts';
+  conn1.SQL := 'Select ConceptKey, URL, Code from Concepts where NeedsIndexing = 1';
+  conn1.Prepare;
+  conn1.Execute;
+  i := 0;
+  while conn1.FetchNext do
+  begin
+    inc(i);
+    if (prog and (i mod 10 = 0)) then Write('.');
+    MaintenanceThreadStatus := 'BI: Indexing Concept '+conn1.ColStringByName['ConceptKey'];
+    processConcept(conn1.ColIntegerByName['ConceptKey'], conn1.ColStringByName['URL'], '', conn1.ColStringByName['Code'], conn2, conn3);
+    if finish < now then
+      break;
+  end;
+  conn1.Terminate;
+  if (prog) then Writeln;
+  if finish < now then
+    exit;
+
+  // last, for each entry in the closure entry table that needs closureing, do it
+  if (prog) then logtn('Generating Closures');
+  MaintenanceThreadStatus := 'BI: Generating Closures';
+  conn1.SQL := 'select ClosureEntryKey, Closures.ClosureKey, SubsumesKey, Name, URL, Code from ClosureEntries, Concepts, Closures '+
+     'where Closures.ClosureKey = ClosureEntries.ClosureKey and ClosureEntries.IndexedVersion = 0 and ClosureEntries.SubsumesKey = Concepts.ConceptKey';
+  conn1.Prepare;
+  conn1.Execute;
+  while conn1.FetchNext do
+  begin
+    inc(i);
+    if (prog and (i mod 100 = 0)) then Write('.');
+    MaintenanceThreadStatus := 'BI: Generating Closures for '+conn1.ColStringByName['Name'];
+    FClosures[conn1.ColStringByName['Name']].processEntry(conn2, conn1.ColIntegerByName['ClosureEntryKey'], conn1.ColIntegerByName['SubsumesKey'], conn1.ColStringByName['URL'], conn1.ColStringByName['Code']);
+    if finish < now then
+      break;
+  end;
+  conn1.Terminate;
+  if (prog) then Writeln;
+  if finish < now then
+    exit;
+
+  if (prog) then logt('Done');
+  MaintenanceThreadStatus := 'BI: ';
+end;
+
+procedure TTerminologyServer.BuildIndexes(prog : boolean);
+var
+  conn1, conn2, conn3 : TKDBConnection;
+begin
   conn1 := DB.GetConnection('BuildIndexes');
   try
     conn2 := DB.GetConnection('BuildIndexes');
     try
       conn3 := DB.GetConnection('BuildIndexes');
       try
-        MaintenanceThreadStatus := 'BI: counting';
-        if conn1.CountSQL('Select Count(*) from ValueSets where NeedsIndexing = 0') = 0 then
-          conn1.ExecSQL('Update Concepts set NeedsIndexing = 0'); // we're going to index them all anwyay
-
-        // first, update value set member information
-        MaintenanceThreadStatus := 'BI: Updating ValueSet Members';
-        if (prog) then logtn('Updating ValueSet Members');
-        conn1.SQL := 'Select ValueSetKey, URL from ValueSets where NeedsIndexing = 1';
-        conn1.Prepare;
-        conn1.Execute;
-        i := 0;
-
-        while conn1.FetchNext do
-        begin
-          inc(i);
-          if (prog and (i mod 10 = 0)) then Write('.');
-          MaintenanceThreadStatus := 'BI: Updating ValueSet Members for '+conn1.ColStringByName['ValueSetKey'];
-          processValueSet(conn1.ColIntegerByName['ValueSetKey'], conn1.ColStringByName['URL'], conn2, conn3);
-          if finish < now then
-            break;
-        end;
-        conn1.Terminate;
-        if (prog) then Writeln;
-        if finish < now then
-          exit;
-
-
-        // second, for each concept that needs indexing, check it's value set information
-        if (prog) then logtn('Indexing Concepts');
-        MaintenanceThreadStatus := 'BI: Indexing Concepts';
-        conn1.SQL := 'Select ConceptKey, URL, Code from Concepts where NeedsIndexing = 1';
-        conn1.Prepare;
-        conn1.Execute;
-        i := 0;
-        while conn1.FetchNext do
-        begin
-          inc(i);
-          if (prog and (i mod 10 = 0)) then Write('.');
-          MaintenanceThreadStatus := 'BI: Indexing Concept '+conn1.ColStringByName['ConceptKey'];
-          processConcept(conn1.ColIntegerByName['ConceptKey'], conn1.ColStringByName['URL'], '', conn1.ColStringByName['Code'], conn2, conn3);
-          if finish < now then
-            break;
-        end;
-        conn1.Terminate;
-        if (prog) then Writeln;
-        if finish < now then
-          exit;
-
-        // last, for each entry in the closure entry table that needs closureing, do it
-        if (prog) then logtn('Generating Closures');
-        MaintenanceThreadStatus := 'BI: Generating Closures';
-        conn1.SQL := 'select ClosureEntryKey, Closures.ClosureKey, SubsumesKey, Name, URL, Code from ClosureEntries, Concepts, Closures '+
-           'where Closures.ClosureKey = ClosureEntries.ClosureKey and ClosureEntries.IndexedVersion = 0 and ClosureEntries.SubsumesKey = Concepts.ConceptKey';
-        conn1.Prepare;
-        conn1.Execute;
-        while conn1.FetchNext do
-        begin
-          inc(i);
-          if (prog and (i mod 100 = 0)) then Write('.');
-          MaintenanceThreadStatus := 'BI: Generating Closures for '+conn1.ColStringByName['Name'];
-          FClosures[conn1.ColStringByName['Name']].processEntry(conn2, conn1.ColIntegerByName['ClosureEntryKey'], conn1.ColIntegerByName['SubsumesKey'], conn1.ColStringByName['URL'], conn1.ColStringByName['Code']);
-          if finish < now then
-            break;
-        end;
-        conn1.Terminate;
-        if (prog) then Writeln;
-        if finish < now then
-          exit;
-
-        if (prog) then logt('Done');
-        MaintenanceThreadStatus := 'BI: ';
-
+        BuildIndexesInternal(prog, conn1, conn2, conn3);
         conn3.Release;
       except
         on e : exception do
