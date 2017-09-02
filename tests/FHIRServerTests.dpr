@@ -298,7 +298,8 @@ uses
   FHIRIndexBase in '..\reference-platform\support\FHIRIndexBase.pas',
   KDBTests in '..\Libraries\db\KDBTests.pas',
   KDBOdbc in '..\Libraries\db\KDBOdbc.pas',
-  ODBCObjects in '..\Libraries\db\ODBCObjects.pas';
+  ODBCObjects in '..\Libraries\db\ODBCObjects.pas',
+  OdbcHeaders in '..\Libraries\db\OdbcHeaders.pas';
 
 var
   runner : ITestRunner;

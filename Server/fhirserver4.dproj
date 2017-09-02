@@ -306,7 +306,7 @@
         <DCCReference Include="..\reference-platform\r4\NarrativeGenerator.pas"/>
         <DCCReference Include="..\reference-platform\support\FHIRSecurity.pas"/>
         <DCCReference Include="..\reference-platform\r4\FHIRNarrativeGenerator.pas"/>
-        <DCCReference Include="..\reference-platform\support\SmartOnFhirUtilities.pas"/>
+        <DCCReference Include="..\reference-platform\client\SmartOnFhirUtilities.pas"/>
         <DCCReference Include="..\reference-platform\r4\FhirPath.pas"/>
         <DCCReference Include="..\reference-platform\r4\FHIRTags.pas"/>
         <DCCReference Include="..\reference-platform\r4\FHIRProfileUtilities.pas"/>
@@ -319,7 +319,7 @@
         <DCCReference Include="..\reference-platform\r4\FHIRSupport.pas"/>
         <DCCReference Include="..\reference-platform\support\FHIRLang.pas"/>
         <DCCReference Include="..\reference-platform\r4\FHIRUtilities.pas"/>
-        <DCCReference Include="..\reference-platform\r4\FHIRClient.pas"/>
+        <DCCReference Include="..\reference-platform\client\FHIRClient.pas"/>
         <DCCReference Include="..\reference-platform\r4\FHIRValidator.pas"/>
         <DCCReference Include="ClosureManager.pas"/>
         <DCCReference Include="..\reference-platform\support\CDSHooksUtilities.pas"/>
@@ -372,6 +372,7 @@
         <DCCReference Include="..\reference-platform\support\FHIRIndexBase.pas"/>
         <DCCReference Include="..\Libraries\db\KDBOdbc.pas"/>
         <DCCReference Include="..\Libraries\db\ODBCObjects.pas"/>
+        <DCCReference Include="..\Libraries\db\OdbcHeaders.pas"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>

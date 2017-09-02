@@ -46,7 +46,7 @@ Type
   private
     procedure test(manager : TKDBManager);
   Published
-    {[TestCase] }procedure TestMSSQL;
+    [TestCase] procedure TestMSSQL;
     [TestCase] procedure TestMySQL;
     {[TestCase] }procedure TestMySQLMaria;
   End;

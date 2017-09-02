@@ -259,7 +259,8 @@ uses
   WebSourceProvider in 'WebSourceProvider.pas',
   FHIRIndexBase in '..\reference-platform\support\FHIRIndexBase.pas',
   KDBOdbc in '..\Libraries\db\KDBOdbc.pas',
-  ODBCObjects in '..\Libraries\db\ODBCObjects.pas';
+  ODBCObjects in '..\Libraries\db\ODBCObjects.pas',
+  OdbcHeaders in '..\Libraries\db\OdbcHeaders.pas';
 
 begin
   logfile := Path([SystemTemp, 'fhirserver.log']);

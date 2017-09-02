@@ -1,4 +1,5 @@
-   <td>v0.0.17</td>
-   <td>31/08/2017 10:41:03 AM</td>
-   <td><a href="http://www.healthintersections.com.au/FhirServer/fhir-toolkit-install-0.0.17.exe"><img src="windows.ico"> Install (64)</a></td>
-   <td><a href="http://www.healthintersections.com.au/FhirServer/fhir-toolkit-osx-0.0.17.zip"><img src="apple.png"> App</a></td>
+   <td>v0.0.20</td>
+   <td>2017-09-02</td>
+   <td><a href="http://www.healthintersections.com.au/FhirServer/fhir-toolkit-install-0.0.20.exe"><img src="windows.ico"> Install</a></td>
+  <td></td>
+   <td><a href="http://www.healthintersections.com.au/FhirServer/fhir-toolkit-osx-0.0.20.zip"><img src="apple.png"> App</a></td>

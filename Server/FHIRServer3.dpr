@@ -320,7 +320,8 @@ uses
   FHIRIndexBase in '..\reference-platform\support\FHIRIndexBase.pas',
   ErrorSupport in '..\reference-platform\Support\ErrorSupport.pas',
   KDBOdbc in '..\Libraries\db\KDBOdbc.pas',
-  ODBCObjects in '..\Libraries\db\ODBCObjects.pas';
+  ODBCObjects in '..\Libraries\db\ODBCObjects.pas',
+  OdbcHeaders in '..\Libraries\db\OdbcHeaders.pas';
 
 begin
   logfile := IncludeTrailingPathDelimiter(SystemTemp)+'fhirserver.log';

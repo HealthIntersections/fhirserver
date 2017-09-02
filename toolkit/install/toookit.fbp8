@@ -625,7 +625,8 @@ begin
         encoding = ANSI
         filecontents = "   <td\>v0.0.%BuildCount%</td\>" +
                        "   <td\>%BuildDate%</td\>" +
-                       "   <td\><a href\=\"http://www.healthintersections.com.au/FhirServer/fhir-toolkit-install-0.0.%BuildCount%.exe\"\><img src\=\"windows.ico\"\> Install (64)</a\></td\>" +
+                       "   <td\><a href\=\"http://www.healthintersections.com.au/FhirServer/fhir-toolkit-install-0.0.%BuildCount%.exe\"\><img src\=\"windows.ico\"\> Install</a\></td\>" +
+                       "  <td\></td\>" +
                        "   <td\><a href\=\"http://www.healthintersections.com.au/FhirServer/fhir-toolkit-osx-0.0.%BuildCount%.zip\"\><img src\=\"apple.png\"\> App</a\></td\>" +
                        ""
         id = {058B75F6-AA98-47B9-A380-8070023C5CC4}
@@ -700,10 +701,9 @@ begin
   variable
   begin
     defaultvalue = 0
-    formatstring = c
     name = BuildDate
     variablescope = vtProject
-    variabletype = btDateTime
+    variabletype = btString
   end
   variable
   begin

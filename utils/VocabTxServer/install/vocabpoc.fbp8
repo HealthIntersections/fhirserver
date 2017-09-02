@@ -63,7 +63,7 @@ begin
         as.defaultvalue = %npp-purpose%
         as.xpos = -1
         as.ypos = -1
-        as.returnvalue = "OSX Release"
+        as.returnvalue = "Support for more LOINC filters"
         as.returnvariable = npp-purpose
       end
       action.variables.savetoini
@@ -105,6 +105,7 @@ begin
       action.variables.savetoini
       begin
         description = "update BuildCount in source"
+        enabled = false
         erasesection = false
         id = {9950814C-E13D-49D7-A8CF-45CDE3D2AECF}
         inifile = C:\\work\\fhirserver\\utils\\VocabTxServer\\vpocversion.pas
@@ -117,6 +118,7 @@ begin
       begin
         deletehidden = false
         deletereadonly = true
+        enabled = false
         failifnofile = false
         filespec = C:\\work\\fhirserver\\utils\\VocabTxServer\\install\\VocabTxServer.exe
         id = {82298DB8-3604-43DF-815E-1FEAAA947AE6}
@@ -137,6 +139,7 @@ begin
         debugversionnumbers = false
         delphiversion = Delphi10Tokyo
         description = "Compile the Server (Win64)"
+        enabled = false
         eurekalogverboselogging = false
         frameworktype = VCL
         hintsaserror = false
@@ -258,6 +261,7 @@ begin
         debugversionnumbers = false
         delphiversion = Delphi10Tokyo
         description = "Compile the Server (OSX)"
+        enabled = false
         eurekalogverboselogging = false
         frameworktype = VCL
         hintsaserror = false
@@ -367,6 +371,7 @@ begin
       begin
         captureoutput = true
         description = "Sign the Server"
+        enabled = false
         enablelivecapture = true
         enablereturncodecheck = true
         enabletimeout = false
@@ -393,6 +398,7 @@ begin
         allowcreate = false
         deleteifblank = false
         description = "Set AppVerName in Inno Script"
+        enabled = false
         id = {EC89A4F6-46B5-442D-A33A-944AFEE95993}
         inifile = C:\\work\\fhirserver\\utils\\VocabTxServer\\install\\vocabpoc.iss
         newvalue = "0.0.%BuildCount% (FHIR Version %FhirVersion%)"
@@ -405,6 +411,7 @@ begin
         allowcreate = false
         deleteifblank = false
         description = "Set OutputFilename in Inno Script"
+        enabled = false
         id = {ACC022AD-C186-4AA5-A36D-448F59DDDB0D}
         inifile = C:\\work\\fhirserver\\utils\\VocabTxServer\\install\\vocabpoc.iss
         newvalue = vocabpoc-install-0.0.%BuildCount%
@@ -415,6 +422,7 @@ begin
       action.innosetup.execute
       begin
         description = "Build the VocabPoC install"
+        enabled = false
         id = {DB9CE85D-5959-4FD8-94EC-33ED5C16CE3A}
         innoversion = Inno5
         scriptfile = C:\\work\\fhirserver\\utils\\VocabTxServer\\install\\vocabpoc.iss
@@ -430,6 +438,7 @@ begin
         compressionlevel = clUltra
         createsfxarchive = false
         description = "Build OSX installer"
+        enabled = false
         enabletimeout = false
         expandimpersonationtoken = false
         fileslist = "C:\\work\\fhirserver\\utils\\VocabTxServer\\install\\osx\\*.*" +
@@ -454,6 +463,7 @@ begin
       begin
         captureoutput = true
         description = "Sign the plugin install"
+        enabled = false
         enablelivecapture = true
         enablereturncodecheck = true
         enabletimeout = false
@@ -502,6 +512,7 @@ begin
         checkfilesizes = false
         connectionname = HealthIntersections
         detailedlogging = false
+        enabled = false
         enabletimeout = false
         filespec = vocabpoc-install-0.0.%BuildCount%.exe
         forcenextclockskewupdate = true
@@ -625,7 +636,8 @@ begin
         encoding = ANSI
         filecontents = "   <td\>v0.0.%BuildCount%</td\>" +
                        "   <td\>%BuildDate%</td\>" +
-                       "   <td\><a href\=\"http://www.healthintersections.com.au/FhirServer/vocabpoc-install-0.0.%BuildCount%.exe\"\><img src\=\"windows.ico\"\> Install (64)</a\></td\>" +
+                       "   <td\><a href\=\"http://www.healthintersections.com.au/FhirServer/vocabpoc-install-0.0.%BuildCount%.exe\"\><img src\=\"windows.ico\"\> Install</a\></td\>" +
+                       "   <td\></td\>" +
                        "   <td\><a href\=\"http://www.healthintersections.com.au/FhirServer/vocabpoc-osx-0.0.%BuildCount%.zip\"\><img src\=\"apple.png\"\> App</a\></td\>" +
                        ""
         id = {8412312A-E16E-49E2-AB55-57A1952ED208}

@@ -102,7 +102,6 @@ uses
   GUIDSupport in '..\reference-platform\Support\GUIDSupport.pas',
   DecimalSupport in '..\reference-platform\Support\DecimalSupport.pas',
   HL7V2DateSupport in '..\reference-platform\Support\HL7V2DateSupport.pas',
-  MsXmlParser in '..\reference-platform\Support\MsXmlParser.pas',
   XMLBuilder in '..\reference-platform\Support\XMLBuilder.pas',
   AdvWinInetClients in '..\reference-platform\Support\AdvWinInetClients.pas',
   MXmlBuilder in '..\reference-platform\support\MXmlBuilder.pas',
@@ -182,7 +181,6 @@ uses
   FHIRSubscriptionManager in '..\server\FHIRSubscriptionManager.pas',
   ServerValidator in '..\server\ServerValidator.pas',
   IdWebSocket in '..\reference-platform\Support\IdWebSocket.pas',
-  MsXML in '..\reference-platform\Support\MsXML.pas',
   MimeMessage in '..\reference-platform\Support\MimeMessage.pas',
   kCritSct in '..\reference-platform\Support\kCritSct.pas',
   QuestionnaireBuilder in '..\reference-platform\r4\QuestionnaireBuilder.pas',
@@ -244,7 +242,6 @@ uses
   FHIRUserProvider in '..\Server\FHIRUserProvider.pas',
   FHIRGraphQL in '..\reference-platform\support\FHIRGraphQL.pas',
   GraphQL in '..\reference-platform\support\GraphQL.pas',
-  XmlTests in '..\reference-platform\support\Tests\XmlTests.pas',
   ParserSupport in '..\reference-platform\support\ParserSupport.pas',
   MXML in '..\reference-platform\support\MXML.pas',
   MarkdownCommonMark in '..\..\markdown\source\MarkdownCommonMark.pas',
@@ -267,7 +264,8 @@ uses
   WebSourceProvider in '..\Server\WebSourceProvider.pas',
   FHIRIndexBase in '..\reference-platform\support\FHIRIndexBase.pas',
   KDBOdbc in '..\Libraries\db\KDBOdbc.pas',
-  ODBCObjects in '..\Libraries\db\ODBCObjects.pas';
+  ODBCObjects in '..\Libraries\db\ODBCObjects.pas',
+  OdbcHeaders in '..\Libraries\db\OdbcHeaders.pas';
 
 {$R *.res}
 

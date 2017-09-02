@@ -1,4 +1,4 @@
-// cloned from System.ODBC to address bug
+// cloned from System.ODBC to address bug https://quality.embarcadero.com/browse/RSP-18980
 
 {*******************************************************}
 {                                                       }

@@ -137,3 +137,9 @@ utils/VocabTxServer/install/osx/VocabTxServer\.app/Contents/MacOS/
 utils/VocabTxServer/install/vocabpoc-*.zip
 tests/Win32/Debug/TestInsightSettings.ini
 Libraries/db/old/
+Exec/ssl64 source/
+Exec/ssl32 source/
+FHIRToolkit.exe - Shortcut.lnk
+toolkit/install/server.inc
+install/fhirserver.fbl8
+*.fbl8

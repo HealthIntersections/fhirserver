@@ -130,7 +130,8 @@ uses
   FHIRMetaModel in '..\reference-platform\r4\FHIRMetaModel.pas',
   FHIRProfileUtilities in '..\reference-platform\r4\FHIRProfileUtilities.pas',
   AdvZipReaders in '..\reference-platform\support\AdvZipReaders.pas',
-  FhirPath in '..\reference-platform\r4\FhirPath.pas'};
+  FhirPath in '..\reference-platform\r4\FhirPath.pas'},
+  OdbcHeaders in '..\Libraries\db\OdbcHeaders.pas';
 
 var
   runner : ITestRunner;
