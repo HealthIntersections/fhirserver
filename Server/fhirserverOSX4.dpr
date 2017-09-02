@@ -130,8 +130,7 @@ uses
   FHIRMetaModel in '..\reference-platform\r4\FHIRMetaModel.pas',
   FHIRProfileUtilities in '..\reference-platform\r4\FHIRProfileUtilities.pas',
   AdvZipReaders in '..\reference-platform\support\AdvZipReaders.pas',
-  FhirPath in '..\reference-platform\r4\FhirPath.pas'},
-  OdbcHeaders in '..\Libraries\db\OdbcHeaders.pas';
+  FhirPath in '..\reference-platform\r4\FhirPath.pas'};
 
 var
   runner : ITestRunner;
@@ -181,3 +180,14 @@ TestInsight not for OSX
   end;
 end.
 
+
+  FhirPath in '..\reference-platform\r4\FhirPath.pas'},
+  KDBTests in '..\Libraries\db\KDBTests.pas',
+  KDBDialects in '..\reference-platform\support\KDBDialects.pas',
+  KDBManager in '..\Libraries\db\KDBManager.pas',
+  KSettings in '..\Libraries\db\KSettings.pas',
+  KDBLogging in '..\Libraries\db\KDBLogging.pas',
+  KDBOdbc in '..\Libraries\db\KDBOdbc.pas',
+  ODBCObjects in '..\Libraries\db\ODBCObjects.pas',
+  OdbcHeaders in '..\Libraries\db\OdbcHeaders.pas';
+
