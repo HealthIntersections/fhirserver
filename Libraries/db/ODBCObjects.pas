@@ -45,11 +45,9 @@ Uses
 
 const
   EnterString = #0#0;
-  MaxNullString = 255;
 
 Type
   EODBCExpress = Class(Exception);
-  NullString = Array[0..MaxNullString] Of Char;
 
   SQLINTEGERPtr=^SQLINTEGER;
   SQLUSMALLINTPtr=^SQLUSMALLINT;
@@ -87,6 +85,8 @@ Type
   TNoRowsAffected = Set Of (nrByInsert, nrByUpdate, nrByDelete, nrByRefresh);
 
 Const
+  DefaultStringCount = 255;
+  DefaultStringSize = DefaultStringCount * {$IFDEF MACOS} 4 {$ELSE} 2 {$ENDIF};
   NullData = '';
 
   DefRaiseSoftErrors = False;
@@ -143,7 +143,6 @@ Const
 
 Type
   { Type Pointers }
-  NullStringPtr = ^NullString;
   StringPtr = ^String;
 
   SinglePtr = ^Single;
@@ -597,10 +596,6 @@ Type
     Procedure UpdateRow(Row: SQLUSMALLINT);
     Procedure DeleteRow(Row: SQLUSMALLINT);
     Procedure RefreshRow(Row: SQLUSMALLINT);
-    Procedure InsertRows;
-    Procedure UpdateRows;
-    Procedure DeleteRows;
-    Procedure RefreshRows;
 
     { Get/Set Methods }
     Function GetHandle: SQLHSTMT;
@@ -1022,8 +1017,6 @@ Type
                         SqlSize: LongInt): String;
 
     Procedure BindNull(Param: SQLUSMALLINT);
-    Procedure BindNullString(Param: SQLUSMALLINT;
-                             Var ParamValue: NullString);
     Procedure BindString(Param: SQLUSMALLINT;
                          Var ParamValue: String);
     Procedure BindSingle(Param: SQLUSMALLINT;
@@ -1063,8 +1056,6 @@ Type
                        Var ParamValue: TMemoryStream);
 
     Procedure BindNullByName(ParamName: String);
-    Procedure BindNullStringByName(ParamName: String;
-                                   Var ParamValue: NullString);
     Procedure BindStringByName(ParamName: String;
                                Var ParamValue: String);
     Procedure BindSingleByName(ParamName: String;
@@ -1104,8 +1095,6 @@ Type
                              Var ParamValue: TMemoryStream);
 
     Procedure BindNulls(Param: SQLUSMALLINT);
-    Procedure BindNullStrings(Param: SQLUSMALLINT;
-                              Var ParamValue: Array Of NullString);
     Procedure BindSingles(Param: SQLUSMALLINT;
                           Var ParamValue: Array Of Single);
     Procedure BindDoubles(Param: SQLUSMALLINT;
@@ -1136,8 +1125,6 @@ Type
                              Var ParamValue: Array Of DateSupport.TTimeStamp);
 
     Procedure BindNullsByName(ParamName: String);
-    Procedure BindNullStringsByName(ParamName: String;
-                                    Var ParamValue: Array Of NullString);
     Procedure BindSinglesByName(ParamName: String;
                                 Var ParamValue: Array Of Single);
     Procedure BindDoublesByName(ParamName: String;
@@ -2255,10 +2242,10 @@ Function PhysSize(CType: SQLSMALLINT): Word;
 Begin
   Case CType Of
     SQL_C_CHAR:
-      Result:= SizeOf(NullString);
+      Result:= DefaultStringSize; // SizeOf(NullString);
 
     SQL_C_BINARY:
-      Result:= SizeOf(NullString);
+      Result:= DefaultStringSize; // SizeOf(NullString);
 
     SQL_C_FLOAT:
       Result:= SizeOf(Single);
@@ -2867,6 +2854,38 @@ Begin
   Inherited Message:= AMessage;
 End;
 
+function fromOdbcPChar(p : PChar) : String;
+begin
+  {$IFDEF MACOS}
+  raise Exception.Create('Still to do: UTF-32 to UTF-16');
+  {$ELSE}
+  result := p;
+  {$ENDIF}
+end;
+
+function odbcPChar(s : String) : PChar; overload;
+begin
+  {$IFDEF MACOS}
+  raise Exception.Create('Still to do: UTF-16 to UTF-32');
+  {$ELSE}
+  if s = '' then
+    result := nil
+  else
+  begin
+    getMem(result, length(s) * 2);
+    move(s[1], result^, length(s) * 2);
+  end;
+  {$ENDIF}
+end;
+
+function odbcPChar(count : integer) : PChar; overload;
+begin
+  {$IFDEF MACOS}
+  getMem(result, count * 4);
+  {$ELSE}
+  getMem(result, count * 2);
+  {$ENDIF}
+end;
 
 { TODBCErrorHandler }
 
@@ -2876,59 +2895,66 @@ Var
   ErrorPtr: TErrorPtr;
 
   RetCode: SQLRETURN;
-  State: NullString;
+  State: PChar;
   Native: SQLINTEGER;
-  Message: NullString;
+  Message: PChar;
   StringLength: SQLSMALLINT;
 Begin
-  Result:= TList.Create;
-  Result.Clear;
+  State := odbcPChar(DefaultStringCount);
+  Message := odbcPChar(DefaultStringCount);
+  try
+    Result:= TList.Create;
+    Result.Clear;
 
-  Case ARetCode Of
-    SQL_ERROR,
-    SQL_SUCCESS_WITH_INFO:
-    Begin
-      ErrorNum:= 0;
-      Repeat
-        Inc(ErrorNum);
+    Case ARetCode Of
+      SQL_ERROR,
+      SQL_SUCCESS_WITH_INFO:
+      Begin
+        ErrorNum:= 0;
+        Repeat
+          Inc(ErrorNum);
 
-        //depreciated RetCode:= _SQLError(FErrHenv, FErrHdbc, FErrHstmt, SqlState, NativeError, ErrorMsg);
-        RetCode:= SQLGetDiagRec(aHandleType, aHandle, ErrorNum, @State, Native, @Message, SizeOf(Message), StringLength);
+          //depreciated RetCode:= _SQLError(FErrHenv, FErrHdbc, FErrHstmt, SqlState, NativeError, ErrorMsg);
+          RetCode:= SQLGetDiagRec(aHandleType, aHandle, ErrorNum, State, Native, Message, DefaultStringSize, StringLength);
 
-        If Success(RetCode) Then
+          If Success(RetCode) Then
+          Begin
+            New(ErrorPtr);
+            ErrorPtr.FState:= fromOdbcPChar(State);
+            ErrorPtr.FNative:= Native;
+            ErrorPtr.FMessage:= fromOdbcPChar(Message);
+            Result.Add(ErrorPtr);
+          End;
+        Until Not Success(RetCode);
+        If (Result.Count = 0) Or (RetCode <> SQL_NO_DATA) Then
         Begin
           New(ErrorPtr);
-          ErrorPtr.FState:= State;
-          ErrorPtr.FNative:= Native;
-          ErrorPtr.FMessage:= Message;
+          ErrorPtr.FState:= '';
+          ErrorPtr.FNative:= 0;
+          ErrorPtr.FMessage:= 'Unable to Retrieve ODBC Error';
           Result.Add(ErrorPtr);
         End;
-      Until Not Success(RetCode);
-      If (Result.Count = 0) Or (RetCode <> SQL_NO_DATA) Then
+      End;
+      Else
       Begin
         New(ErrorPtr);
         ErrorPtr.FState:= '';
         ErrorPtr.FNative:= 0;
-        ErrorPtr.FMessage:= 'Unable to Retrieve ODBC Error';
+        Case ARetCode Of
+          SQL_INVALID_HANDLE:
+            ErrorPtr.FMessage:= 'Invalid ODBC Handle';
+          SQL_NO_DATA:
+            ErrorPtr.FMessage:= 'No Data Found';
+          Else
+            ErrorPtr.FMessage:= 'ODBC Return Code '+IntToStr(ARetCode);
+        End;
         Result.Add(ErrorPtr);
       End;
     End;
-    Else
-    Begin
-      New(ErrorPtr);
-      ErrorPtr.FState:= '';
-      ErrorPtr.FNative:= 0;
-      Case ARetCode Of
-        SQL_INVALID_HANDLE:
-          ErrorPtr.FMessage:= 'Invalid ODBC Handle';
-        SQL_NO_DATA:
-          ErrorPtr.FMessage:= 'No Data Found';
-        Else
-          ErrorPtr.FMessage:= 'ODBC Return Code '+IntToStr(ARetCode);
-      End;
-      Result.Add(ErrorPtr);
-    End;
-  End;
+  finally
+    freemem(state);
+    freemem(message);
+  end;
 End;
 
 Procedure TODBCErrorHandler.RaiseError(AOwner: TODBCObject; ARetCode: SQLRETURN);
@@ -3352,8 +3378,8 @@ Begin
 
 Procedure TOdbcConnection.Connect;
 Var
-  ConnectStrIn: String;
-  ConnectStrOut: NullString;
+  ConnectStrIn: PChar;
+  ConnectStrOut: PChar;
   StringLength: SQLSMALLINT;
 
   Function ConnectStr: String;
@@ -3392,10 +3418,16 @@ Begin
                                    Pointer(PChar(FPassword)), SQL_NTS)
     Else
     Begin
-      ConnectStrIn:= ConnectStr;
-      FRetCode:= SQLDriverConnect(FHdbc, 0, PChar(ConnectStrIn), SQL_NTS,
-                                                               @ConnectStrOut, SizeOf(ConnectStrOut), StringLength,
-                                                               FInfoPrompt);
+      ConnectStrOut := odbcPChar(DefaultStringCount);
+      ConnectStrIn := odbcPChar(ConnectStr);
+      try
+        FRetCode:= SQLDriverConnect(FHdbc, 0, PChar(ConnectStrIn), SQL_NTS,
+                                                                 ConnectStrOut, DefaultStringSize, StringLength,
+                                                                 FInfoPrompt);
+      finally
+        freemem(ConnectStrOut);
+        FreeMem(ConnectStrIn);
+      end;
     End;
     If Not FEnv.Error.Success(FRetCode) Then
       FEnv.Error.RaiseError(Self, FRetCode);
@@ -3500,16 +3532,21 @@ End;
 
 Function TOdbcConnection.GetInfoString(InfoType: SQLUSMALLINT): String;
 Var
-  Supported: NullString;
+  Supported: PChar;
   StringLength: SQLSMALLINT;
 Begin
   Connect;
 
-  FRetCode:= SQLGetInfo(FHdbc, InfoType, @Supported, SizeOf(Supported), StringLength);
-  If Not FEnv.Error.Success(FRetCode) Then
-    Result:= ''
-  Else
-    Result:= StrPas(Supported);
+  Supported := odbcPChar(DefaultStringCount);
+  try
+    FRetCode:= SQLGetInfo(FHdbc, InfoType, Supported, DefaultStringSize, StringLength);
+    If Not FEnv.Error.Success(FRetCode) Then
+      Result:= ''
+    Else
+      Result:= fromOdbcPChar(Supported);
+  finally
+    FreeMem(supported);
+  end;
 End;
 
 Function TOdbcConnection.GetInfoSmallint(InfoType: SQLUSMALLINT): SQLUSMALLINT;
@@ -3685,11 +3722,11 @@ Begin
   With Result^ Do
   Begin
     Desc:= ADriver;
-    PS_SQL_CHAR:= MaxNullString;
-    PS_SQL_VARCHAR:= MaxNullString;
+    PS_SQL_CHAR:= DefaultStringCount;
+    PS_SQL_VARCHAR:= DefaultStringCount;
     PS_SQL_LONGVARCHAR:= MaxLongint;
-    PS_SQL_BINARY:= MaxNullString;
-    PS_SQL_VARBINARY:= MaxNullString;
+    PS_SQL_BINARY:= DefaultStringCount;
+    PS_SQL_VARBINARY:= DefaultStringCount;
     PS_SQL_LONGVARBINARY:= MaxLongint;
     PS_SQL_DECIMAL:= 15;
     PS_SQL_NUMERIC:= 15;
@@ -5107,7 +5144,7 @@ Begin
       If Bulk = 0 Then
         BufferLength:= ParameterSize+1
       Else
-        BufferLength:= MaxNullString+1;
+        BufferLength:= DefaultStringSize+1;
       temp^.FSize^:= SQL_NTS;
     End;
     SQL_VARCHAR:
@@ -5115,7 +5152,7 @@ Begin
       If Bulk = 0 Then
         BufferLength:= ParameterSize+1
       Else
-        BufferLength:= MaxNullString+1;
+        BufferLength:= DefaultStringSize+1;
       temp^.FSize^:= SQL_NTS;
     End;
     SQL_LONGVARCHAR:
@@ -5135,7 +5172,7 @@ Begin
       If Bulk = 0 Then
         BufferLength:= ParameterSize
       Else
-        BufferLength:= MaxNullString+1;
+        BufferLength:= DefaultStringSize+1;
     End;
     SQL_VARBINARY:
     Begin
@@ -5327,15 +5364,6 @@ Begin
   BindParam(Param, ParamType, Nil, SQL_CHAR);
 End;
 
-Procedure TOdbcStatement.BindNullString(Param: SQLUSMALLINT;
-                                Var ParamValue: NullString);
-Var
-  ParamType: SQLSMALLINT;
-Begin
-  ParamType:= SQL_C_CHAR;
-  BindParam(Param, ParamType, @ParamValue, ColTypeToSqlType(ParamType));
-End;
-
 Procedure TOdbcStatement.BindString(Param: SQLUSMALLINT;
                             Var ParamValue: String);
 Var
@@ -5497,12 +5525,6 @@ Begin
   BindNull(ParamByName(ParamName));
 End;
 
-Procedure TOdbcStatement.BindNullStringByName(ParamName: String;
-                                      Var ParamValue: NullString);
-Begin
-  BindNullString(ParamByName(ParamName), ParamValue);
-End;
-
 Procedure TOdbcStatement.BindStringByName(ParamName: String;
                                   Var ParamValue: String);
 Begin
@@ -5618,15 +5640,6 @@ Var
 Begin
   ParamType:= SQL_C_DEFAULT;
   BindParams(Param, ParamType, Nil, FNumParams);
-End;
-
-Procedure TOdbcStatement.BindNullStrings(Param: SQLUSMALLINT;
-                                 Var ParamValue: Array Of NullString);
-Var
-  ParamType: SQLSMALLINT;
-Begin
-  ParamType:= SQL_C_CHAR;
-  BindParams(Param, ParamType, @ParamValue, High(ParamValue)+1);
 End;
 
 Procedure TOdbcStatement.BindSingles(Param: SQLUSMALLINT;
@@ -5760,12 +5773,6 @@ End;
 Procedure TOdbcStatement.BindNullsByName(ParamName: String);
 Begin
   BindNulls(ParamByName(ParamName));
-End;
-
-Procedure TOdbcStatement.BindNullStringsByName(ParamName: String;
-                                       Var ParamValue: Array Of NullString);
-Begin
-  BindNullStrings(ParamByName(ParamName), ParamValue);
 End;
 
 Procedure TOdbcStatement.BindSinglesByName(ParamName: String;
@@ -5958,29 +5965,39 @@ End;
 Function TOdbcStatement.ColAttrString(Col: SQLUSMALLINT;
                               FieldIdentifier: SQLUSMALLINT): String;
 Var
-  CharAttr: NullString;
+  CharAttr: PChar;
   NumAttr: SQLLEN;
   StringLength: SQLSMALLINT;
 Begin
-  FRetCode:= SQLColAttribute(FHstmt, Col, FieldIdentifier, @CharAttr, SizeOf(CharAttr), StringLength, NumAttr);
-  If Not FEnv.Error.Success(FRetCode) Then
-    FEnv.Error.RaiseError(Self, FRetCode);
+  CharAttr := odbcPChar(DefaultStringCount);
+  try
+    FRetCode:= SQLColAttribute(FHstmt, Col, FieldIdentifier, CharAttr, DefaultStringSize, StringLength, NumAttr);
+    If Not FEnv.Error.Success(FRetCode) Then
+      FEnv.Error.RaiseError(Self, FRetCode);
 
-  Result:= CharAttr;
+    Result := fromOdbcPChar(CharAttr);
+  finally
+    freemem(CharAttr);
+  end;
 End;
 
 Function TOdbcStatement.ColAttrInteger(Col: SQLUSMALLINT;
                                FieldIdentifier: SQLUSMALLINT): SQLINTEGER;
 Var
-  CharAttr: NullString;
+  CharAttr: PChar;
   NumAttr: SQLLEN;
   StringLength: SQLSMALLINT;
 Begin
-  FRetCode:= SQLColAttribute(FHstmt, Col, FieldIdentifier, @CharAttr, SizeOf(NumAttr), StringLength, NumAttr);
-  If Not FEnv.Error.Success(FRetCode) Then
-    FEnv.Error.RaiseError(Self, FRetCode);
+  CharAttr := odbcPChar(DefaultStringCount);
+  try
+    FRetCode:= SQLColAttribute(FHstmt, Col, FieldIdentifier, CharAttr, DefaultStringSize, StringLength, NumAttr);
+    If Not FEnv.Error.Success(FRetCode) Then
+      FEnv.Error.RaiseError(Self, FRetCode);
 
-  Result:= NumAttr;
+    Result:= NumAttr;
+  finally
+    freemem(CharAttr);
+  end;
 End;
 
 Procedure TOdbcStatement.BindCol(Col: SQLUSMALLINT;
@@ -6005,7 +6022,7 @@ Var
   SqlValue: SQLPOINTER;
   BufferLength: SQLLEN;
 
-  ColumnName: NullString;
+  ColumnName: PChar;
   NameLength: SQLSMALLINT;
   SqlType: SQLSMALLINT;
   ColumnSize: SQLULEN;
@@ -6026,12 +6043,17 @@ Begin
     FTail:= Nil;
     For icol:= 1 To FNumCols Do
     Begin
-      FRetCode:= SQLDescribeCol(FHstmt, icol, @ColumnName, SizeOf(ColumnName), NameLength, SqlType, ColumnSize, DecimalDigits, Nullable);
-      If Not FEnv.Error.Success(FRetCode) Then
-        FEnv.Error.RaiseError(Self, FRetCode);
+      ColumnName := odbcPChar(DefaultStringCount);
+      try
+        FRetCode:= SQLDescribeCol(FHstmt, icol, ColumnName, DefaultStringSize, NameLength, SqlType, ColumnSize, DecimalDigits, Nullable);
+        If Not FEnv.Error.Success(FRetCode) Then
+          FEnv.Error.RaiseError(Self, FRetCode);
 
-      { Set Column Name }
-      FColNames.Add(ColumnName);
+        { Set Column Name }
+        FColNames.Add(fromOdbcPChar(ColumnName));
+      finally
+        freeMem(columnName);
+      end;
 
       { Set Column Type }
       temp:= ColBindRec(icol);
@@ -6058,7 +6080,7 @@ Begin
         Begin
           CType:= SQL_C_CHAR;
           If FBulkData Then
-            BufferLength:= MaxNullString+1
+            BufferLength:= DefaultStringCount+1
           Else
             BufferLength:= ColumnSize+1;
           GetMem(SqlValue, BufferLength);
@@ -6067,7 +6089,7 @@ Begin
         Begin
           CType:= SQL_C_CHAR;
           If FBulkData Or (ColumnSize = 0) Then
-            BufferLength:= MaxNullString+1
+            BufferLength:= DefaultStringCount+1
           Else
             BufferLength:= ColumnSize+1;
           GetMem(SqlValue, BufferLength);
@@ -6616,43 +6638,48 @@ End;
 
 Procedure TOdbcStatement.DetermineTargetTable;
 Var
-  CharAttr: NullString;
+  CharAttr: PChar;
   NumAttr: SQLLEN;
   StringLength: SQLSMALLINT;
   Loc: Integer;
 Begin
-  { Determine Target Table }
-  If Trim(FTargetTable) = '' Then
-  Begin
-    FRetCode:= SQLColAttribute(FHstmt, 1, SQL_DESC_SCHEMA_NAME, @CharAttr, SizeOf(CharAttr), StringLength, NumAttr);
-    FTableOwner:= Trim(CharAttr);
-    If Not FEnv.Error.Success(FRetCode) Then
-      FTableOwner:= '';
-
-    FRetCode:= SQLColAttribute(FHstmt, 1, SQL_DESC_TABLE_NAME, @CharAttr, SizeOf(CharAttr), StringLength, NumAttr);
-    FTableName:= Trim(CharAttr);
-    If FTableName = '' Then
+  CharAttr := odbcPChar(DefaultStringSize);
+  try
+    { Determine Target Table }
+    If Trim(FTargetTable) = '' Then
     Begin
-      FTableName:= StringReplace(FSQL, EnterString, ' ', [rfReplaceAll, rfIgnoreCase]);
-      Loc:= Pos(' FROM ', UpperCase(FTableName));
-      If Loc > 0 Then
+      FRetCode:= SQLColAttribute(FHstmt, 1, SQL_DESC_SCHEMA_NAME, CharAttr, DefaultStringSize, StringLength, NumAttr);
+      FTableOwner:= Trim(fromOdbcPChar(CharAttr));
+      If Not FEnv.Error.Success(FRetCode) Then
+        FTableOwner:= '';
+
+      FRetCode:= SQLColAttribute(FHstmt, 1, SQL_DESC_TABLE_NAME, CharAttr, DefaultStringSize, StringLength, NumAttr);
+      FTableName:= Trim(fromOdbcPChar(CharAttr));
+      If FTableName = '' Then
       Begin
-        FTableName:= Trim(Copy(FTableName, Loc+6, Length(FTableName)-Loc-5));
-        Loc:= Pos(' ', FTableName);
+        FTableName:= StringReplace(FSQL, EnterString, ' ', [rfReplaceAll, rfIgnoreCase]);
+        Loc:= Pos(' FROM ', UpperCase(FTableName));
         If Loc > 0 Then
-          FTableName:= Copy(FTableName, 1, Loc-1);  //can include table owner
-      End
-      Else
-        FTableName:= '';
+        Begin
+          FTableName:= Trim(Copy(FTableName, Loc+6, Length(FTableName)-Loc-5));
+          Loc:= Pos(' ', FTableName);
+          If Loc > 0 Then
+            FTableName:= Copy(FTableName, 1, Loc-1);  //can include table owner
+        End
+        Else
+          FTableName:= '';
+      End;
+      If (Not FEnv.Error.Success(FRetCode)) Or (FTableName = '') Then
+        Raise EODBCExpress.Create('Unable to determine table name:  set TargetTable property.');
+    End
+    Else
+    Begin
+      FTableOwner:= '';
+      FTableName:= Trim(FTargetTable);
     End;
-    If (Not FEnv.Error.Success(FRetCode)) Or (FTableName = '') Then
-      Raise EODBCExpress.Create('Unable to determine table name:  set TargetTable property.');
-  End
-  Else
-  Begin
-    FTableOwner:= '';
-    FTableName:= Trim(FTargetTable);
-  End;
+  finally
+    freemem(CharAttr);
+  end;
 End;
 
 Procedure TOdbcStatement.DeterminePrimaryCols;
@@ -6788,15 +6815,20 @@ End;
 
 Function TOdbcStatement.CursorName: String;
 Var
-  CurName: NullString;
+  CurName: PChar;
   StringLength: SQLSMALLINT;
 Begin
   { Determine Cursor Name }
-  FRetCode:= SQLGetCursorName(FHstmt, @CurName, SizeOf(CurName), StringLength);
-  If Not FEnv.Error.Success(FRetCode) Then
-    FEnv.Error.RaiseError(Self, FRetCode);
+  CurName := odbcPChar(DefaultStringCount);
+  try
+    FRetCode:= SQLGetCursorName(FHstmt, CurName, DefaultStringSize, StringLength);
+    If Not FEnv.Error.Success(FRetCode) Then
+      FEnv.Error.RaiseError(Self, FRetCode);
 
-  Result:= CurName;
+    Result := fromOdbcPChar(CurName);
+  finally
+    freemem(CurName);
+  end;
 End;
 
 Function TOdbcStatement.PrimaryClause: String;
@@ -7172,44 +7204,6 @@ Procedure TOdbcStatement.RefreshRow(Row: SQLUSMALLINT);
 
 Begin
   RefreshFields(WhereClause);
-End;
-
-{ ActionRows }
-
-Procedure TOdbcStatement.InsertRows;
-Var
-  i: Integer;
-Begin
-  For i:= 1 To FNumRows Do
-    If RowFlag[i] = rfInsert Then
-      InsertRow(i);
-End;
-
-Procedure TOdbcStatement.UpdateRows;
-Var
-  i: Integer;
-Begin
-  For i:= 1 To FNumRows Do
-    If RowFlag[i] = rfUpdate Then
-      UpdateRow(i);
-End;
-
-Procedure TOdbcStatement.DeleteRows;
-Var
-  i: Integer;
-Begin
-  For i:= 1 To FNumRows Do
-    If RowFlag[i] = rfDelete Then
-      DeleteRow(i);
-End;
-
-Procedure TOdbcStatement.RefreshRows;
-Var
-  i: Integer;
-Begin
-  For i:= 1 To FNumRows Do
-    If RowFlag[i] = rfRefresh Then
-      RefreshRow(i);
 End;
 
 { DoAction }
@@ -10129,7 +10123,7 @@ end;
 procedure TOdbcAdministrator.RetrieveDataSources;
 var
   Direction: SQLUSMALLINT;
-  DSName, DSDriver: NullString;
+  DSName, DSDriver: PChar;
   StringLength1, StringLength2: SQLSMALLINT;
 begin
   { Retrieve DataSources }
@@ -10145,18 +10139,25 @@ begin
       Direction:= SQL_FETCH_FIRST;
   end;
 
-  while FEnv.Error.Success(SQLDataSources(FEnv.Handle, Direction, @DSName, SizeOf(DSName), StringLength1, DSDriver, SizeOf(DSDriver), StringLength2)) do
-  begin
-    FDataSourceNames.Add(DSName);
-    FDataSourceDrivers.Add(DSDriver);
-    Direction:= SQL_FETCH_NEXT;
+  DSName := odbcPChar(DefaultStringCount);
+  DSDriver := odbcPChar(DefaultStringCount);
+  try
+    while FEnv.Error.Success(SQLDataSources(FEnv.Handle, Direction, DSName, DefaultStringSize, StringLength1, DSDriver, DefaultStringSize, StringLength2)) do
+    begin
+      FDataSourceNames.Add(fromOdbcPChar(DSName));
+      FDataSourceDrivers.Add(fromOdbcPChar(DSDriver));
+      Direction:= SQL_FETCH_NEXT;
+    end;
+  finally
+    freeMem(DSName);
+    freeMem(DSDriver);
   end;
 end;
 
 procedure TOdbcAdministrator.RetrieveDrivers;
 var
   Direction: SQLUSMALLINT;
-  DName, DAttr: NullString;
+  DName, DAttr: PChar;
   StringLength1, StringLength2: SQLSMALLINT;
 begin
   { Retrieve Drivers }
@@ -10164,10 +10165,17 @@ begin
 
   Direction:= SQL_FETCH_FIRST;
 
-  while FEnv.Error.Success(SQLDrivers(FEnv.Handle, Direction, @DName, SizeOf(DName), StringLength1, @DAttr, SizeOf(DAttr), StringLength2)) do
-  begin
-    FDriverNames.Add(DName);
-    Direction:= SQL_FETCH_NEXT;
+  DName := odbcPChar(DefaultStringCount);
+  DAttr := odbcPChar(DefaultStringCount);
+  try
+    while FEnv.Error.Success(SQLDrivers(FEnv.Handle, Direction, DName, DefaultStringSize, StringLength1, DAttr, DefaultStringSize, StringLength2)) do
+    begin
+      FDriverNames.Add(fromOdbcPChar(DName));
+      Direction:= SQL_FETCH_NEXT;
+    end;
+  finally
+    freeMem(DName);
+    freeMem(DAttr);
   end;
 end;
 
