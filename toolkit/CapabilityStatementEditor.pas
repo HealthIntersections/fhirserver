@@ -161,6 +161,7 @@ type
     StringColumn2: TStringColumn;
     PopupColumn1: TPopupColumn;
     VertScrollBox2: TVertScrollBox;
+    VertScrollBox3: TVertScrollBox;
     procedure tvStructureClick(Sender: TObject);
     procedure btnCancelClick(Sender: TObject);
     procedure inputChanged(Sender: TObject);

@@ -86,371 +86,380 @@ object CapabilityStatementEditorFrame: TCapabilityStatementEditorFrame
         Text = 'tbMetadata'
         ExplicitSize.cx = 8.000000000000000000
         ExplicitSize.cy = 8.000000000000000000
-        object btnAddClient: TButton
-          Position.X = 16.000000000000000000
-          Position.Y = 584.000000000000000000
+        object VertScrollBox3: TVertScrollBox
+          Align = Client
+          Size.Width = 614.000000000000000000
+          Size.Height = 779.000000000000000000
+          Size.PlatformDefault = False
           TabOrder = 0
-          Text = 'Add Client'
-          OnClick = btnAddClientClick
-        end
-        object btnAddServer: TButton
-          Position.X = 104.000000000000000000
-          Position.Y = 584.000000000000000000
-          TabOrder = 1
-          Text = 'Add Server'
-          OnClick = btnAddServerClick
-        end
-        object cbExperimental: TCheckBox
-          Anchors = [akTop, akRight]
-          Position.X = 341.000000000000000000
-          Position.Y = 120.000000000000000000
-          Size.Width = 97.000000000000000000
-          Size.Height = 19.000000000000000000
-          Size.PlatformDefault = False
-          TabOrder = 2
-          Text = 'Experimental'
-          OnChange = inputChanged
-        end
-        object cbJson: TCheckBox
-          Position.X = 88.000000000000000000
-          Position.Y = 362.000000000000000000
-          Size.Width = 65.000000000000000000
-          Size.Height = 19.000000000000000000
-          Size.PlatformDefault = False
-          TabOrder = 3
-          Text = 'JSON'
-          OnChange = inputChanged
-        end
-        object cbTerminologyService: TCheckBox
-          Position.X = 16.000000000000000000
-          Position.Y = 397.000000000000000000
-          Size.Width = 201.000000000000000000
-          Size.Height = 19.000000000000000000
-          Size.PlatformDefault = False
-          TabOrder = 4
-          Text = 'Terminology Service'
-          OnChange = inputChanged
-        end
-        object cbTurtle: TCheckBox
-          Position.X = 152.000000000000000000
-          Position.Y = 362.000000000000000000
-          Size.Width = 81.000000000000000000
-          Size.Height = 19.000000000000000000
-          Size.PlatformDefault = False
-          TabOrder = 5
-          Text = 'Turtle'
-          OnChange = inputChanged
-        end
-        object cbxKind: TComboBox
-          Items.Strings = (
-            ''
-            'instance'
-            'capability'
-            'requirements')
-          Position.X = 96.000000000000000000
-          Position.Y = 328.000000000000000000
-          Size.Width = 113.000000000000000000
-          Size.Height = 22.000000000000000000
-          Size.PlatformDefault = False
-          TabOrder = 7
-          OnChange = inputChanged
-        end
-        object cbXml: TCheckBox
-          Position.X = 16.000000000000000000
-          Position.Y = 362.000000000000000000
-          Size.Width = 65.000000000000000000
-          Size.Height = 19.000000000000000000
-          Size.PlatformDefault = False
-          TabOrder = 8
-          Text = 'XML'
-          OnChange = inputChanged
-        end
-        object edtFHIRVersion: TEdit
-          Touch.InteractiveGestures = [LongTap, DoubleTap]
-          Anchors = [akLeft, akTop, akRight]
-          TabOrder = 13
-          Position.X = 312.000000000000000000
-          Position.Y = 362.000000000000000000
-          Size.Width = 294.000000000000000000
-          Size.Height = 22.000000000000000000
-          Size.PlatformDefault = False
-          OnChange = inputChanged
-          OnChangeTracking = inputChanged
-        end
-        object edtTitle: TEdit
-          Touch.InteractiveGestures = [LongTap, DoubleTap]
-          Anchors = [akLeft, akTop, akRight]
-          TabOrder = 17
-          Position.X = 96.000000000000000000
-          Position.Y = 85.000000000000000000
-          Size.Width = 512.000000000000000000
-          Size.Height = 22.000000000000000000
-          Size.PlatformDefault = False
-          OnChange = inputChanged
-          OnChangeTracking = inputChanged
-        end
-        object edtURL: TEdit
-          Touch.InteractiveGestures = [LongTap, DoubleTap]
-          Anchors = [akLeft, akTop, akRight]
-          TabOrder = 18
-          Position.X = 96.000000000000000000
-          Position.Y = 16.000000000000000000
-          Size.Width = 512.000000000000000000
-          Size.Height = 22.000000000000000000
-          Size.PlatformDefault = False
-          OnChange = inputChanged
-          OnChangeTracking = inputChanged
-        end
-        object edtVersion: TEdit
-          Touch.InteractiveGestures = [LongTap, DoubleTap]
-          Anchors = [akTop, akRight]
-          TabOrder = 19
-          Position.X = 506.000000000000000000
-          Position.Y = 50.000000000000000000
-          Size.Width = 100.000000000000000000
-          Size.Height = 22.000000000000000000
-          Size.PlatformDefault = False
-          OnChange = inputChanged
-          OnChangeTracking = inputChanged
-        end
-        object Label10: TLabel
-          Position.X = 16.000000000000000000
-          Position.Y = 258.000000000000000000
-          Text = 'Purpose'
-          TabOrder = 20
-        end
-        object Label11: TLabel
-          Position.X = 16.000000000000000000
-          Position.Y = 293.000000000000000000
-          Text = 'Copyright:'
-          TabOrder = 21
-        end
-        object Label12: TLabel
-          Position.X = 16.000000000000000000
-          Position.Y = 328.000000000000000000
-          Text = 'Kind:'
-          TabOrder = 22
-        end
-        object Label13: TLabel
-          Position.X = 224.000000000000000000
-          Position.Y = 328.000000000000000000
-          Size.Width = 104.000000000000000000
-          Size.Height = 17.000000000000000000
-          Size.PlatformDefault = False
-          Text = 'Jurisdiction:'
-          TabOrder = 23
-        end
-        object Label14: TLabel
-          Position.X = 224.000000000000000000
-          Position.Y = 364.000000000000000000
-          Size.Width = 88.000000000000000000
-          Size.Height = 17.000000000000000000
-          Size.PlatformDefault = False
-          Text = 'FHIR Version:'
-          TabOrder = 24
-        end
-        object Label15: TLabel
-          Position.X = 16.000000000000000000
-          Position.Y = 432.000000000000000000
-          Size.Width = 177.000000000000000000
-          Size.Height = 17.000000000000000000
-          Size.PlatformDefault = False
-          Text = 'Implementation Guides:'
-          TabOrder = 25
-        end
-        object Label3: TLabel
-          Position.X = 16.000000000000000000
-          Position.Y = 50.000000000000000000
-          Text = 'Name:'
-          TabOrder = 26
-        end
-        object Label2: TLabel
-          Position.X = 16.000000000000000000
-          Position.Y = 16.000000000000000000
-          Text = 'URL:'
-          TabOrder = 27
-        end
-        object Label4: TLabel
-          Anchors = [akTop, akRight]
-          Position.X = 446.000000000000000000
-          Position.Y = 50.000000000000000000
-          Size.Width = 59.000000000000000000
-          Size.Height = 17.000000000000000000
-          Size.PlatformDefault = False
-          Text = 'Version:'
-          TabOrder = 28
-        end
-        object Label5: TLabel
-          Position.X = 16.000000000000000000
-          Position.Y = 85.000000000000000000
-          Text = 'Title'
-          TabOrder = 29
-        end
-        object Label6: TLabel
-          Position.X = 16.000000000000000000
-          Position.Y = 120.000000000000000000
-          Text = 'Status'
-          TabOrder = 30
-        end
-        object Label7: TLabel
-          Position.X = 16.000000000000000000
-          Position.Y = 154.000000000000000000
-          Text = 'Date:'
-          TabOrder = 31
-        end
-        object Label8: TLabel
-          Position.X = 16.000000000000000000
-          Position.Y = 189.000000000000000000
-          Text = 'Publisher'
-          TabOrder = 32
-        end
-        object Label9: TLabel
-          Position.X = 16.000000000000000000
-          Position.Y = 224.000000000000000000
-          Text = 'Description:'
-          TabOrder = 33
-        end
-        object mImplementationGuides: TMemo
-          Touch.InteractiveGestures = [Pan, LongTap, DoubleTap]
-          DataDetectorTypes = []
-          OnChange = inputChanged
-          OnChangeTracking = inputChanged
-          Anchors = [akLeft, akTop, akRight]
-          Position.X = 16.000000000000000000
-          Position.Y = 456.000000000000000000
-          Size.Width = 588.000000000000000000
-          Size.Height = 105.000000000000000000
-          Size.PlatformDefault = False
-          TabOrder = 34
-          Viewport.Width = 588.000000000000000000
-          Viewport.Height = 105.000000000000000000
-        end
-        object edtName: TEdit
-          Touch.InteractiveGestures = [LongTap, DoubleTap]
-          Anchors = [akLeft, akTop, akRight]
-          TabOrder = 14
-          Position.X = 96.000000000000000000
-          Position.Y = 50.000000000000000000
-          Size.Width = 339.000000000000000000
-          Size.Height = 22.000000000000000000
-          Size.PlatformDefault = False
-          OnChange = inputChanged
-          OnChangeTracking = inputChanged
-        end
-        object cbxStatus: TComboBox
-          Anchors = [akLeft, akTop, akRight]
-          Items.Strings = (
-            ''
-            'draft'
-            'active'
-            'retired'
-            'unknown')
-          Position.X = 96.000000000000000000
-          Position.Y = 120.000000000000000000
-          Size.Width = 513.000000000000000000
-          Size.Height = 22.000000000000000000
-          Size.PlatformDefault = False
-          TabOrder = 9
-          OnChange = inputChanged
-        end
-        object dedDate: TDateEdit
-          Date = 42965.000000000000000000
-          OnChange = inputChanged
-          OnCheckChanged = inputChanged
-          Anchors = [akLeft, akTop, akRight]
-          Position.X = 96.000000000000000000
-          Position.Y = 154.000000000000000000
-          Size.Width = 512.000000000000000000
-          Size.Height = 22.000000000000000000
-          Size.PlatformDefault = False
-          TabOrder = 10
-        end
-        object edtPublisher: TEdit
-          Touch.InteractiveGestures = [LongTap, DoubleTap]
-          Anchors = [akLeft, akTop, akRight]
-          TabOrder = 15
-          Position.X = 96.000000000000000000
-          Position.Y = 189.000000000000000000
-          Size.Width = 512.000000000000000000
-          Size.Height = 22.000000000000000000
-          Size.PlatformDefault = False
-          OnChange = inputChanged
-          OnChangeTracking = inputChanged
-        end
-        object edtDescription: TEdit
-          Touch.InteractiveGestures = [LongTap, DoubleTap]
-          Anchors = [akLeft, akTop, akRight]
-          TabOrder = 12
-          Position.X = 96.000000000000000000
-          Position.Y = 224.000000000000000000
-          Size.Width = 512.000000000000000000
-          Size.Height = 22.000000000000000000
-          Size.PlatformDefault = False
-          OnChange = inputChanged
-          OnChangeTracking = inputChanged
-        end
-        object edtPurpose: TEdit
-          Touch.InteractiveGestures = [LongTap, DoubleTap]
-          Anchors = [akLeft, akTop, akRight]
-          TabOrder = 16
-          Position.X = 96.000000000000000000
-          Position.Y = 258.000000000000000000
-          Size.Width = 512.000000000000000000
-          Size.Height = 22.000000000000000000
-          Size.PlatformDefault = False
-          OnChange = inputChanged
-          OnChangeTracking = inputChanged
-        end
-        object edtCopyright: TEdit
-          Touch.InteractiveGestures = [LongTap, DoubleTap]
-          Anchors = [akLeft, akTop, akRight]
-          TabOrder = 11
-          Position.X = 96.000000000000000000
-          Position.Y = 293.000000000000000000
-          Size.Width = 512.000000000000000000
-          Size.Height = 22.000000000000000000
-          Size.PlatformDefault = False
-          OnChange = inputChanged
-          OnChangeTracking = inputChanged
-        end
-        object cbxJurisdiction: TComboBox
-          Anchors = [akLeft, akTop, akRight]
-          Items.Strings = (
-            ''
-            'Austria (AT)'
-            'Australia (AU)'
-            'Brazil (BR)'
-            'Canada (CA)'
-            'Switzerland (CH)'
-            'Chile (CL)'
-            'China (CN)'
-            'Germany (DE)'
-            'Denmark (DK)'
-            'Estonia (EE)'
-            'Spain (ES)'
-            'Finland (FI)'
-            'France (FR)'
-            'United Kingdom (GB)'
-            'Netherlands (the) (NL)'
-            'Norway (NO)'
-            'New Zealand (NZ)'
-            'Russian Federation (the) (RU)'
-            'United States (US)'
-            'Viet Nam (VN)'
-            '--'
-            'World '
-            'Africa'
-            'Americas '
-            'Asia '
-            'Europe '
-            'Australia and New Zealand')
-          Position.X = 304.000000000000000000
-          Position.Y = 328.000000000000000000
-          Size.Width = 302.000000000000000000
-          Size.Height = 22.000000000000000000
-          Size.PlatformDefault = False
-          TabOrder = 6
-          OnChange = inputChanged
+          Viewport.Width = 614.000000000000000000
+          Viewport.Height = 779.000000000000000000
+          object dedDate: TDateEdit
+            Date = 42965.000000000000000000
+            OnChange = inputChanged
+            OnCheckChanged = inputChanged
+            Anchors = [akLeft, akTop, akRight]
+            Position.X = 96.000000000000000000
+            Position.Y = 154.000000000000000000
+            Size.Width = 512.000000000000000000
+            Size.Height = 22.000000000000000000
+            Size.PlatformDefault = False
+            TabOrder = 10
+          end
+          object edtCopyright: TEdit
+            Touch.InteractiveGestures = [LongTap, DoubleTap]
+            Anchors = [akLeft, akTop, akRight]
+            TabOrder = 11
+            Position.X = 96.000000000000000000
+            Position.Y = 293.000000000000000000
+            Size.Width = 512.000000000000000000
+            Size.Height = 22.000000000000000000
+            Size.PlatformDefault = False
+            OnChange = inputChanged
+            OnChangeTracking = inputChanged
+          end
+          object edtDescription: TEdit
+            Touch.InteractiveGestures = [LongTap, DoubleTap]
+            Anchors = [akLeft, akTop, akRight]
+            TabOrder = 12
+            Position.X = 96.000000000000000000
+            Position.Y = 224.000000000000000000
+            Size.Width = 512.000000000000000000
+            Size.Height = 22.000000000000000000
+            Size.PlatformDefault = False
+            OnChange = inputChanged
+            OnChangeTracking = inputChanged
+          end
+          object edtFHIRVersion: TEdit
+            Touch.InteractiveGestures = [LongTap, DoubleTap]
+            Anchors = [akLeft, akTop, akRight]
+            TabOrder = 13
+            Position.X = 312.000000000000000000
+            Position.Y = 362.000000000000000000
+            Size.Width = 294.000000000000000000
+            Size.Height = 22.000000000000000000
+            Size.PlatformDefault = False
+            OnChange = inputChanged
+            OnChangeTracking = inputChanged
+          end
+          object edtName: TEdit
+            Touch.InteractiveGestures = [LongTap, DoubleTap]
+            Anchors = [akLeft, akTop, akRight]
+            TabOrder = 14
+            Position.X = 96.000000000000000000
+            Position.Y = 50.000000000000000000
+            Size.Width = 339.000000000000000000
+            Size.Height = 22.000000000000000000
+            Size.PlatformDefault = False
+            OnChange = inputChanged
+            OnChangeTracking = inputChanged
+          end
+          object edtPublisher: TEdit
+            Touch.InteractiveGestures = [LongTap, DoubleTap]
+            Anchors = [akLeft, akTop, akRight]
+            TabOrder = 15
+            Position.X = 96.000000000000000000
+            Position.Y = 189.000000000000000000
+            Size.Width = 512.000000000000000000
+            Size.Height = 22.000000000000000000
+            Size.PlatformDefault = False
+            OnChange = inputChanged
+            OnChangeTracking = inputChanged
+          end
+          object edtPurpose: TEdit
+            Touch.InteractiveGestures = [LongTap, DoubleTap]
+            Anchors = [akLeft, akTop, akRight]
+            TabOrder = 16
+            Position.X = 96.000000000000000000
+            Position.Y = 258.000000000000000000
+            Size.Width = 512.000000000000000000
+            Size.Height = 22.000000000000000000
+            Size.PlatformDefault = False
+            OnChange = inputChanged
+            OnChangeTracking = inputChanged
+          end
+          object edtTitle: TEdit
+            Touch.InteractiveGestures = [LongTap, DoubleTap]
+            Anchors = [akLeft, akTop, akRight]
+            TabOrder = 17
+            Position.X = 96.000000000000000000
+            Position.Y = 85.000000000000000000
+            Size.Width = 512.000000000000000000
+            Size.Height = 22.000000000000000000
+            Size.PlatformDefault = False
+            OnChange = inputChanged
+            OnChangeTracking = inputChanged
+          end
+          object edtURL: TEdit
+            Touch.InteractiveGestures = [LongTap, DoubleTap]
+            Anchors = [akLeft, akTop, akRight]
+            TabOrder = 18
+            Position.X = 96.000000000000000000
+            Position.Y = 16.000000000000000000
+            Size.Width = 512.000000000000000000
+            Size.Height = 22.000000000000000000
+            Size.PlatformDefault = False
+            OnChange = inputChanged
+            OnChangeTracking = inputChanged
+          end
+          object edtVersion: TEdit
+            Touch.InteractiveGestures = [LongTap, DoubleTap]
+            Anchors = [akTop, akRight]
+            TabOrder = 19
+            Position.X = 506.000000000000000000
+            Position.Y = 50.000000000000000000
+            Size.Width = 100.000000000000000000
+            Size.Height = 22.000000000000000000
+            Size.PlatformDefault = False
+            OnChange = inputChanged
+            OnChangeTracking = inputChanged
+          end
+          object Label10: TLabel
+            Position.X = 16.000000000000000000
+            Position.Y = 258.000000000000000000
+            Text = 'Purpose'
+            TabOrder = 20
+          end
+          object Label11: TLabel
+            Position.X = 16.000000000000000000
+            Position.Y = 293.000000000000000000
+            Text = 'Copyright:'
+            TabOrder = 21
+          end
+          object Label12: TLabel
+            Position.X = 16.000000000000000000
+            Position.Y = 328.000000000000000000
+            Text = 'Kind:'
+            TabOrder = 22
+          end
+          object Label13: TLabel
+            Position.X = 224.000000000000000000
+            Position.Y = 328.000000000000000000
+            Size.Width = 104.000000000000000000
+            Size.Height = 17.000000000000000000
+            Size.PlatformDefault = False
+            Text = 'Jurisdiction:'
+            TabOrder = 23
+          end
+          object Label14: TLabel
+            Position.X = 224.000000000000000000
+            Position.Y = 364.000000000000000000
+            Size.Width = 88.000000000000000000
+            Size.Height = 17.000000000000000000
+            Size.PlatformDefault = False
+            Text = 'FHIR Version:'
+            TabOrder = 24
+          end
+          object Label15: TLabel
+            Position.X = 16.000000000000000000
+            Position.Y = 432.000000000000000000
+            Size.Width = 177.000000000000000000
+            Size.Height = 17.000000000000000000
+            Size.PlatformDefault = False
+            Text = 'Implementation Guides:'
+            TabOrder = 25
+          end
+          object Label2: TLabel
+            Position.X = 16.000000000000000000
+            Position.Y = 16.000000000000000000
+            Text = 'URL:'
+            TabOrder = 27
+          end
+          object Label3: TLabel
+            Position.X = 16.000000000000000000
+            Position.Y = 50.000000000000000000
+            Text = 'Name:'
+            TabOrder = 26
+          end
+          object Label4: TLabel
+            Anchors = [akTop, akRight]
+            Position.X = 446.000000000000000000
+            Position.Y = 50.000000000000000000
+            Size.Width = 59.000000000000000000
+            Size.Height = 17.000000000000000000
+            Size.PlatformDefault = False
+            Text = 'Version:'
+            TabOrder = 28
+          end
+          object Label5: TLabel
+            Position.X = 16.000000000000000000
+            Position.Y = 85.000000000000000000
+            Text = 'Title'
+            TabOrder = 29
+          end
+          object Label6: TLabel
+            Position.X = 16.000000000000000000
+            Position.Y = 120.000000000000000000
+            Text = 'Status'
+            TabOrder = 30
+          end
+          object Label7: TLabel
+            Position.X = 16.000000000000000000
+            Position.Y = 154.000000000000000000
+            Text = 'Date:'
+            TabOrder = 31
+          end
+          object Label8: TLabel
+            Position.X = 16.000000000000000000
+            Position.Y = 189.000000000000000000
+            Text = 'Publisher'
+            TabOrder = 32
+          end
+          object Label9: TLabel
+            Position.X = 16.000000000000000000
+            Position.Y = 224.000000000000000000
+            Text = 'Description:'
+            TabOrder = 33
+          end
+          object mImplementationGuides: TMemo
+            Touch.InteractiveGestures = [Pan, LongTap, DoubleTap]
+            DataDetectorTypes = []
+            OnChange = inputChanged
+            OnChangeTracking = inputChanged
+            Anchors = [akLeft, akTop, akRight]
+            Position.X = 16.000000000000000000
+            Position.Y = 456.000000000000000000
+            Size.Width = 588.000000000000000000
+            Size.Height = 105.000000000000000000
+            Size.PlatformDefault = False
+            TabOrder = 34
+            Viewport.Width = 584.000000000000000000
+            Viewport.Height = 101.000000000000000000
+          end
+          object btnAddClient: TButton
+            Position.X = 16.000000000000000000
+            Position.Y = 584.000000000000000000
+            TabOrder = 0
+            Text = 'Add Client'
+            OnClick = btnAddClientClick
+          end
+          object btnAddServer: TButton
+            Position.X = 104.000000000000000000
+            Position.Y = 584.000000000000000000
+            TabOrder = 1
+            Text = 'Add Server'
+            OnClick = btnAddServerClick
+          end
+          object cbExperimental: TCheckBox
+            Anchors = [akTop, akRight]
+            Position.X = 341.000000000000000000
+            Position.Y = 120.000000000000000000
+            Size.Width = 97.000000000000000000
+            Size.Height = 19.000000000000000000
+            Size.PlatformDefault = False
+            TabOrder = 2
+            Text = 'Experimental'
+            OnChange = inputChanged
+          end
+          object cbJson: TCheckBox
+            Position.X = 88.000000000000000000
+            Position.Y = 362.000000000000000000
+            Size.Width = 65.000000000000000000
+            Size.Height = 19.000000000000000000
+            Size.PlatformDefault = False
+            TabOrder = 3
+            Text = 'JSON'
+            OnChange = inputChanged
+          end
+          object cbTerminologyService: TCheckBox
+            Position.X = 16.000000000000000000
+            Position.Y = 397.000000000000000000
+            Size.Width = 201.000000000000000000
+            Size.Height = 19.000000000000000000
+            Size.PlatformDefault = False
+            TabOrder = 4
+            Text = 'Terminology Service'
+            OnChange = inputChanged
+          end
+          object cbTurtle: TCheckBox
+            Position.X = 152.000000000000000000
+            Position.Y = 362.000000000000000000
+            Size.Width = 81.000000000000000000
+            Size.Height = 19.000000000000000000
+            Size.PlatformDefault = False
+            TabOrder = 5
+            Text = 'Turtle'
+            OnChange = inputChanged
+          end
+          object cbxJurisdiction: TComboBox
+            Anchors = [akLeft, akTop, akRight]
+            Items.Strings = (
+              ''
+              'Austria (AT)'
+              'Australia (AU)'
+              'Brazil (BR)'
+              'Canada (CA)'
+              'Switzerland (CH)'
+              'Chile (CL)'
+              'China (CN)'
+              'Germany (DE)'
+              'Denmark (DK)'
+              'Estonia (EE)'
+              'Spain (ES)'
+              'Finland (FI)'
+              'France (FR)'
+              'United Kingdom (GB)'
+              'Netherlands (the) (NL)'
+              'Norway (NO)'
+              'New Zealand (NZ)'
+              'Russian Federation (the) (RU)'
+              'United States (US)'
+              'Viet Nam (VN)'
+              '--'
+              'World '
+              'Africa'
+              'Americas '
+              'Asia '
+              'Europe '
+              'Australia and New Zealand')
+            Position.X = 304.000000000000000000
+            Position.Y = 328.000000000000000000
+            Size.Width = 302.000000000000000000
+            Size.Height = 22.000000000000000000
+            Size.PlatformDefault = False
+            TabOrder = 6
+            OnChange = inputChanged
+          end
+          object cbxKind: TComboBox
+            Items.Strings = (
+              ''
+              'instance'
+              'capability'
+              'requirements')
+            Position.X = 96.000000000000000000
+            Position.Y = 328.000000000000000000
+            Size.Width = 113.000000000000000000
+            Size.Height = 22.000000000000000000
+            Size.PlatformDefault = False
+            TabOrder = 7
+            OnChange = inputChanged
+          end
+          object cbXml: TCheckBox
+            Position.X = 16.000000000000000000
+            Position.Y = 362.000000000000000000
+            Size.Width = 65.000000000000000000
+            Size.Height = 19.000000000000000000
+            Size.PlatformDefault = False
+            TabOrder = 8
+            Text = 'XML'
+            OnChange = inputChanged
+          end
+          object cbxStatus: TComboBox
+            Anchors = [akLeft, akTop, akRight]
+            Items.Strings = (
+              ''
+              'draft'
+              'active'
+              'retired'
+              'unknown')
+            Position.X = 96.000000000000000000
+            Position.Y = 120.000000000000000000
+            Size.Width = 513.000000000000000000
+            Size.Height = 22.000000000000000000
+            Size.PlatformDefault = False
+            TabOrder = 9
+            OnChange = inputChanged
+          end
         end
       end
       object tbRest: TTabItem
@@ -466,218 +475,217 @@ object CapabilityStatementEditorFrame: TCapabilityStatementEditorFrame
         Text = 'tbRest'
         ExplicitSize.cx = 8.000000000000000000
         ExplicitSize.cy = 8.000000000000000000
-        object btnAddResources: TButton
-          Position.X = 16.000000000000000000
-          Position.Y = 448.000000000000000000
-          Size.Width = 97.000000000000000000
-          Size.Height = 22.000000000000000000
-          Size.PlatformDefault = False
-          TabOrder = 18
-          Text = 'Add Resources'
-          OnClick = btnAddResourcesClick
-        end
-        object cbBatch: TCheckBox
-          Position.X = 24.000000000000000000
-          Position.Y = 348.000000000000000000
-          Size.Width = 73.000000000000000000
-          Size.Height = 19.000000000000000000
-          Size.PlatformDefault = False
-          TabOrder = 19
-          Text = 'Batch'
-          OnChange = inputChanged
-        end
-        object cbCORS: TCheckBox
-          Position.X = 16.000000000000000000
-          Position.Y = 240.000000000000000000
-          Size.Width = 73.000000000000000000
-          Size.Height = 19.000000000000000000
-          Size.PlatformDefault = False
-          TabOrder = 20
-          Text = 'CORS'
-          OnChange = inputChanged
-        end
-        object cbClientCerts: TCheckBox
-          Position.X = 152.000000000000000000
-          Position.Y = 240.000000000000000000
-          Size.Width = 161.000000000000000000
-          Size.Height = 19.000000000000000000
-          Size.PlatformDefault = False
-          TabOrder = 21
-          Text = 'Client Certificates'
-          OnChange = inputChanged
-        end
-        object cbOAuth: TCheckBox
-          Position.X = 16.000000000000000000
-          Position.Y = 264.000000000000000000
-          TabOrder = 22
-          Text = 'OAuth'
-          OnChange = inputChanged
-        end
-        object cbSmart: TCheckBox
-          Position.X = 152.000000000000000000
-          Position.Y = 264.000000000000000000
-          Size.Width = 257.000000000000000000
-          Size.Height = 19.000000000000000000
-          Size.PlatformDefault = False
-          TabOrder = 23
-          Text = 'Smart App Launch (OAuth profile)'
-          OnChange = inputChanged
-        end
-        object cbSystemHistory: TCheckBox
-          Position.X = 24.000000000000000000
-          Position.Y = 406.000000000000000000
-          Size.Width = 121.000000000000000000
-          Size.Height = 19.000000000000000000
-          Size.PlatformDefault = False
-          TabOrder = 24
-          Text = 'System History'
-          OnChange = inputChanged
-        end
-        object cbSystemSearch: TCheckBox
-          Position.X = 24.000000000000000000
-          Position.Y = 377.000000000000000000
-          Size.Width = 113.000000000000000000
-          Size.Height = 19.000000000000000000
-          Size.PlatformDefault = False
-          TabOrder = 25
-          Text = 'System Search'
-          OnChange = inputChanged
-        end
-        object cbTransaction: TCheckBox
-          Position.X = 24.000000000000000000
-          Position.Y = 320.000000000000000000
-          Size.Width = 97.000000000000000000
-          Size.Height = 19.000000000000000000
-          Size.PlatformDefault = False
-          TabOrder = 26
-          Text = 'Transaction'
-          OnChange = inputChanged
-        end
-        object edtBatch: TEdit
-          Touch.InteractiveGestures = [LongTap, DoubleTap]
-          Anchors = [akLeft, akTop, akRight]
-          TabOrder = 27
-          Position.X = 144.000000000000000000
-          Position.Y = 349.000000000000000000
-          Size.Width = 456.000000000000000000
-          Size.Height = 22.000000000000000000
-          Size.PlatformDefault = False
-          OnChange = inputChanged
-          OnChangeTracking = inputChanged
-        end
-        object edtSystemHistory: TEdit
-          Touch.InteractiveGestures = [LongTap, DoubleTap]
-          Anchors = [akLeft, akTop, akRight]
-          TabOrder = 28
-          Position.X = 144.000000000000000000
-          Position.Y = 407.000000000000000000
-          Size.Width = 456.000000000000000000
-          Size.Height = 22.000000000000000000
-          Size.PlatformDefault = False
-          OnChange = inputChanged
-          OnChangeTracking = inputChanged
-        end
-        object edtSystemSearch: TEdit
-          Touch.InteractiveGestures = [LongTap, DoubleTap]
-          Anchors = [akLeft, akTop, akRight]
-          TabOrder = 29
-          Position.X = 144.000000000000000000
-          Position.Y = 378.000000000000000000
-          Size.Width = 456.000000000000000000
-          Size.Height = 22.000000000000000000
-          Size.PlatformDefault = False
-          OnChange = inputChanged
-          OnChangeTracking = inputChanged
-        end
-        object edtTransaction: TEdit
-          Touch.InteractiveGestures = [LongTap, DoubleTap]
-          Anchors = [akLeft, akTop, akRight]
-          TabOrder = 30
-          Position.X = 144.000000000000000000
-          Position.Y = 320.000000000000000000
-          Size.Width = 456.000000000000000000
-          Size.Height = 22.000000000000000000
-          Size.PlatformDefault = False
-          OnChange = inputChanged
-          OnChangeTracking = inputChanged
-        end
-        object Label16: TLabel
-          Position.X = 16.000000000000000000
-          Position.Y = 136.000000000000000000
-          Text = 'Security:'
-          TabOrder = 31
-        end
-        object Label17: TLabel
-          Position.X = 16.000000000000000000
-          Position.Y = 16.000000000000000000
-          Size.Width = 209.000000000000000000
-          Size.Height = 17.000000000000000000
-          Size.PlatformDefault = False
-          Text = 'General Documentation'
-          TabOrder = 32
-        end
-        object Label26: TLabel
-          Position.X = 16.000000000000000000
-          Position.Y = 296.000000000000000000
-          Text = 'Interactions'
-          TabOrder = 33
-        end
-        object mDoco: TMemo
-          Touch.InteractiveGestures = [Pan, LongTap, DoubleTap]
-          DataDetectorTypes = []
-          OnChange = inputChanged
-          OnChangeTracking = inputChanged
-          Anchors = [akLeft, akTop, akRight]
-          Position.X = 16.000000000000000000
-          Position.Y = 40.000000000000000000
-          Size.Width = 584.000000000000000000
-          Size.Height = 81.000000000000000000
-          Size.PlatformDefault = False
-          TabOrder = 34
-          Viewport.Width = 584.000000000000000000
-          Viewport.Height = 81.000000000000000000
-        end
-        object mSecurity: TMemo
-          Touch.InteractiveGestures = [Pan, LongTap, DoubleTap]
-          DataDetectorTypes = []
-          OnChange = inputChanged
-          OnChangeTracking = inputChanged
-          Anchors = [akLeft, akTop, akRight]
-          Position.X = 16.000000000000000000
-          Position.Y = 160.000000000000000000
-          Size.Width = 584.000000000000000000
-          Size.Height = 73.000000000000000000
-          Size.PlatformDefault = False
-          TabOrder = 35
-          Viewport.Width = 584.000000000000000000
-          Viewport.Height = 73.000000000000000000
-        end
         object VertScrollBox1: TVertScrollBox
-          Align = Right
-          Position.X = 600.000000000000000000
-          Size.Width = 14.000000000000000000
+          Align = Client
+          Size.Width = 614.000000000000000000
           Size.Height = 779.000000000000000000
           Size.PlatformDefault = False
-          TabOrder = 36
-          Viewport.Width = 14.000000000000000000
-          Viewport.Height = 779.000000000000000000
-        end
-        object btnDeleteResources: TButton
-          Position.X = 120.000000000000000000
-          Position.Y = 448.000000000000000000
-          Size.Width = 129.000000000000000000
-          Size.Height = 22.000000000000000000
-          Size.PlatformDefault = False
           TabOrder = 17
-          Text = 'Delete Resources'
-          OnClick = btnDeleteResourcesClick
+          Viewport.Width = 614.000000000000000000
+          Viewport.Height = 779.000000000000000000
+          object edtBatch: TEdit
+            Touch.InteractiveGestures = [LongTap, DoubleTap]
+            Anchors = [akLeft, akTop, akRight]
+            TabOrder = 28
+            Position.X = 144.000000000000000000
+            Position.Y = 349.000000000000000000
+            Size.Width = 456.000000000000000000
+            Size.Height = 22.000000000000000000
+            Size.PlatformDefault = False
+            OnChange = inputChanged
+            OnChangeTracking = inputChanged
+          end
+          object edtSystemHistory: TEdit
+            Touch.InteractiveGestures = [LongTap, DoubleTap]
+            Anchors = [akLeft, akTop, akRight]
+            TabOrder = 29
+            Position.X = 144.000000000000000000
+            Position.Y = 407.000000000000000000
+            Size.Width = 456.000000000000000000
+            Size.Height = 22.000000000000000000
+            Size.PlatformDefault = False
+            OnChange = inputChanged
+            OnChangeTracking = inputChanged
+          end
+          object edtSystemSearch: TEdit
+            Touch.InteractiveGestures = [LongTap, DoubleTap]
+            Anchors = [akLeft, akTop, akRight]
+            TabOrder = 30
+            Position.X = 144.000000000000000000
+            Position.Y = 378.000000000000000000
+            Size.Width = 456.000000000000000000
+            Size.Height = 22.000000000000000000
+            Size.PlatformDefault = False
+            OnChange = inputChanged
+            OnChangeTracking = inputChanged
+          end
+          object edtTransaction: TEdit
+            Touch.InteractiveGestures = [LongTap, DoubleTap]
+            Anchors = [akLeft, akTop, akRight]
+            TabOrder = 31
+            Position.X = 144.000000000000000000
+            Position.Y = 320.000000000000000000
+            Size.Width = 456.000000000000000000
+            Size.Height = 22.000000000000000000
+            Size.PlatformDefault = False
+            OnChange = inputChanged
+            OnChangeTracking = inputChanged
+          end
+          object Label16: TLabel
+            Position.X = 16.000000000000000000
+            Position.Y = 136.000000000000000000
+            Text = 'Security:'
+            TabOrder = 32
+          end
+          object Label17: TLabel
+            Position.X = 24.000000000000000000
+            Position.Y = 24.000000000000000000
+            Size.Width = 209.000000000000000000
+            Size.Height = 17.000000000000000000
+            Size.PlatformDefault = False
+            Text = 'General Documentation'
+            TabOrder = 33
+          end
+          object Label26: TLabel
+            Position.X = 16.000000000000000000
+            Position.Y = 296.000000000000000000
+            Text = 'Interactions'
+            TabOrder = 34
+          end
+          object mDoco: TMemo
+            Touch.InteractiveGestures = [Pan, LongTap, DoubleTap]
+            DataDetectorTypes = []
+            OnChange = inputChanged
+            OnChangeTracking = inputChanged
+            Anchors = [akLeft, akTop, akRight]
+            Position.X = 24.000000000000000000
+            Position.Y = 48.000000000000000000
+            Size.Width = 584.000000000000000000
+            Size.Height = 81.000000000000000000
+            Size.PlatformDefault = False
+            TabOrder = 35
+            Viewport.Width = 584.000000000000000000
+            Viewport.Height = 81.000000000000000000
+          end
+          object mSecurity: TMemo
+            Touch.InteractiveGestures = [Pan, LongTap, DoubleTap]
+            DataDetectorTypes = []
+            OnChange = inputChanged
+            OnChangeTracking = inputChanged
+            Anchors = [akLeft, akTop, akRight]
+            Position.X = 16.000000000000000000
+            Position.Y = 160.000000000000000000
+            Size.Width = 584.000000000000000000
+            Size.Height = 73.000000000000000000
+            Size.PlatformDefault = False
+            TabOrder = 36
+            Viewport.Width = 584.000000000000000000
+            Viewport.Height = 73.000000000000000000
+          end
+          object btnAddResources: TButton
+            Position.X = 16.000000000000000000
+            Position.Y = 448.000000000000000000
+            Size.Width = 97.000000000000000000
+            Size.Height = 22.000000000000000000
+            Size.PlatformDefault = False
+            TabOrder = 21
+            Text = 'Add Resources'
+            OnClick = btnAddResourcesClick
+          end
+          object btnDeleteResources: TButton
+            Position.X = 120.000000000000000000
+            Position.Y = 448.000000000000000000
+            Size.Width = 129.000000000000000000
+            Size.Height = 22.000000000000000000
+            Size.PlatformDefault = False
+            TabOrder = 17
+            Text = 'Delete Resources'
+            OnClick = btnDeleteResourcesClick
+          end
+          object cbBatch: TCheckBox
+            Position.X = 24.000000000000000000
+            Position.Y = 348.000000000000000000
+            Size.Width = 73.000000000000000000
+            Size.Height = 19.000000000000000000
+            Size.PlatformDefault = False
+            TabOrder = 19
+            Text = 'Batch'
+            OnChange = inputChanged
+          end
+          object cbClientCerts: TCheckBox
+            Position.X = 152.000000000000000000
+            Position.Y = 240.000000000000000000
+            Size.Width = 161.000000000000000000
+            Size.Height = 19.000000000000000000
+            Size.PlatformDefault = False
+            TabOrder = 27
+            Text = 'Client Certificates'
+            OnChange = inputChanged
+          end
+          object cbCORS: TCheckBox
+            Position.X = 16.000000000000000000
+            Position.Y = 240.000000000000000000
+            Size.Width = 73.000000000000000000
+            Size.Height = 19.000000000000000000
+            Size.PlatformDefault = False
+            TabOrder = 20
+            Text = 'CORS'
+            OnChange = inputChanged
+          end
+          object cbOAuth: TCheckBox
+            Position.X = 16.000000000000000000
+            Position.Y = 264.000000000000000000
+            TabOrder = 22
+            Text = 'OAuth'
+            OnChange = inputChanged
+          end
+          object cbSmart: TCheckBox
+            Position.X = 152.000000000000000000
+            Position.Y = 264.000000000000000000
+            Size.Width = 257.000000000000000000
+            Size.Height = 19.000000000000000000
+            Size.PlatformDefault = False
+            TabOrder = 23
+            Text = 'Smart App Launch (OAuth profile)'
+            OnChange = inputChanged
+          end
+          object cbSystemHistory: TCheckBox
+            Position.X = 24.000000000000000000
+            Position.Y = 406.000000000000000000
+            Size.Width = 121.000000000000000000
+            Size.Height = 19.000000000000000000
+            Size.PlatformDefault = False
+            TabOrder = 24
+            Text = 'System History'
+            OnChange = inputChanged
+          end
+          object cbSystemSearch: TCheckBox
+            Position.X = 24.000000000000000000
+            Position.Y = 377.000000000000000000
+            Size.Width = 113.000000000000000000
+            Size.Height = 19.000000000000000000
+            Size.PlatformDefault = False
+            TabOrder = 25
+            Text = 'System Search'
+            OnChange = inputChanged
+          end
+          object cbTransaction: TCheckBox
+            Position.X = 24.000000000000000000
+            Position.Y = 320.000000000000000000
+            Size.Width = 97.000000000000000000
+            Size.Height = 19.000000000000000000
+            Size.PlatformDefault = False
+            TabOrder = 26
+            Text = 'Transaction'
+            OnChange = inputChanged
+          end
         end
       end
       object tbResource: TTabItem
         CustomIcon = <
           item
           end>
-        IsSelected = True
+        IsSelected = False
         Size.Width = 8.000000000000000000
         Size.Height = 8.000000000000000000
         Size.PlatformDefault = False
@@ -700,7 +708,7 @@ object CapabilityStatementEditorFrame: TCapabilityStatementEditorFrame
             TabOrder = 0
             Position.X = 96.000000000000000000
             Position.Y = 239.000000000000000000
-            Size.Width = 505.000000000000000000
+            Size.Width = 1069.000000000000000000
             Size.Height = 22.000000000000000000
             Size.PlatformDefault = False
             OnChange = inputChanged
@@ -712,7 +720,7 @@ object CapabilityStatementEditorFrame: TCapabilityStatementEditorFrame
             TabOrder = 1
             Position.X = 96.000000000000000000
             Position.Y = 326.000000000000000000
-            Size.Width = 505.000000000000000000
+            Size.Width = 1069.000000000000000000
             Size.Height = 22.000000000000000000
             Size.PlatformDefault = False
             OnChange = inputChanged
@@ -724,7 +732,7 @@ object CapabilityStatementEditorFrame: TCapabilityStatementEditorFrame
             TabOrder = 2
             Position.X = 160.000000000000000000
             Position.Y = 355.000000000000000000
-            Size.Width = 441.000000000000000000
+            Size.Width = 1005.000000000000000000
             Size.Height = 22.000000000000000000
             Size.PlatformDefault = False
             OnChange = inputChanged
@@ -736,7 +744,7 @@ object CapabilityStatementEditorFrame: TCapabilityStatementEditorFrame
             TabOrder = 3
             Position.X = 160.000000000000000000
             Position.Y = 384.000000000000000000
-            Size.Width = 441.000000000000000000
+            Size.Width = 1005.000000000000000000
             Size.Height = 22.000000000000000000
             Size.PlatformDefault = False
             OnChange = inputChanged
@@ -748,7 +756,7 @@ object CapabilityStatementEditorFrame: TCapabilityStatementEditorFrame
             TabOrder = 4
             Position.X = 96.000000000000000000
             Position.Y = 297.000000000000000000
-            Size.Width = 505.000000000000000000
+            Size.Width = 1069.000000000000000000
             Size.Height = 22.000000000000000000
             Size.PlatformDefault = False
             OnChange = inputChanged
@@ -760,7 +768,7 @@ object CapabilityStatementEditorFrame: TCapabilityStatementEditorFrame
             TabOrder = 5
             Position.X = 96.000000000000000000
             Position.Y = 152.000000000000000000
-            Size.Width = 505.000000000000000000
+            Size.Width = 1069.000000000000000000
             Size.Height = 22.000000000000000000
             Size.PlatformDefault = False
             OnChange = inputChanged
@@ -772,7 +780,7 @@ object CapabilityStatementEditorFrame: TCapabilityStatementEditorFrame
             TabOrder = 6
             Position.X = 96.000000000000000000
             Position.Y = 210.000000000000000000
-            Size.Width = 505.000000000000000000
+            Size.Width = 1069.000000000000000000
             Size.Height = 22.000000000000000000
             Size.PlatformDefault = False
             OnChange = inputChanged
@@ -784,7 +792,7 @@ object CapabilityStatementEditorFrame: TCapabilityStatementEditorFrame
             TabOrder = 7
             Position.X = 96.000000000000000000
             Position.Y = 268.000000000000000000
-            Size.Width = 505.000000000000000000
+            Size.Width = 1069.000000000000000000
             Size.Height = 22.000000000000000000
             Size.PlatformDefault = False
             OnChange = inputChanged
@@ -796,7 +804,7 @@ object CapabilityStatementEditorFrame: TCapabilityStatementEditorFrame
             TabOrder = 8
             Position.X = 96.000000000000000000
             Position.Y = 181.000000000000000000
-            Size.Width = 505.000000000000000000
+            Size.Width = 1069.000000000000000000
             Size.Height = 22.000000000000000000
             Size.PlatformDefault = False
             OnChange = inputChanged
@@ -808,7 +816,7 @@ object CapabilityStatementEditorFrame: TCapabilityStatementEditorFrame
             TabOrder = 9
             Position.X = 88.000000000000000000
             Position.Y = 104.000000000000000000
-            Size.Width = 513.000000000000000000
+            Size.Width = 1077.000000000000000000
             Size.Height = 22.000000000000000000
             Size.PlatformDefault = False
             OnChange = inputChanged
@@ -820,15 +828,15 @@ object CapabilityStatementEditorFrame: TCapabilityStatementEditorFrame
             ClipChildren = True
             Position.X = 16.000000000000000000
             Position.Y = 536.000000000000000000
-            Size.Width = 497.000000000000000000
+            Size.Width = 1061.000000000000000000
             Size.Height = 217.000000000000000000
             Size.PlatformDefault = False
             TabOrder = 10
             RowCount = 10
             OnGetValue = gridSearchGetValue
             OnSetValue = gridSearchSetValue
-            Viewport.Width = 477.000000000000000000
-            Viewport.Height = 176.000000000000000000
+            Viewport.Width = 1061.000000000000000000
+            Viewport.Height = 217.000000000000000000
             object Column1: TColumn
               Header = 'Name'
               Size.Width = 85.000000000000000000
@@ -919,16 +927,16 @@ object CapabilityStatementEditorFrame: TCapabilityStatementEditorFrame
             Anchors = [akLeft, akTop, akRight]
             Position.X = 16.000000000000000000
             Position.Y = 40.000000000000000000
-            Size.Width = 585.000000000000000000
+            Size.Width = 1149.000000000000000000
             Size.Height = 57.000000000000000000
             Size.PlatformDefault = False
             TabOrder = 19
-            Viewport.Width = 581.000000000000000000
-            Viewport.Height = 53.000000000000000000
+            Viewport.Width = 1149.000000000000000000
+            Viewport.Height = 57.000000000000000000
           end
           object btnParamAdd: TButton
             Anchors = [akTop, akRight]
-            Position.X = 521.000000000000000000
+            Position.X = 1085.000000000000000000
             Position.Y = 536.000000000000000000
             TabOrder = 20
             Text = 'Add'
@@ -936,7 +944,7 @@ object CapabilityStatementEditorFrame: TCapabilityStatementEditorFrame
           end
           object btnParamAddStd: TButton
             Anchors = [akTop, akRight]
-            Position.X = 521.000000000000000000
+            Position.X = 1085.000000000000000000
             Position.Y = 560.000000000000000000
             TabOrder = 21
             Text = 'Add Std.'
@@ -944,7 +952,7 @@ object CapabilityStatementEditorFrame: TCapabilityStatementEditorFrame
           end
           object btnParamDelete: TButton
             Anchors = [akTop, akRight]
-            Position.X = 521.000000000000000000
+            Position.X = 1085.000000000000000000
             Position.Y = 609.000000000000000000
             TabOrder = 22
             Text = 'Delete'
@@ -952,7 +960,7 @@ object CapabilityStatementEditorFrame: TCapabilityStatementEditorFrame
           end
           object btnParamEdit: TButton
             Anchors = [akTop, akRight]
-            Position.X = 521.000000000000000000
+            Position.X = 1085.000000000000000000
             Position.Y = 584.000000000000000000
             TabOrder = 23
             Text = 'Edit'
@@ -1136,7 +1144,7 @@ object CapabilityStatementEditorFrame: TCapabilityStatementEditorFrame
               'Fully supported')
             Position.X = 368.000000000000000000
             Position.Y = 444.000000000000000000
-            Size.Width = 234.000000000000000000
+            Size.Width = 798.000000000000000000
             Size.Height = 22.000000000000000000
             Size.PlatformDefault = False
             TabOrder = 42
@@ -1151,7 +1159,7 @@ object CapabilityStatementEditorFrame: TCapabilityStatementEditorFrame
               'Versioned Update Required')
             Position.X = 272.000000000000000000
             Position.Y = 416.000000000000000000
-            Size.Width = 330.000000000000000000
+            Size.Width = 894.000000000000000000
             Size.Height = 22.000000000000000000
             Size.PlatformDefault = False
             TabOrder = 43
