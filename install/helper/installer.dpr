@@ -104,7 +104,8 @@ uses
   AdvGenerics in '..\..\reference-platform\support\AdvGenerics.pas',
   FastMM4Messages in '..\..\Libraries\FMM\FastMM4Messages.pas',
   ODBCObjects in '..\..\Libraries\db\ODBCObjects.pas',
-  KDBOdbc in '..\..\Libraries\db\KDBOdbc.pas';
+  KDBOdbc in '..\..\Libraries\db\KDBOdbc.pas',
+  OdbcHeaders in '..\..\Libraries\db\OdbcHeaders.pas';
 
 function StrToPChar(AStr: AnsiString): PAnsiChar;
 begin

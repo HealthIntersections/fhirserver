@@ -1,0 +1,188 @@
+object CodeSystemConceptForm: TCodeSystemConceptForm
+  Left = 0
+  Top = 0
+  Caption = 'Form1'
+  ClientHeight = 304
+  ClientWidth = 514
+  FormFactor.Width = 320
+  FormFactor.Height = 480
+  FormFactor.Devices = [Desktop]
+  OnShow = FormShow
+  DesignerMasterStyle = 0
+  object Label4: TLabel
+    StyledSettings = [Family, Size, FontColor]
+    Position.X = 16.000000000000000000
+    Position.Y = 264.000000000000000000
+    TextSettings.Font.StyleExt = {00070000000000000004000000}
+    Text = 'Properties'
+    TabOrder = 11
+  end
+  object Panel1: TPanel
+    Align = Bottom
+    Position.Y = 264.000000000000000000
+    Size.Width = 514.000000000000000000
+    Size.Height = 40.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 0
+    object btnOk: TButton
+      Anchors = [akTop, akRight]
+      Default = True
+      Enabled = False
+      ModalResult = 1
+      Position.X = 337.000000000000000000
+      Position.Y = 8.000000000000000000
+      TabOrder = 0
+      Text = 'OK'
+    end
+    object Button2: TButton
+      Anchors = [akTop, akRight]
+      Cancel = True
+      ModalResult = 2
+      Position.X = 425.000000000000000000
+      Position.Y = 8.000000000000000000
+      TabOrder = 1
+      Text = 'Cancel'
+    end
+  end
+  object edtCode: TEdit
+    Touch.InteractiveGestures = [LongTap, DoubleTap]
+    TabOrder = 1
+    Position.X = 64.000000000000000000
+    Position.Y = 16.000000000000000000
+    Size.Width = 89.000000000000000000
+    Size.Height = 22.000000000000000000
+    Size.PlatformDefault = False
+    OnChange = edtCodeChangeTracking
+    OnChangeTracking = edtCodeChangeTracking
+  end
+  object edtDIsplay: TEdit
+    Touch.InteractiveGestures = [LongTap, DoubleTap]
+    TabOrder = 3
+    Position.X = 232.000000000000000000
+    Position.Y = 16.000000000000000000
+    Size.Width = 273.000000000000000000
+    Size.Height = 22.000000000000000000
+    Size.PlatformDefault = False
+    OnChange = edtCodeChangeTracking
+    OnChangeTracking = edtCodeChangeTracking
+  end
+  object Label1: TLabel
+    Position.X = 16.000000000000000000
+    Position.Y = 16.000000000000000000
+    Size.Width = 49.000000000000000000
+    Size.Height = 17.000000000000000000
+    Size.PlatformDefault = False
+    Text = 'Code'
+    TabOrder = 4
+  end
+  object Label2: TLabel
+    Position.X = 184.000000000000000000
+    Position.Y = 16.000000000000000000
+    Size.Width = 49.000000000000000000
+    Size.Height = 17.000000000000000000
+    Size.PlatformDefault = False
+    Text = 'Display'
+    TabOrder = 8
+  end
+  object Label3: TLabel
+    Position.X = 16.000000000000000000
+    Position.Y = 48.000000000000000000
+    Text = 'Definition'
+    TabOrder = 9
+  end
+  object memDefinition: TMemo
+    Touch.InteractiveGestures = [Pan, LongTap, DoubleTap]
+    DataDetectorTypes = []
+    OnChange = edtCodeChangeTracking
+    OnChangeTracking = edtCodeChangeTracking
+    Position.X = 16.000000000000000000
+    Position.Y = 72.000000000000000000
+    Size.Width = 489.000000000000000000
+    Size.Height = 57.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 10
+    Viewport.Width = 485.000000000000000000
+    Viewport.Height = 53.000000000000000000
+  end
+  object btnDeleteDesignation: TButton
+    Position.X = 293.000000000000000000
+    Position.Y = 148.000000000000000000
+    TabOrder = 5
+    Text = 'Delete'
+    OnClick = btnDeleteDesignationClick
+  end
+  object btnAddDesignation: TButton
+    Position.X = 205.000000000000000000
+    Position.Y = 148.000000000000000000
+    TabOrder = 2
+    Text = 'Add'
+    OnClick = btnAddDesignationClick
+  end
+  object gridDesignations: TGrid
+    CanFocus = True
+    ClipChildren = True
+    HelpContext = 40
+    Position.X = 16.000000000000000000
+    Position.Y = 176.000000000000000000
+    Size.Width = 489.000000000000000000
+    Size.Height = 73.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 6
+    OnSelChanged = gridDesignationsSelChanged
+    OnGetValue = gridDesignationsGetValue
+    OnSetValue = gridDesignationsSetValue
+    Viewport.Width = 469.000000000000000000
+    Viewport.Height = 32.000000000000000000
+    object PopupColumn2: TPopupColumn
+      Header = 'Language'
+      Items.Strings = (
+        ''
+        'ar (Arabic)'
+        'bn (Bengali)'
+        'cs (Czech)'
+        'da (Danish)'
+        'de (German)'
+        'el (Greek)'
+        'en (English)'
+        'es (Spanish)'
+        'fi (Finnish)'
+        'fr (French)'
+        'fy (Frysian)'
+        'hi (Hindi)'
+        'hr (Croatian)'
+        'it (Italian)'
+        'ja (Japanese)'
+        'ko (Korean)'
+        'nl (Dutch)'
+        'no (Norwegian)'
+        'pa (Punjabi)'
+        'pt (Portuguese)'
+        'ru (Russian)'
+        'sr (Serbian)'
+        'sv (Swedish)'
+        'te (Telegu)'
+        'zh (Chinese))')
+    end
+    object PopupColumn3: TPopupColumn
+      Header = 'Use'
+      Items.Strings = (
+        ''
+        'Fully specified name'
+        'Synonym'
+        'Definition')
+    end
+    object StringColumn9: TStringColumn
+      Header = 'Value'
+      Size.Width = 319.000000000000000000
+    end
+  end
+  object Label20: TLabel
+    Position.X = 16.000000000000000000
+    Position.Y = 149.000000000000000000
+    Size.Width = 185.000000000000000000
+    Size.Height = 17.000000000000000000
+    Size.PlatformDefault = False
+    Text = 'Designations for selected Concept'
+    TabOrder = 7
+  end
+end

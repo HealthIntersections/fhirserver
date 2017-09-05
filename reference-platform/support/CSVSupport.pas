@@ -12,6 +12,7 @@ Type
   public
     procedure cell(s : String); overload;
     procedure cell(b : boolean); overload;
+    procedure cell(i : integer); overload;
     procedure line;
   end;
 
@@ -53,6 +54,11 @@ begin
     ProduceEntry('true')
   else
     ProduceEntry('false');
+end;
+
+procedure TCSVWriter.cell(i: integer);
+begin
+  cell(inttostr(i));
 end;
 
 procedure TCSVWriter.line;

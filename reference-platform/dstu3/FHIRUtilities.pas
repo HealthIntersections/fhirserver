@@ -491,6 +491,14 @@ type
 
   TFhirCodeSystem2 = TFhirCodeSystem;
 
+  TFhirCodeSystemConceptHelper = class helper for TFhirCodeSystemConcept
+  public
+    function countDescendents : integer;
+    function prop(code : String) : TFhirCodeSystemConceptProperty;
+    function addProp(code : String) : TFhirCodeSystemConceptProperty;
+    procedure deleteProp(code : String);
+  end;
+
   TFhirCodeSystemHelper = class helper for TFhirCodeSystem
   private
     function locate(parent: TFhirCodeSystemConcept; list: TFhirCodeSystemConceptList; code : String; var foundParent, foundConcept: TFhirCodeSystemConcept): boolean;
@@ -4980,6 +4988,42 @@ begin
   for g in givenList do
     result := result + g.value+' ';
   result := result.Trim;
+end;
+
+{ TFhirCodeSystemConceptHelper }
+
+function TFhirCodeSystemConceptHelper.addProp(code: String): TFhirCodeSystemConceptProperty;
+begin
+  result := property_List.Append;
+  result.code := code;
+end;
+
+function TFhirCodeSystemConceptHelper.countDescendents: integer;
+var
+  c : TFhirCodeSystemConcept;
+begin
+  result := conceptList.Count;
+  for c in conceptList do
+    inc(result, c.countDescendents);
+end;
+
+procedure TFhirCodeSystemConceptHelper.deleteProp(code: String);
+var
+  i : integer;
+begin
+  for i := property_List.Count - 1 downto 0 do
+    if property_List[i].code = code then
+      property_List.Remove(i);
+end;
+
+function TFhirCodeSystemConceptHelper.prop(code: String): TFhirCodeSystemConceptProperty;
+var
+  t : TFhirCodeSystemConceptProperty;
+begin
+  result := nil;
+  for t in property_List do
+    if t.code = code then
+      exit(t);
 end;
 
 end.

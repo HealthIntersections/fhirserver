@@ -116,10 +116,11 @@ Begin
   Else
     ProduceSeparator;
 
-  If FHasQuote Then
-    Produce(EncodeQuotedString(sEntry, FQuote))
-  Else
-    Produce(sEntry)
+  if sEntry <> '' then
+    If FHasQuote Then
+      Produce(EncodeQuotedString(sEntry, FQuote))
+    Else
+      Produce(sEntry)
 End;
 
 

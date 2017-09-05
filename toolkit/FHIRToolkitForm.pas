@@ -39,7 +39,7 @@ uses
   FHIRContext, FHIRProfileUtilities,
   SmartOnFHIRUtilities, EditRegisteredServerDialogFMX, OSXUIUtils,
   ToolkitSettings, ServerForm, CapabilityStatementEditor, BaseResourceFrame, BaseFrame, SourceViewer, ListSelector,
-  ValueSetEditor, HelpContexts, ProcessForm, SettingsDialog, AboutDialog, ToolKitVersion;
+  ValueSetEditor, HelpContexts, ProcessForm, SettingsDialog, AboutDialog, ToolKitVersion, CodeSystemEditor;
 
 type
   TMasterToolsForm = class(TForm)
@@ -311,11 +311,13 @@ begin
     form.ListBox1.ShowCheckboxes := false;
     form.ListBox1.items.Add('CapabilityStatement');
     form.ListBox1.items.Add('ValueSet');
+    form.ListBox1.items.Add('CodeSystem');
     form.caption := 'Create New File';
     if (form.ShowModal = mrOk) then
       case form.ListBox1.ItemIndex of
         0 : newResource(TFhirCapabilityStatement, TCapabilityStatementEditorFrame);
         1 : newResource(TFhirValueSet, TValueSetEditorFrame);
+        2 : newResource(TFhirCodeSystem, TCodeSystemEditorFrame);
       end;
   finally
     form.Free;
@@ -736,6 +738,8 @@ begin
     result := TCapabilityStatementEditorFrame
   else if res is TFhirValueSet then
     result := TValueSetEditorFrame
+  else if res is TFhirCodeSystem then
+    result := TCodeSystemEditorFrame
   else
     MessageDlg('Unsupported Resource Type: '+res.fhirType, TMsgDlgType.mtError, [TMsgDlgBtn.mbOK], 0);
 end;

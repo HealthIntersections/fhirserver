@@ -353,6 +353,27 @@ begin
   result := TDateTimeEx.makeLocal(now).fixPrecision(precision);
 end;
 
+function checkFormat(format : String) : string;
+begin
+  if (format = 'c') then
+    result := FormatSettings.shortDateFormat+' '+FormatSettings.ShortTimeFormat
+  else if (format = 'cd') then
+    result := FormatSettings.shortDateFormat
+  else if (format = 'ct') then
+    result := FormatSettings.ShortTimeFormat
+  else if (format = 'C') then
+    result := FormatSettings.longDateFormat+' '+FormatSettings.LongTimeFormat
+  else if (format = 'CD') then
+    result := FormatSettings.LongDateFormat
+  else if (format = 'CC') then
+    result := FormatSettings.LongTimeFormat
+  else if (format = 'x') then
+    result := 'yyyy-dd-mmThh:nn:ss'
+  else
+    result := format;
+end;
+
+
 class function TDateTimeEx.fromFormat(format, date: String; AllowBlankTimes: Boolean = False; allowNoDay: Boolean = False; allownodate: Boolean = False; noFixYear : boolean = false) : TDateTimeEx;
 var
   start, length: Integer;
@@ -360,6 +381,7 @@ var
   tmp: String;
 begin
   result.clear;
+  format := checkFormat(format);
   Result.year := 0;
   Result.month := 0;
   Result.day := 0;
@@ -636,18 +658,7 @@ begin
   if Source = '' then
     exit('');
   check;
-  if (format = 'c') then
-    format := FormatSettings.shortDateFormat+' '+FormatSettings.ShortTimeFormat
-  else if (format = 'cd') then
-    format := FormatSettings.shortDateFormat
-  else if (format = 'ct') then
-    format := FormatSettings.ShortTimeFormat
-  else if (format = 'C') then
-    format := FormatSettings.longDateFormat+' '+FormatSettings.LongTimeFormat
-  else if (format = 'CD') then
-    format := FormatSettings.LongDateFormat
-  else if (format = 'CC') then
-    format := FormatSettings.LongTimeFormat;
+  format := checkFormat(format);
   Result := format;
   if not ReplaceSubString(Result, 'yyyy', StringPadRight(IntToStr(year), '0', 4)) then
     replaceSubstring(Result, 'yy', copy(IntToStr(year), 3, 2));

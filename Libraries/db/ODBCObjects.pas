@@ -2891,9 +2891,9 @@ end;
 function odbcPChar(count : integer) : PChar; overload;
 begin
   {$IFDEF MACOS}
-  getMem(result, count * 4);
+  getMem(result, count);
   {$ELSE}
-  getMem(result, count * 2);
+  getMem(result, count);
   {$ENDIF}
 end;
 
@@ -2910,8 +2910,8 @@ Var
   Message: PChar;
   StringLength: SQLSMALLINT;
 Begin
-  State := odbcPChar(DefaultStringCount);
-  Message := odbcPChar(DefaultStringCount);
+  State := odbcPChar(DefaultStringSize);
+  Message := odbcPChar(DefaultStringSize);
   try
     Result:= TList.Create;
     Result.Clear;
@@ -3428,7 +3428,7 @@ Begin
                                    Pointer(PChar(FPassword)), SQL_NTS)
     Else
     Begin
-      ConnectStrOut := odbcPChar(DefaultStringCount);
+      ConnectStrOut := odbcPChar(DefaultStringSize);
       ConnectStrIn := odbcPChar(ConnectStr);
       try
         FRetCode:= SQLDriverConnect(FHdbc, 0, PChar(ConnectStrIn), SQL_NTS,
@@ -3547,7 +3547,7 @@ Var
 Begin
   Connect;
 
-  Supported := odbcPChar(DefaultStringCount);
+  Supported := odbcPChar(DefaultStringSize);
   try
     FRetCode:= SQLGetInfo(FHdbc, InfoType, Supported, DefaultStringSize, StringLength);
     If Not FEnv.Error.Success(FRetCode) Then
@@ -3732,11 +3732,11 @@ Begin
   With Result^ Do
   Begin
     Desc:= ADriver;
-    PS_SQL_CHAR:= DefaultStringCount;
-    PS_SQL_VARCHAR:= DefaultStringCount;
+    PS_SQL_CHAR:= DefaultStringSize;
+    PS_SQL_VARCHAR:= DefaultStringSize;
     PS_SQL_LONGVARCHAR:= MaxLongint;
-    PS_SQL_BINARY:= DefaultStringCount;
-    PS_SQL_VARBINARY:= DefaultStringCount;
+    PS_SQL_BINARY:= DefaultStringSize;
+    PS_SQL_VARBINARY:= DefaultStringSize;
     PS_SQL_LONGVARBINARY:= MaxLongint;
     PS_SQL_DECIMAL:= 15;
     PS_SQL_NUMERIC:= 15;
@@ -5936,7 +5936,7 @@ Var
   NumAttr: SQLLEN;
   StringLength: SQLSMALLINT;
 Begin
-  CharAttr := odbcPChar(DefaultStringCount);
+  CharAttr := odbcPChar(DefaultStringSize);
   try
     FRetCode:= SQLColAttribute(FHstmt, Col, FieldIdentifier, CharAttr, DefaultStringSize, StringLength, NumAttr);
     If Not FEnv.Error.Success(FRetCode) Then
@@ -5955,7 +5955,7 @@ Var
   NumAttr: SQLLEN;
   StringLength: SQLSMALLINT;
 Begin
-  CharAttr := odbcPChar(DefaultStringCount);
+  CharAttr := odbcPChar(DefaultStringSize);
   try
     FRetCode:= SQLColAttribute(FHstmt, Col, FieldIdentifier, CharAttr, DefaultStringSize, StringLength, NumAttr);
     If Not FEnv.Error.Success(FRetCode) Then
@@ -6010,7 +6010,7 @@ Begin
     FTail:= Nil;
     For icol:= 1 To FNumCols Do
     Begin
-      ColumnName := odbcPChar(DefaultStringCount);
+      ColumnName := odbcPChar(DefaultStringSize);
       try
         FRetCode:= SQLDescribeCol(FHstmt, icol, ColumnName, DefaultStringSize, NameLength, SqlType, ColumnSize, DecimalDigits, Nullable);
         If Not FEnv.Error.Success(FRetCode) Then
@@ -6047,7 +6047,7 @@ Begin
         Begin
           CType:= SQL_C_CHAR;
           If FBulkData Then
-            BufferLength:= DefaultStringCount+1
+            BufferLength:= DefaultStringSize+1
           Else
             BufferLength:= ColumnSize+1;
           GetMem(SqlValue, BufferLength);
@@ -6056,7 +6056,7 @@ Begin
         Begin
           CType:= SQL_C_CHAR;
           If FBulkData Or (ColumnSize = 0) Then
-            BufferLength:= DefaultStringCount+1
+            BufferLength:= DefaultStringSize+1
           Else
             BufferLength:= ColumnSize+1;
           GetMem(SqlValue, BufferLength);
@@ -6786,7 +6786,7 @@ Var
   StringLength: SQLSMALLINT;
 Begin
   { Determine Cursor Name }
-  CurName := odbcPChar(DefaultStringCount);
+  CurName := odbcPChar(DefaultStringSize);
   try
     FRetCode:= SQLGetCursorName(FHstmt, CurName, DefaultStringSize, StringLength);
     If Not FEnv.Error.Success(FRetCode) Then
@@ -10106,8 +10106,8 @@ begin
       Direction:= SQL_FETCH_FIRST;
   end;
 
-  DSName := odbcPChar(DefaultStringCount);
-  DSDriver := odbcPChar(DefaultStringCount);
+  DSName := odbcPChar(DefaultStringSize);
+  DSDriver := odbcPChar(DefaultStringSize);
   try
     while FEnv.Error.Success(SQLDataSources(FEnv.Handle, Direction, DSName, DefaultStringSize, StringLength1, DSDriver, DefaultStringSize, StringLength2)) do
     begin
@@ -10132,8 +10132,8 @@ begin
 
   Direction:= SQL_FETCH_FIRST;
 
-  DName := odbcPChar(DefaultStringCount);
-  DAttr := odbcPChar(DefaultStringCount);
+  DName := odbcPChar(DefaultStringSize);
+  DAttr := odbcPChar(DefaultStringSize);
   try
     while FEnv.Error.Success(SQLDrivers(FEnv.Handle, Direction, DName, DefaultStringSize, StringLength1, DAttr, DefaultStringSize, StringLength2)) do
     begin

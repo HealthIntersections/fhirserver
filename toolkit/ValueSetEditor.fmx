@@ -60,7 +60,7 @@ object ValueSetEditorFrame: TValueSetEditorFrame
       Size.Width = 674.000000000000000000
       Size.Height = 712.000000000000000000
       Size.PlatformDefault = False
-      TabIndex = 0
+      TabIndex = 2
       TabOrder = 0
       TabPosition = None
       Sizes = (
@@ -78,7 +78,7 @@ object ValueSetEditorFrame: TValueSetEditorFrame
         CustomIcon = <
           item
           end>
-        IsSelected = True
+        IsSelected = False
         Size.Width = 8.000000000000000000
         Size.Height = 8.000000000000000000
         Size.PlatformDefault = False
@@ -565,7 +565,7 @@ object ValueSetEditorFrame: TValueSetEditorFrame
         CustomIcon = <
           item
           end>
-        IsSelected = False
+        IsSelected = True
         Size.Width = 8.000000000000000000
         Size.Height = 8.000000000000000000
         Size.PlatformDefault = False

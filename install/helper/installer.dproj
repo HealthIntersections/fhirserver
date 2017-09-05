@@ -152,6 +152,7 @@
         <DCCReference Include="..\..\Libraries\FMM\FastMM4Messages.pas"/>
         <DCCReference Include="..\..\Libraries\db\ODBCObjects.pas"/>
         <DCCReference Include="..\..\Libraries\db\KDBOdbc.pas"/>
+        <DCCReference Include="..\..\Libraries\db\OdbcHeaders.pas"/>
         <BuildConfiguration Include="Debug">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>
