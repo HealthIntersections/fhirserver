@@ -46,9 +46,9 @@ Type
   private
     procedure test(manager : TKDBManager);
   Published
-    [TestCase] procedure TestMSSQL;
+//    {[TestCase] }procedure TestMSSQL;
     [TestCase] procedure TestMySQL;
-    {[TestCase] }procedure TestMySQLMaria;
+//    {[TestCase] }procedure TestMySQLMaria;
   End;
 
 implementation
@@ -85,7 +85,11 @@ var
   md : TKDBMetaData;
 begin
   d := TDateTimeEx.makeLocal(dtpSec);
+  {$IFDEF MACOS}
+  b := FileToBytes(IncludeTrailingPathDelimiter(ExtractFilePath(paramstr(0)))+'libcgsqlite3.dylib');
+  {$ELSE}
   b := FileToBytes('C:\work\fhirserver\Libraries\db\KDBTests.pas');
+  {$ENDIF}
   i64 := MaxInt;
   i64 := i64+2;
 
@@ -228,23 +232,23 @@ begin
   end;
 end;
 
-procedure TKDBTests.TestMSSQL;
-var
-  db : TKDBManager;
-begin
-  db := TKDBOdbcManager.create('test', 8, 200, 'SQL Server', 'localhost', 'test', '', '');
-  try
-    test(db);
-  finally
-    db.Free;
-  end;
-end;
-
+//procedure TKDBTests.TestMSSQL;
+//var
+//  db : TKDBManager;
+//begin
+//  db := TKDBOdbcManager.create('test', 8, 200, 'SQL Server', 'localhost', 'test', '', '');
+//  try
+//    test(db);
+//  finally
+//    db.Free;
+//  end;
+//end;
+//
 procedure TKDBTests.TestMySQL;
 var
   db : TKDBManager;
 begin
-  db := TKDBOdbcManager.create('test', 8, 0, 'MySQL ODBC 5.3 Unicode Driver', 'localhost', 'test', 'test', 'test');
+  db := TKDBOdbcManager.create('test', 8, 0, 'MySQL ODBC 5.2 Unicode Driver', 'localhost', 'test', 'test', 'test');
   try
     test(db);
   finally
@@ -252,18 +256,18 @@ begin
   end;
 end;
 
-procedure TKDBTests.TestMySQLMaria;
-var
-  db : TKDBManager;
-begin
-  db := TKDBOdbcManager.create('test', 8, 0, 'MariaDB ODBC 3.0 Driver', 'localhost', 'test', 'root', 'h_Erp3ChJ![~C7~oL|61');
-  try
-    test(db);
-  finally
-    db.Free;
-  end;
-end;
-
+//procedure TKDBTests.TestMySQLMaria;
+//var
+//  db : TKDBManager;
+//begin
+//  db := TKDBOdbcManager.create('test', 8, 0, 'MariaDB ODBC 3.0 Driver', 'localhost', 'test', 'root', 'h_Erp3ChJ![~C7~oL|61');
+//  try
+//    test(db);
+//  finally
+//    db.Free;
+//  end;
+//end;
+//
 
 
 

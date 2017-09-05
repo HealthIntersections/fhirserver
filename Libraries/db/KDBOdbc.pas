@@ -895,10 +895,10 @@ begin
     End;
     if FTimeout <> 0 then
       LHdbc.LoginTimeOut := FTimeout;
+    LHdbc.CursorLib := SQL_CUR_USE_DRIVER;
     LHdbc.Connect;
     LHdbc.InfoPrompt := SQL_DRIVER_NOPROMPT;
     LHdbc.IsolationLevel := SQL_TXN_READ_COMMITTED;
-    LHdbc.CursorLib := SQL_CUR_USE_DRIVER;
     LStmt := TOdbcStatement.Create(FEnv, LHDBC);
     LStmt.hDbc := LHdbc;
     LStmt.ConcurrencyType := SQL_CONCUR_READ_ONLY;
