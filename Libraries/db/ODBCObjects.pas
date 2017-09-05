@@ -85,8 +85,8 @@ Type
   TNoRowsAffected = Set Of (nrByInsert, nrByUpdate, nrByDelete, nrByRefresh);
 
 Const
-  DefaultStringCount = 255;
-  DefaultStringSize = DefaultStringCount * {$IFDEF MACOS} 4 {$ELSE} 2 {$ENDIF};
+  // on OSX, the iODBC interface is UTF-32 not UTF-16.
+  DefaultStringSize = 255 * {$IFDEF MACOS} 4 {$ELSE} 2 {$ENDIF};
   NullData = '';
 
   DefRaiseSoftErrors = False;
@@ -106,7 +106,6 @@ Const
   DefBlobSize = 32768;
   DefBlobDeferral = False;
   DefBlobPlacement = bpDetect;
-  DefExecAsync = False;
   DefEmptyToNull = enNever;
   DefStringTrimming = stTrimTrailing;
   DefBindByName = False;
@@ -514,7 +513,7 @@ Type
     FBlobSize: LongInt;
     FBlobDeferral: Boolean;
     FBlobPlacement: TBlobPlacement;
-    FExecAsync, FAborted, FAsyncEnabled: Boolean;
+    FAborted:  Boolean;
     FEmptyToNull: TEmptyToNull;
     FStringTrimming: TStringTrimming;
     FBindByName: Boolean;
@@ -571,7 +570,6 @@ Type
     Function FetchCell(Col, Row: SQLUSMALLINT;
                        ColType: SQLSMALLINT;
                        ColStream: TStream): SQLINTEGER;
-    Procedure AsyncEnable(Enabled: Boolean);
     Procedure DataAtExecution(FList: TCommonPtr);
     Function GetPosOpts: SQLINTEGER;
     Function GetPosStmts: SQLINTEGER;
@@ -1317,8 +1315,6 @@ Type
       Default DefBlobDeferral;
     Property BlobPlacement: TBlobPlacement Read FBlobPlacement Write FBlobPlacement
       Default DefBlobPlacement;
-    Property ExecAsync: Boolean Read FExecAsync Write FExecAsync
-      Default DefExecAsync;
     Property EmptyStringToNull: TEmptyToNull Read FEmptyToNull Write FEmptyToNull
       Default DefEmptyToNull;
     Property StringTrimming: TStringTrimming Read FStringTrimming Write FStringTrimming
@@ -2854,28 +2850,42 @@ Begin
   Inherited Message:= AMessage;
 End;
 
-function fromOdbcPChar(p : PChar) : String;
+// MACOS:
+//  We will pretend that UTF-32 is simply a matter of
+// inserting/skipping the high 16 bits until a bug manifests...
+
+function fromOdbcPChar(p : PChar; length : integer) : String;
+var
+  i : integer;
 begin
   {$IFDEF MACOS}
-  raise Exception.Create('Still to do: UTF-32 to UTF-16');
+  SetLength(result, length);
+  for i := 1 to length do
+    result[i] := p[(i-1)*2];
   {$ELSE}
   result := p;
   {$ENDIF}
 end;
 
 function odbcPChar(s : String) : PChar; overload;
+var
+  i : integer;
 begin
-  {$IFDEF MACOS}
-  raise Exception.Create('Still to do: UTF-16 to UTF-32');
-  {$ELSE}
   if s = '' then
     result := nil
   else
   begin
+    {$IFDEF MACOS}
+    getMem(result, length(s) * 4);
+    fillChar(result^, length(s)*4, 0);
+    for i := 1 to length(s) do
+      result[(i-1) * 2] := s[i];
+    {$ELSE}
     getMem(result, length(s) * 2);
+    fillChar(result^, length(s)*2, 0);
     move(s[1], result^, length(s) * 2);
+    {$ENDIF}
   end;
-  {$ENDIF}
 end;
 
 function odbcPChar(count : integer) : PChar; overload;
@@ -2907,7 +2917,7 @@ Begin
     Result.Clear;
 
     Case ARetCode Of
-      SQL_ERROR,
+      SQL_ERROR, -24238,
       SQL_SUCCESS_WITH_INFO:
       Begin
         ErrorNum:= 0;
@@ -2920,9 +2930,9 @@ Begin
           If Success(RetCode) Then
           Begin
             New(ErrorPtr);
-            ErrorPtr.FState:= fromOdbcPChar(State);
+            ErrorPtr.FState:= fromOdbcPChar(State, 5);
             ErrorPtr.FNative:= Native;
-            ErrorPtr.FMessage:= fromOdbcPChar(Message);
+            ErrorPtr.FMessage:= fromOdbcPChar(Message, StringLength);
             Result.Add(ErrorPtr);
           End;
         Until Not Success(RetCode);
@@ -3543,7 +3553,7 @@ Begin
     If Not FEnv.Error.Success(FRetCode) Then
       Result:= ''
     Else
-      Result:= fromOdbcPChar(Supported);
+      Result:= fromOdbcPChar(Supported, StringLength);
   finally
     FreeMem(supported);
   end;
@@ -4634,14 +4644,12 @@ Begin
   FBlobSize:= DefBlobSize;
   FBlobDeferral:= DefBlobDeferral;
   FBlobPlacement:= DefBlobPlacement;
-  FExecAsync:= DefExecAsync;
   FEmptyToNull:= DefEmptyToNull;
   FStringTrimming:= DefStringTrimming;
   FBindByName:= DefBindByName;
   FRowCountMethod:= DefRowCountMethod;
   FNoRowsAffected:= DefNoRowsAffected;
   FAborted:= False;
-  FAsyncEnabled:= False;
 End;
 
 Destructor TOdbcStatement.Destroy;
@@ -5042,7 +5050,7 @@ End;
 
 Procedure TOdbcStatement.Prepare;
 Var
-  ParsedSQL: String;
+  ParsedSQL: PChar;
 Begin
   Log(1, 'TOdbcStatement.Prepare');
 
@@ -5052,10 +5060,13 @@ Begin
   DoBeforePrepare;
 
   { Parse Parameter SQL }
-  ParsedSQL:= ParseSQL;
-
-  { Prepare SQL Statement }
-  FRetCode:= SQLPrepare(FHstmt, Pointer(PChar(ParsedSQL)), SQL_NTS);
+  ParsedSQL := odbcPChar(ParseSQL);
+  try
+    { Prepare SQL Statement }
+    FRetCode:= SQLPrepare(FHstmt, ParsedSQL, SQL_NTS);
+  finally
+    freeMem(ParsedSQL);
+  end;
   If Not FEnv.Error.Success(FRetCode) Then
     FEnv.Error.RaiseError(Self, FRetCode);
 
@@ -5859,22 +5870,6 @@ Begin
   BindTimeStamps(ParamByName(ParamName), ParamValue);
 End;
 
-Procedure TOdbcStatement.AsyncEnable(Enabled: Boolean);
-Var
-  LAsyncEnable: SQLUINTEGER;
-Begin
-  If Enabled Then
-    LAsyncEnable:= SQL_ASYNC_ENABLE_ON
-  Else
-    LAsyncEnable:= SQL_ASYNC_ENABLE_OFF;
-
-  { Start/End Asynchronous Functionality }
-  FRetCode:= SQLSetStmtAttr(FHstmt, SQL_ATTR_ASYNC_ENABLE, Pointer(LAsyncEnable), SizeOf(LAsyncEnable));
-  If (Not FEnv.Error.Success(FRetCode)) And (Not Enabled) Then
-    FEnv.Error.RaiseError(Self, FRetCode);
-  FAsyncEnabled:= Enabled;
-End;
-
 Procedure TOdbcStatement.Execute;
 Var
   ParsedSQL: String;
@@ -5894,7 +5889,6 @@ Begin
 
   FExecuted:= False;
   FAborted:= False;
-  FAsyncEnabled:= False;
   If FPrepared Then
   Begin
     { Reset Statement Handle }
@@ -5902,19 +5896,7 @@ Begin
       CloseCursor;
 
     { Execute SQL Statement }
-    If FExecAsync Then
-    Begin
-      AsyncEnable(True);
-      RetCode:= SQL_STILL_EXECUTING;
-      While RetCode = SQL_STILL_EXECUTING Do
-      Begin
-        RetCode:= SQLExecute(FHstmt);
-//        Application.ProcessMessages;
-      End;
-      FRetCode:= RetCode;
-    End
-    Else
-      FRetCode:= SQLExecute(FHstmt);
+    FRetCode:= SQLExecute(FHstmt);
   End
   Else
   Begin
@@ -5922,23 +5904,10 @@ Begin
     ParsedSQL:= ParseSQL;
 
     { Execute SQL Statement }
-    If FExecAsync Then
-    Begin
-      AsyncEnable(True);
-      RetCode:= SQL_STILL_EXECUTING;
-      While RetCode = SQL_STILL_EXECUTING Do
-      Begin
-        RetCode:= SQLExecDirect(FHstmt, Pointer(PChar(ParsedSQL)), SQL_NTS);
-//        Application.ProcessMessages;
-      End;
-      FRetCode:= RetCode;
-    End
-    Else
-      FRetCode:= SQLExecDirect(FHstmt, Pointer(PChar(ParsedSQL)), SQL_NTS);
+    FRetCode:= SQLExecDirect(FHstmt, Pointer(PChar(ParsedSQL)), SQL_NTS);
   End;
   If FAborted Then
   Begin
-    AsyncEnable(False);
     FExecuted:= True;
     Abort;
   End;
@@ -5946,8 +5915,6 @@ Begin
      (FRetCode <> SQL_NO_DATA) And  //no rows affected by operation
      (Not FEnv.Error.Success(FRetCode)) Then
     FEnv.Error.RaiseError(Self, FRetCode);
-  If FExecAsync Then
-    AsyncEnable(False);
 
   { Handle Data-At-Execution Parameters }
   If FRetCode = SQL_NEED_DATA Then
@@ -5975,7 +5942,7 @@ Begin
     If Not FEnv.Error.Success(FRetCode) Then
       FEnv.Error.RaiseError(Self, FRetCode);
 
-    Result := fromOdbcPChar(CharAttr);
+    Result := fromOdbcPChar(CharAttr, StringLength);
   finally
     freemem(CharAttr);
   end;
@@ -6050,7 +6017,7 @@ Begin
           FEnv.Error.RaiseError(Self, FRetCode);
 
         { Set Column Name }
-        FColNames.Add(fromOdbcPChar(ColumnName));
+        FColNames.Add(fromOdbcPChar(ColumnName, NameLength));
       finally
         freeMem(columnName);
       end;
@@ -6649,12 +6616,12 @@ Begin
     If Trim(FTargetTable) = '' Then
     Begin
       FRetCode:= SQLColAttribute(FHstmt, 1, SQL_DESC_SCHEMA_NAME, CharAttr, DefaultStringSize, StringLength, NumAttr);
-      FTableOwner:= Trim(fromOdbcPChar(CharAttr));
+      FTableOwner:= Trim(fromOdbcPChar(CharAttr, StringLength));
       If Not FEnv.Error.Success(FRetCode) Then
         FTableOwner:= '';
 
       FRetCode:= SQLColAttribute(FHstmt, 1, SQL_DESC_TABLE_NAME, CharAttr, DefaultStringSize, StringLength, NumAttr);
-      FTableName:= Trim(fromOdbcPChar(CharAttr));
+      FTableName:= Trim(fromOdbcPChar(CharAttr, StringLength));
       If FTableName = '' Then
       Begin
         FTableName:= StringReplace(FSQL, EnterString, ' ', [rfReplaceAll, rfIgnoreCase]);
@@ -6825,7 +6792,7 @@ Begin
     If Not FEnv.Error.Success(FRetCode) Then
       FEnv.Error.RaiseError(Self, FRetCode);
 
-    Result := fromOdbcPChar(CurName);
+    Result := fromOdbcPChar(CurName, StringLength);
   finally
     freemem(CurName);
   end;
@@ -10144,8 +10111,8 @@ begin
   try
     while FEnv.Error.Success(SQLDataSources(FEnv.Handle, Direction, DSName, DefaultStringSize, StringLength1, DSDriver, DefaultStringSize, StringLength2)) do
     begin
-      FDataSourceNames.Add(fromOdbcPChar(DSName));
-      FDataSourceDrivers.Add(fromOdbcPChar(DSDriver));
+      FDataSourceNames.Add(fromOdbcPChar(DSName, StringLength1));
+      FDataSourceDrivers.Add(fromOdbcPChar(DSDriver, StringLength2));
       Direction:= SQL_FETCH_NEXT;
     end;
   finally
@@ -10170,7 +10137,7 @@ begin
   try
     while FEnv.Error.Success(SQLDrivers(FEnv.Handle, Direction, DName, DefaultStringSize, StringLength1, DAttr, DefaultStringSize, StringLength2)) do
     begin
-      FDriverNames.Add(fromOdbcPChar(DName));
+      FDriverNames.Add(fromOdbcPChar(DName, StringLength1));
       Direction:= SQL_FETCH_NEXT;
     end;
   finally

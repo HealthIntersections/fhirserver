@@ -204,11 +204,10 @@
         <DCCReference Include="..\Libraries\db\KDBTests.pas"/>
         <DCCReference Include="..\reference-platform\support\KDBDialects.pas"/>
         <DCCReference Include="..\Libraries\db\KDBManager.pas"/>
-        <DCCReference Include="..\Libraries\db\KSettings.pas"/>
         <DCCReference Include="..\Libraries\db\KDBLogging.pas"/>
+        <DCCReference Include="..\Libraries\db\KSettings.pas"/>
         <DCCReference Include="..\Libraries\db\KDBOdbc.pas"/>
         <DCCReference Include="..\Libraries\db\ODBCObjects.pas"/>
-        <DCCReference Include="..\Libraries\db\OdbcHeaders.pas"/>
         <DCCReference Include="..\Libraries\db\OdbcHeaders.pas"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
