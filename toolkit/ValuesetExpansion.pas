@@ -33,15 +33,16 @@ uses
   System.SysUtils, System.Types, System.UITypes, System.Classes, System.Variants,
   FMX.Types, FMX.Controls, FMX.Forms, FMX.Graphics, FMX.Dialogs, System.Rtti,
   FMX.Grid.Style, FMX.Grid, FMX.ScrollBox, FMX.StdCtrls, FMX.DateTimeCtrls,
-  FMX.Edit, FMX.Controls.Presentation,
-  FHIRResources, FHIRUtilities, FHIRClient, FMX.ListBox,
+  FMX.Edit, FMX.Controls.Presentation, FMX.ListBox,
+  CSVSupport,
+  FHIRBase, FHIRResources, FHIRUtilities, FHIRClient,
   SettingsDialog,
   ToolkitSettings;
 
 type
   TValuesetExpansionForm = class(TForm)
     Panel1: TPanel;
-    Button1: TButton;
+    btnUse: TButton;
     Button2: TButton;
     Panel2: TPanel;
     Label1: TLabel;
@@ -70,11 +71,14 @@ type
     StringColumn13: TStringColumn;
     cbxServer: TComboBox;
     btnSettings: TButton;
+    btnExport: TButton;
+    dlgExport: TSaveDialog;
     procedure FormShow(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure GoClick(Sender: TObject);
     procedure gridContainsGetValue(Sender: TObject; const ACol, ARow: Integer; var Value: TValue);
     procedure btnSettingsClick(Sender: TObject);
+    procedure btnExportClick(Sender: TObject);
   private
     FValueSet: TFHIRValueSet;
     FExpansion : TFHIRValueSet;
@@ -100,7 +104,46 @@ implementation
 Uses
   FHIRToolkitForm;
 
+
+
 { TValuesetExpansionForm }
+
+procedure TValuesetExpansionForm.btnExportClick(Sender: TObject);
+var
+  s : String;
+begin
+  if dlgExport.Execute then
+  begin
+    s := ExtractFileExt(dlgExport.FileName);
+    if s = '.xml' then
+      resourceToFile(FValueSet, dlgExport.FileName, ffXml)
+    else if s = '.json' then
+      resourceToFile(FValueSet, dlgExport.FileName, ffJson)
+    else if s = '.ttl' then
+      resourceToFile(FValueSet, dlgExport.FileName, ffJson)
+    else if s = '.csv' then
+      produceCsv(dlgExport.FileName,
+        ['system', 'abstract', 'inactive', 'version', 'code', 'display'],
+        procedure (csv : TCSVWriter)
+        var
+          c : TFhirValueSetExpansionContains;
+        begin
+          for c in FValueSet.expansion.containsList do
+          begin
+            csv.cell(c.system);
+            csv.cell(c.abstract);
+            csv.cell(c.inactive);
+            csv.cell(c.version);
+            csv.cell(c.code);
+            csv.cell(c.display);
+            csv.line;
+          end;
+        end
+      )
+    else
+      raise Exception.Create('Unknown format');
+  end;
+end;
 
 procedure TValuesetExpansionForm.btnSettingsClick(Sender: TObject);
 var
@@ -197,7 +240,8 @@ begin
   FExpansion.Free;
   FExpansion := nil;
   gridContains.RowCount := 0;
-  button1.Enabled := false;
+  btnUse.Enabled := false;
+  btnExport.Enabled := false;
 
   if FClient = nil then
     FClient := TFhirThreadedClient.Create(TFhirHTTPClient.Create(nil, FSettings.serverAddress('Terminology', cbxServer.itemIndex), false, FSettings.timeout * 1000, FSettings.proxy), MasterToolsForm.threadMonitorProc);
@@ -234,7 +278,8 @@ begin
 
         FExpansion := FClient.operation(frtValueSet, 'expand', params) as TFHIRValueSet;
         gridContains.RowCount := FExpansion.expansion.containsList.Count;
-        button1.Enabled := FExpansion.expansion.containsList.Count > 0;
+        btnUse.Enabled := FExpansion.expansion.containsList.Count > 0;
+        btnExport.Enabled := FExpansion.expansion.containsList.Count > 0;
       finally
         params.Free;
       end;

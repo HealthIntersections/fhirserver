@@ -103,7 +103,7 @@ object ValueSetEditorFrame: TValueSetEditorFrame
             HelpContext = 24
             Position.X = 84.000000000000000000
             Position.Y = 154.000000000000000000
-            Size.Width = 584.000000000000000000
+            Size.Width = 1208.000000000000000000
             Size.Height = 22.000000000000000000
             Size.PlatformDefault = False
             TabOrder = 0
@@ -116,7 +116,7 @@ object ValueSetEditorFrame: TValueSetEditorFrame
             Position.X = 84.000000000000000000
             Position.Y = 293.000000000000000000
             HelpContext = 32
-            Size.Width = 557.000000000000000000
+            Size.Width = 1181.000000000000000000
             Size.Height = 22.000000000000000000
             Size.PlatformDefault = False
             OnChange = inputChanged
@@ -130,7 +130,7 @@ object ValueSetEditorFrame: TValueSetEditorFrame
             Position.X = 84.000000000000000000
             Position.Y = 224.000000000000000000
             HelpContext = 27
-            Size.Width = 557.000000000000000000
+            Size.Width = 1181.000000000000000000
             Size.Height = 22.000000000000000000
             Size.PlatformDefault = False
             OnChange = inputChanged
@@ -143,7 +143,7 @@ object ValueSetEditorFrame: TValueSetEditorFrame
             Position.X = 84.000000000000000000
             Position.Y = 50.000000000000000000
             HelpContext = 20
-            Size.Width = 411.000000000000000000
+            Size.Width = 1035.000000000000000000
             Size.Height = 22.000000000000000000
             Size.PlatformDefault = False
             OnChange = inputChanged
@@ -156,7 +156,7 @@ object ValueSetEditorFrame: TValueSetEditorFrame
             Position.X = 84.000000000000000000
             Position.Y = 189.000000000000000000
             HelpContext = 25
-            Size.Width = 584.000000000000000000
+            Size.Width = 1208.000000000000000000
             Size.Height = 22.000000000000000000
             Size.PlatformDefault = False
             OnChange = inputChanged
@@ -170,7 +170,7 @@ object ValueSetEditorFrame: TValueSetEditorFrame
             Position.X = 84.000000000000000000
             Position.Y = 258.000000000000000000
             HelpContext = 31
-            Size.Width = 557.000000000000000000
+            Size.Width = 1181.000000000000000000
             Size.Height = 22.000000000000000000
             Size.PlatformDefault = False
             OnChange = inputChanged
@@ -183,7 +183,7 @@ object ValueSetEditorFrame: TValueSetEditorFrame
             Position.X = 84.000000000000000000
             Position.Y = 85.000000000000000000
             HelpContext = 21
-            Size.Width = 584.000000000000000000
+            Size.Width = 1208.000000000000000000
             Size.Height = 22.000000000000000000
             Size.PlatformDefault = False
             OnChange = inputChanged
@@ -196,7 +196,7 @@ object ValueSetEditorFrame: TValueSetEditorFrame
             Position.X = 84.000000000000000000
             Position.Y = 16.000000000000000000
             HelpContext = 17
-            Size.Width = 584.000000000000000000
+            Size.Width = 1208.000000000000000000
             Size.Height = 22.000000000000000000
             Size.PlatformDefault = False
             OnChange = inputChanged
@@ -206,7 +206,7 @@ object ValueSetEditorFrame: TValueSetEditorFrame
             Touch.InteractiveGestures = [LongTap, DoubleTap]
             Anchors = [akTop, akRight]
             TabOrder = 8
-            Position.X = 566.000000000000000000
+            Position.X = 1190.000000000000000000
             Position.Y = 50.000000000000000000
             HelpContext = 19
             Size.Width = 100.000000000000000000
@@ -222,14 +222,14 @@ object ValueSetEditorFrame: TValueSetEditorFrame
             HelpContext = 18
             Position.X = 16.000000000000000000
             Position.Y = 384.000000000000000000
-            Size.Width = 565.000000000000000000
+            Size.Width = 1189.000000000000000000
             Size.Height = 121.000000000000000000
             Size.PlatformDefault = False
             TabOrder = 9
             OnSelChanged = gridIdentifiersSelChanged
             OnGetValue = gridIdentifiersGetValue
             OnSetValue = gridIdentifiersSetValue
-            Viewport.Width = 565.000000000000000000
+            Viewport.Width = 1189.000000000000000000
             Viewport.Height = 121.000000000000000000
             object StringColumn1: TStringColumn
               Header = 'System'
@@ -281,7 +281,7 @@ object ValueSetEditorFrame: TValueSetEditorFrame
           end
           object Label4: TLabel
             Anchors = [akTop, akRight]
-            Position.X = 506.000000000000000000
+            Position.X = 1130.000000000000000000
             Position.Y = 50.000000000000000000
             Size.Width = 55.000000000000000000
             Size.Height = 17.000000000000000000
@@ -343,7 +343,7 @@ object ValueSetEditorFrame: TValueSetEditorFrame
           end
           object btnIdentifierAdd: TButton
             Anchors = [akTop, akRight]
-            Position.X = 589.000000000000000000
+            Position.X = 1213.000000000000000000
             Position.Y = 384.000000000000000000
             TabOrder = 24
             Text = 'Add'
@@ -351,7 +351,7 @@ object ValueSetEditorFrame: TValueSetEditorFrame
           end
           object btnIdentifierDelete: TButton
             Anchors = [akTop, akRight]
-            Position.X = 589.000000000000000000
+            Position.X = 1213.000000000000000000
             Position.Y = 417.000000000000000000
             TabOrder = 25
             Text = 'Delete'
@@ -359,7 +359,7 @@ object ValueSetEditorFrame: TValueSetEditorFrame
           end
           object btnMemoCopyright: TButton
             Anchors = [akTop, akRight]
-            Position.X = 644.000000000000000000
+            Position.X = 1268.000000000000000000
             Position.Y = 293.000000000000000000
             Size.Width = 24.000000000000000000
             Size.Height = 22.000000000000000000
@@ -370,7 +370,7 @@ object ValueSetEditorFrame: TValueSetEditorFrame
           end
           object btnMemoForDesc: TButton
             Anchors = [akTop, akRight]
-            Position.X = 644.000000000000000000
+            Position.X = 1268.000000000000000000
             Position.Y = 224.000000000000000000
             Size.Width = 24.000000000000000000
             Size.Height = 22.000000000000000000
@@ -381,7 +381,7 @@ object ValueSetEditorFrame: TValueSetEditorFrame
           end
           object btnMemoPurpose: TButton
             Anchors = [akTop, akRight]
-            Position.X = 644.000000000000000000
+            Position.X = 1268.000000000000000000
             Position.Y = 258.000000000000000000
             Size.Width = 24.000000000000000000
             Size.Height = 22.000000000000000000
@@ -393,7 +393,7 @@ object ValueSetEditorFrame: TValueSetEditorFrame
           object cbExperimental: TCheckBox
             Anchors = [akTop, akRight]
             HelpContext = 23
-            Position.X = 544.000000000000000000
+            Position.X = 1168.000000000000000000
             Position.Y = 120.000000000000000000
             Size.Width = 122.000000000000000000
             Size.Height = 19.000000000000000000
@@ -452,7 +452,7 @@ object ValueSetEditorFrame: TValueSetEditorFrame
               'Australia and New Zealand')
             Position.X = 84.000000000000000000
             Position.Y = 328.000000000000000000
-            Size.Width = 584.000000000000000000
+            Size.Width = 1208.000000000000000000
             Size.Height = 22.000000000000000000
             Size.PlatformDefault = False
             TabOrder = 32
@@ -469,7 +469,7 @@ object ValueSetEditorFrame: TValueSetEditorFrame
               'unknown')
             Position.X = 84.000000000000000000
             Position.Y = 120.000000000000000000
-            Size.Width = 453.000000000000000000
+            Size.Width = 1077.000000000000000000
             Size.Height = 22.000000000000000000
             Size.PlatformDefault = False
             TabOrder = 33
@@ -1271,5 +1271,21 @@ object ValueSetEditorFrame: TValueSetEditorFrame
       Text = 'Expand'
       OnClick = btnExpandClick
     end
+    object btnExport: TButton
+      Enabled = False
+      Position.X = 96.000000000000000000
+      Position.Y = 8.000000000000000000
+      Size.Width = 80.000000000000000000
+      Size.Height = 30.000000000000000000
+      Size.PlatformDefault = False
+      TabOrder = 1
+      Text = 'Export'
+      OnClick = btnExportClick
+    end
+  end
+  object dlgExport: TSaveDialog
+    Filter = 'CSV Files|*.csv'
+    Left = 120
+    Top = 728
   end
 end

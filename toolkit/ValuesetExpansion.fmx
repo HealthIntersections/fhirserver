@@ -18,7 +18,7 @@ object ValuesetExpansionForm: TValuesetExpansionForm
     Size.Height = 40.000000000000000000
     Size.PlatformDefault = False
     TabOrder = 0
-    object Button1: TButton
+    object btnUse: TButton
       Default = True
       Enabled = False
       ModalResult = 1
@@ -38,6 +38,14 @@ object ValuesetExpansionForm: TValuesetExpansionForm
       Position.Y = 8.000000000000000000
       TabOrder = 1
       Text = 'Close'
+    end
+    object btnExport: TButton
+      Enabled = False
+      Position.X = 200.000000000000000000
+      Position.Y = 8.000000000000000000
+      TabOrder = 2
+      Text = 'Export'
+      OnClick = btnExportClick
     end
   end
   object Panel2: TPanel
@@ -236,5 +244,13 @@ object ValuesetExpansionForm: TValuesetExpansionForm
     object StringColumn13: TStringColumn
       Header = 'Version'
     end
+  end
+  object dlgExport: TSaveDialog
+    Filter = 
+      'XML Resource|*.csv|JSON Resource|*.json|Turtle Resource|*.ttl|CS' +
+      'V Format|*.csv'
+    Title = 'Export Expansion'
+    Left = 224
+    Top = 448
   end
 end

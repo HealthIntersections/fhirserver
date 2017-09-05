@@ -36,7 +36,7 @@ uses
   FMX.ScrollBox, FMX.Memo, FMX.DateTimeCtrls, FMX.ListBox, FMX.Edit, FMX.DialogService,
   FMX.Grid.Style, FMX.Grid, FMX.Menus,
   DateSupport, StringSupport, DecimalSupport,
-  AdvGenerics,
+  AdvGenerics, CSVSupport,
   FHIRBase, FHIRConstants, FHIRTypes, FHIRResources, FHIRUtilities, FHIRIndexBase, FHIRIndexInformation, FHIRSupport,
   BaseResourceFrame,
   SearchParameterEditor, ListSelector, AddRestResourceDialog, ValuesetExpansion, ValuesetSelectDialog, MemoEditorDialog;
@@ -171,6 +171,8 @@ type
     btnMemoPurpose: TButton;
     btnMemoCopyright: TButton;
     VertScrollBox2: TVertScrollBox;
+    btnExport: TButton;
+    dlgExport: TSaveDialog;
     procedure tvStructureClick(Sender: TObject);
     procedure inputChanged(Sender: TObject);
     procedure btnFlipComposeClick(Sender: TObject);
@@ -223,6 +225,7 @@ type
     procedure btnMemoForDescClick(Sender: TObject);
     procedure btnMemoPurposeClick(Sender: TObject);
     procedure btnMemoCopyrightClick(Sender: TObject);
+    procedure btnExportClick(Sender: TObject);
   private
     tvCompose, tvExpansion : TTreeViewItem;
     function GetValueSet: TFHIRValueSet;
@@ -685,6 +688,61 @@ begin
     end;
   finally
     form.Free;
+  end;
+end;
+
+procedure TValueSetEditorFrame.btnExportClick(Sender: TObject);
+var
+  obj : TObject;
+  s : String;
+begin
+  if dlgExport.Execute then
+  begin
+    s := ExtractFileExt(dlgExport.FileName);
+    if s = '.csv' then
+    begin
+    obj := tvStructure.Selected.TagObject;
+    if obj is TFhirValueSetExpansion then
+      produceCsv(dlgExport.FileName,
+        ['system', 'abstract', 'inactive', 'version', 'code', 'display'],
+        procedure (csv : TCSVWriter)
+        var
+          c : TFhirValueSetExpansionContains;
+        begin
+          for c in (obj as TFhirValueSetExpansion).containsList do
+          begin
+            csv.cell(c.system);
+            csv.cell(c.abstract);
+            csv.cell(c.inactive);
+            csv.cell(c.version);
+            csv.cell(c.code);
+            csv.cell(c.display);
+            csv.line;
+          end;
+        end
+      )
+    else // obj is TFhirValueSetComposeInclude
+    begin
+      produceCsv(dlgExport.FileName,
+        ['system', 'version', 'code', 'display'],
+        procedure (csv : TCSVWriter)
+        var
+          c : TFhirValueSetComposeIncludeConcept;
+        begin
+          for c in (obj as TFhirValueSetComposeInclude).conceptList do
+          begin
+            csv.cell((obj as TFhirValueSetComposeInclude).system);
+            csv.cell((obj as TFhirValueSetComposeInclude).version);
+            csv.cell(c.code);
+            csv.cell(c.display);
+            csv.line;
+          end;
+        end
+      )
+    end
+    end
+    else
+      raise Exception.Create('Unknown format');
   end;
 end;
 
@@ -1444,30 +1502,35 @@ begin
       tbMetadata.TagObject := obj;
       tbStructure.ActiveTab := tbMetadata;
       loadMetadata;
+      btnExport.Enabled := false;
     end
     else if obj is TFhirValueSetCompose then
     begin
       tbRest.TagObject := obj;
       tbStructure.ActiveTab := tbRest;
       loadCompose(obj as TFhirValueSetCompose);
+      btnExport.Enabled := false;
     end
     else if obj is TFhirValueSetComposeInclude then
     begin
       tbResource.TagObject := obj;
       tbStructure.ActiveTab := tbResource;
       loadRule(obj as TFhirValueSetComposeInclude);
+      btnExport.Enabled := true;
     end
     else if obj is TFhirValueSetExpansion then
     begin
       tbRest.TagObject := obj;
       tbStructure.ActiveTab := tabExpansion;
       loadExpansion(obj as TFhirValueSetExpansion);
+      btnExport.Enabled := true;
     end
     else if obj is TFhirValueSetExpansionParameterList then
     begin
       tabParameter.TagObject := obj;
       tbStructure.ActiveTab := tabParameter;
       loadParameters;
+      btnExport.Enabled := false;
     end
   finally
     Loading := false;
