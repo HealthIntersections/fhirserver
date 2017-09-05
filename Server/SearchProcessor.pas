@@ -1063,7 +1063,7 @@ begin
   if result <> '' then
   begin
     if not nested and (name <> 'tag') then
-      result := 'Ids.ResourceKey in (select ResourceKey from IndexEntries where Flag <> 2 and '+result+')';
+      result := 'Ids.ResourceKey in (select ResourceKey from IndexEntries where Flag <> 2 and '+result+'order by resourcekey DESC)'; // This last ORDER BY is to workaround MariaDB Issue where a subquery in an IN clause may not give the results if there is an ORDER BY.
     if not bfirst then
       result := ' and '+result;
   end;
