@@ -2881,8 +2881,8 @@ begin
     for i := 1 to length(s) do
       result[(i-1) * 2] := s[i];
     {$ELSE}
-    getMem(result, length(s) * 2);
-    fillChar(result^, length(s)*2, 0);
+    getMem(result, (length(s) + 1) * 2);
+    fillChar(result^, (length(s) + 1)*2, 0);
     move(s[1], result^, length(s) * 2);
     {$ENDIF}
   end;
