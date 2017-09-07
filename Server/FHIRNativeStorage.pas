@@ -8591,11 +8591,11 @@ begin
       end;
       conn.terminate;
       if conn.Owner.Platform = kdbMySQL then
-        conn.SQL :=
-          'select ResourceTypeKey, max(CASE WHEN RTRIM(Id) REGEXP ''^-?[0-9]+$'' THEN CAST(Id AS SIGNED) ELSE 0 END) as MaxId from Ids group by ResourceTypeKey'
+        conn.SQL := 'select ResourceTypeKey, max(CASE WHEN RTRIM(Id) REGEXP ''^-?[0-9]+$'' THEN CAST(Id AS SIGNED) ELSE 0 END) as MaxId from Ids group by ResourceTypeKey'
+      else if conn.Owner.Platform = kdbSQLite then
+        conn.SQL := 'select ResourceTypeKey, max(CASE WHEN typeof(RTRIM(Id) + ''.0e0'') = ''integer'' THEN CAST(Id AS bigINT) ELSE 0 end) as MaxId from Ids group by ResourceTypeKey'
       else
-        conn.SQL :=
-          'select ResourceTypeKey, max(CASE WHEN ISNUMERIC(RTRIM(Id) + ''.0e0'') = 1 THEN CAST(Id AS bigINT) ELSE 0 end) as MaxId from Ids group by ResourceTypeKey';
+        conn.SQL := 'select ResourceTypeKey, max(CASE WHEN ISNUMERIC(RTRIM(Id) + ''.0e0'') = 1 THEN CAST(Id AS bigINT) ELSE 0 end) as MaxId from Ids group by ResourceTypeKey';
       conn.Prepare;
       conn.Execute;
       While conn.FetchNext do
@@ -8665,13 +8665,13 @@ begin
     conn.Prepare;
     conn.BindInteger('sk', session.key);
     conn.BindInteger('uk', StrToInt(session.User.id));
-    conn.BindTimeStamp('d', DateTimeToTS(now));
+    conn.BindDateTimeEx('d', TDateTimeEx.makeLocal);
     conn.BindInteger('p', integer(session.providerCode));
     conn.BindString('i', session.id);
     conn.BindString('n', session.SessionName);
 //    conn.BindString('sn', session.SystemName);
     conn.BindString('e', session.email);
-    conn.BindTimeStamp('ex', DateTimeToTS(session.expires));
+    conn.BindDateTimeEx('ex', TDateTimeEx.makeLocal(session.expires));
     conn.Execute;
     conn.terminate;
     conn.Release;

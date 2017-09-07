@@ -38,7 +38,7 @@ Type
 
   TKDBPlatform = (kdbUnknown, kdbSQLServer, kdbSybase11, kdbCtree,
                   kdbAccess,  kdbDBIsam,    kdbInterbase, kdbDB2,  kdbGenericODBC,
-                  kdbOracle8, kdbMySQL,     kdbASA,       kdbSybase12);
+                  kdbOracle8, kdbMySQL,     kdbASA,       kdbSybase12, kdbSQLite);
 
   TKDBPlatforms = set of TKDBPlatform;
   TSQLSet = array of String;
@@ -272,6 +272,7 @@ begin
     kdbMySQL: Result := 'MySQL';
     kdbASA: Result := 'Sybase - ASA';
     kdbSybase12: Result := 'Sybase ASE ODBC Driver';
+    kdbSQLite: result := 'SQLite';
   else
     begin
     Result := 'Unknown ' + IntToStr(Integer(ADBPlatform));
@@ -293,6 +294,7 @@ begin
     kdbMySQL: Result := 'MySQL';
     kdbASA: Result := 'ASA';
     kdbSybase12: Result := 'ASE';
+    kdbSQLite: result := 'SQLite';
   else
     begin
     Result := 'Unknown ' + IntToStr(Integer(ADBPlatform));
@@ -446,6 +448,7 @@ begin
     kdbDB2: Result := 'PRIMARY KEY (' + APrimaryKeyName + ')';
     kdbOracle8: Result := 'CONSTRAINT ' + AConstraintName + ' PRIMARY KEY (' + APrimaryKeyName + ')';
     kdbMySQL: Result := 'CONSTRAINT ' + AConstraintName + ' PRIMARY KEY (' + APrimaryKeyName + ')';
+    kdbSQLite: Result := 'CONSTRAINT ' + AConstraintName + ' PRIMARY KEY (' + APrimaryKeyName + ')';
   else
     begin
     raise Exception.Create('Internal Error in Database Configuration, Database Platform in Error');
@@ -473,6 +476,7 @@ begin
     kdbDB2: result := 'char('+inttostr(ASize*2)+')';
     kdbOracle8: raise exception.create('Oracle field field for Unicode not yet resolved');
     kdbMySQL: result := 'VARCHAR('+inttostr(ASize)+') CHARACTER SET utf8';
+    kdbSQLite: result := 'VARCHAR('+inttostr(ASize)+') CHARACTER SET utf8';
   else
     begin
     raise Exception.Create('Internal Error in Database Configuration, Database Platform in Error');
@@ -494,6 +498,7 @@ begin
     kdbDB2: result := 'float';
     kdbOracle8: raise exception.create('Oracle field field for Float not yet resolved');
     kdbMySQL: result := 'DOUBLE';
+    kdbSQLite: result := 'REAL';
   else
     begin
     raise Exception.Create('Internal Error in Database Configuration, Database Platform in Error');
@@ -514,6 +519,7 @@ begin
     kdbDB2: Result := 'int';
     kdbOracle8: Result := 'number(12,0)';
     kdbMySQL: Result := 'int';
+    kdbSQLite: Result := 'Integer';
   else
     begin
     raise Exception.Create('Internal Error in Database Configuration, Database Platform in Error');
@@ -534,6 +540,7 @@ begin
     kdbDB2: Result := 'blob';
     kdbOracle8: Result := 'blob default empty_blob()';
     kdbMySQL: Result := 'LONGTEXT';
+    kdbSQLite: Result := 'BLOB';
   else
     begin
     raise Exception.Create('Internal Error in Database Configuration, Database Platform in Error');
@@ -563,6 +570,7 @@ begin
         'STORAGE (MAXEXTENTS 5) ' + EOL_WINDOWS +
         ')';
     kdbMySQL: Result := '';
+    kdbSQLite: Result := '';
   else
     begin
     raise Exception.Create('Internal Error in Database Configuration, Database Platform in Error');
@@ -583,6 +591,7 @@ begin
     kdbDB2: Result := 'timestamp';
     kdbOracle8: Result := 'date';
     kdbMySQL: Result := 'datetime';
+    kdbSQLite: Result := 'datetext(24)';
   else
     begin
     raise Exception.Create('Internal Error in Database Configuration, Database Platform in Error');
@@ -603,6 +612,7 @@ begin
     kdbDB2: Result := 'CURRENT TIMESTAMP';
     kdbOracle8: Result := 'sysdate';
     kdbMySQL: Result := 'Now()';
+    kdbSQLite: Result := 'CURRENT_TIMESTAMP';
   else
     begin
     raise Exception.Create('Internal Error in Database Configuration, Database Platform in Error');
@@ -696,6 +706,15 @@ begin
         begin
         Result := 'Not Null';
         end;
+    kdbSQLite:
+      if ABeNull then
+        begin
+        Result := 'Null'
+        end
+      else
+        begin
+        Result := 'Not Null';
+        end;
   else
     begin
     raise Exception.Create('Internal Error in Database Configuration, Database Platform in Error');
@@ -716,6 +735,7 @@ begin
     kdbDB2: Result := 'char(1)';
     kdbOracle8: Result := 'number(1)';
     kdbMySQL: Result := 'bool';
+    kdbSQLite: Result := 'Integer';
   else
     begin
     raise Exception.Create('Internal Error in Database Configuration, Database Platform in Error');
@@ -736,6 +756,7 @@ begin
     kdbDB2: Result := 'char';
     kdbOracle8: Result := 'varchar';
     kdbMySQL: Result := 'char';
+    kdbSQLite: Result := 'text';
   else
     begin
     raise Exception.Create('Internal Error in Database Configuration, Database Platform in Error');
@@ -758,6 +779,7 @@ begin
     kdbDB2: Result := 'bigint';
     kdbOracle8: Result := 'number';
     kdbMySQL: Result := 'bigint';
+    kdbSQLite: Result := 'Integer';
   else
     begin
     raise Exception.Create('Internal Error in Database Configuration, Database Platform in Error');
@@ -817,6 +839,7 @@ begin
   case ADBPlatform of
     kdbSQLServer : result := 'int';
     kdbMySQL : result := 'UNSIGNED';
+    kdbSQLite : result := 'Integer';
   else raise exception.create('not done yet: DBIntType');
   end;
 end;

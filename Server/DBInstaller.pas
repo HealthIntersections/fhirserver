@@ -130,14 +130,20 @@ Type
 
 implementation
 
-Function ForeignKeySql(Conn: TKDBConnection; Const sSlaveTable, sSlaveField, sMasterTable, sMasterField, sIndexName : String; b2 : Boolean = false) : String;
+Function ForeignKeySql(Conn: TKDBConnection; Const sSlaveTable, sSlaveField, sMasterTable, sMasterField, sIndexName : String) : String;
 Begin
-  if b2 Then
-    Result := 'ALTER TABLE '+sSlaveTable+' ADD CONSTRAINT '+sIndexName+' '+
-            'FOREIGN KEY ( '+sSlaveField+' ) REFERENCES '+sMasterTable+' ( '+sMasterField+' )'
-  Else
-    Result := 'ALTER TABLE '+sSlaveTable+' ADD CONSTRAINT '+sIndexName +' '+
-            'FOREIGN KEY ( '+sSlaveField+' ) REFERENCES '+sMasterTable+' ( '+sMasterField+' )';
+  if conn.Owner.Platform = kdbSQLite then
+    result := ''
+  else
+    Result := 'ALTER TABLE '+sSlaveTable+' ADD CONSTRAINT '+sIndexName+' '+ 'FOREIGN KEY ( '+sSlaveField+' ) REFERENCES '+sMasterTable+' ( '+sMasterField+' )';
+End;
+
+Function InlineForeignKeySql(Conn: TKDBConnection; Const sSlaveTable, sSlaveField, sMasterTable, sMasterField, sIndexName : String) : String;
+Begin
+  if conn.Owner.Platform <> kdbSQLite then
+    result := ''
+  else
+    result := 'FOREIGN KEY('+sSlaveField+') REFERENCES '+sMasterTable+'('+sMasterField+')';
 End;
 
 
@@ -164,6 +170,7 @@ begin
        ' Created '+DBDateTimeType(FConn.owner.platform)+' '+ColCanBeNull(FConn.owner.platform, False)+',  '+#13#10+
        ' Expiry '+DBDateTimeType(FConn.owner.platform)+' '+ColCanBeNull(FConn.owner.platform, False)+',  '+#13#10+
        ' Closed '+DBDateTimeType(FConn.owner.platform)+' '+ColCanBeNull(FConn.owner.platform, True)+',  '+#13#10+
+       InlineForeignKeySql(FConn, 'Sessions', 'UserKey', 'Users', 'UserKey', 'FK_Session_UserKey')+
        PrimaryKeyType(FConn.owner.Platform, 'PK_Sessions', 'SessionKey')+') '+CreateTableInfo(FConn.owner.platform));
   FConn.ExecSQL('Create INDEX SK_Sessions_Id ON Sessions (Provider, Id, Name)');
   FConn.ExecSQL('Create INDEX SK_Sessions_Name ON Sessions (Name, Created)');
@@ -278,6 +285,9 @@ begin
        ' Status           int                                   '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+      // whether added or deleted
        ' Expiry           '+DBDateTimeType(FConn.owner.platform)+' '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+        // observation.effectiveTime Stated (null = range)
        ' JWT              '+DBBlobType(FConn.owner.platform)+'   '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+     // id of resource changed
+       InlineForeignKeySql(FConn, 'Authorizations', 'PatientKey', 'Ids', 'ResourceKey', 'FK_Authorizations_PatKey')+
+       InlineForeignKeySql(FConn, 'Authorizations', 'ConsentKey', 'Ids', 'ResourceKey', 'FK_Authorizations_ConsKey')+
+       InlineForeignKeySql(FConn, 'Authorizations', 'SessionKey', 'Sessions', 'SessionKey', 'FK_Authorizations_SessionKey')+
        PrimaryKeyType(FConn.owner.Platform, 'PK_Authorizations', 'AuthorizationKey')+') '+CreateTableInfo(FConn.owner.platform));
   FConn.ExecSQL(ForeignKeySql(FConn, 'Authorizations', 'PatientKey', 'Ids', 'ResourceKey', 'FK_Authorizations_PatKey'));
   FConn.ExecSQL(ForeignKeySql(FConn, 'Authorizations', 'ConsentKey', 'Ids', 'ResourceKey', 'FK_Authorizations_ConsKey'));
@@ -293,6 +303,8 @@ begin
        ' DateTime                '+DBDateTimeType(FConn.owner.platform)+' '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+    //
        ' Message                 nchar(255)                               '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+  //
        ' SessionKey              '+DBKeyType(FConn.owner.platform)+'      '+ColCanBeNull(FConn.owner.platform, True)+', '+#13#10+   //
+       InlineForeignKeySql(FConn, 'AuthorizationSessions', 'AuthorizationKey', 'Authorizations', 'AuthorizationKey', 'FK_AuthorizationSessions_AuthKey')+
+       InlineForeignKeySql(FConn, 'AuthorizationSessions', 'SessionKey', 'Sessions', 'SessionKey', 'FK_AuthorizationSessions_SessKey')+
        PrimaryKeyType(FConn.owner.Platform, 'PK_AuthorizationSessions', 'AuthorizationSessionKey')+') '+CreateTableInfo(FConn.owner.platform));
   FConn.ExecSQL(ForeignKeySql(FConn, 'AuthorizationSessions', 'AuthorizationKey', 'Authorizations', 'AuthorizationKey', 'FK_AuthorizationSessions_AuthKey'));
   FConn.ExecSQL(ForeignKeySql(FConn, 'AuthorizationSessions', 'SessionKey', 'Sessions', 'SessionKey', 'FK_AuthorizationSessions_SessKey'));
@@ -307,6 +319,9 @@ begin
        ' SubsumesKey '+DBKeyType(FConn.owner.platform)+' '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+
        ' SubsumedKey '+DBKeyType(FConn.owner.platform)+' '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+
        ' IndexedVersion int '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+
+       InlineForeignKeySql(FConn, 'ClosureEntries', 'ClosureKey',  'Closures', 'ClosureKey', 'FK_ClosureEntries_ConceptKey')+
+       InlineForeignKeySql(FConn, 'ClosureEntries', 'SubsumesKey', 'Concepts', 'ConceptKey', 'FK_ClosureEntries_SubsumesKey')+
+       InlineForeignKeySql(FConn, 'ClosureEntries', 'SubsumedKey', 'Concepts', 'ConceptKey', 'FK_ClosureEntries_SubsumedKey')+
        PrimaryKeyType(FConn.owner.Platform, 'PK_ClosureEntries', 'ClosureEntryKey')+') '+CreateTableInfo(FConn.owner.platform));
 
   FConn.ExecSQL('Create INDEX SK_ClosureEntries_Subsumes ON ClosureEntries (ClosureKey, SubsumesKey)');
@@ -341,6 +356,7 @@ begin
   	'UniiKey int NOT NULL, '+#13#10+
   	'Type nchar(20) NOT NULL, '+#13#10+
  	  'Display nchar(255) NULL, '+#13#10+
+       InlineForeignKeySql(FConn, 'UniiDesc', 'UniiKey',  'Unii', 'UniiKey', 'FK_UniiDesc_UniiKey')+
     PrimaryKeyType(FConn.owner.Platform, 'PK_UniiDesc', 'UniiDescKey')+') '+CreateTableInfo(FConn.owner.platform));
 
   FConn.ExecSQL(ForeignKeySql(FConn, 'UniiDesc', 'UniiKey',  'Unii', 'UniiKey', 'FK_UniiDesc_UniiKey'));
@@ -385,6 +401,8 @@ begin
        ' ErrorCount int                                          '+ColCanBeNull(FConn.owner.platform, true)+', '+#13#10+
        ' Abandoned '+     DBDateTimeType(FConn.owner.platform)+' '+ColCanBeNull(FConn.owner.platform, true)+', '+#13#10+
        ' Handled '+       DBDateTimeType(FConn.owner.platform)+' '+ColCanBeNull(FConn.owner.platform, True)+', '+#13#10+
+       InlineForeignKeySql(FConn, 'NotificationQueue', 'SubscriptionKey','Ids', 'ResourceKey', 'FK_NotificationQ_SubVerKey')+
+       InlineForeignKeySql(FConn, 'NotificationQueue', 'ResourceVersionKey',    'Versions', 'ResourceVersionKey', 'FK_NotificationQ_ResVerKey')+
        PrimaryKeyType(FConn.owner.Platform, 'PK_NotificationQueue', 'NotificationQueueKey')+') '+CreateTableInfo(FConn.owner.platform));
   FConn.ExecSQL(ForeignKeySql(FConn, 'NotificationQueue', 'SubscriptionKey','Ids', 'ResourceKey', 'FK_NotificationQ_SubVerKey'));
   FConn.ExecSQL(ForeignKeySql(FConn, 'NotificationQueue', 'ResourceVersionKey',    'Versions', 'ResourceVersionKey', 'FK_NotificationQ_ResVerKey'));
@@ -408,6 +426,7 @@ begin
        ' SessionKey '+DBKeyType(FConn.owner.platform)+' NULL, '+#13#10+
        ' Rights '+DBBlobType(FConn.owner.platform)+' Null, '+#13#10+
        ' Jwt '+DBBlobType(FConn.owner.platform)+' Null, '+#13#10+
+       InlineForeignKeySql(FConn, 'OAuthLogins', 'SessionKey', 'Sessions', 'SessionKey', 'FK_OUathLogins_SessionKey')+
        PrimaryKeyType(FConn.owner.Platform, 'PK_OAuthLogins', 'Id')+') '+CreateTableInfo(FConn.owner.platform));
   FConn.ExecSQL(ForeignKeySql(FConn, 'OAuthLogins', 'SessionKey', 'Sessions', 'SessionKey', 'FK_OUathLogins_SessionKey'));
 end;
@@ -429,6 +448,11 @@ begin
        ' ValueConcept   '+DBKeyType(FConn.owner.platform)+'      '+ColCanBeNull(FConn.owner.platform, True)+', '+#13#10+          // if observation is a concept (or a data missing value)
        ' IsComponent    int                                      '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+          // if observation is a concept (or a data missing value)
        ' CodeList       nchar(30)                                '+ColCanBeNull(FConn.owner.platform, True)+', '+#13#10+          // roll up of observations as an optimization for grouping
+       InlineForeignKeySql(FConn, 'Observations', 'ResourceKey', 'Ids', 'ResourceKey', 'FK_Observations_ResKey')+
+       InlineForeignKeySql(FConn, 'Observations', 'SubjectKey', 'Ids', 'ResourceKey', 'FK_Observations_SubjKey')+
+       InlineForeignKeySql(FConn, 'Observations', 'ValueUnit', 'Concepts', 'ConceptKey', 'FK_Observations_ValueUnitKey')+
+       InlineForeignKeySql(FConn, 'Observations', 'CanonicalUnit', 'Concepts', 'ConceptKey', 'FK_Observations_CanonicalUnitKey')+
+       InlineForeignKeySql(FConn, 'Observations', 'ValueConcept', 'Concepts', 'ConceptKey', 'FK_Observations_ValueConceptKey')+
        PrimaryKeyType(FConn.owner.Platform, 'PK_Observations', 'ObservationKey')+') '+CreateTableInfo(FConn.owner.platform));
   FConn.ExecSQL(ForeignKeySql(FConn, 'Observations', 'ResourceKey', 'Ids', 'ResourceKey', 'FK_Observations_ResKey'));
   FConn.ExecSQL(ForeignKeySql(FConn, 'Observations', 'SubjectKey', 'Ids', 'ResourceKey', 'FK_Observations_SubjKey'));
@@ -449,11 +473,13 @@ begin
        ' ObservationKey     '+DBKeyType(FConn.owner.platform)+'      '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+     // primary key from Observations Table
        ' ConceptKey         '+DBKeyType(FConn.owner.platform)+'      '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+     // primary key from concept table
        ' Source             int                                      '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+     // 1 = Observation.category, 2 = Observation.code, 3= Observation.component.code
+       InlineForeignKeySql(FConn, 'ObservationCodes', 'ObservationKey', 'Observations', 'ObservationKey', 'FK_ObservationCodes_ObsKey')+
+       InlineForeignKeySql(FConn, 'ObservationCodes', 'ConceptKey', 'Concepts', 'ConceptKey', 'FK_ObservationCodes_ConceptKey')+
        PrimaryKeyType(FConn.owner.Platform, 'PK_ObservationCodes', 'ObservationCodeKey')+') '+CreateTableInfo(FConn.owner.platform));
   FConn.ExecSQL(ForeignKeySql(FConn, 'ObservationCodes', 'ObservationKey', 'Observations', 'ObservationKey', 'FK_ObservationCodes_ObsKey'));
   FConn.ExecSQL(ForeignKeySql(FConn, 'ObservationCodes', 'ConceptKey', 'Concepts', 'ConceptKey', 'FK_ObservationCodes_ConceptKey'));
-  FConn.ExecSQL('Create INDEX SK_Obs_Dt1 ON ObservationCodes (ObservationKey, Source, ConceptKey)');
-  FConn.ExecSQL('Create INDEX SK_Obs_Dt2 ON ObservationCodes (Source, ConceptKey, ObservationKey)');
+  FConn.ExecSQL('Create INDEX SK_ObsC_Dt1 ON ObservationCodes (ObservationKey, Source, ConceptKey)');
+  FConn.ExecSQL('Create INDEX SK_ObsC_Dt2 ON ObservationCodes (Source, ConceptKey, ObservationKey)');
 end;
 
 
@@ -463,6 +489,7 @@ begin
        ' ObservationQueueKey '+DBKeyType(FConn.owner.platform)+'   '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+  // internal primary key
        ' ResourceKey    '+DBKeyType(FConn.owner.platform)+'   '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+     // id of resource changed
        ' Status         int                                   '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+      // whether added or deleted
+       InlineForeignKeySql(FConn, 'Observations', 'ResourceKey', 'Ids', 'ResourceKey', 'FK_ObservationQueue_ResKey')+
        PrimaryKeyType(FConn.owner.Platform, 'PK_ObservationQueue', 'ObservationQueueKey')+') '+CreateTableInfo(FConn.owner.platform));
   FConn.ExecSQL(ForeignKeySql(FConn, 'Observations', 'ResourceKey', 'Ids', 'ResourceKey', 'FK_ObservationQueue_ResKey'));
 end;
@@ -475,6 +502,9 @@ begin
        ' TypeKey '+DBKeyType(FConn.owner.platform)+' '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+ // resource type key for the compartment type
        ' Id nchar('+inttostr(ID_LENGTH)+') '+ColCanBeNull(FConn.owner.platform, True)+', '+#13#10+                    // field two of composite id for compartment - compartment id
        ' CompartmentKey '+DBKeyType(FConn.owner.platform)+' '+ColCanBeNull(FConn.owner.platform, True)+', '+#13#10+   // key for the resource that creates this compartment
+       InlineForeignKeySql(FConn, 'Compartments', 'ResourceKey', 'Ids', 'ResourceKey', 'FK_CompartmentResource_ResKey')+
+       InlineForeignKeySql(FConn, 'Compartments', 'TypeKey', 'Types', 'ResourceTypeKey', 'FK_CompartmentResource_TypeKey')+
+       InlineForeignKeySql(FConn, 'Compartments', 'CompartmentKey', 'Ids', 'ResourceKey', 'FK_Compartment_ResKey')+
        PrimaryKeyType(FConn.owner.Platform, 'PK_Compartments', 'ResourceCompartmentKey')+') '+CreateTableInfo(FConn.owner.platform));
   FConn.ExecSQL(ForeignKeySql(FConn, 'Compartments', 'ResourceKey', 'Ids', 'ResourceKey', 'FK_CompartmentResource_ResKey'));
   FConn.ExecSQL(ForeignKeySql(FConn, 'Compartments', 'TypeKey', 'Types', 'ResourceTypeKey', 'FK_CompartmentResource_TypeKey'));
@@ -496,6 +526,7 @@ Begin
        ' MostRecent '+DBKeyType(FConn.owner.platform)+' '+ColCanBeNull(FConn.owner.platform, True)+', '+#13#10+
        ' ForTesting int '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+
        ' Deleted int '+ColCanBeNull(FConn.owner.platform, True)+', '+#13#10+
+       InlineForeignKeySql(FConn, 'Ids', 'ResourceTypeKey', 'Types', 'ResourceTypeKey', 'FK_ResType_TypeKey')+
        PrimaryKeyType(FConn.owner.Platform, 'PK_Ids', 'ResourceKey')+') '+CreateTableInfo(FConn.owner.platform));
   FConn.ExecSQL(ForeignKeySql(FConn, 'Ids', 'ResourceTypeKey', 'Types', 'ResourceTypeKey', 'FK_ResType_TypeKey'));
   FConn.ExecSQL('Create Unique INDEX SK_Ids_Id ON Ids (ResourceTypeKey, Id)');
@@ -523,6 +554,9 @@ Begin
        ' XmlSummary '+DBBlobType(FConn.owner.platform)+' '+ColCanBeNull(FConn.owner.platform, True)+', '+#13#10+
        ' JsonContent '+DBBlobType(FConn.owner.platform)+' '+ColCanBeNull(FConn.owner.platform, True)+', '+#13#10+
        ' JsonSummary '+DBBlobType(FConn.owner.platform)+' '+ColCanBeNull(FConn.owner.platform, True)+', '+#13#10+
+       InlineForeignKeySql(FConn, 'Versions', 'ResourceKey', 'Ids', 'ResourceKey', 'FK_ResKey_IdKey')+
+       InlineForeignKeySql(FConn, 'Versions', 'AuditKey', 'Ids', 'ResourceKey', 'FK_ResKey_AuditKey')+
+//       InlineForeignKeySql(FConn, 'Ids', 'MostRecent', 'Versions', 'ResourceVersionKey', 'FK_ResCurrent_VersionKey')+
        PrimaryKeyType(FConn.owner.Platform, 'PK_Versions', 'ResourceVersionKey')+') '+CreateTableInfo(FConn.owner.platform));
   FConn.ExecSQL(ForeignKeySql(FConn, 'Versions', 'ResourceKey', 'Ids', 'ResourceKey', 'FK_ResKey_IdKey'));
   FConn.ExecSQL(ForeignKeySql(FConn, 'Versions', 'AuditKey', 'Ids', 'ResourceKey', 'FK_ResKey_AuditKey'));
@@ -538,6 +572,8 @@ Begin
        ' ResourceVersionKey '+DBKeyType(FConn.owner.platform)+' '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+
        ' TagKey '+DBKeyType(FConn.owner.platform)+' '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+
        ' Display nchar(200) '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+
+       InlineForeignKeySql(FConn, 'VersionTags', 'ResourceVersionKey', 'Versions', 'ResourceVersionKey', 'FK_VerTag_VerKey')+
+       InlineForeignKeySql(FConn, 'VersionTags', 'TagKey', 'Tags', 'TagKey', 'FK_VerTag_TagKey')+
        PrimaryKeyType(FConn.owner.Platform, 'PK_VersionTags', 'ResourceTagKey')+') '+CreateTableInfo(FConn.owner.platform));
   FConn.ExecSQL('Create UNIQUE INDEX SK_VersionTags_ResTag1 ON VersionTags (ResourceVersionKey, TagKey)');
   FConn.ExecSQL('Create UNIQUE INDEX SK_VersionTags_ResTag2 ON VersionTags (TagKey, ResourceVersionKey)');
@@ -592,7 +628,11 @@ Begin
        ' ResourceVersionKey '+DBKeyType(FConn.owner.platform)+' '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+
        ' SortValue nchar(128) '+ColCanBeNull(FConn.owner.platform, True)+', '+#13#10+
        ' Score1 int '+ColCanBeNull(FConn.owner.platform, True)+', '+#13#10+
-       ' Score2 int '+ColCanBeNull(FConn.owner.platform, True)+') '+CreateTableInfo(FConn.owner.platform));
+       ' Score2 int '+ColCanBeNull(FConn.owner.platform, True)+', '+#13#10+
+       InlineForeignKeySql(FConn, 'SearchEntries', 'SearchKey', 'Searches', 'SearchKey', 'FK_Search_Search')+
+       InlineForeignKeySql(FConn, 'SearchEntries', 'ResourceKey', 'Ids', 'ResourceKey', 'FK_Search_ResKey')+
+       InlineForeignKeySql(FConn, 'SearchEntries', 'ResourceVersionKey', 'Versions', 'ResourceVersionKey', 'FK_Search_ResVerKey')+
+       PrimaryKeyType(FConn.owner.Platform, 'PK_Searches', 'SearchKey, ResourceKey')+') '+CreateTableInfo(FConn.owner.platform));
   FConn.ExecSQL('Create UNIQUE INDEX SK_SearchesSearchEntries ON SearchEntries (SearchKey, SortValue, ResourceKey)');
   FConn.ExecSQL('Create INDEX SK_SearchesResourceKey ON SearchEntries (ResourceKey)');
   FConn.ExecSQL(ForeignKeySql(FConn, 'SearchEntries', 'SearchKey', 'Searches', 'SearchKey', 'FK_Search_Search'));
@@ -610,6 +650,9 @@ begin
        ' Operation                  int '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+
        ' Entered '+       DBDateTimeType(FConn.owner.platform)+' '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+
        ' Handled '+       DBDateTimeType(FConn.owner.platform)+' '+ColCanBeNull(FConn.owner.platform, True)+', '+#13#10+
+       InlineForeignKeySql(FConn, 'SubscriptionQueue', 'ResourceKey',        'Ids', 'ResourceKey',             'FK_SubscriptionQ_ResKey')+
+       InlineForeignKeySql(FConn, 'SubscriptionQueue', 'ResourceVersionKey', 'Versions', 'ResourceVersionKey', 'FK_SubscriptionQ_ResVerKey')+
+       InlineForeignKeySql(FConn, 'SubscriptionQueue', 'ResourcePreviousKey','Versions', 'ResourceVersionKey', 'FK_SubscriptionQ_ResPrevKey')+
        PrimaryKeyType(FConn.owner.Platform, 'PK_SubscriptionQueue', 'SubscriptionQueueKey')+') '+CreateTableInfo(FConn.owner.platform));
   FConn.ExecSQL(ForeignKeySql(FConn, 'SubscriptionQueue', 'ResourceKey',        'Ids', 'ResourceKey',             'FK_SubscriptionQ_ResKey'));
   FConn.ExecSQL(ForeignKeySql(FConn, 'SubscriptionQueue', 'ResourceVersionKey', 'Versions', 'ResourceVersionKey', 'FK_SubscriptionQ_ResVerKey'));
@@ -635,6 +678,12 @@ Begin
        ' Concept '+DBKeyType(FConn.owner.platform)+' '+ColCanBeNull(FConn.owner.platform, True)+', '+#13#10+
        ' Extension nchar(5) '+ColCanBeNull(FConn.owner.platform, True)+', '+#13#10+
        ' Xhtml '+DBBlobType(FConn.owner.platform)+' '+ColCanBeNull(FConn.owner.platform, True)+', '+#13#10+
+       InlineForeignKeySql(FConn, 'IndexEntries', 'IndexKey', 'Indexes', 'IndexKey', 'FK_IndexEntry_IndexKey')+
+       InlineForeignKeySql(FConn, 'IndexEntries', 'ResourceKey', 'Ids', 'ResourceKey', 'FK_IndexEntry_ResKey')+
+       InlineForeignKeySql(FConn, 'IndexEntries', 'SpaceKey', 'Spaces', 'SpaceKey', 'FK_IndexEntry_SpaceKey')+
+       InlineForeignKeySql(FConn, 'IndexEntries', 'Target', 'Ids', 'ResourceKey', 'FK_IndexEntry_TargetKey')+
+       InlineForeignKeySql(FConn, 'IndexEntries', 'Concept', 'Concepts', 'ConceptKey', 'FK_IndexEntry_ConceptKey')+
+       InlineForeignKeySql(FConn, 'IndexEntries', 'Parent', 'IndexEntries', 'EntryKey', 'FK_IndexEntry_ParentKey')+
        PrimaryKeyType(FConn.owner.Platform, 'PK_IndexEntries', 'EntryKey')+') '+CreateTableInfo(FConn.owner.platform));
   FConn.ExecSQL(ForeignKeySql(FConn, 'IndexEntries', 'IndexKey', 'Indexes', 'IndexKey', 'FK_IndexEntry_IndexKey'));
   FConn.ExecSQL(ForeignKeySql(FConn, 'IndexEntries', 'ResourceKey', 'Ids', 'ResourceKey', 'FK_IndexEntry_ResKey'));
@@ -675,6 +724,8 @@ begin
        ' ValueSetMemberKey '+DBKeyType(FConn.owner.platform)+' '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+
        ' ValueSetKey '+DBKeyType(FConn.owner.platform)+' '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+
        ' ConceptKey '+DBKeyType(FConn.owner.platform)+' '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+
+       InlineForeignKeySql(FConn, 'ValueSetMembers', 'ValueSetKey', 'ValueSets', 'ValueSetKey', 'FK_ValueSetMembers_ValueSetKey')+
+       InlineForeignKeySql(FConn, 'ValueSetMembers', 'ConceptKey', 'Concepts', 'ConceptKey', 'FK_ValueSetMembers_ConceptKey')+
        PrimaryKeyType(FConn.owner.Platform, 'PK_ValueSetMembers', 'ValueSetMemberKey')+') '+CreateTableInfo(FConn.owner.platform));
   FConn.ExecSQL('Create INDEX SK_ValueSetMembers_Members ON ValueSetMembers (ValueSetKey, ConceptKey)');
   FConn.ExecSQL('Create INDEX SK_ValueSetMembers_Owners ON ValueSetMembers (ConceptKey, ValueSetKey)');
@@ -714,6 +765,7 @@ Begin
        ' Parent       '+DBKeyType(FConn.owner.platform)+' '+ColCanBeNull(FConn.owner.platform, true)+', '+#13#10+
        ' Value        nchar(255) '+                         ColCanBeNull(FConn.owner.platform, true)+', '+#13#10+
        ' SortBy       '+DBKeyType(FConn.owner.platform)+' '+ColCanBeNull(FConn.owner.platform, true)+', '+#13#10+
+       InlineForeignKeySql(FConn, 'UserIndexes', 'UserKey', 'Users', 'UserKey', 'FK_UserIndexes_UserKey')+
        PrimaryKeyType(FConn.owner.Platform, 'PK_UserIndexes', 'UserIndexKey')+') '+CreateTableInfo(FConn.owner.platform));
   FConn.ExecSQL(ForeignKeySql(FConn, 'UserIndexes', 'UserKey', 'Users', 'UserKey', 'FK_UserIndexes_UserKey'));
   FConn.ExecSQL('Create INDEX SK_UserIndexes_IndexNameValue ON UserIndexes (IndexName, Value)');
@@ -937,7 +989,7 @@ begin
       try
         if FConn.owner.platform = kdbMySQL then
           FConn.execsql('ALTER TABLE Ids DROP FOREIGN KEY FK_ResCurrent_VersionKey')
-        else
+        else if FConn.owner.platform = kdbSQLServer then
           FConn.execsql('ALTER TABLE Ids DROP CONSTRAINT FK_ResCurrent_VersionKey');
       except
       end;

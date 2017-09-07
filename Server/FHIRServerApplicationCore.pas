@@ -69,7 +69,7 @@ Uses
   SystemService, SystemSupport, FileSupport, ThreadSupport,
   SnomedImporter, SnomedServices, SnomedExpressions, RxNormServices, UniiServices,
   LoincImporter, LoincServices,
-  KDBManager, KDBOdbc, KDBDialects,
+  KDBManager, KDBOdbc, KDBDialects, KDBSQLite,
   TerminologyServer,
   FHIRStorageService,
   FHIRRestServer, DBInstaller, FHIRConstants, FHIRNativeStorage, FHIRBase, FhirPath,
@@ -97,7 +97,7 @@ Type
     FInstaller : boolean;
     Fcallback: TInstallerCallback;
 
-    function connectToDB(name : String; max, timeout : integer; driver, server, database, username, password : String) : TKDBManager;
+    function connectToDB(name : String; max, timeout : integer; driver, server, database, username, password : String; forCreate : boolean) : TKDBManager;
     procedure ConnectToDatabase(noCheck : boolean = false);
     procedure LoadTerminologies;
     procedure InitialiseRestServer;
@@ -362,6 +362,8 @@ begin
       FIni.ReadString(voMaybeVersioned, 'database', 'server', ''), dbn,
       FIni.ReadString(voMaybeVersioned, 'database', 'username', ''), FIni.ReadString(voMaybeVersioned, 'database', 'password', ''));
   end
+  else if FIni.ReadString(voMaybeVersioned, 'database', 'type', '') = 'SQLite' then
+    FDb := TKDBSQLiteManager.create('fhir', dbn, noCheck)
   else
   begin
     logt('Database not configured');
@@ -404,9 +406,12 @@ end;
 
 
 
-function TFHIRService.connectToDB(name: String; max, timeout: integer; driver, server, database, username, password: String): TKDBManager;
+function TFHIRService.connectToDB(name: String; max, timeout: integer; driver, server, database, username, password: String; forCreate : boolean): TKDBManager;
 begin
-  result := TKDBOdbcManager.create(name, max, timeout, driver, server, database, username, password);
+  if driver = 'SQLite' then
+    result := TKDBSQLiteManager.create(name, database, forCreate)
+  else
+    result := TKDBOdbcManager.create(name, max, timeout, driver, server, database, username, password);
 end;
 
 procedure TFHIRService.cb(i: integer; s: WideString);
@@ -657,7 +662,7 @@ begin
 
 
   if FDb = nil then
-    ConnectToDatabase;
+    ConnectToDatabase(true);
   logt('mount database');
   scim := TSCIMServer.Create(FDB.Link, salt, FIni.ReadString(voVersioningNotApplicable, 'web', 'host', ''), FIni.ReadString(voVersioningNotApplicable, 'scim', 'default-rights', ''), true);
   try
