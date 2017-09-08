@@ -703,6 +703,7 @@ type
     function GetDBPlatform: TKDBPlatform; Virtual; Abstract;
     function GetDBProvider: TKDBProvider; Virtual; Abstract;
     function GetDBDetails: String; Virtual; Abstract;
+    function GetDriver: String; Virtual; Abstract;
     procedure init; virtual;
   Public
     constructor Create(AName : String; AMaxConnCount: Integer); overload;
@@ -714,7 +715,7 @@ type
     procedure ExecSQL(ASql, AName : String);
     function GetConnection(const AUsage: String): TKDBConnection;
     procedure SaveSettings(ASettings : TSettingsAdapter); virtual; abstract;
-    
+
     property MaxConnCount : Integer Read FMaxConnCount write SetMaxConnCount;
     property CurrConnCount: Integer Read GetCurrentCount;
     property CurrUseCount : Integer read GetCurrentUse;
@@ -723,6 +724,7 @@ type
     property Platform: TKDBPlatform read GetDBPlatform;
     property Provider : TKDBProvider read GetDBProvider;
     property DBDetails: String read GetDBDetails;
+    Property Driver : String read GetDriver;
     function GetConnSummary : String;
     property Tag : integer read FTag write FTag;
 

@@ -114,6 +114,7 @@ type
     function ConnectionFactory: TKDBConnection; Override;
     function GetDBPlatform: TKDBPlatform; Override;
     function GetDBDetails: String; Override;
+    function GetDriver: String; Override;
     procedure init; override;
   public
     constructor create(AName : String; AMaxConnCount, ATimeout: Integer; ADriver, AServer, ADatabase, AUsername, APassword: String); overload;
@@ -863,6 +864,11 @@ begin
   result := kdbpODBC;
 end;
 
+
+function TKDBOdbcManager.GetDriver: String;
+begin
+  result := FDriver;
+end;
 
 destructor TKDBOdbcManager.Destroy;
 begin

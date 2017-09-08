@@ -101,6 +101,7 @@ type
     function ConnectionFactory: TKDBConnection; Override;
     function GetDBPlatform: TKDBPlatform; Override;
     function GetDBDetails: String; Override;
+    function GetDriver: String; Override;
     procedure init; override;
   public
     constructor create(AName : String; Filename : String; autoCreate : boolean); overload;
@@ -149,6 +150,11 @@ end;
 function TKDBSQLiteManager.GetDBProvider: TKDBProvider;
 begin
   result := kdbpSQLite;
+end;
+
+function TKDBSQLiteManager.GetDriver: String;
+begin
+  result := 'SQLite';
 end;
 
 procedure TKDBSQLiteManager.init;

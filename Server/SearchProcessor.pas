@@ -64,7 +64,6 @@ type
     FStrict : boolean;
     FConnection: TKDBConnection;
     FWarnings : TFhirOperationOutcomeIssueList;
-    FNoOrder: boolean;
 
     function order(s : String) : String;
     procedure warning(issue : TFhirIssueTypeEnum; location, message : String);
@@ -115,7 +114,6 @@ type
     property session : TFhirSession read FSession write SetSession;
     property countAllowed : boolean read FcountAllowed write FcountAllowed;
     property Connection : TKDBConnection read FConnection write SetConnection;
-    property noOrder : boolean read FNoOrder write FNoOrder;
 
     // outbound
     property link_ : String read FLink write FLink;
@@ -1187,10 +1185,10 @@ end;
 
 function TSearchProcessor.order(s: String): String;
 begin
-//  if noOrder then
-    result := ''
-//  else
-//    result := s;
+  if FConnection.Owner.Driver.contains('MariaDB') then
+    result := s
+  else
+    result := '';
 end;
 
 function TSearchProcessor.BuildFilter(filter: TFSFilter; parent: char; issuer: TFSCharIssuer; types : TArray<String>): String;
