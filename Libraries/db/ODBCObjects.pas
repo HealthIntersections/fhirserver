@@ -2876,13 +2876,13 @@ begin
   else
   begin
     {$IFDEF MACOS}
-    getMem(result, length(s) * 4);
-    fillChar(result^, length(s)*4, 0);
-    for i := 1 to length(s) do
-      result[(i-1) * 2] := s[i];
+    getMem(result, (length(s)+1) * 4);
+    fillChar(result^, (length(s)+1)*4, 0);
+//    for i := 1 to length(s) do
+//      result[(i-1) * 2] := s[i];
     {$ELSE}
-    getMem(result, length(s) * 2);
-    fillChar(result^, length(s)*2, 0);
+    getMem(result, (length(s) + 1) * 2);
+    fillChar(result^, (length(s)+1)*2, 0);
     move(s[1], result^, length(s) * 2);
     {$ENDIF}
   end;
@@ -5872,7 +5872,7 @@ End;
 
 Procedure TOdbcStatement.Execute;
 Var
-  ParsedSQL: String;
+  ParsedSQL: PChar;
   RetCode: SQLRETURN;
 Begin
   Log(1, 'TOdbcStatement.Execute');
@@ -5889,22 +5889,25 @@ Begin
 
   FExecuted:= False;
   FAborted:= False;
-  If FPrepared Then
+  If not FPrepared Then
   Begin
-    { Reset Statement Handle }
-    If Hdbc.CursorLib = SQL_CUR_USE_DRIVER Then
-      CloseCursor;
-
     { Execute SQL Statement }
     FRetCode:= SQLExecute(FHstmt);
   End
   Else
   Begin
-    { Parse Parameter SQL }
-    ParsedSQL:= ParseSQL;
+    { Reset Statement Handle }
+    If Hdbc.CursorLib = SQL_CUR_USE_DRIVER Then
+      CloseCursor;
 
-    { Execute SQL Statement }
-    FRetCode:= SQLExecDirect(FHstmt, Pointer(PChar(ParsedSQL)), SQL_NTS);
+    { Parse Parameter SQL }
+    ParsedSQL := odbcPChar(ParseSQL);
+    try
+      { Execute SQL Statement }
+      FRetCode:= SQLExecDirect(FHstmt, ParsedSQL, SQL_NTS);
+    finally
+      FreeMem(ParsedSQL);
+    end;
   End;
   If FAborted Then
   Begin
