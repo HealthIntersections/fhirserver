@@ -871,7 +871,7 @@ object CodeSystemEditorFrame: TCodeSystemEditorFrame
               OnDblClick = btnEditConceptClick
               OnChange = tvConceptTreeChange
               Viewport.Width = 691.000000000000000000
-              Viewport.Height = 701.000000000000000000
+              Viewport.Height = 722.000000000000000000
             end
           end
           object TabItem2: TTabItem
@@ -894,6 +894,7 @@ object CodeSystemEditorFrame: TCodeSystemEditorFrame
               Size.Width = 691.000000000000000000
               Size.Height = 701.000000000000000000
               Size.PlatformDefault = False
+              TextSettings.VertAlign = Leading
               TabOrder = 0
               Options = [Editing, ColumnResize, ColumnMove, ColLines, RowLines, AlwaysShowSelection, Tabs, Header, HeaderClick, AutoDisplacement]
               OnSelChanged = grdConceptsSelChanged

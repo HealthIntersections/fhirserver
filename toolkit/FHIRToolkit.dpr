@@ -164,13 +164,18 @@ uses
   MemoEditorDialog in 'MemoEditorDialog.pas' {MemoEditorForm},
   FHIRClientSettings in '..\reference-platform\client\FHIRClientSettings.pas',
   EditRegisteredServerDialogFMX in '..\reference-platform\client\EditRegisteredServerDialogFMX.pas' {EditRegisteredServerForm},
-  ToolkitSettings in 'ToolkitSettings.pas';
+  ToolkitSettings in 'ToolkitSettings.pas',
+  CodeSystemEditor in 'CodeSystemEditor.pas' {CodeSystemEditorFrame: TFrame},
+  CodeSystemConceptDialog in 'CodeSystemConceptDialog.pas' {CodeSystemConceptForm},
+  ResourceEditingSupport in 'ResourceEditingSupport.pas',
+  CSVSupport in '..\reference-platform\support\CSVSupport.pas',
+  ToolKitUtilities in 'ToolKitUtilities.pas',
+  UpgradeNeededDialog in 'UpgradeNeededDialog.pas' {UpgradeNeededForm};
 
 {$R *.res}
 
 begin
   Application.Initialize;
   Application.CreateForm(TMasterToolsForm, MasterToolsForm);
-  Application.CreateForm(TEditRegisteredServerForm, EditRegisteredServerForm);
   Application.Run;
 end.

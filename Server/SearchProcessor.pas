@@ -64,7 +64,9 @@ type
     FStrict : boolean;
     FConnection: TKDBConnection;
     FWarnings : TFhirOperationOutcomeIssueList;
+    FNoOrder: boolean;
 
+    function order(s : String) : String;
     procedure warning(issue : TFhirIssueTypeEnum; location, message : String);
     function processValueSetMembership(code, vs : String) : String;
     function BuildFilter(filter : TFSFilter; parent : char; issuer : TFSCharIssuer; types : TArray<String>) : String;
@@ -113,6 +115,7 @@ type
     property session : TFhirSession read FSession write SetSession;
     property countAllowed : boolean read FcountAllowed write FcountAllowed;
     property Connection : TKDBConnection read FConnection write SetConnection;
+    property noOrder : boolean read FNoOrder write FNoOrder;
 
     // outbound
     property link_ : String read FLink write FLink;
@@ -1063,7 +1066,8 @@ begin
   if result <> '' then
   begin
     if not nested and (name <> 'tag') then
-      result := 'Ids.ResourceKey in (select ResourceKey from IndexEntries where Flag <> 2 and '+result+'order by resourcekey DESC)'; // This last ORDER BY is to workaround MariaDB Issue where a subquery in an IN clause may not give the results if there is an ORDER BY.
+      result := 'Ids.ResourceKey in (select ResourceKey from IndexEntries where Flag <> 2 and '+result+order(' order by resourcekey DESC')+')';
+      // This last ORDER BY is to workaround MariaDB Issue where a subquery in an IN clause may not give the results if there is an ORDER BY.
     if not bfirst then
       result := ' and '+result;
   end;
@@ -1179,6 +1183,14 @@ begin
   result := value.StartsWith(subst);
   if result then
     value := value.Substring(subst.Length);
+end;
+
+function TSearchProcessor.order(s: String): String;
+begin
+//  if noOrder then
+    result := ''
+//  else
+//    result := s;
 end;
 
 function TSearchProcessor.BuildFilter(filter: TFSFilter; parent: char; issuer: TFSCharIssuer; types : TArray<String>): String;

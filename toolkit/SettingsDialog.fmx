@@ -44,14 +44,37 @@ object SettingsForm: TSettingsForm
     Size.Width = 449.000000000000000000
     Size.Height = 203.000000000000000000
     Size.PlatformDefault = False
-    TabIndex = 1
+    TabIndex = 0
     TabOrder = 1
     TabPosition = PlatformDefault
     Sizes = (
       449s
       177s
       449s
+      177s
+      449s
       177s)
+    object TabItem3: TTabItem
+      CustomIcon = <
+        item
+        end>
+      IsSelected = True
+      Size.Width = 107.000000000000000000
+      Size.Height = 26.000000000000000000
+      Size.PlatformDefault = False
+      StyleLookup = ''
+      TabOrder = 0
+      Text = 'General Settings'
+      object cbCheckUpgrades: TCheckBox
+        Position.X = 32.000000000000000000
+        Position.Y = 30.000000000000000000
+        Size.Width = 385.000000000000000000
+        Size.Height = 19.000000000000000000
+        Size.PlatformDefault = False
+        TabOrder = 0
+        Text = 'Check for Upgrades when Starting'
+      end
+    end
     object TabItem1: TTabItem
       CustomIcon = <
         item
@@ -125,7 +148,7 @@ object SettingsForm: TSettingsForm
       CustomIcon = <
         item
         end>
-      IsSelected = True
+      IsSelected = False
       Size.Width = 127.000000000000000000
       Size.Height = 26.000000000000000000
       Size.PlatformDefault = False
@@ -175,8 +198,8 @@ object SettingsForm: TSettingsForm
         DefaultItemStyles.ItemStyle = ''
         DefaultItemStyles.GroupHeaderStyle = ''
         DefaultItemStyles.GroupFooterStyle = ''
-        Viewport.Width = 429.000000000000000000
-        Viewport.Height = 117.000000000000000000
+        Viewport.Width = 433.000000000000000000
+        Viewport.Height = 121.000000000000000000
       end
       object btnEdit: TButton
         Position.X = 96.000000000000000000

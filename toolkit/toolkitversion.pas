@@ -1,4 +1,4 @@
-unit toolkitversion;
+unit ToolKitVersion;
 {
 Copyright (c) 2011+, HL7 and Health Intersections Pty Ltd (http://www.healthintersections.com.au)
 All rights reserved.
@@ -32,7 +32,7 @@ interface
 {
 [toolkit-settings]
 } const
-BuildCount=20
+BuildCount=22
 ;
 
 implementation

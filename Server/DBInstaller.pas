@@ -632,7 +632,7 @@ Begin
        InlineForeignKeySql(FConn, 'SearchEntries', 'SearchKey', 'Searches', 'SearchKey', 'FK_Search_Search')+
        InlineForeignKeySql(FConn, 'SearchEntries', 'ResourceKey', 'Ids', 'ResourceKey', 'FK_Search_ResKey')+
        InlineForeignKeySql(FConn, 'SearchEntries', 'ResourceVersionKey', 'Versions', 'ResourceVersionKey', 'FK_Search_ResVerKey')+
-       PrimaryKeyType(FConn.owner.Platform, 'PK_Searches', 'SearchKey, ResourceKey')+') '+CreateTableInfo(FConn.owner.platform));
+       PrimaryKeyType(FConn.owner.Platform, 'PK_SearchEntries', 'SearchKey, ResourceKey')+') '+CreateTableInfo(FConn.owner.platform));
   FConn.ExecSQL('Create UNIQUE INDEX SK_SearchesSearchEntries ON SearchEntries (SearchKey, SortValue, ResourceKey)');
   FConn.ExecSQL('Create INDEX SK_SearchesResourceKey ON SearchEntries (ResourceKey)');
   FConn.ExecSQL(ForeignKeySql(FConn, 'SearchEntries', 'SearchKey', 'Searches', 'SearchKey', 'FK_Search_Search'));

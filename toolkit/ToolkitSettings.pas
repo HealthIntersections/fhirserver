@@ -11,6 +11,7 @@ uses
 const
   DEF_TIMEOUT = 10;
   DEF_SHOWHELP = false;
+  DEF_CHECKUPGRADES = true;
 
 type
   TFHIRToolkitSettings = class (TFHIRClientSettings)
@@ -21,6 +22,8 @@ type
     function GetProxy: String;
     function GetShowHelp: boolean;
     procedure SetShowHelp(const Value: boolean);
+    function GetCheckForUpgradesOnStart: boolean;
+    procedure SetCheckForUpgradesOnStart(const Value: boolean);
   protected
     procedure initSettings; virtual;
   public
@@ -29,6 +32,7 @@ type
     property timeout: integer read GetTimeout write SetTimeout;
     property Proxy : String read GetProxy write SetProxy;
     property ShowHelp : boolean read GetShowHelp write SetShowHelp;
+    property CheckForUpgradesOnStart : boolean read GetCheckForUpgradesOnStart write SetCheckForUpgradesOnStart;
 
     procedure storeValues(name : String; values : TStrings); overload;
     procedure storeValue(section, name, value : String); overload;
@@ -44,6 +48,11 @@ type
 implementation
 
 { TFHIRToolkitSettings }
+
+function TFHIRToolkitSettings.GetCheckForUpgradesOnStart: boolean;
+begin
+  result := StrToBoolDef(json.vStr['CheckForUpgrades'], DEF_CHECKUPGRADES);
+end;
 
 function TFHIRToolkitSettings.GetProxy: String;
 var
@@ -132,29 +141,46 @@ begin
   result := TFHIRToolkitSettings(inherited Link);
 end;
 
+procedure TFHIRToolkitSettings.SetCheckForUpgradesOnStart(const Value: boolean);
+begin
+  if value <> GetCheckForUpgradesOnStart then
+  begin
+    json.vStr['CheckForUpgrades'] := BoolToStr(value);
+    Save;
+  end;
+end;
+
 procedure TFHIRToolkitSettings.SetProxy(const Value: String);
 var
   o : TJsonObject;
 begin
-  o := json.forceObj['Client'];
-  o.vStr['Proxy'] := value;
-  Save;
+  if value <> GetProxy then
+  begin
+    o := json.forceObj['Client'];
+    o.vStr['Proxy'] := value;
+    Save;
+  end;
 end;
 
 procedure TFHIRToolkitSettings.SetShowHelp(const Value: boolean);
 begin
-  json.vStr['ShowHelp'] := BoolToStr(value);
-  Save;
-
+  if value <> GetShowHelp then
+  begin
+    json.vStr['ShowHelp'] := BoolToStr(value);
+    Save;
+  end;
 end;
 
 procedure TFHIRToolkitSettings.SetTimeout(const Value: integer);
 var
   o : TJsonObject;
 begin
-  o := json.forceObj['Client'];
-  o.vStr['Timeout'] := inttostr(value);
-  Save;
+  if value <> GetTimeout then
+  begin
+    o := json.forceObj['Client'];
+    o.vStr['Timeout'] := inttostr(value);
+    Save;
+  end;
 end;
 
 procedure TFHIRToolkitSettings.StoreValue(section, name: String; value: boolean);

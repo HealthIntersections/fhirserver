@@ -1677,16 +1677,13 @@ Begin
                     response.ResponseNo := 200;
                     response.contentType := 'text/html; charset=UTF-8';
                     response.FreeContentStream := true;
-                    response.ContentStream :=
-                      StringToUTF8Stream
-                      (BuildFhirHomePage(oRequest.Compartments, lang, sHost,
-                      path, oRequest.Session, secure));
+                    response.ContentStream := StringToUTF8Stream(
+                       BuildFhirHomePage(oRequest.Compartments, lang, sHost, path, oRequest.Session, secure));
                   end
                   else
                   begin
                     response.ResponseNo := 404;
-                    response.ContentText := 'Document ' + request.Document +
-                      ' not found';
+                    response.ContentText := 'Document ' + request.Document + ' not found';
                   end;
                 end
                 else if (oRequest.CommandType = fcmdUpload) and

@@ -3,6 +3,27 @@
 	<channel>
 		<title>FHIR Toolkit Release history</title>
 		<link>http://www.healthintersections.com.au/FhirServer</link>
+		<item><title>FHIR Toolkit release 0.0.23 2017-09-08</title>
+			<link>http://www.healthintersections.com.au/FhirServer/fhir-toolkit-install-0.0.23.exe</link>
+			<mlink>http://www.healthintersections.com.au/FhirServer/fhir-toolkit-osx-0.0.23.zip</mlink>
+			<description>2017-09-08 (v0.0.23): code system editor rendering fix</description>
+			<ptitle>0.0.23, 2017-09-08</ptitle>
+			<comment>code system editor rendering fix</comment>
+		</item>
+<item><title>FHIR Toolkit release 0.0.22 2017-09-07</title>
+			<link>http://www.healthintersections.com.au/FhirServer/fhir-toolkit-install-0.0.22.exe</link>
+			<mlink>http://www.healthintersections.com.au/FhirServer/fhir-toolkit-osx-0.0.22.zip</mlink>
+			<description>2017-09-07 (v0.0.22): code system editor</description>
+			<ptitle>0.0.22, 2017-09-07</ptitle>
+			<comment>code system editor</comment>
+		</item>
+		<item><title>FHIR Toolkit release 0.0.21 2017-09-05</title>
+			<link>http://www.healthintersections.com.au/FhirServer/fhir-toolkit-install-0.0.21.exe</link>
+			<mlink>http://www.healthintersections.com.au/FhirServer/fhir-toolkit-osx-0.0.21.zip</mlink>
+			<description>2017-09-05 (v0.0.21): code system editor</description>
+			<ptitle>0.0.21, 2017-09-05</ptitle>
+			<comment>code system editor</comment>
+		</item>
 		<item><title>FHIR Toolkit release 0.0.20 2017-09-02</title>
 			<link>http://www.healthintersections.com.au/FhirServer/fhir-toolkit-install-0.0.20.exe</link>
 			<mlink>http://www.healthintersections.com.au/FhirServer/fhir-toolkit-osx-0.0.20.zip</mlink>
@@ -10,7 +31,7 @@
 			<ptitle>0.0.20, 2017-09-02</ptitle>
 			<comment>fix images on buttons</comment>
 		</item>
-<item><title>FHIR Toolkit release 0.0.19 2/09/2017 8:40:42 AM</title>
+		<item><title>FHIR Toolkit release 0.0.19 2/09/2017 8:40:42 AM</title>
 			<link>http://www.healthintersections.com.au/FhirServer/fhir-toolkit-install-0.0.19.exe</link>
 			<mlink>http://www.healthintersections.com.au/FhirServer/fhir-toolkit-osx-0.0.19.zip</mlink>
 			<description>2/09/2017 8:40:42 AM (v0.0.19): fix images on buttons</description>

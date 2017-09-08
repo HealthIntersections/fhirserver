@@ -601,7 +601,7 @@ type
     procedure checkDefinitions;
 
     procedure DoExecuteOperation(request: TFHIRRequest; response: TFHIRResponse; bWantSession: Boolean);
-    function DoExecuteSearch(typekey: integer; compartmentId, compartments: String; params: TParseMap; conn: TKDBConnection): String;
+    function DoExecuteSearch(typekey: integer; compartmentId, compartments: String; params: TParseMap; conn: TKDBConnection; noOrder : boolean): String;
     function getTypeForKey(key: integer): String;
     procedure doRegisterTag(tag: TFHIRTag; conn: TKDBConnection);
     procedure checkRegisterTag(tag: TFHIRTag; conn: TKDBConnection);
@@ -8776,7 +8776,7 @@ begin
   end;
 end;
 
-function TFHIRNativeStorageService.DoExecuteSearch(typekey: integer; compartmentId, compartments: String; params: TParseMap; conn: TKDBConnection): String;
+function TFHIRNativeStorageService.DoExecuteSearch(typekey: integer; compartmentId, compartments: String; params: TParseMap; conn: TKDBConnection; noOrder : boolean): String;
 var
   sp: TSearchProcessor;
 begin
@@ -8792,6 +8792,7 @@ begin
     sp.indexes := ServerContext.Indexes.Link;
     sp.countAllowed := false;
     sp.Connection := conn.link;
+    sp.noOrder := noOrder;
     sp.build;
     result := sp.filter;
   finally
