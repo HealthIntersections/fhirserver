@@ -154,6 +154,7 @@ end;
 procedure TKDBSQLiteManager.init;
 begin
   loadSQLite;
+  assert(sqlite3_threadsafe>0, 'SQLite library is not threadsafe');
   if not FAutoCreate then
     if not FileExists(FFIlename) then
       raise Exception.Create('SQLite Database '+FFIlename+' not found');
@@ -176,6 +177,7 @@ constructor TKDBSQLiteConnection.create(AOwner: TKDBManager; Filename : String; 
 begin
   inherited create(AOwner);
   FConnection := TSQLite3Database.Create;
+  FConnection.Delay := 2000;
   if autoCreate then
     FConnection.Open(Filename, SQLITE_OPEN_READWRITE or SQLITE_OPEN_CREATE)
   else

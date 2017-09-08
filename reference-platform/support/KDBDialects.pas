@@ -793,7 +793,7 @@ var
   LSelectSQLPrefix : String;
   LSelectSQLSuffix : String;
 begin
-  if ADBPlatform = kdbmysql Then
+  if ADBPlatform in [kdbmysql, kdbSQLite] Then
   Begin
     result := aSQL + ' limit '+inttostr(aValue);
   End

@@ -36,7 +36,9 @@ unit SQLite3Wrap;
 interface
 
 uses
-  SysUtils, Classes, SQLite3;
+  SysUtils, Classes,
+  SQLite3,
+  DateSupport;
 
 type
   ESQLite3Error = class(Exception);
@@ -52,8 +54,11 @@ type
     FStatementList: TList;
     FBlobHandlerList: TList;
     FTransactionOpen: Boolean;
+    FDelay: integer;
+    FStartDelay : TDateTime;
     procedure Check(const ErrCode: Integer);
     procedure CheckHandle;
+    function busy(count: Integer): Integer;
   public
     constructor Create;
     destructor Destroy; override;
@@ -73,6 +78,7 @@ type
 
     property Handle: PSQLite3 read FHandle;
     property TransactionOpen: Boolean read FTransactionOpen;
+    property Delay : integer read FDelay write FDelay;
   end;
 
   { TSQLite3Statement class }
@@ -169,6 +175,15 @@ begin
   Result := TSQLite3BlobHandler.Create(Self, Table, Column, RowID, WriteAccess);
 end;
 
+function TSQLite3Database.busy(count: Integer): Integer;
+begin
+  result := 1;
+  if FStartDelay = 0 then
+    FStartDelay := now
+  else if now - FStartDelay > FDelay * DATETIME_MILLISECOND_ONE then
+    result := 0;
+end;
+
 procedure TSQLite3Database.Check(const ErrCode: Integer);
 begin
   if ErrCode <> SQLITE_OK then
@@ -238,6 +253,11 @@ begin
   Result := sqlite3_last_insert_rowid(FHandle);
 end;
 
+function whenBusy(ptr: Pointer; count: Integer): Integer; cdecl;
+begin
+  result := TSQLite3Database(ptr).busy(count);
+end;
+
 procedure TSQLite3Database.Open(const FileName: WideString; Flags: Integer);
 begin
   Close;
@@ -245,6 +265,7 @@ begin
     Check(sqlite3_open(PAnsiChar(StrToUTF8(FileName)), FHandle))
   else
     Check(sqlite3_open_v2(PAnsiChar(StrToUTF8(FileName)), FHandle, Flags, nil));
+  sqlite3_busy_handler(FHandle, whenBusy, self);
 end;
 
 function TSQLite3Database.Prepare(const SQL: WideString): TSQLite3Statement;
@@ -386,6 +407,7 @@ end;
 destructor TSQLite3Statement.Destroy;
 begin
   FOwnerDatabase.FStatementList.Remove(Self);
+  FOwnerDatabase.FStartDelay := 0;
   sqlite3_finalize(FHandle);
   inherited;
 end;
