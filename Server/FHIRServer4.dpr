@@ -311,7 +311,11 @@ uses
   FHIRIndexBase in '..\reference-platform\support\FHIRIndexBase.pas',
   KDBOdbc in '..\Libraries\db\KDBOdbc.pas',
   ODBCObjects in '..\Libraries\db\ODBCObjects.pas',
-  OdbcHeaders in '..\Libraries\db\OdbcHeaders.pas';
+  OdbcHeaders in '..\Libraries\db\OdbcHeaders.pas',
+  SQLite3 in '..\Libraries\db\SQLite3.pas',
+  SQLite3Utils in '..\Libraries\db\SQLite3Utils.pas',
+  SQLite3Wrap in '..\Libraries\db\SQLite3Wrap.pas',
+  KDBSQLite in '..\Libraries\db\KDBSQLite.pas';
 
 begin
   logfile := IncludeTrailingPathDelimiter(SystemTemp)+'fhirserver.log';

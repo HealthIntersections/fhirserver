@@ -48,7 +48,7 @@ uses
   TerminologyServerStore, SnomedExpressions;
 
 Type
-  TDataBaseConnectionEvent = function (name : String; max, timeout : integer; driver, server, database, username, password : String) : TKDBManager of object;
+  TDataBaseConnectionEvent = function (name : String; max, timeout : integer; driver, server, database, username, password : String; forCreate : boolean) : TKDBManager of object;
 
   TTerminologyServer = class (TTerminologyServerStore)
   private
@@ -169,14 +169,14 @@ begin
     logt('Connect to RxNorm');
     RxNorm := TRxNormServices.Create(FOnConnectDB('rxnorm', 100, 0, Ini.ReadString(voVersioningNotApplicable, 'database', 'driver', ''),
         Ini.ReadString(voVersioningNotApplicable, 'database', 'server', ''), Ini.ReadString(voVersioningNotApplicable, 'RxNorm', 'database', ''),
-        Ini.ReadString(voVersioningNotApplicable, 'database', 'username', ''), Ini.ReadString(voVersioningNotApplicable, 'database', 'password', '')));
+        Ini.ReadString(voVersioningNotApplicable, 'database', 'username', ''), Ini.ReadString(voVersioningNotApplicable, 'database', 'password', ''), false));
   end;
   if ini.ReadString(voVersioningNotApplicable, 'NciMeta', 'database', '') <> '' then
   begin
     logt('Connect to NciMeta');
     NciMeta := TNciMetaServices.Create(FOnConnectDB('ncimeta', 100, 0, Ini.ReadString(voVersioningNotApplicable, 'database', 'driver', ''),
         Ini.ReadString(voVersioningNotApplicable, 'database', 'server', ''), Ini.ReadString(voVersioningNotApplicable, 'NciMeta', 'database', ''),
-        Ini.ReadString(voVersioningNotApplicable, 'database', 'username', ''), Ini.ReadString(voVersioningNotApplicable, 'database', 'password', '')));
+        Ini.ReadString(voVersioningNotApplicable, 'database', 'username', ''), Ini.ReadString(voVersioningNotApplicable, 'database', 'password', ''), false));
   end;
   fn := ini.ReadString(voVersioningNotApplicable, 'snomed', 'cache', '');
   if fn <> '' then

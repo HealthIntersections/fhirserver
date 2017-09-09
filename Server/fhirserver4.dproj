@@ -373,6 +373,10 @@
         <DCCReference Include="..\Libraries\db\KDBOdbc.pas"/>
         <DCCReference Include="..\Libraries\db\ODBCObjects.pas"/>
         <DCCReference Include="..\Libraries\db\OdbcHeaders.pas"/>
+        <DCCReference Include="..\Libraries\db\SQLite3.pas"/>
+        <DCCReference Include="..\Libraries\db\SQLite3Utils.pas"/>
+        <DCCReference Include="..\Libraries\db\SQLite3Wrap.pas"/>
+        <DCCReference Include="..\Libraries\db\KDBSQLite.pas"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>

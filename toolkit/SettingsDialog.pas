@@ -57,6 +57,8 @@ type
     btnDelete: TButton;
     lbServers: TListBox;
     btnEdit: TButton;
+    TabItem3: TTabItem;
+    cbCheckUpgrades: TCheckBox;
     procedure FormShow(Sender: TObject);
     procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
@@ -167,6 +169,7 @@ begin
   begin
     FSettings.Proxy := edtProxy.Text;
     FSettings.timeout := trunc(edtTimeout.Value);
+    FSettings.CheckForUpgradesOnStart := cbCheckUpgrades.IsChecked;
   end;
 end;
 
@@ -180,6 +183,7 @@ begin
   TabControl1.ActiveTab := TabItem1;
   edtProxy.Text := FSettings.Proxy;
   edtTimeout.Value := FSettings.timeout;
+  cbCheckUpgrades.IsChecked := FSettings.CheckForUpgradesOnStart;
   FSettings.ListServers('Terminology', lbServers.Items);
   lbServers.ItemIndex := 0;
   lbServersClick(nil);

@@ -39,7 +39,8 @@ uses
   FHIRContext, FHIRProfileUtilities,
   SmartOnFHIRUtilities, EditRegisteredServerDialogFMX, OSXUIUtils,
   ToolkitSettings, ServerForm, CapabilityStatementEditor, BaseResourceFrame, BaseFrame, SourceViewer, ListSelector,
-  ValueSetEditor, HelpContexts, ProcessForm, SettingsDialog, AboutDialog, ToolKitVersion, CodeSystemEditor;
+  ValueSetEditor, HelpContexts, ProcessForm, SettingsDialog, AboutDialog, ToolKitVersion, CodeSystemEditor,
+  ToolKitUtilities, UpgradeNeededDialog;
 
 type
   TMasterToolsForm = class(TForm)
@@ -96,6 +97,8 @@ type
     mnuHelpAbout: TMenuItem;
     btnCopy: TButton;
     btnEditServer: TButton;
+    mnuCheckVersion: TMenuItem;
+    MenuItem5: TMenuItem;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure lbServersClick(Sender: TObject);
@@ -121,6 +124,7 @@ type
     procedure mnuHelpAboutClick(Sender: TObject);
     procedure btnCopyClick(Sender: TObject);
     procedure btnEditServerClick(Sender: TObject);
+    procedure mnuCheckVersionClick(Sender: TObject);
   private
     { Private declarations }
     FSettings : TFHIRToolkitSettings;
@@ -129,6 +133,8 @@ type
     FIndexes : TFhirIndexList;
     FContext : TBaseWorkerContext;
     FIsStopped : boolean;
+    UpgradeOnClose : boolean;
+    FUpgradeChecked : boolean;
 
     procedure saveFiles;
     procedure openResourceFromFile(filename : String; res : TFHIRResource; format : TFHIRFormat; frameClass : TBaseResourceFrameClass);
@@ -146,6 +152,7 @@ type
     function GetStopped: boolean;
     procedure DoIdle(out stop : boolean);
     procedure DoOpenURL(url : String);
+    procedure checkVersion(reportIfCurrent: boolean);
   public
     procedure dowork(Sender : TObject; opName : String; canCancel : boolean; proc : TWorkProc);
     procedure threadMonitorProc(sender : TFhirClient; var stop : boolean);
@@ -339,6 +346,8 @@ begin
           openResourceFromFile(odFile.Filename, res, format, TCapabilityStatementEditorFrame)
         else if res is TFhirValueSet then
           openResourceFromFile(odFile.Filename, res, format, TValueSetEditorFrame)
+        else if res is TFhirCodeSystem then
+          openResourceFromFile(odFile.Filename, res, format, TCodeSystemEditorFrame)
         else
           MessageDlg('Unsupported Resource Type: '+res.fhirType, TMsgDlgType.mtError, [TMsgDlgBtn.mbOK], 0);
       finally
@@ -658,6 +667,11 @@ begin
         FContext.LoadFromFile(IncludeTrailingPathDelimiter(ExtractFilePath(ParamStr(0)))+'profiles-types.xml');
         FContext.LoadFromFile(IncludeTrailingPathDelimiter(ExtractFilePath(ParamStr(0)))+'profiles-resources.xml');
       end);
+  if not FUpgradeChecked and FSettings.CheckForUpgradesOnStart then
+  begin
+    FUpgradeChecked := true;
+    checkVersion(false);
+  end;
 end;
 
 procedure TMasterToolsForm.FormCloseQuery(Sender: TObject; var CanClose: Boolean);
@@ -717,6 +731,8 @@ begin
 end;
 
 procedure TMasterToolsForm.FormDestroy(Sender: TObject);
+var
+  newVersion : String;
 begin
   saveFiles;
   try
@@ -730,6 +746,15 @@ begin
   FSettings.Free;
   FIndexes.Free;
   FContext.Free;
+  if UpgradeOnClose then
+  begin
+    doWork(self, 'Checking Version', true,
+    procedure
+    begin
+      newVersion := checkUpgrade;
+    end);
+    doUpgrade(newVersion);
+  end;
 end;
 
 function TMasterToolsForm.frameForResource(res: TFhirResource): TBaseResourceFrameClass;
@@ -756,6 +781,43 @@ begin
   btnConnect.Enabled := lbServers.ItemIndex >= 0;
   btnRemoveServer.Enabled := lbServers.ItemIndex >= 0;
   btnEditServer.Enabled := lbServers.ItemIndex >= 0;
+end;
+
+procedure TMasterToolsForm.mnuCheckVersionClick(Sender: TObject);
+begin
+  checkVersion(true);
+end;
+
+procedure TMasterToolsForm.checkVersion(reportIfCurrent : boolean);
+var
+  newVersion : String;
+  upg : TUpgradeNeededForm;
+begin
+  doWork(self, 'Checking Version', true,
+    procedure
+    begin
+      newVersion := checkUpgrade;
+    end);
+  if newVersion <> '0.0.'+inttostr(buildCount) then
+  begin
+    upg := TUpgradeNeededForm.Create(self);
+    try
+      upg.Settings := FSettings.link;
+      upg.lblVersion.Text := 'The current version is '+newVersion+', you are running 0.0.'+inttostr(buildCount)+'. Upgrade?';
+      case upg.ShowModal of
+        mrContinue : UpgradeOnClose := true;
+        mrYes:
+          begin
+          doUpgrade(newVersion);
+          close;
+          end;
+      end;
+    finally
+      upg.Free;
+    end;
+  end
+  else if reportIfCurrent then
+    ShowMessage('The FHIR Toolkit is up to date');
 end;
 
 procedure TMasterToolsForm.mnuHelpAboutClick(Sender: TObject);

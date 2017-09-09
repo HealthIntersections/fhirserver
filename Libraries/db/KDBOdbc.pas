@@ -65,6 +65,7 @@ type
     function GetColBlobV(ACol: Word): TBytes; Override;
     function GetColNullV(ACol: Word): Boolean; Override;
     function GetColTimestampV(ACol: Word): TTimestamp; Override;
+    function GetColDateTimeExV(ACol: Word): TDateTimeEx; Override;
     function GetColTypeV(ACol: Word): TKDBColumnType; Override;
     function GetColKeyV(ACol: Word): Integer; Override;
     function GetRowsAffectedV: Integer; Override;
@@ -86,9 +87,9 @@ type
     procedure BindDoubleV(AParamName: String; AParamValue: Double); Override;
     procedure BindStringV(AParamName: String; AParamValue: String); Override;
     procedure BindTimeStampV(AParamName: String; AParamValue: TTimeStamp); Override;
+    procedure BindDateTimeExV(AParamName: String; AParamValue: TDateTimeEx); Override;
     procedure BindBlobV(AParamName: String; AParamValue: TBytes); Override;
     procedure BindNullV(AParamName: String); Override;
-    function CheckConnection : Integer; Override;
     function DatabaseSizeV : int64; Override;
     Function TableSizeV(sName : String):int64; Override;
     function SupportsSizingV : Boolean; Override;
@@ -113,6 +114,7 @@ type
     function ConnectionFactory: TKDBConnection; Override;
     function GetDBPlatform: TKDBPlatform; Override;
     function GetDBDetails: String; Override;
+    function GetDriver: String; Override;
     procedure init; override;
   public
     constructor create(AName : String; AMaxConnCount, ATimeout: Integer; ADriver, AServer, ADatabase, AUsername, APassword: String); overload;
@@ -196,6 +198,11 @@ end;
 function TKDBOdbcConnection.GetColInt64V(ACol: Word): Int64;
 begin
   Result := FStmt.ColInt64[ACol];
+end;
+
+function TKDBOdbcConnection.GetColDateTimeExV(ACol: Word): TDateTimeEx;
+begin
+  result := TDateTimeEx.fromTS(GetColTimestampV(ACol));
 end;
 
 function TKDBOdbcConnection.GetColDoubleV(ACol: Word): Double;
@@ -503,6 +510,11 @@ begin
   BindInteger(AParamName, AParamValue);
 end;
 
+procedure TKDBOdbcConnection.BindDateTimeExV(AParamName: String; AParamValue: TDateTimeEx);
+begin
+  BindTimeStampV(AParamName, AParamValue.TimeStamp);
+end;
+
 procedure TKDBOdbcConnection.BindDoubleV(AParamName: String; AParamValue: Double);
 var
   LBind: TOdbcBoundDouble;
@@ -556,13 +568,6 @@ procedure TKDBOdbcConnection.BindNullV(AParamName: String);
 begin
   FStmt.BindNullByName(AParamName);
 end;
-
-function TKDBOdbcConnection.CheckConnection : Integer;
-Begin
-  FHdbc.DisConnect;
-  FHdbc.Connect;
-  Result := CONNECTION_OK;
-End;
 
 Function ReadBytes(value : String):Int64;
 var
@@ -860,6 +865,11 @@ begin
 end;
 
 
+function TKDBOdbcManager.GetDriver: String;
+begin
+  result := FDriver;
+end;
+
 destructor TKDBOdbcManager.Destroy;
 begin
   FAttributes.free;
@@ -1004,4 +1014,6 @@ begin
 end;
 
 end.
+
+
 

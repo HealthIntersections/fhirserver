@@ -122,6 +122,7 @@ type
     class function fromHL7(value : String) : TDateTimeEx; static;
     class function fromXML(value : String) : TDateTimeEx; static;
     class function fromTS(value : TTimestamp; tz : TDateTimeExTimezone = dttzLocal) : TDateTimeEx; overload; static;
+    class function fromDB(value : String; tz : TDateTimeExTimezone = dttzUTC) : TDateTimeEx; static; // mainly for SQLite support
       {
          Read a date (date) given the specified format. The specified
          format can be any combination of YYYY, YYY, YY, MM, MMM, DD, HH, NN, SS.
@@ -182,8 +183,9 @@ type
     }
     function toString(format: String): String; overload;
     function toString: String;  overload; // as human readable
-    function toHL7: String; // as hhhhmmhhnnss.zzz+T
+    function toHL7: String; // as yyyymmddhhnnss.zzz+T
     function toXML : String;
+    function toDB : String; // as yyyy-mm-dd hh:nn:ss.zzz
 
     class function isValidXmlDate(value : String) : Boolean; static;
 
@@ -373,6 +375,12 @@ begin
     result := format;
 end;
 
+
+class function TDateTimeEx.fromDB(value: String; tz : TDateTimeExTimezone = dttzUTC): TDateTimeEx;
+begin
+  result := fromFormat('yyyy-mm-dd hh:nn:ss.sss', value, true, true, false);
+  result.TimezoneType := tz;
+end;
 
 class function TDateTimeEx.fromFormat(format, date: String; AllowBlankTimes: Boolean = False; allowNoDay: Boolean = False; allownodate: Boolean = False; noFixYear : boolean = false) : TDateTimeEx;
 var
@@ -849,6 +857,19 @@ begin
   result := StringPadLeft(inttostr(abs(i)), '0', w);
   if i < 0 then
     result := '-'+result;
+end;
+
+function TDateTimeEx.toDB: String;
+begin
+  case FPrecision of
+    dtpYear:        result := sv(Year, 4);
+    dtpMonth:       result := sv(Year, 4) + '-'+sv(Month, 2);
+    dtpDay:         result := sv(Year, 4) + '-'+sv(Month, 2) + '-'+sv(Day, 2);
+    dtpHour:        result := sv(Year, 4) + '-'+sv(Month, 2) + '-'+sv(Day, 2) + ' '+sv(hour, 2);
+    dtpMin:         result := sv(Year, 4) + '-'+sv(Month, 2) + '-'+sv(Day, 2) + ' '+sv(hour, 2)+ ':'+sv(Minute, 2);
+    dtpSec:         result := sv(Year, 4) + '-'+sv(Month, 2) + '-'+sv(Day, 2) + ' '+sv(hour, 2)+ ':'+sv(Minute, 2)+ ':'+sv(Second, 2);
+    dtpNanoSeconds: result := sv(Year, 4) + '-'+sv(Month, 2) + '-'+sv(Day, 2) + ' '+sv(hour, 2)+ ':'+sv(Minute, 2)+ ':'+sv(Second, 2)+'.'+copy(sv(Fraction, 9), 1, IntegerMax(FractionPrecision, 3));
+  end;
 end;
 
 function TDateTimeEx.toHL7: String;

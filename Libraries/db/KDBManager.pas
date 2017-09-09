@@ -93,7 +93,7 @@ type
   // mean that the provider is supported by all 3 of compiler, application, and system
   // access is odbc but settings are done differently
   TKDBProvider = (kdbpUnknown,    kdbpDSN,        kdbpODBC,     kdbpFirebird,    kdbpDBIsam,
-                  kdbpDBXpress,   kdbpSoapClient, kdbpMySQL,    kdbpAccess);
+                  kdbpDBXpress,   kdbpSoapClient, kdbpMySQL,    kdbpAccess,      kdbpSQLite);
 
   TKDBProviderSet = set of TKDBProvider;
 
@@ -121,6 +121,7 @@ type
     FNullable: Boolean;
   public
     constructor Create(name : String); overload;
+    function Link : TKDBColumn; overload;
     property Name : String read FName write FName;
     property DataType : TKDBColumnType read FDataType write FDataType;
     property Length : Integer read FLength write FLength;
@@ -168,6 +169,7 @@ type
   public
     constructor Create; override;
     destructor Destroy; override;
+    function Link : TKDBTable; overload;
     property Columns : TAdvList<TKDBColumn> read FColumns;
     property Indexes : TAdvList<TKDBIndex> read FIndexes;
     Property Relationships : TAdvList<TKDBRelationship> read FRelationships;
@@ -256,6 +258,7 @@ type
     procedure BindDoubleV(AParamName: String; AParamValue: Double); virtual; abstract;
     procedure BindStringV(AParamName: String; AParamValue: String); virtual; abstract;
     procedure BindTimeStampV(AParamName: String; AParamValue: DateSupport.TTimeStamp); virtual; abstract;
+    procedure BindDateTimeExV(AParamName: String; AParamValue: TDateTimeEx); virtual; abstract;
     procedure BindBlobV(AParamName: String; AParamValue: TBytes); virtual; abstract;
     procedure BindNullV(AParamName: String); virtual; abstract;
     function GetColCountV: Integer; Virtual; Abstract;
@@ -266,12 +269,12 @@ type
     function GetColBlobV(ACol: Word): TBytes; Virtual; Abstract;
     function GetColNullV(ACol: Word): Boolean; Virtual; Abstract;
     function GetColTimestampV(ACol: Word): DateSupport.TTimestamp; Virtual; Abstract;
+    function GetColDateTimeExV(ACol: Word): TDateTimeEx; Virtual; Abstract;
     function GetColTypeV(ACol: Word): TKDBColumnType; Virtual; Abstract;
     function GetColKeyV(ACol: Word): Integer; Virtual; Abstract;
     function GetRowsAffectedV: Integer; Virtual; Abstract;
     function FetchMetaDataV : TKDBMetaData; Virtual; Abstract;
     procedure ListTablesV(AList : TStrings); virtual; abstract;
-    function CheckConnection : Integer; virtual; abstract;
     function DatabaseSizeV : int64; virtual; abstract;
     Function TableSizeV(sName : String):int64; virtual; abstract;
     function SupportsSizingV : Boolean; virtual; abstract;
@@ -333,7 +336,7 @@ type
     function GetColBlob(ACol: Integer): TBytes;
     function GetColNull(ACol: Integer): Boolean;
     function GetColTimestamp(ACol: Integer): DateSupport.TTimestamp;
-    function GetColDateAndTime(ACol: Integer): TDateTimeEx;
+    function GetColDateTimeEx(ACol: Integer): TDateTimeEx;
     function GetColType(ACol: Integer): TKDBColumnType;
     function GetRowsAffected: Integer;
 
@@ -343,7 +346,7 @@ type
     function GetColInt64ByName(AName: String): Int64;
     function GetColDoubleByName(AName: String): Double;
     function GetColTimeStampByName(AName: String): DateSupport.TTimestamp;
-    function GetColDateAndTimeByName(AName: String): TDateTimeEx;
+    function GetColDateTimeExByName(AName: String): TDateTimeEx;
     function GetColTypeByName(AName: String): TKDBColumnType;
     function GetColNullByName(AName: String): Boolean;
 
@@ -540,7 +543,7 @@ type
       after using an SQL statement like this:
         insert into table (field) values (:t)
     }
-    procedure BindDateAndTime(AParamName: String; AParamValue: TDateTimeEx);
+    procedure BindDateTimeEx(AParamName: String; AParamValue: TDateTimeEx);
 
     {!Script Hide}
     {@member BindBlob
@@ -615,10 +618,10 @@ type
     }
     property ColTimestamp [ACol: Integer]: DateSupport.TTimestamp Read GetColTimestamp;
 
-    {@member ColDateAndTime
+    {@member ColDateTimeEx
     Get Column ACol(index) as a DateAndTime
     }
-    property ColDateAndTime [ACol: Integer]: TDateTimeEx Read GetColDateAndTime;
+    property ColDateTimeEx [ACol: Integer]: TDateTimeEx Read GetColDateTimeEx;
 
     {!Script Hide}
     property ColKeyByName       [AName: String]: Integer Read GetColKeyByName;
@@ -648,9 +651,9 @@ type
     {@member ColTimeStampByName
       Get Column "AName" as a TTimeStamp}
     property ColTimeStampByName [AName: String]: DateSupport.TTimeStamp Read GetColTimeStampByName;
-    {@member ColDateAndTimeByName
+    {@member ColDateTimeExByName
       Get Column "AName" as a TDateTimeEx}
-    property ColDateAndTimeByName [AName: String]: TDateTimeEx Read GetColDateAndTimeByName;
+    property ColDateTimeExByName [AName: String]: TDateTimeEx Read GetColDateTimeExByName;
     {@member ColCount
       Number of columns in current result set
     }
@@ -700,6 +703,7 @@ type
     function GetDBPlatform: TKDBPlatform; Virtual; Abstract;
     function GetDBProvider: TKDBProvider; Virtual; Abstract;
     function GetDBDetails: String; Virtual; Abstract;
+    function GetDriver: String; Virtual; Abstract;
     procedure init; virtual;
   Public
     constructor Create(AName : String; AMaxConnCount: Integer); overload;
@@ -711,7 +715,6 @@ type
     procedure ExecSQL(ASql, AName : String);
     function GetConnection(const AUsage: String): TKDBConnection;
     procedure SaveSettings(ASettings : TSettingsAdapter); virtual; abstract;
-    function CheckConnection : Integer;
 
     property MaxConnCount : Integer Read FMaxConnCount write SetMaxConnCount;
     property CurrConnCount: Integer Read GetCurrentCount;
@@ -721,6 +724,7 @@ type
     property Platform: TKDBPlatform read GetDBPlatform;
     property Provider : TKDBProvider read GetDBProvider;
     property DBDetails: String read GetDBDetails;
+    Property Driver : String read GetDriver;
     function GetConnSummary : String;
     property Tag : integer read FTag write FTag;
 
@@ -882,6 +886,8 @@ end;
 
 Function TKDBConnection.ExecSQL(ASql: String) : integer;
 begin
+  if asql = '' then
+    exit;
 
   FSQL := ASql;
   Prepare;
@@ -956,7 +962,7 @@ begin
   result := GetColTimestamp(ColByName(AName));
 end;
 
-function TKDBConnection.GetColDateAndTimeByName(AName: String): TDateTimeEx;
+function TKDBConnection.GetColDateTimeExByName(AName: String): TDateTimeEx;
 begin
   result := TDateTimeEx.fromTS(GetColTimestamp(ColByName(AName)));
 end;
@@ -1216,9 +1222,9 @@ begin
   result := GetColTimestampV(ACol);
 end;
 
-function TKDBConnection.GetColDateAndTime(ACol: Integer): TDateTimeEx;
+function TKDBConnection.GetColDateTimeEx(ACol: Integer): TDateTimeEx;
 begin
-  result := TDateTimeEx.fromTS(GetColTimestampV(ACol));
+  result := GetColDateTimeExV(ACol);
 end;
 
 function TKDBConnection.GetColType(ACol: Integer): TKDBColumnType;
@@ -1252,9 +1258,9 @@ begin
 
 end;
 
-procedure TKDBConnection.BindDateAndTime(AParamName: String; AParamValue: TDateTimeEx);
+procedure TKDBConnection.BindDateTimeEx(AParamName: String; AParamValue: TDateTimeEx);
 begin
-  BindTimeStampV(aParamName, AParamValue.TimeStamp);
+  BindDateTimeExV(aParamName, AParamValue);
 end;
 
 function TKDBConnection.DatabaseSize : int64;
@@ -1542,23 +1548,6 @@ begin
   end;
 end;
 
-Function TKDBManager.CheckConnection : Integer;
-var
-  LConn : TKDBConnection;
-begin
-  LConn := GetConnection('CheckConnection');
-  try
-    Result := LConn.CheckConnection;
-    LConn.Release;
-  except
-    on e:exception do
-      begin
-      LConn.Error(e);
-      Result := CONNECTION_FAIL;
-      end;
-  end;
-end;
-
 
 function KDBManagers : TKDBManagerList;
 begin
@@ -1761,6 +1750,11 @@ begin
     end;
 end;
 
+function TKDBColumn.Link: TKDBColumn;
+begin
+  result := TKDBColumn(Inherited Link);
+end;
+
 function CommaText(list : TAdvList<TKDBColumn>) : String;
 var
   s : TStringBuilder;
@@ -1842,6 +1836,11 @@ begin
   result := false;
   for c in FColumns do
     result := result or (c.Name = name);
+end;
+
+function TKDBTable.Link: TKDBTable;
+begin
+  result := TKDBTable(inherited link);
 end;
 
 { TKDBMetaData }

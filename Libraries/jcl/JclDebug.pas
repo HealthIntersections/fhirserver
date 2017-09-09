@@ -4289,6 +4289,9 @@ begin
   end;
 end;
 
+{$R-}
+{$Q-}
+
 function GetLocationInfoStr(const Addr: Pointer; IncludeModuleName, IncludeAddressOffset,
   IncludeStartProcLineOffset: Boolean; IncludeVAddress: Boolean): string;
 var
