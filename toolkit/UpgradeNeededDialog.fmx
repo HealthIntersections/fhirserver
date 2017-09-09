@@ -3,7 +3,7 @@ object UpgradeNeededForm: TUpgradeNeededForm
   Top = 0
   Caption = 'FHIR Toolkit Upgrade'
   ClientHeight = 151
-  ClientWidth = 433
+  ClientWidth = 471
   FormFactor.Width = 320
   FormFactor.Height = 480
   FormFactor.Devices = [Desktop]
@@ -13,7 +13,7 @@ object UpgradeNeededForm: TUpgradeNeededForm
   object lblVersion: TLabel
     Position.X = 16.000000000000000000
     Position.Y = 8.000000000000000000
-    Size.Width = 401.000000000000000000
+    Size.Width = 417.000000000000000000
     Size.Height = 49.000000000000000000
     Size.PlatformDefault = False
     Text = 'lblVersion'
@@ -25,6 +25,9 @@ object UpgradeNeededForm: TUpgradeNeededForm
     HitTest = True
     Position.X = 16.000000000000000000
     Position.Y = 64.000000000000000000
+    Size.Width = 177.000000000000000000
+    Size.Height = 17.000000000000000000
+    Size.PlatformDefault = False
     TextSettings.Font.StyleExt = {04040000000000000004000000}
     TextSettings.FontColor = claNavy
     Text = 'See the version history'
@@ -35,7 +38,7 @@ object UpgradeNeededForm: TUpgradeNeededForm
     ModalResult = 11
     Position.X = 16.000000000000000000
     Position.Y = 96.000000000000000000
-    Size.Width = 145.000000000000000000
+    Size.Width = 161.000000000000000000
     Size.Height = 33.000000000000000000
     Size.PlatformDefault = False
     TabOrder = 3
@@ -43,7 +46,7 @@ object UpgradeNeededForm: TUpgradeNeededForm
   end
   object Button2: TButton
     ModalResult = 6
-    Position.X = 168.000000000000000000
+    Position.X = 184.000000000000000000
     Position.Y = 96.000000000000000000
     Size.Width = 145.000000000000000000
     Size.Height = 33.000000000000000000
@@ -53,7 +56,7 @@ object UpgradeNeededForm: TUpgradeNeededForm
   end
   object Button3: TButton
     ModalResult = 5
-    Position.X = 320.000000000000000000
+    Position.X = 336.000000000000000000
     Position.Y = 96.000000000000000000
     Size.Width = 97.000000000000000000
     Size.Height = 33.000000000000000000
@@ -62,9 +65,9 @@ object UpgradeNeededForm: TUpgradeNeededForm
     Text = 'Ignore'
   end
   object CheckBox1: TCheckBox
-    Position.X = 184.000000000000000000
+    Position.X = 200.000000000000000000
     Position.Y = 64.000000000000000000
-    Size.Width = 233.000000000000000000
+    Size.Width = 265.000000000000000000
     Size.Height = 19.000000000000000000
     Size.PlatformDefault = False
     TabOrder = 5

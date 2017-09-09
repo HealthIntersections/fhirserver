@@ -171,7 +171,7 @@ object CodeSystemEditorFrame: TCodeSystemEditorFrame
             Position.X = 144.000000000000000000
             Position.Y = 82.000000000000000000
             HelpContext = 20
-            Size.Width = 278.000000000000000000
+            Size.Width = 209.000000000000000000
             Size.Height = 22.000000000000000000
             Size.PlatformDefault = False
             OnChange = inputChanged
@@ -180,10 +180,10 @@ object CodeSystemEditorFrame: TCodeSystemEditorFrame
           object edtIdValue: TEdit
             Touch.InteractiveGestures = [LongTap, DoubleTap]
             TabOrder = 5
-            Position.X = 473.000000000000000000
+            Position.X = 416.000000000000000000
             Position.Y = 82.000000000000000000
             HelpContext = 19
-            Size.Width = 109.000000000000000000
+            Size.Width = 166.000000000000000000
             Size.Height = 22.000000000000000000
             Size.PlatformDefault = False
             OnChange = inputChanged
@@ -294,7 +294,7 @@ object CodeSystemEditorFrame: TCodeSystemEditorFrame
           end
           object Label12: TLabel
             Position.X = 16.000000000000000000
-            Position.Y = 82.000000000000000000
+            Position.Y = 84.000000000000000000
             Size.Width = 70.000000000000000000
             Size.Height = 17.000000000000000000
             Size.PlatformDefault = False
@@ -304,7 +304,7 @@ object CodeSystemEditorFrame: TCodeSystemEditorFrame
           object Label13: TLabel
             Position.X = 16.000000000000000000
             Position.Y = 360.000000000000000000
-            Size.Width = 70.000000000000000000
+            Size.Width = 113.000000000000000000
             Size.Height = 17.000000000000000000
             Size.PlatformDefault = False
             Text = 'Jurisdiction:'
@@ -320,8 +320,8 @@ object CodeSystemEditorFrame: TCodeSystemEditorFrame
             TabOrder = 17
           end
           object Label25: TLabel
-            Position.X = 433.000000000000000000
-            Position.Y = 82.000000000000000000
+            Position.X = 369.000000000000000000
+            Position.Y = 84.000000000000000000
             Size.Width = 45.000000000000000000
             Size.Height = 17.000000000000000000
             Size.PlatformDefault = False
@@ -330,7 +330,7 @@ object CodeSystemEditorFrame: TCodeSystemEditorFrame
           end
           object Label26: TLabel
             Position.X = 88.000000000000000000
-            Position.Y = 82.000000000000000000
+            Position.Y = 84.000000000000000000
             Size.Width = 70.000000000000000000
             Size.Height = 17.000000000000000000
             Size.PlatformDefault = False
@@ -383,9 +383,9 @@ object CodeSystemEditorFrame: TCodeSystemEditorFrame
             TabOrder = 24
           end
           object Label4: TLabel
-            Position.X = 445.000000000000000000
+            Position.X = 440.000000000000000000
             Position.Y = 50.000000000000000000
-            Size.Width = 49.000000000000000000
+            Size.Width = 65.000000000000000000
             Size.Height = 17.000000000000000000
             Size.PlatformDefault = False
             Text = 'Version:'
@@ -430,7 +430,7 @@ object CodeSystemEditorFrame: TCodeSystemEditorFrame
           object Label9: TLabel
             Position.X = 16.000000000000000000
             Position.Y = 256.000000000000000000
-            Size.Width = 70.000000000000000000
+            Size.Width = 97.000000000000000000
             Size.Height = 17.000000000000000000
             Size.PlatformDefault = False
             Text = 'Description:'
@@ -871,7 +871,7 @@ object CodeSystemEditorFrame: TCodeSystemEditorFrame
               OnDblClick = btnEditConceptClick
               OnChange = tvConceptTreeChange
               Viewport.Width = 691.000000000000000000
-              Viewport.Height = 722.000000000000000000
+              Viewport.Height = 701.000000000000000000
             end
           end
           object TabItem2: TTabItem

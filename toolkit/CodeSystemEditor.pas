@@ -176,7 +176,7 @@ type
     function GetCodeSystem: TFHIRCodeSystem;
     function readJurisdiction : Integer;
     function getJurisdiction(i : integer) : TFHIRCodeableConcept;
-    procedure addConceptToTree(parent, concept : TFhirCodeSystemConcept);
+    function addConceptToTree(parent, concept : TFhirCodeSystemConcept) : TTreeViewItem;
     function findConcept(sel : TFhirCodeSystemConcept; var parent : TFhirCodeSystemConcept; var list : TFhirCodeSystemConceptList; var index : integer) : boolean;
     procedure updateStatus(sel : TFhirCodeSystemConcept);
     procedure buildFlatGrid(list : TFhirCodeSystemConceptList);
@@ -208,7 +208,7 @@ implementation
 
 { TValueSetEditorFrame }
 
-procedure TCodeSystemEditorFrame.addConceptToTree(parent, concept: TFhirCodeSystemConcept);
+function TCodeSystemEditorFrame.addConceptToTree(parent, concept: TFhirCodeSystemConcept) : TTreeViewItem;
 var
   tvp, tv : TTreeViewItem;
   c : TFhirCodeSystemConcept;
@@ -230,6 +230,7 @@ begin
   end;
   for c in concept.conceptList do
     addConceptToTree(concept, c);
+  result := tv;
 end;
 
 procedure TCodeSystemEditorFrame.btnAddChildConceptClick(Sender: TObject);
@@ -239,11 +240,14 @@ begin
   p := TFhirCodeSystemConcept(tvConceptTree.Selected.TagObject);
   c := p.conceptList.Append;
   c.code := 'new-code';
-  grdConcepts.RowCount := grdConcepts.RowCount + 1;
-  addConceptToTree(p, c);
+  flatConcepts.Clear;
+  buildFlatGrid(CodeSystem.conceptList);
   grdConcepts.RowCount := 0;
   grdConcepts.RowCount := flatConcepts.Count;
+  tvConceptTree.Selected := addConceptToTree(p, c);
+  grdConcepts.SelectCell(1, flatConcepts.IndexOf(c));
   ResourceIsDirty := true;
+  btnEditConceptClick(nil);
 end;
 
 procedure TCodeSystemEditorFrame.btnAddConceptClick(Sender: TObject);
@@ -252,11 +256,14 @@ var
 begin
   c := CodeSystem.conceptList.Append;
   c.code := 'new-code';
-  grdConcepts.RowCount := grdConcepts.RowCount + 1;
-  addConceptToTree(nil, c);
+  tvConceptTree.Selected := addConceptToTree(nil, c);
+  flatConcepts.Clear;
+  buildFlatGrid(CodeSystem.conceptList);
   grdConcepts.RowCount := 0;
   grdConcepts.RowCount := flatConcepts.Count;
+  grdConcepts.SelectCell(1, flatConcepts.IndexOf(c));
   ResourceIsDirty := true;
+  btnEditConceptClick(nil);
 end;
 
 procedure TCodeSystemEditorFrame.btnAddFIlterClick(Sender: TObject);
@@ -463,11 +470,14 @@ begin
     form.Concept := sel.Clone;
     if form.ShowModal = mrOk then
     begin
+      grdConcepts.BeginUpdate;
       sel.code := form.Concept.code;
       sel.display := form.Concept.display;
       sel.definition := form.Concept.definition;
       sel.designationList.Assign(form.Concept.designationList);
       sel.Property_List.Assign(form.Concept.Property_List);
+      TTreeViewItem(sel.TagObject).Text := sel.Code +' "'+sel.display+'": '+sel.definition;
+      grdConcepts.EndUpdate;
     end;
   finally
     form.free;

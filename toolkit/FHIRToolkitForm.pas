@@ -728,6 +728,9 @@ begin
   Height := FSettings.getValue('Window', 'height', height);
   FShowHelp := FSettings.ShowHelp;
   updateHelpStatus;
+  {$IFDEF MACOS}
+  mnuFileExit.Text := '&Quit';
+  {$ENDIF}
 end;
 
 procedure TMasterToolsForm.FormDestroy(Sender: TObject);
@@ -807,6 +810,7 @@ begin
       case upg.ShowModal of
         mrContinue : UpgradeOnClose := true;
         mrYes:
+
           begin
           doUpgrade(newVersion);
           close;

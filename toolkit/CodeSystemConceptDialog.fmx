@@ -105,14 +105,14 @@ object CodeSystemConceptForm: TCodeSystemConceptForm
     Viewport.Height = 53.000000000000000000
   end
   object btnDeleteDesignation: TButton
-    Position.X = 293.000000000000000000
+    Position.X = 421.000000000000000000
     Position.Y = 148.000000000000000000
     TabOrder = 5
     Text = 'Delete'
     OnClick = btnDeleteDesignationClick
   end
   object btnAddDesignation: TButton
-    Position.X = 205.000000000000000000
+    Position.X = 333.000000000000000000
     Position.Y = 148.000000000000000000
     TabOrder = 2
     Text = 'Add'
@@ -128,11 +128,12 @@ object CodeSystemConceptForm: TCodeSystemConceptForm
     Size.Height = 73.000000000000000000
     Size.PlatformDefault = False
     TabOrder = 6
+    RowCount = 0
     OnSelChanged = gridDesignationsSelChanged
     OnGetValue = gridDesignationsGetValue
     OnSetValue = gridDesignationsSetValue
-    Viewport.Width = 469.000000000000000000
-    Viewport.Height = 32.000000000000000000
+    Viewport.Width = 485.000000000000000000
+    Viewport.Height = 48.000000000000000000
     object PopupColumn2: TPopupColumn
       Header = 'Language'
       Items.Strings = (
@@ -179,7 +180,7 @@ object CodeSystemConceptForm: TCodeSystemConceptForm
   object Label20: TLabel
     Position.X = 16.000000000000000000
     Position.Y = 149.000000000000000000
-    Size.Width = 185.000000000000000000
+    Size.Width = 297.000000000000000000
     Size.Height = 17.000000000000000000
     Size.PlatformDefault = False
     Text = 'Designations for selected Concept'
