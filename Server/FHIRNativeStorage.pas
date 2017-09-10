@@ -6224,7 +6224,7 @@ end;
 
 function TFhirObservationLastNOperation.Name: String;
 begin
-  result := 'lastN';
+  result := 'lastn';
 end;
 
 function TFhirObservationLastNOperation.owningResource: TFhirResourceType;
@@ -6280,7 +6280,7 @@ begin
         bundle.meta.lastUpdated := TDateTimeEx.makeUTC;
         summaryStatus := request.Summary;
 
-        base := AppendForwardSlash(Request.baseUrl)+request.ResourceName+'/$lastN?';
+        base := AppendForwardSlash(Request.baseUrl)+request.ResourceName+'/$lastn?';
         if response.Format <> ffUnspecified then
           base := base + '_format='+MIMETYPES_TFHIRFormat[response.Format]+'&';
         bundle.link_List.AddRelRef('self', base+sp.link_);
@@ -6358,7 +6358,7 @@ end;
 
 function TFhirObservationLastNOperation.formalURL: String;
 begin
-  result := 'http://hl7.org/fhir/OperationDefinition/Observation-lastN';
+  result := 'http://hl7.org/fhir/OperationDefinition/Observation-lastn';
 end;
 
 function TFhirObservationLastNOperation.isWrite: boolean;
