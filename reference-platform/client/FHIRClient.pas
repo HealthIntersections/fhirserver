@@ -100,6 +100,8 @@ Type
 
     FCertFile: String;
     FProxy: String;
+    FPassword: String;
+    FUsername: String;
 //    FLastUpdated : TDateTimeEx;
     procedure status(msg : String);
     procedure getSSLpassword(var Password: String);
@@ -143,6 +145,8 @@ Type
     property certFile : String read FCertFile write SetCertFile;
     property certPWord : String read FCertPWord write SetCertPWord;
     property proxy : String read FProxy write FProxy;
+    property username : String read FUsername write FUsername;
+    property password : String read FPassword write FPassword;
 
 //    procedure doRequest(request : TFHIRRequest; response : TFHIRResponse);
     procedure cancelOperation;
@@ -868,6 +872,12 @@ begin
   if ct <> '' then
     http.RequestType := ct;
 
+  if password <> '' then
+  begin
+    http.Username := username;
+    http.Password := Password;
+  end;
+
   repeat
   http.SetAddress(url);
   ok := false;
@@ -942,6 +952,13 @@ begin
     indy.Request.ContentType := ct;
   if smartToken <> nil then
     indy.Request.CustomHeaders.values['Authorization'] := 'Bearer '+smartToken.accessToken;
+
+  if password <> '' then
+  begin
+    indy.Request.BasicAuthentication:= true;
+    indy.Request.UserName := UserName;
+    indy.Request.Password := Password;
+  end;
 
   ok := false;
   result := TMemoryStream.create;

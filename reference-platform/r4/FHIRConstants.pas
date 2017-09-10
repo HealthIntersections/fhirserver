@@ -41,7 +41,7 @@ This is the dstu4 version of the FHIR code
 
 interface
 
-// FHIR v3.1.0 generated 2017-08-11T08:50:17+10:00
+// FHIR v3.1.0 generated 2017-09-05T11:38:55+10:00
 
 uses
   SysUtils, Classes, StringSupport, DecimalSupport, AdvBuffers, DateSupport, FHIRBase, FHIRTypes, FHIRResources;
@@ -2103,7 +2103,10 @@ Requires the near parameter to also be included }
     spObservation_Dataabsentreason, {@enum.value "data-absent-reason" spObservation_Dataabsentreason The reason why the expected value in the element Observation.value[x] is missing. }
     spObservation_Date, {@enum.value "date" spObservation_Date Obtained date/time. If the obtained element is a period, a date that falls in the period }
     spObservation_Device, {@enum.value "device" spObservation_Device The Device that generated the observation data. }
+    spObservation_Dnavariant, {@enum.value "dna-variant" spObservation_Dnavariant search for extension http://hl7.org/fhir/StructureDefinition/observation-geneticsDNASequenceVariantName }
     spObservation_Encounter, {@enum.value "encounter" spObservation_Encounter Encounter related to the observation }
+    spObservation_Genednavariant, {@enum.value "gene-dnavariant" spObservation_Genednavariant search for extension http://hl7.org/fhir/StructureDefinition/observation-geneticsDNAVariantId }
+    spObservation_Geneidentifier, {@enum.value "gene-identifier" spObservation_Geneidentifier search for extension http://hl7.org/fhir/StructureDefinition/observation-geneticsGene }
     spObservation_Identifier, {@enum.value "identifier" spObservation_Identifier The unique id for a particular observation }
     spObservation_Method, {@enum.value "method" spObservation_Method The method used for the observation }
     spObservation_Patient, {@enum.value "patient" spObservation_Patient The subject that the observation is about (if patient) }
@@ -2528,15 +2531,15 @@ Requires the near parameter to also be included }
     spProvenance__text, {@enum.value "_text" spProvenance__text Search on the narrative of the resource }
     spProvenance_Agent, {@enum.value "agent" spProvenance_Agent Who participated }
     spProvenance_Agentrole, {@enum.value "agent-role" spProvenance_Agentrole What the agents role was }
-    spProvenance_End, {@enum.value "end" spProvenance_End End time with inclusive boundary, if not ongoing }
+    spProvenance_Agenttype, {@enum.value "agent-type" spProvenance_Agenttype How the agent participated }
     spProvenance_Entityid, {@enum.value "entity-id" spProvenance_Entityid Identity of entity }
     spProvenance_Entityref, {@enum.value "entity-ref" spProvenance_Entityref Identity of entity }
     spProvenance_Location, {@enum.value "location" spProvenance_Location Where the activity occurred, if relevant }
     spProvenance_Patient, {@enum.value "patient" spProvenance_Patient Target Reference(s) (usually version specific) }
     spProvenance_Recorded, {@enum.value "recorded" spProvenance_Recorded When the activity was recorded / updated }
     spProvenance_Signaturetype, {@enum.value "signature-type" spProvenance_Signaturetype Indication of the reason the entity signed the object(s) }
-    spProvenance_Start, {@enum.value "start" spProvenance_Start Starting time with inclusive boundary }
-    spProvenance_Target); {@enum.value "target" spProvenance_Target Target Reference(s) (usually version specific) }
+    spProvenance_Target, {@enum.value "target" spProvenance_Target Target Reference(s) (usually version specific) }
+    spProvenance_When); {@enum.value "when" spProvenance_When When the activity occurred }
 {$ENDIF}
 
 {$IFDEF FHIR_QUESTIONNAIRE}
@@ -4032,7 +4035,7 @@ Const
   CODES_TSearchParamsNutritionOrder : Array[TSearchParamsNutritionOrder] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'additive', 'datetime', 'encounter', 'formula', 'identifier', 'oraldiet', 'patient', 'provider', 'status', 'supplement');
 {$ENDIF}
 {$IFDEF FHIR_OBSERVATION}
-  CODES_TSearchParamsObservation : Array[TSearchParamsObservation] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'based-on', 'category', 'code', 'code-value-concept', 'code-value-date', 'code-value-quantity', 'code-value-string', 'combo-code', 'combo-code-value-concept', 'combo-code-value-quantity', 'combo-data-absent-reason', 'combo-value-concept', 'combo-value-quantity', 'component-code', 'component-code-value-concept', 'component-code-value-quantity', 'component-data-absent-reason', 'component-value-concept', 'component-value-quantity', 'context', 'data-absent-reason', 'date', 'device', 'encounter', 'identifier', 'method', 'patient', 'performer', 'related', 'related-target', 'related-type', 'specimen', 'status', 'subject', 'value-concept', 'value-date', 'value-quantity', 'value-string');
+  CODES_TSearchParamsObservation : Array[TSearchParamsObservation] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'based-on', 'category', 'code', 'code-value-concept', 'code-value-date', 'code-value-quantity', 'code-value-string', 'combo-code', 'combo-code-value-concept', 'combo-code-value-quantity', 'combo-data-absent-reason', 'combo-value-concept', 'combo-value-quantity', 'component-code', 'component-code-value-concept', 'component-code-value-quantity', 'component-data-absent-reason', 'component-value-concept', 'component-value-quantity', 'context', 'data-absent-reason', 'date', 'device', 'dna-variant', 'encounter', 'gene-dnavariant', 'gene-identifier', 'identifier', 'method', 'patient', 'performer', 'related', 'related-target', 'related-type', 'specimen', 'status', 'subject', 'value-concept', 'value-date', 'value-quantity', 'value-string');
 {$ENDIF}
 {$IFDEF FHIR_OPERATIONDEFINITION}
   CODES_TSearchParamsOperationDefinition : Array[TSearchParamsOperationDefinition] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'base', 'code', 'date', 'description', 'instance', 'jurisdiction', 'kind', 'name', 'param-profile', 'publisher', 'status', 'system', 'type', 'url', 'version');
@@ -4077,7 +4080,7 @@ Const
   CODES_TSearchParamsProcessResponse : Array[TSearchParamsProcessResponse] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'identifier', 'organization', 'request', 'request-organization', 'request-provider', 'status');
 {$ENDIF}
 {$IFDEF FHIR_PROVENANCE}
-  CODES_TSearchParamsProvenance : Array[TSearchParamsProvenance] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'agent', 'agent-role', 'end', 'entity-id', 'entity-ref', 'location', 'patient', 'recorded', 'signature-type', 'start', 'target');
+  CODES_TSearchParamsProvenance : Array[TSearchParamsProvenance] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'agent', 'agent-role', 'agent-type', 'entity-id', 'entity-ref', 'location', 'patient', 'recorded', 'signature-type', 'target', 'when');
 {$ENDIF}
 {$IFDEF FHIR_QUESTIONNAIRE}
   CODES_TSearchParamsQuestionnaire : Array[TSearchParamsQuestionnaire] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'code', 'date', 'description', 'effective', 'identifier', 'jurisdiction', 'name', 'publisher', 'status', 'title', 'url', 'version');
@@ -4161,7 +4164,7 @@ Const
 
   FHIR_GENERATED_PUBLICATION = '4';
 
-  FHIR_GENERATED_DATE = '2017-08-11T08:50:17+10:00';
+  FHIR_GENERATED_DATE = '2017-09-05T11:38:55+10:00';
 
 
 

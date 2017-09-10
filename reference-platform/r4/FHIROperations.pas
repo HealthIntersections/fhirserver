@@ -40,7 +40,7 @@ This is the dstu4 version of the FHIR code
 
 interface
 
-// FHIR v3.1.0 generated 2017-08-11T08:50:17+10:00
+// FHIR v3.1.0 generated 2017-09-05T11:38:55+10:00
 
 uses
   SysUtils, Classes, Generics.Collections, StringSupport, DecimalSupport, AdvBuffers, AdvGenerics, ParseMap, DateSupport, FHIRBase, FHIRTypes, FHIRResources, FHIROpBase;
@@ -235,6 +235,37 @@ Type
     procedure load(params : TParseMap); overload; override;
     function asParams : TFHIRParameters; override;
     property return : TFhirCapabilityStatement read FReturn write SetReturn;
+  end;
+
+  //Operation submit (Submit a Claim resource for adjudication)
+  TFHIRSubmitOpRequest = class (TFHIROperationRequest)
+  private
+    FResource : TFhirResource;
+    procedure SetResource(value : TFhirResource);
+  protected
+    function isKnownName(name : String) : boolean; override;
+  public
+    constructor Create; overload; override;
+    destructor Destroy; override;
+    procedure load(params : TFHIRParameters); overload; override;
+    procedure load(params : TParseMap); overload; override;
+    function asParams : TFHIRParameters; override;
+    property resource : TFhirResource read FResource write SetResource;
+  end;
+
+  TFHIRSubmitOpResponse = class (TFHIROperationResponse)
+  private
+    FReturn : TFhirResource;
+    procedure SetReturn(value : TFhirResource);
+  protected
+    function isKnownName(name : String) : boolean; override;
+  public
+    constructor Create; overload; override;
+    destructor Destroy; override;
+    procedure load(params : TFHIRParameters); overload; override;
+    procedure load(params : TParseMap); overload; override;
+    function asParams : TFHIRParameters; override;
+    property return : TFhirResource read FReturn write SetReturn;
   end;
 
   //Operation compose (Code Composition based on supplied properties)
@@ -2007,6 +2038,98 @@ begin
 end;
 
 function TFHIRSubsetOpResponse.isKnownName(name : String) : boolean;
+begin
+  result := StringArrayExists(['return'], name);
+end;
+
+procedure TFHIRSubmitOpRequest.SetResource(value : TFhirResource);
+begin
+  FResource.free;
+  FResource := value;
+end;
+
+constructor TFHIRSubmitOpRequest.create;
+begin
+  inherited create();
+end;
+
+procedure TFHIRSubmitOpRequest.load(params : TFHIRParameters);
+begin
+  FResource := (params.res['resource'] as TFhirResource).Link;{ob.5a}
+  loadExtensions(params);
+end;
+
+procedure TFHIRSubmitOpRequest.load(params : TParseMap);
+begin
+  loadExtensions(params);
+end;
+
+destructor TFHIRSubmitOpRequest.Destroy;
+begin
+  FResource.free;
+  inherited;
+end;
+
+function TFHIRSubmitOpRequest.asParams : TFhirParameters;
+begin
+  result := TFHIRParameters.create;
+  try
+    if (FResource <> nil) then
+      result.addParameter('resource', FResource.Link);{oz.5a}
+    writeExtensions(result);
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+function TFHIRSubmitOpRequest.isKnownName(name : String) : boolean;
+begin
+  result := StringArrayExists(['resource'], name);
+end;
+
+procedure TFHIRSubmitOpResponse.SetReturn(value : TFhirResource);
+begin
+  FReturn.free;
+  FReturn := value;
+end;
+
+constructor TFHIRSubmitOpResponse.create;
+begin
+  inherited create();
+end;
+
+procedure TFHIRSubmitOpResponse.load(params : TFHIRParameters);
+begin
+  FReturn := (params.res['return'] as TFhirResource).Link;{ob.5a}
+  loadExtensions(params);
+end;
+
+procedure TFHIRSubmitOpResponse.load(params : TParseMap);
+begin
+  loadExtensions(params);
+end;
+
+destructor TFHIRSubmitOpResponse.Destroy;
+begin
+  FReturn.free;
+  inherited;
+end;
+
+function TFHIRSubmitOpResponse.asParams : TFhirParameters;
+begin
+  result := TFHIRParameters.create;
+  try
+    if (FReturn <> nil) then
+      result.addParameter('return', FReturn.Link);{oz.5a}
+    writeExtensions(result);
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+function TFHIRSubmitOpResponse.isKnownName(name : String) : boolean;
 begin
   result := StringArrayExists(['return'], name);
 end;

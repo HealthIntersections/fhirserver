@@ -38,7 +38,7 @@ This is the dstu4 version of the FHIR code
 
 interface
 
-// FHIR v3.1.0 generated 2017-08-11T08:50:17+10:00
+// FHIR v3.1.0 generated 2017-09-05T11:38:55+10:00
 
 uses
   SysUtils, Classes, StringSupport, DecimalSupport, AdvBuffers, DateSupport, FHIRIndexBase, FHIRResources, FHIRTypes, FHIRConstants, FHIRSupport;
@@ -2570,7 +2570,10 @@ begin
   indexes.add('Observation', 'data-absent-reason', 'The reason why the expected value in the element Observation.value[x] is missing.', SearchParamTypeTOKEN, [], 'Observation.dataAbsentReason', SearchXpathUsageNormal);
   indexes.add('Observation', 'date', 'Obtained date/time. If the obtained element is a period, a date that falls in the period', SearchParamTypeDATE, [], 'Consent.dateTime | SupplyRequest.authoredOn | RiskAssessment.occurrence.as(DateTime) | CareTeam.period | FamilyMemberHistory.date | Encounter.period | AllergyIntolerance.assertedDate | CarePlan.period | EpisodeOfCare.period | Procedure.performed | Li'+'st.date | Immunization.date | Flag.period | Observation.effective | DiagnosticReport.effective | Composition.date | DetectedIssue.date | ClinicalImpression.date | Flag.period | RiskAssessment.occurrence.as(DateTime) | FamilyMemberHistory.date | Diagn'+'osticReport.effective | CarePlan.period | CareTeam.period | Immunization.date | Procedure.performed | ClinicalImpression.date | List.date | Composition.date | SupplyRequest.authoredOn | Encounter.period | AllergyIntolerance.assertedDate | DetectedIss'+'ue.date | EpisodeOfCare.period | Observation.effective', SearchXpathUsageNormal);
   indexes.add('Observation', 'device', 'The Device that generated the observation data.', SearchParamTypeREFERENCE, ['DeviceComponent', 'Device', 'DeviceMetric'], 'Observation.device', SearchXpathUsageNormal);
+  indexes.add('Observation', 'dna-variant', 'search for extension http://hl7.org/fhir/StructureDefinition/observation-geneticsDNASequenceVariantName', SearchParamTypeTOKEN, [], 'Observation.extension(''http://hl7.org/fhir/StructureDefinition/observation-geneticsDNASequenceVariantName'').value', SearchXpathUsageNormal);
   indexes.add('Observation', 'encounter', 'Encounter related to the observation', SearchParamTypeREFERENCE, ['EpisodeOfCare', 'Encounter'], 'DocumentReference.context.encounter | RiskAssessment.context | DeviceRequest.context | Procedure.context | List.encounter | VisionPrescription.encounter | ProcedureRequest.context | Flag.encounter | Observation.context | DiagnosticReport.context | Nu'+'tritionOrder.encounter | Composition.encounter | Flag.encounter | RiskAssessment.context | DiagnosticReport.context | ProcedureRequest.context | Procedure.context | List.encounter | Composition.encounter | NutritionOrder.encounter | Observation.conte'+'xt | DeviceRequest.context | VisionPrescription.encounter', SearchXpathUsageNormal);
+  indexes.add('Observation', 'gene-dnavariant', 'search for extension http://hl7.org/fhir/StructureDefinition/observation-geneticsDNAVariantId', SearchParamTypeTOKEN, [], 'Observation.extension(''http://hl7.org/fhir/StructureDefinition/observation-geneticsDNAVariantId'').value', SearchXpathUsageNormal);
+  indexes.add('Observation', 'gene-identifier', 'search for extension http://hl7.org/fhir/StructureDefinition/observation-geneticsGene', SearchParamTypeTOKEN, [], 'Observation.extension(''http://hl7.org/fhir/StructureDefinition/observation-geneticsGene'').value', SearchXpathUsageNormal);
   indexes.add('Observation', 'identifier', 'The unique id for a particular observation', SearchParamTypeTOKEN, [], 'DocumentManifest.masterIdentifier | DocumentManifest.identifier | Goal.identifier | Consent.identifier | DocumentReference.masterIdentifier | DocumentReference.identifier | SupplyRequest.identifier | RiskAssessment.identifier | CareTeam.identifier | '+'ImagingStudy.identifier | FamilyMemberHistory.identifier | Encounter.identifier | DeviceRequest.identifier | AllergyIntolerance.identifier | CarePlan.identifier | EpisodeOfCare.identifier | Procedure.ide'+
    'DocumentManifest.masterIdentifier | DocumentManifest.identifier | Goal.identifier | Consent.identifier | DocumentReference.masterIdentifier | DocumentReference.identifier | SupplyRequest.identifier | RiskAssessment.identifier | CareTeam.identifier | '+'ImagingStudy.identifier | FamilyMemberHistory.identifier | Encounter.identifier | DeviceRequest.identifier | AllergyIntolerance.identifier | CarePlan.identifier | EpisodeOfCare.identifier | Procedure.ide', SearchXpathUsageNormal);
   indexes.add('Observation', 'method', 'The method used for the observation', SearchParamTypeTOKEN, [], 'Observation.method', SearchXpathUsageNormal);
@@ -3010,17 +3013,17 @@ begin
   indexes.add('Provenance', '_security', 'Security Labels applied to this resource', SearchParamTypeTOKEN, [], 'Resource.meta.security', SearchXpathUsageNormal);
   indexes.add('Provenance', '_tag', 'Tags applied to this resource', SearchParamTypeTOKEN, [], 'Resource.meta.tag', SearchXpathUsageNormal);
   indexes.add('Provenance', '_text', 'Search on the narrative of the resource', SearchParamTypeSTRING, [], '', SearchXpathUsageNormal);
-  indexes.add('Provenance', 'agent', 'Who participated', SearchParamTypeREFERENCE, ['Practitioner', 'Organization', 'Device', 'Patient', 'RelatedPerson'], 'Provenance.agent.who', SearchXpathUsageNormal);
+  indexes.add('Provenance', 'agent', 'Who participated', SearchParamTypeREFERENCE, ['Practitioner', 'Organization', 'Device', 'Patient', 'PractitionerRole', 'RelatedPerson'], 'Provenance.agent.who', SearchXpathUsageNormal);
   indexes.add('Provenance', 'agent-role', 'What the agents role was', SearchParamTypeTOKEN, [], 'Provenance.agent.role', SearchXpathUsageNormal);
-  indexes.add('Provenance', 'end', 'End time with inclusive boundary, if not ongoing', SearchParamTypeDATE, [], 'Provenance.period.end', SearchXpathUsageNormal);
+  indexes.add('Provenance', 'agent-type', 'How the agent participated', SearchParamTypeTOKEN, [], 'Provenance.agent.type', SearchXpathUsageNormal);
   indexes.add('Provenance', 'entity-id', 'Identity of entity', SearchParamTypeTOKEN, [], 'Provenance.entity.what.as(Identifier)', SearchXpathUsageNormal);
   indexes.add('Provenance', 'entity-ref', 'Identity of entity', SearchParamTypeREFERENCE, ALL_RESOURCE_TYPE_NAMES, 'Provenance.entity.what.as(Reference)', SearchXpathUsageNormal);
   indexes.add('Provenance', 'location', 'Where the activity occurred, if relevant', SearchParamTypeREFERENCE, ['Location'], 'Provenance.location', SearchXpathUsageNormal);
   indexes.add('Provenance', 'patient', 'Target Reference(s) (usually version specific)', SearchParamTypeREFERENCE, ['Patient'], 'Provenance.target', SearchXpathUsageNormal);
   indexes.add('Provenance', 'recorded', 'When the activity was recorded / updated', SearchParamTypeDATE, [], 'Provenance.recorded', SearchXpathUsageNormal);
   indexes.add('Provenance', 'signature-type', 'Indication of the reason the entity signed the object(s)', SearchParamTypeTOKEN, [], 'Provenance.signature.type', SearchXpathUsageNormal);
-  indexes.add('Provenance', 'start', 'Starting time with inclusive boundary', SearchParamTypeDATE, [], 'Provenance.period.start', SearchXpathUsageNormal);
   indexes.add('Provenance', 'target', 'Target Reference(s) (usually version specific)', SearchParamTypeREFERENCE, ALL_RESOURCE_TYPE_NAMES, 'Provenance.target', SearchXpathUsageNormal);
+  indexes.add('Provenance', 'when', 'When the activity occurred', SearchParamTypeDATE, [], 'Provenance.occured.as(DateTime)', SearchXpathUsageNormal);
   compartments.register(frtDevice, 'Provenance', ['agent']);
   compartments.register(frtPatient, 'Provenance', ['target.subject', 'target.patient', 'patient']);
   compartments.register(frtPractitioner, 'Provenance', ['agent']);

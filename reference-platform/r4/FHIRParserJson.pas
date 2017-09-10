@@ -38,7 +38,7 @@ This is the dstu4 version of the FHIR code
 
 interface
 
-// FHIR v3.1.0 generated 2017-08-11T08:50:17+10:00
+// FHIR v3.1.0 generated 2017-09-05T11:38:55+10:00
 
 uses
   SysUtils, Classes, StringSupport, DateSupport, DecimalSupport, FHIRParserBase, FHIRBase, FHIRResources, FHIRConstants, FHIRTypes, AdvStringMatches, AdvJSON;
@@ -693,6 +693,9 @@ Type
     function ParseDeviceComponentProductionSpecification(jsn : TJsonObject) : TFhirDeviceComponentProductionSpecification; overload; {b\}
     procedure ParseDeviceComponentProductionSpecificationProperties(jsn : TJsonObject; result : TFhirDeviceComponentProductionSpecification); overload; {b\}
     procedure ParseDeviceComponentProductionSpecification(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+    function ParseDeviceComponentProperty(jsn : TJsonObject) : TFhirDeviceComponentProperty; overload; {b\}
+    procedure ParseDeviceComponentPropertyProperties(jsn : TJsonObject; result : TFhirDeviceComponentProperty); overload; {b\}
+    procedure ParseDeviceComponentProperty(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
     function ParseDeviceComponent(jsn : TJsonObject) : TFhirDeviceComponent; overload;
     procedure ParseDeviceComponentProperties(jsn : TJsonObject; result : TFhirDeviceComponent); overload;
     procedure ParseDeviceComponent(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
@@ -1816,6 +1819,9 @@ Type
     function ParseWorkflowExampleInstanceVersion(jsn : TJsonObject) : TFhirWorkflowExampleInstanceVersion; overload; {b\}
     procedure ParseWorkflowExampleInstanceVersionProperties(jsn : TJsonObject; result : TFhirWorkflowExampleInstanceVersion); overload; {b\}
     procedure ParseWorkflowExampleInstanceVersion(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+    function ParseWorkflowExampleInstanceContainedInstance(jsn : TJsonObject) : TFhirWorkflowExampleInstanceContainedInstance; overload; {b\}
+    procedure ParseWorkflowExampleInstanceContainedInstanceProperties(jsn : TJsonObject; result : TFhirWorkflowExampleInstanceContainedInstance); overload; {b\}
+    procedure ParseWorkflowExampleInstanceContainedInstance(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
     function ParseWorkflowExampleProcess(jsn : TJsonObject) : TFhirWorkflowExampleProcess; overload; {b\}
     procedure ParseWorkflowExampleProcessProperties(jsn : TJsonObject; result : TFhirWorkflowExampleProcess); overload; {b\}
     procedure ParseWorkflowExampleProcess(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
@@ -1825,9 +1831,6 @@ Type
     function ParseWorkflowExampleProcessStepOperation(jsn : TJsonObject) : TFhirWorkflowExampleProcessStepOperation; overload; {b\}
     procedure ParseWorkflowExampleProcessStepOperationProperties(jsn : TJsonObject; result : TFhirWorkflowExampleProcessStepOperation); overload; {b\}
     procedure ParseWorkflowExampleProcessStepOperation(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
-    function ParseWorkflowExampleProcessStepOperationInstance(jsn : TJsonObject) : TFhirWorkflowExampleProcessStepOperationInstance; overload; {b\}
-    procedure ParseWorkflowExampleProcessStepOperationInstanceProperties(jsn : TJsonObject; result : TFhirWorkflowExampleProcessStepOperationInstance); overload; {b\}
-    procedure ParseWorkflowExampleProcessStepOperationInstance(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
     function ParseWorkflowExampleProcessStepAlternative(jsn : TJsonObject) : TFhirWorkflowExampleProcessStepAlternative; overload; {b\}
     procedure ParseWorkflowExampleProcessStepAlternativeProperties(jsn : TJsonObject; result : TFhirWorkflowExampleProcessStepAlternative); overload; {b\}
     procedure ParseWorkflowExampleProcessStepAlternative(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
@@ -2136,6 +2139,7 @@ Type
 {$ENDIF FHIR_DEVICE}
 {$IFDEF FHIR_DEVICECOMPONENT}
     procedure ComposeDeviceComponentProductionSpecification(json : TJSONWriter; name : string; elem : TFhirDeviceComponentProductionSpecification; noObj : boolean = false);
+    procedure ComposeDeviceComponentProperty(json : TJSONWriter; name : string; elem : TFhirDeviceComponentProperty; noObj : boolean = false);
     procedure ComposeDeviceComponent(json : TJSONWriter; name : string; elem : TFhirDeviceComponent; noObj : boolean = false);
 {$ENDIF FHIR_DEVICECOMPONENT}
 {$IFDEF FHIR_DEVICEMETRIC}
@@ -2625,10 +2629,10 @@ Type
     procedure ComposeWorkflowExampleActor(json : TJSONWriter; name : string; elem : TFhirWorkflowExampleActor; noObj : boolean = false);
     procedure ComposeWorkflowExampleInstance(json : TJSONWriter; name : string; elem : TFhirWorkflowExampleInstance; noObj : boolean = false);
     procedure ComposeWorkflowExampleInstanceVersion(json : TJSONWriter; name : string; elem : TFhirWorkflowExampleInstanceVersion; noObj : boolean = false);
+    procedure ComposeWorkflowExampleInstanceContainedInstance(json : TJSONWriter; name : string; elem : TFhirWorkflowExampleInstanceContainedInstance; noObj : boolean = false);
     procedure ComposeWorkflowExampleProcess(json : TJSONWriter; name : string; elem : TFhirWorkflowExampleProcess; noObj : boolean = false);
     procedure ComposeWorkflowExampleProcessStep(json : TJSONWriter; name : string; elem : TFhirWorkflowExampleProcessStep; noObj : boolean = false);
     procedure ComposeWorkflowExampleProcessStepOperation(json : TJSONWriter; name : string; elem : TFhirWorkflowExampleProcessStepOperation; noObj : boolean = false);
-    procedure ComposeWorkflowExampleProcessStepOperationInstance(json : TJSONWriter; name : string; elem : TFhirWorkflowExampleProcessStepOperationInstance; noObj : boolean = false);
     procedure ComposeWorkflowExampleProcessStepAlternative(json : TJSONWriter; name : string; elem : TFhirWorkflowExampleProcessStepAlternative; noObj : boolean = false);
     procedure ComposeWorkflowExampleProcessStepAlternativeOption(json : TJSONWriter; name : string; elem : TFhirWorkflowExampleProcessStepAlternativeOption; noObj : boolean = false);
     procedure ComposeWorkflowExample(json : TJSONWriter; name : string; elem : TFhirWorkflowExample; noObj : boolean = false);
@@ -9551,6 +9555,8 @@ end;
 procedure TFHIRJsonParser.ParseAuditEventAgentProperties(jsn : TJsonObject; result : TFhirAuditEventAgent);
 begin
     ParseBackboneElementProperties(jsn, result);
+    if jsn.has('type') then
+        result.type_ := ParseCodeableConcept(jsn.vObj['type']);{q3}
     if jsn.has('role') then
       iterateArray(jsn.vArr['role'], result.roleList, parseCodeableConcept);
     if jsn.has('reference') then
@@ -9585,6 +9591,8 @@ begin
     exit;
   if not noObj then json.valueObject(name);
   ComposeBackboneElementProperties(json, elem);
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeCodeableConcept(json, 'type', elem.type_); {a}
   if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.roleList.Count > 0) then
   begin
     json.valueArray('role');
@@ -9850,8 +9858,10 @@ begin
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('type') or jsn.has('_type') then
         result.type_Element := ParseString(jsn['type'], jsn.vObj['_type']);{q}
-    if jsn.has('value') or jsn.has('_value') then
-        result.valueElement := ParseBase64Binary(jsn['value'], jsn.vObj['_value']);{q}
+    if jsn.has('valueString') or jsn.has('_valueString') then
+      result.value := parseString(jsn['valueString'], jsn.vObj['_valueString']);
+    if jsn.has('valueBase64Binary') or jsn.has('_valueBase64Binary') then
+      result.value := parseBase64Binary(jsn['valueBase64Binary'], jsn.vObj['_valueBase64Binary']);
 end;
 
 procedure TFHIRJsonComposer.ComposeAuditEventEntityDetail(json : TJSONWriter; name : string; elem : TFhirAuditEventEntityDetail; noObj : boolean = false);
@@ -9864,10 +9874,16 @@ begin
     ComposeStringValue(json, 'type', elem.type_Element, false);
   if not elem.noCompose and (SummaryOption in [soFull, soData]) then
     ComposeStringProps(json, 'type', elem.type_Element, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
-    ComposeBase64BinaryValue(json, 'value', elem.valueElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
-    ComposeBase64BinaryProps(json, 'value', elem.valueElement, false);
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.value is TFhirString) then 
+  begin
+    ComposeStringValue(json, 'valueString', TFhirString(elem.value), false);
+    ComposeStringProps(json, 'valueString', TFhirString(elem.value), false);
+  end
+  else if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.value is TFhirBase64Binary) then 
+  begin
+    ComposeBase64BinaryValue(json, 'valueBase64Binary', TFhirBase64Binary(elem.value), false);
+    ComposeBase64BinaryProps(json, 'valueBase64Binary', TFhirBase64Binary(elem.value), false);
+  end;
   if not noObj then json.finishObject;
 end;
 
@@ -9896,6 +9912,8 @@ begin
       iterateArray(jsn.vArr['subtype'], result.subtypeList, parseCoding);
     if jsn.has('action') or jsn.has('_action')  then
       result.actionElement := parseEnum(jsn.path+'/action', jsn['action'], jsn.vObj['_action'], CODES_TFhirAuditEventActionEnum, SYSTEMS_TFhirAuditEventActionEnum);
+    if jsn.has('period') then
+        result.period := ParsePeriod(jsn.vObj['period']);{q3}
     if jsn.has('recorded') or jsn.has('_recorded') then
         result.recordedElement := ParseInstant(jsn['recorded'], jsn.vObj['_recorded']);{q}
     if jsn.has('outcome') or jsn.has('_outcome')  then
@@ -9932,6 +9950,8 @@ begin
      ComposeEnumValue(json, 'action', elem.ActionElement, CODES_TFhirAuditEventActionEnum, false);
   if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumProps(json, 'action', elem.ActionElement, CODES_TFhirAuditEventActionEnum, false);
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposePeriod(json, 'period', elem.period); {a}
   if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeInstantValue(json, 'recorded', elem.recordedElement, false);
   if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
@@ -19021,6 +19041,60 @@ begin
   if not noObj then json.finishObject;
 end;
 
+procedure TFHIRJsonParser.ParseDeviceComponentProperty(jsn : TJsonObject; ctxt : TFHIRObjectList);
+begin
+  ctxt.add(ParseDeviceComponentProperty(jsn)); {2}
+end;
+
+function TFHIRJsonParser.ParseDeviceComponentProperty(jsn : TJsonObject) : TFhirDeviceComponentProperty;
+begin
+  result := TFhirDeviceComponentProperty.create;
+  try
+    ParseDeviceComponentPropertyProperties(jsn, result);
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFHIRJsonParser.ParseDeviceComponentPropertyProperties(jsn : TJsonObject; result : TFhirDeviceComponentProperty);
+begin
+    ParseBackboneElementProperties(jsn, result);
+    if jsn.has('type') then
+        result.type_ := ParseCodeableConcept(jsn.vObj['type']);{q3}
+    if jsn.has('valueQuantity') then
+      iterateArray(jsn.vArr['valueQuantity'], result.valueQuantityList, parseQuantity);
+    if jsn.has('valueCode') then
+      iterateArray(jsn.vArr['valueCode'], result.valueCodeList, parseCodeableConcept);
+end;
+
+procedure TFHIRJsonComposer.ComposeDeviceComponentProperty(json : TJSONWriter; name : string; elem : TFhirDeviceComponentProperty; noObj : boolean = false);
+var
+  i : integer;
+begin
+  if (elem = nil) then
+    exit;
+  if not noObj then json.valueObject(name);
+  ComposeBackboneElementProperties(json, elem);
+  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+    ComposeCodeableConcept(json, 'type', elem.type_); {a}
+  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.valueQuantityList.Count > 0) then
+  begin
+    json.valueArray('valueQuantity');
+    for i := 0 to elem.valueQuantityList.Count - 1 do
+      ComposeQuantity(json, '', elem.valueQuantityList[i]); {z - Quantity}
+    json.FinishArray;
+  end;
+  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.valueCodeList.Count > 0) then
+  begin
+    json.valueArray('valueCode');
+    for i := 0 to elem.valueCodeList.Count - 1 do
+      ComposeCodeableConcept(json, '', elem.valueCodeList[i]); {z - CodeableConcept}
+    json.FinishArray;
+  end;
+  if not noObj then json.finishObject;
+end;
+
 procedure TFHIRJsonParser.ParseDeviceComponent(jsn : TJsonObject; ctxt : TFHIRObjectList);
 begin
   ctxt.add(ParseDeviceComponent(jsn)); {2}
@@ -19041,7 +19115,7 @@ procedure TFHIRJsonParser.ParseDeviceComponentProperties(jsn : TJsonObject; resu
 begin
     ParseDomainResourceProperties(jsn, result);
     if jsn.has('identifier') then
-        result.identifier := ParseIdentifier(jsn.vObj['identifier']);{q3}
+      iterateArray(jsn.vArr['identifier'], result.identifierList, parseIdentifier);
     if jsn.has('type') then
         result.type_ := ParseCodeableConcept(jsn.vObj['type']);{q3}
     if jsn.has('lastSystemChange') or jsn.has('_lastSystemChange') then
@@ -19060,6 +19134,8 @@ begin
       iterateArray(jsn.vArr['productionSpecification'], result.productionSpecificationList, parseDeviceComponentProductionSpecification);
     if jsn.has('languageCode') then
         result.languageCode := ParseCodeableConcept(jsn.vObj['languageCode']);{q3}
+    if jsn.has('property') then
+      iterateArray(jsn.vArr['property'], result.property_List, parseDeviceComponentProperty);
 end;
 
 procedure TFHIRJsonComposer.ComposeDeviceComponent(json : TJSONWriter; name : string; elem : TFhirDeviceComponent; noObj : boolean = false);
@@ -19069,8 +19145,13 @@ begin
   if (elem = nil) then
     exit;
   ComposeDomainResourceProperties(json, elem);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
-    ComposeIdentifier(json, 'identifier', elem.identifier); {a}
+  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.identifierList.Count > 0) then
+  begin
+    json.valueArray('identifier');
+    for i := 0 to elem.identifierList.Count - 1 do
+      ComposeIdentifier(json, '', elem.identifierList[i]); {z - Identifier}
+    json.FinishArray;
+  end;
   if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeCodeableConcept(json, 'type', elem.type_); {a}
   if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
@@ -19103,6 +19184,13 @@ begin
   end;
   if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeCodeableConcept(json, 'languageCode', elem.languageCode); {a}
+  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.property_List.Count > 0) then
+  begin
+    json.valueArray('property');
+    for i := 0 to elem.property_List.Count - 1 do
+      ComposeDeviceComponentProperty(json, '', elem.property_List[i]); {z - }
+    json.FinishArray;
+  end;
 end;
 
 {$ENDIF FHIR_DEVICECOMPONENT}
@@ -19175,7 +19263,7 @@ procedure TFHIRJsonParser.ParseDeviceMetricProperties(jsn : TJsonObject; result 
 begin
     ParseDomainResourceProperties(jsn, result);
     if jsn.has('identifier') then
-        result.identifier := ParseIdentifier(jsn.vObj['identifier']);{q3}
+      iterateArray(jsn.vArr['identifier'], result.identifierList, parseIdentifier);
     if jsn.has('type') then
         result.type_ := ParseCodeableConcept(jsn.vObj['type']);{q3}
     if jsn.has('unit') then
@@ -19203,8 +19291,13 @@ begin
   if (elem = nil) then
     exit;
   ComposeDomainResourceProperties(json, elem);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
-    ComposeIdentifier(json, 'identifier', elem.identifier); {a}
+  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.identifierList.Count > 0) then
+  begin
+    json.valueArray('identifier');
+    for i := 0 to elem.identifierList.Count - 1 do
+      ComposeIdentifier(json, '', elem.identifierList[i]); {z - Identifier}
+    json.FinishArray;
+  end;
   if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeCodeableConcept(json, 'type', elem.type_); {a}
   if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
@@ -31646,6 +31739,8 @@ begin
         result.context := ParseReference{Resource}(jsn.vObj['context']);{q3}
     if jsn.has('effectivePeriod') {a4} then
       result.effective := ParsePeriod(jsn.vObj['effectivePeriod']);
+    if jsn.has('effectiveTiming') {a4} then
+      result.effective := ParseTiming(jsn.vObj['effectiveTiming']);
     if jsn.has('effectiveDateTime') or jsn.has('_effectiveDateTime') then
       result.effective := parseDateTime(jsn['effectiveDateTime'], jsn.vObj['_effectiveDateTime']);
     if jsn.has('issued') or jsn.has('_issued') then
@@ -31738,6 +31833,8 @@ begin
     ComposeReference{Resource}(json, 'context', elem.context); {a}
   if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.effective is TFhirPeriod) then 
     ComposePeriod(json, 'effectivePeriod', TFhirPeriod(elem.effective)) 
+  else if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.effective is TFhirTiming) then 
+    ComposeTiming(json, 'effectiveTiming', TFhirTiming(elem.effective)) 
   else if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.effective is TFhirDateTime) then 
   begin
     ComposeDateTimeValue(json, 'effectiveDateTime', TFhirDateTime(elem.effective), false);
@@ -35129,7 +35226,7 @@ begin
   begin
     json.valueArray('reasonReference');
     for i := 0 to elem.reasonReferenceList.Count - 1 do
-      ComposeReference{Resource}(json, '', elem.reasonReferenceList[i]); {z - Reference(Condition|Observation)}
+      ComposeReference{Resource}(json, '', elem.reasonReferenceList[i]); {z - Reference(Condition|Observation|DiagnosticReport|DocumentReference)}
     json.FinishArray;
   end;
   if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.supportingInfoList.Count > 0) then
@@ -35542,6 +35639,8 @@ end;
 procedure TFHIRJsonParser.ParseProvenanceAgentProperties(jsn : TJsonObject; result : TFhirProvenanceAgent);
 begin
     ParseBackboneElementProperties(jsn, result);
+    if jsn.has('type') then
+        result.type_ := ParseCodeableConcept(jsn.vObj['type']);{q3}
     if jsn.has('role') then
       iterateArray(jsn.vArr['role'], result.roleList, parseCodeableConcept);
     if jsn.has('whoReference') {a3} then
@@ -35552,8 +35651,6 @@ begin
       result.onBehalfOf := ParseReference(jsn.vObj['onBehalfOfReference']);
     if jsn.has('onBehalfOfUri') or jsn.has('_onBehalfOfUri') then
       result.onBehalfOf := parseUri(jsn['onBehalfOfUri'], jsn.vObj['_onBehalfOfUri']);
-    if jsn.has('relatedAgentType') then
-        result.relatedAgentType := ParseCodeableConcept(jsn.vObj['relatedAgentType']);{q3}
 end;
 
 procedure TFHIRJsonComposer.ComposeProvenanceAgent(json : TJSONWriter; name : string; elem : TFhirProvenanceAgent; noObj : boolean = false);
@@ -35564,7 +35661,9 @@ begin
     exit;
   if not noObj then json.valueObject(name);
   ComposeBackboneElementProperties(json, elem);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.roleList.Count > 0) then
+  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+    ComposeCodeableConcept(json, 'type', elem.type_); {a}
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.roleList.Count > 0) then
   begin
     json.valueArray('role');
     for i := 0 to elem.roleList.Count - 1 do
@@ -35585,8 +35684,6 @@ begin
     ComposeUriValue(json, 'onBehalfOfUri', TFhirUri(elem.onBehalfOf), false);
     ComposeUriProps(json, 'onBehalfOfUri', TFhirUri(elem.onBehalfOf), false);
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
-    ComposeCodeableConcept(json, 'relatedAgentType', elem.relatedAgentType); {a}
   if not noObj then json.finishObject;
 end;
 
@@ -35673,8 +35770,10 @@ begin
     ParseDomainResourceProperties(jsn, result);
     if jsn.has('target') then
       iterateArray(jsn.vArr['target'], result.targetList, parseReference{TFhirReference});
-    if jsn.has('period') then
-        result.period := ParsePeriod(jsn.vObj['period']);{q3}
+    if jsn.has('occuredPeriod') {a4} then
+      result.occured := ParsePeriod(jsn.vObj['occuredPeriod']);
+    if jsn.has('occuredDateTime') or jsn.has('_occuredDateTime') then
+      result.occured := parseDateTime(jsn['occuredDateTime'], jsn.vObj['_occuredDateTime']);
     if jsn.has('recorded') or jsn.has('_recorded') then
         result.recordedElement := ParseInstant(jsn['recorded'], jsn.vObj['_recorded']);{q}
       if jsn.has('policy') or jsn.has('_policy') then
@@ -35682,9 +35781,9 @@ begin
     if jsn.has('location') then
         result.location := ParseReference{TFhirLocation}(jsn.vObj['location']);{q3}
     if jsn.has('reason') then
-      iterateArray(jsn.vArr['reason'], result.reasonList, parseCoding);
+      iterateArray(jsn.vArr['reason'], result.reasonList, parseCodeableConcept);
     if jsn.has('activity') then
-        result.activity := ParseCoding(jsn.vObj['activity']);{q3}
+        result.activity := ParseCodeableConcept(jsn.vObj['activity']);{q3}
     if jsn.has('agent') then
       iterateArray(jsn.vArr['agent'], result.agentList, parseProvenanceAgent);
     if jsn.has('entity') then
@@ -35709,8 +35808,13 @@ begin
       ComposeReference{TFhirReference}(json, '', elem.targetList[i]); {z - Reference(Any)}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
-    ComposePeriod(json, 'period', elem.period); {a}
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.occured is TFhirPeriod) then 
+    ComposePeriod(json, 'occuredPeriod', TFhirPeriod(elem.occured)) 
+  else if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.occured is TFhirDateTime) then 
+  begin
+    ComposeDateTimeValue(json, 'occuredDateTime', TFhirDateTime(elem.occured), false);
+    ComposeDateTimeProps(json, 'occuredDateTime', TFhirDateTime(elem.occured), false);
+  end;
   if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeInstantValue(json, 'recorded', elem.recordedElement, false);
   if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
@@ -35745,11 +35849,11 @@ begin
   begin
     json.valueArray('reason');
     for i := 0 to elem.reasonList.Count - 1 do
-      ComposeCoding(json, '', elem.reasonList[i]); {z - Coding}
+      ComposeCodeableConcept(json, '', elem.reasonList[i]); {z - CodeableConcept}
     json.FinishArray;
   end;
   if not elem.noCompose and (SummaryOption in [soFull, soData]) then
-    ComposeCoding(json, 'activity', elem.activity); {a}
+    ComposeCodeableConcept(json, 'activity', elem.activity); {a}
   if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.agentList.Count > 0) then
   begin
     json.valueArray('agent');
@@ -42389,8 +42493,10 @@ begin
       iterateArray(jsn.vArr['performerType'], result.performerTypeList, parseCodeableConcept);
     if jsn.has('owner') then
         result.owner := ParseReference{Resource}(jsn.vObj['owner']);{q3}
-    if jsn.has('reason') then
-        result.reason := ParseCodeableConcept(jsn.vObj['reason']);{q3}
+    if jsn.has('reasonCode') then
+        result.reasonCode := ParseCodeableConcept(jsn.vObj['reasonCode']);{q3}
+    if jsn.has('reasonReference') then
+        result.reasonReference := ParseReference{TFhirReference}(jsn.vObj['reasonReference']);{q3}
     if jsn.has('note') then
       iterateArray(jsn.vArr['note'], result.noteList, parseAnnotation);
     if jsn.has('relevantHistory') then
@@ -42490,7 +42596,9 @@ begin
   if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{Resource}(json, 'owner', elem.owner); {a}
   if not elem.noCompose and (SummaryOption in [soFull, soData]) then
-    ComposeCodeableConcept(json, 'reason', elem.reason); {a}
+    ComposeCodeableConcept(json, 'reasonCode', elem.reasonCode); {a}
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeReference{TFhirReference}(json, 'reasonReference', elem.reasonReference); {a}
   if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.noteList.Count > 0) then
   begin
     json.valueArray('note');
@@ -45648,6 +45756,8 @@ begin
         result.descriptionElement := ParseMarkdown(jsn['description'], jsn.vObj['_description']);{q}
     if jsn.has('version') then
       iterateArray(jsn.vArr['version'], result.versionList, parseWorkflowExampleInstanceVersion);
+    if jsn.has('containedInstance') then
+      iterateArray(jsn.vArr['containedInstance'], result.containedInstanceList, parseWorkflowExampleInstanceContainedInstance);
 end;
 
 procedure TFHIRJsonComposer.ComposeWorkflowExampleInstance(json : TJSONWriter; name : string; elem : TFhirWorkflowExampleInstance; noObj : boolean = false);
@@ -45679,6 +45789,13 @@ begin
     json.valueArray('version');
     for i := 0 to elem.versionList.Count - 1 do
       ComposeWorkflowExampleInstanceVersion(json, '', elem.versionList[i]); {z - }
+    json.FinishArray;
+  end;
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.containedInstanceList.Count > 0) then
+  begin
+    json.valueArray('containedInstance');
+    for i := 0 to elem.containedInstanceList.Count - 1 do
+      ComposeWorkflowExampleInstanceContainedInstance(json, '', elem.containedInstanceList[i]); {z - }
     json.FinishArray;
   end;
   if not noObj then json.finishObject;
@@ -45723,6 +45840,48 @@ begin
     ComposeMarkdownValue(json, 'description', elem.descriptionElement, false);
   if not elem.noCompose and (SummaryOption in [soFull, soData]) then
     ComposeMarkdownProps(json, 'description', elem.descriptionElement, false);
+  if not noObj then json.finishObject;
+end;
+
+procedure TFHIRJsonParser.ParseWorkflowExampleInstanceContainedInstance(jsn : TJsonObject; ctxt : TFHIRObjectList);
+begin
+  ctxt.add(ParseWorkflowExampleInstanceContainedInstance(jsn)); {2}
+end;
+
+function TFHIRJsonParser.ParseWorkflowExampleInstanceContainedInstance(jsn : TJsonObject) : TFhirWorkflowExampleInstanceContainedInstance;
+begin
+  result := TFhirWorkflowExampleInstanceContainedInstance.create;
+  try
+    ParseWorkflowExampleInstanceContainedInstanceProperties(jsn, result);
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFHIRJsonParser.ParseWorkflowExampleInstanceContainedInstanceProperties(jsn : TJsonObject; result : TFhirWorkflowExampleInstanceContainedInstance);
+begin
+    ParseBackboneElementProperties(jsn, result);
+    if jsn.has('resourceId') or jsn.has('_resourceId') then
+        result.resourceIdElement := ParseString(jsn['resourceId'], jsn.vObj['_resourceId']);{q}
+    if jsn.has('versionId') or jsn.has('_versionId') then
+        result.versionIdElement := ParseString(jsn['versionId'], jsn.vObj['_versionId']);{q}
+end;
+
+procedure TFHIRJsonComposer.ComposeWorkflowExampleInstanceContainedInstance(json : TJSONWriter; name : string; elem : TFhirWorkflowExampleInstanceContainedInstance; noObj : boolean = false);
+begin
+  if (elem = nil) then
+    exit;
+  if not noObj then json.valueObject(name);
+  ComposeBackboneElementProperties(json, elem);
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeStringValue(json, 'resourceId', elem.resourceIdElement, false);
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeStringProps(json, 'resourceId', elem.resourceIdElement, false);
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeStringValue(json, 'versionId', elem.versionIdElement, false);
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeStringProps(json, 'versionId', elem.versionIdElement, false);
   if not noObj then json.finishObject;
 end;
 
@@ -45881,13 +46040,13 @@ begin
         result.initiatorActiveElement := ParseBoolean(jsn['initiatorActive'], jsn.vObj['_initiatorActive']);{q}
     if jsn.has('receiverActive') or jsn.has('_receiverActive') then
         result.receiverActiveElement := ParseBoolean(jsn['receiverActive'], jsn.vObj['_receiverActive']);{q}
-    if jsn.has('instance') then
-      iterateArray(jsn.vArr['instance'], result.instanceList, parseWorkflowExampleProcessStepOperationInstance);
+    if jsn.has('request') then
+        result.request := ParseWorkflowExampleInstanceContainedInstance(jsn.vObj['request']);{q3}
+    if jsn.has('response') then
+        result.response := ParseWorkflowExampleInstanceContainedInstance(jsn.vObj['response']);{q3}
 end;
 
 procedure TFHIRJsonComposer.ComposeWorkflowExampleProcessStepOperation(json : TJSONWriter; name : string; elem : TFhirWorkflowExampleProcessStepOperation; noObj : boolean = false);
-var
-  i : integer;
 begin
   if (elem = nil) then
     exit;
@@ -45925,49 +46084,10 @@ begin
     ComposeBooleanValue(json, 'receiverActive', elem.receiverActiveElement, false);
   if not elem.noCompose and (SummaryOption in [soFull, soData]) then
     ComposeBooleanProps(json, 'receiverActive', elem.receiverActiveElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.instanceList.Count > 0) then
-  begin
-    json.valueArray('instance');
-    for i := 0 to elem.instanceList.Count - 1 do
-      ComposeWorkflowExampleProcessStepOperationInstance(json, '', elem.instanceList[i]); {z - }
-    json.FinishArray;
-  end;
-  if not noObj then json.finishObject;
-end;
-
-procedure TFHIRJsonParser.ParseWorkflowExampleProcessStepOperationInstance(jsn : TJsonObject; ctxt : TFHIRObjectList);
-begin
-  ctxt.add(ParseWorkflowExampleProcessStepOperationInstance(jsn)); {2}
-end;
-
-function TFHIRJsonParser.ParseWorkflowExampleProcessStepOperationInstance(jsn : TJsonObject) : TFhirWorkflowExampleProcessStepOperationInstance;
-begin
-  result := TFhirWorkflowExampleProcessStepOperationInstance.create;
-  try
-    ParseWorkflowExampleProcessStepOperationInstanceProperties(jsn, result);
-    result.link;
-  finally
-    result.free;
-  end;
-end;
-
-procedure TFHIRJsonParser.ParseWorkflowExampleProcessStepOperationInstanceProperties(jsn : TJsonObject; result : TFhirWorkflowExampleProcessStepOperationInstance);
-begin
-    ParseBackboneElementProperties(jsn, result);
-    if jsn.has('instanceId') or jsn.has('_instanceId') then
-        result.instanceIdElement := ParseString(jsn['instanceId'], jsn.vObj['_instanceId']);{q}
-end;
-
-procedure TFHIRJsonComposer.ComposeWorkflowExampleProcessStepOperationInstance(json : TJSONWriter; name : string; elem : TFhirWorkflowExampleProcessStepOperationInstance; noObj : boolean = false);
-begin
-  if (elem = nil) then
-    exit;
-  if not noObj then json.valueObject(name);
-  ComposeBackboneElementProperties(json, elem);
   if not elem.noCompose and (SummaryOption in [soFull, soData]) then
-    ComposeStringValue(json, 'instanceId', elem.instanceIdElement, false);
+    ComposeWorkflowExampleInstanceContainedInstance(json, 'request', elem.request); {a}
   if not elem.noCompose and (SummaryOption in [soFull, soData]) then
-    ComposeStringProps(json, 'instanceId', elem.instanceIdElement, false);
+    ComposeWorkflowExampleInstanceContainedInstance(json, 'response', elem.response); {a}
   if not noObj then json.finishObject;
 end;
 
@@ -46039,12 +46159,8 @@ begin
     ParseBackboneElementProperties(jsn, result);
     if jsn.has('description') or jsn.has('_description') then
         result.descriptionElement := ParseMarkdown(jsn['description'], jsn.vObj['_description']);{q}
-    if jsn.has('process') then
-      iterateArray(jsn.vArr['process'], result.processList, parseWorkflowExampleProcess);
-    if jsn.has('alternative') then
-      iterateArray(jsn.vArr['alternative'], result.alternativeList, parseWorkflowExampleProcessStepAlternative);
-    if jsn.has('operation') then
-      iterateArray(jsn.vArr['operation'], result.operationList, parseWorkflowExampleProcessStepOperation);
+    if jsn.has('step') then
+      iterateArray(jsn.vArr['step'], result.stepList, parseWorkflowExampleProcessStep);
       if jsn.has('pause') or jsn.has('_pause') then
       iteratePrimitiveArray(jsn.vArr['pause'], jsn.vArr['_pause'], result.pauseList, parseBoolean);
 end;
@@ -46063,25 +46179,11 @@ begin
     ComposeMarkdownValue(json, 'description', elem.descriptionElement, false);
   if not elem.noCompose and (SummaryOption in [soFull, soData]) then
     ComposeMarkdownProps(json, 'description', elem.descriptionElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.processList.Count > 0) then
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.stepList.Count > 0) then
   begin
-    json.valueArray('process');
-    for i := 0 to elem.processList.Count - 1 do
-      ComposeWorkflowExampleProcess(json, '', elem.processList[i]); {z - @WorkflowExample.process}
-    json.FinishArray;
-  end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.alternativeList.Count > 0) then
-  begin
-    json.valueArray('alternative');
-    for i := 0 to elem.alternativeList.Count - 1 do
-      ComposeWorkflowExampleProcessStepAlternative(json, '', elem.alternativeList[i]); {z - @WorkflowExample.process.step.alternative}
-    json.FinishArray;
-  end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.operationList.Count > 0) then
-  begin
-    json.valueArray('operation');
-    for i := 0 to elem.operationList.Count - 1 do
-      ComposeWorkflowExampleProcessStepOperation(json, '', elem.operationList[i]); {z - @WorkflowExample.process.step.operation}
+    json.valueArray('step');
+    for i := 0 to elem.stepList.Count - 1 do
+      ComposeWorkflowExampleProcessStep(json, '', elem.stepList[i]); {z - @WorkflowExample.process.step}
     json.FinishArray;
   end;
   if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.pauseList.Count > 0) then
@@ -48077,6 +48179,8 @@ begin
 {$IFDEF FHIR_DEVICECOMPONENT}
   else if (base is TFhirDeviceComponentProductionSpecification) then
     composeDeviceComponentProductionSpecification(json, name, TFhirDeviceComponentProductionSpecification(base), false)
+  else if (base is TFhirDeviceComponentProperty) then
+    composeDeviceComponentProperty(json, name, TFhirDeviceComponentProperty(base), false)
   else if (base is TFhirDeviceComponent) then
     composeDeviceComponent(json, name, TFhirDeviceComponent(base), false)
 {$ENDIF FHIR_DEVICECOMPONENT}
@@ -48883,14 +48987,14 @@ begin
     composeWorkflowExampleInstance(json, name, TFhirWorkflowExampleInstance(base), false)
   else if (base is TFhirWorkflowExampleInstanceVersion) then
     composeWorkflowExampleInstanceVersion(json, name, TFhirWorkflowExampleInstanceVersion(base), false)
+  else if (base is TFhirWorkflowExampleInstanceContainedInstance) then
+    composeWorkflowExampleInstanceContainedInstance(json, name, TFhirWorkflowExampleInstanceContainedInstance(base), false)
   else if (base is TFhirWorkflowExampleProcess) then
     composeWorkflowExampleProcess(json, name, TFhirWorkflowExampleProcess(base), false)
   else if (base is TFhirWorkflowExampleProcessStep) then
     composeWorkflowExampleProcessStep(json, name, TFhirWorkflowExampleProcessStep(base), false)
   else if (base is TFhirWorkflowExampleProcessStepOperation) then
     composeWorkflowExampleProcessStepOperation(json, name, TFhirWorkflowExampleProcessStepOperation(base), false)
-  else if (base is TFhirWorkflowExampleProcessStepOperationInstance) then
-    composeWorkflowExampleProcessStepOperationInstance(json, name, TFhirWorkflowExampleProcessStepOperationInstance(base), false)
   else if (base is TFhirWorkflowExampleProcessStepAlternative) then
     composeWorkflowExampleProcessStepAlternative(json, name, TFhirWorkflowExampleProcessStepAlternative(base), false)
   else if (base is TFhirWorkflowExampleProcessStepAlternativeOption) then

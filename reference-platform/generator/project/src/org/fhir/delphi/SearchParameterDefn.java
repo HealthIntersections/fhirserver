@@ -193,5 +193,17 @@ public class SearchParameterDefn {
   public SearchParameter.XPathUsageType getxPathUsage() {
     return xPathUsage;
   }
+
+  public void setDescription(String description) {
+    this.description = description;
+  }
+
+  public void setType(SearchParamType type) {
+    this.type = type;
+  }
+
+  public void setxPathUsage(SearchParameter.XPathUsageType xPathUsage) {
+    this.xPathUsage = xPathUsage;
+  }
   
 }

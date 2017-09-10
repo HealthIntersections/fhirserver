@@ -40,7 +40,7 @@ This is the dstu4 version of the FHIR code
 
 interface
 
-// FHIR v3.1.0 generated 2017-08-11T08:50:17+10:00
+// FHIR v3.1.0 generated 2017-09-05T11:38:55+10:00
 
 uses
   Classes, SysUtils, DecimalSupport, StringSupport, AdvBuffers, EncdDecd, DateSupport, FHIRBase;
@@ -6937,7 +6937,7 @@ Type
     property textElement : TFhirString read FText write SetText;
 
     {@member additionalInstructionList
-      Supplemental instruction - e.g. "with meals".
+      Supplemental instructions to the patient on how to take the medication  (e.g. "with meals" or"take half to one hour before food") or warnings for the patient about the medication (e.g. "may cause drowsiness" or "avoid exposure of skin to direct sunlight or sunlamps").
     }
     property additionalInstructionList : TFhirCodeableConceptList read GetAdditionalInstructionList;
     property hasAdditionalInstructionList : boolean read GetHasAdditionalInstructionList;
@@ -9638,11 +9638,11 @@ Type
     property onBehalfOfElement : TFhirType read FOnBehalfOf write SetOnBehalfOf;
 
     {@member contentType
-      Typed access to A mime type that indicates the technical format of the signature. Important mime types are application/signature+xml for X ML DigSig, application/jwt for JWT, and image/* for a graphical image of a signature, etc.
+      Typed access to A mime type that indicates the technical format of the signature. Important mime types are application/signature+xml for X ML DigSig, application/jose for JWS, and image/* for a graphical image of a signature, etc.
     }
     property contentType : String read GetContentTypeST write SetContentTypeST;
     {@member contentTypeElement
-      A mime type that indicates the technical format of the signature. Important mime types are application/signature+xml for X ML DigSig, application/jwt for JWT, and image/* for a graphical image of a signature, etc.
+      A mime type that indicates the technical format of the signature. Important mime types are application/signature+xml for X ML DigSig, application/jose for JWS, and image/* for a graphical image of a signature, etc.
     }
     property contentTypeElement : TFhirCode read FContentType write SetContentType;
 

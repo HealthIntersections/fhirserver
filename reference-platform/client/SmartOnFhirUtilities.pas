@@ -142,6 +142,8 @@ type
     FtokenEndpoint: String;
     FauthorizeEndpoint: String;
     FFormat: TFHIRFormat;
+    FPassword: String;
+    FUserName: String;
   public
     constructor Create; override;
     Destructor Destroy; Override;
@@ -190,6 +192,9 @@ type
 
     // whether to use hooks automatically, or only if the server is connected
     property autoUseHooks : boolean read FautoUseHooks write FautoUseHooks;
+
+    property username : String read FUserName write FUserName;
+    property password : String read FPassword write FPassword;
   end;
 
   // result of a SMART on FHIR authorization
@@ -494,6 +499,8 @@ begin
 
   name := o.vStr['name'];
   fhirEndpoint := o.vStr['fhir'];
+  username := o.vStr['username'];
+  password := o.vStr['password'];
   SmartOnFHIR := o.bool['smart'];
   if o.vStr['format']  = 'xml' then
     format := ffXml
@@ -536,6 +543,8 @@ begin
   o.clear;
   o.vStr['name'] := name;
   o.vStr['fhir'] := fhirEndpoint;
+  o.vStr['username'] := username;
+  o.vStr['password'] := password;
   case format of
     ffXml: o.vStr['format'] := 'xml';
     ffJson: o.vStr['format'] := 'json';

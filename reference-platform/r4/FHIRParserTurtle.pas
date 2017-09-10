@@ -38,7 +38,7 @@ This is the dstu4 version of the FHIR code
 
 interface
 
-// FHIR v3.1.0 generated 2017-08-11T08:50:17+10:00
+// FHIR v3.1.0 generated 2017-09-05T11:38:55+10:00
 
 uses
   SysUtils, Classes, StringSupport, DateSupport, DecimalSupport, FHIRParserBase, FHIRBase, FHIRResources, FHIRConstants, FHIRTypes, AdvStringMatches, TurtleParser;
@@ -495,6 +495,8 @@ Type
 {$IFDEF FHIR_DEVICECOMPONENT}
     function ParseDeviceComponentProductionSpecification(obj : TTurtleComplex) : TFhirDeviceComponentProductionSpecification; overload; {b\}
     procedure ParseDeviceComponentProductionSpecificationProperties(obj : TTurtleComplex; result : TFhirDeviceComponentProductionSpecification); overload; {b\}
+    function ParseDeviceComponentProperty(obj : TTurtleComplex) : TFhirDeviceComponentProperty; overload; {b\}
+    procedure ParseDeviceComponentPropertyProperties(obj : TTurtleComplex; result : TFhirDeviceComponentProperty); overload; {b\}
     function ParseDeviceComponent(obj : TTurtleComplex) : TFhirDeviceComponent; overload;
     procedure ParseDeviceComponentProperties(obj : TTurtleComplex; result : TFhirDeviceComponent); overload;
 {$ENDIF FHIR_DEVICECOMPONENT}
@@ -1301,14 +1303,14 @@ Type
     procedure ParseWorkflowExampleInstanceProperties(obj : TTurtleComplex; result : TFhirWorkflowExampleInstance); overload; {b\}
     function ParseWorkflowExampleInstanceVersion(obj : TTurtleComplex) : TFhirWorkflowExampleInstanceVersion; overload; {b\}
     procedure ParseWorkflowExampleInstanceVersionProperties(obj : TTurtleComplex; result : TFhirWorkflowExampleInstanceVersion); overload; {b\}
+    function ParseWorkflowExampleInstanceContainedInstance(obj : TTurtleComplex) : TFhirWorkflowExampleInstanceContainedInstance; overload; {b\}
+    procedure ParseWorkflowExampleInstanceContainedInstanceProperties(obj : TTurtleComplex; result : TFhirWorkflowExampleInstanceContainedInstance); overload; {b\}
     function ParseWorkflowExampleProcess(obj : TTurtleComplex) : TFhirWorkflowExampleProcess; overload; {b\}
     procedure ParseWorkflowExampleProcessProperties(obj : TTurtleComplex; result : TFhirWorkflowExampleProcess); overload; {b\}
     function ParseWorkflowExampleProcessStep(obj : TTurtleComplex) : TFhirWorkflowExampleProcessStep; overload; {b\}
     procedure ParseWorkflowExampleProcessStepProperties(obj : TTurtleComplex; result : TFhirWorkflowExampleProcessStep); overload; {b\}
     function ParseWorkflowExampleProcessStepOperation(obj : TTurtleComplex) : TFhirWorkflowExampleProcessStepOperation; overload; {b\}
     procedure ParseWorkflowExampleProcessStepOperationProperties(obj : TTurtleComplex; result : TFhirWorkflowExampleProcessStepOperation); overload; {b\}
-    function ParseWorkflowExampleProcessStepOperationInstance(obj : TTurtleComplex) : TFhirWorkflowExampleProcessStepOperationInstance; overload; {b\}
-    procedure ParseWorkflowExampleProcessStepOperationInstanceProperties(obj : TTurtleComplex; result : TFhirWorkflowExampleProcessStepOperationInstance); overload; {b\}
     function ParseWorkflowExampleProcessStepAlternative(obj : TTurtleComplex) : TFhirWorkflowExampleProcessStepAlternative; overload; {b\}
     procedure ParseWorkflowExampleProcessStepAlternativeProperties(obj : TTurtleComplex; result : TFhirWorkflowExampleProcessStepAlternative); overload; {b\}
     function ParseWorkflowExampleProcessStepAlternativeOption(obj : TTurtleComplex) : TFhirWorkflowExampleProcessStepAlternativeOption; overload; {b\}
@@ -1597,6 +1599,7 @@ Type
 {$ENDIF FHIR_DEVICE}
 {$IFDEF FHIR_DEVICECOMPONENT}
     procedure ComposeDeviceComponentProductionSpecification(parent :  TTurtleComplex; parentType, name : String; elem : TFhirDeviceComponentProductionSpecification; useType : boolean; index : integer);
+    procedure ComposeDeviceComponentProperty(parent :  TTurtleComplex; parentType, name : String; elem : TFhirDeviceComponentProperty; useType : boolean; index : integer);
     procedure ComposeDeviceComponent(parent :  TTurtleComplex; parentType, name : String; elem : TFhirDeviceComponent; useType : boolean; index : integer);
 {$ENDIF FHIR_DEVICECOMPONENT}
 {$IFDEF FHIR_DEVICEMETRIC}
@@ -2086,10 +2089,10 @@ Type
     procedure ComposeWorkflowExampleActor(parent :  TTurtleComplex; parentType, name : String; elem : TFhirWorkflowExampleActor; useType : boolean; index : integer);
     procedure ComposeWorkflowExampleInstance(parent :  TTurtleComplex; parentType, name : String; elem : TFhirWorkflowExampleInstance; useType : boolean; index : integer);
     procedure ComposeWorkflowExampleInstanceVersion(parent :  TTurtleComplex; parentType, name : String; elem : TFhirWorkflowExampleInstanceVersion; useType : boolean; index : integer);
+    procedure ComposeWorkflowExampleInstanceContainedInstance(parent :  TTurtleComplex; parentType, name : String; elem : TFhirWorkflowExampleInstanceContainedInstance; useType : boolean; index : integer);
     procedure ComposeWorkflowExampleProcess(parent :  TTurtleComplex; parentType, name : String; elem : TFhirWorkflowExampleProcess; useType : boolean; index : integer);
     procedure ComposeWorkflowExampleProcessStep(parent :  TTurtleComplex; parentType, name : String; elem : TFhirWorkflowExampleProcessStep; useType : boolean; index : integer);
     procedure ComposeWorkflowExampleProcessStepOperation(parent :  TTurtleComplex; parentType, name : String; elem : TFhirWorkflowExampleProcessStepOperation; useType : boolean; index : integer);
-    procedure ComposeWorkflowExampleProcessStepOperationInstance(parent :  TTurtleComplex; parentType, name : String; elem : TFhirWorkflowExampleProcessStepOperationInstance; useType : boolean; index : integer);
     procedure ComposeWorkflowExampleProcessStepAlternative(parent :  TTurtleComplex; parentType, name : String; elem : TFhirWorkflowExampleProcessStepAlternative; useType : boolean; index : integer);
     procedure ComposeWorkflowExampleProcessStepAlternativeOption(parent :  TTurtleComplex; parentType, name : String; elem : TFhirWorkflowExampleProcessStepAlternativeOption; useType : boolean; index : integer);
     procedure ComposeWorkflowExample(parent :  TTurtleComplex; parentType, name : String; elem : TFhirWorkflowExample; useType : boolean; index : integer);
@@ -7346,6 +7349,7 @@ var
   item : TTurtleComplex;
 begin
     ParseBackboneElementProperties(obj, result);
+    result.type_ := ParseCodeableConcept(obj.complex('http://hl7.org/fhir/AuditEvent.agent.type'));{q3b}
     for item in obj.complexes('http://hl7.org/fhir/AuditEvent.agent.role') do
       result.roleList.Add(parseCodeableConcept(item));
     result.reference := ParseReference{Resource}(obj.complex('http://hl7.org/fhir/AuditEvent.agent.reference'));{q3b}
@@ -7378,6 +7382,8 @@ begin
       this.addPredicate('a', 'fhir:AuditEventAgent'); {z}
   end;
   composeBackboneElement(this, '', name, elem, false, index);
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeCodeableConcept(this, 'AuditEvent.agent', 'type', elem.type_Element, false, -1);{x.2f}
   if not elem.noCompose and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.roleList.Count - 1 do
       ComposeCodeableConcept(this, 'AuditEvent.agent', 'role', elem.roleList[i], false, i);{x.d3}
@@ -7581,10 +7587,15 @@ begin
 end;
 
 procedure TFHIRTurtleParser.ParseAuditEventEntityDetailProperties(obj : TTurtleComplex; result : TFhirAuditEventEntityDetail);
+var
+  item : TTurtleComplex;
 begin
     ParseBackboneElementProperties(obj, result);
     result.type_Element := ParseString(obj.complex('http://hl7.org/fhir/AuditEvent.entity.detail.type'));{q1}
-    result.valueElement := ParseBase64Binary(obj.complex('http://hl7.org/fhir/AuditEvent.entity.detail.value'));{q1}
+    if obj.has('http://hl7.org/fhir/AuditEvent.entity.detail.valueString', item) then
+      result.value := parseString(item);
+    if obj.has('http://hl7.org/fhir/AuditEvent.entity.detail.valueBase64Binary', item) then
+      result.value := parseBase64Binary(item);
 end;
 
 procedure TFHIRTurtleComposer.ComposeAuditEventEntityDetail(parent :  TTurtleComplex; parentType, name : String; elem : TFhirAuditEventEntityDetail; useType : boolean; index : integer);
@@ -7604,8 +7615,10 @@ begin
   composeBackboneElement(this, '', name, elem, false, index);
   if not elem.noCompose and (SummaryOption in [soFull, soData]) then
     ComposeString(this, 'AuditEvent.entity.detail', 'type', elem.type_Element, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
-    ComposeBase64Binary(this, 'AuditEvent.entity.detail', 'value', elem.valueElement, false, -1);{x.2ea}
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.value is TFhirString) {6} then
+    ComposeString(this, 'AuditEvent.entity.detail', 'valueString', TFhirString(elem.value), false, -1){x.d9}
+  else if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.value is TFhirBase64Binary) {6} then
+    ComposeBase64Binary(this, 'AuditEvent.entity.detail', 'valueBase64Binary', TFhirBase64Binary(elem.value), false, -1);{x.d9}
 end;
 
 function TFHIRTurtleParser.ParseAuditEvent(obj : TTurtleComplex) : TFhirAuditEvent;
@@ -7630,6 +7643,7 @@ begin
     for item in obj.complexes('http://hl7.org/fhir/AuditEvent.subtype') do
       result.subtypeList.Add(parseCoding(item));
     result.actionElement := ParseEnum(obj.complex('http://hl7.org/fhir/AuditEvent.action'), CODES_TFhirAuditEventActionEnum, SYSTEMS_TFhirAuditEventActionEnum);
+    result.period := ParsePeriod(obj.complex('http://hl7.org/fhir/AuditEvent.period'));{q3b}
     result.recordedElement := ParseInstant(obj.complex('http://hl7.org/fhir/AuditEvent.recorded'));{q1}
     result.outcomeElement := ParseEnum(obj.complex('http://hl7.org/fhir/AuditEvent.outcome'), CODES_TFhirAuditEventOutcomeEnum, SYSTEMS_TFhirAuditEventOutcomeEnum);
     result.outcomeDescElement := ParseString(obj.complex('http://hl7.org/fhir/AuditEvent.outcomeDesc'));{q1}
@@ -7665,6 +7679,8 @@ begin
       ComposeCoding(this, 'AuditEvent', 'subtype', elem.subtypeList[i], false, i);{x.d3}
   if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnum(this, 'AuditEvent', 'action', elem.ActionElement, CODES_TFhirAuditEventActionEnum, SYSTEMS_TFhirAuditEventActionEnum, false, -1);{x.d4}
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposePeriod(this, 'AuditEvent', 'period', elem.periodElement, false, -1);{x.2f}
   if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeInstant(this, 'AuditEvent', 'recorded', elem.recordedElement, false, -1);{x.2ea}
   if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
@@ -14840,6 +14856,57 @@ begin
     ComposeString(this, 'DeviceComponent.productionSpecification', 'productionSpec', elem.productionSpecElement, false, -1);{x.2ea}
 end;
 
+function TFHIRTurtleParser.ParseDeviceComponentProperty(obj : TTurtleComplex) : TFhirDeviceComponentProperty;
+begin
+  if (obj = nil) then
+    exit(nil);
+  result := TFhirDeviceComponentProperty.create;
+  try
+    ParseDeviceComponentPropertyProperties(obj, result);
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFHIRTurtleParser.ParseDeviceComponentPropertyProperties(obj : TTurtleComplex; result : TFhirDeviceComponentProperty);
+var
+  item : TTurtleComplex;
+begin
+    ParseBackboneElementProperties(obj, result);
+    result.type_ := ParseCodeableConcept(obj.complex('http://hl7.org/fhir/DeviceComponent.property.type'));{q3b}
+    for item in obj.complexes('http://hl7.org/fhir/DeviceComponent.property.valueQuantity') do
+      result.valueQuantityList.Add(parseQuantity(item));
+    for item in obj.complexes('http://hl7.org/fhir/DeviceComponent.property.valueCode') do
+      result.valueCodeList.Add(parseCodeableConcept(item));
+end;
+
+procedure TFHIRTurtleComposer.ComposeDeviceComponentProperty(parent :  TTurtleComplex; parentType, name : String; elem : TFhirDeviceComponentProperty; useType : boolean; index : integer);
+var
+  this : TTurtleComplex;
+  i : integer;
+begin
+  if (elem = nil) then
+    exit;
+  if (parentType = '') then
+    this := parent
+  else
+  begin
+    this := parent.addPredicate('fhir:'+parentType+'.'+name);
+    if (useType) then
+      this.addPredicate('a', 'fhir:DeviceComponentProperty'); {z}
+  end;
+  composeBackboneElement(this, '', name, elem, false, index);
+  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+    ComposeCodeableConcept(this, 'DeviceComponent.property', 'type', elem.type_Element, false, -1);{x.2f}
+  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+    for i := 0 to elem.valueQuantityList.Count - 1 do
+      ComposeQuantity(this, 'DeviceComponent.property', 'valueQuantity', elem.valueQuantityList[i], false, i);{x.d3}
+  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+    for i := 0 to elem.valueCodeList.Count - 1 do
+      ComposeCodeableConcept(this, 'DeviceComponent.property', 'valueCode', elem.valueCodeList[i], false, i);{x.d3}
+end;
+
 function TFHIRTurtleParser.ParseDeviceComponent(obj : TTurtleComplex) : TFhirDeviceComponent;
 begin
   if (obj = nil) then
@@ -14858,7 +14925,8 @@ var
   item : TTurtleComplex;
 begin
     ParseDomainResourceProperties(obj, result);
-    result.identifier := ParseIdentifier(obj.complex('http://hl7.org/fhir/DeviceComponent.identifier'));{q3b}
+    for item in obj.complexes('http://hl7.org/fhir/DeviceComponent.identifier') do
+      result.identifierList.Add(parseIdentifier(item));
     result.type_ := ParseCodeableConcept(obj.complex('http://hl7.org/fhir/DeviceComponent.type'));{q3b}
     result.lastSystemChangeElement := ParseInstant(obj.complex('http://hl7.org/fhir/DeviceComponent.lastSystemChange'));{q1}
     result.source := ParseReference{TFhirDevice}(obj.complex('http://hl7.org/fhir/DeviceComponent.source'));{q3b}
@@ -14870,6 +14938,8 @@ begin
     for item in obj.complexes('http://hl7.org/fhir/DeviceComponent.productionSpecification') do
       result.productionSpecificationList.Add(parseDeviceComponentProductionSpecification(item));
     result.languageCode := ParseCodeableConcept(obj.complex('http://hl7.org/fhir/DeviceComponent.languageCode'));{q3b}
+    for item in obj.complexes('http://hl7.org/fhir/DeviceComponent.property') do
+      result.property_List.Add(parseDeviceComponentProperty(item));
 end;
 
 procedure TFHIRTurtleComposer.ComposeDeviceComponent(parent :  TTurtleComplex; parentType, name : String; elem : TFhirDeviceComponent; useType : boolean; index : integer);
@@ -14889,7 +14959,8 @@ begin
   end;
   composeDomainResource(this, '', name, elem, false, index);
   if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
-    ComposeIdentifier(this, 'DeviceComponent', 'identifier', elem.identifierElement, false, -1);{x.2f}
+    for i := 0 to elem.identifierList.Count - 1 do
+      ComposeIdentifier(this, 'DeviceComponent', 'identifier', elem.identifierList[i], false, i);{x.d3}
   if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeCodeableConcept(this, 'DeviceComponent', 'type', elem.type_Element, false, -1);{x.2f}
   if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
@@ -14910,6 +14981,9 @@ begin
       ComposeDeviceComponentProductionSpecification(this, 'DeviceComponent', 'productionSpecification', elem.productionSpecificationList[i], false, i);{x.d3}
   if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeCodeableConcept(this, 'DeviceComponent', 'languageCode', elem.languageCodeElement, false, -1);{x.2f}
+  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+    for i := 0 to elem.property_List.Count - 1 do
+      ComposeDeviceComponentProperty(this, 'DeviceComponent', 'property', elem.property_List[i], false, i);{x.d3}
 end;
 
 {$ENDIF FHIR_DEVICECOMPONENT}
@@ -14976,7 +15050,8 @@ var
   item : TTurtleComplex;
 begin
     ParseDomainResourceProperties(obj, result);
-    result.identifier := ParseIdentifier(obj.complex('http://hl7.org/fhir/DeviceMetric.identifier'));{q3b}
+    for item in obj.complexes('http://hl7.org/fhir/DeviceMetric.identifier') do
+      result.identifierList.Add(parseIdentifier(item));
     result.type_ := ParseCodeableConcept(obj.complex('http://hl7.org/fhir/DeviceMetric.type'));{q3b}
     result.unit_ := ParseCodeableConcept(obj.complex('http://hl7.org/fhir/DeviceMetric.unit'));{q3b}
     result.source := ParseReference{TFhirDevice}(obj.complex('http://hl7.org/fhir/DeviceMetric.source'));{q3b}
@@ -15006,7 +15081,8 @@ begin
   end;
   composeDomainResource(this, '', name, elem, false, index);
   if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
-    ComposeIdentifier(this, 'DeviceMetric', 'identifier', elem.identifierElement, false, -1);{x.2f}
+    for i := 0 to elem.identifierList.Count - 1 do
+      ComposeIdentifier(this, 'DeviceMetric', 'identifier', elem.identifierList[i], false, i);{x.d3}
   if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeCodeableConcept(this, 'DeviceMetric', 'type', elem.type_Element, false, -1);{x.2f}
   if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
@@ -25083,6 +25159,8 @@ begin
     result.context := ParseReference{Resource}(obj.complex('http://hl7.org/fhir/Observation.context'));{q3b}
     if obj.has('http://hl7.org/fhir/Observation.effectivePeriod', item) then
       result.effective := parsePeriod(item);
+    if obj.has('http://hl7.org/fhir/Observation.effectiveTiming', item) then
+      result.effective := parseTiming(item);
     if obj.has('http://hl7.org/fhir/Observation.effectiveDateTime', item) then
       result.effective := parseDateTime(item);
     result.issuedElement := ParseInstant(obj.complex('http://hl7.org/fhir/Observation.issued'));{q1}
@@ -25162,6 +25240,8 @@ begin
     ComposeReference{Resource}(this, 'Observation', 'context', elem.contextElement, false, -1);{x.2f}
   if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.effective is TFhirPeriod) {6} then
     ComposePeriod(this, 'Observation', 'effectivePeriod', TFhirPeriod(elem.effective), false, -1){x.d9}
+  else if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.effective is TFhirTiming) {6} then
+    ComposeTiming(this, 'Observation', 'effectiveTiming', TFhirTiming(elem.effective), false, -1){x.d9}
   else if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.effective is TFhirDateTime) {6} then
     ComposeDateTime(this, 'Observation', 'effectiveDateTime', TFhirDateTime(elem.effective), false, -1);{x.d9}
   if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
@@ -28094,6 +28174,7 @@ var
   item : TTurtleComplex;
 begin
     ParseBackboneElementProperties(obj, result);
+    result.type_ := ParseCodeableConcept(obj.complex('http://hl7.org/fhir/Provenance.agent.type'));{q3b}
     for item in obj.complexes('http://hl7.org/fhir/Provenance.agent.role') do
       result.roleList.Add(parseCodeableConcept(item));
     if obj.has('http://hl7.org/fhir/Provenance.agent.whoReference', item) {a3} then
@@ -28104,7 +28185,6 @@ begin
       result.onBehalfOf := ParseReference(item);
     if obj.has('http://hl7.org/fhir/Provenance.agent.onBehalfOfUri', item) then
       result.onBehalfOf := parseUri(item);
-    result.relatedAgentType := ParseCodeableConcept(obj.complex('http://hl7.org/fhir/Provenance.agent.relatedAgentType'));{q3b}
 end;
 
 procedure TFHIRTurtleComposer.ComposeProvenanceAgent(parent :  TTurtleComplex; parentType, name : String; elem : TFhirProvenanceAgent; useType : boolean; index : integer);
@@ -28124,6 +28204,8 @@ begin
   end;
   composeBackboneElement(this, '', name, elem, false, index);
   if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+    ComposeCodeableConcept(this, 'Provenance.agent', 'type', elem.type_Element, false, -1);{x.2f}
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.roleList.Count - 1 do
       ComposeCodeableConcept(this, 'Provenance.agent', 'role', elem.roleList[i], false, i);{x.d3}
   if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.who is TFhirReference) {2} then
@@ -28134,8 +28216,6 @@ begin
     ComposeReference(this, 'Provenance.agent', 'onBehalfOfReference', TFhirReference(elem.onBehalfOf), false,-1){x.d8}
   else if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.onBehalfOf is TFhirUri) {6} then
     ComposeUri(this, 'Provenance.agent', 'onBehalfOfUri', TFhirUri(elem.onBehalfOf), false, -1);{x.d9}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
-    ComposeCodeableConcept(this, 'Provenance.agent', 'relatedAgentType', elem.relatedAgentTypeElement, false, -1);{x.2f}
 end;
 
 function TFHIRTurtleParser.ParseProvenanceEntity(obj : TTurtleComplex) : TFhirProvenanceEntity;
@@ -28216,14 +28296,17 @@ begin
     ParseDomainResourceProperties(obj, result);
     for item in obj.complexes('http://hl7.org/fhir/Provenance.target') do
       result.targetList.Add(parseReference{TFhirReference}(item));
-    result.period := ParsePeriod(obj.complex('http://hl7.org/fhir/Provenance.period'));{q3b}
+    if obj.has('http://hl7.org/fhir/Provenance.occuredPeriod', item) then
+      result.occured := parsePeriod(item);
+    if obj.has('http://hl7.org/fhir/Provenance.occuredDateTime', item) then
+      result.occured := parseDateTime(item);
     result.recordedElement := ParseInstant(obj.complex('http://hl7.org/fhir/Provenance.recorded'));{q1}
     for item in obj.complexes('http://hl7.org/fhir/Provenance.policy') do
       result.policyList.Add(parseUri(item));
     result.location := ParseReference{TFhirLocation}(obj.complex('http://hl7.org/fhir/Provenance.location'));{q3b}
     for item in obj.complexes('http://hl7.org/fhir/Provenance.reason') do
-      result.reasonList.Add(parseCoding(item));
-    result.activity := ParseCoding(obj.complex('http://hl7.org/fhir/Provenance.activity'));{q3b}
+      result.reasonList.Add(parseCodeableConcept(item));
+    result.activity := ParseCodeableConcept(obj.complex('http://hl7.org/fhir/Provenance.activity'));{q3b}
     for item in obj.complexes('http://hl7.org/fhir/Provenance.agent') do
       result.agentList.Add(parseProvenanceAgent(item));
     for item in obj.complexes('http://hl7.org/fhir/Provenance.entity') do
@@ -28251,8 +28334,10 @@ begin
   if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.targetList.Count - 1 do
       ComposeReference{TFhirReference}(this, 'Provenance', 'target', elem.targetList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
-    ComposePeriod(this, 'Provenance', 'period', elem.periodElement, false, -1);{x.2f}
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.occured is TFhirPeriod) {6} then
+    ComposePeriod(this, 'Provenance', 'occuredPeriod', TFhirPeriod(elem.occured), false, -1){x.d9}
+  else if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.occured is TFhirDateTime) {6} then
+    ComposeDateTime(this, 'Provenance', 'occuredDateTime', TFhirDateTime(elem.occured), false, -1);{x.d9}
   if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeInstant(this, 'Provenance', 'recorded', elem.recordedElement, false, -1);{x.2ea}
   if not elem.noCompose and (SummaryOption in [soFull, soData]) then
@@ -28262,9 +28347,9 @@ begin
     ComposeReference{TFhirLocation}(this, 'Provenance', 'location', elem.locationElement, false, -1);{x.2f}
   if not elem.noCompose and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.reasonList.Count - 1 do
-      ComposeCoding(this, 'Provenance', 'reason', elem.reasonList[i], false, i);{x.d3}
+      ComposeCodeableConcept(this, 'Provenance', 'reason', elem.reasonList[i], false, i);{x.d3}
   if not elem.noCompose and (SummaryOption in [soFull, soData]) then
-    ComposeCoding(this, 'Provenance', 'activity', elem.activityElement, false, -1);{x.2f}
+    ComposeCodeableConcept(this, 'Provenance', 'activity', elem.activityElement, false, -1);{x.2f}
   if not elem.noCompose and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.agentList.Count - 1 do
       ComposeProvenanceAgent(this, 'Provenance', 'agent', elem.agentList[i], false, i);{x.d3}
@@ -33352,7 +33437,8 @@ begin
     for item in obj.complexes('http://hl7.org/fhir/Task.performerType') do
       result.performerTypeList.Add(parseCodeableConcept(item));
     result.owner := ParseReference{Resource}(obj.complex('http://hl7.org/fhir/Task.owner'));{q3b}
-    result.reason := ParseCodeableConcept(obj.complex('http://hl7.org/fhir/Task.reason'));{q3b}
+    result.reasonCode := ParseCodeableConcept(obj.complex('http://hl7.org/fhir/Task.reasonCode'));{q3b}
+    result.reasonReference := ParseReference{TFhirReference}(obj.complex('http://hl7.org/fhir/Task.reasonReference'));{q3b}
     for item in obj.complexes('http://hl7.org/fhir/Task.note') do
       result.noteList.Add(parseAnnotation(item));
     for item in obj.complexes('http://hl7.org/fhir/Task.relevantHistory') do
@@ -33429,7 +33515,9 @@ begin
   if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{Resource}(this, 'Task', 'owner', elem.ownerElement, false, -1);{x.2f}
   if not elem.noCompose and (SummaryOption in [soFull, soData]) then
-    ComposeCodeableConcept(this, 'Task', 'reason', elem.reasonElement, false, -1);{x.2f}
+    ComposeCodeableConcept(this, 'Task', 'reasonCode', elem.reasonCodeElement, false, -1);{x.2f}
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeReference{TFhirReference}(this, 'Task', 'reasonReference', elem.reasonReferenceElement, false, -1);{x.2f}
   if not elem.noCompose and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.noteList.Count - 1 do
       ComposeAnnotation(this, 'Task', 'note', elem.noteList[i], false, i);{x.d3}
@@ -36097,6 +36185,8 @@ begin
     result.descriptionElement := ParseMarkdown(obj.complex('http://hl7.org/fhir/WorkflowExample.instance.description'));{q1}
     for item in obj.complexes('http://hl7.org/fhir/WorkflowExample.instance.version') do
       result.versionList.Add(parseWorkflowExampleInstanceVersion(item));
+    for item in obj.complexes('http://hl7.org/fhir/WorkflowExample.instance.containedInstance') do
+      result.containedInstanceList.Add(parseWorkflowExampleInstanceContainedInstance(item));
 end;
 
 procedure TFHIRTurtleComposer.ComposeWorkflowExampleInstance(parent :  TTurtleComplex; parentType, name : String; elem : TFhirWorkflowExampleInstance; useType : boolean; index : integer);
@@ -36126,6 +36216,9 @@ begin
   if not elem.noCompose and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.versionList.Count - 1 do
       ComposeWorkflowExampleInstanceVersion(this, 'WorkflowExample.instance', 'version', elem.versionList[i], false, i);{x.d3}
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    for i := 0 to elem.containedInstanceList.Count - 1 do
+      ComposeWorkflowExampleInstanceContainedInstance(this, 'WorkflowExample.instance', 'containedInstance', elem.containedInstanceList[i], false, i);{x.d3}
 end;
 
 function TFHIRTurtleParser.ParseWorkflowExampleInstanceVersion(obj : TTurtleComplex) : TFhirWorkflowExampleInstanceVersion;
@@ -36167,6 +36260,47 @@ begin
     ComposeString(this, 'WorkflowExample.instance.version', 'versionId', elem.versionIdElement, false, -1);{x.2ea}
   if not elem.noCompose and (SummaryOption in [soFull, soData]) then
     ComposeMarkdown(this, 'WorkflowExample.instance.version', 'description', elem.descriptionElement, false, -1);{x.2ea}
+end;
+
+function TFHIRTurtleParser.ParseWorkflowExampleInstanceContainedInstance(obj : TTurtleComplex) : TFhirWorkflowExampleInstanceContainedInstance;
+begin
+  if (obj = nil) then
+    exit(nil);
+  result := TFhirWorkflowExampleInstanceContainedInstance.create;
+  try
+    ParseWorkflowExampleInstanceContainedInstanceProperties(obj, result);
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFHIRTurtleParser.ParseWorkflowExampleInstanceContainedInstanceProperties(obj : TTurtleComplex; result : TFhirWorkflowExampleInstanceContainedInstance);
+begin
+    ParseBackboneElementProperties(obj, result);
+    result.resourceIdElement := ParseString(obj.complex('http://hl7.org/fhir/WorkflowExample.instance.containedInstance.resourceId'));{q1}
+    result.versionIdElement := ParseString(obj.complex('http://hl7.org/fhir/WorkflowExample.instance.containedInstance.versionId'));{q1}
+end;
+
+procedure TFHIRTurtleComposer.ComposeWorkflowExampleInstanceContainedInstance(parent :  TTurtleComplex; parentType, name : String; elem : TFhirWorkflowExampleInstanceContainedInstance; useType : boolean; index : integer);
+var
+  this : TTurtleComplex;
+begin
+  if (elem = nil) then
+    exit;
+  if (parentType = '') then
+    this := parent
+  else
+  begin
+    this := parent.addPredicate('fhir:'+parentType+'.'+name);
+    if (useType) then
+      this.addPredicate('a', 'fhir:WorkflowExampleInstanceContainedInstance'); {z}
+  end;
+  composeBackboneElement(this, '', name, elem, false, index);
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeString(this, 'WorkflowExample.instance.containedInstance', 'resourceId', elem.resourceIdElement, false, -1);{x.2ea}
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeString(this, 'WorkflowExample.instance.containedInstance', 'versionId', elem.versionIdElement, false, -1);{x.2ea}
 end;
 
 function TFHIRTurtleParser.ParseWorkflowExampleProcess(obj : TTurtleComplex) : TFhirWorkflowExampleProcess;
@@ -36290,8 +36424,6 @@ begin
 end;
 
 procedure TFHIRTurtleParser.ParseWorkflowExampleProcessStepOperationProperties(obj : TTurtleComplex; result : TFhirWorkflowExampleProcessStepOperation);
-var
-  item : TTurtleComplex;
 begin
     ParseBackboneElementProperties(obj, result);
     result.numberElement := ParseString(obj.complex('http://hl7.org/fhir/WorkflowExample.process.step.operation.number'));{q1}
@@ -36302,14 +36434,13 @@ begin
     result.descriptionElement := ParseMarkdown(obj.complex('http://hl7.org/fhir/WorkflowExample.process.step.operation.description'));{q1}
     result.initiatorActiveElement := ParseBoolean(obj.complex('http://hl7.org/fhir/WorkflowExample.process.step.operation.initiatorActive'));{q1}
     result.receiverActiveElement := ParseBoolean(obj.complex('http://hl7.org/fhir/WorkflowExample.process.step.operation.receiverActive'));{q1}
-    for item in obj.complexes('http://hl7.org/fhir/WorkflowExample.process.step.operation.instance') do
-      result.instanceList.Add(parseWorkflowExampleProcessStepOperationInstance(item));
+    result.request := ParseWorkflowExampleInstanceContainedInstance(obj.complex('http://hl7.org/fhir/WorkflowExample.process.step.operation.request'));{q3b}
+    result.response := ParseWorkflowExampleInstanceContainedInstance(obj.complex('http://hl7.org/fhir/WorkflowExample.process.step.operation.response'));{q3b}
 end;
 
 procedure TFHIRTurtleComposer.ComposeWorkflowExampleProcessStepOperation(parent :  TTurtleComplex; parentType, name : String; elem : TFhirWorkflowExampleProcessStepOperation; useType : boolean; index : integer);
 var
   this : TTurtleComplex;
-  i : integer;
 begin
   if (elem = nil) then
     exit;
@@ -36339,46 +36470,9 @@ begin
   if not elem.noCompose and (SummaryOption in [soFull, soData]) then
     ComposeBoolean(this, 'WorkflowExample.process.step.operation', 'receiverActive', elem.receiverActiveElement, false, -1);{x.2ea}
   if not elem.noCompose and (SummaryOption in [soFull, soData]) then
-    for i := 0 to elem.instanceList.Count - 1 do
-      ComposeWorkflowExampleProcessStepOperationInstance(this, 'WorkflowExample.process.step.operation', 'instance', elem.instanceList[i], false, i);{x.d3}
-end;
-
-function TFHIRTurtleParser.ParseWorkflowExampleProcessStepOperationInstance(obj : TTurtleComplex) : TFhirWorkflowExampleProcessStepOperationInstance;
-begin
-  if (obj = nil) then
-    exit(nil);
-  result := TFhirWorkflowExampleProcessStepOperationInstance.create;
-  try
-    ParseWorkflowExampleProcessStepOperationInstanceProperties(obj, result);
-    result.link;
-  finally
-    result.free;
-  end;
-end;
-
-procedure TFHIRTurtleParser.ParseWorkflowExampleProcessStepOperationInstanceProperties(obj : TTurtleComplex; result : TFhirWorkflowExampleProcessStepOperationInstance);
-begin
-    ParseBackboneElementProperties(obj, result);
-    result.instanceIdElement := ParseString(obj.complex('http://hl7.org/fhir/WorkflowExample.process.step.operation.instance.instanceId'));{q1}
-end;
-
-procedure TFHIRTurtleComposer.ComposeWorkflowExampleProcessStepOperationInstance(parent :  TTurtleComplex; parentType, name : String; elem : TFhirWorkflowExampleProcessStepOperationInstance; useType : boolean; index : integer);
-var
-  this : TTurtleComplex;
-begin
-  if (elem = nil) then
-    exit;
-  if (parentType = '') then
-    this := parent
-  else
-  begin
-    this := parent.addPredicate('fhir:'+parentType+'.'+name);
-    if (useType) then
-      this.addPredicate('a', 'fhir:WorkflowExampleProcessStepOperationInstance'); {z}
-  end;
-  composeBackboneElement(this, '', name, elem, false, index);
+    ComposeWorkflowExampleInstanceContainedInstance(this, 'WorkflowExample.process.step.operation', 'request', elem.requestElement, false, -1);{x.2f}
   if not elem.noCompose and (SummaryOption in [soFull, soData]) then
-    ComposeString(this, 'WorkflowExample.process.step.operation.instance', 'instanceId', elem.instanceIdElement, false, -1);{x.2ea}
+    ComposeWorkflowExampleInstanceContainedInstance(this, 'WorkflowExample.process.step.operation', 'response', elem.responseElement, false, -1);{x.2f}
 end;
 
 function TFHIRTurtleParser.ParseWorkflowExampleProcessStepAlternative(obj : TTurtleComplex) : TFhirWorkflowExampleProcessStepAlternative;
@@ -36446,12 +36540,8 @@ var
 begin
     ParseBackboneElementProperties(obj, result);
     result.descriptionElement := ParseMarkdown(obj.complex('http://hl7.org/fhir/WorkflowExample.process.step.alternative.option.description'));{q1}
-    for item in obj.complexes('http://hl7.org/fhir/WorkflowExample.process.step.alternative.option.process') do
-      result.processList.Add(parseWorkflowExampleProcess(item));
-    for item in obj.complexes('http://hl7.org/fhir/WorkflowExample.process.step.alternative.option.alternative') do
-      result.alternativeList.Add(parseWorkflowExampleProcessStepAlternative(item));
-    for item in obj.complexes('http://hl7.org/fhir/WorkflowExample.process.step.alternative.option.operation') do
-      result.operationList.Add(parseWorkflowExampleProcessStepOperation(item));
+    for item in obj.complexes('http://hl7.org/fhir/WorkflowExample.process.step.alternative.option.step') do
+      result.stepList.Add(parseWorkflowExampleProcessStep(item));
     for item in obj.complexes('http://hl7.org/fhir/WorkflowExample.process.step.alternative.option.pause') do
       result.pauseList.Add(parseBoolean(item));
 end;
@@ -36475,14 +36565,8 @@ begin
   if not elem.noCompose and (SummaryOption in [soFull, soData]) then
     ComposeMarkdown(this, 'WorkflowExample.process.step.alternative.option', 'description', elem.descriptionElement, false, -1);{x.2ea}
   if not elem.noCompose and (SummaryOption in [soFull, soData]) then
-    for i := 0 to elem.processList.Count - 1 do
-      ComposeWorkflowExampleProcess(this, 'WorkflowExample.process.step.alternative.option', 'process', elem.processList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
-    for i := 0 to elem.alternativeList.Count - 1 do
-      ComposeWorkflowExampleProcessStepAlternative(this, 'WorkflowExample.process.step.alternative.option', 'alternative', elem.alternativeList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
-    for i := 0 to elem.operationList.Count - 1 do
-      ComposeWorkflowExampleProcessStepOperation(this, 'WorkflowExample.process.step.alternative.option', 'operation', elem.operationList[i], false, i);{x.d3}
+    for i := 0 to elem.stepList.Count - 1 do
+      ComposeWorkflowExampleProcessStep(this, 'WorkflowExample.process.step.alternative.option', 'step', elem.stepList[i], false, i);{x.d3}
   if not elem.noCompose and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.pauseList.Count - 1 do
       ComposeBoolean(this, 'WorkflowExample.process.step.alternative.option', 'pause', elem.pauseList[i], false, i);{x.d3}

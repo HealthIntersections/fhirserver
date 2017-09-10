@@ -45,6 +45,10 @@ type
     Label9: TLabel;
     edtRedirectPort: TEdit;
     btnCheckFormat: TButton;
+    Label15: TLabel;
+    Label16: TLabel;
+    edtUsername: TEdit;
+    edtPassword: TEdit;
     procedure FormDestroy(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure btnCheckFormatClick(Sender: TObject);
@@ -114,6 +118,8 @@ begin
   server.fhirEndpoint := edtURL.Text;
   server.format := TFHIRFormat(cbxFormat.ItemIndex);
   server.SmartOnFHIR := (edtClientId.Text <> '') or (edtClientSecret.Text <> '') or ((edtRedirectPort.Text <> '') and (edtRedirectPort.Text <> '0')) or (edtAuthorize.Text <> '') or (edtToken.Text <> '');
+  server.username := edtUsername.Text;
+  server.password := edtPassword.Text;
   if server.SmartOnFHIR then
   begin
     server.clientid := edtClientId.Text;
@@ -150,6 +156,8 @@ begin
   edtAuthorize.Text := FServer.authorizeEndpoint;
   edtToken.Text := FServer.tokenEndpoint;
   edtRedirectPort.Text := inttostr(FServer.redirectport);
+  edtUsername.Text := server.username;
+  edtPassword.Text := server.password;
 end;
 
 procedure TEditRegisteredServerForm.inputChange(Sender: TObject);

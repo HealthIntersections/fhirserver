@@ -325,7 +325,8 @@ uses
   KDBSQLite in '..\Libraries\db\KDBSQLite.pas',
   SQLite3Wrap in '..\Libraries\db\SQLite3Wrap.pas',
   SQLite3 in '..\Libraries\db\SQLite3.pas',
-  SQLite3Utils in '..\Libraries\db\SQLite3Utils.pas';
+  SQLite3Utils in '..\Libraries\db\SQLite3Utils.pas',
+  QuestionnaireRenderer in '..\reference-platform\dstu3\QuestionnaireRenderer.pas';
 
 begin
   logfile := IncludeTrailingPathDelimiter(SystemTemp)+'fhirserver.log';
