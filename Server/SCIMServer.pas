@@ -63,6 +63,7 @@ Type
 
     function GetNextUserKey : Integer;
     function GetNextUserIndexKey : Integer;
+    function CheckPassword(uk : integer; pw, hash : String):boolean;
     function HashPassword(uk : integer; pw : String):String;
     function BuildUserFilter(filter : TSCIMSearchFilter; prefix : String; parent : char; issuer : TSCIMCharIssuer) : String;
     function BuildUserFilterTest(filter : TSCIMSearchFilterTest; prefix : String; parent : char; issuer : TSCIMCharIssuer) : String;
@@ -159,7 +160,7 @@ begin
       if not conn.FetchNext then
         result := false
       else
-        result := HashPassword(conn.ColIntegerByName['UserKey'], password) = conn.ColStringByName['Password'];
+        result := checkPassword(conn.ColIntegerByName['UserKey'], password, conn.ColStringByName['Password']);
     finally
       conn.Terminate;
     end;
@@ -172,6 +173,13 @@ begin
       raise;
     end;
   end;
+end;
+
+function TSCIMServer.CheckPassword(uk: integer; pw, hash: String): boolean;
+var
+  dummy : boolean;
+begin
+  result := TSCrypt.CheckPassword(inttostr(uk)+':'+pw, hash, dummy);
 end;
 
 constructor TSCIMServer.Create(db: TKDBManager; salt, host, defaultRights : String; forInstall : boolean);
@@ -395,11 +403,7 @@ end;
 
 function TSCIMServer.HashPassword(uk : integer; pw: String): String;
 begin
-  {$IFDEF MSWINDOWS}
   result := TSCrypt.HashPassword(inttostr(uk)+':'+pw);
-  {$ELSE}
-  raise Exception.Create('Not done yet');
-  {$ENDIF}
 end;
 
 
