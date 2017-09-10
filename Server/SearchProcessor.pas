@@ -400,13 +400,24 @@ begin
     else if modifier = 'not' then
     begin
       if (system = '--') then
-        result := result + '(IndexKey = ' + inttostr(Key) + ' /*' + name + '*/ and not (Value = ''' + sqlwrapString(value) + '''))'
+        result := result + '(IndexKey = ' + inttostr(Key) + ' /*' + name + '*/ and not (Value = ''' + sqlwrapString(value) + ''') and not (value = ''''))'
       else if (system = '') then
-        result := result + '(IndexKey = ' + inttostr(Key) + ' /*' + name + '*/ and not (SpaceKey = null and Value = ''' + sqlwrapString(code) + '''))'
+        result := result + '(IndexKey = ' + inttostr(Key) + ' /*' + name + '*/ and not (SpaceKey = null and Value = ''' + sqlwrapString(code) + ''') and not (value = ''''))'
       else if (code = '') then // this variation (no code, only system) is not described in the spec
-        result := result + '(IndexKey = ' + inttostr(Key) + ' /*' + name + '*/ and not (SpaceKey = (Select SpaceKey from Spaces where Space = ''' + sqlwrapstring(system) + ''')))'
+        result := result + '(IndexKey = ' + inttostr(Key) + ' /*' + name + '*/ and not (SpaceKey = (Select SpaceKey from Spaces where Space = ''' + sqlwrapstring(system) + ''')) and not (value = ''''))'
       else
-        result := result + '(IndexKey = ' + inttostr(Key) + ' /*' + name + '*/ and not (SpaceKey = (Select SpaceKey from Spaces where Space = ''' + sqlwrapstring(system) + ''') and Value = ''' + sqlwrapString(code) + '''))';
+        result := result + '(IndexKey = ' + inttostr(Key) + ' /*' + name + '*/ and not (SpaceKey = (Select SpaceKey from Spaces where Space = ''' + sqlwrapstring(system) + ''') and Value = ''' + sqlwrapString(code) + ''') and not (value = ''''))';
+    end
+    else if modifier = 'excludes' then
+    begin
+      if (system = '--') then
+        result := result + 'not (IndexKey = ' + inttostr(Key) + ' /*' + name + '*/ and (Value = ''' + sqlwrapString(value) + '''))'
+      else if (system = '') then
+        result := result + 'not (IndexKey = ' + inttostr(Key) + ' /*' + name + '*/ and (SpaceKey = null and Value = ''' + sqlwrapString(code) + '''))'
+      else if (code = '') then // this variation (no code, only system) is not described in the spec
+        result := result + 'not (IndexKey = ' + inttostr(Key) + ' /*' + name + '*/ and (SpaceKey = (Select SpaceKey from Spaces where Space = ''' + sqlwrapstring(system) + ''')))'
+      else
+        result := result + 'not (IndexKey = ' + inttostr(Key) + ' /*' + name + '*/ and (SpaceKey = (Select SpaceKey from Spaces where Space = ''' + sqlwrapstring(system) + ''') and Value = ''' + sqlwrapString(code) + '''))';
     end
     else if modifier = 'above' then
       raise exception.create(StringFormat(GetFhirMessage('MSG_PARAM_MODIFIER_INVALID', lang), [modifier]))
