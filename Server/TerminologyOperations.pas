@@ -264,6 +264,8 @@ begin
           begin
             vs := manager.GetResourceById(request, 'ValueSet', request.Id, request.baseUrl, needSecure) as TFHIRValueSet;
             cacheId := vs.url;
+            if vs.version <> '' then
+              cacheId := cacheId + vs.version;
           end
           else if params.hasParameter('url') then
           begin
@@ -275,6 +277,8 @@ begin
             else if not FServer.isKnownValueSet(url, vs) then
               vs := manager.GetResourceByUrl(frtValueSet, request.Parameters.getvar('url'), request.Parameters.getvar('version'), false, needSecure) as TFHIRValueSet;
             cacheId := vs.url;
+            if vs.version <> '' then
+              cacheId := cacheId + vs.version;
           end
           else if params.hasParameter('valueSet') then
             vs := params['valueSet'].Link as TFhirValueSet
@@ -653,30 +657,46 @@ begin
           else
             req.load(request.Parameters);
 
-          // first, we have to identify the Code System
-          if request.Id <> '' then // and it must exist, because of the check above
-            cs := manager.GetResourceById(request, 'CodeSystem', request.Id, request.baseUrl, needSecure) as TFhirCodeSystem
-          else if req.system <> '' then
-            cs := manager.GetResourceByUrl(frtCodeSystem, req.system, req.version, false, needSecure) as TFhirCodeSystem
-          else
-            raise Exception.Create('No CodeSystem Identified (need a system parameter, or execute the operation on a CodeSystem resource');
-
-          cacheId := cs.url;
-          if (req.codingA = nil) and (req.codeA <> '') then
-            req.codingA := TFhirCoding.Create(cs.url, req.codeA);
-          if (req.codingB = nil) and (req.codeB <> '') then
-            req.codingB := TFhirCoding.Create(cs.url, req.codeB);
-          if req.codingA = nil then
-            raise Exception.Create('No codeA or codingA parameter found');
-          if req.codingB = nil then
-            raise Exception.Create('No codeB or codingB parameter found');
-
           response.Body := '';
           response.LastModifiedDate := now;
           resp := TFHIRSubsumesOpResponse.Create;
           try
             try
-              resp.outcome := FServer.subsumes(cs, req.codingA, req.codingB);
+              if (request.Id = '') and (req.system <> '') and (req.codeA <> '') and (req.codeB <> '') then
+              begin
+                if not FServer.isValidCode(req.system, req.codeA) or not FServer.isValidCode(req.system, req.codeB) then
+                  raise Exception.Create('Invalid code')
+                else if (req.codeA = req.codeB) then
+                  resp.outcome := 'equivalent'
+                else if FServer.subsumes(req.system, req.codeA, req.system, req.codeB) then
+                  resp.outcome := 'subsumes'
+                else if FServer.subsumes(req.system, req.codeB, req.system, req.codeA) then
+                  resp.outcome := 'subsumed-by'
+                else
+                  resp.outcome := 'not-subsumed';
+              end
+              else
+              begin
+                // first, we have to identify the Code System
+                if request.Id <> '' then // and it must exist, because of the check above
+                  cs := manager.GetResourceById(request, 'CodeSystem', request.Id, request.baseUrl, needSecure) as TFhirCodeSystem
+                else if req.system <> '' then
+                  cs := manager.GetResourceByUrl(frtCodeSystem, req.system, req.version, false, needSecure) as TFhirCodeSystem
+                else
+                  raise Exception.Create('No CodeSystem Identified (need a system parameter, or execute the operation on a CodeSystem resource');
+
+                cacheId := cs.url;
+                if (req.codingA = nil) and (req.codeA <> '') then
+                  req.codingA := TFhirCoding.Create(cs.url, req.codeA);
+                if (req.codingB = nil) and (req.codeB <> '') then
+                  req.codingB := TFhirCoding.Create(cs.url, req.codeB);
+                if req.codingA = nil then
+                  raise Exception.Create('No codeA or codingA parameter found');
+                if req.codingB = nil then
+                  raise Exception.Create('No codeB or codingB parameter found');
+
+                resp.outcome := FServer.subsumes(cs, req.codingA, req.codingB);
+              end;
               response.Resource := resp.asParams;
               response.HTTPCode := 200;
               response.Message := 'OK';

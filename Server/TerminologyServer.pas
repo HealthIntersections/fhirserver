@@ -103,6 +103,7 @@ Type
     Function MakeChecker(uri : string; profile : TFhirExpansionProfile) : TValueSetChecker;
     function getDisplayForCode(lang : String; system, version, code : String): String;
     function checkCode(op : TFhirOperationOutcome; lang, path : string; code : string; system, version : string; display : string) : boolean;
+    function isValidCode(system, code : String) : boolean;
     {$IFNDEF FHIR2}
     procedure composeCode(req : TFHIRComposeOpRequest; resp : TFHIRComposeOpResponse);
     {$ENDIF}
@@ -875,6 +876,29 @@ begin
   else
     result := false;
   // todo: or it might be ok to use this value set if it's a subset of the specified one?
+end;
+
+function TTerminologyServer.isValidCode(system, code: String): boolean;
+var
+  cp : TCodeSystemProvider;
+  lct : TCodeSystemProviderContext;
+begin
+  cp := getProvider(system, '', nil, true);
+  if cp = nil then
+    result := false
+  else
+  begin
+    try
+      lct := cp.locate(code);
+      try
+        result := lct <> nil;
+      finally
+        cp.Close(lct);
+      end;
+    finally
+      cp.Free;
+    end;
+  end
 end;
 
 function TTerminologyServer.isOkSource(cm : TLoadedConceptMap; vs : TFHIRValueSet; coding : TFHIRCoding; out group : TFhirConceptMapGroup; out match : TFhirConceptMapGroupElement) : boolean;
