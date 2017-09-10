@@ -214,7 +214,7 @@ Begin
     html.textInput('srch');
     html.submit('Go');
     html.AddTextPlain(' ');
-    html.checkbox('all', '1', 'Tight');
+    html.checkbox('all', false, 'Tight');
     html.endForm;
 
     html.StartList;

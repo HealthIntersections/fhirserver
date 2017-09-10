@@ -86,10 +86,15 @@ Type
     procedure EndListItem;
     procedure StartBlockQuote;
     procedure EndBlockQuote;
+    procedure startDiv;
+    procedure endDiv;
 
     procedure StartForm(method, action : String);
-    procedure TextInput(name : String; length : integer = 20);
-    procedure checkbox(name, value, text : String);
+    procedure TextInput(name : String; length : integer = 20); overload;
+    procedure TextInput(name, value : String; length : integer = 20); overload;
+    procedure TextInput(name, value, text : String; length : integer = 20); overload;
+    procedure Memo(name, value, text : String); overload;
+    procedure checkbox(name : String; value : boolean; text : String);
     procedure hiddenInput(name, value : String);
     procedure Submit(name : String);
     procedure EndForm;
@@ -161,9 +166,17 @@ begin
   AddText(text, true, false);
 end;
 
-procedure THtmlPublisher.checkbox(name, value, text: String);
+procedure THtmlPublisher.checkbox(name : String; value : boolean; text : String);
 begin
-  FBuilder.Append('<input type="checkbox" name="'+name+'" value="'+value+'""/> '+text);
+  if value then
+    FBuilder.Append('<input type="checkbox" name="'+name+'" checked value="1"/> '+text)
+  else
+    FBuilder.Append('<input type="checkbox" name="'+name+'" value="1"/> '+text);
+end;
+
+procedure THtmlPublisher.endDiv;
+begin
+  FBuilder.Append('</div>')
 end;
 
 constructor THtmlPublisher.Create;
@@ -268,6 +281,11 @@ begin
   FBuilder.Append('<hr/>'#13#10);
 end;
 
+procedure THtmlPublisher.Memo(name, value, text: String);
+begin
+  FBuilder.Append(text+'<textArea name="'+name+'">'#13#10+value+'</textArea>');
+end;
+
 function THtmlPublisher.output: String;
 begin
   result := FBuilder.ToString;
@@ -288,6 +306,11 @@ end;
 procedure THtmlPublisher.StartBlockQuote;
 begin
   FBuilder.Append('<blockquote>');
+end;
+
+procedure THtmlPublisher.startDiv;
+begin
+  FBuilder.Append('<div>')
 end;
 
 procedure THtmlPublisher.StartForm(method, action: String);
@@ -354,6 +377,11 @@ begin
   FBuilder.Append('<input type="submit" value="'+name+'"/>');
 end;
 
+procedure THtmlPublisher.TextInput(name, value: String; length: integer);
+begin
+  FBuilder.Append('<input type="text" name="'+name+'" value="'+value+'" size="'+inttostr(length)+'"/>');
+end;
+
 procedure THtmlPublisher.TextInput(name: String; length: integer);
 begin
   FBuilder.Append('<input type="text" name="'+name+'" size="'+inttostr(length)+'"/>');
@@ -394,6 +422,11 @@ begin
     fhntComment:
       FBuilder.Append('<!-- '+EncodeXML(node.Content, xmlText)+' -->');
   end;
+end;
+
+procedure THtmlPublisher.TextInput(name, value, text: String; length: integer);
+begin
+  FBuilder.Append('<input type="text" name="'+name+'" value="'+value+'" size="'+inttostr(length)+'"/> '+text);
 end;
 
 end.
