@@ -173,7 +173,8 @@ begin
         {$ENDIF}
       end;
     except
-      // suppress the exception - will be handled below
+      on e : Exception do
+        response.ContentText := e.message;
     end;
     if assigned(response.ContentStream) then
       response.ContentStream.Position := 0;
@@ -205,7 +206,8 @@ begin
     response.LastModified := client.response.LastModified;
     response.Pragma := client.response.Pragma;
     response.TransferEncoding := client.response.TransferEncoding;
-    response.Cookies.AddCookies(client.CookieManager.CookieCollection);
+    if client.CookieManager <> nil then
+      response.Cookies.AddCookies(client.CookieManager.CookieCollection);
     response.ServerSoftware := client.response.Server;
     response.ResponseText := client.response.ResponseText;
     response.ResponseNo := client.response.ResponseCode;
