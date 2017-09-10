@@ -38,8 +38,9 @@ uses
   DateSupport, StringSupport, DecimalSupport,
   AdvGenerics, CSVSupport,
   FHIRBase, FHIRConstants, FHIRTypes, FHIRResources, FHIRUtilities, FHIRIndexBase, FHIRIndexInformation, FHIRSupport,
-  BaseResourceFrame, ResourceEditingSupport,
-  SearchParameterEditor, ListSelector, AddRestResourceDialog, ValuesetExpansion, ValuesetSelectDialog, MemoEditorDialog;
+  BaseResourceFrame,
+  SearchParameterEditor, ListSelector, AddRestResourceDialog, ValuesetExpansion, ValuesetSelectDialog, MemoEditorDialog,
+  ResourceEditingSupport;
 
 type
   TFrame = TBaseResourceFrame; // re-aliasing the Frame to work around a designer bug
@@ -809,10 +810,7 @@ end;
 
 procedure TValueSetEditorFrame.commitExpansion(expansion: TFhirValueSetExpansion);
 begin
-  if dedTimestamp.Text = '' then
-    expansion.timestampElement := nil
-  else
-    expansion.timestamp := TDateTimeEx.make(trunc(dedTimestamp.DateTime) + tmTimestamp.Time, dttzLocal);
+  expansion.timestampElement := storeDateTime(dedTimestamp, tmTimestamp);
   expansion.identifier := edtIdentifier.text ;
   expansion.total := edtTotal.Text;
   expansion.offset := edtOffset.text;
@@ -1352,16 +1350,7 @@ end;
 
 procedure TValueSetEditorFrame.loadExpansion(expansion: TFhirValueSetExpansion);
 begin
-  if expansion.timestampElement = nil then
-  begin
-    dedTimestamp.Text := '';
-    tmTimestamp.Text := '';
-  end
-  else
-  begin
-    dedTimestamp.DateTime := expansion.timestamp.DateTime;
-    tmTimestamp.DateTime := expansion.timestamp.DateTime;
-  end;
+  presentDateTime(expansion.timestampElement, dedTimestamp, tmTimestamp);
   edtIdentifier.text := expansion.identifier;
   edtTotal.Text := expansion.total;
   edtOffset.text := expansion.offset;

@@ -98,7 +98,7 @@ var
   prop: TFhirCodeSystemProperty;
   value : TFhirCodeSystemConceptProperty;
   s : String;
-  d : TDateTime;
+  d : TFHIRDateTime;
 begin
   if not FLoading then
   begin
@@ -133,19 +133,12 @@ begin
             value.value := TFhirBoolean.Create(false);
         ConceptPropertyTypeDateTime:
           begin
-          if TDateEdit(prop.TagObject).text = '' then
-            d := 0
-          else
-          begin
-            d := TDateEdit(prop.TagObject).DateTime;
-            if TTimeEdit(TDateEdit(prop.TagObject).TagObject).text <> '' then
-              d := d + TTimeEdit(TDateEdit(prop.TagObject).TagObject).DateTime;
-          end;
-          if d <> 0 then
+          d := storeDateTime(TDateEdit(prop.TagObject), TTimeEdit(TDateEdit(prop.TagObject).TagObject));
+          if d <> nil then
           begin
             if value = nil then
               value := concept.addProp(prop.code);
-            value.value := TFhirDateTime.Create(TDateTimeEx.make(d, dttzUnknown));
+            value.value := d;
           end
           else if value <> nil then
             concept.deleteProp(prop.code);

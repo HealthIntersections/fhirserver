@@ -63,7 +63,7 @@ begin
         as.defaultvalue = %npp-purpose%
         as.xpos = -1
         as.ypos = -1
-        as.returnvalue = "fix release package"
+        as.returnvalue = "code system editing improvements \+ add upgrade system"
         as.returnvariable = npp-purpose
       end
       action.variables.savetoini

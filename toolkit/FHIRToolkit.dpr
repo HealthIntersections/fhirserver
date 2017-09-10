@@ -170,12 +170,17 @@ uses
   ResourceEditingSupport in 'ResourceEditingSupport.pas',
   CSVSupport in '..\reference-platform\support\CSVSupport.pas',
   ToolKitUtilities in 'ToolKitUtilities.pas',
-  UpgradeNeededDialog in 'UpgradeNeededDialog.pas' {UpgradeNeededForm};
+  UpgradeNeededDialog in 'UpgradeNeededDialog.pas' {UpgradeNeededForm},
+  QuestionnaireEditor in 'QuestionnaireEditor.pas' {QuestionnaireEditorFrame: TFrame},
+  QuestionnaireRenderer in '..\reference-platform\dstu3\QuestionnaireRenderer.pas',
+  HTMLPublisher in '..\reference-platform\Support\HTMLPublisher.pas',
+  QuestionnaireItemDialog in 'QuestionnaireItemDialog.pas' {QuestionnaireItemForm};
 
 {$R *.res}
 
 begin
   Application.Initialize;
   Application.CreateForm(TMasterToolsForm, MasterToolsForm);
+  Application.CreateForm(TQuestionnaireItemForm, QuestionnaireItemForm);
   Application.Run;
 end.

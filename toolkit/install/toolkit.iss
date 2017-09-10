@@ -8,7 +8,7 @@
 AppId={{9FD61024-BC9A-4226-ADA5-E72254250B6C}
 AppName=FHIR Toolkit
 AppVersion=0.1
-AppVerName=0.0.23 (FHIR Version 3.0.1.11926)
+AppVerName=0.0.25 (FHIR Version 3.0.1.11926)
 AppPublisher=Health Intersections
 AppPublisherURL=http://www.healthintersections.com.au/FhirServer
 AppSupportURL=http://www.healthintersections.com.au/FhirServer
@@ -18,7 +18,7 @@ DefaultGroupName=FHIR Applications
 AllowNoIcons=yes
 LicenseFile=C:\work\fhirserver\toolkit\install\licence.txt
 OutputDir=C:\work\fhirserver\toolkit\install
-OutputBaseFilename=fhir-toolkit-install-0.0.23
+OutputBaseFilename=fhir-toolkit-install-0.0.25
 SetupIconFile=C:\work\fhirserver\toolkit\AppEndorser_Icon.ico
 Compression=lzma
 SolidCompression=yes

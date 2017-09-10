@@ -40,7 +40,7 @@ uses
   SmartOnFHIRUtilities, EditRegisteredServerDialogFMX, OSXUIUtils,
   ToolkitSettings, ServerForm, CapabilityStatementEditor, BaseResourceFrame, BaseFrame, SourceViewer, ListSelector,
   ValueSetEditor, HelpContexts, ProcessForm, SettingsDialog, AboutDialog, ToolKitVersion, CodeSystemEditor,
-  ToolKitUtilities, UpgradeNeededDialog;
+  ToolKitUtilities, UpgradeNeededDialog, QuestionnaireEditor;
 
 type
   TMasterToolsForm = class(TForm)
@@ -210,6 +210,8 @@ begin
   try
     http := TFhirHTTPClient.Create(nil, server.fhirEndpoint, false, FSettings.Timeout* 1000, FSettings.proxy);
     try
+      http.username := server.username;
+      http.password := server.password;
       ok := true;
       if server.SmartOnFHIR then
       begin
@@ -319,12 +321,14 @@ begin
     form.ListBox1.items.Add('CapabilityStatement');
     form.ListBox1.items.Add('ValueSet');
     form.ListBox1.items.Add('CodeSystem');
+    form.ListBox1.items.Add('Questionnaire');
     form.caption := 'Create New File';
     if (form.ShowModal = mrOk) then
       case form.ListBox1.ItemIndex of
         0 : newResource(TFhirCapabilityStatement, TCapabilityStatementEditorFrame);
         1 : newResource(TFhirValueSet, TValueSetEditorFrame);
         2 : newResource(TFhirCodeSystem, TCodeSystemEditorFrame);
+        3 : newResource(TFhirQuestionnaire, TQuestionnaireEditorFrame);
       end;
   finally
     form.Free;
@@ -348,6 +352,8 @@ begin
           openResourceFromFile(odFile.Filename, res, format, TValueSetEditorFrame)
         else if res is TFhirCodeSystem then
           openResourceFromFile(odFile.Filename, res, format, TCodeSystemEditorFrame)
+        else if res is TFhirQuestionnaire then
+          openResourceFromFile(odFile.Filename, res, format, TQuestionnaireEditorFrame)
         else
           MessageDlg('Unsupported Resource Type: '+res.fhirType, TMsgDlgType.mtError, [TMsgDlgBtn.mbOK], 0);
       finally
@@ -768,6 +774,8 @@ begin
     result := TValueSetEditorFrame
   else if res is TFhirCodeSystem then
     result := TCodeSystemEditorFrame
+  else if res is TFhirQuestionnaire then
+    result := TQuestionnaireEditorFrame
   else
     MessageDlg('Unsupported Resource Type: '+res.fhirType, TMsgDlgType.mtError, [TMsgDlgBtn.mbOK], 0);
 end;

@@ -1,0 +1,658 @@
+object QuestionnaireItemForm: TQuestionnaireItemForm
+  Left = 0
+  Top = 0
+  BorderIcons = [biSystemMenu]
+  BorderStyle = Single
+  Caption = 'Form1'
+  ClientHeight = 560
+  ClientWidth = 416
+  FormFactor.Width = 320
+  FormFactor.Height = 480
+  FormFactor.Devices = [Desktop]
+  OnShow = FormShow
+  DesignerMasterStyle = 0
+  object Panel1: TPanel
+    Align = Bottom
+    Position.Y = 520.000000000000000000
+    Size.Width = 416.000000000000000000
+    Size.Height = 40.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 0
+    object btnOk: TButton
+      Anchors = [akTop, akRight]
+      Default = True
+      Position.X = 239.000000000000000000
+      Position.Y = 8.000000000000000000
+      TabOrder = 0
+      Text = 'OK'
+      OnClick = btnOkClick
+    end
+    object Button2: TButton
+      Anchors = [akTop, akRight]
+      Cancel = True
+      ModalResult = 2
+      Position.X = 327.000000000000000000
+      Position.Y = 8.000000000000000000
+      TabOrder = 1
+      Text = 'Cancel'
+    end
+  end
+  object Label1: TLabel
+    Position.X = 16.000000000000000000
+    Position.Y = 8.000000000000000000
+    Text = 'Internal Id'
+    TabOrder = 1
+  end
+  object Label2: TLabel
+    Position.X = 16.000000000000000000
+    Position.Y = 40.000000000000000000
+    Text = 'Definition'
+    TabOrder = 2
+  end
+  object Label3: TLabel
+    Position.X = 232.000000000000000000
+    Position.Y = 8.000000000000000000
+    Text = 'Prefix'
+    TabOrder = 3
+  end
+  object Label4: TLabel
+    Position.X = 16.000000000000000000
+    Position.Y = 72.000000000000000000
+    Text = 'Text'
+    TabOrder = 4
+  end
+  object Label5: TLabel
+    Position.X = 16.000000000000000000
+    Position.Y = 104.000000000000000000
+    Text = 'Type'
+    TabOrder = 5
+  end
+  object cbRequired: TCheckBox
+    Position.X = 16.000000000000000000
+    Position.Y = 136.000000000000000000
+    TabOrder = 6
+    Text = 'Required'
+  end
+  object cbRepeats: TCheckBox
+    Position.X = 168.000000000000000000
+    Position.Y = 136.000000000000000000
+    TabOrder = 8
+    Text = 'Repeats'
+  end
+  object cbReadOnly: TCheckBox
+    Position.X = 320.000000000000000000
+    Position.Y = 136.000000000000000000
+    TabOrder = 7
+    Text = 'ReadOnly'
+  end
+  object Label6: TLabel
+    Position.X = 232.000000000000000000
+    Position.Y = 104.000000000000000000
+    Text = 'Max Length'
+    TabOrder = 9
+  end
+  object Label7: TLabel
+    Position.X = 16.000000000000000000
+    Position.Y = 168.000000000000000000
+    Text = 'Default Value:'
+    TabOrder = 10
+  end
+  object edtLinkId: TEdit
+    Touch.InteractiveGestures = [LongTap, DoubleTap]
+    TabOrder = 15
+    Position.X = 80.000000000000000000
+    Position.Y = 8.000000000000000000
+    Size.Width = 105.000000000000000000
+    Size.Height = 22.000000000000000000
+    Size.PlatformDefault = False
+  end
+  object edtDefinition: TEdit
+    Touch.InteractiveGestures = [LongTap, DoubleTap]
+    TabOrder = 14
+    Position.X = 80.000000000000000000
+    Position.Y = 40.000000000000000000
+    Size.Width = 321.000000000000000000
+    Size.Height = 22.000000000000000000
+    Size.PlatformDefault = False
+  end
+  object edtPrefix: TEdit
+    Touch.InteractiveGestures = [LongTap, DoubleTap]
+    TabOrder = 13
+    Position.X = 296.000000000000000000
+    Position.Y = 8.000000000000000000
+    Size.Width = 105.000000000000000000
+    Size.Height = 22.000000000000000000
+    Size.PlatformDefault = False
+  end
+  object edtText: TEdit
+    Touch.InteractiveGestures = [LongTap, DoubleTap]
+    TabOrder = 12
+    Position.X = 80.000000000000000000
+    Position.Y = 72.000000000000000000
+    Size.Width = 321.000000000000000000
+    Size.Height = 22.000000000000000000
+    Size.PlatformDefault = False
+  end
+  object cbxType: TComboBox
+    Items.Strings = (
+      'group'
+      'display'
+      'boolean'
+      'decimal'
+      'integer'
+      'date'
+      'dateTime'
+      'time'
+      'string'
+      'text'
+      'url'
+      'choice'
+      'open-choice'
+      'attachment'
+      'reference'
+      'quantity')
+    Position.X = 80.000000000000000000
+    Position.Y = 104.000000000000000000
+    Size.Width = 145.000000000000000000
+    Size.Height = 22.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 16
+    OnChange = cbxTypeChange
+  end
+  object edtMaxLength: TEdit
+    Touch.InteractiveGestures = [LongTap, DoubleTap]
+    TabOrder = 11
+    Position.X = 312.000000000000000000
+    Position.Y = 104.000000000000000000
+    Size.Width = 89.000000000000000000
+    Size.Height = 22.000000000000000000
+    Size.PlatformDefault = False
+  end
+  object tbInitial: TTabControl
+    Position.X = 96.000000000000000000
+    Position.Y = 160.000000000000000000
+    Size.Width = 305.000000000000000000
+    Size.Height = 73.000000000000000000
+    Size.PlatformDefault = False
+    TabIndex = 0
+    TabOrder = 17
+    TabPosition = None
+    Sizes = (
+      305s
+      73s
+      305s
+      73s
+      305s
+      73s
+      305s
+      73s
+      305s
+      73s
+      305s
+      73s
+      305s
+      73s
+      305s
+      73s
+      305s
+      73s
+      305s
+      73s
+      305s
+      73s
+      305s
+      73s
+      305s
+      73s
+      305s
+      73s)
+    object TabItem1: TTabItem
+      CustomIcon = <
+        item
+        end>
+      IsSelected = True
+      Size.Width = 8.000000000000000000
+      Size.Height = 8.000000000000000000
+      Size.PlatformDefault = False
+      StyleLookup = ''
+      TabOrder = 0
+      Text = 'TabItem1'
+      ExplicitSize.cx = 8.000000000000000000
+      ExplicitSize.cy = 8.000000000000000000
+      object Label8: TLabel
+        StyledSettings = [Family, Size, FontColor]
+        Position.X = 16.000000000000000000
+        Position.Y = 8.000000000000000000
+        TextSettings.Font.StyleExt = {00040000000200000004000000}
+        Text = 'n/a'
+        TabOrder = 0
+      end
+    end
+    object TabItem2: TTabItem
+      CustomIcon = <
+        item
+        end>
+      IsSelected = False
+      Size.Width = 8.000000000000000000
+      Size.Height = 8.000000000000000000
+      Size.PlatformDefault = False
+      StyleLookup = ''
+      TabOrder = 0
+      Text = 'TabItem2'
+      ExplicitSize.cx = 8.000000000000000000
+      ExplicitSize.cy = 8.000000000000000000
+      object cbDefaultBoolean: TCheckBox
+        Position.X = 16.000000000000000000
+        Position.Y = 8.000000000000000000
+        TabOrder = 0
+        Text = 'True'
+        OnChange = inputChange
+        OnClick = inputChange
+      end
+    end
+    object TabItem3: TTabItem
+      CustomIcon = <
+        item
+        end>
+      IsSelected = False
+      Size.Width = 8.000000000000000000
+      Size.Height = 8.000000000000000000
+      Size.PlatformDefault = False
+      StyleLookup = ''
+      TabOrder = 0
+      Text = 'TabItem3'
+      ExplicitSize.cx = 8.000000000000000000
+      ExplicitSize.cy = 8.000000000000000000
+      object edtDefaultDecimal: TEdit
+        Touch.InteractiveGestures = [LongTap, DoubleTap]
+        TabOrder = 0
+        Position.X = 8.000000000000000000
+        Position.Y = 8.000000000000000000
+        OnChange = inputChange
+        OnChangeTracking = inputChange
+      end
+    end
+    object TabItem4: TTabItem
+      CustomIcon = <
+        item
+        end>
+      IsSelected = False
+      Size.Width = 8.000000000000000000
+      Size.Height = 8.000000000000000000
+      Size.PlatformDefault = False
+      StyleLookup = ''
+      TabOrder = 0
+      Text = 'TabItem4'
+      ExplicitSize.cx = 8.000000000000000000
+      ExplicitSize.cy = 8.000000000000000000
+      object edtDefaultInteger: TEdit
+        Touch.InteractiveGestures = [LongTap, DoubleTap]
+        TabOrder = 0
+        Position.X = 8.000000000000000000
+        Position.Y = 8.000000000000000000
+        OnChange = inputChange
+        OnChangeTracking = inputChange
+      end
+    end
+    object edtDefaultDate: TTabItem
+      CustomIcon = <
+        item
+        end>
+      IsSelected = False
+      Size.Width = 8.000000000000000000
+      Size.Height = 8.000000000000000000
+      Size.PlatformDefault = False
+      StyleLookup = ''
+      TabOrder = 0
+      Text = 'edtDefaultDate'
+      ExplicitSize.cx = 8.000000000000000000
+      ExplicitSize.cy = 8.000000000000000000
+      object dedDefaultDate: TDateEdit
+        Date = 42987.000000000000000000
+        OnChange = inputChange
+        Position.X = 8.000000000000000000
+        Position.Y = 8.000000000000000000
+        TabOrder = 0
+      end
+    end
+    object TabItem6: TTabItem
+      CustomIcon = <
+        item
+        end>
+      IsSelected = False
+      Size.Width = 8.000000000000000000
+      Size.Height = 8.000000000000000000
+      Size.PlatformDefault = False
+      StyleLookup = ''
+      TabOrder = 0
+      Text = 'TabItem6'
+      ExplicitSize.cx = 8.000000000000000000
+      ExplicitSize.cy = 8.000000000000000000
+      object dedDefaultDateTime: TDateEdit
+        Date = 42987.000000000000000000
+        OnChange = inputChange
+        Position.X = 8.000000000000000000
+        Position.Y = 8.000000000000000000
+        TabOrder = 0
+      end
+      object tdtDefaultDateTime: TTimeEdit
+        Time = 0.852935555555555600
+        OnChange = inputChange
+        Position.X = 120.000000000000000000
+        Position.Y = 8.000000000000000000
+        TabOrder = 1
+      end
+    end
+    object TabItem7: TTabItem
+      CustomIcon = <
+        item
+        end>
+      IsSelected = False
+      Size.Width = 8.000000000000000000
+      Size.Height = 8.000000000000000000
+      Size.PlatformDefault = False
+      StyleLookup = ''
+      TabOrder = 0
+      Text = 'TabItem7'
+      ExplicitSize.cx = 8.000000000000000000
+      ExplicitSize.cy = 8.000000000000000000
+      object tdtDefaultTime: TTimeEdit
+        Time = 0.853392002314814800
+        OnChange = inputChange
+        Position.X = 8.000000000000000000
+        Position.Y = 8.000000000000000000
+        TabOrder = 0
+      end
+    end
+    object TabItem8: TTabItem
+      CustomIcon = <
+        item
+        end>
+      IsSelected = False
+      Size.Width = 8.000000000000000000
+      Size.Height = 8.000000000000000000
+      Size.PlatformDefault = False
+      StyleLookup = ''
+      TabOrder = 0
+      Text = 'TabItem8'
+      ExplicitSize.cx = 8.000000000000000000
+      ExplicitSize.cy = 8.000000000000000000
+      object edtDefaultString: TEdit
+        Touch.InteractiveGestures = [LongTap, DoubleTap]
+        TabOrder = 0
+        Position.X = 8.000000000000000000
+        Position.Y = 8.000000000000000000
+        OnChange = inputChange
+        OnChangeTracking = inputChange
+      end
+    end
+    object TabItem9: TTabItem
+      CustomIcon = <
+        item
+        end>
+      IsSelected = False
+      Size.Width = 8.000000000000000000
+      Size.Height = 8.000000000000000000
+      Size.PlatformDefault = False
+      StyleLookup = ''
+      TabOrder = 0
+      Text = 'TabItem9'
+      ExplicitSize.cx = 8.000000000000000000
+      ExplicitSize.cy = 8.000000000000000000
+      object memDefaultText: TMemo
+        Touch.InteractiveGestures = [Pan, LongTap, DoubleTap]
+        DataDetectorTypes = []
+        Position.X = 8.000000000000000000
+        Position.Y = 8.000000000000000000
+        Size.Width = 297.000000000000000000
+        Size.Height = 65.000000000000000000
+        Size.PlatformDefault = False
+        TabOrder = 0
+        Viewport.Width = 297.000000000000000000
+        Viewport.Height = 65.000000000000000000
+      end
+    end
+    object TabItem10: TTabItem
+      CustomIcon = <
+        item
+        end>
+      IsSelected = False
+      Size.Width = 8.000000000000000000
+      Size.Height = 8.000000000000000000
+      Size.PlatformDefault = False
+      StyleLookup = ''
+      TabOrder = 0
+      Text = 'TabItem10'
+      ExplicitSize.cx = 8.000000000000000000
+      ExplicitSize.cy = 8.000000000000000000
+      object edtDefaultUrl: TEdit
+        Touch.InteractiveGestures = [LongTap, DoubleTap]
+        TabOrder = 0
+        Position.X = 8.000000000000000000
+        Position.Y = 8.000000000000000000
+        Size.Width = 297.000000000000000000
+        Size.Height = 22.000000000000000000
+        Size.PlatformDefault = False
+        OnChange = inputChange
+        OnChangeTracking = inputChange
+      end
+    end
+    object TabItem11: TTabItem
+      CustomIcon = <
+        item
+        end>
+      IsSelected = False
+      Size.Width = 8.000000000000000000
+      Size.Height = 8.000000000000000000
+      Size.PlatformDefault = False
+      StyleLookup = ''
+      TabOrder = 0
+      Text = 'TabItem11'
+      ExplicitSize.cx = 8.000000000000000000
+      ExplicitSize.cy = 8.000000000000000000
+      object cbxDefaultChoice: TComboBox
+        Position.X = 8.000000000000000000
+        Position.Y = 8.000000000000000000
+        Size.Width = 297.000000000000000000
+        Size.Height = 22.000000000000000000
+        Size.PlatformDefault = False
+        TabOrder = 0
+        OnChange = inputChange
+        OnClick = inputChange
+      end
+    end
+    object TabItem12: TTabItem
+      CustomIcon = <
+        item
+        end>
+      IsSelected = False
+      Size.Width = 8.000000000000000000
+      Size.Height = 8.000000000000000000
+      Size.PlatformDefault = False
+      StyleLookup = ''
+      TabOrder = 0
+      Text = 'TabItem12'
+      OnClick = inputChange
+      ExplicitSize.cx = 8.000000000000000000
+      ExplicitSize.cy = 8.000000000000000000
+      object cedDefaultOpenChoice: TComboEdit
+        Touch.InteractiveGestures = [LongTap, DoubleTap]
+        TabOrder = 0
+        ItemHeight = 19.000000000000000000
+        ItemIndex = -1
+        Position.X = 8.000000000000000000
+        Position.Y = 8.000000000000000000
+        Size.Width = 297.000000000000000000
+        Size.Height = 22.000000000000000000
+        Size.PlatformDefault = False
+      end
+    end
+    object TabItem13: TTabItem
+      CustomIcon = <
+        item
+        end>
+      IsSelected = False
+      Size.Width = 8.000000000000000000
+      Size.Height = 8.000000000000000000
+      Size.PlatformDefault = False
+      StyleLookup = ''
+      TabOrder = 0
+      Text = 'TabItem13'
+      ExplicitSize.cx = 8.000000000000000000
+      ExplicitSize.cy = 8.000000000000000000
+      object edtDefaultReference: TEdit
+        Touch.InteractiveGestures = [LongTap, DoubleTap]
+        TabOrder = 0
+        Position.X = 8.000000000000000000
+        Position.Y = 8.000000000000000000
+        OnChange = inputChange
+        OnChangeTracking = inputChange
+      end
+    end
+    object TabItem14: TTabItem
+      CustomIcon = <
+        item
+        end>
+      IsSelected = False
+      Size.Width = 8.000000000000000000
+      Size.Height = 8.000000000000000000
+      Size.PlatformDefault = False
+      StyleLookup = ''
+      TabOrder = 0
+      Text = 'TabItem14'
+      ExplicitSize.cx = 8.000000000000000000
+      ExplicitSize.cy = 8.000000000000000000
+      object edtDefaultQuantity: TEdit
+        Touch.InteractiveGestures = [LongTap, DoubleTap]
+        TabOrder = 0
+        Position.X = 8.000000000000000000
+        Position.Y = 8.000000000000000000
+        OnChange = inputChange
+        OnChangeTracking = inputChange
+      end
+      object edtDefaultQuantityUnits: TEdit
+        Touch.InteractiveGestures = [LongTap, DoubleTap]
+        TabOrder = 1
+        Position.X = 144.000000000000000000
+        Position.Y = 8.000000000000000000
+        OnChange = inputChange
+        OnChangeTracking = inputChange
+      end
+    end
+  end
+  object tabOptions: TTabControl
+    Position.X = 16.000000000000000000
+    Position.Y = 240.000000000000000000
+    Size.Width = 385.000000000000000000
+    Size.Height = 265.000000000000000000
+    Size.PlatformDefault = False
+    TabIndex = 1
+    TabOrder = 18
+    TabPosition = PlatformDefault
+    Sizes = (
+      385s
+      239s
+      385s
+      239s)
+    object tabValueSet: TTabItem
+      CustomIcon = <
+        item
+        end>
+      IsSelected = False
+      Size.Width = 106.000000000000000000
+      Size.Height = 26.000000000000000000
+      Size.PlatformDefault = False
+      StyleLookup = ''
+      TabOrder = 0
+      Text = 'Option ValueSet'
+      ExplicitSize.cx = 106.000000000000000000
+      ExplicitSize.cy = 26.000000000000000000
+      object Label9: TLabel
+        Position.X = 8.000000000000000000
+        Position.Y = 14.000000000000000000
+        Text = 'Value Set'
+        TabOrder = 0
+      end
+      object cedValueSet: TComboEdit
+        Touch.InteractiveGestures = [LongTap, DoubleTap]
+        TabOrder = 1
+        ItemHeight = 19.000000000000000000
+        ItemIndex = -1
+        Position.X = 72.000000000000000000
+        Position.Y = 14.000000000000000000
+        Size.Width = 313.000000000000000000
+        Size.Height = 22.000000000000000000
+        Size.PlatformDefault = False
+      end
+    end
+    object tabOptionList: TTabItem
+      CustomIcon = <
+        item
+        end>
+      IsSelected = True
+      Size.Width = 78.000000000000000000
+      Size.Height = 26.000000000000000000
+      Size.PlatformDefault = False
+      StyleLookup = ''
+      TabOrder = 0
+      Text = 'Option List'
+      ExplicitSize.cx = 78.000000000000000000
+      ExplicitSize.cy = 26.000000000000000000
+      object Panel2: TPanel
+        Align = Top
+        Size.Width = 385.000000000000000000
+        Size.Height = 33.000000000000000000
+        Size.PlatformDefault = False
+        TabOrder = 0
+        object Button1: TButton
+          Position.X = 8.000000000000000000
+          Position.Y = 4.000000000000000000
+          Size.Width = 65.000000000000000000
+          Size.Height = 26.000000000000000000
+          Size.PlatformDefault = False
+          TabOrder = 3
+          Text = 'Add'
+        end
+        object Button3: TButton
+          Position.X = 80.000000000000000000
+          Position.Y = 4.000000000000000000
+          Size.Width = 65.000000000000000000
+          Size.Height = 26.000000000000000000
+          Size.PlatformDefault = False
+          TabOrder = 2
+          Text = 'Up'
+        end
+        object Button4: TButton
+          Position.X = 152.000000000000000000
+          Position.Y = 4.000000000000000000
+          Size.Width = 65.000000000000000000
+          Size.Height = 26.000000000000000000
+          Size.PlatformDefault = False
+          TabOrder = 1
+          Text = 'Down'
+        end
+        object Button5: TButton
+          Position.X = 224.000000000000000000
+          Position.Y = 4.000000000000000000
+          Size.Width = 65.000000000000000000
+          Size.Height = 26.000000000000000000
+          Size.PlatformDefault = False
+          TabOrder = 0
+          Text = 'Delete'
+        end
+      end
+      object grdOptions: TGrid
+        Align = Client
+        CanFocus = True
+        ClipChildren = True
+        Size.Width = 385.000000000000000000
+        Size.Height = 206.000000000000000000
+        Size.PlatformDefault = False
+        TabOrder = 1
+        RowCount = 0
+        Viewport.Width = 385.000000000000000000
+        Viewport.Height = 206.000000000000000000
+      end
+    end
+  end
+end

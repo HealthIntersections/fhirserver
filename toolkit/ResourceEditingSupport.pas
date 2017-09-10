@@ -4,12 +4,16 @@ interface
 
 uses
   SysUtils,
-  FHIRTypes;
+  DateSupport,
+  FHIRTypes,
+  FMX.DateTimeCtrls;
 
 function displayLang(lang : String) : string;
 function displayUse(coding : TFHIRCoding) : string;
 function CodeForUse(s : String) : String;
 
+procedure presentDateTime(date : TFHIRDateTime; ded: TDateEdit; tdt: TTimeEdit);
+function storeDateTime(ded: TDateEdit; tdt: TTimeEdit): TFHIRDateTime;
 
 implementation
 
@@ -73,6 +77,32 @@ begin
     result := '900000000000013009'
   else
     result := '900000000000550004';
+end;
+
+procedure presentDateTime(date : TFHIRDateTime; ded: TDateEdit; tdt: TTimeEdit);
+begin
+  if date = nil then
+  begin
+    ded.Text := '';
+    tdt.Text := '';
+  end
+  else
+  begin
+    ded.DateTime := trunc(date.value.DateTime);
+    if ded.DateTime = date.value.DateTime then
+      tdt.Text := ''
+    else
+      tdt.DateTime := date.value.DateTime - ded.DateTime;
+  end;
+end;
+
+
+function storeDateTime(ded: TDateEdit; tdt: TTimeEdit): TFHIRDateTime;
+begin
+  if ded.Text = '' then
+    result := nil
+  else
+    result := TFhirDateTime.Create(TDateTimeEx.make(trunc(ded.DateTime) + tdt.Time, dttzLocal));
 end;
 
 
