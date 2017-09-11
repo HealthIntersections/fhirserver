@@ -1448,7 +1448,6 @@ procedure TKDBManager.Error(AConn : TKDBConnection; AException: Exception; AErrM
 var
   LIndex : integer;
 begin
-
   FDBLogger.RecordUsage(AConn.Usage, AConn.FUsed, AConn.FRowCount, AConn.FPrepareCount, AException, AErrMsg);
 
   FLock.Enter; // must lock because of the debugger
@@ -1460,12 +1459,16 @@ begin
       end;
     FConnections.Remove(AConn);
     FWaitCreate := (FMaxConnCount > 0) and (FConnections.count > FMaxConnCount div 2);
-    FSemaphore.Release;
     if FAvail.Count = 0 then
     begin
       FServerIsAvailable := false;
       FLastServerError := AException.message;
     End;
+    try
+      FSemaphore.Release;
+    except
+      // nothing
+    end;
   finally
     FLock.Leave;
   end;

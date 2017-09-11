@@ -45,15 +45,17 @@ Type
   TKDBTests = Class (TObject)
   private
     procedure test(manager : TKDBManager);
-    procedure testSQLite();
   Published
-//    {[TestCase] }procedure TestMSSQL;
-    [TestCase] procedure TestMySQL;
+    [TestCase] procedure TestMSSQL;
+    {[TestCase] }procedure TestMySQL;
 //    {[TestCase] }procedure TestMySQLMaria;
     [TestCase] procedure TestSQLite;
   End;
 
 implementation
+
+type
+  ETestException = class (Exception);
 
 function BlobIsSame(l, r : TBytes) : boolean;
 var
@@ -94,6 +96,16 @@ begin
   {$ENDIF}
   i64 := MaxInt;
   i64 := i64+2;
+
+  conn := manager.GetConnection('test');
+  try
+    raise ETestException.Create('Test');
+
+    conn.Release;
+  except
+    on e : exception do
+      conn.Error(e);
+  end;
 
   conn := manager.GetConnection('test');
   try
@@ -234,18 +246,18 @@ begin
   end;
 end;
 
-//procedure TKDBTests.TestMSSQL;
-//var
-//  db : TKDBManager;
-//begin
-//  db := TKDBOdbcManager.create('test', 8, 200, 'SQL Server', 'localhost', 'test', '', '');
-//  try
-//    test(db);
-//  finally
-//    db.Free;
-//  end;
-//end;
-//
+procedure TKDBTests.TestMSSQL;
+var
+  db : TKDBManager;
+begin
+  db := TKDBOdbcManager.create('test', 8, 200, 'SQL Server', 'localhost', 'test', '', '');
+  try
+    test(db);
+  finally
+    db.Free;
+  end;
+end;
+
 procedure TKDBTests.TestMySQL;
 var
   db : TKDBManager;
@@ -258,149 +270,149 @@ begin
   end;
 end;
 
-procedure TKDBTests.testSQLite;
-var
-  DB: TSQLite3Database;
-  Stmt: TSQLite3Statement;
-  IDs: array[1..6] of Integer;
-begin
-  // Delete database if it already exists
-  DeleteFile('artists.db');
-
-  // Create database and fill it with example data
-  DB := TSQLite3Database.Create;
-  try
-    DB.Open('artists.db');
-
-    // Create table "artists"
-    DB.Execute('CREATE TABLE artists (name TEXT, born REAL, died REAL)');
-
-    // Fill the table with artists
-    Stmt := DB.Prepare('INSERT INTO artists (name, born, died) VALUES (:p1, :p2, :p3)');
-    try
-      Stmt.BindText  (':p1', 'Leonardo da Vinci');
-      Stmt.BindDouble(':p2', EncodeDate(1452, 4, 15));
-      Stmt.BindDouble(':p3', EncodeDate(1519, 5, 2));
-
-      Stmt.StepAndReset; // StepAndReset executes a prepared statement
-                         // and resets it so we can reuse it again
-
-      IDs[1] := DB.LastInsertRowID; // Save newly added artist's ID to use it
-                                    // when filling "paintings" table below
-
-      Stmt.BindText  (1, 'Raphael');
-      Stmt.BindDouble(2, EncodeDate(1483, 3, 28));
-      Stmt.BindDouble(3, EncodeDate(1520, 4, 6));
-      Stmt.StepAndReset;
-      IDs[2] := DB.LastInsertRowID;
-
-      Stmt.BindText  (1, 'Arkhip Kuindzhi');
-      Stmt.BindDouble(2, EncodeDate(1842, 1, 27));
-      Stmt.BindDouble(3, EncodeDate(1898, 7, 24));
-      Stmt.StepAndReset;
-      IDs[3] := DB.LastInsertRowID;
-
-      Stmt.BindText  (1, 'Nicholas Roerich');
-      Stmt.BindDouble(2, EncodeDate(1874, 10, 9));
-      Stmt.BindDouble(3, EncodeDate(1947, 12, 13));
-      Stmt.StepAndReset;
-      IDs[4] := DB.LastInsertRowID;
-
-      Stmt.BindText  (1, 'Ivan Aivazovsky');
-      Stmt.BindDouble(2, EncodeDate(1817, 7, 29));
-      Stmt.BindDouble(3, EncodeDate(1900, 5, 5));
-      Stmt.StepAndReset;
-      IDs[5] := DB.LastInsertRowID;
-
-      Stmt.BindText  (1, 'Ivan Shishkin');
-      Stmt.BindDouble(2, EncodeDate(1832, 1, 25));
-      Stmt.BindDouble(3, EncodeDate(1898, 3, 20));
-      Stmt.StepAndReset;
-      IDs[6] := DB.LastInsertRowID;
-    finally
-      Stmt.Free;
-    end;
-
-    // Create table "paintings"
-    DB.Execute('CREATE TABLE paintings (title TEXT, year INTEGER, artist INTEGER)');
-
-    // Fill the table with paintings info
-    Stmt := DB.Prepare('INSERT INTO paintings (title, year, artist) VALUES (?, ?, ?)');
-    try
-      // Leonardo da Vinci
-      Stmt.BindText(1, 'The Virgin and Child with St. Anne');
-      Stmt.BindInt (2, 1508);
-      Stmt.BindInt (3, IDs[1]);
-      Stmt.StepAndReset;
-
-      Stmt.BindText(1, 'Mona Lisa');
-      Stmt.BindInt (2, 1519);
-      Stmt.BindInt (3, IDs[1]);
-      Stmt.StepAndReset;
-
-      // Raphael
-      Stmt.BindText(1, 'Sistine Madonna');
-      Stmt.BindInt (2, 1514);
-      Stmt.BindInt (3, IDs[2]);
-      Stmt.StepAndReset;
-
-      Stmt.BindText(1, 'Transfiguration');
-      Stmt.BindInt (2, 1520);
-      Stmt.BindInt (3, IDs[2]);
-      Stmt.StepAndReset;
-
-      // Arkhip Kuindzhi
-      Stmt.BindText(1, 'After a rain');
-      Stmt.BindInt (2, 1879);
-      Stmt.BindInt (3, IDs[3]);
-      Stmt.StepAndReset;
-
-      Stmt.BindText(1, 'Elbrus');
-      Stmt.BindInt (2, 1895);
-      Stmt.BindInt (3, IDs[3]);
-      Stmt.StepAndReset;
-
-      // Nicholas Roerich
-      Stmt.BindText(1, 'To Kailas. Lahul');
-      Stmt.BindInt (2, 1932);
-      Stmt.BindInt (3, IDs[4]);
-      Stmt.StepAndReset;
-
-      Stmt.BindText(1, 'Krishna');
-      Stmt.BindInt (2, 1929);
-      Stmt.BindInt (3, IDs[4]);
-      Stmt.StepAndReset;
-
-      // Ivan Aivazovsky
-      Stmt.BindText(1, 'The Mary Caught in a Storm');
-      Stmt.BindInt (2, 1892);
-      Stmt.BindInt (3, IDs[5]);
-      Stmt.StepAndReset;
-
-      Stmt.BindText(1, 'Brig "Mercury" Attacked by Two Turkish Ships');
-      Stmt.BindInt (2, 1892);
-      Stmt.BindInt (3, IDs[5]);
-      Stmt.StepAndReset;
-
-      // Ivan Shishkin
-      Stmt.BindText(1, 'Morning in a Pine Forest');
-      Stmt.BindInt (2, 1889);
-      Stmt.BindInt (3, IDs[6]);
-      Stmt.StepAndReset;
-
-      Stmt.BindText(1, 'Wood Distances');
-      Stmt.BindInt (2, 1884);
-      Stmt.BindInt (3, IDs[6]);
-      Stmt.StepAndReset;
-    finally
-      Stmt.Free;
-    end;
-
-  finally
-    DB.Free;
-  end;
-end;
-
+//procedure TKDBTests.testSQLite;
+//var
+//  DB: TSQLite3Database;
+//  Stmt: TSQLite3Statement;
+//  IDs: array[1..6] of Integer;
+//begin
+//  // Delete database if it already exists
+//  DeleteFile('artists.db');
+//
+//  // Create database and fill it with example data
+//  DB := TSQLite3Database.Create;
+//  try
+//    DB.Open('artists.db');
+//
+//    // Create table "artists"
+//    DB.Execute('CREATE TABLE artists (name TEXT, born REAL, died REAL)');
+//
+//    // Fill the table with artists
+//    Stmt := DB.Prepare('INSERT INTO artists (name, born, died) VALUES (:p1, :p2, :p3)');
+//    try
+//      Stmt.BindText  (':p1', 'Leonardo da Vinci');
+//      Stmt.BindDouble(':p2', EncodeDate(1452, 4, 15));
+//      Stmt.BindDouble(':p3', EncodeDate(1519, 5, 2));
+//
+//      Stmt.StepAndReset; // StepAndReset executes a prepared statement
+//                         // and resets it so we can reuse it again
+//
+//      IDs[1] := DB.LastInsertRowID; // Save newly added artist's ID to use it
+//                                    // when filling "paintings" table below
+//
+//      Stmt.BindText  (1, 'Raphael');
+//      Stmt.BindDouble(2, EncodeDate(1483, 3, 28));
+//      Stmt.BindDouble(3, EncodeDate(1520, 4, 6));
+//      Stmt.StepAndReset;
+//      IDs[2] := DB.LastInsertRowID;
+//
+//      Stmt.BindText  (1, 'Arkhip Kuindzhi');
+//      Stmt.BindDouble(2, EncodeDate(1842, 1, 27));
+//      Stmt.BindDouble(3, EncodeDate(1898, 7, 24));
+//      Stmt.StepAndReset;
+//      IDs[3] := DB.LastInsertRowID;
+//
+//      Stmt.BindText  (1, 'Nicholas Roerich');
+//      Stmt.BindDouble(2, EncodeDate(1874, 10, 9));
+//      Stmt.BindDouble(3, EncodeDate(1947, 12, 13));
+//      Stmt.StepAndReset;
+//      IDs[4] := DB.LastInsertRowID;
+//
+//      Stmt.BindText  (1, 'Ivan Aivazovsky');
+//      Stmt.BindDouble(2, EncodeDate(1817, 7, 29));
+//      Stmt.BindDouble(3, EncodeDate(1900, 5, 5));
+//      Stmt.StepAndReset;
+//      IDs[5] := DB.LastInsertRowID;
+//
+//      Stmt.BindText  (1, 'Ivan Shishkin');
+//      Stmt.BindDouble(2, EncodeDate(1832, 1, 25));
+//      Stmt.BindDouble(3, EncodeDate(1898, 3, 20));
+//      Stmt.StepAndReset;
+//      IDs[6] := DB.LastInsertRowID;
+//    finally
+//      Stmt.Free;
+//    end;
+//
+//    // Create table "paintings"
+//    DB.Execute('CREATE TABLE paintings (title TEXT, year INTEGER, artist INTEGER)');
+//
+//    // Fill the table with paintings info
+//    Stmt := DB.Prepare('INSERT INTO paintings (title, year, artist) VALUES (?, ?, ?)');
+//    try
+//      // Leonardo da Vinci
+//      Stmt.BindText(1, 'The Virgin and Child with St. Anne');
+//      Stmt.BindInt (2, 1508);
+//      Stmt.BindInt (3, IDs[1]);
+//      Stmt.StepAndReset;
+//
+//      Stmt.BindText(1, 'Mona Lisa');
+//      Stmt.BindInt (2, 1519);
+//      Stmt.BindInt (3, IDs[1]);
+//      Stmt.StepAndReset;
+//
+//      // Raphael
+//      Stmt.BindText(1, 'Sistine Madonna');
+//      Stmt.BindInt (2, 1514);
+//      Stmt.BindInt (3, IDs[2]);
+//      Stmt.StepAndReset;
+//
+//      Stmt.BindText(1, 'Transfiguration');
+//      Stmt.BindInt (2, 1520);
+//      Stmt.BindInt (3, IDs[2]);
+//      Stmt.StepAndReset;
+//
+//      // Arkhip Kuindzhi
+//      Stmt.BindText(1, 'After a rain');
+//      Stmt.BindInt (2, 1879);
+//      Stmt.BindInt (3, IDs[3]);
+//      Stmt.StepAndReset;
+//
+//      Stmt.BindText(1, 'Elbrus');
+//      Stmt.BindInt (2, 1895);
+//      Stmt.BindInt (3, IDs[3]);
+//      Stmt.StepAndReset;
+//
+//      // Nicholas Roerich
+//      Stmt.BindText(1, 'To Kailas. Lahul');
+//      Stmt.BindInt (2, 1932);
+//      Stmt.BindInt (3, IDs[4]);
+//      Stmt.StepAndReset;
+//
+//      Stmt.BindText(1, 'Krishna');
+//      Stmt.BindInt (2, 1929);
+//      Stmt.BindInt (3, IDs[4]);
+//      Stmt.StepAndReset;
+//
+//      // Ivan Aivazovsky
+//      Stmt.BindText(1, 'The Mary Caught in a Storm');
+//      Stmt.BindInt (2, 1892);
+//      Stmt.BindInt (3, IDs[5]);
+//      Stmt.StepAndReset;
+//
+//      Stmt.BindText(1, 'Brig "Mercury" Attacked by Two Turkish Ships');
+//      Stmt.BindInt (2, 1892);
+//      Stmt.BindInt (3, IDs[5]);
+//      Stmt.StepAndReset;
+//
+//      // Ivan Shishkin
+//      Stmt.BindText(1, 'Morning in a Pine Forest');
+//      Stmt.BindInt (2, 1889);
+//      Stmt.BindInt (3, IDs[6]);
+//      Stmt.StepAndReset;
+//
+//      Stmt.BindText(1, 'Wood Distances');
+//      Stmt.BindInt (2, 1884);
+//      Stmt.BindInt (3, IDs[6]);
+//      Stmt.StepAndReset;
+//    finally
+//      Stmt.Free;
+//    end;
+//
+//  finally
+//    DB.Free;
+//  end;
+//end;
+//
 procedure TKDBTests.TestSQLite;
 var
   db : TKDBManager;
