@@ -595,6 +595,7 @@ type
     FQueue: TFhirResourceList;
 
     FAppFolder : String;
+    FLoading: boolean;
 
     procedure LoadExistingResources(conn: TKDBConnection);
     procedure LoadSpaces(conn: TKDBConnection);
@@ -621,7 +622,8 @@ type
     procedure ProcessObservationValueCode(conn: TKDBConnection; key, subj : integer; isComp : boolean; categories, concepts, compConcepts : TArray<Integer>; dt, dtMin, dtMax : TDateTime; value : TFHIRCodeableConcept);
     procedure storeObservationConcepts(conn: TKDBConnection; ok : integer; isComp : boolean; categories, concepts, compConcepts : TArray<Integer>);
     function Authorize(conn :  TKDBConnection; patientId : String; patientKey, consentKey, sessionKey : integer; JWT : String; expiry : TDateTime) : string;
-
+    function TrackValueSet(id: String; bOnlyIfNew: boolean; conn: TKDBConnection): integer;
+    procedure identifyValueSets;
   protected
     function GetTotalResourceCount: integer; override;
   public
@@ -677,6 +679,7 @@ type
 
     property ServerContext : TFHIRServerContext read FServerContext write FServerContext;
     Property DB: TKDBManager read FDB;
+    Property Loading : boolean read FLoading write FLoading;
   end;
 
 implementation
@@ -8617,6 +8620,7 @@ begin
 
         logt('Load Validation Pack from ' + fn);
         ServerContext.ValidatorContext.LoadFromDefinitions(fn);
+        identifyValueSets;
         if ServerContext.forLoad then
         begin
           logt('Load Custom Resources');
@@ -9032,6 +9036,34 @@ begin
       recordStack(e);
       raise;
     end;
+  end;
+end;
+
+procedure TFHIRNativeStorageService.identifyValueSets;
+var
+  vs : TFhirValueSet;
+  vsl : TFHIRValueSetList;
+  conn : TKDBConnection;
+begin
+  logt('Register ValueSets');
+  Loading := true;
+  vsl := ServerContext.ValidatorContext.TerminologyServer.GetValueSetList;
+  try
+    conn := FDB.GetConnection('identifyValueSets');
+    try
+      for vs in vsl do
+        vs.Tags['tracker'] := inttostr(TrackValueSet(vs.url, true, conn));
+      conn.Release;
+    except
+      on e : Exception do
+      begin
+        conn.Error(e);
+        raise;
+      end;
+    end;
+  finally
+    Loading := false;
+    vsl.Free;
   end;
 end;
 
@@ -9668,7 +9700,24 @@ begin
 
 end;
 
+function TFHIRNativeStorageService.TrackValueSet(id: String; bOnlyIfNew : boolean; conn : TKDBConnection): integer;
+begin
+   if FDB = nil then
+     exit(0);
+
+  result := Conn.CountSQL('Select ValueSetKey from ValueSets where URL = '''+SQLWrapString(id)+'''');
+  if result = 0 then
+  begin
+    result := FServerContext.TerminologyServer.NextValueSetKey;
+    Conn.ExecSQL('Insert into ValueSets (ValueSetKey, URL, NeedsIndexing) values ('+inttostr(result)+', '''+SQLWrapString(id)+''', 1)');
+  end
+  else if not bOnlyIfNew and not Loading then
+    Conn.ExecSQL('Update ValueSets set NeedsIndexing = 1 where ValueSetKey = '+inttostr(result));
+end;
+
 procedure TFHIRNativeStorageService.SeeResource(key, vkey, pvkey: integer; id: string; needsSecure, created : boolean; resource: TFhirResource; conn: TKDBConnection; reload: Boolean; session: TFhirSession);
+var
+  vs : TFHIRValueSet;
 begin
   if (resource.ResourceType in [frtValueSet, frtConceptMap, frtStructureDefinition, frtQuestionnaire, frtSubscription]) and (needsSecure or ((resource.meta <> nil) and not resource.meta.securityList.IsEmpty)) then
     raise ERestfulException.Create('TFHIRNativeStorageService', 'SeeResource', 'Resources of type '+CODES_TFHIRResourceType[resource.ResourceType]+' are not allowed to have a security label on them', 400, IssueTypeBusinessRule);
@@ -9676,7 +9725,13 @@ begin
   ServerContext.ApplicationCache.seeResource(resource);
   FLock.Lock('SeeResource');
   try
-    if resource.ResourceType in [frtValueSet, frtConceptMap {$IFNDEF FHIR2}, frtCodeSystem {$ENDIF}] then
+    if resource.ResourceType = frtValueSet then
+    begin
+      vs := TFHIRValueSet(resource);
+      vs.Tags['tracker'] := inttostr(TrackValueSet(vs.url, true, conn));
+      ServerContext.TerminologyServer.SeeTerminologyResource(resource)
+    end
+    else if resource.ResourceType in [frtConceptMap {$IFNDEF FHIR2}, frtCodeSystem {$ENDIF}] then
       ServerContext.TerminologyServer.SeeTerminologyResource(resource)
     else if resource.ResourceType = frtStructureDefinition then
       ServerContext.ValidatorContext.seeResource(resource as TFhirStructureDefinition)
@@ -10308,7 +10363,7 @@ var
   i: integer;
   cback: TKDBConnection;
 begin
-  ServerContext.TerminologyServer.Loading := true;
+  Loading := true;
   conn.SQL :=
     'select Ids.ResourceKey, Versions.ResourceVersionKey, Ids.Id, Secure, JsonContent from Ids, Types, Versions where '
     + 'Versions.ResourceVersionKey = Ids.MostRecent and ' +
@@ -10351,7 +10406,7 @@ begin
     conn.terminate;
   end;
   FTotalResourceCount := i;
-  ServerContext.TerminologyServer.Loading := false;
+  Loading := false;
 end;
 
 function TFHIRNativeStorageService.loadResource(conn: TKDBConnection; key: integer): TFhirResource;

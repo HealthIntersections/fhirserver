@@ -174,7 +174,6 @@ Type
   // (and at start up)
   TTerminologyServerStore = class (TAdvObject)
   private
-    FLoading : boolean;
     FLoinc : TLOINCServices;
     FSnomed : TAdvList<TSnomedServices>;
     FDefSnomed : TSnomedServices;
@@ -226,7 +225,6 @@ Type
     procedure SetACIR(const Value: TACIRServices);
     procedure checkCodeSystem(vs : TFHIRCodeSystem);
 
-    function TrackValueSet(id : String; bOnlyIfNew : boolean) : integer;
     function GetMaintenanceThreadStatus: String;
     procedure SetMaintenanceThreadStatus(const Value: String);
     function GetSubscriptionThreadStatus: String;
@@ -280,8 +278,6 @@ Type
     function ValueSetCount : integer;
     function CodeSystemCount : integer;
 
-    // database maintenance
-    Property Loading : boolean read FLoading write FLoading;
     {$IFDEF FHIR2}
     procedure declareSystems(oConf : TFhirCapabilityStatement);
     {$ENDIF}
@@ -1152,34 +1148,6 @@ begin
   end;
 end;
 
-function TTerminologyServerStore.TrackValueSet(id: String; bOnlyIfNew : boolean): integer;
-var
-  conn : TKDBConnection;
-begin
-   if FDB = nil then
-     exit(0);
-
-  conn := FDB.GetConnection('TrackValueSet');
-  try
-    result := Conn.CountSQL('Select ValueSetKey from ValueSets where URL = '''+SQLWrapString(id)+'''');
-    if result = 0 then
-    begin
-      result := NextValueSetKey;
-      Conn.ExecSQL('Insert into ValueSets (ValueSetKey, URL, NeedsIndexing) values ('+inttostr(result)+', '''+SQLWrapString(id)+''', 1)');
-    end
-    else if not bOnlyIfNew and not Loading then
-      Conn.ExecSQL('Update ValueSets set NeedsIndexing = 1 where ValueSetKey = '+inttostr(result));
-    conn.Release;
-  except
-    on e : Exception do
-    begin
-      conn.Error(e);
-      recordStack(e);
-      raise;
-    end;
-  end;
-end;
-
 // ----  maintenance procedures ------------------------------------------------
 
 function urlTail(path : String) : String;
@@ -1208,7 +1176,6 @@ begin
     if (resource.ResourceType = frtValueSet) then
     begin
       vs := TFhirValueSet(resource);
-      vs.Tags['tracker'] := inttostr(TrackValueSet(vs.url, true));
       if (vs.url = 'http://hl7.org/fhir/ValueSet/ucum-common') then
         FUcum.SetCommonUnits(vs.Link);
 
@@ -1276,7 +1243,6 @@ begin
     if (resource.ResourceType = frtValueSet) then
     begin
       vs := TFhirValueSet(resource);
-      vs.Tags['tracker'] := inttostr(TrackValueSet(vs.url, false));
       FValueSetsById.AddOrSetValue(vs.id, vs.Link);
       FValueSetsByUrl.AddOrSetValue(vs.url, vs.Link);
       invalidateVS(vs.url);

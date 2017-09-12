@@ -737,7 +737,7 @@ procedure TFHIRDatabaseInstaller.CreateValueSets;
 begin
   FConn.ExecSQL('CREATE TABLE ValueSets ( '+#13#10+
        ' ValueSetKey '+DBKeyType(FConn.owner.platform)+' '+ColCanBeNull(FConn.owner.platform, False)+',  '+#13#10+
-       ' URL nchar(200) '+ColCanBeNull(FConn.owner.platform, False)+', '+
+       ' URL nchar(255) '+ColCanBeNull(FConn.owner.platform, False)+', '+
        ' NeedsIndexing int '+ColCanBeNull(FConn.owner.platform, False)+', '+
        ' Error nchar(200) '+ColCanBeNull(FConn.owner.platform, True)+', '+
        PrimaryKeyType(FConn.owner.Platform, 'PK_ValueSets', 'ValueSetKey')+') '+CreateTableInfo(FConn.owner.platform));
