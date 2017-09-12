@@ -5086,45 +5086,34 @@ begin
   context := TOperationContext.create;
   try
     context.upload := upload;
-    Connection.StartTransact;
+    // cut us off from the external request
+    request := TFHIRRequest.create(ServerContext.ValidatorContext.Link, origin, FIndexer.Definitions.Compartments.Link);
+    response := TFHIRResponse.create;
     try
-      // cut us off from the external request
-      request := TFHIRRequest.create(ServerContext.ValidatorContext.Link, origin, FIndexer.Definitions.Compartments.Link);
-      response := TFHIRResponse.create;
-      try
-        for i := 0 to list.count - 1 do
-        begin
-          request.ResourceName := list[i].FhirType;
-          request.CommandType := fcmdCreate;
-          request.Resource := list[i].link;
-
-          if (list[i] is TFHIRBundle) and (list[i].Tags['process'] = 'true') then
-          begin
-            request.CommandType := fcmdTransaction;
-          end
-          else if (list[i].id <> '') then
-          begin
-            request.id := list[i].id;
-            request.CommandType := fcmdUpdate;
-          end;
-
-          if TFhirResource(list[i]).Tag <> nil then
-            request.lastModifiedDate := TDateTimeExWrapper(TFhirResource(list[i]).Tag).Value.DateTime;
-          request.Session := nil;
-          Execute(context, request, response);
-        end;
-      finally
-        response.Free;
-        request.free;
-      end;
-      Connection.Commit;
-    except
-      on e : Exception do
+      for i := 0 to list.count - 1 do
       begin
-        Connection.Rollback;
-        recordStack(e);
-        raise;
+        request.ResourceName := list[i].FhirType;
+        request.CommandType := fcmdCreate;
+        request.Resource := list[i].link;
+
+        if (list[i] is TFHIRBundle) and (list[i].Tags['process'] = 'true') then
+        begin
+          request.CommandType := fcmdTransaction;
+        end
+        else if (list[i].id <> '') then
+        begin
+          request.id := list[i].id;
+          request.CommandType := fcmdUpdate;
+        end;
+
+        if TFhirResource(list[i]).Tag <> nil then
+          request.lastModifiedDate := TDateTimeExWrapper(TFhirResource(list[i]).Tag).Value.DateTime;
+        request.Session := nil;
+        Execute(context, request, response);
       end;
+    finally
+      response.Free;
+      request.free;
     end;
   finally
     context.Free;
@@ -8721,7 +8710,7 @@ var
 begin
   conn := DB.GetConnection('oauth2');
   try
-    conn.ExecSQL('insert into OAuthLogins (Id, Client, Scope, Redirect, ClientState, Status, DateAdded) values ('''+id+''', '''+client_id+''', '''+SQLWrapString(scope)+''', '''+SQLWrapString(redirect_uri)+''', '''+SQLWrapString(state)+''', 1, '+DBGetDate(conn.Owner.Platform)+')');
+    conn.ExecSQL('insert into OAuthLogins (Id, Client, Scope, Redirect, Status, DateAdded, ClientState) values ('''+id+''', '''+client_id+''', '''+SQLWrapString(scope)+''', '''+SQLWrapString(redirect_uri)+''', 1, '+DBGetDate(conn.Owner.Platform)+', '''+SQLWrapString(state)+''')');
     conn.release;
   except
     on e:exception do
@@ -8874,8 +8863,8 @@ begin
       client_id := conn.ColStringByName['Client'];
       name := conn.ColStringByName['Name'];
       redirect := conn.ColStringByName['Redirect'];
-      state := conn.ColStringByName['ClientState'];
       scope := conn.ColStringByName['Scope'];
+      state := conn.ColStringByName['ClientState'];
     end;
     conn.Terminate;
     conn.release;
