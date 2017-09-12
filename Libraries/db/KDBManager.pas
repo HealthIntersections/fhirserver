@@ -1426,7 +1426,12 @@ begin
     else
       begin
       FAvail.Add(AConn.Link);
-      FSemaphore.Release;
+      try
+        FSemaphore.Release;
+      except
+        on e : exception do
+          raise Exception.Create('Error releasing semaphore for '+AConn.Usage+': '+e.message+'. please report this error to grahameg@gmail.com');
+      end;
       end;
   finally
     FLock.Leave;
@@ -1467,7 +1472,8 @@ begin
     try
       FSemaphore.Release;
     except
-      // nothing
+      on e : exception do
+        raise Exception.Create('Error releasing semaphore for '+AConn.Usage+': '+e.message+'. please report this error to grahameg@gmail.com');
     end;
   finally
     FLock.Leave;
