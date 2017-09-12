@@ -416,7 +416,7 @@ begin
        ' Client nchar(48) NOT NULL, '+#13#10+
        ' Scope nchar(255) NOT NULL, '+#13#10+
        ' Redirect nchar(255) NOT NULL, '+#13#10+
-       ' ClientState nchar(255) NOT NULL, '+#13#10+
+       ' ClientState nchar(512) NOT NULL, '+#13#10+
        ' Patient nchar(64) NULL, '+#13#10+
        ' Status int NOT NULL, '+#13#10+
        ' DateAdded '+DBDateTimeType(FConn.owner.platform)+' NOT NULL, '+#13#10+
@@ -632,7 +632,7 @@ Begin
        InlineForeignKeySql(FConn, 'SearchEntries', 'SearchKey', 'Searches', 'SearchKey', 'FK_Search_Search')+
        InlineForeignKeySql(FConn, 'SearchEntries', 'ResourceKey', 'Ids', 'ResourceKey', 'FK_Search_ResKey')+
        InlineForeignKeySql(FConn, 'SearchEntries', 'ResourceVersionKey', 'Versions', 'ResourceVersionKey', 'FK_Search_ResVerKey')+
-       PrimaryKeyType(FConn.owner.Platform, 'PK_SearchEntries', 'SearchKey, ResourceKey')+') '+CreateTableInfo(FConn.owner.platform));
+       PrimaryKeyType(FConn.owner.Platform, 'PK_SearchEntries', 'SearchKey, ResourceKey, ResourceVersionKey')+') '+CreateTableInfo(FConn.owner.platform));
   FConn.ExecSQL('Create UNIQUE INDEX SK_SearchesSearchEntries ON SearchEntries (SearchKey, SortValue, ResourceKey)');
   FConn.ExecSQL('Create INDEX SK_SearchesResourceKey ON SearchEntries (ResourceKey)');
   FConn.ExecSQL(ForeignKeySql(FConn, 'SearchEntries', 'SearchKey', 'Searches', 'SearchKey', 'FK_Search_Search'));
