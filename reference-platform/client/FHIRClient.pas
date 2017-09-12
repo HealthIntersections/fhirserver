@@ -53,6 +53,8 @@ Type
   end;
 
   TFhirClient = {abstract} class (TAdvObject)
+  private
+    FLastURL: String;
   public
     function link : TFhirClient; overload;
 
@@ -73,6 +75,7 @@ Type
     procedure terminate; virtual;
     function address : String; virtual;
     function format : TFHIRFormat; virtual;
+    property LastURL : String read FLastURL write FLastURL;
   end;
 
   TFhirHTTPClientHTTPVerb = (get, post, put, delete, options, patch);
@@ -808,6 +811,7 @@ end;
 function TFhirHTTPClient.exchange(url : String; verb : TFhirHTTPClientHTTPVerb; source : TStream; ct : String = '') : TStream;
 begin
   createClient;
+  LastURL := url;
   if FUseIndy then
     result := exchangeIndy(url, verb, source, ct)
   {$IFDEF MSWINDOWS}
