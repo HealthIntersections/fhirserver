@@ -874,6 +874,8 @@ end;
 
 function TDateTimeEx.toHL7: String;
 begin
+  if null then
+    exit('');
   case FPrecision of
     dtpYear:  result := sv(Year, 4);
     dtpMonth: result := sv(Year, 4) + sv(Month, 2);
@@ -902,6 +904,9 @@ end;
 
 function TDateTimeEx.toXml: String;
 begin
+  if null then
+    exit('');
+
   case FPrecision of
     dtpYear:  result := sv(Year, 4);
     dtpMonth: result := sv(Year, 4) + '-' + sv(Month, 2);
@@ -1232,6 +1237,8 @@ end;
 
 function TDateTimeEx.ToString: String;
 begin
+  if null then
+    exit('');
   Result := DateTimeToStr(DateTime);
 end;
 
