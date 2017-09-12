@@ -1,11 +1,11 @@
 object CodeSystemEditorFrame: TCodeSystemEditorFrame
-  Size.Width = 900.000000000000000000
-  Size.Height = 760.000000000000000000
+  Size.Width = 950.000000000000000000
+  Size.Height = 816.000000000000000000
   Size.PlatformDefault = False
   object Panel2: TPanel
     Align = Left
     Size.Width = 201.000000000000000000
-    Size.Height = 760.000000000000000000
+    Size.Height = 816.000000000000000000
     Size.PlatformDefault = False
     TabOrder = 0
     object Panel4: TPanel
@@ -24,12 +24,12 @@ object CodeSystemEditorFrame: TCodeSystemEditorFrame
     object tvStructure: TTreeView
       Align = Client
       Size.Width = 201.000000000000000000
-      Size.Height = 735.000000000000000000
+      Size.Height = 791.000000000000000000
       Size.PlatformDefault = False
       TabOrder = 1
       OnClick = tvStructureClick
       Viewport.Width = 197.000000000000000000
-      Viewport.Height = 731.000000000000000000
+      Viewport.Height = 787.000000000000000000
       object tvMetadata: TTreeViewItem
         IsChecked = False
         IsExpanded = False
@@ -66,33 +66,33 @@ object CodeSystemEditorFrame: TCodeSystemEditorFrame
     MinSize = 20.000000000000000000
     Position.X = 201.000000000000000000
     Size.Width = 8.000000000000000000
-    Size.Height = 760.000000000000000000
+    Size.Height = 816.000000000000000000
     Size.PlatformDefault = False
   end
   object Panel3: TPanel
     Align = Client
-    Size.Width = 691.000000000000000000
-    Size.Height = 760.000000000000000000
+    Size.Width = 741.000000000000000000
+    Size.Height = 816.000000000000000000
     Size.PlatformDefault = False
     TabOrder = 2
     object tbStructure: TTabControl
       Align = Client
       Anchors = [akLeft, akTop]
-      Size.Width = 691.000000000000000000
-      Size.Height = 760.000000000000000000
+      Size.Width = 741.000000000000000000
+      Size.Height = 816.000000000000000000
       Size.PlatformDefault = False
       TabIndex = 3
       TabOrder = 0
       TabPosition = None
       Sizes = (
-        691s
-        760s
-        691s
-        760s
-        691s
-        760s
-        691s
-        760s)
+        741s
+        816s
+        741s
+        816s
+        741s
+        816s
+        741s
+        816s)
       object tbMetadata: TTabItem
         CustomIcon = <
           item
@@ -108,12 +108,12 @@ object CodeSystemEditorFrame: TCodeSystemEditorFrame
         ExplicitSize.cy = 8.000000000000000000
         object ScrollBox1: TScrollBox
           Align = Client
-          Size.Width = 691.000000000000000000
-          Size.Height = 760.000000000000000000
+          Size.Width = 741.000000000000000000
+          Size.Height = 816.000000000000000000
           Size.PlatformDefault = False
           TabOrder = 0
-          Viewport.Width = 691.000000000000000000
-          Viewport.Height = 760.000000000000000000
+          Viewport.Width = 741.000000000000000000
+          Viewport.Height = 816.000000000000000000
           object dedDate: TDateEdit
             Date = 42965.000000000000000000
             OnChange = inputChanged
@@ -623,15 +623,15 @@ object CodeSystemEditorFrame: TCodeSystemEditorFrame
           Align = Client
           CanFocus = True
           ClipChildren = True
-          Size.Width = 691.000000000000000000
-          Size.Height = 727.000000000000000000
+          Size.Width = 741.000000000000000000
+          Size.Height = 783.000000000000000000
           Size.PlatformDefault = False
           TabOrder = 0
           OnSelChanged = grdPropertiesSelChanged
           OnGetValue = grdPropertiesGetValue
           OnSetValue = grdPropertiesSetValue
-          Viewport.Width = 691.000000000000000000
-          Viewport.Height = 727.000000000000000000
+          Viewport.Width = 741.000000000000000000
+          Viewport.Height = 783.000000000000000000
           object StringColumn1: TStringColumn
             Header = 'Code'
           end
@@ -657,7 +657,7 @@ object CodeSystemEditorFrame: TCodeSystemEditorFrame
         end
         object pnlPropertyActions: TPanel
           Align = Top
-          Size.Width = 691.000000000000000000
+          Size.Width = 741.000000000000000000
           Size.Height = 33.000000000000000000
           Size.PlatformDefault = False
           TabOrder = 1
@@ -692,7 +692,7 @@ object CodeSystemEditorFrame: TCodeSystemEditorFrame
         ExplicitSize.cy = 8.000000000000000000
         object Panel1: TPanel
           Align = Top
-          Size.Width = 691.000000000000000000
+          Size.Width = 741.000000000000000000
           Size.Height = 33.000000000000000000
           Size.PlatformDefault = False
           TabOrder = 1
@@ -715,15 +715,15 @@ object CodeSystemEditorFrame: TCodeSystemEditorFrame
           Align = Client
           CanFocus = True
           ClipChildren = True
-          Size.Width = 691.000000000000000000
-          Size.Height = 727.000000000000000000
+          Size.Width = 741.000000000000000000
+          Size.Height = 783.000000000000000000
           Size.PlatformDefault = False
           TabOrder = 2
           OnSelChanged = grdFiltersSelChanged
           OnGetValue = grdFiltersGetValue
           OnSetValue = grdFiltersSetValue
-          Viewport.Width = 691.000000000000000000
-          Viewport.Height = 727.000000000000000000
+          Viewport.Width = 741.000000000000000000
+          Viewport.Height = 783.000000000000000000
           object StringColumn4: TStringColumn
             Header = 'Code'
           end
@@ -755,10 +755,10 @@ object CodeSystemEditorFrame: TCodeSystemEditorFrame
         ExplicitSize.cy = 8.000000000000000000
         object Panel5: TPanel
           Align = Top
-          Size.Width = 691.000000000000000000
+          Size.Width = 741.000000000000000000
           Size.Height = 33.000000000000000000
           Size.PlatformDefault = False
-          TabOrder = 1
+          TabOrder = 2
           object btnAddConcept: TButton
             Position.X = 6.000000000000000000
             Position.Y = 6.000000000000000000
@@ -837,17 +837,17 @@ object CodeSystemEditorFrame: TCodeSystemEditorFrame
         end
         object TabControl1: TTabControl
           Align = Client
-          Size.Width = 691.000000000000000000
-          Size.Height = 727.000000000000000000
+          Size.Width = 741.000000000000000000
+          Size.Height = 751.000000000000000000
           Size.PlatformDefault = False
           TabIndex = 1
-          TabOrder = 2
+          TabOrder = 3
           TabPosition = Top
           Sizes = (
-            691s
-            701s
-            691s
-            701s)
+            741s
+            725s
+            741s
+            725s)
           object TabItem1: TTabItem
             CustomIcon = <
               item
@@ -863,15 +863,15 @@ object CodeSystemEditorFrame: TCodeSystemEditorFrame
             ExplicitSize.cy = 26.000000000000000000
             object tvConceptTree: TTreeView
               Align = Client
-              Size.Width = 691.000000000000000000
-              Size.Height = 701.000000000000000000
+              Size.Width = 741.000000000000000000
+              Size.Height = 725.000000000000000000
               Size.PlatformDefault = False
               TabOrder = 0
               OnClick = tvConceptTreeChange
               OnDblClick = btnEditConceptClick
               OnChange = tvConceptTreeChange
-              Viewport.Width = 691.000000000000000000
-              Viewport.Height = 701.000000000000000000
+              Viewport.Width = 741.000000000000000000
+              Viewport.Height = 725.000000000000000000
             end
           end
           object TabItem2: TTabItem
@@ -891,8 +891,8 @@ object CodeSystemEditorFrame: TCodeSystemEditorFrame
               Align = Client
               CanFocus = True
               ClipChildren = True
-              Size.Width = 691.000000000000000000
-              Size.Height = 701.000000000000000000
+              Size.Width = 741.000000000000000000
+              Size.Height = 725.000000000000000000
               Size.PlatformDefault = False
               TextSettings.VertAlign = Leading
               TabOrder = 0
@@ -901,8 +901,8 @@ object CodeSystemEditorFrame: TCodeSystemEditorFrame
               OnGetValue = grdConceptsGetValue
               OnSetValue = grdConceptsSetValue
               OnCellDblClick = grdConceptsCellDblClick
-              Viewport.Width = 671.000000000000000000
-              Viewport.Height = 676.000000000000000000
+              Viewport.Width = 741.000000000000000000
+              Viewport.Height = 725.000000000000000000
               object IntegerColumn1: TIntegerColumn
                 Enabled = False
                 Header = 'Depth'
@@ -918,6 +918,75 @@ object CodeSystemEditorFrame: TCodeSystemEditorFrame
                 Header = 'Definition'
               end
             end
+          end
+        end
+        object Panel6: TPanel
+          Align = Bottom
+          Position.Y = 784.000000000000000000
+          Size.Width = 741.000000000000000000
+          Size.Height = 32.000000000000000000
+          Size.PlatformDefault = False
+          TabOrder = 1
+          object Label14: TLabel
+            Position.X = 16.000000000000000000
+            Position.Y = 8.000000000000000000
+            Text = 'Search:'
+            TabOrder = 0
+          end
+          object edtSearch: TEdit
+            Touch.InteractiveGestures = [LongTap, DoubleTap]
+            TabOrder = 1
+            Position.X = 64.000000000000000000
+            Position.Y = 6.000000000000000000
+            Size.Width = 177.000000000000000000
+            Size.Height = 22.000000000000000000
+            Size.PlatformDefault = False
+          end
+          object btnSearchStart: TButton
+            Position.X = 248.000000000000000000
+            Position.Y = 5.000000000000000000
+            Size.Width = 89.000000000000000000
+            Size.Height = 22.000000000000000000
+            Size.PlatformDefault = False
+            TabOrder = 5
+            Text = 'From Start'
+            OnClick = btnSearchStartClick
+          end
+          object btnSearchNext: TButton
+            Position.X = 336.000000000000000000
+            Position.Y = 5.000000000000000000
+            Size.Width = 89.000000000000000000
+            Size.Height = 22.000000000000000000
+            Size.PlatformDefault = False
+            TabOrder = 4
+            Text = 'Next'
+            OnClick = btnSearchNextClick
+          end
+          object btnSearchPrev: TButton
+            Position.X = 424.000000000000000000
+            Position.Y = 5.000000000000000000
+            Size.Width = 89.000000000000000000
+            Size.Height = 22.000000000000000000
+            Size.PlatformDefault = False
+            TabOrder = 3
+            Text = 'Prev'
+            OnClick = btnSearchPrevClick
+          end
+          object btnSearchEnd: TButton
+            Position.X = 512.000000000000000000
+            Position.Y = 5.000000000000000000
+            Size.Width = 89.000000000000000000
+            Size.Height = 22.000000000000000000
+            Size.PlatformDefault = False
+            TabOrder = 2
+            Text = 'From End'
+            OnClick = btnSearchEndClick
+          end
+          object CheckBox1: TCheckBox
+            Position.X = 608.000000000000000000
+            Position.Y = 6.000000000000000000
+            TabOrder = 6
+            Text = 'CheckBox1'
           end
         end
       end

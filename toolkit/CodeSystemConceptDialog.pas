@@ -28,7 +28,7 @@ type
     PopupColumn3: TPopupColumn;
     StringColumn9: TStringColumn;
     Label20: TLabel;
-    Label4: TLabel;
+    lblProperties: TLabel;
     procedure FormShow(Sender: TObject);
     procedure edtCodeChangeTracking(Sender: TObject);
     procedure gridDesignationsGetValue(Sender: TObject; const ACol, ARow: Integer; var Value: TValue);
@@ -227,13 +227,16 @@ var
 const
   DELTA = 32;
 begin
-  top := Label4.Position.Y + DELTA;
+  top := lblProperties.Position.Y + DELTA;
   for value in FProperties do
   begin
     loadProperty(value, top);
     top := top + delta;
   end;
   Height := trunc(top + delta + 10 + panel1.height);
+  if top = lblProperties.Position.Y + DELTA then
+    lblProperties.visible := false;
+
 end;
 
 procedure TCodeSystemConceptForm.loadProperty(Value: TFhirCodeSystemProperty; top : Double);
@@ -246,11 +249,11 @@ var
 begin
   lbl := TLabel.Create(self);
   lbl.Parent := self;
-  lbl.Position.X := label4.Position.X;
+  lbl.Position.X := lblProperties.Position.X;
   lbl.Position.Y := top + 2;
   lbl.Text := value.code;
-  lbl.Height := Label4.Height;
-  lbl.Width := Label4.Width;
+  lbl.Height := lblProperties.Height;
+  lbl.Width := lblProperties.Width;
 
   case value.type_ of
     ConceptPropertyTypeCode, ConceptPropertyTypeString, ConceptPropertyTypeInteger:

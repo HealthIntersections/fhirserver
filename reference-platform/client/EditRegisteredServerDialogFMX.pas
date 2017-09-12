@@ -49,6 +49,8 @@ type
     Label16: TLabel;
     edtUsername: TEdit;
     edtPassword: TEdit;
+    Label17: TLabel;
+    Label18: TLabel;
     procedure FormDestroy(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure btnCheckFormatClick(Sender: TObject);

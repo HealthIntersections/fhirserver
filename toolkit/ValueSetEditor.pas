@@ -174,6 +174,8 @@ type
     VertScrollBox2: TVertScrollBox;
     btnExport: TButton;
     dlgExport: TSaveDialog;
+    rbAll: TRadioButton;
+    TabItem3: TTabItem;
     procedure tvStructureClick(Sender: TObject);
     procedure inputChanged(Sender: TObject);
     procedure btnFlipComposeClick(Sender: TObject);
@@ -227,6 +229,7 @@ type
     procedure btnMemoPurposeClick(Sender: TObject);
     procedure btnMemoCopyrightClick(Sender: TObject);
     procedure btnExportClick(Sender: TObject);
+    procedure rbAllClick(Sender: TObject);
   private
     tvCompose, tvExpansion : TTreeViewItem;
     function GetValueSet: TFHIRValueSet;
@@ -302,6 +305,8 @@ begin
   btnDeleteConcept.Enabled := gridConcepts.Row > -1;
   rbList.Enabled := false;
   rbFilter.Enabled := false;
+  rbAll.Enabled := false;
+  rbFilter.isChecked := true;
 end;
 
 procedure TValueSetEditorFrame.btnAddContainsClick(Sender: TObject);
@@ -402,6 +407,8 @@ begin
   btnDeleteFilter.Enabled := gridIdentifiers.Row > -1;
   rbList.Enabled := false;
   rbFilter.Enabled := false;
+  rbAll.Enabled := false;
+  rbFilter.Enabled := true;
 end;
 
 procedure TValueSetEditorFrame.btnAddImportClick(Sender: TObject);
@@ -477,6 +484,7 @@ begin
   btnDeleteConcept.Enabled := gridConcepts.Row > -1;
   rbList.Enabled := rule.conceptList.Count = 0;
   rbFilter.Enabled := rule.conceptList.Count = 0;
+  rbAll.Enabled := rule.conceptList.Count = 0;
 end;
 
 procedure TValueSetEditorFrame.btnDeleteContainsClick(Sender: TObject);
@@ -521,6 +529,7 @@ begin
   btnDeleteFilter.Enabled := gridFilters.Row > -1;
   rbList.Enabled := rule.filterList.Count = 0;
   rbFilter.Enabled := rule.filterList.Count = 0;
+  rbAll.Enabled := rule.conceptList.Count = 0;
 end;
 
 procedure TValueSetEditorFrame.btnDeleteImportClick(Sender: TObject);
@@ -1310,6 +1319,8 @@ begin
 
   if rule.conceptList.Count > 0 then
   begin
+    rbAll.IsChecked := false;
+    rbAll.Enabled := false;
     rbList.IsChecked := true;
     tabSelect.TabIndex := 1;
     rbList.Enabled := false;
@@ -1317,6 +1328,8 @@ begin
   end
   else if rule.filterList.Count > 0 then
   begin
+    rbAll.IsChecked := false;
+    rbAll.Enabled := false;
     rbFilter.IsChecked := true;
     tabSelect.TabIndex := 0;
     rbList.Enabled := false;
@@ -1324,8 +1337,9 @@ begin
   end
   else
   begin
-    rbList.IsChecked := true;
-    tabSelect.TabIndex := 1;
+    rbAll.IsChecked := true;
+    rbAll.Enabled := true;
+    tabSelect.TabIndex := 2;
     rbList.Enabled := true;
     rbFilter.Enabled := true;
   end;
@@ -1364,6 +1378,11 @@ end;
 procedure TValueSetEditorFrame.rbListClick(Sender: TObject);
 begin
   tabSelect.TabIndex := 1;
+end;
+
+procedure TValueSetEditorFrame.rbAllClick(Sender: TObject);
+begin
+  tabSelect.TabIndex := 2;
 end;
 
 procedure TValueSetEditorFrame.rbFilterClick(Sender: TObject);

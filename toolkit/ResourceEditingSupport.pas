@@ -5,7 +5,7 @@ interface
 uses
   SysUtils,
   DateSupport,
-  FHIRTypes,
+  FHIRTypes, FHIRResources,
   FMX.DateTimeCtrls;
 
 function displayLang(lang : String) : string;
@@ -14,6 +14,11 @@ function CodeForUse(s : String) : String;
 
 procedure presentDateTime(date : TFHIRDateTime; ded: TDateEdit; tdt: TTimeEdit);
 function storeDateTime(ded: TDateEdit; tdt: TTimeEdit): TFHIRDateTime;
+
+function getJurisdictionSearch(i: integer): string;
+function readJurisdiction(res : TFhirMetadataResource): String;
+
+function FMXescape(s : String) : String;
 
 implementation
 
@@ -105,5 +110,87 @@ begin
     result := TFhirDateTime.Create(TDateTimeEx.make(trunc(ded.DateTime) + tdt.Time, dttzLocal));
 end;
 
+function getJurisdictionSearch(i: integer): string;
+begin
+  case i of
+    1:result := 'urn:iso:std:iso:3166|AT';
+    2:result := 'urn:iso:std:iso:3166|AU';
+    3:result := 'urn:iso:std:iso:3166|BR';
+    4:result := 'urn:iso:std:iso:3166|CA';
+    5:result := 'urn:iso:std:iso:3166|CH';
+    6:result := 'urn:iso:std:iso:3166|CL';
+    7:result := 'urn:iso:std:iso:3166|CN';
+    8:result := 'urn:iso:std:iso:3166|DE';
+    9:result := 'urn:iso:std:iso:3166|DK';
+    10:result := 'urn:iso:std:iso:3166|EE';
+    11:result := 'urn:iso:std:iso:3166|ES';
+    12:result := 'urn:iso:std:iso:3166|FI';
+    13:result := 'urn:iso:std:iso:3166|FR';
+    14:result := 'urn:iso:std:iso:3166|GB';
+    15:result := 'urn:iso:std:iso:3166|NL';
+    16:result := 'urn:iso:std:iso:3166|NO';
+    17:result := 'urn:iso:std:iso:3166|NZ';
+    18:result := 'urn:iso:std:iso:3166|RU';
+    19:result := 'urn:iso:std:iso:3166|US';
+    21:result := 'urn:iso:std:iso:3166|VN';
+    22:result := 'http://unstats.un.org/unsd/methods/m49/m49.htm|001';
+    23:result := 'http://unstats.un.org/unsd/methods/m49/m49.htm|002';
+    24:result := 'http://unstats.un.org/unsd/methods/m49/m49.htm|019';
+    25:result := 'http://unstats.un.org/unsd/methods/m49/m49.htm|142';
+    26:result := 'http://unstats.un.org/unsd/methods/m49/m49.htm|150';
+    27:result := 'http://unstats.un.org/unsd/methods/m49/m49.htm|053';
+  else
+    result := '';
+  end;
+end;
+
+function readJurisdiction(res : TFhirMetadataResource): String;
+var
+  cc : TFhirCodeableConcept;
+  c : TFhirCoding;
+begin
+  result := '';
+  for cc in res.jurisdictionList do
+    for c in cc.codingList do
+    begin
+      if c.system = 'urn:iso:std:iso:3166' then
+      begin
+        if c.code = 'AT' then exit('Austraia');
+        if c.code = 'AU' then exit('Australia');
+        if c.code = 'BR' then exit('Brazil');
+        if c.code = 'CA' then exit('Canada');
+        if c.code = 'CH' then exit('Switzerland');
+        if c.code = 'CL' then exit('Chile');
+        if c.code = 'CN' then exit('China');
+        if c.code = 'DE' then exit('Germany');
+        if c.code = 'DK' then exit('Denmark');
+        if c.code = 'EE' then exit('Estonia');
+        if c.code = 'ES' then exit('Spain');
+        if c.code = 'FI' then exit('Finland');
+        if c.code = 'FR' then exit('France');
+        if c.code = 'GB' then exit('UK');
+        if c.code = 'NL' then exit('Netherlands');
+        if c.code = 'NO' then exit('Norway');
+        if c.code = 'NZ' then exit('NZ');
+        if c.code = 'RU' then exit('Russia');
+        if c.code = 'US' then exit('USA');
+        if c.code = 'VN' then exit('Vietnam');
+      end
+      else if c.system = 'http://unstats.un.org/unsd/methods/m49/m49.htm' then
+      begin
+        if c.code = '001' { World } then exit('World');
+        if c.code = '002' { Africa } then exit('Africa');
+        if c.code = '019' { Americas } then exit('Americas');
+        if c.code = '142' { Asia } then exit('Asia');
+        if c.code = '150' { Europe } then exit('Europe');
+        if c.code = '053' { Australia and New Zealand } then exit('Australasia');
+      end
+    end;
+end;
+
+function FMXescape(s : String) : String;
+begin
+  result := s.replace('&', '&&');
+end;
 
 end.

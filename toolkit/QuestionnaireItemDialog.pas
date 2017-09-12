@@ -3,14 +3,15 @@ unit QuestionnaireItemDialog;
 interface
 
 uses
-  System.SysUtils, System.Types, System.UITypes, System.Classes, System.Variants,
+  System.SysUtils, System.Types, System.UITypes, System.Classes, System.Variants, System.Generics.Collections,
   FMX.Types, FMX.Controls, FMX.Forms, FMX.Graphics, FMX.Dialogs, FMX.StdCtrls,
   FMX.Controls.Presentation, System.Rtti, FMX.Grid.Style, FMX.Grid,
   FMX.ComboEdit, FMX.ScrollBox, FMX.Memo, FMX.DateTimeCtrls, FMX.TabControl,
   FMX.ListBox, FMX.Edit, FMX.DialogService,
   StringSupport, DateSupport,
-  FHIRTypes, FHIRResources,
-  ResourceEditingSupport;
+  ToolkitSettings,
+  FHIRTypes, FHIRResources, FHIRClient,
+  ResourceEditingSupport, BaseFrame;
 
 type
   TQuestionnaireItemForm = class(TForm)
@@ -69,27 +70,42 @@ type
     edtDefaultQuantityUnits: TEdit;
     Label9: TLabel;
     Panel2: TPanel;
-    Button1: TButton;
-    Button3: TButton;
-    Button4: TButton;
-    Button5: TButton;
+    btnOptionAdd: TButton;
+    btnOptionUp: TButton;
+    btnOptionDown: TButton;
+    btnOptionDelete: TButton;
     grdOptions: TGrid;
     cedValueSet: TComboEdit;
+    Button1: TButton;
     procedure FormShow(Sender: TObject);
     procedure btnOkClick(Sender: TObject);
     procedure cbxTypeChange(Sender: TObject);
     procedure inputChange(Sender: TObject);
+    procedure grdOptionsGetValue(Sender: TObject; const ACol, ARow: Integer; var Value: TValue);
+    procedure grdOptionsSetValue(Sender: TObject; const ACol, ARow: Integer; const Value: TValue);
+    procedure btnOptionAddClick(Sender: TObject);
+    procedure btnOptionUpClick(Sender: TObject);
+    procedure btnOptionDownClick(Sender: TObject);
+    procedure btnOptionDeleteClick(Sender: TObject);
+    procedure btnLoadValuesets(Sender: TObject);
+    procedure cedValueSetChange(Sender: TObject);
   private
     FItem: TFhirQuestionnaireItem;
     Loading : boolean;
+    FSettings: TFHIRToolkitSettings;
+    FOnWork: TWorkEvent;
     procedure SetItem(const Value: TFhirQuestionnaireItem);
     procedure loadInitialValue;
     procedure saveInitialValue;
     procedure loadOptions;
     procedure commit;
+    procedure SetSettings(const Value: TFHIRToolkitSettings);
   public
     destructor Destroy; override;
     property item : TFhirQuestionnaireItem read FItem write SetItem;
+
+    property Settings : TFHIRToolkitSettings read FSettings write SetSettings;
+    property OnWork : TWorkEvent read FOnWork write FOnWork;
   end;
 
 var
@@ -98,6 +114,9 @@ var
 implementation
 
 {$R *.fmx}
+
+uses
+  FHIRToolkitForm;
 
 { TQuestionnaireItemForm }
 
@@ -112,6 +131,114 @@ begin
   begin
     commit;
     ModalResult := mrOk;
+  end;
+end;
+
+procedure TQuestionnaireItemForm.btnOptionAddClick(Sender: TObject);
+begin
+  grdOptions.BeginUpdate;
+  grdOptions.RowCount := grdOptions.RowCount + 1;
+  item.optionList.Append;
+  grdOptions.EndUpdate;
+end;
+
+procedure TQuestionnaireItemForm.btnOptionDeleteClick(Sender: TObject);
+var
+  i : integer;
+begin
+  i := grdOptions.Row;
+  if (i >= 0) then
+  begin
+    grdOptions.BeginUpdate;
+    item.optionList.DeleteByIndex(i);
+    grdOptions.RowCount := grdOptions.RowCount - 1;
+    grdOptions.EndUpdate;
+    if i > 0 then
+      grdOptions.Row := i - 1;
+  end;
+end;
+
+procedure TQuestionnaireItemForm.btnOptionDownClick(Sender: TObject);
+var
+  i : integer;
+begin
+  i := grdOptions.Row;
+  if (i < item.optionList.Count - 1) then
+  begin
+    grdOptions.BeginUpdate;
+    item.optionList.Exchange(i, i+1);
+    grdOptions.EndUpdate;
+    grdOptions.Row := i + 1;
+  end;
+end;
+
+procedure TQuestionnaireItemForm.btnOptionUpClick(Sender: TObject);
+var
+  i : integer;
+begin
+  i := grdOptions.Row;
+  if (i > 0) then
+  begin
+    grdOptions.BeginUpdate;
+    item.optionList.Exchange(i, i-1);
+    grdOptions.EndUpdate;
+    grdOptions.Row := i - 1;
+  end;
+end;
+
+procedure TQuestionnaireItemForm.btnLoadValuesets(Sender: TObject);
+var
+  client : TFHIRClient;
+  params : TDictionary<String, String>;
+  be : TFhirBundleEntry;
+  bundle : TFhirBundle;
+  vs : TFHIRValueSet;
+  s : String;
+begin
+  Loading := true;
+  try
+    bundle := TFhirBundle.create;
+    params := TDictionary<String, String>.create;
+    try
+      client := TFhirThreadedClient.Create(TFhirHTTPClient.Create(nil, FSettings.serverAddress('Terminology', 0), false, FSettings.timeout * 1000, FSettings.proxy), MasterToolsForm.threadMonitorProc);
+      try
+        params.Add('_summary', 'true');
+        OnWork(self, 'Fetching ValueSets', true,
+          procedure
+          begin
+            bundle := client.search(frtValueSet, true, params);
+          end);
+        try
+          cedValueSet.Items.Clear;
+          cedValueSet.Items.BeginUpdate;
+          if item.options <> nil then
+          begin
+            if item.options.display <> '' then
+              cedValueSet.Items.Add(item.options.reference + ': '+item.options.display)
+            else
+              cedValueSet.Items.Add(item.options.reference);
+          end;
+          for be in bundle.entryList do
+          begin
+            if (be.resource <> nil) and (be.resource is TFhirValueSet) then
+            begin
+              vs := be.resource as TFhirValueSet;
+              s := vs.url;
+              cedValueSet.Items.Add(vs.url+': '+vs.name);
+            end;
+          end;
+          cedValueSet.Items.EndUpdate;
+        finally
+          bundle.Free;
+        end;
+      finally
+        client.Free;
+      end;
+    finally
+      params.free;
+    end;
+  finally
+    Loading := false;
   end;
 end;
 
@@ -160,6 +287,26 @@ begin
       exit;
     end;
   end;
+  if (item.optionList.Count > 0) and not ((nType in [ItemTypeOpenChoice, ItemTypeChoice]) and (item.type_ in [ItemTypeOpenChoice, ItemTypeChoice]) ) then
+  begin
+    TDialogService.MessageDialog('This will clear the options list. Continue?', TMsgDlgType.mtConfirmation, mbYesNo, TMsgDlgBtn.mbNo, 0,
+    procedure (const AResult: TModalResult)
+    begin
+      ok := AResult = mrYes;
+    end);
+    if not ok then
+    begin
+      Loading := true;
+      try
+        cbxType.ItemIndex := ord(item.type_)-1;
+      finally
+        Loading := false;
+      end;
+      exit;
+    end
+    else
+      item.optionList.Clear;
+  end;
   item.type_ := TFhirItemTypeEnum(cbxType.ItemIndex+1);
   edtMaxLength.Enabled := item.type_ in [ItemTypeDecimal, ItemTypeInteger, ItemTypeString, ItemTypeText, ItemTypeUrl, ItemTypeOpenChoice];
   if not edtMaxLength.Enabled then
@@ -167,6 +314,32 @@ begin
   edtMaxLength.Text := item.maxLength;
   loadInitialValue;
   loadOptions;
+end;
+
+procedure TQuestionnaireItemForm.cedValueSetChange(Sender: TObject);
+var
+  l, r : String;
+begin
+  if Loading then
+    exit;
+  if cedValueSet.Text = '' then
+    item.options := nil
+  else
+  begin
+    if item.options = nil then
+      item.options := TFhirReference.Create;
+    if cedValueSet.text.IndexOf(':') > 0 then
+    begin
+      StringSplit(cedValueSet.text, ':', l, r);
+      item.options.reference := l.Trim;
+      item.options.display := r.Trim;
+    end
+    else
+    begin
+      item.options.reference := cedValueSet.Text;
+      item.options.display := '';
+    end;
+  end;
 end;
 
 procedure TQuestionnaireItemForm.commit;
@@ -184,6 +357,7 @@ end;
 
 destructor TQuestionnaireItemForm.Destroy;
 begin
+  FSettings.Free;
   FItem.Free;
   inherited;
 end;
@@ -206,6 +380,44 @@ begin
     loadOptions;
   finally
     Loading := false;
+  end;
+end;
+
+procedure TQuestionnaireItemForm.grdOptionsGetValue(Sender: TObject; const ACol, ARow: Integer; var Value: TValue);
+var
+  v : TFhirQuestionnaireItemOption;
+begin
+  v := item.optionList[aRow];
+  if v.value = nil then
+    Value := ''
+  else case item.type_ of
+    ItemTypeInteger: value := (v.value as TFHIRInteger).value;
+    ItemTypeDate: value := (v.value as TFHIRDate).value.toString('c');
+    ItemTypeTime: value := (v.value as TFHIRTime).value;
+    ItemTypeString: value := (v.value as TFHIRString).value;
+    ItemTypeChoice, ItemTypeOpenChoice: case ACol of
+      0: value := (v.value as TFhirCoding).system;
+      1: value := (v.value as TFhirCoding).code;
+      2: value := (v.value as TFhirCoding).display;
+    end;
+  end;
+end;
+
+procedure TQuestionnaireItemForm.grdOptionsSetValue(Sender: TObject; const ACol, ARow: Integer; const Value: TValue);
+var
+  v : TFhirQuestionnaireItemOption;
+begin
+  v := item.optionList[aRow];
+  case item.type_ of
+    ItemTypeInteger: v.value := TFHIRInteger.Create(value.AsString);
+    ItemTypeDate: v.value := TFHIRDate.Create(TDateTimeEx.fromFormat('c', value.AsString));
+    ItemTypeTime: v.value := TFHIRTime.Create(value.AsString);
+    ItemTypeString: v.value := TFHIRString.Create(value.AsString);
+    ItemTypeChoice, ItemTypeOpenChoice: case ACol of
+      0: (v.value as TFhirCoding).system := value.AsString;
+      1: (v.value as TFhirCoding).code := value.AsString;
+      2: (v.value as TFhirCoding).display := value.AsString;
+    end;
   end;
 end;
 
@@ -376,7 +588,10 @@ begin
       tabOptionList.Enabled := false;
       tabOptions.ActiveTab := tabValueSet;
       cedValueSet.Enabled := true;
-      cedValueSet.Text := item.options.reference;
+      if item.options.display <> '' then
+        cedValueSet.Text := item.options.reference + ' : '+item.options.display
+      else
+        cedValueSet.Text := item.options.reference;
       grdOptions.RowCount := 0;
     end
     else if item.optionList.Count > 0 then
@@ -463,6 +678,12 @@ procedure TQuestionnaireItemForm.SetItem(const Value: TFhirQuestionnaireItem);
 begin
   FItem.Free;
   FItem := Value;
+end;
+
+procedure TQuestionnaireItemForm.SetSettings(const Value: TFHIRToolkitSettings);
+begin
+  FSettings.Free;
+  FSettings := Value;
 end;
 
 end.

@@ -59,6 +59,12 @@ type
     btnEdit: TButton;
     TabItem3: TTabItem;
     cbCheckUpgrades: TCheckBox;
+    Label5: TLabel;
+    Label6: TLabel;
+    Label7: TLabel;
+    Label8: TLabel;
+    edtUsername: TEdit;
+    edtPassword: TEdit;
     procedure FormShow(Sender: TObject);
     procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
@@ -170,6 +176,8 @@ begin
     FSettings.Proxy := edtProxy.Text;
     FSettings.timeout := trunc(edtTimeout.Value);
     FSettings.CheckForUpgradesOnStart := cbCheckUpgrades.IsChecked;
+    FSettings.RegistryUsername := edtUsername.Text;
+    FSettings.RegistryPassword := edtPassword.Text;
   end;
 end;
 
@@ -187,6 +195,8 @@ begin
   FSettings.ListServers('Terminology', lbServers.Items);
   lbServers.ItemIndex := 0;
   lbServersClick(nil);
+  edtUsername.Text := FSettings.RegistryUsername;
+  edtPassword.Text := FSettings.RegistryPassword;
 end;
 
 procedure TSettingsForm.lbServersClick(Sender: TObject);

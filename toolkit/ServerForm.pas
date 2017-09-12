@@ -418,7 +418,7 @@ begin
         start := now;
         FConfBundle := FClient.search(false, params);
         for be in FConfBundle.entryList do
-          if (be.search.mode = SearchEntryModeMatch) and (be.resource <> nil) then
+          if ((be.search = nil) or (be.search.mode = SearchEntryModeMatch)) and (be.resource <> nil) then
             FConfMatches.Add(be.resource.Link);
         gridConfMatches.RowCount := FConfMatches.Count;
         lblOutcome.Text := 'Fetched '+inttostr(FConfMatches.Count)+' of '+FConfBundle.total+' resources in '+describePeriod(now - start);

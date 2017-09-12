@@ -10,7 +10,7 @@ object ValuesetExpansionForm: TValuesetExpansionForm
   FormFactor.Devices = [Desktop]
   OnClose = FormClose
   OnShow = FormShow
-  DesignerMasterStyle = 0
+  DesignerMasterStyle = 1
   object Panel1: TPanel
     Align = Bottom
     Position.Y = 440.000000000000000000
@@ -222,8 +222,8 @@ object ValuesetExpansionForm: TValuesetExpansionForm
     TabOrder = 29
     RowCount = 0
     OnGetValue = gridContainsGetValue
-    Viewport.Width = 640.000000000000000000
-    Viewport.Height = 343.000000000000000000
+    Viewport.Width = 636.000000000000000000
+    Viewport.Height = 318.000000000000000000
     object StringColumn10: TStringColumn
       Header = 'Code'
     end

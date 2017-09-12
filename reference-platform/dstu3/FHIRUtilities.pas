@@ -151,6 +151,7 @@ function fileToResource(name : String; var format : TFHIRFormat) : TFhirResource
 function streamToResource(stream : TStream; var format : TFHIRFormat) : TFhirResource;
 procedure resourceToFile(res : TFhirResource; name : String; format : TFHIRFormat);
 procedure resourceToStream(res : TFhirResource; stream : TStream; format : TFHIRFormat);
+function resourceToString(res : TFhirResource; format : TFHIRFormat) : String;
 
 function parseParamsFromForm(stream : TStream) : TFHIRParameters;
 
@@ -515,6 +516,11 @@ type
     function isAbstract(concept :  TFhirCodeSystemConcept) : boolean;
 
     function buildImplicitValueSet : TFhirValueSet;
+  end;
+
+  TFhirQuestionnaireItemHelper = class helper for TFhirQuestionnaireItem
+  public
+    function countDescendents : integer;
   end;
 
   TFhirExpansionProfileHelper = class helper for TFhirExpansionProfile
@@ -4830,6 +4836,19 @@ begin
   end;
 end;
 
+function resourceToString(res : TFhirResource; format : TFHIRFormat) : String;
+var
+  f : TStringStream;
+begin
+  f := TStringStream.Create('', TEncoding.UTF8);
+  try
+    resourceToStream(res, f, format);
+    result := f.DataString;
+  finally
+    f.Free;
+  end;
+end;
+
 procedure resourceToFile(res : TFhirResource; name : String; format : TFHIRFormat);
 var
   f : TFileStream;
@@ -5024,6 +5043,17 @@ begin
   for t in property_List do
     if t.code = code then
       exit(t);
+end;
+
+{ TFhirQuestionnaireItemHelper }
+
+function TFhirQuestionnaireItemHelper.countDescendents: integer;
+var
+  c : TFhirQuestionnaireItem;
+begin
+  result := itemList.Count;
+  for c in itemList do
+    inc(result, c.countDescendents);
 end;
 
 end.

@@ -28,8 +28,8 @@ object ValueSetEditorFrame: TValueSetEditorFrame
       Size.PlatformDefault = False
       TabOrder = 1
       OnClick = tvStructureClick
-      Viewport.Width = 201.000000000000000000
-      Viewport.Height = 687.000000000000000000
+      Viewport.Width = 197.000000000000000000
+      Viewport.Height = 683.000000000000000000
       object tvMetadata: TTreeViewItem
         IsChecked = False
         IsExpanded = False
@@ -647,8 +647,8 @@ object ValueSetEditorFrame: TValueSetEditorFrame
           DefaultItemStyles.GroupHeaderStyle = ''
           DefaultItemStyles.GroupFooterStyle = ''
           OnChange = lbImportsClick
-          Viewport.Width = 557.000000000000000000
-          Viewport.Height = 43.000000000000000000
+          Viewport.Width = 553.000000000000000000
+          Viewport.Height = 39.000000000000000000
         end
         object Label18: TLabel
           Position.X = 8.000000000000000000
@@ -663,10 +663,12 @@ object ValueSetEditorFrame: TValueSetEditorFrame
           Size.Width = 664.000000000000000000
           Size.Height = 537.000000000000000000
           Size.PlatformDefault = False
-          TabIndex = 1
+          TabIndex = 0
           TabOrder = 25
           TabPosition = None
           Sizes = (
+            664s
+            537s
             664s
             537s
             664s
@@ -675,7 +677,7 @@ object ValueSetEditorFrame: TValueSetEditorFrame
             CustomIcon = <
               item
               end>
-            IsSelected = False
+            IsSelected = True
             Size.Width = 8.000000000000000000
             Size.Height = 8.000000000000000000
             Size.PlatformDefault = False
@@ -714,8 +716,8 @@ object ValueSetEditorFrame: TValueSetEditorFrame
               OnSelChanged = gridFiltersSelChanged
               OnGetValue = gridFiltersGetValue
               OnSetValue = gridFiltersSetValue
-              Viewport.Width = 548.000000000000000000
-              Viewport.Height = 227.000000000000000000
+              Viewport.Width = 528.000000000000000000
+              Viewport.Height = 202.000000000000000000
               object StringColumn3: TStringColumn
                 Header = 'Property'
                 Size.Width = 177.000000000000000000
@@ -745,7 +747,7 @@ object ValueSetEditorFrame: TValueSetEditorFrame
             CustomIcon = <
               item
               end>
-            IsSelected = True
+            IsSelected = False
             Size.Width = 8.000000000000000000
             Size.Height = 8.000000000000000000
             Size.PlatformDefault = False
@@ -800,8 +802,8 @@ object ValueSetEditorFrame: TValueSetEditorFrame
               OnSelChanged = gridConceptsSelChanged
               OnGetValue = gridConceptsGetValue
               OnSetValue = gridConceptsSetValue
-              Viewport.Width = 549.000000000000000000
-              Viewport.Height = 407.000000000000000000
+              Viewport.Width = 529.000000000000000000
+              Viewport.Height = 382.000000000000000000
               object StringColumn5: TStringColumn
                 Header = 'Code'
                 Size.Width = 73.000000000000000000
@@ -829,8 +831,8 @@ object ValueSetEditorFrame: TValueSetEditorFrame
               OnSelChanged = gridDesignationsSelChanged
               OnGetValue = gridDesignationsGetValue
               OnSetValue = gridDesignationsSetValue
-              Viewport.Width = 549.000000000000000000
-              Viewport.Height = 73.000000000000000000
+              Viewport.Width = 529.000000000000000000
+              Viewport.Height = 48.000000000000000000
               object PopupColumn2: TPopupColumn
                 Header = 'Language'
                 Items.Strings = (
@@ -893,11 +895,23 @@ object ValueSetEditorFrame: TValueSetEditorFrame
               OnClick = btnSelectConceptsClick
             end
           end
+          object TabItem3: TTabItem
+            CustomIcon = <
+              item
+              end>
+            IsSelected = False
+            Size.Width = 8.000000000000000000
+            Size.Height = 8.000000000000000000
+            Size.PlatformDefault = False
+            StyleLookup = ''
+            TabOrder = 0
+            Text = 'TabItem3'
+          end
         end
         object rbList: TRadioButton
-          Position.X = 96.000000000000000000
+          Position.X = 176.000000000000000000
           Position.Y = 128.000000000000000000
-          TabOrder = 26
+          TabOrder = 27
           Text = 'Enumerated'
           OnClick = rbListClick
         end
@@ -908,14 +922,21 @@ object ValueSetEditorFrame: TValueSetEditorFrame
           Size.Height = 17.000000000000000000
           Size.PlatformDefault = False
           Text = 'Concepts'
-          TabOrder = 27
+          TabOrder = 28
         end
         object rbFilter: TRadioButton
-          Position.X = 208.000000000000000000
+          Position.X = 288.000000000000000000
           Position.Y = 128.000000000000000000
-          TabOrder = 28
+          TabOrder = 29
           Text = 'Selected'
           OnClick = rbFilterClick
+        end
+        object rbAll: TRadioButton
+          Position.X = 72.000000000000000000
+          Position.Y = 128.000000000000000000
+          TabOrder = 26
+          Text = 'Enumerated'
+          OnClick = rbAllClick
         end
       end
       object tabExpansion: TTabItem

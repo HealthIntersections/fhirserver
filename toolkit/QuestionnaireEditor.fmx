@@ -577,27 +577,28 @@ object QuestionnaireEditorFrame: TQuestionnaireEditorFrame
           Size.Height = 33.000000000000000000
           Size.PlatformDefault = False
           TabOrder = 0
-          object btnAddConcept: TButton
+          object btnAddItem: TButton
             Position.X = 6.000000000000000000
             Position.Y = 6.000000000000000000
             TabOrder = 0
             Text = 'Add'
-            OnClick = btnAddConceptClick
+            OnClick = btnAddItemClick
           end
-          object btnAddChildConcept: TButton
+          object btnAddChildItem: TButton
             Position.X = 96.000000000000000000
             Position.Y = 6.000000000000000000
             TabOrder = 1
             Text = 'Add Child'
+            OnClick = btnAddChildItemClick
           end
-          object btnEditConcept: TButton
+          object btnEditItem: TButton
             Position.X = 184.000000000000000000
             Position.Y = 6.000000000000000000
             TabOrder = 3
             Text = 'Edit'
-            OnClick = btnEditConceptClick
+            OnClick = btnEditItemClick
           end
-          object btnConceptUp: TButton
+          object btnItemUp: TButton
             Position.X = 280.000000000000000000
             Position.Y = 6.000000000000000000
             Size.Width = 41.000000000000000000
@@ -605,8 +606,9 @@ object QuestionnaireEditorFrame: TQuestionnaireEditorFrame
             Size.PlatformDefault = False
             TabOrder = 7
             Text = 'Up'
+            OnClick = btnItemUpClick
           end
-          object btnConceptDown: TButton
+          object btnItemDown: TButton
             Position.X = 324.000000000000000000
             Position.Y = 6.000000000000000000
             Size.Width = 53.000000000000000000
@@ -614,8 +616,9 @@ object QuestionnaireEditorFrame: TQuestionnaireEditorFrame
             Size.PlatformDefault = False
             TabOrder = 4
             Text = 'Down'
+            OnClick = btnItemDownClick
           end
-          object btnConceptIn: TButton
+          object btnItemIn: TButton
             Position.X = 380.000000000000000000
             Position.Y = 6.000000000000000000
             Size.Width = 41.000000000000000000
@@ -623,8 +626,9 @@ object QuestionnaireEditorFrame: TQuestionnaireEditorFrame
             Size.PlatformDefault = False
             TabOrder = 6
             Text = 'In'
+            OnClick = btnItemInClick
           end
-          object btnConceptOut: TButton
+          object btnItemOut: TButton
             Position.X = 424.000000000000000000
             Position.Y = 6.000000000000000000
             Size.Width = 41.000000000000000000
@@ -632,12 +636,14 @@ object QuestionnaireEditorFrame: TQuestionnaireEditorFrame
             Size.PlatformDefault = False
             TabOrder = 5
             Text = 'Out'
+            OnClick = btnItemOutClick
           end
-          object btnDeleteConcept: TButton
+          object btnDeleteItem: TButton
             Position.X = 480.000000000000000000
             Position.Y = 6.000000000000000000
             TabOrder = 2
             Text = 'Delete'
+            OnClick = btnDeleteItemClick
           end
         end
         object grdItems: TGrid
@@ -645,15 +651,16 @@ object QuestionnaireEditorFrame: TQuestionnaireEditorFrame
           CanFocus = True
           ClipChildren = True
           Size.Width = 744.000000000000000000
-          Size.Height = 727.000000000000000000
+          Size.Height = 695.000000000000000000
           Size.PlatformDefault = False
-          TabOrder = 1
+          TabOrder = 2
           RowCount = 0
+          OnSelChanged = grdItemsSelChanged
           OnGetValue = grdItemsGetValue
           OnSetValue = grdItemsSetValue
           OnCellDblClick = grdItemsCellDblClick
           Viewport.Width = 740.000000000000000000
-          Viewport.Height = 702.000000000000000000
+          Viewport.Height = 670.000000000000000000
           object StringColumn6: TStringColumn
             Enabled = False
             Header = 'Depth'
@@ -686,6 +693,71 @@ object QuestionnaireEditorFrame: TQuestionnaireEditorFrame
           end
           object CheckColumn3: TCheckColumn
             Header = 'R.O'
+          end
+        end
+        object Panel8: TPanel
+          Align = Bottom
+          Position.Y = 728.000000000000000000
+          Size.Width = 744.000000000000000000
+          Size.Height = 32.000000000000000000
+          Size.PlatformDefault = False
+          TabOrder = 1
+          object Label20: TLabel
+            Position.X = 16.000000000000000000
+            Position.Y = 8.000000000000000000
+            Text = 'Search:'
+            TabOrder = 0
+          end
+          object edtSearch: TEdit
+            Touch.InteractiveGestures = [LongTap, DoubleTap]
+            TabOrder = 1
+            Position.X = 64.000000000000000000
+            Position.Y = 6.000000000000000000
+            Size.Width = 177.000000000000000000
+            Size.Height = 22.000000000000000000
+            Size.PlatformDefault = False
+          end
+          object btnSearchStart: TButton
+            Position.X = 248.000000000000000000
+            Position.Y = 5.000000000000000000
+            Size.Width = 89.000000000000000000
+            Size.Height = 22.000000000000000000
+            Size.PlatformDefault = False
+            TabOrder = 5
+            Text = 'From Start'
+          end
+          object btnSearchNext: TButton
+            Position.X = 336.000000000000000000
+            Position.Y = 5.000000000000000000
+            Size.Width = 89.000000000000000000
+            Size.Height = 22.000000000000000000
+            Size.PlatformDefault = False
+            TabOrder = 4
+            Text = 'Next'
+          end
+          object btnSearchPrev: TButton
+            Position.X = 424.000000000000000000
+            Position.Y = 5.000000000000000000
+            Size.Width = 89.000000000000000000
+            Size.Height = 22.000000000000000000
+            Size.PlatformDefault = False
+            TabOrder = 3
+            Text = 'Prev'
+          end
+          object btnSearchEnd: TButton
+            Position.X = 512.000000000000000000
+            Position.Y = 5.000000000000000000
+            Size.Width = 89.000000000000000000
+            Size.Height = 22.000000000000000000
+            Size.PlatformDefault = False
+            TabOrder = 2
+            Text = 'From End'
+          end
+          object CheckBox1: TCheckBox
+            Position.X = 608.000000000000000000
+            Position.Y = 6.000000000000000000
+            TabOrder = 7
+            Text = 'CheckBox1'
           end
         end
       end
@@ -772,11 +844,76 @@ object QuestionnaireEditorFrame: TQuestionnaireEditorFrame
         object TreeView1: TTreeView
           Align = Client
           Size.Width = 744.000000000000000000
-          Size.Height = 727.000000000000000000
+          Size.Height = 695.000000000000000000
+          Size.PlatformDefault = False
+          TabOrder = 2
+          Viewport.Width = 744.000000000000000000
+          Viewport.Height = 695.000000000000000000
+        end
+        object Panel9: TPanel
+          Align = Bottom
+          Position.Y = 728.000000000000000000
+          Size.Width = 744.000000000000000000
+          Size.Height = 32.000000000000000000
           Size.PlatformDefault = False
           TabOrder = 1
-          Viewport.Width = 744.000000000000000000
-          Viewport.Height = 727.000000000000000000
+          object Label21: TLabel
+            Position.X = 16.000000000000000000
+            Position.Y = 8.000000000000000000
+            Text = 'Search:'
+            TabOrder = 0
+          end
+          object Edit1: TEdit
+            Touch.InteractiveGestures = [LongTap, DoubleTap]
+            TabOrder = 1
+            Position.X = 64.000000000000000000
+            Position.Y = 6.000000000000000000
+            Size.Width = 177.000000000000000000
+            Size.Height = 22.000000000000000000
+            Size.PlatformDefault = False
+          end
+          object Button9: TButton
+            Position.X = 248.000000000000000000
+            Position.Y = 5.000000000000000000
+            Size.Width = 89.000000000000000000
+            Size.Height = 22.000000000000000000
+            Size.PlatformDefault = False
+            TabOrder = 5
+            Text = 'From Start'
+          end
+          object Button10: TButton
+            Position.X = 336.000000000000000000
+            Position.Y = 5.000000000000000000
+            Size.Width = 89.000000000000000000
+            Size.Height = 22.000000000000000000
+            Size.PlatformDefault = False
+            TabOrder = 4
+            Text = 'Next'
+          end
+          object Button11: TButton
+            Position.X = 424.000000000000000000
+            Position.Y = 5.000000000000000000
+            Size.Width = 89.000000000000000000
+            Size.Height = 22.000000000000000000
+            Size.PlatformDefault = False
+            TabOrder = 3
+            Text = 'Prev'
+          end
+          object Button12: TButton
+            Position.X = 512.000000000000000000
+            Position.Y = 5.000000000000000000
+            Size.Width = 89.000000000000000000
+            Size.Height = 22.000000000000000000
+            Size.PlatformDefault = False
+            TabOrder = 2
+            Text = 'From End'
+          end
+          object CheckBox2: TCheckBox
+            Position.X = 608.000000000000000000
+            Position.Y = 6.000000000000000000
+            TabOrder = 7
+            Text = 'CheckBox1'
+          end
         end
       end
     end

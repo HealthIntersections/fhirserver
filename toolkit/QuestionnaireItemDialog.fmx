@@ -430,7 +430,7 @@ object QuestionnaireItemForm: TQuestionnaireItemForm
         TabOrder = 0
         Position.X = 8.000000000000000000
         Position.Y = 8.000000000000000000
-        Size.Width = 297.000000000000000000
+        Size.Width = 289.000000000000000000
         Size.Height = 22.000000000000000000
         Size.PlatformDefault = False
         OnChange = inputChange
@@ -453,7 +453,7 @@ object QuestionnaireItemForm: TQuestionnaireItemForm
       object cbxDefaultChoice: TComboBox
         Position.X = 8.000000000000000000
         Position.Y = 8.000000000000000000
-        Size.Width = 297.000000000000000000
+        Size.Width = 289.000000000000000000
         Size.Height = 22.000000000000000000
         Size.PlatformDefault = False
         TabOrder = 0
@@ -482,7 +482,7 @@ object QuestionnaireItemForm: TQuestionnaireItemForm
         ItemIndex = -1
         Position.X = 8.000000000000000000
         Position.Y = 8.000000000000000000
-        Size.Width = 297.000000000000000000
+        Size.Width = 289.000000000000000000
         Size.Height = 22.000000000000000000
         Size.PlatformDefault = False
       end
@@ -546,7 +546,7 @@ object QuestionnaireItemForm: TQuestionnaireItemForm
     Size.Width = 385.000000000000000000
     Size.Height = 265.000000000000000000
     Size.PlatformDefault = False
-    TabIndex = 1
+    TabIndex = 0
     TabOrder = 18
     TabPosition = PlatformDefault
     Sizes = (
@@ -558,7 +558,7 @@ object QuestionnaireItemForm: TQuestionnaireItemForm
       CustomIcon = <
         item
         end>
-      IsSelected = False
+      IsSelected = True
       Size.Width = 106.000000000000000000
       Size.Height = 26.000000000000000000
       Size.PlatformDefault = False
@@ -568,7 +568,7 @@ object QuestionnaireItemForm: TQuestionnaireItemForm
       ExplicitSize.cx = 106.000000000000000000
       ExplicitSize.cy = 26.000000000000000000
       object Label9: TLabel
-        Position.X = 8.000000000000000000
+        Position.X = 16.000000000000000000
         Position.Y = 14.000000000000000000
         Text = 'Value Set'
         TabOrder = 0
@@ -578,18 +578,30 @@ object QuestionnaireItemForm: TQuestionnaireItemForm
         TabOrder = 1
         ItemHeight = 19.000000000000000000
         ItemIndex = -1
-        Position.X = 72.000000000000000000
-        Position.Y = 14.000000000000000000
-        Size.Width = 313.000000000000000000
+        Position.X = 16.000000000000000000
+        Position.Y = 38.000000000000000000
+        Size.Width = 361.000000000000000000
         Size.Height = 22.000000000000000000
         Size.PlatformDefault = False
+        OnChange = cedValueSetChange
+        OnChangeTracking = cedValueSetChange
+      end
+      object Button1: TButton
+        Position.X = 312.000000000000000000
+        Position.Y = 70.000000000000000000
+        Size.Width = 64.000000000000000000
+        Size.Height = 22.000000000000000000
+        Size.PlatformDefault = False
+        TabOrder = 2
+        Text = 'Load'
+        OnClick = btnLoadValuesets
       end
     end
     object tabOptionList: TTabItem
       CustomIcon = <
         item
         end>
-      IsSelected = True
+      IsSelected = False
       Size.Width = 78.000000000000000000
       Size.Height = 26.000000000000000000
       Size.PlatformDefault = False
@@ -604,7 +616,7 @@ object QuestionnaireItemForm: TQuestionnaireItemForm
         Size.Height = 33.000000000000000000
         Size.PlatformDefault = False
         TabOrder = 0
-        object Button1: TButton
+        object btnOptionAdd: TButton
           Position.X = 8.000000000000000000
           Position.Y = 4.000000000000000000
           Size.Width = 65.000000000000000000
@@ -612,8 +624,9 @@ object QuestionnaireItemForm: TQuestionnaireItemForm
           Size.PlatformDefault = False
           TabOrder = 3
           Text = 'Add'
+          OnClick = btnOptionAddClick
         end
-        object Button3: TButton
+        object btnOptionUp: TButton
           Position.X = 80.000000000000000000
           Position.Y = 4.000000000000000000
           Size.Width = 65.000000000000000000
@@ -621,8 +634,9 @@ object QuestionnaireItemForm: TQuestionnaireItemForm
           Size.PlatformDefault = False
           TabOrder = 2
           Text = 'Up'
+          OnClick = btnOptionUpClick
         end
-        object Button4: TButton
+        object btnOptionDown: TButton
           Position.X = 152.000000000000000000
           Position.Y = 4.000000000000000000
           Size.Width = 65.000000000000000000
@@ -630,8 +644,9 @@ object QuestionnaireItemForm: TQuestionnaireItemForm
           Size.PlatformDefault = False
           TabOrder = 1
           Text = 'Down'
+          OnClick = btnOptionDownClick
         end
-        object Button5: TButton
+        object btnOptionDelete: TButton
           Position.X = 224.000000000000000000
           Position.Y = 4.000000000000000000
           Size.Width = 65.000000000000000000
@@ -639,6 +654,7 @@ object QuestionnaireItemForm: TQuestionnaireItemForm
           Size.PlatformDefault = False
           TabOrder = 0
           Text = 'Delete'
+          OnClick = btnOptionDeleteClick
         end
       end
       object grdOptions: TGrid
@@ -650,6 +666,8 @@ object QuestionnaireItemForm: TQuestionnaireItemForm
         Size.PlatformDefault = False
         TabOrder = 1
         RowCount = 0
+        OnGetValue = grdOptionsGetValue
+        OnSetValue = grdOptionsSetValue
         Viewport.Width = 385.000000000000000000
         Viewport.Height = 206.000000000000000000
       end

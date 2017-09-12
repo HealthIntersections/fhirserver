@@ -4,6 +4,7 @@ interface
 
 uses
   SysUtils, Classes,
+  EncodeSupport,
   AdvJson,
   SmartOnFHIRUtilities,
   FHIRClientSettings;
@@ -24,6 +25,10 @@ type
     procedure SetShowHelp(const Value: boolean);
     function GetCheckForUpgradesOnStart: boolean;
     procedure SetCheckForUpgradesOnStart(const Value: boolean);
+    function GetRegistryPassword: String;
+    function GetRegistryUsername: String;
+    procedure SetRegistryPassword(const Value: String);
+    procedure SetRegistryUsername(const Value: String);
   protected
     procedure initSettings; virtual;
   public
@@ -33,6 +38,8 @@ type
     property Proxy : String read GetProxy write SetProxy;
     property ShowHelp : boolean read GetShowHelp write SetShowHelp;
     property CheckForUpgradesOnStart : boolean read GetCheckForUpgradesOnStart write SetCheckForUpgradesOnStart;
+    property RegistryUsername : String read GetRegistryUsername write SetRegistryUsername;
+    property RegistryPassword : String read GetRegistryPassword write SetRegistryPassword;
 
     procedure storeValues(name : String; values : TStrings); overload;
     procedure storeValue(section, name, value : String); overload;
@@ -63,6 +70,16 @@ begin
     result := ''
   else
     result := o.vStr['Proxy'];
+end;
+
+function TFHIRToolkitSettings.GetRegistryPassword: String;
+begin
+  result := strDecrypt(json.vStr['RegistryPassword'], 53423);
+end;
+
+function TFHIRToolkitSettings.GetRegistryUsername: String;
+begin
+  result := json.vStr['RegistryUsername'];
 end;
 
 function TFHIRToolkitSettings.GetShowHelp: boolean;
@@ -160,6 +177,16 @@ begin
     o.vStr['Proxy'] := value;
     Save;
   end;
+end;
+
+procedure TFHIRToolkitSettings.SetRegistryPassword(const Value: String);
+begin
+  json.vStr['RegistryPassword'] := strEncrypt(Value, 53423);
+end;
+
+procedure TFHIRToolkitSettings.SetRegistryUsername(const Value: String);
+begin
+  json.vStr['RegistryUsername'] := value;
 end;
 
 procedure TFHIRToolkitSettings.SetShowHelp(const Value: boolean);

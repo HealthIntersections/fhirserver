@@ -3,6 +3,20 @@
 	<channel>
 		<title>FHIR Toolkit Release history</title>
 		<link>http://www.healthintersections.com.au/FhirServer</link>
+		<item><title>FHIR Toolkit release 0.0.27 2017-09-12</title>
+			<link>http://www.healthintersections.com.au/FhirServer/fhir-toolkit-install-0.0.27.exe</link>
+			<mlink>http://www.healthintersections.com.au/FhirServer/fhir-toolkit-osx-0.0.27.zip</mlink>
+			<description>2017-09-12 (v0.0.27): improve code system editor</description>
+			<ptitle>0.0.27, 2017-09-12</ptitle>
+			<comment>improve code system editor</comment>
+		</item>
+<item><title>FHIR Toolkit release 0.0.26 2017-09-11</title>
+			<link>http://www.healthintersections.com.au/FhirServer/fhir-toolkit-install-0.0.26.exe</link>
+			<mlink>http://www.healthintersections.com.au/FhirServer/fhir-toolkit-osx-0.0.26.zip</mlink>
+			<description>2017-09-11 (v0.0.26): stability fixes</description>
+			<ptitle>0.0.26, 2017-09-11</ptitle>
+			<comment>stability fixes</comment>
+		</item>
 		<item><title>FHIR Toolkit release 0.0.25 2017-09-10</title>
 			<link>http://www.healthintersections.com.au/FhirServer/fhir-toolkit-install-0.0.25.exe</link>
 			<mlink>http://www.healthintersections.com.au/FhirServer/fhir-toolkit-osx-0.0.25.zip</mlink>
@@ -10,7 +24,7 @@
 			<ptitle>0.0.25, 2017-09-10</ptitle>
 			<comment>code system editing improvements + add upgrade system</comment>
 		</item>
-<item><title>FHIR Toolkit release 0.0.24 2017-09-09</title>
+		<item><title>FHIR Toolkit release 0.0.24 2017-09-09</title>
 			<link>http://www.healthintersections.com.au/FhirServer/fhir-toolkit-install-0.0.24.exe</link>
 			<mlink>http://www.healthintersections.com.au/FhirServer/fhir-toolkit-osx-0.0.24.zip</mlink>
 			<description>2017-09-09 (v0.0.24): code system editing improvements + add upgrade system</description>

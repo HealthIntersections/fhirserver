@@ -69,8 +69,8 @@ object EditRegisteredServerForm: TEditRegisteredServerForm
       ExplicitSize.cx = 97.000000000000000000
       ExplicitSize.cy = 26.000000000000000000
       object btnCheckFormat: TButton
-        Position.X = 8.000000000000000000
-        Position.Y = 192.000000000000000000
+        Position.X = 560.000000000000000000
+        Position.Y = 147.000000000000000000
         Size.Width = 113.000000000000000000
         Size.Height = 22.000000000000000000
         Size.PlatformDefault = False
@@ -87,8 +87,8 @@ object EditRegisteredServerForm: TEditRegisteredServerForm
           'Turtle')
         ItemIndex = 0
         Position.X = 80.000000000000000000
-        Position.Y = 150.000000000000000000
-        Size.Width = 593.000000000000000000
+        Position.Y = 147.000000000000000000
+        Size.Width = 465.000000000000000000
         Size.Height = 22.000000000000000000
         Size.PlatformDefault = False
         TabOrder = 1
@@ -185,6 +185,30 @@ object EditRegisteredServerForm: TEditRegisteredServerForm
         Size.Width = 401.000000000000000000
         Size.Height = 22.000000000000000000
         Size.PlatformDefault = False
+      end
+      object Label17: TLabel
+        StyledSettings = [Family, Size, FontColor]
+        Position.X = 8.000000000000000000
+        Position.Y = 206.000000000000000000
+        Size.Width = 185.000000000000000000
+        Size.Height = 17.000000000000000000
+        Size.PlatformDefault = False
+        TextSettings.Font.StyleExt = {00070000000000000004000000}
+        Text = 'Password based security'
+        TabOrder = 12
+      end
+      object Label18: TLabel
+        Anchors = [akLeft, akTop, akRight]
+        Position.X = 32.000000000000000000
+        Position.Y = 310.000000000000000000
+        Size.Width = 641.000000000000000000
+        Size.Height = 67.000000000000000000
+        Size.PlatformDefault = False
+        TextSettings.VertAlign = Leading
+        Text = 
+          'Usually Username\Password is used instead of the Smart App Launc' +
+          'h Process'
+        TabOrder = 13
       end
     end
     object TabItem2: TTabItem

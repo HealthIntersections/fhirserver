@@ -3,7 +3,7 @@ object SettingsForm: TSettingsForm
   Top = 0
   BorderIcons = []
   BorderStyle = Single
-  Caption = 'Form1'
+  Caption = 'FHIR Toolkit Settings'
   ClientHeight = 243
   ClientWidth = 449
   FormFactor.Width = 320
@@ -65,14 +65,73 @@ object SettingsForm: TSettingsForm
       StyleLookup = ''
       TabOrder = 0
       Text = 'General Settings'
+      ExplicitSize.cx = 107.000000000000000000
+      ExplicitSize.cy = 26.000000000000000000
       object cbCheckUpgrades: TCheckBox
-        Position.X = 32.000000000000000000
-        Position.Y = 30.000000000000000000
+        Position.X = 24.000000000000000000
+        Position.Y = 22.000000000000000000
         Size.Width = 385.000000000000000000
         Size.Height = 19.000000000000000000
         Size.PlatformDefault = False
         TabOrder = 0
         Text = 'Check for Upgrades when Starting'
+      end
+      object Label5: TLabel
+        StyledSettings = [Family, Size, FontColor]
+        Position.X = 24.000000000000000000
+        Position.Y = 54.000000000000000000
+        Size.Width = 401.000000000000000000
+        Size.Height = 17.000000000000000000
+        Size.PlatformDefault = False
+        TextSettings.Font.StyleExt = {00070000000000000004000000}
+        Text = 'Login for registry.fhir.org '
+        TabOrder = 1
+      end
+      object Label6: TLabel
+        Position.X = 48.000000000000000000
+        Position.Y = 86.000000000000000000
+        Size.Width = 120.000000000000000000
+        Size.Height = 19.000000000000000000
+        Size.PlatformDefault = False
+        Text = 'Username:'
+        TabOrder = 2
+      end
+      object Label7: TLabel
+        Position.X = 48.000000000000000000
+        Position.Y = 118.000000000000000000
+        Size.Width = 120.000000000000000000
+        Size.Height = 19.000000000000000000
+        Size.PlatformDefault = False
+        Text = 'Password'
+        TabOrder = 3
+      end
+      object Label8: TLabel
+        Position.X = 24.000000000000000000
+        Position.Y = 150.000000000000000000
+        Size.Width = 401.000000000000000000
+        Size.Height = 17.000000000000000000
+        Size.PlatformDefault = False
+        Text = 'Login is only required for writing to the registry'
+        TabOrder = 4
+      end
+      object edtUsername: TEdit
+        Touch.InteractiveGestures = [LongTap, DoubleTap]
+        TabOrder = 5
+        Position.X = 120.000000000000000000
+        Position.Y = 86.000000000000000000
+        Size.Width = 249.000000000000000000
+        Size.Height = 22.000000000000000000
+        Size.PlatformDefault = False
+      end
+      object edtPassword: TEdit
+        Touch.InteractiveGestures = [LongTap, DoubleTap]
+        TabOrder = 6
+        Password = True
+        Position.X = 120.000000000000000000
+        Position.Y = 118.000000000000000000
+        Size.Width = 249.000000000000000000
+        Size.Height = 22.000000000000000000
+        Size.PlatformDefault = False
       end
     end
     object TabItem1: TTabItem
@@ -137,8 +196,8 @@ object SettingsForm: TSettingsForm
       object Label4: TLabel
         Position.X = 16.000000000000000000
         Position.Y = 118.000000000000000000
-        Size.Width = 321.000000000000000000
-        Size.Height = 17.000000000000000000
+        Size.Width = 417.000000000000000000
+        Size.Height = 43.000000000000000000
         Size.PlatformDefault = False
         Text = 'These settings only apply to new Server Connections'
         TabOrder = 5
@@ -198,8 +257,8 @@ object SettingsForm: TSettingsForm
         DefaultItemStyles.ItemStyle = ''
         DefaultItemStyles.GroupHeaderStyle = ''
         DefaultItemStyles.GroupFooterStyle = ''
-        Viewport.Width = 433.000000000000000000
-        Viewport.Height = 121.000000000000000000
+        Viewport.Width = 429.000000000000000000
+        Viewport.Height = 117.000000000000000000
       end
       object btnEdit: TButton
         Position.X = 96.000000000000000000

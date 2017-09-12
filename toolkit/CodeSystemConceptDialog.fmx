@@ -2,25 +2,25 @@ object CodeSystemConceptForm: TCodeSystemConceptForm
   Left = 0
   Top = 0
   Caption = 'Form1'
-  ClientHeight = 304
-  ClientWidth = 514
+  ClientHeight = 421
+  ClientWidth = 513
   FormFactor.Width = 320
   FormFactor.Height = 480
   FormFactor.Devices = [Desktop]
   OnShow = FormShow
   DesignerMasterStyle = 0
-  object Label4: TLabel
+  object lblProperties: TLabel
     StyledSettings = [Family, Size, FontColor]
     Position.X = 16.000000000000000000
-    Position.Y = 264.000000000000000000
+    Position.Y = 384.000000000000000000
     TextSettings.Font.StyleExt = {00070000000000000004000000}
     Text = 'Properties'
     TabOrder = 11
   end
   object Panel1: TPanel
     Align = Bottom
-    Position.Y = 264.000000000000000000
-    Size.Width = 514.000000000000000000
+    Position.Y = 381.000000000000000000
+    Size.Width = 513.000000000000000000
     Size.Height = 40.000000000000000000
     Size.PlatformDefault = False
     TabOrder = 0
@@ -29,7 +29,7 @@ object CodeSystemConceptForm: TCodeSystemConceptForm
       Default = True
       Enabled = False
       ModalResult = 1
-      Position.X = 337.000000000000000000
+      Position.X = 336.000000000000000000
       Position.Y = 8.000000000000000000
       TabOrder = 0
       Text = 'OK'
@@ -38,7 +38,7 @@ object CodeSystemConceptForm: TCodeSystemConceptForm
       Anchors = [akTop, akRight]
       Cancel = True
       ModalResult = 2
-      Position.X = 425.000000000000000000
+      Position.X = 424.000000000000000000
       Position.Y = 8.000000000000000000
       TabOrder = 1
       Text = 'Cancel'
@@ -46,10 +46,11 @@ object CodeSystemConceptForm: TCodeSystemConceptForm
   end
   object edtCode: TEdit
     Touch.InteractiveGestures = [LongTap, DoubleTap]
+    Anchors = [akLeft, akTop, akRight]
     TabOrder = 1
-    Position.X = 64.000000000000000000
+    Position.X = 112.000000000000000000
     Position.Y = 16.000000000000000000
-    Size.Width = 89.000000000000000000
+    Size.Width = 393.000000000000000000
     Size.Height = 22.000000000000000000
     Size.PlatformDefault = False
     OnChange = edtCodeChangeTracking
@@ -57,10 +58,11 @@ object CodeSystemConceptForm: TCodeSystemConceptForm
   end
   object edtDIsplay: TEdit
     Touch.InteractiveGestures = [LongTap, DoubleTap]
+    Anchors = [akLeft, akTop, akRight]
     TabOrder = 3
-    Position.X = 232.000000000000000000
-    Position.Y = 16.000000000000000000
-    Size.Width = 273.000000000000000000
+    Position.X = 112.000000000000000000
+    Position.Y = 48.000000000000000000
+    Size.Width = 393.000000000000000000
     Size.Height = 22.000000000000000000
     Size.PlatformDefault = False
     OnChange = edtCodeChangeTracking
@@ -76,8 +78,8 @@ object CodeSystemConceptForm: TCodeSystemConceptForm
     TabOrder = 4
   end
   object Label2: TLabel
-    Position.X = 184.000000000000000000
-    Position.Y = 16.000000000000000000
+    Position.X = 16.000000000000000000
+    Position.Y = 48.000000000000000000
     Size.Width = 49.000000000000000000
     Size.Height = 17.000000000000000000
     Size.PlatformDefault = False
@@ -86,44 +88,49 @@ object CodeSystemConceptForm: TCodeSystemConceptForm
   end
   object Label3: TLabel
     Position.X = 16.000000000000000000
-    Position.Y = 48.000000000000000000
+    Position.Y = 80.000000000000000000
     Text = 'Definition'
     TabOrder = 9
   end
   object memDefinition: TMemo
     Touch.InteractiveGestures = [Pan, LongTap, DoubleTap]
     DataDetectorTypes = []
+    TextSettings.WordWrap = True
     OnChange = edtCodeChangeTracking
     OnChangeTracking = edtCodeChangeTracking
+    Anchors = [akLeft, akTop, akRight]
     Position.X = 16.000000000000000000
-    Position.Y = 72.000000000000000000
+    Position.Y = 104.000000000000000000
     Size.Width = 489.000000000000000000
-    Size.Height = 57.000000000000000000
+    Size.Height = 153.000000000000000000
     Size.PlatformDefault = False
     TabOrder = 10
     Viewport.Width = 485.000000000000000000
-    Viewport.Height = 53.000000000000000000
+    Viewport.Height = 149.000000000000000000
   end
   object btnDeleteDesignation: TButton
+    Anchors = [akTop, akRight]
     Position.X = 421.000000000000000000
-    Position.Y = 148.000000000000000000
+    Position.Y = 268.000000000000000000
     TabOrder = 5
     Text = 'Delete'
     OnClick = btnDeleteDesignationClick
   end
   object btnAddDesignation: TButton
+    Anchors = [akTop, akRight]
     Position.X = 333.000000000000000000
-    Position.Y = 148.000000000000000000
+    Position.Y = 268.000000000000000000
     TabOrder = 2
     Text = 'Add'
     OnClick = btnAddDesignationClick
   end
   object gridDesignations: TGrid
+    Anchors = [akLeft, akTop, akRight]
     CanFocus = True
     ClipChildren = True
     HelpContext = 40
     Position.X = 16.000000000000000000
-    Position.Y = 176.000000000000000000
+    Position.Y = 296.000000000000000000
     Size.Width = 489.000000000000000000
     Size.Height = 73.000000000000000000
     Size.PlatformDefault = False
@@ -179,7 +186,7 @@ object CodeSystemConceptForm: TCodeSystemConceptForm
   end
   object Label20: TLabel
     Position.X = 16.000000000000000000
-    Position.Y = 149.000000000000000000
+    Position.Y = 269.000000000000000000
     Size.Width = 297.000000000000000000
     Size.Height = 17.000000000000000000
     Size.PlatformDefault = False

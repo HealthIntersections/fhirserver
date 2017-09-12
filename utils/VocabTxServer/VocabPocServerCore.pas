@@ -404,7 +404,7 @@ end;
 procedure TTerminologyServerOperationEngine.ExecuteSearch(request: TFHIRRequest; response: TFHIRResponse);
 var
   search : TAdvList<TSearchParameter>;
-  list : TFhirObjectList;
+  list, l : TFhirObjectList;
   filtered : TAdvList<TFHIRMetadataResource>;
   o : TFHIRObject;
   res : TFhirMetadataResource;
@@ -449,8 +449,32 @@ begin
           list := FServer.GetCodeSystemList
         else if request.ResourceName = 'ValueSet' then
           list := FServer.GetValueSetList
+        else if (request.ResourceName = '') and (request.Parameters.GetVar('_type').Contains('ValueSet') or request.Parameters.GetVar('_type').Contains('CodeSystem')) then
+        begin
+          list := TFhirObjectList.Create;
+          if request.Parameters.GetVar('_type').Contains('CodeSystem') then
+          begin
+            l := FServer.GetCodeSystemList;
+            try
+              list.AddAll(l);
+            finally
+              l.Free;
+            end;
+          end;
+          if request.Parameters.GetVar('_type').Contains('ValueSet') then
+          begin
+            l := FServer.GetValueSetList;
+            try
+              list.AddAll(l);
+            finally
+              l.Free;
+            end;
+          end;
+
+        end
         else
-          raise Exception.Create('Unsupported Resource Type');
+          raise Exception.Create('Unsupported Resource Type '+request.resourceName);
+
         try
           filtered := TAdvList<TFHIRMetadataResource>.create;
           try

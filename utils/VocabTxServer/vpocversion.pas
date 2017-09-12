@@ -32,7 +32,7 @@ interface
 {
 [vpoc-settings]
 } const
-BuildCount=5
+BuildCount=6
 ;
 
 implementation

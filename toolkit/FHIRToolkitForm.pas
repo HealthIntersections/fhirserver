@@ -40,7 +40,7 @@ uses
   SmartOnFHIRUtilities, EditRegisteredServerDialogFMX, OSXUIUtils,
   ToolkitSettings, ServerForm, CapabilityStatementEditor, BaseResourceFrame, BaseFrame, SourceViewer, ListSelector,
   ValueSetEditor, HelpContexts, ProcessForm, SettingsDialog, AboutDialog, ToolKitVersion, CodeSystemEditor,
-  ToolKitUtilities, UpgradeNeededDialog, QuestionnaireEditor;
+  ToolKitUtilities, UpgradeNeededDialog, QuestionnaireEditor, RegistryForm;
 
 type
   TMasterToolsForm = class(TForm)
@@ -99,6 +99,8 @@ type
     btnEditServer: TButton;
     mnuCheckVersion: TMenuItem;
     MenuItem5: TMenuItem;
+    mnuRegistry: TMenuItem;
+    Button1: TButton;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure lbServersClick(Sender: TObject);
@@ -125,6 +127,7 @@ type
     procedure btnCopyClick(Sender: TObject);
     procedure btnEditServerClick(Sender: TObject);
     procedure mnuCheckVersionClick(Sender: TObject);
+    procedure mnuRegistryClick(Sender: TObject);
   private
     { Private declarations }
     FSettings : TFHIRToolkitSettings;
@@ -135,6 +138,7 @@ type
     FIsStopped : boolean;
     UpgradeOnClose : boolean;
     FUpgradeChecked : boolean;
+    FRegistryTab : TTabItem;
 
     procedure saveFiles;
     procedure openResourceFromFile(filename : String; res : TFHIRResource; format : TFHIRFormat; frameClass : TBaseResourceFrameClass);
@@ -473,6 +477,8 @@ var
   procedure closeit;
   begin
     i := tbMain.TabIndex;
+    if tbMain.ActiveTab = FRegistryTab then
+      FRegistryTab := nil;
     tbMain.ActiveTab.Free;
     if i > 0 then
       tbMain.TabIndex := i - 1
@@ -844,6 +850,31 @@ begin
   end;
 end;
 
+procedure TMasterToolsForm.mnuRegistryClick(Sender: TObject);
+var
+  frame : TFrame;
+begin
+  if FRegistryTab <> nil then
+    tbMain.ActiveTab := FRegistryTab
+  else
+  begin
+    FRegistryTab := tbMain.Add(TTabItem);
+    tbMain.ActiveTab := FRegistryTab;
+    FRegistryTab.Text := 'registry.fhir.org';
+    frame := TRegistryFrame.create(FRegistryTab);
+    FRegistryTab.TagObject := frame;
+    frame.TagObject := FRegistryTab;
+    frame.Parent := FRegistryTab;
+    frame.tabs := tbMain;
+    frame.OnWork := dowork;
+    frame.OnOpenResource := OpenResourcefromClient;
+    frame.Settings := FSettings.link;
+    frame.Tab := FRegistryTab;
+    frame.Align := TAlignLayout.Client;
+    frame.load;
+  end;
+end;
+
 procedure TMasterToolsForm.newResource(rClass : TFhirResourceClass; frameClass : TBaseResourceFrameClass);
 var
   tab : TTabItem;
@@ -874,8 +905,6 @@ begin
     frame.Settings := FSettings.link;
     frame.Tab := tab;
     frame.Align := TAlignLayout.Client;
-    frame.Filename := '';
-    frame.resource := rClass.Create;
     frame.load;
   finally
     if Assigned(fCS) then
@@ -886,7 +915,7 @@ end;
 procedure TMasterToolsForm.openResourceFromFile(filename: String; res: TFHIRResource; format : TFHIRFormat; frameClass: TBaseResourceFrameClass);
 var
   tab : TTabItem;
-  frame : TFrame;
+  frame : TBaseResourceFrame;
   fcs : IFMXCursorService;
 begin
   if TPlatformServices.Current.SupportsPlatformService(IFMXCursorService) then
@@ -927,7 +956,7 @@ end;
 procedure TMasterToolsForm.OpenResourceFromClient(sender : TObject; client : TFHIRClient; format : TFHIRFormat; resource : TFHIRResource);
 var
   tab : TTabItem;
-  frame : TFrame;
+  frame : TBaseResourceFrame;
   fcs : IFMXCursorService;
 begin
   if TPlatformServices.Current.SupportsPlatformService(IFMXCursorService) then

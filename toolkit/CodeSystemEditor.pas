@@ -40,7 +40,7 @@ uses
   FHIRBase, FHIRConstants, FHIRTypes, FHIRResources, FHIRUtilities, FHIRIndexBase, FHIRIndexInformation, FHIRSupport,
   BaseResourceFrame,
   SearchParameterEditor, ListSelector, AddRestResourceDialog, ValuesetExpansion, ValuesetSelectDialog, MemoEditorDialog,
-  CodeSystemConceptDialog;
+  CodeSystemConceptDialog, FMX.Platform;
 
 type
   TFrame = TBaseResourceFrame; // re-aliasing the Frame to work around a designer bug
@@ -141,6 +141,14 @@ type
     btnDeleteConcept: TButton;
     btnExport: TButton;
     dlgExport: TSaveDialog;
+    Panel6: TPanel;
+    Label14: TLabel;
+    edtSearch: TEdit;
+    btnSearchStart: TButton;
+    btnSearchNext: TButton;
+    btnSearchPrev: TButton;
+    btnSearchEnd: TButton;
+    CheckBox1: TCheckBox;
     procedure tvStructureClick(Sender: TObject);
     procedure inputChanged(Sender: TObject);
     procedure btnMemoForDescClick(Sender: TObject);
@@ -170,9 +178,14 @@ type
     procedure btnEditConceptClick(Sender: TObject);
     procedure grdConceptsCellDblClick(const Column: TColumn; const Row: Integer);
     procedure btnExportClick(Sender: TObject);
+    procedure btnSearchStartClick(Sender: TObject);
+    procedure btnSearchNextClick(Sender: TObject);
+    procedure btnSearchPrevClick(Sender: TObject);
+    procedure btnSearchEndClick(Sender: TObject);
   private
     flatConcepts : TAdvList<TFhirCodeSystemConcept>;
     selchanging : boolean;
+
     function GetCodeSystem: TFHIRCodeSystem;
     function readJurisdiction : Integer;
     function getJurisdiction(i : integer) : TFHIRCodeableConcept;
@@ -180,6 +193,7 @@ type
     function findConcept(sel : TFhirCodeSystemConcept; var parent : TFhirCodeSystemConcept; var list : TFhirCodeSystemConceptList; var index : integer) : boolean;
     procedure updateStatus(sel : TFhirCodeSystemConcept);
     procedure buildFlatGrid(list : TFhirCodeSystemConceptList);
+    function matchesSearch(concept : TFhirCodeSystemConcept) : boolean;
 
     procedure loadMetadata;
     procedure loadProperties;
@@ -206,6 +220,13 @@ implementation
 
 {$R *.fmx}
 
+function polish(s : String): String;
+begin
+  result := s.trim.replace(#13, ' ').replace(#10, ' ').replace('  ', ' ');
+end;
+
+
+
 { TValueSetEditorFrame }
 
 function TCodeSystemEditorFrame.addConceptToTree(parent, concept: TFhirCodeSystemConcept) : TTreeViewItem;
@@ -214,7 +235,7 @@ var
   c : TFhirCodeSystemConcept;
 begin
   tv := TTreeViewItem.Create(self);
-  tv.Text := concept.Code +' "'+concept.display+'": '+concept.definition;
+  tv.Text := concept.Code +' "'+concept.display+'": '+polish(concept.definition);
   tv.TagObject := concept;
   concept.TagObject := tv;
   if parent = nil then
@@ -456,6 +477,138 @@ begin
   end;
 end;
 
+procedure TCodeSystemEditorFrame.btnSearchEndClick(Sender: TObject);
+var
+  i : integer;
+  fcs : IFMXCursorService;
+begin
+  if TPlatformServices.Current.SupportsPlatformService(IFMXCursorService) then
+    fcs := TPlatformServices.Current.GetPlatformService(IFMXCursorService) as IFMXCursorService
+  else
+    fcs := nil;
+  if Assigned(fcs) then
+  begin
+    Cursor := fcs.GetCursor;
+    fcs.SetCursor(crHourGlass);
+  end;
+  try
+    i := grdConcepts.RowCount - 1;
+    while i >= 0 do
+    begin
+      if matchesSearch(flatConcepts[i]) then
+      begin
+        grdConcepts.SelectCell(0, i);
+        grdConcepts.ScrollToSelectedCell;
+        exit;
+      end;
+      dec(i);
+    end;
+    beep;
+  finally
+    if Assigned(fCS) then
+      fcs.setCursor(Cursor);
+  end;
+end;
+
+procedure TCodeSystemEditorFrame.btnSearchNextClick(Sender: TObject);
+var
+  i : integer;
+  fcs : IFMXCursorService;
+begin
+  if TPlatformServices.Current.SupportsPlatformService(IFMXCursorService) then
+    fcs := TPlatformServices.Current.GetPlatformService(IFMXCursorService) as IFMXCursorService
+  else
+    fcs := nil;
+  if Assigned(fcs) then
+  begin
+    Cursor := fcs.GetCursor;
+    fcs.SetCursor(crHourGlass);
+  end;
+  try
+    i := grdConcepts.Row + 1;
+    while i < flatConcepts.Count do
+    begin
+      if matchesSearch(flatConcepts[i]) then
+      begin
+        grdConcepts.SelectCell(0, i);
+        grdConcepts.ScrollToSelectedCell;
+        exit;
+      end;
+      inc(i);
+    end;
+    beep;
+  finally
+    if Assigned(fCS) then
+      fcs.setCursor(Cursor);
+  end;
+end;
+
+procedure TCodeSystemEditorFrame.btnSearchPrevClick(Sender: TObject);
+var
+  i : integer;
+  fcs : IFMXCursorService;
+begin
+  if TPlatformServices.Current.SupportsPlatformService(IFMXCursorService) then
+    fcs := TPlatformServices.Current.GetPlatformService(IFMXCursorService) as IFMXCursorService
+  else
+    fcs := nil;
+  if Assigned(fcs) then
+  begin
+    Cursor := fcs.GetCursor;
+    fcs.SetCursor(crHourGlass);
+  end;
+  try
+    i := grdConcepts.Row - 1;
+    while i >= 0 do
+    begin
+      if matchesSearch(flatConcepts[i]) then
+      begin
+        grdConcepts.SelectCell(0, i);
+        grdConcepts.ScrollToSelectedCell;
+        exit;
+      end;
+      dec(i);
+    end;
+    beep;
+  finally
+    if Assigned(fCS) then
+      fcs.setCursor(Cursor);
+  end;
+end;
+
+procedure TCodeSystemEditorFrame.btnSearchStartClick(Sender: TObject);
+var
+  i : integer;
+  fcs : IFMXCursorService;
+begin
+  if TPlatformServices.Current.SupportsPlatformService(IFMXCursorService) then
+    fcs := TPlatformServices.Current.GetPlatformService(IFMXCursorService) as IFMXCursorService
+  else
+    fcs := nil;
+  if Assigned(fcs) then
+  begin
+    Cursor := fcs.GetCursor;
+    fcs.SetCursor(crHourGlass);
+  end;
+  try
+    i := 0;
+    while i < flatConcepts.Count do
+    begin
+      if matchesSearch(flatConcepts[i]) then
+      begin
+        grdConcepts.SelectCell(0, i);
+        grdConcepts.ScrollToSelectedCell;
+        exit;
+      end;
+      inc(i);
+    end;
+    beep;
+  finally
+    if Assigned(fCS) then
+      fcs.setCursor(Cursor);
+  end;
+end;
+
 procedure TCodeSystemEditorFrame.btnEditConceptClick(Sender: TObject);
 var
   form : TCodeSystemConceptForm;
@@ -476,7 +629,7 @@ begin
       sel.definition := form.Concept.definition;
       sel.designationList.Assign(form.Concept.designationList);
       sel.Property_List.Assign(form.Concept.Property_List);
-      TTreeViewItem(sel.TagObject).Text := sel.Code +' "'+sel.display+'": '+sel.definition;
+      TTreeViewItem(sel.TagObject).Text := sel.Code +' "'+sel.display+'": '+polish(sel.definition);
       grdConcepts.EndUpdate;
     end;
   finally
@@ -515,12 +668,13 @@ begin
             csv.cell(c.TagInt);
             csv.cell(c.code);
             csv.cell(c.display);
-            csv.cell(c.definition);
+            csv.cell(polish(c.definition));
             for p in CodeSystem.property_List do
             begin
               v := c.prop(p.code);
               if v = nil then
                 csv.cell('')
+
               else case p.type_ of
                 ConceptPropertyTypeCode, ConceptPropertyTypeString, ConceptPropertyTypeInteger:
                   csv.cell(v.value.primitiveValue);
@@ -742,7 +896,7 @@ begin
     0: value := c.TagInt;
     1: value := c.code;
     2: value := c.display;
-    3: value := c.definition;
+    3: value := polish(c.definition);
   else
   begin
     p := CodeSystem.property_List[aCol - 4];
@@ -814,7 +968,7 @@ begin
     end;
   end;
   end;
-  TTreeViewItem(c.TagObject).Text := c.Code +' "'+c.display+'": '+c.definition;
+  TTreeViewItem(c.TagObject).Text := c.Code +' "'+c.display+'": '+polish(c.definition);
   ResourceIsDirty := true;
 end;
 
@@ -833,7 +987,7 @@ begin
         for e := low(TFhirFilterOperatorEnum) to high(TFhirFilterOperatorEnum) do
           if e in f.&operator then
             s := s +' '+CODES_TFhirFilterOperatorEnum[e];
-        value := s.Trim;
+        value := s.trim;
       end;
     2: value := f.value;
     3: value := f.description;
@@ -1012,6 +1166,11 @@ begin
   grdProperties.RowCount := 0;
   grdProperties.RowCount := CodeSystem.property_List.Count;
   grdPropertiesSelChanged(self);
+end;
+
+function TCodeSystemEditorFrame.matchesSearch(concept: TFhirCodeSystemConcept): boolean;
+begin
+  result := concept.code.Contains(edtSearch.Text) or concept.display.Contains(edtSearch.Text) or concept.definition.Contains(edtSearch.Text);
 end;
 
 function TCodeSystemEditorFrame.readJurisdiction: Integer;
