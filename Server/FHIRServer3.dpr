@@ -72,6 +72,7 @@ STU3 draft:
 
 
 
+https://chat.fhir.org/#narrow/stream/implementers/subject/search.20on.20several.20resource.20types.3F
 
 
 

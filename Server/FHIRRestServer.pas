@@ -635,6 +635,7 @@ begin
 {$IFDEF MSWINDOWS}
   CoInitialize(nil);
 {$ENDIF}
+  AContext.Connection.IOHandler.MaxLineLength := 100 * 1024;
   FLock.Lock;
   try
     ci := TFHIRWebServerClientInfo.Create;
@@ -2934,29 +2935,32 @@ begin
 
           names.Sort;
           j := 0;
-          for i := 0 to names.Count div 2 do
+          if names.count > 0 then
           begin
-            inc(j);
-            if j mod 2 = 1 then
-              b.Append('<tr bgcolor="#F0F0F0">')
-            else
-              b.Append('<tr bgcolor="#FFFFFF">');
-
-            a := names[i];
-            ix := counts.IndexOf(a);
-            b.Append(TFHIRXhtmlComposer.ResourceLinks(a, lang, sBaseURL, integer(counts.Objects[ix]), true, true, Session.canRead(a)));
-
-            b.Append('<td style="border-left: 1px solid grey"/>');
-
-            if (i + names.Count div 2) + 1 < names.Count then
+            for i := 0 to names.Count div 2 do
             begin
-              a := names[1 + i + names.Count div 2];
+              inc(j);
+              if j mod 2 = 1 then
+                b.Append('<tr bgcolor="#F0F0F0">')
+              else
+                b.Append('<tr bgcolor="#FFFFFF">');
+
+              a := names[i];
               ix := counts.IndexOf(a);
               b.Append(TFHIRXhtmlComposer.ResourceLinks(a, lang, sBaseURL, integer(counts.Objects[ix]), true, true, Session.canRead(a)));
+
+              b.Append('<td style="border-left: 1px solid grey"/>');
+
+              if (i + names.Count div 2) + 1 < names.Count then
+              begin
+                a := names[1 + i + names.Count div 2];
+                ix := counts.IndexOf(a);
+                b.Append(TFHIRXhtmlComposer.ResourceLinks(a, lang, sBaseURL, integer(counts.Objects[ix]), true, true, Session.canRead(a)));
+              end;
+
+              b.Append('</tr>');
+
             end;
-
-            b.Append('</tr>');
-
           end;
         finally
           names.Free;
