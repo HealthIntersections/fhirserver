@@ -31,8 +31,8 @@ object QuestionnaireEditorFrame: TQuestionnaireEditorFrame
       Size.PlatformDefault = False
       TabOrder = 1
       OnClick = tvStructureClick
-      Viewport.Width = 117.000000000000000000
-      Viewport.Height = 723.000000000000000000
+      Viewport.Width = 121.000000000000000000
+      Viewport.Height = 727.000000000000000000
       object tvMetadata: TTreeViewItem
         IsChecked = False
         IsExpanded = False
@@ -74,7 +74,7 @@ object QuestionnaireEditorFrame: TQuestionnaireEditorFrame
       Size.Width = 744.000000000000000000
       Size.Height = 760.000000000000000000
       Size.PlatformDefault = False
-      TabIndex = 2
+      TabIndex = 1
       TabOrder = 0
       TabPosition = None
       Sizes = (
@@ -503,7 +503,7 @@ object QuestionnaireEditorFrame: TQuestionnaireEditorFrame
         CustomIcon = <
           item
           end>
-        IsSelected = False
+        IsSelected = True
         Size.Width = 8.000000000000000000
         Size.Height = 8.000000000000000000
         Size.PlatformDefault = False
@@ -528,7 +528,7 @@ object QuestionnaireEditorFrame: TQuestionnaireEditorFrame
           Text = 'Resource Types'
           TabOrder = 0
         end
-        object ListBox1: TListBox
+        object lbResources: TListBox
           Anchors = [akLeft, akTop, akRight, akBottom]
           Position.X = 8.000000000000000000
           Position.Y = 128.000000000000000000
@@ -541,6 +541,8 @@ object QuestionnaireEditorFrame: TQuestionnaireEditorFrame
           DefaultItemStyles.ItemStyle = ''
           DefaultItemStyles.GroupHeaderStyle = ''
           DefaultItemStyles.GroupFooterStyle = ''
+          ShowCheckboxes = True
+          OnChangeCheck = lbResourcesChangeCheck
           Viewport.Width = 721.000000000000000000
           Viewport.Height = 601.000000000000000000
         end
@@ -562,7 +564,7 @@ object QuestionnaireEditorFrame: TQuestionnaireEditorFrame
         CustomIcon = <
           item
           end>
-        IsSelected = True
+        IsSelected = False
         Size.Width = 8.000000000000000000
         Size.Height = 8.000000000000000000
         Size.PlatformDefault = False
@@ -655,12 +657,13 @@ object QuestionnaireEditorFrame: TQuestionnaireEditorFrame
           Size.PlatformDefault = False
           TabOrder = 2
           RowCount = 0
+          Options = [Editing, ColumnResize, ColumnMove, ColLines, RowLines, AlwaysShowSelection, Tabs, Header, HeaderClick, AutoDisplacement]
           OnSelChanged = grdItemsSelChanged
           OnGetValue = grdItemsGetValue
           OnSetValue = grdItemsSetValue
           OnCellDblClick = grdItemsCellDblClick
-          Viewport.Width = 740.000000000000000000
-          Viewport.Height = 670.000000000000000000
+          Viewport.Width = 744.000000000000000000
+          Viewport.Height = 695.000000000000000000
           object StringColumn6: TStringColumn
             Enabled = False
             Header = 'Depth'
@@ -780,25 +783,28 @@ object QuestionnaireEditorFrame: TQuestionnaireEditorFrame
           Size.Height = 33.000000000000000000
           Size.PlatformDefault = False
           TabOrder = 0
-          object Button1: TButton
+          object btnAddItemTV: TButton
             Position.X = 6.000000000000000000
             Position.Y = 6.000000000000000000
             TabOrder = 0
             Text = 'Add'
+            OnClick = btnAddItemTVClick
           end
-          object Button2: TButton
+          object btnAddChildItemTV: TButton
             Position.X = 96.000000000000000000
             Position.Y = 6.000000000000000000
             TabOrder = 1
             Text = 'Add Child'
+            OnClick = btnAddChildItemTVClick
           end
-          object Button3: TButton
+          object btnEditItemTV: TButton
             Position.X = 184.000000000000000000
             Position.Y = 6.000000000000000000
             TabOrder = 3
             Text = 'Edit'
+            OnClick = btnEditItemTVClick
           end
-          object Button4: TButton
+          object btnItemUpTV: TButton
             Position.X = 280.000000000000000000
             Position.Y = 6.000000000000000000
             Size.Width = 41.000000000000000000
@@ -806,8 +812,9 @@ object QuestionnaireEditorFrame: TQuestionnaireEditorFrame
             Size.PlatformDefault = False
             TabOrder = 7
             Text = 'Up'
+            OnClick = btnItemUpTVClick
           end
-          object Button5: TButton
+          object btnItemDownTV: TButton
             Position.X = 324.000000000000000000
             Position.Y = 6.000000000000000000
             Size.Width = 53.000000000000000000
@@ -815,8 +822,9 @@ object QuestionnaireEditorFrame: TQuestionnaireEditorFrame
             Size.PlatformDefault = False
             TabOrder = 4
             Text = 'Down'
+            OnClick = btnItemDownTVClick
           end
-          object Button6: TButton
+          object btnItemInTV: TButton
             Position.X = 380.000000000000000000
             Position.Y = 6.000000000000000000
             Size.Width = 41.000000000000000000
@@ -824,8 +832,9 @@ object QuestionnaireEditorFrame: TQuestionnaireEditorFrame
             Size.PlatformDefault = False
             TabOrder = 6
             Text = 'In'
+            OnClick = btnItemInTVClick
           end
-          object Button7: TButton
+          object btnItemOutTV: TButton
             Position.X = 424.000000000000000000
             Position.Y = 6.000000000000000000
             Size.Width = 41.000000000000000000
@@ -833,20 +842,25 @@ object QuestionnaireEditorFrame: TQuestionnaireEditorFrame
             Size.PlatformDefault = False
             TabOrder = 5
             Text = 'Out'
+            OnClick = btnItemOutTVClick
           end
-          object Button8: TButton
+          object btnDeleteItemTV: TButton
             Position.X = 480.000000000000000000
             Position.Y = 6.000000000000000000
             TabOrder = 2
             Text = 'Delete'
+            OnClick = btnDeleteItemTVClick
           end
         end
-        object TreeView1: TTreeView
+        object tvItemTree: TTreeView
           Align = Client
           Size.Width = 744.000000000000000000
           Size.Height = 695.000000000000000000
           Size.PlatformDefault = False
           TabOrder = 2
+          OnClick = tvItemTreeClick
+          OnDblClick = btnEditItemTVClick
+          OnChange = tvItemTreeClick
           Viewport.Width = 744.000000000000000000
           Viewport.Height = 695.000000000000000000
         end
