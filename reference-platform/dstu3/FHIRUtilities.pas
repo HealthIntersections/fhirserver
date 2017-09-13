@@ -523,6 +523,11 @@ type
     function countDescendents : integer;
   end;
 
+  TFhirQuestionnaireHelper = class helper for TFhirQuestionnaire
+  public
+    function itemCount : integer;
+  end;
+
   TFhirExpansionProfileHelper = class helper for TFhirExpansionProfile
   public
     function hash : String;
@@ -5048,6 +5053,17 @@ end;
 { TFhirQuestionnaireItemHelper }
 
 function TFhirQuestionnaireItemHelper.countDescendents: integer;
+var
+  c : TFhirQuestionnaireItem;
+begin
+  result := itemList.Count;
+  for c in itemList do
+    inc(result, c.countDescendents);
+end;
+
+{ TFhirQuestionnaireHelper }
+
+function TFhirQuestionnaireHelper.itemCount: integer;
 var
   c : TFhirQuestionnaireItem;
 begin
