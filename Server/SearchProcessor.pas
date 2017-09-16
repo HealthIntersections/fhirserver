@@ -1196,7 +1196,7 @@ end;
 
 function TSearchProcessor.order(s: String): String;
 begin
-  if FConnection.Owner.Driver.contains('MariaDB') then
+  if Connection.owner.platform = kdbMySQL then
     result := s
   else
     result := '';
