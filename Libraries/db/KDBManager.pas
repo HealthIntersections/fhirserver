@@ -673,6 +673,8 @@ type
     property SQL: String Read FSql Write FSql;
   end;
 
+  TKDBConnectionProc = reference to Procedure (conn : TKDBConnection);
+
   TKDBManager = class(TAdvObject)
   Private
     FSemaphore : TSemaphore;
@@ -686,6 +688,7 @@ type
     FServerIsAvailable : Boolean;
     FLastServerGood : TDateTime;
     FLastServerError : String;
+    FThreadWaitCount : integer;
 
     FMaxConnCount : Integer;
     FName : string;
@@ -696,6 +699,7 @@ type
     procedure Error(AConn : TKDBConnection; AException: Exception; AErrMsg : string);
     function GetCurrentUse: Integer;
     procedure SetMaxConnCount(const Value: Integer);
+    procedure CheckWait;
   Protected
     FLock : TCriticalSection;
 
@@ -714,6 +718,7 @@ type
 
     procedure ExecSQL(ASql, AName : String);
     function GetConnection(const AUsage: String): TKDBConnection;
+    procedure connection(usage : String; proc : TKDBConnectionProc);
     procedure SaveSettings(ASettings : TSettingsAdapter); virtual; abstract;
 
     property MaxConnCount : Integer Read FMaxConnCount write SetMaxConnCount;
@@ -1290,7 +1295,7 @@ begin
 
   FLock := TCriticalSection.create;
   FDBLogger := TKDBLogger.create;
-  FSemaphore := TSemaphore.Create(nil, 0, $FFFF, '');
+  FSemaphore := TSemaphore.Create(nil, 0, 4{ $FFFF}, '');
   FWaitCreate := false;
 
   FConnections := TAdvList<TKDBConnection>.create;
@@ -1333,14 +1338,35 @@ begin
   end;
 end;
 
+procedure TKDBManager.CheckWait;
+begin
+  if FWaitCreate then
+  begin
+    FLock.Lock;
+    try
+      inc(FThreadWaitCount);
+    finally
+      FLock.Unlock;
+    end;
+    try
+      if FSemaphore.WaitFor(DEFAULT_CONNECTION_WAIT_LENGTH) = wrError then
+        raise EKDBException.Create('['+Name+'] KDBManager Wait Failed - ' + ErrorAsString(GetLastError));
+    finally
+      FLock.Lock;
+      try
+        dec(FThreadWaitCount);
+      finally
+        FLock.Unlock;
+      end;
+    end;
+  end;
+end;
+
 function TKDBManager.GetConnection(const AUsage: String): TKDBConnection;
 var
   LCreateNew: Boolean;
 begin
-  if FWaitCreate and (FSemaphore.WaitFor(DEFAULT_CONNECTION_WAIT_LENGTH) = wrError) then
-    begin
-    raise EKDBException.Create('['+Name+'] KDBManager Wait Failed - ' + ErrorAsString(GetLastError));
-    end;
+  CheckWait;
   result := PopAvail;
   if not assigned(result) then
     begin
@@ -1377,7 +1403,7 @@ begin
       result.FNoFree := true;
       FLock.Enter;
       try
-        FWaitCreate := (FMaxConnCount > 0) and (FConnections.Count > FMaxConnCount div 2);
+        FWaitCreate := (FMaxConnCount > 0) and (FConnections.Count = FMaxConnCount);
       finally
         FLock.Leave;
       end;
@@ -1406,6 +1432,7 @@ procedure TKDBManager.Release(AConn : TKDBConnection);
 var
   LDispose : boolean;
   LIndex : integer;
+  s : String;
 begin
 
   FDBLogger.RecordUsage(AConn.Usage, AConn.FUsed, AConn.FRowCount, AConn.FPrepareCount, nil, '');
@@ -1416,21 +1443,23 @@ begin
     FInUse.Delete(LIndex);
     FLastServerGood := now;
     FServerIsAvailable := true;
+    s := AConn.FUsage;
     AConn.FUsage := '';
     AConn.FUsed := 0;
     if LDispose then
       begin
       FConnections.Remove(AConn);
-      FWaitCreate := (FMaxConnCount > 0) and (FConnections.count > FMaxConnCount div 2);
+      FWaitCreate := (FMaxConnCount > 0) and (FConnections.count = FMaxConnCount);
       end
     else
       begin
       FAvail.Add(AConn.Link);
       try
-        FSemaphore.Release;
+        if FThreadWaitCount > 0 then
+         FSemaphore.Release;
       except
         on e : exception do
-          raise Exception.Create('Error releasing semaphore for '+AConn.Usage+': '+e.message+'. please report this error to grahameg@gmail.com');
+          Writeln('Error releasing semaphore for '+s+': '+e.message+' for '+s);
       end;
       end;
   finally
@@ -1452,6 +1481,7 @@ end;
 procedure TKDBManager.Error(AConn : TKDBConnection; AException: Exception; AErrMsg : string);
 var
   LIndex : integer;
+  s : String;
 begin
   FDBLogger.RecordUsage(AConn.Usage, AConn.FUsed, AConn.FRowCount, AConn.FPrepareCount, AException, AErrMsg);
 
@@ -1470,10 +1500,11 @@ begin
       FLastServerError := AException.message;
     End;
     try
-      FSemaphore.Release;
+      if FThreadWaitCount > 0 then
+        FSemaphore.Release;
     except
       on e : exception do
-        raise Exception.Create('Error releasing semaphore for '+AConn.Usage+': '+e.message+'. please report this error to grahameg@gmail.com');
+        raise Exception.Create('Error (2) releasing semaphore for '+AConn.Usage+': '+e.message+'. please report this error to grahameg@gmail.com (original error = "'+AException.Message+'"');
     end;
   finally
     FLock.Leave;
@@ -1616,6 +1647,23 @@ begin
     FMaxConnCount := Value;
   finally
     FLock.Leave;
+  end;
+end;
+
+procedure TKDBManager.connection(usage: String; proc: TKDBConnectionProc);
+var
+  conn : TKDBConnection;
+begin
+  conn := GetConnection(usage);
+  try
+    proc(conn);
+    conn.Release;
+  except
+    on e : exception do
+    begin
+      conn.Error(e);
+      raise;
+    end;
   end;
 end;
 

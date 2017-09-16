@@ -104,7 +104,7 @@ type
     function GetDriver: String; Override;
     procedure init; override;
   public
-    constructor create(AName : String; Filename : String; autoCreate : boolean); overload;
+    constructor create(AName : String; Filename : String; autoCreate : boolean; maxConn : integer = 100); overload;
     constructor create(AName : String; ASettings : TSettingsAdapter; AIdent : String = ''); overload; override;
     destructor Destroy; override;
     procedure SaveSettings(ASettings : TSettingsAdapter); override;
@@ -115,11 +115,11 @@ implementation
 
 { TKDBSQLiteManager }
 
-constructor TKDBSQLiteManager.create(AName: String; Filename : String; autoCreate : boolean);
+constructor TKDBSQLiteManager.create(AName: String; Filename : String; autoCreate : boolean; maxConn : integer = 100);
 begin
   FFilename := filename;
   FAutoCreate := autoCreate;
-  Inherited Create(aName, 100);
+  Inherited Create(aName, maxConn);
 end;
 
 constructor TKDBSQLiteManager.create(AName: String; ASettings: TSettingsAdapter; AIdent: String);
