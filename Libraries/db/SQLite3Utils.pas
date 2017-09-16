@@ -43,7 +43,7 @@ function FloatToSQLStr(Value: Extended): WideString;
 implementation
 
 uses
-  {$IFNDEF FPC}Windows,{$ENDIF} SysUtils;
+  {$IFDEF MSWINDOWS}Windows,{$ENDIF} SysUtils;
 
 function StrToUTF8(const S: WideString): AnsiString;
 begin
@@ -83,8 +83,8 @@ function FloatToSQLStr(Value: Extended): WideString;
 var
   FS: TFormatSettings;
 begin
-{$IFDEF FPC}
-  FS := DefaultFormatSettings;
+{$IFDEF MACOS}
+  FS := FormatSettings;
 {$ELSE}
   GetLocaleFormatSettings(GetThreadLocale, FS);
 {$ENDIF}

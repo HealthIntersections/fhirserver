@@ -38,7 +38,8 @@ This is the dstu3 version of the FHIR code
 interface
 
 uses
-  SysUtils, Classes, Windows, WinAPI.ShellAPI, Soap.EncdDecd,
+  {$IFDEF WINDOWS}Windows, WinAPI.ShellAPI, {$ENDIF}
+  SysUtils, Classes, Soap.EncdDecd,
   StringSupport, FileSupport,
   FHIRBase, FHIRTypes, FHIRResources, FHIRConstants, FHIRParser, FHIRContext,
   FHIRSupport, FHIRProfileUtilities, FHIRPath,
@@ -72,6 +73,21 @@ Type
     class procedure closeUp;
   end;
 
+
+  TTestObjectThread = class (TThread)
+  private
+    FProc : TThreadProcedure;
+  protected
+    procedure execute; override;
+  public
+    Constructor Create(proc : TThreadProcedure);
+  end;
+  TTestObject = class (TObject)
+  private
+  protected
+    procedure thread(proc : TThreadProcedure);
+  public
+  end;
 
 implementation
 
@@ -168,6 +184,27 @@ begin
   finally
     sl.Free;
   end;
+end;
+
+{ TTestObjectThread }
+
+constructor TTestObjectThread.Create(proc: TThreadProcedure);
+begin
+  FProc := proc;
+  FreeOnTerminate := true;
+  inherited Create(false);
+end;
+
+procedure TTestObjectThread.execute;
+begin
+  Fproc;
+end;
+
+{ TTestObject }
+
+procedure TTestObject.thread(proc: TThreadProcedure);
+begin
+  TTestObjectThread.Create(proc);
 end;
 
 initialization

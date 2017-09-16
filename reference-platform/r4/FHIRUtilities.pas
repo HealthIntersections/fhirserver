@@ -43,7 +43,7 @@ uses
   AdvObjects, AdvStringBuilders, AdvGenerics,   AdvStreams,  ADvVclStreams, AdvBuffers, AdvMemories, AdvJson,
   AdvZipWriters, AdvZipParts,
 
-  MimeMessage, TextUtilities, ZLib, InternetFetcher, TurtleParser,
+  MimeMessage, TextUtilities, ZLib, {$IFDEF MSWINDOWS} InternetFetcher, {$ENDIF} TurtleParser,
 
   FHIRContext, FHIRSupport, FHIRParserBase, FHIRParser, FHIRBase, FHIRTypes, FHIRResources, FHIRConstants, FHIRXHtml;
 
@@ -1648,7 +1648,13 @@ begin
   end;
 end;
 
+
 function CustomResourceNameIsOk(name : String) : boolean;
+{$IFDEF MACOS}
+begin
+  result := false;
+end;
+{$ELSE}
 var
   fetcher : TInternetFetcher;
   json : TJsonObject;
@@ -1683,6 +1689,7 @@ begin
     fetcher.Free;
   end;
 end;
+{$ENDIF}
 
 (*
 
@@ -4645,6 +4652,11 @@ End;
 
 
 function TFHIRAttachmentHelper.asZipPart(i: integer): TAdvZipPart;
+{$IFDEF MACOS}
+begin
+  raise Exception.Create('Not done yet');
+end;
+{$ELSE}
 var
   fetcher : TInternetFetcher;
 begin
@@ -4678,6 +4690,7 @@ begin
     result.Free;
   end;
 end;
+{$ENDIF}
 
 { TFhirReferenceHelper }
 

@@ -313,6 +313,11 @@ Type
     Property Comments : Boolean read FComments write FComments;
   End;
 
+  TFHIRNDJsonComposer = class (TFHIRComposer)
+  public
+    Procedure Compose(stream : TStream; oResource : TFhirResource; isPretty : Boolean = false; links : TFhirBundleLinkList = nil); Override;
+  end;
+
   {$IFNDEF FHIR2}
   TFHIRTurtleComposerBase = class (TFHIRComposer)
   private
@@ -433,7 +438,10 @@ begin
       else
       begin
         // well, ok, we'll look to see if it's a logical model....
-        sd := FWorker.getStructure(root.namespaceURI, root.localName);
+        if FWorker = nil then
+          sd := nil
+        else
+          sd := FWorker.getStructure(root.namespaceURI, root.localName);
         if sd = nil then
           XmlError('/', StringFormat(GetFhirMessage('MSG_WRONG_NS', lang), [root.namespaceURI]))
         else
@@ -1492,7 +1500,7 @@ end;
 
 procedure TFHIRComposer.ComposeResource(xml : TXmlBuilder; oResource: TFhirResource; links : TFhirBundleLinkList);
 begin
-  raise exception.create('don''t use TFHIRXmlComposerBase directly - use TFHIRXmlComposer');
+  raise exception.create('don''t use '+className+' directly - use TFHIRXmlComposer');
 end;
 
 procedure TFHIRComposer.ComposeXHtmlNode(xml: TXmlBuilder; name: String; node: TFhirXHtmlNode);
@@ -3042,5 +3050,51 @@ begin
   result := TTurtleURL(t).uri.Substring(20);
 end;
 {$ENDIF}
+
+{ TFHIRNDJsonComposer }
+
+procedure TFHIRNDJsonComposer.Compose(stream: TStream; oResource: TFhirResource; isPretty: Boolean; links: TFhirBundleLinkList);
+var
+  oStream : TAdvVCLStream;
+  json : TFHIRJsonComposer;
+  be : TFhirBundleEntry;
+  first : boolean;
+  ch : char;
+begin
+  ch := #10;
+  if oResource.ResourceType = frtBundle then
+  begin
+    first := true;
+    for be in TFHIRBundle(oResource).entryList do
+    begin
+      if first then
+        first := false
+      else
+        stream.Write(ch, 1);
+      if be.resource <> nil then
+      begin
+        json := TFHIRJsonComposer.Create(FWorker.link, lang);
+        try
+          json.Compose(stream, be.resource, false, links);
+        finally
+          json.Free;
+        end;
+      end
+      else if be.tag is TAdvBuffer then
+      begin
+        TAdvBuffer(be.tag).SaveToStream(stream);
+      end;
+    end;
+  end
+  else
+  begin
+    json := TFHIRJsonComposer.Create(FWorker.link, lang);
+    try
+      json.Compose(stream, oResource, false, links);
+    finally
+      json.Free;
+    end;
+  end;
+end;
 
 End.

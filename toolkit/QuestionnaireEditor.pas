@@ -39,7 +39,7 @@ uses
   AdvGenerics, CSVSupport,
   FHIRBase, FHIRConstants, FHIRTypes, FHIRResources, FHIRUtilities, FHIRIndexBase, FHIRIndexInformation, FHIRSupport,
   QuestionnaireRenderer,
-  BaseResourceFrame,
+  BaseResourceFrame, { QuestionnaireFrame, }
   QuestionnaireItemDialog, MemoEditorDialog;
 
 type
@@ -150,6 +150,8 @@ type
     Button11: TButton;
     Button12: TButton;
     CheckBox2: TCheckBox;
+    tvForm: TTreeViewItem;
+    tbForm: TTabItem;
     procedure tvStructureClick(Sender: TObject);
     procedure inputChanged(Sender: TObject);
     procedure btnMemoForDescClick(Sender: TObject);
@@ -181,6 +183,7 @@ type
     flatItems : TAdvList<TFhirQuestionnaireItem>;
     loading : boolean;
     FSelected : TFhirQuestionnaireItem;
+//    FFrame : TQuestionnaireFrame;
     function GetQuestionnaire: TFHIRQuestionnaire;
     function readJurisdiction : Integer;
     function getJurisdiction(i : integer) : TFHIRCodeableConcept;
@@ -198,6 +201,7 @@ type
     procedure loadContext;
     procedure loadGrid;
     procedure loadTree;
+    procedure loadForm;
 
     procedure commitMetadata;
 //    procedure commitGrid;
@@ -972,6 +976,21 @@ begin
     end;
 end;
 
+procedure TQuestionnaireEditorFrame.loadForm;
+begin
+{  if FFrame = nil then
+  begin
+    FFrame := TQuestionnaireFrame.Create(self);
+    FFrame.Parent := tbForm;
+    FFrame.Margins.Left := 6;
+    FFrame.Margins.Top := 6;
+    FFrame.Margins.Right := 6;
+    FFrame.Margins.Bottom := 6;
+  end;
+  FFrame.Questionnaire := Questionnaire.Link;
+  FFrame.build;}
+end;
+
 procedure TQuestionnaireEditorFrame.loadGrid;
 begin
   flatItems.Clear;
@@ -1137,6 +1156,11 @@ begin
     begin
       tbStructure.ActiveTab := tbTree;
       loadTree;
+    end
+    else if tvStructure.Selected = tvForm then
+    begin
+      tbStructure.ActiveTab := tbForm;
+      loadForm;
     end
   finally
     Loading := false;

@@ -66,10 +66,11 @@ interface
 Uses
   Windows, SysUtils, Classes, IniFiles, ActiveX, ComObj,
   AdvExceptions,
-  SystemService, SystemSupport, FileSupport, ThreadSupport,
+  SystemService, SystemSupport, FileSupport, ThreadSupport, StringSupport,
   SnomedImporter, SnomedServices, SnomedExpressions, RxNormServices, UniiServices,
   LoincImporter, LoincServices,
   KDBManager, KDBOdbc, KDBDialects, KDBSQLite,
+  FHIRResources,
   TerminologyServer,
   FHIRStorageService,
   FHIRRestServer, DBInstaller, FHIRConstants, FHIRNativeStorage, FHIRBase, FhirPath,
@@ -107,6 +108,8 @@ Type
     procedure validate;
     procedure InstallerCallBack(i : integer; s : String);
     procedure cb(i : integer; s : WideString);
+    procedure identifyValueSets;
+    function RegisterValueSet(id: String; conn: TKDBConnection): integer;
   protected
     function CanStart : boolean; Override;
     procedure postStart; override;
@@ -335,6 +338,36 @@ begin
   logt(KDBManagers.Dump);
 end;
 
+function TFHIRService.RegisterValueSet(id: String; conn : TKDBConnection): integer;
+begin
+  result := Conn.CountSQL('Select ValueSetKey from ValueSets where URL = '''+SQLWrapString(id)+'''');
+  if result = 0 then
+  begin
+    result := FTerminologyServer.NextValueSetKey;
+    Conn.ExecSQL('Insert into ValueSets (ValueSetKey, URL, NeedsIndexing) values ('+inttostr(result)+', '''+SQLWrapString(id)+''', 1)');
+  end;
+end;
+
+
+procedure TFHIRService.identifyValueSets;
+begin
+  logt('Register ValueSets');
+  FDb.Connection('register value sets',
+    procedure (conn : TKDBConnection)
+    var
+      vs : TFhirValueSet;
+      vsl : TFHIRValueSetList;
+    begin
+      vsl := FTerminologyServer.GetValueSetList;
+      try
+        for vs in vsl do
+          vs.Tags['tracker'] := inttostr(RegisterValueSet(vs.url, conn));
+      finally
+        vsl.Free;
+      end;
+    end);
+end;
+
 Procedure TFHIRService.ConnectToDatabase(noCheck : boolean = false);
 var
   dbn,ddr : String;
@@ -454,6 +487,8 @@ begin
     ConnectToDatabase;
   cb(1, 'Load: start kernel');
   CanStart;
+  logt('Load: register value sets');
+  identifyValueSets;
   cb(2, 'Load from '+fn);
   {$IFDEF FHIR2}
   logt('Load database from '+fn);

@@ -65,30 +65,30 @@ Type
     Possible command types supported by HL7Connect FHIR interfaces
   }
   TFHIRCommandType = (
-    fcmdUnknown, {@enum.value fcmdUnknown Unknown command}
-    fcmdRead, {@enum.value fcmdRead Read the resource}
-    fcmdVersionRead, {@enum.value fcmdVersionRead Read a particular version of the resource}
-    fcmdUpdate, {@enum.value fcmdUpdate Update the resource}
-    fcmdDelete, {@enum.value fcmdDelete Delete the resource}
-    fcmdHistoryInstance, {@enum.value fcmdHistory get a history for the resource}
+    fcmdUnknown, { Unknown command}
+    fcmdRead, { Read the resource}
+    fcmdVersionRead, { Read a particular version of the resource}
+    fcmdUpdate, { Update the resource}
+    fcmdDelete, { Delete the resource}
+    fcmdHistoryInstance, { get a history for the resource}
 
-    fcmdCreate, {@enum.value fcmdCreate create a resource}
-    fcmdSearch, {@enum.value fcmdSearch search a resource type}
-    fcmdHistoryType,{@enum.value fcmdUpdate get updates for the resource type}
+    fcmdCreate, { create a resource}
+    fcmdSearch, { search a resource type}
+    fcmdHistoryType,{ get updates for the resource type}
 
-    fcmdValidate, {@enum.value fcmdValidate validate the resource}
-    fcmdConformanceStmt, {@enum.value fcmdConformanceStmt get the conformance statement for the system}
-    fcmdTransaction, {@enum.value fcmdTransaction Update or create a set of resources}
-    fcmdHistorySystem, {@enum.value fcmdUpdate get updates for the resource type}
-    fcmdUpload, {@enum.value fcmdUpload Manual upload (Server extension)}
+    fcmdValidate, { validate the resource}
+    fcmdConformanceStmt, { get the conformance statement for the system}
+    fcmdTransaction, { Update or create a set of resources}
+    fcmdHistorySystem, { get updates for the resource type}
+    fcmdUpload, { Manual upload (Server extension)}
 
-    fcmdOperation, {@enum.value fcmdOperation operation, as defined in DSTU2}
+    fcmdOperation, { operation, as defined in DSTU2}
 
-    fcmdPatch, {@enum.value fcmdPatch Patch (trial for Connectathon 11)}
+    fcmdPatch, { Patch (trial for Connectathon 11)}
 
-    fcmdBatch, {@enum.value fcmdBatch batch as defined in DSTU2}
-    fcmdWebUI, {@enum.value fcmdWebUI Special web interface operations - not a valid FHIR operation}
-    fcmdNull); {@enum.value fcmdNull Internal use only - not a valid FHIR operation}
+    fcmdBatch, { batch as defined in DSTU2}
+    fcmdWebUI, { Special web interface operations - not a valid FHIR operation}
+    fcmdNull); { Internal use only - not a valid FHIR operation}
 
 
 
@@ -96,21 +96,22 @@ Type
     Format support.
   }
   TFHIRFormat = (
-    ffUnspecified, {@enum.value ffAsIs leave the format as received/expected, or default to XML}
-    ffXml, {@enum.value ffXml XML}
-    ffJson,{@enum.value ffJson JSON}
-    ffTurtle, {@enum.value ffTurtle RDF using Turtle syntax}
+    ffUnspecified, { leave the format as received/expected, or default to XML }
+    ffXml, { XML }
+    ffJson,{ JSON }
+    ffTurtle, { RDF using Turtle syntax }
     ffText,
-    ffXhtml); {@enum.value ffXhtml XHTML - only for retrieval from the server}
+    ffNDJson, { new line delimited JSON }
+    ffXhtml); { XHTML - only for retrieval from the server }
 
   {@Enum TFHIRHtmlNodeType
     Enumeration of html node types
   }
   TFHIRHtmlNodeType = (
-    fhntElement, {@enum.value fhntElement The node is an element}
-    fhntText, {@enum.value fhntText The node is a text fragment}
-    fhntComment, {@enum.value fhntComment The node is a comment}
-    fhntDocument);{@enum.value fhntDocument The node represents a document (not used in FHIR context)}
+    fhntElement, { The node is an element}
+    fhntText, { The node is a text fragment}
+    fhntComment, { The node is a comment}
+    fhntDocument);{ The node represents a document (not used in FHIR context)}
 
   TFHIRAuthProvider = (apNone, apInternal, apFacebook, apGoogle, apHL7);
 
@@ -142,8 +143,8 @@ Const
   CODES_TFHIRCommandType : array [TFHIRCommandType] of String = (
     'Unknown', 'Read', 'VersionRead', 'Update', 'Delete', 'HistoryInstance', 'Create', 'Search', 'HistoryType', 'Validate', 'ConformanceStmt', 'Transaction', 'HistorySystem', 'Upload', 'Operation', 'Patch', 'Batch', 'WebUI', 'Null');
   CODES_TFHIRHtmlNodeType : array [TFHIRHtmlNodeType] of String = ('Element', 'Text', 'Comment', 'Document');
-  CODES_TFHIRFormat : Array [TFHIRFormat] of String = ('Unspecified', 'XML', 'JSON', 'RDF/Turtle', 'Text Representation', 'XHTML');
-  MIMETYPES_TFHIRFormat : Array [TFHIRFormat] of String = ('', 'application/fhir+xml', 'application/fhir+json', 'text/turtle; x-dialect=fhir', 'text/fhir', 'text/xhtml');
+  CODES_TFHIRFormat : Array [TFHIRFormat] of String = ('Unspecified', 'XML', 'JSON', 'RDF/Turtle', 'Text Representation', 'Newline delimited JSON', 'XHTML');
+  MIMETYPES_TFHIRFormat : Array [TFHIRFormat] of String = ('', 'application/fhir+xml', 'application/fhir+json', 'text/turtle; x-dialect=fhir', 'text/fhir', 'application/x-ndjson', 'text/xhtml');
   Names_TFHIRAuthProvider : Array [TFHIRAuthProvider] of String = ('', 'Custom', 'Facebook', 'Google', 'HL7');
   USER_SCHEME_IMPLICIT = 'http://healthintersections.com.au/fhir/user/implicit';
   USER_SCHEME_PROVIDER : array [TFHIRAuthProvider] of String =

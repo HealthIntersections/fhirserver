@@ -175,7 +175,8 @@ uses
   QuestionnaireRenderer in '..\reference-platform\dstu3\QuestionnaireRenderer.pas',
   HTMLPublisher in '..\reference-platform\Support\HTMLPublisher.pas',
   QuestionnaireItemDialog in 'QuestionnaireItemDialog.pas' {QuestionnaireItemForm},
-  RegistryForm in 'RegistryForm.pas';
+  RegistryForm in 'RegistryForm.pas'{,
+  QuestionnaireFrame in 'QuestionnaireFrame.pas'};
 
 {$R *.res}
 

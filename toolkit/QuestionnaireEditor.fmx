@@ -61,6 +61,13 @@ object QuestionnaireEditorFrame: TQuestionnaireEditorFrame
         TabOrder = 2
         Text = 'Tree'
       end
+      object tvForm: TTreeViewItem
+        IsChecked = False
+        IsExpanded = False
+        IsSelected = False
+        TabOrder = 4
+        Text = 'Form'
+      end
     end
   end
   object Panel3: TPanel
@@ -74,10 +81,12 @@ object QuestionnaireEditorFrame: TQuestionnaireEditorFrame
       Size.Width = 744.000000000000000000
       Size.Height = 760.000000000000000000
       Size.PlatformDefault = False
-      TabIndex = 1
+      TabIndex = 4
       TabOrder = 0
       TabPosition = None
       Sizes = (
+        744s
+        760s
         744s
         760s
         744s
@@ -503,7 +512,7 @@ object QuestionnaireEditorFrame: TQuestionnaireEditorFrame
         CustomIcon = <
           item
           end>
-        IsSelected = True
+        IsSelected = False
         Size.Width = 8.000000000000000000
         Size.Height = 8.000000000000000000
         Size.PlatformDefault = False
@@ -929,6 +938,20 @@ object QuestionnaireEditorFrame: TQuestionnaireEditorFrame
             Text = 'CheckBox1'
           end
         end
+      end
+      object tbForm: TTabItem
+        CustomIcon = <
+          item
+          end>
+        IsSelected = True
+        Size.Width = 8.000000000000000000
+        Size.Height = 8.000000000000000000
+        Size.PlatformDefault = False
+        StyleLookup = ''
+        TabOrder = 0
+        Text = 'tbForm'
+        ExplicitSize.cx = 8.000000000000000000
+        ExplicitSize.cy = 8.000000000000000000
       end
     end
     object Panel1: TPanel

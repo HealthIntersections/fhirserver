@@ -64,7 +64,7 @@ const
 {$IFDEF UNIX}
   sqlite3_lib = 'sqlite3.so';
 {$ENDIF}
-{$IFDEF DARWIN}
+{$IFDEF MACOS}
   sqlite3_lib = 'libsqlite3.dylib';
 {$ENDIF}
 
@@ -1063,7 +1063,12 @@ procedure loadSQLite;
 implementation
 
 uses
+  {$IFDEF MSWINDOWS}
   Windows,
+  {$ENDIF}
+  {$IFDEF MACOS}
+  Macapi.CoreFoundation,
+  {$ENDIF}
   SysUtils;
 
 procedure loadSQLite;

@@ -130,9 +130,9 @@ type
     FIndexer : TFHIRIndexManager;
     FTestServer : Boolean;
 
-    procedure checkNotRedacted(meta : TFhirMeta; msg : String);
-    procedure markRedacted(meta : TFhirMeta);
-    procedure unmarkRedacted(meta : TFhirMeta);
+    procedure checkNotSubsetted(meta : TFhirMeta; msg : String);
+    procedure markSubsetted(meta : TFhirMeta);
+    procedure unmarkSubsetted(meta : TFhirMeta);
 
     function checkOkToStore(request: TFHIRRequest; response: TFHIRResponse; var secure : boolean) : boolean;
     function isOkToDeleteSecurityLabel(request: TFHIRRequest; response: TFHIRResponse; c : TFHIRCoding) : boolean;
@@ -502,6 +502,18 @@ type
     function formalURL : String; override;
   end;
 
+  TFhirConvertOperation = class (TFhirNativeOperation)
+  protected
+    function isWrite : boolean; override;
+    function owningResource : TFhirResourceType; override;
+  public
+    function Name : String; override;
+    function Types : TFhirResourceTypeSet; override;
+    function CreateDefinition(base : String) : TFHIROperationDefinition; override;
+    procedure Execute(context : TOperationContext; manager: TFHIROperationEngine; request: TFHIRRequest; response : TFHIRResponse); override;
+    function formalURL : String; override;
+  end;
+
   {$IFNDEF FHIR2}
   TServerTransformerServices = class (TTransformerServices)
   private
@@ -590,12 +602,12 @@ type
     FNextSearchSweep: TDateTime;
     FServerContext : TFHIRServerContext; // not linked
     FSpaces : TFHIRIndexSpaces;
+    FRegisteredValueSets : TDictionary<String, String>;
 
     FClaimQueue: TFHIRClaimList;
     FQueue: TFhirResourceList;
 
     FAppFolder : String;
-    FLoading: boolean;
 
     procedure LoadExistingResources(conn: TKDBConnection);
     procedure LoadSpaces(conn: TKDBConnection);
@@ -622,8 +634,7 @@ type
     procedure ProcessObservationValueCode(conn: TKDBConnection; key, subj : integer; isComp : boolean; categories, concepts, compConcepts : TArray<Integer>; dt, dtMin, dtMax : TDateTime; value : TFHIRCodeableConcept);
     procedure storeObservationConcepts(conn: TKDBConnection; ok : integer; isComp : boolean; categories, concepts, compConcepts : TArray<Integer>);
     function Authorize(conn :  TKDBConnection; patientId : String; patientKey, consentKey, sessionKey : integer; JWT : String; expiry : TDateTime) : string;
-    function TrackValueSet(id: String; bOnlyIfNew: boolean; conn: TKDBConnection): integer;
-    procedure identifyValueSets;
+    function TrackValueSet(id: String; conn: TKDBConnection; loading : boolean): integer;
   protected
     function GetTotalResourceCount: integer; override;
   public
@@ -679,7 +690,6 @@ type
 
     property ServerContext : TFHIRServerContext read FServerContext write FServerContext;
     Property DB: TKDBManager read FDB;
-    Property Loading : boolean read FLoading write FLoading;
   end;
 
 implementation
@@ -747,6 +757,7 @@ begin
   FOperations.add(TFhirAddMetaDataOperation.create);
   FOperations.add(TFhirDeleteMetaDataOperation.create);
   FOperations.add(TFhirDiffOperation.create);
+  FOperations.add(TFhirConvertOperation.create);
   {$IFNDEF FHIR2}
   FOperations.add(TFhirTransformOperation.create);
   {$ENDIF}
@@ -1030,7 +1041,7 @@ begin
       request.Resource.meta.lastUpdated := TDateTimeEx.makeUTC;
       request.Resource.meta.versionId := '1';
       updateProvenance(request.Provenance, request.ResourceName, sid, '1');
-      checkNotRedacted(request.Resource.meta, 'Creating resource');
+      checkNotSubsetted(request.Resource.meta, 'Creating resource');
       tags := TFHIRTagList.create;
       try
         tags.readTags(request.resource.meta);
@@ -1097,10 +1108,10 @@ begin
             FConnection.BindIntegerFromBoolean('ft', tags.hasTestingTag);
             FConnection.BindBlob('xc', EncodeResource(request.Resource, true, soFull));
             FConnection.BindBlob('jc', EncodeResource(request.Resource, false, soFull));
-            markRedacted(request.Resource.meta);
+            markSubsetted(request.Resource.meta);
             FConnection.BindBlob('xs', EncodeResource(request.Resource, true, soSummary));
             FConnection.BindBlob('js', EncodeResource(request.Resource, false, soSummary));
-            unmarkRedacted(request.Resource.meta);
+            unmarkSubsetted(request.Resource.meta);
             FConnection.Execute;
             CommitTags(tags, key);
           finally
@@ -2357,7 +2368,7 @@ begin
         begin
           request.Resource.meta.lastUpdated := TDateTimeEx.makeUTC;
           request.Resource.meta.versionId := inttostr(nvid);
-          CheckNotRedacted(request.Resource.meta, 'Updating Resource');
+          CheckNotSubsetted(request.Resource.meta, 'Updating Resource');
           updateProvenance(request.Provenance, request.ResourceName, request.Id, inttostr(nvid));
 
 
@@ -2391,10 +2402,10 @@ begin
             FConnection.BindBlob('tb', tags.json);
             FConnection.BindBlob('xc', EncodeResource(request.Resource, true, soFull));
             FConnection.BindBlob('jc', EncodeResource(request.Resource, false, soFull));
-            markRedacted(request.Resource.meta);
+            markSubsetted(request.Resource.meta);
             FConnection.BindBlob('xs', EncodeResource(request.Resource, true, soSummary));
             FConnection.BindBlob('js', EncodeResource(request.Resource, false, soSummary));
-            unmarkRedacted(request.Resource.meta);
+            unmarkSubsetted(request.Resource.meta);
             FConnection.Execute;
           finally
             FConnection.Terminate;
@@ -2589,7 +2600,7 @@ begin
           // don't need to recheck the approval on the tags, they must already have been loaded before the earlier check
           request.resource.meta.lastUpdated := TDateTimeEx.makeUTC;
           request.resource.meta.versionId := inttostr(nvid);
-          CheckNotRedacted(request.resource.meta, 'Patching Resource');
+          CheckNotSubsetted(request.resource.meta, 'Patching Resource');
           updateProvenance(request.Provenance, request.ResourceName, request.Id, inttostr(nvid));
           checkProposedContent(request, request.resource, tags);
           for i := 0 to tags.count - 1 do
@@ -2615,10 +2626,10 @@ begin
             FConnection.BindBlob('tb', tags.json);
             FConnection.BindBlob('xc', EncodeResource(request.resource, true, soFull));
             FConnection.BindBlob('jc', EncodeResource(request.resource, false, soFull));
-            markRedacted(request.resource.meta);
+            markSubsetted(request.resource.meta);
             FConnection.BindBlob('xs', EncodeResource(request.resource, true, soSummary));
             FConnection.BindBlob('js', EncodeResource(request.resource, false, soSummary));
-            unmarkRedacted(request.resource.meta);
+            unmarkSubsetted(request.resource.meta);
             FConnection.Execute;
           finally
             FConnection.Terminate;
@@ -2895,10 +2906,10 @@ begin
   end;
 end;
 
-procedure TFHIRNativeOperationEngine.checkNotRedacted(meta: TFhirMeta; msg: String);
+procedure TFHIRNativeOperationEngine.checkNotSubsetted(meta: TFhirMeta; msg: String);
 begin
-  if meta.HasTag('http://hl7.org/fhir/v3/ObservationValue', 'REDACTED') then
-    raise Exception.Create('Error '+msg+': This resource has been redacted, and cannot be used as the basis for this operation');
+  if meta.HasTag('http://hl7.org/fhir/v3/ObservationValue', 'SUBSETTED') then
+    raise Exception.Create('Error '+msg+': This resource has been subsetted, and cannot be used as the basis for this operation');
 end;
 
 function TFHIRNativeOperationEngine.hasActCodeSecurityLabel(res : TFHIRResource; codes : array of string) : boolean;
@@ -3125,14 +3136,14 @@ begin
       hasConfidentialitySecurityLabel(request.Resource, ['R', 'U', 'V', 'B', 'D', 'I', 'ETH', 'HIV', 'PSY', 'SDV', 'C', 'S', 'T']);
 end;
 
-procedure TFHIRNativeOperationEngine.markRedacted(meta: TFhirMeta);
+procedure TFHIRNativeOperationEngine.markSubsetted(meta: TFhirMeta);
 begin
-  meta.addTag('http://hl7.org/fhir/v3/ObservationValue', 'REDACTED', 'redacted');
+  meta.addTag('http://hl7.org/fhir/v3/ObservationValue', 'SUBSETTED', 'Subsetted');
 end;
 
-procedure TFHIRNativeOperationEngine.unmarkRedacted(meta: TFhirMeta);
+procedure TFHIRNativeOperationEngine.unmarkSubsetted(meta: TFhirMeta);
 begin
-  meta.removeTag('http://hl7.org/fhir/v3/ObservationValue', 'REDACTED');
+  meta.removeTag('http://hl7.org/fhir/v3/ObservationValue', 'SUBSETTED');
 end;
 
 procedure TFHIRNativeOperationEngine.updateProvenance(prv: TFHIRProvenance; rtype, id, vid: String);
@@ -5566,7 +5577,7 @@ begin
   comp := nil;
   needsObject := loadObjects;
 
-  if aFormat = ffJson then
+  if aFormat in [ffJson, ffNDJson] then
   begin
     s := 'Json';
     comp := TFHIRJsonParser;
@@ -7832,10 +7843,10 @@ begin
             tags.writeTags(parser.resource.meta);
             native(manager).FConnection.BindBlob('xc', native(manager).EncodeResource(parser.Resource, true, soFull));
             native(manager).FConnection.BindBlob('jc', native(manager).EncodeResource(parser.Resource, false, soFull));
-            native(manager).markRedacted(parser.resource.meta);
+            native(manager).markSubsetted(parser.resource.meta);
             native(manager).FConnection.BindBlob('xs', native(manager).EncodeResource(parser.Resource, true, soSummary));
             native(manager).FConnection.BindBlob('js', native(manager).EncodeResource(parser.Resource, false, soSummary));
-            native(manager).unmarkRedacted(parser.resource.meta);
+            native(manager).unmarkSubsetted(parser.resource.meta);
             TFHIRParameters(response.Resource).AddParameter('return', parser.resource.meta.link);
           end;
           native(manager).FConnection.Execute;
@@ -7990,10 +8001,10 @@ begin
             tags.writeTags(parser.resource.meta);
             native(manager).FConnection.BindBlob('xc', native(manager).EncodeResource(parser.Resource, true, soFull));
             native(manager).FConnection.BindBlob('jc', native(manager).EncodeResource(parser.Resource, false, soFull));
-            native(manager).markRedacted(parser.resource.meta);
+            native(manager).markSubsetted(parser.resource.meta);
             native(manager).FConnection.BindBlob('xs', native(manager).EncodeResource(parser.Resource, true, soSummary));
             native(manager).FConnection.BindBlob('js', native(manager).EncodeResource(parser.Resource, false, soSummary));
-            native(manager).unmarkRedacted(parser.resource.meta);
+            native(manager).unmarkSubsetted(parser.resource.meta);
             TFHIRParameters(response.Resource).AddParameter('return', parser.resource.meta.link);
           end;
           native(manager).FConnection.Execute;
@@ -8460,7 +8471,7 @@ begin
   FLock := TCriticalSection.Create('fhir-store');
   FQueue := TFhirResourceList.Create;
   FSpaces := TFHIRIndexSpaces.create;
-
+  FRegisteredValueSets := TDictionary<String,String>.create;
   FClaimQueue := TFHIRClaimList.Create;
 End;
 
@@ -8512,6 +8523,14 @@ begin
       FLastAuthorizationKey := conn.CountSQL('select max(AuthorizationKey) from Authorizations');
       FLastConnectionKey := conn.CountSQL('select max(ConnectionKey) from Connections');
       conn.execSQL('Update Sessions set Closed = ' +DBGetDate(conn.Owner.Platform) + ' where Closed = null');
+
+      Conn.SQL := 'Select ValueSetKey, URL from ValueSets';
+      Conn.Prepare;
+      conn.Execute;
+      while conn.FetchNext do
+        if not FRegisteredValueSets.ContainsKey(Conn.ColStringByName['URL']) then
+          FRegisteredValueSets.Add(Conn.ColStringByName['URL'], Conn.ColStringByName['ValueSetKey']);
+      conn.terminate;
 
       conn.SQL := 'Select TagKey, Kind, Uri, Code, Display from Tags';
       conn.Prepare;
@@ -8604,7 +8623,6 @@ begin
       ServerContext.TagManager.crosslink;
       ServerContext.Indexes.ReconcileIndexes(conn);
 
-
       if ServerContext.TerminologyServer <> nil then
       begin
         // the order here is important: specification resources must be loaded prior to stored resources
@@ -8620,7 +8638,6 @@ begin
 
         logt('Load Validation Pack from ' + fn);
         ServerContext.ValidatorContext.LoadFromDefinitions(fn);
-        identifyValueSets;
         if ServerContext.forLoad then
         begin
           logt('Load Custom Resources');
@@ -8731,6 +8748,7 @@ begin
   FQueue.free;
   FClaimQueue.free;
   FSpaces.Free;
+  FRegisteredValueSets.Free;
   FLock.free;
   FDB.Free;
   inherited;
@@ -9036,34 +9054,6 @@ begin
       recordStack(e);
       raise;
     end;
-  end;
-end;
-
-procedure TFHIRNativeStorageService.identifyValueSets;
-var
-  vs : TFhirValueSet;
-  vsl : TFHIRValueSetList;
-  conn : TKDBConnection;
-begin
-  logt('Register ValueSets');
-  Loading := true;
-  vsl := ServerContext.ValidatorContext.TerminologyServer.GetValueSetList;
-  try
-    conn := FDB.GetConnection('identifyValueSets');
-    try
-      for vs in vsl do
-        vs.Tags['tracker'] := inttostr(TrackValueSet(vs.url, true, conn));
-      conn.Release;
-    except
-      on e : Exception do
-      begin
-        conn.Error(e);
-        raise;
-      end;
-    end;
-  finally
-    Loading := false;
-    vsl.Free;
   end;
 end;
 
@@ -9700,19 +9690,28 @@ begin
 
 end;
 
-function TFHIRNativeStorageService.TrackValueSet(id: String; bOnlyIfNew : boolean; conn : TKDBConnection): integer;
+function TFHIRNativeStorageService.TrackValueSet(id: String; conn : TKDBConnection; loading : boolean): integer;
+var
+  s : String;
 begin
-   if FDB = nil then
-     exit(0);
-
-  result := Conn.CountSQL('Select ValueSetKey from ValueSets where URL = '''+SQLWrapString(id)+'''');
-  if result = 0 then
+  FLock.Lock;
+  try
+    if not FRegisteredValueSets.TryGetValue(id, s) then
+      s := '';
+  finally
+    FLock.Unlock;
+  end;
+  if s <> '' then
+  begin
+    result := StrToInt(s);
+    if not loading then
+      Conn.ExecSQL('Update ValueSets set NeedsIndexing = 1 where ValueSetKey = '+inttostr(result));
+  end
+  else
   begin
     result := FServerContext.TerminologyServer.NextValueSetKey;
     Conn.ExecSQL('Insert into ValueSets (ValueSetKey, URL, NeedsIndexing) values ('+inttostr(result)+', '''+SQLWrapString(id)+''', 1)');
   end
-  else if not bOnlyIfNew and not Loading then
-    Conn.ExecSQL('Update ValueSets set NeedsIndexing = 1 where ValueSetKey = '+inttostr(result));
 end;
 
 procedure TFHIRNativeStorageService.SeeResource(key, vkey, pvkey: integer; id: string; needsSecure, created : boolean; resource: TFhirResource; conn: TKDBConnection; reload: Boolean; session: TFhirSession);
@@ -9728,7 +9727,7 @@ begin
     if resource.ResourceType = frtValueSet then
     begin
       vs := TFHIRValueSet(resource);
-      vs.Tags['tracker'] := inttostr(TrackValueSet(vs.url, true, conn));
+      vs.Tags['tracker'] := inttostr(TrackValueSet(vs.url, conn, reload));
       ServerContext.TerminologyServer.SeeTerminologyResource(resource)
     end
     else if resource.ResourceType in [frtConceptMap {$IFNDEF FHIR2}, frtCodeSystem {$ENDIF}] then
@@ -10363,7 +10362,6 @@ var
   i: integer;
   cback: TKDBConnection;
 begin
-  Loading := true;
   conn.SQL :=
     'select Ids.ResourceKey, Versions.ResourceVersionKey, Ids.Id, Secure, JsonContent from Ids, Types, Versions where '
     + 'Versions.ResourceVersionKey = Ids.MostRecent and ' +
@@ -10406,7 +10404,6 @@ begin
     conn.terminate;
   end;
   FTotalResourceCount := i;
-  Loading := false;
 end;
 
 function TFHIRNativeStorageService.loadResource(conn: TKDBConnection; key: integer): TFhirResource;
@@ -10585,6 +10582,55 @@ end;
 function TFhirNativeOperation.native(engine: TFHIROperationEngine): TFHIRNativeOperationEngine;
 begin
   result := TFHIRNativeOperationEngine(engine);
+end;
+
+{ TFhirConvertOperation }
+
+function TFhirConvertOperation.CreateDefinition(base: String): TFHIROperationDefinition;
+begin
+  result := nil;
+end;
+
+procedure TFhirConvertOperation.Execute(context : TOperationContext; manager: TFHIROperationEngine; request: TFHIRRequest; response: TFHIRResponse);
+begin
+  try
+    response.Resource := request.Resource.link;
+    response.HTTPCode := 200;
+    response.Message := 'OK';
+    manager.AuditRest(request.session, request.requestId, request.ip, request.ResourceName, request.id, request.subid, 0, request.CommandType, request.Provenance, response.httpCode, 'diff', response.message);
+  except
+    on e: exception do
+    begin
+      manager.AuditRest(request.session, request.requestId, request.ip, request.ResourceName, request.id, request.subid, 0, request.CommandType, request.Provenance, 500, 'diff', e.message);
+      recordStack(e);
+      raise;
+    end;
+  end;
+end;
+
+function TFhirConvertOperation.formalURL: String;
+begin
+  result := 'http://hl7.org/fhir/OperationDefinition/Resource-Convert';
+end;
+
+function TFhirConvertOperation.isWrite: boolean;
+begin
+  result := false;
+end;
+
+function TFhirConvertOperation.Name: String;
+begin
+  result := 'convert';
+end;
+
+function TFhirConvertOperation.owningResource: TFhirResourceType;
+begin
+  result := frtNull;
+end;
+
+function TFhirConvertOperation.Types: TFhirResourceTypeSet;
+begin
+  result := [frtNull] + ALL_RESOURCE_TYPES;
 end;
 
 end.

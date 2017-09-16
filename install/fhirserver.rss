@@ -3,11 +3,31 @@
 	<channel>
 		<title>FHIRServer (reference server) Release history</title>
 		<link>http://www.healthintersections.com.au/FhirServer</link>
+		<item><title>FHIRServer release 1.0.179 2017-09-16</title>
+			<link>http://www.healthintersections.com.au/FhirServer/fhirserver64-1.0.179.exe</link>
+			<description>2017-09-16 (v1.0.179): try fix stability issue</description>
+		</item>
+<item><title>FHIRServer release 1.0.178 2017-09-15</title>
+			<link>http://www.healthintersections.com.au/FhirServer/fhirserver64-1.0.178.exe</link>
+			<description>2017-09-15 (v1.0.178): fix bug in $lookup</description>
+		</item>
+		<item><title>FHIRServer release 1.0.177 2017-09-15</title>
+			<link>http://www.healthintersections.com.au/FhirServer/fhirserver64-1.0.177.exe</link>
+			<description>2017-09-15 (v1.0.177): add $convert</description>
+		</item>
+		<item><title>FHIRServer release 1.0.176 2017-09-14</title>
+			<link>http://www.healthintersections.com.au/FhirServer/fhirserver64-1.0.176.exe</link>
+			<description>2017-09-14 (v1.0.176): NDJson support</description>
+		</item>
+		<item><title>FHIRServer release 1.0.175 2017-09-12</title>
+			<link>http://www.healthintersections.com.au/FhirServer/fhirserver64-1.0.175.exe</link>
+			<description>2017-09-12 (v1.0.175): debugging for semaphore release problem</description>
+		</item>
 		<item><title>FHIRServer release 1.0.174 2017-09-10</title>
 			<link>http://www.healthintersections.com.au/FhirServer/fhirserver64-1.0.174.exe</link>
 			<description>2017-09-10 (v1.0.174): fix OAuth login problems</description>
 		</item>
-<item><title>FHIRServer release 1.0.173 2017-09-10</title>
+		<item><title>FHIRServer release 1.0.173 2017-09-10</title>
 			<link>http://www.healthintersections.com.au/FhirServer/fhirserver64-1.0.173.exe</link>
 			<description>2017-09-10 (v1.0.173): fix bug with :not</description>
 		</item>

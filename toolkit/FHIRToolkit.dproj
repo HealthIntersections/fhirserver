@@ -368,7 +368,10 @@
             <Form>QuestionnaireItemForm</Form>
             <FormType>fmx</FormType>
         </DCCReference>
-        <DCCReference Include="RegistryForm.pas"/>
+        <DCCReference Include="RegistryForm.pas">
+            <Form>,
+  QuestionnaireFrame in &apos;QuestionnaireFrame.pas&apos;</Form>
+        </DCCReference>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>

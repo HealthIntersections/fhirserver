@@ -2247,7 +2247,9 @@ Begin
     begin
       if oRequest.Parameters.VarExists('_format') and (form = nil) and (oRequest.Parameters.GetVar('_format') <> '') then
         sContentType := oRequest.Parameters.GetVar('_format');
-      if StringStartsWithInsensitive(sContentType, 'application/json') or StringStartsWithInsensitive(sContentType, 'application/fhir+json') or
+      if StringStartsWithInsensitive(sContentType, 'application/x-ndjson') then
+        oRequest.PostFormat := ffNDJson
+      else if StringStartsWithInsensitive(sContentType, 'application/json') or StringStartsWithInsensitive(sContentType, 'application/fhir+json') or
         StringStartsWithInsensitive(sContentType, 'application/json+fhir') or StringStartsWithInsensitive(sContentType, 'json') or
         StringStartsWithInsensitive(sContentType, 'text/json') Then
         oRequest.PostFormat := ffJson
@@ -2266,7 +2268,9 @@ Begin
 
     if oRequest.Parameters.VarExists('_format') and (oRequest.Parameters.GetVar('_format') <> '') then
       sContentAccept := oRequest.Parameters.GetVar('_format');
-    if StringExistsSensitive(sContentAccept, 'application/json') or StringExistsSensitive(sContentAccept, 'application/fhir+json') or
+    if StringStartsWithInsensitive(sContentAccept, 'application/x-ndjson') then
+      oResponse.format := ffNDJson
+    else if StringExistsSensitive(sContentAccept, 'application/json') or StringExistsSensitive(sContentAccept, 'application/fhir+json') or
       StringExistsInsensitive(sContentAccept, 'json') Then
       oResponse.format := ffJson
     else if StringExistsSensitive(sContentAccept, 'text/xml') Then
@@ -2631,6 +2635,8 @@ begin
             // response.Expires := 0;
             response.Pragma := '';
           end
+          else if oResponse.format = ffNDJson then
+            oComp := TFHIRNDJsonComposer.Create(FServerContext.Validator.Context.link, oRequest.lang)
           else if oResponse.format = ffXml then
             oComp := TFHIRXMLComposer.Create(FServerContext.Validator.Context.link, oRequest.lang)
           else if oResponse.format = ffText then
