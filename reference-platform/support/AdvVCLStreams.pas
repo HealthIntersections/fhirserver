@@ -68,6 +68,7 @@ Type
 
     Public
       Constructor Create; Overload; Virtual;
+      Constructor Create(Stream : TAdvStream); Overload; Virtual;
       Destructor Destroy; Override;
 
       Function Read(Var aBuffer; iCount: LongInt): LongInt; Override;
@@ -174,6 +175,12 @@ Begin
   FStream := Nil;
 End;
 
+
+constructor TVCLStream.Create(Stream: TAdvStream);
+begin
+  Create;
+  FStream := Stream;
+end;
 
 Destructor TVCLStream.Destroy;
 Begin

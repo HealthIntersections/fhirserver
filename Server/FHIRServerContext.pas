@@ -32,8 +32,9 @@ POSSIBILITY OF SUCH DAMAGE.
 interface
 
 uses
-  SysUtils, Classes, Generics.Collections, kCritSct,
-  AdvObjects, AdvGenerics, AdvStringMatches, OIDSupport,
+  SysUtils, Classes, Generics.Collections,
+  OIDSupport, kCritSct, FileSupport, SystemSupport,
+  AdvObjects, AdvGenerics, AdvStringMatches,
   FHIRTypes, FHIRResources, FHIRConstants, FHIRIndexManagers, FHIRUtilities,
   FHIRValidator, ServerValidator, FHIRUserProvider, FHIRStorageService, ServerUtilities, TerminologyServer,
   FHIRSubscriptionManager, FHIRSessionManager, FHIRTagManager, JWTService, ClientApplicationVerifier, ApplicationCache;
@@ -100,6 +101,7 @@ Type
     FValidate: Boolean;
     FClientApplicationVerifier: TClientApplicationVerifier;
     FJWTServices: TJWTServices;
+    FTaskFolder: String;
 
     procedure SetUserProvider(const Value: TFHIRUserProvider);
     procedure SetTerminologyServer(const Value: TTerminologyServer);
@@ -137,6 +139,7 @@ Type
     property SystemId: String read FSystemId write FSystemId;
 
     property ForLoad : boolean read FForLoad write FForLoad;
+    property TaskFolder : String read FTaskFolder;
     Property SupportTransaction: Boolean read FSupportTransaction write FSupportTransaction;
     Property DoAudit: Boolean read FDoAudit write FDoAudit;
     Property SupportSystemHistory: Boolean read FSupportSystemHistory write FSupportSystemHistory;
@@ -330,6 +333,11 @@ begin
   {$IFNDEF FHIR2}
   FMaps := TAdvMap<TFHIRStructureMap>.create;
   {$ENDIF}
+  if DirectoryExists('c:\temp') then
+    FTaskFolder := 'c:\temp\fhir-server-tasks'
+  else
+    FTaskFolder := path([SystemTemp, 'fhir-server-tasks']);
+  ForceFolder(FTaskFolder);
 end;
 
 destructor TFHIRServerContext.Destroy;

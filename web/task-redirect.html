@@ -4,7 +4,9 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
-    <title>Terminology Home - FHIR Server [%id%] Version [%ver%]</title>
+  <title>${title}</title>
+  ${redirect}
+  
   <meta charset="utf-8"/>
   <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
   <meta content="http://hl7.org/fhir" name="author"/>
@@ -78,94 +80,8 @@
             <div class="row">
             	<div class="inner-wrapper">
  <div class="col-9">
-<h3>Terminology service Resources</h3>
-<p>
-Explore the resources available to this server: 
-</p>
-<ul>
-  <li><a href="tx/valuesets">Value Sets</a> on this server</a></li>
-  <li><a href="tx/codesystems">Code Systems</a></li> 
-  <li><a href="tx/codesystemproviders">Implicit Code Systems</a></li> 
-  <li><a href="tx/maps">Concept Maps</a> on this server</a></li>
-</ul>
-<p>
-</p>
-<hr/>
-<h3>Terminology service operations</h3>
-<div id="tabs">
-  <ul>
-    <li><a href="#tabs-find">Find a code</a></li>
-    <li><a href="#tabs-validate">Validate a Code</a></li>
-    <li><a href="#tabs-expand">Value Set Expansion</a></li>
-    <li><a href="#tabs-translate">Translate a Code</a></li>
-    <li><a href="#tabs-closure">Closure Maintenance</a></li>
-  </ul>
-  <div id="tabs-find">
-  
-<form method="GET" action="/tx">
-<input type="hidden" name="op" value="find"/>
-<table> 
-  <tr><td>System*</td><td><input type="text" name="system" value="[%param.system%]"></td></tr>
-  <tr><td>Version</td><td><input type="text" name="version" value="[%param.version%]"></td></tr>
-  <tr><td>Code*</td><td><input type="text" name="code" value="[%param.code%]"></td></tr>
-</table>
-<input type="submit" value="Find"/>
-</form>
-<hr/>
-[%find.results%]
-  </div>
-  
-  <div id="tabs-validate">
-  
-<form method="GET" action="/tx">
-<table> 
-  <input type="hidden" name="op" value="validate"/>
-  <tr><td>Value Set</td><td>[%valuesetlist%]</td></tr>
-  <tr><td>System*</td><td><input type="text" name="system" value="[%param.system%]"></td></tr>
-  <tr><td>Version</td><td><input type="text" name="version" value="[%param.version%]"></td></tr>
-  <tr><td>Code*</td><td><input type="text" name="code" value="[%param.code%]"></td></tr>
-  <tr><td>Display</td><td><input type="text" name="display" value="[%param.display%]"></td></tr>
-  <tr><td>Options</td><td><input type="checkbox" name="abstract" value="1" [%param.abstract%]> Allow Abstract Codes</td></tr>
-</table>
-<input type="submit" value="Validate"/>
-</form>
-<hr/>
-[%validate.results%]
-  </div>
-  
-  <div id="tabs-expand">
-<form method="GET" action="/tx">
-<table> 
-  <input type="hidden" name="op" value="expand"/>
-  <tr><td>Value Set</td><td colspan="2">[%valuesetlist%]</td></tr>
-  <tr><td>Filter</td><td><input type="text" name="filter" value="[%param.filter%]"></td></tr>
-  <tr><td>Options</td><td><input type="checkbox" name="nodetails" value="1" [%param.nodetails%]> Don't return value set definition</td></tr>
-</table>
-<input type="submit" value="Expand"/>
-</form>
-<hr/>
-[%expand.results%]
 
-  </div>
-  <div id="tabs-translate">
-<form method="GET" action="/tx">
-<table> 
-  <input type="hidden" name="op" value="translate"/>
-  <tr><td>System*</td><td><input type="text" name="system" value="[%param.system%]"></td></tr>
-  <tr><td>Version</td><td><input type="text" name="version" value="[%param.version%]"></td></tr>
-  <tr><td>Code*</td><td><input type="text" name="code" value="[%param.code%]"></td></tr>
-  <tr><td>Target Value Set</td><td>[%valuesetlist%]</td></tr>
-</table>
-<input type="submit" value="Translate"/>
-</form>
-<hr/>
-[%translate.results%]
-  </div>
-  <div id="tabs-closure">
-  <p>Not done yet</p>
-  </div>
-</div>
-
+    ${body}
 
 
 
@@ -198,52 +114,6 @@ Explore the resources available to this server:
 		<div class="container">  <!-- container -->
 		</div>  <!-- /container -->
 	</div>  <!-- /segment-post-footer -->
-
-
-
-
-
-      <!-- JS and analytics only. -->
-      <!-- Bootstrap core JavaScript
-================================================== -->
-  <!-- Placed at the end of the document so the pages load faster -->
-<script src="/assets/js/jquery.js"/>
-<script src="/dist/js/bootstrap.min.js"/>
-<script src="/assets/js/respond.min.js"/>
-
-<script src="/assets/js/fhir.js"/>
-
-  <!-- Analytics Below
-================================================== -->
-
-
-
-<script src="external/jquery/jquery.js"> </script>
-<script src="jquery-ui.min.js"> </script>
-<script>
-try {
-  var currentTabIndex = sessionStorage.getItem('fhir-tx-tab-index');
-}
-catch(exception){
-}
-
-if (!currentTabIndex)
-  currentTabIndex = '0';
-
-$( '#tabs' ).tabs({
-         active: currentTabIndex,
-         activate: function( event, ui ) {
-             var active = $('.selector').tabs('option', 'active');
-             currentTabIndex = ui.newTab.index();
-             document.activeElement.blur();
-             try {
-               sessionStorage.setItem('fhir-tx-tab-index', currentTabIndex);
-             }
-             catch(exception){
-             }
-         }
-     });
-</script>
 
 </body>
 </html>

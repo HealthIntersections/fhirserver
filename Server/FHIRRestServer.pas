@@ -85,11 +85,11 @@ Uses
   IdGlobalProtocols, IdWebSocket,
 
   EncodeSupport, GUIDSupport, DateSupport, BytesSupport, StringSupport,
-  ThreadSupport, CertificateSupport,
+  ThreadSupport, CertificateSupport, SystemSupport,
 
   AdvBuffers, AdvObjectLists, AdvStringMatches, AdvZipParts, AdvZipReaders,
   AdvVCLStreams, AdvMemories, AdvIntegerObjectMatches, AdvExceptions,
-  AdvGenerics,
+  AdvGenerics, AdvFiles,
 
   kCritSct, ParseMap, TextUtilities, KDBManager, HTMLPublisher, KDBDialects,
   AdvJSON, libeay32, RDFUtilities, JWT,
@@ -150,6 +150,33 @@ Type
     procedure Execute; override;
   public
     constructor Create(server: TFhirWebServer);
+  end;
+
+  TAsyncTaskThread = class(TThread)
+  private
+    FKey : integer;
+    FServer : TFhirWebServer;
+    FRequest : TFHIRRequest;
+    FFormat : TFHIRFormat;
+    procedure SetRequest(const Value: TFHIRRequest);
+    procedure SetServer(const Value: TFhirWebServer);
+
+    procedure status(status : TAsyncTaskStatus; message : String);
+    procedure callback(IntParam: Integer; StrParam: String);
+
+    procedure saveOutcome(response : TFHIRResponse);
+  protected
+    procedure Execute; override;
+  public
+    constructor Create();
+    destructor Destroy;
+
+    procedure kill;
+
+    property Key : integer read FKey write FKey;
+    property Format : TFHIRFormat read FFormat write FFormat;
+    Property Server : TFhirWebServer read FServer write SetServer;
+    Property Request : TFHIRRequest read FRequest write SetRequest;
   end;
 
   TFHIRWebServerClientInfo = class(TAdvObject)
@@ -253,6 +280,7 @@ Type
     FReverseProxyList: TAdvList<TReverseProxyInfo>;
     FCDSHooksServer: TCDSHooksServer;
     FIsTerminologyServerOnly: boolean;
+    FThreads : TList<TAsyncTaskThread>;
 
     function OAuthPath(secure: boolean): String;
     procedure PopulateConformanceAuth(rest: TFhirCapabilityStatementRest);
@@ -316,6 +344,8 @@ Type
     procedure SendError(response: TIdHTTPResponseInfo; status: word; format: TFHIRFormat; lang, message, url: String; e: exception; Session: TFHIRSession;
       addLogins: boolean; path: String; relativeReferenceAdjustment: integer; code: TFhirIssueTypeEnum);
     Procedure ProcessRequest(Context: TOperationContext; request: TFHIRRequest; response: TFHIRResponse);
+    Procedure ProcessAsyncRequest(Context: TOperationContext; request: TFHIRRequest; response: TFHIRResponse);
+    Procedure ProcessTaskRequest(Context: TOperationContext; request: TFHIRRequest; response: TFHIRResponse);
     function BuildRequest(lang, sBaseURL, sHost, sOrigin, sClient, sContentLocation, sCommand, sResource, sContentType, sContentAccept, sContentEncoding,
       sCookie, provenance, sBearer: String; oPostStream: TStream; oResponse: TFHIRResponse; var aFormat: TFHIRFormat; var redirect: boolean; form: TMimeMessage;
       bAuth, secure: boolean; out relativeReferenceAdjustment: integer; var pretty: boolean; Session: TFHIRSession; cert: TIdX509): TFHIRRequest;
@@ -332,6 +362,9 @@ Type
     procedure smsStatus(Msg: String);
     procedure loadConfiguration;
     procedure SetSourceProvider(const Value: TFHIRWebServerSourceProvider);
+    procedure StopAsyncTasks;
+    function makeTaskRedirect(base, id : String; msg : String; fmt : TFHIRFormat; names : TStringList) : string;
+    procedure CheckAsyncTasks;
   Public
     Constructor Create(ini: TFHIRServerIniFile; name: String; TerminologyServer: TTerminologyServer; Context: TFHIRServerContext);
     Destructor Destroy; Override;
@@ -520,6 +553,7 @@ var
 Begin
   Inherited Create;
   FLock := TCriticalSection.Create('fhir-rest');
+  FThreads := TList<TAsyncTaskThread>.create;
   FCertificateIdList := TStringList.Create;
   FName := Name;
   FIni := ini;
@@ -609,6 +643,7 @@ End;
 
 Destructor TFhirWebServer.Destroy;
 Begin
+  StopAsyncTasks;
   FCDSHooksServer.Free;
   carry.Free;
   FAdaptors.Free;
@@ -622,6 +657,7 @@ Begin
 {$ENDIF}
   FReverseProxyList.Free;
   FServerContext.Free;
+  FThreads.Free;
   FLock.Free;
   FCertificateIdList.Free;
   FSourceProvider.Free;
@@ -812,6 +848,54 @@ Begin
     FEmailThread.Terminate;
   StopServer;
 End;
+
+procedure TFhirWebServer.StopAsyncTasks;
+var
+  task : TAsyncTaskThread;
+  done : boolean;
+  i : integer;
+begin
+  done := false;
+  FLock.Lock;
+  try
+    for task in FThreads do
+    begin
+      task.Terminate;
+      done := true;
+    end;
+  finally
+    FLock.Unlock;
+  end;
+  if done then
+  begin
+    i := 0;
+    repeat
+      sleep(100);
+      inc(i);
+      done := true;
+      FLock.Lock;
+      try
+        for task in FThreads do
+          done := false;
+      finally
+        FLock.Unlock;
+      end;
+    until done or (i = 10);
+    if not done then
+    begin
+      FLock.Lock;
+      try
+        for task in FThreads do
+        begin
+          task.kill;
+          ServerContext.Storage.updateAsyncTaskStatus(task.Key, atsTerminated, 'Terminated due to system shut down');
+        end;
+      finally
+        FLock.Unlock;
+      end;
+    end;
+  end;
+end;
 
 Procedure TFhirWebServer.StartServer(active: boolean);
 Begin
@@ -1485,6 +1569,10 @@ Begin
                       Context.upload := upload;
                       if oRequest.CommandType = fcmdWebUI then
                         HandleWebUIRequest(oRequest, oResponse, secure)
+                      else if oRequest.commandType in [fcmdTask, fcmdDeleteTask] then
+                        ProcessTaskRequest(Context, oRequest, oResponse)
+                      else if (request.RawHeaders.Values['Prefer'] = 'respond-async') or (oRequest.Parameters.GetVar('_async') = 'true') then
+                        ProcessAsyncRequest(Context, oRequest, oResponse)
                       else
                         ProcessRequest(Context, oRequest, oResponse);
                     finally
@@ -1520,6 +1608,8 @@ Begin
                     response.CustomHeaders.Add('Link: ' + oResponse.link_List.AsHeader);
                   if oResponse.originalId <> '' then
                     response.CustomHeaders.Add('X-Original-Location: ' + oResponse.originalId);
+                  if oResponse.Progress <> '' then
+                    response.CustomHeaders.Add('X-Progress: ' + oResponse.Progress);
                   if oResponse.ContentLocation <> '' then
                     response.CustomHeaders.Add('Content-Location: ' + oResponse.ContentLocation);
                   if oResponse.Location <> '' then
@@ -2577,7 +2667,7 @@ Procedure TFhirWebServer.ProcessOutput(oRequest: TFHIRRequest; oResponse: TFHIRR
 var
   oComp: TFHIRComposer;
   b: TBytes;
-  stream: TMemoryStream;
+  stream: TStream;
   ownsStream: boolean;
   comp: TIdCompressorZLib;
   Body: boolean;
@@ -2594,7 +2684,10 @@ begin
   if Body and (request.RawHeaders.Values['Prefer'] = 'return=OperationOutcome') and (oResponse.outcome <> nil) then
     res := oResponse.outcome;
 
-  stream := TMemoryStream.Create;
+  if oResponse.Stream <> nil then
+    stream := TVCLStream.Create(oResponse.Stream.Link)
+  else
+    stream := TMemoryStream.Create;
   try
     ownsStream := true;
     if res <> nil then
@@ -2663,7 +2756,7 @@ begin
         end;
       end
     end
-    else
+    else if oResponse.Stream = nil then
     begin
       if response.contentType = '' then
         response.contentType := 'text/plain';
@@ -2722,6 +2815,34 @@ end;
 function sNow: String;
 begin
   result := FormatDateTime('c', Now);
+end;
+
+procedure TFhirWebServer.ProcessAsyncRequest(Context: TOperationContext; request: TFHIRRequest; response: TFHIRResponse);
+var
+  thread : TAsyncTaskThread;
+  id : String;
+begin
+  thread := TAsyncTaskThread.create;
+  FLock.Lock;
+  try
+    FThreads.add(thread);
+  finally
+    FLock.Unlock;
+  end;
+  id := NewGuidId;
+  thread.key := ServerContext.Storage.createAsyncTask(request.url, id, response.Format);
+  thread.server := self.link as TFhirWebServer;
+  thread.request := request.Link;
+  thread.Format := response.Format;
+  thread.Start;
+  response.HTTPCode := 202;
+  response.Message := 'Accepted';
+  response.ContentLocation := request.baseUrl+'task/'+id;
+  if response.format = ffXhtml then
+  begin
+    response.ContentType := 'text/html';
+    response.Body := makeTaskRedirect(request.baseUrl, id, 'Preparing', response.Format, nil);
+  end;
 end;
 
 procedure TFhirWebServer.ProcessRequest(Context: TOperationContext; request: TFHIRRequest; response: TFHIRResponse);
@@ -2811,6 +2932,136 @@ begin
   else
     Raise ERestfulAuthenticationNeeded.Create('TFhirWebServer', 'HTTPRequest', GetFhirMessage('MSG_AUTH_REQUIRED', request.AcceptLanguage),
       'Authentication required', HTTP_ERR_UNAUTHORIZED);
+end;
+
+procedure TFhirWebServer.ProcessTaskRequest(Context: TOperationContext; request: TFHIRRequest; response: TFHIRResponse);
+var
+  status : TAsyncTaskStatus;
+  message, s : String;
+  expires : TDateTimeEx;
+  names : TStringList;
+  outcome : TBytes;
+  fmt : TFHIRFormat;
+  key, i : integer;
+  l : TFhirBundleLink;
+  n, f : string;
+begin
+  names := TStringList.Create;
+  try
+    if FServerContext.Storage.fetchTaskDetails(request.Id, key, status, fmt, message, expires, names, outcome) then
+    begin
+      if request.CommandType = fcmdDeleteTask then
+      begin
+        ServerContext.Storage.MarkTaskDeleted(key);
+        for n in names do
+        begin
+          f := Path([ServerContext.TaskFolder, 'task-'+inttostr(key)+'-'+n+EXT_WEB_TFHIRFormat[fmt]]);
+          if FileExists(f) then
+            DeleteFile(f);
+        end;
+        response.HTTPCode := 204;
+        response.Message := 'Deleted';
+      end
+      else if request.subId <> '' then
+      begin
+        if (fmt <> response.Format) then
+        begin
+          response.HTTPCode := 500;
+          response.Message := 'Server Error';
+          response.resource := BuildOperationOutcome(request.Lang, 'Mime Type mismatch. Original request was for '+MIMETYPES_TFHIRFormat[fmt]+', current request is for '+MIMETYPES_TFHIRFormat[response.format]);
+        end
+        else
+        begin
+          f := Path([ServerContext.TaskFolder, 'task-'+inttostr(key)+'-'+request.SubId]);
+          if not FileExists(f) then
+          begin
+            response.HTTPCode := 500;
+            response.Message := 'Server Error';
+            response.resource := BuildOperationOutcome(request.Lang, 'The source for file '+ExtractFileName(f)+' could not be found');
+          end
+          else
+          begin
+            response.HTTPCode := 200;
+            response.Message := 'OK';
+            response.Stream := TAdvFile.create(f, fmOpenRead + fmShareDenyWrite);
+            response.ContentType := MIMETYPES_TFHIRFormat[response.format];
+            FServerContext.Storage.recordDownload(key, request.subId);
+          end;
+        end;
+      end
+      else
+      begin
+        case status of
+          atsCreated, atsWaiting, atsProcessing :
+            begin
+            response.HTTPCode := 202;
+            response.Message := 'Accepted';
+            response.ContentLocation := request.baseUrl+'task/'+request.id;
+            if response.format = ffXhtml then
+            begin
+              response.ContentType := 'text/html';
+              response.Body := makeTaskRedirect(request.baseUrl, request.id, '', response.Format, nil);
+            end;
+            response.Progress := Message;
+            end;
+          atsComplete:
+            begin
+            // check format
+            if (fmt <> response.Format) then
+              raise Exception.Create('Error: the request format () does not match the task format ()');
+            response.HTTPCode := 200;
+            response.Message := 'OK';
+            for s in names do
+            begin
+              l := TFhirBundleLink.Create;
+              try
+                l.url := request.baseUrl+'task/'+request.id+'/'+s+EXT_WEB_TFHIRFormat[fmt];
+                l.relation := 'xxx';
+                response.link_list.add(l.Link);
+              finally
+                l.Free;
+              end;
+            end;
+            if response.format = ffXhtml then
+            begin
+              response.ContentType := 'text/html';
+              response.Body := makeTaskRedirect(request.baseUrl, request.id, '', fmt, names);
+            end;
+            end;
+          atsTerminated, atsError :
+            begin
+            response.HTTPCode := 500;
+            response.Message := 'Error';
+            fmt := ffJson;
+            if length(outcome) > 0 then
+              response.resource := bytesToResource(outcome, fmt)
+            else
+              response.resource := BuildOperationOutcome(request.Lang, message);
+            end;
+          atsAborted:
+            begin
+            response.HTTPCode := 400;
+            response.Message := 'Error';
+            response.resource := BuildOperationOutcome(request.Lang, 'This task has been cancelled');
+            end;
+          atsDeleted:
+            begin
+            response.HTTPCode := 404;
+            response.Message := 'Not found';
+            response.Resource := BuildOperationOutcome('en', 'Task has been deleted', IssueTypeUnknown);
+            end;
+        end;
+      end
+    end
+    else
+    begin
+      response.HTTPCode := 404;
+      response.Message := 'Not found';
+      response.Resource := BuildOperationOutcome('en', 'Unknown task', IssueTypeUnknown);
+    end;
+  finally
+    names.Free;
+  end;
 end;
 
 function TFhirWebServer.BuildFhirAuthenticationPage(lang, host, path, Msg: String; secure: boolean): String;
@@ -3063,6 +3314,34 @@ begin
   end;
 end;
 
+function TFhirWebServer.makeTaskRedirect(base, id: String; msg : String; fmt : TFHIRFormat; names: TStringList): string;
+var
+  s, n, body, r : String;
+begin
+  s := FSourceProvider.getSource('task-redirect.html');
+  if (names <> nil) and (names.count > 0) then
+  begin
+    r := '';
+    body := '<p>';
+    for n in names do
+      body := body+'<a href="'+base+'task/'+id+'/'+n+EXT_WEB_TFHIRFormat[fmt]+'">'+n+EXT_WEB_TFHIRFormat[fmt]+'</a><br/>'+#13#10;
+    body := body+'</p>';
+  end
+  else
+  begin
+    body := '<p>';
+    body := body+'Working: '+msg;
+    body := body+'</p>';
+    body := body+'<p>';
+    body := body+'<a href="'+base+'task/'+id+'">Try Again</a>';
+    body := body+'</p>';
+    r := '<META HTTP-EQUIV="Refresh" CONTENT="30;URL='+base+'task/'+id+'"/>'
+  end;
+  result := s.Replace('${body}', body);
+  result := result.Replace('${redirect}', r);
+  result := result.Replace('${title}', 'Task '+id);
+end;
+
 procedure TFhirWebServer.MarkEntry(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo);
 var
   ci: TFHIRWebServerClientInfo;
@@ -3293,6 +3572,30 @@ constructor ERestfulAuthenticationNeeded.Create(const sSender, sMethod, sReason,
 begin
   Create(sSender, sMethod, sReason, aStatus, IssueTypeLogin);
   FMsg := sMsg;
+end;
+
+procedure TFhirWebServer.CheckAsyncTasks;
+var
+  tasks : TAdvList<TAsyncTaskInformation>;
+  task : TAsyncTaskInformation;
+  n, fn : string;
+begin
+  tasks := TAdvList<TAsyncTaskInformation>.create;
+  try
+    ServerContext.Storage.fetchExpiredTasks(tasks);
+    for task in tasks do
+    begin
+      ServerContext.Storage.MarkTaskDeleted(task.key);
+      for n in task.names do
+      begin
+        fn := Path([ServerContext.TaskFolder, 'task-'+inttostr(task.key)+'-'+n+EXT_WEB_TFHIRFormat[task.format]]);
+        if FileExists(fn) then
+          DeleteFile(fn);
+      end;
+    end;
+  finally
+    tasks.free;
+  end;
 end;
 
 function TFhirWebServer.CheckSessionOK(Session: TFHIRSession; ip: string): boolean;
@@ -3674,7 +3977,7 @@ begin
         end;
         FLastSweep := Now;
       end;
-      if FServer.ServerContext.ForLoad then
+      if not FServer.ServerContext.ForLoad then
       begin
         if (not terminated) then
           try
@@ -3682,13 +3985,19 @@ begin
             FServer.FServerContext.TerminologyServer.BuildIndexes(false);
           except
           end;
+      end;
         if (not terminated) then
           try
             FServer.ServerContext.TerminologyServer.MaintenanceThreadStatus := 'Processing Observations';
-            // FServer.FServerContext.Storage.ProcessObservations;
+             FServer.FServerContext.Storage.ProcessObservations;
           except
           end;
-      end;
+        if (not terminated) then
+          try
+            FServer.ServerContext.TerminologyServer.MaintenanceThreadStatus := 'Checking Async Tasks';
+            FServer.CheckAsyncTasks;
+          except
+          end;
     until terminated;
     try
       FServer.ServerContext.TerminologyServer.MaintenanceThreadStatus := 'dead';
@@ -3788,8 +4097,132 @@ begin
   end;
 end;
 
+{ TAsyncTaskThread }
+
+procedure TAsyncTaskThread.callback(IntParam: Integer; StrParam: String);
+begin
+  status(atsProcessing, StrParam);
+end;
+
+constructor TAsyncTaskThread.Create;
+begin
+  inherited Create(true); // suspended
+end;
+
+destructor TAsyncTaskThread.Destroy;
+begin
+  FRequest.Free;
+  FServer.Free;
+  inherited;
+end;
+
+procedure TAsyncTaskThread.Execute;
+var
+  response : TFHIRResponse;
+  op: TFHIROperationEngine;
+  t: cardinal;
+  us, cs: String;
+  ctxt : TOperationContext;
+begin
+  try
+    status(atsWaiting, 'Waiting to start');
+    sleep(100);
+    response := TFHIRResponse.Create;
+    try
+      response.format := FFormat;
+      t := GetTickCount;
+      if request.Session = nil then // during OAuth only
+        us := 'user=(in-oauth)'
+      else
+        us := 'user=' + request.Session.UserName;
+      if request.CommandType = fcmdOperation then
+        cs := '$' + request.OperationName
+      else
+        cs := 'cmd=' + CODES_TFHIRCommandType[request.CommandType];
+      logt('Start Task ('+inttostr(key)+'): ' + cs + ', type=' + request.ResourceName + ', id=' + request.id + ', ' + us + ', params=' + request.Parameters.Source);
+      op := FServer.ServerContext.Storage.createOperationContext(request.lang);
+      try
+        op.OnPopulateConformance := FServer.PopulateConformance;
+        ctxt := TOperationContext.create(false, callback, 'starting');
+        try
+          op.Execute(ctxt, request, response);
+        finally
+          ctxt.Free;
+        end;
+        FServer.ServerContext.Storage.yield(op, nil);
+      except
+        on e: exception do
+        begin
+          FServer.ServerContext.Storage.yield(op, e);
+          raise;
+        end;
+      end;
+      saveOutcome(response);
+      status(atsComplete, 'Complete');
+      t := GetTickCount - t;
+      logt('Finish Task ('+inttostr(key)+'): ' + cs + ', type=' + request.ResourceName + ', id=' + request.id + ', ' + us + ', params=' + request.Parameters.Source + '. rt = ' + inttostr(t));
+    finally
+      response.Free;
+    end;
+  except
+    on e : exception do
+    begin
+      logt('Error Task ('+inttostr(key)+'): ' + cs + ', type=' + request.ResourceName + ', id=' + request.id + ', ' + us + ', params=' + request.Parameters.Source + '. rt = ' + inttostr(t)+': '+e.Message);
+      status(atsError, e.Message);
+    end;
+  end;
+  FServer.FLock.Lock;
+  try
+    FServer.FThreads.Remove(self);
+  finally
+    FServer.FLock.Unlock;
+  end;
+  FreeOnTerminate := true;
+end;
+
+procedure TAsyncTaskThread.kill;
+begin
+  TerminateThread(ThreadHandle, 1);
+end;
+
+procedure TAsyncTaskThread.saveOutcome;
+var
+  names : TStringList;
+  f : TFileStream;
+begin
+  names := TStringList.Create;
+  try
+    names.Add('content');
+    f := TFileStream.Create(Path([FServer.ServerContext.TaskFolder, 'task-'+inttostr(key)+'-content'+EXT_WEB_TFHIRFormat[format]]), fmCreate);
+    try
+      // ffNDJson, { new line delimited JSON }
+      resourceToStream(response.Resource, f, FFormat, false);
+    finally
+      f.Free;
+    end;
+    FServer.ServerContext.Storage.MarkTaskForDownload(key, names);
+  finally
+    names.Free;
+  end;
+end;
+
+procedure TAsyncTaskThread.SetRequest(const Value: TFHIRRequest);
+begin
+  FRequest.Free;
+  FRequest := Value;
+end;
+
+procedure TAsyncTaskThread.SetServer(const Value: TFhirWebServer);
+begin
+  FServer.Free;
+  FServer := Value;
+end;
+
+procedure TAsyncTaskThread.status(status: TAsyncTaskStatus; message: String);
+begin
+  FServer.serverContext.Storage.updateAsyncTaskStatus(key, status, message);
+end;
+
 Initialization
-
-IdSSLOpenSSLHeaders.Load;
-
+  IdSSLOpenSSLHeaders.Load;
 End.

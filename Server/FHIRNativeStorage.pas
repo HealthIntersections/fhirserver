@@ -171,7 +171,7 @@ type
     procedure CheckCompartments(actual, allowed : String);
     procedure executeReadInTransaction(entry : TFhirBundleEntryRequest; request: TFHIRRequest; response : TFHIRResponse);
 
-    procedure processIncludes(session : TFhirSession; secure : boolean; _includes, _reverseIncludes : String; bundle : TFHIRBundle; keys : TKeyList; field : String; comp : TFHIRParserClass);
+    procedure processIncludes(session : TFhirSession; secure : boolean; _includes, _reverseIncludes : String; bundle : TFHIRBundleBuilder; keys : TKeyList; field : String; comp : TFHIRParserClass);
     procedure ReIndex;
     procedure CheckCreateNarrative(request : TFHIRRequest);
     procedure CreateIndexer;
@@ -215,7 +215,7 @@ type
 
     function opAllowed(resource : string; command : TFHIRCommandType) : Boolean; override;
 
-    function AddResourceTobundle(bundle : TFHIRBundle; isSecure : boolean; base : String; field : String; comp : TFHIRParserClass; purpose : TFhirSearchEntryModeEnum; makeRequest : boolean; var type_ : String) : TFHIRBundleEntry; overload;
+    function AddResourceTobundle(bundle : TFHIRBundleBuilder; isSecure : boolean; base : String; field : String; comp : TFHIRParserClass; purpose : TFhirSearchEntryModeEnum; makeRequest : boolean; var type_ : String) : TFHIRBundleEntry; overload;
     procedure DefineConformanceResources(base : String); // called after database is created
 
     // called when kernel actually wants to process against the store
@@ -593,6 +593,7 @@ type
     FLastResourceKey: integer;
     FLastEntryKey: integer;
     FLastCompartmentKey: integer;
+    FLastAsyncTaskKey : integer;
     FLastObservationKey : integer;
     FLastObservationCodeKey : integer;
     FLastObservationQueueKey : integer;
@@ -652,6 +653,7 @@ type
     function NextResourceKeyGetId(aType: String; var id: string): integer;
     function NextEntryKey: integer;
     function NextCompartmentKey: integer;
+    function NextAsyncTaskKey: integer;
     function nextObservationKey : integer;
     function nextObservationCodeKey : integer;
     function NextAuthorizationKey : integer;
@@ -687,6 +689,13 @@ type
 
     function FetchResourceCounts(comps : String) : TStringList; override;
     function FetchResource(key : integer) : TFHIRResource; override;
+    function createAsyncTask(url, id : string; format : TFHIRFormat) : integer; override;
+    procedure updateAsyncTaskStatus(key : integer; status : TAsyncTaskStatus; message : String); override;
+    procedure MarkTaskForDownload(key : integer; names : TStringList); override;
+    function fetchTaskDetails(id : String; var key : integer; var status : TAsyncTaskStatus; var fmt : TFHIRFormat; var message : String; var expires : TDateTimeEx; names : TStringList; var outcome : TBytes): boolean; override;
+    procedure recordDownload(key : integer; name : String); override;
+    procedure fetchExpiredTasks(tasks : TAdvList<TAsyncTaskInformation>); override;
+    procedure MarkTaskDeleted(key : integer); override;
 
     property ServerContext : TFHIRServerContext read FServerContext write FServerContext;
     Property DB: TKDBManager read FDB;
@@ -833,13 +842,39 @@ begin
   inherited;
 end;
 
-function TFHIRNativeOperationEngine.AddResourceTobundle(bundle : TFHIRBundle; isSecure : boolean; base : String; field : String; comp : TFHIRParserClass; purpose : TFhirSearchEntryModeEnum; makeRequest : boolean; var type_ : String) : TFHIRBundleEntry;
+function TFHIRNativeOperationEngine.AddResourceTobundle(bundle : TFHIRBundleBuilder; isSecure : boolean; base : String; field : String; comp : TFHIRParserClass; purpose : TFhirSearchEntryModeEnum; makeRequest : boolean; var type_ : String) : TFHIRBundleEntry;
 var
   parser : TFhirParser;
   mem : TBytesStream;
   sId, sAud : String;
   entry : TFHIRBundleEntry;
   op : TFhirOperationOutcome;
+  procedure addRequest(entry : TFHIRBundleEntry);
+  begin
+    if (makeRequest) then
+    begin
+      entry.response := TFhirBundleEntryResponse.Create;
+      entry.response.lastModified := TDateTimeEx.fromTS(FConnection.ColTimeStampByName['StatedDate'], dttzUTC);
+      entry.response.etag := 'W/'+FConnection.ColStringByName['VersionId'];
+      sAud := FConnection.ColStringByName['AuditId'];
+      if sAud <> '' then
+        entry.link_List.AddRelRef('audit', 'AuditEvent/'+sAud);
+
+      entry.request := TFhirBundleEntryRequest.Create;
+      if FConnection.ColIntegerByName['Status'] = 1 then
+      begin
+        entry.request.url := AppendForwardSlash(base)+type_+'/'+sId;
+        entry.request.method := HttpVerbPUT;
+        entry.Tags['opdesc'] := 'Updated by '+FConnection.ColStringByName['Name']+' at '+entry.response.lastModified.ToString+ '(UTC)';
+      end
+      else
+      begin
+        entry.request.method := HttpVerbPOST;
+        entry.request.url := AppendForwardSlash(base)+type_;
+        entry.Tags['opdesc'] := 'Created by '+FConnection.ColStringByName['Name']+' at '+entry.response.lastModified.ToString+ '(UTC)';
+      end;
+    end;
+  end;
 begin
   sId := FConnection.ColStringByName['Id'];
   type_ := FConnection.colStringByName['ResourceName'];
@@ -848,7 +883,6 @@ begin
     result := TFHIRBundleEntry.Create;
     try
       result.fullUrl := AppendForwardSlash(base)+type_+'/'+sId;
-      bundle.entryList.add(result.Link);
       result.request := TFhirBundleEntryRequest.Create;
       result.request.url := result.fullUrl;
       result.request.method := HttpVerbDELETE;
@@ -859,37 +893,51 @@ begin
       sAud := FConnection.ColStringByName['AuditId'];
       if sAud <> '' then
         result.link_List.AddRelRef('audit', 'AuditEvent/'+sAud);
+      addRequest(result);
+      bundle.addEntry(result.Link);
     finally
       result.Free;
     end;
   end
   else if not isSecure and (FConnection.ColIntegerByName['Secure'] = 1) then
   begin
-    for entry in bundle.entryList do
-      if (entry.resource <> nil) and entry.HasTag(OP_MASK_TAG) then
-        exit;
-    op := BuildOperationOutcome('en', 'Some resources have been omitted from this bundle because they are labelled with a with a security tag that means this server will only send it if the connection is secure', IssueTypeSuppressed);
-    bundle.entryList.Append.resource := op;
-    op.Tags[OP_MASK_TAG] := 'secure';
+    if bundle.hasSecureOp then
+      exit;
+    result := TFHIRBundleEntry.Create;
+    try
+      result.resource := BuildOperationOutcome('en', 'Some resources have been omitted from this bundle because they are labelled with a with a security tag that means this server will only send it if the connection is secure', IssueTypeSuppressed);
+      result.resource.Tags[OP_MASK_TAG] := 'secure';
+      addRequest(result);
+      bundle.addEntry(result.link);
+      bundle.hasSecureOp := true;
+    finally
+      result.Free;
+    end;
   end
   else
   begin
     if comp = nil then
     begin
-      result := bundle.entryList.Append;
-      result.Tag := TAdvBuffer.create;
-      result.fullUrl := AppendForwardSlash(base)+type_+'/'+sId;
-      TAdvBuffer(result.Tag).AsBytes := FConnection.ColBlobByName[field];
-      if (purpose <> SearchEntryModeNull) then
-      begin
-        result.search := TFhirBundleEntrySearch.Create;
-        result.search.mode := purpose;
-        if (purpose = SearchEntryModeMatch) and not FConnection.ColNullByName['Score1'] then
+      result := TFHIRBundleEntry.Create;
+      try
+        result.Tag := TAdvBuffer.create;
+        result.fullUrl := AppendForwardSlash(base)+type_+'/'+sId;
+        TAdvBuffer(result.Tag).AsBytes := FConnection.ColBlobByName[field];
+        if (purpose <> SearchEntryModeNull) then
         begin
-          result.search.score := FloatToStr(FConnection.ColIntegerByName['Score1'] / 100);
-          if FConnection.ColIntegerByName['Score2'] > 0 then
-            result.search.addExtension('http://hl7.org/fhir/StructureDefinition/patient-mpi-match').value := TFhirCode.Create(CODES_TMPICertainty[TMPICertainty(FConnection.ColIntegerByName['Score2'])]);
+          result.search := TFhirBundleEntrySearch.Create;
+          result.search.mode := purpose;
+          if (purpose = SearchEntryModeMatch) and not FConnection.ColNullByName['Score1'] then
+          begin
+            result.search.score := FloatToStr(FConnection.ColIntegerByName['Score1'] / 100);
+            if FConnection.ColIntegerByName['Score2'] > 0 then
+              result.search.addExtension('http://hl7.org/fhir/StructureDefinition/patient-mpi-match').value := TFhirCode.Create(CODES_TMPICertainty[TMPICertainty(FConnection.ColIntegerByName['Score2'])]);
+          end;
         end;
+        addRequest(result);
+        bundle.addEntry(result.link);
+      finally
+        result.Free;
       end;
     end
     else
@@ -916,8 +964,9 @@ begin
                   entry.search.addExtension('http://hl7.org/fhir/StructureDefinition/patient-mpi-match').value := TFhirCode.Create(CODES_TMPICertainty[TMPICertainty(FConnection.ColIntegerByName['Score2'])]);
               end;
             end;
-            bundle.entryList.add(entry.Link);
             result := entry;
+            addRequest(result);
+            bundle.addEntry(entry.Link);
           finally
             entry.Free;
           end;
@@ -926,29 +975,6 @@ begin
         end;
       finally
         mem.Free;
-      end;
-    end;
-    if (makeRequest) then
-    begin
-      result.response := TFhirBundleEntryResponse.Create;
-      result.response.lastModified := TDateTimeEx.fromTS(FConnection.ColTimeStampByName['StatedDate'], dttzUTC);
-      result.response.etag := 'W/'+FConnection.ColStringByName['VersionId'];
-      sAud := FConnection.ColStringByName['AuditId'];
-      if sAud <> '' then
-        result.link_List.AddRelRef('audit', 'AuditEvent/'+sAud);
-
-      result.request := TFhirBundleEntryRequest.Create;
-      if FConnection.ColIntegerByName['Status'] = 1 then
-      begin
-        result.request.url := AppendForwardSlash(base)+type_+'/'+sId;
-        result.request.method := HttpVerbPUT;
-        result.Tags['opdesc'] := 'Updated by '+FConnection.ColStringByName['Name']+' at '+result.response.lastModified.ToString+ '(UTC)';
-      end
-      else
-      begin
-        result.request.method := HttpVerbPOST;
-        result.request.url := AppendForwardSlash(base)+type_;
-        result.Tags['opdesc'] := 'Created by '+FConnection.ColStringByName['Name']+' at '+result.response.lastModified.ToString+ '(UTC)';
       end;
     end;
   end;
@@ -1556,7 +1582,7 @@ end;
 procedure TFHIRNativeOperationEngine.ExecuteHistory(request: TFHIRRequest; response: TFHIRResponse);
 var
   offset, count, i : integer;
-  bundle : TFHIRBundle;
+  bundle : TFHIRBundleBuilder;
   ok, reverse : boolean;
   id : String;
   dummy : TFHIRSummaryOption;
@@ -1601,27 +1627,26 @@ begin
       if (not needsObject) then
         comp := nil;
 
-      bundle := TFHIRBundle.Create(BundleTypeHistory);
+      bundle := TFHIRBundleBuilderSimple.Create(TFHIRBundle.Create(BundleTypeHistory));
       try
         if response.Format <> ffUnspecified then
           base := base + '&_format='+MIMETYPES_TFHIRFormat[response.Format]+'&';
-        bundle.total := inttostr(total);
-        bundle.Tags['sql'] := sql;
-        bundle.meta := TFHIRMeta.create;
-        bundle.meta.lastUpdated := TDateTimeEx.makeUTC;
-        bundle.link_List.AddRelRef('self', base+link);
+        bundle.setTotal(total);
+        bundle.Tag('sql', sql);
+        bundle.setLastUpdated(TDateTimeEx.makeUTC);
+        bundle.addLink('self', base+link);
 
-        bundle.link_List.AddRelRef('self', base+link);
+        bundle.addLink('self', base+link);
 
         if (offset > 0) or (Count < total) then
         begin
-          bundle.link_List.AddRelRef('first', base+link+'&'+SEARCH_PARAM_NAME_OFFSET+'=0&'+SEARCH_PARAM_NAME_COUNT+'='+inttostr(Count));
+          bundle.addLink('first', base+link+'&'+SEARCH_PARAM_NAME_OFFSET+'=0&'+SEARCH_PARAM_NAME_COUNT+'='+inttostr(Count));
           if offset - count >= 0 then
-            bundle.link_List.AddRelRef('previous', base+link+'&'+SEARCH_PARAM_NAME_OFFSET+'='+inttostr(offset - count)+'&'+SEARCH_PARAM_NAME_COUNT+'='+inttostr(Count));
+            bundle.addLink('previous', base+link+'&'+SEARCH_PARAM_NAME_OFFSET+'='+inttostr(offset - count)+'&'+SEARCH_PARAM_NAME_COUNT+'='+inttostr(Count));
           if offset + count < total then
-            bundle.link_List.AddRelRef('next', base+link+'&'+SEARCH_PARAM_NAME_OFFSET+'='+inttostr(offset + count)+'&'+SEARCH_PARAM_NAME_COUNT+'='+inttostr(Count));
+            bundle.addLink('next', base+link+'&'+SEARCH_PARAM_NAME_OFFSET+'='+inttostr(offset + count)+'&'+SEARCH_PARAM_NAME_COUNT+'='+inttostr(Count));
           if count < total then
-            bundle.link_List.AddRelRef('last', base+link+'&'+SEARCH_PARAM_NAME_OFFSET+'='+inttostr((total div count) * count)+'&'+SEARCH_PARAM_NAME_COUNT+'='+inttostr(Count));
+            bundle.addLink('last', base+link+'&'+SEARCH_PARAM_NAME_OFFSET+'='+inttostr((total div count) * count)+'&'+SEARCH_PARAM_NAME_COUNT+'='+inttostr(Count));
         end;
 
         FConnection.SQL :=
@@ -1645,13 +1670,13 @@ begin
           FConnection.Terminate;
         end;
 
-        bundle.id := FhirGUIDToString(CreateGUID);
-        bundle.Tags['sql'] := sql;
+        bundle.setId(FhirGUIDToString(CreateGUID));
+        bundle.tag('sql', sql);
 
         response.HTTPCode := 200;
         response.Message := 'OK';
         response.Body := '';
-        response.bundle := bundle.Link;
+        response.bundle := bundle.getBundle;
       finally
         bundle.Free;
       end;
@@ -2027,7 +2052,7 @@ begin
   end;
 end;
 
-procedure TFHIRNativeOperationEngine.processIncludes(session: TFhirSession; secure : boolean; _includes, _reverseIncludes: String; bundle: TFHIRBundle; keys : TKeyList; field: String; comp: TFHIRParserClass);
+procedure TFHIRNativeOperationEngine.processIncludes(session: TFhirSession; secure : boolean; _includes, _reverseIncludes: String; bundle: TFHIRBundleBuilder; keys : TKeyList; field: String; comp: TFHIRParserClass);
 var
   s, sql : String;
   p : TArray<String>;
@@ -2097,7 +2122,7 @@ end;
 
 procedure TFHIRNativeOperationEngine.ExecuteSearch(request: TFHIRRequest; response: TFHIRResponse);
 var
-  bundle : TFHIRBundle;
+  bundle : TFHIRBundleBuilder;
   id, link, base, sql, field : String;
   i, total, t : Integer;
   key : integer;
@@ -2138,13 +2163,12 @@ begin
 
       if ok then
       begin
-        bundle := TFHIRBundle.Create(BundleTypeSearchset);
+        bundle := TFHIRBundleBuilderSimple.Create(TFHIRBundle.Create(BundleTypeSearchset));
         op := TFhirOperationOutcome.Create;
         keys := TKeyList.Create;
         try
+          bundle.setLastUpdated(TDateTimeEx.makeUTC);
 //          bundle.base := request.baseUrl;
-          bundle.meta := TFhirMeta.Create;
-          bundle.meta.lastUpdated := TDateTimeEx.makeUTC;
 
           summaryStatus := request.Summary;
           if FindSavedSearch(request.parameters.value[SEARCH_PARAM_NAME_ID], request.Session, 1, id, link, sql, title, base, total, summaryStatus, request.strictSearch, reverse) then
@@ -2152,13 +2176,13 @@ begin
           else
             id := BuildSearchResultSet(key, request.Session, request.resourceName, request.Parameters, request.baseUrl, request.compartments, request.compartmentId, op, link, sql, total, summaryStatus, request.strictSearch, reverse);
 
-          bundle.total := inttostr(total);
-          bundle.Tags['sql'] := sql;
+          bundle.setTotal(total);
+          bundle.Tag('sql', sql);
 
           base := AppendForwardSlash(Request.baseUrl)+request.ResourceName+'?';
           if response.Format <> ffUnspecified then
             base := base + '_format='+MIMETYPES_TFHIRFormat[response.Format]+'&';
-          bundle.link_List.AddRelRef('self', base+link);
+          bundle.addLink('self', base+link);
 
           offset := StrToIntDef(request.Parameters.getVar(SEARCH_PARAM_NAME_OFFSET), 0);
           if request.Parameters.getVar(SEARCH_PARAM_NAME_COUNT) = 'all' then
@@ -2181,13 +2205,13 @@ begin
 
             if (offset > 0) or (Count < total) then
             begin
-              bundle.link_List.AddRelRef('first', base+link+'&'+SEARCH_PARAM_NAME_OFFSET+'=0&'+SEARCH_PARAM_NAME_COUNT+'='+inttostr(Count));
+              bundle.addLink('first', base+link+'&'+SEARCH_PARAM_NAME_OFFSET+'=0&'+SEARCH_PARAM_NAME_COUNT+'='+inttostr(Count));
               if offset - count >= 0 then
-                bundle.link_List.AddRelRef('previous', base+link+'&'+SEARCH_PARAM_NAME_OFFSET+'='+inttostr(offset - count)+'&'+SEARCH_PARAM_NAME_COUNT+'='+inttostr(Count));
+                bundle.addLink('previous', base+link+'&'+SEARCH_PARAM_NAME_OFFSET+'='+inttostr(offset - count)+'&'+SEARCH_PARAM_NAME_COUNT+'='+inttostr(Count));
               if offset + count < total then
-                bundle.link_List.AddRelRef('next', base+link+'&'+SEARCH_PARAM_NAME_OFFSET+'='+inttostr(offset + count)+'&'+SEARCH_PARAM_NAME_COUNT+'='+inttostr(Count));
+                bundle.addLink('next', base+link+'&'+SEARCH_PARAM_NAME_OFFSET+'='+inttostr(offset + count)+'&'+SEARCH_PARAM_NAME_COUNT+'='+inttostr(Count));
               if count < total then
-                bundle.link_List.AddRelRef('last', base+link+'&'+SEARCH_PARAM_NAME_OFFSET+'='+inttostr((total div count) * count)+'&'+SEARCH_PARAM_NAME_COUNT+'='+inttostr(Count));
+                bundle.addLink('last', base+link+'&'+SEARCH_PARAM_NAME_OFFSET+'='+inttostr((total div count) * count)+'&'+SEARCH_PARAM_NAME_COUNT+'='+inttostr(Count));
             end;
 
             chooseField(response.Format, summaryStatus, request.loadObjects, field, comp, needsObject);
@@ -2224,13 +2248,18 @@ begin
             processIncludes(request.session, request.secure, request.Parameters.GetVar('_include'), request.Parameters.GetVar('_revinclude'), bundle, keys, field, comp);
           end;
 
-          bundle.id := FhirGUIDToString(CreateGUID);
+          bundle.setId(FhirGUIDToString(CreateGUID));
           if (op.issueList.Count > 0) then
           begin
-            be := bundle.entryList.Append;
-            be.resource := op.Link;
-            be.search := TFhirBundleEntrySearch.Create;
-            be.search.mode := SearchEntryModeOutcome;
+            be := TFhirBundleEntry.Create;
+            try
+              be.resource := op.Link;
+              be.search := TFhirBundleEntrySearch.Create;
+              be.search.mode := SearchEntryModeOutcome;
+              bundle.addEntry(be.Link);
+            finally
+              be.Free;
+            end;
           end;
 
           //bundle.link_List['self'] := request.url;
@@ -2238,7 +2267,7 @@ begin
           response.Message := 'OK';
           response.Body := '';
           response.Resource := nil;
-          response.bundle := bundle.Link;
+          response.bundle := bundle.getBundle;
         finally
           keys.Free;
           bundle.Free;
@@ -6250,7 +6279,7 @@ var
   sp : TSearchProcessor;
   conn : TKDBConnection;
   base, field, type_ : String;
-  bundle : TFHIRBundle;
+  bundle : TFHIRBundleBuilder;
   op : TFhirOperationOutcome;
   keys : TKeyList;
   summaryStatus : TFHIRSummaryOption;
@@ -6274,19 +6303,18 @@ begin
       sp.Connection := conn.link;
       sp.build;
 
-      bundle := TFHIRBundle.Create(BundleTypeSearchset);
+      bundle := TFHIRBundleBuilderSimple.Create(TFHIRBundle.Create(BundleTypeSearchset));
       op := TFhirOperationOutcome.Create;
       keys := TKeyList.Create;
       try
-        bundle.id := FhirGUIDToString(CreateGUID);
-        bundle.meta := TFhirMeta.Create;
-        bundle.meta.lastUpdated := TDateTimeEx.makeUTC;
+        bundle.setId(FhirGUIDToString(CreateGUID));
+        bundle.setLastUpdated(TDateTimeEx.makeUTC);
         summaryStatus := request.Summary;
 
         base := AppendForwardSlash(Request.baseUrl)+request.ResourceName+'/$lastn?';
         if response.Format <> ffUnspecified then
           base := base + '_format='+MIMETYPES_TFHIRFormat[response.Format]+'&';
-        bundle.link_List.AddRelRef('self', base+sp.link_);
+        bundle.addLink('self', base+sp.link_);
         native(manager).chooseField(response.Format, summaryStatus, request.loadObjects, field, comp, needsObject);
         if (not needsObject) then
           comp := nil;
@@ -6311,7 +6339,7 @@ begin
           ') tmp '+#13#10+
           'WHERE rn <= 3 '+#13#10+
           'ORDER BY CodeList, StatedDate Desc, rn'+#13#10;
-        bundle.Tags['sql'] := conn.SQL;
+        bundle.tag('sql', conn.SQL);
         conn.Prepare;
         try
           conn.Execute;
@@ -6338,7 +6366,7 @@ begin
         response.Message := 'OK';
         response.Body := '';
         response.Resource := nil;
-        response.bundle := bundle.Link;
+        response.bundle := bundle.getBundle;
       finally
         keys.Free;
         bundle.Free;
@@ -6808,7 +6836,7 @@ end;
 
 procedure TFhirPatientEverythingOperation.Execute(context : TOperationContext; manager: TFHIROperationEngine; request: TFHIRRequest; response: TFHIRResponse);
 var
-  bundle : TFHIRBundle;
+  bundle : TFHIRBundleBuilder;
   entry : TFHIRBundleEntry;
   includes : TReferenceList;
   id, link, base, sql, field : String;
@@ -6831,7 +6859,7 @@ begin
       if manager.FindResource('Patient', request.Id, false, rkey, versionKey, request, response, '') then
       begin
         request.compartmentId := request.Id;
-        bundle := TFHIRBundle.Create(BundleTypeSearchset);
+        bundle := TFHIRBundleBuilderSimple.Create(TFHIRBundle.Create(BundleTypeSearchset));
         includes := TReferenceList.create;
         keys := TKeyList.Create;
         params := TParseMap.Create('');
@@ -6841,8 +6869,8 @@ begin
             link := SEARCH_PARAM_NAME_ID+'='+request.parameters.value[SEARCH_PARAM_NAME_ID]
           else
             id := native(manager).BuildSearchResultSet(0, request.Session, request.resourceName, params, request.baseUrl, request.compartments, request.compartmentId, nil, link, sql, total, wantSummary, request.strictSearch, reverse);
-          bundle.total := inttostr(total);
-          bundle.Tags['sql'] := sql;
+          bundle.setTotal(total);
+          bundle.tag('sql', sql);
           native(manager).chooseField(response.Format, wantsummary, request.loadObjects, field, prsr, needsObject);
 
           native(manager).FConnection.SQL := 'Select Ids.ResourceKey, Types.ResourceName, Ids.Id, VersionId, Secure, StatedDate, Name, Versions.Status, Tags, '+field+' from Versions, Ids, Sessions, SearchEntries, Types '+
@@ -6892,21 +6920,19 @@ begin
 
           if patient = nil then
             raise Exception.Create('No Patient resource found in patient compartment');
-          bundle.deleteEntry(patient);
-          bundle.entryList.Insert(0).resource := patient.Link;
-          bundle.entryList[0].fullurl := AppendForwardSlash(request.baseUrl)+'Patient/'+patient.id;
-          if (request.Parameters.getVar('email') <> '') then
-            native(manager).ServerContext.SubscriptionManager.sendByEmail(bundle, request.Parameters.getVar('email'), false)
-          else if (request.Parameters.getVar('direct') <> '') then
-            native(manager).ServerContext.SubscriptionManager.sendByEmail(bundle, request.Parameters.getVar('direct'), true);
+          entry := bundle.moveToFirst(patient);
+          entry.fullurl := AppendForwardSlash(request.baseUrl)+'Patient/'+patient.id;
 
-          bundle.meta := TFhirMeta.Create;
-          bundle.meta.lastUpdated := TDateTimeEx.makeUTC;
-          bundle.id := NewGuidURN;
+          bundle.setLastUpdated(TDateTimeEx.makeUTC);
+          bundle.setId(NewGuidId);
           response.HTTPCode := 200;
           response.Message := 'OK';
           response.Body := '';
-          response.bundle := bundle.Link;
+          response.bundle := bundle.getBundle;
+          if (request.Parameters.getVar('email') <> '') then
+            native(manager).ServerContext.SubscriptionManager.sendByEmail(response.bundle, request.Parameters.getVar('email'), false)
+          else if (request.Parameters.getVar('direct') <> '') then
+            native(manager).ServerContext.SubscriptionManager.sendByEmail(response.bundle, request.Parameters.getVar('direct'), true);
         finally
           params.free;
           includes.free;
@@ -8475,6 +8501,12 @@ begin
   FClaimQueue := TFHIRClaimList.Create;
 End;
 
+function TFHIRNativeStorageService.createAsyncTask(url, id: string; format : TFHIRFormat): integer;
+begin
+  result := NextAsyncTaskKey;
+  DB.ExecSQL('Insert into AsyncTasks (TaskKey, id, SourceUrl, Format, Status, Created) values ('+inttostr(result)+', '''+SQLWrapString(id)+''', '''+SQLWrapString(url)+''', '+inttostr(ord(format))+', '+inttostr(ord(atsCreated))+', '+DBGetDate(DB.Platform)+')', 'async')
+end;
+
 procedure TFHIRNativeStorageService.Initialise(ini: TFHIRServerIniFile);
 var
   conn: TKDBConnection;
@@ -8517,6 +8549,7 @@ begin
       FLastResourceKey := conn.CountSQL('select Max(ResourceKey) from Ids');
       FLastEntryKey := conn.CountSQL('select max(EntryKey) from IndexEntries');
       FLastCompartmentKey := conn.CountSQL('select max(ResourceCompartmentKey) from Compartments');
+      FLastAsyncTaskKey  := conn.CountSQL('select max(TaskKey) from AsyncTasks');
       FLastObservationKey := conn.CountSQL('select max(ObservationKey) from Observations');
       FLastObservationCodeKey := conn.CountSQL('select max(ObservationCodeKey) from ObservationCodes');
       FLastObservationQueueKey := conn.CountSQL('select max(ObservationQueueKey) from ObservationQueue');
@@ -8870,6 +8903,34 @@ begin
 end;
 
 
+procedure TFHIRNativeStorageService.fetchExpiredTasks(tasks: TAdvList<TAsyncTaskInformation>);
+begin
+  DB.connection('async',
+    procedure (conn : TKDBConnection)
+    var
+      task : TAsyncTaskInformation;
+    begin
+      conn.SQL := 'select * from AsyncTasks where Status != '+inttostr(ord(atsDeleted))+' and Expires < '+DBGetDate(DB.Platform);
+      conn.Prepare;
+      conn.Execute;
+      while conn.FetchNext do
+      begin
+        task := TAsyncTaskInformation.Create;
+        try
+          task.key := conn.ColIntegerByName['TaskKey'];
+          task.format := TFHIRFormat(conn.ColIntegerByName['Format']);
+          task.names := conn.ColStringByName['Names'].Split([',']);
+          tasks.Add(task.Link);
+        finally
+          task.Free;
+        end;
+      end;
+      conn.Terminate;
+    end
+   );
+end;
+
+
 function TFHIRNativeStorageService.fetchOAuthDetails(key, status: integer; var client_id, name, redirect, state, scope: String): boolean;
 var
   conn : TKDBConnection;
@@ -8972,6 +9033,36 @@ begin
     end;
   end;
 
+end;
+
+function TFHIRNativeStorageService.fetchTaskDetails(id : String; var key : integer; var status: TAsyncTaskStatus; var fmt : TFHIRFormat; var message: String; var expires: TDateTimeEx; names : TStringList; var outcome: TBytes): boolean;
+var
+  conn : TKDBConnection;
+begin
+  conn := FDB.GetConnection('async');
+  try
+    conn.SQL := 'Select * from AsyncTasks where Id = '''+SQLWrapString(id)+'''';
+    conn.Prepare;
+    conn.Execute;
+    result := conn.FetchNext;
+    if result then
+    begin
+      key := conn.ColIntegerByName['TaskKey'];
+      status := TAsyncTaskStatus(conn.ColIntegerByName['status']);
+      fmt := TFhirFormat(conn.ColIntegerByName['format']);
+      message := conn.ColStringByName['Message'];
+      expires := conn.ColDateTimeExByName['Expires'];
+      names.CommaText := conn.ColStringByName['Names'];
+      outcome := conn.ColBlobByName['Outcome']
+    end;
+    conn.Terminate;
+  except
+    on e : Exception do
+    begin
+      conn.Error(e);
+      raise;
+    end;
+  end;
 end;
 
 procedure TFHIRNativeStorageService.CloseFhirSession(key: integer);
@@ -9662,6 +9753,14 @@ begin
   conn.ExecSQL('Insert into ObservationQueue (ObservationQueueKey, ResourceKey, Status) values ('+inttostr(FLastObservationQueueKey)+', '+inttostr(key)+', 0)');
 end;
 
+procedure TFHIRNativeStorageService.updateAsyncTaskStatus(key: integer; status: TAsyncTaskStatus; message: String);
+begin
+  if status in [atsComplete, atsError] then
+    DB.ExecSQL('Update AsyncTasks set Status = '+inttostr(ord(status))+', Message = '''+SQLWrapString(message)+''', Finished = '+DBGetDate(DB.Platform)+' where TaskKey = '+inttostr(key), 'async')
+  else
+    DB.ExecSQL('Update AsyncTasks set Status = '+inttostr(ord(status))+', Message = '''+SQLWrapString(message)+''' where TaskKey = '+inttostr(key), 'async');
+end;
+
 procedure TFHIRNativeStorageService.updateOAuthSession(id : String; state, key: integer; var client_id : String);
 var
   conn : TKDBConnection;
@@ -10157,6 +10256,11 @@ begin
   QueueResource(r);
 end;
 
+procedure TFHIRNativeStorageService.recordDownload(key: integer; name: String);
+begin
+  DB.ExecSQL('Update AsyncTasks set Downloads = Downloads + 1 where TaskKey = '+inttostr(key), 'async');
+end;
+
 procedure TFHIRNativeStorageService.QueueResource(r: TFhirResource);
 begin
   FLock.Lock;
@@ -10239,6 +10343,17 @@ begin
   try
     inc(FLastObservationCodeKey);
     result := FLastObservationCodeKey;
+  finally
+    FLock.Unlock;
+  end;
+end;
+
+function TFHIRNativeStorageService.NextAsyncTaskKey: integer;
+begin
+  FLock.Lock('NextCompartmentKey');
+  try
+    inc(FLastAsyncTaskKey);
+    result := FLastAsyncTaskKey;
   finally
     FLock.Unlock;
   end;
@@ -10456,6 +10571,37 @@ begin
   end;
 end;
 
+
+procedure TFHIRNativeStorageService.MarkTaskDeleted(key: integer);
+begin
+  DB.ExecSQL('Update AsyncTasks set Status = '+inttostr(ord(atsDeleted))+' where TaskKey = '+inttostr(key), 'async');
+end;
+
+procedure TFHIRNativeStorageService.MarkTaskForDownload(key: integer; names : TStringList);
+var
+  exp : TDateTimeEx;
+begin
+  exp := TDateTimeEx.makeLocal.add(1/24);
+  DB.connection('async',
+    procedure (conn : TKDBConnection)
+    begin
+     conn.SQL := 'Update AsyncTasks set Expires = :t, Names = :n, Count = :c where TaskKey = '+inttostr(key);
+     conn.Prepare;
+     conn.BindDateTimeEx('t', exp);
+     if names = nil then
+     begin
+       conn.BindNull('n');
+       conn.BindInteger('c', 1);
+     end
+     else
+     begin
+       conn.BindString('n', names.CommaText);
+       conn.BindInteger('c', names.Count);
+     end;
+     conn.Execute;
+     conn.Terminate;
+    end);
+end;
 
 {$IFNDEF FHIR2}
 

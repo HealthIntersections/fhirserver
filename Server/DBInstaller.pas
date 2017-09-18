@@ -56,7 +56,8 @@ const
 //  ServerDBVersion = 14; // add Authorizations
 //   ServerDBVersion = 15; // add Uuid to Authorizations
 //  ServerDBVersion = 16; // add PatientId to Authorizations
-  ServerDBVersion = 17; // add AuthorizationSessions and Connections
+//  ServerDBVersion = 17; // add AuthorizationSessions and Connections
+  ServerDBVersion = 18; // add AsyncTasks
 
   // config table keys
   CK_Transactions = 1;   // whether transactions and batches are allowed or not
@@ -114,6 +115,7 @@ Type
     procedure CreateAuthorizations;
     procedure CreateAuthorizationSessions;
     procedure CreateConnections;
+    procedure CreateAsyncTasks;
     procedure runScript(s : String);
   public
     Constructor create(conn : TKDBConnection; txpath : String);
@@ -660,6 +662,27 @@ begin
   FConn.ExecSQL('Create INDEX SK_SubscriptionsQueue_Reload ON SubscriptionQueue (Handled)');
 end;
 
+procedure TFHIRDatabaseInstaller.CreateAsyncTasks;
+begin
+  FConn.ExecSQL('CREATE TABLE AsyncTasks ( '+#13#10+
+       ' TaskKey     '+DBKeyType(FConn.owner.platform)+'      '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+  //
+       ' Id          nchar(36)                                '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+  //
+       ' SourceUrl   nchar(255)                               '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+  //
+       ' Format      int                                      '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+  //
+       ' Status      int                                      '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+  //
+       ' Message     nchar(255)                               '+ColCanBeNull(FConn.owner.platform, true)+', '+#13#10+  //
+       ' Created     '+DBDateTimeType(FConn.owner.platform)+' '+ColCanBeNull(FConn.owner.platform, true)+', '+#13#10+    //
+       ' Finished    '+DBDateTimeType(FConn.owner.platform)+' '+ColCanBeNull(FConn.owner.platform, true)+', '+#13#10+    //
+       ' Expires     '+DBDateTimeType(FConn.owner.platform)+' '+ColCanBeNull(FConn.owner.platform, true)+', '+#13#10+    //
+       ' Deleted     '+DBDateTimeType(FConn.owner.platform)+' '+ColCanBeNull(FConn.owner.platform, true)+', '+#13#10+    //
+       ' Count       int                                      '+ColCanBeNull(FConn.owner.platform, true)+', '+#13#10+   //
+       ' Names       char(512)                                '+ColCanBeNull(FConn.owner.platform, true)+', '+#13#10+   //
+       ' Downloads   int                                      '+ColCanBeNull(FConn.owner.platform, true)+', '+#13#10+   //
+       ' Outcome     '+DBBlobType(FConn.owner.platform)+'     '+ColCanBeNull(FConn.owner.platform, true)+', '+#13#10+   //
+       PrimaryKeyType(FConn.owner.Platform, 'PK_AsyncTasks', 'TaskKey')+') '+CreateTableInfo(FConn.owner.platform));
+  FConn.ExecSQL('Create INDEX SK_AsyncTasksId ON AsyncTasks (Id)');
+end;
+
 procedure TFHIRDatabaseInstaller.CreateResourceIndexEntries;
 Begin
   FConn.ExecSQL('CREATE TABLE IndexEntries( '+#13#10+
@@ -938,7 +961,9 @@ begin
     CreateAuthorizationSessions;
     if assigned(CallBack) then Callback(72, 'Create Connections');
     CreateConnections;
-    if assigned(CallBack) then Callback(73, 'Commit');
+    if assigned(CallBack) then Callback(74, 'Create AsyncTasks');
+    CreateAsyncTasks;
+    if assigned(CallBack) then Callback(75, 'Commit');
     FConn.Commit;
   except
     on e:exception do
@@ -1120,7 +1145,7 @@ begin
   FConn.StartTransact;
   try
     if version > ServerDBVersion then
-      raise Exception.Create('Database Version mismatch (found='+inttostr(version)+', can handle 1-'+inttostr(ServerDBVersion)+'): you must re-install the database or change which version of the server you are running');
+      raise Exception.Create('Database Version mismatch (found='+inttostr(version)+', can handle 12-'+inttostr(ServerDBVersion)+'): you must re-install the database or change which version of the server you are running');
     if (version < 12) then
       raise Exception.Create('Database must be rebuilt');
     if (version < 13) then
@@ -1147,6 +1172,8 @@ begin
      CreateAuthorizationSessions;
      CreateConnections;
     end;
+    if (version < 18) then
+      CreateAsyncTasks;
 
     Fconn.ExecSQL('update Config set value = '+inttostr(ServerDBVersion)+' where ConfigKey = 5');
     FConn.commit;

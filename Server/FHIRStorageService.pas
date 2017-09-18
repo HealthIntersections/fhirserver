@@ -43,6 +43,7 @@ uses
 
 
 Type
+  TAsyncTaskStatus = (atsCreated, atsWaiting, atsProcessing, atsComplete, atsAborted, atsTerminated, atsError, atsDeleted);
 
   TPopulateConformanceEvent = procedure (sender : TObject; conf : TFhirCapabilityStatement) of object;
 
@@ -95,6 +96,17 @@ Type
     Property entries[iIndex : Integer] : TMatchingResource Read GetEntry; Default;
   end;
 
+  TAsyncTaskInformation = class (TAdvObject)
+  private
+    FKey: integer;
+    FNames: TArray<String>;
+    FFormat: TFHIRFormat;
+  public
+    function link : TAsyncTaskInformation; overload;
+    property key : integer read FKey write FKey;
+    property names : TArray<String> read FNames write FNames;
+    property format : TFHIRFormat read FFormat write FFormat;
+  end;
 
   TFHIROperationEngine = class (TAdvObject)
   private
@@ -224,6 +236,14 @@ Type
     function ExpandVS(vs: TFHIRValueSet; ref: TFhirReference; lang : String; limit, count, offset: integer; allowIncomplete: Boolean; dependencies: TStringList): TFHIRValueSet; virtual;
     function LookupCode(system, version, code: String): String; virtual;
     function FetchResource(key : integer) : TFHIRResource; virtual;
+
+    function createAsyncTask(url, id : string; format : TFHIRFormat) : integer; virtual;
+    procedure updateAsyncTaskStatus(key : integer; status : TAsyncTaskStatus; message : String); virtual;
+    procedure MarkTaskForDownload(key : integer; names : TStringList); virtual;
+    function fetchTaskDetails(id : String; var key : integer; var status : TAsyncTaskStatus; var fmt : TFHIRFormat; var message : String; var expires : TDateTimeEx; names : TStringList; var outcome : TBytes): boolean; virtual;
+    procedure recordDownload(key : integer; name : String); virtual;
+    procedure fetchExpiredTasks(tasks : TAdvList<TAsyncTaskInformation>); virtual;
+    procedure MarkTaskDeleted(key : integer); virtual;
   end;
 
 
@@ -265,6 +285,11 @@ begin
   raise Exception.Create('This server does not support OAuth');
 end;
 
+procedure TFHIRStorageService.fetchExpiredTasks(tasks: TAdvList<TAsyncTaskInformation>);
+begin
+  raise Exception.Create('This server does not support Async tasks');
+end;
+
 function TFHIRStorageService.fetchOAuthDetails(key, status: integer; var client_id, name, redirect, state, scope: String): boolean;
 begin
   raise Exception.Create('This server does not support OAuth');
@@ -278,6 +303,11 @@ end;
 function TFHIRStorageService.FetchResourceCounts(comps : String): TStringList;
 begin
   raise Exception.Create('The function "FetchResourceCounts(comps : String): TStringList" must be overridden in '+className);
+end;
+
+function TFHIRStorageService.fetchTaskDetails(id : String; var key : integer; var status: TAsyncTaskStatus; var fmt : TFHIRFormat; var message: String; var expires: TDateTimeEx; names : TStringList; var outcome: TBytes): boolean;
+begin
+  raise Exception.Create('This server does not support Async tasks');
 end;
 
 function TFHIRStorageService.GetTotalResourceCount: integer;
@@ -303,6 +333,16 @@ end;
 function TFHIRStorageService.LookupCode(system, version, code: String): String;
 begin
   raise Exception.Create('Looking up codes is not implemented in this server');
+end;
+
+procedure TFHIRStorageService.MarkTaskDeleted(key: integer);
+begin
+  raise Exception.Create('This server does not support Async tasks');
+end;
+
+procedure TFHIRStorageService.MarkTaskForDownload(key: integer; names : TStringList);
+begin
+  raise Exception.Create('This server does not support Async tasks');
 end;
 
 procedure TFHIRStorageService.ProcessEmails;
@@ -333,6 +373,11 @@ end;
 procedure TFHIRStorageService.QueueResource(r: TFhirResource; dateTime: TDateTimeEx);
 begin
   raise Exception.Create('The function "QueueResource(r: TFhirResource; dateTime: TDateTimeEx)" must be overridden in '+className);
+end;
+
+procedure TFHIRStorageService.recordDownload(key: integer; name: String);
+begin
+  raise Exception.Create('This server does not support Async tasks');
 end;
 
 procedure TFHIRStorageService.RecordFhirSession(session: TFhirSession);
@@ -373,6 +418,11 @@ end;
 procedure TFHIRStorageService.Sweep;
 begin
   raise Exception.Create('The function "Sweep" must be overridden in '+className);
+end;
+
+procedure TFHIRStorageService.updateAsyncTaskStatus(key: integer; status: TAsyncTaskStatus; message: String);
+begin
+  raise Exception.Create('This server does not support Async tasks');
 end;
 
 procedure TFHIRStorageService.updateOAuthSession(id : String; state, key: integer; var client_id : String);
@@ -1060,6 +1110,11 @@ begin
 
 end;
 
+function TFHIRStorageService.createAsyncTask(url, id: string; format : TFHIRFormat): integer;
+begin
+  raise Exception.Create('Asynchronous Processing is not supported on this server');
+end;
+
 function TFHIRStorageService.createClient(lang: String; context: TFHIRWorkerContext; session: TFHIRSession): TFHIRClient;
 begin
   result := TFHIRInternalClient.Create;
@@ -1346,6 +1401,13 @@ begin
   end;
 end;
 
+
+{ TAsyncTaskInformation }
+
+function TAsyncTaskInformation.link: TAsyncTaskInformation;
+begin
+  result := TAsyncTaskInformation(inherited link);
+end;
 
 end.
 

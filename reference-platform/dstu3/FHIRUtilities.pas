@@ -149,13 +149,50 @@ Function removeCaseAndAccents(s : String) : String;
 function CustomResourceNameIsOk(name : String) : boolean;
 function fileToResource(name : String; var format : TFHIRFormat) : TFhirResource;
 function streamToResource(stream : TStream; var format : TFHIRFormat) : TFhirResource;
+function bytesToResource(bytes : TBytes; var format : TFHIRFormat) : TFhirResource;
 procedure resourceToFile(res : TFhirResource; name : String; format : TFHIRFormat);
-procedure resourceToStream(res : TFhirResource; stream : TStream; format : TFHIRFormat);
+procedure resourceToStream(res : TFhirResource; stream : TStream; format : TFHIRFormat; pretty : boolean = true);
 function resourceToString(res : TFhirResource; format : TFHIRFormat) : String;
 
 function parseParamsFromForm(stream : TStream) : TFHIRParameters;
 
 type
+  TFHIRBundleBuilder = class (TAdvObject)
+  private
+    FHasSecureOp: boolean;
+  public
+    constructor Create;
+
+    Property hasSecureOp : boolean read FHasSecureOp write FHasSecureOp;
+
+    procedure setId(id : string); virtual;
+    procedure setLastUpdated(dt : TDateTimeEx); virtual;
+    procedure setTotal(t : integer); virtual;
+    procedure tag(n, v : String); virtual;
+    procedure addLink(rt, url : String); virtual;
+    procedure addEntry(entry : TFhirBundleEntry); virtual;
+    function moveToFirst(res : TFhirResource) : TFhirBundleEntry; virtual;
+
+    function getBundle : TFHIRBundle; virtual;
+  end;
+
+  TFHIRBundleBuilderSimple = class (TFHIRBundleBuilder)
+  private
+    FBundle : TFHIRBundle;
+  public
+    constructor Create(bundle : TFHIRBundle);
+    destructor Destroy; override;
+    procedure setId(id : string); override;
+    procedure setLastUpdated(dt : TDateTimeEx); override;
+    procedure setTotal(t : integer); override;
+    procedure tag(n, v : String); override;
+    procedure addLink(rt, url : String); override;
+    procedure addEntry(entry : TFhirBundleEntry); override;
+    function moveToFirst(res : TFhirResource) : TFhirBundleEntry; override;
+
+    function getBundle : TFHIRBundle; override;
+  end;
+
   TFHIRProfileStructureHolder = TFhirStructureDefinitionSnapshot;
   TFHIRProfileStructureElement = TFhirElementDefinition;
   TFhirProfileStructureElementList = TFhirElementDefinitionList;
@@ -4723,6 +4760,11 @@ End;
 
 
 function TFHIRAttachmentHelper.asZipPart(i: integer): TAdvZipPart;
+{$IFDEF MACOS}
+begin
+  raise Exception.Create('Not done yet');
+end;
+{$ELSE}
 var
   fetcher : TInternetFetcher;
 begin
@@ -4756,6 +4798,7 @@ begin
     result.Free;
   end;
 end;
+{$ENDIF}
 
 { TFhirReferenceHelper }
 
@@ -4809,6 +4852,18 @@ begin
     result := streamToResource(f, format);
   finally
     f.Free;
+  end;
+end;
+
+function bytesToResource(bytes : TBytes; var format : TFHIRFormat) : TFhirResource;
+var
+  b : TBytesStream;
+begin
+  b := TBytesStream.Create(bytes);
+  try
+    result := streamToResource(b, format);
+  finally
+    b.Free;
   end;
 end;
 
@@ -4866,19 +4921,19 @@ begin
   end;
 end;
 
-procedure resourceToStream(res : TFhirResource; stream : TStream; format : TFHIRFormat);
+procedure resourceToStream(res : TFhirResource; stream : TStream; format : TFHIRFormat; pretty : boolean = true);
 var
   c : TFHIRComposer;
 begin
   case format of
-    ffXml : c := TFHIRXmlComposer.Create(nil, 'en');
+    ffXml, ffxhtml : c := TFHIRXmlComposer.Create(nil, 'en');
     ffJson : c := TFHIRJsonComposer.Create(nil, 'en');
     ffTurtle : c := TFHIRTurtleComposer.Create(nil, 'en');
   else
     raise Exception.Create('Format Not supported');
   end;
   try
-    c.Compose(stream, res, true);
+    c.Compose(stream, res, pretty);
   finally
     c.Free;
   end;
@@ -5070,6 +5125,110 @@ begin
   result := itemList.Count;
   for c in itemList do
     inc(result, c.countDescendents);
+end;
+
+{ TFHIRBundleBuilder }
+
+procedure TFHIRBundleBuilder.addEntry(entry: TFhirBundleEntry);
+begin
+  raise Exception.Create('Must override '+ClassName+'.addEntry');
+end;
+
+procedure TFHIRBundleBuilder.addLink(rt, url: String);
+begin
+  raise Exception.Create('Must override '+ClassName+'.addLink');
+end;
+
+constructor TFHIRBundleBuilder.Create;
+begin
+  inherited Create;
+end;
+
+function TFHIRBundleBuilder.getBundle: TFHIRBundle;
+begin
+  raise Exception.Create('Must override '+ClassName+'.getBundle');
+end;
+
+function TFHIRBundleBuilder.moveToFirst(res: TFhirResource): TFhirBundleEntry;
+begin
+  raise Exception.Create('Must override '+ClassName+'.moveToFirst');
+end;
+
+procedure TFHIRBundleBuilder.setId(id: string);
+begin
+  raise Exception.Create('Must override '+ClassName+'.setId');
+end;
+
+procedure TFHIRBundleBuilder.setLastUpdated(dt: TDateTimeEx);
+begin
+  raise Exception.Create('Must override '+ClassName+'.setLastUpdated');
+end;
+
+procedure TFHIRBundleBuilder.setTotal(t: integer);
+begin
+  raise Exception.Create('Must override '+ClassName+'.setTotal');
+end;
+
+procedure TFHIRBundleBuilder.tag(n, v: String);
+begin
+  raise Exception.Create('Must override '+ClassName+'.tag');
+end;
+
+{ TFHIRBundleBuilderSimple }
+
+procedure TFHIRBundleBuilderSimple.addEntry(entry: TFhirBundleEntry);
+begin
+  FBundle.entryList.AddItem(entry);
+end;
+
+procedure TFHIRBundleBuilderSimple.addLink(rt, url: String);
+begin
+  FBundle.Link_List.AddRelRef(rt, url);
+end;
+
+constructor TFHIRBundleBuilderSimple.Create(bundle: TFHIRBundle);
+begin
+  inherited Create;
+  FBundle := bundle;
+end;
+
+destructor TFHIRBundleBuilderSimple.Destroy;
+begin
+  FBundle.Free;
+  inherited;
+end;
+
+function TFHIRBundleBuilderSimple.getBundle: TFHIRBundle;
+begin
+  result := FBundle.Link;
+end;
+
+function TFHIRBundleBuilderSimple.moveToFirst(res: TFhirResource): TFhirBundleEntry;
+begin
+  Fbundle.deleteEntry(res);
+  Fbundle.entryList.Insert(0).resource := res.Link;
+  result := Fbundle.entryList[0];
+end;
+
+procedure TFHIRBundleBuilderSimple.setId(id: string);
+begin
+  FBundle.id := id;
+end;
+
+procedure TFHIRBundleBuilderSimple.setLastUpdated(dt: TDateTimeEx);
+begin
+  FBundle.meta := TFhirMeta.Create;
+  FBundle.meta.lastUpdated := dt;
+end;
+
+procedure TFHIRBundleBuilderSimple.setTotal(t: integer);
+begin
+  FBundle.total := inttostr(t);
+end;
+
+procedure TFHIRBundleBuilderSimple.tag(n, v: String);
+begin
+  FBundle.Tags[n] := v;
 end;
 
 end.

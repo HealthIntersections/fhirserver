@@ -43,7 +43,7 @@ uses
   AdvObjects, AdvStringBuilders, AdvGenerics,   AdvStreams,  ADvVclStreams, AdvBuffers, AdvMemories, AdvJson,
   AdvZipWriters, AdvZipParts,
 
-  MimeMessage, TextUtilities, ZLib, {$IFDEF MSWINDOWS} InternetFetcher, {$ENDIF} TurtleParser,
+  MimeMessage, TextUtilities, ZLib, InternetFetcher, TurtleParser,
 
   FHIRContext, FHIRSupport, FHIRParserBase, FHIRParser, FHIRBase, FHIRTypes, FHIRResources, FHIRConstants, FHIRXHtml;
 
@@ -149,8 +149,10 @@ Function removeCaseAndAccents(s : String) : String;
 function CustomResourceNameIsOk(name : String) : boolean;
 function fileToResource(name : String; var format : TFHIRFormat) : TFhirResource;
 function streamToResource(stream : TStream; var format : TFHIRFormat) : TFhirResource;
+function bytesToResource(bytes : TBytes; var format : TFHIRFormat) : TFhirResource;
 procedure resourceToFile(res : TFhirResource; name : String; format : TFHIRFormat);
-procedure resourceToStream(res : TFhirResource; stream : TStream; format : TFHIRFormat);
+procedure resourceToStream(res : TFhirResource; stream : TStream; format : TFHIRFormat; pretty : boolean = true);
+function resourceToString(res : TFhirResource; format : TFHIRFormat) : String;
 
 function parseParamsFromForm(stream : TStream) : TFHIRParameters;
 
@@ -181,6 +183,7 @@ type
   TFhirIdentifierListHelper = class helper for TFhirIdentifierList
   public
     function BySystem(uri : String) : TFhirIdentifier;
+    function withCommas : String;
   end;
 
   TFhirAuditEventHelper = class helper for TFhirAuditEvent
@@ -344,6 +347,11 @@ type
     Constructor Create(system, code : String); overload;
   end;
 
+  TFhirHumanNameHelper = class helper for TFhirHumanName
+  public
+    function given : string;
+  end;
+
   TFhirValueSetHelper = class helper for TFhirValueSet
   public
     function context : string;
@@ -477,6 +485,14 @@ type
 
   TFhirCodeSystem2 = TFhirCodeSystem;
 
+  TFhirCodeSystemConceptHelper = class helper for TFhirCodeSystemConcept
+  public
+    function countDescendents : integer;
+    function prop(code : String) : TFhirCodeSystemConceptProperty;
+    function addProp(code : String) : TFhirCodeSystemConceptProperty;
+    procedure deleteProp(code : String);
+  end;
+
   TFhirCodeSystemHelper = class helper for TFhirCodeSystem
   private
     function locate(parent: TFhirCodeSystemConcept; list: TFhirCodeSystemConceptList; code : String; var foundParent, foundConcept: TFhirCodeSystemConcept): boolean;
@@ -493,6 +509,16 @@ type
     function isAbstract(concept :  TFhirCodeSystemConcept) : boolean;
 
     function buildImplicitValueSet : TFhirValueSet;
+  end;
+
+  TFhirQuestionnaireItemHelper = class helper for TFhirQuestionnaireItem
+  public
+    function countDescendents : integer;
+  end;
+
+  TFhirQuestionnaireHelper = class helper for TFhirQuestionnaire
+  public
+    function itemCount : integer;
   end;
 
   TFhirExpansionProfileHelper = class helper for TFhirExpansionProfile
@@ -536,6 +562,11 @@ type
   end;
 
   TFhirCapabilityStatementRestResourceSearchParamHelper = class helper for TFhirCapabilityStatementRestResourceSearchParam
+  public
+    function summary : String;
+  end;
+
+  TFhirValueSetComposeIncludeHelper = class helper for TFhirValueSetComposeInclude
   public
     function summary : String;
   end;
@@ -689,7 +720,9 @@ begin
 end;
 function MakeParser(oWorker : TFHIRWorkerContext; lang : String; aFormat: TFHIRFormat; oContent: TStream; policy : TFHIRXhtmlParserPolicy): TFHIRParser;
 begin
-  if aFormat = ffJSON Then
+  if aFormat = ffUnspecified then
+    result := DetectFormat(oContent).Create(oWorker.Link, lang)
+  else if aFormat = ffJSON Then
     result := TFHIRJsonParser.Create(oWorker.Link, lang)
   else if aFormat = ffXhtml then
     result := DetectFormat(oContent).create(oWorker.Link, lang)
@@ -1648,13 +1681,7 @@ begin
   end;
 end;
 
-
 function CustomResourceNameIsOk(name : String) : boolean;
-{$IFDEF MACOS}
-begin
-  result := false;
-end;
-{$ELSE}
 var
   fetcher : TInternetFetcher;
   json : TJsonObject;
@@ -1689,7 +1716,6 @@ begin
     fetcher.Free;
   end;
 end;
-{$ENDIF}
 
 (*
 
@@ -4500,6 +4526,16 @@ begin
       exit(id);
 end;
 
+function TFhirIdentifierListHelper.withCommas: String;
+var
+  id : TFhirIdentifier;
+begin
+  result := '';
+  for id in self do
+    result := result + id.value+' ';
+  result := result.Trim;
+end;
+
 { TFHIRDocumentReferenceHelper }
 
 function makeFileName(s : String) : String;
@@ -4747,6 +4783,18 @@ begin
   end;
 end;
 
+function bytesToResource(bytes : TBytes; var format : TFHIRFormat) : TFhirResource;
+var
+  b : TBytesStream;
+begin
+  b := TBytesStream.Create(bytes);
+  try
+    result := streamToResource(b, format);
+  finally
+    b.Free;
+  end;
+end;
+
 function streamToResource(stream : TStream; var format : TFHIRFormat) : TFhirResource;
 var
   p :  TFHIRParser;
@@ -4776,6 +4824,19 @@ begin
   end;
 end;
 
+function resourceToString(res : TFhirResource; format : TFHIRFormat) : String;
+var
+  f : TStringStream;
+begin
+  f := TStringStream.Create('', TEncoding.UTF8);
+  try
+    resourceToStream(res, f, format);
+    result := f.DataString;
+  finally
+    f.Free;
+  end;
+end;
+
 procedure resourceToFile(res : TFhirResource; name : String; format : TFHIRFormat);
 var
   f : TFileStream;
@@ -4788,7 +4849,7 @@ begin
   end;
 end;
 
-procedure resourceToStream(res : TFhirResource; stream : TStream; format : TFHIRFormat);
+procedure resourceToStream(res : TFhirResource; stream : TStream; format : TFHIRFormat; pretty : boolean = true);
 var
   c : TFHIRComposer;
 begin
@@ -4800,7 +4861,7 @@ begin
     raise Exception.Create('Format Not supported');
   end;
   try
-    c.Compose(stream, res, true);
+    c.Compose(stream, res, pretty);
   finally
     c.Free;
   end;
@@ -4908,6 +4969,90 @@ begin
   for i := 0 to self.interactionList.count - 1 do
     if (self.interactionList[i].code = type_) then
       result := self.interactionList[i];
+end;
+
+{ TFhirValueSetComposeIncludeHelper }
+
+function TFhirValueSetComposeIncludeHelper.summary: String;
+begin
+  if valueSetList.Count > 0 then
+    result := 'from valueset '+valueSetList[0].value
+  else if conceptList.Count > 0 then
+    result := 'enumerated concepts from '+system
+  else if filterList.Count > 0 then
+    result := 'select concepts from '+system
+  else
+    result := 'all concepts from '+system;
+end;
+
+{ TFhirHumanNameHelper }
+
+function TFhirHumanNameHelper.given: string;
+var
+  g : TFHIRString;
+begin
+  result := '';
+  for g in givenList do
+    result := result + g.value+' ';
+  result := result.Trim;
+end;
+
+{ TFhirCodeSystemConceptHelper }
+
+function TFhirCodeSystemConceptHelper.addProp(code: String): TFhirCodeSystemConceptProperty;
+begin
+  result := property_List.Append;
+  result.code := code;
+end;
+
+function TFhirCodeSystemConceptHelper.countDescendents: integer;
+var
+  c : TFhirCodeSystemConcept;
+begin
+  result := conceptList.Count;
+  for c in conceptList do
+    inc(result, c.countDescendents);
+end;
+
+procedure TFhirCodeSystemConceptHelper.deleteProp(code: String);
+var
+  i : integer;
+begin
+  for i := property_List.Count - 1 downto 0 do
+    if property_List[i].code = code then
+      property_List.Remove(i);
+end;
+
+function TFhirCodeSystemConceptHelper.prop(code: String): TFhirCodeSystemConceptProperty;
+var
+  t : TFhirCodeSystemConceptProperty;
+begin
+  result := nil;
+  for t in property_List do
+    if t.code = code then
+      exit(t);
+end;
+
+{ TFhirQuestionnaireItemHelper }
+
+function TFhirQuestionnaireItemHelper.countDescendents: integer;
+var
+  c : TFhirQuestionnaireItem;
+begin
+  result := itemList.Count;
+  for c in itemList do
+    inc(result, c.countDescendents);
+end;
+
+{ TFhirQuestionnaireHelper }
+
+function TFhirQuestionnaireHelper.itemCount: integer;
+var
+  c : TFhirQuestionnaireItem;
+begin
+  result := itemList.Count;
+  for c in itemList do
+    inc(result, c.countDescendents);
 end;
 
 end.

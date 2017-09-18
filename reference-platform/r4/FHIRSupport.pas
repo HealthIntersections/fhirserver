@@ -45,7 +45,7 @@ uses
   IdGlobal,
   Parsemap, TextUtilities,
   StringSupport, DecimalSupport, GuidSupport, DateSupport,
-  AdvObjects, AdvBuffers, AdvStringLists, AdvStringMatches, AdvJson, AdvGenerics, AdvNameBuffers,
+  AdvObjects, AdvBuffers, AdvStringLists, AdvStringMatches, AdvJson, AdvGenerics, AdvNameBuffers, AdvStreams,
   MimeMessage, JWT, SCIMObjects, MXML, GraphQL,
   FHIRBase, FHirResources, FHIRConstants, FHIRTypes, FHIRContext, FHIRSecurity, FHIRTags, FHIRLang, FHIRXhtml;
 
@@ -566,11 +566,14 @@ Type
     FId: String;
     FOutcome: TFHIROperationOutcome;
     FCacheControl : TFHIRCacheControl;
+    FProgress: String;
+    FStream : TAdvStream;
 
     procedure SetResource(const Value: TFhirResource);
     function GetBundle: TFhirBundle;
     procedure SetBundle(const Value: TFhirBundle);
     procedure SetOutcome(const Value: TFHIROperationOutcome);
+    procedure SetStream(const Value: TAdvStream);
   public
     Constructor Create; Override;
     Destructor Destroy; Override;
@@ -618,6 +621,7 @@ Type
     Property Bundle : TFhirBundle read GetBundle write SetBundle;
 
     Property outcome : TFHIROperationOutcome read FOutcome write SetOutcome;
+    Property Stream : TAdvStream read FStream write SetStream;
 
     {@member Format
       The format for the response, if known and identified (xml, or json). Derived
@@ -684,6 +688,8 @@ Type
       The degree of caching to use on the response
     }
     Property CacheControl : TFHIRCacheControl read FCacheControl write FCacheControl;
+
+    property Progress : String read FProgress write FProgress;
   end;
 
   ERestfulException = class (EAdvException)
@@ -1001,6 +1007,22 @@ begin
   begin
     CommandType := fcmdConformanceStmt;
     ForceMethod('GET');
+  end
+  else if (sType = 'task') Then
+  begin
+    CommandType := fcmdTask;
+    StringSplit(sURL, '/', FId, FSubId);
+    sUrl := '';
+    if not IsGuid(id) then
+      raise ERestfulException.Create('TFhirWebServer', 'HTTPRequest', StringFormat(GetFhirMessage('MSG_BAD_FORMAT', lang), [sUrl, FId]), HTTP_ERR_FORBIDDEN, IssueTypeInvalid);
+    if sCommand = 'DELETE' then
+    begin
+      if FSubid = '' then
+        raise ERestfulException.Create('TFhirWebServer', 'HTTPRequest', StringFormat(GetFhirMessage('MSG_BAD_FORMAT', lang), [sUrl, FId]), HTTP_ERR_FORBIDDEN, IssueTypeInvalid);
+      CommandType := fcmdDeleteTask;
+    end
+    else
+      ForceMethod('GET');
   end
   else if (sType = 'validation') then
   begin
@@ -1505,6 +1527,7 @@ end;
 
 destructor TFHIRResponse.Destroy;
 begin
+  FStream.Free;
   FOutcome.Free;
   Flink_list.Free;
   FTags.free;
@@ -1540,6 +1563,12 @@ begin
   FResource.free;
   FResource := nil;
   FResource := Value;
+end;
+
+procedure TFHIRResponse.SetStream(const Value: TAdvStream);
+begin
+  FStream.Free;
+  FStream := Value;
 end;
 
 { TFHIRFactory }
