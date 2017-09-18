@@ -46,17 +46,17 @@ Type
   private
     procedure test(manager: TKDBManager);
   Published
-    [TestCase]
-    procedure TestSemaphore;
-    [TestCase]
-    procedure TestMSSQL;
+    [TestCase] procedure TestSemaphore;
+    [TestCase] procedure TestMSSQL;
     { [TestCase] } procedure TestMySQL;
     // {[TestCase] }procedure TestMySQLMaria;
-    [TestCase]
-    procedure TestSQLite;
+    [TestCase] procedure TestSQLite;
   End;
 
 implementation
+
+const
+  Name_455 = 'asdasd askjhf asdjfh sif hksdfh skdjfh sdf askjhas dak akdh ajksdh akjsdh askjd hakjsdh aksdh aksjdh aksjdh asdajksdh askd ajksdha askd ajksdh askjdh aksjdh aksjdh asjkdh askjd haskjdh askdhj asskajhd aksjdhaksjd '+'aksdh askjdh kajsdh aksjhd askjdh akjsdh kajsdh akjshdak jshd akjsdh aksjdh akjshdkajsdh akjsdhk ajshd akjsdhaj kshd akjshd asjkdhasjk d akjdh askjdh askjdh askjdh akjsdhakjsdh akjsdh aksjdh kasjdh kajsajskhd akjsdhk ajajkshd kajsdhsaksjhd d'
 
 type
   ETestException = class(Exception);
@@ -132,7 +132,7 @@ begin
       conn.sql := 'Insert into TestTable (TestKey, Name, Number, BigNumber, FloatNumber, Instant, Content) values (:k, :n, :i, :bi, :d, :ts, :c)';
       conn.Prepare;
       conn.BindKey('k', 2);
-      conn.BindString('n', 'Name 2');
+      conn.BindString('n', Name_455);
       conn.BindInteger('i', 3);
       conn.BindInt64('bi', -i64);
       conn.BindDouble('d', 3.4);
@@ -161,7 +161,7 @@ begin
 
       conn.FetchNext;
       Assert.IsTrue(conn.ColIntegerByName['TestKey'] = 2);
-      Assert.IsTrue(conn.ColStringByName['Name'] = 'Name 2');
+      Assert.IsTrue(conn.ColStringByName['Name'] = Name_455);
       Assert.IsTrue(conn.ColIntegerByName['Number'] = 3);
       Assert.IsTrue(conn.ColInt64ByName['BigNumber'] = -i64);
       Assert.IsTrue(isSame(conn.ColDoubleByName['FloatNumber'], 3.4));
