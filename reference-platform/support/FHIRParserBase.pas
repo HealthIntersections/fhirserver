@@ -35,7 +35,7 @@ Interface
 uses
   {$IFDEF MACOS} OSXUtils, {$ELSE} Windows, {$ENDIF} SysUtils, Classes, Math, EncdDecd, Generics.Collections, System.Character, {$IFNDEF VER260} System.NetEncoding, {$ENDIF}
   DateSupport, StringSupport, DecimalSupport, EncodeSupport, BytesSupport, TextUtilities, GuidSupport,
-  AdvBuffers, AdvStringLists,  AdvStringMatches, AdvVCLStreams, AdvStringBuilders, AdvGenerics,
+  AdvBuffers, AdvStringLists,  AdvStringMatches, AdvVCLStreams, AdvStringBuilders, AdvGenerics, AdvStreams,
   ParserSupport, MXML, XmlBuilder, MXmlBuilder, AdvXmlBuilders, AdvJSON, TurtleParser,
   FHIRBase, FHIRResources, FHIRTypes, FHIRConstants, FHIRContext, FHIRSupport, FHIRTags, FHIRLang, FHIRXhtml;
 
@@ -305,6 +305,7 @@ Type
     procedure ComposeItem(stream : TStream; name : String; item : TFHIRObject; isPretty : Boolean); override;
   Public
     Procedure Compose(stream : TStream; oResource : TFhirResource; isPretty : Boolean = false; links : TFhirBundleLinkList = nil); Override;
+    Procedure Compose(stream : TAdvStream; oResource : TFhirResource; isPretty : Boolean = false; links : TFhirBundleLinkList = nil); overload;
     Procedure Compose(json: TJSONWriter; oResource : TFhirResource; links : TFhirBundleLinkList = nil); Overload;
 //    Procedure Compose(stream : TStream; ResourceType : TFhirResourceType; statedType, id, ver : String; oTags : TFHIRCodingList; isPretty : Boolean); Override;
     class procedure composeFile(worker : TFHIRWorkerContext; r : TFHIRResource; lang : String; filename : String; isPretty : Boolean = false); overload;
@@ -883,9 +884,9 @@ begin
     oStream := TAdvVCLStream.Create;
     json.Stream := oStream;
     oStream.Stream := stream;
+    json.HasWhitespace := isPretty;
     json.Start;
-      json.HasWhitespace := isPretty;
-      ComposeResource(json, oResource, links);
+    ComposeResource(json, oResource, links);
     json.Finish;
   finally
     json.free;
@@ -908,6 +909,18 @@ procedure TFHIRJsonComposerBase.Compose(json : TJSONWriter; oResource: TFhirReso
 begin
   json := json.Link;
   ComposeResource(json, oResource, links);
+end;
+
+procedure TFHIRJsonComposerBase.Compose(stream: TAdvStream; oResource: TFhirResource; isPretty: Boolean; links: TFhirBundleLinkList);
+var
+  v : TVCLStream;
+begin
+  v :=  TVCLStream.Create(stream.Link);
+  try
+    Compose(v, oResource, isPretty, links);
+  finally
+    v.Free;
+  end;
 end;
 
 procedure TFHIRJsonComposerBase.ComposeBase(json: TJSONWriter; name: String; base: TFHIRObject);

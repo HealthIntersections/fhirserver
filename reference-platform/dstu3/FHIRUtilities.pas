@@ -41,7 +41,7 @@ uses
 
   StringSupport, GuidSupport, DateSupport, BytesSupport, OidSupport, EncodeSupport, DecimalSupport, ParseMap,
   AdvObjects, AdvStringBuilders, AdvGenerics,   AdvStreams,  ADvVclStreams, AdvBuffers, AdvMemories, AdvJson,
-  AdvZipWriters, AdvZipParts,
+  AdvZipWriters, AdvZipParts, AdvFiles,
 
   MimeMessage, TextUtilities, ZLib, InternetFetcher, TurtleParser,
 
@@ -157,39 +157,26 @@ function resourceToString(res : TFhirResource; format : TFHIRFormat) : String;
 function parseParamsFromForm(stream : TStream) : TFHIRParameters;
 
 type
-  TFHIRBundleBuilder = class (TAdvObject)
-  private
-    FHasSecureOp: boolean;
+  TFHIRBundleBuilderSimple = class (TFHIRBundleBuilder)
   public
-    constructor Create;
-
-    Property hasSecureOp : boolean read FHasSecureOp write FHasSecureOp;
-
-    procedure setId(id : string); virtual;
-    procedure setLastUpdated(dt : TDateTimeEx); virtual;
-    procedure setTotal(t : integer); virtual;
-    procedure tag(n, v : String); virtual;
-    procedure addLink(rt, url : String); virtual;
-    procedure addEntry(entry : TFhirBundleEntry); virtual;
-    function moveToFirst(res : TFhirResource) : TFhirBundleEntry; virtual;
-
-    function getBundle : TFHIRBundle; virtual;
+    procedure addEntry(entry : TFhirBundleEntry; first : boolean); override;
+    function moveToFirst(res : TFhirResource) : TFhirBundleEntry; override;
+    function getBundle : TFHIRBundle; override;
   end;
 
-  TFHIRBundleBuilderSimple = class (TFHIRBundleBuilder)
+  TFHIRBundleBuilderNDJson = class (TFHIRBundleBuilder)
   private
-    FBundle : TFHIRBundle;
+    FFileBase : String;
+    FFiles : TAdvMap<TAdvFile>;
+    function fileForType(rType : String) : TAdvFile;
+    procedure writeResource(res : TFHIRResource); overload;
+    procedure writeResource(rType : String; cnt : TAdvBuffer); overload;
   public
-    constructor Create(bundle : TFHIRBundle);
+    constructor Create(bundle : TFHIRBundle; fileBase : String; files : TAdvMap<TAdvFile>);
     destructor Destroy; override;
-    procedure setId(id : string); override;
-    procedure setLastUpdated(dt : TDateTimeEx); override;
-    procedure setTotal(t : integer); override;
-    procedure tag(n, v : String); override;
-    procedure addLink(rt, url : String); override;
-    procedure addEntry(entry : TFhirBundleEntry); override;
-    function moveToFirst(res : TFhirResource) : TFhirBundleEntry; override;
 
+    procedure addEntry(entry : TFhirBundleEntry; first : boolean); override;
+    function moveToFirst(res : TFhirResource) : TFhirBundleEntry; override;
     function getBundle : TFHIRBundle; override;
   end;
 
@@ -5127,76 +5114,16 @@ begin
     inc(result, c.countDescendents);
 end;
 
-{ TFHIRBundleBuilder }
-
-procedure TFHIRBundleBuilder.addEntry(entry: TFhirBundleEntry);
-begin
-  raise Exception.Create('Must override '+ClassName+'.addEntry');
-end;
-
-procedure TFHIRBundleBuilder.addLink(rt, url: String);
-begin
-  raise Exception.Create('Must override '+ClassName+'.addLink');
-end;
-
-constructor TFHIRBundleBuilder.Create;
-begin
-  inherited Create;
-end;
-
-function TFHIRBundleBuilder.getBundle: TFHIRBundle;
-begin
-  raise Exception.Create('Must override '+ClassName+'.getBundle');
-end;
-
-function TFHIRBundleBuilder.moveToFirst(res: TFhirResource): TFhirBundleEntry;
-begin
-  raise Exception.Create('Must override '+ClassName+'.moveToFirst');
-end;
-
-procedure TFHIRBundleBuilder.setId(id: string);
-begin
-  raise Exception.Create('Must override '+ClassName+'.setId');
-end;
-
-procedure TFHIRBundleBuilder.setLastUpdated(dt: TDateTimeEx);
-begin
-  raise Exception.Create('Must override '+ClassName+'.setLastUpdated');
-end;
-
-procedure TFHIRBundleBuilder.setTotal(t: integer);
-begin
-  raise Exception.Create('Must override '+ClassName+'.setTotal');
-end;
-
-procedure TFHIRBundleBuilder.tag(n, v: String);
-begin
-  raise Exception.Create('Must override '+ClassName+'.tag');
-end;
-
 { TFHIRBundleBuilderSimple }
 
-procedure TFHIRBundleBuilderSimple.addEntry(entry: TFhirBundleEntry);
+procedure TFHIRBundleBuilderSimple.addEntry(entry: TFhirBundleEntry; first : boolean);
 begin
-  FBundle.entryList.AddItem(entry);
+  if first then
+    FBundle.entryList.InsertItem(0, entry)
+  else
+    FBundle.entryList.AddItem(entry);
 end;
 
-procedure TFHIRBundleBuilderSimple.addLink(rt, url: String);
-begin
-  FBundle.Link_List.AddRelRef(rt, url);
-end;
-
-constructor TFHIRBundleBuilderSimple.Create(bundle: TFHIRBundle);
-begin
-  inherited Create;
-  FBundle := bundle;
-end;
-
-destructor TFHIRBundleBuilderSimple.Destroy;
-begin
-  FBundle.Free;
-  inherited;
-end;
 
 function TFHIRBundleBuilderSimple.getBundle: TFHIRBundle;
 begin
@@ -5204,31 +5131,103 @@ begin
 end;
 
 function TFHIRBundleBuilderSimple.moveToFirst(res: TFhirResource): TFhirBundleEntry;
+var
+  fu : String;
+  i : integer;
 begin
-  Fbundle.deleteEntry(res);
+  for i := Fbundle.entryList.Count -1 downto 0 do
+    if Fbundle.entryList[i].resource = res then
+    begin
+      fu := Fbundle.entryList[i].fullurl;
+      Fbundle.entrylist.DeleteByIndex(i);
+    end;
   Fbundle.entryList.Insert(0).resource := res.Link;
+  Fbundle.entryList[0].fullurl := fu;
   result := Fbundle.entryList[0];
 end;
 
-procedure TFHIRBundleBuilderSimple.setId(id: string);
+{ TFHIRBundleBuilderNDJson }
+
+constructor TFHIRBundleBuilderNDJson.Create(bundle: TFHIRBundle; fileBase: String; files : TAdvMap<TAdvFile>);
 begin
-  FBundle.id := id;
+  inherited Create(bundle);
+  FFileBase := fileBase;
+  FFiles := files;
 end;
 
-procedure TFHIRBundleBuilderSimple.setLastUpdated(dt: TDateTimeEx);
+destructor TFHIRBundleBuilderNDJson.Destroy;
 begin
-  FBundle.meta := TFhirMeta.Create;
-  FBundle.meta.lastUpdated := dt;
+  writeResource(FBundle);
+  Ffiles.Free;
+  inherited;
 end;
 
-procedure TFHIRBundleBuilderSimple.setTotal(t: integer);
+function TFHIRBundleBuilderNDJson.fileForType(rType: String): TAdvFile;
 begin
-  FBundle.total := inttostr(t);
+  if not FFiles.TryGetValue(rType, result) then
+  begin
+    result := TAdvFile.Create(FFileBase+'-'+rType+'.ndjson', fmCreate);
+    FFiles.Add(rType, result);
+  end;
 end;
 
-procedure TFHIRBundleBuilderSimple.tag(n, v: String);
+procedure TFHIRBundleBuilderNDJson.addEntry(entry: TFhirBundleEntry; first : boolean);
 begin
-  FBundle.Tags[n] := v;
+  if (entry.Tag <> nil) and (entry.Tag is TAdvBuffer) then
+    writeResource(entry.Tags['type'], entry.Tag as TAdvBuffer)
+  else if entry.resource <> nil then
+    writeResource(entry.resource);
+  entry.Tag := nil;
+  entry.resource := nil;
+  if first then
+    FBundle.entryList.InsertItem(0, entry)
+  else
+    FBundle.entryList.AddItem(entry);
+end;
+
+function TFHIRBundleBuilderNDJson.getBundle: TFHIRBundle;
+begin
+  result := nil; // although we have bundle internally, we don't return it directly (only use ND-JSON is asymc mode, and return a list of files)
+end;
+
+function TFHIRBundleBuilderNDJson.moveToFirst(  res: TFhirResource): TFhirBundleEntry;
+begin
+  raise Exception.Create('Not done yet');
+end;
+
+
+procedure TFHIRBundleBuilderNDJson.writeResource(res: TFHIRResource);
+var
+  f : TAdvFile;
+  json : TFHIRJsonComposer;
+  b : ansichar;
+begin
+  f := fileForType(res.fhirType);
+  if f.Size > 0 then
+  begin
+    b := #10;
+    f.Write(b, 1);
+  end;
+  json := TFHIRJsonComposer.Create(nil, 'en');
+  try
+    json.Compose(f, res, false);
+  finally
+    json.Free;
+  end;
+end;
+
+procedure TFHIRBundleBuilderNDJson.writeResource(rType: String; cnt: TAdvBuffer);
+var
+  f : TAdvFile;
+  b : ansiChar;
+begin
+  f := fileForType(rType);
+  if f.Size > 0 then
+  begin
+    b := #10;
+    f.Write(b, 1);
+  end;
+  cnt.SaveToStream(f);
 end;
 
 end.

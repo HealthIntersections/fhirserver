@@ -36,11 +36,11 @@ This is the dstu2 version of the FHIR code
 interface
 
 uses
-  Windows, SysUtils, Classes, Soap.EncdDecd, Generics.Collections, Registry,
+  Windows, SysUtils, Classes, Soap.EncdDecd, Generics.Collections,
 
   StringSupport, GuidSupport, DateSupport, BytesSupport, OidSupport, EncodeSupport, DecimalSupport, ParseMap,
   AdvObjects, AdvStringBuilders, AdvGenerics,   AdvStreams,  ADvVclStreams, AdvBuffers, AdvMemories, AdvJson,
-  AdvZipWriters, AdvZipParts,
+  AdvZipWriters, AdvZipParts, AdvFiles,
 
   MimeMessage, TextUtilities, ZLib, InternetFetcher,
 
@@ -144,13 +144,39 @@ function getConformanceResourceUrl(res : TFHIRResource) : string;
 Function removeCaseAndAccents(s : String) : String;
 
 function CustomResourceNameIsOk(name : String) : boolean;
-function fileToResource(name : String; format : TFHIRFormat) : TFhirResource;
-function streamToResource(stream : TStream; format : TFHIRFormat) : TFhirResource;
+function fileToResource(name : String; var format : TFHIRFormat) : TFhirResource;
+function streamToResource(stream : TStream; var format : TFHIRFormat) : TFhirResource;
+function bytesToResource(bytes : TBytes; var format : TFHIRFormat) : TFhirResource;
 procedure resourceToFile(res : TFhirResource; name : String; format : TFHIRFormat);
-procedure resourceToStream(res : TFhirResource; stream : TStream; format : TFHIRFormat);
+procedure resourceToStream(res : TFhirResource; stream : TStream; format : TFHIRFormat; pretty : boolean = true);
+function resourceToString(res : TFhirResource; format : TFHIRFormat) : String;
+
 function parseParamsFromForm(stream : TStream) : TFHIRParameters;
 
 type
+  TFHIRBundleBuilderSimple = class (TFHIRBundleBuilder)
+  public
+    procedure addEntry(entry : TFhirBundleEntry; first : boolean); override;
+    function moveToFirst(res : TFhirResource) : TFhirBundleEntry; override;
+    function getBundle : TFHIRBundle; override;
+  end;
+
+  TFHIRBundleBuilderNDJson = class (TFHIRBundleBuilder)
+  private
+    FFileBase : String;
+    FFiles : TAdvMap<TAdvFile>;
+    function fileForType(rType : String) : TAdvFile;
+    procedure writeResource(res : TFHIRResource); overload;
+    procedure writeResource(rType : String; cnt : TAdvBuffer); overload;
+  public
+    constructor Create(bundle : TFHIRBundle; fileBase : String; files : TAdvMap<TAdvFile>);
+    destructor Destroy; override;
+
+    procedure addEntry(entry : TFhirBundleEntry; first : boolean); override;
+    function moveToFirst(res : TFhirResource) : TFhirBundleEntry; override;
+    function getBundle : TFHIRBundle; override;
+  end;
+
   TFHIRProfileStructureHolder = TFhirStructureDefinitionSnapshot;
   TFHIRProfileStructureElement = TFhirElementDefinition;
   TFhirProfileStructureElementList = TFhirElementDefinitionList;
@@ -594,6 +620,9 @@ uses
   {$IFDEF STACK_DUMPS}
   JclDebug,
   {$ENDIF}
+  {$IFDEF MSWINDOWS}
+  Registry,
+  {$ENDIF}
   FHIRMetaModel;
 
   {$IFDEF STACK_DUMPS}
@@ -626,7 +655,7 @@ end;
 function DetectFormat(oContent : TStream) : TFHIRParserClass; overload;
 var
   i : integer;
-  s : String;
+  s : AnsiString;
 begin
   i := oContent.Position;
   setlength(s, ocontent.Size - oContent.Position);
@@ -634,16 +663,20 @@ begin
   oContent.Position := i;
   if (pos('<', s) > 0) and ((pos('<', s) < 10)) then
     result := TFHIRXmlParser
+  else if (pos('{', s) > 0) and ((pos('{', s) < 10)) then
+    result := TFHIRJsonParser
   else
-    result := TFHIRJsonParser;
+    result := nil;
 end;
 
 function DetectFormat(bytes : TBytes) : TFHIRParserClass; overload;
 var
-  s : AnsiString;
+  sa : AnsiString;
+  s : String;
 begin
-  setlength(s, length(bytes));
-  move(bytes[0], s[1], length(s));
+  setlength(sa, length(bytes));
+  move(bytes[0], sa[1], length(sa));
+  s := String(sa);
   if (pos('<', s) > 0) and ((pos('<', s) < 10)) then
     result := TFHIRXmlParser
   else
@@ -694,7 +727,9 @@ begin
 end;
 function MakeParser(oWorker : TFHIRWorkerContext; lang : String; aFormat: TFHIRFormat; oContent: TStream; policy : TFHIRXhtmlParserPolicy): TFHIRParser;
 begin
-  if aFormat = ffJSON Then
+  if aFormat = ffUnspecified then
+    result := DetectFormat(oContent).Create(oWorker.Link, lang)
+  else if aFormat = ffJSON Then
     result := TFHIRJsonParser.Create(oWorker.Link, lang)
   else if aFormat = ffXhtml then
     result := DetectFormat(oContent).create(oWorker.Link, lang)
@@ -783,7 +818,6 @@ Begin
 End;
 
 
-
 function geTFhirResourceNarrativeAsText(resource : TFhirDomainResource) : String;
 begin
   result := resource.text.div_.Content;
@@ -813,7 +847,7 @@ begin
         if StringStartsWith(iter.Current.Type_, 'Reference(') then
         begin
           for i := 0 to iter.Current.Values.count - 1 do
-            if (iter.current.Values[i] <> nil)  and not StringStartsWith(TFhirReference(iter.current.Values[i]).reference, '#') then
+            if (iter.current.Values[i] <> nil) and (iter.current.Values[i].fhirType = 'Reference') and not StringStartsWith(TFhirReference(iter.current.Values[i]).reference, '#') then
               list.add(iter.Current.Values[i].Link)
         end
         else if (iter.Current.Type_ = 'Resource') then
@@ -1268,8 +1302,9 @@ end;
 
 function gen(obj : TFhirTiming) : String;
 begin
-
+  result := '';
 end;
+
 
 function gen(extension : TFHIRExtension):String; overload;
 begin
@@ -4348,7 +4383,7 @@ begin
   CommentsElement := value;
 end;
 
-function fileToResource(name : String; format : TFHIRFormat) : TFhirResource;
+function fileToResource(name : String; var format : TFHIRFormat) : TFhirResource;
 var
   f : TFileStream;
 begin
@@ -4360,13 +4395,34 @@ begin
   end;
 end;
 
-function streamToResource(stream : TStream; format : TFHIRFormat) : TFhirResource;
+function bytesToResource(bytes : TBytes; var format : TFHIRFormat) : TFhirResource;
+var
+  b : TBytesStream;
+begin
+  b := TBytesStream.Create(bytes);
+  try
+    result := streamToResource(b, format);
+  finally
+    b.Free;
+  end;
+end;
+
+function streamToResource(stream : TStream; var format : TFHIRFormat) : TFhirResource;
 var
   p :  TFHIRParser;
+  pc : TFHIRParserClass;
 begin
   case format of
     ffXml : p := TFHIRXmlParser.Create(nil, 'en');
     ffJson : p := TFHIRJsonParser.Create(nil, 'en');
+    ffUnspecified :
+    begin
+      pc := DetectFormat(stream);
+      if pc = nil then
+        raise Exception.Create('Format Not identified');
+      p := pc.Create(nil, 'en');
+      format := p.Format;
+    end
   else
     raise Exception.Create('Format Not supported');
   end;
@@ -4376,6 +4432,19 @@ begin
     result := p.resource.Link;
   finally
     p.Free;
+  end;
+end;
+
+function resourceToString(res : TFhirResource; format : TFHIRFormat) : String;
+var
+  f : TStringStream;
+begin
+  f := TStringStream.Create('', TEncoding.UTF8);
+  try
+    resourceToStream(res, f, format);
+    result := f.DataString;
+  finally
+    f.Free;
   end;
 end;
 
@@ -4391,22 +4460,23 @@ begin
   end;
 end;
 
-procedure resourceToStream(res : TFhirResource; stream : TStream; format : TFHIRFormat);
+procedure resourceToStream(res : TFhirResource; stream : TStream; format : TFHIRFormat; pretty : boolean = true);
 var
   c : TFHIRComposer;
 begin
   case format of
-    ffXml : c := TFHIRXmlComposer.Create(nil, 'en');
+    ffXml, ffxhtml : c := TFHIRXmlComposer.Create(nil, 'en');
     ffJson : c := TFHIRJsonComposer.Create(nil, 'en');
   else
     raise Exception.Create('Format Not supported');
   end;
   try
-    c.Compose(stream, res, true);
+    c.Compose(stream, res, pretty);
   finally
     c.Free;
   end;
 end;
+
 
 function parseParamsFromForm(stream : TStream) : TFHIRParameters;
 var
@@ -4479,4 +4549,121 @@ function TFhirReferenceHelper.isRelative: boolean;
 begin
   result := not (reference.startsWith('http:') or reference.startsWith('https:') or reference.startsWith('urn:uuid:') or reference.startsWith('urn:oid:'));
 end;
+
+{ TFHIRBundleBuilderSimple }
+
+procedure TFHIRBundleBuilderSimple.addEntry(entry: TFhirBundleEntry; first : boolean);
+begin
+  if first then
+    FBundle.entryList.InsertItem(0, entry)
+  else
+    FBundle.entryList.AddItem(entry);
+end;
+
+
+function TFHIRBundleBuilderSimple.getBundle: TFHIRBundle;
+begin
+  result := FBundle.Link;
+end;
+
+function TFHIRBundleBuilderSimple.moveToFirst(res: TFhirResource): TFhirBundleEntry;
+var
+  fu : String;
+  i : integer;
+begin
+  for i := Fbundle.entryList.Count -1 downto 0 do
+    if Fbundle.entryList[i].resource = res then
+    begin
+      fu := Fbundle.entryList[i].fullurl;
+      Fbundle.entrylist.DeleteByIndex(i);
+    end;
+  Fbundle.entryList.Insert(0).resource := res.Link;
+  Fbundle.entryList[0].fullurl := fu;
+  result := Fbundle.entryList[0];
+end;
+
+{ TFHIRBundleBuilderNDJson }
+
+constructor TFHIRBundleBuilderNDJson.Create(bundle: TFHIRBundle; fileBase: String; files : TAdvMap<TAdvFile>);
+begin
+  inherited Create(bundle);
+  FFileBase := fileBase;
+  FFiles := files;
+end;
+
+destructor TFHIRBundleBuilderNDJson.Destroy;
+begin
+  writeResource(FBundle);
+  Ffiles.Free;
+  inherited;
+end;
+
+function TFHIRBundleBuilderNDJson.fileForType(rType: String): TAdvFile;
+begin
+  if not FFiles.TryGetValue(rType, result) then
+  begin
+    result := TAdvFile.Create(FFileBase+'-'+rType+'.ndjson', fmCreate);
+    FFiles.Add(rType, result);
+  end;
+end;
+
+procedure TFHIRBundleBuilderNDJson.addEntry(entry: TFhirBundleEntry; first : boolean);
+begin
+  if (entry.Tag <> nil) and (entry.Tag is TAdvBuffer) then
+    writeResource(entry.Tags['type'], entry.Tag as TAdvBuffer)
+  else if entry.resource <> nil then
+    writeResource(entry.resource);
+  entry.Tag := nil;
+  entry.resource := nil;
+  if first then
+    FBundle.entryList.InsertItem(0, entry)
+  else
+    FBundle.entryList.AddItem(entry);
+end;
+
+function TFHIRBundleBuilderNDJson.getBundle: TFHIRBundle;
+begin
+  result := nil; // although we have bundle internally, we don't return it directly (only use ND-JSON is asymc mode, and return a list of files)
+end;
+
+function TFHIRBundleBuilderNDJson.moveToFirst(  res: TFhirResource): TFhirBundleEntry;
+begin
+  raise Exception.Create('Not done yet');
+end;
+
+
+procedure TFHIRBundleBuilderNDJson.writeResource(res: TFHIRResource);
+var
+  f : TAdvFile;
+  json : TFHIRJsonComposer;
+  b : ansichar;
+begin
+  f := fileForType(res.fhirType);
+  if f.Size > 0 then
+  begin
+    b := #10;
+    f.Write(b, 1);
+  end;
+  json := TFHIRJsonComposer.Create(nil, 'en');
+  try
+    json.Compose(f, res, false);
+  finally
+    json.Free;
+  end;
+end;
+
+procedure TFHIRBundleBuilderNDJson.writeResource(rType: String; cnt: TAdvBuffer);
+var
+  f : TAdvFile;
+  b : ansiChar;
+begin
+  f := fileForType(rType);
+  if f.Size > 0 then
+  begin
+    b := #10;
+    f.Write(b, 1);
+  end;
+  cnt.SaveToStream(f);
+end;
+
 end.

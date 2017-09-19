@@ -41,7 +41,7 @@ uses
 
   StringSupport, GuidSupport, DateSupport, BytesSupport, OidSupport, EncodeSupport, DecimalSupport, ParseMap,
   AdvObjects, AdvStringBuilders, AdvGenerics,   AdvStreams,  ADvVclStreams, AdvBuffers, AdvMemories, AdvJson,
-  AdvZipWriters, AdvZipParts,
+  AdvZipWriters, AdvZipParts, AdvFiles,
 
   MimeMessage, TextUtilities, ZLib, InternetFetcher, TurtleParser,
 
@@ -157,6 +157,29 @@ function resourceToString(res : TFhirResource; format : TFHIRFormat) : String;
 function parseParamsFromForm(stream : TStream) : TFHIRParameters;
 
 type
+  TFHIRBundleBuilderSimple = class (TFHIRBundleBuilder)
+  public
+    procedure addEntry(entry : TFhirBundleEntry; first : boolean); override;
+    function moveToFirst(res : TFhirResource) : TFhirBundleEntry; override;
+    function getBundle : TFHIRBundle; override;
+  end;
+
+  TFHIRBundleBuilderNDJson = class (TFHIRBundleBuilder)
+  private
+    FFileBase : String;
+    FFiles : TAdvMap<TAdvFile>;
+    function fileForType(rType : String) : TAdvFile;
+    procedure writeResource(res : TFHIRResource); overload;
+    procedure writeResource(rType : String; cnt : TAdvBuffer); overload;
+  public
+    constructor Create(bundle : TFHIRBundle; fileBase : String; files : TAdvMap<TAdvFile>);
+    destructor Destroy; override;
+
+    procedure addEntry(entry : TFhirBundleEntry; first : boolean); override;
+    function moveToFirst(res : TFhirResource) : TFhirBundleEntry; override;
+    function getBundle : TFHIRBundle; override;
+  end;
+
   TFHIRProfileStructureHolder = TFhirStructureDefinitionSnapshot;
   TFHIRProfileStructureElement = TFhirElementDefinition;
   TFhirProfileStructureElementList = TFhirElementDefinitionList;
@@ -4854,7 +4877,7 @@ var
   c : TFHIRComposer;
 begin
   case format of
-    ffXml : c := TFHIRXmlComposer.Create(nil, 'en');
+    ffXml, ffxhtml : c := TFHIRXmlComposer.Create(nil, 'en');
     ffJson : c := TFHIRJsonComposer.Create(nil, 'en');
     ffTurtle : c := TFHIRTurtleComposer.Create(nil, 'en');
   else
@@ -5053,6 +5076,122 @@ begin
   result := itemList.Count;
   for c in itemList do
     inc(result, c.countDescendents);
+end;
+
+{ TFHIRBundleBuilderSimple }
+
+procedure TFHIRBundleBuilderSimple.addEntry(entry: TFhirBundleEntry; first : boolean);
+begin
+  if first then
+    FBundle.entryList.InsertItem(0, entry)
+  else
+    FBundle.entryList.AddItem(entry);
+end;
+
+
+function TFHIRBundleBuilderSimple.getBundle: TFHIRBundle;
+begin
+  result := FBundle.Link;
+end;
+
+function TFHIRBundleBuilderSimple.moveToFirst(res: TFhirResource): TFhirBundleEntry;
+var
+  fu : String;
+  i : integer;
+begin
+  for i := Fbundle.entryList.Count -1 downto 0 do
+    if Fbundle.entryList[i].resource = res then
+    begin
+      fu := Fbundle.entryList[i].fullurl;
+      Fbundle.entrylist.DeleteByIndex(i);
+    end;
+  Fbundle.entryList.Insert(0).resource := res.Link;
+  Fbundle.entryList[0].fullurl := fu;
+  result := Fbundle.entryList[0];
+end;
+
+{ TFHIRBundleBuilderNDJson }
+
+constructor TFHIRBundleBuilderNDJson.Create(bundle: TFHIRBundle; fileBase: String; files : TAdvMap<TAdvFile>);
+begin
+  inherited Create(bundle);
+  FFileBase := fileBase;
+  FFiles := files;
+end;
+
+destructor TFHIRBundleBuilderNDJson.Destroy;
+begin
+  writeResource(FBundle);
+  Ffiles.Free;
+  inherited;
+end;
+
+function TFHIRBundleBuilderNDJson.fileForType(rType: String): TAdvFile;
+begin
+  if not FFiles.TryGetValue(rType, result) then
+  begin
+    result := TAdvFile.Create(FFileBase+'-'+rType+'.ndjson', fmCreate);
+    FFiles.Add(rType, result);
+  end;
+end;
+
+procedure TFHIRBundleBuilderNDJson.addEntry(entry: TFhirBundleEntry; first : boolean);
+begin
+  if (entry.Tag <> nil) and (entry.Tag is TAdvBuffer) then
+    writeResource(entry.Tags['type'], entry.Tag as TAdvBuffer)
+  else if entry.resource <> nil then
+    writeResource(entry.resource);
+  entry.Tag := nil;
+  entry.resource := nil;
+  if first then
+    FBundle.entryList.InsertItem(0, entry)
+  else
+    FBundle.entryList.AddItem(entry);
+end;
+
+function TFHIRBundleBuilderNDJson.getBundle: TFHIRBundle;
+begin
+  result := nil; // although we have bundle internally, we don't return it directly (only use ND-JSON is asymc mode, and return a list of files)
+end;
+
+function TFHIRBundleBuilderNDJson.moveToFirst(  res: TFhirResource): TFhirBundleEntry;
+begin
+  raise Exception.Create('Not done yet');
+end;
+
+
+procedure TFHIRBundleBuilderNDJson.writeResource(res: TFHIRResource);
+var
+  f : TAdvFile;
+  json : TFHIRJsonComposer;
+  b : ansichar;
+begin
+  f := fileForType(res.fhirType);
+  if f.Size > 0 then
+  begin
+    b := #10;
+    f.Write(b, 1);
+  end;
+  json := TFHIRJsonComposer.Create(nil, 'en');
+  try
+    json.Compose(f, res, false);
+  finally
+    json.Free;
+  end;
+end;
+
+procedure TFHIRBundleBuilderNDJson.writeResource(rType: String; cnt: TAdvBuffer);
+var
+  f : TAdvFile;
+  b : ansiChar;
+begin
+  f := fileForType(rType);
+  if f.Size > 0 then
+  begin
+    b := #10;
+    f.Write(b, 1);
+  end;
+  cnt.SaveToStream(f);
 end;
 
 end.

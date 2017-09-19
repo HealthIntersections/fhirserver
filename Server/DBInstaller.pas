@@ -676,8 +676,8 @@ begin
        ' Expires     '+DBDateTimeType(FConn.owner.platform)+' '+ColCanBeNull(FConn.owner.platform, true)+', '+#13#10+    //
        ' Deleted     '+DBDateTimeType(FConn.owner.platform)+' '+ColCanBeNull(FConn.owner.platform, true)+', '+#13#10+    //
        ' Count       int                                      '+ColCanBeNull(FConn.owner.platform, true)+', '+#13#10+   //
-       ' Names       char(512)                                '+ColCanBeNull(FConn.owner.platform, true)+', '+#13#10+   //
        ' Downloads   int                                      '+ColCanBeNull(FConn.owner.platform, true)+', '+#13#10+   //
+       ' Names       '+DBBlobType(FConn.owner.platform)+'     '+ColCanBeNull(FConn.owner.platform, true)+', '+#13#10+   //
        ' Outcome     '+DBBlobType(FConn.owner.platform)+'     '+ColCanBeNull(FConn.owner.platform, true)+', '+#13#10+   //
        PrimaryKeyType(FConn.owner.Platform, 'PK_AsyncTasks', 'TaskKey')+') '+CreateTableInfo(FConn.owner.platform));
   FConn.ExecSQL('Create INDEX SK_AsyncTasksId ON AsyncTasks (Id)');
@@ -1118,6 +1118,9 @@ begin
       if assigned(CallBack) then Callback(30, 'Check Delete Unii');
       if meta.hasTable('Unii') then
         FConn.DropTable('Unii');
+      if assigned(CallBack) then Callback(30, 'Check Delete AsyncTasks');
+      if meta.hasTable('AsyncTasks') then
+        FConn.DropTable('AsyncTasks');
 
       FConn.Commit;
     except

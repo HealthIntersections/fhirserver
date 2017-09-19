@@ -45,7 +45,7 @@ uses
   IdGlobal,
   Parsemap, TextUtilities,
   StringSupport, DecimalSupport, GuidSupport, DateSupport,
-  AdvObjects, AdvBuffers, AdvStringLists, AdvStringMatches, AdvJson, AdvGenerics, AdvNameBuffers,
+  AdvObjects, AdvBuffers, AdvStringLists, AdvStringMatches, AdvJson, AdvGenerics, AdvNameBuffers, AdvStreams,
   MimeMessage, JWT, SCIMObjects, MXML, GraphQL,
   FHIRBase, FHirResources, FHIRConstants, FHIRTypes, FHIRContext, FHIRSecurity, FHIRTags, FHIRLang, FHIRXhtml;
 
@@ -120,7 +120,8 @@ Type
     Function Link : TFHIRCompartmentList; overload;
     function existsInCompartment(comp: TFHIRResourceType; resource : String) : boolean;
     function getIndexNames(comp: TFHIRResourceType; resource : String) : TAdvStringSet;
-    procedure register(comp: TFHIRResourceType; resource : String; indexes : array of String);
+    procedure register(comp: TFHIRResourceType; resource : String; indexes : array of String); overload;
+    procedure register(comp: TFHIRResourceType; resource : String; list : String); overload;
   end;
 
 
@@ -529,6 +530,29 @@ Type
     property loadObjects : boolean read FLoadObjects write FLoadObjects;
   End;
 
+  TFHIRBundleBuilder = class (TAdvObject)
+  private
+    FHasSecureOp: boolean;
+  protected
+    FBundle : TFHIRBundle;
+  public
+    constructor Create(bundle : TFHIRBundle);
+    destructor Destroy; override;
+
+    Property hasSecureOp : boolean read FHasSecureOp write FHasSecureOp;
+
+    procedure setId(id : string);
+    procedure setLastUpdated(dt : TDateTimeEx);
+    procedure setTotal(t : integer);
+    procedure tag(n, v : String);
+    procedure addLink(rt, url : String);
+    procedure addEntry(entry : TFhirBundleEntry; first : boolean); virtual;
+    function moveToFirst(res : TFhirResource) : TFhirBundleEntry; virtual;
+    function getBundle : TFHIRBundle; virtual;
+  end;
+
+  TCreateBundleBuilderEvent = procedure (context : TFHIRResponse; aType : TFhirBundleTypeEnum; out builder : TFhirBundleBuilder) of object;
+
   {@Class TFHIRResponse
     A FHIR response.
 
@@ -565,11 +589,15 @@ Type
     FId: String;
     FOutcome: TFHIROperationOutcome;
     FCacheControl : TFHIRCacheControl;
+    FProgress: String;
+    FStream : TAdvStream;
+    FOnCreateBuilder: TCreateBundleBuilderEvent;
 
     procedure SetResource(const Value: TFhirResource);
     function GetBundle: TFhirBundle;
     procedure SetBundle(const Value: TFhirBundle);
     procedure SetOutcome(const Value: TFHIROperationOutcome);
+    procedure SetStream(const Value: TAdvStream);
   public
     Constructor Create; Override;
     Destructor Destroy; Override;
@@ -617,6 +645,7 @@ Type
     Property Bundle : TFhirBundle read GetBundle write SetBundle;
 
     Property outcome : TFHIROperationOutcome read FOutcome write SetOutcome;
+    Property Stream : TAdvStream read FStream write SetStream;
 
     {@member Format
       The format for the response, if known and identified (xml, or json). Derived
@@ -683,6 +712,9 @@ Type
       The degree of caching to use on the response
     }
     Property CacheControl : TFHIRCacheControl read FCacheControl write FCacheControl;
+
+    property Progress : String read FProgress write FProgress;
+    property OnCreateBuilder : TCreateBundleBuilderEvent read FOnCreateBuilder write FOnCreateBuilder;
   end;
 
   ERestfulException = class (EAdvException)
@@ -1000,6 +1032,22 @@ begin
   begin
     CommandType := fcmdConformanceStmt;
     ForceMethod('GET');
+  end
+  else if (sType = 'task') Then
+  begin
+    CommandType := fcmdTask;
+    StringSplit(sURL, '/', FId, FSubId);
+    sUrl := '';
+    if not IsGuid(id) then
+      raise ERestfulException.Create('TFhirWebServer', 'HTTPRequest', StringFormat(GetFhirMessage('MSG_BAD_FORMAT', lang), [sUrl, FId]), HTTP_ERR_FORBIDDEN, IssueTypeInvalid);
+    if sCommand = 'DELETE' then
+    begin
+      if FSubid <> '' then
+        raise ERestfulException.Create('TFhirWebServer', 'HTTPRequest', StringFormat(GetFhirMessage('MSG_BAD_FORMAT', lang), [sUrl, FSubid]), HTTP_ERR_FORBIDDEN, IssueTypeInvalid);
+      CommandType := fcmdDeleteTask;
+    end
+    else
+      ForceMethod('GET');
   end
   else if (sType = 'validation') then
   begin
@@ -1491,6 +1539,7 @@ end;
 
 destructor TFHIRResponse.Destroy;
 begin
+  FStream.Free;
   FOutcome.Free;
   Flink_list.Free;
   FTags.free;
@@ -1526,6 +1575,12 @@ begin
   FResource.free;
   FResource := nil;
   FResource := Value;
+end;
+
+procedure TFHIRResponse.SetStream(const Value: TAdvStream);
+begin
+  FStream.Free;
+  FStream := Value;
 end;
 
 { TFHIRFactory }
@@ -2105,6 +2160,11 @@ begin
   result := TFHIRCompartmentList(inherited link);
 end;
 
+procedure TFHIRCompartmentList.register(comp: TFHIRResourceType; resource, list: String);
+begin
+  raise Exception.Create('not done yet');
+end;
+
 procedure TFHIRCompartmentList.register(comp: TFHIRResourceType; resource : String; indexes : array of String);
 begin
   case comp of
@@ -2124,5 +2184,61 @@ function TFHIRFormatAdaptor.Link: TFHIRFormatAdaptor;
 begin
   result := TFHIRFormatAdaptor(inherited Link);
 end;
+
+{ TFHIRBundleBuilder }
+
+procedure TFHIRBundleBuilder.addEntry(entry: TFhirBundleEntry; first : boolean);
+begin
+  raise Exception.Create('Must override '+ClassName+'.addEntry');
+end;
+
+procedure TFHIRBundleBuilder.addLink(rt, url: String);
+begin
+  FBundle.Link_List.AddRelRef(rt, url);
+end;
+
+constructor TFHIRBundleBuilder.Create;
+begin
+  inherited Create;
+  FBundle := bundle;
+end;
+
+destructor TFHIRBundleBuilder.Destroy;
+begin
+  FBundle.Free;
+  inherited;
+end;
+
+function TFHIRBundleBuilder.getBundle: TFHIRBundle;
+begin
+  raise Exception.Create('Must override '+ClassName+'.getBundle');
+end;
+
+function TFHIRBundleBuilder.moveToFirst(res: TFhirResource): TFhirBundleEntry;
+begin
+  raise Exception.Create('Must override '+ClassName+'.moveToFirst');
+end;
+
+procedure TFHIRBundleBuilder.setId(id: string);
+begin
+  FBundle.id := id;
+end;
+
+procedure TFHIRBundleBuilder.setLastUpdated(dt: TDateTimeEx);
+begin
+  FBundle.meta := TFhirMeta.Create;
+  FBundle.meta.lastUpdated := dt;
+end;
+
+procedure TFHIRBundleBuilder.setTotal(t: integer);
+begin
+  FBundle.total := inttostr(t);
+end;
+
+procedure TFHIRBundleBuilder.tag(n, v: String);
+begin
+  FBundle.Tags[n] := v;
+end;
+
 
 end.

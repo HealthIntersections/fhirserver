@@ -530,6 +530,29 @@ Type
     property loadObjects : boolean read FLoadObjects write FLoadObjects;
   End;
 
+  TFHIRBundleBuilder = class (TAdvObject)
+  private
+    FHasSecureOp: boolean;
+  protected
+    FBundle : TFHIRBundle;
+  public
+    constructor Create(bundle : TFHIRBundle);
+    destructor Destroy; override;
+
+    Property hasSecureOp : boolean read FHasSecureOp write FHasSecureOp;
+
+    procedure setId(id : string);
+    procedure setLastUpdated(dt : TDateTimeEx);
+    procedure setTotal(t : integer);
+    procedure tag(n, v : String);
+    procedure addLink(rt, url : String);
+    procedure addEntry(entry : TFhirBundleEntry; first : boolean); virtual;
+    function moveToFirst(res : TFhirResource) : TFhirBundleEntry; virtual;
+    function getBundle : TFHIRBundle; virtual;
+  end;
+
+  TCreateBundleBuilderEvent = procedure (context : TFHIRResponse; aType : TFhirBundleTypeEnum; out builder : TFhirBundleBuilder) of object;
+
   {@Class TFHIRResponse
     A FHIR response.
 
@@ -568,6 +591,7 @@ Type
     FCacheControl : TFHIRCacheControl;
     FProgress: String;
     FStream : TAdvStream;
+    FOnCreateBuilder: TCreateBundleBuilderEvent;
 
     procedure SetResource(const Value: TFhirResource);
     function GetBundle: TFhirBundle;
@@ -690,6 +714,7 @@ Type
     Property CacheControl : TFHIRCacheControl read FCacheControl write FCacheControl;
 
     property Progress : String read FProgress write FProgress;
+    property OnCreateBuilder : TCreateBundleBuilderEvent read FOnCreateBuilder write FOnCreateBuilder;
   end;
 
   ERestfulException = class (EAdvException)
@@ -1017,8 +1042,8 @@ begin
       raise ERestfulException.Create('TFhirWebServer', 'HTTPRequest', StringFormat(GetFhirMessage('MSG_BAD_FORMAT', lang), [sUrl, FId]), HTTP_ERR_FORBIDDEN, IssueTypeInvalid);
     if sCommand = 'DELETE' then
     begin
-      if FSubid = '' then
-        raise ERestfulException.Create('TFhirWebServer', 'HTTPRequest', StringFormat(GetFhirMessage('MSG_BAD_FORMAT', lang), [sUrl, FId]), HTTP_ERR_FORBIDDEN, IssueTypeInvalid);
+      if FSubid <> '' then
+        raise ERestfulException.Create('TFhirWebServer', 'HTTPRequest', StringFormat(GetFhirMessage('MSG_BAD_FORMAT', lang), [sUrl, FSubid]), HTTP_ERR_FORBIDDEN, IssueTypeInvalid);
       CommandType := fcmdDeleteTask;
     end
     else
@@ -2174,5 +2199,61 @@ function TFHIRFormatAdaptor.Link: TFHIRFormatAdaptor;
 begin
   result := TFHIRFormatAdaptor(inherited Link);
 end;
+
+{ TFHIRBundleBuilder }
+
+procedure TFHIRBundleBuilder.addEntry(entry: TFhirBundleEntry; first : boolean);
+begin
+  raise Exception.Create('Must override '+ClassName+'.addEntry');
+end;
+
+procedure TFHIRBundleBuilder.addLink(rt, url: String);
+begin
+  FBundle.Link_List.AddRelRef(rt, url);
+end;
+
+constructor TFHIRBundleBuilder.Create;
+begin
+  inherited Create;
+  FBundle := bundle;
+end;
+
+destructor TFHIRBundleBuilder.Destroy;
+begin
+  FBundle.Free;
+  inherited;
+end;
+
+function TFHIRBundleBuilder.getBundle: TFHIRBundle;
+begin
+  raise Exception.Create('Must override '+ClassName+'.getBundle');
+end;
+
+function TFHIRBundleBuilder.moveToFirst(res: TFhirResource): TFhirBundleEntry;
+begin
+  raise Exception.Create('Must override '+ClassName+'.moveToFirst');
+end;
+
+procedure TFHIRBundleBuilder.setId(id: string);
+begin
+  FBundle.id := id;
+end;
+
+procedure TFHIRBundleBuilder.setLastUpdated(dt: TDateTimeEx);
+begin
+  FBundle.meta := TFhirMeta.Create;
+  FBundle.meta.lastUpdated := dt;
+end;
+
+procedure TFHIRBundleBuilder.setTotal(t: integer);
+begin
+  FBundle.total := inttostr(t);
+end;
+
+procedure TFHIRBundleBuilder.tag(n, v: String);
+begin
+  FBundle.Tags[n] := v;
+end;
+
 
 end.

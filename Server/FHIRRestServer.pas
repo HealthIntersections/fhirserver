@@ -158,6 +158,7 @@ Type
     FServer : TFhirWebServer;
     FRequest : TFHIRRequest;
     FFormat : TFHIRFormat;
+    files : TAdvMap<TAdvFile>;
     procedure SetRequest(const Value: TFHIRRequest);
     procedure SetServer(const Value: TFhirWebServer);
 
@@ -165,6 +166,7 @@ Type
     procedure callback(IntParam: Integer; StrParam: String);
 
     procedure saveOutcome(response : TFHIRResponse);
+    procedure doGetBundleBuilder(context : TFHIRResponse; aType : TFhirBundleTypeEnum; out builder : TFhirBundleBuilder);
   protected
     procedure Execute; override;
   public
@@ -286,6 +288,7 @@ Type
     procedure PopulateConformanceAuth(rest: TFhirCapabilityStatementRest);
     procedure PopulateConformance(sender: TObject; conf: TFhirCapabilityStatement);
     function WebDump: String;
+    procedure doGetBundleBuilder(context : TFHIRResponse; aType : TFhirBundleTypeEnum; out builder : TFhirBundleBuilder);
 
     function hasInternalSSLToken(request: TIdHTTPRequestInfo): boolean;
     procedure cacheResponse(response: TIdHTTPResponseInfo; caching: TFHIRCacheControl);
@@ -697,6 +700,13 @@ begin
 {$ENDIF}
 end;
 
+procedure TFhirWebServer.doGetBundleBuilder(context: TFHIRResponse; aType: TFhirBundleTypeEnum; out builder: TFhirBundleBuilder);
+begin
+  if context.Format = ffNDJson then
+    raise Exception.Create('ND-json is only supported for asynchronous calls');
+  builder := TFHIRBundleBuilderSimple.Create(TFHIRBundle.create(aType));
+end;
+
 function TFhirWebServer.DoSearch(Session: TFHIRSession; rtype: string; lang, params: String): TFHIRBundle;
 var
   request: TFHIRRequest;
@@ -708,6 +718,7 @@ begin
   try
     response := TFHIRResponse.Create;
     try
+      response.OnCreateBuilder := doGetBundleBuilder;
       request.Session := Session.link;
       request.ResourceName := rtype;
       request.lang := lang;
@@ -1001,6 +1012,7 @@ begin
       Context.message := 'Process ' + name;
       resp := TFHIRResponse.Create;
       try
+        resp.OnCreateBuilder := doGetBundleBuilder;
         ProcessRequest(Context, req, resp);
       finally
         resp.Free;
@@ -1471,6 +1483,7 @@ Begin
         try
           oResponse := TFHIRResponse.Create;
           try
+            oResponse.OnCreateBuilder := doGetBundleBuilder;
             response.CustomHeaders.Add('Access-Control-Allow-Origin: *');
             // response.CustomHeaders.add('Access-Control-Allow-Methods: GET, POST, PUT, DELETE');
             response.CustomHeaders.Add('Access-Control-Expose-Headers: Content-Location, Location');
@@ -2253,7 +2266,7 @@ begin
             TFHIRXhtmlComposer(oComp).Session := Session.link;
             TFHIRXhtmlComposer(oComp).relativeReferenceAdjustment := relativeReferenceAdjustment;
           end;
-        ffJson:
+        ffJson, ffNDJson:
           oComp := TFHIRJsonComposer.Create(FServerContext.Validator.Context.link, lang);
         ffText:
           oComp := TFHIRTextComposer.Create(FServerContext.Validator.Context.link, lang);
@@ -2337,7 +2350,7 @@ Begin
     begin
       if oRequest.Parameters.VarExists('_format') and (form = nil) and (oRequest.Parameters.GetVar('_format') <> '') then
         sContentType := oRequest.Parameters.GetVar('_format');
-      if StringStartsWithInsensitive(sContentType, 'application/x-ndjson') then
+      if StringStartsWithInsensitive(sContentType, 'application/x-ndjson') or StringStartsWithInsensitive(sContentType, 'application/fhir+ndjson') then
         oRequest.PostFormat := ffNDJson
       else if StringStartsWithInsensitive(sContentType, 'application/json') or StringStartsWithInsensitive(sContentType, 'application/fhir+json') or
         StringStartsWithInsensitive(sContentType, 'application/json+fhir') or StringStartsWithInsensitive(sContentType, 'json') or
@@ -2358,7 +2371,7 @@ Begin
 
     if oRequest.Parameters.VarExists('_format') and (oRequest.Parameters.GetVar('_format') <> '') then
       sContentAccept := oRequest.Parameters.GetVar('_format');
-    if StringStartsWithInsensitive(sContentAccept, 'application/x-ndjson') then
+    if StringStartsWithInsensitive(sContentAccept, 'application/x-ndjson') or StringStartsWithInsensitive(sContentAccept, 'application/fhir+ndjson') then
       oResponse.format := ffNDJson
     else if StringExistsSensitive(sContentAccept, 'application/json') or StringExistsSensitive(sContentAccept, 'application/fhir+json') or
       StringExistsInsensitive(sContentAccept, 'json') Then
@@ -2822,6 +2835,8 @@ var
   thread : TAsyncTaskThread;
   id : String;
 begin
+  if not (request.CommandType in [fcmdSearch, fcmdHistoryInstance, fcmdHistoryType, fcmdHistorySystem, fcmdTransaction, fcmdBatch, fcmdUpload, fcmdOperation]) then
+    raise Exception.Create('Asynchronous processing not supported for this request');
   thread := TAsyncTaskThread.create;
   FLock.Lock;
   try
@@ -3008,7 +3023,7 @@ begin
             begin
             // check format
             if (fmt <> response.Format) then
-              raise Exception.Create('Error: the request format () does not match the task format ()');
+              raise Exception.Create('Error: the request format ('+CODES_TFHIRFormat[response.Format]+') does not match the task format ('+CODES_TFHIRFormat[fmt]+')');
             response.HTTPCode := 200;
             response.Message := 'OK';
             for s in names do
@@ -3016,7 +3031,7 @@ begin
               l := TFhirBundleLink.Create;
               try
                 l.url := request.baseUrl+'task/'+request.id+'/'+s+EXT_WEB_TFHIRFormat[fmt];
-                l.relation := 'xxx';
+                l.relation := 'item';
                 response.link_list.add(l.Link);
               finally
                 l.Free;
@@ -3430,6 +3445,7 @@ begin
   request := TFHIRRequest.Create(FServerContext.ValidatorContext.link, roRest, FServerContext.Indexes.Compartments.link);
   response := TFHIRResponse.Create;
   try
+    response.OnCreateBuilder := doGetBundleBuilder;
     request.Session := Session.link;
     request.ResourceName := rtype;
     request.lang := lang;
@@ -3473,6 +3489,7 @@ begin
   request := TFHIRRequest.Create(FServerContext.ValidatorContext.link, roRest, FServerContext.Indexes.Compartments.link);
   response := TFHIRResponse.Create;
   try
+    response.OnCreateBuilder := doGetBundleBuilder;
     request.Session := Session.link;
     request.ResourceName := rtype;
     request.lang := lang;
@@ -4111,9 +4128,22 @@ end;
 
 destructor TAsyncTaskThread.Destroy;
 begin
+  Files.free;
   FRequest.Free;
   FServer.Free;
   inherited;
+end;
+
+procedure TAsyncTaskThread.doGetBundleBuilder(context: TFHIRResponse; aType: TFhirBundleTypeEnum; out builder: TFhirBundleBuilder);
+begin
+  if context.Format = ffNDJson then
+  begin
+    files := TAdvMap<TAdvFile>.create;
+    builder := TFHIRBundleBuilderNDJson.Create(TFHIRBundle.create(aType), IncludeTrailingPathDelimiter(FServer.ServerContext.TaskFolder)+'task-'+inttostr(FKey), files.link)
+  end
+  else
+    builder := TFHIRBundleBuilderSimple.Create(TFHIRBundle.create(aType));
+
 end;
 
 procedure TAsyncTaskThread.Execute;
@@ -4130,6 +4160,8 @@ begin
     response := TFHIRResponse.Create;
     try
       response.format := FFormat;
+      response.OnCreateBuilder := doGetBundleBuilder;
+
       t := GetTickCount;
       if request.Session = nil then // during OAuth only
         us := 'user=(in-oauth)'
@@ -4189,16 +4221,26 @@ procedure TAsyncTaskThread.saveOutcome;
 var
   names : TStringList;
   f : TFileStream;
+  n : String;
 begin
   names := TStringList.Create;
   try
-    names.Add('content');
-    f := TFileStream.Create(Path([FServer.ServerContext.TaskFolder, 'task-'+inttostr(key)+'-content'+EXT_WEB_TFHIRFormat[format]]), fmCreate);
-    try
-      // ffNDJson, { new line delimited JSON }
-      resourceToStream(response.Resource, f, FFormat, false);
-    finally
-      f.Free;
+    if files = nil then
+    begin
+      names.Add('content');
+      f := TFileStream.Create(Path([FServer.ServerContext.TaskFolder, 'task-'+inttostr(key)+'-content'+EXT_WEB_TFHIRFormat[format]]), fmCreate);
+      try
+        // ffNDJson, { new line delimited JSON }
+        resourceToStream(response.Resource, f, FFormat, false);
+      finally
+        f.Free;
+      end;
+    end
+    else
+    begin
+      for n in files.Keys do
+        names.Add(n);
+      files.Clear;
     end;
     FServer.ServerContext.Storage.MarkTaskForDownload(key, names);
   finally

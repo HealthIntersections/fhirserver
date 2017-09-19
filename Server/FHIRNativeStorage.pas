@@ -215,7 +215,7 @@ type
 
     function opAllowed(resource : string; command : TFHIRCommandType) : Boolean; override;
 
-    function AddResourceTobundle(bundle : TFHIRBundleBuilder; isSecure : boolean; base : String; field : String; comp : TFHIRParserClass; purpose : TFhirSearchEntryModeEnum; makeRequest : boolean; var type_ : String) : TFHIRBundleEntry; overload;
+    procedure AddResourceTobundle(bundle : TFHIRBundleBuilder; isSecure : boolean; base : String; field : String; comp : TFHIRParserClass; purpose : TFhirSearchEntryModeEnum; makeRequest : boolean; var type_ : String; first : boolean = false); overload;
     procedure DefineConformanceResources(base : String); // called after database is created
 
     // called when kernel actually wants to process against the store
@@ -842,7 +842,7 @@ begin
   inherited;
 end;
 
-function TFHIRNativeOperationEngine.AddResourceTobundle(bundle : TFHIRBundleBuilder; isSecure : boolean; base : String; field : String; comp : TFHIRParserClass; purpose : TFhirSearchEntryModeEnum; makeRequest : boolean; var type_ : String) : TFHIRBundleEntry;
+procedure TFHIRNativeOperationEngine.AddResourceTobundle(bundle : TFHIRBundleBuilder; isSecure : boolean; base : String; field : String; comp : TFHIRParserClass; purpose : TFhirSearchEntryModeEnum; makeRequest : boolean; var type_ : String; first : boolean = false);
 var
   parser : TFhirParser;
   mem : TBytesStream;
@@ -880,64 +880,65 @@ begin
   type_ := FConnection.colStringByName['ResourceName'];
   if (FConnection.ColIntegerByName['Status'] = 2) then
   begin
-    result := TFHIRBundleEntry.Create;
+    entry := TFHIRBundleEntry.Create;
     try
-      result.fullUrl := AppendForwardSlash(base)+type_+'/'+sId;
-      result.request := TFhirBundleEntryRequest.Create;
-      result.request.url := result.fullUrl;
-      result.request.method := HttpVerbDELETE;
-      result.response := TFhirBundleEntryResponse.Create;
-      result.response.lastModified := TDateTimeEx.fromTS(FConnection.ColTimeStampByName['StatedDate'], dttzUTC);
-      result.response.etag := 'W/'+FConnection.ColStringByName['VersionId'];
-      result.Tags['opdesc'] := 'Deleted by '+FConnection.ColStringByName['Name']+' at '+result.response.lastModified.toString+ '(UTC)';
+      entry.fullUrl := AppendForwardSlash(base)+type_+'/'+sId;
+      entry.request := TFhirBundleEntryRequest.Create;
+      entry.request.url := entry.fullUrl;
+      entry.request.method := HttpVerbDELETE;
+      entry.response := TFhirBundleEntryResponse.Create;
+      entry.response.lastModified := TDateTimeEx.fromTS(FConnection.ColTimeStampByName['StatedDate'], dttzUTC);
+      entry.response.etag := 'W/'+FConnection.ColStringByName['VersionId'];
+      entry.Tags['opdesc'] := 'Deleted by '+FConnection.ColStringByName['Name']+' at '+entry.response.lastModified.toString+ '(UTC)';
       sAud := FConnection.ColStringByName['AuditId'];
       if sAud <> '' then
-        result.link_List.AddRelRef('audit', 'AuditEvent/'+sAud);
-      addRequest(result);
-      bundle.addEntry(result.Link);
+        entry.link_List.AddRelRef('audit', 'AuditEvent/'+sAud);
+      addRequest(entry);
+      bundle.addEntry(entry.Link, first);
     finally
-      result.Free;
+      entry.Free;
     end;
   end
   else if not isSecure and (FConnection.ColIntegerByName['Secure'] = 1) then
   begin
     if bundle.hasSecureOp then
       exit;
-    result := TFHIRBundleEntry.Create;
+    entry := TFHIRBundleEntry.Create;
     try
-      result.resource := BuildOperationOutcome('en', 'Some resources have been omitted from this bundle because they are labelled with a with a security tag that means this server will only send it if the connection is secure', IssueTypeSuppressed);
-      result.resource.Tags[OP_MASK_TAG] := 'secure';
-      addRequest(result);
-      bundle.addEntry(result.link);
+      entry.resource := BuildOperationOutcome('en', 'Some resources have been omitted from this bundle because they are labelled with a with a security tag that means this server will only send it if the connection is secure', IssueTypeSuppressed);
+      entry.resource.Tags[OP_MASK_TAG] := 'secure';
+      addRequest(entry);
+      bundle.addEntry(entry.link, first);
       bundle.hasSecureOp := true;
     finally
-      result.Free;
+      entry.Free;
     end;
   end
   else
   begin
     if comp = nil then
     begin
-      result := TFHIRBundleEntry.Create;
+      entry := TFHIRBundleEntry.Create;
       try
-        result.Tag := TAdvBuffer.create;
-        result.fullUrl := AppendForwardSlash(base)+type_+'/'+sId;
-        TAdvBuffer(result.Tag).AsBytes := FConnection.ColBlobByName[field];
+        entry.Tag := TAdvBuffer.create;
+        entry.fullUrl := AppendForwardSlash(base)+type_+'/'+sId;
+        TAdvBuffer(entry.Tag).AsBytes := FConnection.ColBlobByName[field];
+        entry.Tags['type'] := type_;
         if (purpose <> SearchEntryModeNull) then
         begin
-          result.search := TFhirBundleEntrySearch.Create;
-          result.search.mode := purpose;
+          entry.search := TFhirBundleEntrySearch.Create;
+          entry.search.mode := purpose;
           if (purpose = SearchEntryModeMatch) and not FConnection.ColNullByName['Score1'] then
           begin
-            result.search.score := FloatToStr(FConnection.ColIntegerByName['Score1'] / 100);
+            entry.search.score := FloatToStr(FConnection.ColIntegerByName['Score1'] / 100);
             if FConnection.ColIntegerByName['Score2'] > 0 then
-              result.search.addExtension('http://hl7.org/fhir/StructureDefinition/patient-mpi-match').value := TFhirCode.Create(CODES_TMPICertainty[TMPICertainty(FConnection.ColIntegerByName['Score2'])]);
+              entry.search.addExtension('http://hl7.org/fhir/StructureDefinition/patient-mpi-match').value := TFhirCode.Create(CODES_TMPICertainty[TMPICertainty(FConnection.ColIntegerByName['Score2'])]);
           end;
         end;
-        addRequest(result);
-        bundle.addEntry(result.link);
+        addRequest(entry);
+        bundle.addEntry(entry.link, first);
       finally
-        result.Free;
+        entry.Free;
       end;
     end
     else
@@ -964,9 +965,8 @@ begin
                   entry.search.addExtension('http://hl7.org/fhir/StructureDefinition/patient-mpi-match').value := TFhirCode.Create(CODES_TMPICertainty[TMPICertainty(FConnection.ColIntegerByName['Score2'])]);
               end;
             end;
-            result := entry;
-            addRequest(result);
-            bundle.addEntry(entry.Link);
+            addRequest(entry);
+            bundle.addEntry(entry.Link, first);
           finally
             entry.Free;
           end;
@@ -1627,7 +1627,7 @@ begin
       if (not needsObject) then
         comp := nil;
 
-      bundle := TFHIRBundleBuilderSimple.Create(TFHIRBundle.Create(BundleTypeHistory));
+      response.OnCreateBuilder(response, BundleTypeHistory, bundle);
       try
         if response.Format <> ffUnspecified then
           base := base + '&_format='+MIMETYPES_TFHIRFormat[response.Format]+'&';
@@ -2163,7 +2163,7 @@ begin
 
       if ok then
       begin
-        bundle := TFHIRBundleBuilderSimple.Create(TFHIRBundle.Create(BundleTypeSearchset));
+        response.OnCreateBuilder(response, BundleTypeSearchset, bundle);
         op := TFhirOperationOutcome.Create;
         keys := TKeyList.Create;
         try
@@ -2256,7 +2256,7 @@ begin
               be.resource := op.Link;
               be.search := TFhirBundleEntrySearch.Create;
               be.search.mode := SearchEntryModeOutcome;
-              bundle.addEntry(be.Link);
+              bundle.addEntry(be.Link, false);
             finally
               be.Free;
             end;
@@ -6303,7 +6303,7 @@ begin
       sp.Connection := conn.link;
       sp.build;
 
-      bundle := TFHIRBundleBuilderSimple.Create(TFHIRBundle.Create(BundleTypeSearchset));
+      response.OnCreateBuilder(response, BundleTypeSearchset, bundle);
       op := TFhirOperationOutcome.Create;
       keys := TKeyList.Create;
       try
@@ -6850,7 +6850,8 @@ var
   patient : TFHIRResource;
   prsr : TFHIRParserClass;
   needsObject : boolean;
-  type_ : String;
+  sId, type_ : String;
+  first : boolean;
 begin
   try
     patient := nil;
@@ -6859,7 +6860,7 @@ begin
       if manager.FindResource('Patient', request.Id, false, rkey, versionKey, request, response, '') then
       begin
         request.compartmentId := request.Id;
-        bundle := TFHIRBundleBuilderSimple.Create(TFHIRBundle.Create(BundleTypeSearchset));
+        response.OnCreateBuilder(response, BundleTypeCollection, bundle);
         includes := TReferenceList.create;
         keys := TKeyList.Create;
         params := TParseMap.Create('');
@@ -6872,6 +6873,8 @@ begin
           bundle.setTotal(total);
           bundle.tag('sql', sql);
           native(manager).chooseField(response.Format, wantsummary, request.loadObjects, field, prsr, needsObject);
+          if (not needsObject) then
+            prsr := nil;
 
           native(manager).FConnection.SQL := 'Select Ids.ResourceKey, Types.ResourceName, Ids.Id, VersionId, Secure, StatedDate, Name, Versions.Status, Tags, '+field+' from Versions, Ids, Sessions, SearchEntries, Types '+
               'where Ids.Deleted = 0 and SearchEntries.ResourceVersionKey = Versions.ResourceVersionKey and Versions.SessionKey = Sessions.SessionKey '+'and SearchEntries.ResourceKey = Ids.ResourceKey and Types.ResourceTypeKey = Ids.ResourceTypeKey and SearchEntries.SearchKey = '+id+' '+
@@ -6881,18 +6884,22 @@ begin
             native(manager).FConnection.Execute;
             while native(manager).FConnection.FetchNext do
             Begin
-              entry := native(manager).AddResourceTobundle(bundle, request.secure, request.baseUrl, field, prsr, SearchEntryModeNull, false, type_);
+              sId := native(manager).FConnection.ColStringByName['Id'];
+              type_ := native(manager).FConnection.colStringByName['ResourceName'];
+              first := false;
+              if type_ = 'Patient' then
+              begin
+                if sid = request.id then
+                  first := true
+                else
+                  raise Exception.Create('Multiple patient resources found in patient compartment');
+              end;
+
+              native(manager).AddResourceTobundle(bundle, request.secure, request.baseUrl, field, prsr, SearchEntryModeNull, false, type_, first);
               keys.Add(TKeyPair.create(type_, native(manager).FConnection.ColStringByName['ResourceKey']));
 
               if request.Parameters.VarExists('_include') then
                 native(manager).CollectIncludes(request.session, includes, entry.resource, request.Parameters.GetVar('_include'));
-              if (entry.resource.ResourceType = frtPatient) and (entry.resource.id = request.id) then
-              begin
-                if (patient = nil) then
-                  patient := entry.resource.link
-                else
-                  raise Exception.Create('Multiple patient resources found in patient compartment');
-              end;
             End;
           finally
             native(manager).FConnection.Terminate;
@@ -6917,11 +6924,6 @@ begin
 //              native(manager).FConnection.Terminate;
 //            end;
 //          end;
-
-          if patient = nil then
-            raise Exception.Create('No Patient resource found in patient compartment');
-          entry := bundle.moveToFirst(patient);
-          entry.fullurl := AppendForwardSlash(request.baseUrl)+'Patient/'+patient.id;
 
           bundle.setLastUpdated(TDateTimeEx.makeUTC);
           bundle.setId(NewGuidId);
@@ -9041,7 +9043,7 @@ var
 begin
   conn := FDB.GetConnection('async');
   try
-    conn.SQL := 'Select * from AsyncTasks where Id = '''+SQLWrapString(id)+'''';
+    conn.SQL := 'Select TaskKey, Status, Format, Message, Expires, Names, Outcome from AsyncTasks where Id = '''+SQLWrapString(id)+'''';
     conn.Prepare;
     conn.Execute;
     result := conn.FetchNext;
@@ -9052,7 +9054,7 @@ begin
       fmt := TFhirFormat(conn.ColIntegerByName['format']);
       message := conn.ColStringByName['Message'];
       expires := conn.ColDateTimeExByName['Expires'];
-      names.CommaText := conn.ColStringByName['Names'];
+      names.CommaText := TEncoding.UTF8.GetString(conn.ColBlobByName['Names']);
       outcome := conn.ColBlobByName['Outcome']
     end;
     conn.Terminate;
@@ -10595,7 +10597,7 @@ begin
      end
      else
      begin
-       conn.BindString('n', names.CommaText);
+       conn.BindBlobFromString('n', names.CommaText);
        conn.BindInteger('c', names.Count);
      end;
      conn.Execute;
