@@ -233,6 +233,8 @@ type
     FTransactionId: String;
     function GetTables : TStrings;
     function LookupInternal(ATableName, AKeyField, AKeyValue, AValueField, ADefault: String; bAsString: Boolean): String;
+    function GetColBlobAsString(ACol: Integer): String;
+    function GetColBlobAsStringByName(AName: String): String;
   Protected
     // caching for blobs, for use by concrete implementations
     procedure KeepBoundObj(sName : String; AObj : TKDBBoundParam);
@@ -531,6 +533,11 @@ type
     }
     procedure BindString(AParamName: String; AParamValue: String);
 
+    {@member BindStringOrNull
+      Bind a String value to a named parameter, or null
+    }
+    procedure BindStringOrNull(AParamName: String; AParamValue: String);
+
     {@member BindTimeStamp
       Bind a TTimeStamp value to a named parameter. You can call this
       after using an SQL statement like this:
@@ -613,6 +620,7 @@ type
     Get Column ACol(index) as a blob
     }
     property ColBlob    [ACol: Integer]: TBytes Read GetColBlob;
+    property ColBlobAsString [ACol: Integer]: String Read GetColBlobAsString;
     {@member ColTimestamp
     Get Column ACol(index) as a TTimestamp
     }
@@ -648,6 +656,7 @@ type
     {@member ColMemoryByName
       Get Column "AName" as a Blob}
     property ColBlobByName    [AName: String]: TBytes Read GetColBlobByName;
+    property ColBlobAsStringByName[AName: String]: String Read GetColBlobAsStringByName;
     {@member ColTimeStampByName
       Get Column "AName" as a TTimeStamp}
     property ColTimeStampByName [AName: String]: DateSupport.TTimeStamp Read GetColTimeStampByName;
@@ -1136,6 +1145,14 @@ begin
   BindStringV(AParamName, AParamValue);
 end;
 
+procedure TKDBConnection.BindStringOrNull(AParamName, AParamValue: String);
+begin
+  if AParamValue = '' then
+    BindNull(aParamName)
+  else
+    BindString(aParamName, AParamValue);
+end;
+
 procedure TKDBConnection.BindTimeStamp(AParamName: String; AParamValue: TTimeStamp);
 begin
   BindTimeStampV(AParamName, AParamValue);
@@ -1179,6 +1196,16 @@ end;
 function TKDBConnection.GetColBlob(ACol: Integer): TBytes;
 begin
   result := GetColBlobV(ACol);
+end;
+
+function TKDBConnection.GetColBlobAsString(ACol: Integer): String;
+begin
+  result := TEncoding.UTF8.GetString(ColBlob[aCol]);
+end;
+
+function TKDBConnection.GetColBlobAsStringByName(AName: String): String;
+begin
+  result := TEncoding.UTF8.GetString(ColBlobByName[AName]);
 end;
 
 function TKDBConnection.GetColBlobByName(AName: String): TBytes;
