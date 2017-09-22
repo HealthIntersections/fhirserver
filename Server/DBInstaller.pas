@@ -444,7 +444,6 @@ begin
        ' Client nchar(48) NOT NULL, '+#13#10+
        ' Scope nchar(255) NOT NULL, '+#13#10+
        ' Redirect nchar(255) NOT NULL, '+#13#10+
-       ' ClientState nchar(512) NOT NULL, '+#13#10+
        ' Patient nchar(64) NULL, '+#13#10+
        ' Status int NOT NULL, '+#13#10+
        ' DateAdded '+DBDateTimeType(FConn.owner.platform)+' NOT NULL, '+#13#10+
@@ -452,6 +451,7 @@ begin
        ' DateChosen '+DBDateTimeType(FConn.owner.platform)+' NULL, '+#13#10+
        ' DateTokenAccessed '+DBDateTimeType(FConn.owner.platform)+' NULL, '+#13#10+
        ' SessionKey '+DBKeyType(FConn.owner.platform)+' NULL, '+#13#10+
+       ' ClientState '+DBBlobType(FConn.owner.platform)+' NOT NULL, '+#13#10+
        ' Rights '+DBBlobType(FConn.owner.platform)+' Null, '+#13#10+
        ' Jwt '+DBBlobType(FConn.owner.platform)+' Null, '+#13#10+
        InlineForeignKeySql(FConn, 'OAuthLogins', 'SessionKey', 'Sessions', 'SessionKey', 'FK_OUathLogins_SessionKey')+
@@ -1114,44 +1114,44 @@ begin
       if assigned(CallBack) then Callback(20, 'Check Delete OAuthLogins');
       if meta.hasTable('OAuthLogins') then
         FConn.DropTable('OAuthLogins');
-      if assigned(CallBack) then Callback(21, 'Check Delete Sessions');
+      if assigned(CallBack) then Callback(21, 'Check Delete ClientRegistrations');
+      if meta.hasTable('ClientRegistrations') then
+        FConn.DropTable('ClientRegistrations');
+      if assigned(CallBack) then Callback(22, 'Check Delete Sessions');
       if meta.hasTable('Sessions') then
         FConn.DropTable('Sessions');
-      if assigned(CallBack) then Callback(22, 'Check Delete UserIndexes');
+      if assigned(CallBack) then Callback(23, 'Check Delete UserIndexes');
       if meta.hasTable('UserIndexes') then
         FConn.DropTable('UserIndexes');
-      if assigned(CallBack) then Callback(23, 'Check Delete Users');
+      if assigned(CallBack) then Callback(24, 'Check Delete Users');
       if meta.hasTable('Users') then
         FConn.DropTable('Users');
 
-      if assigned(CallBack) then Callback(24, 'Check Delete ClosureEntries');
+      if assigned(CallBack) then Callback(25, 'Check Delete ClosureEntries');
       if meta.hasTable('ClosureEntries') then
         FConn.DropTable('ClosureEntries');
-      if assigned(CallBack) then Callback(25, 'Check Delete ValueSetMembers');
+      if assigned(CallBack) then Callback(26, 'Check Delete ValueSetMembers');
       if meta.hasTable('ValueSetMembers') then
         FConn.DropTable('ValueSetMembers');
-      if assigned(CallBack) then Callback(26, 'Check Delete ValueSets');
+      if assigned(CallBack) then Callback(27, 'Check Delete ValueSets');
       if meta.hasTable('ValueSets') then
         FConn.DropTable('ValueSets');
-      if assigned(CallBack) then Callback(27, 'Check Delete Closures');
+      if assigned(CallBack) then Callback(28, 'Check Delete Closures');
       if meta.hasTable('Closures') then
         FConn.DropTable('Closures');
-      if assigned(CallBack) then Callback(28, 'Check Delete Concepts');
+      if assigned(CallBack) then Callback(29, 'Check Delete Concepts');
       if meta.hasTable('Concepts') then
         FConn.DropTable('Concepts');
 
-      if assigned(CallBack) then Callback(29, 'Check Delete UniiDesc');
+      if assigned(CallBack) then Callback(30, 'Check Delete UniiDesc');
       if meta.hasTable('UniiDesc') then
         FConn.DropTable('UniiDesc');
-      if assigned(CallBack) then Callback(30, 'Check Delete Unii');
+      if assigned(CallBack) then Callback(31, 'Check Delete Unii');
       if meta.hasTable('Unii') then
         FConn.DropTable('Unii');
-      if assigned(CallBack) then Callback(30, 'Check Delete AsyncTasks');
+      if assigned(CallBack) then Callback(32, 'Check Delete AsyncTasks');
       if meta.hasTable('AsyncTasks') then
         FConn.DropTable('AsyncTasks');
-      if assigned(CallBack) then Callback(30, 'Check Delete ClientRegistrations');
-      if meta.hasTable('ClientRegistrations') then
-        FConn.DropTable('ClientRegistrations');
 
       FConn.Commit;
     except

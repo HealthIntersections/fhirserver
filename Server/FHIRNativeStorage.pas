@@ -8850,7 +8850,11 @@ var
 begin
   conn := DB.GetConnection('oauth2');
   try
-    conn.ExecSQL('insert into OAuthLogins (Id, Client, Scope, Redirect, Status, DateAdded, ClientState) values ('''+id+''', '''+client_id+''', '''+SQLWrapString(scope)+''', '''+SQLWrapString(redirect_uri)+''', 1, '+DBGetDate(conn.Owner.Platform)+', '''+SQLWrapString(state)+''')');
+    conn.SQL := 'insert into OAuthLogins (Id, Client, Scope, Redirect, Status, DateAdded, ClientState) values ('''+id+''', '''+client_id+''', '''+SQLWrapString(scope)+''', '''+SQLWrapString(redirect_uri)+''', 1, '+DBGetDate(conn.Owner.Platform)+', :st)';
+    conn.prepare;
+    conn.BindBlobFromString('st', state);
+    conn.execute;
+    conn.Terminate;
     conn.release;
   except
     on e:exception do
@@ -9033,7 +9037,7 @@ begin
       name := conn.ColStringByName['Name'];
       redirect := conn.ColStringByName['Redirect'];
       scope := conn.ColStringByName['Scope'];
-      state := conn.ColStringByName['ClientState'];
+      state := conn.ColBlobAsStringByName['ClientState'];
     end;
     conn.Terminate;
     conn.release;

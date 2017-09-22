@@ -56,7 +56,7 @@ Type
 implementation
 
 const
-  Name_455 = 'asdasd askjhf asdjfh sif hksdfh skdjfh sdf askjhas dak akdh ajksdh akjsdh askjd hakjsdh aksdh aksjdh aksjdh asdajksdh askd ajksdha askd ajksdh askjdh aksjdh aksjdh asjkdh askjd haskjdh askdhj asskajhd aksjdhaksjd '+'aksdh askjdh kajsdh aksjhd askjdh akjsdh kajsdh akjshdak jshd akjsdh aksjdh akjshdkajsdh akjsdhk ajshd akjsdhaj kshd akjshd asjkdhasjk d akjdh askjdh askjdh askjdh akjsdhakjsdh akjsdh aksjdh kasjdh kajsajskhd akjsdhk ajajkshd kajsdhsaksjhd d';
+  Name_405 = 'asdasd askjhf asdjfh sif hksdfh skdjfh sdf askjhas dak akdh ajksdh akjsdh askjd hakjsdh aksdh aksjdh aksjdh asdajksdh askd ajksdha askd ajksdh askjdh aksjdh aksjdh asjkdh askjd haskjdh askdhj asskajhd aksjdhaksjd '+'aksdh askjdh kajsdh aksjhd askjdh akjsdh kajsdh akjshdak jshd akjsdh aksjdh akjshdkajsdh akjsdhk ajshd akjsdhaj kshd akjshd asjkdhasjk d akjdh askjdh askjdh askjdh akjsdhakjsdh akjsdh aksjdh';
 
 type
   ETestException = class(Exception);
@@ -113,7 +113,7 @@ begin
     conn.ExecSQL('CREATE TABLE TestTable ( ' + #13#10 + ' TestKey ' + DBKeyType(conn.owner.platform) + ' ' + ColCanBeNull(conn.owner.platform, false) + ', ' +
       #13#10 + ' Name nchar(255) ' + ColCanBeNull(conn.owner.platform, false) + ', ' + #13#10 + ' Number int ' + ColCanBeNull(conn.owner.platform, true) + ', '
       + #13#10 + ' BigNumber bigint ' + ColCanBeNull(conn.owner.platform, true) + ', ' + #13#10 + ' FloatNumber float ' + ColCanBeNull(conn.owner.platform,
-      true) + ', ' + #13#10 + ' Instant ' + DBDateTimeType(conn.owner.platform) + ' ' + ColCanBeNull(conn.owner.platform, false) + ', ' + #13#10 + ' Content ' +
+      true) + ', ' + #13#10 + ' Instant ' + DBDateTimeType(conn.owner.platform) + ' ' + ColCanBeNull(conn.owner.platform, false) + ', ' + #13#10 + ' BigString text ' + ColCanBeNull(conn.owner.platform, false) + ', ' + #13#10 + ' Content ' +
       DBBlobType(conn.owner.platform) + ' ' + ColCanBeNull(conn.owner.platform, true) + ', ' + #13#10 + PrimaryKeyType(conn.owner.platform, 'PK_TestTable',
       'TestKey') + ') ' + CreateTableInfo(conn.owner.platform));
     conn.ExecSQL('Create Unique INDEX SK_TestTable_Index ON TestTable (Name, Number)');
@@ -127,12 +127,13 @@ begin
       end;
       Assert.IsTrue(conn.CountSQL('Select count(*) from TestTable') = 0);
 
-      conn.ExecSQL('Insert into TestTable (TestKey, Name, Number, BigNumber, FloatNumber, Instant) values (1, ''a name'', 2, ' + IntToStr(i64) + ', 3.2, ' +
+      conn.ExecSQL('Insert into TestTable (TestKey, Name, BigString, Number, BigNumber, FloatNumber, Instant) values (1, ''a name'', '''', 2, ' + IntToStr(i64) + ', 3.2, ' +
         DBGetDate(manager.platform) + ')');
-      conn.sql := 'Insert into TestTable (TestKey, Name, Number, BigNumber, FloatNumber, Instant, Content) values (:k, :n, :i, :bi, :d, :ts, :c)';
+      conn.sql := 'Insert into TestTable (TestKey, Name, BigString, Number, BigNumber, FloatNumber, Instant, Content) values (:k, :n, :bs, :i, :bi, :d, :ts, :c)';
       conn.Prepare;
       conn.BindKey('k', 2);
-      conn.BindString('n', Name_455);
+      conn.BindString('n', 'Name 2');
+      conn.BindString('bs', Name_405);
       conn.BindInteger('i', 3);
       conn.BindInt64('bi', -i64);
       conn.BindDouble('d', 3.4);
@@ -150,6 +151,7 @@ begin
       conn.FetchNext;
       Assert.IsTrue(conn.ColIntegerByName['TestKey'] = 1);
       Assert.IsTrue(conn.ColStringByName['Name'] = 'a name');
+      Assert.IsTrue(conn.ColBlobAsStringByName['BigString'] = '');
       Assert.IsTrue(conn.ColIntegerByName['Number'] = 2);
       Assert.IsTrue(conn.ColInt64ByName['BigNumber'] = i64);
       Assert.IsTrue(isSame(conn.ColDoubleByName['FloatNumber'], 3.2));
@@ -161,7 +163,8 @@ begin
 
       conn.FetchNext;
       Assert.IsTrue(conn.ColIntegerByName['TestKey'] = 2);
-      Assert.IsTrue(conn.ColStringByName['Name'] = Name_455);
+      Assert.IsTrue(conn.ColStringByName['Name'] = 'Name 2');
+      Assert.IsTrue(conn.ColBlobAsStringByName['BigString'] = Name_405);
       Assert.IsTrue(conn.ColIntegerByName['Number'] = 3);
       Assert.IsTrue(conn.ColInt64ByName['BigNumber'] = -i64);
       Assert.IsTrue(isSame(conn.ColDoubleByName['FloatNumber'], 3.4));
@@ -254,7 +257,7 @@ procedure TKDBTests.TestMySQL;
 var
   db: TKDBManager;
 begin
-  db := TKDBOdbcManager.create('test', 8, 0, 'MySQL ODBC 5.2 Unicode Driver', 'localhost', 'test', 'test', 'test');
+  db := TKDBOdbcManager.create('test', 8, 0, 'MySQL ODBC 5.3 Unicode Driver', 'localhost', 'test', 'test', 'test');
   try
     test(db);
   finally
