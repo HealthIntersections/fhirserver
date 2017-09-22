@@ -38,7 +38,7 @@ uses
   FHIRResources, FHIRConstants, FHIRSupport;
 
 type
-  TProcessFileEvent = procedure (response : TIdHTTPResponseInfo; session : TFhirSession; path : String; secure : boolean; variables: TDictionary<String, String> = nil) of Object;
+  TProcessFileEvent = procedure (request : TIdHTTPRequestInfo; response : TIdHTTPResponseInfo; session : TFhirSession; path : String; secure : boolean; variables: TDictionary<String, String> = nil) of Object;
 
   TFHIRResourceConfig = class (TAdvObject)
   public

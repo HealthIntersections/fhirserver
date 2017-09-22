@@ -758,7 +758,7 @@ begin
         FClient.timeout := 5000;
         FClient.allowR2 := true;
         ok := true;
-        if server.SmartOnFHIR then
+        if server.SmartAppLaunchMode <> salmNone then
           if not DoSmartOnFHIR(server) then
           begin
             ok := false;

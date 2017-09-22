@@ -11,7 +11,7 @@ object EditRegisteredServerForm: TEditRegisteredServerForm
   FormFactor.Devices = [Desktop]
   OnDestroy = FormDestroy
   OnShow = FormShow
-  DesignerMasterStyle = 0
+  DesignerMasterStyle = 1
   object Panel1: TPanel
     Align = Bottom
     Position.Y = 440.000000000000000000
@@ -45,7 +45,7 @@ object EditRegisteredServerForm: TEditRegisteredServerForm
     Size.Width = 687.000000000000000000
     Size.Height = 440.000000000000000000
     Size.PlatformDefault = False
-    TabIndex = 0
+    TabIndex = 1
     TabOrder = 2
     TabPosition = PlatformDefault
     Sizes = (
@@ -59,8 +59,8 @@ object EditRegisteredServerForm: TEditRegisteredServerForm
       CustomIcon = <
         item
         end>
-      IsSelected = True
-      Size.Width = 97.000000000000000000
+      IsSelected = False
+      Size.Width = 104.000000000000000000
       Size.Height = 26.000000000000000000
       Size.PlatformDefault = False
       StyleLookup = ''
@@ -215,8 +215,8 @@ object EditRegisteredServerForm: TEditRegisteredServerForm
       CustomIcon = <
         item
         end>
-      IsSelected = False
-      Size.Width = 118.000000000000000000
+      IsSelected = True
+      Size.Width = 126.000000000000000000
       Size.Height = 26.000000000000000000
       Size.PlatformDefault = False
       StyleLookup = ''
@@ -230,46 +230,16 @@ object EditRegisteredServerForm: TEditRegisteredServerForm
         Size.Width = 137.000000000000000000
         Size.Height = 22.000000000000000000
         Size.PlatformDefault = False
-        TabOrder = 0
+        TabOrder = 1
         Text = 'Fetch Endpoints'
         OnClick = btnFetchEndpointsClick
       end
       object edtAuthorize: TEdit
         Touch.InteractiveGestures = [LongTap, DoubleTap]
         Anchors = [akLeft, akTop, akRight]
-        TabOrder = 1
-        Position.X = 87.000000000000000000
-        Position.Y = 254.000000000000000000
-        Size.Width = 593.000000000000000000
-        Size.Height = 22.000000000000000000
-        Size.PlatformDefault = False
-      end
-      object edtClientId: TEdit
-        Touch.InteractiveGestures = [LongTap, DoubleTap]
-        Anchors = [akLeft, akTop, akRight]
         TabOrder = 2
-        Position.X = 88.000000000000000000
-        Position.Y = 38.000000000000000000
-        Size.Width = 593.000000000000000000
-        Size.Height = 22.000000000000000000
-        Size.PlatformDefault = False
-      end
-      object edtClientSecret: TEdit
-        Touch.InteractiveGestures = [LongTap, DoubleTap]
-        Anchors = [akLeft, akTop, akRight]
-        TabOrder = 3
-        Position.X = 88.000000000000000000
-        Position.Y = 70.000000000000000000
-        Size.Width = 593.000000000000000000
-        Size.Height = 22.000000000000000000
-        Size.PlatformDefault = False
-      end
-      object edtRedirectPort: TEdit
-        Touch.InteractiveGestures = [LongTap, DoubleTap]
-        Anchors = [akLeft, akTop, akRight]
-        TabOrder = 4
         Position.X = 87.000000000000000000
-        Position.Y = 142.000000000000000000
+        Position.Y = 294.000000000000000000
         Size.Width = 593.000000000000000000
         Size.Height = 22.000000000000000000
         Size.PlatformDefault = False
@@ -277,121 +247,328 @@ object EditRegisteredServerForm: TEditRegisteredServerForm
       object edtToken: TEdit
         Touch.InteractiveGestures = [LongTap, DoubleTap]
         Anchors = [akLeft, akTop, akRight]
-        TabOrder = 5
+        TabOrder = 3
         Position.X = 87.000000000000000000
-        Position.Y = 286.000000000000000000
+        Position.Y = 326.000000000000000000
         Size.Width = 593.000000000000000000
         Size.Height = 22.000000000000000000
         Size.PlatformDefault = False
       end
-      object Label10: TLabel
-        Anchors = [akLeft, akTop, akRight]
-        Position.X = 87.000000000000000000
-        Position.Y = 174.000000000000000000
-        Size.Width = 593.000000000000000000
-        Size.Height = 35.000000000000000000
-        Size.PlatformDefault = False
-        TextSettings.VertAlign = Leading
-        Text = 'The redirect URL must be http://localhost:[port]/done'
-        TabOrder = 6
-      end
       object Label11: TLabel
         Position.X = 8.000000000000000000
-        Position.Y = 230.000000000000000000
+        Position.Y = 270.000000000000000000
         Size.Width = 313.000000000000000000
         Size.Height = 17.000000000000000000
         Size.PlatformDefault = False
         Text = 'From the conformance statement:'
-        TabOrder = 7
+        TabOrder = 4
       end
       object Label12: TLabel
         Position.X = 8.000000000000000000
-        Position.Y = 254.000000000000000000
+        Position.Y = 294.000000000000000000
         Size.Width = 73.000000000000000000
         Size.Height = 17.000000000000000000
         Size.PlatformDefault = False
         Text = 'Authorize:'
-        TabOrder = 8
+        TabOrder = 5
       end
       object Label13: TLabel
         Position.X = 8.000000000000000000
-        Position.Y = 286.000000000000000000
+        Position.Y = 326.000000000000000000
         Size.Width = 81.000000000000000000
         Size.Height = 17.000000000000000000
         Size.PlatformDefault = False
         Text = 'Token:'
-        TabOrder = 9
-      end
-      object Label14: TLabel
-        Anchors = [akLeft, akTop, akRight]
-        Position.X = 87.000000000000000000
-        Position.Y = 310.000000000000000000
-        Size.Width = 593.000000000000000000
-        Size.Height = 43.000000000000000000
-        Size.PlatformDefault = False
-        TextSettings.VertAlign = Leading
-        Text = 
-          'Note: Other than the reference server, you must register the [cl' +
-          'ient] with each Smart App Launch Server yourself'
-        TabOrder = 10
-      end
-      object Label5: TLabel
-        Position.X = 8.000000000000000000
-        Position.Y = 38.000000000000000000
-        Size.Width = 49.000000000000000000
-        Size.Height = 17.000000000000000000
-        Size.PlatformDefault = False
-        Text = 'Client Id:'
-        TabOrder = 11
-      end
-      object Label6: TLabel
-        Position.X = 8.000000000000000000
-        Position.Y = 70.000000000000000000
-        Size.Width = 81.000000000000000000
-        Size.Height = 17.000000000000000000
-        Size.PlatformDefault = False
-        Text = 'Client Secret:'
-        TabOrder = 12
-      end
-      object Label7: TLabel
-        Anchors = [akLeft, akTop, akRight]
-        Position.X = 88.000000000000000000
-        Position.Y = 94.000000000000000000
-        Size.Width = 593.000000000000000000
-        Size.Height = 43.000000000000000000
-        Size.PlatformDefault = False
-        TextSettings.VertAlign = Leading
-        Text = 
-          'Note: the [client] is not a confidential app, but the client sec' +
-          'ret can be provided to help test SMART App Launch Servers'
-        TabOrder = 13
-      end
-      object Label8: TLabel
-        Position.X = 8.000000000000000000
-        Position.Y = 14.000000000000000000
-        Size.Width = 313.000000000000000000
-        Size.Height = 17.000000000000000000
-        Size.PlatformDefault = False
-        Text = 'From the client registration'
-        TabOrder = 14
-      end
-      object Label9: TLabel
-        Position.X = 8.000000000000000000
-        Position.Y = 142.000000000000000000
-        Size.Width = 81.000000000000000000
-        Size.Height = 17.000000000000000000
-        Size.PlatformDefault = False
-        Text = 'Redirect Port:'
-        TabOrder = 15
+        TabOrder = 6
       end
       object Line1: TLine
         Anchors = [akLeft, akTop, akRight]
         LineType = Diagonal
         Position.X = 8.000000000000000000
-        Position.Y = 222.000000000000000000
+        Position.Y = 262.000000000000000000
         Size.Width = 674.000000000000000000
         Size.Height = 3.000000000000000000
         Size.PlatformDefault = False
+      end
+      object TabControl2: TTabControl
+        Position.X = 8.000000000000000000
+        Position.Y = 40.000000000000000000
+        Size.Width = 665.000000000000000000
+        Size.Height = 185.000000000000000000
+        Size.PlatformDefault = False
+        TabIndex = 2
+        TabOrder = 14
+        TabPosition = None
+        Sizes = (
+          665s
+          185s
+          665s
+          185s
+          665s
+          185s)
+        object TabItem5: TTabItem
+          CustomIcon = <
+            item
+            end>
+          IsSelected = False
+          Size.Width = 8.000000000000000000
+          Size.Height = 8.000000000000000000
+          Size.PlatformDefault = False
+          StyleLookup = ''
+          TabOrder = 0
+          Text = 'TabItem5'
+          ExplicitSize.cx = 8.000000000000000000
+          ExplicitSize.cy = 8.000000000000000000
+        end
+        object TabItem4: TTabItem
+          CustomIcon = <
+            item
+            end>
+          IsSelected = False
+          Size.Width = 8.000000000000000000
+          Size.Height = 8.000000000000000000
+          Size.PlatformDefault = False
+          StyleLookup = ''
+          TabOrder = 0
+          Text = 'TabItem4'
+          ExplicitSize.cx = 8.000000000000000000
+          ExplicitSize.cy = 8.000000000000000000
+          object Label5: TLabel
+            Position.X = 8.000000000000000000
+            Position.Y = 14.000000000000000000
+            Size.Width = 65.000000000000000000
+            Size.Height = 17.000000000000000000
+            Size.PlatformDefault = False
+            Text = 'Client Id:'
+            TabOrder = 11
+          end
+          object edtClientId: TEdit
+            Touch.InteractiveGestures = [LongTap, DoubleTap]
+            Anchors = [akLeft, akTop, akRight]
+            TabOrder = 2
+            Position.X = 96.000000000000000000
+            Position.Y = 14.000000000000000000
+            Size.Width = 561.000000000000000000
+            Size.Height = 22.000000000000000000
+            Size.PlatformDefault = False
+          end
+          object Label6: TLabel
+            Position.X = 8.000000000000000000
+            Position.Y = 46.000000000000000000
+            Size.Width = 81.000000000000000000
+            Size.Height = 17.000000000000000000
+            Size.PlatformDefault = False
+            Text = 'Client Secret:'
+            TabOrder = 12
+          end
+          object edtClientSecret: TEdit
+            Touch.InteractiveGestures = [LongTap, DoubleTap]
+            Anchors = [akLeft, akTop, akRight]
+            TabOrder = 3
+            Position.X = 96.000000000000000000
+            Position.Y = 46.000000000000000000
+            Size.Width = 561.000000000000000000
+            Size.Height = 22.000000000000000000
+            Size.PlatformDefault = False
+          end
+          object Label7: TLabel
+            Anchors = [akLeft, akTop, akRight]
+            Position.X = 96.000000000000000000
+            Position.Y = 70.000000000000000000
+            Size.Width = 569.000000000000000000
+            Size.Height = 43.000000000000000000
+            Size.PlatformDefault = False
+            TextSettings.VertAlign = Leading
+            Text = 
+              'Note: this app ([client]) is not a confidential app, but the cli' +
+              'ent secret can be provided to help test SMART App Launch Servers'
+            TabOrder = 13
+          end
+          object Label9: TLabel
+            Position.X = 8.000000000000000000
+            Position.Y = 110.000000000000000000
+            Size.Width = 81.000000000000000000
+            Size.Height = 17.000000000000000000
+            Size.PlatformDefault = False
+            Text = 'Redirect Port:'
+            TabOrder = 14
+          end
+          object edtRedirectPort: TEdit
+            Touch.InteractiveGestures = [LongTap, DoubleTap]
+            Anchors = [akLeft, akTop, akRight]
+            TabOrder = 4
+            Position.X = 96.000000000000000000
+            Position.Y = 110.000000000000000000
+            Size.Width = 561.000000000000000000
+            Size.Height = 22.000000000000000000
+            Size.PlatformDefault = False
+          end
+          object Label10: TLabel
+            Anchors = [akLeft, akTop, akRight]
+            Position.X = 96.000000000000000000
+            Position.Y = 139.000000000000000000
+            Size.Width = 569.000000000000000000
+            Size.Height = 35.000000000000000000
+            Size.PlatformDefault = False
+            TextSettings.VertAlign = Leading
+            Text = 'The redirect URL must be http://localhost:[port]/done'
+            TabOrder = 6
+          end
+        end
+        object TabItem6: TTabItem
+          CustomIcon = <
+            item
+            end>
+          IsSelected = True
+          Size.Width = 8.000000000000000000
+          Size.Height = 8.000000000000000000
+          Size.PlatformDefault = False
+          StyleLookup = ''
+          TabOrder = 0
+          Text = 'TabItem6'
+          ExplicitSize.cx = 8.000000000000000000
+          ExplicitSize.cy = 8.000000000000000000
+          object Label19: TLabel
+            Position.X = 8.000000000000000000
+            Position.Y = 46.000000000000000000
+            Size.Width = 89.000000000000000000
+            Size.Height = 17.000000000000000000
+            Size.PlatformDefault = False
+            Text = 'Issuer URL:'
+            TabOrder = 0
+          end
+          object edtIssuerURL: TEdit
+            Touch.InteractiveGestures = [LongTap, DoubleTap]
+            TabOrder = 1
+            Position.X = 96.000000000000000000
+            Position.Y = 46.000000000000000000
+            Size.Width = 561.000000000000000000
+            Size.Height = 22.000000000000000000
+            Size.PlatformDefault = False
+          end
+          object Label20: TLabel
+            Position.X = 8.000000000000000000
+            Position.Y = 80.000000000000000000
+            Text = 'Issuer Key:'
+            TabOrder = 3
+          end
+          object Label21: TLabel
+            Position.X = 8.000000000000000000
+            Position.Y = 152.000000000000000000
+            Text = 'Passphrase:'
+            TabOrder = 4
+          end
+          object edtPrivateKey: TEdit
+            Touch.InteractiveGestures = [LongTap, DoubleTap]
+            TabOrder = 5
+            Position.X = 96.000000000000000000
+            Position.Y = 80.000000000000000000
+            Size.Width = 529.000000000000000000
+            Size.Height = 22.000000000000000000
+            Size.PlatformDefault = False
+          end
+          object Button1: TButton
+            Position.X = 632.000000000000000000
+            Position.Y = 80.000000000000000000
+            Size.Width = 24.000000000000000000
+            Size.Height = 22.000000000000000000
+            Size.PlatformDefault = False
+            TabOrder = 6
+            Text = '...'
+            OnClick = Button1Click
+          end
+          object edtPassphrase: TEdit
+            Touch.InteractiveGestures = [LongTap, DoubleTap]
+            TabOrder = 7
+            Position.X = 96.000000000000000000
+            Position.Y = 152.000000000000000000
+            Size.Width = 561.000000000000000000
+            Size.Height = 22.000000000000000000
+            Size.PlatformDefault = False
+          end
+          object Label22: TLabel
+            Position.X = 96.000000000000000000
+            Position.Y = 104.000000000000000000
+            Size.Width = 561.000000000000000000
+            Size.Height = 41.000000000000000000
+            Size.PlatformDefault = False
+            Text = 
+              'Choose a generated key (e.g. using OpenSSL) that is an RSA-256 p' +
+              'rivate Key paired with the registered public key'
+            TabOrder = 8
+          end
+          object Label23: TLabel
+            Position.X = 8.000000000000000000
+            Position.Y = 14.000000000000000000
+            Size.Width = 65.000000000000000000
+            Size.Height = 17.000000000000000000
+            Size.PlatformDefault = False
+            Text = 'Client Id:'
+            TabOrder = 12
+          end
+          object edtClientId1: TEdit
+            Touch.InteractiveGestures = [LongTap, DoubleTap]
+            Anchors = [akLeft, akTop, akRight]
+            TabOrder = 2
+            Position.X = 96.000000000000000000
+            Position.Y = 14.000000000000000000
+            Size.Width = 561.000000000000000000
+            Size.Height = 22.000000000000000000
+            Size.PlatformDefault = False
+          end
+          object odPrivateKey: TOpenDialog
+            Title = 'Choose Public Key'
+            Left = 32
+            Top = 432
+          end
+        end
+      end
+      object Label8: TLabel
+        Position.X = 8.000000000000000000
+        Position.Y = 14.000000000000000000
+        Size.Width = 129.000000000000000000
+        Size.Height = 17.000000000000000000
+        Size.PlatformDefault = False
+        Text = 'Smart on FHIR Mode:'
+        TabOrder = 21
+      end
+      object Label14: TLabel
+        Anchors = [akLeft, akTop, akRight]
+        Position.X = 15.000000000000000000
+        Position.Y = 232.000000000000000000
+        Size.Width = 658.000000000000000000
+        Size.Height = 25.000000000000000000
+        Size.PlatformDefault = False
+        TextSettings.VertAlign = Leading
+        Text = 
+          'Note: You must register the [client] with each Smart App Launch ' +
+          'Server yourself'
+        TabOrder = 7
+      end
+      object cbxSmartType: TComboBox
+        Items.Strings = (
+          'No Smart App Launch'
+          'OAuth Client'
+          'Backend Services Client')
+        Position.X = 136.000000000000000000
+        Position.Y = 12.000000000000000000
+        Size.Width = 529.000000000000000000
+        Size.Height = 22.000000000000000000
+        Size.PlatformDefault = False
+        TabOrder = 16
+        OnChange = cbxSmartTypeChange
+        OnClick = cbxSmartTypeChange
+      end
+      object btnRegister: TButton
+        Enabled = False
+        Position.X = 160.000000000000000000
+        Position.Y = 382.000000000000000000
+        Size.Width = 129.000000000000000000
+        Size.Height = 22.000000000000000000
+        Size.PlatformDefault = False
+        TabOrder = 0
+        Text = 'Register Client'
+        OnClick = btnRegisterClick
       end
     end
     object TabItem3: TTabItem
@@ -399,7 +576,7 @@ object EditRegisteredServerForm: TEditRegisteredServerForm
         item
         end>
       IsSelected = False
-      Size.Width = 80.000000000000000000
+      Size.Width = 85.000000000000000000
       Size.Height = 26.000000000000000000
       Size.PlatformDefault = False
       StyleLookup = ''

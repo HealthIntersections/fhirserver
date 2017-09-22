@@ -175,8 +175,9 @@ uses
   QuestionnaireRenderer in '..\reference-platform\dstu3\QuestionnaireRenderer.pas',
   HTMLPublisher in '..\reference-platform\Support\HTMLPublisher.pas',
   QuestionnaireItemDialog in 'QuestionnaireItemDialog.pas' {QuestionnaireItemForm},
-  RegistryForm in 'RegistryForm.pas'{,
-  QuestionnaireFrame in 'QuestionnaireFrame.pas'};
+  RegistryForm in 'RegistryForm.pas' {,
+  QuestionnaireFrame in 'QuestionnaireFrame.pas'},
+  RegisterClientDialogFMX in '..\reference-platform\client\RegisterClientDialogFMX.pas' {RegisterClientForm};
 
 {$R *.res}
 
@@ -184,5 +185,6 @@ begin
   Application.Initialize;
   Application.CreateForm(TMasterToolsForm, MasterToolsForm);
   Application.CreateForm(TQuestionnaireItemForm, QuestionnaireItemForm);
+  Application.CreateForm(TRegisterClientForm, RegisterClientForm);
   Application.Run;
 end.

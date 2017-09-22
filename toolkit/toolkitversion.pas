@@ -35,6 +35,10 @@ interface
 BuildCount=27
 ;
 
+const
+  ToolKitVersionBase = '0.0.';
+  ToolkitIdentifier = 'org.fhir.toolkit';
+
 implementation
 
 end.

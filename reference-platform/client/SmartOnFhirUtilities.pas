@@ -44,12 +44,12 @@ POSSIBILITY OF SUCH DAMAGE.
 
 
 {
-Using the SMART on FHIR client library
+Using the Smart App Launch client library
 
-Using SMART on FHIR consists of 2 main phases:
+Using Smart App Launch consists of 2 main phases:
 
 1. registration
-- you must register with the specific SMART on FHIR Server. You give it a name, and a redirect URL, and it will return a client id
+- you must register with the specific Smart App Launch Server. You give it a name, and a redirect URL, and it will return a client id
 
 - for this library, the redirect URL must take the form of http://localhost:[port]/done where post is any number
   between 1 and 65535. There is no flexibility associated with this
@@ -67,7 +67,7 @@ Using SMART on FHIR consists of 2 main phases:
 - Create a TSmartOnFhirLoginForm. give it:
   * logoPath : the path to a PNG describing your application (used by some servers)
   * server: the server details from the registration phase
-  * scopes: the scopes you are asking. See Smart on FHIR documentation for what are valid scopes
+  * scopes: the scopes you are asking. See Smart App Launch documentation for what are valid scopes
   * handle error:
        if this is false, and an error occurs, the form will close without telling
        the user about the error, and the host can handle the user. If this is true,
@@ -94,7 +94,7 @@ Using SMART on FHIR consists of 2 main phases:
   mrAbort: something went wrong. if HandleError is false, a description of what went wrong will be in ErrorMessage
 
 - note that the OAuth process in the browser could go wrong for many reasons that are not known to the
-  Smart on FHIR client. In these cases, the user has no choice but to process cancel, so you should not
+  Smart App Launch client. In these cases, the user has no choice but to process cancel, so you should not
   assume that cancel means the user chose not to succeed - just that they already know it failed.
 
 3. CDS hooks Support
@@ -108,7 +108,7 @@ interface
 uses
   SysUtils, Classes,
   IdContext, IdHTTPServer, IdCustomHTTPServer, IdSocketHandle, IdHTTP, IdSSLOpenSSL,
-  StringSupport, EncodeSupport, DateSupport, JWT, ParseMap, GuidSupport,
+  StringSupport, EncodeSupport, DateSupport, JWT, ParseMap, GuidSupport, TextUtilities,
   AdvObjects, AdvJson, AdvGenerics,
   FHIRBase, FHIRResources, FHIRTypes, FHIRUtilities;
 
@@ -128,12 +128,17 @@ type
     property preFetch : TStringList read FpreFetch;
   end;
 
-  // information about a server required to get SMART on FHIR working
+  TSmartAppLaunchMode = (salmNone, salmOAuthClient, salmBackendClient);
+
+const
+  CODES_TSmartAppLaunchMode : array [TSmartAppLaunchMode] of string = ('None', 'OAuth Client', 'Backend Services');
+type
+  // information about a server required to get Smart App Launch working
   TRegisteredFHIRServer = class (TAdvObject)
   private
     Fname: String;
     FfhirEndpoint: String;
-    FSmartOnFHIR: boolean;
+    FSmartAppLaunchMode: TSmartAppLaunchMode;
     Fclientid: String;
     Fclientsecret: String;
     FautoUseHooks: boolean;
@@ -144,6 +149,9 @@ type
     FFormat: TFHIRFormat;
     FPassword: String;
     FUserName: String;
+    FissuerUrl: String;
+    Fpassphrase: String;
+    Fprivatekey: String;
   public
     constructor Create; override;
     Destructor Destroy; Override;
@@ -165,8 +173,8 @@ type
     // as is, choose from the conformance statement at run time. Else XML or JSON
     property format : TFHIRFormat read FFormat write FFormat;
 
-    // whether the server needs SMART on FHIR
-    property SmartOnFHIR: boolean read FSmartOnFHIR write FSmartOnFHIR;
+    // whether the server needs Smart App Launch
+    property SmartAppLaunchMode: TSmartAppLaunchMode read FSmartAppLaunchMode write FSmartAppLaunchMode;
 
     // you can get these 2 endpoints from the fhirEndPoint using usesSmartOnFHIR below:
 
@@ -187,6 +195,11 @@ type
     // the port for redirecting to this server
     property redirectport : integer read Fredirectport write Fredirectport;
 
+    // backend services
+    property issuerUrl : String read FissuerUrl write FissuerUrl;
+    property privatekey : String read Fprivatekey write Fprivatekey;
+    property passphrase : String read Fpassphrase write Fpassphrase;
+
     // what CDS hooks are used on this server
     property cdshooks : TAdvList<TRegisteredCDSHook> read Fcdshooks;
 
@@ -197,7 +210,7 @@ type
     property password : String read FPassword write FPassword;
   end;
 
-  // result of a SMART on FHIR authorization
+  // result of a Smart App Launch authorization
   TSmartOnFhirAccessToken = class (TAdvObject)
   private
     FidToken: TJWT;
@@ -257,6 +270,8 @@ type
     procedure openBrowser;
     procedure closeWebServer;
     function template(title, body, redirect: String): String;
+    function loginOAuthClient: boolean;
+    function loginBackendClient : boolean;
   public
     Destructor Destroy; override;
 
@@ -271,8 +286,8 @@ type
     function login : boolean;
   end;
 
-// given a conformance statement, check the server is using Smart on FHIR, and extract the end points
-function usesSmartOnFHIR(conf : TFhirCapabilityStatement; var authorize, token: String): Boolean;
+// given a conformance statement, check the server is using Smart App Launch, and extract the end points
+function usesSmartOnFHIR(conf : TFhirCapabilityStatement; var authorize, token, register: String): Boolean;
 
 // build the launch token (used by the form)
 function buildAuthUrl(server : TRegisteredFHIRServer; scopes, state : String) : String;
@@ -289,7 +304,7 @@ begin
   result := server.authorizeEndpoint+'?response_type=code&client_id='+server.clientid+'&redirect_uri=http://localhost:'+inttostr(server.redirectport)+'/done&scope='+EncodeMIME(scopes)+'&state='+state+'&aud='+server.fhirEndpoint;
 end;
 
-function usesSmartOnFHIR(conf : TFhirCapabilityStatement; var authorize, token: String): Boolean;
+function usesSmartOnFHIR(conf : TFhirCapabilityStatement; var authorize, token, register: String): Boolean;
 var
   cc : TFhirCodeableConcept;
   ex1, ex2 : TFhirExtension;
@@ -312,14 +327,16 @@ begin
               if ex2.url = 'authorize' then
                 authorize := TFHIRUri(ex2.value).value
               else if ex2.url = 'token' then
-                token := TFHIRUri(ex2.value).value;
+                token := TFHIRUri(ex2.value).value
+              else if ex2.url = 'register' then
+                register := TFHIRUri(ex2.value).value;
 
       end;
   end;
   result := (token <> '') and (authorize <> '');
 end;
 
-function getSmartOnFhirAuthToken(server : TRegisteredFHIRServer; authcode : String) : TSmartOnFhirAccessToken;
+function getSmartOnFhirAuthTokenRequest(server : TRegisteredFHIRServer; request : String) : TSmartOnFhirAccessToken;
 var
   http: TIdHTTP;
   ssl : TIdSSLIOHandlerSocketOpenSSL;
@@ -329,11 +346,7 @@ var
 begin
   result := nil;
 
-  if server.clientsecret = '' then
-    s := 'code='+authcode+'&grant_type=authorization_code&client_id='+server.clientid+'&redirect_uri='+EncodeMime('http://localhost:'+inttostr(server.redirectport)+'/done')
-  else
-    s := 'code='+authcode+'&grant_type=authorization_code&redirect_uri='+EncodeMime('http://localhost:'+inttostr(server.redirectport)+'/done');
-  post := TBytesStream.create(TEncoding.UTF8.getBytes(s));
+  post := TBytesStream.create(TEncoding.UTF8.getBytes(request));
   try
     http := TIdHTTP.Create(nil);
     Try
@@ -369,7 +382,8 @@ begin
                     raise Exception.Create('expires_in is not an integer');
                   result.expires := now + StrToInt(s) * DATETIME_SECOND_ONE;
                 end;
-                result.idToken := TJWTUtils.unpack(json.vStr['id_token'], false, nil);
+                if json.vStr['id_token'] <> '' then
+                  result.idToken := TJWTUtils.unpack(json.vStr['id_token'], false, nil);
                 result.Link;
               finally
                 result.Free;
@@ -395,6 +409,14 @@ begin
   finally
     post.free;
   end;
+end;
+
+function getSmartOnFhirAuthToken(server : TRegisteredFHIRServer; authcode : String) : TSmartOnFhirAccessToken;
+begin
+  if server.clientsecret = '' then
+    result := getSmartOnFhirAuthTokenRequest(server, 'code='+authcode+'&grant_type=authorization_code&client_id='+server.clientid+'&redirect_uri='+EncodeMime('http://localhost:'+inttostr(server.redirectport)+'/done'))
+  else
+    result := getSmartOnFhirAuthTokenRequest(server, 'code='+authcode+'&grant_type=authorization_code&redirect_uri='+EncodeMime('http://localhost:'+inttostr(server.redirectport)+'/done'));
 end;
 
 { TSmartOnFhirAccessToken }
@@ -451,7 +473,7 @@ procedure TRegisteredFHIRServer.clear;
 begin
   Fname := '';
   FfhirEndpoint := '';
-  FSmartOnFHIR := false;
+  FSmartAppLaunchMode := salmNone;
   Fclientid := '';
   Fclientsecret := '';
   FautoUseHooks := false;
@@ -501,7 +523,16 @@ begin
   fhirEndpoint := o.vStr['fhir'];
   username := o.vStr['username'];
   password := o.vStr['password'];
-  SmartOnFHIR := o.bool['smart'];
+  if password.StartsWith('##') then
+    password := strDecrypt(password.Substring(2), 35252);
+  if StringArrayExistsSensitive(['true', 'outh'], o.vStr['smart']) then
+    FSmartAppLaunchMode := salmOAuthClient
+  else if StringArrayExistsSensitive(['false', 'none'], o.vStr['smart']) then
+    FSmartAppLaunchMode := salmNone
+  else if StringArrayExistsSensitive(['backend'], o.vStr['smart']) then
+    FSmartAppLaunchMode := salmBackendClient
+  else
+    FSmartAppLaunchMode := salmNone;
   if o.vStr['format']  = 'xml' then
     format := ffXml
   else if o.vStr['format']  = 'json' then
@@ -509,14 +540,14 @@ begin
   else
     format := ffUnspecified;
 
-  if SmartOnFHIR then
-  begin
-    tokenEndpoint := o.vStr['token'];
-    authorizeEndpoint := o.vStr['authorize'];
-    clientid := o.vStr['clientid'];
-    redirectport := StrToInt(o.vStr['port']);
-    clientsecret := o.vStr['secret'];
-  end;
+  tokenEndpoint := o.vStr['token'];
+  authorizeEndpoint := o.vStr['authorize'];
+  clientid := o.vStr['clientid'];
+  redirectport := StrToIntDef(o.vStr['port'], 0);
+  clientsecret := o.vStr['secret'];
+  issuerUrl := o.vStr['issuer'];
+  privatekey := o.vStr['key'];
+  passphrase := strDecrypt(o.vStr['passphrase'], 42344);
   autoUseHooks := o.bool['auto-cds-hooks'];
   arr := o.arr['cdshooks'];
   if arr <> nil then
@@ -544,7 +575,7 @@ begin
   o.vStr['name'] := name;
   o.vStr['fhir'] := fhirEndpoint;
   o.vStr['username'] := username;
-  o.vStr['password'] := password;
+  o.vStr['password'] := '##'+strEncrypt(password, 35252);
   case format of
     ffXml: o.vStr['format'] := 'xml';
     ffJson: o.vStr['format'] := 'json';
@@ -552,15 +583,21 @@ begin
   else
     o.vStr['format'] := 'either';
   end;
-  o.bool['smart'] := SmartOnFHIR;
-  if SmartOnFHIR then
-  begin
-    o.vStr['token'] := tokenEndpoint;
-    o.vStr['authorize'] := authorizeEndpoint;
-    o.vStr['clientid'] := clientid;
-    o.vStr['port'] := inttostr(redirectport);
-    o.vStr['secret'] := clientsecret;
+  case SmartAppLaunchMode of
+    salmNone: o.vStr['smart'] := 'none';
+    salmOAuthClient: o.vStr['smart'] := 'oauth';
+    salmBackendClient: o.vStr['smart'] := 'backend';
   end;
+  o.vStr['token'] := tokenEndpoint;
+  o.vStr['authorize'] := authorizeEndpoint;
+
+  o.vStr['clientid'] := clientid;
+  o.vStr['port'] := inttostr(redirectport);
+  o.vStr['secret'] := clientsecret;
+  o.vStr['issuer'] := issuerUrl;
+  o.vStr['key'] := privatekey;
+  o.vStr['passphrase'] := strEncrypt(passphrase, 42344);
+
   o.bool['auto-cds-hooks'] := autoUseHooks;
   if cdshooks.Count > 0 then
   begin
@@ -812,6 +849,47 @@ begin
 end;
 
 function TSmartAppLaunchLogin.login: boolean;
+begin
+  case server.SmartAppLaunchMode of
+    salmNone: raise Exception.Create('Smart App Launch is not configured for this server');
+    salmOAuthClient: result := loginOAuthClient;
+    salmBackendClient: result := loginBackendClient;
+  end;
+end;
+
+function TSmartAppLaunchLogin.loginBackendClient: boolean;
+var
+  jwt : TJWT;
+  jwt_header : string;
+  sl, s : String;
+begin
+ // 1. building the JWT
+  jwt := TJWT.Create;
+  try
+    jwt.issuer := server.issuerUrl;
+    jwt.subject := server.clientid;
+    jwt.expires := now + 1 * DATETIME_MINUTE_ONE;
+    jwt.audience := server.tokenEndpoint;
+    jwt.id := NewGuidId;
+    jwt_header := TJWTUtils.pack(jwt, jwt_hmac_rsa256, nil, server.privatekey, server.passphrase);
+  finally
+    jwt.Free;
+  end;
+
+  // 2. submit to server;
+  sl := '';
+  for s in scopes do
+    sl := sl +' '+s.replace('user/', 'system/');
+
+  token := getSmartOnFhirAuthTokenRequest(server,
+    'scope='+sl.Trim+'&'+
+    'grant_type=client_credentials'+'&'+
+    'client_assertion_type=urn:ietf:params:oauth:client-assertion-type:jwt-bearer'+'&'+
+    'client_assertion='+jwt_header);
+  result := true;
+end;
+
+function TSmartAppLaunchLogin.loginOAuthClient: boolean;
 var
   stop : boolean;
 begin

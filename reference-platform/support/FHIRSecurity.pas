@@ -42,7 +42,7 @@ Const
   // can admin SCIM
   SCIM_ADMINISTRATOR = 'http://www.healthintersections.com.au/scim/administer';
 
-  // SMART ON FHIR Scopes
+  // SMART App Launch Scopes
   SCIM_SMART_PREFIX = 'http://smarthealthit.org/fhir/scopes/';
   SCIM_OPENID_PREFIX = 'http://openid.net/specs/openid-connect-core-1_0#';
 

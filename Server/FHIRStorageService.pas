@@ -108,6 +108,39 @@ Type
     property format : TFHIRFormat read FFormat write FFormat;
   end;
 
+  TRegisteredClientMode = (rcmOAuthClient, rcmBackendServices);
+
+  TRegisteredClientInformation = class (TAdvObject)
+  private
+    FRedirects: TStringList;
+    FMode: TRegisteredClientMode;
+    FName: String;
+    FJwt: String;
+    FPublicKey: String;
+    FSecret: string;
+    FsoftwareVersion: String;
+    Flogo: String;
+    Furl: String;
+    FsoftwareId: String;
+    FIssuer: String;
+  public
+    constructor Create; override;
+    destructor Destroy; override;
+    function link : TRegisteredClientInformation; overload;
+
+    property name : String read FName write FName;
+    property jwt : String read FJwt write FJwt; // for application verification service
+    property mode : TRegisteredClientMode read FMode write FMode;
+    property secret : string read FSecret write FSecret;
+    Property redirects : TStringList read FRedirects;
+    property publicKey : String read FPublicKey write FPublicKey;
+    property issuer : String read FIssuer write FIssuer;
+    property url : String read Furl write Furl;
+    property logo : String read Flogo write Flogo;
+    property softwareId : String read FsoftwareId write FsoftwareId;
+    property softwareVersion : String read FsoftwareVersion write FsoftwareVersion;
+  end;
+
   TFHIROperationEngine = class (TAdvObject)
   private
     FOnPopulateConformance : TPopulateConformanceEvent;
@@ -244,6 +277,10 @@ Type
     procedure recordDownload(key : integer; name : String); virtual;
     procedure fetchExpiredTasks(tasks : TAdvList<TAsyncTaskInformation>); virtual;
     procedure MarkTaskDeleted(key : integer); virtual;
+
+    function getClientInfo(id : String) : TRegisteredClientInformation; virtual;
+    function getClientName(id : String) : string; virtual;
+    function storeClient(client : TRegisteredClientInformation; sessionKey : integer) : String; virtual;
   end;
 
 
@@ -308,6 +345,16 @@ end;
 function TFHIRStorageService.fetchTaskDetails(id : String; var key : integer; var status: TAsyncTaskStatus; var fmt : TFHIRFormat; var message: String; var expires: TDateTimeEx; names : TStringList; var outcome: TBytes): boolean;
 begin
   raise Exception.Create('This server does not support Async tasks');
+end;
+
+function TFHIRStorageService.getClientInfo(id: String): TRegisteredClientInformation;
+begin
+  raise Exception.Create('The function "getClientInfo" must be overridden in '+className);
+end;
+
+function TFHIRStorageService.getClientName(id: String): string;
+begin
+  raise Exception.Create('The function "getClientName" must be overridden in '+className);
 end;
 
 function TFHIRStorageService.GetTotalResourceCount: integer;
@@ -413,6 +460,11 @@ end;
 procedure TFHIRStorageService.RunValidation;
 begin
   raise Exception.Create('The function "RunValidation" must be overridden in '+className);
+end;
+
+function TFHIRStorageService.storeClient(client: TRegisteredClientInformation; sessionKey : integer): String;
+begin
+  raise Exception.Create('The function "storeClient" must be overridden in '+className);
 end;
 
 procedure TFHIRStorageService.Sweep;
@@ -652,7 +704,7 @@ begin
     {$IFDEF FHIR2}
     ServerContext.TerminologyServer.declareSystems(oConf);
     {$ENDIF}
-    if assigned(OnPopulateConformance) and request.secure then // only add smart on fhir things on a secure interface
+    if assigned(OnPopulateConformance) and request.secure then // only add Smart App Launch things on a secure interface
       OnPopulateConformance(self, oConf);
     AddCDSHooks(oConf.restList[0]);
 
@@ -1407,6 +1459,25 @@ end;
 function TAsyncTaskInformation.link: TAsyncTaskInformation;
 begin
   result := TAsyncTaskInformation(inherited link);
+end;
+
+{ TRegisteredClientInformation }
+
+constructor TRegisteredClientInformation.Create;
+begin
+  inherited;
+  FRedirects := TStringList.Create;
+end;
+
+destructor TRegisteredClientInformation.Destroy;
+begin
+  FRedirects.Free;
+  inherited;
+end;
+
+function TRegisteredClientInformation.link: TRegisteredClientInformation;
+begin
+  result := TRegisteredClientInformation(inherited Link);
 end;
 
 end.

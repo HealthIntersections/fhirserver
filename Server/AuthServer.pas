@@ -38,7 +38,7 @@ uses
   IdContext, IdCustomHTTPServer, IdCookie,
   ParseMap, KDBManager, KDBDialects, KCritSct, StringSupport, EncodeSupport, GUIDSupport, DateSupport, TextUtilities,
   AdvObjects, AdvMemories, AdvJSON, AdvExceptions, AdvGenerics,
-  FacebookSupport, SCIMServer, SCIMObjects, JWT,
+  FacebookSupport, SCIMServer, SCIMObjects, JWT, SmartOnFhirUtilities,
   FHIRSupport, FHIRBase, FHIRTypes, FHIRResources, FHIRConstants, FHIRSecurity, FHIRUtilities,
   FHIRUserProvider, ServerUtilities, FHIRServerContext, FHIRStorageService, ClientApplicationVerifier,
   JWTService, ApplicationCache;
@@ -65,7 +65,6 @@ type
   TAuth2Server = class (TAdvObject)
   private
     FLock : TCriticalSection;
-    FIni : TFHIRServerIniFile;
     FServerContext : TFHIRServerContext;
     FOnProcessFile : TProcessFileEvent;
     FSSLPort : String;
@@ -86,6 +85,8 @@ type
     FOnDoSearch : TDoSearchEvent;
     FPath: String;
     FActive : boolean;
+    FPassword : String;
+    FNonceList : TStringList;
 
     function GetPatientListAsOptions : String;
     {$IFNDEF FHIR2}
@@ -104,8 +105,10 @@ type
     Procedure HandleTokenData(AContext: TIdContext; request: TIdHTTPRequestInfo; session : TFhirSession; params : TParseMap;response: TIdHTTPResponseInfo);
     Procedure HandleKey(AContext: TIdContext; request: TIdHTTPRequestInfo; session : TFhirSession; params : TParseMap;response: TIdHTTPResponseInfo);
     Procedure HandleKeyToken(AContext: TIdContext; request: TIdHTTPRequestInfo; session : TFhirSession; params : TParseMap;response: TIdHTTPResponseInfo);
+    Procedure HandleRegistration(AContext: TIdContext; request: TIdHTTPRequestInfo; session : TFhirSession; response: TIdHTTPResponseInfo);
+    procedure HandleTokenJWT(AContext: TIdContext; request: TIdHTTPRequestInfo; params: TParseMap; response: TIdHTTPResponseInfo);
     function checkNotEmpty(v, n: String): String;
-    function isAllowedRedirect(client_id, redirect_uri: String): boolean;
+    function isAllowedRedirect(client : TRegisteredClientInformation; redirect_uri: String): boolean;
     function isAllowedAud(client_id, aud_uri: String): boolean;
     procedure SetServerContext(const Value: TFHIRServerContext);
     function BuildLoginList(id : String) : String;
@@ -113,9 +116,10 @@ type
     procedure loadScopeVariables(variables: TDictionary<String, String>; scope: String; user : TSCIMUser);
     procedure readScopes(scopes: TStringList; params: TParseMap);
     procedure SetUserProvider(const Value: TFHIRUserProvider);
+    function nonceIsUnique(nonce : String) : boolean;
 
   public
-    Constructor Create(ini : String; Host, SSLPort : String);
+    Constructor Create(ini : TFHIRServerIniFile; Host, SSLPort : String);
     Destructor Destroy; override;
 
     Procedure HandleRequest(AContext: TIdContext; request: TIdHTTPRequestInfo; session : TFhirSession; response: TIdHTTPResponseInfo);
@@ -137,10 +141,10 @@ type
     function AuthPath : String;
     function BasePath : String;
     function TokenPath : String;
+    function RegisterPath : String;
     function KeyPath : String;
     function CavsPath : String;
     Property EndPoint : String read FEndPoint write FEndPoint;
-    Property Ini : TFHIRServerIniFile read FIni;
     property OnDoSearch : TDoSearchEvent read FOnDoSearch write FOnDoSearch;
     property UserProvider : TFHIRUserProvider read FUserProvider write SetUserProvider;
     property Active : boolean read FActive write FActive;
@@ -156,31 +160,33 @@ uses
 
 { TAuth2Server }
 
-constructor TAuth2Server.Create(ini: String; Host, SSLPort : String);
+constructor TAuth2Server.Create(ini : TFHIRServerIniFile; Host, SSLPort : String);
 begin
   inherited create;
-  FIni := TFHIRServerIniFile.Create(ini);
   FHost := host;
   FSSLPort := SSLPort;
   FLock := TCriticalSection.Create('auth-server');
   FLoginTokens := TAdvMap<TFhirLoginToken>.create;
+  FNonceList := TStringList.create;
+  FNonceList.Sorted := true;
 
-  FHL7Appid := FIni.ReadString(voVersioningNotApplicable, 'hl7.org', 'app-id', '');
-  FHL7AppSecret := FIni.ReadString(voVersioningNotApplicable, 'hl7.org', 'app-secret', '');
-  FFacebookAppid := FIni.ReadString(voVersioningNotApplicable, 'facebook.com', 'app-id', '');
-  FFacebookAppSecret := FIni.ReadString(voVersioningNotApplicable, 'facebook.com', 'app-secret', '');
-  FGoogleAppid := FIni.ReadString(voVersioningNotApplicable, 'google.com', 'app-id', '');
-  FGoogleAppSecret := FIni.ReadString(voVersioningNotApplicable, 'google.com', 'app-secret', '');
-  FGoogleAppKey := FIni.ReadString(voVersioningNotApplicable, 'google.com', 'app-key', '');
+  FHL7Appid := ini.ReadString(voVersioningNotApplicable, 'hl7.org', 'app-id', '');
+  FHL7AppSecret := ini.ReadString(voVersioningNotApplicable, 'hl7.org', 'app-secret', '');
+  FFacebookAppid := ini.ReadString(voVersioningNotApplicable, 'facebook.com', 'app-id', '');
+  FFacebookAppSecret := ini.ReadString(voVersioningNotApplicable, 'facebook.com', 'app-secret', '');
+  FGoogleAppid := ini.ReadString(voVersioningNotApplicable, 'google.com', 'app-id', '');
+  FGoogleAppSecret := ini.ReadString(voVersioningNotApplicable, 'google.com', 'app-secret', '');
+  FGoogleAppKey := ini.ReadString(voVersioningNotApplicable, 'google.com', 'app-key', '');
+  FPassword := ini.ReadString(voVersioningNotApplicable, 'admin', 'password', '');
   FPath := '/auth';
 end;
 
 destructor TAuth2Server.Destroy;
 begin
+  FNonceList.Free;
   FLoginTokens.Free;;
   FLock.Free;
   FServerContext.Free;
-  FIni.Free;
   FUserProvider.free;
   inherited;
 end;
@@ -262,6 +268,20 @@ begin
 end;
 
 
+function TAuth2Server.nonceIsUnique(nonce: String): boolean;
+var
+  i : integer;
+begin
+  FLock.Lock;
+  try
+    result := not FNonceList.Find(nonce, i);
+    if result then
+      FNonceList.Add(nonce);
+  finally
+    FLock.Unlock;
+  end;
+end;
+
 {$IFNDEF FHIR2}
 procedure TAuth2Server.populateFromConsent(consentKey: integer; session: TFhirSession);
 var
@@ -300,18 +320,9 @@ begin
   result := (aud_uri = EndPoint);
 end;
 
-function TAuth2Server.isAllowedRedirect(client_id, redirect_uri: String): boolean;
-var
-  i : integer;
-  s : String;
+function TAuth2Server.isAllowedRedirect(client : TRegisteredClientInformation; redirect_uri: String): boolean;
 begin
-  i := 0;
-  result := false;
-  repeat
-    s := FIni.ReadString(voVersioningNotApplicable, client_id, 'redirect'+inttostr(i), '');
-    result := s = redirect_uri;
-    inc(i);
-  until result or (s = '');
+  result := (client <> nil) and (client.mode = rcmOAuthClient) and (client.redirects.indexof(redirect_uri) > -1);
 end;
 
 function TAuth2Server.KeyPath: String;
@@ -357,60 +368,65 @@ var
   state : String;
   aud : String;
   id : String;
-  jwts : String;
   jwt : TJWT;
   message : String;
   b : TStringBuilder;
   ok : boolean;
   variables : TDictionary<String,String>;
+  client : TRegisteredClientInformation;
 begin
   if params.GetVar('response_type') <> 'code' then
     raise Exception.Create('Only response_type allowed is ''code''');
   client_id := checkNotEmpty(params.GetVar('client_id'), 'client_id');
-  if FIni.ReadString(voVersioningNotApplicable, client_id, 'name', '') = '' then
-    raise Exception.Create('Unknown Client Identifier "'+client_id+'"');
-  redirect_uri := checkNotEmpty(params.GetVar('redirect_uri'), 'redirect_uri');
-  jwts := FIni.ReadString(voVersioningNotApplicable, client_id, 'jwt', '');
-  if not isAllowedRedirect(client_id, redirect_uri) then
-    raise Exception.Create('Unacceptable Redirect url "'+redirect_uri+'"');
-  scope := checkNotEmpty(params.GetVar('scope'), 'scope');
-  state := checkNotEmpty(params.GetVar('state'), 'state');
-  aud := checkNotEmpty(params.GetVar('aud'), 'aud');
-  if not isAllowedAud(client_id, aud) then
-    raise Exception.Create('Unacceptable FHIR Server URL "'+aud+'" (should be '+EndPoint+')');
-
-  id := newguidid;
-  ServerContext.Storage.recordOAuthLogin(id, client_id, scope, redirect_uri, state);
-  b := TStringBuilder.Create;
+  client := ServerContext.Storage.getClientInfo(client_id);
   try
-    ok := true;
-    if (jwts <> '') and (ServerContext.ClientApplicationVerifier <> nil) then
-    begin
-      jwt := TJWTUtils.unpack(jwts, false, nil);
-      try
-        ok := ServerContext.ClientApplicationVerifier.check(jwt, b, message);
-      finally
-        jwt.Free;
-      end;
-    end
-    else
-      message := ' <li>The Client Application Service has not checked this client</li>';
+    if client = nil then
+      raise Exception.Create('Unknown Client Identifier "'+client_id+'"');
+    redirect_uri := checkNotEmpty(params.GetVar('redirect_uri'), 'redirect_uri');
+    if not ((client_id = 'c.1') and (redirect_uri = ServerContext.FormalURLSecureClosed+'/internal')) then
+      if not isAllowedRedirect(client, redirect_uri) then
+      raise Exception.Create('Unacceptable Redirect url "'+redirect_uri+'"');
+    scope := checkNotEmpty(params.GetVar('scope'), 'scope');
+    state := checkNotEmpty(params.GetVar('state'), 'state');
+    aud := checkNotEmpty(params.GetVar('aud'), 'aud');
+    if not isAllowedAud(client_id, aud) then
+      raise Exception.Create('Unacceptable FHIR Server URL "'+aud+'" (should be '+EndPoint+')');
 
-    variables := TDictionary<String,String>.create;
+    id := newguidid;
+    ServerContext.Storage.recordOAuthLogin(id, client_id, scope, redirect_uri, state);
+    b := TStringBuilder.Create;
     try
-      variables.Add('/oauth2', FPath);
-      variables.Add('idmethods', BuildLoginList(id));
-      variables.Add('client', FIni.ReadString(voVersioningNotApplicable, client_id, 'name', ''));
-      variables.Add('client-notes', message);
-      if ok then
-        OnProcessFile(response, session, '/oauth_login.html', true, variables)
+      ok := true;
+      if (client.jwt <> '') and (ServerContext.ClientApplicationVerifier <> nil) then
+      begin
+        jwt := TJWTUtils.unpack(client.jwt, false, nil);
+        try
+          ok := ServerContext.ClientApplicationVerifier.check(jwt, b, message);
+        finally
+          jwt.Free;
+        end;
+      end
       else
-        OnProcessFile(response, session, '/oauth_login_denied.html', true, variables)
+        message := ' <li>The Client Application Service has not checked this client</li>';
+
+      variables := TDictionary<String,String>.create;
+      try
+        variables.Add('/oauth2', FPath);
+        variables.Add('idmethods', BuildLoginList(id));
+        variables.Add('client', client.name);
+        variables.Add('client-notes', message);
+        if ok then
+          OnProcessFile(request, response, session, '/oauth_login.html', true, variables)
+        else
+          OnProcessFile(request, response, session, '/oauth_login_denied.html', true, variables)
+      finally
+        variables.free;
+      end;
     finally
-      variables.free;
+      b.Free;
     end;
   finally
-    b.Free;
+    client.free;
   end;
 end;
 
@@ -500,6 +516,11 @@ begin
         scopes.Add(pfx+CODES_TFHIRResourceType[t]+'.write');
     end;
   end;
+end;
+
+function TAuth2Server.RegisterPath: String;
+begin
+  result := FPath+'/register';
 end;
 
 const
@@ -652,12 +673,12 @@ begin
   begin
     variables := TDictionary<String,String>.create;
     try
-      variables.Add('client', FIni.ReadString(voVersioningNotApplicable, client_id, 'name', ''));
+      variables.Add('client', ServerContext.Storage.getClientName(client_id));
       variables.Add('/oauth2', FPath);
       variables.Add('username', name);
       variables.Add('patient-list', GetPatientListAsOptions);
       loadScopeVariables(variables, scope, session.User);
-      OnProcessFile(response, session, '/oauth_choice.html', true, variables)
+      OnProcessFile(request, response, session, '/oauth_choice.html', true, variables)
     finally
       variables.free;
     end;
@@ -680,6 +701,7 @@ begin
       obj['issuer'] := FHost;
       obj['authorization_endpoint'] := BasePath+'/auth';
       obj['token_endpoint'] := BasePath+'/token';
+      obj['register_endpoint'] := BasePath+'/register';
       obj['jwks_uri'] :=  BasePath+'/auth_key';
       obj['registration_endpoint'] := 'mailto:'+FAdminEmail;
       obj.arr['scopes_supported'] := TJsonArray.create.add('read').add('write').add('user');
@@ -811,6 +833,101 @@ begin
     raise Exception.Create('Login attempt not understood');
 end;
 
+//  "grant_types" : "client_credentials",
+//  "jwks" : {
+//    "keys" : [
+//      {
+//        "e" : "AQAB",
+//        "kty" : "RSA",
+//        "n" : "pWGCPEp8PNjfiTHNM_iB5JqC4SyfVJoAR8urI1guoFtfPPlH2c_ZO1p4S0W1rAy8qi_lLLOKmiTL2JDqd6xUA6AHcf8Fr7cwAJiqQBd-3AMOfm7fSIgVgKQXCFQAzTAefJYq4f7ydnkocrDuKSH29QhhlBqVIu3TwKNQUGs6Owk1HRRtxIlxHJRCNEbA-AFdjT4A5JKztyYaA5IiWr2cgU-q71_SeMDWUNHZNeBO7HJu0Jh7uX-9xhpSr8J3zt9kMBbFzIwH1ycglJ9e4yhFA5y5VE-ZjBvSnDrfC5J22IoEvzBOSuzy33D6Y4vbH26g7slh90atsMbzuTHJu7iaQQ"
+//      }
+//    ]
+//  },
+//  "response_types" : "token",
+//  "token_endpoint_auth_method" : "client_secret_post"
+
+procedure TAuth2Server.HandleRegistration(AContext: TIdContext; request: TIdHTTPRequestInfo; session: TFhirSession; response: TIdHTTPResponseInfo);
+var
+  json, resp : TJsonObject;
+  client : TRegisteredClientInformation;
+begin
+  try
+    // parse the json
+    json := TJSONParser.Parse(request.PostStream);
+    try
+      client := TRegisteredClientInformation.Create;
+      try
+        if Session = nil then
+          raise Exception.Create('User must be identified; log in to the server using the web interface, and get a token that can be used to register the client');
+
+        // check that it meets business rules
+        if json.str['client_name'].Trim = '' then
+          raise Exception.Create('A client_name field is required')
+        else
+          client.name := json.str['client_name'].Trim;
+        client.url := json.str['client_uri'].Trim;
+        client.logo := json.str['logo_uri'].Trim;
+        client.softwareId := json.str['software_id'].Trim;
+        client.softwareVersion := json.str['software_version'].Trim;
+        if (json.str['grant_types'].Trim = '') then
+          raise Exception.Create('A grant_types field is required');
+        if (json.str['response_types'].Trim = '') then
+          raise Exception.Create('A response_types field is required');
+        if (json.str['token_endpoint_auth_method'].Trim = '') then
+          raise Exception.Create('A token_endpoint_auth_method field is required');
+        if (json.str['grant_types'] = 'client_credentials') and (json.str['response_types'] = 'token') and (json.str['token_endpoint_auth_method'] = 'client_secret_post') then
+        begin
+          client.mode := rcmBackendServices;
+          if json.obj['jwks'] = nil then
+            raise Exception.Create('No jwks found');
+          if json.obj['jwks'].arr['keys'] = nil then
+            raise Exception.Create('No keys found in jwks');
+          if json.obj['jwks'].arr['keys'].Count = 0 then
+            raise Exception.Create('No Keys found in jwks.keys');
+          client.publicKey := TJsonWriter.writeObjectStr(json.obj['jwks']);
+          if (json.str['issuer'].Trim = '') then
+            raise Exception.Create('An issuer field is required');
+          client.issuer := json.str['issuer'].Trim;
+        end
+        else
+          raise Exception.Create('Unable to recognise client mode');
+        resp := TJsonObject.Create;
+        try
+          // if mode = oauth.. generate client id and secret
+          resp.str['client_id'] := ServerContext.Storage.storeClient(client, 0 {session.Key});
+          resp.str['client_id_issued_at'] := IntToStr(DateTimeToUnix(now));
+          response.ContentText := TJSONWriter.writeObjectStr(resp);
+          response.ResponseNo := 200;
+          response.ResponseText := 'OK';
+          response.ContentType := 'application/json';
+        finally
+          resp.Free;
+        end;
+      finally
+        client.Free;
+      end;
+
+    finally
+      json.Free;
+    end;
+  except
+    on e : Exception do
+    begin
+      json := TJsonObject.create;
+      try
+        json.str['error'] := 'invalid_client';
+        json.str['error_description'] := e.Message;
+        response.ContentText := TJSONWriter.writeObjectStr(json);
+        response.ResponseNo := 400;
+        response.ResponseText := 'Client Error';
+        response.ContentType := 'application/json';
+      finally
+        json.Free;
+      end;
+    end;
+  end;
+end;
+
 procedure TAuth2Server.HandleRequest(AContext: TIdContext; request: TIdHTTPRequestInfo; session : TFhirSession; response: TIdHTTPResponseInfo);
 var
   params : TParseMap;
@@ -852,6 +969,8 @@ begin
           HandleKeyToken(AContext, request, session, params, response)
         else if (request.Document = FPath+'/discovery') then
           HandleDiscovery(AContext, request, response)
+        else if (request.Document = FPath+'/register') then
+          HandleRegistration(AContext, request, session, response)
         else if (request.Document = FPath+'/userdetails') then
           HandleUserDetails(AContext, request, session, params, response)
         else if (request.Document = FPath+'/cavs') then
@@ -888,7 +1007,7 @@ begin
     email := checkNotEmpty(params.GetVar('email'), 'email');
     password := checkNotEmpty(params.GetVar('password'), 'password');
 
-    if FIni.ReadString(voVersioningNotApplicable, 'admin', 'password', '') <> password then
+    if FPassword <> password then
       raise Exception.Create('Admin Password fail');
 
     // update the login record
@@ -921,7 +1040,7 @@ begin
     variables := TDictionary<String,String>.create;
     try
       variables.Add('/oauth2', FPath);
-      OnProcessFile(response, session, FPath+'/auth_skype.html', true, variables);
+      OnProcessFile(request, response, session, FPath+'/auth_skype.html', true, variables);
     finally
       variables.free;
     end;
@@ -953,7 +1072,12 @@ begin
   if params.getVar('grant_type') = 'authorization_code' then
     HandleTokenOAuth(AContext, request, session, params, response)
   else if params.getVar('grant_type') = 'client_credentials' then
-     HandleTokenBearer(AContext, request, params, response)
+  begin
+     if params.GetVar('client_assertion_type') = 'urn:ietf:params:oauth:client-assertion-type:jwt-bearer' then
+       HandleTokenJWT(AContext, request, params, response) // smart backend services
+     else
+       HandleTokenBearer(AContext, request, params, response)
+  end
   else
   begin
     response.ResponseNo := 500;
@@ -1054,14 +1178,112 @@ begin
   end;
 end;
 
+procedure TAuth2Server.HandleTokenJWT(AContext: TIdContext; request: TIdHTTPRequestInfo; params: TParseMap; response: TIdHTTPResponseInfo);
+var
+//  jwtStored,
+  errCode, domain : string;
+  json : TJsonWriter;
+  jwt, jwtv : TJWT;
+  jwk : TJWKList;
+//  expiry : TDateTime;
+//  PatientId : String;
+//  ConsentKey, SessionKey : integer;
+  session : TFhirSession;
+  client : TRegisteredClientInformation;
+begin
+  domain := request.Host;
+  if domain.Contains(':') then
+    domain := domain.Substring(0, domain.IndexOf(':'));
+
+  response.ContentType := 'application/json';
+  try
+    errCode := 'invalid_request';
+    try
+      jwt := TJWTUtils.unpack(params.GetVar('client_assertion'), false, nil); // todo:
+    except
+      on e : exception do
+        raise Exception.Create('Error reading JWT: '+e.message);
+    end;
+    try
+      client := ServerContext.Storage.getClientInfo(jwt.subject);
+      try
+        // validate the signature on the JWT
+        // check that the JWT exp is valid
+        // check that this is not a jti value seen before (prevention of replay attacks)
+        // ensure that the client_id provided is valid etc
+        if client = nil then
+          raise Exception.Create('Unknown client_id "'+jwt.subject+'"');
+        if jwt.issuer <> client.issuer then
+          raise Exception.Create('Stated Issuer does not match registered issuer');
+        if not nonceIsUnique(jwt.id) then
+          raise Exception.Create('Repeat Nonce Token - not allowed');
+        if (jwt.expires > now + 5 * DATETIME_MINUTE_ONE)then
+          raise Exception.Create('JWT Expiry is too far in the future');
+        if (jwt.expires < now) then
+          raise Exception.Create('JWT expiry is too old');
+
+
+        jwk := TJWKList.create(client.publicKey);
+        try
+          TJWTUtils.unpack(params.GetVar('client_assertion'), true, jwk).Free;
+        finally
+          jwk.Free;
+        end;
+        // all done... now create the session
+        session := ServerContext.SessionManager.CreateImplicitSession(AContext.Binding.PeerIP, jwt.subject, 'n/a', systemFromJWT, false, true);
+        try
+          session.SystemName := jwt.subject;
+          session.SystemEvidence := systemFromJWT;
+          session.scopes := params.GetVar('scopes');
+          json := TJsonWriter.create;
+          try
+            json.Start;
+            json.Value('access_token', session.Cookie);
+            json.Value('token_type', 'Bearer');
+            json.Value('expires_in', inttostr(trunc((session.Expires - now) / DATETIME_SECOND_ONE)));
+            json.Value('scope', session.scopes);
+            json.Finish;
+            response.ContentText := json.ToString;
+          finally
+            json.Free;
+          end;
+        finally
+          session.Free;
+        end;
+      finally
+        client.free;
+      end;
+    finally
+      jwt.Free;
+    end;
+    response.ResponseNo := 200;
+  except
+    on e : Exception do
+    begin
+      response.ResponseNo := 500;
+      json := TJsonWriter.create;
+      try
+        json.Start;
+        json.Value('error', errCode);
+        json.Value('error_description', e.Message);
+        json.Finish;
+        response.ContentText := json.ToString;
+      finally
+        json.Free;
+      end;
+    end;
+  end;
+end;
+
 procedure TAuth2Server.HandleTokenOAuth(AContext: TIdContext; request: TIdHTTPRequestInfo; session : TFhirSession; params: TParseMap; response: TIdHTTPResponseInfo);
 
 var
   code, clientId, clientSecret, uri, errCode, client_id : string;
-  psecret, pclientid, pname, predirect, pstate, pscope : String;
+  pclientid, pname, predirect, pstate, pscope : String;
   json : TJSONWriter;
   buffer : TAdvMemoryStream;
   launch, scope : String;
+  client : TRegisteredClientInformation;
 begin
   buffer := TAdvMemoryStream.Create;
   try
@@ -1076,54 +1298,57 @@ begin
       try
         if not ServerContext.Storage.fetchOAuthDetails(session.key, 3, pclientid, pname, predirect, pstate, pscope) then
           raise Exception.Create('Authorization Code not recognized (2)');
-        psecret := FIni.ReadString(voVersioningNotApplicable, pclientId, 'secret', '');
-
-        // what happens now depends on whether there's a client secret or not
-        if (psecret = '') then
-        begin
-          // user must supply the correct client id
-          errCode := 'invalid_client';
-          clientId := checkNotEmpty(params.getVar('client_id'), 'client_id');
-          if clientId <> pclientid then
-            raise Exception.Create('Client Id is wrong ("'+clientId+'") is wrong in parameter');
-        end
-        else
-        begin
-          // client id and client secret must be in the basic header. Check them
-          clientId := request.AuthUsername;
-          clientSecret := request.AuthPassword;
-          if clientId <> pclientid then
-            raise Exception.Create('Client Id is wrong ("'+clientId+'") in Authorization Header');
-          if clientSecret <> psecret then
-            raise Exception.Create('Client Secret in Authorization header is wrong ("'+clientSecret+'")');
-        end;
-
-        // now check the redirect URL
-        uri := checkNotEmpty(params.getVar('redirect_uri'), 'redirect_uri');
-        errCode := 'invalid_request';
-        if predirect <> uri then
-          raise Exception.Create('Mismatch between claimed and actual redirection URIs');
-
-        // ok, well, it's passed.
-        scope := pscope;
-        launch := readFromScope(scope, 'launch');
-        ServerContext.Storage.updateOAuthSession(session.OuterToken, 4, session.Key, client_id);
-        if (session.SystemName <> client_id) or (session.SystemName <> clientId) then
-          raise Exception.Create('Session client id mismatch ("'+session.SystemName+'"/"'+client_id+'"/"'+clientId+'")');
-
-        json := TJsonWriter.create;
+        client := ServerContext.Storage.getClientInfo(pclientid);
         try
-          json.Stream := buffer.link;
-          json.Start;
-          json.Value('access_token', session.Cookie);
-          json.Value('token_type', 'Bearer');
-          json.Value('expires_in', inttostr(trunc((session.Expires - now) / DATETIME_SECOND_ONE)));
-          json.Value('id_token', session.JWTPacked);
-          json.Value('scope', scope);
-          json.Value('patient', launch);
-          json.Finish;
+          // what happens now depends on whether there's a client secret or not
+          if (client.secret = '') then
+          begin
+            // user must supply the correct client id
+            errCode := 'invalid_client';
+            clientId := checkNotEmpty(params.getVar('client_id'), 'client_id');
+            if clientId <> pclientid then
+              raise Exception.Create('Client Id is wrong ("'+clientId+'") is wrong in parameter');
+          end
+          else
+          begin
+            // client id and client secret must be in the basic header. Check them
+            clientId := request.AuthUsername;
+            clientSecret := request.AuthPassword;
+            if clientId <> pclientid then
+              raise Exception.Create('Client Id is wrong ("'+clientId+'") in Authorization Header');
+            if clientSecret <> client.secret then
+              raise Exception.Create('Client Secret in Authorization header is wrong ("'+clientSecret+'")');
+          end;
+
+          // now check the redirect URL
+          uri := checkNotEmpty(params.getVar('redirect_uri'), 'redirect_uri');
+          errCode := 'invalid_request';
+          if predirect <> uri then
+            raise Exception.Create('Mismatch between claimed and actual redirection URIs');
+
+          // ok, well, it's passed.
+          scope := pscope;
+          launch := readFromScope(scope, 'launch');
+          ServerContext.Storage.updateOAuthSession(session.OuterToken, 4, session.Key, client_id);
+          if (session.SystemName <> client_id) or (session.SystemName <> clientId) then
+            raise Exception.Create('Session client id mismatch ("'+session.SystemName+'"/"'+client_id+'"/"'+clientId+'")');
+
+          json := TJsonWriter.create;
+          try
+            json.Stream := buffer.link;
+            json.Start;
+            json.Value('access_token', session.Cookie);
+            json.Value('token_type', 'Bearer');
+            json.Value('expires_in', inttostr(trunc((session.Expires - now) / DATETIME_SECOND_ONE)));
+            json.Value('id_token', session.JWTPacked);
+            json.Value('scope', scope);
+            json.Value('patient', launch);
+            json.Finish;
+          finally
+            json.Free;
+          end;
         finally
-          json.Free;
+          client.Free;
         end;
       finally
         session.free;
@@ -1159,6 +1384,7 @@ var
   json : TJSONWriter;
   buffer : TAdvMemoryStream;
   check : boolean;
+  client : TRegisteredClientInformation;
 begin
   buffer := TAdvMemoryStream.Create;
   try
@@ -1172,46 +1398,51 @@ begin
       clientId := checkNotEmpty(params.getVar('client_id'), 'client_id');
       clientSecret := checkNotEmpty(params.getVar('client_secret'), 'client_secret');
 
-      if FIni.ReadString(voVersioningNotApplicable, clientId, 'secret', '') <> clientSecret then
-        raise Exception.Create('Client Id or secret is wrong ("'+clientId+'")');
-
-      if not ServerContext.SessionManager.GetSession(token, session, check) then
-      begin
-        json := TJsonWriter.create;
-        try
-          json.Stream := buffer.link;
-          json.Start;
-          json.Value('active', false);
-          json.Finish;
-        finally
-          json.Free;
-        end;
-      end
-      else
+      client := ServerContext.Storage.getClientInfo(clientId);
       try
-        json := TJsonWriter.create;
-        try
-          json.Stream := buffer.link;
-          json.Start;
-          json.Value('active', true);
-          json.Value('token_type', 'Bearer');
-          json.Value('exp', inttostr(trunc((session.Expires - EncodeDate(1970, 1, 1)) / DATETIME_SECOND_ONE)));
-          json.Value('iat', inttostr(trunc((session.FirstCreated - EncodeDate(1970, 1, 1)) / DATETIME_SECOND_ONE)));
-          json.Value('scope', session.scopes);
-          json.Value('use_count', inttostr(session.useCount));
-          if session.canGetUser then
-          begin
-            json.Value('user_id', Names_TFHIRAuthProvider[session.ProviderCode]+':'+session.id);
-            json.Value('user_name', session.UserName);
-            if session.Email <> '' then
-              json.Value('email', session.Email);
+        if client.secret <> clientSecret then
+          raise Exception.Create('Client Id or secret is wrong ("'+clientId+'")');
+
+        if not ServerContext.SessionManager.GetSession(token, session, check) then
+        begin
+          json := TJsonWriter.create;
+          try
+            json.Stream := buffer.link;
+            json.Start;
+            json.Value('active', false);
+            json.Finish;
+          finally
+            json.Free;
           end;
-          json.Finish;
+        end
+        else
+        try
+          json := TJsonWriter.create;
+          try
+            json.Stream := buffer.link;
+            json.Start;
+            json.Value('active', true);
+            json.Value('token_type', 'Bearer');
+            json.Value('exp', inttostr(trunc((session.Expires - EncodeDate(1970, 1, 1)) / DATETIME_SECOND_ONE)));
+            json.Value('iat', inttostr(trunc((session.FirstCreated - EncodeDate(1970, 1, 1)) / DATETIME_SECOND_ONE)));
+            json.Value('scope', session.scopes);
+            json.Value('use_count', inttostr(session.useCount));
+            if session.canGetUser then
+            begin
+              json.Value('user_id', Names_TFHIRAuthProvider[session.ProviderCode]+':'+session.id);
+              json.Value('user_name', session.UserName);
+              if session.Email <> '' then
+                json.Value('email', session.Email);
+            end;
+            json.Finish;
+          finally
+            json.Free;
+          end;
         finally
-          json.Free;
+          session.free;
         end;
       finally
-        session.free;
+        client.Free;
       end;
       response.ResponseNo := 200;
     except
@@ -1255,7 +1486,7 @@ begin
       try
         variables.Add('username', session.User.username);
         variables.Add('/oauth2', FPath);
-        OnProcessFile(response, session, '/oauth_userdetails.html', true, variables)
+        OnProcessFile(request, response, session, '/oauth_userdetails.html', true, variables)
       finally
         variables.free;
       end;

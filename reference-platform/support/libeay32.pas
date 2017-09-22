@@ -176,7 +176,7 @@ var
   DSA_new: function: PDSA cdecl = nil;
   DSA_free : procedure(rsa: PDSA) cdecl = nil;
 
-procedure LoadEAYExtensions;
+function LoadEAYExtensions : boolean;
 procedure UnloadEAYExtensions;
 
 implementation
@@ -203,7 +203,7 @@ begin
 end;
 
 
-Procedure LoadEAYExtensions;
+function LoadEAYExtensions : boolean;
 begin
   inc(gLoadCount);
   if gLoadCount = 1 then
@@ -224,6 +224,7 @@ begin
     @DSA_new := LoadFunctionCLib('DSA_new');
     @DSA_free := LoadFunctionCLib('DSA_free');
   end;
+  result := @BN_num_bits <> nil;
 end;
 
 procedure UnloadEAYExtensions;

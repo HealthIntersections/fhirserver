@@ -127,88 +127,50 @@ object EditRegisteredServerForm: TEditRegisteredServerForm
           441
           376)
         object Label13: TLabel
-          Left = 12
-          Top = 262
-          Width = 369
+          Left = 16
+          Top = 209
+          Width = 407
           Height = 29
           AutoSize = False
           Caption = 
-            'Note: Other than the reference server, you must register the plu' +
-            'g-in with each SMART-ON-FHIR server yourself'
+            'Note: You must register the [client] with each Smart App Launch ' +
+            'Server yourself'
           WordWrap = True
         end
         object Label11: TLabel
-          Left = 12
-          Top = 203
+          Left = 10
+          Top = 272
           Width = 50
           Height = 13
           Caption = 'Authorize:'
         end
         object Label12: TLabel
-          Left = 12
-          Top = 230
+          Left = 10
+          Top = 299
           Width = 33
           Height = 13
           Caption = 'Token:'
         end
         object Label10: TLabel
           Left = 12
-          Top = 181
+          Top = 250
           Width = 164
           Height = 13
           Caption = 'From the conformance statement:'
         end
         object Bevel1: TBevel
-          Left = 12
-          Top = 168
+          Left = 10
+          Top = 244
           Width = 377
           Height = 11
           Shape = bsTopLine
         end
-        object Label9: TLabel
-          Left = 86
-          Top = 135
-          Width = 258
-          Height = 13
-          Caption = 'The redirect URL must be http://localhost:[port]/done'
-        end
-        object Label8: TLabel
+        object Label15: TLabel
           Left = 12
-          Top = 115
-          Width = 67
+          Top = 6
+          Width = 103
           Height = 13
-          Caption = 'Redirect Port:'
-        end
-        object Label7: TLabel
-          Left = 86
-          Top = 79
-          Width = 284
-          Height = 26
-          Caption = 
-            'Note: the Notepad++ plug-in is not a confidential app, but this ' +
-            'can be provided to help test SMART on FHIR Servers'
-          WordWrap = True
-        end
-        object Label6: TLabel
-          Left = 12
-          Top = 61
-          Width = 65
-          Height = 13
-          Caption = 'Client Secret:'
-        end
-        object Label4: TLabel
-          Left = 12
-          Top = 29
-          Width = 44
-          Height = 13
-          Caption = 'Client Id:'
-        end
-        object Label5: TLabel
-          Left = 12
-          Top = 7
-          Width = 139
-          Height = 13
-          Caption = 'From your client registration:'
+          Caption = 'Smart on FHIR Mode:'
         end
         object btnFetch: TButton
           Left = 4
@@ -221,8 +183,8 @@ object EditRegisteredServerForm: TEditRegisteredServerForm
           OnClick = btnFetchClick
         end
         object edtToken: TEdit
-          Left = 86
-          Top = 227
+          Left = 84
+          Top = 296
           Width = 339
           Height = 21
           Anchors = [akLeft, akTop, akRight]
@@ -230,39 +192,202 @@ object EditRegisteredServerForm: TEditRegisteredServerForm
           OnChange = edtNameChange
         end
         object edtAuthorize: TEdit
-          Left = 86
-          Top = 200
+          Left = 84
+          Top = 269
           Width = 339
           Height = 21
           Anchors = [akLeft, akTop, akRight]
           TabOrder = 2
           OnChange = edtNameChange
         end
-        object edtRedirect: TEdit
-          Left = 86
-          Top = 112
-          Width = 55
-          Height = 21
+        object Notebook1: TNotebook
+          Left = 12
+          Top = 25
+          Width = 423
+          Height = 160
+          PageIndex = 2
           TabOrder = 3
-          OnChange = edtNameChange
+          object TPage
+            Left = 0
+            Top = 0
+            Caption = 'Default'
+            ExplicitWidth = 409
+            ExplicitHeight = 201
+          end
+          object TPage
+            Left = 0
+            Top = 0
+            Caption = 'oauth'
+            ExplicitWidth = 0
+            ExplicitHeight = 0
+          end
+          object TPage
+            Left = 0
+            Top = 0
+            Caption = 'backend'
+            object Notebook2: TNotebook
+              Left = 0
+              Top = 0
+              Width = 423
+              Height = 160
+              PageIndex = 2
+              TabOrder = 0
+              object TPage
+                Left = 0
+                Top = 0
+                Caption = 'Default'
+              end
+              object TPage
+                Left = 0
+                Top = 0
+                Caption = 'oauth'
+                object Label4: TLabel
+                  Left = 13
+                  Top = 15
+                  Width = 41
+                  Height = 13
+                  Caption = 'Client ID'
+                end
+                object Label5: TLabel
+                  Left = 13
+                  Top = 45
+                  Width = 61
+                  Height = 13
+                  Caption = 'Client Secret'
+                end
+                object Label6: TLabel
+                  Left = 88
+                  Top = 72
+                  Width = 304
+                  Height = 26
+                  Caption = 
+                    'Note: this app ([client]) is not a confidential app, but the cli' +
+                    'ent secret can be provided to help test SMART App Launch Servers'
+                  WordWrap = True
+                end
+                object Label7: TLabel
+                  Left = 13
+                  Top = 109
+                  Width = 67
+                  Height = 13
+                  Caption = 'Redirect Port:'
+                end
+                object Label8: TLabel
+                  Left = 88
+                  Top = 136
+                  Width = 258
+                  Height = 13
+                  Caption = 'The redirect URL must be http://localhost:[port]/done'
+                end
+                object edtClientId: TEdit
+                  Left = 88
+                  Top = 15
+                  Width = 313
+                  Height = 21
+                  TabOrder = 0
+                end
+                object edtClientSecret: TEdit
+                  Left = 88
+                  Top = 42
+                  Width = 313
+                  Height = 21
+                  TabOrder = 1
+                end
+                object edtRedirect: TEdit
+                  Left = 88
+                  Top = 109
+                  Width = 313
+                  Height = 21
+                  TabOrder = 2
+                end
+              end
+              object TPage
+                Left = 0
+                Top = 0
+                Caption = 'backend'
+                object Label9: TLabel
+                  Left = 13
+                  Top = 44
+                  Width = 56
+                  Height = 13
+                  Caption = 'Issuer URL:'
+                end
+                object Label16: TLabel
+                  Left = 13
+                  Top = 67
+                  Width = 59
+                  Height = 13
+                  Caption = 'Private Key:'
+                end
+                object Label17: TLabel
+                  Left = 88
+                  Top = 96
+                  Width = 315
+                  Height = 26
+                  Caption = 
+                    'Choose a generated key (e.g. using OpenSSL that is an RSA-256 pr' +
+                    'ivate Key paired with the registered public key'
+                  WordWrap = True
+                end
+                object Label18: TLabel
+                  Left = 13
+                  Top = 129
+                  Width = 59
+                  Height = 13
+                  Caption = 'Passphrase:'
+                end
+                object Label19: TLabel
+                  Left = 13
+                  Top = 15
+                  Width = 41
+                  Height = 13
+                  Caption = 'Client ID'
+                end
+                object edtIssuerURL: TEdit
+                  Left = 88
+                  Top = 42
+                  Width = 321
+                  Height = 21
+                  TabOrder = 0
+                end
+                object edtPrivateKey: TEdit
+                  Left = 88
+                  Top = 69
+                  Width = 321
+                  Height = 21
+                  TabOrder = 1
+                end
+                object edtPassphrase: TEdit
+                  Left = 88
+                  Top = 128
+                  Width = 315
+                  Height = 21
+                  TabOrder = 2
+                end
+                object edtClientId1: TEdit
+                  Left = 88
+                  Top = 15
+                  Width = 321
+                  Height = 21
+                  TabOrder = 3
+                end
+              end
+            end
+          end
         end
-        object edtClientSecret: TEdit
-          Left = 86
-          Top = 58
-          Width = 339
+        object cbxSmartMode: TComboBox
+          Left = 121
+          Top = 2
+          Width = 304
           Height = 21
-          Anchors = [akLeft, akTop, akRight]
+          Style = csDropDownList
           TabOrder = 4
-          OnChange = edtNameChange
-        end
-        object edtClientId: TEdit
-          Left = 86
-          Top = 26
-          Width = 339
-          Height = 21
-          Anchors = [akLeft, akTop, akRight]
-          TabOrder = 5
-          OnChange = edtNameChange
+          OnChange = cbxSmartModeChange
+          OnClick = cbxSmartModeChange
+          Items.Strings = (
+            'No Smart App Launch'
+            'OAuth Client'
+            'Backend Services Client')
         end
       end
     end

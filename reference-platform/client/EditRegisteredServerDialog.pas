@@ -55,15 +55,6 @@ type
     Label12: TLabel;
     Label10: TLabel;
     Bevel1: TBevel;
-    Label9: TLabel;
-    edtRedirect: TEdit;
-    Label8: TLabel;
-    Label7: TLabel;
-    edtClientSecret: TEdit;
-    Label6: TLabel;
-    Label4: TLabel;
-    edtClientId: TEdit;
-    Label5: TLabel;
     Panel3: TPanel;
     edtName: TEdit;
     Label3: TLabel;
@@ -78,6 +69,27 @@ type
     Formt: TLabel;
     cbxFormat: TComboBox;
     Button3: TButton;
+    Notebook1: TNotebook;
+    Label15: TLabel;
+    cbxSmartMode: TComboBox;
+    Notebook2: TNotebook;
+    Label4: TLabel;
+    Label5: TLabel;
+    Label6: TLabel;
+    Label7: TLabel;
+    Label8: TLabel;
+    edtClientId: TEdit;
+    edtClientSecret: TEdit;
+    edtRedirect: TEdit;
+    Label9: TLabel;
+    Label16: TLabel;
+    Label17: TLabel;
+    Label18: TLabel;
+    edtIssuerURL: TEdit;
+    edtPrivateKey: TEdit;
+    edtPassphrase: TEdit;
+    Label19: TLabel;
+    edtClientId1: TEdit;
     procedure edtNameChange(Sender: TObject);
     procedure btnOkClick(Sender: TObject);
     procedure btnFetchClick(Sender: TObject);
@@ -86,6 +98,7 @@ type
     procedure FormCreate(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure Button3Click(Sender: TObject);
+    procedure cbxSmartModeChange(Sender: TObject);
   private
     { Private declarations }
     FIndex : integer;
@@ -185,14 +198,20 @@ begin
   server := TRegisteredFHIRServer.Create;
   try
     server.name := edtName.Text;
-    server.SmartOnFHIR := edtAuthorize.Text <> '';
+    server.SmartAppLaunchMode := TSmartAppLaunchMode(cbxSmartMode.ItemIndex);
     server.fhirEndpoint := edtServer.Text;
     server.format := TFHIRFormat(cbxFormat.ItemIndex);
     server.tokenEndpoint := edtToken.Text;
     server.authorizeEndpoint := edtAuthorize.Text;
-    server.clientid := edtClientId.Text;
+    if cbxSmartMode.itemIndex = 2 then
+      server.clientid := edtClientId1.Text
+    else
+      server.clientid := edtClientId.Text;
     server.clientsecret := edtClientSecret.Text;
     server.redirectport := StrToIntDef(edtRedirect.Text, 0);
+    server.issuerUrl := edtIssuerURL.Text;
+    server.privatekey := edtPrivateKey.Text;
+    server.passphrase := edtPassphrase.Text;
     listHooks(server.cdshooks);
     if FIndex = -1 then
       Settings.registerServer('', server)
@@ -241,12 +260,22 @@ begin
     ShowMessage('This end point doens''t have any compatible formats in it''s conformance statement');
 end;
 
+procedure TEditRegisteredServerForm.cbxSmartModeChange(Sender: TObject);
+begin
+  Notebook1.PageIndex := cbxSmartMode.ItemIndex;
+end;
+
 procedure TEditRegisteredServerForm.edtNameChange(Sender: TObject);
 begin
+  case cbxSmartMode.itemIndex of
+    0: btnOk.Enabled := (edtName.text <> '') and (edtServer.text <> '');
+    1: btnOk.Enabled := (edtName.text <> '') and (edtServer.text <> '') and (edtAuthorize.Text <> '') and (edtToken.Text <> '') and (edtClientId.Text <> '') and StringIsInteger16(edtRedirect.Text)
+    2: btnOk.Enabled := (edtName.text <> '') and (edtServer.text <> '') and (edtAuthorize.Text <> '') and (edtToken.Text <> '') and (edtClientId1.Text <> '') and (edtIssuerURL.Text <> '')...
+  end;
   if (edtAuthorize.Text <> '') then
-    btnOk.Enabled := (edtName.text <> '') and (edtServer.text <> '') and (edtAuthorize.Text <> '') and (edtToken.Text <> '') and (edtClientId.Text <> '') and StringIsInteger16(edtRedirect.Text)
+    btnOk.Enabled :=
   else
-    btnOk.Enabled := (edtName.text <> '') and (edtServer.text <> '') and (edtAuthorize.Text = '') and (edtToken.Text = '') and (edtClientId.Text = '') and (edtRedirect.Text = '');
+
   btnOk.Enabled := edtServer.text <> '';
 end;
 
@@ -381,22 +410,16 @@ begin
         end;
       end;
 
-    if server.SmartOnFHIR then
-    begin
-      edtToken.Text := server.tokenEndpoint;
-      edtAuthorize.Text := server.authorizeEndpoint;
-      edtClientId.Text := server.clientid;
-      edtClientSecret.Text := server.clientsecret;
-      edtRedirect.Text := IntToStr(server.redirectport);
-    end
-    else
-    begin
-      edtToken.Text := '';
-      edtAuthorize.Text := '';
-      edtClientId.Text := '';
-      edtClientSecret.Text := '';
-      edtRedirect.Text := '';
-    end;
+    edtToken.Text := server.tokenEndpoint;
+    edtAuthorize.Text := server.authorizeEndpoint;
+    edtClientId.Text := server.clientid;
+    edtClientId1.Text := server.clientid;
+    edtClientSecret.Text := server.clientsecret;
+    edtRedirect.Text := IntToStr(server.redirectport);
+    edtIssuerURL.Text := server.issuerUrl;
+    edtPrivateKey.Text := server.privatekey;
+    edtPassphrase.Text := server.passphrase;
+    cbxSmartMode.ItemIndex := ord(server.SmartAppLaunchMode);
   finally
     server.Free;
   end;

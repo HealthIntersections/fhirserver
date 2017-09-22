@@ -276,7 +276,7 @@ begin
     case Column of
     0: CellText := server.name;
     1: CellText := server.fhirEndpoint;
-    2: CellText := BoolToStr(server.SmartOnFHIR, true);
+    2: CellText := CODES_TSmartAppLaunchMode[server.SmartAppLaunchMode];
     3: CellText := server.cdshookSummary;
     end;
   finally

@@ -34,6 +34,7 @@ uses
   FMX.Types, FMX.Controls, FMX.Forms, FMX.Graphics, FMX.Dialogs, FMX.StdCtrls, FMX.Platform,
   FMX.Layouts, FMX.ListBox, FMX.TabControl, FMX.Controls.Presentation, FMX.DialogService,
   System.ImageList, FMX.ImgList, FMX.Menus, FMX.WebBrowser,
+  IdSSLOpenSSLHeaders, libeay32,
   SystemSupport, TextUtilities,
   FHIRBase, FHIRTypes, FHIRResources, FHIRClient, FHIRUtilities, FHIRIndexBase, FHIRIndexInformation, FHIRSupport,
   FHIRContext, FHIRProfileUtilities,
@@ -187,6 +188,8 @@ var
 begin
   form := TEditRegisteredServerForm.create(self);
   try
+    form.SoftwareId := 'FHIR Toolkit';
+    form.SoftwareVersion := ToolKitVersionBase+inttostr(BuildCount);
     form.Server := TRegisteredFHIRServer.Create;
     if form.ShowModal = mrOk then
     begin
@@ -216,8 +219,8 @@ begin
     try
       http.username := server.username;
       http.password := server.password;
-      ok := true;
-      if server.SmartOnFHIR then
+      ok := false;
+      if server.SmartAppLaunchMode <> salmNone then
       begin
         dowork(self, 'Logging in', true,
           procedure
@@ -225,7 +228,7 @@ begin
             smart := TSmartAppLaunchLogin.Create;
             try
               smart.server := server.Link;
-              smart.scopes := ['User/*.*'];
+              smart.scopes := ['user/*.*'];
               smart.OnIdle := DoIdle;
               smart.OnOpenURL := DoOpenURL;
               smart.name := 'FHIR Toolkit';
@@ -303,6 +306,8 @@ var
 begin
   form := TEditRegisteredServerForm.create(self);
   try
+    form.SoftwareId := ToolkitIdentifier;
+    form.SoftwareVersion := ToolKitVersionBase+inttostr(BuildCount);
     form.Server := FSettings.serverInfo('', lbServers.ItemIndex);
     if form.ShowModal = mrOk then
     begin
@@ -678,6 +683,8 @@ begin
         FContext := TBaseWorkerContext.Create;
         FContext.LoadFromFile(IncludeTrailingPathDelimiter(ExtractFilePath(ParamStr(0)))+'profiles-types.xml');
         FContext.LoadFromFile(IncludeTrailingPathDelimiter(ExtractFilePath(ParamStr(0)))+'profiles-resources.xml');
+        if not (IdSSLOpenSSLHeaders.load and LoadEAYExtensions) then
+          raise Exception.Create('Unable to load openSSL - SSL/Crypto functions will fail');
       end);
   if not FUpgradeChecked and FSettings.CheckForUpgradesOnStart then
   begin

@@ -143,7 +143,7 @@ type
     procedure disconnectFromServer(details : TRegisteredFHIRServer);
 
     // if the application uses a hook, and there's a server not connected, then
-    // the manager will auto-connect, unless it's needs Smart on FHIR login, in which case this
+    // the manager will auto-connect, unless it's needs Smart App Launch login, in which case this
     // event will be called. The host needs to call connectToServer while responding to this,
     // or the server will be skipped
     property OnAuthToServer : TOnAuthToServer read FOnAuthToServer write FOnAuthToServer;
@@ -468,7 +468,7 @@ end;
 
 procedure TCDSHooksManager.checkConnectServer(server: TCDSHooksManagerServerInfo);
 begin
-  if not server.info.SmartOnFHIR then
+  if server.info.SmartAppLaunchMode <> salmOAuthClient then
     exit;
   if server.token <> nil then
     exit;
@@ -635,7 +635,7 @@ end;
 
 function TCDSHooksManagerServerInfo.okToUse: boolean;
 begin
-  result := FinUse and (not info.SmartOnFHIR or (token <> nil));
+  result := FinUse and ((info.SmartAppLaunchMode = salmNone) or (token <> nil));
 end;
 
 procedure TCDSHooksManagerServerInfo.Setinfo(const Value: TRegisteredFHIRServer);

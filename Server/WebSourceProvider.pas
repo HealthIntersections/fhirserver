@@ -37,7 +37,7 @@ uses
 type
   TFHIRWebServerSourceProvider = {abstract} class (TAdvObject)
   public
-    function AltFile(path: String): String;
+    function AltFile(path, base: String): String;
     function getSource(filename : String) : String; virtual;
     function exists(filename : String) : boolean; virtual;
     function asStream(filename : String) : TStream; virtual;
@@ -70,8 +70,11 @@ implementation
 
 { TFHIRWebServerSourceProvider }
 
-function TFHIRWebServerSourceProvider.AltFile(path : String) : String;
+function TFHIRWebServerSourceProvider.AltFile(path, base : String) : String;
 begin
+  if path.StartsWith(base) then
+    path := path.Substring(base.Length);
+
   if path.StartsWith('/') then
     result := path.Substring(1).Replace('/', '\')
   else

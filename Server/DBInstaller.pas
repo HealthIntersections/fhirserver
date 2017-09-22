@@ -57,7 +57,8 @@ const
 //   ServerDBVersion = 15; // add Uuid to Authorizations
 //  ServerDBVersion = 16; // add PatientId to Authorizations
 //  ServerDBVersion = 17; // add AuthorizationSessions and Connections
-  ServerDBVersion = 18; // add AsyncTasks
+//  ServerDBVersion = 18; // add AsyncTasks
+  ServerDBVersion = 19; // add RegisteredTasks
 
   // config table keys
   CK_Transactions = 1;   // whether transactions and batches are allowed or not
@@ -116,6 +117,7 @@ Type
     procedure CreateAuthorizationSessions;
     procedure CreateConnections;
     procedure CreateAsyncTasks;
+    procedure CreateClientRegistrations;
     procedure runScript(s : String);
   public
     Constructor create(conn : TKDBConnection; txpath : String);
@@ -311,6 +313,30 @@ begin
   FConn.ExecSQL(ForeignKeySql(FConn, 'AuthorizationSessions', 'AuthorizationKey', 'Authorizations', 'AuthorizationKey', 'FK_AuthorizationSessions_AuthKey'));
   FConn.ExecSQL(ForeignKeySql(FConn, 'AuthorizationSessions', 'SessionKey', 'Sessions', 'SessionKey', 'FK_AuthorizationSessions_SessKey'));
   FConn.ExecSQL('Create INDEX SK_Authorizations_AKey ON AuthorizationSessions (AuthorizationKey)');
+end;
+
+procedure TFHIRDatabaseInstaller.CreateClientRegistrations;
+begin
+  FConn.ExecSQL('CREATE TABLE ClientRegistrations( '+#13#10+
+       ' ClientKey         '+DBKeyType(FConn.owner.platform)+'      '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+  //
+       ' DateRegistered    '+DBDateTimeType(FConn.owner.platform)+' '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+    //
+       ' SessionRegistered '+DBKeyType(FConn.owner.platform)+'      '+ColCanBeNull(FConn.owner.platform, True)+', '+#13#10+    //
+       ' SoftwareId        nchar(128)                               '+ColCanBeNull(FConn.owner.platform, True )+', '+#13#10+    //
+       ' SoftwareVersion   nchar(128)                               '+ColCanBeNull(FConn.owner.platform, True )+', '+#13#10+  //
+       ' Uri               nchar(255)                               '+ColCanBeNull(FConn.owner.platform, True )+', '+#13#10+  //
+       ' LogoUri           nchar(255)                               '+ColCanBeNull(FConn.owner.platform, True )+', '+#13#10+  //
+       ' Name              nchar(255)                               '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+  //
+       ' Mode              int                                      '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+  //
+       ' Secret            nchar(36)                                '+ColCanBeNull(FConn.owner.platform, True )+', '+#13#10+  //
+       ' JwksUri           nchar(255)                               '+ColCanBeNull(FConn.owner.platform, True )+', '+#13#10+  //
+       ' Issuer            nchar(255)                               '+ColCanBeNull(FConn.owner.platform, True )+', '+#13#10+  //
+       ' SoftwareStatement '+DBBlobType(FConn.owner.platform)+'     '+ColCanBeNull(FConn.owner.platform, True )+', '+#13#10+  //
+       ' PublicKey         '+DBBlobType(FConn.owner.platform)+'     '+ColCanBeNull(FConn.owner.platform, True )+', '+#13#10+  //
+       ' Scopes            '+DBBlobType(FConn.owner.platform)+'     '+ColCanBeNull(FConn.owner.platform, True )+', '+#13#10+  //
+       ' Redirects         '+DBBlobType(FConn.owner.platform)+'     '+ColCanBeNull(FConn.owner.platform, True )+', '+#13#10+  //
+       InlineForeignKeySql(FConn, 'ClientRegistrations', 'SessionRegistered', 'Sessions', 'SessionKey', 'FK_ClientRegistrations_SessionKey')+
+       PrimaryKeyType(FConn.owner.Platform, 'PK_ClientRegistrations', 'ClientKey')+') '+CreateTableInfo(FConn.owner.platform));
+  FConn.ExecSQL(ForeignKeySql(FConn, 'ClientRegistrations', 'SessionRegistered', 'Sessions', 'SessionKey', 'FK_ClientRegistrations_SessionKey'));
 end;
 
 procedure TFHIRDatabaseInstaller.CreateClosureEntries;
@@ -963,7 +989,9 @@ begin
     CreateConnections;
     if assigned(CallBack) then Callback(74, 'Create AsyncTasks');
     CreateAsyncTasks;
-    if assigned(CallBack) then Callback(75, 'Commit');
+    if assigned(CallBack) then Callback(75, 'Create ClientRegistrations');
+    CreateClientRegistrations;
+    if assigned(CallBack) then Callback(76, 'Commit');
     FConn.Commit;
   except
     on e:exception do
@@ -1121,6 +1149,9 @@ begin
       if assigned(CallBack) then Callback(30, 'Check Delete AsyncTasks');
       if meta.hasTable('AsyncTasks') then
         FConn.DropTable('AsyncTasks');
+      if assigned(CallBack) then Callback(30, 'Check Delete ClientRegistrations');
+      if meta.hasTable('ClientRegistrations') then
+        FConn.DropTable('ClientRegistrations');
 
       FConn.Commit;
     except
@@ -1177,6 +1208,8 @@ begin
     end;
     if (version < 18) then
       CreateAsyncTasks;
+    if (version < 19) then
+      CreateClientRegistrations;
 
     Fconn.ExecSQL('update Config set value = '+inttostr(ServerDBVersion)+' where ConfigKey = 5');
     FConn.commit;

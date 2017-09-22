@@ -350,15 +350,34 @@ type
 
 {$ENDIF}
 
-  TFhirPatientEverythingOperation = class (TFhirNativeOperation)
+  TFhirEverythingOperation = class (TFhirNativeOperation)
+  protected
+    function resourceName : String; virtual; abstract;
+  public
+    procedure Execute(context : TOperationContext; manager: TFHIROperationEngine; request: TFHIRRequest; response : TFHIRResponse); override;
+  end;
+
+  TFhirPatientEverythingOperation = class (TFhirEverythingOperation)
   protected
     function isWrite : boolean; override;
     function owningResource : TFhirResourceType; override;
+    function resourceName : String; override;
   public
     function Name : String; override;
     function Types : TFhirResourceTypeSet; override;
     function CreateDefinition(base : String) : TFHIROperationDefinition; override;
-    procedure Execute(context : TOperationContext; manager: TFHIROperationEngine; request: TFHIRRequest; response : TFHIRResponse); override;
+    function formalURL : String; override;
+  end;
+
+  TFhirEncounterEverythingOperation = class (TFhirEverythingOperation)
+  protected
+    function isWrite : boolean; override;
+    function owningResource : TFhirResourceType; override;
+    function resourceName : String; override;
+  public
+    function Name : String; override;
+    function Types : TFhirResourceTypeSet; override;
+    function CreateDefinition(base : String) : TFHIROperationDefinition; override;
     function formalURL : String; override;
   end;
 
@@ -599,6 +618,7 @@ type
     FLastObservationQueueKey : integer;
     FLastAuthorizationKey : integer;
     FLastConnectionKey : Integer;
+    FLastClientKey : Integer;
     FTotalResourceCount: integer;
     FNextSearchSweep: TDateTime;
     FServerContext : TFHIRServerContext; // not linked
@@ -658,6 +678,7 @@ type
     function nextObservationCodeKey : integer;
     function NextAuthorizationKey : integer;
     function NextConnectionKey : integer;
+    function NextClientKey : integer;
     Function GetNextKey(keytype: TKeyType; aType: String; var id: string): integer;
     procedure RegisterTag(tag: TFHIRTag; conn: TKDBConnection); overload;
     procedure RegisterTag(tag: TFHIRTag); overload;
@@ -696,6 +717,9 @@ type
     procedure recordDownload(key : integer; name : String); override;
     procedure fetchExpiredTasks(tasks : TAdvList<TAsyncTaskInformation>); override;
     procedure MarkTaskDeleted(key : integer); override;
+    function getClientInfo(id : String) : TRegisteredClientInformation; override;
+    function getClientName(id : String) : string; override;
+    function storeClient(client : TRegisteredClientInformation; sessionKey : integer) : String; override;
 
     property ServerContext : TFHIRServerContext read FServerContext write FServerContext;
     Property DB: TKDBManager read FDB;
@@ -751,6 +775,7 @@ begin
   FOperations.add(TFhirValidationOperation.create);
   FOperations.add(TFhirGenerateDocumentOperation.create);
   FOperations.add(TFhirPatientEverythingOperation.create);
+  FOperations.add(TFhirEncounterEverythingOperation.create);
   FOperations.add(TFhirGenerateQAOperation.create);
   FOperations.add(TFhirGenerateJWTOperation.create);
   FOperations.add(TFhirGenerateCodeOperation.create);
@@ -6439,7 +6464,7 @@ begin
   for c in consent.except_List[0].class_List do
     ok := ok or (c.System = 'http://smarthealthit.org/fhir/scopes');
   if not ok then
-    raise Exception.Create('Consent must have at least one smart on fhir scope');
+    raise Exception.Create('Consent must have at least one Smart App Launch scope');
   {$ELSE}
   raise Exception.Create('This operation is only supported in R3 for now');
   {$ENDIF}
@@ -6792,6 +6817,124 @@ begin
 end;
 {$ENDIF}
 
+{ TFhirEverythingOperation }
+
+procedure TFhirEverythingOperation.Execute(context : TOperationContext; manager: TFHIROperationEngine; request: TFHIRRequest; response: TFHIRResponse);
+var
+  bundle : TFHIRBundleBuilder;
+  entry : TFHIRBundleEntry;
+  includes : TReferenceList;
+  id, link, base, sql, field : String;
+  total : Integer;
+  rkey, versionKey : integer;
+  reverse : boolean;
+  wantsummary : TFHIRSummaryOption;
+  title: string;
+  keys : TKeyList;
+  params : TParseMap;
+  prsr : TFHIRParserClass;
+  needsObject : boolean;
+  sId, type_ : String;
+  first : boolean;
+begin
+  try
+    // first, we have to convert from the patient id to a compartment id
+    if manager.FindResource(resourceName, request.Id, false, rkey, versionKey, request, response, '') then
+    begin
+      request.compartmentId := request.Id;
+      response.OnCreateBuilder(response, BundleTypeCollection, bundle);
+      includes := TReferenceList.create;
+      keys := TKeyList.Create;
+      params := TParseMap.Create('');
+      try
+        if native(manager).FindSavedSearch(request.parameters.value[SEARCH_PARAM_NAME_ID], request.Session, 1, id, link, sql, title, base, total, wantSummary, request.strictSearch, reverse) then
+          link := SEARCH_PARAM_NAME_ID+'='+request.parameters.value[SEARCH_PARAM_NAME_ID]
+        else
+          id := native(manager).BuildSearchResultSet(0, request.Session, request.resourceName, params, request.baseUrl, request.compartments, request.compartmentId, nil, link, sql, total, wantSummary, request.strictSearch, reverse);
+        bundle.setTotal(total);
+        bundle.tag('sql', sql);
+        native(manager).chooseField(response.Format, wantsummary, request.loadObjects, field, prsr, needsObject);
+        if (not needsObject) then
+          prsr := nil;
+
+        native(manager).FConnection.SQL := 'Select Ids.ResourceKey, Types.ResourceName, Ids.Id, VersionId, Secure, StatedDate, Name, Versions.Status, Tags, '+field+' from Versions, Ids, Sessions, SearchEntries, Types '+
+            'where Ids.Deleted = 0 and SearchEntries.ResourceVersionKey = Versions.ResourceVersionKey and Versions.SessionKey = Sessions.SessionKey '+'and SearchEntries.ResourceKey = Ids.ResourceKey and Types.ResourceTypeKey = Ids.ResourceTypeKey and SearchEntries.SearchKey = '+id+' '+
+            'order by SortValue ASC';
+        native(manager).FConnection.Prepare;
+        try
+          native(manager).FConnection.Execute;
+          while native(manager).FConnection.FetchNext do
+          Begin
+            sId := native(manager).FConnection.ColStringByName['Id'];
+            type_ := native(manager).FConnection.colStringByName['ResourceName'];
+            first := false;
+            if type_ = 'Patient' then
+            begin
+              if sid = request.id then
+                first := true
+              else
+                raise Exception.Create('Multiple patient resources found in patient compartment');
+            end;
+
+            native(manager).AddResourceTobundle(bundle, request.secure, request.baseUrl, field, prsr, SearchEntryModeNull, false, type_, first);
+            keys.Add(TKeyPair.create(type_, native(manager).FConnection.ColStringByName['ResourceKey']));
+
+            if request.Parameters.VarExists('_include') then
+              native(manager).CollectIncludes(request.session, includes, entry.resource, request.Parameters.GetVar('_include'));
+          End;
+        finally
+          native(manager).FConnection.Terminate;
+        end;
+
+        // process reverse includes
+//          if request.Parameters.VarExists('_reverseInclude') then
+//            native(manager).CollectReverseIncludes(request.Session, includes, keys, request.Parameters.GetVar('_reverseInclude'), bundle, request, response, wantsummary);
+
+//          //now, add the includes
+//          if includes.Count > 0 then
+//          begin
+//            native(manager).FConnection.SQL := 'Select ResourceTypeKey, Ids.Id, VersionId, Secure, StatedDate, Name, Versions.Status, Tags, '+field+' from Versions, Sessions, Ids '+
+//                'where Ids.Deleted = 0 and Ids.MostRecent = Versions.ResourceVersionKey and Versions.SessionKey = Sessions.SessionKey '+
+//                'and Ids.ResourceKey in (select ResourceKey from IndexEntries where Flag <> 2 and '+includes.asSql+') order by ResourceVersionKey DESC';
+//            native(manager).FConnection.Prepare;
+//            try
+//              native(manager).FConnection.Execute;
+//              while native(manager).FConnection.FetchNext do
+//                native(manager).AddResourceTobundle(bundle, baseUrlrequest.request.request., field, prsr);
+//            finally
+//              native(manager).FConnection.Terminate;
+//            end;
+//          end;
+
+        bundle.setLastUpdated(TDateTimeEx.makeUTC);
+        bundle.setId(NewGuidId);
+        response.HTTPCode := 200;
+        response.Message := 'OK';
+        response.Body := '';
+        response.bundle := bundle.getBundle;
+        if (request.Parameters.getVar('email') <> '') then
+          native(manager).ServerContext.SubscriptionManager.sendByEmail(response.bundle, request.Parameters.getVar('email'), false)
+        else if (request.Parameters.getVar('direct') <> '') then
+          native(manager).ServerContext.SubscriptionManager.sendByEmail(response.bundle, request.Parameters.getVar('direct'), true);
+      finally
+        params.free;
+        includes.free;
+        keys.Free;
+        bundle.Free;
+      end;
+    end;
+    manager.AuditRest(request.session, request.requestId, request.ip, request.ResourceName, '', '', 0, request.CommandType, request.Provenance, response.httpCode, request.Parameters.Source, response.message);
+  except
+    on e: exception do
+    begin
+      manager.AuditRest(request.session, request.requestId, request.ip, request.ResourceName, '', '', 0, request.CommandType, request.Provenance, 500, request.Parameters.Source, e.message);
+      recordStack(e);
+      raise;
+    end;
+  end;
+end;
+
+
 { TFhirPatientEverythingOperation }
 
 function TFhirPatientEverythingOperation.Name: String;
@@ -6804,6 +6947,11 @@ begin
   result := frtPatient;
 end;
 
+
+function TFhirPatientEverythingOperation.resourceName: String;
+begin
+  result := 'Patient';
+end;
 
 function TFhirPatientEverythingOperation.Types: TFhirResourceTypeSet;
 begin
@@ -6834,134 +6982,69 @@ begin
   end;
 end;
 
-procedure TFhirPatientEverythingOperation.Execute(context : TOperationContext; manager: TFHIROperationEngine; request: TFHIRRequest; response: TFHIRResponse);
-var
-  bundle : TFHIRBundleBuilder;
-  entry : TFHIRBundleEntry;
-  includes : TReferenceList;
-  id, link, base, sql, field : String;
-  total : Integer;
-  rkey, versionKey : integer;
-  reverse : boolean;
-  wantsummary : TFHIRSummaryOption;
-  title: string;
-  keys : TKeyList;
-  params : TParseMap;
-  patient : TFHIRResource;
-  prsr : TFHIRParserClass;
-  needsObject : boolean;
-  sId, type_ : String;
-  first : boolean;
-begin
-  try
-    patient := nil;
-    try
-      // first, we have to convert from the patient id to a compartment id
-      if manager.FindResource('Patient', request.Id, false, rkey, versionKey, request, response, '') then
-      begin
-        request.compartmentId := request.Id;
-        response.OnCreateBuilder(response, BundleTypeCollection, bundle);
-        includes := TReferenceList.create;
-        keys := TKeyList.Create;
-        params := TParseMap.Create('');
-        try
-//          bundle.base := request.baseUrl;
-          if native(manager).FindSavedSearch(request.parameters.value[SEARCH_PARAM_NAME_ID], request.Session, 1, id, link, sql, title, base, total, wantSummary, request.strictSearch, reverse) then
-            link := SEARCH_PARAM_NAME_ID+'='+request.parameters.value[SEARCH_PARAM_NAME_ID]
-          else
-            id := native(manager).BuildSearchResultSet(0, request.Session, request.resourceName, params, request.baseUrl, request.compartments, request.compartmentId, nil, link, sql, total, wantSummary, request.strictSearch, reverse);
-          bundle.setTotal(total);
-          bundle.tag('sql', sql);
-          native(manager).chooseField(response.Format, wantsummary, request.loadObjects, field, prsr, needsObject);
-          if (not needsObject) then
-            prsr := nil;
-
-          native(manager).FConnection.SQL := 'Select Ids.ResourceKey, Types.ResourceName, Ids.Id, VersionId, Secure, StatedDate, Name, Versions.Status, Tags, '+field+' from Versions, Ids, Sessions, SearchEntries, Types '+
-              'where Ids.Deleted = 0 and SearchEntries.ResourceVersionKey = Versions.ResourceVersionKey and Versions.SessionKey = Sessions.SessionKey '+'and SearchEntries.ResourceKey = Ids.ResourceKey and Types.ResourceTypeKey = Ids.ResourceTypeKey and SearchEntries.SearchKey = '+id+' '+
-              'order by SortValue ASC';
-          native(manager).FConnection.Prepare;
-          try
-            native(manager).FConnection.Execute;
-            while native(manager).FConnection.FetchNext do
-            Begin
-              sId := native(manager).FConnection.ColStringByName['Id'];
-              type_ := native(manager).FConnection.colStringByName['ResourceName'];
-              first := false;
-              if type_ = 'Patient' then
-              begin
-                if sid = request.id then
-                  first := true
-                else
-                  raise Exception.Create('Multiple patient resources found in patient compartment');
-              end;
-
-              native(manager).AddResourceTobundle(bundle, request.secure, request.baseUrl, field, prsr, SearchEntryModeNull, false, type_, first);
-              keys.Add(TKeyPair.create(type_, native(manager).FConnection.ColStringByName['ResourceKey']));
-
-              if request.Parameters.VarExists('_include') then
-                native(manager).CollectIncludes(request.session, includes, entry.resource, request.Parameters.GetVar('_include'));
-            End;
-          finally
-            native(manager).FConnection.Terminate;
-          end;
-
-          // process reverse includes
-//          if request.Parameters.VarExists('_reverseInclude') then
-//            native(manager).CollectReverseIncludes(request.Session, includes, keys, request.Parameters.GetVar('_reverseInclude'), bundle, request, response, wantsummary);
-
-//          //now, add the includes
-//          if includes.Count > 0 then
-//          begin
-//            native(manager).FConnection.SQL := 'Select ResourceTypeKey, Ids.Id, VersionId, Secure, StatedDate, Name, Versions.Status, Tags, '+field+' from Versions, Sessions, Ids '+
-//                'where Ids.Deleted = 0 and Ids.MostRecent = Versions.ResourceVersionKey and Versions.SessionKey = Sessions.SessionKey '+
-//                'and Ids.ResourceKey in (select ResourceKey from IndexEntries where Flag <> 2 and '+includes.asSql+') order by ResourceVersionKey DESC';
-//            native(manager).FConnection.Prepare;
-//            try
-//              native(manager).FConnection.Execute;
-//              while native(manager).FConnection.FetchNext do
-//                native(manager).AddResourceTobundle(bundle, baseUrlrequest.request.request., field, prsr);
-//            finally
-//              native(manager).FConnection.Terminate;
-//            end;
-//          end;
-
-          bundle.setLastUpdated(TDateTimeEx.makeUTC);
-          bundle.setId(NewGuidId);
-          response.HTTPCode := 200;
-          response.Message := 'OK';
-          response.Body := '';
-          response.bundle := bundle.getBundle;
-          if (request.Parameters.getVar('email') <> '') then
-            native(manager).ServerContext.SubscriptionManager.sendByEmail(response.bundle, request.Parameters.getVar('email'), false)
-          else if (request.Parameters.getVar('direct') <> '') then
-            native(manager).ServerContext.SubscriptionManager.sendByEmail(response.bundle, request.Parameters.getVar('direct'), true);
-        finally
-          params.free;
-          includes.free;
-          keys.Free;
-          bundle.Free;
-        end;
-    end;
-    finally
-      patient.free;
-    end;
-    manager.AuditRest(request.session, request.requestId, request.ip, request.ResourceName, '', '', 0, request.CommandType, request.Provenance, response.httpCode, request.Parameters.Source, response.message);
-  except
-    on e: exception do
-    begin
-      manager.AuditRest(request.session, request.requestId, request.ip, request.ResourceName, '', '', 0, request.CommandType, request.Provenance, 500, request.Parameters.Source, e.message);
-      recordStack(e);
-      raise;
-    end;
-  end;
-end;
-
 function TFhirPatientEverythingOperation.formalURL: String;
 begin
   result := 'http://hl7.org/fhir/OperationDefinition/Patient-everything';
 end;
 
 function TFhirPatientEverythingOperation.isWrite: boolean;
+begin
+  result := false;
+end;
+
+{ TFhirEncounterEverythingOperation }
+
+function TFhirEncounterEverythingOperation.Name: String;
+begin
+  result := 'everything';
+end;
+
+function TFhirEncounterEverythingOperation.owningResource: TFhirResourceType;
+begin
+  result := frtEncounter;
+end;
+
+
+function TFhirEncounterEverythingOperation.resourceName: String;
+begin
+  result := 'Encounter';
+end;
+
+function TFhirEncounterEverythingOperation.Types: TFhirResourceTypeSet;
+begin
+  result := [frtEncounter];
+end;
+
+function TFhirEncounterEverythingOperation.CreateDefinition(base : String): TFHIROperationDefinition;
+begin
+  result := CreateBaseDefinition(base);
+  try
+    result.{$IFDEF FHIR2}notes{$ELSE}comment{$ENDIF} := 'This server has little idea what a valid Encounter record is; it returns everything in the Encounter compartment, and any resource directly referred to from one of these';
+    result.system := False;
+    result.resourceList.AddItem('Encounter');
+    result.type_ := true;
+    result.instance := true;
+    with result.parameterList.Append do
+    begin
+      name := 'return';
+      use := OperationParameterUseOut;
+      min := '1';
+      max := '1';
+      documentation := 'Encounter record as a bundle';
+      type_ := {$IFNDEF FHIR2}AllTypesBundle {$ELSE}OperationParameterTypeBundle{$ENDIF};
+    end;
+    result.Link;
+  finally
+    result.Free;
+  end;
+end;
+
+function TFhirEncounterEverythingOperation.formalURL: String;
+begin
+  result := 'http://hl7.org/fhir/OperationDefinition/Encounter-everything';
+end;
+
+function TFhirEncounterEverythingOperation.isWrite: boolean;
 begin
   result := false;
 end;
@@ -8557,6 +8640,7 @@ begin
       FLastObservationQueueKey := conn.CountSQL('select max(ObservationQueueKey) from ObservationQueue');
       FLastAuthorizationKey := conn.CountSQL('select max(AuthorizationKey) from Authorizations');
       FLastConnectionKey := conn.CountSQL('select max(ConnectionKey) from Connections');
+      FLastClientKey := conn.CountSQL('select max(ClientKey) from ClientRegistrations');
       conn.execSQL('Update Sessions set Closed = ' +DBGetDate(conn.Owner.Platform) + ' where Closed = null');
 
       Conn.SQL := 'Select ValueSetKey, URL from ValueSets';
@@ -9255,7 +9339,7 @@ begin
       code := 'disclosure';
       system := 'http://hl7.org/fhir/contracttypecodes';
     end;
-    ct.subtypeList.append.text := 'Smart on FHIR Authorization';
+    ct.subtypeList.append.text := 'Smart App Launch Authorization';
     with ct.actionReasonList.append.codingList.append do
     begin
       code := 'PATRQT';
@@ -9859,6 +9943,50 @@ begin
   end;
 end;
 
+function TFHIRNativeStorageService.storeClient(client: TRegisteredClientInformation; sessionKey : integer): String;
+var
+  conn : TKDBConnection;
+  key : integer;
+begin
+  conn := FDB.getconnection('clients');
+  try
+    key := NextClientKey;
+    result := 'c.'+inttostr(key);
+    conn.sql := 'Insert into ClientRegistrations '+
+       '(ClientKey, DateRegistered, SessionRegistered, SoftwareId, SoftwareVersion, Uri, LogoUri, Name, Mode, Secret, '+
+         'JwksUri, Issuer, SoftwareStatement, PublicKey, Scopes, Redirects) values '+
+       '(:k, '+DBGetDate(FDB.Platform)+', :sk, :si, :sv, :u, :lu, :n, :m, :s, :j, :i, :ss, :pk, :sc, :r)';
+    conn.Prepare;
+    conn.BindInteger('k', key);
+    if sessionKey <> 0 then
+      conn.BindKey('sk', sessionKey)
+    else
+      conn.BindNull('sk');
+    conn.BindStringOrNull('si', client.softwareId);
+    conn.BindStringOrNull('sv', client.softwareVersion);
+    conn.BindStringOrNull('u', client.url);
+    conn.BindStringOrNull('lu', client.logo);
+    conn.BindString('n', client.name);
+    conn.BindInteger('m', ord(client.mode));
+    conn.BindStringOrNull('s', client.secret);
+    conn.BindNull('j');
+    conn.BindStringOrNull('i', client.issuer);
+    conn.BindNull('ss');
+    conn.BindBlobFromString('pk', client.publicKey);
+    conn.BindNull('sc');
+    conn.BindBlobFromString('r', client.redirects.CommaText);
+    conn.execute;
+    conn.Terminate;
+    conn.Release;
+  except
+    on e : exception do
+    begin
+      conn.Error(e);
+      raise
+    end;
+  end;
+end;
+
 procedure TFHIRNativeStorageService.StoreObservation(conn: TKDBConnection; key: integer);
 begin
   inc(FLastObservationQueueKey);
@@ -10383,6 +10511,17 @@ begin
   end;
 end;
 
+function TFHIRNativeStorageService.NextClientKey: integer;
+begin
+  FLock.Lock('NextConnectionKey');
+  try
+    inc(FLastClientKey);
+    result := FLastClientKey;
+  finally
+    FLock.Unlock;
+  end;
+end;
+
 function TFHIRNativeStorageService.NextCompartmentKey: integer;
 begin
   FLock.Lock('NextCompartmentKey');
@@ -10420,6 +10559,59 @@ begin
   finally
     resp.free;
   end;
+end;
+
+function TFHIRNativeStorageService.getClientInfo(id: String): TRegisteredClientInformation;
+var
+  client : TRegisteredClientInformation;
+begin
+  client := TRegisteredClientInformation.Create;
+  try
+    FDB.connection('clients',
+      procedure (conn : TKDBConnection)
+      begin
+        conn.SQL := 'select SoftwareId, SoftwareVersion, Uri, LogoUri, Name, Mode, Secret, JwksUri, Issuer, SoftwareStatement, PublicKey, Scopes, Redirects from ClientRegistrations where ClientKey = '+inttostr(strToIntDef(id.Substring(2), 0));
+        conn.Prepare;
+        conn.Execute;
+        if not conn.FetchNext then
+          raise Exception.Create('Unable to find registered client '+id);
+        client.name := conn.ColStringByName['Name'];
+        client.jwt := ''; // conn.ColBlobByName['SoftwareStatement'];
+        client.mode := TRegisteredClientMode(conn.ColIntegerByName['Mode']);
+        client.secret := conn.ColStringByName['Secret'];
+        client.redirects.Text := conn.ColBlobAsStringByName['Redirects'];
+        client.publicKey := conn.ColBlobAsStringByName['PublicKey'];
+        client.issuer := conn.ColStringByName['Issuer'];
+        client.url := conn.ColStringByName['Uri'];
+        client.logo := conn.ColStringByName['LogoUri'];
+        client.softwareId := conn.ColStringByName['SoftwareId'];
+        client.softwareVersion := conn.ColStringByName['SoftwareVersion'];
+        conn.Terminate;
+      end
+    );
+    result := client.link;
+  finally
+    client.Free;
+  end;
+end;
+
+function TFHIRNativeStorageService.getClientName(id: String): string;
+var
+  s : string;
+begin
+  FDB.connection('clients',
+    procedure (conn : TKDBConnection)
+    begin
+      conn.SQL := 'select Name from ClientRegistrations where ClientKey = '+inttostr(strToIntDef(id.Substring(2), 0));
+      conn.Prepare;
+      conn.Execute;
+      if not conn.FetchNext then
+        raise Exception.Create('Unable to find registered client '+id);
+      s := conn.ColStringByName['Name'];
+      conn.Terminate;
+    end
+  );
+  result := s;
 end;
 
 function TFHIRNativeStorageService.GetNextKey(keytype: TKeyType; aType: string; var id: string): integer;

@@ -87,7 +87,6 @@ Source: "C:\work\fhirserver\Exec\32\FHIRServer4.exe";        DestDir: "{app}";  
 Source: "C:\work\fhirserver\Exec\32\FHIRServerUtils.exe";    DestDir: "{app}";     DestName: "FHIRServerUtils.exe";                  Flags: ignoreversion
 
 Source: "C:\work\fhirserver\Exec\fhir.ini";                           DestDir: "{app}";            Flags: ignoreversion onlyifdoesntexist;       DestName: "fhirserver.ini" 
-Source: "C:\work\fhirserver\Exec\auth.example.ini";                   DestDir: "{app}";            Flags: ignoreversion onlyifdoesntexist;       DestName: "auth.ini" 
 Source: "C:\work\fhirserver\Libraries\FMM\FastMM_FullDebugMode.dll";  DestDir: "{app}";            Flags: ignoreversion
 
 ; Web resources

@@ -1130,7 +1130,7 @@ begin
     end;
 
     if not bDone then
-      OnProcessFile(response, session, '/scimuser.html', true, variables);
+      OnProcessFile(request, response, session, '/scimuser.html', true, variables);
   finally
     variables.free;
   end;
@@ -1208,7 +1208,7 @@ begin
     variables := TDictionary<String,String>.create;
     try
       variables.Add('usertable', b.ToString);
-      OnProcessFile(response, session, '/scimusers.html', true, variables);
+      OnProcessFile(request, response, session, '/scimusers.html', true, variables);
     finally
       variables.free;
     end;

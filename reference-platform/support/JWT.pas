@@ -34,8 +34,8 @@ interface
 uses
   SysUtils, EncdDecd, Classes, {$IFNDEF VER260} System.NetEncoding, {$ENDIF}
   IdSSLOpenSSLHeaders, IdHMACSHA1,
-  
-  EncodeSupport, BytesSupport, StringSupport,
+
+  EncodeSupport, BytesSupport, StringSupport, DateSupport, FileSupport, SystemSupport,
   AdvObjects, AdvObjectLists,
   AdvJSON, HMAC, libeay32;
 
@@ -120,16 +120,16 @@ Type
 
   TJWKList = class (TAdvObjectList)
   private
-    FObj: TJsonObject;
     function GetKey(index: integer): TJWK;
     procedure Setkey(index: integer; const Value: TJWK);
-    procedure setObj(const Value: TJsonObject);
   protected
     function ItemClass : TAdvObjectClass; override;
   public
-    constructor create(_obj : TJsonObject); overload;
+    constructor create(obj : TJsonObject); overload;
+    constructor create(source : String); overload;
     destructor Destroy; override;
-    Property obj : TJsonObject read FObj write setObj;
+    procedure readFromJson(obj : TJsonObject);
+    procedure writeToJson(obj : TJsonObject);
 
     property Key[index : integer] : TJWK read GetKey write Setkey; default;
   end;
@@ -297,7 +297,8 @@ Type
   TJWTUtils = class (TAdvObject)
   private
     class function loadRSAPrivateKey(pemfile, pempassword : AnsiString) : PRSA;
-    class function loadRSAPublicKey(pemfile : AnsiString) : PRSA;
+    class function loadRSAPublicKey(pemfile : AnsiString) : PRSA; overload;
+    class function loadRSAPublicKey(contents : TBytes) : PRSA; overload;
 //    class function loadDSAPrivateKey(pemfile, pempassword : AnsiString) : PDSA;
     class function loadDSAPublicKey(pemfile, pempassword : AnsiString) : PDSA;
 
@@ -328,9 +329,13 @@ Type
     class function unpack(token : string; verify : boolean; keys : TJWKList) : TJWT;
 
     // load the publi key details from the provided filename
-    class function loadKeyFromRSACert(filename : AnsiString) : TJWK;
     class function loadKeyFromDSACert(filename, password : AnsiString) : TJWK;
+    class function loadKeyFromRSACert(filename : AnsiString) : TJWK; overload;
+    class function loadKeyFromRSACert(content : TBytes) : TJWK; overload;
   end;
+
+function DateTimeToUnix(ConvDate: TDateTime): Longint;
+function UnixToDateTime(USec: Longint): TDateTime;
 
 implementation
 
@@ -690,15 +695,27 @@ end;
 
 { TJWKList }
 
-constructor TJWKList.create(_obj: TJsonObject);
+constructor TJWKList.create(obj: TJsonObject);
 begin
   Create;
-  Obj := _obj;  // note assign to property
+  ReadFromJson(obj);
+end;
+
+constructor TJWKList.create(source: String);
+var
+  json : TJsonObject;
+begin
+  Create;
+  json := TJSONParser.Parse(source);
+  try
+    readFromJson(json);
+  finally
+    json.Free;
+  end;
 end;
 
 destructor TJWKList.Destroy;
 begin
-  FObj.Free;
   inherited;
 end;
 
@@ -717,28 +734,34 @@ begin
   ObjectByIndex[index] := value;
 end;
 
-procedure TJWKList.setObj(const Value: TJsonObject);
+procedure TJWKList.readFromJson(obj : TJsonObject);
 var
   arr : TJsonArray;
   i : integer;
 begin
-  FObj.Free;
-  FObj := nil;
   clear;
 
-  if Value.has('kty') then
+  if obj.has('kty') then
   begin
-    Add(TJWK.create(value))
+    Add(TJWK.create(obj))
   end
-  else if Value.has('keys') then
+  else if obj.has('keys') then
   begin
-    FObj := Value;
-    arr := FObj.Arr['keys'];
+    arr := obj.Arr['keys'];
     for i := 0 to arr.Count  - 1 do
       Add(TJWK.create(arr.Obj[i].Link));
   end
-  else
-    raise Exception.Create('Unable to read Keys');
+end;
+
+procedure TJWKList.writeToJson(obj: TJsonObject);
+var
+  arr : TJsonArray;
+  i : integer;
+begin
+  arr := obj.forceArr['keys'];
+  arr.clear;
+  for i := 0 to count - 1 do
+    arr.add(Key[i].obj.Link);
 end;
 
 { TJWT }
@@ -1192,6 +1215,18 @@ begin
   end;
 end;
 
+class function TJWTUtils.loadKeyFromRSACert(content: TBytes): TJWK;
+var
+  key : PRSA;
+begin
+  key := PRSA(LoadRSAPublicKey(content));
+  try
+    result := TJWK.create(key, false);
+  finally
+    RSA_free(key);
+  end;
+end;
+
 class function TJWTUtils.loadRSAPrivateKey(pemfile, pempassword: AnsiString): PRSA;
 var
   bp: pBIO;
@@ -1206,6 +1241,19 @@ begin
   result := PEM_read_bio_RSAPrivateKey(bp, @pk, nil, pp);
   if result = nil then
     raise Exception.Create('Private key failure.' + GetSSLErrorMessage);
+end;
+
+class function TJWTUtils.loadRSAPublicKey(contents: TBytes): PRSA;
+var
+  fn : String;
+begin
+  fn := Path([SystemTemp, TDateTimeEx.makeUTC.toString('yyyymmddhhnnss.zzz')+'.cer']);
+  BytesToFile(contents, fn);
+  try
+    result := loadRSAPublicKey(fn);
+  finally
+    DeleteFile(fn)
+  end;
 end;
 
 //class function TJWTUtils.loadDSAPrivateKey(pemfile, pempassword: AnsiString): PDSA;

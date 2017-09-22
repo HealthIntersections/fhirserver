@@ -413,7 +413,7 @@ Type
     property url : String read FUrl write FUrl;
 
     {@member secure
-      Whether the request was made on an SSL interface or not (SSL = smart on fhir as well)
+      Whether the request was made on an SSL interface or not (SSL = Smart App Launch as well)
     }
     property secure : Boolean read FSecure write FSecure;
 

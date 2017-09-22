@@ -42,7 +42,7 @@ uses
   TerminologyServer, TerminologyServices, TerminologyServerStore, FHIRServerConstants, FHIROperations;
 
 Type
-  TReturnProcessFileEvent = procedure (response: TIdHTTPResponseInfo; session : TFhirSession; named, path: String; secure : boolean; variables: TDictionary<String, String>) of Object;
+  TReturnProcessFileEvent = procedure (request : TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; session : TFhirSession; named, path: String; secure : boolean; variables: TDictionary<String, String>) of Object;
 
   TTerminologyWebServer = class (TAdvObject)
   private
@@ -223,7 +223,7 @@ begin
       else if pm.getVar('op') = 'translate' then
         vars['translate.results'] := processTranslate(pm);
 
-      FReturnProcessFileEvent(response, session, request.Document, 'txhome.html', false, vars);
+      FReturnProcessFileEvent(request, response, session, request.Document, 'txhome.html', false, vars);
     finally
       pm.Free;
     end;
@@ -249,7 +249,7 @@ begin
     finally
       cm.Free;
     end;
-    FReturnProcessFileEvent(response, session, request.Document, 'tx-cm-id.html', false, vars);
+    FReturnProcessFileEvent(request, response, session, request.Document, 'tx-cm-id.html', false, vars);
   finally
     vars.Free;
   end;
@@ -272,7 +272,7 @@ begin
     finally
       vs.Free;
     end;
-    FReturnProcessFileEvent(response, session, request.Document, 'tx-vs-id.html', false, vars);
+    FReturnProcessFileEvent(request, response, session, request.Document, 'tx-vs-id.html', false, vars);
   finally
     vars.Free;
   end;
@@ -295,7 +295,7 @@ begin
     finally
       cs.Free;
     end;
-    FReturnProcessFileEvent(response, session, request.Document, 'tx-cs-id.html', false, vars);
+    FReturnProcessFileEvent(request, response, session, request.Document, 'tx-cs-id.html', false, vars);
   finally
     vars.Free;
   end;
@@ -340,7 +340,7 @@ begin
     finally
       html.Free;
     end;
-    FReturnProcessFileEvent(response, session, request.Document, 'tx-vs.html', false, vars);
+    FReturnProcessFileEvent(request, response, session, request.Document, 'tx-vs.html', false, vars);
   finally
     vars.Free;
   end;
@@ -397,7 +397,7 @@ begin
     finally
       list.free;
     end;
-    FReturnProcessFileEvent(response, session, request.Document, 'tx-vs.html', false, vars);
+    FReturnProcessFileEvent(request, response, session, request.Document, 'tx-vs.html', false, vars);
   finally
     vars.Free;
   end;
@@ -472,7 +472,7 @@ begin
     finally
       mlist.free;
     end;
-    FReturnProcessFileEvent(response, session, request.Document, 'tx-vs.html', false, vars);
+    FReturnProcessFileEvent(request, response, session, request.Document, 'tx-vs.html', false, vars);
   finally
     vars.Free;
   end;
@@ -603,7 +603,7 @@ begin
     finally
       list.free;
     end;
-    FReturnProcessFileEvent(response, session, request.Document, 'tx-vs.html', false, vars);
+    FReturnProcessFileEvent(request, response, session, request.Document, 'tx-vs.html', false, vars);
   finally
     vars.Free;
   end;

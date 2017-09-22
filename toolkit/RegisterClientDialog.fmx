@@ -1,0 +1,154 @@
+object RegisterClientForm: TRegisterClientForm
+  Left = 0
+  Top = 0
+  Caption = 'Client Registration Details'
+  ClientHeight = 425
+  ClientWidth = 503
+  FormFactor.Width = 320
+  FormFactor.Height = 480
+  FormFactor.Devices = [Desktop]
+  OnShow = FormShow
+  DesignerMasterStyle = 1
+  object Panel1: TPanel
+    Align = Bottom
+    Position.Y = 385.000000000000000000
+    Size.Width = 503.000000000000000000
+    Size.Height = 40.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 0
+    object btnOk: TButton
+      Anchors = [akTop, akRight]
+      Default = True
+      Enabled = False
+      ModalResult = 1
+      Position.X = 326.000000000000000000
+      Position.Y = 8.000000000000000000
+      TabOrder = 0
+      Text = 'OK'
+      OnClick = btnOkClick
+    end
+    object Button2: TButton
+      Anchors = [akTop, akRight]
+      Cancel = True
+      ModalResult = 2
+      Position.X = 414.000000000000000000
+      Position.Y = 8.000000000000000000
+      TabOrder = 1
+      Text = 'Cancel'
+    end
+  end
+  object Label1: TLabel
+    Position.X = 8.000000000000000000
+    Position.Y = 16.000000000000000000
+    Text = 'Name:'
+    TabOrder = 7
+  end
+  object edtName: TEdit
+    Touch.InteractiveGestures = [LongTap, DoubleTap]
+    TabOrder = 9
+    Position.X = 88.000000000000000000
+    Position.Y = 16.000000000000000000
+    Size.Width = 401.000000000000000000
+    Size.Height = 22.000000000000000000
+    Size.PlatformDefault = False
+    OnChange = edtNameChange
+    OnChangeTracking = edtNameChange
+  end
+  object Label2: TLabel
+    Position.X = 8.000000000000000000
+    Position.Y = 48.000000000000000000
+    Text = 'URL:'
+    TabOrder = 4
+  end
+  object edtUrl: TEdit
+    Touch.InteractiveGestures = [LongTap, DoubleTap]
+    TabOrder = 5
+    Position.X = 88.000000000000000000
+    Position.Y = 48.000000000000000000
+    Size.Width = 401.000000000000000000
+    Size.Height = 22.000000000000000000
+    Size.PlatformDefault = False
+    OnChange = edtNameChange
+    OnChangeTracking = edtNameChange
+  end
+  object Label3: TLabel
+    Position.X = 8.000000000000000000
+    Position.Y = 80.000000000000000000
+    Text = 'Logo (URL):'
+    TabOrder = 2
+  end
+  object edtLogo: TEdit
+    Touch.InteractiveGestures = [LongTap, DoubleTap]
+    TabOrder = 3
+    Position.X = 88.000000000000000000
+    Position.Y = 80.000000000000000000
+    Size.Width = 401.000000000000000000
+    Size.Height = 22.000000000000000000
+    Size.PlatformDefault = False
+    OnChange = edtNameChange
+    OnChangeTracking = edtNameChange
+  end
+  object edtPublicKey: TEdit
+    Touch.InteractiveGestures = [LongTap, DoubleTap]
+    TabOrder = 8
+    Position.X = 88.000000000000000000
+    Position.Y = 112.000000000000000000
+    Size.Width = 369.000000000000000000
+    Size.Height = 22.000000000000000000
+    Size.PlatformDefault = False
+    OnChange = edtNameChange
+    OnChangeTracking = edtNameChange
+  end
+  object Label4: TLabel
+    Position.X = 8.000000000000000000
+    Position.Y = 112.000000000000000000
+    Text = 'Public Key:'
+    TabOrder = 6
+  end
+  object btnPublicKey: TButton
+    Position.X = 464.000000000000000000
+    Position.Y = 112.000000000000000000
+    Size.Width = 24.000000000000000000
+    Size.Height = 22.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 10
+    Text = '...'
+  end
+  object Label5: TLabel
+    Position.X = 8.000000000000000000
+    Position.Y = 144.000000000000000000
+    Text = 'Redirects'
+    TabOrder = 1
+  end
+  object memRedirects: TMemo
+    Touch.InteractiveGestures = [Pan, LongTap, DoubleTap]
+    DataDetectorTypes = []
+    OnChange = edtNameChange
+    OnChangeTracking = edtNameChange
+    Position.X = 88.000000000000000000
+    Position.Y = 144.000000000000000000
+    Size.Width = 401.000000000000000000
+    Size.Height = 169.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 11
+    Viewport.Width = 393.000000000000000000
+    Viewport.Height = 161.000000000000000000
+  end
+  object Label6: TLabel
+    Position.X = 88.000000000000000000
+    Position.Y = 312.000000000000000000
+    Size.Width = 409.000000000000000000
+    Size.Height = 65.000000000000000000
+    Size.PlatformDefault = False
+    Text = 
+      'Each line must have the format http(s)://[local]:port/done where' +
+      ' [local] is your selected name for your own PC (usually '#39'localho' +
+      'st'#39'), and Port is a number you'#39'll choose between 1024 and 65534'
+    TabOrder = 12
+  end
+  object odPublicKey: TOpenDialog
+    Title = 'Choose Public Key'
+    Left = 16
+    Top = 336
+  end
+end

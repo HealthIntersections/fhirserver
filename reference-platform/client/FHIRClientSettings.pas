@@ -175,7 +175,7 @@ begin
     server.clear;
     server.name := 'Secure Reference Server';
     server.fhirEndpoint := 'https://test.fhir.org/r3';
-    server.SmartOnFHIR := true;
+    server.SmartAppLaunchMode := salmOAuthClient;
     server.clientid := '458EA027-CDCC-4E89-B103-997965132D0C';
     server.redirectport := 23145;
     server.tokenEndpoint := 'https://authorize-dstu2.smarthealthit.org/token';

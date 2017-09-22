@@ -72,7 +72,7 @@ implementation
 
 procedure TAboutForm.FormShow(Sender: TObject);
 begin
-  lblVersion.Text := 'Toolkit Version 0.0.'+inttostr(BuildCount)+', FHIR Version '+FHIR_GENERATED_VERSION;
+  lblVersion.Text := 'Toolkit Version '+ToolKitVersionBase+inttostr(BuildCount)+', FHIR Version '+FHIR_GENERATED_VERSION;
 end;
 
 procedure TAboutForm.lblDocoClick(Sender: TObject);
