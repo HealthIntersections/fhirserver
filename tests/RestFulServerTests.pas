@@ -107,6 +107,9 @@ type
     procedure recordOAuthChoice(id : String; scopes, jwt, patient : String); override;
     procedure RegisterAuditEvent(session: TFhirSession; ip: String); override;
     procedure RegisterConsentRecord(session: TFhirSession); override;
+    function getClientInfo(id : String) : TRegisteredClientInformation; override;
+    function getClientName(id : String) : string; override;
+    function storeClient(client : TRegisteredClientInformation; sessionKey : integer) : String; override;
   end;
 
 
@@ -253,9 +256,21 @@ begin
   end;
 end;
 
+function TTestStorageService.getClientInfo(id: String): TRegisteredClientInformation;
+begin
+  result := TRegisteredClientInformation.Create;
+  result.name := getClientName(id);
+  result.redirects.Add('http://localhost:961/done');
+  result.secret := 'this-password-is-never-used';
+end;
+
+function TTestStorageService.getClientName(id: String): string;
+begin
+  result := 'test server';
+end;
+
 procedure TTestStorageService.RegisterAuditEvent(session: TFhirSession; ip: String);
 begin
-
 end;
 
 procedure TTestStorageService.RegisterConsentRecord(session: TFhirSession);
@@ -271,6 +286,12 @@ begin
   FLastUserEvidence := userNoInformation;
   FLastSystemEvidence := systemNoInformation;
   FOAuths.Clear;
+end;
+
+function TTestStorageService.storeClient(client: TRegisteredClientInformation;
+  sessionKey: integer): String;
+begin
+
 end;
 
 { TTestingFHIRUserProvider }

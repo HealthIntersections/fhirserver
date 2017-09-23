@@ -40,11 +40,11 @@ object RegisterClientForm: TRegisterClientForm
     Position.X = 8.000000000000000000
     Position.Y = 16.000000000000000000
     Text = 'Name:'
-    TabOrder = 9
+    TabOrder = 10
   end
   object edtName: TEdit
     Touch.InteractiveGestures = [LongTap, DoubleTap]
-    TabOrder = 11
+    TabOrder = 12
     Position.X = 88.000000000000000000
     Position.Y = 16.000000000000000000
     Size.Width = 401.000000000000000000
@@ -57,11 +57,11 @@ object RegisterClientForm: TRegisterClientForm
     Position.X = 8.000000000000000000
     Position.Y = 48.000000000000000000
     Text = 'URL:'
-    TabOrder = 6
+    TabOrder = 7
   end
   object edtUrl: TEdit
     Touch.InteractiveGestures = [LongTap, DoubleTap]
-    TabOrder = 7
+    TabOrder = 8
     Position.X = 88.000000000000000000
     Position.Y = 48.000000000000000000
     Size.Width = 401.000000000000000000
@@ -74,11 +74,11 @@ object RegisterClientForm: TRegisterClientForm
     Position.X = 8.000000000000000000
     Position.Y = 80.000000000000000000
     Text = 'Logo (URL):'
-    TabOrder = 3
+    TabOrder = 4
   end
   object edtLogo: TEdit
     Touch.InteractiveGestures = [LongTap, DoubleTap]
-    TabOrder = 5
+    TabOrder = 6
     Position.X = 88.000000000000000000
     Position.Y = 80.000000000000000000
     Size.Width = 401.000000000000000000
@@ -89,7 +89,7 @@ object RegisterClientForm: TRegisterClientForm
   end
   object edtPublicKey: TEdit
     Touch.InteractiveGestures = [LongTap, DoubleTap]
-    TabOrder = 10
+    TabOrder = 11
     Position.X = 88.000000000000000000
     Position.Y = 424.000000000000000000
     Size.Width = 369.000000000000000000
@@ -102,7 +102,7 @@ object RegisterClientForm: TRegisterClientForm
     Position.X = 8.000000000000000000
     Position.Y = 424.000000000000000000
     Text = 'Public Key:'
-    TabOrder = 8
+    TabOrder = 9
   end
   object btnPublicKey: TButton
     Position.X = 464.000000000000000000
@@ -110,15 +110,15 @@ object RegisterClientForm: TRegisterClientForm
     Size.Width = 24.000000000000000000
     Size.Height = 22.000000000000000000
     Size.PlatformDefault = False
-    TabOrder = 12
+    TabOrder = 13
     Text = '...'
     OnClick = btnPublicKeyClick
   end
   object Label5: TLabel
     Position.X = 8.000000000000000000
-    Position.Y = 152.000000000000000000
+    Position.Y = 184.000000000000000000
     Text = 'Redirects'
-    TabOrder = 1
+    TabOrder = 2
   end
   object memRedirects: TMemo
     Touch.InteractiveGestures = [Pan, LongTap, DoubleTap]
@@ -126,13 +126,13 @@ object RegisterClientForm: TRegisterClientForm
     OnChange = edtNameChange
     OnChangeTracking = edtNameChange
     Position.X = 88.000000000000000000
-    Position.Y = 152.000000000000000000
+    Position.Y = 184.000000000000000000
     Size.Width = 401.000000000000000000
-    Size.Height = 169.000000000000000000
+    Size.Height = 137.000000000000000000
     Size.PlatformDefault = False
-    TabOrder = 13
-    Viewport.Width = 393.000000000000000000
-    Viewport.Height = 161.000000000000000000
+    TabOrder = 14
+    Viewport.Width = 401.000000000000000000
+    Viewport.Height = 137.000000000000000000
   end
   object Label6: TLabel
     Position.X = 88.000000000000000000
@@ -144,7 +144,7 @@ object RegisterClientForm: TRegisterClientForm
       'Each line must have the format http(s)://[local]:port/done where' +
       ' [local] is your selected name for your own PC (usually '#39'localho' +
       'st'#39'), and Port is a number you'#39'll choose between 1024 and 65534'
-    TabOrder = 14
+    TabOrder = 15
   end
   object odPublicKey: TOpenDialog
     Title = 'Choose Public Key'
@@ -153,7 +153,7 @@ object RegisterClientForm: TRegisterClientForm
   end
   object edtIssuer: TEdit
     Touch.InteractiveGestures = [LongTap, DoubleTap]
-    TabOrder = 4
+    TabOrder = 5
     Position.X = 88.000000000000000000
     Position.Y = 456.000000000000000000
     Size.Width = 401.000000000000000000
@@ -166,7 +166,7 @@ object RegisterClientForm: TRegisterClientForm
     Position.X = 8.000000000000000000
     Position.Y = 456.000000000000000000
     Text = 'Issuer:'
-    TabOrder = 2
+    TabOrder = 3
   end
   object Line1: TLine
     LineType = Diagonal
@@ -182,7 +182,7 @@ object RegisterClientForm: TRegisterClientForm
     Position.Y = 400.000000000000000000
     TextSettings.Font.StyleExt = {00070000000000000004000000}
     Text = 'Backend Services'
-    TabOrder = 18
+    TabOrder = 19
   end
   object Label9: TLabel
     StyledSettings = [Family, Size, FontColor]
@@ -193,7 +193,7 @@ object RegisterClientForm: TRegisterClientForm
     Size.PlatformDefault = False
     TextSettings.Font.StyleExt = {00070000000000000004000000}
     Text = 'Client OAuth Settings'
-    TabOrder = 17
+    TabOrder = 18
   end
   object Line2: TLine
     LineType = Diagonal
@@ -218,11 +218,11 @@ object RegisterClientForm: TRegisterClientForm
     Size.Height = 21.000000000000000000
     Size.PlatformDefault = False
     Text = 'Authorization Header:'
-    TabOrder = 21
+    TabOrder = 22
   end
   object edtAuth: TEdit
     Touch.InteractiveGestures = [LongTap, DoubleTap]
-    TabOrder = 22
+    TabOrder = 23
     Position.X = 144.000000000000000000
     Position.Y = 504.000000000000000000
     Size.Width = 345.000000000000000000
@@ -236,6 +236,23 @@ object RegisterClientForm: TRegisterClientForm
     Size.Height = 17.000000000000000000
     Size.PlatformDefault = False
     Text = 'As required by the server...'
-    TabOrder = 23
+    TabOrder = 24
+  end
+  object Label12: TLabel
+    Position.X = 8.000000000000000000
+    Position.Y = 152.000000000000000000
+    Text = 'Mode'
+    TabOrder = 1
+  end
+  object cbxConfidential: TComboBox
+    Items.Strings = (
+      'Confidential Client'
+      'Public Client (no secret)')
+    Position.X = 88.000000000000000000
+    Position.Y = 152.000000000000000000
+    Size.Width = 401.000000000000000000
+    Size.Height = 22.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 26
   end
 end

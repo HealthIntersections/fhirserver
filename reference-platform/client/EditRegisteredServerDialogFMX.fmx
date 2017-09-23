@@ -296,8 +296,8 @@ object EditRegisteredServerForm: TEditRegisteredServerForm
         Size.Width = 665.000000000000000000
         Size.Height = 185.000000000000000000
         Size.PlatformDefault = False
-        TabIndex = 2
-        TabOrder = 14
+        TabIndex = 1
+        TabOrder = 15
         TabPosition = None
         Sizes = (
           665s
@@ -324,7 +324,7 @@ object EditRegisteredServerForm: TEditRegisteredServerForm
           CustomIcon = <
             item
             end>
-          IsSelected = False
+          IsSelected = True
           Size.Width = 8.000000000000000000
           Size.Height = 8.000000000000000000
           Size.PlatformDefault = False
@@ -419,7 +419,7 @@ object EditRegisteredServerForm: TEditRegisteredServerForm
           CustomIcon = <
             item
             end>
-          IsSelected = True
+          IsSelected = False
           Size.Width = 8.000000000000000000
           Size.Height = 8.000000000000000000
           Size.PlatformDefault = False
@@ -530,7 +530,7 @@ object EditRegisteredServerForm: TEditRegisteredServerForm
         Size.Height = 17.000000000000000000
         Size.PlatformDefault = False
         Text = 'Smart on FHIR Mode:'
-        TabOrder = 21
+        TabOrder = 22
       end
       object Label14: TLabel
         Anchors = [akLeft, akTop, akRight]

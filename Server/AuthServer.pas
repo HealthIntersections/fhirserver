@@ -850,50 +850,68 @@ procedure TAuth2Server.HandleRegistration(AContext: TIdContext; request: TIdHTTP
 var
   json, resp : TJsonObject;
   client : TRegisteredClientInformation;
+  function checkPresent(name : String) : String;
+  begin
+    result := json.str[name];
+    if result = '' then
+      raise Exception.Create('A '+name+' field is required in the json token');
+  end;
+  procedure checkValue(name, value : String);
+  begin
+    if json.str[name] <> value then
+      raise Exception.Create('The '+name+' field must have the value "'+value+'" but has the value "'+json.str[name]+'"');
+  end;
 begin
   try
     // parse the json
     json := TJSONParser.Parse(request.PostStream);
     try
-      client := TRegisteredClientInformation.Create;
+      resp := TJsonObject.Create;
       try
-        if Session = nil then
-          raise Exception.Create('User must be identified; log in to the server using the web interface, and get a token that can be used to register the client');
-
-        // check that it meets business rules
-        if json.str['client_name'].Trim = '' then
-          raise Exception.Create('A client_name field is required')
-        else
-          client.name := json.str['client_name'].Trim;
-        client.url := json.str['client_uri'].Trim;
-        client.logo := json.str['logo_uri'].Trim;
-        client.softwareId := json.str['software_id'].Trim;
-        client.softwareVersion := json.str['software_version'].Trim;
-        if (json.str['grant_types'].Trim = '') then
-          raise Exception.Create('A grant_types field is required');
-        if (json.str['response_types'].Trim = '') then
-          raise Exception.Create('A response_types field is required');
-        if (json.str['token_endpoint_auth_method'].Trim = '') then
-          raise Exception.Create('A token_endpoint_auth_method field is required');
-        if (json.str['grant_types'] = 'client_credentials') and (json.str['response_types'] = 'token') and (json.str['token_endpoint_auth_method'] = 'client_secret_post') then
-        begin
-          client.mode := rcmBackendServices;
-          if json.obj['jwks'] = nil then
-            raise Exception.Create('No jwks found');
-          if json.obj['jwks'].arr['keys'] = nil then
-            raise Exception.Create('No keys found in jwks');
-          if json.obj['jwks'].arr['keys'].Count = 0 then
-            raise Exception.Create('No Keys found in jwks.keys');
-          client.publicKey := TJsonWriter.writeObjectStr(json.obj['jwks']);
-          if (json.str['issuer'].Trim = '') then
-            raise Exception.Create('An issuer field is required');
-          client.issuer := json.str['issuer'].Trim;
-        end
-        else
-          raise Exception.Create('Unable to recognise client mode');
-        resp := TJsonObject.Create;
+        client := TRegisteredClientInformation.Create;
         try
-          // if mode = oauth.. generate client id and secret
+          if Session = nil then
+            raise Exception.Create('User must be identified; log in to the server using the web interface, and get a token that can be used to register the client');
+          // check that it meets business rules
+          client.name := checkPresent('client_name');
+          client.url := json.str['client_uri'];
+          client.logo := json.str['logo_uri'];
+          client.softwareId := json.str['software_id'];
+          client.softwareVersion := json.str['software_version'];
+          checkPresent('grant_types');
+          checkPresent('response_types');
+          checkPresent('token_endpoint_auth_method');
+          if (json.str['token_endpoint_auth_method'] = 'private_key_jwt') then // backend services
+          begin
+            client.mode := rcmBackendServices;
+            checkValue('grant_types', 'client_credentials');
+            checkValue('response_types', 'token');
+            if json.obj['jwks'] = nil then
+              raise Exception.Create('No jwks found');
+            if json.obj['jwks'].arr['keys'] = nil then
+              raise Exception.Create('No keys found in jwks');
+            if json.obj['jwks'].arr['keys'].Count = 0 then
+              raise Exception.Create('No Keys found in jwks.keys');
+            client.publicKey := TJsonWriter.writeObjectStr(json.obj['jwks']);
+            client.issuer := checkPresent('issuer');
+          end
+          else if (json.str['token_endpoint_auth_method'] = 'client_secret_basic') then // confidential
+          begin
+            checkValue('grant_types', 'authorization_code');
+            checkValue('response_types', 'code');
+            client.mode := rcmBackendServices;
+            client.secret := newGuidId;
+            resp.str['client_secret'] := client.secret;
+          end
+          else if (json.str['token_endpoint_auth_method'] = 'none') then // confidential
+          begin
+            checkValue('grant_types', 'authorization_code');
+            checkValue('response_types', 'code');
+            client.mode := rcmBackendServices;
+            // no secret
+          end
+          else
+            raise Exception.Create('Unable to recognise client mode');
           resp.str['client_id'] := ServerContext.Storage.storeClient(client, 0 {session.Key});
           resp.str['client_id_issued_at'] := IntToStr(DateTimeToUnix(now));
           response.ContentText := TJSONWriter.writeObjectStr(resp);
@@ -901,12 +919,11 @@ begin
           response.ResponseText := 'OK';
           response.ContentType := 'application/json';
         finally
-          resp.Free;
+          client.Free;
         end;
       finally
-        client.Free;
+        resp.Free;
       end;
-
     finally
       json.Free;
     end;

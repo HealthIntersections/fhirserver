@@ -9,7 +9,7 @@ uses
   IdHttp, IdSSLOpenSSL,
   AdvJson,
   JWT,
-  SmartOnFhirUtilities, FMX.Objects;
+  SmartOnFhirUtilities, FMX.Objects, FMX.ListBox;
 
 type
   TRegisterClientForm = class(TForm)
@@ -39,6 +39,8 @@ type
     Label10: TLabel;
     edtAuth: TEdit;
     Label11: TLabel;
+    Label12: TLabel;
+    cbxConfidential: TComboBox;
     procedure FormShow(Sender: TObject);
     procedure edtNameChange(Sender: TObject);
     procedure btnOkClick(Sender: TObject);
@@ -187,7 +189,20 @@ begin
       arr := json.forceArr['redirect_uris'];
       for s in memRedirects.Lines do
         arr.add(s);
-      raise Exception.Create('Not Done yet');
+      if cbxConfidential.ItemIndex = 0 then
+      begin
+        // confidential
+        json.str['token_endpoint_auth_method'] := 'client_secret_basic';
+        json.str['grant_types'] := 'authorization_code';
+        json.str['response_types'] := 'code';
+      end
+      else
+      begin
+        // public
+        json.str['token_endpoint_auth_method'] := 'none';
+        json.str['grant_types'] := 'authorization_code';
+        json.str['response_types'] := 'code';
+      end;
     end
     else
     begin
@@ -198,8 +213,8 @@ begin
       finally
         jwks.Free;
       end;
+      json.str['token_endpoint_auth_method'] := 'private_key_jwt';
       json.str['issuer'] := edtIssuer.Text;
-      json.str['token_endpoint_auth_method'] := 'client_secret_post';
       json.str['grant_types'] := 'client_credentials';
       json.str['response_types'] := 'token';
     end;

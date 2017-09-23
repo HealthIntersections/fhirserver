@@ -64,7 +64,7 @@ begin
         as.defaultvalue = %purpose%
         as.xpos = -1
         as.ypos = -1
-        as.returnvalue = "Updated R4 build"
+        as.returnvalue = "support for backend services"
         as.returnvariable = purpose
       end
       action.variables.savetoini
@@ -271,6 +271,7 @@ begin
       action.group
       begin
         description = "64 bit build"
+        enabled = false
         id = {B04497CC-9752-463E-8B55-3B8543974103}
         action.group
         begin
@@ -1049,6 +1050,7 @@ begin
       action.group
       begin
         description = "32 bit build"
+        enabled = false
         id = {C42EC044-C80A-4901-AE36-65C021CB903C}
         action.group
         begin
@@ -1786,6 +1788,7 @@ begin
         action.group
         begin
           description = "Build Install"
+          enabled = false
           id = {7C6EF671-FE82-4122-99AF-47FAB8487C57}
           action.ini.write
           begin
@@ -1804,6 +1807,7 @@ begin
             allowcreate = false
             deleteifblank = false
             description = "Set OutputFilename in Inno Script"
+            enabled = false
             id = {2184568E-999D-490C-BFBC-07DF2C1E36E8}
             inifile = C:\\work\\fhirserver\\install\\install32.iss
             newvalue = fhirserver32-1.0.%BuildCount%
@@ -1814,6 +1818,7 @@ begin
           action.innosetup.execute
           begin
             description = "Build the server install"
+            enabled = false
             id = {9D73FA91-BC13-4AAD-B87F-77A584C233CE}
             innoversion = Inno5
             scriptfile = C:\\work\\fhirserver\\install\\install32.iss
@@ -1827,11 +1832,13 @@ begin
       action.group
       begin
         description = "Sign Installs"
+        enabled = false
         id = {8C3D4CBC-6388-4AA1-8AE8-157BE12FCCC9}
         action.process.execute
         begin
           captureoutput = true
           description = "Sign the server install"
+          enabled = false
           enablelivecapture = true
           enablereturncodecheck = true
           enabletimeout = false
@@ -1857,6 +1864,7 @@ begin
         begin
           captureoutput = true
           description = "Sign the server install"
+          enabled = false
           enablelivecapture = true
           enablereturncodecheck = true
           enabletimeout = false
@@ -1906,6 +1914,7 @@ begin
         checkfilesizes = false
         connectionname = HealthIntersections2
         detailedlogging = false
+        enabled = false
         enabletimeout = false
         filespec = fhirserver64-1.0.%BuildCount%.exe
         forcenextclockskewupdate = true

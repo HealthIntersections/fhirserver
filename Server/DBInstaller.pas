@@ -317,7 +317,7 @@ end;
 
 procedure TFHIRDatabaseInstaller.CreateClientRegistrations;
 begin
-  FConn.ExecSQL('CREATE TABLE ClientRegistrations( '+#13#10+
+  FConn.ExecSQL('CREATE TABLE ClientRegistrations ( '+#13#10+
        ' ClientKey         '+DBKeyType(FConn.owner.platform)+'      '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+  //
        ' DateRegistered    '+DBDateTimeType(FConn.owner.platform)+' '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+    //
        ' SessionRegistered '+DBKeyType(FConn.owner.platform)+'      '+ColCanBeNull(FConn.owner.platform, True)+', '+#13#10+    //
@@ -337,6 +337,7 @@ begin
        InlineForeignKeySql(FConn, 'ClientRegistrations', 'SessionRegistered', 'Sessions', 'SessionKey', 'FK_ClientRegistrations_SessionKey')+
        PrimaryKeyType(FConn.owner.Platform, 'PK_ClientRegistrations', 'ClientKey')+') '+CreateTableInfo(FConn.owner.platform));
   FConn.ExecSQL(ForeignKeySql(FConn, 'ClientRegistrations', 'SessionRegistered', 'Sessions', 'SessionKey', 'FK_ClientRegistrations_SessionKey'));
+  FConn.ExecSQL('Insert into ClientRegistrations (ClientKey, DateRegistered, Name, Mode) values (1, '+DBGetDate(FConn.Owner.Platform)+', ''Web Interface'', 0)');
 end;
 
 procedure TFHIRDatabaseInstaller.CreateClosureEntries;
