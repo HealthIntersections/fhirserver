@@ -66,6 +66,7 @@ function DBKeyType(ADBPlatform: TKDBPlatform): String;
 function DBUnicodeType(ADBPlatform: TKDBPlatform; ASize : Integer): String;
 function DBFloatType(ADBPlatform: TKDBPlatform): String;
 function DBBlobType(ADBPlatform: TKDBPlatform): String;
+function DBTextBlobType(ADBPlatform: TKDBPlatform): String;
 function DBBlobStorageType(ADBPlatform: TKDBPlatform; ADBColumnName: String): String;
 function DBDateTimeType(ADBPlatform: TKDBPlatform): String;
 function DBGetDate(ADBPlatform: TKDBPlatform): String;
@@ -475,7 +476,7 @@ begin
     kdbInterbase: Result := 'char('+inttostr(ASize*2)+')';
     kdbDB2: result := 'char('+inttostr(ASize*2)+')';
     kdbOracle8: raise exception.create('Oracle field field for Unicode not yet resolved');
-    kdbMySQL: result := 'VARCHAR('+inttostr(ASize)+') CHARACTER SET utf8';
+    kdbMySQL: result := 'VARCHAR('+inttostr(ASize)+') CHARACTER SET utf8mb4';
     kdbSQLite: result := 'VARCHAR('+inttostr(ASize)+') CHARACTER SET utf8';
   else
     begin
@@ -539,7 +540,7 @@ begin
     kdbInterbase: Result := 'blob';
     kdbDB2: Result := 'blob';
     kdbOracle8: Result := 'blob default empty_blob()';
-    kdbMySQL: Result := 'LONGTEXT';
+    kdbMySQL: Result := 'LongBlob';
     kdbSQLite: Result := 'BLOB';
   else
     begin
@@ -548,6 +549,27 @@ begin
   end;
 end;
 
+
+function DBTextBlobType(ADBPlatform: TKDBPlatform): String;
+begin
+  case ADBPlatform of
+    kdbUnknown: raise Exception.Create('Internal Error in Database Configuration, Database Platform not recognised');
+    kdbSQLServer : Result := 'image';
+    kdbSybase11, kdbASA, kdbSybase12: Result := 'image';
+    kdbCtree: result := 'LVARBINARY';
+    kdbAccess: raise Exception.Create('You cannot create tables for MSAccess using SQL');
+    kdbDBIsam: Result := 'blob(1,1)';
+    kdbInterbase: Result := 'blob';
+    kdbDB2: Result := 'blob';
+    kdbOracle8: Result := 'blob default empty_blob()';
+    kdbMySQL: Result := 'LONGTEXT';
+    kdbSQLite: Result := 'BLOB';
+  else
+    begin
+    raise Exception.Create('Internal Error in Database Configuration, Database Platform in Error');
+    end;
+  end;
+end;
 
 
 
