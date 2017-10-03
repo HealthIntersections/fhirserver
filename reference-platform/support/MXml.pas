@@ -558,6 +558,8 @@ begin
     b := TStringBuilder.Create;
     try
       for c in FChildren do
+        if c.NodeType <> ntComment then
+
         b.Append(c.FText);
       result := b.ToString;
     finally

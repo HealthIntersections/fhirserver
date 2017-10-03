@@ -1535,7 +1535,7 @@ begin
       end
       else
       begin
-        logError(line(node), col(node), path, IssueTypeSTRUCTURE, 'Text should not be present', IssueSeverityERROR);
+        logError(line(node), col(node), path, IssueTypeSTRUCTURE, 'Text ("'+text+'") should not be present', IssueSeverityERROR);
       end;
     end;
 
