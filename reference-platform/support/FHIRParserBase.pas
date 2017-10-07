@@ -641,7 +641,7 @@ var
   xml : TXmlBuilder;
   mx : TFHIRMMXmlParser;
 begin
-  if oResource.resourceType = frtCustom then
+  if (oResource <> nil) and (oResource.resourceType = frtCustom) then
   begin
     mx := TFHIRMMXmlParser.create(FWorker.Link);
     try

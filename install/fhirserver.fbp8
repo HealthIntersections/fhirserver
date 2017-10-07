@@ -64,7 +64,7 @@ begin
         as.defaultvalue = %purpose%
         as.xpos = -1
         as.ypos = -1
-        as.returnvalue = "support for backend services"
+        as.returnvalue = "fix bug in XML validation"
         as.returnvariable = purpose
       end
       action.variables.savetoini
@@ -1050,11 +1050,11 @@ begin
       action.group
       begin
         description = "32 bit build"
-        enabled = false
         id = {C42EC044-C80A-4901-AE36-65C021CB903C}
         action.group
         begin
           description = "Build R4 Server"
+          enabled = false
           id = {C2AAA22F-26E6-4702-962F-F4C5EC91C41F}
           action.files.delete
           begin
@@ -1212,6 +1212,7 @@ begin
         action.group
         begin
           description = "Build R3 Server"
+          enabled = false
           id = {2FD4473F-0129-48F7-8C6D-9F0A95153D25}
           action.files.delete
           begin
@@ -1369,6 +1370,7 @@ begin
         action.group
         begin
           description = "Build R2 Server"
+          enabled = false
           id = {5782C596-ACF5-403F-95A0-C0EB0AA3C208}
           action.files.delete
           begin
@@ -1526,6 +1528,7 @@ begin
         action.group
         begin
           description = "Build Server Utils"
+          enabled = false
           id = {F7B197F8-03A9-41ED-8B7E-9DADB5F8F984}
           action.files.delete
           begin
@@ -1683,6 +1686,7 @@ begin
         action.group
         begin
           description = "sign executables"
+          enabled = false
           id = {EB639197-5295-42ED-8AF1-D1CBCC10F5CD}
           action.process.execute
           begin
@@ -1788,7 +1792,6 @@ begin
         action.group
         begin
           description = "Build Install"
-          enabled = false
           id = {7C6EF671-FE82-4122-99AF-47FAB8487C57}
           action.ini.write
           begin
@@ -1807,7 +1810,6 @@ begin
             allowcreate = false
             deleteifblank = false
             description = "Set OutputFilename in Inno Script"
-            enabled = false
             id = {2184568E-999D-490C-BFBC-07DF2C1E36E8}
             inifile = C:\\work\\fhirserver\\install\\install32.iss
             newvalue = fhirserver32-1.0.%BuildCount%
@@ -1818,7 +1820,6 @@ begin
           action.innosetup.execute
           begin
             description = "Build the server install"
-            enabled = false
             id = {9D73FA91-BC13-4AAD-B87F-77A584C233CE}
             innoversion = Inno5
             scriptfile = C:\\work\\fhirserver\\install\\install32.iss
@@ -1832,7 +1833,6 @@ begin
       action.group
       begin
         description = "Sign Installs"
-        enabled = false
         id = {8C3D4CBC-6388-4AA1-8AE8-157BE12FCCC9}
         action.process.execute
         begin
@@ -1914,7 +1914,6 @@ begin
         checkfilesizes = false
         connectionname = HealthIntersections2
         detailedlogging = false
-        enabled = false
         enabletimeout = false
         filespec = fhirserver64-1.0.%BuildCount%.exe
         forcenextclockskewupdate = true

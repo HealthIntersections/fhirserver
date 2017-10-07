@@ -3,14 +3,14 @@ object QuestionnaireItemForm: TQuestionnaireItemForm
   Top = 0
   BorderIcons = [biSystemMenu]
   BorderStyle = Single
-  Caption = 'Form1'
+  Caption = 'Questionnaire Item Details'
   ClientHeight = 560
   ClientWidth = 416
   FormFactor.Width = 320
   FormFactor.Height = 480
   FormFactor.Devices = [Desktop]
   OnShow = FormShow
-  DesignerMasterStyle = 0
+  DesignerMasterStyle = 1
   object Panel1: TPanel
     Align = Bottom
     Position.Y = 520.000000000000000000
@@ -21,8 +21,11 @@ object QuestionnaireItemForm: TQuestionnaireItemForm
     object btnOk: TButton
       Anchors = [akTop, akRight]
       Default = True
-      Position.X = 239.000000000000000000
+      Position.X = 224.000000000000000000
       Position.Y = 8.000000000000000000
+      Size.Width = 96.000000000000000000
+      Size.Height = 22.000000000000000000
+      Size.PlatformDefault = False
       TabOrder = 0
       Text = 'OK'
       OnClick = btnOkClick
@@ -35,6 +38,17 @@ object QuestionnaireItemForm: TQuestionnaireItemForm
       Position.Y = 8.000000000000000000
       TabOrder = 1
       Text = 'Cancel'
+    end
+    object btnAsChild: TButton
+      Position.X = 120.000000000000000000
+      Position.Y = 8.000000000000000000
+      Size.Width = 96.000000000000000000
+      Size.Height = 22.000000000000000000
+      Size.PlatformDefault = False
+      TabOrder = 2
+      Text = 'Add Child'
+      Visible = False
+      OnClick = btnAsChildClick
     end
   end
   object Label1: TLabel
@@ -408,8 +422,8 @@ object QuestionnaireItemForm: TQuestionnaireItemForm
         Size.Height = 65.000000000000000000
         Size.PlatformDefault = False
         TabOrder = 0
-        Viewport.Width = 297.000000000000000000
-        Viewport.Height = 65.000000000000000000
+        Viewport.Width = 289.000000000000000000
+        Viewport.Height = 57.000000000000000000
       end
     end
     object TabItem10: TTabItem
@@ -559,7 +573,7 @@ object QuestionnaireItemForm: TQuestionnaireItemForm
         item
         end>
       IsSelected = True
-      Size.Width = 106.000000000000000000
+      Size.Width = 114.000000000000000000
       Size.Height = 26.000000000000000000
       Size.PlatformDefault = False
       StyleLookup = ''
@@ -602,7 +616,7 @@ object QuestionnaireItemForm: TQuestionnaireItemForm
         item
         end>
       IsSelected = False
-      Size.Width = 78.000000000000000000
+      Size.Width = 84.000000000000000000
       Size.Height = 26.000000000000000000
       Size.PlatformDefault = False
       StyleLookup = ''
@@ -668,8 +682,8 @@ object QuestionnaireItemForm: TQuestionnaireItemForm
         RowCount = 0
         OnGetValue = grdOptionsGetValue
         OnSetValue = grdOptionsSetValue
-        Viewport.Width = 385.000000000000000000
-        Viewport.Height = 206.000000000000000000
+        Viewport.Width = 381.000000000000000000
+        Viewport.Height = 181.000000000000000000
       end
     end
   end

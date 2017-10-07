@@ -240,7 +240,9 @@ begin
               smart.Free;
             end;
           end);
-      end;
+      end
+      else
+        ok := true;
       if not ok then
         exit;
       client := TFhirThreadedClient.create(http.link, threadMonitorProc);

@@ -178,7 +178,8 @@ uses
   RegistryForm in 'RegistryForm.pas' {,
   QuestionnaireFrame in 'QuestionnaireFrame.pas'},
   RegisterClientDialogFMX in '..\reference-platform\client\RegisterClientDialogFMX.pas' {RegisterClientForm},
-  QuestionnaireItemPanel in 'QuestionnaireItemPanel.pas';
+  QuestionnaireItemPanel in 'QuestionnaireItemPanel.pas',
+  QuestionnairePanel in 'QuestionnairePanel.pas';
 
 {$R *.res}
 

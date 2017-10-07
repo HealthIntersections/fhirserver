@@ -327,7 +327,8 @@ uses
   SQLite3Wrap in '..\Libraries\db\SQLite3Wrap.pas',
   SQLite3 in '..\Libraries\db\SQLite3.pas',
   SQLite3Utils in '..\Libraries\db\SQLite3Utils.pas',
-  QuestionnaireRenderer in '..\reference-platform\dstu3\QuestionnaireRenderer.pas';
+  QuestionnaireRenderer in '..\reference-platform\dstu3\QuestionnaireRenderer.pas',
+  FHIRDeIdentifier in '..\reference-platform\common\FHIRDeIdentifier.pas';
 
 begin
   logfile := IncludeTrailingPathDelimiter(SystemTemp)+'fhirserver.log';

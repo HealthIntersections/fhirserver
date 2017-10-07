@@ -388,6 +388,7 @@
         <DCCReference Include="..\Libraries\db\SQLite3.pas"/>
         <DCCReference Include="..\Libraries\db\SQLite3Utils.pas"/>
         <DCCReference Include="..\reference-platform\dstu3\QuestionnaireRenderer.pas"/>
+        <DCCReference Include="..\reference-platform\common\FHIRDeIdentifier.pas"/>
         <None Include="..\reference-platform\r4\fhirtests4.dpr"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>

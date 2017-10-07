@@ -48,6 +48,8 @@ const
 type
   Thread = Cardinal;
 
+  TCriticalSectionProcedure = reference to procedure;
+
   TCriticalSection = class(TObject)
   Private
     FCritSect: TRTLCriticalSection;
@@ -89,6 +91,7 @@ type
     procedure changeName(aName : String);
 
 
+    procedure exec(proc : TCriticalSectionProcedure); overload;
     // debugging support
     property Category: String Read FCategory Write FCategory;
     class function CurrentCount: Integer;
@@ -292,6 +295,16 @@ end;
 procedure TCriticalSection.Enter(const AName: String);
 begin
   Lock(AName);
+end;
+
+procedure TCriticalSection.exec(proc: TCriticalSectionProcedure);
+begin
+  lock;
+  try
+    proc;
+  finally
+    unlock;
+  end;
 end;
 
 procedure TCriticalSection.Leave;

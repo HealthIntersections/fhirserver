@@ -1,0 +1,24 @@
+Questionnaire frame
+
+a non-visual component
+
+each item has a panel
+each panel has a left and right
+  left - the actual item
+  right - item control (meta, conditions, answers move, add(sibling/child)/delete)
+    display: prefix/text/input(+initial+readOnly) + required/repeat
+    meta = linkId, definition, code
+    conditions = enableWhen - question + answer + required/repeat/readonly/maxlength
+    options
+
+frame has
+- a header line with name / title / status / meta link  (also a root item)
+ - white background
+ - faint horizontal dividing lines
+ - faint tree lines
+ - a focus item with a different color parent line and a different colour background
+ - a total height
+ - a left vertical scroll bar
+ - a min width
+ - maybe a horizontal scroll bar
+

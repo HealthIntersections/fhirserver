@@ -77,6 +77,7 @@ type
     grdOptions: TGrid;
     cedValueSet: TComboEdit;
     Button1: TButton;
+    btnAsChild: TButton;
     procedure FormShow(Sender: TObject);
     procedure btnOkClick(Sender: TObject);
     procedure cbxTypeChange(Sender: TObject);
@@ -89,6 +90,7 @@ type
     procedure btnOptionDeleteClick(Sender: TObject);
     procedure btnLoadValuesets(Sender: TObject);
     procedure cedValueSetChange(Sender: TObject);
+    procedure btnAsChildClick(Sender: TObject);
   private
     FItem: TFhirQuestionnaireItem;
     Loading : boolean;
@@ -183,6 +185,20 @@ begin
     item.optionList.Exchange(i, i-1);
     grdOptions.EndUpdate;
     grdOptions.Row := i - 1;
+  end;
+end;
+
+procedure TQuestionnaireItemForm.btnAsChildClick(Sender: TObject);
+begin
+  if (edtMaxLength.Text <> '') and not StringIsInteger16(edtMaxLength.Text) then
+  begin
+    showmessage('Max Length must be an integer');
+    ActiveControl := edtMaxLength;
+  end
+  else
+  begin
+    commit;
+    ModalResult := mrYes;
   end;
 end;
 

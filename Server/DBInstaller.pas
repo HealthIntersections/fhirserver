@@ -58,7 +58,8 @@ const
 //  ServerDBVersion = 16; // add PatientId to Authorizations
 //  ServerDBVersion = 17; // add AuthorizationSessions and Connections
 //  ServerDBVersion = 18; // add AsyncTasks
-  ServerDBVersion = 19; // add RegisteredTasks
+//  ServerDBVersion = 19; // add RegisteredClients
+  ServerDBVersion = 20; // add PseudoData
 
   // config table keys
   CK_Transactions = 1;   // whether transactions and batches are allowed or not
@@ -118,6 +119,7 @@ Type
     procedure CreateConnections;
     procedure CreateAsyncTasks;
     procedure CreateClientRegistrations;
+    procedure CreatePseudoData;
     procedure runScript(s : String);
   public
     Constructor create(conn : TKDBConnection; txpath : String);
@@ -339,6 +341,25 @@ begin
   FConn.ExecSQL(ForeignKeySql(FConn, 'ClientRegistrations', 'SessionRegistered', 'Sessions', 'SessionKey', 'FK_ClientRegistrations_SessionKey'));
   FConn.ExecSQL('Insert into ClientRegistrations (ClientKey, DateRegistered, Name, Mode) values (1, '+DBGetDate(FConn.Owner.Platform)+', ''Web Interface'', 0)');
 end;
+
+procedure TFHIRDatabaseInstaller.CreatePseudoData;
+begin
+  FConn.ExecSQL('CREATE TABLE PseudoData ( '+#13#10+
+       ' PseudoDataKey  '+DBKeyType(FConn.owner.platform)+'      '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+  //
+       ' Type           int                                      '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+    //
+       ' Id             nchar(64)                                '+ColCanBeNull(FConn.owner.platform, True)+', '+#13#10+    //
+       ' Given          nchar(32)                                '+ColCanBeNull(FConn.owner.platform, True )+', '+#13#10+    //
+       ' Family         nchar(32)                                '+ColCanBeNull(FConn.owner.platform, True )+', '+#13#10+  //
+       ' Line           nchar(255)                               '+ColCanBeNull(FConn.owner.platform, True )+', '+#13#10+  //
+       ' City           nchar(32)                                '+ColCanBeNull(FConn.owner.platform, True )+', '+#13#10+  //
+       ' State          nchar(10)                                '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+  //
+       ' PostCode       int                                      '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+  //
+       ' Telecom        nchar(20)                                '+ColCanBeNull(FConn.owner.platform, True )+', '+#13#10+  //
+       ' Photo          '+DBBlobType(FConn.owner.platform)+'     '+ColCanBeNull(FConn.owner.platform, True )+', '+#13#10+  //
+       PrimaryKeyType(FConn.owner.Platform, 'PK_PseudoData', 'PseudoDataKey')+') '+CreateTableInfo(FConn.owner.platform));
+  FConn.ExecSQL('Create INDEX SK_PseudoData ON ClosureEntries (Type, Id)');
+end;
+
 
 procedure TFHIRDatabaseInstaller.CreateClosureEntries;
 begin
@@ -992,7 +1013,10 @@ begin
     CreateAsyncTasks;
     if assigned(CallBack) then Callback(75, 'Create ClientRegistrations');
     CreateClientRegistrations;
+    if assigned(CallBack) then Callback(75, 'Create PseudoData');
+    CreatePseudoData;
     if assigned(CallBack) then Callback(76, 'Commit');
+
     FConn.Commit;
   except
     on e:exception do
@@ -1033,8 +1057,17 @@ end;
 procedure TFHIRDatabaseInstaller.Uninstall;
 var
   meta : TKDBMetaData;
+  step : integer;
+  procedure drop(name : String);
+  begin
+    inc(step);
+    if assigned(CallBack) then Callback(step, 'Check Delete '+name);
+    if meta.hasTable(name) then
+      FConn.DropTable(name);
+  end;
 begin
   if assigned(CallBack) then Callback(5, 'Check for existing tables');
+  step := 5;
   meta := FConn.FetchMetaData;
   try
     FConn.StartTransact;
@@ -1048,111 +1081,44 @@ begin
       except
       end;
 
-      if assigned(CallBack) then Callback(5, 'Check Delete Connections');
-      if meta.hasTable('Connections') then
-        FConn.DropTable('Connections');
-      if assigned(CallBack) then Callback(5, 'Check Delete AuthorizationSessions');
-      if meta.hasTable('AuthorizationSessions') then
-        FConn.DropTable('AuthorizationSessions');
-      if assigned(CallBack) then Callback(5, 'Check Delete Authorizations');
-      if meta.hasTable('Authorizations') then
-        FConn.DropTable('Authorizations');
-      if assigned(CallBack) then Callback(5, 'Check Delete ObservationCodes');
-      if meta.hasTable('ObservationCodes') then
-        FConn.DropTable('ObservationCodes');
-      if assigned(CallBack) then Callback(5, 'Check Delete Observations');
-      if meta.hasTable('Observations') then
-        FConn.DropTable('Observations');
-      if assigned(CallBack) then Callback(5, 'Check Delete ObservationQueue');
-      if meta.hasTable('ObservationQueue') then
-        FConn.DropTable('ObservationQueue');
-      if assigned(CallBack) then Callback(5, 'Check Delete WebSocketsQueue');
-      if meta.hasTable('WebSocketsQueue') then
-        FConn.DropTable('WebSocketsQueue');
-      if assigned(CallBack) then Callback(6, 'Check Delete NotificationQueue');
-      if meta.hasTable('NotificationQueue') then
-        FConn.DropTable('NotificationQueue');
-      if assigned(CallBack) then Callback(7, 'Check Delete SubscriptionQueue');
-      if meta.hasTable('SubscriptionQueue') then
-        FConn.DropTable('SubscriptionQueue');
-      if assigned(CallBack) then Callback(8, 'Check Delete SearchEntries');
-      if meta.hasTable('SearchEntries') then
-        FConn.DropTable('SearchEntries');
-      if assigned(CallBack) then Callback(9, 'Check Delete Searches');
-      if meta.hasTable('Searches') then
-        FConn.DropTable('Searches');
-      if assigned(CallBack) then Callback(10, 'Check Delete IndexEntries');
-      if meta.hasTable('IndexEntries') then
-        FConn.DropTable('IndexEntries');
-      if assigned(CallBack) then Callback(11, 'Check Delete Indexes');
-      if meta.hasTable('Indexes') then
-        FConn.DropTable('Indexes');
-      if assigned(CallBack) then Callback(12, 'Check Delete Spaces');
-      if meta.hasTable('Spaces') then
-        FConn.DropTable('Spaces');
+      drop('Connections');
+      drop('AuthorizationSessions');
+      drop('Authorizations');
+      drop('ObservationCodes');
+      drop('Observations');
+      drop('ObservationQueue');
+      drop('WebSocketsQueue');
+      drop('NotificationQueue');
+      drop('SubscriptionQueue');
+      drop('SearchEntries');
+      drop('Searches');
+      drop('IndexEntries');
+      drop('Indexes');
+      drop('Spaces');
 
-      if assigned(CallBack) then Callback(13, 'Check Delete VersionTags');
-      if meta.hasTable('VersionTags') then
-        FConn.DropTable('VersionTags');
-      if assigned(CallBack) then Callback(14, 'Check Delete Versions');
-      if meta.hasTable('Versions') then
-        FConn.DropTable('Versions');
-      if assigned(CallBack) then Callback(15, 'Check Delete Compartments');
-      if meta.hasTable('Compartments') then
-        FConn.DropTable('Compartments');
-      if assigned(CallBack) then Callback(16, 'Check Delete Ids');
-      if meta.hasTable('Ids') then
-        FConn.DropTable('Ids');
-      if assigned(CallBack) then Callback(17, 'Check Delete Config');
-      if meta.hasTable('Config') then
-        FConn.DropTable('Config');
-      if assigned(CallBack) then Callback(18, 'Check Delete Types');
-      if meta.hasTable('Types') then
-        FConn.DropTable('Types');
-      if assigned(CallBack) then Callback(19, 'Check Delete Tags');
-      if meta.hasTable('Tags') then
-        FConn.DropTable('Tags');
-      if assigned(CallBack) then Callback(20, 'Check Delete OAuthLogins');
-      if meta.hasTable('OAuthLogins') then
-        FConn.DropTable('OAuthLogins');
-      if assigned(CallBack) then Callback(21, 'Check Delete ClientRegistrations');
-      if meta.hasTable('ClientRegistrations') then
-        FConn.DropTable('ClientRegistrations');
-      if assigned(CallBack) then Callback(22, 'Check Delete Sessions');
-      if meta.hasTable('Sessions') then
-        FConn.DropTable('Sessions');
-      if assigned(CallBack) then Callback(23, 'Check Delete UserIndexes');
-      if meta.hasTable('UserIndexes') then
-        FConn.DropTable('UserIndexes');
-      if assigned(CallBack) then Callback(24, 'Check Delete Users');
-      if meta.hasTable('Users') then
-        FConn.DropTable('Users');
+      drop('VersionTags');
+      drop('Versions');
+      drop('Compartments');
+      drop('Ids');
+      drop('Config');
+      drop('Types');
+      drop('Tags');
+      drop('OAuthLogins');
+      drop('ClientRegistrations');
+      drop('Sessions');
+      drop('UserIndexes');
+      drop('Users');
 
-      if assigned(CallBack) then Callback(25, 'Check Delete ClosureEntries');
-      if meta.hasTable('ClosureEntries') then
-        FConn.DropTable('ClosureEntries');
-      if assigned(CallBack) then Callback(26, 'Check Delete ValueSetMembers');
-      if meta.hasTable('ValueSetMembers') then
-        FConn.DropTable('ValueSetMembers');
-      if assigned(CallBack) then Callback(27, 'Check Delete ValueSets');
-      if meta.hasTable('ValueSets') then
-        FConn.DropTable('ValueSets');
-      if assigned(CallBack) then Callback(28, 'Check Delete Closures');
-      if meta.hasTable('Closures') then
-        FConn.DropTable('Closures');
-      if assigned(CallBack) then Callback(29, 'Check Delete Concepts');
-      if meta.hasTable('Concepts') then
-        FConn.DropTable('Concepts');
+      drop('ClosureEntries');
+      drop('ValueSetMembers');
+      drop('ValueSets');
+      drop('Closures');
+      drop('Concepts');
 
-      if assigned(CallBack) then Callback(30, 'Check Delete UniiDesc');
-      if meta.hasTable('UniiDesc') then
-        FConn.DropTable('UniiDesc');
-      if assigned(CallBack) then Callback(31, 'Check Delete Unii');
-      if meta.hasTable('Unii') then
-        FConn.DropTable('Unii');
-      if assigned(CallBack) then Callback(32, 'Check Delete AsyncTasks');
-      if meta.hasTable('AsyncTasks') then
-        FConn.DropTable('AsyncTasks');
+      drop('UniiDesc');
+      drop('Unii');
+      drop('AsyncTasks');
+      drop('PseudoData');
 
       FConn.Commit;
     except
@@ -1211,6 +1177,8 @@ begin
       CreateAsyncTasks;
     if (version < 19) then
       CreateClientRegistrations;
+    if (version < 19) then
+      CreatePseudoData;
 
     Fconn.ExecSQL('update Config set value = '+inttostr(ServerDBVersion)+' where ConfigKey = 5');
     FConn.commit;

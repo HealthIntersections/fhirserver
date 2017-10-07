@@ -839,7 +839,7 @@ begin
         comp.Free;
       end;
       logt('Send '+msg.MsgId+' to '+dest);
-      msg.SaveToFile('c:\temp\out.msg');
+//      msg.SaveToFile('c:\temp\out.msg');
       sender.Send(msg);
     Finally
       msg.Free;
@@ -1141,7 +1141,7 @@ var
   ts : TStringList;
   bs : TBytesStream;
 begin
-  msg.SaveToFile('c:\temp\in.msg');
+//  msg.SaveToFile('c:\temp\in.msg');
   ct := msg.ContentType.split([' ']);
   if (ct[0] = 'multipart/report;') and (ct[1] = 'report-type=delivery-status') then
   begin

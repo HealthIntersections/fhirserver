@@ -1159,6 +1159,8 @@ begin
             FConnection.BindIntegerFromBoolean('ft', tags.hasTestingTag);
             FConnection.BindBlob('xc', EncodeResource(request.Resource, true, soFull));
             FConnection.BindBlob('jc', EncodeResource(request.Resource, false, soFull));
+            if key = 187 then
+              BytesToFile(EncodeResource(request.Resource, false, soFull), 'c:\temp\json\fr-i-'+inttostr(key)+'.json');
             markSubsetted(request.Resource.meta);
             FConnection.BindBlob('xs', EncodeResource(request.Resource, true, soSummary));
             FConnection.BindBlob('js', EncodeResource(request.Resource, false, soSummary));
@@ -10692,6 +10694,11 @@ begin
         inc(i);
         mem := conn.ColBlobByName['JsonContent'];
 
+        if conn.ColIntegerByName['ResourceVersionKey'] = 187 then
+        begin
+          BytesToFile(mem, 'c:\temp\json\fr-o-'+inttostr(conn.ColIntegerByName['ResourceVersionKey'])+'.json');
+          writeln('vrk = '+inttostr(conn.ColIntegerByName['ResourceVersionKey']));
+        end;
         parser := MakeParser(ServerContext.Validator.Context, 'en', ffJson, mem, xppDrop);
         try
           SeeResource(conn.ColIntegerByName['ResourceKey'],

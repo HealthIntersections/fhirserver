@@ -39,8 +39,9 @@ uses
   AdvGenerics, CSVSupport,
   FHIRBase, FHIRConstants, FHIRTypes, FHIRResources, FHIRUtilities, FHIRIndexBase, FHIRIndexInformation, FHIRSupport,
   QuestionnaireRenderer,
-  BaseResourceFrame, { QuestionnaireFrame, }
-  QuestionnaireItemDialog, MemoEditorDialog;
+  BaseResourceFrame,
+  QuestionnaireItemDialog, MemoEditorDialog, QuestionnairePanel,
+  System.ImageList, FMX.ImgList, FMX.Effects, FMX.Filter.Effects;
 
 type
   TFrame = TBaseResourceFrame; // re-aliasing the Frame to work around a designer bug
@@ -82,16 +83,8 @@ type
     cbxJurisdiction: TComboBox;
     cbxStatus: TComboBox;
     tvGrid: TTreeViewItem;
-    tvTree: TTreeViewItem;
-    Panel1: TPanel;
-    Panel5: TPanel;
-    webPreview: TWebBrowser;
-    Splitter1: TSplitter;
-    Label12: TLabel;
     tbGrid: TTabItem;
-    tbTree: TTabItem;
     Panel6: TPanel;
-    Panel7: TPanel;
     tvContext: TTreeViewItem;
     tbContext: TTabItem;
     Label14: TLabel;
@@ -125,15 +118,6 @@ type
     btnItemIn: TButton;
     btnItemOut: TButton;
     btnDeleteItem: TButton;
-    btnAddItemTV: TButton;
-    btnAddChildItemTV: TButton;
-    btnEditItemTV: TButton;
-    btnItemUpTV: TButton;
-    btnItemDownTV: TButton;
-    btnItemInTV: TButton;
-    btnItemOutTV: TButton;
-    btnDeleteItemTV: TButton;
-    tvItemTree: TTreeView;
     Panel8: TPanel;
     Label20: TLabel;
     edtSearch: TEdit;
@@ -142,16 +126,10 @@ type
     btnSearchPrev: TButton;
     btnSearchEnd: TButton;
     CheckBox1: TCheckBox;
-    Panel9: TPanel;
-    Label21: TLabel;
-    Edit1: TEdit;
-    Button9: TButton;
-    Button10: TButton;
-    Button11: TButton;
-    Button12: TButton;
-    CheckBox2: TCheckBox;
     tvForm: TTreeViewItem;
     tbForm: TTabItem;
+    ImageList1: TImageList;
+    LineTransitionEffect1: TLineTransitionEffect;
     procedure tvStructureClick(Sender: TObject);
     procedure inputChanged(Sender: TObject);
     procedure btnMemoForDescClick(Sender: TObject);
@@ -169,38 +147,24 @@ type
     procedure btnItemOutClick(Sender: TObject);
     procedure grdItemsSelChanged(Sender: TObject);
     procedure btnDeleteItemClick(Sender: TObject);
-    procedure tvItemTreeClick(Sender: TObject);
-    procedure btnAddItemTVClick(Sender: TObject);
-    procedure btnAddChildItemTVClick(Sender: TObject);
-    procedure btnEditItemTVClick(Sender: TObject);
-    procedure btnItemUpTVClick(Sender: TObject);
-    procedure btnItemDownTVClick(Sender: TObject);
-    procedure btnItemInTVClick(Sender: TObject);
-    procedure btnItemOutTVClick(Sender: TObject);
-    procedure btnDeleteItemTVClick(Sender: TObject);
     procedure lbResourcesChangeCheck(Sender: TObject);
   private
     flatItems : TAdvList<TFhirQuestionnaireItem>;
     loading : boolean;
     FSelected : TFhirQuestionnaireItem;
-//    FFrame : TQuestionnaireFrame;
+    FPanel : TQuestionnairePanel;
     function GetQuestionnaire: TFHIRQuestionnaire;
     function readJurisdiction : Integer;
     function getJurisdiction(i : integer) : TFHIRCodeableConcept;
     procedure addToItems(level : integer; list : TFhirQuestionnaireItemList);
-    procedure updateRendering;
     function renderItem(item : TFhirQuestionnaireItem) : String;
 
-    function addItemToTree(parent, item : TFhirQuestionnaireItem) : TTreeViewItem;
     function findItem(sel : TFhirQuestionnaireItem; var parent : TFhirQuestionnaireItem; var list : TFhirQuestionnaireItemList; var index : integer) : boolean;
-    procedure updateStatusGrid(sel : TFhirQuestionnaireItem);
-    procedure updateStatusTree(sel : TFhirQuestionnaireItem);
-//    procedure buildFlatGrid(list : TFhirQuestionnaireConceptList);
+    procedure updateStatus(sel : TFhirQuestionnaireItem);
 
     procedure loadMetadata;
     procedure loadContext;
     procedure loadGrid;
-    procedure loadTree;
     procedure loadForm;
 
     procedure commitMetadata;
@@ -249,30 +213,7 @@ begin
   grdItems.EndUpdate;
   grdItems.RowCount := flatItems.Count;
   ResourceIsDirty := true;
-  updateRendering;
   grdItems.SelectCell(1, flatItems.IndexOf(c));
-  btnEditItemClick(nil);
-end;
-
-procedure TQuestionnaireEditorFrame.btnAddChildItemTVClick(Sender: TObject);
-var
-  p, c : TFhirQuestionnaireItem;
-  tvp, tv : TTreeViewItem;
-begin
-  p := tvItemTree.Selected.TagObject as TFhirQuestionnaireItem;
-  c := p.itemList.Append;
-  c.linkId := 'i'+inttostr(Questionnaire.itemCount + 1);
-  tvp := TTreeViewItem(p.TagObject);
-  tv := TTreeViewItem.Create(self);
-  tvp.AddObject(tv);
-  tv.Text := renderItem(c);
-  tv.TagObject := c;
-  flatItems.Clear;
-  addToItems(0, Questionnaire.itemList);
-  c.TagObject := tv;
-  ResourceIsDirty := true;
-  updateRendering;
-  tvItemTree.Selected := tv;
   btnEditItemClick(nil);
 end;
 
@@ -289,27 +230,6 @@ begin
   grdItems.RowCount := flatItems.Count;
   grdItems.SelectCell(1, flatItems.IndexOf(c));
   ResourceIsDirty := true;
-  updateRendering;
-  btnEditItemClick(nil);
-end;
-
-procedure TQuestionnaireEditorFrame.btnAddItemTVClick(Sender: TObject);
-var
-  c : TFhirQuestionnaireItem;
-  tv : TTreeViewItem;
-begin
-  c := Questionnaire.itemList.Append;
-  c.linkId := 'i'+inttostr(Questionnaire.itemCount + 1);
-  tv := TTreeViewItem.Create(self);
-  tvItemTree.AddObject(tv);
-  tv.Text := renderItem(c);
-  tv.TagObject := c;
-  c.TagObject := tv;
-  flatItems.Clear;
-  addToItems(0, Questionnaire.itemList);
-  ResourceIsDirty := true;
-  updateRendering;
-  tvItemTree.Selected := tv;
   btnEditItemClick(nil);
 end;
 
@@ -354,57 +274,6 @@ begin
         if nf <> nil then
           grdItems.SelectCell(1, flatItems.IndexOf(nf));
         ResourceIsDirty := true;
-        updateRendering;
-      end;
-    end
-  );
-end;
-
-procedure TQuestionnaireEditorFrame.btnDeleteItemTVClick(Sender: TObject);
-var
-  sel, nf, parent : TFhirQuestionnaireItem;
-  list : TFhirQuestionnaireItemList;
-  index, count : integer;
-  s : String;
-begin
-  if grdItems.Row = -1 then
-    exit;
-  sel := flatItems[grdItems.Row];
-  if not findItem(sel, parent, list, index) then
-    exit;
-
-  count := sel.countDescendents;
-  if count = 0 then
-    s := 'Delete Item '+sel.linkId+'?'
-  else if count = 1 then
-    s := 'Delete Item '+sel.linkId+' and 1 child?'
-  else
-    s := 'Delete Item '+sel.linkId+' and it''s '+inttostr(count)+' children?';
-
-  TDialogService.MessageDialog(s, TMsgDlgType.mtConfirmation, mbYesNo, TMsgDlgBtn.mbNo, 0,
-    procedure (const AResult: TModalResult)
-    var p : TFhirQuestionnaireItem;
-    begin
-      if AResult = mrYes then
-      begin
-        if index > 0 then
-          nf := list[index - 1]
-        else if list.Count > 1 then
-          nf := list[index + 1]
-        else
-          nf := nil;
-        tvItemTree.BeginUpdate;
-        list.Remove(index);
-        tvItemTree.Clear;
-        for p in Questionnaire.itemList do
-          addItemToTree(nil, p);
-        flatItems.Clear;
-        addToItems(0, Questionnaire.itemList);
-        tvItemTree.EndUpdate;
-        if nf <> nil then
-          tvItemTree.Selected := nf.TagObject as TTreeViewItem;
-        ResourceIsDirty := true;
-        updateRendering;
       end;
     end
   );
@@ -430,31 +299,6 @@ begin
   grdItems.EndUpdate;
   grdItems.SelectCell(1, flatItems.IndexOf(sel));
   ResourceIsDirty := true;
-  updateRendering;
-end;
-
-procedure TQuestionnaireEditorFrame.btnItemDownTVClick(Sender: TObject);
-var
-  sel, p : TFhirQuestionnaireItem;
-  parent : TFhirQuestionnaireItem;
-  list : TFhirQuestionnaireItemList;
-  index : integer;
-begin
-  sel := tvItemTree.Selected.TagObject as TFhirQuestionnaireItem;
-  if not findItem(sel, parent, list, index) then
-    exit;
-
-  tvItemTree.BeginUpdate;
-  list.Exchange(index, index+1);
-  tvItemTree.Clear;
-  for p in Questionnaire.itemList do
-    addItemToTree(nil, p);
-  flatItems.Clear;
-  addToItems(0, Questionnaire.itemList);
-  tvItemTree.EndUpdate;
-  tvItemTree.Selected := sel.TagObject as TTreeViewItem;
-  ResourceIsDirty := true;
-  updateRendering;
 end;
 
 procedure TQuestionnaireEditorFrame.btnItemInClick(Sender: TObject);
@@ -482,36 +326,6 @@ begin
   grdItems.EndUpdate;
   grdItems.SelectCell(1, flatItems.IndexOf(sel));
   ResourceIsDirty := true;
-  updateRendering;
-end;
-
-procedure TQuestionnaireEditorFrame.btnItemInTVClick(Sender: TObject);
-var
-  sel, p : TFhirQuestionnaireItem;
-  parent, grandparent : TFhirQuestionnaireItem;
-  list, gList : TFhirQuestionnaireItemList;
-  index, gIndex : integer;
-begin
-  sel := tvItemTree.Selected.TagObject as TFhirQuestionnaireItem;
-  if not findItem(sel, parent, list, index) then
-    exit;
-  if parent = nil then
-    exit;
-  if not findItem(parent, grandparent, glist, gindex) then
-    exit;
-
-  tvItemTree.BeginUpdate;
-  glist.InsertItem(gindex+1, sel.Link);
-  list.DeleteByIndex(index);
-  tvItemTree.Clear;
-  for p in Questionnaire.itemList do
-    addItemToTree(nil, p);
-  flatItems.Clear;
-  addToItems(0, Questionnaire.itemList);
-  tvItemTree.EndUpdate;
-  tvItemTree.Selected := sel.TagObject as TTreeViewItem;
-  ResourceIsDirty := true;
-  updateRendering;
 end;
 
 procedure TQuestionnaireEditorFrame.btnItemOutClick(Sender: TObject);
@@ -538,35 +352,6 @@ begin
   grdItems.EndUpdate;
   grdItems.SelectCell(1, flatItems.IndexOf(sel));
   ResourceIsDirty := true;
-  updateRendering;
-end;
-
-procedure TQuestionnaireEditorFrame.btnItemOutTVClick(Sender: TObject);
-var
-  sel, p : TFhirQuestionnaireItem;
-  parent : TFhirQuestionnaireItem;
-  list : TFhirQuestionnaireItemList;
-  index : integer;
-begin
-  sel := tvItemTree.Selected.TagObject as TFhirQuestionnaireItem;
-  if not findItem(sel, parent, list, index) then
-    exit;
-  if index = 0 then
-    exit;
-
-  tvItemTree.BeginUpdate;
-  parent := list[index - 1];
-  parent.itemList.add(sel.Link);
-  list.DeleteByIndex(index);
-  tvItemTree.Clear;
-  for p in Questionnaire.itemList do
-    addItemToTree(nil, p);
-  flatItems.Clear;
-  addToItems(0, Questionnaire.itemList);
-  tvItemTree.EndUpdate;
-  tvItemTree.Selected := sel.TagObject as TTreeViewItem;
-  ResourceIsDirty := true;
-  updateRendering;
 end;
 
 procedure TQuestionnaireEditorFrame.btnItemUpClick(Sender: TObject);
@@ -589,34 +374,6 @@ begin
   grdItems.EndUpdate;
   grdItems.SelectCell(1, flatItems.IndexOf(sel));
   ResourceIsDirty := true;
-  updateRendering;
-end;
-
-procedure TQuestionnaireEditorFrame.btnItemUpTVClick(Sender: TObject);
-var
-  sel, p : TFhirQuestionnaireItem;
-  parent : TFhirQuestionnaireItem;
-  list : TFhirQuestionnaireItemList;
-  index : integer;
-begin
-  sel := tvItemTree.Selected.TagObject as TFhirQuestionnaireItem;
-  if grdItems.Row = -1 then
-    exit;
-  sel := flatItems[grdItems.Row];
-  if not findItem(sel, parent, list, index) then
-    exit;
-
-  tvItemTree.BeginUpdate;
-  list.Exchange(index, index-1);
-  tvItemTree.Clear;
-  for p in Questionnaire.itemList do
-    addItemToTree(nil, p);
-  flatItems.Clear;
-  addToItems(0, Questionnaire.itemList);
-  tvItemTree.EndUpdate;
-  tvItemTree.Selected := sel.TagObject as TTreeViewItem;
-  ResourceIsDirty := true;
-  updateRendering;
 end;
 
 procedure TQuestionnaireEditorFrame.btnEditItemClick(Sender: TObject);
@@ -645,40 +402,6 @@ begin
       item.options := form.item.options.Link;
       grdItems.EndUpdate;
       ResourceIsDirty := true;
-      updateRendering;
-    end;
-  finally
-    form.Free;
-  end;
-end;
-
-procedure TQuestionnaireEditorFrame.btnEditItemTVClick(Sender: TObject);
-var
-  form : TQuestionnaireItemForm;
-  item : TFHIRQuestionnaireItem;
-begin
-  form := TQuestionnaireItemForm.Create(self);
-  try
-    item := tvItemTree.Selected.TagObject as TFhirQuestionnaireItem;
-    form.item := item.clone;
-    form.Settings := Settings.link;
-    form.OnWork := OnWork;
-    if form.ShowModal = mrOk then
-    begin
-      grdItems.BeginUpdate;
-      item.required := form.item.required;
-      item.repeats := form.item.repeats;
-      item.readOnly := form.item.readOnly;
-      item.linkId := form.item.linkId;
-      item.definition := form.item.definition;
-      item.prefix := form.item.prefix;
-      item.text := form.item.text;
-      item.type_ := form.item.type_;
-      item.maxLength := form.item.maxLength;
-      item.options := form.item.options.Link;
-      grdItems.EndUpdate;
-      ResourceIsDirty := true;
-      updateRendering;
     end;
   finally
     form.Free;
@@ -708,7 +431,6 @@ procedure TQuestionnaireEditorFrame.commit;
 begin
   if tvStructure.Selected = tvMetadata then
     CommitMetadata;
-  updateRendering;
   ResourceIsDirty := true;
 end;
 
@@ -824,13 +546,13 @@ procedure TQuestionnaireEditorFrame.grdItemsSelChanged(Sender: TObject);
 begin
   if grdItems.Row < 0 then
   begin
-    updateStatusGrid(nil);
+    updateStatus(nil);
     FSelected := nil;
   end
   else
   begin
     FSelected := flatItems[grdItems.Row];
-    updateStatusGrid(FSelected);
+    updateStatus(FSelected);
   end;
 end;
 
@@ -850,7 +572,6 @@ begin
     8: item.repeats := value.AsBoolean;
     9: item.readOnly := value.AsBoolean;
   end;
-  updateRendering;
   ResourceIsDirty := true;
 end;
 
@@ -956,7 +677,6 @@ begin
   tvStructure.Selected := tvMetadata;
   tvStructure.ExpandAll;
   tvStructureClick(nil);
-  updateRendering;
 end;
 
 procedure TQuestionnaireEditorFrame.loadContext;
@@ -978,17 +698,22 @@ end;
 
 procedure TQuestionnaireEditorFrame.loadForm;
 begin
-{  if FFrame = nil then
+  if FPanel = nil then
   begin
-    FFrame := TQuestionnaireFrame.Create(self);
-    FFrame.Parent := tbForm;
-    FFrame.Margins.Left := 6;
-    FFrame.Margins.Top := 6;
-    FFrame.Margins.Right := 6;
-    FFrame.Margins.Bottom := 6;
+    FPanel := TQuestionnairePanel.Create(self);
+    FPanel.Parent := tbForm;
+    FPanel.Margins.Left := 6;
+    FPanel.Margins.Top := 6;
+    FPanel.Margins.Right := 6;
+    FPanel.Margins.Bottom := 6;
+    FPanel.Width := tbForm.Width;
+    FPanel.Align := Align.alClient;
+    FPanel.imageList := ImageList1;
+    FPanel.Settings := Settings.link;
+    FPanel.OnWork := OnWork;
   end;
-  FFrame.Questionnaire := Questionnaire.Link;
-  FFrame.build;}
+  FPanel.Questionnaire := Questionnaire.Link;
+  FPanel.build;
 end;
 
 procedure TQuestionnaireEditorFrame.loadGrid;
@@ -1053,25 +778,6 @@ begin
   end;
 end;
 
-procedure TQuestionnaireEditorFrame.loadTree;
-var
-  item : TFhirQuestionnaireItem;
-begin
-  Loading := true;
-  try
-    tvItemTree.Clear;
-    for item in Questionnaire.itemList do
-      addItemToTree(nil, item);
-    flatItems.Clear;
-    addToItems(0, Questionnaire.itemList);
-    tvItemTree.ExpandAll;
-    if FSelected <> nil then
-      tvItemTree.Selected := FSelected.TagObject as TTreeViewItem;
-  finally
-    Loading := false;
-  end;
-end;
-
 function TQuestionnaireEditorFrame.readJurisdiction: Integer;
 var
   cc : TFhirCodeableConcept;
@@ -1125,14 +831,6 @@ begin
     result := item.text+' : '+CODES_TFhirItemTypeEnum[item.type_]+ ' ('+item.linkId+')';
 end;
 
-procedure TQuestionnaireEditorFrame.tvItemTreeClick(Sender: TObject);
-begin
-  if Loading then
-    exit;
-  FSelected := tvItemTree.Selected.TagObject as TFhirQuestionnaireItem;
-  updateStatusTree(FSelected);
-end;
-
 procedure TQuestionnaireEditorFrame.tvStructureClick(Sender: TObject);
 begin
   Loading := true;
@@ -1151,11 +849,6 @@ begin
     begin
       tbStructure.ActiveTab := tbGrid;
       loadGrid;
-    end
-    else if tvStructure.Selected = tvTree then
-    begin
-      tbStructure.ActiveTab := tbTree;
-      loadTree;
     end
     else if tvStructure.Selected = tvForm then
     begin
@@ -1191,20 +884,7 @@ fragment+#13#10+
 end;
 
 
-procedure TQuestionnaireEditorFrame.updateRendering;
-var
-  r : TQuestionnaireRenderer;
-begin
-  r := TQuestionnaireRenderer.Create;
-  try
-    r.questionnaire := Questionnaire.Link;
-    webPreview.LoadFromStrings(template(r.render), 'my.html');
-  finally
-    r.free;
-  end;
-end;
-
-procedure TQuestionnaireEditorFrame.updateStatusGrid(sel: TFhirQuestionnaireItem);
+procedure TQuestionnaireEditorFrame.updateStatus(sel: TFhirQuestionnaireItem);
 var
   list : TFhirQuestionnaireItemList;
   parent : TFhirQuestionnaireItem;
@@ -1228,57 +908,6 @@ begin
     btnEditItem.Enabled := true;
     btnDeleteItem.Enabled := true;
   end;
-end;
-
-procedure TQuestionnaireEditorFrame.updateStatusTree(sel: TFhirQuestionnaireItem);
-var
-  list : TFhirQuestionnaireItemList;
-  parent : TFhirQuestionnaireItem;
-  i : integer;
-begin
-  if not findItem(sel, parent, list, i) then
-  begin
-    btnItemUpTV.Enabled := false;
-    btnItemDownTV.Enabled := false;
-    btnItemInTV.Enabled := false;
-    btnItemOutTV.Enabled := false;
-    btnEditItemTV.Enabled := false;
-    btnDeleteItemTV.Enabled := false;
-  end
-  else
-  begin
-    btnItemUpTV.Enabled := i > 0;
-    btnItemDownTV.Enabled := i < list.Count - 1;
-    btnItemInTV.Enabled := sel.TagInt > 0;
-    btnItemOutTV.Enabled := i > 0;
-    btnEditItemTV.Enabled := true;
-    btnDeleteItemTV.Enabled := true;
-  end;
-end;
-
-function TQuestionnaireEditorFrame.addItemToTree(parent, item: TFhirQuestionnaireItem) : TTreeViewItem;
-var
-  tvp, tv : TTreeViewItem;
-  c : TFhirQuestionnaireItem;
-begin
-  tv := TTreeViewItem.Create(self);
-  tv.Text := renderItem(item);
-  tv.TagObject := Item;
-  Item.TagObject := tv;
-  if parent = nil then
-  begin
-    tvItemTree.AddObject(tv);
-    Item.TagInt := 0;
-  end
-  else
-  begin
-    tvp := TTreeViewItem(parent.TagObject);
-    tvp.AddObject(tv);
-    Item.TagInt := parent.TagInt + 1;
-  end;
-  for c in Item.ItemList do
-    addItemToTree(Item, c);
-  result := tv;
 end;
 
 end.
