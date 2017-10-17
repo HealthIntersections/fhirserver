@@ -128,11 +128,11 @@ uses
 
 procedure TEditRegisteredServerForm.btnFetchClick(Sender: TObject);
 var
-  authorize, token : String;
+  authorize, token, register : String;
 begin
   if FCapabilityStatement = nil then
     loadCapabilityStatement;
-  if usesSmartOnFHIR(FCapabilityStatement, authorize, token) then
+  if usesSmartOnFHIR(FCapabilityStatement, authorize, token, register) then
   begin
     edtAuthorize.Text := authorize;
     edtToken.Text := token;
@@ -267,14 +267,14 @@ end;
 
 procedure TEditRegisteredServerForm.edtNameChange(Sender: TObject);
 begin
-  case cbxSmartMode.itemIndex of
-    0: btnOk.Enabled := (edtName.text <> '') and (edtServer.text <> '');
-    1: btnOk.Enabled := (edtName.text <> '') and (edtServer.text <> '') and (edtAuthorize.Text <> '') and (edtToken.Text <> '') and (edtClientId.Text <> '') and StringIsInteger16(edtRedirect.Text)
-    2: btnOk.Enabled := (edtName.text <> '') and (edtServer.text <> '') and (edtAuthorize.Text <> '') and (edtToken.Text <> '') and (edtClientId1.Text <> '') and (edtIssuerURL.Text <> '')...
-  end;
-  if (edtAuthorize.Text <> '') then
-    btnOk.Enabled :=
-  else
+//  case cbxSmartMode.itemIndex of
+//    0: btnOk.Enabled := (edtName.text <> '') and (edtServer.text <> '');
+//    1: btnOk.Enabled := (edtName.text <> '') and (edtServer.text <> '') and (edtAuthorize.Text <> '') and (edtToken.Text <> '') and (edtClientId.Text <> '') and StringIsInteger16(edtRedirect.Text);
+//    2: btnOk.Enabled := (edtName.text <> '') and (edtServer.text <> '') and (edtAuthorize.Text <> '') and (edtToken.Text <> '') and (edtClientId1.Text <> '') and (edtIssuerURL.Text <> '');
+//  end;
+//  if (edtAuthorize.Text <> '') then
+//    btnOk.Enabled :=
+//  else
 
   btnOk.Enabled := edtServer.text <> '';
 end;

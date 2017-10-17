@@ -207,7 +207,7 @@
         <DCCReference Include="FHIRResources.pas"/>
         <DCCReference Include="..\support\FHIRParser.pas"/>
         <DCCReference Include="..\support\FHIRParserBase.pas"/>
-        <DCCReference Include="FHIRSupport.pas"/>
+        <DCCReference Include="..\support\FHIRSupport.pas"/>
         <DCCReference Include="..\support\FHIRLang.pas"/>
         <DCCReference Include="FHIRUtilities.pas"/>
         <DCCReference Include="FHIRPath.pas"/>
@@ -226,6 +226,7 @@
         <DCCReference Include="..\support\SCIMObjects.pas"/>
         <DCCReference Include="..\support\FHIRSecurity.pas"/>
         <DCCReference Include="..\support\TurtleParser.pas"/>
+        <DCCReference Include="..\support\FHIRIndexBase.pas"/>
         <None Include="Profiling\AQtimeModule1.aqt"/>
         <None Include="..\r4\fhirtests4.dpr"/>
         <BuildConfiguration Include="Debug">

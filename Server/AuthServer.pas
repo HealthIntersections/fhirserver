@@ -660,7 +660,7 @@ begin
 
       ServerContext.Storage.recordOAuthChoice(Session.OuterToken, scopes.CommaText, session.JWTPacked, params.GetVar('patient'));
       if params.GetVar('patient') <> '' then
-        session.PatientList.Add(params.GetVar('patient'));
+        session.Compartments.Add(TFHIRCompartmentId.Create(frtPatient, params.GetVar('patient')));
 
       session.scopes := scopes.CommaText.Replace(',', ' ');
       ServerContext.Storage.RegisterConsentRecord(session);
@@ -1151,7 +1151,7 @@ begin
       try
         session.SystemName := jwt.subject;
         session.SystemEvidence := systemFromJWT;
-        session.PatientList.Add(PatientId);
+        session.Compartments.Add(TFHIRCompartmentId.Create(frtPatient, PatientId));
         setCookie(response, FHIR_COOKIE_NAME, session.Cookie, domain, '', session.Expires, false);
         {$IFNDEF FHIR2}
         populateFromConsent(consentKey, session);
@@ -1164,7 +1164,7 @@ begin
           json.Value('expires_in', inttostr(trunc((session.Expires - now) / DATETIME_SECOND_ONE)));
 //          json.Value('id_token', session.JWTPacked);
           json.Value('scope', session.scopes);
-          json.Value('patient', session.PatientList[0]);
+          json.Value('patient', session.Compartments[0].id);
           json.Finish;
           response.ContentText := json.ToString;
         finally

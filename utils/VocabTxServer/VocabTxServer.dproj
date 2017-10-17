@@ -6,7 +6,7 @@
         <MainSource>VocabTxServer.dpr</MainSource>
         <Base>True</Base>
         <Config Condition="'$(Config)'==''">Debug</Config>
-        <Platform Condition="'$(Platform)'==''">OSX32</Platform>
+        <Platform Condition="'$(Platform)'==''">Win64</Platform>
         <TargetedPlatforms>6</TargetedPlatforms>
         <AppType>Application</AppType>
     </PropertyGroup>
@@ -161,6 +161,8 @@
         </DCCReference>
         <DCCReference Include="..\..\Libraries\ui\OSXUIUtils.pas"/>
         <DCCReference Include="..\..\reference-platform\support\AfsResourceVolumes.pas"/>
+        <DCCReference Include="..\..\reference-platform\support\AdvWinInetClients.pas"/>
+        <DCCReference Include="..\..\reference-platform\support\MsXmlParser.pas"/>
         <DCCReference Include="..\..\reference-platform\support\CDSHooksClientManager.pas"/>
         <DCCReference Include="..\..\reference-platform\support\FileSupport.pas"/>
         <DCCReference Include="..\..\reference-platform\support\OSXUtils.pas"/>
@@ -226,7 +228,7 @@
         <DCCReference Include="..\..\reference-platform\support\InternetFetcher.pas"/>
         <DCCReference Include="..\..\reference-platform\support\TurtleParser.pas"/>
         <DCCReference Include="..\..\reference-platform\r4\FHIRContext.pas"/>
-        <DCCReference Include="..\..\reference-platform\r4\FHIRSupport.pas"/>
+        <DCCReference Include="..\..\reference-platform\support\FHIRSupport.pas"/>
         <DCCReference Include="..\..\reference-platform\support\AdvStringMatches.pas"/>
         <DCCReference Include="..\..\reference-platform\support\JWT.pas"/>
         <DCCReference Include="..\..\reference-platform\support\HMAC.pas"/>
@@ -422,12 +424,6 @@
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
-                <DeployFile LocalName="Win64\Debug\VocabTxServer.rsm" Configuration="Debug" Class="DebugSymbols">
-                    <Platform Name="Win64">
-                        <RemoteName>VocabTxServer.rsm</RemoteName>
-                        <Overwrite>true</Overwrite>
-                    </Platform>
-                </DeployFile>
                 <DeployFile LocalName="Win64\Debug\VocabTxServer.exe" Configuration="Debug" Class="ProjectOutput">
                     <Platform Name="Win64">
                         <RemoteName>VocabTxServer.exe</RemoteName>
@@ -437,6 +433,12 @@
                 <DeployFile LocalName="OSX32\Debug\VocabTxServer.rsm" Configuration="Debug" Class="DebugSymbols">
                     <Platform Name="OSX32">
                         <RemoteDir>Contents\MacOS\</RemoteDir>
+                        <RemoteName>VocabTxServer.rsm</RemoteName>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
+                <DeployFile LocalName="Win64\Debug\VocabTxServer.rsm" Configuration="Debug" Class="DebugSymbols">
+                    <Platform Name="Win64">
                         <RemoteName>VocabTxServer.rsm</RemoteName>
                         <Overwrite>true</Overwrite>
                     </Platform>

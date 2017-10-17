@@ -89,7 +89,7 @@ Uses
 
   AdvBuffers, AdvObjectLists, AdvStringMatches, AdvZipParts, AdvZipReaders,
   AdvVCLStreams, AdvMemories, AdvIntegerObjectMatches, AdvExceptions,
-  AdvGenerics, AdvFiles,
+  AdvGenerics, AdvFiles, AdvZipWriters,
 
   kCritSct, ParseMap, TextUtilities, KDBManager, HTMLPublisher, KDBDialects,
   AdvJSON, libeay32, RDFUtilities, JWT,
@@ -234,6 +234,7 @@ Type
     FHost: String;
     FActualPort: integer;
     FBasePath: String;
+    FXVersionPath : String;
     FActualSSLPort: integer;
     FSecurePath: String;
     FCertFile: String;
@@ -280,10 +281,12 @@ Type
     FPatientHooks: TAdvMap<TFHIRWebServerPatientViewContext>;
 {$ENDIF}
     FReverseProxyList: TAdvList<TReverseProxyInfo>;
+    FReverseProxyByVersion : TAdvMap<TReverseProxyInfo>;
     FCDSHooksServer: TCDSHooksServer;
     FIsTerminologyServerOnly: boolean;
     FThreads : TList<TAsyncTaskThread>;
 
+    function readVersion(request: TIdHTTPRequestInfo) : TFHIRVersion;
     function OAuthPath(secure: boolean): String;
     procedure PopulateConformanceAuth(rest: TFhirCapabilityStatementRest);
     procedure PopulateConformance(sender: TObject; conf: TFhirCapabilityStatement);
@@ -319,7 +322,7 @@ Type
     // Procedure ReadTags(Headers: TIdHeaderList; Request : TFHIRRequest); overload;
     Procedure ReadTags(header: String; request: TFHIRRequest); overload;
     function CheckSessionOK(Session: TFHIRSession; ip: string): boolean;
-    Function BuildFhirHomePage(comps, lang, host, sBaseURL: String; Session: TFHIRSession; secure: boolean): String;
+    Function BuildFhirHomePage(compList : TAdvList<TFHIRCompartmentId>; lang, host, sBaseURL: String; Session: TFHIRSession; secure: boolean): String;
     Function BuildFhirAuthenticationPage(lang, host, path, Msg: String; secure: boolean): String;
     Function BuildFhirUploadPage(lang, host, sBaseURL: String; aType: String; Session: TFHIRSession): String;
     Procedure CreatePostStream(AContext: TIdContext; AHeaders: TIdHeaderList; var VPostStream: TStream);
@@ -327,25 +330,20 @@ Type
     Procedure ProcessScimRequest(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo);
     procedure MarkEntry(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo);
     procedure MarkExit(AContext: TIdContext);
-    Procedure ReverseProxy(proxy: TReverseProxyInfo; AContext: TIdContext; request: TIdHTTPRequestInfo; Session: TFHIRSession; response: TIdHTTPResponseInfo;
-      secure: boolean);
+    Procedure ReverseProxy(proxy: TReverseProxyInfo; AContext: TIdContext; request: TIdHTTPRequestInfo; Session: TFHIRSession; response: TIdHTTPResponseInfo; secure: boolean);
     Procedure PlainRequest(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo);
     Procedure SecureRequest(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo);
-    Procedure HandleRequest(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; ssl, secure: boolean; path: String;
-      esession: TFHIRSession; cert: TIdX509);
+    Procedure HandleRequest(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; ssl, secure: boolean; path: String; esession: TFHIRSession; cert: TIdX509);
     Procedure HandleWebSockets(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; ssl, secure: boolean; path: String);
     Procedure HandleDiscoveryRedirect(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo);
     Procedure HandleOWinToken(AContext: TIdContext; secure: boolean; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo);
-    Procedure ProcessOutput(oRequest: TFHIRRequest; oResponse: TFHIRResponse; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo;
-      relativeReferenceAdjustment: integer; pretty, gzip: boolean);
+    Procedure ProcessOutput(oRequest: TFHIRRequest; oResponse: TFHIRResponse; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; relativeReferenceAdjustment: integer; pretty, gzip: boolean);
     function extractFileData(form: TMimeMessage; const name: String; var sContentType: String): TStream;
     Procedure StartServer(active: boolean);
     Procedure StopServer;
-    Function ProcessZip(lang: String; oStream: TStream; name, base: String; init: boolean; ini: TFHIRServerIniFile; Context: TOperationContext;
-      var cursor: integer): TFHIRBundle;
+    Function ProcessZip(lang: String; oStream: TStream; name, base: String; init: boolean; ini: TFHIRServerIniFile; Context: TOperationContext; var cursor: integer): TFHIRBundle;
     procedure SSLPassword(var Password: String);
-    procedure SendError(response: TIdHTTPResponseInfo; status: word; format: TFHIRFormat; lang, message, url: String; e: exception; Session: TFHIRSession;
-      addLogins: boolean; path: String; relativeReferenceAdjustment: integer; code: TFhirIssueTypeEnum);
+    procedure SendError(response: TIdHTTPResponseInfo; status: word; format: TFHIRFormat; lang, message, url: String; e: exception; Session: TFHIRSession; addLogins: boolean; path: String; relativeReferenceAdjustment: integer; code: TFhirIssueTypeEnum);
     Procedure ProcessRequest(Context: TOperationContext; request: TFHIRRequest; response: TFHIRResponse);
     Procedure ProcessAsyncRequest(Context: TOperationContext; request: TFHIRRequest; response: TFHIRResponse);
     Procedure ProcessTaskRequest(Context: TOperationContext; request: TFHIRRequest; response: TFHIRResponse);
@@ -493,6 +491,7 @@ begin
   // web server configuration
   FActualPort := FIni.ReadInteger(voMaybeVersioned, 'web', 'http', 0);
   FBasePath := FIni.ReadString(voMaybeVersioned, 'web', 'base', '');
+  FXVersionPath := FIni.ReadString(voMaybeVersioned, 'web', 'xver', '');
   FActualSSLPort := FIni.ReadInteger(voMaybeVersioned, 'web', 'https', 0);
   FSecurePath := FIni.ReadString(voMaybeVersioned, 'web', 'secure', '');
   FCertFile := FIni.ReadString(voMaybeVersioned, 'web', 'certname', '');
@@ -507,6 +506,12 @@ begin
     FIni.ReadSection(voMaybeVersioned, 'reverse-proxy', ts);
     for s in ts do
       FReverseProxyList.Add(TReverseProxyInfo.Create(s, FIni.ReadString(voMaybeVersioned, 'reverse-proxy', s, '')));
+    if FXVersionPath <> '' then
+    begin
+      FIni.ReadSection(voMaybeVersioned, 'version-proxy', ts);
+      for s in ts do
+        FReverseProxyByVersion.Add(s, TReverseProxyInfo.Create(FXVersionPath, FIni.ReadString(voMaybeVersioned, 'version-proxy', s, '')));
+    end;
   finally
     ts.Free;
   end;
@@ -586,6 +591,7 @@ Begin
   FPatientHooks := TAdvMap<TFHIRWebServerPatientViewContext>.Create;
 {$ENDIF}
   FReverseProxyList := TAdvList<TReverseProxyInfo>.Create;
+  FReverseProxyByVersion := TAdvMap<TReverseProxyInfo>.Create;
   FServerContext := Context;
 
   loadConfiguration;
@@ -677,6 +683,7 @@ Begin
   FPatientHooks.Free;
 {$ENDIF}
   FReverseProxyList.Free;
+  FReverseProxyByVersion.Free;
   FServerContext.Free;
   FThreads.Free;
   FLock.Free;
@@ -1114,6 +1121,7 @@ var
   c: integer;
   check, handled: boolean;
   rp: TReverseProxyInfo;
+  version : TFHIRVersion;
 begin
   Session := nil;
   MarkEntry(AContext, request, response);
@@ -1163,6 +1171,19 @@ begin
       FCDSHooksServer.HandleRequest(false, FBasePath, Session, AContext, request, response)
     else if request.Document.StartsWith(AppendForwardSlash(FBasePath) + 'websockets', false) then
       HandleWebSockets(AContext, request, response, false, false, FBasePath)
+    else if (FXVersionPath <> '') and (request.Document.StartsWith(FXVersionPath, false)) then
+    begin
+      version := readVersion(request);
+      if version = fhirVersionUnknown then
+         raise Exception.Create('No specific version specified in the Accept: header');
+//        version := CURRENT_FHIR_VERSION
+      if version = CURRENT_FHIR_VERSION then
+        HandleRequest(AContext, request, response, false, false, FXVersionPath, Session, nil)
+      else if FReverseProxyByVersion.TryGetValue(CODES_TFHIRVersion[version], rp) then
+          ReverseProxy(rp, AContext, request, Session, response, false)
+      else
+        raise Exception.Create('The version '+CODES_TFHIRVersion[version]+' is not supported');
+    end
     else if request.Document.StartsWith(FBasePath, false) then
       HandleRequest(AContext, request, response, false, false, FBasePath, Session, nil)
     else if request.Document.StartsWith(AppendForwardSlash(FBasePath) + 'FSecurePath', false) then
@@ -1566,7 +1587,7 @@ Begin
                     response.ResponseNo := 200;
                     response.contentType := 'text/html; charset=UTF-8';
                     response.FreeContentStream := true;
-                    response.ContentStream := StringToUTF8Stream(BuildFhirHomePage(oRequest.Compartments, lang, sHost, path, oRequest.Session, secure));
+                    response.ContentStream := StringToUTF8Stream(BuildFhirHomePage(oRequest.SessionCompartments, lang, sHost, path, oRequest.Session, secure));
                   end
                   else
                   begin
@@ -2464,10 +2485,6 @@ Begin
 
       if (oRequest.CommandType <> fcmdNull) then
       begin
-
-        if (oRequest.Session <> nil) and (oRequest.Session.User <> nil) and (oRequest.Session.PatientList.Count > 0) then
-          oRequest.Compartments := oRequest.Session.BuildCompartmentList;
-
         if (oRequest.CommandType in [fcmdTransaction, fcmdBatch, fcmdUpdate, fcmdPatch, fcmdValidate, fcmdCreate]) or
           ((oRequest.CommandType in [fcmdUpload, fcmdSearch, fcmdWebUI, fcmdOperation]) and (sCommand = 'POST') and (oPostStream <> nil) and
           (oPostStream.Size > 0)) or ((oRequest.CommandType in [fcmdDelete]) and ((sCommand = 'DELETE')) and (oPostStream <> nil) and (oPostStream.Size > 0) and
@@ -2780,6 +2797,7 @@ begin
           try
             response.contentType := oComp.MimeType;
             oComp.SummaryOption := oRequest.Summary;
+            oComp.ElementToCompose.Assign(oRequest.Elements);
             oComp.Compose(stream, res, pretty, oResponse.link_List);
           finally
             oComp.Free;
@@ -3047,6 +3065,8 @@ var
   key, i : integer;
   l : TFhirBundleLink;
   n, f : string;
+  zip : TAdvZipWriter;
+  m : TAdvMemoryStream;
 begin
   names := TStringList.Create;
   try
@@ -3066,11 +3086,37 @@ begin
       end
       else if request.subId <> '' then
       begin
-        if (fmt <> response.Format) then
+        if (fmt <> response.Format) and (response.Format <> ffXhtml) then
         begin
           response.HTTPCode := 500;
           response.Message := 'Server Error';
           response.resource := BuildOperationOutcome(request.Lang, 'Mime Type mismatch. Original request was for '+MIMETYPES_TFHIRFormat[fmt]+', current request is for '+MIMETYPES_TFHIRFormat[response.format]);
+        end
+        else if request.SubId = 'zip' then
+        begin
+          m := TAdvMemoryStream.Create;
+          try
+            zip := TAdvZipWriter.Create;
+            try
+              zip.Stream := m.Link;
+              for n in names do
+              begin
+                f := Path([ServerContext.TaskFolder, 'task-'+inttostr(key)+'-'+n+EXT_WEB_TFHIRFormat[fmt]]);
+                zip.addFile(n+EXT_WEB_TFHIRFormat[fmt], f);
+              end;
+              zip.WriteZip;
+            finally
+              zip.Free;
+            end;
+            m.Position := 0;
+            response.HTTPCode := 200;
+            response.Message := 'OK';
+            response.Stream := m.Link;
+            response.ContentType := 'application/zip';
+            FServerContext.Storage.recordDownload(key, request.subId);
+          finally
+            m.Free;
+          end;
         end
         else
         begin
@@ -3123,6 +3169,14 @@ begin
               finally
                 l.Free;
               end;
+            end;
+            l := TFhirBundleLink.Create;
+            try
+              l.url := request.baseUrl+'task/'+request.id+'.zip';
+              l.relation := 'collection';
+              response.link_list.add(l.Link);
+            finally
+              l.Free;
             end;
             if response.format = ffXhtml then
             begin
@@ -3194,7 +3248,7 @@ begin
   result := result + TFHIRXhtmlComposer.Footer(lang, lang);
 end;
 
-function TFhirWebServer.BuildFhirHomePage(comps, lang, host, sBaseURL: String; Session: TFHIRSession; secure: boolean): String;
+function TFhirWebServer.BuildFhirHomePage(compList : TAdvList<TFHIRCompartmentId>; lang, host, sBaseURL: String; Session: TFHIRSession; secure: boolean): String;
 var
   counts: TStringList;
   a: String;
@@ -3211,7 +3265,7 @@ begin
     for a in FServerContext.ValidatorContext.allResourceNames do
     begin
       ix := counts.Add(a);
-      if (comps = '') or FServerContext.Indexes.Compartments.existsInCompartment(frtPatient, a) then
+      if (compList.Empty) or FServerContext.Indexes.Compartments.existsInCompartment(frtPatient, a) then
         counts.Objects[ix] := TObject(0)
       else
         counts.Objects[ix] := TObject(-1);
@@ -3221,7 +3275,7 @@ begin
     profiles := TAdvStringMatch.Create;
     try
       profiles.forced := true;
-      counts := FServerContext.Storage.FetchResourceCounts(comps);
+      counts := FServerContext.Storage.FetchResourceCounts(compList);
 
       s := host + sBaseURL;
       b := TStringBuilder.Create;
@@ -3746,6 +3800,69 @@ begin
   // raise Exception.Create('todo');
 end;
 
+function TFhirWebServer.readVersion(request : TIdHTTPRequestInfo): TFHIRVersion;
+  function readVersionFromHeader(tlist : String): TFHIRVersion;
+  var
+    i, s, p, pi,l,r : string;
+  begin
+    result := fhirVersionUnknown;
+    for i in tlist.Split([',']) do
+    begin
+      s := i.Trim;
+      if s.StartsWith('application/fhir.r') and (s.Length > 18) then
+        case s[19] of
+          '2': exit(fhirVersionRelease2);
+          '3': exit(fhirVersionRelease3);
+          '4': exit(fhirVersionRelease4);
+        end
+      else for p in s.Split([';']) do
+      begin
+        pi := p.Trim;
+        StringSplit(pi, '=', l, r);
+        if l = 'fhir-version' then
+        begin
+          if r = 'r3' then
+            exit(fhirVersionRelease3)
+          else if r = '3.0' then
+            exit(fhirVersionRelease3)
+          else if r = '3.0.1' then
+            exit(fhirVersionRelease3)
+          else if r = 'r2' then
+            exit(fhirVersionRelease2)
+          else if r = '1.0' then
+            exit(fhirVersionRelease2)
+          else if r = '1.0.2' then
+            exit(fhirVersionRelease2)
+          else if r = 'r4' then
+            exit(fhirVersionRelease4)
+          else if r = '3.1' then
+            exit(fhirVersionRelease4)
+          else if r = '3.1.0' then
+            exit(fhirVersionRelease4)
+        end;
+      end;
+    end;
+  end;
+var
+  vA, vC : TFHIRVersion;
+begin
+   vA := readVersionFromHeader(request.Accept);
+   if request.ContentType <> '' then
+   begin
+     vC := readVersionFromHeader(request.ContentType);
+     if (va = fhirVersionUnknown) then
+       exit(vC)
+     else if (vC = fhirVersionUnknown) then
+       exit(vA)
+     else if (vA = vC) then
+       exit(vA)
+     else
+       raise Exception.Create('Version mismatch between Accept: and Content-Type: Headers');
+   end
+   else
+     exit(vA);
+end;
+
 procedure TFhirWebServer.RecordExchange(req: TFHIRRequest; resp: TFHIRResponse; e: exception);
 var
   op: TFhirTestScriptSetupActionOperation;
@@ -3779,7 +3896,6 @@ begin
   if req.provenance <> nil then
     op.requestHeaderList.Add('x-provenance', ComposeJson(FServerContext.ValidatorContext, req.provenance));
   op.url := req.url;
-
 end;
 
 procedure TFhirWebServer.ReturnDiagnostics(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; ssl, secure: boolean;

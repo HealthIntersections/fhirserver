@@ -218,6 +218,8 @@ Function StringExcludeAfter(Const sText, sSymbol : String) : String; Overload;
 
 function jsonEscape(s : String; isString : boolean) : String;
 
+function StringFindEndOfNumber(const s : String; index : integer) : integer;
+
 Implementation
 
 
@@ -1532,6 +1534,29 @@ begin
   end;
 end;
 
+function StringFindEndOfNumber(const s : String; index : integer) : integer;
+var
+  dec : boolean;
+begin
+  result := index;
+  if s.Length <= index then
+    exit;
+  if s[index] = '-' then
+    inc(index);
+  if s.Length <= result then
+    exit;
+  if CharInSet(s[index], ['0'..'9']) then
+  begin
+    dec := false;
+    while (index <= s.Length) and (CharInSet(s[index], ['0'..'9']) or (not dec and (s[index] = '.'))) do
+    begin
+      if s[index] = '.' then
+        dec := true;
+      inc(index);
+    end;
+    exit(index-1);
+  end;
+end;
 
 Initialization
 

@@ -141,6 +141,10 @@ Type
     property softwareVersion : String read FsoftwareVersion write FsoftwareVersion;
   end;
 
+  TFindResourceOption = (froFindDeletedResource, froForCommit);
+
+  TFindResourceOptions = set of TFindResourceOption;
+
   TFHIROperationEngine = class (TAdvObject)
   private
     FOnPopulateConformance : TPopulateConformanceEvent;
@@ -187,11 +191,11 @@ Type
     Function Execute(context : TOperationContext; request: TFHIRRequest; response : TFHIRResponse) : String;  virtual;
     function LookupReference(context : TFHIRRequest; id : String) : TResourceWithReference; virtual;
     function getResourcesByParam(aType : TFhirResourceType; name, value : string; var needSecure : boolean): TAdvList<TFHIRResource>; virtual;
-    function FindResource(aType, sId : String; bAllowDeleted : boolean; var resourceKey, versionKey : integer; request: TFHIRRequest; response: TFHIRResponse; compartments : String): boolean; virtual;
+    function FindResource(aType, sId : String; options : TFindResourceOptions; var resourceKey, versionKey : integer; request: TFHIRRequest; response: TFHIRResponse; sessionCompartments : TAdvList<TFHIRCompartmentId>): boolean; virtual;
     function GetResourceById(request: TFHIRRequest; aType : String; id, base : String; var needSecure : boolean) : TFHIRResource; virtual;
     function getResourceByUrl(aType : TFhirResourceType; url, version : string; allowNil : boolean; var needSecure : boolean): TFHIRResource; virtual;
     function GetResourceByKey(key : integer; var needSecure : boolean): TFHIRResource; virtual;
-    function ResolveSearchId(resourceName, compartmentId, compartments : String; baseURL, params : String) : TMatchingResourceList; virtual;
+    function ResolveSearchId(resourceName : String; requestCompartment : TFHIRCompartmentId; SessionCompartments : TAdvList<TFHIRCompartmentId>; baseURL, params : String) : TMatchingResourceList; virtual;
     procedure AuditRest(session : TFhirSession; reqid, ip, resourceName : string; id, ver : String; verkey : integer; op : TFHIRCommandType; provenance : TFhirProvenance; httpCode : Integer; name, message : String); overload; virtual;
     procedure AuditRest(session : TFhirSession; reqid, ip, resourceName : string; id, ver : String; verkey : integer; op : TFHIRCommandType; provenance : TFhirProvenance; opName : String; httpCode : Integer; name, message : String); overload; virtual;
   end;
@@ -242,7 +246,7 @@ Type
     function FetchAuthorization(hash : String; var PatientId : String; var ConsentKey, SessionKey : Integer; var Expiry : TDateTime; var jwt : String) : boolean; virtual;
 
     // server total counts:
-    function FetchResourceCounts(comps : String) : TStringList; virtual; // comps = comma delimited list of patient compartments
+    function FetchResourceCounts(compList : TAdvList<TFHIRCompartmentId>) : TStringList; virtual; // comps = comma delimited list of patient compartments
     Property TotalResourceCount: integer read GetTotalResourceCount;
 
 
@@ -337,7 +341,7 @@ begin
   raise Exception.Create('The function "FetchResource()" must be overridden in '+className);
 end;
 
-function TFHIRStorageService.FetchResourceCounts(comps : String): TStringList;
+function TFHIRStorageService.FetchResourceCounts(compList : TAdvList<TFHIRCompartmentId>): TStringList;
 begin
   raise Exception.Create('The function "FetchResourceCounts(comps : String): TStringList" must be overridden in '+className);
 end;
@@ -1067,7 +1071,7 @@ begin
   raise Exception.Create('This server does not implement the "VersionRead" function');
 end;
 
-function TFHIROperationEngine.FindResource(aType, sId: String; bAllowDeleted: boolean; var resourceKey, versionKey: integer; request: TFHIRRequest; response: TFHIRResponse; compartments: String): boolean;
+function TFHIROperationEngine.FindResource(aType, sId: String; options : TFindResourceOptions; var resourceKey, versionKey: integer; request: TFHIRRequest; response: TFHIRResponse; sessionCompartments : TAdvList<TFHIRCompartmentId>): boolean;
 begin
   raise Exception.Create('This server does not implement the "FindResource" function');
 end;
@@ -1097,7 +1101,7 @@ begin
   raise Exception.Create('The function "LookupReference(context: TFHIRRequest; id: String): TResourceWithReference" must be overridden in '+className);
 end;
 
-function TFHIROperationEngine.ResolveSearchId(resourceName, compartmentId, compartments, baseURL, params: String): TMatchingResourceList;
+function TFHIROperationEngine.ResolveSearchId(resourceName : String; requestCompartment : TFHIRCompartmentId; sessionCompartments : TAdvList<TFHIRCompartmentId>; baseURL, params : String) : TMatchingResourceList;
 begin
   raise Exception.Create('This server does not implement the "GetResourceByKey" function');
 end;
@@ -1198,35 +1202,27 @@ end;
 
 function TFHIRInternalClient.conformance(summary: boolean): TFhirCapabilityStatement;
 var
-  comp : TFHIRCompartmentList;
   req : TFHIRRequest;
   resp : TFHIRResponse;
 begin
-  comp := TFHIRCompartmentList.Create;
+  req := TFHIRRequest.Create(context, roOperation, nil);
   try
-    comp.register(frtPatient, '', session.BuildCompartmentList);
-    req := TFHIRRequest.Create(context, roOperation, comp.Link);
+    req.CommandType := fcmdConformanceStmt;
+    resp := TFHIRResponse.Create;
     try
-      req.CommandType := fcmdConformanceStmt;
-      resp := TFHIRResponse.Create;
-      try
-        FEngine.ExecuteConformanceStmt(req, resp);
-        if resp.HTTPCode >= 300 then
-          if (resp.Resource <> nil) and (resp.Resource is TFhirOperationOutcome) then
-            raise EFHIRClientException.Create((resp.Resource as TFhirOperationOutcome).asExceptionMessage, resp.Resource as TFhirOperationOutcome)
-          else
-            raise EFHIRClientException.Create(resp.Body, BuildOperationOutcome('en', resp.Body));
-        result := resp.Resource.Link as TFhirCapabilityStatement;
-      finally
-        resp.Free;
-      end;
+      FEngine.ExecuteConformanceStmt(req, resp);
+      if resp.HTTPCode >= 300 then
+        if (resp.Resource <> nil) and (resp.Resource is TFhirOperationOutcome) then
+          raise EFHIRClientException.Create((resp.Resource as TFhirOperationOutcome).asExceptionMessage, resp.Resource as TFhirOperationOutcome)
+        else
+          raise EFHIRClientException.Create(resp.Body, BuildOperationOutcome('en', resp.Body));
+      result := resp.Resource.Link as TFhirCapabilityStatement;
     finally
-      req.Free;
+      resp.Free;
     end;
   finally
-    comp.Free;
+    req.Free;
   end;
-
 end;
 
 function TFHIRInternalClient.createResource(resource: TFhirResource; var id: String): TFHIRResource;
@@ -1358,7 +1354,7 @@ begin
   parts := ref.Split(['/']);
   if length(parts) <> 2 then
     raise Exception.Create('Unable to understand the subject reference "'+ref+'"');
-  if NOT manager.FindResource(parts[0], parts[1], false, result, versionKey, request, nil, '') then
+  if NOT manager.FindResource(parts[0], parts[1], [], result, versionKey, request, nil, nil) then
     result := 0;
 end;
 

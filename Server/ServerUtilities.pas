@@ -34,7 +34,7 @@ interface
 uses
   SysUtils, Classes, IniFiles, Generics.Collections,
   IdCustomHTTPServer,
-  AdvObjects,
+  AdvObjects, AdvGenerics,
   FHIRResources, FHIRConstants, FHIRSupport;
 
 type
@@ -43,6 +43,7 @@ type
   TFHIRResourceConfig = class (TAdvObject)
   public
     name : String;
+    enum : TFHIRResourceType;
     key: integer;
     Supported: Boolean;
     IdGuids: Boolean;
@@ -99,6 +100,8 @@ type
     procedure WriteInteger(const Section, Ident: string; Value: Integer);
     procedure DeleteKey(const Section, Ident: String);
   end;
+
+function buildCompartmentsSQL(resconfig : TAdvMap<TFHIRResourceConfig>; compartment : TFHIRCompartmentId; sessionCompartments : TAdvList<TFHIRCompartmentId>) : String;
 
 implementation
 
@@ -235,6 +238,31 @@ end;
 procedure TFHIRServerIniFile.WriteString(const Section, Ident, Value: String);
 begin
   FIni.WriteString(section, ident, value);
+end;
+
+function buildCompartmentsSQL(resconfig : TAdvMap<TFHIRResourceConfig>; compartment : TFHIRCompartmentId; sessionCompartments : TAdvList<TFHIRCompartmentId>) : String;
+var
+  first : boolean;
+  c : TFHIRCompartmentId;
+begin
+  result := '';
+  if (compartment <> nil) then
+    result := ' and Ids.ResourceKey in (select ResourceKey from Compartments where TypeKey = '+inttostr(ResConfig[CODES_TFHIRResourceType[compartment.Enum]].key)+' and Id = '''+compartment.Id+''')';
+
+  if (sessionCompartments <> nil) and (sessionCompartments.Count > 0) then
+  begin
+    result := result +' and Ids.ResourceKey in (select ResourceKey from Compartments where ';
+    first := true;
+    for c in sessionCompartments do
+    begin
+      if first then
+        first := false
+      else
+        result := result + ' or ';
+      result := result + 'TypeKey = '+inttostr(ResConfig[CODES_TFHIRResourceType[c.Enum]].key)+' and Id = '''+c.id+'''';
+    end;
+    result := result + ')';
+  end;
 end;
 
 end.

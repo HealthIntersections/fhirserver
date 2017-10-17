@@ -188,7 +188,7 @@
   AdvZipWorkers in &apos;..\reference-platform\support\AdvZipWorkers.pas&apos;,
   InternetFetcher in &apos;..\reference-platform\support\InternetFetcher.pas&apos;{,
   FHIRContext in &apos;..\reference-platform\r4\FHIRContext.pas&apos;,
-  FHIRSupport in &apos;..\reference-platform\r4\FHIRSupport.pas&apos;,
+  FHIRSupport in &apos;..\reference-platform\support\FHIRSupport.pas&apos;,
   SCIMObjects in &apos;..\reference-platform\support\SCIMObjects.pas&apos;,
   GraphQL in &apos;..\reference-platform\support\GraphQL.pas&apos;,
   FHIRConstants in &apos;..\reference-platform\r4\FHIRConstants.pas&apos;,
@@ -227,7 +227,7 @@
         <DCCReference Include="..\reference-platform\r4\FHIRContext.pas"/>
         <DCCReference Include="..\reference-platform\r4\FHIRTypes.pas"/>
         <DCCReference Include="..\reference-platform\r4\FHIRResources.pas"/>
-        <DCCReference Include="..\reference-platform\r4\FHIRSupport.pas"/>
+        <DCCReference Include="..\reference-platform\support\FHIRSupport.pas"/>
         <DCCReference Include="..\reference-platform\support\SCIMObjects.pas"/>
         <DCCReference Include="..\reference-platform\support\GraphQL.pas"/>
         <DCCReference Include="..\reference-platform\r4\FHIRConstants.pas"/>
@@ -248,6 +248,8 @@
         <DCCReference Include="..\reference-platform\support\AdvZipReaders.pas"/>
         <DCCReference Include="..\reference-platform\support\FHIRLog.pas"/>
         <DCCReference Include="..\reference-platform\r4\FhirPath.pas"/>
+        <DCCReference Include="..\reference-platform\support\InternetFetcher.pas"/>
+        <DCCReference Include="..\reference-platform\support\FHIRIndexBase.pas"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>

@@ -176,7 +176,7 @@
         <DCCReference Include="FHIRPath.pas"/>
         <DCCReference Include="tests\FHIRPathTests.pas"/>
         <DCCReference Include="FHIRResources.pas"/>
-        <DCCReference Include="FHIRSupport.pas"/>
+        <DCCReference Include="..\support\FHIRSupport.pas"/>
         <DCCReference Include="tests\FHIRTestWorker.pas"/>
         <DCCReference Include="FHIRUtilities.pas"/>
         <DCCReference Include="tests\FHIRValidatorTests.pas"/>
@@ -219,6 +219,7 @@
         <DCCReference Include="FHIRParserTurtle.pas"/>
         <DCCReference Include="..\support\FHIRLog.pas"/>
         <DCCReference Include="..\..\Server\Logging.pas"/>
+        <DCCReference Include="..\support\FHIRIndexBase.pas"/>
         <None Include="Profiling\AQtimeModule1.aqt"/>
         <BuildConfiguration Include="Debug">
             <Key>Cfg_2</Key>

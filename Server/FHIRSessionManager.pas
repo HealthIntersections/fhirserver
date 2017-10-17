@@ -145,6 +145,7 @@ begin
         session.originalUrl := '';
         session.email := '';
         session.userkey := 0;
+        session.Compartments.Add(TFHIRCompartmentId.Create(frtPatient, '1'));
         FSessions.Add(session.Cookie, session.Link);
         result := session.Link as TFhirSession;
       end;

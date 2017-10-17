@@ -346,7 +346,7 @@ procedure TFHIRDatabaseInstaller.CreatePseudoData;
 begin
   FConn.ExecSQL('CREATE TABLE PseudoData ( '+#13#10+
        ' PseudoDataKey  '+DBKeyType(FConn.owner.platform)+'      '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+  //
-       ' Type           int                                      '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+    //
+       ' ResourceType   int                                      '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+    //
        ' Id             nchar(64)                                '+ColCanBeNull(FConn.owner.platform, True)+', '+#13#10+    //
        ' Given          nchar(32)                                '+ColCanBeNull(FConn.owner.platform, True )+', '+#13#10+    //
        ' Family         nchar(32)                                '+ColCanBeNull(FConn.owner.platform, True )+', '+#13#10+  //
@@ -357,7 +357,7 @@ begin
        ' Telecom        nchar(20)                                '+ColCanBeNull(FConn.owner.platform, True )+', '+#13#10+  //
        ' Photo          '+DBBlobType(FConn.owner.platform)+'     '+ColCanBeNull(FConn.owner.platform, True )+', '+#13#10+  //
        PrimaryKeyType(FConn.owner.Platform, 'PK_PseudoData', 'PseudoDataKey')+') '+CreateTableInfo(FConn.owner.platform));
-  FConn.ExecSQL('Create INDEX SK_PseudoData ON ClosureEntries (Type, Id)');
+  FConn.ExecSQL('Create INDEX SK_PseudoData ON PseudoData (ResourceType, Id)');
 end;
 
 

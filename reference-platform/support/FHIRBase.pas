@@ -59,8 +59,13 @@ Const
 
 
 Type
-  TFHIRVersion = (fhirVersionRelease1, fhirVersionRelease2, fhirVersionRelease3, fhirVersionRelease4);
+  TFHIRVersion = (fhirVersionUnknown, fhirVersionRelease1, fhirVersionRelease2, fhirVersionRelease3, fhirVersionRelease4);
 
+Const
+  CODES_TFHIRVersion : Array [TFHIRVersion] of String = ('', 'r1', 'r2', 'r3', 'r4');
+  CURRENT_FHIR_VERSION = {$IFDEF FHIR1} fhirVersionRelease1 {$ENDIF} {$IFDEF FHIR2} fhirVersionRelease2 {$ENDIF}{$IFDEF FHIR3} fhirVersionRelease3 {$ENDIF} {$IFDEF FHIR4}  fhirVersionRelease4{$ENDIF} ;
+
+Type
   {@Enum TFHIRCommandType
     Possible command types supported by HL7Connect FHIR interfaces
   }

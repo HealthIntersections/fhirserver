@@ -186,7 +186,7 @@
         <DCCReference Include="..\reference-platform\dstu3\FHIRUtilities.pas"/>
         <DCCReference Include="..\reference-platform\Support\OIDSupport.pas"/>
         <DCCReference Include="..\reference-platform\Support\TextUtilities.pas"/>
-        <DCCReference Include="..\reference-platform\dstu3\FHIRSupport.pas"/>
+        <DCCReference Include="..\reference-platform\support\FHIRSupport.pas"/>
         <DCCReference Include="..\reference-platform\Support\JWT.pas"/>
         <DCCReference Include="..\reference-platform\Support\HMAC.pas"/>
         <DCCReference Include="..\reference-platform\Support\libeay32.pas"/>
@@ -293,6 +293,7 @@
         </DCCReference>
         <DCCReference Include="..\reference-platform\support\CDSHooksClientManager.pas"/>
         <DCCReference Include="..\reference-platform\client\FHIRClientSettings.pas"/>
+        <DCCReference Include="..\reference-platform\support\FHIRIndexBase.pas"/>
         <BuildConfiguration Include="Debug">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>

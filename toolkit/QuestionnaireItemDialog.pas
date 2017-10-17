@@ -1,5 +1,32 @@
 unit QuestionnaireItemDialog;
 
+{
+Copyright (c) 2017+, Health Intersections Pty Ltd (http://www.healthintersections.com.au)
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without modification,
+are permitted provided that the following conditions are met:
+
+ * Redistributions of source code must retain the above copyright notice, this
+   list of conditions and the following disclaimer.
+ * Redistributions in binary form must reproduce the above copyright notice,
+   this list of conditions and the following disclaimer in the documentation
+   and/or other materials provided with the distribution.
+ * Neither the name of HL7 nor the names of its contributors may be used to
+   endorse or promote products derived from this software without specific
+   prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS 'AS IS' AND
+ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+POSSIBILITY OF SUCH DAMAGE.
+}
 interface
 
 uses
@@ -10,7 +37,7 @@ uses
   FMX.ListBox, FMX.Edit, FMX.DialogService,
   StringSupport, DateSupport,
   ToolkitSettings,
-  FHIRTypes, FHIRResources, FHIRClient,
+  FHIRTypes, FHIRResources, FHIRClient, FHIRUtilities,
   ResourceEditingSupport, BaseFrame;
 
 type
@@ -78,6 +105,45 @@ type
     cedValueSet: TComboEdit;
     Button1: TButton;
     btnAsChild: TButton;
+    tabMode: TTabControl;
+    tabItemDetails: TTabItem;
+    tabConditions: TTabItem;
+    Panel3: TPanel;
+    grdConditions: TGrid;
+    grdColQuestions: TPopupColumn;
+    StringColumn1: TStringColumn;
+    btnAddCondition: TButton;
+    btnDeleteCondition: TButton;
+    TabItem5: TTabItem;
+    PopupColumn2: TPopupColumn;
+    Label10: TLabel;
+    edtXFormatPrompt: TEdit;
+    Label11: TLabel;
+    edtXMaxDecPlaces: TEdit;
+    Label12: TLabel;
+    edtXMaxAttachSize: TEdit;
+    Label13: TLabel;
+    edtXMinValue: TEdit;
+    Label14: TLabel;
+    edtXMaxValue: TEdit;
+    Label15: TLabel;
+    edtXMimeTypes: TEdit;
+    Label16: TLabel;
+    edtXMinLength: TEdit;
+    Label17: TLabel;
+    cbxXChoiceOrientation: TComboBox;
+    Label18: TLabel;
+    Label19: TLabel;
+    edtXMaxOccurs: TEdit;
+    edtXMinOccurs: TEdit;
+    Label20: TLabel;
+    edxSupportingURL: TEdit;
+    Label21: TLabel;
+    edtXDefinedUnit: TEdit;
+    Label22: TLabel;
+    edtXRegexRule: TEdit;
+    Label23: TLabel;
+    cbxXUiControlType: TComboBox;
     procedure FormShow(Sender: TObject);
     procedure btnOkClick(Sender: TObject);
     procedure cbxTypeChange(Sender: TObject);
@@ -91,20 +157,27 @@ type
     procedure btnLoadValuesets(Sender: TObject);
     procedure cedValueSetChange(Sender: TObject);
     procedure btnAsChildClick(Sender: TObject);
+    procedure grdConditionsGetValue(Sender: TObject; const ACol, ARow: Integer; var Value: TValue);
+    procedure grdConditionsSetValue(Sender: TObject; const ACol, ARow: Integer; const Value: TValue);
+    procedure btnAddConditionClick(Sender: TObject);
   private
     FItem: TFhirQuestionnaireItem;
     Loading : boolean;
     FSettings: TFHIRToolkitSettings;
     FOnWork: TWorkEvent;
+    FQuestionnaire: TFhirQuestionnaire;
     procedure SetItem(const Value: TFhirQuestionnaireItem);
     procedure loadInitialValue;
     procedure saveInitialValue;
     procedure loadOptions;
     procedure commit;
     procedure SetSettings(const Value: TFHIRToolkitSettings);
+    procedure SetQuestionnaire(const Value: TFhirQuestionnaire);
+    procedure listQuestions(list : TFhirQuestionnaireItemList);
   public
     destructor Destroy; override;
     property item : TFhirQuestionnaireItem read FItem write SetItem;
+    property questionnaire : TFhirQuestionnaire read FQuestionnaire write SetQuestionnaire;
 
     property Settings : TFHIRToolkitSettings read FSettings write SetSettings;
     property OnWork : TWorkEvent read FOnWork write FOnWork;
@@ -186,6 +259,12 @@ begin
     grdOptions.EndUpdate;
     grdOptions.Row := i - 1;
   end;
+end;
+
+procedure TQuestionnaireItemForm.btnAddConditionClick(Sender: TObject);
+begin
+  item.enableWhenList.Append.question := questionnaire.itemList[0].linkId;
+  grdConditions.RowCount := item.enableWhenList.Count;
 end;
 
 procedure TQuestionnaireItemForm.btnAsChildClick(Sender: TObject);
@@ -359,6 +438,8 @@ begin
 end;
 
 procedure TQuestionnaireItemForm.commit;
+var
+  s : string;
 begin
   item.required := cbRequired.IsChecked;
   item.repeats := cbRepeats.IsChecked;
@@ -368,17 +449,99 @@ begin
   item.prefix := edtPrefix.Text;
   item.text := edtText.Text;
   item.maxLength := edtMaxLength.Text;
+
+  if edtXFormatPrompt.Text <> '' then
+    item.setExtensionString('http://hl7.org/fhir/StructureDefinition/entryFormat', edtXFormatPrompt.Text)
+  else
+    item.removeExtension('http://hl7.org/fhir/StructureDefinition/entryFormat');
+  if edtXMaxDecPlaces.Text <> '' then
+    item.setExtensionInteger('http://hl7.org/fhir/StructureDefinition/maxDecimalPlaces', edtXMaxDecPlaces.Text)
+  else
+    item.removeExtension('http://hl7.org/fhir/StructureDefinition/maxDecimalPlaces');
+  if edtXMaxAttachSize.Text <> '' then
+    item.setExtensionDecimal('http://hl7.org/fhir/StructureDefinition/maxSize', edtXMaxAttachSize.Text)
+  else
+    item.removeExtension('http://hl7.org/fhir/StructureDefinition/maxSize');
+  if edtXMinValue.Text <> '' then
+    case item.type_ of
+      ItemTypeDecimal: item.setExtensionDecimal('http://hl7.org/fhir/StructureDefinition/minValue', edtXMinValue.Text);
+      ItemTypeInteger: item.setExtensionInteger('http://hl7.org/fhir/StructureDefinition/minValue', edtXMinValue.Text);
+      ItemTypeDate: item.setExtensionDate('http://hl7.org/fhir/StructureDefinition/minValue', edtXMinValue.Text);
+      ItemTypeDateTime: item.setExtensionDateTime('http://hl7.org/fhir/StructureDefinition/minValue', edtXMinValue.Text);
+      ItemTypeTime: item.setExtensionTime('http://hl7.org/fhir/StructureDefinition/minValue', edtXMinValue.Text);
+      ItemTypeQuantity: item.setExtension('http://hl7.org/fhir/StructureDefinition/minValue', TFhirQuantity.fromEdit(edtXMinValue.Text));
+    end
+  else
+    item.removeExtension('http://hl7.org/fhir/StructureDefinition/minValue');
+  if edtXMaxValue.Text <> '' then
+    case item.type_ of
+      ItemTypeDecimal: item.setExtensionDecimal('http://hl7.org/fhir/StructureDefinition/maxValue', edtXMinValue.Text);
+      ItemTypeInteger: item.setExtensionInteger('http://hl7.org/fhir/StructureDefinition/maxValue', edtXMinValue.Text);
+      ItemTypeDate: item.setExtensionDate('http://hl7.org/fhir/StructureDefinition/maxValue', edtXMinValue.Text);
+      ItemTypeDateTime: item.setExtensionDateTime('http://hl7.org/fhir/StructureDefinition/maxValue', edtXMinValue.Text);
+      ItemTypeTime: item.setExtensionTime('http://hl7.org/fhir/StructureDefinition/maxValue', edtXMinValue.Text);
+      ItemTypeQuantity: item.setExtension('http://hl7.org/fhir/StructureDefinition/maxValue', TFhirQuantity.fromEdit(edtXMinValue.Text));
+    end
+  else
+    item.removeExtension('http://hl7.org/fhir/StructureDefinition/maxValue');
+  item.removeExtension('http://hl7.org/fhir/StructureDefinition/mimeType');
+  for s in edtXMimeTypes.Text.Split([',']) do
+    item.addExtension('http://hl7.org/fhir/StructureDefinition/mimeType').value := TFHIRString.Create(s.Trim);
+  if edtXMinLength.Text <> '' then
+    item.setExtensionInteger('http://hl7.org/fhir/StructureDefinition/minLength', edtXMinLength.Text)
+  else
+    item.removeExtension('http://hl7.org/fhir/StructureDefinition/minLength');
+  if cbxXChoiceOrientation.ItemIndex > 0 then
+    item.setExtensionCode('http://hl7.org/fhir/StructureDefinition/entryFormat',  cbxXChoiceOrientation.items[cbxXChoiceOrientation.ItemIndex])
+  else
+    item.removeExtension('http://hl7.org/fhir/StructureDefinition/entryFormat');
+  if edtXMaxOccurs.Text <> '' then
+    item.setExtensionInteger('http://hl7.org/fhir/StructureDefinition/questionnaire-maxOccurs', edtXMaxOccurs.Text)
+  else
+    item.removeExtension('http://hl7.org/fhir/StructureDefinition/questionnaire-maxOccurs');
+  if edtXMinOccurs.Text <> '' then
+    item.setExtensionInteger('http://hl7.org/fhir/StructureDefinition/questionnaire-minOccurs', edtXMinOccurs.Text)
+  else
+    item.removeExtension('http://hl7.org/fhir/StructureDefinition/questionnaire-minOccurs');
+  if edxSupportingURL.Text <> '' then
+    item.setExtensionUri('http://hl7.org/fhir/StructureDefinition/questionnaire-supportLink', edxSupportingURL.Text)
+  else
+    item.removeExtension('http://hl7.org/fhir/StructureDefinition/questionnaire-supportLink');
+  if edtXDefinedUnit.Text <> '' then
+    item.setExtension('http://hl7.org/fhir/StructureDefinition/questionnaire-unit', TFHIRCoding.fromEdit(edtXDefinedUnit.Text))
+  else
+    item.removeExtension('http://hl7.org/fhir/StructureDefinition/questionnaire-unit');
+  if edtXRegexRule.Text <> '' then
+    item.setExtensionString('http://hl7.org/fhir/StructureDefinition/regex', edtXRegexRule.Text)
+  else
+    item.removeExtension('http://hl7.org/fhir/StructureDefinition/regex');
+
   saveInitialValue;
 end;
 
 destructor TQuestionnaireItemForm.Destroy;
 begin
+  FQuestionnaire.free;
   FSettings.Free;
   FItem.Free;
   inherited;
 end;
 
 procedure TQuestionnaireItemForm.FormShow(Sender: TObject);
+  function hasExtension(url : String; var ex : TFHIRExtension) : boolean;
+  var
+    e : TFhirExtension;
+  begin
+    result := false;
+    for e in item.extensionList do
+      if e.url = url then
+      begin
+        ex := e;
+        exit(true);
+      end;
+  end;
+var
+  ex : TFhirExtension;
 begin
   Loading := true;
   try
@@ -394,8 +557,179 @@ begin
     edtMaxLength.Enabled := item.type_ in [ItemTypeDecimal, ItemTypeInteger, ItemTypeString, ItemTypeText, ItemTypeUrl, ItemTypeOpenChoice];
     loadInitialValue;
     loadOptions;
+
+    if hasExtension('http://hl7.org/fhir/StructureDefinition/entryFormat', ex) then
+      edtXFormatPrompt.Text := ex.value.primitiveValue
+    else
+      edtXFormatPrompt.Text := '';
+    if hasExtension('http://hl7.org/fhir/StructureDefinition/maxDecimalPlaces', ex) then
+      edtXMaxDecPlaces.Text := ex.value.primitiveValue
+    else
+      edtXMaxDecPlaces.Text := '';
+    if hasExtension('http://hl7.org/fhir/StructureDefinition/maxSize', ex) then
+      edtXMaxAttachSize.Text := ex.value.primitiveValue
+    else
+      edtXMaxAttachSize.Text := '';
+    if hasExtension('http://hl7.org/fhir/StructureDefinition/minValue', ex) then
+    begin
+      if ex.value is TFHIRQuantity then
+        edtXMinValue.Text := (ex.value as TFHIRQuantity).editString
+      else
+        edtXMinValue.Text := ex.value.primitiveValue
+    end
+    else
+      edtXMinValue.Text := '';
+    if hasExtension('http://hl7.org/fhir/StructureDefinition/maxValue', ex) then
+    begin
+      if ex.value is TFHIRQuantity then
+        edtXMaxValue.Text := (ex.value as TFHIRQuantity).editString
+      else
+        edtXMaxValue.Text := ex.value.primitiveValue
+    end
+    else
+      edtXMaxValue.Text := '';
+    edtXMimeTypes.Text := '';
+    for ex in item.extensionList do
+      if ex.url = 'http://hl7.org/fhir/StructureDefinition/mimeType' then
+        if edtXMimeTypes.Text = '' then
+          edtXMimeTypes.Text := ex.value.primitiveValue
+        else
+          edtXMimeTypes.Text := edtXMimeTypes.Text + ', '+ex.value.primitiveValue;
+
+    if hasExtension('http://hl7.org/fhir/StructureDefinition/minLength', ex) then
+      edtXMinLength.Text := ex.value.primitiveValue
+    else
+      edtXMinLength.Text := '';
+
+    if hasExtension('http://hl7.org/fhir/StructureDefinition/questionnaire-choiceOrientation', ex) then
+      cbxXChoiceOrientation.ItemIndex := cbxXChoiceOrientation.Items.IndexOf(ex.value.primitiveValue)
+    else
+      cbxXChoiceOrientation.ItemIndex := 0;
+
+    if hasExtension('http://hl7.org/fhir/StructureDefinition/questionnaire-maxOccurs', ex) then
+      edtXMaxOccurs.Text := ex.value.primitiveValue
+    else
+      edtXMaxOccurs.Text := '';
+
+    if hasExtension('http://hl7.org/fhir/StructureDefinition/questionnaire-minOccurs', ex) then
+      edtXMinOccurs.Text := ex.value.primitiveValue
+    else
+      edtXMinOccurs.Text := '';
+
+    if hasExtension('http://hl7.org/fhir/StructureDefinition/questionnaire-supportLink', ex) then
+      edxSupportingURL.Text := ex.value.primitiveValue
+    else
+      edxSupportingURL.Text := '';
+
+    if hasExtension('http://hl7.org/fhir/StructureDefinition/questionnaire-unit', ex) then
+      edtXDefinedUnit.Text := ex.value.primitiveValue
+    else
+      edtXDefinedUnit.Text := '';
+    if hasExtension('http://hl7.org/fhir/StructureDefinition/regex', ex) then
+      edtXRegexRule.Text := ex.value.primitiveValue
+    else
+      edtXRegexRule.Text := '';
+
+    grdConditions.RowCount := item.enableWhenList.Count;
   finally
     Loading := false;
+  end;
+end;
+
+procedure TQuestionnaireItemForm.grdConditionsGetValue(Sender: TObject; const ACol, ARow: Integer; var Value: TValue);
+var
+  cond : TFhirQuestionnaireItemEnableWhen;
+begin
+  cond := item.enableWhenList[ARow];
+  case aCol of
+    0: value := cond.question;
+    1: if (cond.hasAnswerElement <> nil) or (cond.answer = nil) then
+         value := 'Has Answer'
+       else
+         value := cond.answer.fhirType +' Value';
+    2: if cond.hasAnswerElement <> nil then
+         value := cond.hasAnswerElement.primitiveValue
+       else if cond.answer = nil then
+         value := ''
+       else if cond.answer is TFHIRCoding then
+         value := (cond.answer as TFHIRCoding).editString
+       else if cond.answer is TFHIRQuantity then
+         value := (cond.answer as TFHIRQuantity).editString
+       else if cond.answer is TFHIRReference then
+         value := (cond.answer as TFHIRReference).editString
+       else
+         value := cond.answer.primitiveValue;
+  end;
+end;
+
+procedure TQuestionnaireItemForm.grdConditionsSetValue(Sender: TObject; const ACol, ARow: Integer; const Value: TValue);
+var
+  cond : TFhirQuestionnaireItemEnableWhen;
+begin
+  cond := item.enableWhenList[ARow];
+  case aCol of
+    0: cond.question := value.AsString;
+    1: if value.AsString = 'Has Answer' then
+       begin
+         if (cond.answer <> nil) then
+           cond.answer := nil;
+         if (cond.hasAnswerElement = nil) then
+           cond.hasAnswerElement := TFhirBoolean.Create(true);
+       end
+       else if (cond.answer = nil) or (cond.answer.fhirType+' Value' <> value.AsString) then
+       begin
+         cond.hasAnswerElement := nil;
+         if Value.AsString = 'boolean Value' then
+           cond.answer := TFhirBoolean.Create(true)
+         else if Value.AsString = 'decimal Value' then
+           cond.answer := TFhirDecimal.Create('0')
+         else if Value.AsString = 'integer Value' then
+           cond.answer := TFhirInteger.Create('0')
+         else if Value.AsString = 'date Value' then
+           cond.answer := TFhirDate.Create(TDateTimeEx.makeToday)
+         else if Value.AsString = 'dateTime Value' then
+           cond.answer := TFhirDateTime.Create(TDateTimeEx.makeLocal)
+         else if Value.AsString = 'time Value' then
+           cond.answer := TFhirTime.Create('00:00')
+         else if Value.AsString = 'string Value' then
+           cond.answer := TFhirString.Create('..')
+         else if Value.AsString = 'uri Value' then
+           cond.answer := TFhirUri.Create('http://')
+         else if Value.AsString = 'Coding Value' then
+           cond.answer := TFhirCoding.Create()
+         else if Value.AsString = 'Quantity Value' then
+           cond.answer := TFhirQuantity.Create()
+         else if Value.AsString = 'Reference Value' then
+           cond.answer := TFhirReference.Create()
+         else
+           raise Exception.Create('??');
+       end;
+    2: if (cond.hasAnswerElement <> nil) then
+         cond.hasAnswer := StrToBool(value.AsString)
+       else if cond.answer is TFHIRCoding then
+         (cond.answer as TFHIRCoding).editString := value.AsString
+       else if cond.answer is TFHIRQuantity then
+         (cond.answer as TFHIRQuantity).editString := value.AsString
+       else if cond.answer is TFHIRReference then
+         (cond.answer as TFHIRReference).editString := value.AsString
+       else if cond.answer is TFhirBoolean then
+         TFhirBoolean(cond.answer).value := StrToBool(value.AsString)
+       else if cond.answer is TFhirDecimal then
+         TFhirDecimal(cond.answer).value := value.AsString
+       else if cond.answer is TFhirInteger then
+         TFhirInteger(cond.answer).value := value.AsString
+       else if cond.answer is TFhirDate then
+         TFhirDate(cond.answer).value := TDateTimeEx.fromXML(value.AsString)
+       else if cond.answer is TFhirDateTime then
+         TFhirDateTime(cond.answer).value := TDateTimeEx.fromXML(value.AsString)
+       else if cond.answer is TFhirTime then
+         TFhirTime(cond.answer).value := value.AsString
+       else if cond.answer is TFhirString then
+         TFhirString(cond.answer).value := value.AsString
+       else if cond.answer is TFhirUri then
+         TFhirUri(cond.answer).value := value.AsString
+       else
+         raise Exception.Create('??');
   end;
 end;
 
@@ -440,6 +774,18 @@ end;
 procedure TQuestionnaireItemForm.inputChange(Sender: TObject);
 begin
   commit;
+end;
+
+procedure TQuestionnaireItemForm.listQuestions(list: TFhirQuestionnaireItemList);
+var
+  q : TFhirQuestionnaireItem;
+begin
+  for q in list do
+    if item.linkId <> q.LinkId then
+    begin
+      grdColQuestions.Items.Add(q.linkId);
+      listQuestions(q.itemList);
+    end;
 end;
 
 procedure TQuestionnaireItemForm.loadInitialValue;
@@ -694,6 +1040,17 @@ procedure TQuestionnaireItemForm.SetItem(const Value: TFhirQuestionnaireItem);
 begin
   FItem.Free;
   FItem := Value;
+end;
+
+procedure TQuestionnaireItemForm.SetQuestionnaire(const Value: TFhirQuestionnaire);
+begin
+  FQuestionnaire.free;
+  FQuestionnaire := Value;
+  if FQuestionnaire <> nil then
+  begin
+    grdColQuestions.Items.Clear;
+    listQuestions(FQuestionnaire.itemList);
+  end;
 end;
 
 procedure TQuestionnaireItemForm.SetSettings(const Value: TFHIRToolkitSettings);

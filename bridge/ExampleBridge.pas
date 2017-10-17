@@ -137,7 +137,7 @@ Type
     // no OAuth Support
 
     // server total counts:
-    function FetchResourceCounts(comps : String) : TStringList; override;
+    function FetchResourceCounts(comps : TAdvList<TFHIRCompartmentId>) : TStringList; override;
 
     procedure RecordFhirSession(session: TFhirSession); override;
     procedure CloseFhirSession(key: integer); override;
@@ -602,7 +602,7 @@ begin
 end;
 
 
-function TExampleFhirServerStorage.FetchResourceCounts(comps: String): TStringList;
+function TExampleFhirServerStorage.FetchResourceCounts(comps : TAdvList<TFHIRCompartmentId>): TStringList;
 begin
   FData.FLock.Lock();
   try

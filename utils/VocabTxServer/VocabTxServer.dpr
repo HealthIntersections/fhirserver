@@ -103,7 +103,7 @@ uses
   InternetFetcher in '..\..\reference-platform\support\InternetFetcher.pas',
   TurtleParser in '..\..\reference-platform\support\TurtleParser.pas',
   FHIRContext in '..\..\reference-platform\r4\FHIRContext.pas',
-  FHIRSupport in '..\..\reference-platform\r4\FHIRSupport.pas',
+  FHIRSupport in '..\..\reference-platform\support\FHIRSupport.pas',
   AdvStringMatches in '..\..\reference-platform\support\AdvStringMatches.pas',
   JWT in '..\..\reference-platform\support\JWT.pas',
   HMAC in '..\..\reference-platform\support\HMAC.pas',

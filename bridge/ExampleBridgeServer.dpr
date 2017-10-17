@@ -159,7 +159,7 @@ uses
   FHIRProfileUtilities in '..\reference-platform\dstu3\FHIRProfileUtilities.pas',
   FHIRResources in '..\reference-platform\dstu3\FHIRResources.pas',
   FHIRSecurity in '..\reference-platform\support\FHIRSecurity.pas',
-  FHIRSupport in '..\reference-platform\dstu3\FHIRSupport.pas',
+  FHIRSupport in '..\reference-platform\support\FHIRSupport.pas',
   FHIRTags in '..\reference-platform\dstu3\FHIRTags.pas',
   FHIRTypes in '..\reference-platform\dstu3\FHIRTypes.pas',
   FHIRUtilities in '..\reference-platform\dstu3\FHIRUtilities.pas',

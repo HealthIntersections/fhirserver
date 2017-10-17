@@ -50,8 +50,8 @@ type
     FSort: String;
     FFilter: String;
     FTypeKey: integer;
-    FCompartmentId: String;
-    FCompartments: String;
+    FCompartment: TFHIRCompartmentId;
+    FSessionCompartments : TAdvList<TFHIRCompartmentId>;
     FParams: TParseMap;
     FType: String;
     FBaseURL: String;
@@ -64,6 +64,7 @@ type
     FStrict : boolean;
     FConnection: TKDBConnection;
     FWarnings : TFhirOperationOutcomeIssueList;
+    FResConfig : TAdvMap<TFHIRResourceConfig>;
 
     function order(s : String) : String;
     procedure warning(issue : TFhirIssueTypeEnum; location, message : String);
@@ -96,6 +97,9 @@ type
     procedure ProcessQuantityParam(var Result: string; name, modifier, value: string; key: Integer; types : TArray<String>);
     procedure ProcessNumberParam(var Result: string; name, modifier, value: string; key: Integer; types : TArray<String>);
     procedure SetConnection(const Value: TKDBConnection);
+    procedure SetCompartment(const Value: TFHIRCompartmentId);
+    procedure SetSessionCompartments(const Value: TAdvList<TFHIRCompartmentId>);
+    procedure SetResConfig(const Value: TAdvMap<TFHIRResourceConfig>);
   public
     constructor create(serverContext : TAdvObject);
     Destructor Destroy; override;
@@ -103,10 +107,11 @@ type
 //procedure TFhirOperation.ProcessDefaultSearch(typekey : integer; aType : TFHIRResourceType; params : TParseMap; baseURL, compartments, compartmentId : String; id, key : string; var link, sql : String; var total : Integer; var wantSummary : boolean);
 
     // inbound
+    property resConfig : TAdvMap<TFHIRResourceConfig> read FResConfig write SetResConfig;
     property typekey : integer read FTypeKey write FTypeKey;
     property type_ : String read FType write FType;
-    property compartmentId : String read FCompartmentId write FCompartmentId;
-    property compartments : String read FCompartments write FCompartments;
+    property compartment : TFHIRCompartmentId read FCompartment write SetCompartment;
+    property sessionCompartments : TAdvList<TFHIRCompartmentId> read FSessionCompartments write SetSessionCompartments;
     property baseURL : String read FBaseURL write FBaseURL;
     property lang : String read FLang write FLang;
     property params : TParseMap read FParams write FParams;
@@ -175,6 +180,7 @@ var
   i, j : integer;
   ix : TFhirIndex;
   ts : TStringList;
+  c : TFHIRCompartmentId;
 begin
   if typekey = 0 then
   begin
@@ -184,11 +190,7 @@ begin
   else
     filter := 'Ids.MasterResourceKey is null and Ids.ResourceTypeKey = '+inttostr(typekey);
 
-  if (compartmentId <> '') then
-    filter := filter +' and Ids.ResourceKey in (select ResourceKey from Compartments where TypeKey = '+inttostr(TFHIRServerContext(ServerContext).ResConfig['Patient'].key)+' and Id = '''+compartmentId+''')';
-
-  if (compartments <> '') then
-    filter := filter +' and Ids.ResourceKey in (select ResourceKey from Compartments where TypeKey = '+inttostr(TFHIRServerContext(ServerContext).ResConfig['Patient'].key)+' and Id in ('+compartments+'))';
+  filter := filter + buildCompartmentsSQL(resConfig, compartment, sessionCompartments);
 
   link_ := '';
   first := false;
@@ -1148,6 +1150,12 @@ begin
     replaceNames(TFSFilterParameter(filter).ParamPath, components);
 end;
 
+procedure TSearchProcessor.SetCompartment(const Value: TFHIRCompartmentId);
+begin
+  FCompartment.Free;
+  FCompartment := Value;
+end;
+
 procedure TSearchProcessor.SetConnection(const Value: TKDBConnection);
 begin
   FConnection.Free;
@@ -1161,10 +1169,22 @@ begin
 end;
 
 
+procedure TSearchProcessor.SetResConfig(const Value: TAdvMap<TFHIRResourceConfig>);
+begin
+  FResConfig.Free;
+  FResConfig := Value;
+end;
+
 procedure TSearchProcessor.SetSession(const Value: TFhirSession);
 begin
   FSession.Free;
   FSession := Value;
+end;
+
+procedure TSearchProcessor.SetSessionCompartments(const Value: TAdvList<TFHIRCompartmentId>);
+begin
+  FSessionCompartments.Free;
+  FSessionCompartments := Value;
 end;
 
 procedure TSearchProcessor.SplitByCommas(value : String; list : TStringList);
@@ -1344,6 +1364,9 @@ end;
 
 destructor TSearchProcessor.Destroy;
 begin
+  FResConfig.Free;
+  FSessionCompartments.Free;
+  FCompartment.Free;
   FWarnings.Free;
   FConnection.Free;
   FSession.Free;

@@ -103,7 +103,7 @@ uses
   FHIRContext in '..\reference-platform\dstu3\FHIRContext.pas',
   FHIRTypes in '..\reference-platform\dstu3\FHIRTypes.pas',
   FHIRResources in '..\reference-platform\dstu3\FHIRResources.pas',
-  FHIRSupport in '..\reference-platform\dstu3\FHIRSupport.pas',
+  FHIRSupport in '..\reference-platform\support\FHIRSupport.pas',
   JWT in '..\reference-platform\support\JWT.pas',
   HMAC in '..\reference-platform\support\HMAC.pas',
   libeay32 in '..\reference-platform\support\libeay32.pas',
@@ -186,7 +186,6 @@ uses
 begin
   Application.Initialize;
   Application.CreateForm(TMasterToolsForm, MasterToolsForm);
-  Application.CreateForm(TQuestionnaireItemForm, QuestionnaireItemForm);
   Application.CreateForm(TRegisterClientForm, RegisterClientForm);
   Application.Run;
 end.

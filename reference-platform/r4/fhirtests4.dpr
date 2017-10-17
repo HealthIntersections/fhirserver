@@ -100,7 +100,7 @@ uses
   FHIRPath in 'FHIRPath.pas',
   FHIRPathTests in 'tests\FHIRPathTests.pas',
   FHIRResources in 'FHIRResources.pas',
-  FHIRSupport in 'FHIRSupport.pas',
+  FHIRSupport in '..\support\FHIRSupport.pas',
   FHIRTestWorker in 'tests\FHIRTestWorker.pas',
   FHIRUtilities in 'FHIRUtilities.pas',
   FHIRValidatorTests in 'tests\FHIRValidatorTests.pas',
@@ -145,7 +145,8 @@ uses
   TurtleParser in '..\support\TurtleParser.pas',
   FHIRParserTurtle in 'FHIRParserTurtle.pas',
   FHIRLog in '..\support\FHIRLog.pas',
-  Logging in '..\..\Server\Logging.pas';
+  Logging in '..\..\Server\Logging.pas',
+  FHIRIndexBase in '..\support\FHIRIndexBase.pas';
 
 var
   s: String;

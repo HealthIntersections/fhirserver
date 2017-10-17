@@ -38,7 +38,7 @@ This is the dstu4 version of the FHIR code
 
 interface
 
-// FHIR v3.1.0 generated 2017-09-05T11:38:55+10:00
+// FHIR v3.1.0 generated 2017-10-06T08:43:59+11:00
 
 uses
   SysUtils, Classes, StringSupport, DateSupport, DecimalSupport, FHIRParserBase, FHIRBase, FHIRResources, FHIRConstants, FHIRTypes, AdvStringMatches, AdvJSON;
@@ -531,6 +531,9 @@ Type
     function ParseCodeSystemConceptProperty(jsn : TJsonObject) : TFhirCodeSystemConceptProperty; overload; {b\}
     procedure ParseCodeSystemConceptPropertyProperties(jsn : TJsonObject; result : TFhirCodeSystemConceptProperty); overload; {b\}
     procedure ParseCodeSystemConceptProperty(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+    function ParseCodeSystemConceptAlternate(jsn : TJsonObject) : TFhirCodeSystemConceptAlternate; overload; {b\}
+    procedure ParseCodeSystemConceptAlternateProperties(jsn : TJsonObject; result : TFhirCodeSystemConceptAlternate); overload; {b\}
+    procedure ParseCodeSystemConceptAlternate(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
     function ParseCodeSystem(jsn : TJsonObject) : TFhirCodeSystem; overload;
     procedure ParseCodeSystemProperties(jsn : TJsonObject; result : TFhirCodeSystem); overload;
     procedure ParseCodeSystem(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
@@ -730,9 +733,9 @@ Type
     procedure ParseDiagnosticReport(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
 {$ENDIF FHIR_DIAGNOSTICREPORT}
 {$IFDEF FHIR_DOCUMENTMANIFEST}
-    function ParseDocumentManifestContent(jsn : TJsonObject) : TFhirDocumentManifestContent; overload; {b\}
-    procedure ParseDocumentManifestContentProperties(jsn : TJsonObject; result : TFhirDocumentManifestContent); overload; {b\}
-    procedure ParseDocumentManifestContent(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+    function ParseDocumentManifestAgent(jsn : TJsonObject) : TFhirDocumentManifestAgent; overload; {b\}
+    procedure ParseDocumentManifestAgentProperties(jsn : TJsonObject; result : TFhirDocumentManifestAgent); overload; {b\}
+    procedure ParseDocumentManifestAgent(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
     function ParseDocumentManifestRelated(jsn : TJsonObject) : TFhirDocumentManifestRelated; overload; {b\}
     procedure ParseDocumentManifestRelatedProperties(jsn : TJsonObject; result : TFhirDocumentManifestRelated); overload; {b\}
     procedure ParseDocumentManifestRelated(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
@@ -741,6 +744,9 @@ Type
     procedure ParseDocumentManifest(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
 {$ENDIF FHIR_DOCUMENTMANIFEST}
 {$IFDEF FHIR_DOCUMENTREFERENCE}
+    function ParseDocumentReferenceAgent(jsn : TJsonObject) : TFhirDocumentReferenceAgent; overload; {b\}
+    procedure ParseDocumentReferenceAgentProperties(jsn : TJsonObject; result : TFhirDocumentReferenceAgent); overload; {b\}
+    procedure ParseDocumentReferenceAgent(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
     function ParseDocumentReferenceRelatesTo(jsn : TJsonObject) : TFhirDocumentReferenceRelatesTo; overload; {b\}
     procedure ParseDocumentReferenceRelatesToProperties(jsn : TJsonObject; result : TFhirDocumentReferenceRelatesTo); overload; {b\}
     procedure ParseDocumentReferenceRelatesTo(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
@@ -833,6 +839,38 @@ Type
     procedure ParseEventDefinitionProperties(jsn : TJsonObject; result : TFhirEventDefinition); overload;
     procedure ParseEventDefinition(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
 {$ENDIF FHIR_EVENTDEFINITION}
+{$IFDEF FHIR_EXAMPLESCENARIO}
+    function ParseExampleScenarioActor(jsn : TJsonObject) : TFhirExampleScenarioActor; overload; {b\}
+    procedure ParseExampleScenarioActorProperties(jsn : TJsonObject; result : TFhirExampleScenarioActor); overload; {b\}
+    procedure ParseExampleScenarioActor(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+    function ParseExampleScenarioInstance(jsn : TJsonObject) : TFhirExampleScenarioInstance; overload; {b\}
+    procedure ParseExampleScenarioInstanceProperties(jsn : TJsonObject; result : TFhirExampleScenarioInstance); overload; {b\}
+    procedure ParseExampleScenarioInstance(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+    function ParseExampleScenarioInstanceVersion(jsn : TJsonObject) : TFhirExampleScenarioInstanceVersion; overload; {b\}
+    procedure ParseExampleScenarioInstanceVersionProperties(jsn : TJsonObject; result : TFhirExampleScenarioInstanceVersion); overload; {b\}
+    procedure ParseExampleScenarioInstanceVersion(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+    function ParseExampleScenarioInstanceContainedInstance(jsn : TJsonObject) : TFhirExampleScenarioInstanceContainedInstance; overload; {b\}
+    procedure ParseExampleScenarioInstanceContainedInstanceProperties(jsn : TJsonObject; result : TFhirExampleScenarioInstanceContainedInstance); overload; {b\}
+    procedure ParseExampleScenarioInstanceContainedInstance(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+    function ParseExampleScenarioProcess(jsn : TJsonObject) : TFhirExampleScenarioProcess; overload; {b\}
+    procedure ParseExampleScenarioProcessProperties(jsn : TJsonObject; result : TFhirExampleScenarioProcess); overload; {b\}
+    procedure ParseExampleScenarioProcess(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+    function ParseExampleScenarioProcessStep(jsn : TJsonObject) : TFhirExampleScenarioProcessStep; overload; {b\}
+    procedure ParseExampleScenarioProcessStepProperties(jsn : TJsonObject; result : TFhirExampleScenarioProcessStep); overload; {b\}
+    procedure ParseExampleScenarioProcessStep(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+    function ParseExampleScenarioProcessStepOperation(jsn : TJsonObject) : TFhirExampleScenarioProcessStepOperation; overload; {b\}
+    procedure ParseExampleScenarioProcessStepOperationProperties(jsn : TJsonObject; result : TFhirExampleScenarioProcessStepOperation); overload; {b\}
+    procedure ParseExampleScenarioProcessStepOperation(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+    function ParseExampleScenarioProcessStepAlternative(jsn : TJsonObject) : TFhirExampleScenarioProcessStepAlternative; overload; {b\}
+    procedure ParseExampleScenarioProcessStepAlternativeProperties(jsn : TJsonObject; result : TFhirExampleScenarioProcessStepAlternative); overload; {b\}
+    procedure ParseExampleScenarioProcessStepAlternative(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+    function ParseExampleScenarioProcessStepAlternativeOption(jsn : TJsonObject) : TFhirExampleScenarioProcessStepAlternativeOption; overload; {b\}
+    procedure ParseExampleScenarioProcessStepAlternativeOptionProperties(jsn : TJsonObject; result : TFhirExampleScenarioProcessStepAlternativeOption); overload; {b\}
+    procedure ParseExampleScenarioProcessStepAlternativeOption(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+    function ParseExampleScenario(jsn : TJsonObject) : TFhirExampleScenario; overload;
+    procedure ParseExampleScenarioProperties(jsn : TJsonObject; result : TFhirExampleScenario); overload;
+    procedure ParseExampleScenario(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+{$ENDIF FHIR_EXAMPLESCENARIO}
 {$IFDEF FHIR_EXPANSIONPROFILE}
     function ParseExpansionProfileFixedVersion(jsn : TJsonObject) : TFhirExpansionProfileFixedVersion; overload; {b\}
     procedure ParseExpansionProfileFixedVersionProperties(jsn : TJsonObject; result : TFhirExpansionProfileFixedVersion); overload; {b\}
@@ -1809,38 +1847,6 @@ Type
     procedure ParseVisionPrescriptionProperties(jsn : TJsonObject; result : TFhirVisionPrescription); overload;
     procedure ParseVisionPrescription(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
 {$ENDIF FHIR_VISIONPRESCRIPTION}
-{$IFDEF FHIR_WORKFLOWEXAMPLE}
-    function ParseWorkflowExampleActor(jsn : TJsonObject) : TFhirWorkflowExampleActor; overload; {b\}
-    procedure ParseWorkflowExampleActorProperties(jsn : TJsonObject; result : TFhirWorkflowExampleActor); overload; {b\}
-    procedure ParseWorkflowExampleActor(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
-    function ParseWorkflowExampleInstance(jsn : TJsonObject) : TFhirWorkflowExampleInstance; overload; {b\}
-    procedure ParseWorkflowExampleInstanceProperties(jsn : TJsonObject; result : TFhirWorkflowExampleInstance); overload; {b\}
-    procedure ParseWorkflowExampleInstance(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
-    function ParseWorkflowExampleInstanceVersion(jsn : TJsonObject) : TFhirWorkflowExampleInstanceVersion; overload; {b\}
-    procedure ParseWorkflowExampleInstanceVersionProperties(jsn : TJsonObject; result : TFhirWorkflowExampleInstanceVersion); overload; {b\}
-    procedure ParseWorkflowExampleInstanceVersion(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
-    function ParseWorkflowExampleInstanceContainedInstance(jsn : TJsonObject) : TFhirWorkflowExampleInstanceContainedInstance; overload; {b\}
-    procedure ParseWorkflowExampleInstanceContainedInstanceProperties(jsn : TJsonObject; result : TFhirWorkflowExampleInstanceContainedInstance); overload; {b\}
-    procedure ParseWorkflowExampleInstanceContainedInstance(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
-    function ParseWorkflowExampleProcess(jsn : TJsonObject) : TFhirWorkflowExampleProcess; overload; {b\}
-    procedure ParseWorkflowExampleProcessProperties(jsn : TJsonObject; result : TFhirWorkflowExampleProcess); overload; {b\}
-    procedure ParseWorkflowExampleProcess(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
-    function ParseWorkflowExampleProcessStep(jsn : TJsonObject) : TFhirWorkflowExampleProcessStep; overload; {b\}
-    procedure ParseWorkflowExampleProcessStepProperties(jsn : TJsonObject; result : TFhirWorkflowExampleProcessStep); overload; {b\}
-    procedure ParseWorkflowExampleProcessStep(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
-    function ParseWorkflowExampleProcessStepOperation(jsn : TJsonObject) : TFhirWorkflowExampleProcessStepOperation; overload; {b\}
-    procedure ParseWorkflowExampleProcessStepOperationProperties(jsn : TJsonObject; result : TFhirWorkflowExampleProcessStepOperation); overload; {b\}
-    procedure ParseWorkflowExampleProcessStepOperation(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
-    function ParseWorkflowExampleProcessStepAlternative(jsn : TJsonObject) : TFhirWorkflowExampleProcessStepAlternative; overload; {b\}
-    procedure ParseWorkflowExampleProcessStepAlternativeProperties(jsn : TJsonObject; result : TFhirWorkflowExampleProcessStepAlternative); overload; {b\}
-    procedure ParseWorkflowExampleProcessStepAlternative(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
-    function ParseWorkflowExampleProcessStepAlternativeOption(jsn : TJsonObject) : TFhirWorkflowExampleProcessStepAlternativeOption; overload; {b\}
-    procedure ParseWorkflowExampleProcessStepAlternativeOptionProperties(jsn : TJsonObject; result : TFhirWorkflowExampleProcessStepAlternativeOption); overload; {b\}
-    procedure ParseWorkflowExampleProcessStepAlternativeOption(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
-    function ParseWorkflowExample(jsn : TJsonObject) : TFhirWorkflowExample; overload;
-    procedure ParseWorkflowExampleProperties(jsn : TJsonObject; result : TFhirWorkflowExample); overload;
-    procedure ParseWorkflowExample(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
-{$ENDIF FHIR_WORKFLOWEXAMPLE}
     function ParseResource(jsn : TJsonObject) : TFhirResource; override;
     function ParseDataType(jsn : TJsonObject; name : String; type_ : TFHIRTypeClass) : TFHIRType; override;
   public
@@ -2069,6 +2075,7 @@ Type
     procedure ComposeCodeSystemConcept(json : TJSONWriter; name : string; elem : TFhirCodeSystemConcept; noObj : boolean = false);
     procedure ComposeCodeSystemConceptDesignation(json : TJSONWriter; name : string; elem : TFhirCodeSystemConceptDesignation; noObj : boolean = false);
     procedure ComposeCodeSystemConceptProperty(json : TJSONWriter; name : string; elem : TFhirCodeSystemConceptProperty; noObj : boolean = false);
+    procedure ComposeCodeSystemConceptAlternate(json : TJSONWriter; name : string; elem : TFhirCodeSystemConceptAlternate; noObj : boolean = false);
     procedure ComposeCodeSystem(json : TJSONWriter; name : string; elem : TFhirCodeSystem; noObj : boolean = false);
 {$ENDIF FHIR_CODESYSTEM}
 {$IFDEF FHIR_COMMUNICATION}
@@ -2158,11 +2165,12 @@ Type
     procedure ComposeDiagnosticReport(json : TJSONWriter; name : string; elem : TFhirDiagnosticReport; noObj : boolean = false);
 {$ENDIF FHIR_DIAGNOSTICREPORT}
 {$IFDEF FHIR_DOCUMENTMANIFEST}
-    procedure ComposeDocumentManifestContent(json : TJSONWriter; name : string; elem : TFhirDocumentManifestContent; noObj : boolean = false);
+    procedure ComposeDocumentManifestAgent(json : TJSONWriter; name : string; elem : TFhirDocumentManifestAgent; noObj : boolean = false);
     procedure ComposeDocumentManifestRelated(json : TJSONWriter; name : string; elem : TFhirDocumentManifestRelated; noObj : boolean = false);
     procedure ComposeDocumentManifest(json : TJSONWriter; name : string; elem : TFhirDocumentManifest; noObj : boolean = false);
 {$ENDIF FHIR_DOCUMENTMANIFEST}
 {$IFDEF FHIR_DOCUMENTREFERENCE}
+    procedure ComposeDocumentReferenceAgent(json : TJSONWriter; name : string; elem : TFhirDocumentReferenceAgent; noObj : boolean = false);
     procedure ComposeDocumentReferenceRelatesTo(json : TJSONWriter; name : string; elem : TFhirDocumentReferenceRelatesTo; noObj : boolean = false);
     procedure ComposeDocumentReferenceContent(json : TJSONWriter; name : string; elem : TFhirDocumentReferenceContent; noObj : boolean = false);
     procedure ComposeDocumentReferenceContext(json : TJSONWriter; name : string; elem : TFhirDocumentReferenceContext; noObj : boolean = false);
@@ -2205,6 +2213,18 @@ Type
 {$IFDEF FHIR_EVENTDEFINITION}
     procedure ComposeEventDefinition(json : TJSONWriter; name : string; elem : TFhirEventDefinition; noObj : boolean = false);
 {$ENDIF FHIR_EVENTDEFINITION}
+{$IFDEF FHIR_EXAMPLESCENARIO}
+    procedure ComposeExampleScenarioActor(json : TJSONWriter; name : string; elem : TFhirExampleScenarioActor; noObj : boolean = false);
+    procedure ComposeExampleScenarioInstance(json : TJSONWriter; name : string; elem : TFhirExampleScenarioInstance; noObj : boolean = false);
+    procedure ComposeExampleScenarioInstanceVersion(json : TJSONWriter; name : string; elem : TFhirExampleScenarioInstanceVersion; noObj : boolean = false);
+    procedure ComposeExampleScenarioInstanceContainedInstance(json : TJSONWriter; name : string; elem : TFhirExampleScenarioInstanceContainedInstance; noObj : boolean = false);
+    procedure ComposeExampleScenarioProcess(json : TJSONWriter; name : string; elem : TFhirExampleScenarioProcess; noObj : boolean = false);
+    procedure ComposeExampleScenarioProcessStep(json : TJSONWriter; name : string; elem : TFhirExampleScenarioProcessStep; noObj : boolean = false);
+    procedure ComposeExampleScenarioProcessStepOperation(json : TJSONWriter; name : string; elem : TFhirExampleScenarioProcessStepOperation; noObj : boolean = false);
+    procedure ComposeExampleScenarioProcessStepAlternative(json : TJSONWriter; name : string; elem : TFhirExampleScenarioProcessStepAlternative; noObj : boolean = false);
+    procedure ComposeExampleScenarioProcessStepAlternativeOption(json : TJSONWriter; name : string; elem : TFhirExampleScenarioProcessStepAlternativeOption; noObj : boolean = false);
+    procedure ComposeExampleScenario(json : TJSONWriter; name : string; elem : TFhirExampleScenario; noObj : boolean = false);
+{$ENDIF FHIR_EXAMPLESCENARIO}
 {$IFDEF FHIR_EXPANSIONPROFILE}
     procedure ComposeExpansionProfileFixedVersion(json : TJSONWriter; name : string; elem : TFhirExpansionProfileFixedVersion; noObj : boolean = false);
     procedure ComposeExpansionProfileExcludedSystem(json : TJSONWriter; name : string; elem : TFhirExpansionProfileExcludedSystem; noObj : boolean = false);
@@ -2625,18 +2645,6 @@ Type
     procedure ComposeVisionPrescriptionDispense(json : TJSONWriter; name : string; elem : TFhirVisionPrescriptionDispense; noObj : boolean = false);
     procedure ComposeVisionPrescription(json : TJSONWriter; name : string; elem : TFhirVisionPrescription; noObj : boolean = false);
 {$ENDIF FHIR_VISIONPRESCRIPTION}
-{$IFDEF FHIR_WORKFLOWEXAMPLE}
-    procedure ComposeWorkflowExampleActor(json : TJSONWriter; name : string; elem : TFhirWorkflowExampleActor; noObj : boolean = false);
-    procedure ComposeWorkflowExampleInstance(json : TJSONWriter; name : string; elem : TFhirWorkflowExampleInstance; noObj : boolean = false);
-    procedure ComposeWorkflowExampleInstanceVersion(json : TJSONWriter; name : string; elem : TFhirWorkflowExampleInstanceVersion; noObj : boolean = false);
-    procedure ComposeWorkflowExampleInstanceContainedInstance(json : TJSONWriter; name : string; elem : TFhirWorkflowExampleInstanceContainedInstance; noObj : boolean = false);
-    procedure ComposeWorkflowExampleProcess(json : TJSONWriter; name : string; elem : TFhirWorkflowExampleProcess; noObj : boolean = false);
-    procedure ComposeWorkflowExampleProcessStep(json : TJSONWriter; name : string; elem : TFhirWorkflowExampleProcessStep; noObj : boolean = false);
-    procedure ComposeWorkflowExampleProcessStepOperation(json : TJSONWriter; name : string; elem : TFhirWorkflowExampleProcessStepOperation; noObj : boolean = false);
-    procedure ComposeWorkflowExampleProcessStepAlternative(json : TJSONWriter; name : string; elem : TFhirWorkflowExampleProcessStepAlternative; noObj : boolean = false);
-    procedure ComposeWorkflowExampleProcessStepAlternativeOption(json : TJSONWriter; name : string; elem : TFhirWorkflowExampleProcessStepAlternativeOption; noObj : boolean = false);
-    procedure ComposeWorkflowExample(json : TJSONWriter; name : string; elem : TFhirWorkflowExample; noObj : boolean = false);
-{$ENDIF FHIR_WORKFLOWEXAMPLE}
     procedure ComposeResource(json : TJSONWriter; resource : TFhirResource; links : TFhirBundleLinkList); override;
     procedure ComposeBase(json : TJSONWriter; name : String; base : TFHIRObject); override;
   end;
@@ -3725,15 +3733,15 @@ begin
     ComposeIdValue(json, 'id', elem.idElement, false);
   if not elem.noCompose and (SummaryOption in [soFull, soSummary, soText, soData]) then
     ComposeIdProps(json, 'id', elem.idElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('meta') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeMeta(json, 'meta', elem.meta); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('implicitRules') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeUriValue(json, 'implicitRules', elem.implicitRulesElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('implicitRules') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeUriProps(json, 'implicitRules', elem.implicitRulesElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('language') and (SummaryOption in [soFull, soData]) then
     ComposeCodeValue(json, 'language', elem.languageElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('language') and (SummaryOption in [soFull, soData]) then
     ComposeCodeProps(json, 'language', elem.languageElement, false);
 end;
 
@@ -3755,23 +3763,23 @@ var
   i : integer{z.b};
 begin
   ComposeResourceProperties(json, elem);
-  if not elem.noCompose and (SummaryOption in [soFull, soText]) then
+  if not elem.noCompose and doCompose('text') and (SummaryOption in [soFull, soText]) then
     ComposeNarrative(json, 'text', elem.text); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.containedList.Count > 0) then
+  if not elem.noCompose and doCompose('contained') and (SummaryOption in [soFull, soData]) and (elem.containedList.Count > 0) then
   begin
     json.valueArray('contained');
     for i := 0 to elem.containedList.Count - 1 do
       ComposeInnerResource(json, '', elem, elem.containedList[i]); {z - Resource}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.extensionList.Count > 0) then
+  if not elem.noCompose and doCompose('extension') and (SummaryOption in [soFull, soData]) and (elem.extensionList.Count > 0) then
   begin
     json.valueArray('extension');
     for i := 0 to elem.extensionList.Count - 1 do
       ComposeExtension(json, '', elem.extensionList[i]); {z - Extension}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.modifierExtensionList.Count > 0) then
+  if not elem.noCompose and doCompose('modifierExtension') and (SummaryOption in [soFull, soData]) and (elem.modifierExtensionList.Count > 0) then
   begin
     json.valueArray('modifierExtension');
     for i := 0 to elem.modifierExtensionList.Count - 1 do
@@ -4062,7 +4070,7 @@ begin
   if (elem = nil) then
     exit;
   ComposeResourceProperties(json, elem);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.parameterList.Count > 0) then
+  if not elem.noCompose and doCompose('parameter') and (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.parameterList.Count > 0) then
   begin
     json.valueArray('parameter');
     for i := 0 to elem.parameterList.Count - 1 do
@@ -8328,45 +8336,45 @@ begin
   if (elem = nil) then
     exit;
   ComposeDomainResourceProperties(json, elem);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.identifierList.Count > 0) then
+  if not elem.noCompose and doCompose('identifier') and (SummaryOption in [soFull, soSummary, soData]) and (elem.identifierList.Count > 0) then
   begin
     json.valueArray('identifier');
     for i := 0 to elem.identifierList.Count - 1 do
       ComposeIdentifier(json, '', elem.identifierList[i]); {z - Identifier}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('status') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumValue(json, 'status', elem.StatusElement, CODES_TFhirAccountStatusEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('status') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumProps(json, 'status', elem.StatusElement, CODES_TFhirAccountStatusEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('type_') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeCodeableConcept(json, 'type', elem.type_); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('name') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeStringValue(json, 'name', elem.nameElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('name') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeStringProps(json, 'name', elem.nameElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('subject') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{Resource}(json, 'subject', elem.subject); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('period') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposePeriod(json, 'period', elem.period); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('active') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposePeriod(json, 'active', elem.active); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('balance') and (SummaryOption in [soFull, soData]) then
     ComposeMoney(json, 'balance', elem.balance); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.coverageList.Count > 0) then
+  if not elem.noCompose and doCompose('coverage') and (SummaryOption in [soFull, soSummary, soData]) and (elem.coverageList.Count > 0) then
   begin
     json.valueArray('coverage');
     for i := 0 to elem.coverageList.Count - 1 do
       ComposeAccountCoverage(json, '', elem.coverageList[i]); {z - }
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('owner') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{TFhirOrganization}(json, 'owner', elem.owner); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('description') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeStringValue(json, 'description', elem.descriptionElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('description') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeStringProps(json, 'description', elem.descriptionElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.guarantorList.Count > 0) then
+  if not elem.noCompose and doCompose('guarantor') and (SummaryOption in [soFull, soData]) and (elem.guarantorList.Count > 0) then
   begin
     json.valueArray('guarantor');
     for i := 0 to elem.guarantorList.Count - 1 do
@@ -8575,125 +8583,125 @@ begin
   if (elem = nil) then
     exit;
   ComposeDomainResourceProperties(json, elem);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('url') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeUriValue(json, 'url', elem.urlElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('url') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeUriProps(json, 'url', elem.urlElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.identifierList.Count > 0) then
+  if not elem.noCompose and doCompose('identifier') and (SummaryOption in [soFull, soSummary, soData]) and (elem.identifierList.Count > 0) then
   begin
     json.valueArray('identifier');
     for i := 0 to elem.identifierList.Count - 1 do
       ComposeIdentifier(json, '', elem.identifierList[i]); {z - Identifier}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('version') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeStringValue(json, 'version', elem.versionElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('version') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeStringProps(json, 'version', elem.versionElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('name') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeStringValue(json, 'name', elem.nameElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('name') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeStringProps(json, 'name', elem.nameElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('title') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeStringValue(json, 'title', elem.titleElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('title') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeStringProps(json, 'title', elem.titleElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('status') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumValue(json, 'status', elem.StatusElement, CODES_TFhirPublicationStatusEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('status') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumProps(json, 'status', elem.StatusElement, CODES_TFhirPublicationStatusEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('experimental') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeBooleanValue(json, 'experimental', elem.experimentalElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('experimental') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeBooleanProps(json, 'experimental', elem.experimentalElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('date') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeDateTimeValue(json, 'date', elem.dateElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('date') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeDateTimeProps(json, 'date', elem.dateElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('publisher') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeStringValue(json, 'publisher', elem.publisherElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('publisher') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeStringProps(json, 'publisher', elem.publisherElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('description') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeMarkdownValue(json, 'description', elem.descriptionElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('description') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeMarkdownProps(json, 'description', elem.descriptionElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('purpose') and (SummaryOption in [soFull, soData]) then
     ComposeMarkdownValue(json, 'purpose', elem.purposeElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('purpose') and (SummaryOption in [soFull, soData]) then
     ComposeMarkdownProps(json, 'purpose', elem.purposeElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('usage') and (SummaryOption in [soFull, soData]) then
     ComposeStringValue(json, 'usage', elem.usageElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('usage') and (SummaryOption in [soFull, soData]) then
     ComposeStringProps(json, 'usage', elem.usageElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('approvalDate') and (SummaryOption in [soFull, soData]) then
     ComposeDateValue(json, 'approvalDate', elem.approvalDateElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('approvalDate') and (SummaryOption in [soFull, soData]) then
     ComposeDateProps(json, 'approvalDate', elem.approvalDateElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('lastReviewDate') and (SummaryOption in [soFull, soData]) then
     ComposeDateValue(json, 'lastReviewDate', elem.lastReviewDateElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('lastReviewDate') and (SummaryOption in [soFull, soData]) then
     ComposeDateProps(json, 'lastReviewDate', elem.lastReviewDateElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('effectivePeriod') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposePeriod(json, 'effectivePeriod', elem.effectivePeriod); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.useContextList.Count > 0) then
+  if not elem.noCompose and doCompose('useContext') and (SummaryOption in [soFull, soSummary, soData]) and (elem.useContextList.Count > 0) then
   begin
     json.valueArray('useContext');
     for i := 0 to elem.useContextList.Count - 1 do
       ComposeUsageContext(json, '', elem.useContextList[i]); {z - UsageContext}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.jurisdictionList.Count > 0) then
+  if not elem.noCompose and doCompose('jurisdiction') and (SummaryOption in [soFull, soSummary, soData]) and (elem.jurisdictionList.Count > 0) then
   begin
     json.valueArray('jurisdiction');
     for i := 0 to elem.jurisdictionList.Count - 1 do
       ComposeCodeableConcept(json, '', elem.jurisdictionList[i]); {z - CodeableConcept}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.topicList.Count > 0) then
+  if not elem.noCompose and doCompose('topic') and (SummaryOption in [soFull, soData]) and (elem.topicList.Count > 0) then
   begin
     json.valueArray('topic');
     for i := 0 to elem.topicList.Count - 1 do
       ComposeCodeableConcept(json, '', elem.topicList[i]); {z - CodeableConcept}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.contributorList.Count > 0) then
+  if not elem.noCompose and doCompose('contributor') and (SummaryOption in [soFull, soData]) and (elem.contributorList.Count > 0) then
   begin
     json.valueArray('contributor');
     for i := 0 to elem.contributorList.Count - 1 do
       ComposeContributor(json, '', elem.contributorList[i]); {z - Contributor}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.contactList.Count > 0) then
+  if not elem.noCompose and doCompose('contact') and (SummaryOption in [soFull, soSummary, soData]) and (elem.contactList.Count > 0) then
   begin
     json.valueArray('contact');
     for i := 0 to elem.contactList.Count - 1 do
       ComposeContactDetail(json, '', elem.contactList[i]); {z - ContactDetail}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('copyright') and (SummaryOption in [soFull, soData]) then
     ComposeMarkdownValue(json, 'copyright', elem.copyrightElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('copyright') and (SummaryOption in [soFull, soData]) then
     ComposeMarkdownProps(json, 'copyright', elem.copyrightElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.relatedArtifactList.Count > 0) then
+  if not elem.noCompose and doCompose('relatedArtifact') and (SummaryOption in [soFull, soData]) and (elem.relatedArtifactList.Count > 0) then
   begin
     json.valueArray('relatedArtifact');
     for i := 0 to elem.relatedArtifactList.Count - 1 do
       ComposeRelatedArtifact(json, '', elem.relatedArtifactList[i]); {z - RelatedArtifact}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.library_List.Count > 0) then
+  if not elem.noCompose and doCompose('library_') and (SummaryOption in [soFull, soData]) and (elem.library_List.Count > 0) then
   begin
     json.valueArray('library');
     for i := 0 to elem.library_List.Count - 1 do
       ComposeReference{TFhirLibrary}(json, '', elem.library_List[i]); {z - Reference(Library)}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('kind') and (SummaryOption in [soFull, soData]) then
      ComposeEnumValue(json, 'kind', elem.KindElement, CODES_TFhirResourceTypesEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('kind') and (SummaryOption in [soFull, soData]) then
      ComposeEnumProps(json, 'kind', elem.KindElement, CODES_TFhirResourceTypesEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('code') and (SummaryOption in [soFull, soData]) then
     ComposeCodeableConcept(json, 'code', elem.code); {a}
   if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.timing is TFhirTiming) then 
     ComposeTiming(json, 'timingTiming', TFhirTiming(elem.timing)) 
@@ -8706,9 +8714,9 @@ begin
     ComposeDateTimeValue(json, 'timingDateTime', TFhirDateTime(elem.timing), false);
     ComposeDateTimeProps(json, 'timingDateTime', TFhirDateTime(elem.timing), false);
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('location') and (SummaryOption in [soFull, soData]) then
     ComposeReference{TFhirLocation}(json, 'location', elem.location); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.participantList.Count > 0) then
+  if not elem.noCompose and doCompose('participant') and (SummaryOption in [soFull, soData]) and (elem.participantList.Count > 0) then
   begin
     json.valueArray('participant');
     for i := 0 to elem.participantList.Count - 1 do
@@ -8719,25 +8727,25 @@ begin
     ComposeReference(json, 'productReference', TFhirReference(elem.product))
   else if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.product is TFhirCodeableConcept) then 
     ComposeCodeableConcept(json, 'productCodeableConcept', TFhirCodeableConcept(elem.product)) ;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('quantity') and (SummaryOption in [soFull, soData]) then
     ComposeQuantity(json, 'quantity', elem.quantity); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.dosageList.Count > 0) then
+  if not elem.noCompose and doCompose('dosage') and (SummaryOption in [soFull, soData]) and (elem.dosageList.Count > 0) then
   begin
     json.valueArray('dosage');
     for i := 0 to elem.dosageList.Count - 1 do
       ComposeDosage(json, '', elem.dosageList[i]); {z - Dosage}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.bodySiteList.Count > 0) then
+  if not elem.noCompose and doCompose('bodySite') and (SummaryOption in [soFull, soData]) and (elem.bodySiteList.Count > 0) then
   begin
     json.valueArray('bodySite');
     for i := 0 to elem.bodySiteList.Count - 1 do
       ComposeCodeableConcept(json, '', elem.bodySiteList[i]); {z - CodeableConcept}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('transform') and (SummaryOption in [soFull, soData]) then
     ComposeReference{TFhirStructureMap}(json, 'transform', elem.transform); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.dynamicValueList.Count > 0) then
+  if not elem.noCompose and doCompose('dynamicValue') and (SummaryOption in [soFull, soData]) and (elem.dynamicValueList.Count > 0) then
   begin
     json.valueArray('dynamicValue');
     for i := 0 to elem.dynamicValueList.Count - 1 do
@@ -8864,8 +8872,8 @@ begin
         result.identifier := ParseIdentifier(jsn.vObj['identifier']);{q3}
     if jsn.has('actuality') or jsn.has('_actuality')  then
       result.actualityElement := parseEnum(jsn.path+'/actuality', jsn['actuality'], jsn.vObj['_actuality'], CODES_TFhirAdverseEventActualityEnum, SYSTEMS_TFhirAdverseEventActualityEnum);
-    if jsn.has('category') or jsn.has('_category')  then
-      result.categoryElement := parseEnum(jsn.path+'/category', jsn['category'], jsn.vObj['_category'], CODES_TFhirAdverseEventCategoryEnum, SYSTEMS_TFhirAdverseEventCategoryEnum);
+    if jsn.has('category') then
+      iterateArray(jsn.vArr['category'], result.categoryList, parseCodeableConcept);
     if jsn.has('event') then
         result.event := ParseCodeableConcept(jsn.vObj['event']);{q3}
     if jsn.has('subject') then
@@ -8905,69 +8913,72 @@ begin
   if (elem = nil) then
     exit;
   ComposeDomainResourceProperties(json, elem);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('identifier') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeIdentifier(json, 'identifier', elem.identifier); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('actuality') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumValue(json, 'actuality', elem.ActualityElement, CODES_TFhirAdverseEventActualityEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('actuality') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumProps(json, 'actuality', elem.ActualityElement, CODES_TFhirAdverseEventActualityEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
-     ComposeEnumValue(json, 'category', elem.CategoryElement, CODES_TFhirAdverseEventCategoryEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
-     ComposeEnumProps(json, 'category', elem.CategoryElement, CODES_TFhirAdverseEventCategoryEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('category') and (SummaryOption in [soFull, soSummary, soData]) and (elem.categoryList.Count > 0) then
+  begin
+    json.valueArray('category');
+    for i := 0 to elem.categoryList.Count - 1 do
+      ComposeCodeableConcept(json, '', elem.categoryList[i]); {z - CodeableConcept}
+    json.FinishArray;
+  end;
+  if not elem.noCompose and doCompose('event') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeCodeableConcept(json, 'event', elem.event); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('subject') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{Resource}(json, 'subject', elem.subject); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('date') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeDateTimeValue(json, 'date', elem.dateElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('date') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeDateTimeProps(json, 'date', elem.dateElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.resultingConditionList.Count > 0) then
+  if not elem.noCompose and doCompose('resultingCondition') and (SummaryOption in [soFull, soSummary, soData]) and (elem.resultingConditionList.Count > 0) then
   begin
     json.valueArray('resultingCondition');
     for i := 0 to elem.resultingConditionList.Count - 1 do
       ComposeReference{TFhirCondition}(json, '', elem.resultingConditionList[i]); {z - Reference(Condition)}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('location') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{TFhirLocation}(json, 'location', elem.location); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('seriousness') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeCodeableConcept(json, 'seriousness', elem.seriousness); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('severity') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeCodeableConcept(json, 'severity', elem.severity); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('outcome') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeCodeableConcept(json, 'outcome', elem.outcome); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('recorder') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{Resource}(json, 'recorder', elem.recorder); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('eventParticipant') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{Resource}(json, 'eventParticipant', elem.eventParticipant); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('description') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeStringValue(json, 'description', elem.descriptionElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('description') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeStringProps(json, 'description', elem.descriptionElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.suspectEntityList.Count > 0) then
+  if not elem.noCompose and doCompose('suspectEntity') and (SummaryOption in [soFull, soSummary, soData]) and (elem.suspectEntityList.Count > 0) then
   begin
     json.valueArray('suspectEntity');
     for i := 0 to elem.suspectEntityList.Count - 1 do
       ComposeAdverseEventSuspectEntity(json, '', elem.suspectEntityList[i]); {z - }
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.subjectMedicalHistoryList.Count > 0) then
+  if not elem.noCompose and doCompose('subjectMedicalHistory') and (SummaryOption in [soFull, soSummary, soData]) and (elem.subjectMedicalHistoryList.Count > 0) then
   begin
     json.valueArray('subjectMedicalHistory');
     for i := 0 to elem.subjectMedicalHistoryList.Count - 1 do
       ComposeReference{Resource}(json, '', elem.subjectMedicalHistoryList[i]); {z - Reference(Condition|Observation|AllergyIntolerance|FamilyMemberHistory|Immunization|Procedure)}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.referenceDocumentList.Count > 0) then
+  if not elem.noCompose and doCompose('referenceDocument') and (SummaryOption in [soFull, soSummary, soData]) and (elem.referenceDocumentList.Count > 0) then
   begin
     json.valueArray('referenceDocument');
     for i := 0 to elem.referenceDocumentList.Count - 1 do
       ComposeReference{TFhirDocumentReference}(json, '', elem.referenceDocumentList[i]); {z - Reference(DocumentReference)}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.studyList.Count > 0) then
+  if not elem.noCompose and doCompose('study') and (SummaryOption in [soFull, soSummary, soData]) and (elem.studyList.Count > 0) then
   begin
     json.valueArray('study');
     for i := 0 to elem.studyList.Count - 1 do
@@ -9122,26 +9133,26 @@ begin
   if (elem = nil) then
     exit;
   ComposeDomainResourceProperties(json, elem);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.identifierList.Count > 0) then
+  if not elem.noCompose and doCompose('identifier') and (SummaryOption in [soFull, soSummary, soData]) and (elem.identifierList.Count > 0) then
   begin
     json.valueArray('identifier');
     for i := 0 to elem.identifierList.Count - 1 do
       ComposeIdentifier(json, '', elem.identifierList[i]); {z - Identifier}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('clinicalStatus') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumValue(json, 'clinicalStatus', elem.ClinicalStatusElement, CODES_TFhirAllergyClinicalStatusEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('clinicalStatus') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumProps(json, 'clinicalStatus', elem.ClinicalStatusElement, CODES_TFhirAllergyClinicalStatusEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('verificationStatus') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumValue(json, 'verificationStatus', elem.VerificationStatusElement, CODES_TFhirAllergyVerificationStatusEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('verificationStatus') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumProps(json, 'verificationStatus', elem.VerificationStatusElement, CODES_TFhirAllergyVerificationStatusEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('type_') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumValue(json, 'type', elem.Type_Element, CODES_TFhirAllergyIntoleranceTypeEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('type_') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumProps(json, 'type', elem.Type_Element, CODES_TFhirAllergyIntoleranceTypeEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.categoryList.Count > 0) then
+  if not elem.noCompose and doCompose('category') and (SummaryOption in [soFull, soSummary, soData]) and (elem.categoryList.Count > 0) then
   begin
     val := false;
     ext := false;
@@ -9165,13 +9176,13 @@ begin
       json.FinishArray;
     end;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('criticality') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumValue(json, 'criticality', elem.CriticalityElement, CODES_TFhirAllergyIntoleranceCriticalityEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('criticality') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumProps(json, 'criticality', elem.CriticalityElement, CODES_TFhirAllergyIntoleranceCriticalityEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('code') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeCodeableConcept(json, 'code', elem.code); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('patient') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{TFhirPatient}(json, 'patient', elem.patient); {a}
   if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.onset is TFhirAge) then 
     ComposeAge(json, 'onsetAge', TFhirAge(elem.onset)) 
@@ -9189,26 +9200,26 @@ begin
     ComposeStringValue(json, 'onsetString', TFhirString(elem.onset), false);
     ComposeStringProps(json, 'onsetString', TFhirString(elem.onset), false);
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('assertedDate') and (SummaryOption in [soFull, soData]) then
     ComposeDateTimeValue(json, 'assertedDate', elem.assertedDateElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('assertedDate') and (SummaryOption in [soFull, soData]) then
     ComposeDateTimeProps(json, 'assertedDate', elem.assertedDateElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('recorder') and (SummaryOption in [soFull, soData]) then
     ComposeReference{Resource}(json, 'recorder', elem.recorder); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('asserter') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{Resource}(json, 'asserter', elem.asserter); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('lastOccurrence') and (SummaryOption in [soFull, soData]) then
     ComposeDateTimeValue(json, 'lastOccurrence', elem.lastOccurrenceElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('lastOccurrence') and (SummaryOption in [soFull, soData]) then
     ComposeDateTimeProps(json, 'lastOccurrence', elem.lastOccurrenceElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.noteList.Count > 0) then
+  if not elem.noCompose and doCompose('note') and (SummaryOption in [soFull, soData]) and (elem.noteList.Count > 0) then
   begin
     json.valueArray('note');
     for i := 0 to elem.noteList.Count - 1 do
       ComposeAnnotation(json, '', elem.noteList[i]); {z - Annotation}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.reactionList.Count > 0) then
+  if not elem.noCompose and doCompose('reaction') and (SummaryOption in [soFull, soData]) and (elem.reactionList.Count > 0) then
   begin
     json.valueArray('reaction');
     for i := 0 to elem.reactionList.Count - 1 do
@@ -9344,106 +9355,106 @@ begin
   if (elem = nil) then
     exit;
   ComposeDomainResourceProperties(json, elem);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.identifierList.Count > 0) then
+  if not elem.noCompose and doCompose('identifier') and (SummaryOption in [soFull, soSummary, soData]) and (elem.identifierList.Count > 0) then
   begin
     json.valueArray('identifier');
     for i := 0 to elem.identifierList.Count - 1 do
       ComposeIdentifier(json, '', elem.identifierList[i]); {z - Identifier}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('status') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumValue(json, 'status', elem.StatusElement, CODES_TFhirAppointmentstatusEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('status') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumProps(json, 'status', elem.StatusElement, CODES_TFhirAppointmentstatusEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('serviceCategory') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeCodeableConcept(json, 'serviceCategory', elem.serviceCategory); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.serviceTypeList.Count > 0) then
+  if not elem.noCompose and doCompose('serviceType') and (SummaryOption in [soFull, soSummary, soData]) and (elem.serviceTypeList.Count > 0) then
   begin
     json.valueArray('serviceType');
     for i := 0 to elem.serviceTypeList.Count - 1 do
       ComposeCodeableConcept(json, '', elem.serviceTypeList[i]); {z - CodeableConcept}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.specialtyList.Count > 0) then
+  if not elem.noCompose and doCompose('specialty') and (SummaryOption in [soFull, soSummary, soData]) and (elem.specialtyList.Count > 0) then
   begin
     json.valueArray('specialty');
     for i := 0 to elem.specialtyList.Count - 1 do
       ComposeCodeableConcept(json, '', elem.specialtyList[i]); {z - CodeableConcept}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('appointmentType') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeCodeableConcept(json, 'appointmentType', elem.appointmentType); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.reasonList.Count > 0) then
+  if not elem.noCompose and doCompose('reason') and (SummaryOption in [soFull, soSummary, soData]) and (elem.reasonList.Count > 0) then
   begin
     json.valueArray('reason');
     for i := 0 to elem.reasonList.Count - 1 do
       ComposeCodeableConcept(json, '', elem.reasonList[i]); {z - CodeableConcept}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.indicationList.Count > 0) then
+  if not elem.noCompose and doCompose('indication') and (SummaryOption in [soFull, soData]) and (elem.indicationList.Count > 0) then
   begin
     json.valueArray('indication');
     for i := 0 to elem.indicationList.Count - 1 do
       ComposeReference{Resource}(json, '', elem.indicationList[i]); {z - Reference(Condition|Procedure)}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('priority') and (SummaryOption in [soFull, soData]) then
     ComposeUnsignedIntValue(json, 'priority', elem.priorityElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('priority') and (SummaryOption in [soFull, soData]) then
     ComposeUnsignedIntProps(json, 'priority', elem.priorityElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('description') and (SummaryOption in [soFull, soData]) then
     ComposeStringValue(json, 'description', elem.descriptionElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('description') and (SummaryOption in [soFull, soData]) then
     ComposeStringProps(json, 'description', elem.descriptionElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.supportingInformationList.Count > 0) then
+  if not elem.noCompose and doCompose('supportingInformation') and (SummaryOption in [soFull, soData]) and (elem.supportingInformationList.Count > 0) then
   begin
     json.valueArray('supportingInformation');
     for i := 0 to elem.supportingInformationList.Count - 1 do
       ComposeReference{TFhirReference}(json, '', elem.supportingInformationList[i]); {z - Reference(Any)}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('start') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeInstantValue(json, 'start', elem.startElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('start') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeInstantProps(json, 'start', elem.startElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('end_') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeInstantValue(json, 'end', elem.end_Element, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('end_') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeInstantProps(json, 'end', elem.end_Element, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('minutesDuration') and (SummaryOption in [soFull, soData]) then
     ComposePositiveIntValue(json, 'minutesDuration', elem.minutesDurationElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('minutesDuration') and (SummaryOption in [soFull, soData]) then
     ComposePositiveIntProps(json, 'minutesDuration', elem.minutesDurationElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.slotList.Count > 0) then
+  if not elem.noCompose and doCompose('slot') and (SummaryOption in [soFull, soData]) and (elem.slotList.Count > 0) then
   begin
     json.valueArray('slot');
     for i := 0 to elem.slotList.Count - 1 do
       ComposeReference{TFhirSlot}(json, '', elem.slotList[i]); {z - Reference(Slot)}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('created') and (SummaryOption in [soFull, soData]) then
     ComposeDateTimeValue(json, 'created', elem.createdElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('created') and (SummaryOption in [soFull, soData]) then
     ComposeDateTimeProps(json, 'created', elem.createdElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('comment') and (SummaryOption in [soFull, soData]) then
     ComposeStringValue(json, 'comment', elem.commentElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('comment') and (SummaryOption in [soFull, soData]) then
     ComposeStringProps(json, 'comment', elem.commentElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.incomingReferralList.Count > 0) then
+  if not elem.noCompose and doCompose('incomingReferral') and (SummaryOption in [soFull, soData]) and (elem.incomingReferralList.Count > 0) then
   begin
     json.valueArray('incomingReferral');
     for i := 0 to elem.incomingReferralList.Count - 1 do
       ComposeReference{TFhirProcedureRequest}(json, '', elem.incomingReferralList[i]); {z - Reference(ProcedureRequest)}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.participantList.Count > 0) then
+  if not elem.noCompose and doCompose('participant') and (SummaryOption in [soFull, soData]) and (elem.participantList.Count > 0) then
   begin
     json.valueArray('participant');
     for i := 0 to elem.participantList.Count - 1 do
       ComposeAppointmentParticipant(json, '', elem.participantList[i]); {z - }
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.requestedPeriodList.Count > 0) then
+  if not elem.noCompose and doCompose('requestedPeriod') and (SummaryOption in [soFull, soData]) and (elem.requestedPeriodList.Count > 0) then
   begin
     json.valueArray('requestedPeriod');
     for i := 0 to elem.requestedPeriodList.Count - 1 do
@@ -9498,39 +9509,39 @@ begin
   if (elem = nil) then
     exit;
   ComposeDomainResourceProperties(json, elem);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.identifierList.Count > 0) then
+  if not elem.noCompose and doCompose('identifier') and (SummaryOption in [soFull, soSummary, soData]) and (elem.identifierList.Count > 0) then
   begin
     json.valueArray('identifier');
     for i := 0 to elem.identifierList.Count - 1 do
       ComposeIdentifier(json, '', elem.identifierList[i]); {z - Identifier}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('appointment') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{TFhirAppointment}(json, 'appointment', elem.appointment); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('start') and (SummaryOption in [soFull, soData]) then
     ComposeInstantValue(json, 'start', elem.startElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('start') and (SummaryOption in [soFull, soData]) then
     ComposeInstantProps(json, 'start', elem.startElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('end_') and (SummaryOption in [soFull, soData]) then
     ComposeInstantValue(json, 'end', elem.end_Element, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('end_') and (SummaryOption in [soFull, soData]) then
     ComposeInstantProps(json, 'end', elem.end_Element, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.participantTypeList.Count > 0) then
+  if not elem.noCompose and doCompose('participantType') and (SummaryOption in [soFull, soSummary, soData]) and (elem.participantTypeList.Count > 0) then
   begin
     json.valueArray('participantType');
     for i := 0 to elem.participantTypeList.Count - 1 do
       ComposeCodeableConcept(json, '', elem.participantTypeList[i]); {z - CodeableConcept}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('actor') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{Resource}(json, 'actor', elem.actor); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('participantStatus') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumValue(json, 'participantStatus', elem.ParticipantStatusElement, CODES_TFhirParticipationstatusEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('participantStatus') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumProps(json, 'participantStatus', elem.ParticipantStatusElement, CODES_TFhirParticipationstatusEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('comment') and (SummaryOption in [soFull, soData]) then
     ComposeStringValue(json, 'comment', elem.commentElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('comment') and (SummaryOption in [soFull, soData]) then
     ComposeStringProps(json, 'comment', elem.commentElement, false);
 end;
 
@@ -9937,50 +9948,50 @@ begin
   if (elem = nil) then
     exit;
   ComposeDomainResourceProperties(json, elem);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('type_') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeCoding(json, 'type', elem.type_); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.subtypeList.Count > 0) then
+  if not elem.noCompose and doCompose('subtype') and (SummaryOption in [soFull, soSummary, soData]) and (elem.subtypeList.Count > 0) then
   begin
     json.valueArray('subtype');
     for i := 0 to elem.subtypeList.Count - 1 do
       ComposeCoding(json, '', elem.subtypeList[i]); {z - Coding}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('action') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumValue(json, 'action', elem.ActionElement, CODES_TFhirAuditEventActionEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('action') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumProps(json, 'action', elem.ActionElement, CODES_TFhirAuditEventActionEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('period') and (SummaryOption in [soFull, soData]) then
     ComposePeriod(json, 'period', elem.period); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('recorded') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeInstantValue(json, 'recorded', elem.recordedElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('recorded') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeInstantProps(json, 'recorded', elem.recordedElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('outcome') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumValue(json, 'outcome', elem.OutcomeElement, CODES_TFhirAuditEventOutcomeEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('outcome') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumProps(json, 'outcome', elem.OutcomeElement, CODES_TFhirAuditEventOutcomeEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('outcomeDesc') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeStringValue(json, 'outcomeDesc', elem.outcomeDescElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('outcomeDesc') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeStringProps(json, 'outcomeDesc', elem.outcomeDescElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.purposeOfEventList.Count > 0) then
+  if not elem.noCompose and doCompose('purposeOfEvent') and (SummaryOption in [soFull, soSummary, soData]) and (elem.purposeOfEventList.Count > 0) then
   begin
     json.valueArray('purposeOfEvent');
     for i := 0 to elem.purposeOfEventList.Count - 1 do
       ComposeCodeableConcept(json, '', elem.purposeOfEventList[i]); {z - CodeableConcept}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.agentList.Count > 0) then
+  if not elem.noCompose and doCompose('agent') and (SummaryOption in [soFull, soData]) and (elem.agentList.Count > 0) then
   begin
     json.valueArray('agent');
     for i := 0 to elem.agentList.Count - 1 do
       ComposeAuditEventAgent(json, '', elem.agentList[i]); {z - }
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('source') and (SummaryOption in [soFull, soData]) then
     ComposeAuditEventSource(json, 'source', elem.source); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.entityList.Count > 0) then
+  if not elem.noCompose and doCompose('entity') and (SummaryOption in [soFull, soData]) and (elem.entityList.Count > 0) then
   begin
     json.valueArray('entity');
     for i := 0 to elem.entityList.Count - 1 do
@@ -10029,22 +10040,22 @@ begin
   if (elem = nil) then
     exit;
   ComposeDomainResourceProperties(json, elem);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.identifierList.Count > 0) then
+  if not elem.noCompose and doCompose('identifier') and (SummaryOption in [soFull, soSummary, soData]) and (elem.identifierList.Count > 0) then
   begin
     json.valueArray('identifier');
     for i := 0 to elem.identifierList.Count - 1 do
       ComposeIdentifier(json, '', elem.identifierList[i]); {z - Identifier}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('code') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeCodeableConcept(json, 'code', elem.code); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('subject') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{TFhirReference}(json, 'subject', elem.subject); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('created') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeDateValue(json, 'created', elem.createdElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('created') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeDateProps(json, 'created', elem.createdElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('author') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{Resource}(json, 'author', elem.author); {a}
 end;
 
@@ -10082,15 +10093,15 @@ begin
   if (elem = nil) then
     exit;
   ComposeResourceProperties(json, elem);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('contentType') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeCodeValue(json, 'contentType', elem.contentTypeElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('contentType') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeCodeProps(json, 'contentType', elem.contentTypeElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('securityContext') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{TFhirReference}(json, 'securityContext', elem.securityContext); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('content') and (SummaryOption in [soFull, soData]) then
     ComposeBase64BinaryValue(json, 'content', elem.contentElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('content') and (SummaryOption in [soFull, soData]) then
     ComposeBase64BinaryProps(json, 'content', elem.contentElement, false);
 end;
 
@@ -10140,40 +10151,40 @@ begin
   if (elem = nil) then
     exit;
   ComposeDomainResourceProperties(json, elem);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.identifierList.Count > 0) then
+  if not elem.noCompose and doCompose('identifier') and (SummaryOption in [soFull, soSummary, soData]) and (elem.identifierList.Count > 0) then
   begin
     json.valueArray('identifier');
     for i := 0 to elem.identifierList.Count - 1 do
       ComposeIdentifier(json, '', elem.identifierList[i]); {z - Identifier}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('active') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeBooleanValue(json, 'active', elem.activeElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('active') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeBooleanProps(json, 'active', elem.activeElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('morphology') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeCodeableConcept(json, 'morphology', elem.morphology); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('location') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeCodeableConcept(json, 'location', elem.location); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.locationQualifierList.Count > 0) then
+  if not elem.noCompose and doCompose('locationQualifier') and (SummaryOption in [soFull, soData]) and (elem.locationQualifierList.Count > 0) then
   begin
     json.valueArray('locationQualifier');
     for i := 0 to elem.locationQualifierList.Count - 1 do
       ComposeCodeableConcept(json, '', elem.locationQualifierList[i]); {z - CodeableConcept}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('description') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeStringValue(json, 'description', elem.descriptionElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('description') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeStringProps(json, 'description', elem.descriptionElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.imageList.Count > 0) then
+  if not elem.noCompose and doCompose('image') and (SummaryOption in [soFull, soData]) and (elem.imageList.Count > 0) then
   begin
     json.valueArray('image');
     for i := 0 to elem.imageList.Count - 1 do
       ComposeAttachment(json, '', elem.imageList[i]); {z - Attachment}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('patient') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{TFhirPatient}(json, 'patient', elem.patient); {a}
 end;
 
@@ -11539,76 +11550,76 @@ begin
   if (elem = nil) then
     exit;
   ComposeDomainResourceProperties(json, elem);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('url') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeUriValue(json, 'url', elem.urlElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('url') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeUriProps(json, 'url', elem.urlElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('version') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeStringValue(json, 'version', elem.versionElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('version') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeStringProps(json, 'version', elem.versionElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('name') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeStringValue(json, 'name', elem.nameElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('name') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeStringProps(json, 'name', elem.nameElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('title') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeStringValue(json, 'title', elem.titleElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('title') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeStringProps(json, 'title', elem.titleElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('status') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumValue(json, 'status', elem.StatusElement, CODES_TFhirPublicationStatusEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('status') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumProps(json, 'status', elem.StatusElement, CODES_TFhirPublicationStatusEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('experimental') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeBooleanValue(json, 'experimental', elem.experimentalElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('experimental') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeBooleanProps(json, 'experimental', elem.experimentalElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('date') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeDateTimeValue(json, 'date', elem.dateElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('date') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeDateTimeProps(json, 'date', elem.dateElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('publisher') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeStringValue(json, 'publisher', elem.publisherElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('publisher') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeStringProps(json, 'publisher', elem.publisherElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.contactList.Count > 0) then
+  if not elem.noCompose and doCompose('contact') and (SummaryOption in [soFull, soSummary, soData]) and (elem.contactList.Count > 0) then
   begin
     json.valueArray('contact');
     for i := 0 to elem.contactList.Count - 1 do
       ComposeContactDetail(json, '', elem.contactList[i]); {z - ContactDetail}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('description') and (SummaryOption in [soFull, soData]) then
     ComposeMarkdownValue(json, 'description', elem.descriptionElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('description') and (SummaryOption in [soFull, soData]) then
     ComposeMarkdownProps(json, 'description', elem.descriptionElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.useContextList.Count > 0) then
+  if not elem.noCompose and doCompose('useContext') and (SummaryOption in [soFull, soSummary, soData]) and (elem.useContextList.Count > 0) then
   begin
     json.valueArray('useContext');
     for i := 0 to elem.useContextList.Count - 1 do
       ComposeUsageContext(json, '', elem.useContextList[i]); {z - UsageContext}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.jurisdictionList.Count > 0) then
+  if not elem.noCompose and doCompose('jurisdiction') and (SummaryOption in [soFull, soSummary, soData]) and (elem.jurisdictionList.Count > 0) then
   begin
     json.valueArray('jurisdiction');
     for i := 0 to elem.jurisdictionList.Count - 1 do
       ComposeCodeableConcept(json, '', elem.jurisdictionList[i]); {z - CodeableConcept}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('purpose') and (SummaryOption in [soFull, soData]) then
     ComposeMarkdownValue(json, 'purpose', elem.purposeElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('purpose') and (SummaryOption in [soFull, soData]) then
     ComposeMarkdownProps(json, 'purpose', elem.purposeElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('copyright') and (SummaryOption in [soFull, soData]) then
     ComposeMarkdownValue(json, 'copyright', elem.copyrightElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('copyright') and (SummaryOption in [soFull, soData]) then
     ComposeMarkdownProps(json, 'copyright', elem.copyrightElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('kind') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumValue(json, 'kind', elem.KindElement, CODES_TFhirCapabilityStatementKindEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('kind') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumProps(json, 'kind', elem.KindElement, CODES_TFhirCapabilityStatementKindEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.instantiatesList.Count > 0) then
+  if not elem.noCompose and doCompose('instantiates') and (SummaryOption in [soFull, soSummary, soData]) and (elem.instantiatesList.Count > 0) then
   begin
     ext := false;
     val := false;
@@ -11632,19 +11643,19 @@ begin
       json.FinishArray;
     end;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('software') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeCapabilityStatementSoftware(json, 'software', elem.software); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('implementation_') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeCapabilityStatementImplementation(json, 'implementation', elem.implementation_); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('fhirVersion') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeIdValue(json, 'fhirVersion', elem.fhirVersionElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('fhirVersion') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeIdProps(json, 'fhirVersion', elem.fhirVersionElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('acceptUnknown') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumValue(json, 'acceptUnknown', elem.AcceptUnknownElement, CODES_TFhirUnknownContentCodeEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('acceptUnknown') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumProps(json, 'acceptUnknown', elem.AcceptUnknownElement, CODES_TFhirUnknownContentCodeEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.formatList.Count > 0) then
+  if not elem.noCompose and doCompose('format') and (SummaryOption in [soFull, soSummary, soData]) and (elem.formatList.Count > 0) then
   begin
     ext := false;
     val := false;
@@ -11668,7 +11679,7 @@ begin
       json.FinishArray;
     end;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.patchFormatList.Count > 0) then
+  if not elem.noCompose and doCompose('patchFormat') and (SummaryOption in [soFull, soSummary, soData]) and (elem.patchFormatList.Count > 0) then
   begin
     ext := false;
     val := false;
@@ -11692,7 +11703,7 @@ begin
       json.FinishArray;
     end;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.implementationGuideList.Count > 0) then
+  if not elem.noCompose and doCompose('implementationGuide') and (SummaryOption in [soFull, soSummary, soData]) and (elem.implementationGuideList.Count > 0) then
   begin
     ext := false;
     val := false;
@@ -11716,28 +11727,28 @@ begin
       json.FinishArray;
     end;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.profileList.Count > 0) then
+  if not elem.noCompose and doCompose('profile') and (SummaryOption in [soFull, soSummary, soData]) and (elem.profileList.Count > 0) then
   begin
     json.valueArray('profile');
     for i := 0 to elem.profileList.Count - 1 do
       ComposeReference{TFhirStructureDefinition}(json, '', elem.profileList[i]); {z - Reference(StructureDefinition)}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.restList.Count > 0) then
+  if not elem.noCompose and doCompose('rest') and (SummaryOption in [soFull, soSummary, soData]) and (elem.restList.Count > 0) then
   begin
     json.valueArray('rest');
     for i := 0 to elem.restList.Count - 1 do
       ComposeCapabilityStatementRest(json, '', elem.restList[i]); {z - }
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.messagingList.Count > 0) then
+  if not elem.noCompose and doCompose('messaging') and (SummaryOption in [soFull, soSummary, soData]) and (elem.messagingList.Count > 0) then
   begin
     json.valueArray('messaging');
     for i := 0 to elem.messagingList.Count - 1 do
       ComposeCapabilityStatementMessaging(json, '', elem.messagingList[i]); {z - }
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.documentList.Count > 0) then
+  if not elem.noCompose and doCompose('document') and (SummaryOption in [soFull, soSummary, soData]) and (elem.documentList.Count > 0) then
   begin
     json.valueArray('document');
     for i := 0 to elem.documentList.Count - 1 do
@@ -12024,113 +12035,113 @@ begin
   if (elem = nil) then
     exit;
   ComposeDomainResourceProperties(json, elem);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.identifierList.Count > 0) then
+  if not elem.noCompose and doCompose('identifier') and (SummaryOption in [soFull, soSummary, soData]) and (elem.identifierList.Count > 0) then
   begin
     json.valueArray('identifier');
     for i := 0 to elem.identifierList.Count - 1 do
       ComposeIdentifier(json, '', elem.identifierList[i]); {z - Identifier}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.definitionList.Count > 0) then
+  if not elem.noCompose and doCompose('definition') and (SummaryOption in [soFull, soSummary, soData]) and (elem.definitionList.Count > 0) then
   begin
     json.valueArray('definition');
     for i := 0 to elem.definitionList.Count - 1 do
       ComposeReference{Resource}(json, '', elem.definitionList[i]); {z - Reference(PlanDefinition|Questionnaire)}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.basedOnList.Count > 0) then
+  if not elem.noCompose and doCompose('basedOn') and (SummaryOption in [soFull, soSummary, soData]) and (elem.basedOnList.Count > 0) then
   begin
     json.valueArray('basedOn');
     for i := 0 to elem.basedOnList.Count - 1 do
       ComposeReference{TFhirCarePlan}(json, '', elem.basedOnList[i]); {z - Reference(CarePlan)}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.replacesList.Count > 0) then
+  if not elem.noCompose and doCompose('replaces') and (SummaryOption in [soFull, soSummary, soData]) and (elem.replacesList.Count > 0) then
   begin
     json.valueArray('replaces');
     for i := 0 to elem.replacesList.Count - 1 do
       ComposeReference{TFhirCarePlan}(json, '', elem.replacesList[i]); {z - Reference(CarePlan)}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.partOfList.Count > 0) then
+  if not elem.noCompose and doCompose('partOf') and (SummaryOption in [soFull, soSummary, soData]) and (elem.partOfList.Count > 0) then
   begin
     json.valueArray('partOf');
     for i := 0 to elem.partOfList.Count - 1 do
       ComposeReference{TFhirCarePlan}(json, '', elem.partOfList[i]); {z - Reference(CarePlan)}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('status') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumValue(json, 'status', elem.StatusElement, CODES_TFhirCarePlanStatusEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('status') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumProps(json, 'status', elem.StatusElement, CODES_TFhirCarePlanStatusEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('intent') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumValue(json, 'intent', elem.IntentElement, CODES_TFhirCarePlanIntentEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('intent') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumProps(json, 'intent', elem.IntentElement, CODES_TFhirCarePlanIntentEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.categoryList.Count > 0) then
+  if not elem.noCompose and doCompose('category') and (SummaryOption in [soFull, soSummary, soData]) and (elem.categoryList.Count > 0) then
   begin
     json.valueArray('category');
     for i := 0 to elem.categoryList.Count - 1 do
       ComposeCodeableConcept(json, '', elem.categoryList[i]); {z - CodeableConcept}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('title') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeStringValue(json, 'title', elem.titleElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('title') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeStringProps(json, 'title', elem.titleElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('description') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeStringValue(json, 'description', elem.descriptionElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('description') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeStringProps(json, 'description', elem.descriptionElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('subject') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{Resource}(json, 'subject', elem.subject); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('context') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{Resource}(json, 'context', elem.context); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('period') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposePeriod(json, 'period', elem.period); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.authorList.Count > 0) then
+  if not elem.noCompose and doCompose('author') and (SummaryOption in [soFull, soSummary, soData]) and (elem.authorList.Count > 0) then
   begin
     json.valueArray('author');
     for i := 0 to elem.authorList.Count - 1 do
       ComposeReference{Resource}(json, '', elem.authorList[i]); {z - Reference(Patient|Practitioner|RelatedPerson|Organization|CareTeam)}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.careTeamList.Count > 0) then
+  if not elem.noCompose and doCompose('careTeam') and (SummaryOption in [soFull, soData]) and (elem.careTeamList.Count > 0) then
   begin
     json.valueArray('careTeam');
     for i := 0 to elem.careTeamList.Count - 1 do
       ComposeReference{TFhirCareTeam}(json, '', elem.careTeamList[i]); {z - Reference(CareTeam)}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.addressesList.Count > 0) then
+  if not elem.noCompose and doCompose('addresses') and (SummaryOption in [soFull, soSummary, soData]) and (elem.addressesList.Count > 0) then
   begin
     json.valueArray('addresses');
     for i := 0 to elem.addressesList.Count - 1 do
       ComposeReference{TFhirCondition}(json, '', elem.addressesList[i]); {z - Reference(Condition)}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.supportingInfoList.Count > 0) then
+  if not elem.noCompose and doCompose('supportingInfo') and (SummaryOption in [soFull, soData]) and (elem.supportingInfoList.Count > 0) then
   begin
     json.valueArray('supportingInfo');
     for i := 0 to elem.supportingInfoList.Count - 1 do
       ComposeReference{TFhirReference}(json, '', elem.supportingInfoList[i]); {z - Reference(Any)}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.goalList.Count > 0) then
+  if not elem.noCompose and doCompose('goal') and (SummaryOption in [soFull, soData]) and (elem.goalList.Count > 0) then
   begin
     json.valueArray('goal');
     for i := 0 to elem.goalList.Count - 1 do
       ComposeReference{TFhirGoal}(json, '', elem.goalList[i]); {z - Reference(Goal)}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.activityList.Count > 0) then
+  if not elem.noCompose and doCompose('activity') and (SummaryOption in [soFull, soData]) and (elem.activityList.Count > 0) then
   begin
     json.valueArray('activity');
     for i := 0 to elem.activityList.Count - 1 do
       ComposeCarePlanActivity(json, '', elem.activityList[i]); {z - }
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.noteList.Count > 0) then
+  if not elem.noCompose and doCompose('note') and (SummaryOption in [soFull, soData]) and (elem.noteList.Count > 0) then
   begin
     json.valueArray('note');
     for i := 0 to elem.noteList.Count - 1 do
@@ -12241,70 +12252,70 @@ begin
   if (elem = nil) then
     exit;
   ComposeDomainResourceProperties(json, elem);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.identifierList.Count > 0) then
+  if not elem.noCompose and doCompose('identifier') and (SummaryOption in [soFull, soSummary, soData]) and (elem.identifierList.Count > 0) then
   begin
     json.valueArray('identifier');
     for i := 0 to elem.identifierList.Count - 1 do
       ComposeIdentifier(json, '', elem.identifierList[i]); {z - Identifier}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('status') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumValue(json, 'status', elem.StatusElement, CODES_TFhirCareTeamStatusEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('status') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumProps(json, 'status', elem.StatusElement, CODES_TFhirCareTeamStatusEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.categoryList.Count > 0) then
+  if not elem.noCompose and doCompose('category') and (SummaryOption in [soFull, soSummary, soData]) and (elem.categoryList.Count > 0) then
   begin
     json.valueArray('category');
     for i := 0 to elem.categoryList.Count - 1 do
       ComposeCodeableConcept(json, '', elem.categoryList[i]); {z - CodeableConcept}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('name') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeStringValue(json, 'name', elem.nameElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('name') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeStringProps(json, 'name', elem.nameElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('subject') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{Resource}(json, 'subject', elem.subject); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('context') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{Resource}(json, 'context', elem.context); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('period') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposePeriod(json, 'period', elem.period); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.participantList.Count > 0) then
+  if not elem.noCompose and doCompose('participant') and (SummaryOption in [soFull, soData]) and (elem.participantList.Count > 0) then
   begin
     json.valueArray('participant');
     for i := 0 to elem.participantList.Count - 1 do
       ComposeCareTeamParticipant(json, '', elem.participantList[i]); {z - }
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.reasonCodeList.Count > 0) then
+  if not elem.noCompose and doCompose('reasonCode') and (SummaryOption in [soFull, soData]) and (elem.reasonCodeList.Count > 0) then
   begin
     json.valueArray('reasonCode');
     for i := 0 to elem.reasonCodeList.Count - 1 do
       ComposeCodeableConcept(json, '', elem.reasonCodeList[i]); {z - CodeableConcept}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.reasonReferenceList.Count > 0) then
+  if not elem.noCompose and doCompose('reasonReference') and (SummaryOption in [soFull, soData]) and (elem.reasonReferenceList.Count > 0) then
   begin
     json.valueArray('reasonReference');
     for i := 0 to elem.reasonReferenceList.Count - 1 do
       ComposeReference{TFhirCondition}(json, '', elem.reasonReferenceList[i]); {z - Reference(Condition)}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.managingOrganizationList.Count > 0) then
+  if not elem.noCompose and doCompose('managingOrganization') and (SummaryOption in [soFull, soSummary, soData]) and (elem.managingOrganizationList.Count > 0) then
   begin
     json.valueArray('managingOrganization');
     for i := 0 to elem.managingOrganizationList.Count - 1 do
       ComposeReference{TFhirOrganization}(json, '', elem.managingOrganizationList[i]); {z - Reference(Organization)}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.telecomList.Count > 0) then
+  if not elem.noCompose and doCompose('telecom') and (SummaryOption in [soFull, soData]) and (elem.telecomList.Count > 0) then
   begin
     json.valueArray('telecom');
     for i := 0 to elem.telecomList.Count - 1 do
       ComposeContactPoint(json, '', elem.telecomList[i]); {z - ContactPoint}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.noteList.Count > 0) then
+  if not elem.noCompose and doCompose('note') and (SummaryOption in [soFull, soData]) and (elem.noteList.Count > 0) then
   begin
     json.valueArray('note');
     for i := 0 to elem.noteList.Count - 1 do
@@ -12409,51 +12420,51 @@ begin
   if (elem = nil) then
     exit;
   ComposeDomainResourceProperties(json, elem);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('type_') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeCodeableConcept(json, 'type', elem.type_); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('purpose') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeCodeableConcept(json, 'purpose', elem.purpose); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('referencedItem') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{Resource}(json, 'referencedItem', elem.referencedItem); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('identifier') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeIdentifier(json, 'identifier', elem.identifier); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.additionalIdentifierList.Count > 0) then
+  if not elem.noCompose and doCompose('additionalIdentifier') and (SummaryOption in [soFull, soSummary, soData]) and (elem.additionalIdentifierList.Count > 0) then
   begin
     json.valueArray('additionalIdentifier');
     for i := 0 to elem.additionalIdentifierList.Count - 1 do
       ComposeIdentifier(json, '', elem.additionalIdentifierList[i]); {z - Identifier}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.classificationList.Count > 0) then
+  if not elem.noCompose and doCompose('classification') and (SummaryOption in [soFull, soSummary, soData]) and (elem.classificationList.Count > 0) then
   begin
     json.valueArray('classification');
     for i := 0 to elem.classificationList.Count - 1 do
       ComposeIdentifier(json, '', elem.classificationList[i]); {z - Identifier}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('status') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeCodeableConcept(json, 'status', elem.status); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('validityPeriod') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposePeriod(json, 'validityPeriod', elem.validityPeriod); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('lastUpdated') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeDateTimeValue(json, 'lastUpdated', elem.lastUpdatedElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('lastUpdated') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeDateTimeProps(json, 'lastUpdated', elem.lastUpdatedElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.additionalCharacteristicList.Count > 0) then
+  if not elem.noCompose and doCompose('additionalCharacteristic') and (SummaryOption in [soFull, soSummary, soData]) and (elem.additionalCharacteristicList.Count > 0) then
   begin
     json.valueArray('additionalCharacteristic');
     for i := 0 to elem.additionalCharacteristicList.Count - 1 do
       ComposeCodeableConcept(json, '', elem.additionalCharacteristicList[i]); {z - CodeableConcept}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.additionalClassificationList.Count > 0) then
+  if not elem.noCompose and doCompose('additionalClassification') and (SummaryOption in [soFull, soSummary, soData]) and (elem.additionalClassificationList.Count > 0) then
   begin
     json.valueArray('additionalClassification');
     for i := 0 to elem.additionalClassificationList.Count - 1 do
       ComposeCodeableConcept(json, '', elem.additionalClassificationList[i]); {z - CodeableConcept}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.relatedItemList.Count > 0) then
+  if not elem.noCompose and doCompose('relatedItem') and (SummaryOption in [soFull, soSummary, soData]) and (elem.relatedItemList.Count > 0) then
   begin
     json.valueArray('relatedItem');
     for i := 0 to elem.relatedItemList.Count - 1 do
@@ -12582,9 +12593,9 @@ begin
   if (elem = nil) then
     exit;
   ComposeDomainResourceProperties(json, elem);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('identifier') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeIdentifier(json, 'identifier', elem.identifier); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.definitionList.Count > 0) then
+  if not elem.noCompose and doCompose('definition') and (SummaryOption in [soFull, soData]) and (elem.definitionList.Count > 0) then
   begin
     ext := false;
     val := false;
@@ -12608,22 +12619,22 @@ begin
       json.FinishArray;
     end;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('status') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumValue(json, 'status', elem.StatusElement, CODES_TFhirChargeitemStatusEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('status') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumProps(json, 'status', elem.StatusElement, CODES_TFhirChargeitemStatusEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.partOfList.Count > 0) then
+  if not elem.noCompose and doCompose('partOf') and (SummaryOption in [soFull, soData]) and (elem.partOfList.Count > 0) then
   begin
     json.valueArray('partOf');
     for i := 0 to elem.partOfList.Count - 1 do
       ComposeReference{TFhirChargeItem}(json, '', elem.partOfList[i]); {z - Reference(ChargeItem)}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('code') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeCodeableConcept(json, 'code', elem.code); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('subject') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{Resource}(json, 'subject', elem.subject); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('context') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{Resource}(json, 'context', elem.context); {a}
   if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.occurrence is TFhirPeriod) then 
     ComposePeriod(json, 'occurrencePeriod', TFhirPeriod(elem.occurrence)) 
@@ -12634,71 +12645,71 @@ begin
     ComposeDateTimeValue(json, 'occurrenceDateTime', TFhirDateTime(elem.occurrence), false);
     ComposeDateTimeProps(json, 'occurrenceDateTime', TFhirDateTime(elem.occurrence), false);
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.participantList.Count > 0) then
+  if not elem.noCompose and doCompose('participant') and (SummaryOption in [soFull, soData]) and (elem.participantList.Count > 0) then
   begin
     json.valueArray('participant');
     for i := 0 to elem.participantList.Count - 1 do
       ComposeChargeItemParticipant(json, '', elem.participantList[i]); {z - }
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('performingOrganization') and (SummaryOption in [soFull, soData]) then
     ComposeReference{TFhirOrganization}(json, 'performingOrganization', elem.performingOrganization); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('requestingOrganization') and (SummaryOption in [soFull, soData]) then
     ComposeReference{TFhirOrganization}(json, 'requestingOrganization', elem.requestingOrganization); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('quantity') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeQuantity(json, 'quantity', elem.quantity); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.bodysiteList.Count > 0) then
+  if not elem.noCompose and doCompose('bodysite') and (SummaryOption in [soFull, soSummary, soData]) and (elem.bodysiteList.Count > 0) then
   begin
     json.valueArray('bodysite');
     for i := 0 to elem.bodysiteList.Count - 1 do
       ComposeCodeableConcept(json, '', elem.bodysiteList[i]); {z - CodeableConcept}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('factorOverride') and (SummaryOption in [soFull, soData]) then
     ComposeDecimalValue(json, 'factorOverride', elem.factorOverrideElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('factorOverride') and (SummaryOption in [soFull, soData]) then
     ComposeDecimalProps(json, 'factorOverride', elem.factorOverrideElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('priceOverride') and (SummaryOption in [soFull, soData]) then
     ComposeMoney(json, 'priceOverride', elem.priceOverride); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('overrideReason') and (SummaryOption in [soFull, soData]) then
     ComposeStringValue(json, 'overrideReason', elem.overrideReasonElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('overrideReason') and (SummaryOption in [soFull, soData]) then
     ComposeStringProps(json, 'overrideReason', elem.overrideReasonElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('enterer') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{Resource}(json, 'enterer', elem.enterer); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('enteredDate') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeDateTimeValue(json, 'enteredDate', elem.enteredDateElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('enteredDate') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeDateTimeProps(json, 'enteredDate', elem.enteredDateElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.reasonList.Count > 0) then
+  if not elem.noCompose and doCompose('reason') and (SummaryOption in [soFull, soData]) and (elem.reasonList.Count > 0) then
   begin
     json.valueArray('reason');
     for i := 0 to elem.reasonList.Count - 1 do
       ComposeCodeableConcept(json, '', elem.reasonList[i]); {z - CodeableConcept}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.serviceList.Count > 0) then
+  if not elem.noCompose and doCompose('service') and (SummaryOption in [soFull, soData]) and (elem.serviceList.Count > 0) then
   begin
     json.valueArray('service');
     for i := 0 to elem.serviceList.Count - 1 do
       ComposeReference{Resource}(json, '', elem.serviceList[i]); {z - Reference(DiagnosticReport|ImagingStudy|Immunization|MedicationAdministration|MedicationDispense|Observation|Procedure|SupplyDelivery)}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.accountList.Count > 0) then
+  if not elem.noCompose and doCompose('account') and (SummaryOption in [soFull, soSummary, soData]) and (elem.accountList.Count > 0) then
   begin
     json.valueArray('account');
     for i := 0 to elem.accountList.Count - 1 do
       ComposeReference{TFhirAccount}(json, '', elem.accountList[i]); {z - Reference(Account)}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.noteList.Count > 0) then
+  if not elem.noCompose and doCompose('note') and (SummaryOption in [soFull, soData]) and (elem.noteList.Count > 0) then
   begin
     json.valueArray('note');
     for i := 0 to elem.noteList.Count - 1 do
       ComposeAnnotation(json, '', elem.noteList[i]); {z - Annotation}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.supportingInformationList.Count > 0) then
+  if not elem.noCompose and doCompose('supportingInformation') and (SummaryOption in [soFull, soData]) and (elem.supportingInformationList.Count > 0) then
   begin
     json.valueArray('supportingInformation');
     for i := 0 to elem.supportingInformationList.Count - 1 do
@@ -13714,116 +13725,116 @@ begin
   if (elem = nil) then
     exit;
   ComposeDomainResourceProperties(json, elem);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.identifierList.Count > 0) then
+  if not elem.noCompose and doCompose('identifier') and (SummaryOption in [soFull, soData]) and (elem.identifierList.Count > 0) then
   begin
     json.valueArray('identifier');
     for i := 0 to elem.identifierList.Count - 1 do
       ComposeIdentifier(json, '', elem.identifierList[i]); {z - Identifier}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('status') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumValue(json, 'status', elem.StatusElement, CODES_TFhirFmStatusEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('status') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumProps(json, 'status', elem.StatusElement, CODES_TFhirFmStatusEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('type_') and (SummaryOption in [soFull, soData]) then
     ComposeCodeableConcept(json, 'type', elem.type_); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.subTypeList.Count > 0) then
+  if not elem.noCompose and doCompose('subType') and (SummaryOption in [soFull, soData]) and (elem.subTypeList.Count > 0) then
   begin
     json.valueArray('subType');
     for i := 0 to elem.subTypeList.Count - 1 do
       ComposeCodeableConcept(json, '', elem.subTypeList[i]); {z - CodeableConcept}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('use') and (SummaryOption in [soFull, soData]) then
      ComposeEnumValue(json, 'use', elem.UseElement, CODES_TFhirClaimUseEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('use') and (SummaryOption in [soFull, soData]) then
      ComposeEnumProps(json, 'use', elem.UseElement, CODES_TFhirClaimUseEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('patient') and (SummaryOption in [soFull, soData]) then
     ComposeReference{TFhirPatient}(json, 'patient', elem.patient); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('billablePeriod') and (SummaryOption in [soFull, soData]) then
     ComposePeriod(json, 'billablePeriod', elem.billablePeriod); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('created') and (SummaryOption in [soFull, soData]) then
     ComposeDateTimeValue(json, 'created', elem.createdElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('created') and (SummaryOption in [soFull, soData]) then
     ComposeDateTimeProps(json, 'created', elem.createdElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('enterer') and (SummaryOption in [soFull, soData]) then
     ComposeReference{TFhirPractitioner}(json, 'enterer', elem.enterer); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('insurer') and (SummaryOption in [soFull, soData]) then
     ComposeReference{TFhirOrganization}(json, 'insurer', elem.insurer); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('provider') and (SummaryOption in [soFull, soData]) then
     ComposeReference{TFhirPractitioner}(json, 'provider', elem.provider); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('organization') and (SummaryOption in [soFull, soData]) then
     ComposeReference{TFhirOrganization}(json, 'organization', elem.organization); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('priority') and (SummaryOption in [soFull, soData]) then
     ComposeCodeableConcept(json, 'priority', elem.priority); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('fundsReserve') and (SummaryOption in [soFull, soData]) then
     ComposeCodeableConcept(json, 'fundsReserve', elem.fundsReserve); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.relatedList.Count > 0) then
+  if not elem.noCompose and doCompose('related') and (SummaryOption in [soFull, soData]) and (elem.relatedList.Count > 0) then
   begin
     json.valueArray('related');
     for i := 0 to elem.relatedList.Count - 1 do
       ComposeClaimRelated(json, '', elem.relatedList[i]); {z - }
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('prescription') and (SummaryOption in [soFull, soData]) then
     ComposeReference{Resource}(json, 'prescription', elem.prescription); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('originalPrescription') and (SummaryOption in [soFull, soData]) then
     ComposeReference{TFhirMedicationRequest}(json, 'originalPrescription', elem.originalPrescription); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('payee') and (SummaryOption in [soFull, soData]) then
     ComposeClaimPayee(json, 'payee', elem.payee); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('referral') and (SummaryOption in [soFull, soData]) then
     ComposeReference{TFhirProcedureRequest}(json, 'referral', elem.referral); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('facility') and (SummaryOption in [soFull, soData]) then
     ComposeReference{TFhirLocation}(json, 'facility', elem.facility); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.careTeamList.Count > 0) then
+  if not elem.noCompose and doCompose('careTeam') and (SummaryOption in [soFull, soData]) and (elem.careTeamList.Count > 0) then
   begin
     json.valueArray('careTeam');
     for i := 0 to elem.careTeamList.Count - 1 do
       ComposeClaimCareTeam(json, '', elem.careTeamList[i]); {z - }
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.informationList.Count > 0) then
+  if not elem.noCompose and doCompose('information') and (SummaryOption in [soFull, soData]) and (elem.informationList.Count > 0) then
   begin
     json.valueArray('information');
     for i := 0 to elem.informationList.Count - 1 do
       ComposeClaimInformation(json, '', elem.informationList[i]); {z - }
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.diagnosisList.Count > 0) then
+  if not elem.noCompose and doCompose('diagnosis') and (SummaryOption in [soFull, soData]) and (elem.diagnosisList.Count > 0) then
   begin
     json.valueArray('diagnosis');
     for i := 0 to elem.diagnosisList.Count - 1 do
       ComposeClaimDiagnosis(json, '', elem.diagnosisList[i]); {z - }
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.procedure_List.Count > 0) then
+  if not elem.noCompose and doCompose('procedure_') and (SummaryOption in [soFull, soData]) and (elem.procedure_List.Count > 0) then
   begin
     json.valueArray('procedure');
     for i := 0 to elem.procedure_List.Count - 1 do
       ComposeClaimProcedure(json, '', elem.procedure_List[i]); {z - }
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.insuranceList.Count > 0) then
+  if not elem.noCompose and doCompose('insurance') and (SummaryOption in [soFull, soData]) and (elem.insuranceList.Count > 0) then
   begin
     json.valueArray('insurance');
     for i := 0 to elem.insuranceList.Count - 1 do
       ComposeClaimInsurance(json, '', elem.insuranceList[i]); {z - }
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('accident') and (SummaryOption in [soFull, soData]) then
     ComposeClaimAccident(json, 'accident', elem.accident); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('employmentImpacted') and (SummaryOption in [soFull, soData]) then
     ComposePeriod(json, 'employmentImpacted', elem.employmentImpacted); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('hospitalization') and (SummaryOption in [soFull, soData]) then
     ComposePeriod(json, 'hospitalization', elem.hospitalization); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.itemList.Count > 0) then
+  if not elem.noCompose and doCompose('item') and (SummaryOption in [soFull, soData]) and (elem.itemList.Count > 0) then
   begin
     json.valueArray('item');
     for i := 0 to elem.itemList.Count - 1 do
       ComposeClaimItem(json, '', elem.itemList[i]); {z - }
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('total') and (SummaryOption in [soFull, soData]) then
     ComposeMoney(json, 'total', elem.total); {a}
 end;
 
@@ -14604,89 +14615,89 @@ begin
   if (elem = nil) then
     exit;
   ComposeDomainResourceProperties(json, elem);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.identifierList.Count > 0) then
+  if not elem.noCompose and doCompose('identifier') and (SummaryOption in [soFull, soData]) and (elem.identifierList.Count > 0) then
   begin
     json.valueArray('identifier');
     for i := 0 to elem.identifierList.Count - 1 do
       ComposeIdentifier(json, '', elem.identifierList[i]); {z - Identifier}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('status') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumValue(json, 'status', elem.StatusElement, CODES_TFhirFmStatusEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('status') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumProps(json, 'status', elem.StatusElement, CODES_TFhirFmStatusEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('patient') and (SummaryOption in [soFull, soData]) then
     ComposeReference{TFhirPatient}(json, 'patient', elem.patient); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('created') and (SummaryOption in [soFull, soData]) then
     ComposeDateTimeValue(json, 'created', elem.createdElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('created') and (SummaryOption in [soFull, soData]) then
     ComposeDateTimeProps(json, 'created', elem.createdElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('insurer') and (SummaryOption in [soFull, soData]) then
     ComposeReference{TFhirOrganization}(json, 'insurer', elem.insurer); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('requestProvider') and (SummaryOption in [soFull, soData]) then
     ComposeReference{TFhirPractitioner}(json, 'requestProvider', elem.requestProvider); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('requestOrganization') and (SummaryOption in [soFull, soData]) then
     ComposeReference{TFhirOrganization}(json, 'requestOrganization', elem.requestOrganization); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('request') and (SummaryOption in [soFull, soData]) then
     ComposeReference{TFhirClaim}(json, 'request', elem.request); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('outcome') and (SummaryOption in [soFull, soData]) then
      ComposeEnumValue(json, 'outcome', elem.OutcomeElement, CODES_TFhirRemittanceOutcomeEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('outcome') and (SummaryOption in [soFull, soData]) then
      ComposeEnumProps(json, 'outcome', elem.OutcomeElement, CODES_TFhirRemittanceOutcomeEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('disposition') and (SummaryOption in [soFull, soData]) then
     ComposeStringValue(json, 'disposition', elem.dispositionElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('disposition') and (SummaryOption in [soFull, soData]) then
     ComposeStringProps(json, 'disposition', elem.dispositionElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('payeeType') and (SummaryOption in [soFull, soData]) then
     ComposeCodeableConcept(json, 'payeeType', elem.payeeType); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.itemList.Count > 0) then
+  if not elem.noCompose and doCompose('item') and (SummaryOption in [soFull, soData]) and (elem.itemList.Count > 0) then
   begin
     json.valueArray('item');
     for i := 0 to elem.itemList.Count - 1 do
       ComposeClaimResponseItem(json, '', elem.itemList[i]); {z - }
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.addItemList.Count > 0) then
+  if not elem.noCompose and doCompose('addItem') and (SummaryOption in [soFull, soData]) and (elem.addItemList.Count > 0) then
   begin
     json.valueArray('addItem');
     for i := 0 to elem.addItemList.Count - 1 do
       ComposeClaimResponseAddItem(json, '', elem.addItemList[i]); {z - }
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.errorList.Count > 0) then
+  if not elem.noCompose and doCompose('error') and (SummaryOption in [soFull, soData]) and (elem.errorList.Count > 0) then
   begin
     json.valueArray('error');
     for i := 0 to elem.errorList.Count - 1 do
       ComposeClaimResponseError(json, '', elem.errorList[i]); {z - }
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('totalCost') and (SummaryOption in [soFull, soData]) then
     ComposeMoney(json, 'totalCost', elem.totalCost); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('unallocDeductable') and (SummaryOption in [soFull, soData]) then
     ComposeMoney(json, 'unallocDeductable', elem.unallocDeductable); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('totalBenefit') and (SummaryOption in [soFull, soData]) then
     ComposeMoney(json, 'totalBenefit', elem.totalBenefit); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('payment') and (SummaryOption in [soFull, soData]) then
     ComposeClaimResponsePayment(json, 'payment', elem.payment); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('reserved') and (SummaryOption in [soFull, soData]) then
     ComposeCoding(json, 'reserved', elem.reserved); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('form') and (SummaryOption in [soFull, soData]) then
     ComposeCodeableConcept(json, 'form', elem.form); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.processNoteList.Count > 0) then
+  if not elem.noCompose and doCompose('processNote') and (SummaryOption in [soFull, soData]) and (elem.processNoteList.Count > 0) then
   begin
     json.valueArray('processNote');
     for i := 0 to elem.processNoteList.Count - 1 do
       ComposeClaimResponseProcessNote(json, '', elem.processNoteList[i]); {z - }
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.communicationRequestList.Count > 0) then
+  if not elem.noCompose and doCompose('communicationRequest') and (SummaryOption in [soFull, soData]) and (elem.communicationRequestList.Count > 0) then
   begin
     json.valueArray('communicationRequest');
     for i := 0 to elem.communicationRequestList.Count - 1 do
       ComposeReference{TFhirCommunicationRequest}(json, '', elem.communicationRequestList[i]); {z - Reference(CommunicationRequest)}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.insuranceList.Count > 0) then
+  if not elem.noCompose and doCompose('insurance') and (SummaryOption in [soFull, soData]) and (elem.insuranceList.Count > 0) then
   begin
     json.valueArray('insurance');
     for i := 0 to elem.insuranceList.Count - 1 do
@@ -14856,26 +14867,26 @@ begin
   if (elem = nil) then
     exit;
   ComposeDomainResourceProperties(json, elem);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.identifierList.Count > 0) then
+  if not elem.noCompose and doCompose('identifier') and (SummaryOption in [soFull, soSummary, soData]) and (elem.identifierList.Count > 0) then
   begin
     json.valueArray('identifier');
     for i := 0 to elem.identifierList.Count - 1 do
       ComposeIdentifier(json, '', elem.identifierList[i]); {z - Identifier}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('status') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumValue(json, 'status', elem.StatusElement, CODES_TFhirClinicalImpressionStatusEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('status') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumProps(json, 'status', elem.StatusElement, CODES_TFhirClinicalImpressionStatusEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('code') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeCodeableConcept(json, 'code', elem.code); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('description') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeStringValue(json, 'description', elem.descriptionElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('description') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeStringProps(json, 'description', elem.descriptionElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('subject') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{Resource}(json, 'subject', elem.subject); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('context') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{Resource}(json, 'context', elem.context); {a}
   if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.effective is TFhirPeriod) then 
     ComposePeriod(json, 'effectivePeriod', TFhirPeriod(elem.effective)) 
@@ -14884,29 +14895,29 @@ begin
     ComposeDateTimeValue(json, 'effectiveDateTime', TFhirDateTime(elem.effective), false);
     ComposeDateTimeProps(json, 'effectiveDateTime', TFhirDateTime(elem.effective), false);
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('date') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeDateTimeValue(json, 'date', elem.dateElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('date') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeDateTimeProps(json, 'date', elem.dateElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('assessor') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{TFhirPractitioner}(json, 'assessor', elem.assessor); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('previous') and (SummaryOption in [soFull, soData]) then
     ComposeReference{TFhirClinicalImpression}(json, 'previous', elem.previous); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.problemList.Count > 0) then
+  if not elem.noCompose and doCompose('problem') and (SummaryOption in [soFull, soSummary, soData]) and (elem.problemList.Count > 0) then
   begin
     json.valueArray('problem');
     for i := 0 to elem.problemList.Count - 1 do
       ComposeReference{Resource}(json, '', elem.problemList[i]); {z - Reference(Condition|AllergyIntolerance)}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.investigationList.Count > 0) then
+  if not elem.noCompose and doCompose('investigation') and (SummaryOption in [soFull, soData]) and (elem.investigationList.Count > 0) then
   begin
     json.valueArray('investigation');
     for i := 0 to elem.investigationList.Count - 1 do
       ComposeClinicalImpressionInvestigation(json, '', elem.investigationList[i]); {z - }
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.protocolList.Count > 0) then
+  if not elem.noCompose and doCompose('protocol') and (SummaryOption in [soFull, soData]) and (elem.protocolList.Count > 0) then
   begin
     ext := false;
     val := false;
@@ -14930,39 +14941,39 @@ begin
       json.FinishArray;
     end;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('summary') and (SummaryOption in [soFull, soData]) then
     ComposeStringValue(json, 'summary', elem.summaryElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('summary') and (SummaryOption in [soFull, soData]) then
     ComposeStringProps(json, 'summary', elem.summaryElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.findingList.Count > 0) then
+  if not elem.noCompose and doCompose('finding') and (SummaryOption in [soFull, soData]) and (elem.findingList.Count > 0) then
   begin
     json.valueArray('finding');
     for i := 0 to elem.findingList.Count - 1 do
       ComposeClinicalImpressionFinding(json, '', elem.findingList[i]); {z - }
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.prognosisCodeableConceptList.Count > 0) then
+  if not elem.noCompose and doCompose('prognosisCodeableConcept') and (SummaryOption in [soFull, soData]) and (elem.prognosisCodeableConceptList.Count > 0) then
   begin
     json.valueArray('prognosisCodeableConcept');
     for i := 0 to elem.prognosisCodeableConceptList.Count - 1 do
       ComposeCodeableConcept(json, '', elem.prognosisCodeableConceptList[i]); {z - CodeableConcept}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.prognosisReferenceList.Count > 0) then
+  if not elem.noCompose and doCompose('prognosisReference') and (SummaryOption in [soFull, soData]) and (elem.prognosisReferenceList.Count > 0) then
   begin
     json.valueArray('prognosisReference');
     for i := 0 to elem.prognosisReferenceList.Count - 1 do
       ComposeReference{TFhirRiskAssessment}(json, '', elem.prognosisReferenceList[i]); {z - Reference(RiskAssessment)}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.actionList.Count > 0) then
+  if not elem.noCompose and doCompose('action') and (SummaryOption in [soFull, soData]) and (elem.actionList.Count > 0) then
   begin
     json.valueArray('action');
     for i := 0 to elem.actionList.Count - 1 do
       ComposeReference{Resource}(json, '', elem.actionList[i]); {z - Reference(ProcedureRequest|Procedure|MedicationRequest|Appointment)}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.noteList.Count > 0) then
+  if not elem.noCompose and doCompose('note') and (SummaryOption in [soFull, soData]) and (elem.noteList.Count > 0) then
   begin
     json.valueArray('note');
     for i := 0 to elem.noteList.Count - 1 do
@@ -15134,6 +15145,8 @@ begin
       iterateArray(jsn.vArr['designation'], result.designationList, parseCodeSystemConceptDesignation);
     if jsn.has('property') then
       iterateArray(jsn.vArr['property'], result.property_List, parseCodeSystemConceptProperty);
+    if jsn.has('alternate') then
+      iterateArray(jsn.vArr['alternate'], result.alternateList, parseCodeSystemConceptAlternate);
     if jsn.has('concept') then
       iterateArray(jsn.vArr['concept'], result.conceptList, parseCodeSystemConcept);
 end;
@@ -15170,6 +15183,13 @@ begin
     json.valueArray('property');
     for i := 0 to elem.property_List.Count - 1 do
       ComposeCodeSystemConceptProperty(json, '', elem.property_List[i]); {z - }
+    json.FinishArray;
+  end;
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.alternateList.Count > 0) then
+  begin
+    json.valueArray('alternate');
+    for i := 0 to elem.alternateList.Count - 1 do
+      ComposeCodeSystemConceptAlternate(json, '', elem.alternateList[i]); {z - }
     json.FinishArray;
   end;
   if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.conceptList.Count > 0) then
@@ -15303,6 +15323,46 @@ begin
   if not noObj then json.finishObject;
 end;
 
+procedure TFHIRJsonParser.ParseCodeSystemConceptAlternate(jsn : TJsonObject; ctxt : TFHIRObjectList);
+begin
+  ctxt.add(ParseCodeSystemConceptAlternate(jsn)); {2}
+end;
+
+function TFHIRJsonParser.ParseCodeSystemConceptAlternate(jsn : TJsonObject) : TFhirCodeSystemConceptAlternate;
+begin
+  result := TFhirCodeSystemConceptAlternate.create;
+  try
+    ParseCodeSystemConceptAlternateProperties(jsn, result);
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFHIRJsonParser.ParseCodeSystemConceptAlternateProperties(jsn : TJsonObject; result : TFhirCodeSystemConceptAlternate);
+begin
+    ParseBackboneElementProperties(jsn, result);
+    if jsn.has('kind') then
+        result.kind := ParseCoding(jsn.vObj['kind']);{q3}
+    if jsn.has('code') or jsn.has('_code') then
+        result.codeElement := ParseCode(jsn['code'], jsn.vObj['_code']);{q}
+end;
+
+procedure TFHIRJsonComposer.ComposeCodeSystemConceptAlternate(json : TJSONWriter; name : string; elem : TFhirCodeSystemConceptAlternate; noObj : boolean = false);
+begin
+  if (elem = nil) then
+    exit;
+  if not noObj then json.valueObject(name);
+  ComposeBackboneElementProperties(json, elem);
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeCoding(json, 'kind', elem.kind); {a}
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeCodeValue(json, 'code', elem.codeElement, false);
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeCodeProps(json, 'code', elem.codeElement, false);
+  if not noObj then json.finishObject;
+end;
+
 procedure TFHIRJsonParser.ParseCodeSystem(jsn : TJsonObject; ctxt : TFHIRObjectList);
 begin
   ctxt.add(ParseCodeSystem(jsn)); {2}
@@ -15381,116 +15441,116 @@ begin
   if (elem = nil) then
     exit;
   ComposeDomainResourceProperties(json, elem);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('url') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeUriValue(json, 'url', elem.urlElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('url') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeUriProps(json, 'url', elem.urlElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('identifier') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeIdentifier(json, 'identifier', elem.identifier); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('version') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeStringValue(json, 'version', elem.versionElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('version') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeStringProps(json, 'version', elem.versionElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('name') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeStringValue(json, 'name', elem.nameElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('name') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeStringProps(json, 'name', elem.nameElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('title') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeStringValue(json, 'title', elem.titleElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('title') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeStringProps(json, 'title', elem.titleElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('status') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumValue(json, 'status', elem.StatusElement, CODES_TFhirPublicationStatusEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('status') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumProps(json, 'status', elem.StatusElement, CODES_TFhirPublicationStatusEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('experimental') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeBooleanValue(json, 'experimental', elem.experimentalElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('experimental') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeBooleanProps(json, 'experimental', elem.experimentalElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('date') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeDateTimeValue(json, 'date', elem.dateElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('date') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeDateTimeProps(json, 'date', elem.dateElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('publisher') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeStringValue(json, 'publisher', elem.publisherElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('publisher') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeStringProps(json, 'publisher', elem.publisherElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.contactList.Count > 0) then
+  if not elem.noCompose and doCompose('contact') and (SummaryOption in [soFull, soSummary, soData]) and (elem.contactList.Count > 0) then
   begin
     json.valueArray('contact');
     for i := 0 to elem.contactList.Count - 1 do
       ComposeContactDetail(json, '', elem.contactList[i]); {z - ContactDetail}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('description') and (SummaryOption in [soFull, soData]) then
     ComposeMarkdownValue(json, 'description', elem.descriptionElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('description') and (SummaryOption in [soFull, soData]) then
     ComposeMarkdownProps(json, 'description', elem.descriptionElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.useContextList.Count > 0) then
+  if not elem.noCompose and doCompose('useContext') and (SummaryOption in [soFull, soSummary, soData]) and (elem.useContextList.Count > 0) then
   begin
     json.valueArray('useContext');
     for i := 0 to elem.useContextList.Count - 1 do
       ComposeUsageContext(json, '', elem.useContextList[i]); {z - UsageContext}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.jurisdictionList.Count > 0) then
+  if not elem.noCompose and doCompose('jurisdiction') and (SummaryOption in [soFull, soSummary, soData]) and (elem.jurisdictionList.Count > 0) then
   begin
     json.valueArray('jurisdiction');
     for i := 0 to elem.jurisdictionList.Count - 1 do
       ComposeCodeableConcept(json, '', elem.jurisdictionList[i]); {z - CodeableConcept}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('purpose') and (SummaryOption in [soFull, soData]) then
     ComposeMarkdownValue(json, 'purpose', elem.purposeElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('purpose') and (SummaryOption in [soFull, soData]) then
     ComposeMarkdownProps(json, 'purpose', elem.purposeElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('copyright') and (SummaryOption in [soFull, soData]) then
     ComposeMarkdownValue(json, 'copyright', elem.copyrightElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('copyright') and (SummaryOption in [soFull, soData]) then
     ComposeMarkdownProps(json, 'copyright', elem.copyrightElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('caseSensitive') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeBooleanValue(json, 'caseSensitive', elem.caseSensitiveElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('caseSensitive') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeBooleanProps(json, 'caseSensitive', elem.caseSensitiveElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('valueSet') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeUriValue(json, 'valueSet', elem.valueSetElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('valueSet') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeUriProps(json, 'valueSet', elem.valueSetElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('hierarchyMeaning') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumValue(json, 'hierarchyMeaning', elem.HierarchyMeaningElement, CODES_TFhirCodesystemHierarchyMeaningEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('hierarchyMeaning') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumProps(json, 'hierarchyMeaning', elem.HierarchyMeaningElement, CODES_TFhirCodesystemHierarchyMeaningEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('compositional') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeBooleanValue(json, 'compositional', elem.compositionalElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('compositional') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeBooleanProps(json, 'compositional', elem.compositionalElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('versionNeeded') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeBooleanValue(json, 'versionNeeded', elem.versionNeededElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('versionNeeded') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeBooleanProps(json, 'versionNeeded', elem.versionNeededElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('content') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumValue(json, 'content', elem.ContentElement, CODES_TFhirCodesystemContentModeEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('content') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumProps(json, 'content', elem.ContentElement, CODES_TFhirCodesystemContentModeEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('count') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeUnsignedIntValue(json, 'count', elem.countElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('count') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeUnsignedIntProps(json, 'count', elem.countElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.filterList.Count > 0) then
+  if not elem.noCompose and doCompose('filter') and (SummaryOption in [soFull, soSummary, soData]) and (elem.filterList.Count > 0) then
   begin
     json.valueArray('filter');
     for i := 0 to elem.filterList.Count - 1 do
       ComposeCodeSystemFilter(json, '', elem.filterList[i]); {z - }
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.property_List.Count > 0) then
+  if not elem.noCompose and doCompose('property_') and (SummaryOption in [soFull, soSummary, soData]) and (elem.property_List.Count > 0) then
   begin
     json.valueArray('property');
     for i := 0 to elem.property_List.Count - 1 do
       ComposeCodeSystemProperty(json, '', elem.property_List[i]); {z - }
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.conceptList.Count > 0) then
+  if not elem.noCompose and doCompose('concept') and (SummaryOption in [soFull, soData]) and (elem.conceptList.Count > 0) then
   begin
     json.valueArray('concept');
     for i := 0 to elem.conceptList.Count - 1 do
@@ -15592,7 +15652,9 @@ begin
     if jsn.has('recipient') then
       iterateArray(jsn.vArr['recipient'], result.recipientList, parseReference{Resource});
     if jsn.has('topic') then
-      iterateArray(jsn.vArr['topic'], result.topicList, parseReference{TFhirReference});
+        result.topic := ParseCodeableConcept(jsn.vObj['topic']);{q3}
+    if jsn.has('about') then
+      iterateArray(jsn.vArr['about'], result.aboutList, parseReference{TFhirReference});
     if jsn.has('context') then
         result.context := ParseReference{Resource}(jsn.vObj['context']);{q3}
     if jsn.has('sent') or jsn.has('_sent') then
@@ -15618,119 +15680,121 @@ begin
   if (elem = nil) then
     exit;
   ComposeDomainResourceProperties(json, elem);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.identifierList.Count > 0) then
+  if not elem.noCompose and doCompose('identifier') and (SummaryOption in [soFull, soSummary, soData]) and (elem.identifierList.Count > 0) then
   begin
     json.valueArray('identifier');
     for i := 0 to elem.identifierList.Count - 1 do
       ComposeIdentifier(json, '', elem.identifierList[i]); {z - Identifier}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.definitionList.Count > 0) then
+  if not elem.noCompose and doCompose('definition') and (SummaryOption in [soFull, soSummary, soData]) and (elem.definitionList.Count > 0) then
   begin
     json.valueArray('definition');
     for i := 0 to elem.definitionList.Count - 1 do
       ComposeReference{Resource}(json, '', elem.definitionList[i]); {z - Reference(PlanDefinition|ActivityDefinition)}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.basedOnList.Count > 0) then
+  if not elem.noCompose and doCompose('basedOn') and (SummaryOption in [soFull, soSummary, soData]) and (elem.basedOnList.Count > 0) then
   begin
     json.valueArray('basedOn');
     for i := 0 to elem.basedOnList.Count - 1 do
       ComposeReference{TFhirReference}(json, '', elem.basedOnList[i]); {z - Reference(Any)}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.partOfList.Count > 0) then
+  if not elem.noCompose and doCompose('partOf') and (SummaryOption in [soFull, soSummary, soData]) and (elem.partOfList.Count > 0) then
   begin
     json.valueArray('partOf');
     for i := 0 to elem.partOfList.Count - 1 do
       ComposeReference{TFhirReference}(json, '', elem.partOfList[i]); {z - Reference(Any)}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.inResponseToList.Count > 0) then
+  if not elem.noCompose and doCompose('inResponseTo') and (SummaryOption in [soFull, soData]) and (elem.inResponseToList.Count > 0) then
   begin
     json.valueArray('inResponseTo');
     for i := 0 to elem.inResponseToList.Count - 1 do
       ComposeReference{TFhirCommunication}(json, '', elem.inResponseToList[i]); {z - Reference(Communication)}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('status') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumValue(json, 'status', elem.StatusElement, CODES_TFhirEventStatusEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('status') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumProps(json, 'status', elem.StatusElement, CODES_TFhirEventStatusEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('notDone') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeBooleanValue(json, 'notDone', elem.notDoneElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('notDone') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeBooleanProps(json, 'notDone', elem.notDoneElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('notDoneReason') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeCodeableConcept(json, 'notDoneReason', elem.notDoneReason); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.categoryList.Count > 0) then
+  if not elem.noCompose and doCompose('category') and (SummaryOption in [soFull, soData]) and (elem.categoryList.Count > 0) then
   begin
     json.valueArray('category');
     for i := 0 to elem.categoryList.Count - 1 do
       ComposeCodeableConcept(json, '', elem.categoryList[i]); {z - CodeableConcept}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('priority') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumValue(json, 'priority', elem.PriorityElement, CODES_TFhirRequestPriorityEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('priority') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumProps(json, 'priority', elem.PriorityElement, CODES_TFhirRequestPriorityEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.mediumList.Count > 0) then
+  if not elem.noCompose and doCompose('medium') and (SummaryOption in [soFull, soData]) and (elem.mediumList.Count > 0) then
   begin
     json.valueArray('medium');
     for i := 0 to elem.mediumList.Count - 1 do
       ComposeCodeableConcept(json, '', elem.mediumList[i]); {z - CodeableConcept}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('subject') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{Resource}(json, 'subject', elem.subject); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.recipientList.Count > 0) then
+  if not elem.noCompose and doCompose('recipient') and (SummaryOption in [soFull, soData]) and (elem.recipientList.Count > 0) then
   begin
     json.valueArray('recipient');
     for i := 0 to elem.recipientList.Count - 1 do
       ComposeReference{Resource}(json, '', elem.recipientList[i]); {z - Reference(Device|Organization|Patient|Practitioner|RelatedPerson|Group|CareTeam)}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.topicList.Count > 0) then
+  if not elem.noCompose and doCompose('topic') and (SummaryOption in [soFull, soData]) then
+    ComposeCodeableConcept(json, 'topic', elem.topic); {a}
+  if not elem.noCompose and doCompose('about') and (SummaryOption in [soFull, soData]) and (elem.aboutList.Count > 0) then
   begin
-    json.valueArray('topic');
-    for i := 0 to elem.topicList.Count - 1 do
-      ComposeReference{TFhirReference}(json, '', elem.topicList[i]); {z - Reference(Any)}
+    json.valueArray('about');
+    for i := 0 to elem.aboutList.Count - 1 do
+      ComposeReference{TFhirReference}(json, '', elem.aboutList[i]); {z - Reference(Any)}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('context') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{Resource}(json, 'context', elem.context); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('sent') and (SummaryOption in [soFull, soData]) then
     ComposeDateTimeValue(json, 'sent', elem.sentElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('sent') and (SummaryOption in [soFull, soData]) then
     ComposeDateTimeProps(json, 'sent', elem.sentElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('received') and (SummaryOption in [soFull, soData]) then
     ComposeDateTimeValue(json, 'received', elem.receivedElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('received') and (SummaryOption in [soFull, soData]) then
     ComposeDateTimeProps(json, 'received', elem.receivedElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('sender') and (SummaryOption in [soFull, soData]) then
     ComposeReference{Resource}(json, 'sender', elem.sender); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.reasonCodeList.Count > 0) then
+  if not elem.noCompose and doCompose('reasonCode') and (SummaryOption in [soFull, soSummary, soData]) and (elem.reasonCodeList.Count > 0) then
   begin
     json.valueArray('reasonCode');
     for i := 0 to elem.reasonCodeList.Count - 1 do
       ComposeCodeableConcept(json, '', elem.reasonCodeList[i]); {z - CodeableConcept}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.reasonReferenceList.Count > 0) then
+  if not elem.noCompose and doCompose('reasonReference') and (SummaryOption in [soFull, soSummary, soData]) and (elem.reasonReferenceList.Count > 0) then
   begin
     json.valueArray('reasonReference');
     for i := 0 to elem.reasonReferenceList.Count - 1 do
       ComposeReference{Resource}(json, '', elem.reasonReferenceList[i]); {z - Reference(Condition|Observation)}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.payloadList.Count > 0) then
+  if not elem.noCompose and doCompose('payload') and (SummaryOption in [soFull, soData]) and (elem.payloadList.Count > 0) then
   begin
     json.valueArray('payload');
     for i := 0 to elem.payloadList.Count - 1 do
       ComposeCommunicationPayload(json, '', elem.payloadList[i]); {z - }
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.noteList.Count > 0) then
+  if not elem.noCompose and doCompose('note') and (SummaryOption in [soFull, soData]) and (elem.noteList.Count > 0) then
   begin
     json.valueArray('note');
     for i := 0 to elem.noteList.Count - 1 do
@@ -15863,8 +15927,8 @@ begin
         result.subject := ParseReference{Resource}(jsn.vObj['subject']);{q3}
     if jsn.has('recipient') then
       iterateArray(jsn.vArr['recipient'], result.recipientList, parseReference{Resource});
-    if jsn.has('topic') then
-      iterateArray(jsn.vArr['topic'], result.topicList, parseReference{TFhirReference});
+    if jsn.has('about') then
+      iterateArray(jsn.vArr['about'], result.aboutList, parseReference{TFhirReference});
     if jsn.has('context') then
         result.context := ParseReference{Resource}(jsn.vObj['context']);{q3}
     if jsn.has('payload') then
@@ -15894,70 +15958,70 @@ begin
   if (elem = nil) then
     exit;
   ComposeDomainResourceProperties(json, elem);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.identifierList.Count > 0) then
+  if not elem.noCompose and doCompose('identifier') and (SummaryOption in [soFull, soSummary, soData]) and (elem.identifierList.Count > 0) then
   begin
     json.valueArray('identifier');
     for i := 0 to elem.identifierList.Count - 1 do
       ComposeIdentifier(json, '', elem.identifierList[i]); {z - Identifier}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.basedOnList.Count > 0) then
+  if not elem.noCompose and doCompose('basedOn') and (SummaryOption in [soFull, soSummary, soData]) and (elem.basedOnList.Count > 0) then
   begin
     json.valueArray('basedOn');
     for i := 0 to elem.basedOnList.Count - 1 do
       ComposeReference{TFhirReference}(json, '', elem.basedOnList[i]); {z - Reference(Any)}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.replacesList.Count > 0) then
+  if not elem.noCompose and doCompose('replaces') and (SummaryOption in [soFull, soSummary, soData]) and (elem.replacesList.Count > 0) then
   begin
     json.valueArray('replaces');
     for i := 0 to elem.replacesList.Count - 1 do
       ComposeReference{TFhirCommunicationRequest}(json, '', elem.replacesList[i]); {z - Reference(CommunicationRequest)}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('groupIdentifier') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeIdentifier(json, 'groupIdentifier', elem.groupIdentifier); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('status') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumValue(json, 'status', elem.StatusElement, CODES_TFhirRequestStatusEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('status') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumProps(json, 'status', elem.StatusElement, CODES_TFhirRequestStatusEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.categoryList.Count > 0) then
+  if not elem.noCompose and doCompose('category') and (SummaryOption in [soFull, soData]) and (elem.categoryList.Count > 0) then
   begin
     json.valueArray('category');
     for i := 0 to elem.categoryList.Count - 1 do
       ComposeCodeableConcept(json, '', elem.categoryList[i]); {z - CodeableConcept}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('priority') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumValue(json, 'priority', elem.PriorityElement, CODES_TFhirRequestPriorityEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('priority') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumProps(json, 'priority', elem.PriorityElement, CODES_TFhirRequestPriorityEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.mediumList.Count > 0) then
+  if not elem.noCompose and doCompose('medium') and (SummaryOption in [soFull, soData]) and (elem.mediumList.Count > 0) then
   begin
     json.valueArray('medium');
     for i := 0 to elem.mediumList.Count - 1 do
       ComposeCodeableConcept(json, '', elem.mediumList[i]); {z - CodeableConcept}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('subject') and (SummaryOption in [soFull, soData]) then
     ComposeReference{Resource}(json, 'subject', elem.subject); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.recipientList.Count > 0) then
+  if not elem.noCompose and doCompose('recipient') and (SummaryOption in [soFull, soData]) and (elem.recipientList.Count > 0) then
   begin
     json.valueArray('recipient');
     for i := 0 to elem.recipientList.Count - 1 do
       ComposeReference{Resource}(json, '', elem.recipientList[i]); {z - Reference(Device|Organization|Patient|Practitioner|RelatedPerson|Group|CareTeam)}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.topicList.Count > 0) then
+  if not elem.noCompose and doCompose('about') and (SummaryOption in [soFull, soData]) and (elem.aboutList.Count > 0) then
   begin
-    json.valueArray('topic');
-    for i := 0 to elem.topicList.Count - 1 do
-      ComposeReference{TFhirReference}(json, '', elem.topicList[i]); {z - Reference(Any)}
+    json.valueArray('about');
+    for i := 0 to elem.aboutList.Count - 1 do
+      ComposeReference{TFhirReference}(json, '', elem.aboutList[i]); {z - Reference(Any)}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('context') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{Resource}(json, 'context', elem.context); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.payloadList.Count > 0) then
+  if not elem.noCompose and doCompose('payload') and (SummaryOption in [soFull, soData]) and (elem.payloadList.Count > 0) then
   begin
     json.valueArray('payload');
     for i := 0 to elem.payloadList.Count - 1 do
@@ -15971,29 +16035,29 @@ begin
     ComposeDateTimeValue(json, 'occurrenceDateTime', TFhirDateTime(elem.occurrence), false);
     ComposeDateTimeProps(json, 'occurrenceDateTime', TFhirDateTime(elem.occurrence), false);
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('authoredOn') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeDateTimeValue(json, 'authoredOn', elem.authoredOnElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('authoredOn') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeDateTimeProps(json, 'authoredOn', elem.authoredOnElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('sender') and (SummaryOption in [soFull, soData]) then
     ComposeReference{Resource}(json, 'sender', elem.sender); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('requester') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeCommunicationRequestRequester(json, 'requester', elem.requester); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.reasonCodeList.Count > 0) then
+  if not elem.noCompose and doCompose('reasonCode') and (SummaryOption in [soFull, soSummary, soData]) and (elem.reasonCodeList.Count > 0) then
   begin
     json.valueArray('reasonCode');
     for i := 0 to elem.reasonCodeList.Count - 1 do
       ComposeCodeableConcept(json, '', elem.reasonCodeList[i]); {z - CodeableConcept}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.reasonReferenceList.Count > 0) then
+  if not elem.noCompose and doCompose('reasonReference') and (SummaryOption in [soFull, soSummary, soData]) and (elem.reasonReferenceList.Count > 0) then
   begin
     json.valueArray('reasonReference');
     for i := 0 to elem.reasonReferenceList.Count - 1 do
       ComposeReference{Resource}(json, '', elem.reasonReferenceList[i]); {z - Reference(Condition|Observation)}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.noteList.Count > 0) then
+  if not elem.noCompose and doCompose('note') and (SummaryOption in [soFull, soData]) and (elem.noteList.Count > 0) then
   begin
     json.valueArray('note');
     for i := 0 to elem.noteList.Count - 1 do
@@ -16134,72 +16198,72 @@ begin
   if (elem = nil) then
     exit;
   ComposeDomainResourceProperties(json, elem);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('url') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeUriValue(json, 'url', elem.urlElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('url') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeUriProps(json, 'url', elem.urlElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('name') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeStringValue(json, 'name', elem.nameElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('name') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeStringProps(json, 'name', elem.nameElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('title') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeStringValue(json, 'title', elem.titleElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('title') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeStringProps(json, 'title', elem.titleElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('status') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumValue(json, 'status', elem.StatusElement, CODES_TFhirPublicationStatusEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('status') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumProps(json, 'status', elem.StatusElement, CODES_TFhirPublicationStatusEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('experimental') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeBooleanValue(json, 'experimental', elem.experimentalElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('experimental') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeBooleanProps(json, 'experimental', elem.experimentalElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('date') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeDateTimeValue(json, 'date', elem.dateElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('date') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeDateTimeProps(json, 'date', elem.dateElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('publisher') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeStringValue(json, 'publisher', elem.publisherElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('publisher') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeStringProps(json, 'publisher', elem.publisherElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.contactList.Count > 0) then
+  if not elem.noCompose and doCompose('contact') and (SummaryOption in [soFull, soSummary, soData]) and (elem.contactList.Count > 0) then
   begin
     json.valueArray('contact');
     for i := 0 to elem.contactList.Count - 1 do
       ComposeContactDetail(json, '', elem.contactList[i]); {z - ContactDetail}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('description') and (SummaryOption in [soFull, soData]) then
     ComposeMarkdownValue(json, 'description', elem.descriptionElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('description') and (SummaryOption in [soFull, soData]) then
     ComposeMarkdownProps(json, 'description', elem.descriptionElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('purpose') and (SummaryOption in [soFull, soData]) then
     ComposeMarkdownValue(json, 'purpose', elem.purposeElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('purpose') and (SummaryOption in [soFull, soData]) then
     ComposeMarkdownProps(json, 'purpose', elem.purposeElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.useContextList.Count > 0) then
+  if not elem.noCompose and doCompose('useContext') and (SummaryOption in [soFull, soSummary, soData]) and (elem.useContextList.Count > 0) then
   begin
     json.valueArray('useContext');
     for i := 0 to elem.useContextList.Count - 1 do
       ComposeUsageContext(json, '', elem.useContextList[i]); {z - UsageContext}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.jurisdictionList.Count > 0) then
+  if not elem.noCompose and doCompose('jurisdiction') and (SummaryOption in [soFull, soSummary, soData]) and (elem.jurisdictionList.Count > 0) then
   begin
     json.valueArray('jurisdiction');
     for i := 0 to elem.jurisdictionList.Count - 1 do
       ComposeCodeableConcept(json, '', elem.jurisdictionList[i]); {z - CodeableConcept}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('code') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumValue(json, 'code', elem.CodeElement, CODES_TFhirCompartmentTypeEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('code') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumProps(json, 'code', elem.CodeElement, CODES_TFhirCompartmentTypeEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('search') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeBooleanValue(json, 'search', elem.searchElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('search') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeBooleanProps(json, 'search', elem.searchElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.resourceList.Count > 0) then
+  if not elem.noCompose and doCompose('resource') and (SummaryOption in [soFull, soSummary, soData]) and (elem.resourceList.Count > 0) then
   begin
     json.valueArray('resource');
     for i := 0 to elem.resourceList.Count - 1 do
@@ -16514,63 +16578,63 @@ begin
   if (elem = nil) then
     exit;
   ComposeDomainResourceProperties(json, elem);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('identifier') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeIdentifier(json, 'identifier', elem.identifier); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('status') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumValue(json, 'status', elem.StatusElement, CODES_TFhirCompositionStatusEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('status') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumProps(json, 'status', elem.StatusElement, CODES_TFhirCompositionStatusEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('type_') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeCodeableConcept(json, 'type', elem.type_); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('class_') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeCodeableConcept(json, 'class', elem.class_); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('subject') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{TFhirReference}(json, 'subject', elem.subject); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('encounter') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{TFhirEncounter}(json, 'encounter', elem.encounter); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('date') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeDateTimeValue(json, 'date', elem.dateElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('date') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeDateTimeProps(json, 'date', elem.dateElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.authorList.Count > 0) then
+  if not elem.noCompose and doCompose('author') and (SummaryOption in [soFull, soSummary, soData]) and (elem.authorList.Count > 0) then
   begin
     json.valueArray('author');
     for i := 0 to elem.authorList.Count - 1 do
       ComposeReference{Resource}(json, '', elem.authorList[i]); {z - Reference(Practitioner|PractitionerRole|Device|Patient|RelatedPerson)}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('title') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeStringValue(json, 'title', elem.titleElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('title') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeStringProps(json, 'title', elem.titleElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('confidentiality') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumValue(json, 'confidentiality', elem.ConfidentialityElement, CODES_TFhirV3ConfidentialityClassificationEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('confidentiality') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumProps(json, 'confidentiality', elem.ConfidentialityElement, CODES_TFhirV3ConfidentialityClassificationEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.attesterList.Count > 0) then
+  if not elem.noCompose and doCompose('attester') and (SummaryOption in [soFull, soSummary, soData]) and (elem.attesterList.Count > 0) then
   begin
     json.valueArray('attester');
     for i := 0 to elem.attesterList.Count - 1 do
       ComposeCompositionAttester(json, '', elem.attesterList[i]); {z - }
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('custodian') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{TFhirOrganization}(json, 'custodian', elem.custodian); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.relatesToList.Count > 0) then
+  if not elem.noCompose and doCompose('relatesTo') and (SummaryOption in [soFull, soSummary, soData]) and (elem.relatesToList.Count > 0) then
   begin
     json.valueArray('relatesTo');
     for i := 0 to elem.relatesToList.Count - 1 do
       ComposeCompositionRelatesTo(json, '', elem.relatesToList[i]); {z - }
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.eventList.Count > 0) then
+  if not elem.noCompose and doCompose('event') and (SummaryOption in [soFull, soSummary, soData]) and (elem.eventList.Count > 0) then
   begin
     json.valueArray('event');
     for i := 0 to elem.eventList.Count - 1 do
       ComposeCompositionEvent(json, '', elem.eventList[i]); {z - }
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.sectionList.Count > 0) then
+  if not elem.noCompose and doCompose('section') and (SummaryOption in [soFull, soData]) and (elem.sectionList.Count > 0) then
   begin
     json.valueArray('section');
     for i := 0 to elem.sectionList.Count - 1 do
@@ -16953,72 +17017,72 @@ begin
   if (elem = nil) then
     exit;
   ComposeDomainResourceProperties(json, elem);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('url') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeUriValue(json, 'url', elem.urlElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('url') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeUriProps(json, 'url', elem.urlElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('identifier') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeIdentifier(json, 'identifier', elem.identifier); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('version') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeStringValue(json, 'version', elem.versionElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('version') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeStringProps(json, 'version', elem.versionElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('name') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeStringValue(json, 'name', elem.nameElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('name') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeStringProps(json, 'name', elem.nameElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('title') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeStringValue(json, 'title', elem.titleElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('title') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeStringProps(json, 'title', elem.titleElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('status') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumValue(json, 'status', elem.StatusElement, CODES_TFhirPublicationStatusEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('status') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumProps(json, 'status', elem.StatusElement, CODES_TFhirPublicationStatusEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('experimental') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeBooleanValue(json, 'experimental', elem.experimentalElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('experimental') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeBooleanProps(json, 'experimental', elem.experimentalElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('date') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeDateTimeValue(json, 'date', elem.dateElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('date') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeDateTimeProps(json, 'date', elem.dateElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('publisher') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeStringValue(json, 'publisher', elem.publisherElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('publisher') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeStringProps(json, 'publisher', elem.publisherElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.contactList.Count > 0) then
+  if not elem.noCompose and doCompose('contact') and (SummaryOption in [soFull, soSummary, soData]) and (elem.contactList.Count > 0) then
   begin
     json.valueArray('contact');
     for i := 0 to elem.contactList.Count - 1 do
       ComposeContactDetail(json, '', elem.contactList[i]); {z - ContactDetail}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('description') and (SummaryOption in [soFull, soData]) then
     ComposeMarkdownValue(json, 'description', elem.descriptionElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('description') and (SummaryOption in [soFull, soData]) then
     ComposeMarkdownProps(json, 'description', elem.descriptionElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.useContextList.Count > 0) then
+  if not elem.noCompose and doCompose('useContext') and (SummaryOption in [soFull, soSummary, soData]) and (elem.useContextList.Count > 0) then
   begin
     json.valueArray('useContext');
     for i := 0 to elem.useContextList.Count - 1 do
       ComposeUsageContext(json, '', elem.useContextList[i]); {z - UsageContext}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.jurisdictionList.Count > 0) then
+  if not elem.noCompose and doCompose('jurisdiction') and (SummaryOption in [soFull, soSummary, soData]) and (elem.jurisdictionList.Count > 0) then
   begin
     json.valueArray('jurisdiction');
     for i := 0 to elem.jurisdictionList.Count - 1 do
       ComposeCodeableConcept(json, '', elem.jurisdictionList[i]); {z - CodeableConcept}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('purpose') and (SummaryOption in [soFull, soData]) then
     ComposeMarkdownValue(json, 'purpose', elem.purposeElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('purpose') and (SummaryOption in [soFull, soData]) then
     ComposeMarkdownProps(json, 'purpose', elem.purposeElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('copyright') and (SummaryOption in [soFull, soData]) then
     ComposeMarkdownValue(json, 'copyright', elem.copyrightElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('copyright') and (SummaryOption in [soFull, soData]) then
     ComposeMarkdownProps(json, 'copyright', elem.copyrightElement, false);
   if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.source is TFhirReference) then
     ComposeReference(json, 'sourceReference', TFhirReference(elem.source))
@@ -17034,7 +17098,7 @@ begin
     ComposeUriValue(json, 'targetUri', TFhirUri(elem.target), false);
     ComposeUriProps(json, 'targetUri', TFhirUri(elem.target), false);
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.groupList.Count > 0) then
+  if not elem.noCompose and doCompose('group') and (SummaryOption in [soFull, soData]) and (elem.groupList.Count > 0) then
   begin
     json.valueArray('group');
     for i := 0 to elem.groupList.Count - 1 do
@@ -17220,42 +17284,42 @@ begin
   if (elem = nil) then
     exit;
   ComposeDomainResourceProperties(json, elem);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.identifierList.Count > 0) then
+  if not elem.noCompose and doCompose('identifier') and (SummaryOption in [soFull, soSummary, soData]) and (elem.identifierList.Count > 0) then
   begin
     json.valueArray('identifier');
     for i := 0 to elem.identifierList.Count - 1 do
       ComposeIdentifier(json, '', elem.identifierList[i]); {z - Identifier}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('clinicalStatus') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumValue(json, 'clinicalStatus', elem.ClinicalStatusElement, CODES_TFhirConditionClinicalEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('clinicalStatus') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumProps(json, 'clinicalStatus', elem.ClinicalStatusElement, CODES_TFhirConditionClinicalEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('verificationStatus') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumValue(json, 'verificationStatus', elem.VerificationStatusElement, CODES_TFhirConditionVerStatusEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('verificationStatus') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumProps(json, 'verificationStatus', elem.VerificationStatusElement, CODES_TFhirConditionVerStatusEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.categoryList.Count > 0) then
+  if not elem.noCompose and doCompose('category') and (SummaryOption in [soFull, soData]) and (elem.categoryList.Count > 0) then
   begin
     json.valueArray('category');
     for i := 0 to elem.categoryList.Count - 1 do
       ComposeCodeableConcept(json, '', elem.categoryList[i]); {z - CodeableConcept}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('severity') and (SummaryOption in [soFull, soData]) then
     ComposeCodeableConcept(json, 'severity', elem.severity); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('code') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeCodeableConcept(json, 'code', elem.code); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.bodySiteList.Count > 0) then
+  if not elem.noCompose and doCompose('bodySite') and (SummaryOption in [soFull, soSummary, soData]) and (elem.bodySiteList.Count > 0) then
   begin
     json.valueArray('bodySite');
     for i := 0 to elem.bodySiteList.Count - 1 do
       ComposeCodeableConcept(json, '', elem.bodySiteList[i]); {z - CodeableConcept}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('subject') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{Resource}(json, 'subject', elem.subject); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('context') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{Resource}(json, 'context', elem.context); {a}
   if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.onset is TFhirAge) then 
     ComposeAge(json, 'onsetAge', TFhirAge(elem.onset)) 
@@ -17289,27 +17353,27 @@ begin
     ComposeStringValue(json, 'abatementString', TFhirString(elem.abatement), false);
     ComposeStringProps(json, 'abatementString', TFhirString(elem.abatement), false);
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('assertedDate') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeDateTimeValue(json, 'assertedDate', elem.assertedDateElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('assertedDate') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeDateTimeProps(json, 'assertedDate', elem.assertedDateElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('asserter') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{Resource}(json, 'asserter', elem.asserter); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.stageList.Count > 0) then
+  if not elem.noCompose and doCompose('stage') and (SummaryOption in [soFull, soData]) and (elem.stageList.Count > 0) then
   begin
     json.valueArray('stage');
     for i := 0 to elem.stageList.Count - 1 do
       ComposeConditionStage(json, '', elem.stageList[i]); {z - }
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.evidenceList.Count > 0) then
+  if not elem.noCompose and doCompose('evidence') and (SummaryOption in [soFull, soData]) and (elem.evidenceList.Count > 0) then
   begin
     json.valueArray('evidence');
     for i := 0 to elem.evidenceList.Count - 1 do
       ComposeConditionEvidence(json, '', elem.evidenceList[i]); {z - }
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.noteList.Count > 0) then
+  if not elem.noCompose and doCompose('note') and (SummaryOption in [soFull, soData]) and (elem.noteList.Count > 0) then
   begin
     json.valueArray('note');
     for i := 0 to elem.noteList.Count - 1 do
@@ -17645,8 +17709,8 @@ begin
       result.source := ParseReference(jsn.vObj['sourceReference']);
     if jsn.has('policy') then
       iterateArray(jsn.vArr['policy'], result.policyList, parseConsentPolicy);
-    if jsn.has('policyRule') or jsn.has('_policyRule') then
-        result.policyRuleElement := ParseUri(jsn['policyRule'], jsn.vObj['_policyRule']);{q}
+    if jsn.has('policyRule') then
+        result.policyRule := ParseCodeableConcept(jsn.vObj['policyRule']);{q3}
     if jsn.has('verification') then
       iterateArray(jsn.vArr['verification'], result.verificationList, parseConsentVerification);
     if jsn.has('provision') then
@@ -17660,33 +17724,33 @@ begin
   if (elem = nil) then
     exit;
   ComposeDomainResourceProperties(json, elem);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('identifier') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeIdentifier(json, 'identifier', elem.identifier); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('status') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumValue(json, 'status', elem.StatusElement, CODES_TFhirConsentStateCodesEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('status') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumProps(json, 'status', elem.StatusElement, CODES_TFhirConsentStateCodesEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.categoryList.Count > 0) then
+  if not elem.noCompose and doCompose('category') and (SummaryOption in [soFull, soSummary, soData]) and (elem.categoryList.Count > 0) then
   begin
     json.valueArray('category');
     for i := 0 to elem.categoryList.Count - 1 do
       ComposeCodeableConcept(json, '', elem.categoryList[i]); {z - CodeableConcept}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('patient') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{TFhirPatient}(json, 'patient', elem.patient); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('dateTime') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeDateTimeValue(json, 'dateTime', elem.dateTimeElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('dateTime') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeDateTimeProps(json, 'dateTime', elem.dateTimeElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.consentingPartyList.Count > 0) then
+  if not elem.noCompose and doCompose('consentingParty') and (SummaryOption in [soFull, soSummary, soData]) and (elem.consentingPartyList.Count > 0) then
   begin
     json.valueArray('consentingParty');
     for i := 0 to elem.consentingPartyList.Count - 1 do
       ComposeReference{Resource}(json, '', elem.consentingPartyList[i]); {z - Reference(Organization|Patient|Practitioner|RelatedPerson)}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.organizationList.Count > 0) then
+  if not elem.noCompose and doCompose('organization') and (SummaryOption in [soFull, soSummary, soData]) and (elem.organizationList.Count > 0) then
   begin
     json.valueArray('organization');
     for i := 0 to elem.organizationList.Count - 1 do
@@ -17699,25 +17763,23 @@ begin
     ComposeIdentifier(json, 'sourceIdentifier', TFhirIdentifier(elem.source)) 
   else if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.source is TFhirReference) then
     ComposeReference(json, 'sourceReference', TFhirReference(elem.source));
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.policyList.Count > 0) then
+  if not elem.noCompose and doCompose('policy') and (SummaryOption in [soFull, soData]) and (elem.policyList.Count > 0) then
   begin
     json.valueArray('policy');
     for i := 0 to elem.policyList.Count - 1 do
       ComposeConsentPolicy(json, '', elem.policyList[i]); {z - }
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
-    ComposeUriValue(json, 'policyRule', elem.policyRuleElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
-    ComposeUriProps(json, 'policyRule', elem.policyRuleElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.verificationList.Count > 0) then
+  if not elem.noCompose and doCompose('policyRule') and (SummaryOption in [soFull, soSummary, soData]) then
+    ComposeCodeableConcept(json, 'policyRule', elem.policyRule); {a}
+  if not elem.noCompose and doCompose('verification') and (SummaryOption in [soFull, soSummary, soData]) and (elem.verificationList.Count > 0) then
   begin
     json.valueArray('verification');
     for i := 0 to elem.verificationList.Count - 1 do
       ComposeConsentVerification(json, '', elem.verificationList[i]); {z - }
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.provisionList.Count > 0) then
+  if not elem.noCompose and doCompose('provision') and (SummaryOption in [soFull, soSummary, soData]) and (elem.provisionList.Count > 0) then
   begin
     json.valueArray('provision');
     for i := 0 to elem.provisionList.Count - 1 do
@@ -18342,79 +18404,79 @@ begin
   if (elem = nil) then
     exit;
   ComposeDomainResourceProperties(json, elem);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('identifier') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeIdentifier(json, 'identifier', elem.identifier); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('status') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumValue(json, 'status', elem.StatusElement, CODES_TFhirContractStatusEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('status') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumProps(json, 'status', elem.StatusElement, CODES_TFhirContractStatusEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('contentDerivative') and (SummaryOption in [soFull, soData]) then
     ComposeCodeableConcept(json, 'contentDerivative', elem.contentDerivative); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('issued') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeDateTimeValue(json, 'issued', elem.issuedElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('issued') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeDateTimeProps(json, 'issued', elem.issuedElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('applies') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposePeriod(json, 'applies', elem.applies); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.subjectList.Count > 0) then
+  if not elem.noCompose and doCompose('subject') and (SummaryOption in [soFull, soSummary, soData]) and (elem.subjectList.Count > 0) then
   begin
     json.valueArray('subject');
     for i := 0 to elem.subjectList.Count - 1 do
       ComposeReference{TFhirReference}(json, '', elem.subjectList[i]); {z - Reference(Any)}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.authorityList.Count > 0) then
+  if not elem.noCompose and doCompose('authority') and (SummaryOption in [soFull, soData]) and (elem.authorityList.Count > 0) then
   begin
     json.valueArray('authority');
     for i := 0 to elem.authorityList.Count - 1 do
       ComposeReference{TFhirOrganization}(json, '', elem.authorityList[i]); {z - Reference(Organization)}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.domainList.Count > 0) then
+  if not elem.noCompose and doCompose('domain') and (SummaryOption in [soFull, soData]) and (elem.domainList.Count > 0) then
   begin
     json.valueArray('domain');
     for i := 0 to elem.domainList.Count - 1 do
       ComposeReference{TFhirLocation}(json, '', elem.domainList[i]); {z - Reference(Location)}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('type_') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeCodeableConcept(json, 'type', elem.type_); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.subTypeList.Count > 0) then
+  if not elem.noCompose and doCompose('subType') and (SummaryOption in [soFull, soSummary, soData]) and (elem.subTypeList.Count > 0) then
   begin
     json.valueArray('subType');
     for i := 0 to elem.subTypeList.Count - 1 do
       ComposeCodeableConcept(json, '', elem.subTypeList[i]); {z - CodeableConcept}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.termList.Count > 0) then
+  if not elem.noCompose and doCompose('term') and (SummaryOption in [soFull, soData]) and (elem.termList.Count > 0) then
   begin
     json.valueArray('term');
     for i := 0 to elem.termList.Count - 1 do
       ComposeContractTerm(json, '', elem.termList[i]); {z - }
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.signerList.Count > 0) then
+  if not elem.noCompose and doCompose('signer') and (SummaryOption in [soFull, soData]) and (elem.signerList.Count > 0) then
   begin
     json.valueArray('signer');
     for i := 0 to elem.signerList.Count - 1 do
       ComposeContractSigner(json, '', elem.signerList[i]); {z - }
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.friendlyList.Count > 0) then
+  if not elem.noCompose and doCompose('friendly') and (SummaryOption in [soFull, soData]) and (elem.friendlyList.Count > 0) then
   begin
     json.valueArray('friendly');
     for i := 0 to elem.friendlyList.Count - 1 do
       ComposeContractFriendly(json, '', elem.friendlyList[i]); {z - }
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.legalList.Count > 0) then
+  if not elem.noCompose and doCompose('legal') and (SummaryOption in [soFull, soData]) and (elem.legalList.Count > 0) then
   begin
     json.valueArray('legal');
     for i := 0 to elem.legalList.Count - 1 do
       ComposeContractLegal(json, '', elem.legalList[i]); {z - }
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('rule') and (SummaryOption in [soFull, soData]) then
     ComposeContractRule(json, 'rule', elem.rule); {a}
   if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.legallyBinding is TFhirAttachment) then 
     ComposeAttachment(json, 'legallyBindingAttachment', TFhirAttachment(elem.legallyBinding)) 
@@ -18586,59 +18648,59 @@ begin
   if (elem = nil) then
     exit;
   ComposeDomainResourceProperties(json, elem);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.identifierList.Count > 0) then
+  if not elem.noCompose and doCompose('identifier') and (SummaryOption in [soFull, soSummary, soData]) and (elem.identifierList.Count > 0) then
   begin
     json.valueArray('identifier');
     for i := 0 to elem.identifierList.Count - 1 do
       ComposeIdentifier(json, '', elem.identifierList[i]); {z - Identifier}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('status') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumValue(json, 'status', elem.StatusElement, CODES_TFhirFmStatusEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('status') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumProps(json, 'status', elem.StatusElement, CODES_TFhirFmStatusEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('type_') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeCodeableConcept(json, 'type', elem.type_); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('policyHolder') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{Resource}(json, 'policyHolder', elem.policyHolder); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('subscriber') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{Resource}(json, 'subscriber', elem.subscriber); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('subscriberId') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeStringValue(json, 'subscriberId', elem.subscriberIdElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('subscriberId') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeStringProps(json, 'subscriberId', elem.subscriberIdElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('beneficiary') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{TFhirPatient}(json, 'beneficiary', elem.beneficiary); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('relationship') and (SummaryOption in [soFull, soData]) then
     ComposeCodeableConcept(json, 'relationship', elem.relationship); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('period') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposePeriod(json, 'period', elem.period); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.payorList.Count > 0) then
+  if not elem.noCompose and doCompose('payor') and (SummaryOption in [soFull, soSummary, soData]) and (elem.payorList.Count > 0) then
   begin
     json.valueArray('payor');
     for i := 0 to elem.payorList.Count - 1 do
       ComposeReference{Resource}(json, '', elem.payorList[i]); {z - Reference(Organization|Patient|RelatedPerson)}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('grouping') and (SummaryOption in [soFull, soData]) then
     ComposeCoverageGrouping(json, 'grouping', elem.grouping); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('dependent') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeStringValue(json, 'dependent', elem.dependentElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('dependent') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeStringProps(json, 'dependent', elem.dependentElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('sequence') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeStringValue(json, 'sequence', elem.sequenceElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('sequence') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeStringProps(json, 'sequence', elem.sequenceElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('order') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposePositiveIntValue(json, 'order', elem.orderElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('order') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposePositiveIntProps(json, 'order', elem.orderElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('network') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeStringValue(json, 'network', elem.networkElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('network') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeStringProps(json, 'network', elem.networkElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.contractList.Count > 0) then
+  if not elem.noCompose and doCompose('contract') and (SummaryOption in [soFull, soData]) and (elem.contractList.Count > 0) then
   begin
     json.valueArray('contract');
     for i := 0 to elem.contractList.Count - 1 do
@@ -18743,42 +18805,42 @@ begin
   if (elem = nil) then
     exit;
   ComposeDomainResourceProperties(json, elem);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('identifier') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeIdentifier(json, 'identifier', elem.identifier); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('status') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumValue(json, 'status', elem.StatusElement, CODES_TFhirObservationStatusEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('status') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumProps(json, 'status', elem.StatusElement, CODES_TFhirObservationStatusEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('category') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeCodeableConcept(json, 'category', elem.category); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('severity') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumValue(json, 'severity', elem.SeverityElement, CODES_TFhirDetectedissueSeverityEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('severity') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumProps(json, 'severity', elem.SeverityElement, CODES_TFhirDetectedissueSeverityEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('patient') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{TFhirPatient}(json, 'patient', elem.patient); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('date') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeDateTimeValue(json, 'date', elem.dateElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('date') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeDateTimeProps(json, 'date', elem.dateElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('author') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{Resource}(json, 'author', elem.author); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.implicatedList.Count > 0) then
+  if not elem.noCompose and doCompose('implicated') and (SummaryOption in [soFull, soSummary, soData]) and (elem.implicatedList.Count > 0) then
   begin
     json.valueArray('implicated');
     for i := 0 to elem.implicatedList.Count - 1 do
       ComposeReference{TFhirReference}(json, '', elem.implicatedList[i]); {z - Reference(Any)}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('detail') and (SummaryOption in [soFull, soData]) then
     ComposeStringValue(json, 'detail', elem.detailElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('detail') and (SummaryOption in [soFull, soData]) then
     ComposeStringProps(json, 'detail', elem.detailElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('reference') and (SummaryOption in [soFull, soData]) then
     ComposeUriValue(json, 'reference', elem.referenceElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('reference') and (SummaryOption in [soFull, soData]) then
     ComposeUriProps(json, 'reference', elem.referenceElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.mitigationList.Count > 0) then
+  if not elem.noCompose and doCompose('mitigation') and (SummaryOption in [soFull, soData]) and (elem.mitigationList.Count > 0) then
   begin
     json.valueArray('mitigation');
     for i := 0 to elem.mitigationList.Count - 1 do
@@ -18923,70 +18985,70 @@ begin
   if (elem = nil) then
     exit;
   ComposeDomainResourceProperties(json, elem);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.identifierList.Count > 0) then
+  if not elem.noCompose and doCompose('identifier') and (SummaryOption in [soFull, soData]) and (elem.identifierList.Count > 0) then
   begin
     json.valueArray('identifier');
     for i := 0 to elem.identifierList.Count - 1 do
       ComposeIdentifier(json, '', elem.identifierList[i]); {z - Identifier}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('udi') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeDeviceUdi(json, 'udi', elem.udi); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('status') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumValue(json, 'status', elem.StatusElement, CODES_TFhirDeviceStatusEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('status') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumProps(json, 'status', elem.StatusElement, CODES_TFhirDeviceStatusEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('type_') and (SummaryOption in [soFull, soData]) then
     ComposeCodeableConcept(json, 'type', elem.type_); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('lotNumber') and (SummaryOption in [soFull, soData]) then
     ComposeStringValue(json, 'lotNumber', elem.lotNumberElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('lotNumber') and (SummaryOption in [soFull, soData]) then
     ComposeStringProps(json, 'lotNumber', elem.lotNumberElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('manufacturer') and (SummaryOption in [soFull, soData]) then
     ComposeStringValue(json, 'manufacturer', elem.manufacturerElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('manufacturer') and (SummaryOption in [soFull, soData]) then
     ComposeStringProps(json, 'manufacturer', elem.manufacturerElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('manufactureDate') and (SummaryOption in [soFull, soData]) then
     ComposeDateTimeValue(json, 'manufactureDate', elem.manufactureDateElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('manufactureDate') and (SummaryOption in [soFull, soData]) then
     ComposeDateTimeProps(json, 'manufactureDate', elem.manufactureDateElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('expirationDate') and (SummaryOption in [soFull, soData]) then
     ComposeDateTimeValue(json, 'expirationDate', elem.expirationDateElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('expirationDate') and (SummaryOption in [soFull, soData]) then
     ComposeDateTimeProps(json, 'expirationDate', elem.expirationDateElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('model') and (SummaryOption in [soFull, soData]) then
     ComposeStringValue(json, 'model', elem.modelElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('model') and (SummaryOption in [soFull, soData]) then
     ComposeStringProps(json, 'model', elem.modelElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('version') and (SummaryOption in [soFull, soData]) then
     ComposeStringValue(json, 'version', elem.versionElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('version') and (SummaryOption in [soFull, soData]) then
     ComposeStringProps(json, 'version', elem.versionElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('patient') and (SummaryOption in [soFull, soData]) then
     ComposeReference{TFhirPatient}(json, 'patient', elem.patient); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('owner') and (SummaryOption in [soFull, soData]) then
     ComposeReference{TFhirOrganization}(json, 'owner', elem.owner); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.contactList.Count > 0) then
+  if not elem.noCompose and doCompose('contact') and (SummaryOption in [soFull, soData]) and (elem.contactList.Count > 0) then
   begin
     json.valueArray('contact');
     for i := 0 to elem.contactList.Count - 1 do
       ComposeContactPoint(json, '', elem.contactList[i]); {z - ContactPoint}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('location') and (SummaryOption in [soFull, soData]) then
     ComposeReference{TFhirLocation}(json, 'location', elem.location); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('url') and (SummaryOption in [soFull, soData]) then
     ComposeUriValue(json, 'url', elem.urlElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('url') and (SummaryOption in [soFull, soData]) then
     ComposeUriProps(json, 'url', elem.urlElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.noteList.Count > 0) then
+  if not elem.noCompose and doCompose('note') and (SummaryOption in [soFull, soData]) and (elem.noteList.Count > 0) then
   begin
     json.valueArray('note');
     for i := 0 to elem.noteList.Count - 1 do
       ComposeAnnotation(json, '', elem.noteList[i]); {z - Annotation}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.safetyList.Count > 0) then
+  if not elem.noCompose and doCompose('safety') and (SummaryOption in [soFull, soSummary, soData]) and (elem.safetyList.Count > 0) then
   begin
     json.valueArray('safety');
     for i := 0 to elem.safetyList.Count - 1 do
@@ -19145,46 +19207,46 @@ begin
   if (elem = nil) then
     exit;
   ComposeDomainResourceProperties(json, elem);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.identifierList.Count > 0) then
+  if not elem.noCompose and doCompose('identifier') and (SummaryOption in [soFull, soSummary, soData]) and (elem.identifierList.Count > 0) then
   begin
     json.valueArray('identifier');
     for i := 0 to elem.identifierList.Count - 1 do
       ComposeIdentifier(json, '', elem.identifierList[i]); {z - Identifier}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('type_') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeCodeableConcept(json, 'type', elem.type_); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('lastSystemChange') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeInstantValue(json, 'lastSystemChange', elem.lastSystemChangeElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('lastSystemChange') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeInstantProps(json, 'lastSystemChange', elem.lastSystemChangeElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('source') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{TFhirDevice}(json, 'source', elem.source); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('parent') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{TFhirDeviceComponent}(json, 'parent', elem.parent); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.operationalStatusList.Count > 0) then
+  if not elem.noCompose and doCompose('operationalStatus') and (SummaryOption in [soFull, soSummary, soData]) and (elem.operationalStatusList.Count > 0) then
   begin
     json.valueArray('operationalStatus');
     for i := 0 to elem.operationalStatusList.Count - 1 do
       ComposeCodeableConcept(json, '', elem.operationalStatusList[i]); {z - CodeableConcept}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('parameterGroup') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeCodeableConcept(json, 'parameterGroup', elem.parameterGroup); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('measurementPrinciple') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumValue(json, 'measurementPrinciple', elem.MeasurementPrincipleElement, CODES_TFhirMeasurementPrincipleEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('measurementPrinciple') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumProps(json, 'measurementPrinciple', elem.MeasurementPrincipleElement, CODES_TFhirMeasurementPrincipleEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.productionSpecificationList.Count > 0) then
+  if not elem.noCompose and doCompose('productionSpecification') and (SummaryOption in [soFull, soSummary, soData]) and (elem.productionSpecificationList.Count > 0) then
   begin
     json.valueArray('productionSpecification');
     for i := 0 to elem.productionSpecificationList.Count - 1 do
       ComposeDeviceComponentProductionSpecification(json, '', elem.productionSpecificationList[i]); {z - }
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('languageCode') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeCodeableConcept(json, 'languageCode', elem.languageCode); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.property_List.Count > 0) then
+  if not elem.noCompose and doCompose('property_') and (SummaryOption in [soFull, soSummary, soData]) and (elem.property_List.Count > 0) then
   begin
     json.valueArray('property');
     for i := 0 to elem.property_List.Count - 1 do
@@ -19291,36 +19353,36 @@ begin
   if (elem = nil) then
     exit;
   ComposeDomainResourceProperties(json, elem);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.identifierList.Count > 0) then
+  if not elem.noCompose and doCompose('identifier') and (SummaryOption in [soFull, soSummary, soData]) and (elem.identifierList.Count > 0) then
   begin
     json.valueArray('identifier');
     for i := 0 to elem.identifierList.Count - 1 do
       ComposeIdentifier(json, '', elem.identifierList[i]); {z - Identifier}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('type_') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeCodeableConcept(json, 'type', elem.type_); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('unit_') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeCodeableConcept(json, 'unit', elem.unit_); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('source') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{TFhirDevice}(json, 'source', elem.source); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('parent') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{TFhirDeviceComponent}(json, 'parent', elem.parent); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('operationalStatus') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumValue(json, 'operationalStatus', elem.OperationalStatusElement, CODES_TFhirMetricOperationalStatusEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('operationalStatus') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumProps(json, 'operationalStatus', elem.OperationalStatusElement, CODES_TFhirMetricOperationalStatusEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('color') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumValue(json, 'color', elem.ColorElement, CODES_TFhirMetricColorEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('color') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumProps(json, 'color', elem.ColorElement, CODES_TFhirMetricColorEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('category') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumValue(json, 'category', elem.CategoryElement, CODES_TFhirMetricCategoryEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('category') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumProps(json, 'category', elem.CategoryElement, CODES_TFhirMetricCategoryEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('measurementPeriod') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeTiming(json, 'measurementPeriod', elem.measurementPeriod); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.calibrationList.Count > 0) then
+  if not elem.noCompose and doCompose('calibration') and (SummaryOption in [soFull, soSummary, soData]) and (elem.calibrationList.Count > 0) then
   begin
     json.valueArray('calibration');
     for i := 0 to elem.calibrationList.Count - 1 do
@@ -19445,53 +19507,53 @@ begin
   if (elem = nil) then
     exit;
   ComposeDomainResourceProperties(json, elem);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.identifierList.Count > 0) then
+  if not elem.noCompose and doCompose('identifier') and (SummaryOption in [soFull, soSummary, soData]) and (elem.identifierList.Count > 0) then
   begin
     json.valueArray('identifier');
     for i := 0 to elem.identifierList.Count - 1 do
       ComposeIdentifier(json, '', elem.identifierList[i]); {z - Identifier}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.definitionList.Count > 0) then
+  if not elem.noCompose and doCompose('definition') and (SummaryOption in [soFull, soSummary, soData]) and (elem.definitionList.Count > 0) then
   begin
     json.valueArray('definition');
     for i := 0 to elem.definitionList.Count - 1 do
       ComposeReference{Resource}(json, '', elem.definitionList[i]); {z - Reference(ActivityDefinition|PlanDefinition)}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.basedOnList.Count > 0) then
+  if not elem.noCompose and doCompose('basedOn') and (SummaryOption in [soFull, soSummary, soData]) and (elem.basedOnList.Count > 0) then
   begin
     json.valueArray('basedOn');
     for i := 0 to elem.basedOnList.Count - 1 do
       ComposeReference{TFhirReference}(json, '', elem.basedOnList[i]); {z - Reference(Any)}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.priorRequestList.Count > 0) then
+  if not elem.noCompose and doCompose('priorRequest') and (SummaryOption in [soFull, soSummary, soData]) and (elem.priorRequestList.Count > 0) then
   begin
     json.valueArray('priorRequest');
     for i := 0 to elem.priorRequestList.Count - 1 do
       ComposeReference{TFhirReference}(json, '', elem.priorRequestList[i]); {z - Reference(Any)}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('groupIdentifier') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeIdentifier(json, 'groupIdentifier', elem.groupIdentifier); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('status') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumValue(json, 'status', elem.StatusElement, CODES_TFhirRequestStatusEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('status') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumProps(json, 'status', elem.StatusElement, CODES_TFhirRequestStatusEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('intent') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeCodeableConcept(json, 'intent', elem.intent); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('priority') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumValue(json, 'priority', elem.PriorityElement, CODES_TFhirRequestPriorityEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('priority') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumProps(json, 'priority', elem.PriorityElement, CODES_TFhirRequestPriorityEnum, false);
   if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.code is TFhirReference) then
     ComposeReference(json, 'codeReference', TFhirReference(elem.code))
   else if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.code is TFhirCodeableConcept) then 
     ComposeCodeableConcept(json, 'codeCodeableConcept', TFhirCodeableConcept(elem.code)) ;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('subject') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{Resource}(json, 'subject', elem.subject); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('context') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{Resource}(json, 'context', elem.context); {a}
   if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.occurrence is TFhirPeriod) then 
     ComposePeriod(json, 'occurrencePeriod', TFhirPeriod(elem.occurrence)) 
@@ -19502,45 +19564,45 @@ begin
     ComposeDateTimeValue(json, 'occurrenceDateTime', TFhirDateTime(elem.occurrence), false);
     ComposeDateTimeProps(json, 'occurrenceDateTime', TFhirDateTime(elem.occurrence), false);
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('authoredOn') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeDateTimeValue(json, 'authoredOn', elem.authoredOnElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('authoredOn') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeDateTimeProps(json, 'authoredOn', elem.authoredOnElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('requester') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeDeviceRequestRequester(json, 'requester', elem.requester); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('performerType') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeCodeableConcept(json, 'performerType', elem.performerType); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('performer') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{Resource}(json, 'performer', elem.performer); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.reasonCodeList.Count > 0) then
+  if not elem.noCompose and doCompose('reasonCode') and (SummaryOption in [soFull, soSummary, soData]) and (elem.reasonCodeList.Count > 0) then
   begin
     json.valueArray('reasonCode');
     for i := 0 to elem.reasonCodeList.Count - 1 do
       ComposeCodeableConcept(json, '', elem.reasonCodeList[i]); {z - CodeableConcept}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.reasonReferenceList.Count > 0) then
+  if not elem.noCompose and doCompose('reasonReference') and (SummaryOption in [soFull, soSummary, soData]) and (elem.reasonReferenceList.Count > 0) then
   begin
     json.valueArray('reasonReference');
     for i := 0 to elem.reasonReferenceList.Count - 1 do
       ComposeReference{TFhirReference}(json, '', elem.reasonReferenceList[i]); {z - Reference(Any)}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.supportingInfoList.Count > 0) then
+  if not elem.noCompose and doCompose('supportingInfo') and (SummaryOption in [soFull, soData]) and (elem.supportingInfoList.Count > 0) then
   begin
     json.valueArray('supportingInfo');
     for i := 0 to elem.supportingInfoList.Count - 1 do
       ComposeReference{TFhirReference}(json, '', elem.supportingInfoList[i]); {z - Reference(Any)}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.noteList.Count > 0) then
+  if not elem.noCompose and doCompose('note') and (SummaryOption in [soFull, soData]) and (elem.noteList.Count > 0) then
   begin
     json.valueArray('note');
     for i := 0 to elem.noteList.Count - 1 do
       ComposeAnnotation(json, '', elem.noteList[i]); {z - Annotation}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.relevantHistoryList.Count > 0) then
+  if not elem.noCompose and doCompose('relevantHistory') and (SummaryOption in [soFull, soData]) and (elem.relevantHistoryList.Count > 0) then
   begin
     json.valueArray('relevantHistory');
     for i := 0 to elem.relevantHistoryList.Count - 1 do
@@ -19605,20 +19667,20 @@ begin
   if (elem = nil) then
     exit;
   ComposeDomainResourceProperties(json, elem);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.identifierList.Count > 0) then
+  if not elem.noCompose and doCompose('identifier') and (SummaryOption in [soFull, soData]) and (elem.identifierList.Count > 0) then
   begin
     json.valueArray('identifier');
     for i := 0 to elem.identifierList.Count - 1 do
       ComposeIdentifier(json, '', elem.identifierList[i]); {z - Identifier}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('status') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumValue(json, 'status', elem.StatusElement, CODES_TFhirDeviceStatementStatusEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('status') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumProps(json, 'status', elem.StatusElement, CODES_TFhirDeviceStatementStatusEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('subject') and (SummaryOption in [soFull, soData]) then
     ComposeReference{Resource}(json, 'subject', elem.subject); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('whenUsed') and (SummaryOption in [soFull, soData]) then
     ComposePeriod(json, 'whenUsed', elem.whenUsed); {a}
   if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.timing is TFhirTiming) then 
     ComposeTiming(json, 'timingTiming', TFhirTiming(elem.timing)) 
@@ -19629,24 +19691,24 @@ begin
     ComposeDateTimeValue(json, 'timingDateTime', TFhirDateTime(elem.timing), false);
     ComposeDateTimeProps(json, 'timingDateTime', TFhirDateTime(elem.timing), false);
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('recordedOn') and (SummaryOption in [soFull, soData]) then
     ComposeDateTimeValue(json, 'recordedOn', elem.recordedOnElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('recordedOn') and (SummaryOption in [soFull, soData]) then
     ComposeDateTimeProps(json, 'recordedOn', elem.recordedOnElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('source') and (SummaryOption in [soFull, soData]) then
     ComposeReference{Resource}(json, 'source', elem.source); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('device') and (SummaryOption in [soFull, soData]) then
     ComposeReference{TFhirDevice}(json, 'device', elem.device); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.indicationList.Count > 0) then
+  if not elem.noCompose and doCompose('indication') and (SummaryOption in [soFull, soData]) and (elem.indicationList.Count > 0) then
   begin
     json.valueArray('indication');
     for i := 0 to elem.indicationList.Count - 1 do
       ComposeCodeableConcept(json, '', elem.indicationList[i]); {z - CodeableConcept}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('bodySite') and (SummaryOption in [soFull, soData]) then
     ComposeCodeableConcept(json, 'bodySite', elem.bodySite); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.noteList.Count > 0) then
+  if not elem.noCompose and doCompose('note') and (SummaryOption in [soFull, soData]) and (elem.noteList.Count > 0) then
   begin
     json.valueArray('note');
     for i := 0 to elem.noteList.Count - 1 do
@@ -19763,31 +19825,31 @@ begin
   if (elem = nil) then
     exit;
   ComposeDomainResourceProperties(json, elem);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.identifierList.Count > 0) then
+  if not elem.noCompose and doCompose('identifier') and (SummaryOption in [soFull, soSummary, soData]) and (elem.identifierList.Count > 0) then
   begin
     json.valueArray('identifier');
     for i := 0 to elem.identifierList.Count - 1 do
       ComposeIdentifier(json, '', elem.identifierList[i]); {z - Identifier}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.basedOnList.Count > 0) then
+  if not elem.noCompose and doCompose('basedOn') and (SummaryOption in [soFull, soData]) and (elem.basedOnList.Count > 0) then
   begin
     json.valueArray('basedOn');
     for i := 0 to elem.basedOnList.Count - 1 do
       ComposeReference{Resource}(json, '', elem.basedOnList[i]); {z - Reference(CarePlan|ImmunizationRecommendation|MedicationRequest|NutritionOrder|ProcedureRequest)}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('status') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumValue(json, 'status', elem.StatusElement, CODES_TFhirDiagnosticReportStatusEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('status') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumProps(json, 'status', elem.StatusElement, CODES_TFhirDiagnosticReportStatusEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('category') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeCodeableConcept(json, 'category', elem.category); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('code') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeCodeableConcept(json, 'code', elem.code); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('subject') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{Resource}(json, 'subject', elem.subject); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('context') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{Resource}(json, 'context', elem.context); {a}
   if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.effective is TFhirPeriod) then 
     ComposePeriod(json, 'effectivePeriod', TFhirPeriod(elem.effective)) 
@@ -19796,64 +19858,64 @@ begin
     ComposeDateTimeValue(json, 'effectiveDateTime', TFhirDateTime(elem.effective), false);
     ComposeDateTimeProps(json, 'effectiveDateTime', TFhirDateTime(elem.effective), false);
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('issued') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeInstantValue(json, 'issued', elem.issuedElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('issued') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeInstantProps(json, 'issued', elem.issuedElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.performerList.Count > 0) then
+  if not elem.noCompose and doCompose('performer') and (SummaryOption in [soFull, soSummary, soData]) and (elem.performerList.Count > 0) then
   begin
     json.valueArray('performer');
     for i := 0 to elem.performerList.Count - 1 do
       ComposeReference{Resource}(json, '', elem.performerList[i]); {z - Reference(Practitioner|Organization)}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.resultsInterpreterList.Count > 0) then
+  if not elem.noCompose and doCompose('resultsInterpreter') and (SummaryOption in [soFull, soSummary, soData]) and (elem.resultsInterpreterList.Count > 0) then
   begin
     json.valueArray('resultsInterpreter');
     for i := 0 to elem.resultsInterpreterList.Count - 1 do
       ComposeReference{Resource}(json, '', elem.resultsInterpreterList[i]); {z - Reference(Practitioner|Organization)}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.specimenList.Count > 0) then
+  if not elem.noCompose and doCompose('specimen') and (SummaryOption in [soFull, soData]) and (elem.specimenList.Count > 0) then
   begin
     json.valueArray('specimen');
     for i := 0 to elem.specimenList.Count - 1 do
       ComposeReference{TFhirSpecimen}(json, '', elem.specimenList[i]); {z - Reference(Specimen)}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.resultList.Count > 0) then
+  if not elem.noCompose and doCompose('result') and (SummaryOption in [soFull, soData]) and (elem.resultList.Count > 0) then
   begin
     json.valueArray('result');
     for i := 0 to elem.resultList.Count - 1 do
       ComposeReference{TFhirObservation}(json, '', elem.resultList[i]); {z - Reference(Observation)}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.imagingStudyList.Count > 0) then
+  if not elem.noCompose and doCompose('imagingStudy') and (SummaryOption in [soFull, soData]) and (elem.imagingStudyList.Count > 0) then
   begin
     json.valueArray('imagingStudy');
     for i := 0 to elem.imagingStudyList.Count - 1 do
       ComposeReference{Resource}(json, '', elem.imagingStudyList[i]); {z - Reference(ImagingStudy|ImagingManifest)}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.imageList.Count > 0) then
+  if not elem.noCompose and doCompose('image') and (SummaryOption in [soFull, soSummary, soData]) and (elem.imageList.Count > 0) then
   begin
     json.valueArray('image');
     for i := 0 to elem.imageList.Count - 1 do
       ComposeDiagnosticReportImage(json, '', elem.imageList[i]); {z - }
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('conclusion') and (SummaryOption in [soFull, soData]) then
     ComposeStringValue(json, 'conclusion', elem.conclusionElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('conclusion') and (SummaryOption in [soFull, soData]) then
     ComposeStringProps(json, 'conclusion', elem.conclusionElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.codedDiagnosisList.Count > 0) then
+  if not elem.noCompose and doCompose('codedDiagnosis') and (SummaryOption in [soFull, soData]) and (elem.codedDiagnosisList.Count > 0) then
   begin
     json.valueArray('codedDiagnosis');
     for i := 0 to elem.codedDiagnosisList.Count - 1 do
       ComposeCodeableConcept(json, '', elem.codedDiagnosisList[i]); {z - CodeableConcept}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.presentedFormList.Count > 0) then
+  if not elem.noCompose and doCompose('presentedForm') and (SummaryOption in [soFull, soData]) and (elem.presentedFormList.Count > 0) then
   begin
     json.valueArray('presentedForm');
     for i := 0 to elem.presentedFormList.Count - 1 do
@@ -19864,41 +19926,41 @@ end;
 
 {$ENDIF FHIR_DIAGNOSTICREPORT}
 {$IFDEF FHIR_DOCUMENTMANIFEST}
-procedure TFHIRJsonParser.ParseDocumentManifestContent(jsn : TJsonObject; ctxt : TFHIRObjectList);
+procedure TFHIRJsonParser.ParseDocumentManifestAgent(jsn : TJsonObject; ctxt : TFHIRObjectList);
 begin
-  ctxt.add(ParseDocumentManifestContent(jsn)); {2}
+  ctxt.add(ParseDocumentManifestAgent(jsn)); {2}
 end;
 
-function TFHIRJsonParser.ParseDocumentManifestContent(jsn : TJsonObject) : TFhirDocumentManifestContent;
+function TFHIRJsonParser.ParseDocumentManifestAgent(jsn : TJsonObject) : TFhirDocumentManifestAgent;
 begin
-  result := TFhirDocumentManifestContent.create;
+  result := TFhirDocumentManifestAgent.create;
   try
-    ParseDocumentManifestContentProperties(jsn, result);
+    ParseDocumentManifestAgentProperties(jsn, result);
     result.link;
   finally
     result.free;
   end;
 end;
 
-procedure TFHIRJsonParser.ParseDocumentManifestContentProperties(jsn : TJsonObject; result : TFhirDocumentManifestContent);
+procedure TFHIRJsonParser.ParseDocumentManifestAgentProperties(jsn : TJsonObject; result : TFhirDocumentManifestAgent);
 begin
     ParseBackboneElementProperties(jsn, result);
-    if jsn.has('pAttachment') {a4} then
-      result.p := ParseAttachment(jsn.vObj['pAttachment']);
-    if jsn.has('pReference') {a3} then
-      result.p := ParseReference(jsn.vObj['pReference']);
+    if jsn.has('type') then
+        result.type_ := ParseCodeableConcept(jsn.vObj['type']);{q3}
+    if jsn.has('who') then
+        result.who := ParseReference{Resource}(jsn.vObj['who']);{q3}
 end;
 
-procedure TFHIRJsonComposer.ComposeDocumentManifestContent(json : TJSONWriter; name : string; elem : TFhirDocumentManifestContent; noObj : boolean = false);
+procedure TFHIRJsonComposer.ComposeDocumentManifestAgent(json : TJSONWriter; name : string; elem : TFhirDocumentManifestAgent; noObj : boolean = false);
 begin
   if (elem = nil) then
     exit;
   if not noObj then json.valueObject(name);
   ComposeBackboneElementProperties(json, elem);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.p is TFhirAttachment) then 
-    ComposeAttachment(json, 'pAttachment', TFhirAttachment(elem.p)) 
-  else if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.p is TFhirReference) then
-    ComposeReference(json, 'pReference', TFhirReference(elem.p));
+  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+    ComposeCodeableConcept(json, 'type', elem.type_); {a}
+  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+    ComposeReference{Resource}(json, 'who', elem.who); {a}
   if not noObj then json.finishObject;
 end;
 
@@ -19933,9 +19995,9 @@ begin
     exit;
   if not noObj then json.valueObject(name);
   ComposeBackboneElementProperties(json, elem);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
     ComposeIdentifier(json, 'identifier', elem.identifier); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
     ComposeReference{TFhirReference}(json, 'ref', elem.ref); {a}
   if not noObj then json.finishObject;
 end;
@@ -19971,8 +20033,8 @@ begin
         result.subject := ParseReference{Resource}(jsn.vObj['subject']);{q3}
     if jsn.has('created') or jsn.has('_created') then
         result.createdElement := ParseDateTime(jsn['created'], jsn.vObj['_created']);{q}
-    if jsn.has('author') then
-      iterateArray(jsn.vArr['author'], result.authorList, parseReference{Resource});
+    if jsn.has('agent') then
+      iterateArray(jsn.vArr['agent'], result.agentList, parseDocumentManifestAgent);
     if jsn.has('recipient') then
       iterateArray(jsn.vArr['recipient'], result.recipientList, parseReference{Resource});
     if jsn.has('source') or jsn.has('_source') then
@@ -19980,7 +20042,7 @@ begin
     if jsn.has('description') or jsn.has('_description') then
         result.descriptionElement := ParseString(jsn['description'], jsn.vObj['_description']);{q}
     if jsn.has('content') then
-      iterateArray(jsn.vArr['content'], result.contentList, parseDocumentManifestContent);
+      iterateArray(jsn.vArr['content'], result.contentList, parseReference{TFhirReference});
     if jsn.has('related') then
       iterateArray(jsn.vArr['related'], result.relatedList, parseDocumentManifestRelated);
 end;
@@ -19992,57 +20054,57 @@ begin
   if (elem = nil) then
     exit;
   ComposeDomainResourceProperties(json, elem);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('masterIdentifier') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeIdentifier(json, 'masterIdentifier', elem.masterIdentifier); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.identifierList.Count > 0) then
+  if not elem.noCompose and doCompose('identifier') and (SummaryOption in [soFull, soSummary, soData]) and (elem.identifierList.Count > 0) then
   begin
     json.valueArray('identifier');
     for i := 0 to elem.identifierList.Count - 1 do
       ComposeIdentifier(json, '', elem.identifierList[i]); {z - Identifier}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('status') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumValue(json, 'status', elem.StatusElement, CODES_TFhirDocumentReferenceStatusEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('status') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumProps(json, 'status', elem.StatusElement, CODES_TFhirDocumentReferenceStatusEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('type_') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeCodeableConcept(json, 'type', elem.type_); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('subject') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{Resource}(json, 'subject', elem.subject); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('created') and (SummaryOption in [soFull, soData]) then
     ComposeDateTimeValue(json, 'created', elem.createdElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('created') and (SummaryOption in [soFull, soData]) then
     ComposeDateTimeProps(json, 'created', elem.createdElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.authorList.Count > 0) then
+  if not elem.noCompose and doCompose('agent') and (SummaryOption in [soFull, soSummary, soData]) and (elem.agentList.Count > 0) then
   begin
-    json.valueArray('author');
-    for i := 0 to elem.authorList.Count - 1 do
-      ComposeReference{Resource}(json, '', elem.authorList[i]); {z - Reference(Practitioner|Organization|Device|Patient|RelatedPerson)}
+    json.valueArray('agent');
+    for i := 0 to elem.agentList.Count - 1 do
+      ComposeDocumentManifestAgent(json, '', elem.agentList[i]); {z - }
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.recipientList.Count > 0) then
+  if not elem.noCompose and doCompose('recipient') and (SummaryOption in [soFull, soData]) and (elem.recipientList.Count > 0) then
   begin
     json.valueArray('recipient');
     for i := 0 to elem.recipientList.Count - 1 do
-      ComposeReference{Resource}(json, '', elem.recipientList[i]); {z - Reference(Patient|Practitioner|RelatedPerson|Organization)}
+      ComposeReference{Resource}(json, '', elem.recipientList[i]); {z - Reference(Patient|Practitioner|PractitionerRole|RelatedPerson|Organization)}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('source') and (SummaryOption in [soFull, soData]) then
     ComposeUriValue(json, 'source', elem.sourceElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('source') and (SummaryOption in [soFull, soData]) then
     ComposeUriProps(json, 'source', elem.sourceElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('description') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeStringValue(json, 'description', elem.descriptionElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('description') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeStringProps(json, 'description', elem.descriptionElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.contentList.Count > 0) then
+  if not elem.noCompose and doCompose('content') and (SummaryOption in [soFull, soData]) and (elem.contentList.Count > 0) then
   begin
     json.valueArray('content');
     for i := 0 to elem.contentList.Count - 1 do
-      ComposeDocumentManifestContent(json, '', elem.contentList[i]); {z - }
+      ComposeReference{TFhirReference}(json, '', elem.contentList[i]); {z - Reference(Any)}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.relatedList.Count > 0) then
+  if not elem.noCompose and doCompose('related') and (SummaryOption in [soFull, soData]) and (elem.relatedList.Count > 0) then
   begin
     json.valueArray('related');
     for i := 0 to elem.relatedList.Count - 1 do
@@ -20053,6 +20115,44 @@ end;
 
 {$ENDIF FHIR_DOCUMENTMANIFEST}
 {$IFDEF FHIR_DOCUMENTREFERENCE}
+procedure TFHIRJsonParser.ParseDocumentReferenceAgent(jsn : TJsonObject; ctxt : TFHIRObjectList);
+begin
+  ctxt.add(ParseDocumentReferenceAgent(jsn)); {2}
+end;
+
+function TFHIRJsonParser.ParseDocumentReferenceAgent(jsn : TJsonObject) : TFhirDocumentReferenceAgent;
+begin
+  result := TFhirDocumentReferenceAgent.create;
+  try
+    ParseDocumentReferenceAgentProperties(jsn, result);
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFHIRJsonParser.ParseDocumentReferenceAgentProperties(jsn : TJsonObject; result : TFhirDocumentReferenceAgent);
+begin
+    ParseBackboneElementProperties(jsn, result);
+    if jsn.has('type') then
+        result.type_ := ParseCodeableConcept(jsn.vObj['type']);{q3}
+    if jsn.has('who') then
+        result.who := ParseReference{Resource}(jsn.vObj['who']);{q3}
+end;
+
+procedure TFHIRJsonComposer.ComposeDocumentReferenceAgent(json : TJSONWriter; name : string; elem : TFhirDocumentReferenceAgent; noObj : boolean = false);
+begin
+  if (elem = nil) then
+    exit;
+  if not noObj then json.valueObject(name);
+  ComposeBackboneElementProperties(json, elem);
+  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+    ComposeCodeableConcept(json, 'type', elem.type_); {a}
+  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+    ComposeReference{Resource}(json, 'who', elem.who); {a}
+  if not noObj then json.finishObject;
+end;
+
 procedure TFHIRJsonParser.ParseDocumentReferenceRelatesTo(jsn : TJsonObject; ctxt : TFHIRObjectList);
 begin
   ctxt.add(ParseDocumentReferenceRelatesTo(jsn)); {2}
@@ -20174,9 +20274,9 @@ begin
     exit;
   if not noObj then json.valueObject(name);
   ComposeBackboneElementProperties(json, elem);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
     ComposeReference{TFhirEncounter}(json, 'encounter', elem.encounter); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.eventList.Count > 0) then
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.eventList.Count > 0) then
   begin
     json.valueArray('event');
     for i := 0 to elem.eventList.Count - 1 do
@@ -20185,13 +20285,13 @@ begin
   end;
   if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
     ComposePeriod(json, 'period', elem.period); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
     ComposeCodeableConcept(json, 'facilityType', elem.facilityType); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
     ComposeCodeableConcept(json, 'practiceSetting', elem.practiceSetting); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
     ComposeReference{TFhirPatient}(json, 'sourcePatientInfo', elem.sourcePatientInfo); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.relatedList.Count > 0) then
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.relatedList.Count > 0) then
   begin
     json.valueArray('related');
     for i := 0 to elem.relatedList.Count - 1 do
@@ -20232,9 +20332,9 @@ begin
     exit;
   if not noObj then json.valueObject(name);
   ComposeBackboneElementProperties(json, elem);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
     ComposeIdentifier(json, 'identifier', elem.identifier); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
     ComposeReference{TFhirReference}(json, 'ref', elem.ref); {a}
   if not noObj then json.finishObject;
 end;
@@ -20274,10 +20374,10 @@ begin
         result.subject := ParseReference{Resource}(jsn.vObj['subject']);{q3}
     if jsn.has('created') or jsn.has('_created') then
         result.createdElement := ParseDateTime(jsn['created'], jsn.vObj['_created']);{q}
-    if jsn.has('indexed') or jsn.has('_indexed') then
-        result.indexedElement := ParseInstant(jsn['indexed'], jsn.vObj['_indexed']);{q}
-    if jsn.has('author') then
-      iterateArray(jsn.vArr['author'], result.authorList, parseReference{Resource});
+    if jsn.has('date') or jsn.has('_date') then
+        result.dateElement := ParseInstant(jsn['date'], jsn.vObj['_date']);{q}
+    if jsn.has('agent') then
+      iterateArray(jsn.vArr['agent'], result.agentList, parseDocumentReferenceAgent);
     if jsn.has('authenticator') then
         result.authenticator := ParseReference{Resource}(jsn.vObj['authenticator']);{q3}
     if jsn.has('custodian') then
@@ -20301,74 +20401,74 @@ begin
   if (elem = nil) then
     exit;
   ComposeDomainResourceProperties(json, elem);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('masterIdentifier') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeIdentifier(json, 'masterIdentifier', elem.masterIdentifier); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.identifierList.Count > 0) then
+  if not elem.noCompose and doCompose('identifier') and (SummaryOption in [soFull, soSummary, soData]) and (elem.identifierList.Count > 0) then
   begin
     json.valueArray('identifier');
     for i := 0 to elem.identifierList.Count - 1 do
       ComposeIdentifier(json, '', elem.identifierList[i]); {z - Identifier}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('status') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumValue(json, 'status', elem.StatusElement, CODES_TFhirDocumentReferenceStatusEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('status') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumProps(json, 'status', elem.StatusElement, CODES_TFhirDocumentReferenceStatusEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('docStatus') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumValue(json, 'docStatus', elem.DocStatusElement, CODES_TFhirCompositionStatusEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('docStatus') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumProps(json, 'docStatus', elem.DocStatusElement, CODES_TFhirCompositionStatusEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('type_') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeCodeableConcept(json, 'type', elem.type_); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('class_') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeCodeableConcept(json, 'class', elem.class_); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('subject') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{Resource}(json, 'subject', elem.subject); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('created') and (SummaryOption in [soFull, soData]) then
     ComposeDateTimeValue(json, 'created', elem.createdElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('created') and (SummaryOption in [soFull, soData]) then
     ComposeDateTimeProps(json, 'created', elem.createdElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
-    ComposeInstantValue(json, 'indexed', elem.indexedElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
-    ComposeInstantProps(json, 'indexed', elem.indexedElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.authorList.Count > 0) then
+  if not elem.noCompose and doCompose('date') and (SummaryOption in [soFull, soSummary, soData]) then
+    ComposeInstantValue(json, 'date', elem.dateElement, false);
+  if not elem.noCompose and doCompose('date') and (SummaryOption in [soFull, soSummary, soData]) then
+    ComposeInstantProps(json, 'date', elem.dateElement, false);
+  if not elem.noCompose and doCompose('agent') and (SummaryOption in [soFull, soSummary, soData]) and (elem.agentList.Count > 0) then
   begin
-    json.valueArray('author');
-    for i := 0 to elem.authorList.Count - 1 do
-      ComposeReference{Resource}(json, '', elem.authorList[i]); {z - Reference(Practitioner|Organization|Device|Patient|RelatedPerson)}
+    json.valueArray('agent');
+    for i := 0 to elem.agentList.Count - 1 do
+      ComposeDocumentReferenceAgent(json, '', elem.agentList[i]); {z - }
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('authenticator') and (SummaryOption in [soFull, soData]) then
     ComposeReference{Resource}(json, 'authenticator', elem.authenticator); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('custodian') and (SummaryOption in [soFull, soData]) then
     ComposeReference{TFhirOrganization}(json, 'custodian', elem.custodian); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.relatesToList.Count > 0) then
+  if not elem.noCompose and doCompose('relatesTo') and (SummaryOption in [soFull, soSummary, soData]) and (elem.relatesToList.Count > 0) then
   begin
     json.valueArray('relatesTo');
     for i := 0 to elem.relatesToList.Count - 1 do
       ComposeDocumentReferenceRelatesTo(json, '', elem.relatesToList[i]); {z - }
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('description') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeStringValue(json, 'description', elem.descriptionElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('description') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeStringProps(json, 'description', elem.descriptionElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.securityLabelList.Count > 0) then
+  if not elem.noCompose and doCompose('securityLabel') and (SummaryOption in [soFull, soSummary, soData]) and (elem.securityLabelList.Count > 0) then
   begin
     json.valueArray('securityLabel');
     for i := 0 to elem.securityLabelList.Count - 1 do
       ComposeCodeableConcept(json, '', elem.securityLabelList[i]); {z - CodeableConcept}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.contentList.Count > 0) then
+  if not elem.noCompose and doCompose('content') and (SummaryOption in [soFull, soSummary, soData]) and (elem.contentList.Count > 0) then
   begin
     json.valueArray('content');
     for i := 0 to elem.contentList.Count - 1 do
       ComposeDocumentReferenceContent(json, '', elem.contentList[i]); {z - }
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('context') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeDocumentReferenceContext(json, 'context', elem.context); {a}
 end;
 
@@ -20434,20 +20534,20 @@ begin
   if (elem = nil) then
     exit;
   ComposeDomainResourceProperties(json, elem);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.identifierList.Count > 0) then
+  if not elem.noCompose and doCompose('identifier') and (SummaryOption in [soFull, soData]) and (elem.identifierList.Count > 0) then
   begin
     json.valueArray('identifier');
     for i := 0 to elem.identifierList.Count - 1 do
       ComposeIdentifier(json, '', elem.identifierList[i]); {z - Identifier}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('status') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumValue(json, 'status', elem.StatusElement, CODES_TFhirFmStatusEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('status') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumProps(json, 'status', elem.StatusElement, CODES_TFhirFmStatusEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('priority') and (SummaryOption in [soFull, soData]) then
     ComposeCodeableConcept(json, 'priority', elem.priority); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('patient') and (SummaryOption in [soFull, soData]) then
     ComposeReference{TFhirPatient}(json, 'patient', elem.patient); {a}
   if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.serviced is TFhirPeriod) then 
     ComposePeriod(json, 'servicedPeriod', TFhirPeriod(elem.serviced)) 
@@ -20456,29 +20556,29 @@ begin
     ComposeDateValue(json, 'servicedDate', TFhirDate(elem.serviced), false);
     ComposeDateProps(json, 'servicedDate', TFhirDate(elem.serviced), false);
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('created') and (SummaryOption in [soFull, soData]) then
     ComposeDateTimeValue(json, 'created', elem.createdElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('created') and (SummaryOption in [soFull, soData]) then
     ComposeDateTimeProps(json, 'created', elem.createdElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('enterer') and (SummaryOption in [soFull, soData]) then
     ComposeReference{TFhirPractitioner}(json, 'enterer', elem.enterer); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('provider') and (SummaryOption in [soFull, soData]) then
     ComposeReference{TFhirPractitioner}(json, 'provider', elem.provider); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('organization') and (SummaryOption in [soFull, soData]) then
     ComposeReference{TFhirOrganization}(json, 'organization', elem.organization); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('insurer') and (SummaryOption in [soFull, soData]) then
     ComposeReference{TFhirOrganization}(json, 'insurer', elem.insurer); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('facility') and (SummaryOption in [soFull, soData]) then
     ComposeReference{TFhirLocation}(json, 'facility', elem.facility); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('coverage') and (SummaryOption in [soFull, soData]) then
     ComposeReference{TFhirCoverage}(json, 'coverage', elem.coverage); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('businessArrangement') and (SummaryOption in [soFull, soData]) then
     ComposeStringValue(json, 'businessArrangement', elem.businessArrangementElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('businessArrangement') and (SummaryOption in [soFull, soData]) then
     ComposeStringProps(json, 'businessArrangement', elem.businessArrangementElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('benefitCategory') and (SummaryOption in [soFull, soData]) then
     ComposeCodeableConcept(json, 'benefitCategory', elem.benefitCategory); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('benefitSubCategory') and (SummaryOption in [soFull, soData]) then
     ComposeCodeableConcept(json, 'benefitSubCategory', elem.benefitSubCategory); {a}
 end;
 
@@ -20763,51 +20863,51 @@ begin
   if (elem = nil) then
     exit;
   ComposeDomainResourceProperties(json, elem);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.identifierList.Count > 0) then
+  if not elem.noCompose and doCompose('identifier') and (SummaryOption in [soFull, soData]) and (elem.identifierList.Count > 0) then
   begin
     json.valueArray('identifier');
     for i := 0 to elem.identifierList.Count - 1 do
       ComposeIdentifier(json, '', elem.identifierList[i]); {z - Identifier}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('status') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumValue(json, 'status', elem.StatusElement, CODES_TFhirFmStatusEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('status') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumProps(json, 'status', elem.StatusElement, CODES_TFhirFmStatusEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('created') and (SummaryOption in [soFull, soData]) then
     ComposeDateTimeValue(json, 'created', elem.createdElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('created') and (SummaryOption in [soFull, soData]) then
     ComposeDateTimeProps(json, 'created', elem.createdElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('requestProvider') and (SummaryOption in [soFull, soData]) then
     ComposeReference{TFhirPractitioner}(json, 'requestProvider', elem.requestProvider); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('requestOrganization') and (SummaryOption in [soFull, soData]) then
     ComposeReference{TFhirOrganization}(json, 'requestOrganization', elem.requestOrganization); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('request') and (SummaryOption in [soFull, soData]) then
     ComposeReference{TFhirEligibilityRequest}(json, 'request', elem.request); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('outcome') and (SummaryOption in [soFull, soData]) then
      ComposeEnumValue(json, 'outcome', elem.OutcomeElement, CODES_TFhirRemittanceOutcomeEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('outcome') and (SummaryOption in [soFull, soData]) then
      ComposeEnumProps(json, 'outcome', elem.OutcomeElement, CODES_TFhirRemittanceOutcomeEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('disposition') and (SummaryOption in [soFull, soData]) then
     ComposeStringValue(json, 'disposition', elem.dispositionElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('disposition') and (SummaryOption in [soFull, soData]) then
     ComposeStringProps(json, 'disposition', elem.dispositionElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('insurer') and (SummaryOption in [soFull, soData]) then
     ComposeReference{TFhirOrganization}(json, 'insurer', elem.insurer); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('inforce') and (SummaryOption in [soFull, soData]) then
     ComposeBooleanValue(json, 'inforce', elem.inforceElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('inforce') and (SummaryOption in [soFull, soData]) then
     ComposeBooleanProps(json, 'inforce', elem.inforceElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.insuranceList.Count > 0) then
+  if not elem.noCompose and doCompose('insurance') and (SummaryOption in [soFull, soData]) and (elem.insuranceList.Count > 0) then
   begin
     json.valueArray('insurance');
     for i := 0 to elem.insuranceList.Count - 1 do
       ComposeEligibilityResponseInsurance(json, '', elem.insuranceList[i]); {z - }
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('form') and (SummaryOption in [soFull, soData]) then
     ComposeCodeableConcept(json, 'form', elem.form); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.errorList.Count > 0) then
+  if not elem.noCompose and doCompose('error') and (SummaryOption in [soFull, soData]) and (elem.errorList.Count > 0) then
   begin
     json.valueArray('error');
     for i := 0 to elem.errorList.Count - 1 do
@@ -21186,104 +21286,104 @@ begin
   if (elem = nil) then
     exit;
   ComposeDomainResourceProperties(json, elem);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.identifierList.Count > 0) then
+  if not elem.noCompose and doCompose('identifier') and (SummaryOption in [soFull, soSummary, soData]) and (elem.identifierList.Count > 0) then
   begin
     json.valueArray('identifier');
     for i := 0 to elem.identifierList.Count - 1 do
       ComposeIdentifier(json, '', elem.identifierList[i]); {z - Identifier}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('status') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumValue(json, 'status', elem.StatusElement, CODES_TFhirEncounterStatusEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('status') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumProps(json, 'status', elem.StatusElement, CODES_TFhirEncounterStatusEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.statusHistoryList.Count > 0) then
+  if not elem.noCompose and doCompose('statusHistory') and (SummaryOption in [soFull, soData]) and (elem.statusHistoryList.Count > 0) then
   begin
     json.valueArray('statusHistory');
     for i := 0 to elem.statusHistoryList.Count - 1 do
       ComposeEncounterStatusHistory(json, '', elem.statusHistoryList[i]); {z - }
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('class_') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeCoding(json, 'class', elem.class_); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.classHistoryList.Count > 0) then
+  if not elem.noCompose and doCompose('classHistory') and (SummaryOption in [soFull, soData]) and (elem.classHistoryList.Count > 0) then
   begin
     json.valueArray('classHistory');
     for i := 0 to elem.classHistoryList.Count - 1 do
       ComposeEncounterClassHistory(json, '', elem.classHistoryList[i]); {z - }
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.type_List.Count > 0) then
+  if not elem.noCompose and doCompose('type_') and (SummaryOption in [soFull, soSummary, soData]) and (elem.type_List.Count > 0) then
   begin
     json.valueArray('type');
     for i := 0 to elem.type_List.Count - 1 do
       ComposeCodeableConcept(json, '', elem.type_List[i]); {z - CodeableConcept}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('priority') and (SummaryOption in [soFull, soData]) then
     ComposeCodeableConcept(json, 'priority', elem.priority); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('subject') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{Resource}(json, 'subject', elem.subject); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.episodeOfCareList.Count > 0) then
+  if not elem.noCompose and doCompose('episodeOfCare') and (SummaryOption in [soFull, soSummary, soData]) and (elem.episodeOfCareList.Count > 0) then
   begin
     json.valueArray('episodeOfCare');
     for i := 0 to elem.episodeOfCareList.Count - 1 do
       ComposeReference{TFhirEpisodeOfCare}(json, '', elem.episodeOfCareList[i]); {z - Reference(EpisodeOfCare)}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.incomingReferralList.Count > 0) then
+  if not elem.noCompose and doCompose('incomingReferral') and (SummaryOption in [soFull, soData]) and (elem.incomingReferralList.Count > 0) then
   begin
     json.valueArray('incomingReferral');
     for i := 0 to elem.incomingReferralList.Count - 1 do
       ComposeReference{TFhirProcedureRequest}(json, '', elem.incomingReferralList[i]); {z - Reference(ProcedureRequest)}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.participantList.Count > 0) then
+  if not elem.noCompose and doCompose('participant') and (SummaryOption in [soFull, soSummary, soData]) and (elem.participantList.Count > 0) then
   begin
     json.valueArray('participant');
     for i := 0 to elem.participantList.Count - 1 do
       ComposeEncounterParticipant(json, '', elem.participantList[i]); {z - }
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('appointment') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{TFhirAppointment}(json, 'appointment', elem.appointment); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('period') and (SummaryOption in [soFull, soData]) then
     ComposePeriod(json, 'period', elem.period); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('length') and (SummaryOption in [soFull, soData]) then
     ComposeDuration(json, 'length', elem.length); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.reasonList.Count > 0) then
+  if not elem.noCompose and doCompose('reason') and (SummaryOption in [soFull, soSummary, soData]) and (elem.reasonList.Count > 0) then
   begin
     json.valueArray('reason');
     for i := 0 to elem.reasonList.Count - 1 do
       ComposeCodeableConcept(json, '', elem.reasonList[i]); {z - CodeableConcept}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.diagnosisList.Count > 0) then
+  if not elem.noCompose and doCompose('diagnosis') and (SummaryOption in [soFull, soSummary, soData]) and (elem.diagnosisList.Count > 0) then
   begin
     json.valueArray('diagnosis');
     for i := 0 to elem.diagnosisList.Count - 1 do
       ComposeEncounterDiagnosis(json, '', elem.diagnosisList[i]); {z - }
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.accountList.Count > 0) then
+  if not elem.noCompose and doCompose('account') and (SummaryOption in [soFull, soData]) and (elem.accountList.Count > 0) then
   begin
     json.valueArray('account');
     for i := 0 to elem.accountList.Count - 1 do
       ComposeReference{TFhirAccount}(json, '', elem.accountList[i]); {z - Reference(Account)}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('hospitalization') and (SummaryOption in [soFull, soData]) then
     ComposeEncounterHospitalization(json, 'hospitalization', elem.hospitalization); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.locationList.Count > 0) then
+  if not elem.noCompose and doCompose('location') and (SummaryOption in [soFull, soData]) and (elem.locationList.Count > 0) then
   begin
     json.valueArray('location');
     for i := 0 to elem.locationList.Count - 1 do
       ComposeEncounterLocation(json, '', elem.locationList[i]); {z - }
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('serviceProvider') and (SummaryOption in [soFull, soData]) then
     ComposeReference{TFhirOrganization}(json, 'serviceProvider', elem.serviceProvider); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('partOf') and (SummaryOption in [soFull, soData]) then
     ComposeReference{TFhirEncounter}(json, 'partOf', elem.partOf); {a}
 end;
 
@@ -21341,42 +21441,42 @@ begin
   if (elem = nil) then
     exit;
   ComposeDomainResourceProperties(json, elem);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.identifierList.Count > 0) then
+  if not elem.noCompose and doCompose('identifier') and (SummaryOption in [soFull, soSummary, soData]) and (elem.identifierList.Count > 0) then
   begin
     json.valueArray('identifier');
     for i := 0 to elem.identifierList.Count - 1 do
       ComposeIdentifier(json, '', elem.identifierList[i]); {z - Identifier}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('status') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumValue(json, 'status', elem.StatusElement, CODES_TFhirEndpointStatusEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('status') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumProps(json, 'status', elem.StatusElement, CODES_TFhirEndpointStatusEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('connectionType') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeCoding(json, 'connectionType', elem.connectionType); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('name') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeStringValue(json, 'name', elem.nameElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('name') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeStringProps(json, 'name', elem.nameElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('managingOrganization') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{TFhirOrganization}(json, 'managingOrganization', elem.managingOrganization); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.contactList.Count > 0) then
+  if not elem.noCompose and doCompose('contact') and (SummaryOption in [soFull, soData]) and (elem.contactList.Count > 0) then
   begin
     json.valueArray('contact');
     for i := 0 to elem.contactList.Count - 1 do
       ComposeContactPoint(json, '', elem.contactList[i]); {z - ContactPoint}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('period') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposePeriod(json, 'period', elem.period); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.payloadTypeList.Count > 0) then
+  if not elem.noCompose and doCompose('payloadType') and (SummaryOption in [soFull, soSummary, soData]) and (elem.payloadTypeList.Count > 0) then
   begin
     json.valueArray('payloadType');
     for i := 0 to elem.payloadTypeList.Count - 1 do
       ComposeCodeableConcept(json, '', elem.payloadTypeList[i]); {z - CodeableConcept}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.payloadMimeTypeList.Count > 0) then
+  if not elem.noCompose and doCompose('payloadMimeType') and (SummaryOption in [soFull, soSummary, soData]) and (elem.payloadMimeTypeList.Count > 0) then
   begin
     ext := false;
     val := false;
@@ -21400,11 +21500,11 @@ begin
       json.FinishArray;
     end;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('address') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeUriValue(json, 'address', elem.addressElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('address') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeUriProps(json, 'address', elem.addressElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.headerList.Count > 0) then
+  if not elem.noCompose and doCompose('header') and (SummaryOption in [soFull, soData]) and (elem.headerList.Count > 0) then
   begin
     ext := false;
     val := false;
@@ -21476,30 +21576,30 @@ begin
   if (elem = nil) then
     exit;
   ComposeDomainResourceProperties(json, elem);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.identifierList.Count > 0) then
+  if not elem.noCompose and doCompose('identifier') and (SummaryOption in [soFull, soData]) and (elem.identifierList.Count > 0) then
   begin
     json.valueArray('identifier');
     for i := 0 to elem.identifierList.Count - 1 do
       ComposeIdentifier(json, '', elem.identifierList[i]); {z - Identifier}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('status') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumValue(json, 'status', elem.StatusElement, CODES_TFhirFmStatusEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('status') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumProps(json, 'status', elem.StatusElement, CODES_TFhirFmStatusEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('created') and (SummaryOption in [soFull, soData]) then
     ComposeDateTimeValue(json, 'created', elem.createdElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('created') and (SummaryOption in [soFull, soData]) then
     ComposeDateTimeProps(json, 'created', elem.createdElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('insurer') and (SummaryOption in [soFull, soData]) then
     ComposeReference{TFhirOrganization}(json, 'insurer', elem.insurer); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('provider') and (SummaryOption in [soFull, soData]) then
     ComposeReference{TFhirPractitioner}(json, 'provider', elem.provider); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('organization') and (SummaryOption in [soFull, soData]) then
     ComposeReference{TFhirOrganization}(json, 'organization', elem.organization); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('candidate') and (SummaryOption in [soFull, soData]) then
     ComposeReference{TFhirPatient}(json, 'candidate', elem.candidate); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('coverage') and (SummaryOption in [soFull, soData]) then
     ComposeReference{TFhirCoverage}(json, 'coverage', elem.coverage); {a}
 end;
 
@@ -21551,36 +21651,36 @@ begin
   if (elem = nil) then
     exit;
   ComposeDomainResourceProperties(json, elem);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.identifierList.Count > 0) then
+  if not elem.noCompose and doCompose('identifier') and (SummaryOption in [soFull, soData]) and (elem.identifierList.Count > 0) then
   begin
     json.valueArray('identifier');
     for i := 0 to elem.identifierList.Count - 1 do
       ComposeIdentifier(json, '', elem.identifierList[i]); {z - Identifier}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('status') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumValue(json, 'status', elem.StatusElement, CODES_TFhirFmStatusEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('status') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumProps(json, 'status', elem.StatusElement, CODES_TFhirFmStatusEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('request') and (SummaryOption in [soFull, soData]) then
     ComposeReference{TFhirEnrollmentRequest}(json, 'request', elem.request); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('outcome') and (SummaryOption in [soFull, soData]) then
      ComposeEnumValue(json, 'outcome', elem.OutcomeElement, CODES_TFhirRemittanceOutcomeEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('outcome') and (SummaryOption in [soFull, soData]) then
      ComposeEnumProps(json, 'outcome', elem.OutcomeElement, CODES_TFhirRemittanceOutcomeEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('disposition') and (SummaryOption in [soFull, soData]) then
     ComposeStringValue(json, 'disposition', elem.dispositionElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('disposition') and (SummaryOption in [soFull, soData]) then
     ComposeStringProps(json, 'disposition', elem.dispositionElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('created') and (SummaryOption in [soFull, soData]) then
     ComposeDateTimeValue(json, 'created', elem.createdElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('created') and (SummaryOption in [soFull, soData]) then
     ComposeDateTimeProps(json, 'created', elem.createdElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('organization') and (SummaryOption in [soFull, soData]) then
     ComposeReference{TFhirOrganization}(json, 'organization', elem.organization); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('requestProvider') and (SummaryOption in [soFull, soData]) then
     ComposeReference{TFhirPractitioner}(json, 'requestProvider', elem.requestProvider); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('requestOrganization') and (SummaryOption in [soFull, soData]) then
     ComposeReference{TFhirOrganization}(json, 'requestOrganization', elem.requestOrganization); {a}
 end;
 
@@ -21722,61 +21822,61 @@ begin
   if (elem = nil) then
     exit;
   ComposeDomainResourceProperties(json, elem);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.identifierList.Count > 0) then
+  if not elem.noCompose and doCompose('identifier') and (SummaryOption in [soFull, soData]) and (elem.identifierList.Count > 0) then
   begin
     json.valueArray('identifier');
     for i := 0 to elem.identifierList.Count - 1 do
       ComposeIdentifier(json, '', elem.identifierList[i]); {z - Identifier}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('status') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumValue(json, 'status', elem.StatusElement, CODES_TFhirEpisodeOfCareStatusEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('status') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumProps(json, 'status', elem.StatusElement, CODES_TFhirEpisodeOfCareStatusEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.statusHistoryList.Count > 0) then
+  if not elem.noCompose and doCompose('statusHistory') and (SummaryOption in [soFull, soData]) and (elem.statusHistoryList.Count > 0) then
   begin
     json.valueArray('statusHistory');
     for i := 0 to elem.statusHistoryList.Count - 1 do
       ComposeEpisodeOfCareStatusHistory(json, '', elem.statusHistoryList[i]); {z - }
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.type_List.Count > 0) then
+  if not elem.noCompose and doCompose('type_') and (SummaryOption in [soFull, soSummary, soData]) and (elem.type_List.Count > 0) then
   begin
     json.valueArray('type');
     for i := 0 to elem.type_List.Count - 1 do
       ComposeCodeableConcept(json, '', elem.type_List[i]); {z - CodeableConcept}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.diagnosisList.Count > 0) then
+  if not elem.noCompose and doCompose('diagnosis') and (SummaryOption in [soFull, soSummary, soData]) and (elem.diagnosisList.Count > 0) then
   begin
     json.valueArray('diagnosis');
     for i := 0 to elem.diagnosisList.Count - 1 do
       ComposeEpisodeOfCareDiagnosis(json, '', elem.diagnosisList[i]); {z - }
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('patient') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{TFhirPatient}(json, 'patient', elem.patient); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('managingOrganization') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{TFhirOrganization}(json, 'managingOrganization', elem.managingOrganization); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('period') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposePeriod(json, 'period', elem.period); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.referralRequestList.Count > 0) then
+  if not elem.noCompose and doCompose('referralRequest') and (SummaryOption in [soFull, soData]) and (elem.referralRequestList.Count > 0) then
   begin
     json.valueArray('referralRequest');
     for i := 0 to elem.referralRequestList.Count - 1 do
       ComposeReference{TFhirProcedureRequest}(json, '', elem.referralRequestList[i]); {z - Reference(ProcedureRequest)}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('careManager') and (SummaryOption in [soFull, soData]) then
     ComposeReference{TFhirPractitioner}(json, 'careManager', elem.careManager); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.teamList.Count > 0) then
+  if not elem.noCompose and doCompose('team') and (SummaryOption in [soFull, soData]) and (elem.teamList.Count > 0) then
   begin
     json.valueArray('team');
     for i := 0 to elem.teamList.Count - 1 do
       ComposeReference{TFhirCareTeam}(json, '', elem.teamList[i]); {z - Reference(CareTeam)}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.accountList.Count > 0) then
+  if not elem.noCompose and doCompose('account') and (SummaryOption in [soFull, soData]) and (elem.accountList.Count > 0) then
   begin
     json.valueArray('account');
     for i := 0 to elem.accountList.Count - 1 do
@@ -21861,118 +21961,823 @@ begin
   if (elem = nil) then
     exit;
   ComposeDomainResourceProperties(json, elem);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('url') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeUriValue(json, 'url', elem.urlElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('url') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeUriProps(json, 'url', elem.urlElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.identifierList.Count > 0) then
+  if not elem.noCompose and doCompose('identifier') and (SummaryOption in [soFull, soSummary, soData]) and (elem.identifierList.Count > 0) then
   begin
     json.valueArray('identifier');
     for i := 0 to elem.identifierList.Count - 1 do
       ComposeIdentifier(json, '', elem.identifierList[i]); {z - Identifier}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('version') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeStringValue(json, 'version', elem.versionElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('version') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeStringProps(json, 'version', elem.versionElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('name') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeStringValue(json, 'name', elem.nameElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('name') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeStringProps(json, 'name', elem.nameElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('title') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeStringValue(json, 'title', elem.titleElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('title') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeStringProps(json, 'title', elem.titleElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('status') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumValue(json, 'status', elem.StatusElement, CODES_TFhirPublicationStatusEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('status') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumProps(json, 'status', elem.StatusElement, CODES_TFhirPublicationStatusEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('experimental') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeBooleanValue(json, 'experimental', elem.experimentalElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('experimental') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeBooleanProps(json, 'experimental', elem.experimentalElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('date') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeDateTimeValue(json, 'date', elem.dateElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('date') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeDateTimeProps(json, 'date', elem.dateElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('publisher') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeStringValue(json, 'publisher', elem.publisherElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('publisher') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeStringProps(json, 'publisher', elem.publisherElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('description') and (SummaryOption in [soFull, soData]) then
     ComposeMarkdownValue(json, 'description', elem.descriptionElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('description') and (SummaryOption in [soFull, soData]) then
     ComposeMarkdownProps(json, 'description', elem.descriptionElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('purpose') and (SummaryOption in [soFull, soData]) then
     ComposeMarkdownValue(json, 'purpose', elem.purposeElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('purpose') and (SummaryOption in [soFull, soData]) then
     ComposeMarkdownProps(json, 'purpose', elem.purposeElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('usage') and (SummaryOption in [soFull, soData]) then
     ComposeStringValue(json, 'usage', elem.usageElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('usage') and (SummaryOption in [soFull, soData]) then
     ComposeStringProps(json, 'usage', elem.usageElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('approvalDate') and (SummaryOption in [soFull, soData]) then
     ComposeDateValue(json, 'approvalDate', elem.approvalDateElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('approvalDate') and (SummaryOption in [soFull, soData]) then
     ComposeDateProps(json, 'approvalDate', elem.approvalDateElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('lastReviewDate') and (SummaryOption in [soFull, soData]) then
     ComposeDateValue(json, 'lastReviewDate', elem.lastReviewDateElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('lastReviewDate') and (SummaryOption in [soFull, soData]) then
     ComposeDateProps(json, 'lastReviewDate', elem.lastReviewDateElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('effectivePeriod') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposePeriod(json, 'effectivePeriod', elem.effectivePeriod); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.useContextList.Count > 0) then
+  if not elem.noCompose and doCompose('useContext') and (SummaryOption in [soFull, soSummary, soData]) and (elem.useContextList.Count > 0) then
   begin
     json.valueArray('useContext');
     for i := 0 to elem.useContextList.Count - 1 do
       ComposeUsageContext(json, '', elem.useContextList[i]); {z - UsageContext}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.jurisdictionList.Count > 0) then
+  if not elem.noCompose and doCompose('jurisdiction') and (SummaryOption in [soFull, soSummary, soData]) and (elem.jurisdictionList.Count > 0) then
   begin
     json.valueArray('jurisdiction');
     for i := 0 to elem.jurisdictionList.Count - 1 do
       ComposeCodeableConcept(json, '', elem.jurisdictionList[i]); {z - CodeableConcept}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.topicList.Count > 0) then
+  if not elem.noCompose and doCompose('topic') and (SummaryOption in [soFull, soData]) and (elem.topicList.Count > 0) then
   begin
     json.valueArray('topic');
     for i := 0 to elem.topicList.Count - 1 do
       ComposeCodeableConcept(json, '', elem.topicList[i]); {z - CodeableConcept}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.contributorList.Count > 0) then
+  if not elem.noCompose and doCompose('contributor') and (SummaryOption in [soFull, soData]) and (elem.contributorList.Count > 0) then
   begin
     json.valueArray('contributor');
     for i := 0 to elem.contributorList.Count - 1 do
       ComposeContributor(json, '', elem.contributorList[i]); {z - Contributor}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.contactList.Count > 0) then
+  if not elem.noCompose and doCompose('contact') and (SummaryOption in [soFull, soSummary, soData]) and (elem.contactList.Count > 0) then
   begin
     json.valueArray('contact');
     for i := 0 to elem.contactList.Count - 1 do
       ComposeContactDetail(json, '', elem.contactList[i]); {z - ContactDetail}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('copyright') and (SummaryOption in [soFull, soData]) then
     ComposeMarkdownValue(json, 'copyright', elem.copyrightElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('copyright') and (SummaryOption in [soFull, soData]) then
     ComposeMarkdownProps(json, 'copyright', elem.copyrightElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.relatedArtifactList.Count > 0) then
+  if not elem.noCompose and doCompose('relatedArtifact') and (SummaryOption in [soFull, soData]) and (elem.relatedArtifactList.Count > 0) then
   begin
     json.valueArray('relatedArtifact');
     for i := 0 to elem.relatedArtifactList.Count - 1 do
       ComposeRelatedArtifact(json, '', elem.relatedArtifactList[i]); {z - RelatedArtifact}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('trigger') and (SummaryOption in [soFull, soData]) then
     ComposeTriggerDefinition(json, 'trigger', elem.trigger); {a}
 end;
 
 {$ENDIF FHIR_EVENTDEFINITION}
+{$IFDEF FHIR_EXAMPLESCENARIO}
+procedure TFHIRJsonParser.ParseExampleScenarioActor(jsn : TJsonObject; ctxt : TFHIRObjectList);
+begin
+  ctxt.add(ParseExampleScenarioActor(jsn)); {2}
+end;
+
+function TFHIRJsonParser.ParseExampleScenarioActor(jsn : TJsonObject) : TFhirExampleScenarioActor;
+begin
+  result := TFhirExampleScenarioActor.create;
+  try
+    ParseExampleScenarioActorProperties(jsn, result);
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFHIRJsonParser.ParseExampleScenarioActorProperties(jsn : TJsonObject; result : TFhirExampleScenarioActor);
+begin
+    ParseBackboneElementProperties(jsn, result);
+    if jsn.has('actorId') or jsn.has('_actorId') then
+        result.actorIdElement := ParseString(jsn['actorId'], jsn.vObj['_actorId']);{q}
+    if jsn.has('type') or jsn.has('_type')  then
+      result.type_Element := parseEnum(jsn.path+'/type', jsn['type'], jsn.vObj['_type'], CODES_TFhirExamplescenarioActorTypeEnum, SYSTEMS_TFhirExamplescenarioActorTypeEnum);
+    if jsn.has('name') or jsn.has('_name') then
+        result.nameElement := ParseString(jsn['name'], jsn.vObj['_name']);{q}
+    if jsn.has('description') or jsn.has('_description') then
+        result.descriptionElement := ParseMarkdown(jsn['description'], jsn.vObj['_description']);{q}
+end;
+
+procedure TFHIRJsonComposer.ComposeExampleScenarioActor(json : TJSONWriter; name : string; elem : TFhirExampleScenarioActor; noObj : boolean = false);
+begin
+  if (elem = nil) then
+    exit;
+  if not noObj then json.valueObject(name);
+  ComposeBackboneElementProperties(json, elem);
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeStringValue(json, 'actorId', elem.actorIdElement, false);
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeStringProps(json, 'actorId', elem.actorIdElement, false);
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+     ComposeEnumValue(json, 'type', elem.Type_Element, CODES_TFhirExamplescenarioActorTypeEnum, false);
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+     ComposeEnumProps(json, 'type', elem.Type_Element, CODES_TFhirExamplescenarioActorTypeEnum, false);
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeStringValue(json, 'name', elem.nameElement, false);
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeStringProps(json, 'name', elem.nameElement, false);
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeMarkdownValue(json, 'description', elem.descriptionElement, false);
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeMarkdownProps(json, 'description', elem.descriptionElement, false);
+  if not noObj then json.finishObject;
+end;
+
+procedure TFHIRJsonParser.ParseExampleScenarioInstance(jsn : TJsonObject; ctxt : TFHIRObjectList);
+begin
+  ctxt.add(ParseExampleScenarioInstance(jsn)); {2}
+end;
+
+function TFHIRJsonParser.ParseExampleScenarioInstance(jsn : TJsonObject) : TFhirExampleScenarioInstance;
+begin
+  result := TFhirExampleScenarioInstance.create;
+  try
+    ParseExampleScenarioInstanceProperties(jsn, result);
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFHIRJsonParser.ParseExampleScenarioInstanceProperties(jsn : TJsonObject; result : TFhirExampleScenarioInstance);
+begin
+    ParseBackboneElementProperties(jsn, result);
+    if jsn.has('resourceId') or jsn.has('_resourceId') then
+        result.resourceIdElement := ParseString(jsn['resourceId'], jsn.vObj['_resourceId']);{q}
+    if jsn.has('resourceType') or jsn.has('_resourceType')  then
+      result.resourceTypeElement := parseEnum(jsn.path+'/resourceType', jsn['resourceType'], jsn.vObj['_resourceType'], CODES_TFhirResourceTypesEnum, SYSTEMS_TFhirResourceTypesEnum);
+    if jsn.has('name') or jsn.has('_name') then
+        result.nameElement := ParseString(jsn['name'], jsn.vObj['_name']);{q}
+    if jsn.has('description') or jsn.has('_description') then
+        result.descriptionElement := ParseMarkdown(jsn['description'], jsn.vObj['_description']);{q}
+    if jsn.has('version') then
+      iterateArray(jsn.vArr['version'], result.versionList, parseExampleScenarioInstanceVersion);
+    if jsn.has('containedInstance') then
+      iterateArray(jsn.vArr['containedInstance'], result.containedInstanceList, parseExampleScenarioInstanceContainedInstance);
+end;
+
+procedure TFHIRJsonComposer.ComposeExampleScenarioInstance(json : TJSONWriter; name : string; elem : TFhirExampleScenarioInstance; noObj : boolean = false);
+var
+  i : integer;
+begin
+  if (elem = nil) then
+    exit;
+  if not noObj then json.valueObject(name);
+  ComposeBackboneElementProperties(json, elem);
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeStringValue(json, 'resourceId', elem.resourceIdElement, false);
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeStringProps(json, 'resourceId', elem.resourceIdElement, false);
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+     ComposeEnumValue(json, 'resourceType', elem.ResourceTypeElement, CODES_TFhirResourceTypesEnum, false);
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+     ComposeEnumProps(json, 'resourceType', elem.ResourceTypeElement, CODES_TFhirResourceTypesEnum, false);
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeStringValue(json, 'name', elem.nameElement, false);
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeStringProps(json, 'name', elem.nameElement, false);
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeMarkdownValue(json, 'description', elem.descriptionElement, false);
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeMarkdownProps(json, 'description', elem.descriptionElement, false);
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.versionList.Count > 0) then
+  begin
+    json.valueArray('version');
+    for i := 0 to elem.versionList.Count - 1 do
+      ComposeExampleScenarioInstanceVersion(json, '', elem.versionList[i]); {z - }
+    json.FinishArray;
+  end;
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.containedInstanceList.Count > 0) then
+  begin
+    json.valueArray('containedInstance');
+    for i := 0 to elem.containedInstanceList.Count - 1 do
+      ComposeExampleScenarioInstanceContainedInstance(json, '', elem.containedInstanceList[i]); {z - }
+    json.FinishArray;
+  end;
+  if not noObj then json.finishObject;
+end;
+
+procedure TFHIRJsonParser.ParseExampleScenarioInstanceVersion(jsn : TJsonObject; ctxt : TFHIRObjectList);
+begin
+  ctxt.add(ParseExampleScenarioInstanceVersion(jsn)); {2}
+end;
+
+function TFHIRJsonParser.ParseExampleScenarioInstanceVersion(jsn : TJsonObject) : TFhirExampleScenarioInstanceVersion;
+begin
+  result := TFhirExampleScenarioInstanceVersion.create;
+  try
+    ParseExampleScenarioInstanceVersionProperties(jsn, result);
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFHIRJsonParser.ParseExampleScenarioInstanceVersionProperties(jsn : TJsonObject; result : TFhirExampleScenarioInstanceVersion);
+begin
+    ParseBackboneElementProperties(jsn, result);
+    if jsn.has('versionId') or jsn.has('_versionId') then
+        result.versionIdElement := ParseString(jsn['versionId'], jsn.vObj['_versionId']);{q}
+    if jsn.has('description') or jsn.has('_description') then
+        result.descriptionElement := ParseMarkdown(jsn['description'], jsn.vObj['_description']);{q}
+end;
+
+procedure TFHIRJsonComposer.ComposeExampleScenarioInstanceVersion(json : TJSONWriter; name : string; elem : TFhirExampleScenarioInstanceVersion; noObj : boolean = false);
+begin
+  if (elem = nil) then
+    exit;
+  if not noObj then json.valueObject(name);
+  ComposeBackboneElementProperties(json, elem);
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeStringValue(json, 'versionId', elem.versionIdElement, false);
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeStringProps(json, 'versionId', elem.versionIdElement, false);
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeMarkdownValue(json, 'description', elem.descriptionElement, false);
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeMarkdownProps(json, 'description', elem.descriptionElement, false);
+  if not noObj then json.finishObject;
+end;
+
+procedure TFHIRJsonParser.ParseExampleScenarioInstanceContainedInstance(jsn : TJsonObject; ctxt : TFHIRObjectList);
+begin
+  ctxt.add(ParseExampleScenarioInstanceContainedInstance(jsn)); {2}
+end;
+
+function TFHIRJsonParser.ParseExampleScenarioInstanceContainedInstance(jsn : TJsonObject) : TFhirExampleScenarioInstanceContainedInstance;
+begin
+  result := TFhirExampleScenarioInstanceContainedInstance.create;
+  try
+    ParseExampleScenarioInstanceContainedInstanceProperties(jsn, result);
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFHIRJsonParser.ParseExampleScenarioInstanceContainedInstanceProperties(jsn : TJsonObject; result : TFhirExampleScenarioInstanceContainedInstance);
+begin
+    ParseBackboneElementProperties(jsn, result);
+    if jsn.has('resourceId') or jsn.has('_resourceId') then
+        result.resourceIdElement := ParseString(jsn['resourceId'], jsn.vObj['_resourceId']);{q}
+    if jsn.has('versionId') or jsn.has('_versionId') then
+        result.versionIdElement := ParseString(jsn['versionId'], jsn.vObj['_versionId']);{q}
+end;
+
+procedure TFHIRJsonComposer.ComposeExampleScenarioInstanceContainedInstance(json : TJSONWriter; name : string; elem : TFhirExampleScenarioInstanceContainedInstance; noObj : boolean = false);
+begin
+  if (elem = nil) then
+    exit;
+  if not noObj then json.valueObject(name);
+  ComposeBackboneElementProperties(json, elem);
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeStringValue(json, 'resourceId', elem.resourceIdElement, false);
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeStringProps(json, 'resourceId', elem.resourceIdElement, false);
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeStringValue(json, 'versionId', elem.versionIdElement, false);
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeStringProps(json, 'versionId', elem.versionIdElement, false);
+  if not noObj then json.finishObject;
+end;
+
+procedure TFHIRJsonParser.ParseExampleScenarioProcess(jsn : TJsonObject; ctxt : TFHIRObjectList);
+begin
+  ctxt.add(ParseExampleScenarioProcess(jsn)); {2}
+end;
+
+function TFHIRJsonParser.ParseExampleScenarioProcess(jsn : TJsonObject) : TFhirExampleScenarioProcess;
+begin
+  result := TFhirExampleScenarioProcess.create;
+  try
+    ParseExampleScenarioProcessProperties(jsn, result);
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFHIRJsonParser.ParseExampleScenarioProcessProperties(jsn : TJsonObject; result : TFhirExampleScenarioProcess);
+begin
+    ParseBackboneElementProperties(jsn, result);
+    if jsn.has('title') or jsn.has('_title') then
+        result.titleElement := ParseString(jsn['title'], jsn.vObj['_title']);{q}
+    if jsn.has('description') or jsn.has('_description') then
+        result.descriptionElement := ParseMarkdown(jsn['description'], jsn.vObj['_description']);{q}
+    if jsn.has('preConditions') or jsn.has('_preConditions') then
+        result.preConditionsElement := ParseMarkdown(jsn['preConditions'], jsn.vObj['_preConditions']);{q}
+    if jsn.has('postConditions') or jsn.has('_postConditions') then
+        result.postConditionsElement := ParseMarkdown(jsn['postConditions'], jsn.vObj['_postConditions']);{q}
+    if jsn.has('step') then
+      iterateArray(jsn.vArr['step'], result.stepList, parseExampleScenarioProcessStep);
+end;
+
+procedure TFHIRJsonComposer.ComposeExampleScenarioProcess(json : TJSONWriter; name : string; elem : TFhirExampleScenarioProcess; noObj : boolean = false);
+var
+  i : integer;
+begin
+  if (elem = nil) then
+    exit;
+  if not noObj then json.valueObject(name);
+  ComposeBackboneElementProperties(json, elem);
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeStringValue(json, 'title', elem.titleElement, false);
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeStringProps(json, 'title', elem.titleElement, false);
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeMarkdownValue(json, 'description', elem.descriptionElement, false);
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeMarkdownProps(json, 'description', elem.descriptionElement, false);
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeMarkdownValue(json, 'preConditions', elem.preConditionsElement, false);
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeMarkdownProps(json, 'preConditions', elem.preConditionsElement, false);
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeMarkdownValue(json, 'postConditions', elem.postConditionsElement, false);
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeMarkdownProps(json, 'postConditions', elem.postConditionsElement, false);
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.stepList.Count > 0) then
+  begin
+    json.valueArray('step');
+    for i := 0 to elem.stepList.Count - 1 do
+      ComposeExampleScenarioProcessStep(json, '', elem.stepList[i]); {z - }
+    json.FinishArray;
+  end;
+  if not noObj then json.finishObject;
+end;
+
+procedure TFHIRJsonParser.ParseExampleScenarioProcessStep(jsn : TJsonObject; ctxt : TFHIRObjectList);
+begin
+  ctxt.add(ParseExampleScenarioProcessStep(jsn)); {2}
+end;
+
+function TFHIRJsonParser.ParseExampleScenarioProcessStep(jsn : TJsonObject) : TFhirExampleScenarioProcessStep;
+begin
+  result := TFhirExampleScenarioProcessStep.create;
+  try
+    ParseExampleScenarioProcessStepProperties(jsn, result);
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFHIRJsonParser.ParseExampleScenarioProcessStepProperties(jsn : TJsonObject; result : TFhirExampleScenarioProcessStep);
+begin
+    ParseBackboneElementProperties(jsn, result);
+    if jsn.has('process') then
+      iterateArray(jsn.vArr['process'], result.processList, parseExampleScenarioProcess);
+    if jsn.has('pause') or jsn.has('_pause') then
+        result.pauseElement := ParseBoolean(jsn['pause'], jsn.vObj['_pause']);{q}
+    if jsn.has('operation') then
+        result.operation := ParseExampleScenarioProcessStepOperation(jsn.vObj['operation']);{q3}
+    if jsn.has('alternative') then
+        result.alternative := ParseExampleScenarioProcessStepAlternative(jsn.vObj['alternative']);{q3}
+end;
+
+procedure TFHIRJsonComposer.ComposeExampleScenarioProcessStep(json : TJSONWriter; name : string; elem : TFhirExampleScenarioProcessStep; noObj : boolean = false);
+var
+  i : integer;
+begin
+  if (elem = nil) then
+    exit;
+  if not noObj then json.valueObject(name);
+  ComposeBackboneElementProperties(json, elem);
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.processList.Count > 0) then
+  begin
+    json.valueArray('process');
+    for i := 0 to elem.processList.Count - 1 do
+      ComposeExampleScenarioProcess(json, '', elem.processList[i]); {z - @ExampleScenario.process}
+    json.FinishArray;
+  end;
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeBooleanValue(json, 'pause', elem.pauseElement, false);
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeBooleanProps(json, 'pause', elem.pauseElement, false);
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeExampleScenarioProcessStepOperation(json, 'operation', elem.operation); {a}
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeExampleScenarioProcessStepAlternative(json, 'alternative', elem.alternative); {a}
+  if not noObj then json.finishObject;
+end;
+
+procedure TFHIRJsonParser.ParseExampleScenarioProcessStepOperation(jsn : TJsonObject; ctxt : TFHIRObjectList);
+begin
+  ctxt.add(ParseExampleScenarioProcessStepOperation(jsn)); {2}
+end;
+
+function TFHIRJsonParser.ParseExampleScenarioProcessStepOperation(jsn : TJsonObject) : TFhirExampleScenarioProcessStepOperation;
+begin
+  result := TFhirExampleScenarioProcessStepOperation.create;
+  try
+    ParseExampleScenarioProcessStepOperationProperties(jsn, result);
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFHIRJsonParser.ParseExampleScenarioProcessStepOperationProperties(jsn : TJsonObject; result : TFhirExampleScenarioProcessStepOperation);
+begin
+    ParseBackboneElementProperties(jsn, result);
+    if jsn.has('number') or jsn.has('_number') then
+        result.numberElement := ParseString(jsn['number'], jsn.vObj['_number']);{q}
+    if jsn.has('type') or jsn.has('_type') then
+        result.type_Element := ParseString(jsn['type'], jsn.vObj['_type']);{q}
+    if jsn.has('name') or jsn.has('_name') then
+        result.nameElement := ParseString(jsn['name'], jsn.vObj['_name']);{q}
+    if jsn.has('initiator') or jsn.has('_initiator') then
+        result.initiatorElement := ParseString(jsn['initiator'], jsn.vObj['_initiator']);{q}
+    if jsn.has('receiver') or jsn.has('_receiver') then
+        result.receiverElement := ParseString(jsn['receiver'], jsn.vObj['_receiver']);{q}
+    if jsn.has('description') or jsn.has('_description') then
+        result.descriptionElement := ParseMarkdown(jsn['description'], jsn.vObj['_description']);{q}
+    if jsn.has('initiatorActive') or jsn.has('_initiatorActive') then
+        result.initiatorActiveElement := ParseBoolean(jsn['initiatorActive'], jsn.vObj['_initiatorActive']);{q}
+    if jsn.has('receiverActive') or jsn.has('_receiverActive') then
+        result.receiverActiveElement := ParseBoolean(jsn['receiverActive'], jsn.vObj['_receiverActive']);{q}
+    if jsn.has('request') then
+        result.request := ParseExampleScenarioInstanceContainedInstance(jsn.vObj['request']);{q3}
+    if jsn.has('response') then
+        result.response := ParseExampleScenarioInstanceContainedInstance(jsn.vObj['response']);{q3}
+end;
+
+procedure TFHIRJsonComposer.ComposeExampleScenarioProcessStepOperation(json : TJSONWriter; name : string; elem : TFhirExampleScenarioProcessStepOperation; noObj : boolean = false);
+begin
+  if (elem = nil) then
+    exit;
+  if not noObj then json.valueObject(name);
+  ComposeBackboneElementProperties(json, elem);
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeStringValue(json, 'number', elem.numberElement, false);
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeStringProps(json, 'number', elem.numberElement, false);
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeStringValue(json, 'type', elem.type_Element, false);
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeStringProps(json, 'type', elem.type_Element, false);
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeStringValue(json, 'name', elem.nameElement, false);
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeStringProps(json, 'name', elem.nameElement, false);
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeStringValue(json, 'initiator', elem.initiatorElement, false);
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeStringProps(json, 'initiator', elem.initiatorElement, false);
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeStringValue(json, 'receiver', elem.receiverElement, false);
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeStringProps(json, 'receiver', elem.receiverElement, false);
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeMarkdownValue(json, 'description', elem.descriptionElement, false);
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeMarkdownProps(json, 'description', elem.descriptionElement, false);
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeBooleanValue(json, 'initiatorActive', elem.initiatorActiveElement, false);
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeBooleanProps(json, 'initiatorActive', elem.initiatorActiveElement, false);
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeBooleanValue(json, 'receiverActive', elem.receiverActiveElement, false);
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeBooleanProps(json, 'receiverActive', elem.receiverActiveElement, false);
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeExampleScenarioInstanceContainedInstance(json, 'request', elem.request); {a}
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeExampleScenarioInstanceContainedInstance(json, 'response', elem.response); {a}
+  if not noObj then json.finishObject;
+end;
+
+procedure TFHIRJsonParser.ParseExampleScenarioProcessStepAlternative(jsn : TJsonObject; ctxt : TFHIRObjectList);
+begin
+  ctxt.add(ParseExampleScenarioProcessStepAlternative(jsn)); {2}
+end;
+
+function TFHIRJsonParser.ParseExampleScenarioProcessStepAlternative(jsn : TJsonObject) : TFhirExampleScenarioProcessStepAlternative;
+begin
+  result := TFhirExampleScenarioProcessStepAlternative.create;
+  try
+    ParseExampleScenarioProcessStepAlternativeProperties(jsn, result);
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFHIRJsonParser.ParseExampleScenarioProcessStepAlternativeProperties(jsn : TJsonObject; result : TFhirExampleScenarioProcessStepAlternative);
+begin
+    ParseBackboneElementProperties(jsn, result);
+    if jsn.has('name') or jsn.has('_name') then
+        result.nameElement := ParseString(jsn['name'], jsn.vObj['_name']);{q}
+    if jsn.has('option') then
+      iterateArray(jsn.vArr['option'], result.optionList, parseExampleScenarioProcessStepAlternativeOption);
+end;
+
+procedure TFHIRJsonComposer.ComposeExampleScenarioProcessStepAlternative(json : TJSONWriter; name : string; elem : TFhirExampleScenarioProcessStepAlternative; noObj : boolean = false);
+var
+  i : integer;
+begin
+  if (elem = nil) then
+    exit;
+  if not noObj then json.valueObject(name);
+  ComposeBackboneElementProperties(json, elem);
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeStringValue(json, 'name', elem.nameElement, false);
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeStringProps(json, 'name', elem.nameElement, false);
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.optionList.Count > 0) then
+  begin
+    json.valueArray('option');
+    for i := 0 to elem.optionList.Count - 1 do
+      ComposeExampleScenarioProcessStepAlternativeOption(json, '', elem.optionList[i]); {z - }
+    json.FinishArray;
+  end;
+  if not noObj then json.finishObject;
+end;
+
+procedure TFHIRJsonParser.ParseExampleScenarioProcessStepAlternativeOption(jsn : TJsonObject; ctxt : TFHIRObjectList);
+begin
+  ctxt.add(ParseExampleScenarioProcessStepAlternativeOption(jsn)); {2}
+end;
+
+function TFHIRJsonParser.ParseExampleScenarioProcessStepAlternativeOption(jsn : TJsonObject) : TFhirExampleScenarioProcessStepAlternativeOption;
+begin
+  result := TFhirExampleScenarioProcessStepAlternativeOption.create;
+  try
+    ParseExampleScenarioProcessStepAlternativeOptionProperties(jsn, result);
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFHIRJsonParser.ParseExampleScenarioProcessStepAlternativeOptionProperties(jsn : TJsonObject; result : TFhirExampleScenarioProcessStepAlternativeOption);
+begin
+    ParseBackboneElementProperties(jsn, result);
+    if jsn.has('description') or jsn.has('_description') then
+        result.descriptionElement := ParseMarkdown(jsn['description'], jsn.vObj['_description']);{q}
+    if jsn.has('step') then
+      iterateArray(jsn.vArr['step'], result.stepList, parseExampleScenarioProcessStep);
+      if jsn.has('pause') or jsn.has('_pause') then
+      iteratePrimitiveArray(jsn.vArr['pause'], jsn.vArr['_pause'], result.pauseList, parseBoolean);
+end;
+
+procedure TFHIRJsonComposer.ComposeExampleScenarioProcessStepAlternativeOption(json : TJSONWriter; name : string; elem : TFhirExampleScenarioProcessStepAlternativeOption; noObj : boolean = false);
+var
+  i : integer;
+  ext : boolean;
+  val : boolean;
+begin
+  if (elem = nil) then
+    exit;
+  if not noObj then json.valueObject(name);
+  ComposeBackboneElementProperties(json, elem);
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeMarkdownValue(json, 'description', elem.descriptionElement, false);
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeMarkdownProps(json, 'description', elem.descriptionElement, false);
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.stepList.Count > 0) then
+  begin
+    json.valueArray('step');
+    for i := 0 to elem.stepList.Count - 1 do
+      ComposeExampleScenarioProcessStep(json, '', elem.stepList[i]); {z - @ExampleScenario.process.step}
+    json.FinishArray;
+  end;
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.pauseList.Count > 0) then
+  begin
+    ext := false;
+    val := false;
+    for i := 0 to elem.pauseList.Count - 1 do
+    begin
+      ext := ext or ((elem.pauseList[i].id <> '') or (elem.pauseList[i].hasExtensionList) {no-comments or (elem.pauseList[i].hasComments)});
+      val := val or (elem.pauseList[i].hasPrimitiveValue);
+    end;
+    if val then
+    begin
+      json.valueArray('pause');
+      for i := 0 to elem.pauseList.Count - 1 do
+        ComposeBooleanValue(json, '',elem.pauseList[i], true);
+      json.FinishArray;
+    end;
+    if ext then
+    begin
+      json.valueArray('_pause');
+      for i := 0 to elem.pauseList.Count - 1 do
+        ComposeBooleanProps(json, '',elem.pauseList[i], true);
+      json.FinishArray;
+    end;
+  end;
+  if not noObj then json.finishObject;
+end;
+
+procedure TFHIRJsonParser.ParseExampleScenario(jsn : TJsonObject; ctxt : TFHIRObjectList);
+begin
+  ctxt.add(ParseExampleScenario(jsn)); {2}
+end;
+
+function TFHIRJsonParser.ParseExampleScenario(jsn : TJsonObject) : TFhirExampleScenario;
+begin
+  result := TFhirExampleScenario.create;
+  try
+    ParseExampleScenarioProperties(jsn, result);
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFHIRJsonParser.ParseExampleScenarioProperties(jsn : TJsonObject; result : TFhirExampleScenario);
+begin
+    ParseDomainResourceProperties(jsn, result);
+    if jsn.has('url') or jsn.has('_url') then
+        result.urlElement := ParseUri(jsn['url'], jsn.vObj['_url']);{q}
+    if jsn.has('identifier') then
+      iterateArray(jsn.vArr['identifier'], result.identifierList, parseIdentifier);
+    if jsn.has('version') or jsn.has('_version') then
+        result.versionElement := ParseString(jsn['version'], jsn.vObj['_version']);{q}
+    if jsn.has('name') or jsn.has('_name') then
+        result.nameElement := ParseString(jsn['name'], jsn.vObj['_name']);{q}
+    if jsn.has('title') or jsn.has('_title') then
+        result.titleElement := ParseString(jsn['title'], jsn.vObj['_title']);{q}
+    if jsn.has('status') or jsn.has('_status')  then
+      result.statusElement := parseEnum(jsn.path+'/status', jsn['status'], jsn.vObj['_status'], CODES_TFhirPublicationStatusEnum, SYSTEMS_TFhirPublicationStatusEnum);
+    if jsn.has('experimental') or jsn.has('_experimental') then
+        result.experimentalElement := ParseBoolean(jsn['experimental'], jsn.vObj['_experimental']);{q}
+    if jsn.has('date') or jsn.has('_date') then
+        result.dateElement := ParseDateTime(jsn['date'], jsn.vObj['_date']);{q}
+    if jsn.has('publisher') or jsn.has('_publisher') then
+        result.publisherElement := ParseString(jsn['publisher'], jsn.vObj['_publisher']);{q}
+    if jsn.has('contact') then
+      iterateArray(jsn.vArr['contact'], result.contactList, parseContactDetail);
+    if jsn.has('useContext') then
+      iterateArray(jsn.vArr['useContext'], result.useContextList, parseUsageContext);
+    if jsn.has('jurisdiction') then
+      iterateArray(jsn.vArr['jurisdiction'], result.jurisdictionList, parseCodeableConcept);
+    if jsn.has('copyright') or jsn.has('_copyright') then
+        result.copyrightElement := ParseMarkdown(jsn['copyright'], jsn.vObj['_copyright']);{q}
+    if jsn.has('description') or jsn.has('_description') then
+        result.descriptionElement := ParseMarkdown(jsn['description'], jsn.vObj['_description']);{q}
+    if jsn.has('purpose') or jsn.has('_purpose') then
+        result.purposeElement := ParseMarkdown(jsn['purpose'], jsn.vObj['_purpose']);{q}
+    if jsn.has('actor') then
+      iterateArray(jsn.vArr['actor'], result.actorList, parseExampleScenarioActor);
+    if jsn.has('instance') then
+      iterateArray(jsn.vArr['instance'], result.instanceList, parseExampleScenarioInstance);
+    if jsn.has('process') then
+        result.process := ParseExampleScenarioProcess(jsn.vObj['process']);{q3}
+    if jsn.has('workflow') then
+      iterateArray(jsn.vArr['workflow'], result.workflowList, parseReference{TFhirExampleScenario});
+end;
+
+procedure TFHIRJsonComposer.ComposeExampleScenario(json : TJSONWriter; name : string; elem : TFhirExampleScenario; noObj : boolean = false);
+var
+  i : integer;
+begin
+  if (elem = nil) then
+    exit;
+  ComposeDomainResourceProperties(json, elem);
+  if not elem.noCompose and doCompose('url') and (SummaryOption in [soFull, soSummary, soData]) then
+    ComposeUriValue(json, 'url', elem.urlElement, false);
+  if not elem.noCompose and doCompose('url') and (SummaryOption in [soFull, soSummary, soData]) then
+    ComposeUriProps(json, 'url', elem.urlElement, false);
+  if not elem.noCompose and doCompose('identifier') and (SummaryOption in [soFull, soSummary, soData]) and (elem.identifierList.Count > 0) then
+  begin
+    json.valueArray('identifier');
+    for i := 0 to elem.identifierList.Count - 1 do
+      ComposeIdentifier(json, '', elem.identifierList[i]); {z - Identifier}
+    json.FinishArray;
+  end;
+  if not elem.noCompose and doCompose('version') and (SummaryOption in [soFull, soSummary, soData]) then
+    ComposeStringValue(json, 'version', elem.versionElement, false);
+  if not elem.noCompose and doCompose('version') and (SummaryOption in [soFull, soSummary, soData]) then
+    ComposeStringProps(json, 'version', elem.versionElement, false);
+  if not elem.noCompose and doCompose('name') and (SummaryOption in [soFull, soSummary, soData]) then
+    ComposeStringValue(json, 'name', elem.nameElement, false);
+  if not elem.noCompose and doCompose('name') and (SummaryOption in [soFull, soSummary, soData]) then
+    ComposeStringProps(json, 'name', elem.nameElement, false);
+  if not elem.noCompose and doCompose('title') and (SummaryOption in [soFull, soSummary, soData]) then
+    ComposeStringValue(json, 'title', elem.titleElement, false);
+  if not elem.noCompose and doCompose('title') and (SummaryOption in [soFull, soSummary, soData]) then
+    ComposeStringProps(json, 'title', elem.titleElement, false);
+  if not elem.noCompose and doCompose('status') and (SummaryOption in [soFull, soSummary, soData]) then
+     ComposeEnumValue(json, 'status', elem.StatusElement, CODES_TFhirPublicationStatusEnum, false);
+  if not elem.noCompose and doCompose('status') and (SummaryOption in [soFull, soSummary, soData]) then
+     ComposeEnumProps(json, 'status', elem.StatusElement, CODES_TFhirPublicationStatusEnum, false);
+  if not elem.noCompose and doCompose('experimental') and (SummaryOption in [soFull, soSummary, soData]) then
+    ComposeBooleanValue(json, 'experimental', elem.experimentalElement, false);
+  if not elem.noCompose and doCompose('experimental') and (SummaryOption in [soFull, soSummary, soData]) then
+    ComposeBooleanProps(json, 'experimental', elem.experimentalElement, false);
+  if not elem.noCompose and doCompose('date') and (SummaryOption in [soFull, soSummary, soData]) then
+    ComposeDateTimeValue(json, 'date', elem.dateElement, false);
+  if not elem.noCompose and doCompose('date') and (SummaryOption in [soFull, soSummary, soData]) then
+    ComposeDateTimeProps(json, 'date', elem.dateElement, false);
+  if not elem.noCompose and doCompose('publisher') and (SummaryOption in [soFull, soSummary, soData]) then
+    ComposeStringValue(json, 'publisher', elem.publisherElement, false);
+  if not elem.noCompose and doCompose('publisher') and (SummaryOption in [soFull, soSummary, soData]) then
+    ComposeStringProps(json, 'publisher', elem.publisherElement, false);
+  if not elem.noCompose and doCompose('contact') and (SummaryOption in [soFull, soSummary, soData]) and (elem.contactList.Count > 0) then
+  begin
+    json.valueArray('contact');
+    for i := 0 to elem.contactList.Count - 1 do
+      ComposeContactDetail(json, '', elem.contactList[i]); {z - ContactDetail}
+    json.FinishArray;
+  end;
+  if not elem.noCompose and doCompose('useContext') and (SummaryOption in [soFull, soSummary, soData]) and (elem.useContextList.Count > 0) then
+  begin
+    json.valueArray('useContext');
+    for i := 0 to elem.useContextList.Count - 1 do
+      ComposeUsageContext(json, '', elem.useContextList[i]); {z - UsageContext}
+    json.FinishArray;
+  end;
+  if not elem.noCompose and doCompose('jurisdiction') and (SummaryOption in [soFull, soSummary, soData]) and (elem.jurisdictionList.Count > 0) then
+  begin
+    json.valueArray('jurisdiction');
+    for i := 0 to elem.jurisdictionList.Count - 1 do
+      ComposeCodeableConcept(json, '', elem.jurisdictionList[i]); {z - CodeableConcept}
+    json.FinishArray;
+  end;
+  if not elem.noCompose and doCompose('copyright') and (SummaryOption in [soFull, soData]) then
+    ComposeMarkdownValue(json, 'copyright', elem.copyrightElement, false);
+  if not elem.noCompose and doCompose('copyright') and (SummaryOption in [soFull, soData]) then
+    ComposeMarkdownProps(json, 'copyright', elem.copyrightElement, false);
+  if not elem.noCompose and doCompose('description') and (SummaryOption in [soFull, soData]) then
+    ComposeMarkdownValue(json, 'description', elem.descriptionElement, false);
+  if not elem.noCompose and doCompose('description') and (SummaryOption in [soFull, soData]) then
+    ComposeMarkdownProps(json, 'description', elem.descriptionElement, false);
+  if not elem.noCompose and doCompose('purpose') and (SummaryOption in [soFull, soData]) then
+    ComposeMarkdownValue(json, 'purpose', elem.purposeElement, false);
+  if not elem.noCompose and doCompose('purpose') and (SummaryOption in [soFull, soData]) then
+    ComposeMarkdownProps(json, 'purpose', elem.purposeElement, false);
+  if not elem.noCompose and doCompose('actor') and (SummaryOption in [soFull, soData]) and (elem.actorList.Count > 0) then
+  begin
+    json.valueArray('actor');
+    for i := 0 to elem.actorList.Count - 1 do
+      ComposeExampleScenarioActor(json, '', elem.actorList[i]); {z - }
+    json.FinishArray;
+  end;
+  if not elem.noCompose and doCompose('instance') and (SummaryOption in [soFull, soData]) and (elem.instanceList.Count > 0) then
+  begin
+    json.valueArray('instance');
+    for i := 0 to elem.instanceList.Count - 1 do
+      ComposeExampleScenarioInstance(json, '', elem.instanceList[i]); {z - }
+    json.FinishArray;
+  end;
+  if not elem.noCompose and doCompose('process') and (SummaryOption in [soFull, soData]) then
+    ComposeExampleScenarioProcess(json, 'process', elem.process); {a}
+  if not elem.noCompose and doCompose('workflow') and (SummaryOption in [soFull, soData]) and (elem.workflowList.Count > 0) then
+  begin
+    json.valueArray('workflow');
+    for i := 0 to elem.workflowList.Count - 1 do
+      ComposeReference{TFhirExampleScenario}(json, '', elem.workflowList[i]); {z - Reference(ExampleScenario)}
+    json.FinishArray;
+  end;
+end;
+
+{$ENDIF FHIR_EXAMPLESCENARIO}
 {$IFDEF FHIR_EXPANSIONPROFILE}
 procedure TFHIRJsonParser.ParseExpansionProfileFixedVersion(jsn : TJsonObject; ctxt : TFHIRObjectList);
 begin
@@ -22338,103 +23143,103 @@ begin
   if (elem = nil) then
     exit;
   ComposeDomainResourceProperties(json, elem);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('url') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeUriValue(json, 'url', elem.urlElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('url') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeUriProps(json, 'url', elem.urlElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('identifier') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeIdentifier(json, 'identifier', elem.identifier); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('version') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeStringValue(json, 'version', elem.versionElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('version') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeStringProps(json, 'version', elem.versionElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('name') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeStringValue(json, 'name', elem.nameElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('name') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeStringProps(json, 'name', elem.nameElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('status') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumValue(json, 'status', elem.StatusElement, CODES_TFhirPublicationStatusEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('status') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumProps(json, 'status', elem.StatusElement, CODES_TFhirPublicationStatusEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('experimental') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeBooleanValue(json, 'experimental', elem.experimentalElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('experimental') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeBooleanProps(json, 'experimental', elem.experimentalElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('date') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeDateTimeValue(json, 'date', elem.dateElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('date') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeDateTimeProps(json, 'date', elem.dateElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('publisher') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeStringValue(json, 'publisher', elem.publisherElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('publisher') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeStringProps(json, 'publisher', elem.publisherElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.contactList.Count > 0) then
+  if not elem.noCompose and doCompose('contact') and (SummaryOption in [soFull, soSummary, soData]) and (elem.contactList.Count > 0) then
   begin
     json.valueArray('contact');
     for i := 0 to elem.contactList.Count - 1 do
       ComposeContactDetail(json, '', elem.contactList[i]); {z - ContactDetail}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('description') and (SummaryOption in [soFull, soData]) then
     ComposeMarkdownValue(json, 'description', elem.descriptionElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('description') and (SummaryOption in [soFull, soData]) then
     ComposeMarkdownProps(json, 'description', elem.descriptionElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.useContextList.Count > 0) then
+  if not elem.noCompose and doCompose('useContext') and (SummaryOption in [soFull, soSummary, soData]) and (elem.useContextList.Count > 0) then
   begin
     json.valueArray('useContext');
     for i := 0 to elem.useContextList.Count - 1 do
       ComposeUsageContext(json, '', elem.useContextList[i]); {z - UsageContext}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.jurisdictionList.Count > 0) then
+  if not elem.noCompose and doCompose('jurisdiction') and (SummaryOption in [soFull, soSummary, soData]) and (elem.jurisdictionList.Count > 0) then
   begin
     json.valueArray('jurisdiction');
     for i := 0 to elem.jurisdictionList.Count - 1 do
       ComposeCodeableConcept(json, '', elem.jurisdictionList[i]); {z - CodeableConcept}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.fixedVersionList.Count > 0) then
+  if not elem.noCompose and doCompose('fixedVersion') and (SummaryOption in [soFull, soSummary, soData]) and (elem.fixedVersionList.Count > 0) then
   begin
     json.valueArray('fixedVersion');
     for i := 0 to elem.fixedVersionList.Count - 1 do
       ComposeExpansionProfileFixedVersion(json, '', elem.fixedVersionList[i]); {z - }
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('excludedSystem') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeExpansionProfileExcludedSystem(json, 'excludedSystem', elem.excludedSystem); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('includeDesignations') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeBooleanValue(json, 'includeDesignations', elem.includeDesignationsElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('includeDesignations') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeBooleanProps(json, 'includeDesignations', elem.includeDesignationsElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('designation') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeExpansionProfileDesignation(json, 'designation', elem.designation); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('includeDefinition') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeBooleanValue(json, 'includeDefinition', elem.includeDefinitionElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('includeDefinition') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeBooleanProps(json, 'includeDefinition', elem.includeDefinitionElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('activeOnly') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeBooleanValue(json, 'activeOnly', elem.activeOnlyElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('activeOnly') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeBooleanProps(json, 'activeOnly', elem.activeOnlyElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('excludeNested') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeBooleanValue(json, 'excludeNested', elem.excludeNestedElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('excludeNested') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeBooleanProps(json, 'excludeNested', elem.excludeNestedElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('excludeNotForUI') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeBooleanValue(json, 'excludeNotForUI', elem.excludeNotForUIElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('excludeNotForUI') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeBooleanProps(json, 'excludeNotForUI', elem.excludeNotForUIElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('excludePostCoordinated') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeBooleanValue(json, 'excludePostCoordinated', elem.excludePostCoordinatedElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('excludePostCoordinated') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeBooleanProps(json, 'excludePostCoordinated', elem.excludePostCoordinatedElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('displayLanguage') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeCodeValue(json, 'displayLanguage', elem.displayLanguageElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('displayLanguage') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeCodeProps(json, 'displayLanguage', elem.displayLanguageElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('limitedExpansion') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeBooleanValue(json, 'limitedExpansion', elem.limitedExpansionElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('limitedExpansion') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeBooleanProps(json, 'limitedExpansion', elem.limitedExpansionElement, false);
 end;
 
@@ -24008,143 +24813,143 @@ begin
   if (elem = nil) then
     exit;
   ComposeDomainResourceProperties(json, elem);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.identifierList.Count > 0) then
+  if not elem.noCompose and doCompose('identifier') and (SummaryOption in [soFull, soData]) and (elem.identifierList.Count > 0) then
   begin
     json.valueArray('identifier');
     for i := 0 to elem.identifierList.Count - 1 do
       ComposeIdentifier(json, '', elem.identifierList[i]); {z - Identifier}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('status') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumValue(json, 'status', elem.StatusElement, CODES_TFhirExplanationofbenefitStatusEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('status') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumProps(json, 'status', elem.StatusElement, CODES_TFhirExplanationofbenefitStatusEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('type_') and (SummaryOption in [soFull, soData]) then
     ComposeCodeableConcept(json, 'type', elem.type_); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.subTypeList.Count > 0) then
+  if not elem.noCompose and doCompose('subType') and (SummaryOption in [soFull, soData]) and (elem.subTypeList.Count > 0) then
   begin
     json.valueArray('subType');
     for i := 0 to elem.subTypeList.Count - 1 do
       ComposeCodeableConcept(json, '', elem.subTypeList[i]); {z - CodeableConcept}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('patient') and (SummaryOption in [soFull, soData]) then
     ComposeReference{TFhirPatient}(json, 'patient', elem.patient); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('billablePeriod') and (SummaryOption in [soFull, soData]) then
     ComposePeriod(json, 'billablePeriod', elem.billablePeriod); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('created') and (SummaryOption in [soFull, soData]) then
     ComposeDateTimeValue(json, 'created', elem.createdElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('created') and (SummaryOption in [soFull, soData]) then
     ComposeDateTimeProps(json, 'created', elem.createdElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('enterer') and (SummaryOption in [soFull, soData]) then
     ComposeReference{TFhirPractitioner}(json, 'enterer', elem.enterer); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('insurer') and (SummaryOption in [soFull, soData]) then
     ComposeReference{TFhirOrganization}(json, 'insurer', elem.insurer); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('provider') and (SummaryOption in [soFull, soData]) then
     ComposeReference{TFhirPractitioner}(json, 'provider', elem.provider); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('organization') and (SummaryOption in [soFull, soData]) then
     ComposeReference{TFhirOrganization}(json, 'organization', elem.organization); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('referral') and (SummaryOption in [soFull, soData]) then
     ComposeReference{TFhirProcedureRequest}(json, 'referral', elem.referral); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('facility') and (SummaryOption in [soFull, soData]) then
     ComposeReference{TFhirLocation}(json, 'facility', elem.facility); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('claim') and (SummaryOption in [soFull, soData]) then
     ComposeReference{TFhirClaim}(json, 'claim', elem.claim); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('claimResponse') and (SummaryOption in [soFull, soData]) then
     ComposeReference{TFhirClaimResponse}(json, 'claimResponse', elem.claimResponse); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('outcome') and (SummaryOption in [soFull, soData]) then
      ComposeEnumValue(json, 'outcome', elem.OutcomeElement, CODES_TFhirRemittanceOutcomeEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('outcome') and (SummaryOption in [soFull, soData]) then
      ComposeEnumProps(json, 'outcome', elem.OutcomeElement, CODES_TFhirRemittanceOutcomeEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('disposition') and (SummaryOption in [soFull, soData]) then
     ComposeStringValue(json, 'disposition', elem.dispositionElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('disposition') and (SummaryOption in [soFull, soData]) then
     ComposeStringProps(json, 'disposition', elem.dispositionElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.relatedList.Count > 0) then
+  if not elem.noCompose and doCompose('related') and (SummaryOption in [soFull, soData]) and (elem.relatedList.Count > 0) then
   begin
     json.valueArray('related');
     for i := 0 to elem.relatedList.Count - 1 do
       ComposeExplanationOfBenefitRelated(json, '', elem.relatedList[i]); {z - }
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('prescription') and (SummaryOption in [soFull, soData]) then
     ComposeReference{Resource}(json, 'prescription', elem.prescription); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('originalPrescription') and (SummaryOption in [soFull, soData]) then
     ComposeReference{TFhirMedicationRequest}(json, 'originalPrescription', elem.originalPrescription); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('payee') and (SummaryOption in [soFull, soData]) then
     ComposeExplanationOfBenefitPayee(json, 'payee', elem.payee); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.informationList.Count > 0) then
+  if not elem.noCompose and doCompose('information') and (SummaryOption in [soFull, soData]) and (elem.informationList.Count > 0) then
   begin
     json.valueArray('information');
     for i := 0 to elem.informationList.Count - 1 do
       ComposeExplanationOfBenefitInformation(json, '', elem.informationList[i]); {z - }
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.careTeamList.Count > 0) then
+  if not elem.noCompose and doCompose('careTeam') and (SummaryOption in [soFull, soData]) and (elem.careTeamList.Count > 0) then
   begin
     json.valueArray('careTeam');
     for i := 0 to elem.careTeamList.Count - 1 do
       ComposeExplanationOfBenefitCareTeam(json, '', elem.careTeamList[i]); {z - }
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.diagnosisList.Count > 0) then
+  if not elem.noCompose and doCompose('diagnosis') and (SummaryOption in [soFull, soData]) and (elem.diagnosisList.Count > 0) then
   begin
     json.valueArray('diagnosis');
     for i := 0 to elem.diagnosisList.Count - 1 do
       ComposeExplanationOfBenefitDiagnosis(json, '', elem.diagnosisList[i]); {z - }
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.procedure_List.Count > 0) then
+  if not elem.noCompose and doCompose('procedure_') and (SummaryOption in [soFull, soData]) and (elem.procedure_List.Count > 0) then
   begin
     json.valueArray('procedure');
     for i := 0 to elem.procedure_List.Count - 1 do
       ComposeExplanationOfBenefitProcedure(json, '', elem.procedure_List[i]); {z - }
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('precedence') and (SummaryOption in [soFull, soData]) then
     ComposePositiveIntValue(json, 'precedence', elem.precedenceElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('precedence') and (SummaryOption in [soFull, soData]) then
     ComposePositiveIntProps(json, 'precedence', elem.precedenceElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('insurance') and (SummaryOption in [soFull, soData]) then
     ComposeExplanationOfBenefitInsurance(json, 'insurance', elem.insurance); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('accident') and (SummaryOption in [soFull, soData]) then
     ComposeExplanationOfBenefitAccident(json, 'accident', elem.accident); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('employmentImpacted') and (SummaryOption in [soFull, soData]) then
     ComposePeriod(json, 'employmentImpacted', elem.employmentImpacted); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('hospitalization') and (SummaryOption in [soFull, soData]) then
     ComposePeriod(json, 'hospitalization', elem.hospitalization); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.itemList.Count > 0) then
+  if not elem.noCompose and doCompose('item') and (SummaryOption in [soFull, soData]) and (elem.itemList.Count > 0) then
   begin
     json.valueArray('item');
     for i := 0 to elem.itemList.Count - 1 do
       ComposeExplanationOfBenefitItem(json, '', elem.itemList[i]); {z - }
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.addItemList.Count > 0) then
+  if not elem.noCompose and doCompose('addItem') and (SummaryOption in [soFull, soData]) and (elem.addItemList.Count > 0) then
   begin
     json.valueArray('addItem');
     for i := 0 to elem.addItemList.Count - 1 do
       ComposeExplanationOfBenefitAddItem(json, '', elem.addItemList[i]); {z - }
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('totalCost') and (SummaryOption in [soFull, soData]) then
     ComposeMoney(json, 'totalCost', elem.totalCost); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('unallocDeductable') and (SummaryOption in [soFull, soData]) then
     ComposeMoney(json, 'unallocDeductable', elem.unallocDeductable); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('totalBenefit') and (SummaryOption in [soFull, soData]) then
     ComposeMoney(json, 'totalBenefit', elem.totalBenefit); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('payment') and (SummaryOption in [soFull, soData]) then
     ComposeExplanationOfBenefitPayment(json, 'payment', elem.payment); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('form') and (SummaryOption in [soFull, soData]) then
     ComposeCodeableConcept(json, 'form', elem.form); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.processNoteList.Count > 0) then
+  if not elem.noCompose and doCompose('processNote') and (SummaryOption in [soFull, soData]) and (elem.processNoteList.Count > 0) then
   begin
     json.valueArray('processNote');
     for i := 0 to elem.processNoteList.Count - 1 do
       ComposeExplanationOfBenefitProcessNote(json, '', elem.processNoteList[i]); {z - }
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.benefitBalanceList.Count > 0) then
+  if not elem.noCompose and doCompose('benefitBalance') and (SummaryOption in [soFull, soData]) and (elem.benefitBalanceList.Count > 0) then
   begin
     json.valueArray('benefitBalance');
     for i := 0 to elem.benefitBalanceList.Count - 1 do
@@ -24244,8 +25049,8 @@ begin
     ParseDomainResourceProperties(jsn, result);
     if jsn.has('identifier') then
       iterateArray(jsn.vArr['identifier'], result.identifierList, parseIdentifier);
-    if jsn.has('definition') then
-      iterateArray(jsn.vArr['definition'], result.definitionList, parseReference{Resource});
+    if jsn.has('instantiates') then
+      iterateArray(jsn.vArr['instantiates'], result.instantiatesList, parseReference{Resource});
     if jsn.has('status') or jsn.has('_status')  then
       result.statusElement := parseEnum(jsn.path+'/status', jsn['status'], jsn.vObj['_status'], CODES_TFhirHistoryStatusEnum, SYSTEMS_TFhirHistoryStatusEnum);
     if jsn.has('dataAbsentReason') then
@@ -24301,41 +25106,41 @@ begin
   if (elem = nil) then
     exit;
   ComposeDomainResourceProperties(json, elem);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.identifierList.Count > 0) then
+  if not elem.noCompose and doCompose('identifier') and (SummaryOption in [soFull, soSummary, soData]) and (elem.identifierList.Count > 0) then
   begin
     json.valueArray('identifier');
     for i := 0 to elem.identifierList.Count - 1 do
       ComposeIdentifier(json, '', elem.identifierList[i]); {z - Identifier}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.definitionList.Count > 0) then
+  if not elem.noCompose and doCompose('instantiates') and (SummaryOption in [soFull, soSummary, soData]) and (elem.instantiatesList.Count > 0) then
   begin
-    json.valueArray('definition');
-    for i := 0 to elem.definitionList.Count - 1 do
-      ComposeReference{Resource}(json, '', elem.definitionList[i]); {z - Reference(PlanDefinition|Questionnaire)}
+    json.valueArray('instantiates');
+    for i := 0 to elem.instantiatesList.Count - 1 do
+      ComposeReference{Resource}(json, '', elem.instantiatesList[i]); {z - Reference(PlanDefinition|Questionnaire)}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('status') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumValue(json, 'status', elem.StatusElement, CODES_TFhirHistoryStatusEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('status') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumProps(json, 'status', elem.StatusElement, CODES_TFhirHistoryStatusEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('dataAbsentReason') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeCodeableConcept(json, 'dataAbsentReason', elem.dataAbsentReason); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('patient') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{TFhirPatient}(json, 'patient', elem.patient); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('date') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeDateTimeValue(json, 'date', elem.dateElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('date') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeDateTimeProps(json, 'date', elem.dateElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('name') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeStringValue(json, 'name', elem.nameElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('name') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeStringProps(json, 'name', elem.nameElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('relationship') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeCodeableConcept(json, 'relationship', elem.relationship); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('gender') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumValue(json, 'gender', elem.GenderElement, CODES_TFhirAdministrativeGenderEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('gender') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumProps(json, 'gender', elem.GenderElement, CODES_TFhirAdministrativeGenderEnum, false);
   if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.born is TFhirPeriod) then 
     ComposePeriod(json, 'bornPeriod', TFhirPeriod(elem.born)) 
@@ -24358,9 +25163,9 @@ begin
     ComposeStringValue(json, 'ageString', TFhirString(elem.age), false);
     ComposeStringProps(json, 'ageString', TFhirString(elem.age), false);
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('estimatedAge') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeBooleanValue(json, 'estimatedAge', elem.estimatedAgeElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('estimatedAge') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeBooleanProps(json, 'estimatedAge', elem.estimatedAgeElement, false);
   if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.deceased is TFhirAge) then 
     ComposeAge(json, 'deceasedAge', TFhirAge(elem.deceased)) 
@@ -24381,28 +25186,28 @@ begin
     ComposeStringValue(json, 'deceasedString', TFhirString(elem.deceased), false);
     ComposeStringProps(json, 'deceasedString', TFhirString(elem.deceased), false);
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.reasonCodeList.Count > 0) then
+  if not elem.noCompose and doCompose('reasonCode') and (SummaryOption in [soFull, soSummary, soData]) and (elem.reasonCodeList.Count > 0) then
   begin
     json.valueArray('reasonCode');
     for i := 0 to elem.reasonCodeList.Count - 1 do
       ComposeCodeableConcept(json, '', elem.reasonCodeList[i]); {z - CodeableConcept}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.reasonReferenceList.Count > 0) then
+  if not elem.noCompose and doCompose('reasonReference') and (SummaryOption in [soFull, soSummary, soData]) and (elem.reasonReferenceList.Count > 0) then
   begin
     json.valueArray('reasonReference');
     for i := 0 to elem.reasonReferenceList.Count - 1 do
       ComposeReference{Resource}(json, '', elem.reasonReferenceList[i]); {z - Reference(Condition|Observation|AllergyIntolerance|QuestionnaireResponse)}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.noteList.Count > 0) then
+  if not elem.noCompose and doCompose('note') and (SummaryOption in [soFull, soData]) and (elem.noteList.Count > 0) then
   begin
     json.valueArray('note');
     for i := 0 to elem.noteList.Count - 1 do
       ComposeAnnotation(json, '', elem.noteList[i]); {z - Annotation}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.conditionList.Count > 0) then
+  if not elem.noCompose and doCompose('condition') and (SummaryOption in [soFull, soData]) and (elem.conditionList.Count > 0) then
   begin
     json.valueArray('condition');
     for i := 0 to elem.conditionList.Count - 1 do
@@ -24457,33 +25262,33 @@ begin
   if (elem = nil) then
     exit;
   ComposeDomainResourceProperties(json, elem);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.identifierList.Count > 0) then
+  if not elem.noCompose and doCompose('identifier') and (SummaryOption in [soFull, soSummary, soData]) and (elem.identifierList.Count > 0) then
   begin
     json.valueArray('identifier');
     for i := 0 to elem.identifierList.Count - 1 do
       ComposeIdentifier(json, '', elem.identifierList[i]); {z - Identifier}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('status') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumValue(json, 'status', elem.StatusElement, CODES_TFhirFlagStatusEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('status') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumProps(json, 'status', elem.StatusElement, CODES_TFhirFlagStatusEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.categoryList.Count > 0) then
+  if not elem.noCompose and doCompose('category') and (SummaryOption in [soFull, soSummary, soData]) and (elem.categoryList.Count > 0) then
   begin
     json.valueArray('category');
     for i := 0 to elem.categoryList.Count - 1 do
       ComposeCodeableConcept(json, '', elem.categoryList[i]); {z - CodeableConcept}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('code') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeCodeableConcept(json, 'code', elem.code); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('subject') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{Resource}(json, 'subject', elem.subject); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('period') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposePeriod(json, 'period', elem.period); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('encounter') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{TFhirEncounter}(json, 'encounter', elem.encounter); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('author') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{Resource}(json, 'author', elem.author); {a}
 end;
 
@@ -24606,29 +25411,29 @@ begin
   if (elem = nil) then
     exit;
   ComposeDomainResourceProperties(json, elem);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.identifierList.Count > 0) then
+  if not elem.noCompose and doCompose('identifier') and (SummaryOption in [soFull, soData]) and (elem.identifierList.Count > 0) then
   begin
     json.valueArray('identifier');
     for i := 0 to elem.identifierList.Count - 1 do
       ComposeIdentifier(json, '', elem.identifierList[i]); {z - Identifier}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('status') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumValue(json, 'status', elem.StatusElement, CODES_TFhirGoalStatusEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('status') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumProps(json, 'status', elem.StatusElement, CODES_TFhirGoalStatusEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.categoryList.Count > 0) then
+  if not elem.noCompose and doCompose('category') and (SummaryOption in [soFull, soSummary, soData]) and (elem.categoryList.Count > 0) then
   begin
     json.valueArray('category');
     for i := 0 to elem.categoryList.Count - 1 do
       ComposeCodeableConcept(json, '', elem.categoryList[i]); {z - CodeableConcept}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('priority') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeCodeableConcept(json, 'priority', elem.priority); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('description') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeCodeableConcept(json, 'description', elem.description); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('subject') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{Resource}(json, 'subject', elem.subject); {a}
   if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.start is TFhirCodeableConcept) then 
     ComposeCodeableConcept(json, 'startCodeableConcept', TFhirCodeableConcept(elem.start)) 
@@ -24637,40 +25442,40 @@ begin
     ComposeDateValue(json, 'startDate', TFhirDate(elem.start), false);
     ComposeDateProps(json, 'startDate', TFhirDate(elem.start), false);
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('target') and (SummaryOption in [soFull, soData]) then
     ComposeGoalTarget(json, 'target', elem.target); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('statusDate') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeDateValue(json, 'statusDate', elem.statusDateElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('statusDate') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeDateProps(json, 'statusDate', elem.statusDateElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('statusReason') and (SummaryOption in [soFull, soData]) then
     ComposeStringValue(json, 'statusReason', elem.statusReasonElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('statusReason') and (SummaryOption in [soFull, soData]) then
     ComposeStringProps(json, 'statusReason', elem.statusReasonElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('expressedBy') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{Resource}(json, 'expressedBy', elem.expressedBy); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.addressesList.Count > 0) then
+  if not elem.noCompose and doCompose('addresses') and (SummaryOption in [soFull, soData]) and (elem.addressesList.Count > 0) then
   begin
     json.valueArray('addresses');
     for i := 0 to elem.addressesList.Count - 1 do
       ComposeReference{Resource}(json, '', elem.addressesList[i]); {z - Reference(Condition|Observation|MedicationStatement|NutritionOrder|ProcedureRequest|RiskAssessment)}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.noteList.Count > 0) then
+  if not elem.noCompose and doCompose('note') and (SummaryOption in [soFull, soData]) and (elem.noteList.Count > 0) then
   begin
     json.valueArray('note');
     for i := 0 to elem.noteList.Count - 1 do
       ComposeAnnotation(json, '', elem.noteList[i]); {z - Annotation}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.outcomeCodeList.Count > 0) then
+  if not elem.noCompose and doCompose('outcomeCode') and (SummaryOption in [soFull, soData]) and (elem.outcomeCodeList.Count > 0) then
   begin
     json.valueArray('outcomeCode');
     for i := 0 to elem.outcomeCodeList.Count - 1 do
       ComposeCodeableConcept(json, '', elem.outcomeCodeList[i]); {z - CodeableConcept}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.outcomeReferenceList.Count > 0) then
+  if not elem.noCompose and doCompose('outcomeReference') and (SummaryOption in [soFull, soData]) and (elem.outcomeReferenceList.Count > 0) then
   begin
     json.valueArray('outcomeReference');
     for i := 0 to elem.outcomeReferenceList.Count - 1 do
@@ -24938,72 +25743,72 @@ begin
   if (elem = nil) then
     exit;
   ComposeDomainResourceProperties(json, elem);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('url') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeUriValue(json, 'url', elem.urlElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('url') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeUriProps(json, 'url', elem.urlElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('version') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeStringValue(json, 'version', elem.versionElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('version') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeStringProps(json, 'version', elem.versionElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('name') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeStringValue(json, 'name', elem.nameElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('name') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeStringProps(json, 'name', elem.nameElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('status') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumValue(json, 'status', elem.StatusElement, CODES_TFhirPublicationStatusEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('status') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumProps(json, 'status', elem.StatusElement, CODES_TFhirPublicationStatusEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('experimental') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeBooleanValue(json, 'experimental', elem.experimentalElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('experimental') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeBooleanProps(json, 'experimental', elem.experimentalElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('date') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeDateTimeValue(json, 'date', elem.dateElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('date') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeDateTimeProps(json, 'date', elem.dateElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('publisher') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeStringValue(json, 'publisher', elem.publisherElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('publisher') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeStringProps(json, 'publisher', elem.publisherElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.contactList.Count > 0) then
+  if not elem.noCompose and doCompose('contact') and (SummaryOption in [soFull, soSummary, soData]) and (elem.contactList.Count > 0) then
   begin
     json.valueArray('contact');
     for i := 0 to elem.contactList.Count - 1 do
       ComposeContactDetail(json, '', elem.contactList[i]); {z - ContactDetail}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('description') and (SummaryOption in [soFull, soData]) then
     ComposeMarkdownValue(json, 'description', elem.descriptionElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('description') and (SummaryOption in [soFull, soData]) then
     ComposeMarkdownProps(json, 'description', elem.descriptionElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.useContextList.Count > 0) then
+  if not elem.noCompose and doCompose('useContext') and (SummaryOption in [soFull, soSummary, soData]) and (elem.useContextList.Count > 0) then
   begin
     json.valueArray('useContext');
     for i := 0 to elem.useContextList.Count - 1 do
       ComposeUsageContext(json, '', elem.useContextList[i]); {z - UsageContext}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.jurisdictionList.Count > 0) then
+  if not elem.noCompose and doCompose('jurisdiction') and (SummaryOption in [soFull, soSummary, soData]) and (elem.jurisdictionList.Count > 0) then
   begin
     json.valueArray('jurisdiction');
     for i := 0 to elem.jurisdictionList.Count - 1 do
       ComposeCodeableConcept(json, '', elem.jurisdictionList[i]); {z - CodeableConcept}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('purpose') and (SummaryOption in [soFull, soData]) then
     ComposeMarkdownValue(json, 'purpose', elem.purposeElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('purpose') and (SummaryOption in [soFull, soData]) then
     ComposeMarkdownProps(json, 'purpose', elem.purposeElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('start') and (SummaryOption in [soFull, soData]) then
      ComposeEnumValue(json, 'start', elem.StartElement, CODES_TFhirResourceTypesEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('start') and (SummaryOption in [soFull, soData]) then
      ComposeEnumProps(json, 'start', elem.StartElement, CODES_TFhirResourceTypesEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('profile') and (SummaryOption in [soFull, soData]) then
     ComposeUriValue(json, 'profile', elem.profileElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('profile') and (SummaryOption in [soFull, soData]) then
     ComposeUriProps(json, 'profile', elem.profileElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.link_List.Count > 0) then
+  if not elem.noCompose and doCompose('link_') and (SummaryOption in [soFull, soData]) and (elem.link_List.Count > 0) then
   begin
     json.valueArray('link');
     for i := 0 to elem.link_List.Count - 1 do
@@ -25167,43 +25972,43 @@ begin
   if (elem = nil) then
     exit;
   ComposeDomainResourceProperties(json, elem);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.identifierList.Count > 0) then
+  if not elem.noCompose and doCompose('identifier') and (SummaryOption in [soFull, soSummary, soData]) and (elem.identifierList.Count > 0) then
   begin
     json.valueArray('identifier');
     for i := 0 to elem.identifierList.Count - 1 do
       ComposeIdentifier(json, '', elem.identifierList[i]); {z - Identifier}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('active') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeBooleanValue(json, 'active', elem.activeElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('active') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeBooleanProps(json, 'active', elem.activeElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('type_') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumValue(json, 'type', elem.Type_Element, CODES_TFhirGroupTypeEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('type_') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumProps(json, 'type', elem.Type_Element, CODES_TFhirGroupTypeEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('actual') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeBooleanValue(json, 'actual', elem.actualElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('actual') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeBooleanProps(json, 'actual', elem.actualElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('code') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeCodeableConcept(json, 'code', elem.code); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('name') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeStringValue(json, 'name', elem.nameElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('name') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeStringProps(json, 'name', elem.nameElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('quantity') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeUnsignedIntValue(json, 'quantity', elem.quantityElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('quantity') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeUnsignedIntProps(json, 'quantity', elem.quantityElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.characteristicList.Count > 0) then
+  if not elem.noCompose and doCompose('characteristic') and (SummaryOption in [soFull, soData]) and (elem.characteristicList.Count > 0) then
   begin
     json.valueArray('characteristic');
     for i := 0 to elem.characteristicList.Count - 1 do
       ComposeGroupCharacteristic(json, '', elem.characteristicList[i]); {z - }
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.memberList.Count > 0) then
+  if not elem.noCompose and doCompose('member') and (SummaryOption in [soFull, soData]) and (elem.memberList.Count > 0) then
   begin
     json.valueArray('member');
     for i := 0 to elem.memberList.Count - 1 do
@@ -25272,51 +26077,51 @@ begin
   if (elem = nil) then
     exit;
   ComposeDomainResourceProperties(json, elem);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('requestId') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeIdValue(json, 'requestId', elem.requestIdElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('requestId') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeIdProps(json, 'requestId', elem.requestIdElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('identifier') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeIdentifier(json, 'identifier', elem.identifier); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('module') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{TFhirServiceDefinition}(json, 'module', elem.module); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('status') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumValue(json, 'status', elem.StatusElement, CODES_TFhirGuidanceResponseStatusEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('status') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumProps(json, 'status', elem.StatusElement, CODES_TFhirGuidanceResponseStatusEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('subject') and (SummaryOption in [soFull, soData]) then
     ComposeReference{Resource}(json, 'subject', elem.subject); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('context') and (SummaryOption in [soFull, soData]) then
     ComposeReference{Resource}(json, 'context', elem.context); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('occurrenceDateTime') and (SummaryOption in [soFull, soData]) then
     ComposeDateTimeValue(json, 'occurrenceDateTime', elem.occurrenceDateTimeElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('occurrenceDateTime') and (SummaryOption in [soFull, soData]) then
     ComposeDateTimeProps(json, 'occurrenceDateTime', elem.occurrenceDateTimeElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('performer') and (SummaryOption in [soFull, soData]) then
     ComposeReference{TFhirDevice}(json, 'performer', elem.performer); {a}
   if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.reason is TFhirCodeableConcept) then 
     ComposeCodeableConcept(json, 'reasonCodeableConcept', TFhirCodeableConcept(elem.reason)) 
   else if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.reason is TFhirReference) then
     ComposeReference(json, 'reasonReference', TFhirReference(elem.reason));
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.noteList.Count > 0) then
+  if not elem.noCompose and doCompose('note') and (SummaryOption in [soFull, soData]) and (elem.noteList.Count > 0) then
   begin
     json.valueArray('note');
     for i := 0 to elem.noteList.Count - 1 do
       ComposeAnnotation(json, '', elem.noteList[i]); {z - Annotation}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.evaluationMessageList.Count > 0) then
+  if not elem.noCompose and doCompose('evaluationMessage') and (SummaryOption in [soFull, soData]) and (elem.evaluationMessageList.Count > 0) then
   begin
     json.valueArray('evaluationMessage');
     for i := 0 to elem.evaluationMessageList.Count - 1 do
       ComposeReference{TFhirOperationOutcome}(json, '', elem.evaluationMessageList[i]); {z - Reference(OperationOutcome)}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('outputParameters') and (SummaryOption in [soFull, soData]) then
     ComposeReference{TFhirParameters}(json, 'outputParameters', elem.outputParameters); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('result') and (SummaryOption in [soFull, soData]) then
     ComposeReference{Resource}(json, 'result', elem.result); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.dataRequirementList.Count > 0) then
+  if not elem.noCompose and doCompose('dataRequirement') and (SummaryOption in [soFull, soData]) and (elem.dataRequirementList.Count > 0) then
   begin
     json.valueArray('dataRequirement');
     for i := 0 to elem.dataRequirementList.Count - 1 do
@@ -25523,84 +26328,84 @@ begin
   if (elem = nil) then
     exit;
   ComposeDomainResourceProperties(json, elem);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.identifierList.Count > 0) then
+  if not elem.noCompose and doCompose('identifier') and (SummaryOption in [soFull, soSummary, soData]) and (elem.identifierList.Count > 0) then
   begin
     json.valueArray('identifier');
     for i := 0 to elem.identifierList.Count - 1 do
       ComposeIdentifier(json, '', elem.identifierList[i]); {z - Identifier}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('active') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeBooleanValue(json, 'active', elem.activeElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('active') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeBooleanProps(json, 'active', elem.activeElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('providedBy') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{TFhirOrganization}(json, 'providedBy', elem.providedBy); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('category') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeCodeableConcept(json, 'category', elem.category); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.type_List.Count > 0) then
+  if not elem.noCompose and doCompose('type_') and (SummaryOption in [soFull, soSummary, soData]) and (elem.type_List.Count > 0) then
   begin
     json.valueArray('type');
     for i := 0 to elem.type_List.Count - 1 do
       ComposeCodeableConcept(json, '', elem.type_List[i]); {z - CodeableConcept}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.specialtyList.Count > 0) then
+  if not elem.noCompose and doCompose('specialty') and (SummaryOption in [soFull, soSummary, soData]) and (elem.specialtyList.Count > 0) then
   begin
     json.valueArray('specialty');
     for i := 0 to elem.specialtyList.Count - 1 do
       ComposeCodeableConcept(json, '', elem.specialtyList[i]); {z - CodeableConcept}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.locationList.Count > 0) then
+  if not elem.noCompose and doCompose('location') and (SummaryOption in [soFull, soSummary, soData]) and (elem.locationList.Count > 0) then
   begin
     json.valueArray('location');
     for i := 0 to elem.locationList.Count - 1 do
       ComposeReference{TFhirLocation}(json, '', elem.locationList[i]); {z - Reference(Location)}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('name') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeStringValue(json, 'name', elem.nameElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('name') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeStringProps(json, 'name', elem.nameElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('comment') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeStringValue(json, 'comment', elem.commentElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('comment') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeStringProps(json, 'comment', elem.commentElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('extraDetails') and (SummaryOption in [soFull, soData]) then
     ComposeStringValue(json, 'extraDetails', elem.extraDetailsElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('extraDetails') and (SummaryOption in [soFull, soData]) then
     ComposeStringProps(json, 'extraDetails', elem.extraDetailsElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('photo') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeAttachment(json, 'photo', elem.photo); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.telecomList.Count > 0) then
+  if not elem.noCompose and doCompose('telecom') and (SummaryOption in [soFull, soData]) and (elem.telecomList.Count > 0) then
   begin
     json.valueArray('telecom');
     for i := 0 to elem.telecomList.Count - 1 do
       ComposeContactPoint(json, '', elem.telecomList[i]); {z - ContactPoint}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.coverageAreaList.Count > 0) then
+  if not elem.noCompose and doCompose('coverageArea') and (SummaryOption in [soFull, soData]) and (elem.coverageAreaList.Count > 0) then
   begin
     json.valueArray('coverageArea');
     for i := 0 to elem.coverageAreaList.Count - 1 do
       ComposeReference{TFhirLocation}(json, '', elem.coverageAreaList[i]); {z - Reference(Location)}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.serviceProvisionCodeList.Count > 0) then
+  if not elem.noCompose and doCompose('serviceProvisionCode') and (SummaryOption in [soFull, soData]) and (elem.serviceProvisionCodeList.Count > 0) then
   begin
     json.valueArray('serviceProvisionCode');
     for i := 0 to elem.serviceProvisionCodeList.Count - 1 do
       ComposeCodeableConcept(json, '', elem.serviceProvisionCodeList[i]); {z - CodeableConcept}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('eligibility') and (SummaryOption in [soFull, soData]) then
     ComposeCodeableConcept(json, 'eligibility', elem.eligibility); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('eligibilityNote') and (SummaryOption in [soFull, soData]) then
     ComposeStringValue(json, 'eligibilityNote', elem.eligibilityNoteElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('eligibilityNote') and (SummaryOption in [soFull, soData]) then
     ComposeStringProps(json, 'eligibilityNote', elem.eligibilityNoteElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.programNameList.Count > 0) then
+  if not elem.noCompose and doCompose('programName') and (SummaryOption in [soFull, soData]) and (elem.programNameList.Count > 0) then
   begin
     ext := false;
     val := false;
@@ -25624,43 +26429,43 @@ begin
       json.FinishArray;
     end;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.characteristicList.Count > 0) then
+  if not elem.noCompose and doCompose('characteristic') and (SummaryOption in [soFull, soData]) and (elem.characteristicList.Count > 0) then
   begin
     json.valueArray('characteristic');
     for i := 0 to elem.characteristicList.Count - 1 do
       ComposeCodeableConcept(json, '', elem.characteristicList[i]); {z - CodeableConcept}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.referralMethodList.Count > 0) then
+  if not elem.noCompose and doCompose('referralMethod') and (SummaryOption in [soFull, soData]) and (elem.referralMethodList.Count > 0) then
   begin
     json.valueArray('referralMethod');
     for i := 0 to elem.referralMethodList.Count - 1 do
       ComposeCodeableConcept(json, '', elem.referralMethodList[i]); {z - CodeableConcept}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('appointmentRequired') and (SummaryOption in [soFull, soData]) then
     ComposeBooleanValue(json, 'appointmentRequired', elem.appointmentRequiredElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('appointmentRequired') and (SummaryOption in [soFull, soData]) then
     ComposeBooleanProps(json, 'appointmentRequired', elem.appointmentRequiredElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.availableTimeList.Count > 0) then
+  if not elem.noCompose and doCompose('availableTime') and (SummaryOption in [soFull, soData]) and (elem.availableTimeList.Count > 0) then
   begin
     json.valueArray('availableTime');
     for i := 0 to elem.availableTimeList.Count - 1 do
       ComposeHealthcareServiceAvailableTime(json, '', elem.availableTimeList[i]); {z - }
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.notAvailableList.Count > 0) then
+  if not elem.noCompose and doCompose('notAvailable') and (SummaryOption in [soFull, soData]) and (elem.notAvailableList.Count > 0) then
   begin
     json.valueArray('notAvailable');
     for i := 0 to elem.notAvailableList.Count - 1 do
       ComposeHealthcareServiceNotAvailable(json, '', elem.notAvailableList[i]); {z - }
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('availabilityExceptions') and (SummaryOption in [soFull, soData]) then
     ComposeStringValue(json, 'availabilityExceptions', elem.availabilityExceptionsElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('availabilityExceptions') and (SummaryOption in [soFull, soData]) then
     ComposeStringProps(json, 'availabilityExceptions', elem.availabilityExceptionsElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.endpointList.Count > 0) then
+  if not elem.noCompose and doCompose('endpoint') and (SummaryOption in [soFull, soData]) and (elem.endpointList.Count > 0) then
   begin
     json.valueArray('endpoint');
     for i := 0 to elem.endpointList.Count - 1 do
@@ -25899,21 +26704,21 @@ begin
   if (elem = nil) then
     exit;
   ComposeDomainResourceProperties(json, elem);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('identifier') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeIdentifier(json, 'identifier', elem.identifier); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('patient') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{TFhirPatient}(json, 'patient', elem.patient); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('authoringTime') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeDateTimeValue(json, 'authoringTime', elem.authoringTimeElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('authoringTime') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeDateTimeProps(json, 'authoringTime', elem.authoringTimeElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('author') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{Resource}(json, 'author', elem.author); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('description') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeStringValue(json, 'description', elem.descriptionElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('description') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeStringProps(json, 'description', elem.descriptionElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.studyList.Count > 0) then
+  if not elem.noCompose and doCompose('study') and (SummaryOption in [soFull, soSummary, soData]) and (elem.studyList.Count > 0) then
   begin
     json.valueArray('study');
     for i := 0 to elem.studyList.Count - 1 do
@@ -26151,90 +26956,90 @@ begin
   if (elem = nil) then
     exit;
   ComposeDomainResourceProperties(json, elem);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('uid') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeOidValue(json, 'uid', elem.uidElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('uid') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeOidProps(json, 'uid', elem.uidElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('accession') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeIdentifier(json, 'accession', elem.accession); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.identifierList.Count > 0) then
+  if not elem.noCompose and doCompose('identifier') and (SummaryOption in [soFull, soSummary, soData]) and (elem.identifierList.Count > 0) then
   begin
     json.valueArray('identifier');
     for i := 0 to elem.identifierList.Count - 1 do
       ComposeIdentifier(json, '', elem.identifierList[i]); {z - Identifier}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('availability') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumValue(json, 'availability', elem.AvailabilityElement, CODES_TFhirInstanceAvailabilityEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('availability') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumProps(json, 'availability', elem.AvailabilityElement, CODES_TFhirInstanceAvailabilityEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.modalityListList.Count > 0) then
+  if not elem.noCompose and doCompose('modalityList') and (SummaryOption in [soFull, soSummary, soData]) and (elem.modalityListList.Count > 0) then
   begin
     json.valueArray('modalityList');
     for i := 0 to elem.modalityListList.Count - 1 do
       ComposeCoding(json, '', elem.modalityListList[i]); {z - Coding}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('patient') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{TFhirPatient}(json, 'patient', elem.patient); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('context') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{Resource}(json, 'context', elem.context); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('started') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeDateTimeValue(json, 'started', elem.startedElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('started') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeDateTimeProps(json, 'started', elem.startedElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.basedOnList.Count > 0) then
+  if not elem.noCompose and doCompose('basedOn') and (SummaryOption in [soFull, soSummary, soData]) and (elem.basedOnList.Count > 0) then
   begin
     json.valueArray('basedOn');
     for i := 0 to elem.basedOnList.Count - 1 do
       ComposeReference{Resource}(json, '', elem.basedOnList[i]); {z - Reference(CarePlan|ProcedureRequest)}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('referrer') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{TFhirPractitioner}(json, 'referrer', elem.referrer); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.interpreterList.Count > 0) then
+  if not elem.noCompose and doCompose('interpreter') and (SummaryOption in [soFull, soSummary, soData]) and (elem.interpreterList.Count > 0) then
   begin
     json.valueArray('interpreter');
     for i := 0 to elem.interpreterList.Count - 1 do
       ComposeReference{TFhirPractitioner}(json, '', elem.interpreterList[i]); {z - Reference(Practitioner)}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.endpointList.Count > 0) then
+  if not elem.noCompose and doCompose('endpoint') and (SummaryOption in [soFull, soSummary, soData]) and (elem.endpointList.Count > 0) then
   begin
     json.valueArray('endpoint');
     for i := 0 to elem.endpointList.Count - 1 do
       ComposeReference{TFhirEndpoint}(json, '', elem.endpointList[i]); {z - Reference(Endpoint)}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('numberOfSeries') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeUnsignedIntValue(json, 'numberOfSeries', elem.numberOfSeriesElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('numberOfSeries') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeUnsignedIntProps(json, 'numberOfSeries', elem.numberOfSeriesElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('numberOfInstances') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeUnsignedIntValue(json, 'numberOfInstances', elem.numberOfInstancesElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('numberOfInstances') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeUnsignedIntProps(json, 'numberOfInstances', elem.numberOfInstancesElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.procedureReferenceList.Count > 0) then
+  if not elem.noCompose and doCompose('procedureReference') and (SummaryOption in [soFull, soSummary, soData]) and (elem.procedureReferenceList.Count > 0) then
   begin
     json.valueArray('procedureReference');
     for i := 0 to elem.procedureReferenceList.Count - 1 do
       ComposeReference{TFhirProcedure}(json, '', elem.procedureReferenceList[i]); {z - Reference(Procedure)}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.procedureCodeList.Count > 0) then
+  if not elem.noCompose and doCompose('procedureCode') and (SummaryOption in [soFull, soSummary, soData]) and (elem.procedureCodeList.Count > 0) then
   begin
     json.valueArray('procedureCode');
     for i := 0 to elem.procedureCodeList.Count - 1 do
       ComposeCodeableConcept(json, '', elem.procedureCodeList[i]); {z - CodeableConcept}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('reason') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeCodeableConcept(json, 'reason', elem.reason); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('description') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeStringValue(json, 'description', elem.descriptionElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('description') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeStringProps(json, 'description', elem.descriptionElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.seriesList.Count > 0) then
+  if not elem.noCompose and doCompose('series') and (SummaryOption in [soFull, soSummary, soData]) and (elem.seriesList.Count > 0) then
   begin
     json.valueArray('series');
     for i := 0 to elem.seriesList.Count - 1 do
@@ -26526,79 +27331,79 @@ begin
   if (elem = nil) then
     exit;
   ComposeDomainResourceProperties(json, elem);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.identifierList.Count > 0) then
+  if not elem.noCompose and doCompose('identifier') and (SummaryOption in [soFull, soData]) and (elem.identifierList.Count > 0) then
   begin
     json.valueArray('identifier');
     for i := 0 to elem.identifierList.Count - 1 do
       ComposeIdentifier(json, '', elem.identifierList[i]); {z - Identifier}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('status') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumValue(json, 'status', elem.StatusElement, CODES_TFhirImmunizationStatusEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('status') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumProps(json, 'status', elem.StatusElement, CODES_TFhirImmunizationStatusEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('notGiven') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeBooleanValue(json, 'notGiven', elem.notGivenElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('notGiven') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeBooleanProps(json, 'notGiven', elem.notGivenElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('vaccineCode') and (SummaryOption in [soFull, soData]) then
     ComposeCodeableConcept(json, 'vaccineCode', elem.vaccineCode); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('patient') and (SummaryOption in [soFull, soData]) then
     ComposeReference{TFhirPatient}(json, 'patient', elem.patient); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('encounter') and (SummaryOption in [soFull, soData]) then
     ComposeReference{TFhirEncounter}(json, 'encounter', elem.encounter); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('date') and (SummaryOption in [soFull, soData]) then
     ComposeDateTimeValue(json, 'date', elem.dateElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('date') and (SummaryOption in [soFull, soData]) then
     ComposeDateTimeProps(json, 'date', elem.dateElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('primarySource') and (SummaryOption in [soFull, soData]) then
     ComposeBooleanValue(json, 'primarySource', elem.primarySourceElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('primarySource') and (SummaryOption in [soFull, soData]) then
     ComposeBooleanProps(json, 'primarySource', elem.primarySourceElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('reportOrigin') and (SummaryOption in [soFull, soData]) then
     ComposeCodeableConcept(json, 'reportOrigin', elem.reportOrigin); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('location') and (SummaryOption in [soFull, soData]) then
     ComposeReference{TFhirLocation}(json, 'location', elem.location); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('manufacturer') and (SummaryOption in [soFull, soData]) then
     ComposeReference{TFhirOrganization}(json, 'manufacturer', elem.manufacturer); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('lotNumber') and (SummaryOption in [soFull, soData]) then
     ComposeStringValue(json, 'lotNumber', elem.lotNumberElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('lotNumber') and (SummaryOption in [soFull, soData]) then
     ComposeStringProps(json, 'lotNumber', elem.lotNumberElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('expirationDate') and (SummaryOption in [soFull, soData]) then
     ComposeDateValue(json, 'expirationDate', elem.expirationDateElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('expirationDate') and (SummaryOption in [soFull, soData]) then
     ComposeDateProps(json, 'expirationDate', elem.expirationDateElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('site') and (SummaryOption in [soFull, soData]) then
     ComposeCodeableConcept(json, 'site', elem.site); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('route') and (SummaryOption in [soFull, soData]) then
     ComposeCodeableConcept(json, 'route', elem.route); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('doseQuantity') and (SummaryOption in [soFull, soData]) then
     ComposeQuantity(json, 'doseQuantity', elem.doseQuantity); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.practitionerList.Count > 0) then
+  if not elem.noCompose and doCompose('practitioner') and (SummaryOption in [soFull, soSummary, soData]) and (elem.practitionerList.Count > 0) then
   begin
     json.valueArray('practitioner');
     for i := 0 to elem.practitionerList.Count - 1 do
       ComposeImmunizationPractitioner(json, '', elem.practitionerList[i]); {z - }
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.noteList.Count > 0) then
+  if not elem.noCompose and doCompose('note') and (SummaryOption in [soFull, soSummary, soData]) and (elem.noteList.Count > 0) then
   begin
     json.valueArray('note');
     for i := 0 to elem.noteList.Count - 1 do
       ComposeAnnotation(json, '', elem.noteList[i]); {z - Annotation}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('explanation') and (SummaryOption in [soFull, soData]) then
     ComposeImmunizationExplanation(json, 'explanation', elem.explanation); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.reactionList.Count > 0) then
+  if not elem.noCompose and doCompose('reaction') and (SummaryOption in [soFull, soData]) and (elem.reactionList.Count > 0) then
   begin
     json.valueArray('reaction');
     for i := 0 to elem.reactionList.Count - 1 do
       ComposeImmunizationReaction(json, '', elem.reactionList[i]); {z - }
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.vaccinationProtocolList.Count > 0) then
+  if not elem.noCompose and doCompose('vaccinationProtocol') and (SummaryOption in [soFull, soData]) and (elem.vaccinationProtocolList.Count > 0) then
   begin
     json.valueArray('vaccinationProtocol');
     for i := 0 to elem.vaccinationProtocolList.Count - 1 do
@@ -26822,16 +27627,16 @@ begin
   if (elem = nil) then
     exit;
   ComposeDomainResourceProperties(json, elem);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.identifierList.Count > 0) then
+  if not elem.noCompose and doCompose('identifier') and (SummaryOption in [soFull, soSummary, soData]) and (elem.identifierList.Count > 0) then
   begin
     json.valueArray('identifier');
     for i := 0 to elem.identifierList.Count - 1 do
       ComposeIdentifier(json, '', elem.identifierList[i]); {z - Identifier}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('patient') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{TFhirPatient}(json, 'patient', elem.patient); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.recommendationList.Count > 0) then
+  if not elem.noCompose and doCompose('recommendation') and (SummaryOption in [soFull, soSummary, soData]) and (elem.recommendationList.Count > 0) then
   begin
     json.valueArray('recommendation');
     for i := 0 to elem.recommendationList.Count - 1 do
@@ -27231,89 +28036,89 @@ begin
   if (elem = nil) then
     exit;
   ComposeDomainResourceProperties(json, elem);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('url') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeUriValue(json, 'url', elem.urlElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('url') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeUriProps(json, 'url', elem.urlElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('version') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeStringValue(json, 'version', elem.versionElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('version') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeStringProps(json, 'version', elem.versionElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('name') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeStringValue(json, 'name', elem.nameElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('name') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeStringProps(json, 'name', elem.nameElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('status') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumValue(json, 'status', elem.StatusElement, CODES_TFhirPublicationStatusEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('status') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumProps(json, 'status', elem.StatusElement, CODES_TFhirPublicationStatusEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('experimental') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeBooleanValue(json, 'experimental', elem.experimentalElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('experimental') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeBooleanProps(json, 'experimental', elem.experimentalElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('date') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeDateTimeValue(json, 'date', elem.dateElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('date') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeDateTimeProps(json, 'date', elem.dateElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('publisher') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeStringValue(json, 'publisher', elem.publisherElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('publisher') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeStringProps(json, 'publisher', elem.publisherElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.contactList.Count > 0) then
+  if not elem.noCompose and doCompose('contact') and (SummaryOption in [soFull, soSummary, soData]) and (elem.contactList.Count > 0) then
   begin
     json.valueArray('contact');
     for i := 0 to elem.contactList.Count - 1 do
       ComposeContactDetail(json, '', elem.contactList[i]); {z - ContactDetail}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('description') and (SummaryOption in [soFull, soData]) then
     ComposeMarkdownValue(json, 'description', elem.descriptionElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('description') and (SummaryOption in [soFull, soData]) then
     ComposeMarkdownProps(json, 'description', elem.descriptionElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.useContextList.Count > 0) then
+  if not elem.noCompose and doCompose('useContext') and (SummaryOption in [soFull, soSummary, soData]) and (elem.useContextList.Count > 0) then
   begin
     json.valueArray('useContext');
     for i := 0 to elem.useContextList.Count - 1 do
       ComposeUsageContext(json, '', elem.useContextList[i]); {z - UsageContext}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.jurisdictionList.Count > 0) then
+  if not elem.noCompose and doCompose('jurisdiction') and (SummaryOption in [soFull, soSummary, soData]) and (elem.jurisdictionList.Count > 0) then
   begin
     json.valueArray('jurisdiction');
     for i := 0 to elem.jurisdictionList.Count - 1 do
       ComposeCodeableConcept(json, '', elem.jurisdictionList[i]); {z - CodeableConcept}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('copyright') and (SummaryOption in [soFull, soData]) then
     ComposeMarkdownValue(json, 'copyright', elem.copyrightElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('copyright') and (SummaryOption in [soFull, soData]) then
     ComposeMarkdownProps(json, 'copyright', elem.copyrightElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('fhirVersion') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeIdValue(json, 'fhirVersion', elem.fhirVersionElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('fhirVersion') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeIdProps(json, 'fhirVersion', elem.fhirVersionElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.dependencyList.Count > 0) then
+  if not elem.noCompose and doCompose('dependency') and (SummaryOption in [soFull, soSummary, soData]) and (elem.dependencyList.Count > 0) then
   begin
     json.valueArray('dependency');
     for i := 0 to elem.dependencyList.Count - 1 do
       ComposeImplementationGuideDependency(json, '', elem.dependencyList[i]); {z - }
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.packageList.Count > 0) then
+  if not elem.noCompose and doCompose('package') and (SummaryOption in [soFull, soSummary, soData]) and (elem.packageList.Count > 0) then
   begin
     json.valueArray('package');
     for i := 0 to elem.packageList.Count - 1 do
       ComposeImplementationGuidePackage(json, '', elem.packageList[i]); {z - }
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.globalList.Count > 0) then
+  if not elem.noCompose and doCompose('global') and (SummaryOption in [soFull, soSummary, soData]) and (elem.globalList.Count > 0) then
   begin
     json.valueArray('global');
     for i := 0 to elem.globalList.Count - 1 do
       ComposeImplementationGuideGlobal(json, '', elem.globalList[i]); {z - }
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.binaryList.Count > 0) then
+  if not elem.noCompose and doCompose('binary') and (SummaryOption in [soFull, soData]) and (elem.binaryList.Count > 0) then
   begin
     ext := false;
     val := false;
@@ -27337,7 +28142,7 @@ begin
       json.FinishArray;
     end;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('page') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeImplementationGuidePage(json, 'page', elem.page); {a}
 end;
 
@@ -27423,130 +28228,130 @@ begin
   if (elem = nil) then
     exit;
   ComposeDomainResourceProperties(json, elem);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('url') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeUriValue(json, 'url', elem.urlElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('url') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeUriProps(json, 'url', elem.urlElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.identifierList.Count > 0) then
+  if not elem.noCompose and doCompose('identifier') and (SummaryOption in [soFull, soSummary, soData]) and (elem.identifierList.Count > 0) then
   begin
     json.valueArray('identifier');
     for i := 0 to elem.identifierList.Count - 1 do
       ComposeIdentifier(json, '', elem.identifierList[i]); {z - Identifier}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('version') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeStringValue(json, 'version', elem.versionElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('version') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeStringProps(json, 'version', elem.versionElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('name') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeStringValue(json, 'name', elem.nameElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('name') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeStringProps(json, 'name', elem.nameElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('title') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeStringValue(json, 'title', elem.titleElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('title') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeStringProps(json, 'title', elem.titleElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('status') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumValue(json, 'status', elem.StatusElement, CODES_TFhirPublicationStatusEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('status') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumProps(json, 'status', elem.StatusElement, CODES_TFhirPublicationStatusEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('experimental') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeBooleanValue(json, 'experimental', elem.experimentalElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('experimental') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeBooleanProps(json, 'experimental', elem.experimentalElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('type_') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeCodeableConcept(json, 'type', elem.type_); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('date') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeDateTimeValue(json, 'date', elem.dateElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('date') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeDateTimeProps(json, 'date', elem.dateElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('publisher') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeStringValue(json, 'publisher', elem.publisherElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('publisher') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeStringProps(json, 'publisher', elem.publisherElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('description') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeMarkdownValue(json, 'description', elem.descriptionElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('description') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeMarkdownProps(json, 'description', elem.descriptionElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('purpose') and (SummaryOption in [soFull, soData]) then
     ComposeMarkdownValue(json, 'purpose', elem.purposeElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('purpose') and (SummaryOption in [soFull, soData]) then
     ComposeMarkdownProps(json, 'purpose', elem.purposeElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('usage') and (SummaryOption in [soFull, soData]) then
     ComposeStringValue(json, 'usage', elem.usageElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('usage') and (SummaryOption in [soFull, soData]) then
     ComposeStringProps(json, 'usage', elem.usageElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('approvalDate') and (SummaryOption in [soFull, soData]) then
     ComposeDateValue(json, 'approvalDate', elem.approvalDateElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('approvalDate') and (SummaryOption in [soFull, soData]) then
     ComposeDateProps(json, 'approvalDate', elem.approvalDateElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('lastReviewDate') and (SummaryOption in [soFull, soData]) then
     ComposeDateValue(json, 'lastReviewDate', elem.lastReviewDateElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('lastReviewDate') and (SummaryOption in [soFull, soData]) then
     ComposeDateProps(json, 'lastReviewDate', elem.lastReviewDateElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('effectivePeriod') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposePeriod(json, 'effectivePeriod', elem.effectivePeriod); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.useContextList.Count > 0) then
+  if not elem.noCompose and doCompose('useContext') and (SummaryOption in [soFull, soSummary, soData]) and (elem.useContextList.Count > 0) then
   begin
     json.valueArray('useContext');
     for i := 0 to elem.useContextList.Count - 1 do
       ComposeUsageContext(json, '', elem.useContextList[i]); {z - UsageContext}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.jurisdictionList.Count > 0) then
+  if not elem.noCompose and doCompose('jurisdiction') and (SummaryOption in [soFull, soSummary, soData]) and (elem.jurisdictionList.Count > 0) then
   begin
     json.valueArray('jurisdiction');
     for i := 0 to elem.jurisdictionList.Count - 1 do
       ComposeCodeableConcept(json, '', elem.jurisdictionList[i]); {z - CodeableConcept}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.topicList.Count > 0) then
+  if not elem.noCompose and doCompose('topic') and (SummaryOption in [soFull, soData]) and (elem.topicList.Count > 0) then
   begin
     json.valueArray('topic');
     for i := 0 to elem.topicList.Count - 1 do
       ComposeCodeableConcept(json, '', elem.topicList[i]); {z - CodeableConcept}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.contributorList.Count > 0) then
+  if not elem.noCompose and doCompose('contributor') and (SummaryOption in [soFull, soData]) and (elem.contributorList.Count > 0) then
   begin
     json.valueArray('contributor');
     for i := 0 to elem.contributorList.Count - 1 do
       ComposeContributor(json, '', elem.contributorList[i]); {z - Contributor}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.contactList.Count > 0) then
+  if not elem.noCompose and doCompose('contact') and (SummaryOption in [soFull, soSummary, soData]) and (elem.contactList.Count > 0) then
   begin
     json.valueArray('contact');
     for i := 0 to elem.contactList.Count - 1 do
       ComposeContactDetail(json, '', elem.contactList[i]); {z - ContactDetail}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('copyright') and (SummaryOption in [soFull, soData]) then
     ComposeMarkdownValue(json, 'copyright', elem.copyrightElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('copyright') and (SummaryOption in [soFull, soData]) then
     ComposeMarkdownProps(json, 'copyright', elem.copyrightElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.relatedArtifactList.Count > 0) then
+  if not elem.noCompose and doCompose('relatedArtifact') and (SummaryOption in [soFull, soData]) and (elem.relatedArtifactList.Count > 0) then
   begin
     json.valueArray('relatedArtifact');
     for i := 0 to elem.relatedArtifactList.Count - 1 do
       ComposeRelatedArtifact(json, '', elem.relatedArtifactList[i]); {z - RelatedArtifact}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.parameterList.Count > 0) then
+  if not elem.noCompose and doCompose('parameter') and (SummaryOption in [soFull, soData]) and (elem.parameterList.Count > 0) then
   begin
     json.valueArray('parameter');
     for i := 0 to elem.parameterList.Count - 1 do
       ComposeParameterDefinition(json, '', elem.parameterList[i]); {z - ParameterDefinition}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.dataRequirementList.Count > 0) then
+  if not elem.noCompose and doCompose('dataRequirement') and (SummaryOption in [soFull, soData]) and (elem.dataRequirementList.Count > 0) then
   begin
     json.valueArray('dataRequirement');
     for i := 0 to elem.dataRequirementList.Count - 1 do
       ComposeDataRequirement(json, '', elem.dataRequirementList[i]); {z - DataRequirement}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.contentList.Count > 0) then
+  if not elem.noCompose and doCompose('content') and (SummaryOption in [soFull, soData]) and (elem.contentList.Count > 0) then
   begin
     json.valueArray('content');
     for i := 0 to elem.contentList.Count - 1 do
@@ -27631,13 +28436,13 @@ begin
   if (elem = nil) then
     exit;
   ComposeDomainResourceProperties(json, elem);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('active') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeBooleanValue(json, 'active', elem.activeElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('active') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeBooleanProps(json, 'active', elem.activeElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('author') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{Resource}(json, 'author', elem.author); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.itemList.Count > 0) then
+  if not elem.noCompose and doCompose('item') and (SummaryOption in [soFull, soSummary, soData]) and (elem.itemList.Count > 0) then
   begin
     json.valueArray('item');
     for i := 0 to elem.itemList.Count - 1 do
@@ -27752,54 +28557,54 @@ begin
   if (elem = nil) then
     exit;
   ComposeDomainResourceProperties(json, elem);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.identifierList.Count > 0) then
+  if not elem.noCompose and doCompose('identifier') and (SummaryOption in [soFull, soData]) and (elem.identifierList.Count > 0) then
   begin
     json.valueArray('identifier');
     for i := 0 to elem.identifierList.Count - 1 do
       ComposeIdentifier(json, '', elem.identifierList[i]); {z - Identifier}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('status') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumValue(json, 'status', elem.StatusElement, CODES_TFhirListStatusEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('status') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumProps(json, 'status', elem.StatusElement, CODES_TFhirListStatusEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('mode') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumValue(json, 'mode', elem.ModeElement, CODES_TFhirListModeEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('mode') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumProps(json, 'mode', elem.ModeElement, CODES_TFhirListModeEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('title') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeStringValue(json, 'title', elem.titleElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('title') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeStringProps(json, 'title', elem.titleElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('code') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeCodeableConcept(json, 'code', elem.code); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('subject') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{Resource}(json, 'subject', elem.subject); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('encounter') and (SummaryOption in [soFull, soData]) then
     ComposeReference{TFhirEncounter}(json, 'encounter', elem.encounter); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('date') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeDateTimeValue(json, 'date', elem.dateElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('date') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeDateTimeProps(json, 'date', elem.dateElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('source') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{Resource}(json, 'source', elem.source); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('orderedBy') and (SummaryOption in [soFull, soData]) then
     ComposeCodeableConcept(json, 'orderedBy', elem.orderedBy); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.noteList.Count > 0) then
+  if not elem.noCompose and doCompose('note') and (SummaryOption in [soFull, soData]) and (elem.noteList.Count > 0) then
   begin
     json.valueArray('note');
     for i := 0 to elem.noteList.Count - 1 do
       ComposeAnnotation(json, '', elem.noteList[i]); {z - Annotation}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.entryList.Count > 0) then
+  if not elem.noCompose and doCompose('entry') and (SummaryOption in [soFull, soData]) and (elem.entryList.Count > 0) then
   begin
     json.valueArray('entry');
     for i := 0 to elem.entryList.Count - 1 do
       ComposeListEntry(json, '', elem.entryList[i]); {z - }
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('emptyReason') and (SummaryOption in [soFull, soData]) then
     ComposeCodeableConcept(json, 'emptyReason', elem.emptyReason); {a}
 end;
 
@@ -27913,24 +28718,24 @@ begin
   if (elem = nil) then
     exit;
   ComposeDomainResourceProperties(json, elem);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.identifierList.Count > 0) then
+  if not elem.noCompose and doCompose('identifier') and (SummaryOption in [soFull, soSummary, soData]) and (elem.identifierList.Count > 0) then
   begin
     json.valueArray('identifier');
     for i := 0 to elem.identifierList.Count - 1 do
       ComposeIdentifier(json, '', elem.identifierList[i]); {z - Identifier}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('status') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumValue(json, 'status', elem.StatusElement, CODES_TFhirLocationStatusEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('status') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumProps(json, 'status', elem.StatusElement, CODES_TFhirLocationStatusEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('operationalStatus') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeCoding(json, 'operationalStatus', elem.operationalStatus); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('name') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeStringValue(json, 'name', elem.nameElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('name') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeStringProps(json, 'name', elem.nameElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.aliasList.Count > 0) then
+  if not elem.noCompose and doCompose('alias') and (SummaryOption in [soFull, soData]) and (elem.aliasList.Count > 0) then
   begin
     ext := false;
     val := false;
@@ -27954,34 +28759,34 @@ begin
       json.FinishArray;
     end;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('description') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeStringValue(json, 'description', elem.descriptionElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('description') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeStringProps(json, 'description', elem.descriptionElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('mode') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumValue(json, 'mode', elem.ModeElement, CODES_TFhirLocationModeEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('mode') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumProps(json, 'mode', elem.ModeElement, CODES_TFhirLocationModeEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('type_') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeCodeableConcept(json, 'type', elem.type_); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.telecomList.Count > 0) then
+  if not elem.noCompose and doCompose('telecom') and (SummaryOption in [soFull, soData]) and (elem.telecomList.Count > 0) then
   begin
     json.valueArray('telecom');
     for i := 0 to elem.telecomList.Count - 1 do
       ComposeContactPoint(json, '', elem.telecomList[i]); {z - ContactPoint}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('address') and (SummaryOption in [soFull, soData]) then
     ComposeAddress(json, 'address', elem.address); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('physicalType') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeCodeableConcept(json, 'physicalType', elem.physicalType); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('position') and (SummaryOption in [soFull, soData]) then
     ComposeLocationPosition(json, 'position', elem.position); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('managingOrganization') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{TFhirOrganization}(json, 'managingOrganization', elem.managingOrganization); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('partOf') and (SummaryOption in [soFull, soData]) then
     ComposeReference{TFhirLocation}(json, 'partOf', elem.partOf); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.endpointList.Count > 0) then
+  if not elem.noCompose and doCompose('endpoint') and (SummaryOption in [soFull, soData]) and (elem.endpointList.Count > 0) then
   begin
     json.valueArray('endpoint');
     for i := 0 to elem.endpointList.Count - 1 do
@@ -28321,156 +29126,156 @@ begin
   if (elem = nil) then
     exit;
   ComposeDomainResourceProperties(json, elem);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('url') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeUriValue(json, 'url', elem.urlElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('url') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeUriProps(json, 'url', elem.urlElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.identifierList.Count > 0) then
+  if not elem.noCompose and doCompose('identifier') and (SummaryOption in [soFull, soSummary, soData]) and (elem.identifierList.Count > 0) then
   begin
     json.valueArray('identifier');
     for i := 0 to elem.identifierList.Count - 1 do
       ComposeIdentifier(json, '', elem.identifierList[i]); {z - Identifier}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('version') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeStringValue(json, 'version', elem.versionElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('version') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeStringProps(json, 'version', elem.versionElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('name') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeStringValue(json, 'name', elem.nameElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('name') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeStringProps(json, 'name', elem.nameElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('title') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeStringValue(json, 'title', elem.titleElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('title') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeStringProps(json, 'title', elem.titleElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('status') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumValue(json, 'status', elem.StatusElement, CODES_TFhirPublicationStatusEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('status') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumProps(json, 'status', elem.StatusElement, CODES_TFhirPublicationStatusEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('experimental') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeBooleanValue(json, 'experimental', elem.experimentalElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('experimental') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeBooleanProps(json, 'experimental', elem.experimentalElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('date') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeDateTimeValue(json, 'date', elem.dateElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('date') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeDateTimeProps(json, 'date', elem.dateElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('publisher') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeStringValue(json, 'publisher', elem.publisherElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('publisher') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeStringProps(json, 'publisher', elem.publisherElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('description') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeMarkdownValue(json, 'description', elem.descriptionElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('description') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeMarkdownProps(json, 'description', elem.descriptionElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('purpose') and (SummaryOption in [soFull, soData]) then
     ComposeMarkdownValue(json, 'purpose', elem.purposeElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('purpose') and (SummaryOption in [soFull, soData]) then
     ComposeMarkdownProps(json, 'purpose', elem.purposeElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('usage') and (SummaryOption in [soFull, soData]) then
     ComposeStringValue(json, 'usage', elem.usageElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('usage') and (SummaryOption in [soFull, soData]) then
     ComposeStringProps(json, 'usage', elem.usageElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('approvalDate') and (SummaryOption in [soFull, soData]) then
     ComposeDateValue(json, 'approvalDate', elem.approvalDateElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('approvalDate') and (SummaryOption in [soFull, soData]) then
     ComposeDateProps(json, 'approvalDate', elem.approvalDateElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('lastReviewDate') and (SummaryOption in [soFull, soData]) then
     ComposeDateValue(json, 'lastReviewDate', elem.lastReviewDateElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('lastReviewDate') and (SummaryOption in [soFull, soData]) then
     ComposeDateProps(json, 'lastReviewDate', elem.lastReviewDateElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('effectivePeriod') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposePeriod(json, 'effectivePeriod', elem.effectivePeriod); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.useContextList.Count > 0) then
+  if not elem.noCompose and doCompose('useContext') and (SummaryOption in [soFull, soSummary, soData]) and (elem.useContextList.Count > 0) then
   begin
     json.valueArray('useContext');
     for i := 0 to elem.useContextList.Count - 1 do
       ComposeUsageContext(json, '', elem.useContextList[i]); {z - UsageContext}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.jurisdictionList.Count > 0) then
+  if not elem.noCompose and doCompose('jurisdiction') and (SummaryOption in [soFull, soSummary, soData]) and (elem.jurisdictionList.Count > 0) then
   begin
     json.valueArray('jurisdiction');
     for i := 0 to elem.jurisdictionList.Count - 1 do
       ComposeCodeableConcept(json, '', elem.jurisdictionList[i]); {z - CodeableConcept}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.topicList.Count > 0) then
+  if not elem.noCompose and doCompose('topic') and (SummaryOption in [soFull, soData]) and (elem.topicList.Count > 0) then
   begin
     json.valueArray('topic');
     for i := 0 to elem.topicList.Count - 1 do
       ComposeCodeableConcept(json, '', elem.topicList[i]); {z - CodeableConcept}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.contributorList.Count > 0) then
+  if not elem.noCompose and doCompose('contributor') and (SummaryOption in [soFull, soData]) and (elem.contributorList.Count > 0) then
   begin
     json.valueArray('contributor');
     for i := 0 to elem.contributorList.Count - 1 do
       ComposeContributor(json, '', elem.contributorList[i]); {z - Contributor}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.contactList.Count > 0) then
+  if not elem.noCompose and doCompose('contact') and (SummaryOption in [soFull, soSummary, soData]) and (elem.contactList.Count > 0) then
   begin
     json.valueArray('contact');
     for i := 0 to elem.contactList.Count - 1 do
       ComposeContactDetail(json, '', elem.contactList[i]); {z - ContactDetail}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('copyright') and (SummaryOption in [soFull, soData]) then
     ComposeMarkdownValue(json, 'copyright', elem.copyrightElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('copyright') and (SummaryOption in [soFull, soData]) then
     ComposeMarkdownProps(json, 'copyright', elem.copyrightElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.relatedArtifactList.Count > 0) then
+  if not elem.noCompose and doCompose('relatedArtifact') and (SummaryOption in [soFull, soData]) and (elem.relatedArtifactList.Count > 0) then
   begin
     json.valueArray('relatedArtifact');
     for i := 0 to elem.relatedArtifactList.Count - 1 do
       ComposeRelatedArtifact(json, '', elem.relatedArtifactList[i]); {z - RelatedArtifact}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.library_List.Count > 0) then
+  if not elem.noCompose and doCompose('library_') and (SummaryOption in [soFull, soData]) and (elem.library_List.Count > 0) then
   begin
     json.valueArray('library');
     for i := 0 to elem.library_List.Count - 1 do
       ComposeReference{TFhirLibrary}(json, '', elem.library_List[i]); {z - Reference(Library)}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('disclaimer') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeMarkdownValue(json, 'disclaimer', elem.disclaimerElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('disclaimer') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeMarkdownProps(json, 'disclaimer', elem.disclaimerElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('scoring') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeCodeableConcept(json, 'scoring', elem.scoring); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('compositeScoring') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeCodeableConcept(json, 'compositeScoring', elem.compositeScoring); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.type_List.Count > 0) then
+  if not elem.noCompose and doCompose('type_') and (SummaryOption in [soFull, soSummary, soData]) and (elem.type_List.Count > 0) then
   begin
     json.valueArray('type');
     for i := 0 to elem.type_List.Count - 1 do
       ComposeCodeableConcept(json, '', elem.type_List[i]); {z - CodeableConcept}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('riskAdjustment') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeStringValue(json, 'riskAdjustment', elem.riskAdjustmentElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('riskAdjustment') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeStringProps(json, 'riskAdjustment', elem.riskAdjustmentElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('rateAggregation') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeStringValue(json, 'rateAggregation', elem.rateAggregationElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('rateAggregation') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeStringProps(json, 'rateAggregation', elem.rateAggregationElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('rationale') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeMarkdownValue(json, 'rationale', elem.rationaleElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('rationale') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeMarkdownProps(json, 'rationale', elem.rationaleElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('clinicalRecommendationStatement') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeMarkdownValue(json, 'clinicalRecommendationStatement', elem.clinicalRecommendationStatementElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('clinicalRecommendationStatement') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeMarkdownProps(json, 'clinicalRecommendationStatement', elem.clinicalRecommendationStatementElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('improvementNotation') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeStringValue(json, 'improvementNotation', elem.improvementNotationElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('improvementNotation') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeStringProps(json, 'improvementNotation', elem.improvementNotationElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.definitionList.Count > 0) then
+  if not elem.noCompose and doCompose('definition') and (SummaryOption in [soFull, soSummary, soData]) and (elem.definitionList.Count > 0) then
   begin
     ext := false;
     val := false;
@@ -28494,22 +29299,22 @@ begin
       json.FinishArray;
     end;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('guidance') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeMarkdownValue(json, 'guidance', elem.guidanceElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('guidance') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeMarkdownProps(json, 'guidance', elem.guidanceElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('set_') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeStringValue(json, 'set', elem.set_Element, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('set_') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeStringProps(json, 'set', elem.set_Element, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.groupList.Count > 0) then
+  if not elem.noCompose and doCompose('group') and (SummaryOption in [soFull, soData]) and (elem.groupList.Count > 0) then
   begin
     json.valueArray('group');
     for i := 0 to elem.groupList.Count - 1 do
       ComposeMeasureGroup(json, '', elem.groupList[i]); {z - }
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.supplementalDataList.Count > 0) then
+  if not elem.noCompose and doCompose('supplementalData') and (SummaryOption in [soFull, soData]) and (elem.supplementalDataList.Count > 0) then
   begin
     json.valueArray('supplementalData');
     for i := 0 to elem.supplementalDataList.Count - 1 do
@@ -28822,36 +29627,36 @@ begin
   if (elem = nil) then
     exit;
   ComposeDomainResourceProperties(json, elem);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('identifier') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeIdentifier(json, 'identifier', elem.identifier); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('status') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumValue(json, 'status', elem.StatusElement, CODES_TFhirMeasureReportStatusEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('status') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumProps(json, 'status', elem.StatusElement, CODES_TFhirMeasureReportStatusEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('type_') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumValue(json, 'type', elem.Type_Element, CODES_TFhirMeasureReportTypeEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('type_') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumProps(json, 'type', elem.Type_Element, CODES_TFhirMeasureReportTypeEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('measure') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{TFhirMeasure}(json, 'measure', elem.measure); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('patient') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{TFhirPatient}(json, 'patient', elem.patient); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('date') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeDateTimeValue(json, 'date', elem.dateElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('date') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeDateTimeProps(json, 'date', elem.dateElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('reportingOrganization') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{TFhirOrganization}(json, 'reportingOrganization', elem.reportingOrganization); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('period') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposePeriod(json, 'period', elem.period); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.groupList.Count > 0) then
+  if not elem.noCompose and doCompose('group') and (SummaryOption in [soFull, soData]) and (elem.groupList.Count > 0) then
   begin
     json.valueArray('group');
     for i := 0 to elem.groupList.Count - 1 do
       ComposeMeasureReportGroup(json, '', elem.groupList[i]); {z - }
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('evaluatedResources') and (SummaryOption in [soFull, soData]) then
     ComposeReference{TFhirBundle}(json, 'evaluatedResources', elem.evaluatedResources); {a}
 end;
 
@@ -28923,31 +29728,31 @@ begin
   if (elem = nil) then
     exit;
   ComposeDomainResourceProperties(json, elem);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.identifierList.Count > 0) then
+  if not elem.noCompose and doCompose('identifier') and (SummaryOption in [soFull, soSummary, soData]) and (elem.identifierList.Count > 0) then
   begin
     json.valueArray('identifier');
     for i := 0 to elem.identifierList.Count - 1 do
       ComposeIdentifier(json, '', elem.identifierList[i]); {z - Identifier}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.basedOnList.Count > 0) then
+  if not elem.noCompose and doCompose('basedOn') and (SummaryOption in [soFull, soSummary, soData]) and (elem.basedOnList.Count > 0) then
   begin
     json.valueArray('basedOn');
     for i := 0 to elem.basedOnList.Count - 1 do
       ComposeReference{TFhirProcedureRequest}(json, '', elem.basedOnList[i]); {z - Reference(ProcedureRequest)}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('type_') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumValue(json, 'type', elem.Type_Element, CODES_TFhirDigitalMediaTypeEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('type_') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumProps(json, 'type', elem.Type_Element, CODES_TFhirDigitalMediaTypeEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('subtype') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeCodeableConcept(json, 'subtype', elem.subtype); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('view') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeCodeableConcept(json, 'view', elem.view); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('subject') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{Resource}(json, 'subject', elem.subject); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('context') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{Resource}(json, 'context', elem.context); {a}
   if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.occurrence is TFhirPeriod) then 
     ComposePeriod(json, 'occurrencePeriod', TFhirPeriod(elem.occurrence)) 
@@ -28956,38 +29761,38 @@ begin
     ComposeDateTimeValue(json, 'occurrenceDateTime', TFhirDateTime(elem.occurrence), false);
     ComposeDateTimeProps(json, 'occurrenceDateTime', TFhirDateTime(elem.occurrence), false);
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('operator') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{TFhirPractitioner}(json, 'operator', elem.operator); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.reasonCodeList.Count > 0) then
+  if not elem.noCompose and doCompose('reasonCode') and (SummaryOption in [soFull, soSummary, soData]) and (elem.reasonCodeList.Count > 0) then
   begin
     json.valueArray('reasonCode');
     for i := 0 to elem.reasonCodeList.Count - 1 do
       ComposeCodeableConcept(json, '', elem.reasonCodeList[i]); {z - CodeableConcept}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('bodySite') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeCodeableConcept(json, 'bodySite', elem.bodySite); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('device') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{Resource}(json, 'device', elem.device); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('height') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposePositiveIntValue(json, 'height', elem.heightElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('height') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposePositiveIntProps(json, 'height', elem.heightElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('width') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposePositiveIntValue(json, 'width', elem.widthElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('width') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposePositiveIntProps(json, 'width', elem.widthElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('frames') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposePositiveIntValue(json, 'frames', elem.framesElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('frames') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposePositiveIntProps(json, 'frames', elem.framesElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('duration') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeUnsignedIntValue(json, 'duration', elem.durationElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('duration') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeUnsignedIntProps(json, 'duration', elem.durationElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('content') and (SummaryOption in [soFull, soData]) then
     ComposeAttachment(json, 'content', elem.content); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.noteList.Count > 0) then
+  if not elem.noCompose and doCompose('note') and (SummaryOption in [soFull, soData]) and (elem.noteList.Count > 0) then
   begin
     json.valueArray('note');
     for i := 0 to elem.noteList.Count - 1 do
@@ -29230,34 +30035,34 @@ begin
   if (elem = nil) then
     exit;
   ComposeDomainResourceProperties(json, elem);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('code') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeCodeableConcept(json, 'code', elem.code); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('status') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumValue(json, 'status', elem.StatusElement, CODES_TFhirMedicationStatusEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('status') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumProps(json, 'status', elem.StatusElement, CODES_TFhirMedicationStatusEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('isBrand') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeBooleanValue(json, 'isBrand', elem.isBrandElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('isBrand') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeBooleanProps(json, 'isBrand', elem.isBrandElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('isOverTheCounter') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeBooleanValue(json, 'isOverTheCounter', elem.isOverTheCounterElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('isOverTheCounter') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeBooleanProps(json, 'isOverTheCounter', elem.isOverTheCounterElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('manufacturer') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{TFhirOrganization}(json, 'manufacturer', elem.manufacturer); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('form') and (SummaryOption in [soFull, soData]) then
     ComposeCodeableConcept(json, 'form', elem.form); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.ingredientList.Count > 0) then
+  if not elem.noCompose and doCompose('ingredient') and (SummaryOption in [soFull, soData]) and (elem.ingredientList.Count > 0) then
   begin
     json.valueArray('ingredient');
     for i := 0 to elem.ingredientList.Count - 1 do
       ComposeMedicationIngredient(json, '', elem.ingredientList[i]); {z - }
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('package') and (SummaryOption in [soFull, soData]) then
     ComposeMedicationPackage(json, 'package', elem.package); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.imageList.Count > 0) then
+  if not elem.noCompose and doCompose('image') and (SummaryOption in [soFull, soData]) and (elem.imageList.Count > 0) then
   begin
     json.valueArray('image');
     for i := 0 to elem.imageList.Count - 1 do
@@ -29438,42 +30243,42 @@ begin
   if (elem = nil) then
     exit;
   ComposeDomainResourceProperties(json, elem);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.identifierList.Count > 0) then
+  if not elem.noCompose and doCompose('identifier') and (SummaryOption in [soFull, soData]) and (elem.identifierList.Count > 0) then
   begin
     json.valueArray('identifier');
     for i := 0 to elem.identifierList.Count - 1 do
       ComposeIdentifier(json, '', elem.identifierList[i]); {z - Identifier}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.definitionList.Count > 0) then
+  if not elem.noCompose and doCompose('definition') and (SummaryOption in [soFull, soSummary, soData]) and (elem.definitionList.Count > 0) then
   begin
     json.valueArray('definition');
     for i := 0 to elem.definitionList.Count - 1 do
       ComposeReference{Resource}(json, '', elem.definitionList[i]); {z - Reference(PlanDefinition|ActivityDefinition)}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.partOfList.Count > 0) then
+  if not elem.noCompose and doCompose('partOf') and (SummaryOption in [soFull, soSummary, soData]) and (elem.partOfList.Count > 0) then
   begin
     json.valueArray('partOf');
     for i := 0 to elem.partOfList.Count - 1 do
       ComposeReference{Resource}(json, '', elem.partOfList[i]); {z - Reference(MedicationAdministration|Procedure)}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('status') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumValue(json, 'status', elem.StatusElement, CODES_TFhirMedicationAdminStatusEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('status') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumProps(json, 'status', elem.StatusElement, CODES_TFhirMedicationAdminStatusEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('category') and (SummaryOption in [soFull, soData]) then
     ComposeCodeableConcept(json, 'category', elem.category); {a}
   if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.medication is TFhirCodeableConcept) then 
     ComposeCodeableConcept(json, 'medicationCodeableConcept', TFhirCodeableConcept(elem.medication)) 
   else if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.medication is TFhirReference) then
     ComposeReference(json, 'medicationReference', TFhirReference(elem.medication));
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('subject') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{Resource}(json, 'subject', elem.subject); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('context') and (SummaryOption in [soFull, soData]) then
     ComposeReference{Resource}(json, 'context', elem.context); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.supportingInformationList.Count > 0) then
+  if not elem.noCompose and doCompose('supportingInformation') and (SummaryOption in [soFull, soData]) and (elem.supportingInformationList.Count > 0) then
   begin
     json.valueArray('supportingInformation');
     for i := 0 to elem.supportingInformationList.Count - 1 do
@@ -29487,57 +30292,57 @@ begin
     ComposeDateTimeValue(json, 'effectiveDateTime', TFhirDateTime(elem.effective), false);
     ComposeDateTimeProps(json, 'effectiveDateTime', TFhirDateTime(elem.effective), false);
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.performerList.Count > 0) then
+  if not elem.noCompose and doCompose('performer') and (SummaryOption in [soFull, soSummary, soData]) and (elem.performerList.Count > 0) then
   begin
     json.valueArray('performer');
     for i := 0 to elem.performerList.Count - 1 do
       ComposeMedicationAdministrationPerformer(json, '', elem.performerList[i]); {z - }
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('notGiven') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeBooleanValue(json, 'notGiven', elem.notGivenElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('notGiven') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeBooleanProps(json, 'notGiven', elem.notGivenElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.reasonNotGivenList.Count > 0) then
+  if not elem.noCompose and doCompose('reasonNotGiven') and (SummaryOption in [soFull, soData]) and (elem.reasonNotGivenList.Count > 0) then
   begin
     json.valueArray('reasonNotGiven');
     for i := 0 to elem.reasonNotGivenList.Count - 1 do
       ComposeCodeableConcept(json, '', elem.reasonNotGivenList[i]); {z - CodeableConcept}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.reasonCodeList.Count > 0) then
+  if not elem.noCompose and doCompose('reasonCode') and (SummaryOption in [soFull, soData]) and (elem.reasonCodeList.Count > 0) then
   begin
     json.valueArray('reasonCode');
     for i := 0 to elem.reasonCodeList.Count - 1 do
       ComposeCodeableConcept(json, '', elem.reasonCodeList[i]); {z - CodeableConcept}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.reasonReferenceList.Count > 0) then
+  if not elem.noCompose and doCompose('reasonReference') and (SummaryOption in [soFull, soData]) and (elem.reasonReferenceList.Count > 0) then
   begin
     json.valueArray('reasonReference');
     for i := 0 to elem.reasonReferenceList.Count - 1 do
       ComposeReference{Resource}(json, '', elem.reasonReferenceList[i]); {z - Reference(Condition|Observation)}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('request') and (SummaryOption in [soFull, soData]) then
     ComposeReference{TFhirMedicationRequest}(json, 'request', elem.request); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.deviceList.Count > 0) then
+  if not elem.noCompose and doCompose('device') and (SummaryOption in [soFull, soData]) and (elem.deviceList.Count > 0) then
   begin
     json.valueArray('device');
     for i := 0 to elem.deviceList.Count - 1 do
       ComposeReference{TFhirDevice}(json, '', elem.deviceList[i]); {z - Reference(Device)}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.noteList.Count > 0) then
+  if not elem.noCompose and doCompose('note') and (SummaryOption in [soFull, soData]) and (elem.noteList.Count > 0) then
   begin
     json.valueArray('note');
     for i := 0 to elem.noteList.Count - 1 do
       ComposeAnnotation(json, '', elem.noteList[i]); {z - Annotation}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('dosage') and (SummaryOption in [soFull, soData]) then
     ComposeMedicationAdministrationDosage(json, 'dosage', elem.dosage); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.eventHistoryList.Count > 0) then
+  if not elem.noCompose and doCompose('eventHistory') and (SummaryOption in [soFull, soData]) and (elem.eventHistoryList.Count > 0) then
   begin
     json.valueArray('eventHistory');
     for i := 0 to elem.eventHistoryList.Count - 1 do
@@ -29726,110 +30531,110 @@ begin
   if (elem = nil) then
     exit;
   ComposeDomainResourceProperties(json, elem);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.identifierList.Count > 0) then
+  if not elem.noCompose and doCompose('identifier') and (SummaryOption in [soFull, soData]) and (elem.identifierList.Count > 0) then
   begin
     json.valueArray('identifier');
     for i := 0 to elem.identifierList.Count - 1 do
       ComposeIdentifier(json, '', elem.identifierList[i]); {z - Identifier}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.partOfList.Count > 0) then
+  if not elem.noCompose and doCompose('partOf') and (SummaryOption in [soFull, soData]) and (elem.partOfList.Count > 0) then
   begin
     json.valueArray('partOf');
     for i := 0 to elem.partOfList.Count - 1 do
       ComposeReference{TFhirProcedure}(json, '', elem.partOfList[i]); {z - Reference(Procedure)}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('status') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumValue(json, 'status', elem.StatusElement, CODES_TFhirMedicationDispenseStatusEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('status') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumProps(json, 'status', elem.StatusElement, CODES_TFhirMedicationDispenseStatusEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('category') and (SummaryOption in [soFull, soData]) then
     ComposeCodeableConcept(json, 'category', elem.category); {a}
   if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.medication is TFhirCodeableConcept) then 
     ComposeCodeableConcept(json, 'medicationCodeableConcept', TFhirCodeableConcept(elem.medication)) 
   else if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.medication is TFhirReference) then
     ComposeReference(json, 'medicationReference', TFhirReference(elem.medication));
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('subject') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{Resource}(json, 'subject', elem.subject); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('context') and (SummaryOption in [soFull, soData]) then
     ComposeReference{Resource}(json, 'context', elem.context); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.supportingInformationList.Count > 0) then
+  if not elem.noCompose and doCompose('supportingInformation') and (SummaryOption in [soFull, soData]) and (elem.supportingInformationList.Count > 0) then
   begin
     json.valueArray('supportingInformation');
     for i := 0 to elem.supportingInformationList.Count - 1 do
       ComposeReference{TFhirReference}(json, '', elem.supportingInformationList[i]); {z - Reference(Any)}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.performerList.Count > 0) then
+  if not elem.noCompose and doCompose('performer') and (SummaryOption in [soFull, soData]) and (elem.performerList.Count > 0) then
   begin
     json.valueArray('performer');
     for i := 0 to elem.performerList.Count - 1 do
       ComposeMedicationDispensePerformer(json, '', elem.performerList[i]); {z - }
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.authorizingPrescriptionList.Count > 0) then
+  if not elem.noCompose and doCompose('authorizingPrescription') and (SummaryOption in [soFull, soData]) and (elem.authorizingPrescriptionList.Count > 0) then
   begin
     json.valueArray('authorizingPrescription');
     for i := 0 to elem.authorizingPrescriptionList.Count - 1 do
       ComposeReference{TFhirMedicationRequest}(json, '', elem.authorizingPrescriptionList[i]); {z - Reference(MedicationRequest)}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('type_') and (SummaryOption in [soFull, soData]) then
     ComposeCodeableConcept(json, 'type', elem.type_); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('quantity') and (SummaryOption in [soFull, soData]) then
     ComposeQuantity(json, 'quantity', elem.quantity); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('daysSupply') and (SummaryOption in [soFull, soData]) then
     ComposeQuantity(json, 'daysSupply', elem.daysSupply); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('whenPrepared') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeDateTimeValue(json, 'whenPrepared', elem.whenPreparedElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('whenPrepared') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeDateTimeProps(json, 'whenPrepared', elem.whenPreparedElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('whenHandedOver') and (SummaryOption in [soFull, soData]) then
     ComposeDateTimeValue(json, 'whenHandedOver', elem.whenHandedOverElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('whenHandedOver') and (SummaryOption in [soFull, soData]) then
     ComposeDateTimeProps(json, 'whenHandedOver', elem.whenHandedOverElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('destination') and (SummaryOption in [soFull, soData]) then
     ComposeReference{TFhirLocation}(json, 'destination', elem.destination); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.receiverList.Count > 0) then
+  if not elem.noCompose and doCompose('receiver') and (SummaryOption in [soFull, soData]) and (elem.receiverList.Count > 0) then
   begin
     json.valueArray('receiver');
     for i := 0 to elem.receiverList.Count - 1 do
       ComposeReference{Resource}(json, '', elem.receiverList[i]); {z - Reference(Patient|Practitioner)}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.noteList.Count > 0) then
+  if not elem.noCompose and doCompose('note') and (SummaryOption in [soFull, soData]) and (elem.noteList.Count > 0) then
   begin
     json.valueArray('note');
     for i := 0 to elem.noteList.Count - 1 do
       ComposeAnnotation(json, '', elem.noteList[i]); {z - Annotation}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.dosageInstructionList.Count > 0) then
+  if not elem.noCompose and doCompose('dosageInstruction') and (SummaryOption in [soFull, soData]) and (elem.dosageInstructionList.Count > 0) then
   begin
     json.valueArray('dosageInstruction');
     for i := 0 to elem.dosageInstructionList.Count - 1 do
       ComposeDosage(json, '', elem.dosageInstructionList[i]); {z - Dosage}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('substitution') and (SummaryOption in [soFull, soData]) then
     ComposeMedicationDispenseSubstitution(json, 'substitution', elem.substitution); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.detectedIssueList.Count > 0) then
+  if not elem.noCompose and doCompose('detectedIssue') and (SummaryOption in [soFull, soData]) and (elem.detectedIssueList.Count > 0) then
   begin
     json.valueArray('detectedIssue');
     for i := 0 to elem.detectedIssueList.Count - 1 do
       ComposeReference{TFhirDetectedIssue}(json, '', elem.detectedIssueList[i]); {z - Reference(DetectedIssue)}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('notDone') and (SummaryOption in [soFull, soData]) then
     ComposeBooleanValue(json, 'notDone', elem.notDoneElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('notDone') and (SummaryOption in [soFull, soData]) then
     ComposeBooleanProps(json, 'notDone', elem.notDoneElement, false);
   if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.notDoneReason is TFhirCodeableConcept) then 
     ComposeCodeableConcept(json, 'notDoneReasonCodeableConcept', TFhirCodeableConcept(elem.notDoneReason)) 
   else if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.notDoneReason is TFhirReference) then
     ComposeReference(json, 'notDoneReasonReference', TFhirReference(elem.notDoneReason));
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.eventHistoryList.Count > 0) then
+  if not elem.noCompose and doCompose('eventHistory') and (SummaryOption in [soFull, soData]) and (elem.eventHistoryList.Count > 0) then
   begin
     json.valueArray('eventHistory');
     for i := 0 to elem.eventHistoryList.Count - 1 do
@@ -30002,7 +30807,7 @@ begin
     if jsn.has('intent') or jsn.has('_intent')  then
       result.intentElement := parseEnum(jsn.path+'/intent', jsn['intent'], jsn.vObj['_intent'], CODES_TFhirMedicationRequestIntentEnum, SYSTEMS_TFhirMedicationRequestIntentEnum);
     if jsn.has('category') then
-        result.category := ParseCodeableConcept(jsn.vObj['category']);{q3}
+      iterateArray(jsn.vArr['category'], result.categoryList, parseCodeableConcept);
     if jsn.has('priority') or jsn.has('_priority')  then
       result.priorityElement := parseEnum(jsn.path+'/priority', jsn['priority'], jsn.vObj['_priority'], CODES_TFhirMedicationRequestPriorityEnum, SYSTEMS_TFhirMedicationRequestPriorityEnum);
     if jsn.has('medicationCodeableConcept') {a4} then
@@ -30050,110 +30855,115 @@ begin
   if (elem = nil) then
     exit;
   ComposeDomainResourceProperties(json, elem);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.identifierList.Count > 0) then
+  if not elem.noCompose and doCompose('identifier') and (SummaryOption in [soFull, soData]) and (elem.identifierList.Count > 0) then
   begin
     json.valueArray('identifier');
     for i := 0 to elem.identifierList.Count - 1 do
       ComposeIdentifier(json, '', elem.identifierList[i]); {z - Identifier}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.definitionList.Count > 0) then
+  if not elem.noCompose and doCompose('definition') and (SummaryOption in [soFull, soSummary, soData]) and (elem.definitionList.Count > 0) then
   begin
     json.valueArray('definition');
     for i := 0 to elem.definitionList.Count - 1 do
       ComposeReference{Resource}(json, '', elem.definitionList[i]); {z - Reference(ActivityDefinition|PlanDefinition)}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.basedOnList.Count > 0) then
+  if not elem.noCompose and doCompose('basedOn') and (SummaryOption in [soFull, soSummary, soData]) and (elem.basedOnList.Count > 0) then
   begin
     json.valueArray('basedOn');
     for i := 0 to elem.basedOnList.Count - 1 do
       ComposeReference{Resource}(json, '', elem.basedOnList[i]); {z - Reference(CarePlan|MedicationRequest|ProcedureRequest)}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('groupIdentifier') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeIdentifier(json, 'groupIdentifier', elem.groupIdentifier); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('status') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumValue(json, 'status', elem.StatusElement, CODES_TFhirMedicationRequestStatusEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('status') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumProps(json, 'status', elem.StatusElement, CODES_TFhirMedicationRequestStatusEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('intent') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumValue(json, 'intent', elem.IntentElement, CODES_TFhirMedicationRequestIntentEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('intent') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumProps(json, 'intent', elem.IntentElement, CODES_TFhirMedicationRequestIntentEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
-    ComposeCodeableConcept(json, 'category', elem.category); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('category') and (SummaryOption in [soFull, soData]) and (elem.categoryList.Count > 0) then
+  begin
+    json.valueArray('category');
+    for i := 0 to elem.categoryList.Count - 1 do
+      ComposeCodeableConcept(json, '', elem.categoryList[i]); {z - CodeableConcept}
+    json.FinishArray;
+  end;
+  if not elem.noCompose and doCompose('priority') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumValue(json, 'priority', elem.PriorityElement, CODES_TFhirMedicationRequestPriorityEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('priority') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumProps(json, 'priority', elem.PriorityElement, CODES_TFhirMedicationRequestPriorityEnum, false);
   if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.medication is TFhirCodeableConcept) then 
     ComposeCodeableConcept(json, 'medicationCodeableConcept', TFhirCodeableConcept(elem.medication)) 
   else if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.medication is TFhirReference) then
     ComposeReference(json, 'medicationReference', TFhirReference(elem.medication));
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('subject') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{Resource}(json, 'subject', elem.subject); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('context') and (SummaryOption in [soFull, soData]) then
     ComposeReference{Resource}(json, 'context', elem.context); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.supportingInformationList.Count > 0) then
+  if not elem.noCompose and doCompose('supportingInformation') and (SummaryOption in [soFull, soData]) and (elem.supportingInformationList.Count > 0) then
   begin
     json.valueArray('supportingInformation');
     for i := 0 to elem.supportingInformationList.Count - 1 do
       ComposeReference{TFhirReference}(json, '', elem.supportingInformationList[i]); {z - Reference(Any)}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('authoredOn') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeDateTimeValue(json, 'authoredOn', elem.authoredOnElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('authoredOn') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeDateTimeProps(json, 'authoredOn', elem.authoredOnElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('requester') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeMedicationRequestRequester(json, 'requester', elem.requester); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('recorder') and (SummaryOption in [soFull, soData]) then
     ComposeReference{TFhirPractitioner}(json, 'recorder', elem.recorder); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('performer') and (SummaryOption in [soFull, soData]) then
     ComposeReference{Resource}(json, 'performer', elem.performer); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.reasonCodeList.Count > 0) then
+  if not elem.noCompose and doCompose('reasonCode') and (SummaryOption in [soFull, soData]) and (elem.reasonCodeList.Count > 0) then
   begin
     json.valueArray('reasonCode');
     for i := 0 to elem.reasonCodeList.Count - 1 do
       ComposeCodeableConcept(json, '', elem.reasonCodeList[i]); {z - CodeableConcept}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.reasonReferenceList.Count > 0) then
+  if not elem.noCompose and doCompose('reasonReference') and (SummaryOption in [soFull, soData]) and (elem.reasonReferenceList.Count > 0) then
   begin
     json.valueArray('reasonReference');
     for i := 0 to elem.reasonReferenceList.Count - 1 do
       ComposeReference{Resource}(json, '', elem.reasonReferenceList[i]); {z - Reference(Condition|Observation)}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.noteList.Count > 0) then
+  if not elem.noCompose and doCompose('note') and (SummaryOption in [soFull, soData]) and (elem.noteList.Count > 0) then
   begin
     json.valueArray('note');
     for i := 0 to elem.noteList.Count - 1 do
       ComposeAnnotation(json, '', elem.noteList[i]); {z - Annotation}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.dosageInstructionList.Count > 0) then
+  if not elem.noCompose and doCompose('dosageInstruction') and (SummaryOption in [soFull, soData]) and (elem.dosageInstructionList.Count > 0) then
   begin
     json.valueArray('dosageInstruction');
     for i := 0 to elem.dosageInstructionList.Count - 1 do
       ComposeDosage(json, '', elem.dosageInstructionList[i]); {z - Dosage}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('dispenseRequest') and (SummaryOption in [soFull, soData]) then
     ComposeMedicationRequestDispenseRequest(json, 'dispenseRequest', elem.dispenseRequest); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('substitution') and (SummaryOption in [soFull, soData]) then
     ComposeMedicationRequestSubstitution(json, 'substitution', elem.substitution); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('priorPrescription') and (SummaryOption in [soFull, soData]) then
     ComposeReference{TFhirMedicationRequest}(json, 'priorPrescription', elem.priorPrescription); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.detectedIssueList.Count > 0) then
+  if not elem.noCompose and doCompose('detectedIssue') and (SummaryOption in [soFull, soData]) and (elem.detectedIssueList.Count > 0) then
   begin
     json.valueArray('detectedIssue');
     for i := 0 to elem.detectedIssueList.Count - 1 do
       ComposeReference{TFhirDetectedIssue}(json, '', elem.detectedIssueList[i]); {z - Reference(DetectedIssue)}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.eventHistoryList.Count > 0) then
+  if not elem.noCompose and doCompose('eventHistory') and (SummaryOption in [soFull, soData]) and (elem.eventHistoryList.Count > 0) then
   begin
     json.valueArray('eventHistory');
     for i := 0 to elem.eventHistoryList.Count - 1 do
@@ -30232,34 +31042,34 @@ begin
   if (elem = nil) then
     exit;
   ComposeDomainResourceProperties(json, elem);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.identifierList.Count > 0) then
+  if not elem.noCompose and doCompose('identifier') and (SummaryOption in [soFull, soSummary, soData]) and (elem.identifierList.Count > 0) then
   begin
     json.valueArray('identifier');
     for i := 0 to elem.identifierList.Count - 1 do
       ComposeIdentifier(json, '', elem.identifierList[i]); {z - Identifier}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.basedOnList.Count > 0) then
+  if not elem.noCompose and doCompose('basedOn') and (SummaryOption in [soFull, soSummary, soData]) and (elem.basedOnList.Count > 0) then
   begin
     json.valueArray('basedOn');
     for i := 0 to elem.basedOnList.Count - 1 do
       ComposeReference{Resource}(json, '', elem.basedOnList[i]); {z - Reference(MedicationRequest|CarePlan|ProcedureRequest)}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.partOfList.Count > 0) then
+  if not elem.noCompose and doCompose('partOf') and (SummaryOption in [soFull, soSummary, soData]) and (elem.partOfList.Count > 0) then
   begin
     json.valueArray('partOf');
     for i := 0 to elem.partOfList.Count - 1 do
       ComposeReference{Resource}(json, '', elem.partOfList[i]); {z - Reference(MedicationAdministration|MedicationDispense|MedicationStatement|Procedure|Observation)}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('context') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{Resource}(json, 'context', elem.context); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('status') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumValue(json, 'status', elem.StatusElement, CODES_TFhirMedicationStatementStatusEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('status') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumProps(json, 'status', elem.StatusElement, CODES_TFhirMedicationStatementStatusEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('category') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeCodeableConcept(json, 'category', elem.category); {a}
   if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.medication is TFhirCodeableConcept) then 
     ComposeCodeableConcept(json, 'medicationCodeableConcept', TFhirCodeableConcept(elem.medication)) 
@@ -30272,54 +31082,54 @@ begin
     ComposeDateTimeValue(json, 'effectiveDateTime', TFhirDateTime(elem.effective), false);
     ComposeDateTimeProps(json, 'effectiveDateTime', TFhirDateTime(elem.effective), false);
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('dateAsserted') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeDateTimeValue(json, 'dateAsserted', elem.dateAssertedElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('dateAsserted') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeDateTimeProps(json, 'dateAsserted', elem.dateAssertedElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('informationSource') and (SummaryOption in [soFull, soData]) then
     ComposeReference{Resource}(json, 'informationSource', elem.informationSource); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('subject') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{Resource}(json, 'subject', elem.subject); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.derivedFromList.Count > 0) then
+  if not elem.noCompose and doCompose('derivedFrom') and (SummaryOption in [soFull, soData]) and (elem.derivedFromList.Count > 0) then
   begin
     json.valueArray('derivedFrom');
     for i := 0 to elem.derivedFromList.Count - 1 do
       ComposeReference{TFhirReference}(json, '', elem.derivedFromList[i]); {z - Reference(Any)}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('taken') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumValue(json, 'taken', elem.TakenElement, CODES_TFhirMedicationStatementTakenEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('taken') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumProps(json, 'taken', elem.TakenElement, CODES_TFhirMedicationStatementTakenEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.reasonNotTakenList.Count > 0) then
+  if not elem.noCompose and doCompose('reasonNotTaken') and (SummaryOption in [soFull, soData]) and (elem.reasonNotTakenList.Count > 0) then
   begin
     json.valueArray('reasonNotTaken');
     for i := 0 to elem.reasonNotTakenList.Count - 1 do
       ComposeCodeableConcept(json, '', elem.reasonNotTakenList[i]); {z - CodeableConcept}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.reasonCodeList.Count > 0) then
+  if not elem.noCompose and doCompose('reasonCode') and (SummaryOption in [soFull, soData]) and (elem.reasonCodeList.Count > 0) then
   begin
     json.valueArray('reasonCode');
     for i := 0 to elem.reasonCodeList.Count - 1 do
       ComposeCodeableConcept(json, '', elem.reasonCodeList[i]); {z - CodeableConcept}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.reasonReferenceList.Count > 0) then
+  if not elem.noCompose and doCompose('reasonReference') and (SummaryOption in [soFull, soData]) and (elem.reasonReferenceList.Count > 0) then
   begin
     json.valueArray('reasonReference');
     for i := 0 to elem.reasonReferenceList.Count - 1 do
       ComposeReference{Resource}(json, '', elem.reasonReferenceList[i]); {z - Reference(Condition|Observation)}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.noteList.Count > 0) then
+  if not elem.noCompose and doCompose('note') and (SummaryOption in [soFull, soData]) and (elem.noteList.Count > 0) then
   begin
     json.valueArray('note');
     for i := 0 to elem.noteList.Count - 1 do
       ComposeAnnotation(json, '', elem.noteList[i]); {z - Annotation}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.dosageList.Count > 0) then
+  if not elem.noCompose and doCompose('dosage') and (SummaryOption in [soFull, soData]) and (elem.dosageList.Count > 0) then
   begin
     json.valueArray('dosage');
     for i := 0 to elem.dosageList.Count - 1 do
@@ -30477,8 +31287,8 @@ begin
       iterateArray(jsn.vArr['parent'], result.parentList, parseReference{Resource});
     if jsn.has('replaces') then
       iterateArray(jsn.vArr['replaces'], result.replacesList, parseReference{TFhirMessageDefinition});
-    if jsn.has('event') then
-        result.event := ParseCoding(jsn.vObj['event']);{q3}
+    if jsn.has('event') or jsn.has('_event') then
+        result.eventElement := ParseUri(jsn['event'], jsn.vObj['_event']);{q}
     if jsn.has('category') or jsn.has('_category')  then
       result.categoryElement := parseEnum(jsn.path+'/category', jsn['category'], jsn.vObj['_category'], CODES_TFhirMessageSignificanceCategoryEnum, SYSTEMS_TFhirMessageSignificanceCategoryEnum);
     if jsn.has('focus') then
@@ -30496,107 +31306,109 @@ begin
   if (elem = nil) then
     exit;
   ComposeDomainResourceProperties(json, elem);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('url') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeUriValue(json, 'url', elem.urlElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('url') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeUriProps(json, 'url', elem.urlElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('identifier') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeIdentifier(json, 'identifier', elem.identifier); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('version') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeStringValue(json, 'version', elem.versionElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('version') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeStringProps(json, 'version', elem.versionElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('name') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeStringValue(json, 'name', elem.nameElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('name') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeStringProps(json, 'name', elem.nameElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('title') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeStringValue(json, 'title', elem.titleElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('title') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeStringProps(json, 'title', elem.titleElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('status') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumValue(json, 'status', elem.StatusElement, CODES_TFhirPublicationStatusEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('status') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumProps(json, 'status', elem.StatusElement, CODES_TFhirPublicationStatusEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('experimental') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeBooleanValue(json, 'experimental', elem.experimentalElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('experimental') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeBooleanProps(json, 'experimental', elem.experimentalElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('date') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeDateTimeValue(json, 'date', elem.dateElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('date') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeDateTimeProps(json, 'date', elem.dateElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('publisher') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeStringValue(json, 'publisher', elem.publisherElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('publisher') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeStringProps(json, 'publisher', elem.publisherElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.contactList.Count > 0) then
+  if not elem.noCompose and doCompose('contact') and (SummaryOption in [soFull, soSummary, soData]) and (elem.contactList.Count > 0) then
   begin
     json.valueArray('contact');
     for i := 0 to elem.contactList.Count - 1 do
       ComposeContactDetail(json, '', elem.contactList[i]); {z - ContactDetail}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('description') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeMarkdownValue(json, 'description', elem.descriptionElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('description') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeMarkdownProps(json, 'description', elem.descriptionElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.useContextList.Count > 0) then
+  if not elem.noCompose and doCompose('useContext') and (SummaryOption in [soFull, soSummary, soData]) and (elem.useContextList.Count > 0) then
   begin
     json.valueArray('useContext');
     for i := 0 to elem.useContextList.Count - 1 do
       ComposeUsageContext(json, '', elem.useContextList[i]); {z - UsageContext}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.jurisdictionList.Count > 0) then
+  if not elem.noCompose and doCompose('jurisdiction') and (SummaryOption in [soFull, soSummary, soData]) and (elem.jurisdictionList.Count > 0) then
   begin
     json.valueArray('jurisdiction');
     for i := 0 to elem.jurisdictionList.Count - 1 do
       ComposeCodeableConcept(json, '', elem.jurisdictionList[i]); {z - CodeableConcept}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('purpose') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeMarkdownValue(json, 'purpose', elem.purposeElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('purpose') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeMarkdownProps(json, 'purpose', elem.purposeElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('copyright') and (SummaryOption in [soFull, soData]) then
     ComposeMarkdownValue(json, 'copyright', elem.copyrightElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('copyright') and (SummaryOption in [soFull, soData]) then
     ComposeMarkdownProps(json, 'copyright', elem.copyrightElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('base') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{TFhirMessageDefinition}(json, 'base', elem.base); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.parentList.Count > 0) then
+  if not elem.noCompose and doCompose('parent') and (SummaryOption in [soFull, soSummary, soData]) and (elem.parentList.Count > 0) then
   begin
     json.valueArray('parent');
     for i := 0 to elem.parentList.Count - 1 do
       ComposeReference{Resource}(json, '', elem.parentList[i]); {z - Reference(ActivityDefinition|PlanDefinition)}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.replacesList.Count > 0) then
+  if not elem.noCompose and doCompose('replaces') and (SummaryOption in [soFull, soSummary, soData]) and (elem.replacesList.Count > 0) then
   begin
     json.valueArray('replaces');
     for i := 0 to elem.replacesList.Count - 1 do
       ComposeReference{TFhirMessageDefinition}(json, '', elem.replacesList[i]); {z - Reference(MessageDefinition)}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
-    ComposeCoding(json, 'event', elem.event); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('event') and (SummaryOption in [soFull, soSummary, soData]) then
+    ComposeUriValue(json, 'event', elem.eventElement, false);
+  if not elem.noCompose and doCompose('event') and (SummaryOption in [soFull, soSummary, soData]) then
+    ComposeUriProps(json, 'event', elem.eventElement, false);
+  if not elem.noCompose and doCompose('category') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumValue(json, 'category', elem.CategoryElement, CODES_TFhirMessageSignificanceCategoryEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('category') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumProps(json, 'category', elem.CategoryElement, CODES_TFhirMessageSignificanceCategoryEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.focusList.Count > 0) then
+  if not elem.noCompose and doCompose('focus') and (SummaryOption in [soFull, soSummary, soData]) and (elem.focusList.Count > 0) then
   begin
     json.valueArray('focus');
     for i := 0 to elem.focusList.Count - 1 do
       ComposeMessageDefinitionFocus(json, '', elem.focusList[i]); {z - }
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('responseRequired') and (SummaryOption in [soFull, soData]) then
     ComposeBooleanValue(json, 'responseRequired', elem.responseRequiredElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('responseRequired') and (SummaryOption in [soFull, soData]) then
     ComposeBooleanProps(json, 'responseRequired', elem.responseRequiredElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.allowedResponseList.Count > 0) then
+  if not elem.noCompose and doCompose('allowedResponse') and (SummaryOption in [soFull, soData]) and (elem.allowedResponseList.Count > 0) then
   begin
     json.valueArray('allowedResponse');
     for i := 0 to elem.allowedResponseList.Count - 1 do
@@ -30802,6 +31614,8 @@ begin
         result.response := ParseMessageHeaderResponse(jsn.vObj['response']);{q3}
     if jsn.has('focus') then
       iterateArray(jsn.vArr['focus'], result.focusList, parseReference{TFhirReference});
+    if jsn.has('definition') or jsn.has('_definition') then
+        result.definitionElement := ParseUri(jsn['definition'], jsn.vObj['_definition']);{q}
 end;
 
 procedure TFHIRJsonComposer.ComposeMessageHeader(json : TJSONWriter; name : string; elem : TFhirMessageHeader; noObj : boolean = false);
@@ -30811,40 +31625,44 @@ begin
   if (elem = nil) then
     exit;
   ComposeDomainResourceProperties(json, elem);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('event') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeCoding(json, 'event', elem.event); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.destinationList.Count > 0) then
+  if not elem.noCompose and doCompose('destination') and (SummaryOption in [soFull, soSummary, soData]) and (elem.destinationList.Count > 0) then
   begin
     json.valueArray('destination');
     for i := 0 to elem.destinationList.Count - 1 do
       ComposeMessageHeaderDestination(json, '', elem.destinationList[i]); {z - }
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('sender') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{Resource}(json, 'sender', elem.sender); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('timestamp') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeInstantValue(json, 'timestamp', elem.timestampElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('timestamp') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeInstantProps(json, 'timestamp', elem.timestampElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('enterer') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{TFhirPractitioner}(json, 'enterer', elem.enterer); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('author') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{TFhirPractitioner}(json, 'author', elem.author); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('source') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeMessageHeaderSource(json, 'source', elem.source); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('responsible') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{Resource}(json, 'responsible', elem.responsible); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('reason') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeCodeableConcept(json, 'reason', elem.reason); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('response') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeMessageHeaderResponse(json, 'response', elem.response); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.focusList.Count > 0) then
+  if not elem.noCompose and doCompose('focus') and (SummaryOption in [soFull, soSummary, soData]) and (elem.focusList.Count > 0) then
   begin
     json.valueArray('focus');
     for i := 0 to elem.focusList.Count - 1 do
       ComposeReference{TFhirReference}(json, '', elem.focusList[i]); {z - Reference(Any)}
     json.FinishArray;
   end;
+  if not elem.noCompose and doCompose('definition') and (SummaryOption in [soFull, soSummary, soData]) then
+    ComposeUriValue(json, 'definition', elem.definitionElement, false);
+  if not elem.noCompose and doCompose('definition') and (SummaryOption in [soFull, soSummary, soData]) then
+    ComposeUriProps(json, 'definition', elem.definitionElement, false);
 end;
 
 {$ENDIF FHIR_MESSAGEHEADER}
@@ -30963,69 +31781,69 @@ begin
   if (elem = nil) then
     exit;
   ComposeDomainResourceProperties(json, elem);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('name') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeStringValue(json, 'name', elem.nameElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('name') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeStringProps(json, 'name', elem.nameElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('status') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumValue(json, 'status', elem.StatusElement, CODES_TFhirPublicationStatusEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('status') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumProps(json, 'status', elem.StatusElement, CODES_TFhirPublicationStatusEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('kind') and (SummaryOption in [soFull, soData]) then
      ComposeEnumValue(json, 'kind', elem.KindElement, CODES_TFhirNamingsystemTypeEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('kind') and (SummaryOption in [soFull, soData]) then
      ComposeEnumProps(json, 'kind', elem.KindElement, CODES_TFhirNamingsystemTypeEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('date') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeDateTimeValue(json, 'date', elem.dateElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('date') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeDateTimeProps(json, 'date', elem.dateElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('publisher') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeStringValue(json, 'publisher', elem.publisherElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('publisher') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeStringProps(json, 'publisher', elem.publisherElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.contactList.Count > 0) then
+  if not elem.noCompose and doCompose('contact') and (SummaryOption in [soFull, soSummary, soData]) and (elem.contactList.Count > 0) then
   begin
     json.valueArray('contact');
     for i := 0 to elem.contactList.Count - 1 do
       ComposeContactDetail(json, '', elem.contactList[i]); {z - ContactDetail}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('responsible') and (SummaryOption in [soFull, soData]) then
     ComposeStringValue(json, 'responsible', elem.responsibleElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('responsible') and (SummaryOption in [soFull, soData]) then
     ComposeStringProps(json, 'responsible', elem.responsibleElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('type_') and (SummaryOption in [soFull, soData]) then
     ComposeCodeableConcept(json, 'type', elem.type_); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('description') and (SummaryOption in [soFull, soData]) then
     ComposeMarkdownValue(json, 'description', elem.descriptionElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('description') and (SummaryOption in [soFull, soData]) then
     ComposeMarkdownProps(json, 'description', elem.descriptionElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.useContextList.Count > 0) then
+  if not elem.noCompose and doCompose('useContext') and (SummaryOption in [soFull, soSummary, soData]) and (elem.useContextList.Count > 0) then
   begin
     json.valueArray('useContext');
     for i := 0 to elem.useContextList.Count - 1 do
       ComposeUsageContext(json, '', elem.useContextList[i]); {z - UsageContext}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.jurisdictionList.Count > 0) then
+  if not elem.noCompose and doCompose('jurisdiction') and (SummaryOption in [soFull, soSummary, soData]) and (elem.jurisdictionList.Count > 0) then
   begin
     json.valueArray('jurisdiction');
     for i := 0 to elem.jurisdictionList.Count - 1 do
       ComposeCodeableConcept(json, '', elem.jurisdictionList[i]); {z - CodeableConcept}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('usage') and (SummaryOption in [soFull, soData]) then
     ComposeStringValue(json, 'usage', elem.usageElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('usage') and (SummaryOption in [soFull, soData]) then
     ComposeStringProps(json, 'usage', elem.usageElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.uniqueIdList.Count > 0) then
+  if not elem.noCompose and doCompose('uniqueId') and (SummaryOption in [soFull, soData]) and (elem.uniqueIdList.Count > 0) then
   begin
     json.valueArray('uniqueId');
     for i := 0 to elem.uniqueIdList.Count - 1 do
       ComposeNamingSystemUniqueId(json, '', elem.uniqueIdList[i]); {z - }
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('replacedBy') and (SummaryOption in [soFull, soData]) then
     ComposeReference{TFhirNamingSystem}(json, 'replacedBy', elem.replacedBy); {a}
 end;
 
@@ -31428,58 +32246,58 @@ begin
   if (elem = nil) then
     exit;
   ComposeDomainResourceProperties(json, elem);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.identifierList.Count > 0) then
+  if not elem.noCompose and doCompose('identifier') and (SummaryOption in [soFull, soData]) and (elem.identifierList.Count > 0) then
   begin
     json.valueArray('identifier');
     for i := 0 to elem.identifierList.Count - 1 do
       ComposeIdentifier(json, '', elem.identifierList[i]); {z - Identifier}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('status') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumValue(json, 'status', elem.StatusElement, CODES_TFhirNutritionRequestStatusEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('status') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumProps(json, 'status', elem.StatusElement, CODES_TFhirNutritionRequestStatusEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('patient') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{TFhirPatient}(json, 'patient', elem.patient); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('encounter') and (SummaryOption in [soFull, soData]) then
     ComposeReference{TFhirEncounter}(json, 'encounter', elem.encounter); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('dateTime') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeDateTimeValue(json, 'dateTime', elem.dateTimeElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('dateTime') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeDateTimeProps(json, 'dateTime', elem.dateTimeElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('orderer') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{TFhirPractitioner}(json, 'orderer', elem.orderer); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.allergyIntoleranceList.Count > 0) then
+  if not elem.noCompose and doCompose('allergyIntolerance') and (SummaryOption in [soFull, soData]) and (elem.allergyIntoleranceList.Count > 0) then
   begin
     json.valueArray('allergyIntolerance');
     for i := 0 to elem.allergyIntoleranceList.Count - 1 do
       ComposeReference{TFhirAllergyIntolerance}(json, '', elem.allergyIntoleranceList[i]); {z - Reference(AllergyIntolerance)}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.foodPreferenceModifierList.Count > 0) then
+  if not elem.noCompose and doCompose('foodPreferenceModifier') and (SummaryOption in [soFull, soData]) and (elem.foodPreferenceModifierList.Count > 0) then
   begin
     json.valueArray('foodPreferenceModifier');
     for i := 0 to elem.foodPreferenceModifierList.Count - 1 do
       ComposeCodeableConcept(json, '', elem.foodPreferenceModifierList[i]); {z - CodeableConcept}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.excludeFoodModifierList.Count > 0) then
+  if not elem.noCompose and doCompose('excludeFoodModifier') and (SummaryOption in [soFull, soData]) and (elem.excludeFoodModifierList.Count > 0) then
   begin
     json.valueArray('excludeFoodModifier');
     for i := 0 to elem.excludeFoodModifierList.Count - 1 do
       ComposeCodeableConcept(json, '', elem.excludeFoodModifierList[i]); {z - CodeableConcept}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('oralDiet') and (SummaryOption in [soFull, soData]) then
     ComposeNutritionOrderOralDiet(json, 'oralDiet', elem.oralDiet); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.supplementList.Count > 0) then
+  if not elem.noCompose and doCompose('supplement') and (SummaryOption in [soFull, soData]) and (elem.supplementList.Count > 0) then
   begin
     json.valueArray('supplement');
     for i := 0 to elem.supplementList.Count - 1 do
       ComposeNutritionOrderSupplement(json, '', elem.supplementList[i]); {z - }
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('enteralFormula') and (SummaryOption in [soFull, soData]) then
     ComposeNutritionOrderEnteralFormula(json, 'enteralFormula', elem.enteralFormula); {a}
 end;
 
@@ -31800,36 +32618,36 @@ begin
   if (elem = nil) then
     exit;
   ComposeDomainResourceProperties(json, elem);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.identifierList.Count > 0) then
+  if not elem.noCompose and doCompose('identifier') and (SummaryOption in [soFull, soSummary, soData]) and (elem.identifierList.Count > 0) then
   begin
     json.valueArray('identifier');
     for i := 0 to elem.identifierList.Count - 1 do
       ComposeIdentifier(json, '', elem.identifierList[i]); {z - Identifier}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.basedOnList.Count > 0) then
+  if not elem.noCompose and doCompose('basedOn') and (SummaryOption in [soFull, soSummary, soData]) and (elem.basedOnList.Count > 0) then
   begin
     json.valueArray('basedOn');
     for i := 0 to elem.basedOnList.Count - 1 do
       ComposeReference{Resource}(json, '', elem.basedOnList[i]); {z - Reference(CarePlan|DeviceRequest|ImmunizationRecommendation|MedicationRequest|NutritionOrder|ProcedureRequest)}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('status') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumValue(json, 'status', elem.StatusElement, CODES_TFhirObservationStatusEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('status') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumProps(json, 'status', elem.StatusElement, CODES_TFhirObservationStatusEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.categoryList.Count > 0) then
+  if not elem.noCompose and doCompose('category') and (SummaryOption in [soFull, soData]) and (elem.categoryList.Count > 0) then
   begin
     json.valueArray('category');
     for i := 0 to elem.categoryList.Count - 1 do
       ComposeCodeableConcept(json, '', elem.categoryList[i]); {z - CodeableConcept}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('code') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeCodeableConcept(json, 'code', elem.code); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('subject') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{Resource}(json, 'subject', elem.subject); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('context') and (SummaryOption in [soFull, soData]) then
     ComposeReference{Resource}(json, 'context', elem.context); {a}
   if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.effective is TFhirPeriod) then 
     ComposePeriod(json, 'effectivePeriod', TFhirPeriod(elem.effective)) 
@@ -31840,11 +32658,11 @@ begin
     ComposeDateTimeValue(json, 'effectiveDateTime', TFhirDateTime(elem.effective), false);
     ComposeDateTimeProps(json, 'effectiveDateTime', TFhirDateTime(elem.effective), false);
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('issued') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeInstantValue(json, 'issued', elem.issuedElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('issued') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeInstantProps(json, 'issued', elem.issuedElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.performerList.Count > 0) then
+  if not elem.noCompose and doCompose('performer') and (SummaryOption in [soFull, soSummary, soData]) and (elem.performerList.Count > 0) then
   begin
     json.valueArray('performer');
     for i := 0 to elem.performerList.Count - 1 do
@@ -31890,37 +32708,37 @@ begin
     ComposeDateTimeValue(json, 'valueDateTime', TFhirDateTime(elem.value), false);
     ComposeDateTimeProps(json, 'valueDateTime', TFhirDateTime(elem.value), false);
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('dataAbsentReason') and (SummaryOption in [soFull, soData]) then
     ComposeCodeableConcept(json, 'dataAbsentReason', elem.dataAbsentReason); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('interpretation') and (SummaryOption in [soFull, soData]) then
     ComposeCodeableConcept(json, 'interpretation', elem.interpretation); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('comment') and (SummaryOption in [soFull, soData]) then
     ComposeStringValue(json, 'comment', elem.commentElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('comment') and (SummaryOption in [soFull, soData]) then
     ComposeStringProps(json, 'comment', elem.commentElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('bodySite') and (SummaryOption in [soFull, soData]) then
     ComposeCodeableConcept(json, 'bodySite', elem.bodySite); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('method') and (SummaryOption in [soFull, soData]) then
     ComposeCodeableConcept(json, 'method', elem.method); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('specimen') and (SummaryOption in [soFull, soData]) then
     ComposeReference{TFhirSpecimen}(json, 'specimen', elem.specimen); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('device') and (SummaryOption in [soFull, soData]) then
     ComposeReference{Resource}(json, 'device', elem.device); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.referenceRangeList.Count > 0) then
+  if not elem.noCompose and doCompose('referenceRange') and (SummaryOption in [soFull, soData]) and (elem.referenceRangeList.Count > 0) then
   begin
     json.valueArray('referenceRange');
     for i := 0 to elem.referenceRangeList.Count - 1 do
       ComposeObservationReferenceRange(json, '', elem.referenceRangeList[i]); {z - }
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.relatedList.Count > 0) then
+  if not elem.noCompose and doCompose('related') and (SummaryOption in [soFull, soSummary, soData]) and (elem.relatedList.Count > 0) then
   begin
     json.valueArray('related');
     for i := 0 to elem.relatedList.Count - 1 do
       ComposeObservationRelated(json, '', elem.relatedList[i]); {z - }
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.componentList.Count > 0) then
+  if not elem.noCompose and doCompose('component') and (SummaryOption in [soFull, soSummary, soData]) and (elem.componentList.Count > 0) then
   begin
     json.valueArray('component');
     for i := 0 to elem.componentList.Count - 1 do
@@ -32211,82 +33029,82 @@ begin
   if (elem = nil) then
     exit;
   ComposeDomainResourceProperties(json, elem);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('url') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeUriValue(json, 'url', elem.urlElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('url') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeUriProps(json, 'url', elem.urlElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('version') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeStringValue(json, 'version', elem.versionElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('version') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeStringProps(json, 'version', elem.versionElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('name') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeStringValue(json, 'name', elem.nameElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('name') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeStringProps(json, 'name', elem.nameElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('status') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumValue(json, 'status', elem.StatusElement, CODES_TFhirPublicationStatusEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('status') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumProps(json, 'status', elem.StatusElement, CODES_TFhirPublicationStatusEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('kind') and (SummaryOption in [soFull, soData]) then
      ComposeEnumValue(json, 'kind', elem.KindElement, CODES_TFhirOperationKindEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('kind') and (SummaryOption in [soFull, soData]) then
      ComposeEnumProps(json, 'kind', elem.KindElement, CODES_TFhirOperationKindEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('experimental') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeBooleanValue(json, 'experimental', elem.experimentalElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('experimental') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeBooleanProps(json, 'experimental', elem.experimentalElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('date') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeDateTimeValue(json, 'date', elem.dateElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('date') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeDateTimeProps(json, 'date', elem.dateElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('publisher') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeStringValue(json, 'publisher', elem.publisherElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('publisher') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeStringProps(json, 'publisher', elem.publisherElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.contactList.Count > 0) then
+  if not elem.noCompose and doCompose('contact') and (SummaryOption in [soFull, soSummary, soData]) and (elem.contactList.Count > 0) then
   begin
     json.valueArray('contact');
     for i := 0 to elem.contactList.Count - 1 do
       ComposeContactDetail(json, '', elem.contactList[i]); {z - ContactDetail}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('description') and (SummaryOption in [soFull, soData]) then
     ComposeMarkdownValue(json, 'description', elem.descriptionElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('description') and (SummaryOption in [soFull, soData]) then
     ComposeMarkdownProps(json, 'description', elem.descriptionElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.useContextList.Count > 0) then
+  if not elem.noCompose and doCompose('useContext') and (SummaryOption in [soFull, soSummary, soData]) and (elem.useContextList.Count > 0) then
   begin
     json.valueArray('useContext');
     for i := 0 to elem.useContextList.Count - 1 do
       ComposeUsageContext(json, '', elem.useContextList[i]); {z - UsageContext}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.jurisdictionList.Count > 0) then
+  if not elem.noCompose and doCompose('jurisdiction') and (SummaryOption in [soFull, soSummary, soData]) and (elem.jurisdictionList.Count > 0) then
   begin
     json.valueArray('jurisdiction');
     for i := 0 to elem.jurisdictionList.Count - 1 do
       ComposeCodeableConcept(json, '', elem.jurisdictionList[i]); {z - CodeableConcept}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('purpose') and (SummaryOption in [soFull, soData]) then
     ComposeMarkdownValue(json, 'purpose', elem.purposeElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('purpose') and (SummaryOption in [soFull, soData]) then
     ComposeMarkdownProps(json, 'purpose', elem.purposeElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('idempotent') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeBooleanValue(json, 'idempotent', elem.idempotentElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('idempotent') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeBooleanProps(json, 'idempotent', elem.idempotentElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('code') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeCodeValue(json, 'code', elem.codeElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('code') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeCodeProps(json, 'code', elem.codeElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('comment') and (SummaryOption in [soFull, soData]) then
     ComposeStringValue(json, 'comment', elem.commentElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('comment') and (SummaryOption in [soFull, soData]) then
     ComposeStringProps(json, 'comment', elem.commentElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('base') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{TFhirOperationDefinition}(json, 'base', elem.base); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.resource.Count > 0) then
+  if not elem.noCompose and doCompose('resource') and (SummaryOption in [soFull, soSummary, soData]) and (elem.resource.Count > 0) then
   begin
     val := false;
     ext := false;
@@ -32310,26 +33128,26 @@ begin
       json.FinishArray;
     end;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('system') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeBooleanValue(json, 'system', elem.systemElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('system') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeBooleanProps(json, 'system', elem.systemElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('type_') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeBooleanValue(json, 'type', elem.type_Element, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('type_') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeBooleanProps(json, 'type', elem.type_Element, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('instance') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeBooleanValue(json, 'instance', elem.instanceElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('instance') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeBooleanProps(json, 'instance', elem.instanceElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.parameterList.Count > 0) then
+  if not elem.noCompose and doCompose('parameter') and (SummaryOption in [soFull, soData]) and (elem.parameterList.Count > 0) then
   begin
     json.valueArray('parameter');
     for i := 0 to elem.parameterList.Count - 1 do
       ComposeOperationDefinitionParameter(json, '', elem.parameterList[i]); {z - }
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.overloadList.Count > 0) then
+  if not elem.noCompose and doCompose('overload') and (SummaryOption in [soFull, soData]) and (elem.overloadList.Count > 0) then
   begin
     json.valueArray('overload');
     for i := 0 to elem.overloadList.Count - 1 do
@@ -32478,7 +33296,7 @@ begin
   if (elem = nil) then
     exit;
   ComposeDomainResourceProperties(json, elem);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.issueList.Count > 0) then
+  if not elem.noCompose and doCompose('issue') and (SummaryOption in [soFull, soSummary, soData]) and (elem.issueList.Count > 0) then
   begin
     json.valueArray('issue');
     for i := 0 to elem.issueList.Count - 1 do
@@ -32592,29 +33410,29 @@ begin
   if (elem = nil) then
     exit;
   ComposeDomainResourceProperties(json, elem);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.identifierList.Count > 0) then
+  if not elem.noCompose and doCompose('identifier') and (SummaryOption in [soFull, soSummary, soData]) and (elem.identifierList.Count > 0) then
   begin
     json.valueArray('identifier');
     for i := 0 to elem.identifierList.Count - 1 do
       ComposeIdentifier(json, '', elem.identifierList[i]); {z - Identifier}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('active') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeBooleanValue(json, 'active', elem.activeElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('active') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeBooleanProps(json, 'active', elem.activeElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.type_List.Count > 0) then
+  if not elem.noCompose and doCompose('type_') and (SummaryOption in [soFull, soSummary, soData]) and (elem.type_List.Count > 0) then
   begin
     json.valueArray('type');
     for i := 0 to elem.type_List.Count - 1 do
       ComposeCodeableConcept(json, '', elem.type_List[i]); {z - CodeableConcept}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('name') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeStringValue(json, 'name', elem.nameElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('name') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeStringProps(json, 'name', elem.nameElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.aliasList.Count > 0) then
+  if not elem.noCompose and doCompose('alias') and (SummaryOption in [soFull, soData]) and (elem.aliasList.Count > 0) then
   begin
     ext := false;
     val := false;
@@ -32638,30 +33456,30 @@ begin
       json.FinishArray;
     end;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.telecomList.Count > 0) then
+  if not elem.noCompose and doCompose('telecom') and (SummaryOption in [soFull, soData]) and (elem.telecomList.Count > 0) then
   begin
     json.valueArray('telecom');
     for i := 0 to elem.telecomList.Count - 1 do
       ComposeContactPoint(json, '', elem.telecomList[i]); {z - ContactPoint}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.addressList.Count > 0) then
+  if not elem.noCompose and doCompose('address') and (SummaryOption in [soFull, soData]) and (elem.addressList.Count > 0) then
   begin
     json.valueArray('address');
     for i := 0 to elem.addressList.Count - 1 do
       ComposeAddress(json, '', elem.addressList[i]); {z - Address}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('partOf') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{TFhirOrganization}(json, 'partOf', elem.partOf); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.contactList.Count > 0) then
+  if not elem.noCompose and doCompose('contact') and (SummaryOption in [soFull, soData]) and (elem.contactList.Count > 0) then
   begin
     json.valueArray('contact');
     for i := 0 to elem.contactList.Count - 1 do
       ComposeOrganizationContact(json, '', elem.contactList[i]); {z - }
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.endpointList.Count > 0) then
+  if not elem.noCompose and doCompose('endpoint') and (SummaryOption in [soFull, soData]) and (elem.endpointList.Count > 0) then
   begin
     json.valueArray('endpoint');
     for i := 0 to elem.endpointList.Count - 1 do
@@ -32932,38 +33750,38 @@ begin
   if (elem = nil) then
     exit;
   ComposeDomainResourceProperties(json, elem);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.identifierList.Count > 0) then
+  if not elem.noCompose and doCompose('identifier') and (SummaryOption in [soFull, soSummary, soData]) and (elem.identifierList.Count > 0) then
   begin
     json.valueArray('identifier');
     for i := 0 to elem.identifierList.Count - 1 do
       ComposeIdentifier(json, '', elem.identifierList[i]); {z - Identifier}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('active') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeBooleanValue(json, 'active', elem.activeElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('active') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeBooleanProps(json, 'active', elem.activeElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.nameList.Count > 0) then
+  if not elem.noCompose and doCompose('name') and (SummaryOption in [soFull, soSummary, soData]) and (elem.nameList.Count > 0) then
   begin
     json.valueArray('name');
     for i := 0 to elem.nameList.Count - 1 do
       ComposeHumanName(json, '', elem.nameList[i]); {z - HumanName}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.telecomList.Count > 0) then
+  if not elem.noCompose and doCompose('telecom') and (SummaryOption in [soFull, soSummary, soData]) and (elem.telecomList.Count > 0) then
   begin
     json.valueArray('telecom');
     for i := 0 to elem.telecomList.Count - 1 do
       ComposeContactPoint(json, '', elem.telecomList[i]); {z - ContactPoint}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('gender') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumValue(json, 'gender', elem.GenderElement, CODES_TFhirAdministrativeGenderEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('gender') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumProps(json, 'gender', elem.GenderElement, CODES_TFhirAdministrativeGenderEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('birthDate') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeDateValue(json, 'birthDate', elem.birthDateElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('birthDate') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeDateProps(json, 'birthDate', elem.birthDateElement, false);
   if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.deceased is TFhirBoolean) then 
   begin
@@ -32975,14 +33793,14 @@ begin
     ComposeDateTimeValue(json, 'deceasedDateTime', TFhirDateTime(elem.deceased), false);
     ComposeDateTimeProps(json, 'deceasedDateTime', TFhirDateTime(elem.deceased), false);
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.addressList.Count > 0) then
+  if not elem.noCompose and doCompose('address') and (SummaryOption in [soFull, soSummary, soData]) and (elem.addressList.Count > 0) then
   begin
     json.valueArray('address');
     for i := 0 to elem.addressList.Count - 1 do
       ComposeAddress(json, '', elem.addressList[i]); {z - Address}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('maritalStatus') and (SummaryOption in [soFull, soData]) then
     ComposeCodeableConcept(json, 'maritalStatus', elem.maritalStatus); {a}
   if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.multipleBirth is TFhirBoolean) then 
   begin
@@ -32994,39 +33812,39 @@ begin
     ComposeIntegerValue(json, 'multipleBirthInteger', TFhirInteger(elem.multipleBirth), false);
     ComposeIntegerProps(json, 'multipleBirthInteger', TFhirInteger(elem.multipleBirth), false);
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.photoList.Count > 0) then
+  if not elem.noCompose and doCompose('photo') and (SummaryOption in [soFull, soData]) and (elem.photoList.Count > 0) then
   begin
     json.valueArray('photo');
     for i := 0 to elem.photoList.Count - 1 do
       ComposeAttachment(json, '', elem.photoList[i]); {z - Attachment}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.contactList.Count > 0) then
+  if not elem.noCompose and doCompose('contact') and (SummaryOption in [soFull, soData]) and (elem.contactList.Count > 0) then
   begin
     json.valueArray('contact');
     for i := 0 to elem.contactList.Count - 1 do
       ComposePatientContact(json, '', elem.contactList[i]); {z - }
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('animal') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposePatientAnimal(json, 'animal', elem.animal); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.communicationList.Count > 0) then
+  if not elem.noCompose and doCompose('communication') and (SummaryOption in [soFull, soData]) and (elem.communicationList.Count > 0) then
   begin
     json.valueArray('communication');
     for i := 0 to elem.communicationList.Count - 1 do
       ComposePatientCommunication(json, '', elem.communicationList[i]); {z - }
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.generalPractitionerList.Count > 0) then
+  if not elem.noCompose and doCompose('generalPractitioner') and (SummaryOption in [soFull, soData]) and (elem.generalPractitionerList.Count > 0) then
   begin
     json.valueArray('generalPractitioner');
     for i := 0 to elem.generalPractitionerList.Count - 1 do
       ComposeReference{Resource}(json, '', elem.generalPractitionerList[i]); {z - Reference(Organization|Practitioner)}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('managingOrganization') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{TFhirOrganization}(json, 'managingOrganization', elem.managingOrganization); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.link_List.Count > 0) then
+  if not elem.noCompose and doCompose('link_') and (SummaryOption in [soFull, soSummary, soData]) and (elem.link_List.Count > 0) then
   begin
     json.valueArray('link');
     for i := 0 to elem.link_List.Count - 1 do
@@ -33085,36 +33903,36 @@ begin
   if (elem = nil) then
     exit;
   ComposeDomainResourceProperties(json, elem);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.identifierList.Count > 0) then
+  if not elem.noCompose and doCompose('identifier') and (SummaryOption in [soFull, soData]) and (elem.identifierList.Count > 0) then
   begin
     json.valueArray('identifier');
     for i := 0 to elem.identifierList.Count - 1 do
       ComposeIdentifier(json, '', elem.identifierList[i]); {z - Identifier}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('status') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumValue(json, 'status', elem.StatusElement, CODES_TFhirFmStatusEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('status') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumProps(json, 'status', elem.StatusElement, CODES_TFhirFmStatusEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('request') and (SummaryOption in [soFull, soData]) then
     ComposeReference{TFhirReference}(json, 'request', elem.request); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('response') and (SummaryOption in [soFull, soData]) then
     ComposeReference{TFhirReference}(json, 'response', elem.response); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('statusDate') and (SummaryOption in [soFull, soData]) then
     ComposeDateValue(json, 'statusDate', elem.statusDateElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('statusDate') and (SummaryOption in [soFull, soData]) then
     ComposeDateProps(json, 'statusDate', elem.statusDateElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('created') and (SummaryOption in [soFull, soData]) then
     ComposeDateTimeValue(json, 'created', elem.createdElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('created') and (SummaryOption in [soFull, soData]) then
     ComposeDateTimeProps(json, 'created', elem.createdElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('target') and (SummaryOption in [soFull, soData]) then
     ComposeReference{TFhirOrganization}(json, 'target', elem.target); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('provider') and (SummaryOption in [soFull, soData]) then
     ComposeReference{TFhirPractitioner}(json, 'provider', elem.provider); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('organization') and (SummaryOption in [soFull, soData]) then
     ComposeReference{TFhirOrganization}(json, 'organization', elem.organization); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('paymentStatus') and (SummaryOption in [soFull, soData]) then
     ComposeCodeableConcept(json, 'paymentStatus', elem.paymentStatus); {a}
 end;
 
@@ -33278,51 +34096,51 @@ begin
   if (elem = nil) then
     exit;
   ComposeDomainResourceProperties(json, elem);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.identifierList.Count > 0) then
+  if not elem.noCompose and doCompose('identifier') and (SummaryOption in [soFull, soData]) and (elem.identifierList.Count > 0) then
   begin
     json.valueArray('identifier');
     for i := 0 to elem.identifierList.Count - 1 do
       ComposeIdentifier(json, '', elem.identifierList[i]); {z - Identifier}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('status') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumValue(json, 'status', elem.StatusElement, CODES_TFhirFmStatusEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('status') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumProps(json, 'status', elem.StatusElement, CODES_TFhirFmStatusEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('period') and (SummaryOption in [soFull, soData]) then
     ComposePeriod(json, 'period', elem.period); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('created') and (SummaryOption in [soFull, soData]) then
     ComposeDateTimeValue(json, 'created', elem.createdElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('created') and (SummaryOption in [soFull, soData]) then
     ComposeDateTimeProps(json, 'created', elem.createdElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('organization') and (SummaryOption in [soFull, soData]) then
     ComposeReference{TFhirOrganization}(json, 'organization', elem.organization); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('request') and (SummaryOption in [soFull, soData]) then
     ComposeReference{TFhirProcessRequest}(json, 'request', elem.request); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('outcome') and (SummaryOption in [soFull, soData]) then
      ComposeEnumValue(json, 'outcome', elem.OutcomeElement, CODES_TFhirRemittanceOutcomeEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('outcome') and (SummaryOption in [soFull, soData]) then
      ComposeEnumProps(json, 'outcome', elem.OutcomeElement, CODES_TFhirRemittanceOutcomeEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('disposition') and (SummaryOption in [soFull, soData]) then
     ComposeStringValue(json, 'disposition', elem.dispositionElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('disposition') and (SummaryOption in [soFull, soData]) then
     ComposeStringProps(json, 'disposition', elem.dispositionElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('requestProvider') and (SummaryOption in [soFull, soData]) then
     ComposeReference{TFhirPractitioner}(json, 'requestProvider', elem.requestProvider); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('requestOrganization') and (SummaryOption in [soFull, soData]) then
     ComposeReference{TFhirOrganization}(json, 'requestOrganization', elem.requestOrganization); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.detailList.Count > 0) then
+  if not elem.noCompose and doCompose('detail') and (SummaryOption in [soFull, soData]) and (elem.detailList.Count > 0) then
   begin
     json.valueArray('detail');
     for i := 0 to elem.detailList.Count - 1 do
       ComposePaymentReconciliationDetail(json, '', elem.detailList[i]); {z - }
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('form') and (SummaryOption in [soFull, soData]) then
     ComposeCodeableConcept(json, 'form', elem.form); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('total') and (SummaryOption in [soFull, soData]) then
     ComposeMoney(json, 'total', elem.total); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.processNoteList.Count > 0) then
+  if not elem.noCompose and doCompose('processNote') and (SummaryOption in [soFull, soData]) and (elem.processNoteList.Count > 0) then
   begin
     json.valueArray('processNote');
     for i := 0 to elem.processNoteList.Count - 1 do
@@ -33421,51 +34239,51 @@ begin
   if (elem = nil) then
     exit;
   ComposeDomainResourceProperties(json, elem);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.identifierList.Count > 0) then
+  if not elem.noCompose and doCompose('identifier') and (SummaryOption in [soFull, soData]) and (elem.identifierList.Count > 0) then
   begin
     json.valueArray('identifier');
     for i := 0 to elem.identifierList.Count - 1 do
       ComposeIdentifier(json, '', elem.identifierList[i]); {z - Identifier}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.nameList.Count > 0) then
+  if not elem.noCompose and doCompose('name') and (SummaryOption in [soFull, soSummary, soData]) and (elem.nameList.Count > 0) then
   begin
     json.valueArray('name');
     for i := 0 to elem.nameList.Count - 1 do
       ComposeHumanName(json, '', elem.nameList[i]); {z - HumanName}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.telecomList.Count > 0) then
+  if not elem.noCompose and doCompose('telecom') and (SummaryOption in [soFull, soSummary, soData]) and (elem.telecomList.Count > 0) then
   begin
     json.valueArray('telecom');
     for i := 0 to elem.telecomList.Count - 1 do
       ComposeContactPoint(json, '', elem.telecomList[i]); {z - ContactPoint}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('gender') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumValue(json, 'gender', elem.GenderElement, CODES_TFhirAdministrativeGenderEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('gender') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumProps(json, 'gender', elem.GenderElement, CODES_TFhirAdministrativeGenderEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('birthDate') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeDateValue(json, 'birthDate', elem.birthDateElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('birthDate') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeDateProps(json, 'birthDate', elem.birthDateElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.addressList.Count > 0) then
+  if not elem.noCompose and doCompose('address') and (SummaryOption in [soFull, soData]) and (elem.addressList.Count > 0) then
   begin
     json.valueArray('address');
     for i := 0 to elem.addressList.Count - 1 do
       ComposeAddress(json, '', elem.addressList[i]); {z - Address}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('photo') and (SummaryOption in [soFull, soData]) then
     ComposeAttachment(json, 'photo', elem.photo); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('managingOrganization') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{TFhirOrganization}(json, 'managingOrganization', elem.managingOrganization); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('active') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeBooleanValue(json, 'active', elem.activeElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('active') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeBooleanProps(json, 'active', elem.activeElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.link_List.Count > 0) then
+  if not elem.noCompose and doCompose('link_') and (SummaryOption in [soFull, soData]) and (elem.link_List.Count > 0) then
   begin
     json.valueArray('link');
     for i := 0 to elem.link_List.Count - 1 do
@@ -34127,130 +34945,130 @@ begin
   if (elem = nil) then
     exit;
   ComposeDomainResourceProperties(json, elem);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('url') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeUriValue(json, 'url', elem.urlElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('url') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeUriProps(json, 'url', elem.urlElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.identifierList.Count > 0) then
+  if not elem.noCompose and doCompose('identifier') and (SummaryOption in [soFull, soSummary, soData]) and (elem.identifierList.Count > 0) then
   begin
     json.valueArray('identifier');
     for i := 0 to elem.identifierList.Count - 1 do
       ComposeIdentifier(json, '', elem.identifierList[i]); {z - Identifier}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('version') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeStringValue(json, 'version', elem.versionElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('version') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeStringProps(json, 'version', elem.versionElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('name') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeStringValue(json, 'name', elem.nameElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('name') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeStringProps(json, 'name', elem.nameElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('title') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeStringValue(json, 'title', elem.titleElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('title') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeStringProps(json, 'title', elem.titleElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('type_') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeCodeableConcept(json, 'type', elem.type_); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('status') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumValue(json, 'status', elem.StatusElement, CODES_TFhirPublicationStatusEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('status') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumProps(json, 'status', elem.StatusElement, CODES_TFhirPublicationStatusEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('experimental') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeBooleanValue(json, 'experimental', elem.experimentalElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('experimental') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeBooleanProps(json, 'experimental', elem.experimentalElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('date') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeDateTimeValue(json, 'date', elem.dateElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('date') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeDateTimeProps(json, 'date', elem.dateElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('publisher') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeStringValue(json, 'publisher', elem.publisherElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('publisher') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeStringProps(json, 'publisher', elem.publisherElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('description') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeMarkdownValue(json, 'description', elem.descriptionElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('description') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeMarkdownProps(json, 'description', elem.descriptionElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('purpose') and (SummaryOption in [soFull, soData]) then
     ComposeMarkdownValue(json, 'purpose', elem.purposeElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('purpose') and (SummaryOption in [soFull, soData]) then
     ComposeMarkdownProps(json, 'purpose', elem.purposeElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('usage') and (SummaryOption in [soFull, soData]) then
     ComposeStringValue(json, 'usage', elem.usageElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('usage') and (SummaryOption in [soFull, soData]) then
     ComposeStringProps(json, 'usage', elem.usageElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('approvalDate') and (SummaryOption in [soFull, soData]) then
     ComposeDateValue(json, 'approvalDate', elem.approvalDateElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('approvalDate') and (SummaryOption in [soFull, soData]) then
     ComposeDateProps(json, 'approvalDate', elem.approvalDateElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('lastReviewDate') and (SummaryOption in [soFull, soData]) then
     ComposeDateValue(json, 'lastReviewDate', elem.lastReviewDateElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('lastReviewDate') and (SummaryOption in [soFull, soData]) then
     ComposeDateProps(json, 'lastReviewDate', elem.lastReviewDateElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('effectivePeriod') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposePeriod(json, 'effectivePeriod', elem.effectivePeriod); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.useContextList.Count > 0) then
+  if not elem.noCompose and doCompose('useContext') and (SummaryOption in [soFull, soSummary, soData]) and (elem.useContextList.Count > 0) then
   begin
     json.valueArray('useContext');
     for i := 0 to elem.useContextList.Count - 1 do
       ComposeUsageContext(json, '', elem.useContextList[i]); {z - UsageContext}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.jurisdictionList.Count > 0) then
+  if not elem.noCompose and doCompose('jurisdiction') and (SummaryOption in [soFull, soSummary, soData]) and (elem.jurisdictionList.Count > 0) then
   begin
     json.valueArray('jurisdiction');
     for i := 0 to elem.jurisdictionList.Count - 1 do
       ComposeCodeableConcept(json, '', elem.jurisdictionList[i]); {z - CodeableConcept}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.topicList.Count > 0) then
+  if not elem.noCompose and doCompose('topic') and (SummaryOption in [soFull, soData]) and (elem.topicList.Count > 0) then
   begin
     json.valueArray('topic');
     for i := 0 to elem.topicList.Count - 1 do
       ComposeCodeableConcept(json, '', elem.topicList[i]); {z - CodeableConcept}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.contributorList.Count > 0) then
+  if not elem.noCompose and doCompose('contributor') and (SummaryOption in [soFull, soData]) and (elem.contributorList.Count > 0) then
   begin
     json.valueArray('contributor');
     for i := 0 to elem.contributorList.Count - 1 do
       ComposeContributor(json, '', elem.contributorList[i]); {z - Contributor}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.contactList.Count > 0) then
+  if not elem.noCompose and doCompose('contact') and (SummaryOption in [soFull, soSummary, soData]) and (elem.contactList.Count > 0) then
   begin
     json.valueArray('contact');
     for i := 0 to elem.contactList.Count - 1 do
       ComposeContactDetail(json, '', elem.contactList[i]); {z - ContactDetail}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('copyright') and (SummaryOption in [soFull, soData]) then
     ComposeMarkdownValue(json, 'copyright', elem.copyrightElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('copyright') and (SummaryOption in [soFull, soData]) then
     ComposeMarkdownProps(json, 'copyright', elem.copyrightElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.relatedArtifactList.Count > 0) then
+  if not elem.noCompose and doCompose('relatedArtifact') and (SummaryOption in [soFull, soData]) and (elem.relatedArtifactList.Count > 0) then
   begin
     json.valueArray('relatedArtifact');
     for i := 0 to elem.relatedArtifactList.Count - 1 do
       ComposeRelatedArtifact(json, '', elem.relatedArtifactList[i]); {z - RelatedArtifact}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.library_List.Count > 0) then
+  if not elem.noCompose and doCompose('library_') and (SummaryOption in [soFull, soData]) and (elem.library_List.Count > 0) then
   begin
     json.valueArray('library');
     for i := 0 to elem.library_List.Count - 1 do
       ComposeReference{TFhirLibrary}(json, '', elem.library_List[i]); {z - Reference(Library)}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.goalList.Count > 0) then
+  if not elem.noCompose and doCompose('goal') and (SummaryOption in [soFull, soData]) and (elem.goalList.Count > 0) then
   begin
     json.valueArray('goal');
     for i := 0 to elem.goalList.Count - 1 do
       ComposePlanDefinitionGoal(json, '', elem.goalList[i]); {z - }
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.actionList.Count > 0) then
+  if not elem.noCompose and doCompose('action') and (SummaryOption in [soFull, soData]) and (elem.actionList.Count > 0) then
   begin
     json.valueArray('action');
     for i := 0 to elem.actionList.Count - 1 do
@@ -34362,61 +35180,61 @@ begin
   if (elem = nil) then
     exit;
   ComposeDomainResourceProperties(json, elem);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.identifierList.Count > 0) then
+  if not elem.noCompose and doCompose('identifier') and (SummaryOption in [soFull, soSummary, soData]) and (elem.identifierList.Count > 0) then
   begin
     json.valueArray('identifier');
     for i := 0 to elem.identifierList.Count - 1 do
       ComposeIdentifier(json, '', elem.identifierList[i]); {z - Identifier}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('active') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeBooleanValue(json, 'active', elem.activeElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('active') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeBooleanProps(json, 'active', elem.activeElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.nameList.Count > 0) then
+  if not elem.noCompose and doCompose('name') and (SummaryOption in [soFull, soSummary, soData]) and (elem.nameList.Count > 0) then
   begin
     json.valueArray('name');
     for i := 0 to elem.nameList.Count - 1 do
       ComposeHumanName(json, '', elem.nameList[i]); {z - HumanName}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.telecomList.Count > 0) then
+  if not elem.noCompose and doCompose('telecom') and (SummaryOption in [soFull, soSummary, soData]) and (elem.telecomList.Count > 0) then
   begin
     json.valueArray('telecom');
     for i := 0 to elem.telecomList.Count - 1 do
       ComposeContactPoint(json, '', elem.telecomList[i]); {z - ContactPoint}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.addressList.Count > 0) then
+  if not elem.noCompose and doCompose('address') and (SummaryOption in [soFull, soSummary, soData]) and (elem.addressList.Count > 0) then
   begin
     json.valueArray('address');
     for i := 0 to elem.addressList.Count - 1 do
       ComposeAddress(json, '', elem.addressList[i]); {z - Address}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('gender') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumValue(json, 'gender', elem.GenderElement, CODES_TFhirAdministrativeGenderEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('gender') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumProps(json, 'gender', elem.GenderElement, CODES_TFhirAdministrativeGenderEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('birthDate') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeDateValue(json, 'birthDate', elem.birthDateElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('birthDate') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeDateProps(json, 'birthDate', elem.birthDateElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.photoList.Count > 0) then
+  if not elem.noCompose and doCompose('photo') and (SummaryOption in [soFull, soData]) and (elem.photoList.Count > 0) then
   begin
     json.valueArray('photo');
     for i := 0 to elem.photoList.Count - 1 do
       ComposeAttachment(json, '', elem.photoList[i]); {z - Attachment}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.qualificationList.Count > 0) then
+  if not elem.noCompose and doCompose('qualification') and (SummaryOption in [soFull, soData]) and (elem.qualificationList.Count > 0) then
   begin
     json.valueArray('qualification');
     for i := 0 to elem.qualificationList.Count - 1 do
       ComposePractitionerQualification(json, '', elem.qualificationList[i]); {z - }
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.communicationList.Count > 0) then
+  if not elem.noCompose and doCompose('communication') and (SummaryOption in [soFull, soData]) and (elem.communicationList.Count > 0) then
   begin
     json.valueArray('communication');
     for i := 0 to elem.communicationList.Count - 1 do
@@ -34601,77 +35419,77 @@ begin
   if (elem = nil) then
     exit;
   ComposeDomainResourceProperties(json, elem);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.identifierList.Count > 0) then
+  if not elem.noCompose and doCompose('identifier') and (SummaryOption in [soFull, soSummary, soData]) and (elem.identifierList.Count > 0) then
   begin
     json.valueArray('identifier');
     for i := 0 to elem.identifierList.Count - 1 do
       ComposeIdentifier(json, '', elem.identifierList[i]); {z - Identifier}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('active') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeBooleanValue(json, 'active', elem.activeElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('active') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeBooleanProps(json, 'active', elem.activeElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('period') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposePeriod(json, 'period', elem.period); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('practitioner') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{TFhirPractitioner}(json, 'practitioner', elem.practitioner); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('organization') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{TFhirOrganization}(json, 'organization', elem.organization); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.codeList.Count > 0) then
+  if not elem.noCompose and doCompose('code') and (SummaryOption in [soFull, soSummary, soData]) and (elem.codeList.Count > 0) then
   begin
     json.valueArray('code');
     for i := 0 to elem.codeList.Count - 1 do
       ComposeCodeableConcept(json, '', elem.codeList[i]); {z - CodeableConcept}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.specialtyList.Count > 0) then
+  if not elem.noCompose and doCompose('specialty') and (SummaryOption in [soFull, soSummary, soData]) and (elem.specialtyList.Count > 0) then
   begin
     json.valueArray('specialty');
     for i := 0 to elem.specialtyList.Count - 1 do
       ComposeCodeableConcept(json, '', elem.specialtyList[i]); {z - CodeableConcept}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.locationList.Count > 0) then
+  if not elem.noCompose and doCompose('location') and (SummaryOption in [soFull, soSummary, soData]) and (elem.locationList.Count > 0) then
   begin
     json.valueArray('location');
     for i := 0 to elem.locationList.Count - 1 do
       ComposeReference{TFhirLocation}(json, '', elem.locationList[i]); {z - Reference(Location)}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.healthcareServiceList.Count > 0) then
+  if not elem.noCompose and doCompose('healthcareService') and (SummaryOption in [soFull, soData]) and (elem.healthcareServiceList.Count > 0) then
   begin
     json.valueArray('healthcareService');
     for i := 0 to elem.healthcareServiceList.Count - 1 do
       ComposeReference{TFhirHealthcareService}(json, '', elem.healthcareServiceList[i]); {z - Reference(HealthcareService)}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.telecomList.Count > 0) then
+  if not elem.noCompose and doCompose('telecom') and (SummaryOption in [soFull, soSummary, soData]) and (elem.telecomList.Count > 0) then
   begin
     json.valueArray('telecom');
     for i := 0 to elem.telecomList.Count - 1 do
       ComposeContactPoint(json, '', elem.telecomList[i]); {z - ContactPoint}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.availableTimeList.Count > 0) then
+  if not elem.noCompose and doCompose('availableTime') and (SummaryOption in [soFull, soData]) and (elem.availableTimeList.Count > 0) then
   begin
     json.valueArray('availableTime');
     for i := 0 to elem.availableTimeList.Count - 1 do
       ComposePractitionerRoleAvailableTime(json, '', elem.availableTimeList[i]); {z - }
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.notAvailableList.Count > 0) then
+  if not elem.noCompose and doCompose('notAvailable') and (SummaryOption in [soFull, soData]) and (elem.notAvailableList.Count > 0) then
   begin
     json.valueArray('notAvailable');
     for i := 0 to elem.notAvailableList.Count - 1 do
       ComposePractitionerRoleNotAvailable(json, '', elem.notAvailableList[i]); {z - }
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('availabilityExceptions') and (SummaryOption in [soFull, soData]) then
     ComposeStringValue(json, 'availabilityExceptions', elem.availabilityExceptionsElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('availabilityExceptions') and (SummaryOption in [soFull, soData]) then
     ComposeStringProps(json, 'availabilityExceptions', elem.availabilityExceptionsElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.endpointList.Count > 0) then
+  if not elem.noCompose and doCompose('endpoint') and (SummaryOption in [soFull, soData]) and (elem.endpointList.Count > 0) then
   begin
     json.valueArray('endpoint');
     for i := 0 to elem.endpointList.Count - 1 do
@@ -34850,51 +35668,51 @@ begin
   if (elem = nil) then
     exit;
   ComposeDomainResourceProperties(json, elem);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.identifierList.Count > 0) then
+  if not elem.noCompose and doCompose('identifier') and (SummaryOption in [soFull, soSummary, soData]) and (elem.identifierList.Count > 0) then
   begin
     json.valueArray('identifier');
     for i := 0 to elem.identifierList.Count - 1 do
       ComposeIdentifier(json, '', elem.identifierList[i]); {z - Identifier}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.definitionList.Count > 0) then
+  if not elem.noCompose and doCompose('definition') and (SummaryOption in [soFull, soSummary, soData]) and (elem.definitionList.Count > 0) then
   begin
     json.valueArray('definition');
     for i := 0 to elem.definitionList.Count - 1 do
       ComposeReference{Resource}(json, '', elem.definitionList[i]); {z - Reference(PlanDefinition|ActivityDefinition|HealthcareService)}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.basedOnList.Count > 0) then
+  if not elem.noCompose and doCompose('basedOn') and (SummaryOption in [soFull, soSummary, soData]) and (elem.basedOnList.Count > 0) then
   begin
     json.valueArray('basedOn');
     for i := 0 to elem.basedOnList.Count - 1 do
       ComposeReference{Resource}(json, '', elem.basedOnList[i]); {z - Reference(CarePlan|ProcedureRequest)}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.partOfList.Count > 0) then
+  if not elem.noCompose and doCompose('partOf') and (SummaryOption in [soFull, soSummary, soData]) and (elem.partOfList.Count > 0) then
   begin
     json.valueArray('partOf');
     for i := 0 to elem.partOfList.Count - 1 do
       ComposeReference{Resource}(json, '', elem.partOfList[i]); {z - Reference(Procedure|Observation|MedicationAdministration)}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('status') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumValue(json, 'status', elem.StatusElement, CODES_TFhirEventStatusEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('status') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumProps(json, 'status', elem.StatusElement, CODES_TFhirEventStatusEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('notDone') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeBooleanValue(json, 'notDone', elem.notDoneElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('notDone') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeBooleanProps(json, 'notDone', elem.notDoneElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('notDoneReason') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeCodeableConcept(json, 'notDoneReason', elem.notDoneReason); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('category') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeCodeableConcept(json, 'category', elem.category); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('code') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeCodeableConcept(json, 'code', elem.code); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('subject') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{Resource}(json, 'subject', elem.subject); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('context') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{Resource}(json, 'context', elem.context); {a}
   if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.performed is TFhirPeriod) then 
     ComposePeriod(json, 'performedPeriod', TFhirPeriod(elem.performed)) 
@@ -34912,88 +35730,88 @@ begin
     ComposeStringValue(json, 'performedString', TFhirString(elem.performed), false);
     ComposeStringProps(json, 'performedString', TFhirString(elem.performed), false);
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.performerList.Count > 0) then
+  if not elem.noCompose and doCompose('performer') and (SummaryOption in [soFull, soSummary, soData]) and (elem.performerList.Count > 0) then
   begin
     json.valueArray('performer');
     for i := 0 to elem.performerList.Count - 1 do
       ComposeProcedurePerformer(json, '', elem.performerList[i]); {z - }
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('location') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{TFhirLocation}(json, 'location', elem.location); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.reasonCodeList.Count > 0) then
+  if not elem.noCompose and doCompose('reasonCode') and (SummaryOption in [soFull, soSummary, soData]) and (elem.reasonCodeList.Count > 0) then
   begin
     json.valueArray('reasonCode');
     for i := 0 to elem.reasonCodeList.Count - 1 do
       ComposeCodeableConcept(json, '', elem.reasonCodeList[i]); {z - CodeableConcept}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.reasonReferenceList.Count > 0) then
+  if not elem.noCompose and doCompose('reasonReference') and (SummaryOption in [soFull, soSummary, soData]) and (elem.reasonReferenceList.Count > 0) then
   begin
     json.valueArray('reasonReference');
     for i := 0 to elem.reasonReferenceList.Count - 1 do
       ComposeReference{Resource}(json, '', elem.reasonReferenceList[i]); {z - Reference(Condition|Observation)}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.bodySiteList.Count > 0) then
+  if not elem.noCompose and doCompose('bodySite') and (SummaryOption in [soFull, soSummary, soData]) and (elem.bodySiteList.Count > 0) then
   begin
     json.valueArray('bodySite');
     for i := 0 to elem.bodySiteList.Count - 1 do
       ComposeCodeableConcept(json, '', elem.bodySiteList[i]); {z - CodeableConcept}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('outcome') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeCodeableConcept(json, 'outcome', elem.outcome); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.reportList.Count > 0) then
+  if not elem.noCompose and doCompose('report') and (SummaryOption in [soFull, soData]) and (elem.reportList.Count > 0) then
   begin
     json.valueArray('report');
     for i := 0 to elem.reportList.Count - 1 do
       ComposeReference{TFhirDiagnosticReport}(json, '', elem.reportList[i]); {z - Reference(DiagnosticReport)}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.complicationList.Count > 0) then
+  if not elem.noCompose and doCompose('complication') and (SummaryOption in [soFull, soData]) and (elem.complicationList.Count > 0) then
   begin
     json.valueArray('complication');
     for i := 0 to elem.complicationList.Count - 1 do
       ComposeCodeableConcept(json, '', elem.complicationList[i]); {z - CodeableConcept}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.complicationDetailList.Count > 0) then
+  if not elem.noCompose and doCompose('complicationDetail') and (SummaryOption in [soFull, soData]) and (elem.complicationDetailList.Count > 0) then
   begin
     json.valueArray('complicationDetail');
     for i := 0 to elem.complicationDetailList.Count - 1 do
       ComposeReference{TFhirCondition}(json, '', elem.complicationDetailList[i]); {z - Reference(Condition)}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.followUpList.Count > 0) then
+  if not elem.noCompose and doCompose('followUp') and (SummaryOption in [soFull, soData]) and (elem.followUpList.Count > 0) then
   begin
     json.valueArray('followUp');
     for i := 0 to elem.followUpList.Count - 1 do
       ComposeCodeableConcept(json, '', elem.followUpList[i]); {z - CodeableConcept}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.noteList.Count > 0) then
+  if not elem.noCompose and doCompose('note') and (SummaryOption in [soFull, soData]) and (elem.noteList.Count > 0) then
   begin
     json.valueArray('note');
     for i := 0 to elem.noteList.Count - 1 do
       ComposeAnnotation(json, '', elem.noteList[i]); {z - Annotation}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.focalDeviceList.Count > 0) then
+  if not elem.noCompose and doCompose('focalDevice') and (SummaryOption in [soFull, soData]) and (elem.focalDeviceList.Count > 0) then
   begin
     json.valueArray('focalDevice');
     for i := 0 to elem.focalDeviceList.Count - 1 do
       ComposeProcedureFocalDevice(json, '', elem.focalDeviceList[i]); {z - }
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.usedReferenceList.Count > 0) then
+  if not elem.noCompose and doCompose('usedReference') and (SummaryOption in [soFull, soData]) and (elem.usedReferenceList.Count > 0) then
   begin
     json.valueArray('usedReference');
     for i := 0 to elem.usedReferenceList.Count - 1 do
       ComposeReference{Resource}(json, '', elem.usedReferenceList[i]); {z - Reference(Device|Medication|Substance)}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.usedCodeList.Count > 0) then
+  if not elem.noCompose and doCompose('usedCode') and (SummaryOption in [soFull, soData]) and (elem.usedCodeList.Count > 0) then
   begin
     json.valueArray('usedCode');
     for i := 0 to elem.usedCodeList.Count - 1 do
@@ -35130,64 +35948,64 @@ begin
   if (elem = nil) then
     exit;
   ComposeDomainResourceProperties(json, elem);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.identifierList.Count > 0) then
+  if not elem.noCompose and doCompose('identifier') and (SummaryOption in [soFull, soSummary, soData]) and (elem.identifierList.Count > 0) then
   begin
     json.valueArray('identifier');
     for i := 0 to elem.identifierList.Count - 1 do
       ComposeIdentifier(json, '', elem.identifierList[i]); {z - Identifier}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.definitionList.Count > 0) then
+  if not elem.noCompose and doCompose('definition') and (SummaryOption in [soFull, soSummary, soData]) and (elem.definitionList.Count > 0) then
   begin
     json.valueArray('definition');
     for i := 0 to elem.definitionList.Count - 1 do
       ComposeReference{Resource}(json, '', elem.definitionList[i]); {z - Reference(ActivityDefinition|PlanDefinition)}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.basedOnList.Count > 0) then
+  if not elem.noCompose and doCompose('basedOn') and (SummaryOption in [soFull, soSummary, soData]) and (elem.basedOnList.Count > 0) then
   begin
     json.valueArray('basedOn');
     for i := 0 to elem.basedOnList.Count - 1 do
       ComposeReference{Resource}(json, '', elem.basedOnList[i]); {z - Reference(CarePlan|ProcedureRequest|MedicationRequest)}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.replacesList.Count > 0) then
+  if not elem.noCompose and doCompose('replaces') and (SummaryOption in [soFull, soSummary, soData]) and (elem.replacesList.Count > 0) then
   begin
     json.valueArray('replaces');
     for i := 0 to elem.replacesList.Count - 1 do
       ComposeReference{TFhirProcedureRequest}(json, '', elem.replacesList[i]); {z - Reference(ProcedureRequest)}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('requisition') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeIdentifier(json, 'requisition', elem.requisition); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('status') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumValue(json, 'status', elem.StatusElement, CODES_TFhirRequestStatusEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('status') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumProps(json, 'status', elem.StatusElement, CODES_TFhirRequestStatusEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('intent') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumValue(json, 'intent', elem.IntentElement, CODES_TFhirRequestIntentEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('intent') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumProps(json, 'intent', elem.IntentElement, CODES_TFhirRequestIntentEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('priority') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumValue(json, 'priority', elem.PriorityElement, CODES_TFhirRequestPriorityEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('priority') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumProps(json, 'priority', elem.PriorityElement, CODES_TFhirRequestPriorityEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('doNotPerform') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeBooleanValue(json, 'doNotPerform', elem.doNotPerformElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('doNotPerform') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeBooleanProps(json, 'doNotPerform', elem.doNotPerformElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.categoryList.Count > 0) then
+  if not elem.noCompose and doCompose('category') and (SummaryOption in [soFull, soSummary, soData]) and (elem.categoryList.Count > 0) then
   begin
     json.valueArray('category');
     for i := 0 to elem.categoryList.Count - 1 do
       ComposeCodeableConcept(json, '', elem.categoryList[i]); {z - CodeableConcept}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('code') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeCodeableConcept(json, 'code', elem.code); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('subject') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{Resource}(json, 'subject', elem.subject); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('context') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{Resource}(json, 'context', elem.context); {a}
   if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.occurrence is TFhirPeriod) then 
     ComposePeriod(json, 'occurrencePeriod', TFhirPeriod(elem.occurrence)) 
@@ -35205,63 +36023,63 @@ begin
     ComposeBooleanValue(json, 'asNeededBoolean', TFhirBoolean(elem.asNeeded), false);
     ComposeBooleanProps(json, 'asNeededBoolean', TFhirBoolean(elem.asNeeded), false);
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('authoredOn') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeDateTimeValue(json, 'authoredOn', elem.authoredOnElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('authoredOn') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeDateTimeProps(json, 'authoredOn', elem.authoredOnElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('requester') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeProcedureRequestRequester(json, 'requester', elem.requester); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('performerType') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeCodeableConcept(json, 'performerType', elem.performerType); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('performer') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{Resource}(json, 'performer', elem.performer); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.reasonCodeList.Count > 0) then
+  if not elem.noCompose and doCompose('reasonCode') and (SummaryOption in [soFull, soSummary, soData]) and (elem.reasonCodeList.Count > 0) then
   begin
     json.valueArray('reasonCode');
     for i := 0 to elem.reasonCodeList.Count - 1 do
       ComposeCodeableConcept(json, '', elem.reasonCodeList[i]); {z - CodeableConcept}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.reasonReferenceList.Count > 0) then
+  if not elem.noCompose and doCompose('reasonReference') and (SummaryOption in [soFull, soSummary, soData]) and (elem.reasonReferenceList.Count > 0) then
   begin
     json.valueArray('reasonReference');
     for i := 0 to elem.reasonReferenceList.Count - 1 do
       ComposeReference{Resource}(json, '', elem.reasonReferenceList[i]); {z - Reference(Condition|Observation|DiagnosticReport|DocumentReference)}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.supportingInfoList.Count > 0) then
+  if not elem.noCompose and doCompose('supportingInfo') and (SummaryOption in [soFull, soData]) and (elem.supportingInfoList.Count > 0) then
   begin
     json.valueArray('supportingInfo');
     for i := 0 to elem.supportingInfoList.Count - 1 do
       ComposeReference{TFhirReference}(json, '', elem.supportingInfoList[i]); {z - Reference(Any)}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.specimenList.Count > 0) then
+  if not elem.noCompose and doCompose('specimen') and (SummaryOption in [soFull, soSummary, soData]) and (elem.specimenList.Count > 0) then
   begin
     json.valueArray('specimen');
     for i := 0 to elem.specimenList.Count - 1 do
       ComposeReference{TFhirSpecimen}(json, '', elem.specimenList[i]); {z - Reference(Specimen)}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.bodySiteList.Count > 0) then
+  if not elem.noCompose and doCompose('bodySite') and (SummaryOption in [soFull, soSummary, soData]) and (elem.bodySiteList.Count > 0) then
   begin
     json.valueArray('bodySite');
     for i := 0 to elem.bodySiteList.Count - 1 do
       ComposeCodeableConcept(json, '', elem.bodySiteList[i]); {z - CodeableConcept}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.noteList.Count > 0) then
+  if not elem.noCompose and doCompose('note') and (SummaryOption in [soFull, soData]) and (elem.noteList.Count > 0) then
   begin
     json.valueArray('note');
     for i := 0 to elem.noteList.Count - 1 do
       ComposeAnnotation(json, '', elem.noteList[i]); {z - Annotation}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('description') and (SummaryOption in [soFull, soData]) then
     ComposeStringValue(json, 'description', elem.descriptionElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('description') and (SummaryOption in [soFull, soData]) then
     ComposeStringProps(json, 'description', elem.descriptionElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.relevantHistoryList.Count > 0) then
+  if not elem.noCompose and doCompose('relevantHistory') and (SummaryOption in [soFull, soData]) and (elem.relevantHistoryList.Count > 0) then
   begin
     json.valueArray('relevantHistory');
     for i := 0 to elem.relevantHistoryList.Count - 1 do
@@ -35368,51 +36186,51 @@ begin
   if (elem = nil) then
     exit;
   ComposeDomainResourceProperties(json, elem);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.identifierList.Count > 0) then
+  if not elem.noCompose and doCompose('identifier') and (SummaryOption in [soFull, soData]) and (elem.identifierList.Count > 0) then
   begin
     json.valueArray('identifier');
     for i := 0 to elem.identifierList.Count - 1 do
       ComposeIdentifier(json, '', elem.identifierList[i]); {z - Identifier}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('status') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumValue(json, 'status', elem.StatusElement, CODES_TFhirFmStatusEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('status') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumProps(json, 'status', elem.StatusElement, CODES_TFhirFmStatusEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('action') and (SummaryOption in [soFull, soData]) then
      ComposeEnumValue(json, 'action', elem.ActionElement, CODES_TFhirActionlistEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('action') and (SummaryOption in [soFull, soData]) then
      ComposeEnumProps(json, 'action', elem.ActionElement, CODES_TFhirActionlistEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('target') and (SummaryOption in [soFull, soData]) then
     ComposeReference{TFhirOrganization}(json, 'target', elem.target); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('created') and (SummaryOption in [soFull, soData]) then
     ComposeDateTimeValue(json, 'created', elem.createdElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('created') and (SummaryOption in [soFull, soData]) then
     ComposeDateTimeProps(json, 'created', elem.createdElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('provider') and (SummaryOption in [soFull, soData]) then
     ComposeReference{TFhirPractitioner}(json, 'provider', elem.provider); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('organization') and (SummaryOption in [soFull, soData]) then
     ComposeReference{TFhirOrganization}(json, 'organization', elem.organization); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('request') and (SummaryOption in [soFull, soData]) then
     ComposeReference{TFhirReference}(json, 'request', elem.request); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('response') and (SummaryOption in [soFull, soData]) then
     ComposeReference{TFhirReference}(json, 'response', elem.response); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('nullify') and (SummaryOption in [soFull, soData]) then
     ComposeBooleanValue(json, 'nullify', elem.nullifyElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('nullify') and (SummaryOption in [soFull, soData]) then
     ComposeBooleanProps(json, 'nullify', elem.nullifyElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('reference') and (SummaryOption in [soFull, soData]) then
     ComposeStringValue(json, 'reference', elem.referenceElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('reference') and (SummaryOption in [soFull, soData]) then
     ComposeStringProps(json, 'reference', elem.referenceElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.itemList.Count > 0) then
+  if not elem.noCompose and doCompose('item') and (SummaryOption in [soFull, soData]) and (elem.itemList.Count > 0) then
   begin
     json.valueArray('item');
     for i := 0 to elem.itemList.Count - 1 do
       ComposeProcessRequestItem(json, '', elem.itemList[i]); {z - }
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.includeList.Count > 0) then
+  if not elem.noCompose and doCompose('include') and (SummaryOption in [soFull, soData]) and (elem.includeList.Count > 0) then
   begin
     ext := false;
     val := false;
@@ -35436,7 +36254,7 @@ begin
       json.FinishArray;
     end;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.excludeList.Count > 0) then
+  if not elem.noCompose and doCompose('exclude') and (SummaryOption in [soFull, soData]) and (elem.excludeList.Count > 0) then
   begin
     ext := false;
     val := false;
@@ -35460,7 +36278,7 @@ begin
       json.FinishArray;
     end;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('period') and (SummaryOption in [soFull, soData]) then
     ComposePeriod(json, 'period', elem.period); {a}
 end;
 
@@ -35562,54 +36380,54 @@ begin
   if (elem = nil) then
     exit;
   ComposeDomainResourceProperties(json, elem);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.identifierList.Count > 0) then
+  if not elem.noCompose and doCompose('identifier') and (SummaryOption in [soFull, soData]) and (elem.identifierList.Count > 0) then
   begin
     json.valueArray('identifier');
     for i := 0 to elem.identifierList.Count - 1 do
       ComposeIdentifier(json, '', elem.identifierList[i]); {z - Identifier}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('status') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumValue(json, 'status', elem.StatusElement, CODES_TFhirFmStatusEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('status') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumProps(json, 'status', elem.StatusElement, CODES_TFhirFmStatusEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('created') and (SummaryOption in [soFull, soData]) then
     ComposeDateTimeValue(json, 'created', elem.createdElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('created') and (SummaryOption in [soFull, soData]) then
     ComposeDateTimeProps(json, 'created', elem.createdElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('organization') and (SummaryOption in [soFull, soData]) then
     ComposeReference{TFhirOrganization}(json, 'organization', elem.organization); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('request') and (SummaryOption in [soFull, soData]) then
     ComposeReference{TFhirReference}(json, 'request', elem.request); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('outcome') and (SummaryOption in [soFull, soData]) then
      ComposeEnumValue(json, 'outcome', elem.OutcomeElement, CODES_TFhirProcessOutcomeEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('outcome') and (SummaryOption in [soFull, soData]) then
      ComposeEnumProps(json, 'outcome', elem.OutcomeElement, CODES_TFhirProcessOutcomeEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('disposition') and (SummaryOption in [soFull, soData]) then
     ComposeStringValue(json, 'disposition', elem.dispositionElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('disposition') and (SummaryOption in [soFull, soData]) then
     ComposeStringProps(json, 'disposition', elem.dispositionElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('requestProvider') and (SummaryOption in [soFull, soData]) then
     ComposeReference{TFhirPractitioner}(json, 'requestProvider', elem.requestProvider); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('requestOrganization') and (SummaryOption in [soFull, soData]) then
     ComposeReference{TFhirOrganization}(json, 'requestOrganization', elem.requestOrganization); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('form') and (SummaryOption in [soFull, soData]) then
     ComposeCodeableConcept(json, 'form', elem.form); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.processNoteList.Count > 0) then
+  if not elem.noCompose and doCompose('processNote') and (SummaryOption in [soFull, soData]) and (elem.processNoteList.Count > 0) then
   begin
     json.valueArray('processNote');
     for i := 0 to elem.processNoteList.Count - 1 do
       ComposeProcessResponseProcessNote(json, '', elem.processNoteList[i]); {z - }
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.errorList.Count > 0) then
+  if not elem.noCompose and doCompose('error') and (SummaryOption in [soFull, soData]) and (elem.errorList.Count > 0) then
   begin
     json.valueArray('error');
     for i := 0 to elem.errorList.Count - 1 do
       ComposeCodeableConcept(json, '', elem.errorList[i]); {z - CodeableConcept}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.communicationRequestList.Count > 0) then
+  if not elem.noCompose and doCompose('communicationRequest') and (SummaryOption in [soFull, soData]) and (elem.communicationRequestList.Count > 0) then
   begin
     json.valueArray('communicationRequest');
     for i := 0 to elem.communicationRequestList.Count - 1 do
@@ -35770,10 +36588,10 @@ begin
     ParseDomainResourceProperties(jsn, result);
     if jsn.has('target') then
       iterateArray(jsn.vArr['target'], result.targetList, parseReference{TFhirReference});
-    if jsn.has('occuredPeriod') {a4} then
-      result.occured := ParsePeriod(jsn.vObj['occuredPeriod']);
-    if jsn.has('occuredDateTime') or jsn.has('_occuredDateTime') then
-      result.occured := parseDateTime(jsn['occuredDateTime'], jsn.vObj['_occuredDateTime']);
+    if jsn.has('occurredPeriod') {a4} then
+      result.occurred := ParsePeriod(jsn.vObj['occurredPeriod']);
+    if jsn.has('occurredDateTime') or jsn.has('_occurredDateTime') then
+      result.occurred := parseDateTime(jsn['occurredDateTime'], jsn.vObj['_occurredDateTime']);
     if jsn.has('recorded') or jsn.has('_recorded') then
         result.recordedElement := ParseInstant(jsn['recorded'], jsn.vObj['_recorded']);{q}
       if jsn.has('policy') or jsn.has('_policy') then
@@ -35801,25 +36619,25 @@ begin
   if (elem = nil) then
     exit;
   ComposeDomainResourceProperties(json, elem);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.targetList.Count > 0) then
+  if not elem.noCompose and doCompose('target') and (SummaryOption in [soFull, soSummary, soData]) and (elem.targetList.Count > 0) then
   begin
     json.valueArray('target');
     for i := 0 to elem.targetList.Count - 1 do
       ComposeReference{TFhirReference}(json, '', elem.targetList[i]); {z - Reference(Any)}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.occured is TFhirPeriod) then 
-    ComposePeriod(json, 'occuredPeriod', TFhirPeriod(elem.occured)) 
-  else if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.occured is TFhirDateTime) then 
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.occurred is TFhirPeriod) then 
+    ComposePeriod(json, 'occurredPeriod', TFhirPeriod(elem.occurred)) 
+  else if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.occurred is TFhirDateTime) then 
   begin
-    ComposeDateTimeValue(json, 'occuredDateTime', TFhirDateTime(elem.occured), false);
-    ComposeDateTimeProps(json, 'occuredDateTime', TFhirDateTime(elem.occured), false);
+    ComposeDateTimeValue(json, 'occurredDateTime', TFhirDateTime(elem.occurred), false);
+    ComposeDateTimeProps(json, 'occurredDateTime', TFhirDateTime(elem.occurred), false);
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('recorded') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeInstantValue(json, 'recorded', elem.recordedElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('recorded') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeInstantProps(json, 'recorded', elem.recordedElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.policyList.Count > 0) then
+  if not elem.noCompose and doCompose('policy') and (SummaryOption in [soFull, soData]) and (elem.policyList.Count > 0) then
   begin
     ext := false;
     val := false;
@@ -35843,32 +36661,32 @@ begin
       json.FinishArray;
     end;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('location') and (SummaryOption in [soFull, soData]) then
     ComposeReference{TFhirLocation}(json, 'location', elem.location); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.reasonList.Count > 0) then
+  if not elem.noCompose and doCompose('reason') and (SummaryOption in [soFull, soData]) and (elem.reasonList.Count > 0) then
   begin
     json.valueArray('reason');
     for i := 0 to elem.reasonList.Count - 1 do
       ComposeCodeableConcept(json, '', elem.reasonList[i]); {z - CodeableConcept}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('activity') and (SummaryOption in [soFull, soData]) then
     ComposeCodeableConcept(json, 'activity', elem.activity); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.agentList.Count > 0) then
+  if not elem.noCompose and doCompose('agent') and (SummaryOption in [soFull, soData]) and (elem.agentList.Count > 0) then
   begin
     json.valueArray('agent');
     for i := 0 to elem.agentList.Count - 1 do
       ComposeProvenanceAgent(json, '', elem.agentList[i]); {z - }
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.entityList.Count > 0) then
+  if not elem.noCompose and doCompose('entity') and (SummaryOption in [soFull, soData]) and (elem.entityList.Count > 0) then
   begin
     json.valueArray('entity');
     for i := 0 to elem.entityList.Count - 1 do
       ComposeProvenanceEntity(json, '', elem.entityList[i]); {z - }
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.signatureList.Count > 0) then
+  if not elem.noCompose and doCompose('signature') and (SummaryOption in [soFull, soData]) and (elem.signatureList.Count > 0) then
   begin
     json.valueArray('signature');
     for i := 0 to elem.signatureList.Count - 1 do
@@ -36282,36 +37100,38 @@ begin
         result.nameElement := ParseString(jsn['name'], jsn.vObj['_name']);{q}
     if jsn.has('title') or jsn.has('_title') then
         result.titleElement := ParseString(jsn['title'], jsn.vObj['_title']);{q}
+      if jsn.has('derivedFrom') or jsn.has('_derivedFrom') then
+      iteratePrimitiveArray(jsn.vArr['derivedFrom'], jsn.vArr['_derivedFrom'], result.derivedFromList, parseUri);
     if jsn.has('status') or jsn.has('_status')  then
       result.statusElement := parseEnum(jsn.path+'/status', jsn['status'], jsn.vObj['_status'], CODES_TFhirPublicationStatusEnum, SYSTEMS_TFhirPublicationStatusEnum);
     if jsn.has('experimental') or jsn.has('_experimental') then
         result.experimentalElement := ParseBoolean(jsn['experimental'], jsn.vObj['_experimental']);{q}
+    if jsn.has('subjectType') or jsn.has('_subjectType') then
+      iterateEnumArray(jsn.vArr['subjectType'], jsn.vArr['_subjectType'], jsn.path+'/subjectType', result.subjectType, parseEnum, CODES_TFhirResourceTypesEnum, SYSTEMS_TFhirResourceTypesEnum);
     if jsn.has('date') or jsn.has('_date') then
         result.dateElement := ParseDateTime(jsn['date'], jsn.vObj['_date']);{q}
     if jsn.has('publisher') or jsn.has('_publisher') then
         result.publisherElement := ParseString(jsn['publisher'], jsn.vObj['_publisher']);{q}
+    if jsn.has('contact') then
+      iterateArray(jsn.vArr['contact'], result.contactList, parseContactDetail);
+    if jsn.has('useContext') then
+      iterateArray(jsn.vArr['useContext'], result.useContextList, parseUsageContext);
+    if jsn.has('jurisdiction') then
+      iterateArray(jsn.vArr['jurisdiction'], result.jurisdictionList, parseCodeableConcept);
     if jsn.has('description') or jsn.has('_description') then
         result.descriptionElement := ParseMarkdown(jsn['description'], jsn.vObj['_description']);{q}
     if jsn.has('purpose') or jsn.has('_purpose') then
         result.purposeElement := ParseMarkdown(jsn['purpose'], jsn.vObj['_purpose']);{q}
+    if jsn.has('copyright') or jsn.has('_copyright') then
+        result.copyrightElement := ParseMarkdown(jsn['copyright'], jsn.vObj['_copyright']);{q}
     if jsn.has('approvalDate') or jsn.has('_approvalDate') then
         result.approvalDateElement := ParseDate(jsn['approvalDate'], jsn.vObj['_approvalDate']);{q}
     if jsn.has('lastReviewDate') or jsn.has('_lastReviewDate') then
         result.lastReviewDateElement := ParseDate(jsn['lastReviewDate'], jsn.vObj['_lastReviewDate']);{q}
     if jsn.has('effectivePeriod') then
         result.effectivePeriod := ParsePeriod(jsn.vObj['effectivePeriod']);{q3}
-    if jsn.has('useContext') then
-      iterateArray(jsn.vArr['useContext'], result.useContextList, parseUsageContext);
-    if jsn.has('jurisdiction') then
-      iterateArray(jsn.vArr['jurisdiction'], result.jurisdictionList, parseCodeableConcept);
-    if jsn.has('contact') then
-      iterateArray(jsn.vArr['contact'], result.contactList, parseContactDetail);
-    if jsn.has('copyright') or jsn.has('_copyright') then
-        result.copyrightElement := ParseMarkdown(jsn['copyright'], jsn.vObj['_copyright']);{q}
     if jsn.has('code') then
       iterateArray(jsn.vArr['code'], result.codeList, parseCoding);
-    if jsn.has('subjectType') or jsn.has('_subjectType') then
-      iterateEnumArray(jsn.vArr['subjectType'], jsn.vArr['_subjectType'], jsn.path+'/subjectType', result.subjectType, parseEnum, CODES_TFhirResourceTypesEnum, SYSTEMS_TFhirResourceTypesEnum);
     if jsn.has('item') then
       iterateArray(jsn.vArr['item'], result.itemList, parseQuestionnaireItem);
 end;
@@ -36325,96 +37145,62 @@ begin
   if (elem = nil) then
     exit;
   ComposeDomainResourceProperties(json, elem);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('url') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeUriValue(json, 'url', elem.urlElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('url') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeUriProps(json, 'url', elem.urlElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.identifierList.Count > 0) then
+  if not elem.noCompose and doCompose('identifier') and (SummaryOption in [soFull, soSummary, soData]) and (elem.identifierList.Count > 0) then
   begin
     json.valueArray('identifier');
     for i := 0 to elem.identifierList.Count - 1 do
       ComposeIdentifier(json, '', elem.identifierList[i]); {z - Identifier}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('version') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeStringValue(json, 'version', elem.versionElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('version') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeStringProps(json, 'version', elem.versionElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('name') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeStringValue(json, 'name', elem.nameElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('name') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeStringProps(json, 'name', elem.nameElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('title') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeStringValue(json, 'title', elem.titleElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('title') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeStringProps(json, 'title', elem.titleElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('derivedFrom') and (SummaryOption in [soFull, soData]) and (elem.derivedFromList.Count > 0) then
+  begin
+    ext := false;
+    val := false;
+    for i := 0 to elem.derivedFromList.Count - 1 do
+    begin
+      ext := ext or ((elem.derivedFromList[i].id <> '') or (elem.derivedFromList[i].hasExtensionList) {no-comments or (elem.derivedFromList[i].hasComments)});
+      val := val or (elem.derivedFromList[i].hasPrimitiveValue);
+    end;
+    if val then
+    begin
+      json.valueArray('derivedFrom');
+      for i := 0 to elem.derivedFromList.Count - 1 do
+        ComposeUriValue(json, '',elem.derivedFromList[i], true);
+      json.FinishArray;
+    end;
+    if ext then
+    begin
+      json.valueArray('_derivedFrom');
+      for i := 0 to elem.derivedFromList.Count - 1 do
+        ComposeUriProps(json, '',elem.derivedFromList[i], true);
+      json.FinishArray;
+    end;
+  end;
+  if not elem.noCompose and doCompose('status') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumValue(json, 'status', elem.StatusElement, CODES_TFhirPublicationStatusEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('status') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumProps(json, 'status', elem.StatusElement, CODES_TFhirPublicationStatusEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('experimental') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeBooleanValue(json, 'experimental', elem.experimentalElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('experimental') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeBooleanProps(json, 'experimental', elem.experimentalElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
-    ComposeDateTimeValue(json, 'date', elem.dateElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
-    ComposeDateTimeProps(json, 'date', elem.dateElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
-    ComposeStringValue(json, 'publisher', elem.publisherElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
-    ComposeStringProps(json, 'publisher', elem.publisherElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
-    ComposeMarkdownValue(json, 'description', elem.descriptionElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
-    ComposeMarkdownProps(json, 'description', elem.descriptionElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
-    ComposeMarkdownValue(json, 'purpose', elem.purposeElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
-    ComposeMarkdownProps(json, 'purpose', elem.purposeElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
-    ComposeDateValue(json, 'approvalDate', elem.approvalDateElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
-    ComposeDateProps(json, 'approvalDate', elem.approvalDateElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
-    ComposeDateValue(json, 'lastReviewDate', elem.lastReviewDateElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
-    ComposeDateProps(json, 'lastReviewDate', elem.lastReviewDateElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
-    ComposePeriod(json, 'effectivePeriod', elem.effectivePeriod); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.useContextList.Count > 0) then
-  begin
-    json.valueArray('useContext');
-    for i := 0 to elem.useContextList.Count - 1 do
-      ComposeUsageContext(json, '', elem.useContextList[i]); {z - UsageContext}
-    json.FinishArray;
-  end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.jurisdictionList.Count > 0) then
-  begin
-    json.valueArray('jurisdiction');
-    for i := 0 to elem.jurisdictionList.Count - 1 do
-      ComposeCodeableConcept(json, '', elem.jurisdictionList[i]); {z - CodeableConcept}
-    json.FinishArray;
-  end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.contactList.Count > 0) then
-  begin
-    json.valueArray('contact');
-    for i := 0 to elem.contactList.Count - 1 do
-      ComposeContactDetail(json, '', elem.contactList[i]); {z - ContactDetail}
-    json.FinishArray;
-  end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
-    ComposeMarkdownValue(json, 'copyright', elem.copyrightElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
-    ComposeMarkdownProps(json, 'copyright', elem.copyrightElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.codeList.Count > 0) then
-  begin
-    json.valueArray('code');
-    for i := 0 to elem.codeList.Count - 1 do
-      ComposeCoding(json, '', elem.codeList[i]); {z - Coding}
-    json.FinishArray;
-  end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.subjectType.Count > 0) then
+  if not elem.noCompose and doCompose('subjectType') and (SummaryOption in [soFull, soSummary, soData]) and (elem.subjectType.Count > 0) then
   begin
     val := false;
     ext := false;
@@ -36438,7 +37224,65 @@ begin
       json.FinishArray;
     end;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.itemList.Count > 0) then
+  if not elem.noCompose and doCompose('date') and (SummaryOption in [soFull, soSummary, soData]) then
+    ComposeDateTimeValue(json, 'date', elem.dateElement, false);
+  if not elem.noCompose and doCompose('date') and (SummaryOption in [soFull, soSummary, soData]) then
+    ComposeDateTimeProps(json, 'date', elem.dateElement, false);
+  if not elem.noCompose and doCompose('publisher') and (SummaryOption in [soFull, soSummary, soData]) then
+    ComposeStringValue(json, 'publisher', elem.publisherElement, false);
+  if not elem.noCompose and doCompose('publisher') and (SummaryOption in [soFull, soSummary, soData]) then
+    ComposeStringProps(json, 'publisher', elem.publisherElement, false);
+  if not elem.noCompose and doCompose('contact') and (SummaryOption in [soFull, soSummary, soData]) and (elem.contactList.Count > 0) then
+  begin
+    json.valueArray('contact');
+    for i := 0 to elem.contactList.Count - 1 do
+      ComposeContactDetail(json, '', elem.contactList[i]); {z - ContactDetail}
+    json.FinishArray;
+  end;
+  if not elem.noCompose and doCompose('useContext') and (SummaryOption in [soFull, soSummary, soData]) and (elem.useContextList.Count > 0) then
+  begin
+    json.valueArray('useContext');
+    for i := 0 to elem.useContextList.Count - 1 do
+      ComposeUsageContext(json, '', elem.useContextList[i]); {z - UsageContext}
+    json.FinishArray;
+  end;
+  if not elem.noCompose and doCompose('jurisdiction') and (SummaryOption in [soFull, soSummary, soData]) and (elem.jurisdictionList.Count > 0) then
+  begin
+    json.valueArray('jurisdiction');
+    for i := 0 to elem.jurisdictionList.Count - 1 do
+      ComposeCodeableConcept(json, '', elem.jurisdictionList[i]); {z - CodeableConcept}
+    json.FinishArray;
+  end;
+  if not elem.noCompose and doCompose('description') and (SummaryOption in [soFull, soData]) then
+    ComposeMarkdownValue(json, 'description', elem.descriptionElement, false);
+  if not elem.noCompose and doCompose('description') and (SummaryOption in [soFull, soData]) then
+    ComposeMarkdownProps(json, 'description', elem.descriptionElement, false);
+  if not elem.noCompose and doCompose('purpose') and (SummaryOption in [soFull, soData]) then
+    ComposeMarkdownValue(json, 'purpose', elem.purposeElement, false);
+  if not elem.noCompose and doCompose('purpose') and (SummaryOption in [soFull, soData]) then
+    ComposeMarkdownProps(json, 'purpose', elem.purposeElement, false);
+  if not elem.noCompose and doCompose('copyright') and (SummaryOption in [soFull, soData]) then
+    ComposeMarkdownValue(json, 'copyright', elem.copyrightElement, false);
+  if not elem.noCompose and doCompose('copyright') and (SummaryOption in [soFull, soData]) then
+    ComposeMarkdownProps(json, 'copyright', elem.copyrightElement, false);
+  if not elem.noCompose and doCompose('approvalDate') and (SummaryOption in [soFull, soData]) then
+    ComposeDateValue(json, 'approvalDate', elem.approvalDateElement, false);
+  if not elem.noCompose and doCompose('approvalDate') and (SummaryOption in [soFull, soData]) then
+    ComposeDateProps(json, 'approvalDate', elem.approvalDateElement, false);
+  if not elem.noCompose and doCompose('lastReviewDate') and (SummaryOption in [soFull, soData]) then
+    ComposeDateValue(json, 'lastReviewDate', elem.lastReviewDateElement, false);
+  if not elem.noCompose and doCompose('lastReviewDate') and (SummaryOption in [soFull, soData]) then
+    ComposeDateProps(json, 'lastReviewDate', elem.lastReviewDateElement, false);
+  if not elem.noCompose and doCompose('effectivePeriod') and (SummaryOption in [soFull, soSummary, soData]) then
+    ComposePeriod(json, 'effectivePeriod', elem.effectivePeriod); {a}
+  if not elem.noCompose and doCompose('code') and (SummaryOption in [soFull, soSummary, soData]) and (elem.codeList.Count > 0) then
+  begin
+    json.valueArray('code');
+    for i := 0 to elem.codeList.Count - 1 do
+      ComposeCoding(json, '', elem.codeList[i]); {z - Coding}
+    json.FinishArray;
+  end;
+  if not elem.noCompose and doCompose('item') and (SummaryOption in [soFull, soData]) and (elem.itemList.Count > 0) then
   begin
     json.valueArray('item');
     for i := 0 to elem.itemList.Count - 1 do
@@ -36657,8 +37501,8 @@ begin
         result.identifier := ParseIdentifier(jsn.vObj['identifier']);{q3}
     if jsn.has('basedOn') then
       iterateArray(jsn.vArr['basedOn'], result.basedOnList, parseReference{Resource});
-    if jsn.has('parent') then
-      iterateArray(jsn.vArr['parent'], result.parentList, parseReference{Resource});
+    if jsn.has('partOf') then
+      iterateArray(jsn.vArr['partOf'], result.partOfList, parseReference{Resource});
     if jsn.has('questionnaire') then
         result.questionnaire := ParseReference{TFhirQuestionnaire}(jsn.vObj['questionnaire']);{q3}
     if jsn.has('status') or jsn.has('_status')  then
@@ -36684,41 +37528,41 @@ begin
   if (elem = nil) then
     exit;
   ComposeDomainResourceProperties(json, elem);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('identifier') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeIdentifier(json, 'identifier', elem.identifier); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.basedOnList.Count > 0) then
+  if not elem.noCompose and doCompose('basedOn') and (SummaryOption in [soFull, soSummary, soData]) and (elem.basedOnList.Count > 0) then
   begin
     json.valueArray('basedOn');
     for i := 0 to elem.basedOnList.Count - 1 do
       ComposeReference{Resource}(json, '', elem.basedOnList[i]); {z - Reference(CarePlan|ProcedureRequest)}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.parentList.Count > 0) then
+  if not elem.noCompose and doCompose('partOf') and (SummaryOption in [soFull, soSummary, soData]) and (elem.partOfList.Count > 0) then
   begin
-    json.valueArray('parent');
-    for i := 0 to elem.parentList.Count - 1 do
-      ComposeReference{Resource}(json, '', elem.parentList[i]); {z - Reference(Observation|Procedure)}
+    json.valueArray('partOf');
+    for i := 0 to elem.partOfList.Count - 1 do
+      ComposeReference{Resource}(json, '', elem.partOfList[i]); {z - Reference(Observation|Procedure)}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('questionnaire') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{TFhirQuestionnaire}(json, 'questionnaire', elem.questionnaire); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('status') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumValue(json, 'status', elem.StatusElement, CODES_TFhirQuestionnaireAnswersStatusEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('status') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumProps(json, 'status', elem.StatusElement, CODES_TFhirQuestionnaireAnswersStatusEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('subject') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{TFhirReference}(json, 'subject', elem.subject); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('context') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{Resource}(json, 'context', elem.context); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('authored') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeDateTimeValue(json, 'authored', elem.authoredElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('authored') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeDateTimeProps(json, 'authored', elem.authoredElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('author') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{Resource}(json, 'author', elem.author); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('source') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{Resource}(json, 'source', elem.source); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.itemList.Count > 0) then
+  if not elem.noCompose and doCompose('item') and (SummaryOption in [soFull, soData]) and (elem.itemList.Count > 0) then
   begin
     json.valueArray('item');
     for i := 0 to elem.itemList.Count - 1 do
@@ -36779,58 +37623,58 @@ begin
   if (elem = nil) then
     exit;
   ComposeDomainResourceProperties(json, elem);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.identifierList.Count > 0) then
+  if not elem.noCompose and doCompose('identifier') and (SummaryOption in [soFull, soSummary, soData]) and (elem.identifierList.Count > 0) then
   begin
     json.valueArray('identifier');
     for i := 0 to elem.identifierList.Count - 1 do
       ComposeIdentifier(json, '', elem.identifierList[i]); {z - Identifier}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('active') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeBooleanValue(json, 'active', elem.activeElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('active') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeBooleanProps(json, 'active', elem.activeElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('patient') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{TFhirPatient}(json, 'patient', elem.patient); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('relationship') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeCodeableConcept(json, 'relationship', elem.relationship); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.nameList.Count > 0) then
+  if not elem.noCompose and doCompose('name') and (SummaryOption in [soFull, soSummary, soData]) and (elem.nameList.Count > 0) then
   begin
     json.valueArray('name');
     for i := 0 to elem.nameList.Count - 1 do
       ComposeHumanName(json, '', elem.nameList[i]); {z - HumanName}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.telecomList.Count > 0) then
+  if not elem.noCompose and doCompose('telecom') and (SummaryOption in [soFull, soSummary, soData]) and (elem.telecomList.Count > 0) then
   begin
     json.valueArray('telecom');
     for i := 0 to elem.telecomList.Count - 1 do
       ComposeContactPoint(json, '', elem.telecomList[i]); {z - ContactPoint}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('gender') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumValue(json, 'gender', elem.GenderElement, CODES_TFhirAdministrativeGenderEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('gender') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumProps(json, 'gender', elem.GenderElement, CODES_TFhirAdministrativeGenderEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('birthDate') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeDateValue(json, 'birthDate', elem.birthDateElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('birthDate') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeDateProps(json, 'birthDate', elem.birthDateElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.addressList.Count > 0) then
+  if not elem.noCompose and doCompose('address') and (SummaryOption in [soFull, soSummary, soData]) and (elem.addressList.Count > 0) then
   begin
     json.valueArray('address');
     for i := 0 to elem.addressList.Count - 1 do
       ComposeAddress(json, '', elem.addressList[i]); {z - Address}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.photoList.Count > 0) then
+  if not elem.noCompose and doCompose('photo') and (SummaryOption in [soFull, soData]) and (elem.photoList.Count > 0) then
   begin
     json.valueArray('photo');
     for i := 0 to elem.photoList.Count - 1 do
       ComposeAttachment(json, '', elem.photoList[i]); {z - Attachment}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('period') and (SummaryOption in [soFull, soData]) then
     ComposePeriod(json, 'period', elem.period); {a}
 end;
 
@@ -37173,82 +38017,82 @@ begin
   if (elem = nil) then
     exit;
   ComposeDomainResourceProperties(json, elem);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.identifierList.Count > 0) then
+  if not elem.noCompose and doCompose('identifier') and (SummaryOption in [soFull, soSummary, soData]) and (elem.identifierList.Count > 0) then
   begin
     json.valueArray('identifier');
     for i := 0 to elem.identifierList.Count - 1 do
       ComposeIdentifier(json, '', elem.identifierList[i]); {z - Identifier}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.definitionList.Count > 0) then
+  if not elem.noCompose and doCompose('definition') and (SummaryOption in [soFull, soData]) and (elem.definitionList.Count > 0) then
   begin
     json.valueArray('definition');
     for i := 0 to elem.definitionList.Count - 1 do
       ComposeReference{TFhirReference}(json, '', elem.definitionList[i]); {z - Reference(Any)}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.basedOnList.Count > 0) then
+  if not elem.noCompose and doCompose('basedOn') and (SummaryOption in [soFull, soData]) and (elem.basedOnList.Count > 0) then
   begin
     json.valueArray('basedOn');
     for i := 0 to elem.basedOnList.Count - 1 do
       ComposeReference{TFhirReference}(json, '', elem.basedOnList[i]); {z - Reference(Any)}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.replacesList.Count > 0) then
+  if not elem.noCompose and doCompose('replaces') and (SummaryOption in [soFull, soData]) and (elem.replacesList.Count > 0) then
   begin
     json.valueArray('replaces');
     for i := 0 to elem.replacesList.Count - 1 do
       ComposeReference{TFhirReference}(json, '', elem.replacesList[i]); {z - Reference(Any)}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('groupIdentifier') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeIdentifier(json, 'groupIdentifier', elem.groupIdentifier); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('status') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumValue(json, 'status', elem.StatusElement, CODES_TFhirRequestStatusEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('status') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumProps(json, 'status', elem.StatusElement, CODES_TFhirRequestStatusEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('intent') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumValue(json, 'intent', elem.IntentElement, CODES_TFhirRequestIntentEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('intent') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumProps(json, 'intent', elem.IntentElement, CODES_TFhirRequestIntentEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('priority') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumValue(json, 'priority', elem.PriorityElement, CODES_TFhirRequestPriorityEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('priority') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumProps(json, 'priority', elem.PriorityElement, CODES_TFhirRequestPriorityEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('code') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeCodeableConcept(json, 'code', elem.code); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('subject') and (SummaryOption in [soFull, soData]) then
     ComposeReference{Resource}(json, 'subject', elem.subject); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('context') and (SummaryOption in [soFull, soData]) then
     ComposeReference{Resource}(json, 'context', elem.context); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('authoredOn') and (SummaryOption in [soFull, soData]) then
     ComposeDateTimeValue(json, 'authoredOn', elem.authoredOnElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('authoredOn') and (SummaryOption in [soFull, soData]) then
     ComposeDateTimeProps(json, 'authoredOn', elem.authoredOnElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('author') and (SummaryOption in [soFull, soData]) then
     ComposeReference{Resource}(json, 'author', elem.author); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.reasonCodeList.Count > 0) then
+  if not elem.noCompose and doCompose('reasonCode') and (SummaryOption in [soFull, soData]) and (elem.reasonCodeList.Count > 0) then
   begin
     json.valueArray('reasonCode');
     for i := 0 to elem.reasonCodeList.Count - 1 do
       ComposeCodeableConcept(json, '', elem.reasonCodeList[i]); {z - CodeableConcept}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.reasonReferenceList.Count > 0) then
+  if not elem.noCompose and doCompose('reasonReference') and (SummaryOption in [soFull, soData]) and (elem.reasonReferenceList.Count > 0) then
   begin
     json.valueArray('reasonReference');
     for i := 0 to elem.reasonReferenceList.Count - 1 do
       ComposeReference{TFhirReference}(json, '', elem.reasonReferenceList[i]); {z - Reference(Any)}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.noteList.Count > 0) then
+  if not elem.noCompose and doCompose('note') and (SummaryOption in [soFull, soData]) and (elem.noteList.Count > 0) then
   begin
     json.valueArray('note');
     for i := 0 to elem.noteList.Count - 1 do
       ComposeAnnotation(json, '', elem.noteList[i]); {z - Annotation}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.actionList.Count > 0) then
+  if not elem.noCompose and doCompose('action') and (SummaryOption in [soFull, soData]) and (elem.actionList.Count > 0) then
   begin
     json.valueArray('action');
     for i := 0 to elem.actionList.Count - 1 do
@@ -37373,111 +38217,111 @@ begin
   if (elem = nil) then
     exit;
   ComposeDomainResourceProperties(json, elem);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.identifierList.Count > 0) then
+  if not elem.noCompose and doCompose('identifier') and (SummaryOption in [soFull, soSummary, soData]) and (elem.identifierList.Count > 0) then
   begin
     json.valueArray('identifier');
     for i := 0 to elem.identifierList.Count - 1 do
       ComposeIdentifier(json, '', elem.identifierList[i]); {z - Identifier}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('title') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeStringValue(json, 'title', elem.titleElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('title') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeStringProps(json, 'title', elem.titleElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.protocolList.Count > 0) then
+  if not elem.noCompose and doCompose('protocol') and (SummaryOption in [soFull, soSummary, soData]) and (elem.protocolList.Count > 0) then
   begin
     json.valueArray('protocol');
     for i := 0 to elem.protocolList.Count - 1 do
       ComposeReference{TFhirPlanDefinition}(json, '', elem.protocolList[i]); {z - Reference(PlanDefinition)}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.partOfList.Count > 0) then
+  if not elem.noCompose and doCompose('partOf') and (SummaryOption in [soFull, soSummary, soData]) and (elem.partOfList.Count > 0) then
   begin
     json.valueArray('partOf');
     for i := 0 to elem.partOfList.Count - 1 do
       ComposeReference{TFhirResearchStudy}(json, '', elem.partOfList[i]); {z - Reference(ResearchStudy)}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('status') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumValue(json, 'status', elem.StatusElement, CODES_TFhirResearchStudyStatusEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('status') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumProps(json, 'status', elem.StatusElement, CODES_TFhirResearchStudyStatusEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.categoryList.Count > 0) then
+  if not elem.noCompose and doCompose('category') and (SummaryOption in [soFull, soSummary, soData]) and (elem.categoryList.Count > 0) then
   begin
     json.valueArray('category');
     for i := 0 to elem.categoryList.Count - 1 do
       ComposeCodeableConcept(json, '', elem.categoryList[i]); {z - CodeableConcept}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.focusList.Count > 0) then
+  if not elem.noCompose and doCompose('focus') and (SummaryOption in [soFull, soSummary, soData]) and (elem.focusList.Count > 0) then
   begin
     json.valueArray('focus');
     for i := 0 to elem.focusList.Count - 1 do
       ComposeCodeableConcept(json, '', elem.focusList[i]); {z - CodeableConcept}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.contactList.Count > 0) then
+  if not elem.noCompose and doCompose('contact') and (SummaryOption in [soFull, soSummary, soData]) and (elem.contactList.Count > 0) then
   begin
     json.valueArray('contact');
     for i := 0 to elem.contactList.Count - 1 do
       ComposeContactDetail(json, '', elem.contactList[i]); {z - ContactDetail}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.relatedArtifactList.Count > 0) then
+  if not elem.noCompose and doCompose('relatedArtifact') and (SummaryOption in [soFull, soData]) and (elem.relatedArtifactList.Count > 0) then
   begin
     json.valueArray('relatedArtifact');
     for i := 0 to elem.relatedArtifactList.Count - 1 do
       ComposeRelatedArtifact(json, '', elem.relatedArtifactList[i]); {z - RelatedArtifact}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.keywordList.Count > 0) then
+  if not elem.noCompose and doCompose('keyword') and (SummaryOption in [soFull, soSummary, soData]) and (elem.keywordList.Count > 0) then
   begin
     json.valueArray('keyword');
     for i := 0 to elem.keywordList.Count - 1 do
       ComposeCodeableConcept(json, '', elem.keywordList[i]); {z - CodeableConcept}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.jurisdictionList.Count > 0) then
+  if not elem.noCompose and doCompose('jurisdiction') and (SummaryOption in [soFull, soSummary, soData]) and (elem.jurisdictionList.Count > 0) then
   begin
     json.valueArray('jurisdiction');
     for i := 0 to elem.jurisdictionList.Count - 1 do
       ComposeCodeableConcept(json, '', elem.jurisdictionList[i]); {z - CodeableConcept}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('description') and (SummaryOption in [soFull, soData]) then
     ComposeMarkdownValue(json, 'description', elem.descriptionElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('description') and (SummaryOption in [soFull, soData]) then
     ComposeMarkdownProps(json, 'description', elem.descriptionElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.enrollmentList.Count > 0) then
+  if not elem.noCompose and doCompose('enrollment') and (SummaryOption in [soFull, soSummary, soData]) and (elem.enrollmentList.Count > 0) then
   begin
     json.valueArray('enrollment');
     for i := 0 to elem.enrollmentList.Count - 1 do
       ComposeReference{TFhirGroup}(json, '', elem.enrollmentList[i]); {z - Reference(Group)}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('period') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposePeriod(json, 'period', elem.period); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('sponsor') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{TFhirOrganization}(json, 'sponsor', elem.sponsor); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('principalInvestigator') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{TFhirPractitioner}(json, 'principalInvestigator', elem.principalInvestigator); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.siteList.Count > 0) then
+  if not elem.noCompose and doCompose('site') and (SummaryOption in [soFull, soSummary, soData]) and (elem.siteList.Count > 0) then
   begin
     json.valueArray('site');
     for i := 0 to elem.siteList.Count - 1 do
       ComposeReference{TFhirLocation}(json, '', elem.siteList[i]); {z - Reference(Location)}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('reasonStopped') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeCodeableConcept(json, 'reasonStopped', elem.reasonStopped); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.noteList.Count > 0) then
+  if not elem.noCompose and doCompose('note') and (SummaryOption in [soFull, soData]) and (elem.noteList.Count > 0) then
   begin
     json.valueArray('note');
     for i := 0 to elem.noteList.Count - 1 do
       ComposeAnnotation(json, '', elem.noteList[i]); {z - Annotation}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.armList.Count > 0) then
+  if not elem.noCompose and doCompose('arm') and (SummaryOption in [soFull, soData]) and (elem.armList.Count > 0) then
   begin
     json.valueArray('arm');
     for i := 0 to elem.armList.Count - 1 do
@@ -37530,27 +38374,27 @@ begin
   if (elem = nil) then
     exit;
   ComposeDomainResourceProperties(json, elem);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('identifier') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeIdentifier(json, 'identifier', elem.identifier); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('status') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumValue(json, 'status', elem.StatusElement, CODES_TFhirResearchSubjectStatusEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('status') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumProps(json, 'status', elem.StatusElement, CODES_TFhirResearchSubjectStatusEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('period') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposePeriod(json, 'period', elem.period); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('study') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{TFhirResearchStudy}(json, 'study', elem.study); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('individual') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{TFhirPatient}(json, 'individual', elem.individual); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('assignedArm') and (SummaryOption in [soFull, soData]) then
     ComposeStringValue(json, 'assignedArm', elem.assignedArmElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('assignedArm') and (SummaryOption in [soFull, soData]) then
     ComposeStringProps(json, 'assignedArm', elem.assignedArmElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('actualArm') and (SummaryOption in [soFull, soData]) then
     ComposeStringValue(json, 'actualArm', elem.actualArmElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('actualArm') and (SummaryOption in [soFull, soData]) then
     ComposeStringProps(json, 'actualArm', elem.actualArmElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('consent') and (SummaryOption in [soFull, soData]) then
     ComposeReference{TFhirConsent}(json, 'consent', elem.consent); {a}
 end;
 
@@ -37689,23 +38533,23 @@ begin
   if (elem = nil) then
     exit;
   ComposeDomainResourceProperties(json, elem);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('identifier') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeIdentifier(json, 'identifier', elem.identifier); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('basedOn') and (SummaryOption in [soFull, soData]) then
     ComposeReference{TFhirReference}(json, 'basedOn', elem.basedOn); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('parent') and (SummaryOption in [soFull, soData]) then
     ComposeReference{TFhirReference}(json, 'parent', elem.parent); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('status') and (SummaryOption in [soFull, soData]) then
      ComposeEnumValue(json, 'status', elem.StatusElement, CODES_TFhirObservationStatusEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('status') and (SummaryOption in [soFull, soData]) then
      ComposeEnumProps(json, 'status', elem.StatusElement, CODES_TFhirObservationStatusEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('method') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeCodeableConcept(json, 'method', elem.method); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('code') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeCodeableConcept(json, 'code', elem.code); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('subject') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{Resource}(json, 'subject', elem.subject); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('context') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{Resource}(json, 'context', elem.context); {a}
   if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.occurrence is TFhirPeriod) then 
     ComposePeriod(json, 'occurrencePeriod', TFhirPeriod(elem.occurrence)) 
@@ -37714,35 +38558,35 @@ begin
     ComposeDateTimeValue(json, 'occurrenceDateTime', TFhirDateTime(elem.occurrence), false);
     ComposeDateTimeProps(json, 'occurrenceDateTime', TFhirDateTime(elem.occurrence), false);
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('condition') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{TFhirCondition}(json, 'condition', elem.condition); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('performer') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{Resource}(json, 'performer', elem.performer); {a}
   if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.reason is TFhirCodeableConcept) then 
     ComposeCodeableConcept(json, 'reasonCodeableConcept', TFhirCodeableConcept(elem.reason)) 
   else if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.reason is TFhirReference) then
     ComposeReference(json, 'reasonReference', TFhirReference(elem.reason));
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.basisList.Count > 0) then
+  if not elem.noCompose and doCompose('basis') and (SummaryOption in [soFull, soData]) and (elem.basisList.Count > 0) then
   begin
     json.valueArray('basis');
     for i := 0 to elem.basisList.Count - 1 do
       ComposeReference{TFhirReference}(json, '', elem.basisList[i]); {z - Reference(Any)}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.predictionList.Count > 0) then
+  if not elem.noCompose and doCompose('prediction') and (SummaryOption in [soFull, soData]) and (elem.predictionList.Count > 0) then
   begin
     json.valueArray('prediction');
     for i := 0 to elem.predictionList.Count - 1 do
       ComposeRiskAssessmentPrediction(json, '', elem.predictionList[i]); {z - }
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('mitigation') and (SummaryOption in [soFull, soData]) then
     ComposeStringValue(json, 'mitigation', elem.mitigationElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('mitigation') and (SummaryOption in [soFull, soData]) then
     ComposeStringProps(json, 'mitigation', elem.mitigationElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('comment') and (SummaryOption in [soFull, soData]) then
     ComposeStringValue(json, 'comment', elem.commentElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('comment') and (SummaryOption in [soFull, soData]) then
     ComposeStringProps(json, 'comment', elem.commentElement, false);
 end;
 
@@ -37792,45 +38636,45 @@ begin
   if (elem = nil) then
     exit;
   ComposeDomainResourceProperties(json, elem);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.identifierList.Count > 0) then
+  if not elem.noCompose and doCompose('identifier') and (SummaryOption in [soFull, soSummary, soData]) and (elem.identifierList.Count > 0) then
   begin
     json.valueArray('identifier');
     for i := 0 to elem.identifierList.Count - 1 do
       ComposeIdentifier(json, '', elem.identifierList[i]); {z - Identifier}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('active') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeBooleanValue(json, 'active', elem.activeElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('active') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeBooleanProps(json, 'active', elem.activeElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('serviceCategory') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeCodeableConcept(json, 'serviceCategory', elem.serviceCategory); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.serviceTypeList.Count > 0) then
+  if not elem.noCompose and doCompose('serviceType') and (SummaryOption in [soFull, soSummary, soData]) and (elem.serviceTypeList.Count > 0) then
   begin
     json.valueArray('serviceType');
     for i := 0 to elem.serviceTypeList.Count - 1 do
       ComposeCodeableConcept(json, '', elem.serviceTypeList[i]); {z - CodeableConcept}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.specialtyList.Count > 0) then
+  if not elem.noCompose and doCompose('specialty') and (SummaryOption in [soFull, soSummary, soData]) and (elem.specialtyList.Count > 0) then
   begin
     json.valueArray('specialty');
     for i := 0 to elem.specialtyList.Count - 1 do
       ComposeCodeableConcept(json, '', elem.specialtyList[i]); {z - CodeableConcept}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.actorList.Count > 0) then
+  if not elem.noCompose and doCompose('actor') and (SummaryOption in [soFull, soSummary, soData]) and (elem.actorList.Count > 0) then
   begin
     json.valueArray('actor');
     for i := 0 to elem.actorList.Count - 1 do
       ComposeReference{Resource}(json, '', elem.actorList[i]); {z - Reference(Patient|Practitioner|PractitionerRole|RelatedPerson|Device|HealthcareService|Location)}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('planningHorizon') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposePeriod(json, 'planningHorizon', elem.planningHorizon); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('comment') and (SummaryOption in [soFull, soData]) then
     ComposeStringValue(json, 'comment', elem.commentElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('comment') and (SummaryOption in [soFull, soData]) then
     ComposeStringProps(json, 'comment', elem.commentElement, false);
 end;
 
@@ -37954,64 +38798,64 @@ begin
   if (elem = nil) then
     exit;
   ComposeDomainResourceProperties(json, elem);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('url') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeUriValue(json, 'url', elem.urlElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('url') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeUriProps(json, 'url', elem.urlElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('version') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeStringValue(json, 'version', elem.versionElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('version') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeStringProps(json, 'version', elem.versionElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('name') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeStringValue(json, 'name', elem.nameElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('name') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeStringProps(json, 'name', elem.nameElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('status') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumValue(json, 'status', elem.StatusElement, CODES_TFhirPublicationStatusEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('status') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumProps(json, 'status', elem.StatusElement, CODES_TFhirPublicationStatusEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('experimental') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeBooleanValue(json, 'experimental', elem.experimentalElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('experimental') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeBooleanProps(json, 'experimental', elem.experimentalElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('date') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeDateTimeValue(json, 'date', elem.dateElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('date') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeDateTimeProps(json, 'date', elem.dateElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('publisher') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeStringValue(json, 'publisher', elem.publisherElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('publisher') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeStringProps(json, 'publisher', elem.publisherElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.contactList.Count > 0) then
+  if not elem.noCompose and doCompose('contact') and (SummaryOption in [soFull, soSummary, soData]) and (elem.contactList.Count > 0) then
   begin
     json.valueArray('contact');
     for i := 0 to elem.contactList.Count - 1 do
       ComposeContactDetail(json, '', elem.contactList[i]); {z - ContactDetail}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.useContextList.Count > 0) then
+  if not elem.noCompose and doCompose('useContext') and (SummaryOption in [soFull, soSummary, soData]) and (elem.useContextList.Count > 0) then
   begin
     json.valueArray('useContext');
     for i := 0 to elem.useContextList.Count - 1 do
       ComposeUsageContext(json, '', elem.useContextList[i]); {z - UsageContext}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.jurisdictionList.Count > 0) then
+  if not elem.noCompose and doCompose('jurisdiction') and (SummaryOption in [soFull, soSummary, soData]) and (elem.jurisdictionList.Count > 0) then
   begin
     json.valueArray('jurisdiction');
     for i := 0 to elem.jurisdictionList.Count - 1 do
       ComposeCodeableConcept(json, '', elem.jurisdictionList[i]); {z - CodeableConcept}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('purpose') and (SummaryOption in [soFull, soData]) then
     ComposeMarkdownValue(json, 'purpose', elem.purposeElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('purpose') and (SummaryOption in [soFull, soData]) then
     ComposeMarkdownProps(json, 'purpose', elem.purposeElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('code') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeCodeValue(json, 'code', elem.codeElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('code') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeCodeProps(json, 'code', elem.codeElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.base.Count > 0) then
+  if not elem.noCompose and doCompose('base') and (SummaryOption in [soFull, soSummary, soData]) and (elem.base.Count > 0) then
   begin
     val := false;
     ext := false;
@@ -38035,31 +38879,31 @@ begin
       json.FinishArray;
     end;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('type_') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumValue(json, 'type', elem.Type_Element, CODES_TFhirSearchParamTypeEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('type_') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumProps(json, 'type', elem.Type_Element, CODES_TFhirSearchParamTypeEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('derivedFrom') and (SummaryOption in [soFull, soData]) then
     ComposeUriValue(json, 'derivedFrom', elem.derivedFromElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('derivedFrom') and (SummaryOption in [soFull, soData]) then
     ComposeUriProps(json, 'derivedFrom', elem.derivedFromElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('description') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeMarkdownValue(json, 'description', elem.descriptionElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('description') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeMarkdownProps(json, 'description', elem.descriptionElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('expression') and (SummaryOption in [soFull, soData]) then
     ComposeStringValue(json, 'expression', elem.expressionElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('expression') and (SummaryOption in [soFull, soData]) then
     ComposeStringProps(json, 'expression', elem.expressionElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('xpath') and (SummaryOption in [soFull, soData]) then
     ComposeStringValue(json, 'xpath', elem.xpathElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('xpath') and (SummaryOption in [soFull, soData]) then
     ComposeStringProps(json, 'xpath', elem.xpathElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('xpathUsage') and (SummaryOption in [soFull, soData]) then
      ComposeEnumValue(json, 'xpathUsage', elem.XpathUsageElement, CODES_TFhirSearchXpathUsageEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('xpathUsage') and (SummaryOption in [soFull, soData]) then
      ComposeEnumProps(json, 'xpathUsage', elem.XpathUsageElement, CODES_TFhirSearchXpathUsageEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.target.Count > 0) then
+  if not elem.noCompose and doCompose('target') and (SummaryOption in [soFull, soData]) and (elem.target.Count > 0) then
   begin
     val := false;
     ext := false;
@@ -38083,7 +38927,7 @@ begin
       json.FinishArray;
     end;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.comparatorList.Count > 0) then
+  if not elem.noCompose and doCompose('comparator') and (SummaryOption in [soFull, soData]) and (elem.comparatorList.Count > 0) then
   begin
     val := false;
     ext := false;
@@ -38107,7 +38951,7 @@ begin
       json.FinishArray;
     end;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.modifierList.Count > 0) then
+  if not elem.noCompose and doCompose('modifier') and (SummaryOption in [soFull, soData]) and (elem.modifierList.Count > 0) then
   begin
     val := false;
     ext := false;
@@ -38131,7 +38975,7 @@ begin
       json.FinishArray;
     end;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.chainList.Count > 0) then
+  if not elem.noCompose and doCompose('chain') and (SummaryOption in [soFull, soData]) and (elem.chainList.Count > 0) then
   begin
     ext := false;
     val := false;
@@ -38155,7 +38999,7 @@ begin
       json.FinishArray;
     end;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.componentList.Count > 0) then
+  if not elem.noCompose and doCompose('component') and (SummaryOption in [soFull, soData]) and (elem.componentList.Count > 0) then
   begin
     json.valueArray('component');
     for i := 0 to elem.componentList.Count - 1 do
@@ -38896,70 +39740,70 @@ begin
   if (elem = nil) then
     exit;
   ComposeDomainResourceProperties(json, elem);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.identifierList.Count > 0) then
+  if not elem.noCompose and doCompose('identifier') and (SummaryOption in [soFull, soSummary, soData]) and (elem.identifierList.Count > 0) then
   begin
     json.valueArray('identifier');
     for i := 0 to elem.identifierList.Count - 1 do
       ComposeIdentifier(json, '', elem.identifierList[i]); {z - Identifier}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('type_') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeCodeValue(json, 'type', elem.type_Element, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('type_') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeCodeProps(json, 'type', elem.type_Element, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('coordinateSystem') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeIntegerValue(json, 'coordinateSystem', elem.coordinateSystemElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('coordinateSystem') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeIntegerProps(json, 'coordinateSystem', elem.coordinateSystemElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('patient') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{TFhirPatient}(json, 'patient', elem.patient); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('specimen') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{TFhirSpecimen}(json, 'specimen', elem.specimen); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('device') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{TFhirDevice}(json, 'device', elem.device); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('performer') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{TFhirOrganization}(json, 'performer', elem.performer); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('quantity') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeQuantity(json, 'quantity', elem.quantity); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('referenceSeq') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeSequenceReferenceSeq(json, 'referenceSeq', elem.referenceSeq); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.variantList.Count > 0) then
+  if not elem.noCompose and doCompose('variant') and (SummaryOption in [soFull, soSummary, soData]) and (elem.variantList.Count > 0) then
   begin
     json.valueArray('variant');
     for i := 0 to elem.variantList.Count - 1 do
       ComposeSequenceVariant(json, '', elem.variantList[i]); {z - }
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('observedSeq') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeStringValue(json, 'observedSeq', elem.observedSeqElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('observedSeq') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeStringProps(json, 'observedSeq', elem.observedSeqElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.qualityList.Count > 0) then
+  if not elem.noCompose and doCompose('quality') and (SummaryOption in [soFull, soSummary, soData]) and (elem.qualityList.Count > 0) then
   begin
     json.valueArray('quality');
     for i := 0 to elem.qualityList.Count - 1 do
       ComposeSequenceQuality(json, '', elem.qualityList[i]); {z - }
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('readCoverage') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeIntegerValue(json, 'readCoverage', elem.readCoverageElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('readCoverage') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeIntegerProps(json, 'readCoverage', elem.readCoverageElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.repositoryList.Count > 0) then
+  if not elem.noCompose and doCompose('repository') and (SummaryOption in [soFull, soSummary, soData]) and (elem.repositoryList.Count > 0) then
   begin
     json.valueArray('repository');
     for i := 0 to elem.repositoryList.Count - 1 do
       ComposeSequenceRepository(json, '', elem.repositoryList[i]); {z - }
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.pointerList.Count > 0) then
+  if not elem.noCompose and doCompose('pointer') and (SummaryOption in [soFull, soSummary, soData]) and (elem.pointerList.Count > 0) then
   begin
     json.valueArray('pointer');
     for i := 0 to elem.pointerList.Count - 1 do
       ComposeReference{TFhirSequence}(json, '', elem.pointerList[i]); {z - Reference(Sequence)}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.structureVariantList.Count > 0) then
+  if not elem.noCompose and doCompose('structureVariant') and (SummaryOption in [soFull, soSummary, soData]) and (elem.structureVariantList.Count > 0) then
   begin
     json.valueArray('structureVariant');
     for i := 0 to elem.structureVariantList.Count - 1 do
@@ -39048,128 +39892,128 @@ begin
   if (elem = nil) then
     exit;
   ComposeDomainResourceProperties(json, elem);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('url') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeUriValue(json, 'url', elem.urlElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('url') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeUriProps(json, 'url', elem.urlElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.identifierList.Count > 0) then
+  if not elem.noCompose and doCompose('identifier') and (SummaryOption in [soFull, soSummary, soData]) and (elem.identifierList.Count > 0) then
   begin
     json.valueArray('identifier');
     for i := 0 to elem.identifierList.Count - 1 do
       ComposeIdentifier(json, '', elem.identifierList[i]); {z - Identifier}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('version') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeStringValue(json, 'version', elem.versionElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('version') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeStringProps(json, 'version', elem.versionElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('name') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeStringValue(json, 'name', elem.nameElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('name') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeStringProps(json, 'name', elem.nameElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('title') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeStringValue(json, 'title', elem.titleElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('title') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeStringProps(json, 'title', elem.titleElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('status') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumValue(json, 'status', elem.StatusElement, CODES_TFhirPublicationStatusEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('status') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumProps(json, 'status', elem.StatusElement, CODES_TFhirPublicationStatusEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('experimental') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeBooleanValue(json, 'experimental', elem.experimentalElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('experimental') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeBooleanProps(json, 'experimental', elem.experimentalElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('date') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeDateTimeValue(json, 'date', elem.dateElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('date') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeDateTimeProps(json, 'date', elem.dateElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('publisher') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeStringValue(json, 'publisher', elem.publisherElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('publisher') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeStringProps(json, 'publisher', elem.publisherElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('description') and (SummaryOption in [soFull, soData]) then
     ComposeMarkdownValue(json, 'description', elem.descriptionElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('description') and (SummaryOption in [soFull, soData]) then
     ComposeMarkdownProps(json, 'description', elem.descriptionElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('purpose') and (SummaryOption in [soFull, soData]) then
     ComposeMarkdownValue(json, 'purpose', elem.purposeElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('purpose') and (SummaryOption in [soFull, soData]) then
     ComposeMarkdownProps(json, 'purpose', elem.purposeElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('usage') and (SummaryOption in [soFull, soData]) then
     ComposeStringValue(json, 'usage', elem.usageElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('usage') and (SummaryOption in [soFull, soData]) then
     ComposeStringProps(json, 'usage', elem.usageElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('approvalDate') and (SummaryOption in [soFull, soData]) then
     ComposeDateValue(json, 'approvalDate', elem.approvalDateElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('approvalDate') and (SummaryOption in [soFull, soData]) then
     ComposeDateProps(json, 'approvalDate', elem.approvalDateElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('lastReviewDate') and (SummaryOption in [soFull, soData]) then
     ComposeDateValue(json, 'lastReviewDate', elem.lastReviewDateElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('lastReviewDate') and (SummaryOption in [soFull, soData]) then
     ComposeDateProps(json, 'lastReviewDate', elem.lastReviewDateElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('effectivePeriod') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposePeriod(json, 'effectivePeriod', elem.effectivePeriod); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.useContextList.Count > 0) then
+  if not elem.noCompose and doCompose('useContext') and (SummaryOption in [soFull, soSummary, soData]) and (elem.useContextList.Count > 0) then
   begin
     json.valueArray('useContext');
     for i := 0 to elem.useContextList.Count - 1 do
       ComposeUsageContext(json, '', elem.useContextList[i]); {z - UsageContext}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.jurisdictionList.Count > 0) then
+  if not elem.noCompose and doCompose('jurisdiction') and (SummaryOption in [soFull, soSummary, soData]) and (elem.jurisdictionList.Count > 0) then
   begin
     json.valueArray('jurisdiction');
     for i := 0 to elem.jurisdictionList.Count - 1 do
       ComposeCodeableConcept(json, '', elem.jurisdictionList[i]); {z - CodeableConcept}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.topicList.Count > 0) then
+  if not elem.noCompose and doCompose('topic') and (SummaryOption in [soFull, soData]) and (elem.topicList.Count > 0) then
   begin
     json.valueArray('topic');
     for i := 0 to elem.topicList.Count - 1 do
       ComposeCodeableConcept(json, '', elem.topicList[i]); {z - CodeableConcept}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.contributorList.Count > 0) then
+  if not elem.noCompose and doCompose('contributor') and (SummaryOption in [soFull, soData]) and (elem.contributorList.Count > 0) then
   begin
     json.valueArray('contributor');
     for i := 0 to elem.contributorList.Count - 1 do
       ComposeContributor(json, '', elem.contributorList[i]); {z - Contributor}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.contactList.Count > 0) then
+  if not elem.noCompose and doCompose('contact') and (SummaryOption in [soFull, soSummary, soData]) and (elem.contactList.Count > 0) then
   begin
     json.valueArray('contact');
     for i := 0 to elem.contactList.Count - 1 do
       ComposeContactDetail(json, '', elem.contactList[i]); {z - ContactDetail}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('copyright') and (SummaryOption in [soFull, soData]) then
     ComposeMarkdownValue(json, 'copyright', elem.copyrightElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('copyright') and (SummaryOption in [soFull, soData]) then
     ComposeMarkdownProps(json, 'copyright', elem.copyrightElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.relatedArtifactList.Count > 0) then
+  if not elem.noCompose and doCompose('relatedArtifact') and (SummaryOption in [soFull, soData]) and (elem.relatedArtifactList.Count > 0) then
   begin
     json.valueArray('relatedArtifact');
     for i := 0 to elem.relatedArtifactList.Count - 1 do
       ComposeRelatedArtifact(json, '', elem.relatedArtifactList[i]); {z - RelatedArtifact}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.triggerList.Count > 0) then
+  if not elem.noCompose and doCompose('trigger') and (SummaryOption in [soFull, soData]) and (elem.triggerList.Count > 0) then
   begin
     json.valueArray('trigger');
     for i := 0 to elem.triggerList.Count - 1 do
       ComposeTriggerDefinition(json, '', elem.triggerList[i]); {z - TriggerDefinition}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.dataRequirementList.Count > 0) then
+  if not elem.noCompose and doCompose('dataRequirement') and (SummaryOption in [soFull, soData]) and (elem.dataRequirementList.Count > 0) then
   begin
     json.valueArray('dataRequirement');
     for i := 0 to elem.dataRequirementList.Count - 1 do
       ComposeDataRequirement(json, '', elem.dataRequirementList[i]); {z - DataRequirement}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('operationDefinition') and (SummaryOption in [soFull, soData]) then
     ComposeReference{TFhirOperationDefinition}(json, 'operationDefinition', elem.operationDefinition); {a}
 end;
 
@@ -39225,52 +40069,52 @@ begin
   if (elem = nil) then
     exit;
   ComposeDomainResourceProperties(json, elem);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.identifierList.Count > 0) then
+  if not elem.noCompose and doCompose('identifier') and (SummaryOption in [soFull, soSummary, soData]) and (elem.identifierList.Count > 0) then
   begin
     json.valueArray('identifier');
     for i := 0 to elem.identifierList.Count - 1 do
       ComposeIdentifier(json, '', elem.identifierList[i]); {z - Identifier}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('serviceCategory') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeCodeableConcept(json, 'serviceCategory', elem.serviceCategory); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.serviceTypeList.Count > 0) then
+  if not elem.noCompose and doCompose('serviceType') and (SummaryOption in [soFull, soSummary, soData]) and (elem.serviceTypeList.Count > 0) then
   begin
     json.valueArray('serviceType');
     for i := 0 to elem.serviceTypeList.Count - 1 do
       ComposeCodeableConcept(json, '', elem.serviceTypeList[i]); {z - CodeableConcept}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.specialtyList.Count > 0) then
+  if not elem.noCompose and doCompose('specialty') and (SummaryOption in [soFull, soSummary, soData]) and (elem.specialtyList.Count > 0) then
   begin
     json.valueArray('specialty');
     for i := 0 to elem.specialtyList.Count - 1 do
       ComposeCodeableConcept(json, '', elem.specialtyList[i]); {z - CodeableConcept}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('appointmentType') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeCodeableConcept(json, 'appointmentType', elem.appointmentType); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('schedule') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{TFhirSchedule}(json, 'schedule', elem.schedule); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('status') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumValue(json, 'status', elem.StatusElement, CODES_TFhirSlotstatusEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('status') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumProps(json, 'status', elem.StatusElement, CODES_TFhirSlotstatusEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('start') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeInstantValue(json, 'start', elem.startElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('start') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeInstantProps(json, 'start', elem.startElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('end_') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeInstantValue(json, 'end', elem.end_Element, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('end_') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeInstantProps(json, 'end', elem.end_Element, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('overbooked') and (SummaryOption in [soFull, soData]) then
     ComposeBooleanValue(json, 'overbooked', elem.overbookedElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('overbooked') and (SummaryOption in [soFull, soData]) then
     ComposeBooleanProps(json, 'overbooked', elem.overbookedElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('comment') and (SummaryOption in [soFull, soData]) then
     ComposeStringValue(json, 'comment', elem.commentElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('comment') and (SummaryOption in [soFull, soData]) then
     ComposeStringProps(json, 'comment', elem.commentElement, false);
 end;
 
@@ -39514,58 +40358,58 @@ begin
   if (elem = nil) then
     exit;
   ComposeDomainResourceProperties(json, elem);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.identifierList.Count > 0) then
+  if not elem.noCompose and doCompose('identifier') and (SummaryOption in [soFull, soSummary, soData]) and (elem.identifierList.Count > 0) then
   begin
     json.valueArray('identifier');
     for i := 0 to elem.identifierList.Count - 1 do
       ComposeIdentifier(json, '', elem.identifierList[i]); {z - Identifier}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('accessionIdentifier') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeIdentifier(json, 'accessionIdentifier', elem.accessionIdentifier); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('status') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumValue(json, 'status', elem.StatusElement, CODES_TFhirSpecimenStatusEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('status') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumProps(json, 'status', elem.StatusElement, CODES_TFhirSpecimenStatusEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('type_') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeCodeableConcept(json, 'type', elem.type_); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('subject') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{Resource}(json, 'subject', elem.subject); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('receivedTime') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeDateTimeValue(json, 'receivedTime', elem.receivedTimeElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('receivedTime') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeDateTimeProps(json, 'receivedTime', elem.receivedTimeElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.parentList.Count > 0) then
+  if not elem.noCompose and doCompose('parent') and (SummaryOption in [soFull, soData]) and (elem.parentList.Count > 0) then
   begin
     json.valueArray('parent');
     for i := 0 to elem.parentList.Count - 1 do
       ComposeReference{TFhirSpecimen}(json, '', elem.parentList[i]); {z - Reference(Specimen)}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.requestList.Count > 0) then
+  if not elem.noCompose and doCompose('request') and (SummaryOption in [soFull, soData]) and (elem.requestList.Count > 0) then
   begin
     json.valueArray('request');
     for i := 0 to elem.requestList.Count - 1 do
       ComposeReference{TFhirProcedureRequest}(json, '', elem.requestList[i]); {z - Reference(ProcedureRequest)}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('collection') and (SummaryOption in [soFull, soData]) then
     ComposeSpecimenCollection(json, 'collection', elem.collection); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.processingList.Count > 0) then
+  if not elem.noCompose and doCompose('processing') and (SummaryOption in [soFull, soData]) and (elem.processingList.Count > 0) then
   begin
     json.valueArray('processing');
     for i := 0 to elem.processingList.Count - 1 do
       ComposeSpecimenProcessing(json, '', elem.processingList[i]); {z - }
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.containerList.Count > 0) then
+  if not elem.noCompose and doCompose('container') and (SummaryOption in [soFull, soData]) and (elem.containerList.Count > 0) then
   begin
     json.valueArray('container');
     for i := 0 to elem.containerList.Count - 1 do
       ComposeSpecimenContainer(json, '', elem.containerList[i]); {z - }
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.noteList.Count > 0) then
+  if not elem.noCompose and doCompose('note') and (SummaryOption in [soFull, soData]) and (elem.noteList.Count > 0) then
   begin
     json.valueArray('note');
     for i := 0 to elem.noteList.Count - 1 do
@@ -39825,26 +40669,26 @@ begin
   if (elem = nil) then
     exit;
   ComposeDomainResourceProperties(json, elem);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('identifier') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeIdentifier(json, 'identifier', elem.identifier); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('typeCollected') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeCodeableConcept(json, 'typeCollected', elem.typeCollected); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('patientPreparation') and (SummaryOption in [soFull, soData]) then
     ComposeStringValue(json, 'patientPreparation', elem.patientPreparationElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('patientPreparation') and (SummaryOption in [soFull, soData]) then
     ComposeStringProps(json, 'patientPreparation', elem.patientPreparationElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('timeAspect') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeStringValue(json, 'timeAspect', elem.timeAspectElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('timeAspect') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeStringProps(json, 'timeAspect', elem.timeAspectElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.collectionList.Count > 0) then
+  if not elem.noCompose and doCompose('collection') and (SummaryOption in [soFull, soSummary, soData]) and (elem.collectionList.Count > 0) then
   begin
     json.valueArray('collection');
     for i := 0 to elem.collectionList.Count - 1 do
       ComposeCodeableConcept(json, '', elem.collectionList[i]); {z - CodeableConcept}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.specimenToLabList.Count > 0) then
+  if not elem.noCompose and doCompose('specimenToLab') and (SummaryOption in [soFull, soData]) and (elem.specimenToLabList.Count > 0) then
   begin
     json.valueArray('specimenToLab');
     for i := 0 to elem.specimenToLabList.Count - 1 do
@@ -40077,109 +40921,109 @@ begin
   if (elem = nil) then
     exit;
   ComposeDomainResourceProperties(json, elem);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('url') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeUriValue(json, 'url', elem.urlElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('url') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeUriProps(json, 'url', elem.urlElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.identifierList.Count > 0) then
+  if not elem.noCompose and doCompose('identifier') and (SummaryOption in [soFull, soSummary, soData]) and (elem.identifierList.Count > 0) then
   begin
     json.valueArray('identifier');
     for i := 0 to elem.identifierList.Count - 1 do
       ComposeIdentifier(json, '', elem.identifierList[i]); {z - Identifier}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('version') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeStringValue(json, 'version', elem.versionElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('version') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeStringProps(json, 'version', elem.versionElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('name') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeStringValue(json, 'name', elem.nameElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('name') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeStringProps(json, 'name', elem.nameElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('title') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeStringValue(json, 'title', elem.titleElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('title') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeStringProps(json, 'title', elem.titleElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('status') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumValue(json, 'status', elem.StatusElement, CODES_TFhirPublicationStatusEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('status') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumProps(json, 'status', elem.StatusElement, CODES_TFhirPublicationStatusEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('experimental') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeBooleanValue(json, 'experimental', elem.experimentalElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('experimental') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeBooleanProps(json, 'experimental', elem.experimentalElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('date') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeDateTimeValue(json, 'date', elem.dateElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('date') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeDateTimeProps(json, 'date', elem.dateElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('publisher') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeStringValue(json, 'publisher', elem.publisherElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('publisher') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeStringProps(json, 'publisher', elem.publisherElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.contactList.Count > 0) then
+  if not elem.noCompose and doCompose('contact') and (SummaryOption in [soFull, soSummary, soData]) and (elem.contactList.Count > 0) then
   begin
     json.valueArray('contact');
     for i := 0 to elem.contactList.Count - 1 do
       ComposeContactDetail(json, '', elem.contactList[i]); {z - ContactDetail}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('description') and (SummaryOption in [soFull, soData]) then
     ComposeMarkdownValue(json, 'description', elem.descriptionElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('description') and (SummaryOption in [soFull, soData]) then
     ComposeMarkdownProps(json, 'description', elem.descriptionElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.useContextList.Count > 0) then
+  if not elem.noCompose and doCompose('useContext') and (SummaryOption in [soFull, soSummary, soData]) and (elem.useContextList.Count > 0) then
   begin
     json.valueArray('useContext');
     for i := 0 to elem.useContextList.Count - 1 do
       ComposeUsageContext(json, '', elem.useContextList[i]); {z - UsageContext}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.jurisdictionList.Count > 0) then
+  if not elem.noCompose and doCompose('jurisdiction') and (SummaryOption in [soFull, soSummary, soData]) and (elem.jurisdictionList.Count > 0) then
   begin
     json.valueArray('jurisdiction');
     for i := 0 to elem.jurisdictionList.Count - 1 do
       ComposeCodeableConcept(json, '', elem.jurisdictionList[i]); {z - CodeableConcept}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('purpose') and (SummaryOption in [soFull, soData]) then
     ComposeMarkdownValue(json, 'purpose', elem.purposeElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('purpose') and (SummaryOption in [soFull, soData]) then
     ComposeMarkdownProps(json, 'purpose', elem.purposeElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('copyright') and (SummaryOption in [soFull, soData]) then
     ComposeMarkdownValue(json, 'copyright', elem.copyrightElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('copyright') and (SummaryOption in [soFull, soData]) then
     ComposeMarkdownProps(json, 'copyright', elem.copyrightElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.keywordList.Count > 0) then
+  if not elem.noCompose and doCompose('keyword') and (SummaryOption in [soFull, soSummary, soData]) and (elem.keywordList.Count > 0) then
   begin
     json.valueArray('keyword');
     for i := 0 to elem.keywordList.Count - 1 do
       ComposeCoding(json, '', elem.keywordList[i]); {z - Coding}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('fhirVersion') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeIdValue(json, 'fhirVersion', elem.fhirVersionElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('fhirVersion') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeIdProps(json, 'fhirVersion', elem.fhirVersionElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.mappingList.Count > 0) then
+  if not elem.noCompose and doCompose('mapping') and (SummaryOption in [soFull, soData]) and (elem.mappingList.Count > 0) then
   begin
     json.valueArray('mapping');
     for i := 0 to elem.mappingList.Count - 1 do
       ComposeStructureDefinitionMapping(json, '', elem.mappingList[i]); {z - }
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('kind') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumValue(json, 'kind', elem.KindElement, CODES_TFhirStructureDefinitionKindEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('kind') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumProps(json, 'kind', elem.KindElement, CODES_TFhirStructureDefinitionKindEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('abstract') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeBooleanValue(json, 'abstract', elem.abstractElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('abstract') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeBooleanProps(json, 'abstract', elem.abstractElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('contextType') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumValue(json, 'contextType', elem.ContextTypeElement, CODES_TFhirExtensionContextEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('contextType') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumProps(json, 'contextType', elem.ContextTypeElement, CODES_TFhirExtensionContextEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.contextList.Count > 0) then
+  if not elem.noCompose and doCompose('context') and (SummaryOption in [soFull, soSummary, soData]) and (elem.contextList.Count > 0) then
   begin
     ext := false;
     val := false;
@@ -40203,7 +41047,7 @@ begin
       json.FinishArray;
     end;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.contextInvariantList.Count > 0) then
+  if not elem.noCompose and doCompose('contextInvariant') and (SummaryOption in [soFull, soSummary, soData]) and (elem.contextInvariantList.Count > 0) then
   begin
     ext := false;
     val := false;
@@ -40227,21 +41071,21 @@ begin
       json.FinishArray;
     end;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('type_') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeCodeValue(json, 'type', elem.type_Element, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('type_') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeCodeProps(json, 'type', elem.type_Element, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('baseDefinition') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeUriValue(json, 'baseDefinition', elem.baseDefinitionElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('baseDefinition') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeUriProps(json, 'baseDefinition', elem.baseDefinitionElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('derivation') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumValue(json, 'derivation', elem.DerivationElement, CODES_TFhirTypeDerivationRuleEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('derivation') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumProps(json, 'derivation', elem.DerivationElement, CODES_TFhirTypeDerivationRuleEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('snapshot') and (SummaryOption in [soFull, soData]) then
     ComposeStructureDefinitionSnapshot(json, 'snapshot', elem.snapshot); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('differential') and (SummaryOption in [soFull, soData]) then
     ComposeStructureDefinitionDifferential(json, 'differential', elem.differential); {a}
 end;
 
@@ -41095,86 +41939,86 @@ begin
   if (elem = nil) then
     exit;
   ComposeDomainResourceProperties(json, elem);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('url') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeUriValue(json, 'url', elem.urlElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('url') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeUriProps(json, 'url', elem.urlElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.identifierList.Count > 0) then
+  if not elem.noCompose and doCompose('identifier') and (SummaryOption in [soFull, soSummary, soData]) and (elem.identifierList.Count > 0) then
   begin
     json.valueArray('identifier');
     for i := 0 to elem.identifierList.Count - 1 do
       ComposeIdentifier(json, '', elem.identifierList[i]); {z - Identifier}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('version') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeStringValue(json, 'version', elem.versionElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('version') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeStringProps(json, 'version', elem.versionElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('name') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeStringValue(json, 'name', elem.nameElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('name') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeStringProps(json, 'name', elem.nameElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('title') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeStringValue(json, 'title', elem.titleElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('title') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeStringProps(json, 'title', elem.titleElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('status') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumValue(json, 'status', elem.StatusElement, CODES_TFhirPublicationStatusEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('status') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumProps(json, 'status', elem.StatusElement, CODES_TFhirPublicationStatusEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('experimental') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeBooleanValue(json, 'experimental', elem.experimentalElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('experimental') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeBooleanProps(json, 'experimental', elem.experimentalElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('date') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeDateTimeValue(json, 'date', elem.dateElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('date') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeDateTimeProps(json, 'date', elem.dateElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('publisher') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeStringValue(json, 'publisher', elem.publisherElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('publisher') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeStringProps(json, 'publisher', elem.publisherElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.contactList.Count > 0) then
+  if not elem.noCompose and doCompose('contact') and (SummaryOption in [soFull, soSummary, soData]) and (elem.contactList.Count > 0) then
   begin
     json.valueArray('contact');
     for i := 0 to elem.contactList.Count - 1 do
       ComposeContactDetail(json, '', elem.contactList[i]); {z - ContactDetail}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('description') and (SummaryOption in [soFull, soData]) then
     ComposeMarkdownValue(json, 'description', elem.descriptionElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('description') and (SummaryOption in [soFull, soData]) then
     ComposeMarkdownProps(json, 'description', elem.descriptionElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.useContextList.Count > 0) then
+  if not elem.noCompose and doCompose('useContext') and (SummaryOption in [soFull, soSummary, soData]) and (elem.useContextList.Count > 0) then
   begin
     json.valueArray('useContext');
     for i := 0 to elem.useContextList.Count - 1 do
       ComposeUsageContext(json, '', elem.useContextList[i]); {z - UsageContext}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.jurisdictionList.Count > 0) then
+  if not elem.noCompose and doCompose('jurisdiction') and (SummaryOption in [soFull, soSummary, soData]) and (elem.jurisdictionList.Count > 0) then
   begin
     json.valueArray('jurisdiction');
     for i := 0 to elem.jurisdictionList.Count - 1 do
       ComposeCodeableConcept(json, '', elem.jurisdictionList[i]); {z - CodeableConcept}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('purpose') and (SummaryOption in [soFull, soData]) then
     ComposeMarkdownValue(json, 'purpose', elem.purposeElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('purpose') and (SummaryOption in [soFull, soData]) then
     ComposeMarkdownProps(json, 'purpose', elem.purposeElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('copyright') and (SummaryOption in [soFull, soData]) then
     ComposeMarkdownValue(json, 'copyright', elem.copyrightElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('copyright') and (SummaryOption in [soFull, soData]) then
     ComposeMarkdownProps(json, 'copyright', elem.copyrightElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.structureList.Count > 0) then
+  if not elem.noCompose and doCompose('structure') and (SummaryOption in [soFull, soSummary, soData]) and (elem.structureList.Count > 0) then
   begin
     json.valueArray('structure');
     for i := 0 to elem.structureList.Count - 1 do
       ComposeStructureMapStructure(json, '', elem.structureList[i]); {z - }
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.importList.Count > 0) then
+  if not elem.noCompose and doCompose('import') and (SummaryOption in [soFull, soSummary, soData]) and (elem.importList.Count > 0) then
   begin
     ext := false;
     val := false;
@@ -41198,7 +42042,7 @@ begin
       json.FinishArray;
     end;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.groupList.Count > 0) then
+  if not elem.noCompose and doCompose('group') and (SummaryOption in [soFull, soSummary, soData]) and (elem.groupList.Count > 0) then
   begin
     json.valueArray('group');
     for i := 0 to elem.groupList.Count - 1 do
@@ -41331,36 +42175,36 @@ begin
   if (elem = nil) then
     exit;
   ComposeDomainResourceProperties(json, elem);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('status') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumValue(json, 'status', elem.StatusElement, CODES_TFhirSubscriptionStatusEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('status') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumProps(json, 'status', elem.StatusElement, CODES_TFhirSubscriptionStatusEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.contactList.Count > 0) then
+  if not elem.noCompose and doCompose('contact') and (SummaryOption in [soFull, soSummary, soData]) and (elem.contactList.Count > 0) then
   begin
     json.valueArray('contact');
     for i := 0 to elem.contactList.Count - 1 do
       ComposeContactPoint(json, '', elem.contactList[i]); {z - ContactPoint}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('end_') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeInstantValue(json, 'end', elem.end_Element, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('end_') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeInstantProps(json, 'end', elem.end_Element, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('reason') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeStringValue(json, 'reason', elem.reasonElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('reason') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeStringProps(json, 'reason', elem.reasonElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('criteria') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeStringValue(json, 'criteria', elem.criteriaElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('criteria') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeStringProps(json, 'criteria', elem.criteriaElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('error') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeStringValue(json, 'error', elem.errorElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('error') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeStringProps(json, 'error', elem.errorElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('channel') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeSubscriptionChannel(json, 'channel', elem.channel); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.tagList.Count > 0) then
+  if not elem.noCompose and doCompose('tag') and (SummaryOption in [soFull, soSummary, soData]) and (elem.tagList.Count > 0) then
   begin
     json.valueArray('tag');
     for i := 0 to elem.tagList.Count - 1 do
@@ -41499,38 +42343,38 @@ begin
   if (elem = nil) then
     exit;
   ComposeDomainResourceProperties(json, elem);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.identifierList.Count > 0) then
+  if not elem.noCompose and doCompose('identifier') and (SummaryOption in [soFull, soSummary, soData]) and (elem.identifierList.Count > 0) then
   begin
     json.valueArray('identifier');
     for i := 0 to elem.identifierList.Count - 1 do
       ComposeIdentifier(json, '', elem.identifierList[i]); {z - Identifier}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('status') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumValue(json, 'status', elem.StatusElement, CODES_TFhirSubstanceStatusEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('status') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumProps(json, 'status', elem.StatusElement, CODES_TFhirSubstanceStatusEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.categoryList.Count > 0) then
+  if not elem.noCompose and doCompose('category') and (SummaryOption in [soFull, soSummary, soData]) and (elem.categoryList.Count > 0) then
   begin
     json.valueArray('category');
     for i := 0 to elem.categoryList.Count - 1 do
       ComposeCodeableConcept(json, '', elem.categoryList[i]); {z - CodeableConcept}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('code') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeCodeableConcept(json, 'code', elem.code); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('description') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeStringValue(json, 'description', elem.descriptionElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('description') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeStringProps(json, 'description', elem.descriptionElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.instanceList.Count > 0) then
+  if not elem.noCompose and doCompose('instance') and (SummaryOption in [soFull, soSummary, soData]) and (elem.instanceList.Count > 0) then
   begin
     json.valueArray('instance');
     for i := 0 to elem.instanceList.Count - 1 do
       ComposeSubstanceInstance(json, '', elem.instanceList[i]); {z - }
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.ingredientList.Count > 0) then
+  if not elem.noCompose and doCompose('ingredient') and (SummaryOption in [soFull, soSummary, soData]) and (elem.ingredientList.Count > 0) then
   begin
     json.valueArray('ingredient');
     for i := 0 to elem.ingredientList.Count - 1 do
@@ -41637,31 +42481,31 @@ begin
   if (elem = nil) then
     exit;
   ComposeDomainResourceProperties(json, elem);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('identifier') and (SummaryOption in [soFull, soData]) then
     ComposeIdentifier(json, 'identifier', elem.identifier); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.basedOnList.Count > 0) then
+  if not elem.noCompose and doCompose('basedOn') and (SummaryOption in [soFull, soSummary, soData]) and (elem.basedOnList.Count > 0) then
   begin
     json.valueArray('basedOn');
     for i := 0 to elem.basedOnList.Count - 1 do
       ComposeReference{TFhirSupplyRequest}(json, '', elem.basedOnList[i]); {z - Reference(SupplyRequest)}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.partOfList.Count > 0) then
+  if not elem.noCompose and doCompose('partOf') and (SummaryOption in [soFull, soSummary, soData]) and (elem.partOfList.Count > 0) then
   begin
     json.valueArray('partOf');
     for i := 0 to elem.partOfList.Count - 1 do
       ComposeReference{Resource}(json, '', elem.partOfList[i]); {z - Reference(SupplyDelivery|Contract)}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('status') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumValue(json, 'status', elem.StatusElement, CODES_TFhirSupplydeliveryStatusEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('status') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumProps(json, 'status', elem.StatusElement, CODES_TFhirSupplydeliveryStatusEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('patient') and (SummaryOption in [soFull, soData]) then
     ComposeReference{TFhirPatient}(json, 'patient', elem.patient); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('type_') and (SummaryOption in [soFull, soData]) then
     ComposeCodeableConcept(json, 'type', elem.type_); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('suppliedItem') and (SummaryOption in [soFull, soData]) then
     ComposeSupplyDeliverySuppliedItem(json, 'suppliedItem', elem.suppliedItem); {a}
   if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.occurrence is TFhirPeriod) then 
     ComposePeriod(json, 'occurrencePeriod', TFhirPeriod(elem.occurrence)) 
@@ -41672,11 +42516,11 @@ begin
     ComposeDateTimeValue(json, 'occurrenceDateTime', TFhirDateTime(elem.occurrence), false);
     ComposeDateTimeProps(json, 'occurrenceDateTime', TFhirDateTime(elem.occurrence), false);
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('supplier') and (SummaryOption in [soFull, soData]) then
     ComposeReference{Resource}(json, 'supplier', elem.supplier); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('destination') and (SummaryOption in [soFull, soData]) then
     ComposeReference{TFhirLocation}(json, 'destination', elem.destination); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.receiverList.Count > 0) then
+  if not elem.noCompose and doCompose('receiver') and (SummaryOption in [soFull, soData]) and (elem.receiverList.Count > 0) then
   begin
     json.valueArray('receiver');
     for i := 0 to elem.receiverList.Count - 1 do
@@ -41825,19 +42669,19 @@ begin
   if (elem = nil) then
     exit;
   ComposeDomainResourceProperties(json, elem);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('identifier') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeIdentifier(json, 'identifier', elem.identifier); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('status') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumValue(json, 'status', elem.StatusElement, CODES_TFhirSupplyrequestStatusEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('status') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumProps(json, 'status', elem.StatusElement, CODES_TFhirSupplyrequestStatusEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('category') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeCodeableConcept(json, 'category', elem.category); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('priority') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumValue(json, 'priority', elem.PriorityElement, CODES_TFhirRequestPriorityEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('priority') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumProps(json, 'priority', elem.PriorityElement, CODES_TFhirRequestPriorityEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('orderedItem') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeSupplyRequestOrderedItem(json, 'orderedItem', elem.orderedItem); {a}
   if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.occurrence is TFhirPeriod) then 
     ComposePeriod(json, 'occurrencePeriod', TFhirPeriod(elem.occurrence)) 
@@ -41848,13 +42692,13 @@ begin
     ComposeDateTimeValue(json, 'occurrenceDateTime', TFhirDateTime(elem.occurrence), false);
     ComposeDateTimeProps(json, 'occurrenceDateTime', TFhirDateTime(elem.occurrence), false);
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('authoredOn') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeDateTimeValue(json, 'authoredOn', elem.authoredOnElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('authoredOn') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeDateTimeProps(json, 'authoredOn', elem.authoredOnElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('requester') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeSupplyRequestRequester(json, 'requester', elem.requester); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.supplierList.Count > 0) then
+  if not elem.noCompose and doCompose('supplier') and (SummaryOption in [soFull, soSummary, soData]) and (elem.supplierList.Count > 0) then
   begin
     json.valueArray('supplier');
     for i := 0 to elem.supplierList.Count - 1 do
@@ -41865,9 +42709,9 @@ begin
     ComposeCodeableConcept(json, 'reasonCodeableConcept', TFhirCodeableConcept(elem.reason)) 
   else if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.reason is TFhirReference) then
     ComposeReference(json, 'reasonReference', TFhirReference(elem.reason));
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('deliverFrom') and (SummaryOption in [soFull, soData]) then
     ComposeReference{Resource}(json, 'deliverFrom', elem.deliverFrom); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('deliverTo') and (SummaryOption in [soFull, soData]) then
     ComposeReference{Resource}(json, 'deliverTo', elem.deliverTo); {a}
 end;
 
@@ -42516,7 +43360,7 @@ begin
   if (elem = nil) then
     exit;
   ComposeDomainResourceProperties(json, elem);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.identifierList.Count > 0) then
+  if not elem.noCompose and doCompose('identifier') and (SummaryOption in [soFull, soData]) and (elem.identifierList.Count > 0) then
   begin
     json.valueArray('identifier');
     for i := 0 to elem.identifierList.Count - 1 do
@@ -42530,99 +43374,99 @@ begin
     ComposeUriValue(json, 'definitionUri', TFhirUri(elem.definition), false);
     ComposeUriProps(json, 'definitionUri', TFhirUri(elem.definition), false);
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.basedOnList.Count > 0) then
+  if not elem.noCompose and doCompose('basedOn') and (SummaryOption in [soFull, soSummary, soData]) and (elem.basedOnList.Count > 0) then
   begin
     json.valueArray('basedOn');
     for i := 0 to elem.basedOnList.Count - 1 do
       ComposeReference{TFhirReference}(json, '', elem.basedOnList[i]); {z - Reference(Any)}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('groupIdentifier') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeIdentifier(json, 'groupIdentifier', elem.groupIdentifier); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.partOfList.Count > 0) then
+  if not elem.noCompose and doCompose('partOf') and (SummaryOption in [soFull, soSummary, soData]) and (elem.partOfList.Count > 0) then
   begin
     json.valueArray('partOf');
     for i := 0 to elem.partOfList.Count - 1 do
       ComposeReference{TFhirTask}(json, '', elem.partOfList[i]); {z - Reference(Task)}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('status') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumValue(json, 'status', elem.StatusElement, CODES_TFhirTaskStatusEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('status') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumProps(json, 'status', elem.StatusElement, CODES_TFhirTaskStatusEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('statusReason') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeCodeableConcept(json, 'statusReason', elem.statusReason); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('businessStatus') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeCodeableConcept(json, 'businessStatus', elem.businessStatus); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('intent') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumValue(json, 'intent', elem.IntentElement, CODES_TFhirRequestIntentEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('intent') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumProps(json, 'intent', elem.IntentElement, CODES_TFhirRequestIntentEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('priority') and (SummaryOption in [soFull, soData]) then
      ComposeEnumValue(json, 'priority', elem.PriorityElement, CODES_TFhirRequestPriorityEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('priority') and (SummaryOption in [soFull, soData]) then
      ComposeEnumProps(json, 'priority', elem.PriorityElement, CODES_TFhirRequestPriorityEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('code') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeCodeableConcept(json, 'code', elem.code); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('description') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeStringValue(json, 'description', elem.descriptionElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('description') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeStringProps(json, 'description', elem.descriptionElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('focus') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{TFhirReference}(json, 'focus', elem.focus); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('for_') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{TFhirReference}(json, 'for', elem.for_); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('context') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{Resource}(json, 'context', elem.context); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('executionPeriod') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposePeriod(json, 'executionPeriod', elem.executionPeriod); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('authoredOn') and (SummaryOption in [soFull, soData]) then
     ComposeDateTimeValue(json, 'authoredOn', elem.authoredOnElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('authoredOn') and (SummaryOption in [soFull, soData]) then
     ComposeDateTimeProps(json, 'authoredOn', elem.authoredOnElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('lastModified') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeDateTimeValue(json, 'lastModified', elem.lastModifiedElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('lastModified') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeDateTimeProps(json, 'lastModified', elem.lastModifiedElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('requester') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeTaskRequester(json, 'requester', elem.requester); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.performerTypeList.Count > 0) then
+  if not elem.noCompose and doCompose('performerType') and (SummaryOption in [soFull, soData]) and (elem.performerTypeList.Count > 0) then
   begin
     json.valueArray('performerType');
     for i := 0 to elem.performerTypeList.Count - 1 do
       ComposeCodeableConcept(json, '', elem.performerTypeList[i]); {z - CodeableConcept}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('owner') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{Resource}(json, 'owner', elem.owner); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('reasonCode') and (SummaryOption in [soFull, soData]) then
     ComposeCodeableConcept(json, 'reasonCode', elem.reasonCode); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('reasonReference') and (SummaryOption in [soFull, soData]) then
     ComposeReference{TFhirReference}(json, 'reasonReference', elem.reasonReference); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.noteList.Count > 0) then
+  if not elem.noCompose and doCompose('note') and (SummaryOption in [soFull, soData]) and (elem.noteList.Count > 0) then
   begin
     json.valueArray('note');
     for i := 0 to elem.noteList.Count - 1 do
       ComposeAnnotation(json, '', elem.noteList[i]); {z - Annotation}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.relevantHistoryList.Count > 0) then
+  if not elem.noCompose and doCompose('relevantHistory') and (SummaryOption in [soFull, soData]) and (elem.relevantHistoryList.Count > 0) then
   begin
     json.valueArray('relevantHistory');
     for i := 0 to elem.relevantHistoryList.Count - 1 do
       ComposeReference{TFhirProvenance}(json, '', elem.relevantHistoryList[i]); {z - Reference(Provenance)}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('restriction') and (SummaryOption in [soFull, soData]) then
     ComposeTaskRestriction(json, 'restriction', elem.restriction); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.inputList.Count > 0) then
+  if not elem.noCompose and doCompose('input') and (SummaryOption in [soFull, soData]) and (elem.inputList.Count > 0) then
   begin
     json.valueArray('input');
     for i := 0 to elem.inputList.Count - 1 do
       ComposeTaskInput(json, '', elem.inputList[i]); {z - }
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.outputList.Count > 0) then
+  if not elem.noCompose and doCompose('output') and (SummaryOption in [soFull, soData]) and (elem.outputList.Count > 0) then
   begin
     json.valueArray('output');
     for i := 0 to elem.outputList.Count - 1 do
@@ -43074,51 +43918,51 @@ begin
   if (elem = nil) then
     exit;
   ComposeDomainResourceProperties(json, elem);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('identifier') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeIdentifier(json, 'identifier', elem.identifier); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('name') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeStringValue(json, 'name', elem.nameElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('name') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeStringProps(json, 'name', elem.nameElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('status') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumValue(json, 'status', elem.StatusElement, CODES_TFhirReportStatusCodesEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('status') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumProps(json, 'status', elem.StatusElement, CODES_TFhirReportStatusCodesEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('testScript') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{TFhirTestScript}(json, 'testScript', elem.testScript); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('result') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumValue(json, 'result', elem.ResultElement, CODES_TFhirReportResultCodesEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('result') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumProps(json, 'result', elem.ResultElement, CODES_TFhirReportResultCodesEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('score') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeDecimalValue(json, 'score', elem.scoreElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('score') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeDecimalProps(json, 'score', elem.scoreElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('tester') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeStringValue(json, 'tester', elem.testerElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('tester') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeStringProps(json, 'tester', elem.testerElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('issued') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeDateTimeValue(json, 'issued', elem.issuedElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('issued') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeDateTimeProps(json, 'issued', elem.issuedElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.participantList.Count > 0) then
+  if not elem.noCompose and doCompose('participant') and (SummaryOption in [soFull, soData]) and (elem.participantList.Count > 0) then
   begin
     json.valueArray('participant');
     for i := 0 to elem.participantList.Count - 1 do
       ComposeTestReportParticipant(json, '', elem.participantList[i]); {z - }
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('setup') and (SummaryOption in [soFull, soData]) then
     ComposeTestReportSetup(json, 'setup', elem.setup); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.testList.Count > 0) then
+  if not elem.noCompose and doCompose('test') and (SummaryOption in [soFull, soData]) and (elem.testList.Count > 0) then
   begin
     json.valueArray('test');
     for i := 0 to elem.testList.Count - 1 do
       ComposeTestReportTest(json, '', elem.testList[i]); {z - }
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('teardown') and (SummaryOption in [soFull, soData]) then
     ComposeTestReportTeardown(json, 'teardown', elem.teardown); {a}
 end;
 
@@ -44646,134 +45490,134 @@ begin
   if (elem = nil) then
     exit;
   ComposeDomainResourceProperties(json, elem);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('url') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeUriValue(json, 'url', elem.urlElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('url') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeUriProps(json, 'url', elem.urlElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('identifier') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeIdentifier(json, 'identifier', elem.identifier); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('version') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeStringValue(json, 'version', elem.versionElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('version') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeStringProps(json, 'version', elem.versionElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('name') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeStringValue(json, 'name', elem.nameElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('name') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeStringProps(json, 'name', elem.nameElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('title') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeStringValue(json, 'title', elem.titleElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('title') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeStringProps(json, 'title', elem.titleElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('status') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumValue(json, 'status', elem.StatusElement, CODES_TFhirPublicationStatusEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('status') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumProps(json, 'status', elem.StatusElement, CODES_TFhirPublicationStatusEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('experimental') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeBooleanValue(json, 'experimental', elem.experimentalElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('experimental') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeBooleanProps(json, 'experimental', elem.experimentalElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('date') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeDateTimeValue(json, 'date', elem.dateElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('date') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeDateTimeProps(json, 'date', elem.dateElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('publisher') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeStringValue(json, 'publisher', elem.publisherElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('publisher') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeStringProps(json, 'publisher', elem.publisherElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.contactList.Count > 0) then
+  if not elem.noCompose and doCompose('contact') and (SummaryOption in [soFull, soSummary, soData]) and (elem.contactList.Count > 0) then
   begin
     json.valueArray('contact');
     for i := 0 to elem.contactList.Count - 1 do
       ComposeContactDetail(json, '', elem.contactList[i]); {z - ContactDetail}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('description') and (SummaryOption in [soFull, soData]) then
     ComposeMarkdownValue(json, 'description', elem.descriptionElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('description') and (SummaryOption in [soFull, soData]) then
     ComposeMarkdownProps(json, 'description', elem.descriptionElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.useContextList.Count > 0) then
+  if not elem.noCompose and doCompose('useContext') and (SummaryOption in [soFull, soSummary, soData]) and (elem.useContextList.Count > 0) then
   begin
     json.valueArray('useContext');
     for i := 0 to elem.useContextList.Count - 1 do
       ComposeUsageContext(json, '', elem.useContextList[i]); {z - UsageContext}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.jurisdictionList.Count > 0) then
+  if not elem.noCompose and doCompose('jurisdiction') and (SummaryOption in [soFull, soSummary, soData]) and (elem.jurisdictionList.Count > 0) then
   begin
     json.valueArray('jurisdiction');
     for i := 0 to elem.jurisdictionList.Count - 1 do
       ComposeCodeableConcept(json, '', elem.jurisdictionList[i]); {z - CodeableConcept}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('purpose') and (SummaryOption in [soFull, soData]) then
     ComposeMarkdownValue(json, 'purpose', elem.purposeElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('purpose') and (SummaryOption in [soFull, soData]) then
     ComposeMarkdownProps(json, 'purpose', elem.purposeElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('copyright') and (SummaryOption in [soFull, soData]) then
     ComposeMarkdownValue(json, 'copyright', elem.copyrightElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('copyright') and (SummaryOption in [soFull, soData]) then
     ComposeMarkdownProps(json, 'copyright', elem.copyrightElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.originList.Count > 0) then
+  if not elem.noCompose and doCompose('origin') and (SummaryOption in [soFull, soData]) and (elem.originList.Count > 0) then
   begin
     json.valueArray('origin');
     for i := 0 to elem.originList.Count - 1 do
       ComposeTestScriptOrigin(json, '', elem.originList[i]); {z - }
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.destinationList.Count > 0) then
+  if not elem.noCompose and doCompose('destination') and (SummaryOption in [soFull, soData]) and (elem.destinationList.Count > 0) then
   begin
     json.valueArray('destination');
     for i := 0 to elem.destinationList.Count - 1 do
       ComposeTestScriptDestination(json, '', elem.destinationList[i]); {z - }
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('metadata') and (SummaryOption in [soFull, soData]) then
     ComposeTestScriptMetadata(json, 'metadata', elem.metadata); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.fixtureList.Count > 0) then
+  if not elem.noCompose and doCompose('fixture') and (SummaryOption in [soFull, soData]) and (elem.fixtureList.Count > 0) then
   begin
     json.valueArray('fixture');
     for i := 0 to elem.fixtureList.Count - 1 do
       ComposeTestScriptFixture(json, '', elem.fixtureList[i]); {z - }
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.profileList.Count > 0) then
+  if not elem.noCompose and doCompose('profile') and (SummaryOption in [soFull, soData]) and (elem.profileList.Count > 0) then
   begin
     json.valueArray('profile');
     for i := 0 to elem.profileList.Count - 1 do
       ComposeReference{TFhirReference}(json, '', elem.profileList[i]); {z - Reference(Any)}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.variableList.Count > 0) then
+  if not elem.noCompose and doCompose('variable') and (SummaryOption in [soFull, soData]) and (elem.variableList.Count > 0) then
   begin
     json.valueArray('variable');
     for i := 0 to elem.variableList.Count - 1 do
       ComposeTestScriptVariable(json, '', elem.variableList[i]); {z - }
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.ruleList.Count > 0) then
+  if not elem.noCompose and doCompose('rule') and (SummaryOption in [soFull, soData]) and (elem.ruleList.Count > 0) then
   begin
     json.valueArray('rule');
     for i := 0 to elem.ruleList.Count - 1 do
       ComposeTestScriptRule(json, '', elem.ruleList[i]); {z - }
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.rulesetList.Count > 0) then
+  if not elem.noCompose and doCompose('ruleset') and (SummaryOption in [soFull, soData]) and (elem.rulesetList.Count > 0) then
   begin
     json.valueArray('ruleset');
     for i := 0 to elem.rulesetList.Count - 1 do
       ComposeTestScriptRuleset(json, '', elem.rulesetList[i]); {z - }
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('setup') and (SummaryOption in [soFull, soData]) then
     ComposeTestScriptSetup(json, 'setup', elem.setup); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.testList.Count > 0) then
+  if not elem.noCompose and doCompose('test') and (SummaryOption in [soFull, soData]) and (elem.testList.Count > 0) then
   begin
     json.valueArray('test');
     for i := 0 to elem.testList.Count - 1 do
       ComposeTestScriptTest(json, '', elem.testList[i]); {z - }
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('teardown') and (SummaryOption in [soFull, soData]) then
     ComposeTestScriptTeardown(json, 'teardown', elem.teardown); {a}
 end;
 
@@ -45382,89 +46226,89 @@ begin
   if (elem = nil) then
     exit;
   ComposeDomainResourceProperties(json, elem);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('url') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeUriValue(json, 'url', elem.urlElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('url') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeUriProps(json, 'url', elem.urlElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.identifierList.Count > 0) then
+  if not elem.noCompose and doCompose('identifier') and (SummaryOption in [soFull, soSummary, soData]) and (elem.identifierList.Count > 0) then
   begin
     json.valueArray('identifier');
     for i := 0 to elem.identifierList.Count - 1 do
       ComposeIdentifier(json, '', elem.identifierList[i]); {z - Identifier}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('version') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeStringValue(json, 'version', elem.versionElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('version') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeStringProps(json, 'version', elem.versionElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('name') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeStringValue(json, 'name', elem.nameElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('name') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeStringProps(json, 'name', elem.nameElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('title') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeStringValue(json, 'title', elem.titleElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('title') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeStringProps(json, 'title', elem.titleElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('status') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumValue(json, 'status', elem.StatusElement, CODES_TFhirPublicationStatusEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('status') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumProps(json, 'status', elem.StatusElement, CODES_TFhirPublicationStatusEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('experimental') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeBooleanValue(json, 'experimental', elem.experimentalElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('experimental') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeBooleanProps(json, 'experimental', elem.experimentalElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('date') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeDateTimeValue(json, 'date', elem.dateElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('date') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeDateTimeProps(json, 'date', elem.dateElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('publisher') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeStringValue(json, 'publisher', elem.publisherElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('publisher') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeStringProps(json, 'publisher', elem.publisherElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.contactList.Count > 0) then
+  if not elem.noCompose and doCompose('contact') and (SummaryOption in [soFull, soSummary, soData]) and (elem.contactList.Count > 0) then
   begin
     json.valueArray('contact');
     for i := 0 to elem.contactList.Count - 1 do
       ComposeContactDetail(json, '', elem.contactList[i]); {z - ContactDetail}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('description') and (SummaryOption in [soFull, soData]) then
     ComposeMarkdownValue(json, 'description', elem.descriptionElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('description') and (SummaryOption in [soFull, soData]) then
     ComposeMarkdownProps(json, 'description', elem.descriptionElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.useContextList.Count > 0) then
+  if not elem.noCompose and doCompose('useContext') and (SummaryOption in [soFull, soSummary, soData]) and (elem.useContextList.Count > 0) then
   begin
     json.valueArray('useContext');
     for i := 0 to elem.useContextList.Count - 1 do
       ComposeUsageContext(json, '', elem.useContextList[i]); {z - UsageContext}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.jurisdictionList.Count > 0) then
+  if not elem.noCompose and doCompose('jurisdiction') and (SummaryOption in [soFull, soSummary, soData]) and (elem.jurisdictionList.Count > 0) then
   begin
     json.valueArray('jurisdiction');
     for i := 0 to elem.jurisdictionList.Count - 1 do
       ComposeCodeableConcept(json, '', elem.jurisdictionList[i]); {z - CodeableConcept}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('immutable') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeBooleanValue(json, 'immutable', elem.immutableElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('immutable') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeBooleanProps(json, 'immutable', elem.immutableElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('purpose') and (SummaryOption in [soFull, soData]) then
     ComposeMarkdownValue(json, 'purpose', elem.purposeElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('purpose') and (SummaryOption in [soFull, soData]) then
     ComposeMarkdownProps(json, 'purpose', elem.purposeElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('copyright') and (SummaryOption in [soFull, soData]) then
     ComposeMarkdownValue(json, 'copyright', elem.copyrightElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('copyright') and (SummaryOption in [soFull, soData]) then
     ComposeMarkdownProps(json, 'copyright', elem.copyrightElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('extensible') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeBooleanValue(json, 'extensible', elem.extensibleElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('extensible') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeBooleanProps(json, 'extensible', elem.extensibleElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('compose') and (SummaryOption in [soFull, soData]) then
     ComposeValueSetCompose(json, 'compose', elem.compose); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('expansion') and (SummaryOption in [soFull, soData]) then
     ComposeValueSetExpansion(json, 'expansion', elem.expansion); {a}
 end;
 
@@ -45637,32 +46481,32 @@ begin
   if (elem = nil) then
     exit;
   ComposeDomainResourceProperties(json, elem);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.identifierList.Count > 0) then
+  if not elem.noCompose and doCompose('identifier') and (SummaryOption in [soFull, soData]) and (elem.identifierList.Count > 0) then
   begin
     json.valueArray('identifier');
     for i := 0 to elem.identifierList.Count - 1 do
       ComposeIdentifier(json, '', elem.identifierList[i]); {z - Identifier}
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('status') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumValue(json, 'status', elem.StatusElement, CODES_TFhirFmStatusEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('status') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumProps(json, 'status', elem.StatusElement, CODES_TFhirFmStatusEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('patient') and (SummaryOption in [soFull, soData]) then
     ComposeReference{TFhirPatient}(json, 'patient', elem.patient); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('encounter') and (SummaryOption in [soFull, soData]) then
     ComposeReference{TFhirEncounter}(json, 'encounter', elem.encounter); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('dateWritten') and (SummaryOption in [soFull, soData]) then
     ComposeDateTimeValue(json, 'dateWritten', elem.dateWrittenElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('dateWritten') and (SummaryOption in [soFull, soData]) then
     ComposeDateTimeProps(json, 'dateWritten', elem.dateWrittenElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('prescriber') and (SummaryOption in [soFull, soData]) then
     ComposeReference{TFhirPractitioner}(json, 'prescriber', elem.prescriber); {a}
   if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.reason is TFhirCodeableConcept) then 
     ComposeCodeableConcept(json, 'reasonCodeableConcept', TFhirCodeableConcept(elem.reason)) 
   else if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.reason is TFhirReference) then
     ComposeReference(json, 'reasonReference', TFhirReference(elem.reason));
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.dispenseList.Count > 0) then
+  if not elem.noCompose and doCompose('dispense') and (SummaryOption in [soFull, soData]) and (elem.dispenseList.Count > 0) then
   begin
     json.valueArray('dispense');
     for i := 0 to elem.dispenseList.Count - 1 do
@@ -45672,711 +46516,6 @@ begin
 end;
 
 {$ENDIF FHIR_VISIONPRESCRIPTION}
-{$IFDEF FHIR_WORKFLOWEXAMPLE}
-procedure TFHIRJsonParser.ParseWorkflowExampleActor(jsn : TJsonObject; ctxt : TFHIRObjectList);
-begin
-  ctxt.add(ParseWorkflowExampleActor(jsn)); {2}
-end;
-
-function TFHIRJsonParser.ParseWorkflowExampleActor(jsn : TJsonObject) : TFhirWorkflowExampleActor;
-begin
-  result := TFhirWorkflowExampleActor.create;
-  try
-    ParseWorkflowExampleActorProperties(jsn, result);
-    result.link;
-  finally
-    result.free;
-  end;
-end;
-
-procedure TFHIRJsonParser.ParseWorkflowExampleActorProperties(jsn : TJsonObject; result : TFhirWorkflowExampleActor);
-begin
-    ParseBackboneElementProperties(jsn, result);
-    if jsn.has('actorId') or jsn.has('_actorId') then
-        result.actorIdElement := ParseString(jsn['actorId'], jsn.vObj['_actorId']);{q}
-    if jsn.has('type') or jsn.has('_type')  then
-      result.type_Element := parseEnum(jsn.path+'/type', jsn['type'], jsn.vObj['_type'], CODES_TFhirWorkflowexampleActorTypeEnum, SYSTEMS_TFhirWorkflowexampleActorTypeEnum);
-    if jsn.has('name') or jsn.has('_name') then
-        result.nameElement := ParseString(jsn['name'], jsn.vObj['_name']);{q}
-    if jsn.has('description') or jsn.has('_description') then
-        result.descriptionElement := ParseMarkdown(jsn['description'], jsn.vObj['_description']);{q}
-end;
-
-procedure TFHIRJsonComposer.ComposeWorkflowExampleActor(json : TJSONWriter; name : string; elem : TFhirWorkflowExampleActor; noObj : boolean = false);
-begin
-  if (elem = nil) then
-    exit;
-  if not noObj then json.valueObject(name);
-  ComposeBackboneElementProperties(json, elem);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
-    ComposeStringValue(json, 'actorId', elem.actorIdElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
-    ComposeStringProps(json, 'actorId', elem.actorIdElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
-     ComposeEnumValue(json, 'type', elem.Type_Element, CODES_TFhirWorkflowexampleActorTypeEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
-     ComposeEnumProps(json, 'type', elem.Type_Element, CODES_TFhirWorkflowexampleActorTypeEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
-    ComposeStringValue(json, 'name', elem.nameElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
-    ComposeStringProps(json, 'name', elem.nameElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
-    ComposeMarkdownValue(json, 'description', elem.descriptionElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
-    ComposeMarkdownProps(json, 'description', elem.descriptionElement, false);
-  if not noObj then json.finishObject;
-end;
-
-procedure TFHIRJsonParser.ParseWorkflowExampleInstance(jsn : TJsonObject; ctxt : TFHIRObjectList);
-begin
-  ctxt.add(ParseWorkflowExampleInstance(jsn)); {2}
-end;
-
-function TFHIRJsonParser.ParseWorkflowExampleInstance(jsn : TJsonObject) : TFhirWorkflowExampleInstance;
-begin
-  result := TFhirWorkflowExampleInstance.create;
-  try
-    ParseWorkflowExampleInstanceProperties(jsn, result);
-    result.link;
-  finally
-    result.free;
-  end;
-end;
-
-procedure TFHIRJsonParser.ParseWorkflowExampleInstanceProperties(jsn : TJsonObject; result : TFhirWorkflowExampleInstance);
-begin
-    ParseBackboneElementProperties(jsn, result);
-    if jsn.has('resourceId') or jsn.has('_resourceId') then
-        result.resourceIdElement := ParseString(jsn['resourceId'], jsn.vObj['_resourceId']);{q}
-    if jsn.has('resourceType') or jsn.has('_resourceType')  then
-      result.resourceTypeElement := parseEnum(jsn.path+'/resourceType', jsn['resourceType'], jsn.vObj['_resourceType'], CODES_TFhirResourceTypesEnum, SYSTEMS_TFhirResourceTypesEnum);
-    if jsn.has('name') or jsn.has('_name') then
-        result.nameElement := ParseString(jsn['name'], jsn.vObj['_name']);{q}
-    if jsn.has('description') or jsn.has('_description') then
-        result.descriptionElement := ParseMarkdown(jsn['description'], jsn.vObj['_description']);{q}
-    if jsn.has('version') then
-      iterateArray(jsn.vArr['version'], result.versionList, parseWorkflowExampleInstanceVersion);
-    if jsn.has('containedInstance') then
-      iterateArray(jsn.vArr['containedInstance'], result.containedInstanceList, parseWorkflowExampleInstanceContainedInstance);
-end;
-
-procedure TFHIRJsonComposer.ComposeWorkflowExampleInstance(json : TJSONWriter; name : string; elem : TFhirWorkflowExampleInstance; noObj : boolean = false);
-var
-  i : integer;
-begin
-  if (elem = nil) then
-    exit;
-  if not noObj then json.valueObject(name);
-  ComposeBackboneElementProperties(json, elem);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
-    ComposeStringValue(json, 'resourceId', elem.resourceIdElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
-    ComposeStringProps(json, 'resourceId', elem.resourceIdElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
-     ComposeEnumValue(json, 'resourceType', elem.ResourceTypeElement, CODES_TFhirResourceTypesEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
-     ComposeEnumProps(json, 'resourceType', elem.ResourceTypeElement, CODES_TFhirResourceTypesEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
-    ComposeStringValue(json, 'name', elem.nameElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
-    ComposeStringProps(json, 'name', elem.nameElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
-    ComposeMarkdownValue(json, 'description', elem.descriptionElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
-    ComposeMarkdownProps(json, 'description', elem.descriptionElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.versionList.Count > 0) then
-  begin
-    json.valueArray('version');
-    for i := 0 to elem.versionList.Count - 1 do
-      ComposeWorkflowExampleInstanceVersion(json, '', elem.versionList[i]); {z - }
-    json.FinishArray;
-  end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.containedInstanceList.Count > 0) then
-  begin
-    json.valueArray('containedInstance');
-    for i := 0 to elem.containedInstanceList.Count - 1 do
-      ComposeWorkflowExampleInstanceContainedInstance(json, '', elem.containedInstanceList[i]); {z - }
-    json.FinishArray;
-  end;
-  if not noObj then json.finishObject;
-end;
-
-procedure TFHIRJsonParser.ParseWorkflowExampleInstanceVersion(jsn : TJsonObject; ctxt : TFHIRObjectList);
-begin
-  ctxt.add(ParseWorkflowExampleInstanceVersion(jsn)); {2}
-end;
-
-function TFHIRJsonParser.ParseWorkflowExampleInstanceVersion(jsn : TJsonObject) : TFhirWorkflowExampleInstanceVersion;
-begin
-  result := TFhirWorkflowExampleInstanceVersion.create;
-  try
-    ParseWorkflowExampleInstanceVersionProperties(jsn, result);
-    result.link;
-  finally
-    result.free;
-  end;
-end;
-
-procedure TFHIRJsonParser.ParseWorkflowExampleInstanceVersionProperties(jsn : TJsonObject; result : TFhirWorkflowExampleInstanceVersion);
-begin
-    ParseBackboneElementProperties(jsn, result);
-    if jsn.has('versionId') or jsn.has('_versionId') then
-        result.versionIdElement := ParseString(jsn['versionId'], jsn.vObj['_versionId']);{q}
-    if jsn.has('description') or jsn.has('_description') then
-        result.descriptionElement := ParseMarkdown(jsn['description'], jsn.vObj['_description']);{q}
-end;
-
-procedure TFHIRJsonComposer.ComposeWorkflowExampleInstanceVersion(json : TJSONWriter; name : string; elem : TFhirWorkflowExampleInstanceVersion; noObj : boolean = false);
-begin
-  if (elem = nil) then
-    exit;
-  if not noObj then json.valueObject(name);
-  ComposeBackboneElementProperties(json, elem);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
-    ComposeStringValue(json, 'versionId', elem.versionIdElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
-    ComposeStringProps(json, 'versionId', elem.versionIdElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
-    ComposeMarkdownValue(json, 'description', elem.descriptionElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
-    ComposeMarkdownProps(json, 'description', elem.descriptionElement, false);
-  if not noObj then json.finishObject;
-end;
-
-procedure TFHIRJsonParser.ParseWorkflowExampleInstanceContainedInstance(jsn : TJsonObject; ctxt : TFHIRObjectList);
-begin
-  ctxt.add(ParseWorkflowExampleInstanceContainedInstance(jsn)); {2}
-end;
-
-function TFHIRJsonParser.ParseWorkflowExampleInstanceContainedInstance(jsn : TJsonObject) : TFhirWorkflowExampleInstanceContainedInstance;
-begin
-  result := TFhirWorkflowExampleInstanceContainedInstance.create;
-  try
-    ParseWorkflowExampleInstanceContainedInstanceProperties(jsn, result);
-    result.link;
-  finally
-    result.free;
-  end;
-end;
-
-procedure TFHIRJsonParser.ParseWorkflowExampleInstanceContainedInstanceProperties(jsn : TJsonObject; result : TFhirWorkflowExampleInstanceContainedInstance);
-begin
-    ParseBackboneElementProperties(jsn, result);
-    if jsn.has('resourceId') or jsn.has('_resourceId') then
-        result.resourceIdElement := ParseString(jsn['resourceId'], jsn.vObj['_resourceId']);{q}
-    if jsn.has('versionId') or jsn.has('_versionId') then
-        result.versionIdElement := ParseString(jsn['versionId'], jsn.vObj['_versionId']);{q}
-end;
-
-procedure TFHIRJsonComposer.ComposeWorkflowExampleInstanceContainedInstance(json : TJSONWriter; name : string; elem : TFhirWorkflowExampleInstanceContainedInstance; noObj : boolean = false);
-begin
-  if (elem = nil) then
-    exit;
-  if not noObj then json.valueObject(name);
-  ComposeBackboneElementProperties(json, elem);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
-    ComposeStringValue(json, 'resourceId', elem.resourceIdElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
-    ComposeStringProps(json, 'resourceId', elem.resourceIdElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
-    ComposeStringValue(json, 'versionId', elem.versionIdElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
-    ComposeStringProps(json, 'versionId', elem.versionIdElement, false);
-  if not noObj then json.finishObject;
-end;
-
-procedure TFHIRJsonParser.ParseWorkflowExampleProcess(jsn : TJsonObject; ctxt : TFHIRObjectList);
-begin
-  ctxt.add(ParseWorkflowExampleProcess(jsn)); {2}
-end;
-
-function TFHIRJsonParser.ParseWorkflowExampleProcess(jsn : TJsonObject) : TFhirWorkflowExampleProcess;
-begin
-  result := TFhirWorkflowExampleProcess.create;
-  try
-    ParseWorkflowExampleProcessProperties(jsn, result);
-    result.link;
-  finally
-    result.free;
-  end;
-end;
-
-procedure TFHIRJsonParser.ParseWorkflowExampleProcessProperties(jsn : TJsonObject; result : TFhirWorkflowExampleProcess);
-begin
-    ParseBackboneElementProperties(jsn, result);
-    if jsn.has('title') or jsn.has('_title') then
-        result.titleElement := ParseString(jsn['title'], jsn.vObj['_title']);{q}
-    if jsn.has('description') or jsn.has('_description') then
-        result.descriptionElement := ParseMarkdown(jsn['description'], jsn.vObj['_description']);{q}
-    if jsn.has('preConditions') or jsn.has('_preConditions') then
-        result.preConditionsElement := ParseMarkdown(jsn['preConditions'], jsn.vObj['_preConditions']);{q}
-    if jsn.has('postConditions') or jsn.has('_postConditions') then
-        result.postConditionsElement := ParseMarkdown(jsn['postConditions'], jsn.vObj['_postConditions']);{q}
-    if jsn.has('step') then
-      iterateArray(jsn.vArr['step'], result.stepList, parseWorkflowExampleProcessStep);
-end;
-
-procedure TFHIRJsonComposer.ComposeWorkflowExampleProcess(json : TJSONWriter; name : string; elem : TFhirWorkflowExampleProcess; noObj : boolean = false);
-var
-  i : integer;
-begin
-  if (elem = nil) then
-    exit;
-  if not noObj then json.valueObject(name);
-  ComposeBackboneElementProperties(json, elem);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
-    ComposeStringValue(json, 'title', elem.titleElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
-    ComposeStringProps(json, 'title', elem.titleElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
-    ComposeMarkdownValue(json, 'description', elem.descriptionElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
-    ComposeMarkdownProps(json, 'description', elem.descriptionElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
-    ComposeMarkdownValue(json, 'preConditions', elem.preConditionsElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
-    ComposeMarkdownProps(json, 'preConditions', elem.preConditionsElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
-    ComposeMarkdownValue(json, 'postConditions', elem.postConditionsElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
-    ComposeMarkdownProps(json, 'postConditions', elem.postConditionsElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.stepList.Count > 0) then
-  begin
-    json.valueArray('step');
-    for i := 0 to elem.stepList.Count - 1 do
-      ComposeWorkflowExampleProcessStep(json, '', elem.stepList[i]); {z - }
-    json.FinishArray;
-  end;
-  if not noObj then json.finishObject;
-end;
-
-procedure TFHIRJsonParser.ParseWorkflowExampleProcessStep(jsn : TJsonObject; ctxt : TFHIRObjectList);
-begin
-  ctxt.add(ParseWorkflowExampleProcessStep(jsn)); {2}
-end;
-
-function TFHIRJsonParser.ParseWorkflowExampleProcessStep(jsn : TJsonObject) : TFhirWorkflowExampleProcessStep;
-begin
-  result := TFhirWorkflowExampleProcessStep.create;
-  try
-    ParseWorkflowExampleProcessStepProperties(jsn, result);
-    result.link;
-  finally
-    result.free;
-  end;
-end;
-
-procedure TFHIRJsonParser.ParseWorkflowExampleProcessStepProperties(jsn : TJsonObject; result : TFhirWorkflowExampleProcessStep);
-begin
-    ParseBackboneElementProperties(jsn, result);
-    if jsn.has('process') then
-      iterateArray(jsn.vArr['process'], result.processList, parseWorkflowExampleProcess);
-    if jsn.has('pause') or jsn.has('_pause') then
-        result.pauseElement := ParseBoolean(jsn['pause'], jsn.vObj['_pause']);{q}
-    if jsn.has('operation') then
-        result.operation := ParseWorkflowExampleProcessStepOperation(jsn.vObj['operation']);{q3}
-    if jsn.has('alternative') then
-        result.alternative := ParseWorkflowExampleProcessStepAlternative(jsn.vObj['alternative']);{q3}
-end;
-
-procedure TFHIRJsonComposer.ComposeWorkflowExampleProcessStep(json : TJSONWriter; name : string; elem : TFhirWorkflowExampleProcessStep; noObj : boolean = false);
-var
-  i : integer;
-begin
-  if (elem = nil) then
-    exit;
-  if not noObj then json.valueObject(name);
-  ComposeBackboneElementProperties(json, elem);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.processList.Count > 0) then
-  begin
-    json.valueArray('process');
-    for i := 0 to elem.processList.Count - 1 do
-      ComposeWorkflowExampleProcess(json, '', elem.processList[i]); {z - @WorkflowExample.process}
-    json.FinishArray;
-  end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
-    ComposeBooleanValue(json, 'pause', elem.pauseElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
-    ComposeBooleanProps(json, 'pause', elem.pauseElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
-    ComposeWorkflowExampleProcessStepOperation(json, 'operation', elem.operation); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
-    ComposeWorkflowExampleProcessStepAlternative(json, 'alternative', elem.alternative); {a}
-  if not noObj then json.finishObject;
-end;
-
-procedure TFHIRJsonParser.ParseWorkflowExampleProcessStepOperation(jsn : TJsonObject; ctxt : TFHIRObjectList);
-begin
-  ctxt.add(ParseWorkflowExampleProcessStepOperation(jsn)); {2}
-end;
-
-function TFHIRJsonParser.ParseWorkflowExampleProcessStepOperation(jsn : TJsonObject) : TFhirWorkflowExampleProcessStepOperation;
-begin
-  result := TFhirWorkflowExampleProcessStepOperation.create;
-  try
-    ParseWorkflowExampleProcessStepOperationProperties(jsn, result);
-    result.link;
-  finally
-    result.free;
-  end;
-end;
-
-procedure TFHIRJsonParser.ParseWorkflowExampleProcessStepOperationProperties(jsn : TJsonObject; result : TFhirWorkflowExampleProcessStepOperation);
-begin
-    ParseBackboneElementProperties(jsn, result);
-    if jsn.has('number') or jsn.has('_number') then
-        result.numberElement := ParseString(jsn['number'], jsn.vObj['_number']);{q}
-    if jsn.has('type') or jsn.has('_type') then
-        result.type_Element := ParseString(jsn['type'], jsn.vObj['_type']);{q}
-    if jsn.has('name') or jsn.has('_name') then
-        result.nameElement := ParseString(jsn['name'], jsn.vObj['_name']);{q}
-    if jsn.has('initiator') or jsn.has('_initiator') then
-        result.initiatorElement := ParseString(jsn['initiator'], jsn.vObj['_initiator']);{q}
-    if jsn.has('receiver') or jsn.has('_receiver') then
-        result.receiverElement := ParseString(jsn['receiver'], jsn.vObj['_receiver']);{q}
-    if jsn.has('description') or jsn.has('_description') then
-        result.descriptionElement := ParseMarkdown(jsn['description'], jsn.vObj['_description']);{q}
-    if jsn.has('initiatorActive') or jsn.has('_initiatorActive') then
-        result.initiatorActiveElement := ParseBoolean(jsn['initiatorActive'], jsn.vObj['_initiatorActive']);{q}
-    if jsn.has('receiverActive') or jsn.has('_receiverActive') then
-        result.receiverActiveElement := ParseBoolean(jsn['receiverActive'], jsn.vObj['_receiverActive']);{q}
-    if jsn.has('request') then
-        result.request := ParseWorkflowExampleInstanceContainedInstance(jsn.vObj['request']);{q3}
-    if jsn.has('response') then
-        result.response := ParseWorkflowExampleInstanceContainedInstance(jsn.vObj['response']);{q3}
-end;
-
-procedure TFHIRJsonComposer.ComposeWorkflowExampleProcessStepOperation(json : TJSONWriter; name : string; elem : TFhirWorkflowExampleProcessStepOperation; noObj : boolean = false);
-begin
-  if (elem = nil) then
-    exit;
-  if not noObj then json.valueObject(name);
-  ComposeBackboneElementProperties(json, elem);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
-    ComposeStringValue(json, 'number', elem.numberElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
-    ComposeStringProps(json, 'number', elem.numberElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
-    ComposeStringValue(json, 'type', elem.type_Element, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
-    ComposeStringProps(json, 'type', elem.type_Element, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
-    ComposeStringValue(json, 'name', elem.nameElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
-    ComposeStringProps(json, 'name', elem.nameElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
-    ComposeStringValue(json, 'initiator', elem.initiatorElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
-    ComposeStringProps(json, 'initiator', elem.initiatorElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
-    ComposeStringValue(json, 'receiver', elem.receiverElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
-    ComposeStringProps(json, 'receiver', elem.receiverElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
-    ComposeMarkdownValue(json, 'description', elem.descriptionElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
-    ComposeMarkdownProps(json, 'description', elem.descriptionElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
-    ComposeBooleanValue(json, 'initiatorActive', elem.initiatorActiveElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
-    ComposeBooleanProps(json, 'initiatorActive', elem.initiatorActiveElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
-    ComposeBooleanValue(json, 'receiverActive', elem.receiverActiveElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
-    ComposeBooleanProps(json, 'receiverActive', elem.receiverActiveElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
-    ComposeWorkflowExampleInstanceContainedInstance(json, 'request', elem.request); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
-    ComposeWorkflowExampleInstanceContainedInstance(json, 'response', elem.response); {a}
-  if not noObj then json.finishObject;
-end;
-
-procedure TFHIRJsonParser.ParseWorkflowExampleProcessStepAlternative(jsn : TJsonObject; ctxt : TFHIRObjectList);
-begin
-  ctxt.add(ParseWorkflowExampleProcessStepAlternative(jsn)); {2}
-end;
-
-function TFHIRJsonParser.ParseWorkflowExampleProcessStepAlternative(jsn : TJsonObject) : TFhirWorkflowExampleProcessStepAlternative;
-begin
-  result := TFhirWorkflowExampleProcessStepAlternative.create;
-  try
-    ParseWorkflowExampleProcessStepAlternativeProperties(jsn, result);
-    result.link;
-  finally
-    result.free;
-  end;
-end;
-
-procedure TFHIRJsonParser.ParseWorkflowExampleProcessStepAlternativeProperties(jsn : TJsonObject; result : TFhirWorkflowExampleProcessStepAlternative);
-begin
-    ParseBackboneElementProperties(jsn, result);
-    if jsn.has('name') or jsn.has('_name') then
-        result.nameElement := ParseString(jsn['name'], jsn.vObj['_name']);{q}
-    if jsn.has('option') then
-      iterateArray(jsn.vArr['option'], result.optionList, parseWorkflowExampleProcessStepAlternativeOption);
-end;
-
-procedure TFHIRJsonComposer.ComposeWorkflowExampleProcessStepAlternative(json : TJSONWriter; name : string; elem : TFhirWorkflowExampleProcessStepAlternative; noObj : boolean = false);
-var
-  i : integer;
-begin
-  if (elem = nil) then
-    exit;
-  if not noObj then json.valueObject(name);
-  ComposeBackboneElementProperties(json, elem);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
-    ComposeStringValue(json, 'name', elem.nameElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
-    ComposeStringProps(json, 'name', elem.nameElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.optionList.Count > 0) then
-  begin
-    json.valueArray('option');
-    for i := 0 to elem.optionList.Count - 1 do
-      ComposeWorkflowExampleProcessStepAlternativeOption(json, '', elem.optionList[i]); {z - }
-    json.FinishArray;
-  end;
-  if not noObj then json.finishObject;
-end;
-
-procedure TFHIRJsonParser.ParseWorkflowExampleProcessStepAlternativeOption(jsn : TJsonObject; ctxt : TFHIRObjectList);
-begin
-  ctxt.add(ParseWorkflowExampleProcessStepAlternativeOption(jsn)); {2}
-end;
-
-function TFHIRJsonParser.ParseWorkflowExampleProcessStepAlternativeOption(jsn : TJsonObject) : TFhirWorkflowExampleProcessStepAlternativeOption;
-begin
-  result := TFhirWorkflowExampleProcessStepAlternativeOption.create;
-  try
-    ParseWorkflowExampleProcessStepAlternativeOptionProperties(jsn, result);
-    result.link;
-  finally
-    result.free;
-  end;
-end;
-
-procedure TFHIRJsonParser.ParseWorkflowExampleProcessStepAlternativeOptionProperties(jsn : TJsonObject; result : TFhirWorkflowExampleProcessStepAlternativeOption);
-begin
-    ParseBackboneElementProperties(jsn, result);
-    if jsn.has('description') or jsn.has('_description') then
-        result.descriptionElement := ParseMarkdown(jsn['description'], jsn.vObj['_description']);{q}
-    if jsn.has('step') then
-      iterateArray(jsn.vArr['step'], result.stepList, parseWorkflowExampleProcessStep);
-      if jsn.has('pause') or jsn.has('_pause') then
-      iteratePrimitiveArray(jsn.vArr['pause'], jsn.vArr['_pause'], result.pauseList, parseBoolean);
-end;
-
-procedure TFHIRJsonComposer.ComposeWorkflowExampleProcessStepAlternativeOption(json : TJSONWriter; name : string; elem : TFhirWorkflowExampleProcessStepAlternativeOption; noObj : boolean = false);
-var
-  i : integer;
-  ext : boolean;
-  val : boolean;
-begin
-  if (elem = nil) then
-    exit;
-  if not noObj then json.valueObject(name);
-  ComposeBackboneElementProperties(json, elem);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
-    ComposeMarkdownValue(json, 'description', elem.descriptionElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
-    ComposeMarkdownProps(json, 'description', elem.descriptionElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.stepList.Count > 0) then
-  begin
-    json.valueArray('step');
-    for i := 0 to elem.stepList.Count - 1 do
-      ComposeWorkflowExampleProcessStep(json, '', elem.stepList[i]); {z - @WorkflowExample.process.step}
-    json.FinishArray;
-  end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.pauseList.Count > 0) then
-  begin
-    ext := false;
-    val := false;
-    for i := 0 to elem.pauseList.Count - 1 do
-    begin
-      ext := ext or ((elem.pauseList[i].id <> '') or (elem.pauseList[i].hasExtensionList) {no-comments or (elem.pauseList[i].hasComments)});
-      val := val or (elem.pauseList[i].hasPrimitiveValue);
-    end;
-    if val then
-    begin
-      json.valueArray('pause');
-      for i := 0 to elem.pauseList.Count - 1 do
-        ComposeBooleanValue(json, '',elem.pauseList[i], true);
-      json.FinishArray;
-    end;
-    if ext then
-    begin
-      json.valueArray('_pause');
-      for i := 0 to elem.pauseList.Count - 1 do
-        ComposeBooleanProps(json, '',elem.pauseList[i], true);
-      json.FinishArray;
-    end;
-  end;
-  if not noObj then json.finishObject;
-end;
-
-procedure TFHIRJsonParser.ParseWorkflowExample(jsn : TJsonObject; ctxt : TFHIRObjectList);
-begin
-  ctxt.add(ParseWorkflowExample(jsn)); {2}
-end;
-
-function TFHIRJsonParser.ParseWorkflowExample(jsn : TJsonObject) : TFhirWorkflowExample;
-begin
-  result := TFhirWorkflowExample.create;
-  try
-    ParseWorkflowExampleProperties(jsn, result);
-    result.link;
-  finally
-    result.free;
-  end;
-end;
-
-procedure TFHIRJsonParser.ParseWorkflowExampleProperties(jsn : TJsonObject; result : TFhirWorkflowExample);
-begin
-    ParseDomainResourceProperties(jsn, result);
-    if jsn.has('url') or jsn.has('_url') then
-        result.urlElement := ParseUri(jsn['url'], jsn.vObj['_url']);{q}
-    if jsn.has('identifier') then
-      iterateArray(jsn.vArr['identifier'], result.identifierList, parseIdentifier);
-    if jsn.has('version') or jsn.has('_version') then
-        result.versionElement := ParseString(jsn['version'], jsn.vObj['_version']);{q}
-    if jsn.has('name') or jsn.has('_name') then
-        result.nameElement := ParseString(jsn['name'], jsn.vObj['_name']);{q}
-    if jsn.has('title') or jsn.has('_title') then
-        result.titleElement := ParseString(jsn['title'], jsn.vObj['_title']);{q}
-    if jsn.has('status') or jsn.has('_status')  then
-      result.statusElement := parseEnum(jsn.path+'/status', jsn['status'], jsn.vObj['_status'], CODES_TFhirPublicationStatusEnum, SYSTEMS_TFhirPublicationStatusEnum);
-    if jsn.has('experimental') or jsn.has('_experimental') then
-        result.experimentalElement := ParseBoolean(jsn['experimental'], jsn.vObj['_experimental']);{q}
-    if jsn.has('date') or jsn.has('_date') then
-        result.dateElement := ParseDateTime(jsn['date'], jsn.vObj['_date']);{q}
-    if jsn.has('publisher') or jsn.has('_publisher') then
-        result.publisherElement := ParseString(jsn['publisher'], jsn.vObj['_publisher']);{q}
-    if jsn.has('contact') then
-      iterateArray(jsn.vArr['contact'], result.contactList, parseContactDetail);
-    if jsn.has('useContext') then
-      iterateArray(jsn.vArr['useContext'], result.useContextList, parseUsageContext);
-    if jsn.has('jurisdiction') then
-      iterateArray(jsn.vArr['jurisdiction'], result.jurisdictionList, parseCodeableConcept);
-    if jsn.has('copyright') or jsn.has('_copyright') then
-        result.copyrightElement := ParseMarkdown(jsn['copyright'], jsn.vObj['_copyright']);{q}
-    if jsn.has('description') or jsn.has('_description') then
-        result.descriptionElement := ParseMarkdown(jsn['description'], jsn.vObj['_description']);{q}
-    if jsn.has('purpose') or jsn.has('_purpose') then
-        result.purposeElement := ParseMarkdown(jsn['purpose'], jsn.vObj['_purpose']);{q}
-    if jsn.has('actor') then
-      iterateArray(jsn.vArr['actor'], result.actorList, parseWorkflowExampleActor);
-    if jsn.has('instance') then
-      iterateArray(jsn.vArr['instance'], result.instanceList, parseWorkflowExampleInstance);
-    if jsn.has('process') then
-        result.process := ParseWorkflowExampleProcess(jsn.vObj['process']);{q3}
-    if jsn.has('workflow') then
-      iterateArray(jsn.vArr['workflow'], result.workflowList, parseReference{TFhirWorkflowExample});
-end;
-
-procedure TFHIRJsonComposer.ComposeWorkflowExample(json : TJSONWriter; name : string; elem : TFhirWorkflowExample; noObj : boolean = false);
-var
-  i : integer;
-begin
-  if (elem = nil) then
-    exit;
-  ComposeDomainResourceProperties(json, elem);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
-    ComposeUriValue(json, 'url', elem.urlElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
-    ComposeUriProps(json, 'url', elem.urlElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.identifierList.Count > 0) then
-  begin
-    json.valueArray('identifier');
-    for i := 0 to elem.identifierList.Count - 1 do
-      ComposeIdentifier(json, '', elem.identifierList[i]); {z - Identifier}
-    json.FinishArray;
-  end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
-    ComposeStringValue(json, 'version', elem.versionElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
-    ComposeStringProps(json, 'version', elem.versionElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
-    ComposeStringValue(json, 'name', elem.nameElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
-    ComposeStringProps(json, 'name', elem.nameElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
-    ComposeStringValue(json, 'title', elem.titleElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
-    ComposeStringProps(json, 'title', elem.titleElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
-     ComposeEnumValue(json, 'status', elem.StatusElement, CODES_TFhirPublicationStatusEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
-     ComposeEnumProps(json, 'status', elem.StatusElement, CODES_TFhirPublicationStatusEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
-    ComposeBooleanValue(json, 'experimental', elem.experimentalElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
-    ComposeBooleanProps(json, 'experimental', elem.experimentalElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
-    ComposeDateTimeValue(json, 'date', elem.dateElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
-    ComposeDateTimeProps(json, 'date', elem.dateElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
-    ComposeStringValue(json, 'publisher', elem.publisherElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
-    ComposeStringProps(json, 'publisher', elem.publisherElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.contactList.Count > 0) then
-  begin
-    json.valueArray('contact');
-    for i := 0 to elem.contactList.Count - 1 do
-      ComposeContactDetail(json, '', elem.contactList[i]); {z - ContactDetail}
-    json.FinishArray;
-  end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.useContextList.Count > 0) then
-  begin
-    json.valueArray('useContext');
-    for i := 0 to elem.useContextList.Count - 1 do
-      ComposeUsageContext(json, '', elem.useContextList[i]); {z - UsageContext}
-    json.FinishArray;
-  end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.jurisdictionList.Count > 0) then
-  begin
-    json.valueArray('jurisdiction');
-    for i := 0 to elem.jurisdictionList.Count - 1 do
-      ComposeCodeableConcept(json, '', elem.jurisdictionList[i]); {z - CodeableConcept}
-    json.FinishArray;
-  end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
-    ComposeMarkdownValue(json, 'copyright', elem.copyrightElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
-    ComposeMarkdownProps(json, 'copyright', elem.copyrightElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
-    ComposeMarkdownValue(json, 'description', elem.descriptionElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
-    ComposeMarkdownProps(json, 'description', elem.descriptionElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
-    ComposeMarkdownValue(json, 'purpose', elem.purposeElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
-    ComposeMarkdownProps(json, 'purpose', elem.purposeElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.actorList.Count > 0) then
-  begin
-    json.valueArray('actor');
-    for i := 0 to elem.actorList.Count - 1 do
-      ComposeWorkflowExampleActor(json, '', elem.actorList[i]); {z - }
-    json.FinishArray;
-  end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.instanceList.Count > 0) then
-  begin
-    json.valueArray('instance');
-    for i := 0 to elem.instanceList.Count - 1 do
-      ComposeWorkflowExampleInstance(json, '', elem.instanceList[i]); {z - }
-    json.FinishArray;
-  end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
-    ComposeWorkflowExampleProcess(json, 'process', elem.process); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.workflowList.Count > 0) then
-  begin
-    json.valueArray('workflow');
-    for i := 0 to elem.workflowList.Count - 1 do
-      ComposeReference{TFhirWorkflowExample}(json, '', elem.workflowList[i]); {z - Reference(WorkflowExample)}
-    json.FinishArray;
-  end;
-end;
-
-{$ENDIF FHIR_WORKFLOWEXAMPLE}
 function TFHIRJsonParser.ParseResource(jsn : TJsonObject) : TFhirResource;
 var
   s : String;
@@ -46662,6 +46801,12 @@ begin
     result := ParseEventDefinition(jsn) 
   {$ENDIF}
 {$ENDIF FHIR_EVENTDEFINITION}
+{$IFDEF FHIR_EXAMPLESCENARIO}
+  {$IFDEF FHIR_EXAMPLESCENARIO}
+   else if s = 'ExampleScenario' Then
+    result := ParseExampleScenario(jsn) 
+  {$ENDIF}
+{$ENDIF FHIR_EXAMPLESCENARIO}
 {$IFDEF FHIR_EXPANSIONPROFILE}
   {$IFDEF FHIR_EXPANSIONPROFILE}
    else if s = 'ExpansionProfile' Then
@@ -47088,12 +47233,6 @@ begin
     result := ParseVisionPrescription(jsn) 
   {$ENDIF}
 {$ENDIF FHIR_VISIONPRESCRIPTION}
-{$IFDEF FHIR_WORKFLOWEXAMPLE}
-  {$IFDEF FHIR_WORKFLOWEXAMPLE}
-   else if s = 'WorkflowExample' Then
-    result := ParseWorkflowExample(jsn) 
-  {$ENDIF}
-{$ENDIF FHIR_WORKFLOWEXAMPLE}
   else
     raise Exception.create('error: the element '+s+' is not a valid resource name');
 end;
@@ -47358,6 +47497,10 @@ begin
   else if (type_ = 'TFhirEventDefinition') then
     result := parseEventDefinition(jsn)
 {$ENDIF FHIR_EVENTDEFINITION}
+{$IFDEF FHIR_EXAMPLESCENARIO}
+  else if (type_ = 'TFhirExampleScenario') then
+    result := parseExampleScenario(jsn)
+{$ENDIF FHIR_EXAMPLESCENARIO}
 {$IFDEF FHIR_EXPANSIONPROFILE}
   else if (type_ = 'TFhirExpansionProfile') then
     result := parseExpansionProfile(jsn)
@@ -47642,10 +47785,6 @@ begin
   else if (type_ = 'TFhirVisionPrescription') then
     result := parseVisionPrescription(jsn)
 {$ENDIF FHIR_VISIONPRESCRIPTION}
-{$IFDEF FHIR_WORKFLOWEXAMPLE}
-  else if (type_ = 'TFhirWorkflowExample') then
-    result := parseWorkflowExample(jsn)
-{$ENDIF FHIR_WORKFLOWEXAMPLE}
   else
     raise Exception.create('error: the element '+type_+' is not a valid fragment name');
 end;
@@ -48063,6 +48202,8 @@ begin
     composeCodeSystemConceptDesignation(json, name, TFhirCodeSystemConceptDesignation(base), false)
   else if (base is TFhirCodeSystemConceptProperty) then
     composeCodeSystemConceptProperty(json, name, TFhirCodeSystemConceptProperty(base), false)
+  else if (base is TFhirCodeSystemConceptAlternate) then
+    composeCodeSystemConceptAlternate(json, name, TFhirCodeSystemConceptAlternate(base), false)
   else if (base is TFhirCodeSystem) then
     composeCodeSystem(json, name, TFhirCodeSystem(base), false)
 {$ENDIF FHIR_CODESYSTEM}
@@ -48207,14 +48348,16 @@ begin
     composeDiagnosticReport(json, name, TFhirDiagnosticReport(base), false)
 {$ENDIF FHIR_DIAGNOSTICREPORT}
 {$IFDEF FHIR_DOCUMENTMANIFEST}
-  else if (base is TFhirDocumentManifestContent) then
-    composeDocumentManifestContent(json, name, TFhirDocumentManifestContent(base), false)
+  else if (base is TFhirDocumentManifestAgent) then
+    composeDocumentManifestAgent(json, name, TFhirDocumentManifestAgent(base), false)
   else if (base is TFhirDocumentManifestRelated) then
     composeDocumentManifestRelated(json, name, TFhirDocumentManifestRelated(base), false)
   else if (base is TFhirDocumentManifest) then
     composeDocumentManifest(json, name, TFhirDocumentManifest(base), false)
 {$ENDIF FHIR_DOCUMENTMANIFEST}
 {$IFDEF FHIR_DOCUMENTREFERENCE}
+  else if (base is TFhirDocumentReferenceAgent) then
+    composeDocumentReferenceAgent(json, name, TFhirDocumentReferenceAgent(base), false)
   else if (base is TFhirDocumentReferenceRelatesTo) then
     composeDocumentReferenceRelatesTo(json, name, TFhirDocumentReferenceRelatesTo(base), false)
   else if (base is TFhirDocumentReferenceContent) then
@@ -48282,6 +48425,28 @@ begin
   else if (base is TFhirEventDefinition) then
     composeEventDefinition(json, name, TFhirEventDefinition(base), false)
 {$ENDIF FHIR_EVENTDEFINITION}
+{$IFDEF FHIR_EXAMPLESCENARIO}
+  else if (base is TFhirExampleScenarioActor) then
+    composeExampleScenarioActor(json, name, TFhirExampleScenarioActor(base), false)
+  else if (base is TFhirExampleScenarioInstance) then
+    composeExampleScenarioInstance(json, name, TFhirExampleScenarioInstance(base), false)
+  else if (base is TFhirExampleScenarioInstanceVersion) then
+    composeExampleScenarioInstanceVersion(json, name, TFhirExampleScenarioInstanceVersion(base), false)
+  else if (base is TFhirExampleScenarioInstanceContainedInstance) then
+    composeExampleScenarioInstanceContainedInstance(json, name, TFhirExampleScenarioInstanceContainedInstance(base), false)
+  else if (base is TFhirExampleScenarioProcess) then
+    composeExampleScenarioProcess(json, name, TFhirExampleScenarioProcess(base), false)
+  else if (base is TFhirExampleScenarioProcessStep) then
+    composeExampleScenarioProcessStep(json, name, TFhirExampleScenarioProcessStep(base), false)
+  else if (base is TFhirExampleScenarioProcessStepOperation) then
+    composeExampleScenarioProcessStepOperation(json, name, TFhirExampleScenarioProcessStepOperation(base), false)
+  else if (base is TFhirExampleScenarioProcessStepAlternative) then
+    composeExampleScenarioProcessStepAlternative(json, name, TFhirExampleScenarioProcessStepAlternative(base), false)
+  else if (base is TFhirExampleScenarioProcessStepAlternativeOption) then
+    composeExampleScenarioProcessStepAlternativeOption(json, name, TFhirExampleScenarioProcessStepAlternativeOption(base), false)
+  else if (base is TFhirExampleScenario) then
+    composeExampleScenario(json, name, TFhirExampleScenario(base), false)
+{$ENDIF FHIR_EXAMPLESCENARIO}
 {$IFDEF FHIR_EXPANSIONPROFILE}
   else if (base is TFhirExpansionProfileFixedVersion) then
     composeExpansionProfileFixedVersion(json, name, TFhirExpansionProfileFixedVersion(base), false)
@@ -48980,28 +49145,6 @@ begin
   else if (base is TFhirVisionPrescription) then
     composeVisionPrescription(json, name, TFhirVisionPrescription(base), false)
 {$ENDIF FHIR_VISIONPRESCRIPTION}
-{$IFDEF FHIR_WORKFLOWEXAMPLE}
-  else if (base is TFhirWorkflowExampleActor) then
-    composeWorkflowExampleActor(json, name, TFhirWorkflowExampleActor(base), false)
-  else if (base is TFhirWorkflowExampleInstance) then
-    composeWorkflowExampleInstance(json, name, TFhirWorkflowExampleInstance(base), false)
-  else if (base is TFhirWorkflowExampleInstanceVersion) then
-    composeWorkflowExampleInstanceVersion(json, name, TFhirWorkflowExampleInstanceVersion(base), false)
-  else if (base is TFhirWorkflowExampleInstanceContainedInstance) then
-    composeWorkflowExampleInstanceContainedInstance(json, name, TFhirWorkflowExampleInstanceContainedInstance(base), false)
-  else if (base is TFhirWorkflowExampleProcess) then
-    composeWorkflowExampleProcess(json, name, TFhirWorkflowExampleProcess(base), false)
-  else if (base is TFhirWorkflowExampleProcessStep) then
-    composeWorkflowExampleProcessStep(json, name, TFhirWorkflowExampleProcessStep(base), false)
-  else if (base is TFhirWorkflowExampleProcessStepOperation) then
-    composeWorkflowExampleProcessStepOperation(json, name, TFhirWorkflowExampleProcessStepOperation(base), false)
-  else if (base is TFhirWorkflowExampleProcessStepAlternative) then
-    composeWorkflowExampleProcessStepAlternative(json, name, TFhirWorkflowExampleProcessStepAlternative(base), false)
-  else if (base is TFhirWorkflowExampleProcessStepAlternativeOption) then
-    composeWorkflowExampleProcessStepAlternativeOption(json, name, TFhirWorkflowExampleProcessStepAlternativeOption(base), false)
-  else if (base is TFhirWorkflowExample) then
-    composeWorkflowExample(json, name, TFhirWorkflowExample(base), false)
-{$ENDIF FHIR_WORKFLOWEXAMPLE}
   else
     raise Exception.create('Unknown Type '+base.className);
 end;
@@ -49245,6 +49388,11 @@ begin
      frtEventDefinition: ComposeEventDefinition(json, 'EventDefinition', TFhirEventDefinition(resource));
    {$ENDIF}
 {$ENDIF FHIR_EVENTDEFINITION}
+{$IFDEF FHIR_EXAMPLESCENARIO}
+  {$IFDEF FHIR_EXAMPLESCENARIO}
+     frtExampleScenario: ComposeExampleScenario(json, 'ExampleScenario', TFhirExampleScenario(resource));
+   {$ENDIF}
+{$ENDIF FHIR_EXAMPLESCENARIO}
 {$IFDEF FHIR_EXPANSIONPROFILE}
   {$IFDEF FHIR_EXPANSIONPROFILE}
      frtExpansionProfile: ComposeExpansionProfile(json, 'ExpansionProfile', TFhirExpansionProfile(resource));
@@ -49600,11 +49748,6 @@ begin
      frtVisionPrescription: ComposeVisionPrescription(json, 'VisionPrescription', TFhirVisionPrescription(resource));
    {$ENDIF}
 {$ENDIF FHIR_VISIONPRESCRIPTION}
-{$IFDEF FHIR_WORKFLOWEXAMPLE}
-  {$IFDEF FHIR_WORKFLOWEXAMPLE}
-     frtWorkflowExample: ComposeWorkflowExample(json, 'WorkflowExample', TFhirWorkflowExample(resource));
-   {$ENDIF}
-{$ENDIF FHIR_WORKFLOWEXAMPLE}
   else
     raise Exception.create('Internal error: the resource type '+CODES_TFhirResourceType[resource.ResourceType]+' is not a valid resource type');
   end;

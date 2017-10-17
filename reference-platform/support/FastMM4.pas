@@ -160,8 +160,8 @@ Acknowledgements (for version 4):
  - Kristofer Skaug for reporting the bug that sometimes causes the leak report
    to be shown, even when all the leaks have been registered as expected leaks.
    Also for some useful enhancement suggestions.
- - Günther Schoch for the "RequireDebuggerPresenceForLeakReporting" option.
- - Jan Schlüter for the "ForceMMX" option.
+ - Gï¿½nther Schoch for the "RequireDebuggerPresenceForLeakReporting" option.
+ - Jan Schlï¿½ter for the "ForceMMX" option.
  - Hallvard Vassbotn for various good enhancement suggestions.
  - Mark Edington for some good suggestions and bug reports.
  - Paul Ishenin for reporting the compilation error when the NoMessageBoxes
@@ -219,7 +219,7 @@ Acknowledgements (for version 4):
    not work in FullDebugMode.
  - Ionut Muntean for the Romanian translation.
  - Florent Ouchet for the French translation.
- - Marcus Mönnig for the ScanMemoryPoolForCorruptions suggestion and the
+ - Marcus Mï¿½nnig for the ScanMemoryPoolForCorruptions suggestion and the
    suggestion to have the option to scan the memory pool before every
    operation when in FullDebugMode.
  - Francois Piette for bringing under my attention that
@@ -372,7 +372,34 @@ Change log:
   Version 4.15 (14 July 2005):
   - Fixed a false 4GB(!) memory leak reported in some instances.
   Version 4.16 (15 July 2005):
-  - Added the "CatchUseOfFreedInterfaces" option to catch the use of interfaces
+  - Added the "CatchUseOfFreedInterfaces" option to catch the use of {
+Copyright (c) 2017+, Health Intersections Pty Ltd (http://www.healthintersections.com.au)
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without modification,
+are permitted provided that the following conditions are met:
+
+ * Redistributions of source code must retain the above copyright notice, this
+   list of conditions and the following disclaimer.
+ * Redistributions in binary form must reproduce the above copyright notice,
+   this list of conditions and the following disclaimer in the documentation
+   and/or other materials provided with the distribution.
+ * Neither the name of HL7 nor the names of its contributors may be used to
+   endorse or promote products derived from this software without specific
+   prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS 'AS IS' AND
+ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+POSSIBILITY OF SUCH DAMAGE.
+}
+interfaces
     of freed objects. This option is not compatible with checking that a freed
     block has not been modified, so enable this option only when hunting an
     invalid interface reference. (Only relevant if "FullDebugMode" is set.)
@@ -438,10 +465,10 @@ Change log:
    leaks were registered as expected leaks. (Thanks to Kristofer Skaug.)
  Version 4.29 (30 September 2005):
  - Added the "RequireDebuggerPresenceForLeakReporting" option to only display
-   the leak report if the application is run inside the IDE. (Thanks to Günther
+   the leak report if the application is run inside the IDE. (Thanks to Gï¿½nther
    Schoch.)
  - Added the "ForceMMX" option, which when disabled will check the CPU for
-   MMX compatibility before using MMX. (Thanks to Jan Schlüter.)
+   MMX compatibility before using MMX. (Thanks to Jan Schlï¿½ter.)
  - Added the module name to the title of error dialogs to more easily identify
    which application caused the error. (Thanks to Kristofer Skaug.)
  - Added an ASCII dump to the "FullDebugMode" memory dumps. (Thanks to Hallvard
@@ -670,14 +697,14 @@ Change log:
   - Added a ScanMemoryPoolForCorruptions procedure that checks the entire
     memory pool for corruptions and raises an exception if one is found. It can
     be called at any time, but is only available in FullDebugMode. (Thanks to
-    Marcus Mönnig.)
+    Marcus Mï¿½nnig.)
   - Added a global variable "FullDebugModeScanMemoryPoolBeforeEveryOperation".
     When this variable is set to true and FullDebugMode is enabled, then the
     entire memory pool is checked for consistency before every GetMem, FreeMem
     and ReallocMem operation. An "Out of Memory" error is raised if a
     corruption is found (and this variable is set to false to prevent recursive
     errors). This obviously incurs a massive performance hit, so enable it only
-    when hunting for elusive memory corruption bugs. (Thanks to Marcus Mönnig.)
+    when hunting for elusive memory corruption bugs. (Thanks to Marcus Mï¿½nnig.)
   - Fixed a bug in AllocMem that caused the FPU stack to be shifted by one
     position.
   - Changed the default for option "EnableMMX" to false, since using MMX may

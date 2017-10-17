@@ -73,7 +73,7 @@ type
     Constructor create(server : TTerminologyServer; ServerContext : TFHIRServerContext; lang : String);
     Destructor Destroy; override;
 
-    function FindResource(aType, sId : String; bAllowDeleted : boolean; var resourceKey, versionKey : integer; request: TFHIRRequest; response: TFHIRResponse; compartments : String): boolean; override;
+    function FindResource(aType, sId : String; options : TFindResourceOptions; var resourceKey, versionKey : integer; request: TFHIRRequest; response: TFHIRResponse; compartments : TAdvList<TFHIRCompartmentId>): boolean; override;
     function GetResourceById(request: TFHIRRequest; aType : String; id, base : String; var needSecure : boolean) : TFHIRResource; override;
     function getResourceByUrl(aType : TFhirResourceType; url, version : string; allowNil : boolean; var needSecure : boolean): TFHIRResource; override;
   end;
@@ -91,7 +91,7 @@ type
     // no OAuth Support
 
     // server total counts:
-    function FetchResourceCounts(comps : String) : TStringList; override;
+    function FetchResourceCounts(compList : TAdvList<TFHIRCompartmentId>) : TStringList; override;
 
     procedure RecordFhirSession(session: TFhirSession); override;
     procedure CloseFhirSession(key: integer); override;
@@ -138,7 +138,7 @@ begin
   inherited;
 end;
 
-function TTerminologyServerStorage.FetchResourceCounts(comps: String): TStringList;
+function TTerminologyServerStorage.FetchResourceCounts(compList : TAdvList<TFHIRCompartmentId>): TStringList;
 begin
   result := TStringList.create;
   result.AddObject('ValueSet', TObject(FServer.ValueSetCount));
@@ -429,7 +429,7 @@ begin
   if offset < 0 then
     offset := 0;
 
-  if (request.Parameters.getItemCount = 0) and (response.Format = ffXhtml) and (request.compartmentId = '') then
+  if (request.Parameters.getItemCount = 0) and (response.Format = ffXhtml) and not request.hasCompartments then
     BuildSearchForm(request, response)
   else
   begin
@@ -655,7 +655,7 @@ begin
   end;
 end;
 
-function TTerminologyServerOperationEngine.FindResource(aType, sId: String; bAllowDeleted: boolean; var resourceKey, versionKey: integer; request: TFHIRRequest; response: TFHIRResponse; compartments: String): boolean;
+function TTerminologyServerOperationEngine.FindResource(aType, sId : String; options : TFindResourceOptions; var resourceKey, versionKey : integer; request: TFHIRRequest; response: TFHIRResponse; compartments : TAdvList<TFHIRCompartmentId>): boolean;
 var
   res : TFhirMetadataResource;
 begin

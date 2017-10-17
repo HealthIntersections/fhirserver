@@ -2686,11 +2686,11 @@ Procedure TFHIRTurtleComposer.ComposeResource(this : TTurtleComplex; parentType,
 begin
   if not elem.noCompose and (SummaryOption in [soFull, soSummary, soText, soData]) then
     ComposeId(this, 'Resource', 'id', elem.idElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('meta') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeMeta(this, 'Resource', 'meta', elem.metaElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('implicitRules') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeUri(this, 'Resource', 'implicitRules', elem.implicitRulesElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('language') and (SummaryOption in [soFull, soData]) then
     ComposeCode(this, 'Resource', 'language', elem.languageElement, false, -1);{x.2ea}
 end;
 
@@ -2713,15 +2713,15 @@ var
   i : integer{z.c};
 begin
   ComposeResource(this, '', name, elem, false, index);
-  if not elem.noCompose and (SummaryOption in [soFull, soText]) then
+  if not elem.noCompose and doCompose('text') and (SummaryOption in [soFull, soText]) then
     ComposeNarrative(this, 'DomainResource', 'text', elem.textElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('contained') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.containedList.Count - 1 do
       ComposeInnerResource(this, 'DomainResource', 'contained', elem.containedList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('extension') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.extensionList.Count - 1 do
       ComposeExtension(this, 'DomainResource', 'extension', elem.extensionList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('modifierExtension') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.modifierExtensionList.Count - 1 do
       ComposeExtension(this, 'DomainResource', 'modifierExtension', elem.modifierExtensionList[i], false, i);{x.d3}
 end;
@@ -2966,7 +2966,7 @@ begin
       this.addPredicate('a', 'fhir:Parameters'); {z}
   end;
   composeResource(this, '', name, elem, false, index);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soText, soData]) then
+  if not elem.noCompose and doCompose('parameter') and (SummaryOption in [soFull, soSummary, soText, soData]) then
     for i := 0 to elem.parameterList.Count - 1 do
       ComposeParametersParameter(this, 'Parameters', 'parameter', elem.parameterList[i], false, i);{x.d3}
 end;
@@ -6319,31 +6319,31 @@ begin
       this.addPredicate('a', 'fhir:Account'); {z}
   end;
   composeDomainResource(this, '', name, elem, false, index);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('identifier') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.identifierList.Count - 1 do
       ComposeIdentifier(this, 'Account', 'identifier', elem.identifierList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('status') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnum(this, 'Account', 'status', elem.StatusElement, CODES_TFhirAccountStatusEnum, SYSTEMS_TFhirAccountStatusEnum, false, -1);{x.d4}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('type_') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeCodeableConcept(this, 'Account', 'type', elem.type_Element, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('name') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeString(this, 'Account', 'name', elem.nameElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('subject') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{Resource}(this, 'Account', 'subject', elem.subjectElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('period') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposePeriod(this, 'Account', 'period', elem.periodElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('active') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposePeriod(this, 'Account', 'active', elem.activeElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('balance') and (SummaryOption in [soFull, soData]) then
     ComposeMoney(this, 'Account', 'balance', elem.balanceElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('coverage') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.coverageList.Count - 1 do
       ComposeAccountCoverage(this, 'Account', 'coverage', elem.coverageList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('owner') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{TFhirOrganization}(this, 'Account', 'owner', elem.ownerElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('description') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeString(this, 'Account', 'description', elem.descriptionElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('guarantor') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.guarantorList.Count - 1 do
       ComposeAccountGuarantor(this, 'Account', 'guarantor', elem.guarantorList[i], false, i);{x.d3}
 end;
@@ -6530,63 +6530,63 @@ begin
       this.addPredicate('a', 'fhir:ActivityDefinition'); {z}
   end;
   composeDomainResource(this, '', name, elem, false, index);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('url') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeUri(this, 'ActivityDefinition', 'url', elem.urlElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('identifier') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.identifierList.Count - 1 do
       ComposeIdentifier(this, 'ActivityDefinition', 'identifier', elem.identifierList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('version') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeString(this, 'ActivityDefinition', 'version', elem.versionElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('name') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeString(this, 'ActivityDefinition', 'name', elem.nameElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('title') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeString(this, 'ActivityDefinition', 'title', elem.titleElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('status') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnum(this, 'ActivityDefinition', 'status', elem.StatusElement, CODES_TFhirPublicationStatusEnum, SYSTEMS_TFhirPublicationStatusEnum, false, -1);{x.d4}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('experimental') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeBoolean(this, 'ActivityDefinition', 'experimental', elem.experimentalElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('date') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeDateTime(this, 'ActivityDefinition', 'date', elem.dateElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('publisher') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeString(this, 'ActivityDefinition', 'publisher', elem.publisherElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('description') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeMarkdown(this, 'ActivityDefinition', 'description', elem.descriptionElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('purpose') and (SummaryOption in [soFull, soData]) then
     ComposeMarkdown(this, 'ActivityDefinition', 'purpose', elem.purposeElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('usage') and (SummaryOption in [soFull, soData]) then
     ComposeString(this, 'ActivityDefinition', 'usage', elem.usageElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('approvalDate') and (SummaryOption in [soFull, soData]) then
     ComposeDate(this, 'ActivityDefinition', 'approvalDate', elem.approvalDateElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('lastReviewDate') and (SummaryOption in [soFull, soData]) then
     ComposeDate(this, 'ActivityDefinition', 'lastReviewDate', elem.lastReviewDateElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('effectivePeriod') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposePeriod(this, 'ActivityDefinition', 'effectivePeriod', elem.effectivePeriodElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('useContext') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.useContextList.Count - 1 do
       ComposeUsageContext(this, 'ActivityDefinition', 'useContext', elem.useContextList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('jurisdiction') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.jurisdictionList.Count - 1 do
       ComposeCodeableConcept(this, 'ActivityDefinition', 'jurisdiction', elem.jurisdictionList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('topic') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.topicList.Count - 1 do
       ComposeCodeableConcept(this, 'ActivityDefinition', 'topic', elem.topicList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('contributor') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.contributorList.Count - 1 do
       ComposeContributor(this, 'ActivityDefinition', 'contributor', elem.contributorList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('contact') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.contactList.Count - 1 do
       ComposeContactDetail(this, 'ActivityDefinition', 'contact', elem.contactList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('copyright') and (SummaryOption in [soFull, soData]) then
     ComposeMarkdown(this, 'ActivityDefinition', 'copyright', elem.copyrightElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('relatedArtifact') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.relatedArtifactList.Count - 1 do
       ComposeRelatedArtifact(this, 'ActivityDefinition', 'relatedArtifact', elem.relatedArtifactList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('library_') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.library_List.Count - 1 do
       ComposeReference{TFhirLibrary}(this, 'ActivityDefinition', 'library', elem.library_List[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('kind') and (SummaryOption in [soFull, soData]) then
      ComposeEnum(this, 'ActivityDefinition', 'kind', elem.KindElement, CODES_TFhirResourceTypesEnum, SYSTEMS_TFhirResourceTypesEnum, false, -1);{x.d4}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('code') and (SummaryOption in [soFull, soData]) then
     ComposeCodeableConcept(this, 'ActivityDefinition', 'code', elem.codeElement, false, -1);{x.2f}
   if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.timing is TFhirTiming) {6} then
     ComposeTiming(this, 'ActivityDefinition', 'timingTiming', TFhirTiming(elem.timing), false, -1){x.d9}
@@ -6596,26 +6596,26 @@ begin
     ComposeRange(this, 'ActivityDefinition', 'timingRange', TFhirRange(elem.timing), false, -1){x.d9}
   else if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.timing is TFhirDateTime) {6} then
     ComposeDateTime(this, 'ActivityDefinition', 'timingDateTime', TFhirDateTime(elem.timing), false, -1);{x.d9}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('location') and (SummaryOption in [soFull, soData]) then
     ComposeReference{TFhirLocation}(this, 'ActivityDefinition', 'location', elem.locationElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('participant') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.participantList.Count - 1 do
       ComposeActivityDefinitionParticipant(this, 'ActivityDefinition', 'participant', elem.participantList[i], false, i);{x.d3}
   if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.product is TFhirReference) {2} then
     ComposeReference(this, 'ActivityDefinition', 'productReference', TFhirReference(elem.product), false,-1){x.d8}
   else if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.product is TFhirCodeableConcept) {6} then
     ComposeCodeableConcept(this, 'ActivityDefinition', 'productCodeableConcept', TFhirCodeableConcept(elem.product), false, -1);{x.d9}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('quantity') and (SummaryOption in [soFull, soData]) then
     ComposeQuantity(this, 'ActivityDefinition', 'quantity', elem.quantityElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('dosage') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.dosageList.Count - 1 do
       ComposeDosage(this, 'ActivityDefinition', 'dosage', elem.dosageList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('bodySite') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.bodySiteList.Count - 1 do
       ComposeCodeableConcept(this, 'ActivityDefinition', 'bodySite', elem.bodySiteList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('transform') and (SummaryOption in [soFull, soData]) then
     ComposeReference{TFhirStructureMap}(this, 'ActivityDefinition', 'transform', elem.transformElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('dynamicValue') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.dynamicValueList.Count - 1 do
       ComposeActivityDefinitionDynamicValue(this, 'ActivityDefinition', 'dynamicValue', elem.dynamicValueList[i], false, i);{x.d3}
 end;
@@ -6735,41 +6735,41 @@ begin
       this.addPredicate('a', 'fhir:AdverseEvent'); {z}
   end;
   composeDomainResource(this, '', name, elem, false, index);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('identifier') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeIdentifier(this, 'AdverseEvent', 'identifier', elem.identifierElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('category') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnum(this, 'AdverseEvent', 'category', elem.CategoryElement, CODES_TFhirAdverseEventCategoryEnum, SYSTEMS_TFhirAdverseEventCategoryEnum, false, -1);{x.d4}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('type_') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeCodeableConcept(this, 'AdverseEvent', 'type', elem.type_Element, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('subject') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{Resource}(this, 'AdverseEvent', 'subject', elem.subjectElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('date') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeDateTime(this, 'AdverseEvent', 'date', elem.dateElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('reaction') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.reactionList.Count - 1 do
       ComposeReference{TFhirCondition}(this, 'AdverseEvent', 'reaction', elem.reactionList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('location') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{TFhirLocation}(this, 'AdverseEvent', 'location', elem.locationElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('seriousness') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeCodeableConcept(this, 'AdverseEvent', 'seriousness', elem.seriousnessElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('outcome') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeCodeableConcept(this, 'AdverseEvent', 'outcome', elem.outcomeElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('recorder') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{Resource}(this, 'AdverseEvent', 'recorder', elem.recorderElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('eventParticipant') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{Resource}(this, 'AdverseEvent', 'eventParticipant', elem.eventParticipantElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('description') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeString(this, 'AdverseEvent', 'description', elem.descriptionElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('suspectEntity') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.suspectEntityList.Count - 1 do
       ComposeAdverseEventSuspectEntity(this, 'AdverseEvent', 'suspectEntity', elem.suspectEntityList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('subjectMedicalHistory') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.subjectMedicalHistoryList.Count - 1 do
       ComposeReference{Resource}(this, 'AdverseEvent', 'subjectMedicalHistory', elem.subjectMedicalHistoryList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('referenceDocument') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.referenceDocumentList.Count - 1 do
       ComposeReference{TFhirDocumentReference}(this, 'AdverseEvent', 'referenceDocument', elem.referenceDocumentList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('study') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.studyList.Count - 1 do
       ComposeReference{TFhirResearchStudy}(this, 'AdverseEvent', 'study', elem.studyList[i], false, i);{x.d3}
 end;
@@ -6903,26 +6903,26 @@ begin
       this.addPredicate('a', 'fhir:AllergyIntolerance'); {z}
   end;
   composeDomainResource(this, '', name, elem, false, index);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('identifier') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.identifierList.Count - 1 do
       ComposeIdentifier(this, 'AllergyIntolerance', 'identifier', elem.identifierList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('clinicalStatus') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnum(this, 'AllergyIntolerance', 'clinicalStatus', elem.ClinicalStatusElement, CODES_TFhirAllergyClinicalStatusEnum, SYSTEMS_TFhirAllergyClinicalStatusEnum, false, -1);{x.d4}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('verificationStatus') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnum(this, 'AllergyIntolerance', 'verificationStatus', elem.VerificationStatusElement, CODES_TFhirAllergyVerificationStatusEnum, SYSTEMS_TFhirAllergyVerificationStatusEnum, false, -1);{x.d4}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('type_') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnum(this, 'AllergyIntolerance', 'type', elem.Type_Element, CODES_TFhirAllergyIntoleranceTypeEnum, SYSTEMS_TFhirAllergyIntoleranceTypeEnum, false, -1);{x.d4}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('category') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.categoryList.Count - 1 do
       ComposeEnum(this, 'AllergyIntolerance', 'category', elem.categoryList[i], CODES_TFhirAllergyIntoleranceCategoryEnum, SYSTEMS_TFhirAllergyIntoleranceCategoryEnum, false, i); {x.d1}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('category') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.categoryList.Count - 1 do
       ComposeEnum(this, 'AllergyIntolerance', 'category', elem.categoryList[i], CODES_TFhirAllergyIntoleranceCategoryEnum, SYSTEMS_TFhirAllergyIntoleranceCategoryEnum, false, i);{x.d2}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('criticality') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnum(this, 'AllergyIntolerance', 'criticality', elem.CriticalityElement, CODES_TFhirAllergyIntoleranceCriticalityEnum, SYSTEMS_TFhirAllergyIntoleranceCriticalityEnum, false, -1);{x.d4}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('code') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeCodeableConcept(this, 'AllergyIntolerance', 'code', elem.codeElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('patient') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{TFhirPatient}(this, 'AllergyIntolerance', 'patient', elem.patientElement, false, -1);{x.2f}
   if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.onset is TFhirAge) {6} then
     ComposeAge(this, 'AllergyIntolerance', 'onsetAge', TFhirAge(elem.onset), false, -1){x.d9}
@@ -6934,18 +6934,18 @@ begin
     ComposeDateTime(this, 'AllergyIntolerance', 'onsetDateTime', TFhirDateTime(elem.onset), false, -1){x.d9}
   else if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.onset is TFhirString) {6} then
     ComposeString(this, 'AllergyIntolerance', 'onsetString', TFhirString(elem.onset), false, -1);{x.d9}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('assertedDate') and (SummaryOption in [soFull, soData]) then
     ComposeDateTime(this, 'AllergyIntolerance', 'assertedDate', elem.assertedDateElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('recorder') and (SummaryOption in [soFull, soData]) then
     ComposeReference{Resource}(this, 'AllergyIntolerance', 'recorder', elem.recorderElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('asserter') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{Resource}(this, 'AllergyIntolerance', 'asserter', elem.asserterElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('lastOccurrence') and (SummaryOption in [soFull, soData]) then
     ComposeDateTime(this, 'AllergyIntolerance', 'lastOccurrence', elem.lastOccurrenceElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('note') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.noteList.Count - 1 do
       ComposeAnnotation(this, 'AllergyIntolerance', 'note', elem.noteList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('reaction') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.reactionList.Count - 1 do
       ComposeAllergyIntoleranceReaction(this, 'AllergyIntolerance', 'reaction', elem.reactionList[i], false, i);{x.d3}
 end;
@@ -7070,54 +7070,54 @@ begin
       this.addPredicate('a', 'fhir:Appointment'); {z}
   end;
   composeDomainResource(this, '', name, elem, false, index);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('identifier') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.identifierList.Count - 1 do
       ComposeIdentifier(this, 'Appointment', 'identifier', elem.identifierList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('status') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnum(this, 'Appointment', 'status', elem.StatusElement, CODES_TFhirAppointmentstatusEnum, SYSTEMS_TFhirAppointmentstatusEnum, false, -1);{x.d4}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('serviceCategory') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeCodeableConcept(this, 'Appointment', 'serviceCategory', elem.serviceCategoryElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('serviceType') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.serviceTypeList.Count - 1 do
       ComposeCodeableConcept(this, 'Appointment', 'serviceType', elem.serviceTypeList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('specialty') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.specialtyList.Count - 1 do
       ComposeCodeableConcept(this, 'Appointment', 'specialty', elem.specialtyList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('appointmentType') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeCodeableConcept(this, 'Appointment', 'appointmentType', elem.appointmentTypeElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('reason') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.reasonList.Count - 1 do
       ComposeCodeableConcept(this, 'Appointment', 'reason', elem.reasonList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('indication') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.indicationList.Count - 1 do
       ComposeReference{Resource}(this, 'Appointment', 'indication', elem.indicationList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('priority') and (SummaryOption in [soFull, soData]) then
     ComposeUnsignedInt(this, 'Appointment', 'priority', elem.priorityElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('description') and (SummaryOption in [soFull, soData]) then
     ComposeString(this, 'Appointment', 'description', elem.descriptionElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('supportingInformation') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.supportingInformationList.Count - 1 do
       ComposeReference{TFhirReference}(this, 'Appointment', 'supportingInformation', elem.supportingInformationList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('start') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeInstant(this, 'Appointment', 'start', elem.startElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('end_') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeInstant(this, 'Appointment', 'end', elem.end_Element, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('minutesDuration') and (SummaryOption in [soFull, soData]) then
     ComposePositiveInt(this, 'Appointment', 'minutesDuration', elem.minutesDurationElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('slot') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.slotList.Count - 1 do
       ComposeReference{TFhirSlot}(this, 'Appointment', 'slot', elem.slotList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('created') and (SummaryOption in [soFull, soData]) then
     ComposeDateTime(this, 'Appointment', 'created', elem.createdElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('comment') and (SummaryOption in [soFull, soData]) then
     ComposeString(this, 'Appointment', 'comment', elem.commentElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('incomingReferral') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.incomingReferralList.Count - 1 do
       ComposeReference{TFhirReferralRequest}(this, 'Appointment', 'incomingReferral', elem.incomingReferralList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('participant') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.participantList.Count - 1 do
       ComposeAppointmentParticipant(this, 'Appointment', 'participant', elem.participantList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('requestedPeriod') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.requestedPeriodList.Count - 1 do
       ComposePeriod(this, 'Appointment', 'requestedPeriod', elem.requestedPeriodList[i], false, i);{x.d3}
 end;
@@ -7170,23 +7170,23 @@ begin
       this.addPredicate('a', 'fhir:AppointmentResponse'); {z}
   end;
   composeDomainResource(this, '', name, elem, false, index);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('identifier') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.identifierList.Count - 1 do
       ComposeIdentifier(this, 'AppointmentResponse', 'identifier', elem.identifierList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('appointment') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{TFhirAppointment}(this, 'AppointmentResponse', 'appointment', elem.appointmentElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('start') and (SummaryOption in [soFull, soData]) then
     ComposeInstant(this, 'AppointmentResponse', 'start', elem.startElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('end_') and (SummaryOption in [soFull, soData]) then
     ComposeInstant(this, 'AppointmentResponse', 'end', elem.end_Element, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('participantType') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.participantTypeList.Count - 1 do
       ComposeCodeableConcept(this, 'AppointmentResponse', 'participantType', elem.participantTypeList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('actor') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{Resource}(this, 'AppointmentResponse', 'actor', elem.actorElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('participantStatus') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnum(this, 'AppointmentResponse', 'participantStatus', elem.ParticipantStatusElement, CODES_TFhirParticipationstatusEnum, SYSTEMS_TFhirParticipationstatusEnum, false, -1);{x.d4}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('comment') and (SummaryOption in [soFull, soData]) then
     ComposeString(this, 'AppointmentResponse', 'comment', elem.commentElement, false, -1);{x.2ea}
 end;
 
@@ -7522,28 +7522,28 @@ begin
       this.addPredicate('a', 'fhir:AuditEvent'); {z}
   end;
   composeDomainResource(this, '', name, elem, false, index);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('type_') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeCoding(this, 'AuditEvent', 'type', elem.type_Element, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('subtype') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.subtypeList.Count - 1 do
       ComposeCoding(this, 'AuditEvent', 'subtype', elem.subtypeList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('action') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnum(this, 'AuditEvent', 'action', elem.ActionElement, CODES_TFhirAuditEventActionEnum, SYSTEMS_TFhirAuditEventActionEnum, false, -1);{x.d4}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('recorded') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeInstant(this, 'AuditEvent', 'recorded', elem.recordedElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('outcome') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnum(this, 'AuditEvent', 'outcome', elem.OutcomeElement, CODES_TFhirAuditEventOutcomeEnum, SYSTEMS_TFhirAuditEventOutcomeEnum, false, -1);{x.d4}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('outcomeDesc') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeString(this, 'AuditEvent', 'outcomeDesc', elem.outcomeDescElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('purposeOfEvent') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.purposeOfEventList.Count - 1 do
       ComposeCodeableConcept(this, 'AuditEvent', 'purposeOfEvent', elem.purposeOfEventList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('agent') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.agentList.Count - 1 do
       ComposeAuditEventAgent(this, 'AuditEvent', 'agent', elem.agentList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('source') and (SummaryOption in [soFull, soData]) then
     ComposeAuditEventSource(this, 'AuditEvent', 'source', elem.sourceElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('entity') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.entityList.Count - 1 do
       ComposeAuditEventEntity(this, 'AuditEvent', 'entity', elem.entityList[i], false, i);{x.d3}
 end;
@@ -7592,16 +7592,16 @@ begin
       this.addPredicate('a', 'fhir:Basic'); {z}
   end;
   composeDomainResource(this, '', name, elem, false, index);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('identifier') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.identifierList.Count - 1 do
       ComposeIdentifier(this, 'Basic', 'identifier', elem.identifierList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('code') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeCodeableConcept(this, 'Basic', 'code', elem.codeElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('subject') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{TFhirReference}(this, 'Basic', 'subject', elem.subjectElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('created') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeDate(this, 'Basic', 'created', elem.createdElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('author') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{Resource}(this, 'Basic', 'author', elem.authorElement, false, -1);{x.2f}
 end;
 
@@ -7643,11 +7643,11 @@ begin
       this.addPredicate('a', 'fhir:Binary'); {z}
   end;
   composeResource(this, '', name, elem, false, index);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('contentType') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeCode(this, 'Binary', 'contentType', elem.contentTypeElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('securityContext') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{TFhirReference}(this, 'Binary', 'securityContext', elem.securityContextElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('content') and (SummaryOption in [soFull, soData]) then
     ComposeBase64Binary(this, 'Binary', 'content', elem.contentElement, false, -1);{x.2ea}
 end;
 
@@ -7699,22 +7699,22 @@ begin
       this.addPredicate('a', 'fhir:BodySite'); {z}
   end;
   composeDomainResource(this, '', name, elem, false, index);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('identifier') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.identifierList.Count - 1 do
       ComposeIdentifier(this, 'BodySite', 'identifier', elem.identifierList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('active') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeBoolean(this, 'BodySite', 'active', elem.activeElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('code') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeCodeableConcept(this, 'BodySite', 'code', elem.codeElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('qualifier') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.qualifierList.Count - 1 do
       ComposeCodeableConcept(this, 'BodySite', 'qualifier', elem.qualifierList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('description') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeString(this, 'BodySite', 'description', elem.descriptionElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('image') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.imageList.Count - 1 do
       ComposeAttachment(this, 'BodySite', 'image', elem.imageList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('patient') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{TFhirPatient}(this, 'BodySite', 'patient', elem.patientElement, false, -1);{x.2f}
 end;
 
@@ -8858,69 +8858,69 @@ begin
       this.addPredicate('a', 'fhir:CapabilityStatement'); {z}
   end;
   composeDomainResource(this, '', name, elem, false, index);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('url') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeUri(this, 'CapabilityStatement', 'url', elem.urlElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('version') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeString(this, 'CapabilityStatement', 'version', elem.versionElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('name') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeString(this, 'CapabilityStatement', 'name', elem.nameElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('title') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeString(this, 'CapabilityStatement', 'title', elem.titleElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('status') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnum(this, 'CapabilityStatement', 'status', elem.StatusElement, CODES_TFhirPublicationStatusEnum, SYSTEMS_TFhirPublicationStatusEnum, false, -1);{x.d4}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('experimental') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeBoolean(this, 'CapabilityStatement', 'experimental', elem.experimentalElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('date') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeDateTime(this, 'CapabilityStatement', 'date', elem.dateElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('publisher') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeString(this, 'CapabilityStatement', 'publisher', elem.publisherElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('contact') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.contactList.Count - 1 do
       ComposeContactDetail(this, 'CapabilityStatement', 'contact', elem.contactList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('description') and (SummaryOption in [soFull, soData]) then
     ComposeMarkdown(this, 'CapabilityStatement', 'description', elem.descriptionElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('useContext') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.useContextList.Count - 1 do
       ComposeUsageContext(this, 'CapabilityStatement', 'useContext', elem.useContextList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('jurisdiction') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.jurisdictionList.Count - 1 do
       ComposeCodeableConcept(this, 'CapabilityStatement', 'jurisdiction', elem.jurisdictionList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('purpose') and (SummaryOption in [soFull, soData]) then
     ComposeMarkdown(this, 'CapabilityStatement', 'purpose', elem.purposeElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('copyright') and (SummaryOption in [soFull, soData]) then
     ComposeMarkdown(this, 'CapabilityStatement', 'copyright', elem.copyrightElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('kind') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnum(this, 'CapabilityStatement', 'kind', elem.KindElement, CODES_TFhirCapabilityStatementKindEnum, SYSTEMS_TFhirCapabilityStatementKindEnum, false, -1);{x.d4}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('instantiates') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.instantiatesList.Count - 1 do
       ComposeUri(this, 'CapabilityStatement', 'instantiates', elem.instantiatesList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('software') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeCapabilityStatementSoftware(this, 'CapabilityStatement', 'software', elem.softwareElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('implementation_') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeCapabilityStatementImplementation(this, 'CapabilityStatement', 'implementation', elem.implementation_Element, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('fhirVersion') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeId(this, 'CapabilityStatement', 'fhirVersion', elem.fhirVersionElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('acceptUnknown') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnum(this, 'CapabilityStatement', 'acceptUnknown', elem.AcceptUnknownElement, CODES_TFhirUnknownContentCodeEnum, SYSTEMS_TFhirUnknownContentCodeEnum, false, -1);{x.d4}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('format') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.formatList.Count - 1 do
       ComposeCode(this, 'CapabilityStatement', 'format', elem.formatList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('patchFormat') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.patchFormatList.Count - 1 do
       ComposeCode(this, 'CapabilityStatement', 'patchFormat', elem.patchFormatList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('implementationGuide') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.implementationGuideList.Count - 1 do
       ComposeUri(this, 'CapabilityStatement', 'implementationGuide', elem.implementationGuideList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('profile') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.profileList.Count - 1 do
       ComposeReference{TFhirStructureDefinition}(this, 'CapabilityStatement', 'profile', elem.profileList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('rest') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.restList.Count - 1 do
       ComposeCapabilityStatementRest(this, 'CapabilityStatement', 'rest', elem.restList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('messaging') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.messagingList.Count - 1 do
       ComposeCapabilityStatementMessaging(this, 'CapabilityStatement', 'messaging', elem.messagingList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('document') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.documentList.Count - 1 do
       ComposeCapabilityStatementDocument(this, 'CapabilityStatement', 'document', elem.documentList[i], false, i);{x.d3}
 end;
@@ -9163,57 +9163,57 @@ begin
       this.addPredicate('a', 'fhir:CarePlan'); {z}
   end;
   composeDomainResource(this, '', name, elem, false, index);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('identifier') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.identifierList.Count - 1 do
       ComposeIdentifier(this, 'CarePlan', 'identifier', elem.identifierList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('definition') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.definitionList.Count - 1 do
       ComposeReference{Resource}(this, 'CarePlan', 'definition', elem.definitionList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('basedOn') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.basedOnList.Count - 1 do
       ComposeReference{TFhirCarePlan}(this, 'CarePlan', 'basedOn', elem.basedOnList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('replaces') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.replacesList.Count - 1 do
       ComposeReference{TFhirCarePlan}(this, 'CarePlan', 'replaces', elem.replacesList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('partOf') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.partOfList.Count - 1 do
       ComposeReference{TFhirCarePlan}(this, 'CarePlan', 'partOf', elem.partOfList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('status') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnum(this, 'CarePlan', 'status', elem.StatusElement, CODES_TFhirCarePlanStatusEnum, SYSTEMS_TFhirCarePlanStatusEnum, false, -1);{x.d4}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('intent') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnum(this, 'CarePlan', 'intent', elem.IntentElement, CODES_TFhirCarePlanIntentEnum, SYSTEMS_TFhirCarePlanIntentEnum, false, -1);{x.d4}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('category') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.categoryList.Count - 1 do
       ComposeCodeableConcept(this, 'CarePlan', 'category', elem.categoryList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('title') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeString(this, 'CarePlan', 'title', elem.titleElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('description') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeString(this, 'CarePlan', 'description', elem.descriptionElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('subject') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{Resource}(this, 'CarePlan', 'subject', elem.subjectElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('context') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{Resource}(this, 'CarePlan', 'context', elem.contextElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('period') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposePeriod(this, 'CarePlan', 'period', elem.periodElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('author') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.authorList.Count - 1 do
       ComposeReference{Resource}(this, 'CarePlan', 'author', elem.authorList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('careTeam') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.careTeamList.Count - 1 do
       ComposeReference{TFhirCareTeam}(this, 'CarePlan', 'careTeam', elem.careTeamList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('addresses') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.addressesList.Count - 1 do
       ComposeReference{TFhirCondition}(this, 'CarePlan', 'addresses', elem.addressesList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('supportingInfo') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.supportingInfoList.Count - 1 do
       ComposeReference{TFhirReference}(this, 'CarePlan', 'supportingInfo', elem.supportingInfoList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('goal') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.goalList.Count - 1 do
       ComposeReference{TFhirGoal}(this, 'CarePlan', 'goal', elem.goalList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('activity') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.activityList.Count - 1 do
       ComposeCarePlanActivity(this, 'CarePlan', 'activity', elem.activityList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('note') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.noteList.Count - 1 do
       ComposeAnnotation(this, 'CarePlan', 'note', elem.noteList[i], false, i);{x.d3}
 end;
@@ -9322,35 +9322,35 @@ begin
       this.addPredicate('a', 'fhir:CareTeam'); {z}
   end;
   composeDomainResource(this, '', name, elem, false, index);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('identifier') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.identifierList.Count - 1 do
       ComposeIdentifier(this, 'CareTeam', 'identifier', elem.identifierList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('status') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnum(this, 'CareTeam', 'status', elem.StatusElement, CODES_TFhirCareTeamStatusEnum, SYSTEMS_TFhirCareTeamStatusEnum, false, -1);{x.d4}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('category') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.categoryList.Count - 1 do
       ComposeCodeableConcept(this, 'CareTeam', 'category', elem.categoryList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('name') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeString(this, 'CareTeam', 'name', elem.nameElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('subject') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{Resource}(this, 'CareTeam', 'subject', elem.subjectElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('context') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{Resource}(this, 'CareTeam', 'context', elem.contextElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('period') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposePeriod(this, 'CareTeam', 'period', elem.periodElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('participant') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.participantList.Count - 1 do
       ComposeCareTeamParticipant(this, 'CareTeam', 'participant', elem.participantList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('reasonCode') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.reasonCodeList.Count - 1 do
       ComposeCodeableConcept(this, 'CareTeam', 'reasonCode', elem.reasonCodeList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('reasonReference') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.reasonReferenceList.Count - 1 do
       ComposeReference{TFhirCondition}(this, 'CareTeam', 'reasonReference', elem.reasonReferenceList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('managingOrganization') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.managingOrganizationList.Count - 1 do
       ComposeReference{TFhirOrganization}(this, 'CareTeam', 'managingOrganization', elem.managingOrganizationList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('note') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.noteList.Count - 1 do
       ComposeAnnotation(this, 'CareTeam', 'note', elem.noteList[i], false, i);{x.d3}
 end;
@@ -9471,21 +9471,21 @@ begin
       this.addPredicate('a', 'fhir:ChargeItem'); {z}
   end;
   composeDomainResource(this, '', name, elem, false, index);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('identifier') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeIdentifier(this, 'ChargeItem', 'identifier', elem.identifierElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('definition') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.definitionList.Count - 1 do
       ComposeUri(this, 'ChargeItem', 'definition', elem.definitionList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('status') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnum(this, 'ChargeItem', 'status', elem.StatusElement, CODES_TFhirChargeitemStatusEnum, SYSTEMS_TFhirChargeitemStatusEnum, false, -1);{x.d4}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('partOf') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.partOfList.Count - 1 do
       ComposeReference{TFhirChargeItem}(this, 'ChargeItem', 'partOf', elem.partOfList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('code') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeCodeableConcept(this, 'ChargeItem', 'code', elem.codeElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('subject') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{Resource}(this, 'ChargeItem', 'subject', elem.subjectElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('context') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{Resource}(this, 'ChargeItem', 'context', elem.contextElement, false, -1);{x.2f}
   if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.occurrence is TFhirPeriod) {6} then
     ComposePeriod(this, 'ChargeItem', 'occurrencePeriod', TFhirPeriod(elem.occurrence), false, -1){x.d9}
@@ -9493,41 +9493,41 @@ begin
     ComposeTiming(this, 'ChargeItem', 'occurrenceTiming', TFhirTiming(elem.occurrence), false, -1){x.d9}
   else if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.occurrence is TFhirDateTime) {6} then
     ComposeDateTime(this, 'ChargeItem', 'occurrenceDateTime', TFhirDateTime(elem.occurrence), false, -1);{x.d9}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('participant') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.participantList.Count - 1 do
       ComposeChargeItemParticipant(this, 'ChargeItem', 'participant', elem.participantList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('performingOrganization') and (SummaryOption in [soFull, soData]) then
     ComposeReference{TFhirOrganization}(this, 'ChargeItem', 'performingOrganization', elem.performingOrganizationElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('requestingOrganization') and (SummaryOption in [soFull, soData]) then
     ComposeReference{TFhirOrganization}(this, 'ChargeItem', 'requestingOrganization', elem.requestingOrganizationElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('quantity') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeQuantity(this, 'ChargeItem', 'quantity', elem.quantityElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('bodysite') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.bodysiteList.Count - 1 do
       ComposeCodeableConcept(this, 'ChargeItem', 'bodysite', elem.bodysiteList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('factorOverride') and (SummaryOption in [soFull, soData]) then
     ComposeDecimal(this, 'ChargeItem', 'factorOverride', elem.factorOverrideElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('priceOverride') and (SummaryOption in [soFull, soData]) then
     ComposeMoney(this, 'ChargeItem', 'priceOverride', elem.priceOverrideElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('overrideReason') and (SummaryOption in [soFull, soData]) then
     ComposeString(this, 'ChargeItem', 'overrideReason', elem.overrideReasonElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('enterer') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{Resource}(this, 'ChargeItem', 'enterer', elem.entererElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('enteredDate') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeDateTime(this, 'ChargeItem', 'enteredDate', elem.enteredDateElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('reason') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.reasonList.Count - 1 do
       ComposeCodeableConcept(this, 'ChargeItem', 'reason', elem.reasonList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('service') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.serviceList.Count - 1 do
       ComposeReference{Resource}(this, 'ChargeItem', 'service', elem.serviceList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('account') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.accountList.Count - 1 do
       ComposeReference{TFhirAccount}(this, 'ChargeItem', 'account', elem.accountList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('note') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.noteList.Count - 1 do
       ComposeAnnotation(this, 'ChargeItem', 'note', elem.noteList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('supportingInformation') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.supportingInformationList.Count - 1 do
       ComposeReference{TFhirReference}(this, 'ChargeItem', 'supportingInformation', elem.supportingInformationList[i], false, i);{x.d3}
 end;
@@ -10331,74 +10331,74 @@ begin
       this.addPredicate('a', 'fhir:Claim'); {z}
   end;
   composeDomainResource(this, '', name, elem, false, index);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('identifier') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.identifierList.Count - 1 do
       ComposeIdentifier(this, 'Claim', 'identifier', elem.identifierList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('status') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnum(this, 'Claim', 'status', elem.StatusElement, CODES_TFhirFmStatusEnum, SYSTEMS_TFhirFmStatusEnum, false, -1);{x.d4}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('type_') and (SummaryOption in [soFull, soData]) then
     ComposeCodeableConcept(this, 'Claim', 'type', elem.type_Element, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('subType') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.subTypeList.Count - 1 do
       ComposeCodeableConcept(this, 'Claim', 'subType', elem.subTypeList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('use') and (SummaryOption in [soFull, soData]) then
      ComposeEnum(this, 'Claim', 'use', elem.UseElement, CODES_TFhirClaimUseEnum, SYSTEMS_TFhirClaimUseEnum, false, -1);{x.d4}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('patient') and (SummaryOption in [soFull, soData]) then
     ComposeReference{TFhirPatient}(this, 'Claim', 'patient', elem.patientElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('billablePeriod') and (SummaryOption in [soFull, soData]) then
     ComposePeriod(this, 'Claim', 'billablePeriod', elem.billablePeriodElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('created') and (SummaryOption in [soFull, soData]) then
     ComposeDateTime(this, 'Claim', 'created', elem.createdElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('enterer') and (SummaryOption in [soFull, soData]) then
     ComposeReference{TFhirPractitioner}(this, 'Claim', 'enterer', elem.entererElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('insurer') and (SummaryOption in [soFull, soData]) then
     ComposeReference{TFhirOrganization}(this, 'Claim', 'insurer', elem.insurerElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('provider') and (SummaryOption in [soFull, soData]) then
     ComposeReference{TFhirPractitioner}(this, 'Claim', 'provider', elem.providerElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('organization') and (SummaryOption in [soFull, soData]) then
     ComposeReference{TFhirOrganization}(this, 'Claim', 'organization', elem.organizationElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('priority') and (SummaryOption in [soFull, soData]) then
     ComposeCodeableConcept(this, 'Claim', 'priority', elem.priorityElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('fundsReserve') and (SummaryOption in [soFull, soData]) then
     ComposeCodeableConcept(this, 'Claim', 'fundsReserve', elem.fundsReserveElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('related') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.relatedList.Count - 1 do
       ComposeClaimRelated(this, 'Claim', 'related', elem.relatedList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('prescription') and (SummaryOption in [soFull, soData]) then
     ComposeReference{Resource}(this, 'Claim', 'prescription', elem.prescriptionElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('originalPrescription') and (SummaryOption in [soFull, soData]) then
     ComposeReference{TFhirMedicationRequest}(this, 'Claim', 'originalPrescription', elem.originalPrescriptionElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('payee') and (SummaryOption in [soFull, soData]) then
     ComposeClaimPayee(this, 'Claim', 'payee', elem.payeeElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('referral') and (SummaryOption in [soFull, soData]) then
     ComposeReference{TFhirReferralRequest}(this, 'Claim', 'referral', elem.referralElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('facility') and (SummaryOption in [soFull, soData]) then
     ComposeReference{TFhirLocation}(this, 'Claim', 'facility', elem.facilityElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('careTeam') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.careTeamList.Count - 1 do
       ComposeClaimCareTeam(this, 'Claim', 'careTeam', elem.careTeamList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('information') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.informationList.Count - 1 do
       ComposeClaimInformation(this, 'Claim', 'information', elem.informationList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('diagnosis') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.diagnosisList.Count - 1 do
       ComposeClaimDiagnosis(this, 'Claim', 'diagnosis', elem.diagnosisList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('procedure_') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.procedure_List.Count - 1 do
       ComposeClaimProcedure(this, 'Claim', 'procedure', elem.procedure_List[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('insurance') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.insuranceList.Count - 1 do
       ComposeClaimInsurance(this, 'Claim', 'insurance', elem.insuranceList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('accident') and (SummaryOption in [soFull, soData]) then
     ComposeClaimAccident(this, 'Claim', 'accident', elem.accidentElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('employmentImpacted') and (SummaryOption in [soFull, soData]) then
     ComposePeriod(this, 'Claim', 'employmentImpacted', elem.employmentImpactedElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('hospitalization') and (SummaryOption in [soFull, soData]) then
     ComposePeriod(this, 'Claim', 'hospitalization', elem.hospitalizationElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('item') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.itemList.Count - 1 do
       ComposeClaimItem(this, 'Claim', 'item', elem.itemList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('total') and (SummaryOption in [soFull, soData]) then
     ComposeMoney(this, 'Claim', 'total', elem.totalElement, false, -1);{x.2f}
 end;
 
@@ -11025,57 +11025,57 @@ begin
       this.addPredicate('a', 'fhir:ClaimResponse'); {z}
   end;
   composeDomainResource(this, '', name, elem, false, index);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('identifier') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.identifierList.Count - 1 do
       ComposeIdentifier(this, 'ClaimResponse', 'identifier', elem.identifierList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('status') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnum(this, 'ClaimResponse', 'status', elem.StatusElement, CODES_TFhirFmStatusEnum, SYSTEMS_TFhirFmStatusEnum, false, -1);{x.d4}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('patient') and (SummaryOption in [soFull, soData]) then
     ComposeReference{TFhirPatient}(this, 'ClaimResponse', 'patient', elem.patientElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('created') and (SummaryOption in [soFull, soData]) then
     ComposeDateTime(this, 'ClaimResponse', 'created', elem.createdElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('insurer') and (SummaryOption in [soFull, soData]) then
     ComposeReference{TFhirOrganization}(this, 'ClaimResponse', 'insurer', elem.insurerElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('requestProvider') and (SummaryOption in [soFull, soData]) then
     ComposeReference{TFhirPractitioner}(this, 'ClaimResponse', 'requestProvider', elem.requestProviderElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('requestOrganization') and (SummaryOption in [soFull, soData]) then
     ComposeReference{TFhirOrganization}(this, 'ClaimResponse', 'requestOrganization', elem.requestOrganizationElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('request') and (SummaryOption in [soFull, soData]) then
     ComposeReference{TFhirClaim}(this, 'ClaimResponse', 'request', elem.requestElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('outcome') and (SummaryOption in [soFull, soData]) then
     ComposeCodeableConcept(this, 'ClaimResponse', 'outcome', elem.outcomeElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('disposition') and (SummaryOption in [soFull, soData]) then
     ComposeString(this, 'ClaimResponse', 'disposition', elem.dispositionElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('payeeType') and (SummaryOption in [soFull, soData]) then
     ComposeCodeableConcept(this, 'ClaimResponse', 'payeeType', elem.payeeTypeElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('item') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.itemList.Count - 1 do
       ComposeClaimResponseItem(this, 'ClaimResponse', 'item', elem.itemList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('addItem') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.addItemList.Count - 1 do
       ComposeClaimResponseAddItem(this, 'ClaimResponse', 'addItem', elem.addItemList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('error') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.errorList.Count - 1 do
       ComposeClaimResponseError(this, 'ClaimResponse', 'error', elem.errorList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('totalCost') and (SummaryOption in [soFull, soData]) then
     ComposeMoney(this, 'ClaimResponse', 'totalCost', elem.totalCostElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('unallocDeductable') and (SummaryOption in [soFull, soData]) then
     ComposeMoney(this, 'ClaimResponse', 'unallocDeductable', elem.unallocDeductableElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('totalBenefit') and (SummaryOption in [soFull, soData]) then
     ComposeMoney(this, 'ClaimResponse', 'totalBenefit', elem.totalBenefitElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('payment') and (SummaryOption in [soFull, soData]) then
     ComposeClaimResponsePayment(this, 'ClaimResponse', 'payment', elem.paymentElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('reserved') and (SummaryOption in [soFull, soData]) then
     ComposeCoding(this, 'ClaimResponse', 'reserved', elem.reservedElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('form') and (SummaryOption in [soFull, soData]) then
     ComposeCodeableConcept(this, 'ClaimResponse', 'form', elem.formElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('processNote') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.processNoteList.Count - 1 do
       ComposeClaimResponseProcessNote(this, 'ClaimResponse', 'processNote', elem.processNoteList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('communicationRequest') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.communicationRequestList.Count - 1 do
       ComposeReference{TFhirCommunicationRequest}(this, 'ClaimResponse', 'communicationRequest', elem.communicationRequestList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('insurance') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.insuranceList.Count - 1 do
       ComposeClaimResponseInsurance(this, 'ClaimResponse', 'insurance', elem.insuranceList[i], false, i);{x.d3}
 end;
@@ -11243,53 +11243,53 @@ begin
       this.addPredicate('a', 'fhir:ClinicalImpression'); {z}
   end;
   composeDomainResource(this, '', name, elem, false, index);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('identifier') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.identifierList.Count - 1 do
       ComposeIdentifier(this, 'ClinicalImpression', 'identifier', elem.identifierList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('status') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnum(this, 'ClinicalImpression', 'status', elem.StatusElement, CODES_TFhirClinicalImpressionStatusEnum, SYSTEMS_TFhirClinicalImpressionStatusEnum, false, -1);{x.d4}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('code') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeCodeableConcept(this, 'ClinicalImpression', 'code', elem.codeElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('description') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeString(this, 'ClinicalImpression', 'description', elem.descriptionElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('subject') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{Resource}(this, 'ClinicalImpression', 'subject', elem.subjectElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('context') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{Resource}(this, 'ClinicalImpression', 'context', elem.contextElement, false, -1);{x.2f}
   if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.effective is TFhirPeriod) {6} then
     ComposePeriod(this, 'ClinicalImpression', 'effectivePeriod', TFhirPeriod(elem.effective), false, -1){x.d9}
   else if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.effective is TFhirDateTime) {6} then
     ComposeDateTime(this, 'ClinicalImpression', 'effectiveDateTime', TFhirDateTime(elem.effective), false, -1);{x.d9}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('date') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeDateTime(this, 'ClinicalImpression', 'date', elem.dateElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('assessor') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{TFhirPractitioner}(this, 'ClinicalImpression', 'assessor', elem.assessorElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('previous') and (SummaryOption in [soFull, soData]) then
     ComposeReference{TFhirClinicalImpression}(this, 'ClinicalImpression', 'previous', elem.previousElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('problem') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.problemList.Count - 1 do
       ComposeReference{Resource}(this, 'ClinicalImpression', 'problem', elem.problemList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('investigation') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.investigationList.Count - 1 do
       ComposeClinicalImpressionInvestigation(this, 'ClinicalImpression', 'investigation', elem.investigationList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('protocol') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.protocolList.Count - 1 do
       ComposeUri(this, 'ClinicalImpression', 'protocol', elem.protocolList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('summary') and (SummaryOption in [soFull, soData]) then
     ComposeString(this, 'ClinicalImpression', 'summary', elem.summaryElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('finding') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.findingList.Count - 1 do
       ComposeClinicalImpressionFinding(this, 'ClinicalImpression', 'finding', elem.findingList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('prognosisCodeableConcept') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.prognosisCodeableConceptList.Count - 1 do
       ComposeCodeableConcept(this, 'ClinicalImpression', 'prognosisCodeableConcept', elem.prognosisCodeableConceptList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('prognosisReference') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.prognosisReferenceList.Count - 1 do
       ComposeReference{TFhirRiskAssessment}(this, 'ClinicalImpression', 'prognosisReference', elem.prognosisReferenceList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('action') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.actionList.Count - 1 do
       ComposeReference{Resource}(this, 'ClinicalImpression', 'action', elem.actionList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('note') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.noteList.Count - 1 do
       ComposeAnnotation(this, 'ClinicalImpression', 'note', elem.noteList[i], false, i);{x.d3}
 end;
@@ -11635,60 +11635,60 @@ begin
       this.addPredicate('a', 'fhir:CodeSystem'); {z}
   end;
   composeDomainResource(this, '', name, elem, false, index);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('url') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeUri(this, 'CodeSystem', 'url', elem.urlElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('identifier') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeIdentifier(this, 'CodeSystem', 'identifier', elem.identifierElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('version') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeString(this, 'CodeSystem', 'version', elem.versionElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('name') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeString(this, 'CodeSystem', 'name', elem.nameElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('title') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeString(this, 'CodeSystem', 'title', elem.titleElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('status') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnum(this, 'CodeSystem', 'status', elem.StatusElement, CODES_TFhirPublicationStatusEnum, SYSTEMS_TFhirPublicationStatusEnum, false, -1);{x.d4}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('experimental') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeBoolean(this, 'CodeSystem', 'experimental', elem.experimentalElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('date') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeDateTime(this, 'CodeSystem', 'date', elem.dateElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('publisher') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeString(this, 'CodeSystem', 'publisher', elem.publisherElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('contact') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.contactList.Count - 1 do
       ComposeContactDetail(this, 'CodeSystem', 'contact', elem.contactList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('description') and (SummaryOption in [soFull, soData]) then
     ComposeMarkdown(this, 'CodeSystem', 'description', elem.descriptionElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('useContext') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.useContextList.Count - 1 do
       ComposeUsageContext(this, 'CodeSystem', 'useContext', elem.useContextList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('jurisdiction') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.jurisdictionList.Count - 1 do
       ComposeCodeableConcept(this, 'CodeSystem', 'jurisdiction', elem.jurisdictionList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('purpose') and (SummaryOption in [soFull, soData]) then
     ComposeMarkdown(this, 'CodeSystem', 'purpose', elem.purposeElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('copyright') and (SummaryOption in [soFull, soData]) then
     ComposeMarkdown(this, 'CodeSystem', 'copyright', elem.copyrightElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('caseSensitive') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeBoolean(this, 'CodeSystem', 'caseSensitive', elem.caseSensitiveElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('valueSet') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeUri(this, 'CodeSystem', 'valueSet', elem.valueSetElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('hierarchyMeaning') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnum(this, 'CodeSystem', 'hierarchyMeaning', elem.HierarchyMeaningElement, CODES_TFhirCodesystemHierarchyMeaningEnum, SYSTEMS_TFhirCodesystemHierarchyMeaningEnum, false, -1);{x.d4}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('compositional') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeBoolean(this, 'CodeSystem', 'compositional', elem.compositionalElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('versionNeeded') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeBoolean(this, 'CodeSystem', 'versionNeeded', elem.versionNeededElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('content') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnum(this, 'CodeSystem', 'content', elem.ContentElement, CODES_TFhirCodesystemContentModeEnum, SYSTEMS_TFhirCodesystemContentModeEnum, false, -1);{x.d4}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('count') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeUnsignedInt(this, 'CodeSystem', 'count', elem.countElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('filter') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.filterList.Count - 1 do
       ComposeCodeSystemFilter(this, 'CodeSystem', 'filter', elem.filterList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('property_') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.property_List.Count - 1 do
       ComposeCodeSystemProperty(this, 'CodeSystem', 'property', elem.property_List[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('concept') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.conceptList.Count - 1 do
       ComposeCodeSystemConcept(this, 'CodeSystem', 'concept', elem.conceptList[i], false, i);{x.d3}
 end;
@@ -11812,56 +11812,56 @@ begin
       this.addPredicate('a', 'fhir:Communication'); {z}
   end;
   composeDomainResource(this, '', name, elem, false, index);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('identifier') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.identifierList.Count - 1 do
       ComposeIdentifier(this, 'Communication', 'identifier', elem.identifierList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('definition') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.definitionList.Count - 1 do
       ComposeReference{Resource}(this, 'Communication', 'definition', elem.definitionList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('basedOn') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.basedOnList.Count - 1 do
       ComposeReference{TFhirReference}(this, 'Communication', 'basedOn', elem.basedOnList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('partOf') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.partOfList.Count - 1 do
       ComposeReference{TFhirReference}(this, 'Communication', 'partOf', elem.partOfList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('status') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnum(this, 'Communication', 'status', elem.StatusElement, CODES_TFhirEventStatusEnum, SYSTEMS_TFhirEventStatusEnum, false, -1);{x.d4}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('notDone') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeBoolean(this, 'Communication', 'notDone', elem.notDoneElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('notDoneReason') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeCodeableConcept(this, 'Communication', 'notDoneReason', elem.notDoneReasonElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('category') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.categoryList.Count - 1 do
       ComposeCodeableConcept(this, 'Communication', 'category', elem.categoryList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('medium') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.mediumList.Count - 1 do
       ComposeCodeableConcept(this, 'Communication', 'medium', elem.mediumList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('subject') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{Resource}(this, 'Communication', 'subject', elem.subjectElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('recipient') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.recipientList.Count - 1 do
       ComposeReference{Resource}(this, 'Communication', 'recipient', elem.recipientList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('topic') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.topicList.Count - 1 do
       ComposeReference{TFhirReference}(this, 'Communication', 'topic', elem.topicList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('context') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{Resource}(this, 'Communication', 'context', elem.contextElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('sent') and (SummaryOption in [soFull, soData]) then
     ComposeDateTime(this, 'Communication', 'sent', elem.sentElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('received') and (SummaryOption in [soFull, soData]) then
     ComposeDateTime(this, 'Communication', 'received', elem.receivedElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('sender') and (SummaryOption in [soFull, soData]) then
     ComposeReference{Resource}(this, 'Communication', 'sender', elem.senderElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('reasonCode') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.reasonCodeList.Count - 1 do
       ComposeCodeableConcept(this, 'Communication', 'reasonCode', elem.reasonCodeList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('reasonReference') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.reasonReferenceList.Count - 1 do
       ComposeReference{Resource}(this, 'Communication', 'reasonReference', elem.reasonReferenceList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('payload') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.payloadList.Count - 1 do
       ComposeCommunicationPayload(this, 'Communication', 'payload', elem.payloadList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('note') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.noteList.Count - 1 do
       ComposeAnnotation(this, 'Communication', 'note', elem.noteList[i], false, i);{x.d3}
 end;
@@ -12028,57 +12028,57 @@ begin
       this.addPredicate('a', 'fhir:CommunicationRequest'); {z}
   end;
   composeDomainResource(this, '', name, elem, false, index);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('identifier') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.identifierList.Count - 1 do
       ComposeIdentifier(this, 'CommunicationRequest', 'identifier', elem.identifierList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('basedOn') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.basedOnList.Count - 1 do
       ComposeReference{TFhirReference}(this, 'CommunicationRequest', 'basedOn', elem.basedOnList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('replaces') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.replacesList.Count - 1 do
       ComposeReference{TFhirCommunicationRequest}(this, 'CommunicationRequest', 'replaces', elem.replacesList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('groupIdentifier') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeIdentifier(this, 'CommunicationRequest', 'groupIdentifier', elem.groupIdentifierElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('status') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnum(this, 'CommunicationRequest', 'status', elem.StatusElement, CODES_TFhirRequestStatusEnum, SYSTEMS_TFhirRequestStatusEnum, false, -1);{x.d4}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('category') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.categoryList.Count - 1 do
       ComposeCodeableConcept(this, 'CommunicationRequest', 'category', elem.categoryList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('priority') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnum(this, 'CommunicationRequest', 'priority', elem.PriorityElement, CODES_TFhirRequestPriorityEnum, SYSTEMS_TFhirRequestPriorityEnum, false, -1);{x.d4}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('medium') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.mediumList.Count - 1 do
       ComposeCodeableConcept(this, 'CommunicationRequest', 'medium', elem.mediumList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('subject') and (SummaryOption in [soFull, soData]) then
     ComposeReference{Resource}(this, 'CommunicationRequest', 'subject', elem.subjectElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('recipient') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.recipientList.Count - 1 do
       ComposeReference{Resource}(this, 'CommunicationRequest', 'recipient', elem.recipientList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('topic') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.topicList.Count - 1 do
       ComposeReference{TFhirReference}(this, 'CommunicationRequest', 'topic', elem.topicList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('context') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{Resource}(this, 'CommunicationRequest', 'context', elem.contextElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('payload') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.payloadList.Count - 1 do
       ComposeCommunicationRequestPayload(this, 'CommunicationRequest', 'payload', elem.payloadList[i], false, i);{x.d3}
   if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.occurrence is TFhirPeriod) {6} then
     ComposePeriod(this, 'CommunicationRequest', 'occurrencePeriod', TFhirPeriod(elem.occurrence), false, -1){x.d9}
   else if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.occurrence is TFhirDateTime) {6} then
     ComposeDateTime(this, 'CommunicationRequest', 'occurrenceDateTime', TFhirDateTime(elem.occurrence), false, -1);{x.d9}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('authoredOn') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeDateTime(this, 'CommunicationRequest', 'authoredOn', elem.authoredOnElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('sender') and (SummaryOption in [soFull, soData]) then
     ComposeReference{Resource}(this, 'CommunicationRequest', 'sender', elem.senderElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('requester') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeCommunicationRequestRequester(this, 'CommunicationRequest', 'requester', elem.requesterElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('reasonCode') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.reasonCodeList.Count - 1 do
       ComposeCodeableConcept(this, 'CommunicationRequest', 'reasonCode', elem.reasonCodeList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('reasonReference') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.reasonReferenceList.Count - 1 do
       ComposeReference{Resource}(this, 'CommunicationRequest', 'reasonReference', elem.reasonReferenceList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('note') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.noteList.Count - 1 do
       ComposeAnnotation(this, 'CommunicationRequest', 'note', elem.noteList[i], false, i);{x.d3}
 end;
@@ -12189,38 +12189,38 @@ begin
       this.addPredicate('a', 'fhir:CompartmentDefinition'); {z}
   end;
   composeDomainResource(this, '', name, elem, false, index);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('url') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeUri(this, 'CompartmentDefinition', 'url', elem.urlElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('name') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeString(this, 'CompartmentDefinition', 'name', elem.nameElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('title') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeString(this, 'CompartmentDefinition', 'title', elem.titleElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('status') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnum(this, 'CompartmentDefinition', 'status', elem.StatusElement, CODES_TFhirPublicationStatusEnum, SYSTEMS_TFhirPublicationStatusEnum, false, -1);{x.d4}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('experimental') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeBoolean(this, 'CompartmentDefinition', 'experimental', elem.experimentalElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('date') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeDateTime(this, 'CompartmentDefinition', 'date', elem.dateElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('publisher') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeString(this, 'CompartmentDefinition', 'publisher', elem.publisherElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('contact') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.contactList.Count - 1 do
       ComposeContactDetail(this, 'CompartmentDefinition', 'contact', elem.contactList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('description') and (SummaryOption in [soFull, soData]) then
     ComposeMarkdown(this, 'CompartmentDefinition', 'description', elem.descriptionElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('purpose') and (SummaryOption in [soFull, soData]) then
     ComposeMarkdown(this, 'CompartmentDefinition', 'purpose', elem.purposeElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('useContext') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.useContextList.Count - 1 do
       ComposeUsageContext(this, 'CompartmentDefinition', 'useContext', elem.useContextList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('jurisdiction') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.jurisdictionList.Count - 1 do
       ComposeCodeableConcept(this, 'CompartmentDefinition', 'jurisdiction', elem.jurisdictionList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('code') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnum(this, 'CompartmentDefinition', 'code', elem.CodeElement, CODES_TFhirCompartmentTypeEnum, SYSTEMS_TFhirCompartmentTypeEnum, false, -1);{x.d4}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('search') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeBoolean(this, 'CompartmentDefinition', 'search', elem.searchElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('resource') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.resourceList.Count - 1 do
       ComposeCompartmentDefinitionResource(this, 'CompartmentDefinition', 'resource', elem.resourceList[i], false, i);{x.d3}
 end;
@@ -12500,39 +12500,39 @@ begin
       this.addPredicate('a', 'fhir:Composition'); {z}
   end;
   composeDomainResource(this, '', name, elem, false, index);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('identifier') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeIdentifier(this, 'Composition', 'identifier', elem.identifierElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('status') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnum(this, 'Composition', 'status', elem.StatusElement, CODES_TFhirCompositionStatusEnum, SYSTEMS_TFhirCompositionStatusEnum, false, -1);{x.d4}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('type_') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeCodeableConcept(this, 'Composition', 'type', elem.type_Element, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('class_') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeCodeableConcept(this, 'Composition', 'class', elem.class_Element, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('subject') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{TFhirReference}(this, 'Composition', 'subject', elem.subjectElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('encounter') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{TFhirEncounter}(this, 'Composition', 'encounter', elem.encounterElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('date') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeDateTime(this, 'Composition', 'date', elem.dateElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('author') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.authorList.Count - 1 do
       ComposeReference{Resource}(this, 'Composition', 'author', elem.authorList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('title') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeString(this, 'Composition', 'title', elem.titleElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('confidentiality') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnum(this, 'Composition', 'confidentiality', elem.ConfidentialityElement, CODES_TFhirV3ConfidentialityClassificationEnum, SYSTEMS_TFhirV3ConfidentialityClassificationEnum, false, -1);{x.d4}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('attester') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.attesterList.Count - 1 do
       ComposeCompositionAttester(this, 'Composition', 'attester', elem.attesterList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('custodian') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{TFhirOrganization}(this, 'Composition', 'custodian', elem.custodianElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('relatesTo') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.relatesToList.Count - 1 do
       ComposeCompositionRelatesTo(this, 'Composition', 'relatesTo', elem.relatesToList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('event') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.eventList.Count - 1 do
       ComposeCompositionEvent(this, 'Composition', 'event', elem.eventList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('section') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.sectionList.Count - 1 do
       ComposeCompositionSection(this, 'Composition', 'section', elem.sectionList[i], false, i);{x.d3}
 end;
@@ -12864,38 +12864,38 @@ begin
       this.addPredicate('a', 'fhir:ConceptMap'); {z}
   end;
   composeDomainResource(this, '', name, elem, false, index);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('url') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeUri(this, 'ConceptMap', 'url', elem.urlElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('identifier') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeIdentifier(this, 'ConceptMap', 'identifier', elem.identifierElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('version') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeString(this, 'ConceptMap', 'version', elem.versionElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('name') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeString(this, 'ConceptMap', 'name', elem.nameElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('title') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeString(this, 'ConceptMap', 'title', elem.titleElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('status') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnum(this, 'ConceptMap', 'status', elem.StatusElement, CODES_TFhirPublicationStatusEnum, SYSTEMS_TFhirPublicationStatusEnum, false, -1);{x.d4}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('experimental') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeBoolean(this, 'ConceptMap', 'experimental', elem.experimentalElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('date') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeDateTime(this, 'ConceptMap', 'date', elem.dateElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('publisher') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeString(this, 'ConceptMap', 'publisher', elem.publisherElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('contact') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.contactList.Count - 1 do
       ComposeContactDetail(this, 'ConceptMap', 'contact', elem.contactList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('description') and (SummaryOption in [soFull, soData]) then
     ComposeMarkdown(this, 'ConceptMap', 'description', elem.descriptionElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('useContext') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.useContextList.Count - 1 do
       ComposeUsageContext(this, 'ConceptMap', 'useContext', elem.useContextList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('jurisdiction') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.jurisdictionList.Count - 1 do
       ComposeCodeableConcept(this, 'ConceptMap', 'jurisdiction', elem.jurisdictionList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('purpose') and (SummaryOption in [soFull, soData]) then
     ComposeMarkdown(this, 'ConceptMap', 'purpose', elem.purposeElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('copyright') and (SummaryOption in [soFull, soData]) then
     ComposeMarkdown(this, 'ConceptMap', 'copyright', elem.copyrightElement, false, -1);{x.2ea}
   if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.source is TFhirReference) {2} then
     ComposeReference(this, 'ConceptMap', 'sourceReference', TFhirReference(elem.source), false,-1){x.d8}
@@ -12905,7 +12905,7 @@ begin
     ComposeReference(this, 'ConceptMap', 'targetReference', TFhirReference(elem.target), false,-1){x.d8}
   else if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.target is TFhirUri) {6} then
     ComposeUri(this, 'ConceptMap', 'targetUri', TFhirUri(elem.target), false, -1);{x.d9}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('group') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.groupList.Count - 1 do
       ComposeConceptMapGroup(this, 'ConceptMap', 'group', elem.groupList[i], false, i);{x.d3}
 end;
@@ -13083,26 +13083,26 @@ begin
       this.addPredicate('a', 'fhir:Condition'); {z}
   end;
   composeDomainResource(this, '', name, elem, false, index);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('identifier') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.identifierList.Count - 1 do
       ComposeIdentifier(this, 'Condition', 'identifier', elem.identifierList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('clinicalStatus') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnum(this, 'Condition', 'clinicalStatus', elem.ClinicalStatusElement, CODES_TFhirConditionClinicalEnum, SYSTEMS_TFhirConditionClinicalEnum, false, -1);{x.d4}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('verificationStatus') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnum(this, 'Condition', 'verificationStatus', elem.VerificationStatusElement, CODES_TFhirConditionVerStatusEnum, SYSTEMS_TFhirConditionVerStatusEnum, false, -1);{x.d4}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('category') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.categoryList.Count - 1 do
       ComposeCodeableConcept(this, 'Condition', 'category', elem.categoryList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('severity') and (SummaryOption in [soFull, soData]) then
     ComposeCodeableConcept(this, 'Condition', 'severity', elem.severityElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('code') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeCodeableConcept(this, 'Condition', 'code', elem.codeElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('bodySite') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.bodySiteList.Count - 1 do
       ComposeCodeableConcept(this, 'Condition', 'bodySite', elem.bodySiteList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('subject') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{Resource}(this, 'Condition', 'subject', elem.subjectElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('context') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{Resource}(this, 'Condition', 'context', elem.contextElement, false, -1);{x.2f}
   if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.onset is TFhirAge) {6} then
     ComposeAge(this, 'Condition', 'onsetAge', TFhirAge(elem.onset), false, -1){x.d9}
@@ -13126,16 +13126,16 @@ begin
     ComposeBoolean(this, 'Condition', 'abatementBoolean', TFhirBoolean(elem.abatement), false, -1){x.d9}
   else if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.abatement is TFhirString) {6} then
     ComposeString(this, 'Condition', 'abatementString', TFhirString(elem.abatement), false, -1);{x.d9}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('assertedDate') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeDateTime(this, 'Condition', 'assertedDate', elem.assertedDateElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('asserter') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{Resource}(this, 'Condition', 'asserter', elem.asserterElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('stage') and (SummaryOption in [soFull, soData]) then
     ComposeConditionStage(this, 'Condition', 'stage', elem.stageElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('evidence') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.evidenceList.Count - 1 do
       ComposeConditionEvidence(this, 'Condition', 'evidence', elem.evidenceList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('note') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.noteList.Count - 1 do
       ComposeAnnotation(this, 'Condition', 'note', elem.noteList[i], false, i);{x.d3}
 end;
@@ -13498,29 +13498,29 @@ begin
       this.addPredicate('a', 'fhir:Consent'); {z}
   end;
   composeDomainResource(this, '', name, elem, false, index);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('identifier') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeIdentifier(this, 'Consent', 'identifier', elem.identifierElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('status') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnum(this, 'Consent', 'status', elem.StatusElement, CODES_TFhirConsentStateCodesEnum, SYSTEMS_TFhirConsentStateCodesEnum, false, -1);{x.d4}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('category') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.categoryList.Count - 1 do
       ComposeCodeableConcept(this, 'Consent', 'category', elem.categoryList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('patient') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{TFhirPatient}(this, 'Consent', 'patient', elem.patientElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('period') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposePeriod(this, 'Consent', 'period', elem.periodElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('dateTime') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeDateTime(this, 'Consent', 'dateTime', elem.dateTimeElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('consentingParty') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.consentingPartyList.Count - 1 do
       ComposeReference{Resource}(this, 'Consent', 'consentingParty', elem.consentingPartyList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('actor') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.actorList.Count - 1 do
       ComposeConsentActor(this, 'Consent', 'actor', elem.actorList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('action') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.actionList.Count - 1 do
       ComposeCodeableConcept(this, 'Consent', 'action', elem.actionList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('organization') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.organizationList.Count - 1 do
       ComposeReference{TFhirOrganization}(this, 'Consent', 'organization', elem.organizationList[i], false, i);{x.d3}
   if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.source is TFhirAttachment) {6} then
@@ -13529,23 +13529,23 @@ begin
     ComposeIdentifier(this, 'Consent', 'sourceIdentifier', TFhirIdentifier(elem.source), false, -1){x.d9}
   else if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.source is TFhirReference) {2} then
     ComposeReference(this, 'Consent', 'sourceReference', TFhirReference(elem.source), false,-1);{x.d8}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('policy') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.policyList.Count - 1 do
       ComposeConsentPolicy(this, 'Consent', 'policy', elem.policyList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('policyRule') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeUri(this, 'Consent', 'policyRule', elem.policyRuleElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('securityLabel') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.securityLabelList.Count - 1 do
       ComposeCoding(this, 'Consent', 'securityLabel', elem.securityLabelList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('purpose') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.purposeList.Count - 1 do
       ComposeCoding(this, 'Consent', 'purpose', elem.purposeList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('dataPeriod') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposePeriod(this, 'Consent', 'dataPeriod', elem.dataPeriodElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('data') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.dataList.Count - 1 do
       ComposeConsentData(this, 'Consent', 'data', elem.dataList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('except_') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.except_List.Count - 1 do
       ComposeConsentExcept(this, 'Consent', 'except', elem.except_List[i], false, i);{x.d3}
 end;
@@ -14128,67 +14128,67 @@ begin
       this.addPredicate('a', 'fhir:Contract'); {z}
   end;
   composeDomainResource(this, '', name, elem, false, index);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('identifier') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeIdentifier(this, 'Contract', 'identifier', elem.identifierElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('status') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnum(this, 'Contract', 'status', elem.StatusElement, CODES_TFhirContractStatusEnum, SYSTEMS_TFhirContractStatusEnum, false, -1);{x.d4}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('issued') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeDateTime(this, 'Contract', 'issued', elem.issuedElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('applies') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposePeriod(this, 'Contract', 'applies', elem.appliesElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('subject') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.subjectList.Count - 1 do
       ComposeReference{TFhirReference}(this, 'Contract', 'subject', elem.subjectList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('topic') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.topicList.Count - 1 do
       ComposeReference{TFhirReference}(this, 'Contract', 'topic', elem.topicList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('authority') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.authorityList.Count - 1 do
       ComposeReference{TFhirOrganization}(this, 'Contract', 'authority', elem.authorityList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('domain') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.domainList.Count - 1 do
       ComposeReference{TFhirLocation}(this, 'Contract', 'domain', elem.domainList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('type_') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeCodeableConcept(this, 'Contract', 'type', elem.type_Element, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('subType') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.subTypeList.Count - 1 do
       ComposeCodeableConcept(this, 'Contract', 'subType', elem.subTypeList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('action') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.actionList.Count - 1 do
       ComposeCodeableConcept(this, 'Contract', 'action', elem.actionList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('actionReason') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.actionReasonList.Count - 1 do
       ComposeCodeableConcept(this, 'Contract', 'actionReason', elem.actionReasonList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('decisionType') and (SummaryOption in [soFull, soData]) then
     ComposeCodeableConcept(this, 'Contract', 'decisionType', elem.decisionTypeElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('contentDerivative') and (SummaryOption in [soFull, soData]) then
     ComposeCodeableConcept(this, 'Contract', 'contentDerivative', elem.contentDerivativeElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('securityLabel') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.securityLabelList.Count - 1 do
       ComposeCoding(this, 'Contract', 'securityLabel', elem.securityLabelList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('agent') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.agentList.Count - 1 do
       ComposeContractAgent(this, 'Contract', 'agent', elem.agentList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('signer') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.signerList.Count - 1 do
       ComposeContractSigner(this, 'Contract', 'signer', elem.signerList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('valuedItem') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.valuedItemList.Count - 1 do
       ComposeContractValuedItem(this, 'Contract', 'valuedItem', elem.valuedItemList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('term') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.termList.Count - 1 do
       ComposeContractTerm(this, 'Contract', 'term', elem.termList[i], false, i);{x.d3}
   if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.binding is TFhirAttachment) {6} then
     ComposeAttachment(this, 'Contract', 'bindingAttachment', TFhirAttachment(elem.binding), false, -1){x.d9}
   else if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.binding is TFhirReference) {2} then
     ComposeReference(this, 'Contract', 'bindingReference', TFhirReference(elem.binding), false,-1);{x.d8}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('friendly') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.friendlyList.Count - 1 do
       ComposeContractFriendly(this, 'Contract', 'friendly', elem.friendlyList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('legal') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.legalList.Count - 1 do
       ComposeContractLegal(this, 'Contract', 'legal', elem.legalList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('rule') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.ruleList.Count - 1 do
       ComposeContractRule(this, 'Contract', 'rule', elem.ruleList[i], false, i);{x.d3}
 end;
@@ -14321,39 +14321,39 @@ begin
       this.addPredicate('a', 'fhir:Coverage'); {z}
   end;
   composeDomainResource(this, '', name, elem, false, index);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('identifier') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.identifierList.Count - 1 do
       ComposeIdentifier(this, 'Coverage', 'identifier', elem.identifierList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('status') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnum(this, 'Coverage', 'status', elem.StatusElement, CODES_TFhirFmStatusEnum, SYSTEMS_TFhirFmStatusEnum, false, -1);{x.d4}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('type_') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeCodeableConcept(this, 'Coverage', 'type', elem.type_Element, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('policyHolder') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{Resource}(this, 'Coverage', 'policyHolder', elem.policyHolderElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('subscriber') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{Resource}(this, 'Coverage', 'subscriber', elem.subscriberElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('subscriberId') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeString(this, 'Coverage', 'subscriberId', elem.subscriberIdElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('beneficiary') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{TFhirPatient}(this, 'Coverage', 'beneficiary', elem.beneficiaryElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('relationship') and (SummaryOption in [soFull, soData]) then
     ComposeCodeableConcept(this, 'Coverage', 'relationship', elem.relationshipElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('period') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposePeriod(this, 'Coverage', 'period', elem.periodElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('payor') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.payorList.Count - 1 do
       ComposeReference{Resource}(this, 'Coverage', 'payor', elem.payorList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('grouping') and (SummaryOption in [soFull, soData]) then
     ComposeCoverageGrouping(this, 'Coverage', 'grouping', elem.groupingElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('dependent') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeString(this, 'Coverage', 'dependent', elem.dependentElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('sequence') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeString(this, 'Coverage', 'sequence', elem.sequenceElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('order') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposePositiveInt(this, 'Coverage', 'order', elem.orderElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('network') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeString(this, 'Coverage', 'network', elem.networkElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('contract') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.contractList.Count - 1 do
       ComposeReference{TFhirContract}(this, 'Coverage', 'contract', elem.contractList[i], false, i);{x.d3}
 end;
@@ -14465,42 +14465,42 @@ begin
       this.addPredicate('a', 'fhir:DataElement'); {z}
   end;
   composeDomainResource(this, '', name, elem, false, index);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('url') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeUri(this, 'DataElement', 'url', elem.urlElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('identifier') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.identifierList.Count - 1 do
       ComposeIdentifier(this, 'DataElement', 'identifier', elem.identifierList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('version') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeString(this, 'DataElement', 'version', elem.versionElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('status') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnum(this, 'DataElement', 'status', elem.StatusElement, CODES_TFhirPublicationStatusEnum, SYSTEMS_TFhirPublicationStatusEnum, false, -1);{x.d4}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('experimental') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeBoolean(this, 'DataElement', 'experimental', elem.experimentalElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('date') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeDateTime(this, 'DataElement', 'date', elem.dateElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('publisher') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeString(this, 'DataElement', 'publisher', elem.publisherElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('name') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeString(this, 'DataElement', 'name', elem.nameElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('title') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeString(this, 'DataElement', 'title', elem.titleElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('contact') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.contactList.Count - 1 do
       ComposeContactDetail(this, 'DataElement', 'contact', elem.contactList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('useContext') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.useContextList.Count - 1 do
       ComposeUsageContext(this, 'DataElement', 'useContext', elem.useContextList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('jurisdiction') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.jurisdictionList.Count - 1 do
       ComposeCodeableConcept(this, 'DataElement', 'jurisdiction', elem.jurisdictionList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('copyright') and (SummaryOption in [soFull, soData]) then
     ComposeMarkdown(this, 'DataElement', 'copyright', elem.copyrightElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('stringency') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnum(this, 'DataElement', 'stringency', elem.StringencyElement, CODES_TFhirDataelementStringencyEnum, SYSTEMS_TFhirDataelementStringencyEnum, false, -1);{x.d4}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('mapping') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.mappingList.Count - 1 do
       ComposeDataElementMapping(this, 'DataElement', 'mapping', elem.mappingList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('element') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.elementList.Count - 1 do
       ComposeElementDefinition(this, 'DataElement', 'element', elem.elementList[i], false, i);{x.d3}
 end;
@@ -14600,28 +14600,28 @@ begin
       this.addPredicate('a', 'fhir:DetectedIssue'); {z}
   end;
   composeDomainResource(this, '', name, elem, false, index);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('identifier') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeIdentifier(this, 'DetectedIssue', 'identifier', elem.identifierElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('status') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnum(this, 'DetectedIssue', 'status', elem.StatusElement, CODES_TFhirObservationStatusEnum, SYSTEMS_TFhirObservationStatusEnum, false, -1);{x.d4}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('category') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeCodeableConcept(this, 'DetectedIssue', 'category', elem.categoryElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('severity') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnum(this, 'DetectedIssue', 'severity', elem.SeverityElement, CODES_TFhirDetectedissueSeverityEnum, SYSTEMS_TFhirDetectedissueSeverityEnum, false, -1);{x.d4}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('patient') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{TFhirPatient}(this, 'DetectedIssue', 'patient', elem.patientElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('date') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeDateTime(this, 'DetectedIssue', 'date', elem.dateElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('author') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{Resource}(this, 'DetectedIssue', 'author', elem.authorElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('implicated') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.implicatedList.Count - 1 do
       ComposeReference{TFhirReference}(this, 'DetectedIssue', 'implicated', elem.implicatedList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('detail') and (SummaryOption in [soFull, soData]) then
     ComposeString(this, 'DetectedIssue', 'detail', elem.detailElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('reference') and (SummaryOption in [soFull, soData]) then
     ComposeUri(this, 'DetectedIssue', 'reference', elem.referenceElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('mitigation') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.mitigationList.Count - 1 do
       ComposeDetectedIssueMitigation(this, 'DetectedIssue', 'mitigation', elem.mitigationList[i], false, i);{x.d3}
 end;
@@ -14741,42 +14741,42 @@ begin
       this.addPredicate('a', 'fhir:Device'); {z}
   end;
   composeDomainResource(this, '', name, elem, false, index);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('identifier') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.identifierList.Count - 1 do
       ComposeIdentifier(this, 'Device', 'identifier', elem.identifierList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('udi') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeDeviceUdi(this, 'Device', 'udi', elem.udiElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('status') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnum(this, 'Device', 'status', elem.StatusElement, CODES_TFhirDeviceStatusEnum, SYSTEMS_TFhirDeviceStatusEnum, false, -1);{x.d4}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('type_') and (SummaryOption in [soFull, soData]) then
     ComposeCodeableConcept(this, 'Device', 'type', elem.type_Element, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('lotNumber') and (SummaryOption in [soFull, soData]) then
     ComposeString(this, 'Device', 'lotNumber', elem.lotNumberElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('manufacturer') and (SummaryOption in [soFull, soData]) then
     ComposeString(this, 'Device', 'manufacturer', elem.manufacturerElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('manufactureDate') and (SummaryOption in [soFull, soData]) then
     ComposeDateTime(this, 'Device', 'manufactureDate', elem.manufactureDateElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('expirationDate') and (SummaryOption in [soFull, soData]) then
     ComposeDateTime(this, 'Device', 'expirationDate', elem.expirationDateElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('model') and (SummaryOption in [soFull, soData]) then
     ComposeString(this, 'Device', 'model', elem.modelElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('version') and (SummaryOption in [soFull, soData]) then
     ComposeString(this, 'Device', 'version', elem.versionElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('patient') and (SummaryOption in [soFull, soData]) then
     ComposeReference{TFhirPatient}(this, 'Device', 'patient', elem.patientElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('owner') and (SummaryOption in [soFull, soData]) then
     ComposeReference{TFhirOrganization}(this, 'Device', 'owner', elem.ownerElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('contact') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.contactList.Count - 1 do
       ComposeContactPoint(this, 'Device', 'contact', elem.contactList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('location') and (SummaryOption in [soFull, soData]) then
     ComposeReference{TFhirLocation}(this, 'Device', 'location', elem.locationElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('url') and (SummaryOption in [soFull, soData]) then
     ComposeUri(this, 'Device', 'url', elem.urlElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('note') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.noteList.Count - 1 do
       ComposeAnnotation(this, 'Device', 'note', elem.noteList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('safety') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.safetyList.Count - 1 do
       ComposeCodeableConcept(this, 'Device', 'safety', elem.safetyList[i], false, i);{x.d3}
 end;
@@ -14875,27 +14875,27 @@ begin
       this.addPredicate('a', 'fhir:DeviceComponent'); {z}
   end;
   composeDomainResource(this, '', name, elem, false, index);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('identifier') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeIdentifier(this, 'DeviceComponent', 'identifier', elem.identifierElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('type_') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeCodeableConcept(this, 'DeviceComponent', 'type', elem.type_Element, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('lastSystemChange') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeInstant(this, 'DeviceComponent', 'lastSystemChange', elem.lastSystemChangeElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('source') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{TFhirDevice}(this, 'DeviceComponent', 'source', elem.sourceElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('parent') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{TFhirDeviceComponent}(this, 'DeviceComponent', 'parent', elem.parentElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('operationalStatus') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.operationalStatusList.Count - 1 do
       ComposeCodeableConcept(this, 'DeviceComponent', 'operationalStatus', elem.operationalStatusList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('parameterGroup') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeCodeableConcept(this, 'DeviceComponent', 'parameterGroup', elem.parameterGroupElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('measurementPrinciple') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnum(this, 'DeviceComponent', 'measurementPrinciple', elem.MeasurementPrincipleElement, CODES_TFhirMeasurementPrincipleEnum, SYSTEMS_TFhirMeasurementPrincipleEnum, false, -1);{x.d4}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('productionSpecification') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.productionSpecificationList.Count - 1 do
       ComposeDeviceComponentProductionSpecification(this, 'DeviceComponent', 'productionSpecification', elem.productionSpecificationList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('languageCode') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeCodeableConcept(this, 'DeviceComponent', 'languageCode', elem.languageCodeElement, false, -1);{x.2f}
 end;
 
@@ -14992,25 +14992,25 @@ begin
       this.addPredicate('a', 'fhir:DeviceMetric'); {z}
   end;
   composeDomainResource(this, '', name, elem, false, index);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('identifier') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeIdentifier(this, 'DeviceMetric', 'identifier', elem.identifierElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('type_') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeCodeableConcept(this, 'DeviceMetric', 'type', elem.type_Element, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('unit_') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeCodeableConcept(this, 'DeviceMetric', 'unit', elem.unit_Element, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('source') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{TFhirDevice}(this, 'DeviceMetric', 'source', elem.sourceElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('parent') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{TFhirDeviceComponent}(this, 'DeviceMetric', 'parent', elem.parentElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('operationalStatus') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnum(this, 'DeviceMetric', 'operationalStatus', elem.OperationalStatusElement, CODES_TFhirMetricOperationalStatusEnum, SYSTEMS_TFhirMetricOperationalStatusEnum, false, -1);{x.d4}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('color') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnum(this, 'DeviceMetric', 'color', elem.ColorElement, CODES_TFhirMetricColorEnum, SYSTEMS_TFhirMetricColorEnum, false, -1);{x.d4}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('category') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnum(this, 'DeviceMetric', 'category', elem.CategoryElement, CODES_TFhirMetricCategoryEnum, SYSTEMS_TFhirMetricCategoryEnum, false, -1);{x.d4}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('measurementPeriod') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeTiming(this, 'DeviceMetric', 'measurementPeriod', elem.measurementPeriodElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('calibration') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.calibrationList.Count - 1 do
       ComposeDeviceMetricCalibration(this, 'DeviceMetric', 'calibration', elem.calibrationList[i], false, i);{x.d3}
 end;
@@ -15132,33 +15132,33 @@ begin
       this.addPredicate('a', 'fhir:DeviceRequest'); {z}
   end;
   composeDomainResource(this, '', name, elem, false, index);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('identifier') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.identifierList.Count - 1 do
       ComposeIdentifier(this, 'DeviceRequest', 'identifier', elem.identifierList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('definition') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.definitionList.Count - 1 do
       ComposeReference{Resource}(this, 'DeviceRequest', 'definition', elem.definitionList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('basedOn') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.basedOnList.Count - 1 do
       ComposeReference{TFhirReference}(this, 'DeviceRequest', 'basedOn', elem.basedOnList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('priorRequest') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.priorRequestList.Count - 1 do
       ComposeReference{TFhirReference}(this, 'DeviceRequest', 'priorRequest', elem.priorRequestList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('groupIdentifier') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeIdentifier(this, 'DeviceRequest', 'groupIdentifier', elem.groupIdentifierElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('status') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnum(this, 'DeviceRequest', 'status', elem.StatusElement, CODES_TFhirRequestStatusEnum, SYSTEMS_TFhirRequestStatusEnum, false, -1);{x.d4}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('intent') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeCodeableConcept(this, 'DeviceRequest', 'intent', elem.intentElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('priority') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnum(this, 'DeviceRequest', 'priority', elem.PriorityElement, CODES_TFhirRequestPriorityEnum, SYSTEMS_TFhirRequestPriorityEnum, false, -1);{x.d4}
   if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.code is TFhirReference) {2} then
     ComposeReference(this, 'DeviceRequest', 'codeReference', TFhirReference(elem.code), false,-1){x.d8}
   else if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.code is TFhirCodeableConcept) {6} then
     ComposeCodeableConcept(this, 'DeviceRequest', 'codeCodeableConcept', TFhirCodeableConcept(elem.code), false, -1);{x.d9}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('subject') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{Resource}(this, 'DeviceRequest', 'subject', elem.subjectElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('context') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{Resource}(this, 'DeviceRequest', 'context', elem.contextElement, false, -1);{x.2f}
   if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.occurrence is TFhirPeriod) {6} then
     ComposePeriod(this, 'DeviceRequest', 'occurrencePeriod', TFhirPeriod(elem.occurrence), false, -1){x.d9}
@@ -15166,27 +15166,27 @@ begin
     ComposeTiming(this, 'DeviceRequest', 'occurrenceTiming', TFhirTiming(elem.occurrence), false, -1){x.d9}
   else if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.occurrence is TFhirDateTime) {6} then
     ComposeDateTime(this, 'DeviceRequest', 'occurrenceDateTime', TFhirDateTime(elem.occurrence), false, -1);{x.d9}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('authoredOn') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeDateTime(this, 'DeviceRequest', 'authoredOn', elem.authoredOnElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('requester') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeDeviceRequestRequester(this, 'DeviceRequest', 'requester', elem.requesterElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('performerType') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeCodeableConcept(this, 'DeviceRequest', 'performerType', elem.performerTypeElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('performer') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{Resource}(this, 'DeviceRequest', 'performer', elem.performerElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('reasonCode') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.reasonCodeList.Count - 1 do
       ComposeCodeableConcept(this, 'DeviceRequest', 'reasonCode', elem.reasonCodeList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('reasonReference') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.reasonReferenceList.Count - 1 do
       ComposeReference{TFhirReference}(this, 'DeviceRequest', 'reasonReference', elem.reasonReferenceList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('supportingInfo') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.supportingInfoList.Count - 1 do
       ComposeReference{TFhirReference}(this, 'DeviceRequest', 'supportingInfo', elem.supportingInfoList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('note') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.noteList.Count - 1 do
       ComposeAnnotation(this, 'DeviceRequest', 'note', elem.noteList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('relevantHistory') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.relevantHistoryList.Count - 1 do
       ComposeReference{TFhirProvenance}(this, 'DeviceRequest', 'relevantHistory', elem.relevantHistoryList[i], false, i);{x.d3}
 end;
@@ -15248,14 +15248,14 @@ begin
       this.addPredicate('a', 'fhir:DeviceUseStatement'); {z}
   end;
   composeDomainResource(this, '', name, elem, false, index);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('identifier') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.identifierList.Count - 1 do
       ComposeIdentifier(this, 'DeviceUseStatement', 'identifier', elem.identifierList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('status') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnum(this, 'DeviceUseStatement', 'status', elem.StatusElement, CODES_TFhirDeviceStatementStatusEnum, SYSTEMS_TFhirDeviceStatementStatusEnum, false, -1);{x.d4}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('subject') and (SummaryOption in [soFull, soData]) then
     ComposeReference{Resource}(this, 'DeviceUseStatement', 'subject', elem.subjectElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('whenUsed') and (SummaryOption in [soFull, soData]) then
     ComposePeriod(this, 'DeviceUseStatement', 'whenUsed', elem.whenUsedElement, false, -1);{x.2f}
   if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.timing is TFhirTiming) {6} then
     ComposeTiming(this, 'DeviceUseStatement', 'timingTiming', TFhirTiming(elem.timing), false, -1){x.d9}
@@ -15263,18 +15263,18 @@ begin
     ComposePeriod(this, 'DeviceUseStatement', 'timingPeriod', TFhirPeriod(elem.timing), false, -1){x.d9}
   else if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.timing is TFhirDateTime) {6} then
     ComposeDateTime(this, 'DeviceUseStatement', 'timingDateTime', TFhirDateTime(elem.timing), false, -1);{x.d9}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('recordedOn') and (SummaryOption in [soFull, soData]) then
     ComposeDateTime(this, 'DeviceUseStatement', 'recordedOn', elem.recordedOnElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('source') and (SummaryOption in [soFull, soData]) then
     ComposeReference{Resource}(this, 'DeviceUseStatement', 'source', elem.sourceElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('device') and (SummaryOption in [soFull, soData]) then
     ComposeReference{TFhirDevice}(this, 'DeviceUseStatement', 'device', elem.deviceElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('indication') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.indicationList.Count - 1 do
       ComposeCodeableConcept(this, 'DeviceUseStatement', 'indication', elem.indicationList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('bodySite') and (SummaryOption in [soFull, soData]) then
     ComposeCodeableConcept(this, 'DeviceUseStatement', 'bodySite', elem.bodySiteElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('note') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.noteList.Count - 1 do
       ComposeAnnotation(this, 'DeviceUseStatement', 'note', elem.noteList[i], false, i);{x.d3}
 end;
@@ -15428,49 +15428,49 @@ begin
       this.addPredicate('a', 'fhir:DiagnosticReport'); {z}
   end;
   composeDomainResource(this, '', name, elem, false, index);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('identifier') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.identifierList.Count - 1 do
       ComposeIdentifier(this, 'DiagnosticReport', 'identifier', elem.identifierList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('basedOn') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.basedOnList.Count - 1 do
       ComposeReference{Resource}(this, 'DiagnosticReport', 'basedOn', elem.basedOnList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('status') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnum(this, 'DiagnosticReport', 'status', elem.StatusElement, CODES_TFhirDiagnosticReportStatusEnum, SYSTEMS_TFhirDiagnosticReportStatusEnum, false, -1);{x.d4}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('category') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeCodeableConcept(this, 'DiagnosticReport', 'category', elem.categoryElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('code') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeCodeableConcept(this, 'DiagnosticReport', 'code', elem.codeElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('subject') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{Resource}(this, 'DiagnosticReport', 'subject', elem.subjectElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('context') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{Resource}(this, 'DiagnosticReport', 'context', elem.contextElement, false, -1);{x.2f}
   if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.effective is TFhirPeriod) {6} then
     ComposePeriod(this, 'DiagnosticReport', 'effectivePeriod', TFhirPeriod(elem.effective), false, -1){x.d9}
   else if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.effective is TFhirDateTime) {6} then
     ComposeDateTime(this, 'DiagnosticReport', 'effectiveDateTime', TFhirDateTime(elem.effective), false, -1);{x.d9}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('issued') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeInstant(this, 'DiagnosticReport', 'issued', elem.issuedElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('performer') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.performerList.Count - 1 do
       ComposeDiagnosticReportPerformer(this, 'DiagnosticReport', 'performer', elem.performerList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('specimen') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.specimenList.Count - 1 do
       ComposeReference{TFhirSpecimen}(this, 'DiagnosticReport', 'specimen', elem.specimenList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('result') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.resultList.Count - 1 do
       ComposeReference{TFhirObservation}(this, 'DiagnosticReport', 'result', elem.resultList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('imagingStudy') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.imagingStudyList.Count - 1 do
       ComposeReference{Resource}(this, 'DiagnosticReport', 'imagingStudy', elem.imagingStudyList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('image') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.imageList.Count - 1 do
       ComposeDiagnosticReportImage(this, 'DiagnosticReport', 'image', elem.imageList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('conclusion') and (SummaryOption in [soFull, soData]) then
     ComposeString(this, 'DiagnosticReport', 'conclusion', elem.conclusionElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('codedDiagnosis') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.codedDiagnosisList.Count - 1 do
       ComposeCodeableConcept(this, 'DiagnosticReport', 'codedDiagnosis', elem.codedDiagnosisList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('presentedForm') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.presentedFormList.Count - 1 do
       ComposeAttachment(this, 'DiagnosticReport', 'presentedForm', elem.presentedFormList[i], false, i);{x.d3}
 end;
@@ -15616,33 +15616,33 @@ begin
       this.addPredicate('a', 'fhir:DocumentManifest'); {z}
   end;
   composeDomainResource(this, '', name, elem, false, index);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('masterIdentifier') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeIdentifier(this, 'DocumentManifest', 'masterIdentifier', elem.masterIdentifierElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('identifier') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.identifierList.Count - 1 do
       ComposeIdentifier(this, 'DocumentManifest', 'identifier', elem.identifierList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('status') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnum(this, 'DocumentManifest', 'status', elem.StatusElement, CODES_TFhirDocumentReferenceStatusEnum, SYSTEMS_TFhirDocumentReferenceStatusEnum, false, -1);{x.d4}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('type_') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeCodeableConcept(this, 'DocumentManifest', 'type', elem.type_Element, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('subject') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{Resource}(this, 'DocumentManifest', 'subject', elem.subjectElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('created') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeDateTime(this, 'DocumentManifest', 'created', elem.createdElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('author') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.authorList.Count - 1 do
       ComposeReference{Resource}(this, 'DocumentManifest', 'author', elem.authorList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('recipient') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.recipientList.Count - 1 do
       ComposeReference{Resource}(this, 'DocumentManifest', 'recipient', elem.recipientList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('source') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeUri(this, 'DocumentManifest', 'source', elem.sourceElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('description') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeString(this, 'DocumentManifest', 'description', elem.descriptionElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('content') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.contentList.Count - 1 do
       ComposeDocumentManifestContent(this, 'DocumentManifest', 'content', elem.contentList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('related') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.relatedList.Count - 1 do
       ComposeDocumentManifestRelated(this, 'DocumentManifest', 'related', elem.relatedList[i], false, i);{x.d3}
 end;
@@ -15893,44 +15893,44 @@ begin
       this.addPredicate('a', 'fhir:DocumentReference'); {z}
   end;
   composeDomainResource(this, '', name, elem, false, index);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('masterIdentifier') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeIdentifier(this, 'DocumentReference', 'masterIdentifier', elem.masterIdentifierElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('identifier') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.identifierList.Count - 1 do
       ComposeIdentifier(this, 'DocumentReference', 'identifier', elem.identifierList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('status') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnum(this, 'DocumentReference', 'status', elem.StatusElement, CODES_TFhirDocumentReferenceStatusEnum, SYSTEMS_TFhirDocumentReferenceStatusEnum, false, -1);{x.d4}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('docStatus') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnum(this, 'DocumentReference', 'docStatus', elem.DocStatusElement, CODES_TFhirCompositionStatusEnum, SYSTEMS_TFhirCompositionStatusEnum, false, -1);{x.d4}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('type_') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeCodeableConcept(this, 'DocumentReference', 'type', elem.type_Element, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('class_') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeCodeableConcept(this, 'DocumentReference', 'class', elem.class_Element, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('subject') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{Resource}(this, 'DocumentReference', 'subject', elem.subjectElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('created') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeDateTime(this, 'DocumentReference', 'created', elem.createdElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('indexed') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeInstant(this, 'DocumentReference', 'indexed', elem.indexedElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('author') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.authorList.Count - 1 do
       ComposeReference{Resource}(this, 'DocumentReference', 'author', elem.authorList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('authenticator') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{Resource}(this, 'DocumentReference', 'authenticator', elem.authenticatorElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('custodian') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{TFhirOrganization}(this, 'DocumentReference', 'custodian', elem.custodianElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('relatesTo') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.relatesToList.Count - 1 do
       ComposeDocumentReferenceRelatesTo(this, 'DocumentReference', 'relatesTo', elem.relatesToList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('description') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeString(this, 'DocumentReference', 'description', elem.descriptionElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('securityLabel') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.securityLabelList.Count - 1 do
       ComposeCodeableConcept(this, 'DocumentReference', 'securityLabel', elem.securityLabelList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('content') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.contentList.Count - 1 do
       ComposeDocumentReferenceContent(this, 'DocumentReference', 'content', elem.contentList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('context') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeDocumentReferenceContext(this, 'DocumentReference', 'context', elem.contextElement, false, -1);{x.2f}
 end;
 
@@ -15991,38 +15991,38 @@ begin
       this.addPredicate('a', 'fhir:EligibilityRequest'); {z}
   end;
   composeDomainResource(this, '', name, elem, false, index);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('identifier') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.identifierList.Count - 1 do
       ComposeIdentifier(this, 'EligibilityRequest', 'identifier', elem.identifierList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('status') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnum(this, 'EligibilityRequest', 'status', elem.StatusElement, CODES_TFhirFmStatusEnum, SYSTEMS_TFhirFmStatusEnum, false, -1);{x.d4}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('priority') and (SummaryOption in [soFull, soData]) then
     ComposeCodeableConcept(this, 'EligibilityRequest', 'priority', elem.priorityElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('patient') and (SummaryOption in [soFull, soData]) then
     ComposeReference{TFhirPatient}(this, 'EligibilityRequest', 'patient', elem.patientElement, false, -1);{x.2f}
   if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.serviced is TFhirPeriod) {6} then
     ComposePeriod(this, 'EligibilityRequest', 'servicedPeriod', TFhirPeriod(elem.serviced), false, -1){x.d9}
   else if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.serviced is TFhirDate) {6} then
     ComposeDate(this, 'EligibilityRequest', 'servicedDate', TFhirDate(elem.serviced), false, -1);{x.d9}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('created') and (SummaryOption in [soFull, soData]) then
     ComposeDateTime(this, 'EligibilityRequest', 'created', elem.createdElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('enterer') and (SummaryOption in [soFull, soData]) then
     ComposeReference{TFhirPractitioner}(this, 'EligibilityRequest', 'enterer', elem.entererElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('provider') and (SummaryOption in [soFull, soData]) then
     ComposeReference{TFhirPractitioner}(this, 'EligibilityRequest', 'provider', elem.providerElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('organization') and (SummaryOption in [soFull, soData]) then
     ComposeReference{TFhirOrganization}(this, 'EligibilityRequest', 'organization', elem.organizationElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('insurer') and (SummaryOption in [soFull, soData]) then
     ComposeReference{TFhirOrganization}(this, 'EligibilityRequest', 'insurer', elem.insurerElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('facility') and (SummaryOption in [soFull, soData]) then
     ComposeReference{TFhirLocation}(this, 'EligibilityRequest', 'facility', elem.facilityElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('coverage') and (SummaryOption in [soFull, soData]) then
     ComposeReference{TFhirCoverage}(this, 'EligibilityRequest', 'coverage', elem.coverageElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('businessArrangement') and (SummaryOption in [soFull, soData]) then
     ComposeString(this, 'EligibilityRequest', 'businessArrangement', elem.businessArrangementElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('benefitCategory') and (SummaryOption in [soFull, soData]) then
     ComposeCodeableConcept(this, 'EligibilityRequest', 'benefitCategory', elem.benefitCategoryElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('benefitSubCategory') and (SummaryOption in [soFull, soData]) then
     ComposeCodeableConcept(this, 'EligibilityRequest', 'benefitSubCategory', elem.benefitSubCategoryElement, false, -1);{x.2f}
 end;
 
@@ -16294,33 +16294,33 @@ begin
       this.addPredicate('a', 'fhir:EligibilityResponse'); {z}
   end;
   composeDomainResource(this, '', name, elem, false, index);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('identifier') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.identifierList.Count - 1 do
       ComposeIdentifier(this, 'EligibilityResponse', 'identifier', elem.identifierList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('status') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnum(this, 'EligibilityResponse', 'status', elem.StatusElement, CODES_TFhirFmStatusEnum, SYSTEMS_TFhirFmStatusEnum, false, -1);{x.d4}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('created') and (SummaryOption in [soFull, soData]) then
     ComposeDateTime(this, 'EligibilityResponse', 'created', elem.createdElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('requestProvider') and (SummaryOption in [soFull, soData]) then
     ComposeReference{TFhirPractitioner}(this, 'EligibilityResponse', 'requestProvider', elem.requestProviderElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('requestOrganization') and (SummaryOption in [soFull, soData]) then
     ComposeReference{TFhirOrganization}(this, 'EligibilityResponse', 'requestOrganization', elem.requestOrganizationElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('request') and (SummaryOption in [soFull, soData]) then
     ComposeReference{TFhirEligibilityRequest}(this, 'EligibilityResponse', 'request', elem.requestElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('outcome') and (SummaryOption in [soFull, soData]) then
     ComposeCodeableConcept(this, 'EligibilityResponse', 'outcome', elem.outcomeElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('disposition') and (SummaryOption in [soFull, soData]) then
     ComposeString(this, 'EligibilityResponse', 'disposition', elem.dispositionElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('insurer') and (SummaryOption in [soFull, soData]) then
     ComposeReference{TFhirOrganization}(this, 'EligibilityResponse', 'insurer', elem.insurerElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('inforce') and (SummaryOption in [soFull, soData]) then
     ComposeBoolean(this, 'EligibilityResponse', 'inforce', elem.inforceElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('insurance') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.insuranceList.Count - 1 do
       ComposeEligibilityResponseInsurance(this, 'EligibilityResponse', 'insurance', elem.insuranceList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('form') and (SummaryOption in [soFull, soData]) then
     ComposeCodeableConcept(this, 'EligibilityResponse', 'form', elem.formElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('error') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.errorList.Count - 1 do
       ComposeEligibilityResponseError(this, 'EligibilityResponse', 'error', elem.errorList[i], false, i);{x.d3}
 end;
@@ -16685,58 +16685,58 @@ begin
       this.addPredicate('a', 'fhir:Encounter'); {z}
   end;
   composeDomainResource(this, '', name, elem, false, index);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('identifier') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.identifierList.Count - 1 do
       ComposeIdentifier(this, 'Encounter', 'identifier', elem.identifierList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('status') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnum(this, 'Encounter', 'status', elem.StatusElement, CODES_TFhirEncounterStatusEnum, SYSTEMS_TFhirEncounterStatusEnum, false, -1);{x.d4}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('statusHistory') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.statusHistoryList.Count - 1 do
       ComposeEncounterStatusHistory(this, 'Encounter', 'statusHistory', elem.statusHistoryList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('class_') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeCoding(this, 'Encounter', 'class', elem.class_Element, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('classHistory') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.classHistoryList.Count - 1 do
       ComposeEncounterClassHistory(this, 'Encounter', 'classHistory', elem.classHistoryList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('type_') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.type_List.Count - 1 do
       ComposeCodeableConcept(this, 'Encounter', 'type', elem.type_List[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('priority') and (SummaryOption in [soFull, soData]) then
     ComposeCodeableConcept(this, 'Encounter', 'priority', elem.priorityElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('subject') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{Resource}(this, 'Encounter', 'subject', elem.subjectElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('episodeOfCare') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.episodeOfCareList.Count - 1 do
       ComposeReference{TFhirEpisodeOfCare}(this, 'Encounter', 'episodeOfCare', elem.episodeOfCareList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('incomingReferral') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.incomingReferralList.Count - 1 do
       ComposeReference{TFhirReferralRequest}(this, 'Encounter', 'incomingReferral', elem.incomingReferralList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('participant') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.participantList.Count - 1 do
       ComposeEncounterParticipant(this, 'Encounter', 'participant', elem.participantList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('appointment') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{TFhirAppointment}(this, 'Encounter', 'appointment', elem.appointmentElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('period') and (SummaryOption in [soFull, soData]) then
     ComposePeriod(this, 'Encounter', 'period', elem.periodElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('length') and (SummaryOption in [soFull, soData]) then
     ComposeDuration(this, 'Encounter', 'length', elem.lengthElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('reason') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.reasonList.Count - 1 do
       ComposeCodeableConcept(this, 'Encounter', 'reason', elem.reasonList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('diagnosis') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.diagnosisList.Count - 1 do
       ComposeEncounterDiagnosis(this, 'Encounter', 'diagnosis', elem.diagnosisList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('account') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.accountList.Count - 1 do
       ComposeReference{TFhirAccount}(this, 'Encounter', 'account', elem.accountList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('hospitalization') and (SummaryOption in [soFull, soData]) then
     ComposeEncounterHospitalization(this, 'Encounter', 'hospitalization', elem.hospitalizationElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('location') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.locationList.Count - 1 do
       ComposeEncounterLocation(this, 'Encounter', 'location', elem.locationList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('serviceProvider') and (SummaryOption in [soFull, soData]) then
     ComposeReference{TFhirOrganization}(this, 'Encounter', 'serviceProvider', elem.serviceProviderElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('partOf') and (SummaryOption in [soFull, soData]) then
     ComposeReference{TFhirEncounter}(this, 'Encounter', 'partOf', elem.partOfElement, false, -1);{x.2f}
 end;
 
@@ -16794,31 +16794,31 @@ begin
       this.addPredicate('a', 'fhir:Endpoint'); {z}
   end;
   composeDomainResource(this, '', name, elem, false, index);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('identifier') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.identifierList.Count - 1 do
       ComposeIdentifier(this, 'Endpoint', 'identifier', elem.identifierList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('status') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnum(this, 'Endpoint', 'status', elem.StatusElement, CODES_TFhirEndpointStatusEnum, SYSTEMS_TFhirEndpointStatusEnum, false, -1);{x.d4}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('connectionType') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeCoding(this, 'Endpoint', 'connectionType', elem.connectionTypeElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('name') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeString(this, 'Endpoint', 'name', elem.nameElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('managingOrganization') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{TFhirOrganization}(this, 'Endpoint', 'managingOrganization', elem.managingOrganizationElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('contact') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.contactList.Count - 1 do
       ComposeContactPoint(this, 'Endpoint', 'contact', elem.contactList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('period') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposePeriod(this, 'Endpoint', 'period', elem.periodElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('payloadType') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.payloadTypeList.Count - 1 do
       ComposeCodeableConcept(this, 'Endpoint', 'payloadType', elem.payloadTypeList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('payloadMimeType') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.payloadMimeTypeList.Count - 1 do
       ComposeCode(this, 'Endpoint', 'payloadMimeType', elem.payloadMimeTypeList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('address') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeUri(this, 'Endpoint', 'address', elem.addressElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('header') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.headerList.Count - 1 do
       ComposeString(this, 'Endpoint', 'header', elem.headerList[i], false, i);{x.d3}
 end;
@@ -16870,22 +16870,22 @@ begin
       this.addPredicate('a', 'fhir:EnrollmentRequest'); {z}
   end;
   composeDomainResource(this, '', name, elem, false, index);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('identifier') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.identifierList.Count - 1 do
       ComposeIdentifier(this, 'EnrollmentRequest', 'identifier', elem.identifierList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('status') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnum(this, 'EnrollmentRequest', 'status', elem.StatusElement, CODES_TFhirFmStatusEnum, SYSTEMS_TFhirFmStatusEnum, false, -1);{x.d4}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('created') and (SummaryOption in [soFull, soData]) then
     ComposeDateTime(this, 'EnrollmentRequest', 'created', elem.createdElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('insurer') and (SummaryOption in [soFull, soData]) then
     ComposeReference{TFhirOrganization}(this, 'EnrollmentRequest', 'insurer', elem.insurerElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('provider') and (SummaryOption in [soFull, soData]) then
     ComposeReference{TFhirPractitioner}(this, 'EnrollmentRequest', 'provider', elem.providerElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('organization') and (SummaryOption in [soFull, soData]) then
     ComposeReference{TFhirOrganization}(this, 'EnrollmentRequest', 'organization', elem.organizationElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('subject') and (SummaryOption in [soFull, soData]) then
     ComposeReference{TFhirPatient}(this, 'EnrollmentRequest', 'subject', elem.subjectElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('coverage') and (SummaryOption in [soFull, soData]) then
     ComposeReference{TFhirCoverage}(this, 'EnrollmentRequest', 'coverage', elem.coverageElement, false, -1);{x.2f}
 end;
 
@@ -16937,24 +16937,24 @@ begin
       this.addPredicate('a', 'fhir:EnrollmentResponse'); {z}
   end;
   composeDomainResource(this, '', name, elem, false, index);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('identifier') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.identifierList.Count - 1 do
       ComposeIdentifier(this, 'EnrollmentResponse', 'identifier', elem.identifierList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('status') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnum(this, 'EnrollmentResponse', 'status', elem.StatusElement, CODES_TFhirFmStatusEnum, SYSTEMS_TFhirFmStatusEnum, false, -1);{x.d4}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('request') and (SummaryOption in [soFull, soData]) then
     ComposeReference{TFhirEnrollmentRequest}(this, 'EnrollmentResponse', 'request', elem.requestElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('outcome') and (SummaryOption in [soFull, soData]) then
     ComposeCodeableConcept(this, 'EnrollmentResponse', 'outcome', elem.outcomeElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('disposition') and (SummaryOption in [soFull, soData]) then
     ComposeString(this, 'EnrollmentResponse', 'disposition', elem.dispositionElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('created') and (SummaryOption in [soFull, soData]) then
     ComposeDateTime(this, 'EnrollmentResponse', 'created', elem.createdElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('organization') and (SummaryOption in [soFull, soData]) then
     ComposeReference{TFhirOrganization}(this, 'EnrollmentResponse', 'organization', elem.organizationElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('requestProvider') and (SummaryOption in [soFull, soData]) then
     ComposeReference{TFhirPractitioner}(this, 'EnrollmentResponse', 'requestProvider', elem.requestProviderElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('requestOrganization') and (SummaryOption in [soFull, soData]) then
     ComposeReference{TFhirOrganization}(this, 'EnrollmentResponse', 'requestOrganization', elem.requestOrganizationElement, false, -1);{x.2f}
 end;
 
@@ -17100,35 +17100,35 @@ begin
       this.addPredicate('a', 'fhir:EpisodeOfCare'); {z}
   end;
   composeDomainResource(this, '', name, elem, false, index);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('identifier') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.identifierList.Count - 1 do
       ComposeIdentifier(this, 'EpisodeOfCare', 'identifier', elem.identifierList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('status') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnum(this, 'EpisodeOfCare', 'status', elem.StatusElement, CODES_TFhirEpisodeOfCareStatusEnum, SYSTEMS_TFhirEpisodeOfCareStatusEnum, false, -1);{x.d4}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('statusHistory') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.statusHistoryList.Count - 1 do
       ComposeEpisodeOfCareStatusHistory(this, 'EpisodeOfCare', 'statusHistory', elem.statusHistoryList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('type_') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.type_List.Count - 1 do
       ComposeCodeableConcept(this, 'EpisodeOfCare', 'type', elem.type_List[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('diagnosis') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.diagnosisList.Count - 1 do
       ComposeEpisodeOfCareDiagnosis(this, 'EpisodeOfCare', 'diagnosis', elem.diagnosisList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('patient') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{TFhirPatient}(this, 'EpisodeOfCare', 'patient', elem.patientElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('managingOrganization') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{TFhirOrganization}(this, 'EpisodeOfCare', 'managingOrganization', elem.managingOrganizationElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('period') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposePeriod(this, 'EpisodeOfCare', 'period', elem.periodElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('referralRequest') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.referralRequestList.Count - 1 do
       ComposeReference{TFhirReferralRequest}(this, 'EpisodeOfCare', 'referralRequest', elem.referralRequestList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('careManager') and (SummaryOption in [soFull, soData]) then
     ComposeReference{TFhirPractitioner}(this, 'EpisodeOfCare', 'careManager', elem.careManagerElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('team') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.teamList.Count - 1 do
       ComposeReference{TFhirCareTeam}(this, 'EpisodeOfCare', 'team', elem.teamList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('account') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.accountList.Count - 1 do
       ComposeReference{TFhirAccount}(this, 'EpisodeOfCare', 'account', elem.accountList[i], false, i);{x.d3}
 end;
@@ -17492,55 +17492,55 @@ begin
       this.addPredicate('a', 'fhir:ExpansionProfile'); {z}
   end;
   composeDomainResource(this, '', name, elem, false, index);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('url') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeUri(this, 'ExpansionProfile', 'url', elem.urlElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('identifier') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeIdentifier(this, 'ExpansionProfile', 'identifier', elem.identifierElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('version') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeString(this, 'ExpansionProfile', 'version', elem.versionElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('name') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeString(this, 'ExpansionProfile', 'name', elem.nameElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('status') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnum(this, 'ExpansionProfile', 'status', elem.StatusElement, CODES_TFhirPublicationStatusEnum, SYSTEMS_TFhirPublicationStatusEnum, false, -1);{x.d4}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('experimental') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeBoolean(this, 'ExpansionProfile', 'experimental', elem.experimentalElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('date') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeDateTime(this, 'ExpansionProfile', 'date', elem.dateElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('publisher') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeString(this, 'ExpansionProfile', 'publisher', elem.publisherElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('contact') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.contactList.Count - 1 do
       ComposeContactDetail(this, 'ExpansionProfile', 'contact', elem.contactList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('description') and (SummaryOption in [soFull, soData]) then
     ComposeMarkdown(this, 'ExpansionProfile', 'description', elem.descriptionElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('useContext') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.useContextList.Count - 1 do
       ComposeUsageContext(this, 'ExpansionProfile', 'useContext', elem.useContextList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('jurisdiction') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.jurisdictionList.Count - 1 do
       ComposeCodeableConcept(this, 'ExpansionProfile', 'jurisdiction', elem.jurisdictionList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('fixedVersion') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.fixedVersionList.Count - 1 do
       ComposeExpansionProfileFixedVersion(this, 'ExpansionProfile', 'fixedVersion', elem.fixedVersionList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('excludedSystem') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeExpansionProfileExcludedSystem(this, 'ExpansionProfile', 'excludedSystem', elem.excludedSystemElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('includeDesignations') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeBoolean(this, 'ExpansionProfile', 'includeDesignations', elem.includeDesignationsElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('designation') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeExpansionProfileDesignation(this, 'ExpansionProfile', 'designation', elem.designationElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('includeDefinition') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeBoolean(this, 'ExpansionProfile', 'includeDefinition', elem.includeDefinitionElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('activeOnly') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeBoolean(this, 'ExpansionProfile', 'activeOnly', elem.activeOnlyElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('excludeNested') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeBoolean(this, 'ExpansionProfile', 'excludeNested', elem.excludeNestedElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('excludeNotForUI') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeBoolean(this, 'ExpansionProfile', 'excludeNotForUI', elem.excludeNotForUIElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('excludePostCoordinated') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeBoolean(this, 'ExpansionProfile', 'excludePostCoordinated', elem.excludePostCoordinatedElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('displayLanguage') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeCode(this, 'ExpansionProfile', 'displayLanguage', elem.displayLanguageElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('limitedExpansion') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeBoolean(this, 'ExpansionProfile', 'limitedExpansion', elem.limitedExpansionElement, false, -1);{x.2ea}
 end;
 
@@ -18792,93 +18792,93 @@ begin
       this.addPredicate('a', 'fhir:ExplanationOfBenefit'); {z}
   end;
   composeDomainResource(this, '', name, elem, false, index);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('identifier') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.identifierList.Count - 1 do
       ComposeIdentifier(this, 'ExplanationOfBenefit', 'identifier', elem.identifierList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('status') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnum(this, 'ExplanationOfBenefit', 'status', elem.StatusElement, CODES_TFhirExplanationofbenefitStatusEnum, SYSTEMS_TFhirExplanationofbenefitStatusEnum, false, -1);{x.d4}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('type_') and (SummaryOption in [soFull, soData]) then
     ComposeCodeableConcept(this, 'ExplanationOfBenefit', 'type', elem.type_Element, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('subType') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.subTypeList.Count - 1 do
       ComposeCodeableConcept(this, 'ExplanationOfBenefit', 'subType', elem.subTypeList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('patient') and (SummaryOption in [soFull, soData]) then
     ComposeReference{TFhirPatient}(this, 'ExplanationOfBenefit', 'patient', elem.patientElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('billablePeriod') and (SummaryOption in [soFull, soData]) then
     ComposePeriod(this, 'ExplanationOfBenefit', 'billablePeriod', elem.billablePeriodElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('created') and (SummaryOption in [soFull, soData]) then
     ComposeDateTime(this, 'ExplanationOfBenefit', 'created', elem.createdElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('enterer') and (SummaryOption in [soFull, soData]) then
     ComposeReference{TFhirPractitioner}(this, 'ExplanationOfBenefit', 'enterer', elem.entererElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('insurer') and (SummaryOption in [soFull, soData]) then
     ComposeReference{TFhirOrganization}(this, 'ExplanationOfBenefit', 'insurer', elem.insurerElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('provider') and (SummaryOption in [soFull, soData]) then
     ComposeReference{TFhirPractitioner}(this, 'ExplanationOfBenefit', 'provider', elem.providerElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('organization') and (SummaryOption in [soFull, soData]) then
     ComposeReference{TFhirOrganization}(this, 'ExplanationOfBenefit', 'organization', elem.organizationElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('referral') and (SummaryOption in [soFull, soData]) then
     ComposeReference{TFhirReferralRequest}(this, 'ExplanationOfBenefit', 'referral', elem.referralElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('facility') and (SummaryOption in [soFull, soData]) then
     ComposeReference{TFhirLocation}(this, 'ExplanationOfBenefit', 'facility', elem.facilityElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('claim') and (SummaryOption in [soFull, soData]) then
     ComposeReference{TFhirClaim}(this, 'ExplanationOfBenefit', 'claim', elem.claimElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('claimResponse') and (SummaryOption in [soFull, soData]) then
     ComposeReference{TFhirClaimResponse}(this, 'ExplanationOfBenefit', 'claimResponse', elem.claimResponseElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('outcome') and (SummaryOption in [soFull, soData]) then
     ComposeCodeableConcept(this, 'ExplanationOfBenefit', 'outcome', elem.outcomeElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('disposition') and (SummaryOption in [soFull, soData]) then
     ComposeString(this, 'ExplanationOfBenefit', 'disposition', elem.dispositionElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('related') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.relatedList.Count - 1 do
       ComposeExplanationOfBenefitRelated(this, 'ExplanationOfBenefit', 'related', elem.relatedList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('prescription') and (SummaryOption in [soFull, soData]) then
     ComposeReference{Resource}(this, 'ExplanationOfBenefit', 'prescription', elem.prescriptionElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('originalPrescription') and (SummaryOption in [soFull, soData]) then
     ComposeReference{TFhirMedicationRequest}(this, 'ExplanationOfBenefit', 'originalPrescription', elem.originalPrescriptionElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('payee') and (SummaryOption in [soFull, soData]) then
     ComposeExplanationOfBenefitPayee(this, 'ExplanationOfBenefit', 'payee', elem.payeeElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('information') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.informationList.Count - 1 do
       ComposeExplanationOfBenefitInformation(this, 'ExplanationOfBenefit', 'information', elem.informationList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('careTeam') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.careTeamList.Count - 1 do
       ComposeExplanationOfBenefitCareTeam(this, 'ExplanationOfBenefit', 'careTeam', elem.careTeamList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('diagnosis') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.diagnosisList.Count - 1 do
       ComposeExplanationOfBenefitDiagnosis(this, 'ExplanationOfBenefit', 'diagnosis', elem.diagnosisList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('procedure_') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.procedure_List.Count - 1 do
       ComposeExplanationOfBenefitProcedure(this, 'ExplanationOfBenefit', 'procedure', elem.procedure_List[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('precedence') and (SummaryOption in [soFull, soData]) then
     ComposePositiveInt(this, 'ExplanationOfBenefit', 'precedence', elem.precedenceElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('insurance') and (SummaryOption in [soFull, soData]) then
     ComposeExplanationOfBenefitInsurance(this, 'ExplanationOfBenefit', 'insurance', elem.insuranceElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('accident') and (SummaryOption in [soFull, soData]) then
     ComposeExplanationOfBenefitAccident(this, 'ExplanationOfBenefit', 'accident', elem.accidentElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('employmentImpacted') and (SummaryOption in [soFull, soData]) then
     ComposePeriod(this, 'ExplanationOfBenefit', 'employmentImpacted', elem.employmentImpactedElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('hospitalization') and (SummaryOption in [soFull, soData]) then
     ComposePeriod(this, 'ExplanationOfBenefit', 'hospitalization', elem.hospitalizationElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('item') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.itemList.Count - 1 do
       ComposeExplanationOfBenefitItem(this, 'ExplanationOfBenefit', 'item', elem.itemList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('addItem') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.addItemList.Count - 1 do
       ComposeExplanationOfBenefitAddItem(this, 'ExplanationOfBenefit', 'addItem', elem.addItemList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('totalCost') and (SummaryOption in [soFull, soData]) then
     ComposeMoney(this, 'ExplanationOfBenefit', 'totalCost', elem.totalCostElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('unallocDeductable') and (SummaryOption in [soFull, soData]) then
     ComposeMoney(this, 'ExplanationOfBenefit', 'unallocDeductable', elem.unallocDeductableElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('totalBenefit') and (SummaryOption in [soFull, soData]) then
     ComposeMoney(this, 'ExplanationOfBenefit', 'totalBenefit', elem.totalBenefitElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('payment') and (SummaryOption in [soFull, soData]) then
     ComposeExplanationOfBenefitPayment(this, 'ExplanationOfBenefit', 'payment', elem.paymentElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('form') and (SummaryOption in [soFull, soData]) then
     ComposeCodeableConcept(this, 'ExplanationOfBenefit', 'form', elem.formElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('processNote') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.processNoteList.Count - 1 do
       ComposeExplanationOfBenefitProcessNote(this, 'ExplanationOfBenefit', 'processNote', elem.processNoteList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('benefitBalance') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.benefitBalanceList.Count - 1 do
       ComposeExplanationOfBenefitBenefitBalance(this, 'ExplanationOfBenefit', 'benefitBalance', elem.benefitBalanceList[i], false, i);{x.d3}
 end;
@@ -19029,27 +19029,27 @@ begin
       this.addPredicate('a', 'fhir:FamilyMemberHistory'); {z}
   end;
   composeDomainResource(this, '', name, elem, false, index);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('identifier') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.identifierList.Count - 1 do
       ComposeIdentifier(this, 'FamilyMemberHistory', 'identifier', elem.identifierList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('definition') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.definitionList.Count - 1 do
       ComposeReference{Resource}(this, 'FamilyMemberHistory', 'definition', elem.definitionList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('status') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnum(this, 'FamilyMemberHistory', 'status', elem.StatusElement, CODES_TFhirHistoryStatusEnum, SYSTEMS_TFhirHistoryStatusEnum, false, -1);{x.d4}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('notDone') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeBoolean(this, 'FamilyMemberHistory', 'notDone', elem.notDoneElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('notDoneReason') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeCodeableConcept(this, 'FamilyMemberHistory', 'notDoneReason', elem.notDoneReasonElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('patient') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{TFhirPatient}(this, 'FamilyMemberHistory', 'patient', elem.patientElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('date') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeDateTime(this, 'FamilyMemberHistory', 'date', elem.dateElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('name') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeString(this, 'FamilyMemberHistory', 'name', elem.nameElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('relationship') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeCodeableConcept(this, 'FamilyMemberHistory', 'relationship', elem.relationshipElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('gender') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnum(this, 'FamilyMemberHistory', 'gender', elem.GenderElement, CODES_TFhirAdministrativeGenderEnum, SYSTEMS_TFhirAdministrativeGenderEnum, false, -1);{x.d4}
   if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.born is TFhirPeriod) {6} then
     ComposePeriod(this, 'FamilyMemberHistory', 'bornPeriod', TFhirPeriod(elem.born), false, -1){x.d9}
@@ -19063,7 +19063,7 @@ begin
     ComposeRange(this, 'FamilyMemberHistory', 'ageRange', TFhirRange(elem.age), false, -1){x.d9}
   else if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.age is TFhirString) {6} then
     ComposeString(this, 'FamilyMemberHistory', 'ageString', TFhirString(elem.age), false, -1);{x.d9}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('estimatedAge') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeBoolean(this, 'FamilyMemberHistory', 'estimatedAge', elem.estimatedAgeElement, false, -1);{x.2ea}
   if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.deceased is TFhirAge) {6} then
     ComposeAge(this, 'FamilyMemberHistory', 'deceasedAge', TFhirAge(elem.deceased), false, -1){x.d9}
@@ -19075,16 +19075,16 @@ begin
     ComposeDate(this, 'FamilyMemberHistory', 'deceasedDate', TFhirDate(elem.deceased), false, -1){x.d9}
   else if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.deceased is TFhirString) {6} then
     ComposeString(this, 'FamilyMemberHistory', 'deceasedString', TFhirString(elem.deceased), false, -1);{x.d9}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('reasonCode') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.reasonCodeList.Count - 1 do
       ComposeCodeableConcept(this, 'FamilyMemberHistory', 'reasonCode', elem.reasonCodeList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('reasonReference') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.reasonReferenceList.Count - 1 do
       ComposeReference{Resource}(this, 'FamilyMemberHistory', 'reasonReference', elem.reasonReferenceList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('note') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.noteList.Count - 1 do
       ComposeAnnotation(this, 'FamilyMemberHistory', 'note', elem.noteList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('condition') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.conditionList.Count - 1 do
       ComposeFamilyMemberHistoryCondition(this, 'FamilyMemberHistory', 'condition', elem.conditionList[i], false, i);{x.d3}
 end;
@@ -19136,22 +19136,22 @@ begin
       this.addPredicate('a', 'fhir:Flag'); {z}
   end;
   composeDomainResource(this, '', name, elem, false, index);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('identifier') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.identifierList.Count - 1 do
       ComposeIdentifier(this, 'Flag', 'identifier', elem.identifierList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('status') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnum(this, 'Flag', 'status', elem.StatusElement, CODES_TFhirFlagStatusEnum, SYSTEMS_TFhirFlagStatusEnum, false, -1);{x.d4}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('category') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeCodeableConcept(this, 'Flag', 'category', elem.categoryElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('code') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeCodeableConcept(this, 'Flag', 'code', elem.codeElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('subject') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{Resource}(this, 'Flag', 'subject', elem.subjectElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('period') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposePeriod(this, 'Flag', 'period', elem.periodElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('encounter') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{TFhirEncounter}(this, 'Flag', 'encounter', elem.encounterElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('author') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{Resource}(this, 'Flag', 'author', elem.authorElement, false, -1);{x.2f}
 end;
 
@@ -19277,42 +19277,42 @@ begin
       this.addPredicate('a', 'fhir:Goal'); {z}
   end;
   composeDomainResource(this, '', name, elem, false, index);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('identifier') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.identifierList.Count - 1 do
       ComposeIdentifier(this, 'Goal', 'identifier', elem.identifierList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('status') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnum(this, 'Goal', 'status', elem.StatusElement, CODES_TFhirGoalStatusEnum, SYSTEMS_TFhirGoalStatusEnum, false, -1);{x.d4}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('category') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.categoryList.Count - 1 do
       ComposeCodeableConcept(this, 'Goal', 'category', elem.categoryList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('priority') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeCodeableConcept(this, 'Goal', 'priority', elem.priorityElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('description') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeCodeableConcept(this, 'Goal', 'description', elem.descriptionElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('subject') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{Resource}(this, 'Goal', 'subject', elem.subjectElement, false, -1);{x.2f}
   if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.start is TFhirCodeableConcept) {6} then
     ComposeCodeableConcept(this, 'Goal', 'startCodeableConcept', TFhirCodeableConcept(elem.start), false, -1){x.d9}
   else if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.start is TFhirDate) {6} then
     ComposeDate(this, 'Goal', 'startDate', TFhirDate(elem.start), false, -1);{x.d9}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('target') and (SummaryOption in [soFull, soData]) then
     ComposeGoalTarget(this, 'Goal', 'target', elem.targetElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('statusDate') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeDate(this, 'Goal', 'statusDate', elem.statusDateElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('statusReason') and (SummaryOption in [soFull, soData]) then
     ComposeString(this, 'Goal', 'statusReason', elem.statusReasonElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('expressedBy') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{Resource}(this, 'Goal', 'expressedBy', elem.expressedByElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('addresses') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.addressesList.Count - 1 do
       ComposeReference{Resource}(this, 'Goal', 'addresses', elem.addressesList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('note') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.noteList.Count - 1 do
       ComposeAnnotation(this, 'Goal', 'note', elem.noteList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('outcomeCode') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.outcomeCodeList.Count - 1 do
       ComposeCodeableConcept(this, 'Goal', 'outcomeCode', elem.outcomeCodeList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('outcomeReference') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.outcomeReferenceList.Count - 1 do
       ComposeReference{TFhirObservation}(this, 'Goal', 'outcomeReference', elem.outcomeReferenceList[i], false, i);{x.d3}
 end;
@@ -19533,38 +19533,38 @@ begin
       this.addPredicate('a', 'fhir:GraphDefinition'); {z}
   end;
   composeDomainResource(this, '', name, elem, false, index);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('url') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeUri(this, 'GraphDefinition', 'url', elem.urlElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('version') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeString(this, 'GraphDefinition', 'version', elem.versionElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('name') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeString(this, 'GraphDefinition', 'name', elem.nameElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('status') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnum(this, 'GraphDefinition', 'status', elem.StatusElement, CODES_TFhirPublicationStatusEnum, SYSTEMS_TFhirPublicationStatusEnum, false, -1);{x.d4}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('experimental') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeBoolean(this, 'GraphDefinition', 'experimental', elem.experimentalElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('date') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeDateTime(this, 'GraphDefinition', 'date', elem.dateElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('publisher') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeString(this, 'GraphDefinition', 'publisher', elem.publisherElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('contact') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.contactList.Count - 1 do
       ComposeContactDetail(this, 'GraphDefinition', 'contact', elem.contactList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('description') and (SummaryOption in [soFull, soData]) then
     ComposeMarkdown(this, 'GraphDefinition', 'description', elem.descriptionElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('useContext') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.useContextList.Count - 1 do
       ComposeUsageContext(this, 'GraphDefinition', 'useContext', elem.useContextList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('jurisdiction') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.jurisdictionList.Count - 1 do
       ComposeCodeableConcept(this, 'GraphDefinition', 'jurisdiction', elem.jurisdictionList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('purpose') and (SummaryOption in [soFull, soData]) then
     ComposeMarkdown(this, 'GraphDefinition', 'purpose', elem.purposeElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('start') and (SummaryOption in [soFull, soData]) then
      ComposeEnum(this, 'GraphDefinition', 'start', elem.StartElement, CODES_TFhirResourceTypesEnum, SYSTEMS_TFhirResourceTypesEnum, false, -1);{x.d4}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('profile') and (SummaryOption in [soFull, soData]) then
     ComposeUri(this, 'GraphDefinition', 'profile', elem.profileElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('link_') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.link_List.Count - 1 do
       ComposeGraphDefinitionLink(this, 'GraphDefinition', 'link', elem.link_List[i], false, i);{x.d3}
 end;
@@ -19725,25 +19725,25 @@ begin
       this.addPredicate('a', 'fhir:Group'); {z}
   end;
   composeDomainResource(this, '', name, elem, false, index);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('identifier') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.identifierList.Count - 1 do
       ComposeIdentifier(this, 'Group', 'identifier', elem.identifierList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('active') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeBoolean(this, 'Group', 'active', elem.activeElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('type_') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnum(this, 'Group', 'type', elem.Type_Element, CODES_TFhirGroupTypeEnum, SYSTEMS_TFhirGroupTypeEnum, false, -1);{x.d4}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('actual') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeBoolean(this, 'Group', 'actual', elem.actualElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('code') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeCodeableConcept(this, 'Group', 'code', elem.codeElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('name') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeString(this, 'Group', 'name', elem.nameElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('quantity') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeUnsignedInt(this, 'Group', 'quantity', elem.quantityElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('characteristic') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.characteristicList.Count - 1 do
       ComposeGroupCharacteristic(this, 'Group', 'characteristic', elem.characteristicList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('member') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.memberList.Count - 1 do
       ComposeGroupMember(this, 'Group', 'member', elem.memberList[i], false, i);{x.d3}
 end;
@@ -19806,37 +19806,37 @@ begin
       this.addPredicate('a', 'fhir:GuidanceResponse'); {z}
   end;
   composeDomainResource(this, '', name, elem, false, index);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('requestId') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeId(this, 'GuidanceResponse', 'requestId', elem.requestIdElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('identifier') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeIdentifier(this, 'GuidanceResponse', 'identifier', elem.identifierElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('module') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{TFhirServiceDefinition}(this, 'GuidanceResponse', 'module', elem.moduleElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('status') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnum(this, 'GuidanceResponse', 'status', elem.StatusElement, CODES_TFhirGuidanceResponseStatusEnum, SYSTEMS_TFhirGuidanceResponseStatusEnum, false, -1);{x.d4}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('subject') and (SummaryOption in [soFull, soData]) then
     ComposeReference{Resource}(this, 'GuidanceResponse', 'subject', elem.subjectElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('context') and (SummaryOption in [soFull, soData]) then
     ComposeReference{Resource}(this, 'GuidanceResponse', 'context', elem.contextElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('occurrenceDateTime') and (SummaryOption in [soFull, soData]) then
     ComposeDateTime(this, 'GuidanceResponse', 'occurrenceDateTime', elem.occurrenceDateTimeElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('performer') and (SummaryOption in [soFull, soData]) then
     ComposeReference{TFhirDevice}(this, 'GuidanceResponse', 'performer', elem.performerElement, false, -1);{x.2f}
   if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.reason is TFhirCodeableConcept) {6} then
     ComposeCodeableConcept(this, 'GuidanceResponse', 'reasonCodeableConcept', TFhirCodeableConcept(elem.reason), false, -1){x.d9}
   else if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.reason is TFhirReference) {2} then
     ComposeReference(this, 'GuidanceResponse', 'reasonReference', TFhirReference(elem.reason), false,-1);{x.d8}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('note') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.noteList.Count - 1 do
       ComposeAnnotation(this, 'GuidanceResponse', 'note', elem.noteList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('evaluationMessage') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.evaluationMessageList.Count - 1 do
       ComposeReference{TFhirOperationOutcome}(this, 'GuidanceResponse', 'evaluationMessage', elem.evaluationMessageList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('outputParameters') and (SummaryOption in [soFull, soData]) then
     ComposeReference{TFhirParameters}(this, 'GuidanceResponse', 'outputParameters', elem.outputParametersElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('result') and (SummaryOption in [soFull, soData]) then
     ComposeReference{Resource}(this, 'GuidanceResponse', 'result', elem.resultElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('dataRequirement') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.dataRequirementList.Count - 1 do
       ComposeDataRequirement(this, 'GuidanceResponse', 'dataRequirement', elem.dataRequirementList[i], false, i);{x.d3}
 end;
@@ -20012,65 +20012,65 @@ begin
       this.addPredicate('a', 'fhir:HealthcareService'); {z}
   end;
   composeDomainResource(this, '', name, elem, false, index);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('identifier') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.identifierList.Count - 1 do
       ComposeIdentifier(this, 'HealthcareService', 'identifier', elem.identifierList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('active') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeBoolean(this, 'HealthcareService', 'active', elem.activeElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('providedBy') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{TFhirOrganization}(this, 'HealthcareService', 'providedBy', elem.providedByElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('category') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeCodeableConcept(this, 'HealthcareService', 'category', elem.categoryElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('type_') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.type_List.Count - 1 do
       ComposeCodeableConcept(this, 'HealthcareService', 'type', elem.type_List[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('specialty') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.specialtyList.Count - 1 do
       ComposeCodeableConcept(this, 'HealthcareService', 'specialty', elem.specialtyList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('location') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.locationList.Count - 1 do
       ComposeReference{TFhirLocation}(this, 'HealthcareService', 'location', elem.locationList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('name') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeString(this, 'HealthcareService', 'name', elem.nameElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('comment') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeString(this, 'HealthcareService', 'comment', elem.commentElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('extraDetails') and (SummaryOption in [soFull, soData]) then
     ComposeString(this, 'HealthcareService', 'extraDetails', elem.extraDetailsElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('photo') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeAttachment(this, 'HealthcareService', 'photo', elem.photoElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('telecom') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.telecomList.Count - 1 do
       ComposeContactPoint(this, 'HealthcareService', 'telecom', elem.telecomList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('coverageArea') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.coverageAreaList.Count - 1 do
       ComposeReference{TFhirLocation}(this, 'HealthcareService', 'coverageArea', elem.coverageAreaList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('serviceProvisionCode') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.serviceProvisionCodeList.Count - 1 do
       ComposeCodeableConcept(this, 'HealthcareService', 'serviceProvisionCode', elem.serviceProvisionCodeList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('eligibility') and (SummaryOption in [soFull, soData]) then
     ComposeCodeableConcept(this, 'HealthcareService', 'eligibility', elem.eligibilityElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('eligibilityNote') and (SummaryOption in [soFull, soData]) then
     ComposeString(this, 'HealthcareService', 'eligibilityNote', elem.eligibilityNoteElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('programName') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.programNameList.Count - 1 do
       ComposeString(this, 'HealthcareService', 'programName', elem.programNameList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('characteristic') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.characteristicList.Count - 1 do
       ComposeCodeableConcept(this, 'HealthcareService', 'characteristic', elem.characteristicList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('referralMethod') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.referralMethodList.Count - 1 do
       ComposeCodeableConcept(this, 'HealthcareService', 'referralMethod', elem.referralMethodList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('appointmentRequired') and (SummaryOption in [soFull, soData]) then
     ComposeBoolean(this, 'HealthcareService', 'appointmentRequired', elem.appointmentRequiredElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('availableTime') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.availableTimeList.Count - 1 do
       ComposeHealthcareServiceAvailableTime(this, 'HealthcareService', 'availableTime', elem.availableTimeList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('notAvailable') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.notAvailableList.Count - 1 do
       ComposeHealthcareServiceNotAvailable(this, 'HealthcareService', 'notAvailable', elem.notAvailableList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('availabilityExceptions') and (SummaryOption in [soFull, soData]) then
     ComposeString(this, 'HealthcareService', 'availabilityExceptions', elem.availabilityExceptionsElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('endpoint') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.endpointList.Count - 1 do
       ComposeReference{TFhirEndpoint}(this, 'HealthcareService', 'endpoint', elem.endpointList[i], false, i);{x.d3}
 end;
@@ -20266,17 +20266,17 @@ begin
       this.addPredicate('a', 'fhir:ImagingManifest'); {z}
   end;
   composeDomainResource(this, '', name, elem, false, index);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('identifier') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeIdentifier(this, 'ImagingManifest', 'identifier', elem.identifierElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('patient') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{TFhirPatient}(this, 'ImagingManifest', 'patient', elem.patientElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('authoringTime') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeDateTime(this, 'ImagingManifest', 'authoringTime', elem.authoringTimeElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('author') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{Resource}(this, 'ImagingManifest', 'author', elem.authorElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('description') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeString(this, 'ImagingManifest', 'description', elem.descriptionElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('study') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.studyList.Count - 1 do
       ComposeImagingManifestStudy(this, 'ImagingManifest', 'study', elem.studyList[i], false, i);{x.d3}
 end;
@@ -20473,50 +20473,50 @@ begin
       this.addPredicate('a', 'fhir:ImagingStudy'); {z}
   end;
   composeDomainResource(this, '', name, elem, false, index);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('uid') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeOid(this, 'ImagingStudy', 'uid', elem.uidElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('accession') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeIdentifier(this, 'ImagingStudy', 'accession', elem.accessionElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('identifier') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.identifierList.Count - 1 do
       ComposeIdentifier(this, 'ImagingStudy', 'identifier', elem.identifierList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('availability') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnum(this, 'ImagingStudy', 'availability', elem.AvailabilityElement, CODES_TFhirInstanceAvailabilityEnum, SYSTEMS_TFhirInstanceAvailabilityEnum, false, -1);{x.d4}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('modalityList') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.modalityListList.Count - 1 do
       ComposeCoding(this, 'ImagingStudy', 'modalityList', elem.modalityListList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('patient') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{TFhirPatient}(this, 'ImagingStudy', 'patient', elem.patientElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('context') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{Resource}(this, 'ImagingStudy', 'context', elem.contextElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('started') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeDateTime(this, 'ImagingStudy', 'started', elem.startedElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('basedOn') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.basedOnList.Count - 1 do
       ComposeReference{Resource}(this, 'ImagingStudy', 'basedOn', elem.basedOnList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('referrer') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{TFhirPractitioner}(this, 'ImagingStudy', 'referrer', elem.referrerElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('interpreter') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.interpreterList.Count - 1 do
       ComposeReference{TFhirPractitioner}(this, 'ImagingStudy', 'interpreter', elem.interpreterList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('endpoint') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.endpointList.Count - 1 do
       ComposeReference{TFhirEndpoint}(this, 'ImagingStudy', 'endpoint', elem.endpointList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('numberOfSeries') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeUnsignedInt(this, 'ImagingStudy', 'numberOfSeries', elem.numberOfSeriesElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('numberOfInstances') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeUnsignedInt(this, 'ImagingStudy', 'numberOfInstances', elem.numberOfInstancesElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('procedureReference') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.procedureReferenceList.Count - 1 do
       ComposeReference{TFhirProcedure}(this, 'ImagingStudy', 'procedureReference', elem.procedureReferenceList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('procedureCode') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.procedureCodeList.Count - 1 do
       ComposeCodeableConcept(this, 'ImagingStudy', 'procedureCode', elem.procedureCodeList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('reason') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeCodeableConcept(this, 'ImagingStudy', 'reason', elem.reasonElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('description') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeString(this, 'ImagingStudy', 'description', elem.descriptionElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('series') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.seriesList.Count - 1 do
       ComposeImagingStudySeries(this, 'ImagingStudy', 'series', elem.seriesList[i], false, i);{x.d3}
 end;
@@ -20782,51 +20782,51 @@ begin
       this.addPredicate('a', 'fhir:Immunization'); {z}
   end;
   composeDomainResource(this, '', name, elem, false, index);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('identifier') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.identifierList.Count - 1 do
       ComposeIdentifier(this, 'Immunization', 'identifier', elem.identifierList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('status') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnum(this, 'Immunization', 'status', elem.StatusElement, CODES_TFhirImmunizationStatusEnum, SYSTEMS_TFhirImmunizationStatusEnum, false, -1);{x.d4}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('notGiven') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeBoolean(this, 'Immunization', 'notGiven', elem.notGivenElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('vaccineCode') and (SummaryOption in [soFull, soData]) then
     ComposeCodeableConcept(this, 'Immunization', 'vaccineCode', elem.vaccineCodeElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('patient') and (SummaryOption in [soFull, soData]) then
     ComposeReference{TFhirPatient}(this, 'Immunization', 'patient', elem.patientElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('encounter') and (SummaryOption in [soFull, soData]) then
     ComposeReference{TFhirEncounter}(this, 'Immunization', 'encounter', elem.encounterElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('date') and (SummaryOption in [soFull, soData]) then
     ComposeDateTime(this, 'Immunization', 'date', elem.dateElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('primarySource') and (SummaryOption in [soFull, soData]) then
     ComposeBoolean(this, 'Immunization', 'primarySource', elem.primarySourceElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('reportOrigin') and (SummaryOption in [soFull, soData]) then
     ComposeCodeableConcept(this, 'Immunization', 'reportOrigin', elem.reportOriginElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('location') and (SummaryOption in [soFull, soData]) then
     ComposeReference{TFhirLocation}(this, 'Immunization', 'location', elem.locationElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('manufacturer') and (SummaryOption in [soFull, soData]) then
     ComposeReference{TFhirOrganization}(this, 'Immunization', 'manufacturer', elem.manufacturerElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('lotNumber') and (SummaryOption in [soFull, soData]) then
     ComposeString(this, 'Immunization', 'lotNumber', elem.lotNumberElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('expirationDate') and (SummaryOption in [soFull, soData]) then
     ComposeDate(this, 'Immunization', 'expirationDate', elem.expirationDateElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('site') and (SummaryOption in [soFull, soData]) then
     ComposeCodeableConcept(this, 'Immunization', 'site', elem.siteElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('route') and (SummaryOption in [soFull, soData]) then
     ComposeCodeableConcept(this, 'Immunization', 'route', elem.routeElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('doseQuantity') and (SummaryOption in [soFull, soData]) then
     ComposeQuantity(this, 'Immunization', 'doseQuantity', elem.doseQuantityElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('practitioner') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.practitionerList.Count - 1 do
       ComposeImmunizationPractitioner(this, 'Immunization', 'practitioner', elem.practitionerList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('note') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.noteList.Count - 1 do
       ComposeAnnotation(this, 'Immunization', 'note', elem.noteList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('explanation') and (SummaryOption in [soFull, soData]) then
     ComposeImmunizationExplanation(this, 'Immunization', 'explanation', elem.explanationElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('reaction') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.reactionList.Count - 1 do
       ComposeImmunizationReaction(this, 'Immunization', 'reaction', elem.reactionList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('vaccinationProtocol') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.vaccinationProtocolList.Count - 1 do
       ComposeImmunizationVaccinationProtocol(this, 'Immunization', 'vaccinationProtocol', elem.vaccinationProtocolList[i], false, i);{x.d3}
 end;
@@ -21033,12 +21033,12 @@ begin
       this.addPredicate('a', 'fhir:ImmunizationRecommendation'); {z}
   end;
   composeDomainResource(this, '', name, elem, false, index);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('identifier') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.identifierList.Count - 1 do
       ComposeIdentifier(this, 'ImmunizationRecommendation', 'identifier', elem.identifierList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('patient') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{TFhirPatient}(this, 'ImmunizationRecommendation', 'patient', elem.patientElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('recommendation') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.recommendationList.Count - 1 do
       ComposeImmunizationRecommendationRecommendation(this, 'ImmunizationRecommendation', 'recommendation', elem.recommendationList[i], false, i);{x.d3}
 end;
@@ -21365,48 +21365,48 @@ begin
       this.addPredicate('a', 'fhir:ImplementationGuide'); {z}
   end;
   composeDomainResource(this, '', name, elem, false, index);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('url') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeUri(this, 'ImplementationGuide', 'url', elem.urlElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('version') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeString(this, 'ImplementationGuide', 'version', elem.versionElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('name') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeString(this, 'ImplementationGuide', 'name', elem.nameElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('status') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnum(this, 'ImplementationGuide', 'status', elem.StatusElement, CODES_TFhirPublicationStatusEnum, SYSTEMS_TFhirPublicationStatusEnum, false, -1);{x.d4}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('experimental') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeBoolean(this, 'ImplementationGuide', 'experimental', elem.experimentalElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('date') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeDateTime(this, 'ImplementationGuide', 'date', elem.dateElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('publisher') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeString(this, 'ImplementationGuide', 'publisher', elem.publisherElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('contact') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.contactList.Count - 1 do
       ComposeContactDetail(this, 'ImplementationGuide', 'contact', elem.contactList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('description') and (SummaryOption in [soFull, soData]) then
     ComposeMarkdown(this, 'ImplementationGuide', 'description', elem.descriptionElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('useContext') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.useContextList.Count - 1 do
       ComposeUsageContext(this, 'ImplementationGuide', 'useContext', elem.useContextList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('jurisdiction') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.jurisdictionList.Count - 1 do
       ComposeCodeableConcept(this, 'ImplementationGuide', 'jurisdiction', elem.jurisdictionList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('copyright') and (SummaryOption in [soFull, soData]) then
     ComposeMarkdown(this, 'ImplementationGuide', 'copyright', elem.copyrightElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('fhirVersion') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeId(this, 'ImplementationGuide', 'fhirVersion', elem.fhirVersionElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('dependency') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.dependencyList.Count - 1 do
       ComposeImplementationGuideDependency(this, 'ImplementationGuide', 'dependency', elem.dependencyList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('package') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.packageList.Count - 1 do
       ComposeImplementationGuidePackage(this, 'ImplementationGuide', 'package', elem.packageList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('global') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.globalList.Count - 1 do
       ComposeImplementationGuideGlobal(this, 'ImplementationGuide', 'global', elem.globalList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('binary') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.binaryList.Count - 1 do
       ComposeUri(this, 'ImplementationGuide', 'binary', elem.binaryList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('page') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeImplementationGuidePage(this, 'ImplementationGuide', 'page', elem.pageElement, false, -1);{x.2f}
 end;
 
@@ -21484,66 +21484,66 @@ begin
       this.addPredicate('a', 'fhir:Library'); {z}
   end;
   composeDomainResource(this, '', name, elem, false, index);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('url') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeUri(this, 'Library', 'url', elem.urlElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('identifier') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.identifierList.Count - 1 do
       ComposeIdentifier(this, 'Library', 'identifier', elem.identifierList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('version') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeString(this, 'Library', 'version', elem.versionElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('name') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeString(this, 'Library', 'name', elem.nameElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('title') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeString(this, 'Library', 'title', elem.titleElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('status') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnum(this, 'Library', 'status', elem.StatusElement, CODES_TFhirPublicationStatusEnum, SYSTEMS_TFhirPublicationStatusEnum, false, -1);{x.d4}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('experimental') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeBoolean(this, 'Library', 'experimental', elem.experimentalElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('type_') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeCodeableConcept(this, 'Library', 'type', elem.type_Element, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('date') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeDateTime(this, 'Library', 'date', elem.dateElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('publisher') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeString(this, 'Library', 'publisher', elem.publisherElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('description') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeMarkdown(this, 'Library', 'description', elem.descriptionElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('purpose') and (SummaryOption in [soFull, soData]) then
     ComposeMarkdown(this, 'Library', 'purpose', elem.purposeElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('usage') and (SummaryOption in [soFull, soData]) then
     ComposeString(this, 'Library', 'usage', elem.usageElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('approvalDate') and (SummaryOption in [soFull, soData]) then
     ComposeDate(this, 'Library', 'approvalDate', elem.approvalDateElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('lastReviewDate') and (SummaryOption in [soFull, soData]) then
     ComposeDate(this, 'Library', 'lastReviewDate', elem.lastReviewDateElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('effectivePeriod') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposePeriod(this, 'Library', 'effectivePeriod', elem.effectivePeriodElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('useContext') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.useContextList.Count - 1 do
       ComposeUsageContext(this, 'Library', 'useContext', elem.useContextList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('jurisdiction') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.jurisdictionList.Count - 1 do
       ComposeCodeableConcept(this, 'Library', 'jurisdiction', elem.jurisdictionList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('topic') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.topicList.Count - 1 do
       ComposeCodeableConcept(this, 'Library', 'topic', elem.topicList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('contributor') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.contributorList.Count - 1 do
       ComposeContributor(this, 'Library', 'contributor', elem.contributorList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('contact') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.contactList.Count - 1 do
       ComposeContactDetail(this, 'Library', 'contact', elem.contactList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('copyright') and (SummaryOption in [soFull, soData]) then
     ComposeMarkdown(this, 'Library', 'copyright', elem.copyrightElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('relatedArtifact') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.relatedArtifactList.Count - 1 do
       ComposeRelatedArtifact(this, 'Library', 'relatedArtifact', elem.relatedArtifactList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('parameter') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.parameterList.Count - 1 do
       ComposeParameterDefinition(this, 'Library', 'parameter', elem.parameterList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('dataRequirement') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.dataRequirementList.Count - 1 do
       ComposeDataRequirement(this, 'Library', 'dataRequirement', elem.dataRequirementList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('content') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.contentList.Count - 1 do
       ComposeAttachment(this, 'Library', 'content', elem.contentList[i], false, i);{x.d3}
 end;
@@ -21631,11 +21631,11 @@ begin
       this.addPredicate('a', 'fhir:Linkage'); {z}
   end;
   composeDomainResource(this, '', name, elem, false, index);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('active') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeBoolean(this, 'Linkage', 'active', elem.activeElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('author') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{Resource}(this, 'Linkage', 'author', elem.authorElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('item') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.itemList.Count - 1 do
       ComposeLinkageItem(this, 'Linkage', 'item', elem.itemList[i], false, i);{x.d3}
 end;
@@ -21741,34 +21741,34 @@ begin
       this.addPredicate('a', 'fhir:List'); {z}
   end;
   composeDomainResource(this, '', name, elem, false, index);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('identifier') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.identifierList.Count - 1 do
       ComposeIdentifier(this, 'List', 'identifier', elem.identifierList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('status') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnum(this, 'List', 'status', elem.StatusElement, CODES_TFhirListStatusEnum, SYSTEMS_TFhirListStatusEnum, false, -1);{x.d4}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('mode') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnum(this, 'List', 'mode', elem.ModeElement, CODES_TFhirListModeEnum, SYSTEMS_TFhirListModeEnum, false, -1);{x.d4}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('title') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeString(this, 'List', 'title', elem.titleElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('code') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeCodeableConcept(this, 'List', 'code', elem.codeElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('subject') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{Resource}(this, 'List', 'subject', elem.subjectElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('encounter') and (SummaryOption in [soFull, soData]) then
     ComposeReference{TFhirEncounter}(this, 'List', 'encounter', elem.encounterElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('date') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeDateTime(this, 'List', 'date', elem.dateElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('source') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{Resource}(this, 'List', 'source', elem.sourceElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('orderedBy') and (SummaryOption in [soFull, soData]) then
     ComposeCodeableConcept(this, 'List', 'orderedBy', elem.orderedByElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('note') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.noteList.Count - 1 do
       ComposeAnnotation(this, 'List', 'note', elem.noteList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('entry') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.entryList.Count - 1 do
       ComposeListEntry(this, 'List', 'entry', elem.entryList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('emptyReason') and (SummaryOption in [soFull, soData]) then
     ComposeCodeableConcept(this, 'List', 'emptyReason', elem.emptyReasonElement, false, -1);{x.2f}
 end;
 
@@ -21873,38 +21873,38 @@ begin
       this.addPredicate('a', 'fhir:Location'); {z}
   end;
   composeDomainResource(this, '', name, elem, false, index);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('identifier') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.identifierList.Count - 1 do
       ComposeIdentifier(this, 'Location', 'identifier', elem.identifierList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('status') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnum(this, 'Location', 'status', elem.StatusElement, CODES_TFhirLocationStatusEnum, SYSTEMS_TFhirLocationStatusEnum, false, -1);{x.d4}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('operationalStatus') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeCoding(this, 'Location', 'operationalStatus', elem.operationalStatusElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('name') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeString(this, 'Location', 'name', elem.nameElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('alias') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.aliasList.Count - 1 do
       ComposeString(this, 'Location', 'alias', elem.aliasList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('description') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeString(this, 'Location', 'description', elem.descriptionElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('mode') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnum(this, 'Location', 'mode', elem.ModeElement, CODES_TFhirLocationModeEnum, SYSTEMS_TFhirLocationModeEnum, false, -1);{x.d4}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('type_') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeCodeableConcept(this, 'Location', 'type', elem.type_Element, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('telecom') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.telecomList.Count - 1 do
       ComposeContactPoint(this, 'Location', 'telecom', elem.telecomList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('address') and (SummaryOption in [soFull, soData]) then
     ComposeAddress(this, 'Location', 'address', elem.addressElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('physicalType') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeCodeableConcept(this, 'Location', 'physicalType', elem.physicalTypeElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('position') and (SummaryOption in [soFull, soData]) then
     ComposeLocationPosition(this, 'Location', 'position', elem.positionElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('managingOrganization') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{TFhirOrganization}(this, 'Location', 'managingOrganization', elem.managingOrganizationElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('partOf') and (SummaryOption in [soFull, soData]) then
     ComposeReference{TFhirLocation}(this, 'Location', 'partOf', elem.partOfElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('endpoint') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.endpointList.Count - 1 do
       ComposeReference{TFhirEndpoint}(this, 'Location', 'endpoint', elem.endpointList[i], false, i);{x.d3}
 end;
@@ -22199,90 +22199,90 @@ begin
       this.addPredicate('a', 'fhir:Measure'); {z}
   end;
   composeDomainResource(this, '', name, elem, false, index);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('url') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeUri(this, 'Measure', 'url', elem.urlElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('identifier') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.identifierList.Count - 1 do
       ComposeIdentifier(this, 'Measure', 'identifier', elem.identifierList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('version') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeString(this, 'Measure', 'version', elem.versionElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('name') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeString(this, 'Measure', 'name', elem.nameElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('title') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeString(this, 'Measure', 'title', elem.titleElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('status') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnum(this, 'Measure', 'status', elem.StatusElement, CODES_TFhirPublicationStatusEnum, SYSTEMS_TFhirPublicationStatusEnum, false, -1);{x.d4}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('experimental') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeBoolean(this, 'Measure', 'experimental', elem.experimentalElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('date') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeDateTime(this, 'Measure', 'date', elem.dateElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('publisher') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeString(this, 'Measure', 'publisher', elem.publisherElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('description') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeMarkdown(this, 'Measure', 'description', elem.descriptionElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('purpose') and (SummaryOption in [soFull, soData]) then
     ComposeMarkdown(this, 'Measure', 'purpose', elem.purposeElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('usage') and (SummaryOption in [soFull, soData]) then
     ComposeString(this, 'Measure', 'usage', elem.usageElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('approvalDate') and (SummaryOption in [soFull, soData]) then
     ComposeDate(this, 'Measure', 'approvalDate', elem.approvalDateElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('lastReviewDate') and (SummaryOption in [soFull, soData]) then
     ComposeDate(this, 'Measure', 'lastReviewDate', elem.lastReviewDateElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('effectivePeriod') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposePeriod(this, 'Measure', 'effectivePeriod', elem.effectivePeriodElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('useContext') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.useContextList.Count - 1 do
       ComposeUsageContext(this, 'Measure', 'useContext', elem.useContextList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('jurisdiction') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.jurisdictionList.Count - 1 do
       ComposeCodeableConcept(this, 'Measure', 'jurisdiction', elem.jurisdictionList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('topic') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.topicList.Count - 1 do
       ComposeCodeableConcept(this, 'Measure', 'topic', elem.topicList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('contributor') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.contributorList.Count - 1 do
       ComposeContributor(this, 'Measure', 'contributor', elem.contributorList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('contact') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.contactList.Count - 1 do
       ComposeContactDetail(this, 'Measure', 'contact', elem.contactList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('copyright') and (SummaryOption in [soFull, soData]) then
     ComposeMarkdown(this, 'Measure', 'copyright', elem.copyrightElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('relatedArtifact') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.relatedArtifactList.Count - 1 do
       ComposeRelatedArtifact(this, 'Measure', 'relatedArtifact', elem.relatedArtifactList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('library_') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.library_List.Count - 1 do
       ComposeReference{TFhirLibrary}(this, 'Measure', 'library', elem.library_List[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('disclaimer') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeMarkdown(this, 'Measure', 'disclaimer', elem.disclaimerElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('scoring') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeCodeableConcept(this, 'Measure', 'scoring', elem.scoringElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('compositeScoring') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeCodeableConcept(this, 'Measure', 'compositeScoring', elem.compositeScoringElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('type_') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.type_List.Count - 1 do
       ComposeCodeableConcept(this, 'Measure', 'type', elem.type_List[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('riskAdjustment') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeString(this, 'Measure', 'riskAdjustment', elem.riskAdjustmentElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('rateAggregation') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeString(this, 'Measure', 'rateAggregation', elem.rateAggregationElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('rationale') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeMarkdown(this, 'Measure', 'rationale', elem.rationaleElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('clinicalRecommendationStatement') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeMarkdown(this, 'Measure', 'clinicalRecommendationStatement', elem.clinicalRecommendationStatementElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('improvementNotation') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeString(this, 'Measure', 'improvementNotation', elem.improvementNotationElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('definition') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.definitionList.Count - 1 do
       ComposeMarkdown(this, 'Measure', 'definition', elem.definitionList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('guidance') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeMarkdown(this, 'Measure', 'guidance', elem.guidanceElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('set_') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeString(this, 'Measure', 'set', elem.set_Element, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('group') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.groupList.Count - 1 do
       ComposeMeasureGroup(this, 'Measure', 'group', elem.groupList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('supplementalData') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.supplementalDataList.Count - 1 do
       ComposeMeasureSupplementalData(this, 'Measure', 'supplementalData', elem.supplementalDataList[i], false, i);{x.d3}
 end;
@@ -22579,26 +22579,26 @@ begin
       this.addPredicate('a', 'fhir:MeasureReport'); {z}
   end;
   composeDomainResource(this, '', name, elem, false, index);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('identifier') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeIdentifier(this, 'MeasureReport', 'identifier', elem.identifierElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('status') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnum(this, 'MeasureReport', 'status', elem.StatusElement, CODES_TFhirMeasureReportStatusEnum, SYSTEMS_TFhirMeasureReportStatusEnum, false, -1);{x.d4}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('type_') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnum(this, 'MeasureReport', 'type', elem.Type_Element, CODES_TFhirMeasureReportTypeEnum, SYSTEMS_TFhirMeasureReportTypeEnum, false, -1);{x.d4}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('measure') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{TFhirMeasure}(this, 'MeasureReport', 'measure', elem.measureElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('patient') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{TFhirPatient}(this, 'MeasureReport', 'patient', elem.patientElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('date') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeDateTime(this, 'MeasureReport', 'date', elem.dateElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('reportingOrganization') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{TFhirOrganization}(this, 'MeasureReport', 'reportingOrganization', elem.reportingOrganizationElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('period') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposePeriod(this, 'MeasureReport', 'period', elem.periodElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('group') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.groupList.Count - 1 do
       ComposeMeasureReportGroup(this, 'MeasureReport', 'group', elem.groupList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('evaluatedResources') and (SummaryOption in [soFull, soData]) then
     ComposeReference{TFhirBundle}(this, 'MeasureReport', 'evaluatedResources', elem.evaluatedResourcesElement, false, -1);{x.2f}
 end;
 
@@ -22665,46 +22665,46 @@ begin
       this.addPredicate('a', 'fhir:Media'); {z}
   end;
   composeDomainResource(this, '', name, elem, false, index);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('identifier') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.identifierList.Count - 1 do
       ComposeIdentifier(this, 'Media', 'identifier', elem.identifierList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('basedOn') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.basedOnList.Count - 1 do
       ComposeReference{TFhirProcedureRequest}(this, 'Media', 'basedOn', elem.basedOnList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('type_') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnum(this, 'Media', 'type', elem.Type_Element, CODES_TFhirDigitalMediaTypeEnum, SYSTEMS_TFhirDigitalMediaTypeEnum, false, -1);{x.d4}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('subtype') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeCodeableConcept(this, 'Media', 'subtype', elem.subtypeElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('view') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeCodeableConcept(this, 'Media', 'view', elem.viewElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('subject') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{Resource}(this, 'Media', 'subject', elem.subjectElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('context') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{Resource}(this, 'Media', 'context', elem.contextElement, false, -1);{x.2f}
   if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.occurrence is TFhirPeriod) {6} then
     ComposePeriod(this, 'Media', 'occurrencePeriod', TFhirPeriod(elem.occurrence), false, -1){x.d9}
   else if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.occurrence is TFhirDateTime) {6} then
     ComposeDateTime(this, 'Media', 'occurrenceDateTime', TFhirDateTime(elem.occurrence), false, -1);{x.d9}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('operator') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{TFhirPractitioner}(this, 'Media', 'operator', elem.operatorElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('reasonCode') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.reasonCodeList.Count - 1 do
       ComposeCodeableConcept(this, 'Media', 'reasonCode', elem.reasonCodeList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('bodySite') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeCodeableConcept(this, 'Media', 'bodySite', elem.bodySiteElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('device') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{Resource}(this, 'Media', 'device', elem.deviceElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('height') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposePositiveInt(this, 'Media', 'height', elem.heightElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('width') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposePositiveInt(this, 'Media', 'width', elem.widthElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('frames') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposePositiveInt(this, 'Media', 'frames', elem.framesElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('duration') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeUnsignedInt(this, 'Media', 'duration', elem.durationElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('content') and (SummaryOption in [soFull, soData]) then
     ComposeAttachment(this, 'Media', 'content', elem.contentElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('note') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.noteList.Count - 1 do
       ComposeAnnotation(this, 'Media', 'note', elem.noteList[i], false, i);{x.d3}
 end;
@@ -22949,24 +22949,24 @@ begin
       this.addPredicate('a', 'fhir:Medication'); {z}
   end;
   composeDomainResource(this, '', name, elem, false, index);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('code') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeCodeableConcept(this, 'Medication', 'code', elem.codeElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('status') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnum(this, 'Medication', 'status', elem.StatusElement, CODES_TFhirMedicationStatusEnum, SYSTEMS_TFhirMedicationStatusEnum, false, -1);{x.d4}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('isBrand') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeBoolean(this, 'Medication', 'isBrand', elem.isBrandElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('isOverTheCounter') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeBoolean(this, 'Medication', 'isOverTheCounter', elem.isOverTheCounterElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('manufacturer') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{TFhirOrganization}(this, 'Medication', 'manufacturer', elem.manufacturerElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('form') and (SummaryOption in [soFull, soData]) then
     ComposeCodeableConcept(this, 'Medication', 'form', elem.formElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('ingredient') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.ingredientList.Count - 1 do
       ComposeMedicationIngredient(this, 'Medication', 'ingredient', elem.ingredientList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('package') and (SummaryOption in [soFull, soData]) then
     ComposeMedicationPackage(this, 'Medication', 'package', elem.packageElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('image') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.imageList.Count - 1 do
       ComposeAttachment(this, 'Medication', 'image', elem.imageList[i], false, i);{x.d3}
 end;
@@ -23147,59 +23147,59 @@ begin
       this.addPredicate('a', 'fhir:MedicationAdministration'); {z}
   end;
   composeDomainResource(this, '', name, elem, false, index);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('identifier') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.identifierList.Count - 1 do
       ComposeIdentifier(this, 'MedicationAdministration', 'identifier', elem.identifierList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('definition') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.definitionList.Count - 1 do
       ComposeReference{Resource}(this, 'MedicationAdministration', 'definition', elem.definitionList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('partOf') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.partOfList.Count - 1 do
       ComposeReference{Resource}(this, 'MedicationAdministration', 'partOf', elem.partOfList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('status') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnum(this, 'MedicationAdministration', 'status', elem.StatusElement, CODES_TFhirMedicationAdminStatusEnum, SYSTEMS_TFhirMedicationAdminStatusEnum, false, -1);{x.d4}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('category') and (SummaryOption in [soFull, soData]) then
     ComposeCodeableConcept(this, 'MedicationAdministration', 'category', elem.categoryElement, false, -1);{x.2f}
   if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.medication is TFhirCodeableConcept) {6} then
     ComposeCodeableConcept(this, 'MedicationAdministration', 'medicationCodeableConcept', TFhirCodeableConcept(elem.medication), false, -1){x.d9}
   else if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.medication is TFhirReference) {2} then
     ComposeReference(this, 'MedicationAdministration', 'medicationReference', TFhirReference(elem.medication), false,-1);{x.d8}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('subject') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{Resource}(this, 'MedicationAdministration', 'subject', elem.subjectElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('context') and (SummaryOption in [soFull, soData]) then
     ComposeReference{Resource}(this, 'MedicationAdministration', 'context', elem.contextElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('supportingInformation') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.supportingInformationList.Count - 1 do
       ComposeReference{TFhirReference}(this, 'MedicationAdministration', 'supportingInformation', elem.supportingInformationList[i], false, i);{x.d3}
   if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.effective is TFhirPeriod) {6} then
     ComposePeriod(this, 'MedicationAdministration', 'effectivePeriod', TFhirPeriod(elem.effective), false, -1){x.d9}
   else if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.effective is TFhirDateTime) {6} then
     ComposeDateTime(this, 'MedicationAdministration', 'effectiveDateTime', TFhirDateTime(elem.effective), false, -1);{x.d9}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('performer') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.performerList.Count - 1 do
       ComposeMedicationAdministrationPerformer(this, 'MedicationAdministration', 'performer', elem.performerList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('notGiven') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeBoolean(this, 'MedicationAdministration', 'notGiven', elem.notGivenElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('reasonNotGiven') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.reasonNotGivenList.Count - 1 do
       ComposeCodeableConcept(this, 'MedicationAdministration', 'reasonNotGiven', elem.reasonNotGivenList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('reasonCode') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.reasonCodeList.Count - 1 do
       ComposeCodeableConcept(this, 'MedicationAdministration', 'reasonCode', elem.reasonCodeList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('reasonReference') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.reasonReferenceList.Count - 1 do
       ComposeReference{Resource}(this, 'MedicationAdministration', 'reasonReference', elem.reasonReferenceList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('prescription') and (SummaryOption in [soFull, soData]) then
     ComposeReference{TFhirMedicationRequest}(this, 'MedicationAdministration', 'prescription', elem.prescriptionElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('device') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.deviceList.Count - 1 do
       ComposeReference{TFhirDevice}(this, 'MedicationAdministration', 'device', elem.deviceList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('note') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.noteList.Count - 1 do
       ComposeAnnotation(this, 'MedicationAdministration', 'note', elem.noteList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('dosage') and (SummaryOption in [soFull, soData]) then
     ComposeMedicationAdministrationDosage(this, 'MedicationAdministration', 'dosage', elem.dosageElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('eventHistory') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.eventHistoryList.Count - 1 do
       ComposeReference{TFhirProvenance}(this, 'MedicationAdministration', 'eventHistory', elem.eventHistoryList[i], false, i);{x.d3}
 end;
@@ -23377,66 +23377,66 @@ begin
       this.addPredicate('a', 'fhir:MedicationDispense'); {z}
   end;
   composeDomainResource(this, '', name, elem, false, index);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('identifier') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.identifierList.Count - 1 do
       ComposeIdentifier(this, 'MedicationDispense', 'identifier', elem.identifierList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('partOf') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.partOfList.Count - 1 do
       ComposeReference{TFhirProcedure}(this, 'MedicationDispense', 'partOf', elem.partOfList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('status') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnum(this, 'MedicationDispense', 'status', elem.StatusElement, CODES_TFhirMedicationDispenseStatusEnum, SYSTEMS_TFhirMedicationDispenseStatusEnum, false, -1);{x.d4}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('category') and (SummaryOption in [soFull, soData]) then
     ComposeCodeableConcept(this, 'MedicationDispense', 'category', elem.categoryElement, false, -1);{x.2f}
   if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.medication is TFhirCodeableConcept) {6} then
     ComposeCodeableConcept(this, 'MedicationDispense', 'medicationCodeableConcept', TFhirCodeableConcept(elem.medication), false, -1){x.d9}
   else if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.medication is TFhirReference) {2} then
     ComposeReference(this, 'MedicationDispense', 'medicationReference', TFhirReference(elem.medication), false,-1);{x.d8}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('subject') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{Resource}(this, 'MedicationDispense', 'subject', elem.subjectElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('context') and (SummaryOption in [soFull, soData]) then
     ComposeReference{Resource}(this, 'MedicationDispense', 'context', elem.contextElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('supportingInformation') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.supportingInformationList.Count - 1 do
       ComposeReference{TFhirReference}(this, 'MedicationDispense', 'supportingInformation', elem.supportingInformationList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('performer') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.performerList.Count - 1 do
       ComposeMedicationDispensePerformer(this, 'MedicationDispense', 'performer', elem.performerList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('authorizingPrescription') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.authorizingPrescriptionList.Count - 1 do
       ComposeReference{TFhirMedicationRequest}(this, 'MedicationDispense', 'authorizingPrescription', elem.authorizingPrescriptionList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('type_') and (SummaryOption in [soFull, soData]) then
     ComposeCodeableConcept(this, 'MedicationDispense', 'type', elem.type_Element, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('quantity') and (SummaryOption in [soFull, soData]) then
     ComposeQuantity(this, 'MedicationDispense', 'quantity', elem.quantityElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('daysSupply') and (SummaryOption in [soFull, soData]) then
     ComposeQuantity(this, 'MedicationDispense', 'daysSupply', elem.daysSupplyElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('whenPrepared') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeDateTime(this, 'MedicationDispense', 'whenPrepared', elem.whenPreparedElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('whenHandedOver') and (SummaryOption in [soFull, soData]) then
     ComposeDateTime(this, 'MedicationDispense', 'whenHandedOver', elem.whenHandedOverElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('destination') and (SummaryOption in [soFull, soData]) then
     ComposeReference{TFhirLocation}(this, 'MedicationDispense', 'destination', elem.destinationElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('receiver') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.receiverList.Count - 1 do
       ComposeReference{Resource}(this, 'MedicationDispense', 'receiver', elem.receiverList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('note') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.noteList.Count - 1 do
       ComposeAnnotation(this, 'MedicationDispense', 'note', elem.noteList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('dosageInstruction') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.dosageInstructionList.Count - 1 do
       ComposeDosage(this, 'MedicationDispense', 'dosageInstruction', elem.dosageInstructionList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('substitution') and (SummaryOption in [soFull, soData]) then
     ComposeMedicationDispenseSubstitution(this, 'MedicationDispense', 'substitution', elem.substitutionElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('detectedIssue') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.detectedIssueList.Count - 1 do
       ComposeReference{TFhirDetectedIssue}(this, 'MedicationDispense', 'detectedIssue', elem.detectedIssueList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('notDone') and (SummaryOption in [soFull, soData]) then
     ComposeBoolean(this, 'MedicationDispense', 'notDone', elem.notDoneElement, false, -1);{x.2ea}
   if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.notDoneReason is TFhirCodeableConcept) {6} then
     ComposeCodeableConcept(this, 'MedicationDispense', 'notDoneReasonCodeableConcept', TFhirCodeableConcept(elem.notDoneReason), false, -1){x.d9}
   else if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.notDoneReason is TFhirReference) {2} then
     ComposeReference(this, 'MedicationDispense', 'notDoneReasonReference', TFhirReference(elem.notDoneReason), false,-1);{x.d8}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('eventHistory') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.eventHistoryList.Count - 1 do
       ComposeReference{TFhirProvenance}(this, 'MedicationDispense', 'eventHistory', elem.eventHistoryList[i], false, i);{x.d3}
 end;
@@ -23648,64 +23648,64 @@ begin
       this.addPredicate('a', 'fhir:MedicationRequest'); {z}
   end;
   composeDomainResource(this, '', name, elem, false, index);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('identifier') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.identifierList.Count - 1 do
       ComposeIdentifier(this, 'MedicationRequest', 'identifier', elem.identifierList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('definition') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.definitionList.Count - 1 do
       ComposeReference{Resource}(this, 'MedicationRequest', 'definition', elem.definitionList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('basedOn') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.basedOnList.Count - 1 do
       ComposeReference{Resource}(this, 'MedicationRequest', 'basedOn', elem.basedOnList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('groupIdentifier') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeIdentifier(this, 'MedicationRequest', 'groupIdentifier', elem.groupIdentifierElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('status') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnum(this, 'MedicationRequest', 'status', elem.StatusElement, CODES_TFhirMedicationRequestStatusEnum, SYSTEMS_TFhirMedicationRequestStatusEnum, false, -1);{x.d4}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('intent') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnum(this, 'MedicationRequest', 'intent', elem.IntentElement, CODES_TFhirMedicationRequestIntentEnum, SYSTEMS_TFhirMedicationRequestIntentEnum, false, -1);{x.d4}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('category') and (SummaryOption in [soFull, soData]) then
     ComposeCodeableConcept(this, 'MedicationRequest', 'category', elem.categoryElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('priority') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnum(this, 'MedicationRequest', 'priority', elem.PriorityElement, CODES_TFhirMedicationRequestPriorityEnum, SYSTEMS_TFhirMedicationRequestPriorityEnum, false, -1);{x.d4}
   if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.medication is TFhirCodeableConcept) {6} then
     ComposeCodeableConcept(this, 'MedicationRequest', 'medicationCodeableConcept', TFhirCodeableConcept(elem.medication), false, -1){x.d9}
   else if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.medication is TFhirReference) {2} then
     ComposeReference(this, 'MedicationRequest', 'medicationReference', TFhirReference(elem.medication), false,-1);{x.d8}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('subject') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{Resource}(this, 'MedicationRequest', 'subject', elem.subjectElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('context') and (SummaryOption in [soFull, soData]) then
     ComposeReference{Resource}(this, 'MedicationRequest', 'context', elem.contextElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('supportingInformation') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.supportingInformationList.Count - 1 do
       ComposeReference{TFhirReference}(this, 'MedicationRequest', 'supportingInformation', elem.supportingInformationList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('authoredOn') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeDateTime(this, 'MedicationRequest', 'authoredOn', elem.authoredOnElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('requester') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeMedicationRequestRequester(this, 'MedicationRequest', 'requester', elem.requesterElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('recorder') and (SummaryOption in [soFull, soData]) then
     ComposeReference{TFhirPractitioner}(this, 'MedicationRequest', 'recorder', elem.recorderElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('reasonCode') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.reasonCodeList.Count - 1 do
       ComposeCodeableConcept(this, 'MedicationRequest', 'reasonCode', elem.reasonCodeList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('reasonReference') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.reasonReferenceList.Count - 1 do
       ComposeReference{Resource}(this, 'MedicationRequest', 'reasonReference', elem.reasonReferenceList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('note') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.noteList.Count - 1 do
       ComposeAnnotation(this, 'MedicationRequest', 'note', elem.noteList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('dosageInstruction') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.dosageInstructionList.Count - 1 do
       ComposeDosage(this, 'MedicationRequest', 'dosageInstruction', elem.dosageInstructionList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('dispenseRequest') and (SummaryOption in [soFull, soData]) then
     ComposeMedicationRequestDispenseRequest(this, 'MedicationRequest', 'dispenseRequest', elem.dispenseRequestElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('substitution') and (SummaryOption in [soFull, soData]) then
     ComposeMedicationRequestSubstitution(this, 'MedicationRequest', 'substitution', elem.substitutionElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('priorPrescription') and (SummaryOption in [soFull, soData]) then
     ComposeReference{TFhirMedicationRequest}(this, 'MedicationRequest', 'priorPrescription', elem.priorPrescriptionElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('detectedIssue') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.detectedIssueList.Count - 1 do
       ComposeReference{TFhirDetectedIssue}(this, 'MedicationRequest', 'detectedIssue', elem.detectedIssueList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('eventHistory') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.eventHistoryList.Count - 1 do
       ComposeReference{TFhirProvenance}(this, 'MedicationRequest', 'eventHistory', elem.eventHistoryList[i], false, i);{x.d3}
 end;
@@ -23781,20 +23781,20 @@ begin
       this.addPredicate('a', 'fhir:MedicationStatement'); {z}
   end;
   composeDomainResource(this, '', name, elem, false, index);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('identifier') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.identifierList.Count - 1 do
       ComposeIdentifier(this, 'MedicationStatement', 'identifier', elem.identifierList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('basedOn') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.basedOnList.Count - 1 do
       ComposeReference{Resource}(this, 'MedicationStatement', 'basedOn', elem.basedOnList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('partOf') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.partOfList.Count - 1 do
       ComposeReference{Resource}(this, 'MedicationStatement', 'partOf', elem.partOfList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('context') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{Resource}(this, 'MedicationStatement', 'context', elem.contextElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('status') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnum(this, 'MedicationStatement', 'status', elem.StatusElement, CODES_TFhirMedicationStatementStatusEnum, SYSTEMS_TFhirMedicationStatementStatusEnum, false, -1);{x.d4}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('category') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeCodeableConcept(this, 'MedicationStatement', 'category', elem.categoryElement, false, -1);{x.2f}
   if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.medication is TFhirCodeableConcept) {6} then
     ComposeCodeableConcept(this, 'MedicationStatement', 'medicationCodeableConcept', TFhirCodeableConcept(elem.medication), false, -1){x.d9}
@@ -23804,30 +23804,30 @@ begin
     ComposePeriod(this, 'MedicationStatement', 'effectivePeriod', TFhirPeriod(elem.effective), false, -1){x.d9}
   else if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.effective is TFhirDateTime) {6} then
     ComposeDateTime(this, 'MedicationStatement', 'effectiveDateTime', TFhirDateTime(elem.effective), false, -1);{x.d9}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('dateAsserted') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeDateTime(this, 'MedicationStatement', 'dateAsserted', elem.dateAssertedElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('informationSource') and (SummaryOption in [soFull, soData]) then
     ComposeReference{Resource}(this, 'MedicationStatement', 'informationSource', elem.informationSourceElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('subject') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{Resource}(this, 'MedicationStatement', 'subject', elem.subjectElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('derivedFrom') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.derivedFromList.Count - 1 do
       ComposeReference{TFhirReference}(this, 'MedicationStatement', 'derivedFrom', elem.derivedFromList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('taken') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnum(this, 'MedicationStatement', 'taken', elem.TakenElement, CODES_TFhirMedicationStatementTakenEnum, SYSTEMS_TFhirMedicationStatementTakenEnum, false, -1);{x.d4}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('reasonNotTaken') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.reasonNotTakenList.Count - 1 do
       ComposeCodeableConcept(this, 'MedicationStatement', 'reasonNotTaken', elem.reasonNotTakenList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('reasonCode') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.reasonCodeList.Count - 1 do
       ComposeCodeableConcept(this, 'MedicationStatement', 'reasonCode', elem.reasonCodeList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('reasonReference') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.reasonReferenceList.Count - 1 do
       ComposeReference{Resource}(this, 'MedicationStatement', 'reasonReference', elem.reasonReferenceList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('note') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.noteList.Count - 1 do
       ComposeAnnotation(this, 'MedicationStatement', 'note', elem.noteList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('dosage') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.dosageList.Count - 1 do
       ComposeDosage(this, 'MedicationStatement', 'dosage', elem.dosageList[i], false, i);{x.d3}
 end;
@@ -23988,57 +23988,57 @@ begin
       this.addPredicate('a', 'fhir:MessageDefinition'); {z}
   end;
   composeDomainResource(this, '', name, elem, false, index);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('url') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeUri(this, 'MessageDefinition', 'url', elem.urlElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('identifier') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeIdentifier(this, 'MessageDefinition', 'identifier', elem.identifierElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('version') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeString(this, 'MessageDefinition', 'version', elem.versionElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('name') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeString(this, 'MessageDefinition', 'name', elem.nameElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('title') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeString(this, 'MessageDefinition', 'title', elem.titleElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('status') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnum(this, 'MessageDefinition', 'status', elem.StatusElement, CODES_TFhirPublicationStatusEnum, SYSTEMS_TFhirPublicationStatusEnum, false, -1);{x.d4}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('experimental') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeBoolean(this, 'MessageDefinition', 'experimental', elem.experimentalElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('date') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeDateTime(this, 'MessageDefinition', 'date', elem.dateElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('publisher') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeString(this, 'MessageDefinition', 'publisher', elem.publisherElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('contact') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.contactList.Count - 1 do
       ComposeContactDetail(this, 'MessageDefinition', 'contact', elem.contactList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('description') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeMarkdown(this, 'MessageDefinition', 'description', elem.descriptionElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('useContext') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.useContextList.Count - 1 do
       ComposeUsageContext(this, 'MessageDefinition', 'useContext', elem.useContextList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('jurisdiction') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.jurisdictionList.Count - 1 do
       ComposeCodeableConcept(this, 'MessageDefinition', 'jurisdiction', elem.jurisdictionList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('purpose') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeMarkdown(this, 'MessageDefinition', 'purpose', elem.purposeElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('copyright') and (SummaryOption in [soFull, soData]) then
     ComposeMarkdown(this, 'MessageDefinition', 'copyright', elem.copyrightElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('base') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{TFhirMessageDefinition}(this, 'MessageDefinition', 'base', elem.baseElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('parent') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.parentList.Count - 1 do
       ComposeReference{Resource}(this, 'MessageDefinition', 'parent', elem.parentList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('replaces') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.replacesList.Count - 1 do
       ComposeReference{TFhirMessageDefinition}(this, 'MessageDefinition', 'replaces', elem.replacesList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('event') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeCoding(this, 'MessageDefinition', 'event', elem.eventElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('category') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnum(this, 'MessageDefinition', 'category', elem.CategoryElement, CODES_TFhirMessageSignificanceCategoryEnum, SYSTEMS_TFhirMessageSignificanceCategoryEnum, false, -1);{x.d4}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('focus') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.focusList.Count - 1 do
       ComposeMessageDefinitionFocus(this, 'MessageDefinition', 'focus', elem.focusList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('responseRequired') and (SummaryOption in [soFull, soData]) then
     ComposeBoolean(this, 'MessageDefinition', 'responseRequired', elem.responseRequiredElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('allowedResponse') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.allowedResponseList.Count - 1 do
       ComposeMessageDefinitionAllowedResponse(this, 'MessageDefinition', 'allowedResponse', elem.allowedResponseList[i], false, i);{x.d3}
 end;
@@ -24233,30 +24233,30 @@ begin
       this.addPredicate('a', 'fhir:MessageHeader'); {z}
   end;
   composeDomainResource(this, '', name, elem, false, index);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('event') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeCoding(this, 'MessageHeader', 'event', elem.eventElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('destination') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.destinationList.Count - 1 do
       ComposeMessageHeaderDestination(this, 'MessageHeader', 'destination', elem.destinationList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('receiver') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{Resource}(this, 'MessageHeader', 'receiver', elem.receiverElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('sender') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{Resource}(this, 'MessageHeader', 'sender', elem.senderElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('timestamp') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeInstant(this, 'MessageHeader', 'timestamp', elem.timestampElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('enterer') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{TFhirPractitioner}(this, 'MessageHeader', 'enterer', elem.entererElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('author') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{TFhirPractitioner}(this, 'MessageHeader', 'author', elem.authorElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('source') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeMessageHeaderSource(this, 'MessageHeader', 'source', elem.sourceElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('responsible') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{Resource}(this, 'MessageHeader', 'responsible', elem.responsibleElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('reason') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeCodeableConcept(this, 'MessageHeader', 'reason', elem.reasonElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('response') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeMessageHeaderResponse(this, 'MessageHeader', 'response', elem.responseElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('focus') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.focusList.Count - 1 do
       ComposeReference{TFhirReference}(this, 'MessageHeader', 'focus', elem.focusList[i], false, i);{x.d3}
 end;
@@ -24367,37 +24367,37 @@ begin
       this.addPredicate('a', 'fhir:NamingSystem'); {z}
   end;
   composeDomainResource(this, '', name, elem, false, index);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('name') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeString(this, 'NamingSystem', 'name', elem.nameElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('status') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnum(this, 'NamingSystem', 'status', elem.StatusElement, CODES_TFhirPublicationStatusEnum, SYSTEMS_TFhirPublicationStatusEnum, false, -1);{x.d4}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('kind') and (SummaryOption in [soFull, soData]) then
      ComposeEnum(this, 'NamingSystem', 'kind', elem.KindElement, CODES_TFhirNamingsystemTypeEnum, SYSTEMS_TFhirNamingsystemTypeEnum, false, -1);{x.d4}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('date') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeDateTime(this, 'NamingSystem', 'date', elem.dateElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('publisher') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeString(this, 'NamingSystem', 'publisher', elem.publisherElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('contact') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.contactList.Count - 1 do
       ComposeContactDetail(this, 'NamingSystem', 'contact', elem.contactList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('responsible') and (SummaryOption in [soFull, soData]) then
     ComposeString(this, 'NamingSystem', 'responsible', elem.responsibleElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('type_') and (SummaryOption in [soFull, soData]) then
     ComposeCodeableConcept(this, 'NamingSystem', 'type', elem.type_Element, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('description') and (SummaryOption in [soFull, soData]) then
     ComposeMarkdown(this, 'NamingSystem', 'description', elem.descriptionElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('useContext') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.useContextList.Count - 1 do
       ComposeUsageContext(this, 'NamingSystem', 'useContext', elem.useContextList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('jurisdiction') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.jurisdictionList.Count - 1 do
       ComposeCodeableConcept(this, 'NamingSystem', 'jurisdiction', elem.jurisdictionList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('usage') and (SummaryOption in [soFull, soData]) then
     ComposeString(this, 'NamingSystem', 'usage', elem.usageElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('uniqueId') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.uniqueIdList.Count - 1 do
       ComposeNamingSystemUniqueId(this, 'NamingSystem', 'uniqueId', elem.uniqueIdList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('replacedBy') and (SummaryOption in [soFull, soData]) then
     ComposeReference{TFhirNamingSystem}(this, 'NamingSystem', 'replacedBy', elem.replacedByElement, false, -1);{x.2f}
 end;
 
@@ -24777,34 +24777,34 @@ begin
       this.addPredicate('a', 'fhir:NutritionOrder'); {z}
   end;
   composeDomainResource(this, '', name, elem, false, index);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('identifier') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.identifierList.Count - 1 do
       ComposeIdentifier(this, 'NutritionOrder', 'identifier', elem.identifierList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('status') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnum(this, 'NutritionOrder', 'status', elem.StatusElement, CODES_TFhirNutritionRequestStatusEnum, SYSTEMS_TFhirNutritionRequestStatusEnum, false, -1);{x.d4}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('patient') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{TFhirPatient}(this, 'NutritionOrder', 'patient', elem.patientElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('encounter') and (SummaryOption in [soFull, soData]) then
     ComposeReference{TFhirEncounter}(this, 'NutritionOrder', 'encounter', elem.encounterElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('dateTime') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeDateTime(this, 'NutritionOrder', 'dateTime', elem.dateTimeElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('orderer') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{TFhirPractitioner}(this, 'NutritionOrder', 'orderer', elem.ordererElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('allergyIntolerance') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.allergyIntoleranceList.Count - 1 do
       ComposeReference{TFhirAllergyIntolerance}(this, 'NutritionOrder', 'allergyIntolerance', elem.allergyIntoleranceList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('foodPreferenceModifier') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.foodPreferenceModifierList.Count - 1 do
       ComposeCodeableConcept(this, 'NutritionOrder', 'foodPreferenceModifier', elem.foodPreferenceModifierList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('excludeFoodModifier') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.excludeFoodModifierList.Count - 1 do
       ComposeCodeableConcept(this, 'NutritionOrder', 'excludeFoodModifier', elem.excludeFoodModifierList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('oralDiet') and (SummaryOption in [soFull, soData]) then
     ComposeNutritionOrderOralDiet(this, 'NutritionOrder', 'oralDiet', elem.oralDietElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('supplement') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.supplementList.Count - 1 do
       ComposeNutritionOrderSupplement(this, 'NutritionOrder', 'supplement', elem.supplementList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('enteralFormula') and (SummaryOption in [soFull, soData]) then
     ComposeNutritionOrderEnteralFormula(this, 'NutritionOrder', 'enteralFormula', elem.enteralFormulaElement, false, -1);{x.2f}
 end;
 
@@ -25089,30 +25089,30 @@ begin
       this.addPredicate('a', 'fhir:Observation'); {z}
   end;
   composeDomainResource(this, '', name, elem, false, index);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('identifier') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.identifierList.Count - 1 do
       ComposeIdentifier(this, 'Observation', 'identifier', elem.identifierList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('basedOn') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.basedOnList.Count - 1 do
       ComposeReference{Resource}(this, 'Observation', 'basedOn', elem.basedOnList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('status') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnum(this, 'Observation', 'status', elem.StatusElement, CODES_TFhirObservationStatusEnum, SYSTEMS_TFhirObservationStatusEnum, false, -1);{x.d4}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('category') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.categoryList.Count - 1 do
       ComposeCodeableConcept(this, 'Observation', 'category', elem.categoryList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('code') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeCodeableConcept(this, 'Observation', 'code', elem.codeElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('subject') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{Resource}(this, 'Observation', 'subject', elem.subjectElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('context') and (SummaryOption in [soFull, soData]) then
     ComposeReference{Resource}(this, 'Observation', 'context', elem.contextElement, false, -1);{x.2f}
   if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.effective is TFhirPeriod) {6} then
     ComposePeriod(this, 'Observation', 'effectivePeriod', TFhirPeriod(elem.effective), false, -1){x.d9}
   else if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.effective is TFhirDateTime) {6} then
     ComposeDateTime(this, 'Observation', 'effectiveDateTime', TFhirDateTime(elem.effective), false, -1);{x.d9}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('issued') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeInstant(this, 'Observation', 'issued', elem.issuedElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('performer') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.performerList.Count - 1 do
       ComposeReference{Resource}(this, 'Observation', 'performer', elem.performerList[i], false, i);{x.d3}
   if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.value is TFhirQuantity) {6} then
@@ -25137,27 +25137,27 @@ begin
     ComposeTime(this, 'Observation', 'valueTime', TFhirTime(elem.value), false, -1){x.d9}
   else if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.value is TFhirDateTime) {6} then
     ComposeDateTime(this, 'Observation', 'valueDateTime', TFhirDateTime(elem.value), false, -1);{x.d9}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('dataAbsentReason') and (SummaryOption in [soFull, soData]) then
     ComposeCodeableConcept(this, 'Observation', 'dataAbsentReason', elem.dataAbsentReasonElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('interpretation') and (SummaryOption in [soFull, soData]) then
     ComposeCodeableConcept(this, 'Observation', 'interpretation', elem.interpretationElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('comment') and (SummaryOption in [soFull, soData]) then
     ComposeString(this, 'Observation', 'comment', elem.commentElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('bodySite') and (SummaryOption in [soFull, soData]) then
     ComposeCodeableConcept(this, 'Observation', 'bodySite', elem.bodySiteElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('method') and (SummaryOption in [soFull, soData]) then
     ComposeCodeableConcept(this, 'Observation', 'method', elem.methodElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('specimen') and (SummaryOption in [soFull, soData]) then
     ComposeReference{TFhirSpecimen}(this, 'Observation', 'specimen', elem.specimenElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('device') and (SummaryOption in [soFull, soData]) then
     ComposeReference{Resource}(this, 'Observation', 'device', elem.deviceElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('referenceRange') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.referenceRangeList.Count - 1 do
       ComposeObservationReferenceRange(this, 'Observation', 'referenceRange', elem.referenceRangeList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('related') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.relatedList.Count - 1 do
       ComposeObservationRelated(this, 'Observation', 'related', elem.relatedList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('component') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.componentList.Count - 1 do
       ComposeObservationComponent(this, 'Observation', 'component', elem.componentList[i], false, i);{x.d3}
 end;
@@ -25393,59 +25393,59 @@ begin
       this.addPredicate('a', 'fhir:OperationDefinition'); {z}
   end;
   composeDomainResource(this, '', name, elem, false, index);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('url') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeUri(this, 'OperationDefinition', 'url', elem.urlElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('version') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeString(this, 'OperationDefinition', 'version', elem.versionElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('name') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeString(this, 'OperationDefinition', 'name', elem.nameElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('status') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnum(this, 'OperationDefinition', 'status', elem.StatusElement, CODES_TFhirPublicationStatusEnum, SYSTEMS_TFhirPublicationStatusEnum, false, -1);{x.d4}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('kind') and (SummaryOption in [soFull, soData]) then
      ComposeEnum(this, 'OperationDefinition', 'kind', elem.KindElement, CODES_TFhirOperationKindEnum, SYSTEMS_TFhirOperationKindEnum, false, -1);{x.d4}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('experimental') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeBoolean(this, 'OperationDefinition', 'experimental', elem.experimentalElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('date') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeDateTime(this, 'OperationDefinition', 'date', elem.dateElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('publisher') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeString(this, 'OperationDefinition', 'publisher', elem.publisherElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('contact') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.contactList.Count - 1 do
       ComposeContactDetail(this, 'OperationDefinition', 'contact', elem.contactList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('description') and (SummaryOption in [soFull, soData]) then
     ComposeMarkdown(this, 'OperationDefinition', 'description', elem.descriptionElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('useContext') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.useContextList.Count - 1 do
       ComposeUsageContext(this, 'OperationDefinition', 'useContext', elem.useContextList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('jurisdiction') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.jurisdictionList.Count - 1 do
       ComposeCodeableConcept(this, 'OperationDefinition', 'jurisdiction', elem.jurisdictionList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('purpose') and (SummaryOption in [soFull, soData]) then
     ComposeMarkdown(this, 'OperationDefinition', 'purpose', elem.purposeElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('idempotent') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeBoolean(this, 'OperationDefinition', 'idempotent', elem.idempotentElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('code') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeCode(this, 'OperationDefinition', 'code', elem.codeElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('comment') and (SummaryOption in [soFull, soData]) then
     ComposeString(this, 'OperationDefinition', 'comment', elem.commentElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('base') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{TFhirOperationDefinition}(this, 'OperationDefinition', 'base', elem.baseElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('resource') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.resource.Count - 1 do
       ComposeEnum(this, 'OperationDefinition', 'resource', elem.resource[i], CODES_TFhirResourceTypesEnum, SYSTEMS_TFhirResourceTypesEnum, false, i); {x.d1}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('resource') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.resource.Count - 1 do
       ComposeEnum(this, 'OperationDefinition', 'resource', elem.resource[i], CODES_TFhirResourceTypesEnum, SYSTEMS_TFhirResourceTypesEnum, false, i);{x.d2}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('system') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeBoolean(this, 'OperationDefinition', 'system', elem.systemElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('type_') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeBoolean(this, 'OperationDefinition', 'type', elem.type_Element, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('instance') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeBoolean(this, 'OperationDefinition', 'instance', elem.instanceElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('parameter') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.parameterList.Count - 1 do
       ComposeOperationDefinitionParameter(this, 'OperationDefinition', 'parameter', elem.parameterList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('overload') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.overloadList.Count - 1 do
       ComposeOperationDefinitionOverload(this, 'OperationDefinition', 'overload', elem.overloadList[i], false, i);{x.d3}
 end;
@@ -25550,7 +25550,7 @@ begin
       this.addPredicate('a', 'fhir:OperationOutcome'); {z}
   end;
   composeDomainResource(this, '', name, elem, false, index);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('issue') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.issueList.Count - 1 do
       ComposeOperationOutcomeIssue(this, 'OperationOutcome', 'issue', elem.issueList[i], false, i);{x.d3}
 end;
@@ -25662,31 +25662,31 @@ begin
       this.addPredicate('a', 'fhir:Organization'); {z}
   end;
   composeDomainResource(this, '', name, elem, false, index);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('identifier') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.identifierList.Count - 1 do
       ComposeIdentifier(this, 'Organization', 'identifier', elem.identifierList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('active') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeBoolean(this, 'Organization', 'active', elem.activeElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('type_') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.type_List.Count - 1 do
       ComposeCodeableConcept(this, 'Organization', 'type', elem.type_List[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('name') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeString(this, 'Organization', 'name', elem.nameElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('alias') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.aliasList.Count - 1 do
       ComposeString(this, 'Organization', 'alias', elem.aliasList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('telecom') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.telecomList.Count - 1 do
       ComposeContactPoint(this, 'Organization', 'telecom', elem.telecomList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('address') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.addressList.Count - 1 do
       ComposeAddress(this, 'Organization', 'address', elem.addressList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('partOf') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{TFhirOrganization}(this, 'Organization', 'partOf', elem.partOfElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('contact') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.contactList.Count - 1 do
       ComposeOrganizationContact(this, 'Organization', 'contact', elem.contactList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('endpoint') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.endpointList.Count - 1 do
       ComposeReference{TFhirEndpoint}(this, 'Organization', 'endpoint', elem.endpointList[i], false, i);{x.d3}
 end;
@@ -25950,51 +25950,51 @@ begin
       this.addPredicate('a', 'fhir:Patient'); {z}
   end;
   composeDomainResource(this, '', name, elem, false, index);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('identifier') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.identifierList.Count - 1 do
       ComposeIdentifier(this, 'Patient', 'identifier', elem.identifierList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('active') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeBoolean(this, 'Patient', 'active', elem.activeElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('name') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.nameList.Count - 1 do
       ComposeHumanName(this, 'Patient', 'name', elem.nameList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('telecom') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.telecomList.Count - 1 do
       ComposeContactPoint(this, 'Patient', 'telecom', elem.telecomList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('gender') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnum(this, 'Patient', 'gender', elem.GenderElement, CODES_TFhirAdministrativeGenderEnum, SYSTEMS_TFhirAdministrativeGenderEnum, false, -1);{x.d4}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('birthDate') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeDate(this, 'Patient', 'birthDate', elem.birthDateElement, false, -1);{x.2ea}
   if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.deceased is TFhirBoolean) {6} then
     ComposeBoolean(this, 'Patient', 'deceasedBoolean', TFhirBoolean(elem.deceased), false, -1){x.d9}
   else if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.deceased is TFhirDateTime) {6} then
     ComposeDateTime(this, 'Patient', 'deceasedDateTime', TFhirDateTime(elem.deceased), false, -1);{x.d9}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('address') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.addressList.Count - 1 do
       ComposeAddress(this, 'Patient', 'address', elem.addressList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('maritalStatus') and (SummaryOption in [soFull, soData]) then
     ComposeCodeableConcept(this, 'Patient', 'maritalStatus', elem.maritalStatusElement, false, -1);{x.2f}
   if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.multipleBirth is TFhirBoolean) {6} then
     ComposeBoolean(this, 'Patient', 'multipleBirthBoolean', TFhirBoolean(elem.multipleBirth), false, -1){x.d9}
   else if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.multipleBirth is TFhirInteger) {6} then
     ComposeInteger(this, 'Patient', 'multipleBirthInteger', TFhirInteger(elem.multipleBirth), false, -1);{x.d9}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('photo') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.photoList.Count - 1 do
       ComposeAttachment(this, 'Patient', 'photo', elem.photoList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('contact') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.contactList.Count - 1 do
       ComposePatientContact(this, 'Patient', 'contact', elem.contactList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('animal') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposePatientAnimal(this, 'Patient', 'animal', elem.animalElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('communication') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.communicationList.Count - 1 do
       ComposePatientCommunication(this, 'Patient', 'communication', elem.communicationList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('generalPractitioner') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.generalPractitionerList.Count - 1 do
       ComposeReference{Resource}(this, 'Patient', 'generalPractitioner', elem.generalPractitionerList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('managingOrganization') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{TFhirOrganization}(this, 'Patient', 'managingOrganization', elem.managingOrganizationElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('link_') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.link_List.Count - 1 do
       ComposePatientLink(this, 'Patient', 'link', elem.link_List[i], false, i);{x.d3}
 end;
@@ -26048,26 +26048,26 @@ begin
       this.addPredicate('a', 'fhir:PaymentNotice'); {z}
   end;
   composeDomainResource(this, '', name, elem, false, index);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('identifier') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.identifierList.Count - 1 do
       ComposeIdentifier(this, 'PaymentNotice', 'identifier', elem.identifierList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('status') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnum(this, 'PaymentNotice', 'status', elem.StatusElement, CODES_TFhirFmStatusEnum, SYSTEMS_TFhirFmStatusEnum, false, -1);{x.d4}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('request') and (SummaryOption in [soFull, soData]) then
     ComposeReference{TFhirReference}(this, 'PaymentNotice', 'request', elem.requestElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('response') and (SummaryOption in [soFull, soData]) then
     ComposeReference{TFhirReference}(this, 'PaymentNotice', 'response', elem.responseElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('statusDate') and (SummaryOption in [soFull, soData]) then
     ComposeDate(this, 'PaymentNotice', 'statusDate', elem.statusDateElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('created') and (SummaryOption in [soFull, soData]) then
     ComposeDateTime(this, 'PaymentNotice', 'created', elem.createdElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('target') and (SummaryOption in [soFull, soData]) then
     ComposeReference{TFhirOrganization}(this, 'PaymentNotice', 'target', elem.targetElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('provider') and (SummaryOption in [soFull, soData]) then
     ComposeReference{TFhirPractitioner}(this, 'PaymentNotice', 'provider', elem.providerElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('organization') and (SummaryOption in [soFull, soData]) then
     ComposeReference{TFhirOrganization}(this, 'PaymentNotice', 'organization', elem.organizationElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('paymentStatus') and (SummaryOption in [soFull, soData]) then
     ComposeCodeableConcept(this, 'PaymentNotice', 'paymentStatus', elem.paymentStatusElement, false, -1);{x.2f}
 end;
 
@@ -26223,35 +26223,35 @@ begin
       this.addPredicate('a', 'fhir:PaymentReconciliation'); {z}
   end;
   composeDomainResource(this, '', name, elem, false, index);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('identifier') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.identifierList.Count - 1 do
       ComposeIdentifier(this, 'PaymentReconciliation', 'identifier', elem.identifierList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('status') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnum(this, 'PaymentReconciliation', 'status', elem.StatusElement, CODES_TFhirFmStatusEnum, SYSTEMS_TFhirFmStatusEnum, false, -1);{x.d4}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('period') and (SummaryOption in [soFull, soData]) then
     ComposePeriod(this, 'PaymentReconciliation', 'period', elem.periodElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('created') and (SummaryOption in [soFull, soData]) then
     ComposeDateTime(this, 'PaymentReconciliation', 'created', elem.createdElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('organization') and (SummaryOption in [soFull, soData]) then
     ComposeReference{TFhirOrganization}(this, 'PaymentReconciliation', 'organization', elem.organizationElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('request') and (SummaryOption in [soFull, soData]) then
     ComposeReference{TFhirProcessRequest}(this, 'PaymentReconciliation', 'request', elem.requestElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('outcome') and (SummaryOption in [soFull, soData]) then
     ComposeCodeableConcept(this, 'PaymentReconciliation', 'outcome', elem.outcomeElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('disposition') and (SummaryOption in [soFull, soData]) then
     ComposeString(this, 'PaymentReconciliation', 'disposition', elem.dispositionElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('requestProvider') and (SummaryOption in [soFull, soData]) then
     ComposeReference{TFhirPractitioner}(this, 'PaymentReconciliation', 'requestProvider', elem.requestProviderElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('requestOrganization') and (SummaryOption in [soFull, soData]) then
     ComposeReference{TFhirOrganization}(this, 'PaymentReconciliation', 'requestOrganization', elem.requestOrganizationElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('detail') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.detailList.Count - 1 do
       ComposePaymentReconciliationDetail(this, 'PaymentReconciliation', 'detail', elem.detailList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('form') and (SummaryOption in [soFull, soData]) then
     ComposeCodeableConcept(this, 'PaymentReconciliation', 'form', elem.formElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('total') and (SummaryOption in [soFull, soData]) then
     ComposeMoney(this, 'PaymentReconciliation', 'total', elem.totalElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('processNote') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.processNoteList.Count - 1 do
       ComposePaymentReconciliationProcessNote(this, 'PaymentReconciliation', 'processNote', elem.processNoteList[i], false, i);{x.d3}
 end;
@@ -26350,29 +26350,29 @@ begin
       this.addPredicate('a', 'fhir:Person'); {z}
   end;
   composeDomainResource(this, '', name, elem, false, index);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('identifier') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.identifierList.Count - 1 do
       ComposeIdentifier(this, 'Person', 'identifier', elem.identifierList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('name') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.nameList.Count - 1 do
       ComposeHumanName(this, 'Person', 'name', elem.nameList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('telecom') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.telecomList.Count - 1 do
       ComposeContactPoint(this, 'Person', 'telecom', elem.telecomList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('gender') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnum(this, 'Person', 'gender', elem.GenderElement, CODES_TFhirAdministrativeGenderEnum, SYSTEMS_TFhirAdministrativeGenderEnum, false, -1);{x.d4}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('birthDate') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeDate(this, 'Person', 'birthDate', elem.birthDateElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('address') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.addressList.Count - 1 do
       ComposeAddress(this, 'Person', 'address', elem.addressList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('photo') and (SummaryOption in [soFull, soData]) then
     ComposeAttachment(this, 'Person', 'photo', elem.photoElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('managingOrganization') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{TFhirOrganization}(this, 'Person', 'managingOrganization', elem.managingOrganizationElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('active') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeBoolean(this, 'Person', 'active', elem.activeElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('link_') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.link_List.Count - 1 do
       ComposePersonLink(this, 'Person', 'link', elem.link_List[i], false, i);{x.d3}
 end;
@@ -26911,66 +26911,66 @@ begin
       this.addPredicate('a', 'fhir:PlanDefinition'); {z}
   end;
   composeDomainResource(this, '', name, elem, false, index);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('url') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeUri(this, 'PlanDefinition', 'url', elem.urlElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('identifier') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.identifierList.Count - 1 do
       ComposeIdentifier(this, 'PlanDefinition', 'identifier', elem.identifierList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('version') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeString(this, 'PlanDefinition', 'version', elem.versionElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('name') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeString(this, 'PlanDefinition', 'name', elem.nameElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('title') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeString(this, 'PlanDefinition', 'title', elem.titleElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('type_') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeCodeableConcept(this, 'PlanDefinition', 'type', elem.type_Element, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('status') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnum(this, 'PlanDefinition', 'status', elem.StatusElement, CODES_TFhirPublicationStatusEnum, SYSTEMS_TFhirPublicationStatusEnum, false, -1);{x.d4}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('experimental') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeBoolean(this, 'PlanDefinition', 'experimental', elem.experimentalElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('date') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeDateTime(this, 'PlanDefinition', 'date', elem.dateElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('publisher') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeString(this, 'PlanDefinition', 'publisher', elem.publisherElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('description') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeMarkdown(this, 'PlanDefinition', 'description', elem.descriptionElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('purpose') and (SummaryOption in [soFull, soData]) then
     ComposeMarkdown(this, 'PlanDefinition', 'purpose', elem.purposeElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('usage') and (SummaryOption in [soFull, soData]) then
     ComposeString(this, 'PlanDefinition', 'usage', elem.usageElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('approvalDate') and (SummaryOption in [soFull, soData]) then
     ComposeDate(this, 'PlanDefinition', 'approvalDate', elem.approvalDateElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('lastReviewDate') and (SummaryOption in [soFull, soData]) then
     ComposeDate(this, 'PlanDefinition', 'lastReviewDate', elem.lastReviewDateElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('effectivePeriod') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposePeriod(this, 'PlanDefinition', 'effectivePeriod', elem.effectivePeriodElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('useContext') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.useContextList.Count - 1 do
       ComposeUsageContext(this, 'PlanDefinition', 'useContext', elem.useContextList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('jurisdiction') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.jurisdictionList.Count - 1 do
       ComposeCodeableConcept(this, 'PlanDefinition', 'jurisdiction', elem.jurisdictionList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('topic') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.topicList.Count - 1 do
       ComposeCodeableConcept(this, 'PlanDefinition', 'topic', elem.topicList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('contributor') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.contributorList.Count - 1 do
       ComposeContributor(this, 'PlanDefinition', 'contributor', elem.contributorList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('contact') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.contactList.Count - 1 do
       ComposeContactDetail(this, 'PlanDefinition', 'contact', elem.contactList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('copyright') and (SummaryOption in [soFull, soData]) then
     ComposeMarkdown(this, 'PlanDefinition', 'copyright', elem.copyrightElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('relatedArtifact') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.relatedArtifactList.Count - 1 do
       ComposeRelatedArtifact(this, 'PlanDefinition', 'relatedArtifact', elem.relatedArtifactList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('library_') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.library_List.Count - 1 do
       ComposeReference{TFhirLibrary}(this, 'PlanDefinition', 'library', elem.library_List[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('goal') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.goalList.Count - 1 do
       ComposePlanDefinitionGoal(this, 'PlanDefinition', 'goal', elem.goalList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('action') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.actionList.Count - 1 do
       ComposePlanDefinitionAction(this, 'PlanDefinition', 'action', elem.actionList[i], false, i);{x.d3}
 end;
@@ -27082,31 +27082,31 @@ begin
       this.addPredicate('a', 'fhir:Practitioner'); {z}
   end;
   composeDomainResource(this, '', name, elem, false, index);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('identifier') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.identifierList.Count - 1 do
       ComposeIdentifier(this, 'Practitioner', 'identifier', elem.identifierList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('active') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeBoolean(this, 'Practitioner', 'active', elem.activeElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('name') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.nameList.Count - 1 do
       ComposeHumanName(this, 'Practitioner', 'name', elem.nameList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('telecom') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.telecomList.Count - 1 do
       ComposeContactPoint(this, 'Practitioner', 'telecom', elem.telecomList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('address') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.addressList.Count - 1 do
       ComposeAddress(this, 'Practitioner', 'address', elem.addressList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('gender') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnum(this, 'Practitioner', 'gender', elem.GenderElement, CODES_TFhirAdministrativeGenderEnum, SYSTEMS_TFhirAdministrativeGenderEnum, false, -1);{x.d4}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('birthDate') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeDate(this, 'Practitioner', 'birthDate', elem.birthDateElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('photo') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.photoList.Count - 1 do
       ComposeAttachment(this, 'Practitioner', 'photo', elem.photoList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('qualification') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.qualificationList.Count - 1 do
       ComposePractitionerQualification(this, 'Practitioner', 'qualification', elem.qualificationList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('communication') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.communicationList.Count - 1 do
       ComposeCodeableConcept(this, 'Practitioner', 'communication', elem.communicationList[i], false, i);{x.d3}
 end;
@@ -27268,41 +27268,41 @@ begin
       this.addPredicate('a', 'fhir:PractitionerRole'); {z}
   end;
   composeDomainResource(this, '', name, elem, false, index);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('identifier') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.identifierList.Count - 1 do
       ComposeIdentifier(this, 'PractitionerRole', 'identifier', elem.identifierList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('active') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeBoolean(this, 'PractitionerRole', 'active', elem.activeElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('period') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposePeriod(this, 'PractitionerRole', 'period', elem.periodElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('practitioner') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{TFhirPractitioner}(this, 'PractitionerRole', 'practitioner', elem.practitionerElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('organization') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{TFhirOrganization}(this, 'PractitionerRole', 'organization', elem.organizationElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('code') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.codeList.Count - 1 do
       ComposeCodeableConcept(this, 'PractitionerRole', 'code', elem.codeList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('specialty') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.specialtyList.Count - 1 do
       ComposeCodeableConcept(this, 'PractitionerRole', 'specialty', elem.specialtyList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('location') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.locationList.Count - 1 do
       ComposeReference{TFhirLocation}(this, 'PractitionerRole', 'location', elem.locationList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('healthcareService') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.healthcareServiceList.Count - 1 do
       ComposeReference{TFhirHealthcareService}(this, 'PractitionerRole', 'healthcareService', elem.healthcareServiceList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('telecom') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.telecomList.Count - 1 do
       ComposeContactPoint(this, 'PractitionerRole', 'telecom', elem.telecomList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('availableTime') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.availableTimeList.Count - 1 do
       ComposePractitionerRoleAvailableTime(this, 'PractitionerRole', 'availableTime', elem.availableTimeList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('notAvailable') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.notAvailableList.Count - 1 do
       ComposePractitionerRoleNotAvailable(this, 'PractitionerRole', 'notAvailable', elem.notAvailableList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('availabilityExceptions') and (SummaryOption in [soFull, soData]) then
     ComposeString(this, 'PractitionerRole', 'availabilityExceptions', elem.availabilityExceptionsElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('endpoint') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.endpointList.Count - 1 do
       ComposeReference{TFhirEndpoint}(this, 'PractitionerRole', 'endpoint', elem.endpointList[i], false, i);{x.d3}
 end;
@@ -27475,74 +27475,74 @@ begin
       this.addPredicate('a', 'fhir:Procedure'); {z}
   end;
   composeDomainResource(this, '', name, elem, false, index);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('identifier') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.identifierList.Count - 1 do
       ComposeIdentifier(this, 'Procedure', 'identifier', elem.identifierList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('definition') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.definitionList.Count - 1 do
       ComposeReference{Resource}(this, 'Procedure', 'definition', elem.definitionList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('basedOn') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.basedOnList.Count - 1 do
       ComposeReference{Resource}(this, 'Procedure', 'basedOn', elem.basedOnList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('partOf') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.partOfList.Count - 1 do
       ComposeReference{Resource}(this, 'Procedure', 'partOf', elem.partOfList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('status') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnum(this, 'Procedure', 'status', elem.StatusElement, CODES_TFhirEventStatusEnum, SYSTEMS_TFhirEventStatusEnum, false, -1);{x.d4}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('notDone') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeBoolean(this, 'Procedure', 'notDone', elem.notDoneElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('notDoneReason') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeCodeableConcept(this, 'Procedure', 'notDoneReason', elem.notDoneReasonElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('category') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeCodeableConcept(this, 'Procedure', 'category', elem.categoryElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('code') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeCodeableConcept(this, 'Procedure', 'code', elem.codeElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('subject') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{Resource}(this, 'Procedure', 'subject', elem.subjectElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('context') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{Resource}(this, 'Procedure', 'context', elem.contextElement, false, -1);{x.2f}
   if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.performed is TFhirPeriod) {6} then
     ComposePeriod(this, 'Procedure', 'performedPeriod', TFhirPeriod(elem.performed), false, -1){x.d9}
   else if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.performed is TFhirDateTime) {6} then
     ComposeDateTime(this, 'Procedure', 'performedDateTime', TFhirDateTime(elem.performed), false, -1);{x.d9}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('performer') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.performerList.Count - 1 do
       ComposeProcedurePerformer(this, 'Procedure', 'performer', elem.performerList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('location') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{TFhirLocation}(this, 'Procedure', 'location', elem.locationElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('reasonCode') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.reasonCodeList.Count - 1 do
       ComposeCodeableConcept(this, 'Procedure', 'reasonCode', elem.reasonCodeList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('reasonReference') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.reasonReferenceList.Count - 1 do
       ComposeReference{Resource}(this, 'Procedure', 'reasonReference', elem.reasonReferenceList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('bodySite') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.bodySiteList.Count - 1 do
       ComposeCodeableConcept(this, 'Procedure', 'bodySite', elem.bodySiteList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('outcome') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeCodeableConcept(this, 'Procedure', 'outcome', elem.outcomeElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('report') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.reportList.Count - 1 do
       ComposeReference{TFhirDiagnosticReport}(this, 'Procedure', 'report', elem.reportList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('complication') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.complicationList.Count - 1 do
       ComposeCodeableConcept(this, 'Procedure', 'complication', elem.complicationList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('complicationDetail') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.complicationDetailList.Count - 1 do
       ComposeReference{TFhirCondition}(this, 'Procedure', 'complicationDetail', elem.complicationDetailList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('followUp') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.followUpList.Count - 1 do
       ComposeCodeableConcept(this, 'Procedure', 'followUp', elem.followUpList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('note') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.noteList.Count - 1 do
       ComposeAnnotation(this, 'Procedure', 'note', elem.noteList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('focalDevice') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.focalDeviceList.Count - 1 do
       ComposeProcedureFocalDevice(this, 'Procedure', 'focalDevice', elem.focalDeviceList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('usedReference') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.usedReferenceList.Count - 1 do
       ComposeReference{Resource}(this, 'Procedure', 'usedReference', elem.usedReferenceList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('usedCode') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.usedCodeList.Count - 1 do
       ComposeCodeableConcept(this, 'Procedure', 'usedCode', elem.usedCodeList[i], false, i);{x.d3}
 end;
@@ -27672,36 +27672,36 @@ begin
       this.addPredicate('a', 'fhir:ProcedureRequest'); {z}
   end;
   composeDomainResource(this, '', name, elem, false, index);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('identifier') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.identifierList.Count - 1 do
       ComposeIdentifier(this, 'ProcedureRequest', 'identifier', elem.identifierList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('definition') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.definitionList.Count - 1 do
       ComposeReference{Resource}(this, 'ProcedureRequest', 'definition', elem.definitionList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('basedOn') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.basedOnList.Count - 1 do
       ComposeReference{TFhirReference}(this, 'ProcedureRequest', 'basedOn', elem.basedOnList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('replaces') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.replacesList.Count - 1 do
       ComposeReference{TFhirReference}(this, 'ProcedureRequest', 'replaces', elem.replacesList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('requisition') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeIdentifier(this, 'ProcedureRequest', 'requisition', elem.requisitionElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('status') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnum(this, 'ProcedureRequest', 'status', elem.StatusElement, CODES_TFhirRequestStatusEnum, SYSTEMS_TFhirRequestStatusEnum, false, -1);{x.d4}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('intent') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnum(this, 'ProcedureRequest', 'intent', elem.IntentElement, CODES_TFhirRequestIntentEnum, SYSTEMS_TFhirRequestIntentEnum, false, -1);{x.d4}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('priority') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnum(this, 'ProcedureRequest', 'priority', elem.PriorityElement, CODES_TFhirRequestPriorityEnum, SYSTEMS_TFhirRequestPriorityEnum, false, -1);{x.d4}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('doNotPerform') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeBoolean(this, 'ProcedureRequest', 'doNotPerform', elem.doNotPerformElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('category') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.categoryList.Count - 1 do
       ComposeCodeableConcept(this, 'ProcedureRequest', 'category', elem.categoryList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('code') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeCodeableConcept(this, 'ProcedureRequest', 'code', elem.codeElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('subject') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{Resource}(this, 'ProcedureRequest', 'subject', elem.subjectElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('context') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{Resource}(this, 'ProcedureRequest', 'context', elem.contextElement, false, -1);{x.2f}
   if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.occurrence is TFhirPeriod) {6} then
     ComposePeriod(this, 'ProcedureRequest', 'occurrencePeriod', TFhirPeriod(elem.occurrence), false, -1){x.d9}
@@ -27713,33 +27713,33 @@ begin
     ComposeCodeableConcept(this, 'ProcedureRequest', 'asNeededCodeableConcept', TFhirCodeableConcept(elem.asNeeded), false, -1){x.d9}
   else if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.asNeeded is TFhirBoolean) {6} then
     ComposeBoolean(this, 'ProcedureRequest', 'asNeededBoolean', TFhirBoolean(elem.asNeeded), false, -1);{x.d9}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('authoredOn') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeDateTime(this, 'ProcedureRequest', 'authoredOn', elem.authoredOnElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('requester') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeProcedureRequestRequester(this, 'ProcedureRequest', 'requester', elem.requesterElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('performerType') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeCodeableConcept(this, 'ProcedureRequest', 'performerType', elem.performerTypeElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('performer') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{Resource}(this, 'ProcedureRequest', 'performer', elem.performerElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('reasonCode') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.reasonCodeList.Count - 1 do
       ComposeCodeableConcept(this, 'ProcedureRequest', 'reasonCode', elem.reasonCodeList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('reasonReference') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.reasonReferenceList.Count - 1 do
       ComposeReference{Resource}(this, 'ProcedureRequest', 'reasonReference', elem.reasonReferenceList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('supportingInfo') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.supportingInfoList.Count - 1 do
       ComposeReference{TFhirReference}(this, 'ProcedureRequest', 'supportingInfo', elem.supportingInfoList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('specimen') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.specimenList.Count - 1 do
       ComposeReference{TFhirSpecimen}(this, 'ProcedureRequest', 'specimen', elem.specimenList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('bodySite') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.bodySiteList.Count - 1 do
       ComposeCodeableConcept(this, 'ProcedureRequest', 'bodySite', elem.bodySiteList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('note') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.noteList.Count - 1 do
       ComposeAnnotation(this, 'ProcedureRequest', 'note', elem.noteList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('relevantHistory') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.relevantHistoryList.Count - 1 do
       ComposeReference{TFhirProvenance}(this, 'ProcedureRequest', 'relevantHistory', elem.relevantHistoryList[i], false, i);{x.d3}
 end;
@@ -27839,39 +27839,39 @@ begin
       this.addPredicate('a', 'fhir:ProcessRequest'); {z}
   end;
   composeDomainResource(this, '', name, elem, false, index);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('identifier') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.identifierList.Count - 1 do
       ComposeIdentifier(this, 'ProcessRequest', 'identifier', elem.identifierList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('status') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnum(this, 'ProcessRequest', 'status', elem.StatusElement, CODES_TFhirFmStatusEnum, SYSTEMS_TFhirFmStatusEnum, false, -1);{x.d4}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('action') and (SummaryOption in [soFull, soData]) then
      ComposeEnum(this, 'ProcessRequest', 'action', elem.ActionElement, CODES_TFhirActionlistEnum, SYSTEMS_TFhirActionlistEnum, false, -1);{x.d4}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('target') and (SummaryOption in [soFull, soData]) then
     ComposeReference{TFhirOrganization}(this, 'ProcessRequest', 'target', elem.targetElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('created') and (SummaryOption in [soFull, soData]) then
     ComposeDateTime(this, 'ProcessRequest', 'created', elem.createdElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('provider') and (SummaryOption in [soFull, soData]) then
     ComposeReference{TFhirPractitioner}(this, 'ProcessRequest', 'provider', elem.providerElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('organization') and (SummaryOption in [soFull, soData]) then
     ComposeReference{TFhirOrganization}(this, 'ProcessRequest', 'organization', elem.organizationElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('request') and (SummaryOption in [soFull, soData]) then
     ComposeReference{TFhirReference}(this, 'ProcessRequest', 'request', elem.requestElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('response') and (SummaryOption in [soFull, soData]) then
     ComposeReference{TFhirReference}(this, 'ProcessRequest', 'response', elem.responseElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('nullify') and (SummaryOption in [soFull, soData]) then
     ComposeBoolean(this, 'ProcessRequest', 'nullify', elem.nullifyElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('reference') and (SummaryOption in [soFull, soData]) then
     ComposeString(this, 'ProcessRequest', 'reference', elem.referenceElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('item') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.itemList.Count - 1 do
       ComposeProcessRequestItem(this, 'ProcessRequest', 'item', elem.itemList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('include') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.includeList.Count - 1 do
       ComposeString(this, 'ProcessRequest', 'include', elem.includeList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('exclude') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.excludeList.Count - 1 do
       ComposeString(this, 'ProcessRequest', 'exclude', elem.excludeList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('period') and (SummaryOption in [soFull, soData]) then
     ComposePeriod(this, 'ProcessRequest', 'period', elem.periodElement, false, -1);{x.2f}
 end;
 
@@ -27971,34 +27971,34 @@ begin
       this.addPredicate('a', 'fhir:ProcessResponse'); {z}
   end;
   composeDomainResource(this, '', name, elem, false, index);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('identifier') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.identifierList.Count - 1 do
       ComposeIdentifier(this, 'ProcessResponse', 'identifier', elem.identifierList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('status') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnum(this, 'ProcessResponse', 'status', elem.StatusElement, CODES_TFhirFmStatusEnum, SYSTEMS_TFhirFmStatusEnum, false, -1);{x.d4}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('created') and (SummaryOption in [soFull, soData]) then
     ComposeDateTime(this, 'ProcessResponse', 'created', elem.createdElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('organization') and (SummaryOption in [soFull, soData]) then
     ComposeReference{TFhirOrganization}(this, 'ProcessResponse', 'organization', elem.organizationElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('request') and (SummaryOption in [soFull, soData]) then
     ComposeReference{TFhirReference}(this, 'ProcessResponse', 'request', elem.requestElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('outcome') and (SummaryOption in [soFull, soData]) then
     ComposeCodeableConcept(this, 'ProcessResponse', 'outcome', elem.outcomeElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('disposition') and (SummaryOption in [soFull, soData]) then
     ComposeString(this, 'ProcessResponse', 'disposition', elem.dispositionElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('requestProvider') and (SummaryOption in [soFull, soData]) then
     ComposeReference{TFhirPractitioner}(this, 'ProcessResponse', 'requestProvider', elem.requestProviderElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('requestOrganization') and (SummaryOption in [soFull, soData]) then
     ComposeReference{TFhirOrganization}(this, 'ProcessResponse', 'requestOrganization', elem.requestOrganizationElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('form') and (SummaryOption in [soFull, soData]) then
     ComposeCodeableConcept(this, 'ProcessResponse', 'form', elem.formElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('processNote') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.processNoteList.Count - 1 do
       ComposeProcessResponseProcessNote(this, 'ProcessResponse', 'processNote', elem.processNoteList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('error') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.errorList.Count - 1 do
       ComposeCodeableConcept(this, 'ProcessResponse', 'error', elem.errorList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('communicationRequest') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.communicationRequestList.Count - 1 do
       ComposeReference{TFhirCommunicationRequest}(this, 'ProcessResponse', 'communicationRequest', elem.communicationRequestList[i], false, i);{x.d3}
 end;
@@ -28177,30 +28177,30 @@ begin
       this.addPredicate('a', 'fhir:Provenance'); {z}
   end;
   composeDomainResource(this, '', name, elem, false, index);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('target') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.targetList.Count - 1 do
       ComposeReference{TFhirReference}(this, 'Provenance', 'target', elem.targetList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('period') and (SummaryOption in [soFull, soData]) then
     ComposePeriod(this, 'Provenance', 'period', elem.periodElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('recorded') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeInstant(this, 'Provenance', 'recorded', elem.recordedElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('policy') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.policyList.Count - 1 do
       ComposeUri(this, 'Provenance', 'policy', elem.policyList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('location') and (SummaryOption in [soFull, soData]) then
     ComposeReference{TFhirLocation}(this, 'Provenance', 'location', elem.locationElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('reason') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.reasonList.Count - 1 do
       ComposeCoding(this, 'Provenance', 'reason', elem.reasonList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('activity') and (SummaryOption in [soFull, soData]) then
     ComposeCoding(this, 'Provenance', 'activity', elem.activityElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('agent') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.agentList.Count - 1 do
       ComposeProvenanceAgent(this, 'Provenance', 'agent', elem.agentList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('entity') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.entityList.Count - 1 do
       ComposeProvenanceEntity(this, 'Provenance', 'entity', elem.entityList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('signature') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.signatureList.Count - 1 do
       ComposeSignature(this, 'Provenance', 'signature', elem.signatureList[i], false, i);{x.d3}
 end;
@@ -28555,56 +28555,56 @@ begin
       this.addPredicate('a', 'fhir:Questionnaire'); {z}
   end;
   composeDomainResource(this, '', name, elem, false, index);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('url') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeUri(this, 'Questionnaire', 'url', elem.urlElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('identifier') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.identifierList.Count - 1 do
       ComposeIdentifier(this, 'Questionnaire', 'identifier', elem.identifierList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('version') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeString(this, 'Questionnaire', 'version', elem.versionElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('name') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeString(this, 'Questionnaire', 'name', elem.nameElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('title') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeString(this, 'Questionnaire', 'title', elem.titleElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('status') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnum(this, 'Questionnaire', 'status', elem.StatusElement, CODES_TFhirPublicationStatusEnum, SYSTEMS_TFhirPublicationStatusEnum, false, -1);{x.d4}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('experimental') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeBoolean(this, 'Questionnaire', 'experimental', elem.experimentalElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('date') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeDateTime(this, 'Questionnaire', 'date', elem.dateElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('publisher') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeString(this, 'Questionnaire', 'publisher', elem.publisherElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('description') and (SummaryOption in [soFull, soData]) then
     ComposeMarkdown(this, 'Questionnaire', 'description', elem.descriptionElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('purpose') and (SummaryOption in [soFull, soData]) then
     ComposeMarkdown(this, 'Questionnaire', 'purpose', elem.purposeElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('approvalDate') and (SummaryOption in [soFull, soData]) then
     ComposeDate(this, 'Questionnaire', 'approvalDate', elem.approvalDateElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('lastReviewDate') and (SummaryOption in [soFull, soData]) then
     ComposeDate(this, 'Questionnaire', 'lastReviewDate', elem.lastReviewDateElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('effectivePeriod') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposePeriod(this, 'Questionnaire', 'effectivePeriod', elem.effectivePeriodElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('useContext') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.useContextList.Count - 1 do
       ComposeUsageContext(this, 'Questionnaire', 'useContext', elem.useContextList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('jurisdiction') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.jurisdictionList.Count - 1 do
       ComposeCodeableConcept(this, 'Questionnaire', 'jurisdiction', elem.jurisdictionList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('contact') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.contactList.Count - 1 do
       ComposeContactDetail(this, 'Questionnaire', 'contact', elem.contactList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('copyright') and (SummaryOption in [soFull, soData]) then
     ComposeMarkdown(this, 'Questionnaire', 'copyright', elem.copyrightElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('code') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.codeList.Count - 1 do
       ComposeCoding(this, 'Questionnaire', 'code', elem.codeList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('subjectType') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.subjectType.Count - 1 do
       ComposeEnum(this, 'Questionnaire', 'subjectType', elem.subjectType[i], CODES_TFhirResourceTypesEnum, SYSTEMS_TFhirResourceTypesEnum, false, i); {x.d1}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('subjectType') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.subjectType.Count - 1 do
       ComposeEnum(this, 'Questionnaire', 'subjectType', elem.subjectType[i], CODES_TFhirResourceTypesEnum, SYSTEMS_TFhirResourceTypesEnum, false, i);{x.d2}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('item') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.itemList.Count - 1 do
       ComposeQuestionnaireItem(this, 'Questionnaire', 'item', elem.itemList[i], false, i);{x.d3}
 end;
@@ -28812,29 +28812,29 @@ begin
       this.addPredicate('a', 'fhir:QuestionnaireResponse'); {z}
   end;
   composeDomainResource(this, '', name, elem, false, index);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('identifier') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeIdentifier(this, 'QuestionnaireResponse', 'identifier', elem.identifierElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('basedOn') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.basedOnList.Count - 1 do
       ComposeReference{Resource}(this, 'QuestionnaireResponse', 'basedOn', elem.basedOnList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('parent') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.parentList.Count - 1 do
       ComposeReference{Resource}(this, 'QuestionnaireResponse', 'parent', elem.parentList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('questionnaire') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{TFhirQuestionnaire}(this, 'QuestionnaireResponse', 'questionnaire', elem.questionnaireElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('status') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnum(this, 'QuestionnaireResponse', 'status', elem.StatusElement, CODES_TFhirQuestionnaireAnswersStatusEnum, SYSTEMS_TFhirQuestionnaireAnswersStatusEnum, false, -1);{x.d4}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('subject') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{TFhirReference}(this, 'QuestionnaireResponse', 'subject', elem.subjectElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('context') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{Resource}(this, 'QuestionnaireResponse', 'context', elem.contextElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('authored') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeDateTime(this, 'QuestionnaireResponse', 'authored', elem.authoredElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('author') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{Resource}(this, 'QuestionnaireResponse', 'author', elem.authorElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('source') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{Resource}(this, 'QuestionnaireResponse', 'source', elem.sourceElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('item') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.itemList.Count - 1 do
       ComposeQuestionnaireResponseItem(this, 'QuestionnaireResponse', 'item', elem.itemList[i], false, i);{x.d3}
 end;
@@ -28955,63 +28955,63 @@ begin
       this.addPredicate('a', 'fhir:ReferralRequest'); {z}
   end;
   composeDomainResource(this, '', name, elem, false, index);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('identifier') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.identifierList.Count - 1 do
       ComposeIdentifier(this, 'ReferralRequest', 'identifier', elem.identifierList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('definition') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.definitionList.Count - 1 do
       ComposeReference{Resource}(this, 'ReferralRequest', 'definition', elem.definitionList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('basedOn') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.basedOnList.Count - 1 do
       ComposeReference{Resource}(this, 'ReferralRequest', 'basedOn', elem.basedOnList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('replaces') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.replacesList.Count - 1 do
       ComposeReference{TFhirReferralRequest}(this, 'ReferralRequest', 'replaces', elem.replacesList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('groupIdentifier') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeIdentifier(this, 'ReferralRequest', 'groupIdentifier', elem.groupIdentifierElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('status') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnum(this, 'ReferralRequest', 'status', elem.StatusElement, CODES_TFhirRequestStatusEnum, SYSTEMS_TFhirRequestStatusEnum, false, -1);{x.d4}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('intent') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnum(this, 'ReferralRequest', 'intent', elem.IntentElement, CODES_TFhirRequestIntentEnum, SYSTEMS_TFhirRequestIntentEnum, false, -1);{x.d4}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('type_') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeCodeableConcept(this, 'ReferralRequest', 'type', elem.type_Element, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('priority') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnum(this, 'ReferralRequest', 'priority', elem.PriorityElement, CODES_TFhirRequestPriorityEnum, SYSTEMS_TFhirRequestPriorityEnum, false, -1);{x.d4}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('serviceRequested') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.serviceRequestedList.Count - 1 do
       ComposeCodeableConcept(this, 'ReferralRequest', 'serviceRequested', elem.serviceRequestedList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('subject') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{Resource}(this, 'ReferralRequest', 'subject', elem.subjectElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('context') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{Resource}(this, 'ReferralRequest', 'context', elem.contextElement, false, -1);{x.2f}
   if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.occurrence is TFhirPeriod) {6} then
     ComposePeriod(this, 'ReferralRequest', 'occurrencePeriod', TFhirPeriod(elem.occurrence), false, -1){x.d9}
   else if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.occurrence is TFhirDateTime) {6} then
     ComposeDateTime(this, 'ReferralRequest', 'occurrenceDateTime', TFhirDateTime(elem.occurrence), false, -1);{x.d9}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('authoredOn') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeDateTime(this, 'ReferralRequest', 'authoredOn', elem.authoredOnElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('requester') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReferralRequestRequester(this, 'ReferralRequest', 'requester', elem.requesterElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('specialty') and (SummaryOption in [soFull, soData]) then
     ComposeCodeableConcept(this, 'ReferralRequest', 'specialty', elem.specialtyElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('recipient') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.recipientList.Count - 1 do
       ComposeReference{Resource}(this, 'ReferralRequest', 'recipient', elem.recipientList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('reasonCode') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.reasonCodeList.Count - 1 do
       ComposeCodeableConcept(this, 'ReferralRequest', 'reasonCode', elem.reasonCodeList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('reasonReference') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.reasonReferenceList.Count - 1 do
       ComposeReference{Resource}(this, 'ReferralRequest', 'reasonReference', elem.reasonReferenceList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('description') and (SummaryOption in [soFull, soData]) then
     ComposeString(this, 'ReferralRequest', 'description', elem.descriptionElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('supportingInfo') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.supportingInfoList.Count - 1 do
       ComposeReference{TFhirReference}(this, 'ReferralRequest', 'supportingInfo', elem.supportingInfoList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('note') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.noteList.Count - 1 do
       ComposeAnnotation(this, 'ReferralRequest', 'note', elem.noteList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('relevantHistory') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.relevantHistoryList.Count - 1 do
       ComposeReference{TFhirProvenance}(this, 'ReferralRequest', 'relevantHistory', elem.relevantHistoryList[i], false, i);{x.d3}
 end;
@@ -29070,32 +29070,32 @@ begin
       this.addPredicate('a', 'fhir:RelatedPerson'); {z}
   end;
   composeDomainResource(this, '', name, elem, false, index);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('identifier') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.identifierList.Count - 1 do
       ComposeIdentifier(this, 'RelatedPerson', 'identifier', elem.identifierList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('active') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeBoolean(this, 'RelatedPerson', 'active', elem.activeElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('patient') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{TFhirPatient}(this, 'RelatedPerson', 'patient', elem.patientElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('relationship') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeCodeableConcept(this, 'RelatedPerson', 'relationship', elem.relationshipElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('name') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.nameList.Count - 1 do
       ComposeHumanName(this, 'RelatedPerson', 'name', elem.nameList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('telecom') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.telecomList.Count - 1 do
       ComposeContactPoint(this, 'RelatedPerson', 'telecom', elem.telecomList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('gender') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnum(this, 'RelatedPerson', 'gender', elem.GenderElement, CODES_TFhirAdministrativeGenderEnum, SYSTEMS_TFhirAdministrativeGenderEnum, false, -1);{x.d4}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('birthDate') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeDate(this, 'RelatedPerson', 'birthDate', elem.birthDateElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('address') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.addressList.Count - 1 do
       ComposeAddress(this, 'RelatedPerson', 'address', elem.addressList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('photo') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.photoList.Count - 1 do
       ComposeAttachment(this, 'RelatedPerson', 'photo', elem.photoList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('period') and (SummaryOption in [soFull, soData]) then
     ComposePeriod(this, 'RelatedPerson', 'period', elem.periodElement, false, -1);{x.2f}
 end;
 
@@ -29380,42 +29380,42 @@ begin
       this.addPredicate('a', 'fhir:RequestGroup'); {z}
   end;
   composeDomainResource(this, '', name, elem, false, index);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('identifier') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.identifierList.Count - 1 do
       ComposeIdentifier(this, 'RequestGroup', 'identifier', elem.identifierList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('definition') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.definitionList.Count - 1 do
       ComposeReference{TFhirReference}(this, 'RequestGroup', 'definition', elem.definitionList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('basedOn') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.basedOnList.Count - 1 do
       ComposeReference{TFhirReference}(this, 'RequestGroup', 'basedOn', elem.basedOnList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('replaces') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.replacesList.Count - 1 do
       ComposeReference{TFhirReference}(this, 'RequestGroup', 'replaces', elem.replacesList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('groupIdentifier') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeIdentifier(this, 'RequestGroup', 'groupIdentifier', elem.groupIdentifierElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('status') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnum(this, 'RequestGroup', 'status', elem.StatusElement, CODES_TFhirRequestStatusEnum, SYSTEMS_TFhirRequestStatusEnum, false, -1);{x.d4}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('intent') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnum(this, 'RequestGroup', 'intent', elem.IntentElement, CODES_TFhirRequestIntentEnum, SYSTEMS_TFhirRequestIntentEnum, false, -1);{x.d4}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('priority') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnum(this, 'RequestGroup', 'priority', elem.PriorityElement, CODES_TFhirRequestPriorityEnum, SYSTEMS_TFhirRequestPriorityEnum, false, -1);{x.d4}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('subject') and (SummaryOption in [soFull, soData]) then
     ComposeReference{Resource}(this, 'RequestGroup', 'subject', elem.subjectElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('context') and (SummaryOption in [soFull, soData]) then
     ComposeReference{Resource}(this, 'RequestGroup', 'context', elem.contextElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('authoredOn') and (SummaryOption in [soFull, soData]) then
     ComposeDateTime(this, 'RequestGroup', 'authoredOn', elem.authoredOnElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('author') and (SummaryOption in [soFull, soData]) then
     ComposeReference{Resource}(this, 'RequestGroup', 'author', elem.authorElement, false, -1);{x.2f}
   if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.reason is TFhirCodeableConcept) {6} then
     ComposeCodeableConcept(this, 'RequestGroup', 'reasonCodeableConcept', TFhirCodeableConcept(elem.reason), false, -1){x.d9}
   else if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.reason is TFhirReference) {2} then
     ComposeReference(this, 'RequestGroup', 'reasonReference', TFhirReference(elem.reason), false,-1);{x.d8}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('note') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.noteList.Count - 1 do
       ComposeAnnotation(this, 'RequestGroup', 'note', elem.noteList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('action') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.actionList.Count - 1 do
       ComposeRequestGroupAction(this, 'RequestGroup', 'action', elem.actionList[i], false, i);{x.d3}
 end;
@@ -29535,57 +29535,57 @@ begin
       this.addPredicate('a', 'fhir:ResearchStudy'); {z}
   end;
   composeDomainResource(this, '', name, elem, false, index);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('identifier') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.identifierList.Count - 1 do
       ComposeIdentifier(this, 'ResearchStudy', 'identifier', elem.identifierList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('title') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeString(this, 'ResearchStudy', 'title', elem.titleElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('protocol') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.protocolList.Count - 1 do
       ComposeReference{TFhirPlanDefinition}(this, 'ResearchStudy', 'protocol', elem.protocolList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('partOf') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.partOfList.Count - 1 do
       ComposeReference{TFhirResearchStudy}(this, 'ResearchStudy', 'partOf', elem.partOfList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('status') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnum(this, 'ResearchStudy', 'status', elem.StatusElement, CODES_TFhirResearchStudyStatusEnum, SYSTEMS_TFhirResearchStudyStatusEnum, false, -1);{x.d4}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('category') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.categoryList.Count - 1 do
       ComposeCodeableConcept(this, 'ResearchStudy', 'category', elem.categoryList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('focus') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.focusList.Count - 1 do
       ComposeCodeableConcept(this, 'ResearchStudy', 'focus', elem.focusList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('contact') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.contactList.Count - 1 do
       ComposeContactDetail(this, 'ResearchStudy', 'contact', elem.contactList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('relatedArtifact') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.relatedArtifactList.Count - 1 do
       ComposeRelatedArtifact(this, 'ResearchStudy', 'relatedArtifact', elem.relatedArtifactList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('keyword') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.keywordList.Count - 1 do
       ComposeCodeableConcept(this, 'ResearchStudy', 'keyword', elem.keywordList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('jurisdiction') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.jurisdictionList.Count - 1 do
       ComposeCodeableConcept(this, 'ResearchStudy', 'jurisdiction', elem.jurisdictionList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('description') and (SummaryOption in [soFull, soData]) then
     ComposeMarkdown(this, 'ResearchStudy', 'description', elem.descriptionElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('enrollment') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.enrollmentList.Count - 1 do
       ComposeReference{TFhirGroup}(this, 'ResearchStudy', 'enrollment', elem.enrollmentList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('period') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposePeriod(this, 'ResearchStudy', 'period', elem.periodElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('sponsor') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{TFhirOrganization}(this, 'ResearchStudy', 'sponsor', elem.sponsorElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('principalInvestigator') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{TFhirPractitioner}(this, 'ResearchStudy', 'principalInvestigator', elem.principalInvestigatorElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('site') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.siteList.Count - 1 do
       ComposeReference{TFhirLocation}(this, 'ResearchStudy', 'site', elem.siteList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('reasonStopped') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeCodeableConcept(this, 'ResearchStudy', 'reasonStopped', elem.reasonStoppedElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('note') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.noteList.Count - 1 do
       ComposeAnnotation(this, 'ResearchStudy', 'note', elem.noteList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('arm') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.armList.Count - 1 do
       ComposeResearchStudyArm(this, 'ResearchStudy', 'arm', elem.armList[i], false, i);{x.d3}
 end;
@@ -29633,21 +29633,21 @@ begin
       this.addPredicate('a', 'fhir:ResearchSubject'); {z}
   end;
   composeDomainResource(this, '', name, elem, false, index);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('identifier') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeIdentifier(this, 'ResearchSubject', 'identifier', elem.identifierElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('status') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnum(this, 'ResearchSubject', 'status', elem.StatusElement, CODES_TFhirResearchSubjectStatusEnum, SYSTEMS_TFhirResearchSubjectStatusEnum, false, -1);{x.d4}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('period') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposePeriod(this, 'ResearchSubject', 'period', elem.periodElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('study') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{TFhirResearchStudy}(this, 'ResearchSubject', 'study', elem.studyElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('individual') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{TFhirPatient}(this, 'ResearchSubject', 'individual', elem.individualElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('assignedArm') and (SummaryOption in [soFull, soData]) then
     ComposeString(this, 'ResearchSubject', 'assignedArm', elem.assignedArmElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('actualArm') and (SummaryOption in [soFull, soData]) then
     ComposeString(this, 'ResearchSubject', 'actualArm', elem.actualArmElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('consent') and (SummaryOption in [soFull, soData]) then
     ComposeReference{TFhirConsent}(this, 'ResearchSubject', 'consent', elem.consentElement, false, -1);{x.2f}
 end;
 
@@ -29778,43 +29778,43 @@ begin
       this.addPredicate('a', 'fhir:RiskAssessment'); {z}
   end;
   composeDomainResource(this, '', name, elem, false, index);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('identifier') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeIdentifier(this, 'RiskAssessment', 'identifier', elem.identifierElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('basedOn') and (SummaryOption in [soFull, soData]) then
     ComposeReference{TFhirReference}(this, 'RiskAssessment', 'basedOn', elem.basedOnElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('parent') and (SummaryOption in [soFull, soData]) then
     ComposeReference{TFhirReference}(this, 'RiskAssessment', 'parent', elem.parentElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('status') and (SummaryOption in [soFull, soData]) then
      ComposeEnum(this, 'RiskAssessment', 'status', elem.StatusElement, CODES_TFhirObservationStatusEnum, SYSTEMS_TFhirObservationStatusEnum, false, -1);{x.d4}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('method') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeCodeableConcept(this, 'RiskAssessment', 'method', elem.methodElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('code') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeCodeableConcept(this, 'RiskAssessment', 'code', elem.codeElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('subject') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{Resource}(this, 'RiskAssessment', 'subject', elem.subjectElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('context') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{Resource}(this, 'RiskAssessment', 'context', elem.contextElement, false, -1);{x.2f}
   if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.occurrence is TFhirPeriod) {6} then
     ComposePeriod(this, 'RiskAssessment', 'occurrencePeriod', TFhirPeriod(elem.occurrence), false, -1){x.d9}
   else if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.occurrence is TFhirDateTime) {6} then
     ComposeDateTime(this, 'RiskAssessment', 'occurrenceDateTime', TFhirDateTime(elem.occurrence), false, -1);{x.d9}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('condition') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{TFhirCondition}(this, 'RiskAssessment', 'condition', elem.conditionElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('performer') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{Resource}(this, 'RiskAssessment', 'performer', elem.performerElement, false, -1);{x.2f}
   if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.reason is TFhirCodeableConcept) {6} then
     ComposeCodeableConcept(this, 'RiskAssessment', 'reasonCodeableConcept', TFhirCodeableConcept(elem.reason), false, -1){x.d9}
   else if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.reason is TFhirReference) {2} then
     ComposeReference(this, 'RiskAssessment', 'reasonReference', TFhirReference(elem.reason), false,-1);{x.d8}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('basis') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.basisList.Count - 1 do
       ComposeReference{TFhirReference}(this, 'RiskAssessment', 'basis', elem.basisList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('prediction') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.predictionList.Count - 1 do
       ComposeRiskAssessmentPrediction(this, 'RiskAssessment', 'prediction', elem.predictionList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('mitigation') and (SummaryOption in [soFull, soData]) then
     ComposeString(this, 'RiskAssessment', 'mitigation', elem.mitigationElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('comment') and (SummaryOption in [soFull, soData]) then
     ComposeString(this, 'RiskAssessment', 'comment', elem.commentElement, false, -1);{x.2ea}
 end;
 
@@ -29868,25 +29868,25 @@ begin
       this.addPredicate('a', 'fhir:Schedule'); {z}
   end;
   composeDomainResource(this, '', name, elem, false, index);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('identifier') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.identifierList.Count - 1 do
       ComposeIdentifier(this, 'Schedule', 'identifier', elem.identifierList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('active') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeBoolean(this, 'Schedule', 'active', elem.activeElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('serviceCategory') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeCodeableConcept(this, 'Schedule', 'serviceCategory', elem.serviceCategoryElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('serviceType') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.serviceTypeList.Count - 1 do
       ComposeCodeableConcept(this, 'Schedule', 'serviceType', elem.serviceTypeList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('specialty') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.specialtyList.Count - 1 do
       ComposeCodeableConcept(this, 'Schedule', 'specialty', elem.specialtyList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('actor') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.actorList.Count - 1 do
       ComposeReference{Resource}(this, 'Schedule', 'actor', elem.actorList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('planningHorizon') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposePeriod(this, 'Schedule', 'planningHorizon', elem.planningHorizonElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('comment') and (SummaryOption in [soFull, soData]) then
     ComposeString(this, 'Schedule', 'comment', elem.commentElement, false, -1);{x.2ea}
 end;
 
@@ -30002,73 +30002,73 @@ begin
       this.addPredicate('a', 'fhir:SearchParameter'); {z}
   end;
   composeDomainResource(this, '', name, elem, false, index);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('url') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeUri(this, 'SearchParameter', 'url', elem.urlElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('version') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeString(this, 'SearchParameter', 'version', elem.versionElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('name') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeString(this, 'SearchParameter', 'name', elem.nameElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('status') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnum(this, 'SearchParameter', 'status', elem.StatusElement, CODES_TFhirPublicationStatusEnum, SYSTEMS_TFhirPublicationStatusEnum, false, -1);{x.d4}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('experimental') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeBoolean(this, 'SearchParameter', 'experimental', elem.experimentalElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('date') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeDateTime(this, 'SearchParameter', 'date', elem.dateElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('publisher') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeString(this, 'SearchParameter', 'publisher', elem.publisherElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('contact') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.contactList.Count - 1 do
       ComposeContactDetail(this, 'SearchParameter', 'contact', elem.contactList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('useContext') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.useContextList.Count - 1 do
       ComposeUsageContext(this, 'SearchParameter', 'useContext', elem.useContextList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('jurisdiction') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.jurisdictionList.Count - 1 do
       ComposeCodeableConcept(this, 'SearchParameter', 'jurisdiction', elem.jurisdictionList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('purpose') and (SummaryOption in [soFull, soData]) then
     ComposeMarkdown(this, 'SearchParameter', 'purpose', elem.purposeElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('code') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeCode(this, 'SearchParameter', 'code', elem.codeElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('base') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.base.Count - 1 do
       ComposeEnum(this, 'SearchParameter', 'base', elem.base[i], CODES_TFhirResourceTypesEnum, SYSTEMS_TFhirResourceTypesEnum, false, i); {x.d1}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('base') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.base.Count - 1 do
       ComposeEnum(this, 'SearchParameter', 'base', elem.base[i], CODES_TFhirResourceTypesEnum, SYSTEMS_TFhirResourceTypesEnum, false, i);{x.d2}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('type_') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnum(this, 'SearchParameter', 'type', elem.Type_Element, CODES_TFhirSearchParamTypeEnum, SYSTEMS_TFhirSearchParamTypeEnum, false, -1);{x.d4}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('derivedFrom') and (SummaryOption in [soFull, soData]) then
     ComposeUri(this, 'SearchParameter', 'derivedFrom', elem.derivedFromElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('description') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeMarkdown(this, 'SearchParameter', 'description', elem.descriptionElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('expression') and (SummaryOption in [soFull, soData]) then
     ComposeString(this, 'SearchParameter', 'expression', elem.expressionElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('xpath') and (SummaryOption in [soFull, soData]) then
     ComposeString(this, 'SearchParameter', 'xpath', elem.xpathElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('xpathUsage') and (SummaryOption in [soFull, soData]) then
      ComposeEnum(this, 'SearchParameter', 'xpathUsage', elem.XpathUsageElement, CODES_TFhirSearchXpathUsageEnum, SYSTEMS_TFhirSearchXpathUsageEnum, false, -1);{x.d4}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('target') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.target.Count - 1 do
       ComposeEnum(this, 'SearchParameter', 'target', elem.target[i], CODES_TFhirResourceTypesEnum, SYSTEMS_TFhirResourceTypesEnum, false, i); {x.d1}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('target') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.target.Count - 1 do
       ComposeEnum(this, 'SearchParameter', 'target', elem.target[i], CODES_TFhirResourceTypesEnum, SYSTEMS_TFhirResourceTypesEnum, false, i);{x.d2}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('comparator') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.comparatorList.Count - 1 do
       ComposeEnum(this, 'SearchParameter', 'comparator', elem.comparatorList[i], CODES_TFhirSearchComparatorEnum, SYSTEMS_TFhirSearchComparatorEnum, false, i); {x.d1}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('comparator') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.comparatorList.Count - 1 do
       ComposeEnum(this, 'SearchParameter', 'comparator', elem.comparatorList[i], CODES_TFhirSearchComparatorEnum, SYSTEMS_TFhirSearchComparatorEnum, false, i);{x.d2}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('modifier') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.modifierList.Count - 1 do
       ComposeEnum(this, 'SearchParameter', 'modifier', elem.modifierList[i], CODES_TFhirSearchModifierCodeEnum, SYSTEMS_TFhirSearchModifierCodeEnum, false, i); {x.d1}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('modifier') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.modifierList.Count - 1 do
       ComposeEnum(this, 'SearchParameter', 'modifier', elem.modifierList[i], CODES_TFhirSearchModifierCodeEnum, SYSTEMS_TFhirSearchModifierCodeEnum, false, i);{x.d2}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('chain') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.chainList.Count - 1 do
       ComposeString(this, 'SearchParameter', 'chain', elem.chainList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('component') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.componentList.Count - 1 do
       ComposeSearchParameterComponent(this, 'SearchParameter', 'component', elem.componentList[i], false, i);{x.d3}
 end;
@@ -30373,39 +30373,39 @@ begin
       this.addPredicate('a', 'fhir:Sequence'); {z}
   end;
   composeDomainResource(this, '', name, elem, false, index);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('identifier') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.identifierList.Count - 1 do
       ComposeIdentifier(this, 'Sequence', 'identifier', elem.identifierList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('type_') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeCode(this, 'Sequence', 'type', elem.type_Element, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('coordinateSystem') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeInteger(this, 'Sequence', 'coordinateSystem', elem.coordinateSystemElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('patient') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{TFhirPatient}(this, 'Sequence', 'patient', elem.patientElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('specimen') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{TFhirSpecimen}(this, 'Sequence', 'specimen', elem.specimenElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('device') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{TFhirDevice}(this, 'Sequence', 'device', elem.deviceElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('performer') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{TFhirOrganization}(this, 'Sequence', 'performer', elem.performerElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('quantity') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeQuantity(this, 'Sequence', 'quantity', elem.quantityElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('referenceSeq') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeSequenceReferenceSeq(this, 'Sequence', 'referenceSeq', elem.referenceSeqElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('variant') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.variantList.Count - 1 do
       ComposeSequenceVariant(this, 'Sequence', 'variant', elem.variantList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('observedSeq') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeString(this, 'Sequence', 'observedSeq', elem.observedSeqElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('quality') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.qualityList.Count - 1 do
       ComposeSequenceQuality(this, 'Sequence', 'quality', elem.qualityList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('readCoverage') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeInteger(this, 'Sequence', 'readCoverage', elem.readCoverageElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('repository') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.repositoryList.Count - 1 do
       ComposeSequenceRepository(this, 'Sequence', 'repository', elem.repositoryList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('pointer') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.pointerList.Count - 1 do
       ComposeReference{TFhirSequence}(this, 'Sequence', 'pointer', elem.pointerList[i], false, i);{x.d3}
 end;
@@ -30482,64 +30482,64 @@ begin
       this.addPredicate('a', 'fhir:ServiceDefinition'); {z}
   end;
   composeDomainResource(this, '', name, elem, false, index);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('url') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeUri(this, 'ServiceDefinition', 'url', elem.urlElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('identifier') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.identifierList.Count - 1 do
       ComposeIdentifier(this, 'ServiceDefinition', 'identifier', elem.identifierList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('version') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeString(this, 'ServiceDefinition', 'version', elem.versionElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('name') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeString(this, 'ServiceDefinition', 'name', elem.nameElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('title') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeString(this, 'ServiceDefinition', 'title', elem.titleElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('status') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnum(this, 'ServiceDefinition', 'status', elem.StatusElement, CODES_TFhirPublicationStatusEnum, SYSTEMS_TFhirPublicationStatusEnum, false, -1);{x.d4}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('experimental') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeBoolean(this, 'ServiceDefinition', 'experimental', elem.experimentalElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('date') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeDateTime(this, 'ServiceDefinition', 'date', elem.dateElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('publisher') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeString(this, 'ServiceDefinition', 'publisher', elem.publisherElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('description') and (SummaryOption in [soFull, soData]) then
     ComposeMarkdown(this, 'ServiceDefinition', 'description', elem.descriptionElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('purpose') and (SummaryOption in [soFull, soData]) then
     ComposeMarkdown(this, 'ServiceDefinition', 'purpose', elem.purposeElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('usage') and (SummaryOption in [soFull, soData]) then
     ComposeString(this, 'ServiceDefinition', 'usage', elem.usageElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('approvalDate') and (SummaryOption in [soFull, soData]) then
     ComposeDate(this, 'ServiceDefinition', 'approvalDate', elem.approvalDateElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('lastReviewDate') and (SummaryOption in [soFull, soData]) then
     ComposeDate(this, 'ServiceDefinition', 'lastReviewDate', elem.lastReviewDateElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('effectivePeriod') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposePeriod(this, 'ServiceDefinition', 'effectivePeriod', elem.effectivePeriodElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('useContext') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.useContextList.Count - 1 do
       ComposeUsageContext(this, 'ServiceDefinition', 'useContext', elem.useContextList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('jurisdiction') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.jurisdictionList.Count - 1 do
       ComposeCodeableConcept(this, 'ServiceDefinition', 'jurisdiction', elem.jurisdictionList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('topic') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.topicList.Count - 1 do
       ComposeCodeableConcept(this, 'ServiceDefinition', 'topic', elem.topicList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('contributor') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.contributorList.Count - 1 do
       ComposeContributor(this, 'ServiceDefinition', 'contributor', elem.contributorList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('contact') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.contactList.Count - 1 do
       ComposeContactDetail(this, 'ServiceDefinition', 'contact', elem.contactList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('copyright') and (SummaryOption in [soFull, soData]) then
     ComposeMarkdown(this, 'ServiceDefinition', 'copyright', elem.copyrightElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('relatedArtifact') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.relatedArtifactList.Count - 1 do
       ComposeRelatedArtifact(this, 'ServiceDefinition', 'relatedArtifact', elem.relatedArtifactList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('trigger') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.triggerList.Count - 1 do
       ComposeTriggerDefinition(this, 'ServiceDefinition', 'trigger', elem.triggerList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('dataRequirement') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.dataRequirementList.Count - 1 do
       ComposeDataRequirement(this, 'ServiceDefinition', 'dataRequirement', elem.dataRequirementList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('operationDefinition') and (SummaryOption in [soFull, soData]) then
     ComposeReference{TFhirOperationDefinition}(this, 'ServiceDefinition', 'operationDefinition', elem.operationDefinitionElement, false, -1);{x.2f}
 end;
 
@@ -30595,30 +30595,30 @@ begin
       this.addPredicate('a', 'fhir:Slot'); {z}
   end;
   composeDomainResource(this, '', name, elem, false, index);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('identifier') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.identifierList.Count - 1 do
       ComposeIdentifier(this, 'Slot', 'identifier', elem.identifierList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('serviceCategory') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeCodeableConcept(this, 'Slot', 'serviceCategory', elem.serviceCategoryElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('serviceType') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.serviceTypeList.Count - 1 do
       ComposeCodeableConcept(this, 'Slot', 'serviceType', elem.serviceTypeList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('specialty') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.specialtyList.Count - 1 do
       ComposeCodeableConcept(this, 'Slot', 'specialty', elem.specialtyList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('appointmentType') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeCodeableConcept(this, 'Slot', 'appointmentType', elem.appointmentTypeElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('schedule') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{TFhirSchedule}(this, 'Slot', 'schedule', elem.scheduleElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('status') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnum(this, 'Slot', 'status', elem.StatusElement, CODES_TFhirSlotstatusEnum, SYSTEMS_TFhirSlotstatusEnum, false, -1);{x.d4}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('start') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeInstant(this, 'Slot', 'start', elem.startElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('end_') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeInstant(this, 'Slot', 'end', elem.end_Element, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('overbooked') and (SummaryOption in [soFull, soData]) then
     ComposeBoolean(this, 'Slot', 'overbooked', elem.overbookedElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('comment') and (SummaryOption in [soFull, soData]) then
     ComposeString(this, 'Slot', 'comment', elem.commentElement, false, -1);{x.2ea}
 end;
 
@@ -30855,34 +30855,34 @@ begin
       this.addPredicate('a', 'fhir:Specimen'); {z}
   end;
   composeDomainResource(this, '', name, elem, false, index);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('identifier') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.identifierList.Count - 1 do
       ComposeIdentifier(this, 'Specimen', 'identifier', elem.identifierList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('accessionIdentifier') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeIdentifier(this, 'Specimen', 'accessionIdentifier', elem.accessionIdentifierElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('status') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnum(this, 'Specimen', 'status', elem.StatusElement, CODES_TFhirSpecimenStatusEnum, SYSTEMS_TFhirSpecimenStatusEnum, false, -1);{x.d4}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('type_') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeCodeableConcept(this, 'Specimen', 'type', elem.type_Element, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('subject') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{Resource}(this, 'Specimen', 'subject', elem.subjectElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('receivedTime') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeDateTime(this, 'Specimen', 'receivedTime', elem.receivedTimeElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('parent') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.parentList.Count - 1 do
       ComposeReference{TFhirSpecimen}(this, 'Specimen', 'parent', elem.parentList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('request') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.requestList.Count - 1 do
       ComposeReference{TFhirProcedureRequest}(this, 'Specimen', 'request', elem.requestList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('collection') and (SummaryOption in [soFull, soData]) then
     ComposeSpecimenCollection(this, 'Specimen', 'collection', elem.collectionElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('processing') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.processingList.Count - 1 do
       ComposeSpecimenProcessing(this, 'Specimen', 'processing', elem.processingList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('container') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.containerList.Count - 1 do
       ComposeSpecimenContainer(this, 'Specimen', 'container', elem.containerList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('note') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.noteList.Count - 1 do
       ComposeAnnotation(this, 'Specimen', 'note', elem.noteList[i], false, i);{x.d3}
 end;
@@ -31094,69 +31094,69 @@ begin
       this.addPredicate('a', 'fhir:StructureDefinition'); {z}
   end;
   composeDomainResource(this, '', name, elem, false, index);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('url') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeUri(this, 'StructureDefinition', 'url', elem.urlElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('identifier') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.identifierList.Count - 1 do
       ComposeIdentifier(this, 'StructureDefinition', 'identifier', elem.identifierList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('version') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeString(this, 'StructureDefinition', 'version', elem.versionElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('name') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeString(this, 'StructureDefinition', 'name', elem.nameElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('title') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeString(this, 'StructureDefinition', 'title', elem.titleElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('status') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnum(this, 'StructureDefinition', 'status', elem.StatusElement, CODES_TFhirPublicationStatusEnum, SYSTEMS_TFhirPublicationStatusEnum, false, -1);{x.d4}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('experimental') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeBoolean(this, 'StructureDefinition', 'experimental', elem.experimentalElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('date') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeDateTime(this, 'StructureDefinition', 'date', elem.dateElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('publisher') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeString(this, 'StructureDefinition', 'publisher', elem.publisherElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('contact') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.contactList.Count - 1 do
       ComposeContactDetail(this, 'StructureDefinition', 'contact', elem.contactList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('description') and (SummaryOption in [soFull, soData]) then
     ComposeMarkdown(this, 'StructureDefinition', 'description', elem.descriptionElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('useContext') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.useContextList.Count - 1 do
       ComposeUsageContext(this, 'StructureDefinition', 'useContext', elem.useContextList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('jurisdiction') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.jurisdictionList.Count - 1 do
       ComposeCodeableConcept(this, 'StructureDefinition', 'jurisdiction', elem.jurisdictionList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('purpose') and (SummaryOption in [soFull, soData]) then
     ComposeMarkdown(this, 'StructureDefinition', 'purpose', elem.purposeElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('copyright') and (SummaryOption in [soFull, soData]) then
     ComposeMarkdown(this, 'StructureDefinition', 'copyright', elem.copyrightElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('keyword') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.keywordList.Count - 1 do
       ComposeCoding(this, 'StructureDefinition', 'keyword', elem.keywordList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('fhirVersion') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeId(this, 'StructureDefinition', 'fhirVersion', elem.fhirVersionElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('mapping') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.mappingList.Count - 1 do
       ComposeStructureDefinitionMapping(this, 'StructureDefinition', 'mapping', elem.mappingList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('kind') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnum(this, 'StructureDefinition', 'kind', elem.KindElement, CODES_TFhirStructureDefinitionKindEnum, SYSTEMS_TFhirStructureDefinitionKindEnum, false, -1);{x.d4}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('abstract') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeBoolean(this, 'StructureDefinition', 'abstract', elem.abstractElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('contextType') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnum(this, 'StructureDefinition', 'contextType', elem.ContextTypeElement, CODES_TFhirExtensionContextEnum, SYSTEMS_TFhirExtensionContextEnum, false, -1);{x.d4}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('context') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.contextList.Count - 1 do
       ComposeString(this, 'StructureDefinition', 'context', elem.contextList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('contextInvariant') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.contextInvariantList.Count - 1 do
       ComposeString(this, 'StructureDefinition', 'contextInvariant', elem.contextInvariantList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('type_') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeCode(this, 'StructureDefinition', 'type', elem.type_Element, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('baseDefinition') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeUri(this, 'StructureDefinition', 'baseDefinition', elem.baseDefinitionElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('derivation') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnum(this, 'StructureDefinition', 'derivation', elem.DerivationElement, CODES_TFhirTypeDerivationRuleEnum, SYSTEMS_TFhirTypeDerivationRuleEnum, false, -1);{x.d4}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('snapshot') and (SummaryOption in [soFull, soData]) then
     ComposeStructureDefinitionSnapshot(this, 'StructureDefinition', 'snapshot', elem.snapshotElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('differential') and (SummaryOption in [soFull, soData]) then
     ComposeStructureDefinitionDifferential(this, 'StructureDefinition', 'differential', elem.differentialElement, false, -1);{x.2f}
 end;
 
@@ -31829,47 +31829,47 @@ begin
       this.addPredicate('a', 'fhir:StructureMap'); {z}
   end;
   composeDomainResource(this, '', name, elem, false, index);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('url') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeUri(this, 'StructureMap', 'url', elem.urlElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('identifier') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.identifierList.Count - 1 do
       ComposeIdentifier(this, 'StructureMap', 'identifier', elem.identifierList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('version') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeString(this, 'StructureMap', 'version', elem.versionElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('name') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeString(this, 'StructureMap', 'name', elem.nameElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('title') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeString(this, 'StructureMap', 'title', elem.titleElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('status') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnum(this, 'StructureMap', 'status', elem.StatusElement, CODES_TFhirPublicationStatusEnum, SYSTEMS_TFhirPublicationStatusEnum, false, -1);{x.d4}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('experimental') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeBoolean(this, 'StructureMap', 'experimental', elem.experimentalElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('date') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeDateTime(this, 'StructureMap', 'date', elem.dateElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('publisher') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeString(this, 'StructureMap', 'publisher', elem.publisherElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('contact') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.contactList.Count - 1 do
       ComposeContactDetail(this, 'StructureMap', 'contact', elem.contactList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('description') and (SummaryOption in [soFull, soData]) then
     ComposeMarkdown(this, 'StructureMap', 'description', elem.descriptionElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('useContext') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.useContextList.Count - 1 do
       ComposeUsageContext(this, 'StructureMap', 'useContext', elem.useContextList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('jurisdiction') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.jurisdictionList.Count - 1 do
       ComposeCodeableConcept(this, 'StructureMap', 'jurisdiction', elem.jurisdictionList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('purpose') and (SummaryOption in [soFull, soData]) then
     ComposeMarkdown(this, 'StructureMap', 'purpose', elem.purposeElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('copyright') and (SummaryOption in [soFull, soData]) then
     ComposeMarkdown(this, 'StructureMap', 'copyright', elem.copyrightElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('structure') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.structureList.Count - 1 do
       ComposeStructureMapStructure(this, 'StructureMap', 'structure', elem.structureList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('import') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.importList.Count - 1 do
       ComposeUri(this, 'StructureMap', 'import', elem.importList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('group') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.groupList.Count - 1 do
       ComposeStructureMapGroup(this, 'StructureMap', 'group', elem.groupList[i], false, i);{x.d3}
 end;
@@ -31974,22 +31974,22 @@ begin
       this.addPredicate('a', 'fhir:Subscription'); {z}
   end;
   composeDomainResource(this, '', name, elem, false, index);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('status') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnum(this, 'Subscription', 'status', elem.StatusElement, CODES_TFhirSubscriptionStatusEnum, SYSTEMS_TFhirSubscriptionStatusEnum, false, -1);{x.d4}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('contact') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.contactList.Count - 1 do
       ComposeContactPoint(this, 'Subscription', 'contact', elem.contactList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('end_') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeInstant(this, 'Subscription', 'end', elem.end_Element, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('reason') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeString(this, 'Subscription', 'reason', elem.reasonElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('criteria') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeString(this, 'Subscription', 'criteria', elem.criteriaElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('error') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeString(this, 'Subscription', 'error', elem.errorElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('channel') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeSubscriptionChannel(this, 'Subscription', 'channel', elem.channelElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('tag') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.tagList.Count - 1 do
       ComposeCoding(this, 'Subscription', 'tag', elem.tagList[i], false, i);{x.d3}
 end;
@@ -32135,22 +32135,22 @@ begin
       this.addPredicate('a', 'fhir:Substance'); {z}
   end;
   composeDomainResource(this, '', name, elem, false, index);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('identifier') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.identifierList.Count - 1 do
       ComposeIdentifier(this, 'Substance', 'identifier', elem.identifierList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('status') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnum(this, 'Substance', 'status', elem.StatusElement, CODES_TFhirSubstanceStatusEnum, SYSTEMS_TFhirSubstanceStatusEnum, false, -1);{x.d4}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('category') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.categoryList.Count - 1 do
       ComposeCodeableConcept(this, 'Substance', 'category', elem.categoryList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('code') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeCodeableConcept(this, 'Substance', 'code', elem.codeElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('description') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeString(this, 'Substance', 'description', elem.descriptionElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('instance') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.instanceList.Count - 1 do
       ComposeSubstanceInstance(this, 'Substance', 'instance', elem.instanceList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('ingredient') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.ingredientList.Count - 1 do
       ComposeSubstanceIngredient(this, 'Substance', 'ingredient', elem.ingredientList[i], false, i);{x.d3}
 end;
@@ -32260,21 +32260,21 @@ begin
       this.addPredicate('a', 'fhir:SupplyDelivery'); {z}
   end;
   composeDomainResource(this, '', name, elem, false, index);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('identifier') and (SummaryOption in [soFull, soData]) then
     ComposeIdentifier(this, 'SupplyDelivery', 'identifier', elem.identifierElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('basedOn') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.basedOnList.Count - 1 do
       ComposeReference{TFhirSupplyRequest}(this, 'SupplyDelivery', 'basedOn', elem.basedOnList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('partOf') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.partOfList.Count - 1 do
       ComposeReference{Resource}(this, 'SupplyDelivery', 'partOf', elem.partOfList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('status') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnum(this, 'SupplyDelivery', 'status', elem.StatusElement, CODES_TFhirSupplydeliveryStatusEnum, SYSTEMS_TFhirSupplydeliveryStatusEnum, false, -1);{x.d4}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('patient') and (SummaryOption in [soFull, soData]) then
     ComposeReference{TFhirPatient}(this, 'SupplyDelivery', 'patient', elem.patientElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('type_') and (SummaryOption in [soFull, soData]) then
     ComposeCodeableConcept(this, 'SupplyDelivery', 'type', elem.type_Element, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('suppliedItem') and (SummaryOption in [soFull, soData]) then
     ComposeSupplyDeliverySuppliedItem(this, 'SupplyDelivery', 'suppliedItem', elem.suppliedItemElement, false, -1);{x.2f}
   if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.occurrence is TFhirPeriod) {6} then
     ComposePeriod(this, 'SupplyDelivery', 'occurrencePeriod', TFhirPeriod(elem.occurrence), false, -1){x.d9}
@@ -32282,11 +32282,11 @@ begin
     ComposeTiming(this, 'SupplyDelivery', 'occurrenceTiming', TFhirTiming(elem.occurrence), false, -1){x.d9}
   else if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.occurrence is TFhirDateTime) {6} then
     ComposeDateTime(this, 'SupplyDelivery', 'occurrenceDateTime', TFhirDateTime(elem.occurrence), false, -1);{x.d9}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('supplier') and (SummaryOption in [soFull, soData]) then
     ComposeReference{Resource}(this, 'SupplyDelivery', 'supplier', elem.supplierElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('destination') and (SummaryOption in [soFull, soData]) then
     ComposeReference{TFhirLocation}(this, 'SupplyDelivery', 'destination', elem.destinationElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('receiver') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.receiverList.Count - 1 do
       ComposeReference{TFhirPractitioner}(this, 'SupplyDelivery', 'receiver', elem.receiverList[i], false, i);{x.d3}
 end;
@@ -32439,15 +32439,15 @@ begin
       this.addPredicate('a', 'fhir:SupplyRequest'); {z}
   end;
   composeDomainResource(this, '', name, elem, false, index);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('identifier') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeIdentifier(this, 'SupplyRequest', 'identifier', elem.identifierElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('status') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnum(this, 'SupplyRequest', 'status', elem.StatusElement, CODES_TFhirSupplyrequestStatusEnum, SYSTEMS_TFhirSupplyrequestStatusEnum, false, -1);{x.d4}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('category') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeCodeableConcept(this, 'SupplyRequest', 'category', elem.categoryElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('priority') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnum(this, 'SupplyRequest', 'priority', elem.PriorityElement, CODES_TFhirRequestPriorityEnum, SYSTEMS_TFhirRequestPriorityEnum, false, -1);{x.d4}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('orderedItem') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeSupplyRequestOrderedItem(this, 'SupplyRequest', 'orderedItem', elem.orderedItemElement, false, -1);{x.2f}
   if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.occurrence is TFhirPeriod) {6} then
     ComposePeriod(this, 'SupplyRequest', 'occurrencePeriod', TFhirPeriod(elem.occurrence), false, -1){x.d9}
@@ -32455,20 +32455,20 @@ begin
     ComposeTiming(this, 'SupplyRequest', 'occurrenceTiming', TFhirTiming(elem.occurrence), false, -1){x.d9}
   else if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.occurrence is TFhirDateTime) {6} then
     ComposeDateTime(this, 'SupplyRequest', 'occurrenceDateTime', TFhirDateTime(elem.occurrence), false, -1);{x.d9}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('authoredOn') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeDateTime(this, 'SupplyRequest', 'authoredOn', elem.authoredOnElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('requester') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeSupplyRequestRequester(this, 'SupplyRequest', 'requester', elem.requesterElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('supplier') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.supplierList.Count - 1 do
       ComposeReference{TFhirOrganization}(this, 'SupplyRequest', 'supplier', elem.supplierList[i], false, i);{x.d3}
   if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.reason is TFhirCodeableConcept) {6} then
     ComposeCodeableConcept(this, 'SupplyRequest', 'reasonCodeableConcept', TFhirCodeableConcept(elem.reason), false, -1){x.d9}
   else if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.reason is TFhirReference) {2} then
     ComposeReference(this, 'SupplyRequest', 'reasonReference', TFhirReference(elem.reason), false,-1);{x.d8}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('deliverFrom') and (SummaryOption in [soFull, soData]) then
     ComposeReference{Resource}(this, 'SupplyRequest', 'deliverFrom', elem.deliverFromElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('deliverTo') and (SummaryOption in [soFull, soData]) then
     ComposeReference{Resource}(this, 'SupplyRequest', 'deliverTo', elem.deliverToElement, false, -1);{x.2f}
 end;
 
@@ -33022,68 +33022,68 @@ begin
       this.addPredicate('a', 'fhir:Task'); {z}
   end;
   composeDomainResource(this, '', name, elem, false, index);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('identifier') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.identifierList.Count - 1 do
       ComposeIdentifier(this, 'Task', 'identifier', elem.identifierList[i], false, i);{x.d3}
   if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.definition is TFhirReference) {2} then
     ComposeReference(this, 'Task', 'definitionReference', TFhirReference(elem.definition), false,-1){x.d8}
   else if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.definition is TFhirUri) {6} then
     ComposeUri(this, 'Task', 'definitionUri', TFhirUri(elem.definition), false, -1);{x.d9}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('basedOn') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.basedOnList.Count - 1 do
       ComposeReference{TFhirReference}(this, 'Task', 'basedOn', elem.basedOnList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('groupIdentifier') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeIdentifier(this, 'Task', 'groupIdentifier', elem.groupIdentifierElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('partOf') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.partOfList.Count - 1 do
       ComposeReference{TFhirTask}(this, 'Task', 'partOf', elem.partOfList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('status') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnum(this, 'Task', 'status', elem.StatusElement, CODES_TFhirTaskStatusEnum, SYSTEMS_TFhirTaskStatusEnum, false, -1);{x.d4}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('statusReason') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeCodeableConcept(this, 'Task', 'statusReason', elem.statusReasonElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('businessStatus') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeCodeableConcept(this, 'Task', 'businessStatus', elem.businessStatusElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('intent') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnum(this, 'Task', 'intent', elem.IntentElement, CODES_TFhirRequestIntentEnum, SYSTEMS_TFhirRequestIntentEnum, false, -1);{x.d4}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('priority') and (SummaryOption in [soFull, soData]) then
      ComposeEnum(this, 'Task', 'priority', elem.PriorityElement, CODES_TFhirRequestPriorityEnum, SYSTEMS_TFhirRequestPriorityEnum, false, -1);{x.d4}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('code') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeCodeableConcept(this, 'Task', 'code', elem.codeElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('description') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeString(this, 'Task', 'description', elem.descriptionElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('focus') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{TFhirReference}(this, 'Task', 'focus', elem.focusElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('for_') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{TFhirReference}(this, 'Task', 'for', elem.for_Element, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('context') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{Resource}(this, 'Task', 'context', elem.contextElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('executionPeriod') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposePeriod(this, 'Task', 'executionPeriod', elem.executionPeriodElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('authoredOn') and (SummaryOption in [soFull, soData]) then
     ComposeDateTime(this, 'Task', 'authoredOn', elem.authoredOnElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('lastModified') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeDateTime(this, 'Task', 'lastModified', elem.lastModifiedElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('requester') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeTaskRequester(this, 'Task', 'requester', elem.requesterElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('performerType') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.performerTypeList.Count - 1 do
       ComposeCodeableConcept(this, 'Task', 'performerType', elem.performerTypeList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('owner') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{Resource}(this, 'Task', 'owner', elem.ownerElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('reason') and (SummaryOption in [soFull, soData]) then
     ComposeCodeableConcept(this, 'Task', 'reason', elem.reasonElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('note') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.noteList.Count - 1 do
       ComposeAnnotation(this, 'Task', 'note', elem.noteList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('relevantHistory') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.relevantHistoryList.Count - 1 do
       ComposeReference{TFhirProvenance}(this, 'Task', 'relevantHistory', elem.relevantHistoryList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('restriction') and (SummaryOption in [soFull, soData]) then
     ComposeTaskRestriction(this, 'Task', 'restriction', elem.restrictionElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('input') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.inputList.Count - 1 do
       ComposeTaskInput(this, 'Task', 'input', elem.inputList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('output') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.outputList.Count - 1 do
       ComposeTaskOutput(this, 'Task', 'output', elem.outputList[i], false, i);{x.d3}
 end;
@@ -33527,31 +33527,31 @@ begin
       this.addPredicate('a', 'fhir:TestReport'); {z}
   end;
   composeDomainResource(this, '', name, elem, false, index);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('identifier') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeIdentifier(this, 'TestReport', 'identifier', elem.identifierElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('name') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeString(this, 'TestReport', 'name', elem.nameElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('status') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnum(this, 'TestReport', 'status', elem.StatusElement, CODES_TFhirReportStatusCodesEnum, SYSTEMS_TFhirReportStatusCodesEnum, false, -1);{x.d4}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('testScript') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{TFhirTestScript}(this, 'TestReport', 'testScript', elem.testScriptElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('result') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnum(this, 'TestReport', 'result', elem.ResultElement, CODES_TFhirReportResultCodesEnum, SYSTEMS_TFhirReportResultCodesEnum, false, -1);{x.d4}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('score') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeDecimal(this, 'TestReport', 'score', elem.scoreElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('tester') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeString(this, 'TestReport', 'tester', elem.testerElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('issued') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeDateTime(this, 'TestReport', 'issued', elem.issuedElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('participant') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.participantList.Count - 1 do
       ComposeTestReportParticipant(this, 'TestReport', 'participant', elem.participantList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('setup') and (SummaryOption in [soFull, soData]) then
     ComposeTestReportSetup(this, 'TestReport', 'setup', elem.setupElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('test') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.testList.Count - 1 do
       ComposeTestReportTest(this, 'TestReport', 'test', elem.testList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('teardown') and (SummaryOption in [soFull, soData]) then
     ComposeTestReportTeardown(this, 'TestReport', 'teardown', elem.teardownElement, false, -1);{x.2f}
 end;
 
@@ -34898,68 +34898,68 @@ begin
       this.addPredicate('a', 'fhir:TestScript'); {z}
   end;
   composeDomainResource(this, '', name, elem, false, index);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('url') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeUri(this, 'TestScript', 'url', elem.urlElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('identifier') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeIdentifier(this, 'TestScript', 'identifier', elem.identifierElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('version') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeString(this, 'TestScript', 'version', elem.versionElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('name') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeString(this, 'TestScript', 'name', elem.nameElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('title') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeString(this, 'TestScript', 'title', elem.titleElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('status') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnum(this, 'TestScript', 'status', elem.StatusElement, CODES_TFhirPublicationStatusEnum, SYSTEMS_TFhirPublicationStatusEnum, false, -1);{x.d4}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('experimental') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeBoolean(this, 'TestScript', 'experimental', elem.experimentalElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('date') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeDateTime(this, 'TestScript', 'date', elem.dateElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('publisher') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeString(this, 'TestScript', 'publisher', elem.publisherElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('contact') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.contactList.Count - 1 do
       ComposeContactDetail(this, 'TestScript', 'contact', elem.contactList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('description') and (SummaryOption in [soFull, soData]) then
     ComposeMarkdown(this, 'TestScript', 'description', elem.descriptionElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('useContext') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.useContextList.Count - 1 do
       ComposeUsageContext(this, 'TestScript', 'useContext', elem.useContextList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('jurisdiction') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.jurisdictionList.Count - 1 do
       ComposeCodeableConcept(this, 'TestScript', 'jurisdiction', elem.jurisdictionList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('purpose') and (SummaryOption in [soFull, soData]) then
     ComposeMarkdown(this, 'TestScript', 'purpose', elem.purposeElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('copyright') and (SummaryOption in [soFull, soData]) then
     ComposeMarkdown(this, 'TestScript', 'copyright', elem.copyrightElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('origin') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.originList.Count - 1 do
       ComposeTestScriptOrigin(this, 'TestScript', 'origin', elem.originList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('destination') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.destinationList.Count - 1 do
       ComposeTestScriptDestination(this, 'TestScript', 'destination', elem.destinationList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('metadata') and (SummaryOption in [soFull, soData]) then
     ComposeTestScriptMetadata(this, 'TestScript', 'metadata', elem.metadataElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('fixture') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.fixtureList.Count - 1 do
       ComposeTestScriptFixture(this, 'TestScript', 'fixture', elem.fixtureList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('profile') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.profileList.Count - 1 do
       ComposeReference{TFhirReference}(this, 'TestScript', 'profile', elem.profileList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('variable') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.variableList.Count - 1 do
       ComposeTestScriptVariable(this, 'TestScript', 'variable', elem.variableList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('rule') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.ruleList.Count - 1 do
       ComposeTestScriptRule(this, 'TestScript', 'rule', elem.ruleList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('ruleset') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.rulesetList.Count - 1 do
       ComposeTestScriptRuleset(this, 'TestScript', 'ruleset', elem.rulesetList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('setup') and (SummaryOption in [soFull, soData]) then
     ComposeTestScriptSetup(this, 'TestScript', 'setup', elem.setupElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('test') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.testList.Count - 1 do
       ComposeTestScriptTest(this, 'TestScript', 'test', elem.testList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('teardown') and (SummaryOption in [soFull, soData]) then
     ComposeTestScriptTeardown(this, 'TestScript', 'teardown', elem.teardownElement, false, -1);{x.2f}
 end;
 
@@ -35464,47 +35464,47 @@ begin
       this.addPredicate('a', 'fhir:ValueSet'); {z}
   end;
   composeDomainResource(this, '', name, elem, false, index);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('url') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeUri(this, 'ValueSet', 'url', elem.urlElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('identifier') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.identifierList.Count - 1 do
       ComposeIdentifier(this, 'ValueSet', 'identifier', elem.identifierList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('version') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeString(this, 'ValueSet', 'version', elem.versionElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('name') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeString(this, 'ValueSet', 'name', elem.nameElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('title') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeString(this, 'ValueSet', 'title', elem.titleElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('status') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnum(this, 'ValueSet', 'status', elem.StatusElement, CODES_TFhirPublicationStatusEnum, SYSTEMS_TFhirPublicationStatusEnum, false, -1);{x.d4}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('experimental') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeBoolean(this, 'ValueSet', 'experimental', elem.experimentalElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('date') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeDateTime(this, 'ValueSet', 'date', elem.dateElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('publisher') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeString(this, 'ValueSet', 'publisher', elem.publisherElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('contact') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.contactList.Count - 1 do
       ComposeContactDetail(this, 'ValueSet', 'contact', elem.contactList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('description') and (SummaryOption in [soFull, soData]) then
     ComposeMarkdown(this, 'ValueSet', 'description', elem.descriptionElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('useContext') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.useContextList.Count - 1 do
       ComposeUsageContext(this, 'ValueSet', 'useContext', elem.useContextList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('jurisdiction') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.jurisdictionList.Count - 1 do
       ComposeCodeableConcept(this, 'ValueSet', 'jurisdiction', elem.jurisdictionList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('immutable') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeBoolean(this, 'ValueSet', 'immutable', elem.immutableElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('purpose') and (SummaryOption in [soFull, soData]) then
     ComposeMarkdown(this, 'ValueSet', 'purpose', elem.purposeElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('copyright') and (SummaryOption in [soFull, soData]) then
     ComposeMarkdown(this, 'ValueSet', 'copyright', elem.copyrightElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('extensible') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeBoolean(this, 'ValueSet', 'extensible', elem.extensibleElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('compose') and (SummaryOption in [soFull, soData]) then
     ComposeValueSetCompose(this, 'ValueSet', 'compose', elem.composeElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('expansion') and (SummaryOption in [soFull, soData]) then
     ComposeValueSetExpansion(this, 'ValueSet', 'expansion', elem.expansionElement, false, -1);{x.2f}
 end;
 
@@ -35644,24 +35644,24 @@ begin
       this.addPredicate('a', 'fhir:VisionPrescription'); {z}
   end;
   composeDomainResource(this, '', name, elem, false, index);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('identifier') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.identifierList.Count - 1 do
       ComposeIdentifier(this, 'VisionPrescription', 'identifier', elem.identifierList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and doCompose('status') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnum(this, 'VisionPrescription', 'status', elem.StatusElement, CODES_TFhirFmStatusEnum, SYSTEMS_TFhirFmStatusEnum, false, -1);{x.d4}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('patient') and (SummaryOption in [soFull, soData]) then
     ComposeReference{TFhirPatient}(this, 'VisionPrescription', 'patient', elem.patientElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('encounter') and (SummaryOption in [soFull, soData]) then
     ComposeReference{TFhirEncounter}(this, 'VisionPrescription', 'encounter', elem.encounterElement, false, -1);{x.2f}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('dateWritten') and (SummaryOption in [soFull, soData]) then
     ComposeDateTime(this, 'VisionPrescription', 'dateWritten', elem.dateWrittenElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('prescriber') and (SummaryOption in [soFull, soData]) then
     ComposeReference{TFhirPractitioner}(this, 'VisionPrescription', 'prescriber', elem.prescriberElement, false, -1);{x.2f}
   if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.reason is TFhirCodeableConcept) {6} then
     ComposeCodeableConcept(this, 'VisionPrescription', 'reasonCodeableConcept', TFhirCodeableConcept(elem.reason), false, -1){x.d9}
   else if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.reason is TFhirReference) {2} then
     ComposeReference(this, 'VisionPrescription', 'reasonReference', TFhirReference(elem.reason), false,-1);{x.d8}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and doCompose('dispense') and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.dispenseList.Count - 1 do
       ComposeVisionPrescriptionDispense(this, 'VisionPrescription', 'dispense', elem.dispenseList[i], false, i);{x.d3}
 end;

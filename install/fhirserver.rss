@@ -3,11 +3,15 @@
 	<channel>
 		<title>FHIRServer (reference server) Release history</title>
 		<link>http://www.healthintersections.com.au/FhirServer</link>
-		<item><title>FHIRServer release 1.0.181 2017-10-03</title>
+		<item><title>FHIRServer release 1.0.182 2017-10-17</title>
+			<link>http://www.healthintersections.com.au/FhirServer/fhirserver64-1.0.182.exe</link>
+			<description>2017-10-17 (v1.0.182): implement _elements + fix bugs in compartment handing</description>
+		</item>
+<item><title>FHIRServer release 1.0.181 2017-10-03</title>
 			<link>http://www.healthintersections.com.au/FhirServer/fhirserver64-1.0.181.exe</link>
 			<description>2017-10-03 (v1.0.181): fix bug in XML validation</description>
 		</item>
-<item><title>FHIRServer release 1.0.180 2017-09-23</title>
+		<item><title>FHIRServer release 1.0.180 2017-09-23</title>
 			<link>http://www.healthintersections.com.au/FhirServer/fhirserver64-1.0.180.exe</link>
 			<description>2017-09-23 (v1.0.180): support for backend services</description>
 		</item>

@@ -34,9 +34,9 @@ interface
 uses
   SysUtils,
   ParseMap, StringSupport, EncodeSupport,
-  AdvObjects,
+  AdvObjects, AdvGenerics,
   KDBManager,
-  FHIRSupport,
+  FHIRSupport, FHIRIndexBase,
   FHIRIndexManagers;
 
 Type
@@ -46,10 +46,8 @@ Type
   private
     // inputs
     Fparams: TParseMap;
-    FcompartmentId: string;
     FConnection: TKDBConnection;
     FbaseURL: string;
-    Fcompartments: string;
     Ftypekey: integer;
     Findexes: TFHIRIndexInformation;
     Flink_: string;
@@ -63,6 +61,8 @@ Type
     FFirstName : String;
     FFamilyName : String;
     FIdentifier : String;
+    FSessionCompartments: TAdvList<TFHIRCompartmentId>;
+    FCompartment: TFHIRCompartmentId;
 
 
     procedure SetConnection(const Value: TKDBConnection);
@@ -79,12 +79,14 @@ Type
     procedure runProbableSearch3;
     procedure runPossibleSearch1;
     procedure runPossibleSearch2;
+    procedure SetCompartment(const Value: TFHIRCompartmentId);
+    procedure SetSessionCompartments(const Value: TAdvList<TFHIRCompartmentId>);
   public
     Destructor Destroy; override;
 
     property typekey : integer read Ftypekey write Ftypekey;
-    property compartmentId : string read FcompartmentId write FcompartmentId;
-    property compartments : string read Fcompartments write Fcompartments;
+    property compartment : TFHIRCompartmentId read FCompartment write SetCompartment;
+    property sessionCompartments : TAdvList<TFHIRCompartmentId> read FSessionCompartments write SetSessionCompartments;
     property baseURL : string read FbaseURL write FbaseURL;
     property lang : string read Flang write Flang;
     property params : TParseMap read Fparams write Setparams;
@@ -118,6 +120,8 @@ end;
 
 destructor TMPISearchProcessor.Destroy;
 begin
+  FSessionCompartments.Free;
+  FCompartment.Free;
   FConnection.Free;
   Findexes.Free;
   Fsession.Free;
@@ -255,6 +259,12 @@ begin
   result := ' order by ResourceKey DESC';
 end;
 
+procedure TMPISearchProcessor.SetCompartment(const Value: TFHIRCompartmentId);
+begin
+  FCompartment.Free;
+  FCompartment := Value;
+end;
+
 procedure TMPISearchProcessor.SetConnection(const Value: TKDBConnection);
 begin
   FConnection.Free;
@@ -277,6 +287,12 @@ procedure TMPISearchProcessor.Setsession(const Value: TFHIRSession);
 begin
   Fsession.Free;
   Fsession := Value;
+end;
+
+procedure TMPISearchProcessor.SetSessionCompartments(const Value: TAdvList<TFHIRCompartmentId>);
+begin
+  FSessionCompartments.Free;
+  FSessionCompartments := Value;
 end;
 
 end.

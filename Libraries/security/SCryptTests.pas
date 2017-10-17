@@ -3,6 +3,33 @@ unit SCryptTests;
 {
 see https://github.com/JackTrapper/scrypt-for-delphi
 }
+{
+Copyright (c) 2017+, Health Intersections Pty Ltd (http://www.healthintersections.com.au)
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without modification,
+are permitted provided that the following conditions are met:
+
+ * Redistributions of source code must retain the above copyright notice, this
+   list of conditions and the following disclaimer.
+ * Redistributions in binary form must reproduce the above copyright notice,
+   this list of conditions and the following disclaimer in the documentation
+   and/or other materials provided with the distribution.
+ * Neither the name of HL7 nor the names of its contributors may be used to
+   endorse or promote products derived from this software without specific
+   prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS 'AS IS' AND
+ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+POSSIBILITY OF SUCH DAMAGE.
+}
 interface
 
 uses
@@ -593,12 +620,12 @@ begin
    FillChar(buff[0], Length(buff) , 0);
 	tb(buff[0], Length(buff), '541b3e9d aa09b20b f85fa273 e5cbd3e8 0185aa4e c298e765 db87742b 70138a53');
 
-	//#8) 1000 bytes of 0x41 ‘A’
+	//#8) 1000 bytes of 0x41 ï¿½Aï¿½
 	SetLength(buff, 1000);
    FillChar(buff[0], Length(buff), $41);
 	tb(buff[0], Length(buff), 'c2e68682 3489ced2 017f6059 b8b23931 8b6364f6 dcd835d0 a519105a 1eadd6e4');
 
-	//#9) 1005 bytes of 0x55 ‘U’
+	//#9) 1005 bytes of 0x55 ï¿½Uï¿½
 	SetLength(buff, 1005);
    FillChar(buff[0], Length(buff), $55);
 	tb(buff[0], Length(buff), 'f4d62dde c0f3dd90 ea1380fa 16a5ff8d c4c54b21 740650f2 4afc4120 903552b0');
@@ -620,7 +647,7 @@ begin
       FreeMem(data);
    end;
 
-	//#11) 0x20000000 (536,870,912) bytes of 0x5a ‘Z’
+	//#11) 0x20000000 (536,870,912) bytes of 0x5a ï¿½Zï¿½
 	GetMem(data, $20000000);
 	try
 	   FillChar(data^, $20000000, $5a);
@@ -638,7 +665,7 @@ begin
 		FreeMem(data);
    end;
 
-	//#13) 0x6000003e (1,610,612,798) bytes of 0x42 ‘B’
+	//#13) 0x6000003e (1,610,612,798) bytes of 0x42 ï¿½Bï¿½
 	GetMem(data, $6000003e);
 	try
 	   FillChar(data^, $6000003e, $420);

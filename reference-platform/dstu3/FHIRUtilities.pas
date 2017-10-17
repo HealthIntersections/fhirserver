@@ -249,7 +249,15 @@ type
     function getExtensionString(url : String) : String; overload;
     function getExtensionString(url : String; index : integer) : String; overload;
     procedure removeExtension(url : String);
+    procedure setExtension(url : String; t : TFHIRType);
     procedure setExtensionString(url, value : String);
+    procedure setExtensionInteger(url, value : String);
+    procedure setExtensionDecimal(url, value : String);
+    procedure setExtensionURI(url, value : String);
+    procedure setExtensionDate(url, value : String);
+    procedure setExtensionDateTime(url, value : String);
+    procedure setExtensionTime(url, value : String);
+    procedure setExtensionCode(url, value : String);
   end;
 
   TFHIRBackboneElementHelper = class helper for TFHIRBackboneElement
@@ -265,10 +273,15 @@ type
   end;
 
   TFhirQuantityHelper = class helper for TFhirQuantity
+  private
+    function GetEditString: String;
+    procedure SetEditString(vs: String);
   public
     function asDuration : TDateTime;
     class function fromDuration(v : TDateTime) : TFhirQuantity;
     class function fromPair(v : Double; units : String) : TFhirQuantity;
+    class function fromEdit(s : String) : TFhirQuantity;
+    property editString : String read GetEditString write SetEditString;
   end;
 
   TFHIRResourceHelper = class helper for TFHIRResource
@@ -374,8 +387,14 @@ type
   end;
 
   TFhirCodingHelper = class helper for TFhirCoding
+  private
+    function GetEditString: String;
+    procedure SetEditString(const Value: String);
   public
     Constructor Create(system, code : String); overload;
+
+    class function fromEdit(s : String) : TFhirCoding;
+    property editString : String read GetEditString write SetEditString;
   end;
 
   TFhirHumanNameHelper = class helper for TFhirHumanName
@@ -585,11 +604,15 @@ type
   end;
 
   TFhirReferenceHelper = class helper for TFhirReference
+  private
+    function GetEditString: String;
+    procedure SetEditString(const Value: String);
   public
     Constructor Create(ref : String); overload;
     function isRelative : boolean;
     function getType : String;
     function getId : String;
+    property editString : String read GetEditString write SetEditString;
   end;
 
   TFhirCapabilityStatementRestResourceSearchParamHelper = class helper for TFhirCapabilityStatementRestResourceSearchParam
@@ -630,6 +653,23 @@ function gen(obj : TFhirTiming) : String; overload;
 function gen(obj : TFhirUsageContext) : String; overload;
 
 function gen(t : TFhirType):String; overload;
+
+//procedure degen(coding : TFHIRCoding; value:String); overload;
+//procedure degen(code : TFhirCodeableConcept; value:String); overload;
+//procedure degen(ref : TFhirReference; value : String); overload;
+//procedure degen(id : TFhirIdentifier; value : String); overload;
+//procedure degen(obj : TFhirAnnotation; value : String); overload;
+//procedure degen(obj : TFhirAttachment; value : String); overload;
+//procedure degen(obj : TFhirQuantity; value : String); overload;
+//procedure degen(obj : TFhirRange; value : String); overload;
+//procedure degen(obj : TFhirPeriod; value : String); overload;
+//procedure degen(obj : TFhirRatio; value : String); overload;
+//procedure degen(obj : TFhirSampledData; value : String); overload;
+//procedure degen(obj : TFhirSignature; value : String); overload;
+//procedure degen(obj : TFhirAddress; value : String); overload;
+//procedure degen(obj : TFhirContactPoint; value : String); overload;
+//procedure degen(obj : TFhirTiming; value : String); overload;
+//procedure degen(obj : TFhirUsageContext; value : String); overload;
 
 function compareValues(e1, e2 : TFHIRObjectList; allowNull : boolean) : boolean; overload;
 function compareValues(e1, e2 : TFHIRPrimitiveType; allowNull : boolean) : boolean; overload;
@@ -2145,6 +2185,66 @@ begin
 
 end;
 
+procedure TFHIRElementHelper.setExtension(url: String; t: TFHIRType);
+var
+  ext : TFhirExtension;
+begin
+  removeExtension(url);
+  ext := self.ExtensionList.Append;
+  ext.url := url;
+  ext.value := t.link;
+end;
+
+procedure TFHIRElementHelper.setExtensionCode(url, value: String);
+var
+  ext : TFhirExtension;
+begin
+  removeExtension(url);
+  ext := self.ExtensionList.Append;
+  ext.url := url;
+  ext.value := TFhirCode.Create(value);
+end;
+
+procedure TFHIRElementHelper.setExtensionDate(url, value: String);
+var
+  ext : TFhirExtension;
+begin
+  removeExtension(url);
+  ext := self.ExtensionList.Append;
+  ext.url := url;
+  ext.value := TFhirDate.Create(TDateTimeEx.fromXML(value));
+end;
+
+procedure TFHIRElementHelper.setExtensionDateTime(url, value: String);
+var
+  ext : TFhirExtension;
+begin
+  removeExtension(url);
+  ext := self.ExtensionList.Append;
+  ext.url := url;
+  ext.value := TFhirDateTime.Create(TDateTimeEx.fromXML(value));
+end;
+
+procedure TFHIRElementHelper.setExtensionDecimal(url, value: String);
+var
+  ext : TFhirExtension;
+begin
+  removeExtension(url);
+  ext := self.ExtensionList.Append;
+  ext.url := url;
+  ext.value := TFhirDecimal.Create(value);
+end;
+
+procedure TFHIRElementHelper.setExtensionInteger(url, value: String);
+var
+  ext : TFhirExtension;
+begin
+  removeExtension(url);
+  ext := self.ExtensionList.Append;
+  ext.url := url;
+  ext.value := TFhirInteger.Create(value);
+end;
+
 procedure TFHIRElementHelper.setExtensionString(url, value: String);
 var
   ext : TFhirExtension;
@@ -2153,6 +2253,26 @@ begin
   ext := self.ExtensionList.Append;
   ext.url := url;
   ext.value := TFhirString.Create(value);
+end;
+
+procedure TFHIRElementHelper.setExtensionTime(url, value: String);
+var
+  ext : TFhirExtension;
+begin
+  removeExtension(url);
+  ext := self.ExtensionList.Append;
+  ext.url := url;
+  ext.value := TFhirTime.Create(value);
+end;
+
+procedure TFHIRElementHelper.setExtensionURI(url, value: String);
+var
+  ext : TFhirExtension;
+begin
+  removeExtension(url);
+  ext := self.ExtensionList.Append;
+  ext.url := url;
+  ext.value := TFhirUri.Create(value);
 end;
 
 function TFHIRElementHelper.getExtensionCount(url: String): Integer;
@@ -4373,6 +4493,167 @@ begin
   self.code := code;
 end;
 
+class function TFhirCodingHelper.fromEdit(s: String): TFhirCoding;
+begin
+  result := TFhirCoding.Create;
+  try
+    result.editString := s;
+    result.Link;
+  finally
+    result.Free;
+  end;
+end;
+
+function TFhirCodingHelper.GetEditString: String;
+begin
+  if system = 'http://snomed.info/sct' then
+    result := 'sct:'+code
+  else if system = 'http://loinc.org' then
+    result := 'loinc:'+code
+  else if system = 'http://loinc.org' then
+    result := 'loinc:'+code
+
+  else if system = 'http://snomed.info/sct' then
+    result := 'sct:'+code
+  else if system = 'http://www.nlm.nih.gov/research/umls/rxnorm' then
+    result := 'rxnorm:'+code
+  else if system = 'http://loinc.org' then
+    result := 'loinc:'+code
+  else if system = 'http://unitsofmeasure.org' then
+    result := 'ucum:'+code
+  else if system = 'http://ncimeta.nci.nih.gov' then
+    result := 'nci:'+code
+  else if system = 'http://www.ama-assn.org/go/cpt' then
+    result := 'cpt:'+code
+  else if system = 'http://hl7.org/fhir/ndfrt' then
+    result := 'ndfrt:'+code
+  else if system = 'http://fdasis.nlm.nih.gov' then
+    result := 'unii:'+code
+  else if system = 'http://hl7.org/fhir/sid/ndc' then
+    result := 'ndc:'+code
+  else if system = 'http://hl7.org/fhir/sid/cvx' then
+    result := 'cvx:'+code
+  else if system = 'urn:iso:std:iso:3166' then
+    result := 'iso3166:'+code
+  else if system = 'http://www.radlex.org' then
+    result := 'radlex:'+code
+  else if system = 'http://hl7.org/fhir/sid/icf-nl' then
+    result := 'icf:'+code
+  else if system = 'http://www.whocc.no/atc' then
+    result := 'atcc:'+code
+  else if system = 'urn:ietf:bcp:47' then
+    result := 'lang:'+code
+  else if system = 'urn:iso:std:iso:11073:10101' then
+    result := 'mdc:'+code
+  else if system = 'http://dicom.nema.org/resources/ontology/DCM' then
+    result := 'dicom:'+code
+  else if system = 'http://hl7.org/fhir/sid/ca-hc-din' then
+    result := 'ca-din:'+code
+  else if system = 'http://nucc.org/provider-taxonomy' then
+    result := 'nucc:'+code
+  else if system = 'http://www.genenames.org' then
+    result := 'hgnc:'+code
+  else if system = 'http://www.ensembl.org' then
+    result := 'ensembl:'+code
+  else if system = 'http://www.ncbi.nlm.nih.gov/nuccore' then
+    result := 'refseq:'+code
+  else if system = 'http://www.ncbi.nlm.nih.gov/clinvar' then
+    result := 'clinvar:'+code
+  else if system = 'http://sequenceontology.org' then
+    result := 'seqont:'+code
+  else if system = 'http://www.hgvs.org/mutnomen' then
+    result := 'hgvs:'+code
+  else if system = 'http://www.ncbi.nlm.nih.gov/projects/SNP' then
+    result := 'dbsnp:'+code
+  else if system = 'http://cancer.sanger.ac.uk/cancergenome/projects/cosmic' then
+    result := 'cosmic:'+code
+  else if system = 'http://www.lrg-sequence.org' then
+    result := 'lrg:'+code
+  else if system = 'http://www.omim.org' then
+    result := 'omim:'+code
+  else if system = 'http://www.ncbi.nlm.nih.gov/pubmed' then
+    result := 'pubmed:'+code
+  else if system = 'http://www.pharmgkb.org' then
+    result := 'pharmgkb:'+code
+  else if system = 'http://clinicaltrials.gov' then
+    result := 'clintrial:'+code
+  else if system = 'http://www.ebi.ac.uk/ipd/imgt/hla/' then
+    result := 'hla:'+code
+  else if system.StartsWith('http://hl7.org/fhir/v2/') then
+    result := 'v2-'+system.Substring(23)+':'+code
+  else if system.StartsWith('http://hl7.org/fhir/v3/') then
+    result := 'v3-'+system.Substring(23)+':'+code
+  else
+    result := system+'|'+code;
+end;
+
+
+procedure TFhirCodingHelper.SetEditString(const Value: String);
+var
+  s, c : String;
+  function match(abbrev, sys : String) : boolean;
+  begin
+    result := s = abbrev+':';
+    if result then
+    begin
+      system := sys;
+      code := c;
+    end;
+  end;
+begin
+  StringSplit(value, ':', s, c);
+  if not match('sct', 'http://snomed.info/sct') then
+  if not match('rxnorm', 'http://www.nlm.nih.gov/research/umls/rxnorm') then
+  if not match('loinc', 'http://loinc.org') then
+  if not match('ucum', 'http://unitsofmeasure.org') then
+  if not match('nci', 'http://ncimeta.nci.nih.gov') then
+  if not match('cpt', 'http://www.ama-assn.org/go/cpt') then
+  if not match('ndfrt', 'http://hl7.org/fhir/ndfrt') then
+  if not match('unii', 'http://fdasis.nlm.nih.gov') then
+  if not match('ndc', 'http://hl7.org/fhir/sid/ndc') then
+  if not match('cvx', 'http://hl7.org/fhir/sid/cvx') then
+  if not match('iso3166', 'urn:iso:std:iso:3166') then
+  if not match('radlex', 'http://www.radlex.org') then
+  if not match('icf', 'http://hl7.org/fhir/sid/icf-nl') then
+  if not match('atcc', 'http://www.whocc.no/atc') then
+  if not match('lang', 'urn:ietf:bcp:47') then
+  if not match('mdc', 'urn:iso:std:iso:11073:10101') then
+  if not match('dicom', 'http://dicom.nema.org/resources/ontology/DCM') then
+  if not match('ca', 'din http://hl7.org/fhir/sid/ca-hc-din') then
+  if not match('nucc', 'http://nucc.org/provider-taxonomy') then
+  if not match('hgnc', 'http://www.genenames.org') then
+  if not match('ensembl', 'http://www.ensembl.org') then
+  if not match('refseq', 'http://www.ncbi.nlm.nih.gov/nuccore') then
+  if not match('clinvar', 'http://www.ncbi.nlm.nih.gov/clinvar') then
+  if not match('seqont', 'http://sequenceontology.org') then
+  if not match('hgvs', 'http://www.hgvs.org/mutnomen') then
+  if not match('dbsnp', 'http://www.ncbi.nlm.nih.gov/projects/SNP') then
+  if not match('cosmic', 'http://cancer.sanger.ac.uk/cancergenome/projects/cosmic') then
+  if not match('lrg', 'http://www.lrg-sequence.org') then
+  if not match('omim', 'http://www.omim.org') then
+  if not match('pubmed', 'http://www.ncbi.nlm.nih.gov/pubmed') then
+  if not match('pharmgkb', 'http://www.pharmgkb.org') then
+  if not match('clintrial', 'http://clinicaltrials.gov') then
+  if not match('hla', 'http://www.ebi.ac.uk/ipd/imgt/hla/') then
+
+  if s.StartsWith('v2-') then
+  begin
+    system := 'http://hl7.org/fhir/v2/'+s.Substring(3);
+    code := c;
+  end
+  else if s.StartsWith('v3-') then
+  begin
+    system := 'http://hl7.org/fhir/v3/'+s.Substring(3);
+    code := c;
+  end
+  else
+  begin
+    StringSplit(value, '|', s, c);
+    system := s;
+    code := c;
+  end;
+end;
+
 { TFhirTestScriptSetupActionOperationRequestHeaderListHelper }
 
 procedure TFhirTestScriptSetupActionOperationRequestHeaderListHelper.add(name, value: String);
@@ -4561,6 +4842,17 @@ begin
     result := fromPair(v / (DATETIME_MILLISECOND_ONE / 1000000000), 'ps');
 end;
 
+class function TFhirQuantityHelper.fromEdit(s: String): TFhirQuantity;
+begin
+  result := TFhirQuantity.Create;
+  try
+    result.editString := s;
+    result.Link;
+  finally
+    result.Free;
+  end;
+end;
+
 class function TFhirQuantityHelper.fromPair(v: Double; units: String): TFhirQuantity;
 begin
   result := TFhirQuantity.Create;
@@ -4570,6 +4862,70 @@ begin
     result.code := units;
   finally
     result.Free;
+  end;
+end;
+
+function TFhirQuantityHelper.GetEditString: String;
+begin
+  result := CODES_TFhirQuantityComparatorEnum[comparator]+value+' '+unit_;
+  if code <> '' then
+  begin
+    if system = 'http://snomed.info/sct' then
+      result := result+' [sct:'+code+']'
+    else if system <> 'http://unitsofmeasure.org' then
+      result := result+' ['+system+'|'+code+']'
+    else if code <> unit_ then
+      result := result +' ['+code+']';
+  end;
+end;
+
+procedure TFhirQuantityHelper.SetEditString(vs: String);
+var
+  v, u : String;
+  i : integer;
+begin
+  if StringArrayExistsSensitive(CODES_TFhirQuantityComparatorEnum, vs[1]) then
+  begin
+    comparator := TFhirQuantityComparatorEnum(StringArrayIndexOfSensitive(CODES_TFhirQuantityComparatorEnum, vs[1]));
+    vs := vs.Substring(1);
+  end;
+  if vs.Contains('[') then
+  begin
+    StringSplit(vs, '[', vs, u);
+    vs := vs.Trim;
+  end;
+  if vs.Contains(' ') then
+    StringSplit(vs, ' ', v, vs)
+  else
+  begin
+    i := StringFindEndOfNumber(vs, 1);
+    if i = 1 then
+      raise Exception.Create('Unable to parse quantity '+vs);
+    v := vs.Substring(0, i);
+    vs := vs.Substring(i);
+  end;
+  value := v;
+  unit_ := vs;
+  if u <> '' then
+  begin
+    if u.EndsWith(']') then
+      u := u.Substring(0, u.Length-1);
+    if u.StartsWith('sct:') then
+    begin
+      system := 'http://snomed.info/sct';
+      code := u.Substring(4);
+    end
+    else if u.Contains('|') then
+    begin
+      StringSplit(u, '|', u, v);
+      system := u;
+      code := v;
+    end
+    else
+    begin
+      system := 'http://unitsofmeasure.org';
+      code := u;
+    end;
   end;
 end;
 
@@ -4795,6 +5151,14 @@ begin
   reference := ref;
 end;
 
+function TFhirReferenceHelper.GetEditString: String;
+begin
+  if reference <> '' then
+    result := reference
+  else
+    result := '"'+display+'"';
+end;
+
 function TFhirReferenceHelper.getId: String;
 var
   parts : TArray<String>;
@@ -4828,6 +5192,16 @@ end;
 function TFhirReferenceHelper.isRelative: boolean;
 begin
   result := not (reference.startsWith('http:') or reference.startsWith('https:') or reference.startsWith('urn:uuid:') or reference.startsWith('urn:oid:'));
+end;
+
+procedure TFhirReferenceHelper.SetEditString(const Value: String);
+begin
+  if not value.StartsWith('"') then
+    reference := value
+  else if value.EndsWith('"') then
+    display := value.Substring(1, value.Length-2)
+  else
+    display := value.Substring(1, value.Length-1);
 end;
 
 function fileToResource(name : String; var format : TFHIRFormat) : TFhirResource;

@@ -104,7 +104,7 @@ uses
   FHIRParserXml,
   FHIRParserJson,
   FHIRParserBase in '..\support\FHIRParserBase.pas',
-  FHIRSupport in 'FHIRSupport.pas',
+  FHIRSupport in '..\support\FHIRSupport.pas',
   ParseMap in '..\support\ParseMap.pas',
   MsXmlParser in '..\support\MsXmlParser.pas',
   AdvMemories in '..\support\AdvMemories.pas',
@@ -150,7 +150,8 @@ uses
   AdvZipWriters in '..\support\AdvZipWriters.pas',
   SCIMObjects in '..\support\SCIMObjects.pas',
   FHIRSecurity in '..\support\FHIRSecurity.pas',
-  TurtleParser in '..\support\TurtleParser.pas';
+  TurtleParser in '..\support\TurtleParser.pas',
+  FHIRIndexBase in '..\support\FHIRIndexBase.pas';
 
 (*
 procedure SaveStringToFile(s : AnsiString; fn : String);

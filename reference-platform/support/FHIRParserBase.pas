@@ -212,8 +212,11 @@ Type
     FLang: String;
     FSummaryOption: TFHIRSummaryOption;
     FNoHeader: Boolean;
+    FElements : TStringList;
   protected
     FWorker : TFHIRWorkerContext;
+
+    function doCompose(name : String) : boolean;
 
     Procedure ComposeResource(xml : TXmlBuilder; oResource : TFhirResource; links : TFhirBundleLinkList = nil); overload; virtual;
 //    Procedure ComposeBinary(xml : TXmlBuilder; binary : TFhirBinary);
@@ -245,6 +248,7 @@ Type
     Property Lang : String read FLang write FLang;
     Property SummaryOption : TFHIRSummaryOption read FSummaryOption write FSummaryOption;
     property NoHeader : Boolean read FNoHeader write FNoHeader;
+    property ElementToCompose : TStringList read FElements;
   End;
 
   TFHIRComposerClass = class of TFHIRComposer;
@@ -2301,7 +2305,7 @@ end;
 
 class function TFHIRXhtmlComposer.Header(Session : TFhirSession; base, lang, version: String): String;
 var
-   id : String;
+   id : TFHIRCompartmentId;
    f : boolean;
 begin
   result :=
@@ -2331,20 +2335,20 @@ begin
       result := result +'User: [n/a]';
     if session.UserEvidence <> userAnonymous then
       result := result +'&nbsp; <a href="'+base+'/logout" title="Log Out"><img src="/logout.png"></a>';
-    if session.PatientList.Count > 0 then
+    if session.Compartments.Count > 0 then
     begin
-      if session.PatientList.Count = 1 then
-        result := result+'  &nbsp;'#13#10+'</div><div style="background-color: #e5e600; padding: 6px; color: black;"> This session limited to patient '
+      if session.Compartments.Count = 1 then
+        result := result+'  &nbsp;'#13#10+'</div><div style="background-color: #e5e600; padding: 6px; color: black;"> This session limited to '+CODES_TFhirResourceType[session.Compartments[0].Enum]+' '
       else
-        result := result+'  &nbsp;'#13#10+'</div><div style="background-color: #e5e600; padding: 6px; color: black;"> . This session limited to the following patients: ';
+        result := result+'  &nbsp;'#13#10+'</div><div style="background-color: #e5e600; padding: 6px; color: black;"> . This session limited to the following compartments: ';
       f := true;
-      for id in session.PatientList do
+      for id in session.Compartments do
       begin
         if f then
           f := false
         else
           result := result +', ';
-        result := result + id;
+        result := result + id.ToString;
       end;
     end;
   end;
@@ -2692,12 +2696,19 @@ begin
   inherited Create;
   FWorker := worker;
   FLang := lang;
+  FElements := TStringList.create;
 end;
 
 destructor TFHIRComposer.Destroy;
 begin
   Fworker.free;
+  FElements.Free;
   inherited;
+end;
+
+function TFHIRComposer.doCompose(name : String): boolean;
+begin
+  result := (FElements.count = 0) or (FElements.IndexOf(name) > -1);
 end;
 
 function TFHIRComposer.Extension: String;

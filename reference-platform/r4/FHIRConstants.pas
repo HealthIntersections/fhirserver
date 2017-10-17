@@ -41,7 +41,7 @@ This is the dstu4 version of the FHIR code
 
 interface
 
-// FHIR v3.1.0 generated 2017-09-05T11:38:55+10:00
+// FHIR v3.1.0 generated 2017-10-06T08:43:59+11:00
 
 uses
   SysUtils, Classes, StringSupport, DecimalSupport, AdvBuffers, DateSupport, FHIRBase, FHIRTypes, FHIRResources;
@@ -1025,11 +1025,11 @@ Type
     spDocumentManifest__security, {@enum.value "_security" spDocumentManifest__security Security Labels applied to this resource }
     spDocumentManifest__tag, {@enum.value "_tag" spDocumentManifest__tag Tags applied to this resource }
     spDocumentManifest__text, {@enum.value "_text" spDocumentManifest__text Search on the narrative of the resource }
-    spDocumentManifest_Author, {@enum.value "author" spDocumentManifest_Author Who and/or what authored the manifest }
-    spDocumentManifest_Contentref, {@enum.value "content-ref" spDocumentManifest_Contentref Contents of this set of documents }
+    spDocumentManifest_Agent, {@enum.value "agent" spDocumentManifest_Agent Who and/or what had an agent participation }
     spDocumentManifest_Created, {@enum.value "created" spDocumentManifest_Created When this document manifest created }
     spDocumentManifest_Description, {@enum.value "description" spDocumentManifest_Description Human-readable description (title) }
     spDocumentManifest_Identifier, {@enum.value "identifier" spDocumentManifest_Identifier Unique Identifier for the set of documents }
+    spDocumentManifest_Item, {@enum.value "item" spDocumentManifest_Item Items in manifest }
     spDocumentManifest_Patient, {@enum.value "patient" spDocumentManifest_Patient The subject of the set of documents }
     spDocumentManifest_Recipient, {@enum.value "recipient" spDocumentManifest_Recipient Intended to get notified about this set of documents }
     spDocumentManifest_Relatedid, {@enum.value "related-id" spDocumentManifest_Relatedid Identifiers of things that are related }
@@ -1053,18 +1053,19 @@ Type
     spDocumentReference__security, {@enum.value "_security" spDocumentReference__security Security Labels applied to this resource }
     spDocumentReference__tag, {@enum.value "_tag" spDocumentReference__tag Tags applied to this resource }
     spDocumentReference__text, {@enum.value "_text" spDocumentReference__text Search on the narrative of the resource }
+    spDocumentReference_Agent, {@enum.value "agent" spDocumentReference_Agent Who and/or what authored the document }
     spDocumentReference_Authenticator, {@enum.value "authenticator" spDocumentReference_Authenticator Who/what authenticated the document }
-    spDocumentReference_Author, {@enum.value "author" spDocumentReference_Author Who and/or what authored the document }
     spDocumentReference_Class, {@enum.value "class" spDocumentReference_Class Categorization of document }
+    spDocumentReference_Contenttype, {@enum.value "contenttype" spDocumentReference_Contenttype Mime type of the content, with charset etc. }
     spDocumentReference_Created, {@enum.value "created" spDocumentReference_Created Document creation time }
     spDocumentReference_Custodian, {@enum.value "custodian" spDocumentReference_Custodian Organization which maintains the document }
+    spDocumentReference_Date, {@enum.value "date" spDocumentReference_Date When this document reference was created }
     spDocumentReference_Description, {@enum.value "description" spDocumentReference_Description Human-readable description (title) }
     spDocumentReference_Encounter, {@enum.value "encounter" spDocumentReference_Encounter Context of the document  content }
     spDocumentReference_Event, {@enum.value "event" spDocumentReference_Event Main clinical acts documented }
     spDocumentReference_Facility, {@enum.value "facility" spDocumentReference_Facility Kind of facility where patient was seen }
     spDocumentReference_Format, {@enum.value "format" spDocumentReference_Format Format/content rules for the document }
     spDocumentReference_Identifier, {@enum.value "identifier" spDocumentReference_Identifier Master Version Specific Identifier }
-    spDocumentReference_Indexed, {@enum.value "indexed" spDocumentReference_Indexed When this document reference was created }
     spDocumentReference_Language, {@enum.value "language" spDocumentReference_Language Human language of the content (BCP-47) }
     spDocumentReference_Location, {@enum.value "location" spDocumentReference_Location Uri where the data can be found }
     spDocumentReference_Patient, {@enum.value "patient" spDocumentReference_Patient Who/what is the subject of the document }
@@ -1280,6 +1281,31 @@ Type
     spEventDefinition_Version); {@enum.value "version" spEventDefinition_Version The business version of the event definition }
 {$ENDIF}
 
+{$IFDEF FHIR_EXAMPLESCENARIO}
+  {@Enum TSearchParamsExampleScenario
+    Search Parameters for ExampleScenario
+  }
+  TSearchParamsExampleScenario = (
+    spExampleScenario__content, {@enum.value "_content" spExampleScenario__content Search on the entire content of the resource }
+    spExampleScenario__id, {@enum.value "_id" spExampleScenario__id Logical id of this artifact }
+    spExampleScenario__lastUpdated, {@enum.value "_lastUpdated" spExampleScenario__lastUpdated When the resource version last changed }
+    spExampleScenario__profile, {@enum.value "_profile" spExampleScenario__profile Profiles this resource claims to conform to }
+    spExampleScenario__query, {@enum.value "_query" spExampleScenario__query A custom search profile that describes a specific defined query operation }
+    spExampleScenario__security, {@enum.value "_security" spExampleScenario__security Security Labels applied to this resource }
+    spExampleScenario__tag, {@enum.value "_tag" spExampleScenario__tag Tags applied to this resource }
+    spExampleScenario__text, {@enum.value "_text" spExampleScenario__text Search on the narrative of the resource }
+    spExampleScenario_Date, {@enum.value "date" spExampleScenario_Date The example scenario publication date }
+    spExampleScenario_Description, {@enum.value "description" spExampleScenario_Description The description of the example scenario }
+    spExampleScenario_Identifier, {@enum.value "identifier" spExampleScenario_Identifier External identifier for the example scenario }
+    spExampleScenario_Jurisdiction, {@enum.value "jurisdiction" spExampleScenario_Jurisdiction Intended jurisdiction for the example scenario }
+    spExampleScenario_Name, {@enum.value "name" spExampleScenario_Name Computationally friendly name of the example scenario }
+    spExampleScenario_Publisher, {@enum.value "publisher" spExampleScenario_Publisher Name of the publisher of the example scenario }
+    spExampleScenario_Status, {@enum.value "status" spExampleScenario_Status The current status of the example scenario }
+    spExampleScenario_Title, {@enum.value "title" spExampleScenario_Title The human-friendly name of the example scenario }
+    spExampleScenario_Url, {@enum.value "url" spExampleScenario_Url The uri that identifies the example scenario }
+    spExampleScenario_Version); {@enum.value "version" spExampleScenario_Version The business version of the example scenario }
+{$ENDIF}
+
 {$IFDEF FHIR_EXPANSIONPROFILE}
   {@Enum TSearchParamsExpansionProfile
     Search Parameters for ExpansionProfile
@@ -1348,9 +1374,9 @@ Type
     spFamilyMemberHistory__text, {@enum.value "_text" spFamilyMemberHistory__text Search on the narrative of the resource }
     spFamilyMemberHistory_Code, {@enum.value "code" spFamilyMemberHistory_Code A search by a condition code }
     spFamilyMemberHistory_Date, {@enum.value "date" spFamilyMemberHistory_Date When history was captured/updated }
-    spFamilyMemberHistory_Definition, {@enum.value "definition" spFamilyMemberHistory_Definition Instantiates protocol or definition }
     spFamilyMemberHistory_Gender, {@enum.value "gender" spFamilyMemberHistory_Gender A search by a gender code of a family member }
     spFamilyMemberHistory_Identifier, {@enum.value "identifier" spFamilyMemberHistory_Identifier A search by a record identifier }
+    spFamilyMemberHistory_Instantiates, {@enum.value "instantiates" spFamilyMemberHistory_Instantiates Instantiates protocol or definition }
     spFamilyMemberHistory_Patient, {@enum.value "patient" spFamilyMemberHistory_Patient The identity of a subject to list family member history items for }
     spFamilyMemberHistory_Relationship, {@enum.value "relationship" spFamilyMemberHistory_Relationship A search by a relationship type }
     spFamilyMemberHistory_Status); {@enum.value "status" spFamilyMemberHistory_Status partial | completed | entered-in-error | health-unknown }
@@ -2148,7 +2174,7 @@ Requires the near parameter to also be included }
     spOperationDefinition_Publisher, {@enum.value "publisher" spOperationDefinition_Publisher Name of the publisher of the operation definition }
     spOperationDefinition_Status, {@enum.value "status" spOperationDefinition_Status The current status of the operation definition }
     spOperationDefinition_System, {@enum.value "system" spOperationDefinition_System Invoke at the system level? }
-    spOperationDefinition_Type, {@enum.value "type" spOperationDefinition_Type Invole at the type level? }
+    spOperationDefinition_Type, {@enum.value "type" spOperationDefinition_Type Invoke at the type level? }
     spOperationDefinition_Url, {@enum.value "url" spOperationDefinition_Url The uri that identifies the operation definition }
     spOperationDefinition_Version); {@enum.value "version" spOperationDefinition_Version The business version of the operation definition }
 {$ENDIF}
@@ -2587,7 +2613,7 @@ Requires the near parameter to also be included }
     spQuestionnaireResponse_Basedon, {@enum.value "based-on" spQuestionnaireResponse_Basedon Plan/proposal/order fulfilled by this questionnaire response }
     spQuestionnaireResponse_Context, {@enum.value "context" spQuestionnaireResponse_Context Encounter or episode associated with the questionnaire response }
     spQuestionnaireResponse_Identifier, {@enum.value "identifier" spQuestionnaireResponse_Identifier The unique identifier for the questionnaire response }
-    spQuestionnaireResponse_Parent, {@enum.value "parent" spQuestionnaireResponse_Parent Procedure or observation this questionnaire response was performed as a part of }
+    spQuestionnaireResponse_Partof, {@enum.value "part-of" spQuestionnaireResponse_Partof Procedure or observation this questionnaire response was performed as a part of }
     spQuestionnaireResponse_Patient, {@enum.value "patient" spQuestionnaireResponse_Patient The patient that is the subject of the questionnaire response }
     spQuestionnaireResponse_Questionnaire, {@enum.value "questionnaire" spQuestionnaireResponse_Questionnaire The questionnaire the answers are provided for }
     spQuestionnaireResponse_Source, {@enum.value "source" spQuestionnaireResponse_Source The individual providing the information reflected in the questionnaire respose }
@@ -3174,31 +3200,6 @@ Requires the near parameter to also be included }
     spVisionPrescription_Status); {@enum.value "status" spVisionPrescription_Status The status of the vision prescription }
 {$ENDIF}
 
-{$IFDEF FHIR_WORKFLOWEXAMPLE}
-  {@Enum TSearchParamsWorkflowExample
-    Search Parameters for WorkflowExample
-  }
-  TSearchParamsWorkflowExample = (
-    spWorkflowExample__content, {@enum.value "_content" spWorkflowExample__content Search on the entire content of the resource }
-    spWorkflowExample__id, {@enum.value "_id" spWorkflowExample__id Logical id of this artifact }
-    spWorkflowExample__lastUpdated, {@enum.value "_lastUpdated" spWorkflowExample__lastUpdated When the resource version last changed }
-    spWorkflowExample__profile, {@enum.value "_profile" spWorkflowExample__profile Profiles this resource claims to conform to }
-    spWorkflowExample__query, {@enum.value "_query" spWorkflowExample__query A custom search profile that describes a specific defined query operation }
-    spWorkflowExample__security, {@enum.value "_security" spWorkflowExample__security Security Labels applied to this resource }
-    spWorkflowExample__tag, {@enum.value "_tag" spWorkflowExample__tag Tags applied to this resource }
-    spWorkflowExample__text, {@enum.value "_text" spWorkflowExample__text Search on the narrative of the resource }
-    spWorkflowExample_Date, {@enum.value "date" spWorkflowExample_Date The workflow example publication date }
-    spWorkflowExample_Description, {@enum.value "description" spWorkflowExample_Description The description of the workflow example }
-    spWorkflowExample_Identifier, {@enum.value "identifier" spWorkflowExample_Identifier External identifier for the workflow example }
-    spWorkflowExample_Jurisdiction, {@enum.value "jurisdiction" spWorkflowExample_Jurisdiction Intended jurisdiction for the workflow example }
-    spWorkflowExample_Name, {@enum.value "name" spWorkflowExample_Name Computationally friendly name of the workflow example }
-    spWorkflowExample_Publisher, {@enum.value "publisher" spWorkflowExample_Publisher Name of the publisher of the workflow example }
-    spWorkflowExample_Status, {@enum.value "status" spWorkflowExample_Status The current status of the workflow example }
-    spWorkflowExample_Title, {@enum.value "title" spWorkflowExample_Title The human-friendly name of the workflow example }
-    spWorkflowExample_Url, {@enum.value "url" spWorkflowExample_Url The uri that identifies the workflow example }
-    spWorkflowExample_Version); {@enum.value "version" spWorkflowExample_Version The business version of the workflow example }
-{$ENDIF}
-
 Const
   CODES_TFhirResourceType : Array[TFhirResourceType] of String = ('', {$IFDEF FHIR_ACCOUNT}'Account',{$ENDIF}
       {$IFDEF FHIR_ACTIVITYDEFINITION}'ActivityDefinition',{$ENDIF}
@@ -3246,6 +3247,7 @@ Const
       {$IFDEF FHIR_ENROLLMENTRESPONSE}'EnrollmentResponse',{$ENDIF}
       {$IFDEF FHIR_EPISODEOFCARE}'EpisodeOfCare',{$ENDIF}
       {$IFDEF FHIR_EVENTDEFINITION}'EventDefinition',{$ENDIF}
+      {$IFDEF FHIR_EXAMPLESCENARIO}'ExampleScenario',{$ENDIF}
       {$IFDEF FHIR_EXPANSIONPROFILE}'ExpansionProfile',{$ENDIF}
       {$IFDEF FHIR_EXPLANATIONOFBENEFIT}'ExplanationOfBenefit',{$ENDIF}
       {$IFDEF FHIR_FAMILYMEMBERHISTORY}'FamilyMemberHistory',{$ENDIF}
@@ -3255,8 +3257,8 @@ Const
       {$IFDEF FHIR_GROUP}'Group',{$ENDIF}
       {$IFDEF FHIR_GUIDANCERESPONSE}'GuidanceResponse',{$ENDIF}
       {$IFDEF FHIR_HEALTHCARESERVICE}'HealthcareService',{$ENDIF}
-      {$IFDEF FHIR_IMAGINGMANIFEST}'ImagingManifest',{$ENDIF}
       
+      {$IFDEF FHIR_IMAGINGMANIFEST}'ImagingManifest',{$ENDIF}
       {$IFDEF FHIR_IMAGINGSTUDY}'ImagingStudy',{$ENDIF}
       {$IFDEF FHIR_IMMUNIZATION}'Immunization',{$ENDIF}
       {$IFDEF FHIR_IMMUNIZATIONRECOMMENDATION}'ImmunizationRecommendation',{$ENDIF}
@@ -3315,12 +3317,11 @@ Const
       {$IFDEF FHIR_SUPPLYDELIVERY}'SupplyDelivery',{$ENDIF}
       {$IFDEF FHIR_SUPPLYREQUEST}'SupplyRequest',{$ENDIF}
       {$IFDEF FHIR_TASK}'Task',{$ENDIF}
+      
       {$IFDEF FHIR_TESTREPORT}'TestReport',{$ENDIF}
       {$IFDEF FHIR_TESTSCRIPT}'TestScript',{$ENDIF}
-      
       {$IFDEF FHIR_VALUESET}'ValueSet',{$ENDIF}
       {$IFDEF FHIR_VISIONPRESCRIPTION}'VisionPrescription',{$ENDIF}
-      {$IFDEF FHIR_WORKFLOWEXAMPLE}'WorkflowExample',{$ENDIF}
        'Custom');
   LOWERCASE_CODES_TFhirResourceType : Array[TFhirResourceType] of String = ('', {$IFDEF FHIR_ACCOUNT}'account',{$ENDIF}
      {$IFDEF FHIR_ACTIVITYDEFINITION}'activitydefinition',{$ENDIF}
@@ -3368,6 +3369,7 @@ Const
      {$IFDEF FHIR_ENROLLMENTRESPONSE}'enrollmentresponse',{$ENDIF}
      {$IFDEF FHIR_EPISODEOFCARE}'episodeofcare',{$ENDIF}
      {$IFDEF FHIR_EVENTDEFINITION}'eventdefinition',{$ENDIF}
+     {$IFDEF FHIR_EXAMPLESCENARIO}'examplescenario',{$ENDIF}
      {$IFDEF FHIR_EXPANSIONPROFILE}'expansionprofile',{$ENDIF}
      {$IFDEF FHIR_EXPLANATIONOFBENEFIT}'explanationofbenefit',{$ENDIF}
      {$IFDEF FHIR_FAMILYMEMBERHISTORY}'familymemberhistory',{$ENDIF}
@@ -3440,7 +3442,6 @@ Const
      {$IFDEF FHIR_TESTSCRIPT}'testscript',{$ENDIF}
      {$IFDEF FHIR_VALUESET}'valueset',{$ENDIF}
      {$IFDEF FHIR_VISIONPRESCRIPTION}'visionprescription',{$ENDIF}
-     {$IFDEF FHIR_WORKFLOWEXAMPLE}'workflowexample',{$ENDIF}
      'custom');
      
   CLASSES_TFhirResourceType : Array[TFhirResourceType] of TFhirResourceClass = (nil, {$IFDEF FHIR_ACCOUNT}TFhirAccount,{$ENDIF}
@@ -3489,6 +3490,7 @@ Const
      {$IFDEF FHIR_ENROLLMENTRESPONSE}TFhirEnrollmentResponse,{$ENDIF}
      {$IFDEF FHIR_EPISODEOFCARE}TFhirEpisodeOfCare,{$ENDIF}
      {$IFDEF FHIR_EVENTDEFINITION}TFhirEventDefinition,{$ENDIF}
+     {$IFDEF FHIR_EXAMPLESCENARIO}TFhirExampleScenario,{$ENDIF}
      {$IFDEF FHIR_EXPANSIONPROFILE}TFhirExpansionProfile,{$ENDIF}
      {$IFDEF FHIR_EXPLANATIONOFBENEFIT}TFhirExplanationOfBenefit,{$ENDIF}
      {$IFDEF FHIR_FAMILYMEMBERHISTORY}TFhirFamilyMemberHistory,{$ENDIF}
@@ -3561,7 +3563,6 @@ Const
      {$IFDEF FHIR_TESTSCRIPT}TFhirTestScript,{$ENDIF}
      {$IFDEF FHIR_VALUESET}TFhirValueSet,{$ENDIF}
      {$IFDEF FHIR_VISIONPRESCRIPTION}TFhirVisionPrescription,{$ENDIF}
-     {$IFDEF FHIR_WORKFLOWEXAMPLE}TFhirWorkflowExample,{$ENDIF}
      nil);
      
   ALL_RESOURCE_TYPES = [{$IFDEF FHIR_ACCOUNT}frtAccount,{$ENDIF}
@@ -3610,6 +3611,7 @@ Const
      {$IFDEF FHIR_ENROLLMENTRESPONSE}frtEnrollmentResponse,{$ENDIF}
      {$IFDEF FHIR_EPISODEOFCARE}frtEpisodeOfCare,{$ENDIF}
      {$IFDEF FHIR_EVENTDEFINITION}frtEventDefinition,{$ENDIF}
+     {$IFDEF FHIR_EXAMPLESCENARIO}frtExampleScenario,{$ENDIF}
      {$IFDEF FHIR_EXPANSIONPROFILE}frtExpansionProfile,{$ENDIF}
      {$IFDEF FHIR_EXPLANATIONOFBENEFIT}frtExplanationOfBenefit,{$ENDIF}
      {$IFDEF FHIR_FAMILYMEMBERHISTORY}frtFamilyMemberHistory,{$ENDIF}
@@ -3682,7 +3684,6 @@ Const
      {$IFDEF FHIR_TESTSCRIPT}frtTestScript,{$ENDIF}
      {$IFDEF FHIR_VALUESET}frtValueSet,{$ENDIF}
      {$IFDEF FHIR_VISIONPRESCRIPTION}frtVisionPrescription,{$ENDIF}
-     {$IFDEF FHIR_WORKFLOWEXAMPLE}frtWorkflowExample,{$ENDIF}
      frtCustom];
      
   ALL_RESOURCE_TYPE_NAMES : Array [TFHIRResourceType] of String = ('--None--', {$IFDEF FHIR_ACCOUNT}'Account',{$ENDIF}
@@ -3731,6 +3732,7 @@ Const
      {$IFDEF FHIR_ENROLLMENTRESPONSE}'EnrollmentResponse',{$ENDIF}
      {$IFDEF FHIR_EPISODEOFCARE}'EpisodeOfCare',{$ENDIF}
      {$IFDEF FHIR_EVENTDEFINITION}'EventDefinition',{$ENDIF}
+     {$IFDEF FHIR_EXAMPLESCENARIO}'ExampleScenario',{$ENDIF}
      {$IFDEF FHIR_EXPANSIONPROFILE}'ExpansionProfile',{$ENDIF}
      {$IFDEF FHIR_EXPLANATIONOFBENEFIT}'ExplanationOfBenefit',{$ENDIF}
      {$IFDEF FHIR_FAMILYMEMBERHISTORY}'FamilyMemberHistory',{$ENDIF}
@@ -3803,7 +3805,6 @@ Const
      {$IFDEF FHIR_TESTSCRIPT}'TestScript',{$ENDIF}
      {$IFDEF FHIR_VALUESET}'ValueSet',{$ENDIF}
      {$IFDEF FHIR_VISIONPRESCRIPTION}'VisionPrescription',{$ENDIF}
-     {$IFDEF FHIR_WORKFLOWEXAMPLE}'WorkflowExample',{$ENDIF}
      'Custom');
      
 {$IFDEF FHIR_ACCOUNT}
@@ -3915,10 +3916,10 @@ Const
   CODES_TSearchParamsDiagnosticReport : Array[TSearchParamsDiagnosticReport] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'based-on', 'category', 'code', 'context', 'date', 'diagnosis', 'encounter', 'identifier', 'image', 'issued', 'patient', 'performer', 'result', 'results-interpreter', 'specimen', 'status', 'subject');
 {$ENDIF}
 {$IFDEF FHIR_DOCUMENTMANIFEST}
-  CODES_TSearchParamsDocumentManifest : Array[TSearchParamsDocumentManifest] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'author', 'content-ref', 'created', 'description', 'identifier', 'patient', 'recipient', 'related-id', 'related-ref', 'source', 'status', 'subject', 'type');
+  CODES_TSearchParamsDocumentManifest : Array[TSearchParamsDocumentManifest] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'agent', 'created', 'description', 'identifier', 'item', 'patient', 'recipient', 'related-id', 'related-ref', 'source', 'status', 'subject', 'type');
 {$ENDIF}
 {$IFDEF FHIR_DOCUMENTREFERENCE}
-  CODES_TSearchParamsDocumentReference : Array[TSearchParamsDocumentReference] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'authenticator', 'author', 'class', 'created', 'custodian', 'description', 'encounter', 'event', 'facility', 'format', 'identifier', 'indexed', 'language', 'location', 'patient', 'period', 'related-id', 'related-ref', 'relatesto', 'relation', 'relationship', 'securitylabel', 'setting', 'status', 'subject', 'type');
+  CODES_TSearchParamsDocumentReference : Array[TSearchParamsDocumentReference] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'agent', 'authenticator', 'class', 'contenttype', 'created', 'custodian', 'date', 'description', 'encounter', 'event', 'facility', 'format', 'identifier', 'language', 'location', 'patient', 'period', 'related-id', 'related-ref', 'relatesto', 'relation', 'relationship', 'securitylabel', 'setting', 'status', 'subject', 'type');
 {$ENDIF}
 {$IFDEF FHIR_ELIGIBILITYREQUEST}
   CODES_TSearchParamsEligibilityRequest : Array[TSearchParamsEligibilityRequest] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'created', 'enterer', 'facility', 'identifier', 'organization', 'patient', 'provider', 'status');
@@ -3944,6 +3945,9 @@ Const
 {$IFDEF FHIR_EVENTDEFINITION}
   CODES_TSearchParamsEventDefinition : Array[TSearchParamsEventDefinition] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'composed-of', 'date', 'depends-on', 'derived-from', 'description', 'effective', 'identifier', 'jurisdiction', 'name', 'predecessor', 'publisher', 'status', 'successor', 'title', 'topic', 'url', 'version');
 {$ENDIF}
+{$IFDEF FHIR_EXAMPLESCENARIO}
+  CODES_TSearchParamsExampleScenario : Array[TSearchParamsExampleScenario] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'date', 'description', 'identifier', 'jurisdiction', 'name', 'publisher', 'status', 'title', 'url', 'version');
+{$ENDIF}
 {$IFDEF FHIR_EXPANSIONPROFILE}
   CODES_TSearchParamsExpansionProfile : Array[TSearchParamsExpansionProfile] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'date', 'description', 'identifier', 'jurisdiction', 'name', 'publisher', 'status', 'url', 'version');
 {$ENDIF}
@@ -3951,7 +3955,7 @@ Const
   CODES_TSearchParamsExplanationOfBenefit : Array[TSearchParamsExplanationOfBenefit] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'care-team', 'claim', 'coverage', 'created', 'disposition', 'encounter', 'enterer', 'facility', 'identifier', 'organization', 'patient', 'payee', 'provider', 'status');
 {$ENDIF}
 {$IFDEF FHIR_FAMILYMEMBERHISTORY}
-  CODES_TSearchParamsFamilyMemberHistory : Array[TSearchParamsFamilyMemberHistory] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'code', 'date', 'definition', 'gender', 'identifier', 'patient', 'relationship', 'status');
+  CODES_TSearchParamsFamilyMemberHistory : Array[TSearchParamsFamilyMemberHistory] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'code', 'date', 'gender', 'identifier', 'instantiates', 'patient', 'relationship', 'status');
 {$ENDIF}
 {$IFDEF FHIR_FLAG}
   CODES_TSearchParamsFlag : Array[TSearchParamsFlag] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'author', 'date', 'encounter', 'identifier', 'patient', 'subject');
@@ -4086,7 +4090,7 @@ Const
   CODES_TSearchParamsQuestionnaire : Array[TSearchParamsQuestionnaire] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'code', 'date', 'description', 'effective', 'identifier', 'jurisdiction', 'name', 'publisher', 'status', 'title', 'url', 'version');
 {$ENDIF}
 {$IFDEF FHIR_QUESTIONNAIRERESPONSE}
-  CODES_TSearchParamsQuestionnaireResponse : Array[TSearchParamsQuestionnaireResponse] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'author', 'authored', 'based-on', 'context', 'identifier', 'parent', 'patient', 'questionnaire', 'source', 'status', 'subject');
+  CODES_TSearchParamsQuestionnaireResponse : Array[TSearchParamsQuestionnaireResponse] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'author', 'authored', 'based-on', 'context', 'identifier', 'part-of', 'patient', 'questionnaire', 'source', 'status', 'subject');
 {$ENDIF}
 {$IFDEF FHIR_RELATEDPERSON}
   CODES_TSearchParamsRelatedPerson : Array[TSearchParamsRelatedPerson] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'active', 'address', 'address-city', 'address-country', 'address-postalcode', 'address-state', 'address-use', 'birthdate', 'email', 'gender', 'identifier', 'name', 'patient', 'phone', 'phonetic', 'telecom');
@@ -4157,14 +4161,11 @@ Const
 {$IFDEF FHIR_VISIONPRESCRIPTION}
   CODES_TSearchParamsVisionPrescription : Array[TSearchParamsVisionPrescription] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'datewritten', 'encounter', 'identifier', 'patient', 'prescriber', 'status');
 {$ENDIF}
-{$IFDEF FHIR_WORKFLOWEXAMPLE}
-  CODES_TSearchParamsWorkflowExample : Array[TSearchParamsWorkflowExample] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'date', 'description', 'identifier', 'jurisdiction', 'name', 'publisher', 'status', 'title', 'url', 'version');
-{$ENDIF}
   FHIR_GENERATED_VERSION = '3.1.0';
 
   FHIR_GENERATED_PUBLICATION = '4';
 
-  FHIR_GENERATED_DATE = '2017-09-05T11:38:55+10:00';
+  FHIR_GENERATED_DATE = '2017-10-06T08:43:59+11:00';
 
 
 

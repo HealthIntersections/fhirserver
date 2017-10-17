@@ -122,6 +122,25 @@ type
     Property Item[iIndex : integer] : TFhirComposite read GetItemN; default;
   end;
 
+  // this defines the compartments. Contains the search parameters that define the compartment
+  TFHIRCompartmentList = class (TAdvObject)
+  private
+    FPatientCompartment : TAdvMap<TAdvStringSet>;
+    FPractitionerCompartment : TAdvMap<TAdvStringSet>;
+    FEncounterCompartment : TAdvMap<TAdvStringSet>;
+    FRelatedPersonCompartment : TAdvMap<TAdvStringSet>;
+    FDeviceCompartment : TAdvMap<TAdvStringSet>;
+  public
+    Constructor Create; override;
+    Destructor Destroy; override;
+    Function Link : TFHIRCompartmentList; overload;
+    function existsInCompartment(comp: TFHIRResourceType; resource : String) : boolean;
+    function getIndexNames(comp: TFHIRResourceType; resource : String) : TAdvStringSet;
+    function hasCompartment(comp: TFHIRResourceType) : boolean;
+    procedure register(comp: TFHIRResourceType; resource : String; indexes : array of String); overload;
+//    procedure register(comp: TFHIRResourceType; resource : String; list : String); overload;
+  end;
+
 
 implementation
 
@@ -358,6 +377,90 @@ begin
 end;
 
 
+
+{ TFHIRCompartmentList }
+
+constructor TFHIRCompartmentList.Create;
+begin
+  inherited;
+  FPatientCompartment := TAdvMap<TAdvStringSet>.create;
+  FPractitionerCompartment := TAdvMap<TAdvStringSet>.create;
+  FEncounterCompartment := TAdvMap<TAdvStringSet>.create;
+  FRelatedPersonCompartment := TAdvMap<TAdvStringSet>.create;
+  FDeviceCompartment := TAdvMap<TAdvStringSet>.create;
+end;
+
+destructor TFHIRCompartmentList.Destroy;
+begin
+  FPatientCompartment.free;
+  FPractitionerCompartment.free;
+  FEncounterCompartment.free;
+  FRelatedPersonCompartment.free;
+  FDeviceCompartment.free;
+  inherited;
+end;
+
+function TFHIRCompartmentList.existsInCompartment(comp: TFHIRResourceType; resource : String) : boolean;
+begin
+  case comp of
+    frtPatient : result := FPatientCompartment.containsKey(resource);
+    frtPractitioner : result := FPractitionerCompartment.ContainsKey(resource);
+    frtEncounter : result := FEncounterCompartment.containsKey(resource);
+    frtRelatedPerson : result := FRelatedPersonCompartment.containsKey(resource);
+    frtDevice : result := FDeviceCompartment.containsKey(resource);
+  else
+    result := false
+  end;
+end;
+
+function TFHIRCompartmentList.getIndexNames(comp: TFHIRResourceType; resource : String) : TAdvStringSet;
+begin
+  case comp of
+    frtPatient : result := FPatientCompartment[resource];
+    frtPractitioner : result := FPractitionerCompartment[resource];
+    frtEncounter : result := FEncounterCompartment[resource];
+    frtRelatedPerson : result := FRelatedPersonCompartment[resource];
+    frtDevice : result := FDeviceCompartment[resource];
+  else
+    result := nil
+  end;
+end;
+
+function TFHIRCompartmentList.hasCompartment(comp: TFHIRResourceType): boolean;
+begin
+  case comp of
+    frtPatient : result := true;
+    frtPractitioner : result := true;
+    frtEncounter : result := true;
+    frtRelatedPerson : result := true;
+    frtDevice : result := true;
+  else
+    result := false
+  end;
+end;
+
+function TFHIRCompartmentList.Link: TFHIRCompartmentList;
+begin
+  result := TFHIRCompartmentList(inherited link);
+end;
+
+//procedure TFHIRCompartmentList.registerComp(comp: TFHIRResourceType; resource, list: String);
+//begin
+//  raise Exception.Create('not done yet');
+//end;
+//
+procedure TFHIRCompartmentList.register(comp: TFHIRResourceType; resource : String; indexes : array of String);
+begin
+  case comp of
+    frtPatient : FPatientCompartment.add(resource, TAdvStringSet.create(indexes));
+    frtPractitioner : FPractitionerCompartment.Add(resource, TAdvStringSet.create(indexes));
+    frtEncounter : FEncounterCompartment.add(resource, TAdvStringSet.create(indexes));
+    frtRelatedPerson : FRelatedPersonCompartment.add(resource, TAdvStringSet.create(indexes));
+    frtDevice : FDeviceCompartment.add(resource, TAdvStringSet.create(indexes));
+  else
+    raise Exception.Create('Unknown compartment');
+  end;
+end;
 
 
 end.

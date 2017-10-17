@@ -2513,6 +2513,7 @@ public class DelphiGenerator {
       sumSet = "soFull, soSummary, soData";
     else
       sumSet = "soFull, soData";
+    String dc = (category == ClassCategory.Resource || category == ClassCategory.AbstractResource) && !path.contains(".") && !path.contains("Bundle") && !s.equals("id") ? "and doCompose('"+s+"') " : "";
 
     //    boolean summary = e.isSummary() || noSummaries;
     //    String sumAnd = summary ? "" : "Not SummaryOnly and ";
@@ -2590,10 +2591,10 @@ public class DelphiGenerator {
 
         workingParserX.append("      else if (child.localName = '"+e.getName()+"') then\r\n"+
             "        result."+s+obj+".Add("+parse+"){y.1}\r\n");
-        workingComposerX.append("  if not elem.noCompose and (SummaryOption in ["+sumSet+"]) then\r\n    for i := 0 to elem."+s+obj+".Count - 1 do\r\n"+
+        workingComposerX.append("  if not elem.noCompose "+dc+"and (SummaryOption in ["+sumSet+"]) then\r\n    for i := 0 to elem."+s+obj+".Count - 1 do\r\n"+
             "      ComposeEnum(xml, '"+e.getName()+"', elem."+s+obj+"[i], CODES_"+tn+");\r\n");
 
-        workingComposerR.append("  if not elem.noCompose and (SummaryOption in ["+sumSet+"]) then\r\n    for i := 0 to elem."+s+obj+".Count - 1 do\r\n"+
+        workingComposerR.append("  if not elem.noCompose "+dc+"and (SummaryOption in ["+sumSet+"]) then\r\n    for i := 0 to elem."+s+obj+".Count - 1 do\r\n"+
               "      ComposeEnum(this, '%%%%', '"+e.getName()+"', elem."+s+obj+"[i], CODES_"+tn+", SYSTEMS_"+tn+", false, i); {x.d1}\r\n");
 
         workingParserJ.append(
@@ -2604,7 +2605,7 @@ public class DelphiGenerator {
             "    for item in obj.complexes('http://hl7.org/fhir/"+e.getPath()+"') do\r\n"+
             "      result."+s+obj+".Add(parseEnum(item, CODES_"+tn+", SYSTEMS_"+tn+"));\r\n");
 
-        workingComposerJ.append("  if not elem.noCompose and (SummaryOption in ["+sumSet+"]) and (elem."+s+obj+".Count > 0) then\r\n");
+        workingComposerJ.append("  if not elem.noCompose "+dc+"and (SummaryOption in ["+sumSet+"]) and (elem."+s+obj+".Count > 0) then\r\n");
         workingComposerJ.append(
             "  begin\r\n"+
                 "    val := false;\r\n"+    
@@ -2630,7 +2631,7 @@ public class DelphiGenerator {
                 "    end;\r\n"+
             "  end;\r\n");
 
-          workingComposerR.append("  if not elem.noCompose and (SummaryOption in ["+sumSet+"]) then\r\n    for i := 0 to elem."+s+obj+".Count - 1 do\r\n"+
+          workingComposerR.append("  if not elem.noCompose "+dc+"and (SummaryOption in ["+sumSet+"]) then\r\n    for i := 0 to elem."+s+obj+".Count - 1 do\r\n"+
               "      ComposeEnum(this, '%%%%', '"+e.getName()+"', elem."+s+obj+"[i], CODES_"+tn+", SYSTEMS_"+tn+", false, i);{x.d2}\r\n");
       } else {
         String tnl;
@@ -2706,13 +2707,13 @@ public class DelphiGenerator {
         };
         workingParserX.append("      else if (child.localName = '"+e.getName()+"') then\r\n"+
             "        result."+s+".Add("+parse+"){y.2}\r\n");
-        workingComposerX.append("  if not elem.noCompose and (SummaryOption in ["+sumSet+"]) then\r\n    for i := 0 to elem."+s+".Count - 1 do\r\n"+
+        workingComposerX.append("  if not elem.noCompose "+dc+"and (SummaryOption in ["+sumSet+"]) then\r\n    for i := 0 to elem."+s+".Count - 1 do\r\n"+
             "      "+srlsd+"(xml, '"+e.getName()+"', "+getParam3(tn)+srls.replace("#", "elem."+s+"[i]")+");\r\n");
         if (srlsr.equals("ComposeResource")) 
-          workingComposerR.append("  if not elem.noCompose and (SummaryOption in ["+sumSet+"]) then\r\n    for i := 0 to elem."+s+".Count - 1 do\r\n"+
+          workingComposerR.append("  if not elem.noCompose "+dc+"and (SummaryOption in ["+sumSet+"]) then\r\n    for i := 0 to elem."+s+".Count - 1 do\r\n"+
               "      ComposeInnerResource(this, '%%%%', '"+e.getName()+"', "+srls.replace("#", "elem."+s+"[i]")+", false, i);{x.d3}\r\n");
         else
-          workingComposerR.append("  if not elem.noCompose and (SummaryOption in ["+sumSet+"]) then\r\n    for i := 0 to elem."+s+".Count - 1 do\r\n"+
+          workingComposerR.append("  if not elem.noCompose "+dc+"and (SummaryOption in ["+sumSet+"]) then\r\n    for i := 0 to elem."+s+".Count - 1 do\r\n"+
               "      "+srlsr+"(this, '%%%%', '"+e.getName()+"', "+srls.replace("#", "elem."+s+"[i]")+", false, i);{x.d3}\r\n");
         if (typeIsPrimitive(e.typeCode())) { 
           workingParserJ.append(
@@ -2725,7 +2726,7 @@ public class DelphiGenerator {
         workingParserT.append("    for item in obj.complexes('http://hl7.org/fhir/"+e.getPath()+"') do\r\n"+
             "      result."+s+".Add(parse"+parseName(tn)+"(item));\r\n");
 
-        workingComposerJ.append("  if not elem.noCompose and (SummaryOption in ["+sumSet+"]) and (elem."+s+".Count > 0) then\r\n");
+        workingComposerJ.append("  if not elem.noCompose "+dc+"and (SummaryOption in ["+sumSet+"]) and (elem."+s+".Count > 0) then\r\n");
         if (typeIsPrimitive(e.typeCode())) 
           workingComposerJ.append(
               "  begin\r\n"+
@@ -2839,15 +2840,15 @@ public class DelphiGenerator {
           destroy.append("  F"+getTitle(s)+".free;\r\n");
         }
         if (enumNames.contains(tn)) {         
-          workingComposerX.append("  if not elem.noCompose and (SummaryOption in ["+sumSet+"]) then\r\n     ComposeEnum(xml, '"+e.getName()+"', elem."+getTitle(s)+"Element, CODES_"+tn+");\r\n");
-          workingComposerR.append("  if not elem.noCompose and (SummaryOption in ["+sumSet+"]) then\r\n     ComposeEnum(this, '%%%%', '"+e.getName()+"', elem."+getTitle(s)+"Element, CODES_"+tn+", SYSTEMS_"+tn+", false, -1);{x.d4}\r\n");
-          workingComposerJ.append("  if not elem.noCompose and (SummaryOption in ["+sumSet+"]) then\r\n     ComposeEnumValue(json, '"+e.getName()+"', elem."+getTitle(s)+"Element, CODES_"+tn+", false);\r\n");
-          workingComposerJ.append("  if not elem.noCompose and (SummaryOption in ["+sumSet+"]) then\r\n     ComposeEnumProps(json, '"+e.getName()+"', elem."+getTitle(s)+"Element, CODES_"+tn+", false);\r\n");
+          workingComposerX.append("  if not elem.noCompose "+dc+"and (SummaryOption in ["+sumSet+"]) then\r\n     ComposeEnum(xml, '"+e.getName()+"', elem."+getTitle(s)+"Element, CODES_"+tn+");\r\n");
+          workingComposerR.append("  if not elem.noCompose "+dc+"and (SummaryOption in ["+sumSet+"]) then\r\n     ComposeEnum(this, '%%%%', '"+e.getName()+"', elem."+getTitle(s)+"Element, CODES_"+tn+", SYSTEMS_"+tn+", false, -1);{x.d4}\r\n");
+          workingComposerJ.append("  if not elem.noCompose "+dc+"and (SummaryOption in ["+sumSet+"]) then\r\n     ComposeEnumValue(json, '"+e.getName()+"', elem."+getTitle(s)+"Element, CODES_"+tn+", false);\r\n");
+          workingComposerJ.append("  if not elem.noCompose "+dc+"and (SummaryOption in ["+sumSet+"]) then\r\n     ComposeEnumProps(json, '"+e.getName()+"', elem."+getTitle(s)+"Element, CODES_"+tn+", false);\r\n");
         } else {
-          workingComposerX.append("  if not elem.noCompose and (SummaryOption in ["+sumSet+"]) then\r\n     Compose"+tn+"(xml, '"+e.getName()+"', elem."+getTitle(s)+");{x.1}\r\n");
-          workingComposerR.append("  if not elem.noCompose and (SummaryOption in ["+sumSet+"]) then\r\n     Compose"+tn+"(this, '%%%%', '"+e.getName()+"', elem."+getTitle(s)+", false, -1);{x.1}\r\n");
-          workingComposerJ.append("  if not elem.noCompose and (SummaryOption in ["+sumSet+"]) then\r\n     Compose"+tn+"Value(json, '"+e.getName()+"', elem."+getTitle(s)+", false); {1}\r\n");        
-          workingComposerJ.append("  if not elem.noCompose and (SummaryOption in ["+sumSet+"]) then\r\n     Compose"+tn+"Props(json, '"+e.getName()+"', elem."+getTitle(s)+", false); {y}\r\n");        
+          workingComposerX.append("  if not elem.noCompose "+dc+"and (SummaryOption in ["+sumSet+"]) then\r\n     Compose"+tn+"(xml, '"+e.getName()+"', elem."+getTitle(s)+");{x.1}\r\n");
+          workingComposerR.append("  if not elem.noCompose "+dc+"and (SummaryOption in ["+sumSet+"]) then\r\n     Compose"+tn+"(this, '%%%%', '"+e.getName()+"', elem."+getTitle(s)+", false, -1);{x.1}\r\n");
+          workingComposerJ.append("  if not elem.noCompose "+dc+"and (SummaryOption in ["+sumSet+"]) then\r\n     Compose"+tn+"Value(json, '"+e.getName()+"', elem."+getTitle(s)+", false); {1}\r\n");        
+          workingComposerJ.append("  if not elem.noCompose "+dc+"and (SummaryOption in ["+sumSet+"]) then\r\n     Compose"+tn+"Props(json, '"+e.getName()+"', elem."+getTitle(s)+", false); {y}\r\n");        
         }
       }
       else {
@@ -2939,35 +2940,35 @@ public class DelphiGenerator {
           } else {  
             if (typeIsPrimitive(e.typeCode())) { 
               workingParserX.append("      else if (child.localName = '"+e.getName()+"') then\r\n        result."+s+"Element := Parse"+parseName(tn)+"(child, path+'/"+e.getName()+"') {b}\r\n");
-              workingComposerX.append("  if not elem.noCompose and (SummaryOption in ["+sumSet+"]) then\r\n    Compose"+parseName(tn)+"(xml, '"+e.getName()+"', elem."+s+"Element);{x.2b}\r\n");
+              workingComposerX.append("  if not elem.noCompose "+dc+"and (SummaryOption in ["+sumSet+"]) then\r\n    Compose"+parseName(tn)+"(xml, '"+e.getName()+"', elem."+s+"Element);{x.2b}\r\n");
             } else {
               workingParserX.append("      else if (child.localName = '"+e.getName()+"') then\r\n        result."+s+" := Parse"+parseName(tn)+"(child, path+'/"+e.getName()+"') {b}\r\n");
-              workingComposerX.append("  if not elem.noCompose and (SummaryOption in ["+sumSet+"]) then\r\n    Compose"+parseName(tn)+"(xml, '"+e.getName()+"', "+getParam3(tn)+"elem."+s+");{x.2a}\r\n");
+              workingComposerX.append("  if not elem.noCompose "+dc+"and (SummaryOption in ["+sumSet+"]) then\r\n    Compose"+parseName(tn)+"(xml, '"+e.getName()+"', "+getParam3(tn)+"elem."+s+");{x.2a}\r\n");
             }
           }
           if (typeIsPrimitive(e.typeCode())) {
             workingParserJ.append("    if jsn.has('"+e.getName()+"') or jsn.has('_"+e.getName()+"') then\r\n        result."+s+"Element := Parse"+parseName(tn)+"(jsn['"+e.getName()+"'], jsn.vObj['_"+e.getName()+"']);{q}\r\n");
             workingParserT.append("    result."+s+"Element := Parse"+parseName(tn)+"(obj.complex('http://hl7.org/fhir/"+e.getPath()+"'));{q1}\r\n");
-            workingComposerR.append("  if not elem.noCompose and (SummaryOption in ["+sumSet+"]) then\r\n    Compose"+parseNameR(tn)+"(this, '%%%%', '"+e.getName()+"', elem."+s+"Element, false, -1);{x.2ea}\r\n");
+            workingComposerR.append("  if not elem.noCompose "+dc+"and (SummaryOption in ["+sumSet+"]) then\r\n    Compose"+parseNameR(tn)+"(this, '%%%%', '"+e.getName()+"', elem."+s+"Element, false, -1);{x.2ea}\r\n");
           } else if (e.typeCode().equals("xhtml")) {
             workingParserJ.append("    if jsn.has('"+e.getName()+"') then\r\n        result."+s+" := Parse"+parseName(tn)+"(jsn.path+'.div', jsn['"+e.getName()+"']);{q2}\r\n");
             workingParserT.append("    result."+s+" := Parse"+parseName(tn)+"(obj.stringLiteral('http://hl7.org/fhir/"+e.getPath()+"'));{q2}\r\n");
-            workingComposerR.append("  if not elem.noCompose and (SummaryOption in ["+sumSet+"]) then\r\n    Compose"+parseNameR(tn)+"(this, '%%%%', '"+e.getName()+"', elem."+s+"Element, false, -1);{x.2eb}\r\n");
+            workingComposerR.append("  if not elem.noCompose "+dc+"and (SummaryOption in ["+sumSet+"]) then\r\n    Compose"+parseNameR(tn)+"(this, '%%%%', '"+e.getName()+"', elem."+s+"Element, false, -1);{x.2eb}\r\n");
           } else {
             workingParserJ.append("    if jsn.has('"+e.getName()+"') then\r\n        result."+s+" := Parse"+parseName(tn)+"(jsn.vObj['"+e.getName()+"']);{q3}\r\n");
             if (tn.equals("TFhirResource")) {
               workingParserT.append("    result."+s+" := Parse"+parseName(tn)+"(obj.predicate('http://hl7.org/fhir/"+e.getPath()+"'));{q3a}\r\n");
-              workingComposerR.append("  if not elem.noCompose and (SummaryOption in ["+sumSet+"]) then\r\n    ComposeInnerResource(this, '%%%%', '"+e.getName()+"', elem."+s+"Element, false, -1);{x.2ec}\r\n");
+              workingComposerR.append("  if not elem.noCompose "+dc+"and (SummaryOption in ["+sumSet+"]) then\r\n    ComposeInnerResource(this, '%%%%', '"+e.getName()+"', elem."+s+"Element, false, -1);{x.2ec}\r\n");
             } else {
               workingParserT.append("    result."+s+" := Parse"+parseName(tn)+"(obj.complex('http://hl7.org/fhir/"+e.getPath()+"'));{q3b}\r\n");
-              workingComposerR.append("  if not elem.noCompose and (SummaryOption in ["+sumSet+"]) then\r\n    Compose"+parseNameR(tn)+"(this, '%%%%', '"+e.getName()+"', elem."+s+"Element, false, -1);{x.2f}\r\n");
+              workingComposerR.append("  if not elem.noCompose "+dc+"and (SummaryOption in ["+sumSet+"]) then\r\n    Compose"+parseNameR(tn)+"(this, '%%%%', '"+e.getName()+"', elem."+s+"Element, false, -1);{x.2f}\r\n");
             }
           }
           if (typeIsPrimitive(e.typeCode())) {
-            workingComposerJ.append("  if not elem.noCompose and (SummaryOption in ["+sumSet+"]) then\r\n    Compose"+parseName(tn)+"Value(json, '"+e.getName()+"', elem."+s+"Element, false);\r\n");
-            workingComposerJ.append("  if not elem.noCompose and (SummaryOption in ["+sumSet+"]) then\r\n    Compose"+parseName(tn)+"Props(json, '"+e.getName()+"', elem."+s+"Element, false);\r\n");
+            workingComposerJ.append("  if not elem.noCompose "+dc+"and (SummaryOption in ["+sumSet+"]) then\r\n    Compose"+parseName(tn)+"Value(json, '"+e.getName()+"', elem."+s+"Element, false);\r\n");
+            workingComposerJ.append("  if not elem.noCompose "+dc+"and (SummaryOption in ["+sumSet+"]) then\r\n    Compose"+parseName(tn)+"Props(json, '"+e.getName()+"', elem."+s+"Element, false);\r\n");
           } else
-            workingComposerJ.append("  if not elem.noCompose and (SummaryOption in ["+sumSet+"]) then\r\n    Compose"+parseName(tn)+"(json, '"+e.getName()+"', "+getParam3(tn)+"elem."+s+"); {a}\r\n");
+            workingComposerJ.append("  if not elem.noCompose "+dc+"and (SummaryOption in ["+sumSet+"]) then\r\n    Compose"+parseName(tn)+"(json, '"+e.getName()+"', "+getParam3(tn)+"elem."+s+"); {a}\r\n");
         } else {
           String pfx = e.getName().contains("[x]") ? e.getName().replace("[x]", "") : "";
           int i = 0;
@@ -2983,21 +2984,21 @@ public class DelphiGenerator {
           }
           for (ElementDefn ed : definitions.getTypes().values()) {
             workingParserX.append("      else if (child.localName = '"+pfx+getTitle(ed.getName())+"') then\r\n        result."+s+" := Parse"+getTitle(ed.getName())+"(child, path+'."+pfx+getTitle(ed.getName())+"') {e"+ed.getName()+"}\r\n");
-            workingComposerX.append("  else if not elem.noCompose and (SummaryOption in ["+sumSet+"]) and (elem."+s+" is TFhir"+getTitle(ed.getName())+") {8} then\r\n    Compose"+getTitle(ed.getName())+"(xml, '"+pfx+getTitle(ed.getName())+"', TFhir"+getTitle(ed.getName())+"(elem."+s+"))\r\n");
-            workingComposerR.append("  else if not elem.noCompose and (SummaryOption in ["+sumSet+"]) and (elem."+s+" is TFhir"+getTitle(ed.getName())+") {8} then\r\n    Compose"+getTitle(ed.getName())+"(this, '%%%%', '"+pfx+getTitle(ed.getName())+"', TFhir"+getTitle(ed.getName())+"(elem."+s+"), false, -1){x.d5}\r\n");
+            workingComposerX.append("  else if not elem.noCompose "+dc+"and (SummaryOption in ["+sumSet+"]) and (elem."+s+" is TFhir"+getTitle(ed.getName())+") {8} then\r\n    Compose"+getTitle(ed.getName())+"(xml, '"+pfx+getTitle(ed.getName())+"', TFhir"+getTitle(ed.getName())+"(elem."+s+"))\r\n");
+            workingComposerR.append("  else if not elem.noCompose "+dc+"and (SummaryOption in ["+sumSet+"]) and (elem."+s+" is TFhir"+getTitle(ed.getName())+") {8} then\r\n    Compose"+getTitle(ed.getName())+"(this, '%%%%', '"+pfx+getTitle(ed.getName())+"', TFhir"+getTitle(ed.getName())+"(elem."+s+"), false, -1){x.d5}\r\n");
             workingParserJ.append("    if jsn.has('"+pfx+getTitle(ed.getName())+"') {a7} then\r\n        result."+s+" := Parse"+getTitle(ed.getName())+"(jsn.vObj['"+pfx+getTitle(ed.getName())+"']);\r\n");
             workingParserT.append("    if obj.has('"+pfx+getTitle(ed.getName())+"') {a7} then\r\n        result."+s+" := Parse"+getTitle(ed.getName())+"(jsn.vObj['"+pfx+getTitle(ed.getName())+"']);\r\n");
-            workingComposerJ.append("  else if not elem.noCompose and (SummaryOption in ["+sumSet+"]) and (elem."+s+" is TFhir"+getTitle(ed.getName())+") then\r\n    Compose"+getTitle(ed.getName())+"(json, '"+pfx+getTitle(ed.getName())+"', TFhir"+getTitle(ed.getName())+"(elem."+s+"))\r\n");
+            workingComposerJ.append("  else if not elem.noCompose "+dc+"and (SummaryOption in ["+sumSet+"]) and (elem."+s+" is TFhir"+getTitle(ed.getName())+") then\r\n    Compose"+getTitle(ed.getName())+"(json, '"+pfx+getTitle(ed.getName())+"', TFhir"+getTitle(ed.getName())+"(elem."+s+"))\r\n");
           }
           int t = definitions.getStructures().size();
           i = 0;
           for (ElementDefn ed : definitions.getStructures().values()) {
             workingParserX.append("      else if (child.localName = '"+pfx+getTitle(ed.getName())+"') then\r\n        result."+s+" := Parse"+getTitle(ed.getName())+"(child, path+'/"+pfx+getTitle(ed.getName())+"') {f}\r\n");
-            workingComposerX.append("  else if not elem.noCompose and (SummaryOption in ["+sumSet+"]) and (elem."+s+" is TFhir"+getTitle(ed.getName())+") {9} then\r\n    Compose"+getTitle(ed.getName())+"(xml, '"+pfx+getTitle(ed.getName())+"', TFhir"+getTitle(ed.getName())+"(elem."+s+"))"+(i < t-1 ? "" : ";")+"\r\n");
-            workingComposerR.append("  else if not elem.noCompose and (SummaryOption in ["+sumSet+"]) and (elem."+s+" is TFhir"+getTitle(ed.getName())+") {9} then\r\n    Compose"+getTitle(ed.getName())+"(this, '%%%%', '"+pfx+getTitle(ed.getName())+"', TFhir"+getTitle(ed.getName())+"(elem."+s+"), true, -1)"+(i < t-1 ? "" : ";")+"{x.d6}\r\n");
+            workingComposerX.append("  else if not elem.noCompose "+dc+"and (SummaryOption in ["+sumSet+"]) and (elem."+s+" is TFhir"+getTitle(ed.getName())+") {9} then\r\n    Compose"+getTitle(ed.getName())+"(xml, '"+pfx+getTitle(ed.getName())+"', TFhir"+getTitle(ed.getName())+"(elem."+s+"))"+(i < t-1 ? "" : ";")+"\r\n");
+            workingComposerR.append("  else if not elem.noCompose "+dc+"and (SummaryOption in ["+sumSet+"]) and (elem."+s+" is TFhir"+getTitle(ed.getName())+") {9} then\r\n    Compose"+getTitle(ed.getName())+"(this, '%%%%', '"+pfx+getTitle(ed.getName())+"', TFhir"+getTitle(ed.getName())+"(elem."+s+"), true, -1)"+(i < t-1 ? "" : ";")+"{x.d6}\r\n");
             workingParserJ.append("    if jsn.has('"+pfx+getTitle(ed.getName())+"') {a9} then\r\n        result."+s+" := Parse"+getTitle(ed.getName())+"(jsn.vObj['"+pfx+getTitle(ed.getName())+"']);\r\n");
             workingParserT.append("//t.5    if jsn.has('"+pfx+getTitle(ed.getName())+"') {a9} then\r\n        result."+s+" := Parse"+getTitle(ed.getName())+"(jsn.vObj['"+pfx+getTitle(ed.getName())+"']);\r\n");
-            workingComposerJ.append("  else if not elem.noCompose and (SummaryOption in ["+sumSet+"]) and (elem."+s+" is TFhir"+getTitle(ed.getName())+") then\r\n    Compose"+getTitle(ed.getName())+"(json, '"+pfx+getTitle(ed.getName())+"', TFhir"+getTitle(ed.getName())+"(elem."+s+"))"+(i < t-1 ? "" : ";")+"\r\n");
+            workingComposerJ.append("  else if not elem.noCompose "+dc+"and (SummaryOption in ["+sumSet+"]) and (elem."+s+" is TFhir"+getTitle(ed.getName())+") then\r\n    Compose"+getTitle(ed.getName())+"(json, '"+pfx+getTitle(ed.getName())+"', TFhir"+getTitle(ed.getName())+"(elem."+s+"))"+(i < t-1 ? "" : ";")+"\r\n");
             i++;
           }
         }
@@ -3019,13 +3020,14 @@ public class DelphiGenerator {
 
   private void generatePrimitiveTypesSerialiser(ElementDefn e, String cn, String s, String sumSet, String pfx, int i,
       DefinedCode cd) {
+    String dc = ""; // path.contains(".") ? "" : "and doCompose(elem) ";
     workingParserX.append("      else if (child.localName = '"+pfx+getTitle(cd.getCode())+"') then\r\n        result."+s+" := Parse"+getTitle(cd.getCode())+"(child, path+'."+pfx+getTitle(cd.getCode())+"') {c}\r\n");
     String ptn = "TFhir"+getTitle(cd.getCode());
-    workingComposerX.append("  "+(i > 0 ? "else " : "")+"if not elem.noCompose and (SummaryOption in ["+sumSet+"]) and (elem."+s+" is "+ptn+") {1} then\r\n    Compose"+ptn.substring(5)+"(xml, '"+pfx+getTitle(cd.getCode())+"', "+ptn+"(elem."+s+"))\r\n");
-    workingComposerR.append("  "+(i > 0 ? "else " : "")+"if not elem.noCompose and (SummaryOption in ["+sumSet+"]) and (elem."+s+" is "+ptn+") {1} then\r\n    Compose"+ptn.substring(5)+"(this, '%%%%', '"+pfx+getTitle(cd.getCode())+"', "+ptn+"(elem."+s+"), false, -1){x.d7}\r\n");
+    workingComposerX.append("  "+(i > 0 ? "else " : "")+"if not elem.noCompose "+dc+"and (SummaryOption in ["+sumSet+"]) and (elem."+s+" is "+ptn+") {1} then\r\n    Compose"+ptn.substring(5)+"(xml, '"+pfx+getTitle(cd.getCode())+"', "+ptn+"(elem."+s+"))\r\n");
+    workingComposerR.append("  "+(i > 0 ? "else " : "")+"if not elem.noCompose "+dc+"and (SummaryOption in ["+sumSet+"]) and (elem."+s+" is "+ptn+") {1} then\r\n    Compose"+ptn.substring(5)+"(this, '%%%%', '"+pfx+getTitle(cd.getCode())+"', "+ptn+"(elem."+s+"), false, -1){x.d7}\r\n");
     workingParserJ.append("    if jsn.has('"+pfx+getTitle(cd.getCode())+"') or jsn.has('_"+pfx+getTitle(cd.getCode())+"') then\r\n        result."+s+" := Parse"+getTitle(cd.getCode())+"(jsn['"+pfx+getTitle(cd.getCode())+"'], jsn.vObj['_"+pfx+getTitle(cd.getCode())+"']);\r\n");
     workingParserT.append("//t.6    if jsn.has('"+pfx+getTitle(cd.getCode())+"') or jsn.has('_"+pfx+getTitle(cd.getCode())+"') then\r\n        result."+s+" := Parse"+getTitle(cd.getCode())+"(jsn['"+pfx+getTitle(cd.getCode())+"'], jsn.vObj['_"+pfx+getTitle(cd.getCode())+"']);\r\n");
-    workingComposerJ.append("  "+(i > 0 ? "else " : "")+"if not elem.noCompose and (SummaryOption in ["+sumSet+"]) and (elem."+s+" is "+ptn+") then\r\n"+
+    workingComposerJ.append("  "+(i > 0 ? "else " : "")+"if not elem.noCompose "+dc+"and (SummaryOption in ["+sumSet+"]) and (elem."+s+" is "+ptn+") then\r\n"+
         "  begin\r\n"+
         "    Compose"+ptn.substring(5)+"Value(json, '"+pfx+getTitle(cd.getCode())+"', "+ptn+"(elem."+s+"), false);\r\n"+
         "    Compose"+ptn.substring(5)+"Props(json, '"+pfx+getTitle(cd.getCode())+"', "+ptn+"(elem."+s+"), false)\r\n"+
@@ -3037,13 +3039,14 @@ public class DelphiGenerator {
   }
 
   private void genTypeSerialisers(ElementDefn e, String cn, String s, String sumSet, String pfx, boolean first, boolean last, TypeRef td) throws Exception {
+    String dc = ""; // path.contains(".") ? "" : "and doCompose(elem) ";
     if (td.isResourceReference()) {
       workingParserX.append("      else if (child.localName = '"+pfx+"Reference') then\r\n        result."+s+" := ParseReference(child, path+'/"+pfx+"Reference') {a}\r\n");
-      workingComposerX.append("  "+(first ? "if" : "else if")+" not elem.noCompose and (SummaryOption in ["+sumSet+"]) and (elem."+s+" is TFhirReference) {2} then\r\n    ComposeReference(xml, '"+pfx+"Reference', TFhirReference(elem."+s+"))"+(last?";" : "")+"\r\n");
+      workingComposerX.append("  "+(first ? "if" : "else if")+" not elem.noCompose "+dc+"and (SummaryOption in ["+sumSet+"]) and (elem."+s+" is TFhirReference) {2} then\r\n    ComposeReference(xml, '"+pfx+"Reference', TFhirReference(elem."+s+"))"+(last?";" : "")+"\r\n");
       workingParserJ.append("    if jsn.has('"+pfx+"Reference') {a3} then\r\n      result."+s+" := ParseReference(jsn.vObj['"+pfx+"Reference']);\r\n");
       workingParserT.append("    if obj.has('http://hl7.org/fhir/"+e.getPathHead()+"."+pfx+"Reference', item) {a3} then\r\n      result."+s+" := ParseReference(item);\r\n");
-      workingComposerJ.append("  "+(first ? "if" : "else if")+" not elem.noCompose and (SummaryOption in ["+sumSet+"]) and (elem."+s+" is TFhirReference) then\r\n    ComposeReference(json, '"+pfx+"Reference', TFhirReference(elem."+s+"))"+(last?";" : "")+"\r\n");
-      workingComposerR.append("  "+(first ? "if" : "else if")+" not elem.noCompose and (SummaryOption in ["+sumSet+"]) and (elem."+s+" is TFhirReference) {2} then\r\n    ComposeReference(this, '%%%%', '"+pfx+"Reference', TFhirReference(elem."+s+"), false,-1)"+(last?";" : "")+"{x.d8}\r\n");
+      workingComposerJ.append("  "+(first ? "if" : "else if")+" not elem.noCompose "+dc+"and (SummaryOption in ["+sumSet+"]) and (elem."+s+" is TFhirReference) then\r\n    ComposeReference(json, '"+pfx+"Reference', TFhirReference(elem."+s+"))"+(last?";" : "")+"\r\n");
+      workingComposerR.append("  "+(first ? "if" : "else if")+" not elem.noCompose "+dc+"and (SummaryOption in ["+sumSet+"]) and (elem."+s+" is TFhirReference) {2} then\r\n    ComposeReference(this, '%%%%', '"+pfx+"Reference', TFhirReference(elem."+s+"), false,-1)"+(last?";" : "")+"{x.d8}\r\n");
     }
     else {
       if (td.hasParams())
@@ -3051,20 +3054,20 @@ public class DelphiGenerator {
       String tname = td.getName();
       String tpname = tname; 
       workingParserX.append("      else if (child.localName = '"+pfx+getTitle(tpname)+"') then\r\n        result."+s+" := Parse"+getTitle(tname)+"(child, path+'/"+pfx+getTitle(tname)+"'){x.3}\r\n");
-      workingComposerX.append("  "+(first ? "if" : "else if")+" not elem.noCompose and (SummaryOption in ["+sumSet+"]) and (elem."+s+" is "+getTypeName(tname)+") {6} then\r\n    Compose"+getTitle(tname)+"(xml, '"+pfx+getTitle(tpname)+"', "+getTypeName(tname)+"(elem."+s+"))"+(last?";" : "")+"\r\n");
+      workingComposerX.append("  "+(first ? "if" : "else if")+" not elem.noCompose "+dc+"and (SummaryOption in ["+sumSet+"]) and (elem."+s+" is "+getTypeName(tname)+") {6} then\r\n    Compose"+getTitle(tname)+"(xml, '"+pfx+getTitle(tpname)+"', "+getTypeName(tname)+"(elem."+s+"))"+(last?";" : "")+"\r\n");
       if (typeIsPrimitive(tname)) {
-        workingComposerJ.append("  "+(first ? "if" : "else if")+" not elem.noCompose and (SummaryOption in ["+sumSet+"]) and (elem."+s+" is "+getTypeName(tname)+") then \r\n"+
+        workingComposerJ.append("  "+(first ? "if" : "else if")+" not elem.noCompose "+dc+"and (SummaryOption in ["+sumSet+"]) and (elem."+s+" is "+getTypeName(tname)+") then \r\n"+
             "  begin\r\n"+
             "    Compose"+getTitle(tname)+"Value(json, '"+pfx+getTitle(tpname)+"', "+getTypeName(tname)+"(elem."+s+"), false);\r\n"+
             "    Compose"+getTitle(tname)+"Props(json, '"+pfx+getTitle(tpname)+"', "+getTypeName(tname)+"(elem."+s+"), false);\r\n  end"+(last?";" : "")+"\r\n");
         workingParserJ.append("    if jsn.has('"+pfx+getTitle(tpname)+"') or jsn.has('_"+pfx+getTitle(tname)+"') then\r\n      result."+s+" := parse"+Utilities.capitalize(tname)+"(jsn['"+pfx+getTitle(tpname)+"'], jsn.vObj['_"+pfx+getTitle(tpname)+"']);\r\n");
       } else {
-        workingComposerJ.append("  "+(first ? "if" : "else if")+" not elem.noCompose and (SummaryOption in ["+sumSet+"]) and (elem."+s+" is "+getTypeName(tname)+") then \r\n"+
+        workingComposerJ.append("  "+(first ? "if" : "else if")+" not elem.noCompose "+dc+"and (SummaryOption in ["+sumSet+"]) and (elem."+s+" is "+getTypeName(tname)+") then \r\n"+
             "    Compose"+getTitle(tname)+"(json, '"+pfx+getTitle(tpname)+"', "+getTypeName(tname)+"(elem."+s+")) "+(last?";" : "")+"\r\n");
         workingParserJ.append("    if jsn.has('"+pfx+getTitle(tpname)+"') {a4} then\r\n      result."+s+" := Parse"+getTitle(tname)+"(jsn.vObj['"+pfx+getTitle(tpname)+"']);\r\n");
       }
       workingParserT.append("    if obj.has('http://hl7.org/fhir/"+e.getPathHead()+"."+pfx+getTitle(tpname)+"', item) then\r\n      result."+s+" := parse"+Utilities.capitalize(tname)+"(item);\r\n");
-      workingComposerR.append("  "+(first ? "if" : "else if")+" not elem.noCompose and (SummaryOption in ["+sumSet+"]) and (elem."+s+" is "+getTypeName(tname)+") {6} then\r\n    Compose"+getTitle(tname)+"(this, '%%%%', '"+pfx+getTitle(tpname)+"', "+getTypeName(tname)+"(elem."+s+"), false, -1)"+(last?";" : "")+"{x.d9}\r\n");
+      workingComposerR.append("  "+(first ? "if" : "else if")+" not elem.noCompose "+dc+"and (SummaryOption in ["+sumSet+"]) and (elem."+s+" is "+getTypeName(tname)+") {6} then\r\n    Compose"+getTitle(tname)+"(this, '%%%%', '"+pfx+getTitle(tpname)+"', "+getTypeName(tname)+"(elem."+s+"), false, -1)"+(last?";" : "")+"{x.d9}\r\n");
     }
   }
 

@@ -112,7 +112,7 @@ uses
   FHIRUtilities in '..\reference-platform\dstu3\FHIRUtilities.pas',
   OIDSupport in '..\reference-platform\Support\OIDSupport.pas',
   TextUtilities in '..\reference-platform\Support\TextUtilities.pas',
-  FHIRSupport in '..\reference-platform\dstu3\FHIRSupport.pas',
+  FHIRSupport in '..\reference-platform\support\FHIRSupport.pas',
   JWT in '..\reference-platform\Support\JWT.pas',
   HMAC in '..\reference-platform\Support\HMAC.pas',
   libeay32 in '..\reference-platform\Support\libeay32.pas',
@@ -189,7 +189,8 @@ uses
   TurtleParser in '..\reference-platform\support\TurtleParser.pas',
   SmartOnFhirLogin in '..\reference-platform\client\SmartOnFhirLogin.pas' {SmartOnFhirLoginForm},
   CDSHooksClientManager in '..\reference-platform\support\CDSHooksClientManager.pas',
-  FHIRClientSettings in '..\reference-platform\client\FHIRClientSettings.pas';
+  FHIRClientSettings in '..\reference-platform\client\FHIRClientSettings.pas',
+  FHIRIndexBase in '..\reference-platform\support\FHIRIndexBase.pas';
 
 {$R *.res}
 

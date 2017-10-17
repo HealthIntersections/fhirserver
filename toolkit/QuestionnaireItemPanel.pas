@@ -1,5 +1,32 @@
-﻿unit QuestionnaireItemPanel;
+unit QuestionnaireItemPanel;
 
+{
+Copyright (c) 2017+, Health Intersections Pty Ltd (http://www.healthintersections.com.au)
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without modification,
+are permitted provided that the following conditions are met:
+
+ * Redistributions of source code must retain the above copyright notice, this
+   list of conditions and the following disclaimer.
+ * Redistributions in binary form must reproduce the above copyright notice,
+   this list of conditions and the following disclaimer in the documentation
+   and/or other materials provided with the distribution.
+ * Neither the name of HL7 nor the names of its contributors may be used to
+   endorse or promote products derived from this software without specific
+   prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS 'AS IS' AND
+ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+POSSIBILITY OF SUCH DAMAGE.
+}
 interface
 
 uses
@@ -17,7 +44,6 @@ Type
     FInputControl1 : TControl;
     FInputControl2 : TControl;
     FEditButton : TButton;
-    FConditions : TButton;
     FUp : TButton;
     FDown : TButton;
     FIn : TButton;
@@ -37,6 +63,7 @@ Type
     FImageList: TImageList;
     FSettings: TFHIRToolkitSettings;
     FOnWork: TWorkEvent;
+    FQuestionnaire: TFhirQuestionnaire;
 
     procedure SetItem(const Value: TFhirQuestionnaireItem);
     procedure SetNext(const Value: TFhirQuestionnaireItem);
@@ -56,6 +83,7 @@ Type
     procedure LabelDlbClick(sender : TObject);
     procedure TextEditKeyDown(Sender: TObject; var Key: Word; var KeyChar: WideChar; Shift: TShiftState);
     procedure makeLabelText;
+    procedure SetQuestionnaire(const Value: TFhirQuestionnaire);
   protected
     procedure Resize; override;
   public
@@ -79,6 +107,7 @@ Type
     property ParentItem : TFhirQuestionnaireItem read FParent write SetParentItem;
     property Level : integer read FLevel write FLevel;
     property Settings : TFHIRToolkitSettings read FSettings write SetSettings;
+    property questionnaire : TFhirQuestionnaire read FQuestionnaire write SetQuestionnaire;
     property OnWork : TWorkEvent read FOnWork write FOnWork;
   end;
 
@@ -129,6 +158,7 @@ begin
 //  FBase.Sides := [TSide.Bottom];
   FBase.Opacity := 1;
   FBase.OnClick := SelfClick;
+  FBase.OnDblClick := EditClick;
 
   FLabel := TLabel.Create(self);
   FLabel.Parent := FBase;
@@ -192,7 +222,7 @@ begin
     FInputControl1.OnDblClick := EditClick;
     FInputControl1.Position.Y := (Height - FInputControl1.Height) / 2;
     FInputControl1.Position.X := FLabel.Position.X+FLabel.Width+10;
-    FInputControl1.Width := Width - FInputControl1.Position.X - 100 - 10;
+    FInputControl1.Width := Width - FInputControl1.Position.X - 80 - 10;
   end;
   if FInputControl2 <> nil then
   begin
@@ -221,14 +251,6 @@ begin
   FEditButton.OnClick := EditClick;
   FEditButton.Images := ImageList;
   FEditButton.ImageIndex := 7;
-  FConditions := TButton.Create(self);
-  FConditions.Parent := FBase;
-  FConditions.Position.y := (height - 20) / 2;
-  FConditions.Height := 20;
-  FConditions.Width := 20;
-  FConditions.OnClick := DeleteClick;
-  FConditions.Images := ImageList;
-  FConditions.ImageIndex := 8;
   FAddItem := TButton.Create(self);
   FAddItem.Parent := FBase;
   FAddItem.Position.y := (height - 20) / 2;
@@ -292,8 +314,7 @@ begin
   end;
 
   FDelete.Position.X := width - 25;
-  FEditButton.Position.X := width - 100;
-  FConditions.Position.X := width - 78;
+  FEditButton.Position.X := width - 78;
   FAddItem.Position.X := width - 47;
   FDelete.Visible := false;
   FOut.Visible := false;
@@ -301,7 +322,6 @@ begin
   FUp.Visible := false;
   FDown.Visible := false;
   FEditButton.Visible := false;
-  FConditions.Visible := false;
   FAddItem.Visible := false;
 
   if FHasFocus then
@@ -320,8 +340,6 @@ begin
     RemoveObject(FInputControl2);
   if FEditButton <> nil then
     RemoveObject(FEditButton);
-  if FConditions <> nil then
-    RemoveObject(FConditions);
   if FUp <> nil then
     RemoveObject(FUp);
   if FDown <> nil then
@@ -336,6 +354,7 @@ begin
     RemoveObject(FDelete);
 end;
 
+
 constructor TQuestionnaireItemPanel.Create(owner: TComponent);
 begin
   inherited;
@@ -349,6 +368,7 @@ end;
 
 destructor TQuestionnaireItemPanel.Destroy;
 begin
+  FQuestionnaire.Free;
   FSettings.Free;
   FParent.Free;
   FItem.Free;
@@ -369,6 +389,7 @@ begin
   form := TQuestionnaireItemForm.Create(self);
   try
     form.item := item.clone;
+    form.questionnaire := questionnaire.Link;
     form.Settings := Settings.link;
     form.OnWork := OnWork;
     if form.ShowModal = mrOk then
@@ -418,7 +439,6 @@ begin
   FUp.Visible := true;
   FDown.Visible := true;
   FEditButton.Visible := true;
-  FConditions.Visible := true;
   FAddItem.Visible := true;
 end;
 
@@ -451,7 +471,6 @@ begin
     FUp.Visible := false;
     FDown.Visible := false;
     FEditButton.Visible := false;
-    FConditions.Visible := false;
     FAddItem.Visible := false;
   end;
 end;
@@ -468,13 +487,12 @@ begin
   begin
     FBase.Width := Width;
     FDelete.Position.X := width - 25;
-    FEditButton.Position.X := width - 100;
-    FConditions.Position.X := width - 78;
+    FEditButton.Position.X := width - 78;
     FAddItem.Position.X := width - 47;
   end;
   if FInputControl1 <> nil then
   begin
-    FInputControl1.Width := Width - FInputControl1.Position.X - 100 - 10;
+    FInputControl1.Width := Width - FInputControl1.Position.X - 80 - 10;
     if FInputControl2 <> nil then
     begin
       FInputControl1.Width := FInputControl1.width / 2 - 10;
@@ -511,6 +529,12 @@ procedure TQuestionnaireItemPanel.SetPrevious(const Value: TFhirQuestionnaireIte
 begin
   FPrevious.Free;
   FPrevious := Value;
+end;
+
+procedure TQuestionnaireItemPanel.SetQuestionnaire(const Value: TFhirQuestionnaire);
+begin
+  FQuestionnaire.Free;
+  FQuestionnaire := Value;
 end;
 
 procedure TQuestionnaireItemPanel.SetSettings(const Value: TFHIRToolkitSettings);
@@ -583,8 +607,7 @@ begin
     FOut.Images := nil;
 
   FDelete.Position.X := width - 25;
-  FEditButton.Position.X := width - 100;
-  FConditions.Position.X := width - 78;
+  FEditButton.Position.X := width - 80;
   FAddItem.Position.X := width - 47;
 end;
 

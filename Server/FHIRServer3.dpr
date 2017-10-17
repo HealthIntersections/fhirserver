@@ -263,7 +263,7 @@ uses
   FHIRParserTurtle in '..\reference-platform\dstu3\FHIRParserTurtle.pas',
   FHIRParserBase in '..\reference-platform\support\FHIRParserBase.pas',
   FHIRConstants in '..\reference-platform\dstu3\FHIRConstants.pas',
-  FHIRSupport in '..\reference-platform\dstu3\FHIRSupport.pas',
+  FHIRSupport in '..\reference-platform\support\FHIRSupport.pas',
   FHIRLang in '..\reference-platform\support\FHIRLang.pas',
   FHIRUtilities in '..\reference-platform\dstu3\FHIRUtilities.pas',
   FHIRClient in '..\reference-platform\client\FHIRClient.pas',

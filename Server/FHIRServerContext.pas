@@ -322,6 +322,7 @@ begin
     cfg := TFHIRResourceConfig.Create;
     cfg.name := CODES_TFHIRResourceType[a];
     cfg.Supported := false;
+    cfg.enum := a;
     FResConfig.Add(cfg.name,  cfg);
   end;
   FValidatorContext := TFHIRServerWorkerContext.Create;

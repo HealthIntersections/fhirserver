@@ -140,7 +140,7 @@ Type
 
   TGetSessionEvent = function (userkey : Integer) : TFhirSession of object;
   TExecuteOperationEvent = procedure(request : TFHIRRequest; response : TFHIRResponse; bWantSession : boolean) of object;
-  TExecuteSearchEvent = function (typekey : integer; compartmentId, compartments : String; params : TParseMap; conn : TKDBConnection): String of object;
+  TExecuteSearchEvent = function (typekey : integer; compartment : TFHIRCompartmentId; sessionCompartments: TAdvList<TFHIRCompartmentId>; params : TParseMap; conn : TKDBConnection): String of object;
 
   TSubscriptionManager = class (TFHIRServerWorker)
   private
@@ -1597,7 +1597,7 @@ begin
   StringSplit(criteria, '?', l, r);
   p := TParseMap.create('_type='+l+'&'+r, true);
   try
-    sql := FOnExecuteSearch(typekey, '', '', p, conn);
+    sql := FOnExecuteSearch(typekey, nil, nil, p, conn);
     result := conn.CountSQL('select count(*) from Ids where not MostRecent is null and ResourceKey = '+inttostr(key)+' and '+sql) > 0;
   finally
     p.Free;

@@ -137,7 +137,7 @@ uses
   FHIRParserJson,
   FHIRParserTurtle,
   FHIRParserBase in '..\support\FHIRParserBase.pas',
-  FHIRSupport in 'FHIRSupport.pas',
+  FHIRSupport in '..\support\FHIRSupport.pas',
   FHIRLang in '..\support\FHIRLang.pas',
   FHIRUtilities in 'FHIRUtilities.pas',
   FHIRPath in 'FHIRPath.pas',
@@ -155,7 +155,8 @@ uses
   JsonTests in '..\support\Tests\JsonTests.pas',
   SCIMObjects in '..\support\SCIMObjects.pas',
   FHIRSecurity in '..\support\FHIRSecurity.pas',
-  TurtleParser in '..\support\TurtleParser.pas';
+  TurtleParser in '..\support\TurtleParser.pas',
+  FHIRIndexBase in '..\support\FHIRIndexBase.pas';
 
 var
   s: String;

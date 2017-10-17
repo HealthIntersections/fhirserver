@@ -110,18 +110,20 @@ Type
     FCKey: integer;
     FKey: integer;
     FId: string;
-    FTKey: integer;
+    FTypeKey: integer;
+    FEnum: TFhirResourceType;
   public
     function link : TFhirCompartmentEntry; overload;
     property Key : integer read FKey write FKey; // id of resource that is in a compartment
-    property TKey : integer read FTKey write FTKey; // resource type key for the compartment type
+    property Enum : TFhirResourceType read FEnum write FEnum;
+    property TypeKey : integer read FTypeKey write FTypeKey; // resource type key for the compartment type
     property Id : string read FId write FId; // field two of composite id for compartment - compartment id
     property CKey : integer read FCKey write FCKey; // key for the resource that creates this compartment
   end;
 
   TFhirCompartmentEntryList = class (TAdvList<TFhirCompartmentEntry>)
   public
-    procedure add(key, tkey, ckey : integer; id : string);
+    procedure add(key, tkey, ckey : integer; enum : TFhirResourceType; id : string);
     procedure removeById(id : String);
   end;
 
@@ -181,6 +183,7 @@ Type
 
     function EncodeXhtml(r : TFhirDomainResource) : TBytes;
     procedure recordSpace(space : string; key : integer);
+    function TypeForKey(key : integer) : TFhirResourceType;
 
               // addToCompartment
     procedure patientCompartment(key : integer; reference : TFhirReference); overload;
@@ -340,7 +343,7 @@ Type
     function Link : TFHIRIndexManager; overload;
     property TerminologyServer : TTerminologyServer read FTerminologyServer write SetTerminologyServer;
     property Bases : TStringList read FBases write FBases;
-    function execute(key : integer; id: String; resource : TFhirResource; tags : TFHIRTagList) : String;
+    function execute(key : integer; id: String; resource : TFhirResource; tags : TFHIRTagList) : TAdvList<TFHIRCompartmentId>;
     property KeyEvent : TFHIRGetNextKey read FKeyEvent write FKeyEvent;
     property Definitions : TFHIRIndexInformation read FInfo;
   end;
@@ -699,6 +702,16 @@ begin
   raise Exception.Create('not done yet');
 end;
 
+function TFhirIndexManager.TypeForKey(key: integer): TFhirResourceType;
+var
+  t : TFHIRResourceConfig;
+begin
+  result := frtNull;
+  for t in FResConfig.Values do
+    if t.key = key then
+      result := t.enum;
+end;
+
 procedure TFhirIndexManager.evaluateByFHIRPath(key : integer; context, resource: TFhirResource);
 var
   path : TFHIRPathEngine;
@@ -823,7 +836,7 @@ begin
   begin
     // a resource is automatically in it's own compartment
     if (a = resource.ResourceType) then
-      FCompartments.add(key, FResConfig[CODES_TFHIRResourceType[a]].key, key, resource.id);
+      FCompartments.add(key, FResConfig[CODES_TFHIRResourceType[a]].key, key, resource.ResourceType, resource.id);
     if FInfo.Compartments.existsInCompartment(a, resource.fhirType) then
       for s in FInfo.Compartments.getIndexNames(a, resource.fhirType) do
       begin
@@ -835,14 +848,14 @@ begin
           for ie in FEntries do
           begin
             if (ie.FKey = key) and (ie.IndexKey = ndx.Key) and (ie.TargetType = a) then
-              FCompartments.add(key, FResConfig[CODES_TFHIRResourceType[a]].key, ie.FTarget, ie.Value1);
+              FCompartments.add(key, FResConfig[CODES_TFHIRResourceType[a]].key, ie.FTarget, a, ie.Value1);
           end;
         end;
       end;
   end;
 end;
 
-function TFhirIndexManager.execute(key : integer; id : String; resource : TFhirResource; tags : TFHIRTagList) : String;
+function TFhirIndexManager.execute(key : integer; id : String; resource : TFhirResource; tags : TFHIRTagList) : TAdvList<TFHIRCompartmentId>;
 var
   i : integer;
   entry : TFhirIndexEntry;
@@ -957,28 +970,30 @@ begin
   end;
   FConnection.terminate;
 
-  result := '';
-  if FCompartments.Count > 0 then
-  begin
-    FConnection.SQL := 'insert into Compartments (ResourceCompartmentKey, ResourceKey, TypeKey, CompartmentKey, Id) values (:pk, :r, :ct, :ck, :id)';
-    FConnection.prepare;
-    for i := 0 to FCompartments.Count - 1 Do
+  result := TAdvList<TFHIRCompartmentId>.create;
+  try
+    if FCompartments.Count > 0 then
     begin
-      if i > 0 then
-        result := result + ', ';
-      result := result + ''''+FCompartments[i].id+'''';
-
-      FConnection.BindInteger('pk', FKeyEvent(ktCompartment, '', dummy));
-      FConnection.BindInteger('r', FCompartments[i].key);
-      FConnection.BindInteger('ct', FCompartments[i].tkey);
-      FConnection.BindString('id', FCompartments[i].id);
-      if FCompartments[i].ckey > 0 then
-        FConnection.BindInteger('ck', FCompartments[i].ckey)
-      else
-        FConnection.BindNull('ck');
-      FConnection.execute;
+      FConnection.SQL := 'insert into Compartments (ResourceCompartmentKey, ResourceKey, TypeKey, CompartmentKey, Id) values (:pk, :r, :ct, :ck, :id)';
+      FConnection.prepare;
+      for i := 0 to FCompartments.Count - 1 Do
+      begin
+        result.Add(TFhirCompartmentId.Create(FCompartments[i].FEnum, FCompartments[i].Id));
+        FConnection.BindInteger('pk', FKeyEvent(ktCompartment, '', dummy));
+        FConnection.BindInteger('r', FCompartments[i].key);
+        FConnection.BindInteger('ct', FCompartments[i].typekey);
+        FConnection.BindString('id', FCompartments[i].id);
+        if FCompartments[i].ckey > 0 then
+          FConnection.BindInteger('ck', FCompartments[i].ckey)
+        else
+          FConnection.BindNull('ck');
+        FConnection.execute;
+      end;
+      FConnection.terminate;
     end;
-    FConnection.terminate;
+    result.link;
+  finally
+    result.Free;
   end;
 end;
 
@@ -1586,7 +1601,7 @@ begin
   FConnection.BindString('id', id);
   FConnection.Execute;
   if FConnection.FetchNext then
-    FCompartments.add(key, FConnection.ColIntegerByName['ResourceTypeKey'], FConnection.ColIntegerByName['ResourceKey'], id);
+    FCompartments.add(key, FConnection.ColIntegerByName['ResourceTypeKey'], FConnection.ColIntegerByName['ResourceKey'], TypeForKey(FConnection.ColIntegerByName['ResourceTypeKey']), id);
   FConnection.Terminate;
 end;
 
@@ -1722,14 +1737,15 @@ end;
 
 { TFhirCompartmentEntryList }
 
-procedure TFhirCompartmentEntryList.add(key, tkey, ckey: integer; id: string);
+procedure TFhirCompartmentEntryList.add(key, tkey, ckey: integer; enum : TFhirResourceType; id: string);
 var
   item : TFhirCompartmentEntry;
 begin
   item := TFhirCompartmentEntry.create;
   try
     item.key := key;
-    item.tkey := tkey;
+    item.typekey := tkey;
+    item.Enum := enum;
     item.ckey := ckey;
     item.id := id;
     inherited add(item.Link);

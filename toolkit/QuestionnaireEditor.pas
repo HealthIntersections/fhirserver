@@ -385,6 +385,7 @@ begin
   try
     item := flatItems[grdItems.Row];
     form.item := item.clone;
+    form.questionnaire := questionnaire.Link;
     form.Settings := Settings.link;
     form.OnWork := OnWork;
     if form.ShowModal = mrOk then
@@ -400,6 +401,8 @@ begin
       item.type_ := form.item.type_;
       item.maxLength := form.item.maxLength;
       item.options := form.item.options.Link;
+      item.extensionList.Assign(form.item.extensionList);
+      item.enableWhenList.Assign(form.item.enableWhenList);
       grdItems.EndUpdate;
       ResourceIsDirty := true;
     end;

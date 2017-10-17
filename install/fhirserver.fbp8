@@ -271,7 +271,6 @@ begin
       action.group
       begin
         description = "64 bit build"
-        enabled = false
         id = {B04497CC-9752-463E-8B55-3B8543974103}
         action.group
         begin
@@ -1054,7 +1053,6 @@ begin
         action.group
         begin
           description = "Build R4 Server"
-          enabled = false
           id = {C2AAA22F-26E6-4702-962F-F4C5EC91C41F}
           action.files.delete
           begin
@@ -1212,7 +1210,6 @@ begin
         action.group
         begin
           description = "Build R3 Server"
-          enabled = false
           id = {2FD4473F-0129-48F7-8C6D-9F0A95153D25}
           action.files.delete
           begin
@@ -1370,7 +1367,6 @@ begin
         action.group
         begin
           description = "Build R2 Server"
-          enabled = false
           id = {5782C596-ACF5-403F-95A0-C0EB0AA3C208}
           action.files.delete
           begin
@@ -1528,7 +1524,6 @@ begin
         action.group
         begin
           description = "Build Server Utils"
-          enabled = false
           id = {F7B197F8-03A9-41ED-8B7E-9DADB5F8F984}
           action.files.delete
           begin
@@ -1686,7 +1681,6 @@ begin
         action.group
         begin
           description = "sign executables"
-          enabled = false
           id = {EB639197-5295-42ED-8AF1-D1CBCC10F5CD}
           action.process.execute
           begin
@@ -1838,7 +1832,6 @@ begin
         begin
           captureoutput = true
           description = "Sign the server install"
-          enabled = false
           enablelivecapture = true
           enablereturncodecheck = true
           enabletimeout = false
@@ -1864,7 +1857,6 @@ begin
         begin
           captureoutput = true
           description = "Sign the server install"
-          enabled = false
           enablelivecapture = true
           enablereturncodecheck = true
           enabletimeout = false

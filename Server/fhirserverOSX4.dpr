@@ -119,7 +119,7 @@ uses
   AdvZipWorkers in '..\reference-platform\support\AdvZipWorkers.pas',
   InternetFetcher in '..\reference-platform\support\InternetFetcher.pas'{,
   FHIRContext in '..\reference-platform\r4\FHIRContext.pas',
-  FHIRSupport in '..\reference-platform\r4\FHIRSupport.pas',
+  FHIRSupport in '..\reference-platform\support\FHIRSupport.pas',
   SCIMObjects in '..\reference-platform\support\SCIMObjects.pas',
   GraphQL in '..\reference-platform\support\GraphQL.pas',
   FHIRConstants in '..\reference-platform\r4\FHIRConstants.pas',
@@ -157,7 +157,7 @@ uses
   FHIRContext in '..\reference-platform\r4\FHIRContext.pas',
   FHIRTypes in '..\reference-platform\r4\FHIRTypes.pas',
   FHIRResources in '..\reference-platform\r4\FHIRResources.pas',
-  FHIRSupport in '..\reference-platform\r4\FHIRSupport.pas',
+  FHIRSupport in '..\reference-platform\support\FHIRSupport.pas',
   SCIMObjects in '..\reference-platform\support\SCIMObjects.pas',
   GraphQL in '..\reference-platform\support\GraphQL.pas',
   FHIRConstants in '..\reference-platform\r4\FHIRConstants.pas',
@@ -177,7 +177,9 @@ uses
   FHIRProfileUtilities in '..\reference-platform\r4\FHIRProfileUtilities.pas',
   AdvZipReaders in '..\reference-platform\support\AdvZipReaders.pas',
   FHIRLog in '..\reference-platform\support\FHIRLog.pas',
-  FhirPath in '..\reference-platform\r4\FhirPath.pas';
+  FhirPath in '..\reference-platform\r4\FhirPath.pas',
+  InternetFetcher in '..\reference-platform\support\InternetFetcher.pas',
+  FHIRIndexBase in '..\reference-platform\support\FHIRIndexBase.pas';
 
 var
   runner : ITestRunner;
@@ -237,4 +239,4 @@ end.
   KDBOdbc in '..\Libraries\db\KDBOdbc.pas',
   ODBCObjects in '..\Libraries\db\ODBCObjects.pas',
   OdbcHeaders in '..\Libraries\db\OdbcHeaders.pas';
-
+

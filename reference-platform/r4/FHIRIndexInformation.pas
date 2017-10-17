@@ -38,7 +38,7 @@ This is the dstu4 version of the FHIR code
 
 interface
 
-// FHIR v3.1.0 generated 2017-09-05T11:38:55+10:00
+// FHIR v3.1.0 generated 2017-10-06T08:43:59+11:00
 
 uses
   SysUtils, Classes, StringSupport, DecimalSupport, AdvBuffers, DateSupport, FHIRIndexBase, FHIRResources, FHIRTypes, FHIRConstants, FHIRSupport;
@@ -184,6 +184,9 @@ Type
     {$ENDIF}
     {$IFDEF FHIR_EVENTDEFINITION}
     procedure buildIndexesForEventDefinition(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+    {$ENDIF}
+    {$IFDEF FHIR_EXAMPLESCENARIO}
+    procedure buildIndexesForExampleScenario(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
     {$ENDIF}
     {$IFDEF FHIR_EXPANSIONPROFILE}
     procedure buildIndexesForExpansionProfile(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
@@ -398,9 +401,6 @@ Type
     {$IFDEF FHIR_VISIONPRESCRIPTION}
     procedure buildIndexesForVisionPrescription(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
     {$ENDIF}
-    {$IFDEF FHIR_WORKFLOWEXAMPLE}
-    procedure buildIndexesForWorkflowExample(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
-    {$ENDIF}
   public
     procedure registerIndexes(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
  end;
@@ -485,7 +485,7 @@ begin
   indexes.add('AdverseEvent', 'seriousness', 'Seriousness of the event', SearchParamTypeTOKEN, [], 'AdverseEvent.seriousness', SearchXpathUsageNormal);
   indexes.add('AdverseEvent', 'severity', 'Mild | Moderate | Severe', SearchParamTypeTOKEN, [], 'AdverseEvent.severity', SearchXpathUsageNormal);
   indexes.add('AdverseEvent', 'study', 'AdverseEvent.study', SearchParamTypeREFERENCE, ['ResearchStudy'], 'AdverseEvent.study', SearchXpathUsageNormal);
-  indexes.add('AdverseEvent', 'subject', 'Subject impacted by event', SearchParamTypeREFERENCE, ['Practitioner', 'Patient', 'ResearchSubject', 'RelatedPerson'], 'AdverseEvent.subject', SearchXpathUsageNormal);
+  indexes.add('AdverseEvent', 'subject', 'Subject impacted by event', SearchParamTypeREFERENCE, ['Practitioner', 'Group', 'Patient', 'RelatedPerson'], 'AdverseEvent.subject', SearchXpathUsageNormal);
   indexes.add('AdverseEvent', 'substance', 'Refers to the specific entity that caused the adverse event', SearchParamTypeREFERENCE, ['Device', 'Medication', 'Substance', 'MedicationAdministration', 'MedicationStatement'], 'AdverseEvent.suspectEntity.instance', SearchXpathUsageNormal);
   compartments.register(frtPatient, 'AdverseEvent', ['subject']);
   compartments.register(frtPractitioner, 'AdverseEvent', ['recorder']);
@@ -1449,25 +1449,26 @@ begin
   indexes.add('DocumentManifest', '_security', 'Security Labels applied to this resource', SearchParamTypeTOKEN, [], 'Resource.meta.security', SearchXpathUsageNormal);
   indexes.add('DocumentManifest', '_tag', 'Tags applied to this resource', SearchParamTypeTOKEN, [], 'Resource.meta.tag', SearchXpathUsageNormal);
   indexes.add('DocumentManifest', '_text', 'Search on the narrative of the resource', SearchParamTypeSTRING, [], '', SearchXpathUsageNormal);
-  indexes.add('DocumentManifest', 'author', 'Who and/or what authored the manifest', SearchParamTypeREFERENCE, ['Practitioner', 'Organization', 'Device', 'Patient', 'RelatedPerson'], 'DocumentManifest.author', SearchXpathUsageNormal);
-  indexes.add('DocumentManifest', 'content-ref', 'Contents of this set of documents', SearchParamTypeREFERENCE, ALL_RESOURCE_TYPE_NAMES, 'DocumentManifest.content.p.as(Reference)', SearchXpathUsageNormal);
+  indexes.add('DocumentManifest', 'agent', 'Who and/or what had an agent participation', SearchParamTypeREFERENCE, ['Practitioner', 'Organization', 'Device', 'Patient', 'PractitionerRole', 'RelatedPerson'], 'DocumentManifest.agent.who', SearchXpathUsageNormal);
   indexes.add('DocumentManifest', 'created', 'When this document manifest created', SearchParamTypeDATE, [], 'DocumentManifest.created', SearchXpathUsageNormal);
   indexes.add('DocumentManifest', 'description', 'Human-readable description (title)', SearchParamTypeSTRING, [], 'DocumentManifest.description', SearchXpathUsageNormal);
   indexes.add('DocumentManifest', 'identifier', 'Unique Identifier for the set of documents', SearchParamTypeTOKEN, [], 'DocumentManifest.masterIdentifier | DocumentManifest.identifier | Goal.identifier | Consent.identifier | DocumentReference.masterIdentifier | DocumentReference.identifier | SupplyRequest.identifier | RiskAssessment.identifier | CareTeam.identifier | '+'ImagingStudy.identifier | FamilyMemberHistory.identifier | Encounter.identifier | DeviceRequest.identifier | AllergyIntolerance.identifier | CarePlan.identifier | EpisodeOfCare.identifier | Procedure.ide'+
    'DocumentManifest.masterIdentifier | DocumentManifest.identifier | Goal.identifier | Consent.identifier | DocumentReference.masterIdentifier | DocumentReference.identifier | SupplyRequest.identifier | RiskAssessment.identifier | CareTeam.identifier | '+'ImagingStudy.identifier | FamilyMemberHistory.identifier | Encounter.identifier | DeviceRequest.identifier | AllergyIntolerance.identifier | CarePlan.identifier | EpisodeOfCare.identifier | Procedure.ide', SearchXpathUsageNormal);
+  indexes.add('DocumentManifest', 'item', 'Items in manifest', SearchParamTypeREFERENCE, ALL_RESOURCE_TYPE_NAMES, 'DocumentManifest.content', SearchXpathUsageNormal);
   indexes.add('DocumentManifest', 'patient', 'The subject of the set of documents', SearchParamTypeREFERENCE, ['Group', 'Patient'], 'DocumentManifest.subject | Goal.subject | Consent.patient | DocumentReference.subject | ImagingManifest.patient | RiskAssessment.subject | CareTeam.subject | ImagingStudy.patient | FamilyMemberHistory.patient | Encounter.subject | DeviceUseStatement.'+'subject | DeviceRequest.subject | AllergyIntolerance.patient | CarePlan.subject | EpisodeO'+
    'DocumentManifest.subject | Goal.subject | Consent.patient | DocumentReference.subject | ImagingManifest.patient | RiskAssessment.subject | CareTeam.subject | ImagingStudy.patient | FamilyMemberHistory.patient | Encounter.subject | DeviceUseStatement.'+'subject | DeviceRequest.subject | AllergyIntolerance.patient | CarePlan.subject | EpisodeO', SearchXpathUsageNormal);
-  indexes.add('DocumentManifest', 'recipient', 'Intended to get notified about this set of documents', SearchParamTypeREFERENCE, ['Practitioner', 'Organization', 'Patient', 'RelatedPerson'], 'DocumentManifest.recipient', SearchXpathUsageNormal);
+  indexes.add('DocumentManifest', 'recipient', 'Intended to get notified about this set of documents', SearchParamTypeREFERENCE, ['Practitioner', 'Organization', 'Patient', 'PractitionerRole', 'RelatedPerson'], 'DocumentManifest.recipient', SearchXpathUsageNormal);
   indexes.add('DocumentManifest', 'related-id', 'Identifiers of things that are related', SearchParamTypeTOKEN, [], 'DocumentManifest.related.identifier', SearchXpathUsageNormal);
   indexes.add('DocumentManifest', 'related-ref', 'Related Resource', SearchParamTypeREFERENCE, ALL_RESOURCE_TYPE_NAMES, 'DocumentManifest.related.ref', SearchXpathUsageNormal);
   indexes.add('DocumentManifest', 'source', 'The source system/application/software', SearchParamTypeURI, [], 'DocumentManifest.source', SearchXpathUsageNormal);
   indexes.add('DocumentManifest', 'status', 'current | superseded | entered-in-error', SearchParamTypeTOKEN, [], 'DocumentManifest.status', SearchXpathUsageNormal);
   indexes.add('DocumentManifest', 'subject', 'The subject of the set of documents', SearchParamTypeREFERENCE, ['Practitioner', 'Group', 'Device', 'Patient'], 'DocumentManifest.subject', SearchXpathUsageNormal);
   indexes.add('DocumentManifest', 'type', 'Kind of document set', SearchParamTypeTOKEN, [], 'DocumentManifest.type | DocumentReference.type | Encounter.type | AllergyIntolerance.type | EpisodeOfCare.type | Composition.type | DocumentReference.type | Composition.type | Encounter.type | AllergyIntolerance.type | EpisodeOfCare.type', SearchXpathUsageNormal);
-  compartments.register(frtDevice, 'DocumentManifest', ['subject', 'author']);
-  compartments.register(frtPatient, 'DocumentManifest', ['subject', 'author', 'recipient']);
-  compartments.register(frtPractitioner, 'DocumentManifest', ['subject', 'author', 'recipient']);
-  compartments.register(frtRelatedPerson, 'DocumentManifest', ['author']);
+  compartments.register(frtDevice, 'DocumentManifest', ['subject', 'agent']);
+  compartments.register(frtEncounter, 'DocumentManifest', ['related-ref']);
+  compartments.register(frtPatient, 'DocumentManifest', ['subject', 'agent', 'recipient']);
+  compartments.register(frtPractitioner, 'DocumentManifest', ['subject', 'agent', 'recipient']);
+  compartments.register(frtRelatedPerson, 'DocumentManifest', ['agent']);
 end;
 {$ENDIF}
 
@@ -1482,11 +1483,13 @@ begin
   indexes.add('DocumentReference', '_security', 'Security Labels applied to this resource', SearchParamTypeTOKEN, [], 'Resource.meta.security', SearchXpathUsageNormal);
   indexes.add('DocumentReference', '_tag', 'Tags applied to this resource', SearchParamTypeTOKEN, [], 'Resource.meta.tag', SearchXpathUsageNormal);
   indexes.add('DocumentReference', '_text', 'Search on the narrative of the resource', SearchParamTypeSTRING, [], '', SearchXpathUsageNormal);
+  indexes.add('DocumentReference', 'agent', 'Who and/or what authored the document', SearchParamTypeREFERENCE, ['Practitioner', 'Organization', 'Device', 'Patient', 'PractitionerRole', 'RelatedPerson'], 'DocumentReference.agent.who', SearchXpathUsageNormal);
   indexes.add('DocumentReference', 'authenticator', 'Who/what authenticated the document', SearchParamTypeREFERENCE, ['Practitioner', 'Organization'], 'DocumentReference.authenticator', SearchXpathUsageNormal);
-  indexes.add('DocumentReference', 'author', 'Who and/or what authored the document', SearchParamTypeREFERENCE, ['Practitioner', 'Organization', 'Device', 'Patient', 'RelatedPerson'], 'DocumentReference.author', SearchXpathUsageNormal);
   indexes.add('DocumentReference', 'class', 'Categorization of document', SearchParamTypeTOKEN, [], 'DocumentReference.class', SearchXpathUsageNormal);
+  indexes.add('DocumentReference', 'contenttype', 'Mime type of the content, with charset etc.', SearchParamTypeTOKEN, [], 'DocumentReference.content.attachment.contentType', SearchXpathUsageNormal);
   indexes.add('DocumentReference', 'created', 'Document creation time', SearchParamTypeDATE, [], 'DocumentReference.created', SearchXpathUsageNormal);
   indexes.add('DocumentReference', 'custodian', 'Organization which maintains the document', SearchParamTypeREFERENCE, ['Organization'], 'DocumentReference.custodian', SearchXpathUsageNormal);
+  indexes.add('DocumentReference', 'date', 'When this document reference was created', SearchParamTypeDATE, [], 'DocumentReference.date', SearchXpathUsageNormal);
   indexes.add('DocumentReference', 'description', 'Human-readable description (title)', SearchParamTypeSTRING, [], 'DocumentReference.description', SearchXpathUsageNormal);
   indexes.add('DocumentReference', 'encounter', 'Context of the document  content', SearchParamTypeREFERENCE, ['EpisodeOfCare', 'Encounter'], 'DocumentReference.context.encounter | RiskAssessment.context | DeviceRequest.context | Procedure.context | List.encounter | VisionPrescription.encounter | ProcedureRequest.context | Flag.encounter | Observation.context | DiagnosticReport.context | Nu'+'tritionOrder.encounter | Composition.encounter | Flag.encounter | RiskAssessment.context | DiagnosticReport.context | ProcedureRequest.context | Procedure.context | List.encounter | Composition.encounter | NutritionOrder.encounter | Observation.conte'+'xt | DeviceRequest.context | VisionPrescription.encounter', SearchXpathUsageNormal);
   indexes.add('DocumentReference', 'event', 'Main clinical acts documented', SearchParamTypeTOKEN, [], 'DocumentReference.context.event', SearchXpathUsageNormal);
@@ -1494,7 +1497,6 @@ begin
   indexes.add('DocumentReference', 'format', 'Format/content rules for the document', SearchParamTypeTOKEN, [], 'DocumentReference.content.format', SearchXpathUsageNormal);
   indexes.add('DocumentReference', 'identifier', 'Master Version Specific Identifier', SearchParamTypeTOKEN, [], 'DocumentManifest.masterIdentifier | DocumentManifest.identifier | Goal.identifier | Consent.identifier | DocumentReference.masterIdentifier | DocumentReference.identifier | SupplyRequest.identifier | RiskAssessment.identifier | CareTeam.identifier | '+'ImagingStudy.identifier | FamilyMemberHistory.identifier | Encounter.identifier | DeviceRequest.identifier | AllergyIntolerance.identifier | CarePlan.identifier | EpisodeOfCare.identifier | Procedure.ide'+
    'DocumentManifest.masterIdentifier | DocumentManifest.identifier | Goal.identifier | Consent.identifier | DocumentReference.masterIdentifier | DocumentReference.identifier | SupplyRequest.identifier | RiskAssessment.identifier | CareTeam.identifier | '+'ImagingStudy.identifier | FamilyMemberHistory.identifier | Encounter.identifier | DeviceRequest.identifier | AllergyIntolerance.identifier | CarePlan.identifier | EpisodeOfCare.identifier | Procedure.ide', SearchXpathUsageNormal);
-  indexes.add('DocumentReference', 'indexed', 'When this document reference was created', SearchParamTypeDATE, [], 'DocumentReference.indexed', SearchXpathUsageNormal);
   indexes.add('DocumentReference', 'language', 'Human language of the content (BCP-47)', SearchParamTypeTOKEN, [], 'DocumentReference.content.attachment.language', SearchXpathUsageNormal);
   indexes.add('DocumentReference', 'location', 'Uri where the data can be found', SearchParamTypeURI, [], 'DocumentReference.content.attachment.url', SearchXpathUsageNormal);
   indexes.add('DocumentReference', 'patient', 'Who/what is the subject of the document', SearchParamTypeREFERENCE, ['Group', 'Patient'], 'DocumentManifest.subject | Goal.subject | Consent.patient | DocumentReference.subject | ImagingManifest.patient | RiskAssessment.subject | CareTeam.subject | ImagingStudy.patient | FamilyMemberHistory.patient | Encounter.subject | DeviceUseStatement.'+'subject | DeviceRequest.subject | AllergyIntolerance.patient | CarePlan.subject | EpisodeO'+
@@ -1510,11 +1512,11 @@ begin
   indexes.add('DocumentReference', 'status', 'current | superseded | entered-in-error', SearchParamTypeTOKEN, [], 'DocumentReference.status', SearchXpathUsageNormal);
   indexes.add('DocumentReference', 'subject', 'Who/what is the subject of the document', SearchParamTypeREFERENCE, ['Practitioner', 'Group', 'Device', 'Patient'], 'DocumentReference.subject', SearchXpathUsageNormal);
   indexes.add('DocumentReference', 'type', 'Kind of document (LOINC if possible)', SearchParamTypeTOKEN, [], 'DocumentManifest.type | DocumentReference.type | Encounter.type | AllergyIntolerance.type | EpisodeOfCare.type | Composition.type | DocumentReference.type | Composition.type | Encounter.type | AllergyIntolerance.type | EpisodeOfCare.type', SearchXpathUsageNormal);
-  compartments.register(frtDevice, 'DocumentReference', ['subject', 'author']);
+  compartments.register(frtDevice, 'DocumentReference', ['subject', 'agent']);
   compartments.register(frtEncounter, 'DocumentReference', ['encounter']);
-  compartments.register(frtPatient, 'DocumentReference', ['subject', 'author']);
-  compartments.register(frtPractitioner, 'DocumentReference', ['subject', 'author', 'authenticator']);
-  compartments.register(frtRelatedPerson, 'DocumentReference', ['author']);
+  compartments.register(frtPatient, 'DocumentReference', ['subject']);
+  compartments.register(frtPractitioner, 'DocumentReference', ['subject', 'agent', 'authenticator']);
+  compartments.register(frtRelatedPerson, 'DocumentReference', ['agent']);
 end;
 {$ENDIF}
 
@@ -1723,6 +1725,30 @@ begin
 end;
 {$ENDIF}
 
+{$IFDEF FHIR_EXAMPLESCENARIO}
+procedure TFHIRIndexBuilder.buildIndexesForExampleScenario(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+begin
+  indexes.add('ExampleScenario', '_content', 'Search on the entire content of the resource', SearchParamTypeSTRING, [], '', SearchXpathUsageNormal);
+  indexes.add('ExampleScenario', '_id', 'Logical id of this artifact', SearchParamTypeTOKEN, [], 'Resource.id', SearchXpathUsageNormal);
+  indexes.add('ExampleScenario', '_lastUpdated', 'When the resource version last changed', SearchParamTypeDATE, [], 'Resource.meta.lastUpdated', SearchXpathUsageNormal);
+  indexes.add('ExampleScenario', '_profile', 'Profiles this resource claims to conform to', SearchParamTypeURI, [], 'Resource.meta.profile', SearchXpathUsageNormal);
+  indexes.add('ExampleScenario', '_query', 'A custom search profile that describes a specific defined query operation', SearchParamTypeTOKEN, [], '', SearchXpathUsageNormal);
+  indexes.add('ExampleScenario', '_security', 'Security Labels applied to this resource', SearchParamTypeTOKEN, [], 'Resource.meta.security', SearchXpathUsageNormal);
+  indexes.add('ExampleScenario', '_tag', 'Tags applied to this resource', SearchParamTypeTOKEN, [], 'Resource.meta.tag', SearchXpathUsageNormal);
+  indexes.add('ExampleScenario', '_text', 'Search on the narrative of the resource', SearchParamTypeSTRING, [], '', SearchXpathUsageNormal);
+  indexes.add('ExampleScenario', 'date', 'The example scenario publication date', SearchParamTypeDATE, [], 'ExampleScenario.date', SearchXpathUsageNormal);
+  indexes.add('ExampleScenario', 'description', 'The description of the example scenario', SearchParamTypeSTRING, [], 'ExampleScenario.description', SearchXpathUsageNormal);
+  indexes.add('ExampleScenario', 'identifier', 'External identifier for the example scenario', SearchParamTypeTOKEN, [], 'ExampleScenario.identifier', SearchXpathUsageNormal);
+  indexes.add('ExampleScenario', 'jurisdiction', 'Intended jurisdiction for the example scenario', SearchParamTypeTOKEN, [], 'ExampleScenario.jurisdiction', SearchXpathUsageNormal);
+  indexes.add('ExampleScenario', 'name', 'Computationally friendly name of the example scenario', SearchParamTypeSTRING, [], 'ExampleScenario.name', SearchXpathUsageNormal);
+  indexes.add('ExampleScenario', 'publisher', 'Name of the publisher of the example scenario', SearchParamTypeSTRING, [], 'ExampleScenario.publisher', SearchXpathUsageNormal);
+  indexes.add('ExampleScenario', 'status', 'The current status of the example scenario', SearchParamTypeTOKEN, [], 'ExampleScenario.status', SearchXpathUsageNormal);
+  indexes.add('ExampleScenario', 'title', 'The human-friendly name of the example scenario', SearchParamTypeSTRING, [], 'ExampleScenario.title', SearchXpathUsageNormal);
+  indexes.add('ExampleScenario', 'url', 'The uri that identifies the example scenario', SearchParamTypeURI, [], 'ExampleScenario.url', SearchXpathUsageNormal);
+  indexes.add('ExampleScenario', 'version', 'The business version of the example scenario', SearchParamTypeTOKEN, [], 'ExampleScenario.version', SearchXpathUsageNormal);
+end;
+{$ENDIF}
+
 {$IFDEF FHIR_EXPANSIONPROFILE}
 procedure TFHIRIndexBuilder.buildIndexesForExpansionProfile(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
@@ -1791,10 +1817,10 @@ begin
   indexes.add('FamilyMemberHistory', '_text', 'Search on the narrative of the resource', SearchParamTypeSTRING, [], '', SearchXpathUsageNormal);
   indexes.add('FamilyMemberHistory', 'code', 'A search by a condition code', SearchParamTypeTOKEN, [], 'FamilyMemberHistory.condition.code | DeviceRequest.code.as(CodeableConcept) | AllergyIntolerance.code | AllergyIntolerance.reaction.substance | Procedure.code | List.code | ProcedureRequest.code | Observation.code | DiagnosticReport.code | Condition.'+'code | DiagnosticReport.code | Condition.code | ProcedureRequest.code | Procedure.code | List.code | AllergyIntolerance.code | AllergyIntolerance.reaction.substance | Observation.code | DeviceRequest.code.as(CodeableConcept)', SearchXpathUsageNormal);
   indexes.add('FamilyMemberHistory', 'date', 'When history was captured/updated', SearchParamTypeDATE, [], 'Consent.dateTime | SupplyRequest.authoredOn | RiskAssessment.occurrence.as(DateTime) | CareTeam.period | FamilyMemberHistory.date | Encounter.period | AllergyIntolerance.assertedDate | CarePlan.period | EpisodeOfCare.period | Procedure.performed | Li'+'st.date | Immunization.date | Flag.period | Observation.effective | DiagnosticReport.effective | Composition.date | DetectedIssue.date | ClinicalImpression.date | Flag.period | RiskAssessment.occurrence.as(DateTime) | FamilyMemberHistory.date | Diagn'+'osticReport.effective | CarePlan.period | CareTeam.period | Immunization.date | Procedure.performed | ClinicalImpression.date | List.date | Composition.date | SupplyRequest.authoredOn | Encounter.period | AllergyIntolerance.assertedDate | DetectedIss'+'ue.date | EpisodeOfCare.period | Observation.effective', SearchXpathUsageNormal);
-  indexes.add('FamilyMemberHistory', 'definition', 'Instantiates protocol or definition', SearchParamTypeREFERENCE, ['Questionnaire', 'PlanDefinition'], 'FamilyMemberHistory.definition', SearchXpathUsageNormal);
   indexes.add('FamilyMemberHistory', 'gender', 'A search by a gender code of a family member', SearchParamTypeTOKEN, [], 'FamilyMemberHistory.gender', SearchXpathUsageNormal);
   indexes.add('FamilyMemberHistory', 'identifier', 'A search by a record identifier', SearchParamTypeTOKEN, [], 'DocumentManifest.masterIdentifier | DocumentManifest.identifier | Goal.identifier | Consent.identifier | DocumentReference.masterIdentifier | DocumentReference.identifier | SupplyRequest.identifier | RiskAssessment.identifier | CareTeam.identifier | '+'ImagingStudy.identifier | FamilyMemberHistory.identifier | Encounter.identifier | DeviceRequest.identifier | AllergyIntolerance.identifier | CarePlan.identifier | EpisodeOfCare.identifier | Procedure.ide'+
    'DocumentManifest.masterIdentifier | DocumentManifest.identifier | Goal.identifier | Consent.identifier | DocumentReference.masterIdentifier | DocumentReference.identifier | SupplyRequest.identifier | RiskAssessment.identifier | CareTeam.identifier | '+'ImagingStudy.identifier | FamilyMemberHistory.identifier | Encounter.identifier | DeviceRequest.identifier | AllergyIntolerance.identifier | CarePlan.identifier | EpisodeOfCare.identifier | Procedure.ide', SearchXpathUsageNormal);
+  indexes.add('FamilyMemberHistory', 'instantiates', 'Instantiates protocol or definition', SearchParamTypeREFERENCE, ['Questionnaire', 'PlanDefinition'], 'FamilyMemberHistory.instantiates', SearchXpathUsageNormal);
   indexes.add('FamilyMemberHistory', 'patient', 'The identity of a subject to list family member history items for', SearchParamTypeREFERENCE, ['Group', 'Patient'], 'DocumentManifest.subject | Goal.subject | Consent.patient | DocumentReference.subject | ImagingManifest.patient | RiskAssessment.subject | CareTeam.subject | ImagingStudy.patient | FamilyMemberHistory.patient | Encounter.subject | DeviceUseStatement.'+'subject | DeviceRequest.subject | AllergyIntolerance.patient | CarePlan.subject | EpisodeO'+
    'DocumentManifest.subject | Goal.subject | Consent.patient | DocumentReference.subject | ImagingManifest.patient | RiskAssessment.subject | CareTeam.subject | ImagingStudy.patient | FamilyMemberHistory.patient | Encounter.subject | DeviceUseStatement.'+'subject | DeviceRequest.subject | AllergyIntolerance.patient | CarePlan.subject | EpisodeO', SearchXpathUsageNormal);
   indexes.add('FamilyMemberHistory', 'relationship', 'A search by a relationship type', SearchParamTypeTOKEN, [], 'FamilyMemberHistory.relationship', SearchXpathUsageNormal);
@@ -2434,7 +2460,7 @@ begin
   indexes.add('MessageDefinition', 'category', 'The behavior associated with the message', SearchParamTypeTOKEN, [], 'MessageDefinition.category', SearchXpathUsageNormal);
   indexes.add('MessageDefinition', 'date', 'The message definition publication date', SearchParamTypeDATE, [], 'MessageDefinition.date', SearchXpathUsageNormal);
   indexes.add('MessageDefinition', 'description', 'The description of the message definition', SearchParamTypeSTRING, [], 'MessageDefinition.description', SearchXpathUsageNormal);
-  indexes.add('MessageDefinition', 'event', 'The event that triggers the message', SearchParamTypeTOKEN, [], 'MessageDefinition.event', SearchXpathUsageNormal);
+  indexes.add('MessageDefinition', 'event', 'The event that triggers the message', SearchParamTypeURI, [], 'MessageDefinition.event', SearchXpathUsageNormal);
   indexes.add('MessageDefinition', 'focus', 'A resource that is a permitted focus of the message', SearchParamTypeTOKEN, [], 'MessageDefinition.focus.code', SearchXpathUsageNormal);
   indexes.add('MessageDefinition', 'identifier', 'External identifier for the message definition', SearchParamTypeTOKEN, [], 'MessageDefinition.identifier', SearchXpathUsageNormal);
   indexes.add('MessageDefinition', 'jurisdiction', 'Intended jurisdiction for the message definition', SearchParamTypeTOKEN, [], 'MessageDefinition.jurisdiction', SearchXpathUsageNormal);
@@ -2621,7 +2647,7 @@ begin
   indexes.add('OperationDefinition', 'publisher', 'Name of the publisher of the operation definition', SearchParamTypeSTRING, [], 'OperationDefinition.publisher', SearchXpathUsageNormal);
   indexes.add('OperationDefinition', 'status', 'The current status of the operation definition', SearchParamTypeTOKEN, [], 'OperationDefinition.status', SearchXpathUsageNormal);
   indexes.add('OperationDefinition', 'system', 'Invoke at the system level?', SearchParamTypeTOKEN, [], 'OperationDefinition.system', SearchXpathUsageNormal);
-  indexes.add('OperationDefinition', 'type', 'Invole at the type level?', SearchParamTypeTOKEN, [], 'OperationDefinition.type', SearchXpathUsageNormal);
+  indexes.add('OperationDefinition', 'type', 'Invoke at the type level?', SearchParamTypeTOKEN, [], 'OperationDefinition.type', SearchXpathUsageNormal);
   indexes.add('OperationDefinition', 'url', 'The uri that identifies the operation definition', SearchParamTypeURI, [], 'OperationDefinition.url', SearchXpathUsageNormal);
   indexes.add('OperationDefinition', 'version', 'The business version of the operation definition', SearchParamTypeTOKEN, [], 'OperationDefinition.version', SearchXpathUsageNormal);
 end;
@@ -3023,7 +3049,7 @@ begin
   indexes.add('Provenance', 'recorded', 'When the activity was recorded / updated', SearchParamTypeDATE, [], 'Provenance.recorded', SearchXpathUsageNormal);
   indexes.add('Provenance', 'signature-type', 'Indication of the reason the entity signed the object(s)', SearchParamTypeTOKEN, [], 'Provenance.signature.type', SearchXpathUsageNormal);
   indexes.add('Provenance', 'target', 'Target Reference(s) (usually version specific)', SearchParamTypeREFERENCE, ALL_RESOURCE_TYPE_NAMES, 'Provenance.target', SearchXpathUsageNormal);
-  indexes.add('Provenance', 'when', 'When the activity occurred', SearchParamTypeDATE, [], 'Provenance.occured.as(DateTime)', SearchXpathUsageNormal);
+  indexes.add('Provenance', 'when', 'When the activity occurred', SearchParamTypeDATE, [], 'Provenance.occurred.as(DateTime)', SearchXpathUsageNormal);
   compartments.register(frtDevice, 'Provenance', ['agent']);
   compartments.register(frtPatient, 'Provenance', ['target.subject', 'target.patient', 'patient']);
   compartments.register(frtPractitioner, 'Provenance', ['agent']);
@@ -3073,7 +3099,7 @@ begin
   indexes.add('QuestionnaireResponse', 'based-on', 'Plan/proposal/order fulfilled by this questionnaire response', SearchParamTypeREFERENCE, ['CarePlan', 'ProcedureRequest'], 'QuestionnaireResponse.basedOn', SearchXpathUsageNormal);
   indexes.add('QuestionnaireResponse', 'context', 'Encounter or episode associated with the questionnaire response', SearchParamTypeREFERENCE, ['EpisodeOfCare', 'Encounter'], 'QuestionnaireResponse.context', SearchXpathUsageNormal);
   indexes.add('QuestionnaireResponse', 'identifier', 'The unique identifier for the questionnaire response', SearchParamTypeTOKEN, [], 'QuestionnaireResponse.identifier', SearchXpathUsageNormal);
-  indexes.add('QuestionnaireResponse', 'parent', 'Procedure or observation this questionnaire response was performed as a part of', SearchParamTypeREFERENCE, ['Observation', 'Procedure'], 'QuestionnaireResponse.parent', SearchXpathUsageNormal);
+  indexes.add('QuestionnaireResponse', 'part-of', 'Procedure or observation this questionnaire response was performed as a part of', SearchParamTypeREFERENCE, ['Observation', 'Procedure'], 'QuestionnaireResponse.partOf', SearchXpathUsageNormal);
   indexes.add('QuestionnaireResponse', 'patient', 'The patient that is the subject of the questionnaire response', SearchParamTypeREFERENCE, ['Patient'], 'QuestionnaireResponse.subject', SearchXpathUsageNormal);
   indexes.add('QuestionnaireResponse', 'questionnaire', 'The questionnaire the answers are provided for', SearchParamTypeREFERENCE, ['Questionnaire'], 'QuestionnaireResponse.questionnaire', SearchXpathUsageNormal);
   indexes.add('QuestionnaireResponse', 'source', 'The individual providing the information reflected in the questionnaire respose', SearchParamTypeREFERENCE, ['Practitioner', 'Patient', 'RelatedPerson'], 'QuestionnaireResponse.source', SearchXpathUsageNormal);
@@ -3678,30 +3704,6 @@ begin
 end;
 {$ENDIF}
 
-{$IFDEF FHIR_WORKFLOWEXAMPLE}
-procedure TFHIRIndexBuilder.buildIndexesForWorkflowExample(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
-begin
-  indexes.add('WorkflowExample', '_content', 'Search on the entire content of the resource', SearchParamTypeSTRING, [], '', SearchXpathUsageNormal);
-  indexes.add('WorkflowExample', '_id', 'Logical id of this artifact', SearchParamTypeTOKEN, [], 'Resource.id', SearchXpathUsageNormal);
-  indexes.add('WorkflowExample', '_lastUpdated', 'When the resource version last changed', SearchParamTypeDATE, [], 'Resource.meta.lastUpdated', SearchXpathUsageNormal);
-  indexes.add('WorkflowExample', '_profile', 'Profiles this resource claims to conform to', SearchParamTypeURI, [], 'Resource.meta.profile', SearchXpathUsageNormal);
-  indexes.add('WorkflowExample', '_query', 'A custom search profile that describes a specific defined query operation', SearchParamTypeTOKEN, [], '', SearchXpathUsageNormal);
-  indexes.add('WorkflowExample', '_security', 'Security Labels applied to this resource', SearchParamTypeTOKEN, [], 'Resource.meta.security', SearchXpathUsageNormal);
-  indexes.add('WorkflowExample', '_tag', 'Tags applied to this resource', SearchParamTypeTOKEN, [], 'Resource.meta.tag', SearchXpathUsageNormal);
-  indexes.add('WorkflowExample', '_text', 'Search on the narrative of the resource', SearchParamTypeSTRING, [], '', SearchXpathUsageNormal);
-  indexes.add('WorkflowExample', 'date', 'The workflow example publication date', SearchParamTypeDATE, [], 'WorkflowExample.date', SearchXpathUsageNormal);
-  indexes.add('WorkflowExample', 'description', 'The description of the workflow example', SearchParamTypeSTRING, [], 'WorkflowExample.description', SearchXpathUsageNormal);
-  indexes.add('WorkflowExample', 'identifier', 'External identifier for the workflow example', SearchParamTypeTOKEN, [], 'WorkflowExample.identifier', SearchXpathUsageNormal);
-  indexes.add('WorkflowExample', 'jurisdiction', 'Intended jurisdiction for the workflow example', SearchParamTypeTOKEN, [], 'WorkflowExample.jurisdiction', SearchXpathUsageNormal);
-  indexes.add('WorkflowExample', 'name', 'Computationally friendly name of the workflow example', SearchParamTypeSTRING, [], 'WorkflowExample.name', SearchXpathUsageNormal);
-  indexes.add('WorkflowExample', 'publisher', 'Name of the publisher of the workflow example', SearchParamTypeSTRING, [], 'WorkflowExample.publisher', SearchXpathUsageNormal);
-  indexes.add('WorkflowExample', 'status', 'The current status of the workflow example', SearchParamTypeTOKEN, [], 'WorkflowExample.status', SearchXpathUsageNormal);
-  indexes.add('WorkflowExample', 'title', 'The human-friendly name of the workflow example', SearchParamTypeSTRING, [], 'WorkflowExample.title', SearchXpathUsageNormal);
-  indexes.add('WorkflowExample', 'url', 'The uri that identifies the workflow example', SearchParamTypeURI, [], 'WorkflowExample.url', SearchXpathUsageNormal);
-  indexes.add('WorkflowExample', 'version', 'The business version of the workflow example', SearchParamTypeTOKEN, [], 'WorkflowExample.version', SearchXpathUsageNormal);
-end;
-{$ENDIF}
-
 procedure TFHIRIndexBuilder.registerIndexes(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
 begin
   {$IFDEF FHIR_ACCOUNT}
@@ -3841,6 +3843,9 @@ begin
   {$ENDIF}
   {$IFDEF FHIR_EVENTDEFINITION}
   buildIndexesForEventDefinition(Indexes, compartments);
+  {$ENDIF}
+  {$IFDEF FHIR_EXAMPLESCENARIO}
+  buildIndexesForExampleScenario(Indexes, compartments);
   {$ENDIF}
   {$IFDEF FHIR_EXPANSIONPROFILE}
   buildIndexesForExpansionProfile(Indexes, compartments);
@@ -4054,9 +4059,6 @@ begin
   {$ENDIF}
   {$IFDEF FHIR_VISIONPRESCRIPTION}
   buildIndexesForVisionPrescription(Indexes, compartments);
-  {$ENDIF}
-  {$IFDEF FHIR_WORKFLOWEXAMPLE}
-  buildIndexesForWorkflowExample(Indexes, compartments);
   {$ENDIF}
 end;
 

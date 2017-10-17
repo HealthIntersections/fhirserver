@@ -322,7 +322,7 @@
         <DCCReference Include="..\reference-platform\dstu2\FHIRParserJson.pas"/>
         <DCCReference Include="..\reference-platform\support\FHIRParserBase.pas"/>
         <DCCReference Include="..\reference-platform\dstu2\FHIRConstants.pas"/>
-        <DCCReference Include="..\reference-platform\dstu2\FHIRSupport.pas"/>
+        <DCCReference Include="..\reference-platform\support\FHIRSupport.pas"/>
         <DCCReference Include="..\reference-platform\support\FHIRLang.pas"/>
         <DCCReference Include="..\reference-platform\dstu2\FHIRUtilities.pas"/>
         <DCCReference Include="..\reference-platform\client\FHIRClient.pas"/>

@@ -491,7 +491,7 @@ var
 begin
   result := nil;
   // do we know that patient?
-  if engine.FindResource('Patient', request.patient, false, key, versionKey, nil,  nil, session.BuildCompartmentList) then
+  if engine.FindResource('Patient', request.patient, [], key, versionKey, nil,  nil, session.Compartments) then
     result := engine.GetResourceByKey(key, needSecure) as TFhirPatient
   else
   begin
@@ -513,7 +513,7 @@ begin
       try
         for id in pat.identifierList do
         begin
-          m := engine.ResolveSearchId('Patient', '', session.BuildCompartmentList, request.baseURL, 'identifier='+id.system+'|'+id.value);
+          m := engine.ResolveSearchId('Patient', nil, session.Compartments, request.baseURL, 'identifier='+id.system+'|'+id.value);
           try
             matches.AddAll(m);
           finally
@@ -536,35 +536,41 @@ var
   flag : TFhirFlag;
   needSecure : boolean;
   card : TCDSHookCard;
+  comp : TFHIRCompartmentId;
 begin
   result := TCDSHookResponse.Create;
   try
-    m := engine.ResolveSearchId('Flag', patient.id, session.buildCompartmentList, base, 'active=true');
+    comp := TFHIRCompartmentId.Create(frtPatient, patient.id);
     try
-      for i := 0 to m.Count - 1 do
-      begin
-        flag := engine.GetResourceByKey(m[i].key, needSecure) as TFhirFlag;
-        if (flag.status = FlagStatusActive) and (secure or not needSecure) then
+      m := engine.ResolveSearchId('Flag', comp, session.Compartments, base, 'active=true');
+      try
+        for i := 0 to m.Count - 1 do
         begin
-          card := result.addCard;
-          card.indicator := 'info';
-          if flag.author <> nil then
+          flag := engine.GetResourceByKey(m[i].key, needSecure) as TFhirFlag;
+          if (flag.status = FlagStatusActive) and (secure or not needSecure) then
           begin
-            card.sourceLabel := flag.author.display;
-            card.sourceURL := flag.author.reference;
+            card := result.addCard;
+            card.indicator := 'info';
+            if flag.author <> nil then
+            begin
+              card.sourceLabel := flag.author.display;
+              card.sourceURL := flag.author.reference;
+            end;
+            if card.sourceLabel = '' then
+              card.sourceLabel := server.OwnerName;
+            if card.sourceURL = '' then
+              card.sourceURL := base;
+            if flag.code.text <> '' then
+              card.summary := flag.code.text
+            else if flag.code.codingList.Count > 0 then
+              card.summary := flag.code.codingList[0].display
           end;
-          if card.sourceLabel = '' then
-            card.sourceLabel := server.OwnerName;
-          if card.sourceURL = '' then
-            card.sourceURL := base;
-          if flag.code.text <> '' then
-            card.summary := flag.code.text
-          else if flag.code.codingList.Count > 0 then
-            card.summary := flag.code.codingList[0].display
         end;
+      finally
+        m.Free;
       end;
     finally
-      m.Free;
+      comp.Free;
     end;
     result.Link;
   finally

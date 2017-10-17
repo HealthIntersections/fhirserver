@@ -208,7 +208,7 @@
         <DCCReference Include="..\reference-platform\dstu3\FHIRProfileUtilities.pas"/>
         <DCCReference Include="..\reference-platform\dstu3\FHIRResources.pas"/>
         <DCCReference Include="..\reference-platform\support\FHIRSecurity.pas"/>
-        <DCCReference Include="..\reference-platform\dstu3\FHIRSupport.pas"/>
+        <DCCReference Include="..\reference-platform\support\FHIRSupport.pas"/>
         <DCCReference Include="..\reference-platform\dstu3\FHIRTags.pas"/>
         <DCCReference Include="..\reference-platform\dstu3\FHIRTypes.pas"/>
         <DCCReference Include="..\reference-platform\dstu3\FHIRUtilities.pas"/>

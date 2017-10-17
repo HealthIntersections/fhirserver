@@ -1003,6 +1003,9 @@ optional so legal codes are for example:
 		<translation lang="fr">La ressource avec l'Id "%s" n'existe pas</translation>
 		<translation lang="ru">Ресурс Id "%s" не существует</translation>
 	</item>
+	<item id="MSG_NO_ACCESS" ecode="true">
+		<translation lang="en">Access denied to Resource Id "%s"</translation>
+	</item>
 	<item id="MSG_NO_MODULE" ecode="true">
 		<translation lang="en">No module could be found to handle the request "%s"</translation>
 		<translation lang="it">Impossibile trovare un modulo per gestire la richiesta "%s"</translation>

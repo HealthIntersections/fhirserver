@@ -29,10 +29,6 @@ POSSIBILITY OF SUCH DAMAGE.
 }
 
 
-{$IFNDEF FHIR2}
-This is the dstu2 version of the FHIR code
-{$ENDIF}
-
 
 
 {!Wrapper uses Classes,FHIRBase,FHIRResources,FHIRResources_Wrapper, FHIRTypes_Wrapper, FHIRTypes}
@@ -47,7 +43,7 @@ uses
   StringSupport, DecimalSupport, GuidSupport, DateSupport,
   AdvObjects, AdvBuffers, AdvStringLists, AdvStringMatches, AdvJson, AdvGenerics, AdvNameBuffers, AdvStreams,
   MimeMessage, JWT, SCIMObjects, MXML, GraphQL,
-  FHIRBase, FHirResources, FHIRConstants, FHIRTypes, FHIRContext, FHIRSecurity, FHIRTags, FHIRLang, FHIRXhtml;
+  FHIRBase, FHIRIndexBase, FHirResources, FHIRConstants, FHIRTypes, FHIRContext, FHIRSecurity, FHIRTags, FHIRLang, FHIRXhtml;
 
 Const
    HTTP_OK_200 = 200;
@@ -85,10 +81,18 @@ Const
 Type
   {$M+}
 
-  TFHIRCompartment = class (TAdvObject)
+  TFHIRCompartmentId = class (TAdvObject)
   private
+    FEnum: TFhirResourceType;
+    FId: String;
   public
+    Constructor Create(enum : TFhirResourceType; id : String);
+    function Link : TFHIRCompartmentId; overload;
 
+    property Enum : TFhirResourceType read FEnum write FEnum;
+    property Id : String read FId write FId;
+
+    function ToString : String; override;
   end;
 
   TFHIRRequest = class;
@@ -106,24 +110,6 @@ Type
 
     procedure editSearch(req : TFHIRRequest); virtual; abstract;
   end;
-
-  TFHIRCompartmentList = class (TAdvList<TFHIRCompartment>)
-  private
-    FPatientCompartment : TAdvMap<TAdvStringSet>;
-    FPractitionerCompartment : TAdvMap<TAdvStringSet>;
-    FEncounterCompartment : TAdvMap<TAdvStringSet>;
-    FRelatedPersonCompartment : TAdvMap<TAdvStringSet>;
-    FDeviceCompartment : TAdvMap<TAdvStringSet>;
-  public
-    Constructor Create; override;
-    Destructor Destroy; override;
-    Function Link : TFHIRCompartmentList; overload;
-    function existsInCompartment(comp: TFHIRResourceType; resource : String) : boolean;
-    function getIndexNames(comp: TFHIRResourceType; resource : String) : TAdvStringSet;
-    procedure register(comp: TFHIRResourceType; resource : String; indexes : array of String); overload;
-    procedure register(comp: TFHIRResourceType; resource : String; list : String); overload;
-  end;
-
 
 
   {@Class TFhirSession
@@ -156,8 +142,6 @@ Type
     FFirstCreated: TDateTime;
     FJwt : TJWT;
     FJwtPacked : String;
-    FTaggedCompartments : TStringList;
-    FPatientList: TStringList;
     FsessionLength: String;
     FUser : TSCIMUser;
     FUserEvidence : TFHIRUserIdEvidence;
@@ -167,6 +151,7 @@ Type
     FUserKey: integer;
     FTestScript: TFhirTestScript;
     FExternalUserKey: integer;
+    FCompartments : TAdvList<TFHIRCompartmentId>;
 
     procedure SetJwt(const Value: TJWT);
     procedure SetUser(const Value: TSCIMUser);
@@ -179,8 +164,6 @@ Type
     function Link : TFhirSession; overload;
     procedure describe(b : TStringBuilder);
     Property scopes : String read GetScopes write SetScopes;
-
-    function BuildCompartmentList : String;
 
     {@member Key
       Primary database key for this session. Don't change!
@@ -289,11 +272,10 @@ Type
     function canAdministerUsers : boolean;
     procedure allowAll; // for internal use
 
-    property TaggedCompartments : TStringList read FTaggedCompartments;
     property sessionLength : String read FsessionLength write FsessionLength;
-    property PatientList : TStringList read FPatientList;
     Property TestScript : TFhirTestScript read FTestScript write SetTestScript;
     property ExternalUserKey : integer read FExternalUserKey write FExternalUserKey;
+    property Compartments : TAdvList<TFHIRCompartmentId> read FCompartments;
   end;
 
   {@Class TFHIRRequest
@@ -331,8 +313,7 @@ Type
     FSession: TFhirSession;
     FTags : TFHIRTagList;
     FIp: string;
-    FCompartments: String;
-    FCompartmentId: String;
+    FCompartment : TFHIRCompartmentId;
     FForm: TMimeMessage;
     FOperationName: String;
     FIfMatch : String;
@@ -348,9 +329,10 @@ Type
     FrequestId: String;
     FCustom : TFHIRCustomResourceInformation;
     FStrictSearch: boolean;
-    FAdaptor: TFHIRFormatAdaptor;
+    FAdaptor : TFHIRFormatAdaptor;
     FLoadObjects : boolean;
     FGraphQL: TGraphQLPackage;
+    FElements: TStringList;
     procedure SetResource(const Value: TFhirResource);
     procedure SetSource(const Value: TAdvBuffer);
     procedure SetSession(const Value: TFhirSession);
@@ -364,6 +346,8 @@ Type
     procedure SetGraphQL(const Value: TGraphQLPackage);
     procedure SetParams(const Value: TParseMap);
     procedure SetPatchXml(const Value: TMXmlElement);
+    procedure SetCompartment(const Value: TFHIRCompartmentId);
+    function GetHasCompartments: boolean;
   Public
     Constructor Create(worker: TFHIRWorkerContext; origin : TFHIRRequestOrigin; compartmentInformation : TFHIRCompartmentList);
     Destructor Destroy; Override;
@@ -413,7 +397,7 @@ Type
     property url : String read FUrl write FUrl;
 
     {@member secure
-      Whether the request was made on an SSL interface or not (SSL = smart on fhir as well)
+      Whether the request was made on an SSL interface or not (SSL = Smart App Launch as well)
     }
     property secure : Boolean read FSecure write FSecure;
 
@@ -477,6 +461,8 @@ Type
     }
     property Tags : TFHIRTagList read FTags;
 
+    property Elements : TStringList read FElements;
+
     {@member originalId
       The specified originalId of the resource in the request (if present) (i.e. in a transaction)
     }
@@ -485,12 +471,10 @@ Type
     {@member compartments
       If the user is limited to a set of compartments, this is the list (comma separated, with quotes)
     }
-    Property compartments : String read FCompartments write FCompartments;
+    Property compartment : TFHIRCompartmentId read FCompartment write SetCompartment;
+    property hasCompartments : boolean read GetHasCompartments;
+    function SessionCompartments : TAdvList<TFHIRCompartmentId>;
 
-    {@member compartmentId
-      if operation is limited to a patient compartment, the id in the compartment
-    }
-    Property compartmentId : String read FCompartmentId write FCompartmentId;
 
     {@member contentLocation
       Quoted Content location on request. Used for version aware updates. Only on RESTful interface
@@ -977,6 +961,9 @@ Var
 var
   s, soURL : String;
 begin
+  Elements.Clear;
+  Elements.CommaText := Parameters.GetVar('_elements');
+
   soURL := sUrl;
   relativeReferenceAdjustment := 0;
   sType := NextSegment(sURL);
@@ -1038,7 +1025,9 @@ begin
     CommandType := fcmdTask;
     StringSplit(sURL, '/', FId, FSubId);
     sUrl := '';
-    if not IsGuid(id) then
+    if FId.endsWith('.zip') then
+      StringSplit(FId, '.', FId, FSubId);
+    if not IsGuid(FId) then
       raise ERestfulException.Create('TFhirWebServer', 'HTTPRequest', StringFormat(GetFhirMessage('MSG_BAD_FORMAT', lang), [sUrl, FId]), HTTP_ERR_FORBIDDEN, IssueTypeInvalid);
     if sCommand = 'DELETE' then
     begin
@@ -1064,11 +1053,26 @@ begin
   end
   else
   begin
+    {$IFDEF FHIR2}
     if (sType <> '') then
       if not RecogniseFHIRResourceManagerName(sType, aResourceType) and not RecogniseCustomResource(sType, aResourceType) then
       Raise ERestfulException.Create('TFhirWebServer', 'HTTPRequest', StringFormat(GetFhirMessage('MSG_NO_MODULE', lang), [sType]), HTTP_ERR_NOTFOUND, IssueTypeNotSupported);
     ResourceName := sType;
     FResourceEnum := aResourceType;
+    {$ELSE}
+    Adaptor := nil;
+    if (sType <> '') then
+      if (adaptors <> nil) and adaptors.ContainsKey(sType) then
+      begin
+        adaptor := adaptors[sType].link;
+        ResourceName := adaptor.ResourceName;
+      end
+      else if not RecogniseFHIRResourceManagerName(sType, aResourceType) and not RecogniseCustomResource(sType, aResourceType) then
+        Raise ERestfulException.Create('TFhirWebServer', 'HTTPRequest', StringFormat(GetFhirMessage('MSG_NO_MODULE', lang), [sType]), HTTP_ERR_NOTFOUND, IssueTypeNotSupported)
+      else
+        ResourceName := sType;
+    // FResourceEnum := aResourceType;
+    {$ENDIF}
     sId := NextSegment(sURL);
     if sId = '' then
     begin
@@ -1164,12 +1168,12 @@ begin
         else
           raise ERestfulException.Create('TFhirWebServer', 'HTTPRequest', StringFormat(GetFhirMessage('MSG_BAD_SYNTAX', lang), [soURL]), HTTP_ERR_BAD_REQUEST, IssueTypeInvalid);
       end
-      else if sId = '*' then // all tpes
+      else if sId = '*' then // all types
       begin
-        if ResourceName <> 'Patient' then
+        if not FCompartmentInformation.hasCompartment(ResourceEnum) then
           raise ERestfulException.Create('TFhirWebServer', 'HTTPRequest', StringFormat(GetFhirMessage('MSG_UNKNOWN_COMPARTMENT', lang), [soURL, 'GET, POST or DELETE']), HTTP_ERR_FORBIDDEN, IssueTypeNotSupported);
 
-        CompartmentId := Id;
+        compartment := TFHIRCompartmentId.Create(ResourceEnum, Id);
         CommandType := fcmdSearch;
         ResourceName := '';
         Id := '';
@@ -1178,10 +1182,10 @@ begin
       begin
         if FCompartmentInformation.existsInCompartment(ResourceEnum, sId) then
         begin
-          if ResourceName <> 'Patient' then
+          if not FCompartmentInformation.hasCompartment(ResourceEnum) then
             raise ERestfulException.Create('TFhirWebServer', 'HTTPRequest', StringFormat(GetFhirMessage('MSG_UNKNOWN_COMPARTMENT', lang), [soURL, 'GET, POST or DELETE']), HTTP_ERR_FORBIDDEN, IssueTypeNotSupported);
 
-          CompartmentId := Id;
+          compartment := TFHIRCompartmentId.Create(ResourceEnum, Id);
           CommandType := fcmdSearch;
           ResourceName := sId;
           Id := '';
@@ -1224,6 +1228,10 @@ begin
   if (CommandType <> fcmdNull)  then
     if (sURL <> '') then
       raise ERestfulException.Create('TFhirWebServer', 'HTTPRequest', StringFormat(GetFhirMessage('MSG_BAD_SYNTAX', lang), [soURL]), HTTP_ERR_BAD_REQUEST, IssueTypeInvalid);
+  {$IFNDEF FHIR2}
+  if (CommandType = fcmdSearch) and (Adaptor <> nil) then
+    Adaptor.editSearch(self);
+  {$ENDIF}
 end;
 
 function TFHIRRequest.canGetUser: boolean;
@@ -1258,8 +1266,7 @@ begin
   result.FLang := FLang;
   result.FSession := FSession.Link;
   result.FIp := FIp;
-  result.FCompartments := FCompartments;
-  result.FCompartmentId := FCompartmentId;
+  result.FCompartment := FCompartment.Link;
   result.FSummary := FSummary;
   result.FOrigin := FOrigin;
   result.FSecure := FSecure;
@@ -1305,10 +1312,12 @@ begin
   FTags := TFHIRTagList.create;
   FOrigin := origin;
   FCompartmentInformation := compartmentInformation;
+  FElements := TStringList.Create;
 end;
 
 destructor TFHIRRequest.Destroy;
 begin
+  FElements.Free;
   FAdaptor.Free;
   FCompartmentInformation.free;
   FCustom.Free;
@@ -1323,12 +1332,19 @@ begin
   FParams.Free;
   FGraphQL.Free;
   FPatchXml.Free;
+  FCompartment.Free;
   inherited;
+end;
+
+
+function TFHIRRequest.GetHasCompartments: boolean;
+begin
+  result := (FCompartment <> nil) or (Session.Compartments.Count > 0);
 end;
 
 function TFHIRRequest.hasTestingTag: boolean;
 begin
-  result := false;
+  result := {$IFDEF FHIR2}false{$ELSE}Tags.hasTestingTag{$ENDIF};
 end;
 
 function TFHIRRequest.Link: TFHIRRequest;
@@ -1429,10 +1445,28 @@ begin
   FSummary := soFull;
 end;
 
+function TFHIRRequest.SessionCompartments: TAdvList<TFHIRCompartmentId>;
+begin
+  if Session = nil then
+    result := nil
+  else
+    result := Session.Compartments;
+end;
+
 procedure TFHIRRequest.SetAdaptor(const Value: TFHIRFormatAdaptor);
 begin
   FAdaptor.Free;
   FAdaptor := Value;
+  {$IFNDEF FHIR2}
+  if FAdaptor <> nil then
+    FLoadObjects := true;
+  {$ENDIF}
+end;
+
+procedure TFHIRRequest.SetCompartment(const Value: TFHIRCompartmentId);
+begin
+  FCompartment.Free;
+  FCompartment := Value;
 end;
 
 procedure TFHIRRequest.SetForm(const Value: TMimeMessage);
@@ -1506,7 +1540,6 @@ function TFHIRRequest.XMLSummary: String;
     if (t) then
       result := result+'  '+n+': '+v+#13#10;
   end;
-
 begin
   result := #13#10;
   addValue('Command', CODES_TFHIRCommandType[CommandType], true);
@@ -1524,8 +1557,8 @@ begin
   addValue('Language', FLang, FLang <> '');
   addValue('Tag', FTags.ToString, FTags.count > 0);
   addValue('ip', FIp, FIp <> '');
-  addValue('compartments', FCompartments, FCompartments <> '');
-  addValue('compartmentId', FCompartmentId, FCompartmentId <> '');
+  if FCompartment <> nil then
+    result := result+'  Compartment: '+FCompartment.ToString+#13#10;
 end;
 
 { TFHIRResponse }
@@ -1535,6 +1568,7 @@ begin
   inherited;
   FTags := TFHIRTagList.create;
   Flink_list := TFhirBundleLinkList.create;
+  FCacheControl := cacheNormal;
 end;
 
 destructor TFHIRResponse.Destroy;
@@ -1718,10 +1752,16 @@ begin
   result := TFhirHumanName.create;
   try
     result.useElement := CheckEnum(SYSTEMS_TFhirNameUseEnum, CODES_TFhirNameUseEnum, use);
+    {$IFDEF FHIR2}
     result.familyList.addItem(family);
+    {$ELSE}
+    result.family := family;
+    {$ENDIF}
     result.givenList.addItem(given);
-    result.prefixList.addItem(prefix);
-    result.suffixList.addItem(suffix);
+    if (prefix <> '') then
+      result.prefixList.addItem(prefix);
+    if (suffix <> '') then
+      result.suffixList.addItem(suffix);
     result.link;
   finally
     result.free;
@@ -1943,20 +1983,6 @@ begin
   FSecurity.allowAll;
 end;
 
-function TFhirSession.BuildCompartmentList: String;
-var
-  i : integer;
-begin
-  if self = nil then
-    exit('');
-
-  result := ''''+patientList[0]+'''';
-  for i := 1 to patientList.count - 1 do
-    result := result+', '''+patientList[i]+'''';
-  for i := 0 to TaggedCompartments.count - 1 do
-    result := result+', '''+TaggedCompartments[i]+'''';
-end;
-
 function TFhirSession.canAdministerUsers: boolean;
 begin
   result := FSecurity.canAdministerUsers;
@@ -1988,11 +2014,13 @@ begin
   FWOrker := worker;
   FSecure := secure;
   FFirstCreated := now;
-  FTaggedCompartments := TStringList.create;
-  FPatientList := TStringList.create;
+  FCompartments := TAdvList<TFHIRCompartmentId>.create;
 end;
 
 procedure TFhirSession.describe(b: TStringBuilder);
+var
+  id : TFHIRCompartmentId;
+  first : boolean;
 begin
   b.Append('<tr>');
 //  session key
@@ -2032,7 +2060,7 @@ begin
   b.Append(FormatTextToHTML(FUserName));
   b.Append('</td>');
 
-//  created
+  //  created
   b.Append('<td>');
   b.Append(FormatDateTime('c', FFirstCreated));
   b.Append('</td>');
@@ -2054,7 +2082,15 @@ begin
   b.Append('</td>');
 //  compartments
   b.Append('<td>');
-  b.Append(FTaggedCompartments.CommaText +' '+FPatientList.CommaText);
+  first := true;
+  for id in FCompartments do
+  begin
+    if first then
+      first := false
+    else
+      b.Append(', ');
+    b.Append(id.ToString);
+  end;
   b.Append('</td>');
   b.Append('</tr>'#13#10);
 end;
@@ -2064,8 +2100,7 @@ begin
   FTestScript.Free;
   FSecurity.Free;
   FJwt.free;
-  FTaggedCompartments.Free;
-  FPatientList.Free;
+  FCompartments.Free;
   FUser.Free;
   FWOrker.Free;
   inherited;
@@ -2106,77 +2141,6 @@ begin
   FUser := Value;
 end;
 
-
-{ TFHIRCompartmentList }
-
-constructor TFHIRCompartmentList.Create;
-begin
-  inherited;
-  FPatientCompartment := TAdvMap<TAdvStringSet>.create;
-  FPractitionerCompartment := TAdvMap<TAdvStringSet>.create;
-  FEncounterCompartment := TAdvMap<TAdvStringSet>.create;
-  FRelatedPersonCompartment := TAdvMap<TAdvStringSet>.create;
-  FDeviceCompartment := TAdvMap<TAdvStringSet>.create;
-end;
-
-destructor TFHIRCompartmentList.Destroy;
-begin
-  FPatientCompartment.free;
-  FPractitionerCompartment.free;
-  FEncounterCompartment.free;
-  FRelatedPersonCompartment.free;
-  FDeviceCompartment.free;
-  inherited;
-end;
-
-function TFHIRCompartmentList.existsInCompartment(comp: TFHIRResourceType; resource : String) : boolean;
-begin
-  case comp of
-    frtPatient : result := FPatientCompartment.containsKey(resource);
-    frtPractitioner : result := FPractitionerCompartment.ContainsKey(resource);
-    frtEncounter : result := FEncounterCompartment.containsKey(resource);
-    frtRelatedPerson : result := FRelatedPersonCompartment.containsKey(resource);
-    frtDevice : result := FDeviceCompartment.containsKey(resource);
-  else
-  result := false
-end;
-end;
-
-function TFHIRCompartmentList.getIndexNames(comp: TFHIRResourceType; resource : String) : TAdvStringSet;
-begin
-  case comp of
-    frtPatient : result := FPatientCompartment[resource];
-    frtPractitioner : result := FPractitionerCompartment[resource];
-    frtEncounter : result := FEncounterCompartment[resource];
-    frtRelatedPerson : result := FRelatedPersonCompartment[resource];
-    frtDevice : result := FDeviceCompartment[resource];
-  else
-    result := nil
-  end;
-end;
-
-function TFHIRCompartmentList.Link: TFHIRCompartmentList;
-begin
-  result := TFHIRCompartmentList(inherited link);
-end;
-
-procedure TFHIRCompartmentList.register(comp: TFHIRResourceType; resource, list: String);
-begin
-  raise Exception.Create('not done yet');
-end;
-
-procedure TFHIRCompartmentList.register(comp: TFHIRResourceType; resource : String; indexes : array of String);
-begin
-  case comp of
-    frtPatient : FPatientCompartment.add(resource, TAdvStringSet.create(indexes));
-    frtPractitioner : FPractitionerCompartment.Add(resource, TAdvStringSet.create(indexes));
-    frtEncounter : FEncounterCompartment.add(resource, TAdvStringSet.create(indexes));
-    frtRelatedPerson : FRelatedPersonCompartment.add(resource, TAdvStringSet.create(indexes));
-    frtDevice : FDeviceCompartment.add(resource, TAdvStringSet.create(indexes));
-  else
-    raise Exception.Create('Unknown compartment');
-  end;
-end;
 
 { TFHIRFormatAdaptor }
 
@@ -2240,5 +2204,24 @@ begin
   FBundle.Tags[n] := v;
 end;
 
+
+{ TFHIRCompartmentId }
+
+constructor TFHIRCompartmentId.Create(enum: TFhirResourceType; id: String);
+begin
+  inherited Create;
+  FEnum := enum;
+  FId := id;
+end;
+
+function TFHIRCompartmentId.Link: TFHIRCompartmentId;
+begin
+  result := TFHIRCompartmentId(inherited Link);
+end;
+
+function TFHIRCompartmentId.ToString: String;
+begin
+  result := CODES_TFhirResourceType[Enum]+'/'+FId;
+end;
 
 end.
