@@ -55,8 +55,11 @@ Type
   TFhirClient = {abstract} class (TAdvObject)
   private
     FLastURL: String;
+    FProvenance: TFhirProvenance;
+    procedure SetProvenance(const Value: TFhirProvenance);  protected
   public
     function link : TFhirClient; overload;
+    property provenance : TFhirProvenance read FProvenance write SetProvenance;
 
     function conformance(summary : boolean) : TFhirCapabilityStatement; virtual;
     function transaction(bundle : TFHIRBundle) : TFHIRBundle; virtual;
@@ -129,7 +132,7 @@ Type
     function authoriseByOWinHttp(server, username, password : String): TJsonObject;
     procedure SetCertFile(const Value: String);
     procedure SetCertPWord(const Value: String);
-    procedure SetUseIndy(const Value: boolean);  protected
+    procedure SetUseIndy(const Value: boolean);
     function Convert(stream : TStream) : TStream; virtual;
   public
     constructor Create(worker : TFHIRWorkerContext; url : String; json : boolean); overload;
@@ -328,6 +331,7 @@ end;
 
 destructor TFhirHTTPClient.destroy;
 begin
+  FProvenance.Free;
   FWorker.Free;
   FSmartToken.Free;
   ssl.Free;
@@ -486,6 +490,12 @@ begin
   http.Free;
   http := nil;
   {$ENDIF}
+end;
+
+procedure TFhirClient.SetProvenance(const Value: TFhirProvenance);
+begin
+  FProvenance.Free;
+  FProvenance := Value;
 end;
 
 procedure TFhirHTTPClient.SetSmartToken(const Value: TSmartOnFhirAccessToken);
@@ -864,7 +874,7 @@ var
   end;
 begin
   if FJson then
-begin
+  begin
     http.RequestType := 'application/fhir+json; charset=utf-8';
     http.ResponseType := 'application/fhir+json; charset=utf-8';
   end
@@ -876,6 +886,11 @@ begin
   if ct <> '' then
     http.RequestType := ct;
 
+  if provenance <> nil then
+    http.Headers['X-Provenance'] := resourceToString(Provenance, ffJson)
+  else
+    http.Headers.Remove('X-Provenance');
+
   if password <> '' then
   begin
     http.Username := username;
@@ -883,8 +898,8 @@ begin
   end;
 
   repeat
-  http.SetAddress(url);
-  ok := false;
+    http.SetAddress(url);
+    ok := false;
       case verb of
         get :
           begin
@@ -963,6 +978,11 @@ begin
     indy.Request.UserName := UserName;
     indy.Request.Password := Password;
   end;
+
+  if provenance <> nil then
+    indy.Request.CustomHeaders.values['X-Provenance'] := resourceToString(Provenance, ffJson)
+  else if indy.Request.CustomHeaders.IndexOfName('X-Provenance') > -1 then
+    indy.Request.CustomHeaders.Delete(indy.Request.CustomHeaders.IndexOfName('X-Provenance'));
 
   ok := false;
   result := TMemoryStream.create;
