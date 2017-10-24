@@ -1093,7 +1093,6 @@ begin
         request.resource.meta := TFhirMeta.Create;
       request.Resource.meta.lastUpdated := TDateTimeEx.makeUTC;
       request.Resource.meta.versionId := '1';
-      updateProvenance(request.Provenance, request.ResourceName, sid, '1');
       checkNotSubsetted(request.Resource.meta, 'Creating resource');
       tags := TFHIRTagList.create;
       try
@@ -1129,6 +1128,8 @@ begin
         if ok then
           if not check(response, request.Resource.id = sId, 400, lang, GetFhirMessage('MSG_RESOURCE_ID_MISMATCH', lang)+' '+request.Resource.id+'/'+sId+' (1)', IssueTypeInvalid) then
             ok := false;
+
+        updateProvenance(request.Provenance, request.ResourceName, sid, '1');
 
         if ok then
         begin

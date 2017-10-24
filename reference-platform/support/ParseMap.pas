@@ -77,6 +77,7 @@ type
   TParseMap = class(TMultiValList)
   Public
     constructor create(const s: String; MimeDecode: Boolean = True);
+    function Link : TParseMap; overload;
     function VarExists(const n: String): Boolean;
     function GetVar(const n: String): String;
     function GetStringParameter(const Name, errdesc: String; compulsory: Boolean): String;
@@ -489,6 +490,11 @@ begin
         Result := Result + ';' + s;
       end;
     end;
+end;
+
+function TParseMap.Link: TParseMap;
+begin
+  result := TParseMap(inherited Link);
 end;
 
 {procedure TParseMap.ParseIt(const f:string);

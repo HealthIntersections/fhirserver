@@ -1226,8 +1226,39 @@ begin
 end;
 
 function TFHIRInternalClient.createResource(resource: TFhirResource; var id: String): TFHIRResource;
+var
+  req : TFHIRRequest;
+  resp : TFHIRResponse;
+  ctxt : TOperationContext;
 begin
-  raise Exception.Create('Not done yet');
+  ctxt := TOperationContext.Create(false, nil, 'internal');
+  try
+    req := TFHIRRequest.Create(context, roOperation, nil);
+    try
+      req.CommandType := fcmdCreate;
+      req.resource := resource.link;
+      req.ResourceName := resource.fhirType;
+      req.Provenance := provenance.Link;
+
+      resp := TFHIRResponse.Create;
+      try
+        FEngine.ExecuteCreate(ctxt, req, resp, idNoNew, 0);
+        if resp.HTTPCode >= 300 then
+          if (resp.Resource <> nil) and (resp.Resource is TFhirOperationOutcome) then
+            raise EFHIRClientException.Create((resp.Resource as TFhirOperationOutcome).asExceptionMessage, resp.Resource as TFhirOperationOutcome)
+          else
+            raise EFHIRClientException.Create(resp.Body, BuildOperationOutcome('en', resp.Body));
+        id := resp.Id;
+        result := resp.Resource.Link as TFhirResource;
+      finally
+        resp.Free;
+      end;
+    finally
+      req.Free;
+    end;
+  finally
+    ctxt.free;
+  end;
 end;
 
 procedure TFHIRInternalClient.deleteResource(atype: TFhirResourceType;

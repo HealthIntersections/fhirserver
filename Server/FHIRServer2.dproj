@@ -375,6 +375,7 @@
         <DCCReference Include="..\Libraries\db\SQLite3Utils.pas"/>
         <DCCReference Include="..\Libraries\db\SQLite3Wrap.pas"/>
         <DCCReference Include="..\Libraries\db\KDBSQLite.pas"/>
+        <DCCReference Include="ServerPostHandlers.pas"/>
         <None Include="Profiling\AQtimeModule1.aqt"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>

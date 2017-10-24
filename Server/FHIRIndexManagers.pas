@@ -1403,17 +1403,23 @@ begin
 end;
 }
 
-// todo: this doesn't yet handle version references
 function isLocalTypeReference(url : String; var type_, id : String) : boolean;
 var
+  p : TArray<String>;
   i : TFhirResourceType;
 begin
-  result := false;
-  for i := Low(CODES_TFHIRResourceType) to High(CODES_TFHIRResourceType) do
-    if url.StartsWith(CODES_TFHIRResourceType[i]+'/') and IsId(url.Substring(url.IndexOf('/')+1)) then
-      result := true;
-  if result then
-    StringSplit(url, '/', type_, id);
+  p := url.Split(['/']);
+  if (length(p) = 2) or ((length(p) = 4) and (p[2] = '_history')) then
+  begin
+    result := isResourceName(p[0]) and IsId(p[1]);
+    if result then
+    begin
+      type_ := p[0];
+      id := p[1];
+    end;
+  end
+  else
+    result := false;
 end;
 
 function sumContainedResources(resource : TFhirDomainResource) : string;
@@ -1515,8 +1521,8 @@ begin
       if (specificType = '') or (type_ = specificType) then
       begin
         ttype := ResourceTypeByName(type_);
-        if not FSpaces.ResolveSpace(type_.Empty, ref) then
-          recordSpace(type_.Empty, ref);
+        if not FSpaces.ResolveSpace(type_, ref) then
+          recordSpace(type_, ref);
 
         FConnection.sql := 'Select ResourceKey from Ids as i, Types as t where i.ResourceTypeKey = t.ResourceTypeKey and ResourceName = :t and Id = :id';
         FConnection.Prepare;

@@ -107,7 +107,7 @@ Uses
   WebSourceProvider,
 
   FHIRUserProvider, FHIRServerContext, FHIRServerConstants, SCIMServer,
-  ServerUtilities, ClientApplicationVerifier, JWTService, TerminologyServices
+  ServerUtilities, ClientApplicationVerifier, JWTService, TerminologyServices, ServerPostHandlers
 {$IFNDEF FHIR2}, OpenMHealthServer{$ENDIF};
 
 Const
@@ -317,6 +317,7 @@ Type
     function HandleWebCreate(request: TFHIRRequest; response: TFHIRResponse): TDateTime;
 {$ENDIF}
     function HandleWebPatient(request: TFHIRRequest; response: TFHIRResponse; secure: boolean): TDateTime;
+    function getReferencesByType(t : String) : String;
 
     Procedure ReturnSpecFile(response: TIdHTTPResponseInfo; stated, path: String; secure : boolean);
     // Procedure ReadTags(Headers: TIdHeaderList; Request : TFHIRRequest); overload;
@@ -377,6 +378,7 @@ Type
     Procedure Transaction(stream: TStream; init: boolean; name, base: String; ini: TFHIRServerIniFile; callback: TInstallerCallback);
     Procedure ReturnProcessedFile(request : TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; Session: TFHIRSession; path: String; secure: boolean; variables: TDictionary<String, String> = nil); overload;
     Procedure ReturnProcessedFile(request : TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; Session: TFHIRSession; claimed, actual: String; secure: boolean; variables: TDictionary<String, String> = nil); overload;
+    Procedure RunPostHandler(request : TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; Session: TFHIRSession; claimed, actual: String; secure: boolean);
 
     Property ServerContext: TFHIRServerContext read FServerContext;
     property AuthServer: TAuth2Server read FAuthServer;
@@ -1159,6 +1161,8 @@ begin
       ReturnSpecFile(response, request.Document, FSourceProvider.AltFile(request.Document, FBasePath), false)
     else if request.Document.EndsWith('.hts') and FSourceProvider.exists(ChangeFileExt(FSourceProvider.AltFile(request.Document, FBasePath), '.html')) then
       ReturnProcessedFile(request, response, Session, request.Document, ChangeFileExt(FSourceProvider.AltFile(request.Document, FBasePath), '.html'), false)
+    else if request.Document.EndsWith('.phs') and FSourceProvider.exists(ChangeFileExt(FSourceProvider.AltFile(request.Document, FBasePath), '.html')) then
+      runPostHandler(request, response, Session, request.Document, ChangeFileExt(FSourceProvider.AltFile(request.Document, FBasePath), '.html'), false)
       // else if FSourceProvider.FileExists(FSourcePath+ExtractFileName(request.Document.replace('/', '\'))) then
       // ReturnSpecFile(response, request.Document, FSourcePath+ExtractFileName(request.Document.replace('/', '\')))
       // else if FSourceProvider.FileExists(FSpecPath+ExtractFileName(request.Document.replace('/', '\'))) then
@@ -1546,7 +1550,7 @@ Begin
               sBearer := sCookie;
               oRequest := BuildRequest(lang, path, sHost, request.CustomHeaders.Values['Origin'], request.RemoteIP,
                 request.CustomHeaders.Values['content-location'], request.Command, sDoc, sContentType, request.Accept, request.ContentEncoding, sCookie,
-                request.RawHeaders.Values['Provenance'], sBearer, oStream, oResponse, aFormat, redirect, form, secure, ssl, relativeReferenceAdjustment, pretty,
+                request.RawHeaders.Values['X-Provenance'], sBearer, oStream, oResponse, aFormat, redirect, form, secure, ssl, relativeReferenceAdjustment, pretty,
                 esession, cert);
               try
                 oRequest.requestId := request.RawHeaders.Values['X-Request-Id'];
@@ -2965,6 +2969,7 @@ begin
   end;
 end;
 
+
 procedure TFhirWebServer.ProcessRequest(Context: TOperationContext; request: TFHIRRequest; response: TFHIRResponse);
 var
   op: TFHIROperationEngine;
@@ -3653,6 +3658,49 @@ begin
   end;
 end;
 
+function TFhirWebServer.getReferencesByType(t: String): String;
+var
+  bundle : TFhirBundle;
+  entry : TFhirBundleEntry;
+  b : TStringBuilder;
+  s : String;
+begin
+  b := TStringBuilder.create;
+  try
+    for s in t.trim.Split(['|']) do
+    begin
+      bundle := DoSearch(nil, s, 'en', '_summary=true&__wantObject=true');
+      for entry in bundle.entryList do
+      begin
+        b.Append('<option value="');
+        b.Append(entry.resource.id);
+        b.Append('">');
+        if entry.resource is TFhirPatient then
+          b.Append(HumanNamesAsText(TFhirPatient(entry.resource).nameList))
+        else if entry.resource is TFhirRelatedPerson then
+        {$IFDEF FHIR2}
+          b.Append(HumanNameAsText(TFhirRelatedPerson(entry.resource).name))
+        {$ELSE}
+          b.Append(HumanNamesAsText(TFhirRelatedPerson(entry.resource).nameList))
+        {$ENDIF}
+        else if entry.resource is TFhirOrganization then
+          b.Append(TFhirOrganization(entry.resource).name)
+        else
+          b.Append('??');
+        b.Append(' (');
+        b.Append(entry.resource.fhirType);
+        b.Append('/');
+        b.Append(entry.resource.id);
+        b.Append(')</option>');
+      end;
+    end;
+    result := b.ToString;
+  finally
+    b.Free;
+    bundle.Free;
+  end;
+end;
+
 procedure TFhirWebServer.GetWebUILink(resource: TFhirResource; base, statedType, id, ver: String; var link, text: String);
 var
   tail: String;
@@ -3934,11 +3982,46 @@ begin
   ReturnProcessedFile(request, response, Session, path, path, secure, variables);
 end;
 
+procedure TFhirWebServer.RunPostHandler(request : TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; Session: TFHIRSession; claimed, actual: String; secure: boolean);
+var
+  handler : TFHIRServerPostHandler;
+  params : TParseMap;
+  variables: TDictionary<String, String>;
+  s : string;
+begin
+  params := TParseMap.create(request.UnparsedParams);
+  try
+    s := params.GetVar('handler');
+  {$IFNDEF FHIR2}
+    if s = 'coverage' then
+      handler := TFHIRServerCoveragePostHandler.Create
+    else {$ENDIF}
+      raise Exception.Create('Unknown Handler');
+    try
+      handler.secure := secure;
+      handler.params := params.Link;
+      handler.context := ServerContext.Link;
+      handler.session := Session.Link;
+      variables := handler.execute;
+      try
+        ReturnProcessedFile(request, response, session, claimed, actual, secure, variables);
+      finally
+        variables.Free;
+      end;
+    finally
+      handler.Free;
+    end;
+  finally
+    params.Free;
+  end;
+end;
+
 procedure TFhirWebServer.ReturnProcessedFile(request : TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; Session: TFHIRSession; claimed, actual: String; secure: boolean; variables: TDictionary<String, String> = nil);
 var
-  s, n: String;
+  s, n, p, v, t: String;
 begin
   logt('script: ' + claimed);
+
   s := FSourceProvider.getSource(actual);
   // actions....
   if s.Contains('<!--[%clientregistration%]-->') then
@@ -3948,6 +4031,9 @@ begin
   s := s.Replace('[%id%]', FName, [rfReplaceAll]);
   s := s.Replace('[%specurl%]', FHIR_SPEC_URL, [rfReplaceAll]);
   s := s.Replace('[%ver%]', FHIR_GENERATED_VERSION, [rfReplaceAll]);
+  s := s.Replace('[%path%]', FBasePath, [rfReplaceAll]);
+  s := s.Replace('[%spath%]', FSecurePath, [rfReplaceAll]);
+  s := s.Replace('[%xpath%]', FXVersionPath, [rfReplaceAll]);
   s := s.Replace('[%web%]', WebDesc, [rfReplaceAll]);
   s := s.Replace('[%admin%]', FAdminEmail, [rfReplaceAll]);
   if (Session = nil) then
@@ -3980,6 +4066,14 @@ begin
   if variables <> nil then
     for n in variables.Keys do
       s := s.Replace('[%' + n + '%]', variables[n], [rfReplaceAll]);
+
+  while s.contains('[%options-reference') do
+  begin
+    StringSplit(s, '[%options-reference', p, v);
+    StringSplit(v, '%]', v, t);
+    v := getReferencesByType(v);
+    s := p+v+t;
+  end;
 
   response.Expires := Now + 1;
   response.ContentStream := TBytesStream.Create(TEncoding.UTF8.GetBytes(s));

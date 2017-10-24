@@ -367,6 +367,7 @@ Type
 //    procedure ComposeNode(node : TFhirXHtmlNode);
     Procedure ComposeBundle(stream : TStream; bundle : TFHIRBundle; isPretty : Boolean);
 
+
   protected
     function ResourceMediaType: String; override;
   public
@@ -1734,6 +1735,8 @@ Header(Session, FBaseURL, lang, version)+
             s.append('. <a href="'+patchToWeb(links.Matches['edit-form'])+'">Edit this Resource</a> (or <a href="'+links.Matches['edit-form']+'">see resources underlying that</a>)');
         if (links <> nil) and (links.Matches['edit-post'] <> '') then
           s.append('. Submit edited content by POST to '+links.Matches['edit-post']);
+        if not (oResource.resourceType in [frtProvenance, frtAuditEvent]) then
+          s.append('. <a href="'+FBaseURL+'Provenance?target='+oResource.fhirType+'/'+oResource.id+'">provenance for this resource</a>');
         s.append('</p>'#13#10);
       end;
 
@@ -2156,6 +2159,8 @@ Header(Session, FBaseURL, lang, FVersion)+
           if (link <> '') then
             s.append(' <a href="'+link+'">'+FormatTextToHTML(text)+'</a>');
         end;
+        if not (r.resourceType in [frtProvenance, frtAuditEvent]) then
+          s.append('. <a href="'+FBaseURL+'Provenance/target='+r.fhirType+'/'+r.id+'">provenance for this resource</a>');
         s.append('</br> Updated: '+e.tags['updated']+' by '+e.tags['author']+'</p>'+#13#10);
         end;
       end;

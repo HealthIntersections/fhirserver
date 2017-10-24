@@ -269,7 +269,8 @@ uses
   SQLite3 in '..\Libraries\db\SQLite3.pas',
   SQLite3Utils in '..\Libraries\db\SQLite3Utils.pas',
   SQLite3Wrap in '..\Libraries\db\SQLite3Wrap.pas',
-  KDBSQLite in '..\Libraries\db\KDBSQLite.pas';
+  KDBSQLite in '..\Libraries\db\KDBSQLite.pas',
+  ServerPostHandlers in '..\Server\ServerPostHandlers.pas';
 
 {$R *.res}
 
