@@ -230,6 +230,12 @@ type
     function ToDateTime : TDateTime;
   end;
 
+
+  TFhirExtensionListHelper = class helper for TFhirExtensionList
+  public
+    procedure addExtension(url : String; value : String); overload;
+  end;
+
   TFHIRElementHelper = class helper for TFHIRElement
   public
     function addExtension(url : String) : TFHIRExtension; overload;
@@ -5192,6 +5198,18 @@ begin
     f.Write(b, 1);
   end;
   cnt.SaveToStream(f);
+end;
+
+{ TFhirExtensionListHelper }
+
+procedure TFhirExtensionListHelper.addExtension(url, value: String);
+var
+  ext : TFhirExtension;
+begin
+  ext := TFhirExtension.Create;
+  add(ext);
+  ext.url := url;
+  ext.value := TFhirString.Create(value);
 end;
 
 end.
