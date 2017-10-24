@@ -3,11 +3,15 @@
 	<channel>
 		<title>FHIRServer (reference server) Release history</title>
 		<link>http://www.healthintersections.com.au/FhirServer</link>
-		<item><title>FHIRServer release 1.0.183 2017-10-20</title>
+		<item><title>FHIRServer release 1.0.184 2017-10-24</title>
+			<link>http://www.healthintersections.com.au/FhirServer/fhirserver64-1.0.184.exe</link>
+			<description>2017-10-24 (v1.0.184): Add coverage form + handler</description>
+		</item>
+<item><title>FHIRServer release 1.0.183 2017-10-20</title>
 			<link>http://www.healthintersections.com.au/FhirServer/fhirserver64-1.0.183.exe</link>
 			<description>2017-10-20 (v1.0.183): remove debugging code that was accidentally released</description>
 		</item>
-<item><title>FHIRServer release 1.0.182 2017-10-17</title>
+		<item><title>FHIRServer release 1.0.182 2017-10-17</title>
 			<link>http://www.healthintersections.com.au/FhirServer/fhirserver64-1.0.182.exe</link>
 			<description>2017-10-17 (v1.0.182): implement _elements + fix bugs in compartment handing</description>
 		</item>

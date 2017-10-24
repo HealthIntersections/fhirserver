@@ -57,6 +57,8 @@ uses
 Const
   INDEX_ENTRY_LENGTH = 210;
   NARRATIVE_INDEX_NAME = '_text';
+  LIST_ITEM_INDEX_NAME = 'item';
+  GROUP_MEMBER_INDEX_NAME = 'member';
 
 Type
   TKeyType = (ktResource, ktEntries, ktCompartment);
@@ -145,6 +147,8 @@ Type
     FComposites : TFhirCompositeList;
     FCompartments : TFHIRCompartmentList;
     FNarrativeIndex : Integer;
+    FListItemIndex : Integer;
+    FGroupMemberIndex: integer;
     procedure buildIndexes;
   public
     constructor Create; Override;
@@ -160,6 +164,8 @@ Type
     property Indexes : TFhirIndexList read FIndexes;
     property Composites : TFhirCompositeList read FComposites;
     Property NarrativeIndex : integer read FNarrativeIndex;
+    Property ListItemIndex : integer read FListItemIndex;
+    Property GroupMemberIndex : integer read FGroupMemberIndex;
     property Compartments : TFHIRCompartmentList read FCompartments;
   end;
 
@@ -1846,6 +1852,11 @@ begin
 
     if connection.ColStringByName['Name'] = NARRATIVE_INDEX_NAME then
       FNarrativeIndex := connection.ColIntegerByName['IndexKey'];
+    if connection.ColStringByName['Name'] = LIST_ITEM_INDEX_NAME then
+      FListItemIndex := connection.ColIntegerByName['IndexKey'];
+    if connection.ColStringByName['Name'] = GROUP_MEMBER_INDEX_NAME then
+      FGroupMemberIndex := connection.ColIntegerByName['IndexKey'];
+
   end;
   connection.terminate;
 end;

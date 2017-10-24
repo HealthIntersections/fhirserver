@@ -203,6 +203,25 @@ type
     property Resource : TFHIRResource read FResource write SetResource;
   end;
 
+  TFhirPeriodHelper = class helper for TFhirPeriod
+  private
+    function GetEditString: String;
+    procedure SetEditString(const Value: String);
+  public
+    class function fromEdit(s : String) : TFhirPeriod;
+    property editString : String read GetEditString write SetEditString;
+  end;
+
+
+  TFhirIdentifierHelper = class helper for TFhirIdentifier
+  private
+    function GetEditString: String;
+    procedure SetEditString(const Value: String);
+  public
+    class function fromEdit(s : String) : TFhirIdentifier;
+    property editString : String read GetEditString write SetEditString;
+  end;
+
   TFhirIdentifierListHelper = class helper for TFhirIdentifierList
   public
     function BySystem(uri : String) : TFhirIdentifier;
@@ -354,6 +373,8 @@ type
   public
     Constructor Create(system, code : String); overload;
     function hasCode(System, Code : String) : boolean;
+    function fromSystem(System : String; required : boolean = false) : String; overload;
+    function fromSystem(Systems : TArray<String>; required : boolean = false) : String; overload;
   end;
 
   TFHIRCodeableConceptListHelper = class helper for TFHIRCodeableConceptList
@@ -3154,6 +3175,40 @@ begin
   CodingList.Add(TFHIRCoding.create(system, code));
 end;
 
+function TFHIRCodeableConceptHelper.fromSystem(System: String; required: boolean): String;
+var
+  c : TFHIRCoding;
+begin
+  result := '';
+  for c in codingList do
+  begin
+    if c.system = system then
+    begin
+      result := c.code;
+      break;
+    end;
+  end;
+  if required and (result = '') then
+    raise Exception.Create('Unable to find code in '+system);
+end;
+
+function TFHIRCodeableConceptHelper.fromSystem(Systems: TArray<String>; required: boolean): String;
+var
+  c : TFHIRCoding;
+begin
+  result := '';
+  for c in codingList do
+  begin
+    if StringArrayExistsSensitive(systems, c.system) then
+    begin
+      result := c.code;
+      break;
+    end;
+  end;
+  if required and (result = '') then
+    raise Exception.Create('Unable to find code in '+StringArrayToString(systems));
+end;
+
 function TFHIRCodeableConceptHelper.HasCode(System, Code: String): boolean;
 var
   i : integer;
@@ -5619,6 +5674,75 @@ begin
   add(ext);
   ext.url := url;
   ext.value := TFhirString.Create(value);
+end;
+
+{ TFhirIdentifierHelper }
+
+class function TFhirIdentifierHelper.fromEdit(s: String): TFhirIdentifier;
+begin
+  result := TFhirIdentifier.Create;
+  try
+    result.editString := s;
+    result.Link;
+  finally
+    result.Free;
+  end;
+end;
+
+function TFhirIdentifierHelper.GetEditString: String;
+begin
+  result := system+'|'+value;
+end;
+
+procedure TFhirIdentifierHelper.SetEditString(const Value: String);
+var
+  s, c : String;
+begin
+  StringSplit(value, '|', s, c);
+  system := s;
+  self.value := c;
+end;
+
+{ TFhirPeriodHelper }
+
+class function TFhirPeriodHelper.fromEdit(s: String): TFhirPeriod;
+begin
+  result := TFhirPeriod.Create;
+  try
+    result.editString := s;
+    result.Link;
+  finally
+    result.Free;
+  end;
+end;
+
+function TFhirPeriodHelper.GetEditString: String;
+begin
+  if start.null then
+    result := ''
+  else
+    result := start.toXML;
+  result := result + ' -> ';
+  if end_.null then
+    result := result + ''
+  else
+    result := result + end_.toXML;
+
+end;
+
+procedure TFhirPeriodHelper.SetEditString(const Value: String);
+var
+  s, c : String;
+begin
+  StringSplit(value, '->', s, c);
+  if s.Trim <> '' then
+    start := TDateTimeEx.fromXML(s.Trim)
+  else
+    start := TDateTimeEx.makeNull;
+  if c.Trim <> '' then
+    end_ := TDateTimeEx.fromXML(c.Trim)
+  else
+    end_ := TDateTimeEx.makeNull;
 end;
 
 end.

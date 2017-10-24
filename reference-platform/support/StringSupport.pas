@@ -107,6 +107,7 @@ Function StringFormat(Const sFormat : String; Const aArgs : Array Of Const) : St
 Function StringArrayIndexOfInsensitive(Const aNames : Array Of String; Const sName : String): Integer; Overload;
 Function StringArrayIndexOfSensitive(Const aNames : Array Of String; Const sName : String): Integer; Overload;
 Function StringArrayIndexOf(Const aNames : Array Of String; Const sName: String) : Integer; Overload;
+Function StringArrayToString(Const aNames : Array Of String): String; Overload;
 
 Function StringArrayExistsInsensitive(Const aNames : Array Of String; Const sName : String) : Boolean; Overload;
 Function StringArrayExistsSensitive(Const aNames : Array Of String; Const sName : String) : Boolean; Overload;
@@ -667,6 +668,15 @@ Begin
     Dec(Result);
 End;
 
+Function StringArrayToString(Const aNames : Array Of String): String;
+var
+  s : String;
+begin
+  result := '';
+  for s in aNames do
+    result := ', '+s;
+  result := result.Substring(1).trim;
+end;
 
 Function StringArrayIndexOf(Const aNames: Array Of String; Const sName: String): Integer;
 Begin

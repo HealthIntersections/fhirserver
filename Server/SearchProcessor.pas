@@ -38,7 +38,7 @@ uses
   AdvObjects, DateSupport, DecimalSupport, AdvGenerics,
   FHIRBase, FHIRResources, FHIRLang, FHIRConstants, FHIRTypes,
   KDBManager, KDBDialects,
-  FHIRIndexBase, FHIRIndexManagers, FHIRUtilities, FHIRSearchSyntax, FHIRSupport, ServerUtilities, FHIRServerContext,
+  FHIRIndexBase, FHIRIndexManagers, FHIRUtilities, FHIRSearchSyntax, FHIRSupport, ServerUtilities, FHIRServerContext, FHIRClient,
   UcumServices;
 
 type
@@ -67,6 +67,7 @@ type
     FResConfig : TAdvMap<TFHIRResourceConfig>;
 
     function order(s : String) : String;
+    function fetchGroup(id : String) : TFHIRGroup;
     procedure warning(issue : TFhirIssueTypeEnum; location, message : String);
     function processValueSetMembership(code, vs : String) : String;
     function BuildFilter(filter : TFSFilter; parent : char; issuer : TFSCharIssuer; types : TArray<String>) : String;
@@ -196,7 +197,8 @@ begin
   first := false;
   ts := TStringList.create;
   try
-    for i := 0 to params.Count - 1 do
+    i := 0;
+    while i < params.Count do
     begin
       ts.Clear;
       ts.assign(params.List(i));
@@ -212,6 +214,7 @@ begin
         else if strict and not (knownParam(params.VarName(i))) then
           Raise Exception.create(StringFormat(GetFhirMessage('MSG_PARAM_UNKNOWN', lang), [params.VarName(i)]));
       end;
+      inc(i);
     end;
   finally
     ts.free;
@@ -903,6 +906,20 @@ begin
     space := ns+'#'+space;
 end;
 
+function TSearchProcessor.fetchGroup(id: String): TFHIRGroup;
+var
+  client : TFhirClient;
+begin
+  client := TFHIRServerContext(ServerContext).Storage.createClient(lang, TFHIRServerContext(ServerContext).ValidatorContext.link, FSession.link);
+  try
+    result := client.readResource(frtGroup, id) as TFhirGroup;
+    if result = nil then
+      raise Exception.Create('Unable to find group '+id);
+  finally
+    client.Free;
+  end;
+end;
+
 Function TSearchProcessor.filterTypes(types : TArray<String>) : TArray<String>;
 var
   a : string;
@@ -928,13 +945,17 @@ Function TSearchProcessor.processParam(types : TArray<String>; name : String; va
 var
   key, i : integer;
   left, right, op, modifier, tl : String;
-  f : Boolean;
+  f, isReverse : Boolean;
   ts : TStringList;
-  pfx, sfx : String;
+  pfx, sfx, n : String;
   date : TDateTimeEx;
   a : String;
   type_ : TFhirSearchParamTypeEnum;
+  group : TFHIRGroup;
+  each: TObject;
+  characteristic : TFhirGroupCharacteristic;
 begin
+  isReverse := false;
   a := '';
   result := '';
   op := '';
@@ -962,6 +983,37 @@ begin
       tl := tl.Substring(1);
     result := result + '(ResourceTypeKey in ('+tl+'))';
     bHandled := true;
+  end
+  else if (name = '_list') then
+  begin
+    result := result + '(IndexKey = '+inttostr(FIndexes.ListItemIndex)+' /*'+left+'*/ and ResourceKey in (select ResourceKey from Ids where ResourceTypeKey = '+inttostr(TFHIRServerContext(ServerContext).ResConfig['List'].key)+' and Id = '''+SQLWrapString(value)+'''))';
+    bHandled := true;
+    isReverse :=true;
+  end
+  else if (name = '_group') then
+  begin
+    group := fetchGroup(value);
+    try
+      if group.memberList.Count > 0 then
+      begin
+        result := result + '(IndexKey = '+inttostr(FIndexes.GroupMemberIndex)+' /*'+left+'*/ and ResourceKey in (select ResourceKey from Ids where ResourceTypeKey = '+inttostr(TFHIRServerContext(ServerContext).ResConfig['Group'].key)+' and Id = '''+SQLWrapString(value)+'''))';
+        bHandled := true;
+        isReverse := true;
+      end
+      else if group.characteristicList.Count > 0 then
+      begin
+        for characteristic in group.characteristicList do
+        begin
+          n := characteristic.code.fromSystem(['http://hl7.org/fhir/StructureDefinition/Patient', 'http://hl7.org/fhir/StructureDefinition/Practitioner', 'http://hl7.org/fhir/StructureDefinition/Device', 'http://hl7.org/fhir/StructureDefinition/Medication', 'http://hl7.org/fhir/StructureDefinition/Substance']);
+          if n = 'Patient.gender' then
+            params.addItem('gender', (characteristic.value as TFhirCodeableConcept).fromSystem('http://hl7.org/fhir/ValueSet/administrative-gender', true));
+        end;
+      end
+      else
+        raise Exception.Create('Unable to process group "'+group.name+'": it has no members or characteristics');
+    finally
+      group.Free;
+    end;
   end
   else if (name = '_text') then
   begin
@@ -1077,8 +1129,11 @@ begin
   if result <> '' then
   begin
     if not nested and (name <> 'tag') then
-      result := 'Ids.ResourceKey in (select ResourceKey from IndexEntries where Flag <> 2 and '+result+order(' order by resourcekey DESC')+')';
+      if isReverse then
       // This last ORDER BY is to workaround MariaDB Issue where a subquery in an IN clause may not give the results if there is an ORDER BY.
+        result := 'Ids.ResourceKey in (select Target from IndexEntries where Flag <> 2 and '+result+order(' order by Target DESC')+')'
+      else
+        result := 'Ids.ResourceKey in (select ResourceKey from IndexEntries where Flag <> 2 and '+result+order(' order by resourcekey DESC')+')';
     if not bfirst then
       result := ' and '+result;
   end;

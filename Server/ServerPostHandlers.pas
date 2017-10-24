@@ -4,7 +4,7 @@ interface
 
 uses
   SysUtils, Generics.Collections,
-  StringSupport, DateSupport,
+  StringSupport, DateSupport, EncodeSupport,
   AdvObjects,
   ParseMap,
   FHIRBase, FHIRTypes, FHIRResources, FHIRSupport, FHIRClient, FHIRUtilities,
@@ -190,13 +190,47 @@ var
   p : TFhirPractitioner;
   client : TFhirClient;
   id : String;
+  i : integer;
   function forceGroup : TFhirCoverageGrouping;
   begin
     if coverage.grouping = nil then
       coverage.grouping := TFhirCoverageGrouping.Create;
     result := coverage.grouping;
   end;
-
+  procedure processExtension(id : String);
+  var
+    n, v, t : String;
+    ext : TFHIRExtension;
+  begin
+    n := params.getvar('ext.'+id+'.name');
+    v := params.getvar('ext.'+id+'.value');
+    t := params.getvar('ext.'+id+'.type');
+    if (n <> '') and (v <> '') then
+    begin
+      ext := coverage.extensionList.Append;
+      ext.url := 'http://www.healthintersections.com.au/fhir/StructureDefinition/coverage-adhoc-'+EncodeMIME(n);
+      if t = 'integer' then
+        ext.value := TFhirInteger.Create(v)
+      else if t = 'decimal' then
+        ext.value := TFhirDecimal.Create(v)
+      else if t = 'boolean' then
+        ext.value := TFhirBoolean.Create(StrToBool(v))
+      else if t = 'Coding/CodeableConcept' then
+        ext.value := TFhirCoding.fromEdit(v)
+      else if t = 'Quantity' then
+        ext.value := TFhirQuantity.fromEdit(v)
+      else if t = 'Identifier' then
+        ext.value := TFhirIdentifier.fromEdit(v)
+      else if t = 'Reference' then
+        ext.value := TFhirReference.create(v)
+      else if t = 'Period' then
+        ext.value := TFhirPeriod.fromEdit(v)
+//      else if t = 'Range' then
+//        ext.value := TFhirRange.fromEdit(v)
+      else
+        ext.value := TFhirString.Create(v)
+    end;
+  end;
 begin
   if params.GetVar('provenance.name') = '' then
     raise Exception.Create('Please provide a name');
@@ -223,9 +257,7 @@ begin
       coverage.beneficiary := buildReference('beneficiary');
       coverage.relationship := buildCodeableConcept('http://hl7.org/fhir/policyholder-relationship', params.GetVar('relationship'));
       coverage.period := buildPeriod('start', 'end');
-      processReference(coverage.payorList, 'payor1');
-      processReference(coverage.payorList, 'payor2');
-      processReference(coverage.payorList, 'payor3');
+      processReference(coverage.payorList, 'payor');
 
       if params.GetVar('group.code') <> '' then
         forceGroup.group := params.GetVar('group.code');
@@ -256,6 +288,9 @@ begin
       coverage.sequence := params.GetVar('sequence');
       coverage.order := params.GetVar('order');
       coverage.network := params.GetVar('network');
+
+      for i := 1 to 12 do
+        processExtension(inttostr(i));
 
       prov.recorded := TDateTimeEx.makeLocal(dtpSec);
       p := TFhirPractitioner.Create;

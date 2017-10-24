@@ -1249,7 +1249,7 @@ begin
           else
             raise EFHIRClientException.Create(resp.Body, BuildOperationOutcome('en', resp.Body));
         id := resp.Id;
-        result := resp.Resource.Link as TFhirResource;
+        result := resp.Resource.Link;
       finally
         resp.Free;
       end;
@@ -1291,11 +1291,39 @@ begin
 
 end;
 
-function TFHIRInternalClient.readResource(atype: TFhirResourceType;
-  id: String): TFHIRResource;
+function TFHIRInternalClient.readResource(atype: TFhirResourceType; id: String): TFHIRResource;
+var
+  req : TFHIRRequest;
+  resp : TFHIRResponse;
+  ctxt : TOperationContext;
 begin
-  raise Exception.Create('Not done yet');
+  ctxt := TOperationContext.Create(false, nil, 'internal');
+  try
+    req := TFHIRRequest.Create(context, roOperation, nil);
+    try
+      req.CommandType := fcmdRead;
+      req.ResourceName := CODES_TFhirResourceType[aType];
+      req.id := id;
 
+      resp := TFHIRResponse.Create;
+      try
+        FEngine.ExecuteRead(req, resp, true);
+        if resp.HTTPCode >= 300 then
+          if (resp.Resource <> nil) and (resp.Resource is TFhirOperationOutcome) then
+            raise EFHIRClientException.Create((resp.Resource as TFhirOperationOutcome).asExceptionMessage, resp.Resource as TFhirOperationOutcome)
+          else
+            raise EFHIRClientException.Create(resp.Body, BuildOperationOutcome('en', resp.Body));
+        id := resp.Id;
+        result := resp.Resource.Link;
+      finally
+        resp.Free;
+      end;
+    finally
+      req.Free;
+    end;
+  finally
+    ctxt.free;
+  end;
 end;
 
 function TFHIRInternalClient.search(atype: TFhirResourceType;
