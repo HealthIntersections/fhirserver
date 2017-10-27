@@ -383,6 +383,18 @@ type
     function formalURL : String; override;
   end;
 
+  TFhirGroupEverythingOperation = class (TFhirEverythingOperation)
+  protected
+    function isWrite : boolean; override;
+    function owningResource : TFhirResourceType; override;
+    function resourceName : String; override;
+  public
+    function Name : String; override;
+    function Types : TFhirResourceTypeSet; override;
+    function CreateDefinition(base : String) : TFHIROperationDefinition; override;
+    function formalURL : String; override;
+  end;
+
   TFhirGenerateDocumentOperation = class (TFhirNativeOperation)
   protected
     function isWrite : boolean; override;
@@ -778,6 +790,7 @@ begin
   FOperations.add(TFhirGenerateDocumentOperation.create);
   FOperations.add(TFhirPatientEverythingOperation.create);
   FOperations.add(TFhirEncounterEverythingOperation.create);
+  FOperations.add(TFhirGroupEverythingOperation.create);
   FOperations.add(TFhirGenerateQAOperation.create);
   FOperations.add(TFhirGenerateJWTOperation.create);
   FOperations.add(TFhirGenerateCodeOperation.create);
@@ -4703,7 +4716,7 @@ begin
       sp.typekey := rk;
       sp.type_ := requestType;
       sp.compartment := request.compartment.Link;
-      sp.sessionCompartments := request.SessionCompartments;
+      sp.sessionCompartments := request.SessionCompartments.Link;
       sp.baseURL := request.baseURL;
       sp.lang := lang;
       sp.params := TParseMap.create(url);
@@ -7069,6 +7082,62 @@ begin
 end;
 
 function TFhirEncounterEverythingOperation.isWrite: boolean;
+begin
+  result := false;
+end;
+
+{ TFhirGroupEverythingOperation }
+
+function TFhirGroupEverythingOperation.Name: String;
+begin
+  result := 'everything';
+end;
+
+function TFhirGroupEverythingOperation.owningResource: TFhirResourceType;
+begin
+  result := frtGroup;
+end;
+
+
+function TFhirGroupEverythingOperation.resourceName: String;
+begin
+  result := 'Group';
+end;
+
+function TFhirGroupEverythingOperation.Types: TFhirResourceTypeSet;
+begin
+  result := [frtGroup];
+end;
+
+function TFhirGroupEverythingOperation.CreateDefinition(base : String): TFHIROperationDefinition;
+begin
+  result := CreateBaseDefinition(base);
+  try
+    result.system := False;
+    result.resourceList.AddItem('Group');
+    result.type_ := true;
+    result.instance := true;
+    with result.parameterList.Append do
+    begin
+      name := 'return';
+      use := OperationParameterUseOut;
+      min := '1';
+      max := '1';
+      documentation := 'Bundle with information for all patients in the group';
+      type_ := {$IFNDEF FHIR2}AllTypesBundle {$ELSE}OperationParameterTypeBundle{$ENDIF};
+    end;
+    result.Link;
+  finally
+    result.Free;
+  end;
+end;
+
+function TFhirGroupEverythingOperation.formalURL: String;
+begin
+  result := 'http://hl7.org/fhir/OperationDefinition/Group-everything';
+end;
+
+function TFhirGroupEverythingOperation.isWrite: boolean;
 begin
   result := false;
 end;
@@ -10703,7 +10772,7 @@ begin
     'select Ids.ResourceKey, Versions.ResourceVersionKey, Ids.Id, Secure, JsonContent from Ids, Types, Versions where '
     + 'Versions.ResourceVersionKey = Ids.MostRecent and ' +
     'Ids.ResourceTypeKey = Types.ResourceTypeKey and ' +
-    '(Types.ResourceName = ''ValueSet'' or Types.ResourceName = ''Organization'' or Types.ResourceName = ''Device'' or Types.ResourceName = ''Observation'' or Types.ResourceName = ''CodeSystem'' or Types.ResourceName = ''ConceptMap'' or '+
+    '(Types.ResourceName = ''ValueSet'' or Types.ResourceName = ''Organization'' or Types.ResourceName = ''Device'' or Types.ResourceName = ''CodeSystem'' or Types.ResourceName = ''ConceptMap'' or '+
     'Types.ResourceName = ''StructureDefinition'' or Types.ResourceName = ''Questionnaire'' or Types.ResourceName = ''StructureMap'' or Types.ResourceName = ''Subscription'') and Versions.Status < 2';
   conn.Prepare;
   try

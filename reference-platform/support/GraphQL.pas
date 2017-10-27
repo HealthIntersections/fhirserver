@@ -98,6 +98,8 @@ Type
     function ToString : String; override;
   end;
 
+  TGraphQLArgumentListStatus = (listStatusNotSpecified, listStatusSingleton, listStatusRepeating);
+
   TGraphQLObjectValue = class (TGraphQLValue)
   private
     FFields : TAdvList<TGraphQLArgument>;
@@ -107,7 +109,7 @@ Type
     Destructor Destroy; override;
     Function Link : TGraphQLObjectValue; overload;
     property Fields : TAdvList<TGraphQLArgument> read FFields;
-    function addField(name : String; isList : boolean) : TGraphQLArgument;
+    function addField(name : String; listStatus : TGraphQLArgumentListStatus) : TGraphQLArgument;
     procedure write(str : TStringBuilder; indent : integer); override;
   end;
 
@@ -115,7 +117,7 @@ Type
   private
     FName: String;
     FValues: TAdvList<TGraphQLValue>;
-    FList: boolean;
+    FListStatus: TGraphQLArgumentListStatus;
     procedure write(str : TStringBuilder; indent : integer);
     procedure valuesFromNode(json : TJsonNode);
   public
@@ -126,7 +128,7 @@ Type
     Destructor Destroy; override;
     Function Link : TGraphQLArgument; overload;
     property Name : String read FName write FName;
-    property list : boolean read FList write FList;
+    property listStatus : TGraphQLArgumentListStatus read FListStatus write FListStatus;
     property Values : TAdvList<TGraphQLValue> read FValues;
 
     function hasValue(value : String) : boolean;
@@ -163,6 +165,8 @@ Type
     property Directives : TAdvList<TGraphQLDirective> read FDirectives;
     property SelectionSet : TAdvList<TGraphQLSelection> read FSelectionSet;
     function argument(name : String) : TGraphQLArgument;
+    function hasDirective(name : String) : boolean;
+    function directive(name : String) : TGraphQLDirective;
   end;
 
   TGraphQLFragmentSpread = class (TAdvObject)
@@ -175,6 +179,7 @@ Type
     Function Link : TGraphQLFragmentSpread; overload;
     property Name : String read FName write FName;
     property Directives : TAdvList<TGraphQLDirective> read FDirectives;
+    function hasDirective(name : String) : boolean;
   end;
 
   TGraphQLSelection = class (TAdvObject)
@@ -225,6 +230,7 @@ Type
     property Variables : TAdvList<TGraphQLVariable> read FVariables;
     property Directives : TAdvList<TGraphQLDirective> read FDirectives;
     property SelectionSet : TAdvList<TGraphQLSelection> read FSelectionSet;
+    function hasDirective(name : String) : boolean;
   end;
 
   TGraphQLFragment = class (TAdvObject)
@@ -241,6 +247,7 @@ Type
     property TypeCondition : String read FTypeCondition write FTypeCondition;
     property Directives : TAdvList<TGraphQLDirective> read FDirectives;
     property SelectionSet : TAdvList<TGraphQLSelection> read FSelectionSet;
+    function hasDirective(name : String) : boolean;
   end;
 
   TGraphQLDocument = class (TAdvObject)
@@ -415,7 +422,7 @@ Begin
       str.Append(name[i]);
     End;
   str.Append('":');
-  if list then
+  if listStatus = listStatusRepeating then
   begin
     str.Append('[');
     for i := 0 to FValues.count - 1 do
@@ -484,6 +491,26 @@ begin
   inherited;
 end;
 
+function TGraphQLField.directive(name: String): TGraphQLDirective;
+var
+  dir : TGraphQLDirective;
+begin
+  result := nil;
+  for dir in Directives do
+    if dir.Name = name then
+      exit(dir);
+end;
+
+function TGraphQLField.hasDirective(name: String): boolean;
+var
+  dir : TGraphQLDirective;
+begin
+  result := false;
+  for dir in Directives do
+    if dir.Name = name then
+      exit(true);
+end;
+
 function TGraphQLField.Link: TGraphQLField;
 begin
   result := TGraphQLField(inherited Link);
@@ -501,6 +528,16 @@ destructor TGraphQLFragmentSpread.Destroy;
 begin
   FDirectives.Free;
   inherited;
+end;
+
+function TGraphQLFragmentSpread.hasDirective(name: String): boolean;
+var
+  dir : TGraphQLDirective;
+begin
+  result := false;
+  for dir in Directives do
+    if dir.Name = name then
+      exit(true);
 end;
 
 function TGraphQLFragmentSpread.Link: TGraphQLFragmentSpread;
@@ -583,6 +620,16 @@ begin
   inherited;
 end;
 
+function TGraphQLOperation.hasDirective(name: String): boolean;
+var
+  dir : TGraphQLDirective;
+begin
+  result := false;
+  for dir in Directives do
+    if dir.Name = name then
+      exit(true);
+end;
+
 function TGraphQLOperation.Link: TGraphQLOperation;
 begin
   result := TGraphQLOperation(inherited Link);
@@ -603,6 +650,16 @@ begin
   FSelectionSet.Free;
   FDirectives.free;
   inherited;
+end;
+
+function TGraphQLFragment.hasDirective(name: String): boolean;
+var
+  dir : TGraphQLDirective;
+begin
+  result := false;
+  for dir in Directives do
+    if dir.Name = name then
+      exit(true);
 end;
 
 function TGraphQLFragment.Link: TGraphQLFragment;
@@ -850,7 +907,7 @@ begin
     consumePunctuation(':');
     if hasPunctuation('[') then
     begin
-      result.list := true;
+      result.listStatus := listStatusRepeating;
       consumePunctuation('[');
       while not hasPunctuation(']') do
         result.Values.Add(parseValue);
@@ -1366,7 +1423,7 @@ end;
 
 { TGraphQLObjectValue }
 
-function TGraphQLObjectValue.addField(name: String; isList: boolean): TGraphQLArgument;
+function TGraphQLObjectValue.addField(name: String; listStatus: TGraphQLArgumentListStatus): TGraphQLArgument;
 var
   t : TGraphQLArgument;
 begin
@@ -1379,14 +1436,16 @@ begin
     result := TGraphQLArgument.Create;
     try
       result.Name := name;
-      result.list := IsList;
+      result.listStatus := listStatus;
       FFields.Add(result.Link);
     finally
       result.Free;
     end;
   end
+  else if result.listStatus = listStatusSingleton then
+    raise Exception.Create('Error: Attempt to make '+name+' into a repeating field when it is constrained by @singleton')
   else
-    result.list := true;
+    result.listStatus := listStatusRepeating;
 end;
 
 constructor TGraphQLObjectValue.Create;

@@ -375,7 +375,7 @@ Type
 
     Procedure Start(active: boolean);
     Procedure Stop;
-    Procedure Transaction(stream: TStream; init: boolean; name, base: String; ini: TFHIRServerIniFile; callback: TInstallerCallback);
+    Procedure Transaction(stream: TStream; init : boolean; name, base: String; ini: TFHIRServerIniFile; callback: TInstallerCallback);
     Procedure ReturnProcessedFile(request : TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; Session: TFHIRSession; path: String; secure: boolean; variables: TDictionary<String, String> = nil); overload;
     Procedure ReturnProcessedFile(request : TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; Session: TFHIRSession; claimed, actual: String; secure: boolean; variables: TDictionary<String, String> = nil); overload;
     Procedure RunPostHandler(request : TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; Session: TFHIRSession; claimed, actual: String; secure: boolean);
@@ -1010,7 +1010,7 @@ Begin
   end;
 End;
 
-procedure TFhirWebServer.Transaction(stream: TStream; init: boolean; name, base: String; ini: TFHIRServerIniFile; callback: TInstallerCallback);
+procedure TFhirWebServer.Transaction(stream: TStream; init : boolean; name, base: String; ini: TFHIRServerIniFile; callback: TInstallerCallback);
 var
   req: TFHIRRequest;
   resp: TFHIRResponse;
@@ -1026,11 +1026,14 @@ begin
     try
       req.CommandType := fcmdTransaction;
       if ExtractFileExt(name) = '.xml' then
-        req.resource := TFHIRBundle.wrap(BundleTypeTransaction, TFHIRXmlParser.ParseFile(FServerContext.ValidatorContext.link, 'en', name))
+        req.resource := TFHIRXmlParser.ParseFile(FServerContext.ValidatorContext.link, 'en', name)
       else if ExtractFileExt(name) = '.json' then
-        req.resource := TFHIRBundle.wrap(BundleTypeTransaction, TFHIRJsonParser.ParseFile(FServerContext.ValidatorContext.link, 'en', name))
+        req.resource := TFHIRJsonParser.ParseFile(FServerContext.ValidatorContext.link, 'en', name)
       else
         req.resource := ProcessZip('en', stream, name, base, init, ini, Context, cursor);
+      if not (req.Resource is TFHIRBundle) then
+        req.resource := TFHIRBundle.wrap(BundleTypeTransaction, req.resource.Link);
+
       req.resource.tags['duplicates'] := 'ignore';
       req.Session := FServerContext.SessionManager.CreateImplicitSession('n/a', ServerContext.OwnerName, 'Service Manager', systemInternal, true, false);
       req.Session.allowAll;

@@ -169,6 +169,8 @@ Type
     procedure SetArray(name: String; const Value: TJsonArray);
     procedure SetObject(name: String; const Value: TJsonObject);
     function GetForcedArray(name: String): TJsonArray;
+    function GetNode(name: String): TJsonNode;
+    procedure setNode(name: String; const Value: TJsonNode);
   protected
     function nodeType : String; override;
     function compare(other : TJsonNode) : boolean; override;
@@ -181,6 +183,7 @@ Type
     Function has(name : String) : Boolean;
     Function isNull(name : String) : Boolean;
 
+    property node[name : String] : TJsonNode read GetNode write setNode;
     Property str[name : String] : String read GetString write SetString; default;
     Property num[name : String] : String read GetNumber write SetNumber;
     Property bool[name : String] : boolean read GetBool write SetBool;
@@ -1890,6 +1893,14 @@ begin
   result := obj[name];
 end;
 
+function TJsonObject.GetNode(name: String): TJsonNode;
+begin
+  if has(name) then
+    result := FProperties[name]
+  else
+    result := nil;
+end;
+
 function TJsonObject.GetNumber(name: String): String;
 var
   node : TJsonNode;
@@ -2003,6 +2014,11 @@ begin
   finally
     v.Free;
   end;
+end;
+
+procedure TJsonObject.setNode(name: String; const Value: TJsonNode);
+begin
+  properties.AddOrSetValue(name, value);
 end;
 
 procedure TJsonObject.SetObject(name: String; const Value: TJsonObject);

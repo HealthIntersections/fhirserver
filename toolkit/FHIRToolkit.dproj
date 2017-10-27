@@ -377,6 +377,10 @@
         </DCCReference>
         <DCCReference Include="QuestionnaireItemPanel.pas"/>
         <DCCReference Include="QuestionnairePanel.pas"/>
+        <DCCReference Include="VitalSignsGeneratorDialog.pas">
+            <Form>VitalSignsGeneratorForm</Form>
+            <FormType>fmx</FormType>
+        </DCCReference>
         <None Include="q.txt"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>

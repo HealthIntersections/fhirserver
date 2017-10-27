@@ -206,6 +206,12 @@ begin
         else if FindCmdLineSwitch('load', fn, true, [clstValueNextParam]) then
           svc.Load(fn);
       end
+      else if FindCmdLineSwitch('load', fn, true, [clstValueNextParam]) then
+      begin
+        svc.DebugMode := true;
+        svc.FNotServing := true;
+        svc.Load(fn);
+      end
       else if FindCmdLineSwitch('txdirect') then
       begin
         svc.UninstallDatabase;
@@ -490,53 +496,56 @@ begin
   logt('Load: register value sets');
   identifyValueSets;
   cb(2, 'Load from '+fn);
-  {$IFDEF FHIR2}
-  logt('Load database from '+fn);
-  f := TFileStream.Create(fn, fmOpenRead + fmShareDenyWrite);
-  try
-    FWebServer.Transaction(f, true, fn, 'http://hl7.org/fhir', nil, callback);
-  finally
-    f.Free;
-  end;
-  {$ELSE}
-  if FolderExists(fn) then
-    fn := IncludeTrailingPathDelimiter(fn)+'load.ini';
-  logt('Load database from sources listed in '+fn);
-  if not FileExists(fn) then
-    raise Exception.Create('Load Ini file '+fn+' not found');
-  ini := TFHIRServerIniFile.Create(fn);
-  st := TStringList.Create;
-  try
-    ini.ReadSection(voMustBeVersioned, 'files', st);
-    first := true;
-    for s in st do
-    begin
-      logt('Check file '+s);
-      src := locate(s, fn, first);
-      first := false;
-    end;
-
-    i := 0;
-    first := true;
-    for s in st do
-    begin
-      logt('Load file '+s);
-      cb(0, 'Load from '+s);
-      src := locate(s, fn, first);
-      f := TFileStream.Create(src, fmOpenRead + fmShareDenyWrite);
-      try
-        FWebServer.Transaction(f, first, src, ini.ReadString(voMustBeVersioned, 'files', s, ''), nil, callback);
-      finally
-        f.Free;
+  if {$IFDEF FHIR2} true {$ELSE} fn.EndsWith('.json') or fn.EndsWith('.xml') {$ENDIF} then
+  begin
+    logt('Load database from '+fn);
+    f := TFileStream.Create(fn, fmOpenRead + fmShareDenyWrite);
+    try
+      FWebServer.Transaction(f, true, fn, 'http://hl7.org/fhir', nil, callback);
+    finally
+      f.Free;
+    end
+  end
+  else
+  begin
+    if FolderExists(fn) then
+      fn := IncludeTrailingPathDelimiter(fn)+'load.ini';
+    logt('Load database from sources listed in '+fn);
+    if not FileExists(fn) then
+      raise Exception.Create('Load Ini file '+fn+' not found');
+    ini := TFHIRServerIniFile.Create(fn);
+    st := TStringList.Create;
+    try
+      ini.ReadSection(voMustBeVersioned, 'files', st);
+      first := true;
+      for s in st do
+      begin
+        logt('Check file '+s);
+        src := locate(s, fn, first);
+        first := false;
       end;
-      first := false;
+
+      i := 0;
+      first := true;
+      for s in st do
+      begin
+        logt('Load file '+s);
+        cb(0, 'Load from '+s);
+        src := locate(s, fn, first);
+        f := TFileStream.Create(src, fmOpenRead + fmShareDenyWrite);
+        try
+          FWebServer.Transaction(f, first, src, ini.ReadString(voMustBeVersioned, 'files', s, ''), nil, callback);
+        finally
+          f.Free;
+        end;
+        first := false;
+      end;
+    finally
+      st.Free;
+      ini.Free;
     end;
-  finally
-    st.Free;
-    ini.Free;
   end;
 
-  {$ENDIF}
   logt('done');
   cb(95, 'Building Terminology Closure Tables');
   FTerminologyServer.BuildIndexes(not assigned(callback));

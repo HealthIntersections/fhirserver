@@ -1379,8 +1379,19 @@ begin
 end;
 
 function TFhirThreadedClient.transaction(bundle: TFHIRBundle): TFHIRBundle;
+var
+  pack : TFHIRThreadedClientPackage;
 begin
-  raise Exception.Create('Not Done Yet');
+  pack := TFHIRThreadedClientPackage.create;
+  try
+    pack.command := fcmdTransaction;
+    pack.resource := bundle.link;
+    pack.Thread := TThreadClientThread.create(FInternal.link, pack.Link);
+    wait(pack);
+    result := pack.result.link as TFHIRBundle;
+  finally
+    pack.free;
+  end;
 end;
 
 function TFhirThreadedClient.updateResource(resource: TFhirResource): TFHIRResource;
@@ -1393,7 +1404,7 @@ begin
     pack.resource := resource.link;
     pack.Thread := TThreadClientThread.create(FInternal.link, pack.Link);
     wait(pack);
-    result := pack.result.link as TFHIRBundle;
+    result := pack.result.link as TFHIRResource;
   finally
     pack.free;
   end;
@@ -1469,6 +1480,7 @@ begin
     try
       case FPackage.command of
         fcmdConformanceStmt: FPackage.result := FClient.conformance(FPackage.summary);
+        fcmdTransaction : FPackage.result := FCLient.transaction(FPackage.resource as TFHIRBundle);
         fcmdRead : FPackage.result := FClient.readResource(FPackage.ResourceType, FPackage.id);
         fcmdSearch :
           if FPackage.FUrl <> '' then

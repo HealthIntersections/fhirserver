@@ -21138,7 +21138,10 @@ begin
     if jsn.has('length') then
         result.length := ParseDuration(jsn.vObj['length']);{q3}
     if jsn.has('reason') then
-      iterateArray(jsn.vArr['reason'], result.reasonList, parseCodeableConcept);
+      if jsn.node['reason'] is TJsonObject then
+        result.reasonList.add(parseCodeableConcept(jsn.obj['reason']))
+      else
+        iterateArray(jsn.vArr['reason'], result.reasonList, parseCodeableConcept);
     if jsn.has('diagnosis') then
       iterateArray(jsn.vArr['diagnosis'], result.diagnosisList, parseEncounterDiagnosis);
     if jsn.has('account') then
@@ -32344,7 +32347,10 @@ begin
     if jsn.has('active') or jsn.has('_active') then
         result.activeElement := ParseBoolean(jsn['active'], jsn.vObj['_active']);{q}
     if jsn.has('type') then
-      iterateArray(jsn.vArr['type'], result.type_List, parseCodeableConcept);
+      if jsn.node['type'] is TJsonObject then
+        result.type_list.add(ParseCodeableConcept(jsn.obj['type']))
+      else
+        iterateArray(jsn.vArr['type'], result.type_List, parseCodeableConcept);
     if jsn.has('name') or jsn.has('_name') then
         result.nameElement := ParseString(jsn['name'], jsn.vObj['_name']);{q}
       if jsn.has('alias') or jsn.has('_alias') then
@@ -34588,7 +34594,10 @@ begin
     if jsn.has('reasonCode') then
       iterateArray(jsn.vArr['reasonCode'], result.reasonCodeList, parseCodeableConcept);
     if jsn.has('reasonReference') then
-      iterateArray(jsn.vArr['reasonReference'], result.reasonReferenceList, parseReference{Resource});
+      if jsn.node['reasonReference'] is TJsonObject then
+        result.reasonReferenceList.add(parseReference(jsn.obj['reasonReference']))
+      else
+        iterateArray(jsn.vArr['reasonReference'], result.reasonReferenceList, parseReference{Resource});
     if jsn.has('bodySite') then
       iterateArray(jsn.vArr['bodySite'], result.bodySiteList, parseCodeableConcept);
     if jsn.has('outcome') then

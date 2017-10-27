@@ -28,6 +28,49 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 }
 
+(*
+Data Reorganization Directives
+
+GraphQL is a very effectively language for navigating a graph and selecting subset of information from it. However for some uses, the physical structure of the result set is important. This is most relevant when extracting data for statistical analysis in languages such as R. In order to facilitate these kind of uses, FHIR servers should consider supporting the following directives that allow implementers to flatten the return graph for easier analysis
+
+@flatten
+
+This directive indicates the the field to which it is attached is not actually produced in the output graph. Instead, it's children will be processed and added to the output graph as specified in it's place.
+
+Notes:
+If @flatten is used on an element with repeating cardinality, then by default, all the children will become lists
+When using @flatten, all the collated children must have the same FHIR type. The server SHALL return an error if they don't
+
+@singleton
+
+This directive indicates that an field collates to a single node, not a list. It is only used in association with fields on which a parent has @flatten, and overrides the impact of flattening in making it a list. The server SHALL return an error if there is more than on value when flattening
+
+@first
+
+This is a shortcut for a FHIR path filter [$index = 0] and indicates to only take the first match of the elements. Note that this only applies to the immediate context of the field in the source graph, not to the output graph
+
+@slice(fhirpath)
+
+This indicates that in the output graph, each element in the source will have "." and the result of the FHIRPath as a string appended to the specified name. This slices a list up into multiple single values. For example
+
+name @slice($index) @flatten {given @first @singleton family}
+
+For a resource that has 2 names will result in the output
+
+{
+  "Given.1" : "first name, first given",
+  "Family.1" : "first name family name",
+  "Given.2" : "second name, first given",
+  "Family.2" : "second name family name"
+}
+
+Other uses might be e.g. Telecom @slice(use) to generate telecom.home for instance.
+
+Notes:
+- In general, the intent of @slice is to break a list into multiple singletons. However servers do not treat the outputs are singletons unless this is explicitly specified using @singleton
+- you cannot mix @slice and @first
+*)
+
 
 interface
 
@@ -56,9 +99,13 @@ type
     FGraphQL : TGraphQLPackage;
     FAppinfo : TAdvObject;
     FWorkingVariables: TAdvMap<TGraphQLArgument>;
+    FPathEngine : TFHIRPathEngine;
+    FMagicExpression : TFHIRPathExpressionNode;
 
     procedure SetGraphQL(const Value: TGraphQLPackage);
     procedure SetFocus(const Value: TFHIRResource);
+
+    function listStatus(field: TGraphQLField; isList: boolean): TGraphQLArgumentListStatus;
 
     function getSingleValue(arg : TGraphQLArgument) : string;
     function resolveValues(arg : TGraphQLArgument; max : integer = -1; vars : String = '') : TAdvList<TGraphQLValue>;
@@ -72,19 +119,18 @@ type
     function filter(context : TFhirResource; prop:TFHIRProperty; arguments : TAdvList<TGraphQLArgument>; values : TFHIRObjectList; extensionMode : boolean)  : TAdvList<TFHIRObject>;
     function filterResources(fhirpath : TGraphQLArgument; bnd : TFHIRBundle)  : TAdvList<TFHIRResource>; overload;
     function filterResources(fhirpath : TGraphQLArgument; list : TAdvList<TFHIRResource>)  : TAdvList<TFHIRResource>; overload;
-    procedure processObject(context : TFHIRResource; source : TFHIRObject; target : TGraphQLObjectValue; selection : TAdvList<TGraphQLSelection>);
+    procedure processObject(context : TFHIRResource; source : TFHIRObject; target : TGraphQLObjectValue; selection : TAdvList<TGraphQLSelection>; inheritedList : boolean; suffix : string);
     procedure processPrimitive(arg : TGraphQLArgument; value : TFHIRObject);
-    procedure processReference(context : TFHIRResource; source : TFHIRObject; field : TGraphQLField; target : TGraphQLObjectValue);
-    procedure processReverseReferenceList(source : TFHIRResource; field : TGraphQLField; target : TGraphQLObjectValue);
-    procedure processReverseReferenceSearch(source : TFHIRResource; field : TGraphQLField; target : TGraphQLObjectValue);
-    procedure processValues(context : TFHIRResource; sel: TGraphQLSelection; prop: TFHIRProperty; target: TGraphQLObjectValue; values : TAdvList<TFHIRObject>; extensionMode : boolean);
-    procedure processSearch(target : TGraphQLObjectValue; selection : TAdvList<TGraphQLSelection>);
-    procedure processSearchSingle(target : TGraphQLObjectValue; field : TGraphQLField);
-    procedure processSearchSimple(target : TGraphQLObjectValue; field : TGraphQLField);
-    procedure processSearchFull(target : TGraphQLObjectValue; field : TGraphQLField);
+    procedure processReference(context : TFHIRResource; source : TFHIRObject; field : TGraphQLField; target : TGraphQLObjectValue; inheritedList : boolean; suffix : string);
+    procedure processReverseReferenceList(source : TFHIRResource; field : TGraphQLField; target : TGraphQLObjectValue; inheritedList : boolean; suffix : string);
+    procedure processReverseReferenceSearch(source : TFHIRResource; field : TGraphQLField; target : TGraphQLObjectValue; inheritedList : boolean; suffix : string);
+    procedure processValues(context : TFHIRResource; sel: TGraphQLSelection; prop: TFHIRProperty; target: TGraphQLObjectValue; values : TAdvList<TFHIRObject>; extensionMode, inheritedList : boolean; suffix : string);
+    procedure processSearch(target : TGraphQLObjectValue; selection : TAdvList<TGraphQLSelection>; inheritedList : boolean; suffix : string);
+    procedure processSearchSingle(target : TGraphQLObjectValue; field : TGraphQLField; inheritedList : boolean; suffix : string);
+    procedure processSearchSimple(target : TGraphQLObjectValue; field : TGraphQLField; inheritedList : boolean; suffix : string);
+    procedure processSearchFull(target : TGraphQLObjectValue; field : TGraphQLField; inheritedList : boolean; suffix : string);
     procedure SetAppInfo(const Value: TAdvObject);
     procedure processVariables(op : TGraphQLOperation);
-
   public
     Constructor Create; override;
     Destructor Destroy; override;
@@ -165,6 +211,7 @@ begin
   skip := nil;
   include := nil;
   for dir in directives do
+  begin
     if dir.Name = 'skip' then
     begin
       if (skip = nil) then
@@ -179,8 +226,9 @@ begin
       else
         raise EGraphQLException.Create('Duplicate @include directives');
     end
-    else
+    else if not StringArrayExistsSensitive(['flatten', 'first', 'singleton', 'slice'], dir.Name) then
       raise EGraphQLException.Create('Directive "'+dir.Name+'" is not recognised');
+  end;
   if (skip <> nil) and (include <> nil) then
     raise EGraphQLException.Create('Cannot mix @skip and @include directives');
   if skip <> nil then
@@ -201,10 +249,14 @@ constructor TFHIRGraphQLEngine.Create;
 begin
   inherited;
   FWorkingVariables := TAdvMap<TGraphQLArgument>.create;
+  FPathEngine := TFHIRPathEngine.Create(nil);
+  FMagicExpression := TFHIRPathExpressionNode.Create(0);
 end;
 
 destructor TFHIRGraphQLEngine.Destroy;
 begin
+  FMagicExpression.Free;
+  FPathEngine.Free;
   FAppinfo.Free;
   FFocus.Free;
   FOutput.Free;
@@ -229,6 +281,16 @@ procedure TFHIRGraphQLEngine.SetFocus(const Value: TFHIRResource);
 begin
   FFocus.Free;
   FFocus := Value;
+end;
+
+function TFHIRGraphQLEngine.listStatus(field : TGraphQLField; isList : boolean) : TGraphQLArgumentListStatus;
+begin
+  if field.hasDirective('singleton') then
+    result := listStatusSingleton
+  else if isList then
+    result := listStatusRepeating
+  else
+    result := listStatusNotSpecified;
 end;
 
 function TFHIRGraphQLEngine.targetTypeOk(arguments: TAdvList<TGraphQLArgument>; dest: TFHIRResource): boolean;
@@ -288,9 +350,9 @@ begin
   checkNoDirectives(op.Directives);
   processVariables(op);
   if FFocus = nil then
-    processSearch(FOutput, op.SelectionSet)
+    processSearch(FOutput, op.SelectionSet, false, '')
   else
-    processObject(FFocus, FFocus, FOutput, op.SelectionSet);
+    processObject(FFocus, FFocus, FOutput, op.SelectionSet, false, '');
 end;
 
 function TFHIRGraphQLEngine.filter(context : TFhirResource; prop:TFHIRProperty; arguments: TAdvList<TGraphQLArgument>; values: TFHIRObjectList; extensionMode : boolean): TAdvList<TFHIRObject>;
@@ -319,7 +381,6 @@ var
   arg : TGraphQLArgument;
   p : TFHIRProperty;
   v : TFHIRObject;
-  fpe : TFHIRPathEngine;
   node: TFHIRPathExpressionNode;
   vl : TAdvList<TGraphQLValue>;
 begin
@@ -359,18 +420,13 @@ begin
           end
         else
         begin
-          fpe := TFHIRPathEngine.Create(nil);
+          node := FPathEngine.parse(fp.ToString.Substring(5));
           try
-            node := fpe.parse(fp.ToString.Substring(5));
-            try
-              for v in values do
-               if passesExtensionMode(v) and fpe.evaluateToBoolean(nil, context, v, node) then
-                 result.Add(v.Link)
-            finally
-              node.Free;
-            end;
+            for v in values do
+             if passesExtensionMode(v) and FPathEngine.evaluateToBoolean(nil, context, v, node) then
+               result.Add(v.Link)
           finally
-            fpe.Free;
+            node.Free;
           end;
         end;
       finally
@@ -467,33 +523,82 @@ begin
   result := false;
 end;
 
-procedure TFHIRGraphQLEngine.processValues(context : TFHIRResource; sel: TGraphQLSelection; prop: TFHIRProperty; target: TGraphQLObjectValue; values : TAdvList<TFHIRObject>; extensionMode : boolean);
+procedure TFHIRGraphQLEngine.processValues(context : TFHIRResource; sel: TGraphQLSelection; prop: TFHIRProperty; target: TGraphQLObjectValue; values : TAdvList<TFHIRObject>; extensionMode, inheritedList : boolean; suffix : string);
 var
   arg: TGraphQLArgument;
   value: TFHIRObject;
   new: TGraphQLObjectValue;
+  il : boolean;
+  expression : TFHIRPathExpressionNode;
+  dir : TGraphQLDirective;
+  s, ss : String;
+  index : integer;
 begin
-  arg := target.addField(sel.field.Alias, prop.IsList);
-  for value in values do
+  il := false;
+  arg := nil;
+  expression := nil;
+  if sel.field.hasDirective('slice') then
   begin
-    if value.isPrimitive and not extensionMode then
-    begin
-      if not sel.field.SelectionSet.Empty then
-        raise EGraphQLException.Create('Encountered a selection set on a scalar field type');
-      processPrimitive(arg, value)
-    end
+    dir := sel.field.directive('slice');
+    s := (dir.Arguments[0].Values[0] as TGraphQLStringValue).Value;
+    if (s = '$index') then
+      expression := FMagicExpression.Link
     else
+      expression := FPathEngine.parse(s);
+  end;
+  try
+    if sel.field.hasDirective('flatten') then // special: instruction to drop this node...
+      il := prop.isList and not sel.field.hasDirective('first')
+    else if sel.field.hasDirective('first') {or sel.field.hasDirective('last')} then
     begin
-      if sel.field.SelectionSet.Empty then
-        raise EGraphQLException.Create('No Fields selected on a complex object');
-      new := TGraphQLObjectValue.Create;
-      try
-        arg.addValue(new.Link);
-        processObject(context, value, new, sel.field.SelectionSet);
-      finally
-        new.Free;
+      if expression <> nil then
+        raise Exception.Create('You cannot mix @slice and @first');
+      arg := target.addField(sel.field.Alias+suffix, listStatus(sel.field, inheritedList))
+    end
+    else if expression = nil then
+      arg := target.addField(sel.field.Alias+suffix, listStatus(sel.field, prop.IsList or inheritedList));
+
+    index := 0;
+    for value in values do
+    begin
+      if expression <> nil then
+      begin
+        if expression = FMagicExpression then
+          ss := suffix+'.'+inttostr(index)
+        else
+          ss := suffix+'.'+FPathEngine.evaluateToString(nil, value, expression);
+        if not sel.field.hasDirective('flatten') then
+          arg := target.addField(sel.field.Alias+suffix, listStatus(sel.field, prop.IsList or inheritedList));
       end;
+      if value.isPrimitive and not extensionMode then
+      begin
+        if not sel.field.SelectionSet.Empty then
+          raise EGraphQLException.Create('Encountered a selection set on a scalar field type');
+        processPrimitive(arg, value)
+      end
+      else
+      begin
+        if sel.field.SelectionSet.Empty then
+          raise EGraphQLException.Create('No Fields selected on a complex object');
+        if arg = nil then
+          processObject(context, value, target, sel.field.SelectionSet, il, ss)
+        else
+        begin
+          new := TGraphQLObjectValue.Create;
+          try
+            arg.addValue(new.Link);
+            processObject(context, value, new, sel.field.SelectionSet, il, ss);
+          finally
+            new.Free;
+          end;
+        end;
+      end;
+      if sel.field.hasDirective('first') then
+        break;
+      inc(index);
     end;
+  finally
+    expression.Free;
   end;
 end;
 
@@ -533,7 +638,7 @@ begin
 end;
 
 
-procedure TFHIRGraphQLEngine.processObject(context : TFHIRResource; source: TFHIRObject; target: TGraphQLObjectValue; selection: TAdvList<TGraphQLSelection>);
+procedure TFHIRGraphQLEngine.processObject(context : TFHIRResource; source: TFHIRObject; target: TGraphQLObjectValue; selection: TAdvList<TGraphQLSelection>; inheritedList : boolean; suffix : string);
 var
   sel : TGraphQLSelection;
   prop : TFHIRProperty;
@@ -552,13 +657,13 @@ begin
         if prop = nil then
         begin
           if (sel.field.Name = 'resourceType') and (source is TFHIRResource) then
-            target.addField('resourceType', false).addValue(TGraphQLStringValue.Create(source.fhirType))
+            target.addField('resourceType', listStatusSingleton).addValue(TGraphQLStringValue.Create(source.fhirType))
           else if (sel.field.Name = 'resource') and (source.fhirType = 'Reference') then
-            processReference(context, source, sel.field, target)
+            processReference(context, source, sel.field, target, inheritedList, suffix)
           else if isResourceName(sel.field.Name, 'List') and (source is TFhirResource) then
-            processReverseReferenceList(source as TFhirResource, sel.field, target)
+            processReverseReferenceList(source as TFhirResource, sel.field, target, inheritedList, suffix)
           else if isResourceName(sel.field.Name, 'Connection') and (source is TFhirResource) then
-            processReverseReferenceSearch(source as TFhirResource, sel.field, target)
+            processReverseReferenceSearch(source as TFhirResource, sel.field, target, inheritedList, suffix)
           else
             raise EGraphQLException.Create('Unknown property '+sel.field.Name+' on '+source.fhirType);
         end
@@ -571,7 +676,7 @@ begin
             vl := filter(context, prop, sel.field.Arguments, prop.Values, sel.field.Name.startsWith('_'));
             try
              if not vl.Empty then
-               processValues(context, sel, prop, target, vl, sel.field.Name.startsWith('_'));
+               processValues(context, sel, prop, target, vl, sel.field.Name.startsWith('_'), inheritedList, suffix);
             finally
               vl.Free;
             end;
@@ -588,7 +693,7 @@ begin
         if sel.InlineFragment.TypeCondition = '' then
           raise EGraphQLException.Create('Not done yet - inline fragment with no type condition'); // cause why? why is it even valid?
         if source.fhirType = sel.InlineFragment.TypeCondition then
-          processObject(context, source, target, sel.InlineFragment.SelectionSet);
+          processObject(context, source, target, sel.InlineFragment.SelectionSet, inheritedList, suffix);
       end;
     end
     else if checkDirectives(sel.FragmentSpread.Directives) then
@@ -600,7 +705,7 @@ begin
       if fragment.TypeCondition = '' then
         raise EGraphQLException.Create('Not done yet - inline fragment with no type condition'); // cause why? why is it even valid?
       if source.fhirType = fragment.TypeCondition then
-        processObject(context, source, target, fragment.SelectionSet);
+        processObject(context, source, target, fragment.SelectionSet, inheritedList, suffix);
     end;
   end;
 end;
@@ -619,7 +724,7 @@ begin
 end;
 
 
-procedure TFHIRGraphQLEngine.processReference(context : TFHIRResource; source: TFHIRObject; field: TGraphQLField; target: TGraphQLObjectValue);
+procedure TFHIRGraphQLEngine.processReference(context : TFHIRResource; source: TFHIRObject; field: TGraphQLField; target: TGraphQLObjectValue; inheritedList : boolean; suffix : string);
 var
   ref : TFhirReference;
   ok : boolean;
@@ -639,11 +744,11 @@ begin
       try
         if targetTypeOk(field.Arguments, dest) then
         begin
-          arg := target.addField(field.Alias, false);
+          arg := target.addField(field.Alias, listStatus(field, inheritedList));
           new := TGraphQLObjectValue.Create;
           try
             arg.addValue(new.Link);
-            processObject(ctxt, dest, new, field.SelectionSet);
+            processObject(ctxt, dest, new, field.SelectionSet, inheritedList, suffix);
           finally
             new.Free;
           end;
@@ -659,7 +764,7 @@ begin
   end;
 end;
 
-procedure TFHIRGraphQLEngine.processReverseReferenceList(source: TFHIRResource; field: TGraphQLField; target: TGraphQLObjectValue);
+procedure TFHIRGraphQLEngine.processReverseReferenceList(source: TFHIRResource; field: TGraphQLField; target: TGraphQLObjectValue; inheritedList : boolean; suffix : string);
 var
   list, vl : TAdvList<TFHIRResource>;
   v : TFhirResource;
@@ -698,13 +803,13 @@ begin
     try
       if not vl.Empty then
       begin
-        arg := target.addField(field.Alias, true);
+        arg := target.addField(field.Alias, listStatus(field, true));
         for v in vl do
         begin
           new := TGraphQLObjectValue.Create;
           try
             arg.addValue(new.Link);
-            processObject(v, v, new, field.SelectionSet);
+            processObject(v, v, new, field.SelectionSet, inheritedList, suffix);
           finally
             new.Free;
           end;
@@ -718,7 +823,7 @@ begin
   end;
 end;
 
-procedure TFHIRGraphQLEngine.processReverseReferenceSearch(source: TFHIRResource; field: TGraphQLField; target: TGraphQLObjectValue);
+procedure TFHIRGraphQLEngine.processReverseReferenceSearch(source: TFHIRResource; field: TGraphQLField; target: TGraphQLObjectValue; inheritedList : boolean; suffix : string);
 var
   bnd : TFHIRBundle;
   bndWrapper : TFHIRGraphQLSearchWrapper;
@@ -748,10 +853,10 @@ begin
     try
       bndWrapper := TFHIRGraphQLSearchWrapper.create(bnd.link);
       try
-        arg := target.addField(field.Alias, false);
+        arg := target.addField(field.Alias, listStatus(field, false));
         new := TGraphQLObjectValue.Create;
         arg.addValue(new);
-        processObject(nil, bndWrapper, new, field.SelectionSet);
+        processObject(nil, bndWrapper, new, field.SelectionSet, inheritedList, suffix);
       finally
         bndWrapper.Free;
       end;
@@ -763,7 +868,7 @@ begin
   end;
 end;
 
-procedure TFHIRGraphQLEngine.processSearch(target: TGraphQLObjectValue; selection: TAdvList<TGraphQLSelection>);
+procedure TFHIRGraphQLEngine.processSearch(target: TGraphQLObjectValue; selection: TAdvList<TGraphQLSelection>; inheritedList : boolean; suffix : string);
 var
   sel : TGraphQLSelection;
 begin
@@ -774,15 +879,15 @@ begin
     checkNoDirectives(sel.Field.Directives);
 
     if (isResourceName(sel.Field.Name, '')) then
-      processSearchSingle(target, sel.Field)
+      processSearchSingle(target, sel.Field, inheritedList, suffix)
     else if (isResourceName(sel.Field.Name, 'List')) then
-      processSearchSimple(target, sel.Field)
+      processSearchSimple(target, sel.Field, inheritedList, suffix)
     else if (isResourceName(sel.Field.Name, 'Connection')) then
-      processSearchFull(target, sel.Field);
+      processSearchFull(target, sel.Field, inheritedList, suffix);
   end;
 end;
 
-procedure TFHIRGraphQLEngine.processSearchSingle(target: TGraphQLObjectValue; field: TGraphQLField);
+procedure TFHIRGraphQLEngine.processSearchSingle(target: TGraphQLObjectValue; field: TGraphQLField; inheritedList : boolean; suffix : string);
 var
   id : String;
   arg : TGraphQLArgument;
@@ -802,11 +907,11 @@ begin
   if not FOnLookup(FAppinfo, field.Name, id, res) then
     raise EGraphQLException.Create('Resource '+field.Name+'/'+id+' not found');
   try
-    arg := target.addField(field.Alias, false);
+    arg := target.addField(field.Alias, listStatus(field, false));
     new := TGraphQLObjectValue.Create;
     try
       arg.addValue(new.Link);
-      processObject(res, res, new, field.SelectionSet);
+      processObject(res, res, new, field.SelectionSet, inheritedList, suffix);
     finally
       new.Free;
     end;
@@ -815,7 +920,7 @@ begin
   end;
 end;
 
-procedure TFHIRGraphQLEngine.processSearchSimple(target: TGraphQLObjectValue; field: TGraphQLField);
+procedure TFHIRGraphQLEngine.processSearchSimple(target: TGraphQLObjectValue; field: TGraphQLField; inheritedList : boolean; suffix : string);
 var
   list, vl : TAdvList<TFHIRResource>;
   v : TFhirResource;
@@ -834,13 +939,13 @@ begin
     try
       if not vl.Empty then
       begin
-        arg := target.addField(field.Alias, true);
+        arg := target.addField(field.Alias, listStatus(field, true));
         for v in vl do
         begin
           new := TGraphQLObjectValue.Create;
           try
             arg.addValue(new.Link);
-            processObject(v, v, new, field.SelectionSet);
+            processObject(v, v, new, field.SelectionSet, inheritedList, suffix);
           finally
             new.Free;
           end;
@@ -854,7 +959,7 @@ begin
   end;
 end;
 
-procedure TFHIRGraphQLEngine.processSearchFull(target: TGraphQLObjectValue; field: TGraphQLField);
+procedure TFHIRGraphQLEngine.processSearchFull(target: TGraphQLObjectValue; field: TGraphQLField; inheritedList : boolean; suffix : string);
 var
   bnd : TFHIRBundle;
   bndWrapper : TFHIRGraphQLSearchWrapper;
@@ -885,10 +990,10 @@ begin
     try
       bndWrapper := TFHIRGraphQLSearchWrapper.create(bnd.link);
       try
-        arg := target.addField(field.Alias, false);
+        arg := target.addField(field.Alias, listStatus(field, false));
         new := TGraphQLObjectValue.Create;
         arg.addValue(new);
-        processObject(nil, bndWrapper, new, field.SelectionSet);
+        processObject(nil, bndWrapper, new, field.SelectionSet, inheritedList, suffix);
       finally
         bndWrapper.Free;
       end;

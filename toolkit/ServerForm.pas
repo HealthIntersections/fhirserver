@@ -38,7 +38,7 @@ uses
   DateSupport, StringSupport,
   AdvGenerics,
   FHIRTypes, FHIRResources, FHIRClient, FHIRUtilities,
-  BaseFrame, AppEndorserFrame, CapabilityStatementEditor;
+  BaseFrame, AppEndorserFrame, CapabilityStatementEditor, VitalSignsGeneratorDialog;
 
 type
   TFrame = TBaseFrame; // re-aliasing the Frame to work around a designer bug
@@ -138,6 +138,7 @@ type
     TabItem5: TTabItem;
     TabItem6: TTabItem;
     btnFetchMore: TButton;
+    Button2: TButton;
     procedure btnTestClick(Sender: TObject);
     procedure btnCloseClick(Sender: TObject);
     procedure Button1Click(Sender: TObject);
@@ -152,6 +153,7 @@ type
     procedure btnSearchPatientsClick(Sender: TObject);
     procedure gridPMatchesGetValue(Sender: TObject; const ACol, ARow: Integer; var Value: TValue);
     procedure btnFetchMoreClick(Sender: TObject);
+    procedure Button2Click(Sender: TObject);
   private
     FClient: TFHIRClient;
     FCapabilityStatement: TFhirCapabilityStatement;
@@ -261,6 +263,20 @@ begin
     FcsForm.Resource := CapabilityStatement.Link;
     FcsForm.Filename := '$$';
     FcsForm.Load;
+  end;
+end;
+
+procedure TServerFrame.Button2Click(Sender: TObject);
+var
+  form : TVitalSignsGeneratorForm;
+begin
+  form := TVitalSignsGeneratorForm.create(self);
+  try
+    form.Client := FClient.Link;
+    form.Settings := Settings.Link;
+    form.ShowModal;
+  finally
+    form.free;
   end;
 end;
 

@@ -64,7 +64,7 @@ begin
         as.defaultvalue = %purpose%
         as.xpos = -1
         as.ypos = -1
-        as.returnvalue = "fix bug in XML validation"
+        as.returnvalue = "more support for flattening operations in graphQL"
         as.returnvariable = purpose
       end
       action.variables.savetoini
@@ -114,7 +114,6 @@ begin
       action.group
       begin
         description = "DUnit Tests"
-        enabled = false
         id = {77AF12F8-DBE0-4ABB-BD31-13E85E4F5E1D}
         action.files.delete
         begin
@@ -141,6 +140,7 @@ begin
           debugversionnumbers = false
           delphiversion = Delphi10Berlin
           description = "Compile the Server Tests"
+          enabled = false
           eurekalogverboselogging = false
           frameworktype = VCL
           hintsaserror = false
@@ -248,6 +248,7 @@ begin
         action.process.execute
         begin
           captureoutput = true
+          enabled = false
           enablelivecapture = true
           enablereturncodecheck = true
           enabletimeout = false

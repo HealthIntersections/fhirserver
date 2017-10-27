@@ -179,7 +179,8 @@ uses
   QuestionnaireFrame in 'QuestionnaireFrame.pas'},
   RegisterClientDialogFMX in '..\reference-platform\client\RegisterClientDialogFMX.pas' {RegisterClientForm},
   QuestionnaireItemPanel in 'QuestionnaireItemPanel.pas',
-  QuestionnairePanel in 'QuestionnairePanel.pas';
+  QuestionnairePanel in 'QuestionnairePanel.pas',
+  VitalSignsGeneratorDialog in 'VitalSignsGeneratorDialog.pas' {VitalSignsGeneratorForm};
 
 {$R *.res}
 

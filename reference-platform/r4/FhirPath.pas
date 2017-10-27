@@ -347,7 +347,8 @@ type
     function evaluateToBoolean(appInfo : TAdvObject; resource : TFHIRObject; base : TFHIRObject; expr : TFHIRPathExpressionNode) : boolean; overload;
 
     // evaluate a path and return a string describing the outcome
-    function evaluateToString(appInfo : TAdvObject; base : TFHIRObject; path : String) : string;
+    function evaluateToString(appInfo : TAdvObject; base : TFHIRObject; path : String) : string; overload;
+    function evaluateToString(appInfo : TAdvObject; base : TFHIRObject; expr : TFHIRPathExpressionNode) : string; overload;
 
     // worker routine for converting a set of objects to a string representation
     function convertToString(items : TFHIRSelectionList) : String; overload;
@@ -689,6 +690,18 @@ begin
   res := evaluate(appInfo, resource, base, expr);
   try
     result := convertToBoolean(res);
+  finally
+    res.Free;
+  end;
+end;
+
+function TFHIRPathEngine.evaluateToString(appInfo: TAdvObject; base: TFHIRObject; expr: TFHIRPathExpressionNode): string;
+var
+  res : TFHIRSelectionList;
+begin
+  res := evaluate(appInfo, base, expr);
+  try
+    result := convertToString(res);
   finally
     res.Free;
   end;
