@@ -3,33 +3,34 @@ object MemoEditorForm: TMemoEditorForm
   Top = 0
   Caption = 'Form1'
   ClientHeight = 456
-  ClientWidth = 450
+  ClientWidth = 571
   FormFactor.Width = 320
   FormFactor.Height = 480
   FormFactor.Devices = [Desktop]
+  OnShow = FormShow
   DesignerMasterStyle = 0
   object Panel1: TPanel
     Align = Bottom
     Position.Y = 416.000000000000000000
-    Size.Width = 450.000000000000000000
+    Size.Width = 571.000000000000000000
     Size.Height = 40.000000000000000000
     Size.PlatformDefault = False
     TabOrder = 0
     object Button1: TButton
       Anchors = [akTop, akRight]
       Default = True
-      Enabled = False
-      ModalResult = 1
-      Position.X = 273.000000000000000000
+      EnableDragHighlight = False
+      Position.X = 394.000000000000000000
       Position.Y = 8.000000000000000000
       TabOrder = 0
       Text = 'OK'
+      OnClick = Button1Click
     end
     object Button2: TButton
       Anchors = [akTop, akRight]
       Cancel = True
       ModalResult = 2
-      Position.X = 361.000000000000000000
+      Position.X = 482.000000000000000000
       Position.Y = 8.000000000000000000
       TabOrder = 1
       Text = 'Cancel'
@@ -45,11 +46,73 @@ object MemoEditorForm: TMemoEditorForm
     Margins.Top = 6.000000000000000000
     Margins.Right = 6.000000000000000000
     Margins.Bottom = 6.000000000000000000
-    Size.Width = 438.000000000000000000
+    Size.Width = 422.000000000000000000
     Size.Height = 404.000000000000000000
     Size.PlatformDefault = False
     TabOrder = 1
-    Viewport.Width = 434.000000000000000000
-    Viewport.Height = 400.000000000000000000
+    Viewport.Width = 422.000000000000000000
+    Viewport.Height = 404.000000000000000000
+  end
+  object Panel2: TPanel
+    Align = Left
+    Size.Width = 137.000000000000000000
+    Size.Height = 416.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 2
+    object Panel3: TPanel
+      Align = Top
+      Size.Width = 137.000000000000000000
+      Size.Height = 33.000000000000000000
+      Size.PlatformDefault = False
+      TabOrder = 0
+      object Label1: TLabel
+        Position.X = 8.000000000000000000
+        Position.Y = 8.000000000000000000
+        Text = 'Languages'
+        TabOrder = 0
+      end
+    end
+    object Panel4: TPanel
+      Align = Bottom
+      Position.Y = 376.000000000000000000
+      Size.Width = 137.000000000000000000
+      Size.Height = 40.000000000000000000
+      Size.PlatformDefault = False
+      TabOrder = 1
+      object btnAdd: TButton
+        Position.X = 8.000000000000000000
+        Position.Y = 8.000000000000000000
+        Size.Width = 57.000000000000000000
+        Size.Height = 22.000000000000000000
+        Size.PlatformDefault = False
+        TabOrder = 1
+        Text = 'Add'
+        OnClick = btnAddClick
+      end
+      object btnDelete: TButton
+        Position.X = 72.000000000000000000
+        Position.Y = 8.000000000000000000
+        Size.Width = 57.000000000000000000
+        Size.Height = 22.000000000000000000
+        Size.PlatformDefault = False
+        TabOrder = 0
+        Text = 'Delete'
+        OnClick = btnDeleteClick
+      end
+    end
+    object ListBox1: TListBox
+      Align = Client
+      Size.Width = 137.000000000000000000
+      Size.Height = 343.000000000000000000
+      Size.PlatformDefault = False
+      TabOrder = 2
+      OnClick = ListBox1Click
+      DisableFocusEffect = True
+      DefaultItemStyles.ItemStyle = ''
+      DefaultItemStyles.GroupHeaderStyle = ''
+      DefaultItemStyles.GroupFooterStyle = ''
+      Viewport.Width = 137.000000000000000000
+      Viewport.Height = 343.000000000000000000
+    end
   end
 end

@@ -33,9 +33,10 @@ uses
   System.SysUtils, System.Types, System.UITypes, System.Classes, System.Variants,
   FMX.Types, FMX.Controls, FMX.Forms, FMX.Graphics, FMX.Dialogs, FMX.StdCtrls,
   FMX.Controls.Presentation, System.Rtti, FMX.Grid.Style, FMX.Grid, FMX.ScrollBox,
-  FMX.Memo, FMX.Edit, FMX.DateTimeCtrls,
+  FMX.Memo, FMX.Edit, FMX.DateTimeCtrls, System.ImageList, FMX.ImgList,
   DateSupport,
-  ResourceEditingSupport, FHIRTypes, FHIRResources, FHIRUtilities;
+  ResourceEditingSupport, FHIRTypes, FHIRResources, FHIRUtilities,
+  ToolkitUtilities, TranslationsEditorDialog, MemoEditorDialog;
 
 type
   TCodeSystemConceptForm = class(TForm)
@@ -56,6 +57,9 @@ type
     StringColumn9: TStringColumn;
     Label20: TLabel;
     lblProperties: TLabel;
+    ToolbarImages: TImageList;
+    btnDisplay: TButton;
+    btnDefinition: TButton;
     procedure FormShow(Sender: TObject);
     procedure edtCodeChangeTracking(Sender: TObject);
     procedure gridDesignationsGetValue(Sender: TObject; const ACol, ARow: Integer; var Value: TValue);
@@ -63,19 +67,21 @@ type
     procedure gridDesignationsSetValue(Sender: TObject; const ACol, ARow: Integer; const Value: TValue);
     procedure btnDeleteDesignationClick(Sender: TObject);
     procedure btnAddDesignationClick(Sender: TObject);
+    procedure btnDisplayClick(Sender: TObject);
+    procedure btnDefinitionClick(Sender: TObject);
   private
     FLoading : boolean;
     FConcept: TFHIRCodeSystemConcept;
-    FProperties: TFhirCodeSystemPropertyList;
+    FCodeSystem: TFhirCodeSystem;
     procedure SetConcept(const Value: TFHIRCodeSystemConcept);
-    procedure SetProperties(const Value: TFhirCodeSystemPropertyList);
     procedure loadProperties;
     procedure loadProperty(Value: TFhirCodeSystemProperty; top : Double);
+    procedure SetCodeSystem(const Value: TFhirCodeSystem);
   public
     Destructor Destroy; override;
 
     property Concept : TFHIRCodeSystemConcept read FConcept write SetConcept;
-    property properties : TFhirCodeSystemPropertyList read FProperties write SetProperties;
+    property CodeSystem : TFhirCodeSystem read FCodeSystem write SetCodeSystem;
   end;
 
 var
@@ -96,6 +102,13 @@ begin
   btnOk.Enabled := true;
 end;
 
+procedure TCodeSystemConceptForm.btnDefinitionClick(Sender: TObject);
+begin
+  if Concept.definitionElement = nil then
+    Concept.definitionElement := TFhirString.Create;
+  editMarkdownDialog(self, 'Concept Definition', btnDefinition, memDefinition, CodeSystem, Concept.definitionElement);
+end;
+
 procedure TCodeSystemConceptForm.btnDeleteDesignationClick(Sender: TObject);
 var
   designation : TFhirValueSetComposeIncludeConceptDesignation;
@@ -109,13 +122,20 @@ begin
   btnOk.Enabled := true;
 end;
 
+procedure TCodeSystemConceptForm.btnDisplayClick(Sender: TObject);
+begin
+  if Concept.displayElement = nil then
+    Concept.displayElement := TFhirString.Create;
+  editStringDialog(self, 'Concept Display', btnDisplay, edtDIsplay, CodeSystem, Concept.displayElement);
+end;
+
 destructor TCodeSystemConceptForm.Destroy;
 var
   Value: TFhirCodeSystemProperty;
 begin
-  for value in FProperties do
+  for value in FCodeSystem.property_List do
     value.TagObject := nil;
-  FProperties.Free;
+  FCodeSystem.Free;
   FConcept.Free;
   inherited;
 end;
@@ -133,7 +153,7 @@ begin
     Concept.code := edtCode.Text;
     Concept.display := edtDIsplay.Text;
     Concept.definition := memDefinition.Text;
-    for prop in FProperties do
+    for prop in FCodeSystem.property_List do
     begin
       value := concept.prop(prop.code);
       case prop.type_ of
@@ -186,9 +206,11 @@ begin
   try
     edtCode.Text := Concept.code;
     edtDIsplay.Text := Concept.display;
+    btnDisplay.ImageIndex := translationsImageIndex(Concept.displayElement);
     memDefinition.Text := Concept.definition;
+    btnDefinition.ImageIndex := translationsImageIndex(Concept.definitionElement);
     gridDesignations.RowCount := Concept.designationList.Count;
-    for prop in FProperties do
+    for prop in FCodeSystem.property_List do
     begin
       value := concept.prop(prop.code);
       if value <> nil then
@@ -255,7 +277,7 @@ const
   DELTA = 32;
 begin
   top := lblProperties.Position.Y + DELTA;
-  for value in FProperties do
+  for value in FCodeSystem.property_List do
   begin
     loadProperty(value, top);
     top := top + delta;
@@ -338,17 +360,17 @@ begin
   end;
 end;
 
+procedure TCodeSystemConceptForm.SetCodeSystem(const Value: TFhirCodeSystem);
+begin
+  FCodeSystem.Free;
+  FCodeSystem := Value;
+  loadProperties;
+end;
+
 procedure TCodeSystemConceptForm.SetConcept(const Value: TFHIRCodeSystemConcept);
 begin
   FConcept.Free;
   FConcept := Value;
-end;
-
-procedure TCodeSystemConceptForm.SetProperties(const Value: TFhirCodeSystemPropertyList);
-begin
-  FProperties.Free;
-  FProperties := Value;
-  loadProperties;
 end;
 
 end.

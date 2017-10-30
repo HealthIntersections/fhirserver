@@ -180,7 +180,8 @@ uses
   RegisterClientDialogFMX in '..\reference-platform\client\RegisterClientDialogFMX.pas' {RegisterClientForm},
   QuestionnaireItemPanel in 'QuestionnaireItemPanel.pas',
   QuestionnairePanel in 'QuestionnairePanel.pas',
-  VitalSignsGeneratorDialog in 'VitalSignsGeneratorDialog.pas' {VitalSignsGeneratorForm};
+  VitalSignsGeneratorDialog in 'VitalSignsGeneratorDialog.pas' {VitalSignsGeneratorForm},
+  TranslationsEditorDialog in 'TranslationsEditorDialog.pas' {TranslationsEditorForm};
 
 {$R *.res}
 

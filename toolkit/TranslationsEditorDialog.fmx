@@ -1,0 +1,171 @@
+object TranslationsEditorForm: TTranslationsEditorForm
+  Left = 0
+  Top = 0
+  Caption = 'Translations'
+  ClientHeight = 417
+  ClientWidth = 543
+  FormFactor.Width = 320
+  FormFactor.Height = 480
+  FormFactor.Devices = [Desktop]
+  OnShow = FormShow
+  DesignerMasterStyle = 1
+  object Panel1: TPanel
+    Align = Bottom
+    Position.Y = 377.000000000000000000
+    Size.Width = 543.000000000000000000
+    Size.Height = 40.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 0
+    object Button1: TButton
+      Anchors = [akTop, akRight]
+      Default = True
+      Position.X = 366.000000000000000000
+      Position.Y = 8.000000000000000000
+      TabOrder = 0
+      Text = 'OK'
+      OnClick = Button1Click
+    end
+    object Button2: TButton
+      Anchors = [akTop, akRight]
+      Cancel = True
+      ModalResult = 2
+      Position.X = 454.000000000000000000
+      Position.Y = 8.000000000000000000
+      TabOrder = 1
+      Text = 'Cancel'
+    end
+  end
+  object Panel2: TPanel
+    Align = Top
+    Size.Width = 543.000000000000000000
+    Size.Height = 41.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 1
+    object Label1: TLabel
+      Position.X = 8.000000000000000000
+      Position.Y = 8.000000000000000000
+      Size.Width = 113.000000000000000000
+      Size.Height = 17.000000000000000000
+      Size.PlatformDefault = False
+      Text = 'Primary Language:'
+      TabOrder = 0
+    end
+    object edtPrimary: TEdit
+      Touch.InteractiveGestures = [LongTap, DoubleTap]
+      Anchors = [akLeft, akTop, akRight, akBottom]
+      TabOrder = 1
+      Position.X = 120.000000000000000000
+      Position.Y = 8.000000000000000000
+      Size.Width = 416.000000000000000000
+      Size.Height = 22.000000000000000000
+      Size.PlatformDefault = False
+    end
+  end
+  object Panel3: TPanel
+    Align = Client
+    Size.Width = 543.000000000000000000
+    Size.Height = 336.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 2
+    object Label2: TLabel
+      Position.X = 8.000000000000000000
+      Position.Y = 8.000000000000000000
+      Text = 'Translations'
+      TabOrder = 0
+    end
+    object grid: TGrid
+      Anchors = [akLeft, akTop, akRight, akBottom]
+      CanFocus = True
+      ClipChildren = True
+      Position.X = 8.000000000000000000
+      Position.Y = 32.000000000000000000
+      Size.Width = 528.000000000000000000
+      Size.Height = 290.000000000000000000
+      Size.PlatformDefault = False
+      TabOrder = 1
+      OnGetValue = gridGetValue
+      OnSetValue = gridSetValue
+      Viewport.Width = 528.000000000000000000
+      Viewport.Height = 290.000000000000000000
+      object PopupColumn1: TPopupColumn
+        Header = 'Language'
+        Items.Strings = (
+          'ar - Arabic'
+          'bn - Bengali'
+          'cs - Czech'
+          'da - Danish'
+          'de - German'
+          'de-AT - German (Austria)'
+          'de-CH - German (Switzerland)'
+          'de-DE - German (Germany)'
+          'el - Greek'
+          'en - English'
+          'en-AU - English (Australia)'
+          'en-CA - English (Canada)'
+          'en-GB - English (Great Britain)'
+          'en-IN - English (India)'
+          'en-NZ - English (New Zeland)'
+          'en-SG - English (Singapore)'
+          'en-US - English (United States)'
+          'es - Spanish'
+          'es-AR - Spanish (Argentina)'
+          'es-ES - Spanish (Spain)'
+          'es-UY - Spanish (Uruguay)'
+          'fi - Finnish'
+          'fr - French'
+          'fr-BE - French (Belgium)'
+          'fr-CH - French (Switzerland)'
+          'fr-FR - French (France)'
+          'fy - Frysian'
+          'fy-NL - Frysian (Netherlands)'
+          'hi - Hindi'
+          'hr - Croatian'
+          'it - Italian'
+          'it-CH - Italian (Switzerland)'
+          'it-IT - Italian (Italy)'
+          'ja - Japanese'
+          'ko - Korean'
+          'nl - Dutch'
+          'nl-BE - Dutch (Belgium)'
+          'nl-NL - Dutch (Netherlands)'
+          'no - Norwegian'
+          'no-NO - Norwegian (Norway)'
+          'pa - Punjabi'
+          'pt - Portuguese'
+          'pt-BR - Portuguese (Brazil)'
+          'ru - Russian'
+          'ru-RU - Russian (Russia)'
+          'sr - Serbian'
+          'sr-SP - Serbian (Serbia)'
+          'sv - Swedish'
+          'sv-SE - Swedish (Sweden)'
+          'te - Telegu'
+          'zh - Chinese'
+          'zh-CN - Chinese (China)'
+          'zh-HK - Chinese (Hong Kong)'
+          'zh-SG - Chinese (Singapore)'
+          'zh-TW - Chinese (Taiwan)')
+      end
+      object StringColumn1: TStringColumn
+        Header = 'Content'
+        Size.Width = 324.000000000000000000
+      end
+    end
+    object btnAdd: TButton
+      Anchors = [akTop, akRight]
+      Position.X = 368.000000000000000000
+      Position.Y = 8.000000000000000000
+      TabOrder = 2
+      Text = 'Add'
+      OnClick = btnAddClick
+    end
+    object btnDelete: TButton
+      Anchors = [akTop, akRight]
+      Position.X = 456.000000000000000000
+      Position.Y = 8.000000000000000000
+      TabOrder = 3
+      Text = 'Delete'
+      OnClick = btnDeleteClick
+    end
+  end
+end

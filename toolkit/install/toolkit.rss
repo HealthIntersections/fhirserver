@@ -3,14 +3,21 @@
 	<channel>
 		<title>FHIR Toolkit Release history</title>
 		<link>http://www.healthintersections.com.au/FhirServer</link>
-		<item><title>FHIR Toolkit release 0.0.28 2017-09-27</title>
+		<item><title>FHIR Toolkit release 0.0.29 2017-10-30</title>
+			<link>http://www.healthintersections.com.au/FhirServer/fhir-toolkit-install-0.0.29.exe</link>
+			<mlink>http://www.healthintersections.com.au/FhirServer/fhir-toolkit-osx-0.0.29.zip</mlink>
+			<description>2017-10-30 (v0.0.29): Add translation support for Code System and Questionnaire</description>
+			<ptitle>0.0.29, 2017-10-30</ptitle>
+			<comment>Add translation support for Code System and Questionnaire</comment>
+		</item>
+<item><title>FHIR Toolkit release 0.0.28 2017-09-27</title>
 			<link>http://www.healthintersections.com.au/FhirServer/fhir-toolkit-install-0.0.28.exe</link>
 			<mlink>http://www.healthintersections.com.au/FhirServer/fhir-toolkit-osx-0.0.28.zip</mlink>
 			<description>2017-09-27 (v0.0.28): Work on Questionnaire Editor</description>
 			<ptitle>0.0.28, 2017-09-27</ptitle>
 			<comment>Work on Questionnaire Editor</comment>
 		</item>
-<item><title>FHIR Toolkit release 0.0.27 2017-09-12</title>
+		<item><title>FHIR Toolkit release 0.0.27 2017-09-12</title>
 			<link>http://www.healthintersections.com.au/FhirServer/fhir-toolkit-install-0.0.27.exe</link>
 			<mlink>http://www.healthintersections.com.au/FhirServer/fhir-toolkit-osx-0.0.27.zip</mlink>
 			<description>2017-09-12 (v0.0.27): improve code system editor</description>

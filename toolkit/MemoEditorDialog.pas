@@ -32,7 +32,11 @@ interface
 uses
   System.SysUtils, System.Types, System.UITypes, System.Classes, System.Variants,
   FMX.Types, FMX.Controls, FMX.Forms, FMX.Graphics, FMX.Dialogs, FMX.ScrollBox,
-  FMX.Memo, FMX.StdCtrls, FMX.Controls.Presentation, FMX.Edit;
+  FMX.Memo, FMX.StdCtrls, FMX.Controls.Presentation, FMX.Edit, FMX.Layouts,
+  FMX.ListBox,
+  AdvGenerics,
+  FHIRBase, FHIRTypes, FHIRResources, FHIRUtilities,
+  ToolkitUtilities, ListSelector;
 
 type
   TMemoEditorForm = class(TForm)
@@ -40,35 +44,317 @@ type
     Button1: TButton;
     Button2: TButton;
     Memo1: TMemo;
+    Panel2: TPanel;
+    Panel3: TPanel;
+    Label1: TLabel;
+    Panel4: TPanel;
+    btnAdd: TButton;
+    btnDelete: TButton;
+    ListBox1: TListBox;
+    procedure FormShow(Sender: TObject);
+    procedure btnAddClick(Sender: TObject);
+    procedure ListBox1Click(Sender: TObject);
+    procedure btnDeleteClick(Sender: TObject);
+    procedure Button1Click(Sender: TObject);
   private
-    { Private declarations }
+    FResource: TFHIRResource;
+    FElement: TFHIRMarkdown;
+    FExtensions : TAdvList<TFhirExtension>;
+    FCurrentIndex : integer;
+    FPrimary : String;
+    FOffset : integer;
+    procedure SetElement(const Value: TFHIRMarkdown);
+    procedure SetResource(const Value: TFHIRResource);
   public
-    { Public declarations }
+    Constructor Create(owner : TComponent); override;
+    destructor Destroy; override;
+
+    property Resource : TFHIRResource read FResource write SetResource;
+    property Element : TFHIRMarkdown read FElement write SetElement;
   end;
 
 var
   MemoEditorForm: TMemoEditorForm;
 
-procedure editMemo(owner : TComponent; caption : String; edt : TEdit);
+function editMarkdownDialog(owner : TComponent; title : String; button : TButton; edit : TEdit; resource : TFHIRResource; element : TFHIRMarkdown) : boolean; overload;
+function editMarkdownDialog(owner : TComponent; title : String; button : TButton; edit : TMemo; resource : TFHIRResource; element : TFHIRMarkdown) : boolean; overload;
+function editMarkdownDialog(owner : TComponent; title : String; button : TButton; edit : TMemo; resource : TFHIRResource; element : TFHIRString) : boolean; overload;
 
 implementation
 
 {$R *.fmx}
 
-procedure editMemo(owner : TComponent; caption : String; edt : TEdit);
-var
-  MemoEditorForm: TMemoEditorForm;
+function editMarkdownDialog(owner : TComponent; title : String; button : TButton; edit : TEdit; resource : TFHIRResource; element : TFHIRMarkdown) : boolean;
 begin
-  MemoEditorForm := TMemoEditorForm.create(owner);
+  MemoEditorForm := TMemoEditorForm.Create(owner);
   try
-    MemoEditorForm.caption := caption;
-    MemoEditorForm.Memo1.Text := edt.Text;
-    if MemoEditorForm.ShowModal = mrOk then
-      edt.Text := MemoEditorForm.Memo1.Text;
+    MemoEditorForm.Resource := resource.Link;
+    MemoEditorForm.Element := element.Link;
+    MemoEditorForm.Caption := title;
+    result := MemoEditorForm.ShowModal = mrOk;
+    if result then
+    begin
+      edit.Text := element.value;
+      button.ImageIndex := translationsImageIndex(element);
+    end;
   finally
     MemoEditorForm.Free;
   end;
+end;
 
+function editMarkdownDialog(owner : TComponent; title : String; button : TButton; edit : TMemo; resource : TFHIRResource; element : TFHIRMarkdown) : boolean;
+begin
+  MemoEditorForm := TMemoEditorForm.Create(owner);
+  try
+    MemoEditorForm.Resource := resource.Link;
+    MemoEditorForm.Element := element.Link;
+    MemoEditorForm.Caption := title;
+    result := MemoEditorForm.ShowModal = mrOk;
+    if result then
+    begin
+      edit.Text := element.value;
+      button.ImageIndex := translationsImageIndex(element);
+    end;
+  finally
+    MemoEditorForm.Free;
+  end;
+end;
+
+function editMarkdownDialog(owner : TComponent; title : String; button : TButton; edit : TMemo; resource : TFHIRResource; element : TFHIRString) : boolean;
+var
+  md : TFhirMarkdown;
+begin
+  md := TFhirMarkdown.Create;
+  try
+    md.value := element.value;
+    MemoEditorForm := TMemoEditorForm.Create(owner);
+    try
+      MemoEditorForm.Resource := resource.Link;
+      MemoEditorForm.Element := md.Link;
+      MemoEditorForm.Caption := title;
+      result := MemoEditorForm.ShowModal = mrOk;
+      if result then
+      begin
+        element.value := md.value;
+        edit.Text := md.value;
+        button.ImageIndex := translationsImageIndex(element);
+      end;
+    finally
+      MemoEditorForm.Free;
+    end;
+  finally
+    md.Free;
+  end;
+end;
+
+procedure TMemoEditorForm.btnAddClick(Sender: TObject);
+var
+  dlg : TListSelectorForm;
+  procedure checkAdd(code : String);
+  var
+    exists : boolean;
+    ext : TFhirExtension;
+  begin
+    exists := false;
+    for ext in FExtensions do
+      exists := exists or (ext.getExtensionString('lang') = code);
+    if not exists then
+      dlg.ListBox1.Items.Add(langDesc(code));
+  end;
+var
+  i : integer;
+  c : String;
+  ext : TFhirExtension;
+begin
+  dlg := TListSelectorForm.Create(self);
+  try
+    checkAdd('ar');
+    checkAdd('bn');
+    checkAdd('cs');
+    checkAdd('da');
+    checkAdd('de');
+    checkAdd('de-AT');
+    checkAdd('de-CH');
+    checkAdd('de-DE');
+    checkAdd('el');
+    checkAdd('en');
+    checkAdd('en-AU');
+    checkAdd('en-CA');
+    checkAdd('en-GB');
+    checkAdd('en-IN');
+    checkAdd('en-NZ');
+    checkAdd('en-SG');
+    checkAdd('en-US');
+    checkAdd('es');
+    checkAdd('es-AR');
+    checkAdd('es-ES');
+    checkAdd('es-UY');
+    checkAdd('fi');
+    checkAdd('fr');
+    checkAdd('fr-BE');
+    checkAdd('fr-CH');
+    checkAdd('fr-FR');
+    checkAdd('fy');
+    checkAdd('fy-NL');
+    checkAdd('hi');
+    checkAdd('hr');
+    checkAdd('it');
+    checkAdd('it-CH');
+    checkAdd('it-IT');
+    checkAdd('ja');
+    checkAdd('ko');
+    checkAdd('nl');
+    checkAdd('nl-BE');
+    checkAdd('nl-NL');
+    checkAdd('no');
+    checkAdd('no-NO');
+    checkAdd('pa');
+    checkAdd('pt');
+    checkAdd('pt-BR');
+    checkAdd('ru');
+    checkAdd('ru-RU');
+    checkAdd('sr');
+    checkAdd('sr-SP');
+    checkAdd('sv');
+    checkAdd('sv-SE');
+    checkAdd('te');
+    checkAdd('zh');
+    checkAdd('zh-CN');
+    checkAdd('zh-HK');
+    checkAdd('zh-SG');
+    checkAdd('zh-TW');
+
+    if dlg.ShowModal = mrOk then
+    begin
+      for i := 0 to dlg.ListBox1.Items.Count - 1 do
+        if dlg.ListBox1.ListItems[i].IsChecked then
+        begin
+          ext := TFhirExtension.Create;
+          FExtensions.Add(ext);
+          ext.url := 'http://hl7.org/fhir/StructureDefinition/translation';
+          c := langCode(dlg.ListBox1.Items[i]);
+          ext.setExtensionString('lang', c);
+          ListBox1.Items.Add(langDesc(c));
+        end;
+    end;
+  finally
+    dlg.Free;
+  end;
+end;
+
+procedure TMemoEditorForm.btnDeleteClick(Sender: TObject);
+begin
+  FExtensions.Delete(FCurrentIndex-1);
+  ListBox1.items.Delete(FCurrentIndex);
+  ListBox1.ItemIndex := FCurrentIndex - 1;
+  FCurrentIndex := -1;
+  ListBox1Click(self);
+end;
+
+procedure TMemoEditorForm.Button1Click(Sender: TObject);
+var
+  ext : TFHIRExtension;
+  langs : TStringList;
+  s : string;
+begin
+  ListBox1Click(self);
+  langs := TStringList.Create;
+  try
+    for ext in FExtensions do
+    begin
+      s := ext.getExtensionString('lang');
+      if s = '' then
+        raise Exception.Create('Language missing on a translation');
+      if langs.IndexOf(s) > -1 then
+        raise Exception.Create('Duplicate translation for '+s);
+      langs.Add(s);
+      ext.url := 'http://hl7.org/fhir/StructureDefinition/translation';
+    end;
+  finally
+    langs.Free;
+  end;
+  element.value := FPrimary;
+  element.removeExtension('http://hl7.org/fhir/StructureDefinition/translation');
+  for ext in FExtensions do
+    element.extensionList.add(ext.Link);
+  modalResult := mrOk;
+end;
+
+constructor TMemoEditorForm.Create(owner: TComponent);
+begin
+  inherited;
+  FExtensions := TAdvList<TFhirExtension>.create;
+end;
+
+destructor TMemoEditorForm.Destroy;
+begin
+  FExtensions.Free;
+  FElement.Free;
+  FResource.Free;
+  inherited;
+end;
+
+procedure TMemoEditorForm.FormShow(Sender: TObject);
+var
+  ext : TFhirExtension;
+begin
+  FCurrentIndex := -1;
+  ListBox1.items.Clear;
+  ListBox1.items.Add('Primary Lang');
+  FPrimary := Element.value;
+  FOffset := 0;
+  Memo1.Text := FPrimary;
+  FExtensions.Clear;
+  for ext in Element.ExtensionList do
+    if ext.url = 'http://hl7.org/fhir/StructureDefinition/translation' then
+    begin
+      FExtensions.Add(ext.Link);
+      ListBox1.items.Add(langDesc(ext.getExtensionString('lang')));
+    end;
+  ListBox1.ItemIndex := 0;
+  ListBox1Click(self);
+  btnDelete.Enabled := false;
+end;
+
+procedure TMemoEditorForm.ListBox1Click(Sender: TObject);
+begin
+  if FCurrentIndex > -1 then
+  begin
+    if FCurrentIndex < 1 then
+    begin
+      FPrimary := Memo1.Text;
+      FOffset := Memo1.SelStart;
+    end
+    else
+    begin
+      FExtensions[FCurrentIndex - 1].setExtensionString('content', Memo1.Text);
+      FExtensions[FCurrentIndex - 1].TagInt := Memo1.SelStart;
+    end;
+  end;
+  FCurrentIndex := ListBox1.ItemIndex;
+  if FCurrentIndex < 1 then
+  begin
+    Memo1.Text := FPrimary;
+    Memo1.SelStart := FOffset;
+  end
+  else
+  begin
+    Memo1.Text := FExtensions[FCurrentIndex - 1].getExtensionString('content');
+    Memo1.SelStart := FExtensions[FCurrentIndex - 1].TagInt;
+  end;
+  btnDelete.Enabled := FCurrentIndex > 0;
+end;
+
+procedure TMemoEditorForm.SetElement(const Value: TFHIRMarkdown);
+begin
+  FElement.Free;
+  FElement := Value;
+end;
+
+procedure TMemoEditorForm.SetResource(const Value: TFHIRResource);
+begin
+  FResource.Free;
+  FResource := Value;
 end;
 
 end.

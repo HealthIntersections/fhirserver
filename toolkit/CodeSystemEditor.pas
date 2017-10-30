@@ -34,13 +34,13 @@ uses
   FMX.Types, FMX.Graphics, FMX.Controls, FMX.Forms, FMX.Dialogs, FMX.StdCtrls,
   FMX.TabControl, FMX.Layouts, FMX.TreeView, FMX.Controls.Presentation,
   FMX.ScrollBox, FMX.Memo, FMX.DateTimeCtrls, FMX.ListBox, FMX.Edit, FMX.DialogService,
-  FMX.Grid.Style, FMX.Grid, FMX.Menus,
+  FMX.Grid.Style, FMX.Grid, FMX.Menus, FMX.ImgList,
   DateSupport, StringSupport, DecimalSupport,
   AdvGenerics, CSVSupport,
   FHIRBase, FHIRConstants, FHIRTypes, FHIRResources, FHIRUtilities, FHIRIndexBase, FHIRIndexInformation, FHIRSupport,
-  BaseResourceFrame,
+  BaseResourceFrame, ToolKitUtilities,
   SearchParameterEditor, ListSelector, AddRestResourceDialog, ValuesetExpansion, ValuesetSelectDialog, MemoEditorDialog,
-  CodeSystemConceptDialog, FMX.Platform;
+  CodeSystemConceptDialog, FMX.Platform, System.ImageList, TranslationsEditorDialog;
 
 type
   TFrame = TBaseResourceFrame; // re-aliasing the Frame to work around a designer bug
@@ -149,6 +149,12 @@ type
     btnSearchPrev: TButton;
     btnSearchEnd: TButton;
     CheckBox1: TCheckBox;
+    btnName: TButton;
+    ToolbarImages: TImageList;
+    btnTitle: TButton;
+    btnPublisher: TButton;
+    ImageColumn1: TImageColumn;
+    ImageColumn2: TImageColumn;
     procedure tvStructureClick(Sender: TObject);
     procedure inputChanged(Sender: TObject);
     procedure btnMemoForDescClick(Sender: TObject);
@@ -182,6 +188,11 @@ type
     procedure btnSearchNextClick(Sender: TObject);
     procedure btnSearchPrevClick(Sender: TObject);
     procedure btnSearchEndClick(Sender: TObject);
+    procedure btnNameClick(Sender: TObject);
+    procedure btnTitleClick(Sender: TObject);
+    procedure btnPublisherClick(Sender: TObject);
+    procedure grdPropertiesCellClick(const Column: TColumn; const Row: Integer);
+    procedure grdFiltersCellClick(const Column: TColumn; const Row: Integer);
   private
     flatConcepts : TAdvList<TFhirCodeSystemConcept>;
     selchanging : boolean;
@@ -453,17 +464,23 @@ end;
 
 procedure TCodeSystemEditorFrame.btnMemoCopyrightClick(Sender: TObject);
 begin
-  editMemo(self, 'ValueSet Copyright', edtCopyright);
+  if CodeSystem.copyrightElement = nil then
+    CodeSystem.copyrightElement := TFhirMarkdown.Create;
+  editMarkdownDialog(self, 'ValueSet Copyright', btnMemoCopyright, edtCopyright, CodeSystem, CodeSystem.copyrightElement);
 end;
 
 procedure TCodeSystemEditorFrame.btnMemoForDescClick(Sender: TObject);
 begin
-  editMemo(self, 'ValueSet Description', edtDescription);
+  if CodeSystem.descriptionElement = nil then
+    CodeSystem.descriptionElement := TFhirMarkdown.Create;
+  editMarkdownDialog(self, 'ValueSet Description', btnMemoForDesc, edtDescription, CodeSystem, CodeSystem.descriptionElement);
 end;
 
 procedure TCodeSystemEditorFrame.btnMemoPurposeClick(Sender: TObject);
 begin
-  editMemo(self, 'ValueSet Purpose', edtPurpose);
+  if CodeSystem.purposeElement = nil then
+    CodeSystem.purposeElement := TFhirMarkdown.Create;
+  editMarkdownDialog(self, 'ValueSet Purpose', btnMemoPurpose, edtPurpose, CodeSystem, CodeSystem.purposeElement);
 end;
 
 procedure TCodeSystemEditorFrame.buildFlatGrid(list: TFhirCodeSystemConceptList);
@@ -475,6 +492,27 @@ begin
     flatConcepts.Add(c.link);
     buildFlatGrid(c.conceptList);
   end;
+end;
+
+procedure TCodeSystemEditorFrame.btnNameClick(Sender: TObject);
+begin
+  if CodeSystem.nameElement = nil then
+    CodeSystem.nameElement := TFhirString.Create;
+  editStringDialog(self, 'Code System Name', btnName, edtName, CodeSystem, CodeSystem.nameElement);
+end;
+
+procedure TCodeSystemEditorFrame.btnPublisherClick(Sender: TObject);
+begin
+  if CodeSystem.publisherElement = nil then
+    CodeSystem.publisherElement := TFhirString.Create;
+  editStringDialog(self, 'Code System Publisher', btnPublisher, edtPublisher, CodeSystem, CodeSystem.publisherElement);
+end;
+
+procedure TCodeSystemEditorFrame.btnTitleClick(Sender: TObject);
+begin
+  if CodeSystem.titleElement = nil then
+    CodeSystem.titleElement := TFhirString.Create;
+  editStringDialog(self, 'Code System Title', btnTitle, edtTitle, CodeSystem, CodeSystem.titleElement);
 end;
 
 procedure TCodeSystemEditorFrame.btnSearchEndClick(Sender: TObject);
@@ -619,7 +657,7 @@ begin
   sel := TFhirCodeSystemConcept(tvConceptTree.Selected.TagObject);
   form := TCodeSystemConceptForm.create(self);
   try
-    form.properties := CodeSystem.property_List.Link;
+    form.CodeSystem := CodeSystem.Link;
     form.Concept := sel.Clone;
     if form.ShowModal = mrOk then
     begin
@@ -972,12 +1010,32 @@ begin
   ResourceIsDirty := true;
 end;
 
+procedure TCodeSystemEditorFrame.grdFiltersCellClick(const Column: TColumn; const Row: Integer);
+var
+  f : TFhirCodeSystemFilter;
+begin
+  if Column = grdFilters.Columns[4] then
+  begin
+    f := CodeSystem.filterList[grdFilters.Row];
+    if f.descriptionElement = nil then
+      f.descriptionElement := TFhirString.Create;
+    if editStringDialog(self, 'Code System Filter', nil, nil, CodeSystem, f.descriptionElement) then
+    begin
+      grdFilters.BeginUpdate;
+      grdFilters.EndUpdate;
+    end;
+  end;
+end;
+
 procedure TCodeSystemEditorFrame.grdFiltersGetValue(Sender: TObject; const ACol, ARow: Integer; var Value: TValue);
 var
   f : TFhirCodeSystemFilter;
   e : TFhirFilterOperatorEnum;
   s : String;
+  size : TSizeF;
 begin
+  size.cx := 16;
+  size.cy := 16;
   f := CodeSystem.filterList[ARow];
   case aCol of
     0: value := f.code;
@@ -991,6 +1049,7 @@ begin
       end;
     2: value := f.value;
     3: value := f.description;
+    4: value := TValue.From<TBitmap>(ToolbarImages.Bitmap(size, translationsImageIndex(f.descriptionElement)));
   end;
 end;
 
@@ -1026,16 +1085,37 @@ begin
   ResourceIsDirty := true;
 end;
 
-procedure TCodeSystemEditorFrame.grdPropertiesGetValue(Sender: TObject; const ACol, ARow: Integer; var Value: TValue);
+procedure TCodeSystemEditorFrame.grdPropertiesCellClick(const Column: TColumn; const Row: Integer);
 var
   p : TFhirCodeSystemProperty;
 begin
+  if Column = grdProperties.Columns[4] then
+  begin
+    p := CodeSystem.property_List[grdProperties.Row];
+    if p.descriptionElement = nil then
+      p.descriptionElement := TFhirString.Create;
+    if editStringDialog(self, 'Code System Property', nil, nil, CodeSystem, p.descriptionElement) then
+    begin
+      grdProperties.BeginUpdate;
+      grdProperties.EndUpdate;
+    end;
+  end;
+end;
+
+procedure TCodeSystemEditorFrame.grdPropertiesGetValue(Sender: TObject; const ACol, ARow: Integer; var Value: TValue);
+var
+  p : TFhirCodeSystemProperty;
+  size : TSizeF;
+begin
   p := CodeSystem.property_List[ARow];
+  size.cx := 16;
+  size.cy := 16;
   case aCol of
     0: value := p.code;
     1: value := p.uri;
     2: value := CODES_TFhirConceptPropertyTypeEnum[p.type_];
     3: value := p.description;
+    4: value := TValue.From<TBitmap>(ToolbarImages.Bitmap(size, translationsImageIndex(p.descriptionElement)));
   end;
 end;
 
@@ -1118,6 +1198,7 @@ begin
   grdFilters.RowCount := 0;
   grdFilters.RowCount := CodeSystem.filterList.Count;
   grdFiltersSelChanged(self);
+  grdFilters.Columns[4].Width := 26;
 end;
 
 procedure TCodeSystemEditorFrame.loadMetadata;
@@ -1128,12 +1209,18 @@ begin
 
   edtURL.Text := CodeSystem.url;
   edtName.Text := CodeSystem.name;
+  btnName.ImageIndex := translationsImageIndex(CodeSystem.nameElement);
   edtTitle.Text := CodeSystem.title;
+  btnTitle.ImageIndex := translationsImageIndex(CodeSystem.titleElement);
   edtVersion.Text := CodeSystem.version;
   edtPublisher.text := CodeSystem.publisher;
+  btnPublisher.ImageIndex := translationsImageIndex(CodeSystem.publisherElement);
   edtDescription.Text := CodeSystem.description;
+  btnMemoForDesc.ImageIndex := translationsImageIndex(CodeSystem.descriptionElement);
   edtPurpose.Text := CodeSystem.purpose;
+  btnMemoPurpose.ImageIndex := translationsImageIndex(CodeSystem.purposeElement);
   edtCopyright.Text := CodeSystem.copyright;
+  btnMemoCopyright.ImageIndex := translationsImageIndex(CodeSystem.copyrightElement);
   cbxStatus.ItemIndex := ord(CodeSystem.status);
   if CodeSystem.dateElement = nil then
     dedDate.Text := ''
@@ -1165,6 +1252,7 @@ procedure TCodeSystemEditorFrame.loadProperties;
 begin
   grdProperties.RowCount := 0;
   grdProperties.RowCount := CodeSystem.property_List.Count;
+  grdProperties.Columns[4].Width := 26;
   grdPropertiesSelChanged(self);
 end;
 

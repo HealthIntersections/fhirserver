@@ -1,5 +1,5 @@
 object CodeSystemEditorFrame: TCodeSystemEditorFrame
-  Size.Width = 950.000000000000000000
+  Size.Width = 979.000000000000000000
   Size.Height = 816.000000000000000000
   Size.PlatformDefault = False
   object Panel2: TPanel
@@ -28,8 +28,8 @@ object CodeSystemEditorFrame: TCodeSystemEditorFrame
       Size.PlatformDefault = False
       TabOrder = 1
       OnClick = tvStructureClick
-      Viewport.Width = 197.000000000000000000
-      Viewport.Height = 787.000000000000000000
+      Viewport.Width = 201.000000000000000000
+      Viewport.Height = 791.000000000000000000
       object tvMetadata: TTreeViewItem
         IsChecked = False
         IsExpanded = False
@@ -71,33 +71,33 @@ object CodeSystemEditorFrame: TCodeSystemEditorFrame
   end
   object Panel3: TPanel
     Align = Client
-    Size.Width = 741.000000000000000000
+    Size.Width = 770.000000000000000000
     Size.Height = 816.000000000000000000
     Size.PlatformDefault = False
     TabOrder = 2
     object tbStructure: TTabControl
       Align = Client
       Anchors = [akLeft, akTop]
-      Size.Width = 741.000000000000000000
+      Size.Width = 770.000000000000000000
       Size.Height = 816.000000000000000000
       Size.PlatformDefault = False
-      TabIndex = 3
+      TabIndex = 0
       TabOrder = 0
       TabPosition = None
       Sizes = (
-        741s
+        770s
         816s
-        741s
+        770s
         816s
-        741s
+        770s
         816s
-        741s
+        770s
         816s)
       object tbMetadata: TTabItem
         CustomIcon = <
           item
           end>
-        IsSelected = False
+        IsSelected = True
         Size.Width = 8.000000000000000000
         Size.Height = 8.000000000000000000
         Size.PlatformDefault = False
@@ -108,11 +108,11 @@ object CodeSystemEditorFrame: TCodeSystemEditorFrame
         ExplicitSize.cy = 8.000000000000000000
         object ScrollBox1: TScrollBox
           Align = Client
-          Size.Width = 741.000000000000000000
+          Size.Width = 770.000000000000000000
           Size.Height = 816.000000000000000000
           Size.PlatformDefault = False
           TabOrder = 0
-          Viewport.Width = 741.000000000000000000
+          Viewport.Width = 770.000000000000000000
           Viewport.Height = 816.000000000000000000
           object dedDate: TDateEdit
             Date = 42965.000000000000000000
@@ -195,7 +195,7 @@ object CodeSystemEditorFrame: TCodeSystemEditorFrame
             Position.X = 84.000000000000000000
             Position.Y = 50.000000000000000000
             HelpContext = 20
-            Size.Width = 346.000000000000000000
+            Size.Width = 317.000000000000000000
             Size.Height = 22.000000000000000000
             Size.PlatformDefault = False
             OnChange = inputChanged
@@ -207,7 +207,7 @@ object CodeSystemEditorFrame: TCodeSystemEditorFrame
             Position.X = 84.000000000000000000
             Position.Y = 221.000000000000000000
             HelpContext = 25
-            Size.Width = 498.000000000000000000
+            Size.Width = 466.000000000000000000
             Size.Height = 22.000000000000000000
             Size.PlatformDefault = False
             OnChange = inputChanged
@@ -232,7 +232,7 @@ object CodeSystemEditorFrame: TCodeSystemEditorFrame
             Position.X = 84.000000000000000000
             Position.Y = 117.000000000000000000
             HelpContext = 21
-            Size.Width = 498.000000000000000000
+            Size.Width = 466.000000000000000000
             Size.Height = 22.000000000000000000
             Size.PlatformDefault = False
             OnChange = inputChanged
@@ -437,9 +437,11 @@ object CodeSystemEditorFrame: TCodeSystemEditorFrame
             TabOrder = 30
           end
           object btnMemoCopyright: TButton
-            Position.X = 557.000000000000000000
+            Images = ToolbarImages
+            ImageIndex = 0
+            Position.X = 560.000000000000000000
             Position.Y = 325.000000000000000000
-            Size.Width = 24.000000000000000000
+            Size.Width = 22.000000000000000000
             Size.Height = 22.000000000000000000
             Size.PlatformDefault = False
             TabOrder = 31
@@ -447,22 +449,26 @@ object CodeSystemEditorFrame: TCodeSystemEditorFrame
             OnClick = btnMemoCopyrightClick
           end
           object btnMemoForDesc: TButton
-            Position.X = 557.000000000000000000
+            Images = ToolbarImages
+            ImageIndex = 0
+            Position.X = 560.000000000000000000
             Position.Y = 256.000000000000000000
-            Size.Width = 24.000000000000000000
+            Size.Width = 22.000000000000000000
             Size.Height = 22.000000000000000000
             Size.PlatformDefault = False
-            TabOrder = 32
+            TabOrder = 33
             Text = '...'
             OnClick = btnMemoForDescClick
           end
           object btnMemoPurpose: TButton
-            Position.X = 557.000000000000000000
+            Images = ToolbarImages
+            ImageIndex = 0
+            Position.X = 560.000000000000000000
             Position.Y = 290.000000000000000000
-            Size.Width = 24.000000000000000000
+            Size.Width = 22.000000000000000000
             Size.Height = 22.000000000000000000
             Size.PlatformDefault = False
-            TabOrder = 33
+            TabOrder = 34
             Text = '...'
             OnClick = btnMemoPurposeClick
           end
@@ -472,7 +478,7 @@ object CodeSystemEditorFrame: TCodeSystemEditorFrame
             Size.Width = 153.000000000000000000
             Size.Height = 22.000000000000000000
             Size.PlatformDefault = False
-            TabOrder = 34
+            TabOrder = 35
             Text = 'Update from Concepts'
             OnClick = btnMemoCopyrightClick
           end
@@ -482,7 +488,7 @@ object CodeSystemEditorFrame: TCodeSystemEditorFrame
             Size.Width = 369.000000000000000000
             Size.Height = 19.000000000000000000
             Size.PlatformDefault = False
-            TabOrder = 35
+            TabOrder = 36
             Text = 'Codes are Case Sensitive'
             OnChange = inputChanged
           end
@@ -492,7 +498,7 @@ object CodeSystemEditorFrame: TCodeSystemEditorFrame
             Size.Width = 393.000000000000000000
             Size.Height = 19.000000000000000000
             Size.PlatformDefault = False
-            TabOrder = 36
+            TabOrder = 37
             Text = 'Has a Compositional Grammar'
             OnChange = inputChanged
           end
@@ -503,7 +509,7 @@ object CodeSystemEditorFrame: TCodeSystemEditorFrame
             Size.Width = 122.000000000000000000
             Size.Height = 19.000000000000000000
             Size.PlatformDefault = False
-            TabOrder = 37
+            TabOrder = 38
             Text = 'Experimental'
             OnChange = inputChanged
           end
@@ -513,7 +519,7 @@ object CodeSystemEditorFrame: TCodeSystemEditorFrame
             Size.Width = 385.000000000000000000
             Size.Height = 19.000000000000000000
             Size.PlatformDefault = False
-            TabOrder = 38
+            TabOrder = 39
             Text = 'Needs Version When Used'
             OnChange = inputChanged
           end
@@ -530,7 +536,7 @@ object CodeSystemEditorFrame: TCodeSystemEditorFrame
             Size.Width = 498.000000000000000000
             Size.Height = 22.000000000000000000
             Size.PlatformDefault = False
-            TabOrder = 39
+            TabOrder = 40
             OnChange = inputChanged
           end
           object cbxHeirarchy: TComboBox
@@ -546,7 +552,7 @@ object CodeSystemEditorFrame: TCodeSystemEditorFrame
             Size.Width = 498.000000000000000000
             Size.Height = 22.000000000000000000
             Size.PlatformDefault = False
-            TabOrder = 40
+            TabOrder = 41
             OnChange = inputChanged
           end
           object cbxJurisdiction: TComboBox
@@ -585,7 +591,7 @@ object CodeSystemEditorFrame: TCodeSystemEditorFrame
             Size.Width = 498.000000000000000000
             Size.Height = 22.000000000000000000
             Size.PlatformDefault = False
-            TabOrder = 41
+            TabOrder = 42
             OnChange = inputChanged
           end
           object cbxStatus: TComboBox
@@ -601,8 +607,42 @@ object CodeSystemEditorFrame: TCodeSystemEditorFrame
             Size.Width = 386.000000000000000000
             Size.Height = 22.000000000000000000
             Size.PlatformDefault = False
-            TabOrder = 42
+            TabOrder = 43
             OnChange = inputChanged
+          end
+          object btnName: TButton
+            Images = ToolbarImages
+            ImageIndex = 0
+            Position.X = 406.000000000000000000
+            Position.Y = 50.000000000000000000
+            Size.Width = 22.000000000000000000
+            Size.Height = 22.000000000000000000
+            Size.PlatformDefault = False
+            TabOrder = 45
+            OnClick = btnNameClick
+          end
+          object btnTitle: TButton
+            Images = ToolbarImages
+            ImageIndex = 0
+            Position.X = 558.000000000000000000
+            Position.Y = 117.000000000000000000
+            Size.Width = 22.000000000000000000
+            Size.Height = 22.000000000000000000
+            Size.PlatformDefault = False
+            TabOrder = 44
+            OnClick = btnTitleClick
+          end
+          object btnPublisher: TButton
+            Images = ToolbarImages
+            ImageIndex = 0
+            Position.X = 560.000000000000000000
+            Position.Y = 221.000000000000000000
+            Size.Width = 22.000000000000000000
+            Size.Height = 22.000000000000000000
+            Size.PlatformDefault = False
+            TabOrder = 32
+            Text = '...'
+            OnClick = btnPublisherClick
           end
         end
       end
@@ -623,14 +663,15 @@ object CodeSystemEditorFrame: TCodeSystemEditorFrame
           Align = Client
           CanFocus = True
           ClipChildren = True
-          Size.Width = 741.000000000000000000
+          Size.Width = 770.000000000000000000
           Size.Height = 783.000000000000000000
           Size.PlatformDefault = False
           TabOrder = 0
           OnSelChanged = grdPropertiesSelChanged
           OnGetValue = grdPropertiesGetValue
           OnSetValue = grdPropertiesSetValue
-          Viewport.Width = 741.000000000000000000
+          OnCellClick = grdPropertiesCellClick
+          Viewport.Width = 770.000000000000000000
           Viewport.Height = 783.000000000000000000
           object StringColumn1: TStringColumn
             Header = 'Code'
@@ -652,12 +693,15 @@ object CodeSystemEditorFrame: TCodeSystemEditorFrame
           end
           object StringColumn3: TStringColumn
             Header = 'Description'
-            Size.Width = 300.000000000000000000
+            Size.Width = 270.000000000000000000
+          end
+          object ImageColumn1: TImageColumn
+            Size.Width = 26.000000000000000000
           end
         end
         object pnlPropertyActions: TPanel
           Align = Top
-          Size.Width = 741.000000000000000000
+          Size.Width = 770.000000000000000000
           Size.Height = 33.000000000000000000
           Size.PlatformDefault = False
           TabOrder = 1
@@ -692,7 +736,7 @@ object CodeSystemEditorFrame: TCodeSystemEditorFrame
         ExplicitSize.cy = 8.000000000000000000
         object Panel1: TPanel
           Align = Top
-          Size.Width = 741.000000000000000000
+          Size.Width = 770.000000000000000000
           Size.Height = 33.000000000000000000
           Size.PlatformDefault = False
           TabOrder = 1
@@ -715,14 +759,15 @@ object CodeSystemEditorFrame: TCodeSystemEditorFrame
           Align = Client
           CanFocus = True
           ClipChildren = True
-          Size.Width = 741.000000000000000000
+          Size.Width = 770.000000000000000000
           Size.Height = 783.000000000000000000
           Size.PlatformDefault = False
           TabOrder = 2
           OnSelChanged = grdFiltersSelChanged
           OnGetValue = grdFiltersGetValue
           OnSetValue = grdFiltersSetValue
-          Viewport.Width = 741.000000000000000000
+          OnCellClick = grdFiltersCellClick
+          Viewport.Width = 770.000000000000000000
           Viewport.Height = 783.000000000000000000
           object StringColumn4: TStringColumn
             Header = 'Code'
@@ -738,13 +783,15 @@ object CodeSystemEditorFrame: TCodeSystemEditorFrame
             Header = 'Description'
             Size.Width = 300.000000000000000000
           end
+          object ImageColumn2: TImageColumn
+          end
         end
       end
       object tbConcepts: TTabItem
         CustomIcon = <
           item
           end>
-        IsSelected = True
+        IsSelected = False
         Size.Width = 8.000000000000000000
         Size.Height = 8.000000000000000000
         Size.PlatformDefault = False
@@ -755,7 +802,7 @@ object CodeSystemEditorFrame: TCodeSystemEditorFrame
         ExplicitSize.cy = 8.000000000000000000
         object Panel5: TPanel
           Align = Top
-          Size.Width = 741.000000000000000000
+          Size.Width = 770.000000000000000000
           Size.Height = 33.000000000000000000
           Size.PlatformDefault = False
           TabOrder = 2
@@ -837,16 +884,16 @@ object CodeSystemEditorFrame: TCodeSystemEditorFrame
         end
         object TabControl1: TTabControl
           Align = Client
-          Size.Width = 741.000000000000000000
+          Size.Width = 770.000000000000000000
           Size.Height = 751.000000000000000000
           Size.PlatformDefault = False
           TabIndex = 1
           TabOrder = 3
           TabPosition = Top
           Sizes = (
-            741s
+            770s
             725s
-            741s
+            770s
             725s)
           object TabItem1: TTabItem
             CustomIcon = <
@@ -863,14 +910,14 @@ object CodeSystemEditorFrame: TCodeSystemEditorFrame
             ExplicitSize.cy = 26.000000000000000000
             object tvConceptTree: TTreeView
               Align = Client
-              Size.Width = 741.000000000000000000
+              Size.Width = 770.000000000000000000
               Size.Height = 725.000000000000000000
               Size.PlatformDefault = False
               TabOrder = 0
               OnClick = tvConceptTreeChange
               OnDblClick = btnEditConceptClick
               OnChange = tvConceptTreeChange
-              Viewport.Width = 741.000000000000000000
+              Viewport.Width = 770.000000000000000000
               Viewport.Height = 725.000000000000000000
             end
           end
@@ -891,7 +938,7 @@ object CodeSystemEditorFrame: TCodeSystemEditorFrame
               Align = Client
               CanFocus = True
               ClipChildren = True
-              Size.Width = 741.000000000000000000
+              Size.Width = 770.000000000000000000
               Size.Height = 725.000000000000000000
               Size.PlatformDefault = False
               TextSettings.VertAlign = Leading
@@ -901,7 +948,7 @@ object CodeSystemEditorFrame: TCodeSystemEditorFrame
               OnGetValue = grdConceptsGetValue
               OnSetValue = grdConceptsSetValue
               OnCellDblClick = grdConceptsCellDblClick
-              Viewport.Width = 741.000000000000000000
+              Viewport.Width = 770.000000000000000000
               Viewport.Height = 725.000000000000000000
               object IntegerColumn1: TIntegerColumn
                 Enabled = False
@@ -923,7 +970,7 @@ object CodeSystemEditorFrame: TCodeSystemEditorFrame
         object Panel6: TPanel
           Align = Bottom
           Position.Y = 784.000000000000000000
-          Size.Width = 741.000000000000000000
+          Size.Width = 770.000000000000000000
           Size.Height = 32.000000000000000000
           Size.PlatformDefault = False
           TabOrder = 1
@@ -997,5 +1044,100 @@ object CodeSystemEditorFrame: TCodeSystemEditorFrame
     Title = 'Export to CSV'
     Left = 40
     Top = 416
+  end
+  object ToolbarImages: TImageList
+    Source = <
+      item
+        MultiResBitmap.LoadSize = 0
+        MultiResBitmap = <
+          item
+            Width = 16
+            Height = 16
+            PNG = {
+              89504E470D0A1A0A0000000D49484452000000100000001008060000001FF3FF
+              61000000017352474200AECE1CE90000000467414D410000B18F0BFC61050000
+              02EE49444154384F7D535B489361187EFEFDCE79683AE79687E521C4CD69D872
+              62A1595A533241A3A020886C31956EA42B09BA0923E842A89BF2101A4974114A
+              28A958612975E129029DA59987340F736E6DCDD3FCB7BEEF4BC415F4C0CBF7FE
+              EFE9FBFEE77D5F0E7FA1B4B434941CE95EAF57CD715CF81F2B96C9F717411006
+              1A1A1A9CDB36069F022693C9A0D51F2FFF619717759B57C453F30E668F8F0AC1
+              11BD6A532D996B1B1E7C57535F5FFF9A3908F8ED932617AA8F95343DEAB4A44F
+              2CADF109FB64387F528DACD468B8D6DD181C5EE4FB2684E4BC7C4341BC42641E
+              1A1A1AA779A2ED64435266C9E3E6EE6965D3AD026C6D79D070331FD2607F2654
+              A736EA6BEE9E52928B1A690ECDE58D46A3F440DA893BB55D4BFA8EFB67D1FE7E
+              12DA7839F20FC7A17F7491C6205BA782FDD706E6AD2E549567A1A2BA37B8F068
+              8234365AD1C9914AB9E2948B9D6D6FBEFAC7444831B3E0804C2A4148B00456FB
+              1A2B102E0B84C3B501BB7303B19121F8BEE8C4852C95DBF1ED45811F615AF361
+              60D6BFADBA1861D200E45E7B8E96BB4590887934759859814B05C9D8700B3855
+              D1826755A76173AEC378BB4BAC9778D59403C52A21E960A2925497624BF02031
+              46C6F4B090002654A736EAA33A8D75ADBA696D0523713738DFCEFA40C4F9FAC8
+              EB055A603928408C4FE316F2FF4EF03C8789593BD36D8E752654A7369188633A
+              8DDD132406192EDB0E895D3D93FEEA58193E4FDBB0372C1072F2F4398B8BDDA4
+              52066385145AB2AD21292E0C6333769CC9886424F23A9DCEAA8D53A60C4E0ADA
+              66425E28619F325D7BC3008FD70BBD3602F7AEE760C1BA8A9CB418545ECEC093
+              F6111892DDAD96F9E987223ADBE6C1B70F4CC51ACBB9CA5664A646E169E7289C
+              AB9BEC760A876B937584FA688CA938C9324C72EAEAEA7EEEB0424739854C634D
+              FB9882E74548DE2F676C8BFD78F48D2C905F5B8140BA70B5486319EB69BC42F6
+              E125CDF3A1B5ACAC2C4F7328BBEC7FCB64FED85B4BF08A3908FEE9D9AE75D690
+              339CB68AE85622E31E8FA7DF779D81DFE144508F821F6AFD0000000049454E44
+              AE426082}
+            FileName = 'C:\temp\flag-un.png'
+          end>
+        Name = 'lang-translations'
+      end
+      item
+        MultiResBitmap.LoadSize = 0
+        MultiResBitmap = <
+          item
+            Width = 16
+            Height = 16
+            PNG = {
+              89504E470D0A1A0A0000000D49484452000000100000001008060000001FF3FF
+              61000000017352474200AECE1CE90000000467414D410000B18F0BFC61050000
+              031949444154384F5D535B48146114FEFE99DD5567D8AB9AABEEAE5A966616A9
+              915D1E0ABA3C841615693E949740902C228A7A29E8021514441441249A450512
+              5D14B2DB43F61094A168B95DD5B5D255172FBBCDBA3BBB33D3FC5349FAC1617E
+              CEF9BE738673219885A33535D6DCF0D8164E96F30D8A3C87FA444286830ADBDE
+              1D233F3A77AD695223FEC58C04C7F65414972FCEB9981E8C9FCBBEFB09DF905F
+              F327249B102D70C0C3FB7A6F74F51C3855D7D0AC0554B07FBF38BEA762C7BEFC
+              754D8ED6A178E6A72A745840D665C3B02415FA9008E6BD17B62F61EBA2B58525
+              9CDDE47ED9D1D943755A025A998A13DB3C6CE0D866C43C77237C69375ABC045F
+              3833E655AD80EE5E3B02A7B7C276FB2D93BB226F5B6CB2B9A3ADA3F3337BA47A
+              87B9322BEFA1F3C9A06DEAF22EE85FB9C1A6DBA05B9505AEBB1729720809792E
+              60D20FE2F343DCBB01E60B2F18E76AE74A3E23B391DC2A2FDD55BA6063A3F8E2
+              2BB8242304AF1FBC3106E0559B98A23F0858E200210C2110066F3721381C40CC
+              FA4CDCFDFAB452C7116999AEFD07848B65104C1C0CD5F5089C2F0363D0816F7E
+              A3E985E2E590C528626B6F42385382A83F08EEC4037046399F31284A92128AC0
+              9CED029F9280A824C3986E07EF74A1DF6AD38CBEA98FC6288772118C400F2589
+              D14AFC073273B233C09059310512439784C4EA31F97100C2A00F2C4B10F07821
+              7C1F40FAF89866F44D7D0C43340EE582D32342886FBA89A4AD0FACCB8288671C
+              7AABDA34532C302AFCA994C803FE1022E353D0A759210D4C006B32B426B2F30B
+              733C731DB69DF1DFC29690DA3C702C7476A3BA59DBD10F0613390E580E6F0246
+              C610CD4F43A46A2DF42D9DE8CD51FA9F4C840E3274B71BBB3EECF71565497187
+              EE405C9A06B4BA21AA63A3F0B01CC45F61288F7BB418E58C162F94A8E6ECD5AB
+              E3D35DA1AB5CBB6CE39DC466370B56ED6D860D989F0859C782F9E055338D01EA
+              14468AB2A52BEF9E959DAC6B68A2BAE95BA0BBCDA5983B9D2B530BCDF6642BF3
+              6914BED7FD98EA1A04A7C6A3CB5DE85B28F5D675BDAD3A79BDFEFE1FD5AC6BA4
+              F877CE7152B4C040C81C3A2A11CA4850663ADEC7E1C1CC73067E03C811469F64
+              A9D0620000000049454E44AE426082}
+            FileName = 'C:\temp\flag-un.png'
+          end>
+        Name = 'flag-2'
+      end>
+    Destination = <
+      item
+        Layers = <
+          item
+            Name = 'lang-translations'
+          end>
+      end
+      item
+        Layers = <
+          item
+            Name = 'flag-2'
+          end>
+      end>
+    Left = 24
+    Top = 350
   end
 end

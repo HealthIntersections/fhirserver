@@ -887,7 +887,7 @@ end;
 procedure TMasterToolsForm.newResource(rClass : TFhirResourceClass; frameClass : TBaseResourceFrameClass);
 var
   tab : TTabItem;
-  frame : TFrame;
+  frame : TBaseResourceFrame;
   fcs : IFMXCursorService;
 begin
   if TPlatformServices.Current.SupportsPlatformService(IFMXCursorService) then
@@ -914,6 +914,7 @@ begin
     frame.Settings := FSettings.link;
     frame.Tab := tab;
     frame.Align := TAlignLayout.Client;
+    frame.resource := rClass.create;
     frame.load;
   finally
     if Assigned(fCS) then

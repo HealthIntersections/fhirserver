@@ -35,13 +35,13 @@ uses
   FMX.TabControl, FMX.Layouts, FMX.TreeView, FMX.Controls.Presentation,
   FMX.ScrollBox, FMX.Memo, FMX.DateTimeCtrls, FMX.ListBox, FMX.Edit, FMX.DialogService,
   FMX.Grid.Style, FMX.Grid, FMX.Menus,FMX.WebBrowser,
+  System.ImageList, FMX.ImgList, FMX.Effects, FMX.Filter.Effects,
   DateSupport, StringSupport, DecimalSupport,
   AdvGenerics, CSVSupport,
   FHIRBase, FHIRConstants, FHIRTypes, FHIRResources, FHIRUtilities, FHIRIndexBase, FHIRIndexInformation, FHIRSupport,
   QuestionnaireRenderer,
   BaseResourceFrame,
-  QuestionnaireItemDialog, MemoEditorDialog, QuestionnairePanel,
-  System.ImageList, FMX.ImgList, FMX.Effects, FMX.Filter.Effects;
+  ToolkitUtilities, QuestionnaireItemDialog, MemoEditorDialog, QuestionnairePanel, TranslationsEditorDialog;
 
 type
   TFrame = TBaseResourceFrame; // re-aliasing the Frame to work around a designer bug
@@ -76,9 +76,9 @@ type
     Label7: TLabel;
     Label8: TLabel;
     Label9: TLabel;
-    btnMemoCopyright: TButton;
-    btnMemoForDesc: TButton;
-    btnMemoPurpose: TButton;
+    btnCopyright: TButton;
+    btnDescription: TButton;
+    btnPurpose: TButton;
     cbExperimental: TCheckBox;
     cbxJurisdiction: TComboBox;
     cbxStatus: TComboBox;
@@ -130,11 +130,15 @@ type
     tbForm: TTabItem;
     ImageList1: TImageList;
     LineTransitionEffect1: TLineTransitionEffect;
+    ToolbarImages: TImageList;
+    btnPublisher: TButton;
+    btnTitle: TButton;
+    btnName: TButton;
     procedure tvStructureClick(Sender: TObject);
     procedure inputChanged(Sender: TObject);
-    procedure btnMemoForDescClick(Sender: TObject);
-    procedure btnMemoPurposeClick(Sender: TObject);
-    procedure btnMemoCopyrightClick(Sender: TObject);
+    procedure btnDescriptionClick(Sender: TObject);
+    procedure btnPurposeClick(Sender: TObject);
+    procedure btnCopyrightClick(Sender: TObject);
     procedure grdItemsGetValue(Sender: TObject; const ACol, ARow: Integer; var Value: TValue);
     procedure btnAddItemClick(Sender: TObject);
     procedure btnEditItemClick(Sender: TObject);
@@ -148,9 +152,12 @@ type
     procedure grdItemsSelChanged(Sender: TObject);
     procedure btnDeleteItemClick(Sender: TObject);
     procedure lbResourcesChangeCheck(Sender: TObject);
+    procedure btnPublisherClick(Sender: TObject);
+    procedure btnTitleClick(Sender: TObject);
+    procedure btnNameClick(Sender: TObject);
   private
     flatItems : TAdvList<TFhirQuestionnaireItem>;
-    loading : boolean;
+    FLoading : boolean;
     FSelected : TFhirQuestionnaireItem;
     FPanel : TQuestionnairePanel;
     function GetQuestionnaire: TFHIRQuestionnaire;
@@ -179,7 +186,6 @@ type
 
     procedure commit; override;
     procedure cancel; override;
-
   end;
 
 implementation
@@ -376,6 +382,13 @@ begin
   ResourceIsDirty := true;
 end;
 
+procedure TQuestionnaireEditorFrame.btnNameClick(Sender: TObject);
+begin
+  if Questionnaire.nameElement = nil then
+    Questionnaire.nameElement := TFhirString.Create;
+  editStringDialog(self, 'Questionnaire Name', btnName, edtName, Questionnaire, Questionnaire.nameElement);
+end;
+
 procedure TQuestionnaireEditorFrame.btnEditItemClick(Sender: TObject);
 var
   form : TQuestionnaireItemForm;
@@ -411,19 +424,39 @@ begin
   end;
 end;
 
-procedure TQuestionnaireEditorFrame.btnMemoCopyrightClick(Sender: TObject);
+procedure TQuestionnaireEditorFrame.btnCopyrightClick(Sender: TObject);
 begin
-  editMemo(self, 'ValueSet Copyright', edtCopyright);
+  if Questionnaire.copyrightElement = nil then
+    Questionnaire.copyrightElement := TFhirMarkdown.Create;
+  editMarkdownDialog(self, 'Questionnaire Copyright', btnCopyright, edtCopyright, Questionnaire, Questionnaire.copyrightElement);
 end;
 
-procedure TQuestionnaireEditorFrame.btnMemoForDescClick(Sender: TObject);
+procedure TQuestionnaireEditorFrame.btnDescriptionClick(Sender: TObject);
 begin
-  editMemo(self, 'ValueSet Description', edtDescription);
+  if Questionnaire.descriptionElement = nil then
+    Questionnaire.descriptionElement := TFhirMarkdown.Create;
+  editMarkdownDialog(self, 'Questionnaire Description', btnDescription, edtDescription, Questionnaire, Questionnaire.descriptionElement);
 end;
 
-procedure TQuestionnaireEditorFrame.btnMemoPurposeClick(Sender: TObject);
+procedure TQuestionnaireEditorFrame.btnPublisherClick(Sender: TObject);
 begin
-  editMemo(self, 'ValueSet Purpose', edtPurpose);
+  if Questionnaire.publisherElement = nil then
+    Questionnaire.publisherElement := TFhirMarkdown.Create;
+  editStringDialog(self, 'Questionnaire Publisher', btnPublisher, edtPublisher, Questionnaire, Questionnaire.publisherElement);
+end;
+
+procedure TQuestionnaireEditorFrame.btnPurposeClick(Sender: TObject);
+begin
+  if Questionnaire.purposeElement = nil then
+    Questionnaire.purposeElement := TFhirMarkdown.Create;
+  editMarkdownDialog(self, 'Questionnaire Purpose', btnPurpose, edtPurpose, Questionnaire, Questionnaire.purposeElement);
+end;
+
+procedure TQuestionnaireEditorFrame.btnTitleClick(Sender: TObject);
+begin
+  if Questionnaire.titleElement = nil then
+    Questionnaire.titleElement := TFhirString.Create;
+  editStringDialog(self, 'Questionnaire Title', btnTitle, edtTitle, Questionnaire, Questionnaire.titleElement);
 end;
 
 procedure TQuestionnaireEditorFrame.cancel;
@@ -738,12 +771,18 @@ begin
 
     edtURL.Text := Questionnaire.url;
     edtName.Text := Questionnaire.name;
+    btnName.ImageIndex := translationsImageIndex(Questionnaire.nameElement);
     edtTitle.Text := Questionnaire.title;
+    btnTitle.ImageIndex := translationsImageIndex(Questionnaire.titleElement);
     edtVersion.Text := Questionnaire.version;
     edtPublisher.text := Questionnaire.publisher;
+    btnPublisher.ImageIndex := translationsImageIndex(Questionnaire.publisherElement);
     edtDescription.Text := Questionnaire.description;
+    btnDescription.ImageIndex := translationsImageIndex(Questionnaire.descriptionElement);
     edtPurpose.Text := Questionnaire.purpose;
+    btnPurpose.ImageIndex := translationsImageIndex(Questionnaire.purposeElement);
     edtCopyright.Text := Questionnaire.copyright;
+    btnCopyright.ImageIndex := translationsImageIndex(Questionnaire.copyrightElement);
     cbxStatus.ItemIndex := ord(Questionnaire.status);
     if Questionnaire.dateElement = nil then
       dedDate.Text := ''

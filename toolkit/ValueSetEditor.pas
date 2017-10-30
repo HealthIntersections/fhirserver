@@ -40,7 +40,7 @@ uses
   FHIRBase, FHIRConstants, FHIRTypes, FHIRResources, FHIRUtilities, FHIRIndexBase, FHIRIndexInformation, FHIRSupport,
   BaseResourceFrame,
   SearchParameterEditor, ListSelector, AddRestResourceDialog, ValuesetExpansion, ValuesetSelectDialog, MemoEditorDialog,
-  ResourceEditingSupport;
+  ResourceEditingSupport, System.ImageList, FMX.ImgList;
 
 type
   TFrame = TBaseResourceFrame; // re-aliasing the Frame to work around a designer bug
@@ -176,6 +176,7 @@ type
     dlgExport: TSaveDialog;
     rbAll: TRadioButton;
     TabItem3: TTabItem;
+    ToolbarImages: TImageList;
     procedure tvStructureClick(Sender: TObject);
     procedure inputChanged(Sender: TObject);
     procedure btnFlipComposeClick(Sender: TObject);
@@ -611,12 +612,12 @@ end;
 
 procedure TValueSetEditorFrame.btnMemoCopyrightClick(Sender: TObject);
 begin
-  editMemo(self, 'ValueSet Copyright', edtCopyright);
+  editMarkdownDialog(self, 'ValueSet Copyright', btnMemoCopyright, edtCopyright, ValueSet, ValueSet.copyrightElement);
 end;
 
 procedure TValueSetEditorFrame.btnMemoForDescClick(Sender: TObject);
 begin
-  editMemo(self, 'ValueSet Description', edtDescription);
+  editMarkdownDialog(self, 'ValueSet Description', btnMemoForDesc, edtDescription, ValueSet, ValueSet.descriptionElement);
 end;
 
 procedure TValueSetEditorFrame.btnSelectConceptsClick(Sender: TObject);
@@ -659,7 +660,7 @@ end;
 
 procedure TValueSetEditorFrame.btnMemoPurposeClick(Sender: TObject);
 begin
-  editMemo(self, 'ValueSet Purpose', edtPurpose);
+  editMarkdownDialog(self, 'ValueSet Purpose', btnMemoPurpose, edtPurpose, ValueSet, ValueSet.purposeElement);
 end;
 
 procedure TValueSetEditorFrame.btnExpandClick(Sender: TObject);
