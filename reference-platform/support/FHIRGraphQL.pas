@@ -28,49 +28,6 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 }
 
-(*
-Data Reorganization Directives
-
-GraphQL is a very effectively language for navigating a graph and selecting subset of information from it. However for some uses, the physical structure of the result set is important. This is most relevant when extracting data for statistical analysis in languages such as R. In order to facilitate these kind of uses, FHIR servers should consider supporting the following directives that allow implementers to flatten the return graph for easier analysis
-
-@flatten
-
-This directive indicates the the field to which it is attached is not actually produced in the output graph. Instead, it's children will be processed and added to the output graph as specified in it's place.
-
-Notes:
-If @flatten is used on an element with repeating cardinality, then by default, all the children will become lists
-When using @flatten, all the collated children must have the same FHIR type. The server SHALL return an error if they don't
-
-@singleton
-
-This directive indicates that an field collates to a single node, not a list. It is only used in association with fields on which a parent has @flatten, and overrides the impact of flattening in making it a list. The server SHALL return an error if there is more than on value when flattening
-
-@first
-
-This is a shortcut for a FHIR path filter [$index = 0] and indicates to only take the first match of the elements. Note that this only applies to the immediate context of the field in the source graph, not to the output graph
-
-@slice(fhirpath)
-
-This indicates that in the output graph, each element in the source will have "." and the result of the FHIRPath as a string appended to the specified name. This slices a list up into multiple single values. For example
-
-name @slice($index) @flatten {given @first @singleton family}
-
-For a resource that has 2 names will result in the output
-
-{
-  "Given.1" : "first name, first given",
-  "Family.1" : "first name family name",
-  "Given.2" : "second name, first given",
-  "Family.2" : "second name family name"
-}
-
-Other uses might be e.g. Telecom @slice(use) to generate telecom.home for instance.
-
-Notes:
-- In general, the intent of @slice is to break a list into multiple singletons. However servers do not treat the outputs are singletons unless this is explicitly specified using @singleton
-- you cannot mix @slice and @first
-*)
-
 
 interface
 
