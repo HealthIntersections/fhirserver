@@ -2450,14 +2450,20 @@ begin
   if (ty = 'dateTime') then
   begin
     rule(ctxt, IssueTypeINVALID, e.locStart, e.locEnd, path, yearIsValid(e.primitiveValue), 'The value "' + e.primitiveValue + '" does not have a valid year');
-    regex := TRegEx.Create('-?[0-9]{4}(-(0[1-9]|1[0-2])(-(0[0-9]|[1-2][0-9]|3[0-1])(T([01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9](\.[0-9]+)?(Z|(\+|-)((0[0-9]|1[0-3]):[0-5][0-9]|14:00))?)?)?)?', [roCompiled]);
+    regex := TRegEx.Create('([0-9]([0-9]([0-9][1-9]|[1-9]0)|[1-9]00)|[1-9]000)(-(0[1-9]|1[0-2])(-(0[0-9]|[1-2][0-9]|3[0-1])(T([01][0-9]|2[0-3]):[0-5][0-9]:([0-5][0-9]|60)(\.[0-9]+)?(Z|(\+|-)((0[0-9]|1[0-3]):[0-5][0-9]|14:00))?)?)?)?', [roCompiled]);
     rule(ctxt, IssueTypeINVALID, e.locStart, e.locEnd, path, regex.isMatch(e.primitiveValue), 'Not a valid date time');
     rule(ctxt, IssueTypeINVALID, e.locStart, e.locEnd, path, not hasTime(e.primitiveValue) or hasTimeZone(e.primitiveValue),
       'if a date has a time, it must have a timezone');
   end;
+  if (ty = 'date') then
+  begin
+    rule(ctxt, IssueTypeINVALID, e.locStart, e.locEnd, path, yearIsValid(e.primitiveValue), 'The value "' + e.primitiveValue + '" does not have a valid year');
+    regex := TRegEx.Create('([0-9]([0-9]([0-9][1-9]|[1-9]0)|[1-9]00)|[1-9]000)(-(0[1-9]|1[0-2])(-(0[0-9]|[1-2][0-9]|3[0-1]))?)?', [roCompiled]);
+    rule(ctxt, IssueTypeINVALID, e.locStart, e.locEnd, path, regex.isMatch(e.primitiveValue), 'Not a valid date');
+  end;
   if (ty = 'instant') then
   begin
-    regex := TRegEx.Create('-?[0-9]{4}-(0[1-9]|1[0-2])-(0[0-9]|[1-2][0-9]|3[0-1])T([01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9](\.[0-9]+)?(Z|(\+|-)((0[0-9]|1[0-3]):[0-5][0-9]|14:00))', [roCompiled]);
+    regex := TRegEx.Create('-?[0-9]{4}-(0[1-9]|1[0-2])-(0[0-9]|[1-2][0-9]|3[0-1])T([01][0-9]|2[0-3]):[0-5][0-9]:([0-5][0-9]|60)(\.[0-9]+)?(Z|(\+|-)((0[0-9]|1[0-3]):[0-5][0-9]|14:00))', [roCompiled]);
     rule(ctxt, IssueTypeINVALID, e.locStart, e.locEnd, path, regex.isMatch(e.primitiveValue), 'The instant "' + e.primitiveValue + '" is not valid (by regex)');
     rule(ctxt, IssueTypeINVALID, e.locStart, e.locEnd, path, yearIsValid(e.primitiveValue), 'The value "' + e.primitiveValue + '" does not have a valid year');
   end;
