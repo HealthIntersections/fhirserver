@@ -2751,6 +2751,14 @@ begin
     if request.resourceName = 'Binary' then
     begin
       response.outcome := TFhirOperationOutcome.create;
+      if (request.Resource as TFHIRBinary).contentType = '' then
+        with response.outcome.issueList.Append do
+        begin
+
+          severity := IssueSeverityError;
+          code := IssueTypeInvalid;
+          diagnostics := 'A contentType is required';
+        end;
     end
     else if (request.Source <> nil) and (request.postFOrmat <> ffText) then
     begin
@@ -2779,6 +2787,13 @@ begin
       end;
     end;
 
+    if response.outcome.issueList.IsEmpty then
+      with response.outcome.issueList.Append do
+      begin
+        severity := IssueSeverityInformation;
+        code := IssueTypeInformational;
+        diagnostics := 'No issues detected during validation';
+      end;
     result := true;
     for i := 0 to response.outcome.issueList.count - 1 do
       result := result and (response.outcome.issueList[i].severity in [IssueSeverityInformation, IssueSeverityWarning]);
