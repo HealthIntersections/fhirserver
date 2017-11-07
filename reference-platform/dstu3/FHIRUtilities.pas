@@ -702,6 +702,12 @@ function compareValues(e1, e2 : TFHIRPrimitiveType; allowNull : boolean) : boole
 function compareValues(e1, e2 : TFHIRXhtmlNode; allowNull : boolean) : boolean; overload;
 function hasProp(props : TList<String>; name : String; def : boolean) : boolean;
 
+type
+  TResourceIteratorProcedure = reference to procedure (node : TFHIRObject);
+
+procedure iterateResource(resource : TFHIRResource; proc : TResourceIteratorProcedure);
+procedure iterateObject(obj : TFHIRObject; proc : TResourceIteratorProcedure);
+
 implementation
 
 uses
@@ -5743,6 +5749,31 @@ begin
     end_ := TDateTimeEx.fromXML(c.Trim)
   else
     end_ := TDateTimeEx.makeNull;
+end;
+
+procedure iterateResource(resource : TFHIRResource; proc : TResourceIteratorProcedure);
+begin
+  iterateObject(resource, proc);
+end;
+
+procedure iterateObject(obj : TFHIRObject; proc : TResourceIteratorProcedure);
+var
+  child : TFHIRObject;
+  pl : TFHIRPropertyList;
+  p : TFHIRProperty;
+begin
+  proc(obj);
+  if not obj.isPrimitive then
+  begin
+    pl := obj.createPropertyList(true);
+    try
+      for p in pl do
+        for child in p.Values do
+          iterateObject(child, proc);
+    finally
+      pl.Free;
+    end;
+  end;
 end;
 
 end.

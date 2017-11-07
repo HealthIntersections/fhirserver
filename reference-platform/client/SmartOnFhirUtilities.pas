@@ -273,6 +273,7 @@ type
     function loginOAuthClient: boolean;
     function loginBackendClient : boolean;
   public
+    Constructor Create; override;
     Destructor Destroy; override;
 
     property server : TRegisteredFHIRServer read Fserver write SetServer;
@@ -282,6 +283,7 @@ type
     property token : TSmartOnFhirAccessToken read Ftoken write Settoken;
     property name : String read FName write FName;
     property version : String read Fversion write Fversion;
+    property logoPath : String read FLogoPath write FLogoPath;
 
     function login : boolean;
   end;
@@ -651,6 +653,12 @@ begin
   webserver.free;
 end;
 
+constructor TSmartAppLaunchLogin.Create;
+begin
+  inherited;
+  FlogoPath := path([ExtractFilePath(paramstr(0)), ChangeFileExt(ExtractFileName(paramstr(0)), '.png')]);
+end;
+
 destructor TSmartAppLaunchLogin.Destroy;
 begin
   Fserver.Free;
@@ -824,7 +832,7 @@ begin
       sleep(100);
     AResponseInfo.ResponseNo := 200;
     AResponseInfo.ResponseText := 'OK';
-    AResponseInfo.ContentText := Template('Smart App Launch', 'App Launch Sequence is complete. You can close this window now', '');
+    AResponseInfo.ContentText := Template('Smart App Launch', 'App Launch Sequence is complete. You can close this window now and go back to the application', '');
   end
   else
   begin
@@ -845,7 +853,6 @@ begin
   SHandle.Port := server.redirectPort;
   webserver.OnCommandGet := DoCommandGet;
   webserver.Active := true;
-  FlogoPath := path([ExtractFilePath(paramstr(0)), 'toolkit.png']);
 end;
 
 function TSmartAppLaunchLogin.login: boolean;

@@ -243,6 +243,9 @@ Type
   public
     constructor Create; override;
     constructor Create(header, payload : TJsonObject); overload;
+
+    function Link : TJWT; overload;
+
     destructor Destroy; override;
 
     property originalSource : String read FOriginalSource write FOriginalSource;
@@ -969,6 +972,11 @@ end;
 function TJWT.Getwebsite : string;
 begin
   result := payload['website'];
+end;
+
+function TJWT.Link: TJWT;
+begin
+  result := TJWT(inherited Link);
 end;
 
 procedure TJWT.Setwebsite(value : string);

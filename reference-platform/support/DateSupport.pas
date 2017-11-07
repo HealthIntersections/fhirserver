@@ -165,6 +165,7 @@ type
     function after(other : TDateTimeEx; inclusive : boolean):boolean;
     function before(other : TDateTimeEx; inclusive : boolean):boolean;
     function between(min, max : TDateTimeEx; inclusive : boolean):boolean;
+    function compare(other : TDateTimeEx) : integer;
 
     {@
     Valid formatting strings are
@@ -292,6 +293,18 @@ begin
   TimezoneType := dttzUnknown;
   TimeZoneHours := 0;
   TimezoneMins := 0;
+end;
+
+function TDateTimeEx.compare(other: TDateTimeEx): integer;
+begin
+  if null or other.null then
+    result := 0
+  else if after(other, false) then
+    result := 1
+  else if other.after(self, false) then
+    result := -1
+  else
+    result := 0;
 end;
 
 function TDateTimeEx.DateTime: TDateTime;
@@ -1324,6 +1337,22 @@ begin
     result.Fraction := fraction;
 end;
 
+function afterInstant(uSelf, uOther : TDateTimeEx) : boolean;
+begin
+  if (uSelf.year <> uOther.year) then
+    result := uSelf.year > uOther.year
+  else if (uSelf.month <> uOther.month) then
+    result := uSelf.month > uOther.month
+  else if (uSelf.day <> uOther.day) then
+    result := uSelf.day > uOther.day
+  else if (uSelf.hour <> uOther.hour) then
+    result := uSelf.hour > uOther.hour
+  else if (uSelf.minute <> uOther.minute) then
+    result := uSelf.minute > uOther.minute
+  else
+    result := (uSelf.fraction > uOther.fraction);
+end;
+
 function TDateTimeEx.after(other : TDateTimeEx; inclusive : boolean) : boolean;
 var
   uSelf, uOther : TDateTimeEx;
@@ -1332,8 +1361,7 @@ begin
   uOther := other.UTC;
   if uSelf.equal(uOther) then
     exit(inclusive);
-  result := (uSelf.year >= uOther.year) and (uSelf.month >= uOther.month) and (uSelf.day >= uOther.day) and
-            (uSelf.hour >= uOther.hour) and (uSelf.minute >= uOther.minute) and (uSelf.second >= uOther.second) and (uSelf.fraction >= uOther.fraction);
+  result := afterInstant(uSelf, uOther);
 end;
 
 function TDateTimeEx.before(other : TDateTimeEx; inclusive : boolean):boolean;
@@ -1344,8 +1372,7 @@ begin
   uOther := other.UTC;
   if uSelf.equal(uOther) then
     exit(inclusive);
-  result := (uSelf.year <= uOther.year) and (uSelf.month <= uOther.month) and (uSelf.day <= uOther.day) and
-            (uSelf.hour <= uOther.hour) and (uSelf.minute <= uOther.minute) and (uSelf.second <= uOther.second) and (uSelf.fraction <= uOther.fraction);
+  result := afterInstant(uOther, uSelf);
 end;
 
 function TDateTimeEx.between(min, max : TDateTimeEx; inclusive : boolean):boolean;

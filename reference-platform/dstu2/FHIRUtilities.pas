@@ -150,6 +150,7 @@ function bytesToResource(bytes : TBytes; var format : TFHIRFormat) : TFhirResour
 procedure resourceToFile(res : TFhirResource; name : String; format : TFHIRFormat);
 procedure resourceToStream(res : TFhirResource; stream : TStream; format : TFHIRFormat; pretty : boolean = true);
 function resourceToString(res : TFhirResource; format : TFHIRFormat) : String;
+function resourceToBytes(res : TFhirResource; format : TFHIRFormat) : TBytes;
 
 function parseParamsFromForm(stream : TStream) : TFHIRParameters;
 
@@ -227,6 +228,8 @@ type
   public
     class function fromEdit(s : String) : TFhirIdentifier;
     property editString : String read GetEditString write SetEditString;
+    function isType(code : String) : boolean; overload;
+    function isType(system, code : String) : boolean; overload;
   end;
 
   TFhirIdentifierListHelper = class helper for TFhirIdentifierList
@@ -242,6 +245,7 @@ type
     procedure addExtension(url : String; v : String); overload;
     function hasExtension(url : String) : boolean;
     function getExtension(url : String) : Integer;
+    function getExtensionValue(url : String) : TFHIRType;
     function getExtensionCount(url : String) : Integer;
     function getExtensionString(url : String) : String; overload;
     function getExtensionString(url : String; index : integer) : String; overload;
@@ -667,6 +671,7 @@ function gen(obj : TFhirAnnotation) : String; overload;
 function gen(obj : TFhirAttachment) : String; overload;
 function gen(obj : TFhirQuantity) : String; overload;
 function gen(obj : TFhirRange) : String; overload;
+function gen(obj : TFhirDate) : String; overload;
 function gen(obj : TFhirPeriod) : String; overload;
 function gen(obj : TFhirRatio) : String; overload;
 function gen(obj : TFhirSampledData) : String; overload;
@@ -1312,6 +1317,14 @@ begin
     result := ''
   else
     result := gen(obj.start) + ' -> '+gen(obj.end_);
+end;
+
+function gen(obj : TFhirDate) : String;
+begin
+  if obj = nil then
+    result := ''
+  else
+    result := obj.value.toString('c');
 end;
 
 function gen(obj : TFhirRatio) : String;
@@ -3255,6 +3268,17 @@ begin
   end;
 end;
 
+function TFHIRElementHelper.getExtensionValue(url: String): TFHIRType;
+var
+  index : integer;
+begin
+  index := getExtension(url);
+  if index = -1 then
+    result := nil
+  else
+    result := extensionList[index].value;
+end;
+
 { TFhirValueSetContactListHelper }
 
 procedure TFhirValueSetContactListHelper.setSystem(type_: TFHIRContactPointSystemEnum; value: String);
@@ -3376,6 +3400,8 @@ begin
     result := gen(TFhirContactPoint(t))
   else if t is TFhirTiming then
     result := gen(TFhirTiming(t))
+  else if t is TFhirDate then
+    result := gen(TFhirDate(t))
   else if t is TFhirBoolean then
     if TFhirBoolean(t).value then
       result := 'true'
@@ -5049,6 +5075,20 @@ begin
   end;
 end;
 
+function resourceToBytes(res : TFhirResource; format : TFHIRFormat) : TBytes;
+var
+  f : TBytesStream;
+begin
+  f := TBytesStream.Create();
+  try
+    resourceToStream(res, f, format);
+    result := f.Bytes;
+  finally
+    f.Free;
+  end;
+end;
+
+
 procedure resourceToFile(res : TFhirResource; name : String; format : TFHIRFormat);
 var
   f : TFileStream;
@@ -5270,6 +5310,27 @@ end;
 function TFhirIdentifierHelper.GetEditString: String;
 begin
   result := system+'|'+value;
+end;
+
+function TFhirIdentifierHelper.isType(code: String): boolean;
+begin
+  if StringArrayExistsSensitive(['DL', 'PPN', 'BRN', 'MR', 'MCN', 'EN', 'TAX', 'NIIP', 'PRN', 'MD', 'DR', 'ACSN'], code) then
+    result := isType('http://hl7.org/fhir/v2/0203', code)
+  else if StringArrayExistsSensitive(['UDI', 'SNO', 'SB', 'PLAC', 'FILL'], code) then
+    result := isType('http://hl7.org/fhir/identifier-type', code)
+  else
+    result := false;
+end;
+
+function TFhirIdentifierHelper.isType(system, code: String): boolean;
+var
+  c : TFhirCoding;
+begin
+  result := false;
+  if type_ <> nil then
+    for c in type_.codingList do
+      if (c.system = system) and (c.code = code) then
+        exit(true);
 end;
 
 procedure TFhirIdentifierHelper.SetEditString(const Value: String);

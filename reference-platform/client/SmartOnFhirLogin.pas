@@ -30,10 +30,6 @@ POSSIBILITY OF SUCH DAMAGE.
 }
 
 
-{$IFNDEF FHIR3}
-This is the dstu3 version of the FHIR code
-{$ENDIF}
-
 
 
 // see SmartOnFhirUtilities for doco
