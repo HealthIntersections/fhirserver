@@ -56,6 +56,7 @@ Type
   private
     FLastURL: String;
     FProvenance: TFhirProvenance;
+    FLastOperationId: String;
     procedure SetProvenance(const Value: TFhirProvenance);  protected
   public
     function link : TFhirClient; overload;
@@ -79,6 +80,7 @@ Type
     function address : String; virtual;
     function format : TFHIRFormat; virtual;
     property LastURL : String read FLastURL write FLastURL;
+    property LastOperationId : String read FLastOperationId write FLastOperationId; // some servers return an id that links to their own internal log for debugging
   end;
 
   TFhirHTTPClientHTTPVerb = (get, post, put, delete, options, patch);
@@ -879,6 +881,8 @@ var
         comp.Free;
       end;
     end
+    else if cnt = '' then
+      raise exception.Create(http.ResponseCode+' ' +http.ResponseText)
     else
       raise exception.Create(cnt)
   end;
@@ -948,6 +952,8 @@ begin
     if (code >= 300) and (code < 400) then
       url := http.getResponseHeader('Location');
   until (code < 300) or (code >= 400);
+
+  FLastOperationId := http.Headers['X-Request-Id'];
 
   if code >= 300 then
     processException;

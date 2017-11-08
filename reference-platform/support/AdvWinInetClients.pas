@@ -47,6 +47,7 @@ Type
       FUserAgent : String;
       FRequestType: String;
       FResponseCode: String;
+      FResponseText : String;
       FResponseType: String;
       FSoapAction: String;
       FRequestMethod: String;
@@ -125,6 +126,7 @@ Type
       Property SoapAction : String Read FSoapAction Write FSoapAction;
 
       Property ResponseCode : String Read FResponseCode Write FResponseCode;
+      Property ResponseText : String Read FResponseText Write FResponseText;
       Property ResponseType : String Read FResponseType Write FResponseType;
       Property Response : TAdvBuffer Read FResponse Write SetResponse;
 
@@ -159,6 +161,8 @@ Const
 
   HTTP_QUERY_CONTENT_TYPE = 1;
   HTTP_QUERY_STATUS_CODE = 19;
+  HTTP_QUERY_STATUS_TEXT = 20;
+  HTTP_QUERY_RAW_HEADERS_CRLF = 22;
   HTTP_QUERY_LOCATION = 33;
   INTERNET_DEFAULT_HTTP_PORT = 80;
   INTERNET_DEFAULT_HTTPS_PORT = 443;
@@ -427,6 +431,7 @@ Var
   dwFlags : DWORD;
   dwBuffLen : DWORD;
   again : boolean;
+  s, l, r : String;
 Begin
   if FReqHandle <> nil then
     mInternetCloseHandle(FReqHandle);
@@ -519,6 +524,12 @@ Begin
   GetMem(pData, 1024);
   Try
     FResponseCode := GetHeader(FReqHandle, HTTP_QUERY_STATUS_CODE);
+    FResponseText := GetHeader(FReqHandle, HTTP_QUERY_STATUS_TEXT);
+    for s in GetHeader(FReqHandle, HTTP_QUERY_RAW_HEADERS_CRLF).Split([#13]) do
+    begin
+      StringSplit(s.Trim, ':', l, r);
+      FHeaders.AddOrSetValue(l.Trim, r.Trim);
+    end;
 
     If Not IgnoreContentTypeHeader Then
       FResponseType := GetHeader(FReqHandle, HTTP_QUERY_CONTENT_TYPE);
