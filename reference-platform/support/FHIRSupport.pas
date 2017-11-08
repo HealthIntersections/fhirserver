@@ -276,6 +276,8 @@ Type
     Property TestScript : TFhirTestScript read FTestScript write SetTestScript;
     property ExternalUserKey : integer read FExternalUserKey write FExternalUserKey;
     property Compartments : TAdvList<TFHIRCompartmentId> read FCompartments;
+
+    function isAnonymous : boolean;
   end;
 
   {@Class TFHIRRequest
@@ -2109,6 +2111,11 @@ end;
 function TFhirSession.GetScopes: String;
 begin
   result := FSecurity.source;
+end;
+
+function TFhirSession.isAnonymous: boolean;
+begin
+  result := SystemEvidence = systemUnknown;
 end;
 
 function TFhirSession.Link: TFhirSession;

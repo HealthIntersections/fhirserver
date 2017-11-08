@@ -134,6 +134,7 @@ Type
     procedure SetCertPWord(const Value: String);
     procedure SetUseIndy(const Value: boolean);
     function Convert(stream : TStream) : TStream; virtual;
+    function mimeType(fmt: String): String;
   public
     constructor Create(worker : TFHIRWorkerContext; url : String; json : boolean); overload;
     constructor Create(worker : TFHIRWorkerContext; url : String; json : boolean; timeout : integer); overload;
@@ -830,6 +831,15 @@ begin
   {$ENDIF}
 end;
 
+function TFhirHTTPClient.mimeType(fmt : String): String;
+begin
+  {$IFDEF FHIR2}
+  result := 'application/'+fmt+'+fhir';
+  {$ELSE}
+  result := 'application/fhir+'+fmt;
+  {$ENDIF}
+end;
+
 {$IFDEF MSWINDOWS}
 function TFhirHTTPClient.exchangeHTTP(url: String; verb: TFhirHTTPClientHTTPVerb; source: TStream; ct: String): TStream;
 var
@@ -875,13 +885,13 @@ var
 begin
   if FJson then
   begin
-    http.RequestType := 'application/fhir+json; charset=utf-8';
-    http.ResponseType := 'application/fhir+json; charset=utf-8';
+    http.RequestType := mimeType('json')+'; charset=utf-8';
+    http.ResponseType := mimeType('json')+'; charset=utf-8';
   end
   else
   begin
-    http.RequestType := 'application/fhir+xml; charset=utf-8';
-    http.ResponseType := 'application/fhir+xml; charset=utf-8';
+    http.RequestType := mimeType('xml')+'; charset=utf-8';
+    http.ResponseType := mimeType('xml')+'; charset=utf-8';
   end;
   if ct <> '' then
     http.RequestType := ct;
@@ -959,13 +969,13 @@ var
 begin
   if FJson then
   begin
-    indy.Request.ContentType := 'application/fhir+json; charset=utf-8';
-    indy.Request.Accept := 'application/fhir+json; charset=utf-8';
+    indy.Request.ContentType := mimeType('json')+'; charset=utf-8';
+    indy.Request.Accept := mimeType('json')+'; charset=utf-8';
   end
   else
   begin
-    indy.Request.ContentType := 'application/fhir+xml; charset=utf-8';
-    indy.Request.Accept := 'application/fhir+xml; charset=utf-8';
+    indy.Request.ContentType := mimeType('xml')+'; charset=utf-8';
+    indy.Request.Accept := mimeType('xml')+'; charset=utf-8';
   end;
   if ct <> '' then
     indy.Request.ContentType := ct;

@@ -92,6 +92,7 @@ type
     FInitialState : string;
     FFinalState : string;
     FAuthCode : String;
+    FServerError : String;
     FHandleError: boolean;
     procedure DoDone(var Msg: TMessage); message UMSG;
     procedure DoCommandGet(AContext: TIdContext; ARequestInfo: TIdHTTPRequestInfo; AResponseInfo: TIdHTTPResponseInfo);
@@ -131,6 +132,7 @@ begin
     s := ARequestInfo.RawHTTPCommand.Split([' ']);
     pm := TParseMap.create(s[1].Substring(6));
     try
+      FServerError := pm.getVar('error');
       FAuthCode := pm.GetVar('code');
       FFinalState := pm.GetVar('state');
     finally
@@ -199,9 +201,20 @@ begin
   Application.ProcessMessages;
   try
     if (FInitialState <> FFinalState) then
-      raise Exception.create('State parameter mismatch ('+FInitialState+'/'+FFinalState+')');
-    token := getSmartOnFhirAuthToken(server, FAuthcode);
-    ModalResult := mrOK;
+    begin
+      MessageDlg('State parameter mismatch ('+FInitialState+'/'+FFinalState+')', mtError, [mbok], 0);
+      ModalResult := mrCancel;
+    end
+    else if FServerError <> '' then
+    begin
+      MessageDlg('Server Authorization failed: '+FServerError, mtError, [mbok], 0);
+      ModalResult := mrCancel;
+    end
+    else
+    begin
+      token := getSmartOnFhirAuthToken(server, FAuthcode);
+      ModalResult := mrOK;
+    end;
   except
     on e : Exception do
     begin
