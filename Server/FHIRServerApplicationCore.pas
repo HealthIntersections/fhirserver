@@ -97,6 +97,7 @@ Type
     FLoadStore : boolean;
     FInstaller : boolean;
     Fcallback: TInstallerCallback;
+    FRunNumber : integer;
 
     function connectToDB(name : String; max, timeout : integer; driver, server, database, username, password : String; forCreate : boolean) : TKDBManager;
     procedure ConnectToDatabase(noCheck : boolean = false);
@@ -304,6 +305,9 @@ begin
     filelog := true;
     Consolelog := true;
   end;
+  FRunNumber := FIni.ReadInteger(voVersioningNotApplicable, 'server', 'run-number', 0) + 1;
+  FIni.WriteInteger('server', 'run-number', FRunNumber);
+  logt('Run Number '+inttostr(FRunNumber));
 
   result := false;
   try
@@ -651,6 +655,8 @@ begin
     ctxt := TFHIRServerContext.Create(store.Link);
     try
       store.ServerContext := ctxt;
+      ctxt.RunNumber := FRunNumber;
+
       ctxt.TerminologyServer := FterminologyServer.Link;
       ctxt.Validate := FIni.ReadBool(voVersioningNotApplicable, 'fhir', 'validate', true);
       ctxt.ForLoad := not FindCmdLineSwitch('noload');

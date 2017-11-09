@@ -134,6 +134,10 @@ type
     btnPublisher: TButton;
     btnTitle: TButton;
     btnName: TButton;
+    Panel1: TPanel;
+    Button1: TButton;
+    Label12: TLabel;
+    ComboBox1: TComboBox;
     procedure tvStructureClick(Sender: TObject);
     procedure inputChanged(Sender: TObject);
     procedure btnDescriptionClick(Sender: TObject);

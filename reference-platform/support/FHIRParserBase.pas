@@ -213,6 +213,7 @@ Type
     FSummaryOption: TFHIRSummaryOption;
     FNoHeader: Boolean;
     FElements : TStringList;
+    FLogId: string;
   protected
     FWorker : TFHIRWorkerContext;
 
@@ -249,6 +250,7 @@ Type
     Property SummaryOption : TFHIRSummaryOption read FSummaryOption write FSummaryOption;
     property NoHeader : Boolean read FNoHeader write FNoHeader;
     property ElementToCompose : TStringList read FElements;
+    property LogId : string read FLogId write FLogId;
   End;
 
   TFHIRComposerClass = class of TFHIRComposer;
@@ -358,6 +360,7 @@ Type
     FOnGetLink: TFHIRXhtmlComposerGetLink;
     FOperationName : String;
     FVersion: String;
+
     procedure SetSession(const Value: TFhirSession);
     function PresentTags(aType : TFhirResourceType; target : String; tags : TFHIRTagList; c : integer):String; overload;
     function PresentTags(aType : TFhirResourceType; target : String; meta: TFhirMeta; c : integer):String; overload;
@@ -389,7 +392,7 @@ Type
     class function ResourceLinks(a, lang, base : String; count : integer; bTable, bPrefixLinks, canRead : boolean): String;
     class function PageLinks : String;
     class function Header(Session : TFhirSession; base, lang, version : String) : String;
-    class function Footer(base, lang : String; tail : boolean = true) : string;
+    class function Footer(base, lang, logId : String; tail : boolean = true) : string;
   end;
 
   TFHIRTextComposer = class (TFHIRComposer)
@@ -1755,7 +1758,7 @@ Header(Session, FBaseURL, lang, version)+
     end;
     s.append(
 '<p><br/>'+
-Footer(FBaseURL, lang)
+Footer(FBaseURL, lang, logid)
     );
     s.WriteToStream(stream);
   finally
@@ -2195,7 +2198,7 @@ Header(Session, FBaseURL, lang, FVersion)+
     end;
     s.append(
 '<p><br/>'
-+footer(FBaseUrl, lang)
++footer(FBaseUrl, lang, logid)
     );
     s.WriteToStream(stream);
   finally
@@ -2254,7 +2257,7 @@ begin
   result := '.html';
 end;
 
-class function TFHIRXhtmlComposer.Footer(base, lang : String; tail : boolean = true): string;
+class function TFHIRXhtmlComposer.Footer(base, lang, logId : String; tail : boolean = true): string;
 begin
   result :=
     '</div>'+#13#10+
@@ -2271,6 +2274,7 @@ begin
     '			<div class="inner-wrapper">'+#13#10+
     '				<p>'+#13#10+
     '        <a href="'+base+'" style="color: gold">'+GetFhirMessage('SERVER_HOME', lang)+'</a>.&nbsp;|&nbsp;FHIR &copy; HL7.org 2011+. &nbsp;|&nbsp; FHIR '+GetFhirMessage('NAME_VERSION', lang)+' <a href="'+FHIR_SPEC_URL+'" style="color: gold">'+FHIR_GENERATED_VERSION+'</a>'+#13#10+
+    '        | Request-id: '+logId+
     '        </span>'+#13#10+
     '        </p>'+#13#10+
     '			</div>  <!-- /inner-wrapper -->'+#13#10+

@@ -47,6 +47,7 @@ Type
     FBaseURL: String;
     FLang: String;
     FVersion: String;
+    FLogId: String;
   public
     Constructor Create; Override;
     Destructor Destroy; Override;
@@ -105,6 +106,7 @@ Type
     Property BaseURL : String read FBaseURL write FBaseURL;
     Property Lang : String read FLang write FLang;
     Property Version : String read FVersion write FVersion;
+    Property LogId : String read FLogId write FLogid;
   end;
 
 
@@ -193,7 +195,7 @@ end;
 
 procedure THtmlPublisher.Done;
 begin
-  FBuilder.Append(TFHIRXhtmlComposer.footer(BaseURL, lang));
+  FBuilder.Append(TFHIRXhtmlComposer.footer(BaseURL, lang, logid));
 end;
 
 procedure THtmlPublisher.EndBlockQuote;

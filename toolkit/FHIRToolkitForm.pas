@@ -41,7 +41,7 @@ uses
   SmartOnFHIRUtilities, EditRegisteredServerDialogFMX, OSXUIUtils,
   ToolkitSettings, ServerForm, CapabilityStatementEditor, BaseResourceFrame, BaseFrame, SourceViewer, ListSelector,
   ValueSetEditor, HelpContexts, ProcessForm, SettingsDialog, AboutDialog, ToolKitVersion, CodeSystemEditor,
-  ToolKitUtilities, UpgradeNeededDialog, QuestionnaireEditor, RegistryForm;
+  ToolKitUtilities, UpgradeNeededDialog, QuestionnaireEditor, RegistryForm, ResourceLanguageDialog;
 
 type
   TMasterToolsForm = class(TForm)
@@ -102,6 +102,8 @@ type
     MenuItem5: TMenuItem;
     mnuRegistry: TMenuItem;
     Button1: TButton;
+    MenuItem3: TMenuItem;
+    mnuResourceLanguage: TMenuItem;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure lbServersClick(Sender: TObject);
@@ -129,6 +131,7 @@ type
     procedure btnEditServerClick(Sender: TObject);
     procedure mnuCheckVersionClick(Sender: TObject);
     procedure mnuRegistryClick(Sender: TObject);
+    procedure mnuResourceLanguageClick(Sender: TObject);
   private
     { Private declarations }
     FSettings : TFHIRToolkitSettings;
@@ -809,6 +812,25 @@ begin
   btnEditServer.Enabled := lbServers.ItemIndex >= 0;
 end;
 
+procedure TMasterToolsForm.mnuResourceLanguageClick(Sender: TObject);
+var
+  ResourceLanguageForm : TResourceLanguageForm;
+  frame : TBaseFrame;
+begin
+  frame := tbMain.ActiveTab.TagObject as TBaseFrame;
+  if (frame <> nil) and frame.hasResource then
+  begin
+    ResourceLanguageForm := TResourceLanguageForm.Create(self);
+    try
+      ResourceLanguageForm.Resource := frame.currentResource.Link;
+      if ResourceLanguageForm.ShowModal = mrOk then
+        frame.reload;
+    finally
+      ResourceLanguageForm.Free;
+    end;
+  end;
+end;
+
 procedure TMasterToolsForm.mnuCheckVersionClick(Sender: TObject);
 begin
   checkVersion(true);
@@ -1052,12 +1074,15 @@ begin
   tbnSaveAs.Enabled := false;
   tbnClose.Enabled := false;
   tbnSource.Enabled := false;
+  mnuResourceLanguage.Enabled := false;
+
   if (frame <> nil) then
   begin
     tbnClose.Enabled := true;
     tbnSave.Enabled := frame.canSave;
     tbnSaveAs.Enabled := frame.canSaveAs;
     tbnSource.Enabled := frame.hasResource;
+    mnuResourceLanguage.Enabled := frame.hasResource;
   end;
   updateHelpText;
 end;

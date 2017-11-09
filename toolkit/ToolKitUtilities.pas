@@ -40,6 +40,7 @@ procedure doUpgrade(newVersion : String);
 function translationsImageIndex(element : TFHIRElement): integer;
 function langDesc(code : String) : String;
 function langCode(desc : String) : String;
+function langList : TStringList;
 
 implementation
 
@@ -204,6 +205,66 @@ begin
     result := desc
   else
     result := desc.Substring(0, i);
+end;
+
+function langList : TStringList;
+begin
+  result := TStringList.Create;
+  result.add('ar');
+  result.add('bn');
+  result.add('cs');
+  result.add('da');
+  result.add('de');
+  result.add('de-AT');
+  result.add('de-CH');
+  result.add('de-DE');
+  result.add('el');
+  result.add('en');
+  result.add('en-AU');
+  result.add('en-CA');
+  result.add('en-GB');
+  result.add('en-IN');
+  result.add('en-NZ');
+  result.add('en-SG');
+  result.add('en-US');
+  result.add('es');
+  result.add('es-AR');
+  result.add('es-ES');
+  result.add('es-UY');
+  result.add('fi');
+  result.add('fr');
+  result.add('fr-BE');
+  result.add('fr-CH');
+  result.add('fr-FR');
+  result.add('fy');
+  result.add('fy-NL');
+  result.add('hi');
+  result.add('hr');
+  result.add('it');
+  result.add('it-CH');
+  result.add('it-IT');
+  result.add('ja');
+  result.add('ko');
+  result.add('nl');
+  result.add('nl-BE');
+  result.add('nl-NL');
+  result.add('no');
+  result.add('no-NO');
+  result.add('pa');
+  result.add('pt');
+  result.add('pt-BR');
+  result.add('ru');
+  result.add('ru-RU');
+  result.add('sr');
+  result.add('sr-SP');
+  result.add('sv');
+  result.add('sv-SE');
+  result.add('te');
+  result.add('zh');
+  result.add('zh-CN');
+  result.add('zh-HK');
+  result.add('zh-SG');
+  result.add('zh-TW');
 end;
 
 end.

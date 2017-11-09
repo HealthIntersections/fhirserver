@@ -102,6 +102,7 @@ Type
     FClientApplicationVerifier: TClientApplicationVerifier;
     FJWTServices: TJWTServices;
     FTaskFolder: String;
+    FRunNumber: integer;
 
     procedure SetUserProvider(const Value: TFHIRUserProvider);
     procedure SetTerminologyServer(const Value: TTerminologyServer);
@@ -144,6 +145,7 @@ Type
     Property DoAudit: Boolean read FDoAudit write FDoAudit;
     Property SupportSystemHistory: Boolean read FSupportSystemHistory write FSupportSystemHistory;
     Property Validate: Boolean read FValidate write FValidate;
+    Property RunNumber : integer read FRunNumber write FRunNumber;
 
     function oid2Uri(oid : String) : String;
     procedure seeNamingSystem(key : integer; ns : TFhirNamingSystem);

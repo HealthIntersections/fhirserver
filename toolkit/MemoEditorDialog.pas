@@ -150,6 +150,7 @@ end;
 procedure TMemoEditorForm.btnAddClick(Sender: TObject);
 var
   dlg : TListSelectorForm;
+  s: TObject;
   procedure checkAdd(code : String);
   var
     exists : boolean;
@@ -165,64 +166,17 @@ var
   i : integer;
   c : String;
   ext : TFhirExtension;
+  st : TStringList;
 begin
   dlg := TListSelectorForm.Create(self);
   try
-    checkAdd('ar');
-    checkAdd('bn');
-    checkAdd('cs');
-    checkAdd('da');
-    checkAdd('de');
-    checkAdd('de-AT');
-    checkAdd('de-CH');
-    checkAdd('de-DE');
-    checkAdd('el');
-    checkAdd('en');
-    checkAdd('en-AU');
-    checkAdd('en-CA');
-    checkAdd('en-GB');
-    checkAdd('en-IN');
-    checkAdd('en-NZ');
-    checkAdd('en-SG');
-    checkAdd('en-US');
-    checkAdd('es');
-    checkAdd('es-AR');
-    checkAdd('es-ES');
-    checkAdd('es-UY');
-    checkAdd('fi');
-    checkAdd('fr');
-    checkAdd('fr-BE');
-    checkAdd('fr-CH');
-    checkAdd('fr-FR');
-    checkAdd('fy');
-    checkAdd('fy-NL');
-    checkAdd('hi');
-    checkAdd('hr');
-    checkAdd('it');
-    checkAdd('it-CH');
-    checkAdd('it-IT');
-    checkAdd('ja');
-    checkAdd('ko');
-    checkAdd('nl');
-    checkAdd('nl-BE');
-    checkAdd('nl-NL');
-    checkAdd('no');
-    checkAdd('no-NO');
-    checkAdd('pa');
-    checkAdd('pt');
-    checkAdd('pt-BR');
-    checkAdd('ru');
-    checkAdd('ru-RU');
-    checkAdd('sr');
-    checkAdd('sr-SP');
-    checkAdd('sv');
-    checkAdd('sv-SE');
-    checkAdd('te');
-    checkAdd('zh');
-    checkAdd('zh-CN');
-    checkAdd('zh-HK');
-    checkAdd('zh-SG');
-    checkAdd('zh-TW');
+    st := TStringList.Create;
+    try
+      for c in st do
+        checkadd(c);
+    finally
+      st.Free;
+    end;
 
     if dlg.ShowModal = mrOk then
     begin

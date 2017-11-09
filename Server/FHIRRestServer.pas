@@ -323,18 +323,18 @@ Type
     // Procedure ReadTags(Headers: TIdHeaderList; Request : TFHIRRequest); overload;
     Procedure ReadTags(header: String; request: TFHIRRequest); overload;
     function CheckSessionOK(Session: TFHIRSession; ip: string): boolean;
-    Function BuildFhirHomePage(compList : TAdvList<TFHIRCompartmentId>; lang, host, sBaseURL: String; Session: TFHIRSession; secure: boolean): String;
-    Function BuildFhirAuthenticationPage(lang, host, path, Msg: String; secure: boolean): String;
+    Function BuildFhirHomePage(compList : TAdvList<TFHIRCompartmentId>; logId, lang, host, sBaseURL: String; Session: TFHIRSession; secure: boolean): String;
+    Function BuildFhirAuthenticationPage(lang, host, path, logId, Msg: String; secure: boolean): String;
     Function BuildFhirUploadPage(lang, host, sBaseURL: String; aType: String; Session: TFHIRSession): String;
     Procedure CreatePostStream(AContext: TIdContext; AHeaders: TIdHeaderList; var VPostStream: TStream);
     Procedure ParseAuthenticationHeader(AContext: TIdContext; const AAuthType, AAuthData: String; var VUsername, VPassword: String; var VHandled: boolean);
     Procedure ProcessScimRequest(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo);
-    procedure MarkEntry(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo);
+    function MarkEntry(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo) : integer;
     procedure MarkExit(AContext: TIdContext);
     Procedure ReverseProxy(proxy: TReverseProxyInfo; AContext: TIdContext; request: TIdHTTPRequestInfo; Session: TFHIRSession; response: TIdHTTPResponseInfo; secure: boolean);
     Procedure PlainRequest(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo);
     Procedure SecureRequest(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo);
-    Procedure HandleRequest(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; ssl, secure: boolean; path: String; esession: TFHIRSession; cert: TIdX509);
+    Procedure HandleRequest(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; ssl, secure: boolean; path: String; logId : String; esession: TFHIRSession; cert: TIdX509);
     Procedure HandleWebSockets(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; ssl, secure: boolean; path: String);
     Procedure HandleDiscoveryRedirect(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo);
     Procedure HandleOWinToken(AContext: TIdContext; secure: boolean; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo);
@@ -344,7 +344,7 @@ Type
     Procedure StopServer;
     Function ProcessZip(lang: String; oStream: TStream; name, base: String; init: boolean; ini: TFHIRServerIniFile; Context: TOperationContext; var cursor: integer): TFHIRBundle;
     procedure SSLPassword(var Password: String);
-    procedure SendError(response: TIdHTTPResponseInfo; status: word; format: TFHIRFormat; lang, message, url: String; e: exception; Session: TFHIRSession; addLogins: boolean; path: String; relativeReferenceAdjustment: integer; code: TFhirIssueTypeEnum);
+    procedure SendError(response: TIdHTTPResponseInfo; logid : string; status: word; format: TFHIRFormat; lang, message, url: String; e: exception; Session: TFHIRSession; addLogins: boolean; path: String; relativeReferenceAdjustment: integer; code: TFhirIssueTypeEnum);
     Procedure ProcessRequest(Context: TOperationContext; request: TFHIRRequest; response: TFHIRResponse);
     Procedure ProcessAsyncRequest(Context: TOperationContext; request: TFHIRRequest; response: TFHIRResponse);
     Procedure ProcessTaskRequest(Context: TOperationContext; request: TFHIRRequest; response: TFHIRResponse);
@@ -1127,10 +1127,12 @@ var
   check, handled: boolean;
   rp: TReverseProxyInfo;
   version : TFHIRVersion;
+  id : string;
 begin
   Session := nil;
-  MarkEntry(AContext, request, response);
+  id := inttostr(FServerContext.RunNumber)+'-'+inttostr(MarkEntry(AContext, request, response));
   try
+    response.CustomHeaders.Add('X-Request-Id: '+id);
     if (request.AuthUsername = INTERNAL_SECRET) then
       FServerContext.SessionManager.GetSession(request.AuthPassword, Session, check);
     if (Session = nil) then
@@ -1185,18 +1187,18 @@ begin
          raise Exception.Create('No specific version specified in the Accept: header');
 //        version := CURRENT_FHIR_VERSION
       if version = CURRENT_FHIR_VERSION then
-        HandleRequest(AContext, request, response, false, false, FXVersionPath, Session, nil)
+        HandleRequest(AContext, request, response, false, false, FXVersionPath, id, Session, nil)
       else if FReverseProxyByVersion.TryGetValue(CODES_TFHIRVersion[version], rp) then
           ReverseProxy(rp, AContext, request, Session, response, false)
       else
         raise Exception.Create('The version '+CODES_TFHIRVersion[version]+' is not supported');
     end
     else if request.Document.StartsWith(FBasePath, false) then
-      HandleRequest(AContext, request, response, false, false, FBasePath, Session, nil)
+      HandleRequest(AContext, request, response, false, false, FBasePath, id, Session, nil)
     else if request.Document.StartsWith(AppendForwardSlash(FBasePath) + 'FSecurePath', false) then
       HandleWebSockets(AContext, request, response, false, false, FSecurePath)
     else if (FSecurePath <> '') and (request.Document.StartsWith(FSecurePath, false) and hasInternalSSLToken(request)) then
-      HandleRequest(AContext, request, response, true, true, FSecurePath, Session, nil)
+      HandleRequest(AContext, request, response, true, true, FSecurePath, id, Session, nil)
     else if request.Document = '/diagnostics' then
       ReturnDiagnostics(AContext, request, response, false, false, FSecurePath)
     else if request.Document = '/' then
@@ -1239,7 +1241,7 @@ begin
     c.System := 'http://hl7.org/fhir/restful-security-service';
     c.code := 'SMART-on-FHIR';
     c.display := 'SMART-on-FHIR';
-    rest.security.description := 'This server implements OAuth2 for login';
+    rest.security.description := 'This server implements OAuth2 for login using the Smart App Launch profile';
 
     ext := rest.security.extensionList.Append;
     ext.url := 'http://fhir-registry.smarthealthit.org/StructureDefinition/oauth-uris';
@@ -1265,14 +1267,16 @@ var
   c: integer;
   rp: TReverseProxyInfo;
   cert: TIdX509;
+  id : String;
   JWT: TJWT;
 begin
   check := false;
   cert := (AContext.Connection.IOHandler as TIdSSLIOHandlerSocketOpenSSL).SSLSocket.PeerCert;
 
   Session := nil;
-  MarkEntry(AContext, request, response);
+  id := inttostr(FServerContext.RunNumber)+'-'+inttostr(MarkEntry(AContext, request, response));
   try
+    response.CustomHeaders.Add('X-Request-Id: '+id);
     if (request.AuthUsername = INTERNAL_SECRET) then
       if request.AuthPassword.StartsWith('urn:') then
         FServerContext.SessionManager.GetSession(request.AuthPassword, Session, check)
@@ -1320,7 +1324,7 @@ begin
     else if request.Document.EndsWith('.hts') and FSourceProvider.exists(ChangeFileExt(FSourceProvider.AltFile(request.Document, FSecurePath), '.html')) then
       ReturnProcessedFile(request, response, Session, request.Document, ChangeFileExt(FSourceProvider.AltFile(request.Document, FSecurePath), '.html'), true)
     else if request.Document.StartsWith(FSecurePath, false) then
-      HandleRequest(AContext, request, response, true, true, FSecurePath, Session, cert)
+      HandleRequest(AContext, request, response, true, true, FSecurePath, id, Session, cert)
     else if OWinSecuritySecure and ((Session = nil) and (request.Document <> URLPath([FSecurePath, OWIN_TOKEN_PATH]))) then
     begin
       response.ResponseNo := 401;
@@ -1456,8 +1460,7 @@ begin
   end;
 end;
 
-Procedure TFhirWebServer.HandleRequest(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; ssl, secure: boolean; path: String;
-  esession: TFHIRSession; cert: TIdX509);
+Procedure TFhirWebServer.HandleRequest(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; ssl, secure: boolean; path: String; logId : String; esession: TFHIRSession; cert: TIdX509);
 var
   sHost: string;
   oRequest: TFHIRRequest;
@@ -1556,7 +1559,8 @@ Begin
                 request.RawHeaders.Values['X-Provenance'], sBearer, oStream, oResponse, aFormat, redirect, form, secure, ssl, relativeReferenceAdjustment, pretty,
                 esession, cert);
               try
-                oRequest.requestId := request.RawHeaders.Values['X-Request-Id'];
+                oRequest.externalRequestId := request.RawHeaders.Values['X-Request-Id'];
+                oRequest.internalRequestId := logId;
                 if TFHIRWebServerClientInfo(AContext.Data).Session = nil then
                   TFHIRWebServerClientInfo(AContext.Data).Session := oRequest.Session.link;
 
@@ -1594,7 +1598,7 @@ Begin
                     response.ResponseNo := 200;
                     response.contentType := 'text/html; charset=UTF-8';
                     response.FreeContentStream := true;
-                    response.ContentStream := StringToUTF8Stream(BuildFhirHomePage(oRequest.SessionCompartments, lang, sHost, path, oRequest.Session, secure));
+                    response.ContentStream := StringToUTF8Stream(BuildFhirHomePage(oRequest.SessionCompartments, logId, lang, sHost, path, oRequest.Session, secure));
                   end
                   else
                   begin
@@ -1705,48 +1709,48 @@ Begin
           response.ResponseNo := 200;
           response.contentType := 'text/html; charset=UTF-8';
           response.FreeContentStream := true;
-          response.ContentStream := StringToUTF8Stream(BuildFhirAuthenticationPage(lang, sHost, sPath + sDoc, e.Msg, ssl));
+          response.ContentStream := StringToUTF8Stream(BuildFhirAuthenticationPage(lang, sHost, sPath + sDoc, logId, e.Msg, ssl));
         end
         else
-          SendError(response, e.status, aFormat, lang, e.message, sPath, e, Session, true, sPath + sDoc, relativeReferenceAdjustment, IssueTypeLogin);
+          SendError(response, logId, e.status, aFormat, lang, e.message, sPath, e, Session, true, sPath + sDoc, relativeReferenceAdjustment, IssueTypeLogin);
       end;
       on e: ETerminologyError do
       begin
         if noErrCode then
-          SendError(response, 200, aFormat, lang, e.message, sPath, e, Session, false, path, relativeReferenceAdjustment, IssueTypeNotSupported)
+          SendError(response, logId, 200, aFormat, lang, e.message, sPath, e, Session, false, path, relativeReferenceAdjustment, IssueTypeNotSupported)
         else
-          SendError(response, HTTP_ERR_BUSINESS_RULES_FAILED, aFormat, lang, e.message, sPath, e, Session, false, path, relativeReferenceAdjustment,
+          SendError(response, logId, HTTP_ERR_BUSINESS_RULES_FAILED, aFormat, lang, e.message, sPath, e, Session, false, path, relativeReferenceAdjustment,
             IssueTypeNotSupported);
       end;
       on e: ETerminologySetup do
       begin
         if noErrCode then
-          SendError(response, 200, aFormat, lang, e.message, sPath, e, Session, false, path, relativeReferenceAdjustment, IssueTypeNotSupported)
+          SendError(response, logId, 200, aFormat, lang, e.message, sPath, e, Session, false, path, relativeReferenceAdjustment, IssueTypeNotSupported)
         else
-          SendError(response, HTTP_ERR_BUSINESS_RULES_FAILED, aFormat, lang, e.message, sPath, e, Session, false, path, relativeReferenceAdjustment,
+          SendError(response, logId, HTTP_ERR_BUSINESS_RULES_FAILED, aFormat, lang, e.message, sPath, e, Session, false, path, relativeReferenceAdjustment,
             IssueTypeNotSupported);
       end;
       on e: ETooCostly do
       begin
         if noErrCode then
-          SendError(response, 200, aFormat, lang, e.message, sPath, e, Session, false, path, relativeReferenceAdjustment, IssueTypeTooCostly)
+          SendError(response, logId, 200, aFormat, lang, e.message, sPath, e, Session, false, path, relativeReferenceAdjustment, IssueTypeTooCostly)
         else
-          SendError(response, HTTP_ERR_BUSINESS_RULES_FAILED, aFormat, lang, e.message, sPath, e, Session, false, path, relativeReferenceAdjustment,
+          SendError(response, logId, HTTP_ERR_BUSINESS_RULES_FAILED, aFormat, lang, e.message, sPath, e, Session, false, path, relativeReferenceAdjustment,
             IssueTypeTooCostly);
       end;
       on e: ERestfulException do
       begin
         if noErrCode then
-          SendError(response, 200, aFormat, lang, e.message, sPath, e, Session, false, path, relativeReferenceAdjustment, e.code)
+          SendError(response, logId, 200, aFormat, lang, e.message, sPath, e, Session, false, path, relativeReferenceAdjustment, e.code)
         else
-          SendError(response, e.status, aFormat, lang, e.message, sPath, e, Session, false, path, relativeReferenceAdjustment, e.code);
+          SendError(response, logId, e.status, aFormat, lang, e.message, sPath, e, Session, false, path, relativeReferenceAdjustment, e.code);
       end;
       on e: exception do
       begin
         if noErrCode then
-          SendError(response, 200, aFormat, lang, e.message, sPath, e, Session, false, path, relativeReferenceAdjustment, IssueTypeNull)
+          SendError(response, logId, 200, aFormat, lang, e.message, sPath, e, Session, false, path, relativeReferenceAdjustment, IssueTypeNull)
         else
-          SendError(response, HTTP_ERR_INTERNAL, aFormat, lang, e.message, sPath, e, Session, false, path, relativeReferenceAdjustment, IssueTypeNull);
+          SendError(response, logId, HTTP_ERR_INTERNAL, aFormat, lang, e.message, sPath, e, Session, false, path, relativeReferenceAdjustment, IssueTypeNull);
       end;
     end;
   finally
@@ -1806,7 +1810,7 @@ begin
           '<p><a href="' + builder.QuestionnaireId + '">Questionnaire for this form</a>.' + ' The QuestionnaireAnswers should be submitted as a POST to <i>' +
           request.baseUrl + '$qa-post</i> with a questionnaire reference of <a href="' + builder.QuestionnaireId + '">' + builder.QuestionnaireId +
           '</a></p>'#13#10);
-        s := s.Replace('<!--body bottom insertion point-->', TFHIRXhtmlComposer.Footer(request.baseUrl, request.lang, false));
+        s := s.Replace('<!--body bottom insertion point-->', TFHIRXhtmlComposer.Footer(request.baseUrl, request.lang, request.internalRequestId, false));
         s := s.Replace('var questionnaireAnswersEndpoint = null;', 'var questionnaireAnswersEndpoint = "' + request.baseUrl + '$qa-post";');
       finally
         builder.Free;
@@ -1853,6 +1857,7 @@ begin
       else
         comp := TFHIRXMLComposer.Create(FServerContext.Validator.Context.link, request.lang);
       try
+        comp.LogId := request.internalRequestId;
         s := comp.Compose(r, true, nil);
       finally
         comp.Free;
@@ -1866,7 +1871,7 @@ begin
         '<form action="' + request.baseUrl + '_web/' + typ + '/' + id + '/$post" method="POST">'#13#10 + '  <input type="hidden" name="srcformat" value="' +
         request.Parameters.GetVar('srcformat') + '"/>'#13#10 + '  <textarea cols="80" rows="24" name="source" style="white-space:pre">' +
         FormatXMLForTextArea(s) + #13#10'</textarea><br/>'#13#10 + '  <input type="submit" value="Save"/>'#13#10 + '</form>'#13#10 +
-        TFHIRXhtmlComposer.Footer(request.baseUrl, request.lang, true);
+        TFHIRXhtmlComposer.Footer(request.baseUrl, request.lang, request.internalRequestId, true);
 
       response.Body := s;
       result := Now; // don't want anyone caching anything
@@ -1974,7 +1979,7 @@ begin
     // insert page headers:
     s := s.Replace('<!--header insertion point-->', TFHIRXhtmlComposer.PageLinks);
     s := s.Replace('<!--body top insertion point-->', TFHIRXhtmlComposer.header(request.Session, request.baseUrl, request.lang, SERVER_VERSION));
-    s := s.Replace('<!--body bottom insertion point-->', TFHIRXhtmlComposer.Footer(request.baseUrl, request.lang, false));
+    s := s.Replace('<!--body bottom insertion point-->', TFHIRXhtmlComposer.Footer(request.baseUrl, request.lang, request.internalRequestId, false));
     s := s.Replace('var questionnaireAnswersEndpoint = null;', 'var questionnaireAnswersEndpoint = "' + request.baseUrl + '$qa-post";');
     response.Body := s;
     result := Now; // don't want anyone caching anything
@@ -2112,7 +2117,7 @@ begin
     // insert page headers:
     s := s.Replace('<!--header insertion point-->', TFHIRXhtmlComposer.PageLinks);
     s := s.Replace('<!--body top insertion point-->', TFHIRXhtmlComposer.header(request.Session, request.baseUrl, request.lang, SERVER_VERSION));
-    s := s.Replace('<!--body bottom insertion point-->', TFHIRXhtmlComposer.Footer(request.baseUrl, request.lang, false));
+    s := s.Replace('<!--body bottom insertion point-->', TFHIRXhtmlComposer.Footer(request.baseUrl, request.lang, request.internalRequestId, false));
     s := s.Replace('var questionnaireAnswersEndpoint = null;', 'var questionnaireAnswersEndpoint = "' + request.baseUrl + '/QuestionnaireAnswers";');
     response.Body := s;
     result := Now; // don't want anyone caching anything
@@ -2170,7 +2175,7 @@ begin
       // insert page headers:
       s := s.Replace('<!--header insertion point-->', TFHIRXhtmlComposer.PageLinks);
       s := s.Replace('<!--body top insertion point-->', TFHIRXhtmlComposer.header(request.Session, request.baseUrl, request.lang, SERVER_VERSION));
-      s := s.Replace('<!--body bottom insertion point-->', TFHIRXhtmlComposer.Footer(request.baseUrl, request.lang, false));
+      s := s.Replace('<!--body bottom insertion point-->', TFHIRXhtmlComposer.Footer(request.baseUrl, request.lang, request.internalRequestId, false));
       // insert the answer:
       s := s.Replace('var QuestionnaireResponse=null;', 'var QuestionnaireResponse=' + j + ';');
       response.Body := s;
@@ -2225,8 +2230,7 @@ begin
   result := request.RawHeaders.Values[SECURE_TOKEN_HEADER] = FSecureToken;
 end;
 
-procedure TFhirWebServer.SendError(response: TIdHTTPResponseInfo; status: word; format: TFHIRFormat; lang, message, url: String; e: exception;
-  Session: TFHIRSession; addLogins: boolean; path: String; relativeReferenceAdjustment: integer; code: TFhirIssueTypeEnum);
+procedure TFhirWebServer.SendError(response: TIdHTTPResponseInfo; logid : string; status: word; format: TFHIRFormat; lang, message, url: String; e: exception; Session: TFHIRSession; addLogins: boolean; path: String; relativeReferenceAdjustment: integer; code: TFhirIssueTypeEnum);
 var
   issue: TFhirOperationOutcome;
   report: TFhirOperationOutcomeIssue;
@@ -2319,6 +2323,7 @@ begin
       end;
       try
         response.contentType := oComp.MimeType;
+        oComp.LogId := logId;
         oComp.Compose(response.ContentStream, issue, false, nil);
         response.ContentStream.Position := 0;
       finally
@@ -2805,6 +2810,7 @@ begin
             response.contentType := oComp.MimeType;
             oComp.SummaryOption := oRequest.Summary;
             oComp.ElementToCompose.Assign(oRequest.Elements);
+            oComp.LogId := oRequest.internalRequestId;
             oComp.Compose(stream, res, pretty, oResponse.link_List);
           finally
             oComp.Free;
@@ -2876,6 +2882,9 @@ var
   jwks : TJWKList;
   json : TJsonObject;
 begin
+  if session = nil then
+    raise Exception.Create('You must login before registering a client');
+
   pm := TParseMap.create(request.UnparsedParams);
   try
     client := TRegisteredClientInformation.Create;
@@ -3228,7 +3237,7 @@ begin
   end;
 end;
 
-function TFhirWebServer.BuildFhirAuthenticationPage(lang, host, path, Msg: String; secure: boolean): String;
+function TFhirWebServer.BuildFhirAuthenticationPage(lang, host, path, logId, Msg: String; secure: boolean): String;
 var
   authurl: string;
 begin
@@ -3253,10 +3262,10 @@ begin
 
   result := result + '<p>&nbsp;</p>'#13#10 +
     '<p>This server uses <a href="http://fhir-docs.smarthealthit.org/argonaut-dev/authorization/">Smart App Launch</a> for OAuth logins</p>'#13#10;
-  result := result + TFHIRXhtmlComposer.Footer(lang, lang);
+  result := result + TFHIRXhtmlComposer.Footer(lang, lang, logid);
 end;
 
-function TFhirWebServer.BuildFhirHomePage(compList : TAdvList<TFHIRCompartmentId>; lang, host, sBaseURL: String; Session: TFHIRSession; secure: boolean): String;
+function TFhirWebServer.BuildFhirHomePage(compList : TAdvList<TFHIRCompartmentId>; logId, lang, host, sBaseURL: String; Session: TFHIRSession; secure: boolean): String;
 var
   counts: TStringList;
   a: String;
@@ -3311,11 +3320,17 @@ begin
         b.Append('<p>'#13#10 + StringFormat(GetFhirMessage('MSG_HOME_PAGE_1', lang), ['<a href="http://hl7.org/fhir">http://hl7.org/fhir</a>']) + #13#10 +
           StringFormat(GetFhirMessage('MSG_HOME_PAGE_2', lang), [s]) +
           ' This server defines some <a href="local.hts">extensions to the API</a>, and also offers <a href="/tx">Terminology Services</a>' + #13#10);
-        b.Append('. You can also <a href="registerclient.html">Register a client</a>.'+#13#10);
-        if Session.canGetUser and (Session.User <> nil) then
+        if Session.canGetUser and (Session.User <> nil) and not Session.isAnonymous then
         begin
+          b.Append('. You can also <a href="registerclient.html">Register a client</a>.'+#13#10);
           b.Append(' or <a href="token.hts">get your bearer token</a> (use this to get access to the secure API without needing OAuth login).</p>');
+        end
+        else
+        begin
+          b.Append('. If you login through OAuth, you can also Register a client'+#13#10);
+          b.Append(' or get your bearer token (use this to get access to the secure API without needing OAuth login in the application).</p>');
         end;
+
 
         b.Append(
           '</p>'#13#10 + '<hr/>'#13#10 + ''#13#10 + '<p>' + GetFhirMessage('SYSTEM_OPERATIONS', lang) + ':</p><ul><li> <a href="' + sBaseURL + '/metadata">' +
@@ -3399,7 +3414,7 @@ begin
             #13#10 + '<tr><td>Profile:</td><td> <select size="1" name="profile">' + #13#10 + '<option value=""></option>' + #13#10 + pol +
             '</select> (if validating, use the selected profile)</td></tr></table><br/>' + #13#10 + '<input type="submit" value="' +
             GetFhirMessage('NAME_UPLOAD', lang) + '"/>'#13#10 + '</p></form>'#13#10);
-        b.Append(TFHIRXhtmlComposer.Footer(sBaseURL, lang));
+        b.Append(TFHIRXhtmlComposer.Footer(sBaseURL, lang, logId));
         result := b.ToString;
       finally
         b.Free;
@@ -3507,7 +3522,7 @@ begin
   result := result.Replace('${title}', 'Task '+id);
 end;
 
-procedure TFhirWebServer.MarkEntry(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo);
+function TFhirWebServer.MarkEntry(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo) : integer;
 var
   ci: TFHIRWebServerClientInfo;
 begin
@@ -3518,6 +3533,7 @@ begin
     ci.Activity := request.Command + ' ' + request.Document + '?' + request.UnparsedParams;
     ci.Count := ci.Count + 1;
     inc(FTotalCount);
+    result := FTotalCount;
     ci.FStart := GetTickCount;
   finally
     FLock.Unlock;
@@ -3672,7 +3688,7 @@ begin
   try
     for s in t.trim.Split(['|']) do
     begin
-      bundle := DoSearch(nil, s, 'en', '_summary=true&__wantObject=true');
+      bundle := DoSearch(nil, s, 'en', '_summary=true&__wantObject=true&_sort=name&_count=50');
       for entry in bundle.entryList do
       begin
         b.Append('<option value="');

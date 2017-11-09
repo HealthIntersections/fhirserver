@@ -3,11 +3,15 @@
 	<channel>
 		<title>FHIRServer (reference server) Release history</title>
 		<link>http://www.healthintersections.com.au/FhirServer</link>
-		<item><title>FHIRServer release 1.0.190 2017-10-27</title>
+		<item><title>FHIRServer release 1.0.191 2017-11-08</title>
+			<link>http://www.healthintersections.com.au/FhirServer/fhirserver64-1.0.191.exe</link>
+			<description>2017-11-08 (v1.0.191): fix bug in registering clients</description>
+		</item>
+<item><title>FHIRServer release 1.0.190 2017-10-27</title>
 			<link>http://www.healthintersections.com.au/FhirServer/fhirserver64-1.0.190.exe</link>
 			<description>2017-10-27 (v1.0.190): more support for flattening operations in graphQL</description>
 		</item>
-<item><title>FHIRServer release 1.0.189 2017-10-26</title>
+		<item><title>FHIRServer release 1.0.189 2017-10-26</title>
 			<link>http://www.healthintersections.com.au/FhirServer/fhirserver64-1.0.189.exe</link>
 			<description>2017-10-26 (v1.0.189): add support for @flatten and @first in graphQL</description>
 		</item>

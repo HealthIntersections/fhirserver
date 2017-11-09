@@ -328,7 +328,8 @@ Type
     FSecure : Boolean;
     FPatchJson: TJsonArray;
     FPatchXml: TMXmlElement;
-    FrequestId: String;
+    FExternalRequestId: String;
+    FInternalRequestId: String;
     FCustom : TFHIRCustomResourceInformation;
     FStrictSearch: boolean;
     FAdaptor : TFHIRFormatAdaptor;
@@ -511,7 +512,8 @@ Type
     Property Provenance : TFhirProvenance read FProvenance write SetProvenance;
     Property Origin : TFHIRRequestOrigin read FOrigin;
 
-    property requestId : String read FrequestId write FrequestId;
+    property externalRequestId : String read FExternalRequestId write FExternalRequestId;
+    property internalRequestId : String read FInternalRequestId write FInternalRequestId;
     property strictSearch : boolean read FStrictSearch write FStrictSearch;
     property loadObjects : boolean read FLoadObjects write FLoadObjects;
   End;

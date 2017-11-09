@@ -1,0 +1,120 @@
+object ResourceLanguageForm: TResourceLanguageForm
+  Left = 0
+  Top = 0
+  Caption = 'Form1'
+  ClientHeight = 352
+  ClientWidth = 422
+  FormFactor.Width = 320
+  FormFactor.Height = 480
+  FormFactor.Devices = [Desktop]
+  OnShow = FormShow
+  DesignerMasterStyle = 1
+  object Panel1: TPanel
+    Align = Bottom
+    Position.Y = 312.000000000000000000
+    Size.Width = 422.000000000000000000
+    Size.Height = 40.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 0
+    object Button1: TButton
+      Anchors = [akTop, akRight]
+      Default = True
+      Position.X = 245.000000000000000000
+      Position.Y = 8.000000000000000000
+      TabOrder = 0
+      Text = 'OK'
+    end
+    object Button2: TButton
+      Anchors = [akTop, akRight]
+      Cancel = True
+      ModalResult = 2
+      Position.X = 333.000000000000000000
+      Position.Y = 8.000000000000000000
+      TabOrder = 1
+      Text = 'Cancel'
+    end
+  end
+  object Panel2: TPanel
+    Align = Top
+    Size.Width = 422.000000000000000000
+    Size.Height = 129.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 1
+    object Label1: TLabel
+      StyledSettings = [Family, Size, FontColor]
+      Position.X = 8.000000000000000000
+      Position.Y = 8.000000000000000000
+      TextSettings.Font.StyleExt = {00070000000000000004000000}
+      Text = 'Current Language'
+      TabOrder = 0
+    end
+    object lblCurrentLanguage: TLabel
+      Position.X = 32.000000000000000000
+      Position.Y = 40.000000000000000000
+      Size.Width = 353.000000000000000000
+      Size.Height = 17.000000000000000000
+      Size.PlatformDefault = False
+      Text = 'lblCurrentLanguage'
+      TabOrder = 1
+    end
+    object lblCurrentStatus: TLabel
+      Position.X = 32.000000000000000000
+      Position.Y = 64.000000000000000000
+      Size.Width = 369.000000000000000000
+      Size.Height = 49.000000000000000000
+      Size.PlatformDefault = False
+      Text = 'Current Status'
+      TabOrder = 2
+    end
+  end
+  object Panel3: TPanel
+    Align = Client
+    Size.Width = 422.000000000000000000
+    Size.Height = 183.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 2
+    object CheckBox1: TCheckBox
+      Position.X = 32.000000000000000000
+      Position.Y = 88.000000000000000000
+      Size.Width = 329.000000000000000000
+      Size.Height = 19.000000000000000000
+      Size.PlatformDefault = False
+      TabOrder = 1
+      Text = 'Copy existing content to translations'
+    end
+    object Label2: TLabel
+      StyledSettings = [Family, Size, FontColor]
+      Position.X = 8.000000000000000000
+      Position.Y = 8.000000000000000000
+      TextSettings.Font.StyleExt = {00070000000000000004000000}
+      Text = 'Change Language'
+      TabOrder = 2
+    end
+    object Label3: TLabel
+      Position.X = 32.000000000000000000
+      Position.Y = 48.000000000000000000
+      Text = 'New Language:'
+      TabOrder = 3
+    end
+    object ComboEdit1: TComboEdit
+      Touch.InteractiveGestures = [LongTap, DoubleTap]
+      TabOrder = 4
+      ItemHeight = 19.000000000000000000
+      ItemIndex = -1
+      Position.X = 136.000000000000000000
+      Position.Y = 48.000000000000000000
+      Size.Width = 257.000000000000000000
+      Size.Height = 22.000000000000000000
+      Size.PlatformDefault = False
+    end
+    object CheckBox2: TCheckBox
+      Position.X = 32.000000000000000000
+      Position.Y = 120.000000000000000000
+      Size.Width = 329.000000000000000000
+      Size.Height = 19.000000000000000000
+      Size.PlatformDefault = False
+      TabOrder = 0
+      Text = 'Elevate existing translations to primary'
+    end
+  end
+end

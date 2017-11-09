@@ -196,8 +196,8 @@ Type
     function getResourceByUrl(aType : TFhirResourceType; url, version : string; allowNil : boolean; var needSecure : boolean): TFHIRResource; virtual;
     function GetResourceByKey(key : integer; var needSecure : boolean): TFHIRResource; virtual;
     function ResolveSearchId(resourceName : String; requestCompartment : TFHIRCompartmentId; SessionCompartments : TAdvList<TFHIRCompartmentId>; baseURL, params : String) : TMatchingResourceList; virtual;
-    procedure AuditRest(session : TFhirSession; reqid, ip, resourceName : string; id, ver : String; verkey : integer; op : TFHIRCommandType; provenance : TFhirProvenance; httpCode : Integer; name, message : String); overload; virtual;
-    procedure AuditRest(session : TFhirSession; reqid, ip, resourceName : string; id, ver : String; verkey : integer; op : TFHIRCommandType; provenance : TFhirProvenance; opName : String; httpCode : Integer; name, message : String); overload; virtual;
+    procedure AuditRest(session : TFhirSession; intreqid, extreqid, ip, resourceName : string; id, ver : String; verkey : integer; op : TFHIRCommandType; provenance : TFhirProvenance; httpCode : Integer; name, message : String); overload; virtual;
+    procedure AuditRest(session : TFhirSession; intreqid, extreqid, ip, resourceName : string; id, ver : String; verkey : integer; op : TFHIRCommandType; provenance : TFhirProvenance; opName : String; httpCode : Integer; name, message : String); overload; virtual;
   end;
 
   TFHIRInternalClient = class (TFHIRClient)
@@ -642,8 +642,6 @@ var
   ServerContext : TFHIRServerContext;
 begin
   ServerContext := TFHIRServerContext(FServerContext);
-
-
   try
 
     response.HTTPCode := 200;
@@ -845,11 +843,11 @@ begin
       html.free;
     end;
 
-    AuditRest(request.session, request.requestId, request.ip, request.ResourceName, '', '', 0, request.CommandType, request.Provenance, response.httpCode, '', response.message);
+    AuditRest(request.session, request.internalRequestId, request.externalRequestId, request.ip, request.ResourceName, '', '', 0, request.CommandType, request.Provenance, response.httpCode, '', response.message);
   except
     on e: exception do
     begin
-      AuditRest(request.session, request.requestId, request.ip, request.ResourceName, '', '', 0, request.CommandType, request.Provenance, 500, '', e.message);
+      AuditRest(request.session, request.internalRequestId, request.externalRequestId, request.ip, request.ResourceName, '', '', 0, request.CommandType, request.Provenance, 500, '', e.message);
       recordStack(e);
       raise;
     end;
@@ -996,7 +994,7 @@ s := s +
 '</form>'#13#10+
 ''#13#10+
 '<p>'+
-TFHIRXhtmlComposer.Footer(request.baseUrl, lang);
+TFHIRXhtmlComposer.Footer(request.baseUrl, lang, request.internalRequestId);
   response.Body := s;
 end;
 
@@ -1151,19 +1149,14 @@ begin
 //  html.append('<li>'+n+' : '+FormatTextToHTML(d)+'</li>');
 end;
 
-procedure TFHIROperationEngine.AuditRest(session: TFhirSession; reqid, ip,
-  resourceName, id, ver: String; verkey: integer; op: TFHIRCommandType;
-  provenance: TFhirProvenance; httpCode: Integer; name, message: String);
+procedure TFHIROperationEngine.AuditRest(session: TFhirSession; intreqid, extreqid, ip, resourceName, id, ver: String; verkey: integer; op: TFHIRCommandType; provenance: TFhirProvenance; httpCode: Integer; name, message: String);
 begin
-
+  raise Exception.Create('Musr override AuditRest in '+ClassName);
 end;
 
-procedure TFHIROperationEngine.AuditRest(session: TFhirSession; reqid, ip,
-  resourceName, id, ver: String; verkey: integer; op: TFHIRCommandType;
-  provenance: TFhirProvenance; opName: String; httpCode: Integer; name,
-  message: String);
+procedure TFHIROperationEngine.AuditRest(session: TFhirSession; intreqid, extreqid, ip, resourceName, id, ver: String; verkey: integer; op: TFHIRCommandType; provenance: TFhirProvenance; opName: String; httpCode: Integer; name, message: String);
 begin
-
+  raise Exception.Create('Musr override AuditRest in '+ClassName);
 end;
 
 function TFHIRStorageService.createAsyncTask(url, id: string; format : TFHIRFormat): integer;

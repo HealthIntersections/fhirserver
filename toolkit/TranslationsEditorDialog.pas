@@ -139,6 +139,8 @@ end;
 procedure TTranslationsEditorForm.FormShow(Sender: TObject);
 var
   ext : TFhirExtension;
+  st : TStringList;
+  s : String;
 begin
   edtPrimary.Text := Element.primitiveValue;
   FExtensions.Clear;
@@ -148,6 +150,14 @@ begin
       FExtensions.Add(ext.Link);
   grid.RowCount := FExtensions.Count;
   btnDelete.Enabled := grid.RowCount > 0;
+  st := langList;
+  try
+    PopupColumn1.Items.Clear;
+    for s in st do
+      PopupColumn1.Items.add(langDesc(s));
+  finally
+    st.Free;
+  end;
 end;
 
 procedure TTranslationsEditorForm.gridGetValue(Sender: TObject; const ACol, ARow: Integer; var Value: TValue);

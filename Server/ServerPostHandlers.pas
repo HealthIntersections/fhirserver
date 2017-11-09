@@ -289,6 +289,11 @@ begin
       coverage.order := params.GetVar('order');
       coverage.network := params.GetVar('network');
 
+      processExtension('a');
+      processExtension('b');
+      processExtension('c');
+      processExtension('d');
+      processExtension('e');
       for i := 1 to 12 do
         processExtension(inttostr(i));
 

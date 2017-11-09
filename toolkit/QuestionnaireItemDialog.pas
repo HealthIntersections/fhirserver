@@ -34,11 +34,11 @@ uses
   FMX.Types, FMX.Controls, FMX.Forms, FMX.Graphics, FMX.Dialogs, FMX.StdCtrls,
   FMX.Controls.Presentation, System.Rtti, FMX.Grid.Style, FMX.Grid,
   FMX.ComboEdit, FMX.ScrollBox, FMX.Memo, FMX.DateTimeCtrls, FMX.TabControl,
-  FMX.ListBox, FMX.Edit, FMX.DialogService,
+  FMX.ListBox, FMX.Edit, FMX.DialogService, System.ImageList, FMX.ImgList,
   StringSupport, DateSupport,
   ToolkitSettings,
   FHIRTypes, FHIRResources, FHIRClient, FHIRUtilities,
-  ResourceEditingSupport, BaseFrame;
+  ResourceEditingSupport, BaseFrame, ToolkitUtilities, TranslationsEditorDialog, MemoEditorDialog;
 
 type
   TQuestionnaireItemForm = class(TForm)
@@ -144,6 +144,11 @@ type
     edtXRegexRule: TEdit;
     Label23: TLabel;
     cbxXUiControlType: TComboBox;
+    ToolbarImages: TImageList;
+    btnValueString: TButton;
+    btnValueText: TButton;
+    btnText: TButton;
+    btnPrefix: TButton;
     procedure FormShow(Sender: TObject);
     procedure btnOkClick(Sender: TObject);
     procedure cbxTypeChange(Sender: TObject);
@@ -160,6 +165,10 @@ type
     procedure grdConditionsGetValue(Sender: TObject; const ACol, ARow: Integer; var Value: TValue);
     procedure grdConditionsSetValue(Sender: TObject; const ACol, ARow: Integer; const Value: TValue);
     procedure btnAddConditionClick(Sender: TObject);
+    procedure btnPrefixClick(Sender: TObject);
+    procedure btnTextClick(Sender: TObject);
+    procedure btnValueStringClick(Sender: TObject);
+    procedure btnValueTextClick(Sender: TObject);
   private
     FItem: TFhirQuestionnaireItem;
     Loading : boolean;
@@ -259,6 +268,30 @@ begin
     grdOptions.EndUpdate;
     grdOptions.Row := i - 1;
   end;
+end;
+
+procedure TQuestionnaireItemForm.btnPrefixClick(Sender: TObject);
+begin
+  if item.prefixElement = nil then
+    item.prefixElement := TFhirString.Create;
+  editStringDialog(self, 'Questionnaire Item Prefix', btnPrefix, edtPrefix, Questionnaire, item.prefixElement);
+end;
+
+procedure TQuestionnaireItemForm.btnTextClick(Sender: TObject);
+begin
+  if item.textElement = nil then
+    item.textElement := TFhirString.Create;
+  editStringDialog(self, 'Questionnaire Item Text', btnText, edtText, Questionnaire, item.textElement);
+end;
+
+procedure TQuestionnaireItemForm.btnValueStringClick(Sender: TObject);
+begin
+  editStringDialog(self, 'Questionnaire Item Initial', btnValueString, edtDefaultString, Questionnaire, item.initial as TFHIRString);
+end;
+
+procedure TQuestionnaireItemForm.btnValueTextClick(Sender: TObject);
+begin
+  editMarkdownDialog(self, 'Questionnaire Item Initial', btnValueText, memDefaultText, Questionnaire, item.initial as TFhirString);
 end;
 
 procedure TQuestionnaireItemForm.btnAddConditionClick(Sender: TObject);
@@ -551,7 +584,9 @@ begin
     edtLinkId.Text := item.linkId;
     edtDefinition.Text := item.definition;
     edtPrefix.Text := item.prefix;
+    btnPrefix.ImageIndex := translationsImageIndex(item.prefixElement);
     edtText.Text := item.text;
+    btnText.ImageIndex := translationsImageIndex(item.textElement);
     cbxType.ItemIndex := ord(item.type_)-1;
     edtMaxLength.Text := item.maxLength;
     edtMaxLength.Enabled := item.type_ in [ItemTypeDecimal, ItemTypeInteger, ItemTypeString, ItemTypeText, ItemTypeUrl, ItemTypeOpenChoice];
@@ -874,6 +909,7 @@ begin
       end;
     ItemTypeString :
       begin
+      btnValueString.ImageIndex := translationsImageIndex(item.initial);
       tbInitial.TabIndex := 7;
       if item.initial is TFhirString then
         edtDefaultString.Text := TFhirString(item.initial).value
@@ -886,6 +922,7 @@ begin
       end;
     ItemTypeText :
       begin
+      btnValueText.ImageIndex := translationsImageIndex(item.initial);
       tbInitial.TabIndex := 8;
       if item.initial is TFhirString then
         memDefaultText.Text := TFhirString(item.initial).value

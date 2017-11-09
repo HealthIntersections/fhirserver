@@ -385,6 +385,10 @@
             <Form>TranslationsEditorForm</Form>
             <FormType>fmx</FormType>
         </DCCReference>
+        <DCCReference Include="ResourceLanguageDialog.pas">
+            <Form>ResourceLanguageForm</Form>
+            <FormType>fmx</FormType>
+        </DCCReference>
         <None Include="q.txt"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>

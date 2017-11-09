@@ -75,6 +75,7 @@ type
     function hasResource : boolean; virtual;
     function currentResource : TFHIRResource; virtual;
     function originalResource : TFHIRResource; virtual;
+    procedure reload; virtual;
 
     procedure ClientWork(ASender: TObject; AWorkMode: TWorkMode; AWorkCount: Int64);
     procedure work(opName : String; canCancel : boolean; proc : TWorkProc);
@@ -147,6 +148,11 @@ end;
 function TBaseFrame.originalResource: TFHIRResource;
 begin
   result := nil;
+end;
+
+procedure TBaseFrame.reload;
+begin
+  load;
 end;
 
 function TBaseFrame.save : boolean;

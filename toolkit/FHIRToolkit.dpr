@@ -181,13 +181,13 @@ uses
   QuestionnaireItemPanel in 'QuestionnaireItemPanel.pas',
   QuestionnairePanel in 'QuestionnairePanel.pas',
   VitalSignsGeneratorDialog in 'VitalSignsGeneratorDialog.pas' {VitalSignsGeneratorForm},
-  TranslationsEditorDialog in 'TranslationsEditorDialog.pas' {TranslationsEditorForm};
+  TranslationsEditorDialog in 'TranslationsEditorDialog.pas' {TranslationsEditorForm},
+  ResourceLanguageDialog in 'ResourceLanguageDialog.pas' {ResourceLanguageForm};
 
 {$R *.res}
 
 begin
   Application.Initialize;
   Application.CreateForm(TMasterToolsForm, MasterToolsForm);
-  Application.CreateForm(TRegisterClientForm, RegisterClientForm);
   Application.Run;
 end.
