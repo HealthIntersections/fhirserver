@@ -910,6 +910,8 @@ begin
     http.Username := username;
     http.Password := Password;
   end;
+  // todo: if smartToken <> nil then
+  // todo:  indy.Request.CustomHeaders.values['Authorization'] := 'Bearer '+smartToken.accessToken;  ? how to set this on wininet
 
   repeat
     http.SetAddress(url);
@@ -1020,10 +1022,15 @@ begin
       ok := true;
       if (result <> nil) then
          result.Position := 0;
+      FLastOperationId := indy.Response.RawHeaders.Values['X-Request-Id'];
     except
       on E:EIdHTTPProtocolException do
       begin
         cnt := e.ErrorMessage;
+        if cnt = '' then
+          cnt := e.message;
+        FLastOperationId := indy.Response.RawHeaders.Values['X-Request-Id'];
+
         if StringFind(cnt, 'OperationOutcome') > 0 then
         begin
           removeBom(cnt);
