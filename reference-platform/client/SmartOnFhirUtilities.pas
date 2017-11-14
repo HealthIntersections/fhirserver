@@ -242,7 +242,7 @@ type
 
   // called by a client to login via Smart App Launch
   // launches the user's referred browser, and waits for the cycle to complete
-  TSmartLoginState = (stStarting, stDone, stComplete);
+  TSmartLoginState = (stStarting, stDone, stComplete, stError);
   TIdleEvent = procedure(out stop : boolean) of object;
   TOpenURLEvent = procedure(url : String) of object;
   TSmartAppLaunchLogin = class (TAdvObject)
@@ -262,6 +262,7 @@ type
     FOnOpenURL: TOpenURLEvent;
     Fversion: String;
     FName: String;
+    FErrorMessage : String;
 
     procedure SetServer(const Value: TRegisteredFHIRServer);
     procedure Settoken(const Value: TSmartOnFhirAccessToken);
@@ -284,6 +285,7 @@ type
     property name : String read FName write FName;
     property version : String read Fversion write Fversion;
     property logoPath : String read FLogoPath write FLogoPath;
+    property ErrorMessage : String read FErrorMessage write FErrorMessage;
 
     function login : boolean;
   end;
@@ -815,8 +817,11 @@ begin
     s := ARequestInfo.RawHTTPCommand.Split([' ']);
     pm := TParseMap.create(s[1].Substring(6));
     try
-      FAuthCode := pm.GetVar('code');
       FFinalState := pm.GetVar('state');
+      if pm.getVar('error') <> '' then
+        FErrorMessage := pm.getVar('error')
+      else
+        FAuthCode := pm.GetVar('code');
       State := stDone;
     finally
       pm.free;
@@ -912,10 +917,14 @@ begin
     end;
     if (FInitialState <> FFinalState) then
       raise Exception.create('State parameter mismatch ('+FInitialState+'/'+FFinalState+')');
-    token := getSmartOnFhirAuthToken(server, FAuthcode);
+    if FAuthcode <> '' then
+      token := getSmartOnFhirAuthToken(server, FAuthcode);
     state := stComplete;
-    sleep(20); // give web server a chance
-    result := true;
+    sleep(40); // give web server a chance
+    if FErrorMessage <> '' then
+      result := false
+    else
+      result := true;
   finally
     closeWebServer;
   end;
