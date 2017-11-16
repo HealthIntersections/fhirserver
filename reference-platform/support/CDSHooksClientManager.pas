@@ -543,11 +543,12 @@ var
   work : TCDSHooksManagerWorkThread;
   hash : String;
   cached : TCDSHooksManagerCachedResponse;
+  hook : TRegisteredCDSHook;
 begin
   hash := inttostr(request.hash);
   for server in FServers do
   begin
-    if server.info.doesHook(request.hook) then
+    if server.info.doesHook(request.hook, hook) then
     begin
       FLock.Lock;
       try
@@ -560,6 +561,7 @@ begin
           begin
             work := TCDSHooksManagerWorkThread.create(self);
             try
+              work.id := hook.name;
               work.request := request.Link;
               work.server := server.info.Link;
               work.token := server.token.link; // do this here to avoid threading problems

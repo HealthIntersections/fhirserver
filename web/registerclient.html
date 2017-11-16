@@ -97,6 +97,7 @@
  <tr><td>Redirect List</td><td><textarea rows=10 cols=80 name="redirect_uris"/></textarea><br/>(If an OAuth Client:) List of valid redirect URIs for the app</td></tr>
  <tr><td>Issuer</td><td><input type="text" size="80" name="issuer"/><br/>(If a Backend Services Client:) Issuer URL App claims to use (must be correct, but is not verified against the certificate)</td></tr>
  <tr><td>Public Key</td><td><textarea rows=10 cols=80 name="public_key"></textarea><br/>(If a Backend Services Client:) RSA Public Key - either a jwks, or a DER encoded public key certificate (starts with -----BEGIN CERTIFICATE-----)</td></tr>
+ <tr><td>Patient Context</td><td><input type="checkbox" name="ctxt-patient"/> Show this application on the patient screen (using the Client URI to launch the client)</td></tr>
 </table>
 
 <input type="submit" value="Register Client"/>

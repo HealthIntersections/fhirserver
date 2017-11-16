@@ -515,7 +515,10 @@ begin
       result := (loc <> nil) and (abstractOk or not cs.IsAbstract(loc));
       if result then
       begin
-        cs.displays(loc, displays, FProfile.displayLanguage);
+        if FProfile = nil then
+          cs.displays(loc, displays, '')
+        else
+          cs.displays(loc, displays, FProfile.displayLanguage);
         exit;
       end
       else

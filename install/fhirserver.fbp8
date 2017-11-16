@@ -64,7 +64,7 @@ begin
         as.defaultvalue = %purpose%
         as.xpos = -1
         as.ypos = -1
-        as.returnvalue = "more support for flattening operations in graphQL"
+        as.returnvalue = "fix bug where server audits the audit trail in a never ending loop"
         as.returnvariable = purpose
       end
       action.variables.savetoini
@@ -272,6 +272,7 @@ begin
       action.group
       begin
         description = "64 bit build"
+        enabled = false
         id = {B04497CC-9752-463E-8B55-3B8543974103}
         action.group
         begin
@@ -1050,6 +1051,7 @@ begin
       action.group
       begin
         description = "32 bit build"
+        enabled = false
         id = {C42EC044-C80A-4901-AE36-65C021CB903C}
         action.group
         begin
@@ -1828,6 +1830,7 @@ begin
       action.group
       begin
         description = "Sign Installs"
+        enabled = false
         id = {8C3D4CBC-6388-4AA1-8AE8-157BE12FCCC9}
         action.process.execute
         begin

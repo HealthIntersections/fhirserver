@@ -316,6 +316,7 @@ Type
     function HandleWebPatientHooks(request: TFHIRRequest; response: TFHIRResponse; secure: boolean): TDateTime;
     function HandleWebCreate(request: TFHIRRequest; response: TFHIRResponse): TDateTime;
 {$ENDIF}
+    function patientAppList(base, id : String) : string;
     function HandleWebPatient(request: TFHIRRequest; response: TFHIRResponse; secure: boolean): TDateTime;
     function getReferencesByType(t : String) : String;
 
@@ -329,7 +330,7 @@ Type
     Procedure CreatePostStream(AContext: TIdContext; AHeaders: TIdHeaderList; var VPostStream: TStream);
     Procedure ParseAuthenticationHeader(AContext: TIdContext; const AAuthType, AAuthData: String; var VUsername, VPassword: String; var VHandled: boolean);
     Procedure ProcessScimRequest(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo);
-    function MarkEntry(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo) : integer;
+    procedure MarkEntry(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo);
     procedure MarkExit(AContext: TIdContext);
     Procedure ReverseProxy(proxy: TReverseProxyInfo; AContext: TIdContext; request: TIdHTTPRequestInfo; Session: TFHIRSession; response: TIdHTTPResponseInfo; secure: boolean);
     Procedure PlainRequest(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo);
@@ -843,7 +844,7 @@ procedure TFhirWebServer.startHooks(ctxt: TFHIRWebServerPatientViewContext; pati
 var
   server: TRegisteredFHIRServer;
   req: TCDSHookRequest;
-  s: String;
+  s, u, i : String;
   be: TFHIRBundleEntry;
 begin
   for s in FPatientViewServers.Keys do
@@ -851,8 +852,9 @@ begin
     server := TRegisteredFHIRServer.Create;
     try
       server.name := s;
-      server.fhirEndpoint := FPatientViewServers[s];
-      server.addCdsHook('patient-view', TCDSHooks.patientView);
+      StringSplit(FPatientViewServers[s], '|', u, i);
+      server.fhirEndpoint := u;
+      server.addCdsHook(i, TCDSHooks.patientView);
       ctxt.manager.registerServer(server);
     finally
       server.Free;
@@ -1120,6 +1122,41 @@ begin
   VPassword := AAuthData;
 end;
 
+function TFhirWebServer.patientAppList(base, id : String): string;
+var
+  b : TStringBuilder;
+  apps : TAdvList<TRegisteredClientInformation>;
+  app : TRegisteredClientInformation;
+begin
+  b := TStringBuilder.Create;
+  try
+    apps := TAdvList<TRegisteredClientInformation>.create;
+    try
+      FServerContext.Storage.fetchClients(apps);
+      for app in apps do
+      begin
+        if app.patientContext then
+        begin
+          b.Append('  <li><a href="');
+          b.Append(app.url);
+          b.Append('?iss=https://');
+          b.Append(base);
+          b.Append('&launch=');
+          b.Append(id);
+          b.Append('">');
+          b.Append(EncodeXML(app.name, xmlText));
+          b.Append('</a></li>'#13#10);
+        end;
+      end;
+    finally
+      apps.Free;
+    end;
+    result := b.ToString;
+  finally
+    b.Free;
+  end;
+end;
+
 Procedure TFhirWebServer.PlainRequest(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo);
 var
   Session: TFHIRSession;
@@ -1130,8 +1167,9 @@ var
   id : string;
 begin
   Session := nil;
-  id := inttostr(FServerContext.RunNumber)+'-'+inttostr(MarkEntry(AContext, request, response));
+  MarkEntry(AContext, request, response);
   try
+    id := ServerContext.nextRequestId;
     response.CustomHeaders.Add('X-Request-Id: '+id);
     if (request.AuthUsername = INTERNAL_SECRET) then
       FServerContext.SessionManager.GetSession(request.AuthPassword, Session, check);
@@ -1274,8 +1312,9 @@ begin
   cert := (AContext.Connection.IOHandler as TIdSSLIOHandlerSocketOpenSSL).SSLSocket.PeerCert;
 
   Session := nil;
-  id := inttostr(FServerContext.RunNumber)+'-'+inttostr(MarkEntry(AContext, request, response));
+  MarkEntry(AContext, request, response);
   try
+    id := ServerContext.nextRequestId;
     response.CustomHeaders.Add('X-Request-Id: '+id);
     if (request.AuthUsername = INTERNAL_SECRET) then
       if request.AuthPassword.StartsWith('urn:') then
@@ -2029,6 +2068,10 @@ begin
   s := s.Replace('[%ver%]', FHIR_GENERATED_VERSION, [rfReplaceAll]);
   s := s.Replace('[%web%]', WebDesc, [rfReplaceAll]);
   s := s.Replace('[%patient-details%]', xhtml, [rfReplaceAll]);
+  if FStatedSSLPort = 443 then
+    s := s.Replace('[%patient-app-list%]', patientAppList(FHost + FSecurePath, id), [rfReplaceAll])
+  else
+    s := s.Replace('[%patient-app-list%]', patientAppList(FHost + ':' + inttostr(FStatedSSLPort) + FSecurePath, id), [rfReplaceAll]);
   s := s.Replace('[%patient-id%]', id, [rfReplaceAll]);
   s := s.Replace('[%admin%]', FAdminEmail, [rfReplaceAll]);
   if FStatedPort = 80 then
@@ -2896,6 +2939,7 @@ begin
       client.logo := pm.GetVar('logo_uri').Trim;
       client.softwareId := pm.GetVar('software_id').Trim;
       client.softwareVersion := pm.GetVar('software_version').Trim;
+      client.PatientContext := pm.getVar('ctxt-patient') <> '';
       case StrToIntDef(pm.GetVar('mode'), 0) of
         1: begin
            client.mode := rcmOAuthClient;
@@ -2994,6 +3038,8 @@ begin
   finally
     FLock.Unlock;
   end;
+  if request.internalRequestId = '' then
+    request.internalRequestId := ServerContext.nextRequestId;
   t := GetTickCount;
   op := FServerContext.Storage.createOperationContext(request.lang);
   try
@@ -3522,7 +3568,7 @@ begin
   result := result.Replace('${title}', 'Task '+id);
 end;
 
-function TFhirWebServer.MarkEntry(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo) : integer;
+procedure TFhirWebServer.MarkEntry(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo);
 var
   ci: TFHIRWebServerClientInfo;
 begin
@@ -3533,7 +3579,6 @@ begin
     ci.Activity := request.Command + ' ' + request.Document + '?' + request.UnparsedParams;
     ci.Count := ci.Count + 1;
     inc(FTotalCount);
-    result := FTotalCount;
     ci.FStart := GetTickCount;
   finally
     FLock.Unlock;
@@ -3786,6 +3831,8 @@ begin
   try
     if error <> '' then
       ctxt.Errors.Add(error + ' (from ' + server.name + ')')
+    else if response = nil then
+      ctxt.Errors.Add('Unknown Error (from ' + server.name + ')')
     else
       ctxt.cards.AddAll(response.cards);
   finally

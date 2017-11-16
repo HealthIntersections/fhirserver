@@ -59,7 +59,8 @@ const
 //  ServerDBVersion = 17; // add AuthorizationSessions and Connections
 //  ServerDBVersion = 18; // add AsyncTasks
 //  ServerDBVersion = 19; // add RegisteredClients
-  ServerDBVersion = 20; // add PseudoData
+//  ServerDBVersion = 20; // add PseudoData
+  ServerDBVersion = 21; // add ClientRegistrations.PatientContext
 
   // config table keys
   CK_Transactions = 1;   // whether transactions and batches are allowed or not
@@ -328,6 +329,7 @@ begin
        ' Uri               nchar(255)                               '+ColCanBeNull(FConn.owner.platform, True )+', '+#13#10+  //
        ' LogoUri           nchar(255)                               '+ColCanBeNull(FConn.owner.platform, True )+', '+#13#10+  //
        ' Name              nchar(255)                               '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+  //
+       ' PatientContext    int                                      '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+  //
        ' Mode              int                                      '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+  //
        ' Secret            nchar(36)                                '+ColCanBeNull(FConn.owner.platform, True )+', '+#13#10+  //
        ' JwksUri           nchar(255)                               '+ColCanBeNull(FConn.owner.platform, True )+', '+#13#10+  //
@@ -1177,8 +1179,10 @@ begin
       CreateAsyncTasks;
     if (version < 19) then
       CreateClientRegistrations;
-    if (version < 19) then
+    if (version < 20) then
       CreatePseudoData;
+    if (version < 21) then
+      Fconn.ExecSQL('ALTER TABLE dbo.ClientRegistrations ADD PatientContext int NULL');
 
     Fconn.ExecSQL('update Config set value = '+inttostr(ServerDBVersion)+' where ConfigKey = 5');
     FConn.commit;

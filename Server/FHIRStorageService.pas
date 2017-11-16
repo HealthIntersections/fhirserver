@@ -123,9 +123,11 @@ Type
     Furl: String;
     FsoftwareId: String;
     FIssuer: String;
+    FPatientContext: boolean;
   public
     constructor Create; override;
     destructor Destroy; override;
+
     function link : TRegisteredClientInformation; overload;
 
     property name : String read FName write FName;
@@ -139,6 +141,7 @@ Type
     property logo : String read Flogo write Flogo;
     property softwareId : String read FsoftwareId write FsoftwareId;
     property softwareVersion : String read FsoftwareVersion write FsoftwareVersion;
+    property patientContext : boolean read FPatientContext write FPatientContext;
   end;
 
   TFindResourceOption = (froFindDeletedResource, froForCommit);
@@ -285,6 +288,7 @@ Type
     function getClientInfo(id : String) : TRegisteredClientInformation; virtual;
     function getClientName(id : String) : string; virtual;
     function storeClient(client : TRegisteredClientInformation; sessionKey : integer) : String; virtual;
+    procedure fetchClients(list : TAdvList<TRegisteredClientInformation>); virtual;
   end;
 
 
@@ -324,6 +328,11 @@ end;
 function TFHIRStorageService.FetchAuthorization(hash: string; var PatientId : string; var ConsentKey, SessionKey: Integer; var Expiry: TDateTime; var jwt: String): boolean;
 begin
   raise Exception.Create('This server does not support OAuth');
+end;
+
+procedure TFHIRStorageService.fetchClients(list: TAdvList<TRegisteredClientInformation>);
+begin
+  raise Exception.Create('The function "fetchClients" must be overridden in '+className);
 end;
 
 procedure TFHIRStorageService.fetchExpiredTasks(tasks: TAdvList<TAsyncTaskInformation>);

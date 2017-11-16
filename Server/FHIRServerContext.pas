@@ -32,7 +32,7 @@ POSSIBILITY OF SUCH DAMAGE.
 interface
 
 uses
-  SysUtils, Classes, Generics.Collections,
+  {$IFDEF MACOS} OSXUtils, {$ELSE} Windows, {$ENDIF} SysUtils, Classes, Generics.Collections,
   OIDSupport, kCritSct, FileSupport, SystemSupport,
   AdvObjects, AdvGenerics, AdvStringMatches,
   FHIRTypes, FHIRResources, FHIRConstants, FHIRIndexManagers, FHIRUtilities,
@@ -103,6 +103,7 @@ Type
     FJWTServices: TJWTServices;
     FTaskFolder: String;
     FRunNumber: integer;
+    FRequestId : integer;
 
     procedure SetUserProvider(const Value: TFHIRUserProvider);
     procedure SetTerminologyServer(const Value: TTerminologyServer);
@@ -153,6 +154,7 @@ Type
     procedure seeMap(map : TFHIRStructureMap);
     function getMaps : TAdvMap<TFHIRStructureMap>;
     {$ENDIF}
+    function nextRequestId : string;
   end;
 
 
@@ -379,7 +381,15 @@ begin
   result := TFHIRServerContext(inherited Link);
 end;
 
-    {$IFNDEF FHIR2}
+function TFHIRServerContext.nextRequestId: string;
+var
+  v : integer;
+begin
+  v := InterlockedIncrement(FRequestId);
+  result := inttostr(FRunNumber)+'-'+inttostr(v);
+end;
+
+{$IFNDEF FHIR2}
 procedure TFHIRServerContext.seeMap(map: TFHIRStructureMap);
 begin
   FLock.Lock;

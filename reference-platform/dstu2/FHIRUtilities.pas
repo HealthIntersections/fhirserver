@@ -226,6 +226,8 @@ type
     function GetEditString: String;
     procedure SetEditString(const Value: String);
   public
+    constructor Create(system, value : String); overload;
+    constructor Create(value : String); overload;
     class function fromEdit(s : String) : TFhirIdentifier;
     property editString : String read GetEditString write SetEditString;
     function isType(code : String) : boolean; overload;
@@ -5295,6 +5297,19 @@ begin
 end;
 
 { TFhirIdentifierHelper }
+
+constructor TFhirIdentifierHelper.Create(system, value: String);
+begin
+  Create;
+  FValue := TFhirString.Create(value);
+  FSystem := TFhirUri.Create(system);
+end;
+
+constructor TFhirIdentifierHelper.Create(value: String);
+begin
+  Create;
+  FValue := TFhirString.Create(value);
+end;
 
 class function TFhirIdentifierHelper.fromEdit(s: String): TFhirIdentifier;
 begin

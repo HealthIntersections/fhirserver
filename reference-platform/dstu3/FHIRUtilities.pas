@@ -153,6 +153,7 @@ function bytesToResource(bytes : TBytes; var format : TFHIRFormat) : TFhirResour
 procedure resourceToFile(res : TFhirResource; name : String; format : TFHIRFormat);
 procedure resourceToStream(res : TFhirResource; stream : TStream; format : TFHIRFormat; pretty : boolean = true);
 function resourceToString(res : TFhirResource; format : TFHIRFormat) : String;
+function resourceToBytes(res : TFhirResource; format : TFHIRFormat) : TBytes;
 
 function parseParamsFromForm(stream : TStream) : TFHIRParameters;
 
@@ -218,8 +219,12 @@ type
     function GetEditString: String;
     procedure SetEditString(const Value: String);
   public
+    constructor Create(system, value : String); overload;
+    constructor Create(value : String); overload;
     class function fromEdit(s : String) : TFhirIdentifier;
     property editString : String read GetEditString write SetEditString;
+    function isType(code : String) : boolean; overload;
+    function isType(system, code : String) : boolean; overload;
   end;
 
   TFhirIdentifierListHelper = class helper for TFhirIdentifierList
@@ -652,6 +657,7 @@ type
   end;
 
 function Path(const parts : array of String) : String;
+function UrlPath(const parts : array of String) : String;
 
 
 function ZCompressBytes(const s: TBytes): TBytes;
@@ -3305,6 +3311,30 @@ begin
     result := IncludeTrailingPathDelimiter(result) + parts[i];
 end;
 
+function IsSlash(const S: string; Index: Integer): Boolean;
+begin
+  Result := (Index >= Low(string)) and (Index <= High(S)) and (S[Index] = '/') and (ByteType(S, Index) = mbSingleByte);
+end;
+
+function IncludeTrailingSlash(const S: string): string;
+begin
+  Result := S;
+  if not IsSlash(Result, High(Result)) then
+    Result := Result + PathDelim;
+end;
+
+function UrlPath(const parts : array of String) : String;
+var
+  i : integer;
+begin
+  if length(parts) = 0 then
+    result := ''
+  else
+    result := parts[0];
+  for i := 1 to high(parts) do
+    result := IncludeTrailingSlash(result) + parts[i];
+end;
+
 
 function TFHIRElementHelper.getExtensionString(url: String; index: integer): String;
 var
@@ -5336,6 +5366,20 @@ begin
   end;
 end;
 
+function resourceToBytes(res : TFhirResource; format : TFHIRFormat) : TBytes;
+var
+  f : TBytesStream;
+begin
+  f := TBytesStream.Create();
+  try
+    resourceToStream(res, f, format);
+    result := f.Bytes;
+  finally
+    f.Free;
+  end;
+end;
+
+
 procedure resourceToFile(res : TFhirResource; name : String; format : TFHIRFormat);
 var
   f : TFileStream;
@@ -5684,6 +5728,19 @@ end;
 
 { TFhirIdentifierHelper }
 
+constructor TFhirIdentifierHelper.Create(system, value: String);
+begin
+  Create;
+  FValue := TFhirString.Create(value);
+  FSystem := TFhirUri.Create(system);
+end;
+
+constructor TFhirIdentifierHelper.Create(value: String);
+begin
+  Create;
+  FValue := TFhirString.Create(value);
+end;
+
 class function TFhirIdentifierHelper.fromEdit(s: String): TFhirIdentifier;
 begin
   result := TFhirIdentifier.Create;
@@ -5698,6 +5755,27 @@ end;
 function TFhirIdentifierHelper.GetEditString: String;
 begin
   result := system+'|'+value;
+end;
+
+function TFhirIdentifierHelper.isType(code: String): boolean;
+begin
+  if StringArrayExistsSensitive(['DL', 'PPN', 'BRN', 'MR', 'MCN', 'EN', 'TAX', 'NIIP', 'PRN', 'MD', 'DR', 'ACSN'], code) then
+    result := isType('http://hl7.org/fhir/v2/0203', code)
+  else if StringArrayExistsSensitive(['UDI', 'SNO', 'SB', 'PLAC', 'FILL'], code) then
+    result := isType('http://hl7.org/fhir/identifier-type', code)
+  else
+    result := false;
+end;
+
+function TFhirIdentifierHelper.isType(system, code: String): boolean;
+var
+  c : TFhirCoding;
+begin
+  result := false;
+  if type_ <> nil then
+    for c in type_.codingList do
+      if (c.system = system) and (c.code = code) then
+        exit(true);
 end;
 
 procedure TFhirIdentifierHelper.SetEditString(const Value: String);

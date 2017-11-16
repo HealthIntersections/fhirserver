@@ -239,7 +239,7 @@ End;
 constructor TInternalThread.Create(thread: TAdvThread);
 begin
   FOwner := thread;
-  inherited create(true);
+  inherited create(false);
 end;
 
 procedure TInternalThread.execute;

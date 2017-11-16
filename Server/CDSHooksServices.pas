@@ -488,10 +488,16 @@ var
   be : TFhirBundleEntry;
   matches, m : TMatchingResourceList;
   id : TFhirIdentifier;
+  ok : boolean;
 begin
   result := nil;
   // do we know that patient?
-  if engine.FindResource('Patient', request.patient, [], key, versionKey, nil,  nil, session.Compartments) then
+  if Session = nil then
+    ok := engine.FindResource('Patient', request.patient, [], key, versionKey, nil,  nil, nil)
+  else
+    ok := engine.FindResource('Patient', request.patient, [], key, versionKey, nil,  nil, session.Compartments);
+
+  if ok then
     result := engine.GetResourceByKey(key, needSecure) as TFhirPatient
   else
   begin
@@ -542,7 +548,10 @@ begin
   try
     comp := TFHIRCompartmentId.Create(frtPatient, patient.id);
     try
-      m := engine.ResolveSearchId('Flag', comp, session.Compartments, base, 'active=true');
+      if session = nil then
+        m := engine.ResolveSearchId('Flag', comp, nil, base, 'active=true')
+      else
+        m := engine.ResolveSearchId('Flag', comp, session.Compartments, base, 'active=true');
       try
         for i := 0 to m.Count - 1 do
         begin

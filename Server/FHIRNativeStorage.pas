@@ -734,6 +734,7 @@ type
     function getClientInfo(id : String) : TRegisteredClientInformation; override;
     function getClientName(id : String) : string; override;
     function storeClient(client : TRegisteredClientInformation; sessionKey : integer) : String; override;
+    procedure fetchClients(list : TAdvList<TRegisteredClientInformation>); override;
 
     property ServerContext : TFHIRServerContext read FServerContext write FServerContext;
     Property DB: TKDBManager read FDB;
@@ -907,6 +908,12 @@ var
         entry.request.method := HttpVerbPUT;
         entry.Tags['opdesc'] := 'Updated by '+FConnection.ColStringByName['Name']+' at '+entry.response.lastModified.ToString+ '(UTC)';
       end
+      else if FConnection.ColIntegerByName['Status'] = 2 then
+      begin
+        entry.request.url := AppendForwardSlash(base)+type_+'/'+sId;
+        entry.request.method := HttpVerbDELETE;
+        entry.Tags['opdesc'] := 'Deleted by '+FConnection.ColStringByName['Name']+' at '+entry.response.lastModified.ToString+ '(UTC)';
+      end
       else
       begin
         entry.request.method := HttpVerbPOST;
@@ -922,18 +929,8 @@ begin
   begin
     entry := TFHIRBundleEntry.Create;
     try
-      entry.fullUrl := AppendForwardSlash(base)+type_+'/'+sId;
-      entry.request := TFhirBundleEntryRequest.Create;
-      entry.request.url := entry.fullUrl;
-      entry.request.method := HttpVerbDELETE;
-      entry.response := TFhirBundleEntryResponse.Create;
-      entry.response.lastModified := TDateTimeEx.fromTS(FConnection.ColTimeStampByName['StatedDate'], dttzUTC);
-      entry.response.etag := 'W/'+FConnection.ColStringByName['VersionId'];
-      entry.Tags['opdesc'] := 'Deleted by '+FConnection.ColStringByName['Name']+' at '+entry.response.lastModified.toString+ '(UTC)';
-      sAud := FConnection.ColStringByName['AuditId'];
-      if sAud <> '' then
-        entry.link_List.AddRelRef('audit', 'AuditEvent/'+sAud);
       addRequest(entry);
+      entry.fullUrl := AppendForwardSlash(base)+type_+'/'+sId;
       bundle.addEntry(entry.Link, first);
     finally
       entry.Free;
@@ -2485,6 +2482,8 @@ begin
           CreateIndexer;
           FIndexer.execute(resourceKey, request.id, request.resource, tags);
           FRepository.SeeResource(resourceKey, key, versionKey, request.id, needSecure, false, request.Resource, FConnection, false, request.Session);
+          if ((request.ResourceEnum = frtAuditEvent) and request.Resource.hasTag('verkey')) then
+            FConnection.ExecSQL('update Versions set AuditKey = '+inttostr(resourceKey)+' where ResourceVersionKey = '+request.Resource.Tags['verkey']);
 
           if (response.Resource <> nil) and (response.Resource is TFhirBundle)  then
             response.bundle.entryList.add(request.Resource.Link)
@@ -2502,7 +2501,8 @@ begin
         tags.free;
       end;
     end;
-    AuditRest(request.session, request.internalRequestId, request.externalRequestId, request.ip, request.ResourceName, request.id, inttostr(nvid), key, request.CommandType, request.Provenance, response.httpCode, '', response.message);
+    if request.ResourceEnum <> frtAuditEvent then // else you never stop
+      AuditRest(request.session, request.internalRequestId, request.externalRequestId, request.ip, request.ResourceName, request.id, inttostr(nvid), key, request.CommandType, request.Provenance, response.httpCode, '', response.message);
   except
     on e: exception do
     begin
@@ -5088,8 +5088,18 @@ begin
   try
     if verkey <> 0 then
       se.Tags['verkey'] := inttostr(verkey);
-// todo:   if reqid <> '' then
-//      se.addExtension('http://healthintersections.com.au/fhir/StructureDefinition/request-id', reqid);
+    if intreqid = '' then
+      raise Exception.Create('Unidentified request');
+    se.id := intreqid;
+
+    {$IFNDEF FHIR2}
+    if extreqid <> '' then
+      with se.entityList.Append do
+      begin
+        type_ := TFhirCoding.Create('', 'X-Request-Id');
+        identifier := TFhirIdentifier.Create(extreqid);
+      end;
+    {$ENDIF}
 
     se.event := TFhirAuditEventEvent.create;
     case op of
@@ -5212,9 +5222,9 @@ begin
       for i := 0 to list.count - 1 do
       begin
         request.ResourceName := list[i].FhirType;
-        request.CommandType := fcmdCreate;
         request.Resource := list[i].link;
-
+        request.CommandType := fcmdCreate;
+        request.internalRequestId := TFHIRServerContext(FServerContext).nextRequestId;
         if (list[i] is TFHIRBundle) and (list[i].Tags['process'] = 'true') then
         begin
           request.CommandType := fcmdTransaction;
@@ -9104,6 +9114,42 @@ begin
 end;
 
 
+procedure TFHIRNativeStorageService.fetchClients(list: TAdvList<TRegisteredClientInformation>);
+var
+  client : TRegisteredClientInformation;
+begin
+  FDB.connection('clients',
+    procedure (conn : TKDBConnection)
+    begin
+      conn.SQL := 'select SoftwareId, SoftwareVersion, Uri, LogoUri, Name, Mode, Secret, PatientContext, JwksUri, Issuer, SoftwareStatement, PublicKey, Scopes, Redirects from ClientRegistrations';
+      conn.Prepare;
+      conn.Execute;
+      while conn.FetchNext do
+      begin
+        client := TRegisteredClientInformation.Create;
+        try
+          client.name := conn.ColStringByName['Name'];
+          client.jwt := ''; // conn.ColBlobByName['SoftwareStatement'];
+          client.mode := TRegisteredClientMode(conn.ColIntegerByName['Mode']);
+          client.secret := conn.ColStringByName['Secret'];
+          client.redirects.Text := conn.ColBlobAsStringByName['Redirects'];
+          client.publicKey := conn.ColBlobAsStringByName['PublicKey'];
+          client.issuer := conn.ColStringByName['Issuer'];
+          client.url := conn.ColStringByName['Uri'];
+          client.logo := conn.ColStringByName['LogoUri'];
+          client.softwareId := conn.ColStringByName['SoftwareId'];
+          client.softwareVersion := conn.ColStringByName['SoftwareVersion'];
+          client.patientContext := conn.ColIntegerByName['PatientContext'] = 1;
+          list.Add(client.link);
+        finally
+          client.Free;
+        end;
+      end;
+      conn.Terminate;
+    end
+  );
+end;
+
 procedure TFHIRNativeStorageService.fetchExpiredTasks(tasks: TAdvList<TAsyncTaskInformation>);
 begin
   DB.connection('async',
@@ -10066,8 +10112,8 @@ begin
     result := 'c.'+inttostr(key);
     conn.sql := 'Insert into ClientRegistrations '+
        '(ClientKey, DateRegistered, SessionRegistered, SoftwareId, SoftwareVersion, Uri, LogoUri, Name, Mode, Secret, '+
-         'JwksUri, Issuer, SoftwareStatement, PublicKey, Scopes, Redirects) values '+
-       '(:k, '+DBGetDate(FDB.Platform)+', :sk, :si, :sv, :u, :lu, :n, :m, :s, :j, :i, :ss, :pk, :sc, :r)';
+         'JwksUri, PatientContext, Issuer, SoftwareStatement, PublicKey, Scopes, Redirects) values '+
+       '(:k, '+DBGetDate(FDB.Platform)+', :sk, :si, :sv, :u, :lu, :n, :m, :s, :j, :pc, :i, :ss, :pk, :sc, :r)';
     conn.Prepare;
     conn.BindInteger('k', key);
     if sessionKey <> 0 then
@@ -10087,6 +10133,7 @@ begin
     conn.BindBlobFromString('pk', client.publicKey);
     conn.BindNull('sc');
     conn.BindBlobFromString('r', client.redirects.CommaText);
+    conn.BindIntegerFromBoolean('pc', client.patientContext);
     conn.execute;
     conn.Terminate;
     conn.Release;
@@ -10682,7 +10729,7 @@ begin
     FDB.connection('clients',
       procedure (conn : TKDBConnection)
       begin
-        conn.SQL := 'select SoftwareId, SoftwareVersion, Uri, LogoUri, Name, Mode, Secret, JwksUri, Issuer, SoftwareStatement, PublicKey, Scopes, Redirects from ClientRegistrations where ClientKey = '+inttostr(strToIntDef(id.Substring(2), 0));
+        conn.SQL := 'select SoftwareId, SoftwareVersion, Uri, LogoUri, Name, Mode, Secret, PatientContext, JwksUri, Issuer, SoftwareStatement, PublicKey, Scopes, Redirects from ClientRegistrations where ClientKey = '+inttostr(strToIntDef(id.Substring(2), 0));
         conn.Prepare;
         conn.Execute;
         if not conn.FetchNext then
@@ -10698,6 +10745,7 @@ begin
         client.logo := conn.ColStringByName['LogoUri'];
         client.softwareId := conn.ColStringByName['SoftwareId'];
         client.softwareVersion := conn.ColStringByName['SoftwareVersion'];
+        client.patientContext := conn.ColIntegerByName['PatientContext'] = 1;
         conn.Terminate;
       end
     );

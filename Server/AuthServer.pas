@@ -914,6 +914,7 @@ begin
             raise Exception.Create('Unable to recognise client mode');
           resp.str['client_id'] := ServerContext.Storage.storeClient(client, 0 {session.Key});
           resp.str['client_id_issued_at'] := IntToStr(DateTimeToUnix(now));
+          client.patientContext := json.bool['fhir_patient_context'];
           response.ContentText := TJSONWriter.writeObjectStr(resp);
           response.ResponseNo := 200;
           response.ResponseText := 'OK';

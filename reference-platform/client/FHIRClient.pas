@@ -1152,8 +1152,30 @@ end;
 
 
 function TFhirHTTPClient.cdshook(id: String; request: TCDSHookRequest): TCDSHookResponse;
+var
+  b : TBytes;
+  req, resp : TStream;
+  json : TJsonObject;
 begin
-  result := nil;
+  b := TEncoding.UTF8.GetBytes(request.AsJson);
+  req := TMemoryStream.Create;
+  try
+    req.Write(b[0], length(b));
+    req.Position := 0;
+    resp := exchange(UrlPath([FURL, 'cds-services', id]), post, req, 'application/json');
+    try
+      json := TJSONParser.Parse(resp);
+      try
+        result := TCDSHookResponse.Create(json);
+      finally
+        json.Free;
+      end;
+    finally
+      resp.free;
+    end;
+  finally
+    req.Free;
+  end;
 end;
 
 { TFhirClient }

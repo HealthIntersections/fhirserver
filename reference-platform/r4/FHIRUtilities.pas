@@ -153,6 +153,7 @@ function bytesToResource(bytes : TBytes; var format : TFHIRFormat) : TFhirResour
 procedure resourceToFile(res : TFhirResource; name : String; format : TFHIRFormat);
 procedure resourceToStream(res : TFhirResource; stream : TStream; format : TFHIRFormat; pretty : boolean = true);
 function resourceToString(res : TFhirResource; format : TFHIRFormat) : String;
+function resourceToBytes(res : TFhirResource; format : TFHIRFormat) : TBytes;
 
 function parseParamsFromForm(stream : TStream) : TFHIRParameters;
 
@@ -218,8 +219,12 @@ type
     function GetEditString: String;
     procedure SetEditString(const Value: String);
   public
+    constructor Create(system, value : String); overload;
+    constructor Create(value : String); overload;
     class function fromEdit(s : String) : TFhirIdentifier;
     property editString : String read GetEditString write SetEditString;
+    function isType(code : String) : boolean; overload;
+    function isType(system, code : String) : boolean; overload;
   end;
 
   TFhirIdentifierListHelper = class helper for TFhirIdentifierList
@@ -677,6 +682,12 @@ function compareValues(e1, e2 : TFHIRObjectList; allowNull : boolean) : boolean;
 function compareValues(e1, e2 : TFHIRPrimitiveType; allowNull : boolean) : boolean; overload;
 function compareValues(e1, e2 : TFHIRXhtmlNode; allowNull : boolean) : boolean; overload;
 function hasProp(props : TList<String>; name : String; def : boolean) : boolean;
+
+type
+  TResourceIteratorProcedure = reference to procedure (node : TFHIRObject);
+
+procedure iterateResource(resource : TFHIRResource; proc : TResourceIteratorProcedure);
+procedure iterateObject(obj : TFHIRObject; proc : TResourceIteratorProcedure);
 
 implementation
 
@@ -5278,6 +5289,20 @@ begin
   end;
 end;
 
+function resourceToBytes(res : TFhirResource; format : TFHIRFormat) : TBytes;
+var
+  f : TBytesStream;
+begin
+  f := TBytesStream.Create();
+  try
+    resourceToStream(res, f, format);
+    result := f.Bytes;
+  finally
+    f.Free;
+  end;
+end;
+
+
 procedure resourceToFile(res : TFhirResource; name : String; format : TFHIRFormat);
 var
   f : TFileStream;
@@ -5626,6 +5651,19 @@ end;
 
 { TFhirIdentifierHelper }
 
+constructor TFhirIdentifierHelper.Create(system, value: String);
+begin
+  Create;
+  FValue := TFhirString.Create(value);
+  FSystem := TFhirUri.Create(system);
+end;
+
+constructor TFhirIdentifierHelper.Create(value: String);
+begin
+  Create;
+  FValue := TFhirString.Create(value);
+end;
+
 class function TFhirIdentifierHelper.fromEdit(s: String): TFhirIdentifier;
 begin
   result := TFhirIdentifier.Create;
@@ -5640,6 +5678,27 @@ end;
 function TFhirIdentifierHelper.GetEditString: String;
 begin
   result := system+'|'+value;
+end;
+
+function TFhirIdentifierHelper.isType(code: String): boolean;
+begin
+  if StringArrayExistsSensitive(['DL', 'PPN', 'BRN', 'MR', 'MCN', 'EN', 'TAX', 'NIIP', 'PRN', 'MD', 'DR', 'ACSN'], code) then
+    result := isType('http://hl7.org/fhir/v2/0203', code)
+  else if StringArrayExistsSensitive(['UDI', 'SNO', 'SB', 'PLAC', 'FILL'], code) then
+    result := isType('http://hl7.org/fhir/identifier-type', code)
+  else
+    result := false;
+end;
+
+function TFhirIdentifierHelper.isType(system, code: String): boolean;
+var
+  c : TFhirCoding;
+begin
+  result := false;
+  if type_ <> nil then
+    for c in type_.codingList do
+      if (c.system = system) and (c.code = code) then
+        exit(true);
 end;
 
 procedure TFhirIdentifierHelper.SetEditString(const Value: String);
@@ -5691,6 +5750,31 @@ begin
     end_ := TDateTimeEx.fromXML(c.Trim)
   else
     end_ := TDateTimeEx.makeNull;
+end;
+
+procedure iterateResource(resource : TFHIRResource; proc : TResourceIteratorProcedure);
+begin
+  iterateObject(resource, proc);
+end;
+
+procedure iterateObject(obj : TFHIRObject; proc : TResourceIteratorProcedure);
+var
+  child : TFHIRObject;
+  pl : TFHIRPropertyList;
+  p : TFHIRProperty;
+begin
+  proc(obj);
+  if not obj.isPrimitive then
+  begin
+    pl := obj.createPropertyList(true);
+    try
+      for p in pl do
+        for child in p.Values do
+          iterateObject(child, proc);
+    finally
+      pl.Free;
+    end;
+  end;
 end;
 
 end.

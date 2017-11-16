@@ -162,7 +162,7 @@ type
 
     function addCdsHook(name : String; hook : String) : TRegisteredCDSHook;
     function cdshookSummary : String;
-    function doesHook(c : string) : boolean;
+    function doesHook(c : string; var hook : TRegisteredCDSHook) : boolean;
 
     // user casual name for the server
     property name : String read Fname write Fname;
@@ -499,14 +499,17 @@ begin
   inherited;
 end;
 
-function TRegisteredFHIRServer.doesHook(c: string): boolean;
+function TRegisteredFHIRServer.doesHook(c: string; var hook : TRegisteredCDSHook): boolean;
 var
   h : TRegisteredCDSHook;
 begin
   result := false;
   for h in cdshooks do
     if (c = h.hook) then
+    begin
+      hook := h;
       exit(true);
+    end;
 end;
 
 function TRegisteredFHIRServer.Link: TRegisteredFHIRServer;

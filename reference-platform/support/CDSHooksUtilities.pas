@@ -472,7 +472,7 @@ begin
       writer.Value('user', Fuser);
       writer.Value('patient', Fpatient);
       writer.Value('encounter', Fencounter);
-      writer.ValueArray('oauth');
+      writer.ValueArray('context');
       for c in context do
       begin
         comp := TFHIRJsonComposer.create(nil, 'en');
@@ -482,6 +482,7 @@ begin
           comp.Free;
         end;
       end;
+      writer.finishArray;
       if preFetch.Count > 0 then
       begin
         writer.ValueObject('prefetch');
@@ -508,6 +509,7 @@ begin
           end;
           writer.FinishObject;
         end;
+        writer.FinishObject;
       end;
       writer.Finish;
     finally
