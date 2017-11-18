@@ -533,7 +533,8 @@ begin
       first := true;
       for s in st do
       begin
-        logt('Load file '+s);
+        inc(i);
+        logt('Load file '+inttostr(i)+' of '+inttostr(st.count)+':'+s);
         cb(0, 'Load from '+s);
         src := locate(s, fn, first);
         f := TFileStream.Create(src, fmOpenRead + fmShareDenyWrite);
