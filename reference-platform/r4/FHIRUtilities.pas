@@ -650,6 +650,7 @@ type
   end;
 
 function Path(const parts : array of String) : String;
+function UrlPath(const parts : array of String) : String;
 
 
 function ZCompressBytes(const s: TBytes): TBytes;
@@ -3283,6 +3284,30 @@ begin
     result := parts[0];
   for i := 1 to high(parts) do
     result := IncludeTrailingPathDelimiter(result) + parts[i];
+end;
+
+function IsSlash(const S: string; Index: Integer): Boolean;
+begin
+  Result := (Index >= Low(string)) and (Index <= High(S)) and (S[Index] = '/') and (ByteType(S, Index) = mbSingleByte);
+end;
+
+function IncludeTrailingSlash(const S: string): string;
+begin
+  Result := S;
+  if not IsSlash(Result, High(Result)) then
+    Result := Result + PathDelim;
+end;
+
+function UrlPath(const parts : array of String) : String;
+var
+  i : integer;
+begin
+  if length(parts) = 0 then
+    result := ''
+  else
+    result := parts[0];
+  for i := 1 to high(parts) do
+    result := IncludeTrailingSlash(result) + parts[i];
 end;
 
 

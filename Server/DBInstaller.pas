@@ -341,7 +341,7 @@ begin
        InlineForeignKeySql(FConn, 'ClientRegistrations', 'SessionRegistered', 'Sessions', 'SessionKey', 'FK_ClientRegistrations_SessionKey')+
        PrimaryKeyType(FConn.owner.Platform, 'PK_ClientRegistrations', 'ClientKey')+') '+CreateTableInfo(FConn.owner.platform));
   FConn.ExecSQL(ForeignKeySql(FConn, 'ClientRegistrations', 'SessionRegistered', 'Sessions', 'SessionKey', 'FK_ClientRegistrations_SessionKey'));
-  FConn.ExecSQL('Insert into ClientRegistrations (ClientKey, DateRegistered, Name, Mode) values (1, '+DBGetDate(FConn.Owner.Platform)+', ''Web Interface'', 0)');
+  FConn.ExecSQL('Insert into ClientRegistrations (ClientKey, DateRegistered, Name, Mode, PatientContext) values (1, '+DBGetDate(FConn.Owner.Platform)+', ''Web Interface'', 0, 0)');
 end;
 
 procedure TFHIRDatabaseInstaller.CreatePseudoData;

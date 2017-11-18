@@ -3,11 +3,19 @@
 	<channel>
 		<title>FHIRServer (reference server) Release history</title>
 		<link>http://www.healthintersections.com.au/FhirServer</link>
+		<item><title>FHIRServer release 1.0.194 2017-11-17</title>
+			<link>http://www.healthintersections.com.au/FhirServer/fhirserver64-1.0.194.exe</link>
+			<description>2017-11-17 (v1.0.194): fix bug in $everything</description>
+		</item>
+<item><title>FHIRServer release 1.0.193 2017-11-16</title>
+			<link>http://www.healthintersections.com.au/FhirServer/fhirserver64-1.0.193.exe</link>
+			<description>2017-11-16 (v1.0.193): fix bugs in cds-hooks implementation</description>
+		</item>
 		<item><title>FHIRServer release 1.0.192 2017-11-10</title>
 			<link>http://www.healthintersections.com.au/FhirServer/fhirserver64-1.0.192.exe</link>
 			<description>2017-11-10 (v1.0.192): fix bug in coverage form</description>
 		</item>
-<item><title>FHIRServer release 1.0.191 2017-11-08</title>
+		<item><title>FHIRServer release 1.0.191 2017-11-08</title>
 			<link>http://www.healthintersections.com.au/FhirServer/fhirserver64-1.0.191.exe</link>
 			<description>2017-11-08 (v1.0.191): fix bug in registering clients</description>
 		</item>

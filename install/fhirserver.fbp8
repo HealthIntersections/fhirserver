@@ -64,7 +64,7 @@ begin
         as.defaultvalue = %purpose%
         as.xpos = -1
         as.ypos = -1
-        as.returnvalue = "fix bug where server audits the audit trail in a never ending loop"
+        as.returnvalue = "fix bug in $everything"
         as.returnvariable = purpose
       end
       action.variables.savetoini

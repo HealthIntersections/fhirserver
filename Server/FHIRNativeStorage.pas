@@ -1966,7 +1966,7 @@ begin
     sp.Connection := FConnection.link;
 
     sp.build;
-    sql := 'Insert into SearchEntries Select '+key+', ResourceKey, MostRecent as ResourceVersionKey, '+sp.sort+', null, null from Ids where Deleted = 0 and '+sp.filter+' order by ResourceKey DESC';
+    sql := 'Insert into SearchEntries Select '+key+', ResourceKey, MostRecent as ResourceVersionKey, '+sp.sort+', null, null from Ids where Deleted = 0 and MostRecent is not null and '+sp.filter+' order by ResourceKey DESC';
     csql := 'Select count(ResourceKey) from Ids where Deleted = 0 and '+sp.filter;
     link := SEARCH_PARAM_NAME_ID+'='+id+'&'+sp.link_;
     reverse := sp.reverse;
@@ -3506,7 +3506,9 @@ begin
   try
     id.ResType := aType;
 
-    if (entry.resource <> nil) then
+    if (entry.fullUrl <> '') then
+      id.Name := entry.fullUrl
+    else if (entry.resource <> nil) then
       id.Name := fullResourceUri(request.baseUrl, entry.resource.ResourceType, entry.resource.id)
     else if entry.request <> nil then
       id.Name := fullResourceUri(request.baseUrl, entry.request.url)
@@ -6895,12 +6897,16 @@ var
   needsObject : boolean;
   sId, type_ : String;
   first : boolean;
+  conn : TKDBConnection;
 begin
   try
     // first, we have to convert from the patient id to a compartment id
     if (id = '') or manager.FindResource(resourceName, request.Id, [], rkey, versionKey, request, response, nil) then
     begin
-      request.compartment := TFHIRCompartmentId.Create(request.ResourceEnum, request.Id);
+      if id = '' then
+        request.compartment := TFHIRCompartmentId.Create(request.ResourceEnum, '*')
+      else
+        request.compartment := TFHIRCompartmentId.Create(request.ResourceEnum, request.Id);
       response.OnCreateBuilder(response, BundleTypeCollection, bundle);
       includes := TReferenceList.create;
       keys := TKeyList.Create;
@@ -6916,16 +6922,17 @@ begin
         if (not needsObject) then
           prsr := nil;
 
-        native(manager).FConnection.SQL := 'Select Ids.ResourceKey, Types.ResourceName, Ids.Id, VersionId, Secure, StatedDate, Name, Versions.Status, Tags, '+field+' from Versions, Ids, Sessions, SearchEntries, Types '+
+        conn := native(manager).FConnection;
+        conn.SQL := 'Select Ids.ResourceKey, Types.ResourceName, Ids.Id, VersionId, Secure, StatedDate, Name, Versions.Status, Tags, '+field+' from Versions, Ids, Sessions, SearchEntries, Types '+
             'where Ids.Deleted = 0 and SearchEntries.ResourceVersionKey = Versions.ResourceVersionKey and Versions.SessionKey = Sessions.SessionKey '+'and SearchEntries.ResourceKey = Ids.ResourceKey and Types.ResourceTypeKey = Ids.ResourceTypeKey and SearchEntries.SearchKey = '+id+' '+
             'order by SortValue ASC';
-        native(manager).FConnection.Prepare;
+        conn.Prepare;
         try
-          native(manager).FConnection.Execute;
-          while native(manager).FConnection.FetchNext do
+          conn.Execute;
+          while conn.FetchNext do
           Begin
-            sId := native(manager).FConnection.ColStringByName['Id'];
-            type_ := native(manager).FConnection.colStringByName['ResourceName'];
+            sId := conn.ColStringByName['Id'];
+            type_ := conn.colStringByName['ResourceName'];
             first := isPrimaryResource(request, type_, sId);
 
             native(manager).AddResourceTobundle(bundle, request.secure, request.baseUrl, field, prsr, SearchEntryModeNull, false, type_, first);
@@ -6935,7 +6942,7 @@ begin
               native(manager).CollectIncludes(request.session, includes, entry.resource, request.Parameters.GetVar('_include'));
           End;
         finally
-          native(manager).FConnection.Terminate;
+          conn.Terminate;
         end;
 
         // process reverse includes

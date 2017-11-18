@@ -3218,7 +3218,7 @@ begin
           atsComplete:
             begin
             // check format
-            if (fmt <> response.Format) then
+            if (fmt <> response.Format) and (response.Format <> ffXhtml) then
               raise Exception.Create('Error: the request format ('+CODES_TFHIRFormat[response.Format]+') does not match the task format ('+CODES_TFHIRFormat[fmt]+')');
             response.HTTPCode := 200;
             response.Message := 'OK';

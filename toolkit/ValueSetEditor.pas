@@ -612,11 +612,15 @@ end;
 
 procedure TValueSetEditorFrame.btnMemoCopyrightClick(Sender: TObject);
 begin
+  if ValueSet.copyrightElement = nil then
+    ValueSet.copyrightElement := TFhirMarkdown.Create;
   editMarkdownDialog(self, 'ValueSet Copyright', btnMemoCopyright, edtCopyright, ValueSet, ValueSet.copyrightElement);
 end;
 
 procedure TValueSetEditorFrame.btnMemoForDescClick(Sender: TObject);
 begin
+  if ValueSet.descriptionElement = nil then
+    ValueSet.descriptionElement := TFhirMarkdown.Create;
   editMarkdownDialog(self, 'ValueSet Description', btnMemoForDesc, edtDescription, ValueSet, ValueSet.descriptionElement);
 end;
 
@@ -660,6 +664,8 @@ end;
 
 procedure TValueSetEditorFrame.btnMemoPurposeClick(Sender: TObject);
 begin
+  if ValueSet.purposeElement = nil then
+    ValueSet.purposeElement := TFhirMarkdown.Create;
   editMarkdownDialog(self, 'ValueSet Purpose', btnMemoPurpose, edtPurpose, ValueSet, ValueSet.purposeElement);
 end;
 

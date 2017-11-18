@@ -33,10 +33,10 @@ uses
   System.SysUtils, System.Types, System.UITypes, System.Classes, System.Variants,
   FMX.Types, FMX.Controls, FMX.Forms, FMX.Graphics, FMX.Dialogs, System.Rtti,
   FMX.Grid.Style, FMX.Grid, FMX.ScrollBox, FMX.StdCtrls, FMX.DateTimeCtrls,
-  FMX.Edit, FMX.Controls.Presentation, FMX.ListBox,
+  FMX.Edit, FMX.Controls.Presentation, FMX.ListBox, FMX.Platform,
   CSVSupport,
   FHIRBase, FHIRResources, FHIRUtilities, FHIRClient,
-  SettingsDialog,
+  SettingsDialog, BaseFrame, ProcessForm,
   ToolkitSettings;
 
 type
@@ -84,9 +84,13 @@ type
     FExpansion : TFHIRValueSet;
     FSettings : TFHIRToolkitSettings;
     FClient : TFhirClient;
+    FIsStopped : boolean;
     procedure SetValueSet(const Value: TFHIRValueSet);
     procedure SetExpansion(const Value: TFHIRValueSet);
     procedure SetSettings(const Value: TFHIRToolkitSettings);
+    procedure dowork(Sender : TObject; opName : String; canCancel : boolean; proc : TWorkProc);
+    function GetStopped: boolean;
+    procedure btnStopClick(Sender: TObject);
   public
     destructor Destroy; override;
     property ValueSet : TFHIRValueSet read FValueSet write SetValueSet;
@@ -163,6 +167,11 @@ begin
   end;
 end;
 
+procedure TValuesetExpansionForm.btnStopClick(Sender: TObject);
+begin
+  FIsStopped := true;
+end;
+
 destructor TValuesetExpansionForm.Destroy;
 begin
   FSettings.Free;
@@ -170,6 +179,40 @@ begin
   FValueSet.Free;
   FClient.Free;
   inherited;
+end;
+
+procedure TValuesetExpansionForm.dowork(Sender: TObject; opName: String; canCancel: boolean; proc: TWorkProc);
+var
+  fcs : IFMXCursorService;
+  form : TProcessingForm;
+begin
+  if TPlatformServices.Current.SupportsPlatformService(IFMXCursorService) then
+    fcs := TPlatformServices.Current.GetPlatformService(IFMXCursorService) as IFMXCursorService
+  else
+    fcs := nil;
+  if Assigned(fcs) then
+  begin
+    Cursor := fcs.GetCursor;
+    fcs.SetCursor(crHourGlass);
+  end;
+  try
+    FIsStopped := false;
+    if assigned(sender) and (sender is TBaseFrame) then
+      TBaseFrame(sender).OnStopped := GetStopped;
+    form := TProcessingForm.Create(self);
+    try
+      form.lblOperation.text := opName;
+      form.Button1.enabled := canCancel;
+      form.Button1.OnClick := btnStopClick;
+      form.proc := proc;
+      form.ShowModal;
+    finally
+      form.Free;
+    end;
+  finally
+    if Assigned(fCS) then
+      fcs.setCursor(Cursor);
+  end;
 end;
 
 procedure TValuesetExpansionForm.FormClose(Sender: TObject; var Action: TCloseAction);
@@ -233,6 +276,11 @@ begin
   StringColumn13.Width := FSettings.getValue('Expansion', 'width-col-1', trunc(StringColumn13.Width));
 end;
 
+function TValuesetExpansionForm.GetStopped: boolean;
+begin
+
+end;
+
 procedure TValuesetExpansionForm.GoClick(Sender: TObject);
 var
   params :  TFHIRParameters;
@@ -246,7 +294,7 @@ begin
   if FClient = nil then
     FClient := TFhirThreadedClient.Create(TFhirHTTPClient.Create(nil, FSettings.serverAddress('Terminology', cbxServer.itemIndex), false, FSettings.timeout * 1000, FSettings.proxy), MasterToolsForm.threadMonitorProc);
 
-  MasterToolsForm.dowork(self, 'Expanding', true,
+  dowork(self, 'Expanding', true,
     procedure
     var
       params :  TFHIRParameters;

@@ -247,7 +247,10 @@ var
 begin
   result := '';
   if (compartment <> nil) then
-    result := ' and Ids.ResourceKey in (select ResourceKey from Compartments where TypeKey = '+inttostr(ResConfig[CODES_TFHIRResourceType[compartment.Enum]].key)+' and Id = '''+compartment.Id+''')';
+    if compartment.Id = '*' then
+      result := ' and Ids.ResourceKey in (select ResourceKey from Compartments where TypeKey = '+inttostr(ResConfig[CODES_TFHIRResourceType[compartment.Enum]].key)+' and Id is not null)'
+    else
+      result := ' and Ids.ResourceKey in (select ResourceKey from Compartments where TypeKey = '+inttostr(ResConfig[CODES_TFHIRResourceType[compartment.Enum]].key)+' and Id = '''+compartment.Id+''')';
 
   if (sessionCompartments <> nil) and (sessionCompartments.Count > 0) then
   begin

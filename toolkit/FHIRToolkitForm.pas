@@ -250,35 +250,39 @@ begin
         exit;
       client := TFhirThreadedClient.create(http.link, threadMonitorProc);
       try
+        cs := nil;
         doWork(nil, 'Connect', true,
           procedure
           begin
             cs := client.conformance(false);
           end);
         try
-          tab := tbMain.Add(TTabItem);
-          tab.Text := server.name;
-          tbMain.ActiveTab := tab;
-          serverForm := TServerFrame.create(tab);
-          serverForm.Parent := tab;
-          tab.TagObject := serverForm;
-          serverForm.OnWork := dowork;
-          serverForm.TagObject := tab;
-          serverForm.tabs := tbMain;
-          serverForm.Settings := FSettings.Link;
-          serverForm.Tab := tab;
-          serverForm.Align := TAlignLayout.Client;
-          serverForm.Client := client.link;
-          serverForm.CapabilityStatement := cs.link;
-          serverForm.OnOpenResource := OpenResourcefromClient;
-          serverForm.OnWork :=  dowork;
-          serverForm.load;
-
-          if lbServers.ItemIndex > 0 then
+          if (cs <> nil) then
           begin
-            lbServers.Items.Exchange(0, lbServers.ItemIndex);
-            FSettings.moveServer('', lbServers.ItemIndex, -lbServers.ItemIndex);
-            lbServers.ItemIndex := 0;
+            tab := tbMain.Add(TTabItem);
+            tab.Text := server.name;
+            tbMain.ActiveTab := tab;
+            serverForm := TServerFrame.create(tab);
+            serverForm.Parent := tab;
+            tab.TagObject := serverForm;
+            serverForm.OnWork := dowork;
+            serverForm.TagObject := tab;
+            serverForm.tabs := tbMain;
+            serverForm.Settings := FSettings.Link;
+            serverForm.Tab := tab;
+            serverForm.Align := TAlignLayout.Client;
+            serverForm.Client := client.link;
+            serverForm.CapabilityStatement := cs.link;
+            serverForm.OnOpenResource := OpenResourcefromClient;
+            serverForm.OnWork :=  dowork;
+            serverForm.load;
+
+            if lbServers.ItemIndex > 0 then
+            begin
+              lbServers.Items.Exchange(0, lbServers.ItemIndex);
+              FSettings.moveServer('', lbServers.ItemIndex, -lbServers.ItemIndex);
+              lbServers.ItemIndex := 0;
+            end;
           end;
         finally
           cs.free;
