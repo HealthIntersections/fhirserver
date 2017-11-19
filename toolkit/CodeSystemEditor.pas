@@ -473,14 +473,14 @@ procedure TCodeSystemEditorFrame.btnMemoForDescClick(Sender: TObject);
 begin
   if CodeSystem.descriptionElement = nil then
     CodeSystem.descriptionElement := TFhirMarkdown.Create;
-  editMarkdownDialog(self, 'ValueSet Description', btnMemoForDesc, edtDescription, CodeSystem, CodeSystem.descriptionElement);
+  editMarkdownDialog(self, 'Code System Description', btnMemoForDesc, edtDescription, CodeSystem, CodeSystem.descriptionElement);
 end;
 
 procedure TCodeSystemEditorFrame.btnMemoPurposeClick(Sender: TObject);
 begin
   if CodeSystem.purposeElement = nil then
     CodeSystem.purposeElement := TFhirMarkdown.Create;
-  editMarkdownDialog(self, 'ValueSet Purpose', btnMemoPurpose, edtPurpose, CodeSystem, CodeSystem.purposeElement);
+  editMarkdownDialog(self, 'Code System Purpose', btnMemoPurpose, edtPurpose, CodeSystem, CodeSystem.purposeElement);
 end;
 
 procedure TCodeSystemEditorFrame.buildFlatGrid(list: TFhirCodeSystemConceptList);

@@ -32,14 +32,14 @@ interface
 uses
   System.SysUtils, System.Types, System.UITypes, System.Classes, System.Variants,
   FMX.Types, FMX.Graphics, FMX.Controls, FMX.Forms, FMX.Dialogs, FMX.StdCtrls,
-  FMX.TabControl, FMX.Layouts, FMX.TreeView, FMX.Controls.Presentation,
-  FMX.ScrollBox, FMX.Memo, FMX.DateTimeCtrls, FMX.ListBox, FMX.Edit, System.Rtti,
-  FMX.Grid.Style, FMX.Grid, FMX.Menus,
+  FMX.TabControl, FMX.Layouts, FMX.TreeView, FMX.Controls.Presentation, System.ImageList,
+  FMX.ImgList, FMX.ScrollBox, FMX.Memo, FMX.DateTimeCtrls, FMX.ListBox, FMX.Edit,
+  System.Rtti, FMX.Grid.Style, FMX.Grid, FMX.Menus,
   BaseResourceFrame,
   DateSupport, StringSupport,
   AdvGenerics,
   FHIRBase, FHIRConstants, FHIRTypes, FHIRResources, FHIRUtilities, FHIRIndexBase, FHIRIndexInformation, FHIRSupport,
-  SearchParameterEditor, ListSelector, AddRestResourceDialog, AddRestOperationDialog;
+  SearchParameterEditor, ListSelector, AddRestResourceDialog, AddRestOperationDialog, TranslationsEditorDialog, MemoEditorDialog;
 
 type
   TFrame = TBaseResourceFrame; // re-aliasing the Frame to work around a designer bug
@@ -164,6 +164,28 @@ type
     VertScrollBox3: TVertScrollBox;
     btnAddOperations: TButton;
     btnRemoveOperations: TButton;
+    ToolbarImages: TImageList;
+    btnDoco: TButton;
+    btnSecurity: TButton;
+    btnPublisher: TButton;
+    btnDescription: TButton;
+    btnPurpose: TButton;
+    btnCopyright: TButton;
+    btnDocoRes: TButton;
+    btnDocoRead: TButton;
+    btnDocoVRead: TButton;
+    btnDocoSearch: TButton;
+    btnDocoCreate: TButton;
+    btnDocoUpdate: TButton;
+    btnDocoPatch: TButton;
+    btnDocoDelete: TButton;
+    btnDocoHistoryInstance: TButton;
+    btnDocoHistoryType: TButton;
+    btnTitle: TButton;
+    btnTransaction: TButton;
+    btnBatch: TButton;
+    btnSystemSearch: TButton;
+    btnSystemHistory: TButton;
     procedure tvStructureClick(Sender: TObject);
     procedure btnCancelClick(Sender: TObject);
     procedure inputChanged(Sender: TObject);
@@ -180,6 +202,27 @@ type
     procedure gridSearchSetValue(Sender: TObject; const ACol, ARow: Integer; const Value: TValue);
     procedure btnAddOperationsClick(Sender: TObject);
     procedure btnRemoveOperationsClick(Sender: TObject);
+    procedure btnPublisherClick(Sender: TObject);
+    procedure btnTitleClick(Sender: TObject);
+    procedure btnDescriptionClick(Sender: TObject);
+    procedure btnPurposeClick(Sender: TObject);
+    procedure btnCopyrightClick(Sender: TObject);
+    procedure btnDocoClick(Sender: TObject);
+    procedure btnSecurityClick(Sender: TObject);
+    procedure btnTransactionClick(Sender: TObject);
+    procedure btnBatchClick(Sender: TObject);
+    procedure btnSystemSearchClick(Sender: TObject);
+    procedure btnSystemHistoryClick(Sender: TObject);
+    procedure btnDocoResClick(Sender: TObject);
+    procedure btnDocoReadClick(Sender: TObject);
+    procedure btnDocoVReadClick(Sender: TObject);
+    procedure btnDocoSearchClick(Sender: TObject);
+    procedure btnDocoCreateClick(Sender: TObject);
+    procedure btnDocoUpdateClick(Sender: TObject);
+    procedure btnDocoPatchClick(Sender: TObject);
+    procedure btnDocoDeleteClick(Sender: TObject);
+    procedure btnDocoHistoryInstanceClick(Sender: TObject);
+    procedure btnDocoHistoryTypeClick(Sender: TObject);
   private
     function GetCapabilityStatement: TFHIRCapabilityStatement;
     function readJurisdiction : Integer;
@@ -411,9 +454,29 @@ begin
   ResourceIsDirty := true;
 end;
 
+procedure TCapabilityStatementEditorFrame.btnBatchClick(Sender: TObject);
+var
+  ri : TFhirCapabilityStatementRestInteraction;
+begin
+  ri := edtTransaction.TagObject as TFhirCapabilityStatementRestInteraction;
+  if ri <> nil then
+  begin
+    if ri.documentationElement = nil then
+      ri.documentationElement := TFhirString.Create;
+    editStringDialog(self, 'Batch Documentation', btnBatch, edtBatch, CapabilityStatement, ri.documentationElement);
+  end;
+end;
+
 procedure TCapabilityStatementEditorFrame.btnCancelClick(Sender: TObject);
 begin
   cancel;
+end;
+
+procedure TCapabilityStatementEditorFrame.btnCopyrightClick(Sender: TObject);
+begin
+  if CapabilityStatement.copyrightElement = nil then
+    CapabilityStatement.copyrightElement := TFhirMarkdown.Create;
+  editMarkdownDialog(self, 'Capability Statement copyright', btncopyright, edtcopyright, CapabilityStatement, CapabilityStatement.copyrightElement);
 end;
 
 procedure TCapabilityStatementEditorFrame.btnDeleteResourcesClick(Sender: TObject);
@@ -639,6 +702,220 @@ begin
   end;
 end;
 
+procedure TCapabilityStatementEditorFrame.btnSecurityClick(Sender: TObject);
+var
+  rest: TFhirCapabilityStatementRest;
+begin
+  rest := mDoco.TagObject as TFhirCapabilityStatementRest;
+  if rest.security.descriptionElement = nil then
+    rest.security.descriptionElement := TFhirMarkdown.Create;
+  editMarkdownDialog(self, 'Security Documentation', btnSecurity, mSecurity, CapabilityStatement, rest.security.descriptionElement);
+end;
+
+procedure TCapabilityStatementEditorFrame.btnSystemHistoryClick(Sender: TObject);
+var
+  ri : TFhirCapabilityStatementRestInteraction;
+begin
+  ri := edtTransaction.TagObject as TFhirCapabilityStatementRestInteraction;
+  if ri <> nil then
+  begin
+    if ri.documentationElement = nil then
+      ri.documentationElement := TFhirString.Create;
+    editStringDialog(self, 'System History Documentation', btnSystemHistory, edtSystemHistory, CapabilityStatement, ri.documentationElement);
+  end;
+end;
+
+procedure TCapabilityStatementEditorFrame.btnSystemSearchClick(Sender: TObject);
+var
+  ri : TFhirCapabilityStatementRestInteraction;
+begin
+  ri := edtTransaction.TagObject as TFhirCapabilityStatementRestInteraction;
+  if ri <> nil then
+  begin
+    if ri.documentationElement = nil then
+      ri.documentationElement := TFhirString.Create;
+    editStringDialog(self, 'System Search Documentation', btnSystemSearch, edtSystemSearch, CapabilityStatement, ri.documentationElement);
+  end;
+end;
+
+procedure TCapabilityStatementEditorFrame.btnTitleClick(Sender: TObject);
+begin
+  if CapabilityStatement.titleElement = nil then
+    CapabilityStatement.titleElement := TFhirString.Create;
+  editStringDialog(self, 'Capability Statement Title', btnTitle, edtTitle, CapabilityStatement, CapabilityStatement.titleElement);
+end;
+
+procedure TCapabilityStatementEditorFrame.btnTransactionClick(Sender: TObject);
+var
+  ri : TFhirCapabilityStatementRestInteraction;
+begin
+  ri := edtTransaction.TagObject as TFhirCapabilityStatementRestInteraction;
+  if ri <> nil then
+  begin
+    if ri.documentationElement = nil then
+      ri.documentationElement := TFhirString.Create;
+    editStringDialog(self, 'Transaction Documentation', btnTransaction, edtTransaction, CapabilityStatement, ri.documentationElement);
+  end;
+end;
+
+procedure TCapabilityStatementEditorFrame.btnDocoPatchClick(Sender: TObject);
+var
+  ri : TFhirCapabilityStatementRestResourceInteraction;
+begin
+  ri := edtDocoPatch.TagObject as TFhirCapabilityStatementRestResourceInteraction;
+  if ri <> nil then
+  begin
+    if ri.documentationElement = nil then
+      ri.documentationElement := TFhirString.Create;
+    editStringDialog(self, 'Patch Documentation', btnDocoPatch, edtDocoPatch, CapabilityStatement, ri.documentationElement);
+  end;
+end;
+
+procedure TCapabilityStatementEditorFrame.btnDocoReadClick(Sender: TObject);
+var
+  ri : TFhirCapabilityStatementRestResourceInteraction;
+begin
+  ri := edtDocoRead.TagObject as TFhirCapabilityStatementRestResourceInteraction;
+  if ri <> nil then
+  begin
+    if ri.documentationElement = nil then
+      ri.documentationElement := TFhirString.Create;
+    editStringDialog(self, 'Read Documentation', btnDocoRead, edtDocoRead, CapabilityStatement, ri.documentationElement);
+  end;
+end;
+
+procedure TCapabilityStatementEditorFrame.btnDocoResClick(Sender: TObject);
+var
+  res: TFhirCapabilityStatementRestResource;
+begin
+  res := mDocoRes.TagObject as TFhirCapabilityStatementRestResource;
+  if res.documentationElement = nil then
+    res.documentationElement := TFhirMarkdown.Create;
+  editMarkdownDialog(self, 'Resource Use Description', btnDocoRes, mDocoRes, CapabilityStatement, res.documentationElement);
+end;
+
+procedure TCapabilityStatementEditorFrame.btnDocoSearchClick(Sender: TObject);
+var
+  ri : TFhirCapabilityStatementRestResourceInteraction;
+begin
+  ri := edtDocoSearch.TagObject as TFhirCapabilityStatementRestResourceInteraction;
+  if ri <> nil then
+  begin
+    if ri.documentationElement = nil then
+      ri.documentationElement := TFhirString.Create;
+    editStringDialog(self, 'Search Documentation', btnDocoSearch, edtDocoSearch, CapabilityStatement, ri.documentationElement);
+  end;
+end;
+
+procedure TCapabilityStatementEditorFrame.btnDocoUpdateClick(Sender: TObject);
+var
+  ri : TFhirCapabilityStatementRestResourceInteraction;
+begin
+  ri := edtDocoUpdate.TagObject as TFhirCapabilityStatementRestResourceInteraction;
+  if ri <> nil then
+  begin
+    if ri.documentationElement = nil then
+      ri.documentationElement := TFhirString.Create;
+    editStringDialog(self, 'Update Documentation', btnDocoUpdate, edtDocoUpdate, CapabilityStatement, ri.documentationElement);
+  end;
+end;
+
+procedure TCapabilityStatementEditorFrame.btnDocoVReadClick(Sender: TObject);
+var
+  ri : TFhirCapabilityStatementRestResourceInteraction;
+begin
+  ri := edtDocoVRead.TagObject as TFhirCapabilityStatementRestResourceInteraction;
+  if ri <> nil then
+  begin
+    if ri.documentationElement = nil then
+      ri.documentationElement := TFhirString.Create;
+    editStringDialog(self, 'Version Read Documentation', btnDocoVRead, edtDocoVRead, CapabilityStatement, ri.documentationElement);
+  end;
+end;
+
+procedure TCapabilityStatementEditorFrame.btnDescriptionClick(Sender: TObject);
+begin
+  if CapabilityStatement.descriptionElement = nil then
+    CapabilityStatement.descriptionElement := TFhirMarkdown.Create;
+  editMarkdownDialog(self, 'ValueSet Description', btnDescription, edtDescription, CapabilityStatement, CapabilityStatement.descriptionElement);
+end;
+
+procedure TCapabilityStatementEditorFrame.btnDocoClick(Sender: TObject);
+var
+  rest: TFhirCapabilityStatementRest;
+begin
+  rest := mDoco.TagObject as TFhirCapabilityStatementRest;
+  if rest.documentationElement = nil then
+    rest.documentationElement := TFhirMarkdown.Create;
+  editMarkdownDialog(self, 'Capability Statement Documentation', btnDoco, mDoco, CapabilityStatement, rest.documentationElement);
+end;
+
+procedure TCapabilityStatementEditorFrame.btnDocoCreateClick(Sender: TObject);
+var
+  ri : TFhirCapabilityStatementRestResourceInteraction;
+begin
+  ri := edtDocoCreate.TagObject as TFhirCapabilityStatementRestResourceInteraction;
+  if ri <> nil then
+  begin
+    if ri.documentationElement = nil then
+      ri.documentationElement := TFhirString.Create;
+    editStringDialog(self, 'Create Documentation', btnDocoCreate, edtDocoCreate, CapabilityStatement, ri.documentationElement);
+  end;
+end;
+
+procedure TCapabilityStatementEditorFrame.btnDocoDeleteClick(Sender: TObject);
+var
+  ri : TFhirCapabilityStatementRestResourceInteraction;
+begin
+  ri := edtDocoRead.TagObject as TFhirCapabilityStatementRestResourceInteraction;
+  if ri <> nil then
+  begin
+    if ri.documentationElement = nil then
+      ri.documentationElement := TFhirString.Create;
+    editStringDialog(self, 'Delete Documentation', btnDocoDelete, edtDocoDelete, CapabilityStatement, ri.documentationElement);
+  end;
+end;
+
+procedure TCapabilityStatementEditorFrame.btnDocoHistoryInstanceClick(Sender: TObject);
+var
+  ri : TFhirCapabilityStatementRestResourceInteraction;
+begin
+  ri := edtDocoHistoryInstance.TagObject as TFhirCapabilityStatementRestResourceInteraction;
+  if ri <> nil then
+  begin
+    if ri.documentationElement = nil then
+      ri.documentationElement := TFhirString.Create;
+    editStringDialog(self, 'Instance History Documentation', btnDocoHistoryInstance, edtDocoHistoryInstance, CapabilityStatement, ri.documentationElement);
+  end;
+end;
+
+procedure TCapabilityStatementEditorFrame.btnDocoHistoryTypeClick(Sender: TObject);
+var
+  ri : TFhirCapabilityStatementRestResourceInteraction;
+begin
+  ri := edtDocoHistoryType.TagObject as TFhirCapabilityStatementRestResourceInteraction;
+  if ri <> nil then
+  begin
+    if ri.documentationElement = nil then
+      ri.documentationElement := TFhirString.Create;
+    editStringDialog(self, 'Instance History Documentation', btnDocoHistoryType, edtDocoHistoryType, CapabilityStatement, ri.documentationElement);
+  end;
+end;
+
+procedure TCapabilityStatementEditorFrame.btnPublisherClick(Sender: TObject);
+begin
+  if CapabilityStatement.publisherElement = nil then
+    CapabilityStatement.publisherElement := TFhirString.Create;
+  editStringDialog(self, 'Capability Statement Title', btnPublisher, edtPublisher, CapabilityStatement, CapabilityStatement.publisherElement);
+end;
+
+procedure TCapabilityStatementEditorFrame.btnPurposeClick(Sender: TObject);
+begin
+  if CapabilityStatement.purposeElement = nil then
+    CapabilityStatement.purposeElement := TFhirMarkdown.Create;
+  editMarkdownDialog(self, 'Capability Statement purpose', btnpurpose, edtpurpose, CapabilityStatement, CapabilityStatement.purposeElement);
+end;
+
 procedure TCapabilityStatementEditorFrame.cancel;
 begin
 end;
@@ -704,6 +981,7 @@ procedure TCapabilityStatementEditorFrame.commitResource(res: TFhirCapabilitySta
         ri.code := code;
       end;
       ri.documentation := edt.Text;
+      edt.TagObject := ri;
     end
     else if (ri <> nil) then
       res.interactionList.DeleteByReference(ri);
@@ -968,12 +1246,16 @@ procedure TCapabilityStatementEditorFrame.loadResource(res: TFhirCapabilityState
     ri := res.interaction(code);
     cb.IsChecked := ri <> nil;
     if cb.IsChecked then
+    begin
       edt.Text := ri.documentation;
+      edt.TagObject := ri;
+    end;
   end;
 var
   search : TFhirCapabilityStatementRestResourceSearchParam;
 begin
   mDocoRes.Text := res.documentation;
+  mDocoRes.TagObject := res;
   if res.profile <> nil then
     edtProfile.Text := res.profile.reference
   else
@@ -1016,7 +1298,10 @@ procedure TCapabilityStatementEditorFrame.loadRest(rest: TFhirCapabilityStatemen
     ri := rest.interaction(code);
     cb.IsChecked := ri <> nil;
     if cb.IsChecked then
+    begin
+      edt.TagObject := ri;
       edt.Text := ri.documentation;
+    end;
   end;
 var
   res : TFhirCapabilityStatementRestResource;
@@ -1024,6 +1309,7 @@ var
   r : TFhirResourceType;
 begin
   mDoco.Text := rest.documentation;
+  mDoco.TagObject := rest;
   if rest.security <> nil then
   begin
     mSecurity.Text := rest.security.description;
