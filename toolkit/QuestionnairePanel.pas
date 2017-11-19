@@ -97,12 +97,20 @@ var
   npanel: TQuestionnaireItemPanel;
   form : TQuestionnaireItemForm;
 begin
-  item := panel.Item;
-  if panel.ParentItem <> nil then
-    list := panel.ParentItem.itemList
+  if panel = nil then
+  begin
+    list := Questionnaire.itemList ;
+    index := Questionnaire.itemList.Count - 1;
+  end
   else
-    list := Questionnaire.itemList;
-  index := list.IndexByReference(item);
+  begin
+    item := panel.Item;
+    if panel.ParentItem <> nil then
+      list := panel.ParentItem.itemList
+    else
+      list := Questionnaire.itemList;
+    index := list.IndexByReference(item);
+  end;
   new := TFhirQuestionnaireItem.Create;
   try
     new.linkId := 'item'+inttostr(FPanels.Count+1);
@@ -113,8 +121,11 @@ begin
       form.Settings := Settings.link;
       form.questionnaire := questionnaire.Link;
       form.OnWork := OnWork;
-      form.btnAsChild.Visible := true;
-      form.btnOk.Text := 'Add Sibling';
+      if panel <> nil then
+      begin
+        form.btnAsChild.Visible := true;
+        form.btnOk.Text := 'Add Sibling';
+      end;
       if form.ShowModal <> mrCancel then
       begin
         new.Assign(form.item);
@@ -124,7 +135,10 @@ begin
             next := nil
           else
             next := list[index+1];
-          prev := list[index];
+          if index < 0 then
+            prev := nil
+          else
+            prev := list[index];
         end
         else
         begin
@@ -144,11 +158,19 @@ begin
         npanel.Width := Width-26;
         npanel.Height := PANEL_HEIGHT;
         npanel.Item := new.Link;
-        npanel.Level := panel.level;
+        if panel = nil then
+        begin
+          npanel.Level := 0;
+          npanel.ParentItem := nil;
+        end
+        else
+        begin
+          npanel.Level := panel.level;
+          npanel.ParentItem := panel.parentItem.link;
+        end;
         npanel.imagelist := imageList;
         npanel.Previous := prev.Link;
         npanel.Next := next.Link;
-        npanel.ParentItem := panel.parentItem.link;
         npanel.questionnaire := Questionnaire.Link;
         npanel.Settings := Settings.link;
         npanel.OnWork := OnWork;

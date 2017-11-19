@@ -269,6 +269,9 @@ procedure TCodeSystemEditorFrame.btnAddChildConceptClick(Sender: TObject);
 var
   p, c : TFhirCodeSystemConcept;
 begin
+  if tvConceptTree.Selected = nil then
+    exit;
+
   p := TFhirCodeSystemConcept(tvConceptTree.Selected.TagObject);
   c := p.conceptList.Append;
   c.code := 'new-code';

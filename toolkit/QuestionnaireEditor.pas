@@ -129,13 +129,12 @@ type
     tvForm: TTreeViewItem;
     tbForm: TTabItem;
     ImageList1: TImageList;
-    LineTransitionEffect1: TLineTransitionEffect;
     ToolbarImages: TImageList;
     btnPublisher: TButton;
     btnTitle: TButton;
     btnName: TButton;
     Panel1: TPanel;
-    Button1: TButton;
+    btnAddQuestionItem: TButton;
     Label12: TLabel;
     ComboBox1: TComboBox;
     procedure tvStructureClick(Sender: TObject);
@@ -159,6 +158,7 @@ type
     procedure btnPublisherClick(Sender: TObject);
     procedure btnTitleClick(Sender: TObject);
     procedure btnNameClick(Sender: TObject);
+    procedure btnAddQuestionItemClick(Sender: TObject);
   private
     flatItems : TAdvList<TFhirQuestionnaireItem>;
     FLoading : boolean;
@@ -214,6 +214,12 @@ procedure TQuestionnaireEditorFrame.btnAddChildItemClick(Sender: TObject);
 var
   p, c : TFhirQuestionnaireItem;
 begin
+  if grdItems.Row = -1 then
+  begin
+    btnAddItemClick(self);
+    exit;
+  end;
+
   grdItems.BeginUpdate;
   p := flatItems[grdItems.Row];
   c := p.itemList.Append;
@@ -461,6 +467,13 @@ begin
   if Questionnaire.titleElement = nil then
     Questionnaire.titleElement := TFhirString.Create;
   editStringDialog(self, 'Questionnaire Title', btnTitle, edtTitle, Questionnaire, Questionnaire.titleElement);
+end;
+
+procedure TQuestionnaireEditorFrame.btnAddQuestionItemClick(Sender: TObject);
+begin
+  ResourceIsDirty := true;
+  FPanel.build;
+  FPanel.AddItem(nil);
 end;
 
 procedure TQuestionnaireEditorFrame.cancel;

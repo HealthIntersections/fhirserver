@@ -379,19 +379,15 @@
         <DCCReference Include="QuestionnairePanel.pas"/>
         <DCCReference Include="VitalSignsGeneratorDialog.pas">
             <Form>VitalSignsGeneratorForm</Form>
-            <FormType>fmx</FormType>
         </DCCReference>
         <DCCReference Include="TranslationsEditorDialog.pas">
             <Form>TranslationsEditorForm</Form>
-            <FormType>fmx</FormType>
         </DCCReference>
         <DCCReference Include="ResourceLanguageDialog.pas">
             <Form>ResourceLanguageForm</Form>
-            <FormType>fmx</FormType>
         </DCCReference>
         <DCCReference Include="AddRestOperationDialog.pas">
             <Form>AddRestOperationForm</Form>
-            <FormType>fmx</FormType>
         </DCCReference>
         <None Include="q.txt"/>
         <BuildConfiguration Include="Release">

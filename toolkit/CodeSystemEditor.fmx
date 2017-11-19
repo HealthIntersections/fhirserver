@@ -28,8 +28,8 @@ object CodeSystemEditorFrame: TCodeSystemEditorFrame
       Size.PlatformDefault = False
       TabOrder = 1
       OnClick = tvStructureClick
-      Viewport.Width = 201.000000000000000000
-      Viewport.Height = 791.000000000000000000
+      Viewport.Width = 197.000000000000000000
+      Viewport.Height = 787.000000000000000000
       object tvMetadata: TTreeViewItem
         IsChecked = False
         IsExpanded = False
@@ -81,7 +81,7 @@ object CodeSystemEditorFrame: TCodeSystemEditorFrame
       Size.Width = 770.000000000000000000
       Size.Height = 816.000000000000000000
       Size.PlatformDefault = False
-      TabIndex = 0
+      TabIndex = 3
       TabOrder = 0
       TabPosition = None
       Sizes = (
@@ -97,7 +97,7 @@ object CodeSystemEditorFrame: TCodeSystemEditorFrame
         CustomIcon = <
           item
           end>
-        IsSelected = True
+        IsSelected = False
         Size.Width = 8.000000000000000000
         Size.Height = 8.000000000000000000
         Size.PlatformDefault = False
@@ -671,8 +671,8 @@ object CodeSystemEditorFrame: TCodeSystemEditorFrame
           OnGetValue = grdPropertiesGetValue
           OnSetValue = grdPropertiesSetValue
           OnCellClick = grdPropertiesCellClick
-          Viewport.Width = 770.000000000000000000
-          Viewport.Height = 783.000000000000000000
+          Viewport.Width = 750.000000000000000000
+          Viewport.Height = 758.000000000000000000
           object StringColumn1: TStringColumn
             Header = 'Code'
           end
@@ -767,8 +767,8 @@ object CodeSystemEditorFrame: TCodeSystemEditorFrame
           OnGetValue = grdFiltersGetValue
           OnSetValue = grdFiltersSetValue
           OnCellClick = grdFiltersCellClick
-          Viewport.Width = 770.000000000000000000
-          Viewport.Height = 783.000000000000000000
+          Viewport.Width = 750.000000000000000000
+          Viewport.Height = 742.000000000000000000
           object StringColumn4: TStringColumn
             Header = 'Code'
           end
@@ -791,7 +791,7 @@ object CodeSystemEditorFrame: TCodeSystemEditorFrame
         CustomIcon = <
           item
           end>
-        IsSelected = False
+        IsSelected = True
         Size.Width = 8.000000000000000000
         Size.Height = 8.000000000000000000
         Size.PlatformDefault = False
@@ -892,15 +892,16 @@ object CodeSystemEditorFrame: TCodeSystemEditorFrame
           TabPosition = Top
           Sizes = (
             770s
-            746s
+            725s
             770s
-            746s)
+            725s)
           object TabItem1: TTabItem
             CustomIcon = <
               item
               end>
             IsSelected = False
-            Size.Height = 5.000000000000000000
+            Size.Width = 42.000000000000000000
+            Size.Height = 26.000000000000000000
             Size.PlatformDefault = False
             StyleLookup = ''
             TabOrder = 0
@@ -910,14 +911,14 @@ object CodeSystemEditorFrame: TCodeSystemEditorFrame
             object tvConceptTree: TTreeView
               Align = Client
               Size.Width = 770.000000000000000000
-              Size.Height = 746.000000000000000000
+              Size.Height = 725.000000000000000000
               Size.PlatformDefault = False
               TabOrder = 0
               OnClick = tvConceptTreeChange
               OnDblClick = btnEditConceptClick
               OnChange = tvConceptTreeChange
-              Viewport.Width = 770.000000000000000000
-              Viewport.Height = 746.000000000000000000
+              Viewport.Width = 766.000000000000000000
+              Viewport.Height = 721.000000000000000000
             end
           end
           object TabItem2: TTabItem
@@ -925,7 +926,8 @@ object CodeSystemEditorFrame: TCodeSystemEditorFrame
               item
               end>
             IsSelected = True
-            Size.Height = 5.000000000000000000
+            Size.Width = 43.000000000000000000
+            Size.Height = 26.000000000000000000
             Size.PlatformDefault = False
             StyleLookup = ''
             TabOrder = 0
@@ -937,7 +939,7 @@ object CodeSystemEditorFrame: TCodeSystemEditorFrame
               CanFocus = True
               ClipChildren = True
               Size.Width = 770.000000000000000000
-              Size.Height = 746.000000000000000000
+              Size.Height = 725.000000000000000000
               Size.PlatformDefault = False
               TextSettings.VertAlign = Leading
               TabOrder = 0
@@ -946,8 +948,8 @@ object CodeSystemEditorFrame: TCodeSystemEditorFrame
               OnGetValue = grdConceptsGetValue
               OnSetValue = grdConceptsSetValue
               OnCellDblClick = grdConceptsCellDblClick
-              Viewport.Width = 770.000000000000000000
-              Viewport.Height = 746.000000000000000000
+              Viewport.Width = 750.000000000000000000
+              Viewport.Height = 700.000000000000000000
               object IntegerColumn1: TIntegerColumn
                 Enabled = False
                 Header = 'Depth'
