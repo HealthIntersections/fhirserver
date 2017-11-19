@@ -182,12 +182,14 @@ uses
   QuestionnairePanel in 'QuestionnairePanel.pas',
   VitalSignsGeneratorDialog in 'VitalSignsGeneratorDialog.pas' {VitalSignsGeneratorForm},
   TranslationsEditorDialog in 'TranslationsEditorDialog.pas' {TranslationsEditorForm},
-  ResourceLanguageDialog in 'ResourceLanguageDialog.pas' {ResourceLanguageForm};
+  ResourceLanguageDialog in 'ResourceLanguageDialog.pas' {ResourceLanguageForm},
+  AddRestOperationDialog in 'AddRestOperationDialog.pas' {AddRestOperationForm};
 
 {$R *.res}
 
 begin
   Application.Initialize;
   Application.CreateForm(TMasterToolsForm, MasterToolsForm);
+  Application.CreateForm(TAddRestOperationForm, AddRestOperationForm);
   Application.Run;
 end.

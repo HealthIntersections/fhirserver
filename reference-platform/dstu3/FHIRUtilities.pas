@@ -393,6 +393,7 @@ type
   TFhirConformanceRestResourceHelper = class helper (TFHIRElementHelper) for TFhirCapabilityStatementRestResource
   public
     function interaction(type_ : TFhirTypeRestfulInteractionEnum) : TFhirCapabilityStatementRestResourceInteraction;
+    procedure removeInteraction(type_ : TFhirTypeRestfulInteractionEnum);
   end;
 
   TFhirConformanceRestHelper = class helper (TFHIRElementHelper) for TFhirCapabilityStatementRest
@@ -5852,6 +5853,16 @@ begin
       pl.Free;
     end;
   end;
+end;
+
+procedure TFhirConformanceRestResourceHelper.removeInteraction(type_: TFhirTypeRestfulInteractionEnum);
+var
+  i : integer;
+begin
+  for i := self.interactionList.count - 1 downto 0 do
+    if (self.interactionList[i].code = type_) then
+      self.interactionList.DeleteByIndex(i);
+
 end;
 
 end.

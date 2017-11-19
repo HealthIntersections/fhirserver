@@ -33,13 +33,13 @@ uses
   System.SysUtils, System.Types, System.UITypes, System.Classes, System.Variants,
   FMX.Types, FMX.Graphics, FMX.Controls, FMX.Forms, FMX.Dialogs, FMX.StdCtrls,
   FMX.TabControl, FMX.Layouts, FMX.TreeView, FMX.Controls.Presentation,
-  FMX.ScrollBox, FMX.Memo, FMX.DateTimeCtrls, FMX.ListBox, FMX.Edit,
+  FMX.ScrollBox, FMX.Memo, FMX.DateTimeCtrls, FMX.ListBox, FMX.Edit, System.Rtti,
+  FMX.Grid.Style, FMX.Grid, FMX.Menus,
   BaseResourceFrame,
   DateSupport, StringSupport,
   AdvGenerics,
   FHIRBase, FHIRConstants, FHIRTypes, FHIRResources, FHIRUtilities, FHIRIndexBase, FHIRIndexInformation, FHIRSupport,
-  SearchParameterEditor, ListSelector, AddRestResourceDialog, System.Rtti,
-  FMX.Grid.Style, FMX.Grid, FMX.Menus;
+  SearchParameterEditor, ListSelector, AddRestResourceDialog, AddRestOperationDialog;
 
 type
   TFrame = TBaseResourceFrame; // re-aliasing the Frame to work around a designer bug
@@ -162,6 +162,8 @@ type
     PopupColumn1: TPopupColumn;
     VertScrollBox2: TVertScrollBox;
     VertScrollBox3: TVertScrollBox;
+    btnAddOperations: TButton;
+    btnRemoveOperations: TButton;
     procedure tvStructureClick(Sender: TObject);
     procedure btnCancelClick(Sender: TObject);
     procedure inputChanged(Sender: TObject);
@@ -176,6 +178,8 @@ type
     procedure btnDeleteResourcesClick(Sender: TObject);
     procedure gridSearchGetValue(Sender: TObject; const ACol, ARow: Integer; var Value: TValue);
     procedure gridSearchSetValue(Sender: TObject; const ACol, ARow: Integer; const Value: TValue);
+    procedure btnAddOperationsClick(Sender: TObject);
+    procedure btnRemoveOperationsClick(Sender: TObject);
   private
     function GetCapabilityStatement: TFHIRCapabilityStatement;
     function readJurisdiction : Integer;
@@ -221,6 +225,63 @@ begin
   tvStructure.Selected := tiRest;
   tvStructureClick(nil);
   ResourceIsDirty := true;
+end;
+
+procedure TCapabilityStatementEditorFrame.btnAddOperationsClick(Sender: TObject);
+var
+  form : TAddRestOperationForm;
+  res : TFhirCapabilityStatementRestResource;
+  rest : TFhirCapabilityStatementRest;
+begin
+  rest := tvStructure.Selected.TagObject as TFhirCapabilityStatementRest;
+
+  form := TAddRestOperationForm.create(self);
+  try
+    form.cbRead.enabled := false;
+    form.cbVRead.enabled := false;
+    form.cbSearch.enabled := false;
+    form.cbCreate.enabled := false;
+    form.cbUpdate.enabled := false;
+    form.cbDelete.enabled := false;
+    form.cbHistoryInstance.enabled := false;
+    form.cbHistoryType.enabled := false;
+    form.cbPatch.enabled := false;
+
+    for res in rest.resourceList do
+    begin
+      if res.interaction(TypeRestfulInteractionRead) = nil then form.cbRead.Enabled := true;
+      if res.interaction(TypeRestfulInteractionVRead) = nil then form.cbVRead.Enabled := true;
+      if res.interaction(TypeRestfulInteractionSearchType) = nil then form.cbSearch.Enabled := true;
+      if res.interaction(TypeRestfulInteractionCreate) = nil then form.cbCreate.Enabled := true;
+      if res.interaction(TypeRestfulInteractionUpdate) = nil then form.cbUpdate.Enabled := true;
+      if res.interaction(TypeRestfulInteractionDelete) = nil then form.cbDelete.Enabled := true;
+      if res.interaction(TypeRestfulInteractionHistoryInstance) = nil then form.cbHistoryInstance.Enabled := true;
+      if res.interaction(TypeRestfulInteractionHistoryType) = nil then form.cbHistoryType.Enabled := true;
+      if res.interaction(TypeRestfulInteractionPatch) = nil then form.cbPatch.Enabled := true;
+    end;
+    if form.showmodal = mrOk then
+    begin
+      for res in rest.resourceList do
+      begin
+        if form.cbRead.IsChecked then res.interactionList.Append.code := TypeRestfulInteractionRead;
+        if form.cbVRead.IsChecked then res.interactionList.Append.code := TypeRestfulInteractionVRead;
+        if form.cbSearch.IsChecked then res.interactionList.Append.code := TypeRestfulInteractionSearchType;
+        if form.cbCreate.IsChecked then res.interactionList.Append.code := TypeRestfulInteractionCreate;
+        if form.cbUpdate.IsChecked then res.interactionList.Append.code := TypeRestfulInteractionUpdate;
+        if form.cbDelete.IsChecked then res.interactionList.Append.code := TypeRestfulInteractionDelete;
+        if form.cbHistoryInstance.IsChecked then res.interactionList.Append.code := TypeRestfulInteractionHistoryInstance;
+        if form.cbHistoryType.IsChecked then res.interactionList.Append.code := TypeRestfulInteractionHistoryType;
+        if form.cbPatch.IsChecked then res.interactionList.Append.code := TypeRestfulInteractionPatch;
+        if form.cbUpdateCreate.IsChecked then res.updateCreate := true;
+        if form.cbCondCreate.IsChecked then res.conditionalCreate := true;
+        if form.cbCondUpdate.IsChecked then res.conditionalUpdate := true;
+        if form.cbCondDelete.IsChecked then res.conditionalDelete := ConditionalDeleteStatusSingle;
+      end;
+      ResourceIsDirty := true;
+    end;
+  finally
+    form.free;
+  end;
 end;
 
 procedure TCapabilityStatementEditorFrame.btnAddResourcesClick(Sender: TObject);
@@ -325,6 +386,8 @@ begin
         end;
       ResourceIsDirty := true;
     end;
+    btnAddOperations.Enabled := rest.resourceList.Count > 0;
+    btnRemoveOperations.Enabled := rest.resourceList.Count > 0;
   finally
     form.free;
   end;
@@ -517,6 +580,63 @@ begin
     form.free;
   end;
   lbSearchClick(nil);
+end;
+
+procedure TCapabilityStatementEditorFrame.btnRemoveOperationsClick(Sender: TObject);
+var
+  form : TAddRestOperationForm;
+  res : TFhirCapabilityStatementRestResource;
+  rest : TFhirCapabilityStatementRest;
+begin
+  rest := tvStructure.Selected.TagObject as TFhirCapabilityStatementRest;
+
+  form := TAddRestOperationForm.create(self);
+  try
+    form.cbRead.enabled := false;
+    form.cbVRead.enabled := false;
+    form.cbSearch.enabled := false;
+    form.cbCreate.enabled := false;
+    form.cbUpdate.enabled := false;
+    form.cbDelete.enabled := false;
+    form.cbHistoryInstance.enabled := false;
+    form.cbHistoryType.enabled := false;
+    form.cbPatch.enabled := false;
+
+    for res in rest.resourceList do
+    begin
+      if res.interaction(TypeRestfulInteractionRead) <> nil then form.cbRead.Enabled := true;
+      if res.interaction(TypeRestfulInteractionVRead) <> nil then form.cbVRead.Enabled := true;
+      if res.interaction(TypeRestfulInteractionSearchType) <> nil then form.cbSearch.Enabled := true;
+      if res.interaction(TypeRestfulInteractionCreate) <> nil then form.cbCreate.Enabled := true;
+      if res.interaction(TypeRestfulInteractionUpdate) <> nil then form.cbUpdate.Enabled := true;
+      if res.interaction(TypeRestfulInteractionDelete) <> nil then form.cbDelete.Enabled := true;
+      if res.interaction(TypeRestfulInteractionHistoryInstance) <> nil then form.cbHistoryInstance.Enabled := true;
+      if res.interaction(TypeRestfulInteractionHistoryType) <> nil then form.cbHistoryType.Enabled := true;
+      if res.interaction(TypeRestfulInteractionPatch) <> nil then form.cbPatch.Enabled := true;
+    end;
+    if form.showmodal = mrOk then
+    begin
+      for res in rest.resourceList do
+      begin
+        if form.cbRead.IsChecked then res.removeInteraction(TypeRestfulInteractionRead);
+        if form.cbVRead.IsChecked then res.removeInteraction(TypeRestfulInteractionVRead);
+        if form.cbSearch.IsChecked then res.removeInteraction(TypeRestfulInteractionSearchType);
+        if form.cbCreate.IsChecked then res.removeInteraction(TypeRestfulInteractionCreate);
+        if form.cbUpdate.IsChecked then res.removeInteraction(TypeRestfulInteractionUpdate);
+        if form.cbDelete.IsChecked then res.removeInteraction(TypeRestfulInteractionDelete);
+        if form.cbHistoryInstance.IsChecked then res.removeInteraction(TypeRestfulInteractionHistoryInstance);
+        if form.cbHistoryType.IsChecked then res.removeInteraction(TypeRestfulInteractionHistoryType);
+        if form.cbPatch.IsChecked then res.removeInteraction(TypeRestfulInteractionPatch);
+        if form.cbUpdateCreate.IsChecked then res.updateCreate := false;
+        if form.cbCondCreate.IsChecked then res.conditionalCreate := false;
+        if form.cbCondUpdate.IsChecked then res.conditionalUpdate := false;
+        if form.cbCondDelete.IsChecked then res.conditionalDelete := ConditionalDeleteStatusNotSupported;
+      end;
+      ResourceIsDirty := true;
+    end;
+  finally
+    form.free;
+  end;
 end;
 
 procedure TCapabilityStatementEditorFrame.cancel;
@@ -923,6 +1043,8 @@ begin
     rs := rs - [r];
   end;
   btnAddResources.Enabled := rs <> [frtCustom];
+  btnAddOperations.Enabled := rest.resourceList.Count > 0;
+  btnRemoveOperations.Enabled := rest.resourceList.Count > 0;
 end;
 
 function TCapabilityStatementEditorFrame.readJurisdiction: Integer;

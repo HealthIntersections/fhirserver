@@ -1,0 +1,175 @@
+object AddRestOperationForm: TAddRestOperationForm
+  Left = 0
+  Top = 0
+  BorderIcons = [biSystemMenu]
+  BorderStyle = Single
+  Caption = 'Form1'
+  ClientHeight = 167
+  ClientWidth = 543
+  FormFactor.Width = 320
+  FormFactor.Height = 480
+  FormFactor.Devices = [Desktop]
+  DesignerMasterStyle = 1
+  object Panel1: TPanel
+    Align = Bottom
+    Position.Y = 127.000000000000000000
+    Size.Width = 543.000000000000000000
+    Size.Height = 40.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 0
+    object Button1: TButton
+      Anchors = [akTop, akRight]
+      Default = True
+      ModalResult = 1
+      Position.X = 366.000000000000000000
+      Position.Y = 8.000000000000000000
+      TabOrder = 0
+      Text = 'OK'
+    end
+    object Button2: TButton
+      Anchors = [akTop, akRight]
+      Cancel = True
+      ModalResult = 2
+      Position.X = 454.000000000000000000
+      Position.Y = 8.000000000000000000
+      TabOrder = 1
+      Text = 'Cancel'
+    end
+  end
+  object Panel2: TPanel
+    Align = Client
+    Size.Width = 543.000000000000000000
+    Size.Height = 127.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 24
+    object cbCreate: TCheckBox
+      Position.X = 16.000000000000000000
+      Position.Y = 56.000000000000000000
+      Size.Width = 73.000000000000000000
+      Size.Height = 19.000000000000000000
+      Size.PlatformDefault = False
+      TabOrder = 0
+      Text = 'Create'
+    end
+    object cbDelete: TCheckBox
+      Position.X = 272.000000000000000000
+      Position.Y = 56.000000000000000000
+      Size.Width = 73.000000000000000000
+      Size.Height = 19.000000000000000000
+      Size.PlatformDefault = False
+      TabOrder = 1
+      Text = 'Delete'
+    end
+    object cbHistoryInstance: TCheckBox
+      Position.X = 272.000000000000000000
+      Position.Y = 32.000000000000000000
+      Size.Width = 137.000000000000000000
+      Size.Height = 19.000000000000000000
+      Size.PlatformDefault = False
+      TabOrder = 2
+      Text = 'History (Instance)'
+    end
+    object cbHistoryType: TCheckBox
+      Position.X = 424.000000000000000000
+      Position.Y = 32.000000000000000000
+      Size.Width = 113.000000000000000000
+      Size.Height = 19.000000000000000000
+      Size.PlatformDefault = False
+      TabOrder = 3
+      Text = 'History (Type)'
+    end
+    object cbPatch: TCheckBox
+      Position.X = 176.000000000000000000
+      Position.Y = 56.000000000000000000
+      Size.Width = 73.000000000000000000
+      Size.Height = 19.000000000000000000
+      Size.PlatformDefault = False
+      TabOrder = 4
+      Text = 'Patch'
+    end
+    object cbRead: TCheckBox
+      Position.X = 16.000000000000000000
+      Position.Y = 32.000000000000000000
+      Size.Width = 73.000000000000000000
+      Size.Height = 19.000000000000000000
+      Size.PlatformDefault = False
+      TabOrder = 5
+      Text = 'Read'
+    end
+    object cbSearch: TCheckBox
+      Position.X = 96.000000000000000000
+      Position.Y = 32.000000000000000000
+      Size.Width = 73.000000000000000000
+      Size.Height = 19.000000000000000000
+      Size.PlatformDefault = False
+      TabOrder = 6
+      Text = 'Search'
+    end
+    object cbUpdate: TCheckBox
+      Position.X = 96.000000000000000000
+      Position.Y = 56.000000000000000000
+      Size.Width = 73.000000000000000000
+      Size.Height = 19.000000000000000000
+      Size.PlatformDefault = False
+      TabOrder = 7
+      Text = 'Update'
+    end
+    object cbVRead: TCheckBox
+      Position.X = 176.000000000000000000
+      Position.Y = 32.000000000000000000
+      Size.Width = 73.000000000000000000
+      Size.Height = 19.000000000000000000
+      Size.PlatformDefault = False
+      TabOrder = 8
+      Text = 'VRead'
+    end
+    object Label1: TLabel
+      Position.X = 8.000000000000000000
+      Position.Y = 8.000000000000000000
+      Text = 'Template'
+      TabOrder = 9
+    end
+    object cbCondCreate: TCheckBox
+      Position.X = 104.000000000000000000
+      Position.Y = 84.000000000000000000
+      Size.Width = 65.000000000000000000
+      Size.Height = 19.000000000000000000
+      Size.PlatformDefault = False
+      TabOrder = 10
+      Text = 'Create'
+    end
+    object cbCondDelete: TCheckBox
+      Position.X = 256.000000000000000000
+      Position.Y = 84.000000000000000000
+      TabOrder = 11
+      Text = 'Delete'
+    end
+    object cbCondUpdate: TCheckBox
+      Position.X = 176.000000000000000000
+      Position.Y = 84.000000000000000000
+      Size.Width = 65.000000000000000000
+      Size.Height = 19.000000000000000000
+      Size.PlatformDefault = False
+      TabOrder = 12
+      Text = 'Update'
+    end
+    object cbUpdateCreate: TCheckBox
+      Position.X = 384.000000000000000000
+      Position.Y = 56.000000000000000000
+      Size.Width = 161.000000000000000000
+      Size.Height = 19.000000000000000000
+      Size.PlatformDefault = False
+      TabOrder = 13
+      Text = 'Allow Update to Create'
+    end
+    object Label21: TLabel
+      Position.X = 16.000000000000000000
+      Position.Y = 85.000000000000000000
+      Size.Width = 81.000000000000000000
+      Size.Height = 17.000000000000000000
+      Size.PlatformDefault = False
+      Text = 'Conditional: '
+      TabOrder = 34
+    end
+  end
+end

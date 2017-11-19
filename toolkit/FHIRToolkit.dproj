@@ -389,6 +389,10 @@
             <Form>ResourceLanguageForm</Form>
             <FormType>fmx</FormType>
         </DCCReference>
+        <DCCReference Include="AddRestOperationDialog.pas">
+            <Form>AddRestOperationForm</Form>
+            <FormType>fmx</FormType>
+        </DCCReference>
         <None Include="q.txt"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
