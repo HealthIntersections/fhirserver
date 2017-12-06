@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-7472-VolumeMeasurements"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_7472.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.526"/>
+    </identifier>
+    <version value="20020904"/>
+    <name value="VolumeMeasurements"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 7472 VolumeMeasurements"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://dicom.nema.org/resources/ontology/DCM"/>
+            <concept>
+                <code value="121217"/>
+                <display value="Volume estimated from three or more non-coplanar 2D regions"/>
+            </concept>
+            <concept>
+                <code value="121218"/>
+                <display value="Volume estimated from two non-coplanar 2D regions"/>
+            </concept>
+            <concept>
+                <code value="121216"/>
+                <display value="Volume estimated from single 2D region"/>
+            </concept>
+            <concept>
+                <code value="121222"/>
+                <display value="Volume of sphere"/>
+            </concept>
+            <concept>
+                <code value="121220"/>
+                <display value="Volume of circumscribed sphere"/>
+            </concept>
+            <concept>
+                <code value="121221"/>
+                <display value="Volume of ellipsoid"/>
+            </concept>
+            <concept>
+                <code value="121219"/>
+                <display value="Volume of bounding three dimensional region"/>
+            </concept>
+        </include>
+        <include>
+            <system value="http://snomed.info/srt"/>
+            <concept>
+                <code value="G-D705"/>
+                <display value="Volume"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

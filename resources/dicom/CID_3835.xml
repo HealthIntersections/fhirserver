@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-3835-CardiacVolumeMeasurements"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_3835.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.285"/>
+    </identifier>
+    <version value="20051103"/>
+    <name value="CardiacVolumeMeasurements"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 3835 CardiacVolumeMeasurements"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://dicom.nema.org/resources/ontology/DCM"/>
+            <concept>
+                <code value="122407"/>
+                <display value="Left Atrial ED Volume"/>
+            </concept>
+            <concept>
+                <code value="122408"/>
+                <display value="Left Atrial ES Volume"/>
+            </concept>
+        </include>
+        <include>
+            <system value="http://loinc.org"/>
+            <concept>
+                <code value="8824-5"/>
+                <display value="Right Ventricular ES Volume"/>
+            </concept>
+            <concept>
+                <code value="8823-7"/>
+                <display value="Left Ventricular ES Volume"/>
+            </concept>
+            <concept>
+                <code value="8822-9"/>
+                <display value="Right Ventricular ED Volume"/>
+            </concept>
+            <concept>
+                <code value="8821-1"/>
+                <display value="Left Ventricular ED Volume"/>
+            </concept>
+        </include>
+        <include>
+            <system value="http://snomed.info/srt"/>
+            <concept>
+                <code value="F-32120"/>
+                <display value="Stroke Volume"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

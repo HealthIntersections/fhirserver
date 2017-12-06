@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-12242-AorticValveFindingSites"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_12242.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.633"/>
+    </identifier>
+    <version value="20040614"/>
+    <name value="AorticValveFindingSites"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 12242 AorticValveFindingSites"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://snomed.info/srt"/>
+            <concept>
+                <code value="T-35410"/>
+                <display value="Aortic Valve Ring"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

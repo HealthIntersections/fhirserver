@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-83-UnitsforRealWorldValueMapping"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_83.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.24"/>
+    </identifier>
+    <version value="20080123"/>
+    <name value="UnitsforRealWorldValueMapping"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 83 UnitsforRealWorldValueMapping"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://unitsofmeasure.org"/>
+            <concept>
+                <code value="umol/min/ml"/>
+                <display value="Micromole/minute/milliliter"/>
+            </concept>
+            <concept>
+                <code value="cm2/ml"/>
+                <display value="Centimeter**2/milliliter"/>
+            </concept>
+            <concept>
+                <code value="cm2"/>
+                <display value="Centimeter**2"/>
+            </concept>
+            <concept>
+                <code value="ml/g"/>
+                <display value="Milliliter/gram"/>
+            </concept>
+            <concept>
+                <code value="cm2/ml{SUVbsa}"/>
+                <display value="Standardized Uptake Value body surface area"/>
+            </concept>
+            <concept>
+                <code value="g/ml{SUVlbm(Janma)}"/>
+                <display value="Standardized Uptake Value lean body mass (Janma)"/>
+            </concept>
+            <concept>
+                <code value="{propcounts}"/>
+                <display value="Proportional to counts"/>
+            </concept>
+            <concept>
+                <code value="{counts}"/>
+                <display value="Counts"/>
+            </concept>
+            <concept>
+                <code value="%"/>
+                <display value="Percent"/>
+            </concept>
+            <concept>
+                <code value="ml/min/g"/>
+                <display value="Milliliter/minute/gram"/>
+            </concept>
+            <concept>
+                <code value="g/ml{SUVbw}"/>
+                <display value="Standardized Uptake Value body weight"/>
+            </concept>
+            <concept>
+                <code value="umol/ml"/>
+                <display value="Micromole/milliliter"/>
+            </concept>
+            <concept>
+                <code value="[hnsf'U]"/>
+                <display value="Hounsfield unit"/>
+            </concept>
+            <concept>
+                <code value="{propcounts}/s"/>
+                <display value="Proportional to counts per second"/>
+            </concept>
+            <concept>
+                <code value="mg/min/ml"/>
+                <display value="Milligrams/minute/milliliter"/>
+            </concept>
+            <concept>
+                <code value="g/ml{SUVibw}"/>
+                <display value="Standardized Uptake Value ideal body weight"/>
+            </concept>
+            <concept>
+                <code value="/cm"/>
+                <display value="/Centimeter"/>
+            </concept>
+            <concept>
+                <code value="Bq/ml"/>
+                <display value="Becquerels/milliliter"/>
+            </concept>
+            <concept>
+                <code value="{counts}/s"/>
+                <display value="Counts per second"/>
+            </concept>
+            <concept>
+                <code value="g/ml{SUVlbm}"/>
+                <display value="Standardized Uptake Value lean body mass (James)"/>
+            </concept>
+            <concept>
+                <code value="g/ml{SUVlbm(James128)}"/>
+                <display value="Standardized Uptake Value lean body mass (James 128 multiplier)"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

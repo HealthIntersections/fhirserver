@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-12203-LeftVentricleOther"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_12203.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.596"/>
+    </identifier>
+    <version value="20030918"/>
+    <name value="LeftVentricleOther"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 12203 LeftVentricleOther"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://loinc.org"/>
+            <concept>
+                <code value="18071-1"/>
+                <display value="Left Ventricular Isovolumic Relaxation Time"/>
+            </concept>
+            <concept>
+                <code value="18087-7"/>
+                <display value="Left Ventricle Mass"/>
+            </concept>
+        </include>
+        <include>
+            <system value="http://snomed.info/srt"/>
+            <concept>
+                <code value="G-037C"/>
+                <display value="LV Peak Diastolic Tissue Velocity During Atrial Systole"/>
+            </concept>
+            <concept>
+                <code value="G-037D"/>
+                <display value="Left Ventricular Peak Systolic Tissue Velocity"/>
+            </concept>
+            <concept>
+                <code value="G-037A"/>
+                <display value="Left Ventricular Peak Early Diastolic Tissue Velocity"/>
+            </concept>
+            <concept>
+                <code value="G-037B"/>
+                <display value="Ratio of MV Peak Velocity to LV Peak Tissue Velocity E-Wave"/>
+            </concept>
+            <concept>
+                <code value="G-037E"/>
+                <display value="Left Ventricular Isovolumic Contraction Time"/>
+            </concept>
+            <concept>
+                <code value="G-037F"/>
+                <display value="Left Ventricular Index of Myocardial Performance"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

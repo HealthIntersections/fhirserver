@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-4202-OphthalmicPhotographyAcquisitionDevice"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_4202.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.318"/>
+    </identifier>
+    <version value="20100607"/>
+    <name value="OphthalmicPhotographyAcquisitionDevice"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 4202 OphthalmicPhotographyAcquisitionDevice"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://snomed.info/srt"/>
+            <concept>
+                <code value="R-1021F"/>
+                <display value="Ophthalmic Endoscope"/>
+            </concept>
+            <concept>
+                <code value="R-1021E"/>
+                <display value="Direct Ophthalmoscope"/>
+            </concept>
+            <concept>
+                <code value="A-2B201"/>
+                <display value="Slit Lamp Biomicroscope"/>
+            </concept>
+            <concept>
+                <code value="R-1021D"/>
+                <display value="Indirect Ophthalmoscope"/>
+            </concept>
+            <concept>
+                <code value="A-2B210"/>
+                <display value="Operating Microscope"/>
+            </concept>
+            <concept>
+                <code value="A-00FCA"/>
+                <display value="Keratoscope"/>
+            </concept>
+            <concept>
+                <code value="A-00FF4"/>
+                <display value="Pupillograph"/>
+            </concept>
+            <concept>
+                <code value="R-1021C"/>
+                <display value="Specular Microscope"/>
+            </concept>
+            <concept>
+                <code value="A-00E8A"/>
+                <display value="Scanning Laser Ophthalmoscope"/>
+            </concept>
+            <concept>
+                <code value="R-1021B"/>
+                <display value="External Camera"/>
+            </concept>
+            <concept>
+                <code value="R-1021A"/>
+                <display value="Fundus Camera"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

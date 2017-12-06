@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-7166-CommonTissueSegmentationTypes"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_7166.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.963"/>
+    </identifier>
+    <version value="20170914"/>
+    <name value="CommonTissueSegmentationTypes"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 7166 CommonTissueSegmentationTypes"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://snomed.info/srt"/>
+            <concept>
+                <code value="T-40050"/>
+                <display value="Capillary"/>
+            </concept>
+            <concept>
+                <code value="T-C2000"/>
+                <display value="Blood"/>
+            </concept>
+            <concept>
+                <code value="T-C4000"/>
+                <display value="Lymph node"/>
+            </concept>
+            <concept>
+                <code value="T-41000"/>
+                <display value="Artery"/>
+            </concept>
+            <concept>
+                <code value="T-48000"/>
+                <display value="Vein"/>
+            </concept>
+            <concept>
+                <code value="T-17010"/>
+                <display value="Tendon"/>
+            </concept>
+            <concept>
+                <code value="T-18010"/>
+                <display value="Ligament"/>
+            </concept>
+            <concept>
+                <code value="F-03D38"/>
+                <display value="Body fat"/>
+            </concept>
+            <concept>
+                <code value="T-13001"/>
+                <display value="Muscle"/>
+            </concept>
+            <concept>
+                <code value="T-D0598"/>
+                <display value="Nerve"/>
+            </concept>
+            <concept>
+                <code value="T-D0050"/>
+                <display value="Tissue"/>
+            </concept>
+            <concept>
+                <code value="T-D0060"/>
+                <display value="Organ"/>
+            </concept>
+            <concept>
+                <code value="T-15009"/>
+                <display value="Meniscus"/>
+            </concept>
+            <concept>
+                <code value="T-D021B"/>
+                <display value="Cartilage"/>
+            </concept>
+            <concept>
+                <code value="T-C6010"/>
+                <display value="Lymphatic vessel"/>
+            </concept>
+            <concept>
+                <code value="T-1A200"/>
+                <display value="Connective tissue"/>
+            </concept>
+            <concept>
+                <code value="T-C6000"/>
+                <display value="Lymphatic system"/>
+            </concept>
+            <concept>
+                <code value="T-01000"/>
+                <display value="Skin"/>
+            </concept>
+            <concept>
+                <code value="T-40000"/>
+                <display value="Blood vessel"/>
+            </concept>
+            <concept>
+                <code value="T-D016E"/>
+                <display value="Bone"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

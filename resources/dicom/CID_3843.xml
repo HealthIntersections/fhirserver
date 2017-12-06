@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-3843-MyocardialSubsegment"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_3843.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.291"/>
+    </identifier>
+    <version value="20051103"/>
+    <name value="MyocardialSubsegment"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 3843 MyocardialSubsegment"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://snomed.info/srt"/>
+            <concept>
+                <code value="R-427E6"/>
+                <display value="endocardial"/>
+            </concept>
+            <concept>
+                <code value="R-40940"/>
+                <display value="epicardial"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

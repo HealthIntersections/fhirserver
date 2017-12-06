@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-4273-RetinalSegmentationSurfaces"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_4273.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.1153"/>
+    </identifier>
+    <version value="20170405"/>
+    <name value="RetinalSegmentationSurfaces"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 4273 RetinalSegmentationSurfaces"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://dicom.nema.org/resources/ontology/DCM"/>
+            <concept>
+                <code value="128299"/>
+                <display value="Posterior surface of the RPE"/>
+            </concept>
+            <concept>
+                <code value="128298"/>
+                <display value="Surface of the center of the RPE"/>
+            </concept>
+            <concept>
+                <code value="128301"/>
+                <display value="Surface of the choroid-sclera interface"/>
+            </concept>
+            <concept>
+                <code value="128289"/>
+                <display value="Outer surface of RNFL"/>
+            </concept>
+            <concept>
+                <code value="128300"/>
+                <display value="Outer surface of the BM"/>
+            </concept>
+            <concept>
+                <code value="128302"/>
+                <display value="Outer surface of the CC"/>
+            </concept>
+            <concept>
+                <code value="128291"/>
+                <display value="Outer surface of IPL"/>
+            </concept>
+            <concept>
+                <code value="128290"/>
+                <display value="Outer surface of GCL"/>
+            </concept>
+            <concept>
+                <code value="128293"/>
+                <display value="Outer surface of OPL"/>
+            </concept>
+            <concept>
+                <code value="128292"/>
+                <display value="Outer surface of INL"/>
+            </concept>
+            <concept>
+                <code value="128295"/>
+                <display value="Surface between Inner and Outer Segments of the photoreceptors"/>
+            </concept>
+            <concept>
+                <code value="128294"/>
+                <display value="Outer surface of HFL"/>
+            </concept>
+            <concept>
+                <code value="128297"/>
+                <display value="Anterior surface of the RPE"/>
+            </concept>
+            <concept>
+                <code value="128296"/>
+                <display value="Surface of the interdigitating zone between retina and RPE"/>
+            </concept>
+        </include>
+        <include>
+            <system value="http://snomed.info/srt"/>
+            <concept>
+                <code value="T-AA650"/>
+                <display value="ELM - External limiting membrane"/>
+            </concept>
+            <concept>
+                <code value="T-AA62D"/>
+                <display value="ILM - Internal limiting membrane"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-3430-DateTimeQualifiers"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_3430.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.92"/>
+    </identifier>
+    <version value="20030327"/>
+    <name value="DateTimeQualifiers"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 3430 DateTimeQualifiers"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://dicom.nema.org/resources/ontology/DCM"/>
+            <concept>
+                <code value="121136"/>
+                <display value="DateTime Unsynchronized"/>
+            </concept>
+            <concept>
+                <code value="121137"/>
+                <display value="DateTime Estimated"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

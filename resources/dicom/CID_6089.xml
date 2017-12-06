@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-6089-Substances"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_6089.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.411"/>
+    </identifier>
+    <version value="20160314"/>
+    <name value="Substances"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 6089 Substances"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://snomed.info/srt"/>
+            <concept>
+                <code value="F-618FE"/>
+                <display value="Methlyphenidate"/>
+            </concept>
+            <concept>
+                <code value="F-61117"/>
+                <display value="Caffeine"/>
+            </concept>
+            <concept>
+                <code value="F-61D6F"/>
+                <display value="Marijuana"/>
+            </concept>
+            <concept>
+                <code value="F-61AC4"/>
+                <display value="Heroin"/>
+            </concept>
+            <concept>
+                <code value="C-F3302"/>
+                <display value="Cigarette smoking tobacco"/>
+            </concept>
+            <concept>
+                <code value="C-6A180"/>
+                <display value="Phencyclidine"/>
+            </concept>
+            <concept>
+                <code value="C-F3310"/>
+                <display value="Chewing tobacco"/>
+            </concept>
+            <concept>
+                <code value="F-618D7"/>
+                <display value="Morphine"/>
+            </concept>
+            <concept>
+                <code value="C-63A10"/>
+                <display value="Lysergic acid diethlyamide"/>
+            </concept>
+            <concept>
+                <code value="F-61C76"/>
+                <display value="Cocaine"/>
+            </concept>
+            <concept>
+                <code value="C-21047"/>
+                <display value="Ethyl alcohol"/>
+            </concept>
+            <concept>
+                <code value="R-FBDEA"/>
+                <display value="Amphetamine"/>
+            </concept>
+            <concept>
+                <code value="F-6169A"/>
+                <display value="Mescaline"/>
+            </concept>
+            <concept>
+                <code value="F-61A95"/>
+                <display value="Methadone"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

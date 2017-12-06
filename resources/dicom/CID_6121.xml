@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-6121-ChestOrientationDescriptor"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_6121.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.441"/>
+    </identifier>
+    <version value="20030108"/>
+    <name value="ChestOrientationDescriptor"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 6121 ChestOrientationDescriptor"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://snomed.info/srt"/>
+            <concept>
+                <code value="G-A142"/>
+                <display value="Horizontal"/>
+            </concept>
+            <concept>
+                <code value="G-A472"/>
+                <display value="Oblique"/>
+            </concept>
+            <concept>
+                <code value="G-A144"/>
+                <display value="Vertical"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

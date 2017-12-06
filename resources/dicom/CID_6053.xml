@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-6053-BreastImagingReportElements"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_6053.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.382"/>
+    </identifier>
+    <version value="20040112"/>
+    <name value="BreastImagingReportElements"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 6053 BreastImagingReportElements"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://dicom.nema.org/resources/ontology/DCM"/>
+            <concept>
+                <code value="121058"/>
+                <display value="Procedure reported"/>
+            </concept>
+            <concept>
+                <code value="121077"/>
+                <display value="Conclusion"/>
+            </concept>
+            <concept>
+                <code value="111423"/>
+                <display value="Physical Examination Results"/>
+            </concept>
+            <concept>
+                <code value="121075"/>
+                <display value="Recommendation"/>
+            </concept>
+            <concept>
+                <code value="111401"/>
+                <display value="Reason for procedure"/>
+            </concept>
+            <concept>
+                <code value="111424"/>
+                <display value="Comparison to previous exams"/>
+            </concept>
+            <concept>
+                <code value="111413"/>
+                <display value="Overall Assessment"/>
+            </concept>
+            <concept>
+                <code value="121073"/>
+                <display value="Impression"/>
+            </concept>
+            <concept>
+                <code value="121071"/>
+                <display value="Finding"/>
+            </concept>
+        </include>
+        <include>
+            <system value="http://snomed.info/srt"/>
+            <concept>
+                <code value="F-01710"/>
+                <display value="Breast composition"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

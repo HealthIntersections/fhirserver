@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-12307-CardiacPhasesandTimePoints"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_12307.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.1148"/>
+    </identifier>
+    <version value="20161109"/>
+    <name value="CardiacPhasesandTimePoints"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 12307 CardiacPhasesandTimePoints"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://dicom.nema.org/resources/ontology/DCM"/>
+            <concept>
+                <code value="125324"/>
+                <display value="Full Cardiac Cycle"/>
+            </concept>
+            <concept>
+                <code value="125323"/>
+                <display value="AR-wave"/>
+            </concept>
+            <concept>
+                <code value="125322"/>
+                <display value="Atrial Diastolic Filling (D-wave)"/>
+            </concept>
+            <concept>
+                <code value="125321"/>
+                <display value="Pre-ejection Period"/>
+            </concept>
+            <concept>
+                <code value="125320"/>
+                <display value="Electromechanical Delay"/>
+            </concept>
+        </include>
+        <include>
+            <system value="http://snomed.info/srt"/>
+            <concept>
+                <code value="R-40B10"/>
+                <display value="Ventricular Isovolumic Relaxation"/>
+            </concept>
+            <concept>
+                <code value="R-40B21"/>
+                <display value="Diastasis"/>
+            </concept>
+            <concept>
+                <code value="R-FAB5B"/>
+                <display value="End Systole"/>
+            </concept>
+            <concept>
+                <code value="R-40B1C"/>
+                <display value="Diastolic Rapid Inflow (E-wave)"/>
+            </concept>
+            <concept>
+                <code value="F-32020"/>
+                <display value="Systole"/>
+            </concept>
+            <concept>
+                <code value="F-32030"/>
+                <display value="Atrial Systole (A-wave)"/>
+            </concept>
+            <concept>
+                <code value="F-32011"/>
+                <display value="End Diastole"/>
+            </concept>
+            <concept>
+                <code value="F-32010"/>
+                <display value="Diastole"/>
+            </concept>
+            <concept>
+                <code value="R-40B12"/>
+                <display value="Ventricular Isovolumic Contraction"/>
+            </concept>
+            <concept>
+                <code value="R-40B11"/>
+                <display value="Ventricular Ejection (S-wave)"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

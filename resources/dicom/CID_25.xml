@@ -1,0 +1,482 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-25-Radiopharmaceuticals"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_25.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.17"/>
+    </identifier>
+    <version value="20160314"/>
+    <name value="Radiopharmaceuticals"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 25 Radiopharmaceuticals"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://snomed.info/srt"/>
+            <concept>
+                <code value="C-145AB"/>
+                <display value="Indium^111 Capromab Pendetide"/>
+            </concept>
+            <concept>
+                <code value="C-14512"/>
+                <display value="Indium^111 Chloride"/>
+            </concept>
+            <concept>
+                <code value="C-145AA"/>
+                <display value="Indium^111 Pentetreotide"/>
+            </concept>
+            <concept>
+                <code value="C-B1151"/>
+                <display value="Potassium carbonate K^42^"/>
+            </concept>
+            <concept>
+                <code value="C-B1150"/>
+                <display value="Potassium chloride K^43^"/>
+            </concept>
+            <concept>
+                <code value="C-B1032"/>
+                <display value="Sodium fluoride F^18^"/>
+            </concept>
+            <concept>
+                <code value="C-B1031"/>
+                <display value="Fluorodeoxyglucose F^18^"/>
+            </concept>
+            <concept>
+                <code value="C-B1152"/>
+                <display value="Potassium chloride K^42^"/>
+            </concept>
+            <concept>
+                <code value="C-B1200"/>
+                <display value="Technetium Tc^99m^ aggregated albumin"/>
+            </concept>
+            <concept>
+                <code value="C-B1041"/>
+                <display value="Gallium^67^ citrate"/>
+            </concept>
+            <concept>
+                <code value="C-B1207"/>
+                <display value="Technetium Tc^99m^ disofenin"/>
+            </concept>
+            <concept>
+                <code value="C-B1206"/>
+                <display value="Sodium pertechnetate Tc^99m^"/>
+            </concept>
+            <concept>
+                <code value="C-B1209"/>
+                <display value="Technetium Tc^99m^ lidofenin"/>
+            </concept>
+            <concept>
+                <code value="C-B1208"/>
+                <display value="Technetium Tc^99m^ mebrofenin"/>
+            </concept>
+            <concept>
+                <code value="C-B1203"/>
+                <display value="Technetium Tc^99m^ microaggregated albumin"/>
+            </concept>
+            <concept>
+                <code value="C-B1205"/>
+                <display value="Technetium Tc^99c^ albumin microspheres"/>
+            </concept>
+            <concept>
+                <code value="C-B1204"/>
+                <display value="Technetium Tc^99m^ albumin colloid"/>
+            </concept>
+            <concept>
+                <code value="C-B1092"/>
+                <display value="Diiodofluorecein I^131^"/>
+            </concept>
+            <concept>
+                <code value="C-B1091"/>
+                <display value="Iodohippurate I^131^ sodium"/>
+            </concept>
+            <concept>
+                <code value="C-B1094"/>
+                <display value="Iodinated I^125^ levothyroxine"/>
+            </concept>
+            <concept>
+                <code value="C-B1093"/>
+                <display value="Iodinated I^125^ oleic acid and triolein"/>
+            </concept>
+            <concept>
+                <code value="C-B1090"/>
+                <display value="Iodinated I^131^ aggregated albumin"/>
+            </concept>
+            <concept>
+                <code value="C-B1012"/>
+                <display value="Chromium^51^ albumin"/>
+            </concept>
+            <concept>
+                <code value="C-B1133"/>
+                <display value="Technetium Tc^99m^ depreotide"/>
+            </concept>
+            <concept>
+                <code value="C-B1099"/>
+                <display value="Iodinated I^125^ sodium iodine"/>
+            </concept>
+            <concept>
+                <code value="C-B1011"/>
+                <display value="Sodium chromate Cr^51^"/>
+            </concept>
+            <concept>
+                <code value="C-B1135"/>
+                <display value="Indium^111^oxyquinoline"/>
+            </concept>
+            <concept>
+                <code value="C-B1013"/>
+                <display value="Chromium^51^ chloride"/>
+            </concept>
+            <concept>
+                <code value="C-B1096"/>
+                <display value="Iodinated I^125^ povidone"/>
+            </concept>
+            <concept>
+                <code value="C-B1095"/>
+                <display value="Iodohippurate I^123^ sodium"/>
+            </concept>
+            <concept>
+                <code value="C-B1098"/>
+                <display value="Iodinated I^125^ sealed source"/>
+            </concept>
+            <concept>
+                <code value="C-B1010"/>
+                <display value="Therapeutic radioisotope"/>
+            </concept>
+            <concept>
+                <code value="C-B1097"/>
+                <display value="Iodinated I^125^ Rose Bengal"/>
+            </concept>
+            <concept>
+                <code value="C-B1251"/>
+                <display value="Pentetate calcium trisodium Yb^169^"/>
+            </concept>
+            <concept>
+                <code value="C-B1016"/>
+                <display value="Copper^64^ versenate"/>
+            </concept>
+            <concept>
+                <code value="C-B1018"/>
+                <display value="Copper^67^ ceruloplasmin"/>
+            </concept>
+            <concept>
+                <code value="C-B1017"/>
+                <display value="Copper^64^ acetate"/>
+            </concept>
+            <concept>
+                <code value="C-B1023"/>
+                <display value="Cyanocobalamin Co^60^"/>
+            </concept>
+            <concept>
+                <code value="C-B1022"/>
+                <display value="Cyanocobalamin Co^58^"/>
+            </concept>
+            <concept>
+                <code value="C-B1300"/>
+                <display value="Carbon^14^ triolein"/>
+            </concept>
+            <concept>
+                <code value="C-B1140"/>
+                <display value="Chromic phosphate P^32^"/>
+            </concept>
+            <concept>
+                <code value="C-B1021"/>
+                <display value="Cyanocobalamin Co^57^"/>
+            </concept>
+            <concept>
+                <code value="C-B1142"/>
+                <display value="Sodium phosphate P^32^"/>
+            </concept>
+            <concept>
+                <code value="C-B1302"/>
+                <display value="Carbon^14^ D-xylose"/>
+            </concept>
+            <concept>
+                <code value="C-B1304"/>
+                <display value="Cholyl-carbon^14^ glycine"/>
+            </concept>
+            <concept>
+                <code value="C-B1070"/>
+                <display value="Indium^113m^ pentetate"/>
+            </concept>
+            <concept>
+                <code value="C-B1072"/>
+                <display value="Indium^113m^ oxoquinoline platelet label"/>
+            </concept>
+            <concept>
+                <code value="C-B1071"/>
+                <display value="Indium^113m^ oxoquinoline WBC label"/>
+            </concept>
+            <concept>
+                <code value="C-B110E"/>
+                <display value="Iodine^123 3-Iodobenzylguanidine MIBG"/>
+            </concept>
+            <concept>
+                <code value="C-B1111"/>
+                <display value="Iodinated I^131^ gamma globulin"/>
+            </concept>
+            <concept>
+                <code value="C-B1231"/>
+                <display value="Thallous chloride Tl^201^"/>
+            </concept>
+            <concept>
+                <code value="C-B1073"/>
+                <display value="Indium^113m^ oxoquinoline RBC label"/>
+            </concept>
+            <concept>
+                <code value="C-B1081"/>
+                <display value="Sodium iodide I^123^"/>
+            </concept>
+            <concept>
+                <code value="C-B1083"/>
+                <display value="Oleic acid I^125^"/>
+            </concept>
+            <concept>
+                <code value="C-B1082"/>
+                <display value="Fibrinogen I^123^"/>
+            </concept>
+            <concept>
+                <code value="C-B1122"/>
+                <display value="Ferrous chloride Fe^59^"/>
+            </concept>
+            <concept>
+                <code value="C-B1089"/>
+                <display value="Iodinated I^131^ albumin"/>
+            </concept>
+            <concept>
+                <code value="C-B1000"/>
+                <display value="Diagnostic radioisotope"/>
+            </concept>
+            <concept>
+                <code value="C-B1121"/>
+                <display value="Ferrous citrate Fe^59^"/>
+            </concept>
+            <concept>
+                <code value="C-B1088"/>
+                <display value="Iothalamate sodium I^125^"/>
+            </concept>
+            <concept>
+                <code value="C-B1124"/>
+                <display value="Iron Fe^59^ labeled dextran"/>
+            </concept>
+            <concept>
+                <code value="C-B1123"/>
+                <display value="Ferrous sulfate Fe^59^"/>
+            </concept>
+            <concept>
+                <code value="C-B1085"/>
+                <display value="Rose Bengal sodium I^131^"/>
+            </concept>
+            <concept>
+                <code value="C-B1084"/>
+                <display value="Iodinated I^125^ albumin"/>
+            </concept>
+            <concept>
+                <code value="C-B1087"/>
+                <display value="Iodocholesterol I^131^"/>
+            </concept>
+            <concept>
+                <code value="C-B1086"/>
+                <display value="Sodium iodide I^131^"/>
+            </concept>
+            <concept>
+                <code value="C-173A5"/>
+                <display value="Krypton^81m"/>
+            </concept>
+            <concept>
+                <code value="C-B112D"/>
+                <display value="Iodine^131 3-Iodobenzylguanidine MIBG"/>
+            </concept>
+            <concept>
+                <code value="C-B1171"/>
+                <display value="Selenomethionione Se^75^"/>
+            </concept>
+            <concept>
+                <code value="C-163AB"/>
+                <display value="Technetium Tc^99m^ sestamibi"/>
+            </concept>
+            <concept>
+                <code value="C-163AC"/>
+                <display value="Technetium Tc^99m^Teboroxime"/>
+            </concept>
+            <concept>
+                <code value="C-163AD"/>
+                <display value="Technetium Tc^99m^Tetrofosmin"/>
+            </concept>
+            <concept>
+                <code value="C-114B6"/>
+                <display value="Iodine^131 Methylnorcholestenol"/>
+            </concept>
+            <concept>
+                <code value="C-B1210"/>
+                <display value="Technetium Tc^99m^ iron ascorbate"/>
+            </concept>
+            <concept>
+                <code value="C-B1176"/>
+                <display value="Sodium chloride Na^22^"/>
+            </concept>
+            <concept>
+                <code value="C-B1211"/>
+                <display value="Technetium Tc^99m^ stannous etidronate"/>
+            </concept>
+            <concept>
+                <code value="C-B1051"/>
+                <display value="Colloidal gold Au^198^"/>
+            </concept>
+            <concept>
+                <code value="C-B1172"/>
+                <display value="Selenium^75^ HCAT"/>
+            </concept>
+            <concept>
+                <code value="C-B1175"/>
+                <display value="Sodium chloride Na^24^"/>
+            </concept>
+            <concept>
+                <code value="C-B1218"/>
+                <display value="Technetium Tc^99m^ medronate"/>
+            </concept>
+            <concept>
+                <code value="C-B1213"/>
+                <display value="Technetium Tc^99m^ oxidronate"/>
+            </concept>
+            <concept>
+                <code value="C-114AB"/>
+                <display value="Iodine^123 15-(4-Iodophenyl)-3(R,S)-Methylpentadecanoic Acid"/>
+            </concept>
+            <concept>
+                <code value="C-B1216"/>
+                <display value="Technetium Tc^99m^ serum albumin"/>
+            </concept>
+            <concept>
+                <code value="C-B1215"/>
+                <display value="Technetium Tc^99m^ pyro and polyphosphates"/>
+            </concept>
+            <concept>
+                <code value="C-B1180"/>
+                <display value="Strontium chloride Sr^85^"/>
+            </concept>
+            <concept>
+                <code value="C-163BA"/>
+                <display value="Technetium^99m N-pyridoxyl-5-methyltryptophan"/>
+            </concept>
+            <concept>
+                <code value="C-163BB"/>
+                <display value="Technetium^99m Phytate"/>
+            </concept>
+            <concept>
+                <code value="C-B1061"/>
+                <display value="Indium^111^ pentetate"/>
+            </concept>
+            <concept>
+                <code value="C-B1182"/>
+                <display value="Strontium nitrate Sr^85^"/>
+            </concept>
+            <concept>
+                <code value="C-163BC"/>
+                <display value="Technetium^99m Stannous Colloid"/>
+            </concept>
+            <concept>
+                <code value="C-B1181"/>
+                <display value="Strontium chloride Sr^87^"/>
+            </concept>
+            <concept>
+                <code value="C-163BD"/>
+                <display value="Technetium^99m Dimercaptosuccinic Acid DMSA"/>
+            </concept>
+            <concept>
+                <code value="C-B1067"/>
+                <display value="Indium^111^ transferrin"/>
+            </concept>
+            <concept>
+                <code value="C-B1100"/>
+                <display value="Iodinated I^125^ human serum albumin"/>
+            </concept>
+            <concept>
+                <code value="C-B1221"/>
+                <display value="Technetium Tc^99m^ succimer"/>
+            </concept>
+            <concept>
+                <code value="C-163B9"/>
+                <display value="Technetium^99m labeled carbon"/>
+            </concept>
+            <concept>
+                <code value="C-B1066"/>
+                <display value="Indium^111^ red cell label"/>
+            </concept>
+            <concept>
+                <code value="C-B1220"/>
+                <display value="Technetium Tc^99m^ sodium glucoheptonate"/>
+            </concept>
+            <concept>
+                <code value="C-B1069"/>
+                <display value="Indium^113m^ chloride"/>
+            </concept>
+            <concept>
+                <code value="C-B1223"/>
+                <display value="Technetium Tc^99m^ exametazine"/>
+            </concept>
+            <concept>
+                <code value="C-B1068"/>
+                <display value="Indium^113m^ bleomycin"/>
+            </concept>
+            <concept>
+                <code value="C-B1222"/>
+                <display value="Technetium Tc^99m^ sulfur colloid"/>
+            </concept>
+            <concept>
+                <code value="C-B1063"/>
+                <display value="Colloidal Indium^111^"/>
+            </concept>
+            <concept>
+                <code value="C-B1062"/>
+                <display value="Disodium indium^111^"/>
+            </concept>
+            <concept>
+                <code value="C-B1183"/>
+                <display value="Strontium nitrate Sr^87^"/>
+            </concept>
+            <concept>
+                <code value="C-B1065"/>
+                <display value="Indium^111^-Fe(OH) &gt;3&lt;"/>
+            </concept>
+            <concept>
+                <code value="C-B1108"/>
+                <display value="Iofetamine I^123^ hydrochloride"/>
+            </concept>
+            <concept>
+                <code value="C-B1109"/>
+                <display value="Iodine^131^ polyvinylpyrrolidone"/>
+            </concept>
+            <concept>
+                <code value="C-B1225"/>
+                <display value="Technetium Tc^99m^ N-substituted iminodiacetate"/>
+            </concept>
+            <concept>
+                <code value="C-B1224"/>
+                <display value="Technetium Tc^99m^ tagged red cells"/>
+            </concept>
+            <concept>
+                <code value="C-163B6"/>
+                <display value="Technetium^99m Galactosyl Human Serum Albumin Diethylenetriamine"/>
+            </concept>
+            <concept>
+                <code value="C-163B7"/>
+                <display value="Technetium^99m Hydroxymethylene diphosphonate HMDP"/>
+            </concept>
+            <concept>
+                <code value="C-B1105"/>
+                <display value="Iodohippurate I^125^ sodium"/>
+            </concept>
+            <concept>
+                <code value="C-163B8"/>
+                <display value="Technetium^99m Mercaptoacetyl triglycine MAG3"/>
+            </concept>
+            <concept>
+                <code value="C-163B0"/>
+                <display value="Technetium Tc^99m^ pentetate"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

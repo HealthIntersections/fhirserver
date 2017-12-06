@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-6210-LocationinIntestinalTract"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_6210.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.797"/>
+    </identifier>
+    <version value="20090402"/>
+    <name value="LocationinIntestinalTract"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 6210 LocationinIntestinalTract"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://snomed.info/srt"/>
+            <concept>
+                <code value="T-59600"/>
+                <display value="Rectum"/>
+            </concept>
+            <concept>
+                <code value="T-59440"/>
+                <display value="Transverse colon"/>
+            </concept>
+            <concept>
+                <code value="T-59100"/>
+                <display value="Cecum"/>
+            </concept>
+            <concept>
+                <code value="T-59420"/>
+                <display value="Ascending colon"/>
+            </concept>
+            <concept>
+                <code value="T-59442"/>
+                <display value="Splenic flexure of colon"/>
+            </concept>
+            <concept>
+                <code value="T-59470"/>
+                <display value="Sigmoid colon"/>
+            </concept>
+            <concept>
+                <code value="T-59460"/>
+                <display value="Descending colon"/>
+            </concept>
+            <concept>
+                <code value="T-59438"/>
+                <display value="Hepatic flexure of colon"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-271-ObservationSubjectClass"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_271.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.41"/>
+    </identifier>
+    <version value="20071102"/>
+    <name value="ObservationSubjectClass"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 271 ObservationSubjectClass"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://dicom.nema.org/resources/ontology/DCM"/>
+            <concept>
+                <code value="121026"/>
+                <display value="Fetus"/>
+            </concept>
+            <concept>
+                <code value="121027"/>
+                <display value="Specimen"/>
+            </concept>
+            <concept>
+                <code value="121025"/>
+                <display value="Patient"/>
+            </concept>
+            <concept>
+                <code value="121192"/>
+                <display value="Device Subject"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

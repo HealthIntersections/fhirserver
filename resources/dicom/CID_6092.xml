@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-6092-QuantitativeConceptsforUsageExposure"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_6092.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.414"/>
+    </identifier>
+    <version value="20040112"/>
+    <name value="QuantitativeConceptsforUsage,Exposure"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 6092 QuantitativeConceptsforUsage,Exposure"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://dicom.nema.org/resources/ontology/DCM"/>
+            <concept>
+                <code value="111580"/>
+                <display value="Volume of use"/>
+            </concept>
+            <concept>
+                <code value="111578"/>
+                <display value="Dose frequency"/>
+            </concept>
+            <concept>
+                <code value="111579"/>
+                <display value="Rate of exposure"/>
+            </concept>
+        </include>
+        <include>
+            <system value="http://snomed.info/srt"/>
+            <concept>
+                <code value="G-C0B7"/>
+                <display value="Dosage"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

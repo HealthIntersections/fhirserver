@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-635-HeatingMethod"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_635.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.1100"/>
+    </identifier>
+    <version value="20151110"/>
+    <name value="HeatingMethod"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 635 HeatingMethod"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://dicom.nema.org/resources/ontology/DCM"/>
+            <concept>
+                <code value="127253"/>
+                <display value="Heated water blanket"/>
+            </concept>
+            <concept>
+                <code value="127254"/>
+                <display value="Pre-heated pad"/>
+            </concept>
+            <concept>
+                <code value="127255"/>
+                <display value="Unheated"/>
+            </concept>
+            <concept>
+                <code value="127250"/>
+                <display value="Forced air heater"/>
+            </concept>
+            <concept>
+                <code value="127251"/>
+                <display value="Heated imaging device"/>
+            </concept>
+            <concept>
+                <code value="127252"/>
+                <display value="Heated patient support"/>
+            </concept>
+        </include>
+        <include>
+            <system value="http://snomed.info/srt"/>
+            <concept>
+                <code value="A-18041"/>
+                <display value="Electric blanket"/>
+            </concept>
+            <concept>
+                <code value="R-FDB79"/>
+                <display value="Air heating pad"/>
+            </concept>
+            <concept>
+                <code value="A-2C140"/>
+                <display value="Electric heating pad"/>
+            </concept>
+            <concept>
+                <code value="A-2C141"/>
+                <display value="Non-electric heating pad"/>
+            </concept>
+            <concept>
+                <code value="A-17452"/>
+                <display value="Warming blanket"/>
+            </concept>
+            <concept>
+                <code value="A-17454"/>
+                <display value="Forced air warming blanket"/>
+            </concept>
+            <concept>
+                <code value="A-17450"/>
+                <display value="Warmer device"/>
+            </concept>
+        </include>
+        <include>
+            <system value="http://www.nlm.nih.gov/research/umls"/>
+            <concept>
+                <code value="C0181514"/>
+                <display value="Heat lamp"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

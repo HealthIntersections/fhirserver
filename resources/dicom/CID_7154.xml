@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-7154-AbdominalSegmentationTypes"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_7154.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.500"/>
+    </identifier>
+    <version value="20130617"/>
+    <name value="AbdominalSegmentationTypes"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 7154 AbdominalSegmentationTypes"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://snomed.info/srt"/>
+            <concept>
+                <code value="T-70001"/>
+                <display value="Urinary system"/>
+            </concept>
+            <concept>
+                <code value="T-C3000"/>
+                <display value="Spleen"/>
+            </concept>
+            <concept>
+                <code value="T-48710"/>
+                <display value="Inferior vena cava"/>
+            </concept>
+            <concept>
+                <code value="T-71000"/>
+                <display value="Kidney"/>
+            </concept>
+            <concept>
+                <code value="T-D4900"/>
+                <display value="Retroperitoneal space"/>
+            </concept>
+            <concept>
+                <code value="T-14001"/>
+                <display value="Abdominal wall muscle"/>
+            </concept>
+            <concept>
+                <code value="T-B3000"/>
+                <display value="Adrenal gland"/>
+            </concept>
+            <concept>
+                <code value="T-D4400"/>
+                <display value="Peritioneum"/>
+            </concept>
+            <concept>
+                <code value="T-D4425"/>
+                <display value="Peritoneal cavity"/>
+            </concept>
+            <concept>
+                <code value="T-D4600"/>
+                <display value="Omentum"/>
+            </concept>
+            <concept>
+                <code value="T-D4000"/>
+                <display value="Abdomen"/>
+            </concept>
+            <concept>
+                <code value="T-60610"/>
+                <display value="Bile Duct"/>
+            </concept>
+            <concept>
+                <code value="T-58000"/>
+                <display value="Small Intestine"/>
+            </concept>
+            <concept>
+                <code value="T-02480"/>
+                <display value="Skin of abdomen"/>
+            </concept>
+            <concept>
+                <code value="T-D4010"/>
+                <display value="Abdominal cavity"/>
+            </concept>
+            <concept>
+                <code value="T-62000"/>
+                <display value="Liver"/>
+            </concept>
+            <concept>
+                <code value="T-42500"/>
+                <display value="Abdominal aorta"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

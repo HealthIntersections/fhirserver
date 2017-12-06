@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-4040-EndoscopyAnatomicRegions"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_4040.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.311"/>
+    </identifier>
+    <version value="20160314"/>
+    <name value="EndoscopyAnatomicRegions"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 4040 EndoscopyAnatomicRegions"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://snomed.info/srt"/>
+            <concept>
+                <code value="T-AB200"/>
+                <display value="External auditory canal"/>
+            </concept>
+            <concept>
+                <code value="T-73000"/>
+                <display value="Ureter"/>
+            </concept>
+            <concept>
+                <code value="T-71000"/>
+                <display value="Kidney"/>
+            </concept>
+            <concept>
+                <code value="T-63000"/>
+                <display value="Gallbladder"/>
+            </concept>
+            <concept>
+                <code value="T-15001"/>
+                <display value="Joint"/>
+            </concept>
+            <concept>
+                <code value="T-D04FF"/>
+                <display value="Spine"/>
+            </concept>
+            <concept>
+                <code value="T-60610"/>
+                <display value="Bile duct"/>
+            </concept>
+            <concept>
+                <code value="T-D3000"/>
+                <display value="Chest"/>
+            </concept>
+            <concept>
+                <code value="T-2300C"/>
+                <display value="Nasopharynx"/>
+            </concept>
+            <concept>
+                <code value="T-7000B"/>
+                <display value="Upper urinary tract"/>
+            </concept>
+            <concept>
+                <code value="T-88920"/>
+                <display value="Uterus and fallopian tubes"/>
+            </concept>
+            <concept>
+                <code value="T-D9200"/>
+                <display value="Knee"/>
+            </concept>
+            <concept>
+                <code value="T-D7000"/>
+                <display value="Inguinal region"/>
+            </concept>
+            <concept>
+                <code value="T-59470"/>
+                <display value="Sigmoid colon"/>
+            </concept>
+            <concept>
+                <code value="T-59490"/>
+                <display value="Anus, rectum and sigmoid colon"/>
+            </concept>
+            <concept>
+                <code value="T-22000"/>
+                <display value="Paranasal sinus"/>
+            </concept>
+            <concept>
+                <code value="T-24100"/>
+                <display value="Larynx"/>
+            </concept>
+            <concept>
+                <code value="T-40230"/>
+                <display value="Lumen of blood vessel"/>
+            </concept>
+            <concept>
+                <code value="T-DD006"/>
+                <display value="Trachea and bronchus"/>
+            </concept>
+            <concept>
+                <code value="T-D3300"/>
+                <display value="Mediastinum"/>
+            </concept>
+            <concept>
+                <code value="T-83200"/>
+                <display value="Cervix"/>
+            </concept>
+            <concept>
+                <code value="T-D4000"/>
+                <display value="Abdomen"/>
+            </concept>
+            <concept>
+                <code value="T-59600"/>
+                <display value="Rectum"/>
+            </concept>
+            <concept>
+                <code value="T-D2220"/>
+                <display value="Shoulder"/>
+            </concept>
+            <concept>
+                <code value="T-59000"/>
+                <display value="Large intestine"/>
+            </concept>
+            <concept>
+                <code value="T-55000"/>
+                <display value="Pharynx"/>
+            </concept>
+            <concept>
+                <code value="T-26000"/>
+                <display value="Bronchus"/>
+            </concept>
+            <concept>
+                <code value="T-74000"/>
+                <display value="Bladder"/>
+            </concept>
+            <concept>
+                <code value="T-DD123"/>
+                <display value="Bladder and urethra"/>
+            </concept>
+            <concept>
+                <code value="T-20101"/>
+                <display value="Pharynx and larynx"/>
+            </concept>
+            <concept>
+                <code value="T-DD163"/>
+                <display value="Esophagus, stomach and duodenum"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-6081-BreastCancerRiskFactors"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_6081.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.403"/>
+    </identifier>
+    <version value="20160314"/>
+    <name value="BreastCancerRiskFactors"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 6081 BreastCancerRiskFactors"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://dicom.nema.org/resources/ontology/DCM"/>
+            <concept>
+                <code value="111560"/>
+                <display value="Intermediate family history of breast cancer"/>
+            </concept>
+            <concept>
+                <code value="111550"/>
+                <display value="Personal breast cancer history"/>
+            </concept>
+            <concept>
+                <code value="111561"/>
+                <display value="Very strong family history of breast cancer"/>
+            </concept>
+            <concept>
+                <code value="111551"/>
+                <display value="History of endometrial cancer"/>
+            </concept>
+            <concept>
+                <code value="111562"/>
+                <display value="Family history of prostate cancer"/>
+            </concept>
+            <concept>
+                <code value="111552"/>
+                <display value="History of ovarian cancer"/>
+            </concept>
+            <concept>
+                <code value="111563"/>
+                <display value="Family history unknown"/>
+            </concept>
+            <concept>
+                <code value="111553"/>
+                <display value="History of high risk lesion on previous biopsy"/>
+            </concept>
+            <concept>
+                <code value="111554"/>
+                <display value="Post menopausal patient"/>
+            </concept>
+            <concept>
+                <code value="111555"/>
+                <display value="Late child bearing (after 30)"/>
+            </concept>
+            <concept>
+                <code value="111556"/>
+                <display value="BRCA1 breast cancer gene"/>
+            </concept>
+            <concept>
+                <code value="111557"/>
+                <display value="BRCA2 breast cancer gene"/>
+            </concept>
+            <concept>
+                <code value="111558"/>
+                <display value="BRCA3 breast cancer gene"/>
+            </concept>
+            <concept>
+                <code value="111559"/>
+                <display value="Weak family history of breast cancer"/>
+            </concept>
+        </include>
+        <include>
+            <system value="http://snomed.info/srt"/>
+            <concept>
+                <code value="G-04C5"/>
+                <display value="Family history of breast cancer"/>
+            </concept>
+            <concept>
+                <code value="F-84430"/>
+                <display value="Nulliparous"/>
+            </concept>
+            <concept>
+                <code value="R-207AD"/>
+                <display value="No family history of breast carcinoma"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

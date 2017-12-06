@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-3620-HemodynamicRatios"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_3620.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.170"/>
+    </identifier>
+    <version value="20030327"/>
+    <name value="HemodynamicRatios"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 3620 HemodynamicRatios"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://dicom.nema.org/resources/ontology/DCM"/>
+            <concept>
+                <code value="122218"/>
+                <display value="Diastolic/Systolic velocity ratio"/>
+            </concept>
+            <concept>
+                <code value="122219"/>
+                <display value="Hyperemic ratio"/>
+            </concept>
+            <concept>
+                <code value="122217"/>
+                <display value="Coronary Flow reserve"/>
+            </concept>
+            <concept>
+                <code value="122220"/>
+                <display value="Hemodynamic Resistance Index"/>
+            </concept>
+        </include>
+        <include>
+            <system value="http://loinc.org"/>
+            <concept>
+                <code value="8581-1"/>
+                <display value="Tibial/brachial index"/>
+            </concept>
+        </include>
+        <include>
+            <system value="http://snomed.info/srt"/>
+            <concept>
+                <code value="R-00308"/>
+                <display value="Fractional Flow Reserve using intracoronary bolus"/>
+            </concept>
+            <concept>
+                <code value="R-00307"/>
+                <display value="Fractional flow reserve"/>
+            </concept>
+            <concept>
+                <code value="F-0238B"/>
+                <display value="Pulmonary/Systemic Flow Ratio"/>
+            </concept>
+            <concept>
+                <code value="R-00309"/>
+                <display value="Fractional Flow Reserve using intravenous infusion"/>
+            </concept>
+            <concept>
+                <code value="F-031A2"/>
+                <display value="Pulsatility Index"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

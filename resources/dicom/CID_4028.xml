@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-4028-CraniofacialAnatomicRegions"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_4028.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.306"/>
+    </identifier>
+    <version value="20170914"/>
+    <name value="CraniofacialAnatomicRegions"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 4028 CraniofacialAnatomicRegions"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://snomed.info/srt"/>
+            <concept>
+                <code value="T-21342"/>
+                <display value="Vomer bone"/>
+            </concept>
+            <concept>
+                <code value="T-D0801"/>
+                <display value="Eye region"/>
+            </concept>
+            <concept>
+                <code value="T-D006D"/>
+                <display value="Bone structure of head and/or neck"/>
+            </concept>
+            <concept>
+                <code value="T-AB100"/>
+                <display value="External ear"/>
+            </concept>
+            <concept>
+                <code value="T-AA770"/>
+                <display value="Eyeball"/>
+            </concept>
+            <concept>
+                <code value="T-11180"/>
+                <display value="Mandible"/>
+            </concept>
+            <concept>
+                <code value="T-AB300"/>
+                <display value="Middle ear"/>
+            </concept>
+            <concept>
+                <code value="T-11160"/>
+                <display value="Palatine bone"/>
+            </concept>
+            <concept>
+                <code value="T-11140"/>
+                <display value="Occipital bone"/>
+            </concept>
+            <concept>
+                <code value="T-13100"/>
+                <display value="Muscle of head"/>
+            </concept>
+            <concept>
+                <code value="T-D14AE"/>
+                <display value="Orbital structure"/>
+            </concept>
+            <concept>
+                <code value="T-11120"/>
+                <display value="Parietal bone"/>
+            </concept>
+            <concept>
+                <code value="T-13300"/>
+                <display value="Muscle of neck"/>
+            </concept>
+            <concept>
+                <code value="T-11100"/>
+                <display value="Skull"/>
+            </concept>
+            <concept>
+                <code value="T-11166"/>
+                <display value="Zygoma"/>
+            </concept>
+            <concept>
+                <code value="T-D1213"/>
+                <display value="Jaw region"/>
+            </concept>
+            <concept>
+                <code value="T-11102"/>
+                <display value="Optic canal"/>
+            </concept>
+            <concept>
+                <code value="T-11501"/>
+                <display value="Cervical spine"/>
+            </concept>
+            <concept>
+                <code value="T-11149"/>
+                <display value="Nasal bone"/>
+            </concept>
+            <concept>
+                <code value="T-61300"/>
+                <display value="Submandibular gland"/>
+            </concept>
+            <concept>
+                <code value="T-D1000"/>
+                <display value="Head and Neck"/>
+            </concept>
+            <concept>
+                <code value="T-52000"/>
+                <display value="Lip"/>
+            </concept>
+            <concept>
+                <code value="T-25000"/>
+                <display value="Trachea"/>
+            </concept>
+            <concept>
+                <code value="T-AB700"/>
+                <display value="Inner ear"/>
+            </concept>
+            <concept>
+                <code value="T-61007"/>
+                <display value="Salivary gland"/>
+            </concept>
+            <concept>
+                <code value="T-22000"/>
+                <display value="Paranasal sinus"/>
+            </concept>
+            <concept>
+                <code value="T-15290"/>
+                <display value="Temporomandibular joint"/>
+            </concept>
+            <concept>
+                <code value="T-11190"/>
+                <display value="Hyoid bone"/>
+            </concept>
+            <concept>
+                <code value="T-24100"/>
+                <display value="Larynx"/>
+            </concept>
+            <concept>
+                <code value="T-11170"/>
+                <display value="Maxilla"/>
+            </concept>
+            <concept>
+                <code value="T-11150"/>
+                <display value="Sphenoid bone"/>
+            </concept>
+            <concept>
+                <code value="T-D1600"/>
+                <display value="Neck"/>
+            </concept>
+            <concept>
+                <code value="T-11196"/>
+                <display value="Facial bones"/>
+            </concept>
+            <concept>
+                <code value="T-11130"/>
+                <display value="Temporal bone"/>
+            </concept>
+            <concept>
+                <code value="T-11110"/>
+                <display value="Frontal bone"/>
+            </concept>
+            <concept>
+                <code value="T-D1100"/>
+                <display value="Head"/>
+            </concept>
+            <concept>
+                <code value="T-11011"/>
+                <display value="Vertebral column and cranium"/>
+            </concept>
+            <concept>
+                <code value="T-11133"/>
+                <display value="Mastoid bone"/>
+            </concept>
+            <concept>
+                <code value="T-11156"/>
+                <display value="Ethmoid bone"/>
+            </concept>
+            <concept>
+                <code value="T-AB959"/>
+                <display value="Internal Auditory Canal"/>
+            </concept>
+            <concept>
+                <code value="T-54010"/>
+                <display value="Tooth"/>
+            </concept>
+            <concept>
+                <code value="T-51120"/>
+                <display value="Soft palate"/>
+            </concept>
+            <concept>
+                <code value="T-53000"/>
+                <display value="Tongue"/>
+            </concept>
+            <concept>
+                <code value="T-1115A"/>
+                <display value="Lacrimal bone"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

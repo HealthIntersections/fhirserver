@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-3758-CardiovascularFamilyHistory"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_3758.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.253"/>
+    </identifier>
+    <version value="20111028"/>
+    <name value="CardiovascularFamilyHistory"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 3758 CardiovascularFamilyHistory"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://snomed.info/srt"/>
+            <concept>
+                <code value="R-2087E"/>
+                <display value="No family history of diabetes"/>
+            </concept>
+            <concept>
+                <code value="G-0157"/>
+                <display value="Family history of diabetes mellitus"/>
+            </concept>
+            <concept>
+                <code value="G-04E3"/>
+                <display value="Family history of coronary arteriosclerosis"/>
+            </concept>
+            <concept>
+                <code value="G-032F"/>
+                <display value="Family history of cardiovascular disease"/>
+            </concept>
+            <concept>
+                <code value="G-011E"/>
+                <display value="Family history of myocardial infarction"/>
+            </concept>
+            <concept>
+                <code value="F-03F6E"/>
+                <display value="Family history unknown"/>
+            </concept>
+            <concept>
+                <code value="R-20773"/>
+                <display value="No family history of cardiovascular disease"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

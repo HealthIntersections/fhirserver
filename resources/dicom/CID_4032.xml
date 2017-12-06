@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-4032-MRSpectroscopyMetabolites"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_4032.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.309"/>
+    </identifier>
+    <version value="20040322"/>
+    <name value="MRSpectroscopyMetabolites"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 4032 MRSpectroscopyMetabolites"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://dicom.nema.org/resources/ontology/DCM"/>
+            <concept>
+                <code value="113096"/>
+                <display value="Creatine+Choline/Citrate Ratio"/>
+            </concept>
+            <concept>
+                <code value="113080"/>
+                <display value="Glutamate and glutamine"/>
+            </concept>
+            <concept>
+                <code value="113081"/>
+                <display value="Choline/Creatine Ratio"/>
+            </concept>
+            <concept>
+                <code value="113082"/>
+                <display value="N-acetylaspartate/Creatine Ratio"/>
+            </concept>
+            <concept>
+                <code value="113094"/>
+                <display value="Creatine and Choline"/>
+            </concept>
+            <concept>
+                <code value="113083"/>
+                <display value="N-acetylaspartate/Choline Ratio"/>
+            </concept>
+            <concept>
+                <code value="113095"/>
+                <display value="Lipid and Lactate"/>
+            </concept>
+        </include>
+        <include>
+            <system value="http://snomed.info/srt"/>
+            <concept>
+                <code value="F-61A90"/>
+                <display value="Inositol"/>
+            </concept>
+            <concept>
+                <code value="F-61620"/>
+                <display value="Choline"/>
+            </concept>
+            <concept>
+                <code value="F-61760"/>
+                <display value="Lactate"/>
+            </concept>
+            <concept>
+                <code value="F-64460"/>
+                <display value="Tuarine"/>
+            </concept>
+            <concept>
+                <code value="F-61380"/>
+                <display value="Creatine"/>
+            </concept>
+            <concept>
+                <code value="F-64210"/>
+                <display value="Glutamine"/>
+            </concept>
+            <concept>
+                <code value="F-61080"/>
+                <display value="Citrate"/>
+            </concept>
+            <concept>
+                <code value="F-63600"/>
+                <display value="Lipid"/>
+            </concept>
+            <concept>
+                <code value="F-65C50"/>
+                <display value="N-acetylaspartate"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

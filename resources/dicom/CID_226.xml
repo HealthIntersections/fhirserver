@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-226-PopulationStatisticalDescriptors"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_226.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.31"/>
+    </identifier>
+    <version value="20121101"/>
+    <name value="PopulationStatisticalDescriptors"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 226 PopulationStatisticalDescriptors"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://dicom.nema.org/resources/ontology/DCM"/>
+            <concept>
+                <code value="121414"/>
+                <display value="Standard deviation of population"/>
+            </concept>
+            <concept>
+                <code value="121417"/>
+                <display value="2 Sigma deviation of population"/>
+            </concept>
+        </include>
+        <include>
+            <system value="http://snomed.info/srt"/>
+            <concept>
+                <code value="R-00319"/>
+                <display value="Median Value of population"/>
+            </concept>
+            <concept>
+                <code value="R-00337"/>
+                <display value="95th Percentile Value of population"/>
+            </concept>
+            <concept>
+                <code value="R-00347"/>
+                <display value="1 Sigma Lower Value of population"/>
+            </concept>
+            <concept>
+                <code value="R-00317"/>
+                <display value="Mean Value of population"/>
+            </concept>
+            <concept>
+                <code value="R-00338"/>
+                <display value="90th Percentile Value of population"/>
+            </concept>
+            <concept>
+                <code value="R-00377"/>
+                <display value="10th Percentile Value of population"/>
+            </concept>
+            <concept>
+                <code value="R-00388"/>
+                <display value="2 Sigma Lower Value of population"/>
+            </concept>
+            <concept>
+                <code value="R-00387"/>
+                <display value="2 Sigma Upper Value of population"/>
+            </concept>
+            <concept>
+                <code value="R-00346"/>
+                <display value="1 Sigma Upper Value of population"/>
+            </concept>
+            <concept>
+                <code value="R-00397"/>
+                <display value="5th Percentile Value of population"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

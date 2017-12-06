@@ -1,0 +1,701 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-7469-GenericIntensityandSizeMeasurements"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_7469.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.1003"/>
+    </identifier>
+    <version value="20141110"/>
+    <name value="GenericIntensityandSizeMeasurements"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 7469 GenericIntensityandSizeMeasurements"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://dicom.nema.org/resources/ontology/DCM"/>
+            <concept>
+                <code value="113041"/>
+                <display value="Apparent Diffusion Coefficient"/>
+            </concept>
+            <concept>
+                <code value="113043"/>
+                <display value="Diffusion weighted"/>
+            </concept>
+            <concept>
+                <code value="113288"/>
+                <display value="Volume Ratio"/>
+            </concept>
+            <concept>
+                <code value="121222"/>
+                <display value="Volume of sphere"/>
+            </concept>
+            <concept>
+                <code value="113289"/>
+                <display value="Diffusion Coefficient"/>
+            </concept>
+            <concept>
+                <code value="110855"/>
+                <display value="Fractional Occupancy Segmentation"/>
+            </concept>
+            <concept>
+                <code value="110854"/>
+                <display value="Fractional Probabilistic Segmentation"/>
+            </concept>
+            <concept>
+                <code value="110853"/>
+                <display value="Binary Segmentation"/>
+            </concept>
+            <concept>
+                <code value="110852"/>
+                <display value="MR signal intensity"/>
+            </concept>
+            <concept>
+                <code value="110850"/>
+                <display value="X-Ray Attenuation"/>
+            </concept>
+            <concept>
+                <code value="121220"/>
+                <display value="Volume of circumscribed sphere"/>
+            </concept>
+            <concept>
+                <code value="121221"/>
+                <display value="Volume of ellipsoid"/>
+            </concept>
+            <concept>
+                <code value="121217"/>
+                <display value="Volume estimated from three or more non-coplanar 2D regions"/>
+            </concept>
+            <concept>
+                <code value="121218"/>
+                <display value="Volume estimated from two non-coplanar 2D regions"/>
+            </concept>
+            <concept>
+                <code value="121216"/>
+                <display value="Volume estimated from single 2D region"/>
+            </concept>
+            <concept>
+                <code value="121211"/>
+                <display value="Path length"/>
+            </concept>
+            <concept>
+                <code value="121219"/>
+                <display value="Volume of bounding three dimensional region"/>
+            </concept>
+            <concept>
+                <code value="110845"/>
+                <display value="YBR ICT CR Component"/>
+            </concept>
+            <concept>
+                <code value="126220"/>
+                <display value="R2-Coefficient"/>
+            </concept>
+            <concept>
+                <code value="110844"/>
+                <display value="YBR ICT CB Component"/>
+            </concept>
+            <concept>
+                <code value="126221"/>
+                <display value="Chi-square"/>
+            </concept>
+            <concept>
+                <code value="110843"/>
+                <display value="YBR ICT Y Component"/>
+            </concept>
+            <concept>
+                <code value="126222"/>
+                <display value="D-W"/>
+            </concept>
+            <concept>
+                <code value="110842"/>
+                <display value="YBR PARTIAL CR Component"/>
+            </concept>
+            <concept>
+                <code value="126223"/>
+                <display value="AIC"/>
+            </concept>
+            <concept>
+                <code value="110841"/>
+                <display value="YBR PARTIAL CB Component"/>
+            </concept>
+            <concept>
+                <code value="126224"/>
+                <display value="BIC"/>
+            </concept>
+            <concept>
+                <code value="110840"/>
+                <display value="YBR PARTIAL Y Component"/>
+            </concept>
+            <concept>
+                <code value="110849"/>
+                <display value="Echogenicity"/>
+            </concept>
+            <concept>
+                <code value="110848"/>
+                <display value="YBR RCT CR Component"/>
+            </concept>
+            <concept>
+                <code value="110847"/>
+                <display value="YBR RCT CB Component"/>
+            </concept>
+            <concept>
+                <code value="110846"/>
+                <display value="YBR RCT Y Component"/>
+            </concept>
+            <concept>
+                <code value="121206"/>
+                <display value="Distance"/>
+            </concept>
+            <concept>
+                <code value="121207"/>
+                <display value="Height"/>
+            </concept>
+            <concept>
+                <code value="110834"/>
+                <display value="RGB R Component"/>
+            </concept>
+            <concept>
+                <code value="110833"/>
+                <display value="Ultrasound Attenuation"/>
+            </concept>
+            <concept>
+                <code value="126330"/>
+                <display value="tau_m"/>
+            </concept>
+            <concept>
+                <code value="110832"/>
+                <display value="Speed of sound"/>
+            </concept>
+            <concept>
+                <code value="126331"/>
+                <display value="vp"/>
+            </concept>
+            <concept>
+                <code value="110831"/>
+                <display value="Perfusion"/>
+            </concept>
+            <concept>
+                <code value="110830"/>
+                <display value="Elasticity"/>
+            </concept>
+            <concept>
+                <code value="128512"/>
+                <display value="Equivalent Dose"/>
+            </concept>
+            <concept>
+                <code value="128513"/>
+                <display value="Absorbed Dose"/>
+            </concept>
+            <concept>
+                <code value="110839"/>
+                <display value="YBR FULL CR Component"/>
+            </concept>
+            <concept>
+                <code value="110838"/>
+                <display value="YBR FULL CB Component"/>
+            </concept>
+            <concept>
+                <code value="110837"/>
+                <display value="YBR FULL Y Component"/>
+            </concept>
+            <concept>
+                <code value="110836"/>
+                <display value="RGB B Component"/>
+            </concept>
+            <concept>
+                <code value="110835"/>
+                <display value="RGB G Component"/>
+            </concept>
+            <concept>
+                <code value="113096"/>
+                <display value="Creatine+Choline/Citrate Ratio"/>
+            </concept>
+            <concept>
+                <code value="113098"/>
+                <display value="Magnetization Transfer Ratio"/>
+            </concept>
+            <concept>
+                <code value="126326"/>
+                <display value="IAUC90BN"/>
+            </concept>
+            <concept>
+                <code value="126327"/>
+                <display value="IAUC180BN"/>
+            </concept>
+            <concept>
+                <code value="113094"/>
+                <display value="Creatine and Choline"/>
+            </concept>
+            <concept>
+                <code value="113095"/>
+                <display value="Lipid and Lactate"/>
+            </concept>
+            <concept>
+                <code value="110823"/>
+                <display value="Spatial Displacement Y Component"/>
+            </concept>
+            <concept>
+                <code value="110822"/>
+                <display value="Spatial Displacement X Component"/>
+            </concept>
+            <concept>
+                <code value="110821"/>
+                <display value="Nuclear Medicine Tomographic Activity"/>
+            </concept>
+            <concept>
+                <code value="126320"/>
+                <display value="IAUC"/>
+            </concept>
+            <concept>
+                <code value="110820"/>
+                <display value="Nuclear Medicine Projection Activity"/>
+            </concept>
+            <concept>
+                <code value="126321"/>
+                <display value="IAUC60"/>
+            </concept>
+            <concept>
+                <code value="126322"/>
+                <display value="IAUC90"/>
+            </concept>
+            <concept>
+                <code value="126323"/>
+                <display value="IAUC180"/>
+            </concept>
+            <concept>
+                <code value="126324"/>
+                <display value="IAUCBN"/>
+            </concept>
+            <concept>
+                <code value="126325"/>
+                <display value="IAUC60BN"/>
+            </concept>
+            <concept>
+                <code value="110829"/>
+                <display value="Flow Variance"/>
+            </concept>
+            <concept>
+                <code value="110828"/>
+                <display value="Flow Velocity"/>
+            </concept>
+            <concept>
+                <code value="110827"/>
+                <display value="Tissue Velocity"/>
+            </concept>
+            <concept>
+                <code value="110826"/>
+                <display value="Indexed Hemodynamic Resistance"/>
+            </concept>
+            <concept>
+                <code value="110825"/>
+                <display value="Hemodynamic Resistance"/>
+            </concept>
+            <concept>
+                <code value="110824"/>
+                <display value="Spatial Displacement Z Component"/>
+            </concept>
+            <concept>
+                <code value="112031"/>
+                <display value="Attenuation Coefficient"/>
+            </concept>
+            <concept>
+                <code value="113080"/>
+                <display value="Glutamate and glutamine"/>
+            </concept>
+            <concept>
+                <code value="113081"/>
+                <display value="Choline/Creatine Ratio"/>
+            </concept>
+            <concept>
+                <code value="113082"/>
+                <display value="N-acetylaspartate/Creatine Ratio"/>
+            </concept>
+            <concept>
+                <code value="113083"/>
+                <display value="N-acetylaspartate/Choline Ratio"/>
+            </concept>
+            <concept>
+                <code value="113084"/>
+                <display value="Tmax"/>
+            </concept>
+            <concept>
+                <code value="126395"/>
+                <display value="R2*"/>
+            </concept>
+            <concept>
+                <code value="110812"/>
+                <display value="Volumetric Diffusion Dxz Component"/>
+            </concept>
+            <concept>
+                <code value="126396"/>
+                <display value="Magnetic Susceptibility"/>
+            </concept>
+            <concept>
+                <code value="110811"/>
+                <display value="Volumetric Diffusion Dxy Component"/>
+            </concept>
+            <concept>
+                <code value="110810"/>
+                <display value="Volumetric Diffusion Dxx Component"/>
+            </concept>
+            <concept>
+                <code value="126312"/>
+                <display value="Ktrans"/>
+            </concept>
+            <concept>
+                <code value="126313"/>
+                <display value="kep"/>
+            </concept>
+            <concept>
+                <code value="126314"/>
+                <display value="ve"/>
+            </concept>
+            <concept>
+                <code value="110819"/>
+                <display value="Blood Oxygenation Level"/>
+            </concept>
+            <concept>
+                <code value="110818"/>
+                <display value="T2* Weighted Dynamic Contrast Enhanced MR Signal Intensity"/>
+            </concept>
+            <concept>
+                <code value="110817"/>
+                <display value="T2 Weighted Dynamic Contrast Enhanced MR Signal Intensity"/>
+            </concept>
+            <concept>
+                <code value="126390"/>
+                <display value="Regional Blood Flow"/>
+            </concept>
+            <concept>
+                <code value="110816"/>
+                <display value="T1 Weighted Dynamic Contrast Enhanced MR Signal Intensity"/>
+            </concept>
+            <concept>
+                <code value="126391"/>
+                <display value="Regional Blood Volume"/>
+            </concept>
+            <concept>
+                <code value="110815"/>
+                <display value="Volumetric Diffusion Dzz Component"/>
+            </concept>
+            <concept>
+                <code value="126392"/>
+                <display value="Oxygen Extraction Fraction"/>
+            </concept>
+            <concept>
+                <code value="126393"/>
+                <display value="R1"/>
+            </concept>
+            <concept>
+                <code value="110814"/>
+                <display value="Volumetric Diffusion Dyz Component"/>
+            </concept>
+            <concept>
+                <code value="126394"/>
+                <display value="R2"/>
+            </concept>
+            <concept>
+                <code value="110813"/>
+                <display value="Volumetric Diffusion Dyy Component"/>
+            </concept>
+            <concept>
+                <code value="113070"/>
+                <display value="Velocity encoded"/>
+            </concept>
+            <concept>
+                <code value="113071"/>
+                <display value="Z-score"/>
+            </concept>
+            <concept>
+                <code value="110801"/>
+                <display value="Contrast Agent Angio MR Signal Intensity"/>
+            </concept>
+            <concept>
+                <code value="110800"/>
+                <display value="Spin Tagging Perfusion MR Signal Intensity"/>
+            </concept>
+            <concept>
+                <code value="110809"/>
+                <display value="Relative Anisotropy"/>
+            </concept>
+            <concept>
+                <code value="110808"/>
+                <display value="Fractional Anisotropy"/>
+            </concept>
+            <concept>
+                <code value="110807"/>
+                <display value="Field Map MR Signal Intensity"/>
+            </concept>
+            <concept>
+                <code value="110806"/>
+                <display value="T2* Weighted MR Signal Intensity"/>
+            </concept>
+            <concept>
+                <code value="110805"/>
+                <display value="T2 Weighted MR Signal Intensity"/>
+            </concept>
+            <concept>
+                <code value="110804"/>
+                <display value="T1 Weighted MR Signal Intensity"/>
+            </concept>
+            <concept>
+                <code value="110803"/>
+                <display value="Proton Density Weighted MR Signal Intensity"/>
+            </concept>
+            <concept>
+                <code value="110802"/>
+                <display value="Time Of Flight Angio MR Signal Intensity"/>
+            </concept>
+            <concept>
+                <code value="113063"/>
+                <display value="T1"/>
+            </concept>
+            <concept>
+                <code value="113064"/>
+                <display value="T2*"/>
+            </concept>
+            <concept>
+                <code value="113065"/>
+                <display value="T2"/>
+            </concept>
+            <concept>
+                <code value="113067"/>
+                <display value="Temperature encoded"/>
+            </concept>
+            <concept>
+                <code value="113068"/>
+                <display value="Student's T-test"/>
+            </concept>
+            <concept>
+                <code value="113069"/>
+                <display value="Time To Peak"/>
+            </concept>
+            <concept>
+                <code value="126374"/>
+                <display value="Temporal Derivative Threshold"/>
+            </concept>
+            <concept>
+                <code value="126375"/>
+                <display value="Maximum Slope"/>
+            </concept>
+            <concept>
+                <code value="126376"/>
+                <display value="Maximum Difference"/>
+            </concept>
+            <concept>
+                <code value="126377"/>
+                <display value="Tracer Concentration"/>
+            </concept>
+            <concept>
+                <code value="126370"/>
+                <display value="Time of Peak Concentration"/>
+            </concept>
+            <concept>
+                <code value="126371"/>
+                <display value="Bolus Arrival Time"/>
+            </concept>
+            <concept>
+                <code value="126372"/>
+                <display value="Time of Leading Half-Peak Concentration"/>
+            </concept>
+            <concept>
+                <code value="113052"/>
+                <display value="Mean Transit Time"/>
+            </concept>
+            <concept>
+                <code value="113294"/>
+                <display value="Kurtosis Diffusion Coefficient"/>
+            </concept>
+            <concept>
+                <code value="113295"/>
+                <display value="Gamma Distribution Scale Parameter"/>
+            </concept>
+            <concept>
+                <code value="113296"/>
+                <display value="Gamma Distribution Shape Parameter"/>
+            </concept>
+            <concept>
+                <code value="113055"/>
+                <display value="Regional Cerebral Blood Flow"/>
+            </concept>
+            <concept>
+                <code value="113297"/>
+                <display value="Gamma Distribution Mode"/>
+            </concept>
+            <concept>
+                <code value="113056"/>
+                <display value="Regional Cerebral Blood Volume"/>
+            </concept>
+            <concept>
+                <code value="113298"/>
+                <display value="Distributed Diffusion Coefficient"/>
+            </concept>
+            <concept>
+                <code value="113057"/>
+                <display value="R-Coefficient"/>
+            </concept>
+            <concept>
+                <code value="113299"/>
+                <display value="Anomalous Exponent Parameter"/>
+            </concept>
+            <concept>
+                <code value="113058"/>
+                <display value="Proton Density"/>
+            </concept>
+            <concept>
+                <code value="126403"/>
+                <display value="SUVbsa"/>
+            </concept>
+            <concept>
+                <code value="126404"/>
+                <display value="SUVibw"/>
+            </concept>
+            <concept>
+                <code value="126405"/>
+                <display value="SUVlbm(Janma)"/>
+            </concept>
+            <concept>
+                <code value="126406"/>
+                <display value="SUVlbm(James128)"/>
+            </concept>
+            <concept>
+                <code value="113290"/>
+                <display value="Mono-exponential Apparent Diffusion Coefficient"/>
+            </concept>
+            <concept>
+                <code value="113291"/>
+                <display value="Slow Diffusion Coefficient"/>
+            </concept>
+            <concept>
+                <code value="113292"/>
+                <display value="Fast Diffusion Coefficient"/>
+            </concept>
+            <concept>
+                <code value="113293"/>
+                <display value="Fast Diffusion Coefficient Fraction"/>
+            </concept>
+            <concept>
+                <code value="126400"/>
+                <display value="Standardized Uptake Value"/>
+            </concept>
+            <concept>
+                <code value="126401"/>
+                <display value="SUVbw"/>
+            </concept>
+            <concept>
+                <code value="126402"/>
+                <display value="SUVlbm"/>
+            </concept>
+        </include>
+        <include>
+            <system value="http://snomed.info/srt"/>
+            <concept>
+                <code value="G-A193"/>
+                <display value="Major Axis"/>
+            </concept>
+            <concept>
+                <code value="M-02560"/>
+                <display value="Circumference"/>
+            </concept>
+            <concept>
+                <code value="G-A195"/>
+                <display value="Perpendicular Axis"/>
+            </concept>
+            <concept>
+                <code value="G-A194"/>
+                <display value="Minor Axis"/>
+            </concept>
+            <concept>
+                <code value="G-A197"/>
+                <display value="Perimeter"/>
+            </concept>
+            <concept>
+                <code value="G-A196"/>
+                <display value="Radius"/>
+            </concept>
+            <concept>
+                <code value="G-A198"/>
+                <display value="Diameter of circumscribed circle"/>
+            </concept>
+            <concept>
+                <code value="F-61620"/>
+                <display value="Choline"/>
+            </concept>
+            <concept>
+                <code value="F-64460"/>
+                <display value="Tuarine"/>
+            </concept>
+            <concept>
+                <code value="F-64210"/>
+                <display value="Glutamine"/>
+            </concept>
+            <concept>
+                <code value="F-65C50"/>
+                <display value="N-acetylaspartate"/>
+            </concept>
+            <concept>
+                <code value="M-02550"/>
+                <display value="Diameter"/>
+            </concept>
+            <concept>
+                <code value="G-A186"/>
+                <display value="Short Axis"/>
+            </concept>
+            <concept>
+                <code value="G-A185"/>
+                <display value="Long Axis"/>
+            </concept>
+            <concept>
+                <code value="G-A220"/>
+                <display value="Width"/>
+            </concept>
+            <concept>
+                <code value="P0-02241"/>
+                <display value="Power Doppler"/>
+            </concept>
+            <concept>
+                <code value="G-D785"/>
+                <display value="Depth"/>
+            </concept>
+            <concept>
+                <code value="G-D705"/>
+                <display value="Volume"/>
+            </concept>
+            <concept>
+                <code value="F-61380"/>
+                <display value="Creatine"/>
+            </concept>
+            <concept>
+                <code value="G-A166"/>
+                <display value="Area"/>
+            </concept>
+            <concept>
+                <code value="F-63600"/>
+                <display value="Lipid"/>
+            </concept>
+            <concept>
+                <code value="G-A16A"/>
+                <display value="Area of defined region"/>
+            </concept>
+            <concept>
+                <code value="F-61A90"/>
+                <display value="Inositol"/>
+            </concept>
+            <concept>
+                <code value="G-D7FE"/>
+                <display value="Length"/>
+            </concept>
+            <concept>
+                <code value="F-61080"/>
+                <display value="Citrate"/>
+            </concept>
+            <concept>
+                <code value="F-61760"/>
+                <display value="Lactate"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

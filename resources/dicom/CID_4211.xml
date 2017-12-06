@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-4211-OphthalmicOCTAnatomicStructureImaged"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_4211.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.327"/>
+    </identifier>
+    <version value="20071016"/>
+    <name value="OphthalmicOCTAnatomicStructureImaged"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 4211 OphthalmicOCTAnatomicStructureImaged"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://snomed.info/srt"/>
+            <concept>
+                <code value="T-AA260"/>
+                <display value="Corneal endothelium"/>
+            </concept>
+            <concept>
+                <code value="T-AA110"/>
+                <display value="Sclera"/>
+            </concept>
+            <concept>
+                <code value="T-AA220"/>
+                <display value="Corneal epithelium"/>
+            </concept>
+            <concept>
+                <code value="T-AA630"/>
+                <display value="Optic nerve head"/>
+            </concept>
+            <concept>
+                <code value="T-AA310"/>
+                <display value="Choroid of eye"/>
+            </concept>
+            <concept>
+                <code value="T-AA860"/>
+                <display value="Conjunctiva"/>
+            </concept>
+            <concept>
+                <code value="T-AA200"/>
+                <display value="Cornea"/>
+            </concept>
+            <concept>
+                <code value="T-AA079"/>
+                <display value="Vitreous"/>
+            </concept>
+            <concept>
+                <code value="T-AA050"/>
+                <display value="Anterior chamber of eye"/>
+            </concept>
+            <concept>
+                <code value="T-AA500"/>
+                <display value="Iris"/>
+            </concept>
+            <concept>
+                <code value="T-AA610"/>
+                <display value="Retina"/>
+            </concept>
+            <concept>
+                <code value="T-AA400"/>
+                <display value="Ciliary body"/>
+            </concept>
+            <concept>
+                <code value="T-AA700"/>
+                <display value="Lens"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

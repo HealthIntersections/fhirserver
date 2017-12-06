@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-7467-GrayLevelCooccurrenceMatrixMeasurements"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_7467.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.1000"/>
+    </identifier>
+    <version value="20171122"/>
+    <name value="GrayLevelCooccurrenceMatrixMeasurements"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 7467 GrayLevelCooccurrenceMatrixMeasurements"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://dicom.nema.org/resources/ontology/DCM"/>
+            <concept>
+                <code value="128794"/>
+                <display value="Autocorrelation of GLCM"/>
+            </concept>
+            <concept>
+                <code value="128793"/>
+                <display value="Inverse Variance of GLCM"/>
+            </concept>
+            <concept>
+                <code value="128796"/>
+                <display value="Cluster Shade of GLCM"/>
+            </concept>
+            <concept>
+                <code value="128795"/>
+                <display value="Cluster Tendency of GLCM"/>
+            </concept>
+            <concept>
+                <code value="128798"/>
+                <display value="First Measure of Information Correlation of GLCM"/>
+            </concept>
+            <concept>
+                <code value="128797"/>
+                <display value="Cluster Prominence of GLCM"/>
+            </concept>
+            <concept>
+                <code value="128799"/>
+                <display value="Second Measure of Information Correlation of GLCM"/>
+            </concept>
+            <concept>
+                <code value="128790"/>
+                <display value="Inverse Difference of GLCM"/>
+            </concept>
+            <concept>
+                <code value="128792"/>
+                <display value="Inverse Difference Moment Normalized of GLCM"/>
+            </concept>
+            <concept>
+                <code value="128791"/>
+                <display value="Inverse Difference Normalized of GLCM"/>
+            </concept>
+            <concept>
+                <code value="126065"/>
+                <display value="Angular Second Moment of GLCM"/>
+            </concept>
+            <concept>
+                <code value="128783"/>
+                <display value="Joint Variance of GLCM"/>
+            </concept>
+            <concept>
+                <code value="126066"/>
+                <display value="Correlation of GLCM"/>
+            </concept>
+            <concept>
+                <code value="128782"/>
+                <display value="Joint Average of GLCM"/>
+            </concept>
+            <concept>
+                <code value="128785"/>
+                <display value="Difference Variance of GLCM"/>
+            </concept>
+            <concept>
+                <code value="128784"/>
+                <display value="Difference Average of GLCM"/>
+            </concept>
+            <concept>
+                <code value="128787"/>
+                <display value="Sum Average of GLCM"/>
+            </concept>
+            <concept>
+                <code value="128786"/>
+                <display value="Difference Entropy of GLCM"/>
+            </concept>
+            <concept>
+                <code value="128789"/>
+                <display value="Sum Entropy of GLCM"/>
+            </concept>
+            <concept>
+                <code value="128788"/>
+                <display value="Sum Variance of GLCM"/>
+            </concept>
+            <concept>
+                <code value="126060"/>
+                <display value="Joint Entropy of GLCM"/>
+            </concept>
+            <concept>
+                <code value="126061"/>
+                <display value="Root Angular Second Moment of GLCM"/>
+            </concept>
+            <concept>
+                <code value="126062"/>
+                <display value="Inverse Difference Moment of GLCM"/>
+            </concept>
+            <concept>
+                <code value="126063"/>
+                <display value="Contrast of GLCM"/>
+            </concept>
+            <concept>
+                <code value="128781"/>
+                <display value="Joint Maximum of GLCM"/>
+            </concept>
+            <concept>
+                <code value="126064"/>
+                <display value="Dissimilarity of GLCM"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

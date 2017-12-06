@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-3113-TypesofPerfusionDefects"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_3113.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.745"/>
+    </identifier>
+    <version value="20080927"/>
+    <name value="TypesofPerfusionDefects"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 3113 TypesofPerfusionDefects"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://dicom.nema.org/resources/ontology/DCM"/>
+            <concept>
+                <code value="122748"/>
+                <display value="False Positive defect finding"/>
+            </concept>
+        </include>
+        <include>
+            <system value="http://snomed.info/srt"/>
+            <concept>
+                <code value="F-3014F"/>
+                <display value="Fixed myocardial perfusion defect"/>
+            </concept>
+            <concept>
+                <code value="F-3014D"/>
+                <display value="Reversible myocardial perfusion defect"/>
+            </concept>
+            <concept>
+                <code value="F-3014E"/>
+                <display value="Partially Reversible myocardial perfusion defect"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

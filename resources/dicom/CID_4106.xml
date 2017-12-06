@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-4106-QuantitativeMethodsusedforPerfusionAndTracerKineticModels"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_4106.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.991"/>
+    </identifier>
+    <version value="20141110"/>
+    <name value="QuantitativeMethodsusedforPerfusionAndTracerKineticModels"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 4106 QuantitativeMethodsusedforPerfusionAndTracerKineticModels"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://dicom.nema.org/resources/ontology/DCM"/>
+            <concept>
+                <code value="126351"/>
+                <display value="T1 by Inversion Recovery"/>
+            </concept>
+            <concept>
+                <code value="126373"/>
+                <display value="Temporal Derivative Exceeds Threshold"/>
+            </concept>
+            <concept>
+                <code value="126352"/>
+                <display value="T1 by Fixed Value"/>
+            </concept>
+            <concept>
+                <code value="126310"/>
+                <display value="Least Mean Square (LMS) deconvolution"/>
+            </concept>
+            <concept>
+                <code value="126311"/>
+                <display value="Singular Value Decomposition (SVD) deconvolution"/>
+            </concept>
+            <concept>
+                <code value="126370"/>
+                <display value="Time of Peak Concentration"/>
+            </concept>
+            <concept>
+                <code value="126350"/>
+                <display value="T1 by Multiple Flip Angles"/>
+            </concept>
+            <concept>
+                <code value="126372"/>
+                <display value="Time of Leading Half-Peak Concentration"/>
+            </concept>
+            <concept>
+                <code value="126340"/>
+                <display value="Standard Tofts Model"/>
+            </concept>
+            <concept>
+                <code value="126362"/>
+                <display value="User-defined AIF ROI"/>
+            </concept>
+            <concept>
+                <code value="126341"/>
+                <display value="Extended Tofts Model"/>
+            </concept>
+            <concept>
+                <code value="126363"/>
+                <display value="Automatically Detected AIF ROI"/>
+            </concept>
+            <concept>
+                <code value="126342"/>
+                <display value="Model-free concentration-time quantitification"/>
+            </concept>
+            <concept>
+                <code value="126364"/>
+                <display value="Blind Estimation of AIF"/>
+            </concept>
+            <concept>
+                <code value="126343"/>
+                <display value="First Pass Leakage Profile (FPLP) Model"/>
+            </concept>
+            <concept>
+                <code value="126344"/>
+                <display value="Shutter-Speed Model (SSM)"/>
+            </concept>
+            <concept>
+                <code value="126300"/>
+                <display value="Perfusion analysis by Stable Xenon CT technique"/>
+            </concept>
+            <concept>
+                <code value="126345"/>
+                <display value="Gamma Capillary Transit Time (GCTT) Model"/>
+            </concept>
+            <concept>
+                <code value="126301"/>
+                <display value="Perfusion analysis by IV Iodinated Contrast CT technique"/>
+            </concept>
+            <concept>
+                <code value="126346"/>
+                <display value="Adiabatic Tissue Homogeneity (ATH) Model"/>
+            </concept>
+            <concept>
+                <code value="126302"/>
+                <display value="Perfusion analysis by Arterial Spin Labeling MR technique"/>
+            </concept>
+            <concept>
+                <code value="126347"/>
+                <display value="Two Compartment Exchange (2CX) Model"/>
+            </concept>
+            <concept>
+                <code value="126303"/>
+                <display value="Perfusion analysis by Susceptibility MR technique"/>
+            </concept>
+            <concept>
+                <code value="126360"/>
+                <display value="AIF Ignored"/>
+            </concept>
+            <concept>
+                <code value="126361"/>
+                <display value="Population Averaged AIF"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

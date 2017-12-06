@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-3641-HemodynamicAssessments"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_3641.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.177"/>
+    </identifier>
+    <version value="20160314"/>
+    <name value="HemodynamicAssessments"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 3641 HemodynamicAssessments"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://snomed.info/srt"/>
+            <concept>
+                <code value="F-03E86"/>
+                <display value="Pulmonary Vascular Resistance"/>
+            </concept>
+            <concept>
+                <code value="F-03DFE"/>
+                <display value="Right Ventricular Systolic Pressure"/>
+            </concept>
+            <concept>
+                <code value="F-0212C"/>
+                <display value="Pulmonary Artery Pressure"/>
+            </concept>
+            <concept>
+                <code value="F-31146"/>
+                <display value="Pulmonary Capillary Wedge Pressure"/>
+            </concept>
+            <concept>
+                <code value="F-03E0D"/>
+                <display value="Left Ventricular Systolic Pressure"/>
+            </concept>
+            <concept>
+                <code value="F-03E0E"/>
+                <display value="Left Ventricular End-Diastolic Pressure"/>
+            </concept>
+            <concept>
+                <code value="F-03E02"/>
+                <display value="Right Ventricular End-Diastolic Pressure"/>
+            </concept>
+            <concept>
+                <code value="F-39790"/>
+                <display value="Vascular Resistance"/>
+            </concept>
+            <concept>
+                <code value="F-03DE9"/>
+                <display value="Right Atrial Pressure"/>
+            </concept>
+            <concept>
+                <code value="F-008ED"/>
+                <display value="Diastolic Pressure"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

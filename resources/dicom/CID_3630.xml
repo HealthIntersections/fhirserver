@@ -1,0 +1,494 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-3630-CardiovascularAnatomicLocations"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_3630.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.175"/>
+    </identifier>
+    <version value="20030327"/>
+    <name value="CardiovascularAnatomicLocations"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 3630 CardiovascularAnatomicLocations"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://snomed.info/srt"/>
+            <concept>
+                <code value="T-45530"/>
+                <display value="anterior communicating artery"/>
+            </concept>
+            <concept>
+                <code value="T-45410"/>
+                <display value="lacrimal artery"/>
+            </concept>
+            <concept>
+                <code value="D4-33142"/>
+                <display value="Pulmonary artery conduit"/>
+            </concept>
+            <concept>
+                <code value="T-49215"/>
+                <display value="Antecubital Vein"/>
+            </concept>
+            <concept>
+                <code value="T-46500"/>
+                <display value="mesenteric artery"/>
+            </concept>
+            <concept>
+                <code value="T-45250"/>
+                <display value="occipital artery"/>
+            </concept>
+            <concept>
+                <code value="A-00203"/>
+                <display value="Baffle"/>
+            </concept>
+            <concept>
+                <code value="T-48000"/>
+                <display value="Vein"/>
+            </concept>
+            <concept>
+                <code value="T-44200"/>
+                <display value="Right pulmonary artery"/>
+            </concept>
+            <concept>
+                <code value="T-48003"/>
+                <display value="Central venous system"/>
+            </concept>
+            <concept>
+                <code value="T-45010"/>
+                <display value="Carotid Artery"/>
+            </concept>
+            <concept>
+                <code value="T-46100"/>
+                <display value="Subclavian Artery"/>
+            </concept>
+            <concept>
+                <code value="D4-31005"/>
+                <display value="Common atrium"/>
+            </concept>
+            <concept>
+                <code value="D4-31400"/>
+                <display value="Truncus Arteriosus Communis"/>
+            </concept>
+            <concept>
+                <code value="D4-31120"/>
+                <display value="Common ventricle"/>
+            </concept>
+            <concept>
+                <code value="T-32330"/>
+                <display value="Coronary sinus"/>
+            </concept>
+            <concept>
+                <code value="T-35200"/>
+                <display value="Pulmonary valve"/>
+            </concept>
+            <concept>
+                <code value="T-42300"/>
+                <display value="Aortic Arch"/>
+            </concept>
+            <concept>
+                <code value="G-DB27"/>
+                <display value="Pulmonary artery wedge"/>
+            </concept>
+            <concept>
+                <code value="G-DB26"/>
+                <display value="Pulmonary capillary wedge"/>
+            </concept>
+            <concept>
+                <code value="T-48810"/>
+                <display value="portal vein"/>
+            </concept>
+            <concept>
+                <code value="T-45300"/>
+                <display value="internal carotid artery"/>
+            </concept>
+            <concept>
+                <code value="T-D930A"/>
+                <display value="Saphenofemoral junction"/>
+            </concept>
+            <concept>
+                <code value="T-43000"/>
+                <display value="Coronary Artery"/>
+            </concept>
+            <concept>
+                <code value="T-32602"/>
+                <display value="Left ventricle apex"/>
+            </concept>
+            <concept>
+                <code value="T-47160"/>
+                <display value="Brachial artery"/>
+            </concept>
+            <concept>
+                <code value="T-48890"/>
+                <display value="splenic vein"/>
+            </concept>
+            <concept>
+                <code value="T-32600"/>
+                <display value="Left ventricle"/>
+            </concept>
+            <concept>
+                <code value="D4-32506"/>
+                <display value="Fistula coronary to left ventricle"/>
+            </concept>
+            <concept>
+                <code value="D3-81922"/>
+                <display value="Aortic fistula"/>
+            </concept>
+            <concept>
+                <code value="T-32200"/>
+                <display value="Right Atrium"/>
+            </concept>
+            <concept>
+                <code value="T-4704C"/>
+                <display value="tibial artery"/>
+            </concept>
+            <concept>
+                <code value="D4-32504"/>
+                <display value="Fistula coronary to left atrium"/>
+            </concept>
+            <concept>
+                <code value="T-F7040"/>
+                <display value="Neonatal pulmonary artery (primitive PA)"/>
+            </concept>
+            <concept>
+                <code value="T-45700"/>
+                <display value="Vertebral artery"/>
+            </concept>
+            <concept>
+                <code value="T-46200"/>
+                <display value="Internal mammary artery"/>
+            </concept>
+            <concept>
+                <code value="T-48620"/>
+                <display value="Innominate vein"/>
+            </concept>
+            <concept>
+                <code value="T-46960"/>
+                <display value="lumbar artery"/>
+            </concept>
+            <concept>
+                <code value="T-47410"/>
+                <display value="Right femoral artery"/>
+            </concept>
+            <concept>
+                <code value="T-45510"/>
+                <display value="cerebral artery"/>
+            </concept>
+            <concept>
+                <code value="T-42000"/>
+                <display value="Aorta"/>
+            </concept>
+            <concept>
+                <code value="T-48740"/>
+                <display value="Renal vein"/>
+            </concept>
+            <concept>
+                <code value="T-45230"/>
+                <display value="lingual artery"/>
+            </concept>
+            <concept>
+                <code value="T-47650"/>
+                <display value="lateral plantar artery"/>
+            </concept>
+            <concept>
+                <code value="T-47490"/>
+                <display value="geniculate artery"/>
+            </concept>
+            <concept>
+                <code value="T-48340"/>
+                <display value="Azygos vein"/>
+            </concept>
+            <concept>
+                <code value="T-48581"/>
+                <display value="Pulmonary vein"/>
+            </concept>
+            <concept>
+                <code value="D4-31220"/>
+                <display value="Atrial Septal defect"/>
+            </concept>
+            <concept>
+                <code value="T-35100"/>
+                <display value="Tricuspid valve"/>
+            </concept>
+            <concept>
+                <code value="T-32190"/>
+                <display value="Pulmonary chamber in cor triatriatum"/>
+            </concept>
+            <concept>
+                <code value="T-42400"/>
+                <display value="Descending aorta"/>
+            </concept>
+            <concept>
+                <code value="T-46600"/>
+                <display value="Renal artery"/>
+            </concept>
+            <concept>
+                <code value="T-48503"/>
+                <display value="Anomalous pulmonary vein"/>
+            </concept>
+            <concept>
+                <code value="T-47300"/>
+                <display value="radial artery"/>
+            </concept>
+            <concept>
+                <code value="T-45400"/>
+                <display value="ophthalmic artery"/>
+            </concept>
+            <concept>
+                <code value="T-47660"/>
+                <display value="medial plantar artery"/>
+            </concept>
+            <concept>
+                <code value="T-45240"/>
+                <display value="facial artery"/>
+            </concept>
+            <concept>
+                <code value="T-32502"/>
+                <display value="Right ventricle apex"/>
+            </concept>
+            <concept>
+                <code value="R-003AA"/>
+                <display value="Vena anonyma"/>
+            </concept>
+            <concept>
+                <code value="T-32500"/>
+                <display value="Right ventricle"/>
+            </concept>
+            <concept>
+                <code value="T-45800"/>
+                <display value="basilar artery"/>
+            </concept>
+            <concept>
+                <code value="T-48720"/>
+                <display value="hepatic vein"/>
+            </concept>
+            <concept>
+                <code value="T-49535"/>
+                <display value="posterior medial tributary"/>
+            </concept>
+            <concept>
+                <code value="T-46420"/>
+                <display value="Hepatic artery"/>
+            </concept>
+            <concept>
+                <code value="T-45210"/>
+                <display value="superior thyroid artery"/>
+            </concept>
+            <concept>
+                <code value="T-47630"/>
+                <display value="peroneal artery"/>
+            </concept>
+            <concept>
+                <code value="R-00360"/>
+                <display value="Pulmonary vein wedge"/>
+            </concept>
+            <concept>
+                <code value="T-45730"/>
+                <display value="anterior spinal artery"/>
+            </concept>
+            <concept>
+                <code value="T-49410"/>
+                <display value="Femoral vein"/>
+            </concept>
+            <concept>
+                <code value="T-42100"/>
+                <display value="Ascending aorta"/>
+            </concept>
+            <concept>
+                <code value="T-44000"/>
+                <display value="Pulmonary artery"/>
+            </concept>
+            <concept>
+                <code value="T-49530"/>
+                <display value="Saphenous vein"/>
+            </concept>
+            <concept>
+                <code value="D4-32014"/>
+                <display value="Coarctation of aorta"/>
+            </concept>
+            <concept>
+                <code value="D4-32012"/>
+                <display value="patent ductus arteriosus"/>
+            </concept>
+            <concept>
+                <code value="T-35400"/>
+                <display value="Aortic Valve"/>
+            </concept>
+            <concept>
+                <code value="T-4884A"/>
+                <display value="mesenteric vein"/>
+            </concept>
+            <concept>
+                <code value="T-32650"/>
+                <display value="Left ventricle outflow tract"/>
+            </concept>
+            <concept>
+                <code value="T-42500"/>
+                <display value="Abdominal aorta"/>
+            </concept>
+            <concept>
+                <code value="T-44007"/>
+                <display value="Systemic collateral Artery to lung"/>
+            </concept>
+            <concept>
+                <code value="T-44400"/>
+                <display value="Left pulmonary artery"/>
+            </concept>
+            <concept>
+                <code value="T-46700"/>
+                <display value="Iliac artery"/>
+            </concept>
+            <concept>
+                <code value="T-48610"/>
+                <display value="Superior vena cava"/>
+            </concept>
+            <concept>
+                <code value="T-45100"/>
+                <display value="Common carotid artery"/>
+            </concept>
+            <concept>
+                <code value="T-47400"/>
+                <display value="Femoral artery"/>
+            </concept>
+            <concept>
+                <code value="T-F1810"/>
+                <display value="Umbilical artery"/>
+            </concept>
+            <concept>
+                <code value="D4-31052"/>
+                <display value="Juxtaposed appendage"/>
+            </concept>
+            <concept>
+                <code value="T-49424"/>
+                <display value="Boyd perforating vein"/>
+            </concept>
+            <concept>
+                <code value="T-48330"/>
+                <display value="Subclavian vein"/>
+            </concept>
+            <concept>
+                <code value="D4-33512"/>
+                <display value="Pulmonary vein confluence"/>
+            </concept>
+            <concept>
+                <code value="T-42070"/>
+                <display value="Thoracic aorta"/>
+            </concept>
+            <concept>
+                <code value="R-002ED"/>
+                <display value="Fistula coronary to right atrium"/>
+            </concept>
+            <concept>
+                <code value="T-48170"/>
+                <display value="Internal jugular vein"/>
+            </concept>
+            <concept>
+                <code value="T-32640"/>
+                <display value="Left ventricle inflow"/>
+            </concept>
+            <concept>
+                <code value="T-4942A"/>
+                <display value="Hunterian perforating vein"/>
+            </concept>
+            <concept>
+                <code value="D4-33514"/>
+                <display value="Pulmonary venous atrium"/>
+            </concept>
+            <concept>
+                <code value="T-F7001"/>
+                <display value="Neo-aorta (primitive aorta)"/>
+            </concept>
+            <concept>
+                <code value="D4-33516"/>
+                <display value="Systemic venous atrium"/>
+            </concept>
+            <concept>
+                <code value="T-49429"/>
+                <display value="Dodd perforating vein"/>
+            </concept>
+            <concept>
+                <code value="T-48820"/>
+                <display value="gastric vein"/>
+            </concept>
+            <concept>
+                <code value="T-49230"/>
+                <display value="Basilic vein"/>
+            </concept>
+            <concept>
+                <code value="D4-32510"/>
+                <display value="Fistula coronary to right ventricle"/>
+            </concept>
+            <concept>
+                <code value="T-49110"/>
+                <display value="Axillary vein"/>
+            </concept>
+            <concept>
+                <code value="T-45270"/>
+                <display value="superficial temporal artery"/>
+            </concept>
+            <concept>
+                <code value="T-49350"/>
+                <display value="Brachial vein"/>
+            </concept>
+            <concept>
+                <code value="T-32550"/>
+                <display value="Right ventricle outflow tract"/>
+            </concept>
+            <concept>
+                <code value="T-35300"/>
+                <display value="Mitral Valve"/>
+            </concept>
+            <concept>
+                <code value="D3-4020B"/>
+                <display value="Pulmonary arteriovenous fistula"/>
+            </concept>
+            <concept>
+                <code value="T-45320"/>
+                <display value="posterior communicating artery"/>
+            </concept>
+            <concept>
+                <code value="D4-31150"/>
+                <display value="Ventricular Septal defect"/>
+            </concept>
+            <concept>
+                <code value="T-48832"/>
+                <display value="Umbilical vein"/>
+            </concept>
+            <concept>
+                <code value="T-48710"/>
+                <display value="Inferior Vena cava"/>
+            </concept>
+            <concept>
+                <code value="T-47500"/>
+                <display value="popliteal artery"/>
+            </concept>
+            <concept>
+                <code value="T-41000"/>
+                <display value="Artery"/>
+            </concept>
+            <concept>
+                <code value="T-46010"/>
+                <display value="brachiocephalic trunk"/>
+            </concept>
+            <concept>
+                <code value="T-47100"/>
+                <display value="Axillary Artery"/>
+            </concept>
+            <concept>
+                <code value="T-49240"/>
+                <display value="cephalic vein"/>
+            </concept>
+            <concept>
+                <code value="T-32300"/>
+                <display value="Left atrium"/>
+            </concept>
+            <concept>
+                <code value="T-32540"/>
+                <display value="Right ventricle inflow"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

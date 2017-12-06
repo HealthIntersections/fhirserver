@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-6132-ChestCalcificationDescriptor"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_6132.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.452"/>
+    </identifier>
+    <version value="20030108"/>
+    <name value="ChestCalcificationDescriptor"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 6132 ChestCalcificationDescriptor"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://dicom.nema.org/resources/ontology/DCM"/>
+            <concept>
+                <code value="112162"/>
+                <display value="Target"/>
+            </concept>
+            <concept>
+                <code value="112163"/>
+                <display value="Fibrocalcific"/>
+            </concept>
+            <concept>
+                <code value="112164"/>
+                <display value="Flocculent"/>
+            </concept>
+        </include>
+        <include>
+            <system value="http://snomed.info/srt"/>
+            <concept>
+                <code value="G-A405"/>
+                <display value="Laminated"/>
+            </concept>
+            <concept>
+                <code value="F-01761"/>
+                <display value="Coarse (popcorn-like) calcification"/>
+            </concept>
+            <concept>
+                <code value="F-12100"/>
+                <display value="Ossification"/>
+            </concept>
+            <concept>
+                <code value="F-01763"/>
+                <display value="Eggshell calcification"/>
+            </concept>
+            <concept>
+                <code value="R-403A7"/>
+                <display value="Nodular"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

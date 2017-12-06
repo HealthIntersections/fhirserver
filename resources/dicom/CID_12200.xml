@@ -1,0 +1,285 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-12200-EchocardiographyLeftVentricle"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_12200.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.593"/>
+    </identifier>
+    <version value="20030918"/>
+    <name value="EchocardiographyLeftVentricle"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 12200 EchocardiographyLeftVentricle"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://loinc.org"/>
+            <concept>
+                <code value="59127-1"/>
+                <display value="D-E Slope"/>
+            </concept>
+            <concept>
+                <code value="59104-0"/>
+                <display value="Peak E wave/Peak A wave by US"/>
+            </concept>
+            <concept>
+                <code value="59080-2"/>
+                <display value="E-Wave Peak Velocity"/>
+            </concept>
+            <concept>
+                <code value="20256-4"/>
+                <display value="Mean Gradient"/>
+            </concept>
+            <concept>
+                <code value="20354-7"/>
+                <display value="Velocity Time Integral"/>
+            </concept>
+            <concept>
+                <code value="59106-5"/>
+                <display value="Stenosis Peak Gradient"/>
+            </concept>
+            <concept>
+                <code value="18026-5"/>
+                <display value="Left Ventricular End Diastolic Volume"/>
+            </concept>
+            <concept>
+                <code value="18087-7"/>
+                <display value="Left Ventricle Mass"/>
+            </concept>
+            <concept>
+                <code value="33878-0"/>
+                <display value="Volume Flow"/>
+            </concept>
+            <concept>
+                <code value="59102-4"/>
+                <display value="Flow Radius"/>
+            </concept>
+            <concept>
+                <code value="18043-0"/>
+                <display value="Left Ventricular Ejection Fraction by US"/>
+            </concept>
+            <concept>
+                <code value="29438-9"/>
+                <display value="Left Ventricle Internal Systolic Dimension"/>
+            </concept>
+            <concept>
+                <code value="18158-6"/>
+                <display value="Interventricular Septum Systolic Thickness"/>
+            </concept>
+            <concept>
+                <code value="8867-4"/>
+                <display value="Heart rate"/>
+            </concept>
+            <concept>
+                <code value="18152-9"/>
+                <display value="Left Ventricle Posterior Wall Diastolic Thickness"/>
+            </concept>
+            <concept>
+                <code value="11653-3"/>
+                <display value="End Diastolic Velocity"/>
+            </concept>
+            <concept>
+                <code value="18156-0"/>
+                <display value="Left Ventricle Posterior Wall Systolic Thickness"/>
+            </concept>
+            <concept>
+                <code value="18154-5"/>
+                <display value="Interventricular Septum Diastolic Thickness"/>
+            </concept>
+            <concept>
+                <code value="20247-3"/>
+                <display value="Peak Gradient"/>
+            </concept>
+            <concept>
+                <code value="29436-3"/>
+                <display value="Left Ventricle Internal End Diastolic Dimension"/>
+            </concept>
+            <concept>
+                <code value="18077-8"/>
+                <display value="Left Ventricle diastolic major axis"/>
+            </concept>
+            <concept>
+                <code value="18054-7"/>
+                <display value="Interventricular Septum % Thickening"/>
+            </concept>
+            <concept>
+                <code value="34141-2"/>
+                <display value="Peak Instantaneous Flow Rate"/>
+            </concept>
+            <concept>
+                <code value="20217-6"/>
+                <display value="Deceleration Time"/>
+            </concept>
+            <concept>
+                <code value="20168-1"/>
+                <display value="Acceleration Time"/>
+            </concept>
+            <concept>
+                <code value="18071-1"/>
+                <display value="Left Ventricular Isovolumic Relaxation Time"/>
+            </concept>
+            <concept>
+                <code value="59128-9"/>
+                <display value="E-F Slope"/>
+            </concept>
+            <concept>
+                <code value="59079-4"/>
+                <display value="Peak Reversal Velocity during Atrial Contraction"/>
+            </concept>
+            <concept>
+                <code value="59103-2"/>
+                <display value="A-C Interval"/>
+            </concept>
+            <concept>
+                <code value="59081-0"/>
+                <display value="A-Wave Peak Velocity"/>
+            </concept>
+            <concept>
+                <code value="11726-7"/>
+                <display value="Peak Systolic Velocity"/>
+            </concept>
+            <concept>
+                <code value="59107-3"/>
+                <display value="Stenosis Peak Velocity"/>
+            </concept>
+            <concept>
+                <code value="11692-1"/>
+                <display value="Time Averaged Peak Velocity"/>
+            </concept>
+            <concept>
+                <code value="18155-2"/>
+                <display value="Interventricular Septum to Posterior Wall Thickness Ratio"/>
+            </concept>
+            <concept>
+                <code value="59115-6"/>
+                <display value="Velocity of Flow Propagation"/>
+            </concept>
+            <concept>
+                <code value="18053-9"/>
+                <display value="Left Ventricle Posterior Wall % Thickening"/>
+            </concept>
+            <concept>
+                <code value="59130-5"/>
+                <display value="Alias velocity"/>
+            </concept>
+            <concept>
+                <code value="20280-4"/>
+                <display value="Pressure Half-Time"/>
+            </concept>
+            <concept>
+                <code value="59111-5"/>
+                <display value="E Velocity to Annulus E Velocity Ratio"/>
+            </concept>
+            <concept>
+                <code value="20167-3"/>
+                <display value="Acceleration Slope"/>
+            </concept>
+            <concept>
+                <code value="20216-8"/>
+                <display value="Deceleration Slope"/>
+            </concept>
+            <concept>
+                <code value="18148-7"/>
+                <display value="Left Ventricular End Systolic Volume"/>
+            </concept>
+            <concept>
+                <code value="18051-3"/>
+                <display value="Left Ventricular Fractional Shortening"/>
+            </concept>
+            <concept>
+                <code value="18076-0"/>
+                <display value="Left Ventricle systolic major axis"/>
+            </concept>
+            <concept>
+                <code value="12144-2"/>
+                <display value="Systolic to Diastolic Velocity Ratio"/>
+            </concept>
+            <concept>
+                <code value="20352-1"/>
+                <display value="Time Averaged Mean Velocity"/>
+            </concept>
+        </include>
+        <include>
+            <system value="http://snomed.info/srt"/>
+            <concept>
+                <code value="G-0374"/>
+                <display value="Left Ventricular Systolic Area"/>
+            </concept>
+            <concept>
+                <code value="G-0377"/>
+                <display value="Left Ventricle Semi-major Axis Diastolic Dimension"/>
+            </concept>
+            <concept>
+                <code value="G-0378"/>
+                <display value="Left Ventricle Truncated Semi-major Axis Diastolic Dimension"/>
+            </concept>
+            <concept>
+                <code value="G-0375"/>
+                <display value="Left Ventricular Diastolic Area"/>
+            </concept>
+            <concept>
+                <code value="G-0376"/>
+                <display value="Left Ventricular Fractional Area Change"/>
+            </concept>
+            <concept>
+                <code value="G-0390"/>
+                <display value="Regurgitant Fraction"/>
+            </concept>
+            <concept>
+                <code value="G-038E"/>
+                <display value="Cardiovascular Orifice Area"/>
+            </concept>
+            <concept>
+                <code value="G-038F"/>
+                <display value="Cardiovascular Orifice Diameter"/>
+            </concept>
+            <concept>
+                <code value="F-32120"/>
+                <display value="Stroke Volume"/>
+            </concept>
+            <concept>
+                <code value="F-32100"/>
+                <display value="Cardiac Output"/>
+            </concept>
+            <concept>
+                <code value="F-00078"/>
+                <display value="Stroke Index"/>
+            </concept>
+            <concept>
+                <code value="G-037C"/>
+                <display value="LV Peak Diastolic Tissue Velocity During Atrial Systole"/>
+            </concept>
+            <concept>
+                <code value="G-037D"/>
+                <display value="Left Ventricular Peak Systolic Tissue Velocity"/>
+            </concept>
+            <concept>
+                <code value="G-037A"/>
+                <display value="Left Ventricular Peak Early Diastolic Tissue Velocity"/>
+            </concept>
+            <concept>
+                <code value="G-037B"/>
+                <display value="Ratio of MV Peak Velocity to LV Peak Tissue Velocity E-Wave"/>
+            </concept>
+            <concept>
+                <code value="G-037E"/>
+                <display value="Left Ventricular Isovolumic Contraction Time"/>
+            </concept>
+            <concept>
+                <code value="G-037F"/>
+                <display value="Left Ventricular Index of Myocardial Performance"/>
+            </concept>
+            <concept>
+                <code value="G-0379"/>
+                <display value="Left Ventricle Epicardial Diastolic Area, psax pap view"/>
+            </concept>
+            <concept>
+                <code value="F-32110"/>
+                <display value="Cardiac Index"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-10065-RadiationTransportModelType"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_10065.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.1159"/>
+    </identifier>
+    <version value="20170405"/>
+    <name value="RadiationTransportModelType"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 10065 RadiationTransportModelType"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://dicom.nema.org/resources/ontology/DCM"/>
+            <concept>
+                <code value="128497"/>
+                <display value="Measured Radiation Dose"/>
+            </concept>
+            <concept>
+                <code value="128422"/>
+                <display value="Voxelized Radiation Transport Model"/>
+            </concept>
+            <concept>
+                <code value="128421"/>
+                <display value="Geometric Radiation Transport Model"/>
+            </concept>
+            <concept>
+                <code value="128424"/>
+                <display value="NURBS Radiation Transport Model"/>
+            </concept>
+            <concept>
+                <code value="128423"/>
+                <display value="Mesh Radiation Transport Model"/>
+            </concept>
+            <concept>
+                <code value="128406"/>
+                <display value="BREP Radiation Transport Model"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

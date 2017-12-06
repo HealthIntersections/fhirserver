@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-12255-CardiacUltrasoundMyocardiumMeasurements"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_12255.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.836"/>
+    </identifier>
+    <version value="20100317"/>
+    <name value="CardiacUltrasoundMyocardiumMeasurements"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 12255 CardiacUltrasoundMyocardiumMeasurements"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://dicom.nema.org/resources/ontology/DCM"/>
+            <concept>
+                <code value="122447"/>
+                <display value="Wall Mass"/>
+            </concept>
+        </include>
+        <include>
+            <system value="http://loinc.org"/>
+            <concept>
+                <code value="59094-3"/>
+                <display value="Endocardial Area"/>
+            </concept>
+            <concept>
+                <code value="59093-5"/>
+                <display value="Epicardial Area"/>
+            </concept>
+            <concept>
+                <code value="59099-2"/>
+                <display value="Myocardial Performance Index (Tei)"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-3772-HealthStatus"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_3772.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.260"/>
+    </identifier>
+    <version value="20070827"/>
+    <name value="HealthStatus"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 3772 HealthStatus"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://snomed.info/srt"/>
+            <concept>
+                <code value="F-04DA1"/>
+                <display value="Deceased"/>
+            </concept>
+            <concept>
+                <code value="R-209F6"/>
+                <display value="Symptom free"/>
+            </concept>
+            <concept>
+                <code value="F-06001"/>
+                <display value="Severely ill"/>
+            </concept>
+            <concept>
+                <code value="F-00001"/>
+                <display value="Alive and well"/>
+            </concept>
+            <concept>
+                <code value="F-00100"/>
+                <display value="Disabled"/>
+            </concept>
+            <concept>
+                <code value="F-0600C"/>
+                <display value="Chronically ill"/>
+            </concept>
+            <concept>
+                <code value="F-029D4"/>
+                <display value="In remission"/>
+            </concept>
+            <concept>
+                <code value="F-0351E"/>
+                <display value="Severely disabled"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-1006-AnatomicalReferenceBasisExtremities"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_1006.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.1127"/>
+    </identifier>
+    <version value="20160905"/>
+    <name value="AnatomicalReferenceBasisExtremities"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 1006 AnatomicalReferenceBasisExtremities"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://snomed.info/srt"/>
+            <concept>
+                <code value="T-D9800"/>
+                <display value="Toe"/>
+            </concept>
+            <concept>
+                <code value="T-D9700"/>
+                <display value="Foot"/>
+            </concept>
+            <concept>
+                <code value="T-15460"/>
+                <display value="Wrist joint"/>
+            </concept>
+            <concept>
+                <code value="T-1273F"/>
+                <display value="Tibial Plateau"/>
+            </concept>
+            <concept>
+                <code value="T-15750"/>
+                <display value="Ankle joint"/>
+            </concept>
+            <concept>
+                <code value="T-127A7"/>
+                <display value="Malleolar structure of tibia"/>
+            </concept>
+            <concept>
+                <code value="T-12450"/>
+                <display value="Scaphoid"/>
+            </concept>
+            <concept>
+                <code value="T-12780"/>
+                <display value="Talus"/>
+            </concept>
+            <concept>
+                <code value="T-15430"/>
+                <display value="Elbow joint"/>
+            </concept>
+            <concept>
+                <code value="T-12540"/>
+                <display value="Metacarpal"/>
+            </concept>
+            <concept>
+                <code value="T-15720"/>
+                <display value="Knee joint"/>
+            </concept>
+            <concept>
+                <code value="T-12730"/>
+                <display value="Patella"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

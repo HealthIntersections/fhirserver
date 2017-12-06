@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-4209-OphthalmicAnatomicStructureImaged"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_4209.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.325"/>
+    </identifier>
+    <version value="20040921"/>
+    <name value="OphthalmicAnatomicStructureImaged"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 4209 OphthalmicAnatomicStructureImaged"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://snomed.info/srt"/>
+            <concept>
+                <code value="T-45400"/>
+                <display value="Ophthalmic artery"/>
+            </concept>
+            <concept>
+                <code value="T-AA000"/>
+                <display value="Eye"/>
+            </concept>
+            <concept>
+                <code value="T-AA110"/>
+                <display value="Sclera"/>
+            </concept>
+            <concept>
+                <code value="T-AA630"/>
+                <display value="Optic nerve head"/>
+            </concept>
+            <concept>
+                <code value="T-AA310"/>
+                <display value="Choroid of eye"/>
+            </concept>
+            <concept>
+                <code value="T-AA860"/>
+                <display value="Conjunctiva"/>
+            </concept>
+            <concept>
+                <code value="T-AA200"/>
+                <display value="Cornea"/>
+            </concept>
+            <concept>
+                <code value="T-AA180"/>
+                <display value="Both eyes"/>
+            </concept>
+            <concept>
+                <code value="T-AA050"/>
+                <display value="Anterior chamber of eye"/>
+            </concept>
+            <concept>
+                <code value="T-AA621"/>
+                <display value="Fovea centralis"/>
+            </concept>
+            <concept>
+                <code value="T-AA500"/>
+                <display value="Iris"/>
+            </concept>
+            <concept>
+                <code value="T-AA940"/>
+                <display value="Lacrimal sac"/>
+            </concept>
+            <concept>
+                <code value="T-AA830"/>
+                <display value="Lower Eyelid"/>
+            </concept>
+            <concept>
+                <code value="T-AA610"/>
+                <display value="Retina"/>
+            </concept>
+            <concept>
+                <code value="T-AA400"/>
+                <display value="Ciliary body"/>
+            </concept>
+            <concept>
+                <code value="T-AA862"/>
+                <display value="Lacrimal caruncle"/>
+            </concept>
+            <concept>
+                <code value="T-AA810"/>
+                <display value="Eyelid"/>
+            </concept>
+            <concept>
+                <code value="T-AA700"/>
+                <display value="Lens"/>
+            </concept>
+            <concept>
+                <code value="T-AA820"/>
+                <display value="Upper Eyelid"/>
+            </concept>
+            <concept>
+                <code value="T-AA910"/>
+                <display value="Lacrimal gland"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

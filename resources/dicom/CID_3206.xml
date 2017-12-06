@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-3206-NoninvasiveCardiacImagingProcedures"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_3206.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.761"/>
+    </identifier>
+    <version value="20080927"/>
+    <name value="NoninvasiveCardiacImagingProcedures"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 3206 NoninvasiveCardiacImagingProcedures"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://snomed.info/srt"/>
+            <concept>
+                <code value="P5-B3000"/>
+                <display value="Echocardiography"/>
+            </concept>
+            <concept>
+                <code value="P5-0A006"/>
+                <display value="PET heart study"/>
+            </concept>
+            <concept>
+                <code value="P5-09011"/>
+                <display value="Cardiac MRI"/>
+            </concept>
+            <concept>
+                <code value="P5-D30F8"/>
+                <display value="Nuclear medicine cardiovascular study"/>
+            </concept>
+            <concept>
+                <code value="P5-0A100"/>
+                <display value="SPECT"/>
+            </concept>
+            <concept>
+                <code value="P5-D3304"/>
+                <display value="Cardiac blood pool imaging (nuclear)"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

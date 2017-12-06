@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-4239-AnteriorChamberDepthDefinition"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_4239.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.885"/>
+    </identifier>
+    <version value="20100623"/>
+    <name value="AnteriorChamberDepthDefinition"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 4239 AnteriorChamberDepthDefinition"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://dicom.nema.org/resources/ontology/DCM"/>
+            <concept>
+                <code value="111776"/>
+                <display value="Front Of Cornea To Front Of Lens"/>
+            </concept>
+            <concept>
+                <code value="111777"/>
+                <display value="Back Of Cornea To Front Of Lens"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

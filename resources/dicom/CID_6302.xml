@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-6302-ProstateSectorAnatomyfromEuropeanConcensus16SectorMinimalModel"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_6302.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.1140"/>
+    </identifier>
+    <version value="20161106"/>
+    <name value="ProstateSectorAnatomyfromEuropeanConcensus16Sector(Minimal)Model"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 6302 ProstateSectorAnatomyfromEuropeanConcensus16Sector(Minimal)Model"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://snomed.info/srt"/>
+            <concept>
+                <code value="T-93010"/>
+                <display value="Right seminal vesicle"/>
+            </concept>
+            <concept>
+                <code value="T-93020"/>
+                <display value="Left seminal vesicle"/>
+            </concept>
+            <concept>
+                <code value="R0-00020"/>
+                <display value="Left basal part transition zone of prostate"/>
+            </concept>
+            <concept>
+                <code value="R-FFFBE"/>
+                <display value="Right basal transition zone of prostate"/>
+            </concept>
+            <concept>
+                <code value="R-FFFD0"/>
+                <display value="Central zone of right half prostate"/>
+            </concept>
+            <concept>
+                <code value="R-FFFD3"/>
+                <display value="Left apical peripheral zone of prostate"/>
+            </concept>
+            <concept>
+                <code value="R-FFFC1"/>
+                <display value="Right apical transition zone of prostate"/>
+            </concept>
+            <concept>
+                <code value="R0-00018"/>
+                <display value="Right basal peripheral zone of prostate"/>
+            </concept>
+            <concept>
+                <code value="R-FFFD9"/>
+                <display value="Male external urethral sphincter"/>
+            </concept>
+            <concept>
+                <code value="R-FFFB6"/>
+                <display value="Right middle transition zone of prostate"/>
+            </concept>
+            <concept>
+                <code value="R-FFFC4"/>
+                <display value="Left basal peripheral zone of prostate"/>
+            </concept>
+            <concept>
+                <code value="R-FFFE6"/>
+                <display value="Left lateral middle peripheral zone of prostate"/>
+            </concept>
+            <concept>
+                <code value="R-FFFD5"/>
+                <display value="Left middle transition zone of prostate"/>
+            </concept>
+            <concept>
+                <code value="R-FFFB3"/>
+                <display value="Right apical peripheral zone of prostate"/>
+            </concept>
+            <concept>
+                <code value="R-FFFD4"/>
+                <display value="Right posteromedial middle peripheral zone of prostate"/>
+            </concept>
+            <concept>
+                <code value="R-FFFB5"/>
+                <display value="Left posteromedial middle peripheral zone of prostate"/>
+            </concept>
+            <concept>
+                <code value="R-FFFFC"/>
+                <display value="Central zone of left half prostate"/>
+            </concept>
+            <concept>
+                <code value="R-FFFA9"/>
+                <display value="Left apical transition zone of prostate"/>
+            </concept>
+            <concept>
+                <code value="R0-0000F"/>
+                <display value="Right lateral middle peripheral zone of prostate"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

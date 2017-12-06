@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-6142-CalculatedValue"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_6142.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.462"/>
+    </identifier>
+    <version value="20070625"/>
+    <name value="CalculatedValue"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 6142 CalculatedValue"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://dicom.nema.org/resources/ontology/DCM"/>
+            <concept>
+                <code value="112194"/>
+                <display value="Mass of parenchymal tissue"/>
+            </concept>
+            <concept>
+                <code value="112195"/>
+                <display value="Mass of breast"/>
+            </concept>
+            <concept>
+                <code value="112196"/>
+                <display value="Area of Vascular Calcification"/>
+            </concept>
+            <concept>
+                <code value="112197"/>
+                <display value="Volume of Vascular Calcification"/>
+            </concept>
+            <concept>
+                <code value="112198"/>
+                <display value="Percentage of Vascular Calcification"/>
+            </concept>
+            <concept>
+                <code value="112199"/>
+                <display value="Mass of Vascular Calcification"/>
+            </concept>
+            <concept>
+                <code value="112200"/>
+                <display value="Average calcification distance in a calcification cluster"/>
+            </concept>
+            <concept>
+                <code value="112058"/>
+                <display value="Calcium score"/>
+            </concept>
+            <concept>
+                <code value="112201"/>
+                <display value="Standard deviation distance of calcifications in a cluster"/>
+            </concept>
+            <concept>
+                <code value="112191"/>
+                <display value="Breast tissue density"/>
+            </concept>
+            <concept>
+                <code value="112192"/>
+                <display value="Volume of parenchymal tissue"/>
+            </concept>
+            <concept>
+                <code value="112193"/>
+                <display value="Volume of breast"/>
+            </concept>
+            <concept>
+                <code value="112017"/>
+                <display value="Cavity extent as percent of volume"/>
+            </concept>
+            <concept>
+                <code value="112018"/>
+                <display value="Calcification extent as percent of surface"/>
+            </concept>
+            <concept>
+                <code value="112019"/>
+                <display value="Calcification extent as percent of volume"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

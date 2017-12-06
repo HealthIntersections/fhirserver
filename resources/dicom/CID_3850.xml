@@ -1,0 +1,217 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-3850-IntravascularOCTFlushAgent"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_3850.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.934"/>
+    </identifier>
+    <version value="20110609"/>
+    <name value="IntravascularOCTFlushAgent"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 3850 IntravascularOCTFlushAgent"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://dicom.nema.org/resources/ontology/DCM"/>
+            <concept>
+                <code value="127855"/>
+                <display value="Non-ionic iodinated contrast agent"/>
+            </concept>
+        </include>
+        <include>
+            <system value="http://snomed.info/srt"/>
+            <concept>
+                <code value="C-17800"/>
+                <display value="Gadolinium"/>
+            </concept>
+            <concept>
+                <code value="C-B0341"/>
+                <display value="Iodophthalein"/>
+            </concept>
+            <concept>
+                <code value="C-10110"/>
+                <display value="Oxygen"/>
+            </concept>
+            <concept>
+                <code value="C-B0342"/>
+                <display value="Sodium diprotrizoate"/>
+            </concept>
+            <concept>
+                <code value="A-80230"/>
+                <display value="Air"/>
+            </concept>
+            <concept>
+                <code value="C-70434"/>
+                <display value="Lactated Ringer's"/>
+            </concept>
+            <concept>
+                <code value="C-B0382"/>
+                <display value="Iopromide"/>
+            </concept>
+            <concept>
+                <code value="C-B0327"/>
+                <display value="Iodopyracet"/>
+            </concept>
+            <concept>
+                <code value="C-B0326"/>
+                <display value="Iodamide meglumine"/>
+            </concept>
+            <concept>
+                <code value="C-B0348"/>
+                <display value="Metrizamide"/>
+            </concept>
+            <concept>
+                <code value="C-B0329"/>
+                <display value="Iopamidol"/>
+            </concept>
+            <concept>
+                <code value="C-B0328"/>
+                <display value="Iopanoic acid"/>
+            </concept>
+            <concept>
+                <code value="C-B0323"/>
+                <display value="Iodoalphionic acid"/>
+            </concept>
+            <concept>
+                <code value="C-B0345"/>
+                <display value="Meglumine diatrizoate"/>
+            </concept>
+            <concept>
+                <code value="C-B0301"/>
+                <display value="Ionic iodinated contrast agent"/>
+            </concept>
+            <concept>
+                <code value="C-B03BC"/>
+                <display value="Iodixanol"/>
+            </concept>
+            <concept>
+                <code value="C-B0300"/>
+                <display value="Contrast agent"/>
+            </concept>
+            <concept>
+                <code value="C-B0344"/>
+                <display value="Sodium iodomethamate"/>
+            </concept>
+            <concept>
+                <code value="C-B0322"/>
+                <display value="Iohexol"/>
+            </concept>
+            <concept>
+                <code value="C-B0325"/>
+                <display value="Sodium iodipamide"/>
+            </concept>
+            <concept>
+                <code value="C-B0347"/>
+                <display value="Sodium diatrizoate"/>
+            </concept>
+            <concept>
+                <code value="C-B0303"/>
+                <display value="Ioxilan"/>
+            </concept>
+            <concept>
+                <code value="C-B0324"/>
+                <display value="Meglumine iodipamide"/>
+            </concept>
+            <concept>
+                <code value="C-B014D"/>
+                <display value="Gadopentetate dimeglumine"/>
+            </concept>
+            <concept>
+                <code value="C-A7220"/>
+                <display value="Dextran"/>
+            </concept>
+            <concept>
+                <code value="C-B038B"/>
+                <display value="Iothalamate"/>
+            </concept>
+            <concept>
+                <code value="C-B05A3"/>
+                <display value="Mangafodipir trisodium"/>
+            </concept>
+            <concept>
+                <code value="C-B03C9"/>
+                <display value="Metrizoate"/>
+            </concept>
+            <concept>
+                <code value="C-B03C3"/>
+                <display value="Gadodiamide"/>
+            </concept>
+            <concept>
+                <code value="C-10520"/>
+                <display value="Carbon dioxide"/>
+            </concept>
+            <concept>
+                <code value="C-B0332"/>
+                <display value="Ioversol"/>
+            </concept>
+            <concept>
+                <code value="C-B0331"/>
+                <display value="Iophendylate"/>
+            </concept>
+            <concept>
+                <code value="C-70841"/>
+                <display value="Saline"/>
+            </concept>
+            <concept>
+                <code value="C-10120"/>
+                <display value="Water"/>
+            </concept>
+            <concept>
+                <code value="C-B0316"/>
+                <display value="Chloriodized oil"/>
+            </concept>
+            <concept>
+                <code value="C-B0338"/>
+                <display value="Sodium acetrizoate"/>
+            </concept>
+            <concept>
+                <code value="C-B0315"/>
+                <display value="Bunamiodyl"/>
+            </concept>
+            <concept>
+                <code value="C-B0337"/>
+                <display value="Propyliodone"/>
+            </concept>
+            <concept>
+                <code value="C-B0318"/>
+                <display value="Iodipamide"/>
+            </concept>
+            <concept>
+                <code value="C-B0317"/>
+                <display value="Diatrizoate"/>
+            </concept>
+            <concept>
+                <code value="C-B0339"/>
+                <display value="Ioxaglate"/>
+            </concept>
+            <concept>
+                <code value="C-12217"/>
+                <display value="Barium Sulfate"/>
+            </concept>
+            <concept>
+                <code value="C-B0312"/>
+                <display value="Non radiopaque medium"/>
+            </concept>
+            <concept>
+                <code value="C-B0333"/>
+                <display value="Iophenoxic acid"/>
+            </concept>
+            <concept>
+                <code value="C-B0314"/>
+                <display value="Sodium tyropanoate"/>
+            </concept>
+            <concept>
+                <code value="C-B0335"/>
+                <display value="Ipodate"/>
+            </concept>
+            <concept>
+                <code value="C-B0319"/>
+                <display value="Iodized oil"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

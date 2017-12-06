@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-85-SUVUnits"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_85.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.984"/>
+    </identifier>
+    <version value="20161106"/>
+    <name value="SUVUnits"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 85 SUVUnits"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://unitsofmeasure.org"/>
+            <concept>
+                <code value="g/ml{SUVibw}"/>
+                <display value="Standardized Uptake Value ideal body weight"/>
+            </concept>
+            <concept>
+                <code value="cm2/ml{SUVbsa}"/>
+                <display value="Standardized Uptake Value body surface area"/>
+            </concept>
+            <concept>
+                <code value="g/ml{SUVlbm(Janma)}"/>
+                <display value="Standardized Uptake Value lean body mass (Janma)"/>
+            </concept>
+            <concept>
+                <code value="g/ml{SUVbw}"/>
+                <display value="Standardized Uptake Value body weight"/>
+            </concept>
+            <concept>
+                <code value="g/ml{SUVlbm}"/>
+                <display value="Standardized Uptake Value lean body mass (James)"/>
+            </concept>
+            <concept>
+                <code value="g/ml{SUVlbm(James128)}"/>
+                <display value="Standardized Uptake Value lean body mass (James 128 multiplier)"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

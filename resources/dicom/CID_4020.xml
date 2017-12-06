@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-4020-PETRadionuclide"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_4020.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.304"/>
+    </identifier>
+    <version value="20160119"/>
+    <name value="PETRadionuclide"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 4020 PETRadionuclide"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://dicom.nema.org/resources/ontology/DCM"/>
+            <concept>
+                <code value="126601"/>
+                <display value="^51^Manganese"/>
+            </concept>
+            <concept>
+                <code value="126602"/>
+                <display value="^70^Arsenic"/>
+            </concept>
+            <concept>
+                <code value="126603"/>
+                <display value="^90^Niobium"/>
+            </concept>
+            <concept>
+                <code value="126605"/>
+                <display value="^43^Scandium"/>
+            </concept>
+            <concept>
+                <code value="126606"/>
+                <display value="^152^Terbium"/>
+            </concept>
+            <concept>
+                <code value="126607"/>
+                <display value="^52m^Manganese"/>
+            </concept>
+            <concept>
+                <code value="126600"/>
+                <display value="^44^Scandium"/>
+            </concept>
+        </include>
+        <include>
+            <system value="http://snomed.info/srt"/>
+            <concept>
+                <code value="C-163AA"/>
+                <display value="^94m^Technetium"/>
+            </concept>
+            <concept>
+                <code value="C-127A4"/>
+                <display value="^60^Copper"/>
+            </concept>
+            <concept>
+                <code value="C-127A5"/>
+                <display value="^62^Copper"/>
+            </concept>
+            <concept>
+                <code value="C-105A1"/>
+                <display value="^11^Carbon"/>
+            </concept>
+            <concept>
+                <code value="C-127A2"/>
+                <display value="^64^Copper"/>
+            </concept>
+            <concept>
+                <code value="C-128A2"/>
+                <display value="^68^Germanium"/>
+            </concept>
+            <concept>
+                <code value="C-107A1"/>
+                <display value="^13^Nitrogen"/>
+            </concept>
+            <concept>
+                <code value="C-149A1"/>
+                <display value="^52^Manganese"/>
+            </concept>
+            <concept>
+                <code value="C-127A1"/>
+                <display value="^61^Copper"/>
+            </concept>
+            <concept>
+                <code value="C-168A4"/>
+                <display value="^89^Zirconium"/>
+            </concept>
+            <concept>
+                <code value="C-162A3"/>
+                <display value="^86^Yttrium"/>
+            </concept>
+            <concept>
+                <code value="C-B1038"/>
+                <display value="^15^Oxygen"/>
+            </concept>
+            <concept>
+                <code value="C-166A2"/>
+                <display value="^45^Titanium"/>
+            </concept>
+            <concept>
+                <code value="C-162A7"/>
+                <display value="^90^Yttrium"/>
+            </concept>
+            <concept>
+                <code value="C-1018C"/>
+                <display value="^14^Oxygen"/>
+            </concept>
+            <concept>
+                <code value="C-141A1"/>
+                <display value="^62^Zinc"/>
+            </concept>
+            <concept>
+                <code value="C-116A2"/>
+                <display value="^73^Selenium"/>
+            </concept>
+            <concept>
+                <code value="C-114A5"/>
+                <display value="^124^Iodine"/>
+            </concept>
+            <concept>
+                <code value="C-135A4"/>
+                <display value="^38^Potassium"/>
+            </concept>
+            <concept>
+                <code value="C-113A3"/>
+                <display value="^77^Bromine"/>
+            </concept>
+            <concept>
+                <code value="C-115A2"/>
+                <display value="^72^Arsenic"/>
+            </concept>
+            <concept>
+                <code value="C-159A2"/>
+                <display value="^82^Rubidium"/>
+            </concept>
+            <concept>
+                <code value="C-155A1"/>
+                <display value="^22^Sodium"/>
+            </concept>
+            <concept>
+                <code value="C-113A1"/>
+                <display value="^75^Bromine"/>
+            </concept>
+            <concept>
+                <code value="C-113A2"/>
+                <display value="^76^Bromine"/>
+            </concept>
+            <concept>
+                <code value="C-111A1"/>
+                <display value="^18^Fluorine"/>
+            </concept>
+            <concept>
+                <code value="C-131A3"/>
+                <display value="^68^Gallium"/>
+            </concept>
+            <concept>
+                <code value="C-131A1"/>
+                <display value="^66^Gallium"/>
+            </concept>
+            <concept>
+                <code value="C-130A1"/>
+                <display value="^52^Iron"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

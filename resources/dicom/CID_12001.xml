@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-12001-UltrasoundProtocolTypes"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_12001.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.550"/>
+    </identifier>
+    <version value="20081027"/>
+    <name value="UltrasoundProtocolTypes"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 12001 UltrasoundProtocolTypes"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://snomed.info/srt"/>
+            <concept>
+                <code value="P2-31109"/>
+                <display value="Adenosine Stress protocol"/>
+            </concept>
+            <concept>
+                <code value="P5-B3000"/>
+                <display value="Echocardiography"/>
+            </concept>
+            <concept>
+                <code value="P5-B8215"/>
+                <display value="Fetal echocardiography"/>
+            </concept>
+            <concept>
+                <code value="P2-31107"/>
+                <display value="Pharmacologic Stress protocol"/>
+            </concept>
+            <concept>
+                <code value="P5-B3002"/>
+                <display value="Transesophageal echocardiography"/>
+            </concept>
+            <concept>
+                <code value="P2-31108"/>
+                <display value="Dobutamine Stress protocol"/>
+            </concept>
+            <concept>
+                <code value="P2-7131F"/>
+                <display value="Pepper protocol"/>
+            </concept>
+            <concept>
+                <code value="P2-7131E"/>
+                <display value="Ramp protocol"/>
+            </concept>
+            <concept>
+                <code value="P2-3110A"/>
+                <display value="Dipyridamole Stress protocol"/>
+            </concept>
+            <concept>
+                <code value="P2-7131D"/>
+                <display value="Ellestad protocol"/>
+            </concept>
+            <concept>
+                <code value="P2-3110B"/>
+                <display value="Stress test using cardiac pacing"/>
+            </concept>
+            <concept>
+                <code value="P2-7131C"/>
+                <display value="Balke protocol"/>
+            </concept>
+            <concept>
+                <code value="P2-7131B"/>
+                <display value="Modified Bruce protocol"/>
+            </concept>
+            <concept>
+                <code value="P2-7131A"/>
+                <display value="Bruce protocol"/>
+            </concept>
+            <concept>
+                <code value="P5-B300C"/>
+                <display value="Intraoperative echocardiography"/>
+            </concept>
+            <concept>
+                <code value="P2-31011"/>
+                <display value="Pharmacologic and exercise stress test"/>
+            </concept>
+            <concept>
+                <code value="P5-B3005"/>
+                <display value="Intravascular echocardiography"/>
+            </concept>
+            <concept>
+                <code value="P2-31010"/>
+                <display value="Exercise stress ECG test"/>
+            </concept>
+            <concept>
+                <code value="P5-B3006"/>
+                <display value="Intracardiac echocardiography"/>
+            </concept>
+            <concept>
+                <code value="P5-B3012"/>
+                <display value="Transthoracic echocardiography"/>
+            </concept>
+            <concept>
+                <code value="P5-B3050"/>
+                <display value="Exercise stress echocardiography"/>
+            </concept>
+            <concept>
+                <code value="P2-713A1"/>
+                <display value="Modified Naughton protocol"/>
+            </concept>
+            <concept>
+                <code value="P2-713A0"/>
+                <display value="Naughton protocol"/>
+            </concept>
+            <concept>
+                <code value="P5-B3090"/>
+                <display value="Contrast echocardiography"/>
+            </concept>
+            <concept>
+                <code value="P5-B300F"/>
+                <display value="Pediatric echocardiography"/>
+            </concept>
+            <concept>
+                <code value="P0-05F95"/>
+                <display value="Epicardial echocardiography"/>
+            </concept>
+            <concept>
+                <code value="P2-31102"/>
+                <display value="Stress test using Bicycle Ergometer"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

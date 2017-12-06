@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-12122-OtherVascularProperties"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_12122.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.588"/>
+    </identifier>
+    <version value="20050110"/>
+    <name value="OtherVascularProperties"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 12122 OtherVascularProperties"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://loinc.org"/>
+            <concept>
+                <code value="20217-6"/>
+                <display value="Deceleration Time"/>
+            </concept>
+            <concept>
+                <code value="20247-3"/>
+                <display value="Peak Gradient"/>
+            </concept>
+            <concept>
+                <code value="20168-1"/>
+                <display value="Acceleration Time"/>
+            </concept>
+            <concept>
+                <code value="20256-4"/>
+                <display value="Mean Gradient"/>
+            </concept>
+            <concept>
+                <code value="33878-0"/>
+                <display value="Volume flow"/>
+            </concept>
+        </include>
+        <include>
+            <system value="http://snomed.info/srt"/>
+            <concept>
+                <code value="G-0366"/>
+                <display value="Vessel lumen cross-sectional area"/>
+            </concept>
+            <concept>
+                <code value="G-0364"/>
+                <display value="Vessel lumen diameter"/>
+            </concept>
+            <concept>
+                <code value="G-0365"/>
+                <display value="Vessel outside diameter"/>
+            </concept>
+            <concept>
+                <code value="R-1025C"/>
+                <display value="Vessel Intimal Diameter"/>
+            </concept>
+            <concept>
+                <code value="R-1025F"/>
+                <display value="Length of Segment"/>
+            </concept>
+            <concept>
+                <code value="R-1025E"/>
+                <display value="Vessel depth from surface"/>
+            </concept>
+            <concept>
+                <code value="R-1025D"/>
+                <display value="Vessel Intimal Cross-Sectional Area"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

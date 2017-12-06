@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-6303-ProstateSectorAnatomyfromEuropeanConcensus27SectorOptimalModel"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_6303.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.1141"/>
+    </identifier>
+    <version value="20161106"/>
+    <name value="ProstateSectorAnatomyfromEuropeanConcensus27Sector(Optimal)Model"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 6303 ProstateSectorAnatomyfromEuropeanConcensus27Sector(Optimal)Model"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://snomed.info/srt"/>
+            <concept>
+                <code value="T-93010"/>
+                <display value="Right seminal vesicle"/>
+            </concept>
+            <concept>
+                <code value="R-FFFCD"/>
+                <display value="Right anterior middle peripheral zone of prostate"/>
+            </concept>
+            <concept>
+                <code value="R0-00020"/>
+                <display value="Left basal part transition zone of prostate"/>
+            </concept>
+            <concept>
+                <code value="R0-00001"/>
+                <display value="Left anterior basal peripheral zone of prostate"/>
+            </concept>
+            <concept>
+                <code value="R0-00025"/>
+                <display value="Left anterior apical peripheral zone of prostate"/>
+            </concept>
+            <concept>
+                <code value="R0-00003"/>
+                <display value="Right anterior apical peripheral zone of prostate"/>
+            </concept>
+            <concept>
+                <code value="R-FFFD0"/>
+                <display value="Central zone of right half prostate"/>
+            </concept>
+            <concept>
+                <code value="R-FFFB0"/>
+                <display value="Left anterior middle peripheral zone of prostate"/>
+            </concept>
+            <concept>
+                <code value="R-FFFD9"/>
+                <display value="Male external urethral sphincter"/>
+            </concept>
+            <concept>
+                <code value="R-FFFB6"/>
+                <display value="Right middle transition zone of prostate"/>
+            </concept>
+            <concept>
+                <code value="R-FFFD5"/>
+                <display value="Left middle transition zone of prostate"/>
+            </concept>
+            <concept>
+                <code value="R-FFFD4"/>
+                <display value="Right posteromedial middle peripheral zone of prostate"/>
+            </concept>
+            <concept>
+                <code value="R0-0001B"/>
+                <display value="Apical anterior fibromuscular stroma of prostate"/>
+            </concept>
+            <concept>
+                <code value="R-FFFB5"/>
+                <display value="Left posteromedial middle peripheral zone of prostate"/>
+            </concept>
+            <concept>
+                <code value="R-FFFFC"/>
+                <display value="Central zone of left half prostate"/>
+            </concept>
+            <concept>
+                <code value="R0-0001E"/>
+                <display value="Right posterolateral basal peripheral zone of prostate"/>
+            </concept>
+            <concept>
+                <code value="T-93020"/>
+                <display value="Left seminal vesicle"/>
+            </concept>
+            <concept>
+                <code value="R-FFFDD"/>
+                <display value="Left posterolateral apical peripheral zone of prostate"/>
+            </concept>
+            <concept>
+                <code value="R-FFFBE"/>
+                <display value="Right basal transition zone of prostate"/>
+            </concept>
+            <concept>
+                <code value="R-FFFE2"/>
+                <display value="Right anterior basal peripheral zone of prostate"/>
+            </concept>
+            <concept>
+                <code value="R-FFFC0"/>
+                <display value="Right posterolateral apical peripheral zone of prostate"/>
+            </concept>
+            <concept>
+                <code value="R-FFFC2"/>
+                <display value="Left posterolateral basal peripheral zone of prostate"/>
+            </concept>
+            <concept>
+                <code value="R-FFFC1"/>
+                <display value="Right apical transition zone of prostate"/>
+            </concept>
+            <concept>
+                <code value="R0-00017"/>
+                <display value="Basal anterior fibromuscular stroma of prostate"/>
+            </concept>
+            <concept>
+                <code value="R-FFFE0"/>
+                <display value="Middle anterior fibromuscular stroma of prostate"/>
+            </concept>
+            <concept>
+                <code value="R-FFFE9"/>
+                <display value="Left posterolateral middle peripheral zone of prostate"/>
+            </concept>
+            <concept>
+                <code value="R0-0000C"/>
+                <display value="Right posterolateral middle peripheral zone of prostate"/>
+            </concept>
+            <concept>
+                <code value="R0-0000B"/>
+                <display value="Left posteromedial apical peripheral zone of prostate"/>
+            </concept>
+            <concept>
+                <code value="R-FFFEA"/>
+                <display value="Right posteromedial apical peripheral zone of prostate"/>
+            </concept>
+            <concept>
+                <code value="R-FFFA9"/>
+                <display value="Left apical transition zone of prostate"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

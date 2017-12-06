@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-10067-RadiationAttenuatorMaterials"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_10067.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.1161"/>
+    </identifier>
+    <version value="20170405"/>
+    <name value="RadiationAttenuatorMaterials"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 10067 RadiationAttenuatorMaterials"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://snomed.info/srt"/>
+            <concept>
+                <code value="C-150F9"/>
+                <display value="Molybdenum or Molybdenum compound"/>
+            </concept>
+            <concept>
+                <code value="C-127F9"/>
+                <display value="Copper or Copper compound"/>
+            </concept>
+            <concept>
+                <code value="C-139F9"/>
+                <display value="Tin or Tin compound"/>
+            </concept>
+            <concept>
+                <code value="C-137F9"/>
+                <display value="Silver or Silver compound"/>
+            </concept>
+            <concept>
+                <code value="F-61202"/>
+                <display value="Carbon Fiber"/>
+            </concept>
+            <concept>
+                <code value="C-167F9"/>
+                <display value="Rhodium or Rhodium compound"/>
+            </concept>
+            <concept>
+                <code value="C-156F9"/>
+                <display value="Tantalum or Tantalum compound"/>
+            </concept>
+            <concept>
+                <code value="C-132F9"/>
+                <display value="Lead or Lead compound"/>
+            </concept>
+            <concept>
+                <code value="C-120F9"/>
+                <display value="Aluminum or Aluminum compound"/>
+            </concept>
+            <concept>
+                <code value="C-1190F"/>
+                <display value="Europium or Europium compound"/>
+            </concept>
+            <concept>
+                <code value="C-1190E"/>
+                <display value="Niobium or Niobium compound"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-6124-LocationinChest"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_6124.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.444"/>
+    </identifier>
+    <version value="20030108"/>
+    <name value="LocationinChest"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 6124 LocationinChest"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://dicom.nema.org/resources/ontology/DCM"/>
+            <concept>
+                <code value="112153"/>
+                <display value="Subpleural"/>
+            </concept>
+        </include>
+        <include>
+            <system value="http://snomed.info/srt"/>
+            <concept>
+                <code value="T-28825"/>
+                <display value="Middle lobe of lung"/>
+            </concept>
+            <concept>
+                <code value="T-D3209"/>
+                <display value="Middle zone of lung"/>
+            </concept>
+            <concept>
+                <code value="G-A111"/>
+                <display value="Peripheral"/>
+            </concept>
+            <concept>
+                <code value="G-A122"/>
+                <display value="Apical"/>
+            </concept>
+            <concept>
+                <code value="T-D3208"/>
+                <display value="Upper zone of lung"/>
+            </concept>
+            <concept>
+                <code value="G-A110"/>
+                <display value="Central"/>
+            </concept>
+            <concept>
+                <code value="G-A123"/>
+                <display value="Basal"/>
+            </concept>
+            <concept>
+                <code value="T-28230"/>
+                <display value="Anterior segment of right upper lobe"/>
+            </concept>
+            <concept>
+                <code value="T-28220"/>
+                <display value="Posterior segment of right upper lobe"/>
+            </concept>
+            <concept>
+                <code value="T-28630"/>
+                <display value="Anterior segment of left upper lobe"/>
+            </concept>
+            <concept>
+                <code value="T-28830"/>
+                <display value="Lower lobe of lung"/>
+            </concept>
+            <concept>
+                <code value="T-D320A"/>
+                <display value="Lower zone of lung"/>
+            </concept>
+            <concept>
+                <code value="T-28820"/>
+                <display value="Upper lobe of lung"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

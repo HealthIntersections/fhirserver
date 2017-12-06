@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-3413-AdverseOutcomes"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_3413.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.78"/>
+    </identifier>
+    <version value="20030327"/>
+    <name value="AdverseOutcomes"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 3413 AdverseOutcomes"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://dicom.nema.org/resources/ontology/DCM"/>
+            <concept>
+                <code value="122167"/>
+                <display value="Death During Catheterization"/>
+            </concept>
+        </include>
+        <include>
+            <system value="http://snomed.info/srt"/>
+            <concept>
+                <code value="D3-3002F"/>
+                <display value="Cardiac arrest"/>
+            </concept>
+            <concept>
+                <code value="D3-90100"/>
+                <display value="Cardiac tamponade"/>
+            </concept>
+            <concept>
+                <code value="DF-10781"/>
+                <display value="Contrast media adverse reaction"/>
+            </concept>
+            <concept>
+                <code value="D3-16010"/>
+                <display value="Congestive heart failure"/>
+            </concept>
+            <concept>
+                <code value="M-39390"/>
+                <display value="AV Fistula"/>
+            </concept>
+            <concept>
+                <code value="R-102B3"/>
+                <display value="Emergency Coronary Artery Bypass"/>
+            </concept>
+            <concept>
+                <code value="R-102B2"/>
+                <display value="Loss of distal pulse"/>
+            </concept>
+            <concept>
+                <code value="D3-89100"/>
+                <display value="Occlusion of artery"/>
+            </concept>
+            <concept>
+                <code value="M-32390"/>
+                <display value="Pseudoaneurysm"/>
+            </concept>
+            <concept>
+                <code value="D7-11010"/>
+                <display value="Renal failure"/>
+            </concept>
+            <concept>
+                <code value="M-37000"/>
+                <display value="Bleeding"/>
+            </concept>
+            <concept>
+                <code value="D3-8900D"/>
+                <display value="Cerebrovascular Accident or Stroke"/>
+            </concept>
+            <concept>
+                <code value="R-102B5"/>
+                <display value="Emergency Percutaneous Coronary Intervention"/>
+            </concept>
+            <concept>
+                <code value="D3-30000"/>
+                <display value="Arrhythmia"/>
+            </concept>
+            <concept>
+                <code value="D3-81310"/>
+                <display value="Arterial dissection"/>
+            </concept>
+            <concept>
+                <code value="D3-00200"/>
+                <display value="Cardiogenic shock"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

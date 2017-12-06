@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-8300-VisualEvaluationMethods"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_8300.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.980"/>
+    </identifier>
+    <version value="20140331"/>
+    <name value="VisualEvaluationMethods"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 8300 VisualEvaluationMethods"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://dicom.nema.org/resources/ontology/DCM"/>
+            <concept>
+                <code value="109702"/>
+                <display value="Grayscale resolution evaluation"/>
+            </concept>
+            <concept>
+                <code value="109701"/>
+                <display value="Overall image quality evaluation"/>
+            </concept>
+            <concept>
+                <code value="109704"/>
+                <display value="Luminance uniformity evaluation"/>
+            </concept>
+            <concept>
+                <code value="109703"/>
+                <display value="Luminance response evaluation"/>
+            </concept>
+            <concept>
+                <code value="109710"/>
+                <display value="Clinical evaluation"/>
+            </concept>
+            <concept>
+                <code value="109709"/>
+                <display value="Angular viewing evaluation"/>
+            </concept>
+            <concept>
+                <code value="109706"/>
+                <display value="Pixel faults evaluation"/>
+            </concept>
+            <concept>
+                <code value="109705"/>
+                <display value="Chromaticity evaluation"/>
+            </concept>
+            <concept>
+                <code value="109708"/>
+                <display value="Geometrical image evaluation"/>
+            </concept>
+            <concept>
+                <code value="109707"/>
+                <display value="Veiling glare evaluation"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-3611-PressureMeasurements"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_3611.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.161"/>
+    </identifier>
+    <version value="20050322"/>
+    <name value="PressureMeasurements"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 3611 PressureMeasurements"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://dicom.nema.org/resources/ontology/DCM"/>
+            <concept>
+                <code value="122208"/>
+                <display value="x-descent pressure"/>
+            </concept>
+            <concept>
+                <code value="122209"/>
+                <display value="y-descent pressure"/>
+            </concept>
+            <concept>
+                <code value="122191"/>
+                <display value="Ventricular End Diastolic pressure"/>
+            </concept>
+            <concept>
+                <code value="109016"/>
+                <display value="A wave peak pressure"/>
+            </concept>
+            <concept>
+                <code value="122199"/>
+                <display value="Pressure at dp/dt max"/>
+            </concept>
+            <concept>
+                <code value="109034"/>
+                <display value="V wave peak pressure"/>
+            </concept>
+            <concept>
+                <code value="122210"/>
+                <display value="z-point pressure"/>
+            </concept>
+            <concept>
+                <code value="122197"/>
+                <display value="Gradient pressure, average"/>
+            </concept>
+            <concept>
+                <code value="122198"/>
+                <display value="Gradient pressure, peak"/>
+            </concept>
+            <concept>
+                <code value="122196"/>
+                <display value="C wave pressure"/>
+            </concept>
+        </include>
+        <include>
+            <system value="http://loinc.org"/>
+            <concept>
+                <code value="8462-4"/>
+                <display value="Intravascular diastolic blood pressure"/>
+            </concept>
+            <concept>
+                <code value="8480-6"/>
+                <display value="Intravascular Systolic Blood pressure"/>
+            </concept>
+        </include>
+        <include>
+            <system value="http://snomed.info/srt"/>
+            <concept>
+                <code value="F-00E22"/>
+                <display value="Average diastolic blood pressure"/>
+            </concept>
+            <concept>
+                <code value="F-00E11"/>
+                <display value="Maximum systolic blood pressure"/>
+            </concept>
+            <concept>
+                <code value="F-00E14"/>
+                <display value="Average systolic blood pressure"/>
+            </concept>
+            <concept>
+                <code value="F-00E1F"/>
+                <display value="Minimum diastolic blood pressure"/>
+            </concept>
+            <concept>
+                <code value="F-31150"/>
+                <display value="Mean blood pressure"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

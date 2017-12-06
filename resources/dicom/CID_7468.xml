@@ -1,0 +1,258 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-7468-TextureMeasurements"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_7468.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.1001"/>
+    </identifier>
+    <version value="20171122"/>
+    <name value="TextureMeasurements"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 7468 TextureMeasurements"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://dicom.nema.org/resources/ontology/DCM"/>
+            <concept>
+                <code value="128813"/>
+                <display value="Run Percentage"/>
+            </concept>
+            <concept>
+                <code value="128812"/>
+                <display value="Run Length Nonuniformity Normalized"/>
+            </concept>
+            <concept>
+                <code value="128815"/>
+                <display value="Run Length Variance"/>
+            </concept>
+            <concept>
+                <code value="128814"/>
+                <display value="Gray Level Variance in Runs"/>
+            </concept>
+            <concept>
+                <code value="128816"/>
+                <display value="Run Entropy"/>
+            </concept>
+            <concept>
+                <code value="128811"/>
+                <display value="Run Length Nonuniformity"/>
+            </concept>
+            <concept>
+                <code value="128810"/>
+                <display value="Gray Level Nonuniformity in Runs Normalized"/>
+            </concept>
+            <concept>
+                <code value="128809"/>
+                <display value="Gray Level Nonuniformity in Runs"/>
+            </concept>
+            <concept>
+                <code value="128802"/>
+                <display value="Long Runs Emphasis"/>
+            </concept>
+            <concept>
+                <code value="128801"/>
+                <display value="Short Runs Emphasis"/>
+            </concept>
+            <concept>
+                <code value="128804"/>
+                <display value="High Gray Level Run Emphasis"/>
+            </concept>
+            <concept>
+                <code value="128803"/>
+                <display value="Low Gray Level Run Emphasis"/>
+            </concept>
+            <concept>
+                <code value="128806"/>
+                <display value="Short Run High Gray Level Emphasis"/>
+            </concept>
+            <concept>
+                <code value="128805"/>
+                <display value="Short Run Low Gray Level Emphasis"/>
+            </concept>
+            <concept>
+                <code value="128808"/>
+                <display value="Long Run High Gray Level Emphasis"/>
+            </concept>
+            <concept>
+                <code value="128807"/>
+                <display value="Long Run Low Gray Level Emphasis"/>
+            </concept>
+            <concept>
+                <code value="126065"/>
+                <display value="Angular Second Moment of GLCM"/>
+            </concept>
+            <concept>
+                <code value="126066"/>
+                <display value="Correlation of GLCM"/>
+            </concept>
+            <concept>
+                <code value="126060"/>
+                <display value="Joint Entropy of GLCM"/>
+            </concept>
+            <concept>
+                <code value="126061"/>
+                <display value="Root Angular Second Moment of GLCM"/>
+            </concept>
+            <concept>
+                <code value="126062"/>
+                <display value="Inverse Difference Moment of GLCM"/>
+            </concept>
+            <concept>
+                <code value="126063"/>
+                <display value="Contrast of GLCM"/>
+            </concept>
+            <concept>
+                <code value="126064"/>
+                <display value="Dissimilarity of GLCM"/>
+            </concept>
+            <concept>
+                <code value="128835"/>
+                <display value="Zone Size Variance"/>
+            </concept>
+            <concept>
+                <code value="128834"/>
+                <display value="Gray Level Variance in Zones"/>
+            </concept>
+            <concept>
+                <code value="128836"/>
+                <display value="Zone Size Entropy"/>
+            </concept>
+            <concept>
+                <code value="128794"/>
+                <display value="Autocorrelation of GLCM"/>
+            </concept>
+            <concept>
+                <code value="128793"/>
+                <display value="Inverse Variance of GLCM"/>
+            </concept>
+            <concept>
+                <code value="128796"/>
+                <display value="Cluster Shade of GLCM"/>
+            </concept>
+            <concept>
+                <code value="128795"/>
+                <display value="Cluster Tendency of GLCM"/>
+            </concept>
+            <concept>
+                <code value="128831"/>
+                <display value="Zone Size Nonuniformity"/>
+            </concept>
+            <concept>
+                <code value="128798"/>
+                <display value="First Measure of Information Correlation of GLCM"/>
+            </concept>
+            <concept>
+                <code value="128830"/>
+                <display value="Gray Level Nonuniformity of Zone Counts Normalized"/>
+            </concept>
+            <concept>
+                <code value="128797"/>
+                <display value="Cluster Prominence of GLCM"/>
+            </concept>
+            <concept>
+                <code value="128833"/>
+                <display value="Zone Percentage"/>
+            </concept>
+            <concept>
+                <code value="128832"/>
+                <display value="Zone Size Nonuniformity Normalized"/>
+            </concept>
+            <concept>
+                <code value="128799"/>
+                <display value="Second Measure of Information Correlation of GLCM"/>
+            </concept>
+            <concept>
+                <code value="126050"/>
+                <display value="Fractal Dimension"/>
+            </concept>
+            <concept>
+                <code value="128790"/>
+                <display value="Inverse Difference of GLCM"/>
+            </concept>
+            <concept>
+                <code value="128792"/>
+                <display value="Inverse Difference Moment Normalized of GLCM"/>
+            </concept>
+            <concept>
+                <code value="128791"/>
+                <display value="Inverse Difference Normalized of GLCM"/>
+            </concept>
+            <concept>
+                <code value="128824"/>
+                <display value="High Gray Level Zone Emphasis"/>
+            </concept>
+            <concept>
+                <code value="128823"/>
+                <display value="Low Gray Level Zone Emphasis"/>
+            </concept>
+            <concept>
+                <code value="128826"/>
+                <display value="Small Zone High Gray Level Emphasis"/>
+            </concept>
+            <concept>
+                <code value="128825"/>
+                <display value="Small Zone Low Gray Level Emphasis"/>
+            </concept>
+            <concept>
+                <code value="128828"/>
+                <display value="Large Zone High Gray Level Emphasis"/>
+            </concept>
+            <concept>
+                <code value="128827"/>
+                <display value="Large Zone Low Gray Level Emphasis"/>
+            </concept>
+            <concept>
+                <code value="128829"/>
+                <display value="Gray Level Nonuniformity of Zone Counts"/>
+            </concept>
+            <concept>
+                <code value="128783"/>
+                <display value="Joint Variance of GLCM"/>
+            </concept>
+            <concept>
+                <code value="128782"/>
+                <display value="Joint Average of GLCM"/>
+            </concept>
+            <concept>
+                <code value="128785"/>
+                <display value="Difference Variance of GLCM"/>
+            </concept>
+            <concept>
+                <code value="128784"/>
+                <display value="Difference Average of GLCM"/>
+            </concept>
+            <concept>
+                <code value="128787"/>
+                <display value="Sum Average of GLCM"/>
+            </concept>
+            <concept>
+                <code value="128786"/>
+                <display value="Difference Entropy of GLCM"/>
+            </concept>
+            <concept>
+                <code value="128822"/>
+                <display value="Large Zone Emphasis"/>
+            </concept>
+            <concept>
+                <code value="128789"/>
+                <display value="Sum Entropy of GLCM"/>
+            </concept>
+            <concept>
+                <code value="128821"/>
+                <display value="Small Zone Emphasis"/>
+            </concept>
+            <concept>
+                <code value="128788"/>
+                <display value="Sum Variance of GLCM"/>
+            </concept>
+            <concept>
+                <code value="128781"/>
+                <display value="Joint Maximum of GLCM"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

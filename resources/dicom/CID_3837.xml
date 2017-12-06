@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-3837-FiducialFeature"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_3837.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.287"/>
+    </identifier>
+    <version value="20051103"/>
+    <name value="FiducialFeature"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 3837 FiducialFeature"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://snomed.info/srt"/>
+            <concept>
+                <code value="T-42580"/>
+                <display value="Aortic Bifurcation"/>
+            </concept>
+            <concept>
+                <code value="R-10258"/>
+                <display value="Common Iliac Bifurcation"/>
+            </concept>
+            <concept>
+                <code value="R-4215C"/>
+                <display value="Ostium"/>
+            </concept>
+            <concept>
+                <code value="T-46600"/>
+                <display value="Renal Artery"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

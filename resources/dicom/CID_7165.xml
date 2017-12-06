@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-7165-AbstractSegmentationTypes"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_7165.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.962"/>
+    </identifier>
+    <version value="20151113"/>
+    <name value="AbstractSegmentationTypes"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 7165 AbstractSegmentationTypes"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://dicom.nema.org/resources/ontology/DCM"/>
+            <concept>
+                <code value="125041"/>
+                <display value="Registration Input"/>
+            </concept>
+            <concept>
+                <code value="125040"/>
+                <display value="Background"/>
+            </concept>
+            <concept>
+                <code value="113132"/>
+                <display value="Single subject extracted from group"/>
+            </concept>
+        </include>
+        <include>
+            <system value="http://ncit.nci.nih.gov"/>
+            <concept>
+                <code value="C94970"/>
+                <display value="Reference Region"/>
+            </concept>
+        </include>
+        <include>
+            <system value="http://snomed.info/srt"/>
+            <concept>
+                <code value="T-D0050"/>
+                <display value="Tissue"/>
+            </concept>
+            <concept>
+                <code value="F-61779"/>
+                <display value="Waste Material"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

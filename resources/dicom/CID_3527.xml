@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-3527-BloodBaseExcess"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_3527.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.141"/>
+    </identifier>
+    <version value="20030327"/>
+    <name value="BloodBaseExcess"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 3527 BloodBaseExcess"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://loinc.org"/>
+            <concept>
+                <code value="11555-0"/>
+                <display value="Blood Base Excess"/>
+            </concept>
+            <concept>
+                <code value="1927-3"/>
+                <display value="Venous Blood Base Excess"/>
+            </concept>
+            <concept>
+                <code value="1925-7"/>
+                <display value="Arterial Blood Base Excess"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

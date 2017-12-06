@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-4251-VisualFieldStaticPerimetryTestStrategies"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_4251.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.910"/>
+    </identifier>
+    <version value="20100827"/>
+    <name value="VisualFieldStaticPerimetryTestStrategies"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 4251 VisualFieldStaticPerimetryTestStrategies"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://dicom.nema.org/resources/ontology/DCM"/>
+            <concept>
+                <code value="111825"/>
+                <display value="Visual Field TOP Test Strategy"/>
+            </concept>
+            <concept>
+                <code value="111836"/>
+                <display value="Visual Field CLIP Test Strategy"/>
+            </concept>
+            <concept>
+                <code value="111815"/>
+                <display value="Visual Field SITA-Standard Test Strategy"/>
+            </concept>
+            <concept>
+                <code value="111826"/>
+                <display value="Visual Field Dynamic Test Strategy"/>
+            </concept>
+            <concept>
+                <code value="111837"/>
+                <display value="Visual Field CLASS Strategy"/>
+            </concept>
+            <concept>
+                <code value="111816"/>
+                <display value="Visual Field SITA-SWAP Test Strategy"/>
+            </concept>
+            <concept>
+                <code value="111827"/>
+                <display value="Visual Field Normal Test Strategy"/>
+            </concept>
+            <concept>
+                <code value="111817"/>
+                <display value="Visual Field SITA-Fast Test Strategy"/>
+            </concept>
+            <concept>
+                <code value="111828"/>
+                <display value="Visual Field 1-LT Test Strategy"/>
+            </concept>
+            <concept>
+                <code value="111818"/>
+                <display value="Visual Field Full Threshold Test Strategy"/>
+            </concept>
+            <concept>
+                <code value="111829"/>
+                <display value="Visual Field 2-LT Test Strategy"/>
+            </concept>
+            <concept>
+                <code value="111819"/>
+                <display value="Visual Field FastPac Test Strategy"/>
+            </concept>
+            <concept>
+                <code value="111830"/>
+                <display value="Visual Field LVS Test Strategy"/>
+            </concept>
+            <concept>
+                <code value="111820"/>
+                <display value="Visual Field Full From Prior Test Strategy"/>
+            </concept>
+            <concept>
+                <code value="111831"/>
+                <display value="Visual Field GATE Test Strategy"/>
+            </concept>
+            <concept>
+                <code value="111821"/>
+                <display value="Visual Field Optima Test Strategy"/>
+            </concept>
+            <concept>
+                <code value="111832"/>
+                <display value="Visual Field GATEi Test Strategy"/>
+            </concept>
+            <concept>
+                <code value="111822"/>
+                <display value="Visual Field Two-Zone Test Strategy"/>
+            </concept>
+            <concept>
+                <code value="111833"/>
+                <display value="Visual Field 2LT-Dynamic Test Strategy"/>
+            </concept>
+            <concept>
+                <code value="111823"/>
+                <display value="Visual Field Three-Zone Test Strategy"/>
+            </concept>
+            <concept>
+                <code value="111834"/>
+                <display value="Visual Field 2LT-Normal Test Strategy"/>
+            </concept>
+            <concept>
+                <code value="111824"/>
+                <display value="Visual Field Quantify-Defects Test Strategy"/>
+            </concept>
+            <concept>
+                <code value="111835"/>
+                <display value="Visual Field Fast Threshold Test Strategy"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

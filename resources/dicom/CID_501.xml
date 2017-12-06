@@ -1,0 +1,406 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-501-VolumetricViewDescription"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_501.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.1057"/>
+    </identifier>
+    <version value="20150915"/>
+    <name value="VolumetricViewDescription"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 501 VolumetricViewDescription"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://snomed.info/srt"/>
+            <concept>
+                <code value="R-10206"/>
+                <display value="antero-posterior"/>
+            </concept>
+            <concept>
+                <code value="R-10204"/>
+                <display value="frontal oblique"/>
+            </concept>
+            <concept>
+                <code value="R-10248"/>
+                <display value="oblique cranio-caudal"/>
+            </concept>
+            <concept>
+                <code value="G-A191"/>
+                <display value="Five chamber"/>
+            </concept>
+            <concept>
+                <code value="G-5222"/>
+                <display value="Right lateral projection"/>
+            </concept>
+            <concept>
+                <code value="G-5223"/>
+                <display value="Left lateral projection"/>
+            </concept>
+            <concept>
+                <code value="R-10208"/>
+                <display value="antero-posterior oblique"/>
+            </concept>
+            <concept>
+                <code value="G-5224"/>
+                <display value="Medio-lateral oblique"/>
+            </concept>
+            <concept>
+                <code value="G-5225"/>
+                <display value="Latero-medial oblique"/>
+            </concept>
+            <concept>
+                <code value="R-40810"/>
+                <display value="Occlusal projection"/>
+            </concept>
+            <concept>
+                <code value="G-A472"/>
+                <display value="Oblique"/>
+            </concept>
+            <concept>
+                <code value="R-40B0E"/>
+                <display value="Transesophageal short axis view"/>
+            </concept>
+            <concept>
+                <code value="G-5220"/>
+                <display value="Medial-lateral"/>
+            </concept>
+            <concept>
+                <code value="G-5221"/>
+                <display value="Lateral-medial"/>
+            </concept>
+            <concept>
+                <code value="R-40B0A"/>
+                <display value="Subcostal oblique coronal view"/>
+            </concept>
+            <concept>
+                <code value="G-A117"/>
+                <display value="Transverse"/>
+            </concept>
+            <concept>
+                <code value="G-A19C"/>
+                <display value="Four chamber"/>
+            </concept>
+            <concept>
+                <code value="G-A19B"/>
+                <display value="Two chamber"/>
+            </concept>
+            <concept>
+                <code value="R-10242"/>
+                <display value="cranio-caudal"/>
+            </concept>
+            <concept>
+                <code value="R-10241"/>
+                <display value="axial"/>
+            </concept>
+            <concept>
+                <code value="R-10202"/>
+                <display value="frontal"/>
+            </concept>
+            <concept>
+                <code value="R-10246"/>
+                <display value="oblique axial"/>
+            </concept>
+            <concept>
+                <code value="R-40B01"/>
+                <display value="Suprasternal sagittal view"/>
+            </concept>
+            <concept>
+                <code value="R-40B00"/>
+                <display value="Suprasternal coronal view"/>
+            </concept>
+            <concept>
+                <code value="R-10244"/>
+                <display value="caudo-cranial"/>
+            </concept>
+            <concept>
+                <code value="G-5215"/>
+                <display value="Anterior projection"/>
+            </concept>
+            <concept>
+                <code value="R-10216"/>
+                <display value="postero-anterior oblique"/>
+            </concept>
+            <concept>
+                <code value="G-5216"/>
+                <display value="Posterior projection"/>
+            </concept>
+            <concept>
+                <code value="R-40AFF"/>
+                <display value="Subcostal view of cardiac outlets directed anteriorly"/>
+            </concept>
+            <concept>
+                <code value="G-5212"/>
+                <display value="Sagittal-oblique axial"/>
+            </concept>
+            <concept>
+                <code value="R-40888"/>
+                <display value="postero-anterior"/>
+            </concept>
+            <concept>
+                <code value="G-5210"/>
+                <display value="Oblique axial"/>
+            </concept>
+            <concept>
+                <code value="G-039E"/>
+                <display value="Subcostal long axis"/>
+            </concept>
+            <concept>
+                <code value="G-039F"/>
+                <display value="Subcostal short axis"/>
+            </concept>
+            <concept>
+                <code value="G-039C"/>
+                <display value="Right Ventricular Inflow Tract View"/>
+            </concept>
+            <concept>
+                <code value="G-039D"/>
+                <display value="Right Ventricular Outflow Tract View"/>
+            </concept>
+            <concept>
+                <code value="R-10252"/>
+                <display value="frontal-oblique axial"/>
+            </concept>
+            <concept>
+                <code value="R-10250"/>
+                <display value="oblique caudo-cranial"/>
+            </concept>
+            <concept>
+                <code value="R-10257"/>
+                <display value="verticosubmental"/>
+            </concept>
+            <concept>
+                <code value="G-5208"/>
+                <display value="Right posterior oblique"/>
+            </concept>
+            <concept>
+                <code value="G-039A"/>
+                <display value="Parasternal short axis at the Mitral Valve level"/>
+            </concept>
+            <concept>
+                <code value="R-10212"/>
+                <display value="left posterior oblique"/>
+            </concept>
+            <concept>
+                <code value="R-10256"/>
+                <display value="submentovertical"/>
+            </concept>
+            <concept>
+                <code value="G-5209"/>
+                <display value="Left posterior oblique"/>
+            </concept>
+            <concept>
+                <code value="G-039B"/>
+                <display value="Parasternal short axis at the Papillary Muscle level"/>
+            </concept>
+            <concept>
+                <code value="R-10210"/>
+                <display value="right posterior oblique"/>
+            </concept>
+            <concept>
+                <code value="R-10254"/>
+                <display value="sagittal-oblique axial"/>
+            </concept>
+            <concept>
+                <code value="R-10228"/>
+                <display value="lateral-medial"/>
+            </concept>
+            <concept>
+                <code value="G-0395"/>
+                <display value="Apical long axis"/>
+            </concept>
+            <concept>
+                <code value="G-0396"/>
+                <display value="Parasternal long axis"/>
+            </concept>
+            <concept>
+                <code value="R-10226"/>
+                <display value="medio-lateral oblique"/>
+            </concept>
+            <concept>
+                <code value="G-5206"/>
+                <display value="Right anterior oblique"/>
+            </concept>
+            <concept>
+                <code value="G-5207"/>
+                <display value="Left anterior oblique"/>
+            </concept>
+            <concept>
+                <code value="G-0399"/>
+                <display value="Parasternal short axis at the level of the mitral chords"/>
+            </concept>
+            <concept>
+                <code value="G-0397"/>
+                <display value="Parasternal short axis"/>
+            </concept>
+            <concept>
+                <code value="G-0398"/>
+                <display value="Parasternal short axis at the aortic valve level"/>
+            </concept>
+            <concept>
+                <code value="R-102C1"/>
+                <display value="oblique"/>
+            </concept>
+            <concept>
+                <code value="R-102C5"/>
+                <display value="parietoacanthial"/>
+            </concept>
+            <concept>
+                <code value="R-102C4"/>
+                <display value="dorsoplantar"/>
+            </concept>
+            <concept>
+                <code value="R-102C3"/>
+                <display value="plantodorsal"/>
+            </concept>
+            <concept>
+                <code value="R-102C2"/>
+                <display value="tangential"/>
+            </concept>
+            <concept>
+                <code value="G-A138"/>
+                <display value="Coronal"/>
+            </concept>
+            <concept>
+                <code value="G-03A1"/>
+                <display value="Suprasternal short axis"/>
+            </concept>
+            <concept>
+                <code value="G-03A0"/>
+                <display value="Suprasternal long axis"/>
+            </concept>
+            <concept>
+                <code value="R-10220"/>
+                <display value="left anterior oblique"/>
+            </concept>
+            <concept>
+                <code value="G-A13B"/>
+                <display value="Off axis"/>
+            </concept>
+            <concept>
+                <code value="R-10224"/>
+                <display value="medial-lateral"/>
+            </concept>
+            <concept>
+                <code value="R-10238"/>
+                <display value="left oblique"/>
+            </concept>
+            <concept>
+                <code value="R-10236"/>
+                <display value="left lateral"/>
+            </concept>
+            <concept>
+                <code value="G-A186"/>
+                <display value="Short Axis"/>
+            </concept>
+            <concept>
+                <code value="R-40985"/>
+                <display value="right anterior oblique"/>
+            </concept>
+            <concept>
+                <code value="G-A185"/>
+                <display value="Long axis"/>
+            </concept>
+            <concept>
+                <code value="G-8300"/>
+                <display value="tissue specimen"/>
+            </concept>
+            <concept>
+                <code value="G-A143"/>
+                <display value="Longitudinal"/>
+            </concept>
+            <concept>
+                <code value="G-A145"/>
+                <display value="sagittal"/>
+            </concept>
+            <concept>
+                <code value="R-40783"/>
+                <display value="lateral oblique"/>
+            </concept>
+            <concept>
+                <code value="G-A189"/>
+                <display value="Parasagittal"/>
+            </concept>
+            <concept>
+                <code value="G-A104"/>
+                <display value="Lateral"/>
+            </concept>
+            <concept>
+                <code value="G-A147"/>
+                <display value="Axial"/>
+            </concept>
+            <concept>
+                <code value="R-102C8"/>
+                <display value="parieto-orbital"/>
+            </concept>
+            <concept>
+                <code value="G-057B"/>
+                <display value="Subcostal short axis view at mitral valve level"/>
+            </concept>
+            <concept>
+                <code value="R-40782"/>
+                <display value="medial oblique"/>
+            </concept>
+            <concept>
+                <code value="R-102C7"/>
+                <display value="orbitoparietal"/>
+            </concept>
+            <concept>
+                <code value="R-102C6"/>
+                <display value="acanthioparietal"/>
+            </concept>
+            <concept>
+                <code value="G-A18B"/>
+                <display value="Horizontal Long Axis"/>
+            </concept>
+            <concept>
+                <code value="G-057E"/>
+                <display value="Subcostal short axis view at aortic valve level"/>
+            </concept>
+            <concept>
+                <code value="G-A18A"/>
+                <display value="Vertical Long Axis"/>
+            </concept>
+            <concept>
+                <code value="G-057C"/>
+                <display value="Subcostal short axis view at venous inflow level"/>
+            </concept>
+            <concept>
+                <code value="G-057D"/>
+                <display value="Suprasternal long axis view of aortic arch"/>
+            </concept>
+            <concept>
+                <code value="G-0579"/>
+                <display value="Subcostal short axis view at papillary muscle level"/>
+            </concept>
+            <concept>
+                <code value="R-10230"/>
+                <display value="latero-medial oblique"/>
+            </concept>
+            <concept>
+                <code value="G-0577"/>
+                <display value="Parasternal long axis view of the RV inflow tract"/>
+            </concept>
+            <concept>
+                <code value="G-0578"/>
+                <display value="Parasternal long axis view of the RV outflow tract"/>
+            </concept>
+            <concept>
+                <code value="R-10234"/>
+                <display value="right oblique"/>
+            </concept>
+            <concept>
+                <code value="R-102CD"/>
+                <display value="lateral"/>
+            </concept>
+            <concept>
+                <code value="R-10232"/>
+                <display value="right lateral"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

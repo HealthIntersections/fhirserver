@@ -1,0 +1,274 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-7181-AbstractMultidimensionalImageModelComponentUnits"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_7181.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.918"/>
+    </identifier>
+    <version value="20170413"/>
+    <name value="AbstractMultidimensionalImageModelComponentUnits"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 7181 AbstractMultidimensionalImageModelComponentUnits"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://unitsofmeasure.org"/>
+            <concept>
+                <code value="cm2/ml"/>
+                <display value="Centimeter**2/milliliter"/>
+            </concept>
+            <concept>
+                <code value="mm2/s"/>
+                <display value="mm2/s"/>
+            </concept>
+            <concept>
+                <code value="cm3"/>
+                <display value="cubic centimeter"/>
+            </concept>
+            <concept>
+                <code value="cm2"/>
+                <display value="square centimeter"/>
+            </concept>
+            <concept>
+                <code value="um2/ms"/>
+                <display value="um2/ms"/>
+            </concept>
+            <concept>
+                <code value="cm2/ml{SUVbsa}"/>
+                <display value="Standardized Uptake Value body surface area"/>
+            </concept>
+            <concept>
+                <code value="g/ml{SUVlbm(Janma)}"/>
+                <display value="Standardized Uptake Value lean body mass (Janma)"/>
+            </concept>
+            <concept>
+                <code value="mT"/>
+                <display value="milliTesla"/>
+            </concept>
+            <concept>
+                <code value="s/mm2"/>
+                <display value="second per square millimeter"/>
+            </concept>
+            <concept>
+                <code value="mm3"/>
+                <display value="cubic millimeter"/>
+            </concept>
+            <concept>
+                <code value="mm2"/>
+                <display value="square millimeter"/>
+            </concept>
+            <concept>
+                <code value="mg/min/ml"/>
+                <display value="Milligrams/minute/milliliter"/>
+            </concept>
+            <concept>
+                <code value="g/ml{SUVibw}"/>
+                <display value="Standardized Uptake Value ideal body weight"/>
+            </concept>
+            <concept>
+                <code value="10-6.mm2/s"/>
+                <display value="10-6.mm2/s"/>
+            </concept>
+            <concept>
+                <code value="Bq/ml"/>
+                <display value="Becquerels/milliliter"/>
+            </concept>
+            <concept>
+                <code value="um"/>
+                <display value="micrometer"/>
+            </concept>
+            <concept>
+                <code value="mmol/kg{WetWeight}"/>
+                <display value="millimoles per kg wet weight"/>
+            </concept>
+            <concept>
+                <code value="umol/min/ml"/>
+                <display value="Micromole/minute/milliliter"/>
+            </concept>
+            <concept>
+                <code value="dB"/>
+                <display value="decibel"/>
+            </concept>
+            <concept>
+                <code value="[arb'U]"/>
+                <display value="arbitrary unit"/>
+            </concept>
+            <concept>
+                <code value="[wood'U]/m2"/>
+                <display value="Wood U/m2"/>
+            </concept>
+            <concept>
+                <code value="dyn.s.cm-5"/>
+                <display value="dyn.s.cm-5"/>
+            </concept>
+            <concept>
+                <code value="ml/min/g"/>
+                <display value="Milliliter/minute/gram"/>
+            </concept>
+            <concept>
+                <code value="um2/s"/>
+                <display value="um2/s"/>
+            </concept>
+            <concept>
+                <code value="g/ml{SUVbw}"/>
+                <display value="Standardized Uptake Value body weight"/>
+            </concept>
+            <concept>
+                <code value="ml/[100]ml"/>
+                <display value="milliliter per 100 milliliter"/>
+            </concept>
+            <concept>
+                <code value="mm/s"/>
+                <display value="millimeter/second"/>
+            </concept>
+            <concept>
+                <code value="umol/ml"/>
+                <display value="Micromole/milliliter"/>
+            </concept>
+            <concept>
+                <code value="{propcounts}/s"/>
+                <display value="Proportional to counts per second"/>
+            </concept>
+            <concept>
+                <code value="cm"/>
+                <display value="centimeter"/>
+            </concept>
+            <concept>
+                <code value="ml/min"/>
+                <display value="milliliter per minute"/>
+            </concept>
+            <concept>
+                <code value="{counts}/s"/>
+                <display value="Counts per second"/>
+            </concept>
+            <concept>
+                <code value="ppm"/>
+                <display value="ppm"/>
+            </concept>
+            <concept>
+                <code value="s"/>
+                <display value="second"/>
+            </concept>
+            <concept>
+                <code value="[PRU]/m2"/>
+                <display value="P.R.U./m2"/>
+            </concept>
+            <concept>
+                <code value="g/ml{SUVlbm(James128)}"/>
+                <display value="Standardized Uptake Value lean body mass (James 128 multiplier)"/>
+            </concept>
+            <concept>
+                <code value="[wood'U]"/>
+                <display value="Wood U"/>
+            </concept>
+            <concept>
+                <code value="ml/g"/>
+                <display value="Milliliter/gram"/>
+            </concept>
+            <concept>
+                <code value="{propcounts}"/>
+                <display value="Proportional to counts"/>
+            </concept>
+            <concept>
+                <code value="kPa"/>
+                <display value="kPa"/>
+            </concept>
+            <concept>
+                <code value="{Particles}/[100]g{Tissue}"/>
+                <display value="number particles per 100 gram of tissue"/>
+            </concept>
+            <concept>
+                <code value="ml/[100]g/min"/>
+                <display value="milliliter per 100 gram per minute"/>
+            </concept>
+            <concept>
+                <code value="/min"/>
+                <display value="/min"/>
+            </concept>
+            <concept>
+                <code value="/cm"/>
+                <display value="/Centimeter"/>
+            </concept>
+            <concept>
+                <code value="dm3"/>
+                <display value="cubic decimeter"/>
+            </concept>
+            <concept>
+                <code value="mm"/>
+                <display value="millimeter"/>
+            </concept>
+            <concept>
+                <code value="cm/s"/>
+                <display value="centimeter/second"/>
+            </concept>
+            <concept>
+                <code value="[PRU]"/>
+                <display value="P.R.U."/>
+            </concept>
+            <concept>
+                <code value="{ratio}"/>
+                <display value="ratio"/>
+            </concept>
+            <concept>
+                <code value="um3"/>
+                <display value="cubic micrometer"/>
+            </concept>
+            <concept>
+                <code value="um2"/>
+                <display value="square micrometer"/>
+            </concept>
+            <concept>
+                <code value="{counts}"/>
+                <display value="Counts"/>
+            </concept>
+            <concept>
+                <code value="ms"/>
+                <display value="millisecond"/>
+            </concept>
+            <concept>
+                <code value="dyn.s.cm-5/m2"/>
+                <display value="dyn.s.cm-5/m2"/>
+            </concept>
+            <concept>
+                <code value="%"/>
+                <display value="Percent"/>
+            </concept>
+            <concept>
+                <code value="/s"/>
+                <display value="/s"/>
+            </concept>
+            <concept>
+                <code value="1"/>
+                <display value="no units"/>
+            </concept>
+            <concept>
+                <code value="[hnsf'U]"/>
+                <display value="Hounsfield Unit"/>
+            </concept>
+            <concept>
+                <code value="ml/s"/>
+                <display value="milliliter per second"/>
+            </concept>
+            <concept>
+                <code value="Cel"/>
+                <display value="degrees Celsius"/>
+            </concept>
+            <concept>
+                <code value="mm[Hg]"/>
+                <display value="mmHg"/>
+            </concept>
+            <concept>
+                <code value="g/ml{SUVlbm}"/>
+                <display value="Standardized Uptake Value lean body mass (James)"/>
+            </concept>
+            <concept>
+                <code value="Hz"/>
+                <display value="Hertz"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

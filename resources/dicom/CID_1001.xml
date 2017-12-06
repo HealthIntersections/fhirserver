@@ -1,0 +1,345 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-1001-AnatomicalReferenceBasis"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_1001.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.1122"/>
+    </identifier>
+    <version value="20160905"/>
+    <name value="AnatomicalReferenceBasis"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 1001 AnatomicalReferenceBasis"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://sig.biostr.washington.edu/projects/fm/AboutFM.html"/>
+            <concept>
+                <code value="264779"/>
+                <display value="Nasion"/>
+            </concept>
+        </include>
+        <include>
+            <system value="http://snomed.info/srt"/>
+            <concept>
+                <code value="T-AB200"/>
+                <display value="External Auditory Meatus"/>
+            </concept>
+            <concept>
+                <code value="T-45010"/>
+                <display value="Carotid Artery"/>
+            </concept>
+            <concept>
+                <code value="T-12450"/>
+                <display value="Scaphoid"/>
+            </concept>
+            <concept>
+                <code value="T-15720"/>
+                <display value="Knee joint"/>
+            </concept>
+            <concept>
+                <code value="T-12730"/>
+                <display value="Patella"/>
+            </concept>
+            <concept>
+                <code value="T-D9800"/>
+                <display value="Toe"/>
+            </concept>
+            <concept>
+                <code value="T-D1120"/>
+                <display value="Vertex of Head"/>
+            </concept>
+            <concept>
+                <code value="T-42300"/>
+                <display value="Aortic Arch"/>
+            </concept>
+            <concept>
+                <code value="T-25201"/>
+                <display value="Carina"/>
+            </concept>
+            <concept>
+                <code value="T-D009D"/>
+                <display value="Level of T12/L1 intervertebral disc"/>
+            </concept>
+            <concept>
+                <code value="T-22200"/>
+                <display value="Frontal sinus"/>
+            </concept>
+            <concept>
+                <code value="T-D009C"/>
+                <display value="Level of C7/T1 intervertebral disc"/>
+            </concept>
+            <concept>
+                <code value="R-10258"/>
+                <display value="Common iliac artery bifurcation"/>
+            </concept>
+            <concept>
+                <code value="T-D009A"/>
+                <display value="Level of L4/L5 intervertebral disc"/>
+            </concept>
+            <concept>
+                <code value="T-41065"/>
+                <display value="Coronary artery graft"/>
+            </concept>
+            <concept>
+                <code value="T-D005D"/>
+                <display value="Level of C2/C3 intervertebral disc"/>
+            </concept>
+            <concept>
+                <code value="T-12280"/>
+                <display value="Scapula"/>
+            </concept>
+            <concept>
+                <code value="T-D009E"/>
+                <display value="Level of L5/S1 intervertebral disc"/>
+            </concept>
+            <concept>
+                <code value="T-15750"/>
+                <display value="Ankle joint"/>
+            </concept>
+            <concept>
+                <code value="T-15430"/>
+                <display value="Elbow joint"/>
+            </concept>
+            <concept>
+                <code value="T-D0099"/>
+                <display value="Level of L3/L4 intervertebral disc"/>
+            </concept>
+            <concept>
+                <code value="T-15710"/>
+                <display value="Hip joint"/>
+            </concept>
+            <concept>
+                <code value="T-32004"/>
+                <display value="Apex of heart"/>
+            </concept>
+            <concept>
+                <code value="T-D3400"/>
+                <display value="Diaphragm"/>
+            </concept>
+            <concept>
+                <code value="T-32000"/>
+                <display value="Heart"/>
+            </concept>
+            <concept>
+                <code value="T-D005F"/>
+                <display value="Level of C4/C5 intervertebral disc"/>
+            </concept>
+            <concept>
+                <code value="T-D005E"/>
+                <display value="Level of C3/C4 intervertebral disc"/>
+            </concept>
+            <concept>
+                <code value="T-D008C"/>
+                <display value="Level of T3/T4 intervertebral disc"/>
+            </concept>
+            <concept>
+                <code value="T-D008B"/>
+                <display value="Level of T2/T3 intervertebral disc"/>
+            </concept>
+            <concept>
+                <code value="T-15460"/>
+                <display value="Wrist joint"/>
+            </concept>
+            <concept>
+                <code value="T-12390"/>
+                <display value="Acetabulum"/>
+            </concept>
+            <concept>
+                <code value="T-65000"/>
+                <display value="Pancreas"/>
+            </concept>
+            <concept>
+                <code value="T-D008F"/>
+                <display value="Level of T6/T7 intervertebral disc"/>
+            </concept>
+            <concept>
+                <code value="T-11180"/>
+                <display value="Mandible"/>
+            </concept>
+            <concept>
+                <code value="T-71000"/>
+                <display value="Kidney"/>
+            </concept>
+            <concept>
+                <code value="T-D008E"/>
+                <display value="Level of T5/T6 intervertebral disc"/>
+            </concept>
+            <concept>
+                <code value="T-D008D"/>
+                <display value="Level of T4/T5 intervertebral disc"/>
+            </concept>
+            <concept>
+                <code value="T-127A7"/>
+                <display value="Malleolar structure of tibia"/>
+            </concept>
+            <concept>
+                <code value="T-15420"/>
+                <display value="Acromioclavicular Joint"/>
+            </concept>
+            <concept>
+                <code value="T-12350"/>
+                <display value="Ischium"/>
+            </concept>
+            <concept>
+                <code value="T-11AD0"/>
+                <display value="Sacrum"/>
+            </concept>
+            <concept>
+                <code value="T-D14AE"/>
+                <display value="Orbital structure"/>
+            </concept>
+            <concept>
+                <code value="T-11100"/>
+                <display value="Skull"/>
+            </concept>
+            <concept>
+                <code value="T-D0094"/>
+                <display value="Level of T10/T11 intervertebral disc"/>
+            </concept>
+            <concept>
+                <code value="T-D9700"/>
+                <display value="Foot"/>
+            </concept>
+            <concept>
+                <code value="T-D0093"/>
+                <display value="Level of T9/T10 intervertebral disc"/>
+            </concept>
+            <concept>
+                <code value="T-D1460"/>
+                <display value="Pituitary Fossa"/>
+            </concept>
+            <concept>
+                <code value="T-12711"/>
+                <display value="Femoral head"/>
+            </concept>
+            <concept>
+                <code value="T-D0092"/>
+                <display value="Level of T8/T9 intervertebral disc"/>
+            </concept>
+            <concept>
+                <code value="T-11227"/>
+                <display value="Xiphoid Process"/>
+            </concept>
+            <concept>
+                <code value="T-D0091"/>
+                <display value="Level of T7/T8 intervertebral disc"/>
+            </concept>
+            <concept>
+                <code value="T-11106"/>
+                <display value="Foramen Magnum"/>
+            </concept>
+            <concept>
+                <code value="T-D3160"/>
+                <display value="Thoracic Inlet"/>
+            </concept>
+            <concept>
+                <code value="T-D0098"/>
+                <display value="Level of L2/L3 intervertebral disc"/>
+            </concept>
+            <concept>
+                <code value="T-12714"/>
+                <display value="Lesser trochanter"/>
+            </concept>
+            <concept>
+                <code value="T-D0097"/>
+                <display value="Level of L1/L2 intervertebral disc"/>
+            </concept>
+            <concept>
+                <code value="T-D0095"/>
+                <display value="Level of T11/T12 intervertebral disc"/>
+            </concept>
+            <concept>
+                <code value="T-AB500"/>
+                <display value="Mastoid cells and antra"/>
+            </concept>
+            <concept>
+                <code value="T-AA813"/>
+                <display value="Lateral Canthus"/>
+            </concept>
+            <concept>
+                <code value="T-22100"/>
+                <display value="Maxillary sinus"/>
+            </concept>
+            <concept>
+                <code value="T-D007F"/>
+                <display value="Level of T1/T2 intervertebral disc"/>
+            </concept>
+            <concept>
+                <code value="T-1273F"/>
+                <display value="Tibial Plateau"/>
+            </concept>
+            <concept>
+                <code value="T-D007D"/>
+                <display value="Level of C6/C7 intervertebral disc"/>
+            </concept>
+            <concept>
+                <code value="T-15690"/>
+                <display value="Symphysis pubis"/>
+            </concept>
+            <concept>
+                <code value="T-D007C"/>
+                <display value="Level of C5/C6 intervertebral disc"/>
+            </concept>
+            <concept>
+                <code value="T-12780"/>
+                <display value="Talus"/>
+            </concept>
+            <concept>
+                <code value="T-11130"/>
+                <display value="Temporal Bone"/>
+            </concept>
+            <concept>
+                <code value="T-B3000"/>
+                <display value="Adrenal gland"/>
+            </concept>
+            <concept>
+                <code value="T-12540"/>
+                <display value="Metacarpal"/>
+            </concept>
+            <concept>
+                <code value="T-11210"/>
+                <display value="Sternum"/>
+            </concept>
+            <concept>
+                <code value="T-11133"/>
+                <display value="Mastoid bone"/>
+            </concept>
+            <concept>
+                <code value="T-11134"/>
+                <display value="Internal Auditory Meatus"/>
+            </concept>
+            <concept>
+                <code value="T-15610"/>
+                <display value="Sternoclavicular Joint"/>
+            </concept>
+            <concept>
+                <code value="T-11610"/>
+                <display value="C1 vertebra"/>
+            </concept>
+            <concept>
+                <code value="T-D2220"/>
+                <display value="Shoulder region structure"/>
+            </concept>
+            <concept>
+                <code value="T-11218"/>
+                <display value="Suprasternal Notch"/>
+            </concept>
+            <concept>
+                <code value="T-62000"/>
+                <display value="Liver"/>
+            </concept>
+            <concept>
+                <code value="T-28000"/>
+                <display value="Lung"/>
+            </concept>
+            <concept>
+                <code value="T-1234A"/>
+                <display value="Iliac Crest"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

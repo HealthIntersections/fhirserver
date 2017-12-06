@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-10050-SummaryRadiationExposureQuantities"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_10050.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.1028"/>
+    </identifier>
+    <version value="20150324"/>
+    <name value="SummaryRadiationExposureQuantities"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 10050 SummaryRadiationExposureQuantities"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://dicom.nema.org/resources/ontology/DCM"/>
+            <concept>
+                <code value="113839"/>
+                <display value="Effective Dose"/>
+            </concept>
+            <concept>
+                <code value="113730"/>
+                <display value="Total Fluoro Time"/>
+            </concept>
+            <concept>
+                <code value="113731"/>
+                <display value="Total Number of Radiographic Frames"/>
+            </concept>
+            <concept>
+                <code value="113830"/>
+                <display value="Mean CTDIvol"/>
+            </concept>
+            <concept>
+                <code value="113722"/>
+                <display value="Dose Area Product Total"/>
+            </concept>
+            <concept>
+                <code value="113813"/>
+                <display value="CT Dose Length Product Total"/>
+            </concept>
+            <concept>
+                <code value="111636"/>
+                <display value="Entrance Exposure at RP"/>
+            </concept>
+            <concept>
+                <code value="113727"/>
+                <display value="Acquisition Dose Area Product Total"/>
+            </concept>
+            <concept>
+                <code value="111637"/>
+                <display value="Accumulated Average Glandular Dose (mammo)"/>
+            </concept>
+            <concept>
+                <code value="113726"/>
+                <display value="Fluoro Dose Area Product Total"/>
+            </concept>
+            <concept>
+                <code value="113507"/>
+                <display value="Administered activity"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-3839-CoronaryVeins"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_3839.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.289"/>
+    </identifier>
+    <version value="20110818"/>
+    <name value="CoronaryVeins"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 3839 CoronaryVeins"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://snomed.info/srt"/>
+            <concept>
+                <code value="T-48403"/>
+                <display value="Anterior Cardiac Vein"/>
+            </concept>
+            <concept>
+                <code value="T-48435"/>
+                <display value="Small Cardiac Vein"/>
+            </concept>
+            <concept>
+                <code value="T-48430"/>
+                <display value="Middle Cardiac Vein"/>
+            </concept>
+            <concept>
+                <code value="T-48410"/>
+                <display value="Coronary Sinus"/>
+            </concept>
+            <concept>
+                <code value="T-48420"/>
+                <display value="Great Cardiac Vein"/>
+            </concept>
+            <concept>
+                <code value="T-48340"/>
+                <display value="Azygos Vein"/>
+            </concept>
+            <concept>
+                <code value="T-48405"/>
+                <display value="Smallest Cardiac Vein"/>
+            </concept>
+            <concept>
+                <code value="T-48404"/>
+                <display value="Ventricular Vein"/>
+            </concept>
+            <concept>
+                <code value="T-48407"/>
+                <display value="Atrioventricular Vein"/>
+            </concept>
+            <concept>
+                <code value="T-48406"/>
+                <display value="Atrial Vein"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-3221-StressTestTerminationReasons"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_3221.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.772"/>
+    </identifier>
+    <version value="20080927"/>
+    <name value="StressTestTerminationReasons"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 3221 StressTestTerminationReasons"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://snomed.info/srt"/>
+            <concept>
+                <code value="F-01360"/>
+                <display value="Fatigue"/>
+            </concept>
+            <concept>
+                <code value="R-4038D"/>
+                <display value="End of Protocol"/>
+            </concept>
+            <concept>
+                <code value="D3-04001"/>
+                <display value="Hypotensive episode"/>
+            </concept>
+            <concept>
+                <code value="F-021E1"/>
+                <display value="Target Heart Rate Achieved"/>
+            </concept>
+            <concept>
+                <code value="F-38002"/>
+                <display value="Abnormal ECG"/>
+            </concept>
+            <concept>
+                <code value="F-201B3"/>
+                <display value="Dyspnea"/>
+            </concept>
+            <concept>
+                <code value="D3-30000"/>
+                <display value="Arrhythmia"/>
+            </concept>
+            <concept>
+                <code value="D3-00006"/>
+                <display value="Syncope"/>
+            </concept>
+            <concept>
+                <code value="F-18010"/>
+                <display value="Claudication"/>
+            </concept>
+            <concept>
+                <code value="F-37000"/>
+                <display value="Chest pain"/>
+            </concept>
+            <concept>
+                <code value="D3-02004"/>
+                <display value="Hypertensive episode"/>
+            </concept>
+            <concept>
+                <code value="R-214DD"/>
+                <display value="Patient Refused exercise test"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-7457-SexMaleFemaleorBoth"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_7457.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.1067"/>
+    </identifier>
+    <version value="20151110"/>
+    <name value="SexMaleFemaleorBoth"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 7457 SexMaleFemaleorBoth"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://dicom.nema.org/resources/ontology/DCM"/>
+            <concept>
+                <code value="127146"/>
+                <display value="Mixed sex"/>
+            </concept>
+            <concept>
+                <code value="F"/>
+                <display value="Female"/>
+            </concept>
+            <concept>
+                <code value="M"/>
+                <display value="Male"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

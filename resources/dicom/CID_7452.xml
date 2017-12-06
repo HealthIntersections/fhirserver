@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-7452-OrganizationalRoles"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_7452.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.516"/>
+    </identifier>
+    <version value="20170626"/>
+    <name value="OrganizationalRoles"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 7452 OrganizationalRoles"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://dicom.nema.org/resources/ontology/DCM"/>
+            <concept>
+                <code value="128673"/>
+                <display value="Administrator of Radiology Department"/>
+            </concept>
+            <concept>
+                <code value="128675"/>
+                <display value="Head of Cardiology"/>
+            </concept>
+            <concept>
+                <code value="128674"/>
+                <display value="Lead Radiologic Technologist"/>
+            </concept>
+            <concept>
+                <code value="128677"/>
+                <display value="Representative of Ethics Committee"/>
+            </concept>
+            <concept>
+                <code value="128676"/>
+                <display value="Representative of Protocol Committee"/>
+            </concept>
+            <concept>
+                <code value="121088"/>
+                <display value="Fellow"/>
+            </concept>
+            <concept>
+                <code value="128671"/>
+                <display value="Chair of Protocol Committee"/>
+            </concept>
+            <concept>
+                <code value="128670"/>
+                <display value="Head of Radiology"/>
+            </concept>
+            <concept>
+                <code value="121092"/>
+                <display value="Sonologist"/>
+            </concept>
+        </include>
+        <include>
+            <system value="http://snomed.info/srt"/>
+            <concept>
+                <code value="J-0016E"/>
+                <display value="Medical Practitioner"/>
+            </concept>
+            <concept>
+                <code value="J-005E8"/>
+                <display value="Attending"/>
+            </concept>
+            <concept>
+                <code value="J-004E8"/>
+                <display value="Physician"/>
+            </concept>
+            <concept>
+                <code value="J-07100"/>
+                <display value="Nurse"/>
+            </concept>
+            <concept>
+                <code value="J-005E6"/>
+                <display value="Resident"/>
+            </concept>
+            <concept>
+                <code value="J-0050A"/>
+                <display value="Consultant"/>
+            </concept>
+            <concept>
+                <code value="J-00172"/>
+                <display value="Registrar"/>
+            </concept>
+            <concept>
+                <code value="J-06173"/>
+                <display value="Radiation Therapist"/>
+            </concept>
+            <concept>
+                <code value="J-00187"/>
+                <display value="Radiologic Technologist"/>
+            </concept>
+            <concept>
+                <code value="J-00556"/>
+                <display value="Surgeon"/>
+            </concept>
+            <concept>
+                <code value="J-0714A"/>
+                <display value="Scrub nurse"/>
+            </concept>
+        </include>
+        <include>
+            <system value="http://www.nlm.nih.gov/research/umls"/>
+            <concept>
+                <code value="C1144859"/>
+                <display value="Intern"/>
+            </concept>
+            <concept>
+                <code value="C1708969"/>
+                <display value="Medical Physicist"/>
+            </concept>
+            <concept>
+                <code value="C1441532"/>
+                <display value="Consulting Physician"/>
+            </concept>
+            <concept>
+                <code value="C2985483"/>
+                <display value="Radiation Physicist"/>
+            </concept>
+            <concept>
+                <code value="C1954848"/>
+                <display value="Sonographer"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

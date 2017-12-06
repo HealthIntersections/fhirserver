@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-3403-PercutaneousEntry"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_3403.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.68"/>
+    </identifier>
+    <version value="20030327"/>
+    <name value="PercutaneousEntry"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 3403 PercutaneousEntry"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://snomed.info/srt"/>
+            <concept>
+                <code value="G-D071"/>
+                <display value="Via femoral vein"/>
+            </concept>
+            <concept>
+                <code value="G-D1E4"/>
+                <display value="Via radial artery"/>
+            </concept>
+            <concept>
+                <code value="G-D054"/>
+                <display value="Via artery"/>
+            </concept>
+            <concept>
+                <code value="G-D052"/>
+                <display value="Via vein"/>
+            </concept>
+            <concept>
+                <code value="G-D0C6"/>
+                <display value="Via arm vein"/>
+            </concept>
+            <concept>
+                <code value="G-D067"/>
+                <display value="Via femoral artery"/>
+            </concept>
+            <concept>
+                <code value="G-D05F"/>
+                <display value="Via brachial artery"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

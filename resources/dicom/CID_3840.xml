@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-3840-PulmonaryVeins"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_3840.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.290"/>
+    </identifier>
+    <version value="20110818"/>
+    <name value="PulmonaryVeins"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 3840 PulmonaryVeins"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://snomed.info/srt"/>
+            <concept>
+                <code value="T-48510"/>
+                <display value="Superior Right Pulmonary Vein"/>
+            </concept>
+            <concept>
+                <code value="T-48502"/>
+                <display value="Left Pulmonary Vein"/>
+            </concept>
+            <concept>
+                <code value="T-48501"/>
+                <display value="Right Pulmonary Vein"/>
+            </concept>
+            <concept>
+                <code value="T-48540"/>
+                <display value="Inferior Left Pulmonary Vein"/>
+            </concept>
+            <concept>
+                <code value="T-4858F"/>
+                <display value="Pulmonary Vein"/>
+            </concept>
+            <concept>
+                <code value="T-48520"/>
+                <display value="Inferior Right Pulmonary Vein"/>
+            </concept>
+            <concept>
+                <code value="T-48530"/>
+                <display value="Superior Left Pulmonary Vein"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

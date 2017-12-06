@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-12006-FetalLongBonesBiometryMeasurements"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_12006.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.555"/>
+    </identifier>
+    <version value="20030130"/>
+    <name value="FetalLongBonesBiometryMeasurements"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 12006 FetalLongBonesBiometryMeasurements"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://loinc.org"/>
+            <concept>
+                <code value="11962-8"/>
+                <display value="Clavicle length"/>
+            </concept>
+            <concept>
+                <code value="11963-6"/>
+                <display value="Femur Length"/>
+            </concept>
+            <concept>
+                <code value="11964-4"/>
+                <display value="Fibula length"/>
+            </concept>
+            <concept>
+                <code value="11966-9"/>
+                <display value="Humerus length"/>
+            </concept>
+            <concept>
+                <code value="11967-7"/>
+                <display value="Radius length"/>
+            </concept>
+            <concept>
+                <code value="11968-5"/>
+                <display value="Tibia length"/>
+            </concept>
+            <concept>
+                <code value="11969-3"/>
+                <display value="Ulna length"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

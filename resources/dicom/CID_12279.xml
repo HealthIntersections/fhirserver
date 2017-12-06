@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-12279-CardiacUltrasoundFetalGeneralMeasurements"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_12279.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.859"/>
+    </identifier>
+    <version value="20100317"/>
+    <name value="CardiacUltrasoundFetalGeneralMeasurements"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 12279 CardiacUltrasoundFetalGeneralMeasurements"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://loinc.org"/>
+            <concept>
+                <code value="11851-3"/>
+                <display value="Occipital-Frontal Diameter"/>
+            </concept>
+            <concept>
+                <code value="11871-1"/>
+                <display value="FL/AC"/>
+            </concept>
+            <concept>
+                <code value="11979-2"/>
+                <display value="Abdominal Circumference"/>
+            </concept>
+            <concept>
+                <code value="11984-2"/>
+                <display value="Head Circumference"/>
+            </concept>
+            <concept>
+                <code value="11820-8"/>
+                <display value="Biparietal Diameter"/>
+            </concept>
+            <concept>
+                <code value="11823-2"/>
+                <display value="Cephalic Index"/>
+            </concept>
+            <concept>
+                <code value="33069-6"/>
+                <display value="Nuchal Translucency"/>
+            </concept>
+            <concept>
+                <code value="11864-6"/>
+                <display value="Transverse Thoracic Diameter"/>
+            </concept>
+            <concept>
+                <code value="33068-8"/>
+                <display value="Thoracic Area"/>
+            </concept>
+            <concept>
+                <code value="11863-8"/>
+                <display value="Trans Cerebellar Diameter"/>
+            </concept>
+            <concept>
+                <code value="11947-9"/>
+                <display value="HC/AC"/>
+            </concept>
+            <concept>
+                <code value="11824-0"/>
+                <display value="BPD area corrected"/>
+            </concept>
+            <concept>
+                <code value="11862-0"/>
+                <display value="Tranverse Abdominal Diameter"/>
+            </concept>
+            <concept>
+                <code value="11860-4"/>
+                <display value="Cisterna Magna"/>
+            </concept>
+            <concept>
+                <code value="11963-6"/>
+                <display value="Femur Length"/>
+            </concept>
+            <concept>
+                <code value="11988-3"/>
+                <display value="Thoracic Circumference"/>
+            </concept>
+            <concept>
+                <code value="59078-6"/>
+                <display value="Left Ventricle/Right Ventricle Diameter Ratio"/>
+            </concept>
+            <concept>
+                <code value="59077-8"/>
+                <display value="Foramen Ovale Diameter/Aortic Root Diameter"/>
+            </concept>
+            <concept>
+                <code value="59073-7"/>
+                <display value="Cardiac Circumference, transverse by US"/>
+            </concept>
+            <concept>
+                <code value="59076-0"/>
+                <display value="Cardiothoracic Area Ratio"/>
+            </concept>
+            <concept>
+                <code value="11872-9"/>
+                <display value="FL/BPD"/>
+            </concept>
+            <concept>
+                <code value="59075-2"/>
+                <display value="Cardiac Cross-sectional Area, transverse by US"/>
+            </concept>
+            <concept>
+                <code value="11818-2"/>
+                <display value="Anterior-Posterior Abdominal Diameter"/>
+            </concept>
+            <concept>
+                <code value="11873-7"/>
+                <display value="FL/HC"/>
+            </concept>
+            <concept>
+                <code value="11819-0"/>
+                <display value="Anterior-Posterior Trunk Diameter"/>
+            </concept>
+            <concept>
+                <code value="59074-5"/>
+                <display value="Cardiothoracic Circumference Ratio"/>
+            </concept>
+        </include>
+        <include>
+            <system value="http://snomed.info/srt"/>
+            <concept>
+                <code value="F-00AA0"/>
+                <display value="Number of umbilical arteries"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

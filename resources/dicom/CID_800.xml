@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-800-ProtocolAssertionCodes"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_800.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.1176"/>
+    </identifier>
+    <version value="20160626"/>
+    <name value="ProtocolAssertionCodes"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 800 ProtocolAssertionCodes"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://dicom.nema.org/resources/ontology/DCM"/>
+            <concept>
+                <code value="128604"/>
+                <display value="Approved for use in the clinical trial"/>
+            </concept>
+            <concept>
+                <code value="128615"/>
+                <display value="Ineligible for reimbursement"/>
+            </concept>
+            <concept>
+                <code value="128603"/>
+                <display value="Approved for use at the institution"/>
+            </concept>
+            <concept>
+                <code value="128614"/>
+                <display value="Eligible for reimbursement on per patient basis"/>
+            </concept>
+            <concept>
+                <code value="128617"/>
+                <display value="Disapproved for use on pregnant patients"/>
+            </concept>
+            <concept>
+                <code value="128606"/>
+                <display value="Appropriate for the device"/>
+            </concept>
+            <concept>
+                <code value="128605"/>
+                <display value="Approved for use on pregnant patients"/>
+            </concept>
+            <concept>
+                <code value="128619"/>
+                <display value="Outside operational limits of the device"/>
+            </concept>
+            <concept>
+                <code value="128608"/>
+                <display value="Optimized for the device instance"/>
+            </concept>
+            <concept>
+                <code value="128618"/>
+                <display value="Inappropriate for the device"/>
+            </concept>
+            <concept>
+                <code value="128607"/>
+                <display value="Inside operational limits of the device"/>
+            </concept>
+            <concept>
+                <code value="128609"/>
+                <display value="Disapproved for any use"/>
+            </concept>
+            <concept>
+                <code value="128620"/>
+                <display value="Not optimized for the device instance"/>
+            </concept>
+            <concept>
+                <code value="128622"/>
+                <display value="Inconsistent with labeling of the device"/>
+            </concept>
+            <concept>
+                <code value="128611"/>
+                <display value="Approved for experimental use"/>
+            </concept>
+            <concept>
+                <code value="128621"/>
+                <display value="Inappropriate for the indications"/>
+            </concept>
+            <concept>
+                <code value="128610"/>
+                <display value="Deprecated protocol"/>
+            </concept>
+            <concept>
+                <code value="128602"/>
+                <display value="Consistent with labeling of the device"/>
+            </concept>
+            <concept>
+                <code value="128624"/>
+                <display value="Disapproved for use in the clinical trial"/>
+            </concept>
+            <concept>
+                <code value="128613"/>
+                <display value="Eligible for reimbursement"/>
+            </concept>
+            <concept>
+                <code value="128601"/>
+                <display value="Appropriate for the indications"/>
+            </concept>
+            <concept>
+                <code value="128623"/>
+                <display value="Disapproved for use at the institution"/>
+            </concept>
+            <concept>
+                <code value="128612"/>
+                <display value="Disapproved for experimental use"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

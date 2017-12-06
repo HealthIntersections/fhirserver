@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-7464-GeneralRegionofInterestMeasurementModifiers"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_7464.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.951"/>
+    </identifier>
+    <version value="20121101"/>
+    <name value="GeneralRegionofInterestMeasurementModifiers"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 7464 GeneralRegionofInterestMeasurementModifiers"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://dicom.nema.org/resources/ontology/DCM"/>
+            <concept>
+                <code value="126051"/>
+                <display value="Skewness"/>
+            </concept>
+            <concept>
+                <code value="126052"/>
+                <display value="Kurtosis"/>
+            </concept>
+            <concept>
+                <code value="126031"/>
+                <display value="Peak Value Within ROI"/>
+            </concept>
+        </include>
+        <include>
+            <system value="http://snomed.info/srt"/>
+            <concept>
+                <code value="R-0032E"/>
+                <display value="Mode"/>
+            </concept>
+            <concept>
+                <code value="R-40507"/>
+                <display value="Total"/>
+            </concept>
+            <concept>
+                <code value="R-00319"/>
+                <display value="Median"/>
+            </concept>
+            <concept>
+                <code value="G-A437"/>
+                <display value="Maximum"/>
+            </concept>
+            <concept>
+                <code value="R-404FB"/>
+                <display value="Minimum"/>
+            </concept>
+            <concept>
+                <code value="R-00317"/>
+                <display value="Mean"/>
+            </concept>
+            <concept>
+                <code value="R-10047"/>
+                <display value="Standard Deviation"/>
+            </concept>
+        </include>
+        <include>
+            <system value="http://www.nlm.nih.gov/research/umls"/>
+            <concept>
+                <code value="C0681921"/>
+                <display value="Coefficient of Variance"/>
+            </concept>
+            <concept>
+                <code value="C1711260"/>
+                <display value="Variance"/>
+            </concept>
+            <concept>
+                <code value="C2347976"/>
+                <display value="Root Mean Square"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

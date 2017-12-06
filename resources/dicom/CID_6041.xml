@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-6041-MammographyImageQualityFinding"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_6041.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.371"/>
+    </identifier>
+    <version value="20020904"/>
+    <name value="MammographyImageQualityFinding"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 6041 MammographyImageQualityFinding"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://dicom.nema.org/resources/ontology/DCM"/>
+            <concept>
+                <code value="111182"/>
+                <display value="View and Laterality Marker is partially obscured"/>
+            </concept>
+            <concept>
+                <code value="111183"/>
+                <display value="View and Laterality Marker is incorrect"/>
+            </concept>
+            <concept>
+                <code value="111184"/>
+                <display value="View and Laterality Marker is off image"/>
+            </concept>
+            <concept>
+                <code value="111185"/>
+                <display value="Flash is not near edge of film"/>
+            </concept>
+            <concept>
+                <code value="111186"/>
+                <display value="Flash is illegible, does not fit, or is lopsided"/>
+            </concept>
+            <concept>
+                <code value="111187"/>
+                <display value="Flash doesn't include patient name and additional patient id"/>
+            </concept>
+            <concept>
+                <code value="111220"/>
+                <display value="Other failure"/>
+            </concept>
+            <concept>
+                <code value="111188"/>
+                <display value="Flash doesn't include date of examination"/>
+            </concept>
+            <concept>
+                <code value="111221"/>
+                <display value="Unknown failure"/>
+            </concept>
+            <concept>
+                <code value="111189"/>
+                <display value="Flash doesn't include facility name and location"/>
+            </concept>
+            <concept>
+                <code value="111200"/>
+                <display value="MLO Evidence of motion blur"/>
+            </concept>
+            <concept>
+                <code value="111180"/>
+                <display value="View and Laterality Marker is not near the axilla"/>
+            </concept>
+            <concept>
+                <code value="111181"/>
+                <display value="View and Laterality Marker overlaps breast tissue"/>
+            </concept>
+            <concept>
+                <code value="111209"/>
+                <display value="Positioning"/>
+            </concept>
+            <concept>
+                <code value="111201"/>
+                <display value="MLO Inframammary fold is not open"/>
+            </concept>
+            <concept>
+                <code value="111202"/>
+                <display value="CC Not all medial tissue visualized"/>
+            </concept>
+            <concept>
+                <code value="111203"/>
+                <display value="CC Nipple not centered on image"/>
+            </concept>
+            <concept>
+                <code value="111204"/>
+                <display value="CC Posterior nipple line does not measure within 1 cm of MLO"/>
+            </concept>
+            <concept>
+                <code value="111205"/>
+                <display value="Nipple not in profile"/>
+            </concept>
+            <concept>
+                <code value="111206"/>
+                <display value="Insufficient implant displacement incorrect"/>
+            </concept>
+            <concept>
+                <code value="111208"/>
+                <display value="Grid artifact(s)"/>
+            </concept>
+            <concept>
+                <code value="111193"/>
+                <display value="Date sticker is missing"/>
+            </concept>
+            <concept>
+                <code value="111194"/>
+                <display value="Technical factors missing"/>
+            </concept>
+            <concept>
+                <code value="111195"/>
+                <display value="Collimation too close to breast"/>
+            </concept>
+            <concept>
+                <code value="111196"/>
+                <display value="Inadequate compression"/>
+            </concept>
+            <concept>
+                <code value="111197"/>
+                <display value="MLO Insufficient pectoral muscle"/>
+            </concept>
+            <concept>
+                <code value="111198"/>
+                <display value="MLO No fat is visualized posterior to fibroglandular tissues"/>
+            </concept>
+            <concept>
+                <code value="111177"/>
+                <display value="View and Laterality Marker is missing"/>
+            </concept>
+            <concept>
+                <code value="111199"/>
+                <display value="MLO Poor separation of deep and superficial breast tissues"/>
+            </concept>
+            <concept>
+                <code value="111210"/>
+                <display value="Motion blur"/>
+            </concept>
+            <concept>
+                <code value="111178"/>
+                <display value="View and Laterality Marker does not have both view and laterality"/>
+            </concept>
+            <concept>
+                <code value="111211"/>
+                <display value="Under exposed"/>
+            </concept>
+            <concept>
+                <code value="111190"/>
+                <display value="Flash doesn't include technologist identification"/>
+            </concept>
+            <concept>
+                <code value="111191"/>
+                <display value="Flash doesn't include cassette/screen/detector identification"/>
+            </concept>
+            <concept>
+                <code value="111192"/>
+                <display value="Flash doesn't include mammography unit identification"/>
+            </concept>
+            <concept>
+                <code value="111179"/>
+                <display value="View and Laterality Marker does not have approved codes"/>
+            </concept>
+            <concept>
+                <code value="111212"/>
+                <display value="Over exposed"/>
+            </concept>
+            <concept>
+                <code value="111213"/>
+                <display value="No image"/>
+            </concept>
+            <concept>
+                <code value="111214"/>
+                <display value="Detector artifact(s)"/>
+            </concept>
+            <concept>
+                <code value="111215"/>
+                <display value="Artifact(s) other than grid or detector artifact"/>
+            </concept>
+            <concept>
+                <code value="111216"/>
+                <display value="Mechanical failure"/>
+            </concept>
+            <concept>
+                <code value="111217"/>
+                <display value="Electrical failure"/>
+            </concept>
+            <concept>
+                <code value="111218"/>
+                <display value="Software failure"/>
+            </concept>
+            <concept>
+                <code value="111219"/>
+                <display value="Inappropriate image processing"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-8113-SpecimenPreparationSteps"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_8113.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.1051"/>
+    </identifier>
+    <version value="20080626"/>
+    <name value="SpecimenPreparationSteps"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 8113 SpecimenPreparationSteps"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://snomed.info/srt"/>
+            <concept>
+                <code value="P3-40009"/>
+                <display value="Specimen steam heating"/>
+            </concept>
+            <concept>
+                <code value="P3-05050"/>
+                <display value="Specimen freezing"/>
+            </concept>
+            <concept>
+                <code value="P3-40003"/>
+                <display value="Specimen clearing"/>
+            </concept>
+            <concept>
+                <code value="P3-4000B"/>
+                <display value="Specimen dehydration"/>
+            </concept>
+            <concept>
+                <code value="P3-40005"/>
+                <display value="Specimen microwave heating"/>
+            </concept>
+            <concept>
+                <code value="P3-40006"/>
+                <display value="Protease digestion of tissue specimen"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

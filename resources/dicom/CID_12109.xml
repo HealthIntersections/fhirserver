@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-12109-LowerExtremityArteries"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_12109.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.576"/>
+    </identifier>
+    <version value="20170914"/>
+    <name value="LowerExtremityArteries"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 12109 LowerExtremityArteries"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://snomed.info/srt"/>
+            <concept>
+                <code value="T-47400"/>
+                <display value="Common Femoral Artery"/>
+            </concept>
+            <concept>
+                <code value="T-47740"/>
+                <display value="Dorsalis Pedis Artery"/>
+            </concept>
+            <concept>
+                <code value="T-46740"/>
+                <display value="Internal Iliac Artery"/>
+            </concept>
+            <concept>
+                <code value="T-47630"/>
+                <display value="Peroneal Artery"/>
+            </concept>
+            <concept>
+                <code value="T-47600"/>
+                <display value="Posterior Tibial Artery"/>
+            </concept>
+            <concept>
+                <code value="R-10258"/>
+                <display value="Common Iliac Artery Bifurcation"/>
+            </concept>
+            <concept>
+                <code value="T-47500"/>
+                <display value="Popliteal Artery"/>
+            </concept>
+            <concept>
+                <code value="T-47440"/>
+                <display value="Profunda Femoris Artery"/>
+            </concept>
+            <concept>
+                <code value="T-47690"/>
+                <display value="Plantar Arterial Arch"/>
+            </concept>
+            <concept>
+                <code value="T-46710"/>
+                <display value="Common Iliac Artery"/>
+            </concept>
+            <concept>
+                <code value="T-47700"/>
+                <display value="Anterior Tibial Artery"/>
+            </concept>
+            <concept>
+                <code value="T-47403"/>
+                <display value="Superficial Femoral Artery"/>
+            </concept>
+            <concept>
+                <code value="T-46910"/>
+                <display value="External Iliac Artery"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-1005-AnatomicalReferenceBasisAbdomenPelvis"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_1005.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.1126"/>
+    </identifier>
+    <version value="20160905"/>
+    <name value="AnatomicalReferenceBasisAbdomen/Pelvis"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 1005 AnatomicalReferenceBasisAbdomen/Pelvis"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://snomed.info/srt"/>
+            <concept>
+                <code value="R-10258"/>
+                <display value="Common iliac artery bifurcation"/>
+            </concept>
+            <concept>
+                <code value="T-12390"/>
+                <display value="Acetabulum"/>
+            </concept>
+            <concept>
+                <code value="T-65000"/>
+                <display value="Pancreas"/>
+            </concept>
+            <concept>
+                <code value="T-71000"/>
+                <display value="Kidney"/>
+            </concept>
+            <concept>
+                <code value="T-15690"/>
+                <display value="Symphysis pubis"/>
+            </concept>
+            <concept>
+                <code value="T-12350"/>
+                <display value="Ischium"/>
+            </concept>
+            <concept>
+                <code value="T-11AD0"/>
+                <display value="Sacrum"/>
+            </concept>
+            <concept>
+                <code value="T-B3000"/>
+                <display value="Adrenal gland"/>
+            </concept>
+            <concept>
+                <code value="T-15710"/>
+                <display value="Hip joint"/>
+            </concept>
+            <concept>
+                <code value="T-12711"/>
+                <display value="Femoral head"/>
+            </concept>
+            <concept>
+                <code value="T-12714"/>
+                <display value="Lesser trochanter"/>
+            </concept>
+            <concept>
+                <code value="T-62000"/>
+                <display value="Liver"/>
+            </concept>
+            <concept>
+                <code value="T-1234A"/>
+                <display value="Iliac Crest"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

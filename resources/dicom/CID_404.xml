@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-404-AuditParticipantObjectIDTypeCode"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_404.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.907"/>
+    </identifier>
+    <version value="20100621"/>
+    <name value="AuditParticipantObjectIDTypeCode"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 404 AuditParticipantObjectIDTypeCode"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://dicom.nema.org/resources/ontology/DCM"/>
+            <concept>
+                <code value="110180"/>
+                <display value="Study Instance UID"/>
+            </concept>
+            <concept>
+                <code value="110182"/>
+                <display value="Node ID"/>
+            </concept>
+            <concept>
+                <code value="110181"/>
+                <display value="SOP Class UID"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

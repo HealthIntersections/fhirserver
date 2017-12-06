@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-8201-SurfaceScanAcquisitionTypes"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_8201.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.953"/>
+    </identifier>
+    <version value="20121129"/>
+    <name value="SurfaceScanAcquisitionTypes"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 8201 SurfaceScanAcquisitionTypes"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://dicom.nema.org/resources/ontology/DCM"/>
+            <concept>
+                <code value="114201"/>
+                <display value="Time of flight"/>
+            </concept>
+            <concept>
+                <code value="114203"/>
+                <display value="Laser scanning"/>
+            </concept>
+            <concept>
+                <code value="114202"/>
+                <display value="Interferometry"/>
+            </concept>
+            <concept>
+                <code value="114205"/>
+                <display value="Shape from shading"/>
+            </concept>
+            <concept>
+                <code value="114204"/>
+                <display value="Pattern projection"/>
+            </concept>
+            <concept>
+                <code value="114207"/>
+                <display value="Confocal imaging"/>
+            </concept>
+            <concept>
+                <code value="114206"/>
+                <display value="Shape from motion"/>
+            </concept>
+            <concept>
+                <code value="114208"/>
+                <display value="Point Cloud Algorithmic"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

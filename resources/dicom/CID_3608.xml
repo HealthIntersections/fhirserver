@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-3608-AtrialSourceLocations"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_3608.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.158"/>
+    </identifier>
+    <version value="20160314"/>
+    <name value="AtrialSourceLocations"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 3608 AtrialSourceLocations"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://snomed.info/srt"/>
+            <concept>
+                <code value="T-32330"/>
+                <display value="Coronary sinus"/>
+            </concept>
+            <concept>
+                <code value="D4-31052"/>
+                <display value="Juxtaposed appendage"/>
+            </concept>
+            <concept>
+                <code value="T-32200"/>
+                <display value="Right Atrium"/>
+            </concept>
+            <concept>
+                <code value="A-00203"/>
+                <display value="Baffle"/>
+            </concept>
+            <concept>
+                <code value="D4-33514"/>
+                <display value="Pulmonary venous atrium"/>
+            </concept>
+            <concept>
+                <code value="D4-33516"/>
+                <display value="Systemic venous atrium"/>
+            </concept>
+            <concept>
+                <code value="T-32190"/>
+                <display value="Pulmonary chamber in cor triatriatum"/>
+            </concept>
+            <concept>
+                <code value="D4-31005"/>
+                <display value="Common atrium"/>
+            </concept>
+            <concept>
+                <code value="T-32300"/>
+                <display value="Left atrium"/>
+            </concept>
+            <concept>
+                <code value="G-DB27"/>
+                <display value="Pulmonary artery wedge"/>
+            </concept>
+            <concept>
+                <code value="G-DB26"/>
+                <display value="Pulmonary capillary wedge"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

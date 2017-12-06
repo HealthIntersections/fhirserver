@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-6200-ColonOverallAssessment"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_6200.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.787"/>
+    </identifier>
+    <version value="20090402"/>
+    <name value="ColonOverallAssessment"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 6200 ColonOverallAssessment"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://dicom.nema.org/resources/ontology/DCM"/>
+            <concept>
+                <code value="112240"/>
+                <display value="C0 - Inadequate Study/Awaiting Prior Comparisons"/>
+            </concept>
+            <concept>
+                <code value="112241"/>
+                <display value="C1 - Normal Colon or Benign Lesion"/>
+            </concept>
+            <concept>
+                <code value="112242"/>
+                <display value="C2 - Intermediate Polyp or Indeterminate Finding"/>
+            </concept>
+            <concept>
+                <code value="112243"/>
+                <display value="C3 - Polyp, Possibly Advanced Adenoma"/>
+            </concept>
+            <concept>
+                <code value="112244"/>
+                <display value="C4 - Colonic Mass, Likely Malignant"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

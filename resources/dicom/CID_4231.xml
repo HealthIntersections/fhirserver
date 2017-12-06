@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-4231-LensStatus"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_4231.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.877"/>
+    </identifier>
+    <version value="20100623"/>
+    <name value="LensStatus"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 4231 LensStatus"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://snomed.info/srt"/>
+            <concept>
+                <code value="F-02087"/>
+                <display value="Piggyback IOL"/>
+            </concept>
+            <concept>
+                <code value="DA-73410"/>
+                <display value="Aphakic"/>
+            </concept>
+            <concept>
+                <code value="R-2073F"/>
+                <display value="Phakic"/>
+            </concept>
+            <concept>
+                <code value="DA-73460"/>
+                <display value="Pseudophakia"/>
+            </concept>
+            <concept>
+                <code value="A-040F7"/>
+                <display value="Phakic IOL"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

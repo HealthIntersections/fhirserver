@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-1010-ReferenceGeometryPlanes"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_1010.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.1128"/>
+    </identifier>
+    <version value="20160905"/>
+    <name value="ReferenceGeometryPlanes"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 1010 ReferenceGeometryPlanes"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://dicom.nema.org/resources/ontology/DCM"/>
+            <concept>
+                <code value="128123"/>
+                <display value="Plane through Distal Extent"/>
+            </concept>
+            <concept>
+                <code value="128122"/>
+                <display value="Plane through Proximal Extent"/>
+            </concept>
+            <concept>
+                <code value="128125"/>
+                <display value="Plane through Lateral Extent"/>
+            </concept>
+            <concept>
+                <code value="128124"/>
+                <display value="Plane through Medial Extent"/>
+            </concept>
+            <concept>
+                <code value="128127"/>
+                <display value="Plane through Rightmost Extent"/>
+            </concept>
+            <concept>
+                <code value="128126"/>
+                <display value="Plane through Leftmost Extent"/>
+            </concept>
+            <concept>
+                <code value="128129"/>
+                <display value="Plane through Posterior Extent"/>
+            </concept>
+            <concept>
+                <code value="128128"/>
+                <display value="Plane through Anterior Extent"/>
+            </concept>
+            <concept>
+                <code value="128130"/>
+                <display value="Plane through Center"/>
+            </concept>
+            <concept>
+                <code value="128121"/>
+                <display value="Plane through Inferior Extent"/>
+            </concept>
+            <concept>
+                <code value="128120"/>
+                <display value="Plane through Superior Extent"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

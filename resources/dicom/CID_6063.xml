@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-6063-InterventionalProcedureResults"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_6063.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.392"/>
+    </identifier>
+    <version value="20040112"/>
+    <name value="InterventionalProcedureResults"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 6063 InterventionalProcedureResults"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://snomed.info/srt"/>
+            <concept>
+                <code value="G-A249"/>
+                <display value="Benign"/>
+            </concept>
+            <concept>
+                <code value="G-A425"/>
+                <display value="Malignant"/>
+            </concept>
+            <concept>
+                <code value="F-01E06"/>
+                <display value="Indeterminate result"/>
+            </concept>
+            <concept>
+                <code value="M-09024"/>
+                <display value="Insufficient sample"/>
+            </concept>
+            <concept>
+                <code value="R-41DDC"/>
+                <display value="High risk tumor"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

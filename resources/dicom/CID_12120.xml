@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-12120-BloodVelocityMeasurementsbyUltrasound"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_12120.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.586"/>
+    </identifier>
+    <version value="20030327"/>
+    <name value="BloodVelocityMeasurementsbyUltrasound"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 12120 BloodVelocityMeasurementsbyUltrasound"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://loinc.org"/>
+            <concept>
+                <code value="11665-7"/>
+                <display value="Minimum Diastolic Velocity"/>
+            </concept>
+            <concept>
+                <code value="11692-1"/>
+                <display value="Time averaged peak velocity"/>
+            </concept>
+            <concept>
+                <code value="11726-7"/>
+                <display value="Peak Systolic Velocity"/>
+            </concept>
+            <concept>
+                <code value="11653-3"/>
+                <display value="End Diastolic Velocity"/>
+            </concept>
+            <concept>
+                <code value="20352-1"/>
+                <display value="Time averaged mean velocity"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

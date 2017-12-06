@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-10013-CTAcquisitionType"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_10013.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.545"/>
+    </identifier>
+    <version value="20160314"/>
+    <name value="CTAcquisitionType"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 10013 CTAcquisitionType"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://dicom.nema.org/resources/ontology/DCM"/>
+            <concept>
+                <code value="113806"/>
+                <display value="Stationary Acquisition"/>
+            </concept>
+            <concept>
+                <code value="113805"/>
+                <display value="Constant Angle Acquisition"/>
+            </concept>
+            <concept>
+                <code value="113807"/>
+                <display value="Free Acquisition"/>
+            </concept>
+            <concept>
+                <code value="113804"/>
+                <display value="Sequenced Acquisition"/>
+            </concept>
+        </include>
+        <include>
+            <system value="http://snomed.info/srt"/>
+            <concept>
+                <code value="R-FB8F1"/>
+                <display value="Cone Beam Acquisition"/>
+            </concept>
+            <concept>
+                <code value="P5-08001"/>
+                <display value="Spiral Acquisition"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

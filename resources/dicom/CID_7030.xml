@@ -1,0 +1,372 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-7030-InstitutionalDepartmentsUnitsandServices"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_7030.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.817"/>
+    </identifier>
+    <version value="20160314"/>
+    <name value="InstitutionalDepartments,UnitsandServices"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 7030 InstitutionalDepartments,UnitsandServices"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://dicom.nema.org/resources/ontology/DCM"/>
+            <concept>
+                <code value="128177"/>
+                <display value="Pediatric Radiology"/>
+            </concept>
+            <concept>
+                <code value="128179"/>
+                <display value="Thoracic Radiology"/>
+            </concept>
+            <concept>
+                <code value="128170"/>
+                <display value="Abdominal Radiology"/>
+            </concept>
+            <concept>
+                <code value="128172"/>
+                <display value="Cardiovascular Radiology"/>
+            </concept>
+            <concept>
+                <code value="128171"/>
+                <display value="Biomedical Engineering"/>
+            </concept>
+            <concept>
+                <code value="128174"/>
+                <display value="Medical Physics"/>
+            </concept>
+            <concept>
+                <code value="128173"/>
+                <display value="Information Technology"/>
+            </concept>
+            <concept>
+                <code value="128175"/>
+                <display value="Musculoskeletal Radiology"/>
+            </concept>
+        </include>
+        <include>
+            <system value="http://snomed.info/srt"/>
+            <concept>
+                <code value="R-4223C"/>
+                <display value="Neurosurgery"/>
+            </concept>
+            <concept>
+                <code value="R-30299"/>
+                <display value="Trauma Surgery"/>
+            </concept>
+            <concept>
+                <code value="R-30254"/>
+                <display value="General Medicine"/>
+            </concept>
+            <concept>
+                <code value="R-30298"/>
+                <display value="Transplant Surgery"/>
+            </concept>
+            <concept>
+                <code value="R-30297"/>
+                <display value="Plastic Surgery"/>
+            </concept>
+            <concept>
+                <code value="R-30252"/>
+                <display value="Endocrinology"/>
+            </concept>
+            <concept>
+                <code value="R-4223B"/>
+                <display value="Hepatobiliary Surgery"/>
+            </concept>
+            <concept>
+                <code value="R-30296"/>
+                <display value="Pediatric Surgery"/>
+            </concept>
+            <concept>
+                <code value="R-30250"/>
+                <display value="Dermatology"/>
+            </concept>
+            <concept>
+                <code value="R-30294"/>
+                <display value="Orthopedic Surgery"/>
+            </concept>
+            <concept>
+                <code value="R-3060E"/>
+                <display value="Burns Intensive Care"/>
+            </concept>
+            <concept>
+                <code value="R-30290"/>
+                <display value="Hand Surgery"/>
+            </concept>
+            <concept>
+                <code value="R-302A2"/>
+                <display value="Physiotherapy"/>
+            </concept>
+            <concept>
+                <code value="R-3025E"/>
+                <display value="Neurology"/>
+            </concept>
+            <concept>
+                <code value="R-3025D"/>
+                <display value="Nephrology"/>
+            </concept>
+            <concept>
+                <code value="R-3025C"/>
+                <display value="Ophthalmology"/>
+            </concept>
+            <concept>
+                <code value="R-3025B"/>
+                <display value="Infectious Disease"/>
+            </concept>
+            <concept>
+                <code value="R-421EB"/>
+                <display value="Clinical Biochemistry"/>
+            </concept>
+            <concept>
+                <code value="R-3025A"/>
+                <display value="Geriatric Medicine"/>
+            </concept>
+            <concept>
+                <code value="R-30616"/>
+                <display value="Tropical Medicine"/>
+            </concept>
+            <concept>
+                <code value="R-3029B"/>
+                <display value="Vascular Surgery"/>
+            </concept>
+            <concept>
+                <code value="R-3029A"/>
+                <display value="Urology"/>
+            </concept>
+            <concept>
+                <code value="R-305CE"/>
+                <display value="Neonatal Intensive Care"/>
+            </concept>
+            <concept>
+                <code value="R-30243"/>
+                <display value="Pediatric Intensive Care"/>
+            </concept>
+            <concept>
+                <code value="R-30285"/>
+                <display value="Oral Surgery"/>
+            </concept>
+            <concept>
+                <code value="R-30240"/>
+                <display value="Cardiac Intensive Care"/>
+            </concept>
+            <concept>
+                <code value="R-30283"/>
+                <display value="Dental Surgery"/>
+            </concept>
+            <concept>
+                <code value="R-30282"/>
+                <display value="Cardiac Surgery"/>
+            </concept>
+            <concept>
+                <code value="R-30281"/>
+                <display value="Thoracic Surgery"/>
+            </concept>
+            <concept>
+                <code value="R-30280"/>
+                <display value="Cardiothoracic Surgery"/>
+            </concept>
+            <concept>
+                <code value="R-3023D"/>
+                <display value="Intensive Care"/>
+            </concept>
+            <concept>
+                <code value="R-3028F"/>
+                <display value="General Surgery"/>
+            </concept>
+            <concept>
+                <code value="R-3024B"/>
+                <display value="Pulmonology"/>
+            </concept>
+            <concept>
+                <code value="R-3028E"/>
+                <display value="Colorectal Surgery"/>
+            </concept>
+            <concept>
+                <code value="R-300E3"/>
+                <display value="Accident and Emergency"/>
+            </concept>
+            <concept>
+                <code value="R-3028B"/>
+                <display value="Gastrointestinal Surgery"/>
+            </concept>
+            <concept>
+                <code value="R-3028A"/>
+                <display value="Endocrine Surgery"/>
+            </concept>
+            <concept>
+                <code value="S-8000A"/>
+                <display value="Primary Care Department"/>
+            </concept>
+            <concept>
+                <code value="R-30248"/>
+                <display value="Cardiology"/>
+            </concept>
+            <concept>
+                <code value="R-4221E"/>
+                <display value="Computerized Tomography Service"/>
+            </concept>
+            <concept>
+                <code value="R-30247"/>
+                <display value="Audiology"/>
+            </concept>
+            <concept>
+                <code value="R-30246"/>
+                <display value="Allergy and Immunology"/>
+            </concept>
+            <concept>
+                <code value="R-4221D"/>
+                <display value="Magnetic Resonance Imaging Service"/>
+            </concept>
+            <concept>
+                <code value="R-30289"/>
+                <display value="Otorhinolaryngology"/>
+            </concept>
+            <concept>
+                <code value="R-305EB"/>
+                <display value="Surgical Intensive Care"/>
+            </concept>
+            <concept>
+                <code value="R-30276"/>
+                <display value="Child and Adolescent Psychiatry"/>
+            </concept>
+            <concept>
+                <code value="R-305EA"/>
+                <display value="Pediatric Medicine"/>
+            </concept>
+            <concept>
+                <code value="R-30275"/>
+                <display value="Psychiatry"/>
+            </concept>
+            <concept>
+                <code value="R-4225D"/>
+                <display value="Cytology"/>
+            </concept>
+            <concept>
+                <code value="R-421D4"/>
+                <display value="Endoscopy"/>
+            </concept>
+            <concept>
+                <code value="R-30270"/>
+                <display value="Medical Microbiology"/>
+            </concept>
+            <concept>
+                <code value="R-42219"/>
+                <display value="Psychology"/>
+            </concept>
+            <concept>
+                <code value="R-3023C"/>
+                <display value="Radiotherapy"/>
+            </concept>
+            <concept>
+                <code value="R-3027F"/>
+                <display value="Breast Surgery"/>
+            </concept>
+            <concept>
+                <code value="R-3023B"/>
+                <display value="Clinical Oncology"/>
+            </concept>
+            <concept>
+                <code value="R-3023A"/>
+                <display value="Anesthesiology"/>
+            </concept>
+            <concept>
+                <code value="R-3027E"/>
+                <display value="Surgery"/>
+            </concept>
+            <concept>
+                <code value="R-3027D"/>
+                <display value="Stroke"/>
+            </concept>
+            <concept>
+                <code value="R-3027B"/>
+                <display value="Radiology"/>
+            </concept>
+            <concept>
+                <code value="R-FF0C4"/>
+                <display value="Interventional Radiology Service"/>
+            </concept>
+            <concept>
+                <code value="R-30265"/>
+                <display value="Obstetrics"/>
+            </concept>
+            <concept>
+                <code value="R-30264"/>
+                <display value="Gynecology"/>
+            </concept>
+            <concept>
+                <code value="R-30263"/>
+                <display value="Obstetrics and Gynecology"/>
+            </concept>
+            <concept>
+                <code value="R-30262"/>
+                <display value="Rheumatology"/>
+            </concept>
+            <concept>
+                <code value="R-30261"/>
+                <display value="Rehabilitation"/>
+            </concept>
+            <concept>
+                <code value="R-30260"/>
+                <display value="Palliative Care"/>
+            </concept>
+            <concept>
+                <code value="R-3061E"/>
+                <display value="Medical Intensive Care"/>
+            </concept>
+            <concept>
+                <code value="R-3061D"/>
+                <display value="Histopathology"/>
+            </concept>
+            <concept>
+                <code value="R-3061B"/>
+                <display value="Diagnostic Imaging"/>
+            </concept>
+            <concept>
+                <code value="R-42207"/>
+                <display value="Optometry"/>
+            </concept>
+            <concept>
+                <code value="R-42246"/>
+                <display value="Ultrasonography"/>
+            </concept>
+            <concept>
+                <code value="R-3025F"/>
+                <display value="Nuclear Medicine"/>
+            </concept>
+            <concept>
+                <code value="R-42203"/>
+                <display value="Speech and Language Therapy"/>
+            </concept>
+            <concept>
+                <code value="R-3026F"/>
+                <display value="Hematology"/>
+            </concept>
+            <concept>
+                <code value="R-3026B"/>
+                <display value="Pathology"/>
+            </concept>
+            <concept>
+                <code value="R-3026A"/>
+                <display value="Pain Management"/>
+            </concept>
+            <concept>
+                <code value="R-30269"/>
+                <display value="Pediatric Oncology"/>
+            </concept>
+        </include>
+        <include>
+            <system value="http://www.nlm.nih.gov/research/umls"/>
+            <concept>
+                <code value="C2183225"/>
+                <display value="Neuroradiology"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

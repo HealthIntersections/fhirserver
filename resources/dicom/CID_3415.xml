@@ -1,0 +1,298 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-3415-CardiacRhythms"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_3415.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.80"/>
+    </identifier>
+    <version value="20080927"/>
+    <name value="CardiacRhythms"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 3415 CardiacRhythms"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="urn:iso:std:iso:11073:10101"/>
+            <concept>
+                <code value="10:9712"/>
+                <display value="AV Dissociation"/>
+            </concept>
+            <concept>
+                <code value="10:9952"/>
+                <display value="Ventricular Couplet"/>
+            </concept>
+            <concept>
+                <code value="10:9632"/>
+                <display value="First Degree AV Block"/>
+            </concept>
+            <concept>
+                <code value="10:9312"/>
+                <display value="Non-Respiratory Sinus Arrhythmia"/>
+            </concept>
+            <concept>
+                <code value="10:9872"/>
+                <display value="Ventricular Parasystole"/>
+            </concept>
+            <concept>
+                <code value="10:10032"/>
+                <display value="Nonsustained Ventricular Tachycardia (paroxysmal)"/>
+            </concept>
+            <concept>
+                <code value="10:9552"/>
+                <display value="AV junctional (nodal) escape rhythm"/>
+            </concept>
+            <concept>
+                <code value="10:10352"/>
+                <display value="Irregular rhythm"/>
+            </concept>
+            <concept>
+                <code value="10:10112"/>
+                <display value="Wolf-Parkinson-White syndrome"/>
+            </concept>
+            <concept>
+                <code value="10:10432"/>
+                <display value="Bradycardia"/>
+            </concept>
+            <concept>
+                <code value="10:10160"/>
+                <display value="Lown-Ganong-Levine syndrome"/>
+            </concept>
+            <concept>
+                <code value="10:9760"/>
+                <display value="Complete AV dissociation"/>
+            </concept>
+            <concept>
+                <code value="10:9440"/>
+                <display value="Automatic Atrial Tachycardia"/>
+            </concept>
+            <concept>
+                <code value="10:9680"/>
+                <display value="Second Degree AV Block Type II (Mobitz Type II)"/>
+            </concept>
+            <concept>
+                <code value="10:9360"/>
+                <display value="Atrial Ectopic Rhythm"/>
+            </concept>
+            <concept>
+                <code value="10:10080"/>
+                <display value="Torsades de Pointes Ventricular Tachycardia"/>
+            </concept>
+            <concept>
+                <code value="10:9280"/>
+                <display value="Sinus Arrhythmia"/>
+            </concept>
+            <concept>
+                <code value="10:9328"/>
+                <display value="Wandering Sinus Pacemaker within the sinus node"/>
+            </concept>
+            <concept>
+                <code value="10:9888"/>
+                <display value="Accelerated idioventricular rhythm"/>
+            </concept>
+            <concept>
+                <code value="10:10048"/>
+                <display value="Sustained Monomorphic Ventricular Tachycardia"/>
+            </concept>
+            <concept>
+                <code value="10:10128"/>
+                <display value="Wolf-Parkinson type A"/>
+            </concept>
+            <concept>
+                <code value="10:9568"/>
+                <display value="Accelerated AV junctional (nodal) rhythm"/>
+            </concept>
+            <concept>
+                <code value="10:9920"/>
+                <display value="Ventricular Bigeminy"/>
+            </concept>
+            <concept>
+                <code value="10:10448"/>
+                <display value="Calibration signal (sustained)"/>
+            </concept>
+            <concept>
+                <code value="10:9248"/>
+                <display value="Sinus Bradycardia"/>
+            </concept>
+            <concept>
+                <code value="10:9600"/>
+                <display value="AV reciprocating tachycardia"/>
+            </concept>
+            <concept>
+                <code value="10:9488"/>
+                <display value="Supraventricular (atrial or junctional) Ectopic Rhythm"/>
+            </concept>
+            <concept>
+                <code value="10:9840"/>
+                <display value="Ventricular rhythm"/>
+            </concept>
+            <concept>
+                <code value="10:10000"/>
+                <display value="Ventricular Flutter"/>
+            </concept>
+            <concept>
+                <code value="10:9520"/>
+                <display value="Supraventricular Paroxsysmal Tachycardia"/>
+            </concept>
+            <concept>
+                <code value="10:10240"/>
+                <display value="Ventricular Demand Mode Pacing"/>
+            </concept>
+            <concept>
+                <code value="10:9808"/>
+                <display value="Second Degree SA Block Type II"/>
+            </concept>
+            <concept>
+                <code value="10:9728"/>
+                <display value="AV dissociation with interference"/>
+            </concept>
+            <concept>
+                <code value="10:9408"/>
+                <display value="Paroxsysmal Atrial Tachycardia"/>
+            </concept>
+            <concept>
+                <code value="10:9968"/>
+                <display value="Ventricular Run"/>
+            </concept>
+            <concept>
+                <code value="10:9648"/>
+                <display value="Second Degree AV Block"/>
+            </concept>
+            <concept>
+                <code value="10:10368"/>
+                <display value="Low Heart Rate Variability"/>
+            </concept>
+            <concept>
+                <code value="10:10096"/>
+                <display value="pre-excitation"/>
+            </concept>
+            <concept>
+                <code value="10:9296"/>
+                <display value="Respiratory Sinus Arrhythmia"/>
+            </concept>
+            <concept>
+                <code value="10:9856"/>
+                <display value="Idioventricular (ventricular escape) rhythm"/>
+            </concept>
+            <concept>
+                <code value="10:10016"/>
+                <display value="Ventricular Fibrillation"/>
+            </concept>
+            <concept>
+                <code value="10:10336"/>
+                <display value="Asystole"/>
+            </concept>
+            <concept>
+                <code value="10:9536"/>
+                <display value="AV junctional (nodal) rhythm"/>
+            </concept>
+            <concept>
+                <code value="10:9216"/>
+                <display value="Sinus Rhythm"/>
+            </concept>
+            <concept>
+                <code value="10:9776"/>
+                <display value="First Degree SA Block"/>
+            </concept>
+            <concept>
+                <code value="10:10416"/>
+                <display value="T-wave alternans"/>
+            </concept>
+            <concept>
+                <code value="10:9456"/>
+                <display value="Atrial flutter"/>
+            </concept>
+            <concept>
+                <code value="10:9696"/>
+                <display value="Third Degree AV Block (complete AV block)"/>
+            </concept>
+            <concept>
+                <code value="10:9376"/>
+                <display value="Atrial Bigeminy"/>
+            </concept>
+            <concept>
+                <code value="10:10176"/>
+                <display value="Atrial Demand Mode Pacing"/>
+            </concept>
+            <concept>
+                <code value="10:9936"/>
+                <display value="Ventricular Trigeminy"/>
+            </concept>
+            <concept>
+                <code value="10:9616"/>
+                <display value="Reentrant AV nodal tachycardia"/>
+            </concept>
+            <concept>
+                <code value="10:9584"/>
+                <display value="Junctional Tachycardia"/>
+            </concept>
+            <concept>
+                <code value="10:9264"/>
+                <display value="Sinus Tachycardia"/>
+            </concept>
+            <concept>
+                <code value="10:9504"/>
+                <display value="Supraventricular Tachycardia (atrial or junctional)"/>
+            </concept>
+            <concept>
+                <code value="10:10304"/>
+                <display value="Anti-Tachycardia Pacing"/>
+            </concept>
+            <concept>
+                <code value="10:9744"/>
+                <display value="Isorhythmic AV dissociation"/>
+            </concept>
+            <concept>
+                <code value="10:9424"/>
+                <display value="Multifocal Atrial Tachycardia"/>
+            </concept>
+            <concept>
+                <code value="10:9984"/>
+                <display value="Ventricular Tachycardia (nonparoxysmal)"/>
+            </concept>
+            <concept>
+                <code value="10:9664"/>
+                <display value="Second Degree AV Block Type I (Wenckebach, or Mobitz Type I)"/>
+            </concept>
+            <concept>
+                <code value="10:9344"/>
+                <display value="Wandering Pacemaker between the sinus node and the A-V node"/>
+            </concept>
+            <concept>
+                <code value="10:10064"/>
+                <display value="Polymorphic Ventricular Tachycardia"/>
+            </concept>
+            <concept>
+                <code value="10:10144"/>
+                <display value="Wolf-Parkinson type B"/>
+            </concept>
+            <concept>
+                <code value="10:9904"/>
+                <display value="Slow Ventricular Tachycardia (Idioventricular Tachycardia)"/>
+            </concept>
+            <concept>
+                <code value="10:9824"/>
+                <display value="Third Degree SA Block (complete SA block)"/>
+            </concept>
+            <concept>
+                <code value="10:9232"/>
+                <display value="Normal Sinus Rhythm"/>
+            </concept>
+            <concept>
+                <code value="10:9792"/>
+                <display value="Second Degree SA Block Type I (Wenckebach)"/>
+            </concept>
+            <concept>
+                <code value="10:9472"/>
+                <display value="Atrial fibrillation"/>
+            </concept>
+            <concept>
+                <code value="10:9392"/>
+                <display value="Atrial Tachycardia"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-8114-SpecimenFixatives"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_8114.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.1052"/>
+    </identifier>
+    <version value="20080626"/>
+    <name value="SpecimenFixatives"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 8114 SpecimenFixatives"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://snomed.info/srt"/>
+            <concept>
+                <code value="C-21624"/>
+                <display value="Acetic acid"/>
+            </concept>
+            <concept>
+                <code value="C-15211"/>
+                <display value="Osmium tetroxide"/>
+            </concept>
+            <concept>
+                <code value="F-62238"/>
+                <display value="Formol sublimate"/>
+            </concept>
+            <concept>
+                <code value="C-20830"/>
+                <display value="Chloroform"/>
+            </concept>
+            <concept>
+                <code value="C-21402"/>
+                <display value="Formaldehyde"/>
+            </concept>
+            <concept>
+                <code value="C-21403"/>
+                <display value="Paraformaldehyde"/>
+            </concept>
+            <concept>
+                <code value="C-2102B"/>
+                <display value="Methanol"/>
+            </concept>
+            <concept>
+                <code value="F-62235"/>
+                <display value="Bouin's fluid"/>
+            </concept>
+            <concept>
+                <code value="C-21919"/>
+                <display value="Picric acid"/>
+            </concept>
+            <concept>
+                <code value="F-62234"/>
+                <display value="Zenker's fluid"/>
+            </concept>
+            <concept>
+                <code value="F-62233"/>
+                <display value="Helly's fluid"/>
+            </concept>
+            <concept>
+                <code value="C-13321"/>
+                <display value="Mercuric chloride"/>
+            </concept>
+            <concept>
+                <code value="F-62231"/>
+                <display value="Carnoy's fluid"/>
+            </concept>
+            <concept>
+                <code value="C-13518"/>
+                <display value="Potassium dichromate"/>
+            </concept>
+            <concept>
+                <code value="C-2141B"/>
+                <display value="Formalin aqueous solution of formaldehyde"/>
+            </concept>
+            <concept>
+                <code value="F-6220F"/>
+                <display value="Michel's medium"/>
+            </concept>
+            <concept>
+                <code value="C-2141C"/>
+                <display value="Neutral Buffered Formalin"/>
+            </concept>
+            <concept>
+                <code value="C-21047"/>
+                <display value="Ethanol"/>
+            </concept>
+            <concept>
+                <code value="C-12916"/>
+                <display value="Chromium trioxide"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-3201-IndicationsforStressTest"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_3201.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.756"/>
+    </identifier>
+    <version value="20080927"/>
+    <name value="IndicationsforStressTest"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 3201 IndicationsforStressTest"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://snomed.info/srt"/>
+            <concept>
+                <code value="D3-13040"/>
+                <display value="Coronary Artery Disease"/>
+            </concept>
+            <concept>
+                <code value="F-201B3"/>
+                <display value="Dyspnea"/>
+            </concept>
+            <concept>
+                <code value="G-03AA"/>
+                <display value="History of Myocardial Infarction"/>
+            </concept>
+            <concept>
+                <code value="P7-00044"/>
+                <display value="Occupational requirement"/>
+            </concept>
+            <concept>
+                <code value="D3-13012"/>
+                <display value="Angina pectoris"/>
+            </concept>
+            <concept>
+                <code value="D3-16000"/>
+                <display value="Heart failure"/>
+            </concept>
+            <concept>
+                <code value="G-03A5"/>
+                <display value="History of CABG"/>
+            </concept>
+            <concept>
+                <code value="R-00357"/>
+                <display value="Post PTCA"/>
+            </concept>
+            <concept>
+                <code value="F-03C97"/>
+                <display value="Heart disease risk factors"/>
+            </concept>
+            <concept>
+                <code value="D3-02000"/>
+                <display value="Hypertension"/>
+            </concept>
+            <concept>
+                <code value="F-37150"/>
+                <display value="Palpitations"/>
+            </concept>
+            <concept>
+                <code value="D3-10800"/>
+                <display value="Valvular heart disease"/>
+            </concept>
+            <concept>
+                <code value="F-38002"/>
+                <display value="Abnormal ECG"/>
+            </concept>
+            <concept>
+                <code value="D3-30000"/>
+                <display value="Arrhythmia"/>
+            </concept>
+            <concept>
+                <code value="F-00103"/>
+                <display value="Abnormal exercise tolerance test"/>
+            </concept>
+            <concept>
+                <code value="D3-00006"/>
+                <display value="Syncope"/>
+            </concept>
+            <concept>
+                <code value="D3-33120"/>
+                <display value="Left bundle branch block"/>
+            </concept>
+            <concept>
+                <code value="R-413C5"/>
+                <display value="Pre-operative"/>
+            </concept>
+            <concept>
+                <code value="D3-31290"/>
+                <display value="Supraventricular tachycardia"/>
+            </concept>
+            <concept>
+                <code value="F-37000"/>
+                <display value="Chest Pain"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

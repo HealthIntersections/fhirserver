@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-3525-BloodGasContent"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_3525.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.139"/>
+    </identifier>
+    <version value="20030327"/>
+    <name value="BloodGasContent"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 3525 BloodGasContent"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://dicom.nema.org/resources/ontology/DCM"/>
+            <concept>
+                <code value="122185"/>
+                <display value="Blood Oxygen content"/>
+            </concept>
+        </include>
+        <include>
+            <system value="http://loinc.org"/>
+            <concept>
+                <code value="19218-7"/>
+                <display value="Arterial Oxygen content"/>
+            </concept>
+            <concept>
+                <code value="10245-9"/>
+                <display value="Pulmonary Artery Main Oxygen content"/>
+            </concept>
+            <concept>
+                <code value="10247-5"/>
+                <display value="Pulmonary Wedge Oxygen content"/>
+            </concept>
+            <concept>
+                <code value="2026-3"/>
+                <display value="Arterial Blood Carbon dioxide content"/>
+            </concept>
+            <concept>
+                <code value="20565-8"/>
+                <display value="Blood Carbon dioxide content"/>
+            </concept>
+            <concept>
+                <code value="2027-1"/>
+                <display value="Venous Blood Carbon dioxide content"/>
+            </concept>
+            <concept>
+                <code value="10232-7"/>
+                <display value="Aortic Root Oxygen content"/>
+            </concept>
+            <concept>
+                <code value="19220-3"/>
+                <display value="Venous Oxygen content"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

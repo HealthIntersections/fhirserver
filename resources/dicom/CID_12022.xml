@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-12022-FetalCraniumAnatomicSites"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_12022.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.1007"/>
+    </identifier>
+    <version value="20160314"/>
+    <name value="FetalCraniumAnatomicSites"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 12022 FetalCraniumAnatomicSites"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://snomed.info/srt"/>
+            <concept>
+                <code value="R-FB565"/>
+                <display value="Occipital region of scalp"/>
+            </concept>
+            <concept>
+                <code value="T-A1700"/>
+                <display value="Anterior Horn Lateral Ventricle"/>
+            </concept>
+            <concept>
+                <code value="T-A6000"/>
+                <display value="Cerebellum"/>
+            </concept>
+            <concept>
+                <code value="T-A1710"/>
+                <display value="Posterior Horn Lateral Ventricle"/>
+            </concept>
+            <concept>
+                <code value="T-A010F"/>
+                <display value="Cerebral hemisphere"/>
+            </concept>
+            <concept>
+                <code value="T-D14AE"/>
+                <display value="Orbit"/>
+            </concept>
+            <concept>
+                <code value="T-A1650"/>
+                <display value="Lateral Ventricle"/>
+            </concept>
+            <concept>
+                <code value="T-A1520"/>
+                <display value="Cisterna magna"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

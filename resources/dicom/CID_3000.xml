@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-3000-AudioChannelSource"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_3000.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.42"/>
+    </identifier>
+    <version value="20040326"/>
+    <name value="AudioChannelSource"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 3000 AudioChannelSource"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://dicom.nema.org/resources/ontology/DCM"/>
+            <concept>
+                <code value="109115"/>
+                <display value="Physiological audio signal"/>
+            </concept>
+            <concept>
+                <code value="109114"/>
+                <display value="Phonocardiogram"/>
+            </concept>
+            <concept>
+                <code value="109111"/>
+                <display value="Operator's narrative"/>
+            </concept>
+            <concept>
+                <code value="109110"/>
+                <display value="Voice"/>
+            </concept>
+            <concept>
+                <code value="109113"/>
+                <display value="Doppler audio"/>
+            </concept>
+            <concept>
+                <code value="109112"/>
+                <display value="Ambient room environment"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

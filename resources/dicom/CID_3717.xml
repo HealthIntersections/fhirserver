@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-3717-MyocardialWallSegments"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_3717.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.218"/>
+    </identifier>
+    <version value="20030327"/>
+    <name value="MyocardialWallSegments"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 3717 MyocardialWallSegments"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://snomed.info/srt"/>
+            <concept>
+                <code value="T-32617"/>
+                <display value="left ventricle mid anterior segment"/>
+            </concept>
+            <concept>
+                <code value="R-1007C"/>
+                <display value="left ventricle mid anterolateral segment"/>
+            </concept>
+            <concept>
+                <code value="T-32616"/>
+                <display value="left ventricle mid inferior segment"/>
+            </concept>
+            <concept>
+                <code value="R-1007B"/>
+                <display value="left ventricle mid inferolateral segment"/>
+            </concept>
+            <concept>
+                <code value="T-32619"/>
+                <display value="left ventricle basal anterior segment"/>
+            </concept>
+            <concept>
+                <code value="R-1007A"/>
+                <display value="left ventricle basal anterolateral segment"/>
+            </concept>
+            <concept>
+                <code value="T-32618"/>
+                <display value="left ventricle apical inferior segment"/>
+            </concept>
+            <concept>
+                <code value="T-32613"/>
+                <display value="left ventricle apical anterior segment"/>
+            </concept>
+            <concept>
+                <code value="T-32602"/>
+                <display value="apex of left ventricle"/>
+            </concept>
+            <concept>
+                <code value="T-32615"/>
+                <display value="left ventricle basal inferior segment"/>
+            </concept>
+            <concept>
+                <code value="T-32614"/>
+                <display value="left ventricle apical septal segment"/>
+            </concept>
+            <concept>
+                <code value="R-10077"/>
+                <display value="left ventricle mid anteroseptal segment"/>
+            </concept>
+            <concept>
+                <code value="T-3261C"/>
+                <display value="left ventricle apical lateral segment"/>
+            </concept>
+            <concept>
+                <code value="R-10076"/>
+                <display value="left ventricle basal inferoseptal segment"/>
+            </concept>
+            <concept>
+                <code value="R-10075"/>
+                <display value="left ventricle basal anteroseptal segment"/>
+            </concept>
+            <concept>
+                <code value="R-10079"/>
+                <display value="left ventricle basal inferolateral segment"/>
+            </concept>
+            <concept>
+                <code value="R-10078"/>
+                <display value="left ventricle mid inferoseptal segment"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-638-ExogenousSubstance"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_638.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.1103"/>
+    </identifier>
+    <version value="20151110"/>
+    <name value="ExogenousSubstance"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 638 ExogenousSubstance"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://dicom.nema.org/resources/ontology/DCM"/>
+            <concept>
+                <code value="127851"/>
+                <display value="Human alpha synuclein preformed fibrils"/>
+            </concept>
+            <concept>
+                <code value="127852"/>
+                <display value="Mouse alpha synuclein preformed fibrils"/>
+            </concept>
+            <concept>
+                <code value="127853"/>
+                <display value="Human Tau preformed fibrils"/>
+            </concept>
+            <concept>
+                <code value="127854"/>
+                <display value="Mouse Tau preformed fibrils"/>
+            </concept>
+        </include>
+        <include>
+            <system value="http://ncit.nci.nih.gov"/>
+            <concept>
+                <code value="C2923"/>
+                <display value="Bronchioloalveolar adenocarcinoma"/>
+            </concept>
+        </include>
+        <include>
+            <system value="http://pubchem.ncbi.nlm.nih.gov"/>
+            <concept>
+                <code value="4624"/>
+                <display value="6-hydroxydopamine"/>
+            </concept>
+        </include>
+        <include>
+            <system value="http://snomed.info/srt"/>
+            <concept>
+                <code value="F-CB902"/>
+                <display value="Vascular endothelial growth factor"/>
+            </concept>
+            <concept>
+                <code value="M-81403"/>
+                <display value="Adenocarcinoma"/>
+            </concept>
+            <concept>
+                <code value="M-80413"/>
+                <display value="Small cell carcinoma"/>
+            </concept>
+            <concept>
+                <code value="F-CB962"/>
+                <display value="Tumor necrosis factor alpha"/>
+            </concept>
+            <concept>
+                <code value="R-FB83F"/>
+                <display value="Renal cell carcinoma"/>
+            </concept>
+            <concept>
+                <code value="M-94003"/>
+                <display value="Astrocytoma"/>
+            </concept>
+            <concept>
+                <code value="M-87203"/>
+                <display value="Melanoma"/>
+            </concept>
+            <concept>
+                <code value="F-63750"/>
+                <display value="Lysophosphatidylcholine"/>
+            </concept>
+            <concept>
+                <code value="M-90503"/>
+                <display value="Mesothelioma"/>
+            </concept>
+            <concept>
+                <code value="M-89803"/>
+                <display value="Carcinosarcoma"/>
+            </concept>
+            <concept>
+                <code value="F-C0101"/>
+                <display value="Interferon gamma"/>
+            </concept>
+            <concept>
+                <code value="M-87303"/>
+                <display value="Amelanotic melanoma"/>
+            </concept>
+            <concept>
+                <code value="M-94403"/>
+                <display value="Glioblastoma"/>
+            </concept>
+            <concept>
+                <code value="L-30606"/>
+                <display value="Theiler's murine encephalomyelitis virus"/>
+            </concept>
+            <concept>
+                <code value="M-80453"/>
+                <display value="Mixed small cell carcinoma"/>
+            </concept>
+            <concept>
+                <code value="M-80703"/>
+                <display value="Squamous cell carcinoma"/>
+            </concept>
+            <concept>
+                <code value="DC-F4113"/>
+                <display value="Leukemia"/>
+            </concept>
+            <concept>
+                <code value="M-80103"/>
+                <display value="Carcinoma"/>
+            </concept>
+            <concept>
+                <code value="M-80323"/>
+                <display value="Spindle cell carcinoma"/>
+            </concept>
+            <concept>
+                <code value="M-84403"/>
+                <display value="Cystadenocarcinoma"/>
+            </concept>
+            <concept>
+                <code value="L-35500"/>
+                <display value="Adeno-associated virus group"/>
+            </concept>
+            <concept>
+                <code value="F-63390"/>
+                <display value="Lipopolysaccharide"/>
+            </concept>
+            <concept>
+                <code value="M-88003"/>
+                <display value="Sarcoma"/>
+            </concept>
+            <concept>
+                <code value="D0-F0369"/>
+                <display value="Infiltrating ductal carcinoma of breast"/>
+            </concept>
+            <concept>
+                <code value="M-80463"/>
+                <display value="Non-small cell carcinoma"/>
+            </concept>
+            <concept>
+                <code value="M-80123"/>
+                <display value="Large cell carcinoma"/>
+            </concept>
+            <concept>
+                <code value="M-91803"/>
+                <display value="Osteosarcoma"/>
+            </concept>
+        </include>
+        <include>
+            <system value="http://www.nlm.nih.gov/research/umls"/>
+            <concept>
+                <code value="C0019873"/>
+                <display value="Ethidium Bromide"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

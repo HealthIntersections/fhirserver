@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-3481-IVUSDistanceMeasurements"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_3481.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.116"/>
+    </identifier>
+    <version value="20050110"/>
+    <name value="IVUSDistanceMeasurements"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 3481 IVUSDistanceMeasurements"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://dicom.nema.org/resources/ontology/DCM"/>
+            <concept>
+                <code value="122331"/>
+                <display value="Plaque Plus Media Thickness"/>
+            </concept>
+            <concept>
+                <code value="122332"/>
+                <display value="Lumen Perimeter"/>
+            </concept>
+            <concept>
+                <code value="122330"/>
+                <display value="EEM Diameter"/>
+            </concept>
+        </include>
+        <include>
+            <system value="http://snomed.info/srt"/>
+            <concept>
+                <code value="G-0364"/>
+                <display value="Vessel lumen diameter"/>
+            </concept>
+            <concept>
+                <code value="R-101AD"/>
+                <display value="Stent Diameter"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

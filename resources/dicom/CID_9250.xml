@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-9250-ScheduledProcessingParameterConceptCodesforRTTreatment"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_9250.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.971"/>
+    </identifier>
+    <version value="20170413"/>
+    <name value="ScheduledProcessingParameterConceptCodesforRTTreatment"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 9250 ScheduledProcessingParameterConceptCodesforRTTreatment"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://dicom.nema.org/resources/ontology/DCM"/>
+            <concept>
+                <code value="121740"/>
+                <display value="Treatment Delivery Type"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

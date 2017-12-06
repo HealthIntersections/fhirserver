@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-7466-PETRegionofInterestMeasurements"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_7466.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.999"/>
+    </identifier>
+    <version value="20141110"/>
+    <name value="PETRegionofInterestMeasurements"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 7466 PETRegionofInterestMeasurements"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://dicom.nema.org/resources/ontology/DCM"/>
+            <concept>
+                <code value="126032"/>
+                <display value="Metabolic Volume"/>
+            </concept>
+            <concept>
+                <code value="126033"/>
+                <display value="Total Lesion Glycolysis"/>
+            </concept>
+            <concept>
+                <code value="126034"/>
+                <display value="Glycolysis"/>
+            </concept>
+            <concept>
+                <code value="126035"/>
+                <display value="Total Lesion Proliferation"/>
+            </concept>
+            <concept>
+                <code value="126036"/>
+                <display value="Proliferative Activity"/>
+            </concept>
+            <concept>
+                <code value="126037"/>
+                <display value="Standardized Added Metabolic Activity"/>
+            </concept>
+            <concept>
+                <code value="126038"/>
+                <display value="Standardized Added Metabolic Activity Background"/>
+            </concept>
+            <concept>
+                <code value="126039"/>
+                <display value="Lesion to Background SUV Ratio"/>
+            </concept>
+            <concept>
+                <code value="126040"/>
+                <display value="Background for Lesion to Background SUV Ratio"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

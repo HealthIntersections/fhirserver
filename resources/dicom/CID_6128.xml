@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-6128-ChestDistributionDescriptor"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_6128.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.448"/>
+    </identifier>
+    <version value="20030108"/>
+    <name value="ChestDistributionDescriptor"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 6128 ChestDistributionDescriptor"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://dicom.nema.org/resources/ontology/DCM"/>
+            <concept>
+                <code value="112154"/>
+                <display value="Bat's wing distribution"/>
+            </concept>
+            <concept>
+                <code value="112155"/>
+                <display value="Butterfly distribution"/>
+            </concept>
+            <concept>
+                <code value="112156"/>
+                <display value="Centrilobular"/>
+            </concept>
+            <concept>
+                <code value="112157"/>
+                <display value="Coalescent"/>
+            </concept>
+            <concept>
+                <code value="112158"/>
+                <display value="Lobar"/>
+            </concept>
+        </include>
+        <include>
+            <system value="http://snomed.info/srt"/>
+            <concept>
+                <code value="G-A351"/>
+                <display value="Focal"/>
+            </concept>
+            <concept>
+                <code value="G-A572"/>
+                <display value="Systemic"/>
+            </concept>
+            <concept>
+                <code value="G-A366"/>
+                <display value="Generalized"/>
+            </concept>
+            <concept>
+                <code value="G-A443"/>
+                <display value="Multifocal"/>
+            </concept>
+            <concept>
+                <code value="G-A321"/>
+                <display value="Diffuse"/>
+            </concept>
+            <concept>
+                <code value="G-A324"/>
+                <display value="Disseminated"/>
+            </concept>
+            <concept>
+                <code value="G-A137"/>
+                <display value="Segmental"/>
+            </concept>
+            <concept>
+                <code value="M-020FA"/>
+                <display value="Discoid"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-7140-BrainStructuresforVolumetricMeasurements"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_7140.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.967"/>
+    </identifier>
+    <version value="20170914"/>
+    <name value="BrainStructuresforVolumetricMeasurements"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 7140 BrainStructuresforVolumetricMeasurements"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://dicom.nema.org/resources/ontology/DCM"/>
+            <concept>
+                <code value="110702"/>
+                <display value="White Matter T2 Hyperintensity"/>
+            </concept>
+            <concept>
+                <code value="110701"/>
+                <display value="White Matter T1 Hypointensity"/>
+            </concept>
+            <concept>
+                <code value="110700"/>
+                <display value="Ventral Diencephalon"/>
+            </concept>
+        </include>
+        <include>
+            <system value="http://snomed.info/srt"/>
+            <concept>
+                <code value="T-A1720"/>
+                <display value="Inferior Horn of Lateral Ventricle"/>
+            </concept>
+            <concept>
+                <code value="T-A1502"/>
+                <display value="Cranial Subarachnoid Space"/>
+            </concept>
+            <concept>
+                <code value="T-A0149"/>
+                <display value="Nucleus Accumbens"/>
+            </concept>
+            <concept>
+                <code value="T-D0558"/>
+                <display value="Brain Stem"/>
+            </concept>
+            <concept>
+                <code value="T-A1820"/>
+                <display value="Fourth Ventricle"/>
+            </concept>
+            <concept>
+                <code value="T-A1604"/>
+                <display value="Fifth Ventricle"/>
+            </concept>
+            <concept>
+                <code value="T-A6080"/>
+                <display value="Cerebellar White Matter"/>
+            </concept>
+            <concept>
+                <code value="T-A1509"/>
+                <display value="Cerebellar Subarachnoid Space"/>
+            </concept>
+            <concept>
+                <code value="T-D1400"/>
+                <display value="Cranial Cavity"/>
+            </concept>
+            <concept>
+                <code value="T-A0190"/>
+                <display value="Intracranial structure"/>
+            </concept>
+            <concept>
+                <code value="T-D0593"/>
+                <display value="Thalamus"/>
+            </concept>
+            <concept>
+                <code value="T-A6040"/>
+                <display value="Cerebellar Cortex"/>
+            </concept>
+            <concept>
+                <code value="T-A2030"/>
+                <display value="Cerebral White Matter"/>
+            </concept>
+            <concept>
+                <code value="T-A3230"/>
+                <display value="Amygdala"/>
+            </concept>
+            <concept>
+                <code value="T-A2020"/>
+                <display value="Cerebral Gray Matter"/>
+            </concept>
+            <concept>
+                <code value="T-A2570"/>
+                <display value="Hippocampus"/>
+            </concept>
+            <concept>
+                <code value="T-A1650"/>
+                <display value="Lateral Ventricle"/>
+            </concept>
+            <concept>
+                <code value="T-A3400"/>
+                <display value="Putamen"/>
+            </concept>
+            <concept>
+                <code value="T-A3500"/>
+                <display value="Globus Pallidus"/>
+            </concept>
+            <concept>
+                <code value="T-A3200"/>
+                <display value="Caudate Nucleus"/>
+            </concept>
+            <concept>
+                <code value="T-A1740"/>
+                <display value="Third ventricle"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

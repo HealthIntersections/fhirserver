@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-3238-StressScoringScales"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_3238.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.784"/>
+    </identifier>
+    <version value="20080927"/>
+    <name value="StressScoringScales"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 3238 StressScoringScales"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://dicom.nema.org/resources/ontology/DCM"/>
+            <concept>
+                <code value="122773"/>
+                <display value="ST/HR Index"/>
+            </concept>
+            <concept>
+                <code value="122771"/>
+                <display value="Ratio of achieved to predicted functional capacity"/>
+            </concept>
+            <concept>
+                <code value="122772"/>
+                <display value="Aerobic index"/>
+            </concept>
+            <concept>
+                <code value="122770"/>
+                <display value="Ratio of achieved to predicted maximal oxygen consumption"/>
+            </concept>
+        </include>
+        <include>
+            <system value="http://snomed.info/srt"/>
+            <concept>
+                <code value="G-E002"/>
+                <display value="Duke treadmill score"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

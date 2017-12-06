@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-7476-GrayLevelSizeZoneBasedFeatures"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_7476.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.1200.xml"/>
+    </identifier>
+    <version value="20171122"/>
+    <name value="GrayLevelSizeZoneBasedFeatures"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 7476 GrayLevelSizeZoneBasedFeatures"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://dicom.nema.org/resources/ontology/DCM"/>
+            <concept>
+                <code value="128824"/>
+                <display value="High Gray Level Zone Emphasis"/>
+            </concept>
+            <concept>
+                <code value="128835"/>
+                <display value="Zone Size Variance"/>
+            </concept>
+            <concept>
+                <code value="128823"/>
+                <display value="Low Gray Level Zone Emphasis"/>
+            </concept>
+            <concept>
+                <code value="128834"/>
+                <display value="Gray Level Variance in Zones"/>
+            </concept>
+            <concept>
+                <code value="128826"/>
+                <display value="Small Zone High Gray Level Emphasis"/>
+            </concept>
+            <concept>
+                <code value="128825"/>
+                <display value="Small Zone Low Gray Level Emphasis"/>
+            </concept>
+            <concept>
+                <code value="128836"/>
+                <display value="Zone Size Entropy"/>
+            </concept>
+            <concept>
+                <code value="128828"/>
+                <display value="Large Zone High Gray Level Emphasis"/>
+            </concept>
+            <concept>
+                <code value="128827"/>
+                <display value="Large Zone Low Gray Level Emphasis"/>
+            </concept>
+            <concept>
+                <code value="128829"/>
+                <display value="Gray Level Nonuniformity of Zone Counts"/>
+            </concept>
+            <concept>
+                <code value="128831"/>
+                <display value="Zone Size Nonuniformity"/>
+            </concept>
+            <concept>
+                <code value="128830"/>
+                <display value="Gray Level Nonuniformity of Zone Counts Normalized"/>
+            </concept>
+            <concept>
+                <code value="128822"/>
+                <display value="Large Zone Emphasis"/>
+            </concept>
+            <concept>
+                <code value="128833"/>
+                <display value="Zone Percentage"/>
+            </concept>
+            <concept>
+                <code value="128821"/>
+                <display value="Small Zone Emphasis"/>
+            </concept>
+            <concept>
+                <code value="128832"/>
+                <display value="Zone Size Nonuniformity Normalized"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

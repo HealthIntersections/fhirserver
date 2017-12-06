@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-8110-SpecimenSamplingProcedure"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_8110.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.1048"/>
+    </identifier>
+    <version value="20160314"/>
+    <name value="SpecimenSamplingProcedure"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 8110 SpecimenSamplingProcedure"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://dicom.nema.org/resources/ontology/DCM"/>
+            <concept>
+                <code value="111726"/>
+                <display value="Dissection with entire specimen submission"/>
+            </concept>
+            <concept>
+                <code value="111727"/>
+                <display value="Dissection with representative sections submission"/>
+            </concept>
+        </include>
+        <include>
+            <system value="http://snomed.info/srt"/>
+            <concept>
+                <code value="P1-0329D"/>
+                <display value="Smear procedure"/>
+            </concept>
+            <concept>
+                <code value="P3-40011"/>
+                <display value="Core sampling"/>
+            </concept>
+            <concept>
+                <code value="P3-4500A"/>
+                <display value="Touch preparation (procedure)"/>
+            </concept>
+            <concept>
+                <code value="P3-4000D"/>
+                <display value="Block sectioning"/>
+            </concept>
+            <concept>
+                <code value="P3-40004"/>
+                <display value="Laser microdissection"/>
+            </concept>
+            <concept>
+                <code value="P1-01003"/>
+                <display value="Dissection"/>
+            </concept>
+            <concept>
+                <code value="P3-4000E"/>
+                <display value="Block surface recut"/>
+            </concept>
+            <concept>
+                <code value="P3-4000F"/>
+                <display value="Block step sectioning"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-7475-GrayLevelRunLengthBasedFeatures"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_7475.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.1199.xml"/>
+    </identifier>
+    <version value="20171122"/>
+    <name value="GrayLevelRunLengthBasedFeatures"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 7475 GrayLevelRunLengthBasedFeatures"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://dicom.nema.org/resources/ontology/DCM"/>
+            <concept>
+                <code value="128809"/>
+                <display value="Gray Level Nonuniformity in Runs"/>
+            </concept>
+            <concept>
+                <code value="128802"/>
+                <display value="Long Runs Emphasis"/>
+            </concept>
+            <concept>
+                <code value="128813"/>
+                <display value="Run Percentage"/>
+            </concept>
+            <concept>
+                <code value="128801"/>
+                <display value="Short Runs Emphasis"/>
+            </concept>
+            <concept>
+                <code value="128812"/>
+                <display value="Run Length Nonuniformity Normalized"/>
+            </concept>
+            <concept>
+                <code value="128804"/>
+                <display value="High Gray Level Run Emphasis"/>
+            </concept>
+            <concept>
+                <code value="128815"/>
+                <display value="Run Length Variance"/>
+            </concept>
+            <concept>
+                <code value="128803"/>
+                <display value="Low Gray Level Run Emphasis"/>
+            </concept>
+            <concept>
+                <code value="128814"/>
+                <display value="Gray Level Variance in Runs"/>
+            </concept>
+            <concept>
+                <code value="128806"/>
+                <display value="Short Run High Gray Level Emphasis"/>
+            </concept>
+            <concept>
+                <code value="128805"/>
+                <display value="Short Run Low Gray Level Emphasis"/>
+            </concept>
+            <concept>
+                <code value="128816"/>
+                <display value="Run Entropy"/>
+            </concept>
+            <concept>
+                <code value="128808"/>
+                <display value="Long Run High Gray Level Emphasis"/>
+            </concept>
+            <concept>
+                <code value="128807"/>
+                <display value="Long Run Low Gray Level Emphasis"/>
+            </concept>
+            <concept>
+                <code value="128811"/>
+                <display value="Run Length Nonuniformity"/>
+            </concept>
+            <concept>
+                <code value="128810"/>
+                <display value="Gray Level Nonuniformity in Runs Normalized"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-12304-EchoMeasuredProperties"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_12304.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.1145"/>
+    </identifier>
+    <version value="20161109"/>
+    <name value="EchoMeasuredProperties"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 12304 EchoMeasuredProperties"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://dicom.nema.org/resources/ontology/DCM"/>
+            <concept>
+                <code value="125329"/>
+                <display value="Peak Blood Pressure"/>
+            </concept>
+            <concept>
+                <code value="125328"/>
+                <display value="Maximum Orifice Area"/>
+            </concept>
+            <concept>
+                <code value="125327"/>
+                <display value="Excursion Distance"/>
+            </concept>
+            <concept>
+                <code value="125326"/>
+                <display value="Effective Orifice Area"/>
+            </concept>
+            <concept>
+                <code value="125325"/>
+                <display value="Dyssynchrony Index"/>
+            </concept>
+            <concept>
+                <code value="125334"/>
+                <display value="Vena Contracta Width"/>
+            </concept>
+            <concept>
+                <code value="125333"/>
+                <display value="Regurgitation Jet Width"/>
+            </concept>
+            <concept>
+                <code value="125332"/>
+                <display value="Regurgitation Jet Area"/>
+            </concept>
+            <concept>
+                <code value="125331"/>
+                <display value="PISA Radius"/>
+            </concept>
+            <concept>
+                <code value="125330"/>
+                <display value="Peak Tissue Velocity"/>
+            </concept>
+        </include>
+        <include>
+            <system value="http://loinc.org"/>
+            <concept>
+                <code value="20256-4"/>
+                <display value="Mean Gradient [Pressure] by Doppler"/>
+            </concept>
+            <concept>
+                <code value="20354-7"/>
+                <display value="Velocity Time Integral"/>
+            </concept>
+            <concept>
+                <code value="11726-7"/>
+                <display value="Peak Blood Velocity"/>
+            </concept>
+            <concept>
+                <code value="33878-0"/>
+                <display value="Volume Flow Rate"/>
+            </concept>
+            <concept>
+                <code value="59120-6"/>
+                <display value="dP/dt by US"/>
+            </concept>
+            <concept>
+                <code value="59089-3"/>
+                <display value="Thickness"/>
+            </concept>
+            <concept>
+                <code value="59090-1"/>
+                <display value="Internal Dimension"/>
+            </concept>
+            <concept>
+                <code value="20247-3"/>
+                <display value="Peak Gradient [Pressure]"/>
+            </concept>
+            <concept>
+                <code value="59132-1"/>
+                <display value="Fractional Shortening"/>
+            </concept>
+            <concept>
+                <code value="59130-5"/>
+                <display value="Alias Velocity"/>
+            </concept>
+            <concept>
+                <code value="20280-4"/>
+                <display value="Pressure Half Time"/>
+            </concept>
+            <concept>
+                <code value="34141-2"/>
+                <display value="Peak Instantaneous Flow Rate"/>
+            </concept>
+            <concept>
+                <code value="20217-6"/>
+                <display value="Deceleration Time"/>
+            </concept>
+            <concept>
+                <code value="20168-1"/>
+                <display value="Acceleration Time"/>
+            </concept>
+            <concept>
+                <code value="59093-5"/>
+                <display value="Epicardial Area"/>
+            </concept>
+            <concept>
+                <code value="59099-2"/>
+                <display value="Myocardial Performance Index (Tei)"/>
+            </concept>
+            <concept>
+                <code value="20352-1"/>
+                <display value="Mean Blood Velocity"/>
+            </concept>
+        </include>
+        <include>
+            <system value="http://snomed.info/srt"/>
+            <concept>
+                <code value="F-31000"/>
+                <display value="Blood Pressure"/>
+            </concept>
+            <concept>
+                <code value="G-A194"/>
+                <display value="Minor Axis"/>
+            </concept>
+            <concept>
+                <code value="G-D701"/>
+                <display value="Mass"/>
+            </concept>
+            <concept>
+                <code value="G-D7FE"/>
+                <display value="Length"/>
+            </concept>
+            <concept>
+                <code value="G-0390"/>
+                <display value="Regurgitant Fraction"/>
+            </concept>
+            <concept>
+                <code value="G-D705"/>
+                <display value="Volume"/>
+            </concept>
+            <concept>
+                <code value="F-31150"/>
+                <display value="Mean Blood Pressure"/>
+            </concept>
+            <concept>
+                <code value="F-32120"/>
+                <display value="Stroke Volume"/>
+            </concept>
+            <concept>
+                <code value="F-02692"/>
+                <display value="Vascular Resistance"/>
+            </concept>
+            <concept>
+                <code value="G-A160"/>
+                <display value="Angle"/>
+            </concept>
+            <concept>
+                <code value="M-02550"/>
+                <display value="Diameter"/>
+            </concept>
+            <concept>
+                <code value="G-A166"/>
+                <display value="Area"/>
+            </concept>
+            <concept>
+                <code value="G-D217"/>
+                <display value="Interval"/>
+            </concept>
+            <concept>
+                <code value="F-32070"/>
+                <display value="Cardiac Ejection Fraction"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

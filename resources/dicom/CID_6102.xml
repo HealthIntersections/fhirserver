@@ -1,0 +1,956 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-6102-ChestFindingorFeatureModifier"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_6102.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.422"/>
+    </identifier>
+    <version value="20030108"/>
+    <name value="ChestFindingorFeatureModifier"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 6102 ChestFindingorFeatureModifier"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="doi:10.1016/S0735-1097(99)00126-6"/>
+            <concept>
+                <code value="20A"/>
+                <display value="1st Marginal Coronary Artery Laterals"/>
+            </concept>
+            <concept>
+                <code value="21A"/>
+                <display value="2nd Marginal Coronary Artery Laterals"/>
+            </concept>
+            <concept>
+                <code value="22A"/>
+                <display value="3rd Marginal Coronary Artery Laterals"/>
+            </concept>
+            <concept>
+                <code value="9"/>
+                <display value="Posterior descending septal perforators"/>
+            </concept>
+            <concept>
+                <code value="15A"/>
+                <display value="1st Diagonal Coronary Artery Laterals"/>
+            </concept>
+            <concept>
+                <code value="16A"/>
+                <display value="2nd Diagonal Coronary Artery Laterals"/>
+            </concept>
+            <concept>
+                <code value="28A"/>
+                <display value="Ramus Laterals"/>
+            </concept>
+            <concept>
+                <code value="29A"/>
+                <display value="3rd Diagonal Coronary Artery Laterals"/>
+            </concept>
+        </include>
+        <include>
+            <system value="http://dicom.nema.org/resources/ontology/DCM"/>
+            <concept>
+                <code value="112110"/>
+                <display value="Kerley B line"/>
+            </concept>
+            <concept>
+                <code value="112111"/>
+                <display value="Kerley C lines"/>
+            </concept>
+            <concept>
+                <code value="112112"/>
+                <display value="Parenchymal band"/>
+            </concept>
+            <concept>
+                <code value="112113"/>
+                <display value="Reticular pattern"/>
+            </concept>
+            <concept>
+                <code value="112114"/>
+                <display value="Septal line(s)"/>
+            </concept>
+            <concept>
+                <code value="112115"/>
+                <display value="Subpleural line"/>
+            </concept>
+            <concept>
+                <code value="112116"/>
+                <display value="Tramline shadow"/>
+            </concept>
+            <concept>
+                <code value="112117"/>
+                <display value="Tubular shadow"/>
+            </concept>
+            <concept>
+                <code value="112118"/>
+                <display value="Density"/>
+            </concept>
+            <concept>
+                <code value="112119"/>
+                <display value="Dependent opacity"/>
+            </concept>
+            <concept>
+                <code value="112102"/>
+                <display value="Aortic knob"/>
+            </concept>
+            <concept>
+                <code value="112103"/>
+                <display value="Arch of the Azygos vein"/>
+            </concept>
+            <concept>
+                <code value="112104"/>
+                <display value="Air-fluid level"/>
+            </concept>
+            <concept>
+                <code value="112105"/>
+                <display value="Corona radiata"/>
+            </concept>
+            <concept>
+                <code value="112106"/>
+                <display value="Honeycomb pattern"/>
+            </concept>
+            <concept>
+                <code value="112107"/>
+                <display value="Fleischner's line(s)"/>
+            </concept>
+            <concept>
+                <code value="112108"/>
+                <display value="Intralobular lines"/>
+            </concept>
+            <concept>
+                <code value="112109"/>
+                <display value="Kerley A line"/>
+            </concept>
+            <concept>
+                <code value="112130"/>
+                <display value="Mosaic pattern"/>
+            </concept>
+            <concept>
+                <code value="112120"/>
+                <display value="Ground glass opacity"/>
+            </concept>
+            <concept>
+                <code value="112121"/>
+                <display value="Infiltrate"/>
+            </concept>
+            <concept>
+                <code value="112122"/>
+                <display value="Micronodule"/>
+            </concept>
+            <concept>
+                <code value="112001"/>
+                <display value="Opacity"/>
+            </concept>
+            <concept>
+                <code value="112123"/>
+                <display value="Phantom tumor (pseudotumor)"/>
+            </concept>
+            <concept>
+                <code value="112124"/>
+                <display value="Shadow"/>
+            </concept>
+            <concept>
+                <code value="112004"/>
+                <display value="Abnormal interstitial pattern"/>
+            </concept>
+            <concept>
+                <code value="112125"/>
+                <display value="Small irregular opacities"/>
+            </concept>
+            <concept>
+                <code value="112126"/>
+                <display value="Small rounded opacities"/>
+            </concept>
+            <concept>
+                <code value="112127"/>
+                <display value="Tree-in-bud sign"/>
+            </concept>
+            <concept>
+                <code value="112128"/>
+                <display value="Granular pattern"/>
+            </concept>
+            <concept>
+                <code value="112129"/>
+                <display value="Miliary pattern"/>
+            </concept>
+            <concept>
+                <code value="112073"/>
+                <display value="Halo sign"/>
+            </concept>
+            <concept>
+                <code value="112070"/>
+                <display value="Air bronchiologram"/>
+            </concept>
+            <concept>
+                <code value="112071"/>
+                <display value="Air bronchogram"/>
+            </concept>
+            <concept>
+                <code value="112072"/>
+                <display value="Air crescent"/>
+            </concept>
+            <concept>
+                <code value="112065"/>
+                <display value="Reticulonodular pattern"/>
+            </concept>
+            <concept>
+                <code value="112066"/>
+                <display value="Beaded septum sign"/>
+            </concept>
+            <concept>
+                <code value="112067"/>
+                <display value="Nodular pattern"/>
+            </concept>
+            <concept>
+                <code value="112068"/>
+                <display value="Pseudoplaque"/>
+            </concept>
+            <concept>
+                <code value="112069"/>
+                <display value="Signet-ring sign"/>
+            </concept>
+            <concept>
+                <code value="112172"/>
+                <display value="Portacath"/>
+            </concept>
+            <concept>
+                <code value="112173"/>
+                <display value="Chest tube"/>
+            </concept>
+            <concept>
+                <code value="112174"/>
+                <display value="Central line"/>
+            </concept>
+            <concept>
+                <code value="112175"/>
+                <display value="Kidney stent"/>
+            </concept>
+            <concept>
+                <code value="112054"/>
+                <display value="Secondary pulmonary lobule"/>
+            </concept>
+            <concept>
+                <code value="112176"/>
+                <display value="Pancreatic stent"/>
+            </concept>
+            <concept>
+                <code value="112177"/>
+                <display value="Nipple ring"/>
+            </concept>
+            <concept>
+                <code value="112178"/>
+                <display value="Coin"/>
+            </concept>
+            <concept>
+                <code value="112171"/>
+                <display value="Fiducial mark"/>
+            </concept>
+            <concept>
+                <code value="112059"/>
+                <display value="Primary complex"/>
+            </concept>
+            <concept>
+                <code value="112095"/>
+                <display value="Hiatus"/>
+            </concept>
+            <concept>
+                <code value="112090"/>
+                <display value="Azygoesophageal recess interface"/>
+            </concept>
+            <concept>
+                <code value="112091"/>
+                <display value="Paraspinal line"/>
+            </concept>
+            <concept>
+                <code value="112092"/>
+                <display value="Posterior tracheal stripe"/>
+            </concept>
+            <concept>
+                <code value="112093"/>
+                <display value="Right tracheal stripe"/>
+            </concept>
+            <concept>
+                <code value="112094"/>
+                <display value="Stripe"/>
+            </concept>
+            <concept>
+                <code value="112084"/>
+                <display value="Lucency"/>
+            </concept>
+            <concept>
+                <code value="112085"/>
+                <display value="Midlung window"/>
+            </concept>
+            <concept>
+                <code value="112086"/>
+                <display value="Carina angle"/>
+            </concept>
+            <concept>
+                <code value="112087"/>
+                <display value="Centrilobular structures"/>
+            </concept>
+            <concept>
+                <code value="112088"/>
+                <display value="Anterior junction line"/>
+            </concept>
+            <concept>
+                <code value="112089"/>
+                <display value="Posterior junction line"/>
+            </concept>
+            <concept>
+                <code value="112082"/>
+                <display value="Interface"/>
+            </concept>
+            <concept>
+                <code value="112083"/>
+                <display value="Line"/>
+            </concept>
+        </include>
+        <include>
+            <system value="http://snomed.info/srt"/>
+            <concept>
+                <code value="A-26434"/>
+                <display value="Jejunostomy tube"/>
+            </concept>
+            <concept>
+                <code value="P1-26100"/>
+                <display value="Tracheotomy"/>
+            </concept>
+            <concept>
+                <code value="T-46100"/>
+                <display value="Subclavian artery"/>
+            </concept>
+            <concept>
+                <code value="T-11240"/>
+                <display value="Costal Cartilage"/>
+            </concept>
+            <concept>
+                <code value="T-13660"/>
+                <display value="Deltoid muscle"/>
+            </concept>
+            <concept>
+                <code value="A-26430"/>
+                <display value="Feeding tube"/>
+            </concept>
+            <concept>
+                <code value="T-35200"/>
+                <display value="Pulmonary valve"/>
+            </concept>
+            <concept>
+                <code value="T-461A0"/>
+                <display value="Dorsal scapular artery"/>
+            </concept>
+            <concept>
+                <code value="T-42300"/>
+                <display value="Aortic arch"/>
+            </concept>
+            <concept>
+                <code value="T-46350"/>
+                <display value="Superior phrenic artery"/>
+            </concept>
+            <concept>
+                <code value="F-20240"/>
+                <display value="Air-trapping"/>
+            </concept>
+            <concept>
+                <code value="T-13650"/>
+                <display value="Subscapularis muscle"/>
+            </concept>
+            <concept>
+                <code value="A-25350"/>
+                <display value="Endotracheal tube"/>
+            </concept>
+            <concept>
+                <code value="T-42310"/>
+                <display value="Aortic isthmus"/>
+            </concept>
+            <concept>
+                <code value="T-45700"/>
+                <display value="Vertebral artery"/>
+            </concept>
+            <concept>
+                <code value="T-46200"/>
+                <display value="Internal thoracic artery"/>
+            </concept>
+            <concept>
+                <code value="T-48620"/>
+                <display value="Brachiocephalic vein"/>
+            </concept>
+            <concept>
+                <code value="T-D0765"/>
+                <display value="Descending aorta"/>
+            </concept>
+            <concept>
+                <code value="T-56000"/>
+                <display value="Esophagus"/>
+            </concept>
+            <concept>
+                <code value="T-35100"/>
+                <display value="Tricuspid Valve"/>
+            </concept>
+            <concept>
+                <code value="D3-40230"/>
+                <display value="Pulmonary embolism"/>
+            </concept>
+            <concept>
+                <code value="T-46210"/>
+                <display value="Pericardiophrenic Artery"/>
+            </concept>
+            <concept>
+                <code value="T-D0634"/>
+                <display value="Fascial layer"/>
+            </concept>
+            <concept>
+                <code value="T-13310"/>
+                <display value="Sternocleidomastoid muscle"/>
+            </concept>
+            <concept>
+                <code value="T-D051D"/>
+                <display value="Fissure of lung"/>
+            </concept>
+            <concept>
+                <code value="T-26500"/>
+                <display value="Left main bronchus"/>
+            </concept>
+            <concept>
+                <code value="T-280D0"/>
+                <display value="Segment of lung"/>
+            </concept>
+            <concept>
+                <code value="T-46940"/>
+                <display value="Inferior phrenic artery"/>
+            </concept>
+            <concept>
+                <code value="T-42100"/>
+                <display value="Ascending aorta"/>
+            </concept>
+            <concept>
+                <code value="T-B6000"/>
+                <display value="Thyroid"/>
+            </concept>
+            <concept>
+                <code value="T-32410"/>
+                <display value="Interventricular septum"/>
+            </concept>
+            <concept>
+                <code value="A-61000"/>
+                <display value="Jewelry"/>
+            </concept>
+            <concept>
+                <code value="D2-60302"/>
+                <display value="Plate-like atelectasis"/>
+            </concept>
+            <concept>
+                <code value="A-13600"/>
+                <display value="Staple"/>
+            </concept>
+            <concept>
+                <code value="T-25201"/>
+                <display value="Carina"/>
+            </concept>
+            <concept>
+                <code value="T-43200"/>
+                <display value="Right Coronary Artery"/>
+            </concept>
+            <concept>
+                <code value="T-48330"/>
+                <display value="Subclavian vein"/>
+            </concept>
+            <concept>
+                <code value="A-26800"/>
+                <display value="Catheter"/>
+            </concept>
+            <concept>
+                <code value="T-13450"/>
+                <display value="Scalenous anterior muscle"/>
+            </concept>
+            <concept>
+                <code value="A-040CB"/>
+                <display value="Cardiac pacemaker lead"/>
+            </concept>
+            <concept>
+                <code value="T-32400"/>
+                <display value="Ventricle"/>
+            </concept>
+            <concept>
+                <code value="T-D6515"/>
+                <display value="Mid Right Coronary Artery"/>
+            </concept>
+            <concept>
+                <code value="T-43202"/>
+                <display value="Distal Right Coronary Artery"/>
+            </concept>
+            <concept>
+                <code value="T-43201"/>
+                <display value="Proximal Right Coronary Artery"/>
+            </concept>
+            <concept>
+                <code value="A-32110"/>
+                <display value="Bullet"/>
+            </concept>
+            <concept>
+                <code value="A-11C08"/>
+                <display value="Ureteric stent"/>
+            </concept>
+            <concept>
+                <code value="T-43205"/>
+                <display value="Right Coronary Artery Ostium"/>
+            </concept>
+            <concept>
+                <code value="T-15420"/>
+                <display value="Acromioclavicular Joint"/>
+            </concept>
+            <concept>
+                <code value="A-13500"/>
+                <display value="Suture"/>
+            </concept>
+            <concept>
+                <code value="T-35020"/>
+                <display value="Chordae tendineae cordis"/>
+            </concept>
+            <concept>
+                <code value="T-C6510"/>
+                <display value="Thoracic Duct"/>
+            </concept>
+            <concept>
+                <code value="T-46130"/>
+                <display value="Thyrocervical trunk"/>
+            </concept>
+            <concept>
+                <code value="T-46010"/>
+                <display value="Brachiocephalic trunk"/>
+            </concept>
+            <concept>
+                <code value="T-47100"/>
+                <display value="Axillary Artery"/>
+            </concept>
+            <concept>
+                <code value="T-32423"/>
+                <display value="Trabeculae carnae"/>
+            </concept>
+            <concept>
+                <code value="T-C8000"/>
+                <display value="Thymus Gland"/>
+            </concept>
+            <concept>
+                <code value="T-43112"/>
+                <display value="Distal Left Anterior Descending Coronary Artery"/>
+            </concept>
+            <concept>
+                <code value="T-D305A"/>
+                <display value="Intercostal artery"/>
+            </concept>
+            <concept>
+                <code value="T-43111"/>
+                <display value="Proximal Left Anterior Descending Coronary Artery"/>
+            </concept>
+            <concept>
+                <code value="M-03010"/>
+                <display value="Nodule"/>
+            </concept>
+            <concept>
+                <code value="T-43110"/>
+                <display value="Left Anterior Descending Coronary Artery"/>
+            </concept>
+            <concept>
+                <code value="T-43230"/>
+                <display value="Marginal Coronary Artery"/>
+            </concept>
+            <concept>
+                <code value="A-04000"/>
+                <display value="Prosthesis"/>
+            </concept>
+            <concept>
+                <code value="T-14110"/>
+                <display value="Pectoralis major muscle"/>
+            </concept>
+            <concept>
+                <code value="T-28080"/>
+                <display value="Hilum of lung"/>
+            </concept>
+            <concept>
+                <code value="T-D04FF"/>
+                <display value="Spine"/>
+            </concept>
+            <concept>
+                <code value="T-46180"/>
+                <display value="Costocervical trunk"/>
+            </concept>
+            <concept>
+                <code value="A-11100"/>
+                <display value="Cardiac Pacemaker"/>
+            </concept>
+            <concept>
+                <code value="A-14611"/>
+                <display value="Vena cava filter"/>
+            </concept>
+            <concept>
+                <code value="T-25000"/>
+                <display value="Trachea"/>
+            </concept>
+            <concept>
+                <code value="T-43115"/>
+                <display value="Mid Left Anterior Descending Coronary Artery"/>
+            </concept>
+            <concept>
+                <code value="T-43119"/>
+                <display value="3rd diagonal Coronary Artery"/>
+            </concept>
+            <concept>
+                <code value="T-43118"/>
+                <display value="2nd Diagonal Coronary Artery"/>
+            </concept>
+            <concept>
+                <code value="T-43117"/>
+                <display value="1st Diagonal Coronary Artery"/>
+            </concept>
+            <concept>
+                <code value="T-41065"/>
+                <display value="Coronary Artery Graft"/>
+            </concept>
+            <concept>
+                <code value="T-43002"/>
+                <display value="1st Septal Coronary Artery"/>
+            </concept>
+            <concept>
+                <code value="T-12280"/>
+                <display value="Scapula"/>
+            </concept>
+            <concept>
+                <code value="T-43122"/>
+                <display value="Distal Circumflex Coronary Artery"/>
+            </concept>
+            <concept>
+                <code value="T-43121"/>
+                <display value="Proximal Circumflex Coronary Artery"/>
+            </concept>
+            <concept>
+                <code value="T-43120"/>
+                <display value="Circumflex Coronary Artery"/>
+            </concept>
+            <concept>
+                <code value="A-04110"/>
+                <display value="Heart valve prosthesis"/>
+            </concept>
+            <concept>
+                <code value="T-47160"/>
+                <display value="Brachial artery"/>
+            </concept>
+            <concept>
+                <code value="T-11510"/>
+                <display value="Vertebra"/>
+            </concept>
+            <concept>
+                <code value="T-4312C"/>
+                <display value="2nd Left Posterolateral Coronary Artery"/>
+            </concept>
+            <concept>
+                <code value="T-4312B"/>
+                <display value="1st Left Posterolateral Coronary Artery"/>
+            </concept>
+            <concept>
+                <code value="T-4312A"/>
+                <display value="3rd Marginal Coronary Artery"/>
+            </concept>
+            <concept>
+                <code value="T-43127"/>
+                <display value="Mid Circumflex Coronary Artery"/>
+            </concept>
+            <concept>
+                <code value="T-43126"/>
+                <display value="Left Posterior Descending Artery"/>
+            </concept>
+            <concept>
+                <code value="T-43125"/>
+                <display value="Left Posterolateral Circumflex Coronary Artery"/>
+            </concept>
+            <concept>
+                <code value="T-43124"/>
+                <display value="AV groove continuation of Circumflex Artery"/>
+            </concept>
+            <concept>
+                <code value="T-43003"/>
+                <display value="Intermediate Artery (Ramus)"/>
+            </concept>
+            <concept>
+                <code value="T-43129"/>
+                <display value="2nd Marginal Coronary Artery"/>
+            </concept>
+            <concept>
+                <code value="T-43128"/>
+                <display value="1st Marginal Coronary Artery"/>
+            </concept>
+            <concept>
+                <code value="T-C4000"/>
+                <display value="Lymph node"/>
+            </concept>
+            <concept>
+                <code value="T-43210"/>
+                <display value="Posterior Descending Right Coronary Artery"/>
+            </concept>
+            <concept>
+                <code value="T-48340"/>
+                <display value="Azygos vein"/>
+            </concept>
+            <concept>
+                <code value="T-48581"/>
+                <display value="Pulmonary vein"/>
+            </concept>
+            <concept>
+                <code value="T-A9090"/>
+                <display value="Brachial plexus"/>
+            </concept>
+            <concept>
+                <code value="D4-31220"/>
+                <display value="Atrial Septal Defect"/>
+            </concept>
+            <concept>
+                <code value="T-11300"/>
+                <display value="Rib"/>
+            </concept>
+            <concept>
+                <code value="A-12210"/>
+                <display value="Cervical collar"/>
+            </concept>
+            <concept>
+                <code value="T-28770"/>
+                <display value="Lobe of lung"/>
+            </concept>
+            <concept>
+                <code value="T-43215"/>
+                <display value="3rd Right posterolateral Coronary Artery"/>
+            </concept>
+            <concept>
+                <code value="T-43214"/>
+                <display value="2nd Right posterolateral Coronary Artery"/>
+            </concept>
+            <concept>
+                <code value="T-43213"/>
+                <display value="1st Right posterolateral Coronary Artery"/>
+            </concept>
+            <concept>
+                <code value="T-43212"/>
+                <display value="Right posterior AV Coronary Artery"/>
+            </concept>
+            <concept>
+                <code value="T-42370"/>
+                <display value="Ligamentum arteriosum"/>
+            </concept>
+            <concept>
+                <code value="T-20001"/>
+                <display value="Airway structure"/>
+            </concept>
+            <concept>
+                <code value="M-03000"/>
+                <display value="Mass"/>
+            </concept>
+            <concept>
+                <code value="T-14120"/>
+                <display value="Pectoralis minor muscle"/>
+            </concept>
+            <concept>
+                <code value="T-32100"/>
+                <display value="Atrium"/>
+            </concept>
+            <concept>
+                <code value="T-43105"/>
+                <display value="Left Main Coronary Artery Ostium"/>
+            </concept>
+            <concept>
+                <code value="T-26100"/>
+                <display value="Right main bronchus"/>
+            </concept>
+            <concept>
+                <code value="T-43107"/>
+                <display value="Left Main Coronary Artery"/>
+            </concept>
+            <concept>
+                <code value="T-14150"/>
+                <display value="Levatores costarum muscles"/>
+            </concept>
+            <concept>
+                <code value="T-44000"/>
+                <display value="Pulmonary artery"/>
+            </concept>
+            <concept>
+                <code value="T-14030"/>
+                <display value="Iliocostalis muscle"/>
+            </concept>
+            <concept>
+                <code value="T-D3412"/>
+                <display value="Esophageal Hiatus"/>
+            </concept>
+            <concept>
+                <code value="T-12410"/>
+                <display value="Humerus"/>
+            </concept>
+            <concept>
+                <code value="D2-80300"/>
+                <display value="Pneumothorax"/>
+            </concept>
+            <concept>
+                <code value="T-13620"/>
+                <display value="Infraspinatus muscle"/>
+            </concept>
+            <concept>
+                <code value="T-35400"/>
+                <display value="Aortic Valve"/>
+            </concept>
+            <concept>
+                <code value="M-78060"/>
+                <display value="Scar tissue"/>
+            </concept>
+            <concept>
+                <code value="T-46310"/>
+                <display value="Bronchial artery"/>
+            </concept>
+            <concept>
+                <code value="T-45100"/>
+                <display value="Common carotid artery"/>
+            </concept>
+            <concept>
+                <code value="T-48610"/>
+                <display value="Superior vena cava"/>
+            </concept>
+            <concept>
+                <code value="T-14020"/>
+                <display value="Erector spinae muscle"/>
+            </concept>
+            <concept>
+                <code value="T-14140"/>
+                <display value="Serratus anterior muscle"/>
+            </concept>
+            <concept>
+                <code value="T-4630D"/>
+                <display value="Esophageal artery"/>
+            </concept>
+            <concept>
+                <code value="T-D3400"/>
+                <display value="Diaphragm"/>
+            </concept>
+            <concept>
+                <code value="T-13610"/>
+                <display value="Supraspinatus muscle"/>
+            </concept>
+            <concept>
+                <code value="T-48170"/>
+                <display value="Internal jugular vein"/>
+            </concept>
+            <concept>
+                <code value="T-32000"/>
+                <display value="Heart"/>
+            </concept>
+            <concept>
+                <code value="D2-81180"/>
+                <display value="Pneumomediastinum"/>
+            </concept>
+            <concept>
+                <code value="T-26000"/>
+                <display value="Bronchus"/>
+            </concept>
+            <concept>
+                <code value="T-14172"/>
+                <display value="Latissimus dorsi muscle"/>
+            </concept>
+            <concept>
+                <code value="T-14171"/>
+                <display value="Trapezius muscle"/>
+            </concept>
+            <concept>
+                <code value="T-14050"/>
+                <display value="Spinalis muscle"/>
+            </concept>
+            <concept>
+                <code value="T-44100"/>
+                <display value="Pulmonary trunk"/>
+            </concept>
+            <concept>
+                <code value="T-49110"/>
+                <display value="Axillary vein"/>
+            </concept>
+            <concept>
+                <code value="F-20172"/>
+                <display value="Coin lesion"/>
+            </concept>
+            <concept>
+                <code value="T-18774"/>
+                <display value="Axillary Fascia"/>
+            </concept>
+            <concept>
+                <code value="T-4312E"/>
+                <display value="Left Posterior Descending Circumflex Coronary Artery"/>
+            </concept>
+            <concept>
+                <code value="T-B4000"/>
+                <display value="Carotid Body"/>
+            </concept>
+            <concept>
+                <code value="T-4312D"/>
+                <display value="3rd Left Posterolateral Coronary Artery"/>
+            </concept>
+            <concept>
+                <code value="T-12310"/>
+                <display value="Clavicle"/>
+            </concept>
+            <concept>
+                <code value="T-13640"/>
+                <display value="Teres major muscle"/>
+            </concept>
+            <concept>
+                <code value="T-35300"/>
+                <display value="Mitral Valve"/>
+            </concept>
+            <concept>
+                <code value="T-32150"/>
+                <display value="Interatrial septum"/>
+            </concept>
+            <concept>
+                <code value="A-30360"/>
+                <display value="Needle"/>
+            </concept>
+            <concept>
+                <code value="T-48710"/>
+                <display value="Inferior vena cava"/>
+            </concept>
+            <concept>
+                <code value="T-14161"/>
+                <display value="External intercostal muscle"/>
+            </concept>
+            <concept>
+                <code value="T-14040"/>
+                <display value="Longissimus muscle"/>
+            </concept>
+            <concept>
+                <code value="T-14163"/>
+                <display value="Internal intercostal muscle"/>
+            </concept>
+            <concept>
+                <code value="T-14165"/>
+                <display value="Innermost intercostal muscles"/>
+            </concept>
+            <concept>
+                <code value="T-14167"/>
+                <display value="Transversus thoracis"/>
+            </concept>
+            <concept>
+                <code value="T-14166"/>
+                <display value="Subcostal muscle"/>
+            </concept>
+            <concept>
+                <code value="T-13630"/>
+                <display value="Teres minor muscle"/>
+            </concept>
+            <concept>
+                <code value="T-11210"/>
+                <display value="Sternum"/>
+            </concept>
+            <concept>
+                <code value="A-12024"/>
+                <display value="Pin"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

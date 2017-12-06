@@ -1,0 +1,293 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-6033-MalignantPathologyCodesfromBIRADS"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_6033.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.363"/>
+    </identifier>
+    <version value="20020904"/>
+    <name value="MalignantPathologyCodesfromBIRADS®"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 6033 MalignantPathologyCodesfromBIRADS®"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://dicom.nema.org/resources/ontology/DCM"/>
+            <concept>
+                <code value="111340"/>
+                <display value="Squamous cell carcinoma of the nipple"/>
+            </concept>
+            <concept>
+                <code value="111341"/>
+                <display value="Intraductal carcinoma, high grade"/>
+            </concept>
+            <concept>
+                <code value="111309"/>
+                <display value="Cartilaginous and osseous change"/>
+            </concept>
+            <concept>
+                <code value="111300"/>
+                <display value="Axillary node with lymphoma"/>
+            </concept>
+            <concept>
+                <code value="111301"/>
+                <display value="Axillary nodal metastases"/>
+            </concept>
+            <concept>
+                <code value="111303"/>
+                <display value="Blood vessel (vascular) invasion"/>
+            </concept>
+            <concept>
+                <code value="111304"/>
+                <display value="Carcinoma in children"/>
+            </concept>
+            <concept>
+                <code value="111305"/>
+                <display value="Carcinoma in ectopic breast"/>
+            </concept>
+            <concept>
+                <code value="111306"/>
+                <display value="Carcinoma with endocrine differentiation"/>
+            </concept>
+            <concept>
+                <code value="111307"/>
+                <display value="Basal cell carcinoma of nipple"/>
+            </concept>
+            <concept>
+                <code value="111330"/>
+                <display value="Metastatic disease to axillary node"/>
+            </concept>
+            <concept>
+                <code value="111332"/>
+                <display value="Multifocal invasive ductal carcinoma"/>
+            </concept>
+            <concept>
+                <code value="111333"/>
+                <display value="Metastasis to an intramammary lymph node"/>
+            </concept>
+            <concept>
+                <code value="111334"/>
+                <display value="Malignant melanoma of nipple"/>
+            </concept>
+            <concept>
+                <code value="111338"/>
+                <display value="Recurrent malignancy"/>
+            </concept>
+            <concept>
+                <code value="111320"/>
+                <display value="Lympathic vessel invasion"/>
+            </concept>
+            <concept>
+                <code value="111322"/>
+                <display value="Occult carcinoma presenting with axillary lymph node metastases"/>
+            </concept>
+            <concept>
+                <code value="111323"/>
+                <display value="Metastatic cancer to the breast"/>
+            </concept>
+            <concept>
+                <code value="111324"/>
+                <display value="Metastatic cancer to the breast from the colon"/>
+            </concept>
+            <concept>
+                <code value="111325"/>
+                <display value="Metastatic cancer to the breast from the lung"/>
+            </concept>
+            <concept>
+                <code value="111326"/>
+                <display value="Metastatic melanoma to the breast"/>
+            </concept>
+            <concept>
+                <code value="111327"/>
+                <display value="Metastatic cancer to the breast from the ovary"/>
+            </concept>
+            <concept>
+                <code value="111328"/>
+                <display value="Metastatic sarcoma to the breast"/>
+            </concept>
+            <concept>
+                <code value="111329"/>
+                <display value="Multifocal intraductal carcinoma"/>
+            </concept>
+            <concept>
+                <code value="111310"/>
+                <display value="Carcinoma in pregnancy and lactation"/>
+            </concept>
+            <concept>
+                <code value="111312"/>
+                <display value="Intraductal comedocarcinoma with necrosis"/>
+            </concept>
+            <concept>
+                <code value="111313"/>
+                <display value="Intraductal carcinoma, low grade"/>
+            </concept>
+            <concept>
+                <code value="111315"/>
+                <display value="Intracystic papillary carcinoma"/>
+            </concept>
+            <concept>
+                <code value="111316"/>
+                <display value="Invasive and in-situ carcinoma"/>
+            </concept>
+            <concept>
+                <code value="111318"/>
+                <display value="Leukemic infiltration"/>
+            </concept>
+        </include>
+        <include>
+            <system value="http://snomed.info/srt"/>
+            <concept>
+                <code value="D7-F0902"/>
+                <display value="Carcinoma in situ of male breast"/>
+            </concept>
+            <concept>
+                <code value="M-85023"/>
+                <display value="Secretory (juvenile) carcinoma of the breast"/>
+            </concept>
+            <concept>
+                <code value="M-84013"/>
+                <display value="Apocrine adenocarcinoma"/>
+            </concept>
+            <concept>
+                <code value="M-95913"/>
+                <display value="Non-Hodgkin's lymphoma"/>
+            </concept>
+            <concept>
+                <code value="M-92203"/>
+                <display value="Chondrosarcoma"/>
+            </concept>
+            <concept>
+                <code value="M-85103"/>
+                <display value="Medullary carcinoma"/>
+            </concept>
+            <concept>
+                <code value="M-85303"/>
+                <display value="Inflammatory carcinoma"/>
+            </concept>
+            <concept>
+                <code value="M-82113"/>
+                <display value="Tubular adenocarcinoma"/>
+            </concept>
+            <concept>
+                <code value="M-84803"/>
+                <display value="Mucinous adenocarcinoma (Colloid carcinoma)"/>
+            </concept>
+            <concept>
+                <code value="M-85012"/>
+                <display value="Comedocarcinoma (intraductal)"/>
+            </concept>
+            <concept>
+                <code value="M-83153"/>
+                <display value="Glycogen-rich carcinoma"/>
+            </concept>
+            <concept>
+                <code value="M-85733"/>
+                <display value="Carcinoma with metaplasia"/>
+            </concept>
+            <concept>
+                <code value="M-91203"/>
+                <display value="Angiosarcoma"/>
+            </concept>
+            <concept>
+                <code value="M-91803"/>
+                <display value="Osteogenic sarcoma"/>
+            </concept>
+            <concept>
+                <code value="M-97313"/>
+                <display value="Plasmacytoma"/>
+            </concept>
+            <concept>
+                <code value="M-85003"/>
+                <display value="Infiltrating duct carcinoma"/>
+            </concept>
+            <concept>
+                <code value="M-83143"/>
+                <display value="Lipid-rich (lipid-secreting) carcinoma"/>
+            </concept>
+            <concept>
+                <code value="M-89803"/>
+                <display value="Carcinosarcoma"/>
+            </concept>
+            <concept>
+                <code value="M-85203"/>
+                <display value="Invasive lobular carcinoma"/>
+            </concept>
+            <concept>
+                <code value="M-85403"/>
+                <display value="Paget's disease, mammary (of the nipple)"/>
+            </concept>
+            <concept>
+                <code value="M-96503"/>
+                <display value="Hodgkin's disease (lymphoma)"/>
+            </concept>
+            <concept>
+                <code value="M-90203"/>
+                <display value="Phyllodes tumor, malignant"/>
+            </concept>
+            <concept>
+                <code value="D0-F035F"/>
+                <display value="Neoplasm of the mammary skin"/>
+            </concept>
+            <concept>
+                <code value="M-82013"/>
+                <display value="Invasive cribriform carcinoma"/>
+            </concept>
+            <concept>
+                <code value="M-80703"/>
+                <display value="Squamous cell carcinoma"/>
+            </concept>
+            <concept>
+                <code value="M-80502"/>
+                <display value="Papillary carcinoma in-situ"/>
+            </concept>
+            <concept>
+                <code value="M-80503"/>
+                <display value="Papillary carcinoma (invasive)"/>
+            </concept>
+            <concept>
+                <code value="M-88903"/>
+                <display value="Leiomyosarcoma"/>
+            </concept>
+            <concept>
+                <code value="M-84903"/>
+                <display value="Signet ring cell carcinoma"/>
+            </concept>
+            <concept>
+                <code value="M-78190"/>
+                <display value="Spindle cell nodule (tumor)"/>
+            </concept>
+            <concept>
+                <code value="M-88303"/>
+                <display value="Malignant fibrous histiocytoma"/>
+            </concept>
+            <concept>
+                <code value="M-95903"/>
+                <display value="Lymphoma"/>
+            </concept>
+            <concept>
+                <code value="M-88103"/>
+                <display value="Fibrosarcoma"/>
+            </concept>
+            <concept>
+                <code value="M-91501"/>
+                <display value="Hemangiopericytoma"/>
+            </concept>
+            <concept>
+                <code value="M-88503"/>
+                <display value="Liposarcoma"/>
+            </concept>
+            <concept>
+                <code value="M-82003"/>
+                <display value="Adenoid cystic carcinoma"/>
+            </concept>
+            <concept>
+                <code value="M-85072"/>
+                <display value="Intraductal carcinoma micro-papillary"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

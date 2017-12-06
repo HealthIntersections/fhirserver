@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-12141-FetalVasculatureAnatomicalLocation"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_12141.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.592"/>
+    </identifier>
+    <version value="20040322"/>
+    <name value="FetalVasculatureAnatomicalLocation"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 12141 FetalVasculatureAnatomicalLocation"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://snomed.info/srt"/>
+            <concept>
+                <code value="T-42000"/>
+                <display value="Aorta"/>
+            </concept>
+            <concept>
+                <code value="T-44000"/>
+                <display value="Pulmonary Artery"/>
+            </concept>
+            <concept>
+                <code value="T-48581"/>
+                <display value="Pulmonary Vein"/>
+            </concept>
+            <concept>
+                <code value="T-D0765"/>
+                <display value="Descending Aorta"/>
+            </concept>
+            <concept>
+                <code value="T-45600"/>
+                <display value="Middle Cerebral Artery"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

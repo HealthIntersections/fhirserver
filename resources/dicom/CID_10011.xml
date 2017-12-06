@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-10011-EffectiveDoseEvaluationMethod"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_10011.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.544"/>
+    </identifier>
+    <version value="20071031"/>
+    <name value="EffectiveDoseEvaluationMethod"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 10011 EffectiveDoseEvaluationMethod"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://dicom.nema.org/resources/ontology/DCM"/>
+            <concept>
+                <code value="113800"/>
+                <display value="DLP to E conversion via MC computation"/>
+            </concept>
+            <concept>
+                <code value="113802"/>
+                <display value="DLP to E conversion via measurement"/>
+            </concept>
+            <concept>
+                <code value="113801"/>
+                <display value="CTDIfreeair to E conversion via MC computation"/>
+            </concept>
+            <concept>
+                <code value="113803"/>
+                <display value="CTDIfreeair to E conversion via measurement"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

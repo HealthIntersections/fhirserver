@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-100-QuantitativeDiagnosticImagingProcedures"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_100.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.998"/>
+    </identifier>
+    <version value="20141110"/>
+    <name value="QuantitativeDiagnosticImagingProcedures"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 100 QuantitativeDiagnosticImagingProcedures"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://dicom.nema.org/resources/ontology/DCM"/>
+            <concept>
+                <code value="126021"/>
+                <display value="Multiparametric MRI of prostate"/>
+            </concept>
+            <concept>
+                <code value="126022"/>
+                <display value="Multiparametric MRI of whole body"/>
+            </concept>
+            <concept>
+                <code value="126020"/>
+                <display value="Multiparametric MRI"/>
+            </concept>
+        </include>
+        <include>
+            <system value="http://loinc.org"/>
+            <concept>
+                <code value="44139-4"/>
+                <display value="PET whole body"/>
+            </concept>
+        </include>
+        <include>
+            <system value="http://snomed.info/srt"/>
+            <concept>
+                <code value="P5-0907F"/>
+                <display value="Dynamic magnetic resonance imaging of knee"/>
+            </concept>
+            <concept>
+                <code value="P5-09051"/>
+                <display value="Magnetic resonance imaging guidance"/>
+            </concept>
+            <concept>
+                <code value="P5-70694"/>
+                <display value="Dynamic magnetic resonance imaging of pelvis"/>
+            </concept>
+            <concept>
+                <code value="P5-080FF"/>
+                <display value="PET/CT FDG imaging of whole body"/>
+            </concept>
+            <concept>
+                <code value="P5-08118"/>
+                <display value="PET/CT MET imaging of whole body"/>
+            </concept>
+        </include>
+        <include>
+            <system value="http://www.radlex.org"/>
+            <concept>
+                <code value="RPID96"/>
+                <display value="CT head perfusion with IV contrast"/>
+            </concept>
+            <concept>
+                <code value="RPID5427"/>
+                <display value="NM head perfusion brain PET-CT AV-45"/>
+            </concept>
+            <concept>
+                <code value="RPID5258"/>
+                <display value="NM head perfusion brain SPECT"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

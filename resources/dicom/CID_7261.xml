@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-7261-DiffusionModelValueTypes"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_7261.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.1060"/>
+    </identifier>
+    <version value="20150918"/>
+    <name value="DiffusionModelValueTypes"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 7261 DiffusionModelValueTypes"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://dicom.nema.org/resources/ontology/DCM"/>
+            <concept>
+                <code value="113231"/>
+                <display value="Single Tensor"/>
+            </concept>
+            <concept>
+                <code value="113232"/>
+                <display value="Multi Tensor"/>
+            </concept>
+            <concept>
+                <code value="113233"/>
+                <display value="Model Free"/>
+            </concept>
+            <concept>
+                <code value="113234"/>
+                <display value="CHARMED"/>
+            </concept>
+            <concept>
+                <code value="113224"/>
+                <display value="DSI"/>
+            </concept>
+            <concept>
+                <code value="113236"/>
+                <display value="DOT"/>
+            </concept>
+            <concept>
+                <code value="113237"/>
+                <display value="PAS"/>
+            </concept>
+            <concept>
+                <code value="113238"/>
+                <display value="Spherical Deconvolution"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

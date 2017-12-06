@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-6088-OBGYNMaternalRiskFactors"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_6088.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.410"/>
+    </identifier>
+    <version value="20040112"/>
+    <name value="OBGYNMaternalRiskFactors"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 6088 OBGYNMaternalRiskFactors"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://dicom.nema.org/resources/ontology/DCM"/>
+            <concept>
+                <code value="111570"/>
+                <display value="Previous fetal malformation/syndrome"/>
+            </concept>
+            <concept>
+                <code value="111571"/>
+                <display value="Previous RH negative or blood dyscrasia at birth"/>
+            </concept>
+            <concept>
+                <code value="111572"/>
+                <display value="History of multiple fetuses"/>
+            </concept>
+            <concept>
+                <code value="111573"/>
+                <display value="Current pregnancy, known or suspected malformations/syndromes"/>
+            </concept>
+            <concept>
+                <code value="111574"/>
+                <display value="Family history, fetal malformation/syndrome"/>
+            </concept>
+            <concept>
+                <code value="111565"/>
+                <display value="Uterine malformations"/>
+            </concept>
+            <concept>
+                <code value="111566"/>
+                <display value="Spontaneous Abortion"/>
+            </concept>
+            <concept>
+                <code value="111567"/>
+                <display value="Gynecologic condition"/>
+            </concept>
+            <concept>
+                <code value="111568"/>
+                <display value="Gynecologic surgery"/>
+            </concept>
+            <concept>
+                <code value="111569"/>
+                <display value="Previous LBW or IUGR birth"/>
+            </concept>
+        </include>
+        <include>
+            <system value="http://snomed.info/srt"/>
+            <concept>
+                <code value="D8-20100"/>
+                <display value="Multiple pregnancy"/>
+            </concept>
+            <concept>
+                <code value="G-0244"/>
+                <display value="History of - obesity"/>
+            </concept>
+            <concept>
+                <code value="G-031E"/>
+                <display value="History of - eclampsia"/>
+            </concept>
+            <concept>
+                <code value="G-031F"/>
+                <display value="History of - severe pre-eclampsia"/>
+            </concept>
+            <concept>
+                <code value="G-023F"/>
+                <display value="History of - diabetes mellitus"/>
+            </concept>
+            <concept>
+                <code value="G-02D0"/>
+                <display value="History of - regular medication"/>
+            </concept>
+            <concept>
+                <code value="G-0304"/>
+                <display value="History of - ectopic pregnancy"/>
+            </concept>
+            <concept>
+                <code value="G-0338"/>
+                <display value="History of substance abuse"/>
+            </concept>
+            <concept>
+                <code value="G-0305"/>
+                <display value="History of - premature delivery"/>
+            </concept>
+            <concept>
+                <code value="G-0269"/>
+                <display value="History of - hypertension"/>
+            </concept>
+            <concept>
+                <code value="G-0335"/>
+                <display value="History of - cardiovascular disease"/>
+            </concept>
+            <concept>
+                <code value="G-0319"/>
+                <display value="History of infertility"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

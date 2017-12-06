@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-7017-CategoryofTeachingMaterialImaging"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_7017.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.1181"/>
+    </identifier>
+    <version value="20170914"/>
+    <name value="CategoryofTeachingMaterialImaging"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 7017 CategoryofTeachingMaterialImaging"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://dicom.nema.org/resources/ontology/DCM"/>
+            <concept>
+                <code value="128730"/>
+                <display value="Cardiovascular imaging subject matter"/>
+            </concept>
+            <concept>
+                <code value="128732"/>
+                <display value="Genitourinary imaging subject matter"/>
+            </concept>
+            <concept>
+                <code value="128731"/>
+                <display value="Gastrointestinal imaging subject matter"/>
+            </concept>
+            <concept>
+                <code value="128734"/>
+                <display value="Vascular and interventional imaging subject matter"/>
+            </concept>
+            <concept>
+                <code value="128733"/>
+                <display value="Neuroimaging subject matter"/>
+            </concept>
+            <concept>
+                <code value="128736"/>
+                <display value="Ultrasound imaging subject matter"/>
+            </concept>
+            <concept>
+                <code value="128735"/>
+                <display value="Nuclear medicine imaging subject matter"/>
+            </concept>
+            <concept>
+                <code value="128738"/>
+                <display value="Breast imaging subject matter"/>
+            </concept>
+            <concept>
+                <code value="128737"/>
+                <display value="Pediatric imaging subject matter"/>
+            </concept>
+            <concept>
+                <code value="128729"/>
+                <display value="Pulmonary imaging subject matter"/>
+            </concept>
+            <concept>
+                <code value="128728"/>
+                <display value="Musculoskeletal imaging subject matter"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

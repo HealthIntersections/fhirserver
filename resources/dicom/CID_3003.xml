@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-3003-HemodynamicWaveformSources"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_3003.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.44"/>
+    </identifier>
+    <version value="20020904"/>
+    <name value="HemodynamicWaveformSources"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 3003 HemodynamicWaveformSources"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://snomed.info/srt"/>
+            <concept>
+                <code value="G-DB19"/>
+                <display value="Left atrium pressure waveform"/>
+            </concept>
+            <concept>
+                <code value="G-DB18"/>
+                <display value="Right atrium pressure waveform"/>
+            </concept>
+            <concept>
+                <code value="G-DB20"/>
+                <display value="Femoral artery pressure waveform"/>
+            </concept>
+            <concept>
+                <code value="G-DB24"/>
+                <display value="Arterial pressure waveform"/>
+            </concept>
+            <concept>
+                <code value="G-DB23"/>
+                <display value="Central venous pressure waveform"/>
+            </concept>
+            <concept>
+                <code value="G-DB22"/>
+                <display value="Aortic pressure waveform"/>
+            </concept>
+            <concept>
+                <code value="G-DB21"/>
+                <display value="Pulmonary artery pressure waveform"/>
+            </concept>
+            <concept>
+                <code value="G-DB28"/>
+                <display value="Mitral valve pullback pressure waveform"/>
+            </concept>
+            <concept>
+                <code value="G-DB27"/>
+                <display value="Pulmonary artery wedge pressure waveform"/>
+            </concept>
+            <concept>
+                <code value="G-DB26"/>
+                <display value="Pulmonary capillary wedge pressure waveform"/>
+            </concept>
+            <concept>
+                <code value="G-DB25"/>
+                <display value="Pulmonary artery oxygen saturation waveform"/>
+            </concept>
+            <concept>
+                <code value="G-DB29"/>
+                <display value="Tricuspid valve pullback pressure waveform"/>
+            </concept>
+            <concept>
+                <code value="G-DB31"/>
+                <display value="Aortic valve pullback pressure waveform"/>
+            </concept>
+            <concept>
+                <code value="G-DB30"/>
+                <display value="Pulmonary valve pullback pressure waveform"/>
+            </concept>
+            <concept>
+                <code value="G-DB13"/>
+                <display value="Hemodynamic oxygen saturation waveform"/>
+            </concept>
+            <concept>
+                <code value="G-DB12"/>
+                <display value="Hemodynamic flow waveform"/>
+            </concept>
+            <concept>
+                <code value="G-DB34"/>
+                <display value="Hemodynamic impedance waveform"/>
+            </concept>
+            <concept>
+                <code value="G-DB33"/>
+                <display value="Dye dilution cardiac output waveform"/>
+            </concept>
+            <concept>
+                <code value="G-DB11"/>
+                <display value="Hemodynamic pressure waveform"/>
+            </concept>
+            <concept>
+                <code value="G-DB10"/>
+                <display value="Hemodynamic waveform"/>
+            </concept>
+            <concept>
+                <code value="G-DB32"/>
+                <display value="Thermal cardiac output waveform"/>
+            </concept>
+            <concept>
+                <code value="G-DB17"/>
+                <display value="Right ventricle pressure waveform"/>
+            </concept>
+            <concept>
+                <code value="G-DB16"/>
+                <display value="Left ventricle pressure waveform"/>
+            </concept>
+            <concept>
+                <code value="G-DB15"/>
+                <display value="Temperature waveform"/>
+            </concept>
+            <concept>
+                <code value="G-DB14"/>
+                <display value="Respiration impedance waveform"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

@@ -1,0 +1,249 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-7483-CommonAnatomicRegionsforAnimals"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_7483.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.815"/>
+    </identifier>
+    <version value="20170914"/>
+    <name value="CommonAnatomicRegionsforAnimals"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 7483 CommonAnatomicRegionsforAnimals"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://snomed.info/srt"/>
+            <concept>
+                <code value="T-12450"/>
+                <display value="Navicular of forefoot"/>
+            </concept>
+            <concept>
+                <code value="T-12771"/>
+                <display value="Calcaneal tubercle"/>
+            </concept>
+            <concept>
+                <code value="T-12410"/>
+                <display value="Humerus"/>
+            </concept>
+            <concept>
+                <code value="T-D9713"/>
+                <display value="Hindfoot"/>
+            </concept>
+            <concept>
+                <code value="T-12730"/>
+                <display value="Patella"/>
+            </concept>
+            <concept>
+                <code value="T-54160"/>
+                <display value="Maxillary dental arch"/>
+            </concept>
+            <concept>
+                <code value="T-7000C"/>
+                <display value="Urinary tract"/>
+            </concept>
+            <concept>
+                <code value="T-15728"/>
+                <display value="Stiffle"/>
+            </concept>
+            <concept>
+                <code value="T-D8030"/>
+                <display value="All legs"/>
+            </concept>
+            <concept>
+                <code value="T-11B00"/>
+                <display value="Coccygeal vertrebrae"/>
+            </concept>
+            <concept>
+                <code value="T-22200"/>
+                <display value="Frontal sinus"/>
+            </concept>
+            <concept>
+                <code value="T-22000"/>
+                <display value="Nasal sinus"/>
+            </concept>
+            <concept>
+                <code value="T-15311"/>
+                <display value="Atlanto-occipital joint"/>
+            </concept>
+            <concept>
+                <code value="T-15430"/>
+                <display value="Elbow joint"/>
+            </concept>
+            <concept>
+                <code value="T-15710"/>
+                <display value="Hip joint"/>
+            </concept>
+            <concept>
+                <code value="T-12761"/>
+                <display value="Tarsus"/>
+            </concept>
+            <concept>
+                <code value="T-12403"/>
+                <display value="Radius and ulna"/>
+            </concept>
+            <concept>
+                <code value="T-15317"/>
+                <display value="Atlantal-axial joint"/>
+            </concept>
+            <concept>
+                <code value="T-12800"/>
+                <display value="Navicular of hindfoot"/>
+            </concept>
+            <concept>
+                <code value="T-D6000"/>
+                <display value="Pelvis"/>
+            </concept>
+            <concept>
+                <code value="T-540ED"/>
+                <display value="Maxillary incisor teeth"/>
+            </concept>
+            <concept>
+                <code value="T-12847"/>
+                <display value="Metatarsus"/>
+            </concept>
+            <concept>
+                <code value="T-59300"/>
+                <display value="Colon"/>
+            </concept>
+            <concept>
+                <code value="T-540EE"/>
+                <display value="Mandibular incisor teeth"/>
+            </concept>
+            <concept>
+                <code value="T-D00F9"/>
+                <display value="Lumbo-sacral spine"/>
+            </concept>
+            <concept>
+                <code value="T-D9550"/>
+                <display value="Pastern of hindfoot"/>
+            </concept>
+            <concept>
+                <code value="T-74000"/>
+                <display value="Bladder"/>
+            </concept>
+            <concept>
+                <code value="T-D00F8"/>
+                <display value="Thoraco-lumbar spine"/>
+            </concept>
+            <concept>
+                <code value="T-D00F7"/>
+                <display value="Cervico-thoracic spine"/>
+            </concept>
+            <concept>
+                <code value="T-D04F2"/>
+                <display value="Forefoot"/>
+            </concept>
+            <concept>
+                <code value="T-54170"/>
+                <display value="Mandibular dental arch"/>
+            </concept>
+            <concept>
+                <code value="T-11180"/>
+                <display value="Mandible"/>
+            </concept>
+            <concept>
+                <code value="T-11AD0"/>
+                <display value="Sacrum"/>
+            </concept>
+            <concept>
+                <code value="T-D14AE"/>
+                <display value="Orbital structure"/>
+            </concept>
+            <concept>
+                <code value="T-11100"/>
+                <display value="Skull"/>
+            </concept>
+            <concept>
+                <code value="T-D3000"/>
+                <display value="Chest"/>
+            </concept>
+            <concept>
+                <code value="T-56000"/>
+                <display value="Esophagus"/>
+            </concept>
+            <concept>
+                <code value="T-12710"/>
+                <display value="Femur"/>
+            </concept>
+            <concept>
+                <code value="T-11501"/>
+                <display value="Cervical spine"/>
+            </concept>
+            <concept>
+                <code value="T-11502"/>
+                <display value="Thoracic spine"/>
+            </concept>
+            <concept>
+                <code value="T-D0010"/>
+                <display value="Entire body"/>
+            </concept>
+            <concept>
+                <code value="T-11503"/>
+                <display value="Lumbar spine"/>
+            </concept>
+            <concept>
+                <code value="T-D8650"/>
+                <display value="Pastern of forefoot"/>
+            </concept>
+            <concept>
+                <code value="T-D9540"/>
+                <display value="Fetlock of hindlimb"/>
+            </concept>
+            <concept>
+                <code value="T-75000"/>
+                <display value="Urethra"/>
+            </concept>
+            <concept>
+                <code value="R-FAB55"/>
+                <display value="Chest and Abdomen"/>
+            </concept>
+            <concept>
+                <code value="T-D0310"/>
+                <display value="Digit"/>
+            </concept>
+            <concept>
+                <code value="T-50110"/>
+                <display value="Upper gastro-intestinal tract"/>
+            </concept>
+            <concept>
+                <code value="T-12540"/>
+                <display value="Metacarpus"/>
+            </concept>
+            <concept>
+                <code value="T-D4000"/>
+                <display value="Abdomen"/>
+            </concept>
+            <concept>
+                <code value="T-D8600"/>
+                <display value="Carpus"/>
+            </concept>
+            <concept>
+                <code value="T-D2220"/>
+                <display value="Shoulder"/>
+            </concept>
+            <concept>
+                <code value="T-12701"/>
+                <display value="Tibia and fibula"/>
+            </concept>
+            <concept>
+                <code value="T-D8640"/>
+                <display value="Fetlock of forelimb"/>
+            </concept>
+            <concept>
+                <code value="T-D8040"/>
+                <display value="Wing"/>
+            </concept>
+        </include>
+        <include>
+            <system value="http://www.nlm.nih.gov/research/umls"/>
+            <concept>
+                <code value="C3669027"/>
+                <display value="Distal phalanx"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

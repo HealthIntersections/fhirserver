@@ -1,0 +1,202 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-2-AnatomicModifier"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_2.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.1"/>
+    </identifier>
+    <version value="20160314"/>
+    <name value="AnatomicModifier"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 2 AnatomicModifier"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://snomed.info/srt"/>
+            <concept>
+                <code value="R-40819"/>
+                <display value="Internal"/>
+            </concept>
+            <concept>
+                <code value="G-A171"/>
+                <display value="Capsular"/>
+            </concept>
+            <concept>
+                <code value="G-A170"/>
+                <display value="Hilar"/>
+            </concept>
+            <concept>
+                <code value="G-A151"/>
+                <display value="Extra-articular"/>
+            </concept>
+            <concept>
+                <code value="G-A172"/>
+                <display value="Subcapsular"/>
+            </concept>
+            <concept>
+                <code value="R-404CE"/>
+                <display value="Posterior"/>
+            </concept>
+            <concept>
+                <code value="G-A174"/>
+                <display value="Edge"/>
+            </concept>
+            <concept>
+                <code value="G-A111"/>
+                <display value="Peripheral"/>
+            </concept>
+            <concept>
+                <code value="G-A110"/>
+                <display value="Central"/>
+            </concept>
+            <concept>
+                <code value="R-404CC"/>
+                <display value="Anterior"/>
+            </concept>
+            <concept>
+                <code value="G-A114"/>
+                <display value="Intermediate"/>
+            </concept>
+            <concept>
+                <code value="G-A117"/>
+                <display value="Transverse"/>
+            </concept>
+            <concept>
+                <code value="G-A139"/>
+                <display value="Superficial"/>
+            </concept>
+            <concept>
+                <code value="G-A138"/>
+                <display value="Coronal"/>
+            </concept>
+            <concept>
+                <code value="G-A119"/>
+                <display value="Distal"/>
+            </concept>
+            <concept>
+                <code value="G-A118"/>
+                <display value="Proximal"/>
+            </concept>
+            <concept>
+                <code value="G-A15A"/>
+                <display value="Intra-articular"/>
+            </concept>
+            <concept>
+                <code value="R-4094A"/>
+                <display value="Inferior"/>
+            </concept>
+            <concept>
+                <code value="R-42191"/>
+                <display value="Superior"/>
+            </concept>
+            <concept>
+                <code value="G-A180"/>
+                <display value="Anterolateral"/>
+            </concept>
+            <concept>
+                <code value="G-A182"/>
+                <display value="Posterolateral"/>
+            </concept>
+            <concept>
+                <code value="G-A140"/>
+                <display value="Deep"/>
+            </concept>
+            <concept>
+                <code value="G-A120"/>
+                <display value="Postaxial"/>
+            </concept>
+            <concept>
+                <code value="G-A142"/>
+                <display value="Horizontal"/>
+            </concept>
+            <concept>
+                <code value="R-40941"/>
+                <display value="External"/>
+            </concept>
+            <concept>
+                <code value="G-A100"/>
+                <display value="Right"/>
+            </concept>
+            <concept>
+                <code value="G-A122"/>
+                <display value="Apical"/>
+            </concept>
+            <concept>
+                <code value="G-A144"/>
+                <display value="Vertical"/>
+            </concept>
+            <concept>
+                <code value="G-A121"/>
+                <display value="Preaxial"/>
+            </concept>
+            <concept>
+                <code value="G-A143"/>
+                <display value="Longitudinal"/>
+            </concept>
+            <concept>
+                <code value="G-A102"/>
+                <display value="Bilateral"/>
+            </concept>
+            <concept>
+                <code value="G-A101"/>
+                <display value="Left"/>
+            </concept>
+            <concept>
+                <code value="G-A123"/>
+                <display value="Basal"/>
+            </concept>
+            <concept>
+                <code value="G-A145"/>
+                <display value="Sagittal"/>
+            </concept>
+            <concept>
+                <code value="G-A104"/>
+                <display value="Lateral"/>
+            </concept>
+            <concept>
+                <code value="G-A103"/>
+                <display value="Unilateral"/>
+            </concept>
+            <concept>
+                <code value="G-A147"/>
+                <display value="Axial"/>
+            </concept>
+            <concept>
+                <code value="G-A169"/>
+                <display value="Gutter"/>
+            </concept>
+            <concept>
+                <code value="G-A128"/>
+                <display value="Efferent"/>
+            </concept>
+            <concept>
+                <code value="G-A127"/>
+                <display value="Afferent"/>
+            </concept>
+            <concept>
+                <code value="G-A108"/>
+                <display value="Caudal"/>
+            </concept>
+            <concept>
+                <code value="G-A107"/>
+                <display value="Cephalic"/>
+            </concept>
+            <concept>
+                <code value="G-A206"/>
+                <display value="Surface"/>
+            </concept>
+            <concept>
+                <code value="G-A428"/>
+                <display value="Marginal"/>
+            </concept>
+            <concept>
+                <code value="R-404D5"/>
+                <display value="Medial"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

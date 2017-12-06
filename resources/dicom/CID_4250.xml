@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-4250-VisualFieldStaticPerimetryTestPatterns"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_4250.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.909"/>
+    </identifier>
+    <version value="20100827"/>
+    <name value="VisualFieldStaticPerimetryTestPatterns"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 4250 VisualFieldStaticPerimetryTestPatterns"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://dicom.nema.org/resources/ontology/DCM"/>
+            <concept>
+                <code value="111803"/>
+                <display value="Visual Field 60-4 Test Pattern"/>
+            </concept>
+            <concept>
+                <code value="111814"/>
+                <display value="Visual Field Central Test Pattern"/>
+            </concept>
+            <concept>
+                <code value="111804"/>
+                <display value="Visual Field Macula Test Pattern"/>
+            </concept>
+            <concept>
+                <code value="111805"/>
+                <display value="Visual Field Central 40 Point Test Pattern"/>
+            </concept>
+            <concept>
+                <code value="111806"/>
+                <display value="Visual Field Central 76 Point Test Pattern"/>
+            </concept>
+            <concept>
+                <code value="111807"/>
+                <display value="Visual Field Peripheral 60 Point Test Pattern"/>
+            </concept>
+            <concept>
+                <code value="111808"/>
+                <display value="Visual Field Full Field 81 Point Test Pattern"/>
+            </concept>
+            <concept>
+                <code value="111809"/>
+                <display value="Visual Field Full Field 120 Point Test Pattern"/>
+            </concept>
+            <concept>
+                <code value="111810"/>
+                <display value="Visual Field G Test Pattern"/>
+            </concept>
+            <concept>
+                <code value="111800"/>
+                <display value="Visual Field 24-2 Test Pattern"/>
+            </concept>
+            <concept>
+                <code value="111811"/>
+                <display value="Visual Field M Test Pattern"/>
+            </concept>
+            <concept>
+                <code value="111801"/>
+                <display value="Visual Field 10-2 Test Pattern"/>
+            </concept>
+            <concept>
+                <code value="111812"/>
+                <display value="Visual Field 07 Test Pattern"/>
+            </concept>
+            <concept>
+                <code value="111802"/>
+                <display value="Visual Field 30-2 Test Pattern"/>
+            </concept>
+            <concept>
+                <code value="111813"/>
+                <display value="Visual Field LVC Test Pattern"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

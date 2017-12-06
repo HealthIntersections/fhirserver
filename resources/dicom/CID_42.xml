@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-42-NumericValueQualifier"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_42.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.22"/>
+    </identifier>
+    <version value="20020114"/>
+    <name value="NumericValueQualifier"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 42 NumericValueQualifier"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://dicom.nema.org/resources/ontology/DCM"/>
+            <concept>
+                <code value="114010"/>
+                <display value="Value unknown"/>
+            </concept>
+            <concept>
+                <code value="114001"/>
+                <display value="Negative Infinity"/>
+            </concept>
+            <concept>
+                <code value="114000"/>
+                <display value="Not a number"/>
+            </concept>
+            <concept>
+                <code value="114011"/>
+                <display value="Value indeterminate"/>
+            </concept>
+            <concept>
+                <code value="114003"/>
+                <display value="Divide by zero"/>
+            </concept>
+            <concept>
+                <code value="114002"/>
+                <display value="Positive Infinity"/>
+            </concept>
+            <concept>
+                <code value="114005"/>
+                <display value="Overflow"/>
+            </concept>
+            <concept>
+                <code value="114004"/>
+                <display value="Underflow"/>
+            </concept>
+            <concept>
+                <code value="114007"/>
+                <display value="Measurement not attempted"/>
+            </concept>
+            <concept>
+                <code value="114006"/>
+                <display value="Measurement failure"/>
+            </concept>
+            <concept>
+                <code value="114009"/>
+                <display value="Value out of range"/>
+            </concept>
+            <concept>
+                <code value="114008"/>
+                <display value="Calculation failure"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

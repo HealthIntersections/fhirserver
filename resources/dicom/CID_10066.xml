@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-10066-AttenuatorCategory"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_10066.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.1160"/>
+    </identifier>
+    <version value="20170405"/>
+    <name value="AttenuatorCategory"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 10066 AttenuatorCategory"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://dicom.nema.org/resources/ontology/DCM"/>
+            <concept>
+                <code value="128431"/>
+                <display value="Beam Block"/>
+            </concept>
+            <concept>
+                <code value="113771"/>
+                <display value="X-Ray Filters"/>
+            </concept>
+            <concept>
+                <code value="128459"/>
+                <display value="Table"/>
+            </concept>
+            <concept>
+                <code value="128460"/>
+                <display value="Table Core"/>
+            </concept>
+            <concept>
+                <code value="128492"/>
+                <display value="Patient Support"/>
+            </concept>
+            <concept>
+                <code value="128462"/>
+                <display value="Table Pad"/>
+            </concept>
+            <concept>
+                <code value="128461"/>
+                <display value="Table Outer Liner"/>
+            </concept>
+        </include>
+        <include>
+            <system value="http://snomed.info/srt"/>
+            <concept>
+                <code value="A-2C152"/>
+                <display value="X-Ray shield"/>
+            </concept>
+            <concept>
+                <code value="A-010FE"/>
+                <display value="Shielding Block"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

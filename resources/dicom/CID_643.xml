@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-643-Toxins"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_643.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.1108"/>
+    </identifier>
+    <version value="20151110"/>
+    <name value="Toxins"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 643 Toxins"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://pubchem.ncbi.nlm.nih.gov"/>
+            <concept>
+                <code value="4624"/>
+                <display value="6-hydroxydopamine"/>
+            </concept>
+        </include>
+        <include>
+            <system value="http://snomed.info/srt"/>
+            <concept>
+                <code value="F-63750"/>
+                <display value="Lysophosphatidylcholine"/>
+            </concept>
+            <concept>
+                <code value="F-63390"/>
+                <display value="Lipopolysaccharide"/>
+            </concept>
+        </include>
+        <include>
+            <system value="http://www.nlm.nih.gov/research/umls"/>
+            <concept>
+                <code value="C0019873"/>
+                <display value="Ethidium Bromide"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-4222-OphthalmicMacularGridProblem"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_4222.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.821"/>
+    </identifier>
+    <version value="20090917"/>
+    <name value="OphthalmicMacularGridProblem"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 4222 OphthalmicMacularGridProblem"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://dicom.nema.org/resources/ontology/DCM"/>
+            <concept>
+                <code value="111695"/>
+                <display value="Interfering Tears or Drops"/>
+            </concept>
+            <concept>
+                <code value="111209"/>
+                <display value="Patient Positioning Problem"/>
+            </concept>
+            <concept>
+                <code value="110501"/>
+                <display value="Equipment failure"/>
+            </concept>
+            <concept>
+                <code value="110519"/>
+                <display value="Operator Error"/>
+            </concept>
+            <concept>
+                <code value="110518"/>
+                <display value="Patient Movement"/>
+            </concept>
+        </include>
+        <include>
+            <system value="http://snomed.info/srt"/>
+            <concept>
+                <code value="DA-76000"/>
+                <display value="Eyelid Disease"/>
+            </concept>
+            <concept>
+                <code value="DA-75300"/>
+                <display value="Corneal Opacity"/>
+            </concept>
+            <concept>
+                <code value="F-F1722"/>
+                <display value="Dry Eyes Problem"/>
+            </concept>
+            <concept>
+                <code value="DA-73402"/>
+                <display value="Lens Opacity"/>
+            </concept>
+            <concept>
+                <code value="DA-74100"/>
+                <display value="Refractive Error"/>
+            </concept>
+            <concept>
+                <code value="F-0123A"/>
+                <display value="Constricted Pupil"/>
+            </concept>
+            <concept>
+                <code value="DA-7931D"/>
+                <display value="Vitreous Opacity"/>
+            </concept>
+            <concept>
+                <code value="R-20839"/>
+                <display value="Poor Visual Fixation"/>
+            </concept>
+            <concept>
+                <code value="F-02FA4"/>
+                <display value="Eccentric Fixation"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

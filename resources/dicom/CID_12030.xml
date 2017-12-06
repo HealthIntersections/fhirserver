@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-12030-UltrasoundContrastBolusAgents"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_12030.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.805"/>
+    </identifier>
+    <version value="20090409"/>
+    <name value="UltrasoundContrast/BolusAgents"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 12030 UltrasoundContrast/BolusAgents"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://dicom.nema.org/resources/ontology/DCM"/>
+            <concept>
+                <code value="125905"/>
+                <display value="Sonazoid"/>
+            </concept>
+            <concept>
+                <code value="125906"/>
+                <display value="SonoVue"/>
+            </concept>
+            <concept>
+                <code value="125907"/>
+                <display value="Targestar-B"/>
+            </concept>
+            <concept>
+                <code value="125908"/>
+                <display value="Targestar-P"/>
+            </concept>
+            <concept>
+                <code value="125901"/>
+                <display value="CARDIOsphere"/>
+            </concept>
+            <concept>
+                <code value="125902"/>
+                <display value="Echovist"/>
+            </concept>
+            <concept>
+                <code value="125903"/>
+                <display value="Imagify"/>
+            </concept>
+            <concept>
+                <code value="125904"/>
+                <display value="Levovist"/>
+            </concept>
+        </include>
+        <include>
+            <system value="http://hl7.org/fhir/sid/ndc"/>
+            <concept>
+                <code value="11994-*011-04"/>
+                <display value="Definity"/>
+            </concept>
+            <concept>
+                <code value="00019-2707-03"/>
+                <display value="Optison"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

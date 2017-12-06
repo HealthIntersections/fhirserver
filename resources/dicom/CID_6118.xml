@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-6118-SizeDescriptor"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_6118.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.438"/>
+    </identifier>
+    <version value="20030108"/>
+    <name value="SizeDescriptor"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 6118 SizeDescriptor"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://dicom.nema.org/resources/ontology/DCM"/>
+            <concept>
+                <code value="112131"/>
+                <display value="Extremely small"/>
+            </concept>
+            <concept>
+                <code value="112132"/>
+                <display value="Very small"/>
+            </concept>
+            <concept>
+                <code value="112133"/>
+                <display value="Too small"/>
+            </concept>
+        </include>
+        <include>
+            <system value="http://snomed.info/srt"/>
+            <concept>
+                <code value="R-404A8"/>
+                <display value="Small"/>
+            </concept>
+            <concept>
+                <code value="R-404A9"/>
+                <display value="Medium"/>
+            </concept>
+            <concept>
+                <code value="R-40750"/>
+                <display value="Enlarged"/>
+            </concept>
+            <concept>
+                <code value="R-404AA"/>
+                <display value="Large"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

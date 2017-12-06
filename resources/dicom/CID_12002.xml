@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-12002-UltrasoundProtocolStageTypes"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_12002.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.551"/>
+    </identifier>
+    <version value="20081027"/>
+    <name value="UltrasoundProtocolStageTypes"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 12002 UltrasoundProtocolStageTypes"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://snomed.info/srt"/>
+            <concept>
+                <code value="P2-35000"/>
+                <display value="Cardiac pacing"/>
+            </concept>
+            <concept>
+                <code value="R-40928"/>
+                <display value="Valsalva maneuver"/>
+            </concept>
+            <concept>
+                <code value="F-05028"/>
+                <display value="Peak cardiac stress state"/>
+            </concept>
+            <concept>
+                <code value="P2-71306"/>
+                <display value="Hand grip"/>
+            </concept>
+            <concept>
+                <code value="R-40FB9"/>
+                <display value="Before Procedure"/>
+            </concept>
+            <concept>
+                <code value="F-01604"/>
+                <display value="Resting State"/>
+            </concept>
+            <concept>
+                <code value="F-05018"/>
+                <display value="Cardiac stress recovery state"/>
+            </concept>
+            <concept>
+                <code value="F-05019"/>
+                <display value="Cardiac stress state"/>
+            </concept>
+            <concept>
+                <code value="R-40FBA"/>
+                <display value="During Procedure"/>
+            </concept>
+            <concept>
+                <code value="F-25040"/>
+                <display value="Hyperventilation"/>
+            </concept>
+            <concept>
+                <code value="R-422A4"/>
+                <display value="After Procedure"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

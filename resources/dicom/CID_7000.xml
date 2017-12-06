@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-7000-DiagnosticImagingReportDocumentTitles"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_7000.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.481"/>
+    </identifier>
+    <version value="20140102"/>
+    <name value="DiagnosticImagingReportDocumentTitles"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 7000 DiagnosticImagingReportDocumentTitles"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://dicom.nema.org/resources/ontology/DCM"/>
+            <concept>
+                <code value="111400"/>
+                <display value="Breast Imaging Report"/>
+            </concept>
+        </include>
+        <include>
+            <system value="http://loinc.org"/>
+            <concept>
+                <code value="11541-0"/>
+                <display value="MRI Head Report"/>
+            </concept>
+            <concept>
+                <code value="43468-8"/>
+                <display value="X-Ray Report"/>
+            </concept>
+            <concept>
+                <code value="11540-2"/>
+                <display value="CT Abdomen Report"/>
+            </concept>
+            <concept>
+                <code value="11522-0"/>
+                <display value="Echocardiography Report"/>
+            </concept>
+            <concept>
+                <code value="11524-0"/>
+                <display value="ECG Report"/>
+            </concept>
+            <concept>
+                <code value="11538-6"/>
+                <display value="CT Chest Report"/>
+            </concept>
+            <concept>
+                <code value="11539-4"/>
+                <display value="CT Head Report"/>
+            </concept>
+            <concept>
+                <code value="18745-0"/>
+                <display value="Cardiac Catheterization Report"/>
+            </concept>
+            <concept>
+                <code value="49512-7"/>
+                <display value="Fluoroscopy Study Report"/>
+            </concept>
+            <concept>
+                <code value="18760-9"/>
+                <display value="Ultrasound Report"/>
+            </concept>
+            <concept>
+                <code value="38269-7"/>
+                <display value="DEXA Skeletal System Study Report"/>
+            </concept>
+            <concept>
+                <code value="18748-4"/>
+                <display value="Diagnostic Imaging Report"/>
+            </concept>
+            <concept>
+                <code value="18747-6"/>
+                <display value="CT Report"/>
+            </concept>
+            <concept>
+                <code value="47048-4"/>
+                <display value="Diagnostic Interventional Radiology Report"/>
+            </concept>
+            <concept>
+                <code value="24606-6"/>
+                <display value="Mammography Screening Report"/>
+            </concept>
+            <concept>
+                <code value="18750-0"/>
+                <display value="Cardiac Electrophysiology Report"/>
+            </concept>
+            <concept>
+                <code value="11525-3"/>
+                <display value="Ultrasound Obstetric and Gyn Report"/>
+            </concept>
+            <concept>
+                <code value="17787-3"/>
+                <display value="Nuclear Medicine Thyroid Scan Report"/>
+            </concept>
+            <concept>
+                <code value="11528-7"/>
+                <display value="Radiology Report"/>
+            </concept>
+            <concept>
+                <code value="18754-2"/>
+                <display value="Holter Study Report"/>
+            </concept>
+            <concept>
+                <code value="18752-6"/>
+                <display value="Exercise Stress Test Report"/>
+            </concept>
+            <concept>
+                <code value="18758-3"/>
+                <display value="PET Scan Report"/>
+            </concept>
+            <concept>
+                <code value="18757-5"/>
+                <display value="Nuclear Medicine Report"/>
+            </concept>
+            <concept>
+                <code value="18756-7"/>
+                <display value="MRI Spine Report"/>
+            </concept>
+            <concept>
+                <code value="18755-9"/>
+                <display value="MRI Report"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-6116-MuscularAnatomy"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_6116.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.436"/>
+    </identifier>
+    <version value="20170914"/>
+    <name value="MuscularAnatomy"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 6116 MuscularAnatomy"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://snomed.info/srt"/>
+            <concept>
+                <code value="T-14172"/>
+                <display value="Latissimus dorsi muscle"/>
+            </concept>
+            <concept>
+                <code value="T-14150"/>
+                <display value="Levatores costarum muscles"/>
+            </concept>
+            <concept>
+                <code value="T-14050"/>
+                <display value="Spinalis muscle"/>
+            </concept>
+            <concept>
+                <code value="T-14171"/>
+                <display value="Trapezius muscle"/>
+            </concept>
+            <concept>
+                <code value="T-14030"/>
+                <display value="Iliocostalis muscle"/>
+            </concept>
+            <concept>
+                <code value="T-14110"/>
+                <display value="Pectoralis major muscle"/>
+            </concept>
+            <concept>
+                <code value="T-13660"/>
+                <display value="Deltoid muscle"/>
+            </concept>
+            <concept>
+                <code value="T-32410"/>
+                <display value="Interventricular septum"/>
+            </concept>
+            <concept>
+                <code value="T-13640"/>
+                <display value="Teres major muscle"/>
+            </concept>
+            <concept>
+                <code value="T-13620"/>
+                <display value="Infraspinatus muscle"/>
+            </concept>
+            <concept>
+                <code value="T-32150"/>
+                <display value="Interatrial septum"/>
+            </concept>
+            <concept>
+                <code value="T-35020"/>
+                <display value="Chordae tendineae cordis"/>
+            </concept>
+            <concept>
+                <code value="T-14161"/>
+                <display value="External intercostal muscle"/>
+            </concept>
+            <concept>
+                <code value="T-14040"/>
+                <display value="Longissimus muscle"/>
+            </concept>
+            <concept>
+                <code value="T-14020"/>
+                <display value="Erector spinae muscle"/>
+            </concept>
+            <concept>
+                <code value="T-14163"/>
+                <display value="Internal intercostal muscle"/>
+            </concept>
+            <concept>
+                <code value="T-14140"/>
+                <display value="Serratus anterior muscle"/>
+            </concept>
+            <concept>
+                <code value="T-14165"/>
+                <display value="Innermost intercostal muscles"/>
+            </concept>
+            <concept>
+                <code value="T-13450"/>
+                <display value="Scalenous anterior muscle"/>
+            </concept>
+            <concept>
+                <code value="T-14120"/>
+                <display value="Pectoralis minor muscle"/>
+            </concept>
+            <concept>
+                <code value="T-13650"/>
+                <display value="Subscapularis muscle"/>
+            </concept>
+            <concept>
+                <code value="T-14167"/>
+                <display value="Transversus thoracis"/>
+            </concept>
+            <concept>
+                <code value="T-14166"/>
+                <display value="Subcostal muscle"/>
+            </concept>
+            <concept>
+                <code value="T-13630"/>
+                <display value="Teres minor muscle"/>
+            </concept>
+            <concept>
+                <code value="T-D3400"/>
+                <display value="Diaphragm"/>
+            </concept>
+            <concept>
+                <code value="T-13310"/>
+                <display value="Sternocleidomastoid muscle"/>
+            </concept>
+            <concept>
+                <code value="T-13610"/>
+                <display value="Supraspinatus muscle"/>
+            </concept>
+            <concept>
+                <code value="T-32423"/>
+                <display value="Trabeculae carnae"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

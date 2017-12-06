@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-3440-PeripheralPulseLocations"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_3440.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.93"/>
+    </identifier>
+    <version value="20170914"/>
+    <name value="PeripheralPulseLocations"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 3440 PeripheralPulseLocations"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://snomed.info/srt"/>
+            <concept>
+                <code value="T-47400"/>
+                <display value="Femoral Artery"/>
+            </concept>
+            <concept>
+                <code value="T-47740"/>
+                <display value="Dorsalis Pedis Artery"/>
+            </concept>
+            <concept>
+                <code value="T-47300"/>
+                <display value="Radial Artery"/>
+            </concept>
+            <concept>
+                <code value="T-47600"/>
+                <display value="Posterior Tibial Artery"/>
+            </concept>
+            <concept>
+                <code value="T-47500"/>
+                <display value="Popliteal Artery"/>
+            </concept>
+            <concept>
+                <code value="T-45010"/>
+                <display value="Carotid Artery"/>
+            </concept>
+            <concept>
+                <code value="T-47200"/>
+                <display value="Ulnar Artery"/>
+            </concept>
+            <concept>
+                <code value="T-47160"/>
+                <display value="Brachial Artery"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-7026-RadiotherapeuticDoseMeasurementDevices"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_7026.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.1177"/>
+    </identifier>
+    <version value="20170914"/>
+    <name value="RadiotherapeuticDoseMeasurementDevices"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 7026 RadiotherapeuticDoseMeasurementDevices"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://dicom.nema.org/resources/ontology/DCM"/>
+            <concept>
+                <code value="128701"/>
+                <display value="3D Gel"/>
+            </concept>
+            <concept>
+                <code value="128703"/>
+                <display value="Ion Chamber Array"/>
+            </concept>
+            <concept>
+                <code value="128702"/>
+                <display value="Diode Array"/>
+            </concept>
+            <concept>
+                <code value="128705"/>
+                <display value="Liquid Ion Chamber"/>
+            </concept>
+            <concept>
+                <code value="128704"/>
+                <display value="Diode"/>
+            </concept>
+            <concept>
+                <code value="128707"/>
+                <display value="Ion Chamber"/>
+            </concept>
+            <concept>
+                <code value="128706"/>
+                <display value="OSLD"/>
+            </concept>
+            <concept>
+                <code value="128708"/>
+                <display value="Diamond Detector"/>
+            </concept>
+        </include>
+        <include>
+            <system value="http://snomed.info/srt"/>
+            <concept>
+                <code value="R-FCE69"/>
+                <display value="Thermoluminescent radiation dosimeter"/>
+            </concept>
+            <concept>
+                <code value="R-FCC16"/>
+                <display value="MOSFET radiation therapy dosimetry system dosimeter"/>
+            </concept>
+            <concept>
+                <code value="R-FCCF2"/>
+                <display value="Medical x-ray film"/>
+            </concept>
+            <concept>
+                <code value="R-FD5EB"/>
+                <display value="Digital imager"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

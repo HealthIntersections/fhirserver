@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-3613-HemodynamicTimeMeasurements"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_3613.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.163"/>
+    </identifier>
+    <version value="20030327"/>
+    <name value="HemodynamicTimeMeasurements"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 3613 HemodynamicTimeMeasurements"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://dicom.nema.org/resources/ontology/DCM"/>
+            <concept>
+                <code value="109072"/>
+                <display value="Tau"/>
+            </concept>
+            <concept>
+                <code value="109071"/>
+                <display value="Indicator mean transit time"/>
+            </concept>
+            <concept>
+                <code value="122214"/>
+                <display value="Right Ventricular filling time"/>
+            </concept>
+            <concept>
+                <code value="122212"/>
+                <display value="Left Ventricular filling time"/>
+            </concept>
+            <concept>
+                <code value="122213"/>
+                <display value="Right Ventricular ejection time"/>
+            </concept>
+            <concept>
+                <code value="122211"/>
+                <display value="Left Ventricular ejection time"/>
+            </concept>
+            <concept>
+                <code value="122182"/>
+                <display value="R-R interval"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

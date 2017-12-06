@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-7320-PlanningMethods"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_7320.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.924"/>
+    </identifier>
+    <version value="20101102"/>
+    <name value="PlanningMethods"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 7320 PlanningMethods"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://dicom.nema.org/resources/ontology/DCM"/>
+            <concept>
+                <code value="112340"/>
+                <display value="Generic 2D Planning"/>
+            </concept>
+            <concept>
+                <code value="112341"/>
+                <display value="Generic 3D Planning"/>
+            </concept>
+            <concept>
+                <code value="112342"/>
+                <display value="Generic Planning for Hip Replacement"/>
+            </concept>
+            <concept>
+                <code value="112343"/>
+                <display value="Generic Planning for Knee Replacement"/>
+            </concept>
+            <concept>
+                <code value="112344"/>
+                <display value="Müller Method Planning for Hip Replacement"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

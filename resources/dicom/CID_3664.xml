@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-3664-OxygenConsumptionEquationsandTables"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_3664.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.181"/>
+    </identifier>
+    <version value="20030327"/>
+    <name value="OxygenConsumptionEquationsandTables"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 3664 OxygenConsumptionEquationsandTables"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://dicom.nema.org/resources/ontology/DCM"/>
+            <concept>
+                <code value="122249"/>
+                <display value="VO2 = VeSTPD * 10 * (FIO2 - FE02)"/>
+            </concept>
+            <concept>
+                <code value="122247"/>
+                <display value="VO2male = BSA (138.1 - 11.49 * loge(age) + 0.378*HRf)"/>
+            </concept>
+            <concept>
+                <code value="122248"/>
+                <display value="VO2female = BSA (138.1 - 17.04 * loge(age) + 0.378*HRf)"/>
+            </concept>
+            <concept>
+                <code value="122254"/>
+                <display value="Fleisch table"/>
+            </concept>
+            <concept>
+                <code value="122255"/>
+                <display value="Boothby table"/>
+            </concept>
+            <concept>
+                <code value="122252"/>
+                <display value="VO2 = 176 * BSA"/>
+            </concept>
+            <concept>
+                <code value="122253"/>
+                <display value="Robertson &amp; Reid table"/>
+            </concept>
+            <concept>
+                <code value="122250"/>
+                <display value="VO2 = 152 * BSA"/>
+            </concept>
+            <concept>
+                <code value="122251"/>
+                <display value="VO2 = 175 * BSA"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

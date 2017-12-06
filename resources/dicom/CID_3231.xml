@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-3231-STSegmentFindings"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_3231.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.777"/>
+    </identifier>
+    <version value="20080927"/>
+    <name value="STSegmentFindings"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 3231 STSegmentFindings"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://dicom.nema.org/resources/ontology/DCM"/>
+            <concept>
+                <code value="122755"/>
+                <display value="Strongly positive"/>
+            </concept>
+            <concept>
+                <code value="122756"/>
+                <display value="Strongly positive - ST elevation"/>
+            </concept>
+            <concept>
+                <code value="122751"/>
+                <display value="Non-diagnostic - resting ST abnormalities"/>
+            </concept>
+            <concept>
+                <code value="122752"/>
+                <display value="Non-diagnostic - ventricular pacing or LBBB"/>
+            </concept>
+            <concept>
+                <code value="122750"/>
+                <display value="Non-diagnostic - low heart rate"/>
+            </concept>
+        </include>
+        <include>
+            <system value="http://snomed.info/srt"/>
+            <concept>
+                <code value="G-A205"/>
+                <display value="Weakly positive"/>
+            </concept>
+            <concept>
+                <code value="F-000C3"/>
+                <display value="ST Interval Normal"/>
+            </concept>
+            <concept>
+                <code value="G-A200"/>
+                <display value="Positive"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

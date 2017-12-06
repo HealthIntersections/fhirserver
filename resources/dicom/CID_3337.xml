@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-3337-HemodynamicAnnotations"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_3337.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.63"/>
+    </identifier>
+    <version value="20160314"/>
+    <name value="HemodynamicAnnotations"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 3337 HemodynamicAnnotations"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://dicom.nema.org/resources/ontology/DCM"/>
+            <concept>
+                <code value="109019"/>
+                <display value="Beat detected (rejected)"/>
+            </concept>
+            <concept>
+                <code value="109016"/>
+                <display value="A wave peak pressure"/>
+            </concept>
+            <concept>
+                <code value="109015"/>
+                <display value="70% of thermal/dye dilution CO"/>
+            </concept>
+            <concept>
+                <code value="109037"/>
+                <display value="Valve open"/>
+            </concept>
+            <concept>
+                <code value="109018"/>
+                <display value="Beat detected (accepted)"/>
+            </concept>
+            <concept>
+                <code value="109017"/>
+                <display value="A wave pressure, average"/>
+            </concept>
+            <concept>
+                <code value="109034"/>
+                <display value="V wave peak pressure"/>
+            </concept>
+            <concept>
+                <code value="109014"/>
+                <display value="35% of thermal/dye dilution CO"/>
+            </concept>
+            <concept>
+                <code value="109036"/>
+                <display value="Valve close"/>
+            </concept>
+            <concept>
+                <code value="109035"/>
+                <display value="V wave pressure, average"/>
+            </concept>
+            <concept>
+                <code value="109030"/>
+                <display value="Start of inspiration"/>
+            </concept>
+            <concept>
+                <code value="109073"/>
+                <display value="V max myocardial"/>
+            </concept>
+            <concept>
+                <code value="109031"/>
+                <display value="Start of thermal CO"/>
+            </concept>
+            <concept>
+                <code value="109070"/>
+                <display value="End of systole"/>
+            </concept>
+            <concept>
+                <code value="109072"/>
+                <display value="Tau"/>
+            </concept>
+            <concept>
+                <code value="109071"/>
+                <display value="Indicator mean transit time"/>
+            </concept>
+            <concept>
+                <code value="109026"/>
+                <display value="Max neg dp/dt"/>
+            </concept>
+            <concept>
+                <code value="109029"/>
+                <display value="Start of expiration"/>
+            </concept>
+            <concept>
+                <code value="109028"/>
+                <display value="Peak of thermal cardiac output bolus"/>
+            </concept>
+            <concept>
+                <code value="109023"/>
+                <display value="End of expiration"/>
+            </concept>
+            <concept>
+                <code value="109025"/>
+                <display value="Max dp/dt"/>
+            </concept>
+            <concept>
+                <code value="109024"/>
+                <display value="End of inspiration"/>
+            </concept>
+        </include>
+        <include>
+            <system value="http://snomed.info/srt"/>
+            <concept>
+                <code value="F-00E11"/>
+                <display value="Maximum systolic blood pressure"/>
+            </concept>
+            <concept>
+                <code value="F-00E14"/>
+                <display value="Average systolic blood pressure"/>
+            </concept>
+            <concept>
+                <code value="F-31150"/>
+                <display value="Mean blood pressure"/>
+            </concept>
+            <concept>
+                <code value="F-00E22"/>
+                <display value="Average diastolic blood pressure"/>
+            </concept>
+            <concept>
+                <code value="R-FAB5C"/>
+                <display value="End diastole"/>
+            </concept>
+            <concept>
+                <code value="F-00E1F"/>
+                <display value="Minimum diastolic blood pressure"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

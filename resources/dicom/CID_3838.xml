@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-3838-DiameterDerivation"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_3838.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.288"/>
+    </identifier>
+    <version value="20051103"/>
+    <name value="DiameterDerivation"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 3838 DiameterDerivation"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://dicom.nema.org/resources/ontology/DCM"/>
+            <concept>
+                <code value="122675"/>
+                <display value="Anterior-Posterior"/>
+            </concept>
+        </include>
+        <include>
+            <system value="http://snomed.info/srt"/>
+            <concept>
+                <code value="G-A117"/>
+                <display value="Transverse"/>
+            </concept>
+            <concept>
+                <code value="G-A437"/>
+                <display value="Maximum"/>
+            </concept>
+            <concept>
+                <code value="R-404FB"/>
+                <display value="Minimum"/>
+            </concept>
+            <concept>
+                <code value="R-00317"/>
+                <display value="Mean"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

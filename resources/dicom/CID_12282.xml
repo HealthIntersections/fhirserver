@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-12282-CardiacUltrasoundVenousReturnSystemicFindingSites"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_12282.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.862"/>
+    </identifier>
+    <version value="20100317"/>
+    <name value="CardiacUltrasoundVenousReturnSystemicFindingSites"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 12282 CardiacUltrasoundVenousReturnSystemicFindingSites"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://snomed.info/srt"/>
+            <concept>
+                <code value="T-48610"/>
+                <display value="Superior Vena Cava"/>
+            </concept>
+            <concept>
+                <code value="T-48720"/>
+                <display value="Hepatic Vein"/>
+            </concept>
+            <concept>
+                <code value="T-48611"/>
+                <display value="Left Superior Vena Cava"/>
+            </concept>
+            <concept>
+                <code value="T-48710"/>
+                <display value="Inferior Vena Cava"/>
+            </concept>
+            <concept>
+                <code value="T-D0888"/>
+                <display value="Mustard or Senning Inferior Vena Cava Pathway"/>
+            </concept>
+            <concept>
+                <code value="T-D0882"/>
+                <display value="Fontan Fenestration"/>
+            </concept>
+            <concept>
+                <code value="T-D0880"/>
+                <display value="Fontan Pulmonary Artery Connection"/>
+            </concept>
+            <concept>
+                <code value="T-D0887"/>
+                <display value="Mustard or Senning Superior Vena Cava Pathway"/>
+            </concept>
+            <concept>
+                <code value="T-D0885"/>
+                <display value="Mustard or Senning Common Systemic Venous Pathway"/>
+            </concept>
+            <concept>
+                <code value="T-D0884"/>
+                <display value="Glenn Pathway"/>
+            </concept>
+            <concept>
+                <code value="DD-66228"/>
+                <display value="Fontan Baffle Leak"/>
+            </concept>
+            <concept>
+                <code value="M-2460D"/>
+                <display value="Right Superior Vena Cava"/>
+            </concept>
+            <concept>
+                <code value="T-D087E"/>
+                <display value="Hemi-Fontan Pathway"/>
+            </concept>
+            <concept>
+                <code value="T-D087D"/>
+                <display value="Fontan Inferior Vena Cava Pathway"/>
+            </concept>
+            <concept>
+                <code value="T-D087C"/>
+                <display value="Fontan Pathway"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

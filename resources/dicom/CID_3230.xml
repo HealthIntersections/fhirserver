@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-3230-ECGFindings"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_3230.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.776"/>
+    </identifier>
+    <version value="20080927"/>
+    <name value="ECGFindings"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 3230 ECGFindings"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://snomed.info/srt"/>
+            <concept>
+                <code value="F-380B3"/>
+                <display value="Early repolarization"/>
+            </concept>
+            <concept>
+                <code value="R-F81AE"/>
+                <display value="Second degree Atrioventricular block"/>
+            </concept>
+            <concept>
+                <code value="F-000B7"/>
+                <display value="Normal"/>
+            </concept>
+            <concept>
+                <code value="D3-31700"/>
+                <display value="Ventricular tachycardia"/>
+            </concept>
+            <concept>
+                <code value="D3-31720"/>
+                <display value="Ventricular fibrillation"/>
+            </concept>
+            <concept>
+                <code value="D3-31740"/>
+                <display value="Ventricular premature contraction"/>
+            </concept>
+            <concept>
+                <code value="D3-31520"/>
+                <display value="Atrial Fibrillation"/>
+            </concept>
+            <concept>
+                <code value="D3-33200"/>
+                <display value="Bifascicular Block"/>
+            </concept>
+            <concept>
+                <code value="D3-33122"/>
+                <display value="Incomplete Left bundle branch block"/>
+            </concept>
+            <concept>
+                <code value="D3-33000"/>
+                <display value="Intraventricular conduction disturbance"/>
+            </concept>
+            <concept>
+                <code value="D3-33120"/>
+                <display value="Left bundle branch block"/>
+            </concept>
+            <concept>
+                <code value="D3-33140"/>
+                <display value="Left anterior fascicular block"/>
+            </concept>
+            <concept>
+                <code value="D3-30A03"/>
+                <display value="Atrial premature contraction"/>
+            </concept>
+            <concept>
+                <code value="D3-31710"/>
+                <display value="Non-sustained ventricular tachycardia"/>
+            </concept>
+            <concept>
+                <code value="F-38793"/>
+                <display value="Secondary ST-T abnormality"/>
+            </concept>
+            <concept>
+                <code value="F-38277"/>
+                <display value="ST elevation"/>
+            </concept>
+            <concept>
+                <code value="F-38794"/>
+                <display value="Nonspecific ST-T abnormality"/>
+            </concept>
+            <concept>
+                <code value="D3-32102"/>
+                <display value="Third degree Atrioventricular block"/>
+            </concept>
+            <concept>
+                <code value="F-38278"/>
+                <display value="ST depression"/>
+            </concept>
+            <concept>
+                <code value="D3-30001"/>
+                <display value="First degree Atrioventricular block"/>
+            </concept>
+            <concept>
+                <code value="D3-33112"/>
+                <display value="Incomplete Right bundle branch block"/>
+            </concept>
+            <concept>
+                <code value="D3-31351"/>
+                <display value="Ventricular pre-excitation"/>
+            </concept>
+            <concept>
+                <code value="D3-33110"/>
+                <display value="Right bundle branch block"/>
+            </concept>
+            <concept>
+                <code value="D3-31290"/>
+                <display value="Supraventricular Tachycardia"/>
+            </concept>
+            <concept>
+                <code value="D3-33150"/>
+                <display value="Left posterior fascicular block"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

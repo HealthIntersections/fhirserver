@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-4254-VisualFieldStaticPerimetryTestAnalysisResults"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_4254.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.913"/>
+    </identifier>
+    <version value="20100827"/>
+    <name value="VisualFieldStaticPerimetryTestAnalysisResults"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 4254 VisualFieldStaticPerimetryTestAnalysisResults"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://dicom.nema.org/resources/ontology/DCM"/>
+            <concept>
+                <code value="111847"/>
+                <display value="Outside normal limits"/>
+            </concept>
+            <concept>
+                <code value="111848"/>
+                <display value="Borderline"/>
+            </concept>
+            <concept>
+                <code value="111849"/>
+                <display value="Abnormally high sensitivity"/>
+            </concept>
+            <concept>
+                <code value="111850"/>
+                <display value="General reduction in sensitivity"/>
+            </concept>
+            <concept>
+                <code value="111851"/>
+                <display value="Borderline and general reduction in sensitivity"/>
+            </concept>
+        </include>
+        <include>
+            <system value="http://snomed.info/srt"/>
+            <concept>
+                <code value="M-00101"/>
+                <display value="Within normal limits"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-6100-ChestComponentCategories"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_6100.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.420"/>
+    </identifier>
+    <version value="20030108"/>
+    <name value="ChestComponentCategories"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 6100 ChestComponentCategories"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://dicom.nema.org/resources/ontology/DCM"/>
+            <concept>
+                <code value="112052"/>
+                <display value="Bronchovascular"/>
+            </concept>
+            <concept>
+                <code value="112053"/>
+                <display value="Osseous"/>
+            </concept>
+        </include>
+        <include>
+            <system value="http://snomed.info/srt"/>
+            <concept>
+                <code value="T-32000"/>
+                <display value="Heart"/>
+            </concept>
+            <concept>
+                <code value="T-28000"/>
+                <display value="Lung"/>
+            </concept>
+            <concept>
+                <code value="T-29000"/>
+                <display value="Pleural structure"/>
+            </concept>
+            <concept>
+                <code value="T-D3300"/>
+                <display value="Mediastinum"/>
+            </concept>
+            <concept>
+                <code value="R-420AE"/>
+                <display value="Muscular"/>
+            </concept>
+            <concept>
+                <code value="T-4000E"/>
+                <display value="Systemic vascular structure"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

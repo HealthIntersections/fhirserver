@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-4017-AnatomicRegionModifierforIntraoralRadiography"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_4017.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.301"/>
+    </identifier>
+    <version value="20150318"/>
+    <name value="AnatomicRegionModifierforIntraoralRadiography"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 4017 AnatomicRegionModifierforIntraoralRadiography"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://snomed.info/srt"/>
+            <concept>
+                <code value="R-FB356"/>
+                <display value="Second molar region"/>
+            </concept>
+            <concept>
+                <code value="R-FB322"/>
+                <display value="Central incisor region"/>
+            </concept>
+            <concept>
+                <code value="R-FB354"/>
+                <display value="Third molar region"/>
+            </concept>
+            <concept>
+                <code value="R-FB359"/>
+                <display value="Second premolar region"/>
+            </concept>
+            <concept>
+                <code value="R-FB358"/>
+                <display value="First molar region"/>
+            </concept>
+            <concept>
+                <code value="R-FB35C"/>
+                <display value="Lateral incisor region"/>
+            </concept>
+            <concept>
+                <code value="R-FB35B"/>
+                <display value="Canine region"/>
+            </concept>
+            <concept>
+                <code value="R-FB35A"/>
+                <display value="First premolar region"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

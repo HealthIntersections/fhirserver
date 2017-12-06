@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-4014-ViewforMammography"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_4014.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.298"/>
+    </identifier>
+    <version value="20090717"/>
+    <name value="ViewforMammography"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 4014 ViewforMammography"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://snomed.info/srt"/>
+            <concept>
+                <code value="R-10228"/>
+                <display value="latero-medial"/>
+            </concept>
+            <concept>
+                <code value="R-10226"/>
+                <display value="medio-lateral oblique"/>
+            </concept>
+            <concept>
+                <code value="R-40AAA"/>
+                <display value="inferomedial to superolateral oblique"/>
+            </concept>
+            <concept>
+                <code value="R-10242"/>
+                <display value="cranio-caudal"/>
+            </concept>
+            <concept>
+                <code value="R-1024B"/>
+                <display value="cranio-caudal exaggerated medially"/>
+            </concept>
+            <concept>
+                <code value="G-8310"/>
+                <display value="tissue specimen from breast"/>
+            </concept>
+            <concept>
+                <code value="R-10230"/>
+                <display value="latero-medial oblique"/>
+            </concept>
+            <concept>
+                <code value="R-1024A"/>
+                <display value="cranio-caudal exaggerated laterally"/>
+            </concept>
+            <concept>
+                <code value="R-102D0"/>
+                <display value="superolateral to inferomedial oblique"/>
+            </concept>
+            <concept>
+                <code value="R-10224"/>
+                <display value="medio-lateral"/>
+            </concept>
+            <concept>
+                <code value="R-10244"/>
+                <display value="caudo-cranial (from below)"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

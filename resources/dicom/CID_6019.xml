@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-6019-ClockfaceLocationorRegionfromBIRADS"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_6019.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.349"/>
+    </identifier>
+    <version value="20020904"/>
+    <name value="ClockfaceLocationorRegionfromBIRADS®"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 6019 ClockfaceLocationorRegionfromBIRADS®"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://snomed.info/srt"/>
+            <concept>
+                <code value="F-01783"/>
+                <display value="3 o'clock position"/>
+            </concept>
+            <concept>
+                <code value="F-01794"/>
+                <display value="Axilla region"/>
+            </concept>
+            <concept>
+                <code value="F-01782"/>
+                <display value="2 o'clock position"/>
+            </concept>
+            <concept>
+                <code value="F-01781"/>
+                <display value="1 o'clock position"/>
+            </concept>
+            <concept>
+                <code value="F-0178F"/>
+                <display value="Central region of breast"/>
+            </concept>
+            <concept>
+                <code value="F-0178E"/>
+                <display value="Axillary tail region"/>
+            </concept>
+            <concept>
+                <code value="F-0178D"/>
+                <display value="Subareolar region"/>
+            </concept>
+            <concept>
+                <code value="F-0178C"/>
+                <display value="12 o'clock position"/>
+            </concept>
+            <concept>
+                <code value="F-0178B"/>
+                <display value="11 o'clock position"/>
+            </concept>
+            <concept>
+                <code value="F-0178A"/>
+                <display value="10 o'clock position"/>
+            </concept>
+            <concept>
+                <code value="F-01787"/>
+                <display value="7 o'clock position"/>
+            </concept>
+            <concept>
+                <code value="F-01786"/>
+                <display value="6 o'clock position"/>
+            </concept>
+            <concept>
+                <code value="F-01785"/>
+                <display value="5 o'clock position"/>
+            </concept>
+            <concept>
+                <code value="F-01784"/>
+                <display value="4 o'clock position"/>
+            </concept>
+            <concept>
+                <code value="F-01789"/>
+                <display value="9 o'clock position"/>
+            </concept>
+            <concept>
+                <code value="F-01788"/>
+                <display value="8 o'clock position"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-7101-BrainAtlasFiducials"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_7101.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.495"/>
+    </identifier>
+    <version value="20040115"/>
+    <name value="BrainAtlasFiducials"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 7101 BrainAtlasFiducials"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://dicom.nema.org/resources/ontology/DCM"/>
+            <concept>
+                <code value="125030"/>
+                <display value="Inter-Hemispheric Plane"/>
+            </concept>
+            <concept>
+                <code value="125038"/>
+                <display value="Left Hemisphere Most Inferior"/>
+            </concept>
+            <concept>
+                <code value="125037"/>
+                <display value="Left Hemisphere Most Superior"/>
+            </concept>
+            <concept>
+                <code value="125036"/>
+                <display value="Left Hemisphere Most Posterior"/>
+            </concept>
+            <concept>
+                <code value="125035"/>
+                <display value="Left Hemisphere Most Anterior"/>
+            </concept>
+            <concept>
+                <code value="125034"/>
+                <display value="Right Hemisphere Most Inferior"/>
+            </concept>
+            <concept>
+                <code value="125033"/>
+                <display value="Right Hemisphere Most Superior"/>
+            </concept>
+            <concept>
+                <code value="125032"/>
+                <display value="Right Hemisphere Most Posterior"/>
+            </concept>
+            <concept>
+                <code value="125031"/>
+                <display value="Right Hemisphere Most Anterior"/>
+            </concept>
+        </include>
+        <include>
+            <system value="http://snomed.info/srt"/>
+            <concept>
+                <code value="T-A4904"/>
+                <display value="Posterior Commissure"/>
+            </concept>
+            <concept>
+                <code value="T-A2980"/>
+                <display value="Anterior Commissure"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

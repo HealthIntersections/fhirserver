@@ -1,0 +1,450 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-8301-TestPatternCodes"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_8301.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.981"/>
+    </identifier>
+    <version value="20140331"/>
+    <name value="TestPatternCodes"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 8301 TestPatternCodes"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://dicom.nema.org/resources/ontology/DCM"/>
+            <concept>
+                <code value="109859"/>
+                <display value="TG18-LPV50 Pattern"/>
+            </concept>
+            <concept>
+                <code value="109856"/>
+                <display value="TG18-LPH50 Pattern"/>
+            </concept>
+            <concept>
+                <code value="109855"/>
+                <display value="TG18-LPH10 Pattern"/>
+            </concept>
+            <concept>
+                <code value="109858"/>
+                <display value="TG18-LPV10 Pattern"/>
+            </concept>
+            <concept>
+                <code value="109857"/>
+                <display value="TG18-LPH89 Pattern"/>
+            </concept>
+            <concept>
+                <code value="109852"/>
+                <display value="TG18-RV89 Pattern"/>
+            </concept>
+            <concept>
+                <code value="109851"/>
+                <display value="TG18-RV50 Pattern"/>
+            </concept>
+            <concept>
+                <code value="109854"/>
+                <display value="TG18-CX Pattern"/>
+            </concept>
+            <concept>
+                <code value="109853"/>
+                <display value="TG18-PX Pattern"/>
+            </concept>
+            <concept>
+                <code value="109850"/>
+                <display value="TG18-RV10 Pattern"/>
+            </concept>
+            <concept>
+                <code value="109908"/>
+                <display value="BN05 Pattern"/>
+            </concept>
+            <concept>
+                <code value="109907"/>
+                <display value="BN04 Pattern"/>
+            </concept>
+            <concept>
+                <code value="109909"/>
+                <display value="BN06 Pattern"/>
+            </concept>
+            <concept>
+                <code value="109904"/>
+                <display value="BN01 Pattern"/>
+            </concept>
+            <concept>
+                <code value="109903"/>
+                <display value="GD Pattern"/>
+            </concept>
+            <concept>
+                <code value="109906"/>
+                <display value="BN03 Pattern"/>
+            </concept>
+            <concept>
+                <code value="109905"/>
+                <display value="BN02 Pattern"/>
+            </concept>
+            <concept>
+                <code value="109867"/>
+                <display value="TG18-GQ Pattern"/>
+            </concept>
+            <concept>
+                <code value="109866"/>
+                <display value="TG18-GVN Pattern"/>
+            </concept>
+            <concept>
+                <code value="109869"/>
+                <display value="TG18-GQB Pattern"/>
+            </concept>
+            <concept>
+                <code value="109902"/>
+                <display value="ANG Pattern"/>
+            </concept>
+            <concept>
+                <code value="109868"/>
+                <display value="TG18-GQN Pattern"/>
+            </concept>
+            <concept>
+                <code value="109901"/>
+                <display value="OIQ Pattern"/>
+            </concept>
+            <concept>
+                <code value="109863"/>
+                <display value="TG18-NS50 Pattern"/>
+            </concept>
+            <concept>
+                <code value="109862"/>
+                <display value="TG18-NS10 Pattern"/>
+            </concept>
+            <concept>
+                <code value="109865"/>
+                <display value="TG18-GV Pattern"/>
+            </concept>
+            <concept>
+                <code value="109864"/>
+                <display value="TG18-NS89 Pattern"/>
+            </concept>
+            <concept>
+                <code value="109861"/>
+                <display value="TG18-AFC Pattern"/>
+            </concept>
+            <concept>
+                <code value="109860"/>
+                <display value="TG18-LPV89 Pattern"/>
+            </concept>
+            <concept>
+                <code value="109838"/>
+                <display value="TG18-LN12-16 Pattern"/>
+            </concept>
+            <concept>
+                <code value="109837"/>
+                <display value="TG18-LN12-15 Pattern"/>
+            </concept>
+            <concept>
+                <code value="109839"/>
+                <display value="TG18-LN12-17 Pattern"/>
+            </concept>
+            <concept>
+                <code value="109834"/>
+                <display value="TG18-LN12-12 Pattern"/>
+            </concept>
+            <concept>
+                <code value="109833"/>
+                <display value="TG18-LN12-11 Pattern"/>
+            </concept>
+            <concept>
+                <code value="109836"/>
+                <display value="TG18-LN12-14 Pattern"/>
+            </concept>
+            <concept>
+                <code value="109835"/>
+                <display value="TG18-LN12-13 Pattern"/>
+            </concept>
+            <concept>
+                <code value="109830"/>
+                <display value="TG18-LN12-08 Pattern"/>
+            </concept>
+            <concept>
+                <code value="109832"/>
+                <display value="TG18-LN12-10 Pattern"/>
+            </concept>
+            <concept>
+                <code value="109831"/>
+                <display value="TG18-LN12-09 Pattern"/>
+            </concept>
+            <concept>
+                <code value="109849"/>
+                <display value="TG18-RH89 Pattern"/>
+            </concept>
+            <concept>
+                <code value="109848"/>
+                <display value="TG18-RH50 Pattern"/>
+            </concept>
+            <concept>
+                <code value="109845"/>
+                <display value="TG18-AD Pattern"/>
+            </concept>
+            <concept>
+                <code value="109844"/>
+                <display value="TG18-UNL80 Pattern"/>
+            </concept>
+            <concept>
+                <code value="109847"/>
+                <display value="TG18-RH10 Pattern"/>
+            </concept>
+            <concept>
+                <code value="109846"/>
+                <display value="TG18-MP Pattern"/>
+            </concept>
+            <concept>
+                <code value="109841"/>
+                <display value="TG18-UN10 Pattern"/>
+            </concept>
+            <concept>
+                <code value="109840"/>
+                <display value="TG18-LN12-18 Pattern"/>
+            </concept>
+            <concept>
+                <code value="109843"/>
+                <display value="TG18-UNL10 Pattern"/>
+            </concept>
+            <concept>
+                <code value="109842"/>
+                <display value="TG18-UN80 Pattern"/>
+            </concept>
+            <concept>
+                <code value="109819"/>
+                <display value="TG18-LN8-15 Pattern"/>
+            </concept>
+            <concept>
+                <code value="109816"/>
+                <display value="TG18-LN8-12 Pattern"/>
+            </concept>
+            <concept>
+                <code value="109815"/>
+                <display value="TG18-LN8-11 Pattern"/>
+            </concept>
+            <concept>
+                <code value="109818"/>
+                <display value="TG18-LN8-14 Pattern"/>
+            </concept>
+            <concept>
+                <code value="109817"/>
+                <display value="TG18-LN8-13 Pattern"/>
+            </concept>
+            <concept>
+                <code value="109812"/>
+                <display value="TG18-LN8-08 Pattern"/>
+            </concept>
+            <concept>
+                <code value="109933"/>
+                <display value="DIN Resolution Pattern"/>
+            </concept>
+            <concept>
+                <code value="109811"/>
+                <display value="TG18-LN8-07 Pattern"/>
+            </concept>
+            <concept>
+                <code value="109932"/>
+                <display value="DIN Grayscale Pattern"/>
+            </concept>
+            <concept>
+                <code value="109814"/>
+                <display value="TG18-LN8-10 Pattern"/>
+            </concept>
+            <concept>
+                <code value="109813"/>
+                <display value="TG18-LN8-09 Pattern"/>
+            </concept>
+            <concept>
+                <code value="109810"/>
+                <display value="TG18-LN8-06 Pattern"/>
+            </concept>
+            <concept>
+                <code value="109931"/>
+                <display value="DIN Geometry Pattern"/>
+            </concept>
+            <concept>
+                <code value="109827"/>
+                <display value="TG18-LN12-05 Pattern"/>
+            </concept>
+            <concept>
+                <code value="109826"/>
+                <display value="TG18-LN12-04 Pattern"/>
+            </concept>
+            <concept>
+                <code value="109829"/>
+                <display value="TG18-LN12-07 Pattern"/>
+            </concept>
+            <concept>
+                <code value="109828"/>
+                <display value="TG18-LN12-06 Pattern"/>
+            </concept>
+            <concept>
+                <code value="109823"/>
+                <display value="TG18-LN12-01 Pattern"/>
+            </concept>
+            <concept>
+                <code value="109822"/>
+                <display value="TG18-LN8-18 Pattern"/>
+            </concept>
+            <concept>
+                <code value="109943"/>
+                <display value="SMPTE Pattern"/>
+            </concept>
+            <concept>
+                <code value="109825"/>
+                <display value="TG18-LN12-03 Pattern"/>
+            </concept>
+            <concept>
+                <code value="109824"/>
+                <display value="TG18-LN12-02 Pattern"/>
+            </concept>
+            <concept>
+                <code value="109821"/>
+                <display value="TG18-LN8-17 Pattern"/>
+            </concept>
+            <concept>
+                <code value="109820"/>
+                <display value="TG18-LN8-16 Pattern"/>
+            </concept>
+            <concept>
+                <code value="109941"/>
+                <display value="White Pattern"/>
+            </concept>
+            <concept>
+                <code value="109919"/>
+                <display value="BN16 Pattern"/>
+            </concept>
+            <concept>
+                <code value="109918"/>
+                <display value="BN15 Pattern"/>
+            </concept>
+            <concept>
+                <code value="109915"/>
+                <display value="BN12 Pattern"/>
+            </concept>
+            <concept>
+                <code value="109914"/>
+                <display value="BN11 Pattern"/>
+            </concept>
+            <concept>
+                <code value="109917"/>
+                <display value="BN14 Pattern"/>
+            </concept>
+            <concept>
+                <code value="109916"/>
+                <display value="BN13 Pattern"/>
+            </concept>
+            <concept>
+                <code value="109878"/>
+                <display value="TG18-CH Image"/>
+            </concept>
+            <concept>
+                <code value="109911"/>
+                <display value="BN08 Pattern"/>
+            </concept>
+            <concept>
+                <code value="109877"/>
+                <display value="TG18-GA30 Pattern"/>
+            </concept>
+            <concept>
+                <code value="109910"/>
+                <display value="BN07 Pattern"/>
+            </concept>
+            <concept>
+                <code value="109913"/>
+                <display value="BN10 Pattern"/>
+            </concept>
+            <concept>
+                <code value="109879"/>
+                <display value="TG18-KN Image"/>
+            </concept>
+            <concept>
+                <code value="109912"/>
+                <display value="BN09 Pattern"/>
+            </concept>
+            <concept>
+                <code value="109874"/>
+                <display value="TG18-GA15 Pattern"/>
+            </concept>
+            <concept>
+                <code value="109873"/>
+                <display value="TG18-GA10 Pattern"/>
+            </concept>
+            <concept>
+                <code value="109876"/>
+                <display value="TG18-GA25 Pattern"/>
+            </concept>
+            <concept>
+                <code value="109875"/>
+                <display value="TG18-GA20 Pattern"/>
+            </concept>
+            <concept>
+                <code value="109870"/>
+                <display value="TG18-GA03 Pattern"/>
+            </concept>
+            <concept>
+                <code value="109872"/>
+                <display value="TG18-GA08 Pattern"/>
+            </concept>
+            <concept>
+                <code value="109871"/>
+                <display value="TG18-GA05 Pattern"/>
+            </concept>
+            <concept>
+                <code value="109809"/>
+                <display value="TG18-LN8-05 Pattern"/>
+            </concept>
+            <concept>
+                <code value="109808"/>
+                <display value="TG18-LN8-04 Pattern"/>
+            </concept>
+            <concept>
+                <code value="109805"/>
+                <display value="TG18-LN8-01 Pattern"/>
+            </concept>
+            <concept>
+                <code value="109804"/>
+                <display value="TG18-CT Pattern"/>
+            </concept>
+            <concept>
+                <code value="109807"/>
+                <display value="TG18-LN8-03 Pattern"/>
+            </concept>
+            <concept>
+                <code value="109806"/>
+                <display value="TG18-LN8-02 Pattern"/>
+            </concept>
+            <concept>
+                <code value="109801"/>
+                <display value="TG18-QC Pattern"/>
+            </concept>
+            <concept>
+                <code value="109921"/>
+                <display value="BN18 Pattern"/>
+            </concept>
+            <concept>
+                <code value="109803"/>
+                <display value="TG18-PQC Pattern"/>
+            </concept>
+            <concept>
+                <code value="109802"/>
+                <display value="TG18-BR Pattern"/>
+            </concept>
+            <concept>
+                <code value="109920"/>
+                <display value="BN17 Pattern"/>
+            </concept>
+            <concept>
+                <code value="109881"/>
+                <display value="TG18-MM2 Image"/>
+            </concept>
+            <concept>
+                <code value="109880"/>
+                <display value="TG18-MM1 Image"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

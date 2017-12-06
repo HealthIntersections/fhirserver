@@ -1,0 +1,806 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-12300-CoreEchoMeasurements"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_12300.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.1149"/>
+    </identifier>
+    <version value="20161109"/>
+    <name value="CoreEchoMeasurements"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 12300 CoreEchoMeasurements"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://loinc.org"/>
+            <concept>
+                <code value="18175-0"/>
+                <display value="Tricuspid valve diastolic VTI"/>
+            </concept>
+            <concept>
+                <code value="80074-8"/>
+                <display value="Mitral valve peak instantaneous gradient"/>
+            </concept>
+            <concept>
+                <code value="79981-7"/>
+                <display value="Left atrial end systolic volume biplane (area-length)"/>
+            </concept>
+            <concept>
+                <code value="80013-6"/>
+                <display value="Left ventricular internal systolic dimension / BSA"/>
+            </concept>
+            <concept>
+                <code value="79989-0"/>
+                <display value="Left ventricular pre-ejection period"/>
+            </concept>
+            <concept>
+                <code value="80036-7"/>
+                <display value="LV basal anterior time to S Vmax (Ts-basal anterior)"/>
+            </concept>
+            <concept>
+                <code value="80059-9"/>
+                <display value="Mitral regurgitation PISA radius"/>
+            </concept>
+            <concept>
+                <code value="79920-5"/>
+                <display value="Pulmonic valve Vmax"/>
+            </concept>
+            <concept>
+                <code value="79917-1"/>
+                <display value="Pulmonary vein S-wave Vmax"/>
+            </concept>
+            <concept>
+                <code value="79978-3"/>
+                <display value="Left atrial end systolic diameter (AP) MM / BSA"/>
+            </concept>
+            <concept>
+                <code value="80085-4"/>
+                <display value="Right ventricular mid-cavity dimension 4C"/>
+            </concept>
+            <concept>
+                <code value="80001-1"/>
+                <display value="Left ventricular end systolic volume biplane (MOD)"/>
+            </concept>
+            <concept>
+                <code value="80062-3"/>
+                <display value="Mitral regurgitation Vmax"/>
+            </concept>
+            <concept>
+                <code value="79993-2"/>
+                <display value="Left ventricular ejection fraction single plane 4C (MOD)"/>
+            </concept>
+            <concept>
+                <code value="79970-0"/>
+                <display value="Interventricular septum systolic dimension MM"/>
+            </concept>
+            <concept>
+                <code value="80024-3"/>
+                <display value="Left ventricular mass (dimension method) MM / height^^2.7"/>
+            </concept>
+            <concept>
+                <code value="80047-4"/>
+                <display value="LV mid septal time to S Vmax (Ts-mid septal)"/>
+            </concept>
+            <concept>
+                <code value="79955-1"/>
+                <display value="Aortic sinotubular junction dimension"/>
+            </concept>
+            <concept>
+                <code value="80009-4"/>
+                <display value="Left ventricular internal diastolic dimension / BSA"/>
+            </concept>
+            <concept>
+                <code value="79932-0"/>
+                <display value="Tricuspid regurgitation PISA radius"/>
+            </concept>
+            <concept>
+                <code value="79967-6"/>
+                <display value="Inferior vena cava diameter"/>
+            </concept>
+            <concept>
+                <code value="79944-5"/>
+                <display value="Aortic regurgitant jet width/LVOT width %"/>
+            </concept>
+            <concept>
+                <code value="80073-0"/>
+                <display value="Mitral valve mean gradient"/>
+            </concept>
+            <concept>
+                <code value="79929-6"/>
+                <display value="Right ventricular ejection time"/>
+            </concept>
+            <concept>
+                <code value="80050-8"/>
+                <display value="Mitral annulus diastolic diameter - A2C"/>
+            </concept>
+            <concept>
+                <code value="79982-5"/>
+                <display value="Left atrial end systolic volume biplane (area-length) / BSA"/>
+            </concept>
+            <concept>
+                <code value="80058-1"/>
+                <display value="Mitral regurgitation peak gradient"/>
+            </concept>
+            <concept>
+                <code value="80012-8"/>
+                <display value="Left ventricular internal systolic dimension - MM"/>
+            </concept>
+            <concept>
+                <code value="80035-9"/>
+                <display value="Left ventricular stroke volume 3D"/>
+            </concept>
+            <concept>
+                <code value="79921-3"/>
+                <display value="Tricuspid regurgitation Vmax"/>
+            </concept>
+            <concept>
+                <code value="79956-9"/>
+                <display value="Aortic valve area (Continuity Vmax)"/>
+            </concept>
+            <concept>
+                <code value="79933-8"/>
+                <display value="Tricuspid regurgitation vena contracta width"/>
+            </concept>
+            <concept>
+                <code value="79910-6"/>
+                <display value="Pulmonic valve VTI"/>
+            </concept>
+            <concept>
+                <code value="79918-9"/>
+                <display value="Pulmonic regurgitation end diastolic velocity"/>
+            </concept>
+            <concept>
+                <code value="80061-5"/>
+                <display value="Mitral regurgitation vena contracta width"/>
+            </concept>
+            <concept>
+                <code value="80000-3"/>
+                <display value="Left ventricular end systolic volume (3D)"/>
+            </concept>
+            <concept>
+                <code value="80023-5"/>
+                <display value="Left ventricular mass (dimension method) MM / BSA"/>
+            </concept>
+            <concept>
+                <code value="78191-4"/>
+                <display value="Mitral valve deceleration time"/>
+            </concept>
+            <concept>
+                <code value="80084-7"/>
+                <display value="Right ventricular free wall thickness MM"/>
+            </concept>
+            <concept>
+                <code value="79979-1"/>
+                <display value="Left atrial end systolic length 2C"/>
+            </concept>
+            <concept>
+                <code value="80046-6"/>
+                <display value="LV mid posterior time to S Vmax (Ts-mid posterior)"/>
+            </concept>
+            <concept>
+                <code value="79971-8"/>
+                <display value="Interventricular septum systolic dimension 2D"/>
+            </concept>
+            <concept>
+                <code value="29435-5"/>
+                <display value="Left ventricular fractional shortening (of minor axis) (MM)"/>
+            </concept>
+            <concept>
+                <code value="80008-6"/>
+                <display value="Left ventricular internal diastolic dimension - MM"/>
+            </concept>
+            <concept>
+                <code value="80069-8"/>
+                <display value="Mitral valve area (Pressure Half-Time)"/>
+            </concept>
+            <concept>
+                <code value="18032-3"/>
+                <display value="Tricuspid valve pressure half-time"/>
+            </concept>
+            <concept>
+                <code value="79994-0"/>
+                <display value="Left ventricular end diastolic length 4C"/>
+            </concept>
+            <concept>
+                <code value="79968-4"/>
+                <display value="Interventricular septum diastolic dimension MM"/>
+            </concept>
+            <concept>
+                <code value="80072-2"/>
+                <display value="Mitral valve flow propagation velocity (Vp)"/>
+            </concept>
+            <concept>
+                <code value="80011-0"/>
+                <display value="Left ventricular internal systolic dimension - 2D"/>
+            </concept>
+            <concept>
+                <code value="79960-1"/>
+                <display value="Aortic valve effective regurgitant orifice area"/>
+            </concept>
+            <concept>
+                <code value="80057-3"/>
+                <display value="Mitral regurgitant flow (PISA)"/>
+            </concept>
+            <concept>
+                <code value="80034-2"/>
+                <display value="Left ventricular posterior wall systolic thickness"/>
+            </concept>
+            <concept>
+                <code value="79983-3"/>
+                <display value="Left atrial end systolic volume biplane (MOD)"/>
+            </concept>
+            <concept>
+                <code value="18049-7"/>
+                <display value="Left ventricular ejection fraction (Teichholz) MM"/>
+            </concept>
+            <concept>
+                <code value="79922-1"/>
+                <display value="Tricuspid valve a-prime Vmax"/>
+            </concept>
+            <concept>
+                <code value="79945-2"/>
+                <display value="Aortic regurgitation PISA radius"/>
+            </concept>
+            <concept>
+                <code value="80019-3"/>
+                <display value="Left ventricular mass (dimension method) 2D"/>
+            </concept>
+            <concept>
+                <code value="79957-7"/>
+                <display value="Aortic valve area (Continuity Vmax) / BSA"/>
+            </concept>
+            <concept>
+                <code value="79911-4"/>
+                <display value="Mitral septal e-prime Vmax"/>
+            </concept>
+            <concept>
+                <code value="79934-6"/>
+                <display value="Pulmonic regurgitation end diastolic peak gradient"/>
+            </concept>
+            <concept>
+                <code value="80068-0"/>
+                <display value="Mitral valve area (Planimetry)"/>
+            </concept>
+            <concept>
+                <code value="80060-7"/>
+                <display value="Mitral regurgitation PISA velocity"/>
+            </concept>
+            <concept>
+                <code value="79919-7"/>
+                <display value="Pulmonic regurgitation Vmax"/>
+            </concept>
+            <concept>
+                <code value="80045-8"/>
+                <display value="LV mid lateral time to S Vmax (Ts-mid lateral)"/>
+            </concept>
+            <concept>
+                <code value="80022-7"/>
+                <display value="Left ventricular mass (dimension method) MM"/>
+            </concept>
+            <concept>
+                <code value="80083-9"/>
+                <display value="Right ventricular free wall thickness 2D"/>
+            </concept>
+            <concept>
+                <code value="79995-7"/>
+                <display value="Left ventricular end diastolic volume (3D)"/>
+            </concept>
+            <concept>
+                <code value="79972-6"/>
+                <display value="Interventricular septum time to peak displacement"/>
+            </concept>
+            <concept>
+                <code value="29434-8"/>
+                <display value="Left ventricular fractional shortening (of minor axis) (2D)"/>
+            </concept>
+            <concept>
+                <code value="80007-8"/>
+                <display value="Left ventricular internal diastolic dimension - 2D"/>
+            </concept>
+            <concept>
+                <code value="79923-9"/>
+                <display value="Tricuspid valve A-wave Vmax"/>
+            </concept>
+            <concept>
+                <code value="79969-2"/>
+                <display value="Interventricular septum diastolic dimension 2D"/>
+            </concept>
+            <concept>
+                <code value="79961-9"/>
+                <display value="Aortic valve mean blood velocity"/>
+            </concept>
+            <concept>
+                <code value="80071-4"/>
+                <display value="Mitral valve effective regurgitant orifice area (PISA)"/>
+            </concept>
+            <concept>
+                <code value="80010-2"/>
+                <display value="Left ventricular internal diastolic dimension / BSA"/>
+            </concept>
+            <concept>
+                <code value="80033-4"/>
+                <display value="Left ventricular posterior wall systolic thickness"/>
+            </concept>
+            <concept>
+                <code value="79984-1"/>
+                <display value="Left atrial end systolic volume biplane (MOD) / BSA"/>
+            </concept>
+            <concept>
+                <code value="80056-5"/>
+                <display value="Mitral regurgitant fraction (PISA)"/>
+            </concept>
+            <concept>
+                <code value="80079-7"/>
+                <display value="Right pulmonary artery diameter"/>
+            </concept>
+            <concept>
+                <code value="79946-0"/>
+                <display value="Aortic regurgitation PISA velocity"/>
+            </concept>
+            <concept>
+                <code value="80018-5"/>
+                <display value="Left ventricular mass (area-length) / height^^2.7"/>
+            </concept>
+            <concept>
+                <code value="79958-5"/>
+                <display value="Aortic valve area (Continuity VTI)"/>
+            </concept>
+            <concept>
+                <code value="18042-2"/>
+                <display value="Pulmonic valve ejection time"/>
+            </concept>
+            <concept>
+                <code value="79935-3"/>
+                <display value="Pulmonic valve peak gradient"/>
+            </concept>
+            <concept>
+                <code value="80044-1"/>
+                <display value="LV mid inferior time to S Vmax (Ts-mid inferior)"/>
+            </concept>
+            <concept>
+                <code value="80082-1"/>
+                <display value="Right ventricular end systolic area 4C"/>
+            </concept>
+            <concept>
+                <code value="80006-0"/>
+                <display value="Left ventricular epicardial area SAX PM level"/>
+            </concept>
+            <concept>
+                <code value="80067-2"/>
+                <display value="Mitral valve area (PISA)"/>
+            </concept>
+            <concept>
+                <code value="79973-4"/>
+                <display value="Left atrial end systolic area 2C"/>
+            </concept>
+            <concept>
+                <code value="80021-9"/>
+                <display value="Left ventricular mass (dimension method) 2D / height^^2.7"/>
+            </concept>
+            <concept>
+                <code value="79996-5"/>
+                <display value="Left ventricular end diastolic volume biplane (MOD)"/>
+            </concept>
+            <concept>
+                <code value="80029-2"/>
+                <display value="Left ventricular outflow tract Vmax"/>
+            </concept>
+            <concept>
+                <code value="79912-2"/>
+                <display value="Mitral valve pressure half-time"/>
+            </concept>
+            <concept>
+                <code value="79950-2"/>
+                <display value="Aortic regurgitation volume (Continuity VTI)"/>
+            </concept>
+            <concept>
+                <code value="18038-0"/>
+                <display value="Mitral valve E-to-A ratio"/>
+            </concept>
+            <concept>
+                <code value="79924-7"/>
+                <display value="Tricuspid valve e-prime Vmax"/>
+            </concept>
+            <concept>
+                <code value="79947-8"/>
+                <display value="Aortic regurgitation pressure half-time"/>
+            </concept>
+            <concept>
+                <code value="79985-8"/>
+                <display value="Left atrial end systolic volume single plane 2C (MOD)"/>
+            </concept>
+            <concept>
+                <code value="79909-8"/>
+                <display value="Pulmonic annulus diameter"/>
+            </concept>
+            <concept>
+                <code value="80070-6"/>
+                <display value="Mitral valve E-wave Vmax"/>
+            </concept>
+            <concept>
+                <code value="80032-6"/>
+                <display value="Left ventricular posterior wall diastolic thickness"/>
+            </concept>
+            <concept>
+                <code value="80078-9"/>
+                <display value="Right atrial minor axis dimension 4C / BSA"/>
+            </concept>
+            <concept>
+                <code value="80055-7"/>
+                <display value="Mitral regurgitant fraction (Continuity VTI)"/>
+            </concept>
+            <concept>
+                <code value="79962-7"/>
+                <display value="Aortic valve mean gradient"/>
+            </concept>
+            <concept>
+                <code value="80017-7"/>
+                <display value="Left ventricular mass (area-length) / BSA"/>
+            </concept>
+            <concept>
+                <code value="79959-3"/>
+                <display value="Aortic valve area (Continuity VTI) / BSA"/>
+            </concept>
+            <concept>
+                <code value="77891-0"/>
+                <display value="Left ventricular ejection fraction (Teichholz) 2D"/>
+            </concept>
+            <concept>
+                <code value="79936-1"/>
+                <display value="Right ventricular fractional area change"/>
+            </concept>
+            <concept>
+                <code value="80020-1"/>
+                <display value="Left ventricular mass (dimension method) 2D / BSA"/>
+            </concept>
+            <concept>
+                <code value="80043-3"/>
+                <display value="LV mid anteroseptal time to S Vmax (Ts-mid anteroseptal)"/>
+            </concept>
+            <concept>
+                <code value="80081-3"/>
+                <display value="Right ventricular end diastolic area 4C"/>
+            </concept>
+            <concept>
+                <code value="80089-6"/>
+                <display value="Right ventricular outflow tract VTI"/>
+            </concept>
+            <concept>
+                <code value="80066-4"/>
+                <display value="Mitral valve A-wave Vmax"/>
+            </concept>
+            <concept>
+                <code value="79974-2"/>
+                <display value="Left atrial end systolic area 4C"/>
+            </concept>
+            <concept>
+                <code value="80005-2"/>
+                <display value="Left ventricular endocardial area SAX PM level"/>
+            </concept>
+            <concept>
+                <code value="79997-3"/>
+                <display value="Left ventricular end diastolic volume biplane (MOD) / BSA"/>
+            </concept>
+            <concept>
+                <code value="80028-4"/>
+                <display value="Left ventricular outflow tract dimension (2D)"/>
+            </concept>
+            <concept>
+                <code value="79913-0"/>
+                <display value="Mitral valve Vmax"/>
+            </concept>
+            <concept>
+                <code value="79951-0"/>
+                <display value="Aortic regurgitation volume (PISA)"/>
+            </concept>
+            <concept>
+                <code value="79948-6"/>
+                <display value="Aortic regurgitation vena contracta width"/>
+            </concept>
+            <concept>
+                <code value="79925-4"/>
+                <display value="Tricuspid valve E-wave Vmax"/>
+            </concept>
+            <concept>
+                <code value="79986-6"/>
+                <display value="Left atrial end systolic volume single plane 4C (MOD)"/>
+            </concept>
+            <concept>
+                <code value="80077-1"/>
+                <display value="Right atrial minor axis dimension 4C"/>
+            </concept>
+            <concept>
+                <code value="80054-0"/>
+                <display value="Mitral lateral e-prime Vmax"/>
+            </concept>
+            <concept>
+                <code value="80031-8"/>
+                <display value="Left ventricular posterior wall diastolic thickness"/>
+            </concept>
+            <concept>
+                <code value="80039-1"/>
+                <display value="LV basal lateral time to S Vmax (Ts-basal lateral)"/>
+            </concept>
+            <concept>
+                <code value="78184-9"/>
+                <display value="Pulmonary vein A-wave duration"/>
+            </concept>
+            <concept>
+                <code value="79963-5"/>
+                <display value="Aortic valve peak instantaneous gradient"/>
+            </concept>
+            <concept>
+                <code value="80016-9"/>
+                <display value="Left ventricular mass (area-length)"/>
+            </concept>
+            <concept>
+                <code value="79940-3"/>
+                <display value="Aortic annulus diameter"/>
+            </concept>
+            <concept>
+                <code value="79914-8"/>
+                <display value="Mitral valve VTI"/>
+            </concept>
+            <concept>
+                <code value="79952-8"/>
+                <display value="Aortic regurgitation VTI"/>
+            </concept>
+            <concept>
+                <code value="79975-9"/>
+                <display value="Left atrial end systolic diameter (AP) 2D"/>
+            </concept>
+            <concept>
+                <code value="80080-5"/>
+                <display value="Right ventricular basal dimension 4C"/>
+            </concept>
+            <concept>
+                <code value="79937-9"/>
+                <display value="Tricuspid regurgitation peak gradient"/>
+            </concept>
+            <concept>
+                <code value="80065-6"/>
+                <display value="Mitral valve A-wave duration"/>
+            </concept>
+            <concept>
+                <code value="80088-8"/>
+                <display value="Right ventricular outflow tract diameter at subvalvular level (RVOT-Proximal)"/>
+            </concept>
+            <concept>
+                <code value="80042-5"/>
+                <display value="LV mid anterior time to S Vmax (Ts-mid anterior)"/>
+            </concept>
+            <concept>
+                <code value="79990-8"/>
+                <display value="Left ventricular ejection fraction 3D"/>
+            </concept>
+            <concept>
+                <code value="79998-1"/>
+                <display value="Left ventricular end diastolic volume single plane 2C (MOD)"/>
+            </concept>
+            <concept>
+                <code value="80004-5"/>
+                <display value="Left ventricular end systolic volume single plane 4C (MOD)"/>
+            </concept>
+            <concept>
+                <code value="80027-6"/>
+                <display value="Left ventricular mass (truncated ellipse) / height^^2.7"/>
+            </concept>
+            <concept>
+                <code value="79949-4"/>
+                <display value="Aortic regurgitation Vmax"/>
+            </concept>
+            <concept>
+                <code value="80091-2"/>
+                <display value="Tricuspid annulus diameter"/>
+            </concept>
+            <concept>
+                <code value="79926-2"/>
+                <display value="Tricuspid valve s-prime Vmax"/>
+            </concept>
+            <concept>
+                <code value="80030-0"/>
+                <display value="Left ventricular outflow tract VTI"/>
+            </concept>
+            <concept>
+                <code value="80076-3"/>
+                <display value="Right atrial major axis dimension 4C"/>
+            </concept>
+            <concept>
+                <code value="80053-2"/>
+                <display value="Mitral annulus VTI"/>
+            </concept>
+            <concept>
+                <code value=""/>
+                <display value="Main pulmonary artery Vmax"/>
+            </concept>
+            <concept>
+                <code value="80015-1"/>
+                <display value="Left ventricular isovolumic relaxation time by TDI"/>
+            </concept>
+            <concept>
+                <code value="79987-4"/>
+                <display value="Left pulmonary artery diameter"/>
+            </concept>
+            <concept>
+                <code value="80038-3"/>
+                <display value="LV basal inferior time to S Vmax (Ts-basal inferior)"/>
+            </concept>
+            <concept>
+                <code value="79964-3"/>
+                <display value="Aortic valve Vmax"/>
+            </concept>
+            <concept>
+                <code value="79941-1"/>
+                <display value="Aortic regurgitant flow"/>
+            </concept>
+            <concept>
+                <code value="79915-5"/>
+                <display value="Pulmonary vein A-wave Vmax"/>
+            </concept>
+            <concept>
+                <code value="79953-6"/>
+                <display value="Aortic root diameter"/>
+            </concept>
+            <concept>
+                <code value="80087-0"/>
+                <display value="Right ventricular outflow tract diameter at pulmonic valve (RVOT-Distal)"/>
+            </concept>
+            <concept>
+                <code value="79976-7"/>
+                <display value="Left atrial end systolic diameter (AP) 2D / BSA"/>
+            </concept>
+            <concept>
+                <code value="79999-9"/>
+                <display value="Left ventricular end diastolic volume single plane 4C (MOD)"/>
+            </concept>
+            <concept>
+                <code value="79938-7"/>
+                <display value="Tricuspid valve mean gradient"/>
+            </concept>
+            <concept>
+                <code value="80049-0"/>
+                <display value="Main pulmonary artery diameter"/>
+            </concept>
+            <concept>
+                <code value="79991-6"/>
+                <display value="Left ventricular ejection fraction biplane (MOD)"/>
+            </concept>
+            <concept>
+                <code value="80041-7"/>
+                <display value="LV basal septal time to S Vmax (Ts-basal septal)"/>
+            </concept>
+            <concept>
+                <code value="80003-7"/>
+                <display value="Left ventricular end systolic volume single plane 2C (MOD)"/>
+            </concept>
+            <concept>
+                <code value="80064-9"/>
+                <display value="Mitral regurgitation volume (PISA)"/>
+            </concept>
+            <concept>
+                <code value="80026-8"/>
+                <display value="Left ventricular mass (truncated ellipse) / BSA"/>
+            </concept>
+            <concept>
+                <code value="79930-4"/>
+                <display value="Tricuspid valve closure to opening time"/>
+            </concept>
+            <concept>
+                <code value="79927-0"/>
+                <display value="Tricuspid valve Vmax"/>
+            </concept>
+            <concept>
+                <code value="79942-9"/>
+                <display value="Aortic regurgitant fraction"/>
+            </concept>
+            <concept>
+                <code value="18071-1"/>
+                <display value="Left ventricular isovolumic relaxation time by Doppler"/>
+            </concept>
+            <concept>
+                <code value="80052-4"/>
+                <display value="Mitral annulus diastolic diameter - PLAX"/>
+            </concept>
+            <concept>
+                <code value="80090-4"/>
+                <display value="Right ventricular pre-ejection period"/>
+            </concept>
+            <concept>
+                <code value="80075-5"/>
+                <display value="Right atrial end systolic area 4C"/>
+            </concept>
+            <concept>
+                <code value="80037-5"/>
+                <display value="LV basal anteroseptal time to S Vmax (TS-basal anteroseptal)"/>
+            </concept>
+            <concept>
+                <code value="79980-9"/>
+                <display value="Left atrial end systolic length 4C"/>
+            </concept>
+            <concept>
+                <code value="80014-4"/>
+                <display value="Left ventricular internal systolic dimension / BSA"/>
+            </concept>
+            <concept>
+                <code value="79988-2"/>
+                <display value="Left venticular posterior wall time to peak displacement"/>
+            </concept>
+            <concept>
+                <code value="79965-0"/>
+                <display value="Aortic valve VTI"/>
+            </concept>
+            <concept>
+                <code value="77903-3"/>
+                <display value="Tricuspid Annular Plane Systolic Excursion (TAPSE)"/>
+            </concept>
+            <concept>
+                <code value="79916-3"/>
+                <display value="Pulmonary vein D-wave Vmax"/>
+            </concept>
+            <concept>
+                <code value="79939-5"/>
+                <display value="Tricuspid valve peak gradient"/>
+            </concept>
+            <concept>
+                <code value="80063-1"/>
+                <display value="Mitral regurgitation volume (Continuity VTI)"/>
+            </concept>
+            <concept>
+                <code value="79977-5"/>
+                <display value="Left atrial end systolic diameter (AP) MM"/>
+            </concept>
+            <concept>
+                <code value="80086-2"/>
+                <display value="Right ventricular myocardial performance index"/>
+            </concept>
+            <concept>
+                <code value="80040-9"/>
+                <display value="LV basal posterior time to S Vmax (Ts-basal posterior)"/>
+            </concept>
+            <concept>
+                <code value="79992-4"/>
+                <display value="Left ventricular ejection fraction single plane 2C (MOD)"/>
+            </concept>
+            <concept>
+                <code value="80025-0"/>
+                <display value="Left ventricular mass (truncated ellipse)"/>
+            </concept>
+            <concept>
+                <code value="80048-2"/>
+                <display value="LV Ts-SD (Dyssynchrony Index)"/>
+            </concept>
+            <concept>
+                <code value="79954-4"/>
+                <display value="Aortic root diameter / BSA"/>
+            </concept>
+            <concept>
+                <code value="80002-9"/>
+                <display value="Left ventricular end systolic volume biplane (MOD) / BSA"/>
+            </concept>
+            <concept>
+                <code value="79931-2"/>
+                <display value="Tricuspid valve deceleration time"/>
+            </concept>
+            <concept>
+                <code value="79966-8"/>
+                <display value="Ascending Aorta Dimension"/>
+            </concept>
+            <concept>
+                <code value="79943-7"/>
+                <display value="Aortic regurgitant jet area/LVOT area %"/>
+            </concept>
+            <concept>
+                <code value="80051-6"/>
+                <display value="Mitral annulus diastolic diameter - A4C"/>
+            </concept>
+            <concept>
+                <code value="79928-8"/>
+                <display value="Pulmonic valve acceleration time"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

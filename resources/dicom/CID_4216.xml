@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-4216-OphthalmicVisualAcuityType"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_4216.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.802"/>
+    </identifier>
+    <version value="20080124"/>
+    <name value="OphthalmicVisualAcuityType"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 4216 OphthalmicVisualAcuityType"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://dicom.nema.org/resources/ontology/DCM"/>
+            <concept>
+                <code value="111685"/>
+                <display value="Autorefraction Visual Acuity"/>
+            </concept>
+            <concept>
+                <code value="111686"/>
+                <display value="Habitual Visual Acuity"/>
+            </concept>
+            <concept>
+                <code value="111687"/>
+                <display value="Prescription Visual Acuity"/>
+            </concept>
+        </include>
+        <include>
+            <system value="http://snomed.info/srt"/>
+            <concept>
+                <code value="F-04D53"/>
+                <display value="Uncorrected Visual Acuity"/>
+            </concept>
+            <concept>
+                <code value="F-04D54"/>
+                <display value="Best Corrected Visual Acuity"/>
+            </concept>
+            <concept>
+                <code value="F-04D55"/>
+                <display value="Pinhole Visual Acuity"/>
+            </concept>
+            <concept>
+                <code value="F-04ECE"/>
+                <display value="Potential Acuity Meter Visual Acuity"/>
+            </concept>
+            <concept>
+                <code value="F-04ECF"/>
+                <display value="Brightness Acuity Testing Visual Acuity"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

@@ -1,0 +1,442 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-3001-ECGLeads"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_3001.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.43"/>
+    </identifier>
+    <version value="20130613"/>
+    <name value="ECGLeads"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 3001 ECGLeads"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="urn:iso:std:iso:11073:10101"/>
+            <concept>
+                <code value="2:26"/>
+                <display value="Frank Lead C"/>
+            </concept>
+            <concept>
+                <code value="2:27"/>
+                <display value="Frank Lead A"/>
+            </concept>
+            <concept>
+                <code value="2:28"/>
+                <display value="Frank Lead M"/>
+            </concept>
+            <concept>
+                <code value="2:29"/>
+                <display value="Frank Lead F"/>
+            </concept>
+            <concept>
+                <code value="2:20"/>
+                <display value="Chest-manubrium lead per V5 placement"/>
+            </concept>
+            <concept>
+                <code value="2:21"/>
+                <display value="Left Arm Lead"/>
+            </concept>
+            <concept>
+                <code value="2:150"/>
+                <display value="Canine, sixth left intercostal space at costochondral junction"/>
+            </concept>
+            <concept>
+                <code value="2:22"/>
+                <display value="Right Arm Lead"/>
+            </concept>
+            <concept>
+                <code value="2:23"/>
+                <display value="Left Leg Lead"/>
+            </concept>
+            <concept>
+                <code value="2:151"/>
+                <display value="Canine, over dorsal spinous process of 7th thoracic vertebra"/>
+            </concept>
+            <concept>
+                <code value="2:24"/>
+                <display value="Frank Lead I"/>
+            </concept>
+            <concept>
+                <code value="2:25"/>
+                <display value="Frank Lead E"/>
+            </concept>
+            <concept>
+                <code value="2:37"/>
+                <display value="Derived Lead V5"/>
+            </concept>
+            <concept>
+                <code value="2:38"/>
+                <display value="Derived Lead V6"/>
+            </concept>
+            <concept>
+                <code value="2:30"/>
+                <display value="Frank Lead H"/>
+            </concept>
+            <concept>
+                <code value="2:31"/>
+                <display value="Derived Lead I"/>
+            </concept>
+            <concept>
+                <code value="2:32"/>
+                <display value="Derived Lead II"/>
+            </concept>
+            <concept>
+                <code value="2:33"/>
+                <display value="Derived Lead V1"/>
+            </concept>
+            <concept>
+                <code value="2:34"/>
+                <display value="Derived Lead V2"/>
+            </concept>
+            <concept>
+                <code value="2:35"/>
+                <display value="Derived Lead V3"/>
+            </concept>
+            <concept>
+                <code value="2:36"/>
+                <display value="Derived Lead V4"/>
+            </concept>
+            <concept>
+                <code value="2:132"/>
+                <display value="EASI Lead AS"/>
+            </concept>
+            <concept>
+                <code value="2:133"/>
+                <display value="EASI Lead AI"/>
+            </concept>
+            <concept>
+                <code value="2:134"/>
+                <display value="EASI upper sternum lead"/>
+            </concept>
+            <concept>
+                <code value="2:130"/>
+                <display value="Auxiliary bipolar lead 4"/>
+            </concept>
+            <concept>
+                <code value="2:131"/>
+                <display value="EASI Lead ES"/>
+            </concept>
+            <concept>
+                <code value="2:147"/>
+                <display value="Right Leg Lead"/>
+            </concept>
+            <concept>
+                <code value="2:148"/>
+                <display value="Canine, fifth right intercostal space near edge of sternum"/>
+            </concept>
+            <concept>
+                <code value="2:149"/>
+                <display value="Canine, sixth left intercostal space near edge of sternum"/>
+            </concept>
+            <concept>
+                <code value="2:1"/>
+                <display value="Lead I"/>
+            </concept>
+            <concept>
+                <code value="2:0"/>
+                <display value="Unspecified lead"/>
+            </concept>
+            <concept>
+                <code value="2:3"/>
+                <display value="Lead V1"/>
+            </concept>
+            <concept>
+                <code value="2:2"/>
+                <display value="Lead II"/>
+            </concept>
+            <concept>
+                <code value="2:5"/>
+                <display value="Lead V3"/>
+            </concept>
+            <concept>
+                <code value="2:4"/>
+                <display value="Lead V2"/>
+            </concept>
+            <concept>
+                <code value="2:7"/>
+                <display value="Lead V5"/>
+            </concept>
+            <concept>
+                <code value="2:6"/>
+                <display value="Lead V4"/>
+            </concept>
+            <concept>
+                <code value="2:9"/>
+                <display value="Lead V7"/>
+            </concept>
+            <concept>
+                <code value="2:8"/>
+                <display value="Lead V6"/>
+            </concept>
+            <concept>
+                <code value="2:114"/>
+                <display value="Derived Lead aVF"/>
+            </concept>
+            <concept>
+                <code value="2:62"/>
+                <display value="aVR, augmented voltage, right"/>
+            </concept>
+            <concept>
+                <code value="2:110"/>
+                <display value="Chest-manubrium lead per V6 placement"/>
+            </concept>
+            <concept>
+                <code value="2:63"/>
+                <display value="aVL, augmented voltage, left"/>
+            </concept>
+            <concept>
+                <code value="2:111"/>
+                <display value="Derived Lead III"/>
+            </concept>
+            <concept>
+                <code value="2:64"/>
+                <display value="aVF, augmented voltage, foot"/>
+            </concept>
+            <concept>
+                <code value="2:112"/>
+                <display value="Derived Lead aVR"/>
+            </concept>
+            <concept>
+                <code value="2:65"/>
+                <display value="−aVR"/>
+            </concept>
+            <concept>
+                <code value="2:113"/>
+                <display value="Derived Lead aVL"/>
+            </concept>
+            <concept>
+                <code value="2:66"/>
+                <display value="Lead V8"/>
+            </concept>
+            <concept>
+                <code value="2:67"/>
+                <display value="Lead V9"/>
+            </concept>
+            <concept>
+                <code value="2:68"/>
+                <display value="Lead V8R"/>
+            </concept>
+            <concept>
+                <code value="2:69"/>
+                <display value="Lead V9R"/>
+            </concept>
+            <concept>
+                <code value="2:61"/>
+                <display value="Lead III"/>
+            </concept>
+            <concept>
+                <code value="2:129"/>
+                <display value="Auxiliary bipolar lead 3"/>
+            </concept>
+            <concept>
+                <code value="2:125"/>
+                <display value="Lead CR5"/>
+            </concept>
+            <concept>
+                <code value="2:126"/>
+                <display value="Modified limb lead"/>
+            </concept>
+            <concept>
+                <code value="2:127"/>
+                <display value="Auxiliary bipolar lead 1"/>
+            </concept>
+            <concept>
+                <code value="2:128"/>
+                <display value="Auxiliary bipolar lead 2"/>
+            </concept>
+            <concept>
+                <code value="2:121"/>
+                <display value="Chest-manubrium lead per V7 placement"/>
+            </concept>
+            <concept>
+                <code value="2:73"/>
+                <display value="Defibrillator lead: anterior-lateral"/>
+            </concept>
+            <concept>
+                <code value="2:122"/>
+                <display value="Lead CH5"/>
+            </concept>
+            <concept>
+                <code value="2:74"/>
+                <display value="External pacing lead: anterior-posterior"/>
+            </concept>
+            <concept>
+                <code value="2:75"/>
+                <display value="Auxiliary unipolar lead 1"/>
+            </concept>
+            <concept>
+                <code value="2:123"/>
+                <display value="negative: right infraclavicular fossa"/>
+            </concept>
+            <concept>
+                <code value="2:76"/>
+                <display value="Auxiliary unipolar lead 2"/>
+            </concept>
+            <concept>
+                <code value="2:124"/>
+                <display value="negative: low right scapula Lead"/>
+            </concept>
+            <concept>
+                <code value="2:77"/>
+                <display value="Auxiliary unipolar lead 3"/>
+            </concept>
+            <concept>
+                <code value="2:78"/>
+                <display value="Auxiliary unipolar lead 4"/>
+            </concept>
+            <concept>
+                <code value="2:70"/>
+                <display value="Lead D (Nehb - Dorsal)"/>
+            </concept>
+            <concept>
+                <code value="2:71"/>
+                <display value="Lead A (Nehb - Anterior)"/>
+            </concept>
+            <concept>
+                <code value="2:72"/>
+                <display value="Lead J (Nehb - Inferior)"/>
+            </concept>
+            <concept>
+                <code value="2:86"/>
+                <display value="Chest lead"/>
+            </concept>
+            <concept>
+                <code value="2:87"/>
+                <display value="Precordial lead"/>
+            </concept>
+            <concept>
+                <code value="2:88"/>
+                <display value="Lead VR, nonaugmented voltage, vector of RA"/>
+            </concept>
+            <concept>
+                <code value="2:89"/>
+                <display value="Lead VL, nonaugmented voltage, vector of LA"/>
+            </concept>
+            <concept>
+                <code value="2:107"/>
+                <display value="Chest-manubrium lead per V2 placement"/>
+            </concept>
+            <concept>
+                <code value="2:15"/>
+                <display value="Lead V7R"/>
+            </concept>
+            <concept>
+                <code value="2:108"/>
+                <display value="Chest-manubrium lead per V3 placement"/>
+            </concept>
+            <concept>
+                <code value="2:16"/>
+                <display value="Lead X"/>
+            </concept>
+            <concept>
+                <code value="2:109"/>
+                <display value="Chest-manubrium lead per V4 placement"/>
+            </concept>
+            <concept>
+                <code value="2:17"/>
+                <display value="Lead Y"/>
+            </concept>
+            <concept>
+                <code value="2:18"/>
+                <display value="Lead Z"/>
+            </concept>
+            <concept>
+                <code value="2:19"/>
+                <display value="Chest lead per V5 and V5R placement"/>
+            </concept>
+            <concept>
+                <code value="2:103"/>
+                <display value="Chest lead per V6 and V6R placement"/>
+            </concept>
+            <concept>
+                <code value="2:104"/>
+                <display value="Chest lead per V7 and V8R placement"/>
+            </concept>
+            <concept>
+                <code value="2:105"/>
+                <display value="Chest-manubrium lead"/>
+            </concept>
+            <concept>
+                <code value="2:106"/>
+                <display value="Chest-manubrium lead per V1 placement"/>
+            </concept>
+            <concept>
+                <code value="2:95"/>
+                <display value="Modified chest lead per V4 placement"/>
+            </concept>
+            <concept>
+                <code value="2:100"/>
+                <display value="Chest lead per V2 and V2R placement"/>
+            </concept>
+            <concept>
+                <code value="2:96"/>
+                <display value="Modified chest lead per V5 placement"/>
+            </concept>
+            <concept>
+                <code value="2:101"/>
+                <display value="Chest lead per V3 and V3R placement"/>
+            </concept>
+            <concept>
+                <code value="2:97"/>
+                <display value="Modified chest lead per V6 placement"/>
+            </concept>
+            <concept>
+                <code value="2:98"/>
+                <display value="Chest lead (symmetric placement)"/>
+            </concept>
+            <concept>
+                <code value="2:102"/>
+                <display value="Chest lead per V4 and V4R placement"/>
+            </concept>
+            <concept>
+                <code value="2:10"/>
+                <display value="Lead V2R"/>
+            </concept>
+            <concept>
+                <code value="2:99"/>
+                <display value="Chest lead per V1 and V1R placement"/>
+            </concept>
+            <concept>
+                <code value="2:11"/>
+                <display value="Lead V3R"/>
+            </concept>
+            <concept>
+                <code value="2:12"/>
+                <display value="Lead V4R"/>
+            </concept>
+            <concept>
+                <code value="2:13"/>
+                <display value="Lead V5R"/>
+            </concept>
+            <concept>
+                <code value="2:14"/>
+                <display value="Lead V6R"/>
+            </concept>
+            <concept>
+                <code value="2:90"/>
+                <display value="Lead VF, nonaugmented voltage, vector of LL"/>
+            </concept>
+            <concept>
+                <code value="2:91"/>
+                <display value="Modified chest lead (left arm indifferent)"/>
+            </concept>
+            <concept>
+                <code value="2:92"/>
+                <display value="Modified chest lead per V1 placement"/>
+            </concept>
+            <concept>
+                <code value="2:93"/>
+                <display value="Modified chest lead per V2 placement"/>
+            </concept>
+            <concept>
+                <code value="2:94"/>
+                <display value="Modified chest lead per V3 placement"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

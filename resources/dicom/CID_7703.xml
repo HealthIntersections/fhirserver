@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-7703-AssociationFibers"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_7703.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.1015"/>
+    </identifier>
+    <version value="20150106"/>
+    <name value="AssociationFibers"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 7703 AssociationFibers"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://braininfo.rprc.washington.edu/aboutBrainInfo.aspx#NeuroNames"/>
+            <concept>
+                <code value="2063"/>
+                <display value="arcuate fasciculus"/>
+            </concept>
+            <concept>
+                <code value="2080"/>
+                <display value="superior longitudinal fasciculus"/>
+            </concept>
+        </include>
+        <include>
+            <system value="http://dicom.nema.org/resources/ontology/DCM"/>
+            <concept>
+                <code value="110705"/>
+                <display value="superior longitudinal fasciculus III"/>
+            </concept>
+            <concept>
+                <code value="110704"/>
+                <display value="superior longitudinal fasciculus II"/>
+            </concept>
+            <concept>
+                <code value="110703"/>
+                <display value="superior longitudinal fasciculus I"/>
+            </concept>
+        </include>
+        <include>
+            <system value="http://snomed.info/srt"/>
+            <concept>
+                <code value="T-A2830"/>
+                <display value="uncinate fasciculus"/>
+            </concept>
+            <concept>
+                <code value="T-A2850"/>
+                <display value="inferior longitudinal fasciculus"/>
+            </concept>
+            <concept>
+                <code value="T-A2861"/>
+                <display value="inferior fronto-occipital fasciculus"/>
+            </concept>
+            <concept>
+                <code value="T-A2870"/>
+                <display value="vertical occipital fasciculus"/>
+            </concept>
+            <concept>
+                <code value="T-A2860"/>
+                <display value="superior fronto-occipital fasciculus"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

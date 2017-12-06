@@ -1,0 +1,234 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-7203-ImageDerivation"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_7203.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.510"/>
+    </identifier>
+    <version value="20170405"/>
+    <name value="ImageDerivation"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 7203 ImageDerivation"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://dicom.nema.org/resources/ontology/DCM"/>
+            <concept>
+                <code value="113041"/>
+                <display value="Apparent Diffusion Coefficient"/>
+            </concept>
+            <concept>
+                <code value="113085"/>
+                <display value="Spatial resampling"/>
+            </concept>
+            <concept>
+                <code value="113042"/>
+                <display value="Pixel by pixel addition"/>
+            </concept>
+            <concept>
+                <code value="113086"/>
+                <display value="Edge enhancement"/>
+            </concept>
+            <concept>
+                <code value="113043"/>
+                <display value="Diffusion weighted"/>
+            </concept>
+            <concept>
+                <code value="113087"/>
+                <display value="Smoothing"/>
+            </concept>
+            <concept>
+                <code value="113044"/>
+                <display value="Diffusion Anisotropy"/>
+            </concept>
+            <concept>
+                <code value="113088"/>
+                <display value="Gaussian blur"/>
+            </concept>
+            <concept>
+                <code value="113045"/>
+                <display value="Diffusion Attenuated"/>
+            </concept>
+            <concept>
+                <code value="113089"/>
+                <display value="Unsharp mask"/>
+            </concept>
+            <concept>
+                <code value="113046"/>
+                <display value="Pixel by pixel division"/>
+            </concept>
+            <concept>
+                <code value="113047"/>
+                <display value="Pixel by pixel mask"/>
+            </concept>
+            <concept>
+                <code value="113048"/>
+                <display value="Pixel by pixel Maximum"/>
+            </concept>
+            <concept>
+                <code value="113040"/>
+                <display value="Lossy Compression"/>
+            </concept>
+            <concept>
+                <code value="113084"/>
+                <display value="Tmax"/>
+            </concept>
+            <concept>
+                <code value="113049"/>
+                <display value="Pixel by pixel mean"/>
+            </concept>
+            <concept>
+                <code value="113074"/>
+                <display value="Volume rendering"/>
+            </concept>
+            <concept>
+                <code value="113075"/>
+                <display value="Surface rendering"/>
+            </concept>
+            <concept>
+                <code value="113076"/>
+                <display value="Segmentation"/>
+            </concept>
+            <concept>
+                <code value="113077"/>
+                <display value="Volume editing"/>
+            </concept>
+            <concept>
+                <code value="113078"/>
+                <display value="Maximum intensity projection"/>
+            </concept>
+            <concept>
+                <code value="113079"/>
+                <display value="Minimum intensity projection"/>
+            </concept>
+            <concept>
+                <code value="113070"/>
+                <display value="Velocity encoded"/>
+            </concept>
+            <concept>
+                <code value="113071"/>
+                <display value="Z-Score"/>
+            </concept>
+            <concept>
+                <code value="113072"/>
+                <display value="Multiplanar reformatting"/>
+            </concept>
+            <concept>
+                <code value="113073"/>
+                <display value="Curved multiplanar reformatting"/>
+            </concept>
+            <concept>
+                <code value="113063"/>
+                <display value="T1"/>
+            </concept>
+            <concept>
+                <code value="113064"/>
+                <display value="T2*"/>
+            </concept>
+            <concept>
+                <code value="113065"/>
+                <display value="T2"/>
+            </concept>
+            <concept>
+                <code value="113066"/>
+                <display value="Time Course of Signal"/>
+            </concept>
+            <concept>
+                <code value="113067"/>
+                <display value="Temperature encoded"/>
+            </concept>
+            <concept>
+                <code value="113068"/>
+                <display value="Student's T-Test"/>
+            </concept>
+            <concept>
+                <code value="113069"/>
+                <display value="Time To Peak"/>
+            </concept>
+            <concept>
+                <code value="113060"/>
+                <display value="Signal to Noise"/>
+            </concept>
+            <concept>
+                <code value="113061"/>
+                <display value="Standard Deviation"/>
+            </concept>
+            <concept>
+                <code value="113062"/>
+                <display value="Pixel by pixel subtraction"/>
+            </concept>
+            <concept>
+                <code value="113052"/>
+                <display value="Mean Transit Time"/>
+            </concept>
+            <concept>
+                <code value="113053"/>
+                <display value="Pixel by pixel multiplication"/>
+            </concept>
+            <concept>
+                <code value="113097"/>
+                <display value="Multi-energy proportional weighting"/>
+            </concept>
+            <concept>
+                <code value="113054"/>
+                <display value="Negative Enhancement Integral"/>
+            </concept>
+            <concept>
+                <code value="113131"/>
+                <display value="Extraction of individual subject from group"/>
+            </concept>
+            <concept>
+                <code value="113055"/>
+                <display value="Regional Cerebral Blood Flow"/>
+            </concept>
+            <concept>
+                <code value="113056"/>
+                <display value="Regional Cerebral Blood Volume"/>
+            </concept>
+            <concept>
+                <code value="113057"/>
+                <display value="R-Coefficient"/>
+            </concept>
+            <concept>
+                <code value="113058"/>
+                <display value="Proton Density"/>
+            </concept>
+            <concept>
+                <code value="113059"/>
+                <display value="Signal Change"/>
+            </concept>
+            <concept>
+                <code value="113090"/>
+                <display value="Image stitching"/>
+            </concept>
+            <concept>
+                <code value="113091"/>
+                <display value="Spatially-related frames extracted from the volume"/>
+            </concept>
+            <concept>
+                <code value="113092"/>
+                <display value="Temporally-related frames extracted from the set of volumes"/>
+            </concept>
+            <concept>
+                <code value="113093"/>
+                <display value="Polar to Rectangular Scan Conversion"/>
+            </concept>
+            <concept>
+                <code value="113050"/>
+                <display value="Metabolite Maps from spectroscopy data"/>
+            </concept>
+            <concept>
+                <code value="113051"/>
+                <display value="Pixel by pixel Minimum"/>
+            </concept>
+            <concept>
+                <code value="128303"/>
+                <display value="OCT B-scan analysis"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-6000-OverallBreastComposition"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_6000.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.330"/>
+    </identifier>
+    <version value="20020904"/>
+    <name value="OverallBreastComposition"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 6000 OverallBreastComposition"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://snomed.info/srt"/>
+            <concept>
+                <code value="F-01714"/>
+                <display value="Extremely dense"/>
+            </concept>
+            <concept>
+                <code value="F-01713"/>
+                <display value="Heterogeneously dense"/>
+            </concept>
+            <concept>
+                <code value="F-01712"/>
+                <display value="Scattered fibroglandular densities"/>
+            </concept>
+            <concept>
+                <code value="F-01711"/>
+                <display value="Almost entirely fat"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

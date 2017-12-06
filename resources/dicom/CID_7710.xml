@@ -1,0 +1,288 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-7710-TractographyAnatomicSites"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_7710.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.1020"/>
+    </identifier>
+    <version value="20150106"/>
+    <name value="TractographyAnatomicSites"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 7710 TractographyAnatomicSites"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://braininfo.rprc.washington.edu/aboutBrainInfo.aspx#NeuroNames"/>
+            <concept>
+                <code value="2080"/>
+                <display value="superior longitudinal fasciculus"/>
+            </concept>
+            <concept>
+                <code value="2081"/>
+                <display value="superior thalamic radiation"/>
+            </concept>
+            <concept>
+                <code value="2082"/>
+                <display value="inferior thalamic radiation"/>
+            </concept>
+            <concept>
+                <code value="2083"/>
+                <display value="posterior thalamic radiation"/>
+            </concept>
+            <concept>
+                <code value="286"/>
+                <display value="stria terminalis"/>
+            </concept>
+            <concept>
+                <code value="1466"/>
+                <display value="inferior optic radiation (Meyer's loop)"/>
+            </concept>
+            <concept>
+                <code value="1320"/>
+                <display value="corticospinal tract"/>
+            </concept>
+            <concept>
+                <code value="1319"/>
+                <display value="corticobulbar tract"/>
+            </concept>
+            <concept>
+                <code value="2063"/>
+                <display value="arcuate fasciculus"/>
+            </concept>
+            <concept>
+                <code value="3473"/>
+                <display value="superior optic radiation (Baum's loop)"/>
+            </concept>
+            <concept>
+                <code value="1726"/>
+                <display value="anterior thalamic radiation"/>
+            </concept>
+        </include>
+        <include>
+            <system value="http://dicom.nema.org/resources/ontology/DCM"/>
+            <concept>
+                <code value="113681"/>
+                <display value="Phantom"/>
+            </concept>
+            <concept>
+                <code value="110706"/>
+                <display value="Perilesional White Matter"/>
+            </concept>
+            <concept>
+                <code value="110705"/>
+                <display value="superior longitudinal fasciculus III"/>
+            </concept>
+            <concept>
+                <code value="110704"/>
+                <display value="superior longitudinal fasciculus II"/>
+            </concept>
+            <concept>
+                <code value="110703"/>
+                <display value="superior longitudinal fasciculus I"/>
+            </concept>
+        </include>
+        <include>
+            <system value="http://snomed.info/srt"/>
+            <concept>
+                <code value="T-A3800"/>
+                <display value="external capsule"/>
+            </concept>
+            <concept>
+                <code value="T-A2830"/>
+                <display value="uncinate fasciculus"/>
+            </concept>
+            <concept>
+                <code value="T-A2710"/>
+                <display value="splenium of corpus callosum"/>
+            </concept>
+            <concept>
+                <code value="T-D0829"/>
+                <display value="auditory radiation"/>
+            </concept>
+            <concept>
+                <code value="T-A7091"/>
+                <display value="lateral funiculus"/>
+            </concept>
+            <concept>
+                <code value="T-A6080"/>
+                <display value="Cerebellar white matter"/>
+            </concept>
+            <concept>
+                <code value="T-A8780"/>
+                <display value="accessory nerve"/>
+            </concept>
+            <concept>
+                <code value="T-A5272"/>
+                <display value="lateral lemniscus"/>
+            </concept>
+            <concept>
+                <code value="T-A5271"/>
+                <display value="medial lemniscus"/>
+            </concept>
+            <concept>
+                <code value="T-A2880"/>
+                <display value="optic radiation"/>
+            </concept>
+            <concept>
+                <code value="T-A6640"/>
+                <display value="inferior cerebellar peduncle"/>
+            </concept>
+            <concept>
+                <code value="T-A2840"/>
+                <display value="cingulum"/>
+            </concept>
+            <concept>
+                <code value="T-A2760"/>
+                <display value="forceps minor"/>
+            </concept>
+            <concept>
+                <code value="T-A8820"/>
+                <display value="hypoglossal nerve"/>
+            </concept>
+            <concept>
+                <code value="T-A8500"/>
+                <display value="vestibulocochlear nerve"/>
+            </concept>
+            <concept>
+                <code value="T-A2920"/>
+                <display value="olfactory tract"/>
+            </concept>
+            <concept>
+                <code value="T-A0500"/>
+                <display value="Peripheral nerve"/>
+            </concept>
+            <concept>
+                <code value="T-A4904"/>
+                <display value="posterior commissure"/>
+            </concept>
+            <concept>
+                <code value="T-A8070"/>
+                <display value="oculomotor nerve"/>
+            </concept>
+            <concept>
+                <code value="T-A8110"/>
+                <display value="trochlear nerve"/>
+            </concept>
+            <concept>
+                <code value="T-A7061"/>
+                <display value="ventral funiculus"/>
+            </concept>
+            <concept>
+                <code value="T-A8150"/>
+                <display value="trigeminal nerve"/>
+            </concept>
+            <concept>
+                <code value="T-A2850"/>
+                <display value="inferior longitudinal fasciculus"/>
+            </concept>
+            <concept>
+                <code value="T-A2730"/>
+                <display value="genu of corpus callosum"/>
+            </concept>
+            <concept>
+                <code value="T-A4950"/>
+                <display value="habenular commissure"/>
+            </concept>
+            <concept>
+                <code value="T-A2970"/>
+                <display value="fornix"/>
+            </concept>
+            <concept>
+                <code value="T-A3700"/>
+                <display value="internal capsule"/>
+            </concept>
+            <concept>
+                <code value="T-D0684"/>
+                <display value="Skeletal muscle"/>
+            </concept>
+            <concept>
+                <code value="T-A7070"/>
+                <display value="Spinal cord white matter"/>
+            </concept>
+            <concept>
+                <code value="T-A8640"/>
+                <display value="vagus nerve"/>
+            </concept>
+            <concept>
+                <code value="T-A8040"/>
+                <display value="optic nerve"/>
+            </concept>
+            <concept>
+                <code value="T-A5250"/>
+                <display value="medial longitudinal fasciculus"/>
+            </concept>
+            <concept>
+                <code value="T-A2781"/>
+                <display value="tapetum of corpus callosum"/>
+            </concept>
+            <concept>
+                <code value="T-A2861"/>
+                <display value="inferior fronto-occipital fasciculus"/>
+            </concept>
+            <concept>
+                <code value="T-A2980"/>
+                <display value="anterior commissure"/>
+            </concept>
+            <concept>
+                <code value="T-1300D"/>
+                <display value="Cardiac muscle"/>
+            </concept>
+            <concept>
+                <code value="T-A6620"/>
+                <display value="superior cerebellar peduncle"/>
+            </concept>
+            <concept>
+                <code value="T-A2860"/>
+                <display value="superior fronto-occipital fasciculus"/>
+            </concept>
+            <concept>
+                <code value="T-A2700"/>
+                <display value="corpus callosum"/>
+            </concept>
+            <concept>
+                <code value="T-D07EA"/>
+                <display value="corticospinal tract in brainstem"/>
+            </concept>
+            <concept>
+                <code value="T-A7081"/>
+                <display value="dorsal funiculus"/>
+            </concept>
+            <concept>
+                <code value="T-A8570"/>
+                <display value="glossopharyngeal nerve"/>
+            </concept>
+            <concept>
+                <code value="T-A8130"/>
+                <display value="abducens nerve"/>
+            </concept>
+            <concept>
+                <code value="T-A0095"/>
+                <display value="White matter of brain and spinal cord"/>
+            </concept>
+            <concept>
+                <code value="T-A2030"/>
+                <display value="Cerebral white matter"/>
+            </concept>
+            <concept>
+                <code value="T-A8410"/>
+                <display value="facial nerve"/>
+            </concept>
+            <concept>
+                <code value="T-A6630"/>
+                <display value="middle cerebellar peduncle"/>
+            </concept>
+            <concept>
+                <code value="T-A2870"/>
+                <display value="vertical occipital fasciculus"/>
+            </concept>
+            <concept>
+                <code value="T-A2750"/>
+                <display value="forceps major"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

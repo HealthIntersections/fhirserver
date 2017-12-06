@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-7308-HumanHipImplantComponentTypes"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_7308.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.1039"/>
+    </identifier>
+    <version value="20101102"/>
+    <name value="HumanHipImplantComponentTypes"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 7308 HumanHipImplantComponentTypes"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://dicom.nema.org/resources/ontology/DCM"/>
+            <concept>
+                <code value="112310"/>
+                <display value="Femoral Stem"/>
+            </concept>
+            <concept>
+                <code value="112311"/>
+                <display value="Femoral Stem Distal Component"/>
+            </concept>
+            <concept>
+                <code value="112309"/>
+                <display value="Femoral Head Cone Taper Component"/>
+            </concept>
+            <concept>
+                <code value="112312"/>
+                <display value="Femoral Stem Proximal Component"/>
+            </concept>
+            <concept>
+                <code value="112313"/>
+                <display value="Femoral Stem Component"/>
+            </concept>
+            <concept>
+                <code value="112314"/>
+                <display value="Neck Component"/>
+            </concept>
+            <concept>
+                <code value="112325"/>
+                <display value="Distal Centralizer"/>
+            </concept>
+            <concept>
+                <code value="112315"/>
+                <display value="Monoblock Stem"/>
+            </concept>
+            <concept>
+                <code value="112305"/>
+                <display value="Acetabular Cup Shell"/>
+            </concept>
+            <concept>
+                <code value="112316"/>
+                <display value="Prosthetic Shaft Augment"/>
+            </concept>
+            <concept>
+                <code value="112306"/>
+                <display value="Acetabular Cup Insert"/>
+            </concept>
+            <concept>
+                <code value="112317"/>
+                <display value="Femoral Head Resurfacing Component"/>
+            </concept>
+            <concept>
+                <code value="112307"/>
+                <display value="Acetabular Cup Monoblock"/>
+            </concept>
+            <concept>
+                <code value="112308"/>
+                <display value="Femoral Head Ball Component"/>
+            </concept>
+        </include>
+        <include>
+            <system value="http://snomed.info/srt"/>
+            <concept>
+                <code value="A-04459"/>
+                <display value="Femoral Head Prosthesis"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

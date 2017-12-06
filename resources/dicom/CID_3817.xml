@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-3817-VascularSclerosisTypes"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_3817.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.275"/>
+    </identifier>
+    <version value="20051103"/>
+    <name value="VascularSclerosisTypes"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 3817 VascularSclerosisTypes"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://snomed.info/srt"/>
+            <concept>
+                <code value="M-52302"/>
+                <display value="diffuse fibroelastosis"/>
+            </concept>
+            <concept>
+                <code value="M-52500"/>
+                <display value="phlebosclerosis"/>
+            </concept>
+            <concept>
+                <code value="M-52301"/>
+                <display value="focal fibroelastosis"/>
+            </concept>
+            <concept>
+                <code value="M-52103"/>
+                <display value="ulcerated atheromatous plaque"/>
+            </concept>
+            <concept>
+                <code value="M-52400"/>
+                <display value="vascular wall degeneration"/>
+            </concept>
+            <concept>
+                <code value="M-52210"/>
+                <display value="arteriosclerosis with fibrinoid necrosis"/>
+            </concept>
+            <concept>
+                <code value="M-52100"/>
+                <display value="atheroma"/>
+            </concept>
+            <concept>
+                <code value="M-52000"/>
+                <display value="arteriosclerosis"/>
+            </concept>
+            <concept>
+                <code value="M-52102"/>
+                <display value="complicated atheromatous plaque"/>
+            </concept>
+            <concept>
+                <code value="M-52300"/>
+                <display value="fibroelastosis"/>
+            </concept>
+            <concept>
+                <code value="M-52200"/>
+                <display value="arteriolosclerosis"/>
+            </concept>
+            <concept>
+                <code value="M-52101"/>
+                <display value="calcified atheromatous plaque"/>
+            </concept>
+            <concept>
+                <code value="M-52470"/>
+                <display value="cystic medical necrosis"/>
+            </concept>
+            <concept>
+                <code value="M-52450"/>
+                <display value="adventitial degeneration"/>
+            </concept>
+            <concept>
+                <code value="M-52120"/>
+                <display value="atherosclerotic fibrous plaque"/>
+            </concept>
+            <concept>
+                <code value="M-52240"/>
+                <display value="elastic vascular sclerosis"/>
+            </concept>
+            <concept>
+                <code value="M-52130"/>
+                <display value="fatty streaks"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

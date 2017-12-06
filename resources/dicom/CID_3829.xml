@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-3829-PulmonaryArteries"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_3829.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.281"/>
+    </identifier>
+    <version value="20110818"/>
+    <name value="PulmonaryArteries"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 3829 PulmonaryArteries"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://snomed.info/srt"/>
+            <concept>
+                <code value="T-44010"/>
+                <display value="Suprapulmonic valve area"/>
+            </concept>
+            <concept>
+                <code value="T-44200"/>
+                <display value="Right pulmonary artery"/>
+            </concept>
+            <concept>
+                <code value="T-44100"/>
+                <display value="Trunk of pulmonary artery"/>
+            </concept>
+            <concept>
+                <code value="T-35250"/>
+                <display value="pulmonary valve sinuses"/>
+            </concept>
+            <concept>
+                <code value="T-44400"/>
+                <display value="Left pulmonary artery"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

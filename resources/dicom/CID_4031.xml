@@ -1,0 +1,453 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-4031-CommonAnatomicRegions"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_4031.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.308"/>
+    </identifier>
+    <version value="20170914"/>
+    <name value="CommonAnatomicRegions"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 4031 CommonAnatomicRegions"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://dicom.nema.org/resources/ontology/DCM"/>
+            <concept>
+                <code value="113681"/>
+                <display value="Phantom"/>
+            </concept>
+        </include>
+        <include>
+            <system value="http://snomed.info/srt"/>
+            <concept>
+                <code value="T-92000"/>
+                <display value="Prostate"/>
+            </concept>
+            <concept>
+                <code value="T-15680"/>
+                <display value="Sacroiliac joint"/>
+            </concept>
+            <concept>
+                <code value="T-63000"/>
+                <display value="Gallbladder"/>
+            </concept>
+            <concept>
+                <code value="T-12730"/>
+                <display value="Patella"/>
+            </concept>
+            <concept>
+                <code value="T-D04FF"/>
+                <display value="Spine"/>
+            </concept>
+            <concept>
+                <code value="T-58200"/>
+                <display value="Duodenum"/>
+            </concept>
+            <concept>
+                <code value="T-58600"/>
+                <display value="Ileum"/>
+            </concept>
+            <concept>
+                <code value="T-61100"/>
+                <display value="Parotid gland"/>
+            </concept>
+            <concept>
+                <code value="T-D9200"/>
+                <display value="Knee"/>
+            </concept>
+            <concept>
+                <code value="T-25000"/>
+                <display value="Trachea"/>
+            </concept>
+            <concept>
+                <code value="T-22000"/>
+                <display value="Paranasal sinus"/>
+            </concept>
+            <concept>
+                <code value="T-AA000"/>
+                <display value="Eye"/>
+            </concept>
+            <concept>
+                <code value="T-12280"/>
+                <display value="Scapula"/>
+            </concept>
+            <concept>
+                <code value="T-11196"/>
+                <display value="Facial bones"/>
+            </concept>
+            <concept>
+                <code value="T-15430"/>
+                <display value="Elbow joint"/>
+            </concept>
+            <concept>
+                <code value="T-15710"/>
+                <display value="Hip joint"/>
+            </concept>
+            <concept>
+                <code value="T-57000"/>
+                <display value="Stomach"/>
+            </concept>
+            <concept>
+                <code value="T-D8500"/>
+                <display value="Forearm"/>
+            </concept>
+            <concept>
+                <code value="T-59300"/>
+                <display value="Colon"/>
+            </concept>
+            <concept>
+                <code value="T-D00F9"/>
+                <display value="Lumbo-sacral spine"/>
+            </concept>
+            <concept>
+                <code value="T-74000"/>
+                <display value="Bladder"/>
+            </concept>
+            <concept>
+                <code value="T-D00F8"/>
+                <display value="Thoraco-lumbar spine"/>
+            </concept>
+            <concept>
+                <code value="T-D00F7"/>
+                <display value="Cervico-thoracic spine"/>
+            </concept>
+            <concept>
+                <code value="T-D0801"/>
+                <display value="Eye region"/>
+            </concept>
+            <concept>
+                <code value="T-15460"/>
+                <display value="Wrist joint"/>
+            </concept>
+            <concept>
+                <code value="T-11BF0"/>
+                <display value="Coccyx"/>
+            </concept>
+            <concept>
+                <code value="T-11AD0"/>
+                <display value="Sacrum"/>
+            </concept>
+            <concept>
+                <code value="T-12750"/>
+                <display value="Fibula"/>
+            </concept>
+            <concept>
+                <code value="T-D8800"/>
+                <display value="Finger"/>
+            </concept>
+            <concept>
+                <code value="T-D1213"/>
+                <display value="Jaw region"/>
+            </concept>
+            <concept>
+                <code value="T-11300"/>
+                <display value="Rib"/>
+            </concept>
+            <concept>
+                <code value="T-D8810"/>
+                <display value="Thumb"/>
+            </concept>
+            <concept>
+                <code value="T-D3000"/>
+                <display value="Chest"/>
+            </concept>
+            <concept>
+                <code value="T-56000"/>
+                <display value="Esophagus"/>
+            </concept>
+            <concept>
+                <code value="T-13600"/>
+                <display value="Muscle of upper limb"/>
+            </concept>
+            <concept>
+                <code value="T-D1460"/>
+                <display value="Sella turcica"/>
+            </concept>
+            <concept>
+                <code value="T-11149"/>
+                <display value="Nasal bone"/>
+            </concept>
+            <concept>
+                <code value="T-D0010"/>
+                <display value="Entire body"/>
+            </concept>
+            <concept>
+                <code value="T-D9100"/>
+                <display value="Thigh"/>
+            </concept>
+            <concept>
+                <code value="T-15290"/>
+                <display value="Temporomandibular joint"/>
+            </concept>
+            <concept>
+                <code value="T-280A0"/>
+                <display value="Apex of Lung"/>
+            </concept>
+            <concept>
+                <code value="T-D1600"/>
+                <display value="Neck"/>
+            </concept>
+            <concept>
+                <code value="T-12340"/>
+                <display value="Ilium"/>
+            </concept>
+            <concept>
+                <code value="T-12980"/>
+                <display value="Sesamoid bones of foot"/>
+            </concept>
+            <concept>
+                <code value="T-11011"/>
+                <display value="Vertebral column and cranium"/>
+            </concept>
+            <concept>
+                <code value="T-11133"/>
+                <display value="Mastoid bone"/>
+            </concept>
+            <concept>
+                <code value="T-15610"/>
+                <display value="Sternoclavicular joint"/>
+            </concept>
+            <concept>
+                <code value="T-59000"/>
+                <display value="Large intestine"/>
+            </concept>
+            <concept>
+                <code value="T-D8000"/>
+                <display value="Upper limb"/>
+            </concept>
+            <concept>
+                <code value="T-DD163"/>
+                <display value="Esophagus, stomach and duodenum"/>
+            </concept>
+            <concept>
+                <code value="T-73000"/>
+                <display value="Ureter"/>
+            </concept>
+            <concept>
+                <code value="T-D0300"/>
+                <display value="Extremity"/>
+            </concept>
+            <concept>
+                <code value="T-12770"/>
+                <display value="Calcaneus"/>
+            </concept>
+            <concept>
+                <code value="T-D0821"/>
+                <display value="Bone of upper limb"/>
+            </concept>
+            <concept>
+                <code value="T-11166"/>
+                <display value="Zygoma"/>
+            </concept>
+            <concept>
+                <code value="T-12410"/>
+                <display value="Humerus"/>
+            </concept>
+            <concept>
+                <code value="T-D9800"/>
+                <display value="Toe"/>
+            </concept>
+            <concept>
+                <code value="T-60610"/>
+                <display value="Bile duct"/>
+            </concept>
+            <concept>
+                <code value="T-7000B"/>
+                <display value="Upper urinary tract"/>
+            </concept>
+            <concept>
+                <code value="T-58000"/>
+                <display value="Small intestine"/>
+            </concept>
+            <concept>
+                <code value="T-61300"/>
+                <display value="Submandibular gland"/>
+            </concept>
+            <concept>
+                <code value="T-D1000"/>
+                <display value="Head and Neck"/>
+            </concept>
+            <concept>
+                <code value="T-D9400"/>
+                <display value="Lower leg"/>
+            </concept>
+            <concept>
+                <code value="T-58400"/>
+                <display value="Jejunum"/>
+            </concept>
+            <concept>
+                <code value="T-D9000"/>
+                <display value="Lower limb"/>
+            </concept>
+            <concept>
+                <code value="T-24100"/>
+                <display value="Larynx"/>
+            </concept>
+            <concept>
+                <code value="T-15750"/>
+                <display value="Ankle joint"/>
+            </concept>
+            <concept>
+                <code value="T-D1100"/>
+                <display value="Head"/>
+            </concept>
+            <concept>
+                <code value="T-59900"/>
+                <display value="Anus"/>
+            </concept>
+            <concept>
+                <code value="T-D8700"/>
+                <display value="Hand"/>
+            </concept>
+            <concept>
+                <code value="T-14668"/>
+                <display value="Muscle of lower limb"/>
+            </concept>
+            <concept>
+                <code value="T-32000"/>
+                <display value="Heart"/>
+            </concept>
+            <concept>
+                <code value="T-D6000"/>
+                <display value="Pelvis"/>
+            </concept>
+            <concept>
+                <code value="T-26000"/>
+                <display value="Bronchus"/>
+            </concept>
+            <concept>
+                <code value="T-11180"/>
+                <display value="Mandible"/>
+            </concept>
+            <concept>
+                <code value="T-15420"/>
+                <display value="Acromioclavicular joint"/>
+            </concept>
+            <concept>
+                <code value="T-D14AE"/>
+                <display value="Orbital structure"/>
+            </concept>
+            <concept>
+                <code value="T-12310"/>
+                <display value="Clavicle"/>
+            </concept>
+            <concept>
+                <code value="T-11100"/>
+                <display value="Skull"/>
+            </concept>
+            <concept>
+                <code value="T-11102"/>
+                <display value="Optic canal"/>
+            </concept>
+            <concept>
+                <code value="T-12710"/>
+                <display value="Femur"/>
+            </concept>
+            <concept>
+                <code value="T-D9700"/>
+                <display value="Foot"/>
+            </concept>
+            <concept>
+                <code value="T-11501"/>
+                <display value="Cervical spine"/>
+            </concept>
+            <concept>
+                <code value="T-11502"/>
+                <display value="Thoracic spine"/>
+            </concept>
+            <concept>
+                <code value="T-11503"/>
+                <display value="Lumbar spine"/>
+            </concept>
+            <concept>
+                <code value="T-88920"/>
+                <display value="Uterus and fallopian tubes"/>
+            </concept>
+            <concept>
+                <code value="T-75000"/>
+                <display value="Urethra"/>
+            </concept>
+            <concept>
+                <code value="T-04000"/>
+                <display value="Breast"/>
+            </concept>
+            <concept>
+                <code value="T-65600"/>
+                <display value="Pancreatic duct and bile duct systems"/>
+            </concept>
+            <concept>
+                <code value="R-FAB53"/>
+                <display value="Neck, Chest and Abdomen"/>
+            </concept>
+            <concept>
+                <code value="R-FAB52"/>
+                <display value="Neck and Chest"/>
+            </concept>
+            <concept>
+                <code value="R-FAB57"/>
+                <display value="Abdomen and Pelvis"/>
+            </concept>
+            <concept>
+                <code value="R-FAB56"/>
+                <display value="Chest, Abdomen and Pelvis"/>
+            </concept>
+            <concept>
+                <code value="R-FAB55"/>
+                <display value="Chest and Abdomen"/>
+            </concept>
+            <concept>
+                <code value="R-FAB54"/>
+                <display value="Neck, Chest, Abdomen and Pelvis"/>
+            </concept>
+            <concept>
+                <code value="T-11170"/>
+                <display value="Maxilla"/>
+            </concept>
+            <concept>
+                <code value="R-FAB58"/>
+                <display value="Pelvis and lower extremities"/>
+            </concept>
+            <concept>
+                <code value="T-15770"/>
+                <display value="Tarsal joint"/>
+            </concept>
+            <concept>
+                <code value="T-D3300"/>
+                <display value="Mediastinum"/>
+            </concept>
+            <concept>
+                <code value="T-11210"/>
+                <display value="Sternum"/>
+            </concept>
+            <concept>
+                <code value="T-D4000"/>
+                <display value="Abdomen"/>
+            </concept>
+            <concept>
+                <code value="T-AB959"/>
+                <display value="Internal Auditory Canal"/>
+            </concept>
+            <concept>
+                <code value="T-12700"/>
+                <display value="Bone of lower limb"/>
+            </concept>
+            <concept>
+                <code value="T-59600"/>
+                <display value="Rectum"/>
+            </concept>
+            <concept>
+                <code value="T-D2220"/>
+                <display value="Shoulder"/>
+            </concept>
+            <concept>
+                <code value="T-D8200"/>
+                <display value="Upper arm"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

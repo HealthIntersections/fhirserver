@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-10068-EstimateMethodTypes"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_10068.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.1162"/>
+    </identifier>
+    <version value="20170405"/>
+    <name value="EstimateMethodTypes"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 10068 EstimateMethodTypes"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://dicom.nema.org/resources/ontology/DCM"/>
+            <concept>
+                <code value="128479"/>
+                <display value="Tabular Data Algorithm"/>
+            </concept>
+            <concept>
+                <code value="128480"/>
+                <display value="Analytical Algorithm"/>
+            </concept>
+            <concept>
+                <code value="128481"/>
+                <display value="Empirical Algorithm"/>
+            </concept>
+        </include>
+        <include>
+            <system value="http://www.nlm.nih.gov/mesh/meshhome.html"/>
+            <concept>
+                <code value="D009010"/>
+                <display value="Monte Carlo Method"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

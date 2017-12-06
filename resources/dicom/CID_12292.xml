@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-12292-CardiacUltrasoundCoronaryArteriesFindingSites"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_12292.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.872"/>
+    </identifier>
+    <version value="20170914"/>
+    <name value="CardiacUltrasoundCoronaryArteriesFindingSites"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 12292 CardiacUltrasoundCoronaryArteriesFindingSites"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://snomed.info/srt"/>
+            <concept>
+                <code value="T-D0878"/>
+                <display value="Posterior Descending Coronary Artery"/>
+            </concept>
+            <concept>
+                <code value="T-43002"/>
+                <display value="Septal Artery"/>
+            </concept>
+            <concept>
+                <code value="T-43200"/>
+                <display value="Right Coronary Artery"/>
+            </concept>
+            <concept>
+                <code value="T-43122"/>
+                <display value="Distal Circumflex Coronary Artery"/>
+            </concept>
+            <concept>
+                <code value="T-43121"/>
+                <display value="Proximal Circumflex Coronary Artery"/>
+            </concept>
+            <concept>
+                <code value="T-43110"/>
+                <display value="Anterior Descending Branch of Left Coronary Artery"/>
+            </concept>
+            <concept>
+                <code value="T-43120"/>
+                <display value="Circumflex Coronary Artery"/>
+            </concept>
+            <concept>
+                <code value="T-43127"/>
+                <display value="Mid Circumflex Coronary Artery"/>
+            </concept>
+            <concept>
+                <code value="T-43107"/>
+                <display value="Left Main Coronary Artery"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-12015-FetalGrowthEquationsandTables"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_12015.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.563"/>
+    </identifier>
+    <version value="20030130"/>
+    <name value="FetalGrowthEquationsandTables"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 12015 FetalGrowthEquationsandTables"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://loinc.org"/>
+            <concept>
+                <code value="33161-1"/>
+                <display value="CRL by GA, Shinozuka 1996"/>
+            </concept>
+            <concept>
+                <code value="33160-3"/>
+                <display value="CRL by GA, Rempen1991"/>
+            </concept>
+            <concept>
+                <code value="33166-0"/>
+                <display value="FL by GA, Hadlock 1984"/>
+            </concept>
+            <concept>
+                <code value="33182-7"/>
+                <display value="HC/AC by GA, Campbell 1977"/>
+            </concept>
+            <concept>
+                <code value="33165-2"/>
+                <display value="FL by GA, ASUM 2000"/>
+            </concept>
+            <concept>
+                <code value="33164-5"/>
+                <display value="Fibula by GA, Jeanty 1983"/>
+            </concept>
+            <concept>
+                <code value="33181-9"/>
+                <display value="TCD by GA Goldstein 1987"/>
+            </concept>
+            <concept>
+                <code value="33163-7"/>
+                <display value="EFW by GA, Hansmann 1986"/>
+            </concept>
+            <concept>
+                <code value="33162-9"/>
+                <display value="EFW by GA, Hadlock 1991"/>
+            </concept>
+            <concept>
+                <code value="33169-4"/>
+                <display value="FL by GA, Merz 1988"/>
+            </concept>
+            <concept>
+                <code value="33168-6"/>
+                <display value="FL by GA, Jeanty 1982"/>
+            </concept>
+            <concept>
+                <code value="33167-8"/>
+                <display value="FL by GA, Chitty 1994"/>
+            </concept>
+            <concept>
+                <code value="33158-7"/>
+                <display value="Cephalic Index by GA, Hadlock 1981"/>
+            </concept>
+            <concept>
+                <code value="33157-9"/>
+                <display value="Cephalic Index by GA, Chitty 1994"/>
+            </concept>
+            <concept>
+                <code value="33145-4"/>
+                <display value="AC by GA, ASUM 2000"/>
+            </concept>
+            <concept>
+                <code value="33146-2"/>
+                <display value="AC by GA, Hadlock 1984"/>
+            </concept>
+            <concept>
+                <code value="33147-0"/>
+                <display value="AC (measured) by GA, Chitty 1994"/>
+            </concept>
+            <concept>
+                <code value="33546-3"/>
+                <display value="AC (derived) by GA, Chitty 1994"/>
+            </concept>
+            <concept>
+                <code value="33180-1"/>
+                <display value="Radius by GA, Jeanty 1983"/>
+            </concept>
+            <concept>
+                <code value="33170-2"/>
+                <display value="FL by GA, Shinozuka 1996"/>
+            </concept>
+            <concept>
+                <code value="33171-0"/>
+                <display value="GS by GA, Rempen 1991"/>
+            </concept>
+            <concept>
+                <code value="33152-0"/>
+                <display value="BPD outer-outer by GA, Chitty 1994"/>
+            </concept>
+            <concept>
+                <code value="33151-2"/>
+                <display value="BPD by GA, ASUM 2000"/>
+            </concept>
+            <concept>
+                <code value="33175-1"/>
+                <display value="HC by GA, Jeanty 1982"/>
+            </concept>
+            <concept>
+                <code value="33150-4"/>
+                <display value="AxT by GA, Shinozuka 1996"/>
+            </concept>
+            <concept>
+                <code value="33174-4"/>
+                <display value="HC derived by GA, Chitty 1994"/>
+            </concept>
+            <concept>
+                <code value="33156-1"/>
+                <display value="BPD by GA, Shinozuka 1996"/>
+            </concept>
+            <concept>
+                <code value="33172-8"/>
+                <display value="HC by GA, ASUM 2000"/>
+            </concept>
+            <concept>
+                <code value="33155-3"/>
+                <display value="BPD by GA, Rempen 1991"/>
+            </concept>
+            <concept>
+                <code value="33173-6"/>
+                <display value="HC by GA, Hadlock 1984"/>
+            </concept>
+            <concept>
+                <code value="33198-3"/>
+                <display value="BPD by GA, Hadlock 1984"/>
+            </concept>
+            <concept>
+                <code value="33179-3"/>
+                <display value="OFD by GA, Chitty 1994"/>
+            </concept>
+            <concept>
+                <code value="33154-6"/>
+                <display value="BPD by GA, Merz 1988"/>
+            </concept>
+            <concept>
+                <code value="33153-8"/>
+                <display value="BPD by GA, Jeanty 1982"/>
+            </concept>
+            <concept>
+                <code value="33177-7"/>
+                <display value="Humerus Length by GA, ASUM 2000"/>
+            </concept>
+            <concept>
+                <code value="33148-8"/>
+                <display value="AC by GA, Merz 1988"/>
+            </concept>
+            <concept>
+                <code value="33178-5"/>
+                <display value="OFD by GA, ASUM 2000"/>
+            </concept>
+            <concept>
+                <code value="33149-6"/>
+                <display value="AC by GA, Shinozuka 1996"/>
+            </concept>
+            <concept>
+                <code value="33159-5"/>
+                <display value="CRL by GA ASUM 2000"/>
+            </concept>
+            <concept>
+                <code value="33176-9"/>
+                <display value="HC by GA, Merz 1988"/>
+            </concept>
+            <concept>
+                <code value="33556-2"/>
+                <display value="BPD outer-inner by GA, Chitty 1994"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

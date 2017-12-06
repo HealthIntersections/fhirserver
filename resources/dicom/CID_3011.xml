@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-3011-ElectrophysiologyAnatomicLocations"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_3011.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.46"/>
+    </identifier>
+    <version value="20170914"/>
+    <name value="ElectrophysiologyAnatomicLocations"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 3011 ElectrophysiologyAnatomicLocations"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://snomed.info/srt"/>
+            <concept>
+                <code value="T-48540"/>
+                <display value="Inferior left pulmonary vein"/>
+            </concept>
+            <concept>
+                <code value="T-39010"/>
+                <display value="Epicardium"/>
+            </concept>
+            <concept>
+                <code value="T-48520"/>
+                <display value="Inferior right pulmonary vein"/>
+            </concept>
+            <concept>
+                <code value="T-48420"/>
+                <display value="Great cardiac vein"/>
+            </concept>
+            <concept>
+                <code value="T-32833"/>
+                <display value="Left anterior division of left branch atrioventricular bundle"/>
+            </concept>
+            <concept>
+                <code value="T-32832"/>
+                <display value="Left branch of atrioventricular bundle"/>
+            </concept>
+            <concept>
+                <code value="T-32810"/>
+                <display value="Sino-atrial node"/>
+            </concept>
+            <concept>
+                <code value="T-32834"/>
+                <display value="Left posterior division of left branch atrioventricular bundle"/>
+            </concept>
+            <concept>
+                <code value="T-48581"/>
+                <display value="Pulmonary vein"/>
+            </concept>
+            <concept>
+                <code value="T-32850"/>
+                <display value="Accessory atrioventricular bundle"/>
+            </concept>
+            <concept>
+                <code value="D4-31120"/>
+                <display value="Common ventricle"/>
+            </concept>
+            <concept>
+                <code value="T-32831"/>
+                <display value="Right branch of Atrioventricular bundle"/>
+            </concept>
+            <concept>
+                <code value="T-32830"/>
+                <display value="Atrioventricular bundle"/>
+            </concept>
+            <concept>
+                <code value="T-32550"/>
+                <display value="Right ventricle outflow tract"/>
+            </concept>
+            <concept>
+                <code value="T-32210"/>
+                <display value="Right auricular appendage"/>
+            </concept>
+            <concept>
+                <code value="T-32310"/>
+                <display value="Left auricular appendage"/>
+            </concept>
+            <concept>
+                <code value="T-32650"/>
+                <display value="Left ventricle outflow tract"/>
+            </concept>
+            <concept>
+                <code value="T-35120"/>
+                <display value="Right atrioventricular ostium"/>
+            </concept>
+            <concept>
+                <code value="G-DE02"/>
+                <display value="High right atrium"/>
+            </concept>
+            <concept>
+                <code value="G-DE06"/>
+                <display value="Mid right atrium"/>
+            </concept>
+            <concept>
+                <code value="T-48411"/>
+                <display value="Ostium of coronary sinus"/>
+            </concept>
+            <concept>
+                <code value="T-48510"/>
+                <display value="Superior right pulmonary vein"/>
+            </concept>
+            <concept>
+                <code value="G-DE04"/>
+                <display value="Lateral high right atrium"/>
+            </concept>
+            <concept>
+                <code value="T-48430"/>
+                <display value="Middle cardiac vein"/>
+            </concept>
+            <concept>
+                <code value="T-48410"/>
+                <display value="Coronary sinus"/>
+            </concept>
+            <concept>
+                <code value="G-DE08"/>
+                <display value="Low right atrium"/>
+            </concept>
+            <concept>
+                <code value="T-48530"/>
+                <display value="Superior left pulmonary vein"/>
+            </concept>
+            <concept>
+                <code value="T-32602"/>
+                <display value="Apex of left ventricle"/>
+            </concept>
+            <concept>
+                <code value="T-32502"/>
+                <display value="Apex of right ventricle"/>
+            </concept>
+            <concept>
+                <code value="T-32300"/>
+                <display value="Left Atrium"/>
+            </concept>
+            <concept>
+                <code value="T-32840"/>
+                <display value="Purkinje fibers"/>
+            </concept>
+            <concept>
+                <code value="T-32202"/>
+                <display value="Tendon of Todaro"/>
+            </concept>
+            <concept>
+                <code value="T-32820"/>
+                <display value="Atrioventricular node"/>
+            </concept>
+            <concept>
+                <code value="T-32600"/>
+                <display value="Left ventricle"/>
+            </concept>
+            <concept>
+                <code value="T-32500"/>
+                <display value="Right ventricle"/>
+            </concept>
+            <concept>
+                <code value="T-32640"/>
+                <display value="Left ventricle inflow"/>
+            </concept>
+            <concept>
+                <code value="T-35310"/>
+                <display value="Mitral ring"/>
+            </concept>
+            <concept>
+                <code value="T-32540"/>
+                <display value="Right ventricle inflow"/>
+            </concept>
+            <concept>
+                <code value="T-32200"/>
+                <display value="Right Atrium"/>
+            </concept>
+            <concept>
+                <code value="T-35110"/>
+                <display value="Tricuspid ring"/>
+            </concept>
+            <concept>
+                <code value="T-35210"/>
+                <display value="Pulmonic ring"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

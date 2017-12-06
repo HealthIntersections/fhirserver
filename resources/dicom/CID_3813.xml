@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-3813-StentFindings"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_3813.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.272"/>
+    </identifier>
+    <version value="20160314"/>
+    <name value="StentFindings"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 3813 StentFindings"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://dicom.nema.org/resources/ontology/DCM"/>
+            <concept>
+                <code value="122683"/>
+                <display value="stent fracture"/>
+            </concept>
+            <concept>
+                <code value="122684"/>
+                <display value="stent disintegration"/>
+            </concept>
+            <concept>
+                <code value="122680"/>
+                <display value="endoleak"/>
+            </concept>
+        </include>
+        <include>
+            <system value="http://snomed.info/srt"/>
+            <concept>
+                <code value="M-75300"/>
+                <display value="hypoplasia"/>
+            </concept>
+            <concept>
+                <code value="DD-661D2"/>
+                <display value="migration of implant or internal device"/>
+            </concept>
+            <concept>
+                <code value="M-3400A"/>
+                <display value="stenosis"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

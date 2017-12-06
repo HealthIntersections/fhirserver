@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-8101-ContainerTypes"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_8101.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.1043"/>
+    </identifier>
+    <version value="20080626"/>
+    <name value="ContainerTypes"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 8101 ContainerTypes"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://snomed.info/srt"/>
+            <concept>
+                <code value="A-01025"/>
+                <display value="Specimen well"/>
+            </concept>
+            <concept>
+                <code value="A-01024"/>
+                <display value="Specimen vial"/>
+            </concept>
+            <concept>
+                <code value="A-0101B"/>
+                <display value="Microscope slide"/>
+            </concept>
+            <concept>
+                <code value="A-01023"/>
+                <display value="Specimen container"/>
+            </concept>
+            <concept>
+                <code value="A-01022"/>
+                <display value="Tissue microarray cassette"/>
+            </concept>
+            <concept>
+                <code value="A-0101E"/>
+                <display value="Tissue cassette"/>
+            </concept>
+            <concept>
+                <code value="A-01021"/>
+                <display value="Electron microscopy grid"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

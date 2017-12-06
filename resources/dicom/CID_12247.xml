@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-12247-PediatricFetalandCongenitalCardiacSurgicalInterventions"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_12247.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.828"/>
+    </identifier>
+    <version value="20160314"/>
+    <name value="Pediatric,FetalandCongenitalCardiacSurgicalInterventions"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 12247 Pediatric,FetalandCongenitalCardiacSurgicalInterventions"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://snomed.info/srt"/>
+            <concept>
+                <code value="P1-32502"/>
+                <display value="Implantation of heart valve with tissue graft"/>
+            </concept>
+            <concept>
+                <code value="P1-31018"/>
+                <display value="Implantation of baffle, atrial or interatrial"/>
+            </concept>
+            <concept>
+                <code value="P5-39106"/>
+                <display value="Coarctation of the Aorta Balloon Angioplasty"/>
+            </concept>
+            <concept>
+                <code value="P1-31876"/>
+                <display value="Correction of ventricular septal defect"/>
+            </concept>
+            <concept>
+                <code value="P1-32504"/>
+                <display value="Implantation of heart valve prosthesis or synthetic device"/>
+            </concept>
+            <concept>
+                <code value="P1-3696A"/>
+                <display value="Hemi-Fontan operation"/>
+            </concept>
+            <concept>
+                <code value="P1-31917"/>
+                <display value="Mustard operation"/>
+            </concept>
+            <concept>
+                <code value="P1-31919"/>
+                <display value="Arterial switch operation"/>
+            </concept>
+            <concept>
+                <code value="P1-36994"/>
+                <display value="Left-sided bidirectional Glenn shunt procedure"/>
+            </concept>
+            <concept>
+                <code value="P1-36995"/>
+                <display value="Right Glenn shunt procedure"/>
+            </concept>
+            <concept>
+                <code value="P1-31088"/>
+                <display value="Damus-Stansel-Kaye operation"/>
+            </concept>
+            <concept>
+                <code value="P1-36993"/>
+                <display value="Lateral-Caval Fontan procedure"/>
+            </concept>
+            <concept>
+                <code value="P1-31089"/>
+                <display value="Norwood type operation"/>
+            </concept>
+            <concept>
+                <code value="P0-057E8"/>
+                <display value="Closure of ductus arteriosus with clip"/>
+            </concept>
+            <concept>
+                <code value="P0-0530F"/>
+                <display value="Repair of total anomalous pulmonary venous connection"/>
+            </concept>
+            <concept>
+                <code value="P1-36996"/>
+                <display value="Right-sided bidirectional Glenn shunt procedure"/>
+            </concept>
+            <concept>
+                <code value="P1-31003"/>
+                <display value="Atrial inversion operation using atrial wall"/>
+            </concept>
+            <concept>
+                <code value="P1-36997"/>
+                <display value="Left Glenn shunt procedure"/>
+            </concept>
+            <concept>
+                <code value="P1-31028"/>
+                <display value="Creation of conduit right atrium to pulmonary trunk"/>
+            </concept>
+            <concept>
+                <code value="P1-36956"/>
+                <display value="Central aortopulmonary shunt operation"/>
+            </concept>
+            <concept>
+                <code value="P1-31920"/>
+                <display value="Rastelli operation"/>
+            </concept>
+            <concept>
+                <code value="P1-36957"/>
+                <display value="Blalock-Taussig shunt, pulmonary-subclavian artery anastomosis"/>
+            </concept>
+            <concept>
+                <code value="P1-31846"/>
+                <display value="Percutaneous prosthetic closure of atrial septal defect"/>
+            </concept>
+            <concept>
+                <code value="P0-06135"/>
+                <display value="Coarctation of the Aorta Angioplasty with Implant of Stent"/>
+            </concept>
+            <concept>
+                <code value="P1-30A31"/>
+                <display value="Radical aortopulmonary reconstruct w RV to PA valveless conduit"/>
+            </concept>
+            <concept>
+                <code value="P0-00E0B"/>
+                <display value="Patent ductus arteriosus coil or device closure"/>
+            </concept>
+            <concept>
+                <code value="P1-3180D"/>
+                <display value="Sano procedure"/>
+            </concept>
+            <concept>
+                <code value="P1-34001"/>
+                <display value="Repair of coarctation of aorta"/>
+            </concept>
+            <concept>
+                <code value="P0-00C6B"/>
+                <display value="Construction of LV to aorta tunnel w RV to PA valved conduit"/>
+            </concept>
+            <concept>
+                <code value="P1-38803"/>
+                <display value="Partial anomalous pulmonary venous connection operation"/>
+            </concept>
+            <concept>
+                <code value="P1-31872"/>
+                <display value="Atrial septal defect repair"/>
+            </concept>
+            <concept>
+                <code value="P1-31850"/>
+                <display value="Ventricular septal defect device closure"/>
+            </concept>
+            <concept>
+                <code value="P1-31037"/>
+                <display value="Repair of defect of the atrioventricular septum"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

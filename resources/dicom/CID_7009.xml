@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-7009-PurposeofReferencetoPredecessorReport"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_7009.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.818"/>
+    </identifier>
+    <version value="20090826"/>
+    <name value="PurposeofReferencetoPredecessorReport"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 7009 PurposeofReferencetoPredecessorReport"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://dicom.nema.org/resources/ontology/DCM"/>
+            <concept>
+                <code value="121363"/>
+                <display value="Partial report"/>
+            </concept>
+            <concept>
+                <code value="121361"/>
+                <display value="Addended report"/>
+            </concept>
+            <concept>
+                <code value="121362"/>
+                <display value="Preliminary report"/>
+            </concept>
+            <concept>
+                <code value="121360"/>
+                <display value="Replaced report"/>
+            </concept>
+            <concept>
+                <code value="122073"/>
+                <display value="Current procedure evidence"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-3736-NYHAClassification"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_3736.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.233"/>
+    </identifier>
+    <version value="20070827"/>
+    <name value="NYHAClassification"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 3736 NYHAClassification"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://snomed.info/srt"/>
+            <concept>
+                <code value="F-3018B"/>
+                <display value="NYHA Class I"/>
+            </concept>
+            <concept>
+                <code value="F-3018C"/>
+                <display value="NYHA Class II"/>
+            </concept>
+            <concept>
+                <code value="F-3018D"/>
+                <display value="NYHA Class III"/>
+            </concept>
+            <concept>
+                <code value="F-3018E"/>
+                <display value="NYHA Class IV"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

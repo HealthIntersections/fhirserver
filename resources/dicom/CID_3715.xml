@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-3715-LesionMargin"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_3715.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.216"/>
+    </identifier>
+    <version value="20050614"/>
+    <name value="LesionMargin"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 3715 LesionMargin"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://snomed.info/srt"/>
+            <concept>
+                <code value="G-A545"/>
+                <display value="Smooth"/>
+            </concept>
+            <concept>
+                <code value="G-A402"/>
+                <display value="Irregular"/>
+            </concept>
+            <concept>
+                <code value="R-00335"/>
+                <display value="Multiple Irregularities"/>
+            </concept>
+            <concept>
+                <code value="R-403CC"/>
+                <display value="Ulcerative"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

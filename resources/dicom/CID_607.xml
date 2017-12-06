@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-607-AnimalFeedTypes"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_607.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.1072"/>
+    </identifier>
+    <version value="20151110"/>
+    <name value="AnimalFeedTypes"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 607 AnimalFeedTypes"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://dicom.nema.org/resources/ontology/DCM"/>
+            <concept>
+                <code value="127270"/>
+                <display value="NIH31"/>
+            </concept>
+            <concept>
+                <code value="127271"/>
+                <display value="NIH07"/>
+            </concept>
+            <concept>
+                <code value="127272"/>
+                <display value="AIN76"/>
+            </concept>
+            <concept>
+                <code value="127273"/>
+                <display value="AIN93G"/>
+            </concept>
+            <concept>
+                <code value="127274"/>
+                <display value="AIN93M"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

@@ -1,0 +1,438 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-4026-PrimaryAnatomicStructureforIntraoralandCraniofacialRadiographyTeeth"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_4026.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.1022"/>
+    </identifier>
+    <version value="20150318"/>
+    <name value="PrimaryAnatomicStructureforIntraoralandCraniofacialRadiographyTeeth"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 4026 PrimaryAnatomicStructureforIntraoralandCraniofacialRadiographyTeeth"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://snomed.info/srt"/>
+            <concept>
+                <code value="R-FC4E7"/>
+                <display value="Supernumerary permanent maxillary right second premolar tooth"/>
+            </concept>
+            <concept>
+                <code value="R-FC4E6"/>
+                <display value="Supernumerary permanent maxillary right first molar tooth"/>
+            </concept>
+            <concept>
+                <code value="R-FC4E4"/>
+                <display value="Supernumerary permanent maxillary right second molar tooth"/>
+            </concept>
+            <concept>
+                <code value="R-FC4E9"/>
+                <display value="Supernumerary permanent maxillary right canine tooth"/>
+            </concept>
+            <concept>
+                <code value="R-FC4E8"/>
+                <display value="Supernumerary permanent maxillary right first premolar tooth"/>
+            </concept>
+            <concept>
+                <code value="T-54520"/>
+                <display value="Mandibular right third molar tooth"/>
+            </concept>
+            <concept>
+                <code value="T-54400"/>
+                <display value="Mandibular left second premolar tooth"/>
+            </concept>
+            <concept>
+                <code value="R-FC4EC"/>
+                <display value="Supernumerary permanent maxillary right central incisor tooth"/>
+            </concept>
+            <concept>
+                <code value="R-FC4EA"/>
+                <display value="Supernumerary permanent maxillary right lateral incisor tooth"/>
+            </concept>
+            <concept>
+                <code value="T-54800"/>
+                <display value="Deciduous mandibular left second molar tooth"/>
+            </concept>
+            <concept>
+                <code value="T-54360"/>
+                <display value="Maxillary left third molar tooth"/>
+            </concept>
+            <concept>
+                <code value="R-FC4EF"/>
+                <display value="Supernumerary permanent maxillary left canine tooth"/>
+            </concept>
+            <concept>
+                <code value="T-54240"/>
+                <display value="Maxillary right second premolar tooth"/>
+            </concept>
+            <concept>
+                <code value="R-FC4EE"/>
+                <display value="Supernumerary permanent maxillary left lateral incisor tooth"/>
+            </concept>
+            <concept>
+                <code value="R-FC4ED"/>
+                <display value="Supernumerary permanent maxillary left central incisor tooth"/>
+            </concept>
+            <concept>
+                <code value="T-54480"/>
+                <display value="Mandibular right first premolar tooth"/>
+            </concept>
+            <concept>
+                <code value="T-54760"/>
+                <display value="Deciduous mandibular left central incisor tooth"/>
+            </concept>
+            <concept>
+                <code value="T-54640"/>
+                <display value="Deciduous maxillary right first molar tooth"/>
+            </concept>
+            <concept>
+                <code value="R-FC4F0"/>
+                <display value="Supernumerary permanent maxillary left first premolar tooth"/>
+            </concept>
+            <concept>
+                <code value="R-FC4F4"/>
+                <display value="Supernumerary permanent maxillary left third molar tooth"/>
+            </concept>
+            <concept>
+                <code value="R-FC4F3"/>
+                <display value="Supernumerary permanent maxillary left second molar tooth"/>
+            </concept>
+            <concept>
+                <code value="R-FC4F2"/>
+                <display value="Supernumerary permanent maxillary left first molar tooth"/>
+            </concept>
+            <concept>
+                <code value="R-FC4F1"/>
+                <display value="Supernumerary permanent maxillary left second premolar tooth"/>
+            </concept>
+            <concept>
+                <code value="R-FC4F7"/>
+                <display value="Supernumerary permanent mandibular left third molar tooth"/>
+            </concept>
+            <concept>
+                <code value="R-FC4F9"/>
+                <display value="Supernumerary permanent mandibular left second molar tooth"/>
+            </concept>
+            <concept>
+                <code value="T-54410"/>
+                <display value="Mandibular left first premolar tooth"/>
+            </concept>
+            <concept>
+                <code value="R-FC4FD"/>
+                <display value="Supernumerary permanent mandibular left canine tooth"/>
+            </concept>
+            <concept>
+                <code value="R-FC4FC"/>
+                <display value="Supernumerary permanent mandibular left first premolar tooth"/>
+            </concept>
+            <concept>
+                <code value="R-FC4FB"/>
+                <display value="Supernumerary permanent mandibular left second premolar tooth"/>
+            </concept>
+            <concept>
+                <code value="R-FC4FA"/>
+                <display value="Supernumerary permanent mandibular left first molar tooth"/>
+            </concept>
+            <concept>
+                <code value="R-FC501"/>
+                <display value="Supernumerary permanent mandibular right lateral incisor tooth"/>
+            </concept>
+            <concept>
+                <code value="T-54250"/>
+                <display value="Maxillary right first premolar tooth"/>
+            </concept>
+            <concept>
+                <code value="R-FC500"/>
+                <display value="Supernumerary permanent mandibular right central incisor tooth"/>
+            </concept>
+            <concept>
+                <code value="R-FC4FF"/>
+                <display value="Supernumerary permanent mandibular left central incisor tooth"/>
+            </concept>
+            <concept>
+                <code value="T-54490"/>
+                <display value="Mandibular right second premolar tooth"/>
+            </concept>
+            <concept>
+                <code value="R-FC4FE"/>
+                <display value="Supernumerary permanent mandibular left lateral incisor tooth"/>
+            </concept>
+            <concept>
+                <code value="T-54370"/>
+                <display value="Mandibular left third molar tooth"/>
+            </concept>
+            <concept>
+                <code value="R-FC505"/>
+                <display value="Supernumerary permanent mandibular right first molar tooth"/>
+            </concept>
+            <concept>
+                <code value="T-54650"/>
+                <display value="Deciduous maxillary right second molar tooth"/>
+            </concept>
+            <concept>
+                <code value="R-FC504"/>
+                <display value="Supernumerary permanent mandibular right second premolar tooth"/>
+            </concept>
+            <concept>
+                <code value="R-FC503"/>
+                <display value="Supernumerary permanent mandibular right first premolar tooth"/>
+            </concept>
+            <concept>
+                <code value="R-FC502"/>
+                <display value="Supernumerary permanent mandibular right canine tooth"/>
+            </concept>
+            <concept>
+                <code value="T-54770"/>
+                <display value="Deciduous mandibular left lateral incisor tooth"/>
+            </concept>
+            <concept>
+                <code value="R-FC507"/>
+                <display value="Supernumerary permanent mandibular right third molar tooth"/>
+            </concept>
+            <concept>
+                <code value="R-FC506"/>
+                <display value="Supernumerary permanent mandibular right second molar tooth"/>
+            </concept>
+            <concept>
+                <code value="T-54500"/>
+                <display value="Mandibular right first molar tooth"/>
+            </concept>
+            <concept>
+                <code value="T-54740"/>
+                <display value="Deciduous mandibular right first molar tooth"/>
+            </concept>
+            <concept>
+                <code value="T-54620"/>
+                <display value="Deciduous maxillary right lateral incisor tooth"/>
+            </concept>
+            <concept>
+                <code value="T-54460"/>
+                <display value="Mandibular right lateral incisor tooth"/>
+            </concept>
+            <concept>
+                <code value="T-54340"/>
+                <display value="Maxillary left first molar tooth"/>
+            </concept>
+            <concept>
+                <code value="T-54220"/>
+                <display value="Maxillary right second molar tooth"/>
+            </concept>
+            <concept>
+                <code value="T-54630"/>
+                <display value="Deciduous maxillary right canine tooth"/>
+            </concept>
+            <concept>
+                <code value="T-54510"/>
+                <display value="Mandibular right second molar tooth"/>
+            </concept>
+            <concept>
+                <code value="T-54470"/>
+                <display value="Mandibular right canine tooth"/>
+            </concept>
+            <concept>
+                <code value="T-54350"/>
+                <display value="Maxillary left second molar tooth"/>
+            </concept>
+            <concept>
+                <code value="T-54750"/>
+                <display value="Deciduous mandibular right second molar tooth"/>
+            </concept>
+            <concept>
+                <code value="T-54230"/>
+                <display value="Maxillary right first molar tooth"/>
+            </concept>
+            <concept>
+                <code value="T-54720"/>
+                <display value="Deciduous mandibular right lateral incisor tooth"/>
+            </concept>
+            <concept>
+                <code value="T-54680"/>
+                <display value="Deciduous maxillary left canine tooth"/>
+            </concept>
+            <concept>
+                <code value="T-54320"/>
+                <display value="Maxillary left first premolar tooth"/>
+            </concept>
+            <concept>
+                <code value="T-54440"/>
+                <display value="Mandibular left central incisor tooth"/>
+            </concept>
+            <concept>
+                <code value="T-54280"/>
+                <display value="Maxillary right central incisor tooth"/>
+            </concept>
+            <concept>
+                <code value="T-54610"/>
+                <display value="Deciduous maxillary right central incisor tooth"/>
+            </concept>
+            <concept>
+                <code value="T-54730"/>
+                <display value="Deciduous mandibular right canine tooth"/>
+            </concept>
+            <concept>
+                <code value="T-54690"/>
+                <display value="Deciduous maxillary left first molar tooth"/>
+            </concept>
+            <concept>
+                <code value="T-54210"/>
+                <display value="Maxillary right third molar tooth"/>
+            </concept>
+            <concept>
+                <code value="T-54450"/>
+                <display value="Mandibular right central incisor tooth"/>
+            </concept>
+            <concept>
+                <code value="T-54330"/>
+                <display value="Maxillary left second premolar tooth"/>
+            </concept>
+            <concept>
+                <code value="T-54290"/>
+                <display value="Maxillary left central incisor tooth"/>
+            </concept>
+            <concept>
+                <code value="T-54300"/>
+                <display value="Maxillary left lateral incisor tooth"/>
+            </concept>
+            <concept>
+                <code value="T-54700"/>
+                <display value="Deciduous maxillary left second molar tooth"/>
+            </concept>
+            <concept>
+                <code value="R-FC4CE"/>
+                <display value="Supernumerary deciduous maxillary right canine tooth"/>
+            </concept>
+            <concept>
+                <code value="R-FC4CD"/>
+                <display value="Supernumerary deciduous maxillary right first molar tooth"/>
+            </concept>
+            <concept>
+                <code value="R-FC4CC"/>
+                <display value="Supernumerary deciduous maxillary right second molar tooth"/>
+            </concept>
+            <concept>
+                <code value="T-54380"/>
+                <display value="Mandibular left second molar tooth"/>
+            </concept>
+            <concept>
+                <code value="T-54260"/>
+                <display value="Maxillary right canine tooth"/>
+            </concept>
+            <concept>
+                <code value="T-54420"/>
+                <display value="Mandibular left canine tooth"/>
+            </concept>
+            <concept>
+                <code value="T-54780"/>
+                <display value="Deciduous mandibular left canine tooth"/>
+            </concept>
+            <concept>
+                <code value="R-FC4CF"/>
+                <display value="Supernumerary deciduous maxillary right lateral incisor tooth"/>
+            </concept>
+            <concept>
+                <code value="T-54660"/>
+                <display value="Deciduous maxillary left central incisor tooth"/>
+            </concept>
+            <concept>
+                <code value="R-FC4D2"/>
+                <display value="Supernumerary deciduous maxillary left lateral incisor tooth"/>
+            </concept>
+            <concept>
+                <code value="R-FC4D1"/>
+                <display value="Supernumerary deciduous maxillary left central incisor tooth"/>
+            </concept>
+            <concept>
+                <code value="R-FC4D0"/>
+                <display value="Supernumerary deciduous maxillary right central incisor tooth"/>
+            </concept>
+            <concept>
+                <code value="R-FC4D5"/>
+                <display value="Supernumerary deciduous maxillary left second molar tooth"/>
+            </concept>
+            <concept>
+                <code value="R-FC4D4"/>
+                <display value="Supernumerary deciduous maxillary left first molar tooth"/>
+            </concept>
+            <concept>
+                <code value="R-FC4D3"/>
+                <display value="Supernumerary deciduous maxillary left canine tooth"/>
+            </concept>
+            <concept>
+                <code value="R-FC4D9"/>
+                <display value="Supernumerary deciduous mandibular right first molar tooth"/>
+            </concept>
+            <concept>
+                <code value="R-FC4D8"/>
+                <display value="Supernumerary deciduous mandibular right second molar tooth"/>
+            </concept>
+            <concept>
+                <code value="T-54710"/>
+                <display value="Deciduous mandibular right central incisor tooth"/>
+            </concept>
+            <concept>
+                <code value="R-FC4DB"/>
+                <display value="Supernumerary deciduous mandibular right lateral incisor tooth"/>
+            </concept>
+            <concept>
+                <code value="R-FC4DA"/>
+                <display value="Supernumerary deciduous mandibular right canine tooth"/>
+            </concept>
+            <concept>
+                <code value="R-FC4DF"/>
+                <display value="Supernumerary deciduous mandibular left lateral incisor tooth"/>
+            </concept>
+            <concept>
+                <code value="T-54790"/>
+                <display value="Deciduous mandibular left first molar tooth"/>
+            </concept>
+            <concept>
+                <code value="R-FC4DD"/>
+                <display value="Supernumerary deciduous mandibular left central incisor tooth"/>
+            </concept>
+            <concept>
+                <code value="T-54270"/>
+                <display value="Maxillary right lateral incisor tooth"/>
+            </concept>
+            <concept>
+                <code value="R-FC4DC"/>
+                <display value="Supernumerary deciduous mandibular right central incisor tooth"/>
+            </concept>
+            <concept>
+                <code value="T-54430"/>
+                <display value="Mandibular left lateral tooth"/>
+            </concept>
+            <concept>
+                <code value="T-54310"/>
+                <display value="Maxillary left canine tooth"/>
+            </concept>
+            <concept>
+                <code value="T-54670"/>
+                <display value="Deciduous maxillary left lateral incisor tooth"/>
+            </concept>
+            <concept>
+                <code value="R-FC4E3"/>
+                <display value="Supernumerary permanent maxillary right third molar tooth"/>
+            </concept>
+            <concept>
+                <code value="R-FC4E2"/>
+                <display value="Supernumerary deciduous mandibular left second molar tooth"/>
+            </concept>
+            <concept>
+                <code value="T-54390"/>
+                <display value="Mandibular left first molar tooth"/>
+            </concept>
+            <concept>
+                <code value="R-FC4E1"/>
+                <display value="Supernumerary deciduous mandibular left first molar tooth"/>
+            </concept>
+            <concept>
+                <code value="R-FC4E0"/>
+                <display value="Supernumerary deciduous mandibular left canine tooth"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

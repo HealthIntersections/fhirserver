@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-3671-ReasonforECGExam"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_3671.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.186"/>
+    </identifier>
+    <version value="20030327"/>
+    <name value="ReasonforECGExam"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 3671 ReasonforECGExam"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://snomed.info/srt"/>
+            <concept>
+                <code value="R-00348"/>
+                <display value="Outpatient procedure"/>
+            </concept>
+            <concept>
+                <code value="R-00300"/>
+                <display value="Emergency procedure"/>
+            </concept>
+            <concept>
+                <code value="P2-10700"/>
+                <display value="Emergency Department patient visit"/>
+            </concept>
+            <concept>
+                <code value="P1-00410"/>
+                <display value="Pre-Surgery testing"/>
+            </concept>
+            <concept>
+                <code value="R-0036E"/>
+                <display value="Routine procedure"/>
+            </concept>
+            <concept>
+                <code value="R-00302"/>
+                <display value="Evaluation of murmur"/>
+            </concept>
+            <concept>
+                <code value="R-0035A"/>
+                <display value="Procedure in Cardiac Care Unit"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

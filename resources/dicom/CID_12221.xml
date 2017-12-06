@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-12221-FlowDirection"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_12221.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.613"/>
+    </identifier>
+    <version value="20100317"/>
+    <name value="FlowDirection"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 12221 FlowDirection"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://snomed.info/srt"/>
+            <concept>
+                <code value="R-42047"/>
+                <display value="Antegrade Flow"/>
+            </concept>
+            <concept>
+                <code value="R-42E61"/>
+                <display value="Retrograde Flow"/>
+            </concept>
+            <concept>
+                <code value="G-0367"/>
+                <display value="Regurgitant Flow"/>
+            </concept>
+            <concept>
+                <code value="F-32330"/>
+                <display value="Left to right cardiovascular shunt"/>
+            </concept>
+            <concept>
+                <code value="F-32340"/>
+                <display value="Right to left cardiovascular shunt"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

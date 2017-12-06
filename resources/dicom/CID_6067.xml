@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-6067-FluidColor"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_6067.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.396"/>
+    </identifier>
+    <version value="20040112"/>
+    <name value="FluidColor"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 6067 FluidColor"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://dicom.nema.org/resources/ontology/DCM"/>
+            <concept>
+                <code value="111450"/>
+                <display value="Light brown color"/>
+            </concept>
+            <concept>
+                <code value="111451"/>
+                <display value="Dark red color"/>
+            </concept>
+            <concept>
+                <code value="111452"/>
+                <display value="Dark brown color"/>
+            </concept>
+            <concept>
+                <code value="111453"/>
+                <display value="Bright red color"/>
+            </concept>
+            <concept>
+                <code value="111454"/>
+                <display value="Blood tinged color"/>
+            </concept>
+        </include>
+        <include>
+            <system value="http://snomed.info/srt"/>
+            <concept>
+                <code value="R-4205B"/>
+                <display value="Clear"/>
+            </concept>
+            <concept>
+                <code value="G-A12B"/>
+                <display value="White color"/>
+            </concept>
+            <concept>
+                <code value="G-A12D"/>
+                <display value="Gray color"/>
+            </concept>
+            <concept>
+                <code value="G-A12C"/>
+                <display value="Black color"/>
+            </concept>
+            <concept>
+                <code value="G-A11E"/>
+                <display value="Green color"/>
+            </concept>
+            <concept>
+                <code value="G-A11D"/>
+                <display value="Yellow color"/>
+            </concept>
+            <concept>
+                <code value="G-A12E"/>
+                <display value="Brown color"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

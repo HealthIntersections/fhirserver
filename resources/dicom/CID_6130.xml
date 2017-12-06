@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-6130-SeverityDescriptor"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_6130.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.450"/>
+    </identifier>
+    <version value="20160314"/>
+    <name value="SeverityDescriptor"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 6130 SeverityDescriptor"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://dicom.nema.org/resources/ontology/DCM"/>
+            <concept>
+                <code value="112159"/>
+                <display value="Hyper-acute"/>
+            </concept>
+        </include>
+        <include>
+            <system value="http://snomed.info/srt"/>
+            <concept>
+                <code value="R-404FA"/>
+                <display value="Mild"/>
+            </concept>
+            <concept>
+                <code value="G-A270"/>
+                <display value="Chronic"/>
+            </concept>
+            <concept>
+                <code value="G-A561"/>
+                <display value="Subacute"/>
+            </concept>
+            <concept>
+                <code value="G-A003"/>
+                <display value="Severe"/>
+            </concept>
+            <concept>
+                <code value="G-A002"/>
+                <display value="Moderate"/>
+            </concept>
+            <concept>
+                <code value="R-424BE"/>
+                <display value="Acute onset"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

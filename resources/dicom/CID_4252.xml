@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-4252-VisualFieldStaticPerimetryScreeningTestModes"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_4252.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.911"/>
+    </identifier>
+    <version value="20100827"/>
+    <name value="VisualFieldStaticPerimetryScreeningTestModes"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 4252 VisualFieldStaticPerimetryScreeningTestModes"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://dicom.nema.org/resources/ontology/DCM"/>
+            <concept>
+                <code value="111838"/>
+                <display value="Age corrected"/>
+            </concept>
+            <concept>
+                <code value="111839"/>
+                <display value="Threshold related"/>
+            </concept>
+            <concept>
+                <code value="121410"/>
+                <display value="User chosen value"/>
+            </concept>
+            <concept>
+                <code value="111840"/>
+                <display value="Single luminance"/>
+            </concept>
+            <concept>
+                <code value="111841"/>
+                <display value="Foveal sensitivity related"/>
+            </concept>
+            <concept>
+                <code value="111842"/>
+                <display value="Related to non macular sensitivity"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

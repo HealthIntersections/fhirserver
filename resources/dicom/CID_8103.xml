@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-8103-AnatomicPathologySpecimenTypes"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_8103.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.1045"/>
+    </identifier>
+    <version value="20080626"/>
+    <name value="AnatomicPathologySpecimenTypes"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 8103 AnatomicPathologySpecimenTypes"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://snomed.info/srt"/>
+            <concept>
+                <code value="G-8439"/>
+                <display value="Tissue section"/>
+            </concept>
+            <concept>
+                <code value="G-8318"/>
+                <display value="specimen from breast obtained by core needle biopsy"/>
+            </concept>
+            <concept>
+                <code value="G-8339"/>
+                <display value="frozen section breast sample"/>
+            </concept>
+            <concept>
+                <code value="T-1A404"/>
+                <display value="Touch preparation cytologic material"/>
+            </concept>
+            <concept>
+                <code value="G-8319"/>
+                <display value="specimen from breast, stereotactically guided core needle biopsy"/>
+            </concept>
+            <concept>
+                <code value="T-1A403"/>
+                <display value="Liquid based cytologic material"/>
+            </concept>
+            <concept>
+                <code value="G-8430"/>
+                <display value="specimen from breast obtained by excision"/>
+            </concept>
+            <concept>
+                <code value="G-8311"/>
+                <display value="specimen from breast obtained by total mastectomy"/>
+            </concept>
+            <concept>
+                <code value="G-81EA"/>
+                <display value="Slide"/>
+            </concept>
+            <concept>
+                <code value="T-D0010"/>
+                <display value="Entire body"/>
+            </concept>
+            <concept>
+                <code value="G-80A6"/>
+                <display value="Body fluid sample"/>
+            </concept>
+            <concept>
+                <code value="G-832D"/>
+                <display value="breast tru-cut biopsy sample"/>
+            </concept>
+            <concept>
+                <code value="G-80A5"/>
+                <display value="Body substance sample"/>
+            </concept>
+            <concept>
+                <code value="G-81A0"/>
+                <display value="Genetic sample"/>
+            </concept>
+            <concept>
+                <code value="G-8346"/>
+                <display value="breast duct sample"/>
+            </concept>
+            <concept>
+                <code value="R-003AC"/>
+                <display value="specimen from breast obtained by image guided core biopsy"/>
+            </concept>
+            <concept>
+                <code value="G-8300"/>
+                <display value="Tissue specimen"/>
+            </concept>
+            <concept>
+                <code value="G-8003"/>
+                <display value="Aspirate"/>
+            </concept>
+            <concept>
+                <code value="G-833F"/>
+                <display value="segmentectomy breast sample"/>
+            </concept>
+            <concept>
+                <code value="G-843A"/>
+                <display value="Gross specimen"/>
+            </concept>
+            <concept>
+                <code value="G-843C"/>
+                <display value="Tissue spot"/>
+            </concept>
+            <concept>
+                <code value="G-833D"/>
+                <display value="lumpectomy breast sample"/>
+            </concept>
+            <concept>
+                <code value="G-831B"/>
+                <display value="specimen from breast by incisional biopsy of breast mass"/>
+            </concept>
+            <concept>
+                <code value="G-843B"/>
+                <display value="Core sample of tissue block"/>
+            </concept>
+            <concept>
+                <code value="G-803C"/>
+                <display value="Smear sample"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

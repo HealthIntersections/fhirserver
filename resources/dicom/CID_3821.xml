@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-3821-PapillaryMuscleIncludedExcluded"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_3821.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.277"/>
+    </identifier>
+    <version value="20051103"/>
+    <name value="PapillaryMuscleIncluded/Excluded"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 3821 PapillaryMuscleIncluded/Excluded"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://dicom.nema.org/resources/ontology/DCM"/>
+            <concept>
+                <code value="122621"/>
+                <display value="Papillary Muscle Included"/>
+            </concept>
+            <concept>
+                <code value="122620"/>
+                <display value="Papillary Muscle Excluded"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

@@ -1,0 +1,213 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-6054-BreastImagingFindings"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_6054.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.383"/>
+    </identifier>
+    <version value="20050110"/>
+    <name value="BreastImagingFindings"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 6054 BreastImagingFindings"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://dicom.nema.org/resources/ontology/DCM"/>
+            <concept>
+                <code value="111460"/>
+                <display value="Complex cyst"/>
+            </concept>
+            <concept>
+                <code value="111461"/>
+                <display value="Intracystic lesion"/>
+            </concept>
+            <concept>
+                <code value="111462"/>
+                <display value="Solid mass"/>
+            </concept>
+            <concept>
+                <code value="111287"/>
+                <display value="Normal breast tissue"/>
+            </concept>
+            <concept>
+                <code value="111100"/>
+                <display value="Breast geometry"/>
+            </concept>
+            <concept>
+                <code value="111101"/>
+                <display value="Image Quality"/>
+            </concept>
+            <concept>
+                <code value="111429"/>
+                <display value="Duct narrowing"/>
+            </concept>
+            <concept>
+                <code value="111102"/>
+                <display value="Non-lesion"/>
+            </concept>
+            <concept>
+                <code value="111425"/>
+                <display value="Intraluminal filling defect"/>
+            </concept>
+            <concept>
+                <code value="111129"/>
+                <display value="Clustered microcysts"/>
+            </concept>
+            <concept>
+                <code value="111426"/>
+                <display value="Multiple filling defect"/>
+            </concept>
+            <concept>
+                <code value="111427"/>
+                <display value="Abrupt duct termination"/>
+            </concept>
+            <concept>
+                <code value="111428"/>
+                <display value="Extravasation"/>
+            </concept>
+            <concept>
+                <code value="111130"/>
+                <display value="Complicated cyst"/>
+            </concept>
+            <concept>
+                <code value="111430"/>
+                <display value="Cyst fill"/>
+            </concept>
+            <concept>
+                <code value="111111"/>
+                <display value="Cooper's ligament changes"/>
+            </concept>
+            <concept>
+                <code value="111112"/>
+                <display value="Mass in the skin"/>
+            </concept>
+            <concept>
+                <code value="111099"/>
+                <display value="Selected region"/>
+            </concept>
+            <concept>
+                <code value="111113"/>
+                <display value="Mass on the skin"/>
+            </concept>
+            <concept>
+                <code value="111459"/>
+                <display value="Mass with calcifications"/>
+            </concept>
+        </include>
+        <include>
+            <system value="http://snomed.info/srt"/>
+            <concept>
+                <code value="T-C4000"/>
+                <display value="Lymph node"/>
+            </concept>
+            <concept>
+                <code value="F-8A057"/>
+                <display value="Calcification of breast"/>
+            </concept>
+            <concept>
+                <code value="F-01793"/>
+                <display value="Asymmetric breast tissue"/>
+            </concept>
+            <concept>
+                <code value="F-01792"/>
+                <display value="Focal asymmetric breast tissue"/>
+            </concept>
+            <concept>
+                <code value="F-01791"/>
+                <display value="Mammographic breast mass"/>
+            </concept>
+            <concept>
+                <code value="F-01BF8"/>
+                <display value="Ultrasound scan normal"/>
+            </concept>
+            <concept>
+                <code value="T-04100"/>
+                <display value="Nipple"/>
+            </concept>
+            <concept>
+                <code value="D7-90370"/>
+                <display value="Mammary duct ectasia"/>
+            </concept>
+            <concept>
+                <code value="D7-90035"/>
+                <display value="Cyst of breast"/>
+            </concept>
+            <concept>
+                <code value="T-C4710"/>
+                <display value="Axillary lymph node"/>
+            </concept>
+            <concept>
+                <code value="F-8A084"/>
+                <display value="Breast normal"/>
+            </concept>
+            <concept>
+                <code value="A-04010"/>
+                <display value="Implant"/>
+            </concept>
+            <concept>
+                <code value="T-C430B"/>
+                <display value="Intramammary lymph node"/>
+            </concept>
+            <concept>
+                <code value="DC-721C4"/>
+                <display value="Axillary adenopathy"/>
+            </concept>
+            <concept>
+                <code value="M-36300"/>
+                <display value="Edema"/>
+            </concept>
+            <concept>
+                <code value="F-0179A"/>
+                <display value="Skin thickening of breast"/>
+            </concept>
+            <concept>
+                <code value="F-01776"/>
+                <display value="Individual Calcification"/>
+            </concept>
+            <concept>
+                <code value="F-01798"/>
+                <display value="Trabecular thickening of breast"/>
+            </concept>
+            <concept>
+                <code value="F-01710"/>
+                <display value="Breast composition"/>
+            </concept>
+            <concept>
+                <code value="F-01775"/>
+                <display value="Calcification Cluster"/>
+            </concept>
+            <concept>
+                <code value="F-01797"/>
+                <display value="Tubular density"/>
+            </concept>
+            <concept>
+                <code value="D7-90382"/>
+                <display value="Sebaceous cyst of skin of breast"/>
+            </concept>
+            <concept>
+                <code value="F-01796"/>
+                <display value="Mammography breast density"/>
+            </concept>
+            <concept>
+                <code value="F-01795"/>
+                <display value="Architectural distortion of breast"/>
+            </concept>
+            <concept>
+                <code value="M-30400"/>
+                <display value="Foreign body"/>
+            </concept>
+            <concept>
+                <code value="D0-00050"/>
+                <display value="Skin lesion"/>
+            </concept>
+            <concept>
+                <code value="F-01799"/>
+                <display value="Skin retraction of breast"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

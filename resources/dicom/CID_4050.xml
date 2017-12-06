@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-4050-DrugorContrastAgentCharacteristics"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_4050.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.313"/>
+    </identifier>
+    <version value="20070124"/>
+    <name value="DrugorContrastAgentCharacteristics"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 4050 DrugorContrastAgentCharacteristics"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://dicom.nema.org/resources/ontology/DCM"/>
+            <concept>
+                <code value="121381"/>
+                <display value="Contrast/Bolus Ingredient Opaque"/>
+            </concept>
+            <concept>
+                <code value="121380"/>
+                <display value="Active Ingredient Undiluted Concentration"/>
+            </concept>
+        </include>
+        <include>
+            <system value="http://snomed.info/srt"/>
+            <concept>
+                <code value="G-D705"/>
+                <display value="Volume"/>
+            </concept>
+            <concept>
+                <code value="G-C52F"/>
+                <display value="Active Ingredient"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

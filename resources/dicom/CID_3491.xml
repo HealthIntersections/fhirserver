@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-3491-IVUSLesionMorphologies"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_3491.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.125"/>
+    </identifier>
+    <version value="20040614"/>
+    <name value="IVUSLesionMorphologies"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 3491 IVUSLesionMorphologies"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://dicom.nema.org/resources/ontology/DCM"/>
+            <concept>
+                <code value="122357"/>
+                <display value="In-Stent Neointima"/>
+            </concept>
+            <concept>
+                <code value="122356"/>
+                <display value="Soft plaque"/>
+            </concept>
+            <concept>
+                <code value="122389"/>
+                <display value="Vulnerable Plaque"/>
+            </concept>
+            <concept>
+                <code value="122390"/>
+                <display value="Eroded Plaque"/>
+            </concept>
+            <concept>
+                <code value="122395"/>
+                <display value="Necrotic-Lipidic Plaque"/>
+            </concept>
+            <concept>
+                <code value="122363"/>
+                <display value="Plaque Rupture"/>
+            </concept>
+            <concept>
+                <code value="122361"/>
+                <display value="False Lumen"/>
+            </concept>
+            <concept>
+                <code value="122394"/>
+                <display value="Fibro-Lipidic Plaque"/>
+            </concept>
+        </include>
+        <include>
+            <system value="http://snomed.info/srt"/>
+            <concept>
+                <code value="R-4047B"/>
+                <display value="Concentric"/>
+            </concept>
+            <concept>
+                <code value="M-52103"/>
+                <display value="Plaque Ulceration"/>
+            </concept>
+            <concept>
+                <code value="D6-34737"/>
+                <display value="Vascular Calcification"/>
+            </concept>
+            <concept>
+                <code value="R-40416"/>
+                <display value="Eccentric"/>
+            </concept>
+            <concept>
+                <code value="M-78260"/>
+                <display value="Fibrous Plaque"/>
+            </concept>
+            <concept>
+                <code value="D3-80027"/>
+                <display value="Arterial (True) Aneurysm"/>
+            </concept>
+            <concept>
+                <code value="M-32390"/>
+                <display value="Pseudo Aneurysm"/>
+            </concept>
+            <concept>
+                <code value="M-35001"/>
+                <display value="Thrombus"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

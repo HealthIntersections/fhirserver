@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-6160-BreastPrimaryTumorAssessmentFromAJCC"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_6160.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.474"/>
+    </identifier>
+    <version value="20050822"/>
+    <name value="BreastPrimaryTumorAssessmentFromAJCC"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 6160 BreastPrimaryTumorAssessmentFromAJCC"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://snomed.info/srt"/>
+            <concept>
+                <code value="R-003B9"/>
+                <display value="T0: No evidence of primary tumor (breast)"/>
+            </concept>
+            <concept>
+                <code value="R-003C7"/>
+                <display value="T4b: Tumor of any size with edema (including peau d'orange) ..."/>
+            </concept>
+            <concept>
+                <code value="R-003C6"/>
+                <display value="T4a: Tumor of any size with extension to chest wall, not incl..."/>
+            </concept>
+            <concept>
+                <code value="R-003B8"/>
+                <display value="TX: Primary tumor cannot be assessed (breast)"/>
+            </concept>
+            <concept>
+                <code value="R-003C9"/>
+                <display value="T4: Inflammatory carcinoma (breast)"/>
+            </concept>
+            <concept>
+                <code value="R-003C8"/>
+                <display value="T4c: Tumor of any size with direct extension to chest wall..."/>
+            </concept>
+            <concept>
+                <code value="R-003BB"/>
+                <display value="Tis: Carcinoma in situ (breast)"/>
+            </concept>
+            <concept>
+                <code value="R-003BA"/>
+                <display value="T1: Tumor 2 cm or less in greatest dimension (breast)"/>
+            </concept>
+            <concept>
+                <code value="R-003BD"/>
+                <display value="Tis: Lobular carcinoma in situ (breast)"/>
+            </concept>
+            <concept>
+                <code value="R-003BC"/>
+                <display value="Tis: Ductal carcinoma in situ (breast)"/>
+            </concept>
+            <concept>
+                <code value="R-003BF"/>
+                <display value="T1mic: Microinvasion 0.1 cm or less in greatest dimension..."/>
+            </concept>
+            <concept>
+                <code value="R-003BE"/>
+                <display value="Tis: Paget's disease of the nipple with no tumor"/>
+            </concept>
+            <concept>
+                <code value="R-003C3"/>
+                <display value="T2: Tumor more than 2 cm but not more than 5 cm..."/>
+            </concept>
+            <concept>
+                <code value="R-003C2"/>
+                <display value="T1c: Tumor more than 1 cm but not more than 2 cm..."/>
+            </concept>
+            <concept>
+                <code value="R-003C5"/>
+                <display value="T4: Tumor of any size with direct extension to chest wall..."/>
+            </concept>
+            <concept>
+                <code value="R-003C4"/>
+                <display value="T3: Tumor more than 5 cm in greatest dimension (breast)"/>
+            </concept>
+            <concept>
+                <code value="R-003C1"/>
+                <display value="T1b: Tumor more than 0.5 cm but not more than 1 cm..."/>
+            </concept>
+            <concept>
+                <code value="R-003C0"/>
+                <display value="T1a: Tumor more than 0.1 cm but not more than 0.5 cm..."/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

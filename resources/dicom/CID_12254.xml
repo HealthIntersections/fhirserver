@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-12254-CardiacUltrasoundHemodynamicMeasurements"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_12254.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.835"/>
+    </identifier>
+    <version value="20100317"/>
+    <name value="CardiacUltrasoundHemodynamicMeasurements"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 12254 CardiacUltrasoundHemodynamicMeasurements"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://dicom.nema.org/resources/ontology/DCM"/>
+            <concept>
+                <code value="109072"/>
+                <display value="Tau"/>
+            </concept>
+            <concept>
+                <code value="109071"/>
+                <display value="Indicator mean transit time"/>
+            </concept>
+            <concept>
+                <code value="122182"/>
+                <display value="R-R interval"/>
+            </concept>
+        </include>
+        <include>
+            <system value="http://loinc.org"/>
+            <concept>
+                <code value="59085-1"/>
+                <display value="Pre-Ejection Period"/>
+            </concept>
+            <concept>
+                <code value="20222-6"/>
+                <display value="Ejection Time"/>
+            </concept>
+            <concept>
+                <code value="59105-7"/>
+                <display value="A-Wave Duration"/>
+            </concept>
+            <concept>
+                <code value="59108-1"/>
+                <display value="Envelope Duration"/>
+            </concept>
+            <concept>
+                <code value="59121-4"/>
+                <display value="Time to Peak by US"/>
+            </concept>
+            <concept>
+                <code value="59120-6"/>
+                <display value="dP/dt by US"/>
+            </concept>
+            <concept>
+                <code value="59086-9"/>
+                <display value="Heart Rate-Corrected Ejection Time"/>
+            </concept>
+            <concept>
+                <code value="59119-8"/>
+                <display value="Filling Time"/>
+            </concept>
+            <concept>
+                <code value="59087-7"/>
+                <display value="Heart Rate-Corrected Pre-Ejection Period"/>
+            </concept>
+            <concept>
+                <code value="59088-5"/>
+                <display value="Pre-Ejection Period/Ejection Time Ratio"/>
+            </concept>
+            <concept>
+                <code value="59084-4"/>
+                <display value="Isovolumic Contraction Time"/>
+            </concept>
+            <concept>
+                <code value="59082-8"/>
+                <display value="Closure to Opening Time"/>
+            </concept>
+            <concept>
+                <code value="59083-6"/>
+                <display value="Isovolumic Relaxation Time"/>
+            </concept>
+        </include>
+        <include>
+            <system value="http://snomed.info/srt"/>
+            <concept>
+                <code value="F-31000"/>
+                <display value="Blood Pressure"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-6056-AssociatedFindingsforBreast"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_6056.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.385"/>
+    </identifier>
+    <version value="20040112"/>
+    <name value="AssociatedFindingsforBreast"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 6056 AssociatedFindingsforBreast"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://dicom.nema.org/resources/ontology/DCM"/>
+            <concept>
+                <code value="111111"/>
+                <display value="Cooper's ligament changes"/>
+            </concept>
+            <concept>
+                <code value="111112"/>
+                <display value="Mass in the skin"/>
+            </concept>
+            <concept>
+                <code value="111113"/>
+                <display value="Mass on the skin"/>
+            </concept>
+        </include>
+        <include>
+            <system value="http://snomed.info/srt"/>
+            <concept>
+                <code value="D7-9002A"/>
+                <display value="Breast hematoma"/>
+            </concept>
+            <concept>
+                <code value="T-C430B"/>
+                <display value="Intramammary lymph node"/>
+            </concept>
+            <concept>
+                <code value="M-78280"/>
+                <display value="Surgical scar"/>
+            </concept>
+            <concept>
+                <code value="D7-90554"/>
+                <display value="Nipple retraction"/>
+            </concept>
+            <concept>
+                <code value="DC-721C4"/>
+                <display value="Axillary adenopathy"/>
+            </concept>
+            <concept>
+                <code value="M-36300"/>
+                <display value="Edema"/>
+            </concept>
+            <concept>
+                <code value="F-0179A"/>
+                <display value="Skin thickening of breast"/>
+            </concept>
+            <concept>
+                <code value="F-01776"/>
+                <display value="Individual Calcification"/>
+            </concept>
+            <concept>
+                <code value="F-01798"/>
+                <display value="Trabecular thickening of breast"/>
+            </concept>
+            <concept>
+                <code value="F-01710"/>
+                <display value="Breast composition"/>
+            </concept>
+            <concept>
+                <code value="F-01775"/>
+                <display value="Calcification Cluster"/>
+            </concept>
+            <concept>
+                <code value="F-01797"/>
+                <display value="Tubular density"/>
+            </concept>
+            <concept>
+                <code value="F-01796"/>
+                <display value="Mammography breast density"/>
+            </concept>
+            <concept>
+                <code value="F-01795"/>
+                <display value="Architectural distortion of breast"/>
+            </concept>
+            <concept>
+                <code value="D0-00050"/>
+                <display value="Skin lesion"/>
+            </concept>
+            <concept>
+                <code value="T-C4710"/>
+                <display value="Axillary lymph node"/>
+            </concept>
+            <concept>
+                <code value="F-01799"/>
+                <display value="Skin retraction of breast"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

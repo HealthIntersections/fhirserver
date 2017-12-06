@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-244-Laterality"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_244.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.37"/>
+    </identifier>
+    <version value="20030108"/>
+    <name value="Laterality"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 244 Laterality"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://snomed.info/srt"/>
+            <concept>
+                <code value="G-A100"/>
+                <display value="Right"/>
+            </concept>
+            <concept>
+                <code value="G-A102"/>
+                <display value="Right and left"/>
+            </concept>
+            <concept>
+                <code value="G-A101"/>
+                <display value="Left"/>
+            </concept>
+            <concept>
+                <code value="G-A103"/>
+                <display value="Unilateral"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

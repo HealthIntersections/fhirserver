@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-6048-CADOperatingPointAxisLabel"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_6048.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.378"/>
+    </identifier>
+    <version value="20060612"/>
+    <name value="CADOperatingPointAxisLabel"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 6048 CADOperatingPointAxisLabel"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://dicom.nema.org/resources/ontology/DCM"/>
+            <concept>
+                <code value="111091"/>
+                <display value="Image Specificity"/>
+            </concept>
+            <concept>
+                <code value="111090"/>
+                <display value="Case Specificity"/>
+            </concept>
+            <concept>
+                <code value="111047"/>
+                <display value="Probability of cancer"/>
+            </concept>
+            <concept>
+                <code value="111012"/>
+                <display value="Certainty of Finding"/>
+            </concept>
+            <concept>
+                <code value="111089"/>
+                <display value="Lesion Sensitivity"/>
+            </concept>
+            <concept>
+                <code value="111088"/>
+                <display value="Case Sensitivity"/>
+            </concept>
+            <concept>
+                <code value="111087"/>
+                <display value="False Markers per Case"/>
+            </concept>
+            <concept>
+                <code value="111086"/>
+                <display value="False Markers per Image"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

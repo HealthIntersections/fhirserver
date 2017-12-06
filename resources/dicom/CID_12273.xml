@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-12273-CardiacUltrasoundAorticSinotubularJunction"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_12273.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.854"/>
+    </identifier>
+    <version value="20100317"/>
+    <name value="CardiacUltrasoundAorticSinotubularJunction"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 12273 CardiacUltrasoundAorticSinotubularJunction"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://loinc.org"/>
+            <concept>
+                <code value="59127-1"/>
+                <display value="D-E Slope"/>
+            </concept>
+            <concept>
+                <code value="59103-2"/>
+                <display value="A-C Interval"/>
+            </concept>
+            <concept>
+                <code value="59104-0"/>
+                <display value="Peak E wave/Peak A wave by US"/>
+            </concept>
+            <concept>
+                <code value="59080-2"/>
+                <display value="E-Wave Peak Velocity"/>
+            </concept>
+            <concept>
+                <code value="20256-4"/>
+                <display value="Mean Gradient"/>
+            </concept>
+            <concept>
+                <code value="20354-7"/>
+                <display value="Velocity Time Integral"/>
+            </concept>
+            <concept>
+                <code value="59081-0"/>
+                <display value="A-Wave Peak Velocity"/>
+            </concept>
+            <concept>
+                <code value="11726-7"/>
+                <display value="Peak Systolic Velocity"/>
+            </concept>
+            <concept>
+                <code value="59106-5"/>
+                <display value="Stenosis Peak Gradient"/>
+            </concept>
+            <concept>
+                <code value="59107-3"/>
+                <display value="Stenosis Peak Velocity"/>
+            </concept>
+            <concept>
+                <code value="33878-0"/>
+                <display value="Volume Flow"/>
+            </concept>
+            <concept>
+                <code value="59102-4"/>
+                <display value="Flow Radius"/>
+            </concept>
+            <concept>
+                <code value="8867-4"/>
+                <display value="Heart rate"/>
+            </concept>
+            <concept>
+                <code value="11692-1"/>
+                <display value="Time Averaged Peak Velocity"/>
+            </concept>
+            <concept>
+                <code value="59089-3"/>
+                <display value="ROI Thickness by US"/>
+            </concept>
+            <concept>
+                <code value="11653-3"/>
+                <display value="End Diastolic Velocity"/>
+            </concept>
+            <concept>
+                <code value="59116-4"/>
+                <display value="Aortic Sinotubular Junction to Aortic Root Ratio"/>
+            </concept>
+            <concept>
+                <code value="59090-1"/>
+                <display value="ROI Internal Dimension by US"/>
+            </concept>
+            <concept>
+                <code value="59115-6"/>
+                <display value="Velocity of Flow Propagation"/>
+            </concept>
+            <concept>
+                <code value="20247-3"/>
+                <display value="Peak Gradient"/>
+            </concept>
+            <concept>
+                <code value="59130-5"/>
+                <display value="Alias velocity"/>
+            </concept>
+            <concept>
+                <code value="20280-4"/>
+                <display value="Pressure Half-Time"/>
+            </concept>
+            <concept>
+                <code value="59111-5"/>
+                <display value="E Velocity to Annulus E Velocity Ratio"/>
+            </concept>
+            <concept>
+                <code value="34141-2"/>
+                <display value="Peak Instantaneous Flow Rate"/>
+            </concept>
+            <concept>
+                <code value="20167-3"/>
+                <display value="Acceleration Slope"/>
+            </concept>
+            <concept>
+                <code value="20216-8"/>
+                <display value="Deceleration Slope"/>
+            </concept>
+            <concept>
+                <code value="20217-6"/>
+                <display value="Deceleration Time"/>
+            </concept>
+            <concept>
+                <code value="20168-1"/>
+                <display value="Acceleration Time"/>
+            </concept>
+            <concept>
+                <code value="12144-2"/>
+                <display value="Systolic to Diastolic Velocity Ratio"/>
+            </concept>
+            <concept>
+                <code value="59128-9"/>
+                <display value="E-F Slope"/>
+            </concept>
+            <concept>
+                <code value="59079-4"/>
+                <display value="Peak Reversal Velocity during Atrial Contraction"/>
+            </concept>
+            <concept>
+                <code value="20352-1"/>
+                <display value="Time Averaged Mean Velocity"/>
+            </concept>
+        </include>
+        <include>
+            <system value="http://snomed.info/srt"/>
+            <concept>
+                <code value="G-A193"/>
+                <display value="Major Axis"/>
+            </concept>
+            <concept>
+                <code value="M-02560"/>
+                <display value="Circumference"/>
+            </concept>
+            <concept>
+                <code value="G-A194"/>
+                <display value="Minor Axis"/>
+            </concept>
+            <concept>
+                <code value="G-A196"/>
+                <display value="Radius"/>
+            </concept>
+            <concept>
+                <code value="G-D7FE"/>
+                <display value="Length"/>
+            </concept>
+            <concept>
+                <code value="G-0390"/>
+                <display value="Regurgitant Fraction"/>
+            </concept>
+            <concept>
+                <code value="G-038E"/>
+                <display value="Cardiovascular Orifice Area"/>
+            </concept>
+            <concept>
+                <code value="G-038F"/>
+                <display value="Cardiovascular Orifice Diameter"/>
+            </concept>
+            <concept>
+                <code value="M-02550"/>
+                <display value="Diameter"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

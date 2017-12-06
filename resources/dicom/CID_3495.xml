@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-3495-IVUSPlaqueComposition"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_3495.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.129"/>
+    </identifier>
+    <version value="20040614"/>
+    <name value="IVUSPlaqueComposition"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 3495 IVUSPlaqueComposition"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://dicom.nema.org/resources/ontology/DCM"/>
+            <concept>
+                <code value="122395"/>
+                <display value="Necrotic-Lipidic Plaque"/>
+            </concept>
+            <concept>
+                <code value="122394"/>
+                <display value="Fibro-Lipidic Plaque"/>
+            </concept>
+        </include>
+        <include>
+            <system value="http://snomed.info/srt"/>
+            <concept>
+                <code value="D6-34737"/>
+                <display value="Vascular Calcification"/>
+            </concept>
+            <concept>
+                <code value="M-35001"/>
+                <display value="Thrombus"/>
+            </concept>
+            <concept>
+                <code value="M-78260"/>
+                <display value="Fibrous Plaque"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

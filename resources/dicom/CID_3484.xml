@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-3484-IVUSIndicesandRatios"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_3484.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.119"/>
+    </identifier>
+    <version value="20040614"/>
+    <name value="IVUSIndicesandRatios"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 3484 IVUSIndicesandRatios"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://dicom.nema.org/resources/ontology/DCM"/>
+            <concept>
+                <code value="122348"/>
+                <display value="Lumen Shape Index"/>
+            </concept>
+            <concept>
+                <code value="122346"/>
+                <display value="Stent Symmetry Index"/>
+            </concept>
+            <concept>
+                <code value="122347"/>
+                <display value="Stent Expansion Index"/>
+            </concept>
+            <concept>
+                <code value="122344"/>
+                <display value="Plaque plus Media Eccentricity Index"/>
+            </concept>
+            <concept>
+                <code value="122345"/>
+                <display value="Remodeling Index"/>
+            </concept>
+            <concept>
+                <code value="122343"/>
+                <display value="Lumen Eccentricity Index"/>
+            </concept>
+            <concept>
+                <code value="122351"/>
+                <display value="Stent Diameter Ratio"/>
+            </concept>
+            <concept>
+                <code value="122352"/>
+                <display value="EEM Diameter Ratio"/>
+            </concept>
+            <concept>
+                <code value="122350"/>
+                <display value="Lumen Diameter Ratio"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

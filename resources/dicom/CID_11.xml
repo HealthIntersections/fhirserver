@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-11-RouteofAdministration"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_11.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.9"/>
+    </identifier>
+    <version value="20160314"/>
+    <name value="RouteofAdministration"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 11 RouteofAdministration"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://dicom.nema.org/resources/ontology/DCM"/>
+            <concept>
+                <code value="127070"/>
+                <display value="Retro-orbital route"/>
+            </concept>
+        </include>
+        <include>
+            <system value="http://ncit.nci.nih.gov"/>
+            <concept>
+                <code value="C38244"/>
+                <display value="Intraepithelial route"/>
+            </concept>
+            <concept>
+                <code value="C38213"/>
+                <display value="Extraluminal route"/>
+            </concept>
+            <concept>
+                <code value="C38306"/>
+                <display value="Transluminal route"/>
+            </concept>
+        </include>
+        <include>
+            <system value="http://snomed.info/srt"/>
+            <concept>
+                <code value="G-D172"/>
+                <display value="Nasal route"/>
+            </concept>
+            <concept>
+                <code value="G-D160"/>
+                <display value="Per rectum"/>
+            </concept>
+            <concept>
+                <code value="R-40B32"/>
+                <display value="By inhalation"/>
+            </concept>
+            <concept>
+                <code value="G-D164"/>
+                <display value="Vaginal route"/>
+            </concept>
+            <concept>
+                <code value="G-D140"/>
+                <display value="Oral route"/>
+            </concept>
+            <concept>
+                <code value="G-D173"/>
+                <display value="Intracardiac route"/>
+            </concept>
+            <concept>
+                <code value="G-D103"/>
+                <display value="Intramuscular route"/>
+            </concept>
+            <concept>
+                <code value="G-D102"/>
+                <display value="Intra-arterial route"/>
+            </concept>
+            <concept>
+                <code value="G-D101"/>
+                <display value="Intravenous route"/>
+            </concept>
+            <concept>
+                <code value="G-D112"/>
+                <display value="Topical route"/>
+            </concept>
+            <concept>
+                <code value="G-D144"/>
+                <display value="Intraluminal route"/>
+            </concept>
+            <concept>
+                <code value="G-D107"/>
+                <display value="Intramedullary route"/>
+            </concept>
+            <concept>
+                <code value="G-D106"/>
+                <display value="Intraperitoneal route"/>
+            </concept>
+            <concept>
+                <code value="G-D104"/>
+                <display value="Subcutaneous route"/>
+            </concept>
+            <concept>
+                <code value="G-D109"/>
+                <display value="Intra-articular route"/>
+            </concept>
+            <concept>
+                <code value="G-D108"/>
+                <display value="Intrathecal route"/>
+            </concept>
+            <concept>
+                <code value="R-F2C86"/>
+                <display value="Intraventricular route - cardiac"/>
+            </concept>
+            <concept>
+                <code value="G-D17D"/>
+                <display value="Intracutaneous route"/>
+            </concept>
+            <concept>
+                <code value="G-D17C"/>
+                <display value="Intracoronary route"/>
+            </concept>
+            <concept>
+                <code value="R-F2CD4"/>
+                <display value="Intratumor route"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

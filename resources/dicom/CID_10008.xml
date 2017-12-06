@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-10008-DoseRelatedDistanceMeasurements"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_10008.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.541"/>
+    </identifier>
+    <version value="20170914"/>
+    <name value="DoseRelatedDistanceMeasurements"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 10008 DoseRelatedDistanceMeasurements"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://dicom.nema.org/resources/ontology/DCM"/>
+            <concept>
+                <code value="113792"/>
+                <display value="Distance Source to Table Plane"/>
+            </concept>
+            <concept>
+                <code value="113750"/>
+                <display value="Distance Source to Detector"/>
+            </concept>
+            <concept>
+                <code value="113761"/>
+                <display value="Table Height End Position"/>
+            </concept>
+            <concept>
+                <code value="113760"/>
+                <display value="Table Lateral End Position"/>
+            </concept>
+            <concept>
+                <code value="113752"/>
+                <display value="Table Lateral Position"/>
+            </concept>
+            <concept>
+                <code value="113751"/>
+                <display value="Table Longitudinal Position"/>
+            </concept>
+            <concept>
+                <code value="128769"/>
+                <display value="Table X End Position to Isocenter"/>
+            </concept>
+            <concept>
+                <code value="128768"/>
+                <display value="Table Z Position to Isocenter"/>
+            </concept>
+            <concept>
+                <code value="128771"/>
+                <display value="Table Z End Position to Isocenter"/>
+            </concept>
+            <concept>
+                <code value="128767"/>
+                <display value="Table Y Position to Isocenter"/>
+            </concept>
+            <concept>
+                <code value="128766"/>
+                <display value="Table X Position to Isocenter"/>
+            </concept>
+            <concept>
+                <code value="113753"/>
+                <display value="Table Height Position"/>
+            </concept>
+            <concept>
+                <code value="128770"/>
+                <display value="Table Y End Position to Isocenter"/>
+            </concept>
+            <concept>
+                <code value="113748"/>
+                <display value="Distance Source to Isocenter"/>
+            </concept>
+            <concept>
+                <code value="113737"/>
+                <display value="Distance Source to Reference Point"/>
+            </concept>
+            <concept>
+                <code value="113759"/>
+                <display value="Table Longitudinal End Position"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

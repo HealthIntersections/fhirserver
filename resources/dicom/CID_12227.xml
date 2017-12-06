@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-12227-EchocardiographyMeasurementMethod"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_12227.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.618"/>
+    </identifier>
+    <version value="20161109"/>
+    <name value="EchocardiographyMeasurementMethod"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 12227 EchocardiographyMeasurementMethod"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://dicom.nema.org/resources/ontology/DCM"/>
+            <concept>
+                <code value="125209"/>
+                <display value="Teichholz"/>
+            </concept>
+            <concept>
+                <code value="125208"/>
+                <display value="Method of Disks, Single Plane"/>
+            </concept>
+            <concept>
+                <code value="125207"/>
+                <display value="Method of Disks, Biplane"/>
+            </concept>
+            <concept>
+                <code value="125206"/>
+                <display value="Cube Method"/>
+            </concept>
+            <concept>
+                <code value="125228"/>
+                <display value="Bullet Method"/>
+            </concept>
+            <concept>
+                <code value="125205"/>
+                <display value="Area-Length Single Plane"/>
+            </concept>
+            <concept>
+                <code value="125227"/>
+                <display value="Modified Simpson"/>
+            </concept>
+            <concept>
+                <code value="125204"/>
+                <display value="Area-Length Biplane"/>
+            </concept>
+            <concept>
+                <code value="125226"/>
+                <display value="Single Plane Ellipse"/>
+            </concept>
+            <concept>
+                <code value="125222"/>
+                <display value="Left Ventricle Mass by Truncated Ellipse"/>
+            </concept>
+            <concept>
+                <code value="125221"/>
+                <display value="Left Ventricle Mass by M-mode"/>
+            </concept>
+            <concept>
+                <code value="125220"/>
+                <display value="Planimetry"/>
+            </concept>
+            <concept>
+                <code value="125219"/>
+                <display value="Doppler Volume Flow"/>
+            </concept>
+            <concept>
+                <code value="125218"/>
+                <display value="Simplified Bernoulli"/>
+            </concept>
+            <concept>
+                <code value="125316"/>
+                <display value="Directly measured"/>
+            </concept>
+            <concept>
+                <code value="125217"/>
+                <display value="Full Bernoulli"/>
+            </concept>
+            <concept>
+                <code value="125216"/>
+                <display value="Proximal Isovelocity Surface Area"/>
+            </concept>
+            <concept>
+                <code value="125215"/>
+                <display value="Continuity Equation by Velocity Time Integral"/>
+            </concept>
+            <concept>
+                <code value="125272"/>
+                <display value="Left Ventricle Mass by Truncated Ellipse - adjusted by Height"/>
+            </concept>
+            <concept>
+                <code value="125271"/>
+                <display value="Left Ventricle Mass by M-mode - adjusted by Height"/>
+            </concept>
+            <concept>
+                <code value="125270"/>
+                <display value="Left Ventricle Mass by Area Length"/>
+            </concept>
+            <concept>
+                <code value="125214"/>
+                <display value="Continuity Equation by Peak Velocity"/>
+            </concept>
+            <concept>
+                <code value="125213"/>
+                <display value="Continuity Equation by Mean Velocity"/>
+            </concept>
+            <concept>
+                <code value="125212"/>
+                <display value="Continuity Equation"/>
+            </concept>
+            <concept>
+                <code value="125211"/>
+                <display value="Biplane Ellipse"/>
+            </concept>
+            <concept>
+                <code value="125210"/>
+                <display value="Area by Pressure Half-Time"/>
+            </concept>
+            <concept>
+                <code value="125273"/>
+                <display value="Left Ventricle Mass by Area Length - adjusted by Height"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

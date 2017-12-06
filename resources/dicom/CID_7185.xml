@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-7185-AbstractMultidimensionalImageModelAxisOrientation"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_7185.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.922"/>
+    </identifier>
+    <version value="20100825"/>
+    <name value="AbstractMultidimensionalImageModelAxisOrientation"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 7185 AbstractMultidimensionalImageModelAxisOrientation"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://dicom.nema.org/resources/ontology/DCM"/>
+            <concept>
+                <code value="110867"/>
+                <display value="Left To Right"/>
+            </concept>
+            <concept>
+                <code value="110866"/>
+                <display value="Right To Left"/>
+            </concept>
+            <concept>
+                <code value="110877"/>
+                <display value="Wall To Septum"/>
+            </concept>
+            <concept>
+                <code value="110876"/>
+                <display value="Septum To Wall"/>
+            </concept>
+            <concept>
+                <code value="110875"/>
+                <display value="Inferior To Anterior"/>
+            </concept>
+            <concept>
+                <code value="110874"/>
+                <display value="Anterior To Inferior"/>
+            </concept>
+            <concept>
+                <code value="110873"/>
+                <display value="Base To Apex"/>
+            </concept>
+            <concept>
+                <code value="110872"/>
+                <display value="Apex To Base"/>
+            </concept>
+            <concept>
+                <code value="110871"/>
+                <display value="Posterior To Anterior"/>
+            </concept>
+            <concept>
+                <code value="110870"/>
+                <display value="Anterior To Posterior"/>
+            </concept>
+            <concept>
+                <code value="110869"/>
+                <display value="Foot To Head"/>
+            </concept>
+            <concept>
+                <code value="110868"/>
+                <display value="Head To Foot"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

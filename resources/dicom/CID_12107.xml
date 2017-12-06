@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-12107-UpperExtremityArteries"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_12107.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.574"/>
+    </identifier>
+    <version value="20050110"/>
+    <name value="UpperExtremityArteries"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 12107 UpperExtremityArteries"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://snomed.info/srt"/>
+            <concept>
+                <code value="T-47300"/>
+                <display value="Radial Artery"/>
+            </concept>
+            <concept>
+                <code value="T-47340"/>
+                <display value="Deep Palmar Arch of Radial Artery"/>
+            </concept>
+            <concept>
+                <code value="T-46010"/>
+                <display value="Innominate Artery"/>
+            </concept>
+            <concept>
+                <code value="T-47200"/>
+                <display value="Ulnar Artery"/>
+            </concept>
+            <concept>
+                <code value="T-47100"/>
+                <display value="Axillary Artery"/>
+            </concept>
+            <concept>
+                <code value="T-46100"/>
+                <display value="Subclavian Artery"/>
+            </concept>
+            <concept>
+                <code value="T-47260"/>
+                <display value="Digital artery of hand"/>
+            </concept>
+            <concept>
+                <code value="T-47160"/>
+                <display value="Brachial Artery"/>
+            </concept>
+            <concept>
+                <code value="T-47240"/>
+                <display value="Superficial Palmar Arch"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

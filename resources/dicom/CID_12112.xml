@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-12112-AbdominalArteriesUnilateral"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_12112.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.579"/>
+    </identifier>
+    <version value="20050110"/>
+    <name value="AbdominalArteries(Unilateral)"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 12112 AbdominalArteries(Unilateral)"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://snomed.info/srt"/>
+            <concept>
+                <code value="T-46421"/>
+                <display value="Common Hepatic Artery"/>
+            </concept>
+            <concept>
+                <code value="T-46520"/>
+                <display value="Inferior Mesenteric Artery"/>
+            </concept>
+            <concept>
+                <code value="T-46960"/>
+                <display value="Lumbar Artery"/>
+            </concept>
+            <concept>
+                <code value="T-46400"/>
+                <display value="Celiac Axis"/>
+            </concept>
+            <concept>
+                <code value="T-46422"/>
+                <display value="Proper Hepatic Artery"/>
+            </concept>
+            <concept>
+                <code value="T-46510"/>
+                <display value="Superior Mesenteric Artery"/>
+            </concept>
+            <concept>
+                <code value="T-46423"/>
+                <display value="Right Branch of Hepatic Artery"/>
+            </concept>
+            <concept>
+                <code value="T-46460"/>
+                <display value="Splenic Artery"/>
+            </concept>
+            <concept>
+                <code value="T-42000"/>
+                <display value="Aorta"/>
+            </concept>
+            <concept>
+                <code value="T-46440"/>
+                <display value="Gastroduodenal Artery"/>
+            </concept>
+            <concept>
+                <code value="T-42510"/>
+                <display value="Supra-renal Aorta"/>
+            </concept>
+            <concept>
+                <code value="T-42520"/>
+                <display value="Infra-renal Aorta"/>
+            </concept>
+            <concept>
+                <code value="T-46710"/>
+                <display value="Common Iliac Artery"/>
+            </concept>
+            <concept>
+                <code value="T-46427"/>
+                <display value="Left Branch of Hepatic Artery"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-3721-CardiovascularSurgeries"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_3721.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.222"/>
+    </identifier>
+    <version value="20081027"/>
+    <name value="CardiovascularSurgeries"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 3721 CardiovascularSurgeries"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://snomed.info/srt"/>
+            <concept>
+                <code value="P1-31C03"/>
+                <display value="Ablation operation for arrhythmia"/>
+            </concept>
+            <concept>
+                <code value="P0-004BA"/>
+                <display value="Implantation of cardiac pacemaker"/>
+            </concept>
+            <concept>
+                <code value="P1-3301A"/>
+                <display value="Coronary artery bypass graft"/>
+            </concept>
+            <concept>
+                <code value="P1-32000"/>
+                <display value="Operation on heart valve"/>
+            </concept>
+            <concept>
+                <code value="P1-080B4"/>
+                <display value="Correction of congenital cardiovascular deformity"/>
+            </concept>
+            <concept>
+                <code value="R-102B4"/>
+                <display value="Percutaneous coronary intervention"/>
+            </concept>
+            <concept>
+                <code value="P1-3157D"/>
+                <display value="Implantation of automatic cardiac defibrillator"/>
+            </concept>
+            <concept>
+                <code value="P1-0555A"/>
+                <display value="Abdominal aortic aneurysm stenting"/>
+            </concept>
+            <concept>
+                <code value="P1-31D00"/>
+                <display value="Heart transplant"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

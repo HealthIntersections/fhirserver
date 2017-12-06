@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-3757-CardiacDiagnosticProcedures"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_3757.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.252"/>
+    </identifier>
+    <version value="20160314"/>
+    <name value="CardiacDiagnosticProcedures"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 3757 CardiacDiagnosticProcedures"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://snomed.info/srt"/>
+            <concept>
+                <code value="P5-B3012"/>
+                <display value="Transthoracic echocardiography"/>
+            </concept>
+            <concept>
+                <code value="P1-31600"/>
+                <display value="Cardiac catheterization"/>
+            </concept>
+            <concept>
+                <code value="P5-00A34"/>
+                <display value="Cardiac catheterization coronary angiogram"/>
+            </concept>
+            <concept>
+                <code value="P5-B3000"/>
+                <display value="Echocardiography"/>
+            </concept>
+            <concept>
+                <code value="P0-006E4"/>
+                <display value="Exercise Tolerance Test"/>
+            </concept>
+            <concept>
+                <code value="P2-31107"/>
+                <display value="Pharmacological stress test"/>
+            </concept>
+            <concept>
+                <code value="P5-B3002"/>
+                <display value="Transesophageal echocardiography"/>
+            </concept>
+            <concept>
+                <code value="P5-D0050"/>
+                <display value="Perfusion imaging (nuclear)"/>
+            </concept>
+            <concept>
+                <code value="P5-0A006"/>
+                <display value="PET heart study"/>
+            </concept>
+            <concept>
+                <code value="P5-09011"/>
+                <display value="Cardiac MRI"/>
+            </concept>
+            <concept>
+                <code value="P5-D30F8"/>
+                <display value="Nuclear medicine cardiovascular study"/>
+            </concept>
+            <concept>
+                <code value="P2-3110B"/>
+                <display value="Stress test using cardiac pacing"/>
+            </concept>
+            <concept>
+                <code value="P5-08025"/>
+                <display value="Cardiac CT"/>
+            </concept>
+            <concept>
+                <code value="P5-B3050"/>
+                <display value="Exercise Stress echocardiography"/>
+            </concept>
+            <concept>
+                <code value="P0-00CA7"/>
+                <display value="Cardiac MRI stress"/>
+            </concept>
+            <concept>
+                <code value="P5-0903A"/>
+                <display value="Magnetic resonance angiography"/>
+            </concept>
+            <concept>
+                <code value="P5-00A5C"/>
+                <display value="CT angiography of coronary arteries"/>
+            </concept>
+            <concept>
+                <code value="P5-080C2"/>
+                <display value="Cardiac CT for calcium scoring"/>
+            </concept>
+            <concept>
+                <code value="P5-30045"/>
+                <display value="Radionuclide angiocardiography"/>
+            </concept>
+            <concept>
+                <code value="P2-31011"/>
+                <display value="Pharmacologic and exercise stress test"/>
+            </concept>
+            <concept>
+                <code value="P5-0A100"/>
+                <display value="SPECT"/>
+            </concept>
+            <concept>
+                <code value="P5-D3304"/>
+                <display value="Cardiac blood pool imaging (nuclear)"/>
+            </concept>
+            <concept>
+                <code value="P5-00A25"/>
+                <display value="Cardiac cath coronary angiogram and left ventriculogram"/>
+            </concept>
+            <concept>
+                <code value="P5-D3008"/>
+                <display value="Radionuclide myocardial perfusion study"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

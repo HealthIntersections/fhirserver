@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-10069-RadiationDoseEstimationParameter"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_10069.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.1163"/>
+    </identifier>
+    <version value="20170405"/>
+    <name value="RadiationDoseEstimationParameter"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 10069 RadiationDoseEstimationParameter"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://dicom.nema.org/resources/ontology/DCM"/>
+            <concept>
+                <code value="121206"/>
+                <display value="Distance"/>
+            </concept>
+            <concept>
+                <code value="112031"/>
+                <display value="Attenuation Coefficient"/>
+            </concept>
+            <concept>
+                <code value="113981"/>
+                <display value="Water Equivalent Diameter Representative Value"/>
+            </concept>
+            <concept>
+                <code value="113983"/>
+                <display value="Water Equivalent Diameter From Raw Data"/>
+            </concept>
+            <concept>
+                <code value="113982"/>
+                <display value="Water Equivalent Diameter Integrated Across Scan Range"/>
+            </concept>
+            <concept>
+                <code value="111046"/>
+                <display value="Percent Fibroglandular Tissue"/>
+            </concept>
+            <concept>
+                <code value="128527"/>
+                <display value="Distance Correction"/>
+            </concept>
+            <concept>
+                <code value="128405"/>
+                <display value="Breast Thickness"/>
+            </concept>
+            <concept>
+                <code value="128526"/>
+                <display value="Tissue Fraction"/>
+            </concept>
+            <concept>
+                <code value="128408"/>
+                <display value="Patient AP Dimension"/>
+            </concept>
+            <concept>
+                <code value="128407"/>
+                <display value="DgN"/>
+            </concept>
+            <concept>
+                <code value="128409"/>
+                <display value="Patient Lateral Dimension"/>
+            </concept>
+            <concept>
+                <code value="128453"/>
+                <display value="Curve Fit Parameter"/>
+            </concept>
+            <concept>
+                <code value="128452"/>
+                <display value="Correction Factor"/>
+            </concept>
+            <concept>
+                <code value="128411"/>
+                <display value="Backscatter"/>
+            </concept>
+            <concept>
+                <code value="128433"/>
+                <display value="Tissue Air Ratio"/>
+            </concept>
+            <concept>
+                <code value="128455"/>
+                <display value="Homogeneity Factor"/>
+            </concept>
+            <concept>
+                <code value="128410"/>
+                <display value="SSDE Conversion Factor"/>
+            </concept>
+            <concept>
+                <code value="128523"/>
+                <display value="Offset Factor"/>
+            </concept>
+            <concept>
+                <code value="128522"/>
+                <display value="Normalization Factor"/>
+            </concept>
+            <concept>
+                <code value="113984"/>
+                <display value="Water Equivalent Diameter From Localizer"/>
+            </concept>
+            <concept>
+                <code value="111634"/>
+                <display value="Half Value Layer"/>
+            </concept>
+        </include>
+        <include>
+            <system value="http://ncit.nci.nih.gov"/>
+            <concept>
+                <code value="C70774"/>
+                <display value="Unit Conversion Factor"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-6050-BreastProcedureReported"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_6050.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.379"/>
+    </identifier>
+    <version value="20090819"/>
+    <name value="BreastProcedureReported"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 6050 BreastProcedureReported"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://dicom.nema.org/resources/ontology/DCM"/>
+            <concept>
+                <code value="111123"/>
+                <display value="Marker placement"/>
+            </concept>
+            <concept>
+                <code value="111408"/>
+                <display value="Film Screen Mammography"/>
+            </concept>
+            <concept>
+                <code value="111409"/>
+                <display value="Digital Mammography"/>
+            </concept>
+            <concept>
+                <code value="111410"/>
+                <display value="Surgical consult"/>
+            </concept>
+            <concept>
+                <code value="111411"/>
+                <display value="Mammography CAD"/>
+            </concept>
+        </include>
+        <include>
+            <system value="http://snomed.info/srt"/>
+            <concept>
+                <code value="P5-B8500"/>
+                <display value="Ultrasonography of breast"/>
+            </concept>
+            <concept>
+                <code value="P1-05535"/>
+                <display value="Insertion of catheter"/>
+            </concept>
+            <concept>
+                <code value="P1-48011"/>
+                <display value="Pre-biopsy localization of breast lesion"/>
+            </concept>
+            <concept>
+                <code value="P5-D0061"/>
+                <display value="Radioisotope scan of lymphatic system"/>
+            </concept>
+            <concept>
+                <code value="P1-48142"/>
+                <display value="Diagnostic aspiration of breast cyst"/>
+            </concept>
+            <concept>
+                <code value="P1-48145"/>
+                <display value="Fine needle aspiration of breast"/>
+            </concept>
+            <concept>
+                <code value="P5-D0042"/>
+                <display value="Radionuclide localization of tumor, limited area"/>
+            </concept>
+            <concept>
+                <code value="P1-48304"/>
+                <display value="Core needle biopsy of breast"/>
+            </concept>
+            <concept>
+                <code value="P1-65359"/>
+                <display value="Sentinel lymph node biopsy"/>
+            </concept>
+            <concept>
+                <code value="P5-0801C"/>
+                <display value="CT of breast"/>
+            </concept>
+            <concept>
+                <code value="P2-4A000"/>
+                <display value="Examination of breast"/>
+            </concept>
+            <concept>
+                <code value="P5-40030"/>
+                <display value="Specimen radiography of breast"/>
+            </concept>
+            <concept>
+                <code value="P5-0900D"/>
+                <display value="MRI of breast"/>
+            </concept>
+            <concept>
+                <code value="P5-40060"/>
+                <display value="Mammary ductogram"/>
+            </concept>
+            <concept>
+                <code value="P1-4830F"/>
+                <display value="Breast - surgical biopsy"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-12248-CardiacUltrasoundSummaryCodes"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_12248.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.829"/>
+    </identifier>
+    <version value="20160314"/>
+    <name value="CardiacUltrasoundSummaryCodes"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 12248 CardiacUltrasoundSummaryCodes"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://snomed.info/srt"/>
+            <concept>
+                <code value="D4-31040"/>
+                <display value="Corrected transposition of great vessels"/>
+            </concept>
+            <concept>
+                <code value="D4-31B16"/>
+                <display value="Dextrocardia"/>
+            </concept>
+            <concept>
+                <code value="M-04100"/>
+                <display value="Cyanosis"/>
+            </concept>
+            <concept>
+                <code value="D3-17100"/>
+                <display value="Rheumatic Fever"/>
+            </concept>
+            <concept>
+                <code value="D3-29051"/>
+                <display value="Pulmonic valve stenosis"/>
+            </concept>
+            <concept>
+                <code value="D4-32014"/>
+                <display value="Coarctation of the Aorta"/>
+            </concept>
+            <concept>
+                <code value="D4-31125"/>
+                <display value="Functional Single Ventricle"/>
+            </concept>
+            <concept>
+                <code value="D4-33622"/>
+                <display value="Partial anomalous pulmonary venous connection"/>
+            </concept>
+            <concept>
+                <code value="D4-31220"/>
+                <display value="Atrial Septal Defect"/>
+            </concept>
+            <concept>
+                <code value="D3-29022"/>
+                <display value="Aortic regurgitation"/>
+            </concept>
+            <concept>
+                <code value="D4-31303"/>
+                <display value="Common atrioventricular canal"/>
+            </concept>
+            <concept>
+                <code value="D4-31B24"/>
+                <display value="Mesocardia"/>
+            </concept>
+            <concept>
+                <code value="D4-31A00"/>
+                <display value="Hypoplastic left heart syndrome"/>
+            </concept>
+            <concept>
+                <code value="D3-1081C"/>
+                <display value="Mitral valve prolapse"/>
+            </concept>
+            <concept>
+                <code value="D4-31150"/>
+                <display value="Ventricular Septal Defect"/>
+            </concept>
+            <concept>
+                <code value="D4-31310"/>
+                <display value="Atrial septal defect with endocardial cushion defect, partial"/>
+            </concept>
+            <concept>
+                <code value="D3-29021"/>
+                <display value="Aortic stenosis"/>
+            </concept>
+            <concept>
+                <code value="D3-83001"/>
+                <display value="Interrupted Aortic Arch"/>
+            </concept>
+            <concept>
+                <code value="D3-81660"/>
+                <display value="Acute febrile mucocutaneous lymph node syndrome"/>
+            </concept>
+            <concept>
+                <code value="D4-31010"/>
+                <display value="Complete transposition of great vessels"/>
+            </concept>
+            <concept>
+                <code value="D4-31110"/>
+                <display value="Tetralogy of Fallot"/>
+            </concept>
+            <concept>
+                <code value="D3-29082"/>
+                <display value="Pulmonary atresia with intact ventricular septum"/>
+            </concept>
+            <concept>
+                <code value="D3-10008"/>
+                <display value="Cardiomegaly"/>
+            </concept>
+            <concept>
+                <code value="D4-31810"/>
+                <display value="Congenital stenosis of aortic valve"/>
+            </concept>
+            <concept>
+                <code value="D3-29011"/>
+                <display value="Mitral stenosis"/>
+            </concept>
+            <concept>
+                <code value="D3-29012"/>
+                <display value="Mitral regurgitation"/>
+            </concept>
+            <concept>
+                <code value="D4-31611"/>
+                <display value="Pulmonary atresia with ventricular septal defect"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

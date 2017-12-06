@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-6146-TimePointTypes"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_6146.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.1002"/>
+    </identifier>
+    <version value="20141110"/>
+    <name value="TimePointTypes"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 6146 TimePointTypes"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://dicom.nema.org/resources/ontology/DCM"/>
+            <concept>
+                <code value="126074"/>
+                <display value="Posttreatment"/>
+            </concept>
+            <concept>
+                <code value="126075"/>
+                <display value="Eligibility"/>
+            </concept>
+        </include>
+        <include>
+            <system value="http://www.nlm.nih.gov/research/umls"/>
+            <concept>
+                <code value="C1699701"/>
+                <display value="Unscheduled"/>
+            </concept>
+            <concept>
+                <code value="C1442488"/>
+                <display value="Baseline"/>
+            </concept>
+            <concept>
+                <code value="C3539075"/>
+                <display value="Pretreatment"/>
+            </concept>
+            <concept>
+                <code value="C1708760"/>
+                <display value="Nadir"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

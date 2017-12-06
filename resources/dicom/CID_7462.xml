@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-7462-UnitsofVolumeMeasurement"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_7462.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.523"/>
+    </identifier>
+    <version value="20020904"/>
+    <name value="UnitsofVolumeMeasurement"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 7462 UnitsofVolumeMeasurement"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://unitsofmeasure.org"/>
+            <concept>
+                <code value="mm3"/>
+                <display value="cubic millimeter"/>
+            </concept>
+            <concept>
+                <code value="cm3"/>
+                <display value="cubic centimeter"/>
+            </concept>
+            <concept>
+                <code value="um3"/>
+                <display value="cubic micrometer"/>
+            </concept>
+            <concept>
+                <code value="dm3"/>
+                <display value="cubic decimeter"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

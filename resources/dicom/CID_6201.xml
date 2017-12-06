@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-6201-ColonFindingorFeature"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_6201.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.788"/>
+    </identifier>
+    <version value="20090402"/>
+    <name value="ColonFindingorFeature"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 6201 ColonFindingorFeature"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://dicom.nema.org/resources/ontology/DCM"/>
+            <concept>
+                <code value="111101"/>
+                <display value="Image quality"/>
+            </concept>
+            <concept>
+                <code value="111099"/>
+                <display value="Selected region"/>
+            </concept>
+            <concept>
+                <code value="111102"/>
+                <display value="Non-lesion"/>
+            </concept>
+            <concept>
+                <code value="112238"/>
+                <display value="Anatomic non-colon"/>
+            </concept>
+        </include>
+        <include>
+            <system value="http://snomed.info/srt"/>
+            <concept>
+                <code value="D5-F131F"/>
+                <display value="Tumor of colon"/>
+            </concept>
+            <concept>
+                <code value="M-32704"/>
+                <display value="Inverted diverticulum"/>
+            </concept>
+            <concept>
+                <code value="F-54005"/>
+                <display value="Rectal mass"/>
+            </concept>
+            <concept>
+                <code value="T-50153"/>
+                <display value="Intraluminal fluid"/>
+            </concept>
+            <concept>
+                <code value="M-18000"/>
+                <display value="Operative Site"/>
+            </concept>
+            <concept>
+                <code value="T-59345"/>
+                <display value="Colonic haustra"/>
+            </concept>
+            <concept>
+                <code value="M-88500"/>
+                <display value="Lipoma"/>
+            </concept>
+            <concept>
+                <code value="T-58650"/>
+                <display value="Ileocecal valve"/>
+            </concept>
+            <concept>
+                <code value="T-59666"/>
+                <display value="Feces"/>
+            </concept>
+            <concept>
+                <code value="F-61D54"/>
+                <display value="Contrast media"/>
+            </concept>
+            <concept>
+                <code value="M-32700"/>
+                <display value="Diverticulum"/>
+            </concept>
+            <concept>
+                <code value="D5-41170"/>
+                <display value="Polyp of colon"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

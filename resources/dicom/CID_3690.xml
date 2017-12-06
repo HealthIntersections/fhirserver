@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-3690-ECGControlVariablesNumeric"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_3690.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.895"/>
+    </identifier>
+    <version value="20110330"/>
+    <name value="ECGControlVariablesNumeric"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 3690 ECGControlVariablesNumeric"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="urn:iso:std:iso:11073:10101"/>
+            <concept>
+                <code value="10:11403"/>
+                <display value="Low pass filter cutoff freq"/>
+            </concept>
+            <concept>
+                <code value="10:11418"/>
+                <display value="Interpolator SNR"/>
+            </concept>
+            <concept>
+                <code value="10:11408"/>
+                <display value="Notch filter frequency"/>
+            </concept>
+            <concept>
+                <code value="10:11393"/>
+                <display value="Sample rate"/>
+            </concept>
+            <concept>
+                <code value="10:11409"/>
+                <display value="Notch filter bandwidth"/>
+            </concept>
+            <concept>
+                <code value="10:11394"/>
+                <display value="Sensitivity"/>
+            </concept>
+            <concept>
+                <code value="10:11395"/>
+                <display value="Zero offset"/>
+            </concept>
+            <concept>
+                <code value="10:11397"/>
+                <display value="Pad value"/>
+            </concept>
+            <concept>
+                <code value="10:11398"/>
+                <display value="Time skew"/>
+            </concept>
+            <concept>
+                <code value="10:11399"/>
+                <display value="Sample skew"/>
+            </concept>
+            <concept>
+                <code value="10:11400"/>
+                <display value="Time offset"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

@@ -1,0 +1,197 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-623-MedicationforSmallAnimalAnesthesia"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_623.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.1088"/>
+    </identifier>
+    <version value="20151110"/>
+    <name value="MedicationforSmallAnimalAnesthesia"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 623 MedicationforSmallAnimalAnesthesia"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://snomed.info/srt"/>
+            <concept>
+                <code value="F-61639"/>
+                <display value="Pancuronium"/>
+            </concept>
+            <concept>
+                <code value="C-23805"/>
+                <display value="Alphachloralose"/>
+            </concept>
+            <concept>
+                <code value="C-6A16E"/>
+                <display value="Tribromoethanol"/>
+            </concept>
+            <concept>
+                <code value="F-61AC9"/>
+                <display value="Desflurane"/>
+            </concept>
+            <concept>
+                <code value="C-20830"/>
+                <display value="Chloroform"/>
+            </concept>
+            <concept>
+                <code value="F-61B0A"/>
+                <display value="Isoflurane"/>
+            </concept>
+            <concept>
+                <code value="R-F2B27"/>
+                <display value="Butabarbital"/>
+            </concept>
+            <concept>
+                <code value="C-64090"/>
+                <display value="Zolazepam"/>
+            </concept>
+            <concept>
+                <code value="C-6A190"/>
+                <display value="Tiletamine"/>
+            </concept>
+            <concept>
+                <code value="C-640A0"/>
+                <display value="Azaperone"/>
+            </concept>
+            <concept>
+                <code value="F-6183C"/>
+                <display value="Midazolam"/>
+            </concept>
+            <concept>
+                <code value="R-F2B1F"/>
+                <display value="Pentobarbital"/>
+            </concept>
+            <concept>
+                <code value="C-6A118"/>
+                <display value="Nitrous oxide"/>
+            </concept>
+            <concept>
+                <code value="F-61ACA"/>
+                <display value="Sevoflurane"/>
+            </concept>
+            <concept>
+                <code value="F-61916"/>
+                <display value="Succinylcholine"/>
+            </concept>
+            <concept>
+                <code value="C-80477"/>
+                <display value="Lidocaine + Prilocaine"/>
+            </concept>
+            <concept>
+                <code value="C-62960"/>
+                <display value="Acepromazine"/>
+            </concept>
+            <concept>
+                <code value="F-61848"/>
+                <display value="Methohexital"/>
+            </concept>
+            <concept>
+                <code value="C-21216"/>
+                <display value="Diethyl ether"/>
+            </concept>
+            <concept>
+                <code value="F-61A3F"/>
+                <display value="Enflurane"/>
+            </concept>
+            <concept>
+                <code value="C-6A161"/>
+                <display value="Alphadolone"/>
+            </concept>
+            <concept>
+                <code value="C-10520"/>
+                <display value="Carbon dioxide"/>
+            </concept>
+            <concept>
+                <code value="F-61BB2"/>
+                <display value="Thiopental"/>
+            </concept>
+            <concept>
+                <code value="R-F6E36"/>
+                <display value="Chloral hydrate"/>
+            </concept>
+            <concept>
+                <code value="F-61A7F"/>
+                <display value="Chlorpromazine"/>
+            </concept>
+            <concept>
+                <code value="F-61BD0"/>
+                <display value="Lidocaine"/>
+            </concept>
+            <concept>
+                <code value="F-6182F"/>
+                <display value="Ketamine"/>
+            </concept>
+            <concept>
+                <code value="C-6A148"/>
+                <display value="Medical air"/>
+            </concept>
+            <concept>
+                <code value="F-61A28"/>
+                <display value="Bupivacaine"/>
+            </concept>
+            <concept>
+                <code value="C-640B0"/>
+                <display value="Xylazine"/>
+            </concept>
+            <concept>
+                <code value="F-61B48"/>
+                <display value="Propofol"/>
+            </concept>
+            <concept>
+                <code value="F-61A26"/>
+                <display value="Droperidol"/>
+            </concept>
+            <concept>
+                <code value="C-6A102"/>
+                <display value="Oxygen gas"/>
+            </concept>
+            <concept>
+                <code value="C-6A16A"/>
+                <display value="Methoxyflurane"/>
+            </concept>
+            <concept>
+                <code value="C-6A16B"/>
+                <display value="Thiamylal"/>
+            </concept>
+            <concept>
+                <code value="C-29020"/>
+                <display value="Urethane (ethyl carbamate)"/>
+            </concept>
+            <concept>
+                <code value="F-61A66"/>
+                <display value="Etomidate"/>
+            </concept>
+            <concept>
+                <code value="F-61AFE"/>
+                <display value="Halothane"/>
+            </concept>
+            <concept>
+                <code value="R-F2B2C"/>
+                <display value="Diazepam"/>
+            </concept>
+        </include>
+        <include>
+            <system value="http://www.nlm.nih.gov/research/umls"/>
+            <concept>
+                <code value="C3846005"/>
+                <display value="Room air"/>
+            </concept>
+            <concept>
+                <code value="C0051482"/>
+                <display value="Alphaxalone"/>
+            </concept>
+            <concept>
+                <code value="C0060473"/>
+                <display value="Fluanisone"/>
+            </concept>
+            <concept>
+                <code value="C0025856"/>
+                <display value="Metomidate"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

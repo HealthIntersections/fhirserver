@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-6051-BreastProcedureReason"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_6051.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.380"/>
+    </identifier>
+    <version value="20160314"/>
+    <name value="BreastProcedureReason"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 6051 BreastProcedureReason"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://dicom.nema.org/resources/ontology/DCM"/>
+            <concept>
+                <code value="111144"/>
+                <display value="Needle localization and biopsy"/>
+            </concept>
+            <concept>
+                <code value="111420"/>
+                <display value="History of benign breast biopsy"/>
+            </concept>
+            <concept>
+                <code value="111123"/>
+                <display value="Marker placement"/>
+            </concept>
+            <concept>
+                <code value="111421"/>
+                <display value="Personal history of breast cancer with breast conservation therapy"/>
+            </concept>
+            <concept>
+                <code value="111124"/>
+                <display value="Personal history of breast cancer with mastectomy"/>
+            </concept>
+            <concept>
+                <code value="111125"/>
+                <display value="Known biopsy proven malignancy"/>
+            </concept>
+            <concept>
+                <code value="111402"/>
+                <display value="Clinical finding"/>
+            </concept>
+            <concept>
+                <code value="111127"/>
+                <display value="Targeted"/>
+            </concept>
+            <concept>
+                <code value="111128"/>
+                <display value="Survey"/>
+            </concept>
+            <concept>
+                <code value="111590"/>
+                <display value="Recall for technical reasons"/>
+            </concept>
+            <concept>
+                <code value="122505"/>
+                <display value="Calibration"/>
+            </concept>
+            <concept>
+                <code value="111591"/>
+                <display value="Recall for imaging findings"/>
+            </concept>
+            <concept>
+                <code value="111592"/>
+                <display value="Recall for patient symptoms/ clinical findings"/>
+            </concept>
+            <concept>
+                <code value="111418"/>
+                <display value="Review of an outside study"/>
+            </concept>
+            <concept>
+                <code value="111419"/>
+                <display value="Additional evaluation requested from abnormal screening exam"/>
+            </concept>
+            <concept>
+                <code value="110002"/>
+                <display value="Quality Control"/>
+            </concept>
+            <concept>
+                <code value="111415"/>
+                <display value="Additional evaluation requested from prior study"/>
+            </concept>
+            <concept>
+                <code value="111416"/>
+                <display value="Follow-up at short interval from prior study"/>
+            </concept>
+            <concept>
+                <code value="111417"/>
+                <display value="History of breast augmentation, asymptomatic"/>
+            </concept>
+        </include>
+        <include>
+            <system value="http://snomed.info/srt"/>
+            <concept>
+                <code value="P1-48830"/>
+                <display value="Reduction mammoplasty"/>
+            </concept>
+            <concept>
+                <code value="R-42453"/>
+                <display value="Screening"/>
+            </concept>
+            <concept>
+                <code value="R-408C3"/>
+                <display value="Diagnostic"/>
+            </concept>
+            <concept>
+                <code value="P5-C018A"/>
+                <display value="Brachytherapy"/>
+            </concept>
+            <concept>
+                <code value="P1-48840"/>
+                <display value="Augmentation mammoplasty"/>
+            </concept>
+            <concept>
+                <code value="P5-C0000"/>
+                <display value="Radiation therapy"/>
+            </concept>
+            <concept>
+                <code value="G-03D3"/>
+                <display value="Personal history of breast cancer"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-12018-OBGYNSummary"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_12018.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.566"/>
+    </identifier>
+    <version value="20030130"/>
+    <name value="OBGYNSummary"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 12018 OBGYNSummary"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://loinc.org"/>
+            <concept>
+                <code value="11878-6"/>
+                <display value="Number of Fetuses by US"/>
+            </concept>
+            <concept>
+                <code value="11886-9"/>
+                <display value="Gestational Age by ovulation date"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-4018-PrimaryAnatomicStructureforIntraoralRadiographyPermanentDentitionDesignationofTeeth"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_4018.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.302"/>
+    </identifier>
+    <version value="20150318"/>
+    <name value="PrimaryAnatomicStructureforIntraoralRadiography(PermanentDentitionDesignationofTeeth)"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 4018 PrimaryAnatomicStructureforIntraoralRadiography(PermanentDentitionDesignationofTeeth)"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://snomed.info/srt"/>
+            <concept>
+                <code value="T-54500"/>
+                <display value="Mandibular right first molar tooth"/>
+            </concept>
+            <concept>
+                <code value="T-54300"/>
+                <display value="Maxillary left lateral incisor tooth"/>
+            </concept>
+            <concept>
+                <code value="T-54520"/>
+                <display value="Mandibular right third molar tooth"/>
+            </concept>
+            <concept>
+                <code value="T-54400"/>
+                <display value="Mandibular left second premolar tooth"/>
+            </concept>
+            <concept>
+                <code value="T-54360"/>
+                <display value="Maxillary left third molar tooth"/>
+            </concept>
+            <concept>
+                <code value="T-54240"/>
+                <display value="Maxillary right second premolar tooth"/>
+            </concept>
+            <concept>
+                <code value="T-54460"/>
+                <display value="Mandibular right lateral incisor tooth"/>
+            </concept>
+            <concept>
+                <code value="T-54380"/>
+                <display value="Mandibular left second molar tooth"/>
+            </concept>
+            <concept>
+                <code value="T-54260"/>
+                <display value="Maxillary right canine tooth"/>
+            </concept>
+            <concept>
+                <code value="T-54480"/>
+                <display value="Mandibular right first premolar tooth"/>
+            </concept>
+            <concept>
+                <code value="T-54320"/>
+                <display value="Maxillary left first premolar tooth"/>
+            </concept>
+            <concept>
+                <code value="T-54420"/>
+                <display value="Mandibular left canine tooth"/>
+            </concept>
+            <concept>
+                <code value="T-54340"/>
+                <display value="Maxillary left first molar tooth"/>
+            </concept>
+            <concept>
+                <code value="T-54220"/>
+                <display value="Maxillary right second molar tooth"/>
+            </concept>
+            <concept>
+                <code value="T-54440"/>
+                <display value="Mandibular left central incisor tooth"/>
+            </concept>
+            <concept>
+                <code value="T-54280"/>
+                <display value="Maxillary right central incisor tooth"/>
+            </concept>
+            <concept>
+                <code value="T-54410"/>
+                <display value="Mandibular left first premolar tooth"/>
+            </concept>
+            <concept>
+                <code value="T-54510"/>
+                <display value="Mandibular right second molar tooth"/>
+            </concept>
+            <concept>
+                <code value="T-54250"/>
+                <display value="Maxillary right first premolar tooth"/>
+            </concept>
+            <concept>
+                <code value="T-54470"/>
+                <display value="Mandibular right canine tooth"/>
+            </concept>
+            <concept>
+                <code value="T-54350"/>
+                <display value="Maxillary left second molar tooth"/>
+            </concept>
+            <concept>
+                <code value="T-54270"/>
+                <display value="Maxillary right lateral incisor tooth"/>
+            </concept>
+            <concept>
+                <code value="T-54490"/>
+                <display value="Mandibular right second premolar tooth"/>
+            </concept>
+            <concept>
+                <code value="T-54370"/>
+                <display value="Mandibular left third molar tooth"/>
+            </concept>
+            <concept>
+                <code value="T-54210"/>
+                <display value="Maxillary right third molar tooth"/>
+            </concept>
+            <concept>
+                <code value="T-54430"/>
+                <display value="Mandibular left lateral tooth"/>
+            </concept>
+            <concept>
+                <code value="T-54310"/>
+                <display value="Maxillary left canine tooth"/>
+            </concept>
+            <concept>
+                <code value="T-54230"/>
+                <display value="Maxillary right first molar tooth"/>
+            </concept>
+            <concept>
+                <code value="T-54450"/>
+                <display value="Mandibular right central incisor tooth"/>
+            </concept>
+            <concept>
+                <code value="T-54330"/>
+                <display value="Maxillary left second premolar tooth"/>
+            </concept>
+            <concept>
+                <code value="T-54290"/>
+                <display value="Maxillary left central incisor tooth"/>
+            </concept>
+            <concept>
+                <code value="T-54390"/>
+                <display value="Mandibular left first molar tooth"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

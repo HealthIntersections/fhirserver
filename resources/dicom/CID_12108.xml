@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-12108-UpperExtremityVeins"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_12108.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.575"/>
+    </identifier>
+    <version value="20160314"/>
+    <name value="UpperExtremityVeins"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 12108 UpperExtremityVeins"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://snomed.info/srt"/>
+            <concept>
+                <code value="T-48610"/>
+                <display value="Superior Vena Cava"/>
+            </concept>
+            <concept>
+                <code value="T-48620"/>
+                <display value="Innominate vein"/>
+            </concept>
+            <concept>
+                <code value="T-49217"/>
+                <display value="Superficial Palmar Venous Arch"/>
+            </concept>
+            <concept>
+                <code value="T-48330"/>
+                <display value="Subclavian vein"/>
+            </concept>
+            <concept>
+                <code value="T-49230"/>
+                <display value="Basilic vein"/>
+            </concept>
+            <concept>
+                <code value="T-49340"/>
+                <display value="Radial vein"/>
+            </concept>
+            <concept>
+                <code value="T-49110"/>
+                <display value="Axillary vein"/>
+            </concept>
+            <concept>
+                <code value="T-49330"/>
+                <display value="Ulnar vein"/>
+            </concept>
+            <concept>
+                <code value="T-49250"/>
+                <display value="Median Cubital vein"/>
+            </concept>
+            <concept>
+                <code value="T-49350"/>
+                <display value="Brachial vein"/>
+            </concept>
+            <concept>
+                <code value="T-49240"/>
+                <display value="Cephalic vein"/>
+            </concept>
+            <concept>
+                <code value="T-48170"/>
+                <display value="Internal Jugular vein"/>
+            </concept>
+            <concept>
+                <code value="T-49218"/>
+                <display value="Deep Palmar Venous Arch"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

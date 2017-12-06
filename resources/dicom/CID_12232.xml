@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-12232-MyocardiumMassMethods"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_12232.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.623"/>
+    </identifier>
+    <version value="20100317"/>
+    <name value="MyocardiumMassMethods"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 12232 MyocardiumMassMethods"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://dicom.nema.org/resources/ontology/DCM"/>
+            <concept>
+                <code value="125272"/>
+                <display value="Left Ventricle Mass by Truncated Ellipse - adjusted by Height"/>
+            </concept>
+            <concept>
+                <code value="125271"/>
+                <display value="Left Ventricle Mass by M-mode - adjusted by Height"/>
+            </concept>
+            <concept>
+                <code value="125270"/>
+                <display value="Left Ventricle Mass by Area Length"/>
+            </concept>
+            <concept>
+                <code value="125222"/>
+                <display value="Left Ventricle Mass by Truncated Ellipse"/>
+            </concept>
+            <concept>
+                <code value="125221"/>
+                <display value="Left Ventricle Mass by M-mode"/>
+            </concept>
+            <concept>
+                <code value="125273"/>
+                <display value="Left Ventricle Mass by Area Length - adjusted by Height"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

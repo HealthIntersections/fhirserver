@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-7451-FamilyMember"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_7451.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.515"/>
+    </identifier>
+    <version value="20040112"/>
+    <name value="FamilyMember"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 7451 FamilyMember"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://snomed.info/srt"/>
+            <concept>
+                <code value="S-101A1"/>
+                <display value="Aunt"/>
+            </concept>
+            <concept>
+                <code value="S-101A2"/>
+                <display value="Uncle"/>
+            </concept>
+            <concept>
+                <code value="S-10115"/>
+                <display value="Natural grand-mother"/>
+            </concept>
+            <concept>
+                <code value="S-10116"/>
+                <display value="Natural grand-father"/>
+            </concept>
+            <concept>
+                <code value="S-10151"/>
+                <display value="Natural sister"/>
+            </concept>
+            <concept>
+                <code value="S-10161"/>
+                <display value="Natural brother"/>
+            </concept>
+            <concept>
+                <code value="S-10131"/>
+                <display value="Natural father"/>
+            </concept>
+            <concept>
+                <code value="S-10164"/>
+                <display value="Half-brother"/>
+            </concept>
+            <concept>
+                <code value="S-101AA"/>
+                <display value="Male first cousin"/>
+            </concept>
+            <concept>
+                <code value="S-10121"/>
+                <display value="Natural mother"/>
+            </concept>
+            <concept>
+                <code value="S-10154"/>
+                <display value="Half-sister"/>
+            </concept>
+            <concept>
+                <code value="S-10191"/>
+                <display value="Natural son"/>
+            </concept>
+            <concept>
+                <code value="S-101A9"/>
+                <display value="Female first cousin"/>
+            </concept>
+            <concept>
+                <code value="S-10181"/>
+                <display value="Natural daughter"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

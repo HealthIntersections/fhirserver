@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-3339-ElectrophysiologyAnnotations"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_3339.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.64"/>
+    </identifier>
+    <version value="20020904"/>
+    <name value="ElectrophysiologyAnnotations"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 3339 ElectrophysiologyAnnotations"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://dicom.nema.org/resources/ontology/DCM"/>
+            <concept>
+                <code value="109050"/>
+                <display value="Stimulation at rate 4 interval"/>
+            </concept>
+            <concept>
+                <code value="109038"/>
+                <display value="Ablation off"/>
+            </concept>
+            <concept>
+                <code value="109049"/>
+                <display value="Stimulation at rate 3 interval"/>
+            </concept>
+            <concept>
+                <code value="109048"/>
+                <display value="Stimulation at rate 2 interval"/>
+            </concept>
+            <concept>
+                <code value="109039"/>
+                <display value="Ablation on"/>
+            </concept>
+            <concept>
+                <code value="109045"/>
+                <display value="Start of atrial contraction"/>
+            </concept>
+            <concept>
+                <code value="109044"/>
+                <display value="S wave"/>
+            </concept>
+            <concept>
+                <code value="109047"/>
+                <display value="Stimulation at rate 1 interval"/>
+            </concept>
+            <concept>
+                <code value="109046"/>
+                <display value="Start of atrial contraction (subsequent)"/>
+            </concept>
+            <concept>
+                <code value="109041"/>
+                <display value="P wave"/>
+            </concept>
+            <concept>
+                <code value="109052"/>
+                <display value="V wave"/>
+            </concept>
+            <concept>
+                <code value="109040"/>
+                <display value="HIS bundle wave"/>
+            </concept>
+            <concept>
+                <code value="109051"/>
+                <display value="T wave"/>
+            </concept>
+            <concept>
+                <code value="109043"/>
+                <display value="R wave"/>
+            </concept>
+            <concept>
+                <code value="109042"/>
+                <display value="Q wave"/>
+            </concept>
+            <concept>
+                <code value="109053"/>
+                <display value="V wave of next beat"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

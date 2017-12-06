@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-7481-BreedRegistry"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_7481.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.530"/>
+    </identifier>
+    <version value="20060822"/>
+    <name value="BreedRegistry"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 7481 BreedRegistry"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://dicom.nema.org/resources/ontology/DCM"/>
+            <concept>
+                <code value="109207"/>
+                <display value="Canadian Border Collie Association"/>
+            </concept>
+            <concept>
+                <code value="109218"/>
+                <display value="United Kennel Club"/>
+            </concept>
+            <concept>
+                <code value="109206"/>
+                <display value="Animal Research Foundation"/>
+            </concept>
+            <concept>
+                <code value="109217"/>
+                <display value="United All Breed Registry"/>
+            </concept>
+            <concept>
+                <code value="109209"/>
+                <display value="Canadian Livestock Records Association"/>
+            </concept>
+            <concept>
+                <code value="109208"/>
+                <display value="Canadian Kennel Club"/>
+            </concept>
+            <concept>
+                <code value="109219"/>
+                <display value="Universal Kennel Club International"/>
+            </concept>
+            <concept>
+                <code value="109203"/>
+                <display value="American Purebred Registry"/>
+            </concept>
+            <concept>
+                <code value="109214"/>
+                <display value="International Progressive Dog Breeders' Alliance"/>
+            </concept>
+            <concept>
+                <code value="109202"/>
+                <display value="American Canine Association"/>
+            </concept>
+            <concept>
+                <code value="109213"/>
+                <display value="Federation of International Canines"/>
+            </concept>
+            <concept>
+                <code value="109205"/>
+                <display value="Animal Registry Unlimited"/>
+            </concept>
+            <concept>
+                <code value="109216"/>
+                <display value="North American Purebred Dog Registry"/>
+            </concept>
+            <concept>
+                <code value="109204"/>
+                <display value="American Rare Breed Association"/>
+            </concept>
+            <concept>
+                <code value="109215"/>
+                <display value="National Kennel Club"/>
+            </concept>
+            <concept>
+                <code value="109210"/>
+                <display value="Canine Federation of Canada"/>
+            </concept>
+            <concept>
+                <code value="109221"/>
+                <display value="World Kennel Club"/>
+            </concept>
+            <concept>
+                <code value="109220"/>
+                <display value="Working Canine Association of Canada"/>
+            </concept>
+            <concept>
+                <code value="109201"/>
+                <display value="America's Pet Registry Inc."/>
+            </concept>
+            <concept>
+                <code value="109212"/>
+                <display value="Dog Registry of America"/>
+            </concept>
+            <concept>
+                <code value="109200"/>
+                <display value="America Kennel Club"/>
+            </concept>
+            <concept>
+                <code value="109211"/>
+                <display value="Continental Kennel Club"/>
+            </concept>
+            <concept>
+                <code value="109222"/>
+                <display value="World Wide Kennel Club"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

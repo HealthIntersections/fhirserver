@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-7039-PediatricSizeCategories"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_7039.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.1173"/>
+    </identifier>
+    <version value="20170417"/>
+    <name value="PediatricSizeCategories"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 7039 PediatricSizeCategories"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://snomed.info/srt"/>
+            <concept>
+                <code value="F-051DF"/>
+                <display value="Broselow Luten Red Zone (8-9 kg)"/>
+            </concept>
+            <concept>
+                <code value="F-051E7"/>
+                <display value="Broselow Luten White Zone (15-18 kg)"/>
+            </concept>
+            <concept>
+                <code value="F-051E8"/>
+                <display value="Broselow Luten Yellow Zone (12-14 kg)"/>
+            </concept>
+            <concept>
+                <code value="F-051E3"/>
+                <display value="Broselow Luten Pink Zone (6-7 kg)"/>
+            </concept>
+            <concept>
+                <code value="F-051E4"/>
+                <display value="Broselow Luten Purple Zone (10-11 kg)"/>
+            </concept>
+            <concept>
+                <code value="F-051E5"/>
+                <display value="Broselow Luten Orange Zone (24-29 kg)"/>
+            </concept>
+            <concept>
+                <code value="F-051E6"/>
+                <display value="Broselow Luten Green Zone (30-36 kg)"/>
+            </concept>
+            <concept>
+                <code value="F-051E0"/>
+                <display value="Broselow Luten Blue Zone (19-23 kg)"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

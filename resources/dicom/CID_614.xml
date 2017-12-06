@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-614-AnesthesiaInductionCodeTypefromAnesthesiaQualityInitiativeAQI"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_614.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.1079"/>
+    </identifier>
+    <version value="20151110"/>
+    <name value="AnesthesiaInductionCodeTypefromAnesthesiaQualityInitiative(AQI)"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 614 AnesthesiaInductionCodeTypefromAnesthesiaQualityInitiative(AQI)"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://snomed.info/srt"/>
+            <concept>
+                <code value="G-D160"/>
+                <display value="Per rectum"/>
+            </concept>
+            <concept>
+                <code value="R-40B32"/>
+                <display value="By inhalation"/>
+            </concept>
+            <concept>
+                <code value="G-D103"/>
+                <display value="Intramuscular route"/>
+            </concept>
+            <concept>
+                <code value="G-D101"/>
+                <display value="Intravenous route"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

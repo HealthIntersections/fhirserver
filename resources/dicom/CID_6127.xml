@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-6127-SegmentLocationinLung"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_6127.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.447"/>
+    </identifier>
+    <version value="20030108"/>
+    <name value="SegmentLocationinLung"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 6127 SegmentLocationinLung"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://snomed.info/srt"/>
+            <concept>
+                <code value="T-28230"/>
+                <display value="Anterior segment of right upper lobe"/>
+            </concept>
+            <concept>
+                <code value="T-28220"/>
+                <display value="Posterior segment of right upper lobe"/>
+            </concept>
+            <concept>
+                <code value="T-28630"/>
+                <display value="Anterior segment of left upper lobe"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

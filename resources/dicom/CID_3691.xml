@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-3691-ECGControlVariablesText"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_3691.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.896"/>
+    </identifier>
+    <version value="20110330"/>
+    <name value="ECGControlVariablesText"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 3691 ECGControlVariablesText"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="urn:iso:std:iso:11073:10101"/>
+            <concept>
+                <code value="10:11414"/>
+                <display value="Interpolator"/>
+            </concept>
+            <concept>
+                <code value="10:11404"/>
+                <display value="High pass filter"/>
+            </concept>
+            <concept>
+                <code value="10:11416"/>
+                <display value="Interpolator description"/>
+            </concept>
+            <concept>
+                <code value="10:11406"/>
+                <display value="High pass filter description"/>
+            </concept>
+            <concept>
+                <code value="10:11407"/>
+                <display value="Notch filter"/>
+            </concept>
+            <concept>
+                <code value="10:11410"/>
+                <display value="Notch filter description"/>
+            </concept>
+            <concept>
+                <code value="10:11412"/>
+                <display value="Baseline description"/>
+            </concept>
+            <concept>
+                <code value="10:11402"/>
+                <display value="Low pass filter"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

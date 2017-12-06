@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-12005-FetalBiometryMeasurements"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_12005.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.554"/>
+    </identifier>
+    <version value="20030130"/>
+    <name value="FetalBiometryMeasurements"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 12005 FetalBiometryMeasurements"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://loinc.org"/>
+            <concept>
+                <code value="11851-3"/>
+                <display value="Occipital-Frontal Diameter"/>
+            </concept>
+            <concept>
+                <code value="11824-0"/>
+                <display value="BPD area corrected"/>
+            </concept>
+            <concept>
+                <code value="11862-0"/>
+                <display value="Tranverse Abdominal Diameter"/>
+            </concept>
+            <concept>
+                <code value="33191-8"/>
+                <display value="APAD * TAD"/>
+            </concept>
+            <concept>
+                <code value="11860-4"/>
+                <display value="Cisterna Magna"/>
+            </concept>
+            <concept>
+                <code value="11979-2"/>
+                <display value="Abdominal Circumference"/>
+            </concept>
+            <concept>
+                <code value="11963-6"/>
+                <display value="Femur Length"/>
+            </concept>
+            <concept>
+                <code value="11988-3"/>
+                <display value="Thoracic Circumference"/>
+            </concept>
+            <concept>
+                <code value="11984-2"/>
+                <display value="Head Circumference"/>
+            </concept>
+            <concept>
+                <code value="11965-1"/>
+                <display value="Foot length"/>
+            </concept>
+            <concept>
+                <code value="11820-8"/>
+                <display value="Biparietal Diameter"/>
+            </concept>
+            <concept>
+                <code value="11853-9"/>
+                <display value="Left Kidney thickness"/>
+            </concept>
+            <concept>
+                <code value="11864-6"/>
+                <display value="Transverse Thoracic Diameter"/>
+            </concept>
+            <concept>
+                <code value="11834-9"/>
+                <display value="Left Kidney length"/>
+            </concept>
+            <concept>
+                <code value="11825-7"/>
+                <display value="Left Kidney width"/>
+            </concept>
+            <concept>
+                <code value="11818-2"/>
+                <display value="Anterior-Posterior Abdominal Diameter"/>
+            </concept>
+            <concept>
+                <code value="33068-8"/>
+                <display value="Thoracic Area"/>
+            </concept>
+            <concept>
+                <code value="11855-4"/>
+                <display value="Right Kidney thickness"/>
+            </concept>
+            <concept>
+                <code value="11819-0"/>
+                <display value="Anterior-Posterior Trunk Diameter"/>
+            </concept>
+            <concept>
+                <code value="11827-3"/>
+                <display value="Right Kidney width"/>
+            </concept>
+            <concept>
+                <code value="11863-8"/>
+                <display value="Trans Cerebellar Diameter"/>
+            </concept>
+            <concept>
+                <code value="11836-4"/>
+                <display value="Right Kidney length"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

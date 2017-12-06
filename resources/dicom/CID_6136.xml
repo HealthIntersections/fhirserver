@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-6136-ChestTypesofQualityControlStandard"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_6136.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.456"/>
+    </identifier>
+    <version value="20030108"/>
+    <name value="ChestTypesofQualityControlStandard"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 6136 ChestTypesofQualityControlStandard"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://dicom.nema.org/resources/ontology/DCM"/>
+            <concept>
+                <code value="112184"/>
+                <display value="Performance of Pediatric and Adult Thoracic CT"/>
+            </concept>
+            <concept>
+                <code value="112185"/>
+                <display value="Performance of CT for Detection of Pulmonary Embolism in Adults"/>
+            </concept>
+            <concept>
+                <code value="111240"/>
+                <display value="Institutionally defined quality control standard"/>
+            </concept>
+            <concept>
+                <code value="112186"/>
+                <display value="Performance of High-Resolution CT of the Lungs in Adults"/>
+            </concept>
+            <concept>
+                <code value="112035"/>
+                <display value="Performance of Pediatric and Adult Chest Radiography, ACR"/>
+            </concept>
+            <concept>
+                <code value="112036"/>
+                <display value="ACR Position Statement"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

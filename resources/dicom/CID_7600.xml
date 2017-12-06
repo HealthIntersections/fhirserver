@@ -1,0 +1,826 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-7600-LymphNodeAnatomicSites"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_7600.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.1011"/>
+    </identifier>
+    <version value="20160314"/>
+    <name value="LymphNodeAnatomicSites"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 7600 LymphNodeAnatomicSites"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://snomed.info/srt"/>
+            <concept>
+                <code value="T-C4620"/>
+                <display value="external iliac lymph node"/>
+            </concept>
+            <concept>
+                <code value="T-C4740"/>
+                <display value="apical axillary lymph node"/>
+            </concept>
+            <concept>
+                <code value="T-C4860"/>
+                <display value="tibial lymph node"/>
+            </concept>
+            <concept>
+                <code value="T-D200A"/>
+                <display value="lymph node of trunk"/>
+            </concept>
+            <concept>
+                <code value="T-C4616"/>
+                <display value="subiliac lymph node"/>
+            </concept>
+            <concept>
+                <code value="T-C4614"/>
+                <display value="subaortic common iliac lymph node"/>
+            </concept>
+            <concept>
+                <code value="T-C4613"/>
+                <display value="lateral common iliac lymph node"/>
+            </concept>
+            <concept>
+                <code value="T-C4612"/>
+                <display value="intermediate common iliac lymph node"/>
+            </concept>
+            <concept>
+                <code value="T-C46AB"/>
+                <display value="lateral vesicular lymph node"/>
+            </concept>
+            <concept>
+                <code value="T-C4611"/>
+                <display value="medial common iliac lymph node"/>
+            </concept>
+            <concept>
+                <code value="T-C46AA"/>
+                <display value="postvesicular lymph node"/>
+            </concept>
+            <concept>
+                <code value="T-C4610"/>
+                <display value="iliac lymph node"/>
+            </concept>
+            <concept>
+                <code value="T-28910"/>
+                <display value="lung and tracheobronchial lymph nodes"/>
+            </concept>
+            <concept>
+                <code value="T-C4852"/>
+                <display value="superficial popliteal lymph node"/>
+            </concept>
+            <concept>
+                <code value="T-C4631"/>
+                <display value="gluteal lymph node"/>
+            </concept>
+            <concept>
+                <code value="T-C4752"/>
+                <display value="paramammary lymph node"/>
+            </concept>
+            <concept>
+                <code value="T-C4630"/>
+                <display value="hypogastric lymph node"/>
+            </concept>
+            <concept>
+                <code value="T-C4750"/>
+                <display value="pectoral axillary lymph node"/>
+            </concept>
+            <concept>
+                <code value="T-C4626"/>
+                <display value="obturator lymph node"/>
+            </concept>
+            <concept>
+                <code value="T-C4867"/>
+                <display value="posterior tibial lymph node"/>
+            </concept>
+            <concept>
+                <code value="T-C4866"/>
+                <display value="anterior tibial lymph node"/>
+            </concept>
+            <concept>
+                <code value="T-C4624"/>
+                <display value="medial lacunar lymph node"/>
+            </concept>
+            <concept>
+                <code value="T-C4623"/>
+                <display value="lateral external iliac lymph node"/>
+            </concept>
+            <concept>
+                <code value="T-C4622"/>
+                <display value="intermediate external iliac lymph node"/>
+            </concept>
+            <concept>
+                <code value="T-C4863"/>
+                <display value="fibular lymph node"/>
+            </concept>
+            <concept>
+                <code value="T-C4500"/>
+                <display value="intestinal lymph node"/>
+            </concept>
+            <concept>
+                <code value="T-C4621"/>
+                <display value="medial external iliac lymph node"/>
+            </concept>
+            <concept>
+                <code value="T-C4400"/>
+                <display value="abdominal lymph node"/>
+            </concept>
+            <concept>
+                <code value="T-C4642"/>
+                <display value="interiliac lymph node"/>
+            </concept>
+            <concept>
+                <code value="T-C4641"/>
+                <display value="promontory common iliac lymph node"/>
+            </concept>
+            <concept>
+                <code value="T-C4760"/>
+                <display value="subscapular axillary lymph node"/>
+            </concept>
+            <concept>
+                <code value="T-C463E"/>
+                <display value="female genital lymph node"/>
+            </concept>
+            <concept>
+                <code value="T-C4513"/>
+                <display value="superior rectal lymph node"/>
+            </concept>
+            <concept>
+                <code value="T-28812"/>
+                <display value="extrapulmonary lymph node of lung"/>
+            </concept>
+            <concept>
+                <code value="T-C4512"/>
+                <display value="sigmoid lymph node"/>
+            </concept>
+            <concept>
+                <code value="T-C4633"/>
+                <display value="superior gluteal lymph node"/>
+            </concept>
+            <concept>
+                <code value="T-C4632"/>
+                <display value="inferior gluteal lymph node"/>
+            </concept>
+            <concept>
+                <code value="T-C4511"/>
+                <display value="inferior mesenteric lymph node"/>
+            </concept>
+            <concept>
+                <code value="T-C4753"/>
+                <display value="interpectoral lymph node"/>
+            </concept>
+            <concept>
+                <code value="T-C4411"/>
+                <display value="perigastric lymph node"/>
+            </concept>
+            <concept>
+                <code value="T-C4410"/>
+                <display value="celiac lymph node"/>
+            </concept>
+            <concept>
+                <code value="T-C4650"/>
+                <display value="sacral lymph node"/>
+            </concept>
+            <concept>
+                <code value="T-C4770"/>
+                <display value="cubital lymph node"/>
+            </concept>
+            <concept>
+                <code value="T-C4404"/>
+                <display value="gut-associated lymph node"/>
+            </concept>
+            <concept>
+                <code value="T-C4523"/>
+                <display value="retrocecal lymph node"/>
+            </concept>
+            <concept>
+                <code value="T-C4401"/>
+                <display value="lymph node of mesentery"/>
+            </concept>
+            <concept>
+                <code value="T-C4522"/>
+                <display value="prececal lymph node"/>
+            </concept>
+            <concept>
+                <code value="T-C4300"/>
+                <display value="lymph node of thorax"/>
+            </concept>
+            <concept>
+                <code value="T-C4420"/>
+                <display value="superior mesenteric lymph node"/>
+            </concept>
+            <concept>
+                <code value="T-C4660"/>
+                <display value="parametrial lymph node"/>
+            </concept>
+            <concept>
+                <code value="T-C4780"/>
+                <display value="epitrochlear lymph node"/>
+            </concept>
+            <concept>
+                <code value="T-C4417"/>
+                <display value="mesenteric artery lymph node"/>
+            </concept>
+            <concept>
+                <code value="T-C4414"/>
+                <display value="lymph node of stomach"/>
+            </concept>
+            <concept>
+                <code value="T-C4312"/>
+                <display value="lobar lymph node of the lung"/>
+            </concept>
+            <concept>
+                <code value="T-C4311"/>
+                <display value="interlobar lymph node of the lung"/>
+            </concept>
+            <concept>
+                <code value="T-C4670"/>
+                <display value="epigastric lymph node"/>
+            </concept>
+            <concept>
+                <code value="T-C43A7"/>
+                <display value="lower paratracheal (including azygous) lymph node"/>
+            </concept>
+            <concept>
+                <code value="T-C43A6"/>
+                <display value="retrotracheal lymph node (mediastinal)"/>
+            </concept>
+            <concept>
+                <code value="T-C43A5"/>
+                <display value="prevascular/retrotracheal lymph node"/>
+            </concept>
+            <concept>
+                <code value="T-C430B"/>
+                <display value="intramammary lymph node"/>
+            </concept>
+            <concept>
+                <code value="T-C430A"/>
+                <display value="cardiophrenic angle lymph node"/>
+            </concept>
+            <concept>
+                <code value="T-C43A2"/>
+                <display value="upper paratracheal lymph node (mediastinal)"/>
+            </concept>
+            <concept>
+                <code value="T-C43A1"/>
+                <display value="highest mediastinal lymph node"/>
+            </concept>
+            <concept>
+                <code value="T-C43A0"/>
+                <display value="superior mediastinal lymph node"/>
+            </concept>
+            <concept>
+                <code value="T-C4309"/>
+                <display value="diaphragmatic lymph node"/>
+            </concept>
+            <concept>
+                <code value="T-C4308"/>
+                <display value="intrapulmonary lymph node"/>
+            </concept>
+            <concept>
+                <code value="T-C4307"/>
+                <display value="prevertebral lymph node"/>
+            </concept>
+            <concept>
+                <code value="T-C4306"/>
+                <display value="lateral pericardial lymph node"/>
+            </concept>
+            <concept>
+                <code value="T-C4305"/>
+                <display value="innominate lymph node"/>
+            </concept>
+            <concept>
+                <code value="T-C4423"/>
+                <display value="juxtaintestinal lymph node"/>
+            </concept>
+            <concept>
+                <code value="T-C4202"/>
+                <display value="deep cervical lymph node"/>
+            </concept>
+            <concept>
+                <code value="T-C4565"/>
+                <display value="midcolic lymph node"/>
+            </concept>
+            <concept>
+                <code value="T-C4201"/>
+                <display value="superficial cervical lymph node"/>
+            </concept>
+            <concept>
+                <code value="T-C4200"/>
+                <display value="cervical lymph node"/>
+            </concept>
+            <concept>
+                <code value="T-C4563"/>
+                <display value="ileocolic lymph node"/>
+            </concept>
+            <concept>
+                <code value="T-C4442"/>
+                <display value="lymph node of epiploic foramen"/>
+            </concept>
+            <concept>
+                <code value="T-C4320"/>
+                <display value="hilar lymph node"/>
+            </concept>
+            <concept>
+                <code value="T-C4440"/>
+                <display value="hepatic lymph node"/>
+            </concept>
+            <concept>
+                <code value="T-C4560"/>
+                <display value="colic lymph node"/>
+            </concept>
+            <concept>
+                <code value="T-C4680"/>
+                <display value="presymphysial lymph node"/>
+            </concept>
+            <concept>
+                <code value="T-C43B3"/>
+                <display value="lymph node of the pulmonary ligament"/>
+            </concept>
+            <concept>
+                <code value="T-C43B2"/>
+                <display value="paraesophageal lymph node below carina"/>
+            </concept>
+            <concept>
+                <code value="T-C43AE"/>
+                <display value="para-aortic lymph node of the anterior mediastinum"/>
+            </concept>
+            <concept>
+                <code value="T-C43AD"/>
+                <display value="lymph node of aortopulmonary window"/>
+            </concept>
+            <concept>
+                <code value="T-C4314"/>
+                <display value="subsegmental lymph node of the lung"/>
+            </concept>
+            <concept>
+                <code value="T-C43AC"/>
+                <display value="lymph node of aortic arch"/>
+            </concept>
+            <concept>
+                <code value="T-C4313"/>
+                <display value="segmental lymph node of the lung"/>
+            </concept>
+            <concept>
+                <code value="T-C4453"/>
+                <display value="lymph node ring of cardia of stomach"/>
+            </concept>
+            <concept>
+                <code value="T-C4332"/>
+                <display value="subcarinal lymph node"/>
+            </concept>
+            <concept>
+                <code value="T-C4210"/>
+                <display value="lateral cervical lymph node"/>
+            </concept>
+            <concept>
+                <code value="T-C4452"/>
+                <display value="lymph node of lesser curvature of stomach"/>
+            </concept>
+            <concept>
+                <code value="T-C4331"/>
+                <display value="superior tracheobronchial lymph node"/>
+            </concept>
+            <concept>
+                <code value="T-C4330"/>
+                <display value="tracheobronchial lymph node, located near carina"/>
+            </concept>
+            <concept>
+                <code value="T-C4690"/>
+                <display value="uterine paracervical lymph node"/>
+            </concept>
+            <concept>
+                <code value="T-C4446"/>
+                <display value="common duct lymph node"/>
+            </concept>
+            <concept>
+                <code value="T-C4445"/>
+                <display value="cystic lymph node"/>
+            </concept>
+            <concept>
+                <code value="T-C4466"/>
+                <display value="subpyloric lymph node"/>
+            </concept>
+            <concept>
+                <code value="T-C4102"/>
+                <display value="mandibular lymph node"/>
+            </concept>
+            <concept>
+                <code value="T-C4465"/>
+                <display value="suprapyloric lymph node"/>
+            </concept>
+            <concept>
+                <code value="T-C4100"/>
+                <display value="lymph node of head"/>
+            </concept>
+            <concept>
+                <code value="T-C4220"/>
+                <display value="supraclavicular lymph node"/>
+            </concept>
+            <concept>
+                <code value="T-C4340"/>
+                <display value="paratracheal lymph node"/>
+            </concept>
+            <concept>
+                <code value="T-C4582"/>
+                <display value="renal hilar lymph node"/>
+            </concept>
+            <concept>
+                <code value="T-C4460"/>
+                <display value="pyloric lymph node"/>
+            </concept>
+            <concept>
+                <code value="T-C4580"/>
+                <display value="retroperitoneal lymph node"/>
+            </concept>
+            <concept>
+                <code value="T-C421E"/>
+                <display value="superficial lateral cervical lymph node"/>
+            </concept>
+            <concept>
+                <code value="T-C421D"/>
+                <display value="inferior auricular lymph node"/>
+            </concept>
+            <concept>
+                <code value="T-C421A"/>
+                <display value="lower deep cervical lymph node"/>
+            </concept>
+            <concept>
+                <code value="T-C4219"/>
+                <display value="middle deep cervical lymph node"/>
+            </concept>
+            <concept>
+                <code value="T-C4218"/>
+                <display value="upper deep cervical lymph node"/>
+            </concept>
+            <concept>
+                <code value="T-C4217"/>
+                <display value="postauricular lymph node"/>
+            </concept>
+            <concept>
+                <code value="T-C4458"/>
+                <display value="gastro-omental lymph node"/>
+            </concept>
+            <concept>
+                <code value="T-C4216"/>
+                <display value="posterior triangle cervical lymph node"/>
+            </concept>
+            <concept>
+                <code value="T-C4456"/>
+                <display value="lymph node of greater curvature of stomach"/>
+            </concept>
+            <concept>
+                <code value="T-C4235"/>
+                <display value="upper jugular lymph node"/>
+            </concept>
+            <concept>
+                <code value="T-C4475"/>
+                <display value="pancreaticoduodenal lymph node"/>
+            </concept>
+            <concept>
+                <code value="T-C4474"/>
+                <display value="pancreatic lymph node"/>
+            </concept>
+            <concept>
+                <code value="T-C4110"/>
+                <display value="occipital lymph node"/>
+            </concept>
+            <concept>
+                <code value="T-C4473"/>
+                <display value="splenic lymph node"/>
+            </concept>
+            <concept>
+                <code value="T-C4352"/>
+                <display value="supramammary lymph node"/>
+            </concept>
+            <concept>
+                <code value="T-C4230"/>
+                <display value="jugular lymph node"/>
+            </concept>
+            <concept>
+                <code value="T-C4592"/>
+                <display value="appendicular lymph node"/>
+            </concept>
+            <concept>
+                <code value="T-C4350"/>
+                <display value="parasternal lymph node"/>
+            </concept>
+            <concept>
+                <code value="T-C4470"/>
+                <display value="pancreaticosplenic lymph node"/>
+            </concept>
+            <concept>
+                <code value="T-C4467"/>
+                <display value="retropyloric lymph node"/>
+            </concept>
+            <concept>
+                <code value="T-C4004"/>
+                <display value="lymph node of head and neck"/>
+            </concept>
+            <concept>
+                <code value="T-C4003"/>
+                <display value="regional lymph node"/>
+            </concept>
+            <concept>
+                <code value="T-C4002"/>
+                <display value="deep lymph node"/>
+            </concept>
+            <concept>
+                <code value="T-C4365"/>
+                <display value="esophageal lymph node"/>
+            </concept>
+            <concept>
+                <code value="T-C4244"/>
+                <display value="pretracheal lymph node"/>
+            </concept>
+            <concept>
+                <code value="T-C4001"/>
+                <display value="superficial lymph node"/>
+            </concept>
+            <concept>
+                <code value="T-C4000"/>
+                <display value="lymph node"/>
+            </concept>
+            <concept>
+                <code value="T-C4120"/>
+                <display value="posterior auricular lymph node"/>
+            </concept>
+            <concept>
+                <code value="T-C4362"/>
+                <display value="posterior mediastinal lymph node"/>
+            </concept>
+            <concept>
+                <code value="T-C4240"/>
+                <display value="anterior cervical lymph node"/>
+            </concept>
+            <concept>
+                <code value="T-C4361"/>
+                <display value="anterior mediastinal lymph node"/>
+            </concept>
+            <concept>
+                <code value="T-C4360"/>
+                <display value="mediastinal lymph node"/>
+            </concept>
+            <concept>
+                <code value="T-C4481"/>
+                <display value="superior pancreaticoduodenal lymph node"/>
+            </concept>
+            <concept>
+                <code value="T-C4480"/>
+                <display value="aortic lymph node"/>
+            </concept>
+            <concept>
+                <code value="T-C447F"/>
+                <display value="inferior pancreaticoduodenal lymph node"/>
+            </concept>
+            <concept>
+                <code value="T-C447E"/>
+                <display value="superior pancreatic lymph node"/>
+            </concept>
+            <concept>
+                <code value="T-C447D"/>
+                <display value="inferior pancreatic lymph node"/>
+            </concept>
+            <concept>
+                <code value="T-C447A"/>
+                <display value="peripancreatic lymph node"/>
+            </concept>
+            <concept>
+                <code value="T-C4238"/>
+                <display value="lateral jugular lymph node"/>
+            </concept>
+            <concept>
+                <code value="T-C4237"/>
+                <display value="lower jugular lymph node"/>
+            </concept>
+            <concept>
+                <code value="T-C4236"/>
+                <display value="middle jugular lymph node"/>
+            </concept>
+            <concept>
+                <code value="T-C4255"/>
+                <display value="lateral retropharyngeal lymph node"/>
+            </concept>
+            <concept>
+                <code value="T-C4254"/>
+                <display value="median retropharyngeal lymph node"/>
+            </concept>
+            <concept>
+                <code value="T-C4130"/>
+                <display value="anterior auricular lymph node"/>
+            </concept>
+            <concept>
+                <code value="T-C4250"/>
+                <display value="retropharyngeal lymph node"/>
+            </concept>
+            <concept>
+                <code value="T-C4370"/>
+                <display value="intercostal lymph node"/>
+            </concept>
+            <concept>
+                <code value="T-C4490"/>
+                <display value="lumbar lymph node"/>
+            </concept>
+            <concept>
+                <code value="T-C4801"/>
+                <display value="femoral lymph node"/>
+            </concept>
+            <concept>
+                <code value="T-C4800"/>
+                <display value="lower limb lymph node"/>
+            </concept>
+            <concept>
+                <code value="T-C4005"/>
+                <display value="lymph node of limb"/>
+            </concept>
+            <concept>
+                <code value="T-C4147"/>
+                <display value="intraglandular parotid lymph node"/>
+            </concept>
+            <concept>
+                <code value="T-C4146"/>
+                <display value="deep parotid lymph node"/>
+            </concept>
+            <concept>
+                <code value="T-C4145"/>
+                <display value="superficial parotid lymph node"/>
+            </concept>
+            <concept>
+                <code value="T-C4144"/>
+                <display value="superficial intraparotid lymph node"/>
+            </concept>
+            <concept>
+                <code value="T-C4143"/>
+                <display value="deep intraparotid lymph node"/>
+            </concept>
+            <concept>
+                <code value="T-C4263"/>
+                <display value="delphian lymph node"/>
+            </concept>
+            <concept>
+                <code value="T-C4140"/>
+                <display value="parotid lymph node"/>
+            </concept>
+            <concept>
+                <code value="T-C4260"/>
+                <display value="prelaryngeal lymph node"/>
+            </concept>
+            <concept>
+                <code value="T-C401A"/>
+                <display value="superficial anterior cervical lymph node"/>
+            </concept>
+            <concept>
+                <code value="T-C437C"/>
+                <display value="prepericardial lymph node"/>
+            </concept>
+            <concept>
+                <code value="T-C4019"/>
+                <display value="deep anterior cervical lymph node"/>
+            </concept>
+            <concept>
+                <code value="T-C4018"/>
+                <display value="deep lateral cervical lymph node"/>
+            </concept>
+            <concept>
+                <code value="T-C4810"/>
+                <display value="inguinal lymph node"/>
+            </concept>
+            <concept>
+                <code value="T-C4379"/>
+                <display value="tracheobronchial lymph node"/>
+            </concept>
+            <concept>
+                <code value="T-C4157"/>
+                <display value="submaxillary lymph node"/>
+            </concept>
+            <concept>
+                <code value="T-C4156"/>
+                <display value="nasolabial lymph node"/>
+            </concept>
+            <concept>
+                <code value="T-C4155"/>
+                <display value="buccinator lymph node"/>
+            </concept>
+            <concept>
+                <code value="T-C4154"/>
+                <display value="mastoid lymph node"/>
+            </concept>
+            <concept>
+                <code value="T-C4150"/>
+                <display value="facial lymph node"/>
+            </concept>
+            <concept>
+                <code value="T-C4822"/>
+                <display value="prefemoral lymph node"/>
+            </concept>
+            <concept>
+                <code value="T-C4700"/>
+                <display value="upper limb lymph node"/>
+            </concept>
+            <concept>
+                <code value="T-C4820"/>
+                <display value="deep inguinal lymph node"/>
+            </concept>
+            <concept>
+                <code value="T-C4840"/>
+                <display value="superficial inguinal lymph node"/>
+            </concept>
+            <concept>
+                <code value="T-C471F"/>
+                <display value="external mammary lymph node"/>
+            </concept>
+            <concept>
+                <code value="T-C471E"/>
+                <display value="axillary vein lymph node"/>
+            </concept>
+            <concept>
+                <code value="T-C4160"/>
+                <display value="submandibular lymph node"/>
+            </concept>
+            <concept>
+                <code value="T-C4280"/>
+                <display value="infraclavicular lymph node"/>
+            </concept>
+            <concept>
+                <code value="T-C3070"/>
+                <display value="hemolymph node"/>
+            </concept>
+            <concept>
+                <code value="T-C4710"/>
+                <display value="axillary lymph node"/>
+            </concept>
+            <concept>
+                <code value="T-C4730"/>
+                <display value="central axillary lymph node"/>
+            </concept>
+            <concept>
+                <code value="T-C4851"/>
+                <display value="deep popliteal lymph node"/>
+            </concept>
+            <concept>
+                <code value="T-C4850"/>
+                <display value="popliteal lymph node"/>
+            </concept>
+            <concept>
+                <code value="T-C46A5"/>
+                <display value="pararectal lymph node"/>
+            </concept>
+            <concept>
+                <code value="T-C4170"/>
+                <display value="submental lymph node"/>
+            </concept>
+            <concept>
+                <code value="T-C46A4"/>
+                <display value="paravaginal lymph node"/>
+            </concept>
+            <concept>
+                <code value="T-C4290"/>
+                <display value="scalene lymph node"/>
+            </concept>
+            <concept>
+                <code value="T-C46A1"/>
+                <display value="prevesicular lymph node"/>
+            </concept>
+            <concept>
+                <code value="T-C46A0"/>
+                <display value="paravesicular lymph node"/>
+            </concept>
+            <concept>
+                <code value="T-C4602"/>
+                <display value="lacunar lymph node"/>
+            </concept>
+            <concept>
+                <code value="T-C4843"/>
+                <display value="inferior inguinal lymph node"/>
+            </concept>
+            <concept>
+                <code value="T-C4722"/>
+                <display value="subclavian lymph node"/>
+            </concept>
+            <concept>
+                <code value="T-C4601"/>
+                <display value="vesicular lymph node"/>
+            </concept>
+            <concept>
+                <code value="T-C4600"/>
+                <display value="pelvic lymph node"/>
+            </concept>
+            <concept>
+                <code value="T-C4842"/>
+                <display value="superior lateral inguinal lymph node"/>
+            </concept>
+            <concept>
+                <code value="T-C4720"/>
+                <display value="lateral axillary lymph node"/>
+            </concept>
+            <concept>
+                <code value="T-C4841"/>
+                <display value="superior medial inguinal lymph node"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

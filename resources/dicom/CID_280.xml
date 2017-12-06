@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-280-LongitudinalTemporalEventTypes"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_280.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.1184"/>
+    </identifier>
+    <version value=""/>
+    <name value="LongitudinalTemporalEventTypes"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 280 LongitudinalTemporalEventTypes"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://dicom.nema.org/resources/ontology/DCM"/>
+            <concept>
+                <code value="121079"/>
+                <display value="Baseline"/>
+            </concept>
+        </include>
+        <include>
+            <system value="http://ncit.nci.nih.gov"/>
+            <concept>
+                <code value="C37948"/>
+                <display value="Enrollment"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

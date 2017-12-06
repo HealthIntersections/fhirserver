@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-6154-EchoPattern"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_6154.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.469"/>
+    </identifier>
+    <version value="20050822"/>
+    <name value="EchoPattern"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 6154 EchoPattern"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://dicom.nema.org/resources/ontology/DCM"/>
+            <concept>
+                <code value="111361"/>
+                <display value="Anechoic"/>
+            </concept>
+            <concept>
+                <code value="111362"/>
+                <display value="Hyperechoic"/>
+            </concept>
+            <concept>
+                <code value="111363"/>
+                <display value="Complex"/>
+            </concept>
+            <concept>
+                <code value="111364"/>
+                <display value="Hypoechoic"/>
+            </concept>
+            <concept>
+                <code value="111365"/>
+                <display value="Isoechoic"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

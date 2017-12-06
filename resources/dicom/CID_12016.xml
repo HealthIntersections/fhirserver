@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-12016-EstimatedFetalWeightPercentileEquationsandTables"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_12016.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.564"/>
+    </identifier>
+    <version value="20160525"/>
+    <name value="EstimatedFetalWeightPercentileEquationsandTables"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 12016 EstimatedFetalWeightPercentileEquationsandTables"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://dicom.nema.org/resources/ontology/DCM"/>
+            <concept>
+                <code value="128040"/>
+                <display value="FWP by GA, Campbell, 1991"/>
+            </concept>
+            <concept>
+                <code value="128041"/>
+                <display value="FWP by GA, Hadlock, 1991"/>
+            </concept>
+        </include>
+        <include>
+            <system value="http://loinc.org"/>
+            <concept>
+                <code value="33185-0"/>
+                <display value="FWP by GA, Alexander, 1996"/>
+            </concept>
+            <concept>
+                <code value="33184-3"/>
+                <display value="FWP by GA, Williams, 1982"/>
+            </concept>
+            <concept>
+                <code value="33199-1"/>
+                <display value="Male Twins BWP by GA, Arbuckle 1993"/>
+            </concept>
+            <concept>
+                <code value="33189-2"/>
+                <display value="FWP by GA, Brenner 1976"/>
+            </concept>
+            <concept>
+                <code value="33187-6"/>
+                <display value="Female Singleton BWP by GA, Arbuckle 1993"/>
+            </concept>
+            <concept>
+                <code value="33188-4"/>
+                <display value="Female Twins BWP by GA, Arbuckle 1993"/>
+            </concept>
+            <concept>
+                <code value="33186-8"/>
+                <display value="Male Singleton BWP by GA, Arbuckle 1993"/>
+            </concept>
+            <concept>
+                <code value="33190-0"/>
+                <display value="FWP by GA, Hadlock 1985"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

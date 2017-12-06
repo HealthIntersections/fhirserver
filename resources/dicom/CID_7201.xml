@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-7201-ReferencedImagePurposesofReference"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_7201.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.508"/>
+    </identifier>
+    <version value="20090409"/>
+    <name value="ReferencedImagePurposesofReference"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 7201 ReferencedImagePurposesofReference"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://dicom.nema.org/resources/ontology/DCM"/>
+            <concept>
+                <code value="121316"/>
+                <display value="Images related to standalone object"/>
+            </concept>
+            <concept>
+                <code value="121338"/>
+                <display value="Anatomic image"/>
+            </concept>
+            <concept>
+                <code value="121349"/>
+                <display value="Temporal Successor"/>
+            </concept>
+            <concept>
+                <code value="121317"/>
+                <display value="Spectroscopy"/>
+            </concept>
+            <concept>
+                <code value="121339"/>
+                <display value="Functional image"/>
+            </concept>
+            <concept>
+                <code value="121314"/>
+                <display value="Other image of biplane pair"/>
+            </concept>
+            <concept>
+                <code value="121347"/>
+                <display value="Volume corresponding to spatially-related acquisition frames"/>
+            </concept>
+            <concept>
+                <code value="121315"/>
+                <display value="Other image of stereoscopic pair"/>
+            </concept>
+            <concept>
+                <code value="121348"/>
+                <display value="Temporal Predecessor"/>
+            </concept>
+            <concept>
+                <code value="121312"/>
+                <display value="Biopsy localizer"/>
+            </concept>
+            <concept>
+                <code value="121313"/>
+                <display value="Other partial views"/>
+            </concept>
+            <concept>
+                <code value="121346"/>
+                <display value="Acquisition frames corresponding to volume"/>
+            </concept>
+            <concept>
+                <code value="121311"/>
+                <display value="Localizer"/>
+            </concept>
+            <concept>
+                <code value="121341"/>
+                <display value="Device localizer"/>
+            </concept>
+            <concept>
+                <code value="121340"/>
+                <display value="Spectral filtered image"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

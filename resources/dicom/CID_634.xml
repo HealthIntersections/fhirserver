@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-634-PhaseofAnimalHandling"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_634.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.1099"/>
+    </identifier>
+    <version value="20151110"/>
+    <name value="PhaseofAnimalHandling"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 634 PhaseofAnimalHandling"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://dicom.nema.org/resources/ontology/DCM"/>
+            <concept>
+                <code value="127101"/>
+                <display value="In home cage"/>
+            </concept>
+            <concept>
+                <code value="127102"/>
+                <display value="During transport"/>
+            </concept>
+            <concept>
+                <code value="127103"/>
+                <display value="Staging prior to imaging"/>
+            </concept>
+            <concept>
+                <code value="127104"/>
+                <display value="Preparation for imaging"/>
+            </concept>
+        </include>
+        <include>
+            <system value="http://snomed.info/srt"/>
+            <concept>
+                <code value="P0-0099A"/>
+                <display value="Imaging procedure"/>
+            </concept>
+            <concept>
+                <code value="P1-C0012"/>
+                <display value="Anesthesia induction"/>
+            </concept>
+        </include>
+        <include>
+            <system value="http://www.nlm.nih.gov/research/umls"/>
+            <concept>
+                <code value="C0002908"/>
+                <display value="Anesthesia recovery period"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

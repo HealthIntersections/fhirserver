@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-6057-DuctographyFindingsforBreast"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_6057.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.386"/>
+    </identifier>
+    <version value="20040112"/>
+    <name value="DuctographyFindingsforBreast"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 6057 DuctographyFindingsforBreast"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://dicom.nema.org/resources/ontology/DCM"/>
+            <concept>
+                <code value="111429"/>
+                <display value="Duct narrowing"/>
+            </concept>
+            <concept>
+                <code value="111287"/>
+                <display value="Normal breast tissue"/>
+            </concept>
+            <concept>
+                <code value="111430"/>
+                <display value="Cyst fill"/>
+            </concept>
+            <concept>
+                <code value="111425"/>
+                <display value="Intraluminal filling defect"/>
+            </concept>
+            <concept>
+                <code value="111426"/>
+                <display value="Multiple filling defect"/>
+            </concept>
+            <concept>
+                <code value="111427"/>
+                <display value="Abrupt duct termination"/>
+            </concept>
+            <concept>
+                <code value="111428"/>
+                <display value="Extravasation"/>
+            </concept>
+        </include>
+        <include>
+            <system value="http://snomed.info/srt"/>
+            <concept>
+                <code value="D7-90370"/>
+                <display value="Mammary duct ectasia"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

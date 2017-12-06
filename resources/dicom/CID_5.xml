@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-5-TransducerApproach"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_5.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.3"/>
+    </identifier>
+    <version value="20160314"/>
+    <name value="TransducerApproach"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 5 TransducerApproach"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://snomed.info/srt"/>
+            <concept>
+                <code value="R-40819"/>
+                <display value="Internal"/>
+            </concept>
+            <concept>
+                <code value="G-A171"/>
+                <display value="Capsular"/>
+            </concept>
+            <concept>
+                <code value="R-404CE"/>
+                <display value="Posterior"/>
+            </concept>
+            <concept>
+                <code value="G-A111"/>
+                <display value="Peripheral"/>
+            </concept>
+            <concept>
+                <code value="G-A110"/>
+                <display value="Central"/>
+            </concept>
+            <concept>
+                <code value="G-A599"/>
+                <display value="Ascending"/>
+            </concept>
+            <concept>
+                <code value="R-404CC"/>
+                <display value="Anterior"/>
+            </concept>
+            <concept>
+                <code value="T-D0048"/>
+                <display value="Lumen"/>
+            </concept>
+            <concept>
+                <code value="G-A117"/>
+                <display value="Transverse"/>
+            </concept>
+            <concept>
+                <code value="G-A119"/>
+                <display value="Distal"/>
+            </concept>
+            <concept>
+                <code value="G-A118"/>
+                <display value="Proximal"/>
+            </concept>
+            <concept>
+                <code value="R-4094A"/>
+                <display value="Inferior"/>
+            </concept>
+            <concept>
+                <code value="R-42191"/>
+                <display value="Superior"/>
+            </concept>
+            <concept>
+                <code value="R-40941"/>
+                <display value="External"/>
+            </concept>
+            <concept>
+                <code value="G-A100"/>
+                <display value="Right"/>
+            </concept>
+            <concept>
+                <code value="G-A122"/>
+                <display value="Apical"/>
+            </concept>
+            <concept>
+                <code value="G-A188"/>
+                <display value="Mid-longitudinal"/>
+            </concept>
+            <concept>
+                <code value="G-4022"/>
+                <display value="Contact with"/>
+            </concept>
+            <concept>
+                <code value="G-A101"/>
+                <display value="Left"/>
+            </concept>
+            <concept>
+                <code value="G-A189"/>
+                <display value="Parasagittal"/>
+            </concept>
+            <concept>
+                <code value="G-A104"/>
+                <display value="Lateral"/>
+            </concept>
+            <concept>
+                <code value="A-2C600"/>
+                <display value="External prosthesis for sonographic procedure [Stand-off]"/>
+            </concept>
+            <concept>
+                <code value="A-2C602"/>
+                <display value="Water bag prosthesis for imaging procedure"/>
+            </concept>
+            <concept>
+                <code value="G-A600"/>
+                <display value="Descending"/>
+            </concept>
+            <concept>
+                <code value="G-A108"/>
+                <display value="Caudal"/>
+            </concept>
+            <concept>
+                <code value="A-2C604"/>
+                <display value="Saline bag prosthesis for imaging procedure"/>
+            </concept>
+            <concept>
+                <code value="G-A206"/>
+                <display value="Surface"/>
+            </concept>
+            <concept>
+                <code value="G-A107"/>
+                <display value="Cranial"/>
+            </concept>
+            <concept>
+                <code value="A-2C606"/>
+                <display value="Gel prosthesis for imaging procedure"/>
+            </concept>
+            <concept>
+                <code value="R-42142"/>
+                <display value="Intraluminal"/>
+            </concept>
+            <concept>
+                <code value="T-A1280"/>
+                <display value="Pia mater"/>
+            </concept>
+            <concept>
+                <code value="T-D0062"/>
+                <display value="Parenchyma"/>
+            </concept>
+            <concept>
+                <code value="T-03000"/>
+                <display value="Subcutaneous tissue"/>
+            </concept>
+            <concept>
+                <code value="T-A1120"/>
+                <display value="Dura mater"/>
+            </concept>
+            <concept>
+                <code value="G-A10A"/>
+                <display value="Midline"/>
+            </concept>
+            <concept>
+                <code value="R-404D5"/>
+                <display value="Medial"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

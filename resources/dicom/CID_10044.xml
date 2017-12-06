@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-10044-RadiosensitiveOrgans"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_10044.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.976"/>
+    </identifier>
+    <version value="20170914"/>
+    <name value="RadiosensitiveOrgans"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 10044 RadiosensitiveOrgans"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://snomed.info/srt"/>
+            <concept>
+                <code value="T-92000"/>
+                <display value="Prostate"/>
+            </concept>
+            <concept>
+                <code value="T-94000"/>
+                <display value="Testis"/>
+            </concept>
+            <concept>
+                <code value="T-C4000"/>
+                <display value="Lymph node"/>
+            </concept>
+            <concept>
+                <code value="T-65000"/>
+                <display value="Pancreas"/>
+            </concept>
+            <concept>
+                <code value="T-71000"/>
+                <display value="Kidney"/>
+            </concept>
+            <concept>
+                <code value="T-63000"/>
+                <display value="Gallbladder"/>
+            </concept>
+            <concept>
+                <code value="T-13001"/>
+                <display value="Muscle"/>
+            </concept>
+            <concept>
+                <code value="T-B6000"/>
+                <display value="Thyroid"/>
+            </concept>
+            <concept>
+                <code value="T-56000"/>
+                <display value="Esophagus"/>
+            </concept>
+            <concept>
+                <code value="T-58000"/>
+                <display value="Small intestine"/>
+            </concept>
+            <concept>
+                <code value="T-04000"/>
+                <display value="Breast"/>
+            </concept>
+            <concept>
+                <code value="T-61007"/>
+                <display value="Salivary Glands"/>
+            </concept>
+            <concept>
+                <code value="T-A0100"/>
+                <display value="Brain"/>
+            </concept>
+            <concept>
+                <code value="T-C3000"/>
+                <display value="Spleen"/>
+            </concept>
+            <concept>
+                <code value="T-C1000"/>
+                <display value="Bone Marrow"/>
+            </concept>
+            <concept>
+                <code value="T-D0859"/>
+                <display value="Bone Surface"/>
+            </concept>
+            <concept>
+                <code value="T-87000"/>
+                <display value="Ovary"/>
+            </concept>
+            <concept>
+                <code value="T-B3000"/>
+                <display value="Adrenal gland"/>
+            </concept>
+            <concept>
+                <code value="T-51300"/>
+                <display value="Oral mucosa"/>
+            </concept>
+            <concept>
+                <code value="T-32000"/>
+                <display value="Heart"/>
+            </concept>
+            <concept>
+                <code value="T-57000"/>
+                <display value="Stomach"/>
+            </concept>
+            <concept>
+                <code value="T-83000"/>
+                <display value="Uterus"/>
+            </concept>
+            <concept>
+                <code value="T-C8000"/>
+                <display value="Thymus"/>
+            </concept>
+            <concept>
+                <code value="T-59300"/>
+                <display value="Colon"/>
+            </concept>
+            <concept>
+                <code value="T-62000"/>
+                <display value="Liver"/>
+            </concept>
+            <concept>
+                <code value="T-28000"/>
+                <display value="Lung"/>
+            </concept>
+            <concept>
+                <code value="T-74000"/>
+                <display value="Bladder"/>
+            </concept>
+            <concept>
+                <code value="T-01000"/>
+                <display value="Skin"/>
+            </concept>
+            <concept>
+                <code value="T-AA700"/>
+                <display value="Eye lenses"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-3515-SpecimenCollection"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_3515.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.136"/>
+    </identifier>
+    <version value="20030327"/>
+    <name value="SpecimenCollection"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 3515 SpecimenCollection"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://snomed.info/srt"/>
+            <concept>
+                <code value="PA-2011E"/>
+                <display value="blood sampling from extracorporeal blood circuit"/>
+            </concept>
+            <concept>
+                <code value="P3-02000"/>
+                <display value="specimen collection"/>
+            </concept>
+            <concept>
+                <code value="PA-20110"/>
+                <display value="collection of blood specimen for laboratory"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

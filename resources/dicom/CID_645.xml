@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-645-ExogenousSubstanceTissueofOrigin"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_645.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.1110"/>
+    </identifier>
+    <version value="20170914"/>
+    <name value="ExogenousSubstanceTissueofOrigin"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 645 ExogenousSubstanceTissueofOrigin"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://dicom.nema.org/resources/ontology/DCM"/>
+            <concept>
+                <code value="127801"/>
+                <display value="Embryonic kidney"/>
+            </concept>
+        </include>
+        <include>
+            <system value="http://snomed.info/srt"/>
+            <concept>
+                <code value="T-92000"/>
+                <display value="Prostate"/>
+            </concept>
+            <concept>
+                <code value="T-C4000"/>
+                <display value="Lymph Node"/>
+            </concept>
+            <concept>
+                <code value="T-71000"/>
+                <display value="Kidney"/>
+            </concept>
+            <concept>
+                <code value="D2-F1106"/>
+                <display value="Pulmonary metastasis"/>
+            </concept>
+            <concept>
+                <code value="T-87000"/>
+                <display value="Ovary"/>
+            </concept>
+            <concept>
+                <code value="DF-00436"/>
+                <display value="Metastasis"/>
+            </concept>
+            <concept>
+                <code value="T-D04AC"/>
+                <display value="Ascitic fluid"/>
+            </concept>
+            <concept>
+                <code value="D2-80100"/>
+                <display value="Pleural effusion"/>
+            </concept>
+            <concept>
+                <code value="T-A0090"/>
+                <display value="Central nervous system"/>
+            </concept>
+            <concept>
+                <code value="T-59300"/>
+                <display value="Colon"/>
+            </concept>
+            <concept>
+                <code value="T-28000"/>
+                <display value="Lung"/>
+            </concept>
+            <concept>
+                <code value="T-C6020"/>
+                <display value="Lymph"/>
+            </concept>
+            <concept>
+                <code value="T-D03C2"/>
+                <display value="Lymphatic tissue"/>
+            </concept>
+            <concept>
+                <code value="T-D016E"/>
+                <display value="Bone"/>
+            </concept>
+            <concept>
+                <code value="T-04000"/>
+                <display value="Breast"/>
+            </concept>
+            <concept>
+                <code value="T-A0100"/>
+                <display value="Brain"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

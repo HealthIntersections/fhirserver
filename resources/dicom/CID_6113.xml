@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-6113-MediastinumAnatomyFindingorFeature"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_6113.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.433"/>
+    </identifier>
+    <version value="20130617"/>
+    <name value="MediastinumAnatomyFindingorFeature"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 6113 MediastinumAnatomyFindingorFeature"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://dicom.nema.org/resources/ontology/DCM"/>
+            <concept>
+                <code value="112095"/>
+                <display value="Hiatus"/>
+            </concept>
+            <concept>
+                <code value="112090"/>
+                <display value="Azygoesophageal recess interface"/>
+            </concept>
+            <concept>
+                <code value="112091"/>
+                <display value="Paraspinal line"/>
+            </concept>
+            <concept>
+                <code value="112092"/>
+                <display value="Posterior tracheal stripe"/>
+            </concept>
+            <concept>
+                <code value="112093"/>
+                <display value="Right tracheal stripe"/>
+            </concept>
+            <concept>
+                <code value="112094"/>
+                <display value="Stripe"/>
+            </concept>
+        </include>
+        <include>
+            <system value="http://snomed.info/srt"/>
+            <concept>
+                <code value="T-C4000"/>
+                <display value="Lymph node"/>
+            </concept>
+            <concept>
+                <code value="T-14171"/>
+                <display value="Trapezius muscle"/>
+            </concept>
+            <concept>
+                <code value="T-15420"/>
+                <display value="Acromioclavicular Joint"/>
+            </concept>
+            <concept>
+                <code value="T-18774"/>
+                <display value="Axillary Fascia"/>
+            </concept>
+            <concept>
+                <code value="T-11240"/>
+                <display value="Costal Cartilage"/>
+            </concept>
+            <concept>
+                <code value="T-B6000"/>
+                <display value="Thyroid"/>
+            </concept>
+            <concept>
+                <code value="T-B4000"/>
+                <display value="Carotid Body"/>
+            </concept>
+            <concept>
+                <code value="T-D3412"/>
+                <display value="Esophageal Hiatus"/>
+            </concept>
+            <concept>
+                <code value="D4-31220"/>
+                <display value="Atrial Septal Defect"/>
+            </concept>
+            <concept>
+                <code value="T-35400"/>
+                <display value="Aortic Valve"/>
+            </concept>
+            <concept>
+                <code value="T-56000"/>
+                <display value="Esophagus"/>
+            </concept>
+            <concept>
+                <code value="T-35200"/>
+                <display value="Pulmonary valve"/>
+            </concept>
+            <concept>
+                <code value="T-35300"/>
+                <display value="Mitral Valve"/>
+            </concept>
+            <concept>
+                <code value="T-35100"/>
+                <display value="Tricuspid Valve"/>
+            </concept>
+            <concept>
+                <code value="T-25000"/>
+                <display value="Trachea"/>
+            </concept>
+            <concept>
+                <code value="T-25201"/>
+                <display value="Carina"/>
+            </concept>
+            <concept>
+                <code value="T-C6510"/>
+                <display value="Thoracic Duct"/>
+            </concept>
+            <concept>
+                <code value="T-42370"/>
+                <display value="Ligamentum arteriosum"/>
+            </concept>
+            <concept>
+                <code value="T-D0634"/>
+                <display value="Fascial layer"/>
+            </concept>
+            <concept>
+                <code value="T-32400"/>
+                <display value="Ventricle"/>
+            </concept>
+            <concept>
+                <code value="T-32000"/>
+                <display value="Heart"/>
+            </concept>
+            <concept>
+                <code value="T-32100"/>
+                <display value="Atrium"/>
+            </concept>
+            <concept>
+                <code value="T-C8000"/>
+                <display value="Thymus Gland"/>
+            </concept>
+            <concept>
+                <code value="T-26100"/>
+                <display value="Right main bronchus"/>
+            </concept>
+            <concept>
+                <code value="T-26500"/>
+                <display value="Left main bronchus"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-7160-PelvicOrganSegmentationTypes"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_7160.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.506"/>
+    </identifier>
+    <version value="20130617"/>
+    <name value="PelvicOrganSegmentationTypes"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 7160 PelvicOrganSegmentationTypes"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://snomed.info/srt"/>
+            <concept>
+                <code value="T-92000"/>
+                <display value="Prostate"/>
+            </concept>
+            <concept>
+                <code value="T-90020"/>
+                <display value="Male internal genitalia"/>
+            </concept>
+            <concept>
+                <code value="T-93000"/>
+                <display value="Seminal Vesicle"/>
+            </concept>
+            <concept>
+                <code value="T-94000"/>
+                <display value="Testis"/>
+            </concept>
+            <concept>
+                <code value="T-90010"/>
+                <display value="Male external genitalia"/>
+            </concept>
+            <concept>
+                <code value="T-87000"/>
+                <display value="Ovary"/>
+            </concept>
+            <concept>
+                <code value="T-88000"/>
+                <display value="Fallopian tube"/>
+            </concept>
+            <concept>
+                <code value="T-83200"/>
+                <display value="Cervix"/>
+            </concept>
+            <concept>
+                <code value="T-80020"/>
+                <display value="Female internal genitalia"/>
+            </concept>
+            <concept>
+                <code value="T-80010"/>
+                <display value="Female external genitalia"/>
+            </concept>
+            <concept>
+                <code value="T-82000"/>
+                <display value="Vagina"/>
+            </concept>
+            <concept>
+                <code value="T-59600"/>
+                <display value="Rectum"/>
+            </concept>
+            <concept>
+                <code value="T-83000"/>
+                <display value="Uterus"/>
+            </concept>
+            <concept>
+                <code value="T-74000"/>
+                <display value="Bladder"/>
+            </concept>
+            <concept>
+                <code value="T-96000"/>
+                <display value="Vas deferens"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

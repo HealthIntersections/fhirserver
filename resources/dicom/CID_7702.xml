@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-7702-ProjectionandThalamicFibers"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_7702.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.1014"/>
+    </identifier>
+    <version value="20160314"/>
+    <name value="ProjectionandThalamicFibers"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 7702 ProjectionandThalamicFibers"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://braininfo.rprc.washington.edu/aboutBrainInfo.aspx#NeuroNames"/>
+            <concept>
+                <code value="1319"/>
+                <display value="corticobulbar tract"/>
+            </concept>
+            <concept>
+                <code value="1726"/>
+                <display value="anterior thalamic radiation"/>
+            </concept>
+            <concept>
+                <code value="3473"/>
+                <display value="superior optic radiation (Baum's loop)"/>
+            </concept>
+            <concept>
+                <code value="1320"/>
+                <display value="corticospinal tract"/>
+            </concept>
+            <concept>
+                <code value="1466"/>
+                <display value="inferior optic radiation (Meyer's loop)"/>
+            </concept>
+            <concept>
+                <code value="2081"/>
+                <display value="superior thalamic radiation"/>
+            </concept>
+            <concept>
+                <code value="2082"/>
+                <display value="inferior thalamic radiation"/>
+            </concept>
+            <concept>
+                <code value="2083"/>
+                <display value="posterior thalamic radiation"/>
+            </concept>
+        </include>
+        <include>
+            <system value="http://snomed.info/srt"/>
+            <concept>
+                <code value="T-A3800"/>
+                <display value="external capsule"/>
+            </concept>
+            <concept>
+                <code value="T-A3700"/>
+                <display value="internal capsule"/>
+            </concept>
+            <concept>
+                <code value="T-D0829"/>
+                <display value="auditory radiation"/>
+            </concept>
+            <concept>
+                <code value="T-A2880"/>
+                <display value="optic radiation"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

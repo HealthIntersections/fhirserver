@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-1003-AnatomicalReferenceBasisSpine"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_1003.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.1124"/>
+    </identifier>
+    <version value="20160905"/>
+    <name value="AnatomicalReferenceBasisSpine"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 1003 AnatomicalReferenceBasisSpine"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://snomed.info/srt"/>
+            <concept>
+                <code value="T-D009D"/>
+                <display value="Level of T12/L1 intervertebral disc"/>
+            </concept>
+            <concept>
+                <code value="T-D008C"/>
+                <display value="Level of T3/T4 intervertebral disc"/>
+            </concept>
+            <concept>
+                <code value="T-D009C"/>
+                <display value="Level of C7/T1 intervertebral disc"/>
+            </concept>
+            <concept>
+                <code value="T-D008B"/>
+                <display value="Level of T2/T3 intervertebral disc"/>
+            </concept>
+            <concept>
+                <code value="T-D009A"/>
+                <display value="Level of L4/L5 intervertebral disc"/>
+            </concept>
+            <concept>
+                <code value="T-D005D"/>
+                <display value="Level of C2/C3 intervertebral disc"/>
+            </concept>
+            <concept>
+                <code value="T-D007F"/>
+                <display value="Level of T1/T2 intervertebral disc"/>
+            </concept>
+            <concept>
+                <code value="T-D008F"/>
+                <display value="Level of T6/T7 intervertebral disc"/>
+            </concept>
+            <concept>
+                <code value="T-D007D"/>
+                <display value="Level of C6/C7 intervertebral disc"/>
+            </concept>
+            <concept>
+                <code value="T-D008E"/>
+                <display value="Level of T5/T6 intervertebral disc"/>
+            </concept>
+            <concept>
+                <code value="T-D007C"/>
+                <display value="Level of C5/C6 intervertebral disc"/>
+            </concept>
+            <concept>
+                <code value="T-D009E"/>
+                <display value="Level of L5/S1 intervertebral disc"/>
+            </concept>
+            <concept>
+                <code value="T-D008D"/>
+                <display value="Level of T4/T5 intervertebral disc"/>
+            </concept>
+            <concept>
+                <code value="T-D0099"/>
+                <display value="Level of L3/L4 intervertebral disc"/>
+            </concept>
+            <concept>
+                <code value="T-D0094"/>
+                <display value="Level of T10/T11 intervertebral disc"/>
+            </concept>
+            <concept>
+                <code value="T-11610"/>
+                <display value="C1 vertebra"/>
+            </concept>
+            <concept>
+                <code value="T-D0093"/>
+                <display value="Level of T9/T10 intervertebral disc"/>
+            </concept>
+            <concept>
+                <code value="T-D0092"/>
+                <display value="Level of T8/T9 intervertebral disc"/>
+            </concept>
+            <concept>
+                <code value="T-D0091"/>
+                <display value="Level of T7/T8 intervertebral disc"/>
+            </concept>
+            <concept>
+                <code value="T-D0098"/>
+                <display value="Level of L2/L3 intervertebral disc"/>
+            </concept>
+            <concept>
+                <code value="T-D0097"/>
+                <display value="Level of L1/L2 intervertebral disc"/>
+            </concept>
+            <concept>
+                <code value="T-D0095"/>
+                <display value="Level of T11/T12 intervertebral disc"/>
+            </concept>
+            <concept>
+                <code value="T-D005F"/>
+                <display value="Level of C4/C5 intervertebral disc"/>
+            </concept>
+            <concept>
+                <code value="T-D005E"/>
+                <display value="Level of C3/C4 intervertebral disc"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

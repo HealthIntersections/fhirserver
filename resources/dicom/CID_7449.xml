@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-7449-ReaderSpecialty"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_7449.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.1119"/>
+    </identifier>
+    <version value="20160601"/>
+    <name value="ReaderSpecialty"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 7449 ReaderSpecialty"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://dicom.nema.org/resources/ontology/DCM"/>
+            <concept>
+                <code value="128013"/>
+                <display value="Oncologic Imaging Specialty"/>
+            </concept>
+            <concept>
+                <code value="128012"/>
+                <display value="OB/Gyn Imaging Specialty"/>
+            </concept>
+            <concept>
+                <code value="128015"/>
+                <display value="Thoracic Imaging Specialty"/>
+            </concept>
+            <concept>
+                <code value="128014"/>
+                <display value="Oncology Specialty"/>
+            </concept>
+            <concept>
+                <code value="128006"/>
+                <display value="Abdominal Imaging Specialty"/>
+            </concept>
+            <concept>
+                <code value="128017"/>
+                <display value="Vascular Imaging Specialty"/>
+            </concept>
+            <concept>
+                <code value="128016"/>
+                <display value="Pediatric Imaging Specialty"/>
+            </concept>
+            <concept>
+                <code value="128008"/>
+                <display value="Head and Neck Imaging Specialty"/>
+            </concept>
+            <concept>
+                <code value="128007"/>
+                <display value="Cardiac Imaging Specialty"/>
+            </concept>
+            <concept>
+                <code value="128009"/>
+                <display value="Musculoskeletal Imaging Specialty"/>
+            </concept>
+            <concept>
+                <code value="128011"/>
+                <display value="Neuroradiology Imaging Specialty"/>
+            </concept>
+            <concept>
+                <code value="128010"/>
+                <display value="Neurology Specialty"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

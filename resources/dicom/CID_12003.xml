@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-12003-OBGYNDates"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_12003.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.552"/>
+    </identifier>
+    <version value="20030130"/>
+    <name value="OBGYNDates"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 12003 OBGYNDates"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://loinc.org"/>
+            <concept>
+                <code value="33067-0"/>
+                <display value="Conception Date"/>
+            </concept>
+            <concept>
+                <code value="33066-2"/>
+                <display value="Estimated LMP by EDD"/>
+            </concept>
+            <concept>
+                <code value="11781-2"/>
+                <display value="EDD from average ultrasound age"/>
+            </concept>
+            <concept>
+                <code value="11780-4"/>
+                <display value="EDD from ovulation date"/>
+            </concept>
+            <concept>
+                <code value="11778-8"/>
+                <display value="EDD"/>
+            </concept>
+            <concept>
+                <code value="11955-2"/>
+                <display value="LMP"/>
+            </concept>
+            <concept>
+                <code value="11779-6"/>
+                <display value="EDD from LMP"/>
+            </concept>
+            <concept>
+                <code value="11976-8"/>
+                <display value="Ovulation date"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

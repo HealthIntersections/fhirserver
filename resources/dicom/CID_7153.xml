@@ -1,0 +1,277 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-7153-CNSSegmentationTypes"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_7153.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.499"/>
+    </identifier>
+    <version value="20170914"/>
+    <name value="CNSSegmentationTypes"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 7153 CNSSegmentationTypes"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://sig.biostr.washington.edu/projects/fm/AboutFM.html"/>
+            <concept>
+                <code value="276650"/>
+                <display value="Arcuate Fasciculus"/>
+            </concept>
+        </include>
+        <include>
+            <system value="http://snomed.info/srt"/>
+            <concept>
+                <code value="T-A1500"/>
+                <display value="Subarachnoid space"/>
+            </concept>
+            <concept>
+                <code value="T-A2830"/>
+                <display value="Uncinate fasciculus"/>
+            </concept>
+            <concept>
+                <code value="T-A1820"/>
+                <display value="Fourth ventricle"/>
+            </concept>
+            <concept>
+                <code value="T-A6080"/>
+                <display value="Cerebellar white matter"/>
+            </concept>
+            <concept>
+                <code value="T-A8060"/>
+                <display value="Optic tract"/>
+            </concept>
+            <concept>
+                <code value="T-B2000"/>
+                <display value="Pineal Gland"/>
+            </concept>
+            <concept>
+                <code value="T-A7010"/>
+                <display value="Spinal cord"/>
+            </concept>
+            <concept>
+                <code value="T-A7093"/>
+                <display value="Lateral corticospinal tract"/>
+            </concept>
+            <concept>
+                <code value="T-A5271"/>
+                <display value="Medial Lemniscus"/>
+            </concept>
+            <concept>
+                <code value="T-A2880"/>
+                <display value="Optic radiation"/>
+            </concept>
+            <concept>
+                <code value="T-A2840"/>
+                <display value="Cingulum"/>
+            </concept>
+            <concept>
+                <code value="T-A6640"/>
+                <display value="Inferior cerebellar peduncle"/>
+            </concept>
+            <concept>
+                <code value="T-A1110"/>
+                <display value="Meninges"/>
+            </concept>
+            <concept>
+                <code value="T-A2400"/>
+                <display value="Occipital lobe"/>
+            </concept>
+            <concept>
+                <code value="T-A0100"/>
+                <display value="Brain"/>
+            </concept>
+            <concept>
+                <code value="T-A2200"/>
+                <display value="Frontal lobe"/>
+            </concept>
+            <concept>
+                <code value="T-A0103"/>
+                <display value="Telencephalon"/>
+            </concept>
+            <concept>
+                <code value="T-A0102"/>
+                <display value="Diencephalon"/>
+            </concept>
+            <concept>
+                <code value="T-A0149"/>
+                <display value="Nucleus accumbens"/>
+            </concept>
+            <concept>
+                <code value="T-A4904"/>
+                <display value="Posterior cerebral commissure"/>
+            </concept>
+            <concept>
+                <code value="T-A0109"/>
+                <display value="Brain cerebrospinal fluid pathway"/>
+            </concept>
+            <concept>
+                <code value="T-B1200"/>
+                <display value="Neurohypophysis"/>
+            </concept>
+            <concept>
+                <code value="T-A7020"/>
+                <display value="Spinal cord gray matter"/>
+            </concept>
+            <concept>
+                <code value="T-A5160"/>
+                <display value="Substantia nigra"/>
+            </concept>
+            <concept>
+                <code value="T-B1000"/>
+                <display value="Pituitary"/>
+            </concept>
+            <concept>
+                <code value="T-A1280"/>
+                <display value="Pia mater"/>
+            </concept>
+            <concept>
+                <code value="T-A3100"/>
+                <display value="Corpus striatum"/>
+            </concept>
+            <concept>
+                <code value="T-A1120"/>
+                <display value="Dura mater"/>
+            </concept>
+            <concept>
+                <code value="T-A2570"/>
+                <display value="Hippocampus"/>
+            </concept>
+            <concept>
+                <code value="T-A2850"/>
+                <display value="Inferior longitudinal fasciculus"/>
+            </concept>
+            <concept>
+                <code value="T-A1000"/>
+                <display value="Cerebrospinal Fluid"/>
+            </concept>
+            <concept>
+                <code value="T-A3500"/>
+                <display value="Globus pallidus"/>
+            </concept>
+            <concept>
+                <code value="T-A2970"/>
+                <display value="Cerebral fornix"/>
+            </concept>
+            <concept>
+                <code value="T-A0036"/>
+                <display value="Limbic lobe"/>
+            </concept>
+            <concept>
+                <code value="T-A2610"/>
+                <display value="Insula"/>
+            </concept>
+            <concept>
+                <code value="T-A1600"/>
+                <display value="Brain ventricle"/>
+            </concept>
+            <concept>
+                <code value="T-A1800"/>
+                <display value="Cerebral aqueduct"/>
+            </concept>
+            <concept>
+                <code value="T-A7070"/>
+                <display value="Spinal cord white matter"/>
+            </concept>
+            <concept>
+                <code value="T-D0721"/>
+                <display value="Spinal cerebrospinal fluid pathway"/>
+            </concept>
+            <concept>
+                <code value="T-A4000"/>
+                <display value="Thalamus"/>
+            </concept>
+            <concept>
+                <code value="T-A3230"/>
+                <display value="Amygdala"/>
+            </concept>
+            <concept>
+                <code value="T-A2020"/>
+                <display value="Cerebral cortex"/>
+            </concept>
+            <concept>
+                <code value="T-A1650"/>
+                <display value="Lateral ventricle"/>
+            </concept>
+            <concept>
+                <code value="T-A2300"/>
+                <display value="Parietal lobe"/>
+            </concept>
+            <concept>
+                <code value="T-A6620"/>
+                <display value="Superior cerebellar peduncle"/>
+            </concept>
+            <concept>
+                <code value="T-A2700"/>
+                <display value="Corpus callosum"/>
+            </concept>
+            <concept>
+                <code value="T-A2500"/>
+                <display value="Temporal lobe"/>
+            </concept>
+            <concept>
+                <code value="T-D0558"/>
+                <display value="Brain stem"/>
+            </concept>
+            <concept>
+                <code value="T-A800B"/>
+                <display value="Optic chiasm"/>
+            </concept>
+            <concept>
+                <code value="T-A2820"/>
+                <display value="Superior longitudinal fasciculus"/>
+            </concept>
+            <concept>
+                <code value="T-B1100"/>
+                <display value="Adenohypophysis"/>
+            </concept>
+            <concept>
+                <code value="T-A0090"/>
+                <display value="Central nervous system"/>
+            </concept>
+            <concept>
+                <code value="T-A0095"/>
+                <display value="White Matter"/>
+            </concept>
+            <concept>
+                <code value="T-A2594"/>
+                <display value="Entorhinal Cortex"/>
+            </concept>
+            <concept>
+                <code value="T-A2030"/>
+                <display value="Cerebral White Matter"/>
+            </concept>
+            <concept>
+                <code value="T-A5100"/>
+                <display value="Midbrain"/>
+            </concept>
+            <concept>
+                <code value="T-A0096"/>
+                <display value="Gray Matter"/>
+            </concept>
+            <concept>
+                <code value="T-A3400"/>
+                <display value="Putamen"/>
+            </concept>
+            <concept>
+                <code value="T-A1220"/>
+                <display value="Arachnoid"/>
+            </concept>
+            <concept>
+                <code value="T-A3200"/>
+                <display value="Caudate nucleus"/>
+            </concept>
+            <concept>
+                <code value="T-A6630"/>
+                <display value="Middle cerebellar peduncle"/>
+            </concept>
+            <concept>
+                <code value="T-A1740"/>
+                <display value="Third ventricle"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

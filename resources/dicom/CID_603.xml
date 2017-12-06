@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-603-AnimalRoomTypes"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_603.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.1068"/>
+    </identifier>
+    <version value="20151110"/>
+    <name value="AnimalRoomTypes"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 603 AnimalRoomTypes"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://dicom.nema.org/resources/ontology/DCM"/>
+            <concept>
+                <code value="127370"/>
+                <display value="Animal housing room"/>
+            </concept>
+            <concept>
+                <code value="127371"/>
+                <display value="Preparation room"/>
+            </concept>
+            <concept>
+                <code value="127372"/>
+                <display value="Imaging procedure room"/>
+            </concept>
+        </include>
+        <include>
+            <system value="http://snomed.info/srt"/>
+            <concept>
+                <code value="R-305D6"/>
+                <display value="Induction room"/>
+            </concept>
+            <concept>
+                <code value="R-305C3"/>
+                <display value="Recovery room"/>
+            </concept>
+            <concept>
+                <code value="R-305D3"/>
+                <display value="Isolation room"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

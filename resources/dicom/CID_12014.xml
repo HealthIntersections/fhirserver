@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-12014-OBFetalBodyWeightEquationsandTables"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_12014.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.562"/>
+    </identifier>
+    <version value="20030130"/>
+    <name value="OBFetalBodyWeightEquationsandTables"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 12014 OBFetalBodyWeightEquationsandTables"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://loinc.org"/>
+            <concept>
+                <code value="11754-9"/>
+                <display value="EFW by AC, HC Hadlock 1984"/>
+            </concept>
+            <concept>
+                <code value="11735-8"/>
+                <display value="EFW by AC, BPD, FL, Hadlock 1985"/>
+            </concept>
+            <concept>
+                <code value="33139-7"/>
+                <display value="EFW by BPD, TTD, Hansmann 1986"/>
+            </concept>
+            <concept>
+                <code value="11732-5"/>
+                <display value="EFW by AC, BPD, FL, HC, Hadlock 1985"/>
+            </concept>
+            <concept>
+                <code value="11746-5"/>
+                <display value="EFW by AC, FL, HC, Hadlock 1985"/>
+            </concept>
+            <concept>
+                <code value="11738-2"/>
+                <display value="EFW by AC, BPD, Hadlock 1984"/>
+            </concept>
+            <concept>
+                <code value="11756-4"/>
+                <display value="EFW by AC, Campbell 1975"/>
+            </concept>
+            <concept>
+                <code value="11739-0"/>
+                <display value="EFW by AC and BPD, Shepard 1982"/>
+            </concept>
+            <concept>
+                <code value="11750-7"/>
+                <display value="EFW by AC, FL, Hadlock 1984"/>
+            </concept>
+            <concept>
+                <code value="33143-9"/>
+                <display value="EFW3 by Shinozuka 1996"/>
+            </concept>
+            <concept>
+                <code value="33144-7"/>
+                <display value="EFW by BPD, APAD, TAD, FL, Tokyo 1987"/>
+            </concept>
+            <concept>
+                <code value="11734-1"/>
+                <display value="EFW by AC, BPD, FL, Hadlock 1984"/>
+            </concept>
+            <concept>
+                <code value="11751-5"/>
+                <display value="EFW by AC, FL, Hadlock 1985"/>
+            </concept>
+            <concept>
+                <code value="33140-5"/>
+                <display value="EFW by BPD, FTA, FL, Osaka 1990"/>
+            </concept>
+            <concept>
+                <code value="33141-3"/>
+                <display value="EFW1 by Shinozuka 1996"/>
+            </concept>
+            <concept>
+                <code value="33142-1"/>
+                <display value="EFW2 by Shinozuka 1996"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

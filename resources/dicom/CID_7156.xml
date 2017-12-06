@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-7156-VascularSegmentationTypes"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_7156.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.502"/>
+    </identifier>
+    <version value="20160314"/>
+    <name value="VascularSegmentationTypes"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 7156 VascularSegmentationTypes"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://snomed.info/srt"/>
+            <concept>
+                <code value="T-1A170"/>
+                <display value="Intima"/>
+            </concept>
+            <concept>
+                <code value="T-1A180"/>
+                <display value="Media"/>
+            </concept>
+            <concept>
+                <code value="T-1A190"/>
+                <display value="Adventitia"/>
+            </concept>
+            <concept>
+                <code value="T-30000"/>
+                <display value="Cardiovascular system"/>
+            </concept>
+            <concept>
+                <code value="T-40230"/>
+                <display value="Lumen"/>
+            </concept>
+            <concept>
+                <code value="T-4105E"/>
+                <display value="Systemic artery"/>
+            </concept>
+            <concept>
+                <code value="M-35001"/>
+                <display value="Thrombus"/>
+            </concept>
+            <concept>
+                <code value="M-520F8"/>
+                <display value="Vascular sclerosis"/>
+            </concept>
+            <concept>
+                <code value="T-48081"/>
+                <display value="Systemic vein"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

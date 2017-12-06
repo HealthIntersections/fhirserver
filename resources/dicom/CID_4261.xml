@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-4261-OphthalmicMappingAcquisitionMethod"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_4261.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.937"/>
+    </identifier>
+    <version value="20110825"/>
+    <name value="OphthalmicMappingAcquisitionMethod"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 4261 OphthalmicMappingAcquisitionMethod"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://dicom.nema.org/resources/ontology/DCM"/>
+            <concept>
+                <code value="111924"/>
+                <display value="Retinal topography"/>
+            </concept>
+            <concept>
+                <code value="111920"/>
+                <display value="Time domain"/>
+            </concept>
+            <concept>
+                <code value="111921"/>
+                <display value="Spectral domain"/>
+            </concept>
+            <concept>
+                <code value="111922"/>
+                <display value="No corneal compensation"/>
+            </concept>
+            <concept>
+                <code value="111923"/>
+                <display value="Corneal birefringence compensation"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

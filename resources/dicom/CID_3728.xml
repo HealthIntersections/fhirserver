@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-3728-CathFindings"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_3728.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.228"/>
+    </identifier>
+    <version value="20160314"/>
+    <name value="CathFindings"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 3728 CathFindings"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://snomed.info/srt"/>
+            <concept>
+                <code value="D3-40300"/>
+                <display value="Pulmonary hypertension"/>
+            </concept>
+            <concept>
+                <code value="D3-90100"/>
+                <display value="Pericardial tamponade"/>
+            </concept>
+            <concept>
+                <code value="R-0033F"/>
+                <display value="Normal left heart hemodynamics"/>
+            </concept>
+            <concept>
+                <code value="D3-13001"/>
+                <display value="Single vessel coronary artery disease."/>
+            </concept>
+            <concept>
+                <code value="R-00340"/>
+                <display value="Normal left ventricular systolic function and wall motion"/>
+            </concept>
+            <concept>
+                <code value="R-00342"/>
+                <display value="Normal right heart hemodynamics"/>
+            </concept>
+            <concept>
+                <code value="D4-31000"/>
+                <display value="heart disease - congenital"/>
+            </concept>
+            <concept>
+                <code value="D4-31220"/>
+                <display value="Atrial septal defect"/>
+            </concept>
+            <concept>
+                <code value="R-00328"/>
+                <display value="Mild intimal coronary irregularities, no significant stenoses"/>
+            </concept>
+            <concept>
+                <code value="D3-29025"/>
+                <display value="Aortic insufficiency"/>
+            </concept>
+            <concept>
+                <code value="D3-23000"/>
+                <display value="Hypertrophic cardiomyopathy with obstruction"/>
+            </concept>
+            <concept>
+                <code value="D3-02500"/>
+                <display value="Hypertensive heart disease"/>
+            </concept>
+            <concept>
+                <code value="D3-91030"/>
+                <display value="Constrictive pericarditis"/>
+            </concept>
+            <concept>
+                <code value="D3-1081C"/>
+                <display value="Mitral valve prolapse"/>
+            </concept>
+            <concept>
+                <code value="D4-31150"/>
+                <display value="Ventricular septal defect"/>
+            </concept>
+            <concept>
+                <code value="D3-13013"/>
+                <display value="Double vessel coronary artery disease."/>
+            </concept>
+            <concept>
+                <code value="R-002C8"/>
+                <display value="Acute mitral regurgitation from chordal rupture"/>
+            </concept>
+            <concept>
+                <code value="R-002C7"/>
+                <display value="Acute mitral regurgitation from chordal dysfunction"/>
+            </concept>
+            <concept>
+                <code value="R-002C9"/>
+                <display value="Acute mitral regurgitation from papillary muscle dysfunction"/>
+            </concept>
+            <concept>
+                <code value="R-00313"/>
+                <display value="Left main coronary artery disease"/>
+            </concept>
+            <concept>
+                <code value="R-00334"/>
+                <display value="Multi vessel coronary artery disease."/>
+            </concept>
+            <concept>
+                <code value="D3-29021"/>
+                <display value="Aortic stenosis"/>
+            </concept>
+            <concept>
+                <code value="R-00372"/>
+                <display value="Significant coronary bypass graft disease"/>
+            </concept>
+            <concept>
+                <code value="R-002CB"/>
+                <display value="Acute ventricular septal rupture"/>
+            </concept>
+            <concept>
+                <code value="R-002CA"/>
+                <display value="Acute mitral regurgitation from papillary muscle rupture"/>
+            </concept>
+            <concept>
+                <code value="D3-29011"/>
+                <display value="Mitral stenosis"/>
+            </concept>
+            <concept>
+                <code value="D3-29012"/>
+                <display value="Mitral regurgitation"/>
+            </concept>
+            <concept>
+                <code value="D3-20021"/>
+                <display value="Congestive cardiomyopathy"/>
+            </concept>
+            <concept>
+                <code value="D3-1301F"/>
+                <display value="Triple vessel coronary artery disease."/>
+            </concept>
+            <concept>
+                <code value="D3-22100"/>
+                <display value="Restrictive cardiomyopathy"/>
+            </concept>
+            <concept>
+                <code value="R-0033E"/>
+                <display value="Normal left and right heart hemodynamics"/>
+            </concept>
+            <concept>
+                <code value="R-0033D"/>
+                <display value="Normal coronary arteries"/>
+            </concept>
+            <concept>
+                <code value="R-002F3"/>
+                <display value="Depression of left ventricular systolic function"/>
+            </concept>
+            <concept>
+                <code value="D3-20003"/>
+                <display value="Hypertrophic cardiomyopathy without obstruction"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

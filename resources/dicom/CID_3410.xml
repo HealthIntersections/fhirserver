@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-3410-NumericParametersofDrugsContrast"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_3410.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.75"/>
+    </identifier>
+    <version value="20070124"/>
+    <name value="NumericParametersofDrugs/Contrast"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 3410 NumericParametersofDrugs/Contrast"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://dicom.nema.org/resources/ontology/DCM"/>
+            <concept>
+                <code value="122092"/>
+                <display value="Undiluted dose administered"/>
+            </concept>
+            <concept>
+                <code value="122093"/>
+                <display value="Concentration"/>
+            </concept>
+            <concept>
+                <code value="122091"/>
+                <display value="Volume administered"/>
+            </concept>
+            <concept>
+                <code value="121383"/>
+                <display value="Mass administered"/>
+            </concept>
+            <concept>
+                <code value="122096"/>
+                <display value="Volume unadministered or discarded"/>
+            </concept>
+            <concept>
+                <code value="121382"/>
+                <display value="Quantity administered"/>
+            </concept>
+            <concept>
+                <code value="122094"/>
+                <display value="Rate of administration"/>
+            </concept>
+            <concept>
+                <code value="122095"/>
+                <display value="Duration of administration"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-3441-PatientAssessments"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_3441.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.94"/>
+    </identifier>
+    <version value="20030327"/>
+    <name value="PatientAssessments"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 3441 PatientAssessments"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://loinc.org"/>
+            <concept>
+                <code value="9304-7"/>
+                <display value="Respiration Rhythm"/>
+            </concept>
+            <concept>
+                <code value="8884-9"/>
+                <display value="Cardiac Rhythm"/>
+            </concept>
+        </include>
+        <include>
+            <system value="http://snomed.info/srt"/>
+            <concept>
+                <code value="F-043E6"/>
+                <display value="Respiration assessment"/>
+            </concept>
+            <concept>
+                <code value="F-046D8"/>
+                <display value="Skin condition assessment"/>
+            </concept>
+            <concept>
+                <code value="F-04317"/>
+                <display value="Patient mental state assessment"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

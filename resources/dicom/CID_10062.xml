@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-10062-EquivalentRadiationDoseTypes"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_10062.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.1156"/>
+    </identifier>
+    <version value="20170405"/>
+    <name value="EquivalentRadiationDoseTypes"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 10062 EquivalentRadiationDoseTypes"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://dicom.nema.org/resources/ontology/DCM"/>
+            <concept>
+                <code value="128540"/>
+                <display value="Median Equivalent Radiation Dose"/>
+            </concept>
+            <concept>
+                <code value="128536"/>
+                <display value="Minimum Equivalent Radiation Dose"/>
+            </concept>
+            <concept>
+                <code value="128535"/>
+                <display value="Maximum Equivalent Radiation Dose"/>
+            </concept>
+            <concept>
+                <code value="128538"/>
+                <display value="Mode Equivalent Radiation Dose"/>
+            </concept>
+            <concept>
+                <code value="128537"/>
+                <display value="Mean Equivalent Radiation Dose"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

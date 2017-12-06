@@ -1,0 +1,289 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-622-MedicationTypeCodeTypefromAnesthesiaQualityInitiativeAQI"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_622.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.1087"/>
+    </identifier>
+    <version value="20160212"/>
+    <name value="MedicationTypeCodeTypefromAnesthesiaQualityInitiative(AQI)"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 622 MedicationTypeCodeTypefromAnesthesiaQualityInitiative(AQI)"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://snomed.info/srt"/>
+            <concept>
+                <code value="F-61814"/>
+                <display value="Beta-blocker"/>
+            </concept>
+            <concept>
+                <code value="F-61899"/>
+                <display value="Skeletal muscle relaxant"/>
+            </concept>
+            <concept>
+                <code value="C-5008C"/>
+                <display value="Antibiotic"/>
+            </concept>
+            <concept>
+                <code value="R-005B3"/>
+                <display value="Blood product"/>
+            </concept>
+            <concept>
+                <code value="F-61898"/>
+                <display value="NSAID"/>
+            </concept>
+            <concept>
+                <code value="F-61E2A"/>
+                <display value="Oxytocic"/>
+            </concept>
+            <concept>
+                <code value="F-616EB"/>
+                <display value="Bronchodilator"/>
+            </concept>
+            <concept>
+                <code value="C-13500"/>
+                <display value="Potassium"/>
+            </concept>
+            <concept>
+                <code value="C-52500"/>
+                <display value="Aminoglycoside antibiotic"/>
+            </concept>
+            <concept>
+                <code value="R-F2B23"/>
+                <display value="Barbiturate"/>
+            </concept>
+            <concept>
+                <code value="F-6180F"/>
+                <display value="NeuroMuscular Blocking (NMB) - depolarizing"/>
+            </concept>
+            <concept>
+                <code value="F-B3000"/>
+                <display value="Thyroid hormone"/>
+            </concept>
+            <concept>
+                <code value="C-81100"/>
+                <display value="Antihypertensive"/>
+            </concept>
+            <concept>
+                <code value="C-00231"/>
+                <display value="Beta-Lactam antibiotic"/>
+            </concept>
+            <concept>
+                <code value="R-F1216"/>
+                <display value="Anticonvulsant"/>
+            </concept>
+            <concept>
+                <code value="R-F2B1D"/>
+                <display value="Benzodiazepine"/>
+            </concept>
+            <concept>
+                <code value="F-618AF"/>
+                <display value="Diuretic"/>
+            </concept>
+            <concept>
+                <code value="F-618BA"/>
+                <display value="Anti-heparin agent"/>
+            </concept>
+            <concept>
+                <code value="F-616FE"/>
+                <display value="Metronidazole antibiotic"/>
+            </concept>
+            <concept>
+                <code value="C-0023B"/>
+                <display value="Lincomycin antibiotic"/>
+            </concept>
+            <concept>
+                <code value="C-97302"/>
+                <display value="Nasal decongestant"/>
+            </concept>
+            <concept>
+                <code value="C-50013"/>
+                <display value="Drug diluent"/>
+            </concept>
+            <concept>
+                <code value="F-B2700"/>
+                <display value="Estrogen"/>
+            </concept>
+            <concept>
+                <code value="F-B1810"/>
+                <display value="Antidiuretic hormone"/>
+            </concept>
+            <concept>
+                <code value="F-6181F"/>
+                <display value="Analgesic"/>
+            </concept>
+            <concept>
+                <code value="F-6186F"/>
+                <display value="Low Molecular Weight Heparin"/>
+            </concept>
+            <concept>
+                <code value="F-6186A"/>
+                <display value="General anesthetic"/>
+            </concept>
+            <concept>
+                <code value="C-80120"/>
+                <display value="Inotropic agent"/>
+            </concept>
+            <concept>
+                <code value="C-00286"/>
+                <display value="Linezolid antibiotic"/>
+            </concept>
+            <concept>
+                <code value="F-61957"/>
+                <display value="Vasodilator"/>
+            </concept>
+            <concept>
+                <code value="F-619EF"/>
+                <display value="Benzodiazepine antagonist"/>
+            </concept>
+            <concept>
+                <code value="C-50309"/>
+                <display value="Hypoglycemic"/>
+            </concept>
+            <concept>
+                <code value="F-61878"/>
+                <display value="Calcium channel blocker"/>
+            </concept>
+            <concept>
+                <code value="F-619AA"/>
+                <display value="Vasoconstrictor"/>
+            </concept>
+            <concept>
+                <code value="F-617EF"/>
+                <display value="Antifungal"/>
+            </concept>
+            <concept>
+                <code value="C-0024E"/>
+                <display value="Vancomycin antibiotic"/>
+            </concept>
+            <concept>
+                <code value="C-0024C"/>
+                <display value="Quinolone antibiotic"/>
+            </concept>
+            <concept>
+                <code value="C-10098"/>
+                <display value="Steroid"/>
+            </concept>
+            <concept>
+                <code value="F-618D8"/>
+                <display value="Caloric agent"/>
+            </concept>
+            <concept>
+                <code value="F-6183D"/>
+                <display value="Local anesthetic"/>
+            </concept>
+            <concept>
+                <code value="C-14800"/>
+                <display value="Magnesium"/>
+            </concept>
+            <concept>
+                <code value="C-00257"/>
+                <display value="Sulfonamide antibiotic"/>
+            </concept>
+            <concept>
+                <code value="F-620E8"/>
+                <display value="Cholinergic agent"/>
+            </concept>
+            <concept>
+                <code value="C-00211"/>
+                <display value="Macrolide antibiotic"/>
+            </concept>
+            <concept>
+                <code value="F-6199A"/>
+                <display value="Anticoagulant"/>
+            </concept>
+            <concept>
+                <code value="C-85800"/>
+                <display value="Antiemetic"/>
+            </concept>
+            <concept>
+                <code value="F-61959"/>
+                <display value="NeuroMuscular Blocking (NMB) - non depolarizing"/>
+            </concept>
+            <concept>
+                <code value="F-61D70"/>
+                <display value="Ocular Lubricant"/>
+            </concept>
+            <concept>
+                <code value="F-61969"/>
+                <display value="Antihistamine"/>
+            </concept>
+            <concept>
+                <code value="C-00216"/>
+                <display value="Tetracycline antibiotic"/>
+            </concept>
+            <concept>
+                <code value="C-68000"/>
+                <display value="Adrenergic agent"/>
+            </concept>
+            <concept>
+                <code value="C-0021C"/>
+                <display value="Cephalosporin antibiotic"/>
+            </concept>
+            <concept>
+                <code value="C-002B1"/>
+                <display value="Carbapenem antibiotic"/>
+            </concept>
+            <concept>
+                <code value="C-14300"/>
+                <display value="Calcium"/>
+            </concept>
+            <concept>
+                <code value="F-618A5"/>
+                <display value="Hemostatic agent"/>
+            </concept>
+            <concept>
+                <code value="F-6180B"/>
+                <display value="Anticholinergic"/>
+            </concept>
+            <concept>
+                <code value="C-84989"/>
+                <display value="Gastrointestinal prokinetic"/>
+            </concept>
+            <concept>
+                <code value="F-6196E"/>
+                <display value="Antiarrhythmic"/>
+            </concept>
+            <concept>
+                <code value="F-616E7"/>
+                <display value="Plasma Expander"/>
+            </concept>
+            <concept>
+                <code value="F-6188F"/>
+                <display value="Narcotic (opiate) antagonist"/>
+            </concept>
+            <concept>
+                <code value="C-0021D"/>
+                <display value="Penicillin antibiotic"/>
+            </concept>
+            <concept>
+                <code value="F-6205D"/>
+                <display value="Respiratory stimulant"/>
+            </concept>
+            <concept>
+                <code value="F-BB000"/>
+                <display value="Vitamin"/>
+            </concept>
+        </include>
+        <include>
+            <system value="http://www.nlm.nih.gov/research/umls"/>
+            <concept>
+                <code value="C0019593"/>
+                <display value="H2 antagonist"/>
+            </concept>
+            <concept>
+                <code value="C0027409"/>
+                <display value="Narcotic analgesic"/>
+            </concept>
+            <concept>
+                <code value="C1579431"/>
+                <display value="Antihypoglycemic"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

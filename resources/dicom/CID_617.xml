@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-617-AirwayManagementMethodCodeTypeforSmallAnimalAnesthesia"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_617.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.1082"/>
+    </identifier>
+    <version value="20151110"/>
+    <name value="AirwayManagementMethodCodeTypeforSmallAnimalAnesthesia"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 617 AirwayManagementMethodCodeTypeforSmallAnimalAnesthesia"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://dicom.nema.org/resources/ontology/DCM"/>
+            <concept>
+                <code value="127060"/>
+                <display value="Nose cone"/>
+            </concept>
+            <concept>
+                <code value="127061"/>
+                <display value="Nasal cannula"/>
+            </concept>
+        </include>
+        <include>
+            <system value="http://snomed.info/srt"/>
+            <concept>
+                <code value="P0-05DE2"/>
+                <display value="Laryngeal Mask Airway (LMA)"/>
+            </concept>
+            <concept>
+                <code value="P2-22500"/>
+                <display value="Oxygen Therapy"/>
+            </concept>
+            <concept>
+                <code value="P0-06211"/>
+                <display value="Intubation of respiratory tract"/>
+            </concept>
+            <concept>
+                <code value="A-00BA2"/>
+                <display value="Anesthetic face mask"/>
+            </concept>
+            <concept>
+                <code value="G-D13E"/>
+                <display value="Via tracheostomy"/>
+            </concept>
+            <concept>
+                <code value="P2-22902"/>
+                <display value="Artificial Respiration"/>
+            </concept>
+            <concept>
+                <code value="P2-2290D"/>
+                <display value="Controlled Ventilation"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

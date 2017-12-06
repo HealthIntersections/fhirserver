@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-3014-CoronaryArterySegments"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_3014.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.47"/>
+    </identifier>
+    <version value="20130403"/>
+    <name value="CoronaryArterySegments"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 3014 CoronaryArterySegments"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="doi:10.1016/S0735-1097(99)00126-6"/>
+            <concept>
+                <code value="21A"/>
+                <display value="2nd Marginal Coronary Artery Laterals"/>
+            </concept>
+            <concept>
+                <code value="15A"/>
+                <display value="1st Diagonal Coronary Artery Laterals"/>
+            </concept>
+            <concept>
+                <code value="29A"/>
+                <display value="3rd Diagonal Coronary Artery Laterals"/>
+            </concept>
+            <concept>
+                <code value="20A"/>
+                <display value="1st Marginal Coronary Artery Laterals"/>
+            </concept>
+            <concept>
+                <code value="22A"/>
+                <display value="3rd Marginal Coronary Artery Laterals"/>
+            </concept>
+            <concept>
+                <code value="16A"/>
+                <display value="2nd Diagonal Coronary Artery Laterals"/>
+            </concept>
+            <concept>
+                <code value="28A"/>
+                <display value="Ramus Laterals"/>
+            </concept>
+            <concept>
+                <code value="9"/>
+                <display value="Posterior descending septal perforators"/>
+            </concept>
+        </include>
+        <include>
+            <system value="http://snomed.info/srt"/>
+            <concept>
+                <code value="T-43112"/>
+                <display value="Distal Left Anterior Descending Coronary Artery"/>
+            </concept>
+            <concept>
+                <code value="T-43210"/>
+                <display value="Posterior Descending Right Coronary Artery"/>
+            </concept>
+            <concept>
+                <code value="T-43111"/>
+                <display value="Proximal Left Anterior Descending Coronary Artery"/>
+            </concept>
+            <concept>
+                <code value="T-43230"/>
+                <display value="Marginal Coronary Artery"/>
+            </concept>
+            <concept>
+                <code value="T-4312D"/>
+                <display value="3rd Left Posterolateral Coronary Artery"/>
+            </concept>
+            <concept>
+                <code value="T-43215"/>
+                <display value="3rd Right posterolateral Coronary Artery"/>
+            </concept>
+            <concept>
+                <code value="T-43214"/>
+                <display value="2nd Right posterolateral Coronary Artery"/>
+            </concept>
+            <concept>
+                <code value="T-43115"/>
+                <display value="Mid Left Anterior Descending Coronary Artery"/>
+            </concept>
+            <concept>
+                <code value="T-43213"/>
+                <display value="1st Right posterolateral Coronary Artery"/>
+            </concept>
+            <concept>
+                <code value="T-43212"/>
+                <display value="Right posterior AV Coronary Artery"/>
+            </concept>
+            <concept>
+                <code value="T-43119"/>
+                <display value="3rd diagonal Coronary Artery"/>
+            </concept>
+            <concept>
+                <code value="T-43118"/>
+                <display value="2nd Diagonal Coronary Artery"/>
+            </concept>
+            <concept>
+                <code value="T-43117"/>
+                <display value="1st Diagonal Coronary Artery"/>
+            </concept>
+            <concept>
+                <code value="T-43002"/>
+                <display value="1st Septal Coronary Artery"/>
+            </concept>
+            <concept>
+                <code value="T-43122"/>
+                <display value="Distal Circumflex Coronary Artery"/>
+            </concept>
+            <concept>
+                <code value="T-43121"/>
+                <display value="Proximal Circumflex Coronary Artery"/>
+            </concept>
+            <concept>
+                <code value="T-D6515"/>
+                <display value="Mid Right Coronary Artery"/>
+            </concept>
+            <concept>
+                <code value="T-4312C"/>
+                <display value="2nd Left Posterolateral Coronary Artery"/>
+            </concept>
+            <concept>
+                <code value="T-4312B"/>
+                <display value="1st Left Posterolateral Coronary Artery"/>
+            </concept>
+            <concept>
+                <code value="T-4312A"/>
+                <display value="3rd Marginal Coronary Artery"/>
+            </concept>
+            <concept>
+                <code value="T-43105"/>
+                <display value="Left Main Coronary Artery Ostium"/>
+            </concept>
+            <concept>
+                <code value="T-43127"/>
+                <display value="Mid Circumflex Coronary Artery"/>
+            </concept>
+            <concept>
+                <code value="T-43126"/>
+                <display value="Left Posterior Descending Artery"/>
+            </concept>
+            <concept>
+                <code value="T-43202"/>
+                <display value="Distal Right Coronary Artery"/>
+            </concept>
+            <concept>
+                <code value="T-43124"/>
+                <display value="AV groove continuation of Circumflex Artery"/>
+            </concept>
+            <concept>
+                <code value="T-43201"/>
+                <display value="Proximal Right Coronary Artery"/>
+            </concept>
+            <concept>
+                <code value="T-43003"/>
+                <display value="Intermediate Artery (Ramus)"/>
+            </concept>
+            <concept>
+                <code value="T-43129"/>
+                <display value="2nd Marginal Coronary Artery"/>
+            </concept>
+            <concept>
+                <code value="T-43107"/>
+                <display value="Left Main Coronary Artery"/>
+            </concept>
+            <concept>
+                <code value="T-43128"/>
+                <display value="1st Marginal Coronary Artery"/>
+            </concept>
+            <concept>
+                <code value="T-43205"/>
+                <display value="Right Coronary Artery Ostium"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

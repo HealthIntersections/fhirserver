@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-6138-ChestNonlesionObjectType"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_6138.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.458"/>
+    </identifier>
+    <version value="20170914"/>
+    <name value="ChestNonlesionObjectType"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 6138 ChestNonlesionObjectType"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://dicom.nema.org/resources/ontology/DCM"/>
+            <concept>
+                <code value="112172"/>
+                <display value="Portacath"/>
+            </concept>
+            <concept>
+                <code value="112173"/>
+                <display value="Chest tube"/>
+            </concept>
+            <concept>
+                <code value="112174"/>
+                <display value="Central line"/>
+            </concept>
+            <concept>
+                <code value="112175"/>
+                <display value="Kidney stent"/>
+            </concept>
+            <concept>
+                <code value="112176"/>
+                <display value="Pancreatic stent"/>
+            </concept>
+            <concept>
+                <code value="112177"/>
+                <display value="Nipple ring"/>
+            </concept>
+            <concept>
+                <code value="112178"/>
+                <display value="Coin"/>
+            </concept>
+            <concept>
+                <code value="112171"/>
+                <display value="Fiducial mark"/>
+            </concept>
+        </include>
+        <include>
+            <system value="http://snomed.info/srt"/>
+            <concept>
+                <code value="A-26434"/>
+                <display value="Jejunostomy tube"/>
+            </concept>
+            <concept>
+                <code value="P1-26100"/>
+                <display value="Tracheotomy"/>
+            </concept>
+            <concept>
+                <code value="A-04000"/>
+                <display value="Prosthesis"/>
+            </concept>
+            <concept>
+                <code value="A-26430"/>
+                <display value="Feeding tube"/>
+            </concept>
+            <concept>
+                <code value="A-61000"/>
+                <display value="Jewelry"/>
+            </concept>
+            <concept>
+                <code value="M-78060"/>
+                <display value="Scar tissue"/>
+            </concept>
+            <concept>
+                <code value="A-11100"/>
+                <display value="Cardiac Pacemaker"/>
+            </concept>
+            <concept>
+                <code value="A-12210"/>
+                <display value="Cervical collar"/>
+            </concept>
+            <concept>
+                <code value="A-13500"/>
+                <display value="Suture"/>
+            </concept>
+            <concept>
+                <code value="A-13600"/>
+                <display value="Staple"/>
+            </concept>
+            <concept>
+                <code value="A-14611"/>
+                <display value="Vena cava filter"/>
+            </concept>
+            <concept>
+                <code value="A-30360"/>
+                <display value="Needle"/>
+            </concept>
+            <concept>
+                <code value="A-26800"/>
+                <display value="Catheter"/>
+            </concept>
+            <concept>
+                <code value="A-04110"/>
+                <display value="Heart valve prosthesis"/>
+            </concept>
+            <concept>
+                <code value="A-040CB"/>
+                <display value="Cardiac pacemaker lead"/>
+            </concept>
+            <concept>
+                <code value="A-25350"/>
+                <display value="Endotracheal tube"/>
+            </concept>
+            <concept>
+                <code value="A-12024"/>
+                <display value="Pin"/>
+            </concept>
+            <concept>
+                <code value="A-32110"/>
+                <display value="Bullet"/>
+            </concept>
+            <concept>
+                <code value="A-11C08"/>
+                <display value="Ureteric stent"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

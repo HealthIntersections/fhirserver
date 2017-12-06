@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-601-BiosafetyLevels"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_601.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.1065"/>
+    </identifier>
+    <version value="20151110"/>
+    <name value="BiosafetyLevels"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 601 BiosafetyLevels"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://snomed.info/srt"/>
+            <concept>
+                <code value="R-41E50"/>
+                <display value="Biosafety level 4"/>
+            </concept>
+            <concept>
+                <code value="R-41E4F"/>
+                <display value="Biosafety level 3"/>
+            </concept>
+            <concept>
+                <code value="R-41E4D"/>
+                <display value="Biosafety level 1"/>
+            </concept>
+            <concept>
+                <code value="R-41E4E"/>
+                <display value="Biosafety level 2"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

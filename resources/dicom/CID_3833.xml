@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-3833-CardiacEjectionFraction"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_3833.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.284"/>
+    </identifier>
+    <version value="20051103"/>
+    <name value="CardiacEjectionFraction"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 3833 CardiacEjectionFraction"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://loinc.org"/>
+            <concept>
+                <code value="8810-4"/>
+                <display value="Left ventricular ejection fraction by CT"/>
+            </concept>
+            <concept>
+                <code value="8818-7"/>
+                <display value="Right ventricular ejection fraction by MR"/>
+            </concept>
+            <concept>
+                <code value="8811-2"/>
+                <display value="Left ventricular ejection fraction by MR"/>
+            </concept>
+            <concept>
+                <code value="8817-9"/>
+                <display value="Right ventricular ejection fraction by CT"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

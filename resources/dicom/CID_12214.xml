@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-12214-EchocardiographyPulmonaryVeins"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_12214.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.606"/>
+    </identifier>
+    <version value="20030918"/>
+    <name value="EchocardiographyPulmonaryVeins"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 12214 EchocardiographyPulmonaryVeins"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://loinc.org"/>
+            <concept>
+                <code value="29450-4"/>
+                <display value="Pulmonary Vein Systolic Peak Velocity"/>
+            </concept>
+            <concept>
+                <code value="29451-2"/>
+                <display value="Pulmonary Vein Diastolic Peak Velocity"/>
+            </concept>
+            <concept>
+                <code value="8867-4"/>
+                <display value="Heart rate"/>
+            </concept>
+            <concept>
+                <code value="29453-8"/>
+                <display value="Pulmonary Vein Atrial Contraction Reversal Peak Velocity"/>
+            </concept>
+            <concept>
+                <code value="29452-0"/>
+                <display value="Pulmonary Vein Systolic to Diastolic Ratio"/>
+            </concept>
+        </include>
+        <include>
+            <system value="http://snomed.info/srt"/>
+            <concept>
+                <code value="G-038D"/>
+                <display value="Pulmonary Vein D-Wave Velocity Time Integral"/>
+            </concept>
+            <concept>
+                <code value="G-038B"/>
+                <display value="Pulmonary Vein A-Wave Duration"/>
+            </concept>
+            <concept>
+                <code value="G-038C"/>
+                <display value="Pulmonary Vein S-Wave Velocity Time Integral"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

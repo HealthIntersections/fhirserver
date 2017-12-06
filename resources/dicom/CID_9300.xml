@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-9300-ProcedureDiscontinuationReasons"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_9300.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.533"/>
+    </identifier>
+    <version value="20160314"/>
+    <name value="ProcedureDiscontinuationReasons"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 9300 ProcedureDiscontinuationReasons"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://dicom.nema.org/resources/ontology/DCM"/>
+            <concept>
+                <code value="110515"/>
+                <display value="Patient condition prevented continuing"/>
+            </concept>
+            <concept>
+                <code value="110514"/>
+                <display value="Incorrect worklist entry selected"/>
+            </concept>
+            <concept>
+                <code value="110513"/>
+                <display value="Discontinued for unspecified reason"/>
+            </concept>
+            <concept>
+                <code value="110512"/>
+                <display value="Incorrect side ordered"/>
+            </concept>
+            <concept>
+                <code value="110511"/>
+                <display value="Nursing unit cancel"/>
+            </concept>
+            <concept>
+                <code value="110510"/>
+                <display value="Duplicate order"/>
+            </concept>
+            <concept>
+                <code value="110530"/>
+                <display value="Workitem assignment rejected by assigned resource"/>
+            </concept>
+            <concept>
+                <code value="110516"/>
+                <display value="Equipment change"/>
+            </concept>
+            <concept>
+                <code value="110526"/>
+                <display value="Resource pre-empted"/>
+            </concept>
+            <concept>
+                <code value="110504"/>
+                <display value="Patient died"/>
+            </concept>
+            <concept>
+                <code value="110503"/>
+                <display value="Patient allergic to media/contrast"/>
+            </concept>
+            <concept>
+                <code value="110502"/>
+                <display value="Incorrect procedure ordered"/>
+            </concept>
+            <concept>
+                <code value="110524"/>
+                <display value="Media Failure"/>
+            </concept>
+            <concept>
+                <code value="110501"/>
+                <display value="Equipment failure"/>
+            </concept>
+            <concept>
+                <code value="110523"/>
+                <display value="Object Set incomplete"/>
+            </concept>
+            <concept>
+                <code value="110500"/>
+                <display value="Doctor canceled procedure"/>
+            </concept>
+            <concept>
+                <code value="110522"/>
+                <display value="Object Types not supported"/>
+            </concept>
+            <concept>
+                <code value="110521"/>
+                <display value="Objects incorrectly formatted"/>
+            </concept>
+            <concept>
+                <code value="110509"/>
+                <display value="Change of procedure for correct charging"/>
+            </concept>
+            <concept>
+                <code value="110508"/>
+                <display value="Patient pregnant"/>
+            </concept>
+            <concept>
+                <code value="110529"/>
+                <display value="Discontinued Procedure Step rescheduling recommended"/>
+            </concept>
+            <concept>
+                <code value="110507"/>
+                <display value="Patient did not arrive"/>
+            </concept>
+            <concept>
+                <code value="110528"/>
+                <display value="Discontinued Procedure Step rescheduled"/>
+            </concept>
+            <concept>
+                <code value="110506"/>
+                <display value="Patient taken for treatment or surgery"/>
+            </concept>
+            <concept>
+                <code value="110527"/>
+                <display value="Resource inadequate"/>
+            </concept>
+            <concept>
+                <code value="110505"/>
+                <display value="Patient refused to continue procedure"/>
+            </concept>
+        </include>
+        <include>
+            <system value="http://snomed.info/srt"/>
+            <concept>
+                <code value="DF-10780"/>
+                <display value="Radiopharmaceutical Adverse Reaction"/>
+            </concept>
+            <concept>
+                <code value="D0-B0330"/>
+                <display value="Injection Site Extravasation"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

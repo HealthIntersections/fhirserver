@@ -1,0 +1,390 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-3335-ECGAnnotations"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_3335.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.62"/>
+    </identifier>
+    <version value="20130613"/>
+    <name value="ECGAnnotations"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 3335 ECGAnnotations"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="urn:iso:std:iso:11073:10101"/>
+            <concept>
+                <code value="10:2240"/>
+                <display value="Calibration pulse (individual pulse)"/>
+            </concept>
+            <concept>
+                <code value="10:6400"/>
+                <display value="atrium Antitachycardia pace spike"/>
+            </concept>
+            <concept>
+                <code value="10:8304"/>
+                <display value="Aberrated atrial premature beat (Ashman beat)"/>
+            </concept>
+            <concept>
+                <code value="10:8624"/>
+                <display value="pre-excitation"/>
+            </concept>
+            <concept>
+                <code value="10:5632"/>
+                <display value="left ventricle Antibradycardia pace spike"/>
+            </concept>
+            <concept>
+                <code value="10:8544"/>
+                <display value="Left posterior fascicular block beat"/>
+            </concept>
+            <concept>
+                <code value="10:1792"/>
+                <display value="Atrial flutter wave"/>
+            </concept>
+            <concept>
+                <code value="10:8224"/>
+                <display value="Abnormal beat"/>
+            </concept>
+            <concept>
+                <code value="10:1472"/>
+                <display value="Entire Beat (Pon to Toff, excluding U)"/>
+            </concept>
+            <concept>
+                <code value="10:1152"/>
+                <display value="U wave"/>
+            </concept>
+            <concept>
+                <code value="10:8464"/>
+                <display value="Left bundle branch block beat"/>
+            </concept>
+            <concept>
+                <code value="10:2368"/>
+                <display value="T-wave change"/>
+            </concept>
+            <concept>
+                <code value="10:2048"/>
+                <display value="J-point"/>
+            </concept>
+            <concept>
+                <code value="10:7936"/>
+                <display value="transthoracic Cardioversion spike"/>
+            </concept>
+            <concept>
+                <code value="10:11200"/>
+                <display value="No Noise"/>
+            </concept>
+            <concept>
+                <code value="10:8704"/>
+                <display value="ventricle Defibrillation spike"/>
+            </concept>
+            <concept>
+                <code value="10:4864"/>
+                <display value="left atrium Antibradycardia pace spike"/>
+            </concept>
+            <concept>
+                <code value="10:11248"/>
+                <display value="No ECG signal is available"/>
+            </concept>
+            <concept>
+                <code value="10:832"/>
+                <display value="S wave"/>
+            </concept>
+            <concept>
+                <code value="10:512"/>
+                <display value="QS wave"/>
+            </concept>
+            <concept>
+                <code value="10:8352"/>
+                <display value="Fusion of ventricular and normal beat"/>
+            </concept>
+            <concept>
+                <code value="10:8272"/>
+                <display value="Atrial premature contraction (beat)"/>
+            </concept>
+            <concept>
+                <code value="10:8592"/>
+                <display value="bilateral bundle-branch block beat"/>
+            </concept>
+            <concept>
+                <code value="10:8192"/>
+                <display value="Defibrillation spike"/>
+            </concept>
+            <concept>
+                <code value="10:7424"/>
+                <display value="atrium Cardioversion spike"/>
+            </concept>
+            <concept>
+                <code value="10:11216"/>
+                <display value="Moderate Noise, beats can be detected but cannot be classified"/>
+            </concept>
+            <concept>
+                <code value="10:1280"/>
+                <display value="Isoelectric region from global QRS onset to specific lead onset"/>
+            </concept>
+            <concept>
+                <code value="10:8512"/>
+                <display value="Incomplete right bundle branch block beat"/>
+            </concept>
+            <concept>
+                <code value="10:5120"/>
+                <display value="ventricular Antibradycardia pace spike"/>
+            </concept>
+            <concept>
+                <code value="10:8432"/>
+                <display value="Ventricular escape beat"/>
+            </concept>
+            <concept>
+                <code value="10:1088"/>
+                <display value="T' wave (second deflection in T Wave)"/>
+            </concept>
+            <concept>
+                <code value="10:8752"/>
+                <display value="Pacemaker Learning beat"/>
+            </concept>
+            <concept>
+                <code value="10:2176"/>
+                <display value="Isolated QRS-like artifact"/>
+            </concept>
+            <concept>
+                <code value="10:8672"/>
+                <display value="Wolf-Parkinson type B"/>
+            </concept>
+            <concept>
+                <code value="10:4352"/>
+                <display value="atrium Antibradycardia pace spike"/>
+            </concept>
+            <concept>
+                <code value="10:6656"/>
+                <display value="ventricle Antitachycardia pace spike"/>
+            </concept>
+            <concept>
+                <code value="10:1920"/>
+                <display value="PR Segment"/>
+            </concept>
+            <concept>
+                <code value="10:1600"/>
+                <display value="Entire QRS (excluding P, T and U)"/>
+            </concept>
+            <concept>
+                <code value="10:5888"/>
+                <display value="transthoracic Antibradycardia pace spike"/>
+            </concept>
+            <concept>
+                <code value="10:1728"/>
+                <display value="Ventricular flutter wave"/>
+            </concept>
+            <concept>
+                <code value="10:1408"/>
+                <display value="Osborne wave"/>
+            </concept>
+            <concept>
+                <code value="10:768"/>
+                <display value="Notch"/>
+            </concept>
+            <concept>
+                <code value="10:448"/>
+                <display value="Q wave"/>
+            </concept>
+            <concept>
+                <code value="10:8560"/>
+                <display value="bifascicular block beat"/>
+            </concept>
+            <concept>
+                <code value="10:960"/>
+                <display value="S'' wave (third deflection in S Wave)"/>
+            </concept>
+            <concept>
+                <code value="10:8240"/>
+                <display value="Dominant beat"/>
+            </concept>
+            <concept>
+                <code value="10:320"/>
+                <display value="P' wave (second deflection in P wave)"/>
+            </concept>
+            <concept>
+                <code value="10:640"/>
+                <display value="R' wave (second deflection in R Wave)"/>
+            </concept>
+            <concept>
+                <code value="10:8480"/>
+                <display value="Incomplete left bundle branch block beat"/>
+            </concept>
+            <concept>
+                <code value="10:5376"/>
+                <display value="right ventricle Antibradycardia pace spike"/>
+            </concept>
+            <concept>
+                <code value="10:8448"/>
+                <display value="atrium Defibrillation spike"/>
+            </concept>
+            <concept>
+                <code value="10:8368"/>
+                <display value="R-on-T premature ventricular beat"/>
+            </concept>
+            <concept>
+                <code value="10:8720"/>
+                <display value="Pacemaker Fusion beat"/>
+            </concept>
+            <concept>
+                <code value="10:8688"/>
+                <display value="Lown-Ganong-Levine syndrome"/>
+            </concept>
+            <concept>
+                <code value="10:8960"/>
+                <display value="transthoracic Defibrillation spike"/>
+            </concept>
+            <concept>
+                <code value="10:8400"/>
+                <display value="Atrial escape beat"/>
+            </concept>
+            <concept>
+                <code value="10:8320"/>
+                <display value="Non-conducted p-wave (blocked)"/>
+            </concept>
+            <concept>
+                <code value="10:6144"/>
+                <display value="Antitachycardia pace spike"/>
+            </concept>
+            <concept>
+                <code value="10:8288"/>
+                <display value="Junctional (nodal) premature contraction"/>
+            </concept>
+            <concept>
+                <code value="10:8640"/>
+                <display value="Wolf-Parkinson-White syndrome"/>
+            </concept>
+            <concept>
+                <code value="10:8608"/>
+                <display value="intraventricular conduction disturbance"/>
+            </concept>
+            <concept>
+                <code value="10:1856"/>
+                <display value="Isoelectric point or segment"/>
+            </concept>
+            <concept>
+                <code value="10:8528"/>
+                <display value="Left anterior fascicular block beat"/>
+            </concept>
+            <concept>
+                <code value="10:1536"/>
+                <display value="Entire Beat (Qon to Toff, excluding P and U)"/>
+            </concept>
+            <concept>
+                <code value="10:1216"/>
+                <display value="Delta wave"/>
+            </concept>
+            <concept>
+                <code value="10:2304"/>
+                <display value="ST change"/>
+            </concept>
+            <concept>
+                <code value="10:8208"/>
+                <display value="Normal beat (sinus beat, normal conduction)"/>
+            </concept>
+            <concept>
+                <code value="10:4608"/>
+                <display value="right atrium Antibradycardia pace spike"/>
+            </concept>
+            <concept>
+                <code value="10:896"/>
+                <display value="S' wave (second deflection in S Wave)"/>
+            </concept>
+            <concept>
+                <code value="10:7680"/>
+                <display value="ventricle Cardioversion spike"/>
+            </concept>
+            <concept>
+                <code value="10:256"/>
+                <display value="P wave"/>
+            </concept>
+            <concept>
+                <code value="10:576"/>
+                <display value="R wave"/>
+            </concept>
+            <concept>
+                <code value="10:8656"/>
+                <display value="Wolf-Parkinson type A"/>
+            </concept>
+            <concept>
+                <code value="10:8336"/>
+                <display value="Ventricular premature contraction beat"/>
+            </concept>
+            <concept>
+                <code value="10:2112"/>
+                <display value="ST measurement point"/>
+            </concept>
+            <concept>
+                <code value="10:4096"/>
+                <display value="Antibradycardia pace spike"/>
+            </concept>
+            <concept>
+                <code value="10:8256"/>
+                <display value="Supraventricular premature contraction"/>
+            </concept>
+            <concept>
+                <code value="10:7168"/>
+                <display value="Cardioversion spike"/>
+            </concept>
+            <concept>
+                <code value="10:8576"/>
+                <display value="trifascicular block beat"/>
+            </concept>
+            <concept>
+                <code value="10:8496"/>
+                <display value="Right bundle branch block beat"/>
+            </concept>
+            <concept>
+                <code value="10:1984"/>
+                <display value="ST Segment"/>
+            </concept>
+            <concept>
+                <code value="10:1664"/>
+                <display value="TU fused wave"/>
+            </concept>
+            <concept>
+                <code value="10:1344"/>
+                <display value="Isoelectric region from specific lead QRS Offset to global offset"/>
+            </concept>
+            <concept>
+                <code value="10:11232"/>
+                <display value="Severe Noise, beats cannot be detected or classified"/>
+            </concept>
+            <concept>
+                <code value="10:1024"/>
+                <display value="T wave"/>
+            </concept>
+            <concept>
+                <code value="10:2432"/>
+                <display value="Ventricular Activation Time"/>
+            </concept>
+            <concept>
+                <code value="10:6912"/>
+                <display value="transthoracic Antitachycardia pace spike"/>
+            </concept>
+            <concept>
+                <code value="10:8416"/>
+                <display value="Junctional (nodal) escape beat"/>
+            </concept>
+            <concept>
+                <code value="10:8736"/>
+                <display value="Unclassifiable beat"/>
+            </concept>
+            <concept>
+                <code value="10:704"/>
+                <display value="R'' wave (third deflection in R Wave)"/>
+            </concept>
+            <concept>
+                <code value="10:8384"/>
+                <display value="Supraventricular escape beat"/>
+            </concept>
+            <concept>
+                <code value="10:384"/>
+                <display value="P'' wave (third deflection in P wave)"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

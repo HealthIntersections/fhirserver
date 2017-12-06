@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-6064-UltrasoundFindingsforBreast"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_6064.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.393"/>
+    </identifier>
+    <version value="20160314"/>
+    <name value="UltrasoundFindingsforBreast"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 6064 UltrasoundFindingsforBreast"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://dicom.nema.org/resources/ontology/DCM"/>
+            <concept>
+                <code value="111460"/>
+                <display value="Complex cyst"/>
+            </concept>
+            <concept>
+                <code value="111130"/>
+                <display value="Complicated cyst"/>
+            </concept>
+            <concept>
+                <code value="111461"/>
+                <display value="Intracystic lesion"/>
+            </concept>
+            <concept>
+                <code value="111462"/>
+                <display value="Solid mass"/>
+            </concept>
+            <concept>
+                <code value="111129"/>
+                <display value="Clustered microcysts"/>
+            </concept>
+        </include>
+        <include>
+            <system value="http://snomed.info/srt"/>
+            <concept>
+                <code value="T-C4000"/>
+                <display value="Lymph node"/>
+            </concept>
+            <concept>
+                <code value="F-01BF8"/>
+                <display value="Ultrasound scan normal"/>
+            </concept>
+            <concept>
+                <code value="D7-90382"/>
+                <display value="Sebaceous cyst of skin of breast"/>
+            </concept>
+            <concept>
+                <code value="D7-90370"/>
+                <display value="Mammary duct ectasia"/>
+            </concept>
+            <concept>
+                <code value="M-30400"/>
+                <display value="Foreign body"/>
+            </concept>
+            <concept>
+                <code value="D7-90035"/>
+                <display value="Cyst of breast"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

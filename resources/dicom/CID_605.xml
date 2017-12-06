@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-605-AnimalBeddingMaterial"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_605.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.1070"/>
+    </identifier>
+    <version value="20151110"/>
+    <name value="AnimalBeddingMaterial"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 605 AnimalBeddingMaterial"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://dicom.nema.org/resources/ontology/DCM"/>
+            <concept>
+                <code value="127231"/>
+                <display value="Aspen shaving bedding"/>
+            </concept>
+            <concept>
+                <code value="127232"/>
+                <display value="Corn cob bedding"/>
+            </concept>
+            <concept>
+                <code value="127233"/>
+                <display value="Paper-based bedding"/>
+            </concept>
+            <concept>
+                <code value="127234"/>
+                <display value="Pine chip bedding"/>
+            </concept>
+            <concept>
+                <code value="127235"/>
+                <display value="Pine shaving bedding"/>
+            </concept>
+            <concept>
+                <code value="127230"/>
+                <display value="Aspen chip bedding"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-10023-SizeSpecificDoseEstimationMethodforCT"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_10023.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.947"/>
+    </identifier>
+    <version value="20160314"/>
+    <name value="SizeSpecificDoseEstimationMethodforCT"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 10023 SizeSpecificDoseEstimationMethodforCT"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://dicom.nema.org/resources/ontology/DCM"/>
+            <concept>
+                <code value="113937"/>
+                <display value="AAPM 204 Effective Diameter Estimated From Patient Age"/>
+            </concept>
+            <concept>
+                <code value="113981"/>
+                <display value="Water Equivalent Diameter Representative Value"/>
+            </concept>
+            <concept>
+                <code value="113983"/>
+                <display value="Water Equivalent Diameter From Raw Data"/>
+            </concept>
+            <concept>
+                <code value="113982"/>
+                <display value="Water Equivalent Diameter Integrated Across Scan Range"/>
+            </concept>
+            <concept>
+                <code value="113984"/>
+                <display value="Water Equivalent Diameter From Localizer"/>
+            </concept>
+            <concept>
+                <code value="113934"/>
+                <display value="AAPM 204 Lateral Dimension"/>
+            </concept>
+            <concept>
+                <code value="113936"/>
+                <display value="AAPM 204 Sum of Lateral and AP Dimension"/>
+            </concept>
+            <concept>
+                <code value="113935"/>
+                <display value="AAPM 204 AP Dimension"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

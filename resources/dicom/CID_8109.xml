@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-8109-SpecimenCollectionProcedure"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_8109.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.1047"/>
+    </identifier>
+    <version value="20080626"/>
+    <name value="SpecimenCollectionProcedure"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 8109 SpecimenCollectionProcedure"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://snomed.info/srt"/>
+            <concept>
+                <code value="P1-03100"/>
+                <display value="Biopsy"/>
+            </concept>
+            <concept>
+                <code value="P1-03000"/>
+                <display value="Excision"/>
+            </concept>
+            <concept>
+                <code value="P1-03154"/>
+                <display value="Scraping"/>
+            </concept>
+            <concept>
+                <code value="P1-03021"/>
+                <display value="Removal of device"/>
+            </concept>
+            <concept>
+                <code value="P1-03130"/>
+                <display value="Aspiration"/>
+            </concept>
+            <concept>
+                <code value="P1-38200"/>
+                <display value="Venipuncture"/>
+            </concept>
+            <concept>
+                <code value="P1-0D300"/>
+                <display value="Harvesting of tissue"/>
+            </concept>
+            <concept>
+                <code value="P0-00593"/>
+                <display value="Taking of swab"/>
+            </concept>
+            <concept>
+                <code value="P3-02000"/>
+                <display value="Specimen collection"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

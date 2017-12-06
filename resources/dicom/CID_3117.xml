@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-3117-AttenuationCorrectionMethods"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_3117.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.749"/>
+    </identifier>
+    <version value="20080927"/>
+    <name value="AttenuationCorrectionMethods"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 3117 AttenuationCorrectionMethods"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://dicom.nema.org/resources/ontology/DCM"/>
+            <concept>
+                <code value="122720"/>
+                <display value="OSEM algorithm"/>
+            </concept>
+            <concept>
+                <code value="122721"/>
+                <display value="Chang method"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

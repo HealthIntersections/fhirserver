@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-6120-ChestBorderDefinition"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_6120.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.440"/>
+    </identifier>
+    <version value="20030108"/>
+    <name value="ChestBorderDefinition"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 6120 ChestBorderDefinition"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://dicom.nema.org/resources/ontology/DCM"/>
+            <concept>
+                <code value="112140"/>
+                <display value="Sharply demarcated"/>
+            </concept>
+            <concept>
+                <code value="112141"/>
+                <display value="Poorly demarcated"/>
+            </concept>
+            <concept>
+                <code value="112142"/>
+                <display value="Circumscribed"/>
+            </concept>
+            <concept>
+                <code value="112137"/>
+                <display value="Sharply defined"/>
+            </concept>
+            <concept>
+                <code value="112138"/>
+                <display value="Distinctly defined"/>
+            </concept>
+            <concept>
+                <code value="112139"/>
+                <display value="Well demarcated"/>
+            </concept>
+        </include>
+        <include>
+            <system value="http://snomed.info/srt"/>
+            <concept>
+                <code value="R-40771"/>
+                <display value="Well defined"/>
+            </concept>
+            <concept>
+                <code value="R-428E7"/>
+                <display value="Poorly defined"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-7455-Sex"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_7455.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.519"/>
+    </identifier>
+    <version value="20040112"/>
+    <name value="Sex"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 7455 Sex"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://dicom.nema.org/resources/ontology/DCM"/>
+            <concept>
+                <code value="MP"/>
+                <display value="Male Pseudohermaphrodite"/>
+            </concept>
+            <concept>
+                <code value="U"/>
+                <display value="Unknown sex"/>
+            </concept>
+            <concept>
+                <code value="121103"/>
+                <display value="Undetermined sex"/>
+            </concept>
+            <concept>
+                <code value="F"/>
+                <display value="Female"/>
+            </concept>
+            <concept>
+                <code value="MC"/>
+                <display value="Male changed to Female"/>
+            </concept>
+            <concept>
+                <code value="121104"/>
+                <display value="Ambiguous sex"/>
+            </concept>
+            <concept>
+                <code value="H"/>
+                <display value="Hermaphrodite"/>
+            </concept>
+            <concept>
+                <code value="121102"/>
+                <display value="Other sex"/>
+            </concept>
+            <concept>
+                <code value="FP"/>
+                <display value="Female Pseudohermaphrodite"/>
+            </concept>
+            <concept>
+                <code value="M"/>
+                <display value="Male"/>
+            </concept>
+            <concept>
+                <code value="FC"/>
+                <display value="Female changed to Male"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

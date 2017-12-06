@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-3663-BodySurfaceAreaEquations"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_3663.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.180"/>
+    </identifier>
+    <version value="20100609"/>
+    <name value="BodySurfaceAreaEquations"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 3663 BodySurfaceAreaEquations"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://dicom.nema.org/resources/ontology/DCM"/>
+            <concept>
+                <code value="122269"/>
+                <display value="BSA = 0.038189*WT^ 0.423*HT^0.362"/>
+            </concept>
+            <concept>
+                <code value="122245"/>
+                <display value="BSA = 1321+0.3433*WT"/>
+            </concept>
+            <concept>
+                <code value="122267"/>
+                <display value="BSA = 0.010265*WT^ 0.423*HT^0.651"/>
+            </concept>
+            <concept>
+                <code value="122246"/>
+                <display value="BSA = 0.0004688*WT^(0.8168-0.0154*log(WT))"/>
+            </concept>
+            <concept>
+                <code value="122268"/>
+                <display value="BSA = 0.008883*WT^ 0.444*HT^0.663"/>
+            </concept>
+            <concept>
+                <code value="122243"/>
+                <display value="BSA = 0.024265*WT^0.5378*HTcm^0.3964"/>
+            </concept>
+            <concept>
+                <code value="122244"/>
+                <display value="BSA = (HT * WT/36) ^0.5"/>
+            </concept>
+            <concept>
+                <code value="122266"/>
+                <display value="BSA = 0.007358*WT^ 0.425*HT^0.725"/>
+            </concept>
+            <concept>
+                <code value="122241"/>
+                <display value="BSA = 0.007184*WT^ 0.425*HT^0.725"/>
+            </concept>
+            <concept>
+                <code value="122242"/>
+                <display value="BSA = 0.0235*WT^0.51456*HTcm^ 0.42246"/>
+            </concept>
+            <concept>
+                <code value="122240"/>
+                <display value="BSA = 0.003207*WT^(0.7285-0.0188 log (WT)) *HT^0.3"/>
+            </concept>
+            <concept>
+                <code value="122270"/>
+                <display value="BSA = 0.009568*WT^ 0.473*HT^0.655"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

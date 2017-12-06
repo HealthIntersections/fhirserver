@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-3235-PerfusionComparisonFindings"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_3235.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.781"/>
+    </identifier>
+    <version value="20080927"/>
+    <name value="PerfusionComparisonFindings"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 3235 PerfusionComparisonFindings"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://snomed.info/srt"/>
+            <concept>
+                <code value="R-215DE"/>
+                <display value="Less ischemia"/>
+            </concept>
+            <concept>
+                <code value="R-215D5"/>
+                <display value="Resolution of ischemia"/>
+            </concept>
+            <concept>
+                <code value="R-215D9"/>
+                <display value="New ischemia"/>
+            </concept>
+            <concept>
+                <code value="R-215E0"/>
+                <display value="New infarction"/>
+            </concept>
+            <concept>
+                <code value="R-215E1"/>
+                <display value="More ischemia"/>
+            </concept>
+            <concept>
+                <code value="R-4075C"/>
+                <display value="No change"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

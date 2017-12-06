@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-6068-TumorStagesFromAJCC"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_6068.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.397"/>
+    </identifier>
+    <version value="20040112"/>
+    <name value="TumorStagesFromAJCC"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 6068 TumorStagesFromAJCC"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://dicom.nema.org/resources/ontology/DCM"/>
+            <concept>
+                <code value="111494"/>
+                <display value="Stage 0"/>
+            </concept>
+            <concept>
+                <code value="111495"/>
+                <display value="Stage I"/>
+            </concept>
+            <concept>
+                <code value="111496"/>
+                <display value="Stage IIA"/>
+            </concept>
+            <concept>
+                <code value="111497"/>
+                <display value="Stage IIB"/>
+            </concept>
+            <concept>
+                <code value="111498"/>
+                <display value="Stage IIIA"/>
+            </concept>
+            <concept>
+                <code value="111499"/>
+                <display value="Stage IIIB"/>
+            </concept>
+            <concept>
+                <code value="111500"/>
+                <display value="Stage IIIC"/>
+            </concept>
+            <concept>
+                <code value="111501"/>
+                <display value="Stage IV"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

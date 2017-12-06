@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-7272-MRDiffusionModelParameters"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_7272.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.1167"/>
+    </identifier>
+    <version value="20170413"/>
+    <name value="MRDiffusionModelParameters"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 7272 MRDiffusionModelParameters"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://dicom.nema.org/resources/ontology/DCM"/>
+            <concept>
+                <code value="113041"/>
+                <display value="Apparent Diffusion Coefficient"/>
+            </concept>
+            <concept>
+                <code value="113294"/>
+                <display value="Kurtosis Diffusion Coefficient"/>
+            </concept>
+            <concept>
+                <code value="113295"/>
+                <display value="Gamma Distribution Scale Parameter"/>
+            </concept>
+            <concept>
+                <code value="113296"/>
+                <display value="Gamma Distribution Shape Parameter"/>
+            </concept>
+            <concept>
+                <code value="113297"/>
+                <display value="Gamma Distribution Mode"/>
+            </concept>
+            <concept>
+                <code value="113298"/>
+                <display value="Distributed Diffusion Coefficient"/>
+            </concept>
+            <concept>
+                <code value="113299"/>
+                <display value="Anomalous Exponent Parameter"/>
+            </concept>
+            <concept>
+                <code value="113289"/>
+                <display value="Diffusion Coefficient"/>
+            </concept>
+            <concept>
+                <code value="113290"/>
+                <display value="Mono-exponential Apparent Diffusion Coefficient"/>
+            </concept>
+            <concept>
+                <code value="113291"/>
+                <display value="Slow Diffusion Coefficient"/>
+            </concept>
+            <concept>
+                <code value="113292"/>
+                <display value="Fast Diffusion Coefficient"/>
+            </concept>
+            <concept>
+                <code value="113293"/>
+                <display value="Fast Diffusion Coefficient Fraction"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

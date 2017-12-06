@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-3205-IndicationsforPharmacologicalStressTest"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_3205.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.760"/>
+    </identifier>
+    <version value="20160314"/>
+    <name value="IndicationsforPharmacologicalStressTest"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 3205 IndicationsforPharmacologicalStressTest"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://dicom.nema.org/resources/ontology/DCM"/>
+            <concept>
+                <code value="122764"/>
+                <display value="Patient weight exceeds equipment limit"/>
+            </concept>
+        </include>
+        <include>
+            <system value="http://snomed.info/srt"/>
+            <concept>
+                <code value="F-33019"/>
+                <display value="Cannot reach target heart rate"/>
+            </concept>
+            <concept>
+                <code value="F-01380"/>
+                <display value="Asthenia (debility)"/>
+            </concept>
+            <concept>
+                <code value="F-A4580"/>
+                <display value="Ataxia or incoordination"/>
+            </concept>
+            <concept>
+                <code value="G-02BD"/>
+                <display value="Lower limb amputation"/>
+            </concept>
+            <concept>
+                <code value="G-0202"/>
+                <display value="Request by Physician"/>
+            </concept>
+            <concept>
+                <code value="S-20570"/>
+                <display value="Dependence on enabling machine or device"/>
+            </concept>
+            <concept>
+                <code value="F-029F7"/>
+                <display value="Cachexia"/>
+            </concept>
+            <concept>
+                <code value="R-00728"/>
+                <display value="Patient has pacemaker"/>
+            </concept>
+            <concept>
+                <code value="F-A0846"/>
+                <display value="Transient limb paralysis"/>
+            </concept>
+            <concept>
+                <code value="DD-33500"/>
+                <display value="Open wound of lower limb"/>
+            </concept>
+            <concept>
+                <code value="F-18002"/>
+                <display value="Gait problem"/>
+            </concept>
+            <concept>
+                <code value="G-044D"/>
+                <display value="Recent Myocardial infarction"/>
+            </concept>
+            <concept>
+                <code value="D3-8005B"/>
+                <display value="Peripheral vascular disease"/>
+            </concept>
+            <concept>
+                <code value="D3-33120"/>
+                <display value="Left bundle branch block"/>
+            </concept>
+            <concept>
+                <code value="DA-26000"/>
+                <display value="Paralytic syndrome"/>
+            </concept>
+            <concept>
+                <code value="DD-13000"/>
+                <display value="Fracture of lower limb"/>
+            </concept>
+            <concept>
+                <code value="D2-50000"/>
+                <display value="Pulmonary disease"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

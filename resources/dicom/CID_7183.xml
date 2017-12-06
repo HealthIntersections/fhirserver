@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-7183-AbstractMultidimensionalImageModelDimensionUnits"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_7183.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.920"/>
+    </identifier>
+    <version value="20100825"/>
+    <name value="AbstractMultidimensionalImageModelDimensionUnits"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 7183 AbstractMultidimensionalImageModelDimensionUnits"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://unitsofmeasure.org"/>
+            <concept>
+                <code value="mm"/>
+                <display value="millimeter"/>
+            </concept>
+            <concept>
+                <code value="rad"/>
+                <display value="Radian"/>
+            </concept>
+            <concept>
+                <code value="deg"/>
+                <display value="Degree"/>
+            </concept>
+            <concept>
+                <code value="cm"/>
+                <display value="centimeter"/>
+            </concept>
+            <concept>
+                <code value="um"/>
+                <display value="micrometer"/>
+            </concept>
+            <concept>
+                <code value="ms"/>
+                <display value="Millisecond"/>
+            </concept>
+            <concept>
+                <code value="s"/>
+                <display value="Second"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

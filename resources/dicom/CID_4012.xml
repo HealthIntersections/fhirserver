@@ -1,0 +1,438 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-4012-ProjectionEponymousName"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_4012.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.296"/>
+    </identifier>
+    <version value="20170914"/>
+    <name value="ProjectionEponymousName"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 4012 ProjectionEponymousName"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://snomed.info/srt"/>
+            <concept>
+                <code value="R-407B0"/>
+                <display value="Waters"/>
+            </concept>
+            <concept>
+                <code value="R-1028B"/>
+                <display value="Lauenstein"/>
+            </concept>
+            <concept>
+                <code value="R-1028A"/>
+                <display value="Laquerriere-Pierquin"/>
+            </concept>
+            <concept>
+                <code value="R-40816"/>
+                <display value="Van Rosen projection"/>
+            </concept>
+            <concept>
+                <code value="R-1028F"/>
+                <display value="Lewis"/>
+            </concept>
+            <concept>
+                <code value="R-1028E"/>
+                <display value="Leonard-George"/>
+            </concept>
+            <concept>
+                <code value="R-1028D"/>
+                <display value="Lawrence"/>
+            </concept>
+            <concept>
+                <code value="R-1028C"/>
+                <display value="Law"/>
+            </concept>
+            <concept>
+                <code value="R-102A3"/>
+                <display value="Staunig"/>
+            </concept>
+            <concept>
+                <code value="R-102A2"/>
+                <display value="Settegast"/>
+            </concept>
+            <concept>
+                <code value="R-102A1"/>
+                <display value="Schuller"/>
+            </concept>
+            <concept>
+                <code value="R-102A0"/>
+                <display value="Rhese"/>
+            </concept>
+            <concept>
+                <code value="R-10282"/>
+                <display value="Isherwood"/>
+            </concept>
+            <concept>
+                <code value="R-10281"/>
+                <display value="Hughston"/>
+            </concept>
+            <concept>
+                <code value="R-10280"/>
+                <display value="Hsieh"/>
+            </concept>
+            <concept>
+                <code value="R-4080E"/>
+                <display value="Mortice projection"/>
+            </concept>
+            <concept>
+                <code value="R-4080D"/>
+                <display value="Judet projection"/>
+            </concept>
+            <concept>
+                <code value="R-10286"/>
+                <display value="Kemp Harper"/>
+            </concept>
+            <concept>
+                <code value="R-10285"/>
+                <display value="Kasabach"/>
+            </concept>
+            <concept>
+                <code value="R-4080A"/>
+                <display value="Harris Beath axial projection"/>
+            </concept>
+            <concept>
+                <code value="R-10284"/>
+                <display value="Kandel"/>
+            </concept>
+            <concept>
+                <code value="R-10283"/>
+                <display value="Judd"/>
+            </concept>
+            <concept>
+                <code value="R-10289"/>
+                <display value="Kurzbauer"/>
+            </concept>
+            <concept>
+                <code value="R-10288"/>
+                <display value="Kuchendorf"/>
+            </concept>
+            <concept>
+                <code value="R-10287"/>
+                <display value="Kovacs"/>
+            </concept>
+            <concept>
+                <code value="R-102AF"/>
+                <display value="West Point"/>
+            </concept>
+            <concept>
+                <code value="R-40809"/>
+                <display value="Brewerton projection"/>
+            </concept>
+            <concept>
+                <code value="R-102AD"/>
+                <display value="Valdini"/>
+            </concept>
+            <concept>
+                <code value="R-1029C"/>
+                <display value="Pawlow"/>
+            </concept>
+            <concept>
+                <code value="R-1029B"/>
+                <display value="Ottonello"/>
+            </concept>
+            <concept>
+                <code value="R-1029A"/>
+                <display value="Norgaard"/>
+            </concept>
+            <concept>
+                <code value="R-102B0"/>
+                <display value="Wigby-Taylor"/>
+            </concept>
+            <concept>
+                <code value="R-1029F"/>
+                <display value="Pirie"/>
+            </concept>
+            <concept>
+                <code value="R-1029E"/>
+                <display value="Penner"/>
+            </concept>
+            <concept>
+                <code value="R-1029D"/>
+                <display value="Pearson"/>
+            </concept>
+            <concept>
+                <code value="R-102B1"/>
+                <display value="Zanelli"/>
+            </concept>
+            <concept>
+                <code value="R-102A7"/>
+                <display value="Tarrant"/>
+            </concept>
+            <concept>
+                <code value="R-102A6"/>
+                <display value="Swanson"/>
+            </concept>
+            <concept>
+                <code value="R-102A5"/>
+                <display value="Stenvers"/>
+            </concept>
+            <concept>
+                <code value="R-102A4"/>
+                <display value="Stecher"/>
+            </concept>
+            <concept>
+                <code value="R-10293"/>
+                <display value="Low-Beer"/>
+            </concept>
+            <concept>
+                <code value="R-10292"/>
+                <display value="Lorenz"/>
+            </concept>
+            <concept>
+                <code value="R-10291"/>
+                <display value="Lindblom"/>
+            </concept>
+            <concept>
+                <code value="R-102A9"/>
+                <display value="Teufel"/>
+            </concept>
+            <concept>
+                <code value="R-10290"/>
+                <display value="Lilienfeld"/>
+            </concept>
+            <concept>
+                <code value="R-102A8"/>
+                <display value="Taylor"/>
+            </concept>
+            <concept>
+                <code value="R-10297"/>
+                <display value="Merchant"/>
+            </concept>
+            <concept>
+                <code value="R-10296"/>
+                <display value="Mayer"/>
+            </concept>
+            <concept>
+                <code value="R-10295"/>
+                <display value="May"/>
+            </concept>
+            <concept>
+                <code value="R-10294"/>
+                <display value="Lysholm"/>
+            </concept>
+            <concept>
+                <code value="R-102AC"/>
+                <display value="Twining"/>
+            </concept>
+            <concept>
+                <code value="R-102AB"/>
+                <display value="Towne"/>
+            </concept>
+            <concept>
+                <code value="R-10299"/>
+                <display value="Nolke"/>
+            </concept>
+            <concept>
+                <code value="R-102AA"/>
+                <display value="Titterington"/>
+            </concept>
+            <concept>
+                <code value="R-10298"/>
+                <display value="Miller"/>
+            </concept>
+            <concept>
+                <code value="R-40A97"/>
+                <display value="Rosenberg"/>
+            </concept>
+            <concept>
+                <code value="R-40A96"/>
+                <display value="Robert"/>
+            </concept>
+            <concept>
+                <code value="R-40A99"/>
+                <display value="Wolf"/>
+            </concept>
+            <concept>
+                <code value="R-10269"/>
+                <display value="Caldwell"/>
+            </concept>
+            <concept>
+                <code value="R-40A98"/>
+                <display value="Stryker"/>
+            </concept>
+            <concept>
+                <code value="R-40A93"/>
+                <display value="Neer"/>
+            </concept>
+            <concept>
+                <code value="R-40A92"/>
+                <display value="Moore"/>
+            </concept>
+            <concept>
+                <code value="R-40A95"/>
+                <display value="Rafert-Long"/>
+            </concept>
+            <concept>
+                <code value="R-40A94"/>
+                <display value="Rafert"/>
+            </concept>
+            <concept>
+                <code value="R-1026D"/>
+                <display value="Chassard-Lapine"/>
+            </concept>
+            <concept>
+                <code value="R-1026C"/>
+                <display value="Chamberlain"/>
+            </concept>
+            <concept>
+                <code value="R-1026B"/>
+                <display value="Causton"/>
+            </concept>
+            <concept>
+                <code value="R-40A91"/>
+                <display value="Kite"/>
+            </concept>
+            <concept>
+                <code value="R-1026A"/>
+                <display value="Camp-Coventry"/>
+            </concept>
+            <concept>
+                <code value="R-40A90"/>
+                <display value="Hirtz Modification"/>
+            </concept>
+            <concept>
+                <code value="R-1026F"/>
+                <display value="Cleaves"/>
+            </concept>
+            <concept>
+                <code value="R-1026E"/>
+                <display value="Chausse"/>
+            </concept>
+            <concept>
+                <code value="R-40A8F"/>
+                <display value="Eraso Modification"/>
+            </concept>
+            <concept>
+                <code value="R-40A8E"/>
+                <display value="Garth"/>
+            </concept>
+            <concept>
+                <code value="R-40A8B"/>
+                <display value="Danelius-Miller"/>
+            </concept>
+            <concept>
+                <code value="R-40A8A"/>
+                <display value="Colcher-Sussman"/>
+            </concept>
+            <concept>
+                <code value="R-40A8D"/>
+                <display value="Folio"/>
+            </concept>
+            <concept>
+                <code value="R-40A8C"/>
+                <display value="Fisk"/>
+            </concept>
+            <concept>
+                <code value="R-10264"/>
+                <display value="Beclere"/>
+            </concept>
+            <concept>
+                <code value="R-10263"/>
+                <display value="Arcelin"/>
+            </concept>
+            <concept>
+                <code value="R-10262"/>
+                <display value="Alexander"/>
+            </concept>
+            <concept>
+                <code value="R-10261"/>
+                <display value="Albers-Schonberg"/>
+            </concept>
+            <concept>
+                <code value="R-10268"/>
+                <display value="Cahoon"/>
+            </concept>
+            <concept>
+                <code value="R-10267"/>
+                <display value="Broden"/>
+            </concept>
+            <concept>
+                <code value="R-40A89"/>
+                <display value="Burman"/>
+            </concept>
+            <concept>
+                <code value="R-10266"/>
+                <display value="Blackett-Healy"/>
+            </concept>
+            <concept>
+                <code value="R-10265"/>
+                <display value="Bertel"/>
+            </concept>
+            <concept>
+                <code value="R-40A88"/>
+                <display value="Apple"/>
+            </concept>
+            <concept>
+                <code value="R-1027A"/>
+                <display value="Haas"/>
+            </concept>
+            <concept>
+                <code value="R-1027E"/>
+                <display value="Holmblad"/>
+            </concept>
+            <concept>
+                <code value="R-1027D"/>
+                <display value="Holly"/>
+            </concept>
+            <concept>
+                <code value="R-1027C"/>
+                <display value="Hickey"/>
+            </concept>
+            <concept>
+                <code value="R-1027B"/>
+                <display value="Henschen"/>
+            </concept>
+            <concept>
+                <code value="R-1027F"/>
+                <display value="Hough"/>
+            </concept>
+            <concept>
+                <code value="R-10271"/>
+                <display value="Clements-Nakayama"/>
+            </concept>
+            <concept>
+                <code value="R-10270"/>
+                <display value="Clements"/>
+            </concept>
+            <concept>
+                <code value="R-10275"/>
+                <display value="Friedman"/>
+            </concept>
+            <concept>
+                <code value="R-10274"/>
+                <display value="Fleischner"/>
+            </concept>
+            <concept>
+                <code value="R-10273"/>
+                <display value="Ferguson"/>
+            </concept>
+            <concept>
+                <code value="R-10272"/>
+                <display value="Dunlap"/>
+            </concept>
+            <concept>
+                <code value="R-10279"/>
+                <display value="Grashey"/>
+            </concept>
+            <concept>
+                <code value="R-10278"/>
+                <display value="Grandy"/>
+            </concept>
+            <concept>
+                <code value="R-10277"/>
+                <display value="Gaynor-Hart"/>
+            </concept>
+            <concept>
+                <code value="R-10276"/>
+                <display value="Fuchs"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

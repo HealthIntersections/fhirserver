@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-12226-EchocardiographyImageView"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_12226.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.617"/>
+    </identifier>
+    <version value="20100317"/>
+    <name value="EchocardiographyImageView"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 12226 EchocardiographyImageView"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://snomed.info/srt"/>
+            <concept>
+                <code value="G-0395"/>
+                <display value="Apical long axis"/>
+            </concept>
+            <concept>
+                <code value="G-0396"/>
+                <display value="Parasternal long axis"/>
+            </concept>
+            <concept>
+                <code value="G-0399"/>
+                <display value="Parasternal short axis at the level of the mitral chords"/>
+            </concept>
+            <concept>
+                <code value="G-0397"/>
+                <display value="Parasternal short axis"/>
+            </concept>
+            <concept>
+                <code value="G-0398"/>
+                <display value="Parasternal short axis at the aortic valve level"/>
+            </concept>
+            <concept>
+                <code value="R-40B0E"/>
+                <display value="Transesophageal short axis view"/>
+            </concept>
+            <concept>
+                <code value="R-40B0A"/>
+                <display value="Subcostal oblique coronal view"/>
+            </concept>
+            <concept>
+                <code value="G-A19C"/>
+                <display value="Apical four chamber"/>
+            </concept>
+            <concept>
+                <code value="G-03A1"/>
+                <display value="Suprasternal short axis"/>
+            </concept>
+            <concept>
+                <code value="G-A19B"/>
+                <display value="Apical two chamber"/>
+            </concept>
+            <concept>
+                <code value="G-03A0"/>
+                <display value="Suprasternal long axis"/>
+            </concept>
+            <concept>
+                <code value="R-40B01"/>
+                <display value="Suprasternal sagittal view"/>
+            </concept>
+            <concept>
+                <code value="R-40B00"/>
+                <display value="Suprasternal coronal view"/>
+            </concept>
+            <concept>
+                <code value="R-40AFF"/>
+                <display value="Subcostal view of cardiac outlets directed anteriorly"/>
+            </concept>
+            <concept>
+                <code value="G-039E"/>
+                <display value="Subcostal long axis"/>
+            </concept>
+            <concept>
+                <code value="G-039F"/>
+                <display value="Subcostal short axis"/>
+            </concept>
+            <concept>
+                <code value="G-057B"/>
+                <display value="Subcostal short axis view at mitral valve level"/>
+            </concept>
+            <concept>
+                <code value="G-039C"/>
+                <display value="Right Ventricular Inflow Tract View"/>
+            </concept>
+            <concept>
+                <code value="G-039D"/>
+                <display value="Right Ventricular Outflow Tract View"/>
+            </concept>
+            <concept>
+                <code value="G-057E"/>
+                <display value="Subcostal short axis view at aortic valve level"/>
+            </concept>
+            <concept>
+                <code value="G-057C"/>
+                <display value="Subcostal short axis view at venous inflow level"/>
+            </concept>
+            <concept>
+                <code value="G-057D"/>
+                <display value="Suprasternal long axis view of aortic arch"/>
+            </concept>
+            <concept>
+                <code value="G-0579"/>
+                <display value="Subcostal short axis view at papillary muscle level"/>
+            </concept>
+            <concept>
+                <code value="G-0577"/>
+                <display value="Parasternal long axis view of the RV inflow tract"/>
+            </concept>
+            <concept>
+                <code value="G-0578"/>
+                <display value="Parasternal long axis view of the RV outflow tract"/>
+            </concept>
+            <concept>
+                <code value="G-039A"/>
+                <display value="Parasternal short axis at the Mitral Valve level"/>
+            </concept>
+            <concept>
+                <code value="G-039B"/>
+                <display value="Parasternal short axis at the Papillary Muscle level"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-4201-PatientEyeMovementCommand"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_4201.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.317"/>
+    </identifier>
+    <version value="20040921"/>
+    <name value="PatientEyeMovementCommand"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 4201 PatientEyeMovementCommand"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://snomed.info/srt"/>
+            <concept>
+                <code value="R-10227"/>
+                <display value="Convergent gaze"/>
+            </concept>
+            <concept>
+                <code value="R-404B9"/>
+                <display value="Left upgaze"/>
+            </concept>
+            <concept>
+                <code value="R-404B8"/>
+                <display value="Right downgaze"/>
+            </concept>
+            <concept>
+                <code value="R-404BD"/>
+                <display value="Right gaze"/>
+            </concept>
+            <concept>
+                <code value="R-404B7"/>
+                <display value="Left downgaze"/>
+            </concept>
+            <concept>
+                <code value="R-404BF"/>
+                <display value="Upward gaze"/>
+            </concept>
+            <concept>
+                <code value="R-404B6"/>
+                <display value="Downgaze"/>
+            </concept>
+            <concept>
+                <code value="R-1022D"/>
+                <display value="Primary gaze"/>
+            </concept>
+            <concept>
+                <code value="R-404BA"/>
+                <display value="Right upgaze"/>
+            </concept>
+            <concept>
+                <code value="R-404BC"/>
+                <display value="Left gaze"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

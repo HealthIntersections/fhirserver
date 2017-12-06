@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-6011-CalcificationTypesfromBIRADS"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_6011.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.341"/>
+    </identifier>
+    <version value="20050822"/>
+    <name value="CalcificationTypesfromBIRADS®"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 6011 CalcificationTypesfromBIRADS®"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://dicom.nema.org/resources/ontology/DCM"/>
+            <concept>
+                <code value="111344"/>
+                <display value="Fine pleomorphic calcification"/>
+            </concept>
+            <concept>
+                <code value="111345"/>
+                <display value="Macrocalcifications"/>
+            </concept>
+        </include>
+        <include>
+            <system value="http://snomed.info/srt"/>
+            <concept>
+                <code value="F-01761"/>
+                <display value="Coarse (popcorn-like) calcification"/>
+            </concept>
+            <concept>
+                <code value="F-0176E"/>
+                <display value="Fine linear, branching (casting) calcification"/>
+            </concept>
+            <concept>
+                <code value="F-0176D"/>
+                <display value="Fine, linear (casting) calcification"/>
+            </concept>
+            <concept>
+                <code value="F-0176C"/>
+                <display value="Amorphous calcification"/>
+            </concept>
+            <concept>
+                <code value="F-0176B"/>
+                <display value="Vascular calcification"/>
+            </concept>
+            <concept>
+                <code value="F-0176F"/>
+                <display value="Heterogeneous calcification"/>
+            </concept>
+            <concept>
+                <code value="D7-90435"/>
+                <display value="Microcalcifications of the breast"/>
+            </concept>
+            <concept>
+                <code value="F-0176A"/>
+                <display value="Calcified suture material"/>
+            </concept>
+            <concept>
+                <code value="F-01765"/>
+                <display value="Milk of calcium calcification"/>
+            </concept>
+            <concept>
+                <code value="F-01764"/>
+                <display value="Large rod-like calcification"/>
+            </concept>
+            <concept>
+                <code value="F-01763"/>
+                <display value="Eggshell calcification"/>
+            </concept>
+            <concept>
+                <code value="F-01762"/>
+                <display value="Dystrophic calcification"/>
+            </concept>
+            <concept>
+                <code value="F-01769"/>
+                <display value="Calcified skin of breast"/>
+            </concept>
+            <concept>
+                <code value="F-01768"/>
+                <display value="Round shaped calcification"/>
+            </concept>
+            <concept>
+                <code value="F-01767"/>
+                <display value="Punctate calcification"/>
+            </concept>
+            <concept>
+                <code value="F-01766"/>
+                <display value="Lucent-centered calcification"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

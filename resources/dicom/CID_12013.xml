@@ -1,0 +1,462 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-12013-GestationalAgeEquationsandTables"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_12013.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.561"/>
+    </identifier>
+    <version value="20061024"/>
+    <name value="GestationalAgeEquationsandTables"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 12013 GestationalAgeEquationsandTables"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://loinc.org"/>
+            <concept>
+                <code value="11893-5"/>
+                <display value="AC, Jeanty 1984"/>
+            </concept>
+            <concept>
+                <code value="33537-2"/>
+                <display value="AC, Jeanty 1982"/>
+            </concept>
+            <concept>
+                <code value="33119-9"/>
+                <display value="OFD, ASUM 2000"/>
+            </concept>
+            <concept>
+                <code value="11911-5"/>
+                <display value="CRL, Hansmann 1985"/>
+            </concept>
+            <concept>
+                <code value="33138-9"/>
+                <display value="Fetal Trunk Cross-Sectional Area, Osaka 1989"/>
+            </concept>
+            <concept>
+                <code value="33081-1"/>
+                <display value="BPD, Mertz 1988"/>
+            </concept>
+            <concept>
+                <code value="11934-7"/>
+                <display value="HC, Jeanty 1984"/>
+            </concept>
+            <concept>
+                <code value="33115-7"/>
+                <display value="HC Merz, 1988"/>
+            </concept>
+            <concept>
+                <code value="33126-4"/>
+                <display value="Radius, Jeanty 1983"/>
+            </concept>
+            <concept>
+                <code value="33103-3"/>
+                <display value="FL, Tokyo 1986"/>
+            </concept>
+            <concept>
+                <code value="33540-6"/>
+                <display value="CRL, Hansmann 1986"/>
+            </concept>
+            <concept>
+                <code value="33085-2"/>
+                <display value="BPD, Tokyo 1986"/>
+            </concept>
+            <concept>
+                <code value="33122-3"/>
+                <display value="IOD, Mayden 1982"/>
+            </concept>
+            <concept>
+                <code value="11941-2"/>
+                <display value="Tibia, Jeanty 1984"/>
+            </concept>
+            <concept>
+                <code value="33089-4"/>
+                <display value="CRL, ASUM 1991"/>
+            </concept>
+            <concept>
+                <code value="11885-1"/>
+                <display value="Gestational Age by LMP"/>
+            </concept>
+            <concept>
+                <code value="33545-5"/>
+                <display value="BD, Jeanty 1982"/>
+            </concept>
+            <concept>
+                <code value="11900-8"/>
+                <display value="BPD, Doubilet 1993"/>
+            </concept>
+            <concept>
+                <code value="33108-2"/>
+                <display value="GS, Tokyo 1986"/>
+            </concept>
+            <concept>
+                <code value="33134-8"/>
+                <display value="TCD, Hill 1990"/>
+            </concept>
+            <concept>
+                <code value="33093-6"/>
+                <display value="CRL, Osaka 1989"/>
+            </concept>
+            <concept>
+                <code value="33111-6"/>
+                <display value="HC derived, Chitty 1997"/>
+            </concept>
+            <concept>
+                <code value="33130-6"/>
+                <display value="TAD, Tokyo 1986"/>
+            </concept>
+            <concept>
+                <code value="33074-6"/>
+                <display value="AC, Lessoway 1998"/>
+            </concept>
+            <concept>
+                <code value="33078-7"/>
+                <display value="AxT, Shinozuka 1996"/>
+            </concept>
+            <concept>
+                <code value="33097-7"/>
+                <display value="Fibula, Jeanty 1983"/>
+            </concept>
+            <concept>
+                <code value="11939-6"/>
+                <display value="Radius, Merz 1987"/>
+            </concept>
+            <concept>
+                <code value="33125-6"/>
+                <display value="OOD, Trout 1994"/>
+            </concept>
+            <concept>
+                <code value="33080-3"/>
+                <display value="BPD, Lessoway 1998"/>
+            </concept>
+            <concept>
+                <code value="33541-4"/>
+                <display value="FL, Hansmann 1986"/>
+            </concept>
+            <concept>
+                <code value="33102-5"/>
+                <display value="FL, Shinozuka 1996"/>
+            </concept>
+            <concept>
+                <code value="33121-5"/>
+                <display value="OFD, Lessoway 1998"/>
+            </concept>
+            <concept>
+                <code value="33084-5"/>
+                <display value="BPD, Shinozuka 1996"/>
+            </concept>
+            <concept>
+                <code value="11923-0"/>
+                <display value="FL, Jeanty 1984"/>
+            </concept>
+            <concept>
+                <code value="33088-6"/>
+                <display value="Clavicle length, Yarkoni 1985"/>
+            </concept>
+            <concept>
+                <code value="11924-8"/>
+                <display value="FL, Merz 1987"/>
+            </concept>
+            <concept>
+                <code value="11905-7"/>
+                <display value="BPD, Jeanty 1984"/>
+            </concept>
+            <concept>
+                <code value="11928-9"/>
+                <display value="GS, Hellman 1969"/>
+            </concept>
+            <concept>
+                <code value="11920-6"/>
+                <display value="FL, Hadlock 1984"/>
+            </concept>
+            <concept>
+                <code value="11901-6"/>
+                <display value="BPDa, Hadlock 1982"/>
+            </concept>
+            <concept>
+                <code value="33107-4"/>
+                <display value="GS, Nyberg 1992"/>
+            </concept>
+            <concept>
+                <code value="33118-1"/>
+                <display value="Length of Vertebra, Tokyo 1986"/>
+            </concept>
+            <concept>
+                <code value="33092-8"/>
+                <display value="CRL, Jeanty 1982"/>
+            </concept>
+            <concept>
+                <code value="33110-8"/>
+                <display value="HC measured, Chitty 1997"/>
+            </concept>
+            <concept>
+                <code value="33137-1"/>
+                <display value="Transverse Thoracic Diameter, Lessoway 1998"/>
+            </concept>
+            <concept>
+                <code value="33114-0"/>
+                <display value="HC, Lessoway 1998"/>
+            </concept>
+            <concept>
+                <code value="33538-0"/>
+                <display value="BPD, Hansmann 1986"/>
+            </concept>
+            <concept>
+                <code value="33133-0"/>
+                <display value="TCD, Goldstein 1987"/>
+            </concept>
+            <concept>
+                <code value="33073-8"/>
+                <display value="AC, Hansmann1985"/>
+            </concept>
+            <concept>
+                <code value="33077-9"/>
+                <display value="A-P Abdominal Diameter, Lessoway 1998"/>
+            </concept>
+            <concept>
+                <code value="33096-9"/>
+                <display value="CRL, Tokyo 1986"/>
+            </concept>
+            <concept>
+                <code value="11913-1"/>
+                <display value="CRL, Nelson 1981"/>
+            </concept>
+            <concept>
+                <code value="11936-2"/>
+                <display value="Humerus, Jeanty 1984"/>
+            </concept>
+            <concept>
+                <code value="33539-8"/>
+                <display value="BPD, Jeanty 1982"/>
+            </concept>
+            <concept>
+                <code value="11917-2"/>
+                <display value="CRL, Jeanty 1984"/>
+            </concept>
+            <concept>
+                <code value="33101-7"/>
+                <display value="FL, Osaka 1989"/>
+            </concept>
+            <concept>
+                <code value="33109-0"/>
+                <display value="HC, ASUM 2000"/>
+            </concept>
+            <concept>
+                <code value="33542-2"/>
+                <display value="FL, Merz 1988"/>
+            </concept>
+            <concept>
+                <code value="33128-0"/>
+                <display value="TAD, Eriksen 1985"/>
+            </concept>
+            <concept>
+                <code value="33083-7"/>
+                <display value="BPD, Rempen 1991"/>
+            </concept>
+            <concept>
+                <code value="33120-7"/>
+                <display value="OFD, Hansmann 1986"/>
+            </concept>
+            <concept>
+                <code value="33087-8"/>
+                <display value="BPD-oo, Chitty 1997"/>
+            </concept>
+            <concept>
+                <code value="11906-5"/>
+                <display value="BPD, Kurtz 1980"/>
+            </concept>
+            <concept>
+                <code value="11929-7"/>
+                <display value="GS, Rempen 1991"/>
+            </concept>
+            <concept>
+                <code value="11921-4"/>
+                <display value="FL, Hansmann 1985"/>
+            </concept>
+            <concept>
+                <code value="33091-0"/>
+                <display value="CRL, Daya 1993"/>
+            </concept>
+            <concept>
+                <code value="33129-8"/>
+                <display value="TAD Hansmann, 1979"/>
+            </concept>
+            <concept>
+                <code value="11902-4"/>
+                <display value="BPD, Hadlock 1984"/>
+            </concept>
+            <concept>
+                <code value="33106-6"/>
+                <display value="GS, Hansmann 1982"/>
+            </concept>
+            <concept>
+                <code value="11944-6"/>
+                <display value="Ulna, Jeanty 1984"/>
+            </concept>
+            <concept>
+                <code value="33117-3"/>
+                <display value="Humerus Length, Osaka 1989"/>
+            </concept>
+            <concept>
+                <code value="33072-0"/>
+                <display value="AC, ASUM 2000"/>
+            </concept>
+            <concept>
+                <code value="33136-3"/>
+                <display value="Transverse Thoracic Diameter, Hansmann 1985"/>
+            </concept>
+            <concept>
+                <code value="11932-1"/>
+                <display value="HC, Hadlock 1984"/>
+            </concept>
+            <concept>
+                <code value="33113-2"/>
+                <display value="HC, Jeanty 1982"/>
+            </concept>
+            <concept>
+                <code value="33076-1"/>
+                <display value="AC, Shinozuka 1996"/>
+            </concept>
+            <concept>
+                <code value="33095-1"/>
+                <display value="CRL, Shinozuka 1996"/>
+            </concept>
+            <concept>
+                <code value="33132-2"/>
+                <display value="TCD, Chitty 1994"/>
+            </concept>
+            <concept>
+                <code value="33099-3"/>
+                <display value="FL, Jeanty 1982"/>
+            </concept>
+            <concept>
+                <code value="11892-7"/>
+                <display value="AC, Hadlock 1984"/>
+            </concept>
+            <concept>
+                <code value="11914-9"/>
+                <display value="CRL, Robinson 1975"/>
+            </concept>
+            <concept>
+                <code value="11937-0"/>
+                <display value="Humerus, Merz 1987"/>
+            </concept>
+            <concept>
+                <code value="11918-0"/>
+                <display value="Fibula, Merz 1987"/>
+            </concept>
+            <concept>
+                <code value="11910-7"/>
+                <display value="CRL, Hadlock 1992"/>
+            </concept>
+            <concept>
+                <code value="33116-5"/>
+                <display value="Humerus Length, ASUM 2000"/>
+            </concept>
+            <concept>
+                <code value="33086-0"/>
+                <display value="BPD-oi, Chitty 1997"/>
+            </concept>
+            <concept>
+                <code value="33100-9"/>
+                <display value="FL, Lessoway 1998"/>
+            </concept>
+            <concept>
+                <code value="33543-0"/>
+                <display value="HC, Hansmann 1986"/>
+            </concept>
+            <concept>
+                <code value="33127-2"/>
+                <display value="Spine Length, Tokyo, 1989"/>
+            </concept>
+            <concept>
+                <code value="33104-1"/>
+                <display value="GS, Daya 1991"/>
+            </concept>
+            <concept>
+                <code value="33123-1"/>
+                <display value="IOD, Trout 1994"/>
+            </concept>
+            <concept>
+                <code value="33082-9"/>
+                <display value="BPD, Osaka 1989"/>
+            </concept>
+            <concept>
+                <code value="11889-3"/>
+                <display value="AC, Campbell 1975"/>
+            </concept>
+            <concept>
+                <code value="11907-3"/>
+                <display value="BPD, Sabbagha 1978"/>
+            </concept>
+            <concept>
+                <code value="11884-4"/>
+                <display value="Average Ultrasound Age"/>
+            </concept>
+            <concept>
+                <code value="11945-3"/>
+                <display value="Ulna, Merz 1987"/>
+            </concept>
+            <concept>
+                <code value="11922-2"/>
+                <display value="FL, Hohler 1982"/>
+            </concept>
+            <concept>
+                <code value="33090-2"/>
+                <display value="CRL, ASUM 2000"/>
+            </concept>
+            <concept>
+                <code value="33544-8"/>
+                <display value="OFD, Hansmann 1985"/>
+            </concept>
+            <concept>
+                <code value="11903-2"/>
+                <display value="BPD, Hansmann 1985"/>
+            </concept>
+            <concept>
+                <code value="11926-3"/>
+                <display value="Foot Length, Mercer 1987"/>
+            </concept>
+            <concept>
+                <code value="33105-8"/>
+                <display value="GS, Hansmann 1979"/>
+            </concept>
+            <concept>
+                <code value="33124-9"/>
+                <display value="OOD, Mayden, 1982"/>
+            </concept>
+            <concept>
+                <code value="33094-4"/>
+                <display value="CRL, Rempen 1991"/>
+            </concept>
+            <concept>
+                <code value="33135-5"/>
+                <display value="TCD, Nimrod 1986"/>
+            </concept>
+            <concept>
+                <code value="33075-3"/>
+                <display value="AC, Mertz 1988"/>
+            </concept>
+            <concept>
+                <code value="33112-4"/>
+                <display value="HC, Hansmann 1985"/>
+            </concept>
+            <concept>
+                <code value="33131-4"/>
+                <display value="ThC, Chitkara 1987"/>
+            </concept>
+            <concept>
+                <code value="33098-5"/>
+                <display value="FL, Chitty 1997"/>
+            </concept>
+            <concept>
+                <code value="33079-5"/>
+                <display value="BPD, ASUM 1989"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

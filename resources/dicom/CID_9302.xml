@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-9302-MediaImportPPSDiscontinuationReasons"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_9302.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.813"/>
+    </identifier>
+    <version value="20090616"/>
+    <name value="MediaImportPPSDiscontinuationReasons"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 9302 MediaImportPPSDiscontinuationReasons"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://dicom.nema.org/resources/ontology/DCM"/>
+            <concept>
+                <code value="110514"/>
+                <display value="Incorrect worklist entry selected"/>
+            </concept>
+            <concept>
+                <code value="110524"/>
+                <display value="Media Failure"/>
+            </concept>
+            <concept>
+                <code value="110513"/>
+                <display value="Discontinued for unspecified reason"/>
+            </concept>
+            <concept>
+                <code value="110523"/>
+                <display value="Object Set incomplete"/>
+            </concept>
+            <concept>
+                <code value="110501"/>
+                <display value="Equipment failure"/>
+            </concept>
+            <concept>
+                <code value="110522"/>
+                <display value="Object Types not supported"/>
+            </concept>
+            <concept>
+                <code value="110521"/>
+                <display value="Objects incorrectly formatted"/>
+            </concept>
+            <concept>
+                <code value="110510"/>
+                <display value="Duplicate order"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

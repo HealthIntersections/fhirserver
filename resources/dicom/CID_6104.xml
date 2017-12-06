@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-6104-AbnormalOpacityFindingorFeature"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_6104.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.424"/>
+    </identifier>
+    <version value="20030108"/>
+    <name value="AbnormalOpacityFindingorFeature"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 6104 AbnormalOpacityFindingorFeature"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://dicom.nema.org/resources/ontology/DCM"/>
+            <concept>
+                <code value="112065"/>
+                <display value="Reticulonodular pattern"/>
+            </concept>
+            <concept>
+                <code value="112120"/>
+                <display value="Ground glass opacity"/>
+            </concept>
+            <concept>
+                <code value="112066"/>
+                <display value="Beaded septum sign"/>
+            </concept>
+            <concept>
+                <code value="112121"/>
+                <display value="Infiltrate"/>
+            </concept>
+            <concept>
+                <code value="112067"/>
+                <display value="Nodular pattern"/>
+            </concept>
+            <concept>
+                <code value="112122"/>
+                <display value="Micronodule"/>
+            </concept>
+            <concept>
+                <code value="112001"/>
+                <display value="Opacity"/>
+            </concept>
+            <concept>
+                <code value="112068"/>
+                <display value="Pseudoplaque"/>
+            </concept>
+            <concept>
+                <code value="112123"/>
+                <display value="Phantom tumor (pseudotumor)"/>
+            </concept>
+            <concept>
+                <code value="112069"/>
+                <display value="Signet-ring sign"/>
+            </concept>
+            <concept>
+                <code value="112124"/>
+                <display value="Shadow"/>
+            </concept>
+            <concept>
+                <code value="112059"/>
+                <display value="Primary complex"/>
+            </concept>
+            <concept>
+                <code value="112004"/>
+                <display value="Abnormal interstitial pattern"/>
+            </concept>
+            <concept>
+                <code value="112125"/>
+                <display value="Small irregular opacities"/>
+            </concept>
+            <concept>
+                <code value="112126"/>
+                <display value="Small rounded opacities"/>
+            </concept>
+            <concept>
+                <code value="112127"/>
+                <display value="Tree-in-bud sign"/>
+            </concept>
+            <concept>
+                <code value="112118"/>
+                <display value="Density"/>
+            </concept>
+            <concept>
+                <code value="112119"/>
+                <display value="Dependent opacity"/>
+            </concept>
+        </include>
+        <include>
+            <system value="http://snomed.info/srt"/>
+            <concept>
+                <code value="M-03000"/>
+                <display value="Mass"/>
+            </concept>
+            <concept>
+                <code value="M-03010"/>
+                <display value="Nodule"/>
+            </concept>
+            <concept>
+                <code value="D3-40230"/>
+                <display value="Pulmonary embolism"/>
+            </concept>
+            <concept>
+                <code value="F-20172"/>
+                <display value="Coin lesion"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

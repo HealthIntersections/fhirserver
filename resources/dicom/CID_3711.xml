@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-3711-ValvularAbnormalities"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_3711.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.212"/>
+    </identifier>
+    <version value="20160314"/>
+    <name value="ValvularAbnormalities"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 3711 ValvularAbnormalities"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://dicom.nema.org/resources/ontology/DCM"/>
+            <concept>
+                <code value="127856"/>
+                <display value="Heart Valve Flail"/>
+            </concept>
+        </include>
+        <include>
+            <system value="http://snomed.info/srt"/>
+            <concept>
+                <code value="D3-29001"/>
+                <display value="Stenosis"/>
+            </concept>
+            <concept>
+                <code value="D3-28005"/>
+                <display value="Valvular endocarditis"/>
+            </concept>
+            <concept>
+                <code value="F-32400"/>
+                <display value="Regurgitation"/>
+            </concept>
+            <concept>
+                <code value="R-0030F"/>
+                <display value="Immobile Heart Valve"/>
+            </concept>
+            <concept>
+                <code value="R-0030B"/>
+                <display value="Calcified Heart Valve"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

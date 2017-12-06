@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-3228-ECGTimingMeasurements"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_3228.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.774"/>
+    </identifier>
+    <version value="20080927"/>
+    <name value="ECGTimingMeasurements"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 3228 ECGTimingMeasurements"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="urn:iso:std:iso:11073:10101"/>
+            <concept>
+                <code value="2:16184"/>
+                <display value="P duration global"/>
+            </concept>
+            <concept>
+                <code value="2:16140"/>
+                <display value="PP interval global"/>
+            </concept>
+            <concept>
+                <code value="2:32768"/>
+                <display value="PP interval per lead"/>
+            </concept>
+            <concept>
+                <code value="2:16160"/>
+                <display value="QT interval global"/>
+            </concept>
+            <concept>
+                <code value="2:7936"/>
+                <display value="QRS duration per lead"/>
+            </concept>
+            <concept>
+                <code value="2:8192"/>
+                <display value="QT interval per lead"/>
+            </concept>
+            <concept>
+                <code value="2:6656"/>
+                <display value="P duration per lead"/>
+            </concept>
+            <concept>
+                <code value="2:16156"/>
+                <display value="QRS duration global"/>
+            </concept>
+            <concept>
+                <code value="2:15872"/>
+                <display value="PR interval global"/>
+            </concept>
+            <concept>
+                <code value="2:7168"/>
+                <display value="PR interval per lead"/>
+            </concept>
+            <concept>
+                <code value="2:33024"/>
+                <display value="RR interval per lead"/>
+            </concept>
+            <concept>
+                <code value="2:16168"/>
+                <display value="RR interval global"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

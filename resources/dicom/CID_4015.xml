@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-4015-ViewModifierforMammography"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_4015.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.299"/>
+    </identifier>
+    <version value="20090717"/>
+    <name value="ViewModifierforMammography"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 4015 ViewModifierforMammography"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://snomed.info/srt"/>
+            <concept>
+                <code value="R-102D2"/>
+                <display value="Cleavage"/>
+            </concept>
+            <concept>
+                <code value="R-102D1"/>
+                <display value="Axillary Tail"/>
+            </concept>
+            <concept>
+                <code value="R-102D6"/>
+                <display value="Magnification"/>
+            </concept>
+            <concept>
+                <code value="R-102D5"/>
+                <display value="Implant Displaced"/>
+            </concept>
+            <concept>
+                <code value="R-40AB3"/>
+                <display value="Nipple in profile"/>
+            </concept>
+            <concept>
+                <code value="P2-00161"/>
+                <display value="Anterior compression"/>
+            </concept>
+            <concept>
+                <code value="R-102D4"/>
+                <display value="Rolled Medial"/>
+            </concept>
+            <concept>
+                <code value="R-102D3"/>
+                <display value="Rolled Lateral"/>
+            </concept>
+            <concept>
+                <code value="R-102C2"/>
+                <display value="Tangential"/>
+            </concept>
+            <concept>
+                <code value="R-102C9"/>
+                <display value="Rolled Superior"/>
+            </concept>
+            <concept>
+                <code value="R-40AB2"/>
+                <display value="Axillary tissue"/>
+            </concept>
+            <concept>
+                <code value="R-102D7"/>
+                <display value="Spot Compression"/>
+            </concept>
+            <concept>
+                <code value="R-102CA"/>
+                <display value="Rolled Inferior"/>
+            </concept>
+            <concept>
+                <code value="R-40ABE"/>
+                <display value="Infra-mammary fold"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

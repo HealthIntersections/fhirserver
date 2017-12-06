@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-12233-CardiacPhase"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_12233.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.624"/>
+    </identifier>
+    <version value="20160314"/>
+    <name value="CardiacPhase"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 12233 CardiacPhase"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://snomed.info/srt"/>
+            <concept>
+                <code value="R-40B10"/>
+                <display value="Ventricular Isovolumic Relaxation"/>
+            </concept>
+            <concept>
+                <code value="R-40B21"/>
+                <display value="Diastasis"/>
+            </concept>
+            <concept>
+                <code value="R-FAB5C"/>
+                <display value="End Diastole"/>
+            </concept>
+            <concept>
+                <code value="R-40B1B"/>
+                <display value="Early Diastole"/>
+            </concept>
+            <concept>
+                <code value="R-FAB5B"/>
+                <display value="End Systole"/>
+            </concept>
+            <concept>
+                <code value="R-40B1C"/>
+                <display value="Diastolic Rapid Inflow"/>
+            </concept>
+            <concept>
+                <code value="F-32020"/>
+                <display value="Systole"/>
+            </concept>
+            <concept>
+                <code value="F-32030"/>
+                <display value="Atrial Systole"/>
+            </concept>
+            <concept>
+                <code value="F-32010"/>
+                <display value="Diastole"/>
+            </concept>
+            <concept>
+                <code value="F-32021"/>
+                <display value="Peak Systolic"/>
+            </concept>
+            <concept>
+                <code value="R-40B12"/>
+                <display value="Ventricular Isovolumic Contraction"/>
+            </concept>
+            <concept>
+                <code value="R-40B11"/>
+                <display value="Ventricular Ejection"/>
+            </concept>
+            <concept>
+                <code value="F-32040"/>
+                <display value="Ventricular Systole"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

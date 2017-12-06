@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-4200-OphthalmicImagingAgent"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_4200.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.316"/>
+    </identifier>
+    <version value="20040921"/>
+    <name value="OphthalmicImagingAgent"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 4200 OphthalmicImagingAgent"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://snomed.info/srt"/>
+            <concept>
+                <code value="C-22853"/>
+                <display value="Trypan blue"/>
+            </concept>
+            <concept>
+                <code value="C-B02C5"/>
+                <display value="Methylene blue"/>
+            </concept>
+            <concept>
+                <code value="C-B02CC"/>
+                <display value="Fluorescein"/>
+            </concept>
+            <concept>
+                <code value="C-B0156"/>
+                <display value="Indocyanine green"/>
+            </concept>
+            <concept>
+                <code value="C-B0295"/>
+                <display value="Rose Bengal"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

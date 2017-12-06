@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-12294-CardiacUltrasoundPericardiumandPleuraFindingSites"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_12294.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.874"/>
+    </identifier>
+    <version value="20100317"/>
+    <name value="CardiacUltrasoundPericardiumandPleuraFindingSites"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 12294 CardiacUltrasoundPericardiumandPleuraFindingSites"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://snomed.info/srt"/>
+            <concept>
+                <code value="T-29100"/>
+                <display value="Right Pleura"/>
+            </concept>
+            <concept>
+                <code value="T-29200"/>
+                <display value="Left Pleura"/>
+            </concept>
+            <concept>
+                <code value="T-39000"/>
+                <display value="Pericardium"/>
+            </concept>
+            <concept>
+                <code value="T-29000"/>
+                <display value="Pleura"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-12212-EchocardiographyAorta"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_12212.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.605"/>
+    </identifier>
+    <version value="20030918"/>
+    <name value="EchocardiographyAorta"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 12212 EchocardiographyAorta"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://loinc.org"/>
+            <concept>
+                <code value="18015-8"/>
+                <display value="Aortic Root Diameter"/>
+            </concept>
+            <concept>
+                <code value="8867-4"/>
+                <display value="Heart rate"/>
+            </concept>
+            <concept>
+                <code value="18012-5"/>
+                <display value="Ascending Aortic Diameter"/>
+            </concept>
+            <concept>
+                <code value="18011-7"/>
+                <display value="Aortic Arch Diameter"/>
+            </concept>
+            <concept>
+                <code value="18014-1"/>
+                <display value="Aortic Isthmus Diameter"/>
+            </concept>
+            <concept>
+                <code value="29460-3"/>
+                <display value="Thoracic Aorta Coarctation Systolic Peak Velocity"/>
+            </concept>
+            <concept>
+                <code value="18013-3"/>
+                <display value="Descending Aortic Diameter"/>
+            </concept>
+            <concept>
+                <code value="17995-2"/>
+                <display value="Thoracic Aorta Coarctation Systolic Peak Instantaneous Gradient"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

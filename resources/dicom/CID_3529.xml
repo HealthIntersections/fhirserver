@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-3529-ArterialVenousContent"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_3529.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.143"/>
+    </identifier>
+    <version value="20030327"/>
+    <name value="Arterial/VenousContent"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 3529 Arterial/VenousContent"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://dicom.nema.org/resources/ontology/DCM"/>
+            <concept>
+                <code value="122188"/>
+                <display value="Pulmonary Arterial Content (FCpa)"/>
+            </concept>
+            <concept>
+                <code value="122189"/>
+                <display value="Pulmonary Venous Content (FCpv)"/>
+            </concept>
+        </include>
+        <include>
+            <system value="http://loinc.org"/>
+            <concept>
+                <code value="19218-7"/>
+                <display value="Arterial Content (FCa)"/>
+            </concept>
+            <concept>
+                <code value="19220-3"/>
+                <display value="Venous Content (FCv)"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

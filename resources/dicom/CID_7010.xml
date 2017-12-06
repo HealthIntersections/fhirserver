@@ -1,0 +1,318 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-7010-KeyObjectSelectionDocumentTitle"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_7010.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.490"/>
+    </identifier>
+    <version value="20170914"/>
+    <name value="KeyObjectSelectionDocumentTitle"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 7010 KeyObjectSelectionDocumentTitle"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://dicom.nema.org/resources/ontology/DCM"/>
+            <concept>
+                <code value="113000"/>
+                <display value="Of Interest"/>
+            </concept>
+            <concept>
+                <code value="113001"/>
+                <display value="Rejected for Quality Reasons"/>
+            </concept>
+            <concept>
+                <code value="113002"/>
+                <display value="For Referring Provider"/>
+            </concept>
+            <concept>
+                <code value="113003"/>
+                <display value="For Surgery"/>
+            </concept>
+            <concept>
+                <code value="113004"/>
+                <display value="For Teaching"/>
+            </concept>
+            <concept>
+                <code value="128219"/>
+                <display value="Contouring Input Used"/>
+            </concept>
+            <concept>
+                <code value="128218"/>
+                <display value="Diagnosis Input Used"/>
+            </concept>
+            <concept>
+                <code value="128211"/>
+                <display value="RT Treatment Planning Input Used"/>
+            </concept>
+            <concept>
+                <code value="128210"/>
+                <display value="RT Prescription Input Used"/>
+            </concept>
+            <concept>
+                <code value="128213"/>
+                <display value="Physician Review Input Used"/>
+            </concept>
+            <concept>
+                <code value="128212"/>
+                <display value="RT Plan Summation Input Used"/>
+            </concept>
+            <concept>
+                <code value="128215"/>
+                <display value="Plan Quality Assurance Input Used"/>
+            </concept>
+            <concept>
+                <code value="128214"/>
+                <display value="Physicist Review Input Used"/>
+            </concept>
+            <concept>
+                <code value="128217"/>
+                <display value="Patient Setup Verification Input Used"/>
+            </concept>
+            <concept>
+                <code value="128216"/>
+                <display value="Machine Quality Assurance Input Used"/>
+            </concept>
+            <concept>
+                <code value="113005"/>
+                <display value="For Conference"/>
+            </concept>
+            <concept>
+                <code value="113006"/>
+                <display value="For Therapy"/>
+            </concept>
+            <concept>
+                <code value="113007"/>
+                <display value="For Patient"/>
+            </concept>
+            <concept>
+                <code value="113008"/>
+                <display value="For Peer Review"/>
+            </concept>
+            <concept>
+                <code value="113009"/>
+                <display value="For Research"/>
+            </concept>
+            <concept>
+                <code value="113030"/>
+                <display value="Manifest"/>
+            </concept>
+            <concept>
+                <code value="113031"/>
+                <display value="Signed Manifest"/>
+            </concept>
+            <concept>
+                <code value="113032"/>
+                <display value="Complete Study Content"/>
+            </concept>
+            <concept>
+                <code value="113033"/>
+                <display value="Signed Complete Study Content"/>
+            </concept>
+            <concept>
+                <code value="113034"/>
+                <display value="Complete Acquisition Content"/>
+            </concept>
+            <concept>
+                <code value="113035"/>
+                <display value="Signed Complete Acquisition Content"/>
+            </concept>
+            <concept>
+                <code value="113036"/>
+                <display value="Group of Frames for Display"/>
+            </concept>
+            <concept>
+                <code value="113037"/>
+                <display value="Rejected for Patient Safety Reasons"/>
+            </concept>
+            <concept>
+                <code value="128208"/>
+                <display value="For Tumor Registry"/>
+            </concept>
+            <concept>
+                <code value="128207"/>
+                <display value="For Clinical Trial Submission"/>
+            </concept>
+            <concept>
+                <code value="128209"/>
+                <display value="RT Workflow Input Used"/>
+            </concept>
+            <concept>
+                <code value="128200"/>
+                <display value="For RT Plan Summation"/>
+            </concept>
+            <concept>
+                <code value="128202"/>
+                <display value="For Physicist Review"/>
+            </concept>
+            <concept>
+                <code value="128201"/>
+                <display value="For Physician Review"/>
+            </concept>
+            <concept>
+                <code value="128204"/>
+                <display value="For Plan Quality Assurance"/>
+            </concept>
+            <concept>
+                <code value="128203"/>
+                <display value="For Tumor Board"/>
+            </concept>
+            <concept>
+                <code value="128206"/>
+                <display value="For Patient Setup Verification"/>
+            </concept>
+            <concept>
+                <code value="128205"/>
+                <display value="For Machine Quality Assurance"/>
+            </concept>
+            <concept>
+                <code value="113038"/>
+                <display value="Incorrect Modality Worklist Entry"/>
+            </concept>
+            <concept>
+                <code value="113039"/>
+                <display value="Data Retention Policy Expired"/>
+            </concept>
+            <concept>
+                <code value="113020"/>
+                <display value="For Report Attachment"/>
+            </concept>
+            <concept>
+                <code value="113021"/>
+                <display value="For Litigation"/>
+            </concept>
+            <concept>
+                <code value="113022"/>
+                <display value="Collection of Presentation States"/>
+            </concept>
+            <concept>
+                <code value="128714"/>
+                <display value="For Publication Export"/>
+            </concept>
+            <concept>
+                <code value="128713"/>
+                <display value="For Research Collection Export"/>
+            </concept>
+            <concept>
+                <code value="128199"/>
+                <display value="For Plan Comparison"/>
+            </concept>
+            <concept>
+                <code value="128710"/>
+                <display value="For Teaching File Export"/>
+            </concept>
+            <concept>
+                <code value="128711"/>
+                <display value="For Clinical Trial Export"/>
+            </concept>
+            <concept>
+                <code value="128192"/>
+                <display value="RT Treatment Session Result"/>
+            </concept>
+            <concept>
+                <code value="128191"/>
+                <display value="Patient Setup Verification Result"/>
+            </concept>
+            <concept>
+                <code value="128194"/>
+                <display value="RT Treatment QA Result"/>
+            </concept>
+            <concept>
+                <code value="128193"/>
+                <display value="RT Treatment Course Summary"/>
+            </concept>
+            <concept>
+                <code value="128196"/>
+                <display value="For Segmentation"/>
+            </concept>
+            <concept>
+                <code value="128195"/>
+                <display value="For Diagnosis"/>
+            </concept>
+            <concept>
+                <code value="128198"/>
+                <display value="For RT Treatment Planning"/>
+            </concept>
+            <concept>
+                <code value="128197"/>
+                <display value="For RT Prescription"/>
+            </concept>
+            <concept>
+                <code value="113010"/>
+                <display value="Quality Issue"/>
+            </concept>
+            <concept>
+                <code value="113013"/>
+                <display value="Best In Set"/>
+            </concept>
+            <concept>
+                <code value="128190"/>
+                <display value="Dosimetric Result"/>
+            </concept>
+            <concept>
+                <code value="128222"/>
+                <display value="Tumor Registry Input Used"/>
+            </concept>
+            <concept>
+                <code value="128189"/>
+                <display value="RT Planning Result"/>
+            </concept>
+            <concept>
+                <code value="128221"/>
+                <display value="Tumor Board Input Used"/>
+            </concept>
+            <concept>
+                <code value="128188"/>
+                <display value="RT Treatment Simulation Result"/>
+            </concept>
+            <concept>
+                <code value="128223"/>
+                <display value="Clinical Trial Submission Input Used"/>
+            </concept>
+            <concept>
+                <code value="128181"/>
+                <display value="Diagnostic Source Images"/>
+            </concept>
+            <concept>
+                <code value="128180"/>
+                <display value="For RT Workflow"/>
+            </concept>
+            <concept>
+                <code value="113018"/>
+                <display value="For Printing"/>
+            </concept>
+            <concept>
+                <code value="128183"/>
+                <display value="Registration Result"/>
+            </concept>
+            <concept>
+                <code value="128182"/>
+                <display value="Segmentation Result"/>
+            </concept>
+            <concept>
+                <code value="128185"/>
+                <display value="RT Prescription Result"/>
+            </concept>
+            <concept>
+                <code value="128184"/>
+                <display value="Pre-Planning Result"/>
+            </concept>
+            <concept>
+                <code value="128220"/>
+                <display value="Plan Comparison Input Used"/>
+            </concept>
+            <concept>
+                <code value="128187"/>
+                <display value="Coordinate Alignment Image Series"/>
+            </concept>
+            <concept>
+                <code value="128186"/>
+                <display value="Dose Calculation Image Series"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

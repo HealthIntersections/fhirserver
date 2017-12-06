@@ -1,0 +1,214 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-3700-CathDiagnosis"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_3700.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.203"/>
+    </identifier>
+    <version value="20170914"/>
+    <name value="CathDiagnosis"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 3700 CathDiagnosis"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://snomed.info/srt"/>
+            <concept>
+                <code value="D3-15100"/>
+                <display value="Acute myocardial infarction"/>
+            </concept>
+            <concept>
+                <code value="D3-13020"/>
+                <display value="Stable Angina"/>
+            </concept>
+            <concept>
+                <code value="D3-13040"/>
+                <display value="Coronary artery disease"/>
+            </concept>
+            <concept>
+                <code value="D3-40300"/>
+                <display value="Pulmonary hypertension"/>
+            </concept>
+            <concept>
+                <code value="D3-90000"/>
+                <display value="Pericardial disease"/>
+            </concept>
+            <concept>
+                <code value="D3-90100"/>
+                <display value="Pericardial tamponade"/>
+            </concept>
+            <concept>
+                <code value="D3-16010"/>
+                <display value="Congestive heart failure"/>
+            </concept>
+            <concept>
+                <code value="D3-13021"/>
+                <display value="Silent ischemia"/>
+            </concept>
+            <concept>
+                <code value="R-00366"/>
+                <display value="Recurrent angina Post-Stent"/>
+            </concept>
+            <concept>
+                <code value="R-00365"/>
+                <display value="Recurrent angina Post-CABG"/>
+            </concept>
+            <concept>
+                <code value="D3-29096"/>
+                <display value="Acute mitral regurgitation"/>
+            </concept>
+            <concept>
+                <code value="R-00368"/>
+                <display value="Recurrent angina Post-PTCA"/>
+            </concept>
+            <concept>
+                <code value="R-00367"/>
+                <display value="Recurrent angina Post-DCA"/>
+            </concept>
+            <concept>
+                <code value="D3-29010"/>
+                <display value="Mitral valve disease"/>
+            </concept>
+            <concept>
+                <code value="D3-31700"/>
+                <display value="Ventricular tachycardia"/>
+            </concept>
+            <concept>
+                <code value="D4-31000"/>
+                <display value="heart disease, congenital"/>
+            </concept>
+            <concept>
+                <code value="D4-31220"/>
+                <display value="Atrial septal defect"/>
+            </concept>
+            <concept>
+                <code value="D3-29050"/>
+                <display value="Pulmonic valve disease"/>
+            </concept>
+            <concept>
+                <code value="D3-31720"/>
+                <display value="Ventricular fibrillation"/>
+            </concept>
+            <concept>
+                <code value="R-FAE6C"/>
+                <display value="Arrhythmia"/>
+            </concept>
+            <concept>
+                <code value="D3-31520"/>
+                <display value="Atrial fibrillation"/>
+            </concept>
+            <concept>
+                <code value="R-00369"/>
+                <display value="Recurrent angina Post-Rotational Atherectomy"/>
+            </concept>
+            <concept>
+                <code value="D3-29025"/>
+                <display value="Aortic insufficiency"/>
+            </concept>
+            <concept>
+                <code value="F-37012"/>
+                <display value="Atypical chest pain"/>
+            </concept>
+            <concept>
+                <code value="D3-00200"/>
+                <display value="cardiogenic shock"/>
+            </concept>
+            <concept>
+                <code value="D3-02500"/>
+                <display value="Hypertensive heart disease"/>
+            </concept>
+            <concept>
+                <code value="D3-2906A"/>
+                <display value="Idiopathic hypertrophic subaortic stenosis"/>
+            </concept>
+            <concept>
+                <code value="D3-91030"/>
+                <display value="Constrictive pericarditis"/>
+            </concept>
+            <concept>
+                <code value="D3-1081C"/>
+                <display value="Mitral valve prolapse"/>
+            </concept>
+            <concept>
+                <code value="D4-31150"/>
+                <display value="Ventricular septal defect"/>
+            </concept>
+            <concept>
+                <code value="D3-29040"/>
+                <display value="Tricuspid valve disease"/>
+            </concept>
+            <concept>
+                <code value="D3-12400"/>
+                <display value="Atypical Angina, Variant Angina"/>
+            </concept>
+            <concept>
+                <code value="D3-83300"/>
+                <display value="Aortic aneurysm"/>
+            </concept>
+            <concept>
+                <code value="D3-29042"/>
+                <display value="Tricuspid regurgitation"/>
+            </concept>
+            <concept>
+                <code value="D3-29020"/>
+                <display value="Aortic valve disease"/>
+            </concept>
+            <concept>
+                <code value="D3-13014"/>
+                <display value="Post-infarction angina"/>
+            </concept>
+            <concept>
+                <code value="D3-29021"/>
+                <display value="Aortic stenosis"/>
+            </concept>
+            <concept>
+                <code value="D3-12700"/>
+                <display value="Unstable Angina, Progressive Angina"/>
+            </concept>
+            <concept>
+                <code value="D2-61100"/>
+                <display value="Pulmonary edema"/>
+            </concept>
+            <concept>
+                <code value="R-002CB"/>
+                <display value="Acute ventricular septal rupture"/>
+            </concept>
+            <concept>
+                <code value="D3-80016"/>
+                <display value="Aortic dissection"/>
+            </concept>
+            <concept>
+                <code value="D3-26000"/>
+                <display value="Myocarditis"/>
+            </concept>
+            <concept>
+                <code value="D3-29011"/>
+                <display value="Mitral stenosis"/>
+            </concept>
+            <concept>
+                <code value="D3-29012"/>
+                <display value="Mitral regurgitation"/>
+            </concept>
+            <concept>
+                <code value="R-00336"/>
+                <display value="s/p MI positive stress for ischemia"/>
+            </concept>
+            <concept>
+                <code value="D3-28102"/>
+                <display value="Subacute bacterial endocarditis"/>
+            </concept>
+            <concept>
+                <code value="D3-20021"/>
+                <display value="Congestive cardiomyopathy"/>
+            </concept>
+            <concept>
+                <code value="D3-22100"/>
+                <display value="Restrictive cardiomyopathy"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

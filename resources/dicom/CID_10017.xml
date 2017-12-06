@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-10017-XRayGrid"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_10017.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.549"/>
+    </identifier>
+    <version value="20070827"/>
+    <name value="XRayGrid"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 10017 XRayGrid"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://dicom.nema.org/resources/ontology/DCM"/>
+            <concept>
+                <code value="111641"/>
+                <display value="Fixed grid"/>
+            </concept>
+            <concept>
+                <code value="111642"/>
+                <display value="Focused grid"/>
+            </concept>
+            <concept>
+                <code value="111643"/>
+                <display value="Reciprocating grid"/>
+            </concept>
+            <concept>
+                <code value="111644"/>
+                <display value="Parallel grid"/>
+            </concept>
+            <concept>
+                <code value="111645"/>
+                <display value="Crossed grid"/>
+            </concept>
+            <concept>
+                <code value="111646"/>
+                <display value="No grid"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

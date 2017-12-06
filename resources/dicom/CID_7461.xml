@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-7461-UnitsofAreaMeasurement"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_7461.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.522"/>
+    </identifier>
+    <version value="20020904"/>
+    <name value="UnitsofAreaMeasurement"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 7461 UnitsofAreaMeasurement"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://unitsofmeasure.org"/>
+            <concept>
+                <code value="mm2"/>
+                <display value="square millimeter"/>
+            </concept>
+            <concept>
+                <code value="cm2"/>
+                <display value="square centimeter"/>
+            </concept>
+            <concept>
+                <code value="um2"/>
+                <display value="square micrometer"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

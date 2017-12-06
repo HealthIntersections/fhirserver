@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-10-InterventionalDrug"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_10.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.8"/>
+    </identifier>
+    <version value="20160314"/>
+    <name value="InterventionalDrug"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 10 InterventionalDrug"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://snomed.info/srt"/>
+            <concept>
+                <code value="F-B2135"/>
+                <display value="Epinephrine"/>
+            </concept>
+            <concept>
+                <code value="C-815E1"/>
+                <display value="Tolazoline hydrocholoride"/>
+            </concept>
+            <concept>
+                <code value="F-D7B50"/>
+                <display value="Thromboplastin"/>
+            </concept>
+            <concept>
+                <code value="C-51000"/>
+                <display value="Antihistamine"/>
+            </concept>
+            <concept>
+                <code value="F-6181D"/>
+                <display value="Cardiac adrenergic blocking agent"/>
+            </concept>
+            <concept>
+                <code value="C-A2010"/>
+                <display value="Glucagon preparation"/>
+            </concept>
+            <concept>
+                <code value="C-A6530"/>
+                <display value="Warfarin"/>
+            </concept>
+            <concept>
+                <code value="C-A6710"/>
+                <display value="Protamine sulfate"/>
+            </concept>
+            <concept>
+                <code value="C-81120"/>
+                <display value="Centrally acting hypotensive agent"/>
+            </concept>
+            <concept>
+                <code value="C-81560"/>
+                <display value="Nitroglycerin"/>
+            </concept>
+            <concept>
+                <code value="C-80131"/>
+                <display value="Alpha-adrenergic blocking agent"/>
+            </concept>
+            <concept>
+                <code value="C-80450"/>
+                <display value="Propranolol"/>
+            </concept>
+            <concept>
+                <code value="C-81100"/>
+                <display value="Hypotensive agent"/>
+            </concept>
+            <concept>
+                <code value="C-80110"/>
+                <display value="Antiarrhythmic drug"/>
+            </concept>
+            <concept>
+                <code value="C-80330"/>
+                <display value="Digoxin"/>
+            </concept>
+            <concept>
+                <code value="C-80430"/>
+                <display value="Nifedipine"/>
+            </concept>
+            <concept>
+                <code value="F-D7011"/>
+                <display value="Human fibrinogen"/>
+            </concept>
+            <concept>
+                <code value="C-A7001"/>
+                <display value="Astringent drug"/>
+            </concept>
+            <concept>
+                <code value="C-A7420"/>
+                <display value="Streptokinase preparation"/>
+            </concept>
+            <concept>
+                <code value="C-80135"/>
+                <display value="beta-Adrenergic blocking agent"/>
+            </concept>
+            <concept>
+                <code value="C-A7021"/>
+                <display value="Antihemophilic factor preparation"/>
+            </concept>
+            <concept>
+                <code value="C-A7000"/>
+                <display value="Hemostatic agent"/>
+            </concept>
+            <concept>
+                <code value="C-A7220"/>
+                <display value="Dextran"/>
+            </concept>
+            <concept>
+                <code value="C-A7440"/>
+                <display value="Injectable fibrinolysin"/>
+            </concept>
+            <concept>
+                <code value="C-22947"/>
+                <display value="Methylene blue"/>
+            </concept>
+            <concept>
+                <code value="F-6ACA0"/>
+                <display value="Thrombin preparation"/>
+            </concept>
+            <concept>
+                <code value="C-67770"/>
+                <display value="Atropine"/>
+            </concept>
+            <concept>
+                <code value="C-80490"/>
+                <display value="Verapamil"/>
+            </concept>
+            <concept>
+                <code value="C-72000"/>
+                <display value="Diuretic"/>
+            </concept>
+            <concept>
+                <code value="C-50434"/>
+                <display value="Thrombolytic agent"/>
+            </concept>
+            <concept>
+                <code value="C-80401"/>
+                <display value="Lidocaine hydrochloride"/>
+            </concept>
+            <concept>
+                <code value="C-A6500"/>
+                <display value="Anticoagulant"/>
+            </concept>
+            <concept>
+                <code value="C-A6900"/>
+                <display value="Coagulant"/>
+            </concept>
+            <concept>
+                <code value="C-A6700"/>
+                <display value="Anti-heparin agent"/>
+            </concept>
+            <concept>
+                <code value="C-80460"/>
+                <display value="Quinidine"/>
+            </concept>
+            <concept>
+                <code value="C-80120"/>
+                <display value="Inotropic agent"/>
+            </concept>
+            <concept>
+                <code value="C-21047"/>
+                <display value="Ethanol"/>
+            </concept>
+            <concept>
+                <code value="C-A7430"/>
+                <display value="Urokinase preparation"/>
+            </concept>
+            <concept>
+                <code value="C-80123"/>
+                <display value="Cardiotonic drug"/>
+            </concept>
+            <concept>
+                <code value="C-A6540"/>
+                <display value="Heparin"/>
+            </concept>
+            <concept>
+                <code value="C-80400"/>
+                <display value="Lidocaine"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

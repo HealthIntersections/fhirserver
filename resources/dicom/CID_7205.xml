@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-7205-PurposeofReferencetoAlternateRepresentation"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_7205.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.511"/>
+    </identifier>
+    <version value="20040322"/>
+    <name value="PurposeofReferencetoAlternateRepresentation"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 7205 PurposeofReferencetoAlternateRepresentation"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://dicom.nema.org/resources/ontology/DCM"/>
+            <concept>
+                <code value="121327"/>
+                <display value="Full fidelity image"/>
+            </concept>
+            <concept>
+                <code value="121328"/>
+                <display value="Alternate Photometric Interpretation image"/>
+            </concept>
+            <concept>
+                <code value="121325"/>
+                <display value="Lossy compressed image"/>
+            </concept>
+            <concept>
+                <code value="121326"/>
+                <display value="Alternate SOP Class instance"/>
+            </concept>
+            <concept>
+                <code value="121324"/>
+                <display value="Source image"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

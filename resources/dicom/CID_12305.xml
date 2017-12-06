@@ -1,0 +1,201 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-12305-BasicEchoAnatomicSites"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_12305.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.1146"/>
+    </identifier>
+    <version value="20161109"/>
+    <name value="BasicEchoAnatomicSites"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 12305 BasicEchoAnatomicSites"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://dicom.nema.org/resources/ontology/DCM"/>
+            <concept>
+                <code value="125319"/>
+                <display value="Right Ventricle Anterior Wall"/>
+            </concept>
+            <concept>
+                <code value="125318"/>
+                <display value="Right Ventricle Outflow Tract, Proximal"/>
+            </concept>
+            <concept>
+                <code value="125317"/>
+                <display value="Right Ventricle Outflow Tract, Distal"/>
+            </concept>
+        </include>
+        <include>
+            <system value="http://snomed.info/srt"/>
+            <concept>
+                <code value="T-42100"/>
+                <display value="Ascending Aorta"/>
+            </concept>
+            <concept>
+                <code value="T-32617"/>
+                <display value="Left ventricle mid anterior segment"/>
+            </concept>
+            <concept>
+                <code value="T-32616"/>
+                <display value="Left ventricle mid inferior segment"/>
+            </concept>
+            <concept>
+                <code value="T-44200"/>
+                <display value="Right Pulmonary Artery"/>
+            </concept>
+            <concept>
+                <code value="T-32619"/>
+                <display value="Left ventricle basal anterior segment"/>
+            </concept>
+            <concept>
+                <code value="T-44100"/>
+                <display value="Trunk of pulmonary artery"/>
+            </concept>
+            <concept>
+                <code value="T-44000"/>
+                <display value="Pulmonary Artery"/>
+            </concept>
+            <concept>
+                <code value="T-32615"/>
+                <display value="Left ventricle basal inferior segment"/>
+            </concept>
+            <concept>
+                <code value="T-32410"/>
+                <display value="Interventricular septum"/>
+            </concept>
+            <concept>
+                <code value="G-0391"/>
+                <display value="Medial Mitral Annulus"/>
+            </concept>
+            <concept>
+                <code value="G-0392"/>
+                <display value="Lateral Mitral Annulus"/>
+            </concept>
+            <concept>
+                <code value="T-35400"/>
+                <display value="Aortic Valve"/>
+            </concept>
+            <concept>
+                <code value="T-32550"/>
+                <display value="Right Ventricle Outflow Tract"/>
+            </concept>
+            <concept>
+                <code value="T-35200"/>
+                <display value="Pulmonic Valve"/>
+            </concept>
+            <concept>
+                <code value="T-32650"/>
+                <display value="Left Ventricle Outflow Tract"/>
+            </concept>
+            <concept>
+                <code value="T-35300"/>
+                <display value="Mitral Valve"/>
+            </concept>
+            <concept>
+                <code value="T-35100"/>
+                <display value="Tricuspid Valve"/>
+            </concept>
+            <concept>
+                <code value="T-4858F"/>
+                <display value="Pulmonary Vein"/>
+            </concept>
+            <concept>
+                <code value="T-42102"/>
+                <display value="Aortic Sinotubular Junction"/>
+            </concept>
+            <concept>
+                <code value="T-44400"/>
+                <display value="Left Pulmonary Artery"/>
+            </concept>
+            <concept>
+                <code value="T-48710"/>
+                <display value="Inferior vena cava"/>
+            </concept>
+            <concept>
+                <code value="R-1007C"/>
+                <display value="Left ventricle mid anterolateral segment"/>
+            </concept>
+            <concept>
+                <code value="T-42110"/>
+                <display value="Aortic Root"/>
+            </concept>
+            <concept>
+                <code value="R-1007B"/>
+                <display value="Left ventricle mid inferolateral segment"/>
+            </concept>
+            <concept>
+                <code value="R-1007A"/>
+                <display value="Left ventricle basal anterolateral segment"/>
+            </concept>
+            <concept>
+                <code value="T-32503"/>
+                <display value="Right Ventricle Midventricular Segment"/>
+            </concept>
+            <concept>
+                <code value="T-32504"/>
+                <display value="Right Ventricle Basal Segment"/>
+            </concept>
+            <concept>
+                <code value="T-32300"/>
+                <display value="Left Atrium"/>
+            </concept>
+            <concept>
+                <code value="T-32620"/>
+                <display value="Left Ventricle Myocardium"/>
+            </concept>
+            <concept>
+                <code value="T-32600"/>
+                <display value="Left Ventricle"/>
+            </concept>
+            <concept>
+                <code value="T-32500"/>
+                <display value="Right Ventricle"/>
+            </concept>
+            <concept>
+                <code value="T-35310"/>
+                <display value="Mitral Annulus"/>
+            </concept>
+            <concept>
+                <code value="T-35410"/>
+                <display value="Aortic Valve Ring"/>
+            </concept>
+            <concept>
+                <code value="T-32200"/>
+                <display value="Right Atrium"/>
+            </concept>
+            <concept>
+                <code value="T-35110"/>
+                <display value="Tricuspid Annulus"/>
+            </concept>
+            <concept>
+                <code value="T-35210"/>
+                <display value="Pulmonic Ring"/>
+            </concept>
+            <concept>
+                <code value="R-10077"/>
+                <display value="Left ventricle mid anteroseptal segment"/>
+            </concept>
+            <concept>
+                <code value="R-10076"/>
+                <display value="Left ventricle basal inferoseptal segment"/>
+            </concept>
+            <concept>
+                <code value="R-10075"/>
+                <display value="Left ventricle basal anteroseptal segment"/>
+            </concept>
+            <concept>
+                <code value="R-10079"/>
+                <display value="Left ventricle basal inferolateral segment"/>
+            </concept>
+            <concept>
+                <code value="R-10078"/>
+                <display value="Left ventricle mid inferoseptal segment"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

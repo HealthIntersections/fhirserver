@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-646-PreclinicalSmallAnimalImagingProcedures"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_646.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.1111"/>
+    </identifier>
+    <version value="20151110"/>
+    <name value="PreclinicalSmallAnimalImagingProcedures"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 646 PreclinicalSmallAnimalImagingProcedures"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://dicom.nema.org/resources/ontology/DCM"/>
+            <concept>
+                <code value="127901"/>
+                <display value="SPECT of whole body"/>
+            </concept>
+            <concept>
+                <code value="127902"/>
+                <display value="SPECT CT of whole body"/>
+            </concept>
+        </include>
+        <include>
+            <system value="http://loinc.org"/>
+            <concept>
+                <code value="46358-8"/>
+                <display value="MRI whole body"/>
+            </concept>
+            <concept>
+                <code value="24725-4"/>
+                <display value="Head CT"/>
+            </concept>
+            <concept>
+                <code value="42175-0"/>
+                <display value="Radionuclide scan of whole body"/>
+            </concept>
+            <concept>
+                <code value="24590-2"/>
+                <display value="Brain MRI"/>
+            </concept>
+            <concept>
+                <code value="24730-4"/>
+                <display value="Radionuclide brain scan"/>
+            </concept>
+            <concept>
+                <code value="44139-4"/>
+                <display value="PET whole body"/>
+            </concept>
+            <concept>
+                <code value="46305-9"/>
+                <display value="Whole body CT"/>
+            </concept>
+            <concept>
+                <code value="44138-6"/>
+                <display value="Brain PET"/>
+            </concept>
+            <concept>
+                <code value="39632-5"/>
+                <display value="Brain SPECT"/>
+            </concept>
+        </include>
+        <include>
+            <system value="http://snomed.info/srt"/>
+            <concept>
+                <code value="P5-B0008"/>
+                <display value="Ultrasonography of total body"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

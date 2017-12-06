@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-7701-FiberTractsInBrainstem"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_7701.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.1013"/>
+    </identifier>
+    <version value="20150106"/>
+    <name value="FiberTractsInBrainstem"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 7701 FiberTractsInBrainstem"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://snomed.info/srt"/>
+            <concept>
+                <code value="T-A5272"/>
+                <display value="lateral lemniscus"/>
+            </concept>
+            <concept>
+                <code value="T-A5250"/>
+                <display value="medial longitudinal fasciculus"/>
+            </concept>
+            <concept>
+                <code value="T-A5271"/>
+                <display value="medial lemniscus"/>
+            </concept>
+            <concept>
+                <code value="T-D07EA"/>
+                <display value="corticospinal tract in brainstem"/>
+            </concept>
+            <concept>
+                <code value="T-A6640"/>
+                <display value="inferior cerebellar peduncle"/>
+            </concept>
+            <concept>
+                <code value="T-A6630"/>
+                <display value="middle cerebellar peduncle"/>
+            </concept>
+            <concept>
+                <code value="T-A6620"/>
+                <display value="superior cerebellar peduncle"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

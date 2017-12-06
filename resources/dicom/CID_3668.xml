@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-3668-FraminghamTables"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_3668.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.184"/>
+    </identifier>
+    <version value="20030327"/>
+    <name value="FraminghamTables"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 3668 FraminghamTables"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://dicom.nema.org/resources/ontology/DCM"/>
+            <concept>
+                <code value="122236"/>
+                <display value="Total Cholesterol Score Sheet for Women"/>
+            </concept>
+            <concept>
+                <code value="122234"/>
+                <display value="LDL Cholesterol Score Sheet for Women"/>
+            </concept>
+            <concept>
+                <code value="122235"/>
+                <display value="Total Cholesterol Score Sheet for Men"/>
+            </concept>
+            <concept>
+                <code value="122233"/>
+                <display value="LDL Cholesterol Score Sheet for Men"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-402-AuditActiveParticipantRoleIDCode"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_402.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.905"/>
+    </identifier>
+    <version value="20100826"/>
+    <name value="AuditActiveParticipantRoleIDCode"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 402 AuditActiveParticipantRoleIDCode"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://dicom.nema.org/resources/ontology/DCM"/>
+            <concept>
+                <code value="110155"/>
+                <display value="Source Media"/>
+            </concept>
+            <concept>
+                <code value="110154"/>
+                <display value="Destination Media"/>
+            </concept>
+            <concept>
+                <code value="110153"/>
+                <display value="Source Role ID"/>
+            </concept>
+            <concept>
+                <code value="110152"/>
+                <display value="Destination Role ID"/>
+            </concept>
+            <concept>
+                <code value="110151"/>
+                <display value="Application Launcher"/>
+            </concept>
+            <concept>
+                <code value="110150"/>
+                <display value="Application"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

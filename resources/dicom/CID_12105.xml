@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-12105-IntracranialCerebralVessels"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_12105.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.572"/>
+    </identifier>
+    <version value="20160314"/>
+    <name value="IntracranialCerebralVessels"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 12105 IntracranialCerebralVessels"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://snomed.info/srt"/>
+            <concept>
+                <code value="T-45540"/>
+                <display value="Anterior Cerebral Artery"/>
+            </concept>
+            <concept>
+                <code value="T-45430"/>
+                <display value="Central Retinal Artery"/>
+            </concept>
+            <concept>
+                <code value="T-45320"/>
+                <display value="Posterior Communicating Artery"/>
+            </concept>
+            <concept>
+                <code value="T-45530"/>
+                <display value="Anterior Communicating Artery"/>
+            </concept>
+            <concept>
+                <code value="T-45300"/>
+                <display value="Internal Carotid Artery"/>
+            </concept>
+            <concept>
+                <code value="T-45400"/>
+                <display value="Ophthalmic Artery"/>
+            </concept>
+            <concept>
+                <code value="T-48286"/>
+                <display value="Central Retinal Vein"/>
+            </concept>
+            <concept>
+                <code value="R-1024F"/>
+                <display value="Middle Cerebral Artery M1 Segment"/>
+            </concept>
+            <concept>
+                <code value="R-FAED1"/>
+                <display value="Internal Carotid Artery C6 segment"/>
+            </concept>
+            <concept>
+                <code value="T-45900"/>
+                <display value="Posterior Cerebral Artery"/>
+            </concept>
+            <concept>
+                <code value="R-10253"/>
+                <display value="Posterior Cerebral Artery P1 Segment"/>
+            </concept>
+            <concept>
+                <code value="G-0368"/>
+                <display value="Anterior-Middle Cerebral Artery Bifurcation"/>
+            </concept>
+            <concept>
+                <code value="T-45308"/>
+                <display value="Carotid Siphon"/>
+            </concept>
+            <concept>
+                <code value="R-10251"/>
+                <display value="Middle Cerebral Artery M2 Segment"/>
+            </concept>
+            <concept>
+                <code value="G-0369"/>
+                <display value="Anterior-Posterior Cerebral Artery Bifurcation"/>
+            </concept>
+            <concept>
+                <code value="R-102BD"/>
+                <display value="Terminal internal carotid artery"/>
+            </concept>
+            <concept>
+                <code value="T-45600"/>
+                <display value="Middle Cerebral Artery"/>
+            </concept>
+            <concept>
+                <code value="R-102BB"/>
+                <display value="Internal Carotid Artery C5 segment"/>
+            </concept>
+            <concept>
+                <code value="R-10255"/>
+                <display value="Posterior Cerebral Artery P2 Segment"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

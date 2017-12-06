@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-7470-LinearMeasurements"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_7470.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.524"/>
+    </identifier>
+    <version value="20160314"/>
+    <name value="LinearMeasurements"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 7470 LinearMeasurements"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://dicom.nema.org/resources/ontology/DCM"/>
+            <concept>
+                <code value="121206"/>
+                <display value="Distance"/>
+            </concept>
+            <concept>
+                <code value="121207"/>
+                <display value="Height"/>
+            </concept>
+            <concept>
+                <code value="121211"/>
+                <display value="Path length"/>
+            </concept>
+        </include>
+        <include>
+            <system value="http://snomed.info/srt"/>
+            <concept>
+                <code value="M-02550"/>
+                <display value="Diameter"/>
+            </concept>
+            <concept>
+                <code value="G-A193"/>
+                <display value="Major Axis"/>
+            </concept>
+            <concept>
+                <code value="M-02560"/>
+                <display value="Circumference"/>
+            </concept>
+            <concept>
+                <code value="G-A195"/>
+                <display value="Perpendicular Axis"/>
+            </concept>
+            <concept>
+                <code value="G-A194"/>
+                <display value="Minor Axis"/>
+            </concept>
+            <concept>
+                <code value="G-D785"/>
+                <display value="Depth"/>
+            </concept>
+            <concept>
+                <code value="G-A186"/>
+                <display value="Short Axis"/>
+            </concept>
+            <concept>
+                <code value="G-A197"/>
+                <display value="Perimeter"/>
+            </concept>
+            <concept>
+                <code value="G-A185"/>
+                <display value="Long Axis"/>
+            </concept>
+            <concept>
+                <code value="G-A196"/>
+                <display value="Radius"/>
+            </concept>
+            <concept>
+                <code value="G-A220"/>
+                <display value="Width"/>
+            </concept>
+            <concept>
+                <code value="G-A198"/>
+                <display value="Diameter of circumscribed circle"/>
+            </concept>
+            <concept>
+                <code value="G-D7FE"/>
+                <display value="Length"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

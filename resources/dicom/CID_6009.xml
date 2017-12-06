@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-6009-DensityModifierfromBIRADS"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_6009.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.339"/>
+    </identifier>
+    <version value="20020904"/>
+    <name value="DensityModifierfromBIRADS®"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 6009 DensityModifierfromBIRADS®"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://snomed.info/srt"/>
+            <concept>
+                <code value="F-01754"/>
+                <display value="Fat containing (radiolucent) lesion"/>
+            </concept>
+            <concept>
+                <code value="F-01753"/>
+                <display value="Low density (not containing fat) lesion"/>
+            </concept>
+            <concept>
+                <code value="F-01752"/>
+                <display value="Equal density (isodense) lesion"/>
+            </concept>
+            <concept>
+                <code value="F-01751"/>
+                <display value="High density lesion"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-7194-MorphologicalAbnormalStructureSegmentationPropertyTypes"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_7194.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.1193"/>
+    </identifier>
+    <version value=""/>
+    <name value="MorphologicalAbnormalStructureSegmentationPropertyTypes"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 7194 MorphologicalAbnormalStructureSegmentationPropertyTypes"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://snomed.info/srt"/>
+            <concept>
+                <code value="M-03000"/>
+                <display value="Mass"/>
+            </concept>
+            <concept>
+                <code value="M-80006"/>
+                <display value="Neoplasm, Secondary"/>
+            </concept>
+            <concept>
+                <code value="M-80003"/>
+                <display value="Neoplasm, Primary"/>
+            </concept>
+            <concept>
+                <code value="M-03010"/>
+                <display value="Nodule"/>
+            </concept>
+            <concept>
+                <code value="M-54000"/>
+                <display value="Necrosis"/>
+            </concept>
+            <concept>
+                <code value="M-3340A"/>
+                <display value="Cyst"/>
+            </concept>
+            <concept>
+                <code value="M-8FFFF"/>
+                <display value="Neoplasm"/>
+            </concept>
+            <concept>
+                <code value="M-35000"/>
+                <display value="Blood clot"/>
+            </concept>
+            <concept>
+                <code value="M-41610"/>
+                <display value="Abscess"/>
+            </concept>
+            <concept>
+                <code value="M-37000"/>
+                <display value="Hemorrhage"/>
+            </concept>
+            <concept>
+                <code value="M-35300"/>
+                <display value="Embolus"/>
+            </concept>
+            <concept>
+                <code value="M-36300"/>
+                <display value="Edema"/>
+            </concept>
+            <concept>
+                <code value="M-40000"/>
+                <display value="Inflammation"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

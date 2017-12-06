@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-12244-CongenitalFindingSites"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_12244.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.635"/>
+    </identifier>
+    <version value="20040614"/>
+    <name value="CongenitalFindingSites"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 12244 CongenitalFindingSites"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://snomed.info/srt"/>
+            <concept>
+                <code value="D4-31150"/>
+                <display value="Ventricular Septal Defect"/>
+            </concept>
+            <concept>
+                <code value="D4-31220"/>
+                <display value="Atrial Septal Defect"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

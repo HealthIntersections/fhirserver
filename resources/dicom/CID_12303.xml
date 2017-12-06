@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-12303-EchoMeasurementTypes"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_12303.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.1144"/>
+    </identifier>
+    <version value="20161109"/>
+    <name value="EchoMeasurementTypes"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 12303 EchoMeasurementTypes"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://dicom.nema.org/resources/ontology/DCM"/>
+            <concept>
+                <code value="125316"/>
+                <display value="Directly measured"/>
+            </concept>
+            <concept>
+                <code value="125315"/>
+                <display value="Calculated"/>
+            </concept>
+            <concept>
+                <code value="125314"/>
+                <display value="Fractional Change"/>
+            </concept>
+            <concept>
+                <code value="125313"/>
+                <display value="Indexed"/>
+            </concept>
+            <concept>
+                <code value="113857"/>
+                <display value="Manual Entry"/>
+            </concept>
+        </include>
+        <include>
+            <system value="http://snomed.info/srt"/>
+            <concept>
+                <code value="G-D750"/>
+                <display value="Ratio"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-3756-CardiacPatientRiskFactors"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_3756.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.251"/>
+    </identifier>
+    <version value="20170914"/>
+    <name value="CardiacPatientRiskFactors"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 3756 CardiacPatientRiskFactors"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://snomed.info/srt"/>
+            <concept>
+                <code value="G-0102"/>
+                <display value="History of cerebrovascular disease"/>
+            </concept>
+            <concept>
+                <code value="G-03AA"/>
+                <display value="History of myocardial infarction"/>
+            </concept>
+            <concept>
+                <code value="G-0586"/>
+                <display value="Insulin dependent mother (IDM)"/>
+            </concept>
+            <concept>
+                <code value="G-023F"/>
+                <display value="History of Diabetes"/>
+            </concept>
+            <concept>
+                <code value="R-102B8"/>
+                <display value="History of hypercholesterolemia"/>
+            </concept>
+            <concept>
+                <code value="G-026D"/>
+                <display value="History of congestive heart failure"/>
+            </concept>
+            <concept>
+                <code value="R-102B7"/>
+                <display value="History of chronic lung disease"/>
+            </concept>
+            <concept>
+                <code value="R-102B6"/>
+                <display value="History of renal failure"/>
+            </concept>
+            <concept>
+                <code value="D3-30000"/>
+                <display value="Arrhythmia"/>
+            </concept>
+            <concept>
+                <code value="F-0331B"/>
+                <display value="HIV Positive"/>
+            </concept>
+            <concept>
+                <code value="D3-8005B"/>
+                <display value="Peripheral vascular disease"/>
+            </concept>
+            <concept>
+                <code value="G-0269"/>
+                <display value="History of Hypertension"/>
+            </concept>
+        </include>
+        <include>
+            <system value="http://www.nlm.nih.gov/research/umls"/>
+            <concept>
+                <code value="C0456029"/>
+                <display value="Infant of mother with gestational diabetes"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

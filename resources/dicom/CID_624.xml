@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-624-InhalationalAnesthesiaAgentsforSmallAnimalAnesthesia"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_624.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.1089"/>
+    </identifier>
+    <version value="20151110"/>
+    <name value="InhalationalAnesthesiaAgentsforSmallAnimalAnesthesia"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 624 InhalationalAnesthesiaAgentsforSmallAnimalAnesthesia"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://snomed.info/srt"/>
+            <concept>
+                <code value="F-61AC9"/>
+                <display value="Desflurane"/>
+            </concept>
+            <concept>
+                <code value="C-20830"/>
+                <display value="Chloroform"/>
+            </concept>
+            <concept>
+                <code value="C-21216"/>
+                <display value="Diethyl ether"/>
+            </concept>
+            <concept>
+                <code value="F-61A3F"/>
+                <display value="Enflurane"/>
+            </concept>
+            <concept>
+                <code value="C-6A16A"/>
+                <display value="Methoxyflurane"/>
+            </concept>
+            <concept>
+                <code value="F-61B0A"/>
+                <display value="Isoflurane"/>
+            </concept>
+            <concept>
+                <code value="C-10520"/>
+                <display value="Carbon dioxide"/>
+            </concept>
+            <concept>
+                <code value="F-61AFE"/>
+                <display value="Halothane"/>
+            </concept>
+            <concept>
+                <code value="C-6A118"/>
+                <display value="Nitrous oxide"/>
+            </concept>
+            <concept>
+                <code value="F-61ACA"/>
+                <display value="Sevoflurane"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

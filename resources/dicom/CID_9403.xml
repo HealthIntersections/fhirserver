@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-9403-IEC61217PatientSupportPositionParameters"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_9403.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.1025"/>
+    </identifier>
+    <version value="20130518"/>
+    <name value="IEC61217PatientSupportPositionParameters"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 9403 IEC61217PatientSupportPositionParameters"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://dicom.nema.org/resources/ontology/DCM"/>
+            <concept>
+                <code value="126807"/>
+                <display value="IEC61217 Table Top Longitudinal Position"/>
+            </concept>
+            <concept>
+                <code value="126808"/>
+                <display value="IEC61217 Table Top Vertical Position"/>
+            </concept>
+            <concept>
+                <code value="126801"/>
+                <display value="IEC61217 Patient Support Continuous Angle"/>
+            </concept>
+            <concept>
+                <code value="126802"/>
+                <display value="IEC61217 Table Top Continuous Pitch Angle"/>
+            </concept>
+            <concept>
+                <code value="126803"/>
+                <display value="IEC61217 Table Top Continuous Roll Angle"/>
+            </concept>
+            <concept>
+                <code value="126804"/>
+                <display value="IEC61217 Table Top Eccentric Axis Distance"/>
+            </concept>
+            <concept>
+                <code value="126805"/>
+                <display value="IEC61217 Table Top Continuous Eccentric Angle"/>
+            </concept>
+            <concept>
+                <code value="126806"/>
+                <display value="IEC61217 Table Top Lateral Position"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

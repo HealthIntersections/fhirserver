@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-625-InjectableAnesthesiaAgentsforSmallAnimalAnesthesia"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_625.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.1090"/>
+    </identifier>
+    <version value="20160212"/>
+    <name value="InjectableAnesthesiaAgentsforSmallAnimalAnesthesia"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 625 InjectableAnesthesiaAgentsforSmallAnimalAnesthesia"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://snomed.info/srt"/>
+            <concept>
+                <code value="F-61848"/>
+                <display value="Methohexital"/>
+            </concept>
+            <concept>
+                <code value="C-23805"/>
+                <display value="Alphachloralose"/>
+            </concept>
+            <concept>
+                <code value="C-6A16E"/>
+                <display value="Tribromoethanol"/>
+            </concept>
+            <concept>
+                <code value="C-6A161"/>
+                <display value="Alphadolone"/>
+            </concept>
+            <concept>
+                <code value="R-F2B27"/>
+                <display value="Butabarbital"/>
+            </concept>
+            <concept>
+                <code value="F-61BB2"/>
+                <display value="Thiopental"/>
+            </concept>
+            <concept>
+                <code value="C-64090"/>
+                <display value="Zolazepam"/>
+            </concept>
+            <concept>
+                <code value="R-F6E36"/>
+                <display value="Chloral hydrate"/>
+            </concept>
+            <concept>
+                <code value="C-6A190"/>
+                <display value="Tiletamine"/>
+            </concept>
+            <concept>
+                <code value="F-6182F"/>
+                <display value="Ketamine"/>
+            </concept>
+            <concept>
+                <code value="C-640A0"/>
+                <display value="Azaperone"/>
+            </concept>
+            <concept>
+                <code value="F-6183C"/>
+                <display value="Midazolam"/>
+            </concept>
+            <concept>
+                <code value="C-640B0"/>
+                <display value="Xylazine"/>
+            </concept>
+            <concept>
+                <code value="F-61B48"/>
+                <display value="Propofol"/>
+            </concept>
+            <concept>
+                <code value="F-61A26"/>
+                <display value="Droperidol"/>
+            </concept>
+            <concept>
+                <code value="R-F2B1F"/>
+                <display value="Pentobarbital"/>
+            </concept>
+            <concept>
+                <code value="C-6A16B"/>
+                <display value="Thiamylal"/>
+            </concept>
+            <concept>
+                <code value="C-29020"/>
+                <display value="Urethane (ethyl carbamate)"/>
+            </concept>
+            <concept>
+                <code value="F-61A66"/>
+                <display value="Etomidate"/>
+            </concept>
+            <concept>
+                <code value="R-F2B2C"/>
+                <display value="Diazepam"/>
+            </concept>
+        </include>
+        <include>
+            <system value="http://www.nlm.nih.gov/research/umls"/>
+            <concept>
+                <code value="C0051482"/>
+                <display value="Alphaxalone"/>
+            </concept>
+            <concept>
+                <code value="C0060473"/>
+                <display value="Fluanisone"/>
+            </concept>
+            <concept>
+                <code value="C0025856"/>
+                <display value="Metomidate"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

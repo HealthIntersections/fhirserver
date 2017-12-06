@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-7202-SourceImagePurposesofReference"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_7202.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.509"/>
+    </identifier>
+    <version value="20170405"/>
+    <name value="SourceImagePurposesofReference"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 7202 SourceImagePurposesofReference"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://dicom.nema.org/resources/ontology/DCM"/>
+            <concept>
+                <code value="113130"/>
+                <display value="Predecessor containing group of imaging subjects"/>
+            </concept>
+            <concept>
+                <code value="121358"/>
+                <display value="For Processing predecessor"/>
+            </concept>
+            <concept>
+                <code value="121321"/>
+                <display value="Mask image for image processing operation"/>
+            </concept>
+            <concept>
+                <code value="121322"/>
+                <display value="Source image for image processing operation"/>
+            </concept>
+            <concept>
+                <code value="121330"/>
+                <display value="Lossy compressed predecessor"/>
+            </concept>
+            <concept>
+                <code value="121320"/>
+                <display value="Uncompressed predecessor"/>
+            </concept>
+            <concept>
+                <code value="128251"/>
+                <display value="Flow image for image processing"/>
+            </concept>
+            <concept>
+                <code value="128250"/>
+                <display value="Structural image for image processing"/>
+            </concept>
+            <concept>
+                <code value="121329"/>
+                <display value="Source image for montage"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

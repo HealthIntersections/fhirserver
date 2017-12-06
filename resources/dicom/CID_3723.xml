@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-3723-MITypes"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_3723.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.224"/>
+    </identifier>
+    <version value="20070827"/>
+    <name value="MITypes"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 3723 MITypes"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://snomed.info/srt"/>
+            <concept>
+                <code value="D3-1511A"/>
+                <display value="Non ST Elevation Myocardial Infarction"/>
+            </concept>
+            <concept>
+                <code value="D3-15119"/>
+                <display value="ST Elevation Myocardial Infarction"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

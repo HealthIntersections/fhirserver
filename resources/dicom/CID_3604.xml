@@ -1,0 +1,449 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-3604-ArterialLesionLocations"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_3604.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.155"/>
+    </identifier>
+    <version value="20030327"/>
+    <name value="ArterialLesionLocations"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 3604 ArterialLesionLocations"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="doi:10.1016/S0735-1097(99)00126-6"/>
+            <concept>
+                <code value="15A"/>
+                <display value="1st Diagonal Coronary Artery Laterals"/>
+            </concept>
+            <concept>
+                <code value="20A"/>
+                <display value="1st Marginal Coronary Artery Laterals"/>
+            </concept>
+            <concept>
+                <code value="16A"/>
+                <display value="2nd Diagonal Coronary Artery Laterals"/>
+            </concept>
+            <concept>
+                <code value="28A"/>
+                <display value="Ramus Laterals"/>
+            </concept>
+            <concept>
+                <code value="21A"/>
+                <display value="2nd Marginal Coronary Artery Laterals"/>
+            </concept>
+            <concept>
+                <code value="29A"/>
+                <display value="3rd Diagonal Coronary Artery Laterals"/>
+            </concept>
+            <concept>
+                <code value="22A"/>
+                <display value="3rd Marginal Coronary Artery Laterals"/>
+            </concept>
+            <concept>
+                <code value="9"/>
+                <display value="Posterior descending septal perforators"/>
+            </concept>
+        </include>
+        <include>
+            <system value="http://snomed.info/srt"/>
+            <concept>
+                <code value="T-45530"/>
+                <display value="anterior communicating artery"/>
+            </concept>
+            <concept>
+                <code value="T-45410"/>
+                <display value="lacrimal artery"/>
+            </concept>
+            <concept>
+                <code value="D4-33142"/>
+                <display value="Pulmonary artery conduit"/>
+            </concept>
+            <concept>
+                <code value="T-46500"/>
+                <display value="mesenteric artery"/>
+            </concept>
+            <concept>
+                <code value="T-43112"/>
+                <display value="Distal Left Anterior Descending Coronary Artery"/>
+            </concept>
+            <concept>
+                <code value="T-45250"/>
+                <display value="occipital artery"/>
+            </concept>
+            <concept>
+                <code value="T-43111"/>
+                <display value="Proximal Left Anterior Descending Coronary Artery"/>
+            </concept>
+            <concept>
+                <code value="A-00203"/>
+                <display value="Baffle"/>
+            </concept>
+            <concept>
+                <code value="T-44200"/>
+                <display value="Right pulmonary artery"/>
+            </concept>
+            <concept>
+                <code value="T-43110"/>
+                <display value="Left Anterior Descending Coronary Artery"/>
+            </concept>
+            <concept>
+                <code value="T-45010"/>
+                <display value="Carotid Artery"/>
+            </concept>
+            <concept>
+                <code value="T-43230"/>
+                <display value="Marginal Coronary Artery"/>
+            </concept>
+            <concept>
+                <code value="T-46100"/>
+                <display value="Subclavian Artery"/>
+            </concept>
+            <concept>
+                <code value="D4-31400"/>
+                <display value="Truncus Arteriosus Communis"/>
+            </concept>
+            <concept>
+                <code value="T-43115"/>
+                <display value="Mid Left Anterior Descending Coronary Artery"/>
+            </concept>
+            <concept>
+                <code value="T-42300"/>
+                <display value="Aortic Arch"/>
+            </concept>
+            <concept>
+                <code value="T-43119"/>
+                <display value="3rd diagonal Coronary Artery"/>
+            </concept>
+            <concept>
+                <code value="T-43118"/>
+                <display value="2nd Diagonal Coronary Artery"/>
+            </concept>
+            <concept>
+                <code value="T-43117"/>
+                <display value="1st Diagonal Coronary Artery"/>
+            </concept>
+            <concept>
+                <code value="T-45300"/>
+                <display value="internal carotid artery"/>
+            </concept>
+            <concept>
+                <code value="T-41065"/>
+                <display value="Coronary Artery Graft"/>
+            </concept>
+            <concept>
+                <code value="T-43002"/>
+                <display value="1st Septal Coronary Artery"/>
+            </concept>
+            <concept>
+                <code value="T-43122"/>
+                <display value="Distal Circumflex Coronary Artery"/>
+            </concept>
+            <concept>
+                <code value="T-43121"/>
+                <display value="Proximal Circumflex Coronary Artery"/>
+            </concept>
+            <concept>
+                <code value="T-43000"/>
+                <display value="Coronary Artery"/>
+            </concept>
+            <concept>
+                <code value="T-43120"/>
+                <display value="Circumflex Coronary Artery"/>
+            </concept>
+            <concept>
+                <code value="T-47160"/>
+                <display value="Brachial artery"/>
+            </concept>
+            <concept>
+                <code value="D4-32506"/>
+                <display value="Fistula coronary to left ventricle"/>
+            </concept>
+            <concept>
+                <code value="D3-81922"/>
+                <display value="Aortic fistula"/>
+            </concept>
+            <concept>
+                <code value="T-4312C"/>
+                <display value="2nd Left Posterolateral Coronary Artery"/>
+            </concept>
+            <concept>
+                <code value="T-4312B"/>
+                <display value="1st Left Posterolateral Coronary Artery"/>
+            </concept>
+            <concept>
+                <code value="T-4704C"/>
+                <display value="tibial artery"/>
+            </concept>
+            <concept>
+                <code value="T-4312A"/>
+                <display value="3rd Marginal Coronary Artery"/>
+            </concept>
+            <concept>
+                <code value="D4-32504"/>
+                <display value="Fistula coronary to left atrium"/>
+            </concept>
+            <concept>
+                <code value="T-43127"/>
+                <display value="Mid Circumflex Coronary Artery"/>
+            </concept>
+            <concept>
+                <code value="T-43126"/>
+                <display value="Left Posterior Descending Artery"/>
+            </concept>
+            <concept>
+                <code value="T-43125"/>
+                <display value="Left Posterolateral Circumflex Coronary Artery"/>
+            </concept>
+            <concept>
+                <code value="T-43124"/>
+                <display value="AV groove continuation of Circumflex Artery"/>
+            </concept>
+            <concept>
+                <code value="T-43003"/>
+                <display value="Intermediate Artery (Ramus)"/>
+            </concept>
+            <concept>
+                <code value="T-F7040"/>
+                <display value="Neonatal pulmonary artery (primitive PA)"/>
+            </concept>
+            <concept>
+                <code value="T-43129"/>
+                <display value="2nd Marginal Coronary Artery"/>
+            </concept>
+            <concept>
+                <code value="T-45700"/>
+                <display value="Vertebral artery"/>
+            </concept>
+            <concept>
+                <code value="T-43128"/>
+                <display value="1st Marginal Coronary Artery"/>
+            </concept>
+            <concept>
+                <code value="T-46200"/>
+                <display value="Internal mammary artery"/>
+            </concept>
+            <concept>
+                <code value="T-46960"/>
+                <display value="lumbar artery"/>
+            </concept>
+            <concept>
+                <code value="T-47410"/>
+                <display value="Right femoral artery"/>
+            </concept>
+            <concept>
+                <code value="T-45510"/>
+                <display value="cerebral artery"/>
+            </concept>
+            <concept>
+                <code value="T-43210"/>
+                <display value="Posterior Descending Right Coronary Artery"/>
+            </concept>
+            <concept>
+                <code value="T-42000"/>
+                <display value="Aorta"/>
+            </concept>
+            <concept>
+                <code value="T-45230"/>
+                <display value="lingual artery"/>
+            </concept>
+            <concept>
+                <code value="T-47650"/>
+                <display value="lateral plantar artery"/>
+            </concept>
+            <concept>
+                <code value="T-47490"/>
+                <display value="geniculate artery"/>
+            </concept>
+            <concept>
+                <code value="T-43215"/>
+                <display value="3rd Right posterolateral Coronary Artery"/>
+            </concept>
+            <concept>
+                <code value="T-43214"/>
+                <display value="2nd Right posterolateral Coronary Artery"/>
+            </concept>
+            <concept>
+                <code value="T-42400"/>
+                <display value="Descending aorta"/>
+            </concept>
+            <concept>
+                <code value="T-43213"/>
+                <display value="1st Right posterolateral Coronary Artery"/>
+            </concept>
+            <concept>
+                <code value="T-43212"/>
+                <display value="Right posterior AV Coronary Artery"/>
+            </concept>
+            <concept>
+                <code value="T-46600"/>
+                <display value="Renal artery"/>
+            </concept>
+            <concept>
+                <code value="T-47300"/>
+                <display value="radial artery"/>
+            </concept>
+            <concept>
+                <code value="T-45400"/>
+                <display value="ophthalmic artery"/>
+            </concept>
+            <concept>
+                <code value="T-47660"/>
+                <display value="medial plantar artery"/>
+            </concept>
+            <concept>
+                <code value="T-45240"/>
+                <display value="facial artery"/>
+            </concept>
+            <concept>
+                <code value="T-43105"/>
+                <display value="Left Main Coronary Artery Ostium"/>
+            </concept>
+            <concept>
+                <code value="T-43107"/>
+                <display value="Left Main Coronary Artery"/>
+            </concept>
+            <concept>
+                <code value="T-45800"/>
+                <display value="basilar artery"/>
+            </concept>
+            <concept>
+                <code value="T-46420"/>
+                <display value="Hepatic artery"/>
+            </concept>
+            <concept>
+                <code value="T-45210"/>
+                <display value="superior thyroid artery"/>
+            </concept>
+            <concept>
+                <code value="T-47630"/>
+                <display value="peroneal artery"/>
+            </concept>
+            <concept>
+                <code value="R-00360"/>
+                <display value="Pulmonary vein wedge"/>
+            </concept>
+            <concept>
+                <code value="T-45730"/>
+                <display value="anterior spinal artery"/>
+            </concept>
+            <concept>
+                <code value="T-42100"/>
+                <display value="Ascending aorta"/>
+            </concept>
+            <concept>
+                <code value="T-44000"/>
+                <display value="Pulmonary artery"/>
+            </concept>
+            <concept>
+                <code value="D4-32012"/>
+                <display value="patent ductus arteriosus"/>
+            </concept>
+            <concept>
+                <code value="T-42500"/>
+                <display value="Abdominal aorta"/>
+            </concept>
+            <concept>
+                <code value="T-44007"/>
+                <display value="Systemic collateral Artery to lung"/>
+            </concept>
+            <concept>
+                <code value="T-44400"/>
+                <display value="Left pulmonary artery"/>
+            </concept>
+            <concept>
+                <code value="T-46700"/>
+                <display value="Iliac artery"/>
+            </concept>
+            <concept>
+                <code value="T-45100"/>
+                <display value="Common carotid artery"/>
+            </concept>
+            <concept>
+                <code value="T-47400"/>
+                <display value="Femoral artery"/>
+            </concept>
+            <concept>
+                <code value="T-F1810"/>
+                <display value="Umbilical artery"/>
+            </concept>
+            <concept>
+                <code value="T-43200"/>
+                <display value="Right Coronary Artery"/>
+            </concept>
+            <concept>
+                <code value="T-42070"/>
+                <display value="Thoracic aorta"/>
+            </concept>
+            <concept>
+                <code value="T-D6515"/>
+                <display value="Mid Right Coronary Artery"/>
+            </concept>
+            <concept>
+                <code value="R-002ED"/>
+                <display value="Fistula coronary to right atrium"/>
+            </concept>
+            <concept>
+                <code value="T-F7001"/>
+                <display value="Neo-aorta (primitive aorta)"/>
+            </concept>
+            <concept>
+                <code value="T-43202"/>
+                <display value="Distal Right Coronary Artery"/>
+            </concept>
+            <concept>
+                <code value="T-43201"/>
+                <display value="Proximal Right Coronary Artery"/>
+            </concept>
+            <concept>
+                <code value="T-43205"/>
+                <display value="Right Coronary Artery Ostium"/>
+            </concept>
+            <concept>
+                <code value="D4-32510"/>
+                <display value="Fistula coronary to right ventricle"/>
+            </concept>
+            <concept>
+                <code value="T-4312E"/>
+                <display value="Left Posterior Descending Circumflex Coronary Artery"/>
+            </concept>
+            <concept>
+                <code value="T-45270"/>
+                <display value="superficial temporal artery"/>
+            </concept>
+            <concept>
+                <code value="T-4312D"/>
+                <display value="3rd Left Posterolateral Coronary Artery"/>
+            </concept>
+            <concept>
+                <code value="D3-4020B"/>
+                <display value="Pulmonary arteriovenous fistula"/>
+            </concept>
+            <concept>
+                <code value="T-45320"/>
+                <display value="posterior communicating artery"/>
+            </concept>
+            <concept>
+                <code value="T-47500"/>
+                <display value="popliteal artery"/>
+            </concept>
+            <concept>
+                <code value="T-41000"/>
+                <display value="Artery"/>
+            </concept>
+            <concept>
+                <code value="T-46010"/>
+                <display value="brachiocephalic trunk"/>
+            </concept>
+            <concept>
+                <code value="T-47100"/>
+                <display value="Axillary Artery"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

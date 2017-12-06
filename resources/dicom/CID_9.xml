@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-9-ImageGuidedTherapeuticProcedures"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_9.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.7"/>
+    </identifier>
+    <version value="20160314"/>
+    <name value="ImageGuidedTherapeuticProcedures"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 9 ImageGuidedTherapeuticProcedures"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://snomed.info/srt"/>
+            <concept>
+                <code value="P1-03100"/>
+                <display value="Biopsy"/>
+            </concept>
+            <concept>
+                <code value="P5-B8310"/>
+                <display value="Ultrasonic guidance for amniocentesis"/>
+            </concept>
+            <concept>
+                <code value="F-39800"/>
+                <display value="Vasodilatation"/>
+            </concept>
+            <concept>
+                <code value="P1-28160"/>
+                <display value="Thoracentesis"/>
+            </concept>
+            <concept>
+                <code value="P1-30530"/>
+                <display value="Selective embolization of artery"/>
+            </concept>
+            <concept>
+                <code value="P1-86E70"/>
+                <display value="Breech Version [Obstetrical Version]"/>
+            </concept>
+            <concept>
+                <code value="P1-86C50"/>
+                <display value="Fetocide (selective reduction)"/>
+            </concept>
+            <concept>
+                <code value="P1-03176"/>
+                <display value="Removal of foreign body"/>
+            </concept>
+            <concept>
+                <code value="P1-05035"/>
+                <display value="Intra-arterial infusion of thrombolytic agent"/>
+            </concept>
+            <concept>
+                <code value="P1-05535"/>
+                <display value="Catheterization"/>
+            </concept>
+            <concept>
+                <code value="P1-30352"/>
+                <display value="Atherectomy by laser"/>
+            </concept>
+            <concept>
+                <code value="P1-30351"/>
+                <display value="Atherectomy by rotary cutter"/>
+            </concept>
+            <concept>
+                <code value="P1-05536"/>
+                <display value="Catheter manipulation"/>
+            </concept>
+            <concept>
+                <code value="P1-30350"/>
+                <display value="Atherectomy"/>
+            </concept>
+            <concept>
+                <code value="P1-05537"/>
+                <display value="Catheter replacement"/>
+            </concept>
+            <concept>
+                <code value="P1-05052"/>
+                <display value="Irrigation following insertion of catheter"/>
+            </concept>
+            <concept>
+                <code value="P1-05538"/>
+                <display value="Occlusion of catheter"/>
+            </concept>
+            <concept>
+                <code value="P2-68060"/>
+                <display value="Intrauterine transfusion"/>
+            </concept>
+            <concept>
+                <code value="P1-05539"/>
+                <display value="Removal of catheter"/>
+            </concept>
+            <concept>
+                <code value="P5-39015"/>
+                <display value="Transcatheter deployment of detachable balloon"/>
+            </concept>
+            <concept>
+                <code value="P5-39010"/>
+                <display value="Transcatheter therapy for embolization"/>
+            </concept>
+            <concept>
+                <code value="P1-05550"/>
+                <display value="Stent placement"/>
+            </concept>
+            <concept>
+                <code value="P5-39191"/>
+                <display value="Percutaneous insertion of intravascular filter"/>
+            </concept>
+            <concept>
+                <code value="P0-05AFA"/>
+                <display value="Percutaneous retrieval of intravascular foreign body"/>
+            </concept>
+            <concept>
+                <code value="P1-00018"/>
+                <display value="Failed attempted procedure"/>
+            </concept>
+            <concept>
+                <code value="P1-86100"/>
+                <display value="Amniocentesis"/>
+            </concept>
+            <concept>
+                <code value="P1-86520"/>
+                <display value="Amnioinfusion [injection of amnion]"/>
+            </concept>
+            <concept>
+                <code value="P5-31500"/>
+                <display value="Percutaneous transluminal balloon angioplasty"/>
+            </concept>
+            <concept>
+                <code value="P1-86180"/>
+                <display value="Intrauterine cordocentesis"/>
+            </concept>
+            <concept>
+                <code value="F-39780"/>
+                <display value="Vasoconstriction"/>
+            </concept>
+            <concept>
+                <code value="P1-93506"/>
+                <display value="Prostaglandin injection"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

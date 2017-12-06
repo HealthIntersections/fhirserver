@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-647-PositionReferenceIndicatorforFrameofReference"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_647.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.1112"/>
+    </identifier>
+    <version value="20151110"/>
+    <name value="PositionReferenceIndicatorforFrameofReference"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 647 PositionReferenceIndicatorforFrameofReference"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://sig.biostr.washington.edu/projects/fm/AboutFM.html"/>
+            <concept>
+                <code value="264776"/>
+                <display value="Bregma"/>
+            </concept>
+            <concept>
+                <code value="264773"/>
+                <display value="Lambda"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

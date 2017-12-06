@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-3629-ProcedureIntent"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_3629.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.174"/>
+    </identifier>
+    <version value="20170914"/>
+    <name value="ProcedureIntent"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 3629 ProcedureIntent"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://dicom.nema.org/resources/ontology/DCM"/>
+            <concept>
+                <code value="113680"/>
+                <display value="Quality Control Intent"/>
+            </concept>
+        </include>
+        <include>
+            <system value="http://snomed.info/srt"/>
+            <concept>
+                <code value="R-002E9"/>
+                <display value="Combined Diagnostic and Therapeutic Procedure"/>
+            </concept>
+            <concept>
+                <code value="P0-021FD"/>
+                <display value="Prophylactic intent"/>
+            </concept>
+            <concept>
+                <code value="R-40644"/>
+                <display value="Palliative Intent"/>
+            </concept>
+            <concept>
+                <code value="P0-02179"/>
+                <display value="Preventive intent"/>
+            </concept>
+            <concept>
+                <code value="R-40641"/>
+                <display value="Guidance Intent"/>
+            </concept>
+            <concept>
+                <code value="R-41531"/>
+                <display value="Therapeutic Intent"/>
+            </concept>
+            <concept>
+                <code value="R-41564"/>
+                <display value="Adjunct intent"/>
+            </concept>
+            <concept>
+                <code value="R-40642"/>
+                <display value="Forensic Intent"/>
+            </concept>
+            <concept>
+                <code value="R-42453"/>
+                <display value="Screening Intent"/>
+            </concept>
+            <concept>
+                <code value="R-41562"/>
+                <display value="Neo-adjuvant intent"/>
+            </concept>
+            <concept>
+                <code value="R-41563"/>
+                <display value="Supportive intent"/>
+            </concept>
+            <concept>
+                <code value="R-41560"/>
+                <display value="Curative intent"/>
+            </concept>
+            <concept>
+                <code value="R-41561"/>
+                <display value="Adjuvant intent"/>
+            </concept>
+            <concept>
+                <code value="R-408C3"/>
+                <display value="Diagnostic Intent"/>
+            </concept>
+            <concept>
+                <code value="R-408F2"/>
+                <display value="Staging intent"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

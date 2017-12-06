@@ -1,0 +1,484 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-4021-PETRadiopharmaceutical"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_4021.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.305"/>
+    </identifier>
+    <version value="20170413"/>
+    <name value="PETRadiopharmaceutical"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 4021 PETRadiopharmaceutical"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://dicom.nema.org/resources/ontology/DCM"/>
+            <concept>
+                <code value="126513"/>
+                <display value="Cetuximab ^89^Zr"/>
+            </concept>
+            <concept>
+                <code value="126755"/>
+                <display value="RO5323441 ^89^Zr"/>
+            </concept>
+            <concept>
+                <code value="126514"/>
+                <display value="J591 ^89^Zr"/>
+            </concept>
+            <concept>
+                <code value="126756"/>
+                <display value="RO542908 ^89^Zr"/>
+            </concept>
+            <concept>
+                <code value="126515"/>
+                <display value="cU36 ^89^Zr"/>
+            </concept>
+            <concept>
+                <code value="126516"/>
+                <display value="Bevacizumab ^89^Zr"/>
+            </concept>
+            <concept>
+                <code value="126517"/>
+                <display value="cG250-F(ab')(2) ^89^Zr"/>
+            </concept>
+            <concept>
+                <code value="126518"/>
+                <display value="R1507 ^89^Zr"/>
+            </concept>
+            <concept>
+                <code value="126519"/>
+                <display value="E4G10 ^89^Zr"/>
+            </concept>
+            <concept>
+                <code value="126750"/>
+                <display value="7E11 ^89^Zr"/>
+            </concept>
+            <concept>
+                <code value="126751"/>
+                <display value="7D12 ^89^Zr"/>
+            </concept>
+            <concept>
+                <code value="126752"/>
+                <display value="28H1 ^89^Zr"/>
+            </concept>
+            <concept>
+                <code value="126510"/>
+                <display value="Monoclonal Antibody (mAb) ^64^Cu"/>
+            </concept>
+            <concept>
+                <code value="126511"/>
+                <display value="Monoclonal Antibody (mAb) ^89^Zr"/>
+            </concept>
+            <concept>
+                <code value="126753"/>
+                <display value="Nanocolloidal albumin ^89^Zr"/>
+            </concept>
+            <concept>
+                <code value="126754"/>
+                <display value="Anti-B220 ^89^Zr"/>
+            </concept>
+            <concept>
+                <code value="126512"/>
+                <display value="Trastuzumab ^89^Zr"/>
+            </concept>
+            <concept>
+                <code value="126502"/>
+                <display value="T807 F^18^"/>
+            </concept>
+            <concept>
+                <code value="126503"/>
+                <display value="Flubatine F^18^"/>
+            </concept>
+            <concept>
+                <code value="126746"/>
+                <display value="cMAb U36 ^89^Zr"/>
+            </concept>
+            <concept>
+                <code value="126747"/>
+                <display value="DN30 ^89^Zr"/>
+            </concept>
+            <concept>
+                <code value="126748"/>
+                <display value="Fresolimumab ^89^Zr"/>
+            </concept>
+            <concept>
+                <code value="126749"/>
+                <display value="TRC105 ^89^Zr"/>
+            </concept>
+            <concept>
+                <code value="126740"/>
+                <display value="Margetuximab ^89^Zr"/>
+            </concept>
+            <concept>
+                <code value="126741"/>
+                <display value="SAR3419 ^89^Zr"/>
+            </concept>
+            <concept>
+                <code value="126500"/>
+                <display value="Pittsburgh compound B C^11^"/>
+            </concept>
+            <concept>
+                <code value="126742"/>
+                <display value="Ranibizumab ^89^Zr"/>
+            </concept>
+            <concept>
+                <code value="126733"/>
+                <display value="Roledumab ^89^Zr"/>
+            </concept>
+            <concept>
+                <code value="126734"/>
+                <display value="XmAb5574 ^89^Zr"/>
+            </concept>
+            <concept>
+                <code value="126735"/>
+                <display value="Brentuximab ^89^Zr"/>
+            </concept>
+            <concept>
+                <code value="126736"/>
+                <display value="Panitumumab ^89^Zr"/>
+            </concept>
+            <concept>
+                <code value="126737"/>
+                <display value="Rituximab ^89^Zr"/>
+            </concept>
+            <concept>
+                <code value="126738"/>
+                <display value="Mogamulizumab ^89^Zr"/>
+            </concept>
+            <concept>
+                <code value="126739"/>
+                <display value="Ublituximab ^89^Zr"/>
+            </concept>
+            <concept>
+                <code value="126730"/>
+                <display value="MEDI-551 ^89^Zr"/>
+            </concept>
+            <concept>
+                <code value="126731"/>
+                <display value="GA201 ^89^Zr"/>
+            </concept>
+            <concept>
+                <code value="126732"/>
+                <display value="Ecromeximab ^89^Zr"/>
+            </concept>
+            <concept>
+                <code value="126722"/>
+                <display value="Benralizumab ^89^Zr"/>
+            </concept>
+            <concept>
+                <code value="126723"/>
+                <display value="Ocaratuzumab ^89^Zr"/>
+            </concept>
+            <concept>
+                <code value="126724"/>
+                <display value="Glembatumumab vedotin ^89^Zr"/>
+            </concept>
+            <concept>
+                <code value="126725"/>
+                <display value="Pinatuzumab vedotin ^89^Zr"/>
+            </concept>
+            <concept>
+                <code value="126726"/>
+                <display value="Polatuzumab vedotin ^89^Zr"/>
+            </concept>
+            <concept>
+                <code value="126727"/>
+                <display value="Blinatumomab ^89^Zr"/>
+            </concept>
+            <concept>
+                <code value="126728"/>
+                <display value="Pegdinetanib ^89^Zr"/>
+            </concept>
+            <concept>
+                <code value="126729"/>
+                <display value="AGN-150998 ^89^Zr"/>
+            </concept>
+            <concept>
+                <code value="126721"/>
+                <display value="Obinituzimab ^89^Zr"/>
+            </concept>
+            <concept>
+                <code value="126711"/>
+                <display value="Glutamine F^18^"/>
+            </concept>
+            <concept>
+                <code value="126713"/>
+                <display value="2FA F^18^"/>
+            </concept>
+            <concept>
+                <code value="126714"/>
+                <display value="Nifene F^18^"/>
+            </concept>
+            <concept>
+                <code value="126715"/>
+                <display value="CLR1404 I^124^"/>
+            </concept>
+            <concept>
+                <code value="126716"/>
+                <display value="CLR1404 I^131^"/>
+            </concept>
+            <concept>
+                <code value="126717"/>
+                <display value="THK5351 F^18^"/>
+            </concept>
+            <concept>
+                <code value="126718"/>
+                <display value="Flurpiridaz F^18^"/>
+            </concept>
+            <concept>
+                <code value="126710"/>
+                <display value="Glutamine C^14^"/>
+            </concept>
+            <concept>
+                <code value="126709"/>
+                <display value="Glutamine C^11^"/>
+            </concept>
+            <concept>
+                <code value="126700"/>
+                <display value="ATSM Cu^60^"/>
+            </concept>
+            <concept>
+                <code value="126701"/>
+                <display value="ATSM Cu^61^"/>
+            </concept>
+            <concept>
+                <code value="126702"/>
+                <display value="ATSM Cu^62^"/>
+            </concept>
+            <concept>
+                <code value="126703"/>
+                <display value="Choline C^11^"/>
+            </concept>
+            <concept>
+                <code value="126704"/>
+                <display value="Fallypride C^11^"/>
+            </concept>
+            <concept>
+                <code value="126705"/>
+                <display value="Fallypride F^18^"/>
+            </concept>
+            <concept>
+                <code value="126706"/>
+                <display value="FLB 457 C^11^"/>
+            </concept>
+            <concept>
+                <code value="126707"/>
+                <display value="Fluorotriopride F^18^"/>
+            </concept>
+            <concept>
+                <code value="126760"/>
+                <display value="Df-FK ^89^Zr"/>
+            </concept>
+            <concept>
+                <code value="126761"/>
+                <display value="Df-FK-PEG(3) ^89^Zr"/>
+            </concept>
+            <concept>
+                <code value="126762"/>
+                <display value="Df-[FK](2) ^89^Zr"/>
+            </concept>
+            <concept>
+                <code value="126520"/>
+                <display value="Df-CD45 ^89^Zr"/>
+            </concept>
+            <concept>
+                <code value="126763"/>
+                <display value="Df-[FK](2)-3PEG(4) ^89^Zr"/>
+            </concept>
+        </include>
+        <include>
+            <system value="http://snomed.info/srt"/>
+            <concept>
+                <code value="C-E0273"/>
+                <display value="Fluorocholine F^18^"/>
+            </concept>
+            <concept>
+                <code value="C-B1034"/>
+                <display value="Fluoro-L-dopa F^18^"/>
+            </concept>
+            <concept>
+                <code value="C-B1033"/>
+                <display value="Spiperone F^18^"/>
+            </concept>
+            <concept>
+                <code value="C-B1036"/>
+                <display value="Thymidine (FLT) F^18^"/>
+            </concept>
+            <concept>
+                <code value="C-B1032"/>
+                <display value="Sodium fluoride F^18^"/>
+            </concept>
+            <concept>
+                <code value="C-B1031"/>
+                <display value="Fluorodeoxyglucose F^18^"/>
+            </concept>
+            <concept>
+                <code value="C-D6858"/>
+                <display value="Florbetaben F^18^"/>
+            </concept>
+            <concept>
+                <code value="C-B07DE"/>
+                <display value="Flumazenil C^11^"/>
+            </concept>
+            <concept>
+                <code value="C-B07DD"/>
+                <display value="EDTA Ga^68^"/>
+            </concept>
+            <concept>
+                <code value="C-B07DF"/>
+                <display value="Flumazenil F^18^"/>
+            </concept>
+            <concept>
+                <code value="C-B1038"/>
+                <display value="Oxygen O^15^"/>
+            </concept>
+            <concept>
+                <code value="C-B1037"/>
+                <display value="Rubidium chloride Rb^82^"/>
+            </concept>
+            <concept>
+                <code value="C-B07DC"/>
+                <display value="Butanol O^15^"/>
+            </concept>
+            <concept>
+                <code value="C-B07DB"/>
+                <display value="ATSM Cu^64^"/>
+            </concept>
+            <concept>
+                <code value="C-B1039"/>
+                <display value="Oxygen-water O^15^"/>
+            </concept>
+            <concept>
+                <code value="C-B103D"/>
+                <display value="Glutamate N^13^"/>
+            </concept>
+            <concept>
+                <code value="C-B103C"/>
+                <display value="Ammonia N^13^"/>
+            </concept>
+            <concept>
+                <code value="C-B103F"/>
+                <display value="Carfentanil C^11^"/>
+            </concept>
+            <concept>
+                <code value="C-B07E0"/>
+                <display value="Fluorethyltyrosin F^18^"/>
+            </concept>
+            <concept>
+                <code value="C-B103E"/>
+                <display value="Methionine C^11^"/>
+            </concept>
+            <concept>
+                <code value="C-B103B"/>
+                <display value="Carbon dioxide O^15^"/>
+            </concept>
+            <concept>
+                <code value="C-B103A"/>
+                <display value="Carbon monoxide O^15^"/>
+            </concept>
+            <concept>
+                <code value="C-B07E6"/>
+                <display value="Monoclonal antibody I^124^"/>
+            </concept>
+            <concept>
+                <code value="C-B07E5"/>
+                <display value="Mespiperone C^11^"/>
+            </concept>
+            <concept>
+                <code value="C-B07E8"/>
+                <display value="Sodium iodide I^124^"/>
+            </concept>
+            <concept>
+                <code value="C-B07E7"/>
+                <display value="PTSM Cu^62^"/>
+            </concept>
+            <concept>
+                <code value="C-B07E2"/>
+                <display value="Fluoromethane F^18^"/>
+            </concept>
+            <concept>
+                <code value="C-B07E1"/>
+                <display value="Fluoromisonidazole F^18^"/>
+            </concept>
+            <concept>
+                <code value="C-B07E4"/>
+                <display value="Fluorobenzothiazole F^18^"/>
+            </concept>
+            <concept>
+                <code value="C-B07E3"/>
+                <display value="Fluorouracil F^18^"/>
+            </concept>
+            <concept>
+                <code value="C-B1045"/>
+                <display value="Carbon monoxide C^11^"/>
+            </concept>
+            <concept>
+                <code value="C-B1044"/>
+                <display value="Palmitate C^11^"/>
+            </concept>
+            <concept>
+                <code value="C-B1047"/>
+                <display value="Sodium Na^22^"/>
+            </concept>
+            <concept>
+                <code value="C-B1046"/>
+                <display value="Germanium Ge^68^"/>
+            </concept>
+            <concept>
+                <code value="C-B1043"/>
+                <display value="Acetate C^11^"/>
+            </concept>
+            <concept>
+                <code value="C-B1042"/>
+                <display value="Raclopride C^11^"/>
+            </concept>
+            <concept>
+                <code value="C-E026A"/>
+                <display value="Fluciclovine F^18^"/>
+            </concept>
+            <concept>
+                <code value="C-E0269"/>
+                <display value="Florbetapir F^18^"/>
+            </concept>
+            <concept>
+                <code value="C-E0267"/>
+                <display value="Flutemetamol F^18^"/>
+            </concept>
+            <concept>
+                <code value="C-E0265"/>
+                <display value="Fluciclatide F^18^"/>
+            </concept>
+        </include>
+        <include>
+            <system value="http://www.nlm.nih.gov/research/umls"/>
+            <concept>
+                <code value="C2981788"/>
+                <display value="ISO-1 F^18^"/>
+            </concept>
+            <concept>
+                <code value="C2934038"/>
+                <display value="Fluoropropyl-dihydrotetrabenazine (DTBZ) F^18^"/>
+            </concept>
+            <concept>
+                <code value="C1541539"/>
+                <display value="Fluoroetanidazole F^18^"/>
+            </concept>
+            <concept>
+                <code value="C1831937"/>
+                <display value="Fluoroestradiol (FES) F^18^"/>
+            </concept>
+            <concept>
+                <code value="C1742831"/>
+                <display value="tyrosine-3-octreotate Ga^68^"/>
+            </concept>
+            <concept>
+                <code value="C2713594"/>
+                <display value="Edotreotide Ga^68^"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

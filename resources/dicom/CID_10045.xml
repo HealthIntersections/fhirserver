@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-10045-RadiopharmaceuticalPatientState"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_10045.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.977"/>
+    </identifier>
+    <version value="20140419"/>
+    <name value="RadiopharmaceuticalPatientState"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 10045 RadiopharmaceuticalPatientState"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://dicom.nema.org/resources/ontology/DCM"/>
+            <concept>
+                <code value="109091"/>
+                <display value="Cardiac Stress State"/>
+            </concept>
+            <concept>
+                <code value="113560"/>
+                <display value="Acute unilateral renal blockage"/>
+            </concept>
+            <concept>
+                <code value="113561"/>
+                <display value="Low Thyroid Uptake"/>
+            </concept>
+            <concept>
+                <code value="113562"/>
+                <display value="High Thyroid Uptake"/>
+            </concept>
+            <concept>
+                <code value="113563"/>
+                <display value="Severely Jaundiced"/>
+            </concept>
+        </include>
+        <include>
+            <system value="http://snomed.info/srt"/>
+            <concept>
+                <code value="F-70102"/>
+                <display value="Abnormal Renal Function"/>
+            </concept>
+            <concept>
+                <code value="F-01604"/>
+                <display value="Resting State"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

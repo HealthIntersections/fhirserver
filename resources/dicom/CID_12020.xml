@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-12020-FetalBiometryAnatomicSites"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_12020.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.1005"/>
+    </identifier>
+    <version value="20141110"/>
+    <name value="FetalBiometryAnatomicSites"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 12020 FetalBiometryAnatomicSites"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://snomed.info/srt"/>
+            <concept>
+                <code value="T-D4000"/>
+                <display value="Abdomen"/>
+            </concept>
+            <concept>
+                <code value="T-12710"/>
+                <display value="Femur"/>
+            </concept>
+            <concept>
+                <code value="T-D9700"/>
+                <display value="Foot"/>
+            </concept>
+            <concept>
+                <code value="T-D3000"/>
+                <display value="Thorax"/>
+            </concept>
+            <concept>
+                <code value="T-D2000"/>
+                <display value="Trunk"/>
+            </concept>
+            <concept>
+                <code value="T-A6000"/>
+                <display value="Cerebellum"/>
+            </concept>
+            <concept>
+                <code value="T-71000"/>
+                <display value="Kidney"/>
+            </concept>
+            <concept>
+                <code value="T-11100"/>
+                <display value="Skull"/>
+            </concept>
+            <concept>
+                <code value="T-A1520"/>
+                <display value="Cisterna Magna"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

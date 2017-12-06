@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-10021-SourceofCTDoseInformation"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_10021.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.1055"/>
+    </identifier>
+    <version value="20081028"/>
+    <name value="SourceofCTDoseInformation"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 10021 SourceofCTDoseInformation"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://dicom.nema.org/resources/ontology/DCM"/>
+            <concept>
+                <code value="113866"/>
+                <display value="Copied From Image Attributes"/>
+            </concept>
+            <concept>
+                <code value="113857"/>
+                <display value="Manual Entry"/>
+            </concept>
+            <concept>
+                <code value="113868"/>
+                <display value="Derived From Human-Readable Reports"/>
+            </concept>
+            <concept>
+                <code value="113856"/>
+                <display value="Automated Data Collection"/>
+            </concept>
+            <concept>
+                <code value="113867"/>
+                <display value="Computed From Image Attributes"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

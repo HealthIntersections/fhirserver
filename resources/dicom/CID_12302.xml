@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-12302-EchoFindingObservationTypes"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_12302.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.1143"/>
+    </identifier>
+    <version value="20161109"/>
+    <name value="EchoFindingObservationTypes"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 12302 EchoFindingObservationTypes"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://dicom.nema.org/resources/ontology/DCM"/>
+            <concept>
+                <code value="125312"/>
+                <display value="Behavior of the Finding Site"/>
+            </concept>
+            <concept>
+                <code value="125311"/>
+                <display value="Structure of the Finding Site"/>
+            </concept>
+        </include>
+        <include>
+            <system value="http://snomed.info/srt"/>
+            <concept>
+                <code value="PA-50030"/>
+                <display value="Hemodynamic Measurements"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

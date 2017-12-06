@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-7601-HeadandNeckCancerAnatomicSites"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_7601.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.1012"/>
+    </identifier>
+    <version value="20160314"/>
+    <name value="HeadandNeckCancerAnatomicSites"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 7601 HeadandNeckCancerAnatomicSites"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://snomed.info/srt"/>
+            <concept>
+                <code value="T-24454"/>
+                <display value="supraglottis"/>
+            </concept>
+            <concept>
+                <code value="T-23000"/>
+                <display value="nasopharynx"/>
+            </concept>
+            <concept>
+                <code value="T-C5330"/>
+                <display value="tubal tonsil"/>
+            </concept>
+            <concept>
+                <code value="T-53130"/>
+                <display value="base of tongue"/>
+            </concept>
+            <concept>
+                <code value="T-52000"/>
+                <display value="lip"/>
+            </concept>
+            <concept>
+                <code value="T-51130"/>
+                <display value="palatine uvula"/>
+            </concept>
+            <concept>
+                <code value="T-61007"/>
+                <display value="salivary gland"/>
+            </concept>
+            <concept>
+                <code value="T-21301"/>
+                <display value="nasal cavity"/>
+            </concept>
+            <concept>
+                <code value="T-51305"/>
+                <display value="buccal mucosa"/>
+            </concept>
+            <concept>
+                <code value="T-22000"/>
+                <display value="paranasal sinus"/>
+            </concept>
+            <concept>
+                <code value="T-C5300"/>
+                <display value="pharyngeal tonsil (adenoid)"/>
+            </concept>
+            <concept>
+                <code value="T-22100"/>
+                <display value="maxillary sinus"/>
+            </concept>
+            <concept>
+                <code value="T-24100"/>
+                <display value="larynx"/>
+            </concept>
+            <concept>
+                <code value="T-C5100"/>
+                <display value="palatine tonsil"/>
+            </concept>
+            <concept>
+                <code value="T-C5001"/>
+                <display value="tonsil and adenoid"/>
+            </concept>
+            <concept>
+                <code value="T-24440"/>
+                <display value="glottis"/>
+            </concept>
+            <concept>
+                <code value="T-C5000"/>
+                <display value="oropharyngeal tonsil (waldeyer's ring)"/>
+            </concept>
+            <concept>
+                <code value="T-C5140"/>
+                <display value="lingual tonsil"/>
+            </concept>
+            <concept>
+                <code value="T-51200"/>
+                <display value="floor of mouth"/>
+            </concept>
+            <concept>
+                <code value="T-51004"/>
+                <display value="oral cavity"/>
+            </concept>
+            <concept>
+                <code value="T-D07CB"/>
+                <display value="lower alveolar ridge"/>
+            </concept>
+            <concept>
+                <code value="T-51600"/>
+                <display value="retromolar trigone"/>
+            </concept>
+            <concept>
+                <code value="T-55200"/>
+                <display value="oropharynx"/>
+            </concept>
+            <concept>
+                <code value="T-55300"/>
+                <display value="hypopharynx"/>
+            </concept>
+            <concept>
+                <code value="T-55320"/>
+                <display value="pyriform sinus"/>
+            </concept>
+            <concept>
+                <code value="T-53000"/>
+                <display value="tongue"/>
+            </concept>
+        </include>
+        <include>
+            <system value="http://www.nlm.nih.gov/research/umls"/>
+            <concept>
+                <code value="C0221297"/>
+                <display value="unknown primary neoplasia site"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

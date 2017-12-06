@@ -1,0 +1,902 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-8112-SpecimenStains"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_8112.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.1050"/>
+    </identifier>
+    <version value="20170914"/>
+    <name value="SpecimenStains"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 8112 SpecimenStains"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://snomed.info/srt"/>
+            <concept>
+                <code value="C-22813"/>
+                <display value="alizarin yellow GG stain"/>
+            </concept>
+            <concept>
+                <code value="C-22934"/>
+                <display value="brilliant cresyl blue stain"/>
+            </concept>
+            <concept>
+                <code value="C-22812"/>
+                <display value="tropaeolin OO stain"/>
+            </concept>
+            <concept>
+                <code value="C-22933"/>
+                <display value="water soluble nigrosine stain"/>
+            </concept>
+            <concept>
+                <code value="C-22936"/>
+                <display value="celestine blue B stain"/>
+            </concept>
+            <concept>
+                <code value="C-22815"/>
+                <display value="tropaeolin O stain"/>
+            </concept>
+            <concept>
+                <code value="C-22814"/>
+                <display value="alizarin yellow R stain"/>
+            </concept>
+            <concept>
+                <code value="C-22935"/>
+                <display value="gallocyanine stain"/>
+            </concept>
+            <concept>
+                <code value="C-22932"/>
+                <display value="alcohol soluble nigrosine stain"/>
+            </concept>
+            <concept>
+                <code value="C-22811"/>
+                <display value="metanil yellow stain"/>
+            </concept>
+            <concept>
+                <code value="C-22810"/>
+                <display value="field's stain"/>
+            </concept>
+            <concept>
+                <code value="C-22817"/>
+                <display value="immunofluorescent stain"/>
+            </concept>
+            <concept>
+                <code value="C-22816"/>
+                <display value="Flagellar stain"/>
+            </concept>
+            <concept>
+                <code value="C-22937"/>
+                <display value="meldola blue stain"/>
+            </concept>
+            <concept>
+                <code value="C-22819"/>
+                <display value="Leishman stain"/>
+            </concept>
+            <concept>
+                <code value="C-22818"/>
+                <display value="Jenner-Giemsa stain"/>
+            </concept>
+            <concept>
+                <code value="C-2281C"/>
+                <display value="myeloperoxidase stain"/>
+            </concept>
+            <concept>
+                <code value="C-2281B"/>
+                <display value="methyl green pyronin stain"/>
+            </concept>
+            <concept>
+                <code value="C-2281E"/>
+                <display value="nonspecific esterase stain"/>
+            </concept>
+            <concept>
+                <code value="C-2281D"/>
+                <display value="neutrophil alkaline phosphatase stain"/>
+            </concept>
+            <concept>
+                <code value="C-2281A"/>
+                <display value="may-Grunwald giemsa stain"/>
+            </concept>
+            <concept>
+                <code value="C-2281F"/>
+                <display value="periodic acid Schiff stain"/>
+            </concept>
+            <concept>
+                <code value="C-22923"/>
+                <display value="erythrosin Y stain"/>
+            </concept>
+            <concept>
+                <code value="C-22802"/>
+                <display value="martius yellow stain"/>
+            </concept>
+            <concept>
+                <code value="C-22801"/>
+                <display value="naphthol green B stain"/>
+            </concept>
+            <concept>
+                <code value="C-22922"/>
+                <display value="phloxin B stain"/>
+            </concept>
+            <concept>
+                <code value="C-22804"/>
+                <display value="janus green B stain"/>
+            </concept>
+            <concept>
+                <code value="C-22925"/>
+                <display value="rose bengal stain"/>
+            </concept>
+            <concept>
+                <code value="C-22924"/>
+                <display value="erythrosin B stain"/>
+            </concept>
+            <concept>
+                <code value="C-22803"/>
+                <display value="naphthol yellow S stain"/>
+            </concept>
+            <concept>
+                <code value="C-22921"/>
+                <display value="blue shade eosin stain"/>
+            </concept>
+            <concept>
+                <code value="C-22920"/>
+                <display value="spirit soluble eosin stain"/>
+            </concept>
+            <concept>
+                <code value="C-22809"/>
+                <display value="methyl orange stain"/>
+            </concept>
+            <concept>
+                <code value="C-22806"/>
+                <display value="chrysoidine R stain"/>
+            </concept>
+            <concept>
+                <code value="C-22927"/>
+                <display value="indophenol from naphthol stain"/>
+            </concept>
+            <concept>
+                <code value="C-22805"/>
+                <display value="chrysoidine Y stain"/>
+            </concept>
+            <concept>
+                <code value="C-22926"/>
+                <display value="thioflavine T stain"/>
+            </concept>
+            <concept>
+                <code value="C-22929"/>
+                <display value="azocarmine G (GX) stain"/>
+            </concept>
+            <concept>
+                <code value="C-22808"/>
+                <display value="methyl red stain"/>
+            </concept>
+            <concept>
+                <code value="C-22928"/>
+                <display value="neutral red stain"/>
+            </concept>
+            <concept>
+                <code value="C-22807"/>
+                <display value="Sudan II stain"/>
+            </concept>
+            <concept>
+                <code value="C-2280B"/>
+                <display value="Albert's stain"/>
+            </concept>
+            <concept>
+                <code value="C-2280A"/>
+                <display value="acid phosphatase stain"/>
+            </concept>
+            <concept>
+                <code value="C-2280D"/>
+                <display value="beta-glucuronidase stain"/>
+            </concept>
+            <concept>
+                <code value="C-2280C"/>
+                <display value="auramine stain"/>
+            </concept>
+            <concept>
+                <code value="C-2280F"/>
+                <display value="Feulgen reaction stain"/>
+            </concept>
+            <concept>
+                <code value="C-2280E"/>
+                <display value="chloroacetate esterase stain"/>
+            </concept>
+            <concept>
+                <code value="C-22912"/>
+                <display value="solochrome azurine (BS) stain"/>
+            </concept>
+            <concept>
+                <code value="C-22911"/>
+                <display value="chrome azurol S stain"/>
+            </concept>
+            <concept>
+                <code value="C-22914"/>
+                <display value="lissamine green B stain"/>
+            </concept>
+            <concept>
+                <code value="C-22913"/>
+                <display value="victoria blue B stain"/>
+            </concept>
+            <concept>
+                <code value="C-22A11"/>
+                <display value="coriphosphine stain"/>
+            </concept>
+            <concept>
+                <code value="C-22919"/>
+                <display value="water soluble eosin stain"/>
+            </concept>
+            <concept>
+                <code value="C-22916"/>
+                <display value="pyronine B stain"/>
+            </concept>
+            <concept>
+                <code value="C-22915"/>
+                <display value="pyronine G stain"/>
+            </concept>
+            <concept>
+                <code value="C-22918"/>
+                <display value="dibromofluorescein stain"/>
+            </concept>
+            <concept>
+                <code value="C-22917"/>
+                <display value="lissamine rhodamine stain"/>
+            </concept>
+            <concept>
+                <code value="C-22901"/>
+                <display value="page blue 83 stain"/>
+            </concept>
+            <concept>
+                <code value="C-22903"/>
+                <display value="alkali blue 5B (4B) stain"/>
+            </concept>
+            <concept>
+                <code value="C-22902"/>
+                <display value="fuchsin acid stain"/>
+            </concept>
+            <concept>
+                <code value="C-22909"/>
+                <display value="solochrome cyanine R stain"/>
+            </concept>
+            <concept>
+                <code value="C-22A01"/>
+                <display value="auramine O stain"/>
+            </concept>
+            <concept>
+                <code value="C-22A00"/>
+                <display value="fluorescent stain"/>
+            </concept>
+            <concept>
+                <code value="C-22908"/>
+                <display value="rosolic acid sodium salt stain"/>
+            </concept>
+            <concept>
+                <code value="C-22A03"/>
+                <display value="atebrin FS stain"/>
+            </concept>
+            <concept>
+                <code value="F-61E5A"/>
+                <display value="wayson stain"/>
+            </concept>
+            <concept>
+                <code value="C-22A02"/>
+                <display value="auramine G stain"/>
+            </concept>
+            <concept>
+                <code value="C-22905"/>
+                <display value="alkali blue 6B stain"/>
+            </concept>
+            <concept>
+                <code value="C-22904"/>
+                <display value="water soluble aniline blue stain"/>
+            </concept>
+            <concept>
+                <code value="C-22907"/>
+                <display value="methyl blue stain"/>
+            </concept>
+            <concept>
+                <code value="C-22906"/>
+                <display value="spirit soluble aniline blue stain"/>
+            </concept>
+            <concept>
+                <code value="C-22A08"/>
+                <display value="acridine orange stain"/>
+            </concept>
+            <concept>
+                <code value="C-22A05"/>
+                <display value="fluorescein stain"/>
+            </concept>
+            <concept>
+                <code value="C-22A04"/>
+                <display value="rhodamine B stain"/>
+            </concept>
+            <concept>
+                <code value="C-22A07"/>
+                <display value="acriflavine stain"/>
+            </concept>
+            <concept>
+                <code value="C-22A06"/>
+                <display value="Fluorescein sodium stain"/>
+            </concept>
+            <concept>
+                <code value="C-22AA1"/>
+                <display value="fluorexon stain"/>
+            </concept>
+            <concept>
+                <code value="F-61DA5"/>
+                <display value="safranin stain"/>
+            </concept>
+            <concept>
+                <code value="R-F748A"/>
+                <display value="permethrin stain"/>
+            </concept>
+            <concept>
+                <code value="C-22897"/>
+                <display value="ethyl violet stain"/>
+            </concept>
+            <concept>
+                <code value="C-22896"/>
+                <display value="methyl green stain"/>
+            </concept>
+            <concept>
+                <code value="C-22899"/>
+                <display value="kenacid blue R stain"/>
+            </concept>
+            <concept>
+                <code value="C-22898"/>
+                <display value="page blue G-90 stain"/>
+            </concept>
+            <concept>
+                <code value="F-61A76"/>
+                <display value="methyl violet stain"/>
+            </concept>
+            <concept>
+                <code value="C-22889"/>
+                <display value="fuchsin basic stain"/>
+            </concept>
+            <concept>
+                <code value="C-22886"/>
+                <display value="fast green FCF stain"/>
+            </concept>
+            <concept>
+                <code value="C-22885"/>
+                <display value="patent blue V sodium salt stain"/>
+            </concept>
+            <concept>
+                <code value="C-22888"/>
+                <display value="xylene cyanol FF stain"/>
+            </concept>
+            <concept>
+                <code value="C-22887"/>
+                <display value="light green SF stain"/>
+            </concept>
+            <concept>
+                <code value="C-2288A"/>
+                <display value="protargol S stain"/>
+            </concept>
+            <concept>
+                <code value="C-2288D"/>
+                <display value="thioflavine S stain"/>
+            </concept>
+            <concept>
+                <code value="C-22892"/>
+                <display value="methyl violet 2B stain"/>
+            </concept>
+            <concept>
+                <code value="C-22895"/>
+                <display value="victoria blue 4R stain"/>
+            </concept>
+            <concept>
+                <code value="C-22894"/>
+                <display value="methyl violet 6B stain"/>
+            </concept>
+            <concept>
+                <code value="C-22891"/>
+                <display value="new fuchsin stain"/>
+            </concept>
+            <concept>
+                <code value="C-22890"/>
+                <display value="malachite green stain"/>
+            </concept>
+            <concept>
+                <code value="C-22879"/>
+                <display value="fast violet B salt stain"/>
+            </concept>
+            <concept>
+                <code value="C-22878"/>
+                <display value="fast blue RR salt stain"/>
+            </concept>
+            <concept>
+                <code value="C-22875"/>
+                <display value="fast red TR salt stain"/>
+            </concept>
+            <concept>
+                <code value="C-22874"/>
+                <display value="sirius red F3B stain"/>
+            </concept>
+            <concept>
+                <code value="C-22877"/>
+                <display value="fast red ITR stain"/>
+            </concept>
+            <concept>
+                <code value="C-22876"/>
+                <display value="fast red B salt stain"/>
+            </concept>
+            <concept>
+                <code value="C-2287A"/>
+                <display value="silver nitrate stain"/>
+            </concept>
+            <concept>
+                <code value="C-2287B"/>
+                <display value="chromic acid stain"/>
+            </concept>
+            <concept>
+                <code value="C-2287E"/>
+                <display value="aniline blue stain"/>
+            </concept>
+            <concept>
+                <code value="C-2287D"/>
+                <display value="trichrome stain"/>
+            </concept>
+            <concept>
+                <code value="C-2287F"/>
+                <display value="modified trichrome stain"/>
+            </concept>
+            <concept>
+                <code value="C-22882"/>
+                <display value="fast garnet GBC salt stain"/>
+            </concept>
+            <concept>
+                <code value="C-22881"/>
+                <display value="fast blue BB salt stain"/>
+            </concept>
+            <concept>
+                <code value="C-22883"/>
+                <display value="fast blue B salt stain"/>
+            </concept>
+            <concept>
+                <code value="C-22880"/>
+                <display value="verhoeff's hematoxylin stain"/>
+            </concept>
+            <concept>
+                <code value="C-22868"/>
+                <display value="ponceau S stain"/>
+            </concept>
+            <concept>
+                <code value="C-22867"/>
+                <display value="fast sulfon black F stain"/>
+            </concept>
+            <concept>
+                <code value="F-61968"/>
+                <display value="giemsa stain"/>
+            </concept>
+            <concept>
+                <code value="C-22869"/>
+                <display value="brilliant crocein stain"/>
+            </concept>
+            <concept>
+                <code value="C-22864"/>
+                <display value="Sudan black B stain"/>
+            </concept>
+            <concept>
+                <code value="C-22863"/>
+                <display value="oil red O stain"/>
+            </concept>
+            <concept>
+                <code value="C-22866"/>
+                <display value="biebrich scarlet stain"/>
+            </concept>
+            <concept>
+                <code value="C-22865"/>
+                <display value="brilliant orange stain"/>
+            </concept>
+            <concept>
+                <code value="C-2286B"/>
+                <display value="carbol fuchsin stain"/>
+            </concept>
+            <concept>
+                <code value="C-2286A"/>
+                <display value="rhodamine stain"/>
+            </concept>
+            <concept>
+                <code value="C-2286D"/>
+                <display value="aldehyde fuchsin stain"/>
+            </concept>
+            <concept>
+                <code value="C-2286C"/>
+                <display value="fouchet stain"/>
+            </concept>
+            <concept>
+                <code value="C-2286F"/>
+                <display value="hansel stain"/>
+            </concept>
+            <concept>
+                <code value="C-2286E"/>
+                <display value="bauer's chromic acid leucofuchsin stain"/>
+            </concept>
+            <concept>
+                <code value="C-22871"/>
+                <display value="durazol red stain"/>
+            </concept>
+            <concept>
+                <code value="C-22870"/>
+                <display value="potassium hydroxide stain"/>
+            </concept>
+            <concept>
+                <code value="C-22873"/>
+                <display value="azo black stain"/>
+            </concept>
+            <concept>
+                <code value="C-22872"/>
+                <display value="benzo fast scarlet stain"/>
+            </concept>
+            <concept>
+                <code value="C-22857"/>
+                <display value="brilliant yellow stain"/>
+            </concept>
+            <concept>
+                <code value="C-22856"/>
+                <display value="pontamine sky blue 6BX stain"/>
+            </concept>
+            <concept>
+                <code value="C-22859"/>
+                <display value="fat red 7B stain"/>
+            </concept>
+            <concept>
+                <code value="C-22858"/>
+                <display value="vital new red stain"/>
+            </concept>
+            <concept>
+                <code value="C-22974"/>
+                <display value="insoluble berlin blue stain"/>
+            </concept>
+            <concept>
+                <code value="C-22853"/>
+                <display value="trypan blue stain"/>
+            </concept>
+            <concept>
+                <code value="C-22973"/>
+                <display value="cochineal stain"/>
+            </concept>
+            <concept>
+                <code value="C-22852"/>
+                <display value="erie garnet stain"/>
+            </concept>
+            <concept>
+                <code value="C-22855"/>
+                <display value="pontamine sky blue 5BX stain"/>
+            </concept>
+            <concept>
+                <code value="C-22854"/>
+                <display value="Evans blue stain"/>
+            </concept>
+            <concept>
+                <code value="C-22975"/>
+                <display value="soluble berlin blue stain"/>
+            </concept>
+            <concept>
+                <code value="C-2285F"/>
+                <display value="terminal deoxynucleotidyl transferase stain"/>
+            </concept>
+            <concept>
+                <code value="C-2285C"/>
+                <display value="India ink stain"/>
+            </concept>
+            <concept>
+                <code value="C-2285B"/>
+                <display value="alkaline phosphatase stain"/>
+            </concept>
+            <concept>
+                <code value="C-2285E"/>
+                <display value="peroxidase stain"/>
+            </concept>
+            <concept>
+                <code value="C-2285D"/>
+                <display value="naphthol-AS-D-chloracetate esterase stain"/>
+            </concept>
+            <concept>
+                <code value="C-22860"/>
+                <display value="acid fast stain"/>
+            </concept>
+            <concept>
+                <code value="C-22862"/>
+                <display value="Sudan IV stain"/>
+            </concept>
+            <concept>
+                <code value="C-22861"/>
+                <display value="Sudan III stain"/>
+            </concept>
+            <concept>
+                <code value="C-22967"/>
+                <display value="hematein stain"/>
+            </concept>
+            <concept>
+                <code value="C-22846"/>
+                <display value="naphthalene black 12B stain"/>
+            </concept>
+            <concept>
+                <code value="C-22966"/>
+                <display value="curcumin stain"/>
+            </concept>
+            <concept>
+                <code value="C-22845"/>
+                <display value="titan yellow stain"/>
+            </concept>
+            <concept>
+                <code value="C-22848"/>
+                <display value="bismark brown Y stain"/>
+            </concept>
+            <concept>
+                <code value="C-22847"/>
+                <display value="cresyl echt violet stain"/>
+            </concept>
+            <concept>
+                <code value="C-22968"/>
+                <display value="hematoxylin stain"/>
+            </concept>
+            <concept>
+                <code value="C-22963"/>
+                <display value="alcian blue 8GX stain"/>
+            </concept>
+            <concept>
+                <code value="C-22842"/>
+                <display value="azophloxin stain"/>
+            </concept>
+            <concept>
+                <code value="C-22962"/>
+                <display value="indigo carmine stain"/>
+            </concept>
+            <concept>
+                <code value="C-22841"/>
+                <display value="lissamine fast red B stain"/>
+            </concept>
+            <concept>
+                <code value="C-22965"/>
+                <display value="brazilin stain"/>
+            </concept>
+            <concept>
+                <code value="C-22844"/>
+                <display value="tartrazine stain"/>
+            </concept>
+            <concept>
+                <code value="C-22843"/>
+                <display value="lissamine fast yellow stain"/>
+            </concept>
+            <concept>
+                <code value="C-22964"/>
+                <display value="saffron stain"/>
+            </concept>
+            <concept>
+                <code value="C-22849"/>
+                <display value="bismark brown R stain"/>
+            </concept>
+            <concept>
+                <code value="C-2284F"/>
+                <display value="quinacrine fluorescent stain"/>
+            </concept>
+            <concept>
+                <code value="C-2284E"/>
+                <display value="phosphotungstic acid-hematoxylin stain"/>
+            </concept>
+            <concept>
+                <code value="C-2284B"/>
+                <display value="mucicarmine stain"/>
+            </concept>
+            <concept>
+                <code value="C-2284A"/>
+                <display value="methylene violet stain"/>
+            </concept>
+            <concept>
+                <code value="C-2284D"/>
+                <display value="orcein stain"/>
+            </concept>
+            <concept>
+                <code value="C-2284C"/>
+                <display value="night blue stain"/>
+            </concept>
+            <concept>
+                <code value="C-22972"/>
+                <display value="carminic acid stain"/>
+            </concept>
+            <concept>
+                <code value="C-22851"/>
+                <display value="Congo red stain"/>
+            </concept>
+            <concept>
+                <code value="C-22971"/>
+                <display value="carmine stain"/>
+            </concept>
+            <concept>
+                <code value="C-22850"/>
+                <display value="thionin stain"/>
+            </concept>
+            <concept>
+                <code value="C-22956"/>
+                <display value="procion brilliant blue MRS stain"/>
+            </concept>
+            <concept>
+                <code value="C-22955"/>
+                <display value="nuclear fast red stain"/>
+            </concept>
+            <concept>
+                <code value="C-22837"/>
+                <display value="colloidal iron stain"/>
+            </concept>
+            <concept>
+                <code value="C-22958"/>
+                <display value="Sudan blue stain"/>
+            </concept>
+            <concept>
+                <code value="C-22836"/>
+                <display value="silver stain"/>
+            </concept>
+            <concept>
+                <code value="C-22957"/>
+                <display value="waxoline blue stain"/>
+            </concept>
+            <concept>
+                <code value="C-22831"/>
+                <display value="azorubin S stain"/>
+            </concept>
+            <concept>
+                <code value="C-22952"/>
+                <display value="methylene violet stain (Bernthsen)"/>
+            </concept>
+            <concept>
+                <code value="C-22830"/>
+                <display value="gram stain"/>
+            </concept>
+            <concept>
+                <code value="C-22951"/>
+                <display value="toluidine blue stain"/>
+            </concept>
+            <concept>
+                <code value="C-22833"/>
+                <display value="crystal ponceau stain"/>
+            </concept>
+            <concept>
+                <code value="C-22954"/>
+                <display value="water soluble anthracene brown stain"/>
+            </concept>
+            <concept>
+                <code value="C-22953"/>
+                <display value="alizarin red S stain"/>
+            </concept>
+            <concept>
+                <code value="C-22832"/>
+                <display value="orange G stain"/>
+            </concept>
+            <concept>
+                <code value="C-22839"/>
+                <display value="eriochrome blue black SE stain"/>
+            </concept>
+            <concept>
+                <code value="C-22959"/>
+                <display value="alizarin cyanine green stain"/>
+            </concept>
+            <concept>
+                <code value="C-22838"/>
+                <display value="chromotrope 2R stain"/>
+            </concept>
+            <concept>
+                <code value="C-2283E"/>
+                <display value="Van Gieson stain"/>
+            </concept>
+            <concept>
+                <code value="C-2283F"/>
+                <display value="luxol fast blue stain"/>
+            </concept>
+            <concept>
+                <code value="C-2283A"/>
+                <display value="Mallory bleach stain"/>
+            </concept>
+            <concept>
+                <code value="C-2283C"/>
+                <display value="butyrate esterase stain"/>
+            </concept>
+            <concept>
+                <code value="C-22961"/>
+                <display value="alizarin blue S stain"/>
+            </concept>
+            <concept>
+                <code value="C-22840"/>
+                <display value="cresyl violet stain"/>
+            </concept>
+            <concept>
+                <code value="C-22945"/>
+                <display value="azure A stain"/>
+            </concept>
+            <concept>
+                <code value="C-22824"/>
+                <display value="orange II stain"/>
+            </concept>
+            <concept>
+                <code value="C-22944"/>
+                <display value="azure C stain"/>
+            </concept>
+            <concept>
+                <code value="C-22823"/>
+                <display value="nitrazine yellow stain"/>
+            </concept>
+            <concept>
+                <code value="C-22826"/>
+                <display value="diamond black stain"/>
+            </concept>
+            <concept>
+                <code value="C-22947"/>
+                <display value="methylene blue stain"/>
+            </concept>
+            <concept>
+                <code value="C-22946"/>
+                <display value="azure B stain"/>
+            </concept>
+            <concept>
+                <code value="C-22825"/>
+                <display value="solochrome dark blue stain"/>
+            </concept>
+            <concept>
+                <code value="C-22941"/>
+                <display value="nile blue stain"/>
+            </concept>
+            <concept>
+                <code value="C-22820"/>
+                <display value="Prussian blue stain"/>
+            </concept>
+            <concept>
+                <code value="C-22822"/>
+                <display value="carmoisine A stain"/>
+            </concept>
+            <concept>
+                <code value="C-22943"/>
+                <display value="thionine stain"/>
+            </concept>
+            <concept>
+                <code value="C-22942"/>
+                <display value="lacmoid stain"/>
+            </concept>
+            <concept>
+                <code value="C-22821"/>
+                <display value="solochrome black 6B stain"/>
+            </concept>
+            <concept>
+                <code value="C-22828"/>
+                <display value="ponceau xylidine stain"/>
+            </concept>
+            <concept>
+                <code value="C-22827"/>
+                <display value="sunset yellow FCF stain"/>
+            </concept>
+            <concept>
+                <code value="F-619B7"/>
+                <display value="wright stain"/>
+            </concept>
+            <concept>
+                <code value="C-22829"/>
+                <display value="ponceau 3R stain"/>
+            </concept>
+            <concept>
+                <code value="C-2282D"/>
+                <display value="Sudan stain"/>
+            </concept>
+            <concept>
+                <code value="C-2282C"/>
+                <display value="Ziehl-Neelsen stain"/>
+            </concept>
+            <concept>
+                <code value="C-2282E"/>
+                <display value="Sudan black stain"/>
+            </concept>
+            <concept>
+                <code value="C-2282B"/>
+                <display value="spore stain"/>
+            </concept>
+            <concept>
+                <code value="C-2282A"/>
+                <display value="Romanowsky stain"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

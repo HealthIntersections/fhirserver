@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-3805-StenosisTypes"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_3805.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.266"/>
+    </identifier>
+    <version value="20051103"/>
+    <name value="StenosisTypes"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 3805 StenosisTypes"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://snomed.info/srt"/>
+            <concept>
+                <code value="R-423C3"/>
+                <display value="thrombosis"/>
+            </concept>
+            <concept>
+                <code value="M-01460"/>
+                <display value="compression"/>
+            </concept>
+            <concept>
+                <code value="M-300F2"/>
+                <display value="entrapment"/>
+            </concept>
+            <concept>
+                <code value="D3-80650"/>
+                <display value="vasculitis"/>
+            </concept>
+            <concept>
+                <code value="M-35300"/>
+                <display value="embolism"/>
+            </concept>
+            <concept>
+                <code value="D3-81100"/>
+                <display value="arteriosclerotic vascular disease"/>
+            </concept>
+            <concept>
+                <code value="R-40448"/>
+                <display value="fibrous"/>
+            </concept>
+            <concept>
+                <code value="D3-80033"/>
+                <display value="cystic adventitial disease"/>
+            </concept>
+            <concept>
+                <code value="D3-80505"/>
+                <display value="Raynaud's disease"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

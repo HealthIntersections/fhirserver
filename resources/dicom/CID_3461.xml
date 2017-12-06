@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-3461-RegionalExtent"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_3461.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.105"/>
+    </identifier>
+    <version value="20040614"/>
+    <name value="RegionalExtent"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 3461 RegionalExtent"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://dicom.nema.org/resources/ontology/DCM"/>
+            <concept>
+                <code value="122469"/>
+                <display value="Multiple RCA Region in RAO Projection"/>
+            </concept>
+            <concept>
+                <code value="122467"/>
+                <display value="Single RCA Region in RAO Projection"/>
+            </concept>
+            <concept>
+                <code value="122468"/>
+                <display value="Multiple LAD Region in RAO Projection"/>
+            </concept>
+            <concept>
+                <code value="122466"/>
+                <display value="Single LAD Region in RAO Projection"/>
+            </concept>
+            <concept>
+                <code value="122472"/>
+                <display value="CFX Region in LAO Projection"/>
+            </concept>
+            <concept>
+                <code value="122470"/>
+                <display value="LAD Region in LAO Projection"/>
+            </concept>
+            <concept>
+                <code value="122471"/>
+                <display value="RCA Region in LAO Projection"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

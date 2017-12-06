@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-4271-EnFaceImageTypes"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_4271.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.1151"/>
+    </identifier>
+    <version value="20170405"/>
+    <name value="EnFaceImageTypes"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 4271 EnFaceImageTypes"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://dicom.nema.org/resources/ontology/DCM"/>
+            <concept>
+                <code value="128266"/>
+                <display value="Superficial retina structural reflectance map"/>
+            </concept>
+            <concept>
+                <code value="128277"/>
+                <display value="Whole eye vasculature flow"/>
+            </concept>
+            <concept>
+                <code value="128265"/>
+                <display value="Superficial retina vasculature flow"/>
+            </concept>
+            <concept>
+                <code value="128276"/>
+                <display value="Choroid structural reflectance map"/>
+            </concept>
+            <concept>
+                <code value="128257"/>
+                <display value="Retina depth encoded vasculature flow"/>
+            </concept>
+            <concept>
+                <code value="128268"/>
+                <display value="Middle inner structural reflectance map"/>
+            </concept>
+            <concept>
+                <code value="128267"/>
+                <display value="Middle inner retina vasculature flow"/>
+            </concept>
+            <concept>
+                <code value="128278"/>
+                <display value="Whole eye structural reflectance map"/>
+            </concept>
+            <concept>
+                <code value="128259"/>
+                <display value="Retina vasculature flow"/>
+            </concept>
+            <concept>
+                <code value="128258"/>
+                <display value="Retina depth encoded structural reflectance map"/>
+            </concept>
+            <concept>
+                <code value="128269"/>
+                <display value="Deep retina vasculature flow"/>
+            </concept>
+            <concept>
+                <code value="128260"/>
+                <display value="Retina structural reflectance map"/>
+            </concept>
+            <concept>
+                <code value="128271"/>
+                <display value="Outer retina vasculature flow"/>
+            </concept>
+            <concept>
+                <code value="128270"/>
+                <display value="Deep retina structural reflectance map"/>
+            </concept>
+            <concept>
+                <code value="128262"/>
+                <display value="Vitreous structural reflectance map"/>
+            </concept>
+            <concept>
+                <code value="128273"/>
+                <display value="Choriocapillaris vasculature flow"/>
+            </concept>
+            <concept>
+                <code value="128261"/>
+                <display value="Vitreous vasculature flow"/>
+            </concept>
+            <concept>
+                <code value="128272"/>
+                <display value="Outer retina structural reflectance map"/>
+            </concept>
+            <concept>
+                <code value="128264"/>
+                <display value="Radial peripapillary structural reflectance map"/>
+            </concept>
+            <concept>
+                <code value="128275"/>
+                <display value="Choroid vasculature flow"/>
+            </concept>
+            <concept>
+                <code value="128263"/>
+                <display value="Radial peripapillary vasculature flow"/>
+            </concept>
+            <concept>
+                <code value="128274"/>
+                <display value="Choriocapillaris structural reflectance map"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

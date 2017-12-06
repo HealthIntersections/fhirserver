@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-12110-LowerExtremityVeins"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_12110.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.577"/>
+    </identifier>
+    <version value="20160314"/>
+    <name value="LowerExtremityVeins"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 12110 LowerExtremityVeins"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://snomed.info/srt"/>
+            <concept>
+                <code value="T-48940"/>
+                <display value="Internal iliac vein"/>
+            </concept>
+            <concept>
+                <code value="T-48920"/>
+                <display value="Common Iliac Vein"/>
+            </concept>
+            <concept>
+                <code value="T-49630"/>
+                <display value="Anterior Tibial Vein"/>
+            </concept>
+            <concept>
+                <code value="T-49650"/>
+                <display value="Popliteal Vein"/>
+            </concept>
+            <concept>
+                <code value="T-49530"/>
+                <display value="Great Saphenous Vein"/>
+            </concept>
+            <concept>
+                <code value="T-49550"/>
+                <display value="Lesser Saphenous Vein"/>
+            </concept>
+            <concept>
+                <code value="T-F6713"/>
+                <display value="Thigh perforator"/>
+            </concept>
+            <concept>
+                <code value="G-036B"/>
+                <display value="Soleal vein"/>
+            </concept>
+            <concept>
+                <code value="G-036F"/>
+                <display value="Giacomini vein"/>
+            </concept>
+            <concept>
+                <code value="T-4941A"/>
+                <display value="Saphenopopliteal junction"/>
+            </concept>
+            <concept>
+                <code value="G-036E"/>
+                <display value="Posterior arch vein"/>
+            </concept>
+            <concept>
+                <code value="T-49426"/>
+                <display value="Cockett's perforating vein"/>
+            </concept>
+            <concept>
+                <code value="R-10259"/>
+                <display value="Great Saphenous Vein of Thigh"/>
+            </concept>
+            <concept>
+                <code value="T-48930"/>
+                <display value="External Iliac Vein"/>
+            </concept>
+            <concept>
+                <code value="T-49424"/>
+                <display value="Boyd's perforating vein"/>
+            </concept>
+            <concept>
+                <code value="T-D930A"/>
+                <display value="Saphenofemoral Junction"/>
+            </concept>
+            <concept>
+                <code value="T-49620"/>
+                <display value="Posterior Tibial Vein"/>
+            </concept>
+            <concept>
+                <code value="T-49640"/>
+                <display value="Peroneal Vein"/>
+            </concept>
+            <concept>
+                <code value="T-49660"/>
+                <display value="Profunda Femoris Vein"/>
+            </concept>
+            <concept>
+                <code value="R-1025A"/>
+                <display value="Great Saphenous Vein of Calf"/>
+            </concept>
+            <concept>
+                <code value="T-F6724"/>
+                <display value="Lateral calf perforator"/>
+            </concept>
+            <concept>
+                <code value="G-035A"/>
+                <display value="Superficial Femoral Vein"/>
+            </concept>
+            <concept>
+                <code value="G-035B"/>
+                <display value="Common Femoral Vein"/>
+            </concept>
+            <concept>
+                <code value="T-4942D"/>
+                <display value="Gastrocnemius vein"/>
+            </concept>
+            <concept>
+                <code value="T-4942A"/>
+                <display value="Hunterian perforating vein"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

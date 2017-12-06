@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-10063-RadiationDoseEstimateDistributionRepresentation"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_10063.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.1157"/>
+    </identifier>
+    <version value="20170405"/>
+    <name value="RadiationDoseEstimateDistributionRepresentation"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 10063 RadiationDoseEstimateDistributionRepresentation"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://dicom.nema.org/resources/ontology/DCM"/>
+            <concept>
+                <code value="128485"/>
+                <display value="Skin Dose Map"/>
+            </concept>
+            <concept>
+                <code value="128496"/>
+                <display value="Dose Point Cloud"/>
+            </concept>
+            <concept>
+                <code value="128488"/>
+                <display value="Dose Gradient"/>
+            </concept>
+            <concept>
+                <code value="128487"/>
+                <display value="3D Dose Map"/>
+            </concept>
+            <concept>
+                <code value="121342"/>
+                <display value="Dose Image"/>
+            </concept>
+            <concept>
+                <code value="128484"/>
+                <display value="Isodose"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>

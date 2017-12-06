@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<ValueSet xmlns="http://hl7.org/fhir">
+    <id value="dicm-4263-OphthalmicThicknessMapValueType"/>
+    <url value="http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_4263.html"/>
+    <identifier>
+        <system value="urn:ietf:rfc:3986"/>
+        <value value="urn:oid:1.2.840.10008.6.1.939"/>
+    </identifier>
+    <version value="20110825"/>
+    <name value="OphthalmicThicknessMapValueType"/>
+    <status value="active"/>
+    <experimental value="false"/>
+    <date value="2017-11-23"/>
+    <publisher value="NEMA MITA DICOM"/>
+    <description value="Transitive closure of CID 4263 OphthalmicThicknessMapValueType"/>
+    <copyright value="© 2017 NEMA"/>
+    <compose>
+        <include>
+            <system value="http://dicom.nema.org/resources/ontology/DCM"/>
+            <concept>
+                <code value="111930"/>
+                <display value="Absolute ophthalmic thickness"/>
+            </concept>
+            <concept>
+                <code value="111931"/>
+                <display value="Thickness deviation category from normative data"/>
+            </concept>
+            <concept>
+                <code value="111932"/>
+                <display value="Thickness deviation from normative data"/>
+            </concept>
+        </include>
+    </compose>
+</ValueSet>
