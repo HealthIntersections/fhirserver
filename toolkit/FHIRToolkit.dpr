@@ -175,14 +175,18 @@ uses
   QuestionnaireRenderer in '..\reference-platform\dstu3\QuestionnaireRenderer.pas',
   HTMLPublisher in '..\reference-platform\Support\HTMLPublisher.pas',
   QuestionnaireItemDialog in 'QuestionnaireItemDialog.pas' {QuestionnaireItemForm},
-  RegistryForm in 'RegistryForm.pas',
+  ProviderDirectoryForm in 'ProviderDirectoryForm.pas' {ProviderDirectoryFrame},
   RegisterClientDialogFMX in '..\reference-platform\client\RegisterClientDialogFMX.pas' {RegisterClientForm},
   QuestionnaireItemPanel in 'QuestionnaireItemPanel.pas',
   QuestionnairePanel in 'QuestionnairePanel.pas',
   VitalSignsGeneratorDialog in 'VitalSignsGeneratorDialog.pas' {VitalSignsGeneratorForm},
   TranslationsEditorDialog in 'TranslationsEditorDialog.pas' {TranslationsEditorForm},
   ResourceLanguageDialog in 'ResourceLanguageDialog.pas' {ResourceLanguageForm},
-  AddRestOperationDialog in 'AddRestOperationDialog.pas' {AddRestOperationForm};
+  AddRestOperationDialog in 'AddRestOperationDialog.pas' {AddRestOperationForm},
+  RegistryForm in 'RegistryForm.pas' {RegistryFrame: TFrame},
+  FHIRUIFmx in '..\reference-platform\client\FHIRUIFmx.pas',
+  FHIRUI in '..\reference-platform\client\FHIRUI.pas',
+  Logging in '..\Server\Logging.pas';
 
 {$R *.res}
 

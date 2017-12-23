@@ -50,9 +50,16 @@ object ServerFrame: TServerFrame
     object Button2: TButton
       Position.X = 248.000000000000000000
       Position.Y = 6.000000000000000000
-      TabOrder = 5
+      TabOrder = 6
       Text = 'Vital Signs'
       OnClick = Button2Click
+    end
+    object Button3: TButton
+      Position.X = 336.000000000000000000
+      Position.Y = 6.000000000000000000
+      TabOrder = 5
+      Text = 'AU PD Client'
+      OnClick = Button3Click
     end
   end
   object pnlSearch: TPanel

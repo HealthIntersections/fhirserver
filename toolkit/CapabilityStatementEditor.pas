@@ -615,6 +615,8 @@ var
   p : TFhirCapabilityStatementRestResourceSearchParam;
   form : TSearchParameterEditorForm;
 begin
+  if gridSearch.Selected = -1 then
+    exit;
   sp := gridSearch.TagObject as TFhirCapabilityStatementRestResourceSearchParamList;
   p := sp[gridSearch.Selected];
   sp.DeleteByReference(p);
@@ -628,6 +630,9 @@ var
   p : TFhirCapabilityStatementRestResourceSearchParam;
   form : TSearchParameterEditorForm;
 begin
+  if gridSearch.Selected = -1 then
+    exit;
+
   sp := gridSearch.TagObject as TFhirCapabilityStatementRestResourceSearchParamList;
   p := sp[gridSearch.Selected];
   form := TSearchParameterEditorForm.create(self);

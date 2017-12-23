@@ -1,4 +1,4 @@
-unit RegistryForm;
+unit ProviderRegistryForm;
 
 {
 Copyright (c) 2017+, Health Intersections Pty Ltd (http://www.healthintersections.com.au)
@@ -44,7 +44,7 @@ uses
 type
   TFrame = TBaseFrame; // re-aliasing the Frame to work around a designer bug
 
-  TRegistryFrame = class (TFrame)
+  TProviderDirectoryFrame = class (TFrame)
     Panel2: TPanel;
     Panel3: TPanel;
     lblOutcome: TLabel;
@@ -111,7 +111,7 @@ uses
 
 { TRegistryFrame }
 
-procedure TRegistryFrame.btnCloseClick(Sender: TObject);
+procedure TProviderDirectoryFrame.btnCloseClick(Sender: TObject);
 begin
   try
     Settings.storeValue('Registry-search', 'url', edtConfUrl.Text);
@@ -127,7 +127,7 @@ begin
   Close;
 end;
 
-procedure TRegistryFrame.btnConfSearchClick(Sender: TObject);
+procedure TProviderDirectoryFrame.btnConfSearchClick(Sender: TObject);
 var
   t : TFHIRResourceType;
   op : TFhirOperationOutcome;
@@ -137,7 +137,7 @@ begin
     procedure
     var
       be : TFhirBundleEntry;
-      params : TStringList;
+      params : TDictionary<String, String>;
       start : TDateTime;
     begin
       FConfMatches.Clear;
@@ -145,7 +145,7 @@ begin
       FConfBundle.Free;
       FConfBundle := nil;
 
-      params := TStringList.create;
+      params := TDictionary<String, String>.create;
       try
         case cbxType.ItemIndex of
           0 : {Profiles}
@@ -175,25 +175,25 @@ begin
           6 : {All Conformance Resources}
             begin
             t := frtNull;
-            params.addPair('_type', 'CapabilityStatement,StructureDefinition,ImplementationGuide,SearchParameter,MessageDefinition,OperationDefinition,CompartmentDefinition,StructureMap,GraphDefinition,CodeSystem,ValueSet,ConceptMap,ExpansionProfile,NamingSystem');
+            params.Add('_type', 'CapabilityStatement,StructureDefinition,ImplementationGuide,SearchParameter,MessageDefinition,OperationDefinition,CompartmentDefinition,StructureMap,GraphDefinition,CodeSystem,ValueSet,ConceptMap,ExpansionProfile,NamingSystem');
             end;
         else{All Resources}
           begin
           t := frtNull;
           end;
         end;
-        params.addPair('_summary', 'true');
+        params.Add('_summary', 'true');
 
         if cbxProfile.Enabled  then
-          params.addPair('type', cbxProfile.items[cbxProfile.itemIndex]);
+          params.add('type', cbxProfile.items[cbxProfile.itemIndex]);
         if edtConfUrl.Text <> '' then
-          params.addPair('url', edtConfUrl.Text);
+          params.add('url', edtConfUrl.Text);
         if edtConfText.Text <> '' then
-          params.addPair('_text', edtConfText.Text);
+          params.add('_text', edtConfText.Text);
         if cbConfUseLastUpdated.IsChecked then
-          params.addPair('_lastUpdated', edtConfUpdated.Text);
+          params.add('_lastUpdated', edtConfUpdated.Text);
         if edtConfJurisdiction.ItemIndex <> -1 then
-          params.addPair('jurisdiction', getJurisdictionSearch(edtConfJurisdiction.ItemIndex));
+          params.add('jurisdiction', getJurisdictionSearch(edtConfJurisdiction.ItemIndex));
 
         start := now;
         FConfBundle := Client.search(t, false, params);
@@ -216,7 +216,7 @@ begin
     end);
 end;
 
-procedure TRegistryFrame.btnFetchMoreClick(Sender: TObject);
+procedure TProviderDirectoryFrame.btnFetchMoreClick(Sender: TObject);
 begin
   work('Fetch More', true,
     procedure
@@ -246,24 +246,24 @@ begin
     end);
 end;
 
-procedure TRegistryFrame.cbConfUseLastUpdatedClick(Sender: TObject);
+procedure TProviderDirectoryFrame.cbConfUseLastUpdatedClick(Sender: TObject);
 begin
   edtConfUpdated.Enabled := cbConfUseLastUpdated.IsChecked;
 end;
 
-procedure TRegistryFrame.cbxTypeChange(Sender: TObject);
+procedure TProviderDirectoryFrame.cbxTypeChange(Sender: TObject);
 begin
   cbxProfile.Enabled := cbxType.ItemIndex = 0;
 end;
 
-function TRegistryFrame.client: TFhirClient;
+function TProviderDirectoryFrame.client: TFhirClient;
 begin
   if FClient = nil then
     FClient := TFhirHTTPClient.Create(nil, 'http://registry-api.fhir.org/open', false);
   result := FClient;
 end;
 
-destructor TRegistryFrame.Destroy;
+destructor TProviderDirectoryFrame.Destroy;
 begin
   FClient.free;
   FConfBundle.Free;
@@ -273,14 +273,14 @@ begin
   inherited;
 end;
 
-procedure TRegistryFrame.DoWork(ASender: TObject; AWorkMode: TWorkMode; AWorkCount: Int64);
+procedure TProviderDirectoryFrame.DoWork(ASender: TObject; AWorkMode: TWorkMode; AWorkCount: Int64);
 begin
   Application.ProcessMessages;
   if assigned(OnStopped) and OnStopped then
     abort;
 end;
 
-procedure TRegistryFrame.gridConfMatchesCellDblClick(const Column: TColumn; const Row: Integer);
+procedure TProviderDirectoryFrame.gridConfMatchesCellDblClick(const Column: TColumn; const Row: Integer);
 var
   res : TFhirResource;
 begin
@@ -292,7 +292,7 @@ begin
   end;
 end;
 
-procedure TRegistryFrame.gridConfMatchesGetValue(Sender: TObject; const ACol, ARow: Integer; var Value: TValue);
+procedure TProviderDirectoryFrame.gridConfMatchesGetValue(Sender: TObject; const ACol, ARow: Integer; var Value: TValue);
 var
   res : TFhirMetadataResource;
 begin
@@ -336,7 +336,7 @@ begin
   result := s;
 end;
 
-procedure TRegistryFrame.gridConfMatchesSelectCell(Sender: TObject; const ACol, ARow: Integer; var CanSelect: Boolean);
+procedure TProviderDirectoryFrame.gridConfMatchesSelectCell(Sender: TObject; const ACol, ARow: Integer; var CanSelect: Boolean);
 var
   res : TFHIRResource;
 begin
@@ -349,7 +349,7 @@ begin
   end;
 end;
 
-procedure TRegistryFrame.lblMessagesClick(Sender: TObject);
+procedure TProviderDirectoryFrame.lblMessagesClick(Sender: TObject);
 //var
 //  Svc: IFMXClipboardService;
 begin
@@ -357,7 +357,7 @@ begin
 //  svc.SetClipboard(lblMessages.Text);
 end;
 
-procedure TRegistryFrame.lblOutcomeClick(Sender: TObject);
+procedure TProviderDirectoryFrame.lblOutcomeClick(Sender: TObject);
 var
   Svc: IFMXClipboardService;
 begin
@@ -365,7 +365,7 @@ begin
   svc.SetClipboard(lblOutcome.Text);
 end;
 
-procedure TRegistryFrame.load;
+procedure TProviderDirectoryFrame.load;
 begin
   edtConfUrl.Text := Settings.getValue('Registry-search', 'url', '');
   edtConfText.Text := Settings.getValue('Registry-search', 'text', '');

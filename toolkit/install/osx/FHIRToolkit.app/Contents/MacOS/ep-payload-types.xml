@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<ValueSet xmlns="http://hl7.org/fhir">
+  <id value="valueset-au-endpoint-payload-type"/>
+  <meta>
+    <versionId value="1"/>
+    <lastUpdated value="2017-02-21T10:54:35.273+11:00"/>
+  </meta>
+  <text>
+    <status value="generated"/>
+    <div xmlns="http://www.w3.org/1999/xhtml">
+      <h2>Australian Endpoint Payload Types</h2>
+      <div>
+        <p>Enumeration of well known endpoint payload types</p>
+
+      </div>
+      <p>This value set includes codes from the following code systems:</p>
+      <ul>
+        <li>Include all codes defined in 
+          <a href="CodeSystem-codesystem-au-endpoint-payload-type.html">
+            <code>http://hl7.org.au/fhir/CodeSystem/codesystem-au-endpoint-payload-type</code>
+          </a>
+        </li>
+      </ul>
+    </div>
+  </text>
+  <url value="http://hl7.org.au/fhir/ValueSet/valueset-au-endpoint-payload-type"/>
+  <name value="Australian Endpoint Payload Types"/>
+  <status value="draft"/>
+  <date value="2017-12-05T12:07:25+11:00"/>
+  <publisher value="Health Level Seven Australia"/>
+  <contact>
+    <name value="hl7.org.au"/>
+  </contact>
+  <description value="Enumeration of well known endpoint payload types"/>
+  <compose>
+    <include>
+      <system value="http://hl7.org.au/fhir/CodeSystem/codesystem-au-endpoint-payload-type"/>
+    </include>
+  </compose>
+  <expansion>
+    <identifier value="urn:uuid:8790bc07-f827-4516-a6ec-64cab87d0b39"/>
+    <timestamp value="2017-12-05T12:07:40+11:00"/>
+    <total value="8"/>
+    <parameter>
+      <name value="profile"/>
+      <valueUri value="http://hl7.org/fhir/ExpansionProfile/dc8fd4bc-091a-424a-8a3b-6198ef146891"/>
+    </parameter>
+    <parameter>
+      <name value="version"/>
+      <valueUri value="http://hl7.org.au/fhir/CodeSystem/codesystem-au-endpoint-payload-type|1"/>
+    </parameter>
+    <contains>
+      <system value="http://hl7.org.au/fhir/CodeSystem/codesystem-au-endpoint-payload-type"/>
+      <code value="http://ns.hl7.org.au/hl7v2/profiles/HL7AU-OO-REF-SIMPLIFIED-201706"/>
+      <display value="Simplified Profile for HL7 V2.4 REF message"/>
+    </contains>
+    <contains>
+      <system value="http://hl7.org.au/fhir/CodeSystem/codesystem-au-endpoint-payload-type"/>
+      <code value="http://ns.hl7.org.au/hl7v2/profiles/HL7AU-OO-REF-SIMPLIFIED-201706/RRI"/>
+      <display value="Simplified Profile for HL7 V2.4 REF referral response message"/>
+    </contains>
+    <contains>
+      <system value="http://hl7.org.au/fhir/CodeSystem/codesystem-au-endpoint-payload-type"/>
+      <code value="http://ns.electronichealth.net.au/ack/sc/deliver/hl7Ack/2012"/>
+      <display value="HL7 V2 Acknowledgment"/>
+    </contains>
+    <contains>
+      <system value="http://hl7.org.au/fhir/CodeSystem/codesystem-au-endpoint-payload-type"/>
+      <code value="http://ns.electronichealth.net.au/ds/sc/deliver/hl7Mdm/2012"/>
+      <display value="HL7 V2 MDM Discharge Summary"/>
+    </contains>
+    <contains>
+      <system value="http://hl7.org.au/fhir/CodeSystem/codesystem-au-endpoint-payload-type"/>
+      <code value="http://ns.electronichealth.net.au/er/sc/deliver/hl7Mdm/2012"/>
+      <display value="HL7 V2 MDM eReferral"/>
+    </contains>
+    <contains>
+      <system value="http://hl7.org.au/fhir/CodeSystem/codesystem-au-endpoint-payload-type"/>
+      <code value="http://ns.electronichealth.net.au/es/sc/deliver/hl7Mdm/2012"/>
+      <display value="HL7 V2 MDM Event Summary"/>
+    </contains>
+    <contains>
+      <system value="http://hl7.org.au/fhir/CodeSystem/codesystem-au-endpoint-payload-type"/>
+      <code value="http://ns.electronichealth.net.au/shs/sc/deliver/hl7Mdm/2012"/>
+      <display value="HL7 V2 MDM Shared Health Summary"/>
+    </contains>
+    <contains>
+      <system value="http://hl7.org.au/fhir/CodeSystem/codesystem-au-endpoint-payload-type"/>
+      <code value="http://ns.electronichealth.net.au/sl/sc/deliver/hl7Mdm/2012"/>
+      <display value="HL7 V2 MDM Specialist Letter"/>
+    </contains>
+  </expansion>
+</ValueSet>

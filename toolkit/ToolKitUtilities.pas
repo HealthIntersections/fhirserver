@@ -51,6 +51,11 @@ var
 begin
   http := TIdHTTP.Create(nil);
   try
+    // init openSSL
+    try
+      http.Get('https://hl7.org/fhir/version.info');
+    except
+    end;
     inc := http.Get('http://www.healthintersections.com.au/FhirServer/toolkit.inc');
     inc := inc.substring(inc.indexof('<td>v')+5);
     inc := inc.substring(0, inc.indexof('</td>'));

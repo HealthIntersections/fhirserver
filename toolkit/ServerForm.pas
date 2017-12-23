@@ -38,7 +38,7 @@ uses
   DateSupport, StringSupport,
   AdvGenerics,
   FHIRTypes, FHIRResources, FHIRClient, FHIRUtilities,
-  BaseFrame, AppEndorserFrame, CapabilityStatementEditor, VitalSignsGeneratorDialog;
+  BaseFrame, AppEndorserFrame, CapabilityStatementEditor, VitalSignsGeneratorDialog, ProviderDirectoryForm;
 
 type
   TFrame = TBaseFrame; // re-aliasing the Frame to work around a designer bug
@@ -139,6 +139,7 @@ type
     TabItem6: TTabItem;
     btnFetchMore: TButton;
     Button2: TButton;
+    Button3: TButton;
     procedure btnTestClick(Sender: TObject);
     procedure btnCloseClick(Sender: TObject);
     procedure Button1Click(Sender: TObject);
@@ -154,11 +155,14 @@ type
     procedure gridPMatchesGetValue(Sender: TObject; const ACol, ARow: Integer; var Value: TValue);
     procedure btnFetchMoreClick(Sender: TObject);
     procedure Button2Click(Sender: TObject);
+    procedure Button3Click(Sender: TObject);
   private
     FClient: TFHIRClient;
     FCapabilityStatement: TFhirCapabilityStatement;
     FCSTab : TTabItem;
+    FPDTab : TTabItem;
     FCsForm : TCapabilityStatementEditorFrame;
+    FPdForm : TProviderDirectoryFrame;
     FPatBundle, FConfBundle : TFhirBundle;
     FConfMatches : TAdvList<TFHIRResource>;
     FPatMatches : TAdvList<TFHIRPatient>;
@@ -280,6 +284,32 @@ begin
   end;
 end;
 
+procedure TServerFrame.Button3Click(Sender: TObject);
+begin
+  if FPDTab <> nil then
+  begin
+    FPDForm.Load;
+    Tabs.ActiveTab := FPDTab;
+  end
+  else
+  begin
+    FPDTab := Tabs.Add(TTabItem);
+    Tabs.ActiveTab := FPDTab;
+    FPDTab.Text := 'Provider Directory on '+FClient.address;
+    FpdForm := TProviderDirectoryFrame.create(tab);
+    FPDTab.TagObject := FPDForm;
+    FPDForm.TagObject := FPDTab;
+    FPDForm.Parent := FPDTab;
+    FPDForm.Tabs := tabs;
+    FPDForm.OnWork := onwork;
+    FPDForm.Settings := Settings.link;
+    FPDForm.tab := FPDTab;
+    FPDForm.Align := TAlignLayout.Client;
+    FPDForm.Client := client.link;
+    FPDForm.Load;
+  end;
+end;
+
 procedure TServerFrame.cbConfUseLastUpdatedChange(Sender: TObject);
 begin
   dedConfDate.Enabled := cbConfUseLastUpdated.IsChecked;
@@ -393,7 +423,7 @@ begin
     procedure
     var
       be : TFhirBundleEntry;
-      params : TDictionary<String, String>;
+      params : TStringList;
       start : TDateTime;
     begin
       FConfMatches.Clear;
@@ -401,35 +431,35 @@ begin
       FConfBundle.Free;
       FConfBundle := nil;
 
-      params := TDictionary<String, String>.create;
+      params := TStringList.create;
       try
-        params.Add('_type', 'CapabilityStatement,StructureDefinition,ImplementationGuide,SearchParameter,MessageDefinition,OperationDefinition,CompartmentDefinition,StructureMap,GraphDefinition,CodeSystem,ValueSet,ConceptMap,ExpansionProfile,NamingSystem');
-        params.Add('_summary', 'true');
+        params.AddPair('_type', 'CapabilityStatement,StructureDefinition,ImplementationGuide,SearchParameter,MessageDefinition,OperationDefinition,CompartmentDefinition,StructureMap,GraphDefinition,CodeSystem,ValueSet,ConceptMap,ExpansionProfile,NamingSystem');
+        params.AddPair('_summary', 'true');
 
         if edtConfUrl.Text <> '' then
-          params.add('url', edtConfUrl.Text);
+          params.addPair('url', edtConfUrl.Text);
         if edtConfId.Text <> '' then
-          params.add('identifier', edtConfId.Text);
+          params.addPair('identifier', edtConfId.Text);
         if edtConfVersion.Text <> '' then
-          params.add('version', edtConfVersion.Text);
+          params.addPair('version', edtConfVersion.Text);
         if edtConfName.Text <> '' then
-          params.add('name', edtConfName.Text);
+          params.addPair('name', edtConfName.Text);
         if edtConfTitle.Text <> '' then
-          params.add('title', edtConfTitle.Text);
+          params.addPair('title', edtConfTitle.Text);
         if edtConfText.Text <> '' then
-          params.add('_text', edtConfText.Text);
+          params.addPair('_text', edtConfText.Text);
         if dedConfDate.Text <> '' then
-          params.add('date', dedConfDate.Text);
+          params.addPair('date', dedConfDate.Text);
         if edtConfJurisdiction.ItemIndex <> -1 then
-          params.add('jurisdiction', getJurisdictionSearch(edtConfJurisdiction.ItemIndex));
+          params.addPair('jurisdiction', getJurisdictionSearch(edtConfJurisdiction.ItemIndex));
         if edtConfPub.Text <> '' then
-          params.add('publisher', edtConfPub.Text);
+          params.addPair('publisher', edtConfPub.Text);
         if cbxConfStatus.ItemIndex <> -1 then
-          params.add('status', cbxConfStatus.Items[cbxConfStatus.ItemIndex]);
+          params.addPair('status', cbxConfStatus.Items[cbxConfStatus.ItemIndex]);
         if cbConfUseLastUpdated.IsChecked then
-          params.add('_lastUpdated', edtConfUpdated.Text);
+          params.addPair('_lastUpdated', edtConfUpdated.Text);
         if edtConfTag.Text <> '' then
-          params.add('_tag', edtConfTag.Text);
+          params.addPair('_tag', edtConfTag.Text);
 
         start := now;
         FConfBundle := FClient.search(false, params);
@@ -503,7 +533,7 @@ begin
   work('Search Patients', true,
     procedure
     var
-      params : TDictionary<String, String>;
+      params : TStringList;
       be : TFhirBundleEntry;
       start : TDateTime;
       l : TFhirBundleLink;
@@ -513,54 +543,54 @@ begin
       FPatBundle.Free;
       FPatBundle := nil;
 
-      params := TDictionary<String, String>.create;
+      params := TStringList.create;
       try
-        params.Add('_summary', 'true');
+        params.AddPair('_summary', 'true');
         if edtPName.Text <> '' then
-          params.add('name', edtPName.Text);
+          params.addPair('name', edtPName.Text);
         if edtPTelecom.Text <> '' then
-          params.add('telecom', edtPTelecom.Text);
+          params.addPair('telecom', edtPTelecom.Text);
         if edtPIdentifier.Text <> '' then
-          params.add('identifier', edtPIdentifier.Text);
+          params.addPair('identifier', edtPIdentifier.Text);
 
         case cbxPDob.ItemIndex of
-          1: {on} params.add('birthdate', TDateTimeEx.make(dedPDob.Date, dttzUnknown).toXML);
-          2: {before} params.add('birthdate', 'le'+TDateTimeEx.make(dedPDob.Date, dttzUnknown).toXML);
-          3: {after}  params.add('birthdate', 'ge'+TDateTimeEx.make(dedPDob.Date, dttzUnknown).toXML);
-          4: {around} params.add('birthdate', 'ap'+TDateTimeEx.make(dedPDob.Date, dttzUnknown).toXML);
+          1: {on} params.addPair('birthdate', TDateTimeEx.make(dedPDob.Date, dttzUnknown).toXML);
+          2: {before} params.addPair('birthdate', 'le'+TDateTimeEx.make(dedPDob.Date, dttzUnknown).toXML);
+          3: {after}  params.addPair('birthdate', 'ge'+TDateTimeEx.make(dedPDob.Date, dttzUnknown).toXML);
+          4: {around} params.addPair('birthdate', 'ap'+TDateTimeEx.make(dedPDob.Date, dttzUnknown).toXML);
         end;
         case cbxPGender.ItemIndex of
-          1: { Male } params.add('gender', 'male');
-          2: { Female } params.add('gender', 'female');
-          3: { Other } params.add('gender', 'other');
-          4: { Unknown } params.add('gender', 'unknown');
+          1: { Male } params.addPair('gender', 'male');
+          2: { Female } params.addPair('gender', 'female');
+          3: { Other } params.addPair('gender', 'other');
+          4: { Unknown } params.addPair('gender', 'unknown');
         end;
         case cbxPDeceased.ItemIndex of
-          1: { Alive} params.add('deceased', 'false');
-          2: { Deceased} params.add('deceased', 'true');
-          3: { On} params.add('death-date', TDateTimeEx.make(dedPDob.Date, dttzUnknown).toXML);
-          4: { Before} params.add('death-date', 'le'+TDateTimeEx.make(dedPDob.Date, dttzUnknown).toXML);
-          5: { After} params.add('death-date', 'ge'+TDateTimeEx.make(dedPDob.Date, dttzUnknown).toXML);
-          6: { Around} params.add('death-date', 'ap'+TDateTimeEx.make(dedPDob.Date, dttzUnknown).toXML);
+          1: { Alive} params.addPair('deceased', 'false');
+          2: { Deceased} params.addPair('deceased', 'true');
+          3: { On} params.addPair('death-date', TDateTimeEx.make(dedPDob.Date, dttzUnknown).toXML);
+          4: { Before} params.addPair('death-date', 'le'+TDateTimeEx.make(dedPDob.Date, dttzUnknown).toXML);
+          5: { After} params.addPair('death-date', 'ge'+TDateTimeEx.make(dedPDob.Date, dttzUnknown).toXML);
+          6: { Around} params.addPair('death-date', 'ap'+TDateTimeEx.make(dedPDob.Date, dttzUnknown).toXML);
         end;
         case cbxPActive.ItemIndex of
-          1: { true } params.add('gender', 'true');
-          2: { false } params.add('gender', 'false');
+          1: { true } params.addPair('gender', 'true');
+          2: { false } params.addPair('gender', 'false');
         end;
         case cbxPActive.ItemIndex of
-          1: { human } params.add('animal-species:missing', 'true');
-          2: { non-human } params.add('animal-species:missing', 'false');
+          1: { human } params.addPair('animal-species:missing', 'true');
+          2: { non-human } params.addPair('animal-species:missing', 'false');
         end;
         if cbxPLanguage.ItemIndex > 0 then
-          params.add('language', cbxPLanguage.Items[cbxPLanguage.ItemIndex].Substring(0, 2));
+          params.addPair('language', cbxPLanguage.Items[cbxPLanguage.ItemIndex].Substring(0, 2));
 
         if cbPUseLastUpdated.IsChecked then
-          params.add('_lastUpdated', dedPLastEdit.Text);
+          params.addPair('_lastUpdated', dedPLastEdit.Text);
 
         if edtPTag.Text <> '' then
-          params.add('_tag', edtPTag.Text);
+          params.addPair('_tag', edtPTag.Text);
         if edtPText.Text <> '' then
-          params.add('_text', edtPText.Text);
+          params.addPair('_text', edtPText.Text);
 
         start := now;
         FPatBundle := FClient.search(frtPatient, false, params);

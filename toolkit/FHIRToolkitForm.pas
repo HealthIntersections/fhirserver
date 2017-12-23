@@ -35,15 +35,26 @@ uses
   FMX.Layouts, FMX.ListBox, FMX.TabControl, FMX.Controls.Presentation, FMX.DialogService,
   System.ImageList, FMX.ImgList, FMX.Menus, FMX.WebBrowser,
   IdSSLOpenSSLHeaders, libeay32,
-  SystemSupport, TextUtilities,
+  SystemSupport, TextUtilities, Logging,
   FHIRBase, FHIRTypes, FHIRResources, FHIRClient, FHIRUtilities, FHIRIndexBase, FHIRIndexInformation, FHIRSupport,
   FHIRContext, FHIRProfileUtilities,
   SmartOnFHIRUtilities, EditRegisteredServerDialogFMX, OSXUIUtils,
   ToolkitSettings, ServerForm, CapabilityStatementEditor, BaseResourceFrame, BaseFrame, SourceViewer, ListSelector,
   ValueSetEditor, HelpContexts, ProcessForm, SettingsDialog, AboutDialog, ToolKitVersion, CodeSystemEditor,
-  ToolKitUtilities, UpgradeNeededDialog, QuestionnaireEditor, RegistryForm, ResourceLanguageDialog;
+  ToolKitUtilities, UpgradeNeededDialog, QuestionnaireEditor, RegistryForm, ProviderDirectoryForm, ResourceLanguageDialog;
 
 type
+  TToolkitLogger = class (TFHIRClientLogger)
+  private
+    FLog : TLogger;
+    function toChars(s : TStream) : string;
+  public
+    constructor Create; override;
+    destructor Destroy; override;
+
+    procedure logExchange(verb, url, status, requestHeaders, responseHeaders : String; request, response : TStream); override;
+  end;
+
   TMasterToolsForm = class(TForm)
     tbMain: TTabControl;
     Label2: TLabel;
@@ -143,6 +154,7 @@ type
     UpgradeOnClose : boolean;
     FUpgradeChecked : boolean;
     FRegistryTab : TTabItem;
+    ToolkitLogger : TToolkitLogger;
 
     procedure saveFiles;
     procedure openResourceFromFile(filename : String; res : TFHIRResource; format : TFHIRFormat; frameClass : TBaseResourceFrameClass);
@@ -222,6 +234,13 @@ begin
     try
       http.username := server.username;
       http.password := server.password;
+      if server.isSSL then
+      begin
+        http.certFile := server.SSLPublicCert;
+        http.certKey := server.SSLPrivateKey;
+        http.certPWord := server.SSLPassphrase;
+      end;
+      http.Logger := ToolkitLogger.Link;
       ok := false;
       if server.SmartAppLaunchMode <> salmNone then
       begin
@@ -759,6 +778,7 @@ begin
   {$IFDEF MACOS}
   mnuFileExit.Text := '&Quit';
   {$ENDIF}
+  ToolkitLogger := TToolkitLogger.create;
 end;
 
 procedure TMasterToolsForm.FormDestroy(Sender: TObject);
@@ -777,6 +797,7 @@ begin
   FSettings.Free;
   FIndexes.Free;
   FContext.Free;
+  ToolkitLogger.Free;
   if UpgradeOnClose then
   begin
     doWork(self, 'Checking Version', true,
@@ -1187,6 +1208,48 @@ begin
   end;
 end;
 
+
+{ TToolkitLogger }
+
+constructor TToolkitLogger.Create;
+begin
+  inherited;
+  if DirectoryExists('c:\temp') then
+    FLog := TLogger.Create('c:\temp\toolkit.fhir.log')
+  else
+    FLog := TLogger.Create(IncludeTrailingPathDelimiter(SystemTemp)+ 'toolkit.fhir.log')
+end;
+
+destructor TToolkitLogger.Destroy;
+begin
+  FLog.Free;
+  inherited;
+end;
+
+procedure TToolkitLogger.logExchange(verb, url, status, requestHeaders, responseHeaders : String; request, response : TStream);
+begin
+  FLog.WriteToLog('=================================='#13#10);
+  FLog.WriteToLog(verb+' '+url+' HTTP/1.0'#13#10);
+  FLog.WriteToLog(requestHeaders+#13#10);
+  if request <> nil then
+    Flog.WriteToLog(toChars(request)+#13#10);
+  FLog.WriteToLog('----------------------------------'#13#10);
+  FLog.WriteToLog(status+' HTTP/1.0'#13#10);
+  FLog.WriteToLog(responseHeaders+#13#10);
+  if response <> nil then
+    Flog.WriteToLog(toChars(response)+#13#10);
+end;
+
+function TToolkitLogger.toChars(s: TStream): string;
+var
+  b : TBytes;
+begin
+  s.Position := 0;
+  setLength(b, s.Size);
+  s.Read(b[0], s.Size);
+  s.Position := 0;
+  result := TEncoding.ANSI.GetString(b);
+end;
 
 end.
 

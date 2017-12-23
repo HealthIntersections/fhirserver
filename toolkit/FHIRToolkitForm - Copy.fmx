@@ -1,0 +1,789 @@
+object MasterToolsForm: TMasterToolsForm
+  Left = 0
+  Top = 0
+  Caption = 'FHIR Client Tools'
+  ClientHeight = 480
+  ClientWidth = 674
+  StyleBook = StyleBook1
+  FormFactor.Width = 320
+  FormFactor.Height = 480
+  FormFactor.Devices = [Desktop]
+  OnActivate = FormActivate
+  OnCreate = FormCreate
+  OnCloseQuery = FormCloseQuery
+  OnDestroy = FormDestroy
+  DesignerMasterStyle = 1
+  object tbMain: TTabControl
+    Align = Client
+    Size.Width = 492.000000000000000000
+    Size.Height = 454.000000000000000000
+    Size.PlatformDefault = False
+    StyleLookup = 'tbMainStyle1'
+    TabIndex = 0
+    TabOrder = 0
+    TabPosition = PlatformDefault
+    Sizes = (
+      492s
+      428s)
+    object TabItem1: TTabItem
+      CustomIcon = <
+        item
+        end>
+      IsSelected = True
+      Size.Width = 63.000000000000000000
+      Size.Height = 26.000000000000000000
+      Size.PlatformDefault = False
+      StyleLookup = 'TabItem1Style1'
+      TabOrder = 0
+      Text = '  Home'
+      ExplicitSize.cx = 53.000000000000000000
+      ExplicitSize.cy = 26.000000000000000000
+      object Panel1: TPanel
+        Align = Top
+        Size.Width = 492.000000000000000000
+        Size.Height = 145.000000000000000000
+        Size.PlatformDefault = False
+        TabOrder = 0
+        object Label2: TLabel
+          Position.X = 8.000000000000000000
+          Position.Y = 8.000000000000000000
+          Size.Width = 49.000000000000000000
+          Size.Height = 17.000000000000000000
+          Size.PlatformDefault = False
+          Text = 'Servers'
+          TabOrder = 0
+        end
+        object lbServers: TListBox
+          Anchors = [akLeft, akTop, akRight, akBottom]
+          HelpContext = 1
+          HelpType = htKeyword
+          Position.X = 8.000000000000000000
+          Position.Y = 32.000000000000000000
+          Size.Width = 397.000000000000000000
+          Size.Height = 105.000000000000000000
+          Size.PlatformDefault = False
+          TabOrder = 1
+          OnClick = lbServersClick
+          OnDblClick = btnConnectClick
+          DisableFocusEffect = True
+          DefaultItemStyles.ItemStyle = ''
+          DefaultItemStyles.GroupHeaderStyle = ''
+          DefaultItemStyles.GroupFooterStyle = ''
+          Viewport.Width = 393.000000000000000000
+          Viewport.Height = 101.000000000000000000
+        end
+        object btnConnect: TButton
+          Anchors = [akTop, akRight]
+          Enabled = False
+          Position.X = 412.000000000000000000
+          Position.Y = 32.000000000000000000
+          Size.Width = 72.000000000000000000
+          Size.Height = 22.000000000000000000
+          Size.PlatformDefault = False
+          TabOrder = 2
+          Text = 'Connect'
+          OnClick = btnConnectClick
+        end
+        object btnAddServer: TButton
+          Anchors = [akTop, akRight]
+          Position.X = 412.000000000000000000
+          Position.Y = 68.000000000000000000
+          Size.Width = 72.000000000000000000
+          Size.Height = 22.000000000000000000
+          Size.PlatformDefault = False
+          TabOrder = 3
+          Text = 'Add'
+          OnClick = btnAddServerClick
+        end
+        object btnRemoveServer: TButton
+          Anchors = [akTop, akRight]
+          Enabled = False
+          Position.X = 412.000000000000000000
+          Position.Y = 116.000000000000000000
+          Size.Width = 72.000000000000000000
+          Size.Height = 22.000000000000000000
+          Size.PlatformDefault = False
+          TabOrder = 5
+          Text = 'Remove'
+          OnClick = btnRemoveServerClick
+        end
+        object btnEditServer: TButton
+          Anchors = [akTop, akRight]
+          Enabled = False
+          Position.X = 412.000000000000000000
+          Position.Y = 92.000000000000000000
+          Size.Width = 72.000000000000000000
+          Size.Height = 22.000000000000000000
+          Size.PlatformDefault = False
+          TabOrder = 4
+          Text = 'Edit'
+          OnClick = btnEditServerClick
+        end
+      end
+      object Splitter1: TSplitter
+        Align = Top
+        Cursor = crVSplit
+        MinSize = 20.000000000000000000
+        Position.Y = 145.000000000000000000
+        ShowGrip = False
+        Size.Width = 492.000000000000000000
+        Size.Height = 8.000000000000000000
+        Size.PlatformDefault = False
+      end
+      object Panel2: TPanel
+        Align = Client
+        Size.Width = 492.000000000000000000
+        Size.Height = 275.000000000000000000
+        Size.PlatformDefault = False
+        TabOrder = 2
+        object Label1: TLabel
+          Position.X = 8.000000000000000000
+          Position.Y = 8.000000000000000000
+          Text = 'Files'
+          TabOrder = 0
+        end
+        object lbFiles: TListBox
+          Anchors = [akLeft, akTop, akRight, akBottom]
+          HelpContext = 2
+          Position.X = 8.000000000000000000
+          Position.Y = 32.000000000000000000
+          Size.Width = 397.000000000000000000
+          Size.Height = 234.000000000000000000
+          Size.PlatformDefault = False
+          TabOrder = 6
+          OnClick = lbFilesClick
+          OnDblClick = btnReopenClick
+          DisableFocusEffect = True
+          DefaultItemStyles.ItemStyle = ''
+          DefaultItemStyles.GroupHeaderStyle = ''
+          DefaultItemStyles.GroupFooterStyle = ''
+          Viewport.Width = 393.000000000000000000
+          Viewport.Height = 230.000000000000000000
+        end
+        object btnReopen: TButton
+          Anchors = [akTop, akRight]
+          Enabled = False
+          Position.X = 412.000000000000000000
+          Position.Y = 32.000000000000000000
+          Size.Width = 72.000000000000000000
+          Size.Height = 22.000000000000000000
+          Size.PlatformDefault = False
+          TabOrder = 2
+          Text = 'Reopen'
+          OnClick = btnReopenClick
+        end
+        object btnRemoveFile: TButton
+          Anchors = [akTop, akRight]
+          Enabled = False
+          Position.X = 412.000000000000000000
+          Position.Y = 60.000000000000000000
+          Size.Width = 72.000000000000000000
+          Size.Height = 22.000000000000000000
+          Size.PlatformDefault = False
+          TabOrder = 3
+          Text = 'Remove'
+          OnClick = btnRemoveFileClick
+        end
+        object btnOpen: TButton
+          Anchors = [akTop, akRight]
+          Position.X = 412.000000000000000000
+          Position.Y = 136.000000000000000000
+          Size.Width = 72.000000000000000000
+          Size.Height = 22.000000000000000000
+          Size.PlatformDefault = False
+          TabOrder = 5
+          Text = 'Open'
+          OnClick = btnOpenClick
+        end
+        object btnNew: TButton
+          Anchors = [akTop, akRight]
+          Position.X = 412.000000000000000000
+          Position.Y = 164.000000000000000000
+          Size.Width = 72.000000000000000000
+          Size.Height = 22.000000000000000000
+          Size.PlatformDefault = False
+          TabOrder = 4
+          Text = 'New'
+          OnClick = btnNewClick
+        end
+        object btnCopy: TButton
+          Anchors = [akTop, akRight]
+          Enabled = False
+          Position.X = 412.000000000000000000
+          Position.Y = 88.000000000000000000
+          Size.Width = 72.000000000000000000
+          Size.Height = 22.000000000000000000
+          Size.PlatformDefault = False
+          TabOrder = 1
+          Text = 'Copy Name'
+          OnClick = btnCopyClick
+        end
+      end
+    end
+  end
+  object pnlToolbar: TPanel
+    Align = Top
+    Size.Width = 674.000000000000000000
+    Size.Height = 26.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 1
+    object ToolBar1: TToolBar
+      Align = Client
+      Size.Width = 674.000000000000000000
+      Size.Height = 26.000000000000000000
+      Size.PlatformDefault = False
+      TabOrder = 0
+      object tbnNew: TButton
+        Hint = 'Create a New File'
+        Images = ToolbarImages
+        ImageIndex = 0
+        Position.X = 2.000000000000000000
+        Position.Y = 2.000000000000000000
+        Size.Width = 22.000000000000000000
+        Size.Height = 22.000000000000000000
+        Size.PlatformDefault = False
+        ParentShowHint = False
+        ShowHint = True
+        OnClick = btnNewClick
+      end
+      object tbnOpen: TButton
+        Hint = 'Open a File'
+        Images = ToolbarImages
+        ImageIndex = 1
+        Position.X = 26.000000000000000000
+        Position.Y = 2.000000000000000000
+        Size.Width = 22.000000000000000000
+        Size.Height = 22.000000000000000000
+        Size.PlatformDefault = False
+        ParentShowHint = False
+        ShowHint = True
+        OnClick = btnOpenClick
+      end
+      object tbnConnect: TButton
+        Hint = 'Connect to Server'
+        Images = ToolbarImages
+        ImageIndex = 2
+        Position.X = 50.000000000000000000
+        Position.Y = 2.000000000000000000
+        Size.Width = 22.000000000000000000
+        Size.Height = 22.000000000000000000
+        Size.PlatformDefault = False
+        ParentShowHint = False
+        ShowHint = True
+        OnClick = btnAddServerClick
+      end
+      object tbnSave: TButton
+        Hint = 'Save Resource to a File'
+        Images = ToolbarImages
+        ImageIndex = 3
+        Position.X = 74.000000000000000000
+        Position.Y = 2.000000000000000000
+        Size.Width = 22.000000000000000000
+        Size.Height = 22.000000000000000000
+        Size.PlatformDefault = False
+        TabOrder = 1
+        ParentShowHint = False
+        ShowHint = True
+        OnClick = tbnSaveClick
+      end
+      object tbnSaveAs: TButton
+        Hint = 'Save Resource to a new File'
+        Images = ToolbarImages
+        ImageIndex = 4
+        Position.X = 98.000000000000000000
+        Position.Y = 2.000000000000000000
+        Size.Width = 22.000000000000000000
+        Size.Height = 22.000000000000000000
+        Size.PlatformDefault = False
+        TabOrder = 6
+        ParentShowHint = False
+        ShowHint = True
+        OnClick = tbnSaveAsClick
+      end
+      object tbnClose: TButton
+        Anchors = [akTop, akRight]
+        Images = ToolbarImages
+        ImageIndex = 5
+        Position.X = 650.000000000000000000
+        Position.Y = 2.000000000000000000
+        Size.Width = 22.000000000000000000
+        Size.Height = 22.000000000000000000
+        Size.PlatformDefault = False
+        TabOrder = 7
+        OnClick = tbnCloseClick
+      end
+      object tbnSource: TButton
+        Hint = 'See the resource source (and Diff)'
+        Images = ToolbarImages
+        ImageIndex = 6
+        Position.X = 126.000000000000000000
+        Position.Y = 2.000000000000000000
+        Size.Width = 22.000000000000000000
+        Size.Height = 22.000000000000000000
+        Size.PlatformDefault = False
+        TabOrder = 5
+        ParentShowHint = False
+        ShowHint = True
+        OnClick = tbnSourceClick
+      end
+      object tbnHelpContext: TButton
+        Hint = 'Show the Help Panel'
+        Images = ToolbarImages
+        ImageIndex = 7
+        Position.X = 300.000000000000000000
+        Position.Y = 2.000000000000000000
+        Size.Width = 22.000000000000000000
+        Size.Height = 22.000000000000000000
+        Size.PlatformDefault = False
+        TabOrder = 4
+        ParentShowHint = False
+        ShowHint = True
+        OnClick = tbnHelpContextClick
+      end
+      object btnSettings: TButton
+        Hint = 'Settings'
+        Images = ToolbarImages
+        ImageIndex = 8
+        Position.X = 268.000000000000000000
+        Position.Y = 2.000000000000000000
+        Size.Width = 22.000000000000000000
+        Size.Height = 22.000000000000000000
+        Size.PlatformDefault = False
+        TabOrder = 3
+        ParentShowHint = False
+        ShowHint = True
+        OnClick = btnSettingsClick
+      end
+      object Button1: TButton
+        Hint = 'registry.fhir.org'
+        Images = ToolbarImages
+        ImageIndex = 10
+        Position.X = 244.000000000000000000
+        Position.Y = 2.000000000000000000
+        Size.Width = 22.000000000000000000
+        Size.Height = 22.000000000000000000
+        Size.PlatformDefault = False
+        TabOrder = 2
+        ParentShowHint = False
+        ShowHint = True
+        OnClick = mnuRegistryClick
+      end
+    end
+  end
+  object odFile: TOpenDialog
+    Filter = 'Resource Files|*.xml;*.json;*.ttl;*.fhir|All Files|*.*'
+    Options = [ofHideReadOnly, ofFileMustExist, ofEnableSizing]
+    Left = 584
+    Top = 372
+  end
+  object StyleBook1: TStyleBook
+    Styles = <
+      item
+      end
+      item
+        Platform = 'Windows 10 Desktop'
+        ResourcesBin = {
+          464D585F5354594C4520322E3501060C50616E656C345374796C653103B70000
+          545046300A5452656374616E676C6500095374796C654E616D65060C50616E65
+          6C345374796C653105416C69676E070643656E7465720A46696C6C2E436F6C6F
+          72070E636C61466C6F72616C77686974650748697454657374080A53697A652E
+          57696474680500000000000000A406400B53697A652E48656967687405000000
+          00000000DD07401453697A652E506C6174666F726D44656661756C74080C5374
+          726F6B652E436F6C6F7207097846464343434343430000}
+      end>
+    Left = 584
+    Top = 424
+  end
+  object Timer1: TTimer
+    Interval = 100
+    OnTimer = Timer1Timer
+    Left = 96
+    Top = 429
+  end
+  object sdFile: TSaveDialog
+    Filter = 'XML Format|*.xml|JSON Format|*.json|Turtle Format|*.ttl'
+    Title = 'Save Resource'
+    Left = 136
+    Top = 429
+  end
+  object MainMenu1: TMainMenu
+    Images = ToolbarImages
+    Left = 184
+    Top = 429
+    object mnuFile: TMenuItem
+      Text = '&File'
+      object mnuFileNew: TMenuItem
+        Locked = True
+        Text = '&New'
+        ImageIndex = 0
+        OnClick = btnNewClick
+      end
+      object mnuFileOpen: TMenuItem
+        Locked = True
+        Text = '&Open'
+        ImageIndex = 1
+        OnClick = btnOpenClick
+      end
+      object mnuFileSave: TMenuItem
+        Locked = True
+        Text = '&Save'
+        ImageIndex = 3
+        OnClick = tbnSaveClick
+      end
+      object mnuFileSaveAs: TMenuItem
+        Locked = True
+        Text = 'Save &As'
+        ImageIndex = 4
+        OnClick = tbnSaveAsClick
+      end
+      object mnuFileClose: TMenuItem
+        Locked = True
+        Text = '&Close'
+        ImageIndex = 5
+        OnClick = tbnCloseClick
+      end
+      object MenuItem1: TMenuItem
+        Locked = True
+        Text = '-'
+      end
+      object mnuFileSource: TMenuItem
+        Locked = True
+        Text = 'View &Resource Source'
+        ImageIndex = 6
+      end
+      object MenuItem6: TMenuItem
+        Locked = True
+        Text = '-'
+      end
+      object mnuFileExit: TMenuItem
+        Locked = True
+        Text = 'E&xit'
+        OnClick = CloseButtonClick
+      end
+    end
+    object MenuItem3: TMenuItem
+      Text = '&Resource'
+      object mnuResourceLanguage: TMenuItem
+        Locked = True
+        Text = '&Language'
+        OnClick = mnuResourceLanguageClick
+      end
+    end
+    object MenuItem2: TMenuItem
+      Text = '&Tools'
+      object mnuRegistry: TMenuItem
+        Locked = True
+        Text = 'registry.fhir.org'
+        OnClick = mnuRegistryClick
+      end
+      object MenuItem4: TMenuItem
+        Locked = True
+        Text = '&Settings'
+        OnClick = btnSettingsClick
+      end
+    end
+    object mnuHelp: TMenuItem
+      Text = '&Help'
+      object mnuHelpContext: TMenuItem
+        Locked = True
+        Text = '&Context'
+        OnClick = tbnHelpContextClick
+      end
+      object mnuCheckVersion: TMenuItem
+        Locked = True
+        Text = 'Check for &Updates'
+        OnClick = mnuCheckVersionClick
+      end
+      object MenuItem5: TMenuItem
+        Locked = True
+        Text = '-'
+      end
+      object mnuHelpAbout: TMenuItem
+        Locked = True
+        Text = '&About'
+        OnClick = mnuHelpAboutClick
+      end
+    end
+  end
+  object pnlHelp: TPanel
+    Align = Right
+    Position.X = 498.000000000000000000
+    Position.Y = 26.000000000000000000
+    Size.Width = 176.000000000000000000
+    Size.Height = 454.000000000000000000
+    Size.PlatformDefault = False
+    StyleLookup = 'Panel3Style1'
+    TabOrder = 8
+    object webHelp: TWebBrowser
+      Align = Client
+      Size.Width = 164.000000000000000000
+      Size.Height = 442.000000000000000000
+      Size.PlatformDefault = False
+      Margins.Left = 6.000000000000000000
+      Margins.Top = 6.000000000000000000
+      Margins.Right = 6.000000000000000000
+      Margins.Bottom = 6.000000000000000000
+    end
+  end
+  object splitHelp: TSplitter
+    Align = Right
+    Cursor = crHSplit
+    MinSize = 20.000000000000000000
+    Position.X = 492.000000000000000000
+    Position.Y = 26.000000000000000000
+    ShowGrip = False
+    Size.Width = 6.000000000000000000
+    Size.Height = 454.000000000000000000
+    Size.PlatformDefault = False
+  end
+  object ToolbarImages: TImageList
+    Source = <
+      item
+        MultiResBitmap.LoadSize = 0
+        MultiResBitmap.TransparentColor = 536870912
+        MultiResBitmap = <
+          item
+            Width = 16
+            Height = 16
+            PNG = {
+              89504E470D0A1A0A0000000D49484452000000100000001008060000001FF3FF
+              61000000017352474200AECE1CE90000000467414D410000B18F0BFC61050000
+              001F49444154384F63FC0F040C140026284D361835603018300A460103030303
+              005982040C44C598DC0000000049454E44AE426082}
+            FileName = 'C:\data\Images\glyfx\16x16\new16.bmp'
+          end>
+        Name = 'new16'
+      end
+      item
+        MultiResBitmap.LoadSize = 0
+        MultiResBitmap.TransparentColor = 536870912
+        MultiResBitmap = <
+          item
+            Width = 16
+            Height = 16
+            PNG = {
+              89504E470D0A1A0A0000000D49484452000000100000001008060000001FF3FF
+              61000000017352474200AECE1CE90000000467414D410000B18F0BFC61050000
+              005D49444154384F636C686898C980033C78F0C078C1820526502E56C004A5C9
+              06141BC09890907006CAC6009F3F7F965CBB76AD34943B0A7000465FDF86FF50
+              365980F2688C8E8EFEAAA2A2F210CA27097CFBF64D74E053E290378081010078
+              E51678944790E80000000049454E44AE426082}
+            FileName = 'C:\data\Images\glyfx\16x16\open16.bmp'
+          end>
+        Name = 'open16'
+      end
+      item
+        MultiResBitmap.LoadSize = 0
+        MultiResBitmap.TransparentColor = 536870912
+        MultiResBitmap = <
+          item
+            Width = 16
+            Height = 16
+            PNG = {
+              89504E470D0A1A0A0000000D49484452000000100000001008060000001FF3FF
+              61000000017352474200AECE1CE90000000467414D410000B18F0BFC61050000
+              007149444154384F636420007C7D1BFE439958011394261B1074417474F45F55
+              55D54F502E06A0D805A306006381503CF3F1DDFE47D358606C6868780F656380
+              EFDFBF733C79F2848D2217B0B0B030820CC285091AF0E7CF9FEF1C1C1CF771E1
+              818F468206FCFBF78FF5DBB76FA2D8F1375100BE0B4B77EC0D1F2C0000000049
+              454E44AE426082}
+            FileName = 
+              'C:\data\Images\programming images\glyphs\network\PNG\Regular\16x' +
+              '16\Data 0 0.png'
+          end>
+        Name = 'Data 0 0'
+      end
+      item
+        MultiResBitmap.LoadSize = 0
+        MultiResBitmap = <
+          item
+            Width = 16
+            Height = 16
+            PNG = {
+              89504E470D0A1A0A0000000D49484452000000100000001008060000001FF3FF
+              61000000017352474200AECE1CE90000000467414D410000B18F0BFC61050000
+              001349444154384F631805A360148C02306060000004100001A7447C63000000
+              0049454E44AE426082}
+            FileName = 'C:\data\Images\collection\16\Save.png'
+          end>
+        Name = 'Save'
+      end
+      item
+        MultiResBitmap.LoadSize = 0
+        MultiResBitmap = <
+          item
+            Width = 16
+            Height = 16
+            PNG = {
+              89504E470D0A1A0A0000000D49484452000000100000001008060000001FF3FF
+              61000000017352474200AECE1CE90000000467414D410000B18F0BFC61050000
+              001349444154384F631805A360148C02306060000004100001A7447C63000000
+              0049454E44AE426082}
+            FileName = 'C:\data\Images\collection\16\Save Add.png'
+          end>
+        Name = 'Save As'
+      end
+      item
+        MultiResBitmap.LoadSize = 0
+        MultiResBitmap.TransparentColor = 536870912
+        MultiResBitmap = <
+          item
+            Width = 16
+            Height = 16
+            PNG = {
+              89504E470D0A1A0A0000000D49484452000000100000001008060000001FF3FF
+              61000000017352474200AECE1CE90000000467414D410000B18F0BFC61050000
+              001349444154384F631805A360148C02306060000004100001A7447C63000000
+              0049454E44AE426082}
+            FileName = 'C:\data\Images\collection\16\delete16_h.bmp'
+          end>
+        Name = 'delete16_h'
+      end
+      item
+        MultiResBitmap.LoadSize = 0
+        MultiResBitmap.TransparentColor = 536870912
+        MultiResBitmap = <
+          item
+            Width = 16
+            Height = 16
+            PNG = {
+              89504E470D0A1A0A0000000D49484452000000100000001008060000001FF3FF
+              61000000017352474200AECE1CE90000000467414D410000B18F0BFC61050000
+              002249444154384F631870C0F81F08A06CB2001394261B8C1A3018C0683A1878
+              0318180055A0080FE08844B90000000049454E44AE426082}
+            FileName = 'C:\data\Images\glyfx\16x16\doc_web_16.bmp'
+          end>
+        Name = 'source'
+      end
+      item
+        MultiResBitmap.LoadSize = 0
+        MultiResBitmap = <
+          item
+            Width = 16
+            Height = 16
+            PNG = {
+              89504E470D0A1A0A0000000D49484452000000100000001008060000001FF3FF
+              61000000017352474200AECE1CE90000000467414D410000B18F0BFC61050000
+              001349444154384F631805A360148C02306060000004100001A7447C63000000
+              0049454E44AE426082}
+            FileName = 'C:\data\Images\collection\16\Help Information.png'
+          end>
+        Name = 'Help Information'
+      end
+      item
+        MultiResBitmap.LoadSize = 0
+        MultiResBitmap = <
+          item
+            Width = 16
+            Height = 16
+            PNG = {
+              89504E470D0A1A0A0000000D49484452000000100000001008060000001FF3FF
+              61000000017352474200AECE1CE90000000467414D410000B18F0BFC61050000
+              001349444154384F631805A360148C02306060000004100001A7447C63000000
+              0049454E44AE426082}
+            FileName = 'C:\data\Images\collection\16\Settings.png'
+          end>
+        Name = 'Settings'
+      end
+      item
+        MultiResBitmap.LoadSize = 0
+        MultiResBitmap.TransparentColor = 536870912
+        MultiResBitmap = <
+          item
+            Width = 16
+            Height = 16
+            PNG = {
+              89504E470D0A1A0A0000000D49484452000000100000001008060000001FF3FF
+              61000000017352474200AECE1CE90000000467414D410000B18F0BFC61050000
+              002149444154384F63A01430FE0702289B2CC004A5C906A3060C060346C13000
+              0C0C0052A8040C2B5E73810000000049454E44AE426082}
+            FileName = 'C:\data\Images\collection\16\stop16.bmp'
+          end>
+        Name = 'stop16'
+      end
+      item
+        MultiResBitmap.LoadSize = 0
+        MultiResBitmap = <
+          item
+            Width = 16
+            Height = 16
+            PNG = {
+              89504E470D0A1A0A0000000D49484452000000100000001008060000001FF3FF
+              61000000017352474200AECE1CE90000000467414D410000B18F0BFC61050000
+              001349444154384F631805A360148C02306060000004100001A7447C63000000
+              0049454E44AE426082}
+            FileName = 'C:\data\Images\collection\16\list_security.gif'
+          end>
+        Name = 'registry'
+      end>
+    Destination = <
+      item
+        Layers = <
+          item
+            Name = 'new16'
+          end>
+      end
+      item
+        Layers = <
+          item
+            Name = 'open16'
+          end>
+      end
+      item
+        Layers = <
+          item
+            Name = 'Data 0 0'
+          end>
+      end
+      item
+        Layers = <
+          item
+            Name = 'Save'
+          end>
+      end
+      item
+        Layers = <
+          item
+            Name = 'Save As'
+          end>
+      end
+      item
+        Layers = <
+          item
+            Name = 'delete16_h'
+          end>
+      end
+      item
+        Layers = <
+          item
+            Name = 'source'
+          end>
+      end
+      item
+        Layers = <
+          item
+            Name = 'Help Information'
+          end>
+      end
+      item
+        Layers = <
+          item
+            Name = 'Settings'
+          end>
+      end
+      item
+        Layers = <
+          item
+            Name = 'stop16'
+          end>
+      end
+      item
+        Layers = <
+          item
+            Name = 'registry'
+          end>
+      end>
+    Left = 24
+    Top = 428
+  end
+end

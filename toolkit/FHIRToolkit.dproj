@@ -368,9 +368,8 @@
             <Form>QuestionnaireItemForm</Form>
             <FormType>fmx</FormType>
         </DCCReference>
-        <DCCReference Include="RegistryForm.pas">
-            <Form>,
-  QuestionnaireFrame in &apos;QuestionnaireFrame.pas&apos;</Form>
+        <DCCReference Include="ProviderDirectoryForm.pas">
+            <Form>ProviderDirectoryFrame</Form>
         </DCCReference>
         <DCCReference Include="..\reference-platform\client\RegisterClientDialogFMX.pas">
             <Form>RegisterClientForm</Form>
@@ -389,6 +388,14 @@
         <DCCReference Include="AddRestOperationDialog.pas">
             <Form>AddRestOperationForm</Form>
         </DCCReference>
+        <DCCReference Include="RegistryForm.pas">
+            <Form>RegistryFrame</Form>
+            <FormType>fmx</FormType>
+            <DesignClass>TFrame</DesignClass>
+        </DCCReference>
+        <DCCReference Include="..\reference-platform\client\FHIRUIFmx.pas"/>
+        <DCCReference Include="..\reference-platform\client\FHIRUI.pas"/>
+        <DCCReference Include="..\Server\Logging.pas"/>
         <None Include="q.txt"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>

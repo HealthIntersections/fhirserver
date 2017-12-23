@@ -317,7 +317,7 @@ end;
 procedure TQuestionnaireItemForm.btnLoadValuesets(Sender: TObject);
 var
   client : TFHIRClient;
-  params : TDictionary<String, String>;
+  params : TStringList;
   be : TFhirBundleEntry;
   bundle : TFhirBundle;
   vs : TFHIRValueSet;
@@ -326,11 +326,11 @@ begin
   Loading := true;
   try
     bundle := TFhirBundle.create;
-    params := TDictionary<String, String>.create;
+    params := TStringList.create;
     try
       client := TFhirThreadedClient.Create(TFhirHTTPClient.Create(nil, FSettings.serverAddress('Terminology', 0), false, FSettings.timeout * 1000, FSettings.proxy), MasterToolsForm.threadMonitorProc);
       try
-        params.Add('_summary', 'true');
+        params.addPair('_summary', 'true');
         OnWork(self, 'Fetching ValueSets', true,
           procedure
           begin

@@ -8,7 +8,7 @@
 AppId={{9FD61024-BC9A-4226-ADA5-E72254250B6C}
 AppName=FHIR Toolkit
 AppVersion=0.1
-AppVerName=0.0.29 (FHIR Version 3.0.1.11926)
+AppVerName=0.0.39 (FHIR Version 3.0.1.11926)
 AppPublisher=Health Intersections
 AppPublisherURL=http://www.healthintersections.com.au/FhirServer
 AppSupportURL=http://www.healthintersections.com.au/FhirServer
@@ -18,7 +18,7 @@ DefaultGroupName=FHIR Applications
 AllowNoIcons=yes
 LicenseFile=C:\work\fhirserver\toolkit\install\licence.txt
 OutputDir=C:\work\fhirserver\toolkit\install
-OutputBaseFilename=fhir-toolkit-install-0.0.29
+OutputBaseFilename=fhir-toolkit-install-0.0.39
 SetupIconFile=C:\work\fhirserver\toolkit\AppEndorser_Icon.ico
 Compression=lzma
 SolidCompression=yes
@@ -31,9 +31,7 @@ Name: "english"; MessagesFile: "compiler:Default.isl"
 [Files]
 Source: "C:\work\fhirserver\toolkit\install\FHIRToolkit.exe"; DestDir: "{app}"; Flags: ignoreversion
 Source: "C:\work\fhirserver\toolkit\install\osx\FHIRToolkit.app\Contents\MacOS\toolkit.png"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\work\fhirserver\toolkit\install\osx\FHIRToolkit.app\Contents\MacOS\translations.xml"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\work\fhirserver\toolkit\install\osx\FHIRToolkit.app\Contents\MacOS\profiles-resources.xml"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\work\fhirserver\toolkit\install\osx\FHIRToolkit.app\Contents\MacOS\profiles-types.xml"; DestDir: "{app}"; Flags: ignoreversion
+Source: "C:\work\fhirserver\toolkit\install\osx\FHIRToolkit.app\Contents\MacOS\*.xml"; DestDir: "{app}"; Flags: ignoreversion
 
 [Icons]
 Name: "{group}\Toolkit"; Filename: "{app}\FHIRToolkit.exe"

@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<ValueSet xmlns="http://hl7.org/fhir">
+  <id value="valueset-au-address-states"/>
+  <meta>
+    <versionId value="1"/>
+    <lastUpdated value="2017-02-21T10:54:35.273+11:00"/>
+  </meta>
+  <text>
+    <status value="generated"/>
+    <div xmlns="http://www.w3.org/1999/xhtml">
+      <h2>Australian States and Territories</h2>
+      <div>
+        <p>Australian states and territories coding</p>
+
+      </div>
+      <p>This value set includes codes from the following code systems:</p>
+      <ul>
+        <li>Include all codes defined in 
+          <a href="CodeSystem-codesystem-au-address-states.html">
+            <code>http://meteor.aihw.gov.au/content/index.phtml/itemId/430134#Codes</code>
+          </a>
+        </li>
+      </ul>
+    </div>
+  </text>
+  <url value="http://hl7.org.au/fhir/ValueSet/valueset-au-address-states"/>
+  <name value="Australian States and Territories"/>
+  <status value="draft"/>
+  <date value="2017-12-05T11:45:48+11:00"/>
+  <publisher value="Health Level Seven Australia (Patient Administration)"/>
+  <contact>
+    <name value="hl7.org.au"/>
+  </contact>
+  <description value="Australian states and territories coding"/>
+  <compose>
+    <include>
+      <system value="http://meteor.aihw.gov.au/content/index.phtml/itemId/430134#Codes"/>
+    </include>
+  </compose>
+  <expansion>
+    <identifier value="urn:uuid:c1c26705-e425-49db-a6c0-0f557acf45e5"/>
+    <timestamp value="2017-12-05T11:46:09+11:00"/>
+    <total value="9"/>
+    <parameter>
+      <name value="profile"/>
+      <valueUri value="http://hl7.org/fhir/ExpansionProfile/dc8fd4bc-091a-424a-8a3b-6198ef146891"/>
+    </parameter>
+    <parameter>
+      <name value="version"/>
+      <valueUri value="http://meteor.aihw.gov.au/content/index.phtml/itemId/430134#Codes|1"/>
+    </parameter>
+    <contains>
+      <system value="http://meteor.aihw.gov.au/content/index.phtml/itemId/430134#Codes"/>
+      <code value="NSW"/>
+      <display value="New South Wales"/>
+    </contains>
+    <contains>
+      <system value="http://meteor.aihw.gov.au/content/index.phtml/itemId/430134#Codes"/>
+      <code value="VIC"/>
+      <display value="Victoria"/>
+    </contains>
+    <contains>
+      <system value="http://meteor.aihw.gov.au/content/index.phtml/itemId/430134#Codes"/>
+      <code value="QLD"/>
+      <display value="Queensland"/>
+    </contains>
+    <contains>
+      <system value="http://meteor.aihw.gov.au/content/index.phtml/itemId/430134#Codes"/>
+      <code value="SA"/>
+      <display value="South Australia"/>
+    </contains>
+    <contains>
+      <system value="http://meteor.aihw.gov.au/content/index.phtml/itemId/430134#Codes"/>
+      <code value="WA"/>
+      <display value="Western Australia"/>
+    </contains>
+    <contains>
+      <system value="http://meteor.aihw.gov.au/content/index.phtml/itemId/430134#Codes"/>
+      <code value="TAS"/>
+      <display value="Tasmainia"/>
+    </contains>
+    <contains>
+      <system value="http://meteor.aihw.gov.au/content/index.phtml/itemId/430134#Codes"/>
+      <code value="NT"/>
+      <display value="Northern Territory"/>
+    </contains>
+    <contains>
+      <system value="http://meteor.aihw.gov.au/content/index.phtml/itemId/430134#Codes"/>
+      <code value="ACT"/>
+      <display value="Australian Capital Territory"/>
+    </contains>
+    <contains>
+      <system value="http://meteor.aihw.gov.au/content/index.phtml/itemId/430134#Codes"/>
+      <code value="AAT"/>
+      <display value="Australian Antarctic Territory"/>
+    </contains>
+  </expansion>
+</ValueSet>

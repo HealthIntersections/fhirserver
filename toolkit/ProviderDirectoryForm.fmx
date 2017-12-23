@@ -1,0 +1,496 @@
+object ProviderDirectoryFrame: TProviderDirectoryFrame
+  Size.Width = 1138.000000000000000000
+  Size.Height = 442.000000000000000000
+  Size.PlatformDefault = False
+  object Panel2: TPanel
+    Align = Client
+    Size.Width = 1138.000000000000000000
+    Size.Height = 442.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 0
+    object Panel1: TPanel
+      Align = MostRight
+      Position.X = 912.000000000000000000
+      Size.Width = 226.000000000000000000
+      Size.Height = 442.000000000000000000
+      Size.PlatformDefault = False
+      TabOrder = 2
+      object gridProperties: TGrid
+        Align = Client
+        CanFocus = True
+        ClipChildren = True
+        Size.Width = 226.000000000000000000
+        Size.Height = 442.000000000000000000
+        Size.PlatformDefault = False
+        TabOrder = 0
+        RowCount = 0
+        OnGetValue = gridPropertiesGetValue
+        Viewport.Width = 226.000000000000000000
+        Viewport.Height = 442.000000000000000000
+        object StringColumn18: TStringColumn
+          Header = 'Property'
+          ReadOnly = True
+        end
+        object StringColumn19: TStringColumn
+          Header = 'Value'
+          ReadOnly = True
+        end
+      end
+    end
+    object Panel4: TPanel
+      Align = Client
+      Size.Width = 904.000000000000000000
+      Size.Height = 442.000000000000000000
+      Size.PlatformDefault = False
+      TabOrder = 3
+      object Panel3: TPanel
+        Align = Bottom
+        Position.Y = 382.000000000000000000
+        Size.Width = 904.000000000000000000
+        Size.Height = 26.000000000000000000
+        Size.PlatformDefault = False
+        TabOrder = 1
+        object lblOutcome: TLabel
+          Anchors = [akLeft, akTop, akRight]
+          Cursor = crHandPoint
+          HitTest = True
+          Position.X = 8.000000000000000000
+          Position.Y = 4.000000000000000000
+          Size.Width = 782.000000000000000000
+          Size.Height = 17.000000000000000000
+          Size.PlatformDefault = False
+          TabOrder = 0
+          OnClick = lblOutcomeClick
+        end
+        object btnFetchMore: TButton
+          Anchors = [akTop, akRight]
+          HelpType = htKeyword
+          Position.X = 805.000000000000000000
+          Position.Y = 2.000000000000000000
+          Size.Width = 97.000000000000000000
+          Size.Height = 22.000000000000000000
+          Size.PlatformDefault = False
+          TabOrder = 1
+          Text = 'Fetch More'
+          OnClick = btnFetchMoreClick
+        end
+      end
+      object pnlMessages: TPanel
+        Align = Bottom
+        Position.Y = 408.000000000000000000
+        Size.Width = 904.000000000000000000
+        Size.Height = 34.000000000000000000
+        Size.PlatformDefault = False
+        TabOrder = 3
+        object lblMessages: TLabel
+          Align = Client
+          StyledSettings = [Family, Size, Style]
+          Margins.Left = 6.000000000000000000
+          Margins.Right = 6.000000000000000000
+          Size.Width = 892.000000000000000000
+          Size.Height = 34.000000000000000000
+          Size.PlatformDefault = False
+          TextSettings.FontColor = claMaroon
+          Text = 'lblMessages'
+          TabOrder = 0
+        end
+      end
+      object TabControl1: TTabControl
+        Align = Client
+        Size.Width = 904.000000000000000000
+        Size.Height = 382.000000000000000000
+        Size.PlatformDefault = False
+        TabIndex = 1
+        TabOrder = 4
+        TabPosition = PlatformDefault
+        Sizes = (
+          904s
+          377s
+          904s
+          377s)
+        object TabItem1: TTabItem
+          CustomIcon = <
+            item
+            end>
+          IsSelected = False
+          Size.Height = 5.000000000000000000
+          Size.PlatformDefault = False
+          StyleLookup = ''
+          TabOrder = 0
+          Text = 'Healthcare Service'
+          ExplicitSize.cx = 118.000000000000000000
+          ExplicitSize.cy = 26.000000000000000000
+          object pnlSearch: TPanel
+            Align = Top
+            Size.Width = 904.000000000000000000
+            Size.Height = 105.000000000000000000
+            Size.PlatformDefault = False
+            TabOrder = 0
+            object btnHSSearch: TButton
+              Position.X = 712.000000000000000000
+              Position.Y = 14.000000000000000000
+              Size.Width = 97.000000000000000000
+              Size.Height = 25.000000000000000000
+              Size.PlatformDefault = False
+              TabOrder = 3
+              Text = 'Search'
+              OnClick = btnHSSearchClick
+            end
+            object Label1: TLabel
+              Position.X = 16.000000000000000000
+              Position.Y = 14.000000000000000000
+              Text = 'Service Name:'
+              TabOrder = 5
+            end
+            object Label3: TLabel
+              Position.X = 16.000000000000000000
+              Position.Y = 40.000000000000000000
+              Size.Width = 120.000000000000000000
+              Size.Height = 23.000000000000000000
+              Size.PlatformDefault = False
+              Text = 'HPI-O'
+              TabOrder = 6
+            end
+            object edtHPIO: TEdit
+              Touch.InteractiveGestures = [LongTap, DoubleTap]
+              TabOrder = 7
+              Position.X = 72.000000000000000000
+              Position.Y = 40.000000000000000000
+              Size.Width = 289.000000000000000000
+              Size.Height = 22.000000000000000000
+              Size.PlatformDefault = False
+            end
+            object edtServiceName: TEdit
+              Touch.InteractiveGestures = [LongTap, DoubleTap]
+              TabOrder = 8
+              Position.X = 104.000000000000000000
+              Position.Y = 14.000000000000000000
+              Size.Width = 313.000000000000000000
+              Size.Height = 22.000000000000000000
+              Size.PlatformDefault = False
+            end
+          end
+          object gridHSMatches: TGrid
+            Align = Client
+            CanFocus = True
+            ClipChildren = True
+            Margins.Left = 6.000000000000000000
+            Margins.Right = 6.000000000000000000
+            Margins.Bottom = 6.000000000000000000
+            Size.Width = 892.000000000000000000
+            Size.Height = 266.000000000000000000
+            Size.PlatformDefault = False
+            TabOrder = 1
+            RowCount = 0
+            Options = [ColumnResize, ColumnMove, ColLines, RowLines, RowSelect, Tabs, Header, HeaderClick, AutoDisplacement]
+            OnSelectCell = gridHSMatchesSelectCell
+            OnGetValue = gridHSMatchesGetValue
+            Viewport.Width = 892.000000000000000000
+            Viewport.Height = 266.000000000000000000
+            object StringColumn1: TStringColumn
+              Header = 'Name'
+              Size.Width = 65.000000000000000000
+            end
+            object StringColumn2: TStringColumn
+              Header = 'Address'
+            end
+            object StringColumn7: TStringColumn
+              Header = 'Telephone/Fax'
+            end
+            object StringColumn8: TStringColumn
+              Header = 'Emails'
+            end
+            object StringColumn3: TStringColumn
+              Header = 'Org Name'
+            end
+            object StringColumn4: TStringColumn
+              Header = 'Specialties'
+            end
+            object StringColumn5: TStringColumn
+              Header = 'Connection Types'
+            end
+            object StringColumn6: TStringColumn
+              Header = 'Payload Types'
+            end
+          end
+        end
+        object TabItem2: TTabItem
+          CustomIcon = <
+            item
+            end>
+          IsSelected = True
+          Size.Height = 5.000000000000000000
+          Size.PlatformDefault = False
+          StyleLookup = ''
+          TabOrder = 0
+          Text = 'Provider'
+          ExplicitSize.cx = 65.000000000000000000
+          ExplicitSize.cy = 26.000000000000000000
+          object Panel5: TPanel
+            Align = Top
+            Size.Width = 904.000000000000000000
+            Size.Height = 105.000000000000000000
+            Size.PlatformDefault = False
+            TabOrder = 0
+            object btnSearchProvider: TButton
+              Position.X = 712.000000000000000000
+              Position.Y = 14.000000000000000000
+              Size.Width = 97.000000000000000000
+              Size.Height = 25.000000000000000000
+              Size.PlatformDefault = False
+              TabOrder = 3
+              Text = 'Search'
+              OnClick = btnSearchProviderClick
+            end
+            object Label4: TLabel
+              Position.X = 16.000000000000000000
+              Position.Y = 14.000000000000000000
+              Text = 'Family:'
+              TabOrder = 5
+            end
+            object Label11: TLabel
+              Position.X = 16.000000000000000000
+              Position.Y = 40.000000000000000000
+              Size.Width = 120.000000000000000000
+              Size.Height = 23.000000000000000000
+              Size.PlatformDefault = False
+              Text = 'Identifier:'
+              TabOrder = 7
+            end
+            object edtIdentifier: TEdit
+              Touch.InteractiveGestures = [LongTap, DoubleTap]
+              TabOrder = 10
+              Position.X = 72.000000000000000000
+              Position.Y = 40.000000000000000000
+              Size.Width = 153.000000000000000000
+              Size.Height = 22.000000000000000000
+              Size.PlatformDefault = False
+            end
+            object edtFamily: TEdit
+              Touch.InteractiveGestures = [LongTap, DoubleTap]
+              TabOrder = 11
+              Position.X = 56.000000000000000000
+              Position.Y = 14.000000000000000000
+              Size.Width = 145.000000000000000000
+              Size.Height = 22.000000000000000000
+              Size.PlatformDefault = False
+            end
+            object Label16: TLabel
+              Position.X = 216.000000000000000000
+              Position.Y = 14.000000000000000000
+              Size.Width = 72.000000000000000000
+              Size.Height = 17.000000000000000000
+              Size.PlatformDefault = False
+              Text = 'Given:'
+              TabOrder = 6
+            end
+            object edtGiven: TEdit
+              Touch.InteractiveGestures = [LongTap, DoubleTap]
+              TabOrder = 9
+              Position.X = 264.000000000000000000
+              Position.Y = 14.000000000000000000
+              Size.Width = 153.000000000000000000
+              Size.Height = 22.000000000000000000
+              Size.PlatformDefault = False
+            end
+            object Label19: TLabel
+              Position.X = 232.000000000000000000
+              Position.Y = 40.000000000000000000
+              Size.Width = 65.000000000000000000
+              Size.Height = 23.000000000000000000
+              Size.PlatformDefault = False
+              Text = 'of Type:'
+              TabOrder = 8
+            end
+            object cbxIdType: TComboBox
+              Items.Strings = (
+                'Provider#'
+                'HPI-I'
+                'HPI-O'
+                'Vendor ID'
+                'NP/OI')
+              Position.X = 280.000000000000000000
+              Position.Y = 40.000000000000000000
+              TabOrder = 12
+            end
+          end
+          object gridPRMatches: TGrid
+            Align = Client
+            CanFocus = True
+            ClipChildren = True
+            Margins.Left = 6.000000000000000000
+            Margins.Right = 6.000000000000000000
+            Margins.Bottom = 6.000000000000000000
+            Size.Width = 892.000000000000000000
+            Size.Height = 266.000000000000000000
+            Size.PlatformDefault = False
+            TabOrder = 1
+            RowCount = 0
+            Options = [ColumnResize, ColumnMove, ColLines, RowLines, RowSelect, Tabs, Header, HeaderClick, AutoDisplacement]
+            OnSelectCell = gridPRMatchesSelectCell
+            OnGetValue = gridPRMatchesGetValue
+            Viewport.Width = 892.000000000000000000
+            Viewport.Height = 266.000000000000000000
+            object StringColumn9: TStringColumn
+              Header = 'Name'
+              Size.Width = 65.000000000000000000
+            end
+            object StringColumn17: TStringColumn
+              Header = 'Identifiers'
+            end
+            object StringColumn10: TStringColumn
+              Header = 'Address'
+            end
+            object StringColumn11: TStringColumn
+              Header = 'Telephone/Fax'
+            end
+            object StringColumn12: TStringColumn
+              Header = 'Emails'
+            end
+            object StringColumn13: TStringColumn
+              Header = 'Org Name'
+            end
+            object StringColumn14: TStringColumn
+              Header = 'Specialties'
+            end
+            object StringColumn15: TStringColumn
+              Header = 'Connection Types'
+            end
+            object StringColumn16: TStringColumn
+              Header = 'Payload Types'
+            end
+          end
+        end
+      end
+      object cbxType: TComboBox
+        Position.X = 280.000000000000000000
+        Position.Y = 96.000000000000000000
+        Size.Width = 185.000000000000000000
+        Size.Height = 22.000000000000000000
+        Size.PlatformDefault = False
+        TabOrder = 5
+      end
+      object cbxPayload: TComboBox
+        Position.X = 528.000000000000000000
+        Position.Y = 96.000000000000000000
+        Size.Width = 169.000000000000000000
+        Size.Height = 22.000000000000000000
+        Size.PlatformDefault = False
+        TabOrder = 6
+      end
+      object Label17: TLabel
+        Position.X = 480.000000000000000000
+        Position.Y = 96.000000000000000000
+        Size.Width = 65.000000000000000000
+        Size.Height = 23.000000000000000000
+        Size.PlatformDefault = False
+        Text = 'Payload'
+        TabOrder = 7
+      end
+      object Label7: TLabel
+        Position.X = 16.000000000000000000
+        Position.Y = 96.000000000000000000
+        Size.Width = 65.000000000000000000
+        Size.Height = 23.000000000000000000
+        Size.PlatformDefault = False
+        Text = 'Specialty:'
+        TabOrder = 8
+      end
+      object Label8: TLabel
+        Position.X = 248.000000000000000000
+        Position.Y = 96.000000000000000000
+        Size.Width = 65.000000000000000000
+        Size.Height = 23.000000000000000000
+        Size.PlatformDefault = False
+        Text = 'Type:'
+        TabOrder = 9
+      end
+      object cbxState: TComboBox
+        Position.X = 600.000000000000000000
+        Position.Y = 64.000000000000000000
+        Size.Width = 81.000000000000000000
+        Size.Height = 22.000000000000000000
+        Size.PlatformDefault = False
+        TabOrder = 10
+      end
+      object edtOrgName: TEdit
+        Touch.InteractiveGestures = [LongTap, DoubleTap]
+        TabOrder = 11
+        Position.X = 544.000000000000000000
+        Position.Y = 38.000000000000000000
+        Size.Width = 153.000000000000000000
+        Size.Height = 22.000000000000000000
+        Size.PlatformDefault = False
+      end
+      object edtPostcode: TEdit
+        Touch.InteractiveGestures = [LongTap, DoubleTap]
+        TabOrder = 12
+        Position.X = 752.000000000000000000
+        Position.Y = 64.000000000000000000
+        Size.Width = 57.000000000000000000
+        Size.Height = 22.000000000000000000
+        Size.PlatformDefault = False
+      end
+      object edtSuburb: TEdit
+        Touch.InteractiveGestures = [LongTap, DoubleTap]
+        TabOrder = 13
+        Position.X = 440.000000000000000000
+        Position.Y = 64.000000000000000000
+        Size.Width = 105.000000000000000000
+        Size.Height = 22.000000000000000000
+        Size.PlatformDefault = False
+      end
+      object Label10: TLabel
+        Position.X = 392.000000000000000000
+        Position.Y = 64.000000000000000000
+        Size.Width = 120.000000000000000000
+        Size.Height = 23.000000000000000000
+        Size.PlatformDefault = False
+        Text = 'Suburb'
+        TabOrder = 14
+      end
+      object Label12: TLabel
+        Position.X = 560.000000000000000000
+        Position.Y = 64.000000000000000000
+        Size.Width = 41.000000000000000000
+        Size.Height = 23.000000000000000000
+        Size.PlatformDefault = False
+        Text = 'State:'
+        TabOrder = 15
+      end
+      object Label13: TLabel
+        Position.X = 696.000000000000000000
+        Position.Y = 64.000000000000000000
+        Size.Width = 57.000000000000000000
+        Size.Height = 23.000000000000000000
+        Size.PlatformDefault = False
+        Text = 'PostCode'
+        TabOrder = 16
+      end
+      object Label9: TLabel
+        Position.X = 432.000000000000000000
+        Position.Y = 38.000000000000000000
+        Text = 'Organisation Name:'
+        TabOrder = 17
+      end
+      object edtSpecialty: TEdit
+        Touch.InteractiveGestures = [LongTap, DoubleTap]
+        TabOrder = 18
+        Position.X = 72.000000000000000000
+        Position.Y = 96.000000000000000000
+        Size.Width = 153.000000000000000000
+        Size.Height = 22.000000000000000000
+        Size.PlatformDefault = False
+      end
+    end
+    object Splitter1: TSplitter
+      Align = Right
+      Cursor = crHSplit
+      MinSize = 20.000000000000000000
+      Position.X = 904.000000000000000000
+      Size.Width = 8.000000000000000000
+      Size.Height = 442.000000000000000000
+      Size.PlatformDefault = False
+    end
+  end
+end
