@@ -171,7 +171,7 @@ type
     procedure CheckCompartments(actual, allowed : TAdvList<TFHIRCompartmentId>);
     procedure executeReadInTransaction(entry : TFhirBundleEntryRequest; request: TFHIRRequest; response : TFHIRResponse);
 
-    procedure processIncludes(session : TFhirSession; secure : boolean; _includes, _reverseIncludes : String; bundle : TFHIRBundleBuilder; keys : TKeyList; field : String; comp : TFHIRParserClass);
+    procedure processIncludes(session : TFhirSession; secure : boolean; _includes, _reverseIncludes : String; bundle : TFHIRBundleBuilder; keys : TKeyList; base, lang, field : String; comp : TFHIRParserClass);
     procedure ReIndex;
     procedure CheckCreateNarrative(request : TFHIRRequest);
     procedure CreateIndexer;
@@ -179,7 +179,7 @@ type
     procedure ExecuteGraphQL(context : TOperationContext; request: TFHIRRequest; response : TFHIRResponse);
     procedure ExecuteGraphQLSystem(context : TOperationContext; request: TFHIRRequest; response : TFHIRResponse);
     procedure ExecuteGraphQLInstance(context : TOperationContext; request: TFHIRRequest; response : TFHIRResponse);
-    procedure processGraphQL(context: TOperationContext; graphql: String; request : TFHIRRequest; response : TFHIRResponse);
+    procedure processGraphQL(graphql: String; request : TFHIRRequest; response : TFHIRResponse); override;
 
     function GraphLookup(appInfo : TAdvObject; requestType, id : String; var res : TFHIRResource) : boolean;
     function GraphFollowReference(appInfo : TAdvObject; context : TFHIRResource; reference : TFHIRReference; out targetContext, target : TFHIRResource) : boolean;
@@ -591,7 +591,7 @@ type
 
   TFhirObservationStatsOperation = class (TFhirNativeOperation)
   private
-    function resolveParameter(code : String): TObservationStatsParameter;
+    function resolveParameter(lang, code : String): TObservationStatsParameter;
   protected
     function isWrite : boolean; override;
     function owningResource : TFhirResourceType; override;
@@ -1390,7 +1390,7 @@ begin
       else if request.Parameters.VarExists('query') then
         gql.GraphQL := TGraphQLParser.parse(request.Parameters.Value['query'])
       else
-        raise EGraphQLException.Create('Unable to find GraphQL to execute');
+        raise EGraphQLException.Create(GetFhirMessage('GRAPHQL_NOT_FOUND', request.lang));
       gql.focus := nil;
       gql.execute;
       response.Resource := nil;
@@ -1412,13 +1412,13 @@ begin
     on e : EGraphQLException do
     begin
       response.HTTPCode := 400;
-      response.Message := 'Error in GraphQL';
+      response.Message := GetFhirMessage('GRAPHQL_ERROR', request.Lang);
       response.Resource := BuildOperationOutcome(request.Lang, e, IssueTypeInvalid);
     end;
     on e : Exception do
     begin
       response.HTTPCode := 500;
-      response.Message := 'Error processing GraphQL';
+      response.Message := GetFhirMessage('GRAPHQL_ERROR', request.Lang);
       response.Resource := BuildOperationOutcome(request.Lang, e, IssueTypeException);
     end;
   end;
@@ -1444,7 +1444,7 @@ begin
         else if request.Parameters.VarExists('query') then
           gql.GraphQL := TGraphQLParser.parse(request.Parameters.Value['query'])
         else
-          raise EGraphQLException.Create('Unable to find GraphQL to execute');
+          raise EGraphQLException.Create(GetFhirMessage('GRAPHQL_NOT_FOUND', request.Lang));
         gql.focus := response.Resource.Link;
         gql.execute;
         response.Resource := nil;
@@ -1606,12 +1606,12 @@ begin
   end;
 end;
 
-function extractProfileId(base, s : String) : String;
+function extractProfileId(lang, base, s : String) : String;
 begin
   if s.StartsWith(base+'StructureDefinition/') and s.EndsWith('/$questionnaire') then
     result := s.Substring(0, s.Length-15).Substring(base.Length+8)
   else
-    raise Exception.Create('Did not understand Questionnaire identifier');
+    raise EFHIRException.CreateLang('MSG_INVALID_ID', lang);
 end;
 
 
@@ -1664,7 +1664,7 @@ begin
       if (not needsObject) then
         comp := nil;
 
-      response.OnCreateBuilder(response, BundleTypeHistory, bundle);
+      response.OnCreateBuilder(request, response, BundleTypeHistory, bundle);
       try
         if response.Format <> ffUnspecified then
           base := base + '&_format='+MIMETYPES_TFHIRFormat[response.Format]+'&';
@@ -1834,11 +1834,11 @@ begin
 
   s := NextSegment(url);
   if (s = '') then
-    raise Exception.Create('not done yet') // system search
+    raise EFHIRException.CreateLang('NOT_DONE_YET', Request.lang) // system search
   else if (s.StartsWith('$')) then
-    raise Exception.Create('not done yet') // system level operation
+    raise EFHIRException.CreateLang('NOT_DONE_YET', Request.lang) // system level operation
   else if (s.StartsWith('_')) then
-    raise Exception.Create('not done yet') // system history
+    raise EFHIRException.CreateLang('NOT_DONE_YET', Request.lang) // system history
   else if not StringArrayExistsSensitive(CODES_TFhirResourceType, s) then
     raise Exception.Create('Unknown path type "'+entry.url+'"')
   else
@@ -1848,11 +1848,11 @@ begin
     if (s = '') then
       ExecuteSearch(request, response)
     else if (s.StartsWith('$')) then
-      raise Exception.Create('not done yet') // resource type level operation
+      raise EFHIRException.CreateLang('NOT_DONE_YET', Request.lang) // resource type level operation
     else if (s.StartsWith('_')) then
-      raise Exception.Create('not done yet') // resource type history
+      raise EFHIRException.CreateLang('NOT_DONE_YET', Request.lang) // resource type history
     else if not IsId(s) then
-      raise Exception.Create('Unknown path type "'+entry.url+'"')
+      raise EFHIRException.CreateLang('MSG_UNKNOWN_TYPE', request.Lang, [entry.url])
     else
     begin
       request.Id := s;
@@ -1860,14 +1860,14 @@ begin
       if (s = '') then
         ExecuteRead(request, response, false)
       else if (s.StartsWith('$')) then
-        raise Exception.Create('not done yet') // resource instance level operation
+        raise EFHIRException.CreateLang('NOT_DONE_YET', Request.lang) // resource instance level operation
       else if (s = '_history') then
       begin
         s := NextSegment(url);
         if (s = '') then
           ExecuteHistory(request, response)
         else if not IsId(s) then
-          raise Exception.Create('Unknown path type "'+entry.url+'"')
+          raise EFHIRException.CreateLang('MSG_UNKNOWN_TYPE', request.Lang, [entry.url])
         else
         begin
           request.SubId := s;
@@ -1875,11 +1875,11 @@ begin
           if (s = '') then
             ExecuteVersionRead(request, response)
           else
-            raise Exception.Create('Unknown path type "'+entry.url+'"')
+            raise EFHIRException.CreateLang('MSG_UNKNOWN_TYPE', request.Lang, [entry.url])
         end;
       end
       else
-        raise Exception.Create('Unknown path type "'+entry.url+'"')
+        raise EFHIRException.CreateLang('MSG_UNKNOWN_TYPE', request.Lang, [entry.url])
     end;
   end;
 end;
@@ -1931,7 +1931,7 @@ begin
     if (params.getVar('_query') = 'mpi') and (aType = 'Patient') then
       ProcessMPISearch(typekey, session, aType, params, baseURL, requestCompartment, sessionCompartments, id, result, link, sql, total, summaryStatus, strict, reverse)
     else
-      raise exception.create('The query "'+params.getVar('_query')+'" is not known');
+      raise EFHIRException.createLang('UNKNOWN_QUERY', lang, [params.getVar('_query')]);
   end
   else
     ProcessDefaultSearch(typekey, session, aType, params, baseURL, requestCompartment, sessionCompartments, id, result, op, link, sql, total, summaryStatus, strict, reverse);
@@ -1943,6 +1943,8 @@ var
   s : String;
   csql : String;
 begin
+    logt('ds.1');
+
   if (session = nil) or session.canReadAll then
     s := 'null'
   else
@@ -1966,6 +1968,7 @@ begin
     sp.Connection := FConnection.link;
 
     sp.build;
+    logt('ds.2');
     sql := 'Insert into SearchEntries Select '+key+', ResourceKey, MostRecent as ResourceVersionKey, '+sp.sort+', null, null from Ids where Deleted = 0 and MostRecent is not null and '+sp.filter+' order by ResourceKey DESC';
     csql := 'Select count(ResourceKey) from Ids where Deleted = 0 and '+sp.filter;
     link := SEARCH_PARAM_NAME_ID+'='+id+'&'+sp.link_;
@@ -1976,6 +1979,7 @@ begin
     sp.free;
   end;
 
+    logt('ds.3 : sql = '+sql);
   if summaryStatus = soCount then
   begin
     total := FConnection.CountSQL(csql);
@@ -1986,6 +1990,7 @@ begin
     FConnection.ExecSQL(sql);
     total := FConnection.CountSQL('Select count(*) from SearchEntries where SearchKey = '+key);
   end;
+    logt('ds.4');
   FConnection.Sql := 'update Searches set Reverse = :r, Link = :l, SqlCode = :s, count = '+inttostr(total)+', Summary = '+inttostr(ord(summaryStatus))+' where SearchKey = '+key;
   FConnection.Prepare;
   try
@@ -1996,6 +2001,7 @@ begin
   finally
     FConnection.Terminate;
   end;
+    logt('ds.5');
 end;
 
 procedure TFHIRNativeOperationEngine.ProcessMPISearch(typekey : integer; session : TFHIRSession; aType : string; params : TParseMap; baseURL : String; requestCompartment : TFHIRCompartmentId; sessionCompartments : TAdvList<TFHIRCompartmentId>; id, key : string; var link, sql : String; var total : Integer; summaryStatus : TFHIRSummaryOption; strict : boolean; var reverse : boolean);
@@ -2004,7 +2010,8 @@ var
   s : String;
 begin
   if (session = nil) then
-    raise Exception.Create('no session?');
+    raise Exception.create('no session?');
+
   s := inttostr(Session.Key);
   FConnection.ExecSQL('insert into Searches (SearchKey, Id, Count, Type, Date, Summary, SessionKey) values ('+key+', '''+id+''', 0, 1, '+DBGetDate(FConnection.Owner.Platform)+', '+inttostr(ord(summaryStatus))+', '+s+')');
 
@@ -2043,7 +2050,7 @@ begin
 end;
 
 
-procedure TFHIRNativeOperationEngine.processGraphQL(context: TOperationContext; graphql: String; request : TFHIRRequest; response : TFHIRResponse);
+procedure TFHIRNativeOperationEngine.processGraphQL(graphql: String; request : TFHIRRequest; response : TFHIRResponse);
 var
   gql : TFHIRGraphQLEngine;
   str : TStringBuilder;
@@ -2090,10 +2097,10 @@ begin
   end;
 end;
 
-procedure TFHIRNativeOperationEngine.processIncludes(session: TFhirSession; secure : boolean; _includes, _reverseIncludes: String; bundle: TFHIRBundleBuilder; keys : TKeyList; field: String; comp: TFHIRParserClass);
+procedure TFHIRNativeOperationEngine.processIncludes(session: TFhirSession; secure : boolean; _includes, _reverseIncludes: String; bundle: TFHIRBundleBuilder; keys : TKeyList; base, lang, field: String; comp: TFHIRParserClass);
 var
   s, sql : String;
-  p : TArray<String>;
+  sl, p : TArray<String>;
   sel : TStringList;
   key2, i: integer;
   type_ : string;
@@ -2103,14 +2110,18 @@ begin
 
   sel := TStringList.Create;
   try
-    for s in _includes.Split([';']) do
+    if _includes.contains(',') then
+      sl := _includes.Split([','])
+    else
+      sl := _includes.Split([';']);
+    for s in sl do
     begin
       p := s.Split([':']);
       if (length(p) >= 2) and (length(p) <= 3) then
       begin
         key2 := ServerContext.Indexes.GetKeyByName(p[1]);
         if (key2 = 0) then
-          raise Exception.Create('Unknown Resource Search Parameter '''+p[1]+'''');
+          raise EFHIRException.createLang('MSG_PARAM_UNKNOWN', lang, [p[1]]);
         if (length(p) = 3) then
         begin
           sel.Add('Ids.ResourceKey in (select Target from IndexEntries, Ids where IndexKey = '+inttostr(key2)+' and ResourceKey in ('+keys.forType(p[2])+') and Ids.ResourceKey = IndexEntries.Target and Ids.ResoureTypeKey = '+inttostr(ServerContext.ResConfig[p[2]].key)+')');
@@ -2119,21 +2130,25 @@ begin
           sel.Add('Ids.ResourceKey in (select Target from IndexEntries where IndexKey = '+inttostr(key2)+' and ResourceKey in ('+keys.forType(p[0])+'))');
       end
       else
-        raise Exception.Create('Unable to process include '+s);
+        raise EFHIRException.createLang('MSG_BAD_SYNTAX', lang, [s]);
     end;
 
-    for s in _reverseIncludes.Split([';']) do
+    if _reverseIncludes.contains(',') then
+      sl := _reverseIncludes.Split([','])
+    else
+      sl := _reverseIncludes.Split([';']);
+    for s in sl do
     begin
       p := s.Split([':']);
       if (length(p) = 2) then
       begin
         key2 := ServerContext.Indexes.GetKeyByName(p[1]);
         if (key2 = 0) then
-          raise Exception.Create('Unknown Resource Parameter '+p[0]);
+          raise EFHIRException.createLang('MSG_PARAM_UNKNOWN', lang, [p[0]]);
         sel.Add('Ids.ResourceKey in (select IndexEntries.ResourceKey from IndexEntries, Ids where IndexKey = '+inttostr(key2)+' and Target in ('+keys.forAll+') and Ids.ResourceKey = IndexEntries.ResourceKey and Ids.ResourceTypeKey = '+inttostr(ServerContext.ResConfig[p[0]].key)+')');
       end
       else
-        raise Exception.Create('Unable to process include '+s);
+        raise EFHIRException.createLang('MSG_BAD_SYNTAX', lang, [s]);
     end;
     if (sel.count > 0) then
     begin
@@ -2148,7 +2163,7 @@ begin
       try
         FConnection.Execute;
         while FConnection.FetchNext do
-          AddResourceTobundle(bundle, secure, '', field, comp, SearchEntryModeInclude, false, type_);
+          AddResourceTobundle(bundle, secure, base, field, comp, SearchEntryModeInclude, false, type_);
       finally
         FConnection.Terminate;
       end;
@@ -2179,6 +2194,7 @@ begin
     ok := true;
     count := 0;
     offset := 0;
+    logt('s1');
     { todo:
      conformance
      quantity searches
@@ -2190,6 +2206,7 @@ begin
     else
     begin
       TypeNotFound(request, response);
+    logt('s2');
       if request.resourceName <> '' then
       begin
         key := FConnection.CountSQL('select ResourceTypeKey from Types where supported = 1 and ResourceName = '''+request.ResourceName+'''');
@@ -2201,18 +2218,20 @@ begin
 
       if ok then
       begin
-        response.OnCreateBuilder(response, BundleTypeSearchset, bundle);
+        response.OnCreateBuilder(request, response, BundleTypeSearchset, bundle);
         op := TFhirOperationOutcome.Create;
         keys := TKeyList.Create;
         try
           bundle.setLastUpdated(TDateTimeEx.makeUTC);
 //          bundle.base := request.baseUrl;
 
+    logt('s3');
           summaryStatus := request.Summary;
           if FindSavedSearch(request.parameters.value[SEARCH_PARAM_NAME_ID], request.Session, 1, id, link, sql, title, base, total, summaryStatus, request.strictSearch, reverse) then
             link := SEARCH_PARAM_NAME_ID+'='+request.parameters.value[SEARCH_PARAM_NAME_ID]
           else
             id := BuildSearchResultSet(key, request.Session, request.resourceName, request.Parameters, request.baseUrl, request.compartment, request.SessionCompartments, op, link, sql, total, summaryStatus, request.strictSearch, reverse);
+    logt('s4');
 
           bundle.setTotal(total);
           bundle.Tag('sql', sql);
@@ -2251,10 +2270,12 @@ begin
               if count < total then
                 bundle.addLink('last', base+link+'&'+SEARCH_PARAM_NAME_OFFSET+'='+inttostr((total div count) * count)+'&'+SEARCH_PARAM_NAME_COUNT+'='+inttostr(Count));
             end;
+    logt('s5');
 
             chooseField(response.Format, summaryStatus, request.loadObjects, field, comp, needsObject);
             if (not needsObject) and (request.Elements.Count = 0) and not request.Parameters.VarExists('__wantObject') then // param __wantObject is for internal use only
               comp := nil;
+    logt('s6');
 
             FConnection.SQL := 'Select Ids.ResourceKey, Types.ResourceName, Ids.Id, VersionId, Secure, StatedDate, Name, Versions.Status, Score1, Score2, Tags, '+field+' from Versions, Ids, Sessions, SearchEntries, Types '+
                 'where Ids.Deleted = 0 and SearchEntries.ResourceVersionKey = Versions.ResourceVersionKey and Types.ResourceTypeKey = Ids.ResourceTypeKey and '+'Versions.SessionKey = Sessions.SessionKey and SearchEntries.ResourceKey = Ids.ResourceKey and SearchEntries.SearchKey = '+id;
@@ -2267,6 +2288,7 @@ begin
               FConnection.Execute;
               i := 0;
               t := 0;
+    logt('s7');
               while FConnection.FetchNext do
               Begin
                 inc(i);
@@ -2282,9 +2304,11 @@ begin
             finally
               FConnection.Terminate;
             end;
+    logt('s8');
 
-            processIncludes(request.session, request.secure, request.Parameters.GetVar('_include'), request.Parameters.GetVar('_revinclude'), bundle, keys, field, comp);
+            processIncludes(request.session, request.secure, request.Parameters.GetVar('_include'), request.Parameters.GetVar('_revinclude'), bundle, keys, request.baseUrl, request.lang, field, comp);
           end;
+    logt('s9');
 
           bundle.setId(FhirGUIDToString(CreateGUID));
           if (op.issueList.Count > 0) then
@@ -2313,10 +2337,12 @@ begin
         end;
       end;
     end;
+    logt('sA');
     AuditRest(request.session, request.internalRequestId, request.externalRequestId, request.ip, request.ResourceName, '', '', 0, request.CommandType, request.Provenance, response.httpCode, request.Parameters.Source, response.message);
   except
     on e: exception do
     begin
+    logt('sB');
       AuditRest(request.session, request.internalRequestId, request.externalRequestId, request.ip, request.ResourceName, '', '', 0, request.CommandType, request.Provenance, 500, request.Parameters.Source, e.message);
       recordStack(e);
       raise;
@@ -3012,7 +3038,7 @@ end;
 procedure TFHIRNativeOperationEngine.checkNotSubsetted(meta: TFhirMeta; msg: String);
 begin
   if meta.HasTag('http://hl7.org/fhir/v3/ObservationValue', 'SUBSETTED') then
-    raise Exception.Create('Error '+msg+': This resource has been subsetted, and cannot be used as the basis for this operation');
+    raise EFHIRException.createLang('SUBSETTED', lang, [msg]);
 end;
 
 function TFHIRNativeOperationEngine.hasActCodeSecurityLabel(res : TFHIRResource; codes : array of string) : boolean;
@@ -3197,7 +3223,7 @@ begin
       begin
         if res is TFHIRStructureDefinition then
           if sd <> nil then
-            raise Exception.Create('Multiple structure definitions in a package; cannot load as a custom resource')
+            raise EFHIRException.create('Multiple structure definitions in a package; cannot load as a custom resource')
           else
             sd := TFHIRStructureDefinition(res);
         if res is TFhirSearchParameter then
@@ -3205,7 +3231,7 @@ begin
       end;
     end;
     if sd = nil then
-      raise Exception.Create('No structure definitions in a package; cannot load as a custom resource');
+      raise EFHIRException.create('No structure definitions in a package; cannot load as a custom resource');
     cr := TFHIRCustomResourceInformation.Create(sd.Link);
     try
       cr.SearchParameters.AddAll(list);
@@ -3478,7 +3504,7 @@ begin
   if entry.resource <> nil then
     aType := entry.resource.fhirType
   else if (entry.request = nil) or not (entry.request.method in [HttpVerbDELETE, HttpVerbGET]) or (entry.request.url = '') then // must be deleting something
-    raise Exception.Create('A resource must be provided unless the entry has a transaction with method = delete and a url (entry '+inttostr(index+1)+')')
+    raise EFHIRException.createLang('TRANSACTION_RESOURCE_MISSING', request.Lang, [inttostr(index+1)])
   else
   begin
     s := entry.request.url;
@@ -3487,18 +3513,18 @@ begin
     sParts := s.Split(['/']);
     aType := sParts[0];
     if not StringArrayExistsSensitive(CODES_TFhirResourceType, atype) and Not ServerContext.ValidatorContext.hasCustomResource(aType) then
-      raise Exception.Create('Unknown resource type '+sParts[0]+' in deletion URL');
+      raise EFHIRException.createLang('MSG_UNKNOWN_TYPE', Request.Lang, [sParts[0]]);
   end;
 
   if (entry.request <> nil) and (entry.request.method = HttpVerbDELETE) and not ServerContext.ResConfig[aType].cmdDelete then
-    Raise Exception.create('Deleting Resource '+CODES_TFHIRResourceType[entry.resource.ResourceType]+' is not supported in Transactions (entry '+inttostr(index+1)+')');
+    raise EFHIRException.createLang('MSG_OP_NOT_ALLOWED', Request.Lang, ['Delete', CODES_TFHIRResourceType[entry.resource.ResourceType]]);
 
 
   if not ServerContext.ResConfig[aType].cmdUpdate and not ServerContext.ResConfig[aType].cmdCreate then
-    Raise Exception.create('Resource '+CODES_TFHIRResourceType[entry.resource.ResourceType]+' is not supported in Transactions (entry '+inttostr(index+1)+')');
+    raise EFHIRException.createLang('MSG_OP_NOT_ALLOWED', Request.Lang, ['Create', CODES_TFHIRResourceType[entry.resource.ResourceType]]);
 
   if (entry.resource <> nil) and  (entry.resource.id.Contains('[x]')) then
-    raise Exception.Create('not handled - error in transaction (entry '+CODES_TFHIRResourceType[entry.resource.ResourceType]+'/'+entry.resource.id+' @ entry '+inttostr(index+1)+')');
+    raise EFHIRException.create('not handled - error in transaction (entry '+CODES_TFHIRResourceType[entry.resource.ResourceType]+'/'+entry.resource.id+' @ entry '+inttostr(index+1)+')');
     // this was a work around an for an error in the build tool - not needed any more
 //    entry.resource.id := entry.resource.id.replace('[x]',CODES_TFHIRResourceType[entry.resource.ResourceType]);
 
@@ -3542,7 +3568,7 @@ begin
                   id.outcomeVersion := list[0].version+1;
                 end
                 else if list.Count > 1 then
-                  raise Exception.Create(GetFhirMessage('UPDATE_MULTIPLE_MATCHES', lang)+' (entry '+inttostr(index+1)+')');
+                  raise EFHIRException.create(GetFhirMessage('UPDATE_MULTIPLE_MATCHES', lang)+' (entry '+inttostr(index+1)+')');
               finally
                 list.Free;
               end;
@@ -3551,7 +3577,7 @@ begin
             if id.state = tesCreate then
             begin
               if not GetNewResourceId(entry.resource.fhirType, false {testing-todo},  sId, k) then
-                raise exception.create(GetFhirMessage('MSG_RESOURCE_ID_FAIL', lang)+' (entry '+inttostr(index+1)+')');
+                raise EFHIRException.create(GetFhirMessage('MSG_RESOURCE_ID_FAIL', lang)+' (entry '+inttostr(index+1)+')');
               id.id := sId;
               id.key := k;
             end;
@@ -3575,12 +3601,12 @@ begin
                 begin
                   id.state := tesCreate;
                   if not GetNewResourceId(entry.resource.fhirType, false {testing-todo},   sId, k) then
-                    raise exception.create(GetFhirMessage('MSG_RESOURCE_ID_FAIL', lang)+' (entry '+inttostr(index+1)+')');
+                    raise EFHIRException.create(GetFhirMessage('MSG_RESOURCE_ID_FAIL', lang)+' (entry '+inttostr(index+1)+')');
                   id.id := sId;
                   id.key := k;
                 end
                 else if list.Count > 1 then
-                  raise Exception.Create(GetFhirMessage('UPDATE_MULTIPLE_MATCHES', lang)+' (entry '+inttostr(index+1)+')');
+                  raise EFHIRException.create(GetFhirMessage('UPDATE_MULTIPLE_MATCHES', lang)+' (entry '+inttostr(index+1)+')');
               finally
                 list.Free;
               end;
@@ -3592,18 +3618,18 @@ begin
                 id.outcomeVersion := FConnection.CountSQL('select Max(VersionId) from Versions where ResourceKey = '+inttostr(id.key))+1;
             end;
             if ids.ExistsByTypeAndId(id) then
-              raise Exception.create(StringFormat(GetFhirMessage('MSG_Transaction_DUPLICATE_ID', lang), [id.restype+'/'+id.id])+' (entry '+inttostr(index+1)+')');
+              raise EFHIRException.create(StringFormat(GetFhirMessage('MSG_Transaction_DUPLICATE_ID', lang), [id.restype+'/'+id.id])+' (entry '+inttostr(index+1)+')');
 
             if (id.state = tesUpdate) and (id.key <> 0) then
             begin
               if entry.request.ifMatch <> '' then
               begin
                 if 'W/"'+inttostr(id.outcomeVersion)+'"' <> entry.request.ifMatch then
-                  raise Exception.Create(StringFormat(GetFhirMessage('MSG_VERSION_AWARE_CONFLICT', lang), ['W/"'+inttostr(id.outcomeVersion)+'"', entry.request.ifMatch])+' (entry '+inttostr(index+1)+')');
+                  raise EFHIRException.create(StringFormat(GetFhirMessage('MSG_VERSION_AWARE_CONFLICT', lang), ['W/"'+inttostr(id.outcomeVersion)+'"', entry.request.ifMatch])+' (entry '+inttostr(index+1)+')');
               end;
             end
             else if entry.request.ifMatch <> '' then
-               raise Exception.Create(StringFormat(GetFhirMessage('MSG_VERSION_AWARE_CONFLICT', lang), ['(n/a)', entry.request.ifMatch])+' (entry '+inttostr(index+1)+')');
+               raise EFHIRException.create(StringFormat(GetFhirMessage('MSG_VERSION_AWARE_CONFLICT', lang), ['(n/a)', entry.request.ifMatch])+' (entry '+inttostr(index+1)+')');
           end;
         HttpVerbDELETE :
           begin
@@ -3625,7 +3651,7 @@ begin
                   id.state := tesIgnore;
                 end
                 else if list.Count > 1 then
-                  raise Exception.Create(GetFhirMessage('UPDATE_MULTIPLE_MATCHES', lang)+' (entry '+inttostr(index+1)+')');
+                  raise EFHIRException.create(GetFhirMessage('UPDATE_MULTIPLE_MATCHES', lang)+' (entry '+inttostr(index+1)+')');
               finally
                 list.Free;
               end;
@@ -3637,7 +3663,7 @@ begin
                 id.outcomeVersion := FConnection.CountSQL('select Max(VersionId) from Versions where ResourceKey = '+inttostr(id.key)) + 1;
             end;
             if (id.state = tesDelete) and ids.ExistsByTypeAndId(id) then
-                  raise Exception.create(StringFormat(GetFhirMessage('MSG_Transaction_DUPLICATE_ID', lang), [id.restype+'/'+id.id])+' (entry '+inttostr(index+1)+')');
+                  raise EFHIRException.create(StringFormat(GetFhirMessage('MSG_Transaction_DUPLICATE_ID', lang), [id.restype+'/'+id.id])+' (entry '+inttostr(index+1)+')');
 
             // version check
             if (id.state = tesDelete) and (id.key <> 0) then
@@ -3645,26 +3671,26 @@ begin
               if entry.request.ifMatch <> '' then
               begin
                 if 'W/"'+inttostr(id.outcomeVersion)+'"' <> entry.request.ifMatch then
-                 raise Exception.Create(StringFormat(GetFhirMessage('MSG_VERSION_AWARE_CONFLICT', lang), ['W/"'+inttostr(id.outcomeVersion)+'"', entry.request.ifMatch])+' (entry '+inttostr(index+1)+')');
+                 raise EFHIRException.create(StringFormat(GetFhirMessage('MSG_VERSION_AWARE_CONFLICT', lang), ['W/"'+inttostr(id.outcomeVersion)+'"', entry.request.ifMatch])+' (entry '+inttostr(index+1)+')');
               end;
             end
             else if entry.request.ifMatch <> '' then
-              raise Exception.Create(StringFormat(GetFhirMessage('MSG_VERSION_AWARE_CONFLICT', lang), ['(n/a)', entry.request.ifMatch])+' (entry '+inttostr(index+1)+')')
+              raise EFHIRException.create(StringFormat(GetFhirMessage('MSG_VERSION_AWARE_CONFLICT', lang), ['(n/a)', entry.request.ifMatch])+' (entry '+inttostr(index+1)+')')
             else if (id.state = tesDelete) then
               id.state := tesIgnore; // nothing to delete
           end
         else
-          raise Exception.Create('illegal method type on entry?');
+          raise EFHIRException.create('illegal method type on entry?');
       end;
     end
     else
     begin
       id.state := tesCreate; // or it might be update - we'll figure out whether it's a create or an update based on the resource itself
       if (entry.resource = nil) then
-        raise Exception.create('resource cannot be missing (entry '+inttostr(index+1)+')');
+        raise EFHIRException.createLang('TRANSACTION_RESOURCE_MISSING', request.Lang, [inttostr(index+1)]);
       if (entry.resource.id <> '') and not IsId(entry.resource.id) then
         entry.resource.id := ''; // just ignore it
-//        raise Exception.create('resource id is illegal ("'+entry.resource.id+'") (entry '+inttostr(index+1)+')');
+//        raise EFHIRException.createLang('resource id is illegal ("'+entry.resource.id+'") (entry '+inttostr(index+1)+')');
       if (entry.fullUrl = '') or (entry.fullUrl.StartsWith(request.baseUrl)) then
         baseok := true
       else
@@ -3682,14 +3708,14 @@ begin
           if ids.dropDuplicates then
             id.state := tesIgnore
           else
-            raise Exception.create(StringFormat(GetFhirMessage('MSG_TRANSACTION_DUPLICATE_ID', lang), [id.restype+'/'+id.id])+' (entry '+inttostr(index+1)+')');
+            raise EFHIRException.create(StringFormat(GetFhirMessage('MSG_TRANSACTION_DUPLICATE_ID', lang), [id.restype+'/'+id.id])+' (entry '+inttostr(index+1)+')');
       end;
       case id.state of
         tesIgnore: ; // yup, ignore it
         tesCreate:
           begin
             if not GetNewResourceId(entry.resource.FhirType,  false {testing-todo},  sId, k) then
-              raise exception.create(GetFhirMessage('MSG_RESOURCE_ID_FAIL', lang)+' (entry '+inttostr(index+1)+')');
+              raise EFHIRException.create(GetFhirMessage('MSG_RESOURCE_ID_FAIL', lang)+' (entry '+inttostr(index+1)+')');
             id.id := sId;
             id.key := k;
             entry.resource.id := sId;
@@ -3744,12 +3770,12 @@ begin
         if (vhist = '') then
           node.Attributes.SetValue('href', ids[j].resType+'/'+ids[j].id)
         else if (ids[j].version <> '') and (ids[j].version <> vHist) then
-          Raise Exception.create(StringFormat(GetFhirMessage('Version ID Mismatch for '+url+' in narrative: reference to version '+vHist+', reference is '+ids[j].version, lang), [s]))
+          raise EFHIRException.create(StringFormat(GetFhirMessage('Version ID Mismatch for '+url+' in narrative: reference to version '+vHist+', reference is '+ids[j].version, lang), [s]))
         else
           node.Attributes.SetValue('href', ids[j].resType+'/'+ids[j].id+'/_history/'+inttostr(ids[j].outcomeVersion));
       end
       else if isLogicalReference(s) then
-        Raise Exception.create(StringFormat(GetFhirMessage('MSG_LOCAL_FAIL', lang), [s]));
+        raise EFHIRException.create(StringFormat(GetFhirMessage('MSG_LOCAL_FAIL', lang), [s]));
     end;
     if (node.Name = 'img') and (node.Attributes.Get('src') <> '') then
     begin
@@ -3758,7 +3784,7 @@ begin
       if (j > -1) then
         node.Attributes.SetValue('src', base+ids[j].resType+'/'+ids[j].id)
       else if isLogicalReference(s) then
-        Raise Exception.create(StringFormat(GetFhirMessage('MSG_LOCAL_FAIL', lang), [s]));
+        raise EFHIRException.create(StringFormat(GetFhirMessage('MSG_LOCAL_FAIL', lang), [s]));
     end;
     for i := 0 to node.ChildNodes.count - 1 do
       FixXhtmlUrls(lang, base, ids, node.childNodes[i]);
@@ -3807,7 +3833,7 @@ begin
         if (vhist = '') then
           ref.reference := ids[j].resType+'/'+ids[j].id
         else if (ids[j].version <> '') and (ids[j].version <> vHist) then
-          Raise Exception.create(StringFormat(GetFhirMessage('Version ID Mismatch for '+url+': reference to version '+vHist+', reference is '+ids[j].version, lang), [ref.reference]))
+          raise EFHIRException.create(StringFormat(GetFhirMessage('Version ID Mismatch for '+url+': reference to version '+vHist+', reference is '+ids[j].version, lang), [ref.reference]))
         else
           ref.reference :=  ids[j].resType+'/'+ids[j].id+'/_history/'+inttostr(ids[j].outcomeVersion);
       end;
@@ -3825,7 +3851,7 @@ begin
       if (j > -1) then
         attachment.url := ids[j].resType+'/'+ids[j].id
       else if isLogicalReference(attachment.url) then
-        Raise Exception.create(StringFormat(GetFhirMessage('MSG_LOCAL_FAIL', lang), [attachment.url]));
+        raise EFHIRException.create(StringFormat(GetFhirMessage('MSG_LOCAL_FAIL', lang), [attachment.url]));
     end;
   finally
     attachments.free;
@@ -3839,7 +3865,7 @@ begin
       if (j > -1) then
         extension.url := base+ids[j].resType+'/'+ids[j].id
       else if isLogicalReference(extension.url) then
-        Raise Exception.create(StringFormat(GetFhirMessage('MSG_LOCAL_FAIL', lang), [extension.url]));
+        raise EFHIRException.create(StringFormat(GetFhirMessage('MSG_LOCAL_FAIL', lang), [extension.url]));
     end;
   end;
   // special case: XdsEntry
@@ -3853,7 +3879,7 @@ begin
         if (j > -1) then
           attachment.url := base+ids[j].resType+'/'+ids[j].id
         else if isLogicalReference(Attachment.url) then
-          Raise Exception.create(StringFormat(GetFhirMessage('MSG_LOCAL_FAIL', lang), [attachment.url]));
+          raise EFHIRException.create(StringFormat(GetFhirMessage('MSG_LOCAL_FAIL', lang), [attachment.url]));
       end;
     end;
 
@@ -3895,7 +3921,7 @@ begin
   //        if (entry.request <> nil) and (entry.request.url.contains('?')) then
   //        begin
   //          if Id.count <> ResolveSearchIdCount(id.resType, request.compartmentId, request.compartments, request.baseUrl, entry.request.url.substring(entry.request.url.IndexOf('?')+1)) then
-  //            raise Exception.Create('error processing batch - id clash: one of the create statements altered the processing of a conditional update: '+entry.request.url);
+  //            raise EFHIRException.createLang('error processing batch - id clash: one of the create statements altered the processing of a conditional update: '+entry.request.url);
   //        end;
           ExecuteUpdate(context, request, response);
         end;
@@ -3904,7 +3930,7 @@ begin
   //        if (entry.request <> nil) and (entry.request.url.contains('?')) then
   //        begin
   //          if Id.count <> ResolveSearchIdCount(id.resType, request.compartmentId, request.compartments, request.baseUrl, entry.request.url.substring(entry.request.url.IndexOf('?')+1)) then
-  //            raise Exception.Create('error processing batch - id clash: one of the create or update statements altered the processing of a conditional delete: '+entry.request.url);
+  //            raise EFHIRException.createLang('error processing batch - id clash: one of the create or update statements altered the processing of a conditional delete: '+entry.request.url);
   //        end;
           ExecuteDelete(request, Response);
         end;
@@ -4082,7 +4108,7 @@ begin
           write('.');
 
           if (resp.type_ = BundleTypeBatch) and (src.request = nil) then
-            raise Exception.Create('No request details');
+            raise EFHIRException.create('No request details');
           if (src.request = nil) then
           begin
             src.request := TFhirBundleEntryRequest.Create;
@@ -4168,7 +4194,7 @@ begin
   begin
     inherited ExecuteOperation(context, request, response);
     if (request.Parameters.VarExists('_graphql') and (response.Resource <> nil) and (response.Resource.ResourceType <> frtOperationOutcome)) then
-      processGraphQL(context, request.Parameters.GetVar('_graphql'), request, response);
+      processGraphQL(request.Parameters.GetVar('_graphql'), request, response);
   end;
 end;
 
@@ -4240,7 +4266,7 @@ end;
 //      b := true;
 //    end;
 //  if not b then
-//    raise exception.create('key '+inttostr(key)+' not found');
+//    raise EFHIRException.createLang('key '+inttostr(key)+' not found');
 //end;
 
 procedure TFHIRNativeOperationEngine.CommitTags(tags: TFHIRTagList; key: integer);
@@ -4386,7 +4412,7 @@ end;
 //        try
 //          // for now, we simply get the base profile
 //          if source is TFHirStructureDefinition then
-//            raise Exception.Create('Editing a profile via a profile questionnaire is not supported');
+//            raise EFHIRException.createLang('Editing a profile via a profile questionnaire is not supported');
 //
 //          profile := GetProfileByURL('http://hl7.org/fhir/StructureDefinition/'+Codes_TFHIRResourceType[source.ResourceType], id);
 //          try
@@ -4522,7 +4548,7 @@ var
 //          else if (request.Resource <> nil) and (request.Resource is TFHirStructureDefinition) then
 //            profile := request.Resource.Link as TFHirStructureDefinition
 //          else
-//            raise Exception.Create('Unable to find profile to convert (not provided by id, identifier, or directly)');
+//            raise EFHIRException.createLang('Unable to find profile to convert (not provided by id, identifier, or directly)');
 //
 //          if id <> '' then
 //          begin
@@ -4909,7 +4935,7 @@ begin
     for res in TFHIRDomainResource(source).containedList do
       if '#'+res.id = url then
         exit(res);
-    raise Exception.Create('Unable to find contained resource '+url);
+    raise ERestfulException.create('TFHIRNativeOperationEngine', 'GetResourceByUrl', 'Cannot resolve local reference: '+url, 404, IssueTypeNotFound);
   end;
 
   for i := 0 to ServerContext.Bases.Count - 1 do
@@ -4969,7 +4995,7 @@ end;
 
 
 
-function ReadOperator(s : String) : TFhirFilterOperatorEnum;
+function ReadOperator(lang, s : String) : TFhirFilterOperatorEnum;
 begin
   s := LowerCase(s);
   if s = '' then
@@ -4983,7 +5009,7 @@ begin
   else if (s = 'regex') then
     result := FilterOperatorRegex
   else
-    raise Exception.create('Unhandled filter operator value "'+s+'"');
+    raise EFHIRException.createLang('UNKNOWN_FILTER_OPERATOR', lang, [s]);
 end;
 
 //function TFHIRNativeOperationEngine.constructValueSet(params: TParseMap; var used: String; allowNull : Boolean): TFhirValueset;
@@ -5051,7 +5077,7 @@ end;
 //    if not empty then
 //      result.link
 //    else if not allowNull then
-//      raise Exception.Create('Not value set details found');
+//      raise EFHIRException.createLang('Not value set details found');
 //  finally
 //    result.free;
 //  end;
@@ -5091,7 +5117,7 @@ begin
     if verkey <> 0 then
       se.Tags['verkey'] := inttostr(verkey);
     if intreqid = '' then
-      raise Exception.Create('Unidentified request');
+      raise EFHIRException.create('Unidentified request');
     se.id := intreqid;
 
     {$IFNDEF FHIR2}
@@ -5122,7 +5148,7 @@ begin
       fcmdUpload:          event('rest', 'http://hl7.org/fhir/security-event-type', 'Restful Operation', 'upload', 'http://hl7.org/fhir/restful-operation', AuditEventActionE);
       fcmdOperation:       event('rest', 'http://hl7.org/fhir/security-event-type', 'Restful Operation', 'operation', 'http://hl7.org/fhir/restful-operation', AuditEventActionE);
     else // fcmdUnknown
-      raise exception.create('unknown operation');
+      raise EFHIRException.create('unknown operation');
     end;
     if op = fcmdOperation then
     begin
@@ -5416,7 +5442,7 @@ begin
         if (a.Enum = b.Enum) and (a.Id = b.Id) then
           ok := true;
       if not ok then
-        raise Exception.create('Compartment error: no access to compartment for '+a.ToString);
+        raise EFHIRException.createLang('COMPARTMENT_ERROR', lang, [a.ToString]);
     end;
   end;
 end;
@@ -5454,7 +5480,7 @@ end;
 
 //procedure TFHIRNativeOperationEngine.ProcessMsgQuery(request: TFHIRRequest; response: TFHIRResponse; bundle : TFHIRBundle);
 //begin
-//  raise exception.create('query-response is not yet supported');
+//  raise EFHIRException.createLang('query-response is not yet supported');
 //end;
 
 //function TFHIRNativeOperationEngine.BuildResponseMessage(request: TFHIRRequest; incoming: TFhirMessageHeader): TFhirMessageHeader;
@@ -5499,27 +5525,27 @@ end;
 //  try
 //    s := msg.event.code;
 //    if s = 'MedicationAdministration-Complete' then
-//      raise exception.create('MedicationAdministration-Complete is not yet supported')
+//      raise EFHIRException.createLang('MedicationAdministration-Complete is not yet supported')
 //    else if s = 'MedicationAdministration-Nullification' then
-//      raise exception.create('MedicationAdministration-Nullification is not yet supported')
+//      raise EFHIRException.createLang('MedicationAdministration-Nullification is not yet supported')
 //    else if s = 'MedicationAdministration-Recording' then
-//      raise exception.create('MedicationAdministration-Recording is not yet supported')
+//      raise EFHIRException.createLang('MedicationAdministration-Recording is not yet supported')
 //    else if s = 'MedicationAdministration-Update' then
-//      raise exception.create('MedicationAdministration-Update is not yet supported')
+//      raise EFHIRException.createLang('MedicationAdministration-Update is not yet supported')
 //    else if s = 'admin-notify' then
-//      raise exception.create('admin-notify is not yet supported')
+//      raise EFHIRException.createLang('admin-notify is not yet supported')
 //    else if s = 'diagnosticreport-provide' then
-//      raise exception.create('diagnosticreport-provide is not yet supported')
+//      raise EFHIRException.createLang('diagnosticreport-provide is not yet supported')
 //    else if s = 'observation-provide' then
-//      raise exception.create('observation-provide is not yet supported')
+//      raise EFHIRException.createLang('observation-provide is not yet supported')
 //    else if s = 'query' then
 //      ProcessMsgQuery(request, response, bundle)
 //    else if s = 'query-response' then
-//      raise exception.create('query-response is not yet supported')
+//      raise EFHIRException.createLang('query-response is not yet supported')
 ////    else if s = 'make-claim' then
 ////      ProcessMsgClaim(request, msg, resp, bundle, bundle)
 //    else
-//      raise exception.create('Unknown message event: "'+s+'"');
+//      raise EFHIRException.createLang('Unknown message event: "'+s+'"');
 //
 //  except
 //    on e:exception do
@@ -5617,7 +5643,7 @@ begin
 //  finally
 //    entry.Free;
 //  end;
-  raise Exception.Create('To do');
+  raise EFHIRException.createLang('To do');
   (*
   entry := TFHIRBundleEntry.Create;
   try
@@ -5644,26 +5670,26 @@ begin
   if resource is TFhirSubscription then
   begin
     if (TFhirSubscription(resource).status <> SubscriptionStatusRequested) and (request.origin = roRest) then // nil = from the internal system, which is allowed to
-      raise Exception.Create('Subscription status must be "requested", not '+TFhirSubscription(resource).statusElement.value);
+      raise EFHIRException.create('Subscription status must be "requested", not '+TFhirSubscription(resource).statusElement.value);
     if (TFhirSubscription(resource).channel = nil) then
-      raise Exception.Create('Subscription must have a channel');
+      raise EFHIRException.create('Subscription must have a channel');
     if (TFhirSubscription(resource).channel.type_ = SubscriptionChannelTypeWebsocket) and not ((TFhirSubscription(resource).channel.payload = '') or StringArrayExistsSensitive(['application/xml+fhir', 'application/fhir+xml', 'application/xml', 'application/json+fhir', 'application/fhir+json', 'application/json'], TFhirSubscription(resource).channel.payload)) then
-      raise Exception.Create('A websocket subscription must have a no payload, or the payload must be application/xml+fhir or application/json+fhir');
+      raise EFHIRException.create('A websocket subscription must have a no payload, or the payload must be application/xml+fhir or application/json+fhir');
     if (TFhirSubscription(resource).status = SubscriptionStatusRequested) then
       TFhirSubscription(resource).status := SubscriptionStatusActive; // well, it will be, or it will be rejected later
     StringSplit(TFhirSubscription(resource).criteria, '?', l, r);
     if (StringArrayIndexOfSensitive(CODES_TFhirResourceType, l) < 1) or (r = '') then
-      raise Exception.Create('Criteria is not valid');
+      raise EFHIRException.create('Criteria is not valid');
   end;
   if (resource is TFhirOperationDefinition) then
   begin
     if resource.id.StartsWith('fso-') and (resource.tags['internal'] <> '1') then
-      raise Exception.Create('operation Definitions that start with "fso-" are managed by the system directly, and cannot be changed through the REST API');
+      raise EFHIRException.create('operation Definitions that start with "fso-" are managed by the system directly, and cannot be changed through the REST API');
   end;
   if (resource is TFHIRStructureDefinition) then
   begin
     if ServerContext.ValidatorContext.hasCustomResourceDefinition(TFHIRStructureDefinition(resource)) then
-      raise Exception.Create('Cannot update a structure definition that is in use as a custom resource');
+      raise EFHIRException.create('Cannot update a structure definition that is in use as a custom resource');
   end;
 end;
 
@@ -5673,12 +5699,12 @@ begin
   if (resource is TFhirOperationDefinition) then
   begin
     if resource.id.StartsWith('fso-') then
-      raise Exception.Create('operation Definitions that start with "fso-" are managed by the system directly, and cannot be changed through the REST API');
+      raise EFHIRException.create('operation Definitions that start with "fso-" are managed by the system directly, and cannot be changed through the REST API');
   end;
   if (resource is TFHIRStructureDefinition) then
   begin
     if ServerContext.ValidatorContext.hasCustomResourceDefinition(TFHIRStructureDefinition(resource)) then
-      raise Exception.Create('Cannot delete a structure definition that is in use as a custom resource');
+      raise EFHIRException.create('Cannot delete a structure definition that is in use as a custom resource');
   end;
 end;
 
@@ -5906,7 +5932,7 @@ begin
       else
       begin
         if not pIn.hasParameter('source') then
-          raise Exception.Create('No Source System specified');
+          raise EFHIRException.createLang('JWT_NO_SOURCE', request.lang);
         jwt := native(manager).ServerContext.JWTServices.makeJWT;
       end;
       response.HTTPCode := 200;
@@ -5995,7 +6021,7 @@ begin
           else if params.hasParameter('resource') then
             res := params.res['resource'].Link
           else
-            raise Exception.Create('Unable to find value set to expand (not provided by id, identifier, or directly)');
+            raise EFHIRException.createLang('OP_NO_RESOURCE', request.lang, ['ValueSet']);
           try
             genlang := params.str['language'];
             codegen := makeCodeGenerator(genlang);
@@ -6120,7 +6146,7 @@ begin
           else if (request.Resource <> nil) and (request.Resource is TFHirStructureDefinition) then
             profile := request.Resource.Link as TFHirStructureDefinition
           else
-            raise Exception.Create('Unable to find profile to convert (not provided by id, identifier, or directly)');
+            raise EFHIRException.createLang('OP_NO_RESOURCE', request.lang, ['Profile']);
 
           profile.checkNoImplicitRules('QuestionnaireGeneration', 'profile');
           profile.checkNoModifiers('QuestionnaireGeneration', 'profile');
@@ -6225,13 +6251,13 @@ begin
 end;
 
 
-function TFhirObservationStatsOperation.resolveParameter(code: String): TObservationStatsParameter;
+function TFhirObservationStatsOperation.resolveParameter(lang, code: String): TObservationStatsParameter;
 var
   i  : integer;
 begin
   i := StringArrayIndexOfSensitive(CODES_TObservationStatsParameter, code);
   if i = -1 then
-    raise Exception.Create('Unknown parameter '+code);
+    raise EFHIRException.createLang('MSG_PARAM_UNKNOWN', lang, [code]);
   result := TObservationStatsParameter(i);
 end;
 
@@ -6273,7 +6299,7 @@ begin
         for c in req.codingList do
           ose.concepts.add(c.Link);
         if (ose.concepts.empty) then
-          raise Exception.Create('no code or coding found');
+          raise EFHIRException.create('no code or coding found');
         if (req.duration <> '') then
         begin
           ose.start := TDateTimeEx.makeUTC.DateTime - DATETIME_HOUR_ONE * StrToFloat(req.duration);
@@ -6282,19 +6308,19 @@ begin
         else if (req.period <> nil) then
         begin
           if (req.period.start.null) then
-            raise Exception.Create('Period.start is required');
+            raise EFHIRException.create('Period.start is required');
           ose.start := req.period.start.UTC.DateTime;
           if (req.period.end_.null) then
-            raise Exception.Create('Period.end is required');
+            raise EFHIRException.create('Period.end is required');
           ose.finish := req.period.end_.UTC.DateTime;
         end
         else
-          raise Exception.Create('duration or period is required');
+          raise EFHIRException.create('duration or period is required');
         if (req.statisticList.Count = 0) then
-          raise Exception.Create('at least one parameter is required');
+          raise EFHIRException.create('at least one parameter is required');
 
         for s in req.statisticList do
-          ose.parameters := ose.parameters + [resolveParameter(s)];
+          ose.parameters := ose.parameters + [resolveParameter(request.Lang, s)];
 
         ose.execute;
         if (req.include) then
@@ -6389,7 +6415,7 @@ begin
       sp.Connection := conn.link;
       sp.build;
 
-      response.OnCreateBuilder(response, BundleTypeSearchset, bundle);
+      response.OnCreateBuilder(request, response, BundleTypeSearchset, bundle);
       op := TFhirOperationOutcome.Create;
       keys := TKeyList.Create;
       try
@@ -6437,7 +6463,7 @@ begin
         finally
           conn.Terminate;
         end;
-        native(manager).processIncludes(request.session, request.secure, request.Parameters.GetVar('_include'), request.Parameters.GetVar('_revinclude'), bundle, keys, field, comp);
+        native(manager).processIncludes(request.session, request.secure, request.Parameters.GetVar('_include'), request.Parameters.GetVar('_revinclude'), bundle, keys, request.baseUrl, request.Lang, field, comp);
 
 //          if (op.issueList.Count > 0) then
 //          begin
@@ -6507,27 +6533,27 @@ var
   c : TFHIRCodING;
 begin
   if consent.status <> ConsentStateCodesActive then
-    raise Exception.Create('Consent must be active');
+    raise EFHIRException.create('Consent must be active');
   if consent.patient = nil then
-    raise Exception.Create('Consent has no identified patient');
+    raise EFHIRException.create('Consent has no identified patient');
   result := resolvePatient(manager, request, consent.patient.reference);
   if result = 0 then
-    raise Exception.Create('Consent Patient unknown');
+    raise EFHIRException.create('Consent Patient unknown');
   patientId := consent.patient.reference.Split(['/'])[1];
   {$IFDEF FHIR3}
   if (consent.period <> nil) and (consent.period.end_.DateTime < expiry) then
-    raise Exception.Create('Consent expires ('+consent.period.end_.toString('c')+') before the end of the nominated duration');
+    raise EFHIRException.create('Consent expires ('+consent.period.end_.toString('c')+') before the end of the nominated duration');
   if (consent.policyRule <> 'http://hl7.org/fhir/ConsentDefinition/simple-oauth') then
-    raise Exception.Create('Consent must have policy "http://hl7.org/fhir/ConsentDefinition/simple-oauth" as it''s policy');
+    raise EFHIRException.create('Consent must have policy "http://hl7.org/fhir/ConsentDefinition/simple-oauth" as it''s policy');
   if (consent.except_List.Count <> 1) then
-    raise Exception.Create('Consent must have a single exception');
+    raise EFHIRException.create('Consent must have a single exception');
   ok := false;
   for c in consent.except_List[0].class_List do
     ok := ok or (c.System = 'http://smarthealthit.org/fhir/scopes');
   if not ok then
-    raise Exception.Create('Consent must have at least one Smart App Launch scope');
+    raise EFHIRException.create('Consent must have at least one Smart App Launch scope');
   {$ELSE}
-  raise Exception.Create('This operation is only supported in R3 for now');
+  raise EFHIRException.create('This operation is only supported in R3 for now');
   {$ENDIF}
 end;
 
@@ -6538,9 +6564,9 @@ var
 begin
   P := params.param['duration'];
   if p = nil then
-    raise Exception.Create('Parameter duration not found');
+    raise EFHIRException.create('Parameter duration not found');
   if (p.value = nil) or not (p.value is TFhirDuration) then
-    raise Exception.Create('Parameter duration must have a value of type Duration');
+    raise EFHIRException.create('Parameter duration must have a value of type Duration');
   q := p.value as TFhirDuration;
   result := TDateTimeEx.makeLocal.add(q.ToDateTime).DateTime;
 end;
@@ -6623,9 +6649,9 @@ var
 begin
   P := params.param['jwt'];
   if p = nil then
-    raise Exception.Create('Parameter "jwt" not found');
+    raise EFHIRException.create('Parameter "jwt" not found');
   if (p.value = nil) or not (p.value is TFhirString) then
-    raise Exception.Create('Parameter duration must have a value of type String');
+    raise EFHIRException.create('Parameter duration must have a value of type String');
   result := TJWTUtils.unpack(p.value.primitiveValue, false, nil); // todo
 end;
 
@@ -6688,7 +6714,7 @@ begin
     profileId := getParam('profile');
     // reject mode - we don't know what to do with it
     if getParam('mode') <> '' then
-      raise Exception.Create('Mode parameter is not (yet) supported');
+      raise EFHIRException.create('Mode parameter is not (yet) supported');
 
     if StringStartsWith(ProfileId, 'http://localhost/StructureDefinition/') then
       profile := native(manager).GetResourceById(request, 'StructureDefinition', copy(ProfileId, 27, $FF), request.baseUrl, needSecure) as TFhirStructureDefinition
@@ -6702,7 +6728,7 @@ begin
     if Profile <> nil then
       opDesc := 'Validate resource '+request.id+' against profile '+profileId
     else if (profileId <> '') then
-      raise Exception.Create('The profile "'+profileId+'" could not be resolved')
+      raise EFHIRException.createLang('MSG_NO_MATCH', request.lang, [profileId])
     else
       opDesc := 'Validate resource '+request.id;
 
@@ -6821,7 +6847,7 @@ begin
           else if params.hasParameter('definition') then
             gd := TFHIRGraphDefinitionParser.parse(params.str['definition'])
           else
-            raise Exception.Create('No Graph definition found');
+            raise EFHIRException.create('No Graph definition found');
           try
 
             engine := TFHIRGraphDefinitionEngine.Create(native(manager).ServerContext.ValidatorContext.Link);
@@ -6907,7 +6933,7 @@ begin
         request.compartment := TFHIRCompartmentId.Create(request.ResourceEnum, '*')
       else
         request.compartment := TFHIRCompartmentId.Create(request.ResourceEnum, request.Id);
-      response.OnCreateBuilder(response, BundleTypeCollection, bundle);
+      response.OnCreateBuilder(request, response, BundleTypeCollection, bundle);
       includes := TReferenceList.create;
       keys := TKeyList.Create;
       params := TParseMap.Create('');
@@ -7211,7 +7237,7 @@ begin
       end
     end
     else if required then
-      raise Exception.Create('Unable to resolve reference '''+reference.reference+'''');
+      raise EFHIRException.createLang('MSG_NO_MATCH', request.lang, [reference.reference]);
   finally
     res.Free;
   end;
@@ -7444,7 +7470,7 @@ begin
           else if (request.Resource <> nil) and (request.Resource is TFHIRClaim) then
             claim := request.Resource.Link as TFHIRClaim
           else
-            raise Exception.Create('Unable to find claim to process (not provided by id, identifier, or directly)');
+            raise EFHIRException.createLang('OP_NO_RESOURCE', request.lang, ['Claim']);
 
           claim.checkNoImplicitRules('ProcessClaim', 'claim');
           claim.checkNoModifiers('ProcessClaim', 'claim');
@@ -7559,24 +7585,24 @@ begin
         else if (request.Resource <> nil) and (request.Resource is TFhirStructureDefinition) then
           sdParam := request.Resource.Link as TFhirStructureDefinition
         else
-          raise Exception.Create('Unable to find profile to generate snapshot for');
+          raise EFHIRException.createLang('OP_NO_RESOURCE', request.Lang, ['Profile']);
 
         sdParam.checkNoImplicitRules('GenerateSnapshot', 'profile');
         sdParam.checkNoModifiers('GenerateSnapshot', 'profile');
         if sdParam.baseDefinition <> '' then
         begin
           if not native(manager).ServerContext.ValidatorContext.Profiles.getProfileStructure(nil, sdParam.baseDefinition, sdBase) then
-            raise Exception.Create('StructureDefinition base profile "'+sdParam.baseDefinition+'" not found');
+          raise EFHIRException.createLang('MSG_NO_MATCH', request.Lang, ['base profile "'+sdParam.baseDefinition+'"']);
         end
         else if params.hasParameter('base') then
         begin
           if not native(manager).ServerContext.ValidatorContext.Profiles.getProfileStructure(nil, params.str['base'], sdBase) then
-            raise Exception.Create('Nominated base profile "'+params.str['base']+'" not found');
+          raise EFHIRException.createLang('MSG_NO_MATCH', request.Lang, ['base profile "'+params.str['base']+'"']);
         end
         else
         begin
           if not native(manager).ServerContext.ValidatorContext.Profiles.getProfileStructure(nil, sdBase.baseDefinition, sdBase) then
-            raise Exception.Create('Implicit base definition "'+sdBase.baseDefinition+'" not found');
+           raise EFHIRException.createLang('MSG_NO_MATCH', request.Lang, ['Implicit base definition "'+sdBase.baseDefinition+'"']);
         end;
 
         op := TFhirOperationOutcome.Create;
@@ -7681,7 +7707,7 @@ begin
           else if (request.Resource <> nil) and (request.Resource is TFHirStructureDefinition) then
             profile := request.Resource.Link as TFHirStructureDefinition
           else
-            raise Exception.Create('Unable to find profile to convert (not provided by id, identifier, or directly)');
+            raise EFHIRException.createLang('OP_NO_RESOURCE', request.lang, ['profile']);
 
           profile.checkNoImplicitRules('GenerateTemplate', 'profile');
           profile.checkNoModifiers('GenerateTemplate', 'profile');
@@ -7763,7 +7789,7 @@ begin
   try
     r := request.Resource;
     if (r = nil) then
-      raise Exception.Create('No resource found');
+      raise EFHIRException.create('No resource found');
     if r is TFhirDomainResource then
     begin
       r.checkNoImplicitRules('GenerateNarrative', 'resource');
@@ -7821,7 +7847,7 @@ end;
 
 procedure TFhirSuggestKeyWordsOperation.Execute(context : TOperationContext; manager: TFHIROperationEngine; request: TFHIRRequest; response: TFHIRResponse);
 begin
-  raise Exception.Create('Not done yet');
+  raise EFHIRException.CreateLang('NOT_DONE_YET', Request.lang);
 end;
 
 function TFhirSuggestKeyWordsOperation.isWrite: boolean;
@@ -8052,7 +8078,7 @@ begin
         native(manager).FConnection.prepare;
         native(manager).FConnection.Execute;
         if not native(manager).FConnection.FetchNext then
-          raise Exception.Create('Internal Error fetching current content');
+          raise EFHIRException.create('Internal Error fetching current content');
         blob := native(manager).FConnection.ColBlobByName['JsonContent'];
         deleted := native(manager).FConnection.ColIntegerByName['Status'] = 2;
         native(manager).FConnection.Terminate;
@@ -8210,7 +8236,7 @@ begin
         native(manager).FConnection.prepare;
         native(manager).FConnection.Execute;
         if not native(manager).FConnection.FetchNext then
-          raise Exception.Create('Internal Error fetching current content');
+          raise EFHIRException.create('Internal Error fetching current content');
         blob := native(manager).FConnection.ColBlobByName['JsonContent'];
         deleted := native(manager).FConnection.ColIntegerByName['Status'] = 2;
         native(manager).FConnection.Terminate;
@@ -8336,7 +8362,7 @@ begin
       native(manager).FConnection.prepare;
       native(manager).FConnection.Execute;
       if not native(manager).FConnection.FetchNext then
-        raise Exception.Create('Internal Error fetching content');
+        raise EFHIRException.create('Internal Error fetching content');
       blob := native(manager).FConnection.ColBlobByName['JsonContent'];
       native(manager).FConnection.Terminate;
       parser := MakeParser(request.Context, 'en', ffJson, blob, xppDrop);
@@ -8597,7 +8623,7 @@ end;
 
 function TServerTransformerServices.translate(appInfo: TAdvObject; src: TFHIRCoding; conceptMapUrl: String): TFHIRCoding;
 begin
-  raise Exception.Create('Not Done Yet');
+  raise EFHIRException.CreateLang('NOT_DONE_YET', 'en'{?});
 end;
 
 {$ENDIF}
@@ -8806,10 +8832,10 @@ begin
         else if conn.ColIntegerByName['ConfigKey'] = 8 then
         begin
           if conn.ColStringByName['Value'] <> FHIR_GENERATED_VERSION then
-            raise Exception.Create('Database FHIR Version mismatch. The database contains DSTU'+conn.ColStringByName['Value']+' resources, but this server is based on DSTU'+FHIR_GENERATED_VERSION)
+            raise EFHIRException.create('Database FHIR Version mismatch. The database contains DSTU'+conn.ColStringByName['Value']+' resources, but this server is based on DSTU'+FHIR_GENERATED_VERSION)
         end
         else if conn.ColIntegerByName['ConfigKey'] <> 5 then
-          raise Exception.Create('Unknown Configuration Item '+conn.ColStringByName['ConfigKey']);
+          raise EFHIRException.create('Unknown Configuration Item '+conn.ColStringByName['ConfigKey']);
 
       conn.terminate;
       conn.SQL := 'Select * from Types';
@@ -8859,7 +8885,7 @@ begin
       begin
         rn := getTypeForKey(conn.ColIntegerByName['ResourceTypeKey']);
         if StringIsInteger32(conn.ColStringByName['MaxId']) and (conn.ColIntegerByName['MaxId'] > ServerContext.ResConfig[rn].LastResourceId) then
-          raise Exception.Create('Error in database - LastResourceId (' +
+          raise EFHIRException.create('Error in database - LastResourceId (' +
             inttostr(ServerContext.ResConfig[rn].LastResourceId) + ') < MaxId (' +
             inttostr(conn.ColIntegerByName['MaxId']) + ') found for ' +
             rn);
@@ -8873,7 +8899,7 @@ begin
       begin
         // the order here is important: specification resources must be loaded prior to stored resources
         {$IFDEF FHIR4}
-        fn := ChooseFile(IncludeTrailingPathDelimiter(FAppFolder) + 'definitions.json.zip', 'C:\work\org.hl7.fhir\build\publish\definitions.json.zip');
+        fn := ChooseFile(IncludeTrailingPathDelimiter(FAppFolder) + 'definitions.xml.zip', 'C:\work\org.hl7.fhir\build\publish\definitions.xml.zip');
         {$ELSE}
         {$IFDEF FHIR3}
         fn := ChooseFile(IncludeTrailingPathDelimiter(FAppFolder) + 'definitions.json.zip', 'C:\work\org.hl7.fhir.old\org.hl7.fhir.dstu3\build\publish\definitions.json.zip');
@@ -9230,7 +9256,7 @@ begin
     try
       conn.Execute;
       if not conn.FetchNext then
-        raise Exception.Create('Unable to load resource '+inttostr(key));
+        raise EFHIRException.create('Unable to load resource '+inttostr(key));
       mem := conn.ColBlobByName['JsonContent'];
       parser := MakeParser(ServerContext.Validator.Context, 'en', ffJson, mem, xppDrop);
       try
@@ -10024,7 +10050,7 @@ begin
     conn.Prepare;
     conn.Execute;
     if not conn.FetchNext then
-      raise Exception.Create('Internal error - unable to find record '+id);
+      raise EFHIRException.create('Internal Error - unable to find record '+id);
     client_id := conn.ColStringByName['Client'];
     conn.Terminate;
 
@@ -10740,7 +10766,7 @@ begin
         conn.Prepare;
         conn.Execute;
         if not conn.FetchNext then
-          raise Exception.Create('Unable to find registered client '+id);
+          raise EFHIRException.create('Unable to find registered client '+id);
         client.name := conn.ColStringByName['Name'];
         client.jwt := ''; // conn.ColBlobByName['SoftwareStatement'];
         client.mode := TRegisteredClientMode(conn.ColIntegerByName['Mode']);
@@ -10773,7 +10799,7 @@ begin
       conn.Prepare;
       conn.Execute;
       if not conn.FetchNext then
-        raise Exception.Create('Unable to find registered client '+id);
+        raise EFHIRException.create('Unable to find registered client '+id);
       s := conn.ColStringByName['Name'];
       conn.Terminate;
     end
@@ -10791,7 +10817,7 @@ begin
     ktCompartment:
       result := NextCompartmentKey;
   else
-    raise Exception.Create('not done');
+    raise EFHIRException.create('not done');
   end;
 end;
 
@@ -10814,7 +10840,7 @@ begin
       try
         for s in guides do
           if not storage.loadCustomResources(nil, s, true, names) then
-            raise Exception.Create('Error Loading Custom resources');
+            raise EFHIRException.create('Error Loading Custom resources');
         storage.Connection.Release;
       except
         on e : exception do
@@ -10893,7 +10919,7 @@ begin
   conn.Prepare;
   conn.Execute;
   if not conn.FetchNext then
-    raise Exception.Create('unable to find resource '+inttostr(key));
+    raise EFHIRException.create('unable to find resource '+inttostr(key));
   mem := conn.ColBlobByName['JsonContent'];
   parser := MakeParser(ServerContext.Validator.Context, 'en', ffJson, mem, xppDrop);
   try
@@ -10986,29 +11012,29 @@ begin
       try
         source := params.str['source'];
         if (not isAbsoluteUrl(source)) then
-          raise Exception.Create('"source" must be provided, and must be an absolute URL');
+          raise EFHIRException.create('"source" must be provided, and must be an absolute URL');
         consent := params.str['consent'];
         if (not IsId(consent)) then
-          raise Exception.Create('"consent" must be provided, and must be a valid FHIR id');
+          raise EFHIRException.create('"consent" must be provided, and must be a valid FHIR id');
         patient := params.str['patient'];
         if ((patient <> '') and not IsId(patient)) then
-          raise Exception.Create('if "patient" is provided, it must be a valid FHIR id');
+          raise EFHIRException.create('if "patient" is provided, it must be a valid FHIR id');
         expires_in := params.str['expires_in'];
         if (not StringIsInteger32(expires_in)) then
-          raise Exception.Create('"expires_in" must be provided, and must be a valid integer');
+          raise EFHIRException.create('"expires_in" must be provided, and must be a valid integer');
         expiry := now + StrToint(expires_in) * DATETIME_SECOND_ONE;
         try
           jwt := TJWTUtils.unpack(params.str['jwt'], false, nil); // todo
         except
           on e : Exception do
-            raise Exception.Create('Exception reading JWT: '+e.Message);
+            raise EFHIRException.create('Exception reading JWT: '+e.Message);
         end;
         try
           if jwt.issuer <> native(manager).ServerContext.SystemId then
-            raise Exception.Create('"jwt" must be provided, and must be a JWT returned from $jwt');
+            raise EFHIRException.create('"jwt" must be provided, and must be a JWT returned from $jwt');
           authorization := params.str['authorization'];
           if (authorization = '') or (length(authorization) > 64) then
-            raise Exception.Create('"authorization" must be provided, and must be shorter than 64 chars long');
+            raise EFHIRException.create('"authorization" must be provided, and must be shorter than 64 chars long');
 
           // ok, passed all the checks. Go ahead and create an entry in the Connections table
           conn := native(manager).FConnection;

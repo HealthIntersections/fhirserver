@@ -235,7 +235,6 @@
         <DCCReference Include="..\reference-platform\Support\HTMLPublisher.pas"/>
         <DCCReference Include="..\Libraries\loinc\LoincImporter.pas"/>
         <DCCReference Include="..\Libraries\loinc\LoincPublisher.pas"/>
-        <DCCReference Include="..\server\TerminologyServer.pas"/>
         <DCCReference Include="..\server\TerminologyServerStore.pas"/>
         <DCCReference Include="..\Libraries\TerminologyServices.pas"/>
         <DCCReference Include="..\server\FHIRValueSetChecker.pas"/>
@@ -377,6 +376,8 @@
         <DCCReference Include="..\Libraries\db\SQLite3Wrap.pas"/>
         <DCCReference Include="..\Libraries\db\KDBSQLite.pas"/>
         <DCCReference Include="..\Server\ServerPostHandlers.pas"/>
+        <DCCReference Include="..\Server\TerminologyServer.pas"/>
+        <DCCReference Include="..\Server\ICD10Services.pas"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>

@@ -157,7 +157,12 @@ function resourceToBytes(res : TFhirResource; format : TFHIRFormat) : TBytes;
 
 function parseParamsFromForm(stream : TStream) : TFHIRParameters;
 
+const
+  frtProcedureRequest = frtServiceRequest;
 type
+  TFhirProcedureRequest = TFhirServiceRequest;
+  TFhirCapabilityStatementRestOperation = TFhirCapabilityStatementRestResourceOperation;
+
   TFHIRBundleBuilderSimple = class (TFHIRBundleBuilder)
   public
     procedure addEntry(entry : TFhirBundleEntry; first : boolean); override;
@@ -3847,7 +3852,7 @@ begin
     end;
     TFHIRSignature(element).when := TDateTimeEx.makeUTC;
     TFHIRSignature(element).who := CreateBasicChildren(TFhirReference.Create, nil) as TFhirReference;
-    TFHIRSignature(element).contentType := 'application/signature+xml';
+    TFHIRSignature(element).sigFormat := 'application/signature+xml';
     TFHIRSignature(element).blob := AnsiStringAsBytes('signature content');
   end
   else if element.FhirType = 'HumanName' then

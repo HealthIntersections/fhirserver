@@ -1,5 +1,7 @@
 unit FHIRUtilities;
 
+{$I fhir.inc}
+
 {
 Copyright (c) 2011+, HL7 and Health Intersections Pty Ltd (http://www.healthintersections.com.au)
 All rights reserved.
@@ -140,7 +142,6 @@ procedure BuildNarrative(op: TFhirOperationOutcome; opDesc : String); overload;
 procedure BuildNarrative(vs : TFhirValueSet); overload;
 function ComposeJson(worker: TFHIRWorkerContext; r : TFhirResource) : String; overload;
 
-function getConformanceResourceUrl(res : TFHIRResource) : string;
 Function removeCaseAndAccents(s : String) : String;
 
 function CustomResourceNameIsOk(name : String) : boolean;
@@ -187,6 +188,7 @@ type
   TFhirConceptMapGroupElement = TFhirConceptMapElement;
   TFhirConceptMapGroupElementTarget = TFhirConceptMapElementTarget;
   TFhirConceptMapGroupElementTargetList = TFhirConceptMapElementTargetList;
+
   TFhirCapabilityStatement = TFhirConformance;
   TFhirCapabilityStatementRest = TFhirConformanceRest;
   TFhirCapabilityStatementRestResourceSearchParamList = TFhirConformanceRestResourceSearchParamList;
@@ -356,6 +358,7 @@ type
     procedure checkCompatible;
   end;
 
+  {$IFDEF FHIR_OPERATIONDEFINITION}
   TFHIROperationDefinitionHelper = class helper (TFHIRDomainResourceHelper) for TFHIROperationDefinition
   private
     function Gettype_: boolean;
@@ -364,6 +367,7 @@ type
     function resourceList : TFhirEnumList;
     property type_ : boolean read Gettype_ write Settype_;
   end;
+  {$ENDIF}
 
   TFHIRCodeableConceptHelper = class helper (TFHIRElementHelper) for TFHIRCodeableConcept
   public
@@ -467,6 +471,7 @@ type
     function targetDesc: String;
     function groupList : TFhirConceptMap;
   end;
+
 
   TFHIRBundleHelper = class helper (TFhirResourceHelper) for TFHIRBundle
   private
@@ -629,11 +634,14 @@ type
   TFhirCodeSystemConcept = TFhirValueSetCodeSystemConcept;
   TFhirCodeSystemConceptList = TFhirValueSetCodeSystemConceptList;
   TFhirCodeSystemConceptDesignation = TFhirValueSetCodeSystemConceptDesignation;
+  {$IFDEF FHIR_NAMINGSYSTEM}
   TFHIRNamingSystemHelper = class helper for TFHIRNamingSystem
   public
     function hasOid(oid : String) : boolean;
     function getUri : String;
   end;
+  {$ENDIF}
+
 
  TFhirReferenceHelper = class helper for TFhirReference
   private
@@ -1937,11 +1945,19 @@ end;
 function getConformanceResourceUrl(res : TFHIRResource) : string;
 begin
   case res.ResourceType of
+    {$IFDEF FHIR_CONCEPTMAP}
     frtConceptMap: result := TFHIRConceptMap(res).url;
+    {$ENDIF}
     frtConformance: result := TFHIRConformance(res).url;
+    {$IFDEF FHIR_CONCEPTMAP}
     frtDataElement: result := TFHIRDataElement(res).url;
+    {$ENDIF}
+    {$IFDEF FHIR_ImplementationGuide}
     frtImplementationGuide: result := TFHIRImplementationGuide(res).url;
+    {$ENDIF}
+    {$IFDEF FHIR_OperationDefinition}
     frtOperationDefinition: result := TFHIROperationDefinition(res).url;
+    {$ENDIF}
     frtSearchParameter: result := TFHIRSearchParameter(res).url;
     frtStructureDefinition: result := TFHIRStructureDefinition(res).url;
     frtTestScript: result := TFHIRTestScript(res).url;
@@ -2576,7 +2592,6 @@ begin
   else
     result := TFhirReference(target).reference
 end;
-
 
 { TFHIRDomainResourceHelper }
 
@@ -4684,7 +4699,6 @@ begin
 end;
 
 { TFhirConceptMapElementTargetHelper }
-
 function TFhirConceptMapElementTargetHelper.getsystem: String;
 begin
   result := codeSystem;
@@ -4718,6 +4732,7 @@ begin
 end;
 
 { TFHIRNamingSystemHelper }
+  {$IFDEF FHIR_NAMINGSYSTEM}
 
 function TFHIRNamingSystemHelper.getUri: String;
 var
@@ -4738,6 +4753,7 @@ begin
     if (id.type_ = NamingSystemIdentifierTypeOID) and (id.value = oid) then
       exit(true);
 end;
+{$ENDIF}
 
 { TFhirValueSetExpansionHelper }
 
@@ -4947,6 +4963,7 @@ begin
 end;
 
 { TFHIROperationDefinitionHelper }
+  {$IFDEF FHIR_OPERATIONDEFINITION}
 
 function TFHIROperationDefinitionHelper.Gettype_: boolean;
 begin
@@ -4962,6 +4979,7 @@ procedure TFHIROperationDefinitionHelper.Settype_(const Value: boolean);
 begin
   raise Exception.Create('Not done yet');
 end;
+{$ENDIF}
 
 { TFhirReferenceHelper }
 

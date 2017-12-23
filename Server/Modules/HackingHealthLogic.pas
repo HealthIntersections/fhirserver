@@ -31,6 +31,7 @@ interface
 
 uses
   FHIRResources,
+  FHIRUtilities,
   CDSHooksServer;
 
 type

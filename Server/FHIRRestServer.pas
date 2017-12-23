@@ -166,12 +166,12 @@ Type
     procedure callback(IntParam: Integer; StrParam: String);
 
     procedure saveOutcome(response : TFHIRResponse);
-    procedure doGetBundleBuilder(context : TFHIRResponse; aType : TFhirBundleTypeEnum; out builder : TFhirBundleBuilder);
+    procedure doGetBundleBuilder(request : TFHIRRequest; context : TFHIRResponse; aType : TFhirBundleTypeEnum; out builder : TFhirBundleBuilder);
   protected
     procedure Execute; override;
   public
     constructor Create();
-    destructor Destroy;
+    destructor Destroy; override;
 
     procedure kill;
 
@@ -291,7 +291,7 @@ Type
     procedure PopulateConformanceAuth(rest: TFhirCapabilityStatementRest);
     procedure PopulateConformance(sender: TObject; conf: TFhirCapabilityStatement);
     function WebDump: String;
-    procedure doGetBundleBuilder(context : TFHIRResponse; aType : TFhirBundleTypeEnum; out builder : TFhirBundleBuilder);
+    procedure doGetBundleBuilder(request : TFHIRRequest; context : TFHIRResponse; aType : TFhirBundleTypeEnum; out builder : TFhirBundleBuilder);
 
     function hasInternalSSLToken(request: TIdHTTPRequestInfo): boolean;
     procedure cacheResponse(response: TIdHTTPResponseInfo; caching: TFHIRCacheControl);
@@ -340,7 +340,7 @@ Type
     Procedure HandleDiscoveryRedirect(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo);
     Procedure HandleOWinToken(AContext: TIdContext; secure: boolean; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo);
     Procedure ProcessOutput(oRequest: TFHIRRequest; oResponse: TFHIRResponse; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; relativeReferenceAdjustment: integer; pretty, gzip: boolean);
-    function extractFileData(form: TMimeMessage; const name: String; var sContentType: String): TStream;
+    function extractFileData(lang : String; form: TMimeMessage; const name: String; var sContentType: String): TStream;
     Procedure StartServer(active: boolean);
     Procedure StopServer;
     Function ProcessZip(lang: String; oStream: TStream; name, base: String; init: boolean; ini: TFHIRServerIniFile; Context: TOperationContext; var cursor: integer): TFHIRBundle;
@@ -728,10 +728,10 @@ begin
 {$ENDIF}
 end;
 
-procedure TFhirWebServer.doGetBundleBuilder(context: TFHIRResponse; aType: TFhirBundleTypeEnum; out builder: TFhirBundleBuilder);
+procedure TFhirWebServer.doGetBundleBuilder(request : TFHIRRequest; context: TFHIRResponse; aType: TFhirBundleTypeEnum; out builder: TFhirBundleBuilder);
 begin
   if context.Format = ffNDJson then
-    raise Exception.Create('ND-json is only supported for asynchronous calls');
+    raise EFHIRException.CreateLang('NDJSON-ASYNC', request.Lang);
   builder := TFHIRBundleBuilderSimple.Create(TFHIRBundle.create(aType));
 end;
 
@@ -1222,14 +1222,14 @@ begin
     begin
       version := readVersion(request);
       if version = fhirVersionUnknown then
-         raise Exception.Create('No specific version specified in the Accept: header');
+         raise EFHIRException.CreateLang('VERSION_MISSING', request.AcceptLanguage);
 //        version := CURRENT_FHIR_VERSION
       if version = CURRENT_FHIR_VERSION then
         HandleRequest(AContext, request, response, false, false, FXVersionPath, id, Session, nil)
       else if FReverseProxyByVersion.TryGetValue(CODES_TFHIRVersion[version], rp) then
           ReverseProxy(rp, AContext, request, Session, response, false)
       else
-        raise Exception.Create('The version '+CODES_TFHIRVersion[version]+' is not supported');
+        raise EFHIRException.CreateLang('VERSION_UNSUPPORTED', 'The version '+CODES_TFHIRVersion[version]+' is not supported');
     end
     else if request.Document.StartsWith(FBasePath, false) then
       HandleRequest(AContext, request, response, false, false, FBasePath, id, Session, nil)
@@ -1556,7 +1556,7 @@ Begin
       try
         if s.StartsWith('multipart/form-data', true) then
         begin
-          oStream := extractFileData(form, 'file', sContentType);
+          oStream := extractFileData(Lang, form, 'file', sContentType);
           // though this might not return the data if we have an operation request
         end
         else if request.PostStream <> nil then
@@ -1878,7 +1878,7 @@ begin
   StringSplit(request.id, '/', typ, s);
   StringSplit(s, '/', id, ver);
   if not(StringArrayExistsSensitive(CODES_TFhirResourceType, typ) or FServerContext.ValidatorContext.hasCustomResource(typ)) then
-    raise exception.Create('Unknown resource type ' + typ);
+    raise EFHIRException.CreateLang('MSG_UNKNOWN_TYPE', request.Lang, [typ]);
 
   r := GetResource(request.Session, typ, request.lang, id, '', '');
   try
@@ -1932,7 +1932,7 @@ begin
   StringSplit(s, '/', id, ver);
   request.id := id;
   if not(StringArrayExistsSensitive(CODES_TFhirResourceType, typ) or FServerContext.ValidatorContext.hasCustomResource(typ)) then
-    raise exception.Create('Unknown resource type ' + typ);
+    raise EFHIRException.CreateLang('MSG_UNKNOWN_TYPE', request.lang, [typ]);
   request.ResourceName := typ;
   request.CommandType := fcmdUpdate;
 
@@ -2185,7 +2185,7 @@ begin
   StringSplit(request.id, '/', typ, s);
   StringSplit(s, '/', id, ver);
   if not(StringArrayExistsSensitive(CODES_TFhirResourceType, typ) or FServerContext.ValidatorContext.hasCustomResource(typ)) then
-    raise exception.Create('Unknown resource type ' + typ);
+    raise EFHIRException.CreateLang('MSG_UNKNOWN_TYPE', request.lang, [typ]);
 
   r := GetResource(request.Session, typ, request.lang, id, ver, 'qa-edit');
   try
@@ -2200,7 +2200,7 @@ begin
       qa := r as TFhirQuestionnaireResponse;
       q := (FindContainedResource(qa, qa.questionnaire) as TFHIRQuestionnaire).link;
       if q = nil then
-        raise exception.Create('Unable to fetch Questionnaire "' + qa.questionnaire.reference.Substring(1) + '"');
+        raise EFHIRException.CreateLang('CANNOT_FIND', request.lang, ['Questionnaire', qa.questionnaire.reference.Substring(1)]);
 
       // convert to xhtml
       s := transform1(q, request.lang, 'QuestionnaireToHTML.xslt', true);
@@ -2265,7 +2265,7 @@ begin
   else if request.id.StartsWith('Patient/') then
     result := HandleWebPatient(request, response, secure)
   else
-    raise exception.Create('Unknown request: ' + request.id);
+    raise EFHIRException.CreateLang('MSG_UNKNOWN_CONTENT', request.lang, [request.id, 'web UI']);
 end;
 
 function TFhirWebServer.hasInternalSSLToken(request: TIdHTTPRequestInfo): boolean;
@@ -2442,8 +2442,6 @@ Begin
 
     if (sCommand <> 'GET') then
     begin
-      if oRequest.Parameters.VarExists('_format') and (form = nil) and (oRequest.Parameters.GetVar('_format') <> '') then
-        sContentType := oRequest.Parameters.GetVar('_format');
       if StringStartsWithInsensitive(sContentType, 'application/x-ndjson') or StringStartsWithInsensitive(sContentType, 'application/fhir+ndjson') then
         oRequest.PostFormat := ffNDJson
       else if StringStartsWithInsensitive(sContentType, 'application/json') or StringStartsWithInsensitive(sContentType, 'application/fhir+json') or
@@ -2461,6 +2459,8 @@ Begin
         StringStartsWithInsensitive(sContentType, 'application/fhir+xml') or StringStartsWithInsensitive(sContentType, 'application/xml+fhir') or
         StringStartsWithInsensitive(sContentType, 'xml') Then
         oRequest.PostFormat := ffXml;
+      if (sContentType <> 'application/x-www-form-urlencoded') and oRequest.Parameters.VarExists('_format') and (form = nil) and (oRequest.Parameters.GetVar('_format') <> '') then
+        sContentType := oRequest.Parameters.GetVar('_format');
     end;
 
     if oRequest.Parameters.VarExists('_format') and (oRequest.Parameters.GetVar('_format') <> '') then
@@ -2584,7 +2584,7 @@ Begin
             begin
               oRequest.patchXml := TMXmlParser.Parse(oPostStream, [xpResolveNamespaces]);
             end
-            else if (oRequest.CommandType = fcmdOperation) and (sContentType = 'application/x-www-form-urlencoded') then
+            else if (oRequest.CommandType in [fcmdOperation, fcmdSearch]) and (sContentType = 'application/x-www-form-urlencoded') then
             begin
               oRequest.resource := parseParamsFromForm(oPostStream);
             end
@@ -2926,7 +2926,7 @@ var
   json : TJsonObject;
 begin
   if session = nil then
-    raise Exception.Create('You must login before registering a client');
+    raise EFHIRException.Createlang('MSG_AUTH_REQUIRED', request.AcceptLanguage);
 
   pm := TParseMap.create(request.UnparsedParams);
   try
@@ -2934,7 +2934,7 @@ begin
     try
       client.name := pm.GetVar('client_name').Trim;
       if client.name = '' then
-        raise Exception.Create('A client_name field is required');
+        raise EFHIRException.Createlang('INFO_MISSING', request.AcceptLanguage, ['client_name']);
       client.url := pm.GetVar('client_uri').Trim;
       client.logo := pm.GetVar('logo_uri').Trim;
       client.softwareId := pm.GetVar('software_id').Trim;
@@ -2954,10 +2954,10 @@ begin
            client.mode := rcmBackendServices;
            client.issuer := pm.GetVar('issuer').Trim;
            if (client.issuer = '') then
-            raise Exception.Create('An issuer field is required');
+            raise EFHIRException.Createlang('INFO_MISSING', request.AcceptLanguage, ['issuer']);
            s := pm.GetVar('public_key').Trim;
            if s = '' then
-             raise Exception.Create('A public key is required');
+             raise EFHIRException.Createlang('INFO_MISSING', request.AcceptLanguage, ['A public key is required']);
            if s.StartsWith('-----BEGIN CERTIFICATE-----') then
              jwks := loadFromRsaDer(s)
            else
@@ -2975,7 +2975,7 @@ begin
            end;
            end;
       else
-        raise Exception.Create('Mode could not be recognised');
+        raise EFHIRException.Createlang('MSG_UNKNOWN_CONTENT', request.AcceptLanguage, ['Mode', 'Processing Registration']);
       end;
 
       if client.secret <> ''  then
@@ -3001,7 +3001,7 @@ var
   id : String;
 begin
   if not (request.CommandType in [fcmdSearch, fcmdHistoryInstance, fcmdHistoryType, fcmdHistorySystem, fcmdTransaction, fcmdBatch, fcmdUpload, fcmdOperation]) then
-    raise Exception.Create('Asynchronous processing not supported for this request');
+    raise EFHIRException.CreateLang('NO_ASYNC', request.Lang);
   thread := TAsyncTaskThread.create;
   FLock.Lock;
   try
@@ -3219,7 +3219,7 @@ begin
             begin
             // check format
             if (fmt <> response.Format) and (response.Format <> ffXhtml) then
-              raise Exception.Create('Error: the request format ('+CODES_TFHIRFormat[response.Format]+') does not match the task format ('+CODES_TFHIRFormat[fmt]+')');
+              raise EFHIRException.CreateLang('TASK_FMT_MISMATCH', request.Lang, [CODES_TFHIRFormat[response.Format], CODES_TFHIRFormat[fmt]]);
             response.HTTPCode := 200;
             response.Message := 'OK';
             for s in names do
@@ -3601,7 +3601,7 @@ begin
   end;
 end;
 
-function TFhirWebServer.extractFileData(form: TMimeMessage; const name: String; var sContentType: String): TStream;
+function TFhirWebServer.extractFileData(lang : String; form: TMimeMessage; const name: String; var sContentType: String): TStream;
 var
   sLeft, sRight: String;
   iLoop: integer;
@@ -3640,7 +3640,7 @@ begin
         else if StringStartsWith(sContent, '{', false) then
           sContentType := 'application/fhir+json'
         else
-          raise exception.Create('unable to determine encoding type for ' + sContent);
+          raise EFHIRException.CreateLang('FORMAT_UNRECOGNIZED', lang, [sContent]);
       end;
     End
   End;
@@ -3683,7 +3683,7 @@ begin
     if response.resource <> nil then
       result := response.resource.link
     else
-      raise exception.Create('Unable to find resource ' + rtype + '/' + id + '/' + ver);
+      raise EFHIRException.CreateLang('MSG_NO_MATCH', lang, [rtype + '/' + id + '/_history/' + ver]);
   finally
     response.Free;
     request.Free;
@@ -3715,7 +3715,7 @@ begin
     if (response.bundle <> nil) and (response.bundle.entryList.Count = 1) then
       result := response.bundle.entryList[0].resource.link
     else
-      raise exception.Create('Unable to find resource ' + rtype + '?' + params);
+      raise EFHIRException.CreateLang('MSG_NO_MATCH', lang, [rtype + '?' + params]);
   finally
     response.Free;
     request.Free;
@@ -3971,7 +3971,7 @@ begin
      else if (vA = vC) then
        exit(vA)
      else
-       raise Exception.Create('Version mismatch between Accept: and Content-Type: Headers');
+       raise EFHIRException.CreateLang('VERSION_HEADER_MISMATCH', request.AcceptLanguage);
    end
    else
      exit(vA);
@@ -4519,7 +4519,7 @@ begin
   inherited;
 end;
 
-procedure TAsyncTaskThread.doGetBundleBuilder(context: TFHIRResponse; aType: TFhirBundleTypeEnum; out builder: TFhirBundleBuilder);
+procedure TAsyncTaskThread.doGetBundleBuilder(request : TFHIRRequest; context: TFHIRResponse; aType: TFhirBundleTypeEnum; out builder: TFhirBundleBuilder);
 begin
   if context.Format = ffNDJson then
   begin

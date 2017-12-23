@@ -41,7 +41,7 @@ This is the dstu4 version of the FHIR code
 
 interface
 
-// FHIR v3.1.0 generated 2017-10-06T08:43:59+11:00
+// FHIR v3.2.0 generated 2017-12-20T12:10:38+11:00
 
 uses
   SysUtils, Classes, StringSupport, DecimalSupport, AdvBuffers, DateSupport, FHIRBase, FHIRTypes, FHIRResources;
@@ -58,9 +58,9 @@ Type
     spAccount__profile, {@enum.value "_profile" spAccount__profile Profiles this resource claims to conform to }
     spAccount__query, {@enum.value "_query" spAccount__query A custom search profile that describes a specific defined query operation }
     spAccount__security, {@enum.value "_security" spAccount__security Security Labels applied to this resource }
+    spAccount__source, {@enum.value "_source" spAccount__source Identifies where the resource comes from }
     spAccount__tag, {@enum.value "_tag" spAccount__tag Tags applied to this resource }
     spAccount__text, {@enum.value "_text" spAccount__text Search on the narrative of the resource }
-    spAccount_Balance, {@enum.value "balance" spAccount_Balance How much is in account? }
     spAccount_Identifier, {@enum.value "identifier" spAccount_Identifier Account number }
     spAccount_Name, {@enum.value "name" spAccount_Name Human-readable label }
     spAccount_Owner, {@enum.value "owner" spAccount_Owner Who is responsible? }
@@ -82,9 +82,11 @@ Type
     spActivityDefinition__profile, {@enum.value "_profile" spActivityDefinition__profile Profiles this resource claims to conform to }
     spActivityDefinition__query, {@enum.value "_query" spActivityDefinition__query A custom search profile that describes a specific defined query operation }
     spActivityDefinition__security, {@enum.value "_security" spActivityDefinition__security Security Labels applied to this resource }
+    spActivityDefinition__source, {@enum.value "_source" spActivityDefinition__source Identifies where the resource comes from }
     spActivityDefinition__tag, {@enum.value "_tag" spActivityDefinition__tag Tags applied to this resource }
     spActivityDefinition__text, {@enum.value "_text" spActivityDefinition__text Search on the narrative of the resource }
     spActivityDefinition_Composedof, {@enum.value "composed-of" spActivityDefinition_Composedof What resource is being referenced }
+    spActivityDefinition_Contexttype, {@enum.value "context-type" spActivityDefinition_Contexttype A type of use context assigned to the activity definition }
     spActivityDefinition_Date, {@enum.value "date" spActivityDefinition_Date The activity definition publication date }
     spActivityDefinition_Dependson, {@enum.value "depends-on" spActivityDefinition_Dependson What resource is being referenced }
     spActivityDefinition_Derivedfrom, {@enum.value "derived-from" spActivityDefinition_Derivedfrom What resource is being referenced }
@@ -114,6 +116,7 @@ Type
     spAdverseEvent__profile, {@enum.value "_profile" spAdverseEvent__profile Profiles this resource claims to conform to }
     spAdverseEvent__query, {@enum.value "_query" spAdverseEvent__query A custom search profile that describes a specific defined query operation }
     spAdverseEvent__security, {@enum.value "_security" spAdverseEvent__security Security Labels applied to this resource }
+    spAdverseEvent__source, {@enum.value "_source" spAdverseEvent__source Identifies where the resource comes from }
     spAdverseEvent__tag, {@enum.value "_tag" spAdverseEvent__tag Tags applied to this resource }
     spAdverseEvent__text, {@enum.value "_text" spAdverseEvent__text Search on the narrative of the resource }
     spAdverseEvent_Actuality, {@enum.value "actuality" spAdverseEvent_Actuality actual | potential }
@@ -141,6 +144,7 @@ Type
     spAllergyIntolerance__profile, {@enum.value "_profile" spAllergyIntolerance__profile Profiles this resource claims to conform to }
     spAllergyIntolerance__query, {@enum.value "_query" spAllergyIntolerance__query A custom search profile that describes a specific defined query operation }
     spAllergyIntolerance__security, {@enum.value "_security" spAllergyIntolerance__security Security Labels applied to this resource }
+    spAllergyIntolerance__source, {@enum.value "_source" spAllergyIntolerance__source Identifies where the resource comes from }
     spAllergyIntolerance__tag, {@enum.value "_tag" spAllergyIntolerance__tag Tags applied to this resource }
     spAllergyIntolerance__text, {@enum.value "_text" spAllergyIntolerance__text Search on the narrative of the resource }
     spAllergyIntolerance_Asserter, {@enum.value "asserter" spAllergyIntolerance_Asserter Source of the information about the allergy }
@@ -172,13 +176,14 @@ Type
     spAppointment__profile, {@enum.value "_profile" spAppointment__profile Profiles this resource claims to conform to }
     spAppointment__query, {@enum.value "_query" spAppointment__query A custom search profile that describes a specific defined query operation }
     spAppointment__security, {@enum.value "_security" spAppointment__security Security Labels applied to this resource }
+    spAppointment__source, {@enum.value "_source" spAppointment__source Identifies where the resource comes from }
     spAppointment__tag, {@enum.value "_tag" spAppointment__tag Tags applied to this resource }
     spAppointment__text, {@enum.value "_text" spAppointment__text Search on the narrative of the resource }
     spAppointment_Actor, {@enum.value "actor" spAppointment_Actor Any one of the individuals participating in the appointment }
     spAppointment_Appointmenttype, {@enum.value "appointment-type" spAppointment_Appointmenttype The style of appointment or patient that has been booked in the slot (not service type) }
     spAppointment_Date, {@enum.value "date" spAppointment_Date Appointment date/time. }
     spAppointment_Identifier, {@enum.value "identifier" spAppointment_Identifier An Identifier of the Appointment }
-    spAppointment_Incomingreferral, {@enum.value "incomingreferral" spAppointment_Incomingreferral The ProcedureRequest provided as information to allocate to the Encounter }
+    spAppointment_Incomingreferral, {@enum.value "incomingreferral" spAppointment_Incomingreferral The ServiceRequest provided as information to allocate to the Encounter }
     spAppointment_Location, {@enum.value "location" spAppointment_Location This location is listed in the participants of the appointment }
     spAppointment_Partstatus, {@enum.value "part-status" spAppointment_Partstatus The Participation status of the subject, or other participant on the appointment. Can be used to locate participants that have not responded to meeting requests. }
     spAppointment_Patient, {@enum.value "patient" spAppointment_Patient One of the individuals of the appointment is this patient }
@@ -198,6 +203,7 @@ Type
     spAppointmentResponse__profile, {@enum.value "_profile" spAppointmentResponse__profile Profiles this resource claims to conform to }
     spAppointmentResponse__query, {@enum.value "_query" spAppointmentResponse__query A custom search profile that describes a specific defined query operation }
     spAppointmentResponse__security, {@enum.value "_security" spAppointmentResponse__security Security Labels applied to this resource }
+    spAppointmentResponse__source, {@enum.value "_source" spAppointmentResponse__source Identifies where the resource comes from }
     spAppointmentResponse__tag, {@enum.value "_tag" spAppointmentResponse__tag Tags applied to this resource }
     spAppointmentResponse__text, {@enum.value "_text" spAppointmentResponse__text Search on the narrative of the resource }
     spAppointmentResponse_Actor, {@enum.value "actor" spAppointmentResponse_Actor The Person, Location/HealthcareService or Device that this appointment response replies for }
@@ -220,6 +226,7 @@ Type
     spAuditEvent__profile, {@enum.value "_profile" spAuditEvent__profile Profiles this resource claims to conform to }
     spAuditEvent__query, {@enum.value "_query" spAuditEvent__query A custom search profile that describes a specific defined query operation }
     spAuditEvent__security, {@enum.value "_security" spAuditEvent__security Security Labels applied to this resource }
+    spAuditEvent__source, {@enum.value "_source" spAuditEvent__source Identifies where the resource comes from }
     spAuditEvent__tag, {@enum.value "_tag" spAuditEvent__tag Tags applied to this resource }
     spAuditEvent__text, {@enum.value "_text" spAuditEvent__text Search on the narrative of the resource }
     spAuditEvent_Action, {@enum.value "action" spAuditEvent_Action Type of action performed during the event }
@@ -255,6 +262,7 @@ Type
     spBasic__profile, {@enum.value "_profile" spBasic__profile Profiles this resource claims to conform to }
     spBasic__query, {@enum.value "_query" spBasic__query A custom search profile that describes a specific defined query operation }
     spBasic__security, {@enum.value "_security" spBasic__security Security Labels applied to this resource }
+    spBasic__source, {@enum.value "_source" spBasic__source Identifies where the resource comes from }
     spBasic__tag, {@enum.value "_tag" spBasic__tag Tags applied to this resource }
     spBasic__text, {@enum.value "_text" spBasic__text Search on the narrative of the resource }
     spBasic_Author, {@enum.value "author" spBasic_Author Who created }
@@ -276,8 +284,25 @@ Type
     spBinary__profile, {@enum.value "_profile" spBinary__profile Profiles this resource claims to conform to }
     spBinary__query, {@enum.value "_query" spBinary__query A custom search profile that describes a specific defined query operation }
     spBinary__security, {@enum.value "_security" spBinary__security Security Labels applied to this resource }
+    spBinary__source, {@enum.value "_source" spBinary__source Identifies where the resource comes from }
     spBinary__tag, {@enum.value "_tag" spBinary__tag Tags applied to this resource }
     spBinary_Contenttype); {@enum.value "contenttype" spBinary_Contenttype MimeType of the binary content }
+{$ENDIF}
+
+{$IFDEF FHIR_BIOLOGICALLYDERIVEDPRODUCT}
+  {@Enum TSearchParamsBiologicallyDerivedProduct
+    Search Parameters for BiologicallyDerivedProduct
+  }
+  TSearchParamsBiologicallyDerivedProduct = (
+    spBiologicallyDerivedProduct__content, {@enum.value "_content" spBiologicallyDerivedProduct__content Search on the entire content of the resource }
+    spBiologicallyDerivedProduct__id, {@enum.value "_id" spBiologicallyDerivedProduct__id Logical id of this artifact }
+    spBiologicallyDerivedProduct__lastUpdated, {@enum.value "_lastUpdated" spBiologicallyDerivedProduct__lastUpdated When the resource version last changed }
+    spBiologicallyDerivedProduct__profile, {@enum.value "_profile" spBiologicallyDerivedProduct__profile Profiles this resource claims to conform to }
+    spBiologicallyDerivedProduct__query, {@enum.value "_query" spBiologicallyDerivedProduct__query A custom search profile that describes a specific defined query operation }
+    spBiologicallyDerivedProduct__security, {@enum.value "_security" spBiologicallyDerivedProduct__security Security Labels applied to this resource }
+    spBiologicallyDerivedProduct__source, {@enum.value "_source" spBiologicallyDerivedProduct__source Identifies where the resource comes from }
+    spBiologicallyDerivedProduct__tag, {@enum.value "_tag" spBiologicallyDerivedProduct__tag Tags applied to this resource }
+    spBiologicallyDerivedProduct__text); {@enum.value "_text" spBiologicallyDerivedProduct__text Search on the narrative of the resource }
 {$ENDIF}
 
 {$IFDEF FHIR_BODYSTRUCTURE}
@@ -291,6 +316,7 @@ Type
     spBodyStructure__profile, {@enum.value "_profile" spBodyStructure__profile Profiles this resource claims to conform to }
     spBodyStructure__query, {@enum.value "_query" spBodyStructure__query A custom search profile that describes a specific defined query operation }
     spBodyStructure__security, {@enum.value "_security" spBodyStructure__security Security Labels applied to this resource }
+    spBodyStructure__source, {@enum.value "_source" spBodyStructure__source Identifies where the resource comes from }
     spBodyStructure__tag, {@enum.value "_tag" spBodyStructure__tag Tags applied to this resource }
     spBodyStructure__text, {@enum.value "_text" spBodyStructure__text Search on the narrative of the resource }
     spBodyStructure_Identifier, {@enum.value "identifier" spBodyStructure_Identifier Bodystructure identifier }
@@ -310,10 +336,12 @@ Type
     spBundle__profile, {@enum.value "_profile" spBundle__profile Profiles this resource claims to conform to }
     spBundle__query, {@enum.value "_query" spBundle__query A custom search profile that describes a specific defined query operation }
     spBundle__security, {@enum.value "_security" spBundle__security Security Labels applied to this resource }
+    spBundle__source, {@enum.value "_source" spBundle__source Identifies where the resource comes from }
     spBundle__tag, {@enum.value "_tag" spBundle__tag Tags applied to this resource }
     spBundle_Composition, {@enum.value "composition" spBundle_Composition The first resource in the bundle, if the bundle type is "document" - this is a composition, and this parameter provides access to searches its contents }
     spBundle_Identifier, {@enum.value "identifier" spBundle_Identifier Persistent identifier for the bundle }
     spBundle_Message, {@enum.value "message" spBundle_Message The first resource in the bundle, if the bundle type is "message" - this is a message header, and this parameter provides access to search its contents }
+    spBundle_Timestamp, {@enum.value "timestamp" spBundle_Timestamp When the bundle was assembled }
     spBundle_Type); {@enum.value "type" spBundle_Type document | message | transaction | transaction-response | batch | batch-response | history | searchset | collection }
 {$ENDIF}
 
@@ -328,11 +356,11 @@ Type
     spCapabilityStatement__profile, {@enum.value "_profile" spCapabilityStatement__profile Profiles this resource claims to conform to }
     spCapabilityStatement__query, {@enum.value "_query" spCapabilityStatement__query A custom search profile that describes a specific defined query operation }
     spCapabilityStatement__security, {@enum.value "_security" spCapabilityStatement__security Security Labels applied to this resource }
+    spCapabilityStatement__source, {@enum.value "_source" spCapabilityStatement__source Identifies where the resource comes from }
     spCapabilityStatement__tag, {@enum.value "_tag" spCapabilityStatement__tag Tags applied to this resource }
     spCapabilityStatement__text, {@enum.value "_text" spCapabilityStatement__text Search on the narrative of the resource }
     spCapabilityStatement_Date, {@enum.value "date" spCapabilityStatement_Date The capability statement publication date }
     spCapabilityStatement_Description, {@enum.value "description" spCapabilityStatement_Description The description of the capability statement }
-    spCapabilityStatement_Event, {@enum.value "event" spCapabilityStatement_Event Event code in a capability statement }
     spCapabilityStatement_Fhirversion, {@enum.value "fhirversion" spCapabilityStatement_Fhirversion The version of FHIR }
     spCapabilityStatement_Format, {@enum.value "format" spCapabilityStatement_Format formats supported (xml | json | ttl | mime type) }
     spCapabilityStatement_Guide, {@enum.value "guide" spCapabilityStatement_Guide Implementation guides supported }
@@ -362,6 +390,7 @@ Type
     spCarePlan__profile, {@enum.value "_profile" spCarePlan__profile Profiles this resource claims to conform to }
     spCarePlan__query, {@enum.value "_query" spCarePlan__query A custom search profile that describes a specific defined query operation }
     spCarePlan__security, {@enum.value "_security" spCarePlan__security Security Labels applied to this resource }
+    spCarePlan__source, {@enum.value "_source" spCarePlan__source Identifies where the resource comes from }
     spCarePlan__tag, {@enum.value "_tag" spCarePlan__tag Tags applied to this resource }
     spCarePlan__text, {@enum.value "_text" spCarePlan__text Search on the narrative of the resource }
     spCarePlan_Activitycode, {@enum.value "activity-code" spCarePlan_Activitycode Detail type of activity }
@@ -373,10 +402,10 @@ Type
     spCarePlan_Condition, {@enum.value "condition" spCarePlan_Condition Health issues this plan addresses }
     spCarePlan_Context, {@enum.value "context" spCarePlan_Context Created in context of }
     spCarePlan_Date, {@enum.value "date" spCarePlan_Date Time period plan covers }
-    spCarePlan_Definition, {@enum.value "definition" spCarePlan_Definition Protocol or definition }
     spCarePlan_Encounter, {@enum.value "encounter" spCarePlan_Encounter Created in context of }
     spCarePlan_Goal, {@enum.value "goal" spCarePlan_Goal Desired outcome of plan }
     spCarePlan_Identifier, {@enum.value "identifier" spCarePlan_Identifier External Ids for this plan }
+    spCarePlan_Instantiates, {@enum.value "instantiates" spCarePlan_Instantiates Protocol or definition }
     spCarePlan_Intent, {@enum.value "intent" spCarePlan_Intent proposal | plan | order | option }
     spCarePlan_Partof, {@enum.value "part-of" spCarePlan_Partof Part of referenced CarePlan }
     spCarePlan_Patient, {@enum.value "patient" spCarePlan_Patient Who care plan is for }
@@ -397,6 +426,7 @@ Type
     spCareTeam__profile, {@enum.value "_profile" spCareTeam__profile Profiles this resource claims to conform to }
     spCareTeam__query, {@enum.value "_query" spCareTeam__query A custom search profile that describes a specific defined query operation }
     spCareTeam__security, {@enum.value "_security" spCareTeam__security Security Labels applied to this resource }
+    spCareTeam__source, {@enum.value "_source" spCareTeam__source Identifies where the resource comes from }
     spCareTeam__tag, {@enum.value "_tag" spCareTeam__tag Tags applied to this resource }
     spCareTeam__text, {@enum.value "_text" spCareTeam__text Search on the narrative of the resource }
     spCareTeam_Category, {@enum.value "category" spCareTeam_Category Type of team }
@@ -410,21 +440,6 @@ Type
     spCareTeam_Subject); {@enum.value "subject" spCareTeam_Subject Who care team is for }
 {$ENDIF}
 
-{$IFDEF FHIR_CATALOGENTRY}
-  {@Enum TSearchParamsCatalogEntry
-    Search Parameters for CatalogEntry
-  }
-  TSearchParamsCatalogEntry = (
-    spCatalogEntry__content, {@enum.value "_content" spCatalogEntry__content Search on the entire content of the resource }
-    spCatalogEntry__id, {@enum.value "_id" spCatalogEntry__id Logical id of this artifact }
-    spCatalogEntry__lastUpdated, {@enum.value "_lastUpdated" spCatalogEntry__lastUpdated When the resource version last changed }
-    spCatalogEntry__profile, {@enum.value "_profile" spCatalogEntry__profile Profiles this resource claims to conform to }
-    spCatalogEntry__query, {@enum.value "_query" spCatalogEntry__query A custom search profile that describes a specific defined query operation }
-    spCatalogEntry__security, {@enum.value "_security" spCatalogEntry__security Security Labels applied to this resource }
-    spCatalogEntry__tag, {@enum.value "_tag" spCatalogEntry__tag Tags applied to this resource }
-    spCatalogEntry__text); {@enum.value "_text" spCatalogEntry__text Search on the narrative of the resource }
-{$ENDIF}
-
 {$IFDEF FHIR_CHARGEITEM}
   {@Enum TSearchParamsChargeItem
     Search Parameters for ChargeItem
@@ -436,6 +451,7 @@ Type
     spChargeItem__profile, {@enum.value "_profile" spChargeItem__profile Profiles this resource claims to conform to }
     spChargeItem__query, {@enum.value "_query" spChargeItem__query A custom search profile that describes a specific defined query operation }
     spChargeItem__security, {@enum.value "_security" spChargeItem__security Security Labels applied to this resource }
+    spChargeItem__source, {@enum.value "_source" spChargeItem__source Identifies where the resource comes from }
     spChargeItem__tag, {@enum.value "_tag" spChargeItem__tag Tags applied to this resource }
     spChargeItem__text, {@enum.value "_text" spChargeItem__text Search on the narrative of the resource }
     spChargeItem_Account, {@enum.value "account" spChargeItem_Account Account to place this charge }
@@ -468,6 +484,7 @@ Type
     spClaim__profile, {@enum.value "_profile" spClaim__profile Profiles this resource claims to conform to }
     spClaim__query, {@enum.value "_query" spClaim__query A custom search profile that describes a specific defined query operation }
     spClaim__security, {@enum.value "_security" spClaim__security Security Labels applied to this resource }
+    spClaim__source, {@enum.value "_source" spClaim__source Identifies where the resource comes from }
     spClaim__tag, {@enum.value "_tag" spClaim__tag Tags applied to this resource }
     spClaim__text, {@enum.value "_text" spClaim__text Search on the narrative of the resource }
     spClaim_Careteam, {@enum.value "care-team" spClaim_Careteam Member of the CareTeam }
@@ -497,6 +514,7 @@ Type
     spClaimResponse__profile, {@enum.value "_profile" spClaimResponse__profile Profiles this resource claims to conform to }
     spClaimResponse__query, {@enum.value "_query" spClaimResponse__query A custom search profile that describes a specific defined query operation }
     spClaimResponse__security, {@enum.value "_security" spClaimResponse__security Security Labels applied to this resource }
+    spClaimResponse__source, {@enum.value "_source" spClaimResponse__source Identifies where the resource comes from }
     spClaimResponse__tag, {@enum.value "_tag" spClaimResponse__tag Tags applied to this resource }
     spClaimResponse__text, {@enum.value "_text" spClaimResponse__text Search on the narrative of the resource }
     spClaimResponse_Created, {@enum.value "created" spClaimResponse_Created The creation date }
@@ -522,6 +540,7 @@ Type
     spClinicalImpression__profile, {@enum.value "_profile" spClinicalImpression__profile Profiles this resource claims to conform to }
     spClinicalImpression__query, {@enum.value "_query" spClinicalImpression__query A custom search profile that describes a specific defined query operation }
     spClinicalImpression__security, {@enum.value "_security" spClinicalImpression__security Security Labels applied to this resource }
+    spClinicalImpression__source, {@enum.value "_source" spClinicalImpression__source Identifies where the resource comes from }
     spClinicalImpression__tag, {@enum.value "_tag" spClinicalImpression__tag Tags applied to this resource }
     spClinicalImpression__text, {@enum.value "_text" spClinicalImpression__text Search on the narrative of the resource }
     spClinicalImpression_Action, {@enum.value "action" spClinicalImpression_Action Action taken as part of assessment procedure }
@@ -550,10 +569,11 @@ Type
     spCodeSystem__profile, {@enum.value "_profile" spCodeSystem__profile Profiles this resource claims to conform to }
     spCodeSystem__query, {@enum.value "_query" spCodeSystem__query A custom search profile that describes a specific defined query operation }
     spCodeSystem__security, {@enum.value "_security" spCodeSystem__security Security Labels applied to this resource }
+    spCodeSystem__source, {@enum.value "_source" spCodeSystem__source Identifies where the resource comes from }
     spCodeSystem__tag, {@enum.value "_tag" spCodeSystem__tag Tags applied to this resource }
     spCodeSystem__text, {@enum.value "_text" spCodeSystem__text Search on the narrative of the resource }
     spCodeSystem_Code, {@enum.value "code" spCodeSystem_Code A code defined in the code system }
-    spCodeSystem_Contentmode, {@enum.value "content-mode" spCodeSystem_Contentmode not-present | example | fragment | complete }
+    spCodeSystem_Contentmode, {@enum.value "content-mode" spCodeSystem_Contentmode not-present | example | fragment | complete | supplement }
     spCodeSystem_Date, {@enum.value "date" spCodeSystem_Date The code system publication date }
     spCodeSystem_Description, {@enum.value "description" spCodeSystem_Description The description of the code system }
     spCodeSystem_Identifier, {@enum.value "identifier" spCodeSystem_Identifier External identifier for the code system }
@@ -562,6 +582,7 @@ Type
     spCodeSystem_Name, {@enum.value "name" spCodeSystem_Name Computationally friendly name of the code system }
     spCodeSystem_Publisher, {@enum.value "publisher" spCodeSystem_Publisher Name of the publisher of the code system }
     spCodeSystem_Status, {@enum.value "status" spCodeSystem_Status The current status of the code system }
+    spCodeSystem_Supplements, {@enum.value "supplements" spCodeSystem_Supplements Code System this adds designations and properties to }
     spCodeSystem_System, {@enum.value "system" spCodeSystem_System The system for any codes defined by this code system (same as 'url') }
     spCodeSystem_Title, {@enum.value "title" spCodeSystem_Title The human-friendly name of the code system }
     spCodeSystem_Url, {@enum.value "url" spCodeSystem_Url The uri that identifies the code system }
@@ -579,14 +600,15 @@ Type
     spCommunication__profile, {@enum.value "_profile" spCommunication__profile Profiles this resource claims to conform to }
     spCommunication__query, {@enum.value "_query" spCommunication__query A custom search profile that describes a specific defined query operation }
     spCommunication__security, {@enum.value "_security" spCommunication__security Security Labels applied to this resource }
+    spCommunication__source, {@enum.value "_source" spCommunication__source Identifies where the resource comes from }
     spCommunication__tag, {@enum.value "_tag" spCommunication__tag Tags applied to this resource }
     spCommunication__text, {@enum.value "_text" spCommunication__text Search on the narrative of the resource }
     spCommunication_Basedon, {@enum.value "based-on" spCommunication_Basedon Request fulfilled by this communication }
     spCommunication_Category, {@enum.value "category" spCommunication_Category Message category }
     spCommunication_Context, {@enum.value "context" spCommunication_Context Encounter or episode leading to message }
-    spCommunication_Definition, {@enum.value "definition" spCommunication_Definition Instantiates protocol or definition }
     spCommunication_Encounter, {@enum.value "encounter" spCommunication_Encounter Encounter leading to message }
     spCommunication_Identifier, {@enum.value "identifier" spCommunication_Identifier Unique identifier }
+    spCommunication_Instantiates, {@enum.value "instantiates" spCommunication_Instantiates Instantiates protocol or definition }
     spCommunication_Medium, {@enum.value "medium" spCommunication_Medium A channel of communication }
     spCommunication_Partof, {@enum.value "part-of" spCommunication_Partof Part of this action }
     spCommunication_Patient, {@enum.value "patient" spCommunication_Patient Focus of message }
@@ -594,7 +616,7 @@ Type
     spCommunication_Recipient, {@enum.value "recipient" spCommunication_Recipient Message recipient }
     spCommunication_Sender, {@enum.value "sender" spCommunication_Sender Message sender }
     spCommunication_Sent, {@enum.value "sent" spCommunication_Sent When sent }
-    spCommunication_Status, {@enum.value "status" spCommunication_Status preparation | in-progress | suspended | aborted | completed | entered-in-error }
+    spCommunication_Status, {@enum.value "status" spCommunication_Status preparation | in-progress | not-done | suspended | aborted | completed | entered-in-error }
     spCommunication_Subject); {@enum.value "subject" spCommunication_Subject Focus of message }
 {$ENDIF}
 
@@ -609,6 +631,7 @@ Type
     spCommunicationRequest__profile, {@enum.value "_profile" spCommunicationRequest__profile Profiles this resource claims to conform to }
     spCommunicationRequest__query, {@enum.value "_query" spCommunicationRequest__query A custom search profile that describes a specific defined query operation }
     spCommunicationRequest__security, {@enum.value "_security" spCommunicationRequest__security Security Labels applied to this resource }
+    spCommunicationRequest__source, {@enum.value "_source" spCommunicationRequest__source Identifies where the resource comes from }
     spCommunicationRequest__tag, {@enum.value "_tag" spCommunicationRequest__tag Tags applied to this resource }
     spCommunicationRequest__text, {@enum.value "_text" spCommunicationRequest__text Search on the narrative of the resource }
     spCommunicationRequest_Authored, {@enum.value "authored" spCommunicationRequest_Authored When request transitioned to being actionable }
@@ -624,7 +647,7 @@ Type
     spCommunicationRequest_Priority, {@enum.value "priority" spCommunicationRequest_Priority Message urgency }
     spCommunicationRequest_Recipient, {@enum.value "recipient" spCommunicationRequest_Recipient Message recipient }
     spCommunicationRequest_Replaces, {@enum.value "replaces" spCommunicationRequest_Replaces Request(s) replaced by this request }
-    spCommunicationRequest_Requester, {@enum.value "requester" spCommunicationRequest_Requester Individual making the request }
+    spCommunicationRequest_Requester, {@enum.value "requester" spCommunicationRequest_Requester Who/what is requesting service }
     spCommunicationRequest_Sender, {@enum.value "sender" spCommunicationRequest_Sender Message sender }
     spCommunicationRequest_Status, {@enum.value "status" spCommunicationRequest_Status draft | active | suspended | cancelled | completed | entered-in-error | unknown }
     spCommunicationRequest_Subject); {@enum.value "subject" spCommunicationRequest_Subject Focus of message }
@@ -641,9 +664,11 @@ Type
     spCompartmentDefinition__profile, {@enum.value "_profile" spCompartmentDefinition__profile Profiles this resource claims to conform to }
     spCompartmentDefinition__query, {@enum.value "_query" spCompartmentDefinition__query A custom search profile that describes a specific defined query operation }
     spCompartmentDefinition__security, {@enum.value "_security" spCompartmentDefinition__security Security Labels applied to this resource }
+    spCompartmentDefinition__source, {@enum.value "_source" spCompartmentDefinition__source Identifies where the resource comes from }
     spCompartmentDefinition__tag, {@enum.value "_tag" spCompartmentDefinition__tag Tags applied to this resource }
     spCompartmentDefinition__text, {@enum.value "_text" spCompartmentDefinition__text Search on the narrative of the resource }
     spCompartmentDefinition_Code, {@enum.value "code" spCompartmentDefinition_Code Patient | Encounter | RelatedPerson | Practitioner | Device }
+    spCompartmentDefinition_Contexttype, {@enum.value "context-type" spCompartmentDefinition_Contexttype A type of use context assigned to the compartment definition }
     spCompartmentDefinition_Date, {@enum.value "date" spCompartmentDefinition_Date The compartment definition publication date }
     spCompartmentDefinition_Description, {@enum.value "description" spCompartmentDefinition_Description The description of the compartment definition }
     spCompartmentDefinition_Jurisdiction, {@enum.value "jurisdiction" spCompartmentDefinition_Jurisdiction Intended jurisdiction for the compartment definition }
@@ -666,6 +691,7 @@ Type
     spComposition__profile, {@enum.value "_profile" spComposition__profile Profiles this resource claims to conform to }
     spComposition__query, {@enum.value "_query" spComposition__query A custom search profile that describes a specific defined query operation }
     spComposition__security, {@enum.value "_security" spComposition__security Security Labels applied to this resource }
+    spComposition__source, {@enum.value "_source" spComposition__source Identifies where the resource comes from }
     spComposition__tag, {@enum.value "_tag" spComposition__tag Tags applied to this resource }
     spComposition__text, {@enum.value "_text" spComposition__text Search on the narrative of the resource }
     spComposition_Attester, {@enum.value "attester" spComposition_Attester Who attested the composition }
@@ -699,6 +725,7 @@ Type
     spConceptMap__profile, {@enum.value "_profile" spConceptMap__profile Profiles this resource claims to conform to }
     spConceptMap__query, {@enum.value "_query" spConceptMap__query A custom search profile that describes a specific defined query operation }
     spConceptMap__security, {@enum.value "_security" spConceptMap__security Security Labels applied to this resource }
+    spConceptMap__source, {@enum.value "_source" spConceptMap__source Identifies where the resource comes from }
     spConceptMap__tag, {@enum.value "_tag" spConceptMap__tag Tags applied to this resource }
     spConceptMap__text, {@enum.value "_text" spConceptMap__text Search on the narrative of the resource }
     spConceptMap_Date, {@enum.value "date" spConceptMap_Date The concept map publication date }
@@ -735,6 +762,7 @@ Type
     spCondition__profile, {@enum.value "_profile" spCondition__profile Profiles this resource claims to conform to }
     spCondition__query, {@enum.value "_query" spCondition__query A custom search profile that describes a specific defined query operation }
     spCondition__security, {@enum.value "_security" spCondition__security Security Labels applied to this resource }
+    spCondition__source, {@enum.value "_source" spCondition__source Identifies where the resource comes from }
     spCondition__tag, {@enum.value "_tag" spCondition__tag Tags applied to this resource }
     spCondition__text, {@enum.value "_text" spCondition__text Search on the narrative of the resource }
     spCondition_Abatementage, {@enum.value "abatement-age" spCondition_Abatementage Abatement as age or age range }
@@ -758,7 +786,7 @@ Type
     spCondition_Severity, {@enum.value "severity" spCondition_Severity The severity of the condition }
     spCondition_Stage, {@enum.value "stage" spCondition_Stage Simple summary (disease specific) }
     spCondition_Subject, {@enum.value "subject" spCondition_Subject Who has the condition? }
-    spCondition_Verificationstatus); {@enum.value "verification-status" spCondition_Verificationstatus unconfirmed | provisional | differential | confirmed | refuted | entered-in-error | unknown }
+    spCondition_Verificationstatus); {@enum.value "verification-status" spCondition_Verificationstatus unconfirmed | provisional | differential | confirmed | refuted | entered-in-error }
 {$ENDIF}
 
 {$IFDEF FHIR_CONSENT}
@@ -772,6 +800,7 @@ Type
     spConsent__profile, {@enum.value "_profile" spConsent__profile Profiles this resource claims to conform to }
     spConsent__query, {@enum.value "_query" spConsent__query A custom search profile that describes a specific defined query operation }
     spConsent__security, {@enum.value "_security" spConsent__security Security Labels applied to this resource }
+    spConsent__source, {@enum.value "_source" spConsent__source Identifies where the resource comes from }
     spConsent__tag, {@enum.value "_tag" spConsent__tag Tags applied to this resource }
     spConsent__text, {@enum.value "_text" spConsent__text Search on the narrative of the resource }
     spConsent_Action, {@enum.value "action" spConsent_Action Actions controlled by this rule }
@@ -785,6 +814,7 @@ Type
     spConsent_Patient, {@enum.value "patient" spConsent_Patient Who the consent applies to }
     spConsent_Period, {@enum.value "period" spConsent_Period Timeframe for this rule }
     spConsent_Purpose, {@enum.value "purpose" spConsent_Purpose Context of activities covered by this rule }
+    spConsent_Scope, {@enum.value "scope" spConsent_Scope Which of the four areas this resource covers }
     spConsent_Securitylabel, {@enum.value "securitylabel" spConsent_Securitylabel Security Labels that define affected resources }
     spConsent_Source, {@enum.value "source" spConsent_Source Source from which this consent is taken }
     spConsent_Status); {@enum.value "status" spConsent_Status draft | proposed | active | rejected | inactive | entered-in-error }
@@ -801,6 +831,7 @@ Type
     spContract__profile, {@enum.value "_profile" spContract__profile Profiles this resource claims to conform to }
     spContract__query, {@enum.value "_query" spContract__query A custom search profile that describes a specific defined query operation }
     spContract__security, {@enum.value "_security" spContract__security Security Labels applied to this resource }
+    spContract__source, {@enum.value "_source" spContract__source Identifies where the resource comes from }
     spContract__tag, {@enum.value "_tag" spContract__tag Tags applied to this resource }
     spContract__text, {@enum.value "_text" spContract__text Search on the narrative of the resource }
     spContract_Authority, {@enum.value "authority" spContract_Authority The authority of the contract }
@@ -824,6 +855,7 @@ Type
     spCoverage__profile, {@enum.value "_profile" spCoverage__profile Profiles this resource claims to conform to }
     spCoverage__query, {@enum.value "_query" spCoverage__query A custom search profile that describes a specific defined query operation }
     spCoverage__security, {@enum.value "_security" spCoverage__security Security Labels applied to this resource }
+    spCoverage__source, {@enum.value "_source" spCoverage__source Identifies where the resource comes from }
     spCoverage__tag, {@enum.value "_tag" spCoverage__tag Tags applied to this resource }
     spCoverage__text, {@enum.value "_text" spCoverage__text Search on the narrative of the resource }
     spCoverage_Beneficiary, {@enum.value "beneficiary" spCoverage_Beneficiary Covered party }
@@ -831,6 +863,7 @@ Type
     spCoverage_Dependent, {@enum.value "dependent" spCoverage_Dependent Dependent number }
     spCoverage_Group, {@enum.value "group" spCoverage_Group Group identifier }
     spCoverage_Identifier, {@enum.value "identifier" spCoverage_Identifier The primary identifier of the insured and the coverage }
+    spCoverage_Patient, {@enum.value "patient" spCoverage_Patient Retrieve coverages for a patient }
     spCoverage_Payor, {@enum.value "payor" spCoverage_Payor The identity of the insurer or party paying for services }
     spCoverage_Plan, {@enum.value "plan" spCoverage_Plan A plan or policy identifier }
     spCoverage_Policyholder, {@enum.value "policy-holder" spCoverage_Policyholder Reference to the policyholder }
@@ -854,6 +887,7 @@ Type
     spDetectedIssue__profile, {@enum.value "_profile" spDetectedIssue__profile Profiles this resource claims to conform to }
     spDetectedIssue__query, {@enum.value "_query" spDetectedIssue__query A custom search profile that describes a specific defined query operation }
     spDetectedIssue__security, {@enum.value "_security" spDetectedIssue__security Security Labels applied to this resource }
+    spDetectedIssue__source, {@enum.value "_source" spDetectedIssue__source Identifies where the resource comes from }
     spDetectedIssue__tag, {@enum.value "_tag" spDetectedIssue__tag Tags applied to this resource }
     spDetectedIssue__text, {@enum.value "_text" spDetectedIssue__text Search on the narrative of the resource }
     spDetectedIssue_Author, {@enum.value "author" spDetectedIssue_Author The provider or device that identified the issue }
@@ -875,6 +909,7 @@ Type
     spDevice__profile, {@enum.value "_profile" spDevice__profile Profiles this resource claims to conform to }
     spDevice__query, {@enum.value "_query" spDevice__query A custom search profile that describes a specific defined query operation }
     spDevice__security, {@enum.value "_security" spDevice__security Security Labels applied to this resource }
+    spDevice__source, {@enum.value "_source" spDevice__source Identifies where the resource comes from }
     spDevice__tag, {@enum.value "_tag" spDevice__tag Tags applied to this resource }
     spDevice__text, {@enum.value "_text" spDevice__text Search on the narrative of the resource }
     spDevice_Devicename, {@enum.value "device-name" spDevice_Devicename A server defined search that may match any of the string fields in the Device.udi.name  or Device.type.coding.display or  Device.type.text }
@@ -902,6 +937,7 @@ Type
     spDeviceComponent__profile, {@enum.value "_profile" spDeviceComponent__profile Profiles this resource claims to conform to }
     spDeviceComponent__query, {@enum.value "_query" spDeviceComponent__query A custom search profile that describes a specific defined query operation }
     spDeviceComponent__security, {@enum.value "_security" spDeviceComponent__security Security Labels applied to this resource }
+    spDeviceComponent__source, {@enum.value "_source" spDeviceComponent__source Identifies where the resource comes from }
     spDeviceComponent__tag, {@enum.value "_tag" spDeviceComponent__tag Tags applied to this resource }
     spDeviceComponent__text, {@enum.value "_text" spDeviceComponent__text Search on the narrative of the resource }
     spDeviceComponent_Identifier, {@enum.value "identifier" spDeviceComponent_Identifier The identifier of the component }
@@ -921,6 +957,7 @@ Type
     spDeviceMetric__profile, {@enum.value "_profile" spDeviceMetric__profile Profiles this resource claims to conform to }
     spDeviceMetric__query, {@enum.value "_query" spDeviceMetric__query A custom search profile that describes a specific defined query operation }
     spDeviceMetric__security, {@enum.value "_security" spDeviceMetric__security Security Labels applied to this resource }
+    spDeviceMetric__source, {@enum.value "_source" spDeviceMetric__source Identifies where the resource comes from }
     spDeviceMetric__tag, {@enum.value "_tag" spDeviceMetric__tag Tags applied to this resource }
     spDeviceMetric__text, {@enum.value "_text" spDeviceMetric__text Search on the narrative of the resource }
     spDeviceMetric_Category, {@enum.value "category" spDeviceMetric_Category The category of the metric }
@@ -941,17 +978,19 @@ Type
     spDeviceRequest__profile, {@enum.value "_profile" spDeviceRequest__profile Profiles this resource claims to conform to }
     spDeviceRequest__query, {@enum.value "_query" spDeviceRequest__query A custom search profile that describes a specific defined query operation }
     spDeviceRequest__security, {@enum.value "_security" spDeviceRequest__security Security Labels applied to this resource }
+    spDeviceRequest__source, {@enum.value "_source" spDeviceRequest__source Identifies where the resource comes from }
     spDeviceRequest__tag, {@enum.value "_tag" spDeviceRequest__tag Tags applied to this resource }
     spDeviceRequest__text, {@enum.value "_text" spDeviceRequest__text Search on the narrative of the resource }
     spDeviceRequest_Authoredon, {@enum.value "authored-on" spDeviceRequest_Authoredon When the request transitioned to being actionable }
     spDeviceRequest_Basedon, {@enum.value "based-on" spDeviceRequest_Basedon Plan/proposal/order fulfilled by this request }
     spDeviceRequest_Code, {@enum.value "code" spDeviceRequest_Code Code for what is being requested/ordered }
-    spDeviceRequest_Definition, {@enum.value "definition" spDeviceRequest_Definition Protocol or definition followed by this request }
     spDeviceRequest_Device, {@enum.value "device" spDeviceRequest_Device Reference to resource that is being requested/ordered }
     spDeviceRequest_Encounter, {@enum.value "encounter" spDeviceRequest_Encounter Encounter or Episode during which request was created }
     spDeviceRequest_Eventdate, {@enum.value "event-date" spDeviceRequest_Eventdate When service should occur }
     spDeviceRequest_Groupidentifier, {@enum.value "group-identifier" spDeviceRequest_Groupidentifier Composite request this is part of }
     spDeviceRequest_Identifier, {@enum.value "identifier" spDeviceRequest_Identifier Business identifier for request/order }
+    spDeviceRequest_Instantiates, {@enum.value "instantiates" spDeviceRequest_Instantiates Protocol or definition followed by this request }
+    spDeviceRequest_Insurance, {@enum.value "insurance" spDeviceRequest_Insurance Associated insurance coverage }
     spDeviceRequest_Intent, {@enum.value "intent" spDeviceRequest_Intent proposal | plan | original-order |reflex-order }
     spDeviceRequest_Patient, {@enum.value "patient" spDeviceRequest_Patient Individual the service is ordered for }
     spDeviceRequest_Performer, {@enum.value "performer" spDeviceRequest_Performer Desired performer for service }
@@ -972,6 +1011,7 @@ Type
     spDeviceUseStatement__profile, {@enum.value "_profile" spDeviceUseStatement__profile Profiles this resource claims to conform to }
     spDeviceUseStatement__query, {@enum.value "_query" spDeviceUseStatement__query A custom search profile that describes a specific defined query operation }
     spDeviceUseStatement__security, {@enum.value "_security" spDeviceUseStatement__security Security Labels applied to this resource }
+    spDeviceUseStatement__source, {@enum.value "_source" spDeviceUseStatement__source Identifies where the resource comes from }
     spDeviceUseStatement__tag, {@enum.value "_tag" spDeviceUseStatement__tag Tags applied to this resource }
     spDeviceUseStatement__text, {@enum.value "_text" spDeviceUseStatement__text Search on the narrative of the resource }
     spDeviceUseStatement_Device, {@enum.value "device" spDeviceUseStatement_Device Search by device }
@@ -991,9 +1031,10 @@ Type
     spDiagnosticReport__profile, {@enum.value "_profile" spDiagnosticReport__profile Profiles this resource claims to conform to }
     spDiagnosticReport__query, {@enum.value "_query" spDiagnosticReport__query A custom search profile that describes a specific defined query operation }
     spDiagnosticReport__security, {@enum.value "_security" spDiagnosticReport__security Security Labels applied to this resource }
+    spDiagnosticReport__source, {@enum.value "_source" spDiagnosticReport__source Identifies where the resource comes from }
     spDiagnosticReport__tag, {@enum.value "_tag" spDiagnosticReport__tag Tags applied to this resource }
     spDiagnosticReport__text, {@enum.value "_text" spDiagnosticReport__text Search on the narrative of the resource }
-    spDiagnosticReport_Basedon, {@enum.value "based-on" spDiagnosticReport_Basedon Reference to the procedure request. }
+    spDiagnosticReport_Basedon, {@enum.value "based-on" spDiagnosticReport_Basedon Reference to the service request. }
     spDiagnosticReport_Category, {@enum.value "category" spDiagnosticReport_Category Which diagnostic discipline/department created the report }
     spDiagnosticReport_Code, {@enum.value "code" spDiagnosticReport_Code The code for the report as a whole, as opposed to codes for the atomic results, which are the names on the observation resource referred to from the result }
     spDiagnosticReport_Context, {@enum.value "context" spDiagnosticReport_Context Healthcare event (Episode of Care or Encounter) related to the report }
@@ -1001,8 +1042,8 @@ Type
     spDiagnosticReport_Diagnosis, {@enum.value "diagnosis" spDiagnosticReport_Diagnosis A coded diagnosis on the report }
     spDiagnosticReport_Encounter, {@enum.value "encounter" spDiagnosticReport_Encounter The Encounter when the order was made }
     spDiagnosticReport_Identifier, {@enum.value "identifier" spDiagnosticReport_Identifier An identifier for the report }
-    spDiagnosticReport_Image, {@enum.value "image" spDiagnosticReport_Image A reference to the image source. }
     spDiagnosticReport_Issued, {@enum.value "issued" spDiagnosticReport_Issued When the report was issued }
+    spDiagnosticReport_Media, {@enum.value "media" spDiagnosticReport_Media A reference to the image source. }
     spDiagnosticReport_Patient, {@enum.value "patient" spDiagnosticReport_Patient The subject of the report if a patient }
     spDiagnosticReport_Performer, {@enum.value "performer" spDiagnosticReport_Performer Who is responsible for the report }
     spDiagnosticReport_Result, {@enum.value "result" spDiagnosticReport_Result Link to an atomic result (observation resource) }
@@ -1023,6 +1064,7 @@ Type
     spDocumentManifest__profile, {@enum.value "_profile" spDocumentManifest__profile Profiles this resource claims to conform to }
     spDocumentManifest__query, {@enum.value "_query" spDocumentManifest__query A custom search profile that describes a specific defined query operation }
     spDocumentManifest__security, {@enum.value "_security" spDocumentManifest__security Security Labels applied to this resource }
+    spDocumentManifest__source, {@enum.value "_source" spDocumentManifest__source Identifies where the resource comes from }
     spDocumentManifest__tag, {@enum.value "_tag" spDocumentManifest__tag Tags applied to this resource }
     spDocumentManifest__text, {@enum.value "_text" spDocumentManifest__text Search on the narrative of the resource }
     spDocumentManifest_Agent, {@enum.value "agent" spDocumentManifest_Agent Who and/or what had an agent participation }
@@ -1051,6 +1093,7 @@ Type
     spDocumentReference__profile, {@enum.value "_profile" spDocumentReference__profile Profiles this resource claims to conform to }
     spDocumentReference__query, {@enum.value "_query" spDocumentReference__query A custom search profile that describes a specific defined query operation }
     spDocumentReference__security, {@enum.value "_security" spDocumentReference__security Security Labels applied to this resource }
+    spDocumentReference__source, {@enum.value "_source" spDocumentReference__source Identifies where the resource comes from }
     spDocumentReference__tag, {@enum.value "_tag" spDocumentReference__tag Tags applied to this resource }
     spDocumentReference__text, {@enum.value "_text" spDocumentReference__text Search on the narrative of the resource }
     spDocumentReference_Agent, {@enum.value "agent" spDocumentReference_Agent Who and/or what authored the document }
@@ -1093,6 +1136,7 @@ Type
     spEligibilityRequest__profile, {@enum.value "_profile" spEligibilityRequest__profile Profiles this resource claims to conform to }
     spEligibilityRequest__query, {@enum.value "_query" spEligibilityRequest__query A custom search profile that describes a specific defined query operation }
     spEligibilityRequest__security, {@enum.value "_security" spEligibilityRequest__security Security Labels applied to this resource }
+    spEligibilityRequest__source, {@enum.value "_source" spEligibilityRequest__source Identifies where the resource comes from }
     spEligibilityRequest__tag, {@enum.value "_tag" spEligibilityRequest__tag Tags applied to this resource }
     spEligibilityRequest__text, {@enum.value "_text" spEligibilityRequest__text Search on the narrative of the resource }
     spEligibilityRequest_Created, {@enum.value "created" spEligibilityRequest_Created The creation date for the EOB }
@@ -1116,6 +1160,7 @@ Type
     spEligibilityResponse__profile, {@enum.value "_profile" spEligibilityResponse__profile Profiles this resource claims to conform to }
     spEligibilityResponse__query, {@enum.value "_query" spEligibilityResponse__query A custom search profile that describes a specific defined query operation }
     spEligibilityResponse__security, {@enum.value "_security" spEligibilityResponse__security Security Labels applied to this resource }
+    spEligibilityResponse__source, {@enum.value "_source" spEligibilityResponse__source Identifies where the resource comes from }
     spEligibilityResponse__tag, {@enum.value "_tag" spEligibilityResponse__tag Tags applied to this resource }
     spEligibilityResponse__text, {@enum.value "_text" spEligibilityResponse__text Search on the narrative of the resource }
     spEligibilityResponse_Created, {@enum.value "created" spEligibilityResponse_Created The creation date }
@@ -1140,6 +1185,7 @@ Type
     spEncounter__profile, {@enum.value "_profile" spEncounter__profile Profiles this resource claims to conform to }
     spEncounter__query, {@enum.value "_query" spEncounter__query A custom search profile that describes a specific defined query operation }
     spEncounter__security, {@enum.value "_security" spEncounter__security Security Labels applied to this resource }
+    spEncounter__source, {@enum.value "_source" spEncounter__source Identifies where the resource comes from }
     spEncounter__tag, {@enum.value "_tag" spEncounter__tag Tags applied to this resource }
     spEncounter__text, {@enum.value "_text" spEncounter__text Search on the narrative of the resource }
     spEncounter_Appointment, {@enum.value "appointment" spEncounter_Appointment The appointment that scheduled this encounter }
@@ -1148,20 +1194,20 @@ Type
     spEncounter_Diagnosis, {@enum.value "diagnosis" spEncounter_Diagnosis Reason the encounter takes place (resource) }
     spEncounter_Episodeofcare, {@enum.value "episodeofcare" spEncounter_Episodeofcare Episode(s) of care that this encounter should be recorded against }
     spEncounter_Identifier, {@enum.value "identifier" spEncounter_Identifier Identifier(s) by which this encounter is known }
-    spEncounter_Incomingreferral, {@enum.value "incomingreferral" spEncounter_Incomingreferral The ProcedureRequest that initiated this encounter }
+    spEncounter_Incomingreferral, {@enum.value "incomingreferral" spEncounter_Incomingreferral The ServiceRequest that initiated this encounter }
     spEncounter_Length, {@enum.value "length" spEncounter_Length Length of encounter in days }
     spEncounter_Location, {@enum.value "location" spEncounter_Location Location the encounter takes place }
     spEncounter_Locationperiod, {@enum.value "location-period" spEncounter_Locationperiod Time period during which the patient was present at the location }
     spEncounter_Partof, {@enum.value "part-of" spEncounter_Partof Another Encounter this encounter is part of }
     spEncounter_Participant, {@enum.value "participant" spEncounter_Participant Persons involved in the encounter other than the patient }
     spEncounter_Participanttype, {@enum.value "participant-type" spEncounter_Participanttype Role of participant in encounter }
-    spEncounter_Patient, {@enum.value "patient" spEncounter_Patient The patient ro group present at the encounter }
+    spEncounter_Patient, {@enum.value "patient" spEncounter_Patient The patient or group present at the encounter }
     spEncounter_Practitioner, {@enum.value "practitioner" spEncounter_Practitioner Persons involved in the encounter other than the patient }
     spEncounter_Reason, {@enum.value "reason" spEncounter_Reason Reason the encounter takes place (code) }
-    spEncounter_Serviceprovider, {@enum.value "service-provider" spEncounter_Serviceprovider The custodian organization of this Encounter record }
+    spEncounter_Serviceprovider, {@enum.value "service-provider" spEncounter_Serviceprovider The organization (facility) responsible for this encounter }
     spEncounter_Specialarrangement, {@enum.value "special-arrangement" spEncounter_Specialarrangement Wheelchair, translator, stretcher, etc. }
     spEncounter_Status, {@enum.value "status" spEncounter_Status planned | arrived | triaged | in-progress | onleave | finished | cancelled + }
-    spEncounter_Subject, {@enum.value "subject" spEncounter_Subject The patient ro group present at the encounter }
+    spEncounter_Subject, {@enum.value "subject" spEncounter_Subject The patient or group present at the encounter }
     spEncounter_Type); {@enum.value "type" spEncounter_Type Specific type of encounter }
 {$ENDIF}
 
@@ -1176,6 +1222,7 @@ Type
     spEndpoint__profile, {@enum.value "_profile" spEndpoint__profile Profiles this resource claims to conform to }
     spEndpoint__query, {@enum.value "_query" spEndpoint__query A custom search profile that describes a specific defined query operation }
     spEndpoint__security, {@enum.value "_security" spEndpoint__security Security Labels applied to this resource }
+    spEndpoint__source, {@enum.value "_source" spEndpoint__source Identifies where the resource comes from }
     spEndpoint__tag, {@enum.value "_tag" spEndpoint__tag Tags applied to this resource }
     spEndpoint__text, {@enum.value "_text" spEndpoint__text Search on the narrative of the resource }
     spEndpoint_Connectiontype, {@enum.value "connection-type" spEndpoint_Connectiontype Protocol/Profile/Standard to be used with this endpoint connection }
@@ -1197,6 +1244,7 @@ Type
     spEnrollmentRequest__profile, {@enum.value "_profile" spEnrollmentRequest__profile Profiles this resource claims to conform to }
     spEnrollmentRequest__query, {@enum.value "_query" spEnrollmentRequest__query A custom search profile that describes a specific defined query operation }
     spEnrollmentRequest__security, {@enum.value "_security" spEnrollmentRequest__security Security Labels applied to this resource }
+    spEnrollmentRequest__source, {@enum.value "_source" spEnrollmentRequest__source Identifies where the resource comes from }
     spEnrollmentRequest__tag, {@enum.value "_tag" spEnrollmentRequest__tag Tags applied to this resource }
     spEnrollmentRequest__text, {@enum.value "_text" spEnrollmentRequest__text Search on the narrative of the resource }
     spEnrollmentRequest_Identifier, {@enum.value "identifier" spEnrollmentRequest_Identifier The business identifier of the Enrollment }
@@ -1217,12 +1265,29 @@ Type
     spEnrollmentResponse__profile, {@enum.value "_profile" spEnrollmentResponse__profile Profiles this resource claims to conform to }
     spEnrollmentResponse__query, {@enum.value "_query" spEnrollmentResponse__query A custom search profile that describes a specific defined query operation }
     spEnrollmentResponse__security, {@enum.value "_security" spEnrollmentResponse__security Security Labels applied to this resource }
+    spEnrollmentResponse__source, {@enum.value "_source" spEnrollmentResponse__source Identifies where the resource comes from }
     spEnrollmentResponse__tag, {@enum.value "_tag" spEnrollmentResponse__tag Tags applied to this resource }
     spEnrollmentResponse__text, {@enum.value "_text" spEnrollmentResponse__text Search on the narrative of the resource }
     spEnrollmentResponse_Identifier, {@enum.value "identifier" spEnrollmentResponse_Identifier The business identifier of the EnrollmentResponse }
     spEnrollmentResponse_Organization, {@enum.value "organization" spEnrollmentResponse_Organization The organization who generated this resource }
     spEnrollmentResponse_Request, {@enum.value "request" spEnrollmentResponse_Request The reference to the claim }
     spEnrollmentResponse_Status); {@enum.value "status" spEnrollmentResponse_Status The status of the enrollment response }
+{$ENDIF}
+
+{$IFDEF FHIR_ENTRYDEFINITION}
+  {@Enum TSearchParamsEntryDefinition
+    Search Parameters for EntryDefinition
+  }
+  TSearchParamsEntryDefinition = (
+    spEntryDefinition__content, {@enum.value "_content" spEntryDefinition__content Search on the entire content of the resource }
+    spEntryDefinition__id, {@enum.value "_id" spEntryDefinition__id Logical id of this artifact }
+    spEntryDefinition__lastUpdated, {@enum.value "_lastUpdated" spEntryDefinition__lastUpdated When the resource version last changed }
+    spEntryDefinition__profile, {@enum.value "_profile" spEntryDefinition__profile Profiles this resource claims to conform to }
+    spEntryDefinition__query, {@enum.value "_query" spEntryDefinition__query A custom search profile that describes a specific defined query operation }
+    spEntryDefinition__security, {@enum.value "_security" spEntryDefinition__security Security Labels applied to this resource }
+    spEntryDefinition__source, {@enum.value "_source" spEntryDefinition__source Identifies where the resource comes from }
+    spEntryDefinition__tag, {@enum.value "_tag" spEntryDefinition__tag Tags applied to this resource }
+    spEntryDefinition__text); {@enum.value "_text" spEntryDefinition__text Search on the narrative of the resource }
 {$ENDIF}
 
 {$IFDEF FHIR_EPISODEOFCARE}
@@ -1236,6 +1301,7 @@ Type
     spEpisodeOfCare__profile, {@enum.value "_profile" spEpisodeOfCare__profile Profiles this resource claims to conform to }
     spEpisodeOfCare__query, {@enum.value "_query" spEpisodeOfCare__query A custom search profile that describes a specific defined query operation }
     spEpisodeOfCare__security, {@enum.value "_security" spEpisodeOfCare__security Security Labels applied to this resource }
+    spEpisodeOfCare__source, {@enum.value "_source" spEpisodeOfCare__source Identifies where the resource comes from }
     spEpisodeOfCare__tag, {@enum.value "_tag" spEpisodeOfCare__tag Tags applied to this resource }
     spEpisodeOfCare__text, {@enum.value "_text" spEpisodeOfCare__text Search on the narrative of the resource }
     spEpisodeOfCare_Caremanager, {@enum.value "care-manager" spEpisodeOfCare_Caremanager Care manager/care co-ordinator for the patient }
@@ -1260,6 +1326,7 @@ Type
     spEventDefinition__profile, {@enum.value "_profile" spEventDefinition__profile Profiles this resource claims to conform to }
     spEventDefinition__query, {@enum.value "_query" spEventDefinition__query A custom search profile that describes a specific defined query operation }
     spEventDefinition__security, {@enum.value "_security" spEventDefinition__security Security Labels applied to this resource }
+    spEventDefinition__source, {@enum.value "_source" spEventDefinition__source Identifies where the resource comes from }
     spEventDefinition__tag, {@enum.value "_tag" spEventDefinition__tag Tags applied to this resource }
     spEventDefinition__text, {@enum.value "_text" spEventDefinition__text Search on the narrative of the resource }
     spEventDefinition_Composedof, {@enum.value "composed-of" spEventDefinition_Composedof What resource is being referenced }
@@ -1292,6 +1359,7 @@ Type
     spExampleScenario__profile, {@enum.value "_profile" spExampleScenario__profile Profiles this resource claims to conform to }
     spExampleScenario__query, {@enum.value "_query" spExampleScenario__query A custom search profile that describes a specific defined query operation }
     spExampleScenario__security, {@enum.value "_security" spExampleScenario__security Security Labels applied to this resource }
+    spExampleScenario__source, {@enum.value "_source" spExampleScenario__source Identifies where the resource comes from }
     spExampleScenario__tag, {@enum.value "_tag" spExampleScenario__tag Tags applied to this resource }
     spExampleScenario__text, {@enum.value "_text" spExampleScenario__text Search on the narrative of the resource }
     spExampleScenario_Date, {@enum.value "date" spExampleScenario_Date The example scenario publication date }
@@ -1317,6 +1385,7 @@ Type
     spExpansionProfile__profile, {@enum.value "_profile" spExpansionProfile__profile Profiles this resource claims to conform to }
     spExpansionProfile__query, {@enum.value "_query" spExpansionProfile__query A custom search profile that describes a specific defined query operation }
     spExpansionProfile__security, {@enum.value "_security" spExpansionProfile__security Security Labels applied to this resource }
+    spExpansionProfile__source, {@enum.value "_source" spExpansionProfile__source Identifies where the resource comes from }
     spExpansionProfile__tag, {@enum.value "_tag" spExpansionProfile__tag Tags applied to this resource }
     spExpansionProfile__text, {@enum.value "_text" spExpansionProfile__text Search on the narrative of the resource }
     spExpansionProfile_Date, {@enum.value "date" spExpansionProfile_Date The expansion profile publication date }
@@ -1341,6 +1410,7 @@ Type
     spExplanationOfBenefit__profile, {@enum.value "_profile" spExplanationOfBenefit__profile Profiles this resource claims to conform to }
     spExplanationOfBenefit__query, {@enum.value "_query" spExplanationOfBenefit__query A custom search profile that describes a specific defined query operation }
     spExplanationOfBenefit__security, {@enum.value "_security" spExplanationOfBenefit__security Security Labels applied to this resource }
+    spExplanationOfBenefit__source, {@enum.value "_source" spExplanationOfBenefit__source Identifies where the resource comes from }
     spExplanationOfBenefit__tag, {@enum.value "_tag" spExplanationOfBenefit__tag Tags applied to this resource }
     spExplanationOfBenefit__text, {@enum.value "_text" spExplanationOfBenefit__text Search on the narrative of the resource }
     spExplanationOfBenefit_Careteam, {@enum.value "care-team" spExplanationOfBenefit_Careteam Member of the CareTeam }
@@ -1370,6 +1440,7 @@ Type
     spFamilyMemberHistory__profile, {@enum.value "_profile" spFamilyMemberHistory__profile Profiles this resource claims to conform to }
     spFamilyMemberHistory__query, {@enum.value "_query" spFamilyMemberHistory__query A custom search profile that describes a specific defined query operation }
     spFamilyMemberHistory__security, {@enum.value "_security" spFamilyMemberHistory__security Security Labels applied to this resource }
+    spFamilyMemberHistory__source, {@enum.value "_source" spFamilyMemberHistory__source Identifies where the resource comes from }
     spFamilyMemberHistory__tag, {@enum.value "_tag" spFamilyMemberHistory__tag Tags applied to this resource }
     spFamilyMemberHistory__text, {@enum.value "_text" spFamilyMemberHistory__text Search on the narrative of the resource }
     spFamilyMemberHistory_Code, {@enum.value "code" spFamilyMemberHistory_Code A search by a condition code }
@@ -1393,6 +1464,7 @@ Type
     spFlag__profile, {@enum.value "_profile" spFlag__profile Profiles this resource claims to conform to }
     spFlag__query, {@enum.value "_query" spFlag__query A custom search profile that describes a specific defined query operation }
     spFlag__security, {@enum.value "_security" spFlag__security Security Labels applied to this resource }
+    spFlag__source, {@enum.value "_source" spFlag__source Identifies where the resource comes from }
     spFlag__tag, {@enum.value "_tag" spFlag__tag Tags applied to this resource }
     spFlag__text, {@enum.value "_text" spFlag__text Search on the narrative of the resource }
     spFlag_Author, {@enum.value "author" spFlag_Author Flag creator }
@@ -1414,6 +1486,7 @@ Type
     spGoal__profile, {@enum.value "_profile" spGoal__profile Profiles this resource claims to conform to }
     spGoal__query, {@enum.value "_query" spGoal__query A custom search profile that describes a specific defined query operation }
     spGoal__security, {@enum.value "_security" spGoal__security Security Labels applied to this resource }
+    spGoal__source, {@enum.value "_source" spGoal__source Identifies where the resource comes from }
     spGoal__tag, {@enum.value "_tag" spGoal__tag Tags applied to this resource }
     spGoal__text, {@enum.value "_text" spGoal__text Search on the narrative of the resource }
     spGoal_Category, {@enum.value "category" spGoal_Category E.g. Treatment, dietary, behavioral, etc. }
@@ -1436,6 +1509,7 @@ Type
     spGraphDefinition__profile, {@enum.value "_profile" spGraphDefinition__profile Profiles this resource claims to conform to }
     spGraphDefinition__query, {@enum.value "_query" spGraphDefinition__query A custom search profile that describes a specific defined query operation }
     spGraphDefinition__security, {@enum.value "_security" spGraphDefinition__security Security Labels applied to this resource }
+    spGraphDefinition__source, {@enum.value "_source" spGraphDefinition__source Identifies where the resource comes from }
     spGraphDefinition__tag, {@enum.value "_tag" spGraphDefinition__tag Tags applied to this resource }
     spGraphDefinition__text, {@enum.value "_text" spGraphDefinition__text Search on the narrative of the resource }
     spGraphDefinition_Date, {@enum.value "date" spGraphDefinition_Date The graph definition publication date }
@@ -1460,6 +1534,7 @@ Type
     spGroup__profile, {@enum.value "_profile" spGroup__profile Profiles this resource claims to conform to }
     spGroup__query, {@enum.value "_query" spGroup__query A custom search profile that describes a specific defined query operation }
     spGroup__security, {@enum.value "_security" spGroup__security Security Labels applied to this resource }
+    spGroup__source, {@enum.value "_source" spGroup__source Identifies where the resource comes from }
     spGroup__tag, {@enum.value "_tag" spGroup__tag Tags applied to this resource }
     spGroup__text, {@enum.value "_text" spGroup__text Search on the narrative of the resource }
     spGroup_Actual, {@enum.value "actual" spGroup_Actual Descriptive or actual }
@@ -1484,6 +1559,7 @@ Type
     spGuidanceResponse__profile, {@enum.value "_profile" spGuidanceResponse__profile Profiles this resource claims to conform to }
     spGuidanceResponse__query, {@enum.value "_query" spGuidanceResponse__query A custom search profile that describes a specific defined query operation }
     spGuidanceResponse__security, {@enum.value "_security" spGuidanceResponse__security Security Labels applied to this resource }
+    spGuidanceResponse__source, {@enum.value "_source" spGuidanceResponse__source Identifies where the resource comes from }
     spGuidanceResponse__tag, {@enum.value "_tag" spGuidanceResponse__tag Tags applied to this resource }
     spGuidanceResponse__text, {@enum.value "_text" spGuidanceResponse__text Search on the narrative of the resource }
     spGuidanceResponse_Identifier, {@enum.value "identifier" spGuidanceResponse_Identifier The identifier of the guidance response }
@@ -1503,6 +1579,7 @@ Type
     spHealthcareService__profile, {@enum.value "_profile" spHealthcareService__profile Profiles this resource claims to conform to }
     spHealthcareService__query, {@enum.value "_query" spHealthcareService__query A custom search profile that describes a specific defined query operation }
     spHealthcareService__security, {@enum.value "_security" spHealthcareService__security Security Labels applied to this resource }
+    spHealthcareService__source, {@enum.value "_source" spHealthcareService__source Identifies where the resource comes from }
     spHealthcareService__tag, {@enum.value "_tag" spHealthcareService__tag Tags applied to this resource }
     spHealthcareService__text, {@enum.value "_text" spHealthcareService__text Search on the narrative of the resource }
     spHealthcareService_Active, {@enum.value "active" spHealthcareService_Active The Healthcare Service is currently marked as active }
@@ -1517,28 +1594,6 @@ Type
     spHealthcareService_Type); {@enum.value "type" spHealthcareService_Type The type of service provided by this healthcare service }
 {$ENDIF}
 
-{$IFDEF FHIR_IMAGINGMANIFEST}
-  {@Enum TSearchParamsImagingManifest
-    Search Parameters for ImagingManifest
-  }
-  TSearchParamsImagingManifest = (
-    spImagingManifest__content, {@enum.value "_content" spImagingManifest__content Search on the entire content of the resource }
-    spImagingManifest__id, {@enum.value "_id" spImagingManifest__id Logical id of this artifact }
-    spImagingManifest__lastUpdated, {@enum.value "_lastUpdated" spImagingManifest__lastUpdated When the resource version last changed }
-    spImagingManifest__profile, {@enum.value "_profile" spImagingManifest__profile Profiles this resource claims to conform to }
-    spImagingManifest__query, {@enum.value "_query" spImagingManifest__query A custom search profile that describes a specific defined query operation }
-    spImagingManifest__security, {@enum.value "_security" spImagingManifest__security Security Labels applied to this resource }
-    spImagingManifest__tag, {@enum.value "_tag" spImagingManifest__tag Tags applied to this resource }
-    spImagingManifest__text, {@enum.value "_text" spImagingManifest__text Search on the narrative of the resource }
-    spImagingManifest_Author, {@enum.value "author" spImagingManifest_Author Author of the ImagingManifest (or a DICOM Key Object Selection which it represents) }
-    spImagingManifest_Authoringtime, {@enum.value "authoring-time" spImagingManifest_Authoringtime Time of the ImagingManifest (or a DICOM Key Object Selection which it represents) authoring }
-    spImagingManifest_Endpoint, {@enum.value "endpoint" spImagingManifest_Endpoint The endpoint for the study or series }
-    spImagingManifest_Identifier, {@enum.value "identifier" spImagingManifest_Identifier UID of the ImagingManifest (or a DICOM Key Object Selection which it represents) }
-    spImagingManifest_Imagingstudy, {@enum.value "imaging-study" spImagingManifest_Imagingstudy ImagingStudy resource selected in the ImagingManifest (or a DICOM Key Object Selection which it represents) }
-    spImagingManifest_Patient, {@enum.value "patient" spImagingManifest_Patient Subject of the ImagingManifest (or a DICOM Key Object Selection which it represents) }
-    spImagingManifest_Selectedstudy); {@enum.value "selected-study" spImagingManifest_Selectedstudy Study selected in the ImagingManifest (or a DICOM Key Object Selection which it represents) }
-{$ENDIF}
-
 {$IFDEF FHIR_IMAGINGSTUDY}
   {@Enum TSearchParamsImagingStudy
     Search Parameters for ImagingStudy
@@ -1550,6 +1605,7 @@ Type
     spImagingStudy__profile, {@enum.value "_profile" spImagingStudy__profile Profiles this resource claims to conform to }
     spImagingStudy__query, {@enum.value "_query" spImagingStudy__query A custom search profile that describes a specific defined query operation }
     spImagingStudy__security, {@enum.value "_security" spImagingStudy__security Security Labels applied to this resource }
+    spImagingStudy__source, {@enum.value "_source" spImagingStudy__source Identifies where the resource comes from }
     spImagingStudy__tag, {@enum.value "_tag" spImagingStudy__tag Tags applied to this resource }
     spImagingStudy__text, {@enum.value "_text" spImagingStudy__text Search on the narrative of the resource }
     spImagingStudy_Accession, {@enum.value "accession" spImagingStudy_Accession The accession identifier for the study }
@@ -1566,6 +1622,7 @@ Type
     spImagingStudy_Series, {@enum.value "series" spImagingStudy_Series The identifier of the series of images }
     spImagingStudy_Started, {@enum.value "started" spImagingStudy_Started When the study was started }
     spImagingStudy_Study, {@enum.value "study" spImagingStudy_Study The study identifier for the image }
+    spImagingStudy_Subject, {@enum.value "subject" spImagingStudy_Subject Who the study is about }
     spImagingStudy_Uid); {@enum.value "uid" spImagingStudy_Uid The instance unique identifier }
 {$ENDIF}
 
@@ -1580,23 +1637,41 @@ Type
     spImmunization__profile, {@enum.value "_profile" spImmunization__profile Profiles this resource claims to conform to }
     spImmunization__query, {@enum.value "_query" spImmunization__query A custom search profile that describes a specific defined query operation }
     spImmunization__security, {@enum.value "_security" spImmunization__security Security Labels applied to this resource }
+    spImmunization__source, {@enum.value "_source" spImmunization__source Identifies where the resource comes from }
     spImmunization__tag, {@enum.value "_tag" spImmunization__tag Tags applied to this resource }
     spImmunization__text, {@enum.value "_text" spImmunization__text Search on the narrative of the resource }
     spImmunization_Date, {@enum.value "date" spImmunization_Date Vaccination  (non)-Administration Date }
-    spImmunization_Dosesequence, {@enum.value "dose-sequence" spImmunization_Dosesequence Dose number within series }
     spImmunization_Identifier, {@enum.value "identifier" spImmunization_Identifier Business identifier }
     spImmunization_Location, {@enum.value "location" spImmunization_Location The service delivery location or facility in which the vaccine was / was to be administered }
     spImmunization_Lotnumber, {@enum.value "lot-number" spImmunization_Lotnumber Vaccine Lot Number }
     spImmunization_Manufacturer, {@enum.value "manufacturer" spImmunization_Manufacturer Vaccine Manufacturer }
-    spImmunization_Notgiven, {@enum.value "notgiven" spImmunization_Notgiven Administrations which were not given }
     spImmunization_Patient, {@enum.value "patient" spImmunization_Patient The patient for the vaccination record }
     spImmunization_Practitioner, {@enum.value "practitioner" spImmunization_Practitioner The practitioner who played a role in the vaccination }
-    spImmunization_Reaction, {@enum.value "reaction" spImmunization_Reaction Additional information on reaction }
-    spImmunization_Reactiondate, {@enum.value "reaction-date" spImmunization_Reactiondate When reaction started }
-    spImmunization_Reason, {@enum.value "reason" spImmunization_Reason Why immunization occurred }
-    spImmunization_Reasonnotgiven, {@enum.value "reason-not-given" spImmunization_Reasonnotgiven Explanation of reason vaccination was not administered }
+    spImmunization_Reason, {@enum.value "reason" spImmunization_Reason Why immunization did or did not occur }
     spImmunization_Status, {@enum.value "status" spImmunization_Status Immunization event status }
     spImmunization_Vaccinecode); {@enum.value "vaccine-code" spImmunization_Vaccinecode Vaccine Product Administered }
+{$ENDIF}
+
+{$IFDEF FHIR_IMMUNIZATIONEVALUATION}
+  {@Enum TSearchParamsImmunizationEvaluation
+    Search Parameters for ImmunizationEvaluation
+  }
+  TSearchParamsImmunizationEvaluation = (
+    spImmunizationEvaluation__content, {@enum.value "_content" spImmunizationEvaluation__content Search on the entire content of the resource }
+    spImmunizationEvaluation__id, {@enum.value "_id" spImmunizationEvaluation__id Logical id of this artifact }
+    spImmunizationEvaluation__lastUpdated, {@enum.value "_lastUpdated" spImmunizationEvaluation__lastUpdated When the resource version last changed }
+    spImmunizationEvaluation__profile, {@enum.value "_profile" spImmunizationEvaluation__profile Profiles this resource claims to conform to }
+    spImmunizationEvaluation__query, {@enum.value "_query" spImmunizationEvaluation__query A custom search profile that describes a specific defined query operation }
+    spImmunizationEvaluation__security, {@enum.value "_security" spImmunizationEvaluation__security Security Labels applied to this resource }
+    spImmunizationEvaluation__source, {@enum.value "_source" spImmunizationEvaluation__source Identifies where the resource comes from }
+    spImmunizationEvaluation__tag, {@enum.value "_tag" spImmunizationEvaluation__tag Tags applied to this resource }
+    spImmunizationEvaluation__text, {@enum.value "_text" spImmunizationEvaluation__text Search on the narrative of the resource }
+    spImmunizationEvaluation_Date, {@enum.value "date" spImmunizationEvaluation_Date Date the evaluation was generated }
+    spImmunizationEvaluation_Dosestatus, {@enum.value "dose-status" spImmunizationEvaluation_Dosestatus The status of the dose relative to published recommendations }
+    spImmunizationEvaluation_Identifier, {@enum.value "identifier" spImmunizationEvaluation_Identifier ID of the evaluation }
+    spImmunizationEvaluation_Immunizationevent, {@enum.value "immunization-event" spImmunizationEvaluation_Immunizationevent The vaccine administration event being evaluated }
+    spImmunizationEvaluation_Patient, {@enum.value "patient" spImmunizationEvaluation_Patient The patient being evaluated }
+    spImmunizationEvaluation_Targetdisease); {@enum.value "target-disease" spImmunizationEvaluation_Targetdisease The vaccine preventable disease being evaluated against }
 {$ENDIF}
 
 {$IFDEF FHIR_IMMUNIZATIONRECOMMENDATION}
@@ -1610,18 +1685,19 @@ Type
     spImmunizationRecommendation__profile, {@enum.value "_profile" spImmunizationRecommendation__profile Profiles this resource claims to conform to }
     spImmunizationRecommendation__query, {@enum.value "_query" spImmunizationRecommendation__query A custom search profile that describes a specific defined query operation }
     spImmunizationRecommendation__security, {@enum.value "_security" spImmunizationRecommendation__security Security Labels applied to this resource }
+    spImmunizationRecommendation__source, {@enum.value "_source" spImmunizationRecommendation__source Identifies where the resource comes from }
     spImmunizationRecommendation__tag, {@enum.value "_tag" spImmunizationRecommendation__tag Tags applied to this resource }
     spImmunizationRecommendation__text, {@enum.value "_text" spImmunizationRecommendation__text Search on the narrative of the resource }
-    spImmunizationRecommendation_Date, {@enum.value "date" spImmunizationRecommendation_Date Date recommendation created }
-    spImmunizationRecommendation_Dosenumber, {@enum.value "dose-number" spImmunizationRecommendation_Dosenumber Recommended dose number }
-    spImmunizationRecommendation_Dosesequence, {@enum.value "dose-sequence" spImmunizationRecommendation_Dosesequence Dose number within sequence }
+    spImmunizationRecommendation_Date, {@enum.value "date" spImmunizationRecommendation_Date Date recommendation(s) created }
+    spImmunizationRecommendation_Dosenumber, {@enum.value "dose-number" spImmunizationRecommendation_Dosenumber Recommended dose number within series }
+    spImmunizationRecommendation_Dosesequence, {@enum.value "dose-sequence" spImmunizationRecommendation_Dosesequence Recommended number of doses for immunity }
     spImmunizationRecommendation_Identifier, {@enum.value "identifier" spImmunizationRecommendation_Identifier Business identifier }
     spImmunizationRecommendation_Information, {@enum.value "information" spImmunizationRecommendation_Information Patient observations supporting recommendation }
     spImmunizationRecommendation_Patient, {@enum.value "patient" spImmunizationRecommendation_Patient Who this profile is for }
-    spImmunizationRecommendation_Status, {@enum.value "status" spImmunizationRecommendation_Status Vaccine administration status }
+    spImmunizationRecommendation_Status, {@enum.value "status" spImmunizationRecommendation_Status Vaccine recommendation status }
     spImmunizationRecommendation_Support, {@enum.value "support" spImmunizationRecommendation_Support Past immunizations supporting recommendation }
     spImmunizationRecommendation_Targetdisease, {@enum.value "target-disease" spImmunizationRecommendation_Targetdisease Disease to be immunized against }
-    spImmunizationRecommendation_Vaccinetype); {@enum.value "vaccine-type" spImmunizationRecommendation_Vaccinetype Vaccine recommendation applies to }
+    spImmunizationRecommendation_Vaccinetype); {@enum.value "vaccine-type" spImmunizationRecommendation_Vaccinetype Vaccine  or vaccine group recommendation applies to }
 {$ENDIF}
 
 {$IFDEF FHIR_IMPLEMENTATIONGUIDE}
@@ -1635,19 +1711,120 @@ Type
     spImplementationGuide__profile, {@enum.value "_profile" spImplementationGuide__profile Profiles this resource claims to conform to }
     spImplementationGuide__query, {@enum.value "_query" spImplementationGuide__query A custom search profile that describes a specific defined query operation }
     spImplementationGuide__security, {@enum.value "_security" spImplementationGuide__security Security Labels applied to this resource }
+    spImplementationGuide__source, {@enum.value "_source" spImplementationGuide__source Identifies where the resource comes from }
     spImplementationGuide__tag, {@enum.value "_tag" spImplementationGuide__tag Tags applied to this resource }
     spImplementationGuide__text, {@enum.value "_text" spImplementationGuide__text Search on the narrative of the resource }
-    spImplementationGuide_Date, {@enum.value "date" spImplementationGuide_Date The implementation guide publication date }
+    spImplementationGuide_Date, {@enum.value "date" spImplementationGuide_Date The implementation guide output publication date }
     spImplementationGuide_Dependency, {@enum.value "dependency" spImplementationGuide_Dependency Where to find dependency }
-    spImplementationGuide_Description, {@enum.value "description" spImplementationGuide_Description The description of the implementation guide }
+    spImplementationGuide_Description, {@enum.value "description" spImplementationGuide_Description The description of the implementation guide output }
     spImplementationGuide_Experimental, {@enum.value "experimental" spImplementationGuide_Experimental For testing purposes, not real usage }
-    spImplementationGuide_Jurisdiction, {@enum.value "jurisdiction" spImplementationGuide_Jurisdiction Intended jurisdiction for the implementation guide }
-    spImplementationGuide_Name, {@enum.value "name" spImplementationGuide_Name Computationally friendly name of the implementation guide }
-    spImplementationGuide_Publisher, {@enum.value "publisher" spImplementationGuide_Publisher Name of the publisher of the implementation guide }
+    spImplementationGuide_Jurisdiction, {@enum.value "jurisdiction" spImplementationGuide_Jurisdiction Intended jurisdiction for the implementation guide output }
+    spImplementationGuide_Name, {@enum.value "name" spImplementationGuide_Name Computationally friendly name of the implementation guide output }
+    spImplementationGuide_Publisher, {@enum.value "publisher" spImplementationGuide_Publisher Name of the publisher of the implementation guide output }
     spImplementationGuide_Resource, {@enum.value "resource" spImplementationGuide_Resource Location of the resource }
-    spImplementationGuide_Status, {@enum.value "status" spImplementationGuide_Status The current status of the implementation guide }
-    spImplementationGuide_Url, {@enum.value "url" spImplementationGuide_Url The uri that identifies the implementation guide }
-    spImplementationGuide_Version); {@enum.value "version" spImplementationGuide_Version The business version of the implementation guide }
+    spImplementationGuide_Status, {@enum.value "status" spImplementationGuide_Status The current status of the implementation guide output }
+    spImplementationGuide_Url, {@enum.value "url" spImplementationGuide_Url The uri that identifies the implementation guide output }
+    spImplementationGuide_Version); {@enum.value "version" spImplementationGuide_Version The business version of the implementation guide output }
+{$ENDIF}
+
+{$IFDEF FHIR_IMPLEMENTATIONGUIDEINPUT}
+  {@Enum TSearchParamsImplementationGuideInput
+    Search Parameters for ImplementationGuideInput
+  }
+  TSearchParamsImplementationGuideInput = (
+    spImplementationGuideInput__content, {@enum.value "_content" spImplementationGuideInput__content Search on the entire content of the resource }
+    spImplementationGuideInput__id, {@enum.value "_id" spImplementationGuideInput__id Logical id of this artifact }
+    spImplementationGuideInput__lastUpdated, {@enum.value "_lastUpdated" spImplementationGuideInput__lastUpdated When the resource version last changed }
+    spImplementationGuideInput__profile, {@enum.value "_profile" spImplementationGuideInput__profile Profiles this resource claims to conform to }
+    spImplementationGuideInput__query, {@enum.value "_query" spImplementationGuideInput__query A custom search profile that describes a specific defined query operation }
+    spImplementationGuideInput__security, {@enum.value "_security" spImplementationGuideInput__security Security Labels applied to this resource }
+    spImplementationGuideInput__source, {@enum.value "_source" spImplementationGuideInput__source Identifies where the resource comes from }
+    spImplementationGuideInput__tag, {@enum.value "_tag" spImplementationGuideInput__tag Tags applied to this resource }
+    spImplementationGuideInput__text, {@enum.value "_text" spImplementationGuideInput__text Search on the narrative of the resource }
+    spImplementationGuideInput_Date, {@enum.value "date" spImplementationGuideInput_Date The implementation guide input publication date }
+    spImplementationGuideInput_Dependency, {@enum.value "dependency" spImplementationGuideInput_Dependency Where to find dependency }
+    spImplementationGuideInput_Description, {@enum.value "description" spImplementationGuideInput_Description The description of the implementation guide input }
+    spImplementationGuideInput_Experimental, {@enum.value "experimental" spImplementationGuideInput_Experimental For testing purposes, not real usage }
+    spImplementationGuideInput_Jurisdiction, {@enum.value "jurisdiction" spImplementationGuideInput_Jurisdiction Intended jurisdiction for the implementation guide input }
+    spImplementationGuideInput_Name, {@enum.value "name" spImplementationGuideInput_Name Computationally friendly name of the implementation guide input }
+    spImplementationGuideInput_Publisher, {@enum.value "publisher" spImplementationGuideInput_Publisher Name of the publisher of the implementation guide input }
+    spImplementationGuideInput_Resource, {@enum.value "resource" spImplementationGuideInput_Resource Location of the resource }
+    spImplementationGuideInput_Status, {@enum.value "status" spImplementationGuideInput_Status The current status of the implementation guide input }
+    spImplementationGuideInput_Url, {@enum.value "url" spImplementationGuideInput_Url The uri that identifies the implementation guide input }
+    spImplementationGuideInput_Version); {@enum.value "version" spImplementationGuideInput_Version The business version of the implementation guide input }
+{$ENDIF}
+
+{$IFDEF FHIR_IMPLEMENTATIONGUIDEOUTPUT}
+  {@Enum TSearchParamsImplementationGuideOutput
+    Search Parameters for ImplementationGuideOutput
+  }
+  TSearchParamsImplementationGuideOutput = (
+    spImplementationGuideOutput__content, {@enum.value "_content" spImplementationGuideOutput__content Search on the entire content of the resource }
+    spImplementationGuideOutput__id, {@enum.value "_id" spImplementationGuideOutput__id Logical id of this artifact }
+    spImplementationGuideOutput__lastUpdated, {@enum.value "_lastUpdated" spImplementationGuideOutput__lastUpdated When the resource version last changed }
+    spImplementationGuideOutput__profile, {@enum.value "_profile" spImplementationGuideOutput__profile Profiles this resource claims to conform to }
+    spImplementationGuideOutput__query, {@enum.value "_query" spImplementationGuideOutput__query A custom search profile that describes a specific defined query operation }
+    spImplementationGuideOutput__security, {@enum.value "_security" spImplementationGuideOutput__security Security Labels applied to this resource }
+    spImplementationGuideOutput__source, {@enum.value "_source" spImplementationGuideOutput__source Identifies where the resource comes from }
+    spImplementationGuideOutput__tag, {@enum.value "_tag" spImplementationGuideOutput__tag Tags applied to this resource }
+    spImplementationGuideOutput__text, {@enum.value "_text" spImplementationGuideOutput__text Search on the narrative of the resource }
+    spImplementationGuideOutput_Date, {@enum.value "date" spImplementationGuideOutput_Date The implementation guide output publication date }
+    spImplementationGuideOutput_Dependency, {@enum.value "dependency" spImplementationGuideOutput_Dependency Where to find dependency }
+    spImplementationGuideOutput_Description, {@enum.value "description" spImplementationGuideOutput_Description The description of the implementation guide output }
+    spImplementationGuideOutput_Experimental, {@enum.value "experimental" spImplementationGuideOutput_Experimental For testing purposes, not real usage }
+    spImplementationGuideOutput_Jurisdiction, {@enum.value "jurisdiction" spImplementationGuideOutput_Jurisdiction Intended jurisdiction for the implementation guide output }
+    spImplementationGuideOutput_Name, {@enum.value "name" spImplementationGuideOutput_Name Computationally friendly name of the implementation guide output }
+    spImplementationGuideOutput_Publisher, {@enum.value "publisher" spImplementationGuideOutput_Publisher Name of the publisher of the implementation guide output }
+    spImplementationGuideOutput_Resource, {@enum.value "resource" spImplementationGuideOutput_Resource Location of the resource }
+    spImplementationGuideOutput_Status, {@enum.value "status" spImplementationGuideOutput_Status The current status of the implementation guide output }
+    spImplementationGuideOutput_Url, {@enum.value "url" spImplementationGuideOutput_Url The uri that identifies the implementation guide output }
+    spImplementationGuideOutput_Version); {@enum.value "version" spImplementationGuideOutput_Version The business version of the implementation guide output }
+{$ENDIF}
+
+{$IFDEF FHIR_INVOICE}
+  {@Enum TSearchParamsInvoice
+    Search Parameters for Invoice
+  }
+  TSearchParamsInvoice = (
+    spInvoice__content, {@enum.value "_content" spInvoice__content Search on the entire content of the resource }
+    spInvoice__id, {@enum.value "_id" spInvoice__id Logical id of this artifact }
+    spInvoice__lastUpdated, {@enum.value "_lastUpdated" spInvoice__lastUpdated When the resource version last changed }
+    spInvoice__profile, {@enum.value "_profile" spInvoice__profile Profiles this resource claims to conform to }
+    spInvoice__query, {@enum.value "_query" spInvoice__query A custom search profile that describes a specific defined query operation }
+    spInvoice__security, {@enum.value "_security" spInvoice__security Security Labels applied to this resource }
+    spInvoice__source, {@enum.value "_source" spInvoice__source Identifies where the resource comes from }
+    spInvoice__tag, {@enum.value "_tag" spInvoice__tag Tags applied to this resource }
+    spInvoice__text, {@enum.value "_text" spInvoice__text Search on the narrative of the resource }
+    spInvoice_Account, {@enum.value "account" spInvoice_Account Account that is being balanced }
+    spInvoice_Date, {@enum.value "date" spInvoice_Date Invoice date / posting date }
+    spInvoice_Identifier, {@enum.value "identifier" spInvoice_Identifier Business Identifier for item }
+    spInvoice_Issuer, {@enum.value "issuer" spInvoice_Issuer Issuing Organization of Invoice }
+    spInvoice_Participant, {@enum.value "participant" spInvoice_Participant Individual who was involved }
+    spInvoice_Participantrole, {@enum.value "participant-role" spInvoice_Participantrole Type of involevent in creation of this Invoice }
+    spInvoice_Patient, {@enum.value "patient" spInvoice_Patient Recipient(s) of goods and services }
+    spInvoice_Recipient, {@enum.value "recipient" spInvoice_Recipient Recipient of this invoice }
+    spInvoice_Status, {@enum.value "status" spInvoice_Status draft | issued | balanced | cancelled | entered-in-error }
+    spInvoice_Subject, {@enum.value "subject" spInvoice_Subject Recipient(s) of goods and services }
+    spInvoice_Totalgross, {@enum.value "totalgross" spInvoice_Totalgross Gross toal of this Invoice }
+    spInvoice_Totalnet, {@enum.value "totalnet" spInvoice_Totalnet Net total of this Invoice }
+    spInvoice_Type); {@enum.value "type" spInvoice_Type Type of Invoice }
+{$ENDIF}
+
+{$IFDEF FHIR_ITEMINSTANCE}
+  {@Enum TSearchParamsItemInstance
+    Search Parameters for ItemInstance
+  }
+  TSearchParamsItemInstance = (
+    spItemInstance__content, {@enum.value "_content" spItemInstance__content Search on the entire content of the resource }
+    spItemInstance__id, {@enum.value "_id" spItemInstance__id Logical id of this artifact }
+    spItemInstance__lastUpdated, {@enum.value "_lastUpdated" spItemInstance__lastUpdated When the resource version last changed }
+    spItemInstance__profile, {@enum.value "_profile" spItemInstance__profile Profiles this resource claims to conform to }
+    spItemInstance__query, {@enum.value "_query" spItemInstance__query A custom search profile that describes a specific defined query operation }
+    spItemInstance__security, {@enum.value "_security" spItemInstance__security Security Labels applied to this resource }
+    spItemInstance__source, {@enum.value "_source" spItemInstance__source Identifies where the resource comes from }
+    spItemInstance__tag, {@enum.value "_tag" spItemInstance__tag Tags applied to this resource }
+    spItemInstance__text, {@enum.value "_text" spItemInstance__text Search on the narrative of the resource }
+    spItemInstance_Subject); {@enum.value "subject" spItemInstance_Subject The identifier of the patient who has devices assigned to }
 {$ENDIF}
 
 {$IFDEF FHIR_LIBRARY}
@@ -1661,6 +1838,7 @@ Type
     spLibrary__profile, {@enum.value "_profile" spLibrary__profile Profiles this resource claims to conform to }
     spLibrary__query, {@enum.value "_query" spLibrary__query A custom search profile that describes a specific defined query operation }
     spLibrary__security, {@enum.value "_security" spLibrary__security Security Labels applied to this resource }
+    spLibrary__source, {@enum.value "_source" spLibrary__source Identifies where the resource comes from }
     spLibrary__tag, {@enum.value "_tag" spLibrary__tag Tags applied to this resource }
     spLibrary__text, {@enum.value "_text" spLibrary__text Search on the narrative of the resource }
     spLibrary_Composedof, {@enum.value "composed-of" spLibrary_Composedof What resource is being referenced }
@@ -1678,6 +1856,7 @@ Type
     spLibrary_Successor, {@enum.value "successor" spLibrary_Successor What resource is being referenced }
     spLibrary_Title, {@enum.value "title" spLibrary_Title The human-friendly name of the library }
     spLibrary_Topic, {@enum.value "topic" spLibrary_Topic Topics associated with the module }
+    spLibrary_Type, {@enum.value "type" spLibrary_Type The type of the library (e.g. logic-library, model-definition, asset-collection, module-definition) }
     spLibrary_Url, {@enum.value "url" spLibrary_Url The uri that identifies the library }
     spLibrary_Version); {@enum.value "version" spLibrary_Version The business version of the library }
 {$ENDIF}
@@ -1693,6 +1872,7 @@ Type
     spLinkage__profile, {@enum.value "_profile" spLinkage__profile Profiles this resource claims to conform to }
     spLinkage__query, {@enum.value "_query" spLinkage__query A custom search profile that describes a specific defined query operation }
     spLinkage__security, {@enum.value "_security" spLinkage__security Security Labels applied to this resource }
+    spLinkage__source, {@enum.value "_source" spLinkage__source Identifies where the resource comes from }
     spLinkage__tag, {@enum.value "_tag" spLinkage__tag Tags applied to this resource }
     spLinkage__text, {@enum.value "_text" spLinkage__text Search on the narrative of the resource }
     spLinkage_Author, {@enum.value "author" spLinkage_Author Author of the Linkage }
@@ -1711,6 +1891,7 @@ Type
     spList__profile, {@enum.value "_profile" spList__profile Profiles this resource claims to conform to }
     spList__query, {@enum.value "_query" spList__query A custom search profile that describes a specific defined query operation }
     spList__security, {@enum.value "_security" spList__security Security Labels applied to this resource }
+    spList__source, {@enum.value "_source" spList__source Identifies where the resource comes from }
     spList__tag, {@enum.value "_tag" spList__tag Tags applied to this resource }
     spList__text, {@enum.value "_text" spList__text Search on the narrative of the resource }
     spList_Code, {@enum.value "code" spList_Code What the purpose of this list is }
@@ -1738,6 +1919,7 @@ Type
     spLocation__profile, {@enum.value "_profile" spLocation__profile Profiles this resource claims to conform to }
     spLocation__query, {@enum.value "_query" spLocation__query A custom search profile that describes a specific defined query operation }
     spLocation__security, {@enum.value "_security" spLocation__security Security Labels applied to this resource }
+    spLocation__source, {@enum.value "_source" spLocation__source Identifies where the resource comes from }
     spLocation__tag, {@enum.value "_tag" spLocation__tag Tags applied to this resource }
     spLocation__text, {@enum.value "_text" spLocation__text Search on the narrative of the resource }
     spLocation_Address, {@enum.value "address" spLocation_Address A (part of the) address of the location }
@@ -1773,6 +1955,7 @@ Requires the near parameter to also be included }
     spMeasure__profile, {@enum.value "_profile" spMeasure__profile Profiles this resource claims to conform to }
     spMeasure__query, {@enum.value "_query" spMeasure__query A custom search profile that describes a specific defined query operation }
     spMeasure__security, {@enum.value "_security" spMeasure__security Security Labels applied to this resource }
+    spMeasure__source, {@enum.value "_source" spMeasure__source Identifies where the resource comes from }
     spMeasure__tag, {@enum.value "_tag" spMeasure__tag Tags applied to this resource }
     spMeasure__text, {@enum.value "_text" spMeasure__text Search on the narrative of the resource }
     spMeasure_Composedof, {@enum.value "composed-of" spMeasure_Composedof What resource is being referenced }
@@ -1805,11 +1988,13 @@ Requires the near parameter to also be included }
     spMeasureReport__profile, {@enum.value "_profile" spMeasureReport__profile Profiles this resource claims to conform to }
     spMeasureReport__query, {@enum.value "_query" spMeasureReport__query A custom search profile that describes a specific defined query operation }
     spMeasureReport__security, {@enum.value "_security" spMeasureReport__security Security Labels applied to this resource }
+    spMeasureReport__source, {@enum.value "_source" spMeasureReport__source Identifies where the resource comes from }
     spMeasureReport__tag, {@enum.value "_tag" spMeasureReport__tag Tags applied to this resource }
     spMeasureReport__text, {@enum.value "_text" spMeasureReport__text Search on the narrative of the resource }
     spMeasureReport_Identifier, {@enum.value "identifier" spMeasureReport_Identifier External identifier of the measure report to be returned }
     spMeasureReport_Patient, {@enum.value "patient" spMeasureReport_Patient The identity of a patient to search for individual measure report results for }
-    spMeasureReport_Status); {@enum.value "status" spMeasureReport_Status The status of the measure report }
+    spMeasureReport_Status, {@enum.value "status" spMeasureReport_Status The status of the measure report }
+    spMeasureReport_Subject); {@enum.value "subject" spMeasureReport_Subject The identity of a subject to search for individual measure report results for }
 {$ENDIF}
 
 {$IFDEF FHIR_MEDIA}
@@ -1823,20 +2008,21 @@ Requires the near parameter to also be included }
     spMedia__profile, {@enum.value "_profile" spMedia__profile Profiles this resource claims to conform to }
     spMedia__query, {@enum.value "_query" spMedia__query A custom search profile that describes a specific defined query operation }
     spMedia__security, {@enum.value "_security" spMedia__security Security Labels applied to this resource }
+    spMedia__source, {@enum.value "_source" spMedia__source Identifies where the resource comes from }
     spMedia__tag, {@enum.value "_tag" spMedia__tag Tags applied to this resource }
     spMedia__text, {@enum.value "_text" spMedia__text Search on the narrative of the resource }
     spMedia_Basedon, {@enum.value "based-on" spMedia_Basedon Procedure that caused this media to be created }
+    spMedia_Category, {@enum.value "category" spMedia_Category Classification of  type of media }
     spMedia_Context, {@enum.value "context" spMedia_Context Encounter / Episode associated with media }
-    spMedia_Created, {@enum.value "created" spMedia_Created Date attachment was first created }
-    spMedia_Date, {@enum.value "date" spMedia_Date When Media was collected }
+    spMedia_Created, {@enum.value "created" spMedia_Created When Media was collected }
     spMedia_Device, {@enum.value "device" spMedia_Device Observing Device }
     spMedia_Identifier, {@enum.value "identifier" spMedia_Identifier Identifier(s) for the image }
+    spMedia_Modality, {@enum.value "modality" spMedia_Modality The type of acquisition equipment/process }
     spMedia_Operator, {@enum.value "operator" spMedia_Operator The person who generated the image }
     spMedia_Patient, {@enum.value "patient" spMedia_Patient Who/What this Media is a record of }
-    spMedia_Site, {@enum.value "site" spMedia_Site Body part in media }
+    spMedia_Site, {@enum.value "site" spMedia_Site Observed body part }
+    spMedia_Status, {@enum.value "status" spMedia_Status preparation | in-progress | not-done | suspended | aborted | completed | entered-in-error | unknown }
     spMedia_Subject, {@enum.value "subject" spMedia_Subject Who/What this Media is a record of }
-    spMedia_Subtype, {@enum.value "subtype" spMedia_Subtype The type of acquisition equipment/process }
-    spMedia_Type, {@enum.value "type" spMedia_Type photo | video | audio }
     spMedia_View); {@enum.value "view" spMedia_View Imaging view, e.g. Lateral or Antero-posterior }
 {$ENDIF}
 
@@ -1851,17 +2037,14 @@ Requires the near parameter to also be included }
     spMedication__profile, {@enum.value "_profile" spMedication__profile Profiles this resource claims to conform to }
     spMedication__query, {@enum.value "_query" spMedication__query A custom search profile that describes a specific defined query operation }
     spMedication__security, {@enum.value "_security" spMedication__security Security Labels applied to this resource }
+    spMedication__source, {@enum.value "_source" spMedication__source Identifies where the resource comes from }
     spMedication__tag, {@enum.value "_tag" spMedication__tag Tags applied to this resource }
     spMedication__text, {@enum.value "_text" spMedication__text Search on the narrative of the resource }
     spMedication_Code, {@enum.value "code" spMedication_Code Codes that identify this medication }
-    spMedication_Container, {@enum.value "container" spMedication_Container E.g. box, vial, blister-pack }
     spMedication_Form, {@enum.value "form" spMedication_Form powder | tablets | capsule + }
     spMedication_Ingredient, {@enum.value "ingredient" spMedication_Ingredient The product contained }
     spMedication_Ingredientcode, {@enum.value "ingredient-code" spMedication_Ingredientcode The product contained }
     spMedication_Manufacturer, {@enum.value "manufacturer" spMedication_Manufacturer Manufacturer of the item }
-    spMedication_Overthecounter, {@enum.value "over-the-counter" spMedication_Overthecounter True if medication does not require a prescription }
-    spMedication_Packageitem, {@enum.value "package-item" spMedication_Packageitem The item in the package }
-    spMedication_Packageitemcode, {@enum.value "package-item-code" spMedication_Packageitemcode The item in the package }
     spMedication_Status); {@enum.value "status" spMedication_Status active | inactive | entered-in-error }
 {$ENDIF}
 
@@ -1876,6 +2059,7 @@ Requires the near parameter to also be included }
     spMedicationAdministration__profile, {@enum.value "_profile" spMedicationAdministration__profile Profiles this resource claims to conform to }
     spMedicationAdministration__query, {@enum.value "_query" spMedicationAdministration__query A custom search profile that describes a specific defined query operation }
     spMedicationAdministration__security, {@enum.value "_security" spMedicationAdministration__security Security Labels applied to this resource }
+    spMedicationAdministration__source, {@enum.value "_source" spMedicationAdministration__source Identifies where the resource comes from }
     spMedicationAdministration__tag, {@enum.value "_tag" spMedicationAdministration__tag Tags applied to this resource }
     spMedicationAdministration__text, {@enum.value "_text" spMedicationAdministration__text Search on the narrative of the resource }
     spMedicationAdministration_Code, {@enum.value "code" spMedicationAdministration_Code Return administrations of this medication code }
@@ -1884,7 +2068,6 @@ Requires the near parameter to also be included }
     spMedicationAdministration_Effectivetime, {@enum.value "effective-time" spMedicationAdministration_Effectivetime Date administration happened (or did not happen) }
     spMedicationAdministration_Identifier, {@enum.value "identifier" spMedicationAdministration_Identifier Return administrations with this external identifier }
     spMedicationAdministration_Medication, {@enum.value "medication" spMedicationAdministration_Medication Return administrations of this medication resource }
-    spMedicationAdministration_Notgiven, {@enum.value "not-given" spMedicationAdministration_Notgiven Administrations that were not made }
     spMedicationAdministration_Patient, {@enum.value "patient" spMedicationAdministration_Patient The identity of a patient to list administrations  for }
     spMedicationAdministration_Performer, {@enum.value "performer" spMedicationAdministration_Performer The identify of the individual who administered the medication }
     spMedicationAdministration_Reasongiven, {@enum.value "reason-given" spMedicationAdministration_Reasongiven Reasons for administering the medication }
@@ -1905,6 +2088,7 @@ Requires the near parameter to also be included }
     spMedicationDispense__profile, {@enum.value "_profile" spMedicationDispense__profile Profiles this resource claims to conform to }
     spMedicationDispense__query, {@enum.value "_query" spMedicationDispense__query A custom search profile that describes a specific defined query operation }
     spMedicationDispense__security, {@enum.value "_security" spMedicationDispense__security Security Labels applied to this resource }
+    spMedicationDispense__source, {@enum.value "_source" spMedicationDispense__source Identifies where the resource comes from }
     spMedicationDispense__tag, {@enum.value "_tag" spMedicationDispense__tag Tags applied to this resource }
     spMedicationDispense__text, {@enum.value "_text" spMedicationDispense__text Search on the narrative of the resource }
     spMedicationDispense_Code, {@enum.value "code" spMedicationDispense_Code Return dispenses of this medicine code }
@@ -1935,6 +2119,7 @@ Requires the near parameter to also be included }
     spMedicationRequest__profile, {@enum.value "_profile" spMedicationRequest__profile Profiles this resource claims to conform to }
     spMedicationRequest__query, {@enum.value "_query" spMedicationRequest__query A custom search profile that describes a specific defined query operation }
     spMedicationRequest__security, {@enum.value "_security" spMedicationRequest__security Security Labels applied to this resource }
+    spMedicationRequest__source, {@enum.value "_source" spMedicationRequest__source Identifies where the resource comes from }
     spMedicationRequest__tag, {@enum.value "_tag" spMedicationRequest__tag Tags applied to this resource }
     spMedicationRequest__text, {@enum.value "_text" spMedicationRequest__text Search on the narrative of the resource }
     spMedicationRequest_Authoredon, {@enum.value "authoredon" spMedicationRequest_Authoredon Return prescriptions written on this date }
@@ -1945,6 +2130,7 @@ Requires the near parameter to also be included }
     spMedicationRequest_Identifier, {@enum.value "identifier" spMedicationRequest_Identifier Return prescriptions with this external identifier }
     spMedicationRequest_Intendeddispenser, {@enum.value "intended-dispenser" spMedicationRequest_Intendeddispenser Returns prescriptions intended to be dispensed by this Organization }
     spMedicationRequest_Intendedperformer, {@enum.value "intended-performer" spMedicationRequest_Intendedperformer Returns the intended performer of the administration of the medication request }
+    spMedicationRequest_Intendedperformertype, {@enum.value "intended-performertype" spMedicationRequest_Intendedperformertype Returns requests for a specific type of performer }
     spMedicationRequest_Intent, {@enum.value "intent" spMedicationRequest_Intent Returns prescriptions with different intents }
     spMedicationRequest_Medication, {@enum.value "medication" spMedicationRequest_Medication Return prescriptions of this medication reference }
     spMedicationRequest_Patient, {@enum.value "patient" spMedicationRequest_Patient Returns prescriptions for a specific patient }
@@ -1965,6 +2151,7 @@ Requires the near parameter to also be included }
     spMedicationStatement__profile, {@enum.value "_profile" spMedicationStatement__profile Profiles this resource claims to conform to }
     spMedicationStatement__query, {@enum.value "_query" spMedicationStatement__query A custom search profile that describes a specific defined query operation }
     spMedicationStatement__security, {@enum.value "_security" spMedicationStatement__security Security Labels applied to this resource }
+    spMedicationStatement__source, {@enum.value "_source" spMedicationStatement__source Identifies where the resource comes from }
     spMedicationStatement__tag, {@enum.value "_tag" spMedicationStatement__tag Tags applied to this resource }
     spMedicationStatement__text, {@enum.value "_text" spMedicationStatement__text Search on the narrative of the resource }
     spMedicationStatement_Category, {@enum.value "category" spMedicationStatement_Category Returns statements of this category of medicationstatement }
@@ -1980,6 +2167,118 @@ Requires the near parameter to also be included }
     spMedicationStatement_Subject); {@enum.value "subject" spMedicationStatement_Subject The identity of a patient, animal or group to list statements for }
 {$ENDIF}
 
+{$IFDEF FHIR_MEDICINALPRODUCT}
+  {@Enum TSearchParamsMedicinalProduct
+    Search Parameters for MedicinalProduct
+  }
+  TSearchParamsMedicinalProduct = (
+    spMedicinalProduct__content, {@enum.value "_content" spMedicinalProduct__content Search on the entire content of the resource }
+    spMedicinalProduct__id, {@enum.value "_id" spMedicinalProduct__id Logical id of this artifact }
+    spMedicinalProduct__lastUpdated, {@enum.value "_lastUpdated" spMedicinalProduct__lastUpdated When the resource version last changed }
+    spMedicinalProduct__profile, {@enum.value "_profile" spMedicinalProduct__profile Profiles this resource claims to conform to }
+    spMedicinalProduct__query, {@enum.value "_query" spMedicinalProduct__query A custom search profile that describes a specific defined query operation }
+    spMedicinalProduct__security, {@enum.value "_security" spMedicinalProduct__security Security Labels applied to this resource }
+    spMedicinalProduct__source, {@enum.value "_source" spMedicinalProduct__source Identifies where the resource comes from }
+    spMedicinalProduct__tag, {@enum.value "_tag" spMedicinalProduct__tag Tags applied to this resource }
+    spMedicinalProduct__text); {@enum.value "_text" spMedicinalProduct__text Search on the narrative of the resource }
+{$ENDIF}
+
+{$IFDEF FHIR_MEDICINALPRODUCTAUTHORIZATION}
+  {@Enum TSearchParamsMedicinalProductAuthorization
+    Search Parameters for MedicinalProductAuthorization
+  }
+  TSearchParamsMedicinalProductAuthorization = (
+    spMedicinalProductAuthorization__content, {@enum.value "_content" spMedicinalProductAuthorization__content Search on the entire content of the resource }
+    spMedicinalProductAuthorization__id, {@enum.value "_id" spMedicinalProductAuthorization__id Logical id of this artifact }
+    spMedicinalProductAuthorization__lastUpdated, {@enum.value "_lastUpdated" spMedicinalProductAuthorization__lastUpdated When the resource version last changed }
+    spMedicinalProductAuthorization__profile, {@enum.value "_profile" spMedicinalProductAuthorization__profile Profiles this resource claims to conform to }
+    spMedicinalProductAuthorization__query, {@enum.value "_query" spMedicinalProductAuthorization__query A custom search profile that describes a specific defined query operation }
+    spMedicinalProductAuthorization__security, {@enum.value "_security" spMedicinalProductAuthorization__security Security Labels applied to this resource }
+    spMedicinalProductAuthorization__source, {@enum.value "_source" spMedicinalProductAuthorization__source Identifies where the resource comes from }
+    spMedicinalProductAuthorization__tag, {@enum.value "_tag" spMedicinalProductAuthorization__tag Tags applied to this resource }
+    spMedicinalProductAuthorization__text); {@enum.value "_text" spMedicinalProductAuthorization__text Search on the narrative of the resource }
+{$ENDIF}
+
+{$IFDEF FHIR_MEDICINALPRODUCTCLINICALS}
+  {@Enum TSearchParamsMedicinalProductClinicals
+    Search Parameters for MedicinalProductClinicals
+  }
+  TSearchParamsMedicinalProductClinicals = (
+    spMedicinalProductClinicals__content, {@enum.value "_content" spMedicinalProductClinicals__content Search on the entire content of the resource }
+    spMedicinalProductClinicals__id, {@enum.value "_id" spMedicinalProductClinicals__id Logical id of this artifact }
+    spMedicinalProductClinicals__lastUpdated, {@enum.value "_lastUpdated" spMedicinalProductClinicals__lastUpdated When the resource version last changed }
+    spMedicinalProductClinicals__profile, {@enum.value "_profile" spMedicinalProductClinicals__profile Profiles this resource claims to conform to }
+    spMedicinalProductClinicals__query, {@enum.value "_query" spMedicinalProductClinicals__query A custom search profile that describes a specific defined query operation }
+    spMedicinalProductClinicals__security, {@enum.value "_security" spMedicinalProductClinicals__security Security Labels applied to this resource }
+    spMedicinalProductClinicals__source, {@enum.value "_source" spMedicinalProductClinicals__source Identifies where the resource comes from }
+    spMedicinalProductClinicals__tag, {@enum.value "_tag" spMedicinalProductClinicals__tag Tags applied to this resource }
+    spMedicinalProductClinicals__text); {@enum.value "_text" spMedicinalProductClinicals__text Search on the narrative of the resource }
+{$ENDIF}
+
+{$IFDEF FHIR_MEDICINALPRODUCTDEVICESPEC}
+  {@Enum TSearchParamsMedicinalProductDeviceSpec
+    Search Parameters for MedicinalProductDeviceSpec
+  }
+  TSearchParamsMedicinalProductDeviceSpec = (
+    spMedicinalProductDeviceSpec__content, {@enum.value "_content" spMedicinalProductDeviceSpec__content Search on the entire content of the resource }
+    spMedicinalProductDeviceSpec__id, {@enum.value "_id" spMedicinalProductDeviceSpec__id Logical id of this artifact }
+    spMedicinalProductDeviceSpec__lastUpdated, {@enum.value "_lastUpdated" spMedicinalProductDeviceSpec__lastUpdated When the resource version last changed }
+    spMedicinalProductDeviceSpec__profile, {@enum.value "_profile" spMedicinalProductDeviceSpec__profile Profiles this resource claims to conform to }
+    spMedicinalProductDeviceSpec__query, {@enum.value "_query" spMedicinalProductDeviceSpec__query A custom search profile that describes a specific defined query operation }
+    spMedicinalProductDeviceSpec__security, {@enum.value "_security" spMedicinalProductDeviceSpec__security Security Labels applied to this resource }
+    spMedicinalProductDeviceSpec__source, {@enum.value "_source" spMedicinalProductDeviceSpec__source Identifies where the resource comes from }
+    spMedicinalProductDeviceSpec__tag, {@enum.value "_tag" spMedicinalProductDeviceSpec__tag Tags applied to this resource }
+    spMedicinalProductDeviceSpec__text); {@enum.value "_text" spMedicinalProductDeviceSpec__text Search on the narrative of the resource }
+{$ENDIF}
+
+{$IFDEF FHIR_MEDICINALPRODUCTINGREDIENT}
+  {@Enum TSearchParamsMedicinalProductIngredient
+    Search Parameters for MedicinalProductIngredient
+  }
+  TSearchParamsMedicinalProductIngredient = (
+    spMedicinalProductIngredient__content, {@enum.value "_content" spMedicinalProductIngredient__content Search on the entire content of the resource }
+    spMedicinalProductIngredient__id, {@enum.value "_id" spMedicinalProductIngredient__id Logical id of this artifact }
+    spMedicinalProductIngredient__lastUpdated, {@enum.value "_lastUpdated" spMedicinalProductIngredient__lastUpdated When the resource version last changed }
+    spMedicinalProductIngredient__profile, {@enum.value "_profile" spMedicinalProductIngredient__profile Profiles this resource claims to conform to }
+    spMedicinalProductIngredient__query, {@enum.value "_query" spMedicinalProductIngredient__query A custom search profile that describes a specific defined query operation }
+    spMedicinalProductIngredient__security, {@enum.value "_security" spMedicinalProductIngredient__security Security Labels applied to this resource }
+    spMedicinalProductIngredient__source, {@enum.value "_source" spMedicinalProductIngredient__source Identifies where the resource comes from }
+    spMedicinalProductIngredient__tag, {@enum.value "_tag" spMedicinalProductIngredient__tag Tags applied to this resource }
+    spMedicinalProductIngredient__text); {@enum.value "_text" spMedicinalProductIngredient__text Search on the narrative of the resource }
+{$ENDIF}
+
+{$IFDEF FHIR_MEDICINALPRODUCTPACKAGED}
+  {@Enum TSearchParamsMedicinalProductPackaged
+    Search Parameters for MedicinalProductPackaged
+  }
+  TSearchParamsMedicinalProductPackaged = (
+    spMedicinalProductPackaged__content, {@enum.value "_content" spMedicinalProductPackaged__content Search on the entire content of the resource }
+    spMedicinalProductPackaged__id, {@enum.value "_id" spMedicinalProductPackaged__id Logical id of this artifact }
+    spMedicinalProductPackaged__lastUpdated, {@enum.value "_lastUpdated" spMedicinalProductPackaged__lastUpdated When the resource version last changed }
+    spMedicinalProductPackaged__profile, {@enum.value "_profile" spMedicinalProductPackaged__profile Profiles this resource claims to conform to }
+    spMedicinalProductPackaged__query, {@enum.value "_query" spMedicinalProductPackaged__query A custom search profile that describes a specific defined query operation }
+    spMedicinalProductPackaged__security, {@enum.value "_security" spMedicinalProductPackaged__security Security Labels applied to this resource }
+    spMedicinalProductPackaged__source, {@enum.value "_source" spMedicinalProductPackaged__source Identifies where the resource comes from }
+    spMedicinalProductPackaged__tag, {@enum.value "_tag" spMedicinalProductPackaged__tag Tags applied to this resource }
+    spMedicinalProductPackaged__text); {@enum.value "_text" spMedicinalProductPackaged__text Search on the narrative of the resource }
+{$ENDIF}
+
+{$IFDEF FHIR_MEDICINALPRODUCTPHARMACEUTICAL}
+  {@Enum TSearchParamsMedicinalProductPharmaceutical
+    Search Parameters for MedicinalProductPharmaceutical
+  }
+  TSearchParamsMedicinalProductPharmaceutical = (
+    spMedicinalProductPharmaceutical__content, {@enum.value "_content" spMedicinalProductPharmaceutical__content Search on the entire content of the resource }
+    spMedicinalProductPharmaceutical__id, {@enum.value "_id" spMedicinalProductPharmaceutical__id Logical id of this artifact }
+    spMedicinalProductPharmaceutical__lastUpdated, {@enum.value "_lastUpdated" spMedicinalProductPharmaceutical__lastUpdated When the resource version last changed }
+    spMedicinalProductPharmaceutical__profile, {@enum.value "_profile" spMedicinalProductPharmaceutical__profile Profiles this resource claims to conform to }
+    spMedicinalProductPharmaceutical__query, {@enum.value "_query" spMedicinalProductPharmaceutical__query A custom search profile that describes a specific defined query operation }
+    spMedicinalProductPharmaceutical__security, {@enum.value "_security" spMedicinalProductPharmaceutical__security Security Labels applied to this resource }
+    spMedicinalProductPharmaceutical__source, {@enum.value "_source" spMedicinalProductPharmaceutical__source Identifies where the resource comes from }
+    spMedicinalProductPharmaceutical__tag, {@enum.value "_tag" spMedicinalProductPharmaceutical__tag Tags applied to this resource }
+    spMedicinalProductPharmaceutical__text); {@enum.value "_text" spMedicinalProductPharmaceutical__text Search on the narrative of the resource }
+{$ENDIF}
+
 {$IFDEF FHIR_MESSAGEDEFINITION}
   {@Enum TSearchParamsMessageDefinition
     Search Parameters for MessageDefinition
@@ -1991,6 +2290,7 @@ Requires the near parameter to also be included }
     spMessageDefinition__profile, {@enum.value "_profile" spMessageDefinition__profile Profiles this resource claims to conform to }
     spMessageDefinition__query, {@enum.value "_query" spMessageDefinition__query A custom search profile that describes a specific defined query operation }
     spMessageDefinition__security, {@enum.value "_security" spMessageDefinition__security Security Labels applied to this resource }
+    spMessageDefinition__source, {@enum.value "_source" spMessageDefinition__source Identifies where the resource comes from }
     spMessageDefinition__tag, {@enum.value "_tag" spMessageDefinition__tag Tags applied to this resource }
     spMessageDefinition__text, {@enum.value "_text" spMessageDefinition__text Search on the narrative of the resource }
     spMessageDefinition_Category, {@enum.value "category" spMessageDefinition_Category The behavior associated with the message }
@@ -2019,6 +2319,7 @@ Requires the near parameter to also be included }
     spMessageHeader__profile, {@enum.value "_profile" spMessageHeader__profile Profiles this resource claims to conform to }
     spMessageHeader__query, {@enum.value "_query" spMessageHeader__query A custom search profile that describes a specific defined query operation }
     spMessageHeader__security, {@enum.value "_security" spMessageHeader__security Security Labels applied to this resource }
+    spMessageHeader__source, {@enum.value "_source" spMessageHeader__source Identifies where the resource comes from }
     spMessageHeader__tag, {@enum.value "_tag" spMessageHeader__tag Tags applied to this resource }
     spMessageHeader__text, {@enum.value "_text" spMessageHeader__text Search on the narrative of the resource }
     spMessageHeader_Author, {@enum.value "author" spMessageHeader_Author The source of the decision }
@@ -2034,8 +2335,7 @@ Requires the near parameter to also be included }
     spMessageHeader_Sender, {@enum.value "sender" spMessageHeader_Sender Real world sender of the message }
     spMessageHeader_Source, {@enum.value "source" spMessageHeader_Source Name of system }
     spMessageHeader_Sourceuri, {@enum.value "source-uri" spMessageHeader_Sourceuri Actual message source address or id }
-    spMessageHeader_Target, {@enum.value "target" spMessageHeader_Target Particular delivery destination within the destination }
-    spMessageHeader_Timestamp); {@enum.value "timestamp" spMessageHeader_Timestamp Time that the message was sent }
+    spMessageHeader_Target); {@enum.value "target" spMessageHeader_Target Particular delivery destination within the destination }
 {$ENDIF}
 
 {$IFDEF FHIR_NAMINGSYSTEM}
@@ -2049,6 +2349,7 @@ Requires the near parameter to also be included }
     spNamingSystem__profile, {@enum.value "_profile" spNamingSystem__profile Profiles this resource claims to conform to }
     spNamingSystem__query, {@enum.value "_query" spNamingSystem__query A custom search profile that describes a specific defined query operation }
     spNamingSystem__security, {@enum.value "_security" spNamingSystem__security Security Labels applied to this resource }
+    spNamingSystem__source, {@enum.value "_source" spNamingSystem__source Identifies where the resource comes from }
     spNamingSystem__tag, {@enum.value "_tag" spNamingSystem__tag Tags applied to this resource }
     spNamingSystem__text, {@enum.value "_text" spNamingSystem__text Search on the narrative of the resource }
     spNamingSystem_Contact, {@enum.value "contact" spNamingSystem_Contact Name of an individual to contact }
@@ -2060,7 +2361,6 @@ Requires the near parameter to also be included }
     spNamingSystem_Name, {@enum.value "name" spNamingSystem_Name Computationally friendly name of the naming system }
     spNamingSystem_Period, {@enum.value "period" spNamingSystem_Period When is identifier valid? }
     spNamingSystem_Publisher, {@enum.value "publisher" spNamingSystem_Publisher Name of the publisher of the naming system }
-    spNamingSystem_Replacedby, {@enum.value "replaced-by" spNamingSystem_Replacedby Use this instead }
     spNamingSystem_Responsible, {@enum.value "responsible" spNamingSystem_Responsible Who maintains system namespace? }
     spNamingSystem_Status, {@enum.value "status" spNamingSystem_Status The current status of the naming system }
     spNamingSystem_Telecom, {@enum.value "telecom" spNamingSystem_Telecom Contact details for individual or organization }
@@ -2079,6 +2379,7 @@ Requires the near parameter to also be included }
     spNutritionOrder__profile, {@enum.value "_profile" spNutritionOrder__profile Profiles this resource claims to conform to }
     spNutritionOrder__query, {@enum.value "_query" spNutritionOrder__query A custom search profile that describes a specific defined query operation }
     spNutritionOrder__security, {@enum.value "_security" spNutritionOrder__security Security Labels applied to this resource }
+    spNutritionOrder__source, {@enum.value "_source" spNutritionOrder__source Identifies where the resource comes from }
     spNutritionOrder__tag, {@enum.value "_tag" spNutritionOrder__tag Tags applied to this resource }
     spNutritionOrder__text, {@enum.value "_text" spNutritionOrder__text Search on the narrative of the resource }
     spNutritionOrder_Additive, {@enum.value "additive" spNutritionOrder_Additive Type of module component to add to the feeding }
@@ -2104,9 +2405,10 @@ Requires the near parameter to also be included }
     spObservation__profile, {@enum.value "_profile" spObservation__profile Profiles this resource claims to conform to }
     spObservation__query, {@enum.value "_query" spObservation__query A custom search profile that describes a specific defined query operation }
     spObservation__security, {@enum.value "_security" spObservation__security Security Labels applied to this resource }
+    spObservation__source, {@enum.value "_source" spObservation__source Identifies where the resource comes from }
     spObservation__tag, {@enum.value "_tag" spObservation__tag Tags applied to this resource }
     spObservation__text, {@enum.value "_text" spObservation__text Search on the narrative of the resource }
-    spObservation_Basedon, {@enum.value "based-on" spObservation_Basedon Reference to the test or procedure request. }
+    spObservation_Basedon, {@enum.value "based-on" spObservation_Basedon Reference to the service request. }
     spObservation_Category, {@enum.value "category" spObservation_Category The classification of the type of observation }
     spObservation_Code, {@enum.value "code" spObservation_Code The code of the observation type }
     spObservation_Codevalueconcept, {@enum.value "code-value-concept" spObservation_Codevalueconcept Code and coded value parameter pair }
@@ -2128,18 +2430,18 @@ Requires the near parameter to also be included }
     spObservation_Context, {@enum.value "context" spObservation_Context Healthcare event  (Episode-of-care or Encounter) related to the observation }
     spObservation_Dataabsentreason, {@enum.value "data-absent-reason" spObservation_Dataabsentreason The reason why the expected value in the element Observation.value[x] is missing. }
     spObservation_Date, {@enum.value "date" spObservation_Date Obtained date/time. If the obtained element is a period, a date that falls in the period }
+    spObservation_Derivedfrom, {@enum.value "derived-from" spObservation_Derivedfrom Related measurements the observation is made from }
     spObservation_Device, {@enum.value "device" spObservation_Device The Device that generated the observation data. }
     spObservation_Dnavariant, {@enum.value "dna-variant" spObservation_Dnavariant search for extension http://hl7.org/fhir/StructureDefinition/observation-geneticsDNASequenceVariantName }
     spObservation_Encounter, {@enum.value "encounter" spObservation_Encounter Encounter related to the observation }
     spObservation_Genednavariant, {@enum.value "gene-dnavariant" spObservation_Genednavariant search for extension http://hl7.org/fhir/StructureDefinition/observation-geneticsDNAVariantId }
     spObservation_Geneidentifier, {@enum.value "gene-identifier" spObservation_Geneidentifier search for extension http://hl7.org/fhir/StructureDefinition/observation-geneticsGene }
+    spObservation_Hasmember, {@enum.value "has-member" spObservation_Hasmember Related resource that belongs to the Observation group }
     spObservation_Identifier, {@enum.value "identifier" spObservation_Identifier The unique id for a particular observation }
     spObservation_Method, {@enum.value "method" spObservation_Method The method used for the observation }
+    spObservation_Partof, {@enum.value "part-of" spObservation_Partof Part of referenced event }
     spObservation_Patient, {@enum.value "patient" spObservation_Patient The subject that the observation is about (if patient) }
     spObservation_Performer, {@enum.value "performer" spObservation_Performer Who performed the observation }
-    spObservation_Related, {@enum.value "related" spObservation_Related Related Observations - search on related-type and related-target together }
-    spObservation_Relatedtarget, {@enum.value "related-target" spObservation_Relatedtarget Resource that is related to this one }
-    spObservation_Relatedtype, {@enum.value "related-type" spObservation_Relatedtype has-member | derived-from | sequel-to | replaces | qualified-by | interfered-by }
     spObservation_Specimen, {@enum.value "specimen" spObservation_Specimen Specimen used for this observation }
     spObservation_Status, {@enum.value "status" spObservation_Status The status of the observation }
     spObservation_Subject, {@enum.value "subject" spObservation_Subject The subject that the observation is about }
@@ -2147,6 +2449,39 @@ Requires the near parameter to also be included }
     spObservation_Valuedate, {@enum.value "value-date" spObservation_Valuedate The value of the observation, if the value is a date or period of time }
     spObservation_Valuequantity, {@enum.value "value-quantity" spObservation_Valuequantity The value of the observation, if the value is a Quantity, or a SampledData (just search on the bounds of the values in sampled data) }
     spObservation_Valuestring); {@enum.value "value-string" spObservation_Valuestring The value of the observation, if the value is a string, and also searches in CodeableConcept.text }
+{$ENDIF}
+
+{$IFDEF FHIR_OBSERVATIONDEFINITION}
+  {@Enum TSearchParamsObservationDefinition
+    Search Parameters for ObservationDefinition
+  }
+  TSearchParamsObservationDefinition = (
+    spObservationDefinition__content, {@enum.value "_content" spObservationDefinition__content Search on the entire content of the resource }
+    spObservationDefinition__id, {@enum.value "_id" spObservationDefinition__id Logical id of this artifact }
+    spObservationDefinition__lastUpdated, {@enum.value "_lastUpdated" spObservationDefinition__lastUpdated When the resource version last changed }
+    spObservationDefinition__profile, {@enum.value "_profile" spObservationDefinition__profile Profiles this resource claims to conform to }
+    spObservationDefinition__query, {@enum.value "_query" spObservationDefinition__query A custom search profile that describes a specific defined query operation }
+    spObservationDefinition__security, {@enum.value "_security" spObservationDefinition__security Security Labels applied to this resource }
+    spObservationDefinition__source, {@enum.value "_source" spObservationDefinition__source Identifies where the resource comes from }
+    spObservationDefinition__tag, {@enum.value "_tag" spObservationDefinition__tag Tags applied to this resource }
+    spObservationDefinition__text); {@enum.value "_text" spObservationDefinition__text Search on the narrative of the resource }
+{$ENDIF}
+
+{$IFDEF FHIR_OCCUPATIONALDATA}
+  {@Enum TSearchParamsOccupationalData
+    Search Parameters for OccupationalData
+  }
+  TSearchParamsOccupationalData = (
+    spOccupationalData__content, {@enum.value "_content" spOccupationalData__content Search on the entire content of the resource }
+    spOccupationalData__id, {@enum.value "_id" spOccupationalData__id Logical id of this artifact }
+    spOccupationalData__lastUpdated, {@enum.value "_lastUpdated" spOccupationalData__lastUpdated When the resource version last changed }
+    spOccupationalData__profile, {@enum.value "_profile" spOccupationalData__profile Profiles this resource claims to conform to }
+    spOccupationalData__query, {@enum.value "_query" spOccupationalData__query A custom search profile that describes a specific defined query operation }
+    spOccupationalData__security, {@enum.value "_security" spOccupationalData__security Security Labels applied to this resource }
+    spOccupationalData__source, {@enum.value "_source" spOccupationalData__source Identifies where the resource comes from }
+    spOccupationalData__tag, {@enum.value "_tag" spOccupationalData__tag Tags applied to this resource }
+    spOccupationalData__text, {@enum.value "_text" spOccupationalData__text Search on the narrative of the resource }
+    spOccupationalData_Subject); {@enum.value "subject" spOccupationalData_Subject Who the occupational data is collected about }
 {$ENDIF}
 
 {$IFDEF FHIR_OPERATIONDEFINITION}
@@ -2160,17 +2495,20 @@ Requires the near parameter to also be included }
     spOperationDefinition__profile, {@enum.value "_profile" spOperationDefinition__profile Profiles this resource claims to conform to }
     spOperationDefinition__query, {@enum.value "_query" spOperationDefinition__query A custom search profile that describes a specific defined query operation }
     spOperationDefinition__security, {@enum.value "_security" spOperationDefinition__security Security Labels applied to this resource }
+    spOperationDefinition__source, {@enum.value "_source" spOperationDefinition__source Identifies where the resource comes from }
     spOperationDefinition__tag, {@enum.value "_tag" spOperationDefinition__tag Tags applied to this resource }
     spOperationDefinition__text, {@enum.value "_text" spOperationDefinition__text Search on the narrative of the resource }
     spOperationDefinition_Base, {@enum.value "base" spOperationDefinition_Base Marks this as a profile of the base }
     spOperationDefinition_Code, {@enum.value "code" spOperationDefinition_Code Name used to invoke the operation }
+    spOperationDefinition_Contexttype, {@enum.value "context-type" spOperationDefinition_Contexttype A type of use context assigned to the operation definition }
     spOperationDefinition_Date, {@enum.value "date" spOperationDefinition_Date The operation definition publication date }
     spOperationDefinition_Description, {@enum.value "description" spOperationDefinition_Description The description of the operation definition }
+    spOperationDefinition_Inputprofile, {@enum.value "input-profile" spOperationDefinition_Inputprofile Validation information for in parameters }
     spOperationDefinition_Instance, {@enum.value "instance" spOperationDefinition_Instance Invoke on an instance? }
     spOperationDefinition_Jurisdiction, {@enum.value "jurisdiction" spOperationDefinition_Jurisdiction Intended jurisdiction for the operation definition }
     spOperationDefinition_Kind, {@enum.value "kind" spOperationDefinition_Kind operation | query }
     spOperationDefinition_Name, {@enum.value "name" spOperationDefinition_Name Computationally friendly name of the operation definition }
-    spOperationDefinition_Paramprofile, {@enum.value "param-profile" spOperationDefinition_Paramprofile Profile on the type }
+    spOperationDefinition_Outputprofile, {@enum.value "output-profile" spOperationDefinition_Outputprofile Validation information for out parameters }
     spOperationDefinition_Publisher, {@enum.value "publisher" spOperationDefinition_Publisher Name of the publisher of the operation definition }
     spOperationDefinition_Status, {@enum.value "status" spOperationDefinition_Status The current status of the operation definition }
     spOperationDefinition_System, {@enum.value "system" spOperationDefinition_System Invoke at the system level? }
@@ -2190,6 +2528,7 @@ Requires the near parameter to also be included }
     spOperationOutcome__profile, {@enum.value "_profile" spOperationOutcome__profile Profiles this resource claims to conform to }
     spOperationOutcome__query, {@enum.value "_query" spOperationOutcome__query A custom search profile that describes a specific defined query operation }
     spOperationOutcome__security, {@enum.value "_security" spOperationOutcome__security Security Labels applied to this resource }
+    spOperationOutcome__source, {@enum.value "_source" spOperationOutcome__source Identifies where the resource comes from }
     spOperationOutcome__tag, {@enum.value "_tag" spOperationOutcome__tag Tags applied to this resource }
     spOperationOutcome__text); {@enum.value "_text" spOperationOutcome__text Search on the narrative of the resource }
 {$ENDIF}
@@ -2205,10 +2544,11 @@ Requires the near parameter to also be included }
     spOrganization__profile, {@enum.value "_profile" spOrganization__profile Profiles this resource claims to conform to }
     spOrganization__query, {@enum.value "_query" spOrganization__query A custom search profile that describes a specific defined query operation }
     spOrganization__security, {@enum.value "_security" spOrganization__security Security Labels applied to this resource }
+    spOrganization__source, {@enum.value "_source" spOrganization__source Identifies where the resource comes from }
     spOrganization__tag, {@enum.value "_tag" spOrganization__tag Tags applied to this resource }
     spOrganization__text, {@enum.value "_text" spOrganization__text Search on the narrative of the resource }
-    spOrganization_Active, {@enum.value "active" spOrganization_Active A server defined search that may match any of the string fields in the Address, including line, city, state, country, postalCode, and/or text }
-    spOrganization_Address, {@enum.value "address" spOrganization_Address A (part of the) address of the organization }
+    spOrganization_Active, {@enum.value "active" spOrganization_Active Is the Organization record active }
+    spOrganization_Address, {@enum.value "address" spOrganization_Address A server defined search that may match any of the string fields in the Address, including line, city, district, state, country, postalCode, and/or text }
     spOrganization_Addresscity, {@enum.value "address-city" spOrganization_Addresscity A city specified in an address }
     spOrganization_Addresscountry, {@enum.value "address-country" spOrganization_Addresscountry A country specified in an address }
     spOrganization_Addresspostalcode, {@enum.value "address-postalcode" spOrganization_Addresspostalcode A postal code specified in an address }
@@ -2222,6 +2562,36 @@ Requires the near parameter to also be included }
     spOrganization_Type); {@enum.value "type" spOrganization_Type A code for the type of organization }
 {$ENDIF}
 
+{$IFDEF FHIR_ORGANIZATIONROLE}
+  {@Enum TSearchParamsOrganizationRole
+    Search Parameters for OrganizationRole
+  }
+  TSearchParamsOrganizationRole = (
+    spOrganizationRole__content, {@enum.value "_content" spOrganizationRole__content Search on the entire content of the resource }
+    spOrganizationRole__id, {@enum.value "_id" spOrganizationRole__id Logical id of this artifact }
+    spOrganizationRole__lastUpdated, {@enum.value "_lastUpdated" spOrganizationRole__lastUpdated When the resource version last changed }
+    spOrganizationRole__profile, {@enum.value "_profile" spOrganizationRole__profile Profiles this resource claims to conform to }
+    spOrganizationRole__query, {@enum.value "_query" spOrganizationRole__query A custom search profile that describes a specific defined query operation }
+    spOrganizationRole__security, {@enum.value "_security" spOrganizationRole__security Security Labels applied to this resource }
+    spOrganizationRole__source, {@enum.value "_source" spOrganizationRole__source Identifies where the resource comes from }
+    spOrganizationRole__tag, {@enum.value "_tag" spOrganizationRole__tag Tags applied to this resource }
+    spOrganizationRole__text, {@enum.value "_text" spOrganizationRole__text Search on the narrative of the resource }
+    spOrganizationRole_Active, {@enum.value "active" spOrganizationRole_Active Whether this practitioner role record is in active use }
+    spOrganizationRole_Date, {@enum.value "date" spOrganizationRole_Date The period during which the practitioner is authorized to perform in these role(s) }
+    spOrganizationRole_Email, {@enum.value "email" spOrganizationRole_Email A value in an email contact }
+    spOrganizationRole_Endpoint, {@enum.value "endpoint" spOrganizationRole_Endpoint Technical endpoints providing access to services operated for the practitioner with this role }
+    spOrganizationRole_Identifier, {@enum.value "identifier" spOrganizationRole_Identifier A practitioner's Identifier }
+    spOrganizationRole_Location, {@enum.value "location" spOrganizationRole_Location One of the locations at which this practitioner provides care }
+    spOrganizationRole_Network, {@enum.value "network" spOrganizationRole_Network One of the locations at which this practitioner provides care }
+    spOrganizationRole_Participatingorganization, {@enum.value "participating-organization" spOrganizationRole_Participatingorganization Practitioner that is able to provide the defined services for the organization }
+    spOrganizationRole_Phone, {@enum.value "phone" spOrganizationRole_Phone A value in a phone contact }
+    spOrganizationRole_Primaryorganization, {@enum.value "primary-organization" spOrganizationRole_Primaryorganization The identity of the organization the practitioner represents / acts on behalf of }
+    spOrganizationRole_Role, {@enum.value "role" spOrganizationRole_Role The practitioner can perform this role at for the organization }
+    spOrganizationRole_Service, {@enum.value "service" spOrganizationRole_Service The list of healthcare services that this worker provides for this role's Organization/Location(s) }
+    spOrganizationRole_Specialty, {@enum.value "specialty" spOrganizationRole_Specialty The practitioner has this specialty at an organization }
+    spOrganizationRole_Telecom); {@enum.value "telecom" spOrganizationRole_Telecom The value in any kind of contact }
+{$ENDIF}
+
 {$IFDEF FHIR_PATIENT}
   {@Enum TSearchParamsPatient
     Search Parameters for Patient
@@ -2233,10 +2603,11 @@ Requires the near parameter to also be included }
     spPatient__profile, {@enum.value "_profile" spPatient__profile Profiles this resource claims to conform to }
     spPatient__query, {@enum.value "_query" spPatient__query A custom search profile that describes a specific defined query operation }
     spPatient__security, {@enum.value "_security" spPatient__security Security Labels applied to this resource }
+    spPatient__source, {@enum.value "_source" spPatient__source Identifies where the resource comes from }
     spPatient__tag, {@enum.value "_tag" spPatient__tag Tags applied to this resource }
     spPatient__text, {@enum.value "_text" spPatient__text Search on the narrative of the resource }
     spPatient_Active, {@enum.value "active" spPatient_Active Whether the patient record is active }
-    spPatient_Address, {@enum.value "address" spPatient_Address A server defined search that may match any of the string fields in the Address, including line, city, state, country, postalCode, and/or text }
+    spPatient_Address, {@enum.value "address" spPatient_Address A server defined search that may match any of the string fields in the Address, including line, city, district, state, country, postalCode, and/or text }
     spPatient_Addresscity, {@enum.value "address-city" spPatient_Addresscity A city specified in an address }
     spPatient_Addresscountry, {@enum.value "address-country" spPatient_Addresscountry A country specified in an address }
     spPatient_Addresspostalcode, {@enum.value "address-postalcode" spPatient_Addresspostalcode A postalCode specified in an address }
@@ -2273,6 +2644,7 @@ Requires the near parameter to also be included }
     spPaymentNotice__profile, {@enum.value "_profile" spPaymentNotice__profile Profiles this resource claims to conform to }
     spPaymentNotice__query, {@enum.value "_query" spPaymentNotice__query A custom search profile that describes a specific defined query operation }
     spPaymentNotice__security, {@enum.value "_security" spPaymentNotice__security Security Labels applied to this resource }
+    spPaymentNotice__source, {@enum.value "_source" spPaymentNotice__source Identifies where the resource comes from }
     spPaymentNotice__tag, {@enum.value "_tag" spPaymentNotice__tag Tags applied to this resource }
     spPaymentNotice__text, {@enum.value "_text" spPaymentNotice__text Search on the narrative of the resource }
     spPaymentNotice_Created, {@enum.value "created" spPaymentNotice_Created Creation date fro the notice }
@@ -2297,6 +2669,7 @@ Requires the near parameter to also be included }
     spPaymentReconciliation__profile, {@enum.value "_profile" spPaymentReconciliation__profile Profiles this resource claims to conform to }
     spPaymentReconciliation__query, {@enum.value "_query" spPaymentReconciliation__query A custom search profile that describes a specific defined query operation }
     spPaymentReconciliation__security, {@enum.value "_security" spPaymentReconciliation__security Security Labels applied to this resource }
+    spPaymentReconciliation__source, {@enum.value "_source" spPaymentReconciliation__source Identifies where the resource comes from }
     spPaymentReconciliation__tag, {@enum.value "_tag" spPaymentReconciliation__tag Tags applied to this resource }
     spPaymentReconciliation__text, {@enum.value "_text" spPaymentReconciliation__text Search on the narrative of the resource }
     spPaymentReconciliation_Created, {@enum.value "created" spPaymentReconciliation_Created The creation date }
@@ -2321,9 +2694,10 @@ Requires the near parameter to also be included }
     spPerson__profile, {@enum.value "_profile" spPerson__profile Profiles this resource claims to conform to }
     spPerson__query, {@enum.value "_query" spPerson__query A custom search profile that describes a specific defined query operation }
     spPerson__security, {@enum.value "_security" spPerson__security Security Labels applied to this resource }
+    spPerson__source, {@enum.value "_source" spPerson__source Identifies where the resource comes from }
     spPerson__tag, {@enum.value "_tag" spPerson__tag Tags applied to this resource }
     spPerson__text, {@enum.value "_text" spPerson__text Search on the narrative of the resource }
-    spPerson_Address, {@enum.value "address" spPerson_Address A server defined search that may match any of the string fields in the Address, including line, city, state, country, postalCode, and/or text }
+    spPerson_Address, {@enum.value "address" spPerson_Address A server defined search that may match any of the string fields in the Address, including line, city, district, state, country, postalCode, and/or text }
     spPerson_Addresscity, {@enum.value "address-city" spPerson_Addresscity A city specified in an address }
     spPerson_Addresscountry, {@enum.value "address-country" spPerson_Addresscountry A country specified in an address }
     spPerson_Addresspostalcode, {@enum.value "address-postalcode" spPerson_Addresspostalcode A postal code specified in an address }
@@ -2355,10 +2729,12 @@ Requires the near parameter to also be included }
     spPlanDefinition__profile, {@enum.value "_profile" spPlanDefinition__profile Profiles this resource claims to conform to }
     spPlanDefinition__query, {@enum.value "_query" spPlanDefinition__query A custom search profile that describes a specific defined query operation }
     spPlanDefinition__security, {@enum.value "_security" spPlanDefinition__security Security Labels applied to this resource }
+    spPlanDefinition__source, {@enum.value "_source" spPlanDefinition__source Identifies where the resource comes from }
     spPlanDefinition__tag, {@enum.value "_tag" spPlanDefinition__tag Tags applied to this resource }
     spPlanDefinition__text, {@enum.value "_text" spPlanDefinition__text Search on the narrative of the resource }
     spPlanDefinition_Composedof, {@enum.value "composed-of" spPlanDefinition_Composedof What resource is being referenced }
     spPlanDefinition_Date, {@enum.value "date" spPlanDefinition_Date The plan definition publication date }
+    spPlanDefinition_Definition, {@enum.value "definition" spPlanDefinition_Definition Activity or plan definitions used by plan definition }
     spPlanDefinition_Dependson, {@enum.value "depends-on" spPlanDefinition_Dependson What resource is being referenced }
     spPlanDefinition_Derivedfrom, {@enum.value "derived-from" spPlanDefinition_Derivedfrom What resource is being referenced }
     spPlanDefinition_Description, {@enum.value "description" spPlanDefinition_Description The description of the plan definition }
@@ -2372,6 +2748,7 @@ Requires the near parameter to also be included }
     spPlanDefinition_Successor, {@enum.value "successor" spPlanDefinition_Successor What resource is being referenced }
     spPlanDefinition_Title, {@enum.value "title" spPlanDefinition_Title The human-friendly name of the plan definition }
     spPlanDefinition_Topic, {@enum.value "topic" spPlanDefinition_Topic Topics associated with the module }
+    spPlanDefinition_Type, {@enum.value "type" spPlanDefinition_Type The type of artifact the plan (e.g. order-set, eca-rule, protocol) }
     spPlanDefinition_Url, {@enum.value "url" spPlanDefinition_Url The uri that identifies the plan definition }
     spPlanDefinition_Version); {@enum.value "version" spPlanDefinition_Version The business version of the plan definition }
 {$ENDIF}
@@ -2387,10 +2764,11 @@ Requires the near parameter to also be included }
     spPractitioner__profile, {@enum.value "_profile" spPractitioner__profile Profiles this resource claims to conform to }
     spPractitioner__query, {@enum.value "_query" spPractitioner__query A custom search profile that describes a specific defined query operation }
     spPractitioner__security, {@enum.value "_security" spPractitioner__security Security Labels applied to this resource }
+    spPractitioner__source, {@enum.value "_source" spPractitioner__source Identifies where the resource comes from }
     spPractitioner__tag, {@enum.value "_tag" spPractitioner__tag Tags applied to this resource }
     spPractitioner__text, {@enum.value "_text" spPractitioner__text Search on the narrative of the resource }
     spPractitioner_Active, {@enum.value "active" spPractitioner_Active Whether the practitioner record is active }
-    spPractitioner_Address, {@enum.value "address" spPractitioner_Address A server defined search that may match any of the string fields in the Address, including line, city, state, country, postalCode, and/or text }
+    spPractitioner_Address, {@enum.value "address" spPractitioner_Address A server defined search that may match any of the string fields in the Address, including line, city, district, state, country, postalCode, and/or text }
     spPractitioner_Addresscity, {@enum.value "address-city" spPractitioner_Addresscity A city specified in an address }
     spPractitioner_Addresscountry, {@enum.value "address-country" spPractitioner_Addresscountry A country specified in an address }
     spPractitioner_Addresspostalcode, {@enum.value "address-postalcode" spPractitioner_Addresspostalcode A postalCode specified in an address }
@@ -2419,9 +2797,10 @@ Requires the near parameter to also be included }
     spPractitionerRole__profile, {@enum.value "_profile" spPractitionerRole__profile Profiles this resource claims to conform to }
     spPractitionerRole__query, {@enum.value "_query" spPractitionerRole__query A custom search profile that describes a specific defined query operation }
     spPractitionerRole__security, {@enum.value "_security" spPractitionerRole__security Security Labels applied to this resource }
+    spPractitionerRole__source, {@enum.value "_source" spPractitionerRole__source Identifies where the resource comes from }
     spPractitionerRole__tag, {@enum.value "_tag" spPractitionerRole__tag Tags applied to this resource }
     spPractitionerRole__text, {@enum.value "_text" spPractitionerRole__text Search on the narrative of the resource }
-    spPractitionerRole_Active, {@enum.value "active" spPractitionerRole_Active Whether this practitioner's record is in active use }
+    spPractitionerRole_Active, {@enum.value "active" spPractitionerRole_Active Whether this practitioner role record is in active use }
     spPractitionerRole_Date, {@enum.value "date" spPractitionerRole_Date The period during which the practitioner is authorized to perform in these role(s) }
     spPractitionerRole_Email, {@enum.value "email" spPractitionerRole_Email A value in an email contact }
     spPractitionerRole_Endpoint, {@enum.value "endpoint" spPractitionerRole_Endpoint Technical endpoints providing access to services operated for the practitioner with this role }
@@ -2429,7 +2808,7 @@ Requires the near parameter to also be included }
     spPractitionerRole_Location, {@enum.value "location" spPractitionerRole_Location One of the locations at which this practitioner provides care }
     spPractitionerRole_Organization, {@enum.value "organization" spPractitionerRole_Organization The identity of the organization the practitioner represents / acts on behalf of }
     spPractitionerRole_Phone, {@enum.value "phone" spPractitionerRole_Phone A value in a phone contact }
-    spPractitionerRole_Practitioner, {@enum.value "practitioner" spPractitionerRole_Practitioner Practitioner that is able to provide the defined services for the organation }
+    spPractitionerRole_Practitioner, {@enum.value "practitioner" spPractitionerRole_Practitioner Practitioner that is able to provide the defined services for the organization }
     spPractitionerRole_Role, {@enum.value "role" spPractitionerRole_Role The practitioner can perform this role at for the organization }
     spPractitionerRole_Service, {@enum.value "service" spPractitionerRole_Service The list of healthcare services that this worker provides for this role's Organization/Location(s) }
     spPractitionerRole_Specialty, {@enum.value "specialty" spPractitionerRole_Specialty The practitioner has this specialty at an organization }
@@ -2447,6 +2826,7 @@ Requires the near parameter to also be included }
     spProcedure__profile, {@enum.value "_profile" spProcedure__profile Profiles this resource claims to conform to }
     spProcedure__query, {@enum.value "_query" spProcedure__query A custom search profile that describes a specific defined query operation }
     spProcedure__security, {@enum.value "_security" spProcedure__security Security Labels applied to this resource }
+    spProcedure__source, {@enum.value "_source" spProcedure__source Identifies where the resource comes from }
     spProcedure__tag, {@enum.value "_tag" spProcedure__tag Tags applied to this resource }
     spProcedure__text, {@enum.value "_text" spProcedure__text Search on the narrative of the resource }
     spProcedure_Basedon, {@enum.value "based-on" spProcedure_Basedon A request for this procedure }
@@ -2454,51 +2834,15 @@ Requires the near parameter to also be included }
     spProcedure_Code, {@enum.value "code" spProcedure_Code A code to identify a  procedure }
     spProcedure_Context, {@enum.value "context" spProcedure_Context Encounter or episode associated with the procedure }
     spProcedure_Date, {@enum.value "date" spProcedure_Date When the procedure was performed }
-    spProcedure_Definition, {@enum.value "definition" spProcedure_Definition Instantiates protocol or definition }
     spProcedure_Encounter, {@enum.value "encounter" spProcedure_Encounter Search by encounter }
     spProcedure_Identifier, {@enum.value "identifier" spProcedure_Identifier A unique identifier for a procedure }
+    spProcedure_Instantiates, {@enum.value "instantiates" spProcedure_Instantiates Instantiates protocol or definition }
     spProcedure_Location, {@enum.value "location" spProcedure_Location Where the procedure happened }
     spProcedure_Partof, {@enum.value "part-of" spProcedure_Partof Part of referenced event }
     spProcedure_Patient, {@enum.value "patient" spProcedure_Patient Search by subject - a patient }
     spProcedure_Performer, {@enum.value "performer" spProcedure_Performer The reference to the practitioner }
-    spProcedure_Status, {@enum.value "status" spProcedure_Status preparation | in-progress | suspended | aborted | completed | entered-in-error | unknown }
+    spProcedure_Status, {@enum.value "status" spProcedure_Status preparation | in-progress | not-done | suspended | aborted | completed | entered-in-error | unknown }
     spProcedure_Subject); {@enum.value "subject" spProcedure_Subject Search by subject }
-{$ENDIF}
-
-{$IFDEF FHIR_PROCEDUREREQUEST}
-  {@Enum TSearchParamsProcedureRequest
-    Search Parameters for ProcedureRequest
-  }
-  TSearchParamsProcedureRequest = (
-    spProcedureRequest__content, {@enum.value "_content" spProcedureRequest__content Search on the entire content of the resource }
-    spProcedureRequest__id, {@enum.value "_id" spProcedureRequest__id Logical id of this artifact }
-    spProcedureRequest__lastUpdated, {@enum.value "_lastUpdated" spProcedureRequest__lastUpdated When the resource version last changed }
-    spProcedureRequest__profile, {@enum.value "_profile" spProcedureRequest__profile Profiles this resource claims to conform to }
-    spProcedureRequest__query, {@enum.value "_query" spProcedureRequest__query A custom search profile that describes a specific defined query operation }
-    spProcedureRequest__security, {@enum.value "_security" spProcedureRequest__security Security Labels applied to this resource }
-    spProcedureRequest__tag, {@enum.value "_tag" spProcedureRequest__tag Tags applied to this resource }
-    spProcedureRequest__text, {@enum.value "_text" spProcedureRequest__text Search on the narrative of the resource }
-    spProcedureRequest_Authored, {@enum.value "authored" spProcedureRequest_Authored Date request signed }
-    spProcedureRequest_Basedon, {@enum.value "based-on" spProcedureRequest_Basedon What request fulfills }
-    spProcedureRequest_Bodysite, {@enum.value "body-site" spProcedureRequest_Bodysite Where procedure is going to be done }
-    spProcedureRequest_Category, {@enum.value "category" spProcedureRequest_Category Classification of procedure }
-    spProcedureRequest_Code, {@enum.value "code" spProcedureRequest_Code What is being requested/ordered }
-    spProcedureRequest_Context, {@enum.value "context" spProcedureRequest_Context Encounter or Episode during which request was created }
-    spProcedureRequest_Definition, {@enum.value "definition" spProcedureRequest_Definition Protocol or definition }
-    spProcedureRequest_Encounter, {@enum.value "encounter" spProcedureRequest_Encounter An encounter in which this request is made }
-    spProcedureRequest_Identifier, {@enum.value "identifier" spProcedureRequest_Identifier Identifiers assigned to this order }
-    spProcedureRequest_Intent, {@enum.value "intent" spProcedureRequest_Intent proposal | plan | order + }
-    spProcedureRequest_Occurrence, {@enum.value "occurrence" spProcedureRequest_Occurrence When procedure should occur }
-    spProcedureRequest_Patient, {@enum.value "patient" spProcedureRequest_Patient Search by subject - a patient }
-    spProcedureRequest_Performer, {@enum.value "performer" spProcedureRequest_Performer Requested perfomer }
-    spProcedureRequest_Performertype, {@enum.value "performer-type" spProcedureRequest_Performertype Performer role }
-    spProcedureRequest_Priority, {@enum.value "priority" spProcedureRequest_Priority routine | urgent | asap | stat }
-    spProcedureRequest_Replaces, {@enum.value "replaces" spProcedureRequest_Replaces What request replaces }
-    spProcedureRequest_Requester, {@enum.value "requester" spProcedureRequest_Requester Individual making the request }
-    spProcedureRequest_Requisition, {@enum.value "requisition" spProcedureRequest_Requisition Composite Request ID }
-    spProcedureRequest_Specimen, {@enum.value "specimen" spProcedureRequest_Specimen Specimen to be tested }
-    spProcedureRequest_Status, {@enum.value "status" spProcedureRequest_Status draft | active | suspended | completed | entered-in-error | cancelled }
-    spProcedureRequest_Subject); {@enum.value "subject" spProcedureRequest_Subject Search by subject }
 {$ENDIF}
 
 {$IFDEF FHIR_PROCESSREQUEST}
@@ -2512,6 +2856,7 @@ Requires the near parameter to also be included }
     spProcessRequest__profile, {@enum.value "_profile" spProcessRequest__profile Profiles this resource claims to conform to }
     spProcessRequest__query, {@enum.value "_query" spProcessRequest__query A custom search profile that describes a specific defined query operation }
     spProcessRequest__security, {@enum.value "_security" spProcessRequest__security Security Labels applied to this resource }
+    spProcessRequest__source, {@enum.value "_source" spProcessRequest__source Identifies where the resource comes from }
     spProcessRequest__tag, {@enum.value "_tag" spProcessRequest__tag Tags applied to this resource }
     spProcessRequest__text, {@enum.value "_text" spProcessRequest__text Search on the narrative of the resource }
     spProcessRequest_Action, {@enum.value "action" spProcessRequest_Action The action requested by this resource }
@@ -2532,6 +2877,7 @@ Requires the near parameter to also be included }
     spProcessResponse__profile, {@enum.value "_profile" spProcessResponse__profile Profiles this resource claims to conform to }
     spProcessResponse__query, {@enum.value "_query" spProcessResponse__query A custom search profile that describes a specific defined query operation }
     spProcessResponse__security, {@enum.value "_security" spProcessResponse__security Security Labels applied to this resource }
+    spProcessResponse__source, {@enum.value "_source" spProcessResponse__source Identifies where the resource comes from }
     spProcessResponse__tag, {@enum.value "_tag" spProcessResponse__tag Tags applied to this resource }
     spProcessResponse__text, {@enum.value "_text" spProcessResponse__text Search on the narrative of the resource }
     spProcessResponse_Identifier, {@enum.value "identifier" spProcessResponse_Identifier The business identifier of the Explanation of Benefit }
@@ -2540,6 +2886,36 @@ Requires the near parameter to also be included }
     spProcessResponse_Requestorganization, {@enum.value "request-organization" spProcessResponse_Requestorganization The Organization who is responsible the request transaction }
     spProcessResponse_Requestprovider, {@enum.value "request-provider" spProcessResponse_Requestprovider The Provider who is responsible the request transaction }
     spProcessResponse_Status); {@enum.value "status" spProcessResponse_Status The status of the process response }
+{$ENDIF}
+
+{$IFDEF FHIR_PRODUCTPLAN}
+  {@Enum TSearchParamsProductPlan
+    Search Parameters for ProductPlan
+  }
+  TSearchParamsProductPlan = (
+    spProductPlan__content, {@enum.value "_content" spProductPlan__content Search on the entire content of the resource }
+    spProductPlan__id, {@enum.value "_id" spProductPlan__id Logical id of this artifact }
+    spProductPlan__lastUpdated, {@enum.value "_lastUpdated" spProductPlan__lastUpdated When the resource version last changed }
+    spProductPlan__profile, {@enum.value "_profile" spProductPlan__profile Profiles this resource claims to conform to }
+    spProductPlan__query, {@enum.value "_query" spProductPlan__query A custom search profile that describes a specific defined query operation }
+    spProductPlan__security, {@enum.value "_security" spProductPlan__security Security Labels applied to this resource }
+    spProductPlan__source, {@enum.value "_source" spProductPlan__source Identifies where the resource comes from }
+    spProductPlan__tag, {@enum.value "_tag" spProductPlan__tag Tags applied to this resource }
+    spProductPlan__text, {@enum.value "_text" spProductPlan__text Search on the narrative of the resource }
+    spProductPlan_Address, {@enum.value "address" spProductPlan_Address A server defined search that may match any of the string fields in the Address, including line, city, district, state, country, postalCode, and/or text }
+    spProductPlan_Addresscity, {@enum.value "address-city" spProductPlan_Addresscity A city specified in an address }
+    spProductPlan_Addresscountry, {@enum.value "address-country" spProductPlan_Addresscountry A country specified in an address }
+    spProductPlan_Addresspostalcode, {@enum.value "address-postalcode" spProductPlan_Addresspostalcode A postal code specified in an address }
+    spProductPlan_Addressstate, {@enum.value "address-state" spProductPlan_Addressstate A state specified in an address }
+    spProductPlan_Addressuse, {@enum.value "address-use" spProductPlan_Addressuse A use code specified in an address }
+    spProductPlan_Administeredby, {@enum.value "administered-by" spProductPlan_Administeredby Administrator of the product/plan }
+    spProductPlan_Endpoint, {@enum.value "endpoint" spProductPlan_Endpoint Technical endpoints providing access to services operated for the organization }
+    spProductPlan_Identifier, {@enum.value "identifier" spProductPlan_Identifier Any identifier for the organization (not the accreditation issuer's identifier) }
+    spProductPlan_Name, {@enum.value "name" spProductPlan_Name A portion of the organization's name or alias }
+    spProductPlan_Ownedby, {@enum.value "owned-by" spProductPlan_Ownedby An organization of which this organization forms a part }
+    spProductPlan_Phonetic, {@enum.value "phonetic" spProductPlan_Phonetic A portion of the organization's name using some kind of phonetic matching algorithm }
+    spProductPlan_Status, {@enum.value "status" spProductPlan_Status Is the Organization record active }
+    spProductPlan_Type); {@enum.value "type" spProductPlan_Type A code for the type of organization }
 {$ENDIF}
 
 {$IFDEF FHIR_PROVENANCE}
@@ -2553,6 +2929,7 @@ Requires the near parameter to also be included }
     spProvenance__profile, {@enum.value "_profile" spProvenance__profile Profiles this resource claims to conform to }
     spProvenance__query, {@enum.value "_query" spProvenance__query A custom search profile that describes a specific defined query operation }
     spProvenance__security, {@enum.value "_security" spProvenance__security Security Labels applied to this resource }
+    spProvenance__source, {@enum.value "_source" spProvenance__source Identifies where the resource comes from }
     spProvenance__tag, {@enum.value "_tag" spProvenance__tag Tags applied to this resource }
     spProvenance__text, {@enum.value "_text" spProvenance__text Search on the narrative of the resource }
     spProvenance_Agent, {@enum.value "agent" spProvenance_Agent Who participated }
@@ -2579,10 +2956,13 @@ Requires the near parameter to also be included }
     spQuestionnaire__profile, {@enum.value "_profile" spQuestionnaire__profile Profiles this resource claims to conform to }
     spQuestionnaire__query, {@enum.value "_query" spQuestionnaire__query A custom search profile that describes a specific defined query operation }
     spQuestionnaire__security, {@enum.value "_security" spQuestionnaire__security Security Labels applied to this resource }
+    spQuestionnaire__source, {@enum.value "_source" spQuestionnaire__source Identifies where the resource comes from }
     spQuestionnaire__tag, {@enum.value "_tag" spQuestionnaire__tag Tags applied to this resource }
     spQuestionnaire__text, {@enum.value "_text" spQuestionnaire__text Search on the narrative of the resource }
     spQuestionnaire_Code, {@enum.value "code" spQuestionnaire_Code A code that corresponds to one of its items in the questionnaire }
+    spQuestionnaire_Contexttype, {@enum.value "context-type" spQuestionnaire_Contexttype A type of use context assigned to the questionnaire }
     spQuestionnaire_Date, {@enum.value "date" spQuestionnaire_Date The questionnaire publication date }
+    spQuestionnaire_Definition, {@enum.value "definition" spQuestionnaire_Definition ElementDefinition - details for the item }
     spQuestionnaire_Description, {@enum.value "description" spQuestionnaire_Description The description of the questionnaire }
     spQuestionnaire_Effective, {@enum.value "effective" spQuestionnaire_Effective The time during which the questionnaire is intended to be in use }
     spQuestionnaire_Identifier, {@enum.value "identifier" spQuestionnaire_Identifier External identifier for the questionnaire }
@@ -2590,6 +2970,7 @@ Requires the near parameter to also be included }
     spQuestionnaire_Name, {@enum.value "name" spQuestionnaire_Name Computationally friendly name of the questionnaire }
     spQuestionnaire_Publisher, {@enum.value "publisher" spQuestionnaire_Publisher Name of the publisher of the questionnaire }
     spQuestionnaire_Status, {@enum.value "status" spQuestionnaire_Status The current status of the questionnaire }
+    spQuestionnaire_Subjecttype, {@enum.value "subject-type" spQuestionnaire_Subjecttype Resource that can be subject of QuestionnaireResponse }
     spQuestionnaire_Title, {@enum.value "title" spQuestionnaire_Title The human-friendly name of the questionnaire }
     spQuestionnaire_Url, {@enum.value "url" spQuestionnaire_Url The uri that identifies the questionnaire }
     spQuestionnaire_Version); {@enum.value "version" spQuestionnaire_Version The business version of the questionnaire }
@@ -2606,6 +2987,7 @@ Requires the near parameter to also be included }
     spQuestionnaireResponse__profile, {@enum.value "_profile" spQuestionnaireResponse__profile Profiles this resource claims to conform to }
     spQuestionnaireResponse__query, {@enum.value "_query" spQuestionnaireResponse__query A custom search profile that describes a specific defined query operation }
     spQuestionnaireResponse__security, {@enum.value "_security" spQuestionnaireResponse__security Security Labels applied to this resource }
+    spQuestionnaireResponse__source, {@enum.value "_source" spQuestionnaireResponse__source Identifies where the resource comes from }
     spQuestionnaireResponse__tag, {@enum.value "_tag" spQuestionnaireResponse__tag Tags applied to this resource }
     spQuestionnaireResponse__text, {@enum.value "_text" spQuestionnaireResponse__text Search on the narrative of the resource }
     spQuestionnaireResponse_Author, {@enum.value "author" spQuestionnaireResponse_Author The author of the questionnaire response }
@@ -2632,10 +3014,11 @@ Requires the near parameter to also be included }
     spRelatedPerson__profile, {@enum.value "_profile" spRelatedPerson__profile Profiles this resource claims to conform to }
     spRelatedPerson__query, {@enum.value "_query" spRelatedPerson__query A custom search profile that describes a specific defined query operation }
     spRelatedPerson__security, {@enum.value "_security" spRelatedPerson__security Security Labels applied to this resource }
+    spRelatedPerson__source, {@enum.value "_source" spRelatedPerson__source Identifies where the resource comes from }
     spRelatedPerson__tag, {@enum.value "_tag" spRelatedPerson__tag Tags applied to this resource }
     spRelatedPerson__text, {@enum.value "_text" spRelatedPerson__text Search on the narrative of the resource }
     spRelatedPerson_Active, {@enum.value "active" spRelatedPerson_Active Indicates if the related person record is active }
-    spRelatedPerson_Address, {@enum.value "address" spRelatedPerson_Address A server defined search that may match any of the string fields in the Address, including line, city, state, country, postalCode, and/or text }
+    spRelatedPerson_Address, {@enum.value "address" spRelatedPerson_Address A server defined search that may match any of the string fields in the Address, including line, city, district, state, country, postalCode, and/or text }
     spRelatedPerson_Addresscity, {@enum.value "address-city" spRelatedPerson_Addresscity A city specified in an address }
     spRelatedPerson_Addresscountry, {@enum.value "address-country" spRelatedPerson_Addresscountry A country specified in an address }
     spRelatedPerson_Addresspostalcode, {@enum.value "address-postalcode" spRelatedPerson_Addresspostalcode A postal code specified in an address }
@@ -2663,6 +3046,7 @@ Requires the near parameter to also be included }
     spRequestGroup__profile, {@enum.value "_profile" spRequestGroup__profile Profiles this resource claims to conform to }
     spRequestGroup__query, {@enum.value "_query" spRequestGroup__query A custom search profile that describes a specific defined query operation }
     spRequestGroup__security, {@enum.value "_security" spRequestGroup__security Security Labels applied to this resource }
+    spRequestGroup__source, {@enum.value "_source" spRequestGroup__source Identifies where the resource comes from }
     spRequestGroup__tag, {@enum.value "_tag" spRequestGroup__tag Tags applied to this resource }
     spRequestGroup__text, {@enum.value "_text" spRequestGroup__text Search on the narrative of the resource }
     spRequestGroup_Author, {@enum.value "author" spRequestGroup_Author The author of the request group }
@@ -2692,20 +3076,21 @@ Requires the near parameter to also be included }
     spResearchStudy__profile, {@enum.value "_profile" spResearchStudy__profile Profiles this resource claims to conform to }
     spResearchStudy__query, {@enum.value "_query" spResearchStudy__query A custom search profile that describes a specific defined query operation }
     spResearchStudy__security, {@enum.value "_security" spResearchStudy__security Security Labels applied to this resource }
+    spResearchStudy__source, {@enum.value "_source" spResearchStudy__source Identifies where the resource comes from }
     spResearchStudy__tag, {@enum.value "_tag" spResearchStudy__tag Tags applied to this resource }
     spResearchStudy__text, {@enum.value "_text" spResearchStudy__text Search on the narrative of the resource }
     spResearchStudy_Category, {@enum.value "category" spResearchStudy_Category Classifications for the study }
     spResearchStudy_Date, {@enum.value "date" spResearchStudy_Date When the study began and ended }
-    spResearchStudy_Focus, {@enum.value "focus" spResearchStudy_Focus Drugs, devices, conditions, etc. under study }
+    spResearchStudy_Focus, {@enum.value "focus" spResearchStudy_Focus Drugs, devices, etc. under study }
     spResearchStudy_Identifier, {@enum.value "identifier" spResearchStudy_Identifier Business Identifier for study }
-    spResearchStudy_Jurisdiction, {@enum.value "jurisdiction" spResearchStudy_Jurisdiction Geographic region(s) for study }
     spResearchStudy_Keyword, {@enum.value "keyword" spResearchStudy_Keyword Used to search for the study }
+    spResearchStudy_Location, {@enum.value "location" spResearchStudy_Location Geographic region(s) for study }
     spResearchStudy_Partof, {@enum.value "partof" spResearchStudy_Partof Part of larger study }
-    spResearchStudy_Principalinvestigator, {@enum.value "principalinvestigator" spResearchStudy_Principalinvestigator The individual responsible for the study }
+    spResearchStudy_Principalinvestigator, {@enum.value "principalinvestigator" spResearchStudy_Principalinvestigator Researcher who oversees multiple aspects of the study }
     spResearchStudy_Protocol, {@enum.value "protocol" spResearchStudy_Protocol Steps followed in executing study }
-    spResearchStudy_Site, {@enum.value "site" spResearchStudy_Site Location involved in study execution }
-    spResearchStudy_Sponsor, {@enum.value "sponsor" spResearchStudy_Sponsor Organization responsible for the study }
-    spResearchStudy_Status, {@enum.value "status" spResearchStudy_Status draft | in-progress | suspended | stopped | completed | entered-in-error }
+    spResearchStudy_Site, {@enum.value "site" spResearchStudy_Site Facility where study activities are conducted }
+    spResearchStudy_Sponsor, {@enum.value "sponsor" spResearchStudy_Sponsor Organization that initiates and is legally responsible for the study }
+    spResearchStudy_Status, {@enum.value "status" spResearchStudy_Status active | administratively-completed | approved | closed-to-accrual | closed-to-accrual-and-intervention | completed | disapproved | in-review | temporarily-closed-to-accrual | temporarily-closed-to-accrual-and-intervention | withdrawn }
     spResearchStudy_Title); {@enum.value "title" spResearchStudy_Title Name for this study }
 {$ENDIF}
 
@@ -2720,13 +3105,15 @@ Requires the near parameter to also be included }
     spResearchSubject__profile, {@enum.value "_profile" spResearchSubject__profile Profiles this resource claims to conform to }
     spResearchSubject__query, {@enum.value "_query" spResearchSubject__query A custom search profile that describes a specific defined query operation }
     spResearchSubject__security, {@enum.value "_security" spResearchSubject__security Security Labels applied to this resource }
+    spResearchSubject__source, {@enum.value "_source" spResearchSubject__source Identifies where the resource comes from }
     spResearchSubject__tag, {@enum.value "_tag" spResearchSubject__tag Tags applied to this resource }
     spResearchSubject__text, {@enum.value "_text" spResearchSubject__text Search on the narrative of the resource }
     spResearchSubject_Date, {@enum.value "date" spResearchSubject_Date Start and end of participation }
-    spResearchSubject_Identifier, {@enum.value "identifier" spResearchSubject_Identifier Business Identifier for research subject }
+    spResearchSubject_Identifier, {@enum.value "identifier" spResearchSubject_Identifier Business Identifier for research subject in a study }
     spResearchSubject_Individual, {@enum.value "individual" spResearchSubject_Individual Who is part of study }
     spResearchSubject_Patient, {@enum.value "patient" spResearchSubject_Patient Who is part of study }
-    spResearchSubject_Status); {@enum.value "status" spResearchSubject_Status candidate | enrolled | active | suspended | withdrawn | completed }
+    spResearchSubject_Status, {@enum.value "status" spResearchSubject_Status candidate | eligible | follow-up | ineligible | not-registered | off-study | on-study | on-study-intervention | on-study-observation | pending-on-study | potential-candidate | screening | withdrawn }
+    spResearchSubject_Study); {@enum.value "study" spResearchSubject_Study Study subject is part of }
 {$ENDIF}
 
 {$IFDEF FHIR_RISKASSESSMENT}
@@ -2740,6 +3127,7 @@ Requires the near parameter to also be included }
     spRiskAssessment__profile, {@enum.value "_profile" spRiskAssessment__profile Profiles this resource claims to conform to }
     spRiskAssessment__query, {@enum.value "_query" spRiskAssessment__query A custom search profile that describes a specific defined query operation }
     spRiskAssessment__security, {@enum.value "_security" spRiskAssessment__security Security Labels applied to this resource }
+    spRiskAssessment__source, {@enum.value "_source" spRiskAssessment__source Identifies where the resource comes from }
     spRiskAssessment__tag, {@enum.value "_tag" spRiskAssessment__tag Tags applied to this resource }
     spRiskAssessment__text, {@enum.value "_text" spRiskAssessment__text Search on the narrative of the resource }
     spRiskAssessment_Condition, {@enum.value "condition" spRiskAssessment_Condition Condition assessed }
@@ -2765,6 +3153,7 @@ Requires the near parameter to also be included }
     spSchedule__profile, {@enum.value "_profile" spSchedule__profile Profiles this resource claims to conform to }
     spSchedule__query, {@enum.value "_query" spSchedule__query A custom search profile that describes a specific defined query operation }
     spSchedule__security, {@enum.value "_security" spSchedule__security Security Labels applied to this resource }
+    spSchedule__source, {@enum.value "_source" spSchedule__source Identifies where the resource comes from }
     spSchedule__tag, {@enum.value "_tag" spSchedule__tag Tags applied to this resource }
     spSchedule__text, {@enum.value "_text" spSchedule__text Search on the narrative of the resource }
     spSchedule_Active, {@enum.value "active" spSchedule_Active Is the schedule in active use }
@@ -2785,11 +3174,13 @@ Requires the near parameter to also be included }
     spSearchParameter__profile, {@enum.value "_profile" spSearchParameter__profile Profiles this resource claims to conform to }
     spSearchParameter__query, {@enum.value "_query" spSearchParameter__query A custom search profile that describes a specific defined query operation }
     spSearchParameter__security, {@enum.value "_security" spSearchParameter__security Security Labels applied to this resource }
+    spSearchParameter__source, {@enum.value "_source" spSearchParameter__source Identifies where the resource comes from }
     spSearchParameter__tag, {@enum.value "_tag" spSearchParameter__tag Tags applied to this resource }
     spSearchParameter__text, {@enum.value "_text" spSearchParameter__text Search on the narrative of the resource }
     spSearchParameter_Base, {@enum.value "base" spSearchParameter_Base The resource type(s) this search parameter applies to }
     spSearchParameter_Code, {@enum.value "code" spSearchParameter_Code Code used in URL }
     spSearchParameter_Component, {@enum.value "component" spSearchParameter_Component Defines how the part works }
+    spSearchParameter_Contexttype, {@enum.value "context-type" spSearchParameter_Contexttype A type of use context assigned to the search parameter }
     spSearchParameter_Date, {@enum.value "date" spSearchParameter_Date The search parameter publication date }
     spSearchParameter_Derivedfrom, {@enum.value "derived-from" spSearchParameter_Derivedfrom Original Definition for the search parameter }
     spSearchParameter_Description, {@enum.value "description" spSearchParameter_Description The description of the search parameter }
@@ -2814,6 +3205,7 @@ Requires the near parameter to also be included }
     spSequence__profile, {@enum.value "_profile" spSequence__profile Profiles this resource claims to conform to }
     spSequence__query, {@enum.value "_query" spSequence__query A custom search profile that describes a specific defined query operation }
     spSequence__security, {@enum.value "_security" spSequence__security Security Labels applied to this resource }
+    spSequence__source, {@enum.value "_source" spSequence__source Identifies where the resource comes from }
     spSequence__tag, {@enum.value "_tag" spSequence__tag Tags applied to this resource }
     spSequence__text, {@enum.value "_text" spSequence__text Search on the narrative of the resource }
     spSequence_Chromosome, {@enum.value "chromosome" spSequence_Chromosome Chromosome number of the reference sequence }
@@ -2836,6 +3228,7 @@ Requires the near parameter to also be included }
     spServiceDefinition__profile, {@enum.value "_profile" spServiceDefinition__profile Profiles this resource claims to conform to }
     spServiceDefinition__query, {@enum.value "_query" spServiceDefinition__query A custom search profile that describes a specific defined query operation }
     spServiceDefinition__security, {@enum.value "_security" spServiceDefinition__security Security Labels applied to this resource }
+    spServiceDefinition__source, {@enum.value "_source" spServiceDefinition__source Identifies where the resource comes from }
     spServiceDefinition__tag, {@enum.value "_tag" spServiceDefinition__tag Tags applied to this resource }
     spServiceDefinition__text, {@enum.value "_text" spServiceDefinition__text Search on the narrative of the resource }
     spServiceDefinition_Composedof, {@enum.value "composed-of" spServiceDefinition_Composedof What resource is being referenced }
@@ -2857,6 +3250,43 @@ Requires the near parameter to also be included }
     spServiceDefinition_Version); {@enum.value "version" spServiceDefinition_Version The business version of the service definition }
 {$ENDIF}
 
+{$IFDEF FHIR_SERVICEREQUEST}
+  {@Enum TSearchParamsServiceRequest
+    Search Parameters for ServiceRequest
+  }
+  TSearchParamsServiceRequest = (
+    spServiceRequest__content, {@enum.value "_content" spServiceRequest__content Search on the entire content of the resource }
+    spServiceRequest__id, {@enum.value "_id" spServiceRequest__id Logical id of this artifact }
+    spServiceRequest__lastUpdated, {@enum.value "_lastUpdated" spServiceRequest__lastUpdated When the resource version last changed }
+    spServiceRequest__profile, {@enum.value "_profile" spServiceRequest__profile Profiles this resource claims to conform to }
+    spServiceRequest__query, {@enum.value "_query" spServiceRequest__query A custom search profile that describes a specific defined query operation }
+    spServiceRequest__security, {@enum.value "_security" spServiceRequest__security Security Labels applied to this resource }
+    spServiceRequest__source, {@enum.value "_source" spServiceRequest__source Identifies where the resource comes from }
+    spServiceRequest__tag, {@enum.value "_tag" spServiceRequest__tag Tags applied to this resource }
+    spServiceRequest__text, {@enum.value "_text" spServiceRequest__text Search on the narrative of the resource }
+    spServiceRequest_Authored, {@enum.value "authored" spServiceRequest_Authored Date request signed }
+    spServiceRequest_Basedon, {@enum.value "based-on" spServiceRequest_Basedon What request fulfills }
+    spServiceRequest_Bodysite, {@enum.value "body-site" spServiceRequest_Bodysite Where procedure is going to be done }
+    spServiceRequest_Category, {@enum.value "category" spServiceRequest_Category Classification of service }
+    spServiceRequest_Code, {@enum.value "code" spServiceRequest_Code What is being requested/ordered }
+    spServiceRequest_Context, {@enum.value "context" spServiceRequest_Context Encounter or Episode during which request was created }
+    spServiceRequest_Encounter, {@enum.value "encounter" spServiceRequest_Encounter An encounter in which this request is made }
+    spServiceRequest_Identifier, {@enum.value "identifier" spServiceRequest_Identifier Identifiers assigned to this order }
+    spServiceRequest_Instantiates, {@enum.value "instantiates" spServiceRequest_Instantiates Protocol or definition }
+    spServiceRequest_Intent, {@enum.value "intent" spServiceRequest_Intent proposal | plan | order + }
+    spServiceRequest_Occurrence, {@enum.value "occurrence" spServiceRequest_Occurrence When service should occur }
+    spServiceRequest_Patient, {@enum.value "patient" spServiceRequest_Patient Search by subject - a patient }
+    spServiceRequest_Performer, {@enum.value "performer" spServiceRequest_Performer Requested perfomer }
+    spServiceRequest_Performertype, {@enum.value "performer-type" spServiceRequest_Performertype Performer role }
+    spServiceRequest_Priority, {@enum.value "priority" spServiceRequest_Priority routine | urgent | asap | stat }
+    spServiceRequest_Replaces, {@enum.value "replaces" spServiceRequest_Replaces What request replaces }
+    spServiceRequest_Requester, {@enum.value "requester" spServiceRequest_Requester Who/what is requesting service }
+    spServiceRequest_Requisition, {@enum.value "requisition" spServiceRequest_Requisition Composite Request ID }
+    spServiceRequest_Specimen, {@enum.value "specimen" spServiceRequest_Specimen Specimen to be tested }
+    spServiceRequest_Status, {@enum.value "status" spServiceRequest_Status draft | active | suspended | completed | entered-in-error | cancelled }
+    spServiceRequest_Subject); {@enum.value "subject" spServiceRequest_Subject Search by subject }
+{$ENDIF}
+
 {$IFDEF FHIR_SLOT}
   {@Enum TSearchParamsSlot
     Search Parameters for Slot
@@ -2868,6 +3298,7 @@ Requires the near parameter to also be included }
     spSlot__profile, {@enum.value "_profile" spSlot__profile Profiles this resource claims to conform to }
     spSlot__query, {@enum.value "_query" spSlot__query A custom search profile that describes a specific defined query operation }
     spSlot__security, {@enum.value "_security" spSlot__security Security Labels applied to this resource }
+    spSlot__source, {@enum.value "_source" spSlot__source Identifies where the resource comes from }
     spSlot__tag, {@enum.value "_tag" spSlot__tag Tags applied to this resource }
     spSlot__text, {@enum.value "_text" spSlot__text Search on the narrative of the resource }
     spSlot_Identifier, {@enum.value "identifier" spSlot_Identifier A Slot Identifier }
@@ -2888,6 +3319,7 @@ Requires the near parameter to also be included }
     spSpecimen__profile, {@enum.value "_profile" spSpecimen__profile Profiles this resource claims to conform to }
     spSpecimen__query, {@enum.value "_query" spSpecimen__query A custom search profile that describes a specific defined query operation }
     spSpecimen__security, {@enum.value "_security" spSpecimen__security Security Labels applied to this resource }
+    spSpecimen__source, {@enum.value "_source" spSpecimen__source Identifies where the resource comes from }
     spSpecimen__tag, {@enum.value "_tag" spSpecimen__tag Tags applied to this resource }
     spSpecimen__text, {@enum.value "_text" spSpecimen__text Search on the narrative of the resource }
     spSpecimen_Accession, {@enum.value "accession" spSpecimen_Accession The accession number associated with the specimen }
@@ -2915,6 +3347,7 @@ Requires the near parameter to also be included }
     spSpecimenDefinition__profile, {@enum.value "_profile" spSpecimenDefinition__profile Profiles this resource claims to conform to }
     spSpecimenDefinition__query, {@enum.value "_query" spSpecimenDefinition__query A custom search profile that describes a specific defined query operation }
     spSpecimenDefinition__security, {@enum.value "_security" spSpecimenDefinition__security Security Labels applied to this resource }
+    spSpecimenDefinition__source, {@enum.value "_source" spSpecimenDefinition__source Identifies where the resource comes from }
     spSpecimenDefinition__tag, {@enum.value "_tag" spSpecimenDefinition__tag Tags applied to this resource }
     spSpecimenDefinition__text, {@enum.value "_text" spSpecimenDefinition__text Search on the narrative of the resource }
     spSpecimenDefinition_Container, {@enum.value "container" spSpecimenDefinition_Container The type of specimen conditioned in container expected by the lab }
@@ -2933,6 +3366,7 @@ Requires the near parameter to also be included }
     spStructureDefinition__profile, {@enum.value "_profile" spStructureDefinition__profile Profiles this resource claims to conform to }
     spStructureDefinition__query, {@enum.value "_query" spStructureDefinition__query A custom search profile that describes a specific defined query operation }
     spStructureDefinition__security, {@enum.value "_security" spStructureDefinition__security Security Labels applied to this resource }
+    spStructureDefinition__source, {@enum.value "_source" spStructureDefinition__source Identifies where the resource comes from }
     spStructureDefinition__tag, {@enum.value "_tag" spStructureDefinition__tag Tags applied to this resource }
     spStructureDefinition__text, {@enum.value "_text" spStructureDefinition__text Search on the narrative of the resource }
     spStructureDefinition_Abstract, {@enum.value "abstract" spStructureDefinition_Abstract Whether the structure is abstract }
@@ -2970,6 +3404,7 @@ Requires the near parameter to also be included }
     spStructureMap__profile, {@enum.value "_profile" spStructureMap__profile Profiles this resource claims to conform to }
     spStructureMap__query, {@enum.value "_query" spStructureMap__query A custom search profile that describes a specific defined query operation }
     spStructureMap__security, {@enum.value "_security" spStructureMap__security Security Labels applied to this resource }
+    spStructureMap__source, {@enum.value "_source" spStructureMap__source Identifies where the resource comes from }
     spStructureMap__tag, {@enum.value "_tag" spStructureMap__tag Tags applied to this resource }
     spStructureMap__text, {@enum.value "_text" spStructureMap__text Search on the narrative of the resource }
     spStructureMap_Date, {@enum.value "date" spStructureMap_Date The structure map publication date }
@@ -2995,6 +3430,7 @@ Requires the near parameter to also be included }
     spSubscription__profile, {@enum.value "_profile" spSubscription__profile Profiles this resource claims to conform to }
     spSubscription__query, {@enum.value "_query" spSubscription__query A custom search profile that describes a specific defined query operation }
     spSubscription__security, {@enum.value "_security" spSubscription__security Security Labels applied to this resource }
+    spSubscription__source, {@enum.value "_source" spSubscription__source Identifies where the resource comes from }
     spSubscription__tag, {@enum.value "_tag" spSubscription__tag Tags applied to this resource }
     spSubscription__text, {@enum.value "_text" spSubscription__text Search on the narrative of the resource }
     spSubscription_Addtag, {@enum.value "add-tag" spSubscription_Addtag A tag to be added to the resource matching the criteria }
@@ -3017,6 +3453,7 @@ Requires the near parameter to also be included }
     spSubstance__profile, {@enum.value "_profile" spSubstance__profile Profiles this resource claims to conform to }
     spSubstance__query, {@enum.value "_query" spSubstance__query A custom search profile that describes a specific defined query operation }
     spSubstance__security, {@enum.value "_security" spSubstance__security Security Labels applied to this resource }
+    spSubstance__source, {@enum.value "_source" spSubstance__source Identifies where the resource comes from }
     spSubstance__tag, {@enum.value "_tag" spSubstance__tag Tags applied to this resource }
     spSubstance__text, {@enum.value "_text" spSubstance__text Search on the narrative of the resource }
     spSubstance_Category, {@enum.value "category" spSubstance_Category The category of the substance }
@@ -3027,6 +3464,54 @@ Requires the near parameter to also be included }
     spSubstance_Quantity, {@enum.value "quantity" spSubstance_Quantity Amount of substance in the package }
     spSubstance_Status, {@enum.value "status" spSubstance_Status active | inactive | entered-in-error }
     spSubstance_Substancereference); {@enum.value "substance-reference" spSubstance_Substancereference A component of the substance }
+{$ENDIF}
+
+{$IFDEF FHIR_SUBSTANCEPOLYMER}
+  {@Enum TSearchParamsSubstancePolymer
+    Search Parameters for SubstancePolymer
+  }
+  TSearchParamsSubstancePolymer = (
+    spSubstancePolymer__content, {@enum.value "_content" spSubstancePolymer__content Search on the entire content of the resource }
+    spSubstancePolymer__id, {@enum.value "_id" spSubstancePolymer__id Logical id of this artifact }
+    spSubstancePolymer__lastUpdated, {@enum.value "_lastUpdated" spSubstancePolymer__lastUpdated When the resource version last changed }
+    spSubstancePolymer__profile, {@enum.value "_profile" spSubstancePolymer__profile Profiles this resource claims to conform to }
+    spSubstancePolymer__query, {@enum.value "_query" spSubstancePolymer__query A custom search profile that describes a specific defined query operation }
+    spSubstancePolymer__security, {@enum.value "_security" spSubstancePolymer__security Security Labels applied to this resource }
+    spSubstancePolymer__source, {@enum.value "_source" spSubstancePolymer__source Identifies where the resource comes from }
+    spSubstancePolymer__tag, {@enum.value "_tag" spSubstancePolymer__tag Tags applied to this resource }
+    spSubstancePolymer__text); {@enum.value "_text" spSubstancePolymer__text Search on the narrative of the resource }
+{$ENDIF}
+
+{$IFDEF FHIR_SUBSTANCEREFERENCEINFORMATION}
+  {@Enum TSearchParamsSubstanceReferenceInformation
+    Search Parameters for SubstanceReferenceInformation
+  }
+  TSearchParamsSubstanceReferenceInformation = (
+    spSubstanceReferenceInformation__content, {@enum.value "_content" spSubstanceReferenceInformation__content Search on the entire content of the resource }
+    spSubstanceReferenceInformation__id, {@enum.value "_id" spSubstanceReferenceInformation__id Logical id of this artifact }
+    spSubstanceReferenceInformation__lastUpdated, {@enum.value "_lastUpdated" spSubstanceReferenceInformation__lastUpdated When the resource version last changed }
+    spSubstanceReferenceInformation__profile, {@enum.value "_profile" spSubstanceReferenceInformation__profile Profiles this resource claims to conform to }
+    spSubstanceReferenceInformation__query, {@enum.value "_query" spSubstanceReferenceInformation__query A custom search profile that describes a specific defined query operation }
+    spSubstanceReferenceInformation__security, {@enum.value "_security" spSubstanceReferenceInformation__security Security Labels applied to this resource }
+    spSubstanceReferenceInformation__source, {@enum.value "_source" spSubstanceReferenceInformation__source Identifies where the resource comes from }
+    spSubstanceReferenceInformation__tag, {@enum.value "_tag" spSubstanceReferenceInformation__tag Tags applied to this resource }
+    spSubstanceReferenceInformation__text); {@enum.value "_text" spSubstanceReferenceInformation__text Search on the narrative of the resource }
+{$ENDIF}
+
+{$IFDEF FHIR_SUBSTANCESPECIFICATION}
+  {@Enum TSearchParamsSubstanceSpecification
+    Search Parameters for SubstanceSpecification
+  }
+  TSearchParamsSubstanceSpecification = (
+    spSubstanceSpecification__content, {@enum.value "_content" spSubstanceSpecification__content Search on the entire content of the resource }
+    spSubstanceSpecification__id, {@enum.value "_id" spSubstanceSpecification__id Logical id of this artifact }
+    spSubstanceSpecification__lastUpdated, {@enum.value "_lastUpdated" spSubstanceSpecification__lastUpdated When the resource version last changed }
+    spSubstanceSpecification__profile, {@enum.value "_profile" spSubstanceSpecification__profile Profiles this resource claims to conform to }
+    spSubstanceSpecification__query, {@enum.value "_query" spSubstanceSpecification__query A custom search profile that describes a specific defined query operation }
+    spSubstanceSpecification__security, {@enum.value "_security" spSubstanceSpecification__security Security Labels applied to this resource }
+    spSubstanceSpecification__source, {@enum.value "_source" spSubstanceSpecification__source Identifies where the resource comes from }
+    spSubstanceSpecification__tag, {@enum.value "_tag" spSubstanceSpecification__tag Tags applied to this resource }
+    spSubstanceSpecification__text); {@enum.value "_text" spSubstanceSpecification__text Search on the narrative of the resource }
 {$ENDIF}
 
 {$IFDEF FHIR_SUPPLYDELIVERY}
@@ -3040,6 +3525,7 @@ Requires the near parameter to also be included }
     spSupplyDelivery__profile, {@enum.value "_profile" spSupplyDelivery__profile Profiles this resource claims to conform to }
     spSupplyDelivery__query, {@enum.value "_query" spSupplyDelivery__query A custom search profile that describes a specific defined query operation }
     spSupplyDelivery__security, {@enum.value "_security" spSupplyDelivery__security Security Labels applied to this resource }
+    spSupplyDelivery__source, {@enum.value "_source" spSupplyDelivery__source Identifies where the resource comes from }
     spSupplyDelivery__tag, {@enum.value "_tag" spSupplyDelivery__tag Tags applied to this resource }
     spSupplyDelivery__text, {@enum.value "_text" spSupplyDelivery__text Search on the narrative of the resource }
     spSupplyDelivery_Identifier, {@enum.value "identifier" spSupplyDelivery_Identifier External identifier }
@@ -3060,6 +3546,7 @@ Requires the near parameter to also be included }
     spSupplyRequest__profile, {@enum.value "_profile" spSupplyRequest__profile Profiles this resource claims to conform to }
     spSupplyRequest__query, {@enum.value "_query" spSupplyRequest__query A custom search profile that describes a specific defined query operation }
     spSupplyRequest__security, {@enum.value "_security" spSupplyRequest__security Security Labels applied to this resource }
+    spSupplyRequest__source, {@enum.value "_source" spSupplyRequest__source Identifies where the resource comes from }
     spSupplyRequest__tag, {@enum.value "_tag" spSupplyRequest__tag Tags applied to this resource }
     spSupplyRequest__text, {@enum.value "_text" spSupplyRequest__text Search on the narrative of the resource }
     spSupplyRequest_Category, {@enum.value "category" spSupplyRequest_Category The kind of supply (central, non-stock, etc.) }
@@ -3081,6 +3568,7 @@ Requires the near parameter to also be included }
     spTask__profile, {@enum.value "_profile" spTask__profile Profiles this resource claims to conform to }
     spTask__query, {@enum.value "_query" spTask__query A custom search profile that describes a specific defined query operation }
     spTask__security, {@enum.value "_security" spTask__security Security Labels applied to this resource }
+    spTask__source, {@enum.value "_source" spTask__source Identifies where the resource comes from }
     spTask__tag, {@enum.value "_tag" spTask__tag Tags applied to this resource }
     spTask__text, {@enum.value "_text" spTask__text Search on the narrative of the resource }
     spTask_Authoredon, {@enum.value "authored-on" spTask_Authoredon Search by creation date }
@@ -3093,7 +3581,6 @@ Requires the near parameter to also be included }
     spTask_Identifier, {@enum.value "identifier" spTask_Identifier Search for a task instance by its business identifier }
     spTask_Intent, {@enum.value "intent" spTask_Intent Search by task intent }
     spTask_Modified, {@enum.value "modified" spTask_Modified Search by last modification date }
-    spTask_Organization, {@enum.value "organization" spTask_Organization Search by responsible organization }
     spTask_Owner, {@enum.value "owner" spTask_Owner Search by task owner }
     spTask_Partof, {@enum.value "part-of" spTask_Partof Search by task this task is part of }
     spTask_Patient, {@enum.value "patient" spTask_Patient Search by patient }
@@ -3103,6 +3590,31 @@ Requires the near parameter to also be included }
     spTask_Requester, {@enum.value "requester" spTask_Requester Search by task requester }
     spTask_Status, {@enum.value "status" spTask_Status Search by task status }
     spTask_Subject); {@enum.value "subject" spTask_Subject Search by subject }
+{$ENDIF}
+
+{$IFDEF FHIR_TERMINOLOGYCAPABILITIES}
+  {@Enum TSearchParamsTerminologyCapabilities
+    Search Parameters for TerminologyCapabilities
+  }
+  TSearchParamsTerminologyCapabilities = (
+    spTerminologyCapabilities__content, {@enum.value "_content" spTerminologyCapabilities__content Search on the entire content of the resource }
+    spTerminologyCapabilities__id, {@enum.value "_id" spTerminologyCapabilities__id Logical id of this artifact }
+    spTerminologyCapabilities__lastUpdated, {@enum.value "_lastUpdated" spTerminologyCapabilities__lastUpdated When the resource version last changed }
+    spTerminologyCapabilities__profile, {@enum.value "_profile" spTerminologyCapabilities__profile Profiles this resource claims to conform to }
+    spTerminologyCapabilities__query, {@enum.value "_query" spTerminologyCapabilities__query A custom search profile that describes a specific defined query operation }
+    spTerminologyCapabilities__security, {@enum.value "_security" spTerminologyCapabilities__security Security Labels applied to this resource }
+    spTerminologyCapabilities__source, {@enum.value "_source" spTerminologyCapabilities__source Identifies where the resource comes from }
+    spTerminologyCapabilities__tag, {@enum.value "_tag" spTerminologyCapabilities__tag Tags applied to this resource }
+    spTerminologyCapabilities__text, {@enum.value "_text" spTerminologyCapabilities__text Search on the narrative of the resource }
+    spTerminologyCapabilities_Date, {@enum.value "date" spTerminologyCapabilities_Date The terminology capabilities publication date }
+    spTerminologyCapabilities_Description, {@enum.value "description" spTerminologyCapabilities_Description The description of the terminology capabilities }
+    spTerminologyCapabilities_Jurisdiction, {@enum.value "jurisdiction" spTerminologyCapabilities_Jurisdiction Intended jurisdiction for the terminology capabilities }
+    spTerminologyCapabilities_Name, {@enum.value "name" spTerminologyCapabilities_Name Computationally friendly name of the terminology capabilities }
+    spTerminologyCapabilities_Publisher, {@enum.value "publisher" spTerminologyCapabilities_Publisher Name of the publisher of the terminology capabilities }
+    spTerminologyCapabilities_Status, {@enum.value "status" spTerminologyCapabilities_Status The current status of the terminology capabilities }
+    spTerminologyCapabilities_Title, {@enum.value "title" spTerminologyCapabilities_Title The human-friendly name of the terminology capabilities }
+    spTerminologyCapabilities_Url, {@enum.value "url" spTerminologyCapabilities_Url The uri that identifies the terminology capabilities }
+    spTerminologyCapabilities_Version); {@enum.value "version" spTerminologyCapabilities_Version The business version of the terminology capabilities }
 {$ENDIF}
 
 {$IFDEF FHIR_TESTREPORT}
@@ -3116,6 +3628,7 @@ Requires the near parameter to also be included }
     spTestReport__profile, {@enum.value "_profile" spTestReport__profile Profiles this resource claims to conform to }
     spTestReport__query, {@enum.value "_query" spTestReport__query A custom search profile that describes a specific defined query operation }
     spTestReport__security, {@enum.value "_security" spTestReport__security Security Labels applied to this resource }
+    spTestReport__source, {@enum.value "_source" spTestReport__source Identifies where the resource comes from }
     spTestReport__tag, {@enum.value "_tag" spTestReport__tag Tags applied to this resource }
     spTestReport__text, {@enum.value "_text" spTestReport__text Search on the narrative of the resource }
     spTestReport_Identifier, {@enum.value "identifier" spTestReport_Identifier An external identifier for the test report }
@@ -3137,6 +3650,7 @@ Requires the near parameter to also be included }
     spTestScript__profile, {@enum.value "_profile" spTestScript__profile Profiles this resource claims to conform to }
     spTestScript__query, {@enum.value "_query" spTestScript__query A custom search profile that describes a specific defined query operation }
     spTestScript__security, {@enum.value "_security" spTestScript__security Security Labels applied to this resource }
+    spTestScript__source, {@enum.value "_source" spTestScript__source Identifies where the resource comes from }
     spTestScript__tag, {@enum.value "_tag" spTestScript__tag Tags applied to this resource }
     spTestScript__text, {@enum.value "_text" spTestScript__text Search on the narrative of the resource }
     spTestScript_Date, {@enum.value "date" spTestScript_Date The test script publication date }
@@ -3152,6 +3666,28 @@ Requires the near parameter to also be included }
     spTestScript_Version); {@enum.value "version" spTestScript_Version The business version of the test script }
 {$ENDIF}
 
+{$IFDEF FHIR_USERSESSION}
+  {@Enum TSearchParamsUserSession
+    Search Parameters for UserSession
+  }
+  TSearchParamsUserSession = (
+    spUserSession__content, {@enum.value "_content" spUserSession__content Search on the entire content of the resource }
+    spUserSession__id, {@enum.value "_id" spUserSession__id Logical id of this artifact }
+    spUserSession__lastUpdated, {@enum.value "_lastUpdated" spUserSession__lastUpdated When the resource version last changed }
+    spUserSession__profile, {@enum.value "_profile" spUserSession__profile Profiles this resource claims to conform to }
+    spUserSession__query, {@enum.value "_query" spUserSession__query A custom search profile that describes a specific defined query operation }
+    spUserSession__security, {@enum.value "_security" spUserSession__security Security Labels applied to this resource }
+    spUserSession__source, {@enum.value "_source" spUserSession__source Identifies where the resource comes from }
+    spUserSession__tag, {@enum.value "_tag" spUserSession__tag Tags applied to this resource }
+    spUserSession__text, {@enum.value "_text" spUserSession__text Search on the narrative of the resource }
+    spUserSession_Focus, {@enum.value "focus" spUserSession_Focus The focus of the user session }
+    spUserSession_Identifier, {@enum.value "identifier" spUserSession_Identifier External identifiers for the user session }
+    spUserSession_Patient, {@enum.value "patient" spUserSession_Patient The identity of a patient to search for user sessions }
+    spUserSession_Status, {@enum.value "status" spUserSession_Status The status of the user session }
+    spUserSession_User, {@enum.value "user" spUserSession_User The user of the session }
+    spUserSession_Workstation); {@enum.value "workstation" spUserSession_Workstation The workstation of the session }
+{$ENDIF}
+
 {$IFDEF FHIR_VALUESET}
   {@Enum TSearchParamsValueSet
     Search Parameters for ValueSet
@@ -3163,8 +3699,10 @@ Requires the near parameter to also be included }
     spValueSet__profile, {@enum.value "_profile" spValueSet__profile Profiles this resource claims to conform to }
     spValueSet__query, {@enum.value "_query" spValueSet__query A custom search profile that describes a specific defined query operation }
     spValueSet__security, {@enum.value "_security" spValueSet__security Security Labels applied to this resource }
+    spValueSet__source, {@enum.value "_source" spValueSet__source Identifies where the resource comes from }
     spValueSet__tag, {@enum.value "_tag" spValueSet__tag Tags applied to this resource }
     spValueSet__text, {@enum.value "_text" spValueSet__text Search on the narrative of the resource }
+    spValueSet_Code, {@enum.value "code" spValueSet_Code This special parameter searches for codes in the value set. See additional notes on the ValueSet resource }
     spValueSet_Date, {@enum.value "date" spValueSet_Date The value set publication date }
     spValueSet_Description, {@enum.value "description" spValueSet_Description The description of the value set }
     spValueSet_Expansion, {@enum.value "expansion" spValueSet_Expansion Uniquely identifies this expansion }
@@ -3179,6 +3717,23 @@ Requires the near parameter to also be included }
     spValueSet_Version); {@enum.value "version" spValueSet_Version The business version of the value set }
 {$ENDIF}
 
+{$IFDEF FHIR_VERIFICATIONRESULT}
+  {@Enum TSearchParamsVerificationResult
+    Search Parameters for VerificationResult
+  }
+  TSearchParamsVerificationResult = (
+    spVerificationResult__content, {@enum.value "_content" spVerificationResult__content Search on the entire content of the resource }
+    spVerificationResult__id, {@enum.value "_id" spVerificationResult__id Logical id of this artifact }
+    spVerificationResult__lastUpdated, {@enum.value "_lastUpdated" spVerificationResult__lastUpdated When the resource version last changed }
+    spVerificationResult__profile, {@enum.value "_profile" spVerificationResult__profile Profiles this resource claims to conform to }
+    spVerificationResult__query, {@enum.value "_query" spVerificationResult__query A custom search profile that describes a specific defined query operation }
+    spVerificationResult__security, {@enum.value "_security" spVerificationResult__security Security Labels applied to this resource }
+    spVerificationResult__source, {@enum.value "_source" spVerificationResult__source Identifies where the resource comes from }
+    spVerificationResult__tag, {@enum.value "_tag" spVerificationResult__tag Tags applied to this resource }
+    spVerificationResult__text, {@enum.value "_text" spVerificationResult__text Search on the narrative of the resource }
+    spVerificationResult_Target); {@enum.value "target" spVerificationResult_Target A resource that was validated }
+{$ENDIF}
+
 {$IFDEF FHIR_VISIONPRESCRIPTION}
   {@Enum TSearchParamsVisionPrescription
     Search Parameters for VisionPrescription
@@ -3190,6 +3745,7 @@ Requires the near parameter to also be included }
     spVisionPrescription__profile, {@enum.value "_profile" spVisionPrescription__profile Profiles this resource claims to conform to }
     spVisionPrescription__query, {@enum.value "_query" spVisionPrescription__query A custom search profile that describes a specific defined query operation }
     spVisionPrescription__security, {@enum.value "_security" spVisionPrescription__security Security Labels applied to this resource }
+    spVisionPrescription__source, {@enum.value "_source" spVisionPrescription__source Identifies where the resource comes from }
     spVisionPrescription__tag, {@enum.value "_tag" spVisionPrescription__tag Tags applied to this resource }
     spVisionPrescription__text, {@enum.value "_text" spVisionPrescription__text Search on the narrative of the resource }
     spVisionPrescription_Datewritten, {@enum.value "datewritten" spVisionPrescription_Datewritten Return prescriptions written on this date }
@@ -3210,12 +3766,12 @@ Const
       {$IFDEF FHIR_AUDITEVENT}'AuditEvent',{$ENDIF}
       {$IFDEF FHIR_BASIC}'Basic',{$ENDIF}
       {$IFDEF FHIR_BINARY}'Binary',{$ENDIF}
+      {$IFDEF FHIR_BIOLOGICALLYDERIVEDPRODUCT}'BiologicallyDerivedProduct',{$ENDIF}
       {$IFDEF FHIR_BODYSTRUCTURE}'BodyStructure',{$ENDIF}
       {$IFDEF FHIR_BUNDLE}'Bundle',{$ENDIF}
       {$IFDEF FHIR_CAPABILITYSTATEMENT}'CapabilityStatement',{$ENDIF}
       {$IFDEF FHIR_CAREPLAN}'CarePlan',{$ENDIF}
       {$IFDEF FHIR_CARETEAM}'CareTeam',{$ENDIF}
-      {$IFDEF FHIR_CATALOGENTRY}'CatalogEntry',{$ENDIF}
       {$IFDEF FHIR_CHARGEITEM}'ChargeItem',{$ENDIF}
       {$IFDEF FHIR_CLAIM}'Claim',{$ENDIF}
       {$IFDEF FHIR_CLAIMRESPONSE}'ClaimResponse',{$ENDIF}
@@ -3245,6 +3801,7 @@ Const
       {$IFDEF FHIR_ENDPOINT}'Endpoint',{$ENDIF}
       {$IFDEF FHIR_ENROLLMENTREQUEST}'EnrollmentRequest',{$ENDIF}
       {$IFDEF FHIR_ENROLLMENTRESPONSE}'EnrollmentResponse',{$ENDIF}
+      {$IFDEF FHIR_ENTRYDEFINITION}'EntryDefinition',{$ENDIF}
       {$IFDEF FHIR_EPISODEOFCARE}'EpisodeOfCare',{$ENDIF}
       {$IFDEF FHIR_EVENTDEFINITION}'EventDefinition',{$ENDIF}
       {$IFDEF FHIR_EXAMPLESCENARIO}'ExampleScenario',{$ENDIF}
@@ -3256,13 +3813,17 @@ Const
       {$IFDEF FHIR_GRAPHDEFINITION}'GraphDefinition',{$ENDIF}
       {$IFDEF FHIR_GROUP}'Group',{$ENDIF}
       {$IFDEF FHIR_GUIDANCERESPONSE}'GuidanceResponse',{$ENDIF}
-      {$IFDEF FHIR_HEALTHCARESERVICE}'HealthcareService',{$ENDIF}
       
-      {$IFDEF FHIR_IMAGINGMANIFEST}'ImagingManifest',{$ENDIF}
+      {$IFDEF FHIR_HEALTHCARESERVICE}'HealthcareService',{$ENDIF}
       {$IFDEF FHIR_IMAGINGSTUDY}'ImagingStudy',{$ENDIF}
       {$IFDEF FHIR_IMMUNIZATION}'Immunization',{$ENDIF}
+      {$IFDEF FHIR_IMMUNIZATIONEVALUATION}'ImmunizationEvaluation',{$ENDIF}
       {$IFDEF FHIR_IMMUNIZATIONRECOMMENDATION}'ImmunizationRecommendation',{$ENDIF}
       {$IFDEF FHIR_IMPLEMENTATIONGUIDE}'ImplementationGuide',{$ENDIF}
+      {$IFDEF FHIR_IMPLEMENTATIONGUIDEINPUT}'ImplementationGuideInput',{$ENDIF}
+      {$IFDEF FHIR_IMPLEMENTATIONGUIDEOUTPUT}'ImplementationGuideOutput',{$ENDIF}
+      {$IFDEF FHIR_INVOICE}'Invoice',{$ENDIF}
+      {$IFDEF FHIR_ITEMINSTANCE}'ItemInstance',{$ENDIF}
       {$IFDEF FHIR_LIBRARY}'Library',{$ENDIF}
       {$IFDEF FHIR_LINKAGE}'Linkage',{$ENDIF}
       {$IFDEF FHIR_LIST}'List',{$ENDIF}
@@ -3275,14 +3836,24 @@ Const
       {$IFDEF FHIR_MEDICATIONDISPENSE}'MedicationDispense',{$ENDIF}
       {$IFDEF FHIR_MEDICATIONREQUEST}'MedicationRequest',{$ENDIF}
       {$IFDEF FHIR_MEDICATIONSTATEMENT}'MedicationStatement',{$ENDIF}
+      {$IFDEF FHIR_MEDICINALPRODUCT}'MedicinalProduct',{$ENDIF}
+      {$IFDEF FHIR_MEDICINALPRODUCTAUTHORIZATION}'MedicinalProductAuthorization',{$ENDIF}
+      {$IFDEF FHIR_MEDICINALPRODUCTCLINICALS}'MedicinalProductClinicals',{$ENDIF}
+      {$IFDEF FHIR_MEDICINALPRODUCTDEVICESPEC}'MedicinalProductDeviceSpec',{$ENDIF}
+      {$IFDEF FHIR_MEDICINALPRODUCTINGREDIENT}'MedicinalProductIngredient',{$ENDIF}
+      {$IFDEF FHIR_MEDICINALPRODUCTPACKAGED}'MedicinalProductPackaged',{$ENDIF}
+      {$IFDEF FHIR_MEDICINALPRODUCTPHARMACEUTICAL}'MedicinalProductPharmaceutical',{$ENDIF}
       {$IFDEF FHIR_MESSAGEDEFINITION}'MessageDefinition',{$ENDIF}
       {$IFDEF FHIR_MESSAGEHEADER}'MessageHeader',{$ENDIF}
       {$IFDEF FHIR_NAMINGSYSTEM}'NamingSystem',{$ENDIF}
       {$IFDEF FHIR_NUTRITIONORDER}'NutritionOrder',{$ENDIF}
       {$IFDEF FHIR_OBSERVATION}'Observation',{$ENDIF}
+      {$IFDEF FHIR_OBSERVATIONDEFINITION}'ObservationDefinition',{$ENDIF}
+      {$IFDEF FHIR_OCCUPATIONALDATA}'OccupationalData',{$ENDIF}
       {$IFDEF FHIR_OPERATIONDEFINITION}'OperationDefinition',{$ENDIF}
       {$IFDEF FHIR_OPERATIONOUTCOME}'OperationOutcome',{$ENDIF}
       {$IFDEF FHIR_ORGANIZATION}'Organization',{$ENDIF}
+      {$IFDEF FHIR_ORGANIZATIONROLE}'OrganizationRole',{$ENDIF}
       {$IFDEF FHIR_PARAMETERS}'Parameters',{$ENDIF}
       {$IFDEF FHIR_PATIENT}'Patient',{$ENDIF}
       {$IFDEF FHIR_PAYMENTNOTICE}'PaymentNotice',{$ENDIF}
@@ -3292,9 +3863,10 @@ Const
       {$IFDEF FHIR_PRACTITIONER}'Practitioner',{$ENDIF}
       {$IFDEF FHIR_PRACTITIONERROLE}'PractitionerRole',{$ENDIF}
       {$IFDEF FHIR_PROCEDURE}'Procedure',{$ENDIF}
-      {$IFDEF FHIR_PROCEDUREREQUEST}'ProcedureRequest',{$ENDIF}
       {$IFDEF FHIR_PROCESSREQUEST}'ProcessRequest',{$ENDIF}
       {$IFDEF FHIR_PROCESSRESPONSE}'ProcessResponse',{$ENDIF}
+      
+      {$IFDEF FHIR_PRODUCTPLAN}'ProductPlan',{$ENDIF}
       {$IFDEF FHIR_PROVENANCE}'Provenance',{$ENDIF}
       {$IFDEF FHIR_QUESTIONNAIRE}'Questionnaire',{$ENDIF}
       {$IFDEF FHIR_QUESTIONNAIRERESPONSE}'QuestionnaireResponse',{$ENDIF}
@@ -3307,6 +3879,7 @@ Const
       {$IFDEF FHIR_SEARCHPARAMETER}'SearchParameter',{$ENDIF}
       {$IFDEF FHIR_SEQUENCE}'Sequence',{$ENDIF}
       {$IFDEF FHIR_SERVICEDEFINITION}'ServiceDefinition',{$ENDIF}
+      {$IFDEF FHIR_SERVICEREQUEST}'ServiceRequest',{$ENDIF}
       {$IFDEF FHIR_SLOT}'Slot',{$ENDIF}
       {$IFDEF FHIR_SPECIMEN}'Specimen',{$ENDIF}
       {$IFDEF FHIR_SPECIMENDEFINITION}'SpecimenDefinition',{$ENDIF}
@@ -3314,13 +3887,18 @@ Const
       {$IFDEF FHIR_STRUCTUREMAP}'StructureMap',{$ENDIF}
       {$IFDEF FHIR_SUBSCRIPTION}'Subscription',{$ENDIF}
       {$IFDEF FHIR_SUBSTANCE}'Substance',{$ENDIF}
+      {$IFDEF FHIR_SUBSTANCEPOLYMER}'SubstancePolymer',{$ENDIF}
+      {$IFDEF FHIR_SUBSTANCEREFERENCEINFORMATION}'SubstanceReferenceInformation',{$ENDIF}
+      {$IFDEF FHIR_SUBSTANCESPECIFICATION}'SubstanceSpecification',{$ENDIF}
       {$IFDEF FHIR_SUPPLYDELIVERY}'SupplyDelivery',{$ENDIF}
       {$IFDEF FHIR_SUPPLYREQUEST}'SupplyRequest',{$ENDIF}
       {$IFDEF FHIR_TASK}'Task',{$ENDIF}
-      
+      {$IFDEF FHIR_TERMINOLOGYCAPABILITIES}'TerminologyCapabilities',{$ENDIF}
       {$IFDEF FHIR_TESTREPORT}'TestReport',{$ENDIF}
       {$IFDEF FHIR_TESTSCRIPT}'TestScript',{$ENDIF}
+      {$IFDEF FHIR_USERSESSION}'UserSession',{$ENDIF}
       {$IFDEF FHIR_VALUESET}'ValueSet',{$ENDIF}
+      {$IFDEF FHIR_VERIFICATIONRESULT}'VerificationResult',{$ENDIF}
       {$IFDEF FHIR_VISIONPRESCRIPTION}'VisionPrescription',{$ENDIF}
        'Custom');
   LOWERCASE_CODES_TFhirResourceType : Array[TFhirResourceType] of String = ('', {$IFDEF FHIR_ACCOUNT}'account',{$ENDIF}
@@ -3332,12 +3910,12 @@ Const
      {$IFDEF FHIR_AUDITEVENT}'auditevent',{$ENDIF}
      {$IFDEF FHIR_BASIC}'basic',{$ENDIF}
      {$IFDEF FHIR_BINARY}'binary',{$ENDIF}
+     {$IFDEF FHIR_BIOLOGICALLYDERIVEDPRODUCT}'biologicallyderivedproduct',{$ENDIF}
      {$IFDEF FHIR_BODYSTRUCTURE}'bodystructure',{$ENDIF}
      {$IFDEF FHIR_BUNDLE}'bundle',{$ENDIF}
      {$IFDEF FHIR_CAPABILITYSTATEMENT}'capabilitystatement',{$ENDIF}
      {$IFDEF FHIR_CAREPLAN}'careplan',{$ENDIF}
      {$IFDEF FHIR_CARETEAM}'careteam',{$ENDIF}
-     {$IFDEF FHIR_CATALOGENTRY}'catalogentry',{$ENDIF}
      {$IFDEF FHIR_CHARGEITEM}'chargeitem',{$ENDIF}
      {$IFDEF FHIR_CLAIM}'claim',{$ENDIF}
      {$IFDEF FHIR_CLAIMRESPONSE}'claimresponse',{$ENDIF}
@@ -3367,6 +3945,7 @@ Const
      {$IFDEF FHIR_ENDPOINT}'endpoint',{$ENDIF}
      {$IFDEF FHIR_ENROLLMENTREQUEST}'enrollmentrequest',{$ENDIF}
      {$IFDEF FHIR_ENROLLMENTRESPONSE}'enrollmentresponse',{$ENDIF}
+     {$IFDEF FHIR_ENTRYDEFINITION}'entrydefinition',{$ENDIF}
      {$IFDEF FHIR_EPISODEOFCARE}'episodeofcare',{$ENDIF}
      {$IFDEF FHIR_EVENTDEFINITION}'eventdefinition',{$ENDIF}
      {$IFDEF FHIR_EXAMPLESCENARIO}'examplescenario',{$ENDIF}
@@ -3379,11 +3958,15 @@ Const
      {$IFDEF FHIR_GROUP}'group',{$ENDIF}
      {$IFDEF FHIR_GUIDANCERESPONSE}'guidanceresponse',{$ENDIF}
      {$IFDEF FHIR_HEALTHCARESERVICE}'healthcareservice',{$ENDIF}
-     {$IFDEF FHIR_IMAGINGMANIFEST}'imagingmanifest',{$ENDIF}
      {$IFDEF FHIR_IMAGINGSTUDY}'imagingstudy',{$ENDIF}
      {$IFDEF FHIR_IMMUNIZATION}'immunization',{$ENDIF}
+     {$IFDEF FHIR_IMMUNIZATIONEVALUATION}'immunizationevaluation',{$ENDIF}
      {$IFDEF FHIR_IMMUNIZATIONRECOMMENDATION}'immunizationrecommendation',{$ENDIF}
      {$IFDEF FHIR_IMPLEMENTATIONGUIDE}'implementationguide',{$ENDIF}
+     {$IFDEF FHIR_IMPLEMENTATIONGUIDEINPUT}'implementationguideinput',{$ENDIF}
+     {$IFDEF FHIR_IMPLEMENTATIONGUIDEOUTPUT}'implementationguideoutput',{$ENDIF}
+     {$IFDEF FHIR_INVOICE}'invoice',{$ENDIF}
+     {$IFDEF FHIR_ITEMINSTANCE}'iteminstance',{$ENDIF}
      {$IFDEF FHIR_LIBRARY}'library',{$ENDIF}
      {$IFDEF FHIR_LINKAGE}'linkage',{$ENDIF}
      {$IFDEF FHIR_LIST}'list',{$ENDIF}
@@ -3396,14 +3979,24 @@ Const
      {$IFDEF FHIR_MEDICATIONDISPENSE}'medicationdispense',{$ENDIF}
      {$IFDEF FHIR_MEDICATIONREQUEST}'medicationrequest',{$ENDIF}
      {$IFDEF FHIR_MEDICATIONSTATEMENT}'medicationstatement',{$ENDIF}
+     {$IFDEF FHIR_MEDICINALPRODUCT}'medicinalproduct',{$ENDIF}
+     {$IFDEF FHIR_MEDICINALPRODUCTAUTHORIZATION}'medicinalproductauthorization',{$ENDIF}
+     {$IFDEF FHIR_MEDICINALPRODUCTCLINICALS}'medicinalproductclinicals',{$ENDIF}
+     {$IFDEF FHIR_MEDICINALPRODUCTDEVICESPEC}'medicinalproductdevicespec',{$ENDIF}
+     {$IFDEF FHIR_MEDICINALPRODUCTINGREDIENT}'medicinalproductingredient',{$ENDIF}
+     {$IFDEF FHIR_MEDICINALPRODUCTPACKAGED}'medicinalproductpackaged',{$ENDIF}
+     {$IFDEF FHIR_MEDICINALPRODUCTPHARMACEUTICAL}'medicinalproductpharmaceutical',{$ENDIF}
      {$IFDEF FHIR_MESSAGEDEFINITION}'messagedefinition',{$ENDIF}
      {$IFDEF FHIR_MESSAGEHEADER}'messageheader',{$ENDIF}
      {$IFDEF FHIR_NAMINGSYSTEM}'namingsystem',{$ENDIF}
      {$IFDEF FHIR_NUTRITIONORDER}'nutritionorder',{$ENDIF}
      {$IFDEF FHIR_OBSERVATION}'observation',{$ENDIF}
+     {$IFDEF FHIR_OBSERVATIONDEFINITION}'observationdefinition',{$ENDIF}
+     {$IFDEF FHIR_OCCUPATIONALDATA}'occupationaldata',{$ENDIF}
      {$IFDEF FHIR_OPERATIONDEFINITION}'operationdefinition',{$ENDIF}
      {$IFDEF FHIR_OPERATIONOUTCOME}'operationoutcome',{$ENDIF}
      {$IFDEF FHIR_ORGANIZATION}'organization',{$ENDIF}
+     {$IFDEF FHIR_ORGANIZATIONROLE}'organizationrole',{$ENDIF}
      {$IFDEF FHIR_PARAMETERS}'parameters',{$ENDIF}
      {$IFDEF FHIR_PATIENT}'patient',{$ENDIF}
      {$IFDEF FHIR_PAYMENTNOTICE}'paymentnotice',{$ENDIF}
@@ -3413,9 +4006,9 @@ Const
      {$IFDEF FHIR_PRACTITIONER}'practitioner',{$ENDIF}
      {$IFDEF FHIR_PRACTITIONERROLE}'practitionerrole',{$ENDIF}
      {$IFDEF FHIR_PROCEDURE}'procedure',{$ENDIF}
-     {$IFDEF FHIR_PROCEDUREREQUEST}'procedurerequest',{$ENDIF}
      {$IFDEF FHIR_PROCESSREQUEST}'processrequest',{$ENDIF}
      {$IFDEF FHIR_PROCESSRESPONSE}'processresponse',{$ENDIF}
+     {$IFDEF FHIR_PRODUCTPLAN}'productplan',{$ENDIF}
      {$IFDEF FHIR_PROVENANCE}'provenance',{$ENDIF}
      {$IFDEF FHIR_QUESTIONNAIRE}'questionnaire',{$ENDIF}
      {$IFDEF FHIR_QUESTIONNAIRERESPONSE}'questionnaireresponse',{$ENDIF}
@@ -3428,6 +4021,7 @@ Const
      {$IFDEF FHIR_SEARCHPARAMETER}'searchparameter',{$ENDIF}
      {$IFDEF FHIR_SEQUENCE}'sequence',{$ENDIF}
      {$IFDEF FHIR_SERVICEDEFINITION}'servicedefinition',{$ENDIF}
+     {$IFDEF FHIR_SERVICEREQUEST}'servicerequest',{$ENDIF}
      {$IFDEF FHIR_SLOT}'slot',{$ENDIF}
      {$IFDEF FHIR_SPECIMEN}'specimen',{$ENDIF}
      {$IFDEF FHIR_SPECIMENDEFINITION}'specimendefinition',{$ENDIF}
@@ -3435,12 +4029,18 @@ Const
      {$IFDEF FHIR_STRUCTUREMAP}'structuremap',{$ENDIF}
      {$IFDEF FHIR_SUBSCRIPTION}'subscription',{$ENDIF}
      {$IFDEF FHIR_SUBSTANCE}'substance',{$ENDIF}
+     {$IFDEF FHIR_SUBSTANCEPOLYMER}'substancepolymer',{$ENDIF}
+     {$IFDEF FHIR_SUBSTANCEREFERENCEINFORMATION}'substancereferenceinformation',{$ENDIF}
+     {$IFDEF FHIR_SUBSTANCESPECIFICATION}'substancespecification',{$ENDIF}
      {$IFDEF FHIR_SUPPLYDELIVERY}'supplydelivery',{$ENDIF}
      {$IFDEF FHIR_SUPPLYREQUEST}'supplyrequest',{$ENDIF}
      {$IFDEF FHIR_TASK}'task',{$ENDIF}
+     {$IFDEF FHIR_TERMINOLOGYCAPABILITIES}'terminologycapabilities',{$ENDIF}
      {$IFDEF FHIR_TESTREPORT}'testreport',{$ENDIF}
      {$IFDEF FHIR_TESTSCRIPT}'testscript',{$ENDIF}
+     {$IFDEF FHIR_USERSESSION}'usersession',{$ENDIF}
      {$IFDEF FHIR_VALUESET}'valueset',{$ENDIF}
+     {$IFDEF FHIR_VERIFICATIONRESULT}'verificationresult',{$ENDIF}
      {$IFDEF FHIR_VISIONPRESCRIPTION}'visionprescription',{$ENDIF}
      'custom');
      
@@ -3453,12 +4053,12 @@ Const
      {$IFDEF FHIR_AUDITEVENT}TFhirAuditEvent,{$ENDIF}
      {$IFDEF FHIR_BASIC}TFhirBasic,{$ENDIF}
      {$IFDEF FHIR_BINARY}TFhirBinary,{$ENDIF}
+     {$IFDEF FHIR_BIOLOGICALLYDERIVEDPRODUCT}TFhirBiologicallyDerivedProduct,{$ENDIF}
      {$IFDEF FHIR_BODYSTRUCTURE}TFhirBodyStructure,{$ENDIF}
      {$IFDEF FHIR_BUNDLE}TFhirBundle,{$ENDIF}
      {$IFDEF FHIR_CAPABILITYSTATEMENT}TFhirCapabilityStatement,{$ENDIF}
      {$IFDEF FHIR_CAREPLAN}TFhirCarePlan,{$ENDIF}
      {$IFDEF FHIR_CARETEAM}TFhirCareTeam,{$ENDIF}
-     {$IFDEF FHIR_CATALOGENTRY}TFhirCatalogEntry,{$ENDIF}
      {$IFDEF FHIR_CHARGEITEM}TFhirChargeItem,{$ENDIF}
      {$IFDEF FHIR_CLAIM}TFhirClaim,{$ENDIF}
      {$IFDEF FHIR_CLAIMRESPONSE}TFhirClaimResponse,{$ENDIF}
@@ -3488,6 +4088,7 @@ Const
      {$IFDEF FHIR_ENDPOINT}TFhirEndpoint,{$ENDIF}
      {$IFDEF FHIR_ENROLLMENTREQUEST}TFhirEnrollmentRequest,{$ENDIF}
      {$IFDEF FHIR_ENROLLMENTRESPONSE}TFhirEnrollmentResponse,{$ENDIF}
+     {$IFDEF FHIR_ENTRYDEFINITION}TFhirEntryDefinition,{$ENDIF}
      {$IFDEF FHIR_EPISODEOFCARE}TFhirEpisodeOfCare,{$ENDIF}
      {$IFDEF FHIR_EVENTDEFINITION}TFhirEventDefinition,{$ENDIF}
      {$IFDEF FHIR_EXAMPLESCENARIO}TFhirExampleScenario,{$ENDIF}
@@ -3500,11 +4101,15 @@ Const
      {$IFDEF FHIR_GROUP}TFhirGroup,{$ENDIF}
      {$IFDEF FHIR_GUIDANCERESPONSE}TFhirGuidanceResponse,{$ENDIF}
      {$IFDEF FHIR_HEALTHCARESERVICE}TFhirHealthcareService,{$ENDIF}
-     {$IFDEF FHIR_IMAGINGMANIFEST}TFhirImagingManifest,{$ENDIF}
      {$IFDEF FHIR_IMAGINGSTUDY}TFhirImagingStudy,{$ENDIF}
      {$IFDEF FHIR_IMMUNIZATION}TFhirImmunization,{$ENDIF}
+     {$IFDEF FHIR_IMMUNIZATIONEVALUATION}TFhirImmunizationEvaluation,{$ENDIF}
      {$IFDEF FHIR_IMMUNIZATIONRECOMMENDATION}TFhirImmunizationRecommendation,{$ENDIF}
      {$IFDEF FHIR_IMPLEMENTATIONGUIDE}TFhirImplementationGuide,{$ENDIF}
+     {$IFDEF FHIR_IMPLEMENTATIONGUIDEINPUT}TFhirImplementationGuideInput,{$ENDIF}
+     {$IFDEF FHIR_IMPLEMENTATIONGUIDEOUTPUT}TFhirImplementationGuideOutput,{$ENDIF}
+     {$IFDEF FHIR_INVOICE}TFhirInvoice,{$ENDIF}
+     {$IFDEF FHIR_ITEMINSTANCE}TFhirItemInstance,{$ENDIF}
      {$IFDEF FHIR_LIBRARY}TFhirLibrary,{$ENDIF}
      {$IFDEF FHIR_LINKAGE}TFhirLinkage,{$ENDIF}
      {$IFDEF FHIR_LIST}TFhirList,{$ENDIF}
@@ -3517,14 +4122,24 @@ Const
      {$IFDEF FHIR_MEDICATIONDISPENSE}TFhirMedicationDispense,{$ENDIF}
      {$IFDEF FHIR_MEDICATIONREQUEST}TFhirMedicationRequest,{$ENDIF}
      {$IFDEF FHIR_MEDICATIONSTATEMENT}TFhirMedicationStatement,{$ENDIF}
+     {$IFDEF FHIR_MEDICINALPRODUCT}TFhirMedicinalProduct,{$ENDIF}
+     {$IFDEF FHIR_MEDICINALPRODUCTAUTHORIZATION}TFhirMedicinalProductAuthorization,{$ENDIF}
+     {$IFDEF FHIR_MEDICINALPRODUCTCLINICALS}TFhirMedicinalProductClinicals,{$ENDIF}
+     {$IFDEF FHIR_MEDICINALPRODUCTDEVICESPEC}TFhirMedicinalProductDeviceSpec,{$ENDIF}
+     {$IFDEF FHIR_MEDICINALPRODUCTINGREDIENT}TFhirMedicinalProductIngredient,{$ENDIF}
+     {$IFDEF FHIR_MEDICINALPRODUCTPACKAGED}TFhirMedicinalProductPackaged,{$ENDIF}
+     {$IFDEF FHIR_MEDICINALPRODUCTPHARMACEUTICAL}TFhirMedicinalProductPharmaceutical,{$ENDIF}
      {$IFDEF FHIR_MESSAGEDEFINITION}TFhirMessageDefinition,{$ENDIF}
      {$IFDEF FHIR_MESSAGEHEADER}TFhirMessageHeader,{$ENDIF}
      {$IFDEF FHIR_NAMINGSYSTEM}TFhirNamingSystem,{$ENDIF}
      {$IFDEF FHIR_NUTRITIONORDER}TFhirNutritionOrder,{$ENDIF}
      {$IFDEF FHIR_OBSERVATION}TFhirObservation,{$ENDIF}
+     {$IFDEF FHIR_OBSERVATIONDEFINITION}TFhirObservationDefinition,{$ENDIF}
+     {$IFDEF FHIR_OCCUPATIONALDATA}TFhirOccupationalData,{$ENDIF}
      {$IFDEF FHIR_OPERATIONDEFINITION}TFhirOperationDefinition,{$ENDIF}
      {$IFDEF FHIR_OPERATIONOUTCOME}TFhirOperationOutcome,{$ENDIF}
      {$IFDEF FHIR_ORGANIZATION}TFhirOrganization,{$ENDIF}
+     {$IFDEF FHIR_ORGANIZATIONROLE}TFhirOrganizationRole,{$ENDIF}
      {$IFDEF FHIR_PARAMETERS}TFhirParameters,{$ENDIF}
      {$IFDEF FHIR_PATIENT}TFhirPatient,{$ENDIF}
      {$IFDEF FHIR_PAYMENTNOTICE}TFhirPaymentNotice,{$ENDIF}
@@ -3534,9 +4149,9 @@ Const
      {$IFDEF FHIR_PRACTITIONER}TFhirPractitioner,{$ENDIF}
      {$IFDEF FHIR_PRACTITIONERROLE}TFhirPractitionerRole,{$ENDIF}
      {$IFDEF FHIR_PROCEDURE}TFhirProcedure,{$ENDIF}
-     {$IFDEF FHIR_PROCEDUREREQUEST}TFhirProcedureRequest,{$ENDIF}
      {$IFDEF FHIR_PROCESSREQUEST}TFhirProcessRequest,{$ENDIF}
      {$IFDEF FHIR_PROCESSRESPONSE}TFhirProcessResponse,{$ENDIF}
+     {$IFDEF FHIR_PRODUCTPLAN}TFhirProductPlan,{$ENDIF}
      {$IFDEF FHIR_PROVENANCE}TFhirProvenance,{$ENDIF}
      {$IFDEF FHIR_QUESTIONNAIRE}TFhirQuestionnaire,{$ENDIF}
      {$IFDEF FHIR_QUESTIONNAIRERESPONSE}TFhirQuestionnaireResponse,{$ENDIF}
@@ -3549,6 +4164,7 @@ Const
      {$IFDEF FHIR_SEARCHPARAMETER}TFhirSearchParameter,{$ENDIF}
      {$IFDEF FHIR_SEQUENCE}TFhirSequence,{$ENDIF}
      {$IFDEF FHIR_SERVICEDEFINITION}TFhirServiceDefinition,{$ENDIF}
+     {$IFDEF FHIR_SERVICEREQUEST}TFhirServiceRequest,{$ENDIF}
      {$IFDEF FHIR_SLOT}TFhirSlot,{$ENDIF}
      {$IFDEF FHIR_SPECIMEN}TFhirSpecimen,{$ENDIF}
      {$IFDEF FHIR_SPECIMENDEFINITION}TFhirSpecimenDefinition,{$ENDIF}
@@ -3556,12 +4172,18 @@ Const
      {$IFDEF FHIR_STRUCTUREMAP}TFhirStructureMap,{$ENDIF}
      {$IFDEF FHIR_SUBSCRIPTION}TFhirSubscription,{$ENDIF}
      {$IFDEF FHIR_SUBSTANCE}TFhirSubstance,{$ENDIF}
+     {$IFDEF FHIR_SUBSTANCEPOLYMER}TFhirSubstancePolymer,{$ENDIF}
+     {$IFDEF FHIR_SUBSTANCEREFERENCEINFORMATION}TFhirSubstanceReferenceInformation,{$ENDIF}
+     {$IFDEF FHIR_SUBSTANCESPECIFICATION}TFhirSubstanceSpecification,{$ENDIF}
      {$IFDEF FHIR_SUPPLYDELIVERY}TFhirSupplyDelivery,{$ENDIF}
      {$IFDEF FHIR_SUPPLYREQUEST}TFhirSupplyRequest,{$ENDIF}
      {$IFDEF FHIR_TASK}TFhirTask,{$ENDIF}
+     {$IFDEF FHIR_TERMINOLOGYCAPABILITIES}TFhirTerminologyCapabilities,{$ENDIF}
      {$IFDEF FHIR_TESTREPORT}TFhirTestReport,{$ENDIF}
      {$IFDEF FHIR_TESTSCRIPT}TFhirTestScript,{$ENDIF}
+     {$IFDEF FHIR_USERSESSION}TFhirUserSession,{$ENDIF}
      {$IFDEF FHIR_VALUESET}TFhirValueSet,{$ENDIF}
+     {$IFDEF FHIR_VERIFICATIONRESULT}TFhirVerificationResult,{$ENDIF}
      {$IFDEF FHIR_VISIONPRESCRIPTION}TFhirVisionPrescription,{$ENDIF}
      nil);
      
@@ -3574,12 +4196,12 @@ Const
      {$IFDEF FHIR_AUDITEVENT}frtAuditEvent,{$ENDIF}
      {$IFDEF FHIR_BASIC}frtBasic,{$ENDIF}
      {$IFDEF FHIR_BINARY}frtBinary,{$ENDIF}
+     {$IFDEF FHIR_BIOLOGICALLYDERIVEDPRODUCT}frtBiologicallyDerivedProduct,{$ENDIF}
      {$IFDEF FHIR_BODYSTRUCTURE}frtBodyStructure,{$ENDIF}
      {$IFDEF FHIR_BUNDLE}frtBundle,{$ENDIF}
      {$IFDEF FHIR_CAPABILITYSTATEMENT}frtCapabilityStatement,{$ENDIF}
      {$IFDEF FHIR_CAREPLAN}frtCarePlan,{$ENDIF}
      {$IFDEF FHIR_CARETEAM}frtCareTeam,{$ENDIF}
-     {$IFDEF FHIR_CATALOGENTRY}frtCatalogEntry,{$ENDIF}
      {$IFDEF FHIR_CHARGEITEM}frtChargeItem,{$ENDIF}
      {$IFDEF FHIR_CLAIM}frtClaim,{$ENDIF}
      {$IFDEF FHIR_CLAIMRESPONSE}frtClaimResponse,{$ENDIF}
@@ -3609,6 +4231,7 @@ Const
      {$IFDEF FHIR_ENDPOINT}frtEndpoint,{$ENDIF}
      {$IFDEF FHIR_ENROLLMENTREQUEST}frtEnrollmentRequest,{$ENDIF}
      {$IFDEF FHIR_ENROLLMENTRESPONSE}frtEnrollmentResponse,{$ENDIF}
+     {$IFDEF FHIR_ENTRYDEFINITION}frtEntryDefinition,{$ENDIF}
      {$IFDEF FHIR_EPISODEOFCARE}frtEpisodeOfCare,{$ENDIF}
      {$IFDEF FHIR_EVENTDEFINITION}frtEventDefinition,{$ENDIF}
      {$IFDEF FHIR_EXAMPLESCENARIO}frtExampleScenario,{$ENDIF}
@@ -3621,11 +4244,15 @@ Const
      {$IFDEF FHIR_GROUP}frtGroup,{$ENDIF}
      {$IFDEF FHIR_GUIDANCERESPONSE}frtGuidanceResponse,{$ENDIF}
      {$IFDEF FHIR_HEALTHCARESERVICE}frtHealthcareService,{$ENDIF}
-     {$IFDEF FHIR_IMAGINGMANIFEST}frtImagingManifest,{$ENDIF}
      {$IFDEF FHIR_IMAGINGSTUDY}frtImagingStudy,{$ENDIF}
      {$IFDEF FHIR_IMMUNIZATION}frtImmunization,{$ENDIF}
+     {$IFDEF FHIR_IMMUNIZATIONEVALUATION}frtImmunizationEvaluation,{$ENDIF}
      {$IFDEF FHIR_IMMUNIZATIONRECOMMENDATION}frtImmunizationRecommendation,{$ENDIF}
      {$IFDEF FHIR_IMPLEMENTATIONGUIDE}frtImplementationGuide,{$ENDIF}
+     {$IFDEF FHIR_IMPLEMENTATIONGUIDEINPUT}frtImplementationGuideInput,{$ENDIF}
+     {$IFDEF FHIR_IMPLEMENTATIONGUIDEOUTPUT}frtImplementationGuideOutput,{$ENDIF}
+     {$IFDEF FHIR_INVOICE}frtInvoice,{$ENDIF}
+     {$IFDEF FHIR_ITEMINSTANCE}frtItemInstance,{$ENDIF}
      {$IFDEF FHIR_LIBRARY}frtLibrary,{$ENDIF}
      {$IFDEF FHIR_LINKAGE}frtLinkage,{$ENDIF}
      {$IFDEF FHIR_LIST}frtList,{$ENDIF}
@@ -3638,14 +4265,24 @@ Const
      {$IFDEF FHIR_MEDICATIONDISPENSE}frtMedicationDispense,{$ENDIF}
      {$IFDEF FHIR_MEDICATIONREQUEST}frtMedicationRequest,{$ENDIF}
      {$IFDEF FHIR_MEDICATIONSTATEMENT}frtMedicationStatement,{$ENDIF}
+     {$IFDEF FHIR_MEDICINALPRODUCT}frtMedicinalProduct,{$ENDIF}
+     {$IFDEF FHIR_MEDICINALPRODUCTAUTHORIZATION}frtMedicinalProductAuthorization,{$ENDIF}
+     {$IFDEF FHIR_MEDICINALPRODUCTCLINICALS}frtMedicinalProductClinicals,{$ENDIF}
+     {$IFDEF FHIR_MEDICINALPRODUCTDEVICESPEC}frtMedicinalProductDeviceSpec,{$ENDIF}
+     {$IFDEF FHIR_MEDICINALPRODUCTINGREDIENT}frtMedicinalProductIngredient,{$ENDIF}
+     {$IFDEF FHIR_MEDICINALPRODUCTPACKAGED}frtMedicinalProductPackaged,{$ENDIF}
+     {$IFDEF FHIR_MEDICINALPRODUCTPHARMACEUTICAL}frtMedicinalProductPharmaceutical,{$ENDIF}
      {$IFDEF FHIR_MESSAGEDEFINITION}frtMessageDefinition,{$ENDIF}
      {$IFDEF FHIR_MESSAGEHEADER}frtMessageHeader,{$ENDIF}
      {$IFDEF FHIR_NAMINGSYSTEM}frtNamingSystem,{$ENDIF}
      {$IFDEF FHIR_NUTRITIONORDER}frtNutritionOrder,{$ENDIF}
      {$IFDEF FHIR_OBSERVATION}frtObservation,{$ENDIF}
+     {$IFDEF FHIR_OBSERVATIONDEFINITION}frtObservationDefinition,{$ENDIF}
+     {$IFDEF FHIR_OCCUPATIONALDATA}frtOccupationalData,{$ENDIF}
      {$IFDEF FHIR_OPERATIONDEFINITION}frtOperationDefinition,{$ENDIF}
      {$IFDEF FHIR_OPERATIONOUTCOME}frtOperationOutcome,{$ENDIF}
      {$IFDEF FHIR_ORGANIZATION}frtOrganization,{$ENDIF}
+     {$IFDEF FHIR_ORGANIZATIONROLE}frtOrganizationRole,{$ENDIF}
      {$IFDEF FHIR_PARAMETERS}frtParameters,{$ENDIF}
      {$IFDEF FHIR_PATIENT}frtPatient,{$ENDIF}
      {$IFDEF FHIR_PAYMENTNOTICE}frtPaymentNotice,{$ENDIF}
@@ -3655,9 +4292,9 @@ Const
      {$IFDEF FHIR_PRACTITIONER}frtPractitioner,{$ENDIF}
      {$IFDEF FHIR_PRACTITIONERROLE}frtPractitionerRole,{$ENDIF}
      {$IFDEF FHIR_PROCEDURE}frtProcedure,{$ENDIF}
-     {$IFDEF FHIR_PROCEDUREREQUEST}frtProcedureRequest,{$ENDIF}
      {$IFDEF FHIR_PROCESSREQUEST}frtProcessRequest,{$ENDIF}
      {$IFDEF FHIR_PROCESSRESPONSE}frtProcessResponse,{$ENDIF}
+     {$IFDEF FHIR_PRODUCTPLAN}frtProductPlan,{$ENDIF}
      {$IFDEF FHIR_PROVENANCE}frtProvenance,{$ENDIF}
      {$IFDEF FHIR_QUESTIONNAIRE}frtQuestionnaire,{$ENDIF}
      {$IFDEF FHIR_QUESTIONNAIRERESPONSE}frtQuestionnaireResponse,{$ENDIF}
@@ -3670,6 +4307,7 @@ Const
      {$IFDEF FHIR_SEARCHPARAMETER}frtSearchParameter,{$ENDIF}
      {$IFDEF FHIR_SEQUENCE}frtSequence,{$ENDIF}
      {$IFDEF FHIR_SERVICEDEFINITION}frtServiceDefinition,{$ENDIF}
+     {$IFDEF FHIR_SERVICEREQUEST}frtServiceRequest,{$ENDIF}
      {$IFDEF FHIR_SLOT}frtSlot,{$ENDIF}
      {$IFDEF FHIR_SPECIMEN}frtSpecimen,{$ENDIF}
      {$IFDEF FHIR_SPECIMENDEFINITION}frtSpecimenDefinition,{$ENDIF}
@@ -3677,12 +4315,18 @@ Const
      {$IFDEF FHIR_STRUCTUREMAP}frtStructureMap,{$ENDIF}
      {$IFDEF FHIR_SUBSCRIPTION}frtSubscription,{$ENDIF}
      {$IFDEF FHIR_SUBSTANCE}frtSubstance,{$ENDIF}
+     {$IFDEF FHIR_SUBSTANCEPOLYMER}frtSubstancePolymer,{$ENDIF}
+     {$IFDEF FHIR_SUBSTANCEREFERENCEINFORMATION}frtSubstanceReferenceInformation,{$ENDIF}
+     {$IFDEF FHIR_SUBSTANCESPECIFICATION}frtSubstanceSpecification,{$ENDIF}
      {$IFDEF FHIR_SUPPLYDELIVERY}frtSupplyDelivery,{$ENDIF}
      {$IFDEF FHIR_SUPPLYREQUEST}frtSupplyRequest,{$ENDIF}
      {$IFDEF FHIR_TASK}frtTask,{$ENDIF}
+     {$IFDEF FHIR_TERMINOLOGYCAPABILITIES}frtTerminologyCapabilities,{$ENDIF}
      {$IFDEF FHIR_TESTREPORT}frtTestReport,{$ENDIF}
      {$IFDEF FHIR_TESTSCRIPT}frtTestScript,{$ENDIF}
+     {$IFDEF FHIR_USERSESSION}frtUserSession,{$ENDIF}
      {$IFDEF FHIR_VALUESET}frtValueSet,{$ENDIF}
+     {$IFDEF FHIR_VERIFICATIONRESULT}frtVerificationResult,{$ENDIF}
      {$IFDEF FHIR_VISIONPRESCRIPTION}frtVisionPrescription,{$ENDIF}
      frtCustom];
      
@@ -3695,12 +4339,12 @@ Const
      {$IFDEF FHIR_AUDITEVENT}'AuditEvent',{$ENDIF}
      {$IFDEF FHIR_BASIC}'Basic',{$ENDIF}
      {$IFDEF FHIR_BINARY}'Binary',{$ENDIF}
+     {$IFDEF FHIR_BIOLOGICALLYDERIVEDPRODUCT}'BiologicallyDerivedProduct',{$ENDIF}
      {$IFDEF FHIR_BODYSTRUCTURE}'BodyStructure',{$ENDIF}
      {$IFDEF FHIR_BUNDLE}'Bundle',{$ENDIF}
      {$IFDEF FHIR_CAPABILITYSTATEMENT}'CapabilityStatement',{$ENDIF}
      {$IFDEF FHIR_CAREPLAN}'CarePlan',{$ENDIF}
      {$IFDEF FHIR_CARETEAM}'CareTeam',{$ENDIF}
-     {$IFDEF FHIR_CATALOGENTRY}'CatalogEntry',{$ENDIF}
      {$IFDEF FHIR_CHARGEITEM}'ChargeItem',{$ENDIF}
      {$IFDEF FHIR_CLAIM}'Claim',{$ENDIF}
      {$IFDEF FHIR_CLAIMRESPONSE}'ClaimResponse',{$ENDIF}
@@ -3730,6 +4374,7 @@ Const
      {$IFDEF FHIR_ENDPOINT}'Endpoint',{$ENDIF}
      {$IFDEF FHIR_ENROLLMENTREQUEST}'EnrollmentRequest',{$ENDIF}
      {$IFDEF FHIR_ENROLLMENTRESPONSE}'EnrollmentResponse',{$ENDIF}
+     {$IFDEF FHIR_ENTRYDEFINITION}'EntryDefinition',{$ENDIF}
      {$IFDEF FHIR_EPISODEOFCARE}'EpisodeOfCare',{$ENDIF}
      {$IFDEF FHIR_EVENTDEFINITION}'EventDefinition',{$ENDIF}
      {$IFDEF FHIR_EXAMPLESCENARIO}'ExampleScenario',{$ENDIF}
@@ -3742,11 +4387,15 @@ Const
      {$IFDEF FHIR_GROUP}'Group',{$ENDIF}
      {$IFDEF FHIR_GUIDANCERESPONSE}'GuidanceResponse',{$ENDIF}
      {$IFDEF FHIR_HEALTHCARESERVICE}'HealthcareService',{$ENDIF}
-     {$IFDEF FHIR_IMAGINGMANIFEST}'ImagingManifest',{$ENDIF}
      {$IFDEF FHIR_IMAGINGSTUDY}'ImagingStudy',{$ENDIF}
      {$IFDEF FHIR_IMMUNIZATION}'Immunization',{$ENDIF}
+     {$IFDEF FHIR_IMMUNIZATIONEVALUATION}'ImmunizationEvaluation',{$ENDIF}
      {$IFDEF FHIR_IMMUNIZATIONRECOMMENDATION}'ImmunizationRecommendation',{$ENDIF}
      {$IFDEF FHIR_IMPLEMENTATIONGUIDE}'ImplementationGuide',{$ENDIF}
+     {$IFDEF FHIR_IMPLEMENTATIONGUIDEINPUT}'ImplementationGuideInput',{$ENDIF}
+     {$IFDEF FHIR_IMPLEMENTATIONGUIDEOUTPUT}'ImplementationGuideOutput',{$ENDIF}
+     {$IFDEF FHIR_INVOICE}'Invoice',{$ENDIF}
+     {$IFDEF FHIR_ITEMINSTANCE}'ItemInstance',{$ENDIF}
      {$IFDEF FHIR_LIBRARY}'Library',{$ENDIF}
      {$IFDEF FHIR_LINKAGE}'Linkage',{$ENDIF}
      {$IFDEF FHIR_LIST}'List',{$ENDIF}
@@ -3759,14 +4408,24 @@ Const
      {$IFDEF FHIR_MEDICATIONDISPENSE}'MedicationDispense',{$ENDIF}
      {$IFDEF FHIR_MEDICATIONREQUEST}'MedicationRequest',{$ENDIF}
      {$IFDEF FHIR_MEDICATIONSTATEMENT}'MedicationStatement',{$ENDIF}
+     {$IFDEF FHIR_MEDICINALPRODUCT}'MedicinalProduct',{$ENDIF}
+     {$IFDEF FHIR_MEDICINALPRODUCTAUTHORIZATION}'MedicinalProductAuthorization',{$ENDIF}
+     {$IFDEF FHIR_MEDICINALPRODUCTCLINICALS}'MedicinalProductClinicals',{$ENDIF}
+     {$IFDEF FHIR_MEDICINALPRODUCTDEVICESPEC}'MedicinalProductDeviceSpec',{$ENDIF}
+     {$IFDEF FHIR_MEDICINALPRODUCTINGREDIENT}'MedicinalProductIngredient',{$ENDIF}
+     {$IFDEF FHIR_MEDICINALPRODUCTPACKAGED}'MedicinalProductPackaged',{$ENDIF}
+     {$IFDEF FHIR_MEDICINALPRODUCTPHARMACEUTICAL}'MedicinalProductPharmaceutical',{$ENDIF}
      {$IFDEF FHIR_MESSAGEDEFINITION}'MessageDefinition',{$ENDIF}
      {$IFDEF FHIR_MESSAGEHEADER}'MessageHeader',{$ENDIF}
      {$IFDEF FHIR_NAMINGSYSTEM}'NamingSystem',{$ENDIF}
      {$IFDEF FHIR_NUTRITIONORDER}'NutritionOrder',{$ENDIF}
      {$IFDEF FHIR_OBSERVATION}'Observation',{$ENDIF}
+     {$IFDEF FHIR_OBSERVATIONDEFINITION}'ObservationDefinition',{$ENDIF}
+     {$IFDEF FHIR_OCCUPATIONALDATA}'OccupationalData',{$ENDIF}
      {$IFDEF FHIR_OPERATIONDEFINITION}'OperationDefinition',{$ENDIF}
      {$IFDEF FHIR_OPERATIONOUTCOME}'OperationOutcome',{$ENDIF}
      {$IFDEF FHIR_ORGANIZATION}'Organization',{$ENDIF}
+     {$IFDEF FHIR_ORGANIZATIONROLE}'OrganizationRole',{$ENDIF}
      {$IFDEF FHIR_PARAMETERS}'Parameters',{$ENDIF}
      {$IFDEF FHIR_PATIENT}'Patient',{$ENDIF}
      {$IFDEF FHIR_PAYMENTNOTICE}'PaymentNotice',{$ENDIF}
@@ -3776,9 +4435,9 @@ Const
      {$IFDEF FHIR_PRACTITIONER}'Practitioner',{$ENDIF}
      {$IFDEF FHIR_PRACTITIONERROLE}'PractitionerRole',{$ENDIF}
      {$IFDEF FHIR_PROCEDURE}'Procedure',{$ENDIF}
-     {$IFDEF FHIR_PROCEDUREREQUEST}'ProcedureRequest',{$ENDIF}
      {$IFDEF FHIR_PROCESSREQUEST}'ProcessRequest',{$ENDIF}
      {$IFDEF FHIR_PROCESSRESPONSE}'ProcessResponse',{$ENDIF}
+     {$IFDEF FHIR_PRODUCTPLAN}'ProductPlan',{$ENDIF}
      {$IFDEF FHIR_PROVENANCE}'Provenance',{$ENDIF}
      {$IFDEF FHIR_QUESTIONNAIRE}'Questionnaire',{$ENDIF}
      {$IFDEF FHIR_QUESTIONNAIRERESPONSE}'QuestionnaireResponse',{$ENDIF}
@@ -3791,6 +4450,7 @@ Const
      {$IFDEF FHIR_SEARCHPARAMETER}'SearchParameter',{$ENDIF}
      {$IFDEF FHIR_SEQUENCE}'Sequence',{$ENDIF}
      {$IFDEF FHIR_SERVICEDEFINITION}'ServiceDefinition',{$ENDIF}
+     {$IFDEF FHIR_SERVICEREQUEST}'ServiceRequest',{$ENDIF}
      {$IFDEF FHIR_SLOT}'Slot',{$ENDIF}
      {$IFDEF FHIR_SPECIMEN}'Specimen',{$ENDIF}
      {$IFDEF FHIR_SPECIMENDEFINITION}'SpecimenDefinition',{$ENDIF}
@@ -3798,374 +4458,446 @@ Const
      {$IFDEF FHIR_STRUCTUREMAP}'StructureMap',{$ENDIF}
      {$IFDEF FHIR_SUBSCRIPTION}'Subscription',{$ENDIF}
      {$IFDEF FHIR_SUBSTANCE}'Substance',{$ENDIF}
+     {$IFDEF FHIR_SUBSTANCEPOLYMER}'SubstancePolymer',{$ENDIF}
+     {$IFDEF FHIR_SUBSTANCEREFERENCEINFORMATION}'SubstanceReferenceInformation',{$ENDIF}
+     {$IFDEF FHIR_SUBSTANCESPECIFICATION}'SubstanceSpecification',{$ENDIF}
      {$IFDEF FHIR_SUPPLYDELIVERY}'SupplyDelivery',{$ENDIF}
      {$IFDEF FHIR_SUPPLYREQUEST}'SupplyRequest',{$ENDIF}
      {$IFDEF FHIR_TASK}'Task',{$ENDIF}
+     {$IFDEF FHIR_TERMINOLOGYCAPABILITIES}'TerminologyCapabilities',{$ENDIF}
      {$IFDEF FHIR_TESTREPORT}'TestReport',{$ENDIF}
      {$IFDEF FHIR_TESTSCRIPT}'TestScript',{$ENDIF}
+     {$IFDEF FHIR_USERSESSION}'UserSession',{$ENDIF}
      {$IFDEF FHIR_VALUESET}'ValueSet',{$ENDIF}
+     {$IFDEF FHIR_VERIFICATIONRESULT}'VerificationResult',{$ENDIF}
      {$IFDEF FHIR_VISIONPRESCRIPTION}'VisionPrescription',{$ENDIF}
      'Custom');
      
 {$IFDEF FHIR_ACCOUNT}
-  CODES_TSearchParamsAccount : Array[TSearchParamsAccount] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'balance', 'identifier', 'name', 'owner', 'patient', 'period', 'status', 'subject', 'type');
+  CODES_TSearchParamsAccount : Array[TSearchParamsAccount] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'identifier', 'name', 'owner', 'patient', 'period', 'status', 'subject', 'type');
 {$ENDIF}
 {$IFDEF FHIR_ACTIVITYDEFINITION}
-  CODES_TSearchParamsActivityDefinition : Array[TSearchParamsActivityDefinition] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'composed-of', 'date', 'depends-on', 'derived-from', 'description', 'effective', 'identifier', 'jurisdiction', 'name', 'predecessor', 'publisher', 'status', 'successor', 'title', 'topic', 'url', 'version');
+  CODES_TSearchParamsActivityDefinition : Array[TSearchParamsActivityDefinition] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'composed-of', 'context-type', 'date', 'depends-on', 'derived-from', 'description', 'effective', 'identifier', 'jurisdiction', 'name', 'predecessor', 'publisher', 'status', 'successor', 'title', 'topic', 'url', 'version');
 {$ENDIF}
 {$IFDEF FHIR_ADVERSEEVENT}
-  CODES_TSearchParamsAdverseEvent : Array[TSearchParamsAdverseEvent] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'actuality', 'category', 'date', 'event', 'location', 'recorder', 'resultingcondition', 'seriousness', 'severity', 'study', 'subject', 'substance');
+  CODES_TSearchParamsAdverseEvent : Array[TSearchParamsAdverseEvent] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'actuality', 'category', 'date', 'event', 'location', 'recorder', 'resultingcondition', 'seriousness', 'severity', 'study', 'subject', 'substance');
 {$ENDIF}
 {$IFDEF FHIR_ALLERGYINTOLERANCE}
-  CODES_TSearchParamsAllergyIntolerance : Array[TSearchParamsAllergyIntolerance] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'asserter', 'category', 'clinical-status', 'code', 'criticality', 'date', 'identifier', 'last-date', 'manifestation', 'onset', 'patient', 'recorder', 'route', 'severity', 'type', 'verification-status');
+  CODES_TSearchParamsAllergyIntolerance : Array[TSearchParamsAllergyIntolerance] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'asserter', 'category', 'clinical-status', 'code', 'criticality', 'date', 'identifier', 'last-date', 'manifestation', 'onset', 'patient', 'recorder', 'route', 'severity', 'type', 'verification-status');
 {$ENDIF}
 {$IFDEF FHIR_APPOINTMENT}
-  CODES_TSearchParamsAppointment : Array[TSearchParamsAppointment] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'actor', 'appointment-type', 'date', 'identifier', 'incomingreferral', 'location', 'part-status', 'patient', 'practitioner', 'service-type', 'status');
+  CODES_TSearchParamsAppointment : Array[TSearchParamsAppointment] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'actor', 'appointment-type', 'date', 'identifier', 'incomingreferral', 'location', 'part-status', 'patient', 'practitioner', 'service-type', 'status');
 {$ENDIF}
 {$IFDEF FHIR_APPOINTMENTRESPONSE}
-  CODES_TSearchParamsAppointmentResponse : Array[TSearchParamsAppointmentResponse] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'actor', 'appointment', 'identifier', 'location', 'part-status', 'patient', 'practitioner');
+  CODES_TSearchParamsAppointmentResponse : Array[TSearchParamsAppointmentResponse] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'actor', 'appointment', 'identifier', 'location', 'part-status', 'patient', 'practitioner');
 {$ENDIF}
 {$IFDEF FHIR_AUDITEVENT}
-  CODES_TSearchParamsAuditEvent : Array[TSearchParamsAuditEvent] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'action', 'address', 'agent', 'agent-name', 'agent-role', 'altid', 'date', 'entity', 'entity-id', 'entity-name', 'entity-role', 'entity-type', 'outcome', 'patient', 'policy', 'site', 'source', 'subtype', 'type', 'user');
+  CODES_TSearchParamsAuditEvent : Array[TSearchParamsAuditEvent] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'action', 'address', 'agent', 'agent-name', 'agent-role', 'altid', 'date', 'entity', 'entity-id', 'entity-name', 'entity-role', 'entity-type', 'outcome', 'patient', 'policy', 'site', 'source', 'subtype', 'type', 'user');
 {$ENDIF}
 {$IFDEF FHIR_BASIC}
-  CODES_TSearchParamsBasic : Array[TSearchParamsBasic] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'author', 'code', 'created', 'identifier', 'patient', 'subject');
+  CODES_TSearchParamsBasic : Array[TSearchParamsBasic] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'author', 'code', 'created', 'identifier', 'patient', 'subject');
 {$ENDIF}
 {$IFDEF FHIR_BINARY}
-  CODES_TSearchParamsBinary : Array[TSearchParamsBinary] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', 'contenttype');
+  CODES_TSearchParamsBinary : Array[TSearchParamsBinary] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', 'contenttype');
+{$ENDIF}
+{$IFDEF FHIR_BIOLOGICALLYDERIVEDPRODUCT}
+  CODES_TSearchParamsBiologicallyDerivedProduct : Array[TSearchParamsBiologicallyDerivedProduct] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text');
 {$ENDIF}
 {$IFDEF FHIR_BODYSTRUCTURE}
-  CODES_TSearchParamsBodyStructure : Array[TSearchParamsBodyStructure] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'identifier', 'location', 'morphology', 'patient');
+  CODES_TSearchParamsBodyStructure : Array[TSearchParamsBodyStructure] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'identifier', 'location', 'morphology', 'patient');
 {$ENDIF}
 {$IFDEF FHIR_BUNDLE}
-  CODES_TSearchParamsBundle : Array[TSearchParamsBundle] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', 'composition', 'identifier', 'message', 'type');
+  CODES_TSearchParamsBundle : Array[TSearchParamsBundle] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', 'composition', 'identifier', 'message', 'timestamp', 'type');
 {$ENDIF}
 {$IFDEF FHIR_CAPABILITYSTATEMENT}
-  CODES_TSearchParamsCapabilityStatement : Array[TSearchParamsCapabilityStatement] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'date', 'description', 'event', 'fhirversion', 'format', 'guide', 'jurisdiction', 'mode', 'name', 'publisher', 'resource', 'resource-profile', 'security-service', 'software', 'status', 'supported-profile', 'title', 'url', 'version');
+  CODES_TSearchParamsCapabilityStatement : Array[TSearchParamsCapabilityStatement] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'date', 'description', 'fhirversion', 'format', 'guide', 'jurisdiction', 'mode', 'name', 'publisher', 'resource', 'resource-profile', 'security-service', 'software', 'status', 'supported-profile', 'title', 'url', 'version');
 {$ENDIF}
 {$IFDEF FHIR_CAREPLAN}
-  CODES_TSearchParamsCarePlan : Array[TSearchParamsCarePlan] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'activity-code', 'activity-date', 'activity-reference', 'based-on', 'care-team', 'category', 'condition', 'context', 'date', 'definition', 'encounter', 'goal', 'identifier', 'intent', 'part-of', 'patient', 'performer', 'replaces', 'status', 'subject');
+  CODES_TSearchParamsCarePlan : Array[TSearchParamsCarePlan] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'activity-code', 'activity-date', 'activity-reference', 'based-on', 'care-team', 'category', 'condition', 'context', 'date', 'encounter', 'goal', 'identifier', 'instantiates', 'intent', 'part-of', 'patient', 'performer', 'replaces', 'status', 'subject');
 {$ENDIF}
 {$IFDEF FHIR_CARETEAM}
-  CODES_TSearchParamsCareTeam : Array[TSearchParamsCareTeam] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'category', 'context', 'date', 'encounter', 'identifier', 'participant', 'patient', 'status', 'subject');
-{$ENDIF}
-{$IFDEF FHIR_CATALOGENTRY}
-  CODES_TSearchParamsCatalogEntry : Array[TSearchParamsCatalogEntry] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text');
+  CODES_TSearchParamsCareTeam : Array[TSearchParamsCareTeam] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'category', 'context', 'date', 'encounter', 'identifier', 'participant', 'patient', 'status', 'subject');
 {$ENDIF}
 {$IFDEF FHIR_CHARGEITEM}
-  CODES_TSearchParamsChargeItem : Array[TSearchParamsChargeItem] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'account', 'code', 'context', 'entered-date', 'enterer', 'factor-override', 'identifier', 'occurrence', 'participant-actor', 'participant-role', 'patient', 'performing-organization', 'price-override', 'quantity', 'requesting-organization', 'service', 'subject');
+  CODES_TSearchParamsChargeItem : Array[TSearchParamsChargeItem] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'account', 'code', 'context', 'entered-date', 'enterer', 'factor-override', 'identifier', 'occurrence', 'participant-actor', 'participant-role', 'patient', 'performing-organization', 'price-override', 'quantity', 'requesting-organization', 'service', 'subject');
 {$ENDIF}
 {$IFDEF FHIR_CLAIM}
-  CODES_TSearchParamsClaim : Array[TSearchParamsClaim] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'care-team', 'created', 'encounter', 'enterer', 'facility', 'identifier', 'insurer', 'organization', 'patient', 'payee', 'priority', 'provider', 'status', 'use');
+  CODES_TSearchParamsClaim : Array[TSearchParamsClaim] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'care-team', 'created', 'encounter', 'enterer', 'facility', 'identifier', 'insurer', 'organization', 'patient', 'payee', 'priority', 'provider', 'status', 'use');
 {$ENDIF}
 {$IFDEF FHIR_CLAIMRESPONSE}
-  CODES_TSearchParamsClaimResponse : Array[TSearchParamsClaimResponse] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'created', 'disposition', 'identifier', 'insurer', 'outcome', 'patient', 'payment-date', 'request', 'request-provider', 'status');
+  CODES_TSearchParamsClaimResponse : Array[TSearchParamsClaimResponse] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'created', 'disposition', 'identifier', 'insurer', 'outcome', 'patient', 'payment-date', 'request', 'request-provider', 'status');
 {$ENDIF}
 {$IFDEF FHIR_CLINICALIMPRESSION}
-  CODES_TSearchParamsClinicalImpression : Array[TSearchParamsClinicalImpression] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'action', 'assessor', 'context', 'date', 'finding-code', 'finding-ref', 'identifier', 'investigation', 'patient', 'previous', 'problem', 'status', 'subject');
+  CODES_TSearchParamsClinicalImpression : Array[TSearchParamsClinicalImpression] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'action', 'assessor', 'context', 'date', 'finding-code', 'finding-ref', 'identifier', 'investigation', 'patient', 'previous', 'problem', 'status', 'subject');
 {$ENDIF}
 {$IFDEF FHIR_CODESYSTEM}
-  CODES_TSearchParamsCodeSystem : Array[TSearchParamsCodeSystem] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'code', 'content-mode', 'date', 'description', 'identifier', 'jurisdiction', 'language', 'name', 'publisher', 'status', 'system', 'title', 'url', 'version');
+  CODES_TSearchParamsCodeSystem : Array[TSearchParamsCodeSystem] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'code', 'content-mode', 'date', 'description', 'identifier', 'jurisdiction', 'language', 'name', 'publisher', 'status', 'supplements', 'system', 'title', 'url', 'version');
 {$ENDIF}
 {$IFDEF FHIR_COMMUNICATION}
-  CODES_TSearchParamsCommunication : Array[TSearchParamsCommunication] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'based-on', 'category', 'context', 'definition', 'encounter', 'identifier', 'medium', 'part-of', 'patient', 'received', 'recipient', 'sender', 'sent', 'status', 'subject');
+  CODES_TSearchParamsCommunication : Array[TSearchParamsCommunication] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'based-on', 'category', 'context', 'encounter', 'identifier', 'instantiates', 'medium', 'part-of', 'patient', 'received', 'recipient', 'sender', 'sent', 'status', 'subject');
 {$ENDIF}
 {$IFDEF FHIR_COMMUNICATIONREQUEST}
-  CODES_TSearchParamsCommunicationRequest : Array[TSearchParamsCommunicationRequest] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'authored', 'based-on', 'category', 'context', 'encounter', 'group-identifier', 'identifier', 'medium', 'occurrence', 'patient', 'priority', 'recipient', 'replaces', 'requester', 'sender', 'status', 'subject');
+  CODES_TSearchParamsCommunicationRequest : Array[TSearchParamsCommunicationRequest] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'authored', 'based-on', 'category', 'context', 'encounter', 'group-identifier', 'identifier', 'medium', 'occurrence', 'patient', 'priority', 'recipient', 'replaces', 'requester', 'sender', 'status', 'subject');
 {$ENDIF}
 {$IFDEF FHIR_COMPARTMENTDEFINITION}
-  CODES_TSearchParamsCompartmentDefinition : Array[TSearchParamsCompartmentDefinition] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'code', 'date', 'description', 'jurisdiction', 'name', 'publisher', 'resource', 'status', 'title', 'url');
+  CODES_TSearchParamsCompartmentDefinition : Array[TSearchParamsCompartmentDefinition] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'code', 'context-type', 'date', 'description', 'jurisdiction', 'name', 'publisher', 'resource', 'status', 'title', 'url');
 {$ENDIF}
 {$IFDEF FHIR_COMPOSITION}
-  CODES_TSearchParamsComposition : Array[TSearchParamsComposition] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'attester', 'author', 'class', 'confidentiality', 'context', 'date', 'encounter', 'entry', 'identifier', 'patient', 'period', 'related-id', 'related-ref', 'section', 'status', 'subject', 'title', 'type');
+  CODES_TSearchParamsComposition : Array[TSearchParamsComposition] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'attester', 'author', 'class', 'confidentiality', 'context', 'date', 'encounter', 'entry', 'identifier', 'patient', 'period', 'related-id', 'related-ref', 'section', 'status', 'subject', 'title', 'type');
 {$ENDIF}
 {$IFDEF FHIR_CONCEPTMAP}
-  CODES_TSearchParamsConceptMap : Array[TSearchParamsConceptMap] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'date', 'dependson', 'description', 'identifier', 'jurisdiction', 'name', 'other', 'product', 'publisher', 'source', 'source-code', 'source-system', 'source-uri', 'status', 'target', 'target-code', 'target-system', 'target-uri', 'title', 'url', 'version');
+  CODES_TSearchParamsConceptMap : Array[TSearchParamsConceptMap] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'date', 'dependson', 'description', 'identifier', 'jurisdiction', 'name', 'other', 'product', 'publisher', 'source', 'source-code', 'source-system', 'source-uri', 'status', 'target', 'target-code', 'target-system', 'target-uri', 'title', 'url', 'version');
 {$ENDIF}
 {$IFDEF FHIR_CONDITION}
-  CODES_TSearchParamsCondition : Array[TSearchParamsCondition] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'abatement-age', 'abatement-date', 'abatement-string', 'asserted-date', 'asserter', 'body-site', 'category', 'clinical-status', 'code', 'context', 'encounter', 'evidence', 'evidence-detail', 'identifier', 'onset-age', 'onset-date', 'onset-info', 'patient', 'severity', 'stage', 'subject', 'verification-status');
+  CODES_TSearchParamsCondition : Array[TSearchParamsCondition] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'abatement-age', 'abatement-date', 'abatement-string', 'asserted-date', 'asserter', 'body-site', 'category', 'clinical-status', 'code', 'context', 'encounter', 'evidence', 'evidence-detail', 'identifier', 'onset-age', 'onset-date', 'onset-info', 'patient', 'severity', 'stage', 'subject', 'verification-status');
 {$ENDIF}
 {$IFDEF FHIR_CONSENT}
-  CODES_TSearchParamsConsent : Array[TSearchParamsConsent] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'action', 'actor', 'category', 'consentor', 'data', 'date', 'identifier', 'organization', 'patient', 'period', 'purpose', 'securitylabel', 'source', 'status');
+  CODES_TSearchParamsConsent : Array[TSearchParamsConsent] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'action', 'actor', 'category', 'consentor', 'data', 'date', 'identifier', 'organization', 'patient', 'period', 'purpose', 'scope', 'securitylabel', 'source', 'status');
 {$ENDIF}
 {$IFDEF FHIR_CONTRACT}
-  CODES_TSearchParamsContract : Array[TSearchParamsContract] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'authority', 'domain', 'identifier', 'issued', 'patient', 'signer', 'status', 'subject');
+  CODES_TSearchParamsContract : Array[TSearchParamsContract] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'authority', 'domain', 'identifier', 'issued', 'patient', 'signer', 'status', 'subject');
 {$ENDIF}
 {$IFDEF FHIR_COVERAGE}
-  CODES_TSearchParamsCoverage : Array[TSearchParamsCoverage] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'beneficiary', 'class', 'dependent', 'group', 'identifier', 'payor', 'plan', 'policy-holder', 'sequence', 'status', 'subclass', 'subgroup', 'subplan', 'subscriber', 'type');
+  CODES_TSearchParamsCoverage : Array[TSearchParamsCoverage] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'beneficiary', 'class', 'dependent', 'group', 'identifier', 'patient', 'payor', 'plan', 'policy-holder', 'sequence', 'status', 'subclass', 'subgroup', 'subplan', 'subscriber', 'type');
 {$ENDIF}
 {$IFDEF FHIR_DETECTEDISSUE}
-  CODES_TSearchParamsDetectedIssue : Array[TSearchParamsDetectedIssue] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'author', 'category', 'date', 'identifier', 'implicated', 'patient');
+  CODES_TSearchParamsDetectedIssue : Array[TSearchParamsDetectedIssue] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'author', 'category', 'date', 'identifier', 'implicated', 'patient');
 {$ENDIF}
 {$IFDEF FHIR_DEVICE}
-  CODES_TSearchParamsDevice : Array[TSearchParamsDevice] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'device-name', 'identifier', 'location', 'manufacturer', 'model', 'organization', 'patient', 'status', 'type', 'udi-carrier', 'udi-di', 'url');
+  CODES_TSearchParamsDevice : Array[TSearchParamsDevice] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'device-name', 'identifier', 'location', 'manufacturer', 'model', 'organization', 'patient', 'status', 'type', 'udi-carrier', 'udi-di', 'url');
 {$ENDIF}
 {$IFDEF FHIR_DEVICECOMPONENT}
-  CODES_TSearchParamsDeviceComponent : Array[TSearchParamsDeviceComponent] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'identifier', 'parent', 'source', 'type');
+  CODES_TSearchParamsDeviceComponent : Array[TSearchParamsDeviceComponent] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'identifier', 'parent', 'source', 'type');
 {$ENDIF}
 {$IFDEF FHIR_DEVICEMETRIC}
-  CODES_TSearchParamsDeviceMetric : Array[TSearchParamsDeviceMetric] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'category', 'identifier', 'parent', 'source', 'type');
+  CODES_TSearchParamsDeviceMetric : Array[TSearchParamsDeviceMetric] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'category', 'identifier', 'parent', 'source', 'type');
 {$ENDIF}
 {$IFDEF FHIR_DEVICEREQUEST}
-  CODES_TSearchParamsDeviceRequest : Array[TSearchParamsDeviceRequest] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'authored-on', 'based-on', 'code', 'definition', 'device', 'encounter', 'event-date', 'group-identifier', 'identifier', 'intent', 'patient', 'performer', 'priorrequest', 'requester', 'status', 'subject');
+  CODES_TSearchParamsDeviceRequest : Array[TSearchParamsDeviceRequest] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'authored-on', 'based-on', 'code', 'device', 'encounter', 'event-date', 'group-identifier', 'identifier', 'instantiates', 'insurance', 'intent', 'patient', 'performer', 'priorrequest', 'requester', 'status', 'subject');
 {$ENDIF}
 {$IFDEF FHIR_DEVICEUSESTATEMENT}
-  CODES_TSearchParamsDeviceUseStatement : Array[TSearchParamsDeviceUseStatement] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'device', 'identifier', 'patient', 'subject');
+  CODES_TSearchParamsDeviceUseStatement : Array[TSearchParamsDeviceUseStatement] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'device', 'identifier', 'patient', 'subject');
 {$ENDIF}
 {$IFDEF FHIR_DIAGNOSTICREPORT}
-  CODES_TSearchParamsDiagnosticReport : Array[TSearchParamsDiagnosticReport] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'based-on', 'category', 'code', 'context', 'date', 'diagnosis', 'encounter', 'identifier', 'image', 'issued', 'patient', 'performer', 'result', 'results-interpreter', 'specimen', 'status', 'subject');
+  CODES_TSearchParamsDiagnosticReport : Array[TSearchParamsDiagnosticReport] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'based-on', 'category', 'code', 'context', 'date', 'diagnosis', 'encounter', 'identifier', 'issued', 'media', 'patient', 'performer', 'result', 'results-interpreter', 'specimen', 'status', 'subject');
 {$ENDIF}
 {$IFDEF FHIR_DOCUMENTMANIFEST}
-  CODES_TSearchParamsDocumentManifest : Array[TSearchParamsDocumentManifest] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'agent', 'created', 'description', 'identifier', 'item', 'patient', 'recipient', 'related-id', 'related-ref', 'source', 'status', 'subject', 'type');
+  CODES_TSearchParamsDocumentManifest : Array[TSearchParamsDocumentManifest] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'agent', 'created', 'description', 'identifier', 'item', 'patient', 'recipient', 'related-id', 'related-ref', 'source', 'status', 'subject', 'type');
 {$ENDIF}
 {$IFDEF FHIR_DOCUMENTREFERENCE}
-  CODES_TSearchParamsDocumentReference : Array[TSearchParamsDocumentReference] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'agent', 'authenticator', 'class', 'contenttype', 'created', 'custodian', 'date', 'description', 'encounter', 'event', 'facility', 'format', 'identifier', 'language', 'location', 'patient', 'period', 'related-id', 'related-ref', 'relatesto', 'relation', 'relationship', 'securitylabel', 'setting', 'status', 'subject', 'type');
+  CODES_TSearchParamsDocumentReference : Array[TSearchParamsDocumentReference] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'agent', 'authenticator', 'class', 'contenttype', 'created', 'custodian', 'date', 'description', 'encounter', 'event', 'facility', 'format', 'identifier', 'language', 'location', 'patient', 'period', 'related-id', 'related-ref', 'relatesto', 'relation', 'relationship', 'securitylabel', 'setting', 'status', 'subject', 'type');
 {$ENDIF}
 {$IFDEF FHIR_ELIGIBILITYREQUEST}
-  CODES_TSearchParamsEligibilityRequest : Array[TSearchParamsEligibilityRequest] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'created', 'enterer', 'facility', 'identifier', 'organization', 'patient', 'provider', 'status');
+  CODES_TSearchParamsEligibilityRequest : Array[TSearchParamsEligibilityRequest] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'created', 'enterer', 'facility', 'identifier', 'organization', 'patient', 'provider', 'status');
 {$ENDIF}
 {$IFDEF FHIR_ELIGIBILITYRESPONSE}
-  CODES_TSearchParamsEligibilityResponse : Array[TSearchParamsEligibilityResponse] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'created', 'disposition', 'identifier', 'insurer', 'outcome', 'request', 'request-organization', 'request-provider', 'status');
+  CODES_TSearchParamsEligibilityResponse : Array[TSearchParamsEligibilityResponse] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'created', 'disposition', 'identifier', 'insurer', 'outcome', 'request', 'request-organization', 'request-provider', 'status');
 {$ENDIF}
 {$IFDEF FHIR_ENCOUNTER}
-  CODES_TSearchParamsEncounter : Array[TSearchParamsEncounter] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'appointment', 'class', 'date', 'diagnosis', 'episodeofcare', 'identifier', 'incomingreferral', 'length', 'location', 'location-period', 'part-of', 'participant', 'participant-type', 'patient', 'practitioner', 'reason', 'service-provider', 'special-arrangement', 'status', 'subject', 'type');
+  CODES_TSearchParamsEncounter : Array[TSearchParamsEncounter] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'appointment', 'class', 'date', 'diagnosis', 'episodeofcare', 'identifier', 'incomingreferral', 'length', 'location', 'location-period', 'part-of', 'participant', 'participant-type', 'patient', 'practitioner', 'reason', 'service-provider', 'special-arrangement', 'status', 'subject', 'type');
 {$ENDIF}
 {$IFDEF FHIR_ENDPOINT}
-  CODES_TSearchParamsEndpoint : Array[TSearchParamsEndpoint] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'connection-type', 'identifier', 'name', 'organization', 'payload-type', 'status');
+  CODES_TSearchParamsEndpoint : Array[TSearchParamsEndpoint] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'connection-type', 'identifier', 'name', 'organization', 'payload-type', 'status');
 {$ENDIF}
 {$IFDEF FHIR_ENROLLMENTREQUEST}
-  CODES_TSearchParamsEnrollmentRequest : Array[TSearchParamsEnrollmentRequest] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'identifier', 'organization', 'patient', 'status', 'subject');
+  CODES_TSearchParamsEnrollmentRequest : Array[TSearchParamsEnrollmentRequest] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'identifier', 'organization', 'patient', 'status', 'subject');
 {$ENDIF}
 {$IFDEF FHIR_ENROLLMENTRESPONSE}
-  CODES_TSearchParamsEnrollmentResponse : Array[TSearchParamsEnrollmentResponse] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'identifier', 'organization', 'request', 'status');
+  CODES_TSearchParamsEnrollmentResponse : Array[TSearchParamsEnrollmentResponse] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'identifier', 'organization', 'request', 'status');
+{$ENDIF}
+{$IFDEF FHIR_ENTRYDEFINITION}
+  CODES_TSearchParamsEntryDefinition : Array[TSearchParamsEntryDefinition] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text');
 {$ENDIF}
 {$IFDEF FHIR_EPISODEOFCARE}
-  CODES_TSearchParamsEpisodeOfCare : Array[TSearchParamsEpisodeOfCare] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'care-manager', 'condition', 'date', 'identifier', 'incomingreferral', 'organization', 'patient', 'status', 'type');
+  CODES_TSearchParamsEpisodeOfCare : Array[TSearchParamsEpisodeOfCare] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'care-manager', 'condition', 'date', 'identifier', 'incomingreferral', 'organization', 'patient', 'status', 'type');
 {$ENDIF}
 {$IFDEF FHIR_EVENTDEFINITION}
-  CODES_TSearchParamsEventDefinition : Array[TSearchParamsEventDefinition] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'composed-of', 'date', 'depends-on', 'derived-from', 'description', 'effective', 'identifier', 'jurisdiction', 'name', 'predecessor', 'publisher', 'status', 'successor', 'title', 'topic', 'url', 'version');
+  CODES_TSearchParamsEventDefinition : Array[TSearchParamsEventDefinition] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'composed-of', 'date', 'depends-on', 'derived-from', 'description', 'effective', 'identifier', 'jurisdiction', 'name', 'predecessor', 'publisher', 'status', 'successor', 'title', 'topic', 'url', 'version');
 {$ENDIF}
 {$IFDEF FHIR_EXAMPLESCENARIO}
-  CODES_TSearchParamsExampleScenario : Array[TSearchParamsExampleScenario] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'date', 'description', 'identifier', 'jurisdiction', 'name', 'publisher', 'status', 'title', 'url', 'version');
+  CODES_TSearchParamsExampleScenario : Array[TSearchParamsExampleScenario] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'date', 'description', 'identifier', 'jurisdiction', 'name', 'publisher', 'status', 'title', 'url', 'version');
 {$ENDIF}
 {$IFDEF FHIR_EXPANSIONPROFILE}
-  CODES_TSearchParamsExpansionProfile : Array[TSearchParamsExpansionProfile] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'date', 'description', 'identifier', 'jurisdiction', 'name', 'publisher', 'status', 'url', 'version');
+  CODES_TSearchParamsExpansionProfile : Array[TSearchParamsExpansionProfile] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'date', 'description', 'identifier', 'jurisdiction', 'name', 'publisher', 'status', 'url', 'version');
 {$ENDIF}
 {$IFDEF FHIR_EXPLANATIONOFBENEFIT}
-  CODES_TSearchParamsExplanationOfBenefit : Array[TSearchParamsExplanationOfBenefit] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'care-team', 'claim', 'coverage', 'created', 'disposition', 'encounter', 'enterer', 'facility', 'identifier', 'organization', 'patient', 'payee', 'provider', 'status');
+  CODES_TSearchParamsExplanationOfBenefit : Array[TSearchParamsExplanationOfBenefit] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'care-team', 'claim', 'coverage', 'created', 'disposition', 'encounter', 'enterer', 'facility', 'identifier', 'organization', 'patient', 'payee', 'provider', 'status');
 {$ENDIF}
 {$IFDEF FHIR_FAMILYMEMBERHISTORY}
-  CODES_TSearchParamsFamilyMemberHistory : Array[TSearchParamsFamilyMemberHistory] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'code', 'date', 'gender', 'identifier', 'instantiates', 'patient', 'relationship', 'status');
+  CODES_TSearchParamsFamilyMemberHistory : Array[TSearchParamsFamilyMemberHistory] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'code', 'date', 'gender', 'identifier', 'instantiates', 'patient', 'relationship', 'status');
 {$ENDIF}
 {$IFDEF FHIR_FLAG}
-  CODES_TSearchParamsFlag : Array[TSearchParamsFlag] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'author', 'date', 'encounter', 'identifier', 'patient', 'subject');
+  CODES_TSearchParamsFlag : Array[TSearchParamsFlag] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'author', 'date', 'encounter', 'identifier', 'patient', 'subject');
 {$ENDIF}
 {$IFDEF FHIR_GOAL}
-  CODES_TSearchParamsGoal : Array[TSearchParamsGoal] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'category', 'identifier', 'patient', 'start-date', 'status', 'subject', 'target-date');
+  CODES_TSearchParamsGoal : Array[TSearchParamsGoal] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'category', 'identifier', 'patient', 'start-date', 'status', 'subject', 'target-date');
 {$ENDIF}
 {$IFDEF FHIR_GRAPHDEFINITION}
-  CODES_TSearchParamsGraphDefinition : Array[TSearchParamsGraphDefinition] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'date', 'description', 'jurisdiction', 'name', 'publisher', 'start', 'status', 'url', 'version');
+  CODES_TSearchParamsGraphDefinition : Array[TSearchParamsGraphDefinition] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'date', 'description', 'jurisdiction', 'name', 'publisher', 'start', 'status', 'url', 'version');
 {$ENDIF}
 {$IFDEF FHIR_GROUP}
-  CODES_TSearchParamsGroup : Array[TSearchParamsGroup] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'actual', 'characteristic', 'characteristic-value', 'code', 'exclude', 'identifier', 'member', 'type', 'value');
+  CODES_TSearchParamsGroup : Array[TSearchParamsGroup] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'actual', 'characteristic', 'characteristic-value', 'code', 'exclude', 'identifier', 'member', 'type', 'value');
 {$ENDIF}
 {$IFDEF FHIR_GUIDANCERESPONSE}
-  CODES_TSearchParamsGuidanceResponse : Array[TSearchParamsGuidanceResponse] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'identifier', 'patient', 'request', 'subject');
+  CODES_TSearchParamsGuidanceResponse : Array[TSearchParamsGuidanceResponse] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'identifier', 'patient', 'request', 'subject');
 {$ENDIF}
 {$IFDEF FHIR_HEALTHCARESERVICE}
-  CODES_TSearchParamsHealthcareService : Array[TSearchParamsHealthcareService] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'active', 'category', 'characteristic', 'endpoint', 'identifier', 'location', 'name', 'organization', 'programname', 'type');
-{$ENDIF}
-{$IFDEF FHIR_IMAGINGMANIFEST}
-  CODES_TSearchParamsImagingManifest : Array[TSearchParamsImagingManifest] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'author', 'authoring-time', 'endpoint', 'identifier', 'imaging-study', 'patient', 'selected-study');
+  CODES_TSearchParamsHealthcareService : Array[TSearchParamsHealthcareService] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'active', 'category', 'characteristic', 'endpoint', 'identifier', 'location', 'name', 'organization', 'programname', 'type');
 {$ENDIF}
 {$IFDEF FHIR_IMAGINGSTUDY}
-  CODES_TSearchParamsImagingStudy : Array[TSearchParamsImagingStudy] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'accession', 'basedon', 'bodysite', 'context', 'dicom-class', 'endpoint', 'identifier', 'modality', 'patient', 'performer', 'reason', 'series', 'started', 'study', 'uid');
+  CODES_TSearchParamsImagingStudy : Array[TSearchParamsImagingStudy] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'accession', 'basedon', 'bodysite', 'context', 'dicom-class', 'endpoint', 'identifier', 'modality', 'patient', 'performer', 'reason', 'series', 'started', 'study', 'subject', 'uid');
 {$ENDIF}
 {$IFDEF FHIR_IMMUNIZATION}
-  CODES_TSearchParamsImmunization : Array[TSearchParamsImmunization] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'date', 'dose-sequence', 'identifier', 'location', 'lot-number', 'manufacturer', 'notgiven', 'patient', 'practitioner', 'reaction', 'reaction-date', 'reason', 'reason-not-given', 'status', 'vaccine-code');
+  CODES_TSearchParamsImmunization : Array[TSearchParamsImmunization] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'date', 'identifier', 'location', 'lot-number', 'manufacturer', 'patient', 'practitioner', 'reason', 'status', 'vaccine-code');
+{$ENDIF}
+{$IFDEF FHIR_IMMUNIZATIONEVALUATION}
+  CODES_TSearchParamsImmunizationEvaluation : Array[TSearchParamsImmunizationEvaluation] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'date', 'dose-status', 'identifier', 'immunization-event', 'patient', 'target-disease');
 {$ENDIF}
 {$IFDEF FHIR_IMMUNIZATIONRECOMMENDATION}
-  CODES_TSearchParamsImmunizationRecommendation : Array[TSearchParamsImmunizationRecommendation] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'date', 'dose-number', 'dose-sequence', 'identifier', 'information', 'patient', 'status', 'support', 'target-disease', 'vaccine-type');
+  CODES_TSearchParamsImmunizationRecommendation : Array[TSearchParamsImmunizationRecommendation] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'date', 'dose-number', 'dose-sequence', 'identifier', 'information', 'patient', 'status', 'support', 'target-disease', 'vaccine-type');
 {$ENDIF}
 {$IFDEF FHIR_IMPLEMENTATIONGUIDE}
-  CODES_TSearchParamsImplementationGuide : Array[TSearchParamsImplementationGuide] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'date', 'dependency', 'description', 'experimental', 'jurisdiction', 'name', 'publisher', 'resource', 'status', 'url', 'version');
+  CODES_TSearchParamsImplementationGuide : Array[TSearchParamsImplementationGuide] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'date', 'dependency', 'description', 'experimental', 'jurisdiction', 'name', 'publisher', 'resource', 'status', 'url', 'version');
+{$ENDIF}
+{$IFDEF FHIR_IMPLEMENTATIONGUIDEINPUT}
+  CODES_TSearchParamsImplementationGuideInput : Array[TSearchParamsImplementationGuideInput] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'date', 'dependency', 'description', 'experimental', 'jurisdiction', 'name', 'publisher', 'resource', 'status', 'url', 'version');
+{$ENDIF}
+{$IFDEF FHIR_IMPLEMENTATIONGUIDEOUTPUT}
+  CODES_TSearchParamsImplementationGuideOutput : Array[TSearchParamsImplementationGuideOutput] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'date', 'dependency', 'description', 'experimental', 'jurisdiction', 'name', 'publisher', 'resource', 'status', 'url', 'version');
+{$ENDIF}
+{$IFDEF FHIR_INVOICE}
+  CODES_TSearchParamsInvoice : Array[TSearchParamsInvoice] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'account', 'date', 'identifier', 'issuer', 'participant', 'participant-role', 'patient', 'recipient', 'status', 'subject', 'totalgross', 'totalnet', 'type');
+{$ENDIF}
+{$IFDEF FHIR_ITEMINSTANCE}
+  CODES_TSearchParamsItemInstance : Array[TSearchParamsItemInstance] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'subject');
 {$ENDIF}
 {$IFDEF FHIR_LIBRARY}
-  CODES_TSearchParamsLibrary : Array[TSearchParamsLibrary] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'composed-of', 'date', 'depends-on', 'derived-from', 'description', 'effective', 'identifier', 'jurisdiction', 'name', 'predecessor', 'publisher', 'status', 'successor', 'title', 'topic', 'url', 'version');
+  CODES_TSearchParamsLibrary : Array[TSearchParamsLibrary] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'composed-of', 'date', 'depends-on', 'derived-from', 'description', 'effective', 'identifier', 'jurisdiction', 'name', 'predecessor', 'publisher', 'status', 'successor', 'title', 'topic', 'type', 'url', 'version');
 {$ENDIF}
 {$IFDEF FHIR_LINKAGE}
-  CODES_TSearchParamsLinkage : Array[TSearchParamsLinkage] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'author', 'item', 'source');
+  CODES_TSearchParamsLinkage : Array[TSearchParamsLinkage] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'author', 'item', 'source');
 {$ENDIF}
 {$IFDEF FHIR_LIST}
-  CODES_TSearchParamsList : Array[TSearchParamsList] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'code', 'date', 'empty-reason', 'encounter', 'identifier', 'item', 'notes', 'patient', 'source', 'status', 'subject', 'title');
+  CODES_TSearchParamsList : Array[TSearchParamsList] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'code', 'date', 'empty-reason', 'encounter', 'identifier', 'item', 'notes', 'patient', 'source', 'status', 'subject', 'title');
 {$ENDIF}
 {$IFDEF FHIR_LOCATION}
-  CODES_TSearchParamsLocation : Array[TSearchParamsLocation] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'address', 'address-city', 'address-country', 'address-postalcode', 'address-state', 'address-use', 'endpoint', 'identifier', 'name', 'near', 'near-distance', 'operational-status', 'organization', 'partof', 'status', 'type');
+  CODES_TSearchParamsLocation : Array[TSearchParamsLocation] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'address', 'address-city', 'address-country', 'address-postalcode', 'address-state', 'address-use', 'endpoint', 'identifier', 'name', 'near', 'near-distance', 'operational-status', 'organization', 'partof', 'status', 'type');
 {$ENDIF}
 {$IFDEF FHIR_MEASURE}
-  CODES_TSearchParamsMeasure : Array[TSearchParamsMeasure] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'composed-of', 'date', 'depends-on', 'derived-from', 'description', 'effective', 'identifier', 'jurisdiction', 'name', 'predecessor', 'publisher', 'status', 'successor', 'title', 'topic', 'url', 'version');
+  CODES_TSearchParamsMeasure : Array[TSearchParamsMeasure] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'composed-of', 'date', 'depends-on', 'derived-from', 'description', 'effective', 'identifier', 'jurisdiction', 'name', 'predecessor', 'publisher', 'status', 'successor', 'title', 'topic', 'url', 'version');
 {$ENDIF}
 {$IFDEF FHIR_MEASUREREPORT}
-  CODES_TSearchParamsMeasureReport : Array[TSearchParamsMeasureReport] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'identifier', 'patient', 'status');
+  CODES_TSearchParamsMeasureReport : Array[TSearchParamsMeasureReport] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'identifier', 'patient', 'status', 'subject');
 {$ENDIF}
 {$IFDEF FHIR_MEDIA}
-  CODES_TSearchParamsMedia : Array[TSearchParamsMedia] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'based-on', 'context', 'created', 'date', 'device', 'identifier', 'operator', 'patient', 'site', 'subject', 'subtype', 'type', 'view');
+  CODES_TSearchParamsMedia : Array[TSearchParamsMedia] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'based-on', 'category', 'context', 'created', 'device', 'identifier', 'modality', 'operator', 'patient', 'site', 'status', 'subject', 'view');
 {$ENDIF}
 {$IFDEF FHIR_MEDICATION}
-  CODES_TSearchParamsMedication : Array[TSearchParamsMedication] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'code', 'container', 'form', 'ingredient', 'ingredient-code', 'manufacturer', 'over-the-counter', 'package-item', 'package-item-code', 'status');
+  CODES_TSearchParamsMedication : Array[TSearchParamsMedication] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'code', 'form', 'ingredient', 'ingredient-code', 'manufacturer', 'status');
 {$ENDIF}
 {$IFDEF FHIR_MEDICATIONADMINISTRATION}
-  CODES_TSearchParamsMedicationAdministration : Array[TSearchParamsMedicationAdministration] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'code', 'context', 'device', 'effective-time', 'identifier', 'medication', 'not-given', 'patient', 'performer', 'reason-given', 'reason-not-given', 'request', 'status', 'subject');
+  CODES_TSearchParamsMedicationAdministration : Array[TSearchParamsMedicationAdministration] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'code', 'context', 'device', 'effective-time', 'identifier', 'medication', 'patient', 'performer', 'reason-given', 'reason-not-given', 'request', 'status', 'subject');
 {$ENDIF}
 {$IFDEF FHIR_MEDICATIONDISPENSE}
-  CODES_TSearchParamsMedicationDispense : Array[TSearchParamsMedicationDispense] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'code', 'context', 'destination', 'identifier', 'medication', 'patient', 'performer', 'prescription', 'receiver', 'responsibleparty', 'status', 'subject', 'type', 'whenhandedover', 'whenprepared');
+  CODES_TSearchParamsMedicationDispense : Array[TSearchParamsMedicationDispense] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'code', 'context', 'destination', 'identifier', 'medication', 'patient', 'performer', 'prescription', 'receiver', 'responsibleparty', 'status', 'subject', 'type', 'whenhandedover', 'whenprepared');
 {$ENDIF}
 {$IFDEF FHIR_MEDICATIONREQUEST}
-  CODES_TSearchParamsMedicationRequest : Array[TSearchParamsMedicationRequest] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'authoredon', 'category', 'code', 'context', 'date', 'identifier', 'intended-dispenser', 'intended-performer', 'intent', 'medication', 'patient', 'priority', 'requester', 'status', 'subject');
+  CODES_TSearchParamsMedicationRequest : Array[TSearchParamsMedicationRequest] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'authoredon', 'category', 'code', 'context', 'date', 'identifier', 'intended-dispenser', 'intended-performer', 'intended-performertype', 'intent', 'medication', 'patient', 'priority', 'requester', 'status', 'subject');
 {$ENDIF}
 {$IFDEF FHIR_MEDICATIONSTATEMENT}
-  CODES_TSearchParamsMedicationStatement : Array[TSearchParamsMedicationStatement] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'category', 'code', 'context', 'effective', 'identifier', 'medication', 'part-of', 'patient', 'source', 'status', 'subject');
+  CODES_TSearchParamsMedicationStatement : Array[TSearchParamsMedicationStatement] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'category', 'code', 'context', 'effective', 'identifier', 'medication', 'part-of', 'patient', 'source', 'status', 'subject');
+{$ENDIF}
+{$IFDEF FHIR_MEDICINALPRODUCT}
+  CODES_TSearchParamsMedicinalProduct : Array[TSearchParamsMedicinalProduct] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text');
+{$ENDIF}
+{$IFDEF FHIR_MEDICINALPRODUCTAUTHORIZATION}
+  CODES_TSearchParamsMedicinalProductAuthorization : Array[TSearchParamsMedicinalProductAuthorization] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text');
+{$ENDIF}
+{$IFDEF FHIR_MEDICINALPRODUCTCLINICALS}
+  CODES_TSearchParamsMedicinalProductClinicals : Array[TSearchParamsMedicinalProductClinicals] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text');
+{$ENDIF}
+{$IFDEF FHIR_MEDICINALPRODUCTDEVICESPEC}
+  CODES_TSearchParamsMedicinalProductDeviceSpec : Array[TSearchParamsMedicinalProductDeviceSpec] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text');
+{$ENDIF}
+{$IFDEF FHIR_MEDICINALPRODUCTINGREDIENT}
+  CODES_TSearchParamsMedicinalProductIngredient : Array[TSearchParamsMedicinalProductIngredient] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text');
+{$ENDIF}
+{$IFDEF FHIR_MEDICINALPRODUCTPACKAGED}
+  CODES_TSearchParamsMedicinalProductPackaged : Array[TSearchParamsMedicinalProductPackaged] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text');
+{$ENDIF}
+{$IFDEF FHIR_MEDICINALPRODUCTPHARMACEUTICAL}
+  CODES_TSearchParamsMedicinalProductPharmaceutical : Array[TSearchParamsMedicinalProductPharmaceutical] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text');
 {$ENDIF}
 {$IFDEF FHIR_MESSAGEDEFINITION}
-  CODES_TSearchParamsMessageDefinition : Array[TSearchParamsMessageDefinition] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'category', 'date', 'description', 'event', 'focus', 'identifier', 'jurisdiction', 'name', 'publisher', 'status', 'title', 'url', 'version');
+  CODES_TSearchParamsMessageDefinition : Array[TSearchParamsMessageDefinition] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'category', 'date', 'description', 'event', 'focus', 'identifier', 'jurisdiction', 'name', 'publisher', 'status', 'title', 'url', 'version');
 {$ENDIF}
 {$IFDEF FHIR_MESSAGEHEADER}
-  CODES_TSearchParamsMessageHeader : Array[TSearchParamsMessageHeader] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'author', 'code', 'destination', 'destination-uri', 'enterer', 'event', 'focus', 'receiver', 'response-id', 'responsible', 'sender', 'source', 'source-uri', 'target', 'timestamp');
+  CODES_TSearchParamsMessageHeader : Array[TSearchParamsMessageHeader] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'author', 'code', 'destination', 'destination-uri', 'enterer', 'event', 'focus', 'receiver', 'response-id', 'responsible', 'sender', 'source', 'source-uri', 'target');
 {$ENDIF}
 {$IFDEF FHIR_NAMINGSYSTEM}
-  CODES_TSearchParamsNamingSystem : Array[TSearchParamsNamingSystem] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'contact', 'date', 'description', 'id-type', 'jurisdiction', 'kind', 'name', 'period', 'publisher', 'replaced-by', 'responsible', 'status', 'telecom', 'type', 'value');
+  CODES_TSearchParamsNamingSystem : Array[TSearchParamsNamingSystem] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'contact', 'date', 'description', 'id-type', 'jurisdiction', 'kind', 'name', 'period', 'publisher', 'responsible', 'status', 'telecom', 'type', 'value');
 {$ENDIF}
 {$IFDEF FHIR_NUTRITIONORDER}
-  CODES_TSearchParamsNutritionOrder : Array[TSearchParamsNutritionOrder] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'additive', 'datetime', 'encounter', 'formula', 'identifier', 'oraldiet', 'patient', 'provider', 'status', 'supplement');
+  CODES_TSearchParamsNutritionOrder : Array[TSearchParamsNutritionOrder] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'additive', 'datetime', 'encounter', 'formula', 'identifier', 'oraldiet', 'patient', 'provider', 'status', 'supplement');
 {$ENDIF}
 {$IFDEF FHIR_OBSERVATION}
-  CODES_TSearchParamsObservation : Array[TSearchParamsObservation] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'based-on', 'category', 'code', 'code-value-concept', 'code-value-date', 'code-value-quantity', 'code-value-string', 'combo-code', 'combo-code-value-concept', 'combo-code-value-quantity', 'combo-data-absent-reason', 'combo-value-concept', 'combo-value-quantity', 'component-code', 'component-code-value-concept', 'component-code-value-quantity', 'component-data-absent-reason', 'component-value-concept', 'component-value-quantity', 'context', 'data-absent-reason', 'date', 'device', 'dna-variant', 'encounter', 'gene-dnavariant', 'gene-identifier', 'identifier', 'method', 'patient', 'performer', 'related', 'related-target', 'related-type', 'specimen', 'status', 'subject', 'value-concept', 'value-date', 'value-quantity', 'value-string');
+  CODES_TSearchParamsObservation : Array[TSearchParamsObservation] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'based-on', 'category', 'code', 'code-value-concept', 'code-value-date', 'code-value-quantity', 'code-value-string', 'combo-code', 'combo-code-value-concept', 'combo-code-value-quantity', 'combo-data-absent-reason', 'combo-value-concept', 'combo-value-quantity', 'component-code', 'component-code-value-concept', 'component-code-value-quantity', 'component-data-absent-reason', 'component-value-concept', 'component-value-quantity', 'context', 'data-absent-reason', 'date', 'derived-from', 'device', 'dna-variant', 'encounter', 'gene-dnavariant', 'gene-identifier', 'has-member', 'identifier', 'method', 'part-of', 'patient', 'performer', 'specimen', 'status', 'subject', 'value-concept', 'value-date', 'value-quantity', 'value-string');
+{$ENDIF}
+{$IFDEF FHIR_OBSERVATIONDEFINITION}
+  CODES_TSearchParamsObservationDefinition : Array[TSearchParamsObservationDefinition] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text');
+{$ENDIF}
+{$IFDEF FHIR_OCCUPATIONALDATA}
+  CODES_TSearchParamsOccupationalData : Array[TSearchParamsOccupationalData] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'subject');
 {$ENDIF}
 {$IFDEF FHIR_OPERATIONDEFINITION}
-  CODES_TSearchParamsOperationDefinition : Array[TSearchParamsOperationDefinition] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'base', 'code', 'date', 'description', 'instance', 'jurisdiction', 'kind', 'name', 'param-profile', 'publisher', 'status', 'system', 'type', 'url', 'version');
+  CODES_TSearchParamsOperationDefinition : Array[TSearchParamsOperationDefinition] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'base', 'code', 'context-type', 'date', 'description', 'input-profile', 'instance', 'jurisdiction', 'kind', 'name', 'output-profile', 'publisher', 'status', 'system', 'type', 'url', 'version');
 {$ENDIF}
 {$IFDEF FHIR_OPERATIONOUTCOME}
-  CODES_TSearchParamsOperationOutcome : Array[TSearchParamsOperationOutcome] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text');
+  CODES_TSearchParamsOperationOutcome : Array[TSearchParamsOperationOutcome] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text');
 {$ENDIF}
 {$IFDEF FHIR_ORGANIZATION}
-  CODES_TSearchParamsOrganization : Array[TSearchParamsOrganization] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'active', 'address', 'address-city', 'address-country', 'address-postalcode', 'address-state', 'address-use', 'endpoint', 'identifier', 'name', 'partof', 'phonetic', 'type');
+  CODES_TSearchParamsOrganization : Array[TSearchParamsOrganization] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'active', 'address', 'address-city', 'address-country', 'address-postalcode', 'address-state', 'address-use', 'endpoint', 'identifier', 'name', 'partof', 'phonetic', 'type');
+{$ENDIF}
+{$IFDEF FHIR_ORGANIZATIONROLE}
+  CODES_TSearchParamsOrganizationRole : Array[TSearchParamsOrganizationRole] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'active', 'date', 'email', 'endpoint', 'identifier', 'location', 'network', 'participating-organization', 'phone', 'primary-organization', 'role', 'service', 'specialty', 'telecom');
 {$ENDIF}
 {$IFDEF FHIR_PATIENT}
-  CODES_TSearchParamsPatient : Array[TSearchParamsPatient] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'active', 'address', 'address-city', 'address-country', 'address-postalcode', 'address-state', 'address-use', 'animal-breed', 'animal-species', 'birthdate', 'death-date', 'deceased', 'email', 'family', 'gender', 'general-practitioner', 'given', 'identifier', 'language', 'link', 'name', 'organization', 'phone', 'phonetic', 'telecom');
+  CODES_TSearchParamsPatient : Array[TSearchParamsPatient] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'active', 'address', 'address-city', 'address-country', 'address-postalcode', 'address-state', 'address-use', 'animal-breed', 'animal-species', 'birthdate', 'death-date', 'deceased', 'email', 'family', 'gender', 'general-practitioner', 'given', 'identifier', 'language', 'link', 'name', 'organization', 'phone', 'phonetic', 'telecom');
 {$ENDIF}
 {$IFDEF FHIR_PAYMENTNOTICE}
-  CODES_TSearchParamsPaymentNotice : Array[TSearchParamsPaymentNotice] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'created', 'identifier', 'organization', 'payment-status', 'provider', 'request', 'response', 'status', 'statusdate');
+  CODES_TSearchParamsPaymentNotice : Array[TSearchParamsPaymentNotice] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'created', 'identifier', 'organization', 'payment-status', 'provider', 'request', 'response', 'status', 'statusdate');
 {$ENDIF}
 {$IFDEF FHIR_PAYMENTRECONCILIATION}
-  CODES_TSearchParamsPaymentReconciliation : Array[TSearchParamsPaymentReconciliation] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'created', 'disposition', 'identifier', 'organization', 'outcome', 'request', 'request-organization', 'request-provider', 'status');
+  CODES_TSearchParamsPaymentReconciliation : Array[TSearchParamsPaymentReconciliation] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'created', 'disposition', 'identifier', 'organization', 'outcome', 'request', 'request-organization', 'request-provider', 'status');
 {$ENDIF}
 {$IFDEF FHIR_PERSON}
-  CODES_TSearchParamsPerson : Array[TSearchParamsPerson] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'address', 'address-city', 'address-country', 'address-postalcode', 'address-state', 'address-use', 'birthdate', 'email', 'gender', 'identifier', 'link', 'name', 'organization', 'patient', 'phone', 'phonetic', 'practitioner', 'relatedperson', 'telecom');
+  CODES_TSearchParamsPerson : Array[TSearchParamsPerson] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'address', 'address-city', 'address-country', 'address-postalcode', 'address-state', 'address-use', 'birthdate', 'email', 'gender', 'identifier', 'link', 'name', 'organization', 'patient', 'phone', 'phonetic', 'practitioner', 'relatedperson', 'telecom');
 {$ENDIF}
 {$IFDEF FHIR_PLANDEFINITION}
-  CODES_TSearchParamsPlanDefinition : Array[TSearchParamsPlanDefinition] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'composed-of', 'date', 'depends-on', 'derived-from', 'description', 'effective', 'identifier', 'jurisdiction', 'name', 'predecessor', 'publisher', 'status', 'successor', 'title', 'topic', 'url', 'version');
+  CODES_TSearchParamsPlanDefinition : Array[TSearchParamsPlanDefinition] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'composed-of', 'date', 'definition', 'depends-on', 'derived-from', 'description', 'effective', 'identifier', 'jurisdiction', 'name', 'predecessor', 'publisher', 'status', 'successor', 'title', 'topic', 'type', 'url', 'version');
 {$ENDIF}
 {$IFDEF FHIR_PRACTITIONER}
-  CODES_TSearchParamsPractitioner : Array[TSearchParamsPractitioner] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'active', 'address', 'address-city', 'address-country', 'address-postalcode', 'address-state', 'address-use', 'communication', 'email', 'family', 'gender', 'given', 'identifier', 'name', 'phone', 'phonetic', 'telecom');
+  CODES_TSearchParamsPractitioner : Array[TSearchParamsPractitioner] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'active', 'address', 'address-city', 'address-country', 'address-postalcode', 'address-state', 'address-use', 'communication', 'email', 'family', 'gender', 'given', 'identifier', 'name', 'phone', 'phonetic', 'telecom');
 {$ENDIF}
 {$IFDEF FHIR_PRACTITIONERROLE}
-  CODES_TSearchParamsPractitionerRole : Array[TSearchParamsPractitionerRole] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'active', 'date', 'email', 'endpoint', 'identifier', 'location', 'organization', 'phone', 'practitioner', 'role', 'service', 'specialty', 'telecom');
+  CODES_TSearchParamsPractitionerRole : Array[TSearchParamsPractitionerRole] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'active', 'date', 'email', 'endpoint', 'identifier', 'location', 'organization', 'phone', 'practitioner', 'role', 'service', 'specialty', 'telecom');
 {$ENDIF}
 {$IFDEF FHIR_PROCEDURE}
-  CODES_TSearchParamsProcedure : Array[TSearchParamsProcedure] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'based-on', 'category', 'code', 'context', 'date', 'definition', 'encounter', 'identifier', 'location', 'part-of', 'patient', 'performer', 'status', 'subject');
-{$ENDIF}
-{$IFDEF FHIR_PROCEDUREREQUEST}
-  CODES_TSearchParamsProcedureRequest : Array[TSearchParamsProcedureRequest] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'authored', 'based-on', 'body-site', 'category', 'code', 'context', 'definition', 'encounter', 'identifier', 'intent', 'occurrence', 'patient', 'performer', 'performer-type', 'priority', 'replaces', 'requester', 'requisition', 'specimen', 'status', 'subject');
+  CODES_TSearchParamsProcedure : Array[TSearchParamsProcedure] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'based-on', 'category', 'code', 'context', 'date', 'encounter', 'identifier', 'instantiates', 'location', 'part-of', 'patient', 'performer', 'status', 'subject');
 {$ENDIF}
 {$IFDEF FHIR_PROCESSREQUEST}
-  CODES_TSearchParamsProcessRequest : Array[TSearchParamsProcessRequest] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'action', 'identifier', 'organization', 'provider', 'status');
+  CODES_TSearchParamsProcessRequest : Array[TSearchParamsProcessRequest] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'action', 'identifier', 'organization', 'provider', 'status');
 {$ENDIF}
 {$IFDEF FHIR_PROCESSRESPONSE}
-  CODES_TSearchParamsProcessResponse : Array[TSearchParamsProcessResponse] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'identifier', 'organization', 'request', 'request-organization', 'request-provider', 'status');
+  CODES_TSearchParamsProcessResponse : Array[TSearchParamsProcessResponse] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'identifier', 'organization', 'request', 'request-organization', 'request-provider', 'status');
+{$ENDIF}
+{$IFDEF FHIR_PRODUCTPLAN}
+  CODES_TSearchParamsProductPlan : Array[TSearchParamsProductPlan] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'address', 'address-city', 'address-country', 'address-postalcode', 'address-state', 'address-use', 'administered-by', 'endpoint', 'identifier', 'name', 'owned-by', 'phonetic', 'status', 'type');
 {$ENDIF}
 {$IFDEF FHIR_PROVENANCE}
-  CODES_TSearchParamsProvenance : Array[TSearchParamsProvenance] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'agent', 'agent-role', 'agent-type', 'entity-id', 'entity-ref', 'location', 'patient', 'recorded', 'signature-type', 'target', 'when');
+  CODES_TSearchParamsProvenance : Array[TSearchParamsProvenance] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'agent', 'agent-role', 'agent-type', 'entity-id', 'entity-ref', 'location', 'patient', 'recorded', 'signature-type', 'target', 'when');
 {$ENDIF}
 {$IFDEF FHIR_QUESTIONNAIRE}
-  CODES_TSearchParamsQuestionnaire : Array[TSearchParamsQuestionnaire] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'code', 'date', 'description', 'effective', 'identifier', 'jurisdiction', 'name', 'publisher', 'status', 'title', 'url', 'version');
+  CODES_TSearchParamsQuestionnaire : Array[TSearchParamsQuestionnaire] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'code', 'context-type', 'date', 'definition', 'description', 'effective', 'identifier', 'jurisdiction', 'name', 'publisher', 'status', 'subject-type', 'title', 'url', 'version');
 {$ENDIF}
 {$IFDEF FHIR_QUESTIONNAIRERESPONSE}
-  CODES_TSearchParamsQuestionnaireResponse : Array[TSearchParamsQuestionnaireResponse] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'author', 'authored', 'based-on', 'context', 'identifier', 'part-of', 'patient', 'questionnaire', 'source', 'status', 'subject');
+  CODES_TSearchParamsQuestionnaireResponse : Array[TSearchParamsQuestionnaireResponse] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'author', 'authored', 'based-on', 'context', 'identifier', 'part-of', 'patient', 'questionnaire', 'source', 'status', 'subject');
 {$ENDIF}
 {$IFDEF FHIR_RELATEDPERSON}
-  CODES_TSearchParamsRelatedPerson : Array[TSearchParamsRelatedPerson] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'active', 'address', 'address-city', 'address-country', 'address-postalcode', 'address-state', 'address-use', 'birthdate', 'email', 'gender', 'identifier', 'name', 'patient', 'phone', 'phonetic', 'telecom');
+  CODES_TSearchParamsRelatedPerson : Array[TSearchParamsRelatedPerson] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'active', 'address', 'address-city', 'address-country', 'address-postalcode', 'address-state', 'address-use', 'birthdate', 'email', 'gender', 'identifier', 'name', 'patient', 'phone', 'phonetic', 'telecom');
 {$ENDIF}
 {$IFDEF FHIR_REQUESTGROUP}
-  CODES_TSearchParamsRequestGroup : Array[TSearchParamsRequestGroup] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'author', 'authored', 'code', 'context', 'definition', 'encounter', 'group-identifier', 'identifier', 'intent', 'participant', 'patient', 'priority', 'status', 'subject');
+  CODES_TSearchParamsRequestGroup : Array[TSearchParamsRequestGroup] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'author', 'authored', 'code', 'context', 'definition', 'encounter', 'group-identifier', 'identifier', 'intent', 'participant', 'patient', 'priority', 'status', 'subject');
 {$ENDIF}
 {$IFDEF FHIR_RESEARCHSTUDY}
-  CODES_TSearchParamsResearchStudy : Array[TSearchParamsResearchStudy] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'category', 'date', 'focus', 'identifier', 'jurisdiction', 'keyword', 'partof', 'principalinvestigator', 'protocol', 'site', 'sponsor', 'status', 'title');
+  CODES_TSearchParamsResearchStudy : Array[TSearchParamsResearchStudy] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'category', 'date', 'focus', 'identifier', 'keyword', 'location', 'partof', 'principalinvestigator', 'protocol', 'site', 'sponsor', 'status', 'title');
 {$ENDIF}
 {$IFDEF FHIR_RESEARCHSUBJECT}
-  CODES_TSearchParamsResearchSubject : Array[TSearchParamsResearchSubject] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'date', 'identifier', 'individual', 'patient', 'status');
+  CODES_TSearchParamsResearchSubject : Array[TSearchParamsResearchSubject] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'date', 'identifier', 'individual', 'patient', 'status', 'study');
 {$ENDIF}
 {$IFDEF FHIR_RISKASSESSMENT}
-  CODES_TSearchParamsRiskAssessment : Array[TSearchParamsRiskAssessment] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'condition', 'date', 'encounter', 'identifier', 'method', 'patient', 'performer', 'probability', 'risk', 'subject');
+  CODES_TSearchParamsRiskAssessment : Array[TSearchParamsRiskAssessment] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'condition', 'date', 'encounter', 'identifier', 'method', 'patient', 'performer', 'probability', 'risk', 'subject');
 {$ENDIF}
 {$IFDEF FHIR_SCHEDULE}
-  CODES_TSearchParamsSchedule : Array[TSearchParamsSchedule] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'active', 'actor', 'date', 'identifier', 'type');
+  CODES_TSearchParamsSchedule : Array[TSearchParamsSchedule] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'active', 'actor', 'date', 'identifier', 'type');
 {$ENDIF}
 {$IFDEF FHIR_SEARCHPARAMETER}
-  CODES_TSearchParamsSearchParameter : Array[TSearchParamsSearchParameter] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'base', 'code', 'component', 'date', 'derived-from', 'description', 'jurisdiction', 'name', 'publisher', 'status', 'target', 'type', 'url', 'version');
+  CODES_TSearchParamsSearchParameter : Array[TSearchParamsSearchParameter] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'base', 'code', 'component', 'context-type', 'date', 'derived-from', 'description', 'jurisdiction', 'name', 'publisher', 'status', 'target', 'type', 'url', 'version');
 {$ENDIF}
 {$IFDEF FHIR_SEQUENCE}
-  CODES_TSearchParamsSequence : Array[TSearchParamsSequence] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'chromosome', 'coordinate', 'end', 'identifier', 'patient', 'start', 'type');
+  CODES_TSearchParamsSequence : Array[TSearchParamsSequence] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'chromosome', 'coordinate', 'end', 'identifier', 'patient', 'start', 'type');
 {$ENDIF}
 {$IFDEF FHIR_SERVICEDEFINITION}
-  CODES_TSearchParamsServiceDefinition : Array[TSearchParamsServiceDefinition] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'composed-of', 'date', 'depends-on', 'derived-from', 'description', 'effective', 'identifier', 'jurisdiction', 'name', 'predecessor', 'publisher', 'status', 'successor', 'title', 'topic', 'url', 'version');
+  CODES_TSearchParamsServiceDefinition : Array[TSearchParamsServiceDefinition] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'composed-of', 'date', 'depends-on', 'derived-from', 'description', 'effective', 'identifier', 'jurisdiction', 'name', 'predecessor', 'publisher', 'status', 'successor', 'title', 'topic', 'url', 'version');
+{$ENDIF}
+{$IFDEF FHIR_SERVICEREQUEST}
+  CODES_TSearchParamsServiceRequest : Array[TSearchParamsServiceRequest] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'authored', 'based-on', 'body-site', 'category', 'code', 'context', 'encounter', 'identifier', 'instantiates', 'intent', 'occurrence', 'patient', 'performer', 'performer-type', 'priority', 'replaces', 'requester', 'requisition', 'specimen', 'status', 'subject');
 {$ENDIF}
 {$IFDEF FHIR_SLOT}
-  CODES_TSearchParamsSlot : Array[TSearchParamsSlot] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'identifier', 'schedule', 'slot-type', 'start', 'status');
+  CODES_TSearchParamsSlot : Array[TSearchParamsSlot] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'identifier', 'schedule', 'slot-type', 'start', 'status');
 {$ENDIF}
 {$IFDEF FHIR_SPECIMEN}
-  CODES_TSearchParamsSpecimen : Array[TSearchParamsSpecimen] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'accession', 'bodysite', 'collected', 'collector', 'container', 'container-id', 'identifier', 'parent', 'patient', 'status', 'subject', 'type');
+  CODES_TSearchParamsSpecimen : Array[TSearchParamsSpecimen] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'accession', 'bodysite', 'collected', 'collector', 'container', 'container-id', 'identifier', 'parent', 'patient', 'status', 'subject', 'type');
 {$ENDIF}
 {$IFDEF FHIR_SPECIMENDEFINITION}
-  CODES_TSearchParamsSpecimenDefinition : Array[TSearchParamsSpecimenDefinition] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'container', 'identifier', 'type');
+  CODES_TSearchParamsSpecimenDefinition : Array[TSearchParamsSpecimenDefinition] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'container', 'identifier', 'type');
 {$ENDIF}
 {$IFDEF FHIR_STRUCTUREDEFINITION}
-  CODES_TSearchParamsStructureDefinition : Array[TSearchParamsStructureDefinition] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'abstract', 'base', 'base-path', 'context-type', 'date', 'derivation', 'description', 'experimental', 'ext-context', 'identifier', 'jurisdiction', 'keyword', 'kind', 'name', 'path', 'publisher', 'status', 'title', 'type', 'url', 'valueset', 'version');
+  CODES_TSearchParamsStructureDefinition : Array[TSearchParamsStructureDefinition] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'abstract', 'base', 'base-path', 'context-type', 'date', 'derivation', 'description', 'experimental', 'ext-context', 'identifier', 'jurisdiction', 'keyword', 'kind', 'name', 'path', 'publisher', 'status', 'title', 'type', 'url', 'valueset', 'version');
 {$ENDIF}
 {$IFDEF FHIR_STRUCTUREMAP}
-  CODES_TSearchParamsStructureMap : Array[TSearchParamsStructureMap] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'date', 'description', 'identifier', 'jurisdiction', 'name', 'publisher', 'status', 'title', 'url', 'version');
+  CODES_TSearchParamsStructureMap : Array[TSearchParamsStructureMap] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'date', 'description', 'identifier', 'jurisdiction', 'name', 'publisher', 'status', 'title', 'url', 'version');
 {$ENDIF}
 {$IFDEF FHIR_SUBSCRIPTION}
-  CODES_TSearchParamsSubscription : Array[TSearchParamsSubscription] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'add-tag', 'contact', 'criteria', 'payload', 'status', 'type', 'url');
+  CODES_TSearchParamsSubscription : Array[TSearchParamsSubscription] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'add-tag', 'contact', 'criteria', 'payload', 'status', 'type', 'url');
 {$ENDIF}
 {$IFDEF FHIR_SUBSTANCE}
-  CODES_TSearchParamsSubstance : Array[TSearchParamsSubstance] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'category', 'code', 'container-identifier', 'expiry', 'identifier', 'quantity', 'status', 'substance-reference');
+  CODES_TSearchParamsSubstance : Array[TSearchParamsSubstance] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'category', 'code', 'container-identifier', 'expiry', 'identifier', 'quantity', 'status', 'substance-reference');
+{$ENDIF}
+{$IFDEF FHIR_SUBSTANCEPOLYMER}
+  CODES_TSearchParamsSubstancePolymer : Array[TSearchParamsSubstancePolymer] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text');
+{$ENDIF}
+{$IFDEF FHIR_SUBSTANCEREFERENCEINFORMATION}
+  CODES_TSearchParamsSubstanceReferenceInformation : Array[TSearchParamsSubstanceReferenceInformation] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text');
+{$ENDIF}
+{$IFDEF FHIR_SUBSTANCESPECIFICATION}
+  CODES_TSearchParamsSubstanceSpecification : Array[TSearchParamsSubstanceSpecification] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text');
 {$ENDIF}
 {$IFDEF FHIR_SUPPLYDELIVERY}
-  CODES_TSearchParamsSupplyDelivery : Array[TSearchParamsSupplyDelivery] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'identifier', 'patient', 'receiver', 'status', 'supplier');
+  CODES_TSearchParamsSupplyDelivery : Array[TSearchParamsSupplyDelivery] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'identifier', 'patient', 'receiver', 'status', 'supplier');
 {$ENDIF}
 {$IFDEF FHIR_SUPPLYREQUEST}
-  CODES_TSearchParamsSupplyRequest : Array[TSearchParamsSupplyRequest] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'category', 'date', 'identifier', 'requester', 'status', 'supplier');
+  CODES_TSearchParamsSupplyRequest : Array[TSearchParamsSupplyRequest] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'category', 'date', 'identifier', 'requester', 'status', 'supplier');
 {$ENDIF}
 {$IFDEF FHIR_TASK}
-  CODES_TSearchParamsTask : Array[TSearchParamsTask] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'authored-on', 'based-on', 'business-status', 'code', 'context', 'focus', 'group-identifier', 'identifier', 'intent', 'modified', 'organization', 'owner', 'part-of', 'patient', 'performer', 'period', 'priority', 'requester', 'status', 'subject');
+  CODES_TSearchParamsTask : Array[TSearchParamsTask] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'authored-on', 'based-on', 'business-status', 'code', 'context', 'focus', 'group-identifier', 'identifier', 'intent', 'modified', 'owner', 'part-of', 'patient', 'performer', 'period', 'priority', 'requester', 'status', 'subject');
+{$ENDIF}
+{$IFDEF FHIR_TERMINOLOGYCAPABILITIES}
+  CODES_TSearchParamsTerminologyCapabilities : Array[TSearchParamsTerminologyCapabilities] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'date', 'description', 'jurisdiction', 'name', 'publisher', 'status', 'title', 'url', 'version');
 {$ENDIF}
 {$IFDEF FHIR_TESTREPORT}
-  CODES_TSearchParamsTestReport : Array[TSearchParamsTestReport] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'identifier', 'issued', 'participant', 'result', 'tester', 'testscript');
+  CODES_TSearchParamsTestReport : Array[TSearchParamsTestReport] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'identifier', 'issued', 'participant', 'result', 'tester', 'testscript');
 {$ENDIF}
 {$IFDEF FHIR_TESTSCRIPT}
-  CODES_TSearchParamsTestScript : Array[TSearchParamsTestScript] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'date', 'description', 'identifier', 'jurisdiction', 'name', 'publisher', 'status', 'testscript-capability', 'title', 'url', 'version');
+  CODES_TSearchParamsTestScript : Array[TSearchParamsTestScript] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'date', 'description', 'identifier', 'jurisdiction', 'name', 'publisher', 'status', 'testscript-capability', 'title', 'url', 'version');
+{$ENDIF}
+{$IFDEF FHIR_USERSESSION}
+  CODES_TSearchParamsUserSession : Array[TSearchParamsUserSession] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'focus', 'identifier', 'patient', 'status', 'user', 'workstation');
 {$ENDIF}
 {$IFDEF FHIR_VALUESET}
-  CODES_TSearchParamsValueSet : Array[TSearchParamsValueSet] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'date', 'description', 'expansion', 'identifier', 'jurisdiction', 'name', 'publisher', 'reference', 'status', 'title', 'url', 'version');
+  CODES_TSearchParamsValueSet : Array[TSearchParamsValueSet] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'code', 'date', 'description', 'expansion', 'identifier', 'jurisdiction', 'name', 'publisher', 'reference', 'status', 'title', 'url', 'version');
+{$ENDIF}
+{$IFDEF FHIR_VERIFICATIONRESULT}
+  CODES_TSearchParamsVerificationResult : Array[TSearchParamsVerificationResult] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'target');
 {$ENDIF}
 {$IFDEF FHIR_VISIONPRESCRIPTION}
-  CODES_TSearchParamsVisionPrescription : Array[TSearchParamsVisionPrescription] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_tag', '_text', 'datewritten', 'encounter', 'identifier', 'patient', 'prescriber', 'status');
+  CODES_TSearchParamsVisionPrescription : Array[TSearchParamsVisionPrescription] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'datewritten', 'encounter', 'identifier', 'patient', 'prescriber', 'status');
 {$ENDIF}
-  FHIR_GENERATED_VERSION = '3.1.0';
+  FHIR_GENERATED_VERSION = '3.2.0';
 
   FHIR_GENERATED_PUBLICATION = '4';
 
-  FHIR_GENERATED_DATE = '2017-10-06T08:43:59+11:00';
+  FHIR_GENERATED_DATE = '2017-12-20T12:10:38+11:00';
 
 
 

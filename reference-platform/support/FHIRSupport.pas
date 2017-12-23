@@ -539,7 +539,7 @@ Type
     function getBundle : TFHIRBundle; virtual;
   end;
 
-  TCreateBundleBuilderEvent = procedure (context : TFHIRResponse; aType : TFhirBundleTypeEnum; out builder : TFhirBundleBuilder) of object;
+  TCreateBundleBuilderEvent = procedure (request : TFHIRRequest; context : TFHIRResponse; aType : TFhirBundleTypeEnum; out builder : TFhirBundleBuilder) of object;
 
   {@Class TFHIRResponse
     A FHIR response.

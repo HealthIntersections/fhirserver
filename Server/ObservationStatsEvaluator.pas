@@ -239,7 +239,7 @@ begin
   init();
   obs := TFhirObservation.Create;
   try
-    resp.returnList.Add(obs.Link);
+    resp.{$IFDEF FHIR4}statisticsList{$ELSE}returnList{$ENDIF}.Add(obs.Link);
     obs.status := ObservationStatusFinal;
     obs.code := TFhirCodeableConcept.create;
     obs.code.codingList.Add(c.Link);

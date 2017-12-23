@@ -43,7 +43,7 @@ uses
   AdvObjects, AdvStringObjectMatches, AdvStringLists, AdvGenerics,
   KDBManager,
   FHIRTypes, FHIRResources, FHIRUtilities, CDSHooksUtilities, FHIROperations,
-  TerminologyServices, SnomedServices, LoincServices, UcumServices, RxNormServices, UniiServices, ACIRServices,
+  TerminologyServices, SnomedServices, LoincServices, UcumServices, RxNormServices, UniiServices, ACIRServices, ICD10Services,
   IETFLanguageCodeServices, FHIRValueSetChecker, ClosureManager, ServerAdaptations, ServerUtilities,
   TerminologyServerStore, SnomedExpressions;
 
@@ -156,6 +156,7 @@ var
   p : TCodeSystemProvider;
   sn: TSnomedServices;
   def : boolean;
+  icdX: TICD10Provider;
 begin
   logt('Load DB Terminologies');
   Unii := TUniiServices.Create(Fdb.Link);
@@ -179,6 +180,19 @@ begin
         Ini.ReadString(voVersioningNotApplicable, 'database', 'server', ''), Ini.ReadString(voVersioningNotApplicable, 'NciMeta', 'database', ''),
         Ini.ReadString(voVersioningNotApplicable, 'database', 'username', ''), Ini.ReadString(voVersioningNotApplicable, 'database', 'password', ''), false));
   end;
+  fn := ini.ReadString(voVersioningNotApplicable, 'icd-10', 'source', '');
+  if fn <> '' then
+  begin
+    for s in fn.split([',']) do
+    begin
+      logt('Load ICD-10 from '+s);
+      icdX := TICD10Provider.Create(true, s);
+      icd10.Add(icdX);
+      ProviderClasses.Add(icdX.system(nil), icdX.Link);
+      ProviderClasses.Add(icdX.system(nil)+URI_VERSION_BREAK+icdX.version(nil), icdX.Link);
+      logt(' - done');
+    end;
+  end;
   fn := ini.ReadString(voVersioningNotApplicable, 'snomed', 'cache', '');
   if fn <> '' then
   begin
@@ -197,6 +211,7 @@ begin
       def := false;
     end;
   end;
+
   fn := ini.ReadString(voVersioningNotApplicable, 'loinc', 'cache', '');
   if fn <> '' then
   begin

@@ -270,7 +270,8 @@ uses
   SQLite3Utils in '..\Libraries\db\SQLite3Utils.pas',
   SQLite3Wrap in '..\Libraries\db\SQLite3Wrap.pas',
   KDBSQLite in '..\Libraries\db\KDBSQLite.pas',
-  ServerPostHandlers in '..\Server\ServerPostHandlers.pas';
+  ServerPostHandlers in '..\Server\ServerPostHandlers.pas',
+  ICD10Services in '..\Server\ICD10Services.pas';
 
 {$R *.res}
 

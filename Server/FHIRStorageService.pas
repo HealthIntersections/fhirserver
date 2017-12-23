@@ -35,9 +35,10 @@ uses
   SysUtils, Classes, System.Generics.Collections,
   KCritSct, StringSupport, ThreadSupport, TextUtilities,
   AdvObjects, AdvGenerics, AdvStringMatches, AdvNames, AdvStringBuilders, AdvExceptions,
-  KDBDialects, DateSupport,
+  KDBDialects, DateSupport, GraphQL,
 
-  FHIRBase, FHIRSupport, FHIRTypes, FHIRResources, FHIRConstants, FHIRUtilities, FHIRLang, FHIRClient, FHIRContext, FHIRXhtml, FHIRIndexInformation, FHIRParserBase, FHIRIndexBase,
+  FHIRBase, FHIRSupport, FHIRTypes, FHIRResources, FHIRConstants, FHIRUtilities, FHIRLang,
+  FHIRClient, FHIRContext, FHIRXhtml, FHIRIndexInformation, FHIRParserBase, FHIRIndexBase, FHIRGraphQL,
   CDSHooksUtilities,
   FHIRValidator, ServerValidator, FHIRSubscriptionManager, ServerUtilities, FHIRServerConstants, FHIRIndexManagers;
 
@@ -157,6 +158,7 @@ Type
   protected
     FServerContext : TAdvObject;
     FOperations : TAdvList<TFhirOperation>;
+    procedure processGraphQL(graphql: String; request : TFHIRRequest; response : TFHIRResponse); virtual;
 
     procedure StartTransaction; virtual;
     procedure CommitTransaction; virtual;
@@ -222,12 +224,12 @@ Type
     function readResource(atype : TFhirResourceType; id : String) : TFHIRResource; override;
     function updateResource(resource : TFhirResource) : TFHIRResource; overload; override;
     procedure deleteResource(atype : TFhirResourceType; id : String); override;
-    function search(allRecords : boolean; params : TDictionary<String, String>) : TFHIRBundle; overload; override;
-    function search(atype : TFhirResourceType; allRecords : boolean; params : TDictionary<String, String>) : TFHIRBundle; overload; override;
+    function search(allRecords : boolean; params : TStringList) : TFHIRBundle; overload; override;
+    function search(atype : TFhirResourceType; allRecords : boolean; params : TStringList) : TFHIRBundle; overload; override;
     function search(atype : TFhirResourceType; allRecords : boolean; params : string) : TFHIRBundle; overload; override;
-    function searchPost(atype : TFhirResourceType; allRecords : boolean; params : TDictionary<String, String>; resource : TFhirResource) : TFHIRBundle; override;
+    function searchPost(atype : TFhirResourceType; allRecords : boolean; params : TStringList; resource : TFhirResource) : TFHIRBundle; override;
     function operation(atype : TFhirResourceType; opName : String; params : TFhirParameters) : TFHIRResource; override;
-    function historyType(atype : TFhirResourceType; allRecords : boolean; params : TDictionary<String, String>) : TFHIRBundle; override;
+    function historyType(atype : TFhirResourceType; allRecords : boolean; params : TStringList) : TFHIRBundle; override;
   end;
 
   TFHIRStorageService = class (TAdvObject)
@@ -567,6 +569,11 @@ begin
   result := true;
 end;
 
+procedure TFHIROperationEngine.processGraphQL(graphql: String; request: TFHIRRequest; response: TFHIRResponse);
+begin
+  raise Exception.Create('Must override '+className+'.processGraphQL');
+end;
+
 procedure TFHIROperationEngine.VersionNotFound(request: TFHIRRequest; response: TFHIRResponse);
 begin
   response.HTTPCode := 404;
@@ -851,6 +858,10 @@ begin
     finally
       html.free;
     end;
+
+    if (request.Parameters.VarExists('_graphql') and (response.Resource <> nil) and (response.Resource.ResourceType <> frtOperationOutcome)) then
+      processGraphQL(request.Parameters.GetVar('_graphql'), request, response);
+
 
     AuditRest(request.session, request.internalRequestId, request.externalRequestId, request.ip, request.ResourceName, '', '', 0, request.CommandType, request.Provenance, response.httpCode, '', response.message);
   except
@@ -1280,7 +1291,7 @@ begin
 end;
 
 function TFHIRInternalClient.historyType(atype: TFhirResourceType;
-  allRecords: boolean; params: TDictionary<String, String>): TFHIRBundle;
+  allRecords: boolean; params : TStringList): TFHIRBundle;
 begin
   raise Exception.Create('Not done yet');
 
@@ -1329,7 +1340,7 @@ begin
 end;
 
 function TFHIRInternalClient.search(atype: TFhirResourceType;
-  allRecords: boolean; params: TDictionary<String, String>): TFHIRBundle;
+  allRecords: boolean; params : TStringList): TFHIRBundle;
 begin
   raise Exception.Create('Not done yet');
 
@@ -1343,13 +1354,13 @@ begin
 end;
 
 function TFHIRInternalClient.search(allRecords: boolean;
-  params: TDictionary<String, String>): TFHIRBundle;
+  params : TStringList): TFHIRBundle;
 begin
   raise Exception.Create('Not done yet');
 end;
 
 function TFHIRInternalClient.searchPost(atype: TFhirResourceType;
-  allRecords: boolean; params: TDictionary<String, String>;
+  allRecords: boolean; params : TStringList;
   resource: TFhirResource): TFHIRBundle;
 begin
   raise Exception.Create('Not done yet');

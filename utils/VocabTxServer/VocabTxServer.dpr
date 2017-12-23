@@ -228,7 +228,9 @@ uses
   vpocversion in 'vpocversion.pas',
   FHIRIndexBase in '..\..\reference-platform\support\FHIRIndexBase.pas',
   AdvThreads in '..\..\reference-platform\support\AdvThreads.pas',
-  SCrypt in '..\..\Libraries\security\SCrypt.pas';
+  SCrypt in '..\..\Libraries\security\SCrypt.pas',
+  ICD10Services in '..\..\Server\ICD10Services.pas',
+  ServerPostHandlers in '..\..\Server\ServerPostHandlers.pas';
 
 {$R *.res}
 

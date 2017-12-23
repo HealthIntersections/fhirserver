@@ -220,6 +220,7 @@
         <DCCReference Include="..\support\FHIRLog.pas"/>
         <DCCReference Include="..\..\Server\Logging.pas"/>
         <DCCReference Include="..\support\FHIRIndexBase.pas"/>
+        <DCCReference Include="..\..\Libraries\js\Javascript.pas"/>
         <None Include="Profiling\AQtimeModule1.aqt"/>
         <BuildConfiguration Include="Debug">
             <Key>Cfg_2</Key>

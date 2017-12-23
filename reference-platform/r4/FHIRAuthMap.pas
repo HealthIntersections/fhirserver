@@ -35,137 +35,159 @@ uses
   FHIRResources;
 
 type
-    TTokenCategory = (tcClinical, tcData, tcMeds, tcSchedule, tcAudit, tcDocuments, tcFinancial, tcOther);
+    TTokenCategory = (tcClinical, tcData, tcMeds, tcSchedule, tcAudit, tcDocuments, tcFinancial, tcMedicationDefinition, tcOther);
 
 const
-  CODES_TTokenCategory : array [TTokenCategory] of String = ('Clinical', 'Data', 'Meds', 'Schedule', 'Audit', 'Documents', 'Financial', 'Other');
+  CODES_TTokenCategory : array [TTokenCategory] of String = ('Clinical', 'Data', 'Meds', 'Schedule', 'Audit', 'Documents', 'Financial', 'MedicationDefinitions', 'Other');
 
 // categories for web login
 // tcClinical, tcData, tcMeds, tcSchedule, tcAudit, tcDocuments, tcFinancial, tcOther
 
   RESOURCE_CATEGORY : array [TFHIRResourceType] of TTokenCategory =
     (
-    tcOther, // frtNull frtNull
-    tcFinancial , // frtAccount frtAccount
-    tcOther, // frtActivityDefinition frtActivityDefinition
-    tcClinical , // frtAdverseEvent frtAdverseEvent
-    tcClinical , // frtAllergyIntolerance frtAllergyIntolerance
-    tcSchedule , // frtAppointment frtAppointment
-    tcSchedule , // frtAppointmentResponse frtAppointmentResponse
-    tcAudit , // frtAuditEvent frtAuditEvent
-    tcOther , // frtBasic frtBasic
-    tcDocuments , // frtBinary frtBinary
-    tcOther , // frtBodySite frtBodyStructure
-    tcOther , // frtBundle frtBundle
-    tcOther , // frtCapabilityStatement
-    tcClinical , // frtCarePlan frtCarePlan
-    tcClinical , // frtCareTeam frtCareTeam
-    tcOther, // frtCatalogEntry frtCatalogEntry
-    tcOther, // frtCatalogEntry frtCatalogEntry
-    tcOther , // frtCareTeam frtChargeItem
-    tcFinancial , // frtClaim frtClaim
-    tcFinancial , // frtClaimResponse
-    tcClinical , // frtClinicalImpression
-    tcOther , // frtCodeSystem
-    tcOther , // frtCommunication
-    tcOther , // frtCommunicationRequest
-    tcOther , // frtCompartmentDefinition
-    tcDocuments , // frtComposition
-    tcOther , // frtConceptMap
-    tcClinical , // frtCondition
-    tcOther, // frtConsent
-    tcFinancial , // frtContract
-    tcFinancial , // frtCoverage
-    tcClinical,  // frtDetectedIssue
-    tcOther , // frtDevice
-    tcOther , // frtDeviceComponent
-    tcOther , // frtDeviceMetric
-    tcOther , // frtDeviceUseRequest
+    tcOther , // frtNull,
+    tcFinancial, // frtAccount
+    tcOther, // frtActivityDefinition
+    tcClinical, // frtAdverseEvent
+    tcClinical, // frtAllergyIntolerance
+    tcSchedule, // frtAppointment
+    tcSchedule, // frtAppointmentResponse
+    tcAudit, // frtAuditEvent
+    tcClinical, // frtBasic
+    tcDocuments, // frtBinary
+    tcMedicationDefinition, // frtBiologicallyDerivedProduct
+    tcClinical, // frtBodyStructure
+    tcDocuments, // frtBundle
+    tcOther, // frtCapabilityStatement
+    tcClinical, // frtCarePlan
+    tcClinical, // frtCareTeam
+    tcFinancial, // frtChargeItem
+    tcFinancial, // frtClaim
+    tcFinancial, // frtClaimResponse
+    tcClinical, // frtClinicalImpression
+    tcOther, // frtCodeSystem
+    tcDocuments, // frtCommunication
+    tcDocuments, // frtCommunicationRequest
+    tcOther, // frtCompartmentDefinition
+    tcDocuments, // frtComposition
+    tcOther, // frtConceptMap
+    tcClinical, // frtCondition
+    tcData, // frtConsent
+    tcDocuments, // frtContract
+    tcFinancial, // frtCoverage
+    tcClinical, // frtDetectedIssue
+    tcData, // frtDevice
+    tcData, // frtDeviceComponent
+    tcData, // frtDeviceMetric
+    tcClinical, // frtDeviceRequest
     tcClinical, // frtDeviceUseStatement
     tcClinical, // frtDiagnosticReport
-    tcDocuments , // frtDocumentManifest
+    tcDocuments, // frtDocumentManifest
     tcDocuments, // frtDocumentReference
-    tcFinancial , // frtEligibilityRequest
+    tcFinancial, // frtEligibilityRequest
     tcFinancial, // frtEligibilityResponse
-    tcSchedule , // frtEncounter
-    tcOther, // frtEndpoint
+    tcSchedule, // frtEncounter
+    tcData, // frtEndpoint
     tcFinancial, // frtEnrollmentRequest
-    tcFinancial , // frtEnrollmentResponse
+    tcFinancial, // frtEnrollmentResponse
+    tcOther, // frtEntryDefinition
     tcSchedule, // frtEpisodeOfCare
     tcOther, // frtEventDefinition
+    tcOther, // frtExampleScenario
     tcOther, // frtExpansionProfile
-    tcFinancial , // frtExplanationOfBenefit
+    tcFinancial, // frtExplanationOfBenefit
     tcClinical, // frtFamilyMemberHistory
-    tcClinical , // frtFlag
-    tcClinical , // frtGoal
+    tcClinical, // frtFlag
+    tcClinical, // frtGoal
     tcOther, // frtGraphDefinition
-    tcOther , // frtGroup
-    tcClinical , // frtGuidanceResponse
-    tcSchedule , // frtHealthcareService
-    tcData , // frtImagingManifest
-    tcData , // frtImagingStudy
-    tcMeds , // frtImmunization
-    tcMeds , // frtImmunizationRecommendation
-    tcOther , // frtImplementationGuide
+    tcData, // frtGroup
+    tcClinical, // frtGuidanceResponse
+    tcData, // frtHealthcareService
+    tcClinical, // frtImagingStudy
+    tcClinical, // frtImmunization
+    tcClinical, // frtImmunizationEvaluation
+    tcClinical, // frtImmunizationRecommendation
+    tcOther, // frtImplementationGuide
+    tcOther, // frtImplementationGuideInput
+    tcOther, // frtImplementationGuideOutput
+    tcFinancial, // frtInvoice
+    tcMedicationDefinition, // frtItemInstance
     tcOther, // frtLibrary
-    tcClinical , // frtLinkage
-    tcOther , // frtList
-    tcOther , // frtLocation
+    tcData, // frtLinkage
+    tcDocuments, // frtList
+    tcData, // frtLocation
     tcOther, // frtMeasure
-    tcOther, // frtMeasureReport
-    tcOther , // frtMedia
-    tcMeds , // frtMedication
-    tcMeds , // frtMedicationAdministration
-    tcMeds , // frtMedicationDispense
-    tcMeds , // frtMedicationRequest
-    tcMeds , // frtMedicationStatement
+    tcData, // frtMeasureReport
+    tcDocuments, // frtMedia
+    tcMeds, // frtMedication
+    tcMeds, // frtMedicationAdministration
+    tcMeds, // frtMedicationDispense
+    tcMeds, // frtMedicationRequest
+    tcMeds, // frtMedicationStatement
+    tcMedicationDefinition, // frtMedicinalProduct
+    tcMedicationDefinition, // frtMedicinalProductAuthorization
+    tcMedicationDefinition, // frtMedicinalProductClinicals
+    tcMedicationDefinition, // frtMedicinalProductDeviceSpec
+    tcMedicationDefinition, // frtMedicinalProductIngredient
+    tcMedicationDefinition, // frtMedicinalProductPackaged
+    tcMedicationDefinition, // frtMedicinalProductPharmaceutical
     tcOther, // frtMessageDefinition
-    tcOther , // frtMessageHeader
-    tcOther , // frtNamingSystem
-    tcMeds , // frtNutritionRequest
-    tcData , // frtObservation
-    tcOther , // frtOperationDefinition
-    tcOther , // frtOperationOutcome
-    tcOther , // frtOrganization
-    tcOther , // frtParameters
-    tcSchedule , // frtPatient
-    tcFinancial , // frtPaymentNotice
-    tcFinancial , // frtPaymentReconciliation
-    tcOther , // frtPerson
-    tcOther , // frtPlanDefinition
-    tcOther , // frtPractitioner
-    tcOther , // frtPractitionerRole
-    tcClinical , // frtProcedure
-    tcOther , // frtProcedureRequest
-    tcOther , // frtProcessRequest
-    tcOther , // frtProcessResponse
-    tcAudit , // frtProvenance
-    tcOther , // frtQuestionnaire
-    tcOther, // frtQuestionnaireResponse
-    tcClinical , // frtReferralRequest
-    tcOther , // frtRelatedPerson
-    tcOther , // frtRequestGroup
-    tcOther , // frtResearchStudy
-    tcOther , // frtResearchSubject
-    tcOther , // frtRiskAssessment
-    tcSchedule , // frtSchedule
-    tcOther , // frtSearchParameter
-    tcData, // frtSequence
-    tcOther , // frtServiceDefinition
-    tcSchedule , // frtSlot
-    tcData , // frtSpecimen
-    tcOther , // frtStructureDefinition
-    tcOther , // frtStructureMap
-    tcOther , // frtSubscription
-    tcOther , // frtSubstance
-    tcOther , // frtSupplyDelivery
-    tcOther , // frtSupplyRequest
-    tcOther , // frtTask
-    tcOther , // frtTestReport
-    tcOther , // frtTestScript
-    tcOther , // frtValueSet
-    tcClinical,// frtVisionPrescription
-    tcOther); // frtCustom
+    tcData, // frtMessageHeader
+    tcOther, // frtNamingSystem
+    tcClinical, // frtNutritionOrder
+    tcClinical, // frtObservation
+    tcOther, // frtObservationDefinition
+    tcData, // frtOccupationalData
+    tcOther, // frtOperationDefinition
+    tcData, // frtOperationOutcome
+    tcData, // frtOrganization
+    tcData, // frtOrganizationRole
+    tcData, // frtParameters
+    tcData, // frtPatient
+    tcFinancial, // frtPaymentNotice
+    tcFinancial, // frtPaymentReconciliation
+    tcData, // frtPerson
+    tcOther, // frtPlanDefinition
+    tcData, // frtPractitioner
+    tcData, // frtPractitionerRole
+    tcClinical, // frtProcedure
+    tcFinancial, // frtProcessRequest
+    tcFinancial, // frtProcessResponse
+    tcMedicationDefinition, // frtProductPlan
+    tcAudit, // frtProvenance
+    tcOther, // frtQuestionnaire
+    tcClinical, // frtQuestionnaireResponse
+    tcData, // frtRelatedPerson
+    tcOther, // frtRequestGroup
+    tcData, // frtResearchStudy
+    tcData, // frtResearchSubject
+    tcClinical, // frtRiskAssessment
+    tcSchedule, // frtSchedule
+    tcOther, // frtSearchParameter
+    tcClinical, // frtSequence
+    tcOther, // frtServiceDefinition
+    tcClinical, // frtServiceRequest
+    tcSchedule, // frtSlot
+    tcClinical, // frtSpecimen
+    tcOther, // frtSpecimenDefinition
+    tcOther, // frtStructureDefinition
+    tcOther, // frtStructureMap
+    tcData, // frtSubscription
+    tcData, // frtSubstance
+    tcMedicationDefinition, // frtSubstancePolymer
+    tcMedicationDefinition, // frtSubstanceReferenceInformation
+    tcMedicationDefinition, // frtSubstanceSpecification
+    tcData, // frtSupplyDelivery
+    tcData, // frtSupplyRequest
+    tcData, // frtTask
+    tcOther, // frtTerminologyCapabilities
+    tcOther, // frtTestReport
+    tcOther, // frtTestScript
+    tcData, // frtUserSession
+    tcOther, // frtValueSet
+    tcMedicationDefinition, // frtVerificationResult
+    tcClinical, // frtVisionPrescription
+    tcOther); // frtCustom);
 
 
 implementation

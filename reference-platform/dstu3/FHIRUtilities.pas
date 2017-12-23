@@ -147,7 +147,8 @@ function getConformanceResourceUrl(res : TFHIRResource) : string;
 Function removeCaseAndAccents(s : String) : String;
 
 function CustomResourceNameIsOk(name : String) : boolean;
-function fileToResource(name : String; var format : TFHIRFormat) : TFhirResource;
+function fileToResource(name : String) : TFhirResource; overload;
+function fileToResource(name : String; var format : TFHIRFormat) : TFhirResource; overload;
 function streamToResource(stream : TStream; var format : TFHIRFormat) : TFhirResource;
 function bytesToResource(bytes : TBytes; var format : TFHIRFormat) : TFhirResource;
 procedure resourceToFile(res : TFhirResource; name : String; format : TFHIRFormat);
@@ -657,6 +658,12 @@ type
     function summary : String;
   end;
 
+  TFhirContactPointHelper = class helper for TFhirContactPoint
+  public
+    function isPhoneOrFax : boolean;
+    function isEmail : boolean;
+  end;
+
 function Path(const parts : array of String) : String;
 function UrlPath(const parts : array of String) : String;
 
@@ -681,7 +688,7 @@ function gen(obj : TFhirRatio) : String; overload;
 function gen(obj : TFhirSampledData) : String; overload;
 function gen(obj : TFhirSignature) : String; overload;
 function gen(obj : TFhirAddress) : String; overload;
-function gen(obj : TFhirContactPoint) : String; overload;
+function gen(obj : TFhirContactPoint; hideType : boolean = false) : String; overload;
 function gen(obj : TFhirTiming) : String; overload;
 function gen(obj : TFhirUsageContext) : String; overload;
 
@@ -1397,10 +1404,12 @@ begin
   end;
 end;
 
-function gen(obj : TFhirContactPoint) : String;
+function gen(obj : TFhirContactPoint; hideType : boolean = false) : String;
 begin
   if (obj = nil) then
     result := ''
+  else if not hideType then
+    result := obj.value
   else
     result := CODES_TFhirContactPointSystemEnum[obj.system]+': '+obj.value;
 end;
@@ -5301,6 +5310,13 @@ begin
     display := value.Substring(1, value.Length-1);
 end;
 
+function fileToResource(name : String) : TFhirResource;
+var
+  fmt : TFHIRFormat;
+begin
+  result := fileToResource(name, fmt);
+end;
+
 function fileToResource(name : String; var format : TFHIRFormat) : TFhirResource;
 var
   f : TFileStream;
@@ -5863,6 +5879,18 @@ begin
     if (self.interactionList[i].code = type_) then
       self.interactionList.DeleteByIndex(i);
 
+end;
+
+{ TFhirContactPointHelper }
+
+function TFhirContactPointHelper.isEmail: boolean;
+begin
+  result := system in [ContactPointSystemEmail];
+end;
+
+function TFhirContactPointHelper.isPhoneOrFax: boolean;
+begin
+  result := system in [ContactPointSystemPhone, ContactPointSystemFax];
 end;
 
 end.

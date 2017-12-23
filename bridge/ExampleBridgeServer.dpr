@@ -237,7 +237,9 @@ uses
   ApplicationCache in '..\Server\ApplicationCache.pas',
   CDSHooksClientManager in '..\reference-platform\support\CDSHooksClientManager.pas',
   WebSourceProvider in '..\Server\WebSourceProvider.pas',
-  FHIRIndexBase in '..\reference-platform\support\FHIRIndexBase.pas';
+  FHIRIndexBase in '..\reference-platform\support\FHIRIndexBase.pas',
+  ICD10Services in '..\Server\ICD10Services.pas',
+  ServerPostHandlers in '..\Server\ServerPostHandlers.pas';
 
 var
   gsrv : TExampleFhirServer;

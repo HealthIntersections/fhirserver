@@ -1728,6 +1728,7 @@ Header(Session, FBaseURL, lang, version)+
 
         if (links <> nil) and (links.Matches['z-edit-src'] <> '') then
           s.append('. Edit this as <a href="'+patchToWeb(links.Matches['z-edit-src'])+'?srcformat=xml">XML</a> or <a href="'+patchToWeb(links.Matches['z-edit-src'])+'?srcformat=json">JSON</a>');
+        {$IFDEF FHIR_QUESTIONNAIRERESPONSE}
         if (links <> nil) and (links.Matches['edit-form'] <> '') then
           if (oResource is TFHIRQuestionnaireResponse) then
           begin
@@ -1736,6 +1737,7 @@ Header(Session, FBaseURL, lang, version)+
           end
           else
             s.append('. <a href="'+patchToWeb(links.Matches['edit-form'])+'">Edit this Resource</a> (or <a href="'+links.Matches['edit-form']+'">see resources underlying that</a>)');
+        {$ENDIF}
         if (links <> nil) and (links.Matches['edit-post'] <> '') then
           s.append('. Submit edited content by POST to '+links.Matches['edit-post']);
         if not (oResource.resourceType in [frtProvenance, frtAuditEvent]) then
@@ -2145,6 +2147,7 @@ Header(Session, FBaseURL, lang, FVersion)+
         if (e.tags['z-edit-src'] <> '') then
           s.append(' Edit this as <a href="'+patchToWeb(e.tags['z-edit-src'])+'?srcformat=xml">XML</a> or <a href="'+patchToWeb(e.tags['z-edit-src'])+'?srcformat=json">JSON</a>.');
 
+        {$IFDEF FHIR_QUESTIONNAIRERESPONSE}
         if e.tags['edit-form'] <> '' then
           if (r is TFHIRQuestionnaireResponse) then
           begin
@@ -2155,6 +2158,7 @@ Header(Session, FBaseURL, lang, FVersion)+
             s.append(' <a href="'+patchToWeb(e.tags['edit-form'])+'">Edit this Resource</a> (or just see <a href="'+e.tags['edit-form']+'">the Questionnaire</a>)');
         if e.tags['edit-post'] <> '' then
           s.append(' Submit edited content by POST to '+e.tags['edit-post']);
+        {$ENDIF}
 
         if assigned(FOnGetLink) then
         begin

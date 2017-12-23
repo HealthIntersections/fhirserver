@@ -37,7 +37,7 @@ uses
   AdvObjects, AdvStringLists, AdvStringMatches, AdvObjectLists, AdvGenerics, AdvExceptions,
   KDBManager,
   FHIRTypes, FHIRResources, FHIRUtilities, FHIROperations, CDSHooksUtilities,
-  TerminologyServices, LoincServices, UCUMServices, SnomedServices, RxNormServices, UniiServices, ACIRServices, UriServices,
+  TerminologyServices, LoincServices, UCUMServices, SnomedServices, RxNormServices, UniiServices, ACIRServices, UriServices, ICD10Services,
   AreaCodeServices, IETFLanguageCodeServices, FHIRLog,
   YuStemmer;
 
@@ -176,6 +176,7 @@ Type
   private
     FLoinc : TLOINCServices;
     FSnomed : TAdvList<TSnomedServices>;
+    FIcd10 : TAdvList<TICD10Provider>;
     FDefSnomed : TSnomedServices;
     FUcum : TUcumServices;
     FRxNorm : TRxNormServices;
@@ -245,6 +246,7 @@ Type
 
     Property Loinc : TLOINCServices read FLoinc write SetLoinc;
     Property Snomed : TAdvList<TSnomedServices> read FSnomed;
+    Property Icd10 : TAdvList<TICD10Provider> read FIcd10;
     Property DefSnomed : TSnomedServices read FDefSnomed write SetDefSnomed;
     Property Ucum : TUcumServices read FUcum write SetUcum;
     Property RxNorm : TRxNormServices read FRxNorm write SetRxNorm;
@@ -863,6 +865,7 @@ begin
   FConceptMapsByURL := TAdvMap<TLoadedConceptMap>.create;
 
   FSnomed := TAdvList<TSnomedServices>.create;
+  FIcd10 := TAdvList<TICD10Provider>.create;
   p := TUriServices.Create();
   FProviderClasses.Add(p.system(nil), p);
   FProviderClasses.Add(p.system(nil)+URI_VERSION_BREAK+p.version(nil), p.link);
@@ -907,13 +910,20 @@ procedure TTerminologyServerStore.declareCodeSystems(list : TFhirResourceList);
     if count <> 0 then
       cs.count := inttostr(count);
   end;
+  function tail(url : String) : String;
+  begin
+    result := url.Substring(url.LastIndexOf('/')+1);
+  end;
 var
   sn : TSnomedServices;
+  icd : TICD10Provider;
 begin
   if FLoinc <> nil then
     addCodeSystem('LOINC', 'loinc', FLoinc.system(nil), FLoinc.version(nil), FLoinc.TotalCount);
   for sn in FSnomed do
     addCodeSystem('SNOMED CT', 'sct', sn.system(nil), sn.version(nil), sn.TotalCount);
+  for icd in FIcd10 do
+    addCodeSystem(icd.title, tail(icd.system(nil)), icd.system(nil), icd.version(nil), icd.TotalCount);
   if FUcum <> nil then
     addCodeSystem('Ucum', 'ucum', FUcum.system(nil), FUcum.version(nil), FUcum.TotalCount);
   if FRxNorm <> nil then

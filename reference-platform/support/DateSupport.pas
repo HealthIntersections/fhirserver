@@ -51,7 +51,7 @@ Const
 type
   TDuration = Int64;             // Number of milliseconds.
   TMonthOfYear =
-    (MonthOfYearJanuary, MonthOfYearFebruary, MonthOfYearMarch, MonthOfYearApril, MonthOfYearMay, MonthOfYearJune,
+    (MonthOfYearNone, MonthOfYearJanuary, MonthOfYearFebruary, MonthOfYearMarch, MonthOfYearApril, MonthOfYearMay, MonthOfYearJune,
      MonthOfYearJuly, MonthOfYearAugust, MonthOfYearSeptember, MonthOfYearOctober, MonthOfYearNovember, MonthOfYearDecember);
   TMonthDays = Array [TMonthOfYear] Of Word;
   TDateTimeExPrecision = (dtpYear, dtpMonth, dtpDay, dtpHour, dtpMin, dtpSec, dtpNanoSeconds);
@@ -61,12 +61,12 @@ Const
   codes_TDateTimeExPrecision : Array [TDateTimeExPrecision] of String = ('Year', 'Month', 'Day', 'Hour', 'Min', 'Sec', 'NanoSeconds');
   codes_TDateTimeExTimezone : Array [TDateTimeExTimezone] of String = ('Unknown', 'UTC', 'Local', 'Specified');
   MONTHOFYEAR_LONG : Array[TMonthOfYear] Of String =
-    ('January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December');
+    ('', 'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December');
   MONTHOFYEAR_SHORT : Array [TMonthOfYear] Of String =
-    ('Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec');
+    ('', 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec');
   MONTHS_DAYS : Array [Boolean{IsLeapYear}] Of TMonthDays =
-    ((31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31),
-     (31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31));
+    ((0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31),
+     (0, 31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31));
 
 
 type
@@ -234,7 +234,7 @@ begin
     err := 'Year is not valid'
   else if (FPrecision >= dtpMonth) and ((Month > 12) or (Month < 1)) then
     err := 'Month is not valid'
-  else if (FPrecision >= dtpDay) and ((Day < 1) or (Day >= 32) or (MONTHS_DAYS[IsLeapYear(Year)][TMonthOfYear(Month-1)] < Day)) then
+  else if (FPrecision >= dtpDay) and ((Day < 1) or (Day >= 32) or (MONTHS_DAYS[IsLeapYear(Year)][TMonthOfYear(Month)] < Day)) then
     err := 'Day is not valid for '+inttostr(Year)+'/'+inttostr(Month)
   else if (FPrecision >= dtpHour) and (Hour > 23) then
     err := 'Hour is not valid'
@@ -261,7 +261,7 @@ begin
     err := 'Year is not valid'
   else if (FPrecision >= dtpMonth) and ((Month > 12) or (Month < 1)) then
     err := 'Month is not valid'
-  else if (FPrecision >= dtpDay) and ((Day < 1) or (Day >= 32) or (MONTHS_DAYS[IsLeapYear(Year)][TMonthOfYear(Month-1)] < Day)) then
+  else if (FPrecision >= dtpDay) and ((Day < 1) or (Day >= 32) or (MONTHS_DAYS[IsLeapYear(Year)][TMonthOfYear(Month)] < Day)) then
     err := 'Day is not valid for '+inttostr(Year)+'/'+inttostr(Month)
   else if (FPrecision >= dtpHour) and (Hour > 23) then
     err := 'Hour is not valid'
@@ -542,8 +542,8 @@ begin
     end
   else
     inc(result.month);
-  if result.day > MONTHS_DAYS[IsLeapYear(result.Year), TMonthOfYear(result.month - 1)] then
-    result.Day := MONTHS_DAYS[IsLeapYear(result.Year), TMonthOfYear(result.month - 1)];
+  if result.day > MONTHS_DAYS[IsLeapYear(result.Year), TMonthOfYear(result.month)] then
+    result.Day := MONTHS_DAYS[IsLeapYear(result.Year), TMonthOfYear(result.month)];
 end;
 
 function TDateTimeEx.IncrementYear : TDateTimeEx;
@@ -683,8 +683,8 @@ begin
   Result := format;
   if not ReplaceSubString(Result, 'yyyy', StringPadRight(IntToStr(year), '0', 4)) then
     replaceSubstring(Result, 'yy', copy(IntToStr(year), 3, 2));
-  if not ReplaceSubString(Result, 'mmmm', copy(MONTHOFYEAR_LONG[TMonthOfYear(month-1)], 1, 4)) then
-    if not ReplaceSubString(Result, 'mmm', MONTHOFYEAR_SHORT[TMonthOfYear(month-1)]) then
+  if not ReplaceSubString(Result, 'mmmm', copy(MONTHOFYEAR_LONG[TMonthOfYear(month)], 1, 4)) then
+    if not ReplaceSubString(Result, 'mmm', MONTHOFYEAR_SHORT[TMonthOfYear(month)]) then
       if not ReplaceSubString(Result, 'mm', StringPadLeft(IntToStr(month), '0', 2)) then
         ReplaceSubString(Result, 'm', IntToStr(month));
   if not ReplaceSubString(Result, 'dd', StringPadLeft(IntToStr(day), '0', 2)) then
@@ -1096,8 +1096,8 @@ begin
     replaceSubstring(Result, 'yy', copy(IntToStr(year), 3, 2));
   if month <> 0 then
   begin
-    if not ReplaceSubString(Result, 'mmmm', copy(MONTHOFYEAR_LONG[TMonthOfYear(month-1)], 1, 4)) then
-      if not ReplaceSubString(Result, 'mmm', MONTHOFYEAR_SHORT[TMonthOfYear(month-1)]) then
+    if not ReplaceSubString(Result, 'mmmm', copy(MONTHOFYEAR_LONG[TMonthOfYear(month)], 1, 4)) then
+      if not ReplaceSubString(Result, 'mmm', MONTHOFYEAR_SHORT[TMonthOfYear(month)]) then
         if not ReplaceSubString(Result, 'mm', StringPadLeft(IntToStr(month), '0', 2)) then
           ReplaceSubString(Result, 'm', IntToStr(month));
     if day > 0 then
@@ -1292,7 +1292,7 @@ begin
     inc(day);
     hour := 0;
   end;
-  if day > MONTHS_DAYS[IsLeapYear(Year), TMonthOfYear(month - 1)] then
+  if day > MONTHS_DAYS[IsLeapYear(Year), TMonthOfYear(month)] then
   begin
     inc(month);
     day := 1;

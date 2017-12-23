@@ -1251,7 +1251,7 @@ begin
   if (ndx = nil) then
     raise Exception.create('Unknown index '+name);
   if (length(ndx.TargetTypes) > 0) then
-    raise Exception.create('Attempt to index a simple type in an index that is a resource join');
+    raise Exception.create('Attempt to index an identifier in an index that is a resource join, index name '+name);
   if not (ndx.SearchType in [SearchParamTypeToken]) then
     raise Exception.create('Unsuitable index '+name+' '+CODES_TFhirSearchParamTypeEnum[ndx.SearchType]+' indexing Identifier');
   ref := 0;

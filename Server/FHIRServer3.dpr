@@ -42,7 +42,7 @@ POSSIBILITY OF SUCH DAMAGE.
 todo:
 STU3 draft:
  - check using UTF-8 in URLs
- - check prepfer = operation outcome
+ - check prefer = operation outcome
  - check turtle support
  - check versioning in capabilities statement
  - check elements & summary on read/vread
@@ -329,7 +329,8 @@ uses
   SQLite3Utils in '..\Libraries\db\SQLite3Utils.pas',
   QuestionnaireRenderer in '..\reference-platform\dstu3\QuestionnaireRenderer.pas',
   FHIRDeIdentifier in '..\reference-platform\common\FHIRDeIdentifier.pas',
-  ServerPostHandlers in 'ServerPostHandlers.pas';
+  ServerPostHandlers in 'ServerPostHandlers.pas',
+  ICD10Services in 'ICD10Services.pas';
 
 begin
   logfile := IncludeTrailingPathDelimiter(SystemTemp)+'fhirserver.log';

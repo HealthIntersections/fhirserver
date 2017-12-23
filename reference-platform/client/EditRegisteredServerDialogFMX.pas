@@ -96,6 +96,17 @@ type
     edtClientId1: TEdit;
     btnRegister: TButton;
     odPrivateKey: TOpenDialog;
+    Label24: TLabel;
+    Label25: TLabel;
+    edtSSLPublicCert: TEdit;
+    Label26: TLabel;
+    edtSSLPrivateKey: TEdit;
+    Label27: TLabel;
+    Label28: TLabel;
+    edtSSLPassphrase: TEdit;
+    Button2: TButton;
+    Button3: TButton;
+    odPublicCert: TOpenDialog;
     procedure FormDestroy(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure btnCheckFormatClick(Sender: TObject);
@@ -105,6 +116,8 @@ type
     procedure cbxSmartTypeChange(Sender: TObject);
     procedure btnRegisterClick(Sender: TObject);
     procedure Button1Click(Sender: TObject);
+    procedure Button2Click(Sender: TObject);
+    procedure Button3Click(Sender: TObject);
   private
     FServer: TRegisteredFHIRServer;
     FCapabilityStatement: TFhirCapabilityStatement;
@@ -181,6 +194,9 @@ begin
   server.tokenEndpoint := edtToken.Text;
   server.clientsecret := edtClientSecret.Text;
   server.redirectport := StrToInt(edtRedirectPort.Text);
+  server.SSLPublicCert := edtSSLPublicCert.Text;
+  server.SSLPrivateKey := edtSSLPrivateKey.Text;
+  server.SSLPassphrase := edtSSLPassphrase.Text;
 
   server.issuerUrl := edtIssuerURL.Text;
   server.privatekey := edtPrivateKey.Text;
@@ -248,6 +264,18 @@ begin
     edtPrivateKey.Text := odPrivateKey.FileName;
 end;
 
+procedure TEditRegisteredServerForm.Button2Click(Sender: TObject);
+begin
+  if odPublicCert.Execute then
+    edtSSLPublicCert.Text := odPublicCert.FileName;
+end;
+
+procedure TEditRegisteredServerForm.Button3Click(Sender: TObject);
+begin
+  if odPrivateKey.Execute then
+    edtSSLPrivateKey.Text := odPrivateKey.FileName;
+end;
+
 procedure TEditRegisteredServerForm.cbxSmartTypeChange(Sender: TObject);
 begin
   TabControl2.TabIndex := cbxSmartType.ItemIndex;
@@ -277,6 +305,9 @@ begin
   edtToken.Text := FServer.tokenEndpoint;
   edtUsername.Text := server.username;
   edtPassword.Text := server.password;
+  edtSSLPublicCert.Text := server.SSLPublicCert;
+  edtSSLPrivateKey.Text := server.SSLPrivateKey;
+  edtSSLPassphrase.Text := server.SSLPassphrase;
 end;
 
 procedure TEditRegisteredServerForm.inputChange(Sender: TObject);

@@ -121,7 +121,7 @@ public class DelphiGenerator {
     this.pubVersion = Integer.toString(dstuID);
     StringBuilder include = new StringBuilder();
 
-    start(destDir, version, dateTimeType, dstuID);
+    start(destDir, version, dateTimeType, Integer.toString(dstuID));
     initParser(version, dateTimeType);
 
     this.definitions = definitions;
@@ -612,9 +612,10 @@ public class DelphiGenerator {
     srlsdefR.append("\r\n");
   }
 
-  private void start(String implDir, String version, DateTimeType dateTimeType, int dstuID)
+  private void start(String implDir, String version, DateTimeType dateTimeType, String dstuID)
       throws UnsupportedEncodingException, FileNotFoundException, Exception {
-    defCodeRes = new DelphiCodeGenerator(new FileOutputStream(Utilities.path(implDir, "FHIRResources.pas")), dstuID);
+    String sfxDstuID = "";
+    defCodeRes = new DelphiCodeGenerator(new FileOutputStream(Utilities.path(implDir, "FHIRResources"+sfxDstuID+".pas")), dstuID, sfxDstuID);
     defCodeRes.start();
     defCodeRes.name = "FHIRResources";
     defCodeRes.comments.add("FHIR v"+version+" generated "+dateTimeType.asStringValue());
@@ -631,7 +632,7 @@ public class DelphiGenerator {
     defCodeRes.uses.add("FHIRTypes");
     defCodeRes.usesImpl.add("FHIRUtilities");
 
-    defCodeConstGen = new DelphiCodeGenerator(new FileOutputStream(Utilities.path(implDir, "FHIRConstants.pas")), dstuID);
+    defCodeConstGen = new DelphiCodeGenerator(new FileOutputStream(Utilities.path(implDir, "FHIRConstants"+sfxDstuID+".pas")), dstuID, sfxDstuID);
     defCodeConstGen.start();
     defCodeConstGen.name = "FHIRConstants";
     defCodeConstGen.comments.add("FHIR v"+version+" generated "+dateTimeType.asStringValue());
@@ -649,7 +650,7 @@ public class DelphiGenerator {
     defCodeConstGen.uses.add("FHIRTypes");
     defCodeConstGen.uses.add("FHIRResources");
 
-    defIndexer = new DelphiCodeGenerator(new FileOutputStream(Utilities.path(implDir, "FHIRIndexInformation.pas")), dstuID);
+    defIndexer = new DelphiCodeGenerator(new FileOutputStream(Utilities.path(implDir, "FHIRIndexInformation"+sfxDstuID+".pas")), dstuID, sfxDstuID);
     defIndexer.start();
     defIndexer.name = "FHIRIndexInformation";
     defIndexer.comments.add("FHIR v"+version+" generated "+dateTimeType.asStringValue());
@@ -670,7 +671,7 @@ public class DelphiGenerator {
     indexMethods = new StringBuilder();
 
 
-    defCodeType = new DelphiCodeGenerator(new FileOutputStream(Utilities.path(implDir, "FHIRTypes.pas")), dstuID);
+    defCodeType = new DelphiCodeGenerator(new FileOutputStream(Utilities.path(implDir, "FHIRTypes"+sfxDstuID+".pas")), dstuID, sfxDstuID);
     defCodeType.start();
     defCodeType.name = "FHIRTypes";
     defCodeType.comments.add("FHIR v"+version+" generated "+dateTimeType.asStringValue());
@@ -693,19 +694,19 @@ public class DelphiGenerator {
     factoryByName = new StringBuilder();
 
 
-    prsrCodeX = new DelphiCodeGenerator(new FileOutputStream(Utilities.path(implDir, "FHIRParserXml.pas")), dstuID);
+    prsrCodeX = new DelphiCodeGenerator(new FileOutputStream(Utilities.path(implDir, "FHIRParserXml"+sfxDstuID+".pas")), dstuID, sfxDstuID);
     prsrCodeX.start();
     prsrCodeX.name = "FHIRParserXml";
 
-    prsrCodeJ = new DelphiCodeGenerator(new FileOutputStream(Utilities.path(implDir, "FHIRParserJson.pas")), dstuID);
+    prsrCodeJ = new DelphiCodeGenerator(new FileOutputStream(Utilities.path(implDir, "FHIRParserJson"+sfxDstuID+".pas")), dstuID, sfxDstuID);
     prsrCodeJ.start();
     prsrCodeJ.name = "FHIRParserJson";
 
-    prsrCodeT = new DelphiCodeGenerator(new FileOutputStream(Utilities.path(implDir, "FHIRParserTurtle.pas")), dstuID);
+    prsrCodeT = new DelphiCodeGenerator(new FileOutputStream(Utilities.path(implDir, "FHIRParserTurtle"+sfxDstuID+".pas")), dstuID, sfxDstuID);
     prsrCodeT.start();
     prsrCodeT.name = "FHIRParserTurtle";
 
-    defCodeOp = new DelphiCodeGenerator(new FileOutputStream(Utilities.path(implDir, "FHIROperations.pas")), dstuID);
+    defCodeOp = new DelphiCodeGenerator(new FileOutputStream(Utilities.path(implDir, "FHIROperations"+sfxDstuID+".pas")), dstuID, sfxDstuID);
     defCodeOp.start();
     defCodeOp.name = "FHIROperations";
     defCodeOp.comments.add("FHIR v"+version+" generated "+dateTimeType.asStringValue());
@@ -1472,7 +1473,7 @@ public class DelphiGenerator {
 
   private Object breakStringConstIntoLines(String str, int llen) {
     while (llen + getLastLineLength(str) > 1000) {
-      str = str.substring(0, str.length()-1000)+"'+\r\n   '"+str.substring(0, str.length()-1000);
+      str = str.substring(0, str.length()-(1000-llen))+"'+\r\n   '"+str.substring(0, str.length()-(1000-llen));
     }
     return str;
   }

@@ -87,11 +87,14 @@ public class DelphiCodeGenerator extends OutputStreamWriter {
   public List<String> procs = new ArrayList<String>();
   public List<String> procsPub = new ArrayList<String>();
 
-  private int dstuID;
+  private String dstuID;
 
-  public DelphiCodeGenerator(OutputStream out, int dstuID) throws UnsupportedEncodingException {
+  private String sfxDstuID;
+
+  public DelphiCodeGenerator(OutputStream out, String dstuID, String sfxDstuID) throws UnsupportedEncodingException {
     super(out, "ASCII");
     this.dstuID = dstuID;
+    this.sfxDstuID = sfxDstuID;
   }
 
   public void start() throws Exception {
@@ -131,12 +134,12 @@ public class DelphiCodeGenerator extends OutputStreamWriter {
       }
       write("\r\n");
     }
-    write("unit "+name+";\r\n");
+    write("unit "+name+sfxDstuID+";\r\n");
     write("\r\n");
     write("{$I fhir.inc}\r\n");
     write("\r\n");
     write("{\r\n"+FULL_LICENSE_CODE+"}\r\n");
-    write("\r\n"+VERSION_MARK.replace("%%", Integer.toString(dstuID))+"\r\n");
+    write("\r\n"+VERSION_MARK.replace("%%", dstuID)+"\r\n");
     write("\r\n");
     write("interface\r\n");
     write("\r\n");

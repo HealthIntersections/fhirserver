@@ -146,7 +146,8 @@ uses
   FHIRParserTurtle in 'FHIRParserTurtle.pas',
   FHIRLog in '..\support\FHIRLog.pas',
   Logging in '..\..\Server\Logging.pas',
-  FHIRIndexBase in '..\support\FHIRIndexBase.pas';
+  FHIRIndexBase in '..\support\FHIRIndexBase.pas',
+  Javascript in '..\..\Libraries\js\Javascript.pas';
 
 var
   s: String;

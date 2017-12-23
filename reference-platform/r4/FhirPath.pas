@@ -4393,7 +4393,7 @@ begin
     else
     begin
       if not lexer.isToken and not lexer.current.startsWith('"') then
-        raise lexer.error('Found '+lexer.current+' expecting a token name');
+        raise lexer.error('Found "'+lexer.current+'" expecting a token name');
 
       result.Name := lexer.readIdentifier('Path Name');
       result.SourceLocationEnd := lexer.FCurrentLocation;

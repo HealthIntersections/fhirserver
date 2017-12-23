@@ -52,13 +52,23 @@ Type
     property issue : TFhirOperationOutcome read FIssue;
   end;
 
+  TFHIRClientLogger = class (TAdvObject)
+  public
+    function Link : TFHIRClientLogger; overload;
+    procedure logExchange(verb, url, status, requestHeaders, responseHeaders : String; request, response : TStream);  virtual;
+  end;
+
   TFhirClient = {abstract} class (TAdvObject)
   private
+    FLogger : TFHIRClientLogger;
     FLastURL: String;
     FProvenance: TFhirProvenance;
     FLastOperationId: String;
-    procedure SetProvenance(const Value: TFhirProvenance);  protected
+    procedure SetProvenance(const Value: TFhirProvenance);
+  protected
+    procedure SetLogger(const Value: TFHIRClientLogger); virtual;
   public
+    Destructor Destroy; override;
     function link : TFhirClient; overload;
     property provenance : TFhirProvenance read FProvenance write SetProvenance;
 
@@ -68,23 +78,27 @@ Type
     function readResource(atype : TFhirResourceType; id : String) : TFHIRResource; virtual;
     function updateResource(resource : TFhirResource) : TFHIRResource; overload; virtual;
     procedure deleteResource(atype : TFhirResourceType; id : String); virtual;
-    function search(allRecords : boolean; params : TDictionary<String, String>) : TFHIRBundle; overload; virtual;
-    function search(atype : TFhirResourceType; allRecords : boolean; params : TDictionary<String, String>) : TFHIRBundle; overload; virtual;
+    function search(allRecords : boolean; params : TStringList) : TFHIRBundle; overload; virtual;
+    function search(atype : TFhirResourceType; allRecords : boolean; params : TStringList) : TFHIRBundle; overload; virtual;
     function search(atype : TFhirResourceType; allRecords : boolean; params : string) : TFHIRBundle; overload; virtual;
-    function searchPost(atype : TFhirResourceType; allRecords : boolean; params : TDictionary<String, String>; resource : TFhirResource) : TFHIRBundle; virtual;
+    function searchPost(atype : TFhirResourceType; allRecords : boolean; params : TStringList; resource : TFhirResource) : TFHIRBundle; virtual;
     function searchAgain(link : String) : TFHIRBundle; overload; virtual;
     function operation(atype : TFhirResourceType; opName : String; params : TFhirParameters) : TFHIRResource; virtual;
-    function historyType(atype : TFhirResourceType; allRecords : boolean; params : TDictionary<String, String>) : TFHIRBundle; virtual;
+    function historyType(atype : TFhirResourceType; allRecords : boolean; params : TStringList) : TFHIRBundle; virtual;
 
     procedure terminate; virtual;
     function address : String; virtual;
     function format : TFHIRFormat; virtual;
     property LastURL : String read FLastURL write FLastURL;
     property LastOperationId : String read FLastOperationId write FLastOperationId; // some servers return an id that links to their own internal log for debugging
+    property Logger : TFHIRClientLogger read FLogger write SetLogger;
   end;
 
   TFhirHTTPClientHTTPVerb = (get, post, put, delete, options, patch);
+const
 
+  CODES_TFhirHTTPClientHTTPVerb : array [TFhirHTTPClientHTTPVerb] of String = ('GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH');
+type
   TFhirHTTPClientStatusEvent = procedure (client : TObject; details : String) of Object;
 
   // use only in one thread at a time
@@ -110,16 +124,17 @@ Type
     FProxy: String;
     FPassword: String;
     FUsername: String;
+    FCertKey: String;
 //    FLastUpdated : TDateTimeEx;
     procedure status(msg : String);
     procedure getSSLpassword(var Password: String);
     function serialise(resource : TFhirResource):TStream; overload;
-    function makeUrl(tail : String; params : TDictionary<String, String> = nil) : String;
+    function makeUrl(tail : String; params : TStringList = nil) : String;
     function makeUrlPath(tail : String) : String;
     function CreateParser(stream : TStream) : TFHIRParser;
     function exchange(url : String; verb : TFhirHTTPClientHTTPVerb; source : TStream; ct : String = '') : TStream;
     function fetchResource(url : String; verb : TFhirHTTPClientHTTPVerb; source : TStream; ct : String = '') : TFhirResource;
-    function makeMultipart(stream: TStream; streamName: string; params: TDictionary<String, String>; var mp : TStream) : String;
+    function makeMultipart(stream: TStream; streamName: string; params: TStringList; var mp : TStream) : String;
     procedure SetSmartToken(const Value: TSmartOnFhirAccessToken);
     procedure SetTimeout(const Value: cardinal);
     procedure createClient;
@@ -137,6 +152,7 @@ Type
     procedure SetUseIndy(const Value: boolean);
     function Convert(stream : TStream) : TStream; virtual;
     function mimeType(fmt: String): String;
+    procedure SetCertKey(const Value: String);
   public
     constructor Create(worker : TFHIRWorkerContext; url : String; json : boolean); overload;
     constructor Create(worker : TFHIRWorkerContext; url : String; json : boolean; timeout : integer); overload;
@@ -152,6 +168,7 @@ Type
     property UseIndy : boolean read FUseIndy write SetUseIndy; // set this to true for a service, but you may have problems with SSL
     property allowR2 : boolean read FAllowR2 write FAllowR2;
     property certFile : String read FCertFile write SetCertFile;
+    property certKey : String read FCertKey write SetCertKey;
     property certPWord : String read FCertPWord write SetCertPWord;
     property proxy : String read FProxy write FProxy;
     property username : String read FUsername write FUsername;
@@ -169,13 +186,13 @@ Type
     function readResource(atype : TFhirResourceType; id : String) : TFHIRResource; override;
     function updateResource(resource : TFhirResource) : TFHIRResource; overload; override;
     procedure deleteResource(atype : TFhirResourceType; id : String); override;
-    function search(allRecords : boolean; params : TDictionary<String, String>) : TFHIRBundle; overload; override;
-    function search(atype : TFhirResourceType; allRecords : boolean; params : TDictionary<String, String>) : TFHIRBundle; overload; override;
+    function search(allRecords : boolean; params : TStringList) : TFHIRBundle; overload; override;
+    function search(atype : TFhirResourceType; allRecords : boolean; params : TStringList) : TFHIRBundle; overload; override;
     function search(atype : TFhirResourceType; allRecords : boolean; params : string) : TFHIRBundle; overload; override;
-    function searchPost(atype : TFhirResourceType; allRecords : boolean; params : TDictionary<String, String>; resource : TFhirResource) : TFHIRBundle; override;
+    function searchPost(atype : TFhirResourceType; allRecords : boolean; params : TStringList; resource : TFhirResource) : TFHIRBundle; override;
     function searchAgain(link : String) : TFHIRBundle; overload; override;
     function operation(atype : TFhirResourceType; opName : String; params : TFhirParameters) : TFHIRResource; override;
-    function historyType(atype : TFhirResourceType; allRecords : boolean; params : TDictionary<String, String>) : TFHIRBundle; override;
+    function historyType(atype : TFhirResourceType; allRecords : boolean; params : TStringList) : TFHIRBundle; override;
     function cdshook(id : String; request : TCDSHookRequest) : TCDSHookResponse;
 
     procedure terminate; override;
@@ -198,11 +215,12 @@ Type
     FThread: TThread;
     FResourceType: TFhirResourceType;
     FAllRecords: boolean;
-    FParams: TDictionary<String, String>;
+    Fparams : TStringList;
     FUrl: String;
     FId: String;
     FResource: TFhirResource;
     FName: String;
+    FLastURL: String;
     procedure SetResult(const Value: TFhirResource);
     procedure SetResource(const Value: TFhirResource);
   public
@@ -216,7 +234,7 @@ Type
     property summary : boolean read FSummary write FSummary;
     property resourceType : TFhirResourceType read FResourceType write FResourceType;
     property allRecords : boolean read FAllRecords write FAllRecords;
-    property params: TDictionary<String, String> read FParams write FParams;
+    property params : TStringList read FParams write FParams;
     property url : String read FUrl write FUrl;
     property id : String read FId write FId;
     property name : String read FName write FName;
@@ -224,6 +242,7 @@ Type
 
     property result : TFhirResource read FResult write SetResult;
     property error : String read FError write FError;
+    property lastUrl : String read FLastURL write FLastURL;
   end;
 
   TThreadClientThread = class (TThread)
@@ -243,6 +262,8 @@ Type
     FInternal : TFhirClient;
     FEvent : TThreadManagementEvent;
     procedure wait(Package : TFHIRThreadedClientPackage);
+  protected
+    procedure SetLogger(const Value: TFHIRClientLogger); override;
   public
     Constructor Create(internal : TFhirClient; event : TThreadManagementEvent);
     Destructor Destroy; override;
@@ -255,13 +276,13 @@ Type
     function readResource(atype : TFhirResourceType; id : String) : TFHIRResource; override;
     function updateResource(resource : TFhirResource) : TFHIRResource; overload; override;
     procedure deleteResource(atype : TFhirResourceType; id : String); override;
-    function search(allRecords : boolean; params : TDictionary<String, String>) : TFHIRBundle; overload; override;
-    function search(atype : TFhirResourceType; allRecords : boolean; params : TDictionary<String, String>) : TFHIRBundle; overload; override;
+    function search(allRecords : boolean; params : TStringList) : TFHIRBundle; overload; override;
+    function search(atype : TFhirResourceType; allRecords : boolean; params : TStringList) : TFHIRBundle; overload; override;
     function search(atype : TFhirResourceType; allRecords : boolean; params : string) : TFHIRBundle; overload; override;
-    function searchPost(atype : TFhirResourceType; allRecords : boolean; params : TDictionary<String, String>; resource : TFhirResource) : TFHIRBundle; override;
+    function searchPost(atype : TFhirResourceType; allRecords : boolean; params : TStringList; resource : TFhirResource) : TFHIRBundle; override;
     function searchAgain(link : String) : TFHIRBundle; overload; override;
     function operation(atype : TFhirResourceType; opName : String; params : TFhirParameters) : TFHIRResource; override;
-    function historyType(atype : TFhirResourceType; allRecords : boolean; params : TDictionary<String, String>) : TFHIRBundle; override;
+    function historyType(atype : TFhirResourceType; allRecords : boolean; params : TStringList) : TFHIRBundle; override;
 
     function address : String; override;
     function format : TFHIRFormat; override;
@@ -353,12 +374,12 @@ end;
 
 function TFhirHTTPClient.conformance(summary : boolean): TFhirCapabilityStatement;
 var
-  params : TDictionary<String, String>;
+  params : TStringList;
 begin
-  params := TDictionary<String, String>.create;
+  params := TStringList.create;
   try
     if summary then
-      params.Add('_summary', 'true');
+      params.AddPair('_summary', 'true');
     result := FetchResource(MakeUrl('metadata', params), get, nil) as TFhirCapabilityStatement;
   finally
     params.Free;
@@ -484,6 +505,17 @@ begin
   {$ENDIF}
 end;
 
+procedure TFhirHTTPClient.SetCertKey(const Value: String);
+begin
+  FCertKey := Value;
+  indy.free;
+  indy := nil;
+  {$IFDEF MSWINDOWS}
+  http.Free;
+  http := nil;
+  {$ENDIF}
+end;
+
 procedure TFhirHTTPClient.SetCertPWord(const Value: String);
 begin
   FCertPWord := Value;
@@ -493,6 +525,12 @@ begin
   http.Free;
   http := nil;
   {$ENDIF}
+end;
+
+procedure TFhirClient.SetLogger(const Value: TFHIRClientLogger);
+begin
+  FLogger.Free;
+  FLogger := Value;
 end;
 
 procedure TFhirClient.SetProvenance(const Value: TFhirProvenance);
@@ -514,16 +552,20 @@ begin
     FOnClientStatus(self, msg);
 end;
 
-function encodeParams(params : TDictionary<String, String>) : String;
+function encodeParams(params : TStringList) : String;
 var
+  i : integer;
   s : String;
 begin
   result := '';
-  for s in params.Keys do
-    result := result + s+'='+EncodeMIME(params[s])+'&';
+  for i := 0 to params.Count - 1 do
+  begin
+    s := params.Names[i];
+    result := result + s+'='+EncodeMIME(params.ValueFromIndex[i])+'&';
+  end;
 end;
 
-function TFhirHTTPClient.search(atype: TFhirResourceType; allRecords: boolean; params: TDictionary<String, String>): TFHIRBundle;
+function TFhirHTTPClient.search(atype: TFhirResourceType; allRecords: boolean; params: TStringList): TFHIRBundle;
 begin
   result := search(atype, allrecords, encodeParams(params));
 end;
@@ -531,10 +573,15 @@ end;
 function TFhirHTTPClient.search(atype: TFhirResourceType; allRecords: boolean; params: string): TFHIRBundle;
 var
   s : String;
+  res : TFHIRResource;
   feed : TFHIRBundle;
 begin
+  res := fetchResource(makeUrl(CODES_TFhirResourceType[aType])+'?'+params, get, nil);
 //    client.Request.RawHeaders.Values['Content-Location'] := MakeUrlPath(CODES_TFhirResourceType[resource.resourceType]+'/'+id+'/history/'+ver);
-  result := fetchResource(makeUrl(CODES_TFhirResourceType[aType])+'?'+params, get, nil) as TFHIRBundle;
+  if not (res is TFHIRBundle) then
+    raise Exception.Create('Found a resource of type '+res.fhirType+' expecting a Bundle');
+
+  result := res as TFHIRBundle;
   try
     s := result.links['next'];
     while AllRecords and (s <> '') do
@@ -560,12 +607,12 @@ begin
   result := fetchResource(link, get, nil) as TFHIRBundle;
 end;
 
-function TFhirHTTPClient.search(allRecords: boolean; params: TDictionary<String, String>): TFHIRBundle;
+function TFhirHTTPClient.search(allRecords: boolean; params: TStringList): TFHIRBundle;
 begin
   result := search(frtNull, allrecords, encodeParams(params));
 end;
 
-function TFhirHTTPClient.searchPost(atype: TFhirResourceType; allRecords: boolean; params: TDictionary<String, String>; resource: TFhirResource): TFHIRBundle;
+function TFhirHTTPClient.searchPost(atype: TFhirResourceType; allRecords: boolean; params: TStringList; resource: TFhirResource): TFHIRBundle;
 var
   src, frm : TStream;
   ct : String;
@@ -644,22 +691,24 @@ begin
     result := ffXml;
 end;
 
-function TFhirHTTPClient.makeMultipart(stream: TStream; streamName: string; params: TDictionary<String, String>; var mp : TStream) : String;
+function TFhirHTTPClient.makeMultipart(stream: TStream; streamName: string; params: TStringList; var mp : TStream) : String;
 var
   m : TMimeMessage;
   p : TMimePart;
   s : String;
+  i : integer;
 begin
   m := TMimeMessage.create;
   try
     p := m.AddPart(NewGuidURN);
     p.ContentDisposition := 'form-data; name="'+streamName+'"';
     p.Content.LoadFromStream(stream);
-    for s in params.Keys do
+    for i := 0 to params.Count -1 do
     begin
+      s := params.Names[i];
       p := m.AddPart(NewGuidURN);
       p.ContentDisposition := 'form-data; name="'+s+'"';
-      p.Content.AsBytes := TEncoding.UTF8.GetBytes(params[s]);
+      p.Content.AsBytes := TEncoding.UTF8.GetBytes(params.ValueFromIndex[i]);
     end;
     m.Boundary := '---'+AnsiString(copy(GUIDToString(CreateGUID), 2, 36));
     m.start := m.parts[0].Id;
@@ -671,7 +720,7 @@ begin
   end;
 end;
 
-function TFhirHTTPClient.makeUrl(tail: String; params : TDictionary<String, String> = nil): String;
+function TFhirHTTPClient.makeUrl(tail: String; params : TStringList = nil): String;
 begin
   result := FURL;
   if not result.EndsWith('/') and (tail <> '') then
@@ -720,7 +769,7 @@ begin
   result.source := stream;
 end;
 
-function TFhirHTTPClient.historyType(atype: TFhirResourceType; allRecords: boolean; params: TDictionary<String, String>): TFHIRBundle;
+function TFhirHTTPClient.historyType(atype: TFhirResourceType; allRecords: boolean; params: TStringList): TFHIRBundle;
 var
   s : String;
   feed : TFHIRBundle;
@@ -766,17 +815,22 @@ begin
           indy.ProxyParams.ProxyServer := proxy.Split([':'])[0];
           indy.ProxyParams.ProxyPort := StrToInt(proxy.Split([':'])[1]);
         except
-          raise Exception.Create('Unabel to process proxy "'+proxy+'" - use address:port');
+          raise Exception.Create('Unable to process proxy "'+proxy+'" - use address:port');
         end;
       end;
       ssl := TIdSSLIOHandlerSocketOpenSSL.Create(nil);
       indy.IOHandler := ssl;
       ssl.SSLOptions.Mode := sslmClient;
       ssl.SSLOptions.SSLVersions := [sslvTLSv1_2];
+      ssl.SSLOptions.Method := sslvTLSv1_2;
+
       if certFile <> '' then
       begin
         ssl.SSLOptions.CertFile := certFile;
-        ssl.SSLOptions.KeyFile := ChangeFileExt(certFile,'.key');
+        if certKey <> '' then
+          ssl.SSLOptions.KeyFile := certKey
+        else
+          ssl.SSLOptions.KeyFile := ChangeFileExt(certFile,'.key');
         ssl.OnGetPassword := getSSLpassword;
       end;
     end;
@@ -1002,21 +1056,25 @@ begin
   else if indy.Request.CustomHeaders.IndexOfName('X-Provenance') > -1 then
     indy.Request.CustomHeaders.Delete(indy.Request.CustomHeaders.IndexOfName('X-Provenance'));
 
+
   ok := false;
   result := TMemoryStream.create;
   Try
     Try
       case verb of
-        get : indy.Get(url, result);
-        post : indy.Post(url, source, result);
-        put : indy.Put(url, source, result);
+        get :    indy.Get(url, result);
+        post :   indy.Post(url, source, result);
+        put :    indy.Put(url, source, result);
         delete : indy.delete(url);
-        options : indy.Options(url);
-{$IFNDEF VER260}    patch : indy.Patch(url, source, result); {$ENDIF}
+        options: indy.Options(url);
+{$IFNDEF VER260}
+        patch :  indy.Patch(url, source, result);
+{$ENDIF}
       else
         raise Exception.Create('Unknown HTTP method '+inttostr(ord(verb)));
       end;
 
+      FLogger.logExchange(CODES_TFhirHTTPClientHTTPVerb[verb], url, indy.ResponseText, indy.Request.RawHeaders.Text, indy.Response.RawHeaders.Text, source, result);
       if (indy.ResponseCode < 200) or (indy.ResponseCode >= 300) Then
         raise exception.create('unexpected condition');
       ok := true;
@@ -1026,6 +1084,7 @@ begin
     except
       on E:EIdHTTPProtocolException do
       begin
+        FLogger.logExchange(CODES_TFhirHTTPClientHTTPVerb[verb], url, indy.ResponseText, indy.Request.RawHeaders.Text, indy.Response.RawHeaders.Text, source, result);
         cnt := e.ErrorMessage;
         if cnt = '' then
           cnt := e.message;
@@ -1205,12 +1264,18 @@ begin
   raise Exception.Create('Must override deleteResource() in '+className);
 end;
 
+destructor TFhirClient.Destroy;
+begin
+  FLogger.Free;
+  inherited;
+end;
+
 function TFhirClient.format: TFHIRFormat;
 begin
   result := ffUnspecified;
 end;
 
-function TFhirClient.historyType(atype: TFhirResourceType; allRecords: boolean; params: TDictionary<String, String>): TFHIRBundle;
+function TFhirClient.historyType(atype: TFhirResourceType; allRecords: boolean; params : TStringList): TFHIRBundle;
 begin
   raise Exception.Create('Must override historyType() in '+className);
 end;
@@ -1235,17 +1300,17 @@ begin
   raise Exception.Create('Must override searchAgain() in '+className);
 end;
 
-function TFhirClient.search(allRecords: boolean; params: TDictionary<String, String>): TFHIRBundle;
+function TFhirClient.search(allRecords: boolean; params : TStringList): TFHIRBundle;
 begin
   raise Exception.Create('Must override search() in '+className);
 end;
 
-function TFhirClient.search(atype: TFhirResourceType; allRecords: boolean; params: TDictionary<String, String>): TFHIRBundle;
+function TFhirClient.search(atype: TFhirResourceType; allRecords: boolean; params : TStringList): TFHIRBundle;
 begin
   raise Exception.Create('Must override search() in '+className);
 end;
 
-function TFhirClient.searchPost(atype: TFhirResourceType; allRecords: boolean; params: TDictionary<String, String>; resource: TFhirResource): TFHIRBundle;
+function TFhirClient.searchPost(atype: TFhirResourceType; allRecords: boolean; params : TStringList; resource: TFhirResource): TFHIRBundle;
 begin
   raise Exception.Create('Must override searchPost() in '+className);
 end;
@@ -1283,6 +1348,7 @@ begin
     pack.Thread := TThreadClientThread.create(FInternal.link, pack.Link);
     wait(pack);
     result := pack.result.link as TFhirCapabilityStatement;
+    LastUrl := pack.lastUrl;
   finally
     pack.free;
   end;
@@ -1316,7 +1382,7 @@ begin
   result := FInternal.format;
 end;
 
-function TFhirThreadedClient.historyType(atype: TFhirResourceType; allRecords: boolean; params: TDictionary<String, String>): TFHIRBundle;
+function TFhirThreadedClient.historyType(atype: TFhirResourceType; allRecords: boolean; params : TStringList): TFHIRBundle;
 begin
   raise Exception.Create('Not Done Yet');
 end;
@@ -1339,6 +1405,7 @@ begin
     pack.Thread := TThreadClientThread.create(FInternal.link, pack.Link);
     wait(pack);
     result := pack.result.link;
+    LastUrl := pack.lastUrl;
   finally
     pack.free;
   end;
@@ -1356,12 +1423,13 @@ begin
     pack.Thread := TThreadClientThread.create(FInternal.link, pack.Link);
     wait(pack);
     result := pack.result.link;
+    LastUrl := pack.lastUrl;
   finally
     pack.free;
   end;
 end;
 
-function TFhirThreadedClient.search(atype: TFhirResourceType; allRecords: boolean; params: TDictionary<String, String>): TFHIRBundle;
+function TFhirThreadedClient.search(atype: TFhirResourceType; allRecords: boolean; params : TStringList): TFHIRBundle;
 var
   pack : TFHIRThreadedClientPackage;
 begin
@@ -1374,6 +1442,7 @@ begin
     pack.Thread := TThreadClientThread.create(FInternal.link, pack.Link);
     wait(pack);
     result := pack.result.link as TFHIRBundle;
+    LastUrl := pack.lastUrl;
   finally
     pack.free;
   end;
@@ -1384,7 +1453,7 @@ begin
   raise Exception.Create('Not Done Yet');
 end;
 
-function TFhirThreadedClient.search(allRecords: boolean; params: TDictionary<String, String>): TFHIRBundle;
+function TFhirThreadedClient.search(allRecords: boolean; params : TStringList): TFHIRBundle;
 var
   pack : TFHIRThreadedClientPackage;
 begin
@@ -1397,6 +1466,7 @@ begin
     pack.Thread := TThreadClientThread.create(FInternal.link, pack.Link);
     wait(pack);
     result := pack.result.link as TFHIRBundle;
+    LastUrl := pack.lastUrl;
   finally
     pack.free;
   end;
@@ -1413,14 +1483,21 @@ begin
     pack.Thread := TThreadClientThread.create(FInternal.link, pack.Link);
     wait(pack);
     result := pack.result.link as TFHIRBundle;
+    LastUrl := pack.lastUrl;
   finally
     pack.free;
   end;
 end;
 
-function TFhirThreadedClient.searchPost(atype: TFhirResourceType; allRecords: boolean; params: TDictionary<String, String>; resource: TFhirResource): TFHIRBundle;
+function TFhirThreadedClient.searchPost(atype: TFhirResourceType; allRecords: boolean; params : TStringList; resource: TFhirResource): TFHIRBundle;
 begin
   raise Exception.Create('Not Done Yet');
+end;
+
+procedure TFhirThreadedClient.SetLogger(const Value: TFHIRClientLogger);
+begin
+  inherited;
+  FInternal.Logger := Value.link;
 end;
 
 function TFhirThreadedClient.transaction(bundle: TFHIRBundle): TFHIRBundle;
@@ -1434,6 +1511,7 @@ begin
     pack.Thread := TThreadClientThread.create(FInternal.link, pack.Link);
     wait(pack);
     result := pack.result.link as TFHIRBundle;
+    LastUrl := pack.lastUrl;
   finally
     pack.free;
   end;
@@ -1450,6 +1528,7 @@ begin
     pack.Thread := TThreadClientThread.create(FInternal.link, pack.Link);
     wait(pack);
     result := pack.result.link as TFHIRResource;
+    LastUrl := pack.lastUrl;
   finally
     pack.free;
   end;
@@ -1543,9 +1622,24 @@ begin
       on e : exception do
         FPackage.error := e.Message;
     end;
+    FPackage.FLastURL := FClient.FLastURL;
   finally
     FPackage.FDone := true;
   end;
+end;
+
+{ TFHIRClientLogger }
+
+function TFHIRClientLogger.Link: TFHIRClientLogger;
+begin
+  result := TFHIRClientLogger(inherited Link);
+end;
+
+
+procedure TFHIRClientLogger.logExchange(verb, url, status, requestHeaders,
+  responseHeaders: String; request, response: TStream);
+begin
+
 end;
 
 end.

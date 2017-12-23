@@ -152,6 +152,9 @@ type
     FissuerUrl: String;
     Fpassphrase: String;
     Fprivatekey: String;
+    FSSLPassphrase: String;
+    FSSLPublicCert: String;
+    FSSLPrivateKey: String;
   public
     constructor Create; override;
     Destructor Destroy; Override;
@@ -208,6 +211,11 @@ type
 
     property username : String read FUserName write FUserName;
     property password : String read FPassword write FPassword;
+
+    property SSLPublicCert : String read FSSLPublicCert write FSSLPublicCert;
+    property SSLPrivateKey : String read FSSLPrivateKey write FSSLPrivateKey;
+    property SSLPassphrase : String read FSSLPassphrase write FSSLPassphrase;
+    function isSSL : boolean;
   end;
 
   // result of a Smart App Launch authorization
@@ -512,6 +520,11 @@ begin
     end;
 end;
 
+function TRegisteredFHIRServer.isSSL: boolean;
+begin
+  result := FileExists(SSLPublicCert);
+end;
+
 function TRegisteredFHIRServer.Link: TRegisteredFHIRServer;
 begin
   result := TRegisteredFHIRServer(Inherited Link);
@@ -555,6 +568,11 @@ begin
   issuerUrl := o.vStr['issuer'];
   privatekey := o.vStr['key'];
   passphrase := strDecrypt(o.vStr['passphrase'], 42344);
+
+  SSLPublicCert := o.vStr['ssl-cert'];
+  SSLPrivateKey := o.vStr['ssl-key'];
+  SSLpassphrase := strDecrypt(o.vStr['ssl-passphrase'], 42345);
+
   autoUseHooks := o.bool['auto-cds-hooks'];
   arr := o.arr['cdshooks'];
   if arr <> nil then
@@ -604,6 +622,10 @@ begin
   o.vStr['issuer'] := issuerUrl;
   o.vStr['key'] := privatekey;
   o.vStr['passphrase'] := strEncrypt(passphrase, 42344);
+
+  o.vStr['ssl-cert'] := SSLPublicCert;
+  o.vStr['ssl-key'] := SSLPrivateKey;
+  o.vStr['ssl-passphrase'] := strEncrypt(SSLpassphrase, 42345);
 
   o.bool['auto-cds-hooks'] := autoUseHooks;
   if cdshooks.Count > 0 then

@@ -30,6 +30,9 @@ POSSIBILITY OF SUCH DAMAGE.
 
 interface
 
+uses
+  SysUtils, classes, Generics.Collections;
+
 function GetFhirMessage(id, lang : String):String; overload;
 function GetFhirMessage(id, lang, def : String):String; overload;
 
@@ -38,12 +41,18 @@ procedure LoadMessages;
 var
   FHIRExeModuleName : String;
 
+Type
+  EFHIRException = class (Exception)
+  public
+    constructor CreateLang(code, lang : String); overload;
+    constructor CreateLang(code, lang : String; const Args: array of const); overload;
+  end;
+
 implementation
 
 {$R FHIRTranslations.res}
 
 uses
-  SysUtils, classes, Generics.Collections,
   StringSupport, TextUtilities,
   AdvObjects, AdvGenerics, AdvExceptions,
   {$IFDEF MSWINDOWS}AfsResourceVolumes, AfsVolumes,{$ENDIF}
@@ -183,6 +192,18 @@ destructor TFHIRMessage.Destroy;
 begin
   FMessages.Free;
   inherited;
+end;
+
+{ EFHIRException }
+
+constructor EFHIRException.CreateLang(code, lang: String);
+begin
+  inherited Create(GetFhirMessage(code, lang));
+end;
+
+constructor EFHIRException.CreateLang(code, lang: String; const Args: array of const);
+begin
+  inherited Create(Format(GetFhirMessage(code, lang), args));
 end;
 
 initialization

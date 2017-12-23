@@ -36,7 +36,7 @@ uses
   AdvExceptions, AdvGenerics,
   KDBManager,
   FHIRBase, FHIRTypes, FHIRResources, FHIRUtilities, FHIRSupport, FHIRLang, FHIROperations,
-  FHIRStorageService, TerminologyServerStore, TerminologyServer, ClosureManager;
+  FHIRStorageService, TerminologyServices, TerminologyServerStore, TerminologyServer, ClosureManager;
 
 type
   TFhirTerminologyOperation = class (TFhirOperation)
@@ -399,10 +399,12 @@ begin
               vs := manager.GetResourceById(request, 'ValueSet', request.Id, request.baseUrl, needSecure) as TFHIRValueSet;
               cacheId := vs.url;
             end
-            else if params.hasParameter('identifier') then
+            else if params.hasParameter('url') then
             begin
-              if not FServer.isKnownValueSet(params.str['identifier'], vs) then
-                vs := manager.GetResourceByUrl(frtValueSet, params.str['identifier'], params.str['version'], false, needSecure) as TFHIRValueSet;
+              if not FServer.isKnownValueSet(params.str['url'], vs) then
+                vs := manager.GetResourceByUrl(frtValueSet, params.str['url'], params.str['version'], false, needSecure) as TFHIRValueSet;
+              if vs = nil then
+                raise ETerminologySetup.Create('Error Message');
               cacheId := vs.url;
             end
             else if params.hasParameter('valueSet') then

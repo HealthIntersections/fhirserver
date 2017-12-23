@@ -157,7 +157,6 @@ uses
   HTMLPublisher in '..\reference-platform\Support\HTMLPublisher.pas',
   LoincImporter in '..\Libraries\loinc\LoincImporter.pas',
   LoincPublisher in '..\Libraries\loinc\LoincPublisher.pas',
-  TerminologyServer in '..\server\TerminologyServer.pas',
   TerminologyServerStore in '..\server\TerminologyServerStore.pas',
   TerminologyServices in '..\Libraries\TerminologyServices.pas',
   FHIRValueSetChecker in '..\server\FHIRValueSetChecker.pas',
@@ -304,7 +303,9 @@ uses
   SQLite3Utils in '..\Libraries\db\SQLite3Utils.pas',
   SQLite3Wrap in '..\Libraries\db\SQLite3Wrap.pas',
   KDBSQLite in '..\Libraries\db\KDBSQLite.pas',
-  ServerPostHandlers in '..\Server\ServerPostHandlers.pas';
+  ServerPostHandlers in '..\Server\ServerPostHandlers.pas',
+  TerminologyServer in '..\Server\TerminologyServer.pas',
+  ICD10Services in '..\Server\ICD10Services.pas';
 
 var
   runner : ITestRunner;
