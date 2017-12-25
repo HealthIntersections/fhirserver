@@ -64,7 +64,7 @@ begin
         as.defaultvalue = %purpose%
         as.xpos = -1
         as.ypos = -1
-        as.returnvalue = "Support for release3.2.0"
+        as.returnvalue = "Wrap up of post 3.2 fixes"
         as.returnvariable = purpose
       end
       action.variables.savetoini
@@ -272,11 +272,11 @@ begin
       action.group
       begin
         description = "64 bit build"
+        enabled = false
         id = {B04497CC-9752-463E-8B55-3B8543974103}
         action.group
         begin
           description = "Build R4 Server"
-          enabled = false
           id = {323EE148-5CF5-49AC-AABA-35E692B5EEE4}
           action.files.delete
           begin
@@ -434,7 +434,6 @@ begin
         action.group
         begin
           description = "Build R3 Server"
-          enabled = false
           id = {78F3E5F3-0B09-471F-9389-9FC56201F566}
           action.files.delete
           begin
@@ -592,7 +591,6 @@ begin
         action.group
         begin
           description = "Build R2 Server"
-          enabled = false
           id = {62943F50-9BF5-4739-8069-CE9D92037FD5}
           action.files.delete
           begin
@@ -750,7 +748,6 @@ begin
         action.group
         begin
           description = "Build Server Utils"
-          enabled = false
           id = {09782113-23C1-4485-9C83-8C271BE0CCCE}
           action.files.delete
           begin
@@ -908,7 +905,6 @@ begin
         action.group
         begin
           description = "Sign executables"
-          enabled = false
           id = {DC8781EF-7FEC-44BD-93F6-AB1772EA8B1E}
           action.process.execute
           begin
@@ -1055,6 +1051,7 @@ begin
       action.group
       begin
         description = "32 bit build"
+        enabled = false
         id = {C42EC044-C80A-4901-AE36-65C021CB903C}
         action.group
         begin
@@ -1833,6 +1830,7 @@ begin
       action.group
       begin
         description = "Sign Installs"
+        enabled = false
         id = {8C3D4CBC-6388-4AA1-8AE8-157BE12FCCC9}
         action.process.execute
         begin

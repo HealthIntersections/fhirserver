@@ -125,7 +125,7 @@ begin
       finally
         md.Free;
       end;
-      Assert.IsTrue(conn.CountSQL('Select count(*) from TestTable') = 0);
+      Assert.IsTrue(conn.CountSQL('Select count(*) from TestTable') = 0, 'dbt.0');
 
       conn.ExecSQL('Insert into TestTable (TestKey, Name, BigString, Number, BigNumber, FloatNumber, Instant) values (1, ''a name'', '''', 2, ' + IntToStr(i64) + ', 3.2, ' +
         DBGetDate(manager.platform) + ')');
@@ -142,34 +142,34 @@ begin
       conn.Execute;
       conn.Terminate;
 
-      Assert.IsTrue(conn.CountSQL('Select count(*) from TestTable where  TestKey = 1') = 1);
-      Assert.IsTrue(conn.CountSQL('Select count(*) from TestTable where  TestKey = 0') = 0);
+      Assert.IsTrue(conn.CountSQL('Select count(*) from TestTable where  TestKey = 1') = 1, 'dbt.1');
+      Assert.IsTrue(conn.CountSQL('Select count(*) from TestTable where  TestKey = 0') = 0, 'dbt.2');
 
       conn.sql := 'Select * from TestTable';
       conn.Prepare;
       conn.Execute;
       conn.FetchNext;
-      Assert.IsTrue(conn.ColIntegerByName['TestKey'] = 1);
-      Assert.IsTrue(conn.ColStringByName['Name'] = 'a name');
-      Assert.IsTrue(conn.ColBlobAsStringByName['BigString'] = '');
-      Assert.IsTrue(conn.ColIntegerByName['Number'] = 2);
-      Assert.IsTrue(conn.ColInt64ByName['BigNumber'] = i64);
-      Assert.IsTrue(isSame(conn.ColDoubleByName['FloatNumber'], 3.2));
-      Assert.IsTrue(TSToDateTime(conn.ColTimestampByName['Instant']) < now);
-      Assert.IsTrue(TSToDateTime(conn.ColTimestampByName['Instant']) > now - DATETIME_MINUTE_ONE);
+      Assert.IsTrue(conn.ColIntegerByName['TestKey'] = 1, 'dbt.3');
+      Assert.IsTrue(conn.ColStringByName['Name'] = 'a name', 'dbt.4');
+      Assert.IsTrue(conn.ColBlobAsStringByName['BigString'] = '', 'dbt.5');
+      Assert.IsTrue(conn.ColIntegerByName['Number'] = 2, 'dbt.6');
+      Assert.IsTrue(conn.ColInt64ByName['BigNumber'] = i64, 'dbt.7');
+      Assert.IsTrue(isSame(conn.ColDoubleByName['FloatNumber'], 3.2), 'dbt.8');
+      Assert.IsTrue(TSToDateTime(conn.ColTimestampByName['Instant']) < now, 'dbt.9');
+      Assert.IsTrue(TSToDateTime(conn.ColTimestampByName['Instant']) > now - DATETIME_MINUTE_ONE, 'dbt.10');
       od := conn.ColDateTimeExByName['Instant'];
-      Assert.IsTrue(length(conn.ColBlobByName['Content']) = 0);
-      Assert.IsTrue(conn.ColNullByName['Content']);
+      Assert.IsTrue(length(conn.ColBlobByName['Content']) = 0, 'dbt.11');
+      Assert.IsTrue(conn.ColNullByName['Content'], 'dbt.12');
 
       conn.FetchNext;
-      Assert.IsTrue(conn.ColIntegerByName['TestKey'] = 2);
-      Assert.IsTrue(conn.ColStringByName['Name'] = 'Name 2');
-      Assert.IsTrue(conn.ColBlobAsStringByName['BigString'] = Name_405);
-      Assert.IsTrue(conn.ColIntegerByName['Number'] = 3);
-      Assert.IsTrue(conn.ColInt64ByName['BigNumber'] = -i64);
-      Assert.IsTrue(isSame(conn.ColDoubleByName['FloatNumber'], 3.4));
-      Assert.IsTrue(conn.ColDateTimeExByName['Instant'].fixPrecision(dtpSec).equal(d));
-      Assert.IsTrue(BlobIsSame(conn.ColBlobByName['Content'], b));
+      Assert.IsTrue(conn.ColIntegerByName['TestKey'] = 2, 'dbt.13');
+      Assert.IsTrue(conn.ColStringByName['Name'] = 'Name 2', 'dbt.14');
+      Assert.IsTrue(conn.ColBlobAsStringByName['BigString'] = Name_405, 'dbt.15');
+      Assert.IsTrue(conn.ColIntegerByName['Number'] = 3, 'dbt.16');
+      Assert.IsTrue(conn.ColInt64ByName['BigNumber'] = -i64, 'dbt.17');
+      Assert.IsTrue(isSame(conn.ColDoubleByName['FloatNumber'], 3.4), 'dbt.18');
+      Assert.IsTrue(conn.ColDateTimeExByName['Instant'].fixPrecision(dtpSec).equal(d), 'dbt.19');
+      Assert.IsTrue(BlobIsSame(conn.ColBlobByName['Content'], b), 'dbt.20');
       conn.Terminate;
 
       sleep(1000);
@@ -192,24 +192,24 @@ begin
       conn.Prepare;
       conn.Execute;
       conn.FetchNext;
-      Assert.IsTrue(conn.ColIntegerByName['TestKey'] = 1);
-      Assert.IsTrue(conn.ColStringByName['Name'] = '3rd Name');
-      Assert.IsTrue(conn.ColIntegerByName['Number'] = 3);
-      Assert.IsTrue(conn.ColInt64ByName['BigNumber'] = -i64);
-      Assert.IsTrue(isSame(conn.ColDoubleByName['FloatNumber'], 3.1));
-      Assert.IsTrue(conn.ColDateTimeExByName['Instant'].after(od, false));
-      Assert.IsTrue(length(conn.ColBlobByName['Content']) = 0);
-      Assert.IsTrue(conn.ColNullByName['Content']);
+      Assert.IsTrue(conn.ColIntegerByName['TestKey'] = 1, 'dbt.21');
+      Assert.IsTrue(conn.ColStringByName['Name'] = '3rd Name', 'dbt.22');
+      Assert.IsTrue(conn.ColIntegerByName['Number'] = 3, 'dbt.23');
+      Assert.IsTrue(conn.ColInt64ByName['BigNumber'] = -i64, 'dbt.24');
+      Assert.IsTrue(isSame(conn.ColDoubleByName['FloatNumber'], 3.1), 'dbt.25');
+      Assert.IsTrue(conn.ColDateTimeExByName['Instant'].after(od, false), 'dbt.26');
+      Assert.IsTrue(length(conn.ColBlobByName['Content']) = 0, 'dbt.27');
+      Assert.IsTrue(conn.ColNullByName['Content'], 'dbt.28');
 
       conn.FetchNext;
-      Assert.IsTrue(conn.ColIntegerByName['TestKey'] = 2);
-      Assert.IsTrue(conn.ColStringByName['Name'] = 'Name 4');
-      Assert.IsTrue(conn.ColIntegerByName['Number'] = -4);
-      Assert.IsTrue(conn.ColInt64ByName['BigNumber'] = i64);
-      Assert.IsTrue(isSame(conn.ColDoubleByName['FloatNumber'], 3.01));
-      Assert.IsTrue(conn.ColDateTimeExByName['Instant'].equal(od));
-      Assert.IsTrue(length(conn.ColBlobByName['Content']) = 0);
-      Assert.IsTrue(conn.ColNullByName['Content']);
+      Assert.IsTrue(conn.ColIntegerByName['TestKey'] = 2, 'dbt.29');
+      Assert.IsTrue(conn.ColStringByName['Name'] = 'Name 4', 'dbt.30');
+      Assert.IsTrue(conn.ColIntegerByName['Number'] = -4, 'dbt.31');
+      Assert.IsTrue(conn.ColInt64ByName['BigNumber'] = i64, 'dbt.32');
+      Assert.IsTrue(isSame(conn.ColDoubleByName['FloatNumber'], 3.01), 'dbt.33');
+      Assert.IsTrue(conn.ColDateTimeExByName['Instant'].equal(od), 'dbt.34');
+      Assert.IsTrue(length(conn.ColBlobByName['Content']) = 0, 'dbt.35');
+      Assert.IsTrue(conn.ColNullByName['Content'], 'dbt.36');
       conn.Terminate;
 
       conn.ExecSQL('Delete from TestTable where TestKey = 1');
@@ -219,14 +219,14 @@ begin
       conn.Execute;
       conn.Terminate;
 
-      Assert.IsTrue(conn.CountSQL('Select count(*) from TestTable') = 0);
+      Assert.IsTrue(conn.CountSQL('Select count(*) from TestTable') = 0, 'dbt.37');
 
     finally
       conn.DropTable('TestTable');
     end;
     md := conn.FetchMetaData;
     try
-      Assert.Isfalse(md.HasTable('TestTable'))
+      Assert.Isfalse(md.HasTable('TestTable'), 'dbt.38')
     finally
       md.Free;
     end;

@@ -128,7 +128,7 @@ begin
     js := TJavascript.Create;
     try
       o := js.wrapObject(i, defineTestInt);
-      js.execute('function func() {'+#13#10+'// o.addOne();'+#13#10+' } ', 'func', []); // [o]
+      js.execute('function func1() {'+#13#10+'// o.addOne();'+#13#10+' } ', 'func', []); // [o]
     finally
       js.Free;
     end;

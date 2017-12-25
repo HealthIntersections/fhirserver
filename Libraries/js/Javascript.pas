@@ -74,7 +74,7 @@ type
 
     procedure defineProperty(obj : JsValueRef; pId : JsPropertyIdRef; func : JsNativeFunction); overload;
     procedure defineProperty(obj : JsValueRef; name : AnsiString; func : JsNativeFunction); overload;
-    function registerPropertyId(name : AnsiString) : JsRef;
+    function getPropertyId(name : AnsiString) : JsRef;
     function wrapObject(o : TObject; definer : TJavascriptDefineObjectEvent) : JsValueRef;
     function getWrapped<T : class>(obj : JsValueRef) : T;
 
@@ -120,7 +120,7 @@ end;
 
 procedure TJavascript.defineProperty(obj: JsValueRef; name: AnsiString; func: JsNativeFunction);
 begin
-  defineProperty(obj, registerPropertyId(name), func);
+  defineProperty(obj, getPropertyId(name), func);
 end;
 
 procedure TJavascript.defineProperty(obj: JsValueRef; pId: JsPropertyIdRef; func: JsNativeFunction);
@@ -143,10 +143,9 @@ function TJavascript.execute(script, funcName: String; params: array of JsValueR
 var
   p : PChar;
   s : JsValueRef;
-  undefined, global, func : JsValueRef;
+  global, func : JsValueRef;
   pl : PJsValueRef;
   i : integer;
-//JsValueRef func, funcPropId, global, undefined, result;
 begin
   // parse the script
   p := @script[1];
@@ -155,16 +154,15 @@ begin
 
   // look up the name on the global object
   jsCheck(JsGetGlobalObject(global));
-  jsCheck(JsGetUndefinedValue(undefined));
-  jsCheck(JsGetProperty(global, registerPropertyId(funcName), func));
+  jsCheck(JsGetProperty(global, getPropertyId(funcName), func));
 
   // execute it
   GetMem(pl, (length(params) + 1) * SizeOf(JsValueRef));
   try
-    pl[0] := undefined;
+    pl[0] := global;
     for i := 0 to length(params) - 1 do
       pl[i+1] := params[i];
-    jsCheck(JsCallFunction(func, pl, 1 + length(params), result));
+    jsCheck(JsCallFunction(func, @pl, 1 + length(params), result));
   finally
     Freemem(pl);
   end;
@@ -215,57 +213,57 @@ var
 begin
   if code > JsNoError then
   begin
-    s := 'No Exception Information Available';
+    s := '';
     if JsGetAndClearException(exception) = JsNoError then
-      s := toString(exception);
+      s := ':' +toString(exception);
     case code of
-      JsErrorCategoryUsage : raise EJavascript.create('JsErrorCategoryUsage: '+s);
-      JsErrorInvalidArgument : raise EJavascript.create('JsErrorInvalidArgument: '+s);
-      JsErrorNullArgument : raise EJavascript.create('JsErrorNullArgument: '+s);
-      JsErrorNoCurrentContext : raise EJavascript.create('JsErrorNoCurrentContext: '+s);
-      JsErrorInExceptionState : raise EJavascript.create('JsErrorInExceptionState: '+s);
-      JsErrorNotImplemented : raise EJavascript.create('JsErrorNotImplemented: '+s);
-      JsErrorWrongThread : raise EJavascript.create('JsErrorWrongThread: '+s);
-      JsErrorRuntimeInUse : raise EJavascript.create('JsErrorRuntimeInUse: '+s);
-      JsErrorBadSerializedScript : raise EJavascript.create('JsErrorBadSerializedScript: '+s);
-      JsErrorInDisabledState : raise EJavascript.create('JsErrorInDisabledState: '+s);
-      JsErrorCannotDisableExecution : raise EJavascript.create('JsErrorCannotDisableExecution: '+s);
-      JsErrorHeapEnumInProgress : raise EJavascript.create('JsErrorHeapEnumInProgress: '+s);
-      JsErrorArgumentNotObject : raise EJavascript.create('JsErrorArgumentNotObject: '+s);
-      JsErrorInProfileCallback : raise EJavascript.create('JsErrorInProfileCallback: '+s);
-      JsErrorInThreadServiceCallback : raise EJavascript.create('JsErrorInThreadServiceCallback: '+s);
-      JsErrorCannotSerializeDebugScript : raise EJavascript.create('JsErrorCannotSerializeDebugScript: '+s);
-      JsErrorAlreadyDebuggingContext : raise EJavascript.create('JsErrorAlreadyDebuggingContext: '+s);
-      JsErrorAlreadyProfilingContext : raise EJavascript.create('JsErrorAlreadyProfilingContext: '+s);
-      JsErrorIdleNotEnabled : raise EJavascript.create('JsErrorIdleNotEnabled: '+s);
-      JsCannotSetProjectionEnqueueCallback : raise EJavascript.create('JsCannotSetProjectionEnqueueCallback: '+s);
-      JsErrorCannotStartProjection : raise EJavascript.create('JsErrorCannotStartProjection: '+s);
-      JsErrorInObjectBeforeCollectCallback : raise EJavascript.create('JsErrorInObjectBeforeCollectCallback: '+s);
-      JsErrorObjectNotInspectable : raise EJavascript.create('JsErrorObjectNotInspectable: '+s);
-      JsErrorPropertyNotSymbol : raise EJavascript.create('JsErrorPropertyNotSymbol: '+s);
-      JsErrorPropertyNotString : raise EJavascript.create('JsErrorPropertyNotString: '+s);
-      JsErrorInvalidContext : raise EJavascript.create('JsErrorInvalidContext: '+s);
-      JsInvalidModuleHostInfoKind : raise EJavascript.create('JsInvalidModuleHostInfoKind: '+s);
-      JsErrorModuleParsed : raise EJavascript.create('JsErrorModuleParsed: '+s);
-      JsErrorModuleEvaluated : raise EJavascript.create('JsErrorModuleEvaluated: '+s);
-      JsErrorCategoryEngine : raise EJavascript.create('JsErrorCategoryEngine: '+s);
-      JsErrorOutOfMemory : raise EJavascript.create('JsErrorOutOfMemory: '+s);
-      JsErrorBadFPUState : raise EJavascript.create('JsErrorBadFPUState: '+s);
-      JsErrorCategoryScript : raise EJavascript.create('JsErrorCategoryScript: '+s);
-      JsErrorScriptException : raise EJavascript.create('JsErrorScriptException: '+s);
-      JsErrorScriptCompile : raise EJavascript.create('JsErrorScriptCompile: '+s);
-      JsErrorScriptTerminated : raise EJavascript.create('JsErrorScriptTerminated: '+s);
-      JsErrorScriptEvalDisabled : raise EJavascript.create('JsErrorScriptEvalDisabled: '+s);
-      JsErrorCategoryFatal : raise EJavascript.create('JsErrorCategoryFatal: '+s);
-      JsErrorFatal : raise EJavascript.create('JsErrorFatal: '+s);
-      JsErrorWrongRuntime : raise EJavascript.create('JsErrorWrongRuntime: '+s);
-      JsErrorCategoryDiagError : raise EJavascript.create('JsErrorCategoryDiagError: '+s);
-      JsErrorDiagAlreadyInDebugMode : raise EJavascript.create('JsErrorDiagAlreadyInDebugMode: '+s);
-      JsErrorDiagNotInDebugMode : raise EJavascript.create('JsErrorDiagNotInDebugMode: '+s);
-      JsErrorDiagNotAtBreak : raise EJavascript.create('JsErrorDiagNotAtBreak: '+s);
-      JsErrorDiagInvalidHandle : raise EJavascript.create('JsErrorDiagInvalidHandle: '+s);
-      JsErrorDiagObjectNotFound : raise EJavascript.create('JsErrorDiagObjectNotFound: '+s);
-      JsErrorDiagUnableToPerformAction : raise EJavascript.create('JsErrorDiagUnableToPerformAction: '+s);
+      JsErrorCategoryUsage : raise EJavascript.create('JsErrorCategoryUsage'+s);
+      JsErrorInvalidArgument : raise EJavascript.create('JsErrorInvalidArgument'+s);
+      JsErrorNullArgument : raise EJavascript.create('JsErrorNullArgument'+s);
+      JsErrorNoCurrentContext : raise EJavascript.create('JsErrorNoCurrentContext'+s);
+      JsErrorInExceptionState : raise EJavascript.create('JsErrorInExceptionState'+s);
+      JsErrorNotImplemented : raise EJavascript.create('JsErrorNotImplemented'+s);
+      JsErrorWrongThread : raise EJavascript.create('JsErrorWrongThread'+s);
+      JsErrorRuntimeInUse : raise EJavascript.create('JsErrorRuntimeInUse'+s);
+      JsErrorBadSerializedScript : raise EJavascript.create('JsErrorBadSerializedScript'+s);
+      JsErrorInDisabledState : raise EJavascript.create('JsErrorInDisabledState'+s);
+      JsErrorCannotDisableExecution : raise EJavascript.create('JsErrorCannotDisableExecution'+s);
+      JsErrorHeapEnumInProgress : raise EJavascript.create('JsErrorHeapEnumInProgress'+s);
+      JsErrorArgumentNotObject : raise EJavascript.create('JsErrorArgumentNotObject'+s);
+      JsErrorInProfileCallback : raise EJavascript.create('JsErrorInProfileCallback'+s);
+      JsErrorInThreadServiceCallback : raise EJavascript.create('JsErrorInThreadServiceCallback'+s);
+      JsErrorCannotSerializeDebugScript : raise EJavascript.create('JsErrorCannotSerializeDebugScript'+s);
+      JsErrorAlreadyDebuggingContext : raise EJavascript.create('JsErrorAlreadyDebuggingContext'+s);
+      JsErrorAlreadyProfilingContext : raise EJavascript.create('JsErrorAlreadyProfilingContext'+s);
+      JsErrorIdleNotEnabled : raise EJavascript.create('JsErrorIdleNotEnabled'+s);
+      JsCannotSetProjectionEnqueueCallback : raise EJavascript.create('JsCannotSetProjectionEnqueueCallback'+s);
+      JsErrorCannotStartProjection : raise EJavascript.create('JsErrorCannotStartProjection'+s);
+      JsErrorInObjectBeforeCollectCallback : raise EJavascript.create('JsErrorInObjectBeforeCollectCallback'+s);
+      JsErrorObjectNotInspectable : raise EJavascript.create('JsErrorObjectNotInspectable'+s);
+      JsErrorPropertyNotSymbol : raise EJavascript.create('JsErrorPropertyNotSymbol'+s);
+      JsErrorPropertyNotString : raise EJavascript.create('JsErrorPropertyNotString'+s);
+      JsErrorInvalidContext : raise EJavascript.create('JsErrorInvalidContext'+s);
+      JsInvalidModuleHostInfoKind : raise EJavascript.create('JsInvalidModuleHostInfoKind'+s);
+      JsErrorModuleParsed : raise EJavascript.create('JsErrorModuleParsed'+s);
+      JsErrorModuleEvaluated : raise EJavascript.create('JsErrorModuleEvaluated'+s);
+      JsErrorCategoryEngine : raise EJavascript.create('JsErrorCategoryEngine'+s);
+      JsErrorOutOfMemory : raise EJavascript.create('JsErrorOutOfMemory'+s);
+      JsErrorBadFPUState : raise EJavascript.create('JsErrorBadFPUState'+s);
+      JsErrorCategoryScript : raise EJavascript.create('JsErrorCategoryScript'+s);
+      JsErrorScriptException : raise EJavascript.create('JsErrorScriptException'+s);
+      JsErrorScriptCompile : raise EJavascript.create('JsErrorScriptCompile'+s);
+      JsErrorScriptTerminated : raise EJavascript.create('JsErrorScriptTerminated'+s);
+      JsErrorScriptEvalDisabled : raise EJavascript.create('JsErrorScriptEvalDisabled'+s);
+      JsErrorCategoryFatal : raise EJavascript.create('JsErrorCategoryFatal'+s);
+      JsErrorFatal : raise EJavascript.create('JsErrorFatal'+s);
+      JsErrorWrongRuntime : raise EJavascript.create('JsErrorWrongRuntime'+s);
+      JsErrorCategoryDiagError : raise EJavascript.create('JsErrorCategoryDiagError'+s);
+      JsErrorDiagAlreadyInDebugMode : raise EJavascript.create('JsErrorDiagAlreadyInDebugMode'+s);
+      JsErrorDiagNotInDebugMode : raise EJavascript.create('JsErrorDiagNotInDebugMode'+s);
+      JsErrorDiagNotAtBreak : raise EJavascript.create('JsErrorDiagNotAtBreak'+s);
+      JsErrorDiagInvalidHandle : raise EJavascript.create('JsErrorDiagInvalidHandle'+s);
+      JsErrorDiagObjectNotFound : raise EJavascript.create('JsErrorDiagObjectNotFound'+s);
+      JsErrorDiagUnableToPerformAction : raise EJavascript.create('JsErrorDiagUnableToPerformAction'+s);
     else
       raise EJavascript.Create('An Error');
     end;
@@ -279,7 +277,7 @@ var
   consolePropId, logPropId : JsPropertyIdRef;
   consoleString : PAnsiChar;
 begin
-  logPropId := registerPropertyId('log');
+  logPropId := getPropertyId('log');
   jsCheck(JsCreateObject(console));
   jsCheck(JsCreateFunction(LogCB, self, logFunc));
   consoleString := 'console';
@@ -291,7 +289,7 @@ begin
 end;
 
 
-function TJavascript.registerPropertyId(name: AnsiString): JsRef;
+function TJavascript.getPropertyId(name: AnsiString): JsRef;
 var
   p : PAnsiChar;
 begin

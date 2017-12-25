@@ -1297,12 +1297,7 @@ begin
     inc(month);
     day := 1;
   end;
-  if month >= 12 then
-  begin
-    inc(year);
-    month := 1;
-  end;
-  if month = 13 then
+  if month > 12 then
   begin
     inc(year);
     month := 1;
@@ -1349,6 +1344,8 @@ begin
     result := uSelf.hour > uOther.hour
   else if (uSelf.minute <> uOther.minute) then
     result := uSelf.minute > uOther.minute
+  else if (uSelf.second <> uOther.second) then
+    result := uSelf.second > uOther.second
   else
     result := (uSelf.fraction > uOther.fraction);
 end;

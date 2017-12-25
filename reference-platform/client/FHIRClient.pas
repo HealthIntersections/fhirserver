@@ -58,6 +58,12 @@ Type
     procedure logExchange(verb, url, status, requestHeaders, responseHeaders : String; request, response : TStream);  virtual;
   end;
 
+  TNullLogger = class (TFHIRClientLogger)
+  public
+    procedure logExchange(verb, url, status, requestHeaders, responseHeaders : String; request, response : TStream);  override;
+  end;
+
+
   TFhirClient = {abstract} class (TAdvObject)
   private
     FLogger : TFHIRClientLogger;
@@ -345,6 +351,7 @@ end;
 constructor TFhirHTTPClient.create(worker : TFHIRWorkerContext; url: String; json : boolean);
 begin
   Create;
+  FLogger := TNullLogger.create;
   FWorker := worker;
   FUrl := URL;
   FJson := json;
@@ -1640,6 +1647,13 @@ procedure TFHIRClientLogger.logExchange(verb, url, status, requestHeaders,
   responseHeaders: String; request, response: TStream);
 begin
 
+end;
+
+{ TNullLogger }
+
+procedure TNullLogger.logExchange(verb, url, status, requestHeaders, responseHeaders: String; request, response: TStream);
+begin
+  // nothing
 end;
 
 end.

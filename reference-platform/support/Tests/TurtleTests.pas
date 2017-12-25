@@ -490,7 +490,6 @@ Type
     [TestCase] procedure test_processrequest_example_poll_inclusive();
     [TestCase] procedure test_processrequest_example_poll_exclusive();
     [TestCase] procedure test_processrequest_example_poll_eob();
-    [TestCase] procedure test_procedurerequest_example();
     [TestCase] procedure test_procedure_example();
     [TestCase] procedure test_procedure_example_implant();
     [TestCase] procedure test_procedure_example_f201_tpf();
@@ -594,7 +593,6 @@ Type
     [TestCase] procedure test_nutritionorder_example_cardiacdiet();
     [TestCase] procedure test_namingsystem_registry();
     [TestCase] procedure test_namingsystem_example();
-    [TestCase] procedure test_namingsystem_example_replaced();
     [TestCase] procedure test_namingsystem_example_id();
     [TestCase] procedure test_messageheader_example();
     [TestCase] procedure test_message_response_link();
@@ -3018,11 +3016,6 @@ begin
   parseResource('processrequest-example-poll-eob.ttl');
 end;
 
-procedure TTurtleResourceTests.test_procedurerequest_example();
-begin
-  parseResource('procedurerequest-example.ttl');
-end;
-
 procedure TTurtleResourceTests.test_procedure_example();
 begin
   parseResource('procedure-example.ttl');
@@ -3536,11 +3529,6 @@ end;
 procedure TTurtleResourceTests.test_namingsystem_example();
 begin
   parseResource('namingsystem-example.ttl');
-end;
-
-procedure TTurtleResourceTests.test_namingsystem_example_replaced();
-begin
-  parseResource('namingsystem-example-replaced.ttl');
 end;
 
 procedure TTurtleResourceTests.test_namingsystem_example_id();

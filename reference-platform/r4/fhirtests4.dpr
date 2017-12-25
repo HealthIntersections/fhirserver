@@ -147,7 +147,9 @@ uses
   FHIRLog in '..\support\FHIRLog.pas',
   Logging in '..\..\Server\Logging.pas',
   FHIRIndexBase in '..\support\FHIRIndexBase.pas',
-  Javascript in '..\..\Libraries\js\Javascript.pas';
+  Javascript in '..\..\Libraries\js\Javascript.pas',
+  ChakraCommon in '..\..\Libraries\js\ChakraCommon.pas',
+  JavascriptTests in '..\..\Libraries\js\JavascriptTests.pas';
 
 var
   s: String;

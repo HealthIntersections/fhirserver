@@ -305,7 +305,10 @@ uses
   KDBSQLite in '..\Libraries\db\KDBSQLite.pas',
   ServerPostHandlers in '..\Server\ServerPostHandlers.pas',
   TerminologyServer in '..\Server\TerminologyServer.pas',
-  ICD10Services in '..\Server\ICD10Services.pas';
+  ICD10Services in '..\Server\ICD10Services.pas',
+  JavascriptTests in '..\Libraries\js\JavascriptTests.pas',
+  ChakraCommon in '..\Libraries\js\ChakraCommon.pas',
+  Javascript in '..\Libraries\js\Javascript.pas';
 
 var
   runner : ITestRunner;
