@@ -308,7 +308,8 @@ uses
   ICD10Services in '..\Server\ICD10Services.pas',
   JavascriptTests in '..\Libraries\js\JavascriptTests.pas',
   ChakraCommon in '..\Libraries\js\ChakraCommon.pas',
-  Javascript in '..\Libraries\js\Javascript.pas';
+  Javascript in '..\Libraries\js\Javascript.pas',
+  DigitalSignatureTests in '..\reference-platform\support\Tests\DigitalSignatureTests.pas';
 
 var
   runner : ITestRunner;

@@ -154,7 +154,8 @@ Type
     procedure SetText(const Value: string);
     function GetAttribute(name: String): String;
     procedure SetAttribute(name: String; const Value: String);
-    function getAbbreviation(ns : String; first : boolean) : String;
+    function getAbbreviation(ns : String) : String;
+    function getAbbreviationPriv(ns : String; var abbrev : String): boolean;
     procedure writeToXml(b : TStringBuilder; pretty : boolean; indent : integer);
     function GetAttributeNS(ns, name: String): String;
     procedure SetAttributeNS(ns, name: String; const Value: String);
@@ -189,9 +190,13 @@ Type
     property attribute[name : String] : String read GetAttribute write SetAttribute;
     property attributeNS[ns, name : String] : String read GetAttributeNS write SetAttributeNS;
     function element(name : String) : TMXmlElement;
+    function elementNS(ns, name : String) : TMXmlElement;
     procedure listElements(name : String; list : TAdvList<TMXmlElement>);
     procedure addChild(node : TMXmlElement; fix : boolean);
-    function ToXml(pretty : boolean = false) : String;
+    function addElement(name : String) : TMXmlElement;
+    function addElementNS(ns, name : String) : TMXmlElement;
+    function addText(content : String) : TMXmlElement;
+    function ToXml(pretty : boolean = false) : String; overload;
     function equal(other : TMXmlNode) : boolean; override;
     function ToString : String; override;
   end;
@@ -295,11 +300,13 @@ Type
     function evaluate(expr : TMXPathExpressionNode; atEntry : boolean; variables : TXPathVariables; position : integer; focus : TAdvList<TMXmlNode>) : TAdvList<TMXmlNode>; overload;
     function evaluate(expr : TMXPathExpressionNode; atEntry : boolean; variables : TXPathVariables; position : integer; item : TMXmlNode) : TAdvList<TMXmlNode>; overload;
     function evaluateString(nodes : TAdvList<TMXmlNode>): String;
+    function GetDocElement: TMXmlElement;
   public
     Constructor Create; override;
     Destructor Destroy; override;
 
-
+    property docElement : TMXmlElement read GetDocElement;
+    function ToXml(pretty : boolean = false; xmlHeader : boolean = false) : String; overload;
     function select(xpath : String; focus : TMXmlElement) : TAdvList<TMXmlNode>; overload;
     function selectElements(xpath : String; focus : TMXmlElement) : TAdvList<TMXmlElement>; overload;
     function select(xpath : TMXPathExpressionNode; focus : TMXmlElement) : TAdvList<TMXmlNode>; overload;
@@ -466,6 +473,19 @@ begin
         raise EMXmlDocument.create('Multiple matches found for '+name+' at Row '+inttostr(FStart.line)+' column '+inttostr(FStart.col));
 end;
 
+function TMXmlElement.elementNS(ns, name: String): TMXmlElement;
+var
+  t : TMXmlElement;
+begin
+  result := nil;
+  for t in Children do
+    if (t.Name = name) and (t.NamespaceURI = ns) then
+      if result = nil then
+        result := t
+      else
+        raise EMXmlDocument.create('Multiple matches found for '+ns+'::'+name+' at Row '+inttostr(FStart.line)+' column '+inttostr(FStart.col));
+end;
+
 function TMXmlElement.equal(other: TMXmlNode): boolean;
 begin
   result := other = self;
@@ -505,33 +525,40 @@ begin
       a.Parent := self;
 end;
 
-function TMXmlElement.getAbbreviation(ns: String; first : boolean): String;
+function TMXmlElement.getAbbreviationPriv(ns: String; var abbrev : String) : boolean;
 var
   s, v : String;
-  hasdef : boolean;
-  i : integer;
 begin
-  hasdef := false;
   if HasAttributes then
   begin
     for s in FAttributes.Keys do
     begin
       v := FAttributes[s].Value;
-      if (s = 'xmlns') then
-        hasdef := true;
       if (s = 'xmlns') and (v = ns) then
-        exit('');
+      begin
+        abbrev := '';
+        exit(true);
+      end;
       if (s.StartsWith('xmlns:')) and (v = ns) then
-        exit(s.Substring(6));
+      begin
+        abbrev := s.Substring(6);
+        exit(true);
+      end;
     end;
   end;
   if (Parent <> nil) then
-    result := parent.getAbbreviation(ns, false)
+    result := parent.getAbbreviationPriv(ns, abbrev)
   else
-    result := '';
-  if (first and (result = '')) then
+    result := false;
+end;
+
+function TMXmlElement.getAbbreviation(ns: String): String;
+var
+  i : integer;
+begin
+  if not getAbbreviationPriv(ns, result) then
   begin
-    if not hasdef then
+    if not Attributes.ContainsKey('xmlns') then
       attribute['xmlns'] := ns
     else
     begin
@@ -703,7 +730,7 @@ begin
       end;
   if not done then
   begin
-    s := getAbbreviation(ns, true);
+    s := getAbbreviation(ns);
     attr := TMXmlAttribute.Create;
     try
       attr.NamespaceURI := ns;
@@ -770,13 +797,16 @@ var
   c : TMXmlElement;
 begin
   case FNodeType of
-    ntElement, ntDocument:
+    ntDocument :
+      for c in Children do
+        c.writeToXml(b, pretty, indent + 1);
+    ntElement:
       begin
       if (Name = '') then
       begin
         if (LocalName <> '') and (NamespaceURI <> '') then
         begin
-          s := getAbbreviation(NamespaceURI, true);
+          s := getAbbreviation(NamespaceURI);
           if s = '' then
             Name := LocalName
           else
@@ -827,6 +857,28 @@ begin
   node.Parent := self;
   if fix then
     fixChildren;
+end;
+
+function TMXmlElement.addElement(name: String) : TMXmlElement;
+begin
+  result := TMXmlElement.Create(ntElement);
+  result.Name := name;
+  addChild(result, false);
+end;
+
+function TMXmlElement.addElementNS(ns, name: String) : TMXmlElement;
+begin
+  result := TMXmlElement.Create(ntElement);
+  result.LocalName := name;
+  result.NamespaceURI := ns;
+  addChild(result, false);
+end;
+
+function TMXmlElement.addText(content: String): TMXmlElement;
+begin
+  result := TMXmlElement.Create(ntText);
+  result.Text := content;
+  addChild(result, false);
 end;
 
 constructor TMXmlElement.Create(nodeType: TMXmlElementType; name, local, ns: String);
@@ -2377,6 +2429,16 @@ begin
   end;
 end;
 
+function TMXmlDocument.GetDocElement: TMXmlElement;
+var
+  t : TMXmlElement;
+begin
+  result := nil;
+  for t in Children do
+    if t.NodeType = ntElement then
+      exit(t);
+end;
+
 procedure TMXmlDocument.funcComment(focus: TMXmlNode; work: TAdvList<TMXmlNode>);
 var
   child : TMXmlElement;
@@ -2974,6 +3036,25 @@ begin
     result.link;
   finally
     result.free;
+  end;
+end;
+
+function TMXmlDocument.ToXml(pretty, xmlHeader: boolean): String;
+var
+  b : TStringBuilder;
+begin
+  b := TStringBuilder.create;
+  try
+    if xmlHeader then
+    begin
+      b.Append('<?xml version="1.0" encoding="UTF-8"?>');
+      if pretty then
+        b.Append(#13#10);
+    end;
+    writeToXml(b, pretty, 0);
+    result := b.toString();
+  finally
+    b.Free;
   end;
 end;
 

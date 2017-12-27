@@ -62,6 +62,7 @@ type
   TXmlBuilder = {abstract} class (TAdvObject)
   private
     function GetCurrentNamespaces: TXmlBuilderNamespaceList;
+    function getNSAbbrev(iElement: TMXMLElement): String;
   Protected
     FNoHeader: Boolean;
     FCanonicalise: TXmlCanonicalisationMethodSet;
@@ -92,7 +93,7 @@ type
     procedure ProcessingInstruction(sName, sText : String); overload; virtual; abstract;
     procedure DocType(sText : String); overload; virtual; abstract;
 
-    Procedure WriteXml(iElement : TMXMLElement); virtual; abstract;
+    Procedure WriteXml(iElement : TMXMLElement);
 {
     Procedure WriteXml(iElement : XmlIntf.IXMLNode; first : boolean); overload; virtual; abstract;
     Procedure WriteXmlNode(iNode : XmlIntf.IXMLNode; first : boolean); overload; virtual; abstract;
@@ -186,5 +187,69 @@ begin
   FNamespaces.Add(CurrentNamespaces.clone);
 end;
 
+function TXmlBuilder.getNSAbbrev(iElement: TMXMLElement) : String;
+var
+  a : TMXmlAttribute;
+  i : integer;
+begin
+  for a in iELement.Attributes.Values do
+    if a.Value = iElement.NamespaceURI then
+    begin
+      if (a.Name = 'xmlns') then
+        exit('')
+      else if a.Name.StartsWith('xmlns:') then
+        exit(a.Name.Substring(6)+':');
+    end;
+
+  if CurrentNamespaces.DefaultNS = iElement.NamespaceURI then
+    exit('');
+
+  for i := 0 to CurrentNamespaces.Count - 1 do
+  begin
+    if CurrentNamespaces.Values[i] = iElement.NamespaceURI then
+      exit(CurrentNamespaces.Keys[i]+':');
+  end;
+  if iElement.attribute['xmlns'] = '' then
+  begin
+    AddAttribute('xmlns', iElement.NamespaceURI);
+    CurrentNamespaces.DefaultNS := iElement.NamespaceURI;
+    exit('');
+  end
+  else
+  begin
+    AddAttribute('xmlns:ns', iElement.NamespaceURI);
+    CurrentNamespaces.Add('ns', iElement.NamespaceURI);
+    exit('ns:');
+  end
+end;
+
+procedure TXmlBuilder.WriteXml(iElement: TMXMLElement);
+var
+  n : string;
+  a : TMXmlAttribute;
+  c : TMXmlElement;
+begin
+  n := iElement.name;
+  if n = '' then
+    n := getNSAbbrev(iElement)+iElement.LocalName;
+  for a in iElement.Attributes.Values do
+    if a.NamespaceURI <> '' then
+      AddAttributeNS(a.NamespaceURI, a.Name, a.Value)
+    else
+      AddAttribute(a.Name, a.Value);
+  Open(n);
+  for c in iElement.Children do
+    case c.NodeType of
+      ntElement: WriteXml(c);
+      ntText: Text(c.Text);
+      ntComment: Comment(c.Text);
+      ntDocument: raise Exception.Create('Illegal XML - document inside element');
+      ntAttribute: raise Exception.Create('Illegal XML - attribute in element chilren');
+      ntProcessingInstruction: ProcessingInstruction(c.Name, c.Text);
+      ntDocumentDeclaration: raise Exception.Create('Illegal DTD not supported');
+      ntCData: raise Exception.Create('Illegal CDATA not supported');
+    end;
+  Close(n);
+end;
 
 end.

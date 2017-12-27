@@ -381,6 +381,7 @@
         <DCCReference Include="..\Libraries\js\JavascriptTests.pas"/>
         <DCCReference Include="..\Libraries\js\ChakraCommon.pas"/>
         <DCCReference Include="..\Libraries\js\Javascript.pas"/>
+        <DCCReference Include="..\reference-platform\support\Tests\DigitalSignatureTests.pas"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>

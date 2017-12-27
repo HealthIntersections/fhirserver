@@ -68,7 +68,6 @@ Type
     function Text(Const sValue : String) : TSourceLocation; override;
     function Entity(Const sValue : String) : TSourceLocation; override;
     function TagText(Const sName, sValue : String) : TSourceLocation; override;
-    Procedure WriteXml(iElement : TMXmlElement); override;
     procedure ProcessingInstruction(sName, sText : String); override;
     procedure DocType(sText : String); override;
 
@@ -208,11 +207,6 @@ begin
   result.col := FSourceLocation.col;
 end;
 
-procedure TMXmlBuilder.WriteXml(iElement: TMXmlElement);
-begin
-  raise Exception.Create('TMXmlBuilder.WriteXml not Done Yet');
-
-end;
 
 function TMXmlBuilder.Entity(const sValue: String) : TSourceLocation;
 begin

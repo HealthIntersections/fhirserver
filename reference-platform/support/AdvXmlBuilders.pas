@@ -73,8 +73,7 @@ Type
     procedure DocType(sText : String); override;
     procedure CData(text : String);
 
-    Procedure WriteXml(iElement : TMXMLElement); Override;
-
+    
     procedure inject(const bytes : TBytes); override;
   End;
 
@@ -286,7 +285,10 @@ begin
     xml.Produce(#10);
   if CurrentNamespaces.DefaultSet then
   begin
-    xml.AddNamespace('', CurrentNamespaces.DefaultNS);
+    if not xml.Attributes.ExistsByName('xmlns') then
+      xml.AddNamespace('', CurrentNamespaces.DefaultNS)
+    else if xml.Attributes.GetByName('xmlns').Value <> CurrentNamespaces.DefaultNS then
+       raise Exception.Create('XML default namespce misalignment');
     CurrentNamespaces.DefaultSet := false;
   end;
   xml.ProduceOpen(sName);
@@ -349,10 +351,6 @@ begin
   result.col := 0; //xml.col;
 end;
 
-procedure TAdvXmlBuilder.WriteXml(iElement: TMXMLElement);
-begin
-  raise Exception.Create('Not done yet');
-end;
 
 function TAdvXmlBuilder.Entity(Const sValue : String) : TSourceLocation;
 begin
