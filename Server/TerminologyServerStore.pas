@@ -120,9 +120,28 @@ Type
     destructor Destroy; override;
   end;
 
+  TFHIRCodeSystemEntry = class (TAdvObject)
+  private
+    FCodeSystem : TFHIRCodeSystem;
+    FValueset : TFHIRValueSet;
+    FSupplements : TAdvList<TFHIRCodeSystem>;
+    function GetHasSupplements: boolean;
+    function GetSupplements: TAdvList<TFHIRCodeSystem>;
+    procedure SetCodeSystem(const Value: TFHIRCodeSystem);
+  public
+    Constructor Create(codeSystem : TFHIRCodeSystem {$IFDEF FHIR2}; vs : TFHIRValueSet {$ENDIF});
+    destructor Destroy; override;
+
+    function Link : TFHIRCodeSystemEntry; overload;
+
+    property CodeSystem : TFHIRCodeSystem read FCodeSystem write SetCodeSystem;
+    Property hasSupplements : boolean read GetHasSupplements;
+    property Supplements : TAdvList<TFHIRCodeSystem> read GetSupplements;
+  end;
+
   TFhirCodeSystemProvider = class (TCodeSystemProvider)
   private
-    FVs : TFhirCodeSystem;
+    FCs : TFhirCodeSystemEntry;
     FMap : TAdvMap<TFhirCodeSystemConcept>;
 
     function LocateCode(code : String) : TFhirCodeSystemConcept;
@@ -133,10 +152,13 @@ Type
     procedure iterateCodes(base: TFhirCodeSystemConcept; list: TFhirCodeSystemProviderFilterContext);
     {$IFNDEF FHIR2}
     function getProperty(code : String) : TFhirCodeSystemProperty;
+    function locCode(list: TFhirCodeSystemConceptList;
+      code: String): TFhirCodeSystemConcept;
     {$ENDIF}
   public
-    constructor Create(vs : TFhirCodeSystem); overload;
+    constructor Create(vs : TFhirCodeSystemEntry); overload;
     destructor Destroy; override;
+
     function name(context: TCodeSystemProviderContext): String; override;
     function version(context: TCodeSystemProviderContext): String; override;
     function TotalCount : integer; override;
@@ -168,7 +190,6 @@ Type
     function subsumesTest(codeA, codeB : String) : String; override;
   end;
 
-
   // the terminology server maintains a cache of terminology related resources
   // the rest server notifies terminology server whenever this list changes
   // (and at start up)
@@ -198,12 +219,13 @@ Type
     // if they're a value set, by their code system url
     FValueSetsById : TAdvMap<TFHIRValueSet>; // by local system's id
     FValueSetsByURL : TAdvMap<TFHIRValueSet>; // by canonical url
-    FCodeSystemsById : TAdvMap<TFHIRCodeSystem>; // all current value sets that define systems, by their url
-    FCodeSystemsByUrl : TAdvMap<TFHIRCodeSystem>; // all current value sets that define systems, by their url
-    FCodeSystemsByVsUrl : TAdvMap<TFHIRCodeSystem>; // all current value sets that define systems, by their url
+    FCodeSystemsById : TAdvMap<TFHIRCodeSystemEntry>; // all current value sets that define systems, by their url
+    FCodeSystemsByUrl : TAdvMap<TFHIRCodeSystemEntry>; // all current value sets that define systems, by their url
+    FCodeSystemsByVsUrl : TAdvMap<TFHIRCodeSystemEntry>; // all current value sets that define systems, by their url
+    FSupplementsById : TAdvMap<TFHIRCodeSystem>; // All supplements
 
     FBaseValueSets : TAdvMap<TFHIRValueSet>; // value sets out of the specification - these can be overriden, but they never go away
-    FBaseCodeSystems : TAdvMap<TFHIRCodeSystem>; // value sets out of the specification - these can be overriden, but they never go away
+    FBaseCodeSystems : TAdvMap<TFHIRCodeSystemEntry>; // value sets out of the specification - these can be overriden, but they never go away
 
     FBaseConceptMaps : TAdvMap<TLoadedConceptMap>; // value sets out of the specification - these can be overriden, but they never go away
     FConceptMapsById : TAdvMap<TLoadedConceptMap>;
@@ -234,6 +256,8 @@ Type
     procedure SetEmailThreadStatus(const Value: String);
     procedure checkForDuplicates(codes: TStringList; list: TFhirCodeSystemConceptList; url : String);
     function checkVersion(system, version: String; profile: TFHIRExpansionProfile): String;
+    procedure AddCodeSystemToCache(cs: TFhirCodeSystem; {$IFDEF FHIR2} vs : TFHIRValueSet; {$ENDIF} base : boolean);
+    procedure RemoveCodeSystemFromCache(id : String);
   protected
     FLock : TCriticalSection;  // it would be possible to use a read/write lock, but the complexity doesn't seem to be justified by the short amount of time in the lock anyway
     FDB : TKDBManager;
@@ -854,11 +878,13 @@ begin
 
   FValueSetsById := TAdvMap<TFhirValueSet>.create;
   FValueSetsByURL := TAdvMap<TFhirValueSet>.create;
-  FCodeSystemsById := TAdvMap<TFhirCodeSystem>.create;
-  FCodeSystemsByUrl := TAdvMap<TFhirCodeSystem>.create;
-  FCodeSystemsByVsUrl := TAdvMap<TFhirCodeSystem>.create;
+  FCodeSystemsById := TAdvMap<TFhirCodeSystemEntry>.create;
+  FCodeSystemsByUrl := TAdvMap<TFhirCodeSystemEntry>.create;
+  FCodeSystemsByVsUrl := TAdvMap<TFhirCodeSystemEntry>.create;
   FBaseValueSets := TAdvMap<TFhirValueSet>.create;
-  FBaseCodeSystems := TAdvMap<TFHIRCodeSystem>.create;
+  FBaseCodeSystems := TAdvMap<TFHIRCodeSystemEntry>.create;
+  FSupplementsById := TAdvMap<TFHIRCodeSystem>.create;
+
 
   FBaseConceptMaps := TAdvMap<TLoadedConceptMap>.create;
   FConceptMapsById := TAdvMap<TLoadedConceptMap>.create;
@@ -970,6 +996,8 @@ begin
   FCodeSystemsByVsUrl.Free;
   FBaseValueSets.Free;
   FBaseCodeSystems.Free;
+  FSupplementsByid.Free;
+
 
   FBaseConceptMaps.Free;
   FConceptMapsById.Free;
@@ -1173,11 +1201,98 @@ begin
     result := TFhirReference(t).reference;
 end;
 
+procedure TTerminologyServerStore.AddCodeSystemToCache(cs : TFhirCodeSystem; {$IFDEF FHIR2} vs : TFHIRValueSet; {$ENDIF} base : boolean);
+var
+  cse : TFHIRCodeSystemEntry;
+  supp : TFHIRCodeSystem;
+begin
+  cse := TFHIRCodeSystemEntry.Create(cs.Link{$IFDEF FHIR2}, vs.link{$ENDIF});
+  try
+    if base then
+      FBaseCodeSystems.AddOrSetValue(cs.url, cse.Link);
+    {$IFDEF FHIR4}
+    if (cs.supplements <> nil) then
+    begin
+      FSupplementsById.AddOrSetValue(cs.id, cs.Link);
+      if cs.supplements.reference.StartsWith('CodeSystem/') then
+      begin
+        if FCodeSystemsById.TryGetValue(cs.supplements.reference.Substring(11), cse) then
+          cse.Supplements.Add(cs.Link);
+      end
+      else if FCodeSystemsByUrl.TryGetValue(cs.supplements.reference, cse) then
+        cse.Supplements.Add(cs.Link);
+    end
+    else
+    begin
+   {$ENDIF}
+      FCodeSystemsById.AddOrSetValue(cs.id, cse.Link);
+      FCodeSystemsByUrl.AddOrSetValue(cs.url, cse.Link);
+      {$IFNDEF FHIR2}
+      if cs.valueSet <> '' then
+        FCodeSystemsByVsUrl.AddOrSetValue(cs.valueSet, cse.Link);
+      {$ENDIF}
+      if (FDB <> nil) then // don't build stems in this case
+        BuildStems({$IFDEF FHIR2}vs.codeSystem{$ELSE}cs{$ENDIF}); // todo: move this out of the lock
+      {$IFDEF FHIR4}
+      for supp in FSupplementsById.values do
+        if (supp.supplements.reference = cs.url) or (supp.supplements.reference = 'CodeSystem/'+cs.id) then
+          cse.Supplements.Add(cs.Link);
+    end;
+   {$ENDIF}
+  finally
+    cse.Free;
+  end;
+end;
+
+procedure TTerminologyServerStore.RemoveCodeSystemFromCache(id : String);
+var
+  cse, cs1 : TFHIRCodeSystemEntry;
+  cs : TFhirCodeSystem;
+begin
+  if (FCodeSystemsById.TryGetValue(id, cse)) then
+  begin
+    cs1 := FBaseCodeSystems[cse.CodeSystem.url].Link;
+    try
+      {$IFDEF FHIR2}
+      FCodeSystemsByUrl.Remove(cse.FValueSet.codeSystem.system);
+      FCodeSystemsByid.Remove(cse.FValueSet.id);
+      {$ELSE}
+      FCodeSystemsByUrl.Remove(cse.codeSystem.system);
+      FCodeSystemsByid.Remove(cse.codeSystem.id);
+      {$ENDIF}
+      if cs1 <> nil then
+        AddCodeSystemToCache(cs1.codeSystem, false);
+    finally
+      cs1.free;
+    end;
+  end
+  {$IFDEF FHIR4}
+  else if FSupplementsById.TryGetValue(id, cs) then
+  begin
+    cs1 := FBaseCodeSystems[cs.url].Link;
+    try
+      if cs.supplements.reference.StartsWith('CodeSystem/') then
+      begin
+        if FCodeSystemsById.TryGetValue(cs.supplements.reference.Substring(11), cse) then
+          cse.Supplements.Remove(cs);
+      end
+      else if FCodeSystemsByUrl.TryGetValue(cs.supplements.reference, cse) then
+        cse.Supplements.remove(cs);
+      if cs1 <> nil then
+        AddCodeSystemToCache(cs1.codeSystem, false);
+    finally
+      cs1.Free;
+    end;
+  end;
+  {$ENDIF}
+end;
+
 procedure TTerminologyServerStore.SeeSpecificationResource(resource : TFHIRResource);
 var
   vs : TFhirValueSet;
   cs : TFhirCodeSystem;
   cm : TLoadedConceptMap;
+  i : integer;
 begin
   FLock.Lock('SeeSpecificationResource');
   try
@@ -1195,10 +1310,7 @@ begin
       {$IFDEF FHIR2}
       if (vs.codeSystem <> nil) then
       begin
-        FCodeSystemsByUrl.AddOrSetValue(vs.codeSystem.system, vs.Link);
-        FCodeSystemsById.AddOrSetValue(vs.id, vs.Link);
-        if (FDB <> nil) then // don't build stems in this case
-          BuildStems(vs.codeSystem);
+        AddCodeSystemToCache(vs.codeSystem);
       end;
       {$ENDIF}
       UpdateConceptMaps;
@@ -1207,13 +1319,7 @@ begin
     else if (resource.ResourceType = frtCodeSystem) then
     begin
       cs := TFhirCodeSystem(resource);
-      FCodeSystemsById.AddOrSetValue(cs.id, cs.Link);
-      FCodeSystemsByUrl.AddOrSetValue(cs.url, cs.Link);
-      FBaseCodeSystems.AddOrSetValue(cs.url, cs.Link);
-      if cs.valueSet <> '' then
-        FCodeSystemsByVsUrl.AddOrSetValue(cs.valueSet, cs.Link);
-      if (FDB <> nil) then // don't build stems in this case
-        BuildStems(cs);
+      AddCodeSystemToCache(cs, true);
     end
     {$ENDIF}
     else if (resource.ResourceType = frtConceptMap) then
@@ -1240,6 +1346,7 @@ var
   vs : TFhirValueSet;
   cs : TFHIRCodeSystem;
   cm : TLoadedConceptMap;
+  cse : TFHIRCodeSystemEntry;
 begin
   resource.checkNoImplicitRules('Repository.SeeResource', 'Resource');
   TFhirDomainResource(resource).checkNoModifiers('Repository.SeeResource', 'Resource');
@@ -1258,12 +1365,7 @@ begin
       invalidateVS(vs.url);
       {$IFDEF FHIR2}
       if (vs.codeSystem <> nil) then
-      begin
-        FCodeSystemsByUrl.AddOrSetValue(vs.codeSystem.system, vs.Link);
-        FCodeSystemsByid.AddOrSetValue(vs.id, vs.Link);
-        if (FDB <> nil) then // don't build stems in this case
-          BuildStems(vs.codeSystem);
-      end;
+        AddCodeSystemToCache(vs.codeSystem);
       {$ENDIF}
       UpdateConceptMaps;
     end
@@ -1271,12 +1373,7 @@ begin
     else if (resource.ResourceType = frtCodeSystem) then
     begin
       cs := TFHIRCodeSystem(resource);
-      FCodeSystemsById.AddOrSetValue(cs.id, cs.Link);
-      FCodeSystemsByUrl.AddOrSetValue(cs.url, cs.Link);
-      if cs.valueSet <> '' then
-        FCodeSystemsByVsUrl.AddOrSetValue(cs.valueSet, cs.Link);
-      if (FDB <> nil) then // don't build stems in this case
-        BuildStems(cs);
+      AddCodeSystemToCache(cs, false);
     end
     {$ENDIF}
     else if (resource.ResourceType = frtConceptMap) then
@@ -1300,7 +1397,6 @@ end;
 procedure TTerminologyServerStore.DropTerminologyResource(aType : TFhirResourceType; id : String);
 var
   vs, vs1 : TFhirValueSet;
-  cs, cs1 : TFhirCodeSystem;
   cm, cm1 : TLoadedConceptMap;
 begin
   vs := nil;
@@ -1315,8 +1411,7 @@ begin
         FValueSetsByURL.Remove(vs.url);
         {$IFDEF FHIR2}
         if (vs.codeSystem <> nil) then
-          FCodeSystemsByUrl.Remove(vs.codeSystem.system);
-          FCodeSystemsByid.Remove(vs.id);
+          removeCodeSystemFromCache(vs.codeSystem);
         {$ENDIF}
         FValueSetsById.Remove(vs.id); // vs is no longer valid
 
@@ -1326,11 +1421,7 @@ begin
         begin
           FValueSetsById.AddOrSetValue(vs.url, vs1.Link);
           {$IFDEF FHIR2}
-          if (vs1.codeSystem <> nil) then
-          begin
-            FCodeSystemsByUrl.AddOrSetValue(vs1.codeSystem.system, vs1.Link);
-            FCodeSystemsById.AddOrSetValue(vs1.id, vs1.Link);
-          end;
+          AddCodeSystemToCache(csl.codeSystem);
           {$ENDIF}
         end;
         UpdateConceptMaps;
@@ -1339,24 +1430,7 @@ begin
     {$IFNDEF FHIR2}
     else if (aType = frtCodeSystem) then
     begin
-      cs := FCodeSystemsById[id];
-      if cs <> nil then
-      begin
-        cs1 := FBaseCodeSystems[cs.url];
-        FCodeSystemsByUrl.Remove(cs.url);
-        FCodeSystemsById.Remove(cs.id);
-        if cs.valueSet <> '' then
-          FCodeSystemsByVsUrl.remove(cs.valueSet);
-        // add the base one back if we are dropping a value set that overrides it
-        // current logical flaw: what if there's another one that overrides this? how do we prevent or deal with this?
-        if cs1 <> nil then
-        begin
-          FCodeSystemsById.AddOrSetValue(cs1.id, cs1.Link);
-          FCodeSystemsByUrl.AddOrSetValue(cs1.url, cs1.Link);
-          if cs1.valueSet <> '' then
-            FCodeSystemsByVsUrl.AddOrSetValue(cs1.valueSet, cs1.Link);
-        end;
-      end;
+      removeCodeSystemFromCache(id);
     end
     {$ENDIF}
     else if (aType = frtConceptMap) then
@@ -1455,7 +1529,7 @@ begin
   FLock.Lock('getValueSetByUrl');
   try
     if FCodeSystemsByUrl.ContainsKey(url) then
-      result := FCodeSystemsByUrl[url].Link
+      result := FCodeSystemsByUrl[url].CodeSystem.Link
     else
       result := nil;
   finally
@@ -1468,7 +1542,7 @@ begin
   FLock.Lock('getValueSetByUrl');
   try
     if FCodeSystemsById.ContainsKey(id) then
-      result := FCodeSystemsById[id].Link
+      result := FCodeSystemsById[id].CodeSystem.Link
     else
       result := nil;
   finally
@@ -1477,11 +1551,13 @@ begin
 end;
 
 function TTerminologyServerStore.getCodeSystemByValueSet(vs: String): TFHIRCodeSystem;
+var
+  cse : TFHIRCodeSystemEntry;
 begin
   FLock.Lock('getValueSetByUrl');
   try
-    if FCodeSystemsByVsUrl.TryGetValue(vs, result) then
-      result.Link
+    if FCodeSystemsByVsUrl.TryGetValue(vs, cse) then
+      result := cse.CodeSystem.Link
     else
       result := nil;
   finally
@@ -1491,14 +1567,14 @@ end;
 
 function TTerminologyServerStore.GetCodeSystemList: TFHIRCodeSystemList;
 var
-  vs : TFHIRCodeSystem;
+  vs : TFHIRCodeSystemEntry;
 begin
   result := TFHIRCodeSystemList.Create;
   try
     FLock.Lock('GetCodeSystemList');
     try
       for vs in FCodeSystemsByUrl.values do
-        result.add(vs.link);
+        result.add(vs.CodeSystem.link);
     finally
       FLock.Unlock;
     end;
@@ -1657,7 +1733,7 @@ end;
 function TTerminologyServerStore.getProvider(codesystem: TFHIRCodeSystem; profile : TFHIRExpansionProfile): TCodeSystemProvider;
 begin
   checkVersion(codeSystem.url, codeSystem.version, profile);
-  result := TFhirCodeSystemProvider.create(codesystem.link);
+  result := TFhirCodeSystemProvider.create(TFHIRCodeSystemEntry.Create(codesystem.link));
 end;
 
 procedure TTerminologyServerStore.getSummary(b: TStringBuilder);
@@ -1841,12 +1917,12 @@ end;
 
 { TFhirCodeSystemProvider }
 
-constructor TFhirCodeSystemProvider.create(vs: TFhirCodeSystem);
+constructor TFhirCodeSystemProvider.create(vs: TFhirCodeSystemEntry);
 begin
   Create;
-  FVs := vs;
-  if (FVs.tag <> nil) then
-    Fmap := TCodeSystemAdornment(FVs.Tag).FMap;
+  FCs := vs;
+  if (FCs.CodeSystem.tag <> nil) then
+    Fmap := TCodeSystemAdornment(FCs.CodeSystem.Tag).FMap;
 end;
 
 function TFhirCodeSystemProvider.Definition(context: TCodeSystemProviderContext): string;
@@ -1856,7 +1932,7 @@ end;
 
 destructor TFhirCodeSystemProvider.destroy;
 begin
-  FVs.free;
+  FCs.free;
   inherited;
 end;
 
@@ -1865,7 +1941,7 @@ var
   ex : TFhirExtension;
 begin
   if context = nil then
-    result := FVs.codeSystem.conceptList.count
+    result := FCs.CodeSystem.codeSystem.conceptList.count
   else
   begin
     result := TFhirCodeSystemProviderContext(context).context.conceptList.count;
@@ -1913,12 +1989,12 @@ begin
       b.Append('Error: Code '+code+' not known')
     else
     try
-      card.addLink('Further Detail', baseURL+'/tx/valuesets/'+FVs.id+'#'+code);
+      card.addLink('Further Detail', baseURL+'/tx/valuesets/'+FCs.CodeSystem.id+'#'+code);
       concept := ctxt.context;
 
-      b.Append(FVS.name+' Code '+code+' : '+concept.display+#13#10#13#10);
+      b.Append(FCS.CodeSystem.name+' Code '+code+' : '+concept.display+#13#10#13#10);
       b.Append('* Definition: '+markdownNoPara(concept.definition)+#13#10);
-      b.Append('* System Definition: '+markdownNoPara(FVs.description)+#13#10);
+      b.Append('* System Definition: '+markdownNoPara(FCs.CodeSystem.description)+#13#10);
       b.Append(#13#10);
 
       if concept.designationList.Count > 0 then
@@ -1929,7 +2005,7 @@ begin
         b.Append(#13#10);
       end;
 
-      codes := FVS.codeSystem.getParents(concept);
+      codes := FCS.CodeSystem.codeSystem.getParents(concept);
       try
         if codes.count > 0 then
         begin
@@ -1942,7 +2018,7 @@ begin
         codes.Free;
       end;
 
-      codes := FVS.codeSystem.getChildren(concept);
+      codes := FCS.CodeSystem.codeSystem.getChildren(concept);
       try
         if codes.count > 0 then
         begin
@@ -1958,8 +2034,8 @@ begin
     finally
       close(ctxt);
     End;
-    if FVs.copyright <> '' then
-      b.Append(FVs.copyright+#13#10);
+    if FCs.CodeSystem.copyright <> '' then
+      b.Append(FCs.CodeSystem.copyright+#13#10);
     card.detail := b.ToString;
   finally
     b.Free;
@@ -1972,7 +2048,7 @@ var
 begin
   result := nil;
   if context = nil then
-    result := TFhirCodeSystemProviderContext.create(FVs.codeSystem.conceptList[ndx])
+    result := TFhirCodeSystemProviderContext.create(FCs.CodeSystem.codeSystem.conceptList[ndx])
   else
   begin
     if (ndx < TFhirCodeSystemProviderContext(context).context.conceptList.Count) then
@@ -1995,12 +2071,26 @@ end;
 function TFhirCodeSystemProvider.Display(context: TCodeSystemProviderContext; lang : String): string;
 var
   ccd : TFhirCodeSystemConceptDesignation;
+  css : TFHIRCodeSystem;
+  cc : TFhirCodeSystemConcept;
 begin
   result := TFhirCodeSystemProviderContext(context).context.display;
   if (lang <> '') then
     for ccd in TFhirCodeSystemProviderContext(context).context.designationList do
       if languageMatches(lang, ccd.language) then
         result := ccd.value;
+  for css in FCs.Supplements do
+  begin
+    cc := locCode(css.conceptList, TFhirCodeSystemProviderContext(context).context.code);
+    if (cc <> nil) then
+    begin
+      if languageMatches(lang, css.language) then
+        result := cc.display;
+      for ccd in cc.designationList do
+        if languageMatches(lang, ccd.language) then
+          result := ccd.value;
+    end;
+  end;
 end;
 
 procedure TFhirCodeSystemProvider.Displays(context: TCodeSystemProviderContext; list: TStringList; lang : String);
@@ -2011,7 +2101,9 @@ end;
 procedure TFhirCodeSystemProvider.Displays(code: String; list: TStringList; lang : String);
 var
   ccd : TFhirCodeSystemConceptDesignation;
+  cc : TFhirCodeSystemConcept;
   ctxt : TCodeSystemProviderContext;
+  css : TFhirCodeSystem;
 begin
   ctxt := locate(code);
   try
@@ -2019,6 +2111,18 @@ begin
     for ccd in TFhirCodeSystemProviderContext(ctxt).context.designationList do
       if (lang = '') or languageMatches(lang, ccd.language) then
         list.add(ccd.value);
+    for css in FCs.Supplements do
+    begin
+      cc := locCode(css.conceptList, code);
+      if (cc <> nil) then
+      begin
+        if languageMatches(lang, css.language) then
+          list.add(cc.display);
+        for ccd in cc.designationList do
+          if languageMatches(lang, ccd.language) then
+            list.add(ccd.value);
+      end;
+    end;
   finally
     Close(ctxt);
   end;
@@ -2042,7 +2146,7 @@ end;
 function TFhirCodeSystemProvider.IsAbstract(context: TCodeSystemProviderContext): boolean;
 begin
   {$IFNDEF FHIR2}
-  result := FVs.isAbstract(TFhirCodeSystemProviderContext(context).context);
+  result := FCs.CodeSystem.isAbstract(TFhirCodeSystemProviderContext(context).context);
   {$ELSE}
   result := (TFhirCodeSystemProviderContext(context).context.abstractElement <> nil) and TFhirCodeSystemProviderContext(context).context.abstract;
   {$ENDIF}
@@ -2102,7 +2206,7 @@ begin
   if (FMap <> nil) then
     result := TConceptAdornment(ctxt.Tag).FParent
   else
-    result := getMyParent(FVs.conceptList)
+    result := getMyParent(FCs.CodeSystem.conceptList)
 end;
 
 {$IFNDEF FHIR2}
@@ -2111,34 +2215,35 @@ var
   p : TFhirCodeSystemProperty;
 begin
   result := nil;
-  for p in FVs.property_List do
+  for p in FCs.CodeSystem.property_List do
     if (p.code = code) then
       exit(p);
 end;
 {$ENDIF}
 
-function TFhirCodeSystemProvider.LocateCode(code : String) : TFhirCodeSystemConcept;
-  function locCode(list : TFhirCodeSystemConceptList) : TFhirCodeSystemConcept;
-  var
-    c : TFhirCodeSystemConcept;
+function TFhirCodeSystemProvider.locCode(list : TFhirCodeSystemConceptList; code : String) : TFhirCodeSystemConcept;
+var
+  c : TFhirCodeSystemConcept;
+begin
+  result := nil;
+  for c in list do
   begin
-    result := nil;
-    for c in list do
-    begin
-      if (c.code = code) then
-        exit(c);
-      result := locCode(c.conceptList);
-      if result <> nil then
-        exit;
-    end;
+    if (c.code = code) then
+      exit(c);
+    result := locCode(c.conceptList, code);
+    if result <> nil then
+      exit;
   end;
+end;
+
+function TFhirCodeSystemProvider.LocateCode(code : String) : TFhirCodeSystemConcept;
 begin
   if (FMap = nil) then
-    result := locCode(FVs.conceptList)
+    result := locCode(FCs.CodeSystem.conceptList, code)
   else if (FMap.ContainsKey(code)) then
     result := FMap[code]
   else
-    result := locCode(FVs.conceptList);
+    result := locCode(FCs.CodeSystem.conceptList, code);
 end;
 
 function TFhirCodeSystemProvider.doLocate(list : TFhirCodeSystemConceptList; code : String) : TFhirCodeSystemProviderContext;
@@ -2170,63 +2275,94 @@ end;
 procedure TFhirCodeSystemProvider.extendLookup(ctxt: TCodeSystemProviderContext; lang : String; props: TList<String>; resp: TFHIRLookupOpResponse);
 {$IFNDEF FHIR2}
 var
-  context : TFhirCodeSystemConcept;
+  concepts : TAdvList<TFhirCodeSystemConcept>;
+  cc, context : TFhirCodeSystemConcept;
   parent, child : TFhirCodeSystemConcept;
   ccd : TFhirCodeSystemConceptDesignation;
   cp : TFhirCodeSystemConceptProperty;
   pp : TFhirCodeSystemProperty;
   d : TFHIRLookupOpRespDesignation;
   p : TFHIRLookupOpRespProperty_;
+  css : TFHIRCodeSystem;
   {$ENDIF}
 begin
   {$IFNDEF FHIR2}
   context := TFHIRCodeSystemProviderContext(ctxt).context;
-
-  if hasProp(props, 'parent', true) then
-  begin
-    parent := getParent(context);
-    if (parent <> nil) then
+  concepts := TAdvList<TFhirCodeSystemConcept>.create;
+  try
+    concepts.Add(context.Link);
+    for css in FCs.Supplements do
     begin
-      p := TFHIRLookupOpRespProperty_.create;
-      resp.property_List.Add(p);
-      p.code := 'parent';
-      p.value := parent.code;
-      p.description := parent.display;
+      cc := locCode(css.conceptList, context.code);
+      if (cc <> nil) then
+      begin
+        concepts.Add(cc.Link);
+        if (css.language <> '') and (cc.displayElement <> nil) then
+          cc.displayElement.Tags['lang'] := css.language;
+      end;
     end;
-  end;
 
-  if hasProp(props, 'child', true) then
-  begin
-    for child in context.conceptList do
+    if hasProp(props, 'parent', true) then
     begin
-      p := TFHIRLookupOpRespProperty_.create;
-      resp.property_List.Add(p);
-      p.code := 'child';
-      p.value := child.code;
-      p.description := child.display;
+      parent := getParent(context);
+      if (parent <> nil) then
+      begin
+        p := TFHIRLookupOpRespProperty_.create;
+        resp.property_List.Add(p);
+        p.code := 'parent';
+        p.value := parent.code;
+        p.description := parent.display;
+      end;
     end;
-  end;
 
-  if hasProp(props, 'designation', true) then
-    for ccd in context.designationList do
-    Begin
-      d := TFHIRLookupOpRespDesignation.create;
-      resp.designationList.Add(d);
-      d.value := ccd.value;
-      d.use := ccd.use.link;
-      d.language := ccd.language
-    End;
-
-  for cp in context.property_List do
-  begin
-    pp := getProperty(cp.code);
-    if hasProp(props, cp.code, true) then
+    if hasProp(props, 'child', true) then
     begin
-      p := TFHIRLookupOpRespProperty_.create;
-      resp.property_List.Add(p);
-      p.code := cp.code;
-      p.value := cp.value.primitiveValue;
+      for child in context.conceptList do
+      begin
+        p := TFHIRLookupOpRespProperty_.create;
+        resp.property_List.Add(p);
+        p.code := 'child';
+        p.value := child.code;
+        p.description := child.display;
+      end;
     end;
+
+    if hasProp(props, 'designation', true) then
+      for cc in concepts do
+      begin
+        if (cc.display <> '') and (cc.display <> context.display) and (cc.displayElement.Tags['lang'] <> '') then
+        Begin
+          d := TFHIRLookupOpRespDesignation.create;
+          resp.designationList.Add(d);
+          d.value := cc.display;
+          d.language := cc.displayElement.Tags['lang']
+        End;
+
+        for ccd in cc.designationList do
+        Begin
+          d := TFHIRLookupOpRespDesignation.create;
+          resp.designationList.Add(d);
+          d.value := ccd.value;
+          d.use := ccd.use.link;
+          d.language := ccd.language
+        End;
+      end;
+
+
+    for cc in concepts do
+      for cp in cc.property_List do
+      begin
+        pp := getProperty(cp.code);
+        if hasProp(props, cp.code, true) then
+        begin
+          p := TFHIRLookupOpRespProperty_.create;
+          resp.property_List.Add(p);
+          p.code := cp.code;
+          p.value := cp.value.primitiveValue;
+        end;
+      end;
+  finally
+    concepts.Free;
   end;
   {$ENDIF}
 end;
@@ -2242,7 +2378,7 @@ var
 begin
   res := TFhirCodeSystemProviderFilterContext.Create;
   try
-    FilterCodes(res, Fvs.codeSystem.conceptList, filter);
+    FilterCodes(res, FCs.CodeSystem.codeSystem.conceptList, filter);
     res.sort;
     result := res.Link;
   finally
@@ -2281,7 +2417,7 @@ end;
 
 function TFhirCodeSystemProvider.system(context : TCodeSystemProviderContext): String;
 begin
-  result := Fvs.codeSystem.system;
+  result := FCs.CodeSystem.codeSystem.system;
 end;
 
 function TFhirCodeSystemProvider.TotalCount: integer;
@@ -2297,13 +2433,13 @@ var
   i : integer;
 begin
   result := 0;
-  for i := 0 to FVs.codeSystem.conceptList.count - 1 do
-    inc(result, count(FVs.codeSystem.conceptList[i]));
+  for i := 0 to FCs.CodeSystem.codeSystem.conceptList.count - 1 do
+    inc(result, count(FCs.CodeSystem.codeSystem.conceptList[i]));
 end;
 
 function TFhirCodeSystemProvider.version(context: TCodeSystemProviderContext): String;
 begin
-   result := FVs.version;
+   result := FCs.CodeSystem.version;
 end;
 
 procedure TFhirCodeSystemProvider.Close(ctxt: TCodeSystemProviderFilterContext);
@@ -2454,7 +2590,7 @@ end;
 
 function TFhirCodeSystemProvider.name(context: TCodeSystemProviderContext): String;
 begin
-   result := FVs.name;
+   result := FCs.CodeSystem.name;
 end;
 
 { TLoadedConceptMap }
@@ -2611,6 +2747,50 @@ destructor TCodeSystemAdornment.destroy;
 begin
   FMap.Free;
   inherited;
+end;
+
+{ TFHIRCodeSystemEntry }
+
+constructor TFHIRCodeSystemEntry.Create(codeSystem: TFHIRCodeSystem {$IFDEF FHIR2}; vs : TFHIRValueSet {$ENDIF});
+begin
+  inherited Create;
+  FCodeSystem := codeSystem;
+  {$IFDEF FHIR2};
+  FValueset := vs : TFHIRValueSet
+  {$ENDIF}
+end;
+
+destructor TFHIRCodeSystemEntry.Destroy;
+begin
+  FCodeSystem.Free;
+  FSupplements.Free;
+  {$IFDEF FHIR2};
+  FValueset.Free;
+  {$ENDIF}
+  inherited;
+end;
+
+function TFHIRCodeSystemEntry.GetHasSupplements: boolean;
+begin
+  result := (FSupplements <> nil) and (FSupplements.Count > 0);
+end;
+
+function TFHIRCodeSystemEntry.GetSupplements: TAdvList<TFHIRCodeSystem>;
+begin
+  if FSupplements = nil then
+    FSupplements := TAdvList<TFHIRCodeSystem>.create;
+  result := FSupplements;
+end;
+
+function TFHIRCodeSystemEntry.Link: TFHIRCodeSystemEntry;
+begin
+  result := TFHIRCodeSystemEntry(inherited Link);
+end;
+
+procedure TFHIRCodeSystemEntry.SetCodeSystem(const Value: TFHIRCodeSystem);
+begin
+  FCodeSystem.Free;
+  FCodeSystem := Value;
 end;
 
 end.
