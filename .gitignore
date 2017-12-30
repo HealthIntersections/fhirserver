@@ -143,3 +143,7 @@ FHIRToolkit.exe - Shortcut.lnk
 toolkit/install/server.inc
 install/fhirserver.fbl8
 *.fbl8
+
+Libraries/js/synopse/
+
+Libraries/js/archive/

@@ -9,8 +9,9 @@ https://github.com/Microsoft/ChakraCore/releases
 
 For examples of use, see JavaScriptTests.pas
 
+
 Most of the functionality is made by registering callbacks with the
-chakra. All call backs start the same way:
+chakra. All call backs have the same structure:
 
 function [name](callee: JsValueRef; isConstructCall: bool; arguments: PJsValueRef; argumentCount: Word; callbackState: Pointer): JsValueRef; stdcall;
 var
@@ -18,6 +19,13 @@ var
   p : PJsValueRefArray absolute arguments;
 begin
   js := TJavascript(callbackState);
+  try
+    .... body ...
+  except
+    on e:exception do
+      result := js.handleException(e);
+  end;
+end;
 
 callee - handle to the source function that called this function. (use for logging name of origin)?
 isConstructCall - whether this was called with a "new" e.g. new Object() - up to you to make a difference or not
@@ -25,6 +33,19 @@ arguments - handle to arguments to the procedure
   note: var p allows easy access to arguments other than the first one e.g. p[1]
 argumentCount - how many ag
 callbackState - a reference to the Javascript engine
+
+You must handle exceptions this way: do not let them propagate back to the Javascript Host
+
+To fully expose an object to the Javascript Host, you need the following:
+
+- a define routine that defines the properties it has
+- a factory routine that can construct the type (possibly taking parameters)
+- a second factory routine that can construct the type when presented with an anonymous class
+- getter and setter routines for all the properties
+- wrapper routines for all the functions
+
+Todo:
+ - figure out debugging
 }
 {
 
@@ -58,7 +79,7 @@ POSSIBILITY OF SUCH DAMAGE.
 interface
 
 uses
-  SysUtils, Classes,
+  SysUtils, Classes, AnsiStrings,
   Generics.Collections,
   ChakraCommon;
 
@@ -68,6 +89,7 @@ type
   PJsValueRef = ChakraCommon.PJsValueRef;
   JsPropertyIdRef = ChakraCommon.JsPropertyIdRef;
   JsValueType = ChakraCommon.JsValueType;
+  PJsValueRefArray = ChakraCommon.PJsValueRefArray;
 
 const
   JS_INVALID_REFERENCE = nil;
@@ -87,7 +109,11 @@ const
 
 type
   TJavascript = class;
-  EJavascript = class (Exception);
+  EJavascriptBase = class (Exception);
+  EJavascriptScript = class (EJavascriptBase); // error thrown by script
+  EJavascriptSource = class (EJavascriptBase); // error compiling
+  EJavascriptHost = class (EJavascriptBase);   // error from hosting infrastructure
+  EJavascriptApplication = class (EJavascriptBase);    // error running application functionality
 
   TJavascriptConsoleLogEvent = procedure (sender : TJavascript; message : String) of object;
   TJavascriptDefineObjectProc = procedure (sender : TJavascript; obj : JsValueRef);
@@ -97,6 +123,36 @@ type
   TJavascriptArrayValueProvider = reference to function (index : integer) : JsValueRef;
   TJavascriptArrayValueConsumer = reference to procedure (index : integer; value : JsValueRef);
 
+  {
+  javascript API to implement:
+  concat()	Joins two or more arrays, and returns a copy of the joined arrays
+copyWithin()	Copies array elements within the array, to and from specified positions
+every()	Checks if every element in an array pass a test
+fill()	Fill the elements in an array with a static value
+filter()	Creates a new array with every element in an array that pass a test
+find()	Returns the value of the first element in an array that pass a test
+findIndex()	Returns the index of the first element in an array that pass a test
+forEach()	Calls a function for each array element
+indexOf()	Search the array for an element and returns its position
+isArray()	Checks whether an object is an array
+join()	Joins all elements of an array into a string
+lastIndexOf()	Search the array for an element, starting at the end, and returns its position
+map()	Creates a new array with the result of calling a function for each array element
+pop()	Removes the last element of an array, and returns that element
+// push()	Adds new elements to the end of an array, and returns the new length
+reduce()	Reduce the values of an array to a single value (going left-to-right)
+reduceRight()	Reduce the values of an array to a single value (going right-to-left)
+reverse()	Reverses the order of the elements in an array
+shift()	Removes the first element of an array, and returns that element
+slice()	Selects a part of an array, and returns the new array
+some()	Checks if any of the elements in an array pass a test
+sort()	Sorts the elements of an array
+splice()	Adds/Removes elements from an array
+toString()	Converts an array to a string, and returns the result
+unshift()	Adds new elements to the beginning of an array, and returns the new length
+valueOf()	Returns the primitive value of an array
+
+  }
   TJavascriptArrayManager = {abstract} class
   protected
     FManager : TJavascript;
@@ -114,6 +170,7 @@ type
   private
     FRuntime : JsRuntimeHandle;
     FContext : JsContextRef;
+    FApplicationError : JsValueRef;
     FOnLog : TJavascriptConsoleLogEvent;
 
     FPIdGetter : JsPropertyIdRef;
@@ -154,7 +211,7 @@ type
     {
       Convert whatever javascript variable is in val to a string representation
     }
-    function toString(val: JsValueRef): String;
+    function asString(val: JsValueRef): String;
 
     {
       Define a type, along with a constructor. This will allow the javascript function
@@ -231,7 +288,7 @@ type
     {
       given a javascript object, get an property value from it (remember to check for undefined)
     }
-    function getProperty(obj : JsValueRef; name : String) : JsValueRef;
+    function getProperty(obj : JsValueRef; name : AnsiString) : JsValueRef;
 
     {
       if the wrapper was generated with owns := true (see wrap()), then
@@ -270,9 +327,16 @@ type
     procedure iterateArray(arr : JsValueRef; valueConsumer : TJavascriptArrayValueConsumer);
 
     {
+      Javascript callbaxks cannot let an exception propagate back into the JS run time.
+      instead, catch all at the last line, and call this
+    }
+    function handleException(e : Exception) : JsValueRef;
+
+    {
       hook any calls to console.log for debugging purposes
     }
     property OnLog : TJavascriptConsoleLogEvent read FOnLog write FOnLog;
+
   end;
 
   TStringListManager = class (TJavascriptArrayManager)
@@ -320,10 +384,15 @@ var
   mref : pointer;
 begin
   js := TJavascript(callbackState);
-  o := js.getProperty(p[0], '__manager');
-  js.jsCheck(JsGetExternalData(o, mref));
-  manager := TJavascriptArrayManager(mref);
-  result := manager.push(p, argumentCount);
+  try
+    o := js.getProperty(p[0], '__manager');
+    js.jsCheck(JsGetExternalData(o, mref));
+    manager := TJavascriptArrayManager(mref);
+    result := manager.push(p, argumentCount);
+  except
+    on e:exception do
+      result := js.handleException(e);
+  end;
 end;
 
 function LogCB(callee: JsValueRef; isConstructCall: bool; arguments: PJsValueRef; argumentCount: Word; callbackState: Pointer): JsValueRef; stdcall;
@@ -332,15 +401,20 @@ var
   s : String;
   p : PJsValueRefArray absolute arguments;
 begin
-  s := '';
-  for i := 1 to argumentCount - 1 do
-  begin
-    if (i > 1) then
-      s := s + ' ';
-    s := s + gjs.toString(p[i]);
+  try
+    s := '';
+    for i := 1 to argumentCount - 1 do
+    begin
+      if (i > 1) then
+        s := s + ' ';
+      s := s + gjs.asString(p[i]);
+    end;
+    gjs.OnLog(gjs, s);
+    result := JS_INVALID_REFERENCE;
+  except
+    on e:exception do
+      result := gjs.handleException(e);
   end;
-  gjs.OnLog(gjs, s);
-  result := JS_INVALID_REFERENCE;
 end;
 
 procedure FreeCallBack(ref: JsRef; callbackState: Pointer); stdcall;
@@ -425,10 +499,7 @@ end;
 
 function TJavascript.execute(script : String; scriptName, funcName: AnsiString; params: array of JsValueRef): JsValueRef;
 var
-//  p : PChar;
-  s : JsValueRef;
   global, func, scriptJ, scriptNameJ, res : JsValueRef;
-//  pl : PJsValueRef;
   pl : PJsValueRefArray;
   i : integer;
   vType : JsValueType;
@@ -446,7 +517,7 @@ begin
   jsCheck(JsGetProperty(global, getPropertyId(funcName), func));
   jsCheck(JsGetValueType(func, vType));
   if (vType <> JsFunction) then
-    raise EJavascript.Create('Could not find the function "'+funcName+'" in the script "'+scriptName+'"');
+    raise EJavascriptSource.Create('Could not find the function "'+string(funcName)+'" in the script "'+string(scriptName)+'"');
 
   // execute it
   GetMem(pl, (length(params) + 1) * SizeOf(JsValueRef));
@@ -490,6 +561,13 @@ begin
   result := T(data);
 end;
 
+function TJavascript.handleException(e: Exception) : JsValueRef;
+begin
+  FApplicationError := wrap(e.Message);
+  jsCheck(JsSetException(FApplicationError));
+  result := JS_INVALID_REFERENCE;
+end;
+
 procedure TJavascript.init;
 begin
   // Create a runtime
@@ -522,62 +600,72 @@ procedure TJavascript.jsCheck(code: JsErrorCode);
 var
   s : String;
   exception : JsValueRef;
+  app : Boolean;
 begin
   if code > JsNoError then
   begin
+    app := false;
     s := '';
     if JsGetAndClearException(exception) = JsNoError then
-      s := ':' +toString(exception);
+    begin
+      app := FApplicationError = exception;
+      s := ':' +asString(exception);
+    end;
+    FApplicationError := nil;
     case code of
-      JsErrorCategoryUsage : raise EJavascript.create('JsErrorCategoryUsage'+s);
-      JsErrorInvalidArgument : raise EJavascript.create('JsErrorInvalidArgument'+s);
-      JsErrorNullArgument : raise EJavascript.create('JsErrorNullArgument'+s);
-      JsErrorNoCurrentContext : raise EJavascript.create('JsErrorNoCurrentContext'+s);
-      JsErrorInExceptionState : raise EJavascript.create('JsErrorInExceptionState'+s);
-      JsErrorNotImplemented : raise EJavascript.create('JsErrorNotImplemented'+s);
-      JsErrorWrongThread : raise EJavascript.create('JsErrorWrongThread'+s);
-      JsErrorRuntimeInUse : raise EJavascript.create('JsErrorRuntimeInUse'+s);
-      JsErrorBadSerializedScript : raise EJavascript.create('JsErrorBadSerializedScript'+s);
-      JsErrorInDisabledState : raise EJavascript.create('JsErrorInDisabledState'+s);
-      JsErrorCannotDisableExecution : raise EJavascript.create('JsErrorCannotDisableExecution'+s);
-      JsErrorHeapEnumInProgress : raise EJavascript.create('JsErrorHeapEnumInProgress'+s);
-      JsErrorArgumentNotObject : raise EJavascript.create('JsErrorArgumentNotObject'+s);
-      JsErrorInProfileCallback : raise EJavascript.create('JsErrorInProfileCallback'+s);
-      JsErrorInThreadServiceCallback : raise EJavascript.create('JsErrorInThreadServiceCallback'+s);
-      JsErrorCannotSerializeDebugScript : raise EJavascript.create('JsErrorCannotSerializeDebugScript'+s);
-      JsErrorAlreadyDebuggingContext : raise EJavascript.create('JsErrorAlreadyDebuggingContext'+s);
-      JsErrorAlreadyProfilingContext : raise EJavascript.create('JsErrorAlreadyProfilingContext'+s);
-      JsErrorIdleNotEnabled : raise EJavascript.create('JsErrorIdleNotEnabled'+s);
-      JsCannotSetProjectionEnqueueCallback : raise EJavascript.create('JsCannotSetProjectionEnqueueCallback'+s);
-      JsErrorCannotStartProjection : raise EJavascript.create('JsErrorCannotStartProjection'+s);
-      JsErrorInObjectBeforeCollectCallback : raise EJavascript.create('JsErrorInObjectBeforeCollectCallback'+s);
-      JsErrorObjectNotInspectable : raise EJavascript.create('JsErrorObjectNotInspectable'+s);
-      JsErrorPropertyNotSymbol : raise EJavascript.create('JsErrorPropertyNotSymbol'+s);
-      JsErrorPropertyNotString : raise EJavascript.create('JsErrorPropertyNotString'+s);
-      JsErrorInvalidContext : raise EJavascript.create('JsErrorInvalidContext'+s);
-      JsInvalidModuleHostInfoKind : raise EJavascript.create('JsInvalidModuleHostInfoKind'+s);
-      JsErrorModuleParsed : raise EJavascript.create('JsErrorModuleParsed'+s);
-      JsErrorModuleEvaluated : raise EJavascript.create('JsErrorModuleEvaluated'+s);
-      JsErrorCategoryEngine : raise EJavascript.create('JsErrorCategoryEngine'+s);
-      JsErrorOutOfMemory : raise EJavascript.create('JsErrorOutOfMemory'+s);
-      JsErrorBadFPUState : raise EJavascript.create('JsErrorBadFPUState'+s);
-      JsErrorCategoryScript : raise EJavascript.create('JsErrorCategoryScript'+s);
-      JsErrorScriptException : raise EJavascript.create('JsErrorScriptException'+s);
-      JsErrorScriptCompile : raise EJavascript.create('JsErrorScriptCompile'+s);
-      JsErrorScriptTerminated : raise EJavascript.create('JsErrorScriptTerminated'+s);
-      JsErrorScriptEvalDisabled : raise EJavascript.create('JsErrorScriptEvalDisabled'+s);
-      JsErrorCategoryFatal : raise EJavascript.create('JsErrorCategoryFatal'+s);
-      JsErrorFatal : raise EJavascript.create('JsErrorFatal'+s);
-      JsErrorWrongRuntime : raise EJavascript.create('JsErrorWrongRuntime'+s);
-      JsErrorCategoryDiagError : raise EJavascript.create('JsErrorCategoryDiagError'+s);
-      JsErrorDiagAlreadyInDebugMode : raise EJavascript.create('JsErrorDiagAlreadyInDebugMode'+s);
-      JsErrorDiagNotInDebugMode : raise EJavascript.create('JsErrorDiagNotInDebugMode'+s);
-      JsErrorDiagNotAtBreak : raise EJavascript.create('JsErrorDiagNotAtBreak'+s);
-      JsErrorDiagInvalidHandle : raise EJavascript.create('JsErrorDiagInvalidHandle'+s);
-      JsErrorDiagObjectNotFound : raise EJavascript.create('JsErrorDiagObjectNotFound'+s);
-      JsErrorDiagUnableToPerformAction : raise EJavascript.create('JsErrorDiagUnableToPerformAction'+s);
+      JsErrorCategoryUsage : raise EJavascriptHost.create('JsErrorCategoryUsage'+s);
+      JsErrorInvalidArgument : raise EJavascriptHost.create('JsErrorInvalidArgument'+s);
+      JsErrorNullArgument : raise EJavascriptHost.create('JsErrorNullArgument'+s);
+      JsErrorNoCurrentContext : raise EJavascriptHost.create('JsErrorNoCurrentContext'+s);
+      JsErrorInExceptionState : raise EJavascriptHost.create('JsErrorInExceptionState'+s);
+      JsErrorNotImplemented : raise EJavascriptHost.create('JsErrorNotImplemented'+s);
+      JsErrorWrongThread : raise EJavascriptHost.create('JsErrorWrongThread'+s);
+      JsErrorRuntimeInUse : raise EJavascriptHost.create('JsErrorRuntimeInUse'+s);
+      JsErrorBadSerializedScript : raise EJavascriptHost.create('JsErrorBadSerializedScript'+s);
+      JsErrorInDisabledState : raise EJavascriptHost.create('JsErrorInDisabledState'+s);
+      JsErrorCannotDisableExecution : raise EJavascriptHost.create('JsErrorCannotDisableExecution'+s);
+      JsErrorHeapEnumInProgress : raise EJavascriptHost.create('JsErrorHeapEnumInProgress'+s);
+      JsErrorArgumentNotObject : raise EJavascriptHost.create('JsErrorArgumentNotObject'+s);
+      JsErrorInProfileCallback : raise EJavascriptHost.create('JsErrorInProfileCallback'+s);
+      JsErrorInThreadServiceCallback : raise EJavascriptHost.create('JsErrorInThreadServiceCallback'+s);
+      JsErrorCannotSerializeDebugScript : raise EJavascriptHost.create('JsErrorCannotSerializeDebugScript'+s);
+      JsErrorAlreadyDebuggingContext : raise EJavascriptHost.create('JsErrorAlreadyDebuggingContext'+s);
+      JsErrorAlreadyProfilingContext : raise EJavascriptHost.create('JsErrorAlreadyProfilingContext'+s);
+      JsErrorIdleNotEnabled : raise EJavascriptHost.create('JsErrorIdleNotEnabled'+s);
+      JsCannotSetProjectionEnqueueCallback : raise EJavascriptHost.create('JsCannotSetProjectionEnqueueCallback'+s);
+      JsErrorCannotStartProjection : raise EJavascriptHost.create('JsErrorCannotStartProjection'+s);
+      JsErrorInObjectBeforeCollectCallback : raise EJavascriptHost.create('JsErrorInObjectBeforeCollectCallback'+s);
+      JsErrorObjectNotInspectable : raise EJavascriptHost.create('JsErrorObjectNotInspectable'+s);
+      JsErrorPropertyNotSymbol : raise EJavascriptHost.create('JsErrorPropertyNotSymbol'+s);
+      JsErrorPropertyNotString : raise EJavascriptHost.create('JsErrorPropertyNotString'+s);
+      JsErrorInvalidContext : raise EJavascriptHost.create('JsErrorInvalidContext'+s);
+      JsInvalidModuleHostInfoKind : raise EJavascriptHost.create('JsInvalidModuleHostInfoKind'+s);
+      JsErrorModuleParsed : raise EJavascriptHost.create('JsErrorModuleParsed'+s);
+      JsErrorModuleEvaluated : raise EJavascriptHost.create('JsErrorModuleEvaluated'+s);
+      JsErrorCategoryEngine : raise EJavascriptHost.create('JsErrorCategoryEngine'+s);
+      JsErrorOutOfMemory : raise EJavascriptHost.create('JsErrorOutOfMemory'+s);
+      JsErrorBadFPUState : raise EJavascriptHost.create('JsErrorBadFPUState'+s);
+      JsErrorCategoryScript : raise EJavascriptHost.create('JsErrorCategoryScript'+s);
+      JsErrorScriptException :
+        if app then
+          raise EJavascriptApplication.create(s.Substring(1))
+        else
+          raise EJavascriptScript.create(s.Substring(1));
+      JsErrorScriptCompile : raise EJavascriptHost.create('JsErrorScriptCompile'+s);
+      JsErrorScriptTerminated : raise EJavascriptHost.create('JsErrorScriptTerminated'+s);
+      JsErrorScriptEvalDisabled : raise EJavascriptHost.create('JsErrorScriptEvalDisabled'+s);
+      JsErrorCategoryFatal : raise EJavascriptHost.create('JsErrorCategoryFatal'+s);
+      JsErrorFatal : raise EJavascriptHost.create('JsErrorFatal'+s);
+      JsErrorWrongRuntime : raise EJavascriptHost.create('JsErrorWrongRuntime'+s);
+      JsErrorCategoryDiagError : raise EJavascriptHost.create('JsErrorCategoryDiagError'+s);
+      JsErrorDiagAlreadyInDebugMode : raise EJavascriptHost.create('JsErrorDiagAlreadyInDebugMode'+s);
+      JsErrorDiagNotInDebugMode : raise EJavascriptHost.create('JsErrorDiagNotInDebugMode'+s);
+      JsErrorDiagNotAtBreak : raise EJavascriptHost.create('JsErrorDiagNotAtBreak'+s);
+      JsErrorDiagInvalidHandle : raise EJavascriptHost.create('JsErrorDiagInvalidHandle'+s);
+      JsErrorDiagObjectNotFound : raise EJavascriptHost.create('JsErrorDiagObjectNotFound'+s);
+      JsErrorDiagUnableToPerformAction : raise EJavascriptHost.create('JsErrorDiagUnableToPerformAction'+s);
     else
-      raise EJavascript.Create('An Error');
+      raise EJavascriptHost.Create('Unknown ?? Error'+s);
     end;
   end;
 end;
@@ -600,8 +688,7 @@ end;
 function TJavascript.makeManagedArray(manager: TJavascriptArrayManager): JsValueRef;
 var
   i : integer;
-  o, vi, v : JsValueRef;
-  p : pointer;
+  o : JsValueRef;
 begin
   manager.FManager := self;
 
@@ -634,12 +721,12 @@ begin
   jsCheck(JsSetProperty(console, logPropId, logFunc, true));
   // set console as property of global object
   jsCheck(JsGetGlobalObject(global));
-  jsCheck(JsCreatePropertyId(consoleString, strlen(consoleString), consolePropId));
+  jsCheck(JsCreatePropertyId(consoleString, AnsiStrings.strlen(consoleString), consolePropId));
   jsCheck(JsSetProperty(global, consolePropId, console, true));
 end;
 
 
-function TJavascript.getProperty(obj: JsValueRef; name: String): JsValueRef;
+function TJavascript.getProperty(obj: JsValueRef; name: AnsiString): JsValueRef;
 begin
   jsCheck(JsGetProperty(obj, getPropertyId(name), result));
 end;
@@ -654,7 +741,7 @@ begin
   jsCheck(JsGetValueType(v, result));
 end;
 
-function TJavascript.toString(val: JsValueRef) : String;
+function TJavascript.asString(val: JsValueRef) : String;
 var
   p : PChar;
   str : JsValueRef;
@@ -730,7 +817,8 @@ var
   i : integer;
 begin
   for i := 1 to paramCount - 1 do
-    Flist.add(FManager.toString(params[i]));
+    Flist.add(FManager.asString(params[i]));
+  result := FManager.wrap(FList.Count);
 end;
 
 { TObjectListManager<T> }
@@ -765,6 +853,7 @@ begin
       o := FFactory(FManager, params[i]);
     Flist.add(o);
   end;
+  result := FManager.wrap(FList.Count);
 end;
 
 end.

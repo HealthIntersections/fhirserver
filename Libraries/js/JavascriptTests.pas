@@ -45,12 +45,15 @@ Type
   TJavascriptTests = Class (TObject)
   Private
     FLog : TStringList;
+    FRaise : boolean;
     procedure JSLog(sender : TJavascript; message : String);
   Published
     [SetUp]    Procedure Setup;
     [TearDown] Procedure TearDown;
     [TestCase] Procedure TestHelloWorld;
     [TestCase] Procedure TestConsoleLog;
+    [TestCase] Procedure TestException;
+    [TestCase] Procedure TestAppException;
     [TestCase] Procedure TestAddOne;
     [TestCase] Procedure TestProperty;
     [TestCase] Procedure TestArray;
@@ -106,7 +109,7 @@ Type
 
 function MakePropObjFromData(js : TJavascript; obj : JsValueRef) : TPropObj;
 begin
-  result := TPropObj.create(js.toString(js.getProperty(obj, 'value')));
+  result := TPropObj.create(js.asString(js.getProperty(obj, 'value')));
 end;
 
 function AddOne(callee: JsValueRef; isConstructCall: bool; arguments: PJsValueRef; argumentCount: Word; callbackState: Pointer): JsValueRef; stdcall;
@@ -116,9 +119,14 @@ var
   p : PJsValueRefArray absolute arguments;
 begin
   js := TJavascript(callbackState);
-  obj := js.getWrapped<TIntObj>(p[0]);
-  inc(obj.value);
-  result := JS_INVALID_REFERENCE;
+  try
+    obj := js.getWrapped<TIntObj>(p[0]);
+    inc(obj.value);
+    result := JS_INVALID_REFERENCE;
+  except
+    on e:exception do
+      result := js.handleException(e);
+  end;
 end;
 
 function PropObjGetValue(callee: JsValueRef; isConstructCall: bool; arguments: PJsValueRef; argumentCount: Word; callbackState: Pointer): JsValueRef; stdcall;
@@ -128,8 +136,13 @@ var
   p : PJsValueRefArray absolute arguments;
 begin
   js := TJavascript(callbackState);
-  obj := js.getWrapped<TPropObj>(p[0]);
-  result := js.wrap(obj.value);
+  try
+    obj := js.getWrapped<TPropObj>(p[0]);
+    result := js.wrap(obj.value);
+  except
+    on e:exception do
+      result := js.handleException(e);
+  end;
 end;
 
 function PropObjSetValue(callee: JsValueRef; isConstructCall: bool; arguments: PJsValueRef; argumentCount: Word; callbackState: Pointer): JsValueRef; stdcall;
@@ -139,9 +152,14 @@ var
   p : PJsValueRefArray absolute arguments;
 begin
   js := TJavascript(callbackState);
-  obj := js.getWrapped<TPropObj>(p[0]);
-  obj.value := js.toString(p[1]);
-  result := JS_INVALID_REFERENCE;
+  try
+    obj := js.getWrapped<TPropObj>(p[0]);
+    obj.value := js.asString(p[1]);
+    result := JS_INVALID_REFERENCE;
+  except
+    on e:exception do
+      result := js.handleException(e);
+  end;
 end;
 
 function PropArrayGetValue(callee: JsValueRef; isConstructCall: bool; arguments: PJsValueRef; argumentCount: Word; callbackState: Pointer): JsValueRef; stdcall;
@@ -151,12 +169,17 @@ var
   p : PJsValueRefArray absolute arguments;
 begin
   js := TJavascript(callbackState);
-  obj := js.getWrapped<TArrayObj>(p[0]);
-  result := js.makeArray(obj.value.Count,
-    function (index : integer) : JsValueRef
-    begin
-      result := js.wrap(obj.value[index]);
-    end);
+  try
+    obj := js.getWrapped<TArrayObj>(p[0]);
+    result := js.makeArray(obj.value.Count,
+      function (index : integer) : JsValueRef
+      begin
+        result := js.wrap(obj.value[index]);
+      end);
+  except
+    on e:exception do
+      result := js.handleException(e);
+  end;
 end;
 
 function PropArrayGetValueManaged(callee: JsValueRef; isConstructCall: bool; arguments: PJsValueRef; argumentCount: Word; callbackState: Pointer): JsValueRef; stdcall;
@@ -166,8 +189,13 @@ var
   p : PJsValueRefArray absolute arguments;
 begin
   js := TJavascript(callbackState);
-  obj := js.getWrapped<TArrayObj>(p[0]);
-  result := js.makeManagedArray(TStringListManager.create(obj.FValue));
+  try
+    obj := js.getWrapped<TArrayObj>(p[0]);
+    result := js.makeManagedArray(TStringListManager.create(obj.FValue));
+  except
+    on e:exception do
+      result := js.handleException(e);
+  end;
 end;
 
 function PropArraySetValue(callee: JsValueRef; isConstructCall: bool; arguments: PJsValueRef; argumentCount: Word; callbackState: Pointer): JsValueRef; stdcall;
@@ -177,14 +205,19 @@ var
   p : PJsValueRefArray absolute arguments;
 begin
   js := TJavascript(callbackState);
-  obj := js.getWrapped<TArrayObj>(p[0]);
-  obj.value.Clear;
-  js.iterateArray(p[1],
-    procedure (i : integer; v : JsValueRef)
-    begin
-      obj.value.Add(js.toString(v));
-    end);
-  result := JS_INVALID_REFERENCE;
+  try
+    obj := js.getWrapped<TArrayObj>(p[0]);
+    obj.value.Clear;
+    js.iterateArray(p[1],
+      procedure (i : integer; v : JsValueRef)
+      begin
+        obj.value.Add(js.asString(v));
+      end);
+    result := JS_INVALID_REFERENCE;
+  except
+    on e:exception do
+      result := js.handleException(e);
+  end;
 end;
 
 function PropComplexArrayGetValue(callee: JsValueRef; isConstructCall: bool; arguments: PJsValueRef; argumentCount: Word; callbackState: Pointer): JsValueRef; stdcall;
@@ -194,8 +227,13 @@ var
   p : PJsValueRefArray absolute arguments;
 begin
   js := TJavascript(callbackState);
-  obj := js.getWrapped<TComplexArrayObj>(p[0]);
-  result := js.makemanagedArray(TObjectListManager<TPropObj>.create(obj.FValue, defineTestProp, MakePropObjFromData));
+  try
+    obj := js.getWrapped<TComplexArrayObj>(p[0]);
+    result := js.makemanagedArray(TObjectListManager<TPropObj>.create(obj.FValue, defineTestProp, MakePropObjFromData));
+  except
+    on e:exception do
+      result := js.handleException(e);
+  end;
 end;
 
 function PropComplexArraySetValue(callee: JsValueRef; isConstructCall: bool; arguments: PJsValueRef; argumentCount: Word; callbackState: Pointer): JsValueRef; stdcall;
@@ -206,18 +244,23 @@ var
   o : TPropObj;
 begin
   js := TJavascript(callbackState);
-  obj := js.getWrapped<TComplexArrayObj>(p[0]);
-  obj.value.Clear;
-  js.iterateArray(p[1],
-    procedure (i : integer; v : JsValueRef)
-    begin
-      o := js.getWrapped<TPropObj>(v);
-      if (o = nil) then
-        o := MakePropObjFromData(js, v);
-      obj.value.Add(o);
-      js.unOwn(v);
-    end);
-  result := JS_INVALID_REFERENCE;
+  try
+    obj := js.getWrapped<TComplexArrayObj>(p[0]);
+    obj.value.Clear;
+    js.iterateArray(p[1],
+      procedure (i : integer; v : JsValueRef)
+      begin
+        o := js.getWrapped<TPropObj>(v);
+        if (o = nil) then
+          o := MakePropObjFromData(js, v);
+        obj.value.Add(o);
+        js.unOwn(v);
+      end);
+    result := JS_INVALID_REFERENCE;
+  except
+    on e:exception do
+      result := js.handleException(e);
+  end;
 end;
 
 function CreateMyObject(callee: JsValueRef; isConstructCall: bool; arguments: PJsValueRef; argumentCount: Word; callbackState: Pointer): JsValueRef; stdcall;
@@ -227,8 +270,13 @@ var
   p : PJsValueRefArray absolute arguments;
 begin
   js := TJavascript(callbackState);
-  obj := TPropObj.Create('test-'+js.toString(p[1]));
-  result := js.wrap(obj, defineTestProp, true);
+  try
+    obj := TPropObj.Create('test-'+js.asString(p[1]));
+    result := js.wrap(obj, defineTestProp, true);
+  except
+    on e:exception do
+      result := js.handleException(e);
+  end;
 end;
 
 procedure defineTestInt(sender : TJavascript; obj : JsValueRef);
@@ -266,7 +314,7 @@ begin
   js := TJavascript.Create;
   try
     js.OnLog := JSLog;
-    Assert.IsTrue(js.toString(js.execute('(()=>{return ''Hello world!'';})()', 'test.js')) = 'Hello world!');
+    Assert.IsTrue(js.asString(js.execute('(()=>{return ''Hello world!'';})()', 'test.js')) = 'Hello world!');
   finally
     js.Free;
   end;
@@ -287,13 +335,39 @@ begin
   Assert.IsTrue(FLog.Text = 'Hello world'+#13#10);
 end;
 
+procedure TJavascriptTests.TestException;
+var
+  js : TJavascript;
+begin
+  js := TJavascript.Create;
+  try
+    js.OnLog := JSLog;
+    try
+      js.execute('(()=>{throw "test exception";})()', 'test.js');
+      Assert.isTrue(false, 'exception expected');
+    except
+      on e : exception do
+      begin
+        Assert.isTrue(e is EJavascriptScript, 'exception had wrong class "'+e.ClassName+'" instead of "EJavascriptScript"');
+        Assert.isTrue(e.message = 'test exception', 'exception had wrong text "'+e.Message+'" instead of "test exception"');
+      end;
+    end;
+  finally
+    js.Free;
+  end;
+
+end;
+
 procedure TJavascriptTests.JSLog(sender: TJavascript; message: String);
 begin
   FLog.Add(message);
+  if FRaise then
+    raise Exception.Create('Internal error');
 end;
 
 procedure TJavascriptTests.Setup;
 begin
+  FRaise := false;
   FLog := TStringList.create;
 end;
 
@@ -321,6 +395,29 @@ begin
     Assert.IsTrue(i.value = 2);
   finally
     i.Free;
+  end;
+end;
+
+procedure TJavascriptTests.TestAppException;
+var
+  js : TJavascript;
+begin
+  js := TJavascript.Create;
+  try
+    js.OnLog := JSLog;
+    FRaise := true;
+    try
+      js.execute('console.log("Hello world");', 'test.js');
+      Assert.isTrue(false, 'exception expected');
+    except
+      on e : exception do
+      begin
+        Assert.isTrue(e.message = 'Internal error', 'exception had wrong text "'+e.Message+'" instead of "Internal error"');
+        Assert.isTrue(e is EJavascriptApplication, 'exception had wrong class "'+e.ClassName+'" instead of "EJavascriptApplication"');
+      end;
+    end;
+  finally
+    js.Free;
   end;
 end;
 
