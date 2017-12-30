@@ -89,8 +89,9 @@ const
 type
   JsContextRef = JsRef;
   JsValueRef = JsRef;
+  PJsValueRef = ^JsValueRef;
   JsValueRefArray = array [0..10 {arbitrary size}] of JsValueRef;
-  PJsValueRef = ^JsValueRefArray;
+  PJsValueRefArray = ^JsValueRefArray;
   JsSourceContext = ChakraCookie;
 
 const
@@ -130,7 +131,8 @@ type
 
   JsParseScriptAttributes = (
     JsParseScriptAttributeNone = $0,
-    JsParseScriptAttributeLibraryCode = $1
+    JsParseScriptAttributeLibraryCode = $1,
+    JsParseScriptAttributeArrayBufferIsUtf16Encoded = $2
   );
 
   JsPropertyIdType = (
@@ -521,6 +523,21 @@ type
   ): JsErrorCode; stdcall; external DLL_NAME;
 
   {
+  CHAKRA_API
+    JsRun(
+        _In_ JsValueRef script,
+        _In_ JsSourceContext sourceContext,
+        _In_ JsValueRef sourceUrl,
+        _In_ JsParseScriptAttributes parseAttributes,
+        _Out_ JsValueRef *result);
+  }
+ function JsRun(
+          script: JsValueRef;
+          sourceContext: JsSourceContext;
+          sourceUrl: JsValueRef;
+          parseAttributes: JsParseScriptAttributes;
+          out result: JsValueRef): JsErrorCode; stdcall; external DLL_NAME;
+  {
     CHAKRA_API
         JsSerializeScriptUtf8(
             _In_z_ const char *script,
@@ -595,20 +612,20 @@ type
 
   {
     CHAKRA_API
-        JsPointerToStringUtf8(
+        JsPointerToString(
             _In_reads_(stringLength) const char *stringValue,
             _In_ size_t stringLength,
             _Out_ JsValueRef *value);
   }
-  function JsPointerToStringUtf8(
-    const stringValue: PAnsiChar;
+  function JsPointerToString(
+    const stringValue: PChar;
     stringLength: size_t;
     var value: JsValueRef
   ): JsErrorCode; stdcall; external DLL_NAME;
 
   {
     CHAKRA_API
-        JsStringToPointerUtf8Copy(
+        JsStringToPointer(
             _In_ JsValueRef value,
             _Outptr_result_buffer_(*stringLength) char **stringValue,
             _Out_ size_t *stringLength);
@@ -772,7 +789,7 @@ type
             _Out_ JsValueRef *value);
   }
   function JsIntToNumber(
-    var intValue: int;
+    intValue: int;
     var value: JsValueRef
   ): JsErrorCode; stdcall; external DLL_NAME;
 
@@ -848,6 +865,19 @@ type
   function JsCreateObject(
     var _object: JsValueRef
   ): JsErrorCode; stdcall; external DLL_NAME;
+
+
+ {
+   CHAKRA_API
+    JsCreateString(
+        _In_ const char *content,
+        _In_ size_t length,
+        _Out_ JsValueRef *value);
+        }
+  function JsCreateString(
+        content: PAnsiChar;
+        length: size_t;
+        out value: JsValueRef): JsErrorCode; stdcall; external DLL_NAME;
 
   {
     CHAKRA_API
@@ -1045,7 +1075,7 @@ type
   function JsHasIndexedProperty(
     _object: JsValueRef;
     index: JsValueRef;
-    result: bool
+    var result: bool
   ): JsErrorCode; stdcall; external DLL_NAME;
 
   {
