@@ -1,51 +1,23 @@
 unit Javascript;
-
 {
 A unit that allows you to execute Javascript inside your application,
 with access to functionality as defined by you.
 
-The underlying engine is Microsoft Chakra. For downloads, see
-https://github.com/Microsoft/ChakraCore/releases
+The underlying engine is Microsoft Chakra. You need the Chakra DLL.
+For downloads, see https://github.com/Microsoft/ChakraCore/releases
 
 For examples of use, see JavaScriptTests.pas
 
-
-Most of the functionality is made by registering callbacks with the
-chakra. All call backs have the same structure:
-
-function [name](callee: JsValueRef; isConstructCall: bool; arguments: PJsValueRef; argumentCount: Word; callbackState: Pointer): JsValueRef; stdcall;
-var
-  js : TJavascript;
-  p : PJsValueRefArray absolute arguments;
-begin
-  js := TJavascript(callbackState);
-  try
-    .... body ...
-  except
-    on e:exception do
-      result := js.handleException(e);
-  end;
-end;
-
-callee - handle to the source function that called this function. (use for logging name of origin)?
-isConstructCall - whether this was called with a "new" e.g. new Object() - up to you to make a difference or not
-arguments - handle to arguments to the procedure
-  note: var p allows easy access to arguments other than the first one e.g. p[1]
-argumentCount - how many ag
-callbackState - a reference to the Javascript engine
-
-You must handle exceptions this way: do not let them propagate back to the Javascript Host
-
+Most of the functionality is made by registering classes, along with properties
 To fully expose an object to the Javascript Host, you need the following:
-
-- a define routine that defines the properties it has
-- a factory routine that can construct the type (possibly taking parameters)
-- a second factory routine that can construct the type when presented with an anonymous class
+- a define routine that defines the properties it has (see defineClass/defineProperty and variants)
+- a factory routine that can construct the type (possibly taking parameters - and always taking a single object, an anonymous class)
 - getter and setter routines for all the properties
-- wrapper routines for all the functions
+- wrapper routines for any other relevant functions
 
 Todo:
  - figure out debugging
+  - things to unit test: nulll values, boolean conversion
 }
 {
 
@@ -90,6 +62,7 @@ type
   JsPropertyIdRef = ChakraCommon.JsPropertyIdRef;
   JsValueType = ChakraCommon.JsValueType;
   PJsValueRefArray = ChakraCommon.PJsValueRefArray;
+  bool = Boolean;
 
 const
   JS_INVALID_REFERENCE = nil;
@@ -109,6 +82,9 @@ const
 
 type
   TJavascript = class;
+  TJavascriptClassDefinition = class;
+  TJavascriptRegisteredProperty = class;
+
   EJavascriptBase = class (Exception);
   EJavascriptScript = class (EJavascriptBase); // error thrown by script
   EJavascriptSource = class (EJavascriptBase); // error compiling
@@ -116,7 +92,6 @@ type
   EJavascriptApplication = class (EJavascriptBase);    // error running application functionality
 
   TJavascriptConsoleLogEvent = procedure (sender : TJavascript; message : String) of object;
-  TJavascriptDefineObjectProc = procedure (sender : TJavascript; obj : JsValueRef);
   TJavascriptObjectFactoryProc<T : class> = function (sender : TJavascript; obj : JsValueRef) : T;
 
 
@@ -124,7 +99,7 @@ type
   TJavascriptArrayValueConsumer = reference to procedure (index : integer; value : JsValueRef);
 
   {
-  javascript API to implement:
+  javascript API to implement on manager:
   concat()	Joins two or more arrays, and returns a copy of the joined arrays
 copyWithin()	Copies array elements within the array, to and from specified positions
 every()	Checks if every element in an array pass a test
@@ -155,7 +130,7 @@ valueOf()	Returns the primitive value of an array
   }
   TJavascriptArrayManager = {abstract} class
   protected
-    FManager : TJavascript;
+    FJavascript : TJavascript;
   public
     // populating the array in the first place
     function count : integer; virtual;
@@ -165,6 +140,56 @@ valueOf()	Returns the primitive value of an array
     function push(params : PJsValueRefArray; paramCount : integer) : JsValueRef; virtual;
   end;
 
+  TJsValue = JsValueRef;
+  TJsValues = array of JsValueRef;
+
+  // callback functions registered with the engine
+
+  // one parameter set that should always be supported is a single anonymous object, which is being auto-converted to the right class
+  TJsFactoryFunction = function (js : TJavascript; classDef : TJavascriptClassDefinition; params : TJsValues; var owns : boolean) : TObject;
+  TJsFunction = function (js : TJavascript; propDef : TJavascriptRegisteredProperty; this : JsValueRef; parameters : TJsValues ) : JsValueRef;
+  TJsGetterFunction = function (js : TJavascript; propDef : TJavascriptRegisteredProperty; this : JsValueRef) : JsValueRef;
+  TJsSetterProcedure = procedure (js : TJavascript; propDef : TJavascriptRegisteredProperty; this : TJsValue; value : TJsValue);
+
+  TJavascriptRegisteredProperty = class
+  private
+    FJavascript : TJavascript;
+    FClassDef : TJavascriptClassDefinition;
+    FName : String;
+    FContext : pointer;
+    FRoutine : TJsFunction;
+    FGetter : TJsGetterFunction;
+    FSetter : TJsSetterProcedure;
+
+    // performance caching
+    FPropId : JsPropertyIdRef;
+    FRoutineJS : TJsValue;
+    FGetterJS : TJsValue;
+    FSetterJS : TJsValue;
+  public
+    property Name : String read FName;
+    property context : Pointer read FContext;
+    property ClassDef : TJavascriptClassDefinition read FClassDef;
+  end;
+
+  TJavascriptClassDefinition = class
+  private
+    FJavascript : TJavascript;
+    FName : String;
+    FFactoryName : String;
+    FContext : pointer;
+    FFactory : TJsFactoryFunction;
+    FProperties : TObjectList<TJavascriptRegisteredProperty>;
+  public
+    constructor create;
+    destructor Destroy; override;
+    property Name : String read FName;
+    property FactoryName : String read FFactoryName;
+    property context : Pointer read FContext;
+    procedure defineRoutine(name : String; context : Pointer; routine : TJsFunction);
+    procedure defineProperty(name : String; context : Pointer; getter : TJsGetterFunction; setter : TJsSetterProcedure);
+  end;
+
   // only one of these per thread
   TJavascript = class // (TAdvObject)
   private
@@ -172,6 +197,8 @@ valueOf()	Returns the primitive value of an array
     FContext : JsContextRef;
     FApplicationError : JsValueRef;
     FOnLog : TJavascriptConsoleLogEvent;
+    FDefinedClasses : TDictionary<String,TJavascriptClassDefinition>;
+    FOwnedObjects : TObjectList<TObject>;
 
     FPIdGetter : JsPropertyIdRef;
     FPIdSetter : JsPropertyIdRef;
@@ -179,8 +206,6 @@ valueOf()	Returns the primitive value of an array
     procedure init;
     procedure fin;
     procedure registerConsoleLog;
-    procedure definePropertyById(obj : JsValueRef; pId : JsPropertyIdRef; read : JsNativeFunction); overload;
-    procedure definePropertyById(obj : JsValueRef; pId : JsPropertyIdRef; read, write : JsNativeFunction); overload;
     procedure jsCheck(code : JsErrorCode);
     function getPropertyId(name : AnsiString) : JsRef;
   protected
@@ -188,6 +213,40 @@ valueOf()	Returns the primitive value of an array
   public
     constructor Create; // override;
     destructor Destroy; override;
+
+    // reset - clear all associated run-time memory - *including* owned objects, but leave definitions in place
+    procedure reset;
+
+    // take ownership of any object the host application wants to associate with the JS context (usually definition helpers)
+    procedure ownObject(obj : TObject);
+
+    // 1st, class registration
+    {
+      Define a class that the Javascript library will work with.
+
+      name is the name of the class from the pascal code perspective. Customarily this is the class name
+      context carries any additional defining information desired
+    }
+    function defineClass(name : String; context : Pointer) : TJavascriptClassDefinition; overload;
+    {
+      Define a class that the Javascript library will work with.
+
+      name is the name of the class from the pascal code perspective. Customarily this is the class name
+      context carries any additional defining information desired
+
+      Also, define a factory for the class. This will allow the javascript code to do:
+
+        var o = new [Name]();
+
+      note: the factory name is customarily capitalized. It need not be the same as the class name, but usually is.
+      note: actually, there's no real class model here, and the 'new' is optional.
+      you can have as many constructors as you like for a single underlying class
+    }
+    function defineClass(name : String; context : Pointer; factoryName : String; factory : TJsFactoryFunction) : TJavascriptClassDefinition; overload;
+    function hasDefinedClass(name : String) : boolean;
+    function getDefinedClass(name : String) : TJavascriptClassDefinition;
+
+    procedure addGlobal(name : AnsiString; obj : TJsValue);
 
     {
       Execute a script.
@@ -206,7 +265,7 @@ valueOf()	Returns the primitive value of an array
       params - params to pass to the function (must match the named parameters on the function).
          Prepare these using wrap() functions or makeArray
     }
-    function execute(script : String; scriptName, funcName: AnsiString; params : array of JsValueRef) : JsValueRef; overload;
+    function execute(script : String; scriptName, funcName: AnsiString; params : TJsValues) : JsValueRef; overload;
 
     {
       Convert whatever javascript variable is in val to a string representation
@@ -214,46 +273,31 @@ valueOf()	Returns the primitive value of an array
     function asString(val: JsValueRef): String;
 
     {
-      Define a type, along with a constructor. This will allow the javascript function
-      to do:
-
-        var o = new [Name]();
-
-      note: name is customarily capitalized.
-
-      Your constructor - see above for signature - will be called, so you can create the
-      correct underlying object, and initialise it. (something like this:
-
-        obj := TMyUnderlyingObject.Create;
-        // whatever initializtion is appropriate
-        result := js.wrap(obj, defineTestProp, true);
-      )
-
-      note: actually, there's no real class model here, and the 'new' is optional.
-      you can have as many constructors as you like for a single underlying class
+      Convert whatever javascript variable is in val to a boolean
     }
-    procedure defineType(name : AnsiString; factory : JsNativeFunction); overload;
+    function asBoolean(val: JsValueRef): boolean;
 
-    {
-      given an object, define a property value on it - a function that will be called
-      with parameters when a javascript function invokes it.
 
-      Your method - see above for signature - will be called, so you can do whatever.
-
-      note: properties can be functions or procedures. Procedures are just functions
-      that return JS_INVALID_REFERENCE
-    }
-    procedure defineProperty(obj : JsValueRef; name : AnsiString; read : JsNativeFunction); overload;
-
-    {
-      given an object, define a property value on it that has both read and write (e.g. like a delphi property).
-
-      Your methods - see above for signature - will be called, so you can do whatever.
-
-      note: getter must return something; setter returns JS_INVALID_REFERENCE
-    }
-    procedure defineProperty(obj : JsValueRef; name : AnsiString; read, write : JsNativeFunction); overload;
-
+//    {
+//      given an object, define a property value on it - a function that will be called
+//      with parameters when a javascript function invokes it.
+//
+//      Your method - see above for signature - will be called, so you can do whatever.
+//
+//      note: properties can be functions or procedures. Procedures are just functions
+//      that return JS_INVALID_REFERENCE
+//    }
+//    procedure defineProperty(obj : JsValueRef; name : AnsiString; read : JsNativeFunction); overload;
+//
+//    {
+//      given an object, define a property value on it that has both read and write (e.g. like a delphi property).
+//
+//      Your methods - see above for signature - will be called, so you can do whatever.
+//
+//      note: getter must return something; setter returns JS_INVALID_REFERENCE
+//    }
+//    procedure defineProperty(obj : JsValueRef; name : AnsiString; read, write : JsNativeFunction); overload;
+//
 
     // the rest of the routines are used for converting between delphi native types and
     // javascript native types. They'll be used in the native call back routines referred to above
@@ -270,6 +314,10 @@ valueOf()	Returns the primitive value of an array
       Convert a delphi integer to a javascript integer
     }
     function wrap(i : integer) : JsValueRef; overload;
+    {
+      Convert a delphi boolean to a javascript integer
+    }
+    function wrap(b : boolean) : JsValueRef; overload;
 
     {
       Generate a Javascript object that wraps a native delphi object
@@ -277,8 +325,11 @@ valueOf()	Returns the primitive value of an array
         definer: a procedure that defines properties for the object - using defineProperty above
         owns : true if the object is owned by the javascript engine and should be cleaned up when done
     }
-    function wrap(o : TObject; definer : TJavascriptDefineObjectProc; owns : boolean) : JsValueRef; overload;
-    // todo: add a wrap variant that uses RTTI
+    function wrap(o : TObject; className : String; owns : boolean) : JsValueRef; overload;
+    function wrap(o : TObject; classDef : TJavascriptClassDefinition; owns : boolean) : JsValueRef; overload;
+    function wrap(o : TObject; owns : boolean) : JsValueRef; overload;
+
+    // todo: add a wrap variant that uses RTTI , and one that uses IDispatch
 
     {
       given a javscript object. get the underlying delphi object
@@ -289,6 +340,11 @@ valueOf()	Returns the primitive value of an array
       given a javascript object, get an property value from it (remember to check for undefined)
     }
     function getProperty(obj : JsValueRef; name : AnsiString) : JsValueRef;
+
+    {
+      given a javascript object, see whether it has a property value which is not undefined
+    }
+    function hasProperty(obj : JsValueRef; name : AnsiString) : boolean;
 
     {
       if the wrapper was generated with owns := true (see wrap()), then
@@ -356,10 +412,9 @@ valueOf()	Returns the primitive value of an array
   TObjectListManager<T: class> = class (TJavascriptArrayManager)
   private
     FList : TObjectList<T>;
-    FDefiner : TJavascriptDefineObjectProc;
-    FFactory : TJavascriptObjectFactoryProc<T>;
+    FObjectDefinition : TJavascriptClassDefinition;
   public
-    constructor create(list : TObjectList<T>; definer : TJavascriptDefineObjectProc; factory : TJavascriptObjectFactoryProc<T>);
+    constructor create(list : TObjectList<T>; objectDefinition : TJavascriptClassDefinition);
 
     // populating the array in the first place
     function count : integer; override;
@@ -372,51 +427,6 @@ valueOf()	Returns the primitive value of an array
 
 implementation
 
-threadvar
-  gjs : TJavascript;
-
-function DoPush(callee: JsValueRef; isConstructCall: bool; arguments: PJsValueRef; argumentCount: Word; callbackState: Pointer): JsValueRef; stdcall;
-var
-  js : TJavascript;
-  p : PJsValueRefArray absolute arguments;
-  o : JsValueRef;
-  manager : TJavascriptArrayManager;
-  mref : pointer;
-begin
-  js := TJavascript(callbackState);
-  try
-    o := js.getProperty(p[0], '__manager');
-    js.jsCheck(JsGetExternalData(o, mref));
-    manager := TJavascriptArrayManager(mref);
-    result := manager.push(p, argumentCount);
-  except
-    on e:exception do
-      result := js.handleException(e);
-  end;
-end;
-
-function LogCB(callee: JsValueRef; isConstructCall: bool; arguments: PJsValueRef; argumentCount: Word; callbackState: Pointer): JsValueRef; stdcall;
-var
-  i : integer;
-  s : String;
-  p : PJsValueRefArray absolute arguments;
-begin
-  try
-    s := '';
-    for i := 1 to argumentCount - 1 do
-    begin
-      if (i > 1) then
-        s := s + ' ';
-      s := s + gjs.asString(p[i]);
-    end;
-    gjs.OnLog(gjs, s);
-    result := JS_INVALID_REFERENCE;
-  except
-    on e:exception do
-      result := gjs.handleException(e);
-  end;
-end;
-
 procedure FreeCallBack(ref: JsRef; callbackState: Pointer); stdcall;
 var
   js : TJavascript;
@@ -425,16 +435,174 @@ begin
   js.freeObject(js.getWrapped<TObject>(ref));
 end;
 
+function GetterCallback(callee: JsValueRef; isConstructCall: bool; arguments: PJsValueRef; argumentCount: Word; callbackState: Pointer): JsValueRef; stdcall;
+var
+  prop : TJavascriptRegisteredProperty;
+  p : PJsValueRefArray absolute arguments;
+begin
+  prop := TJavascriptRegisteredProperty(callbackState);
+  try
+    result := prop.FGetter(prop.FJavascript, prop, p[0]);
+  except
+    on e : Exception do
+      result := prop.FJavascript.handleException(e);
+  end;
+end;
+
+function SetterCallback(callee: JsValueRef; isConstructCall: bool; arguments: PJsValueRef; argumentCount: Word; callbackState: Pointer): JsValueRef; stdcall;
+var
+  prop : TJavascriptRegisteredProperty;
+  p : PJsValueRefArray absolute arguments;
+begin
+  prop := TJavascriptRegisteredProperty(callbackState);
+  try
+    prop.FSetter(prop.FJavascript, prop, p[0], p[1]);
+    result := JS_INVALID_REFERENCE;
+  except
+    on e : Exception do
+      result := prop.FJavascript.handleException(e);
+  end;
+end;
+
+function RoutineCallback(callee: JsValueRef; isConstructCall: bool; arguments: PJsValueRef; argumentCount: Word; callbackState: Pointer): JsValueRef; stdcall;
+var
+  prop : TJavascriptRegisteredProperty;
+  pl : TJsValues;
+  i : integer;
+  p : PJsValueRefArray absolute arguments;
+begin
+  prop := TJavascriptRegisteredProperty(callbackState);
+  try
+    setLength(pl, argumentCount - 1);
+    for i := 0 to argumentCount - 2 do
+      pl[i] := p[i+1];
+    result := prop.FRoutine(prop.FJavascript, prop, p[0], pl);
+  except
+    on e : Exception do
+      result := prop.FJavascript.handleException(e);
+  end;
+end;
+
+function factoryCallback(callee: JsValueRef; isConstructCall: bool; arguments: PJsValueRef; argumentCount: Word; callbackState: Pointer): JsValueRef; stdcall;
+var
+  def : TJavascriptClassDefinition;
+  pl : TJsValues;
+  i : integer;
+  p : PJsValueRefArray absolute arguments;
+  obj : TObject;
+  owns : boolean;
+begin
+  def := TJavascriptClassDefinition(callbackState);
+  try
+    setLength(pl, argumentCount - 1);
+    for i := 0 to argumentCount - 2 do
+      pl[i] := p[i+1];
+    obj := def.FFactory(def.FJavascript, def, pl, owns);
+    result := def.FJavascript.wrap(obj, def, owns);
+  except
+    on e : Exception do
+      result := def.FJavascript.handleException(e);
+  end;
+end;
+
+function DoPush(callee: JsValueRef; isConstructCall: bool; arguments: PJsValueRef; argumentCount: Word; callbackState: Pointer): JsValueRef; stdcall;
+var
+  p : PJsValueRefArray absolute arguments;
+  o : JsValueRef;
+  manager : TJavascriptArrayManager;
+begin
+  manager := TJavascriptArrayManager(callbackState);
+  try
+    result := manager.push(p, argumentCount);
+  except
+    on e:exception do
+      result := manager.FJavascript.handleException(e);
+  end;
+end;
+
+
+//doLog
+function doLog(js : TJavascript; context : TJavascriptRegisteredProperty; this : JsValueRef; parameters : TJsValues ) : JsValueRef;
+var
+  p : TJsValue;
+  s : String;
+begin
+  s := '';
+  for p in parameters do
+  begin
+    if s <> '' then
+      s := s + ' ';
+    s := s + js.asString(p);
+  end;
+  js.OnLog(js, s);
+  result := JS_INVALID_REFERENCE
+end;
+
+{ TJavascriptArrayManager }
+
+function TJavascriptArrayManager.count: integer;
+begin
+  raise Exception.Create('Need to override '+className+'.count');
+end;
+
+function TJavascriptArrayManager.item(i: integer): JsValueRef;
+begin
+  raise Exception.Create('Need to override '+className+'.item');
+end;
+
+function TJavascriptArrayManager.push(params : PJsValueRefArray; paramCount : integer): JsValueRef;
+begin
+  raise Exception.Create('Need to override '+className+'.push');
+end;
+
+{ TJavascriptClassDefinition }
+
+constructor TJavascriptClassDefinition.create;
+begin
+  inherited Create;
+  FProperties := TObjectList<TJavascriptRegisteredProperty>.create;
+  FProperties.OwnsObjects := true;
+end;
+
+destructor TJavascriptClassDefinition.Destroy;
+begin
+  FProperties.free;
+  inherited;
+end;
+
+procedure TJavascriptClassDefinition.defineProperty(name: String; context: Pointer; getter: TJsGetterFunction; setter: TJsSetterProcedure);
+var
+  p : TJavascriptRegisteredProperty;
+begin
+  p := TJavascriptRegisteredProperty.Create;
+  FProperties.Add(p);
+  p.FJavascript := FJavascript;
+  p.FClassDef := Self;
+  p.FName := name;
+  p.FContext := context;
+  p.FGetter := getter;
+  p.FSetter := setter;
+end;
+
+procedure TJavascriptClassDefinition.defineRoutine(name: String; context: Pointer; routine: TJsFunction);
+var
+  p : TJavascriptRegisteredProperty;
+begin
+  p := TJavascriptRegisteredProperty.Create;
+  FProperties.Add(p);
+  p.FJavascript := FJavascript;
+  p.FClassDef := Self;
+  p.FName := name;
+  p.FContext := context;
+  p.FRoutine := routine;
+end;
+
+
 
 { TJavascript }
 
-function TJavascript.arrayLength(arr: JsValueRef): integer;
-var
-  v : JsValueRef;
-begin
-  jsCheck(JsGetProperty(arr, getPropertyId('length'), v));
-  jsCheck(JsNumberToInt(v, result));
-end;
+threadvar
+  gjs : TJavascript;
 
 constructor TJavascript.Create;
 begin
@@ -443,132 +611,29 @@ begin
   if gjs <> nil then
     raise Exception.Create('There is already a javascript runtime on this thread');
   gjs := self;
-  init;
+  FDefinedClasses := TDictionary<String,TJavascriptClassDefinition>.create;
+  FOwnedObjects := TObjectList<TObject>.create;
   registerConsoleLog;
-end;
-
-procedure TJavascript.defineProperty(obj: JsValueRef; name: AnsiString; read: JsNativeFunction);
-begin
-  definePropertyById(obj, getPropertyId(name), read);
-end;
-
-procedure TJavascript.defineProperty(obj: JsValueRef; name: AnsiString; read, write: JsNativeFunction);
-begin
-  definePropertyById(obj, getPropertyId(name), read, write);
-end;
-
-procedure TJavascript.definePropertyById(obj: JsValueRef; pId: JsPropertyIdRef; read, write: JsNativeFunction);
-var
-  fr, fw : JsValueRef;
-  d : JsValueRef;
-  ok : boolean;
-begin
-  jsCheck(JsCreateFunction(read, self, fr));
-  jsCheck(JsCreateFunction(write, self, fw));
-  jsCheck(JsCreateObject(d));
-  jsCheck(JsSetProperty(d, FPIdGetter, fr, true));
-  jsCheck(JsSetProperty(d, FPIdSetter, fw, true));
-  jsCheck(JsDefineProperty(obj, pId, d, ok));
-  assert(ok);
-end;
-
-procedure TJavascript.defineType(name: AnsiString; factory: JsNativeFunction);
-var
-  f, global : JsValueRef;
-begin
-  jsCheck(JsGetGlobalObject(global));
-  jsCheck(JsCreateFunction(factory, self, f));
-  jsCheck(JsSetProperty(global, getPropertyId(name), f, true));
-end;
-
-procedure TJavascript.definePropertyById(obj: JsValueRef; pId: JsPropertyIdRef; read: JsNativeFunction);
-var
-  f : JsValueRef;
-begin
-  jsCheck(JsCreateFunction(read, self, f));
-  jsCheck(JsSetProperty(obj, pId, f, true));
+  init;
 end;
 
 destructor TJavascript.Destroy;
+var
+  def : TJavascriptClassDefinition;
 begin
   fin;
+  FOwnedObjects.Free;
+  for def in FDefinedClasses.Values do
+      def.Free;
+  FDefinedClasses.Free;
   gjs := nil;
   inherited;
 end;
 
-
-function TJavascript.execute(script : String; scriptName, funcName: AnsiString; params: array of JsValueRef): JsValueRef;
-var
-  global, func, scriptJ, scriptNameJ, res : JsValueRef;
-  pl : PJsValueRefArray;
-  i : integer;
-  vType : JsValueType;
-begin
-  // parse + initialise the script
-  jsCheck(JsCreateString(PAnsiChar(scriptName), Length(scriptName), scriptNameJ));
-  jsCheck(JsCreateExternalArrayBuffer(PChar(script), Length(script) * SizeOf(WideChar), nil, nil, scriptJ));
-  jsCheck(JsRun(scriptJ, FContext, scriptNameJ, JsParseScriptAttributeArrayBufferIsUtf16Encoded, res));
-
-  // look up the name on the global object
-  jsCheck(JsGetGlobalObject(global));
-  jsCheck(JsGetValueType(global, vType));
-  Assert(vType = JsObject, 'Could not find global object');
-
-  jsCheck(JsGetProperty(global, getPropertyId(funcName), func));
-  jsCheck(JsGetValueType(func, vType));
-  if (vType <> JsFunction) then
-    raise EJavascriptSource.Create('Could not find the function "'+string(funcName)+'" in the script "'+string(scriptName)+'"');
-
-  // execute it
-  GetMem(pl, (length(params) + 1) * SizeOf(JsValueRef));
-  try
-    pl[0] := global;
-    for i := 0 to length(params) - 1 do
-      pl[i+1] := params[i];
-    jsCheck(JsCallFunction(func, pointer(pl), 1 + length(params), result));
-  finally
-    Freemem(pl);
-  end;
-end;
-
-function TJavascript.execute(script: String; scriptName : AnsiString): JsValueRef;
-begin
-  jsCheck(JsRunScript(PChar(script), FContext, '', result));
-end;
-
-procedure TJavascript.fin;
-begin
-  // Dispose runtime
-  jsCheck(JsSetCurrentContext(JS_INVALID_REFERENCE));
-  jsCheck(JsDisposeRuntime(FRuntime));
-end;
-
-procedure TJavascript.freeObject(obj: TObject);
-begin
-  obj.Free;
-end;
-
-function TJavascript.getWrapped<T>(obj: JsValueRef): T;
-var
-  data : Pointer;
-  ok : boolean;
-begin
-  jsCheck(JsHasExternalData(obj, ok));
-  if not ok then
-    exit(nil);
-
-  jsCheck(JsGetExternalData(obj, data));
-  result := T(data);
-end;
-
-function TJavascript.handleException(e: Exception) : JsValueRef;
-begin
-  FApplicationError := wrap(e.Message);
-  jsCheck(JsSetException(FApplicationError));
-  result := JS_INVALID_REFERENCE;
-end;
-
 procedure TJavascript.init;
+var
+  def : TJavascriptClassDefinition;
+  global, f : TJsValue;
 begin
   // Create a runtime
   jsCheck(JsCreateRuntime(JsRuntimeAttributeNone, nil, FRuntime));
@@ -581,19 +646,32 @@ begin
 
   FPIdGetter := getPropertyId('get');
   FPIdSetter := getPropertyId('set');
+
+  for def in FDefinedClasses.Values do
+  begin
+    if (def.FFactoryName <> '') then
+    begin
+      jsCheck(JsGetGlobalObject(global));
+      jsCheck(JsCreateFunction(factoryCallback, def, f));
+      jsCheck(JsSetProperty(global, getPropertyId(def.FName), f, true));
+    end;
+  end;
+  addGlobal('console', wrap(TObject.create, 'Console', true));
 end;
 
-procedure TJavascript.iterateArray(arr: JsValueRef; valueConsumer: TJavascriptArrayValueConsumer);
-var
-  i : integer;
-  vi, v : JsValueRef;
+procedure TJavascript.fin;
 begin
-  for i := 0 to arrayLength(arr) - 1 do
-  begin
-    vi := wrap(i);
-    jsCheck(JsGetIndexedProperty(arr, vi, v));
-    valueConsumer(i, v);
-  end;
+  // Dispose runtime
+  jsCheck(JsSetCurrentContext(JS_INVALID_REFERENCE));
+  jsCheck(JsDisposeRuntime(FRuntime));
+end;
+
+procedure TJavascript.registerConsoleLog;
+var
+  def : TJavascriptClassDefinition;
+begin
+  def := defineClass('Console', nil);
+  def.defineRoutine('log', nil, doLog);
 end;
 
 procedure TJavascript.jsCheck(code: JsErrorCode);
@@ -670,6 +748,283 @@ begin
   end;
 end;
 
+function TJavascript.handleException(e: Exception) : JsValueRef;
+begin
+  FApplicationError := wrap(e.Message);
+  jsCheck(JsSetException(FApplicationError));
+  result := JS_INVALID_REFERENCE;
+end;
+
+procedure TJavascript.freeObject(obj: TObject);
+begin
+  obj.Free;
+end;
+
+procedure TJavascript.ownObject(obj : TObject);
+begin
+  FOwnedObjects.add(obj);
+end;
+
+procedure TJavascript.reset;
+var
+  c : TJavascriptClassDefinition;
+  p : TJavascriptRegisteredProperty;
+begin
+  fin;
+  FOwnedObjects.Clear;
+  for c in FDefinedClasses.Values do
+    for p in c.FProperties do
+    begin
+      p.FPropId := nil;
+      p.FRoutineJS := nil;
+      p.FGetterJS := nil;
+      p.FSetterJS := nil;
+    end;
+
+  init;
+end;
+
+function TJavascript.getPropertyId(name: AnsiString): JsRef;
+begin
+  jsCheck(JsCreatePropertyId(PAnsiChar(name), length(name), result));
+end;
+
+
+function TJavascript.defineClass(name : String; context : Pointer; factoryName : String; factory : TJsFactoryFunction) : TJavascriptClassDefinition;
+var
+  global, f : TJsValue;
+begin
+  if hasDefinedClass(name) then
+    raise Exception.Create('Attempt to redefine '+name);
+
+  result := TJavascriptClassDefinition.create;
+  FDefinedClasses.add(name, result);
+  result.FJavascript := self;
+  result.FName := name;
+  result.FContext := context;
+  result.FFactoryName := factoryName;
+  result.FFactory := factory;
+  if FRuntime <> nil then
+  begin
+    jsCheck(JsGetGlobalObject(global));
+    jsCheck(JsCreateFunction(factoryCallback, result, f));
+    jsCheck(JsSetProperty(global, getPropertyId(factoryName), f, true));
+  end;
+end;
+
+function TJavascript.defineClass(name : String; context : Pointer) : TJavascriptClassDefinition;
+begin
+  if hasDefinedClass(name) then
+    raise Exception.Create('Attempt to redefine '+name);
+
+  result := TJavascriptClassDefinition.create;
+  FDefinedClasses.add(name, result);
+  result.FJavascript := self;
+  result.FName := name;
+  result.FContext := context;
+end;
+
+function TJavascript.hasDefinedClass(name : String) : boolean;
+begin
+  result := FDefinedClasses.ContainsKey(name);
+end;
+
+function TJavascript.getDefinedClass(name : String) : TJavascriptClassDefinition;
+begin
+  result := FDefinedClasses[name];
+end;
+
+procedure TJavascript.addGlobal(name : AnsiString; obj : TJsValue);
+var
+  global : JsValueRef;
+begin
+  jsCheck(JsGetGlobalObject(global));
+  jsCheck(JsSetProperty(global, getPropertyId(name), obj, true));
+end;
+
+function TJavascript.execute(script: String; scriptName : AnsiString): JsValueRef;
+begin
+  jsCheck(JsRunScript(PChar(script), FContext, '', result));
+end;
+
+function TJavascript.execute(script : String; scriptName, funcName: AnsiString; params: TJsValues): JsValueRef;
+var
+  global, func, scriptJ, scriptNameJ, res : JsValueRef;
+  pl : PJsValueRefArray;
+  i : integer;
+  vType : int; //JsValueType, but see note on JsGetValueType
+begin
+  // parse + initialise the script
+  jsCheck(JsCreateString(PAnsiChar(scriptName), Length(scriptName), scriptNameJ));
+  jsCheck(JsCreateExternalArrayBuffer(PChar(script), Length(script) * SizeOf(WideChar), nil, nil, scriptJ));
+  jsCheck(JsRun(scriptJ, FContext, scriptNameJ, JsParseScriptAttributeArrayBufferIsUtf16Encoded, res));
+
+  // look up the name on the global object
+  jsCheck(JsGetGlobalObject(global));
+  jsCheck(JsGetValueType(global, vType));
+  Assert(JsValueType(vType) = JsObject, 'Could not find global object');
+
+  jsCheck(JsGetProperty(global, getPropertyId(funcName), func));
+  jsCheck(JsGetValueType(func, vType));
+  if (JsValueType(vType) <> JsFunction) then
+    raise EJavascriptSource.Create('Could not find the function "'+string(funcName)+'" in the script "'+string(scriptName)+'"');
+
+  // execute it
+  GetMem(pl, (length(params) + 1) * SizeOf(JsValueRef));
+  try
+    pl[0] := global;
+    for i := 0 to length(params) - 1 do
+      pl[i+1] := params[i];
+    jsCheck(JsCallFunction(func, pointer(pl), 1 + length(params), result));
+  finally
+    Freemem(pl);
+  end;
+end;
+
+
+function TJavascript.wrap(s: String): JsValueRef;
+begin
+  jsCheck(JsPointerToString(pchar(s), length(s), result));
+end;
+
+function TJavascript.wrap(i: integer): JsValueRef;
+begin
+  jsCheck(JsIntToNumber(i, result));
+end;
+
+function TJavascript.wrap(b: boolean): JsValueRef;
+begin
+  jsCheck(JsBoolToBoolean(b, result));
+end;
+
+function TJavascript.wrap(o : TObject; className : String; owns : boolean) : JsValueRef;
+var
+  def : TJavascriptClassDefinition;
+begin
+  if FDefinedClasses.TryGetValue(className, def) then
+    result := wrap(o, def, owns)
+  else
+    raise EJavascriptHost.Create('Attempt to use unknown class "'+className+'"');
+end;
+
+function TJavascript.wrap(o : TObject; classDef : TJavascriptClassDefinition; owns : boolean) : JsValueRef;
+var
+  p : TJavascriptRegisteredProperty;
+  d : JsValueRef;
+  ok : boolean;
+begin
+  JsCheck(JsCreateExternalObject(o, nil, result));
+  if owns then
+    jsCheck(JsSetObjectBeforeCollectCallback(result, self, FreeCallBack));
+  for p in classDef.FProperties do
+  begin
+    if p.FPropId = nil then
+      p.FPropId := getPropertyId(p.Name);
+    if assigned(p.FSetter) then
+    begin
+      if p.FGetterJS = nil then
+        jsCheck(JsCreateFunction(GetterCallback, p, p.FGetterJS));
+      if p.FSetterJS = nil then
+        jsCheck(JsCreateFunction(SetterCallback, p, p.FSetterJS));
+      jsCheck(JsCreateObject(d));
+      jsCheck(JsSetProperty(d, FPIdGetter, p.FGetterJS, true));
+      jsCheck(JsSetProperty(d, FPIdSetter, p.FSetterJS, true));
+      jsCheck(JsDefineProperty(result, p.FPropId, d, ok));
+      assert(ok);
+    end
+    else
+    begin
+      if p.FRoutineJS = nil then
+        jsCheck(JsCreateFunction(RoutineCallback, p, p.FRoutineJS));
+      jsCheck(JsSetProperty(result, p.FPropId, p.FRoutineJS, true));
+    end;
+  end;
+end;
+
+function TJavascript.asString(val: JsValueRef) : String;
+var
+  p : PChar;
+  str : JsValueRef;
+  l : Cardinal;
+begin
+  // Convert your script result to String in JavaScript; redundant if your script returns a String
+  jsCheck(JsConvertValueToString(val, str));
+  // Project script result back to C++.
+  jsCheck(JsStringToPointer(str, p, l));
+  result := p;
+end;
+
+function TJavascript.asBoolean(val: JsValueRef): boolean;
+var
+  p : PChar;
+  str : JsValueRef;
+  l : Cardinal;
+  v : integer;
+begin
+  case getType(val) of
+    JsUndefined : result := false;
+    JsNull : result := false;
+    JsNumber :
+      begin
+      JsNumberToInt(val, v);
+      result := v <> 0;
+      end;
+    JsString : result := asString(val) = 'true';
+    JsBoolean : jsCheck(JsBooleanToBool(val, result));
+    JsObject : result := true;
+    JsFunction : result := false; // should evaluate it??
+    JsError : result := false;
+    JsArray : result := false;
+    JsSymbol : result := false;
+    JsArrayBuffer  : result := false;
+    JsTypedArray  : result := false;
+    JsDataView : result := false;
+  end;
+end;
+
+function TJavascript.getType(v: JsValueRef): JsValueType;
+var
+  i : int;
+begin
+  jsCheck(JsGetValueType(v, i));
+  result := JsValueType(i);
+end;
+
+function TJavascript.getWrapped<T>(obj: JsValueRef): T;
+var
+  data : Pointer;
+  ok : boolean;
+begin
+  jsCheck(JsHasExternalData(obj, ok));
+  if not ok then
+    exit(nil);
+
+  jsCheck(JsGetExternalData(obj, data));
+  result := T(data);
+end;
+
+function TJavascript.getProperty(obj: JsValueRef; name: AnsiString): JsValueRef;
+begin
+  jsCheck(JsGetProperty(obj, getPropertyId(name), result));
+end;
+
+function TJavascript.hasProperty(obj: JsValueRef; name: AnsiString): boolean;
+var
+  o : JsValueRef;
+begin
+  jsCheck(JsGetProperty(obj, getPropertyId(name), o));
+  result := not (getType(o) in [JsUndefined, JsNull]);
+end;
+
+procedure TJavascript.unOwn(v: JsValueRef);
+begin
+  jsCheck(JsSetObjectBeforeCollectCallback(v, self, nil));
+end;
+
+function TJavascript.wrap(o: TObject; owns: boolean): JsValueRef;
+begin
+  result := wrap(o, o.ClassName, owns);
+end;
 
 function TJavascript.makeArray(count: integer; valueProvider: TJavascriptArrayValueProvider): JsValueRef;
 var
@@ -689,9 +1044,15 @@ function TJavascript.makeManagedArray(manager: TJavascriptArrayManager): JsValue
 var
   i : integer;
   o : JsValueRef;
+  procedure defineProperty(name : AnsiString; read : JsNativeFunction);
+  var
+    f : TJsValue;
+  begin
+    jsCheck(JsCreateFunction(read, manager, f));
+    jsCheck(JsSetProperty(result, getPropertyId(name), f, true));
+  end;
 begin
-  manager.FManager := self;
-
+  manager.FJavascript := self;
   JsCheck(JsCreateArray(manager.count, result));
 
   // we can't associate external data with the array directly, but we
@@ -701,97 +1062,34 @@ begin
   jsCheck(JsSetProperty(result, getPropertyId('__manager'), o, false));
 
   // override all the standard Javascript methods
-  defineProperty(result, 'push', doPush);
+  defineProperty('push', doPush);
+
+  // todo: all the rest
 
   // now populate the array
   for i := 0 to manager.count - 1 do
     JsCheck(JsSetIndexedProperty(result, wrap(i), manager.item(i)));
 end;
 
-procedure TJavascript.registerConsoleLog;
+function TJavascript.arrayLength(arr: JsValueRef): integer;
 var
-  console, logFunc, global : JsValueRef;
-  consolePropId, logPropId : JsPropertyIdRef;
-  consoleString : PAnsiChar;
+  v : JsValueRef;
 begin
-  logPropId := getPropertyId('log');
-  jsCheck(JsCreateObject(console));
-  jsCheck(JsCreateFunction(LogCB, self, logFunc));
-  consoleString := 'console';
-  jsCheck(JsSetProperty(console, logPropId, logFunc, true));
-  // set console as property of global object
-  jsCheck(JsGetGlobalObject(global));
-  jsCheck(JsCreatePropertyId(consoleString, AnsiStrings.strlen(consoleString), consolePropId));
-  jsCheck(JsSetProperty(global, consolePropId, console, true));
+  jsCheck(JsGetProperty(arr, getPropertyId('length'), v));
+  jsCheck(JsNumberToInt(v, result));
 end;
 
-
-function TJavascript.getProperty(obj: JsValueRef; name: AnsiString): JsValueRef;
-begin
-  jsCheck(JsGetProperty(obj, getPropertyId(name), result));
-end;
-
-function TJavascript.getPropertyId(name: AnsiString): JsRef;
-begin
-  jsCheck(JsCreatePropertyId(PAnsiChar(name), length(name), result));
-end;
-
-function TJavascript.getType(v: JsValueRef): JsValueType;
-begin
-  jsCheck(JsGetValueType(v, result));
-end;
-
-function TJavascript.asString(val: JsValueRef) : String;
+procedure TJavascript.iterateArray(arr: JsValueRef; valueConsumer: TJavascriptArrayValueConsumer);
 var
-  p : PChar;
-  str : JsValueRef;
-  l : Cardinal;
+  i : integer;
+  vi, v : JsValueRef;
 begin
-  // Convert your script result to String in JavaScript; redundant if your script returns a String
-  jsCheck(JsConvertValueToString(val, str));
-  // Project script result back to C++.
-  jsCheck(JsStringToPointer(str, p, l));
-  result := p;
-end;
-
-procedure TJavascript.unOwn(v: JsValueRef);
-begin
-  jsCheck(JsSetObjectBeforeCollectCallback(v, self, nil));
-end;
-
-function TJavascript.wrap(i: integer): JsValueRef;
-begin
-  jsCheck(JsIntToNumber(i, result));
-end;
-
-function TJavascript.wrap(s: String): JsValueRef;
-begin
-  jsCheck(JsPointerToString(pchar(s), length(s), result));
-end;
-
-function TJavascript.wrap(o: TObject; definer: TJavascriptDefineObjectProc; owns : boolean): JsValueRef;
-begin
-  JsCheck(JsCreateExternalObject(o, nil, result));
-  definer(self, result);
-  if owns then
-    jsCheck(JsSetObjectBeforeCollectCallback(result, self, FreeCallBack));
-end;
-
-{ TJavascriptArrayManager }
-
-function TJavascriptArrayManager.count: integer;
-begin
-  raise Exception.Create('Need to override '+className+'.count');
-end;
-
-function TJavascriptArrayManager.item(i: integer): JsValueRef;
-begin
-  raise Exception.Create('Need to override '+className+'.item');
-end;
-
-function TJavascriptArrayManager.push(params : PJsValueRefArray; paramCount : integer): JsValueRef;
-begin
-  raise Exception.Create('Need to override '+className+'.push');
+  for i := 0 to arrayLength(arr) - 1 do
+  begin
+    vi := wrap(i);
+    jsCheck(JsGetIndexedProperty(arr, vi, v));
+    valueConsumer(i, v);
+  end;
 end;
 
 { TStringListManager }
@@ -809,7 +1107,7 @@ end;
 
 function TStringListManager.item(i: integer): JsValueRef;
 begin
-  result := FManager.wrap(FList[i]);
+  result := FJavascript.wrap(FList[i]);
 end;
 
 function TStringListManager.push(params : PJsValueRefArray; paramCount : integer): JsValueRef;
@@ -817,18 +1115,17 @@ var
   i : integer;
 begin
   for i := 1 to paramCount - 1 do
-    Flist.add(FManager.asString(params[i]));
-  result := FManager.wrap(FList.Count);
+    Flist.add(FJavascript.asString(params[i]));
+  result := FJavascript.wrap(FList.Count);
 end;
 
 { TObjectListManager<T> }
 
-constructor TObjectListManager<T>.create(list: TObjectList<T>; definer : TJavascriptDefineObjectProc; factory : TJavascriptObjectFactoryProc<T>);
+constructor TObjectListManager<T>.create(list: TObjectList<T>; objectDefinition : TJavascriptClassDefinition);
 begin
   inherited Create;
   FList := list;
-  FDefiner := definer;
-  FFactory := factory;
+  FObjectDefinition := objectDefinition;;
 end;
 
 function TObjectListManager<T>.count: integer;
@@ -838,22 +1135,28 @@ end;
 
 function TObjectListManager<T>.item(i: integer): JsValueRef;
 begin
-  result := FManager.wrap(FList[i], FDefiner, false);
+  result := FJavascript.wrap(FList[i], FObjectDefinition, false);
 end;
 
 function TObjectListManager<T>.push(params: PJsValueRefArray; paramCount: integer): JsValueRef;
 var
   i : integer;
   o : T;
+  pl : TJsValues;
+  owns : boolean;
 begin
+  setLength(pl, 1);
   for i := 1 to paramCount - 1 do
   begin
-    o := FManager.getWrapped<T>(params[i]);
+    o := FJavascript.getWrapped<T>(params[i]);
     if o = nil then
-      o := FFactory(FManager, params[i]);
+    begin
+      pl[0] := params[i];
+      o := FObjectDefinition.FFactory(FJavascript, FObjectDefinition, pl, owns) as T;
+    end;
     Flist.add(o);
   end;
-  result := FManager.wrap(FList.Count);
+  result := FJavascript.wrap(FList.Count);
 end;
 
 end.

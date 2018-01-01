@@ -734,28 +734,28 @@ type
 //    var falseValue: JsValueRef
 //  ): JsErrorCode; stdcall; external DLL_NAME;
 //
-//  {
-//     CHAKRA_API
-//        JsBoolToBoolean(
-//            _In_ bool value,
-//            _Out_ JsValueRef *booleanValue);
-//  }
-//  function JsBoolToBoolean(
-//    value: bool;
-//    var booleanValue: JsValueRef
-//  ): JsErrorCode; stdcall; external DLL_NAME;
-//
-//  {
-//    CHAKRA_API
-//        JsBooleanToBool(
-//            _In_ JsValueRef value,
-//            _Out_ bool *boolValue);
-//  }
-//  function JsBooleanToBool(
-//    value: JsValueRef;
-//    var boolValue: bool
-//  ): JsErrorCode; stdcall; external DLL_NAME;
-//
+  {
+     CHAKRA_API
+        JsBoolToBoolean(
+            _In_ bool value,
+            _Out_ JsValueRef *booleanValue);
+  }
+  function JsBoolToBoolean(
+    value: bool;
+    var booleanValue: JsValueRef
+  ): JsErrorCode; stdcall; external DLL_NAME;
+
+  {
+    CHAKRA_API
+        JsBooleanToBool(
+            _In_ JsValueRef value,
+            _Out_ bool *boolValue);
+  }
+  function JsBooleanToBool(
+    value: JsValueRef;
+    var boolValue: bool
+  ): JsErrorCode; stdcall; external DLL_NAME;
+
 //  {
 //    CHAKRA_API
 //        JsConvertValueToBoolean(
@@ -775,7 +775,7 @@ type
   }
   function JsGetValueType(
     value: JsValueRef;
-    var _type: JsValueType
+    var _type: int // if you just use JsValueType directly, you'll get the stack trashed in 64bit
   ): JsErrorCode; stdcall; external DLL_NAME;
 
 //  {

@@ -47,6 +47,7 @@ Type
     FLog : TStringList;
     FRaise : boolean;
     procedure JSLog(sender : TJavascript; message : String);
+    procedure defineTestTypes(js: TJavascript; manArrayValue: boolean);
   Published
     [SetUp]    Procedure Setup;
     [TearDown] Procedure TearDown;
@@ -56,30 +57,41 @@ Type
     [TestCase] Procedure TestAppException;
     [TestCase] Procedure TestAddOne;
     [TestCase] Procedure TestProperty;
+    [TestCase] Procedure TestType;
     [TestCase] Procedure TestArray;
     [TestCase] Procedure TestArrayManaged;
     [TestCase] Procedure TestArrayPush;
     [TestCase] Procedure TestArrayComplex;
     [TestCase] Procedure TestArrayComplexAnonymous;
     [TestCase] Procedure TestArrayComplexPush;
-    [TestCase] Procedure TestType;
   End;
 
 
 implementation
 
-procedure defineTestInt(sender : TJavascript; obj : JsValueRef); forward;
-procedure defineTestProp(sender : TJavascript; obj : JsValueRef); forward;
-procedure defineTestArray(sender : TJavascript; obj : JsValueRef); forward;
-procedure defineTestArrayManaged(sender : TJavascript; obj : JsValueRef); forward;
-procedure defineTestComplexArray(sender : TJavascript; obj : JsValueRef); forward;
-
 Type
   TIntObj = class
   private
     value : integer;
+  public
+    procedure addOne;
   end;
 
+procedure TIntObj.addOne;
+begin
+  inc(value);
+end;
+
+function AddOne(js : TJavascript; propDef : TJavascriptRegisteredProperty; this : JsValueRef; parameters : TJsValues ) : JsValueRef;
+var
+  obj : TIntObj;
+begin
+  obj := js.getWrapped<TIntObj>(this);
+  obj.addOne;
+  result := JS_INVALID_REFERENCE;
+end;
+
+type
   TPropObj = class
   private
     FValue : String;
@@ -89,6 +101,48 @@ Type
     property value : String read FValue write FValue;
   end;
 
+{ TPropObj }
+
+constructor TPropObj.create(v: String);
+begin
+  inherited Create;
+  FValue := v;
+end;
+
+destructor TPropObj.destroy;
+begin
+  inherited;
+end;
+
+function PropObjGetValue(js : TJavascript; propDef : TJavascriptRegisteredProperty; this : JsValueRef) : JsValueRef;
+var
+  obj : TPropObj;
+begin
+  obj := js.getWrapped<TPropObj>(this);
+  result := js.wrap(obj.value);
+end;
+
+procedure PropObjSetValue(js : TJavascript; propDef : TJavascriptRegisteredProperty; this : TJsValue; value : TJsValue);
+var
+  obj : TPropObj;
+begin
+  obj := js.getWrapped<TPropObj>(this);
+  obj.value := js.asString(value);
+end;
+
+function MakePropObjFromData(js : TJavascript; classDef : TJavascriptClassDefinition; params : TJsValues; var owns : boolean) : TObject;
+var
+  p : TJsValue;
+begin
+  p := params[0];
+  if js.getType(p) = JsObject then
+    result := TPropObj.create(js.asString(js.getProperty(p, 'value')))
+  else
+    result := TPropObj.create('test-'+js.asString(p));
+  owns := true;
+end;
+
+type
   TArrayObj = class
   private
     FValue : TStringList;
@@ -98,6 +152,54 @@ Type
     property value : TStringList read FValue;
   end;
 
+{ TArrayObj }
+
+constructor TArrayObj.Create;
+begin
+  inherited;
+  FValue := TStringList.create;
+end;
+
+destructor TArrayObj.Destroy;
+begin
+  FValue.Free;
+  inherited;
+end;
+
+function PropArrayGetValue(js : TJavascript; propDef : TJavascriptRegisteredProperty; this : JsValueRef) : JsValueRef;
+var
+  obj : TArrayObj;
+begin
+  obj := js.getWrapped<TArrayObj>(this);
+  result := js.makeArray(obj.value.Count,
+      function (index : integer) : JsValueRef
+      begin
+        result := js.wrap(obj.value[index]);
+      end);
+end;
+
+function PropArrayGetValueManaged(js : TJavascript; propDef : TJavascriptRegisteredProperty; this : JsValueRef) : JsValueRef;
+var
+  obj : TArrayObj;
+begin
+  obj := js.getWrapped<TArrayObj>(this);
+  result := js.makeManagedArray(TStringListManager.create(obj.FValue));
+end;
+
+procedure PropArraySetValue(js : TJavascript; propDef : TJavascriptRegisteredProperty; this : TJsValue; value : TJsValue);
+var
+  obj : TArrayObj;
+begin
+  obj := js.getWrapped<TArrayObj>(this);
+  obj.value.Clear;
+  js.iterateArray(value,
+      procedure (i : integer; v : JsValueRef)
+      begin
+        obj.value.Add(js.asString(v));
+      end);
+end;
+
+type
   TComplexArrayObj = class
   private
     FValue : TObjectList<TPropObj>;
@@ -107,205 +209,101 @@ Type
     property value : TObjectList<TPropObj> read FValue;
   end;
 
-function MakePropObjFromData(js : TJavascript; obj : JsValueRef) : TPropObj;
+{ TComplexArrayObj }
+
+constructor TComplexArrayObj.Create;
 begin
-  result := TPropObj.create(js.asString(js.getProperty(obj, 'value')));
+  inherited;
+  FValue := TObjectList<TPropObj>.create;
+  // this is important - you won't be able to manage this when javascript starts assigned arrays around
+  FValue.OwnsObjects := false;
 end;
 
-function AddOne(callee: JsValueRef; isConstructCall: bool; arguments: PJsValueRef; argumentCount: Word; callbackState: Pointer): JsValueRef; stdcall;
+destructor TComplexArrayObj.Destroy;
 var
-  js : TJavascript;
-  obj : TIntObj;
-  p : PJsValueRefArray absolute arguments;
+  p : TPropObj;
 begin
-  js := TJavascript(callbackState);
-  try
-    obj := js.getWrapped<TIntObj>(p[0]);
-    inc(obj.value);
-    result := JS_INVALID_REFERENCE;
-  except
-    on e:exception do
-      result := js.handleException(e);
-  end;
+  for p in value do
+    p.Free;
+  FValue.Free;
+  inherited;
 end;
 
-function PropObjGetValue(callee: JsValueRef; isConstructCall: bool; arguments: PJsValueRef; argumentCount: Word; callbackState: Pointer): JsValueRef; stdcall;
+function PropComplexArrayGetValue(js : TJavascript; propDef : TJavascriptRegisteredProperty; this : JsValueRef) : JsValueRef;
 var
-  js : TJavascript;
-  obj : TPropObj;
-  p : PJsValueRefArray absolute arguments;
-begin
-  js := TJavascript(callbackState);
-  try
-    obj := js.getWrapped<TPropObj>(p[0]);
-    result := js.wrap(obj.value);
-  except
-    on e:exception do
-      result := js.handleException(e);
-  end;
-end;
-
-function PropObjSetValue(callee: JsValueRef; isConstructCall: bool; arguments: PJsValueRef; argumentCount: Word; callbackState: Pointer): JsValueRef; stdcall;
-var
-  js : TJavascript;
-  obj : TPropObj;
-  p : PJsValueRefArray absolute arguments;
-begin
-  js := TJavascript(callbackState);
-  try
-    obj := js.getWrapped<TPropObj>(p[0]);
-    obj.value := js.asString(p[1]);
-    result := JS_INVALID_REFERENCE;
-  except
-    on e:exception do
-      result := js.handleException(e);
-  end;
-end;
-
-function PropArrayGetValue(callee: JsValueRef; isConstructCall: bool; arguments: PJsValueRef; argumentCount: Word; callbackState: Pointer): JsValueRef; stdcall;
-var
-  js : TJavascript;
-  obj : TArrayObj;
-  p : PJsValueRefArray absolute arguments;
-begin
-  js := TJavascript(callbackState);
-  try
-    obj := js.getWrapped<TArrayObj>(p[0]);
-    result := js.makeArray(obj.value.Count,
-      function (index : integer) : JsValueRef
-      begin
-        result := js.wrap(obj.value[index]);
-      end);
-  except
-    on e:exception do
-      result := js.handleException(e);
-  end;
-end;
-
-function PropArrayGetValueManaged(callee: JsValueRef; isConstructCall: bool; arguments: PJsValueRef; argumentCount: Word; callbackState: Pointer): JsValueRef; stdcall;
-var
-  js : TJavascript;
-  obj : TArrayObj;
-  p : PJsValueRefArray absolute arguments;
-begin
-  js := TJavascript(callbackState);
-  try
-    obj := js.getWrapped<TArrayObj>(p[0]);
-    result := js.makeManagedArray(TStringListManager.create(obj.FValue));
-  except
-    on e:exception do
-      result := js.handleException(e);
-  end;
-end;
-
-function PropArraySetValue(callee: JsValueRef; isConstructCall: bool; arguments: PJsValueRef; argumentCount: Word; callbackState: Pointer): JsValueRef; stdcall;
-var
-  js : TJavascript;
-  obj : TArrayObj;
-  p : PJsValueRefArray absolute arguments;
-begin
-  js := TJavascript(callbackState);
-  try
-    obj := js.getWrapped<TArrayObj>(p[0]);
-    obj.value.Clear;
-    js.iterateArray(p[1],
-      procedure (i : integer; v : JsValueRef)
-      begin
-        obj.value.Add(js.asString(v));
-      end);
-    result := JS_INVALID_REFERENCE;
-  except
-    on e:exception do
-      result := js.handleException(e);
-  end;
-end;
-
-function PropComplexArrayGetValue(callee: JsValueRef; isConstructCall: bool; arguments: PJsValueRef; argumentCount: Word; callbackState: Pointer): JsValueRef; stdcall;
-var
-  js : TJavascript;
   obj : TComplexArrayObj;
-  p : PJsValueRefArray absolute arguments;
 begin
-  js := TJavascript(callbackState);
-  try
-    obj := js.getWrapped<TComplexArrayObj>(p[0]);
-    result := js.makemanagedArray(TObjectListManager<TPropObj>.create(obj.FValue, defineTestProp, MakePropObjFromData));
-  except
-    on e:exception do
-      result := js.handleException(e);
-  end;
+  obj := js.getWrapped<TComplexArrayObj>(this);
+  result := js.makemanagedArray(TObjectListManager<TPropObj>.create(obj.FValue, js.getDefinedClass('TPropObj')));
 end;
 
-function PropComplexArraySetValue(callee: JsValueRef; isConstructCall: bool; arguments: PJsValueRef; argumentCount: Word; callbackState: Pointer): JsValueRef; stdcall;
+procedure PropComplexArraySetValue(js : TJavascript; propDef : TJavascriptRegisteredProperty; this : TJsValue; value : TJsValue);
 var
-  js : TJavascript;
   obj : TComplexArrayObj;
-  p : PJsValueRefArray absolute arguments;
   o : TPropObj;
+  owns : boolean;
+  def : TJavascriptClassDefinition;
+  params : TJsValues;
 begin
-  js := TJavascript(callbackState);
-  try
-    obj := js.getWrapped<TComplexArrayObj>(p[0]);
-    obj.value.Clear;
-    js.iterateArray(p[1],
-      procedure (i : integer; v : JsValueRef)
+  obj := js.getWrapped<TComplexArrayObj>(this);
+  obj.value.Clear;
+  def := js.getDefinedClass('TPropObj');
+  js.iterateArray(value,
+    procedure (i : integer; v : JsValueRef)
+    begin
+      o := js.getWrapped<TPropObj>(v);
+      if (o = nil) then
       begin
-        o := js.getWrapped<TPropObj>(v);
-        if (o = nil) then
-          o := MakePropObjFromData(js, v);
-        obj.value.Add(o);
-        js.unOwn(v);
-      end);
-    result := JS_INVALID_REFERENCE;
-  except
-    on e:exception do
-      result := js.handleException(e);
-  end;
-end;
-
-function CreateMyObject(callee: JsValueRef; isConstructCall: bool; arguments: PJsValueRef; argumentCount: Word; callbackState: Pointer): JsValueRef; stdcall;
-var
-  js : TJavascript;
-  obj : TPropObj;
-  p : PJsValueRefArray absolute arguments;
-begin
-  js := TJavascript(callbackState);
-  try
-    obj := TPropObj.Create('test-'+js.asString(p[1]));
-    result := js.wrap(obj, defineTestProp, true);
-  except
-    on e:exception do
-      result := js.handleException(e);
-  end;
-end;
-
-procedure defineTestInt(sender : TJavascript; obj : JsValueRef);
-begin
-  sender.defineProperty(obj, 'addOne', AddOne);
-end;
-
-procedure defineTestProp(sender : TJavascript; obj : JsValueRef);
-begin
-  sender.defineProperty(obj, 'value', PropObjGetValue, PropObjSetValue);
-end;
-
-procedure defineTestArray(sender : TJavascript; obj : JsValueRef);
-begin
-  sender.defineProperty(obj, 'value', PropArrayGetValue, PropArraySetValue);
-end;
-
-procedure defineTestArrayManaged(sender : TJavascript; obj : JsValueRef);
-begin
-  sender.defineProperty(obj, 'value', PropArrayGetValueManaged, PropArraySetValue);
-end;
-
-procedure defineTestComplexArray(sender : TJavascript; obj : JsValueRef);
-begin
-  sender.defineProperty(obj, 'value', PropComplexArrayGetValue, PropComplexArraySetValue);
+        setLength(params, 1);
+        params[0] := v;
+        o := MakePropObjFromData(js, def, params, owns) as TPropObj;
+      end;
+      obj.value.Add(o);
+      js.unOwn(v);
+    end);
 end;
 
 
 { TJavascriptTests }
+
+procedure TJavascriptTests.Setup;
+begin
+  FRaise := false;
+  FLog := TStringList.create;
+end;
+
+procedure TJavascriptTests.TearDown;
+begin
+  FLog.Free;
+end;
+
+procedure TJavascriptTests.defineTestTypes(js : TJavascript; manArrayValue : boolean);
+var
+  def : TJavascriptClassDefinition;
+begin
+  def := js.defineClass('TIntObj', nil);
+  def.defineRoutine('addOne', nil, AddOne);
+  def := js.defineClass('TPropObj', nil, 'MyObject', MakePropObjFromData);
+  def.defineProperty('value', nil, PropObjGetValue, PropObjSetValue);
+  def := js.defineClass('TArrayObj', nil);
+  if manArrayValue then
+    def.defineProperty('value', nil, PropArrayGetValueManaged, PropArraySetValue)
+  else
+    def.defineProperty('value', nil, PropArrayGetValue, PropArraySetValue);
+  def := js.defineClass('TComplexArrayObj', nil);
+  def.defineProperty('value', nil, PropComplexArrayGetValue, PropComplexArraySetValue);
+end;
+
+procedure TJavascriptTests.JSLog(sender: TJavascript; message: String);
+begin
+  FLog.Add(message);
+  if FRaise then
+  begin
+    FRaise := false;
+    raise Exception.Create('Internal error');
+  end;
+end;
+
 
 procedure TJavascriptTests.TestHelloWorld;
 var
@@ -355,47 +353,6 @@ begin
   finally
     js.Free;
   end;
-
-end;
-
-procedure TJavascriptTests.JSLog(sender: TJavascript; message: String);
-begin
-  FLog.Add(message);
-  if FRaise then
-    raise Exception.Create('Internal error');
-end;
-
-procedure TJavascriptTests.Setup;
-begin
-  FRaise := false;
-  FLog := TStringList.create;
-end;
-
-procedure TJavascriptTests.TearDown;
-begin
-  FLog.Free;
-end;
-
-procedure TJavascriptTests.TestAddOne;
-var
-  js : TJavascript;
-  i : TIntObj;
-  o : JsValueRef;
-begin
-  i := TIntObj.Create;
-  try
-    i.value := 1;
-    js := TJavascript.Create;
-    try
-      o := js.wrap(i, defineTestInt, false);
-      js.execute('function func1(o) {'+#13#10+' o.addOne();'+#13#10+' } ', 'test.js', 'func1', [o]);
-    finally
-      js.Free;
-    end;
-    Assert.IsTrue(i.value = 2);
-  finally
-    i.Free;
-  end;
 end;
 
 procedure TJavascriptTests.TestAppException;
@@ -421,6 +378,29 @@ begin
   end;
 end;
 
+procedure TJavascriptTests.TestAddOne;
+var
+  js : TJavascript;
+  i : TIntObj;
+  o : JsValueRef;
+begin
+  i := TIntObj.Create;
+  try
+    i.value := 1;
+    js := TJavascript.Create;
+    try
+      defineTestTypes(js, false);
+      o := js.wrap(i, 'TIntObj', false);
+      js.execute('function func1(o) {'+#13#10+' o.addOne();'+#13#10+' } ', 'test.js', 'func1', [o]);
+    finally
+      js.Free;
+    end;
+    Assert.IsTrue(i.value = 2);
+  finally
+    i.Free;
+  end;
+end;
+
 procedure TJavascriptTests.TestProperty;
 var
   js : TJavascript;
@@ -431,7 +411,8 @@ begin
   try
     js := TJavascript.Create;
     try
-      o := js.wrap(i, defineTestProp, false);
+      defineTestTypes(js, false);
+      o := js.wrap(i, i.ClassName, false);
       js.execute('function funcX(o) {'+#13#10+' if (o.value == ''test'') o.value = ''test1'';'+#13#10+' } ', 'test.js', 'funcX', [o]);
     finally
       js.Free;
@@ -449,7 +430,7 @@ begin
   js := TJavascript.Create;
   try
     js.OnLog := JSLog;
-    js.defineType('MyObject', CreateMyObject);
+    defineTestTypes(js, false);
     js.execute('function funcX() {'+#13#10+
                ' var o = new MyObject(''text'');'+#13#10+
                ' console.log(o.value);'+#13#10+
@@ -472,7 +453,8 @@ begin
     js := TJavascript.Create;
     try
       js.OnLog := JSLog;
-      o := js.wrap(i, defineTestArray, false);
+      defineTestTypes(js, false);
+      o := js.wrap(i, i.ClassName, false);
       js.execute('function funcX(o) {'+#13#10+
                  ' console.log(o.value.length);'+#13#10+
                  ' console.log(o.value[0]);'+#13#10+
@@ -501,7 +483,8 @@ begin
     js := TJavascript.Create;
     try
       js.OnLog := JSLog;
-      o := js.wrap(i, defineTestArrayManaged, false);
+      defineTestTypes(js, false);
+      o := js.wrap(i, i.ClassName, false);
       js.execute('function funcX(o) {'+#13#10+
                  ' console.log(o.value.length);'+#13#10+
                  ' console.log(o.value[0]);'+#13#10+
@@ -530,7 +513,8 @@ begin
     js := TJavascript.Create;
     try
       js.OnLog := JSLog;
-      o := js.wrap(i, defineTestArrayManaged, false);
+      defineTestTypes(js, true);
+      o := js.wrap(i, i.ClassName, false);
       js.execute('function funcX(o) {'+#13#10+
                  ' console.log(o.value.length);'+#13#10+
                  ' console.log(o.value[0]);'+#13#10+
@@ -560,8 +544,8 @@ begin
     js := TJavascript.Create;
     try
       js.OnLog := JSLog;
-      js.defineType('MyObject', CreateMyObject);
-      o := js.wrap(i, defineTestComplexArray, false);
+      defineTestTypes(js, false);
+      o := js.wrap(i, false);
       js.execute('function funcX(o) {'+#13#10+
                  ' console.log(o.value.length);'+#13#10+
                  ' console.log(o.value[0].value);'+#13#10+
@@ -590,8 +574,8 @@ begin
     js := TJavascript.Create;
     try
       js.OnLog := JSLog;
-      js.defineType('MyObject', CreateMyObject);
-      o := js.wrap(i, defineTestComplexArray, false);
+      defineTestTypes(js, false);
+      o := js.wrap(i, false);
       js.execute('function funcX(o) {'+#13#10+
                  ' console.log(o.value.length);'+#13#10+
                  ' console.log(o.value[0].value);'+#13#10+
@@ -620,8 +604,8 @@ begin
     js := TJavascript.Create;
     try
       js.OnLog := JSLog;
-      js.defineType('MyObject', CreateMyObject);
-      o := js.wrap(i, defineTestComplexArray, false);
+      defineTestTypes(js, false);
+      o := js.wrap(i, false);
       js.execute('function funcX(o) {'+#13#10+
                  ' console.log(o.value.length);'+#13#10+
                  ' console.log(o.value[0].value);'+#13#10+
@@ -636,53 +620,6 @@ begin
   finally
     i.Free;
   end;
-end;
-
-{ TArrayObj }
-
-constructor TArrayObj.Create;
-begin
-  inherited;
-  FValue := TStringList.create;
-end;
-
-destructor TArrayObj.Destroy;
-begin
-  FValue.Free;
-  inherited;
-end;
-
-{ TComplexArrayObj }
-
-constructor TComplexArrayObj.Create;
-begin
-  inherited;
-  FValue := TObjectList<TPropObj>.create;
-  // this is important - you won't be able to manage this when javascript starts assigned arrays around
-  FValue.OwnsObjects := false;
-end;
-
-destructor TComplexArrayObj.Destroy;
-var
-  p : TPropObj;
-begin
-  for p in value do
-    p.Free;
-  FValue.Free;
-  inherited;
-end;
-
-{ TPropObj }
-
-constructor TPropObj.create(v: String);
-begin
-  inherited Create;
-  FValue := v;
-end;
-
-destructor TPropObj.destroy;
-begin
-  inherited;
 end;
 
 initialization
