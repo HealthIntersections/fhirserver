@@ -7,8 +7,8 @@ unit AdvJavascript;
 interface
 
 uses
-  SysUtils, Classes, Generics.Collections,
-  Javascript,
+  SysUtils, Classes, Generics.Collections, Soap.EncdDecd,
+  Javascript, EncodeSupport,
   AdvObjects, AdvObjectLists, AdvGenerics;
 
 type
@@ -20,33 +20,44 @@ type
   TAdvObjectListManager = class (TJavascriptArrayManager)
   private
     FList : TAdvObjectList;
-    FDefiner : TJavascriptDefineObjectProc;
-    FFactory : TJavascriptObjectFactoryProc<TAdvObject>;
+    FClassDefinition : TJavascriptClassDefinition;
   public
-    constructor Create(list : TAdvObjectList; definer : TJavascriptDefineObjectProc; factory : TJavascriptObjectFactoryProc<TAdvObject>);
+    constructor Create(list : TAdvObjectList; def : TJavascriptClassDefinition);
     destructor Destroy; override;
 
     function count : integer; override;
     function item(i : integer) : JsValueRef; override;
-    function push(params : PJsValueRefArray; paramCount : integer) : JsValueRef; override;
+    function push(this : TJsValue; params : TJsValues) : TJsValue; override;
   end;
 
-  TAdvListManager<T: class> = class (TJavascriptArrayManager)
+  TAdvListManager<T: TAdvObject> = class (TJavascriptArrayManager)
   private
     FList : TAdvList<T>;
-    FDefiner : TJavascriptDefineObjectProc;
-    FFactory : TJavascriptObjectFactoryProc<T>;
+    FClassDefinition : TJavascriptClassDefinition;
   public
-    constructor Create(list : TAdvList<T>; definer : TJavascriptDefineObjectProc; factory : TJavascriptObjectFactoryProc<T>);
+    constructor Create(list : TAdvList<T>; def : TJavascriptClassDefinition);
     destructor Destroy; override;
 
     function count : integer; override;
     function item(i : integer) : JsValueRef; override;
-    function push(params : PJsValueRefArray; paramCount : integer) : JsValueRef; override;
+    function push(this : TJsValue; params : TJsValues) : TJsValue; override;
   end;
+
+function base64AsString(value: TBytes): String;
+function stringAsBase64(value: String): TBytes;
 
 
 implementation
+
+function base64AsString(value: TBytes): String;
+begin
+  result := String(EncodeBase64(@value[0], length(value))).replace(#13#10, '');
+end;
+
+function stringAsBase64(value: String): TBytes;
+begin
+  result := DecodeBase64(AnsiString(value));
+end;
 
 { TAdvJavascript }
 
@@ -60,12 +71,11 @@ end;
 
 { TAdvListManager<T> }
 
-constructor TAdvListManager<T>.create(list: TAdvList<T>; definer : TJavascriptDefineObjectProc; factory : TJavascriptObjectFactoryProc<T>);
+constructor TAdvListManager<T>.create(list: TAdvList<T>; def : TJavascriptClassDefinition);
 begin
   inherited Create;
   FList := list;
-  FDefiner := definer;
-  FFactory := factory;
+  FClassDefinition := def;
 end;
 
 destructor TAdvListManager<T>.Destroy;
@@ -81,32 +91,37 @@ end;
 
 function TAdvListManager<T>.item(i: integer): JsValueRef;
 begin
-  result := FManager.wrap(FList[i], FDefiner, false);
+  result := FJavascript.wrap(FList[i].Link, FClassDefinition, true);
 end;
 
-function TAdvListManager<T>.push(params: PJsValueRefArray; paramCount: integer): JsValueRef;
+function TAdvListManager<T>.push(this : TJsValue; params : TJsValues) : TJsValue;
 var
-  i : integer;
   o : T;
+  owns : boolean;
+  pl : TJsValues;
+  p : TJsValue;
 begin
-  for i := 1 to paramCount - 1 do
+  setLength(pl, 1);
+  for p in params do
   begin
-    o := FManager.getWrapped<T>(params[i]);
+    o := FJavascript.getWrapped<T>(p);
     if o = nil then
-      o := FFactory(FManager, params[i]);
-    Flist.add(o);
+    begin
+      pl[0] := p;
+      o := FClassDefinition.Factory(FJavascript, FClassDefinition, pl, owns) as T;
+    end;
+    Flist.add(o.Link);
   end;
-  result := FManager.wrap(FList.Count);
+  result := FJavascript.wrap(FList.Count);
 end;
 
 { TAdvObjectListManager }
 
-constructor TAdvObjectListManager.create(list: TAdvObjectList; definer : TJavascriptDefineObjectProc; factory : TJavascriptObjectFactoryProc<TAdvObject>);
+constructor TAdvObjectListManager.create(list: TAdvObjectList; def : TJavascriptClassDefinition);
 begin
   inherited Create;
   FList := list;
-  FDefiner := definer;
-  FFactory := factory;
+  FClassDefinition := def;
 end;
 
 destructor TAdvObjectListManager.Destroy;
@@ -122,22 +137,32 @@ end;
 
 function TAdvObjectListManager.item(i: integer): JsValueRef;
 begin
-  result := FManager.wrap(FList[i], FDefiner, false);
+  result := FJavascript.wrap(FList[i].Link, FClassDefinition, true);
 end;
 
-function TAdvObjectListManager.push(params: PJsValueRefArray; paramCount: integer): JsValueRef;
+function TAdvObjectListManager.push(this : TJsValue; params : TJsValues) : TJsValue;
 var
-  i : integer;
+  p : TJsValue;
   o : TAdvObject;
+  pl : TJsValues;
+  owns : boolean;
 begin
-  for i := 1 to paramCount - 1 do
+  setLength(pl, 1);
+  for p in params do
   begin
-    o := FManager.getWrapped<TAdvObject>(params[i]);
+    o := FJavascript.getWrapped<TAdvObject>(p).Link;
     if o = nil then
-      o := FFactory(FManager, params[i]);
-    Flist.add(o);
+    begin
+      pl[0] := p;
+      o := FClassDefinition.Factory(FJavascript, FClassDefinition, pl, owns) as TAdvObject;
+    end;
+    try
+      Flist.add(o.Link);
+    finally
+      o.Free;
+    end;
   end;
-  result := FManager.wrap(FList.Count);
+  result := FJavascript.wrap(FList.Count);
 end;
 
 end.

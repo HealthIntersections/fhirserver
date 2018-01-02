@@ -36,7 +36,6 @@ interface
 
 uses
   SysUtils, Classes, Generics.Collections,
-  ChakraCommon,
   Javascript,
   DUnitX.TestFramework;
 
@@ -82,11 +81,11 @@ begin
   inc(value);
 end;
 
-function AddOne(js : TJavascript; propDef : TJavascriptRegisteredProperty; this : JsValueRef; parameters : TJsValues ) : JsValueRef;
+function AddOne(js : TJavascript; propDef : TJavascriptRegisteredProperty; this : TObject; parameters : TJsValues ) : JsValueRef;
 var
   obj : TIntObj;
 begin
-  obj := js.getWrapped<TIntObj>(this);
+  obj := this as TIntObj;
   obj.addOne;
   result := JS_INVALID_REFERENCE;
 end;
@@ -114,19 +113,19 @@ begin
   inherited;
 end;
 
-function PropObjGetValue(js : TJavascript; propDef : TJavascriptRegisteredProperty; this : JsValueRef) : JsValueRef;
+function PropObjGetValue(js : TJavascript; propDef : TJavascriptRegisteredProperty; this : TObject) : JsValueRef;
 var
   obj : TPropObj;
 begin
-  obj := js.getWrapped<TPropObj>(this);
+  obj := this as TPropObj;
   result := js.wrap(obj.value);
 end;
 
-procedure PropObjSetValue(js : TJavascript; propDef : TJavascriptRegisteredProperty; this : TJsValue; value : TJsValue);
+procedure PropObjSetValue(js : TJavascript; propDef : TJavascriptRegisteredProperty; this : TObject; value : TJsValue);
 var
   obj : TPropObj;
 begin
-  obj := js.getWrapped<TPropObj>(this);
+  obj := this as TPropObj;
   obj.value := js.asString(value);
 end;
 
@@ -166,11 +165,11 @@ begin
   inherited;
 end;
 
-function PropArrayGetValue(js : TJavascript; propDef : TJavascriptRegisteredProperty; this : JsValueRef) : JsValueRef;
+function PropArrayGetValue(js : TJavascript; propDef : TJavascriptRegisteredProperty; this : TObject) : JsValueRef;
 var
   obj : TArrayObj;
 begin
-  obj := js.getWrapped<TArrayObj>(this);
+  obj := this as TArrayObj;
   result := js.makeArray(obj.value.Count,
       function (index : integer) : JsValueRef
       begin
@@ -178,19 +177,19 @@ begin
       end);
 end;
 
-function PropArrayGetValueManaged(js : TJavascript; propDef : TJavascriptRegisteredProperty; this : JsValueRef) : JsValueRef;
+function PropArrayGetValueManaged(js : TJavascript; propDef : TJavascriptRegisteredProperty; this : TObject) : JsValueRef;
 var
   obj : TArrayObj;
 begin
-  obj := js.getWrapped<TArrayObj>(this);
+  obj := this as TArrayObj;
   result := js.makeManagedArray(TStringListManager.create(obj.FValue));
 end;
 
-procedure PropArraySetValue(js : TJavascript; propDef : TJavascriptRegisteredProperty; this : TJsValue; value : TJsValue);
+procedure PropArraySetValue(js : TJavascript; propDef : TJavascriptRegisteredProperty; this : TObject; value : TJsValue);
 var
   obj : TArrayObj;
 begin
-  obj := js.getWrapped<TArrayObj>(this);
+  obj := this as TArrayObj;
   obj.value.Clear;
   js.iterateArray(value,
       procedure (i : integer; v : JsValueRef)
@@ -229,15 +228,15 @@ begin
   inherited;
 end;
 
-function PropComplexArrayGetValue(js : TJavascript; propDef : TJavascriptRegisteredProperty; this : JsValueRef) : JsValueRef;
+function PropComplexArrayGetValue(js : TJavascript; propDef : TJavascriptRegisteredProperty; this : TObject) : JsValueRef;
 var
   obj : TComplexArrayObj;
 begin
-  obj := js.getWrapped<TComplexArrayObj>(this);
+  obj := this as TComplexArrayObj;
   result := js.makemanagedArray(TObjectListManager<TPropObj>.create(obj.FValue, js.getDefinedClass('TPropObj')));
 end;
 
-procedure PropComplexArraySetValue(js : TJavascript; propDef : TJavascriptRegisteredProperty; this : TJsValue; value : TJsValue);
+procedure PropComplexArraySetValue(js : TJavascript; propDef : TJavascriptRegisteredProperty; this : TObject; value : TJsValue);
 var
   obj : TComplexArrayObj;
   o : TPropObj;
@@ -245,7 +244,7 @@ var
   def : TJavascriptClassDefinition;
   params : TJsValues;
 begin
-  obj := js.getWrapped<TComplexArrayObj>(this);
+  obj := this as TComplexArrayObj;
   obj.value.Clear;
   def := js.getDefinedClass('TPropObj');
   js.iterateArray(value,
@@ -383,6 +382,7 @@ var
   js : TJavascript;
   i : TIntObj;
   o : JsValueRef;
+  c : integer;
 begin
   i := TIntObj.Create;
   try
@@ -392,6 +392,12 @@ begin
       defineTestTypes(js, false);
       o := js.wrap(i, 'TIntObj', false);
       js.execute('function func1(o) {'+#13#10+' o.addOne();'+#13#10+' } ', 'test.js', 'func1', [o]);
+      c := 0;
+      js.iterateProperties(o, procedure (name : String; v : TJsValue)
+        begin
+          inc(c);
+        end);
+      Assert.IsTrue(c > 0);
     finally
       js.Free;
     end;

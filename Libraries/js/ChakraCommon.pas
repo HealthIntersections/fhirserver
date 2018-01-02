@@ -707,15 +707,15 @@ type
 //    var undefinedValue: JsValueRef
 //  ): JsErrorCode; stdcall; external DLL_NAME;
 //
-//  {
-//    CHAKRA_API
-//        JsGetNullValue(
-//            _Out_ JsValueRef *nullValue);
-//  }
-//  function JsGetNullValue(
-//    var nullValue: JsValueRef
-//  ): JsErrorCode; stdcall; external DLL_NAME;
-//
+  {
+    CHAKRA_API
+        JsGetNullValue(
+            _Out_ JsValueRef *nullValue);
+  }
+  function JsGetNullValue(
+    var nullValue: JsValueRef
+  ): JsErrorCode; stdcall; external DLL_NAME;
+
 //  {
 //    CHAKRA_API
 //        JsGetTrueValue(
@@ -1003,17 +1003,17 @@ type
 //    var propertyDescriptor: JsValueRef
 //  ): JsErrorCode; stdcall; external DLL_NAME;
 //
-//  {
-//    CHAKRA_API
-//        JsGetOwnPropertyNames(
-//            _In_ JsValueRef object,
-//            _Out_ JsValueRef *propertyNames);
-//  }
-//  function JsGetOwnPropertyNames(
-//    _object: JsValueRef;
-//    var propertyNames: JsValueRef
-//  ): JsErrorCode; stdcall; external DLL_NAME;
-//
+  {
+    CHAKRA_API
+        JsGetOwnPropertyNames(
+            _In_ JsValueRef object,
+            _Out_ JsValueRef *propertyNames);
+  }
+  function JsGetOwnPropertyNames(
+    _object: JsValueRef;
+    var propertyNames: JsValueRef
+  ): JsErrorCode; stdcall; external DLL_NAME;
+
   {
     CHAKRA_API
         JsSetProperty(

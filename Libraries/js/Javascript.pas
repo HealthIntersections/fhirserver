@@ -51,6 +51,7 @@ POSSIBILITY OF SUCH DAMAGE.
 interface
 
 uses
+  Windows,
   SysUtils, Classes, AnsiStrings,
   Generics.Collections,
   ChakraCommon;
@@ -94,11 +95,22 @@ type
   TJavascriptConsoleLogEvent = procedure (sender : TJavascript; message : String) of object;
   TJavascriptObjectFactoryProc<T : class> = function (sender : TJavascript; obj : JsValueRef) : T;
 
-
   TJavascriptArrayValueProvider = reference to function (index : integer) : JsValueRef;
   TJavascriptArrayValueConsumer = reference to procedure (index : integer; value : JsValueRef);
+  TJavascriptPropertyConsumer = reference to procedure (name : String; value : JsValueRef);
 
-  {
+  TJsValue = JsValueRef;
+  TJsValues = array of JsValueRef;
+
+  // callback functions registered with the engine
+
+  // one parameter set that should always be supported is a single anonymous object, which is being auto-converted to the right class
+  TJsFactoryFunction = function (js : TJavascript; classDef : TJavascriptClassDefinition; params : TJsValues; var owns : boolean) : TObject;
+  TJsFunction = function (js : TJavascript; propDef : TJavascriptRegisteredProperty; this : TObject; parameters : TJsValues ) : JsValueRef;
+  TJsGetterFunction = function (js : TJavascript; propDef : TJavascriptRegisteredProperty; this : TObject) : JsValueRef;
+  TJsSetterProcedure = procedure (js : TJavascript; propDef : TJavascriptRegisteredProperty; this : TObject; value : TJsValue);
+
+    {
   javascript API to implement on manager:
   concat()	Joins two or more arrays, and returns a copy of the joined arrays
 copyWithin()	Copies array elements within the array, to and from specified positions
@@ -137,19 +149,8 @@ valueOf()	Returns the primitive value of an array
     function item(i : integer) : JsValueRef; virtual;
 
     // operations from the script
-    function push(params : PJsValueRefArray; paramCount : integer) : JsValueRef; virtual;
+    function push(this : TJsValue; params : TJsValues) : TJsValue; virtual;
   end;
-
-  TJsValue = JsValueRef;
-  TJsValues = array of JsValueRef;
-
-  // callback functions registered with the engine
-
-  // one parameter set that should always be supported is a single anonymous object, which is being auto-converted to the right class
-  TJsFactoryFunction = function (js : TJavascript; classDef : TJavascriptClassDefinition; params : TJsValues; var owns : boolean) : TObject;
-  TJsFunction = function (js : TJavascript; propDef : TJavascriptRegisteredProperty; this : JsValueRef; parameters : TJsValues ) : JsValueRef;
-  TJsGetterFunction = function (js : TJavascript; propDef : TJavascriptRegisteredProperty; this : JsValueRef) : JsValueRef;
-  TJsSetterProcedure = procedure (js : TJavascript; propDef : TJavascriptRegisteredProperty; this : TJsValue; value : TJsValue);
 
   TJavascriptRegisteredProperty = class
   private
@@ -167,9 +168,11 @@ valueOf()	Returns the primitive value of an array
     FGetterJS : TJsValue;
     FSetterJS : TJsValue;
   public
-    property Name : String read FName;
+    property name : String read FName;
     property context : Pointer read FContext;
-    property ClassDef : TJavascriptClassDefinition read FClassDef;
+    property javascript : TJavascript read FJavascript;
+    property classDef : TJavascriptClassDefinition read FClassDef;
+    property setter : TJsSetterProcedure read FSetter;
   end;
 
   TJavascriptClassDefinition = class
@@ -183,9 +186,12 @@ valueOf()	Returns the primitive value of an array
   public
     constructor create;
     destructor Destroy; override;
-    property Name : String read FName;
-    property FactoryName : String read FFactoryName;
+    property name : String read FName;
+    property factoryName : String read FFactoryName;
     property context : Pointer read FContext;
+    property factory : TJsFactoryFunction read FFactory;
+    property javascript : TJavascript read FJavascript;
+    property properties : TObjectList<TJavascriptRegisteredProperty> read FProperties;
     procedure defineRoutine(name : String; context : Pointer; routine : TJsFunction);
     procedure defineProperty(name : String; context : Pointer; getter : TJsGetterFunction; setter : TJsSetterProcedure);
   end;
@@ -194,6 +200,7 @@ valueOf()	Returns the primitive value of an array
   TJavascript = class // (TAdvObject)
   private
     FRuntime : JsRuntimeHandle;
+    FInstanceId : cardinal;
     FContext : JsContextRef;
     FApplicationError : JsValueRef;
     FOnLog : TJavascriptConsoleLogEvent;
@@ -211,8 +218,10 @@ valueOf()	Returns the primitive value of an array
   protected
     procedure freeObject(obj : TObject); virtual;
   public
-    constructor Create; // override;
+    constructor Create; virtual;
     destructor Destroy; override;
+
+    property InstanceId : cardinal read FInstanceId;
 
     // reset - clear all associated run-time memory - *including* owned objects, but leave definitions in place
     procedure reset;
@@ -307,6 +316,10 @@ valueOf()	Returns the primitive value of an array
     function getType(v : JsValueRef) : JsValueType;
 
     {
+      // get the value for javascript null
+    }
+    function getNull : JsValueRef;
+    {
       Convert a delphi string to a javascript string
     }
     function wrap(s : String) : JsValueRef; overload;
@@ -340,6 +353,11 @@ valueOf()	Returns the primitive value of an array
       given a javascript object, get an property value from it (remember to check for undefined)
     }
     function getProperty(obj : JsValueRef; name : AnsiString) : JsValueRef;
+
+    {
+      iterate through all the properties on an object
+    }
+    procedure iterateProperties(value : JsValueRef; proc : TJavascriptPropertyConsumer);
 
     {
       given a javascript object, see whether it has a property value which is not undefined
@@ -406,7 +424,7 @@ valueOf()	Returns the primitive value of an array
     function item(i : integer) : JsValueRef; override;
 
     // operations from the script
-    function push(params : PJsValueRefArray; paramCount : integer) : JsValueRef; override;
+    function push(this : TJsValue; params : TJsValues) : TJsValue; override;
   end;
 
   TObjectListManager<T: class> = class (TJavascriptArrayManager)
@@ -421,7 +439,7 @@ valueOf()	Returns the primitive value of an array
     function item(i : integer) : JsValueRef; override;
 
     // operations from the script
-    function push(params : PJsValueRefArray; paramCount : integer) : JsValueRef; override;
+    function push(this : TJsValue; params : TJsValues) : TJsValue; override;
   end;
 
 
@@ -442,7 +460,7 @@ var
 begin
   prop := TJavascriptRegisteredProperty(callbackState);
   try
-    result := prop.FGetter(prop.FJavascript, prop, p[0]);
+    result := prop.FGetter(prop.FJavascript, prop, prop.FJavascript.getWrapped<TObject>(p[0]));
   except
     on e : Exception do
       result := prop.FJavascript.handleException(e);
@@ -456,7 +474,7 @@ var
 begin
   prop := TJavascriptRegisteredProperty(callbackState);
   try
-    prop.FSetter(prop.FJavascript, prop, p[0], p[1]);
+    prop.FSetter(prop.FJavascript, prop, prop.FJavascript.getWrapped<TObject>(p[0]), p[1]);
     result := JS_INVALID_REFERENCE;
   except
     on e : Exception do
@@ -476,7 +494,7 @@ begin
     setLength(pl, argumentCount - 1);
     for i := 0 to argumentCount - 2 do
       pl[i] := p[i+1];
-    result := prop.FRoutine(prop.FJavascript, prop, p[0], pl);
+    result := prop.FRoutine(prop.FJavascript, prop, prop.FJavascript.getWrapped<TObject>(p[0]), pl);
   except
     on e : Exception do
       result := prop.FJavascript.handleException(e);
@@ -510,10 +528,15 @@ var
   p : PJsValueRefArray absolute arguments;
   o : JsValueRef;
   manager : TJavascriptArrayManager;
+  pl : TJsValues;
+  i : integer;
 begin
   manager := TJavascriptArrayManager(callbackState);
   try
-    result := manager.push(p, argumentCount);
+    setLength(pl, argumentCount - 1);
+    for i := 0 to argumentCount - 2 do
+      pl[i] := p[i+1];
+    result := manager.push(p[0], pl);
   except
     on e:exception do
       result := manager.FJavascript.handleException(e);
@@ -522,7 +545,7 @@ end;
 
 
 //doLog
-function doLog(js : TJavascript; context : TJavascriptRegisteredProperty; this : JsValueRef; parameters : TJsValues ) : JsValueRef;
+function doLog(js : TJavascript; context : TJavascriptRegisteredProperty; this : TObject; parameters : TJsValues ) : JsValueRef;
 var
   p : TJsValue;
   s : String;
@@ -550,7 +573,7 @@ begin
   raise Exception.Create('Need to override '+className+'.item');
 end;
 
-function TJavascriptArrayManager.push(params : PJsValueRefArray; paramCount : integer): JsValueRef;
+function TJavascriptArrayManager.push(this : TJsValue; params : TJsValues) : TJsValue;
 begin
   raise Exception.Create('Need to override '+className+'.push');
 end;
@@ -630,11 +653,16 @@ begin
   inherited;
 end;
 
+var
+  GRuntimeCounter : integer = 0;
+
 procedure TJavascript.init;
 var
   def : TJavascriptClassDefinition;
   global, f : TJsValue;
 begin
+  FInstanceId := InterlockedIncrement(GRuntimeCounter);
+
   // Create a runtime
   jsCheck(JsCreateRuntime(JsRuntimeAttributeNone, nil, FRuntime));
 
@@ -834,6 +862,11 @@ begin
   result := FDefinedClasses[name];
 end;
 
+function TJavascript.getNull: JsValueRef;
+begin
+  jsCheck(JsGetNullValue(result));
+end;
+
 procedure TJavascript.addGlobal(name : AnsiString; obj : TJsValue);
 var
   global : JsValueRef;
@@ -884,7 +917,10 @@ end;
 
 function TJavascript.wrap(s: String): JsValueRef;
 begin
-  jsCheck(JsPointerToString(pchar(s), length(s), result));
+  if s = '' then
+    result := getNull
+  else
+    jsCheck(JsPointerToString(pchar(s), length(s), result));
 end;
 
 function TJavascript.wrap(i: integer): JsValueRef;
@@ -904,7 +940,11 @@ begin
   if FDefinedClasses.TryGetValue(className, def) then
     result := wrap(o, def, owns)
   else
+  begin
+    if owns then
+      freeObject(o);
     raise EJavascriptHost.Create('Attempt to use unknown class "'+className+'"');
+  end;
 end;
 
 function TJavascript.wrap(o : TObject; classDef : TJavascriptClassDefinition; owns : boolean) : JsValueRef;
@@ -1092,6 +1132,24 @@ begin
   end;
 end;
 
+procedure TJavascript.iterateProperties(value: JsValueRef; proc: TJavascriptPropertyConsumer);
+var
+  arr : JsValueRef;
+  i : integer;
+  vi, v : JsValueRef;
+  n : String;
+begin
+  jsCheck(JsGetOwnPropertyNames(value, arr));
+  for i := 0 to arrayLength(arr) - 1 do
+  begin
+    vi := wrap(i);
+    jsCheck(JsGetIndexedProperty(arr, vi, v));
+    n := asString(v);
+    proc(n, getProperty(value, n));
+  end;
+end;
+
+
 { TStringListManager }
 
 constructor TStringListManager.create(list: TStringList);
@@ -1110,12 +1168,12 @@ begin
   result := FJavascript.wrap(FList[i]);
 end;
 
-function TStringListManager.push(params : PJsValueRefArray; paramCount : integer): JsValueRef;
+function TStringListManager.push(this : TJsValue; params : TJsValues) : TJsValue;
 var
-  i : integer;
+  p : TJsValue;
 begin
-  for i := 1 to paramCount - 1 do
-    Flist.add(FJavascript.asString(params[i]));
+  for p in params do
+    Flist.add(FJavascript.asString(p));
   result := FJavascript.wrap(FList.Count);
 end;
 
@@ -1138,20 +1196,20 @@ begin
   result := FJavascript.wrap(FList[i], FObjectDefinition, false);
 end;
 
-function TObjectListManager<T>.push(params: PJsValueRefArray; paramCount: integer): JsValueRef;
+function TObjectListManager<T>.push(this : TJsValue; params : TJsValues) : TJsValue;
 var
-  i : integer;
+  p : TJsValue;
   o : T;
   pl : TJsValues;
   owns : boolean;
 begin
   setLength(pl, 1);
-  for i := 1 to paramCount - 1 do
+  for p in params do
   begin
-    o := FJavascript.getWrapped<T>(params[i]);
+    o := FJavascript.getWrapped<T>(p);
     if o = nil then
     begin
-      pl[0] := params[i];
+      pl[0] := p;
       o := FObjectDefinition.FFactory(FJavascript, FObjectDefinition, pl, owns) as T;
     end;
     Flist.add(o);
