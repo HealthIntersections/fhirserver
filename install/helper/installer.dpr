@@ -105,7 +105,8 @@ uses
   FastMM4Messages in '..\..\Libraries\FMM\FastMM4Messages.pas',
   ODBCObjects in '..\..\Libraries\db\ODBCObjects.pas',
   KDBOdbc in '..\..\Libraries\db\KDBOdbc.pas',
-  OdbcHeaders in '..\..\Libraries\db\OdbcHeaders.pas';
+  OdbcHeaders in '..\..\Libraries\db\OdbcHeaders.pas',
+  TextUtilities in '..\..\reference-platform\support\TextUtilities.pas';
 
 function StrToPChar(AStr: AnsiString): PAnsiChar;
 begin

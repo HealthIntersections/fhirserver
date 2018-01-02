@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<ValueSet xmlns="http://hl7.org/fhir">
+  <id value="valueset-au-serviceinterface"/>
+  <meta>
+    <versionId value="1"/>
+    <lastUpdated value="2017-02-21T10:54:35.273+11:00"/>
+  </meta>
+  <text>
+    <status value="generated"/>
+    <div xmlns="http://www.w3.org/1999/xhtml">
+      <h2>Australian Service Interfaces</h2>
+      <div>
+        <p>Enumeration of well known service interfaces that can be used for specifying a connection type</p>
+
+      </div>
+      <p>This value set includes codes from the following code systems:</p>
+      <ul>
+        <li>Include all codes defined in 
+          <a href="http://hl7.org/fhir/STU3/codesystem-endpoint-connection-type.html">
+            <code>http://hl7.org/fhir/endpoint-connection-type</code>
+          </a>
+        </li>
+        <li>Include all codes defined in 
+          <a href="CodeSystem-codesystem-au-sm-serviceinterface.html">
+            <code>http://ns.electronichealth.net.au/smd/intf</code>
+          </a>
+        </li>
+      </ul>
+    </div>
+  </text>
+  <url value="http://hl7.org.au/fhir/ValueSet/valueset-au-serviceinterface"/>
+  <name value="Australian Service Interfaces"/>
+  <status value="draft"/>
+  <date value="2017-12-05T12:07:25+11:00"/>
+  <publisher value="Health Level Seven Australia"/>
+  <contact>
+    <name value="hl7.org.au"/>
+  </contact>
+  <description value="Enumeration of well known service interfaces that can be used for specifying a connection type"/>
+  <compose>
+    <include>
+      <system value="http://hl7.org/fhir/endpoint-connection-type"/>
+    </include>
+    <include>
+      <system value="http://ns.electronichealth.net.au/smd/intf"/>
+    </include>
+  </compose>
+  <expansion>
+    <identifier value="urn:uuid:fe662337-eab7-47f6-9831-0a13e3a2daa1"/>
+    <timestamp value="2017-12-05T12:07:40+11:00"/>
+    <total value="19"/>
+    <parameter>
+      <name value="profile"/>
+      <valueUri value="http://hl7.org/fhir/ExpansionProfile/dc8fd4bc-091a-424a-8a3b-6198ef146891"/>
+    </parameter>
+    <parameter>
+      <name value="version"/>
+      <valueUri value="http://hl7.org/fhir/endpoint-connection-type|3.0.1"/>
+    </parameter>
+    <parameter>
+      <name value="version"/>
+      <valueUri value="http://ns.electronichealth.net.au/smd/intf|1"/>
+    </parameter>
+    <contains>
+      <system value="http://hl7.org/fhir/endpoint-connection-type"/>
+      <code value="ihe-xcpd"/>
+      <display value="IHE XCPD"/>
+    </contains>
+    <contains>
+      <system value="http://hl7.org/fhir/endpoint-connection-type"/>
+      <code value="ihe-xca"/>
+      <display value="IHE XCA"/>
+    </contains>
+    <contains>
+      <system value="http://hl7.org/fhir/endpoint-connection-type"/>
+      <code value="ihe-xdr"/>
+      <display value="IHE XDR"/>
+    </contains>
+    <contains>
+      <system value="http://hl7.org/fhir/endpoint-connection-type"/>
+      <code value="ihe-xds"/>
+      <display value="IHE XDS"/>
+    </contains>
+    <contains>
+      <system value="http://hl7.org/fhir/endpoint-connection-type"/>
+      <code value="ihe-iid"/>
+      <display value="IHE IID"/>
+    </contains>
+    <contains>
+      <system value="http://hl7.org/fhir/endpoint-connection-type"/>
+      <code value="dicom-wado-rs"/>
+      <display value="DICOM WADO-RS"/>
+    </contains>
+    <contains>
+      <system value="http://hl7.org/fhir/endpoint-connection-type"/>
+      <code value="dicom-qido-rs"/>
+      <display value="DICOM QIDO-RS"/>
+    </contains>
+    <contains>
+      <system value="http://hl7.org/fhir/endpoint-connection-type"/>
+      <code value="dicom-stow-rs"/>
+      <display value="DICOM STOW-RS"/>
+    </contains>
+    <contains>
+      <system value="http://hl7.org/fhir/endpoint-connection-type"/>
+      <code value="dicom-wado-uri"/>
+      <display value="DICOM WADO-URI"/>
+    </contains>
+    <contains>
+      <system value="http://hl7.org/fhir/endpoint-connection-type"/>
+      <code value="hl7-fhir-rest"/>
+      <display value="HL7 FHIR"/>
+    </contains>
+    <contains>
+      <system value="http://hl7.org/fhir/endpoint-connection-type"/>
+      <code value="hl7-fhir-msg"/>
+      <display value="HL7 FHIR Messaging"/>
+    </contains>
+    <contains>
+      <system value="http://hl7.org/fhir/endpoint-connection-type"/>
+      <code value="hl7v2-mllp"/>
+      <display value="HL7 v2 MLLP"/>
+    </contains>
+    <contains>
+      <system value="http://hl7.org/fhir/endpoint-connection-type"/>
+      <code value="secure-email"/>
+      <display value="Secure email"/>
+    </contains>
+    <contains>
+      <system value="http://hl7.org/fhir/endpoint-connection-type"/>
+      <code value="direct-project"/>
+      <display value="Direct Project"/>
+    </contains>
+    <contains>
+      <system value="http://ns.electronichealth.net.au/smd/intf"/>
+      <code value="http://ns.electronichealth.net.au/smd/intf/SealedImmediateMessageDelivery/TLS/2010"/>
+      <display value="Sealed Immediate Message Delivery"/>
+    </contains>
+    <contains>
+      <system value="http://ns.electronichealth.net.au/smd/intf"/>
+      <code value="http://ns.electronichealth.net.au/smd/intf/SealedMessageDelivery/TLS/2010"/>
+      <display value="Sealed Message Delivery"/>
+    </contains>
+    <contains>
+      <system value="http://ns.electronichealth.net.au/smd/intf"/>
+      <code value="http://ns.electronichealth.net.au/smd/intf/SealedMessageRetrieval/TLS/2010"/>
+      <display value="Sealed Message Retrieval"/>
+    </contains>
+    <contains>
+      <system value="http://ns.electronichealth.net.au/smd/intf"/>
+      <code value="http://ns.electronichealth.net.au/smd/intf/TransportResponseDelivery/TLS/2010"/>
+      <display value="Transport Response Delivery"/>
+    </contains>
+    <contains>
+      <system value="http://ns.electronichealth.net.au/smd/intf"/>
+      <code value="http://ns.electronichealth.net.au/smd/intf/TransportResponseRetrieval/TLS/2010"/>
+      <display value="Transport Response Retrieval"/>
+    </contains>
+  </expansion>
+</ValueSet>

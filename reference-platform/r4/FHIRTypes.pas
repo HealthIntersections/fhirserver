@@ -44,6 +44,17 @@ uses
   Classes, SysUtils, DecimalSupport, StringSupport, AdvBuffers, EncdDecd, DateSupport, FHIRBase;
 
 Type
+  {@Enum TFhirContentTypeEnum
+    The content or mime type. from http://hl7.org/fhir/ValueSet/content-type
+  }
+  TFhirContentTypeEnum = (
+    ContentTypeNull,  {@enum.value ContentTypeNull Value is missing from Instance }
+    ContentTypeXml, {@enum.value ContentTypeXml  }
+    ContentTypeJson, {@enum.value ContentTypeJson  }
+    ContentTypeTtl, {@enum.value ContentTypeTtl  }
+    ContentTypeNone); {@enum.value ContentTypeNone  }
+  TFhirContentTypeEnumList = set of TFhirContentTypeEnum;
+
   {@Enum TFhirPublicationStatusEnum
     The lifecycle status of a Value Set or Concept Map. from http://hl7.org/fhir/ValueSet/publication-status
   }
@@ -15306,6 +15317,9 @@ Type
 
 
 Const
+  CODES_TFhirContentTypeEnum : Array[TFhirContentTypeEnum] of String = ('', 'xml', 'json', 'ttl', 'none');
+  SYSTEMS_TFhirContentTypeEnum : Array[TFhirContentTypeEnum] of String = ('', 'http://hl7.org/fhir/content-type', 'http://hl7.org/fhir/content-type', 'http://hl7.org/fhir/content-type', 'http://hl7.org/fhir/content-type');
+
   CODES_TFhirPublicationStatusEnum : Array[TFhirPublicationStatusEnum] of String = ('', 'draft', 'active', 'retired', 'unknown');
   SYSTEMS_TFhirPublicationStatusEnum : Array[TFhirPublicationStatusEnum] of String = ('', 'http://hl7.org/fhir/publication-status', 'http://hl7.org/fhir/publication-status', 'http://hl7.org/fhir/publication-status', 'http://hl7.org/fhir/publication-status');
   CODES_TFhirNarrativeStatusEnum : Array[TFhirNarrativeStatusEnum] of String = ('', 'generated', 'extensions', 'additional', 'empty');

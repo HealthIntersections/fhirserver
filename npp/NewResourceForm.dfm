@@ -25,6 +25,10 @@ object ResourceNewForm: TResourceNewForm
     TabOrder = 0
     object tbResources: TTabSheet
       Caption = 'Resources'
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object lbResources: TListBox
         Left = 0
         Top = 0
@@ -41,6 +45,10 @@ object ResourceNewForm: TResourceNewForm
     object tbProfiles: TTabSheet
       Caption = 'Profiles'
       ImageIndex = 1
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object lbProfiles: TListBox
         Left = 0
         Top = 0

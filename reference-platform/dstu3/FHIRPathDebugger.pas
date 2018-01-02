@@ -468,11 +468,11 @@ begin
   else
   begin
     if (FFormat = ffJson) then
-      comp := TFHIRJsonComposer.Create(FServices.link, 'en')
+      comp := TFHIRJsonComposer.Create(FServices.link, OutputStylePretty, 'en')
     else
-      comp := TFHIRXmlComposer.Create(FServices.link, 'en');
+      comp := TFHIRXmlComposer.Create(FServices.link, OutputStylePretty, 'en');
     try
-      memo.Text := comp.Compose(name, obj, true)
+      memo.Text := comp.Compose(name, obj)
     finally
       comp.Free;
     end;
@@ -484,14 +484,14 @@ var
   comp : TFHIRComposer;
 begin
   if (FFormat = ffJson) then
-    comp := TFHIRJsonComposer.Create(FServices.link, 'en')
+    comp := TFHIRJsonComposer.Create(FServices.link, OutputStylePretty, 'en')
   else
-    comp := TFHIRXmlComposer.Create(FServices.link, 'en');
+    comp := TFHIRXmlComposer.Create(FServices.link, OutputStylePretty, 'en');
   try
     if obj is TFHIRResource then
-      memo.Text := comp.Compose(TFHIRResource(obj), true)
+      memo.Text := comp.Compose(TFHIRResource(obj))
     else
-      memo.Text := comp.Compose(name, obj, true)
+      memo.Text := comp.Compose(name, obj)
   finally
     comp.Free;
   end;

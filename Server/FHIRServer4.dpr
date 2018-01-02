@@ -316,7 +316,15 @@ uses
   SQLite3Utils in '..\Libraries\db\SQLite3Utils.pas',
   SQLite3Wrap in '..\Libraries\db\SQLite3Wrap.pas',
   KDBSQLite in '..\Libraries\db\KDBSQLite.pas',
-  ServerPostHandlers in 'ServerPostHandlers.pas';
+  ServerPostHandlers in 'ServerPostHandlers.pas',
+  ServerJavascriptHost in '..\tests\ServerJavascriptHost.pas',
+  FHIRJavascript in '..\Libraries\js\FHIRJavascript.pas',
+  Javascript in '..\Libraries\js\Javascript.pas',
+  ChakraCommon in '..\Libraries\js\ChakraCommon.pas',
+  AdvJavascript in '..\Libraries\js\AdvJavascript.pas',
+  FHIRJavascriptReg in '..\reference-platform\r4\FHIRJavascriptReg.pas',
+  FHIRClientJs in '..\Libraries\js\FHIRClientJs.pas',
+  ServerEventJs in 'ServerEventJs.pas';
 
 begin
   logfile := IncludeTrailingPathDelimiter(SystemTemp)+'fhirserver.log';

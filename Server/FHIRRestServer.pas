@@ -4010,9 +4010,9 @@ begin
     op.type_ := TFHIRCoding.Create('http://hl7.org/fhir/testscript-operation-codes', CODES_TFHIRCommandType[req.CommandType].ToLower);
   op.resourceElement := TFhirCode.Create(req.ResourceName);
   if resp.format = ffJson then
-    op.Accept := 'application/fhir+json'// ContentTypeJson
+    op.Accept := ContentTypeJson
   else
-    op.Accept := 'application/fhir+xml';
+    op.Accept := ContentTypeXml;
   op.params := req.Parameters.Source;
   op.requestHeaderList.Add('Host', req.baseUrl);
   op.requestHeaderList.Add('Content-Type', MIMETYPES_TFHIRFormat[req.PostFormat]);

@@ -239,7 +239,15 @@ uses
   WebSourceProvider in '..\Server\WebSourceProvider.pas',
   FHIRIndexBase in '..\reference-platform\support\FHIRIndexBase.pas',
   ICD10Services in '..\Server\ICD10Services.pas',
-  ServerPostHandlers in '..\Server\ServerPostHandlers.pas';
+  ServerPostHandlers in '..\Server\ServerPostHandlers.pas',
+  ServerJavascriptHost in '..\tests\ServerJavascriptHost.pas',
+  FHIRJavascriptReg in '..\reference-platform\dstu3\FHIRJavascriptReg.pas',
+  FHIRJavascript in '..\Libraries\js\FHIRJavascript.pas',
+  FHIRClientJs in '..\Libraries\js\FHIRClientJs.pas',
+  ServerEventJs in '..\Server\ServerEventJs.pas',
+  Javascript in '..\Libraries\js\Javascript.pas',
+  ChakraCommon in '..\Libraries\js\ChakraCommon.pas',
+  AdvJavascript in '..\Libraries\js\AdvJavascript.pas';
 
 var
   gsrv : TExampleFhirServer;

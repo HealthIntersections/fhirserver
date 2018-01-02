@@ -33,7 +33,7 @@ uses
   System.SysUtils, System.Types, System.UITypes, System.Classes, System.Variants,
   FMX.Types, FMX.Controls, FMX.Forms, FMX.Graphics, FMX.Dialogs,
   FMX.ScrollBox, FMX.Memo, FMX.TabControl, FMX.StdCtrls, FMX.Controls.Presentation,
-  FHIRResources, FHIRParser, DifferenceEngine;
+  FHIRResources, FHIRBase, FHIRParser, DifferenceEngine;
 
 type
   TSourceViewerForm = class(TForm)
@@ -93,22 +93,22 @@ var
   html : string;
 begin
   if rbXml.IsChecked then
-    c := TFHIRXmlComposer.Create(nil, 'en')
+    c := TFHIRXmlComposer.Create(nil, OutputStylePretty, 'en')
   else if rbJson.IsChecked then
-    c := TFHIRJsonComposer.Create(nil, 'en')
+    c := TFHIRJsonComposer.Create(nil, OutputStylePretty, 'en')
   else
-    c := TFHIRTurtleComposer.Create(nil, 'en');
+    c := TFHIRTurtleComposer.Create(nil, OutputStylePretty, 'en');
   try
     case TabControl1.TabIndex of
-      0 : mSource.Lines.Text := c.Compose(FCurrent, true);
-      1 : mSource.Lines.Text := c.Compose(FOriginal, true);
+      0 : mSource.Lines.Text := c.Compose(FCurrent);
+      1 : mSource.Lines.Text := c.Compose(FOriginal);
       2 :
         begin
         engine := TDifferenceEngine.Create(nil);
         try
           diff := engine.generateDifference(FOriginal, FCurrent, html);
           try
-            mSource.Lines.Text := c.Compose(diff, true);
+            mSource.Lines.Text := c.Compose(diff);
           finally
             diff.Free;
           end;

@@ -307,11 +307,11 @@ begin
   s := TStringStream.Create;
   try
     if fmt = ffXml then
-      comp := TFHIRXmlComposer.Create(FWorker.link, 'en')
+      comp := TFHIRXmlComposer.Create(FWorker.link, OutputStylePretty, 'en')
     else
-      comp := TFHIRJsonComposer.Create(FWorker.link, 'en');
+      comp := TFHIRJsonComposer.Create(FWorker.link, OutputStylePretty, 'en');
     try
-      comp.Compose(s, cnt, true);
+      comp.Compose(s, cnt);
       result := s.DataString;
     finally
      comp.free;
@@ -894,12 +894,12 @@ begin
     FuncValidateClear;
     FuncMatchesClear;
     if fmt = ffJson then
-      comp := TFHIRXmlComposer.Create(FWorker.link, 'en')
+      comp := TFHIRXmlComposer.Create(FWorker.link, OutputStylePretty, 'en')
     else
-      comp := TFHIRJsonComposer.Create(FWorker.link, 'en');
+      comp := TFHIRJsonComposer.Create(FWorker.link, OutputStylePretty, 'en');
     s := TStringStream.Create('');
     try
-      comp.Compose(s, res, true);
+      comp.Compose(s, res);
       CurrentText := s.DataString;
     finally
       s.Free;
@@ -980,13 +980,13 @@ begin
     end;
 
     if fmt = ffXml then
-      comp := TFHIRXmlComposer.Create(FWorker.link, 'en')
+      comp := TFHIRXmlComposer.Create(FWorker.link, OutputStylePretty, 'en')
     else
-      comp := TFHIRJsonComposer.Create(FWorker.link, 'en');
+      comp := TFHIRJsonComposer.Create(FWorker.link, OutputStylePretty, 'en');
     try
       s := TStringStream.Create('');
       try
-        comp.Compose(s, res, true);
+        comp.Compose(s, res);
         CurrentText := s.DataString;
       finally
         s.Free;
@@ -1035,13 +1035,13 @@ begin
     res := FClient.readResource(FetchResourceFrm.SelectedType, FetchResourceFrm.SelectedId);
     try
       if FetchResourceFrm.rbJson.Checked then
-        comp := TFHIRJsonComposer.Create(FWorker.link, 'en')
+        comp := TFHIRJsonComposer.Create(FWorker.link, OutputStylePretty, 'en')
       else
-        comp := TFHIRXmlComposer.Create(FWorker.link, 'en');
+        comp := TFHIRXmlComposer.Create(FWorker.link, OutputStylePretty, 'en');
       try
         s := TStringStream.Create;
         try
-          comp.Compose(s, res, true);
+          comp.Compose(s, res);
           NewFile(s.DataString);
           if FetchResourceFrm.rbJson.Checked then
             saveFileAs(IncludeTrailingPathDelimiter(SystemTemp)+CODES_TFhirResourceType[res.ResourceType]+'-'+res.id+'.json')
@@ -1179,13 +1179,13 @@ begin
     FClient.createResource(res, id).Free;
     res.id := id;
     if fmt = ffXml then
-      comp := TFHIRXmlComposer.Create(FWorker.link, 'en')
+      comp := TFHIRXmlComposer.Create(FWorker.link, OutputStylePretty, 'en')
     else
-      comp := TFHIRJsonComposer.Create(FWorker.link, 'en');
+      comp := TFHIRJsonComposer.Create(FWorker.link, OutputStylePretty, 'en');
     try
       s := TStringStream.Create('');
       try
-        comp.Compose(s, res, true);
+        comp.Compose(s, res);
         CurrentText := s.DataString;
       finally
         s.Free;
@@ -1263,13 +1263,13 @@ begin
         if (MessageDlg('Success. Open transaction response?', mtConfirmation, mbYesNo, 0) = mrYes) then
         begin
           if FClient.Json then
-            comp := TFHIRJsonComposer.Create(FWorker.link, 'en')
+            comp := TFHIRJsonComposer.Create(FWorker.link, OutputStylePretty, 'en')
           else
-            comp := TFHIRXmlComposer.Create(FWorker.link, 'en');
+            comp := TFHIRXmlComposer.Create(FWorker.link, OutputStylePretty, 'en');
           try
             s := TStringStream.Create;
             try
-              comp.Compose(s, res, true);
+              comp.Compose(s, res);
               NewFile(s.DataString);
               if FClient.Json then
                 saveFileAs(IncludeTrailingPathDelimiter(SystemTemp)+CODES_TFhirResourceType[res.ResourceType]+'-'+res.id+'.json')
@@ -1398,11 +1398,11 @@ var
   comp : TFHIRComposer;
 begin
   if fmt = ffXml then
-    comp := TFHIRXmlComposer.Create(FWorker.link, 'en')
+    comp := TFHIRXmlComposer.Create(FWorker.link, OutputStylePretty, 'en')
   else
-    comp := TFHIRJsonComposer.Create(FWorker.link, 'en');
+    comp := TFHIRJsonComposer.Create(FWorker.link, OutputStylePretty, 'en');
   try
-    result := comp.Compose(expr, items, types, true);
+    result := comp.Compose(expr, items, types);
   finally
     comp.Free;
   end;

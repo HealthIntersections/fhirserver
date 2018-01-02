@@ -92,6 +92,8 @@ object SourceViewerForm: TSourceViewerForm
       StyleLookup = ''
       TabOrder = 0
       Text = 'Source'
+      ExplicitSize.cx = 57.000000000000000000
+      ExplicitSize.cy = 26.000000000000000000
     end
     object TabItem2: TTabItem
       CustomIcon = <
@@ -104,6 +106,8 @@ object SourceViewerForm: TSourceViewerForm
       StyleLookup = ''
       TabOrder = 0
       Text = 'Original'
+      ExplicitSize.cx = 62.000000000000000000
+      ExplicitSize.cy = 26.000000000000000000
     end
     object TabItem3: TTabItem
       CustomIcon = <
@@ -116,6 +120,8 @@ object SourceViewerForm: TSourceViewerForm
       StyleLookup = ''
       TabOrder = 0
       Text = 'Delta'
+      ExplicitSize.cx = 48.000000000000000000
+      ExplicitSize.cy = 26.000000000000000000
     end
   end
   object mSource: TMemo

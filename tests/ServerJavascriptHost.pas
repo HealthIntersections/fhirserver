@@ -6,7 +6,8 @@ uses
   SysUtils, Classes,
   kCritSct,
   AdvObjects, AdvGenerics,
-  FHIRBase, FHIRResources, FHIRSupport;
+  FHIRBase, FHIRResources, FHIRSupport,
+  FHIRJavascript;
 
 Type
   TJsEventScript = class (TAdvObject)

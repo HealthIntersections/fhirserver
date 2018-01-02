@@ -30,12 +30,12 @@ POSSIBILITY OF SUCH DAMAGE.
 interface
 
 uses
-  System.SysUtils, System.Types, System.UITypes, System.Classes, System.Variants, 
+  System.SysUtils, System.Types, System.UITypes, System.Classes, System.Variants,
   FMX.Types, FMX.Graphics, FMX.Controls, FMX.Forms, FMX.Dialogs, FMX.StdCtrls,
   FMX.ListBox, FMX.Edit, FMX.TabControl, FMX.TreeView, FMX.Layouts,
   FMX.Controls.Presentation, FMX.Platform,
   StringSupport, FileSupport, DateSupport, GuidSupport,
-  FHIRTypes, FHIRResources, FHIRUtilities, FHIRClient, FHIRParser,
+  FHIRTypes, FHIRResources, FHIRUtilities, FHIRClient, FHIRParser, FHIRBase,
   BaseFrame, OrganizationChooser;
 
 type
@@ -924,7 +924,7 @@ begin
           resource := endorsement.Link;
           fullUrl := URLPath([FClient.address, 'Observation', endorsement.id]);
         end;
-      TFHIRJsonComposer.composeFile(nil, bnd, 'en', sdPack.FileName, true);
+      TFHIRJsonComposer.composeFile(nil, bnd, 'en', sdPack.FileName, OutputStylePretty);
     finally
       bnd.Free;
     end;

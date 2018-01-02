@@ -330,7 +330,15 @@ uses
   QuestionnaireRenderer in '..\reference-platform\dstu3\QuestionnaireRenderer.pas',
   FHIRDeIdentifier in '..\reference-platform\common\FHIRDeIdentifier.pas',
   ServerPostHandlers in 'ServerPostHandlers.pas',
-  ICD10Services in 'ICD10Services.pas';
+  ICD10Services in 'ICD10Services.pas',
+  FHIRJavascript in '..\Libraries\js\FHIRJavascript.pas',
+  FHIRJavascriptReg in '..\reference-platform\dstu3\FHIRJavascriptReg.pas',
+  AdvJavascript in '..\Libraries\js\AdvJavascript.pas',
+  ServerJavascriptHost in '..\tests\ServerJavascriptHost.pas',
+  ServerEventJs in 'ServerEventJs.pas',
+  Javascript in '..\Libraries\js\Javascript.pas',
+  ChakraCommon in '..\Libraries\js\ChakraCommon.pas',
+  FHIRClientJs in '..\Libraries\js\FHIRClientJs.pas';
 
 begin
   logfile := IncludeTrailingPathDelimiter(SystemTemp)+'fhirserver.log';

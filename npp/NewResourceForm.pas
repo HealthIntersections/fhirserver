@@ -35,7 +35,7 @@ uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.ComCtrls, Vcl.ExtCtrls,
   nppforms,
-  FHIRResources, FHIRTypes, FHIRPluginValidator, FHIRProfileUtilities, FHIRParserBase, FHIRParser, FHIRContext;
+  FHIRBase, FHIRResources, FHIRTypes, FHIRPluginValidator, FHIRProfileUtilities, FHIRParserBase, FHIRParser, FHIRContext;
 
 type
   TResourceNewForm = class(TNppForm)
@@ -97,13 +97,13 @@ begin
     res := pu.populateByProfile(sd);
     try
       if rbJson.Checked then
-        comp := TFHIRJsonComposer.Create(FContext.link, 'en')
+        comp := TFHIRJsonComposer.Create(FContext.link, OutputStylePretty, 'en')
       else
-        comp := TFHIRXmlComposer.Create(FContext.link, 'en');
+        comp := TFHIRXmlComposer.Create(FContext.link, OutputStylePretty, 'en');
       try
         s := TStringStream.Create;
         try
-          comp.Compose(s, res, true);
+          comp.Compose(s, res);
           Npp.NewFile(s.DataString);
         finally
           s.Free;

@@ -410,7 +410,7 @@ var
 begin
   b := TAdvStringBuilder.Create;
   try
-    TFHIRXhtmlParser.compose(res.text.div_, b);
+    TFHIRXhtmlParser.compose(res.text.div_, b, false);
 
     if NOT Assigned(webNarrative.Document) then
       webNarrative.Navigate('about:blank');

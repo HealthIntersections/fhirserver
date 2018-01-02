@@ -153,6 +153,7 @@
         <DCCReference Include="..\..\Libraries\db\ODBCObjects.pas"/>
         <DCCReference Include="..\..\Libraries\db\KDBOdbc.pas"/>
         <DCCReference Include="..\..\Libraries\db\OdbcHeaders.pas"/>
+        <DCCReference Include="..\..\reference-platform\support\TextUtilities.pas"/>
         <BuildConfiguration Include="Debug">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>

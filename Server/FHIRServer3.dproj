@@ -391,6 +391,14 @@
         <DCCReference Include="..\reference-platform\common\FHIRDeIdentifier.pas"/>
         <DCCReference Include="ServerPostHandlers.pas"/>
         <DCCReference Include="ICD10Services.pas"/>
+        <DCCReference Include="..\Libraries\js\FHIRJavascript.pas"/>
+        <DCCReference Include="..\reference-platform\dstu3\FHIRJavascriptReg.pas"/>
+        <DCCReference Include="..\Libraries\js\AdvJavascript.pas"/>
+        <DCCReference Include="..\tests\ServerJavascriptHost.pas"/>
+        <DCCReference Include="ServerEventJs.pas"/>
+        <DCCReference Include="..\Libraries\js\Javascript.pas"/>
+        <DCCReference Include="..\Libraries\js\ChakraCommon.pas"/>
+        <DCCReference Include="..\Libraries\js\FHIRClientJs.pas"/>
         <None Include="..\reference-platform\r4\fhirtests4.dpr"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
