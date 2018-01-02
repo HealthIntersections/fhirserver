@@ -32,7 +32,7 @@ interface
 
 Uses
   SysUtils, Classes,
-  StringSupport, EncodeSupport,
+  StringSupport, EncodeSupport, TextUtilities,
   AdvStreams, AdvVCLStreams,  AdvBuffers, AdvObjects, AdvXmlFormatters, AdvMemories, AdvStringMatches, AdvGenerics,
   XmlBuilder, ParserSupport, MXML;
 
@@ -46,7 +46,9 @@ Type
 
     depth : integer;
     started : boolean;
+    FCanonicalEntities: boolean;
     function getNSRep(uri, name : String):String;
+    procedure SetCanonicalEntities(const Value: boolean);
   Public
     destructor Destroy; override;
 
@@ -73,8 +75,9 @@ Type
     procedure DocType(sText : String); override;
     procedure CData(text : String);
 
-    
+
     procedure inject(const bytes : TBytes); override;
+    property CanonicalEntities : boolean read FCanonicalEntities write SetCanonicalEntities;
   End;
 
   // http://www.w3.org/TR/2012/WD-xml-c14n2-testcases-20120105/
@@ -101,6 +104,7 @@ begin
   mem := TAdvMemoryStream.Create;
   mem.Buffer := buf.Link;
   xml := TAdvXMLFormatter.Create;
+  xml.CanonicalEntities := CanonicalEntities;
   xml.HasWhitespace := IsPretty;
   xml.Stream := mem.Link;
   if Canonicalise <> [] then
@@ -180,6 +184,13 @@ end;
 Function TAdvXmlBuilder.Build : String;
 begin
   result := buf.AsUnicode;
+end;
+
+procedure TAdvXmlBuilder.SetCanonicalEntities(const Value: boolean);
+begin
+  FCanonicalEntities := Value;
+  if assigned(xml) then
+    xml.CanonicalEntities := value;
 end;
 
 Function TAdvXmlBuilder.SourceLocation : TSourceLocation;

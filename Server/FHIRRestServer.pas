@@ -107,8 +107,8 @@ Uses
   WebSourceProvider,
 
   FHIRUserProvider, FHIRServerContext, FHIRServerConstants, SCIMServer,
-  ServerUtilities, ClientApplicationVerifier, JWTService, TerminologyServices, ServerPostHandlers
-{$IFNDEF FHIR2}, OpenMHealthServer{$ENDIF};
+  ServerUtilities, ClientApplicationVerifier, JWTService, TerminologyServices, ServerJavascriptHost,
+  ServerPostHandlers{$IFNDEF FHIR2}, OpenMHealthServer{$ENDIF};
 
 Const
   OWIN_TOKEN_PATH = 'oauth/token';
@@ -339,7 +339,7 @@ Type
     Procedure HandleWebSockets(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; ssl, secure: boolean; path: String);
     Procedure HandleDiscoveryRedirect(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo);
     Procedure HandleOWinToken(AContext: TIdContext; secure: boolean; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo);
-    Procedure ProcessOutput(oRequest: TFHIRRequest; oResponse: TFHIRResponse; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; relativeReferenceAdjustment: integer; pretty, gzip: boolean);
+    Procedure ProcessOutput(oRequest: TFHIRRequest; oResponse: TFHIRResponse; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; relativeReferenceAdjustment: integer; style : TFHIROutputStyle; gzip: boolean);
     function extractFileData(lang : String; form: TMimeMessage; const name: String; var sContentType: String): TStream;
     Procedure StartServer(active: boolean);
     Procedure StopServer;
@@ -351,7 +351,7 @@ Type
     Procedure ProcessTaskRequest(Context: TOperationContext; request: TFHIRRequest; response: TFHIRResponse);
     function BuildRequest(lang, sBaseURL, sHost, sOrigin, sClient, sContentLocation, sCommand, sResource, sContentType, sContentAccept, sContentEncoding,
       sCookie, provenance, sBearer: String; oPostStream: TStream; oResponse: TFHIRResponse; var aFormat: TFHIRFormat; var redirect: boolean; form: TMimeMessage;
-      bAuth, secure: boolean; out relativeReferenceAdjustment: integer; var pretty: boolean; Session: TFHIRSession; cert: TIdX509): TFHIRRequest;
+      bAuth, secure: boolean; out relativeReferenceAdjustment: integer; var style : TFHIROutputStyle; Session: TFHIRSession; cert: TIdX509): TFHIRRequest;
     procedure DoConnect(AContext: TIdContext);
     procedure DoDisconnect(AContext: TIdContext);
     Function WebDesc: String;
@@ -370,6 +370,8 @@ Type
     procedure CheckAsyncTasks;
     function processRegistration(request : TIdHTTPRequestInfo; session : TFhirSession) : String;
     function loadFromRsaDer(cert : string) : TJWKList;
+
+    procedure checkRequestByJs(context : TOperationContext; request : TFHIRRequest);
   Public
     Constructor Create(ini: TFHIRServerIniFile; name: String; TerminologyServer: TTerminologyServer; Context: TFHIRServerContext);
     Destructor Destroy; Override;
@@ -702,6 +704,7 @@ begin
 {$IFDEF MSWINDOWS}
   CoInitialize(nil);
 {$ENDIF}
+  GJsHost := TJsHost.Create;
   AContext.Connection.IOHandler.MaxLineLength := 100 * 1024;
   FLock.Lock;
   try
@@ -723,6 +726,8 @@ begin
   finally
     FLock.Unlock;
   end;
+  GJsHost.Free;
+  GJshost := nil;
 {$IFDEF MSWINDOWS}
   CoUninitialize;
 {$ENDIF}
@@ -752,6 +757,7 @@ begin
       request.lang := lang;
       request.LoadParams(params);
       request.CommandType := fcmdSearch;
+      checkRequestByJs(context, request);
       ProcessRequest(Context, request, response);
       result := response.bundle.link;
     finally
@@ -1045,6 +1051,7 @@ begin
       resp := TFHIRResponse.Create;
       try
         resp.OnCreateBuilder := doGetBundleBuilder;
+        checkRequestByJs(context, req);
         ProcessRequest(Context, req, resp);
       finally
         resp.Free;
@@ -1144,7 +1151,7 @@ begin
           b.Append('&launch=');
           b.Append(id);
           b.Append('">');
-          b.Append(EncodeXML(app.name, xmlText));
+          b.Append(FormatTextToXml(app.name, xmlText));
           b.Append('</a></li>'#13#10);
         end;
       end;
@@ -1515,7 +1522,7 @@ var
   redirect: boolean;
   form: TMimeMessage;
   relativeReferenceAdjustment: integer;
-  pretty: boolean;
+  style : TFHIROutputStyle;
   c: integer;
   domain: String;
   sBearer: String;
@@ -1595,7 +1602,7 @@ Begin
               sBearer := sCookie;
               oRequest := BuildRequest(lang, path, sHost, request.CustomHeaders.Values['Origin'], request.RemoteIP,
                 request.CustomHeaders.Values['content-location'], request.Command, sDoc, sContentType, request.Accept, request.ContentEncoding, sCookie,
-                request.RawHeaders.Values['X-Provenance'], sBearer, oStream, oResponse, aFormat, redirect, form, secure, ssl, relativeReferenceAdjustment, pretty,
+                request.RawHeaders.Values['X-Provenance'], sBearer, oStream, oResponse, aFormat, redirect, form, secure, ssl, relativeReferenceAdjustment, style,
                 esession, cert);
               try
                 oRequest.externalRequestId := request.RawHeaders.Values['X-Request-Id'];
@@ -1669,6 +1676,7 @@ Begin
                     Context := TOperationContext.Create;
                     try
                       Context.upload := upload;
+                      checkRequestByJs(context, oRequest);
                       if oRequest.CommandType = fcmdWebUI then
                         HandleWebUIRequest(oRequest, oResponse, secure)
                       else if oRequest.commandType in [fcmdTask, fcmdDeleteTask] then
@@ -1697,7 +1705,7 @@ Begin
                   end;
                   cacheResponse(response, oResponse.CacheControl);
                   RecordExchange(oRequest, oResponse);
-                  ProcessOutput(oRequest, oResponse, request, response, relativeReferenceAdjustment, pretty, request.AcceptEncoding.Contains('gzip'));
+                  ProcessOutput(oRequest, oResponse, request, response, relativeReferenceAdjustment, style, request.AcceptEncoding.Contains('gzip'));
                   // no - just use *              if request.RawHeaders.Values['Origin'] <> '' then
                   // response.CustomHeaders.add('Access-Control-Allow-Origin: '+request.RawHeaders.Values['Origin']);
                   if oResponse.versionId <> '' then
@@ -1892,12 +1900,12 @@ begin
     begin
 
       if request.Parameters.GetVar('srcformat') = 'json' then
-        comp := TFHIRJsonComposer.Create(FServerContext.Validator.Context.link, request.lang)
+        comp := TFHIRJsonComposer.Create(FServerContext.Validator.Context.link, OutputStylePretty, request.lang)
       else
-        comp := TFHIRXMLComposer.Create(FServerContext.Validator.Context.link, request.lang);
+        comp := TFHIRXMLComposer.Create(FServerContext.Validator.Context.link, OutputStylePretty, request.lang);
       try
         comp.LogId := request.internalRequestId;
-        s := comp.Compose(r, true, nil);
+        s := comp.Compose(r, nil);
       finally
         comp.Free;
       end;
@@ -1950,6 +1958,7 @@ begin
         try
           prsr.Parse;
           request.resource := prsr.resource.link;
+          checkRequestByJs(context, request);
           ProcessRequest(Context, request, response);
           if response.HTTPCode < 300 then
           begin
@@ -2208,9 +2217,9 @@ begin
       // make clean qa
       qa.questionnaire.reference := 'Questionnaire/' + qa.questionnaire.reference.Substring(1);
       qa.containedList.Clear;
-      json := TFHIRJsonComposer.Create(request.Context.link, request.lang);
+      json := TFHIRJsonComposer.Create(request.Context.link, OutputStyleNormal, request.lang);
       try
-        j := json.Compose(qa, false, nil);
+        j := json.Compose(qa, nil);
       finally
         json.Free;
       end;
@@ -2294,7 +2303,7 @@ begin
     try
       issue.text := TFhirNarrative.Create;
       issue.text.status := NarrativeStatusGenerated;
-      issue.text.div_ := TFHIRXhtmlParser.Parse(lang, xppReject, [], '<div><p>' + FormatTextToXML(message) + '</p></div>');
+      issue.text.div_ := TFHIRXhtmlParser.Parse(lang, xppReject, [], '<div><p>' + FormatTextToXML(message, xmlText) + '</p></div>');
       if addLogins then
       begin
         if FAuthServer.HL7Appid <> '' then
@@ -2350,24 +2359,24 @@ begin
       oComp := nil;
       case format of
         ffXml:
-          oComp := TFHIRXMLComposer.Create(FServerContext.Validator.Context.link, lang);
+          oComp := TFHIRXMLComposer.Create(FServerContext.Validator.Context.link, OutputStyleNormal, lang);
         ffXhtml:
           begin
-            oComp := TFHIRXhtmlComposer.Create(FServerContext.Validator.Context.link, lang);
+            oComp := TFHIRXhtmlComposer.Create(FServerContext.Validator.Context.link, OutputStyleNormal, lang);
             TFHIRXhtmlComposer(oComp).baseUrl := AppendForwardSlash(url);
             TFHIRXhtmlComposer(oComp).Version := SERVER_VERSION;
             TFHIRXhtmlComposer(oComp).Session := Session.link;
             TFHIRXhtmlComposer(oComp).relativeReferenceAdjustment := relativeReferenceAdjustment;
           end;
         ffJson, ffNDJson:
-          oComp := TFHIRJsonComposer.Create(FServerContext.Validator.Context.link, lang);
+          oComp := TFHIRJsonComposer.Create(FServerContext.Validator.Context.link, OutputStyleNormal, lang);
         ffText:
-          oComp := TFHIRTextComposer.Create(FServerContext.Validator.Context.link, lang);
+          oComp := TFHIRTextComposer.Create(FServerContext.Validator.Context.link, OutputStyleNormal, lang);
       end;
       try
         response.contentType := oComp.MimeType;
         oComp.LogId := logId;
-        oComp.Compose(response.ContentStream, issue, false, nil);
+        oComp.Compose(response.ContentStream, issue, nil);
         response.ContentStream.Position := 0;
       finally
         oComp.Free;
@@ -2399,7 +2408,7 @@ end;
 
 Function TFhirWebServer.BuildRequest(lang, sBaseURL, sHost, sOrigin, sClient, sContentLocation, sCommand, sResource, sContentType, sContentAccept,
   sContentEncoding, sCookie, provenance, sBearer: String; oPostStream: TStream; oResponse: TFHIRResponse; var aFormat: TFHIRFormat; var redirect: boolean;
-  form: TMimeMessage; bAuth, secure: boolean; out relativeReferenceAdjustment: integer; var pretty: boolean; Session: TFHIRSession; cert: TIdX509)
+  form: TMimeMessage; bAuth, secure: boolean; out relativeReferenceAdjustment: integer; var style : TFHIROutputStyle; Session: TFHIRSession; cert: TIdX509)
   : TFHIRRequest;
 Var
   sURL, Msg: String;
@@ -2496,12 +2505,12 @@ Begin
     else if oRequest.PostFormat <> ffUnspecified then
       oResponse.format := oRequest.PostFormat;
 
-    if oRequest.Parameters.VarExists('_pretty') then
-      pretty := oRequest.Parameters.GetVar('_pretty') = 'true'
-    else if sContentAccept.Contains('pretty=') then
-      pretty := extractProp(sContentAccept, 'pretty') = 'true'
+    if oRequest.Parameters.VarExists('_pretty') and (oRequest.Parameters.GetVar('_pretty') = 'true') then
+      style := OutputStylePretty
+    else if sContentAccept.Contains('pretty=') and (extractProp(sContentAccept, 'pretty') = 'true') then
+      style := OutputStylePretty
     else
-      pretty := false;
+      style := OutputStyleNormal;
 
     aFormat := oResponse.format;
 
@@ -2766,7 +2775,7 @@ begin
 end;
 
 Procedure TFhirWebServer.ProcessOutput(oRequest: TFHIRRequest; oResponse: TFHIRResponse; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo;
-  relativeReferenceAdjustment: integer; pretty, gzip: boolean);
+  relativeReferenceAdjustment: integer; style : TFHIROutputStyle; gzip: boolean);
 var
   oComp: TFHIRComposer;
   b: TBytes;
@@ -2817,10 +2826,10 @@ begin
           // response.Expires := Now; //don't want anyone caching anything
           response.Pragma := 'no-cache';
           if oResponse.format = ffJson then
-            oComp := TFHIRJsonComposer.Create(FServerContext.Validator.Context.link, oRequest.lang)
+            oComp := TFHIRJsonComposer.Create(FServerContext.Validator.Context.link, style, oRequest.lang)
           else if oResponse.format = ffXhtml then
           begin
-            oComp := TFHIRXhtmlComposer.Create(FServerContext.Validator.Context.link, oRequest.lang);
+            oComp := TFHIRXhtmlComposer.Create(FServerContext.Validator.Context.link, style, oRequest.lang);
             TFHIRXhtmlComposer(oComp).baseUrl := AppendForwardSlash(oRequest.baseUrl);
             TFHIRXhtmlComposer(oComp).Version := SERVER_VERSION;
             TFHIRXhtmlComposer(oComp).Session := oRequest.Session.link;
@@ -2832,29 +2841,29 @@ begin
             response.Pragma := '';
           end
           else if oResponse.format = ffNDJson then
-            oComp := TFHIRNDJsonComposer.Create(FServerContext.Validator.Context.link, oRequest.lang)
+            oComp := TFHIRNDJsonComposer.Create(FServerContext.Validator.Context.link, style, oRequest.lang)
           else if oResponse.format = ffXml then
-            oComp := TFHIRXMLComposer.Create(FServerContext.Validator.Context.link, oRequest.lang)
+            oComp := TFHIRXMLComposer.Create(FServerContext.Validator.Context.link, style, oRequest.lang)
           else if oResponse.format = ffText then
-            oComp := TFHIRTextComposer.Create(FServerContext.Validator.Context.link, oRequest.lang)
+            oComp := TFHIRTextComposer.Create(FServerContext.Validator.Context.link, style, oRequest.lang)
 {$IFNDEF FHIR2}
           else if (oResponse.format = ffTurtle) or (res._source_format = ffTurtle) then
           begin
-            oComp := TFHIRTurtleComposer.Create(FServerContext.Validator.Context.link, oRequest.lang);
+            oComp := TFHIRTurtleComposer.Create(FServerContext.Validator.Context.link, style, oRequest.lang);
             if (res <> nil) and (res.id <> '') then
               TFHIRTurtleComposer(oComp).url := AppendForwardSlash(oRequest.baseUrl) + CODES_TFhirResourceType[res.ResourceType] + '/' + res.id;
           end
 {$ENDIF}
           else if res._source_format = ffJson then
-            oComp := TFHIRJsonComposer.Create(FServerContext.Validator.Context.link, oRequest.lang)
+            oComp := TFHIRJsonComposer.Create(FServerContext.Validator.Context.link, style, oRequest.lang)
           else
-            oComp := TFHIRXMLComposer.Create(FServerContext.Validator.Context.link, oRequest.lang);
+            oComp := TFHIRXMLComposer.Create(FServerContext.Validator.Context.link, style, oRequest.lang);
           try
             response.contentType := oComp.MimeType;
             oComp.SummaryOption := oRequest.Summary;
             oComp.ElementToCompose.Assign(oRequest.Elements);
             oComp.LogId := oRequest.internalRequestId;
-            oComp.Compose(stream, res, pretty, oResponse.link_List);
+            oComp.Compose(stream, res, oResponse.link_List);
           finally
             oComp.Free;
           end;
@@ -3040,6 +3049,7 @@ begin
   end;
   if request.internalRequestId = '' then
     request.internalRequestId := ServerContext.nextRequestId;
+
   t := GetTickCount;
   op := FServerContext.Storage.createOperationContext(request.lang);
   try
@@ -3355,12 +3365,12 @@ begin
         if Session <> nil then
           if secure then
           begin
-            b.Append('<p>Welcome ' + FormatTextToXML(Session.SessionName) + '</p>'#13#10);
+            b.Append('<p>Welcome ' + FormatTextToXML(Session.SessionName, xmlText) + '</p>'#13#10);
           end
           else if FSecurePath = '' then
-            b.Append('<p>Welcome ' + FormatTextToXML(Session.SessionName) + '</p>'#13#10)
+            b.Append('<p>Welcome ' + FormatTextToXML(Session.SessionName, xmlText) + '</p>'#13#10)
           else
-            b.Append('<p>Welcome ' + FormatTextToXML(Session.SessionName) + ' (or use <a href="https://' + FHost + port(FStatedSSLPort, 443) + FSecurePath +
+            b.Append('<p>Welcome ' + FormatTextToXML(Session.SessionName, xmlText) + ' (or use <a href="https://' + FHost + port(FStatedSSLPort, 443) + FSecurePath +
               '">Secure API</a>)</p>'#13#10);
 
         b.Append('<p>'#13#10 + StringFormat(GetFhirMessage('MSG_HOME_PAGE_1', lang), ['<a href="http://hl7.org/fhir">http://hl7.org/fhir</a>']) + #13#10 +
@@ -3490,7 +3500,7 @@ begin
     '  &nbsp;'#13#10 + '  FHIR ' + GetFhirMessage('NAME_VERSION', lang) + ' ' + FHIR_GENERATED_VERSION + ''#13#10;
 
   if Session <> nil then
-    result := result + '&nbsp;&nbsp;' + FormatTextToXML(Session.SessionName);
+    result := result + '&nbsp;&nbsp;' + FormatTextToXML(Session.SessionName, xmlText);
 
   result := result + '  &nbsp;<a href="' + s + '">' + GetFhirMessage('MSG_BACK_HOME', lang) + '</a>'#13#10 + '</div>'#13#10 + ''#13#10 +
     '<div id="div-cnt" class="content">'#13#10 + '<h2>' + StringFormat(GetFhirMessage('UPLOAD', lang), [aType]) + '</h2>'#13#10 + '<form action="' + s +
@@ -3676,6 +3686,7 @@ begin
     end;
     Context := TOperationContext.Create;
     try
+      checkRequestByJs(context, request);
       ProcessRequest(Context, request, response);
     finally
       Context.Free;
@@ -3708,6 +3719,7 @@ begin
     request.CommandType := fcmdSearch;
     Context := TOperationContext.Create;
     try
+      checkRequestByJs(context, request);
       ProcessRequest(Context, request, response);
     finally
       Context.Free;
@@ -3871,6 +3883,11 @@ begin
   end;
 end;
 
+procedure TFhirWebServer.checkRequestByJs(context: TOperationContext; request: TFHIRRequest);
+begin
+  // js-todo - figure out which scripts to run, and then run them
+end;
+
 function TFhirWebServer.CheckSessionOK(Session: TFHIRSession; ip: string): boolean;
 var
   id, name, email, Msg: String;
@@ -3993,9 +4010,9 @@ begin
     op.type_ := TFHIRCoding.Create('http://hl7.org/fhir/testscript-operation-codes', CODES_TFHIRCommandType[req.CommandType].ToLower);
   op.resourceElement := TFhirCode.Create(req.ResourceName);
   if resp.format = ffJson then
-    op.Accept := ContentTypeJson
+    op.Accept := 'application/fhir+json'// ContentTypeJson
   else
-    op.Accept := ContentTypeXml;
+    op.Accept := 'application/fhir+xml';
   op.params := req.Parameters.Source;
   op.requestHeaderList.Add('Host', req.baseUrl);
   op.requestHeaderList.Add('Content-Type', MIMETYPES_TFHIRFormat[req.PostFormat]);
@@ -4237,9 +4254,9 @@ begin
 
   b := TBytesStream.Create;
   try
-    xml := TFHIRXMLComposer.Create(FServerContext.ValidatorContext.link, lang);
+    xml := TFHIRXMLComposer.Create(FServerContext.ValidatorContext.link, OutputStyleNormal, lang);
     try
-      xml.Compose(b, resource, false, nil);
+      xml.Compose(b, resource, nil);
     finally
       xml.Free;
     end;
@@ -4361,12 +4378,15 @@ end;
 
 procedure TFhirServerMaintenanceThread.Execute;
 begin
+
   logt('Starting TFhirServerMaintenanceThread');
   try
     FServer.ServerContext.TerminologyServer.MaintenanceThreadStatus := 'starting';
 {$IFDEF MSWINDOWS}
     CoInitialize(nil);
 {$ENDIF}
+    GJsHost := TJsHost.Create;
+
     repeat
       FServer.ServerContext.TerminologyServer.MaintenanceThreadStatus := 'sleeping';
       sleep(1000);
@@ -4409,6 +4429,9 @@ begin
       FServer.FMaintenanceThread := nil;
     except
     end;
+    GJsHost.Free;
+    GJsHost := nil;
+
 {$IFDEF MSWINDOWS}
     CoUninitialize;
 {$ENDIF}
@@ -4429,6 +4452,7 @@ end;
 
 procedure TFhirServerSubscriptionThread.Execute;
 begin
+  GJsHost := TJsHost.Create;
   logt('Starting TFhirServerSubscriptionThread');
   try
     FServer.ServerContext.TerminologyServer.SubscriptionThreadStatus := 'starting';
@@ -4453,6 +4477,8 @@ begin
   except
     logt('Failing TFhirServerSubscriptionThread');
   end;
+  GJsHost.Free;
+  GJsHost := nil;
 end;
 
 { TFhirServerEmailThread }
@@ -4468,6 +4494,7 @@ procedure TFhirServerEmailThread.Execute;
 var
   i: integer;
 begin
+  GJsHost := TJsHost.Create;
   logt('Starting TFhirServerEmailThread');
   try
     FServer.ServerContext.TerminologyServer.EmailThreadStatus := 'starting';
@@ -4497,6 +4524,9 @@ begin
   except
     logt('Failing TFhirServerEmailThread');
   end;
+  GJsHost.Free;
+  GJsHost := nil;
+
 end;
 
 { TAsyncTaskThread }
@@ -4539,6 +4569,7 @@ var
   us, cs: String;
   ctxt : TOperationContext;
 begin
+  GJsHost := TJsHost.Create;
   try
     status(atsWaiting, 'Waiting to start');
     sleep(100);
@@ -4595,6 +4626,8 @@ begin
     FServer.FLock.Unlock;
   end;
   FreeOnTerminate := true;
+  GJsHost.Free;
+  GJsHost := nil;
 end;
 
 procedure TAsyncTaskThread.kill;
@@ -4616,7 +4649,7 @@ begin
       f := TFileStream.Create(Path([FServer.ServerContext.TaskFolder, 'task-'+inttostr(key)+'-content'+EXT_WEB_TFHIRFormat[format]]), fmCreate);
       try
         // ffNDJson, { new line delimited JSON }
-        resourceToStream(response.Resource, f, FFormat, false);
+        resourceToStream(response.Resource, f, FFormat, OutputStyleNormal);
       finally
         f.Free;
       end;

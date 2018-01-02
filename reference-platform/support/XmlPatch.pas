@@ -149,7 +149,7 @@ begin
       ntElement :
         begin
           n := op.first;
-          ce := TMXmlElement.Create(ntElement, TMXmlElement(n).Name, n.localName, n.namespaceURI);
+          ce := TMXmlElement.CreateNSN(ntElement, TMXmlElement(n).Name, n.namespaceURI, n.localName);
           try
             ce.Attributes.addAll(n.Attributes);
             addChildNodes(doc, n, ce, '');
@@ -208,7 +208,7 @@ begin
     case n.nodeType of
       ntElement :
         begin
-        ce := TMXmlElement.create(ntElement, n.Name, n.localName, n.namespaceURI);
+        ce := TMXmlElement.createNSN(ntElement, n.Name, n.namespaceURI, n.localName);
         try
           elem := (n as TMXmlElement);
           ce.Attributes.addAll(elem.attributes);

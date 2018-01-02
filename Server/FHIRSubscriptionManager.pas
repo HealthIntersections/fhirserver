@@ -820,13 +820,13 @@ begin
       part.ContentType := 'text/plain';
       part.ContentTransfer := '7bit';
       if subst <> nil then
-        comp := MakeComposer('en', subst.channel.payload, nil)
+        comp := MakeComposer(OutputStylePretty, 'en', subst.channel.payload, nil)
       else
-        comp := MakeComposer('en', 'application/json', nil);
+        comp := MakeComposer(OutputStylePretty, 'en', 'application/json', nil);
       try
         m := TMemoryStream.Create;
         try
-          comp.Compose(m, resource, true, nil);
+          comp.Compose(m, resource, nil);
           m.Position := 0;
           att := TFHIRIdAttachment.Create(msg.MessageParts);
           att.LoadFromStream(m);
@@ -939,14 +939,14 @@ var
 begin
   comp := nil;
   if (subst.channel.payload = 'application/xml+fhir') or (subst.channel.payload = 'application/fhir+xml') or (subst.channel.payload = 'application/xml') then
-    comp := TFHIRXmlComposer.Create(TFHIRServerContext(ServerContext).ValidatorContext.link, 'en')
+    comp := TFHIRXmlComposer.Create(TFHIRServerContext(ServerContext).ValidatorContext.link, OutputStyleNormal, 'en')
   else if (subst.channel.payload = 'application/json+fhir') or (subst.channel.payload = 'application/fhir+json') or (subst.channel.payload = 'application/json') then
-    comp := TFHIRJsonComposer.Create(TFHIRServerContext(ServerContext).ValidatorContext.link, 'en')
+    comp := TFHIRJsonComposer.Create(TFHIRServerContext(ServerContext).ValidatorContext.link, OutputStyleNormal,'en')
   else if subst.channel.payload <> '' then
     raise Exception.Create('unknown payload type '+subst.channel.payload);
   try
     if comp <> nil then
-      b := TEncoding.UTF8.GetBytes(comp.Compose(package, false))
+      b := TEncoding.UTF8.GetBytes(comp.Compose(package))
     else
      SetLength(b, 0);
   finally

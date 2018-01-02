@@ -179,7 +179,8 @@ uses
   FHIRLog in '..\reference-platform\support\FHIRLog.pas',
   FhirPath in '..\reference-platform\r4\FhirPath.pas',
   InternetFetcher in '..\reference-platform\support\InternetFetcher.pas',
-  FHIRIndexBase in '..\reference-platform\support\FHIRIndexBase.pas';
+  FHIRIndexBase in '..\reference-platform\support\FHIRIndexBase.pas',
+  DigitalSignatures in '..\reference-platform\support\DigitalSignatures.pas';
 
 var
   runner : ITestRunner;

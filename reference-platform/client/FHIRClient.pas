@@ -85,6 +85,7 @@ Type
     function updateResource(resource : TFhirResource) : TFHIRResource; overload; virtual;
     procedure deleteResource(atype : TFhirResourceType; id : String); virtual;
     function search(allRecords : boolean; params : TStringList) : TFHIRBundle; overload; virtual;
+    function search(allRecords : boolean; params : string) : TFHIRBundle; overload; virtual;
     function search(atype : TFhirResourceType; allRecords : boolean; params : TStringList) : TFHIRBundle; overload; virtual;
     function search(atype : TFhirResourceType; allRecords : boolean; params : string) : TFHIRBundle; overload; virtual;
     function searchPost(atype : TFhirResourceType; allRecords : boolean; params : TStringList; resource : TFhirResource) : TFHIRBundle; virtual;
@@ -193,6 +194,7 @@ type
     function updateResource(resource : TFhirResource) : TFHIRResource; overload; override;
     procedure deleteResource(atype : TFhirResourceType; id : String); override;
     function search(allRecords : boolean; params : TStringList) : TFHIRBundle; overload; override;
+    function search(allRecords : boolean; params : string) : TFHIRBundle; overload; override;
     function search(atype : TFhirResourceType; allRecords : boolean; params : TStringList) : TFHIRBundle; overload; override;
     function search(atype : TFhirResourceType; allRecords : boolean; params : string) : TFHIRBundle; overload; override;
     function searchPost(atype : TFhirResourceType; allRecords : boolean; params : TStringList; resource : TFhirResource) : TFHIRBundle; override;
@@ -485,11 +487,11 @@ begin
   result := TBytesStream.create;
   try
     if Fjson then
-      comp := TFHIRJsonComposer.create(FWorker.link, 'en')
+      comp := TFHIRJsonComposer.create(FWorker.link, OutputStyleNormal, 'en')
     else
-      comp := TFHIRXmlComposer.create(FWorker.link, 'en');
+      comp := TFHIRXmlComposer.create(FWorker.link, OutputStyleNormal, 'en');
     try
-      comp.Compose(result, resource, false, nil);
+      comp.Compose(result, resource, nil);
     finally
       comp.free;
     end;
@@ -607,6 +609,11 @@ begin
   finally
     result.Free;
   end;
+end;
+
+function TFhirHTTPClient.search(allRecords: boolean; params: string): TFHIRBundle;
+begin
+  result := search(frtNull, allrecords, params);
 end;
 
 function TFhirHTTPClient.searchAgain(link: String): TFHIRBundle;
@@ -1298,6 +1305,11 @@ begin
 end;
 
 function TFhirClient.search(atype: TFhirResourceType; allRecords: boolean; params: string): TFHIRBundle;
+begin
+  raise Exception.Create('Must override search() in '+className);
+end;
+
+function TFhirClient.search(allRecords: boolean; params: string): TFHIRBundle;
 begin
   raise Exception.Create('Must override search() in '+className);
 end;

@@ -4944,9 +4944,9 @@ begin
     ComposeDecimalValue(json, 'period', elem.periodElement, false);
   if not elem.noCompose and (SummaryOption in [soFull, soSummary, soText, soData]) then
     ComposeDecimalProps(json, 'period', elem.periodElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soText, soData]) then
+  if not elem.noCompose and (not isCanonical or (elem.factor <> '1')) and (SummaryOption in [soFull, soSummary, soText, soData]) then
     ComposeDecimalValue(json, 'factor', elem.factorElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soText, soData]) then
+  if not elem.noCompose and (not isCanonical or (elem.factor <> '1')) and (SummaryOption in [soFull, soSummary, soText, soData]) then
     ComposeDecimalProps(json, 'factor', elem.factorElement, false);
   if not elem.noCompose and (SummaryOption in [soFull, soSummary, soText, soData]) then
     ComposeDecimalValue(json, 'lowerLimit', elem.lowerLimitElement, false);
@@ -6107,9 +6107,9 @@ begin
     ComposeStringValue(json, 'description', elem.descriptionElement, false);
   if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeStringProps(json, 'description', elem.descriptionElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and (not isCanonical or (elem.ordered <> false)) and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeBooleanValue(json, 'ordered', elem.orderedElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and (not isCanonical or (elem.ordered <> false)) and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeBooleanProps(json, 'ordered', elem.orderedElement, false);
   if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumValue(json, 'rules', elem.RulesElement, CODES_TFhirResourceSlicingRulesEnum, false);
@@ -6285,9 +6285,9 @@ begin
       json.FinishArray;
     end;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and (not isCanonical or (elem.versioningElement <> nil) and (elem.versioningElement.primitiveValue <> 'either')) and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumValue(json, 'versioning', elem.VersioningElement, CODES_TFhirReferenceVersionRulesEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and (not isCanonical or (elem.versioningElement <> nil) and (elem.versioningElement.primitiveValue <> 'either')) and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumProps(json, 'versioning', elem.VersioningElement, CODES_TFhirReferenceVersionRulesEnum, false);
   if not noObj then json.finishObject;
 end;
@@ -7668,17 +7668,17 @@ begin
       ComposeElementDefinitionConstraint(json, '', elem.constraintList[i]); {z - }
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soText, soData]) then
+  if not elem.noCompose and (not isCanonical or (elem.mustSupport <> false)) and (SummaryOption in [soFull, soSummary, soText, soData]) then
     ComposeBooleanValue(json, 'mustSupport', elem.mustSupportElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soText, soData]) then
+  if not elem.noCompose and (not isCanonical or (elem.mustSupport <> false)) and (SummaryOption in [soFull, soSummary, soText, soData]) then
     ComposeBooleanProps(json, 'mustSupport', elem.mustSupportElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soText, soData]) then
+  if not elem.noCompose and (not isCanonical or (elem.isModifier <> false)) and (SummaryOption in [soFull, soSummary, soText, soData]) then
     ComposeBooleanValue(json, 'isModifier', elem.isModifierElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soText, soData]) then
+  if not elem.noCompose and (not isCanonical or (elem.isModifier <> false)) and (SummaryOption in [soFull, soSummary, soText, soData]) then
     ComposeBooleanProps(json, 'isModifier', elem.isModifierElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soText, soData]) then
+  if not elem.noCompose and (not isCanonical or (elem.isSummary <> false)) and (SummaryOption in [soFull, soSummary, soText, soData]) then
     ComposeBooleanValue(json, 'isSummary', elem.isSummaryElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soText, soData]) then
+  if not elem.noCompose and (not isCanonical or (elem.isSummary <> false)) and (SummaryOption in [soFull, soSummary, soText, soData]) then
     ComposeBooleanProps(json, 'isSummary', elem.isSummaryElement, false);
   if not elem.noCompose and (SummaryOption in [soFull, soSummary, soText, soData]) then
     ComposeElementDefinitionBinding(json, 'binding', elem.binding); {a}
@@ -7783,9 +7783,9 @@ begin
      ComposeEnumValue(json, 'durationUnit', elem.DurationUnitElement, CODES_TFhirUnitsOfTimeEnum, false);
   if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumProps(json, 'durationUnit', elem.DurationUnitElement, CODES_TFhirUnitsOfTimeEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and (not isCanonical or (elem.frequency <> '1')) and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeIntegerValue(json, 'frequency', elem.frequencyElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and (not isCanonical or (elem.frequency <> '1')) and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeIntegerProps(json, 'frequency', elem.frequencyElement, false);
   if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeIntegerValue(json, 'frequencyMax', elem.frequencyMaxElement, false);
@@ -9997,9 +9997,9 @@ begin
       ComposeIdentifier(json, '', elem.identifierList[i]); {z - Identifier}
     json.FinishArray;
   end;
-  if not elem.noCompose and doCompose('active') and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and (not isCanonical or (elem.active <> true)) and doCompose('active') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeBooleanValue(json, 'active', elem.activeElement, false);
-  if not elem.noCompose and doCompose('active') and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and (not isCanonical or (elem.active <> true)) and doCompose('active') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeBooleanProps(json, 'active', elem.activeElement, false);
   if not elem.noCompose and doCompose('code') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeCodeableConcept(json, 'code', elem.code); {a}
@@ -11765,9 +11765,9 @@ begin
     ComposeStringValue(json, 'statusReason', elem.statusReasonElement, false);
   if not elem.noCompose and (SummaryOption in [soFull, soData]) then
     ComposeStringProps(json, 'statusReason', elem.statusReasonElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and (not isCanonical or (elem.prohibited <> false)) and (SummaryOption in [soFull, soData]) then
     ComposeBooleanValue(json, 'prohibited', elem.prohibitedElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and (not isCanonical or (elem.prohibited <> false)) and (SummaryOption in [soFull, soData]) then
     ComposeBooleanProps(json, 'prohibited', elem.prohibitedElement, false);
   if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.scheduled is TFhirTiming) then 
     ComposeTiming(json, 'scheduledTiming', TFhirTiming(elem.scheduled)) 
@@ -16476,9 +16476,9 @@ begin
     ComposeStringValue(json, 'display', elem.displayElement, false);
   if not elem.noCompose and (SummaryOption in [soFull, soData]) then
     ComposeStringProps(json, 'display', elem.displayElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and (not isCanonical or (elem.equivalenceElement <> nil) and (elem.equivalenceElement.primitiveValue <> 'equivalent')) and (SummaryOption in [soFull, soData]) then
      ComposeEnumValue(json, 'equivalence', elem.EquivalenceElement, CODES_TFhirConceptMapEquivalenceEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and (not isCanonical or (elem.equivalenceElement <> nil) and (elem.equivalenceElement.primitiveValue <> 'equivalent')) and (SummaryOption in [soFull, soData]) then
      ComposeEnumProps(json, 'equivalence', elem.EquivalenceElement, CODES_TFhirConceptMapEquivalenceEnum, false);
   if not elem.noCompose and (SummaryOption in [soFull, soData]) then
     ComposeStringValue(json, 'comment', elem.commentElement, false);
@@ -16953,9 +16953,9 @@ begin
      ComposeEnumValue(json, 'clinicalStatus', elem.ClinicalStatusElement, CODES_TFhirConditionClinicalEnum, false);
   if not elem.noCompose and doCompose('clinicalStatus') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumProps(json, 'clinicalStatus', elem.ClinicalStatusElement, CODES_TFhirConditionClinicalEnum, false);
-  if not elem.noCompose and doCompose('verificationStatus') and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and (not isCanonical or (elem.verificationStatusElement <> nil) and (elem.verificationStatusElement.primitiveValue <> 'unknown')) and doCompose('verificationStatus') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumValue(json, 'verificationStatus', elem.VerificationStatusElement, CODES_TFhirConditionVerStatusEnum, false);
-  if not elem.noCompose and doCompose('verificationStatus') and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and (not isCanonical or (elem.verificationStatusElement <> nil) and (elem.verificationStatusElement.primitiveValue <> 'unknown')) and doCompose('verificationStatus') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumProps(json, 'verificationStatus', elem.VerificationStatusElement, CODES_TFhirConditionVerStatusEnum, false);
   if not elem.noCompose and doCompose('category') and (SummaryOption in [soFull, soData]) and (elem.categoryList.Count > 0) then
   begin
@@ -19428,9 +19428,9 @@ begin
      ComposeEnumProps(json, 'status', elem.StatusElement, CODES_TFhirRequestStatusEnum, false);
   if not elem.noCompose and doCompose('intent') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeCodeableConcept(json, 'intent', elem.intent); {a}
-  if not elem.noCompose and doCompose('priority') and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and (not isCanonical or (elem.priorityElement <> nil) and (elem.priorityElement.primitiveValue <> 'If missing, normal priority')) and doCompose('priority') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumValue(json, 'priority', elem.PriorityElement, CODES_TFhirRequestPriorityEnum, false);
-  if not elem.noCompose and doCompose('priority') and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and (not isCanonical or (elem.priorityElement <> nil) and (elem.priorityElement.primitiveValue <> 'If missing, normal priority')) and doCompose('priority') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumProps(json, 'priority', elem.PriorityElement, CODES_TFhirRequestPriorityEnum, false);
   if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.code is TFhirReference) then
     ComposeReference(json, 'codeReference', TFhirReference(elem.code))
@@ -21138,10 +21138,7 @@ begin
     if jsn.has('length') then
         result.length := ParseDuration(jsn.vObj['length']);{q3}
     if jsn.has('reason') then
-      if jsn.node['reason'] is TJsonObject then
-        result.reasonList.add(parseCodeableConcept(jsn.obj['reason']))
-      else
-        iterateArray(jsn.vArr['reason'], result.reasonList, parseCodeableConcept);
+      iterateArray(jsn.vArr['reason'], result.reasonList, parseCodeableConcept);
     if jsn.has('diagnosis') then
       iterateArray(jsn.vArr['diagnosis'], result.diagnosisList, parseEncounterDiagnosis);
     if jsn.has('account') then
@@ -22196,13 +22193,13 @@ begin
     ComposeBooleanProps(json, 'includeDesignations', elem.includeDesignationsElement, false);
   if not elem.noCompose and doCompose('designation') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeExpansionProfileDesignation(json, 'designation', elem.designation); {a}
-  if not elem.noCompose and doCompose('includeDefinition') and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and (not isCanonical or (elem.includeDefinition <> false)) and doCompose('includeDefinition') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeBooleanValue(json, 'includeDefinition', elem.includeDefinitionElement, false);
-  if not elem.noCompose and doCompose('includeDefinition') and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and (not isCanonical or (elem.includeDefinition <> false)) and doCompose('includeDefinition') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeBooleanProps(json, 'includeDefinition', elem.includeDefinitionElement, false);
-  if not elem.noCompose and doCompose('activeOnly') and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and (not isCanonical or (elem.activeOnly <> false)) and doCompose('activeOnly') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeBooleanValue(json, 'activeOnly', elem.activeOnlyElement, false);
-  if not elem.noCompose and doCompose('activeOnly') and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and (not isCanonical or (elem.activeOnly <> false)) and doCompose('activeOnly') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeBooleanProps(json, 'activeOnly', elem.activeOnlyElement, false);
   if not elem.noCompose and doCompose('excludeNested') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeBooleanValue(json, 'excludeNested', elem.excludeNestedElement, false);
@@ -24172,9 +24169,9 @@ begin
      ComposeEnumValue(json, 'status', elem.StatusElement, CODES_TFhirHistoryStatusEnum, false);
   if not elem.noCompose and doCompose('status') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumProps(json, 'status', elem.StatusElement, CODES_TFhirHistoryStatusEnum, false);
-  if not elem.noCompose and doCompose('notDone') and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and (not isCanonical or (elem.notDone <> false)) and doCompose('notDone') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeBooleanValue(json, 'notDone', elem.notDoneElement, false);
-  if not elem.noCompose and doCompose('notDone') and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and (not isCanonical or (elem.notDone <> false)) and doCompose('notDone') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeBooleanProps(json, 'notDone', elem.notDoneElement, false);
   if not elem.noCompose and doCompose('notDoneReason') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeCodeableConcept(json, 'notDoneReason', elem.notDoneReason); {a}
@@ -24954,9 +24951,9 @@ begin
     ComposeReference{Resource}(json, 'entity', elem.entity); {a}
   if not elem.noCompose and (SummaryOption in [soFull, soData]) then
     ComposePeriod(json, 'period', elem.period); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and (not isCanonical or (elem.inactive <> false)) and (SummaryOption in [soFull, soData]) then
     ComposeBooleanValue(json, 'inactive', elem.inactiveElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and (not isCanonical or (elem.inactive <> false)) and (SummaryOption in [soFull, soData]) then
     ComposeBooleanProps(json, 'inactive', elem.inactiveElement, false);
   if not noObj then json.finishObject;
 end;
@@ -25014,9 +25011,9 @@ begin
       ComposeIdentifier(json, '', elem.identifierList[i]); {z - Identifier}
     json.FinishArray;
   end;
-  if not elem.noCompose and doCompose('active') and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and (not isCanonical or (elem.active <> true)) and doCompose('active') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeBooleanValue(json, 'active', elem.activeElement, false);
-  if not elem.noCompose and doCompose('active') and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and (not isCanonical or (elem.active <> true)) and doCompose('active') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeBooleanProps(json, 'active', elem.activeElement, false);
   if not elem.noCompose and doCompose('type_') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumValue(json, 'type', elem.Type_Element, CODES_TFhirGroupTypeEnum, false);
@@ -25370,9 +25367,9 @@ begin
       ComposeIdentifier(json, '', elem.identifierList[i]); {z - Identifier}
     json.FinishArray;
   end;
-  if not elem.noCompose and doCompose('active') and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and (not isCanonical or (elem.active <> true)) and doCompose('active') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeBooleanValue(json, 'active', elem.activeElement, false);
-  if not elem.noCompose and doCompose('active') and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and (not isCanonical or (elem.active <> true)) and doCompose('active') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeBooleanProps(json, 'active', elem.activeElement, false);
   if not elem.noCompose and doCompose('providedBy') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{TFhirOrganization}(json, 'providedBy', elem.providedBy); {a}
@@ -27441,9 +27438,9 @@ begin
   if (elem = nil) then
     exit;
   ComposeDomainResourceProperties(json, elem);
-  if not elem.noCompose and doCompose('active') and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and (not isCanonical or (elem.active <> true)) and doCompose('active') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeBooleanValue(json, 'active', elem.activeElement, false);
-  if not elem.noCompose and doCompose('active') and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and (not isCanonical or (elem.active <> true)) and doCompose('active') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeBooleanProps(json, 'active', elem.activeElement, false);
   if not elem.noCompose and doCompose('author') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{Resource}(json, 'author', elem.author); {a}
@@ -27495,9 +27492,9 @@ begin
   ComposeBackboneElementProperties(json, elem);
   if not elem.noCompose and (SummaryOption in [soFull, soData]) then
     ComposeCodeableConcept(json, 'flag', elem.flag); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and (not isCanonical or (elem.deleted <> false)) and (SummaryOption in [soFull, soData]) then
     ComposeBooleanValue(json, 'deleted', elem.deletedElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and (not isCanonical or (elem.deleted <> false)) and (SummaryOption in [soFull, soData]) then
     ComposeBooleanProps(json, 'deleted', elem.deletedElement, false);
   if not elem.noCompose and (SummaryOption in [soFull, soData]) then
     ComposeDateTimeValue(json, 'date', elem.dateElement, false);
@@ -28787,9 +28784,9 @@ begin
     ComposePositiveIntValue(json, 'width', elem.widthElement, false);
   if not elem.noCompose and doCompose('width') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposePositiveIntProps(json, 'width', elem.widthElement, false);
-  if not elem.noCompose and doCompose('frames') and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and (not isCanonical or (elem.frames <> '1')) and doCompose('frames') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposePositiveIntValue(json, 'frames', elem.framesElement, false);
-  if not elem.noCompose and doCompose('frames') and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and (not isCanonical or (elem.frames <> '1')) and doCompose('frames') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposePositiveIntProps(json, 'frames', elem.framesElement, false);
   if not elem.noCompose and doCompose('duration') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeUnsignedIntValue(json, 'duration', elem.durationElement, false);
@@ -30177,9 +30174,9 @@ begin
      ComposeEnumProps(json, 'code', elem.CodeElement, CODES_TFhirResourceTypesEnum, false);
   if not elem.noCompose and (SummaryOption in [soFull, soData]) then
     ComposeReference{TFhirStructureDefinition}(json, 'profile', elem.profile); {a}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and (not isCanonical or (elem.min <> '0')) and (SummaryOption in [soFull, soData]) then
     ComposeUnsignedIntValue(json, 'min', elem.minElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and (not isCanonical or (elem.min <> '0')) and (SummaryOption in [soFull, soData]) then
     ComposeUnsignedIntProps(json, 'min', elem.minElement, false);
   if not elem.noCompose and (SummaryOption in [soFull, soData]) then
     ComposeStringValue(json, 'max', elem.maxElement, false);
@@ -30398,9 +30395,9 @@ begin
       ComposeMessageDefinitionFocus(json, '', elem.focusList[i]); {z - }
     json.FinishArray;
   end;
-  if not elem.noCompose and doCompose('responseRequired') and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and (not isCanonical or (elem.responseRequired <> false)) and doCompose('responseRequired') and (SummaryOption in [soFull, soData]) then
     ComposeBooleanValue(json, 'responseRequired', elem.responseRequiredElement, false);
-  if not elem.noCompose and doCompose('responseRequired') and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and (not isCanonical or (elem.responseRequired <> false)) and doCompose('responseRequired') and (SummaryOption in [soFull, soData]) then
     ComposeBooleanProps(json, 'responseRequired', elem.responseRequiredElement, false);
   if not elem.noCompose and doCompose('allowedResponse') and (SummaryOption in [soFull, soData]) and (elem.allowedResponseList.Count > 0) then
   begin
@@ -32347,10 +32344,7 @@ begin
     if jsn.has('active') or jsn.has('_active') then
         result.activeElement := ParseBoolean(jsn['active'], jsn.vObj['_active']);{q}
     if jsn.has('type') then
-      if jsn.node['type'] is TJsonObject then
-        result.type_list.add(ParseCodeableConcept(jsn.obj['type']))
-      else
-        iterateArray(jsn.vArr['type'], result.type_List, parseCodeableConcept);
+      iterateArray(jsn.vArr['type'], result.type_List, parseCodeableConcept);
     if jsn.has('name') or jsn.has('_name') then
         result.nameElement := ParseString(jsn['name'], jsn.vObj['_name']);{q}
       if jsn.has('alias') or jsn.has('_alias') then
@@ -32383,9 +32377,9 @@ begin
       ComposeIdentifier(json, '', elem.identifierList[i]); {z - Identifier}
     json.FinishArray;
   end;
-  if not elem.noCompose and doCompose('active') and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and (not isCanonical or (elem.active <> true)) and doCompose('active') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeBooleanValue(json, 'active', elem.activeElement, false);
-  if not elem.noCompose and doCompose('active') and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and (not isCanonical or (elem.active <> true)) and doCompose('active') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeBooleanProps(json, 'active', elem.activeElement, false);
   if not elem.noCompose and doCompose('type_') and (SummaryOption in [soFull, soSummary, soData]) and (elem.type_List.Count > 0) then
   begin
@@ -32723,9 +32717,9 @@ begin
       ComposeIdentifier(json, '', elem.identifierList[i]); {z - Identifier}
     json.FinishArray;
   end;
-  if not elem.noCompose and doCompose('active') and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and (not isCanonical or (elem.active <> true)) and doCompose('active') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeBooleanValue(json, 'active', elem.activeElement, false);
-  if not elem.noCompose and doCompose('active') and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and (not isCanonical or (elem.active <> true)) and doCompose('active') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeBooleanProps(json, 'active', elem.activeElement, false);
   if not elem.noCompose and doCompose('name') and (SummaryOption in [soFull, soSummary, soData]) and (elem.nameList.Count > 0) then
   begin
@@ -34149,9 +34143,9 @@ begin
       ComposeIdentifier(json, '', elem.identifierList[i]); {z - Identifier}
     json.FinishArray;
   end;
-  if not elem.noCompose and doCompose('active') and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and (not isCanonical or (elem.active <> true)) and doCompose('active') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeBooleanValue(json, 'active', elem.activeElement, false);
-  if not elem.noCompose and doCompose('active') and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and (not isCanonical or (elem.active <> true)) and doCompose('active') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeBooleanProps(json, 'active', elem.activeElement, false);
   if not elem.noCompose and doCompose('name') and (SummaryOption in [soFull, soSummary, soData]) and (elem.nameList.Count > 0) then
   begin
@@ -34388,9 +34382,9 @@ begin
       ComposeIdentifier(json, '', elem.identifierList[i]); {z - Identifier}
     json.FinishArray;
   end;
-  if not elem.noCompose and doCompose('active') and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and (not isCanonical or (elem.active <> true)) and doCompose('active') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeBooleanValue(json, 'active', elem.activeElement, false);
-  if not elem.noCompose and doCompose('active') and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and (not isCanonical or (elem.active <> true)) and doCompose('active') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeBooleanProps(json, 'active', elem.activeElement, false);
   if not elem.noCompose and doCompose('period') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposePeriod(json, 'period', elem.period); {a}
@@ -34594,10 +34588,7 @@ begin
     if jsn.has('reasonCode') then
       iterateArray(jsn.vArr['reasonCode'], result.reasonCodeList, parseCodeableConcept);
     if jsn.has('reasonReference') then
-      if jsn.node['reasonReference'] is TJsonObject then
-        result.reasonReferenceList.add(parseReference(jsn.obj['reasonReference']))
-      else
-        iterateArray(jsn.vArr['reasonReference'], result.reasonReferenceList, parseReference{Resource});
+      iterateArray(jsn.vArr['reasonReference'], result.reasonReferenceList, parseReference{Resource});
     if jsn.has('bodySite') then
       iterateArray(jsn.vArr['bodySite'], result.bodySiteList, parseCodeableConcept);
     if jsn.has('outcome') then
@@ -34659,9 +34650,9 @@ begin
      ComposeEnumValue(json, 'status', elem.StatusElement, CODES_TFhirEventStatusEnum, false);
   if not elem.noCompose and doCompose('status') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumProps(json, 'status', elem.StatusElement, CODES_TFhirEventStatusEnum, false);
-  if not elem.noCompose and doCompose('notDone') and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and (not isCanonical or (elem.notDone <> false)) and doCompose('notDone') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeBooleanValue(json, 'notDone', elem.notDoneElement, false);
-  if not elem.noCompose and doCompose('notDone') and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and (not isCanonical or (elem.notDone <> false)) and doCompose('notDone') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeBooleanProps(json, 'notDone', elem.notDoneElement, false);
   if not elem.noCompose and doCompose('notDoneReason') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeCodeableConcept(json, 'notDoneReason', elem.notDoneReason); {a}
@@ -34938,9 +34929,9 @@ begin
      ComposeEnumValue(json, 'priority', elem.PriorityElement, CODES_TFhirRequestPriorityEnum, false);
   if not elem.noCompose and doCompose('priority') and (SummaryOption in [soFull, soSummary, soData]) then
      ComposeEnumProps(json, 'priority', elem.PriorityElement, CODES_TFhirRequestPriorityEnum, false);
-  if not elem.noCompose and doCompose('doNotPerform') and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and (not isCanonical or (elem.doNotPerform <> false)) and doCompose('doNotPerform') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeBooleanValue(json, 'doNotPerform', elem.doNotPerformElement, false);
-  if not elem.noCompose and doCompose('doNotPerform') and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and (not isCanonical or (elem.doNotPerform <> false)) and doCompose('doNotPerform') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeBooleanProps(json, 'doNotPerform', elem.doNotPerformElement, false);
   if not elem.noCompose and doCompose('category') and (SummaryOption in [soFull, soSummary, soData]) and (elem.categoryList.Count > 0) then
   begin
@@ -35745,13 +35736,13 @@ begin
       ComposeQuestionnaireItemEnableWhen(json, '', elem.enableWhenList[i]); {z - }
     json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and (not isCanonical or (elem.required <> false)) and (SummaryOption in [soFull, soData]) then
     ComposeBooleanValue(json, 'required', elem.requiredElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and (not isCanonical or (elem.required <> false)) and (SummaryOption in [soFull, soData]) then
     ComposeBooleanProps(json, 'required', elem.requiredElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and (not isCanonical or (elem.repeats <> false)) and (SummaryOption in [soFull, soData]) then
     ComposeBooleanValue(json, 'repeats', elem.repeatsElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and (not isCanonical or (elem.repeats <> false)) and (SummaryOption in [soFull, soData]) then
     ComposeBooleanProps(json, 'repeats', elem.repeatsElement, false);
   if not elem.noCompose and (SummaryOption in [soFull, soData]) then
     ComposeBooleanValue(json, 'readOnly', elem.readOnlyElement, false);
@@ -36771,9 +36762,9 @@ begin
       ComposeIdentifier(json, '', elem.identifierList[i]); {z - Identifier}
     json.FinishArray;
   end;
-  if not elem.noCompose and doCompose('active') and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and (not isCanonical or (elem.active <> true)) and doCompose('active') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeBooleanValue(json, 'active', elem.activeElement, false);
-  if not elem.noCompose and doCompose('active') and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and (not isCanonical or (elem.active <> true)) and doCompose('active') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeBooleanProps(json, 'active', elem.activeElement, false);
   if not elem.noCompose and doCompose('patient') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeReference{TFhirPatient}(json, 'patient', elem.patient); {a}
@@ -37770,9 +37761,9 @@ begin
       ComposeIdentifier(json, '', elem.identifierList[i]); {z - Identifier}
     json.FinishArray;
   end;
-  if not elem.noCompose and doCompose('active') and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and (not isCanonical or (elem.active <> true)) and doCompose('active') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeBooleanValue(json, 'active', elem.activeElement, false);
-  if not elem.noCompose and doCompose('active') and (SummaryOption in [soFull, soSummary, soData]) then
+  if not elem.noCompose and (not isCanonical or (elem.active <> true)) and doCompose('active') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeBooleanProps(json, 'active', elem.activeElement, false);
   if not elem.noCompose and doCompose('serviceCategory') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeCodeableConcept(json, 'serviceCategory', elem.serviceCategory); {a}
@@ -42660,13 +42651,13 @@ begin
     exit;
   if not noObj then json.valueObject(name);
   ComposeBackboneElementProperties(json, elem);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and (not isCanonical or (elem.required <> false)) and (SummaryOption in [soFull, soData]) then
     ComposeBooleanValue(json, 'required', elem.requiredElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and (not isCanonical or (elem.required <> false)) and (SummaryOption in [soFull, soData]) then
     ComposeBooleanProps(json, 'required', elem.requiredElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and (not isCanonical or (elem.validated <> false)) and (SummaryOption in [soFull, soData]) then
     ComposeBooleanValue(json, 'validated', elem.validatedElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and (not isCanonical or (elem.validated <> false)) and (SummaryOption in [soFull, soData]) then
     ComposeBooleanProps(json, 'validated', elem.validatedElement, false);
   if not elem.noCompose and (SummaryOption in [soFull, soData]) then
     ComposeStringValue(json, 'description', elem.descriptionElement, false);
@@ -42762,13 +42753,13 @@ begin
     exit;
   if not noObj then json.valueObject(name);
   ComposeBackboneElementProperties(json, elem);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and (not isCanonical or (elem.autocreate <> false)) and (SummaryOption in [soFull, soData]) then
     ComposeBooleanValue(json, 'autocreate', elem.autocreateElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and (not isCanonical or (elem.autocreate <> false)) and (SummaryOption in [soFull, soData]) then
     ComposeBooleanProps(json, 'autocreate', elem.autocreateElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and (not isCanonical or (elem.autodelete <> false)) and (SummaryOption in [soFull, soData]) then
     ComposeBooleanValue(json, 'autodelete', elem.autodeleteElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and (not isCanonical or (elem.autodelete <> false)) and (SummaryOption in [soFull, soData]) then
     ComposeBooleanProps(json, 'autodelete', elem.autodeleteElement, false);
   if not elem.noCompose and (SummaryOption in [soFull, soData]) then
     ComposeReference{TFhirReference}(json, 'resource', elem.resource); {a}
@@ -43240,9 +43231,9 @@ begin
     ComposeIntegerValue(json, 'destination', elem.destinationElement, false);
   if not elem.noCompose and (SummaryOption in [soFull, soData]) then
     ComposeIntegerProps(json, 'destination', elem.destinationElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and (not isCanonical or (elem.encodeRequestUrl <> true)) and (SummaryOption in [soFull, soData]) then
     ComposeBooleanValue(json, 'encodeRequestUrl', elem.encodeRequestUrlElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and (not isCanonical or (elem.encodeRequestUrl <> true)) and (SummaryOption in [soFull, soData]) then
     ComposeBooleanProps(json, 'encodeRequestUrl', elem.encodeRequestUrlElement, false);
   if not elem.noCompose and (SummaryOption in [soFull, soData]) then
     ComposeIntegerValue(json, 'origin', elem.originElement, false);
@@ -43487,9 +43478,9 @@ begin
     ComposeStringValue(json, 'value', elem.valueElement, false);
   if not elem.noCompose and (SummaryOption in [soFull, soData]) then
     ComposeStringProps(json, 'value', elem.valueElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and (not isCanonical or (elem.warningOnly <> false)) and (SummaryOption in [soFull, soData]) then
     ComposeBooleanValue(json, 'warningOnly', elem.warningOnlyElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and (not isCanonical or (elem.warningOnly <> false)) and (SummaryOption in [soFull, soData]) then
     ComposeBooleanProps(json, 'warningOnly', elem.warningOnlyElement, false);
   if not noObj then json.finishObject;
 end;
@@ -44598,13 +44589,13 @@ begin
     ComposeUriValue(json, 'system', elem.systemElement, false);
   if not elem.noCompose and (SummaryOption in [soFull, soData]) then
     ComposeUriProps(json, 'system', elem.systemElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and (not isCanonical or (elem.abstract <> false)) and (SummaryOption in [soFull, soData]) then
     ComposeBooleanValue(json, 'abstract', elem.abstractElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and (not isCanonical or (elem.abstract <> false)) and (SummaryOption in [soFull, soData]) then
     ComposeBooleanProps(json, 'abstract', elem.abstractElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and (not isCanonical or (elem.inactive <> false)) and (SummaryOption in [soFull, soData]) then
     ComposeBooleanValue(json, 'inactive', elem.inactiveElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+  if not elem.noCompose and (not isCanonical or (elem.inactive <> false)) and (SummaryOption in [soFull, soData]) then
     ComposeBooleanProps(json, 'inactive', elem.inactiveElement, false);
   if not elem.noCompose and (SummaryOption in [soFull, soData]) then
     ComposeStringValue(json, 'version', elem.versionElement, false);

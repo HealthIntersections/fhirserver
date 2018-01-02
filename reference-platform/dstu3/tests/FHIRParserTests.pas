@@ -77,14 +77,14 @@ begin
     Assert.IsNotNull(r, 'Resource could not be loaded');
     fn := MakeTempFilename();
     try
-      TFHIRXmlComposer.composeFile(nil, r, 'en', fn);
+      TFHIRXmlComposer.composeFile(nil, r, 'en', fn, OutputStylePretty);
       b := CheckXMLIsSame(filename, fn, msg);
       assert.IsTrue(b, msg);
     finally
       DeleteFile(fn);
     end;
     j1 := MakeTempFilename();
-    TFHIRJsonComposer.composeFile(nil, r, 'en', j1, true);
+    TFHIRJsonComposer.composeFile(nil, r, 'en', j1, OutputStylePretty);
   finally
     r.Free;
   end;
@@ -121,14 +121,14 @@ begin
     Assert.IsNotNull(r, 'Resource could not be loaded');
     fn := MakeTempFilename();
     try
-      TFHIRJsonComposer.composeFile(nil, r, 'en', fn);
+      TFHIRJsonComposer.composeFile(nil, r, 'en', fn, OutputStyleNormal);
       b := CheckJsonIsSame(j2, fn, msg);
       assert.IsTrue(b, msg);
     finally
       DeleteFile(fn);
     end;
     x1 := MakeTempFilename();
-    TFHIRXmlComposer.composeFile(nil, r, 'en', x1);
+    TFHIRXmlComposer.composeFile(nil, r, 'en', x1, OutputStyleNormal);
   finally
     r.Free;
   end;
@@ -176,14 +176,14 @@ begin
     Assert.IsNotNull(r, 'Resource could not be loaded');
     fn := MakeTempFilename();
     try
-      TFHIRJsonComposer.composeFile(nil, r, 'en', fn);
+      TFHIRJsonComposer.composeFile(nil, r, 'en', fn, OutputStyleNormal);
       b := CheckJsonIsSame(filename, fn, msg);
       assert.IsTrue(b, msg);
     finally
       DeleteFile(fn);
     end;
     j1 := MakeTempFilename();
-    TFHIRXmlComposer.composeFile(nil, r, 'en', j1, true);
+    TFHIRXmlComposer.composeFile(nil, r, 'en', j1, OutputStylePretty);
   finally
     r.Free;
   end;
@@ -220,14 +220,14 @@ begin
     Assert.IsNotNull(r, 'Resource could not be loaded');
     fn := MakeTempFilename();
     try
-      TFHIRXmlComposer.composeFile(nil, r, 'en', fn);
+      TFHIRXmlComposer.composeFile(nil, r, 'en', fn, OutputStyleNormal);
       b := CheckXmlIsSame(j2, fn, msg);
       assert.IsTrue(b, msg);
     finally
       DeleteFile(fn);
     end;
     x1 := MakeTempFilename();
-    TFHIRJsonComposer.composeFile(nil, r, 'en', x1);
+    TFHIRJsonComposer.composeFile(nil, r, 'en', x1, OutputStyleNormal);
   finally
     r.Free;
   end;

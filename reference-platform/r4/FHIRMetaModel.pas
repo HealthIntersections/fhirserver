@@ -220,7 +220,7 @@ type
     class function parseFile(context : TFHIRWorkerContext; filename : string; inputFormat : TFhirFormat) : TFHIRMMElement;
     class function parse(context : TFHIRWorkerContext; source : TStream; inputFormat : TFhirFormat) : TFHIRMMElement;
     class procedure compose(context : TFHIRWorkerContext; e : TFHIRMMElement; destination : TStream; outputFormat : TFhirFormat; pretty : boolean; base : String = '');
-    class procedure composeFile(context : TFHIRWorkerContext; e : TFHIRMMElement; filename : String; outputFormat : TFhirFormat; pretty : boolean; base : String = '');
+    class procedure composeFile(context : TFHIRWorkerContext; e : TFHIRMMElement; filename : String; outputFormat : TFhirFormat; style : TFHIROutputStyle; base : String = '');
     class function makeParser(context : TFHIRWorkerContext; format : TFhirFormat) : TFHIRMMParserBase;
   end;
 
@@ -1280,13 +1280,13 @@ end;
 
 { TFHIRMMManager }
 
-class procedure TFHIRMMManager.composeFile(context: TFHIRWorkerContext; e: TFHIRMMElement; filename: String; outputFormat: TFhirFormat; pretty: boolean; base: String);
+class procedure TFHIRMMManager.composeFile(context: TFHIRWorkerContext; e: TFHIRMMElement; filename: String; outputFormat: TFhirFormat; style : TFHIROutputStyle; base: String);
 var
   f : TFileStream;
 begin
   f := TFileStream.create(filename, fmCreate);
   try
-    compose(context, e, f, outputFormat, pretty, base);
+    compose(context, e, f, outputFormat, style = OutputStylePretty, base);
   finally
     f.free;
   end;
@@ -2154,7 +2154,7 @@ end;
 
 procedure TFHIRMMJsonParser.compose(e : TFHIRMMElement; stream : TAdvStream; pretty : boolean; base : String);
 begin
-  json := TJSONWriter.Create;
+  json := TJsonWriterDirect.create;
   try
     json.Stream := stream.Link;
     json.Start;

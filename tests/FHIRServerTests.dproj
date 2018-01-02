@@ -382,6 +382,13 @@
         <DCCReference Include="..\Libraries\js\ChakraCommon.pas"/>
         <DCCReference Include="..\Libraries\js\Javascript.pas"/>
         <DCCReference Include="..\reference-platform\support\Tests\DigitalSignatureTests.pas"/>
+        <DCCReference Include="..\Libraries\js\AdvJavascript.pas"/>
+        <DCCReference Include="..\reference-platform\r4\FHIRJavascriptReg.pas"/>
+        <DCCReference Include="..\Libraries\js\FHIRJavascript.pas"/>
+        <DCCReference Include="..\Libraries\js\FHIRJavascriptTests.pas"/>
+        <DCCReference Include="..\Libraries\js\FHIRClientJs.pas"/>
+        <DCCReference Include="..\Server\ServerEventJs.pas"/>
+        <DCCReference Include="ServerJavascriptHost.pas"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>

@@ -223,6 +223,7 @@
         <DCCReference Include="..\..\Libraries\js\Javascript.pas"/>
         <DCCReference Include="..\..\Libraries\js\ChakraCommon.pas"/>
         <DCCReference Include="..\..\Libraries\js\JavascriptTests.pas"/>
+        <DCCReference Include="..\support\DigitalSignatures.pas"/>
         <None Include="Profiling\AQtimeModule1.aqt"/>
         <BuildConfiguration Include="Debug">
             <Key>Cfg_2</Key>

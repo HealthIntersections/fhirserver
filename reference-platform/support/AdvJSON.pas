@@ -241,19 +241,18 @@ Type
   TJSONWriter = class (TAdvTextFormatter)
   private
     FBuilder : TAdvStringBuilder;
-    FName : String;
-    FCache : String;
-    FProperty : Boolean;
-    Function UseName : String;
-    Function UseCache : String;
+  protected
+    procedure doValue(name, value : String); virtual;
+
     Function JSONString(const value : String) : String;
-    procedure DoName(const name : String);
-  Public
-    Constructor Create; Override;
+  public
+    constructor Create; override;
     Destructor Destroy; Override;
     Function Link: TJSONWriter; overload;
-    Procedure Start;
-    Procedure Finish;
+    function canInject : boolean; virtual;
+
+    Procedure Start; virtual;
+    Procedure Finish; virtual;
 
     Procedure Value(Const name : String; Const avalue : String); overload;
     Procedure ValueNumber(Const name : String; Const avalue : String); overload;
@@ -264,16 +263,16 @@ Type
     Procedure Value(Const name : String; avalue : Double); overload;
     Procedure ValueDate(Const name : String; aValue : TDateTime); overload;
     Procedure ValueNull(Const name : String);
-    Procedure ValueBytes(Const name : String; bytes : TBytes);
+    Procedure ValueBytes(Const name : String; bytes : TBytes); virtual;
 
-    Procedure ValueObject(Const name : String); Overload;
-    Procedure ValueObject; Overload;
-    Procedure FinishObject;
+    Procedure ValueObject(Const name : String); Overload; virtual;
+    Procedure ValueObject; Overload; virtual;
+    Procedure FinishObject; virtual;
 
-    Procedure ValueArray(Const name : String);
-    Procedure FinishArray;
+    Procedure ValueArray(Const name : String); virtual;
+    Procedure FinishArray; virtual;
 
-    Procedure ValueInArray(Const value : String); overload;
+    Procedure ValueInArray(Const value : String); overload; virtual;
     Procedure ValueNumberInArray(Const value : String); overload;
     Procedure ValueInArray(value : Boolean); overload;
     Procedure ValueInArray(value : Integer); overload;
@@ -287,12 +286,71 @@ Type
     Procedure WriteArray(name : String; arr : TJsonArray);
 
     function ToString : String; override;
+
     class Function writeObject(obj : TJsonObject; pretty : boolean = false) : TBytes; overload;
     class Function writeObjectStr(obj : TJsonObject; pretty : boolean = false) : String; overload;
     class Procedure writeObject(stream : TStream; obj : TJsonObject; pretty : boolean = false); overload;
     class Procedure writeObject(stream : TAdvStream; obj : TJsonObject; pretty : boolean = false); overload;
+  end;
+
+  TJsonWriterDirect = class (TJSONWriter)
+  private
+    FName : String;
+    FCache : String;
+    FProperty : Boolean;
+    Function UseName : String;
+    Function UseCache : String;
+    procedure DoName(const name : String);
+  protected
+    procedure doValue(name, value : String); override;
+  Public
+    Function Link: TJsonWriterDirect; overload;
+    function canInject : boolean; override;
+    Procedure Start; override;
+    Procedure Finish; override;
+
+    Procedure ValueBytes(Const name : String; bytes : TBytes); override;
+    Procedure ValueObject(Const name : String); Overload; override;
+    Procedure ValueObject; Overload; override;
+    Procedure FinishObject; override;
+    Procedure ValueArray(Const name : String); override;
+    Procedure FinishArray; override;
+    Procedure ValueInArray(Const value : String); overload; override;
   End;
 
+  TCanonicalJsonNodeType = (jntProperty, jntObject, jntArray);
+
+  TCanonicalJsonNode = class (TAdvObject)
+  private
+    FType : TCanonicalJsonNodeType;
+    FName : String;
+    FValue : String;
+    FChildren : TAdvList<TCanonicalJsonNode>;
+  public
+    constructor Create(aType : TCanonicalJsonNodeType);
+    destructor Destroy; override;
+    function link : TCanonicalJsonNode; overload;
+  end;
+
+  // this one resorts all attributes to alphametical order
+  TJsonWriterCanonical = class (TJSONWriter)
+  private
+    FObject : TCanonicalJsonNode;
+    FStack : TAdvList<TCanonicalJsonNode>;
+    procedure commitObject(node : TCanonicalJsonNode);
+    procedure commitArray(node : TCanonicalJsonNode);
+    procedure doValue(name, value : String); override;
+  public
+    Function Link: TJsonWriterCanonical; overload;
+    Procedure Start; override;
+    Procedure Finish; override;
+    Procedure ValueObject(Const name : String); Overload; override;
+    Procedure ValueObject; Overload; override;
+    Procedure FinishObject; override;
+    Procedure ValueArray(Const name : String); override;
+    Procedure FinishArray; override;
+    Procedure ValueInArray(Const value : String); overload; override;
+  end;
 
   TJSONLexType = (jltOpen, jltClose, jltString, jltNumber, jltColon, jltComma, jltOpenArray, jltCloseArray, jltEof, jltNull, jltBoolean);
 
@@ -410,6 +468,11 @@ uses
 
 { TJSONWriter }
 
+function TJSONWriter.canInject: boolean;
+begin
+  result := false;
+end;
+
 Constructor TJSONWriter.Create;
 Begin
   Inherited ;
@@ -422,12 +485,24 @@ Begin
   Inherited;
 End;
 
-procedure TJSONWriter.Start;
+procedure TJSONWriter.doValue(name, value: String);
 begin
-  if not HasStream then
-    Stream := TAdvStringStream.create;
-  ProduceLine('{');
-  LevelDown;
+  raise Exception.Create('Need to override '+className+'.doValue');
+end;
+
+procedure TJSONWriter.Finish;
+begin
+  raise Exception.Create('Need to override '+className+'.Finish');
+end;
+
+procedure TJSONWriter.FinishArray;
+begin
+  raise Exception.Create('Need to override '+className+'.FinishArray');
+end;
+
+procedure TJSONWriter.FinishObject;
+begin
+  raise Exception.Create('Need to override '+className+'.FinishObject');
 end;
 
 function TJSONWriter.toString: String;
@@ -436,15 +511,6 @@ begin
     result := TAdvStringStream(Stream).Data
   else
     result := inherited toString;
-end;
-
-procedure TJSONWriter.Finish;
-begin
-  if FCache <> '' Then
-    ProduceLine(UseCache);
-  LevelUp;
-  Assert(Level = 0);
-  ProduceLine('}');
 end;
 
 Function TJSONWriter.JSONString(const value : String) : String;
@@ -488,18 +554,6 @@ Begin
     End;
 End;
 
-procedure TJSONWriter.DoName(const name : String);
-begin
-  if FCache <> '' Then
-    ProduceLine(UseCache+',')
-  else if FProperty then
-  begin
-    FProperty := false;
-    ProduceLine(',')
-  end;
-  FName := JSONString(name)+' : ';
-end;
-
 procedure TJSONWriter.Value(const name : String; const avalue: String);
 begin
   if name = '' then
@@ -507,24 +561,17 @@ begin
   else if avalue = '' then
     ValueNull(name)
   Else
-  Begin
-    DoName(Name);
-    FCache := UseName + JSONString(avalue);
-  End;
+    doValue(name, JSONString(avalue));
 end;
 
 procedure TJSONWriter.Value(const name : String; avalue: Boolean);
 begin
   if name = '' then
     valueInArray(avalue)
+  else if avalue then
+    doValue(name, 'true')
   else
-  begin
-    DoName(name);
-    if avalue then
-      FCache := UseName + 'true'
-    else
-      FCache := UseName + 'false';
-  end;
+    doValue(name, 'false');
 end;
 
 procedure TJSONWriter.ValueNull(const name : String);
@@ -532,10 +579,7 @@ begin
   if name = '' then
     ValueNullInArray
   else
-  begin
-    DoName(name);
-    FCache := UseName + 'null';
-  end;
+    doValue(name, 'null');
 end;
 
 procedure TJSONWriter.Value(const name : String; avalue: Int64);
@@ -543,10 +587,7 @@ begin
   if name = '' then
     valueInArray(avalue)
   else
-  begin
-    DoName(name);
-    FCache := UseName + inttostr(avalue);
-  end;
+    doValue(name, inttostr(avalue));
 end;
 
 procedure TJSONWriter.Value(const name : String; avalue: Double);
@@ -554,10 +595,12 @@ begin
   if name = '' then
     valueInArray(avalue)
   else
-  begin
-    DoName(name);
-    FCache := UseName + FloatToStr(avalue);
-  end;
+    doValue(name, FloatToStr(avalue));
+end;
+
+procedure TJSONWriter.ValueArray(const name: String);
+begin
+  raise Exception.Create('Need to override '+className+'.ValueArray');
 end;
 
 procedure TJSONWriter.Value(const name : String; avalue: Integer);
@@ -565,43 +608,15 @@ begin
   if name = '' then
     valueInArray(avalue)
   else
-  begin
-    DoName(name);
-    FCache := UseName + inttostr(avalue);
-  end;
+    doValue(name, inttostr(avalue));
 end;
 
-
-procedure TJSONWriter.ValueObject(const name : String);
-begin
-  if (name = '') then
-    ValueObject
-  else
-  begin
-    DoName(name);
-    ProduceLine(UseName+ '{');
-    LevelDown;
-  end;
-end;
-
-procedure TJSONWriter.ValueObject;
-begin
-  if FCache <> '' Then
-    ProduceLine(UseCache+',')
-  else if FProperty then
-  begin
-    FProperty := false;
-    ProduceLine(',')
-  end;
-  ProduceLine(UseName+ '{');
-  LevelDown;
-end;
 
 class procedure TJSONWriter.writeObject(stream: TAdvStream; obj: TJsonObject; pretty : boolean = false);
 var
-  this : TJSONWriter;
+  this : TJsonWriterDirect;
 begin
-  this := TJSONWriter.Create;
+  this := TJsonWriterDirect.Create;
   try
     this.HasWhitespace := pretty;
     this.Stream := stream.Link;
@@ -677,6 +692,59 @@ begin
   FinishObject;
 end;
 
+procedure TJSONWriter.ValueNumberInArray(const value: String);
+begin
+  ValueInArray(value);
+end;
+
+procedure TJSONWriter.ValueObject;
+begin
+  raise Exception.Create('Need to override '+className+'.ValueObject');
+end;
+
+procedure TJSONWriter.ValueObject(const name: String);
+begin
+  raise Exception.Create('Need to override '+className+'.ValueObject');
+end;
+
+procedure TJSONWriter.ValueInArray(value: Boolean);
+begin
+  if value then
+    valueInArray('true')
+  else
+    valueInArray('false');
+end;
+
+procedure TJSONWriter.ValueNullInArray;
+begin
+  valueInArray('null');
+end;
+
+procedure TJSONWriter.ValueNumber(const name, avalue: String);
+begin
+  if name = '' then
+    valueNumberInArray(avalue)
+  else if avalue = '' then
+    ValueNull(name)
+  Else
+    DoValue(name, aValue);
+end;
+
+procedure TJSONWriter.ValueInArray(value: Int64);
+begin
+  valueInArray(inttostr(value));
+end;
+
+procedure TJSONWriter.ValueInArray(value: Double);
+begin
+  valueInArray(FloatToStr(value));
+end;
+
+procedure TJSONWriter.ValueInArray(value: Integer);
+begin
+  valueInArray(inttostr(value));
+end;
+
 class function TJSONWriter.writeObjectStr(obj: TJsonObject; pretty: boolean): String;
 begin
   result := TEncoding.UTF8.GetString(writeObject(obj, pretty));
@@ -709,67 +777,21 @@ begin
   end;
 end;
 
-procedure TJSONWriter.FinishObject;
-begin
-  if FCache <> '' Then
-    ProduceLine(UseCache);
-  LevelUp;
-  Assert(Level >= 0);
-  FCache := '}';
-end;
-
-
-procedure TJSONWriter.ValueArray(const name : String);
-begin
-  DoName(name);
-  ProduceLine(UseName + '[');
-  LevelDown;
-end;
 
 procedure TJSONWriter.ValueBoolean(const name: String; avalue: Boolean);
 begin
   if name = '' then
     valueInArray(avalue)
+  else if avalue then
+    doValue(name, 'true')
   else
-  begin
-    DoName(name);
-    if avalue then
-      FCache := UseName + 'true'
-    else
-      FCache := UseName + 'false';
-  end;
+    doValue(name, 'false');
 end;
+
 
 procedure TJSONWriter.ValueBytes(const name: String; bytes: TBytes);
 begin
-  if name = '' then
-    raise Exception.Create('Injecting bytes not supported in an array');
-  DoName(Name);
-  produce(UseName);
-  ProduceBytes(bytes);
-  FProperty := true;
-end;
 
-procedure TJSONWriter.FinishArray;
-begin
-  if FCache <> '' Then
-    ProduceLine(UseCache);
-  LevelUp;
-  Assert(Level >= 0);
-  FCache := ']';
-end;
-
-
-function TJSONWriter.UseName: String;
-begin
-  result := FName;
-  FName := '';
-end;
-
-function TJSONWriter.UseCache: String;
-begin
-  result := FCache;
-  FCache := '';
 end;
 
 procedure TJSONWriter.ValueDate(const name : String; aValue: TDateTime);
@@ -785,12 +807,156 @@ begin
   result := TJSONWriter(Inherited Link);
 end;
 
+procedure TJSONWriter.Start;
+begin
+  raise Exception.Create('Need to override '+className+'.start');
+end;
+
 procedure TJSONWriter.ValueDateInArray(aValue: TDateTime);
 begin
   if aValue = 0 then
     ValueNullInArray
   Else
     ValueInArray(FormatDateTime('yyyymmddhhnnss.zzz', aValue));
+end;
+
+procedure TJSONWriter.ValueInArray(const value: String);
+begin
+  raise Exception.Create('Need to override '+className+'.ValueInArray');
+end;
+
+{ TJsonWriterDirect }
+
+procedure TJsonWriterDirect.Start;
+begin
+  if not HasStream then
+    Stream := TAdvStringStream.create;
+  ProduceLine('{');
+  LevelDown;
+end;
+
+procedure TJsonWriterDirect.Finish;
+begin
+  if FCache <> '' Then
+    ProduceLine(UseCache);
+  LevelUp;
+  Assert(Level = 0);
+  ProduceLine('}');
+end;
+
+function TJsonWriterDirect.canInject: boolean;
+begin
+  result := true;
+end;
+
+procedure TJsonWriterDirect.DoName(const name : String);
+begin
+  if FCache <> '' Then
+    ProduceLine(UseCache+',')
+  else if FProperty then
+  begin
+    FProperty := false;
+    ProduceLine(',')
+  end;
+  FName := JSONString(name)+' : ';
+end;
+
+procedure TJsonWriterDirect.FinishArray;
+begin
+  if FCache <> '' Then
+    ProduceLine(UseCache);
+  LevelUp;
+  Assert(Level >= 0);
+  FCache := ']';
+end;
+
+procedure TJsonWriterDirect.ValueArray(const name : String);
+begin
+  DoName(name);
+  ProduceLine(UseName + '[');
+  LevelDown;
+end;
+
+procedure TJsonWriterDirect.ValueObject(const name : String);
+begin
+  if (name = '') then
+    ValueObject
+  else
+  begin
+    DoName(name);
+    ProduceLine(UseName+ '{');
+    LevelDown;
+  end;
+end;
+
+procedure TJsonWriterDirect.ValueObject;
+begin
+  if FCache <> '' Then
+    ProduceLine(UseCache+',')
+  else if FProperty then
+  begin
+    FProperty := false;
+    ProduceLine(',')
+  end;
+  ProduceLine(UseName+ '{');
+  LevelDown;
+end;
+
+procedure TJsonWriterDirect.ValueBytes(const name: String; bytes: TBytes);
+begin
+  if name = '' then
+    raise Exception.Create('Injecting bytes not supported in an array');
+  DoName(Name);
+  produce(UseName);
+  ProduceBytes(bytes);
+  FProperty := true;
+end;
+
+procedure TJsonWriterDirect.doValue(name, value : String);
+begin
+  DoName(Name);
+  FCache := UseName + value;
+end;
+
+procedure TJsonWriterDirect.ValueInArray(const value: String);
+begin
+  if FCache <> '' Then
+    ProduceLine(UseCache+',')
+  else if FProperty then
+  begin
+    FProperty := false;
+    ProduceLine(',')
+  end;
+  if value = '' then
+    ValueNullInArray
+  Else
+    FCache := JSONString(value);
+end;
+
+procedure TJsonWriterDirect.FinishObject;
+begin
+  if FCache <> '' Then
+    ProduceLine(UseCache);
+  LevelUp;
+  Assert(Level >= 0);
+  FCache := '}';
+end;
+
+function TJsonWriterDirect.Link: TJsonWriterDirect;
+begin
+  result := TJsonWriterDirect(inherited Link);
+end;
+
+function TJsonWriterDirect.UseName: String;
+begin
+  result := FName;
+  FName := '';
+end;
+
+function TJsonWriterDirect.UseCache: String;
+begin
+  result := FCache;
+  FCache := '';
 end;
 
 { TJSONLexer }
@@ -1409,112 +1575,6 @@ begin
   Next;
 end;
 
-
-procedure TJSONWriter.ValueInArray(const value: String);
-begin
-  if FCache <> '' Then
-    ProduceLine(UseCache+',')
-  else if FProperty then
-  begin
-    FProperty := false;
-    ProduceLine(',')
-  end;
-  if value = '' then
-    ValueNullInArray
-  Else
-    FCache := JSONString(value);
-end;
-
-procedure TJSONWriter.ValueNumberInArray(const value: String);
-begin
-  if FCache <> '' Then
-    ProduceLine(UseCache+',')
-  else if FProperty then
-  begin
-    FProperty := false;
-    ProduceLine(',')
-  end;
-  if value = '' then
-    ValueNullInArray
-  Else
-    FCache := value;
-end;
-
-procedure TJSONWriter.ValueInArray(value: Boolean);
-begin
-  if FCache <> '' Then
-    ProduceLine(UseCache+',')
-  else if FProperty then
-  begin
-    FProperty := false;
-    ProduceLine(',')
-  end;
-  if value then
-    FCache := 'true'
-  else
-    FCache := 'false';
-end;
-
-procedure TJSONWriter.ValueNullInArray;
-begin
-  if FCache <> '' Then
-    ProduceLine(UseCache+',')
-  else if FProperty then
-  begin
-    FProperty := false;
-    ProduceLine(',')
-  end;
-  FCache := 'null';
-end;
-
-procedure TJSONWriter.ValueNumber(const name, avalue: String);
-begin
-  if name = '' then
-    valueNumberInArray(avalue)
-  else if avalue = '' then
-    ValueNull(name)
-  Else
-  Begin
-    DoName(Name);
-    FCache := UseName + avalue;
-  End;
-end;
-
-procedure TJSONWriter.ValueInArray(value: Int64);
-begin
-  if FCache <> '' Then
-    ProduceLine(UseCache+',')
-  else if FProperty then
-  begin
-    FProperty := false;
-    ProduceLine(',')
-  end;
-  FCache := inttostr(value);
-end;
-
-procedure TJSONWriter.ValueInArray(value: Double);
-begin
-  if FCache <> '' Then
-    ProduceLine(UseCache+',')
-  else if FProperty then
-  begin
-    FProperty := false;
-    ProduceLine(',')
-  end;
-  FCache := FloatToStr(value);
-end;
-
-procedure TJSONWriter.ValueInArray(value: Integer);
-begin
-  if FCache <> '' Then
-    ProduceLine(UseCache+',')
-  else if FProperty then
-  begin
-    FProperty := false;
-    ProduceLine(',')
-  end;
-  FCache := inttostr(value);
-end;
 
 
 destructor TJSONParser.Destroy;
@@ -2525,6 +2585,195 @@ end;
 function TJsonPointerQuery.unescape(s: String): String;
 begin
   result := s.Replace('~1', '/').Replace('~0', '~');
+end;
+
+{ TJsonWriterCanonical }
+
+procedure TJsonWriterCanonical.commitArray(node: TCanonicalJsonNode);
+var
+  c : TCanonicalJsonNode;
+  s : String;
+  first : boolean;
+begin
+  Produce('[');
+  first := true;
+  for c in node.FChildren do
+  begin
+    if first then
+      first := false
+    else
+      produce(',');
+    case c.FType of
+      jntProperty : Produce(c.FValue);
+      jntObject :
+        commitObject(c);
+      jntArray :
+        commitArray(c);
+    end;
+  end;
+  Produce(']');
+end;
+
+procedure TJsonWriterCanonical.commitObject(node: TCanonicalJsonNode);
+var
+  ts : TStringList;
+  c, i : TCanonicalJsonNode;
+  s : String;
+  first : boolean;
+begin
+  // no pretty print: this is nly for canonical JSON anyway
+  Produce('{');
+  ts := TStringList.Create;
+  try
+    for c in node.FChildren do
+      ts.Add(c.FName);
+    ts.Sort;
+    first := true;
+    for s in ts do
+    begin
+      for c in node.FChildren do
+        if c.FName = s then
+        begin
+          if first then
+            first := false
+          else
+            produce(',');
+          case c.FType of
+            jntProperty : Produce('"'+c.FName+'":'+c.FValue);
+            jntObject :
+              begin
+              Produce('"'+c.FName+'":');
+              commitObject(c);
+              end;
+            jntArray :
+              begin
+              Produce('"'+c.FName+'":');
+              commitArray(c);
+              end;
+          end;
+        end;
+    end;
+  finally
+    ts.Free;
+  end;
+  Produce('}');
+end;
+
+procedure TJsonWriterCanonical.doValue(name, value: String);
+var
+  node : TCanonicalJsonNode;
+begin
+  node := TCanonicalJsonNode.Create(jntProperty);
+  try
+    node.FName := name;
+    node.FValue := value;
+    FStack[FStack.Count - 1].FChildren.add(node.Link);
+  finally
+    node.Free;
+  end;
+end;
+
+procedure TJsonWriterCanonical.Finish;
+begin
+  commitObject(FObject);
+  FStack.Free;
+  FObject.Free;
+end;
+
+procedure TJsonWriterCanonical.FinishArray;
+begin
+  FStack.Delete(FStack.Count - 1);
+end;
+
+procedure TJsonWriterCanonical.FinishObject;
+begin
+  FStack.Delete(FStack.Count - 1);
+end;
+
+function TJsonWriterCanonical.Link: TJsonWriterCanonical;
+begin
+  result := TJsonWriterCanonical(inherited Link);
+end;
+
+procedure TJsonWriterCanonical.Start;
+begin
+  FObject := TCanonicalJsonNode.Create(jntObject);
+  FStack := TAdvList<TCanonicalJsonNode>.create;
+  FStack.Add(FObject.Link);
+end;
+
+procedure TJsonWriterCanonical.ValueArray(const name: String);
+var
+  node : TCanonicalJsonNode;
+begin
+  node := TCanonicalJsonNode.Create(jntArray);
+  try
+    node.FName := name;
+    FStack[FStack.Count - 1].FChildren.add(node.Link);
+    FStack.Add(node.link);
+  finally
+    node.Free;
+  end;
+end;
+
+procedure TJsonWriterCanonical.ValueInArray(const value: String);
+var
+  node : TCanonicalJsonNode;
+begin
+  node := TCanonicalJsonNode.Create(jntProperty);
+  try
+    node.FValue := value;
+    FStack[FStack.Count - 1].FChildren.add(node.Link);
+  finally
+    node.Free;
+  end;
+end;
+
+procedure TJsonWriterCanonical.ValueObject;
+var
+  node : TCanonicalJsonNode;
+begin
+  node := TCanonicalJsonNode.Create(jntObject);
+  try
+    FStack[FStack.Count - 1].FChildren.add(node.Link);
+    FStack.Add(node.link);
+  finally
+    node.Free;
+  end;
+end;
+
+procedure TJsonWriterCanonical.ValueObject(const name: String);
+var
+  node : TCanonicalJsonNode;
+begin
+  node := TCanonicalJsonNode.Create(jntObject);
+  try
+    node.FName := name;
+    FStack[FStack.Count - 1].FChildren.add(node.Link);
+    FStack.Add(node.link);
+  finally
+    node.Free;
+  end;
+end;
+
+{ TCanonicalJsonNode }
+
+constructor TCanonicalJsonNode.Create(aType : TCanonicalJsonNodeType);
+begin
+  inherited Create;
+  FType := aType;
+  FChildren := TAdvList<TCanonicalJsonNode>.create;
+end;
+
+destructor TCanonicalJsonNode.Destroy;
+begin
+  FChildren.Free;
+  inherited;
+end;
+
+function TCanonicalJsonNode.link: TCanonicalJsonNode;
+begin
+  result := TCanonicalJsonNode(inherited Link);
 end;
 
 End.

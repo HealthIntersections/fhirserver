@@ -1026,14 +1026,14 @@ begin
   b :=  TBytesStream.Create;
   try
     if (xml) then
-      comp := TFHIRXmlComposer.Create(ServerContext.Validator.Context.Link, 'en')
+      comp := TFHIRXmlComposer.Create(ServerContext.Validator.Context.Link, OutputStyleNormal, 'en')
     else
-      comp := TFHIRJsonComposer.Create(ServerContext.Validator.Context.Link, 'en');
+      comp := TFHIRJsonComposer.Create(ServerContext.Validator.Context.Link, OutputStyleNormal, 'en');
     try
       comp.SummaryOption := summary;
       comp.NoHeader := true;
 
-      comp.Compose(b, r, false, nil);
+      comp.Compose(b, r, nil);
     finally
       comp.Free;
     end;
@@ -3364,7 +3364,7 @@ begin
     '  '+GetFhirMessage('NAME_VERSION', lang)+' '+FHIR_GENERATED_VERSION+#13#10;
 
     if request.session <> nil then
-      response.Body := response.Body +'&nbsp;&nbsp;'+FormatTextToXml(request.Session.SessionName);
+      response.Body := response.Body +'&nbsp;&nbsp;'+FormatTextToXml(request.Session.SessionName, xmlText);
 
     response.Body := response.Body +
     '  &nbsp;<a href="'+request.baseUrl+'">'+GetFhirMessage('MSG_BACK_HOME', lang)+'</a>'#13#10+
@@ -4129,13 +4129,13 @@ begin
           request.PostFormat := ffXml;
           if not context.upload and ServerContext.validate and (request.resource <> nil) then
           begin
-            comp := TFHIRXmlComposer.Create(ServerContext.Validator.Context.Link, 'en');
+            comp := TFHIRXmlComposer.Create(ServerContext.Validator.Context.Link, OutputStylePretty, 'en');
             mem := TAdvMemoryStream.Create;
             m := TVCLStream.Create;
             try
               m.Stream := mem.Link;
               mem.Buffer := request.source.Link;
-              comp.compose(m, request.resource, true);
+              comp.compose(m, request.resource);
             finally
               m.Free;
               comp.Free;

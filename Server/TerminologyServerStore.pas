@@ -129,7 +129,7 @@ Type
     function GetSupplements: TAdvList<TFHIRCodeSystem>;
     procedure SetCodeSystem(const Value: TFHIRCodeSystem);
   public
-    Constructor Create(codeSystem : TFHIRCodeSystem {$IFDEF FHIR2}; vs : TFHIRValueSet {$ENDIF});
+    Constructor Create({$IFNDEF FHIR2} cs : TFhirCodeSystem {$ELSE} cs : TFHIRValueSet {$ENDIF});
     destructor Destroy; override;
 
     function Link : TFHIRCodeSystemEntry; overload;
@@ -150,10 +150,9 @@ Type
     function getParent(ctxt : TFhirCodeSystemConcept) : TFhirCodeSystemConcept;
     procedure FilterCodes(dest : TFhirCodeSystemProviderFilterContext; source : TFhirCodeSystemConceptList; filter : TSearchFilterText);
     procedure iterateCodes(base: TFhirCodeSystemConcept; list: TFhirCodeSystemProviderFilterContext);
+    function locCode(list: TFhirCodeSystemConceptList; code: String): TFhirCodeSystemConcept;
     {$IFNDEF FHIR2}
     function getProperty(code : String) : TFhirCodeSystemProperty;
-    function locCode(list: TFhirCodeSystemConceptList;
-      code: String): TFhirCodeSystemConcept;
     {$ENDIF}
   public
     constructor Create(vs : TFhirCodeSystemEntry); overload;
@@ -256,7 +255,7 @@ Type
     procedure SetEmailThreadStatus(const Value: String);
     procedure checkForDuplicates(codes: TStringList; list: TFhirCodeSystemConceptList; url : String);
     function checkVersion(system, version: String; profile: TFHIRExpansionProfile): String;
-    procedure AddCodeSystemToCache(cs: TFhirCodeSystem; {$IFDEF FHIR2} vs : TFHIRValueSet; {$ENDIF} base : boolean);
+    procedure AddCodeSystemToCache({$IFNDEF FHIR2} cs : TFhirCodeSystem; {$ELSE} cs : TFHIRValueSet; {$ENDIF} base : boolean);
     procedure RemoveCodeSystemFromCache(id : String);
   protected
     FLock : TCriticalSection;  // it would be possible to use a read/write lock, but the complexity doesn't seem to be justified by the short amount of time in the lock anyway
@@ -1201,12 +1200,12 @@ begin
     result := TFhirReference(t).reference;
 end;
 
-procedure TTerminologyServerStore.AddCodeSystemToCache(cs : TFhirCodeSystem; {$IFDEF FHIR2} vs : TFHIRValueSet; {$ENDIF} base : boolean);
+procedure TTerminologyServerStore.AddCodeSystemToCache({$IFNDEF FHIR2} cs : TFhirCodeSystem; {$ELSE} cs : TFHIRValueSet; {$ENDIF} base : boolean);
 var
   cse : TFHIRCodeSystemEntry;
   supp : TFHIRCodeSystem;
 begin
-  cse := TFHIRCodeSystemEntry.Create(cs.Link{$IFDEF FHIR2}, vs.link{$ENDIF});
+  cse := TFHIRCodeSystemEntry.Create(cs.Link);
   try
     if base then
       FBaseCodeSystems.AddOrSetValue(cs.url, cse.Link);
@@ -1232,7 +1231,7 @@ begin
         FCodeSystemsByVsUrl.AddOrSetValue(cs.valueSet, cse.Link);
       {$ENDIF}
       if (FDB <> nil) then // don't build stems in this case
-        BuildStems({$IFDEF FHIR2}vs.codeSystem{$ELSE}cs{$ENDIF}); // todo: move this out of the lock
+        BuildStems({$IFDEF FHIR2}cs.codeSystem{$ELSE}cs{$ENDIF}); // todo: move this out of the lock
       {$IFDEF FHIR4}
       for supp in FSupplementsById.values do
         if (supp.supplements.reference = cs.url) or (supp.supplements.reference = 'CodeSystem/'+cs.id) then
@@ -1256,12 +1255,14 @@ begin
       {$IFDEF FHIR2}
       FCodeSystemsByUrl.Remove(cse.FValueSet.codeSystem.system);
       FCodeSystemsByid.Remove(cse.FValueSet.id);
+      if cs1 <> nil then
+        AddCodeSystemToCache(cs1.FValueset, false);
       {$ELSE}
       FCodeSystemsByUrl.Remove(cse.codeSystem.system);
       FCodeSystemsByid.Remove(cse.codeSystem.id);
-      {$ENDIF}
       if cs1 <> nil then
         AddCodeSystemToCache(cs1.codeSystem, false);
+      {$ENDIF}
     finally
       cs1.free;
     end;
@@ -1309,9 +1310,7 @@ begin
       FValueSetsByUrl.AddOrSetValue(vs.url, vs.Link);
       {$IFDEF FHIR2}
       if (vs.codeSystem <> nil) then
-      begin
-        AddCodeSystemToCache(vs.codeSystem);
-      end;
+        AddCodeSystemToCache(vs, true);
       {$ENDIF}
       UpdateConceptMaps;
     end
@@ -1365,7 +1364,7 @@ begin
       invalidateVS(vs.url);
       {$IFDEF FHIR2}
       if (vs.codeSystem <> nil) then
-        AddCodeSystemToCache(vs.codeSystem);
+        AddCodeSystemToCache(vs, false);
       {$ENDIF}
       UpdateConceptMaps;
     end
@@ -1411,7 +1410,7 @@ begin
         FValueSetsByURL.Remove(vs.url);
         {$IFDEF FHIR2}
         if (vs.codeSystem <> nil) then
-          removeCodeSystemFromCache(vs.codeSystem);
+          removeCodeSystemFromCache(vs.id);
         {$ENDIF}
         FValueSetsById.Remove(vs.id); // vs is no longer valid
 
@@ -1421,7 +1420,7 @@ begin
         begin
           FValueSetsById.AddOrSetValue(vs.url, vs1.Link);
           {$IFDEF FHIR2}
-          AddCodeSystemToCache(csl.codeSystem);
+          AddCodeSystemToCache(vs1, false);
           {$ENDIF}
         end;
         UpdateConceptMaps;
@@ -2751,13 +2750,10 @@ end;
 
 { TFHIRCodeSystemEntry }
 
-constructor TFHIRCodeSystemEntry.Create(codeSystem: TFHIRCodeSystem {$IFDEF FHIR2}; vs : TFHIRValueSet {$ENDIF});
+constructor TFHIRCodeSystemEntry.Create({$IFNDEF FHIR2} cs : TFhirCodeSystem {$ELSE} cs : TFHIRValueSet {$ENDIF});
 begin
   inherited Create;
-  FCodeSystem := codeSystem;
-  {$IFDEF FHIR2};
-  FValueset := vs : TFHIRValueSet
-  {$ENDIF}
+  FCodeSystem := cs;
 end;
 
 destructor TFHIRCodeSystemEntry.Destroy;

@@ -97,7 +97,7 @@ Type
     fcmdDeleteTask, { delete an asynchronous task }
     fcmdNull); { Internal use only - not a valid FHIR operation}
 
-
+  TFHIRCommandTypeSet = set of TFHIRCommandType;
 
   {@Enum TFHIRFormat
     Format support.
@@ -110,6 +110,7 @@ Type
     ffText,
     ffNDJson, { new line delimited JSON }
     ffXhtml); { XHTML - only for retrieval from the server }
+  TFHIROutputStyle = (OutputStyleNormal, OutputStylePretty, OutputStyleCanonical);
 
   {@Enum TFHIRHtmlNodeType
     Enumeration of html node types
@@ -158,6 +159,7 @@ Const
   USER_SCHEME_IMPLICIT = 'http://healthintersections.com.au/fhir/user/implicit';
   USER_SCHEME_PROVIDER : array [TFHIRAuthProvider] of String =
     ('', 'http://healthintersections.com.au/fhir/user/explicit', 'http://www.facebook.com', 'http://www.google.com', 'http://www.hl7.org');
+  CODES_TFHIRSummaryOption : array [TFHIRSummaryOption] of String = ('Full', 'Summary', 'Text', 'Data', 'Count');
 
 type
 
@@ -250,6 +252,8 @@ type
     FFormat : TFHIRFormat;
     FNoCompose: boolean;
     FTagInt: integer;
+    FJsHandle: pointer;
+    FJsInstance: cardinal;
     function GetCommentsStart: TAdvStringList;
     function GetCommentsEnd: TAdvStringList;
     procedure SetTag(const Value: TAdvObject);
@@ -296,6 +300,10 @@ type
     property Tag : TAdvObject read FTag write SetTag;
     property TagObject : TObject read FTagObject write FTagObject; // no ownership....
     property TagInt : integer read FTagInt write FTagInt;
+
+    // javascript caching
+    property jsInstance : cardinal read FJsInstance write FJsInstance;
+    property jsHandle : pointer read FJsHandle write FJsHandle;
 
     // populated by some parsers when parsing
     property LocationStart : TSourceLocation read FLocationStart write FLocationStart;
@@ -349,6 +357,8 @@ type
   TFHIRObjectList = class (TAdvObjectList)
   private
     FTags : TDictionary<String,String>;
+    FJsHandle: pointer;
+    FJsInstance: cardinal;
     Function GetItemN(index : Integer) : TFHIRObject;
     procedure SetTags(name: String; const Value: String);
     function getTags(name: String): String;
@@ -365,6 +375,10 @@ type
     Property Tags[name : String] : String read getTags write SetTags;
     function ToString : String; override;
     function new : TFHIRObject; reintroduce; overload; virtual;
+
+    // javascript caching
+    property jsInstance : cardinal read FJsInstance write FJsInstance;
+    property jsHandle : pointer read FJsHandle write FJsHandle;
   end;
 
   TFHIRObjectText = class (TFHIRObject)

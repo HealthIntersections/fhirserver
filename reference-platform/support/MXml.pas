@@ -162,9 +162,9 @@ Type
     function GetAllText: String;
     procedure fixChildren;
   public
-    Constructor Create(nodeType : TMXmlElementType; name : String); overload;
-    Constructor Create(nodeType : TMXmlElementType; local, ns : String); overload;
-    Constructor Create(nodeType : TMXmlElementType; name, local, ns : String); overload;
+    Constructor Create(nodeType : TMXmlElementType; name : String); overload; virtual;
+    Constructor CreateNS(nodeType : TMXmlElementType; ns, local : String); overload; virtual;
+    Constructor CreateNSN(nodeType : TMXmlElementType; name, ns, local : String); overload;
     Destructor Destroy; override;
     Function Link : TMXmlElement; overload;
 
@@ -303,6 +303,8 @@ Type
     function GetDocElement: TMXmlElement;
   public
     Constructor Create; override;
+    Constructor Create(nodeType : TMXmlElementType; name : String); overload; override;
+    Constructor CreateNS(nodeType : TMXmlElementType; ns, local : String); overload; override;
     Destructor Destroy; override;
 
     property docElement : TMXmlElement read GetDocElement;
@@ -426,7 +428,7 @@ begin
   FName := name;
 end;
 
-constructor TMXmlElement.Create(nodeType: TMXmlElementType; local, ns: String);
+constructor TMXmlElement.CreateNS(nodeType: TMXmlElementType; ns, local: String);
 begin
   Create(nodeType);
   FNamespaceURI := ns;
@@ -824,7 +826,7 @@ begin
           b.Append(' ');
           b.Append(s);
           b.Append('="');
-          b.Append(FormatTextToXML(Attributes[s].Value));
+          b.Append(FormatTextToXML(Attributes[s].Value, xmlAttribute));
           b.Append('"');
         end;
       end;
@@ -881,7 +883,7 @@ begin
   addChild(result, false);
 end;
 
-constructor TMXmlElement.Create(nodeType: TMXmlElementType; name, local, ns: String);
+constructor TMXmlElement.CreateNSN(nodeType: TMXmlElementType; name, ns, local: String);
 begin
   Create(nodeType);
   FName := name;
@@ -1903,6 +1905,12 @@ constructor TMXmlDocument.Create;
 begin
   inherited Create(ntDocument);
   FNamespaceAbbreviations := TDictionary<String, String>.create;
+end;
+
+constructor TMXmlDocument.Create(nodeType: TMXmlElementType; name: String);
+begin
+  inherited create(ntDocument);
+  addElement(name);
 end;
 
 destructor TMXmlDocument.Destroy;
@@ -3056,6 +3064,12 @@ begin
   finally
     b.Free;
   end;
+end;
+
+constructor TMXmlDocument.CreateNS(nodeType: TMXmlElementType; ns, local: String);
+begin
+  inherited create(ntDocument);
+  addElementNS(ns, local);
 end;
 
 { TMXmlNode }

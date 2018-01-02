@@ -1,4 +1,3 @@
-{!Wrapper uses FHIRBase, FHIRBase_Wrapper, FHIRTypes, FHIRTypes_Wrapper, FHIRResources, FHIRResources_Wrapper}
 {!ignore ALL_RESOURCE_TYPES}
 
 unit FHIRConstants;

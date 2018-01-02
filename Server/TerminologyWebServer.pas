@@ -34,10 +34,10 @@ interface
 uses
   SysUtils, Classes, System.Generics.Collections,
   ParseMap,
-  EncodeSupport, StringSupport,
+  EncodeSupport, StringSupport, TextUtilities,
   AdvObjects, AdvStringMatches, AdvNameBuffers,
   IdContext, IdCustomHTTPServer,
-  FHIRLang, FHIRContext, FHIRSupport, FHIRUtilities, FHIRResources, FHIRTypes, FHIRXhtml,
+  FHIRLang, FHIRContext, FHIRSupport, FHIRUtilities, FHIRResources, FHIRTypes, FHIRXhtml, FHIRBase,
   HtmlPublisher, SnomedPublisher, SnomedServices, LoincPublisher, LoincServices, SnomedExpressions, SnomedAnalysis,
   TerminologyServer, TerminologyServices, TerminologyServerStore, FHIRServerConstants, FHIROperations;
 
@@ -711,13 +711,13 @@ var
 begin
   b := TBytesStream.Create();
   try
-    json := TFHIRJsonComposer.Create(FWorker.link, 'en');
+    json := TFHIRJsonComposer.Create(FWorker.link, OutputStylePretty, 'en');
     try
-      json.Compose(b, r, true);
+      json.Compose(b, r);
     finally
       json.Free;
     end;
-    result := EncodeXML(TEncoding.UTF8.GetString(b.Bytes, 0, b.size), xmlText);
+    result := FormatTextToXml(TEncoding.UTF8.GetString(b.Bytes, 0, b.size), xmlText);
   finally
     b.Free;
   end;
@@ -730,13 +730,13 @@ var
 begin
   b := TBytesStream.Create();
   try
-    xml := TFHIRXmlComposer.Create(FWorker.link, 'en');
+    xml := TFHIRXmlComposer.Create(FWorker.link, OutputStylePretty, 'en');
     try
-      xml.Compose(b, r, true);
+      xml.Compose(b, r);
     finally
       xml.Free;
     end;
-    result := EncodeXML(TEncoding.UTF8.GetString(b.Bytes, 0, b.size), xmlText);
+    result := FormatTextToXml(TEncoding.UTF8.GetString(b.Bytes, 0, b.size), xmlText);
   finally
     b.Free;
   end;
@@ -923,7 +923,7 @@ begin
         on e : Exception do
         begin
           response.ResponseNo := 500;
-          response.ContentText := '<snomed version="'+FServer.DefSnomed.VersionDate+'" type="error" message="'+EncodeXML(e.Message, xmlAttribute)+'"/>';
+          response.ContentText := '<snomed version="'+FServer.DefSnomed.VersionDate+'" type="error" message="'+FormatTextToXml(e.Message, xmlAttribute)+'"/>';
         end;
       end;
     end;
@@ -993,7 +993,7 @@ begin
         on e:exception do
         begin
           response.ResponseNo := 500;
-          response.ContentText := 'error:'+EncodeXML(e.Message, xmlText);
+          response.ContentText := 'error:'+FormatTextToXml(e.Message, xmlText);
         end;
       end;
     end;
@@ -1087,7 +1087,7 @@ begin
         on e:exception do
         begin
           response.ResponseNo := 500;
-          response.ContentText := 'error:'+EncodeXML(e.Message, xmlText);
+          response.ContentText := 'error:'+FormatTextToXml(e.Message, xmlText);
         end;
       end;
     end;
@@ -1112,12 +1112,12 @@ begin
   begin
     if ss.IsValidConcept(code) then
     begin
-      result := '<snomed version="'+ss.VersionDate+'" type="concept" concept="'+code+'" display="'+EncodeXml(ss.GetDisplayName(code, ''), xmlAttribute)+'">';
+      result := '<snomed version="'+ss.VersionDate+'" type="concept" concept="'+code+'" display="'+FormatTextToXml(ss.GetDisplayName(code, ''), xmlAttribute)+'">';
       sl := TStringList.Create;
       try
         ss.ListDisplayNames(sl, code, '', ALL_DISPLAY_NAMES);
         for s in sl do
-          result := result + '<display value="'+EncodeXML(s, xmlAttribute)+'"/>';
+          result := result + '<display value="'+FormatTextToXml(s, xmlAttribute)+'"/>';
       finally
         sl.free;
       end;
@@ -1125,12 +1125,12 @@ begin
     end
     else if ss.IsValidDescription(code, id, s) then
     begin
-      result := '<snomed version="'+ss.VersionDate+'" type="description" description="'+code+'" concept="'+inttostr(id)+'" display="'+EncodeXml(s, xmlAttribute)+'">';
+      result := '<snomed version="'+ss.VersionDate+'" type="description" description="'+code+'" concept="'+inttostr(id)+'" display="'+FormatTextToXml(s, xmlAttribute)+'">';
       sl := TStringList.Create;
       try
         ss.ListDisplayNames(sl, inttostr(id), '', ALL_DISPLAY_NAMES);
         for s in sl do
-          result := result + '<display value="'+EncodeXML(s, xmlAttribute)+'"/>';
+          result := result + '<display value="'+FormatTextToXml(s, xmlAttribute)+'"/>';
       finally
         sl.free;
       end;
@@ -1143,8 +1143,8 @@ begin
   begin
     exp := ss.parseExpression(code);
     try
-      result := '<snomed version="'+ss.VersionDate+'" type="expression" expression="'+code+'" expressionMinimal="'+EncodeXml(ss.renderExpression(exp, sroMinimal), xmlAttribute)+'" expressionMax="'+
-      EncodeXml(ss.renderExpression(exp, sroReplaceAll), xmlAttribute)+'" display="'+EncodeXml(ss.displayExpression(exp), xmlAttribute)+'" ok="true"/>';
+      result := '<snomed version="'+ss.VersionDate+'" type="expression" expression="'+code+'" expressionMinimal="'+FormatTextToXml(ss.renderExpression(exp, sroMinimal), xmlAttribute)+'" expressionMax="'+
+      FormatTextToXml(ss.renderExpression(exp, sroReplaceAll), xmlAttribute)+'" display="'+FormatTextToXml(ss.displayExpression(exp), xmlAttribute)+'" ok="true"/>';
     finally
       exp.Free;
     end;

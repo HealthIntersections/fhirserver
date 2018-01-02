@@ -110,7 +110,7 @@ begin
     if fvs.codeSystem <> nil then
     begin
       fvs.codeSystem.checkNoModifiers('ValueSetChecker.prepare', 'CodeSystem');
-      FOthers.Add(fvs.codeSystem.system, TFhirCodeSystemProvider.create(FVs.Link));
+      FOthers.Add(fvs.codeSystem.system, TFhirCodeSystemProvider.create(TFHIRCodeSystemEntry.Create(FVs.Link)));
     end;
     {$ENDIF}
     if (fvs.compose <> nil) then

@@ -33,7 +33,7 @@ interface
 
 uses
   SysUtils,
-  EncodeSupport,
+  EncodeSupport, TextUtilities,
   AdvObjects,
   FHIRBase,
   FHIRParserBase,
@@ -132,7 +132,7 @@ end;
 procedure THtmlPublisher.AddTableCellHint(text, hint: String);
 begin
   StartTableCell;
-  FBuilder.Append('<span title="'+EncodeXML(hint, xmlAttribute)+'">');
+  FBuilder.Append('<span title="'+FormatTextToXML(hint, xmlAttribute)+'">');
   addtext(text, false, false);
   FBuilder.Append('</span>');
   EndTableCell;
@@ -160,7 +160,7 @@ end;
 
 procedure THtmlPublisher.AddTextPlain(text: String);
 begin
-  FBuilder.Append(EncodeXML(text, xmlText));
+  FBuilder.Append(FormatTextToXml(text, xmlText));
 end;
 
 procedure THtmlPublisher.AddTitle(text: String);
@@ -392,7 +392,7 @@ end;
 procedure THtmlPublisher.URL(text, url, hint: String);
 begin
   if (hint <> '') then
-    FBuilder.Append('<a href="'+url+'" title="'+EncodeXML(hint, xmlAttribute)+'">')
+    FBuilder.Append('<a href="'+url+'" title="'+FormatTextToXml(hint, xmlAttribute)+'">')
   else
     FBuilder.Append('<a href="'+url+'">');
   AddTextPlain(text);
@@ -408,7 +408,7 @@ begin
       begin
         FBuilder.Append('<'+node.Name);
         for i := 0 to node.Attributes.Count - 1 do
-          FBuilder.Append(' '+node.Attributes[i].Name+'="'+EncodeXML(node.Attributes[i].value, xmlAttribute)+'"');
+          FBuilder.Append(' '+node.Attributes[i].Name+'="'+FormatTextToXml(node.Attributes[i].value, xmlAttribute)+'"');
         if node.ChildNodes.Count = 0 then
           FBuilder.Append('/>')
         else
@@ -422,7 +422,7 @@ begin
     fhntText:
       AddTextPlain(node.Content);
     fhntComment:
-      FBuilder.Append('<!-- '+EncodeXML(node.Content, xmlText)+' -->');
+      FBuilder.Append('<!-- '+FormatTextToXml(node.Content, xmlText)+' -->');
   end;
 end;
 

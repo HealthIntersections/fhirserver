@@ -43,7 +43,7 @@ uses
   AdvObjects, AdvStringBuilders, AdvGenerics,   AdvStreams,  ADvVclStreams, AdvBuffers, AdvMemories, AdvJson,
   AdvZipWriters, AdvZipParts, AdvFiles,
 
-  MimeMessage, TextUtilities, ZLib, InternetFetcher, TurtleParser,
+  MimeMessage, TextUtilities, ZLib, InternetFetcher, TurtleParser, MXml, DigitalSignatures, JWT,
 
   FHIRContext, FHIRSupport, FHIRParserBase, FHIRParser, FHIRBase, FHIRTypes, FHIRResources, FHIRConstants, FHIRXHtml;
 
@@ -71,7 +71,7 @@ Function RecogniseFHIRFormat(Const sName : String): TFHIRFormat;
 function MakeParser(oWorker : TFHIRWorkerContext; lang : String; aFormat: TFHIRFormat; oContent: TStream; policy : TFHIRXhtmlParserPolicy): TFHIRParser; overload;
 function MakeParser(oWorker : TFHIRWorkerContext; lang : String; aFormat: TFHIRFormat; content: TBytes; policy : TFHIRXhtmlParserPolicy): TFHIRParser; overload;
 function MakeParser(oWorker : TFHIRWorkerContext; lang : String; mimetype : String; content: TBytes; policy : TFHIRXhtmlParserPolicy): TFHIRParser; overload;
-function MakeComposer(lang : string; mimetype : String; worker : TFHIRWorkerContext) : TFHIRComposer;
+function MakeComposer(Style : TFHIROutputStyle; lang : string; mimetype : String; worker : TFHIRWorkerContext) : TFHIRComposer;
 Function FhirGUIDToString(aGuid : TGuid):String;
 function geTFhirResourceNarrativeAsText(resource : TFhirDomainResource) : String;
 function IsId(s : String) : boolean;
@@ -147,13 +147,14 @@ function getConformanceResourceUrl(res : TFHIRResource) : string;
 Function removeCaseAndAccents(s : String) : String;
 
 function CustomResourceNameIsOk(name : String) : boolean;
-function fileToResource(name : String; var format : TFHIRFormat) : TFhirResource;
+function fileToResource(name : String) : TFhirResource; overload;
+function fileToResource(name : String; var format : TFHIRFormat) : TFhirResource; overload;
 function streamToResource(stream : TStream; var format : TFHIRFormat) : TFhirResource;
 function bytesToResource(bytes : TBytes; var format : TFHIRFormat) : TFhirResource;
-procedure resourceToFile(res : TFhirResource; name : String; format : TFHIRFormat);
-procedure resourceToStream(res : TFhirResource; stream : TStream; format : TFHIRFormat; pretty : boolean = true);
+procedure resourceToFile(res : TFhirResource; name : String; format : TFHIRFormat; style : TFHIROutputStyle = OutputStyleNormal);
+procedure resourceToStream(res : TFhirResource; stream : TStream; format : TFHIRFormat; style : TFHIROutputStyle = OutputStyleNormal);
 function resourceToString(res : TFhirResource; format : TFHIRFormat) : String;
-function resourceToBytes(res : TFhirResource; format : TFHIRFormat) : TBytes;
+function resourceToBytes(res : TFhirResource; format : TFHIRFormat; style : TFHIROutputStyle = OutputStyleNormal) : TBytes;
 
 function parseParamsFromForm(stream : TStream) : TFHIRParameters;
 
@@ -253,12 +254,11 @@ type
     property object_List : TFhirAuditEventEntityList read GetObjectList;
   end;
 
-  TFHIRTFhirDurationHelper = class helper for TFhirDuration
+  TFHIRDurationHelper = class helper for TFhirDuration
   private
   public
     function ToDateTime : TDateTime;
   end;
-
 
   TFhirExtensionListHelper = class helper for TFhirExtensionList
   public
@@ -463,6 +463,19 @@ type
     function targetDesc: String;
   end;
 
+  TSignatureType = (SignatureTypeAuthor, SignatureTypeCoAuthor, SignatureTypeParticipant, SignatureTypeTranscriptionist, SignatureTypeVerification,
+                    SignatureTypeValidation, SignatureTypeConsent, SignatureTypeWitnessSignature, SignatureTypeWitnessEvent, SignatureTypeWitnessIdentity,
+                    SignatureTypeWitnessConsent, SignatureTypeInterpreter, SignatureTypeReview, SignatureTypeSource, SignatureTypeAddendum,
+                    SignatureTypeModification, SignatureTypeAdministrative, SignatureTypeTimestamp);
+
+const
+  CODES_TSignatureType : array [TSignatureType] of String = ('1.2.840.10065.1.12.1.1', '1.2.840.10065.1.12.1.2', '1.2.840.10065.1.12.1.3', '1.2.840.10065.1.12.1.4', '1.2.840.10065.1.12.1.5',
+                '1.2.840.10065.1.12.1.6', '1.2.840.10065.1.12.1.7', '1.2.840.10065.1.12.1.8', '1.2.840.10065.1.12.1.9', '1.2.840.10065.1.12.1.10',
+                '1.2.840.10065.1.12.1.11', '1.2.840.10065.1.12.1.12', '1.2.840.10065.1.12.1.13', '1.2.840.10065.1.12.1.14', '1.2.840.10065.1.12.1.15',
+                '1.2.840.10065.1.12.1.16', '1.2.840.10065.1.12.1.17', '1.2.840.10065.1.12.1.18');
+
+type
+
   TFHIRBundleHelper = class helper (TFhirResourceHelper) for TFHIRBundle
   private
     function GetLinks(s: string): String;
@@ -471,6 +484,8 @@ type
     procedure deleteEntry(resource : TFHIRResource);
     class function Create(aType : TFhirBundleTypeEnum) : TFhirBundle; overload;
     class function wrap(aType : TFhirBundleTypeEnum; resource : TFhirResource) : TFhirBundle; overload;
+
+    procedure signRef(code : TSignatureType; whoRef : String; format : TFHIRFormat; cert : String);
   end;
 
   TFHIRCodingListHelper = class helper for TFHIRCodingList
@@ -832,14 +847,14 @@ begin
   end;
 end;
 
-function MakeComposer(lang : string; mimetype : String; worker : TFHIRWorkerContext) : TFHIRComposer;
+function MakeComposer(Style : TFHIROutputStyle; lang : string; mimetype : String; worker : TFHIRWorkerContext) : TFHIRComposer;
 begin
   if mimeType.StartsWith('text/xml') or mimeType.StartsWith('application/xml') or mimeType.StartsWith('application/fhir+xml') or (mimetype = 'xml') then
-    result := TFHIRXmlComposer.Create(worker.link, lang)
+    result := TFHIRXmlComposer.Create(worker.link, Style, lang)
   else if mimeType.StartsWith('text/json') or mimeType.StartsWith('application/json') or mimeType.StartsWith('application/fhir+json') or (mimetype = 'json') then
-    result := TFHIRJsonComposer.Create(worker.link, lang)
+    result := TFHIRJsonComposer.Create(worker.link, Style, lang)
   else if mimeType.StartsWith('text/html') or mimeType.StartsWith('text/xhtml') or mimeType.StartsWith('application/fhir+xhtml') or (mimetype = 'xhtml') then
-    result := TFHIRXhtmlComposer.Create(worker.link, lang)
+    result := TFHIRXhtmlComposer.Create(worker.link, Style, lang)
   else
     raise Exception.Create('Format '+mimetype+' not recognised');
 end;
@@ -1811,7 +1826,7 @@ end;
 
 
 
-  procedure generateComposition(x : TFhirTFhirXHtmlNode; vs : TFHIRValueSet, Map<String, AtomEntry> codeSystems) throws Exception begin
+  procedure generateComposition(x : TFHIRXHtmlNode; vs : TFHIRValueSet, Map<String, AtomEntry> codeSystems) throws Exception begin
     TFhirXHtmlNode h := x.addTag('h2');
     h.addText(vs.Name);
     TFhirXHtmlNode p := x.addTag('p');
@@ -1840,7 +1855,7 @@ end;
     if (inc.Code.size :=:= 0 && inc.Filter.size :=:= 0) begin then 
       li.addText(type+' all codes defined in ');
       addCsRef(inc, li, e);
-    end; else begin 
+    end; else begin
       if (inc.Code.size > 0) begin then
         li.addText(type+' these codes as defined in ');
         addCsRef(inc, li, e);
@@ -2748,6 +2763,45 @@ begin
       result := link_List[i].url;
       exit;
     end;
+end;
+
+procedure TFHIRBundleHelper.signRef(code: TSignatureType; whoRef: String; format: TFHIRFormat; cert : String);
+var
+  c : TFHIRCoding;
+  dig : TDigitalSigner;
+  src : TBytes;
+begin
+  // first. populate the signature
+  signature := TFhirSignature.Create;
+  c := signature.type_List.Append;
+  c.system := 'urn:iso-astm:E1762-95:2013';
+  c.code := CODES_TSignatureType[code];
+  signature.when := TDateTimeEx.makeUTC;
+  signature.who := TFhirReference.Create(whoRef);
+  signature.targetFormat := MIMETYPES_TFHIRFormat[format];
+  case format of
+    ffXml:
+      begin
+      signature.sigFormat := 'application/signature+xml';
+      src := resourceToBytes(self, ffXml, OutputStyleCanonical);
+      dig := TDigitalSigner.Create;
+      try
+        dig.PrivateKey := cert;
+        signature.blob := dig.signDetached(src, '', sdXmlRSASha256, 'http://hl7.org/fhir/canonicalization/xml#bundle', true);
+      finally
+        dig.free;
+      end;
+      end;
+    ffJson :
+      begin
+      signature.sigFormat := 'application/jose';
+      src := resourceToBytes(self, ffJson, OutputStyleCanonical);
+      BytesToFile(src, 'c:\temp\can.json');
+      signature.blob := TJWTUtils.Sign_Hmac_RSA256(src, cert, '');
+      end
+  else
+    raise Exception.Create('The format '+CODES_TFHIRFormat[format]+' is not supported for digital signatures');
+  end;
 end;
 
 class function TFHIRBundleHelper.wrap(aType: TFhirBundleTypeEnum; resource: TFhirResource): TFhirBundle;
@@ -4254,9 +4308,9 @@ function ComposeJson(worker: TFHIRWorkerContext; r : TFhirResource) : String;
 var
   comp : TFHIRJsonComposer;
 begin
-  comp := TFHIRJsonComposer.Create(worker.link, 'en');
+  comp := TFHIRJsonComposer.Create(worker.link, OutputStyleNormal, 'en');
   try
-    result := comp.Compose(r, false);
+    result := comp.Compose(r);
   finally
     comp.Free;
   end;
@@ -5265,6 +5319,13 @@ begin
   end;
 end;
 
+function fileToResource(name : String) : TFhirResource;
+var
+  format : TFHIRFormat;
+begin
+  result := fileToResource(name, format);
+end;
+
 function bytesToResource(bytes : TBytes; var format : TFHIRFormat) : TFhirResource;
 var
   b : TBytesStream;
@@ -5319,13 +5380,13 @@ begin
   end;
 end;
 
-function resourceToBytes(res : TFhirResource; format : TFHIRFormat) : TBytes;
+function resourceToBytes(res : TFhirResource; format : TFHIRFormat; style : TFHIROutputStyle = OutputStyleNormal) : TBytes;
 var
   f : TBytesStream;
 begin
   f := TBytesStream.Create();
   try
-    resourceToStream(res, f, format);
+    resourceToStream(res, f, format, style);
     result := f.Bytes;
   finally
     f.Free;
@@ -5333,39 +5394,39 @@ begin
 end;
 
 
-procedure resourceToFile(res : TFhirResource; name : String; format : TFHIRFormat);
+procedure resourceToFile(res : TFhirResource; name : String; format : TFHIRFormat; style : TFHIROutputStyle = OutputStyleNormal);
 var
   f : TFileStream;
 begin
   f := TFileStream.Create(name, fmCreate);
   try
-    resourceToStream(res, f, format);
+    resourceToStream(res, f, format, style);
   finally
     f.Free;
   end;
 end;
 
-procedure resourceToStream(res : TFhirResource; stream : TStream; format : TFHIRFormat; pretty : boolean = true);
+procedure resourceToStream(res : TFhirResource; stream : TStream; format : TFHIRFormat; style : TFHIROutputStyle = OutputStyleNormal);
 var
   c : TFHIRComposer;
 begin
   case format of
-    ffXml, ffxhtml : c := TFHIRXmlComposer.Create(nil, 'en');
-    ffJson : c := TFHIRJsonComposer.Create(nil, 'en');
-    ffTurtle : c := TFHIRTurtleComposer.Create(nil, 'en');
+    ffXml, ffxhtml : c := TFHIRXmlComposer.Create(nil, style, 'en');
+    ffJson : c := TFHIRJsonComposer.Create(nil, style, 'en');
+    ffTurtle : c := TFHIRTurtleComposer.Create(nil, style, 'en');
   else
     raise Exception.Create('Format Not supported');
   end;
   try
-    c.Compose(stream, res, pretty);
+    c.Compose(stream, res);
   finally
     c.Free;
   end;
 end;
 
-{ TFHIRTFhirDurationHelper }
+{ TFHIRDurationHelper }
 
-function TFHIRTFhirDurationHelper.ToDateTime: TDateTime;
+function TFHIRDurationHelper.ToDateTime: TDateTime;
 var
   b : TDateTime;
 begin
@@ -5645,9 +5706,9 @@ begin
     b := #10;
     f.Write(b, 1);
   end;
-  json := TFHIRJsonComposer.Create(nil, 'en');
+  json := TFHIRJsonComposer.Create(nil, OutputStyleNormal, 'en');
   try
-    json.Compose(f, res, false);
+    json.Compose(f, res);
   finally
     json.Free;
   end;

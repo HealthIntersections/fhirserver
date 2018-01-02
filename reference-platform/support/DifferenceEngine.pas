@@ -34,7 +34,7 @@ interface
 uses
   SysUtils, Classes,
   AdvObjects, AdvGenerics, StringSupport, TextUtilities,
-  FHIRBase, FHIRTypes, FHIRResources, FHIRParser, FHIRXhtml, FHIRUtilities, FHIRPath, FHIRContext,
+  FHIRBase, FHIRTypes, FHIRResources, FHIRParser, FHIRXhtml, FHIRUtilities, FHIRPath, FHIRContext, FHIRParserBase,
   MXML, EncodeSupport;
 
 type
@@ -701,16 +701,16 @@ var
   b : TStringBuilder;
 begin
   if value is TFHIREnum then
-    result := EncodeXML(TFHIREnum(value).value, xmlText, eolnIgnore)
+    result := FormatTextToXml(TFHIREnum(value).value, xmlText)
   else if (value is TFhirXHtmlNode) then
-    result := EncodeXML(TFHIRXhtmlParser.compose(TFhirXHtmlNode(value)), xmlText, eolnIgnore)
+    result := FormatTextToXml(TFHIRXhtmlParser.compose(TFhirXHtmlNode(value)), xmlText)
   else if (value is TFHIRType) and (Value.isPrimitive) then
-    result := EncodeXML(Value.primitiveValue, xmlText, eolnIgnore)
+    result := FormatTextToXml(Value.primitiveValue, xmlText)
   else if (value is TFHIRType) and StringArrayExistsSensitive(['Annotation', 'Attachment', 'Identifier', 'CodeableConcept', 'Coding', 'Quantity', 'Range', 'Period', 'Ratio', 'SampledData', 'Signature', 'HumanName', 'Address', 'ContactPoint', 'Timing', 'Reference', 'Meta'], Value.fhirType) then
   begin
-    c := TFHIRJsonComposer.Create(fpe.context.link, 'en');
+    c := TFHIRJsonComposer.Create(fpe.context.link, OutputStyleNormal, 'en');
     try
-      result := c.Compose('value', value, false);
+      result := c.Compose('value', value);
     finally
       c.Free;
     end;

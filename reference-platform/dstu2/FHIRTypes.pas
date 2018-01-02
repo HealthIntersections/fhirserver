@@ -1,5 +1,3 @@
-{!Wrapper uses FHIRBase, FHIRBase_Wrapper}
-
 unit FHIRTypes;
 
 {$I fhir.inc}
@@ -2344,12 +2342,13 @@ Type
   TFHIRPrimitiveType = class (TFhirType)
   Private
     Function GetStringValue : String;
+    Procedure SetStringValue(value : String); virtual;
     Function AsStringValue : String; Virtual;
   Public
     {!script hide}
     Function Link : TFHIRPrimitiveType; Overload;
     Function Clone : TFHIRPrimitiveType; Overload;
-    Property StringValue : String read GetStringValue;
+    Property StringValue : String read GetStringValue write SetStringValue;
     function isPrimitive : boolean; override;
     function hasPrimitiveValue : boolean; override;
     function primitiveValue : string; override;
@@ -2372,6 +2371,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     function AsStringValue : String; Override;
+    procedure SetStringValue(value : String); Override;
   Public
     constructor Create(system : String; value : String); overload;
     Destructor Destroy; override;
@@ -2516,6 +2516,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     function AsStringValue : String; Override;
+    procedure SetStringValue(value : String); Override;
   Public
     constructor Create(value : TDateTimeEx); overload;
     Destructor Destroy; override;
@@ -2653,6 +2654,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     function AsStringValue : String; Override;
+    procedure SetStringValue(value : String); Override;
   Public
     constructor Create(value : TDateTimeEx); overload;
     Destructor Destroy; override;
@@ -2790,6 +2792,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     function AsStringValue : String; Override;
+    procedure SetStringValue(value : String); Override;
   Public
     constructor Create(value : String); overload;
     Destructor Destroy; override;
@@ -2927,6 +2930,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     function AsStringValue : String; Override;
+    procedure SetStringValue(value : String); Override;
   Public
     constructor Create(value : String); overload;
     Destructor Destroy; override;
@@ -3064,6 +3068,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     function AsStringValue : String; Override;
+    procedure SetStringValue(value : String); Override;
   Public
     constructor Create(value : String); overload;
     Destructor Destroy; override;
@@ -3201,6 +3206,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     function AsStringValue : String; Override;
+    procedure SetStringValue(value : String); Override;
   Public
     constructor Create(value : TDateTimeEx); overload;
     Destructor Destroy; override;
@@ -3338,6 +3344,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     function AsStringValue : String; Override;
+    procedure SetStringValue(value : String); Override;
   Public
     constructor Create(value : Boolean); overload;
     Destructor Destroy; override;
@@ -3475,6 +3482,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     function AsStringValue : String; Override;
+    procedure SetStringValue(value : String); Override;
   Public
     constructor Create(value : TBytes); overload;
     Destructor Destroy; override;
@@ -3612,6 +3620,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     function AsStringValue : String; Override;
+    procedure SetStringValue(value : String); Override;
   Public
     constructor Create(value : String); overload;
     Destructor Destroy; override;
@@ -3749,6 +3758,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     function AsStringValue : String; Override;
+    procedure SetStringValue(value : String); Override;
   Public
     constructor Create(value : String); overload;
     Destructor Destroy; override;
@@ -11061,6 +11071,11 @@ begin
     result := AsStringValue;
 end;
 
+procedure TFHIRPrimitiveType.SetStringValue(value: String);
+begin
+  raise Exception.Create('Need to override '+ClassName+'.setStringValue');
+end;
+
 function TFHIRPrimitiveType.AsStringValue : string;
 begin
   raise Exception.create('need to override '+ClassName+'.AsStringValue');
@@ -11124,6 +11139,11 @@ end;
 function TFhirEnum.AsStringValue : string;
 begin
   result := FValue;
+end;
+
+procedure TFhirEnum.SetStringValue(value : string);
+begin
+  FValue := value;
 end;
 
 function TFhirEnum.equalsDeep(other : TFHIRObject) : boolean; 
@@ -11369,6 +11389,14 @@ begin
     result := FValue.toXml;
 end;
 
+procedure TFhirDateTime.SetStringValue(value : string);
+begin
+  if (value = '') then
+    FValue := TDateTimeEx.makeNull
+  else
+    FValue := TDateTimeEx.fromXml(value);
+end;
+
 function TFhirDateTime.equalsDeep(other : TFHIRObject) : boolean; 
 var
   o : TFhirDateTime;
@@ -11598,6 +11626,14 @@ begin
     result := FValue.toXml;
 end;
 
+procedure TFhirDate.SetStringValue(value : string);
+begin
+  if (value = '') then
+    FValue := TDateTimeEx.makeNull
+  else
+    FValue := TDateTimeEx.fromXml(value);
+end;
+
 function TFhirDate.equalsDeep(other : TFHIRObject) : boolean; 
 var
   o : TFhirDate;
@@ -11821,6 +11857,11 @@ end;
 function TFhirString.AsStringValue : string;
 begin
   result := FValue;
+end;
+
+procedure TFhirString.SetStringValue(value : string);
+begin
+  FValue := value;
 end;
 
 function TFhirString.equalsDeep(other : TFHIRObject) : boolean; 
@@ -12048,6 +12089,11 @@ begin
   result := FValue;
 end;
 
+procedure TFhirInteger.SetStringValue(value : string);
+begin
+  FValue := value;
+end;
+
 function TFhirInteger.equalsDeep(other : TFHIRObject) : boolean; 
 var
   o : TFhirInteger;
@@ -12271,6 +12317,11 @@ end;
 function TFhirUri.AsStringValue : string;
 begin
   result := FValue;
+end;
+
+procedure TFhirUri.SetStringValue(value : string);
+begin
+  FValue := value;
 end;
 
 function TFhirUri.equalsDeep(other : TFHIRObject) : boolean; 
@@ -12502,6 +12553,14 @@ begin
     result := FValue.toXml;
 end;
 
+procedure TFhirInstant.SetStringValue(value : string);
+begin
+  if (value = '') then
+    FValue := TDateTimeEx.makeNull
+  else
+    FValue := TDateTimeEx.fromXml(value);
+end;
+
 function TFhirInstant.equalsDeep(other : TFHIRObject) : boolean; 
 var
   o : TFhirInstant;
@@ -12725,6 +12784,11 @@ end;
 function TFhirBoolean.AsStringValue : string;
 begin
   result := LCBooleanToString(FValue);
+end;
+
+procedure TFhirBoolean.SetStringValue(value : string);
+begin
+  FValue := StringToBoolean(value);
 end;
 
 function TFhirBoolean.equalsDeep(other : TFHIRObject) : boolean; 
@@ -12952,6 +13016,11 @@ begin
   if (length(FValue) = 0) then result := '' else result := string(EncodeBase64(@FValue[0], length(FValue)));
 end;
 
+procedure TFhirBase64Binary.SetStringValue(value : string);
+begin
+  if (length(value) = 0) then SetLength(FValue, 0) else FValue := DecodeBase64(value);
+end;
+
 function TFhirBase64Binary.equalsDeep(other : TFHIRObject) : boolean; 
 var
   o : TFhirBase64Binary;
@@ -13177,6 +13246,11 @@ begin
   result := FValue;
 end;
 
+procedure TFhirTime.SetStringValue(value : string);
+begin
+  FValue := value;
+end;
+
 function TFhirTime.equalsDeep(other : TFHIRObject) : boolean; 
 var
   o : TFhirTime;
@@ -13400,6 +13474,11 @@ end;
 function TFhirDecimal.AsStringValue : string;
 begin
   result := FValue;
+end;
+
+procedure TFhirDecimal.SetStringValue(value : string);
+begin
+  FValue := value;
 end;
 
 function TFhirDecimal.equalsDeep(other : TFHIRObject) : boolean; 

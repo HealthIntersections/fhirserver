@@ -35,7 +35,7 @@ uses
   SysUtils, Classes,
   TextUtilities, MarkDownProcessor, KCritSct, HashSupport, EncodeSupport,
   AdvObjects, AdvGenerics, AdvJson, AdvStringStreams,
-  FHIRBase, FHIRTypes, FHIRResources, FHIRUtilities, SmartOnFhirUtilities, FHIRParser;
+  FHIRBase, FHIRTypes, FHIRResources, FHIRUtilities, SmartOnFhirUtilities, FHIRParserBase, FHIRParser;
 
 type
   TCDSHooks = class
@@ -452,7 +452,7 @@ var
 begin
   ss := TAdvStringStream.Create;
   try
-    writer := TJSONWriter.Create;
+    writer := TJsonWriterDirect.create;
     try
       writer.HasWhitespace := true;
       writer.Stream := ss.Link;
@@ -475,7 +475,7 @@ begin
       writer.ValueArray('context');
       for c in context do
       begin
-        comp := TFHIRJsonComposer.create(nil, 'en');
+        comp := TFHIRJsonComposer.create(nil, OutputStyleNormal, 'en');
         try
           comp.Compose(writer, c);
         finally
@@ -499,7 +499,7 @@ begin
           if be.resource <> nil then
           begin
             writer.ValueObject('resource');
-            comp := TFHIRJsonComposer.create(nil, 'en');
+            comp := TFHIRJsonComposer.create(nil, OutputStyleNormal, 'en');
             try
               comp.Compose(writer, be.resource);
             finally
@@ -822,7 +822,7 @@ var
 begin
   ss := TAdvStringStream.Create;
   try
-    writer := TJSONWriter.Create;
+    writer := TJsonWriterDirect.create;
     try
       writer.HasWhitespace := true;
       writer.Stream := ss.Link;

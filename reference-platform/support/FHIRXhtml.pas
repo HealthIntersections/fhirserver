@@ -52,8 +52,8 @@ Type
     class Function parse(lang : String; policy : TFHIRXhtmlParserPolicy; options : TFHIRXhtmlParserOptions; content : String) : TFhirXHtmlNode; Overload;
 
     class procedure compose(node: TFhirXHtmlNode; xml : TXmlBuilder); overload;
-    class procedure compose(node: TFhirXHtmlNode; s : TAdvStringBuilder; indent : integer = 0; relativeReferenceAdjustment : integer = 0); overload;
-    class function  compose(node: TFhirXHtmlNode) : String; overload;
+    class procedure compose(node: TFhirXHtmlNode; s : TAdvStringBuilder; canonicalise : boolean; indent : integer = 0; relativeReferenceAdjustment : integer = 0); overload;
+    class function  compose(node: TFhirXHtmlNode; canonicalise : boolean = false) : String; overload;
 
     class Function attributeIsOk(policy : TFHIRXhtmlParserPolicy; options: TFHIRXhtmlParserOptions; name, attr, value : String) : boolean;
     class Function elementIsOk(policy : TFHIRXhtmlParserPolicy; options: TFHIRXhtmlParserOptions; name : String) : boolean;
@@ -178,13 +178,13 @@ begin
   exit(defaultNS);
 end;
 
-class function TFHIRXhtmlParser.compose(node: TFhirXHtmlNode): String;
+class function TFHIRXhtmlParser.compose(node: TFhirXHtmlNode; canonicalise : boolean): String;
 var
   b : TAdvStringBuilder;
 begin
   b := TAdvStringBuilder.Create;
   try
-    compose(node, b);
+    compose(node, b, canonicalise);
     result := b.AsString;
   finally
     b.Free;
@@ -211,41 +211,6 @@ begin
   for i := 1 to indent do
     result := result + '../';
   result := result + s;
-end;
-
-class procedure TFHIRXhtmlParser.compose(node: TFhirXHtmlNode; s: TAdvStringBuilder; indent, relativeReferenceAdjustment: integer);
-var
-  i : Integer;
-begin
-  if node = nil then
-    exit;
-  case node.NodeType of
-    fhntText : s.append(FormatTexttoXml(node.Content));
-    fhntComment : s.append('<!-- '+FormatTexttoXml(node.Content)+' -->');
-    fhntElement :
-      begin
-      s.append('<'+node.name);
-      for i := 0 to node.Attributes.count - 1 do
-        if (node.name = 'a') and (node.Attributes[i].Name = 'href') and isRelativeReference(node.Attributes[i].Value) then
-          s.append(' '+node.Attributes[i].Name+'="'+FixRelativeReference(node.Attributes[i].Value, relativeReferenceAdjustment)+'"')
-        else
-          s.append(' '+node.Attributes[i].Name+'="'+FormatTexttoXml(node.Attributes[i].Value)+'"');
-      if node.ChildNodes.Count > 0 then
-      begin
-        s.append('>');
-        for i := 0 to node.ChildNodes.count - 1 do
-          compose(node.ChildNodes[i], s, indent+2, relativeReferenceAdjustment);
-        s.append('</'+node.name+'>');
-      end
-      else
-        s.append('/>');
-      end;
-    fhntDocument:
-      for i := 0 to node.ChildNodes.count - 1 do
-        compose(node.ChildNodes[i], s, indent, relativeReferenceAdjustment);
-  else
-    raise exception.create('not supported');
-  End;
 end;
 
 function normaliseWhitespace(s : String) : String;
@@ -280,6 +245,48 @@ begin
   end;
 end;
 
+
+class procedure TFHIRXhtmlParser.compose(node: TFhirXHtmlNode; s: TAdvStringBuilder; canonicalise : boolean; indent, relativeReferenceAdjustment: integer);
+var
+  i : Integer;
+  function canonical(s: String) : String;
+  begin
+    if canonicalise then
+      result := normaliseWhitespace(s)
+    else
+      result := s;
+  end;
+begin
+  if node = nil then
+    exit;
+  case node.NodeType of
+    fhntText : s.append(FormatTexttoXml(canonical(node.Content), xmlText));
+    fhntComment : s.append('<!-- '+FormatTexttoXml(node.Content, xmlText)+' -->');
+    fhntElement :
+      begin
+      s.append('<'+node.name);
+      for i := 0 to node.Attributes.count - 1 do
+        if (node.name = 'a') and (node.Attributes[i].Name = 'href') and isRelativeReference(node.Attributes[i].Value) then
+          s.append(' '+node.Attributes[i].Name+'="'+FixRelativeReference(node.Attributes[i].Value, relativeReferenceAdjustment)+'"')
+        else
+          s.append(' '+node.Attributes[i].Name+'="'+FormatTexttoXml(node.Attributes[i].Value, xmlAttribute)+'"');
+      if node.ChildNodes.Count > 0 then
+      begin
+        s.append('>');
+        for i := 0 to node.ChildNodes.count - 1 do
+          compose(node.ChildNodes[i], s, canonicalise, indent+2, relativeReferenceAdjustment);
+        s.append('</'+node.name+'>');
+      end
+      else
+        s.append('/>');
+      end;
+    fhntDocument:
+      for i := 0 to node.ChildNodes.count - 1 do
+        compose(node.ChildNodes[i], s, canonicalise, indent, relativeReferenceAdjustment);
+  else
+    raise exception.create('not supported');
+  End;
+end;
 
 class procedure TFHIRXhtmlParser.docompose(node: TFhirXHtmlNode; xml: TXmlBuilder);
 var

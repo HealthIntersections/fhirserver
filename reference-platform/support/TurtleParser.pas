@@ -996,7 +996,7 @@ end;
 
 procedure TTurtleLexer.error(message : String);
 begin
- raise Exception.create('Syntax Error parsing Turtle on line '+inttostr(pos.line)+' col '+inttostr(pos.col)+': '+message);
+  raise Exception.create('Syntax Error parsing Turtle on line '+inttostr(pos.line)+' col '+inttostr(pos.col)+': '+message);
 end;
 
 { TTurtleParser }

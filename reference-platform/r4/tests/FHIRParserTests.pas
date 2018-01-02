@@ -35,7 +35,7 @@ interface
 uses
   Windows, SysUtils, Classes,
   DUnitX.TestFramework,
-  FHIRBase, FHIRResources, FHIRParser, FHIRMetaModel,
+  FHIRBase, FHIRResources, FHIRParser, FHIRMetaModel, FHIRParserBase,
   FHIRContext, FHIRTestWorker, XmlTests, JsonTests;
 
 type
@@ -73,14 +73,14 @@ begin
     Assert.IsNotNull(r, 'Resource could not be loaded');
     fn := MakeTempFilename();
     try
-      TFHIRXmlComposer.composeFile(nil, r, 'en', fn);
+      TFHIRXmlComposer.composeFile(nil, r, 'en', fn, OutputStylePretty);
       b := CheckXMLIsSame(filename, fn, msg);
       assert.IsTrue(b, msg);
     finally
       DeleteFile(fn);
     end;
     j1 := MakeTempFilename();
-    TFHIRJsonComposer.composeFile(nil, r, 'en', j1, true);
+    TFHIRJsonComposer.composeFile(nil, r, 'en', j1, OutputStylePretty);
   finally
     r.Free;
   end;
@@ -92,14 +92,14 @@ begin
       Assert.IsNotNull(re, 'Resource could not be loaded');
       fn := MakeTempFilename();
       try
-        TFHIRMMManager.composeFile(ctxt, re, fn, ffXml, true);
+        TFHIRMMManager.composeFile(ctxt, re, fn, ffXml, OutputStylePretty);
         b := CheckXMLIsSame(filename, fn, msg);
         assert.IsTrue(b, msg);
       finally
         DeleteFile(fn);
       end;
       j2 := MakeTempFilename();
-      TFHIRMMManager.composeFile(ctxt, re, j2, ffJson, true);
+      TFHIRMMManager.composeFile(ctxt, re, j2, ffJson, OutputStylePretty);
     finally
       re.Free;
     end;
@@ -117,14 +117,14 @@ begin
     Assert.IsNotNull(r, 'Resource could not be loaded');
     fn := MakeTempFilename();
     try
-      TFHIRJsonComposer.composeFile(nil, r, 'en', fn);
+      TFHIRJsonComposer.composeFile(nil, r, 'en', fn, OutputStyleNormal);
       b := CheckJsonIsSame(j2, fn, msg);
       assert.IsTrue(b, msg);
     finally
       DeleteFile(fn);
     end;
     x1 := MakeTempFilename();
-    TFHIRXmlComposer.composeFile(nil, r, 'en', x1);
+    TFHIRXmlComposer.composeFile(nil, r, 'en', x1, OutputStyleNormal);
   finally
     r.Free;
   end;
@@ -136,14 +136,14 @@ begin
       Assert.IsNotNull(re, 'Resource could not be loaded');
       fn := MakeTempFilename();
       try
-        TFHIRMMManager.composeFile(ctxt, re, fn, ffJson, true);
+        TFHIRMMManager.composeFile(ctxt, re, fn, ffJson, OutputStylePretty);
         b := CheckJsonIsSame(j1, fn, msg);
         assert.IsTrue(b, msg);
       finally
         DeleteFile(fn);
       end;
       x2 := MakeTempFilename();
-      TFHIRMMManager.composeFile(ctxt, re, x2, ffXml, true);
+      TFHIRMMManager.composeFile(ctxt, re, x2, ffXml, OutputStylePretty);
     finally
       re.Free;
     end;

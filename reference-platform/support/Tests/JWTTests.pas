@@ -43,14 +43,10 @@ Type
   TJWTTests = Class (TObject)
   Private
   Published
-    [SetUp]
-    procedure Setup;
-    [TestCase]
-    procedure TestPacking;
-    [TestCase]
-    procedure TestUnpacking;
-    [TestCase]
-    procedure TestCert;
+    [SetUp] procedure Setup;
+    [TestCase] procedure TestPacking;
+    [TestCase] procedure TestUnpacking;
+    [TestCase] procedure TestCert;
   End;
 
 Implementation

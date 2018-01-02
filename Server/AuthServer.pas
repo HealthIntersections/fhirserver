@@ -1100,7 +1100,7 @@ begin
   begin
     response.ResponseNo := 500;
     response.ContentType := 'application/json';
-    json := TJsonWriter.create;
+    json := TJsonWriterDirect.create;
     try
       json.Start;
       json.Value('error', 'unsupported_grant_type');
@@ -1157,7 +1157,7 @@ begin
         {$IFNDEF FHIR2}
         populateFromConsent(consentKey, session);
         {$ENDIF}
-        json := TJsonWriter.create;
+        json := TJsonWriterDirect.create;
         try
           json.Start;
           json.Value('access_token', session.Cookie);
@@ -1182,7 +1182,7 @@ begin
     on e : Exception do
     begin
       response.ResponseNo := 500;
-      json := TJsonWriter.create;
+      json := TJsonWriterDirect.create;
       try
         json.Start;
         json.Value('error', errCode);
@@ -1253,7 +1253,7 @@ begin
           session.SystemName := jwt.subject;
           session.SystemEvidence := systemFromJWT;
           session.scopes := params.GetVar('scopes');
-          json := TJsonWriter.create;
+          json := TJsonWriterDirect.create;
           try
             json.Start;
             json.Value('access_token', session.Cookie);
@@ -1279,7 +1279,7 @@ begin
     on e : Exception do
     begin
       response.ResponseNo := 500;
-      json := TJsonWriter.create;
+      json := TJsonWriterDirect.create;
       try
         json.Start;
         json.Value('error', errCode);
@@ -1351,7 +1351,7 @@ begin
           if (session.SystemName <> client_id) or (session.SystemName <> clientId) then
             raise Exception.Create('Session client id mismatch ("'+session.SystemName+'"/"'+client_id+'"/"'+clientId+'")');
 
-          json := TJsonWriter.create;
+          json := TJsonWriterDirect.create;
           try
             json.Stream := buffer.link;
             json.Start;
@@ -1376,7 +1376,7 @@ begin
       on e : Exception do
       begin
         response.ResponseNo := 500;
-        json := TJsonWriter.create;
+        json := TJsonWriterDirect.create;
         try
           json.Stream := buffer.link;
           json.Start;
@@ -1423,7 +1423,7 @@ begin
 
         if not ServerContext.SessionManager.GetSession(token, session, check) then
         begin
-          json := TJsonWriter.create;
+          json := TJsonWriterDirect.create;
           try
             json.Stream := buffer.link;
             json.Start;
@@ -1435,7 +1435,7 @@ begin
         end
         else
         try
-          json := TJsonWriter.create;
+          json := TJsonWriterDirect.create;
           try
             json.Stream := buffer.link;
             json.Start;
@@ -1466,7 +1466,7 @@ begin
     except
       on e : Exception do
       begin
-        json := TJsonWriter.create;
+        json := TJsonWriterDirect.create;
         try
           json.Stream := buffer.link;
           json.Start;

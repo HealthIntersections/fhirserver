@@ -32,23 +32,62 @@ interface
 uses
   SysUtils, Classes,
   DUnitX.TestFramework,
+  IdSSLOpenSSLHeaders, libeay32,
+  TextUtilities,
   AdvZipParts,
-  FHIRTypes, FHIRResources, FHIRParser, FHIRUtilities;
+  FHIRBase, FHIRTypes, FHIRResources, FHIRParser, FHIRUtilities;
 
 type
   [TextFixture]
   TFHIRUtilityTests = Class (TObject)
-  private
   public
+    [SetUp] procedure Setup;
+
     [TestCase] Procedure TestZipPartCreation;
     [TestCase] Procedure TestZipGeneration;
     [TestCase] Procedure TestReferenceAnalysis;
+    [TestCase] Procedure TestBundleSigningXml;
+    [TestCase] Procedure TestBundleSigningJson;
   end;
 
 
 implementation
 
 { TFHIRUtilityTests }
+
+procedure TFHIRUtilityTests.TestBundleSigningXml;
+var
+  bnd : TFhirBundle;
+  b : TBytes;
+begin
+  bnd := fileToResource('C:\work\org.hl7.fhir\build\publish\document-example-dischargesummary.xml') as TFHIRBundle;
+  try
+    bnd.signRef(SignatureTypeAuthor, 'Practitioner/example', ffXml, 'C:\work\fhirserver\tests\signatures\private_key.pem');
+    ResourceToFile(bnd, 'c:\temp\signed.xml', ffXml, OutputStylePretty);
+  finally
+    bnd.Free;
+  end;
+end;
+
+procedure TFHIRUtilityTests.Setup;
+begin
+  IdSSLOpenSSLHeaders.Load;
+  LoadEAYExtensions;
+end;
+
+procedure TFHIRUtilityTests.TestBundleSigningJson;
+var
+  bnd : TFhirBundle;
+  b : TBytes;
+begin
+  bnd := fileToResource('C:\work\org.hl7.fhir\build\publish\document-example-dischargesummary.xml') as TFHIRBundle;
+  try
+    bnd.signRef(SignatureTypeAuthor, 'Practitioner/example', ffJson, 'C:\work\fhirserver\tests\signatures\private_key.pem');
+    ResourceToFile(bnd, 'c:\temp\signed.json', ffJson, OutputStylePretty);
+  finally
+    bnd.Free;
+  end;
+end;
 
 procedure TFHIRUtilityTests.TestReferenceAnalysis;
 var

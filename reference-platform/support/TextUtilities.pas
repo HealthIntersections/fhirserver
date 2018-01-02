@@ -33,8 +33,12 @@ interface
 Uses
   SysUtils, Classes, AdvStreams;
 
+type
+  TXmlEncodingMode = (xmlText, xmlAttribute, xmlCanonical);
+  TEolnOption = (eolnIgnore, eolnCanonical, eolnEscape);
+
 function FormatTextToHTML(AStr: String): String; // translate ready for use in HTML
-function FormatTextToXML(AStr: String): String;
+function FormatTextToXML(AStr: String; mode : TXmlEncodingMode): String;
 function FormatCodeToXML(AStr: String): String;
 function FormatXMLToHTML(AStr : String):String;
 function FormatXMLToHTMLPlain(AStr : String):String;
@@ -153,46 +157,73 @@ begin
     end;
 end;
 
-function FormatTextToXML(AStr: String): String;
+function FormatTextToXML(AStr: String; mode : TXmlEncodingMode): String;
 var
   i: Integer;
+  b : TStringBuilder;
 begin
-  Result := '';
-  if Length(AStr) <= 0 then
-    exit;
-  i := 1;
-  while i <= Length(AStr) do
-    begin
-    case AStr[i] of
-      '''':
-        Result := Result + '&#' + IntToStr(Ord(AStr[i])) + ';';
-      '"':
-        Result := Result + '&quot;';
-      '&':
-        Result := Result + '&amp;';
-      '<':
-        Result := Result + '&lt;';
-      '>':
-        Result := Result + '&gt;';
-      #32:
-        Result := Result + ' ';
-      #13:
-        begin
-        if i < length(AStr) then
-          if AStr[i + 1] = #10 then
-            Inc(i);
-        Result := Result + ' ';
-        end;
-      else
-        begin
-        if CharInSet(AStr[i], [' '..'~']) then
-          Result := Result + AStr[i]
+  b := TStringBuilder.Create;
+  try
+    i := 1;
+    while i <= Length(AStr) do
+      begin
+      case AStr[i] of
+        '"':
+          case mode of
+            xmlAttribute : b.append('&quot;');
+            xmlCanonical : b.append('&#' + IntToStr(Ord(AStr[i])) + ';');
+            xmlText : b.append(AStr[i]);
+          end;
+        '''':
+          case mode of
+            xmlAttribute : b.append('&apos;');
+            xmlCanonical : b.append('&#' + IntToStr(Ord(AStr[i])) + ';');
+            xmlText : b.append(AStr[i]);
+          end;
+        '&':
+          if mode = xmlCanonical then
+            b.append('&#' + IntToStr(Ord(AStr[i])) + ';')
+          else
+            b.append('&amp;');
+        '<':
+          if mode = xmlCanonical then
+            b.append('&#' + IntToStr(Ord(AStr[i])) + ';')
+          else
+            b.append('&lt;');
+        '>':
+          if mode = xmlCanonical then
+            b.append('&#' + IntToStr(Ord(AStr[i])) + ';')
+          else
+            b.append('&gt;');
+        #32:
+          b.append(' ');
+        #13, #10:
+          begin
+          case mode of
+            xmlAttribute : b.append('&#' + IntToStr(Ord(AStr[i])) + ';');
+            xmlCanonical : b.append('&#' + IntToStr(Ord(AStr[i])) + ';');
+            xmlText : b.append(AStr[i]);
+          end;
+//        canonical?
+//          if i < length(AStr) then
+//            if AStr[i + 1] = #10 then
+//              Inc(i);
+//          b.append(' ');
+          end;
         else
-          Result := Result + '&#' + IntToStr(Ord(AStr[i])) + ';';
+          begin
+          if CharInSet(AStr[i], [' '..'~']) then
+            b.append(AStr[i])
+          else
+            b.append('&#' + IntToStr(Ord(AStr[i])) + ';');
+          end;
         end;
+      Inc(i);
       end;
-    Inc(i);
-    end;
+    result := b.ToString;
+  finally
+    b.Free;
+  end;
 end;
 
 function FormatXMLForTextArea(AStr: String): String;

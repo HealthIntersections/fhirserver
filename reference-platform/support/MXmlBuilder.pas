@@ -159,7 +159,7 @@ begin
   try
     if CurrentNamespaces.DefaultNS <> '' Then
     begin
-      oElem := TMXmlElement.Create(ntElement, sName, CurrentNamespaces.DefaultNS);
+      oElem := TMXmlElement.CreateNS(ntElement, CurrentNamespaces.DefaultNS, sName);
       len := length(sName)+3
     end
     Else
@@ -270,7 +270,7 @@ end;
 function TMXmlBuilder.ReadTextLengthWithEscapes(pfx, s, sfx: string): String;
 begin
   ReadTextLength(pfx);
-  ReadTextLength(EncodeXml(s, xmlText));
+  ReadTextLength(FormatTextToXML(s, xmlText));
   ReadTextLength(sfx);
 end;
 

@@ -149,7 +149,8 @@ uses
   FHIRIndexBase in '..\support\FHIRIndexBase.pas',
   Javascript in '..\..\Libraries\js\Javascript.pas',
   ChakraCommon in '..\..\Libraries\js\ChakraCommon.pas',
-  JavascriptTests in '..\..\Libraries\js\JavascriptTests.pas';
+  JavascriptTests in '..\..\Libraries\js\JavascriptTests.pas',
+  DigitalSignatures in '..\support\DigitalSignatures.pas';
 
 var
   s: String;

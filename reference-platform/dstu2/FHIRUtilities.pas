@@ -72,7 +72,7 @@ Function RecogniseFHIRFormat(Const sName : String): TFHIRFormat;
 function MakeParser(oWorker : TFHIRWorkerContext; lang : String; aFormat: TFHIRFormat; oContent: TStream; policy : TFHIRXhtmlParserPolicy): TFHIRParser; overload;
 function MakeParser(oWorker : TFHIRWorkerContext; lang : String; aFormat: TFHIRFormat; content: TBytes; policy : TFHIRXhtmlParserPolicy): TFHIRParser; overload;
 function MakeParser(oWorker : TFHIRWorkerContext; lang : String; mimetype : String; content: TBytes; policy : TFHIRXhtmlParserPolicy): TFHIRParser; overload;
-function MakeComposer(lang : string; mimetype : String; worker : TFHIRWorkerContext) : TFHIRComposer;
+function MakeComposer(style : TFHIROutputStyle; lang : string; mimetype : String; worker : TFHIRWorkerContext) : TFHIRComposer;
 Function FhirGUIDToString(aGuid : TGuid):String;
 function geTFhirResourceNarrativeAsText(resource : TFhirDomainResource) : String;
 function IsId(s : String) : boolean;
@@ -149,7 +149,7 @@ function fileToResource(name : String; var format : TFHIRFormat) : TFhirResource
 function streamToResource(stream : TStream; var format : TFHIRFormat) : TFhirResource;
 function bytesToResource(bytes : TBytes; var format : TFHIRFormat) : TFhirResource;
 procedure resourceToFile(res : TFhirResource; name : String; format : TFHIRFormat);
-procedure resourceToStream(res : TFhirResource; stream : TStream; format : TFHIRFormat; pretty : boolean = true);
+procedure resourceToStream(res : TFhirResource; stream : TStream; format : TFHIRFormat; style : TFHIROutputStyle = OutputStyleNormal);
 function resourceToString(res : TFhirResource; format : TFHIRFormat) : String;
 function resourceToBytes(res : TFhirResource; format : TFHIRFormat) : TBytes;
 
@@ -831,14 +831,14 @@ begin
   end;
 end;
 
-function MakeComposer(lang : string; mimetype : String; worker : TFHIRWorkerContext) : TFHIRComposer;
+function MakeComposer(style : TFHIROutputStyle; lang : string; mimetype : String; worker : TFHIRWorkerContext) : TFHIRComposer;
 begin
   if mimeType.StartsWith('text/xml') or mimeType.StartsWith('application/xml') or mimeType.StartsWith('application/fhir+xml') or (mimetype = 'xml') then
-    result := TFHIRXmlComposer.Create(worker.link, lang)
+    result := TFHIRXmlComposer.Create(worker.link, style, lang)
   else if mimeType.StartsWith('text/json') or mimeType.StartsWith('application/json') or mimeType.StartsWith('application/fhir+json') or (mimetype = 'json') then
-    result := TFHIRJsonComposer.Create(worker.link, lang)
+    result := TFHIRJsonComposer.Create(worker.link, style, lang)
   else if mimeType.StartsWith('text/html') or mimeType.StartsWith('text/xhtml') or mimeType.StartsWith('application/fhir+xhtml') or (mimetype = 'xhtml') then
-    result := TFHIRXhtmlComposer.Create(worker.link, lang)
+    result := TFHIRXhtmlComposer.Create(worker.link, style, lang)
   else
     raise Exception.Create('Format '+mimetype+' not recognised');
 end;
@@ -4217,9 +4217,9 @@ function ComposeJson(worker: TFHIRWorkerContext; r : TFhirResource) : String;
 var
   comp : TFHIRJsonComposer;
 begin
-  comp := TFHIRJsonComposer.Create(worker.link, 'en');
+  comp := TFHIRJsonComposer.Create(worker.link, OutputStyleNormal, 'en');
   try
-    result := comp.Compose(r, false);
+    result := comp.Compose(r);
   finally
     comp.Free;
   end;
@@ -5146,18 +5146,18 @@ begin
   end;
 end;
 
-procedure resourceToStream(res : TFhirResource; stream : TStream; format : TFHIRFormat; pretty : boolean = true);
+procedure resourceToStream(res : TFhirResource; stream : TStream; format : TFHIRFormat; style : TFHIROutputStyle = OutputStyleNormal);
 var
   c : TFHIRComposer;
 begin
   case format of
-    ffXml, ffxhtml : c := TFHIRXmlComposer.Create(nil, 'en');
-    ffJson : c := TFHIRJsonComposer.Create(nil, 'en');
+    ffXml, ffxhtml : c := TFHIRXmlComposer.Create(nil, style, 'en');
+    ffJson : c := TFHIRJsonComposer.Create(nil, style, 'en');
   else
     raise Exception.Create('Format Not supported');
   end;
   try
-    c.Compose(stream, res, pretty);
+    c.Compose(stream, res);
   finally
     c.Free;
   end;
@@ -5317,9 +5317,9 @@ begin
     b := #10;
     f.Write(b, 1);
   end;
-  json := TFHIRJsonComposer.Create(nil, 'en');
+  json := TFHIRJsonComposer.Create(nil, OutputStyleNormal, 'en');
   try
-    json.Compose(f, res, false);
+    json.Compose(f, res);
   finally
     json.Free;
   end;

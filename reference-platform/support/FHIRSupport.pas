@@ -1283,9 +1283,9 @@ var
 begin
   stream := TStringStream.Create('');
   try
-    comp := TFHIRXmlComposer.create(Fworker.link, lang);
+    comp := TFHIRXmlComposer.create(Fworker.link, OutputStylePretty, lang);
     try
-      comp.Compose(stream, resource, true, nil);
+      comp.Compose(stream, resource, nil);
     finally
       comp.free;
     end;

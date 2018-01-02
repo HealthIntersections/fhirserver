@@ -34,7 +34,7 @@ interface
 uses
   Windows, SysUtils, classes,
   StringSupport, AdvGenerics, TextUtilities,
-  FHIRTestWorker, FHIRResources, FHIRBase, FHIRParser, FHIRTypes, DifferenceEngine,
+  FHIRTestWorker, FHIRResources, FHIRBase, FHIRParserBase, FHIRParser, FHIRTypes, DifferenceEngine,
   MXML, DUnitX.TestFramework;
 
 Type
@@ -153,11 +153,11 @@ var
   p : TFHIRXmlComposer;
   s : TStringStream;
 begin
-  p := TFHIRXmlComposer.Create(nil, 'en');
+  p := TFHIRXmlComposer.Create(nil, OutputStylePretty, 'en');
   try
     s := TStringStream.Create;
     try
-      p.Compose(s, res, true);
+      p.Compose(s, res);
       result := s.DataString;
     finally
       s.Free;

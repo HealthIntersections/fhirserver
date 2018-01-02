@@ -61,6 +61,7 @@ public class ElementDefn {
   private String path;
   private String statedType; // explicitly stated type (=xxxx)
   private boolean inherited;
+  private String defaultValue;
   
 
 
@@ -457,6 +458,8 @@ public class ElementDefn {
     maxCardinality = "*".equals(ed.getMax()) ? Integer.MAX_VALUE : Integer.parseInt(ed.getMax());
     summaryItem = ed.getIsSummary();
     xmlAttribute = ed.getRepresentation().size() > 0;
+    if (ed.getDefaultValue() != null)
+      defaultValue = ed.getDefaultValue().primitiveValue();
  
     if (ed.hasNameReference()) {
       TypeRef tr = new TypeRef();
@@ -511,6 +514,8 @@ public class ElementDefn {
     maxCardinality = "*".equals(ed.getMax()) ? Integer.MAX_VALUE : Integer.parseInt(ed.getMax());
     summaryItem = ed.getIsSummary();
     xmlAttribute = ed.getRepresentation().size() > 0;
+    if (ed.getDefaultValue() != null)
+      defaultValue = ed.getDefaultValue().primitiveValue();
  
     if (ed.hasContentReference()) {
       TypeRef tr = new TypeRef();
@@ -567,6 +572,8 @@ public class ElementDefn {
     maxCardinality = "*".equals(ed.getMax()) ? Integer.MAX_VALUE : Integer.parseInt(ed.getMax());
     summaryItem = ed.getIsSummary();
     xmlAttribute = ed.getRepresentation().size() > 0;
+    if (ed.getDefaultValue() != null)
+      defaultValue = ed.getDefaultValue().primitiveValue();
  
     if (ed.hasContentReference()) {
       TypeRef tr = new TypeRef();
@@ -705,6 +712,18 @@ public class ElementDefn {
 
   public void setInherited(boolean inherited) {
     this.inherited = inherited;
+  }
+
+  public String getDefaultValue() {
+    return defaultValue;
+  }
+  
+  public boolean hasDefaultValue() {
+    return defaultValue != null;
+  }
+
+  public void setDefaultValue(String defaultValue) {
+    this.defaultValue = defaultValue;
   } 
 
 

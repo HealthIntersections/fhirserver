@@ -309,7 +309,14 @@ uses
   JavascriptTests in '..\Libraries\js\JavascriptTests.pas',
   ChakraCommon in '..\Libraries\js\ChakraCommon.pas',
   Javascript in '..\Libraries\js\Javascript.pas',
-  DigitalSignatureTests in '..\reference-platform\support\Tests\DigitalSignatureTests.pas';
+  DigitalSignatureTests in '..\reference-platform\support\Tests\DigitalSignatureTests.pas',
+  AdvJavascript in '..\Libraries\js\AdvJavascript.pas',
+  FHIRJavascriptReg in '..\reference-platform\r4\FHIRJavascriptReg.pas',
+  FHIRJavascript in '..\Libraries\js\FHIRJavascript.pas',
+  FHIRJavascriptTests in '..\Libraries\js\FHIRJavascriptTests.pas',
+  FHIRClientJs in '..\Libraries\js\FHIRClientJs.pas',
+  ServerEventJs in '..\Server\ServerEventJs.pas',
+  ServerJavascriptHost in 'ServerJavascriptHost.pas';
 
 var
   runner : ITestRunner;

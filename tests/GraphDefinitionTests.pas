@@ -231,9 +231,9 @@ begin
 
       f := TFileStream.Create(path(['C:\work\org.hl7.fhir\build\tests\graphdefinition', test.attribute['source']+'.bundle']), fmCreate);
       try
-        x := TFHIRXmlComposer.Create(nil, 'en');
+        x := TFHIRXmlComposer.Create(nil, OutputStylePretty, 'en');
         try
-          x.Compose(f, engine.bundle, true);
+          x.Compose(f, engine.bundle);
         finally
           x.Free;
         end;

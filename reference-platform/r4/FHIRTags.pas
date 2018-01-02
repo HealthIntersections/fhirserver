@@ -239,7 +239,7 @@ begin
     vs := TAdvVCLStream.Create;
     try
       vs.Stream := s;
-      json := TJSONWriter.Create;
+      json := TJsonWriterDirect.create;
       try
         json.Stream := vs.link;
         json.Start;

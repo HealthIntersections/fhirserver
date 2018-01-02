@@ -36,7 +36,7 @@ Uses
   IdGlobalProtocols,
   TextUtilities, ShellSupport,
   TurtleParser, RDFUtilities,
-  FHIRResources, FHIRParserBase, FHIRParser,
+  FHIRResources, FHIRParserBase, FHIRParser, FHIRBase,
   DUnitX.TestFramework;
 
 Type
@@ -2657,7 +2657,7 @@ begin
     p.source := TStringStream.Create(i, TENcoding.UTF8);
     try
       p.Parse;
-      c := TFHIRTurtleComposer.Create(nil, 'en');
+      c := TFHIRTurtleComposer.Create(nil, OutputStyleNormal, 'en');
       try
         s := TStringStream.Create;
         try

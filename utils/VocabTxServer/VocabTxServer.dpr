@@ -230,7 +230,8 @@ uses
   AdvThreads in '..\..\reference-platform\support\AdvThreads.pas',
   SCrypt in '..\..\Libraries\security\SCrypt.pas',
   ICD10Services in '..\..\Server\ICD10Services.pas',
-  ServerPostHandlers in '..\..\Server\ServerPostHandlers.pas';
+  ServerPostHandlers in '..\..\Server\ServerPostHandlers.pas',
+  DigitalSignatures in '..\..\reference-platform\support\DigitalSignatures.pas';
 
 {$R *.res}
 

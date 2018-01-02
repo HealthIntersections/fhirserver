@@ -35,10 +35,10 @@ Uses
   SysUtils,
   StringSupport, MathSupport;
 
-Type
-  TXmlEncodingMode = (xmlText, xmlAttribute);
-
-  TEolnOption = (eolnIgnore, eolnCanonical, eolnEscape);
+//Type
+//  TXmlEncodingMode = (xmlText, xmlAttribute, xmlCanonical);
+//
+//  TEolnOption = (eolnIgnore, eolnCanonical, eolnEscape);
 
 Function EncodeNYSIIS(Const sValue : String) : String;
 {
@@ -46,8 +46,8 @@ Function EncodeBase64(Const sValue : TBytes) : AnsiString; Overload;
 Function DecodeBase64(Const sValue : AnsiString) : TBytes; Overload;
 }
 
-Function EncodeXML(Const sValue : String; mode : TXmlEncodingMode; eoln : TEolnOption = eolnIgnore) : String; Overload;
-Function DecodeXML(Const sValue : String) : String; Overload;
+//Function EncodeXML(Const sValue : String; mode : TXmlEncodingMode; eoln : TEolnOption = eolnIgnore) : String; Overload;
+//Function DecodeXML(Const sValue : String) : String; Overload;
 Function EncodeQuotedString(Const sValue : String; Const cQuote : Char) : String; Overload;
 Function EncodeMIME(Const sValue : String) : String; Overload;
 Function DecodeMIME(Const sValue : String) : String; Overload;
@@ -402,175 +402,192 @@ Begin
   End;
 End;
 
-
-Function EncodeXML(Const sValue : String; mode : TXmlEncodingMode; eoln : TEolnOption = eolnIgnore) : String;
-Var
-  iLoop : Integer;
-  cValue : Char;
-Begin
-  Result := sValue;
-  iLoop := 1;
-  While iLoop <= Length(Result) Do
-  Begin
-    cValue := Result[iLoop];
-
-    Case cValue Of
-      #10, #13:
-      if (mode = xmlAttribute) or (cValue = #13) then
-      Begin
-        Delete(Result, iLoop, 1);
-        Insert('&#x' + IntToHex(Ord(cValue), 1) + ';', Result, iLoop);
-        Inc(iLoop, 4);
-      End
-      else
-      case eoln of
-        eolnIgnore : Inc(iLoop);
-        eolnEscape :
-          Begin
-          Delete(Result, iLoop, 1);
-          Insert('&#x' + IntToHex(Ord(cValue), 1) + ';', Result, iLoop);
-          Inc(iLoop, 4);
-          End
-      else //
-        if cValue = #13 then
-          Delete(Result, iLoop, 1)
-         else
-           Inc(iLoop);
-      end;
-
-      #9 : if mode <> xmlAttribute then
-            Inc(iLoop)
-          else
-          begin
-            Delete(Result, iLoop, 1);
-            Insert('&#x9;', Result, iLoop);
-            Inc(iLoop, 4);
-          End;
-
-      #0..#8, #11..#12, #14..#31{, #127..#255} :
-      Begin
-        Delete(Result, iLoop, 1);
-        Insert('&#x' + IntToHex(Ord(cValue), 2) + ';', Result, iLoop);
-        Inc(iLoop, 5);
-      End;
-
-      '<':
-      Begin
-        Delete(Result, iLoop, 1);
-        Insert('&lt;', Result, iLoop);
-        Inc(iLoop, 4);
-      End;
-
-      '>': if mode = xmlAttribute then
-             Inc(iLoop)
-           else
-           Begin
-             Delete(Result, iLoop, 1);
-             Insert('&gt;', Result, iLoop);
-             Inc(iLoop, 4);
-           End;
-
-      '"' :if mode <> xmlAttribute then
-             Inc(iLoop)
-           else
-           Begin
-             Delete(Result, iLoop, 1);
-             Insert('&quot;', Result, iLoop);
-             Inc(iLoop, 6);
-           End;
-
-      '&':
-      Begin
-        // Preceding '&' already exists in string.
-        Insert('amp;', Result, iLoop + 1);
-        Inc(iLoop, 4);
-      End;
-
-      // Only need to encode &quot; and &apos; in XML attributes...
-    Else if false {ord(cValue) > 255} then
-      Begin
-        Delete(Result, iLoop, 1);
-        Insert('&#x' + IntToHex(Ord(cValue), 4) + ';', Result, iLoop);
-        Inc(iLoop, 7);
-      End
-    Else
-      Inc(iLoop);
-    End;
-  End;
-End;
-
-Function DecodeXML(Const sValue : String) : String;
-Var
-  iLoop : Integer;
-  pValue : PChar;
-  iValue : Byte;
-  sPrefixedEncodedDec : String;
-  sRemainder : String;
-  sEncodedDec : String;
-  iEncodedDec : Integer;
-Begin
-  Result := sValue;
-  iLoop := 1;
-  While iLoop <= Length(Result) Do
-  Begin
-    pValue := @Result[iLoop];
-
-    If pValue^ = '&' Then
-    Begin
-      If StringEquals(pValue, '&lt;', 4) Then
-      Begin
-        Delete(Result, iLoop, 4);
-        Insert('<', Result, iLoop);
-      End
-      Else If StringEquals(pValue, '&gt;', 4) Then
-      Begin
-        Delete(Result, iLoop, 4);
-        Insert('>', Result, iLoop);
-      End
-      Else If StringEquals(pValue, '&amp;', 5) Then
-      Begin
-        Delete(Result, iLoop, 5);
-        Insert('&', Result, iLoop);
-      End
-      Else If StringEquals(pValue, '&quot;', 6) Then
-      Begin
-        Delete(Result, iLoop, 6);
-        Insert('"', Result, iLoop);
-      End
-      Else If StringEquals(pValue, '&apos;', 6) Then
-      Begin
-        Delete(Result, iLoop, 6);
-        Insert('''', Result, iLoop);
-      End
-      Else If StringEquals(pValue, '&#x', 3) Then
-      Begin
-        StringSplit(pValue, ';', sPrefixedEncodedDec, sRemainder);
-        sEncodedDec := '0x'+copy(sPrefixedEncodedDec, 4, length(sPrefixedEncodedDec));
-        iEncodedDec := StringToInteger32(sEncodedDec);
-        iValue := iEncodedDec;
-        Delete(Result, iLoop, Length(sPrefixedEncodedDec) + 1);
-        Insert(Char(iValue), Result, iLoop);
-      End
-      Else If StringEquals(pValue, '&#', 2) Then
-      Begin
-        StringSplit(pValue, ';', sPrefixedEncodedDec, sRemainder);
-        sEncodedDec := sPrefixedEncodedDec.substring(2);
-
-        iEncodedDec := StringToInteger32(sEncodedDec);
-
-        If (iEncodedDec >= 0) And (iEncodedDec <= 65535) Then
-        Begin
-          iValue := iEncodedDec;
-
-          Delete(Result, iLoop, Length(sPrefixedEncodedDec) + 1); // eg. '&#13;' or '&#220;'
-          Insert(Char(iValue), Result, iLoop);
-        End;
-      End;
-    End;
-
-    Inc(iLoop);
-  End;
-End;
+//
+//Function EncodeXML(Const sValue : String; mode : TXmlEncodingMode; eoln : TEolnOption = eolnIgnore) : String;
+//Var
+//  iLoop : Integer;
+//  cValue : Char;
+//Begin
+//  Result := sValue;
+//  iLoop := 1;
+//  While iLoop <= Length(Result) Do
+//  Begin
+//    cValue := Result[iLoop];
+//
+//    Case cValue Of
+//      #10, #13:
+//      if (mode = xmlAttribute) or (cValue = #13) then
+//      Begin
+//        Delete(Result, iLoop, 1);
+//        Insert('&#x' + IntToHex(Ord(cValue), 1) + ';', Result, iLoop);
+//        Inc(iLoop, 4);
+//      End
+//      else
+//      case eoln of
+//        eolnIgnore : Inc(iLoop);
+//        eolnEscape :
+//          Begin
+//          Delete(Result, iLoop, 1);
+//          Insert('&#x' + IntToHex(Ord(cValue), 1) + ';', Result, iLoop);
+//          Inc(iLoop, 4);
+//          End
+//      else //
+//        if cValue = #13 then
+//          Delete(Result, iLoop, 1)
+//         else
+//           Inc(iLoop);
+//      end;
+//
+//      #9 : if mode <> xmlAttribute then
+//            Inc(iLoop)
+//          else
+//          begin
+//            Delete(Result, iLoop, 1);
+//            Insert('&#x9;', Result, iLoop);
+//            Inc(iLoop, 4);
+//          End;
+//
+//      #0..#8, #11..#12, #14..#31{, #127..#255} :
+//      Begin
+//        Delete(Result, iLoop, 1);
+//        Insert('&#x' + IntToHex(Ord(cValue), 2) + ';', Result, iLoop);
+//        Inc(iLoop, 5);
+//      End;
+//
+//      '<':
+//      Begin
+//        Delete(Result, iLoop, 1);
+//        if (mode = xmlCanonical) then
+//          Insert('&#'+IntToStr(Ord('<'))+';', Result, iLoop)
+//        else
+//          Insert('&lt;', Result, iLoop);
+//        Inc(iLoop, 4);
+//      End;
+//
+//      '>': if mode = xmlAttribute then
+//             Inc(iLoop)
+//           else
+//           Begin
+//             Delete(Result, iLoop, 1);
+//            if (mode = xmlCanonical) then
+//              Insert('&#'+IntToStr(Ord('>'))+';', Result, iLoop)
+//            else
+//              Insert('&gt;', Result, iLoop);
+//             Inc(iLoop, 4);
+//           End;
+//
+//      '"' :if mode <> xmlAttribute then
+//             Inc(iLoop)
+//           else
+//           Begin
+//             Delete(Result, iLoop, 1);
+//              if (mode = xmlCanonical) then
+//              begin
+//                Insert('&#'+IntToStr(Ord('"'))+';', Result, iLoop);
+//                Inc(iLoop, 5);
+//              end
+//              else
+//              begin
+//               Insert('&quot;', Result, iLoop);
+//               Inc(iLoop, 6);
+//              end;
+//           End;
+//
+//      '&':
+//      Begin
+//        // Preceding '&' already exists in string.
+//        if (mode = xmlCanonical) then
+//          Insert('&#'+IntToStr(Ord('&'))+';', Result, iLoop)
+//        else
+//          Insert('amp;', Result, iLoop + 1);
+//        Inc(iLoop, 4);
+//      End;
+//
+//      // Only need to encode &quot; and &apos; in XML attributes...
+//    Else if false {ord(cValue) > 255} then
+//      Begin
+//        Delete(Result, iLoop, 1);
+//        Insert('&#x' + IntToHex(Ord(cValue), 4) + ';', Result, iLoop);
+//        Inc(iLoop, 7);
+//      End
+//    Else
+//      Inc(iLoop);
+//    End;
+//  End;
+//End;
+//
+//Function DecodeXML(Const sValue : String) : String;
+//Var
+//  iLoop : Integer;
+//  pValue : PChar;
+//  iValue : Byte;
+//  sPrefixedEncodedDec : String;
+//  sRemainder : String;
+//  sEncodedDec : String;
+//  iEncodedDec : Integer;
+//Begin
+//  Result := sValue;
+//  iLoop := 1;
+//  While iLoop <= Length(Result) Do
+//  Begin
+//    pValue := @Result[iLoop];
+//
+//    If pValue^ = '&' Then
+//    Begin
+//      If StringEquals(pValue, '&lt;', 4) Then
+//      Begin
+//        Delete(Result, iLoop, 4);
+//        Insert('<', Result, iLoop);
+//      End
+//      Else If StringEquals(pValue, '&gt;', 4) Then
+//      Begin
+//        Delete(Result, iLoop, 4);
+//        Insert('>', Result, iLoop);
+//      End
+//      Else If StringEquals(pValue, '&amp;', 5) Then
+//      Begin
+//        Delete(Result, iLoop, 5);
+//        Insert('&', Result, iLoop);
+//      End
+//      Else If StringEquals(pValue, '&quot;', 6) Then
+//      Begin
+//        Delete(Result, iLoop, 6);
+//        Insert('"', Result, iLoop);
+//      End
+//      Else If StringEquals(pValue, '&apos;', 6) Then
+//      Begin
+//        Delete(Result, iLoop, 6);
+//        Insert('''', Result, iLoop);
+//      End
+//      Else If StringEquals(pValue, '&#x', 3) Then
+//      Begin
+//        StringSplit(pValue, ';', sPrefixedEncodedDec, sRemainder);
+//        sEncodedDec := '0x'+copy(sPrefixedEncodedDec, 4, length(sPrefixedEncodedDec));
+//        iEncodedDec := StringToInteger32(sEncodedDec);
+//        iValue := iEncodedDec;
+//        Delete(Result, iLoop, Length(sPrefixedEncodedDec) + 1);
+//        Insert(Char(iValue), Result, iLoop);
+//      End
+//      Else If StringEquals(pValue, '&#', 2) Then
+//      Begin
+//        StringSplit(pValue, ';', sPrefixedEncodedDec, sRemainder);
+//        sEncodedDec := sPrefixedEncodedDec.substring(2);
+//
+//        iEncodedDec := StringToInteger32(sEncodedDec);
+//
+//        If (iEncodedDec >= 0) And (iEncodedDec <= 65535) Then
+//        Begin
+//          iValue := iEncodedDec;
+//
+//          Delete(Result, iLoop, Length(sPrefixedEncodedDec) + 1); // eg. '&#13;' or '&#220;'
+//          Insert(Char(iValue), Result, iLoop);
+//        End;
+//      End;
+//    End;
+//
+//    Inc(iLoop);
+//  End;
+//End;
 
 Function EncodeQuotedString(Const sValue : String; Const cQuote : Char) : String;
 Begin
