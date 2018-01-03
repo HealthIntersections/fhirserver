@@ -174,6 +174,43 @@ begin
   result := StrToPChar(GetString(name));
 end;
 
+Function MyDllCreateDatabase(DBDriver, Server, Database, Username, Password, Version : PAnsiChar) : PAnsiChar; stdcall;
+
+begin
+{
+Work In progress, not sure how to achieve this.
+Procedure is to connect to the DB (with which user?) and run script/qeries below
+
+//// MySQL queries - tested:
+CREATE DATABASE IF NOT EXISTS fhirDB CHARACTER SET utf8 COLLATE utf8_unicode_ci;
+CREATE USER 'sa'@'%' IDENTIFIED BY 'DBroot123';
+GRANT ALL PRIVILEGES ON *.* TO 'sa'@'%' IDENTIFIED BY 'DBroot123' WITH GRANT OPTION;
+
+
+MySQL commmand lines could be executed in the bin directory of mysql :
+mysql -u root -p -e "CREATE DATABASE fhirDB CHARACTER SET utf8 COLLATE utf8_unicode_ci;"
+mysql -u root -p -e "CREATE USER 'sa'@'%' IDENTIFIED BY 'DBroot123';"
+mysql -u root -p -e "GRANT ALL PRIVILEGES ON *.* TO 'sa'@'%' IDENTIFIED BY 'DBroot123' WITH GRANT OPTION;"
+
+Could be:
+ShellExecute(0, 'open', 'mysql.exe', '-u root -p -e "CREATE DATABASE fhirDB CHARACTER SET utf8 COLLATE utf8_unicode_ci;"', 'path_to_bin_folder', SW_HIDE);
+...
+
+
+//// MS SQL Server queries - not yet tested:
+CREATE DATABASE IF NOT EXISTS fhirDB
+USE fhirDB;
+exec sp_configure 'contained database authentication', 1;
+reconfigure;
+alter database fhirDB
+set containment = partial
+CREATE USER sa WITH PASSWORD = 'DBroot123';
+EXEC sp_addrolemember N'db_owner', N'sa'
+}
+
+end;
+
+
 Function MyDllCheckDatabase(DBDriver, Server, Database, Username, Password, Version : PAnsiChar) : PAnsiChar; stdcall;
 var
   conn : TKDBManager;
