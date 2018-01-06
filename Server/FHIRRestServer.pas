@@ -2419,6 +2419,7 @@ Var
   mem: TMemoryStream;
   cursor: integer;
   bundle: TFHIRBundle;
+  b : TBytes;
 Begin
   relativeReferenceAdjustment := 0;
   result := nil;
@@ -2577,11 +2578,14 @@ Begin
               oRequest.Source.LoadFromStream(oPostStream);
 
             oPostStream.Position := 0;
-            if oRequest.ResourceEnum = frtBinary then
+            if (oRequest.ResourceEnum = frtBinary) and (oRequest.PostFormat = ffUnspecified) then
             begin
               oRequest.resource := TFhirBinary.Create;
-              // !              TFhirBinary(oRequest.Resource).Content.loadFromStream(oPostStream);
-              // !              TFhirBinary(oRequest.Resource).ContentType := sContentType;
+              SetLength(b, oPostStream.Size - oPostStream.Position);
+              if oPostStream.Size - oPostStream.Position > 0 then
+                oPostStream.Read(b[0], oPostStream.Size - oPostStream.Position);
+              TFhirBinary(oRequest.Resource).Content := b;
+              TFhirBinary(oRequest.Resource).ContentType := sContentType;
             end
             else if (oRequest.Adaptor <> nil) then
               oRequest.Adaptor.Load(oRequest, oPostStream)

@@ -262,7 +262,7 @@ Begin
   res := WriteFile(f, bytes[0], Length(bytes), done, Nil);
   CloseHandle(f);
   d := Done; // suppress warning
-  If FPolicy.AllowExceptions And Not res Or (d <> Length(s)) Then
+  If FPolicy.AllowExceptions And Not res Or (d <> Length(bytes)) Then
     Raise Exception.Create('Unable to write to file "' + sName + '": ' + SysErrorMessage(GetLastError));
 End;
 {$ENDIF}

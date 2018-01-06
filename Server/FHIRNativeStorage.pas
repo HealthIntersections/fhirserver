@@ -2780,7 +2780,6 @@ begin
       if (request.Resource as TFHIRBinary).contentType = '' then
         with response.outcome.issueList.Append do
         begin
-
           severity := IssueSeverityError;
           code := IssueTypeInvalid;
           diagnostics := 'A contentType is required';
