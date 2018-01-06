@@ -1,0 +1,97 @@
+object PatientHomeFrame: TPatientHomeFrame
+  Size.Width = 842.000000000000000000
+  Size.Height = 332.000000000000000000
+  Size.PlatformDefault = False
+  object Panel1: TPanel
+    Align = Top
+    Size.Width = 842.000000000000000000
+    Size.Height = 41.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 0
+    object lblName: TLabel
+      Position.X = 112.000000000000000000
+      Position.Y = 8.000000000000000000
+      Text = 'lblName'
+      TabOrder = 0
+    end
+    object Button1: TButton
+      Position.X = 752.000000000000000000
+      Position.Y = 8.000000000000000000
+      TabOrder = 1
+      Text = '&Edit'
+      OnClick = Button1Click
+    end
+    object Label1: TLabel
+      StyledSettings = [Family, Size, FontColor]
+      Position.X = 8.000000000000000000
+      Position.Y = 8.000000000000000000
+      TextSettings.Font.StyleExt = {00070000000000000004000000}
+      Text = 'Patient Details:'
+      TabOrder = 2
+    end
+  end
+  object Panel2: TPanel
+    Padding.Left = 2.000000000000000000
+    Padding.Top = 2.000000000000000000
+    Padding.Right = 2.000000000000000000
+    Padding.Bottom = 2.000000000000000000
+    Margins.Left = 2.000000000000000000
+    Margins.Top = 2.000000000000000000
+    Margins.Right = 2.000000000000000000
+    Margins.Bottom = 2.000000000000000000
+    Position.X = 32.000000000000000000
+    Position.Y = 64.000000000000000000
+    Size.Width = 249.000000000000000000
+    Size.Height = 225.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 1
+    object Panel3: TPanel
+      Align = Top
+      Position.X = 2.000000000000000000
+      Position.Y = 2.000000000000000000
+      Size.Width = 245.000000000000000000
+      Size.Height = 33.000000000000000000
+      Size.PlatformDefault = False
+      TabOrder = 0
+      object Label2: TLabel
+        StyledSettings = [Family, Size, FontColor]
+        Position.X = 8.000000000000000000
+        Position.Y = 8.000000000000000000
+        TextSettings.Font.StyleExt = {00070000000000000004000000}
+        Text = 'Compositions'
+        TabOrder = 0
+      end
+    end
+    object lbCompositions: TListBox
+      Align = Client
+      Size.Width = 245.000000000000000000
+      Size.Height = 188.000000000000000000
+      Size.PlatformDefault = False
+      TabOrder = 1
+      OnDblClick = lbCompositionsDblClick
+      DisableFocusEffect = True
+      DefaultItemStyles.ItemStyle = ''
+      DefaultItemStyles.GroupHeaderStyle = ''
+      DefaultItemStyles.GroupFooterStyle = ''
+      Viewport.Width = 245.000000000000000000
+      Viewport.Height = 188.000000000000000000
+    end
+  end
+  object Panel4: TPanel
+    Align = Bottom
+    Position.Y = 304.000000000000000000
+    Size.Width = 842.000000000000000000
+    Size.Height = 28.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 2
+    object lblOutcome: TLabel
+      Anchors = [akLeft, akTop, akRight]
+      Position.X = 8.000000000000000000
+      Position.Y = 8.000000000000000000
+      Size.Width = 825.000000000000000000
+      Size.Height = 17.000000000000000000
+      Size.PlatformDefault = False
+      TabOrder = 0
+    end
+  end
+end

@@ -396,6 +396,16 @@
         <DCCReference Include="..\reference-platform\client\FHIRUIFmx.pas"/>
         <DCCReference Include="..\reference-platform\client\FHIRUI.pas"/>
         <DCCReference Include="..\Server\Logging.pas"/>
+        <DCCReference Include="PatientHomeForm.pas">
+            <Form>PatientHomeFrame</Form>
+            <FormType>fmx</FormType>
+            <DesignClass>TFrame</DesignClass>
+        </DCCReference>
+        <DCCReference Include="..\reference-platform\support\DigitalSignatures.pas"/>
+        <DCCReference Include="DocumentGenerationForm.pas">
+            <Form>DocumentGeneratorForm</Form>
+            <FormType>fmx</FormType>
+        </DCCReference>
         <None Include="q.txt"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>

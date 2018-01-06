@@ -38,7 +38,8 @@ uses
   DateSupport, StringSupport,
   AdvGenerics,
   FHIRTypes, FHIRResources, FHIRClient, FHIRUtilities,
-  BaseFrame, AppEndorserFrame, CapabilityStatementEditor, VitalSignsGeneratorDialog, ProviderDirectoryForm;
+  BaseFrame, AppEndorserFrame, CapabilityStatementEditor, VitalSignsGeneratorDialog,
+  ProviderDirectoryForm, PatientHomeForm;
 
 type
   TFrame = TBaseFrame; // re-aliasing the Frame to work around a designer bug
@@ -156,6 +157,7 @@ type
     procedure btnFetchMoreClick(Sender: TObject);
     procedure Button2Click(Sender: TObject);
     procedure Button3Click(Sender: TObject);
+    procedure gridPMatchesCellDblClick(const Column: TColumn; const Row: Integer);
   private
     FClient: TFHIRClient;
     FCapabilityStatement: TFhirCapabilityStatement;
@@ -169,6 +171,7 @@ type
     procedure SetClient(const Value: TFHIRClient);
     procedure SetCapabilityStatement(const Value: TFhirCapabilityStatement);
     procedure DoWork(ASender: TObject; AWorkMode: TWorkMode; AWorkCount: Int64);
+    procedure openPatient(pat : TFHIRPatient);
   public
     Destructor Destroy; override;
     property Client : TFHIRClient read FClient write SetClient;
@@ -631,7 +634,10 @@ var
 begin
   res := Client.readResource(FConfMatches[Row].ResourceType, FConfMatches[Row].id);
   try
-    OnOpenResource(self, client, client.format, res);
+    if res.ResourceType = frtPatient then
+      openPatient(res as TFhirPatient)
+    else
+      OnOpenResource(self, client, client.format, res);
   finally
     res.Free;
   end;
@@ -661,6 +667,18 @@ begin
       6: Value := res.date.toXML;
       7: Value := readJurisdiction(res);
     end;
+  end;
+end;
+
+procedure TServerFrame.gridPMatchesCellDblClick(const Column: TColumn; const Row: Integer);
+var
+  res : TFhirResource;
+begin
+  res := Client.readResource(FPatMatches[Row].ResourceType, FPatMatches[Row].id);
+  try
+    openPatient(res as TFhirPatient)
+  finally
+    res.Free;
   end;
 end;
 
@@ -724,6 +742,29 @@ begin
   cbConfUseLastUpdatedChange(nil);
 end;
 
+
+procedure TServerFrame.openPatient(pat: TFHIRPatient);
+var
+  tab : TTabItem;
+  frm : TPatientHomeFrame;
+begin
+  tab := Tabs.Add(TTabItem);
+  Tabs.ActiveTab := tab;
+  tab.Text := 'Patient '+pat.id+' on '+FClient.address;
+  frm := TPatientHomeFrame.create(tab);
+  tab.TagObject := frm;
+  frm.TagObject := tab;
+  frm.Parent := tab;
+  frm.Tabs := tabs;
+  frm.OnWork := onwork;
+  frm.Settings := Settings.link;
+  frm.tab := tab;
+  frm.Align := TAlignLayout.Client;
+  frm.Client := client.link;
+  frm.CapabilityStatement := CapabilityStatement.Link;
+  frm.Patient := pat.Link;
+  frm.Load;
+end;
 
 procedure TServerFrame.SetCapabilityStatement(const Value: TFhirCapabilityStatement);
 begin

@@ -186,13 +186,15 @@ uses
   RegistryForm in 'RegistryForm.pas' {RegistryFrame: TFrame},
   FHIRUIFmx in '..\reference-platform\client\FHIRUIFmx.pas',
   FHIRUI in '..\reference-platform\client\FHIRUI.pas',
-  Logging in '..\Server\Logging.pas';
+  Logging in '..\Server\Logging.pas',
+  PatientHomeForm in 'PatientHomeForm.pas' {PatientHomeFrame: TFrame},
+  DigitalSignatures in '..\reference-platform\support\DigitalSignatures.pas',
+  DocumentGenerationForm in 'DocumentGenerationForm.pas' {DocumentGeneratorForm};
 
 {$R *.res}
 
 begin
   Application.Initialize;
   Application.CreateForm(TMasterToolsForm, MasterToolsForm);
-  Application.CreateForm(TAddRestOperationForm, AddRestOperationForm);
   Application.Run;
 end.

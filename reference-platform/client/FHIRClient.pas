@@ -90,7 +90,8 @@ Type
     function search(atype : TFhirResourceType; allRecords : boolean; params : string) : TFHIRBundle; overload; virtual;
     function searchPost(atype : TFhirResourceType; allRecords : boolean; params : TStringList; resource : TFhirResource) : TFHIRBundle; virtual;
     function searchAgain(link : String) : TFHIRBundle; overload; virtual;
-    function operation(atype : TFhirResourceType; opName : String; params : TFhirParameters) : TFHIRResource; virtual;
+    function operation(atype : TFhirResourceType; opName : String; params : TFhirParameters) : TFHIRResource; overload; virtual;
+    function operation(atype : TFhirResourceType; id, opName : String; params : TFhirParameters) : TFHIRResource; overload; virtual;
     function historyType(atype : TFhirResourceType; allRecords : boolean; params : TStringList) : TFHIRBundle; virtual;
 
     procedure terminate; virtual;
@@ -199,7 +200,8 @@ type
     function search(atype : TFhirResourceType; allRecords : boolean; params : string) : TFHIRBundle; overload; override;
     function searchPost(atype : TFhirResourceType; allRecords : boolean; params : TStringList; resource : TFhirResource) : TFHIRBundle; override;
     function searchAgain(link : String) : TFHIRBundle; overload; override;
-    function operation(atype : TFhirResourceType; opName : String; params : TFhirParameters) : TFHIRResource; override;
+    function operation(atype : TFhirResourceType; opName : String; params : TFhirParameters) : TFHIRResource; overload; override;
+    function operation(atype : TFhirResourceType; id, opName : String; params : TFhirParameters) : TFHIRResource; overload; override;
     function historyType(atype : TFhirResourceType; allRecords : boolean; params : TStringList) : TFHIRBundle; override;
     function cdshook(id : String; request : TCDSHookRequest) : TCDSHookResponse;
 
@@ -224,6 +226,7 @@ type
     FResourceType: TFhirResourceType;
     FAllRecords: boolean;
     Fparams : TStringList;
+    FparamString : String;
     FUrl: String;
     FId: String;
     FResource: TFhirResource;
@@ -243,6 +246,7 @@ type
     property resourceType : TFhirResourceType read FResourceType write FResourceType;
     property allRecords : boolean read FAllRecords write FAllRecords;
     property params : TStringList read FParams write FParams;
+    property paramString : string read FParamString write FParamString;
     property url : String read FUrl write FUrl;
     property id : String read FId write FId;
     property name : String read FName write FName;
@@ -289,7 +293,8 @@ type
     function search(atype : TFhirResourceType; allRecords : boolean; params : string) : TFHIRBundle; overload; override;
     function searchPost(atype : TFhirResourceType; allRecords : boolean; params : TStringList; resource : TFhirResource) : TFHIRBundle; override;
     function searchAgain(link : String) : TFHIRBundle; overload; override;
-    function operation(atype : TFhirResourceType; opName : String; params : TFhirParameters) : TFHIRResource; override;
+    function operation(atype : TFhirResourceType; opName : String; params : TFhirParameters) : TFHIRResource; overload; override;
+    function operation(atype : TFhirResourceType; id, opName : String; params : TFhirParameters) : TFHIRResource; overload; override;
     function historyType(atype : TFhirResourceType; allRecords : boolean; params : TStringList) : TFHIRBundle; override;
 
     function address : String; override;
@@ -659,6 +664,26 @@ begin
     result := fetchResource(makeUrl(CODES_TFhirResourceType[aType])+'/$'+opName, post, src);
   finally
     src.free;
+  end;
+end;
+
+function TFhirHTTPClient.operation(atype : TFhirResourceType; id, opName : String; params : TFhirParameters) : TFHIRResource;
+Var
+  src : TStream;
+begin
+  if params = nil then
+  begin
+    result := fetchResource(makeUrl(CODES_TFhirResourceType[aType])+'/'+id+'/$'+opName, get, nil);
+  end
+  else
+  begin
+    src := serialise(params);
+    try
+      src.Position := 0;
+      result := fetchResource(makeUrl(CODES_TFhirResourceType[aType])+'/'+id+'/$'+opName, post, src);
+    finally
+      src.free;
+    end;
   end;
 end;
 
@@ -1258,6 +1283,11 @@ begin
   result := TFhirClient(inherited Link);
 end;
 
+function TFhirClient.operation(atype: TFhirResourceType; id, opName: String; params: TFhirParameters): TFHIRResource;
+begin
+  raise Exception.Create('Must override operation() in '+className);
+end;
+
 function TFhirClient.address: String;
 begin
   raise Exception.Create('Must override address in '+className);
@@ -1381,8 +1411,21 @@ begin
 end;
 
 function TFhirThreadedClient.createResource(resource: TFhirResource; var id: String): TFHIRResource;
+var
+  pack : TFHIRThreadedClientPackage;
 begin
-  raise Exception.Create('Not Done Yet');
+  pack := TFHIRThreadedClientPackage.create;
+  try
+    pack.command := fcmdCreate;
+    pack.resource := resource.Link;
+    pack.Thread := TThreadClientThread.create(FInternal.link, pack.Link);
+    wait(pack);
+    result := pack.result.link;
+    id := pack.id;
+    LastUrl := pack.lastUrl;
+  finally
+    pack.free;
+  end;
 end;
 
 procedure TFhirThreadedClient.deleteResource(atype: TFhirResourceType; id: String);
@@ -1409,6 +1452,26 @@ end;
 function TFhirThreadedClient.link: TFhirThreadedClient;
 begin
   result := TFhirThreadedClient(inherited Link);
+end;
+
+function TFhirThreadedClient.operation(atype: TFhirResourceType; id, opName: String; params: TFhirParameters): TFHIRResource;
+var
+  pack : TFHIRThreadedClientPackage;
+begin
+  pack := TFHIRThreadedClientPackage.create;
+  try
+    pack.command := fcmdOperation;
+    pack.resourceType := aType;
+    pack.id := id;
+    pack.Name := opName;
+    pack.resource := params.Link;
+    pack.Thread := TThreadClientThread.create(FInternal.link, pack.Link);
+    wait(pack);
+    result := pack.result.link;
+    LastUrl := pack.lastUrl;
+  finally
+    pack.free;
+  end;
 end;
 
 function TFhirThreadedClient.operation(atype: TFhirResourceType; opName: String; params: TFhirParameters): TFHIRResource;
@@ -1468,8 +1531,22 @@ begin
 end;
 
 function TFhirThreadedClient.search(atype: TFhirResourceType; allRecords: boolean; params: string): TFHIRBundle;
+var
+  pack : TFHIRThreadedClientPackage;
 begin
-  raise Exception.Create('Not Done Yet');
+  pack := TFHIRThreadedClientPackage.create;
+  try
+    pack.command := fcmdSearch;
+    pack.resourceType := aType;
+    pack.allRecords := allRecords;
+    pack.paramString := params;
+    pack.Thread := TThreadClientThread.create(FInternal.link, pack.Link);
+    wait(pack);
+    result := pack.result.link as TFHIRBundle;
+    LastUrl := pack.lastUrl;
+  finally
+    pack.free;
+  end;
 end;
 
 function TFhirThreadedClient.search(allRecords: boolean; params : TStringList): TFHIRBundle;
@@ -1618,6 +1695,8 @@ begin
 end;
 
 procedure TThreadClientThread.execute;
+var
+  id : String;
 begin
   try
     try
@@ -1625,15 +1704,30 @@ begin
         fcmdConformanceStmt: FPackage.result := FClient.conformance(FPackage.summary);
         fcmdTransaction : FPackage.result := FCLient.transaction(FPackage.resource as TFHIRBundle);
         fcmdRead : FPackage.result := FClient.readResource(FPackage.ResourceType, FPackage.id);
+        fcmdCreate :
+          begin
+            FPackage.result := FClient.createResource(FPackage.resource, id);
+            FPackage.id := id;
+          end;
         fcmdSearch :
           if FPackage.FUrl <> '' then
             FPackage.result := FClient.searchAgain(FPackage.url)
           else if FPackage.resourceType = frtNull then
-            FPackage.result := FClient.search(FPackage.allRecords, FPackage.params)
+            if FPackage.params <> nil then
+              FPackage.result := FClient.search(FPackage.allRecords, FPackage.params)
+            else
+              FPackage.result := FClient.search(FPackage.allRecords, FPackage.paramString)
           else
-            FPackage.result := FClient.search(FPackage.resourceType, FPackage.allRecords, FPackage.params);
+            if FPackage.params <> nil then
+              FPackage.result := FClient.search(FPackage.resourceType, FPackage.allRecords, FPackage.params)
+            else
+              FPackage.result := FClient.search(FPackage.resourceType, FPackage.allRecords, FPackage.paramString);
         fcmdUpdate : FPackage.result := FClient.updateResource(FPackage.Resource);
-        fcmdOperation : FPackage.result := FClient.operation(FPackage.resourceType, FPackage.name, FPackage.resource as TFhirParameters);
+        fcmdOperation :
+          if FPackage.id <> '' then
+            FPackage.result := FClient.operation(FPackage.resourceType, FPackage.id, FPackage.name, FPackage.resource as TFhirParameters)
+          else
+            FPackage.result := FClient.operation(FPackage.resourceType, FPackage.name, FPackage.resource as TFhirParameters);
       else
         raise Exception.Create('Not done yet');
       end;

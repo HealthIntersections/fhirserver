@@ -43,7 +43,7 @@ uses
   AdvObjects, AdvStringBuilders, AdvGenerics,   AdvStreams,  ADvVclStreams, AdvBuffers, AdvMemories, AdvJson,
   AdvZipWriters, AdvZipParts, AdvFiles,
 
-  MimeMessage, TextUtilities, ZLib, InternetFetcher, TurtleParser,
+  MimeMessage, TextUtilities, ZLib, InternetFetcher, TurtleParser, MXml, DigitalSignatures, JWT,
 
   FHIRContext, FHIRSupport, FHIRParserBase, FHIRParser, FHIRBase, FHIRTypes, FHIRResources, FHIRConstants, FHIRXHtml;
 
@@ -151,10 +151,10 @@ function fileToResource(name : String) : TFhirResource; overload;
 function fileToResource(name : String; var format : TFHIRFormat) : TFhirResource; overload;
 function streamToResource(stream : TStream; var format : TFHIRFormat) : TFhirResource;
 function bytesToResource(bytes : TBytes; var format : TFHIRFormat) : TFhirResource;
-procedure resourceToFile(res : TFhirResource; name : String; format : TFHIRFormat);
+procedure resourceToFile(res : TFhirResource; name : String; format : TFHIRFormat; style : TFHIROutputStyle = OutputStyleNormal);
 procedure resourceToStream(res : TFhirResource; stream : TStream; format : TFHIRFormat; style : TFHIROutputStyle = OutputStyleNormal);
-function resourceToString(res : TFhirResource; format : TFHIRFormat) : String;
-function resourceToBytes(res : TFhirResource; format : TFHIRFormat) : TBytes;
+function resourceToString(res : TFhirResource; format : TFHIRFormat; style : TFHIROutputStyle = OutputStyleNormal) : String;
+function resourceToBytes(res : TFhirResource; format : TFHIRFormat; style : TFHIROutputStyle = OutputStyleNormal) : TBytes;
 
 function parseParamsFromForm(stream : TStream) : TFHIRParameters;
 
@@ -256,7 +256,7 @@ type
     property actorList : TFhirContractAgentList read getActorList;
   end;
 
-  TFHIRTFhirDurationHelper = class helper for TFhirDuration
+  TFhirDurationHelper = class helper for TFhirDuration
   private
   public
     function ToDateTime : TDateTime;
@@ -458,6 +458,15 @@ type
     function asExceptionMessage : String;
   end;
 
+  TFHIRCompositionHelper = class helper (TFHIRResourceHelper) for TFHIRComposition
+  public
+    function summary : String;
+  end;
+
+  TFHIRCompositionSectionHelper = class helper (TFHIRElementHelper) for TFHIRCompositionSection
+  public
+    function display : String;
+  end;
 
   TFhirConceptMapHelper = class helper (TFhirResourceHelper) for TFhirConceptMap
   public
@@ -467,6 +476,19 @@ type
     function targetDesc: String;
   end;
 
+  TSignatureType = (SignatureTypeAuthor, SignatureTypeCoAuthor, SignatureTypeParticipant, SignatureTypeTranscriptionist, SignatureTypeVerification,
+                    SignatureTypeValidation, SignatureTypeConsent, SignatureTypeWitnessSignature, SignatureTypeWitnessEvent, SignatureTypeWitnessIdentity,
+                    SignatureTypeWitnessConsent, SignatureTypeInterpreter, SignatureTypeReview, SignatureTypeSource, SignatureTypeAddendum,
+                    SignatureTypeModification, SignatureTypeAdministrative, SignatureTypeTimestamp);
+
+const
+  CODES_TSignatureType : array [TSignatureType] of String = ('1.2.840.10065.1.12.1.1', '1.2.840.10065.1.12.1.2', '1.2.840.10065.1.12.1.3', '1.2.840.10065.1.12.1.4', '1.2.840.10065.1.12.1.5',
+                '1.2.840.10065.1.12.1.6', '1.2.840.10065.1.12.1.7', '1.2.840.10065.1.12.1.8', '1.2.840.10065.1.12.1.9', '1.2.840.10065.1.12.1.10',
+                '1.2.840.10065.1.12.1.11', '1.2.840.10065.1.12.1.12', '1.2.840.10065.1.12.1.13', '1.2.840.10065.1.12.1.14', '1.2.840.10065.1.12.1.15',
+                '1.2.840.10065.1.12.1.16', '1.2.840.10065.1.12.1.17', '1.2.840.10065.1.12.1.18');
+
+type
+
   TFHIRBundleHelper = class helper (TFhirResourceHelper) for TFHIRBundle
   private
     function GetLinks(s: string): String;
@@ -475,6 +497,12 @@ type
     procedure deleteEntry(resource : TFHIRResource);
     class function Create(aType : TFhirBundleTypeEnum) : TFhirBundle; overload;
     class function wrap(aType : TFhirBundleTypeEnum; resource : TFhirResource) : TFhirBundle; overload;
+
+    function findResource(ref : TFHIRReference) : TFhirResource;
+    procedure signRef(code : TSignatureType; whoRef : String; format : TFHIRFormat; cert : String);
+    function signRef2Provenance(code : TSignatureType; whoRef : String; format : TFHIRFormat; cert : String) : TFhirProvenance;
+    function generatePresentation : String;
+    function AsReference : TFHIRDocumentReference;
   end;
 
   TFHIRCodingListHelper = class helper for TFHIRCodingList
@@ -634,6 +662,11 @@ type
   TFHIRAttachmentHelper = class helper for TFHIRAttachment
   public
     function asZipPart(i: integer) : TAdvZipPart;
+  end;
+
+  TFHIRPractitionerHelper = class helper for TFHIRPractitioner
+  public
+    function display : string;
   end;
 
   TFhirReferenceHelper = class helper for TFhirReference
@@ -2752,6 +2785,30 @@ end;
 
 { TFHIRBundleHelper }
 
+function TFHIRBundleHelper.AsReference: TFHIRDocumentReference;
+var
+  cmp : TFHIRComposition;
+begin
+  if type_ <> BundleTypeDocument then
+    raise Exception.Create('Cannot create a reference for something that is not a document');
+  cmp := entryList[0].resource as TFhirComposition;
+  result := TFHIRDocumentReference.create;
+  try
+    result.identifierList.Add(identifier.Link);
+    result.status := DocumentReferenceStatusCurrent;
+    result.docStatus := cmp.status;
+    result.identifierList.Add(cmp.identifier.Link);
+    result.class_ := cmp.class_.Link;
+    result.type_ := cmp.type_.Link;
+    result.subject := cmp.subject.Link;
+    result.created := cmp.date;
+    result.indexed := TDateTimeEx.makeUTC;
+    result.Link;
+  finally
+    result.free;
+  end;
+end;
+
 class function TFHIRBundleHelper.Create(aType: TFhirBundleTypeEnum): TFhirBundle;
 begin
   result := TFhirBundle.Create;
@@ -2767,6 +2824,81 @@ begin
       entrylist.DeleteByIndex(i);
 end;
 
+function TFHIRBundleHelper.findResource(ref: TFHIRReference): TFhirResource;
+var
+  be : TFhirBundleEntry;
+  r : String;
+begin
+  r := ref.reference;
+  result := nil;
+  for be in entryList do
+  begin
+    if (be.resource <> nil) then
+    begin
+      if be.fullUrl = r then
+        exit(be.resource);
+      if be.resource.fhirType+'/'+be.resource.id = r then
+        exit(be.resource);
+    end;
+  end;
+end;
+
+function TFHIRBundleHelper.generatePresentation: String;
+var
+  b : TStringBuilder;
+  procedure addNarrative(br : boolean; n : TFhirNarrative);
+  begin
+    if br then
+      b.Append('<br/>'+#13#10);
+    b.Append(TFHIRXhtmlParser.compose(n.div_));
+  end;
+  procedure processSection(section : TFhirCompositionSection);
+  var
+    child : TFhirCompositionSection;
+  begin
+    b.Append('<br/>'+#13#10);
+    if section.text <> nil then
+      b.Append(TFHIRXhtmlParser.compose(section.text.div_));
+    for child in section.sectionList do
+      processSection(child);
+  end;
+var
+  cmp : TFHIRComposition;
+  sbj : TFhirDomainResource;
+  section : TFhirCompositionSection;
+begin
+  if type_ = BundleTypeDocument then
+  begin
+    cmp := entryList[0].resource as TFhirComposition;
+    b := TStringBuilder.Create;
+    try
+      // header
+      b.append(
+        '<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">'+#13#10+
+        '<head>'+#13#10+
+        '  <meta charset="utf-8" http-equiv="X-UA-Compatible" content="IE=edge" />'+#13#10+
+        '  <title>'+cmp.title+'</title>'+#13#10+
+        '</head>'+#13#10+
+        '<body>'+#13#10);
+      sbj := findResource(cmp.subject) as TFhirDomainResource;
+      addNarrative(false, sbj.text);
+      addNarrative(true, cmp.text);
+      for section in cmp.sectionList do
+        processSection(section);
+      // foooter
+      b.append(
+        '</body>'+#13#10+
+        '</html>'+#13#10);
+
+      result := b.tostring;
+    finally
+      b.free;
+    end;
+  end
+  else
+    result := 'not a document';
+end;
+
 function TFHIRBundleHelper.GetLinks(s: string): String;
 var
   i : integer;
@@ -2778,6 +2910,107 @@ begin
       result := link_List[i].url;
       exit;
     end;
+end;
+
+procedure TFHIRBundleHelper.signRef(code: TSignatureType; whoRef: String; format: TFHIRFormat; cert : String);
+var
+  c : TFHIRCoding;
+  dig : TDigitalSigner;
+  src : TBytes;
+begin
+  // first. populate the signature
+  signature := TFhirSignature.Create;
+  c := signature.type_List.Append;
+  c.system := 'urn:iso-astm:E1762-95:2013';
+  c.code := CODES_TSignatureType[code];
+  signature.when := TDateTimeEx.makeUTC;
+  signature.who := TFhirReference.Create(whoRef);
+  case format of
+    ffXml:
+      begin
+      signature.contentType := 'application/signature+xml';
+      src := resourceToBytes(self, ffXml, OutputStyleCanonical);
+      dig := TDigitalSigner.Create;
+      try
+        dig.PrivateKey := cert;
+        signature.blob := dig.signDetached(src, '', sdXmlRSASha256, 'http://hl7.org/fhir/canonicalization/xml#bundle', true);
+      finally
+        dig.free;
+      end;
+      end;
+    ffJson :
+      begin
+      signature.contentType := 'application/jose';
+      src := resourceToBytes(self, ffJson, OutputStyleCanonical);
+      BytesToFile(src, 'c:\temp\can.json');
+      signature.blob := TJWTUtils.Sign_Hmac_RSA256(src, cert, '');
+      end
+  else
+    raise Exception.Create('The format '+CODES_TFHIRFormat[format]+' is not supported for digital signatures');
+  end;
+end;
+
+function TFHIRBundleHelper.signRef2Provenance(code: TSignatureType; whoRef: String; format: TFHIRFormat; cert: String): TFhirProvenance;
+var
+  c : TFHIRCoding;
+  dig : TDigitalSigner;
+  src : TBytes;
+  sig : TFHIRSignature;
+  cmp : TFHIRComposition;
+begin
+  if type_ = BundleTypeDocument then
+    cmp := entryList[0].resource as TFhirComposition
+  else
+    cmp.Free;
+
+  result := TFhirProvenance.Create;
+  try
+    // first. populate the signature
+    sig := result.signatureList.Append;
+    c := sig.type_List.Append;
+    c.system := 'urn:iso-astm:E1762-95:2013';
+    c.code := CODES_TSignatureType[code];
+    sig.when := TDateTimeEx.makeUTC;
+    sig.who := TFhirReference.Create(whoRef);
+    case format of
+      ffXml:
+        begin
+        sig.contentType := 'application/signature+xml';
+        src := resourceToBytes(self, ffXml, OutputStyleCanonical);
+        dig := TDigitalSigner.Create;
+        try
+          dig.PrivateKey := cert;
+          sig.blob := dig.signDetached(src, '', sdXmlRSASha256, 'http://hl7.org/fhir/canonicalization/xml#bundle', true);
+        finally
+          dig.free;
+        end;
+        end;
+      ffJson :
+        begin
+        sig.contentType := 'application/jose';
+        src := resourceToBytes(self, ffJson, OutputStyleCanonical);
+        BytesToFile(src, 'c:\temp\can.json');
+        sig.blob := TJWTUtils.Sign_Hmac_RSA256(src, cert, '');
+        end
+    else
+      raise Exception.Create('The format '+CODES_TFHIRFormat[format]+' is not supported for digital signatures');
+    end;
+    // fill out other stuff on provenance
+    result.period := TFhirPeriod.Create;
+    result.period.start := cmp.date;
+    result.period.end_ := cmp.date;
+    result.recorded := TDateTimeEx.makeUTC;
+    with result.agentList.Append do
+    begin
+      c := roleList.Append.codingList.Append;
+      c.system := 'urn:iso-astm:E1762-95:2013';
+      c.code := CODES_TSignatureType[code];
+      who := TFhirReference.Create(whoRef);
+    end;
+    result.link;
+  finally
+    result.free;
+  end;
 end;
 
 class function TFHIRBundleHelper.wrap(aType: TFhirBundleTypeEnum; resource: TFhirResource): TFhirBundle;
@@ -5310,13 +5543,6 @@ begin
     display := value.Substring(1, value.Length-1);
 end;
 
-function fileToResource(name : String) : TFhirResource;
-var
-  fmt : TFHIRFormat;
-begin
-  result := fileToResource(name, fmt);
-end;
-
 function fileToResource(name : String; var format : TFHIRFormat) : TFhirResource;
 var
   f : TFileStream;
@@ -5327,6 +5553,13 @@ begin
   finally
     f.Free;
   end;
+end;
+
+function fileToResource(name : String) : TFhirResource;
+var
+  format : TFHIRFormat;
+begin
+  result := fileToResource(name, format);
 end;
 
 function bytesToResource(bytes : TBytes; var format : TFHIRFormat) : TFhirResource;
@@ -5370,26 +5603,26 @@ begin
   end;
 end;
 
-function resourceToString(res : TFhirResource; format : TFHIRFormat) : String;
+function resourceToString(res : TFhirResource; format : TFHIRFormat; style : TFHIROutputStyle = OutputStyleNormal) : String;
 var
   f : TStringStream;
 begin
   f := TStringStream.Create('', TEncoding.UTF8);
   try
-    resourceToStream(res, f, format);
+    resourceToStream(res, f, format, style);
     result := f.DataString;
   finally
     f.Free;
   end;
 end;
 
-function resourceToBytes(res : TFhirResource; format : TFHIRFormat) : TBytes;
+function resourceToBytes(res : TFhirResource; format : TFHIRFormat; style : TFHIROutputStyle = OutputStyleNormal) : TBytes;
 var
   f : TBytesStream;
 begin
   f := TBytesStream.Create();
   try
-    resourceToStream(res, f, format);
+    resourceToStream(res, f, format, style);
     result := f.Bytes;
   finally
     f.Free;
@@ -5397,19 +5630,19 @@ begin
 end;
 
 
-procedure resourceToFile(res : TFhirResource; name : String; format : TFHIRFormat);
+procedure resourceToFile(res : TFhirResource; name : String; format : TFHIRFormat; style : TFHIROutputStyle = OutputStyleNormal);
 var
   f : TFileStream;
 begin
   f := TFileStream.Create(name, fmCreate);
   try
-    resourceToStream(res, f, format);
+    resourceToStream(res, f, format, style);
   finally
     f.Free;
   end;
 end;
 
-procedure resourceToStream(res : TFhirResource; stream : TStream; format : TFHIRFormat; style : TFHIROutputStyle);
+procedure resourceToStream(res : TFhirResource; stream : TStream; format : TFHIRFormat; style : TFHIROutputStyle = OutputStyleNormal);
 var
   c : TFHIRComposer;
 begin
@@ -5427,9 +5660,9 @@ begin
   end;
 end;
 
-{ TFHIRTFhirDurationHelper }
+{ TFHIRDurationHelper }
 
-function TFHIRTFhirDurationHelper.ToDateTime: TDateTime;
+function TFHIRDurationHelper.ToDateTime: TDateTime;
 var
   b : TDateTime;
 begin
@@ -5891,6 +6124,34 @@ end;
 function TFhirContactPointHelper.isPhoneOrFax: boolean;
 begin
   result := system in [ContactPointSystemPhone, ContactPointSystemFax];
+end;
+
+{ TFHIRCompositionHelper }
+
+function TFHIRCompositionHelper.summary: String;
+begin
+  result := title + '('+date.toString('c')+')';
+end;
+
+{ TFHIRPractitionerHelper }
+
+function TFHIRPractitionerHelper.display: string;
+begin
+  if nameList.Count > 0 then
+    result := gen(nameList[0])
+  else
+    result := '??'; // ??
+end;
+
+{ TFHIRCompositionSectionHelper }
+
+function TFHIRCompositionSectionHelper.display: String;
+begin
+  result := title;
+  if result = '' then
+    result := gen(code);
+  if result = '' then
+    result := 'section';
 end;
 
 end.

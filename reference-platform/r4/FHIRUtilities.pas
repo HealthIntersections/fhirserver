@@ -391,6 +391,7 @@ type
   TFhirConformanceRestResourceHelper = class helper (TFHIRElementHelper) for TFhirCapabilityStatementRestResource
   public
     function interaction(type_ : TFhirTypeRestfulInteractionEnum) : TFhirCapabilityStatementRestResourceInteraction;
+    procedure removeInteraction(type_ : TFhirTypeRestfulInteractionEnum);
   end;
 
   TFhirConformanceRestHelper = class helper (TFHIRElementHelper) for TFhirCapabilityStatementRest
@@ -454,6 +455,10 @@ type
     function asExceptionMessage : String;
   end;
 
+  TFHIRCompositionHelper = class helper (TFHIRResourceHelper) for TFHIRComposition
+  public
+    function summary : String;
+  end;
 
   TFhirConceptMapHelper = class helper (TFhirResourceHelper) for TFhirConceptMap
   public
@@ -669,6 +674,12 @@ type
     function summary : String;
   end;
 
+  TFhirContactPointHelper = class helper for TFhirContactPoint
+  public
+    function isPhoneOrFax : boolean;
+    function isEmail : boolean;
+  end;
+
 function Path(const parts : array of String) : String;
 function UrlPath(const parts : array of String) : String;
 
@@ -693,7 +704,7 @@ function gen(obj : TFhirRatio) : String; overload;
 function gen(obj : TFhirSampledData) : String; overload;
 function gen(obj : TFhirSignature) : String; overload;
 function gen(obj : TFhirAddress) : String; overload;
-function gen(obj : TFhirContactPoint) : String; overload;
+function gen(obj : TFhirContactPoint; hideType : boolean = false) : String; overload;
 function gen(obj : TFhirTiming) : String; overload;
 function gen(obj : TFhirUsageContext) : String; overload;
 
@@ -1392,10 +1403,12 @@ begin
   end;
 end;
 
-function gen(obj : TFhirContactPoint) : String;
+function gen(obj : TFhirContactPoint; hideType : boolean = false) : String;
 begin
   if (obj = nil) then
     result := ''
+  else if not hideType then
+    result := obj.value
   else
     result := CODES_TFhirContactPointSystemEnum[obj.system]+': '+obj.value;
 end;
@@ -5866,6 +5879,35 @@ begin
       pl.Free;
     end;
   end;
+end;
+
+procedure TFhirConformanceRestResourceHelper.removeInteraction(type_: TFhirTypeRestfulInteractionEnum);
+var
+  i : integer;
+begin
+  for i := self.interactionList.count - 1 downto 0 do
+    if (self.interactionList[i].code = type_) then
+      self.interactionList.DeleteByIndex(i);
+
+end;
+
+{ TFhirContactPointHelper }
+
+function TFhirContactPointHelper.isEmail: boolean;
+begin
+  result := system in [ContactPointSystemEmail];
+end;
+
+function TFhirContactPointHelper.isPhoneOrFax: boolean;
+begin
+  result := system in [ContactPointSystemPhone, ContactPointSystemFax];
+end;
+
+{ TFHIRCompositionHelper }
+
+function TFHIRCompositionHelper.summary: String;
+begin
+  result := title + '('+date.toString('c')+')';
 end;
 
 end.
