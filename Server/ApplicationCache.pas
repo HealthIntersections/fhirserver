@@ -67,6 +67,7 @@ type
 
     function link : TApplicationCache; overload;
     procedure seeResource(res : TFhirResource);
+    procedure checkResource(res : TFhirResource);
 
     function recogniseJWT(jwt : String; endorsements : TAdvList<TEndorsement>): TFHIRDevice;
   end;
@@ -78,6 +79,11 @@ const
   EXT_JWT = 'http://www.healthintersections.com.au/fhir/StructureDefinition/JWT';
 
 { TApplicationCache }
+
+procedure TApplicationCache.checkResource(res: TFhirResource);
+begin
+
+end;
 
 constructor TApplicationCache.Create;
 begin

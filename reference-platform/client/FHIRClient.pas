@@ -73,6 +73,7 @@ Type
     procedure SetProvenance(const Value: TFhirProvenance);
   protected
     procedure SetLogger(const Value: TFHIRClientLogger); virtual;
+    function encodeParams(params: TStringList): String;
   public
     Destructor Destroy; override;
     function link : TFhirClient; overload;
@@ -102,7 +103,7 @@ Type
     property Logger : TFHIRClientLogger read FLogger write SetLogger;
   end;
 
-  TFhirHTTPClientHTTPVerb = (get, post, put, delete, options, patch);
+  TFhirHTTPClientHTTPVerb = (httpGet, httpPost, httpPut, httpDelete, httpOptions, httpPatch);
 const
 
   CODES_TFhirHTTPClientHTTPVerb : array [TFhirHTTPClientHTTPVerb] of String = ('GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH');
@@ -394,7 +395,7 @@ begin
   try
     if summary then
       params.AddPair('_summary', 'true');
-    result := FetchResource(MakeUrl('metadata', params), get, nil) as TFhirCapabilityStatement;
+    result := FetchResource(MakeUrl('metadata', params), httpGet, nil) as TFhirCapabilityStatement;
   finally
     params.Free;
   end;
@@ -414,7 +415,7 @@ Var
 begin
   src := serialise(bundle);
   try
-    result := fetchResource(makeUrl(''), post, src) as TFhirBundle;
+    result := fetchResource(makeUrl(''), httpPost, src) as TFhirBundle;
   finally
     src.free;
   end;
@@ -449,7 +450,7 @@ begin
   try
     result := nil;
     try
-      result := fetchResource(MakeUrl(CODES_TFhirResourceType[resource.resourceType]), post, src);
+      result := fetchResource(MakeUrl(CODES_TFhirResourceType[resource.resourceType]), httpPost, src);
       id := readIdFromLocation(CODES_TFhirResourceType[resource.resourceType], getHeader('Location'));
       result.link;
     finally
@@ -469,7 +470,7 @@ begin
 
   src := serialise(resource);
   try
-      result := fetchResource(MakeUrl(CODES_TFhirResourceType[resource.resourceType]+'/'+resource.id), put, src);
+      result := fetchResource(MakeUrl(CODES_TFhirResourceType[resource.resourceType]+'/'+resource.id), httpPut, src);
   finally
     src.free;
   end;
@@ -477,7 +478,7 @@ end;
 
 procedure TFhirHTTPClient.deleteResource(atype : TFhirResourceType; id : String);
 begin
-  exchange(MakeUrl(CODES_TFhirResourceType[aType]+'/'+id), delete, nil).free;
+  exchange(MakeUrl(CODES_TFhirResourceType[aType]+'/'+id), httpDelete, nil).free;
 end;
 
 //-- Worker Routines -----------------------------------------------------------
@@ -566,7 +567,7 @@ begin
     FOnClientStatus(self, msg);
 end;
 
-function encodeParams(params : TStringList) : String;
+function TFhirClient.encodeParams(params : TStringList) : String;
 var
   i : integer;
   s : String;
@@ -590,7 +591,7 @@ var
   res : TFHIRResource;
   feed : TFHIRBundle;
 begin
-  res := fetchResource(makeUrl(CODES_TFhirResourceType[aType])+'?'+params, get, nil);
+  res := fetchResource(makeUrl(CODES_TFhirResourceType[aType])+'?'+params, httpGet, nil);
 //    client.Request.RawHeaders.Values['Content-Location'] := MakeUrlPath(CODES_TFhirResourceType[resource.resourceType]+'/'+id+'/history/'+ver);
   if not (res is TFHIRBundle) then
     raise Exception.Create('Found a resource of type '+res.fhirType+' expecting a Bundle');
@@ -600,7 +601,7 @@ begin
     s := result.links['next'];
     while AllRecords and (s <> '') do
     begin
-      feed := fetchResource(s, get, nil) as TFhirBundle;
+      feed := fetchResource(s, httpGet, nil) as TFhirBundle;
       try
         result.entryList.AddAll(feed.entryList);
         s := feed.links['next'];
@@ -623,7 +624,7 @@ end;
 
 function TFhirHTTPClient.searchAgain(link: String): TFHIRBundle;
 begin
-  result := fetchResource(link, get, nil) as TFHIRBundle;
+  result := fetchResource(link, httpGet, nil) as TFHIRBundle;
 end;
 
 function TFhirHTTPClient.search(allRecords: boolean; params: TStringList): TFHIRBundle;
@@ -641,7 +642,7 @@ begin
     src.Position := 0;
     ct := makeMultipart(src, 'src', params, frm);
     try
-      result := fetchResource(makeUrl(CODES_TFhirResourceType[aType])+'/_search', post, frm) as TFhirBundle;
+      result := fetchResource(makeUrl(CODES_TFhirResourceType[aType])+'/_search', httpPost, frm) as TFhirBundle;
     finally
       frm.Free;
     end;
@@ -659,9 +660,9 @@ begin
   try
     src.Position := 0;
     if aType = frtNull then
-      result := fetchResource(makeUrl('$'+opName), post, src)
+      result := fetchResource(makeUrl('$'+opName), httpPost, src)
     else
-    result := fetchResource(makeUrl(CODES_TFhirResourceType[aType])+'/$'+opName, post, src);
+    result := fetchResource(makeUrl(CODES_TFhirResourceType[aType])+'/$'+opName, httpPost, src);
   finally
     src.free;
   end;
@@ -673,14 +674,14 @@ Var
 begin
   if params = nil then
   begin
-    result := fetchResource(makeUrl(CODES_TFhirResourceType[aType])+'/'+id+'/$'+opName, get, nil);
+    result := fetchResource(makeUrl(CODES_TFhirResourceType[aType])+'/'+id+'/$'+opName, httpGet, nil);
   end
   else
   begin
     src := serialise(params);
     try
       src.Position := 0;
-      result := fetchResource(makeUrl(CODES_TFhirResourceType[aType])+'/'+id+'/$'+opName, post, src);
+      result := fetchResource(makeUrl(CODES_TFhirResourceType[aType])+'/'+id+'/$'+opName, httpPost, src);
     finally
       src.free;
     end;
@@ -792,7 +793,7 @@ begin
 
   result := nil;
   try
-    result := fetchResource(MakeUrl(CODES_TFhirResourceType[AType]+'/'+id), get, nil);
+    result := fetchResource(MakeUrl(CODES_TFhirResourceType[AType]+'/'+id), httpGet, nil);
     result.link;
   finally
     result.free;
@@ -816,7 +817,7 @@ var
 begin
 //    client.Request.RawHeaders.Values['Content-Location'] := MakeUrlPath(CODES_TFhirResourceType[resource.resourceType]+'/'+id+'/history/'+ver);
   status('Fetch History for '+CODES_TFhirResourceType[aType]);
-  result := fetchResource(makeUrl(CODES_TFhirResourceType[aType])+'/_history?'+encodeParams(params), get, nil) as TFhirBundle;
+  result := fetchResource(makeUrl(CODES_TFhirResourceType[aType])+'/_history?'+encodeParams(params), httpGet, nil) as TFhirBundle;
   try
     s := result.links['next'];
     i := 1;
@@ -824,7 +825,7 @@ begin
     begin
       inc(i);
       status('Fetch History for '+CODES_TFhirResourceType[aType]+' page '+inttostr(i));
-      feed := fetchResource(s, get, nil) as TFhirBundle;
+      feed := fetchResource(s, httpGet, nil) as TFhirBundle;
       try
         result.entryList.AddAll(feed.entryList);
         s := feed.links['next'];
@@ -1010,29 +1011,29 @@ begin
     http.SetAddress(url);
     ok := false;
       case verb of
-        get :
+        httpGet :
           begin
           http.RequestMethod := 'GET';
           end;
-        post :
+        httpPost :
           begin
           http.RequestMethod := 'POST';
           http.Request := TADvBuffer.create;
           http.Request.LoadFromStream(source);
           end;
-        put :
+        httpPut :
           begin
           http.RequestMethod := 'PUT';
           http.Request.LoadFromStream(source);
           end;
-        delete :
+        httpDelete :
           http.RequestMethod := 'DELETE';
-        patch :
+        httpPatch :
           begin
           http.RequestMethod := 'PATCH';
           http.RequestType := 'application/json-patch+json; charset=utf-8';
           end;
-        options :
+        httpOptions :
           begin
           http.RequestMethod := 'OPTIONS';
           end;
@@ -1101,13 +1102,13 @@ begin
   Try
     Try
       case verb of
-        get :    indy.Get(url, result);
-        post :   indy.Post(url, source, result);
-        put :    indy.Put(url, source, result);
-        delete : indy.delete(url);
-        options: indy.Options(url);
+        httpGet :    indy.Get(url, result);
+        httpPost :   indy.Post(url, source, result);
+        httpPut :    indy.Put(url, source, result);
+        httpDelete : indy.delete(url);
+        httpOptions: indy.Options(url);
 {$IFNDEF VER260}
-        patch :  indy.Patch(url, source, result);
+        httpPatch :  indy.Patch(url, source, result);
 {$ENDIF}
       else
         raise Exception.Create('Unknown HTTP method '+inttostr(ord(verb)));
@@ -1260,7 +1261,7 @@ begin
   try
     req.Write(b[0], length(b));
     req.Position := 0;
-    resp := exchange(UrlPath([FURL, 'cds-services', id]), post, req, 'application/json');
+    resp := exchange(UrlPath([FURL, 'cds-services', id]), httpPost, req, 'application/json');
     try
       json := TJSONParser.Parse(resp);
       try

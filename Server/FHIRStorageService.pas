@@ -33,7 +33,7 @@ interface
 
 uses
   SysUtils, Classes, System.Generics.Collections,
-  KCritSct, StringSupport, ThreadSupport, TextUtilities,
+  KCritSct, StringSupport, ThreadSupport, TextUtilities, ParseMap,
   AdvObjects, AdvGenerics, AdvStringMatches, AdvNames, AdvStringBuilders, AdvExceptions,
   KDBDialects, DateSupport, GraphQL,
 
@@ -203,15 +203,20 @@ Type
     function ResolveSearchId(resourceName : String; requestCompartment : TFHIRCompartmentId; SessionCompartments : TAdvList<TFHIRCompartmentId>; baseURL, params : String) : TMatchingResourceList; virtual;
     procedure AuditRest(session : TFhirSession; intreqid, extreqid, ip, resourceName : string; id, ver : String; verkey : integer; op : TFHIRCommandType; provenance : TFhirProvenance; httpCode : Integer; name, message : String); overload; virtual;
     procedure AuditRest(session : TFhirSession; intreqid, extreqid, ip, resourceName : string; id, ver : String; verkey : integer; op : TFHIRCommandType; provenance : TFhirProvenance; opName : String; httpCode : Integer; name, message : String); overload; virtual;
+
+    function createClient(lang : String; session: TFHIRSession) : TFHIRClient; virtual;
   end;
 
   TFHIRInternalClient = class (TFHIRClient)
   private
+    FServerContext : TAdvObject;
     FEngine : TFHIROperationEngine;
     FContext: TFHIRWorkerContext;
     FSession: TFHIRSession;
     procedure SetContext(const Value: TFHIRWorkerContext);
     procedure SetSession(const Value: TFHIRSession);
+    procedure doGetBundleBuilder(request: TFHIRRequest; context: TFHIRResponse;
+      aType: TFhirBundleTypeEnum; out builder: TFhirBundleBuilder);
   public
     Destructor Destroy; override;
 
@@ -273,7 +278,7 @@ Type
 
     function createOperationContext(lang : String) : TFHIROperationEngine; virtual;
     Procedure Yield(op : TFHIROperationEngine; exception : Exception); overload; virtual;
-    function createClient(lang : String; context: TFHIRWorkerContext; session: TFHIRSession) : TFHIRClient; virtual;
+    function createClient(lang : String; ServerContext : TAdvObject; context: TFHIRWorkerContext; session: TFHIRSession) : TFHIRClient; virtual;
     Procedure Yield(client : TFHIRClient; exception : Exception); overload; virtual;
     function ExpandVS(vs: TFHIRValueSet; ref: TFhirReference; lang : String; limit, count, offset: integer; allowIncomplete: Boolean; dependencies: TStringList): TFHIRValueSet; virtual;
     function LookupCode(system, version, code: String): String; virtual;
@@ -540,6 +545,20 @@ begin
   FServerContext := ServerContext;
   FLang := lang;
   FOperations := TAdvList<TFhirOperation>.create;
+end;
+
+function TFHIROperationEngine.createClient(lang: String; session: TFHIRSession): TFHIRClient;
+begin
+  result := TFHIRInternalClient.Create;
+  try
+    TFHIRInternalClient(result).FServerContext := FServerContext.Link;
+    TFHIRInternalClient(result).FEngine := self.link as TFHIROperationEngine;
+    TFHIRInternalClient(result).Context := TFHIRServerContext(FServerContext).ValidatorContext.link;
+    TFHIRInternalClient(result).session := session.link;
+    result.link;
+  finally
+    result.Free;
+  end;
 end;
 
 destructor TFHIROperationEngine.Destroy;
@@ -1184,10 +1203,11 @@ begin
   raise Exception.Create('Asynchronous Processing is not supported on this server');
 end;
 
-function TFHIRStorageService.createClient(lang: String; context: TFHIRWorkerContext; session: TFHIRSession): TFHIRClient;
+function TFHIRStorageService.createClient(lang: String; ServerContext : TAdvObject; context: TFHIRWorkerContext; session: TFHIRSession): TFHIRClient;
 begin
   result := TFHIRInternalClient.Create;
   try
+    TFHIRInternalClient(result).FServerContext := ServerContext.Link;
     TFHIRInternalClient(result).FEngine := createOperationContext(lang).link as TFHIROperationEngine; // will be freed twice later
     TFHIRInternalClient(result).Context := context.link;
     TFHIRInternalClient(result).session := session.link;
@@ -1287,6 +1307,7 @@ begin
   FEngine.Free;
   FContext.Free;
   FSession.Free;
+  FServerContext.Free;
   inherited;
 end;
 
@@ -1339,18 +1360,53 @@ begin
   end;
 end;
 
-function TFHIRInternalClient.search(atype: TFhirResourceType;
-  allRecords: boolean; params : TStringList): TFHIRBundle;
+function TFHIRInternalClient.search(atype: TFhirResourceType; allRecords: boolean; params : TStringList): TFHIRBundle;
 begin
-  raise Exception.Create('Not done yet');
-
+  result := search(aType, allRecords, encodeParams(params));
 end;
 
-function TFHIRInternalClient.search(atype: TFhirResourceType;
-  allRecords: boolean; params: string): TFHIRBundle;
+procedure TFHIRInternalClient.doGetBundleBuilder(request : TFHIRRequest; context: TFHIRResponse; aType: TFhirBundleTypeEnum; out builder: TFhirBundleBuilder);
 begin
-  raise Exception.Create('Not done yet');
+  if context.Format = ffNDJson then
+    raise EFHIRException.CreateLang('NDJSON-ASYNC', request.Lang);
+  builder := TFHIRBundleBuilderSimple.Create(TFHIRBundle.create(aType));
+end;
 
+
+function TFHIRInternalClient.search(atype: TFhirResourceType; allRecords: boolean; params: string): TFHIRBundle;
+var
+  req : TFHIRRequest;
+  resp : TFHIRResponse;
+  ctxt : TOperationContext;
+begin
+  ctxt := TOperationContext.Create(false, nil, 'internal');
+  try
+    req := TFHIRRequest.Create(context, roOperation, nil);
+    try
+      req.CommandType := fcmdSearch;
+      req.ResourceName := CODES_TFhirResourceType[aType];
+      req.Parameters := TParseMap.create(params+'&__wantObject=true');
+      req.internalRequestId := TFHIRServerContext(FServerContext).nextRequestId;
+
+      resp := TFHIRResponse.Create;
+      try
+        resp.OnCreateBuilder := doGetBundleBuilder;
+        FEngine.ExecuteSearch(req, resp);
+        if resp.HTTPCode >= 300 then
+          if (resp.Resource <> nil) and (resp.Resource is TFhirOperationOutcome) then
+            raise EFHIRClientException.Create((resp.Resource as TFhirOperationOutcome).asExceptionMessage, resp.Resource as TFhirOperationOutcome)
+          else
+            raise EFHIRClientException.Create(resp.Body, BuildOperationOutcome('en', resp.Body));
+        result := resp.Resource.Link as TFHIRBundle;
+      finally
+        resp.Free;
+      end;
+    finally
+      req.Free;
+    end;
+  finally
+    ctxt.free;
+  end;
 end;
 
 function TFHIRInternalClient.search(allRecords: boolean;

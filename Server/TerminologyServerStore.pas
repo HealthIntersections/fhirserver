@@ -281,6 +281,7 @@ Type
     // maintenance procedures
     procedure SeeSpecificationResource(resource : TFHIRResource);
     procedure SeeTerminologyResource(resource : TFHIRResource);
+    procedure checkTerminologyResource(resource : TFHIRResource);
     procedure DropTerminologyResource(aType : TFhirResourceType; id : String);
 
     // access procedures. All return values are owned, and must be freed
@@ -818,6 +819,14 @@ begin
   end;
 end;
 
+procedure TTerminologyServerStore.checkTerminologyResource(resource: TFHIRResource);
+begin
+  resource.checkNoImplicitRules('Repository.SeeResource', 'Resource');
+  TFhirDomainResource(resource).checkNoModifiers('Repository.SeeResource', 'Resource');
+  if (resource.ResourceType = frtCodeSystem) then
+    checkCodeSystem(resource as TFHIRCodeSystem);
+end;
+
 function exempt(vs : TFHIRCodeSystem) : boolean;
 begin
   {$IFDEF FHIR2}
@@ -1347,10 +1356,7 @@ var
   cm : TLoadedConceptMap;
   cse : TFHIRCodeSystemEntry;
 begin
-  resource.checkNoImplicitRules('Repository.SeeResource', 'Resource');
-  TFhirDomainResource(resource).checkNoModifiers('Repository.SeeResource', 'Resource');
-  if (resource.ResourceType = frtCodeSystem) then
-    checkCodeSystem(resource as TFHIRCodeSystem);
+  checkTerminologyResource(resource);
 
   FLock.Lock('SeeTerminologyResource');
   try

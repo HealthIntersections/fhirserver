@@ -315,7 +315,7 @@ begin
       coverage.meta.extensionList.AddExtension('http://www.healthintersections.com.au/fhir/StructureDefinition/source', params.GetVar('provenance.name')+' @ '+params.GetVar('provenance.country'));
 
       // post the coverage
-      client := context.Storage.createClient('en', FContext.ValidatorContext.Link, FSession.Link);
+      client := context.Storage.createClient('en', context, FContext.ValidatorContext.Link, FSession.Link);
       try
         client.provenance := prov.Link;
         client.createResource(coverage, id);

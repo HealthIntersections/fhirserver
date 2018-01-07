@@ -206,6 +206,7 @@ valueOf()	Returns the primitive value of an array
     FOnLog : TJavascriptConsoleLogEvent;
     FDefinedClasses : TDictionary<String,TJavascriptClassDefinition>;
     FOwnedObjects : TObjectList<TObject>;
+    FReadOnly: boolean;
 
     FPIdGetter : JsPropertyIdRef;
     FPIdSetter : JsPropertyIdRef;
@@ -411,6 +412,10 @@ valueOf()	Returns the primitive value of an array
     }
     property OnLog : TJavascriptConsoleLogEvent read FOnLog write FOnLog;
 
+    {
+      Blocks any set property calls
+    }
+    property readOnly : boolean read FReadOnly write FReadOnly;
   end;
 
   TStringListManager = class (TJavascriptArrayManager)
@@ -474,6 +479,9 @@ var
 begin
   prop := TJavascriptRegisteredProperty(callbackState);
   try
+    if prop.FJavascript.readOnly then
+      raise EJavascriptScript.Create('Unable to set the value - the engine is in read-Only mode');
+
     prop.FSetter(prop.FJavascript, prop, prop.FJavascript.getWrapped<TObject>(p[0]), p[1]);
     result := JS_INVALID_REFERENCE;
   except
@@ -937,7 +945,9 @@ function TJavascript.wrap(o : TObject; className : String; owns : boolean) : JsV
 var
   def : TJavascriptClassDefinition;
 begin
-  if FDefinedClasses.TryGetValue(className, def) then
+  if o = nil then
+    result := getNull
+  else if FDefinedClasses.TryGetValue(className, def) then
     result := wrap(o, def, owns)
   else
   begin

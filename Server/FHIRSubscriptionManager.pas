@@ -759,9 +759,9 @@ begin
       evd := resource as TFHIREventDefinition;
       FLock.Lock('getEventDefinition');
       try
-        FEventDefinitions.add(evd.url, evd.link);
-        FEventDefinitions.add(evd.id, evd.link);
-        FEventDefinitions.add('key:'+inttostr(key), evd.link);
+        FEventDefinitions.addOrSetValue(evd.url, evd.link);
+        FEventDefinitions.addOrSetValue(evd.id, evd.link);
+        FEventDefinitions.addOrSetValue('key:'+inttostr(key), evd.link);
       finally
         FLock.Unlock;
       end;

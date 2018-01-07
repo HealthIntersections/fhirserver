@@ -147,7 +147,7 @@ begin
         end);
       bnd := TFhirClient(this).search(a, true, js.asString(parameters[1]))
     end;
-    result := js.wrap(TFhirClient(this).transaction(bnd), 'Bundle', true);
+    result := js.wrap(bnd, 'Bundle', true);
   finally
     ts.free;
   end;

@@ -261,7 +261,7 @@ var
 begin
   if FEngines.Count = 0 then
     exit(false);
-  client := server.Storage.createClient('en', server.ValidatorContext, session);
+  client := server.Storage.createClient('en', server, server.ValidatorContext, session);
   try
     for t in FEngines do
     begin

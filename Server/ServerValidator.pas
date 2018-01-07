@@ -55,6 +55,7 @@ Type
 
     Function Link : TFHIRServerWorkerContext; overload;
 
+    procedure checkResource(r : TFhirResource);
     procedure SeeResource(r : TFhirResource); override;
 
     Property TerminologyServer : TTerminologyServer read FTerminologyServer write SetTerminologyServer;
@@ -73,6 +74,12 @@ Type
 Implementation
 
 { TFHIRServerWorkerContext }
+
+procedure TFHIRServerWorkerContext.checkResource(r: TFhirResource);
+begin
+  r.checkNoImplicitRules('Repository.SeeResource', 'Resource');
+  TFhirDomainResource(r).checkNoModifiers('Repository.SeeResource', 'Resource');
+end;
 
 constructor TFHIRServerWorkerContext.Create;
 begin
@@ -101,8 +108,7 @@ end;
 
 procedure TFHIRServerWorkerContext.SeeResource(r : TFhirResource);
 begin
-  r.checkNoImplicitRules('Repository.SeeResource', 'Resource');
-  TFhirDomainResource(r).checkNoModifiers('Repository.SeeResource', 'Resource');
+  checkResource(r);
   if (r.ResourceType in [frtValueSet, frtConceptMap {$IFDEF FHIR3}, frtCodeSystem{$ENDIF}]) then
     FTerminologyServer.SeeSpecificationResource(r)
   else if r.resourceType = frtQuestionnaire then

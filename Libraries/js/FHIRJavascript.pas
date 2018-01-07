@@ -278,7 +278,7 @@ begin
   if (p = nil) then
     raise EJavascriptHost.Create('Attempt to access illegal property '+propDef.Name);
   try
-    if (p.Values.Count = 0) or (p.Values[0].fhirType <> def.FFHIRType) then
+    if (p.Values.Count = 0) or ((p.Values[0].fhirType <> def.FFHIRType) and (def.FFHIRType <> 'Resource')) then
       result := js.getNull
     else if p.Values.Count > 1 then
       raise EJavascriptHost.Create('Attempt to access '+propDef.Name+' as a string but it had mutiple values')

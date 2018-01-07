@@ -234,7 +234,7 @@ public class DelphiGenerator {
 
     finishIndexer();
 
-    TextFile.stringToFile(include.toString(), Utilities.path(destDir, "fhir.inc"));
+    TextFile.stringToFile(include.toString(), Utilities.path(destDir, "fhir.incn"));
     
     defCodeConstGen.enumConsts.add("  FHIR_GENERATED_VERSION = '"+version+"';\r\n");
     defCodeConstGen.enumConsts.add("  FHIR_GENERATED_PUBLICATION = '"+pubVersion+"';\r\n");
@@ -625,7 +625,7 @@ public class DelphiGenerator {
   private void start(String implDir, String version, DateTimeType dateTimeType, String dstuID)
       throws UnsupportedEncodingException, FileNotFoundException, Exception {
     String sfxDstuID = "";
-    defCodeRes = new DelphiCodeGenerator(new FileOutputStream(Utilities.path(implDir, "FHIRResources"+sfxDstuID+".pas")), dstuID, sfxDstuID);
+    defCodeRes = new DelphiCodeGenerator(new FileOutputStream(Utilities.path(implDir, "FHIRResources"+sfxDstuID+".pasn")), dstuID, sfxDstuID);
     defCodeRes.start();
     defCodeRes.name = "FHIRResources";
     defCodeRes.comments.add("FHIR v"+version+" generated "+dateTimeType.asStringValue());
@@ -648,7 +648,7 @@ public class DelphiGenerator {
     jsCode.uses.add("Javascript");
     jsCode.uses.add("FHIRJavascript");
 
-    defCodeConstGen = new DelphiCodeGenerator(new FileOutputStream(Utilities.path(implDir, "FHIRConstants"+sfxDstuID+".pas")), dstuID, sfxDstuID);
+    defCodeConstGen = new DelphiCodeGenerator(new FileOutputStream(Utilities.path(implDir, "FHIRConstants"+sfxDstuID+".pasn")), dstuID, sfxDstuID);
     defCodeConstGen.start();
     defCodeConstGen.name = "FHIRConstants";
     defCodeConstGen.comments.add("FHIR v"+version+" generated "+dateTimeType.asStringValue());
@@ -665,7 +665,7 @@ public class DelphiGenerator {
     defCodeConstGen.uses.add("FHIRTypes");
     defCodeConstGen.uses.add("FHIRResources");
 
-    defIndexer = new DelphiCodeGenerator(new FileOutputStream(Utilities.path(implDir, "FHIRIndexInformation"+sfxDstuID+".pas")), dstuID, sfxDstuID);
+    defIndexer = new DelphiCodeGenerator(new FileOutputStream(Utilities.path(implDir, "FHIRIndexInformation"+sfxDstuID+".pasn")), dstuID, sfxDstuID);
     defIndexer.start();
     defIndexer.name = "FHIRIndexInformation";
     defIndexer.comments.add("FHIR v"+version+" generated "+dateTimeType.asStringValue());
@@ -686,7 +686,7 @@ public class DelphiGenerator {
     indexMethods = new StringBuilder();
 
 
-    defCodeType = new DelphiCodeGenerator(new FileOutputStream(Utilities.path(implDir, "FHIRTypes"+sfxDstuID+".pas")), dstuID, sfxDstuID);
+    defCodeType = new DelphiCodeGenerator(new FileOutputStream(Utilities.path(implDir, "FHIRTypes"+sfxDstuID+".pasn")), dstuID, sfxDstuID);
     defCodeType.start();
     defCodeType.name = "FHIRTypes";
     defCodeType.comments.add("FHIR v"+version+" generated "+dateTimeType.asStringValue());
@@ -708,19 +708,19 @@ public class DelphiGenerator {
     factoryByName = new StringBuilder();
 
 
-    prsrCodeX = new DelphiCodeGenerator(new FileOutputStream(Utilities.path(implDir, "FHIRParserXml"+sfxDstuID+".pas")), dstuID, sfxDstuID);
+    prsrCodeX = new DelphiCodeGenerator(new FileOutputStream(Utilities.path(implDir, "FHIRParserXml"+sfxDstuID+".pasn")), dstuID, sfxDstuID);
     prsrCodeX.start();
     prsrCodeX.name = "FHIRParserXml";
 
-    prsrCodeJ = new DelphiCodeGenerator(new FileOutputStream(Utilities.path(implDir, "FHIRParserJson"+sfxDstuID+".pas")), dstuID, sfxDstuID);
+    prsrCodeJ = new DelphiCodeGenerator(new FileOutputStream(Utilities.path(implDir, "FHIRParserJson"+sfxDstuID+".pasn")), dstuID, sfxDstuID);
     prsrCodeJ.start();
     prsrCodeJ.name = "FHIRParserJson";
 
-    prsrCodeT = new DelphiCodeGenerator(new FileOutputStream(Utilities.path(implDir, "FHIRParserTurtle"+sfxDstuID+".pas")), dstuID, sfxDstuID);
+    prsrCodeT = new DelphiCodeGenerator(new FileOutputStream(Utilities.path(implDir, "FHIRParserTurtle"+sfxDstuID+".pasn")), dstuID, sfxDstuID);
     prsrCodeT.start();
     prsrCodeT.name = "FHIRParserTurtle";
 
-    defCodeOp = new DelphiCodeGenerator(new FileOutputStream(Utilities.path(implDir, "FHIROperations"+sfxDstuID+".pas")), dstuID, sfxDstuID);
+    defCodeOp = new DelphiCodeGenerator(new FileOutputStream(Utilities.path(implDir, "FHIROperations"+sfxDstuID+".pasn")), dstuID, sfxDstuID);
     defCodeOp.start();
     defCodeOp.name = "FHIROperations";
     defCodeOp.comments.add("FHIR v"+version+" generated "+dateTimeType.asStringValue());
@@ -1242,7 +1242,12 @@ public class DelphiGenerator {
     StringBuilder jsClass = new StringBuilder(); 
     jsClass.append("procedure define"+tj+"PropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);\r\n");
     jsClass.append("begin\r\n");
-    jsClass.append(jsReg.toString());
+    if (tj.equalsIgnoreCase("MetadataResource")) {
+      String s = jsReg.toString();
+      s = s.substring(0, s.indexOf("\r")+2);
+      jsClass.append(s);
+    } else
+      jsClass.append(jsReg.toString());
     jsClass.append("end;\r\n\r\n");
     jsCode.procs.add(jsClass.toString());
     
@@ -1995,7 +2000,10 @@ public class DelphiGenerator {
     StringBuilder jsClass = new StringBuilder(); 
     jsClass.append("procedure define"+tj+"PropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);\r\n");
     jsClass.append("begin\r\n");
-    jsClass.append(jsReg.toString());
+    if (tj.equalsIgnoreCase("MetadataResource")) 
+      jsClass.append("3. "+jsReg.toString());
+    else
+      jsClass.append(jsReg.toString());
     jsClass.append("end;\r\n\r\n");
     jsClass.append("procedure define"+tj+"Js(js : TFHIRJavascript);\r\n");
     jsClass.append("var\r\n  def : TJavascriptClassDefinition;\r\nbegin\r\n");
@@ -3142,7 +3150,12 @@ public class DelphiGenerator {
         if (tn.contains("{"))
           tn = tn.substring(0,  tn.indexOf("{"));
 
-        jsReg.append("  js.registerElement(def, '"+tj+"', '"+e.getName()+"', '"+e.typeCode()+"', getFHIRObjectProp, setFHIRObjectProp);\r\n");
+        if (Utilities.noString(e.typeCode())) {
+
+          String bt = typeNames.get(e).substring(5); 
+          jsReg.append("  js.registerElement(def, '"+tj+"', '"+e.getName()+"', '"+bt+"', getFHIRObjectProp, setFHIRObjectProp);\r\n");
+        } else
+          jsReg.append("  js.registerElement(def, '"+tj+"', '"+e.getName()+"', '"+e.typeCode()+"', getFHIRObjectProp, setFHIRObjectProp);\r\n");
       }
     }
   }
@@ -3155,7 +3168,12 @@ public class DelphiGenerator {
       if (tn.contains("{"))
         tn = tn.substring(0,  tn.indexOf("{"));
 
-      jsReg.append("  js.registerElement(def, '"+tj+"', '"+e.getName()+"', '"+e.typeCode()+"', getFHIRArrayProp, setFHIRArrayProp);\r\n");
+      if (Utilities.noString(e.typeCode())) {
+
+        String bt = typeNames.get(e).substring(5); 
+        jsReg.append("  js.registerElement(def, '"+tj+"', '"+e.getName()+"', '"+bt+"', getFHIRArrayProp, setFHIRArrayProp);\r\n");
+      } else
+        jsReg.append("  js.registerElement(def, '"+tj+"', '"+e.getName()+"', '"+e.typeCode()+"', getFHIRArrayProp, setFHIRArrayProp);\r\n");
     }
   }
 

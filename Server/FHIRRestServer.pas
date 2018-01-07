@@ -705,6 +705,7 @@ begin
   CoInitialize(nil);
 {$ENDIF}
   GJsHost := TJsHost.Create;
+  GJsHost.registry := ServerContext.EventScriptRegistry.Link;
   AContext.Connection.IOHandler.MaxLineLength := 100 * 1024;
   FLock.Lock;
   try
@@ -4390,6 +4391,7 @@ begin
     CoInitialize(nil);
 {$ENDIF}
     GJsHost := TJsHost.Create;
+    GJsHost.registry := FServer.ServerContext.EventScriptRegistry.Link;
 
     repeat
       FServer.ServerContext.TerminologyServer.MaintenanceThreadStatus := 'sleeping';
@@ -4457,6 +4459,7 @@ end;
 procedure TFhirServerSubscriptionThread.Execute;
 begin
   GJsHost := TJsHost.Create;
+  GJsHost.registry := FServer.ServerContext.EventScriptRegistry.Link;
   logt('Starting TFhirServerSubscriptionThread');
   try
     FServer.ServerContext.TerminologyServer.SubscriptionThreadStatus := 'starting';
@@ -4499,6 +4502,7 @@ var
   i: integer;
 begin
   GJsHost := TJsHost.Create;
+  GJsHost.registry := FServer.ServerContext.EventScriptRegistry.Link;
   logt('Starting TFhirServerEmailThread');
   try
     FServer.ServerContext.TerminologyServer.EmailThreadStatus := 'starting';
@@ -4575,6 +4579,7 @@ var
 begin
   GJsHost := TJsHost.Create;
   try
+    GJsHost.registry := FServer.ServerContext.EventScriptRegistry.Link;
     status(atsWaiting, 'Waiting to start');
     sleep(100);
     response := TFHIRResponse.Create;

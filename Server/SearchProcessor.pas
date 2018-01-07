@@ -910,7 +910,7 @@ function TSearchProcessor.fetchGroup(id: String): TFHIRGroup;
 var
   client : TFhirClient;
 begin
-  client := TFHIRServerContext(ServerContext).Storage.createClient(lang, TFHIRServerContext(ServerContext).ValidatorContext.link, FSession.link);
+  client := TFHIRServerContext(ServerContext).Storage.createClient(lang, ServerContext, TFHIRServerContext(ServerContext).ValidatorContext.link, FSession.link);
   try
     result := client.readResource(frtGroup, id) as TFhirGroup;
     if result = nil then

@@ -37,7 +37,8 @@ uses
   AdvObjects, AdvGenerics, AdvStringMatches,
   FHIRTypes, FHIRResources, FHIRConstants, FHIRIndexManagers, FHIRUtilities,
   FHIRValidator, ServerValidator, FHIRUserProvider, FHIRStorageService, ServerUtilities, TerminologyServer,
-  FHIRSubscriptionManager, FHIRSessionManager, FHIRTagManager, JWTService, ClientApplicationVerifier, ApplicationCache;
+  FHIRSubscriptionManager, FHIRSessionManager, FHIRTagManager, JWTService, ClientApplicationVerifier,
+  ApplicationCache, ServerJavascriptHost;
 
 Const
   OAUTH_LOGIN_PREFIX = 'os9z4tw9HdmR-';
@@ -82,6 +83,7 @@ Type
     FTagManager : TFHIRTagManager;
     FNamingSystems : TAdvMap<TFHIRNamingSystem>;
     FApplicationCache : TApplicationCache;
+    FEventScriptRegistry : TJsEventScriptRegistry;
     {$IFNDEF FHIR2}
     FMaps : TAdvMap<TFHIRStructureMap>;
     {$ENDIF}
@@ -129,6 +131,7 @@ Type
     property UserProvider : TFHIRUserProvider read FUserProvider write SetUserProvider;
     property ClientApplicationVerifier : TClientApplicationVerifier read FClientApplicationVerifier write SetClientApplicationVerifier;
     property ApplicationCache : TApplicationCache read FApplicationCache;
+    property EventScriptRegistry : TJsEventScriptRegistry read FEventScriptRegistry;
 
     property JWTServices : TJWTServices read FJWTServices write SetJWTServices;
 
@@ -335,6 +338,8 @@ begin
   FTagManager := TFHIRTagManager.create;
   FNamingSystems := TAdvMap<TFHIRNamingSystem>.create;
   FApplicationCache := TApplicationCache.create;
+  FEventScriptRegistry := TJsEventScriptRegistry.Create;
+
   {$IFNDEF FHIR2}
   FMaps := TAdvMap<TFHIRStructureMap>.create;
   {$ENDIF}
@@ -350,6 +355,7 @@ begin
   {$IFNDEF FHIR2}
   FMaps.Free;
   {$ENDIF}
+  FEventScriptRegistry.Free;
   FApplicationCache.Free;
   FJWTServices.Free;
   FClientApplicationVerifier.Free;
@@ -424,6 +430,7 @@ begin
   FClientApplicationVerifier.Free;
   FClientApplicationVerifier := Value;
 end;
+
 
 procedure TFHIRServerContext.SetJWTServices(const Value: TJWTServices);
 begin

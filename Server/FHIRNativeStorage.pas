@@ -39,11 +39,11 @@ uses
   KDBManager, KDBDialects, XmlSupport, MXML, XmlPatch, GraphQL, JWT,
   FHIRResources, FHIRBase, FHIRTypes, FHIRParser, FHIRParserBase, FHIRConstants, FHIRContext, FHIROperations, FHIRXhtml,
   FHIRTags, FHIRValueSetExpander, FHIRValidator, FHIRIndexManagers, FHIRSupport, DifferenceEngine, FHIRMetaModel,
-  FHIRUtilities, FHIRSubscriptionManager, FHIRSecurity, FHIRLang, FHIRProfileUtilities, FHIRPath, FHIRGraphQL,
+  FHIRUtilities, FHIRSubscriptionManager, FHIRSecurity, FHIRLang, FHIRProfileUtilities, FHIRPath, FHIRGraphQL, FHIRClient,
   FHIRNarrativeGenerator, NarrativeGenerator, QuestionnaireBuilder,
   CDSHooksUtilities, {$IFNDEF FHIR2}FHIRStructureMapUtilities, ObservationStatsEvaluator, {$ENDIF} ClosureManager, {$IFDEF FHIR4} GraphDefinitionEngine, {$ENDIF}
   ServerUtilities, ServerValidator, TerminologyServices, TerminologyServer, SCIMObjects, SCIMServer, DBInstaller, UcumServices, MPISearch,
-  FHIRServerContext, FHIRStorageService, FHIRServerConstants, FHIRCodeGenerator;
+  FHIRServerContext, FHIRStorageService, FHIRServerConstants, FHIRCodeGenerator, ServerJavascriptHost;
 
 const
   MAXSQLDATE = 365 * 3000;
@@ -147,6 +147,7 @@ type
     procedure ProcessMPISearch(typekey : integer; session : TFHIRSession; aType : String; params : TParseMap; baseURL : String; requestCompartment : TFHIRCompartmentId; sessionCompartments : TAdvList<TFHIRCompartmentId>; id, key : string; var link, sql : String; var total : Integer; summaryStatus : TFHIRSummaryOption; strict : boolean; var reverse : boolean);
     function getResourceByReference(source : TFHIRResource; url : string; req : TFHIRRequest; allowNil : boolean; var needSecure : boolean): TFHIRResource;
     function loadResources(keys : TList<integer>) : TAdvList<TFHIRResource>;
+    function loadResourceVersion(versionKey : integer) : TFHIRResource;
     procedure updateProvenance(prv : TFHIRProvenance; rtype, id, vid : String);
 
     function FindResourceVersion(aType : String; sId, sVersionId : String; bAllowDeleted : boolean; var resourceVersionKey : integer; request: TFHIRRequest; response: TFHIRResponse): boolean;
@@ -162,8 +163,8 @@ type
     function resolveConditionalURL(request : TFHIRRequest; resp : TFHIRResponse; url : String) : String;
     function commitResource(request: TFHIRRequest; response : TFHIRResponse; upload : boolean; entry : TFHIRBundleEntry; i : integer; id : TFHIRTransactionEntry; session : TFhirSession; resp : TFHIRBundle) : boolean;
 
-    procedure checkProposedContent(request : TFHIRRequest; resource : TFhirResource; tags : TFHIRTagList);
-    procedure checkProposedDeletion(request : TFHIRRequest; resource : TFhirResource; tags : TFHIRTagList);
+    procedure checkProposedContent(session : TFhirSession; request : TFHIRRequest; resource : TFhirResource; tags : TFHIRTagList);
+    procedure checkProposedDeletion(session : TFHIRSession; request : TFHIRRequest; resource : TFhirResource; tags : TFHIRTagList);
 
     function EncodeResource(r : TFhirResource; xml : boolean; summary : TFHIRSummaryOption) : TBytes;
     procedure SaveProvenance(session : TFhirSession; prv : TFHIRProvenance);
@@ -192,7 +193,7 @@ type
     procedure StartTransaction; override;
     procedure CommitTransaction; override;
     procedure RollbackTransaction; override;
-    function ExecuteRead(request: TFHIRRequest; response : TFHIRResponse; ignoreHeaders : boolean) : boolean; override;
+    function  ExecuteRead(request: TFHIRRequest; response : TFHIRResponse; ignoreHeaders : boolean) : boolean; override;
     function  ExecuteUpdate(context : TOperationContext; request: TFHIRRequest; response : TFHIRResponse) : Boolean; override;
     function  ExecutePatch(request: TFHIRRequest; response : TFHIRResponse) : Boolean; override;
     procedure ExecuteVersionRead(request: TFHIRRequest; response : TFHIRResponse); override;
@@ -294,6 +295,7 @@ type
     procedure Execute(context : TOperationContext; manager: TFHIROperationEngine; request: TFHIRRequest; response : TFHIRResponse); override;
     function HandlesRequest(request : TFHIRRequest) : boolean; override;
   end;
+
 
   TFhirHandleQAPostOperation = class (TFhirNativeOperation)
   protected
@@ -696,7 +698,9 @@ type
     Function GetNextKey(keytype: TKeyType; aType: String; var id: string): integer;
     procedure RegisterTag(tag: TFHIRTag; conn: TKDBConnection); overload;
     procedure RegisterTag(tag: TFHIRTag); overload;
+    procedure checkProposedResource(session : TFhirSession; needsSecure, created : boolean; request : TFHIRRequest; resource : TFhirResource; tags : TFHIRTagList);
     procedure SeeResource(key, vkey, pvkey: integer; id: string; needsSecure, created : boolean; resource: TFhirResource; conn: TKDBConnection; reload: Boolean; session: TFhirSession);
+    procedure checkDropResource(session : TFhirSession; request : TFHIRRequest; resource : TFhirResource; tags : TFHIRTagList);
     procedure DropResource(key, vkey, pvkey: integer; id, resource: string; indexer: TFhirIndexManager; conn: TKDBConnection);
     procedure RegisterConsentRecord(session: TFhirSession); override;
     procedure Sweep; override;
@@ -1143,9 +1147,12 @@ begin
 
         if ok then
         begin
-
-
-          checkProposedContent(request, request.Resource, tags);
+          checkProposedContent(request.Session, request, request.Resource, tags);
+          FRepository.checkProposedResource(request.Session, needSecure, true, request, request.Resource, tags);
+          GJsHost.checkChanges(TriggerTypeDataAdded, request.Session,
+            function : TFHIRClient begin result := createClient(request.Lang, request.Session); end,
+            function : TFHIRResource begin result := nil; end,
+            request.Resource);
           result := sId;
           request.id := sId;
           key := FRepository.NextVersionKey;
@@ -1305,7 +1312,12 @@ begin
         LoadTags(tags, ResourceKey);
         tags.writeTags(meta);
 
-        checkProposedDeletion(request, request.Resource, tags);
+        checkProposedDeletion(request.session, request, request.Resource, tags);
+        FRepository.checkDropResource(request.session, request, request.Resource, tags);
+        GJsHost.checkChanges(TriggerTypeDataRemoved, request.Session,
+            function : TFHIRClient begin result := createClient(request.Lang, request.Session); end,
+            function : TFHIRResource begin result := loadResourceVersion(versionKey); end,
+            nil);
 
         for i := 0 to tags.count - 1 do
           FRepository.RegisterTag(tags[i], FConnection);
@@ -2464,8 +2476,12 @@ begin
           CheckNotSubsetted(request.Resource.meta, 'Updating Resource');
           updateProvenance(request.Provenance, request.ResourceName, request.Id, inttostr(nvid));
 
-
-          checkProposedContent(request, request.Resource, tags);
+          checkProposedContent(request.session, request, request.Resource, tags);
+          FRepository.checkProposedResource(request.Session, needSecure, true, request, request.Resource, tags);
+          GJsHost.checkChanges(TriggerTypeDataModified, request.Session,
+            function : TFHIRClient begin result := createClient(request.Lang, request.Session); end,
+            function : TFHIRResource begin result := loadResourceVersion(versionKey); end,
+            request.Resource);
 
           for i := 0 to tags.count - 1 do
             FRepository.RegisterTag(tags[i], FConnection);
@@ -2698,7 +2714,13 @@ begin
           request.resource.meta.versionId := inttostr(nvid);
           CheckNotSubsetted(request.resource.meta, 'Patching Resource');
           updateProvenance(request.Provenance, request.ResourceName, request.Id, inttostr(nvid));
-          checkProposedContent(request, request.resource, tags);
+          checkProposedContent(request.session, request, request.resource, tags);
+          FRepository.checkProposedResource(request.Session, needSecure, true, request, request.Resource, tags);
+          GJsHost.checkChanges(TriggerTypeDataModified, request.Session,
+            function : TFHIRClient begin result := createClient(request.Lang, request.Session); end,
+            function : TFHIRResource begin result := loadResourceVersion(versionKey); end,
+            request.Resource);
+
           for i := 0 to tags.count - 1 do
             FRepository.RegisterTag(tags[i], FConnection);
           FConnection.execSQL('Update IndexEntries set Flag = 2 where ResourceKey = '+IntToStr(resourceKey));
@@ -3157,6 +3179,29 @@ begin
     result.link;
   finally
     result.Free;
+  end;
+end;
+
+function TFHIRNativeOperationEngine.loadResourceVersion(versionKey: integer): TFHIRResource;
+var
+  parser : TFHIRParser;
+  s : TBytes;
+begin
+  FConnection.SQL := 'Select JsonContent from Versions where ResourceVersionKey = '+inttostr(versionKey);
+  FConnection.Prepare;
+  try
+    FConnection.Execute;
+    if not FConnection.FetchNext then
+      raise Exception.Create('Unable to find previous version of resource');
+    s := FConnection.ColBlobByName['JsonContent'];
+    parser := MakeParser(ServerContext.Validator.Context, lang, ffJson, s, xppDrop);
+    try
+      result := parser.resource.Link;
+    finally
+      parser.free;
+    end;
+  finally
+    FConnection.Terminate;
   end;
 end;
 
@@ -4183,9 +4228,6 @@ begin
 end;
 
 procedure TFHIRNativeOperationEngine.ExecuteOperation(context : TOperationContext; request: TFHIRRequest; response: TFHIRResponse);
-var
-  i : integer;
-  op : TFhirOperation;
 begin
   if request.OperationName = 'graphql' then
     executeGraphQL(context, request, response)
@@ -5662,7 +5704,7 @@ end;
 *)
 
 
-procedure TFHIRNativeOperationEngine.checkProposedContent(request : TFHIRRequest; resource: TFhirResource; tags: TFHIRTagList);
+procedure TFHIRNativeOperationEngine.checkProposedContent(session : TFhirSession; request : TFHIRRequest; resource: TFhirResource; tags: TFHIRTagList);
 var
   l, r : String;
 begin
@@ -5692,7 +5734,7 @@ begin
   end;
 end;
 
-procedure TFHIRNativeOperationEngine.checkProposedDeletion(request: TFHIRRequest; resource: TFhirResource; tags: TFHIRTagList);
+procedure TFHIRNativeOperationEngine.checkProposedDeletion(session : TFHIRSession; request: TFHIRRequest; resource: TFhirResource; tags: TFHIRTagList);
 begin
 
   if (resource is TFhirOperationDefinition) then
@@ -6527,9 +6569,11 @@ begin
 end;
 
 function TFhirConsentAuthorizeOperation.checkConsentOk(manager: TFHIROperationEngine; request: TFHIRRequest; consent: TFhirConsent; expiry : TDateTime; var patientId : String): integer;
+  {$IFDEF FHIR3}
 var
   ok : boolean;
   c : TFHIRCodING;
+  {$ENDIF}
 begin
   if consent.status <> ConsentStateCodesActive then
     raise EFHIRException.create('Consent must be active');
@@ -9728,6 +9772,34 @@ begin
   end;
 end;
 
+procedure TFHIRNativeStorageService.checkDropResource(session: TFhirSession; request: TFHIRRequest; resource: TFhirResource; tags: TFHIRTagList);
+begin
+
+end;
+
+procedure TFHIRNativeStorageService.checkProposedResource(session: TFhirSession; needsSecure, created : boolean; request: TFHIRRequest; resource: TFhirResource; tags: TFHIRTagList);
+var
+  vs : TFHIRValueset;
+begin
+  if (resource.ResourceType in [frtValueSet, frtConceptMap, frtStructureDefinition, frtQuestionnaire, frtSubscription]) and (needsSecure or ((resource.meta <> nil) and not resource.meta.securityList.IsEmpty)) then
+    raise ERestfulException.Create('TFHIRNativeStorageService', 'SeeResource', 'Resources of type '+CODES_TFHIRResourceType[resource.ResourceType]+' are not allowed to have a security label on them', 400, IssueTypeBusinessRule);
+
+  ServerContext.ApplicationCache.checkResource(resource);
+  if resource.ResourceType = frtValueSet then
+  begin
+    vs := TFHIRValueSet(resource);
+    ServerContext.TerminologyServer.checkTerminologyResource(resource)
+  end
+  else if resource.ResourceType in [frtConceptMap {$IFNDEF FHIR2}, frtCodeSystem {$ENDIF}] then
+    ServerContext.TerminologyServer.checkTerminologyResource(resource)
+  else if resource.ResourceType = frtStructureDefinition then
+    ServerContext.ValidatorContext.checkResource(resource as TFhirStructureDefinition)
+  else if resource.ResourceType = frtQuestionnaire then
+    ServerContext.ValidatorContext.checkResource(resource as TFhirQuestionnaire)
+  else if resource.ResourceType = frtEventDefinition then
+    ServerContext.EventScriptRegistry.checkResource(resource as TFhirEventDefinition);
+end;
+
 procedure TFHIRNativeStorageService.checkRegisterTag(tag: TFHIRTag; conn: TKDBConnection);
 begin
   if tag.ConfirmedStored then
@@ -10097,24 +10169,28 @@ begin
     raise ERestfulException.Create('TFHIRNativeStorageService', 'SeeResource', 'Resources of type '+CODES_TFHIRResourceType[resource.ResourceType]+' are not allowed to have a security label on them', 400, IssueTypeBusinessRule);
 
   ServerContext.ApplicationCache.seeResource(resource);
+  if resource.ResourceType = frtValueSet then
+  begin
+    vs := TFHIRValueSet(resource);
+    vs.Tags['tracker'] := inttostr(TrackValueSet(vs.url, conn, reload));
+    ServerContext.TerminologyServer.SeeTerminologyResource(resource)
+  end
+  else if resource.ResourceType in [frtConceptMap {$IFNDEF FHIR2}, frtCodeSystem {$ENDIF}] then
+    ServerContext.TerminologyServer.SeeTerminologyResource(resource)
+  else if resource.ResourceType = frtStructureDefinition then
+    ServerContext.ValidatorContext.seeResource(resource as TFhirStructureDefinition)
+  else if resource.ResourceType = frtQuestionnaire then
+    ServerContext.ValidatorContext.seeResource(resource as TFhirQuestionnaire)
+  else if resource.ResourceType = frtEventDefinition then
+    ServerContext.EventScriptRegistry.seeResource(resource as TFhirEventDefinition);
+
+  if created then
+    FServerContext.SubscriptionManager.SeeResource(key, vkey, pvkey, id, subscriptionCreate, resource, conn, reload, session)
+  else
+    FServerContext.SubscriptionManager.SeeResource(key, vkey, pvkey, id, subscriptionUpdate, resource, conn, reload, session);
+
   FLock.Lock('SeeResource');
   try
-    if resource.ResourceType = frtValueSet then
-    begin
-      vs := TFHIRValueSet(resource);
-      vs.Tags['tracker'] := inttostr(TrackValueSet(vs.url, conn, reload));
-      ServerContext.TerminologyServer.SeeTerminologyResource(resource)
-    end
-    else if resource.ResourceType in [frtConceptMap {$IFNDEF FHIR2}, frtCodeSystem {$ENDIF}] then
-      ServerContext.TerminologyServer.SeeTerminologyResource(resource)
-    else if resource.ResourceType = frtStructureDefinition then
-      ServerContext.ValidatorContext.seeResource(resource as TFhirStructureDefinition)
-    else if resource.ResourceType = frtQuestionnaire then
-      ServerContext.ValidatorContext.seeResource(resource as TFhirQuestionnaire);
-    if created then
-      FServerContext.SubscriptionManager.SeeResource(key, vkey, pvkey, id, subscriptionCreate, resource, conn, reload, session)
-    else
-      FServerContext.SubscriptionManager.SeeResource(key, vkey, pvkey, id, subscriptionUpdate, resource, conn, reload, session);
     FServerContext.QuestionnaireCache.clear(resource.ResourceType, id);
     if resource.ResourceType = frtValueSet then
       FServerContext.QuestionnaireCache.clearVS(TFHIRValueSet(resource).url);
@@ -10867,8 +10943,7 @@ begin
     'select Ids.ResourceKey, Versions.ResourceVersionKey, Ids.Id, Secure, JsonContent from Ids, Types, Versions where '
     + 'Versions.ResourceVersionKey = Ids.MostRecent and ' +
     'Ids.ResourceTypeKey = Types.ResourceTypeKey and ' +
-    '(Types.ResourceName = ''ValueSet'' or Types.ResourceName = ''Organization'' or Types.ResourceName = ''Device'' or Types.ResourceName = ''CodeSystem'' or Types.ResourceName = ''ConceptMap'' or '+
-    'Types.ResourceName = ''StructureDefinition'' or Types.ResourceName = ''Questionnaire'' or Types.ResourceName = ''StructureMap'' or Types.ResourceName = ''Subscription'') and Versions.Status < 2';
+    '(Types.ResourceName in (''ValueSet'', ''EventDefinition'', ''Organization'', ''Device'' , ''CodeSystem'', ''ConceptMap'', ''StructureDefinition'', ''Questionnaire'', ''StructureMap'', ''Subscription'')) and Versions.Status < 2';
   conn.Prepare;
   try
     cback := FDB.GetConnection('load2');
