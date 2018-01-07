@@ -93,7 +93,7 @@ type
   EJavascriptApplication = class (EJavascriptBase);    // error running application functionality
 
   TJavascriptConsoleLogEvent = procedure (sender : TJavascript; message : String) of object;
-  TJavascriptObjectFactoryProc<T : class> = function (sender : TJavascript; obj : JsValueRef) : T;
+  TJavascriptObjectFactoryProc<T : class> = function (sender : TJavascript; obj : JsValueRef) : T of object;
 
   TJavascriptArrayValueProvider = reference to function (index : integer) : JsValueRef;
   TJavascriptArrayValueConsumer = reference to procedure (index : integer; value : JsValueRef);
@@ -105,10 +105,10 @@ type
   // callback functions registered with the engine
 
   // one parameter set that should always be supported is a single anonymous object, which is being auto-converted to the right class
-  TJsFactoryFunction = function (js : TJavascript; classDef : TJavascriptClassDefinition; params : TJsValues; var owns : boolean) : TObject;
-  TJsFunction = function (js : TJavascript; propDef : TJavascriptRegisteredProperty; this : TObject; parameters : TJsValues ) : JsValueRef;
-  TJsGetterFunction = function (js : TJavascript; propDef : TJavascriptRegisteredProperty; this : TObject) : JsValueRef;
-  TJsSetterProcedure = procedure (js : TJavascript; propDef : TJavascriptRegisteredProperty; this : TObject; value : TJsValue);
+  TJsFactoryFunction = function (js : TJavascript; classDef : TJavascriptClassDefinition; params : TJsValues; var owns : boolean) : TObject of object;
+  TJsFunction = function (js : TJavascript; propDef : TJavascriptRegisteredProperty; this : TObject; parameters : TJsValues ) : JsValueRef of object;
+  TJsGetterFunction = function (js : TJavascript; propDef : TJavascriptRegisteredProperty; this : TObject) : JsValueRef of object;
+  TJsSetterProcedure = procedure (js : TJavascript; propDef : TJavascriptRegisteredProperty; this : TObject; value : TJsValue) of object;
 
     {
   javascript API to implement on manager:
@@ -216,6 +216,7 @@ valueOf()	Returns the primitive value of an array
     procedure registerConsoleLog;
     procedure jsCheck(code : JsErrorCode);
     function getPropertyId(name : AnsiString) : JsRef;
+    function doLog(js: TJavascript; context: TJavascriptRegisteredProperty; this: TObject; parameters: TJsValues): JsValueRef;
   protected
     procedure freeObject(obj : TObject); virtual;
   public
@@ -553,7 +554,7 @@ end;
 
 
 //doLog
-function doLog(js : TJavascript; context : TJavascriptRegisteredProperty; this : TObject; parameters : TJsValues ) : JsValueRef;
+function TJavascript.doLog(js : TJavascript; context : TJavascriptRegisteredProperty; this : TObject; parameters : TJsValues ) : JsValueRef;
 var
   p : TJsValue;
   s : String;

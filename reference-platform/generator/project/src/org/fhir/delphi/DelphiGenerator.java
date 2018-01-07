@@ -1034,7 +1034,7 @@ public class DelphiGenerator {
     if (!isAbstract) {
       jsClass.append("procedure define"+tj+"Js(js : TFHIRJavascript);\r\n");
       jsClass.append("var\r\n  def : TJavascriptClassDefinition;\r\nbegin\r\n");
-      jsClass.append("  def := js.defineClass('"+tj+"', nil, '"+tj+"', FHIRFactoryJs);\r\n");
+      jsClass.append("  def := js.defineClass('"+tj+"', nil, '"+tj+"', js.FHIRFactoryJs);\r\n");
       jsClass.append("  define"+tj+"PropsJs(js, def);\r\n");
       jsClass.append("end;\r\n\r\n");
     }
@@ -2007,7 +2007,7 @@ public class DelphiGenerator {
     jsClass.append("end;\r\n\r\n");
     jsClass.append("procedure define"+tj+"Js(js : TFHIRJavascript);\r\n");
     jsClass.append("var\r\n  def : TJavascriptClassDefinition;\r\nbegin\r\n");
-    jsClass.append("  def := js.defineClass('"+tj+"', nil, '"+tj+"', FHIRFactoryJs);\r\n");
+    jsClass.append("  def := js.defineClass('"+tj+"', nil, '"+tj+"', js.FHIRFactoryJs);\r\n");
     jsClass.append("  define"+tj+"PropsJs(js, def);\r\n");
     jsClass.append("end;\r\n\r\n");
     jsCode.procs.add(jsClass.toString());
@@ -3109,10 +3109,10 @@ public class DelphiGenerator {
 
     if (specType.equals("")) {
       String rawTn = getRawTnForType(e.typeCode());
-      jsReg.append("  js.registerElement(def, '"+tj+"', '"+e.getName()+specType+"', '"+e.typeCode()+"', getFHIR"+rawTn+"Prop, setFHIR"+rawTn+"Prop);\r\n");
+      jsReg.append("  js.registerElement(def, '"+tj+"', '"+e.getName()+specType+"', '"+e.typeCode()+"', js.getFHIR"+rawTn+"Prop, js.setFHIR"+rawTn+"Prop);\r\n");
     } else {
       String rawTn = getRawTnForType(Utilities.uncapitalize(specType));
-      jsReg.append("  js.registerElement(def, '"+tj+"', '"+e.getName().replace("[x]", "")+specType+"', '"+Utilities.uncapitalize(specType)+"', getFHIR"+rawTn+"Prop, setFHIR"+rawTn+"Prop);\r\n");
+      jsReg.append("  js.registerElement(def, '"+tj+"', '"+e.getName().replace("[x]", "")+specType+"', '"+Utilities.uncapitalize(specType)+"', js.getFHIR"+rawTn+"Prop, js.setFHIR"+rawTn+"Prop);\r\n");
     }        
   }
 
@@ -3139,7 +3139,7 @@ public class DelphiGenerator {
           String enf = e.getName().replace("[x]", "");
           String en = getElementName(e.getName().replace("[x]", ""));
   
-          jsReg.append("  js.registerElement(def, '"+tj+"', '"+enf+t.getName()+"', '"+t.getName()+"', getFHIRObjectProp, setFHIRObjectProp);\r\n");
+          jsReg.append("  js.registerElement(def, '"+tj+"', '"+enf+t.getName()+"', '"+t.getName()+"', js.getFHIRObjectProp, js.setFHIRObjectProp);\r\n");
         }
       }
     } else {
@@ -3153,9 +3153,9 @@ public class DelphiGenerator {
         if (Utilities.noString(e.typeCode())) {
 
           String bt = typeNames.get(e).substring(5); 
-          jsReg.append("  js.registerElement(def, '"+tj+"', '"+e.getName()+"', '"+bt+"', getFHIRObjectProp, setFHIRObjectProp);\r\n");
+          jsReg.append("  js.registerElement(def, '"+tj+"', '"+e.getName()+"', '"+bt+"', js.getFHIRObjectProp, js.setFHIRObjectProp);\r\n");
         } else
-          jsReg.append("  js.registerElement(def, '"+tj+"', '"+e.getName()+"', '"+e.typeCode()+"', getFHIRObjectProp, setFHIRObjectProp);\r\n");
+          jsReg.append("  js.registerElement(def, '"+tj+"', '"+e.getName()+"', '"+e.typeCode()+"', js.getFHIRObjectProp, js.setFHIRObjectProp);\r\n");
       }
     }
   }
@@ -3171,9 +3171,9 @@ public class DelphiGenerator {
       if (Utilities.noString(e.typeCode())) {
 
         String bt = typeNames.get(e).substring(5); 
-        jsReg.append("  js.registerElement(def, '"+tj+"', '"+e.getName()+"', '"+bt+"', getFHIRArrayProp, setFHIRArrayProp);\r\n");
+        jsReg.append("  js.registerElement(def, '"+tj+"', '"+e.getName()+"', '"+bt+"', js.getFHIRArrayProp, js.setFHIRArrayProp);\r\n");
       } else
-        jsReg.append("  js.registerElement(def, '"+tj+"', '"+e.getName()+"', '"+e.typeCode()+"', getFHIRArrayProp, setFHIRArrayProp);\r\n");
+        jsReg.append("  js.registerElement(def, '"+tj+"', '"+e.getName()+"', '"+e.typeCode()+"', js.getFHIRArrayProp, js.setFHIRArrayProp);\r\n");
     }
   }
 

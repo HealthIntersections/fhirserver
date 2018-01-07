@@ -5,23 +5,41 @@ interface
 uses
   SysUtils, Classes,
   Javascript,
+  AdvObjects,
   FHIRResources, FHIRClient, FHIRUtilities;
 
-procedure registerFHIRClient(js : TJavascript);
+type
+  TFHIRClientJSHelper = class (TAdvObject)
+  private
+    function CreateFHIRClientJs(js: TJavascript; classDef: TJavascriptClassDefinition; params: TJsValues; var owns: boolean): TObject;
+    function FHIRClientAddressJs(js: TJavascript; propDef: TJavascriptRegisteredProperty; this: TObject; parameters: TJsValues): JsValueRef;
+    function FHIRClientCapabilitiesJs(js: TJavascript; propDef: TJavascriptRegisteredProperty; this: TObject; parameters: TJsValues): JsValueRef;
+    function FHIRClientCreateJs(js: TJavascript; propDef: TJavascriptRegisteredProperty; this: TObject; parameters: TJsValues): JsValueRef;
+    function FHIRClientDeleteJs(js: TJavascript; propDef: TJavascriptRegisteredProperty; this: TObject; parameters: TJsValues): JsValueRef;
+    function FHIRClientOperationJs(js: TJavascript; propDef: TJavascriptRegisteredProperty; this: TObject; parameters: TJsValues): JsValueRef;
+    function FHIRClientReadJs(js: TJavascript; propDef: TJavascriptRegisteredProperty; this: TObject; parameters: TJsValues): JsValueRef;
+    function FHIRClientSearchAllJs(js: TJavascript; propDef: TJavascriptRegisteredProperty; this: TObject; parameters: TJsValues): JsValueRef;
+    function FHIRClientSearchJs(js: TJavascript; propDef: TJavascriptRegisteredProperty; this: TObject; parameters: TJsValues): JsValueRef;
+    function FHIRClientTransactionJs(js: TJavascript; propDef: TJavascriptRegisteredProperty; this: TObject; parameters: TJsValues): JsValueRef;
+    function FHIRClientUpdateJs(js: TJavascript; propDef: TJavascriptRegisteredProperty; this: TObject; parameters: TJsValues): JsValueRef;
+  public
+    class procedure registerFHIRClient(js : TJavascript);
+  end;
+
 
 implementation
 
-function CreateFHIRClientJs(js : TJavascript; classDef : TJavascriptClassDefinition; params : TJsValues; var owns : boolean) : TObject;
+function TFHIRClientJSHelper.CreateFHIRClientJs(js : TJavascript; classDef : TJavascriptClassDefinition; params : TJsValues; var owns : boolean) : TObject;
 begin
   result := TFhirHTTPClient.Create(nil, js.asString(params[0]), js.asBoolean(params[1]));
 end;
 
-function FHIRClientAddressJs(js : TJavascript; propDef : TJavascriptRegisteredProperty; this : TObject; parameters : TJsValues ) : JsValueRef;
+function TFHIRClientJSHelper.FHIRClientAddressJs(js : TJavascript; propDef : TJavascriptRegisteredProperty; this : TObject; parameters : TJsValues ) : JsValueRef;
 begin
   result := js.wrap(TFhirClient(this).address);
 end;
 
-function FHIRClientCapabilitiesJs(js : TJavascript; propDef : TJavascriptRegisteredProperty; this : TObject; parameters : TJsValues ) : JsValueRef;
+function TFHIRClientJSHelper.FHIRClientCapabilitiesJs(js : TJavascript; propDef : TJavascriptRegisteredProperty; this : TObject; parameters : TJsValues ) : JsValueRef;
 begin
   if (length(parameters) > 0) then
     result := js.wrap(TFhirClient(this).conformance(js.asBoolean(parameters[0])), 'CapabilityStatement', true)
@@ -29,7 +47,7 @@ begin
     result := js.wrap(TFhirClient(this).conformance(false), 'CapabilityStatement', true);
 end;
 
-function FHIRClientTransactionJs(js : TJavascript; propDef : TJavascriptRegisteredProperty; this : TObject; parameters : TJsValues ) : JsValueRef;
+function TFHIRClientJSHelper.FHIRClientTransactionJs(js : TJavascript; propDef : TJavascriptRegisteredProperty; this : TObject; parameters : TJsValues ) : JsValueRef;
 var
   bnd : TFhirBundle;
   def : TJavascriptClassDefinition;
@@ -48,7 +66,7 @@ begin
   end;
 end;
 
-function FHIRClientCreateJs(js : TJavascript; propDef : TJavascriptRegisteredProperty; this : TObject; parameters : TJsValues ) : JsValueRef;
+function TFHIRClientJSHelper.FHIRClientCreateJs(js : TJavascript; propDef : TJavascriptRegisteredProperty; this : TObject; parameters : TJsValues ) : JsValueRef;
 var
   res, o : TFhirResource;
   def : TJavascriptClassDefinition;
@@ -73,7 +91,7 @@ begin
   end;
 end;
 
-function FHIRClientReadJs(js : TJavascript; propDef : TJavascriptRegisteredProperty; this : TObject; parameters : TJsValues ) : JsValueRef;
+function TFHIRClientJSHelper.FHIRClientReadJs(js : TJavascript; propDef : TJavascriptRegisteredProperty; this : TObject; parameters : TJsValues ) : JsValueRef;
 var
   a : TFhirResourceType;
   id : String;
@@ -85,7 +103,7 @@ begin
   result := js.wrap(res, res.fhirType, true);
 end;
 
-function FHIRClientUpdateJs(js : TJavascript; propDef : TJavascriptRegisteredProperty; this : TObject; parameters : TJsValues ) : JsValueRef;
+function TFHIRClientJSHelper.FHIRClientUpdateJs(js : TJavascript; propDef : TJavascriptRegisteredProperty; this : TObject; parameters : TJsValues ) : JsValueRef;
 var
   res, o : TFhirResource;
   def : TJavascriptClassDefinition;
@@ -109,7 +127,7 @@ begin
   end;
 end;
 
-function FHIRClientDeleteJs(js : TJavascript; propDef : TJavascriptRegisteredProperty; this : TObject; parameters : TJsValues ) : JsValueRef;
+function TFHIRClientJSHelper.FHIRClientDeleteJs(js : TJavascript; propDef : TJavascriptRegisteredProperty; this : TObject; parameters : TJsValues ) : JsValueRef;
 var
   a : TFhirResourceType;
   id : String;
@@ -120,7 +138,7 @@ begin
   result := JS_INVALID_REFERENCE;
 end;
 
-function FHIRClientSearchJs(js : TJavascript; propDef : TJavascriptRegisteredProperty; this : TObject; parameters : TJsValues ) : JsValueRef;
+function TFHIRClientJSHelper.FHIRClientSearchJs(js : TJavascript; propDef : TJavascriptRegisteredProperty; this : TObject; parameters : TJsValues ) : JsValueRef;
 var
   ts : TStringList;
   a : TFhirResourceType;
@@ -154,7 +172,7 @@ begin
 end;
 
 
-function FHIRClientSearchAllJs(js : TJavascript; propDef : TJavascriptRegisteredProperty; this : TObject; parameters : TJsValues ) : JsValueRef;
+function TFHIRClientJSHelper.FHIRClientSearchAllJs(js : TJavascript; propDef : TJavascriptRegisteredProperty; this : TObject; parameters : TJsValues ) : JsValueRef;
 var
   ts : TStringList;
   s : String;
@@ -185,7 +203,7 @@ begin
   end;
 end;
 
-function FHIRClientOperationJs(js : TJavascript; propDef : TJavascriptRegisteredProperty; this : TObject; parameters : TJsValues ) : JsValueRef;
+function TFHIRClientJSHelper.FHIRClientOperationJs(js : TJavascript; propDef : TJavascriptRegisteredProperty; this : TObject; parameters : TJsValues ) : JsValueRef;
 var
   res, o : TFhirResource;
   def : TJavascriptClassDefinition;
@@ -213,24 +231,24 @@ begin
   end;
 end;
 
-procedure registerFHIRClient(js : TJavascript);
+class procedure TFHIRClientJSHelper.registerFHIRClient(js : TJavascript);
 var
+  this : TFHIRClientJSHelper;
   def : TJavascriptClassDefinition;
 begin
-  def := js.defineClass('FHIRClient', nil, 'FHIRClient', CreateFHIRClientJs);
-  def.defineRoutine('address', nil, FHIRClientAddressJs);
-  def.defineRoutine('capabilities', nil, FHIRClientCapabilitiesJs);
-  def.defineRoutine('transaction', nil, FHIRClientTransactionJs);
-  def.defineRoutine('create', nil, FHIRClientCreateJs);
-  def.defineRoutine('read', nil, FHIRClientReadJs);
-  def.defineRoutine('update', nil, FHIRClientUpdateJs);
-  def.defineRoutine('delete', nil, FHIRClientDeleteJs);
-  def.defineRoutine('search', nil, FHIRClientSearchJs);
-  def.defineRoutine('searchAll', nil, FHIRClientSearchAllJs);
-  def.defineRoutine('operation', nil, FHIRClientOperationJs);
-//  def.defineRoutine('historyType', nil, FHIRClientHistoryTypeJs);
-//  def.defineRoutine('historyResource', nil, FHIRClientHistoryResourceJs);
-//  def.defineRoutine('historySystem', nil, FHIRClientHistorySystemJs);
+  this := TFHIRClientJSHelper.Create;
+  js.ownObject(this);
+  def := js.defineClass('FHIRClient', nil, 'FHIRClient', this.CreateFHIRClientJs);
+  def.defineRoutine('address', nil, this.FHIRClientAddressJs);
+  def.defineRoutine('capabilities', nil, this.FHIRClientCapabilitiesJs);
+  def.defineRoutine('transaction', nil, this.FHIRClientTransactionJs);
+  def.defineRoutine('create', nil, this.FHIRClientCreateJs);
+  def.defineRoutine('read', nil, this.FHIRClientReadJs);
+  def.defineRoutine('update', nil, this.FHIRClientUpdateJs);
+  def.defineRoutine('delete', nil, this.FHIRClientDeleteJs);
+  def.defineRoutine('search', nil, this.FHIRClientSearchJs);
+  def.defineRoutine('searchAll', nil, this.FHIRClientSearchAllJs);
+  def.defineRoutine('operation', nil, this.FHIRClientOperationJs);
 end;
 
 end.

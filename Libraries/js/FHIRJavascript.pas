@@ -55,25 +55,25 @@ type
     destructor Destroy; override;
 
     procedure registerElement(classDef : TJavascriptClassDefinition; definingType, name, fhirType : String; getter : TJsGetterFunction; setter : TJsSetterProcedure);
-  end;
 
-function FHIRFactoryJs(js : TJavascript; classDef : TJavascriptClassDefinition; params : TJsValues; var owns : boolean) : TObject;
-function getFHIRStringProp(js : TJavascript; propDef : TJavascriptRegisteredProperty; this : TObject) : JsValueRef;
-procedure setFHIRStringProp(js : TJavascript; propDef : TJavascriptRegisteredProperty; this : TObject; value : TJsValue);
-function getFHIRBooleanProp(js : TJavascript; propDef : TJavascriptRegisteredProperty; this : TObject) : JsValueRef;
-procedure setFHIRBooleanProp(js : TJavascript; propDef : TJavascriptRegisteredProperty; this : TObject; value : TJsValue);
-function getFHIRDateTimeProp(js : TJavascript; propDef : TJavascriptRegisteredProperty; this : TObject) : JsValueRef;
-procedure setFHIRDateTimeProp(js : TJavascript; propDef : TJavascriptRegisteredProperty; this : TObject; value : TJsValue);
-function getFHIRBinaryProp(js : TJavascript; propDef : TJavascriptRegisteredProperty; this : TObject) : JsValueRef;
-procedure setFHIRBinaryProp(js : TJavascript; propDef : TJavascriptRegisteredProperty; this : TObject; value : TJsValue);
-function getFHIRIntegerProp(js : TJavascript; propDef : TJavascriptRegisteredProperty; this : TObject) : JsValueRef;
-procedure setFHIRIntegerProp(js : TJavascript; propDef : TJavascriptRegisteredProperty; this : TObject; value : TJsValue);
-function getFHIRDecimalProp(js : TJavascript; propDef : TJavascriptRegisteredProperty; this : TObject) : JsValueRef;
-procedure setFHIRDecimalProp(js : TJavascript; propDef : TJavascriptRegisteredProperty; this : TObject; value : TJsValue);
-function getFHIRObjectProp(js : TJavascript; propDef : TJavascriptRegisteredProperty; this : TObject) : JsValueRef;
-procedure setFHIRObjectProp(js : TJavascript; propDef : TJavascriptRegisteredProperty; this : TObject; value : TJsValue);
-function getFHIRArrayProp(js : TJavascript; propDef : TJavascriptRegisteredProperty; this : TObject) : JsValueRef;
-procedure setFHIRArrayProp(js : TJavascript; propDef : TJavascriptRegisteredProperty; this : TObject; value : TJsValue);
+    function FHIRFactoryJs(js : TJavascript; classDef : TJavascriptClassDefinition; params : TJsValues; var owns : boolean) : TObject;
+    function getFHIRStringProp(js : TJavascript; propDef : TJavascriptRegisteredProperty; this : TObject) : JsValueRef;
+    procedure setFHIRStringProp(js : TJavascript; propDef : TJavascriptRegisteredProperty; this : TObject; value : TJsValue);
+    function getFHIRBooleanProp(js : TJavascript; propDef : TJavascriptRegisteredProperty; this : TObject) : JsValueRef;
+    procedure setFHIRBooleanProp(js : TJavascript; propDef : TJavascriptRegisteredProperty; this : TObject; value : TJsValue);
+    function getFHIRDateTimeProp(js : TJavascript; propDef : TJavascriptRegisteredProperty; this : TObject) : JsValueRef;
+    procedure setFHIRDateTimeProp(js : TJavascript; propDef : TJavascriptRegisteredProperty; this : TObject; value : TJsValue);
+    function getFHIRBinaryProp(js : TJavascript; propDef : TJavascriptRegisteredProperty; this : TObject) : JsValueRef;
+    procedure setFHIRBinaryProp(js : TJavascript; propDef : TJavascriptRegisteredProperty; this : TObject; value : TJsValue);
+    function getFHIRIntegerProp(js : TJavascript; propDef : TJavascriptRegisteredProperty; this : TObject) : JsValueRef;
+    procedure setFHIRIntegerProp(js : TJavascript; propDef : TJavascriptRegisteredProperty; this : TObject; value : TJsValue);
+    function getFHIRDecimalProp(js : TJavascript; propDef : TJavascriptRegisteredProperty; this : TObject) : JsValueRef;
+    procedure setFHIRDecimalProp(js : TJavascript; propDef : TJavascriptRegisteredProperty; this : TObject; value : TJsValue);
+    function getFHIRObjectProp(js : TJavascript; propDef : TJavascriptRegisteredProperty; this : TObject) : JsValueRef;
+    procedure setFHIRObjectProp(js : TJavascript; propDef : TJavascriptRegisteredProperty; this : TObject; value : TJsValue);
+    function getFHIRArrayProp(js : TJavascript; propDef : TJavascriptRegisteredProperty; this : TObject) : JsValueRef;
+    procedure setFHIRArrayProp(js : TJavascript; propDef : TJavascriptRegisteredProperty; this : TObject; value : TJsValue);
+  end;
 
 implementation
 
@@ -90,8 +90,8 @@ begin
   FDefinedElements := TAdvMap<TFHIRJavascriptDefinedElement>.create;
   FFactory := TFhirResourceFactory.Create;
   registerFHIRTypes(self);
-  registerFHIRClient(self);
-  registerFHIRServerEvent(self);
+  TFHIRClientJSHelper.registerFHIRClient(self);
+  TFHIRServerJsHelper.registerFHIRServerEvent(self);
 end;
 
 destructor TFHIRJavascript.Destroy;
@@ -118,7 +118,7 @@ begin
 end;
 
 
-function FHIRFactoryJs(js : TJavascript; classDef : TJavascriptClassDefinition; params : TJsValues; var owns : boolean) : TObject;
+function TFHIRJavascript.FHIRFactoryJs(js : TJavascript; classDef : TJavascriptClassDefinition; params : TJsValues; var owns : boolean) : TObject;
 var
   obj : TFHIRObject;
   prop : TJavascriptRegisteredProperty;
@@ -145,7 +145,7 @@ begin
   end;
 end;
 
-function getFHIRStringProp(js : TJavascript; propDef : TJavascriptRegisteredProperty; this : TObject) : JsValueRef;
+function TFHIRJavascript.getFHIRStringProp(js : TJavascript; propDef : TJavascriptRegisteredProperty; this : TObject) : JsValueRef;
 var
   obj : TFHIRObject;
   def : TFHIRJavascriptDefinedElement;
@@ -168,7 +168,7 @@ begin
   end;
 end;
 
-procedure setFHIRStringProp(js : TJavascript; propDef : TJavascriptRegisteredProperty; this : TObject; value : TJsValue);
+procedure TFHIRJavascript.setFHIRStringProp(js : TJavascript; propDef : TJavascriptRegisteredProperty; this : TObject; value : TJsValue);
 var
   obj : TFHIRObject;
   def : TFHIRJavascriptDefinedElement;
@@ -200,7 +200,7 @@ begin
   end;
 end;
 
-function getFHIRArrayProp(js : TJavascript; propDef : TJavascriptRegisteredProperty; this : TObject) : JsValueRef;
+function TFHIRJavascript.getFHIRArrayProp(js : TJavascript; propDef : TJavascriptRegisteredProperty; this : TObject) : JsValueRef;
 var
   obj : TFHIRObject;
   def : TFHIRJavascriptDefinedElement;
@@ -225,7 +225,7 @@ begin
   end;
 end;
 
-procedure setFHIRArrayProp(js : TJavascript; propDef : TJavascriptRegisteredProperty; this : TObject; value : TJsValue);
+procedure TFHIRJavascript.setFHIRArrayProp(js : TJavascript; propDef : TJavascriptRegisteredProperty; this : TObject; value : TJsValue);
 var
   obj : TFHIRObject;
   def : TFHIRJavascriptDefinedElement;
@@ -266,7 +266,7 @@ begin
   end;
 end;
 
-function getFHIRObjectProp(js : TJavascript; propDef : TJavascriptRegisteredProperty; this : TObject) : JsValueRef;
+function TFHIRJavascript.getFHIRObjectProp(js : TJavascript; propDef : TJavascriptRegisteredProperty; this : TObject) : JsValueRef;
 var
   obj : TFHIRObject;
   def : TFHIRJavascriptDefinedElement;
@@ -295,12 +295,12 @@ begin
   end;
 end;
 
-procedure setFHIRObjectProp(js : TJavascript; propDef : TJavascriptRegisteredProperty; this : TObject; value : TJsValue);
+procedure TFHIRJavascript.setFHIRObjectProp(js : TJavascript; propDef : TJavascriptRegisteredProperty; this : TObject; value : TJsValue);
 begin
   raise Exception.Create('not implemented yet');
 end;
 
-function getFHIRBinaryProp(js : TJavascript; propDef : TJavascriptRegisteredProperty; this : TObject) : JsValueRef;
+function TFHIRJavascript.getFHIRBinaryProp(js : TJavascript; propDef : TJavascriptRegisteredProperty; this : TObject) : JsValueRef;
 var
   obj : TFHIRObject;
   def : TFHIRJavascriptDefinedElement;
@@ -323,7 +323,7 @@ begin
   end;
 end;
 
-procedure setFHIRBinaryProp(js : TJavascript; propDef : TJavascriptRegisteredProperty; this : TObject; value : TJsValue);
+procedure TFHIRJavascript.setFHIRBinaryProp(js : TJavascript; propDef : TJavascriptRegisteredProperty; this : TObject; value : TJsValue);
 var
   obj : TFHIRObject;
   def : TFHIRJavascriptDefinedElement;
@@ -355,7 +355,7 @@ begin
   end;
 end;
 
-function getFHIRBooleanProp(js : TJavascript; propDef : TJavascriptRegisteredProperty; this : TObject) : JsValueRef;
+function TFHIRJavascript.getFHIRBooleanProp(js : TJavascript; propDef : TJavascriptRegisteredProperty; this : TObject) : JsValueRef;
 var
   obj : TFHIRObject;
   def : TFHIRJavascriptDefinedElement;
@@ -378,7 +378,7 @@ begin
   end;
 end;
 
-procedure setFHIRBooleanProp(js : TJavascript; propDef : TJavascriptRegisteredProperty; this : TObject; value : TJsValue);
+procedure TFHIRJavascript.setFHIRBooleanProp(js : TJavascript; propDef : TJavascriptRegisteredProperty; this : TObject; value : TJsValue);
 var
   obj : TFHIRObject;
   def : TFHIRJavascriptDefinedElement;
@@ -409,7 +409,7 @@ begin
   end;
 end;
 
-function getFHIRDateTimeProp(js : TJavascript; propDef : TJavascriptRegisteredProperty; this : TObject) : JsValueRef;
+function TFHIRJavascript.getFHIRDateTimeProp(js : TJavascript; propDef : TJavascriptRegisteredProperty; this : TObject) : JsValueRef;
 var
   obj : TFHIRObject;
   def : TFHIRJavascriptDefinedElement;
@@ -432,7 +432,7 @@ begin
   end;
 end;
 
-procedure setFHIRDateTimeProp(js : TJavascript; propDef : TJavascriptRegisteredProperty; this : TObject; value : TJsValue);
+procedure TFHIRJavascript.setFHIRDateTimeProp(js : TJavascript; propDef : TJavascriptRegisteredProperty; this : TObject; value : TJsValue);
 var
   obj : TFHIRObject;
   def : TFHIRJavascriptDefinedElement;
@@ -464,7 +464,7 @@ begin
   end;
 end;
 
-function getFHIRIntegerProp(js : TJavascript; propDef : TJavascriptRegisteredProperty; this : TObject) : JsValueRef;
+function TFHIRJavascript.getFHIRIntegerProp(js : TJavascript; propDef : TJavascriptRegisteredProperty; this : TObject) : JsValueRef;
 var
   obj : TFHIRObject;
   def : TFHIRJavascriptDefinedElement;
@@ -487,7 +487,7 @@ begin
   end;
 end;
 
-procedure setFHIRIntegerProp(js : TJavascript; propDef : TJavascriptRegisteredProperty; this : TObject; value : TJsValue);
+procedure TFHIRJavascript.setFHIRIntegerProp(js : TJavascript; propDef : TJavascriptRegisteredProperty; this : TObject; value : TJsValue);
 var
   obj : TFHIRObject;
   def : TFHIRJavascriptDefinedElement;
@@ -519,7 +519,7 @@ begin
   end;
 end;
 
-function getFHIRDecimalProp(js : TJavascript; propDef : TJavascriptRegisteredProperty; this : TObject) : JsValueRef;
+function TFHIRJavascript.getFHIRDecimalProp(js : TJavascript; propDef : TJavascriptRegisteredProperty; this : TObject) : JsValueRef;
 var
   obj : TFHIRObject;
   def : TFHIRJavascriptDefinedElement;
@@ -542,7 +542,7 @@ begin
   end;
 end;
 
-procedure setFHIRDecimalProp(js : TJavascript; propDef : TJavascriptRegisteredProperty; this : TObject; value : TJsValue);
+procedure TFHIRJavascript.setFHIRDecimalProp(js : TJavascript; propDef : TJavascriptRegisteredProperty; this : TObject; value : TJsValue);
 var
   obj : TFHIRObject;
   def : TFHIRJavascriptDefinedElement;
