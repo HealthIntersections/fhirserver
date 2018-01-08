@@ -190,7 +190,8 @@ uses
   SmartOnFhirLogin in '..\reference-platform\client\SmartOnFhirLogin.pas' {SmartOnFhirLoginForm},
   CDSHooksClientManager in '..\reference-platform\support\CDSHooksClientManager.pas',
   FHIRClientSettings in '..\reference-platform\client\FHIRClientSettings.pas',
-  FHIRIndexBase in '..\reference-platform\support\FHIRIndexBase.pas';
+  FHIRIndexBase in '..\reference-platform\support\FHIRIndexBase.pas',
+  DigitalSignatures in '..\reference-platform\support\DigitalSignatures.pas';
 
 {$R *.res}
 

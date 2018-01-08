@@ -83,7 +83,7 @@ Type
     FTagManager : TFHIRTagManager;
     FNamingSystems : TAdvMap<TFHIRNamingSystem>;
     FApplicationCache : TApplicationCache;
-    FEventScriptRegistry : TJsEventScriptRegistry;
+    FEventScriptRegistry : TEventScriptRegistry;
     {$IFNDEF FHIR2}
     FMaps : TAdvMap<TFHIRStructureMap>;
     {$ENDIF}
@@ -131,7 +131,7 @@ Type
     property UserProvider : TFHIRUserProvider read FUserProvider write SetUserProvider;
     property ClientApplicationVerifier : TClientApplicationVerifier read FClientApplicationVerifier write SetClientApplicationVerifier;
     property ApplicationCache : TApplicationCache read FApplicationCache;
-    property EventScriptRegistry : TJsEventScriptRegistry read FEventScriptRegistry;
+    property EventScriptRegistry : TEventScriptRegistry read FEventScriptRegistry;
 
     property JWTServices : TJWTServices read FJWTServices write SetJWTServices;
 
@@ -338,7 +338,7 @@ begin
   FTagManager := TFHIRTagManager.create;
   FNamingSystems := TAdvMap<TFHIRNamingSystem>.create;
   FApplicationCache := TApplicationCache.create;
-  FEventScriptRegistry := TJsEventScriptRegistry.Create;
+  FEventScriptRegistry := TEventScriptRegistry.Create;
 
   {$IFNDEF FHIR2}
   FMaps := TAdvMap<TFHIRStructureMap>.create;

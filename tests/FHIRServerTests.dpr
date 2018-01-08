@@ -316,7 +316,7 @@ uses
   FHIRJavascriptTests in '..\Libraries\js\FHIRJavascriptTests.pas',
   FHIRClientJs in '..\Libraries\js\FHIRClientJs.pas',
   ServerEventJs in '..\Server\ServerEventJs.pas',
-  ServerJavascriptHost in 'ServerJavascriptHost.pas';
+  ServerJavascriptHost in '..\Server\ServerJavascriptHost.pas';
 
 var
   runner : ITestRunner;

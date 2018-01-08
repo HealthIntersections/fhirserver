@@ -317,7 +317,7 @@ uses
   SQLite3Wrap in '..\Libraries\db\SQLite3Wrap.pas',
   KDBSQLite in '..\Libraries\db\KDBSQLite.pas',
   ServerPostHandlers in 'ServerPostHandlers.pas',
-  ServerJavascriptHost in '..\tests\ServerJavascriptHost.pas',
+  ServerJavascriptHost in 'ServerJavascriptHost.pas',
   FHIRJavascript in '..\Libraries\js\FHIRJavascript.pas',
   Javascript in '..\Libraries\js\Javascript.pas',
   ChakraCommon in '..\Libraries\js\ChakraCommon.pas',

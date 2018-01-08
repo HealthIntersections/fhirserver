@@ -357,7 +357,7 @@
         <DCCReference Include="..\..\Server\ICD10Services.pas"/>
         <DCCReference Include="..\..\Server\ServerPostHandlers.pas"/>
         <DCCReference Include="..\..\reference-platform\support\DigitalSignatures.pas"/>
-        <DCCReference Include="..\..\tests\ServerJavascriptHost.pas"/>
+        <DCCReference Include="..\..\Server\ServerJavascriptHost.pas"/>
         <DCCReference Include="..\..\Libraries\js\AdvJavascript.pas"/>
         <DCCReference Include="..\..\reference-platform\r4\FHIRJavascriptReg.pas"/>
         <DCCReference Include="..\..\Libraries\js\FHIRJavascript.pas"/>
@@ -436,6 +436,13 @@
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
+                <DeployFile LocalName="OSX32\Debug\VocabTxServer.rsm" Configuration="Debug" Class="DebugSymbols">
+                    <Platform Name="OSX32">
+                        <RemoteDir>Contents\MacOS\</RemoteDir>
+                        <RemoteName>VocabTxServer.rsm</RemoteName>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
                 <DeployFile LocalName="$(BDS)\Redist\osx32\libcgsqlite3.dylib" Class="DependencyModule">
                     <Platform Name="OSX32">
                         <Overwrite>true</Overwrite>
@@ -444,13 +451,6 @@
                 <DeployFile LocalName="Win64\Debug\VocabTxServer.exe" Configuration="Debug" Class="ProjectOutput">
                     <Platform Name="Win64">
                         <RemoteName>VocabTxServer.exe</RemoteName>
-                        <Overwrite>true</Overwrite>
-                    </Platform>
-                </DeployFile>
-                <DeployFile LocalName="OSX32\Debug\VocabTxServer.rsm" Configuration="Debug" Class="DebugSymbols">
-                    <Platform Name="OSX32">
-                        <RemoteDir>Contents\MacOS\</RemoteDir>
-                        <RemoteName>VocabTxServer.rsm</RemoteName>
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>

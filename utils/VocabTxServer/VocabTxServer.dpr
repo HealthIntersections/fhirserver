@@ -232,7 +232,7 @@ uses
   ICD10Services in '..\..\Server\ICD10Services.pas',
   ServerPostHandlers in '..\..\Server\ServerPostHandlers.pas',
   DigitalSignatures in '..\..\reference-platform\support\DigitalSignatures.pas',
-  ServerJavascriptHost in '..\..\tests\ServerJavascriptHost.pas',
+  ServerJavascriptHost in '..\..\Server\ServerJavascriptHost.pas',
   AdvJavascript in '..\..\Libraries\js\AdvJavascript.pas',
   FHIRJavascriptReg in '..\..\reference-platform\r4\FHIRJavascriptReg.pas',
   FHIRJavascript in '..\..\Libraries\js\FHIRJavascript.pas',

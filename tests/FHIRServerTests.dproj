@@ -388,7 +388,7 @@
         <DCCReference Include="..\Libraries\js\FHIRJavascriptTests.pas"/>
         <DCCReference Include="..\Libraries\js\FHIRClientJs.pas"/>
         <DCCReference Include="..\Server\ServerEventJs.pas"/>
-        <DCCReference Include="ServerJavascriptHost.pas"/>
+        <DCCReference Include="..\Server\ServerJavascriptHost.pas"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>

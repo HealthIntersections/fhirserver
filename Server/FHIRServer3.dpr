@@ -334,7 +334,7 @@ uses
   FHIRJavascript in '..\Libraries\js\FHIRJavascript.pas',
   FHIRJavascriptReg in '..\reference-platform\dstu3\FHIRJavascriptReg.pas',
   AdvJavascript in '..\Libraries\js\AdvJavascript.pas',
-  ServerJavascriptHost in '..\tests\ServerJavascriptHost.pas',
+  ServerJavascriptHost in 'ServerJavascriptHost.pas',
   ServerEventJs in 'ServerEventJs.pas',
   Javascript in '..\Libraries\js\Javascript.pas',
   ChakraCommon in '..\Libraries\js\ChakraCommon.pas',

@@ -156,7 +156,8 @@ uses
   SCIMObjects in '..\support\SCIMObjects.pas',
   FHIRSecurity in '..\support\FHIRSecurity.pas',
   TurtleParser in '..\support\TurtleParser.pas',
-  FHIRIndexBase in '..\support\FHIRIndexBase.pas';
+  FHIRIndexBase in '..\support\FHIRIndexBase.pas',
+  DigitalSignatures in '..\support\DigitalSignatures.pas';
 
 var
   s: String;

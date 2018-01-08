@@ -9796,8 +9796,10 @@ begin
     ServerContext.ValidatorContext.checkResource(resource as TFhirStructureDefinition)
   else if resource.ResourceType = frtQuestionnaire then
     ServerContext.ValidatorContext.checkResource(resource as TFhirQuestionnaire)
+  {$IFDEF FHIR4}
   else if resource.ResourceType = frtEventDefinition then
     ServerContext.EventScriptRegistry.checkResource(resource as TFhirEventDefinition);
+  {$ENDIF}
 end;
 
 procedure TFHIRNativeStorageService.checkRegisterTag(tag: TFHIRTag; conn: TKDBConnection);
@@ -10181,8 +10183,9 @@ begin
     ServerContext.ValidatorContext.seeResource(resource as TFhirStructureDefinition)
   else if resource.ResourceType = frtQuestionnaire then
     ServerContext.ValidatorContext.seeResource(resource as TFhirQuestionnaire)
+  {$IFDEF FHIR4}
   else if resource.ResourceType = frtEventDefinition then
-    ServerContext.EventScriptRegistry.seeResource(resource as TFhirEventDefinition);
+    ServerContext.EventScriptRegistry.seeResource(resource as TFhirEventDefinition){$ENDIF};
 
   if created then
     FServerContext.SubscriptionManager.SeeResource(key, vkey, pvkey, id, subscriptionCreate, resource, conn, reload, session)

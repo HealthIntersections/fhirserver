@@ -47,6 +47,15 @@ Type
     FRaise : boolean;
     procedure JSLog(sender : TJavascript; message : String);
     procedure defineTestTypes(js: TJavascript; manArrayValue: boolean);
+    function AddOne(js: TJavascript; propDef: TJavascriptRegisteredProperty; this: TObject; parameters: TJsValues): JsValueRef;
+    function MakePropObjFromData(js: TJavascript; classDef: TJavascriptClassDefinition; params: TJsValues; var owns: boolean): TObject;
+    function PropArrayGetValue(js: TJavascript; propDef: TJavascriptRegisteredProperty; this: TObject): JsValueRef;
+    function PropArrayGetValueManaged(js: TJavascript; propDef: TJavascriptRegisteredProperty; this: TObject): JsValueRef;
+    procedure PropArraySetValue(js: TJavascript; propDef: TJavascriptRegisteredProperty; this: TObject; value: TJsValue);
+    function PropComplexArrayGetValue(js: TJavascript; propDef: TJavascriptRegisteredProperty; this: TObject): JsValueRef;
+    procedure PropComplexArraySetValue(js: TJavascript; propDef: TJavascriptRegisteredProperty; this: TObject; value: TJsValue);
+    function PropObjGetValue(js: TJavascript; propDef: TJavascriptRegisteredProperty; this: TObject): JsValueRef;
+    procedure PropObjSetValue(js: TJavascript; propDef: TJavascriptRegisteredProperty; this: TObject; value: TJsValue);
   Published
     [SetUp]    Procedure Setup;
     [TearDown] Procedure TearDown;
@@ -81,7 +90,7 @@ begin
   inc(value);
 end;
 
-function AddOne(js : TJavascript; propDef : TJavascriptRegisteredProperty; this : TObject; parameters : TJsValues ) : JsValueRef;
+function TJavascriptTests.AddOne(js : TJavascript; propDef : TJavascriptRegisteredProperty; this : TObject; parameters : TJsValues ) : JsValueRef;
 var
   obj : TIntObj;
 begin
@@ -113,7 +122,7 @@ begin
   inherited;
 end;
 
-function PropObjGetValue(js : TJavascript; propDef : TJavascriptRegisteredProperty; this : TObject) : JsValueRef;
+function TJavascriptTests.PropObjGetValue(js : TJavascript; propDef : TJavascriptRegisteredProperty; this : TObject) : JsValueRef;
 var
   obj : TPropObj;
 begin
@@ -121,7 +130,7 @@ begin
   result := js.wrap(obj.value);
 end;
 
-procedure PropObjSetValue(js : TJavascript; propDef : TJavascriptRegisteredProperty; this : TObject; value : TJsValue);
+procedure TJavascriptTests.PropObjSetValue(js : TJavascript; propDef : TJavascriptRegisteredProperty; this : TObject; value : TJsValue);
 var
   obj : TPropObj;
 begin
@@ -129,7 +138,7 @@ begin
   obj.value := js.asString(value);
 end;
 
-function MakePropObjFromData(js : TJavascript; classDef : TJavascriptClassDefinition; params : TJsValues; var owns : boolean) : TObject;
+function TJavascriptTests.MakePropObjFromData(js : TJavascript; classDef : TJavascriptClassDefinition; params : TJsValues; var owns : boolean) : TObject;
 var
   p : TJsValue;
 begin
@@ -165,7 +174,7 @@ begin
   inherited;
 end;
 
-function PropArrayGetValue(js : TJavascript; propDef : TJavascriptRegisteredProperty; this : TObject) : JsValueRef;
+function TJavascriptTests.PropArrayGetValue(js : TJavascript; propDef : TJavascriptRegisteredProperty; this : TObject) : JsValueRef;
 var
   obj : TArrayObj;
 begin
@@ -177,7 +186,7 @@ begin
       end);
 end;
 
-function PropArrayGetValueManaged(js : TJavascript; propDef : TJavascriptRegisteredProperty; this : TObject) : JsValueRef;
+function TJavascriptTests.PropArrayGetValueManaged(js : TJavascript; propDef : TJavascriptRegisteredProperty; this : TObject) : JsValueRef;
 var
   obj : TArrayObj;
 begin
@@ -185,7 +194,7 @@ begin
   result := js.makeManagedArray(TStringListManager.create(obj.FValue));
 end;
 
-procedure PropArraySetValue(js : TJavascript; propDef : TJavascriptRegisteredProperty; this : TObject; value : TJsValue);
+procedure TJavascriptTests.PropArraySetValue(js : TJavascript; propDef : TJavascriptRegisteredProperty; this : TObject; value : TJsValue);
 var
   obj : TArrayObj;
 begin
@@ -228,7 +237,7 @@ begin
   inherited;
 end;
 
-function PropComplexArrayGetValue(js : TJavascript; propDef : TJavascriptRegisteredProperty; this : TObject) : JsValueRef;
+function TJavascriptTests.PropComplexArrayGetValue(js : TJavascript; propDef : TJavascriptRegisteredProperty; this : TObject) : JsValueRef;
 var
   obj : TComplexArrayObj;
 begin
@@ -236,7 +245,7 @@ begin
   result := js.makemanagedArray(TObjectListManager<TPropObj>.create(obj.FValue, js.getDefinedClass('TPropObj')));
 end;
 
-procedure PropComplexArraySetValue(js : TJavascript; propDef : TJavascriptRegisteredProperty; this : TObject; value : TJsValue);
+procedure TJavascriptTests.PropComplexArraySetValue(js : TJavascript; propDef : TJavascriptRegisteredProperty; this : TObject; value : TJsValue);
 var
   obj : TComplexArrayObj;
   o : TPropObj;

@@ -394,7 +394,7 @@
         <DCCReference Include="..\Libraries\js\FHIRJavascript.pas"/>
         <DCCReference Include="..\reference-platform\dstu3\FHIRJavascriptReg.pas"/>
         <DCCReference Include="..\Libraries\js\AdvJavascript.pas"/>
-        <DCCReference Include="..\tests\ServerJavascriptHost.pas"/>
+        <DCCReference Include="ServerJavascriptHost.pas"/>
         <DCCReference Include="ServerEventJs.pas"/>
         <DCCReference Include="..\Libraries\js\Javascript.pas"/>
         <DCCReference Include="..\Libraries\js\ChakraCommon.pas"/>

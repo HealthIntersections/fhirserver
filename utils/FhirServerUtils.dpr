@@ -271,7 +271,15 @@ uses
   SQLite3Wrap in '..\Libraries\db\SQLite3Wrap.pas',
   KDBSQLite in '..\Libraries\db\KDBSQLite.pas',
   ServerPostHandlers in '..\Server\ServerPostHandlers.pas',
-  ICD10Services in '..\Server\ICD10Services.pas';
+  ICD10Services in '..\Server\ICD10Services.pas',
+  ServerJavascriptHost in '..\Server\ServerJavascriptHost.pas',
+  FHIRJavascript in '..\Libraries\js\FHIRJavascript.pas',
+  Javascript in '..\Libraries\js\Javascript.pas',
+  AdvJavascript in '..\Libraries\js\AdvJavascript.pas',
+  ChakraCommon in '..\Libraries\js\ChakraCommon.pas',
+  FHIRJavascriptReg in '..\reference-platform\r4\FHIRJavascriptReg.pas',
+  FHIRClientJs in '..\Libraries\js\FHIRClientJs.pas',
+  ServerEventJs in '..\Server\ServerEventJs.pas';
 
 {$R *.res}
 

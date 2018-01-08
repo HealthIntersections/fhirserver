@@ -378,7 +378,7 @@
         <DCCReference Include="..\Libraries\db\SQLite3Wrap.pas"/>
         <DCCReference Include="..\Libraries\db\KDBSQLite.pas"/>
         <DCCReference Include="ServerPostHandlers.pas"/>
-        <DCCReference Include="..\tests\ServerJavascriptHost.pas"/>
+        <DCCReference Include="ServerJavascriptHost.pas"/>
         <DCCReference Include="..\Libraries\js\FHIRJavascript.pas"/>
         <DCCReference Include="..\Libraries\js\Javascript.pas"/>
         <DCCReference Include="..\Libraries\js\ChakraCommon.pas"/>

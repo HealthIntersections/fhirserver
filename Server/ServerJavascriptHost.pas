@@ -5,25 +5,34 @@ interface
 uses
   SysUtils, Classes,
   kCritSct, Javascript,
+  StringSupport,
   AdvObjects, AdvGenerics,
   FHIRBase, FHIRTypes, FHIRResources, FHIRSupport, FHIRClient,
   FHIRJavascript;
 
+{$IFDEF FHIR2}
+Type
+  TFhirTriggerTypeEnum = (TriggerTypeNull, TriggerTypeNamedEvent, TriggerTypePeriodic, TriggerTypeDataAdded, TriggerTypeDataModified, TriggerTypeDataRemoved, TriggerTypeDataAccessed, TriggerTypeDataAccessEnded);
+{$ENDIF}
+
 Const
-  ROUTINE_NAMES : array[TFhirTriggerTypeEnum] of String = ('xx', 'xx', 'xx', 'dataChanged', 'dataAdded', 'dataModified', 'dataRemoved', 'dataAccessed', 'xx');
-  SUPPORTED_TRIGGER_TYPES = [TriggerTypeDataChanged,  TriggerTypeDataAdded,  TriggerTypeDataModified, TriggerTypeDataRemoved, TriggerTypeDataAccessed];
+  ROUTINE_NAMES : array[TFhirTriggerTypeEnum] of String = ('xx', 'xx', 'xx', {$IFDEF FHIR4}'dataChanged', {$ENDIF} 'dataAdded', 'dataModified', 'dataRemoved', 'dataAccessed', 'xx');
+  SUPPORTED_TRIGGER_TYPES = [{$IFDEF FHIR4}TriggerTypeDataChanged, {$ENDIF}TriggerTypeDataAdded,  TriggerTypeDataModified, TriggerTypeDataRemoved, TriggerTypeDataAccessed];
 
 Type
-  TJsEventScript = class (TAdvObject)
+  TEventScriptLanguage = (langJavascript, langFHIRPath);
+
+  TEventScript = class (TAdvObject)
   private
     FId : String;
-    FScript : string;
     FCommand : TFhirTriggerTypeEnum;
     FResources : TStringList;
+    FLang : TEventScriptLanguage;
+    FScript : string;
   public
     Constructor Create; override;
     Destructor Destroy; override;
-    function link : TJsEventScript; overload;
+    function link : TEventScript; overload;
 
     property id : String read FId write FId;
     property script : String read FScript write FScript;
@@ -31,23 +40,23 @@ Type
     property Resources : TStringList read FResources;
   end;
 
-  TJsEventScriptRegistry = class (TAdvObject)
+  TEventScriptRegistry = class (TAdvObject)
   private
     FLock : TCriticalSection;
-    FScripts : TAdvMap<TJsEventScript>;
-//    procedure registerScript(script : TJsEventScript);
-//    procedure unregisterScript(id : String);
+    FScripts : TAdvMap<TEventScript>;
   public
     constructor Create; override;
     destructor Destroy; override;
 
-    function link : TJsEventScriptRegistry; overload;
+    function link : TEventScriptRegistry; overload;
 
-    procedure getScripts(list: TAdvList<TJsEventScript>);
-    procedure getApplicableScripts(event : TFhirTriggerTypeEnum; resource : String; list : TAdvList<TJsEventScript>);
+    procedure getScripts(list: TAdvList<TEventScript>);
+    procedure getApplicableScripts(event : TFhirTriggerTypeEnum; resource : String; list : TAdvList<TEventScript>);
 
+{$IFDEF FHIR4}
     procedure checkResource(event : TFhirEventDefinition);
     procedure seeResource(event : TFhirEventDefinition);
+{$ENDIF}
   end;
 
   TJsGetFHIRResource = reference to function : TFHIRResource;
@@ -57,18 +66,17 @@ Type
   // then, we retain it as long as we can
   TJsHost = class (TAdvObject)
   private
-    FRegistry: TJsEventScriptRegistry;
+    FRegistry: TEventScriptRegistry;
     FEngine : TFHIRJavascript;
-    procedure SetRegistry(const Value: TJsEventScriptRegistry);
+    procedure SetRegistry(const Value: TEventScriptRegistry);
     procedure checkHasEngine;
-    procedure previewRequest(session: TFHIRSession; request: TFHIRRequest);
   public
     constructor Create; override;
     destructor Destroy; override;
 
-    property registry : TJsEventScriptRegistry read FRegistry write SetRegistry;
+    property registry : TEventScriptRegistry read FRegistry write SetRegistry;
 
-//    procedure previewRequest(session : TFHIRSession; request : TFHIRRequest);
+    procedure previewRequest(session : TFHIRSession; request : TFHIRRequest);
     procedure checkChanges(event: TFhirTriggerTypeEnum; session : TFHIRSession; client : TJsGetFHIRClient; before : TJsGetFHIRResource; after : TFHIRResource);
   end;
 
@@ -77,16 +85,16 @@ threadvar
 
 implementation
 
-{ TServerJavascriptHost }
+{ TJsHost }
 
 procedure TJsHost.checkChanges(event: TFhirTriggerTypeEnum; session : TFHIRSession; client : TJsGetFHIRClient; before : TJsGetFHIRResource; after : TFHIRResource);
 var
-  scripts : TAdvList<TJsEventScript>;
-  script : TJsEventScript;
+  scripts : TAdvList<TEventScript>;
+  script : TEventScript;
   rn : String;
   s, b, a, c : TJsValue;
 begin
-  scripts := TAdvList<TJsEventScript>.create;
+  scripts := TAdvList<TEventScript>.create;
   try
     if before <> nil then
       rn := before.fhirType
@@ -97,13 +105,14 @@ begin
     if (scripts.count > 0) then
     begin
       checkHasEngine;
+      FEngine.readOnly := true;
       s := FEngine.wrap(session.Link, 'Session', true);
       b := FEngine.wrap(before.Link, rn, true);
       a := FEngine.wrap(after.Link, rn, true);
       c := FEngine.wrap(client.link, 'FHIRClient', true);
       FEngine.addGlobal('fhir', c);
       for script in scripts do
-        FEngine.execute(script.FScript, 'event-'+script.id, ROUTINE_NAMES[script.FCommand], [s, b,a]);
+        FEngine.execute(script.FScript, 'event-'+script.id, ROUTINE_NAMES[script.FCommand], [s, b, a]);
     end;
   finally
     scripts.Free;
@@ -130,46 +139,44 @@ begin
 end;
 
 procedure TJsHost.previewRequest(session : TFHIRSession; request: TFHIRRequest);
+var
+  scripts : TAdvList<TEventScript>;
+  script : TEventScript;
+  rn : String;
+  s, r : TJsValue;
 begin
-
+  scripts := TAdvList<TEventScript>.create;
+  try
+    FRegistry.getApplicableScripts(TriggerTypeDataAccessed, '', scripts);
+    if (scripts.count > 0) then
+    begin
+      checkHasEngine;
+      s := FEngine.wrap(session.Link, 'Session', true);
+      r := FEngine.wrap(request.Link, 'Request', true);
+      for script in scripts do
+        FEngine.execute(script.FScript, 'event-'+script.id, ROUTINE_NAMES[script.FCommand], [s, r]);
+    end;
+  finally
+    scripts.Free;
+  end;
 end;
 
-procedure TJsHost.SetRegistry(const Value: TJsEventScriptRegistry);
+procedure TJsHost.SetRegistry(const Value: TEventScriptRegistry);
 begin
   FRegistry.Free;
   FRegistry := Value;
 end;
 
-{ TJsEventScriptRegistry }
+{ TEventScriptRegistry }
 
-procedure TJsEventScriptRegistry.checkResource(event: TFhirEventDefinition);
-var
-  tag : boolean;
-  c : TFHIRCoding;
-begin
-  tag := false;
-  for c in event.meta.tagList do
-    tag := tag or ((c.system = 'http://www.healthintersections.com.au') and (c.code = 'active'));
-
-  if tag then
-  begin
-    if event.trigger.condition.language <> 'application/javascript' then
-      raise Exception.Create('Unknown error message');
-    if not (event.trigger.type_ in SUPPORTED_TRIGGER_TYPES) then
-      raise Exception.Create('Unsupported Trigger type');
-    if not event.trigger.condition.expression.Contains('function '+ROUTINE_NAMES[event.trigger.type_]+'(') then
-      raise Exception.Create('Unable to find function '+ROUTINE_NAMES[event.trigger.type_]);
-  end;
-end;
-
-constructor TJsEventScriptRegistry.Create;
+constructor TEventScriptRegistry.Create;
 begin
   inherited;
   FLock := TCriticalSection.create;
-  FScripts := TAdvMap<TJsEventScript>.create;
+  FScripts := TAdvMap<TEventScript>.create;
 end;
 
-destructor TJsEventScriptRegistry.Destroy;
+destructor TEventScriptRegistry.Destroy;
 begin
   FLock.Free;
   FScripts.Free;
@@ -178,7 +185,7 @@ end;
 
 function matches(actual, specified : TFhirTriggerTypeEnum) : boolean; overload;
 begin
-  result := (actual = specified) or ((actual in [TriggerTypeDataAdded, TriggerTypeDataModified, TriggerTypeDataRemoved]) and (specified = TriggerTypeDataChanged));
+  result := (actual = specified) {$IFDEF FHIR4}or ((actual in [TriggerTypeDataAdded, TriggerTypeDataModified, TriggerTypeDataRemoved]) and (specified = TriggerTypeDataChanged)) {$ENDIF};
 end;
 
 function matches(actual : String; specified : TStringList) : boolean; overload;
@@ -189,9 +196,9 @@ begin
     result := (specified.Count = 0) or (specified.IndexOf(actual) > -1);
 end;
 
-procedure TJsEventScriptRegistry.getApplicableScripts(event: TFhirTriggerTypeEnum; resource: String; list: TAdvList<TJsEventScript>);
+procedure TEventScriptRegistry.getApplicableScripts(event: TFhirTriggerTypeEnum; resource: String; list: TAdvList<TEventScript>);
 var
-  e : TJsEventScript;
+  e : TEventScript;
 begin
   FLock.Lock;
   try
@@ -205,9 +212,9 @@ begin
   end;
 end;
 
-procedure TJsEventScriptRegistry.getScripts(list : TAdvList<TJsEventScript>);
+procedure TEventScriptRegistry.getScripts(list : TAdvList<TEventScript>);
 var
-  e : TJsEventScript;
+  e : TEventScript;
 begin
   FLock.Lock;
   try
@@ -218,28 +225,16 @@ begin
   end;
 end;
 
-function TJsEventScriptRegistry.link: TJsEventScriptRegistry;
+function TEventScriptRegistry.link: TEventScriptRegistry;
 begin
-  result := TJsEventScriptRegistry(inherited Link);
+  result := TEventScriptRegistry(inherited Link);
 end;
 
-//procedure TJsEventScriptRegistry.registerScript(script: TJsEventScript);
-//begin
-//  FLock.Lock;
-//  try
-//    if FScripts.ContainsKey(script.id) then
-//      raise Exception.Create('Duplicate Script: '+script.id);
-//    FScripts.Add(script.id, script.link);
-//  finally
-//    FLock.Unlock;
-//  end;
-//end;
-
-procedure TJsEventScriptRegistry.seeResource(event: TFhirEventDefinition);
+{$IFDEF FHIR4}
+procedure TEventScriptRegistry.checkResource(event: TFhirEventDefinition);
 var
   tag : boolean;
   c : TFHIRCoding;
-  ev : TJsEventScript;
 begin
   tag := false;
   for c in event.meta.tagList do
@@ -247,8 +242,29 @@ begin
 
   if tag then
   begin
-    if event.trigger.condition.language <> 'application/javascript' then
-      raise Exception.Create('Unknown error message');
+    if not StringArrayExistsSensitive(['application/javascript', 'text/fhirpath'{, 'text/cql'}], event.trigger.condition.language) then
+      raise Exception.Create('Unknown script language');
+    if not (event.trigger.type_ in SUPPORTED_TRIGGER_TYPES) then
+      raise Exception.Create('Unsupported Trigger type');
+    if not event.trigger.condition.expression.Contains('function '+ROUTINE_NAMES[event.trigger.type_]+'(') then
+      raise Exception.Create('Unable to find function '+ROUTINE_NAMES[event.trigger.type_]);
+  end;
+end;
+
+procedure TEventScriptRegistry.seeResource(event: TFhirEventDefinition);
+var
+  tag : boolean;
+  c : TFHIRCoding;
+  ev : TEventScript;
+begin
+  tag := false;
+  for c in event.meta.tagList do
+    tag := tag or ((c.system = 'http://www.healthintersections.com.au') and (c.code = 'active'));
+
+  if tag then
+  begin
+    if not StringArrayExistsSensitive(['application/javascript', 'text/fhirpath'{, 'text/cql'}], event.trigger.condition.language) then
+      raise Exception.Create('Unknown script language');
     if not (event.trigger.type_ in SUPPORTED_TRIGGER_TYPES) then
       raise Exception.Create('Unsupported Trigger type');
     if not event.trigger.condition.expression.Contains('function '+ROUTINE_NAMES[event.trigger.type_]+'(') then
@@ -259,12 +275,16 @@ begin
   try
     if tag then
     begin
-
-      ev := TJsEventScript.Create;
+      ev := TEventScript.Create;
       try
         ev.FId := event.id;
         ev.FScript := event.trigger.condition.expression;
         ev.FCommand := event.trigger.type_;
+        case StringArrayIndexOfSensitive(['application/javascript', 'text/fhirpath'{, 'text/cql'}], event.trigger.condition.language)  of
+          0: ev.FLang := langJavascript;
+          1: ev.FLang := langFHIRPath;
+//          2: ev.FLang := langCQL;
+        end;
         if (event.trigger.data <> nil) and (event.trigger.data.type_ <> AllTypesNull) then
           ev.FResources.Add(CODES_TFhirAllTypesEnum[event.trigger.data.type_]);
         FScripts.AddOrSetValue(event.id, ev.link);
@@ -278,36 +298,26 @@ begin
     FLock.Unlock;
   end;
 end;
+{$ENDIF}
 
-//procedure TJsEventScriptRegistry.unregisterScript(id: String);
-//begin
-//  FLock.Lock;
-//  try
-//    if not FScripts.ContainsKey(id) then
-//      raise Exception.Create('unknown Script: '+id);
-//    FScripts.Remove(id);
-//  finally
-//    FLock.Unlock;
-//  end;
-//end;
 
 { TJsEventScript }
 
-constructor TJsEventScript.Create;
+constructor TEventScript.Create;
 begin
   inherited;
   FResources := TStringList.Create;
 end;
 
-destructor TJsEventScript.Destroy;
+destructor TEventScript.Destroy;
 begin
   FResources.Free;
   inherited;
 end;
 
-function TJsEventScript.link: TJsEventScript;
+function TEventScript.link: TEventScript;
 begin
-  result := TJsEventScript(inherited Link);
+  result := TEventScript(inherited Link);
 end;
 
 end.

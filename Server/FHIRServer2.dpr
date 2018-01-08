@@ -266,7 +266,7 @@ uses
   SQLite3Wrap in '..\Libraries\db\SQLite3Wrap.pas',
   KDBSQLite in '..\Libraries\db\KDBSQLite.pas',
   ServerPostHandlers in 'ServerPostHandlers.pas',
-  ServerJavascriptHost in '..\tests\ServerJavascriptHost.pas',
+  ServerJavascriptHost in 'ServerJavascriptHost.pas',
   AdvJavascript in '..\Libraries\js\AdvJavascript.pas',
   FHIRJavascriptReg in '..\reference-platform\dstu2\FHIRJavascriptReg.pas',
   FHIRJavascript in '..\Libraries\js\FHIRJavascript.pas',

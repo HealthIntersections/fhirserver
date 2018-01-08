@@ -1621,6 +1621,10 @@ Begin
                   StringArrayExistsInsensitive(['yes', 'true', '1'], oRequest.Parameters.GetVar('_nohttperr'));
                 ReadTags(request.RawHeaders.Values['Category'], oRequest);
                 Session := oRequest.Session.link;
+
+                // allow scripting to change anything about the request
+                GJsHost.previewRequest(Session, oRequest);
+
                 if redirect then
                 begin
                   if oRequest.Session <> nil then

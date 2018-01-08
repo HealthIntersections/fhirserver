@@ -227,6 +227,7 @@
         <DCCReference Include="..\support\FHIRSecurity.pas"/>
         <DCCReference Include="..\support\TurtleParser.pas"/>
         <DCCReference Include="..\support\FHIRIndexBase.pas"/>
+        <DCCReference Include="..\support\DigitalSignatures.pas"/>
         <None Include="Profiling\AQtimeModule1.aqt"/>
         <None Include="..\r4\fhirtests4.dpr"/>
         <BuildConfiguration Include="Debug">

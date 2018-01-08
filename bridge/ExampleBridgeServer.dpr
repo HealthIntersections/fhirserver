@@ -240,14 +240,15 @@ uses
   FHIRIndexBase in '..\reference-platform\support\FHIRIndexBase.pas',
   ICD10Services in '..\Server\ICD10Services.pas',
   ServerPostHandlers in '..\Server\ServerPostHandlers.pas',
-  ServerJavascriptHost in '..\tests\ServerJavascriptHost.pas',
+  ServerJavascriptHost in '..\Server\ServerJavascriptHost.pas',
   FHIRJavascriptReg in '..\reference-platform\dstu3\FHIRJavascriptReg.pas',
   FHIRJavascript in '..\Libraries\js\FHIRJavascript.pas',
   FHIRClientJs in '..\Libraries\js\FHIRClientJs.pas',
   ServerEventJs in '..\Server\ServerEventJs.pas',
   Javascript in '..\Libraries\js\Javascript.pas',
   ChakraCommon in '..\Libraries\js\ChakraCommon.pas',
-  AdvJavascript in '..\Libraries\js\AdvJavascript.pas';
+  AdvJavascript in '..\Libraries\js\AdvJavascript.pas',
+  DigitalSignatures in '..\reference-platform\support\DigitalSignatures.pas';
 
 var
   gsrv : TExampleFhirServer;
