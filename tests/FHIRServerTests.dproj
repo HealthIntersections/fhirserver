@@ -94,7 +94,6 @@
         <DCC_TYPEINFO_IMPLICITLY_ADDED>false</DCC_TYPEINFO_IMPLICITLY_ADDED>
         <DCC_SYMBOL_PLATFORM>false</DCC_SYMBOL_PLATFORM>
         <DCC_UNSUPPORTED_CONSTRUCT>false</DCC_UNSUPPORTED_CONSTRUCT>
-        <DCC_DebugDCUs>false</DCC_DebugDCUs>
         <DCC_IntegerOverflowCheck>true</DCC_IntegerOverflowCheck>
         <DCC_RangeChecking>true</DCC_RangeChecking>
         <DCC_DcuOutput>C:\work\com.healthintersections.fhir\scratch\units_3_64</DCC_DcuOutput>
@@ -102,6 +101,7 @@
         <DCC_UnitSearchPath>..\Libraries\jcl;$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
         <Manifest_File>(None)</Manifest_File>
         <VerInfo_Locale>1033</VerInfo_Locale>
+        <VerInfo_Keys>CompanyName=;FileVersion=1.0.0.0;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProductVersion=1.0.0.0;Comments=;ProgramID=com.embarcadero.$(MSBuildProjectName);FileDescription=$(MSBuildProjectName);ProductName=$(MSBuildProjectName)</VerInfo_Keys>
         <DCC_ExeOutput>C:\work\fhirserver\tests\Win64\Debug\</DCC_ExeOutput>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_2)'!=''">
@@ -389,6 +389,13 @@
         <DCCReference Include="..\Libraries\js\FHIRClientJs.pas"/>
         <DCCReference Include="..\Server\ServerEventJs.pas"/>
         <DCCReference Include="..\Server\ServerJavascriptHost.pas"/>
+        <DCCReference Include="..\Libraries\java\JNIWrapper.pas"/>
+        <DCCReference Include="..\Libraries\java\JNI.pas"/>
+        <DCCReference Include="..\Libraries\java\JUtils.pas"/>
+        <DCCReference Include="..\Libraries\java\JavaRuntime.pas"/>
+        <DCCReference Include="..\Server\JavaBridge.pas"/>
+        <DCCReference Include="JavaBridgeTests.pas"/>
+        <DCCReference Include="..\Libraries\java\myUTF8Strings.pas"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>

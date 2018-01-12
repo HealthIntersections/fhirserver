@@ -38,7 +38,7 @@ uses
   FHIRTypes, FHIRResources, FHIRConstants, FHIRIndexManagers, FHIRUtilities,
   FHIRValidator, ServerValidator, FHIRUserProvider, FHIRStorageService, ServerUtilities, TerminologyServer,
   FHIRSubscriptionManager, FHIRSessionManager, FHIRTagManager, JWTService, ClientApplicationVerifier,
-  ApplicationCache, ServerJavascriptHost;
+  ApplicationCache, ServerJavascriptHost, JavaBridge;
 
 Const
   OAUTH_LOGIN_PREFIX = 'os9z4tw9HdmR-';
@@ -86,6 +86,7 @@ Type
     FEventScriptRegistry : TEventScriptRegistry;
     {$IFNDEF FHIR2}
     FMaps : TAdvMap<TFHIRStructureMap>;
+    FJavaServices: TJavaLibraryWrapper;
     {$ENDIF}
 
     FOwnerName: String;
@@ -112,6 +113,9 @@ Type
     procedure SetSubscriptionManager(const Value: TSubscriptionManager);
     procedure SetClientApplicationVerifier(const Value: TClientApplicationVerifier);
     procedure SetJWTServices(const Value: TJWTServices);
+    {$IFNDEF FHIR2}
+    procedure SetJavaServices(const Value: TJavaLibraryWrapper);
+    {$ENDIF}
   public
     Constructor Create(storage : TFHIRStorageService);
     Destructor Destroy; override;
@@ -132,6 +136,9 @@ Type
     property ClientApplicationVerifier : TClientApplicationVerifier read FClientApplicationVerifier write SetClientApplicationVerifier;
     property ApplicationCache : TApplicationCache read FApplicationCache;
     property EventScriptRegistry : TEventScriptRegistry read FEventScriptRegistry;
+    {$IFNDEF FHIR2}
+    property JavaServices : TJavaLibraryWrapper read FJavaServices write SetJavaServices;
+    {$ENDIF}
 
     property JWTServices : TJWTServices read FJWTServices write SetJWTServices;
 
@@ -355,6 +362,7 @@ begin
   {$IFNDEF FHIR2}
   FMaps.Free;
   {$ENDIF}
+  FJavaServices.Free;
   FEventScriptRegistry.Free;
   FApplicationCache.Free;
   FJWTServices.Free;
@@ -431,6 +439,12 @@ begin
   FClientApplicationVerifier := Value;
 end;
 
+
+procedure TFHIRServerContext.SetJavaServices(const Value: TJavaLibraryWrapper);
+begin
+  FJavaServices.Free;
+  FJavaServices := Value;
+end;
 
 procedure TFHIRServerContext.SetJWTServices(const Value: TJWTServices);
 begin

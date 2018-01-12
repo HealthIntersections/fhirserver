@@ -150,7 +150,8 @@ function CustomResourceNameIsOk(name : String) : boolean;
 function fileToResource(name : String) : TFhirResource; overload;
 function fileToResource(name : String; var format : TFHIRFormat) : TFhirResource; overload;
 function streamToResource(stream : TStream; var format : TFHIRFormat) : TFhirResource;
-function bytesToResource(bytes : TBytes; var format : TFHIRFormat) : TFhirResource;
+function bytesToResource(bytes : TBytes) : TFhirResource; overload;
+function bytesToResource(bytes : TBytes; var format : TFHIRFormat) : TFhirResource; overload;
 procedure resourceToFile(res : TFhirResource; name : String; format : TFHIRFormat; style : TFHIROutputStyle = OutputStyleNormal);
 procedure resourceToStream(res : TFhirResource; stream : TStream; format : TFHIRFormat; style : TFHIROutputStyle = OutputStyleNormal);
 function resourceToString(res : TFhirResource; format : TFHIRFormat) : String;
@@ -775,7 +776,10 @@ begin
   else if (pos('@', s) > 0) and ((pos('@', s) < 10)) then
     result := TFHIRTurtleParser
   else
+  begin
     result := nil;
+    raise Exception.Create('Error Message: '+s);
+  end;
 end;
 
 function DetectFormat(bytes : TBytes) : TFHIRParserClass; overload;
@@ -5336,7 +5340,16 @@ function fileToResource(name : String) : TFhirResource;
 var
   format : TFHIRFormat;
 begin
+  format := ffUnspecified;
   result := fileToResource(name, format);
+end;
+
+function bytesToResource(bytes : TBytes) : TFhirResource;
+var
+  format : TFHIRFormat;
+begin
+  format := ffUnspecified;
+  result := bytesToResource(bytes, format);
 end;
 
 function bytesToResource(bytes : TBytes; var format : TFHIRFormat) : TFhirResource;
@@ -5369,7 +5382,9 @@ begin
       format := p.Format;
     end
   else
+  begin
     raise Exception.Create('Format Not supported');
+  end;
   end;
   try
     p.source := stream;

@@ -64,6 +64,7 @@ begin
   try
     bnd.signRef(SignatureTypeAuthor, 'Practitioner/example', ffXml, 'C:\work\fhirserver\tests\signatures\private_key.pem');
     ResourceToFile(bnd, 'c:\temp\signed.xml', ffXml, OutputStylePretty);
+    Assert.IsTrue(bnd <> nil);
   finally
     bnd.Free;
   end;
@@ -84,6 +85,7 @@ begin
   try
     bnd.signRef(SignatureTypeAuthor, 'Practitioner/example', ffJson, 'C:\work\fhirserver\tests\signatures\private_key.pem');
     ResourceToFile(bnd, 'c:\temp\signed.json', ffJson, OutputStylePretty);
+    Assert.IsTrue(bnd <> nil);
   finally
     bnd.Free;
   end;

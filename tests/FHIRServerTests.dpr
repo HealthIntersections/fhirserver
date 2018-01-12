@@ -316,7 +316,14 @@ uses
   FHIRJavascriptTests in '..\Libraries\js\FHIRJavascriptTests.pas',
   FHIRClientJs in '..\Libraries\js\FHIRClientJs.pas',
   ServerEventJs in '..\Server\ServerEventJs.pas',
-  ServerJavascriptHost in '..\Server\ServerJavascriptHost.pas';
+  ServerJavascriptHost in '..\Server\ServerJavascriptHost.pas',
+  JNIWrapper in '..\Libraries\java\JNIWrapper.pas',
+  JNI in '..\Libraries\java\JNI.pas',
+  JUtils in '..\Libraries\java\JUtils.pas',
+  JavaRuntime in '..\Libraries\java\JavaRuntime.pas',
+  JavaBridge in '..\Server\JavaBridge.pas',
+  JavaBridgeTests in 'JavaBridgeTests.pas',
+  myUTF8Strings in '..\Libraries\java\myUTF8Strings.pas';
 
 var
   runner : ITestRunner;

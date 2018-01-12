@@ -813,6 +813,9 @@ Begin
   FActive := active;
   FStartTime := GetTickCount;
   StartServer(active);
+  if ServerContext.JavaServices <> nil then
+    ServerContext.JavaServices.txConnect(Fini.ReadString(voMaybeVersioned, 'Web', 'java-tx', 'http://localhost:'+Fini.ReadString(voMaybeVersioned, 'Web', 'http', '80')+Fini.ReadString(voMaybeVersioned, 'Web', 'base', '/')));
+
   if (active) and (ServerContext.SubscriptionManager <> nil) then
   begin
     FMaintenanceThread := TFhirServerMaintenanceThread.Create(self);
@@ -4600,6 +4603,7 @@ begin
         cs := '$' + request.OperationName
       else
         cs := 'cmd=' + CODES_TFHIRCommandType[request.CommandType];
+      status(atsProcessing, 'Processing');
       logt('Start Task ('+inttostr(key)+'): ' + cs + ', type=' + request.ResourceName + ', id=' + request.id + ', ' + us + ', params=' + request.Parameters.Source);
       op := FServer.ServerContext.Storage.createOperationContext(request.lang);
       try

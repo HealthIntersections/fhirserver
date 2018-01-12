@@ -8953,6 +8953,8 @@ begin
 
         logt('Load Validation Pack from ' + fn);
         ServerContext.ValidatorContext.LoadFromDefinitions(fn);
+        logt('Load in Java');
+        ServerContext.JavaServices.init(fn);
         if ServerContext.forLoad then
         begin
           logt('Load Custom Resources');

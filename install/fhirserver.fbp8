@@ -1018,7 +1018,7 @@ begin
             description = "Set AppVerName in Inno Script"
             id = {E3A38EAF-30F3-4B06-9770-C111B7E0A1E7}
             inifile = C:\\work\\fhirserver\\install\\install64.iss
-            newvalue = 1.0.%BuildCount%
+            newvalue = "Version 1.0.%BuildCount%"
             section = Setup
             valuename = AppVerName
             valuetype = vtString
@@ -1797,7 +1797,7 @@ begin
             description = "Set AppVerName in Inno Script"
             id = {243C561C-5C79-4E75-B512-65C50C8C1CDE}
             inifile = C:\\work\\fhirserver\\install\\install32.iss
-            newvalue = 1.0.%BuildCount%
+            newvalue = "Version 1.0.%BuildCount%"
             section = Setup
             valuename = AppVerName
             valuetype = vtString

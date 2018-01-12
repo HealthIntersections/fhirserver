@@ -21,7 +21,6 @@ Type
     [TearDown] Procedure TearDown;
     [TestCase] Procedure TestPatient;
     [TestCase] Procedure TestPatient2;
-    [TestCase] Procedure TestPatient3;
     [TestCase] Procedure TestObservation;
   End;
 
@@ -127,12 +126,6 @@ begin
   finally
     pat.Free;
   end;
-end;
-
-procedure TFHIRJavascriptTests.TestPatient3;
-begin
-// pat.meta.profile...
-
 end;
 
 procedure TFHIRJavascriptTests.TestObservation;

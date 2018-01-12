@@ -324,7 +324,12 @@ uses
   AdvJavascript in '..\Libraries\js\AdvJavascript.pas',
   FHIRJavascriptReg in '..\reference-platform\r4\FHIRJavascriptReg.pas',
   FHIRClientJs in '..\Libraries\js\FHIRClientJs.pas',
-  ServerEventJs in 'ServerEventJs.pas';
+  ServerEventJs in 'ServerEventJs.pas',
+  JNI in '..\Libraries\java\JNI.pas',
+  JNIWrapper in '..\Libraries\java\JNIWrapper.pas',
+  JavaRuntime in '..\Libraries\java\JavaRuntime.pas',
+  JUtils in '..\Libraries\java\JUtils.pas',
+  myUTF8Strings in '..\Libraries\java\myUTF8Strings.pas';
 
 begin
   logfile := IncludeTrailingPathDelimiter(SystemTemp)+'fhirserver.log';
