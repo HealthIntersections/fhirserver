@@ -159,6 +159,7 @@ begin
     end;
 
     CoInitialize(nil);
+
     if not FindCmdLineSwitch('ini', iniName, true, [clstValueNextParam]) then
       iniName := IncludeTrailingPathDelimiter(ExtractFilePath(ParamStr(0)))+'fhirserver.ini';
 

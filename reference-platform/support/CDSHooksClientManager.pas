@@ -727,6 +727,7 @@ begin
       // nothing. just suppress this
     end;
   finally
+    // todo: detach from Java...
     {$IFDEF MSWINDOWS}
     CoUninitialize;
     {$ENDIF}

@@ -234,7 +234,6 @@ Type
     FHost: String;
     FActualPort: integer;
     FBasePath: String;
-    FXVersionPath : String;
     FActualSSLPort: integer;
     FSecurePath: String;
     FCertFile: String;
@@ -286,7 +285,9 @@ Type
     FIsTerminologyServerOnly: boolean;
     FThreads : TList<TAsyncTaskThread>;
 
-    function readVersion(request: TIdHTTPRequestInfo) : TFHIRVersion;
+    function readVersion(mt : String) : TFHIRVersion;
+    procedure convertFromVersion(stream : TStream; format : TFHIRFormat; version : TFHIRVersion);
+    procedure convertToVersion(stream : TStream; format : TFHIRFormat; version : TFHIRVersion);
     function OAuthPath(secure: boolean): String;
     procedure PopulateConformanceAuth(rest: TFhirCapabilityStatementRest);
     procedure PopulateConformance(sender: TObject; conf: TFhirCapabilityStatement);
@@ -496,7 +497,6 @@ begin
   // web server configuration
   FActualPort := FIni.ReadInteger(voMaybeVersioned, 'web', 'http', 0);
   FBasePath := FIni.ReadString(voMaybeVersioned, 'web', 'base', '');
-  FXVersionPath := FIni.ReadString(voMaybeVersioned, 'web', 'xver', '');
   FActualSSLPort := FIni.ReadInteger(voMaybeVersioned, 'web', 'https', 0);
   FSecurePath := FIni.ReadString(voMaybeVersioned, 'web', 'secure', '');
   FCertFile := FIni.ReadString(voMaybeVersioned, 'web', 'certname', '');
@@ -511,12 +511,6 @@ begin
     FIni.ReadSection(voMaybeVersioned, 'reverse-proxy', ts);
     for s in ts do
       FReverseProxyList.Add(TReverseProxyInfo.Create(s, FIni.ReadString(voMaybeVersioned, 'reverse-proxy', s, '')));
-    if FXVersionPath <> '' then
-    begin
-      FIni.ReadSection(voMaybeVersioned, 'version-proxy', ts);
-      for s in ts do
-        FReverseProxyByVersion.Add(s, TReverseProxyInfo.Create(FXVersionPath, FIni.ReadString(voMaybeVersioned, 'version-proxy', s, '')));
-    end;
   finally
     ts.Free;
   end;
@@ -729,6 +723,8 @@ begin
   end;
   GJsHost.Free;
   GJshost := nil;
+  if ServerContext.JavaServices <> nil then
+    ServerContext.JavaServices.detach;
 {$IFDEF MSWINDOWS}
   CoUninitialize;
 {$ENDIF}
@@ -1229,19 +1225,6 @@ begin
       FCDSHooksServer.HandleRequest(false, FBasePath, Session, AContext, request, response)
     else if request.Document.StartsWith(AppendForwardSlash(FBasePath) + 'websockets', false) then
       HandleWebSockets(AContext, request, response, false, false, FBasePath)
-    else if (FXVersionPath <> '') and (request.Document.StartsWith(FXVersionPath, false)) then
-    begin
-      version := readVersion(request);
-      if version = fhirVersionUnknown then
-         raise EFHIRException.CreateLang('VERSION_MISSING', request.AcceptLanguage);
-//        version := CURRENT_FHIR_VERSION
-      if version = CURRENT_FHIR_VERSION then
-        HandleRequest(AContext, request, response, false, false, FXVersionPath, id, Session, nil)
-      else if FReverseProxyByVersion.TryGetValue(CODES_TFHIRVersion[version], rp) then
-          ReverseProxy(rp, AContext, request, Session, response, false)
-      else
-        raise EFHIRException.CreateLang('VERSION_UNSUPPORTED', 'The version '+CODES_TFHIRVersion[version]+' is not supported');
-    end
     else if request.Document.StartsWith(FBasePath, false) then
       HandleRequest(AContext, request, response, false, false, FBasePath, id, Session, nil)
     else if request.Document.StartsWith(AppendForwardSlash(FBasePath) + 'FSecurePath', false) then
@@ -2428,7 +2411,9 @@ Var
   cursor: integer;
   bundle: TFHIRBundle;
   b : TBytes;
+  inVer : TFHIRVersion;
 Begin
+
   relativeReferenceAdjustment := 0;
   result := nil;
   oRequest := TFHIRRequest.Create(FServerContext.ValidatorContext.link, roRest, FServerContext.Indexes.Compartments.link);
@@ -2460,6 +2445,7 @@ Begin
 
     if (sCommand <> 'GET') then
     begin
+      oRequest.Version := readVersion(sContentType);
       if StringStartsWithInsensitive(sContentType, 'application/x-ndjson') or StringStartsWithInsensitive(sContentType, 'application/fhir+ndjson') then
         oRequest.PostFormat := ffNDJson
       else if StringStartsWithInsensitive(sContentType, 'application/json') or StringStartsWithInsensitive(sContentType, 'application/fhir+json') or
@@ -2481,6 +2467,7 @@ Begin
         sContentType := oRequest.Parameters.GetVar('_format');
     end;
 
+    oResponse.Version := readVersion(sContentAccept);
     if oRequest.Parameters.VarExists('_format') and (oRequest.Parameters.GetVar('_format') <> '') then
       sContentAccept := oRequest.Parameters.GetVar('_format');
     if StringStartsWithInsensitive(sContentAccept, 'application/x-ndjson') or StringStartsWithInsensitive(sContentAccept, 'application/fhir+ndjson') then
@@ -2619,6 +2606,9 @@ Begin
             end
             else if oRequest.CommandType <> fcmdWebUI then
               try
+                if oRequest.Version <> COMPILED_FHIR_VERSION then
+                  convertFromVersion(oPostStream, oRequest.PostFormat, oRequest.Version);
+
                 parser := MakeParser(FServerContext.Validator.Context, lang, oRequest.PostFormat, oPostStream, xppReject);
                 try
                   oRequest.resource := parser.resource.link;
@@ -2879,6 +2869,8 @@ begin
           finally
             oComp.Free;
           end;
+          if oResponse.Version <> COMPILED_FHIR_VERSION then
+            convertToVersion(stream, oResponse.Format, oResponse.Version);
         end;
       end
     end
@@ -3926,6 +3918,38 @@ begin
     result := 'http://localhost:' + inttostr(FActualPort) + FBasePath;
 end;
 
+const
+  JAVA_FORMATS : array [TFHIRFormat] of string = ('', 'XML', 'JSON', 'TURTLE', '', '', '');
+  JAVA_VERSIONS : array [TFHIRVersion] of string = ('', 'r1', 'r2', 'r3', 'r4');
+
+procedure TFhirWebServer.convertFromVersion(stream: TStream; format : TFHIRFormat; version: TFHIRVersion);
+var
+  b : TBytes;
+begin
+  if ServerContext.JavaServices = nil then
+    raise Exception.Create('Version Converion Services are not available');
+
+  b := StreamToBytes(stream);
+  b := ServerContext.JavaServices.convertResource(b, JAVA_FORMATS[format], JAVA_VERSIONS[version]);
+  stream.Size := 0;
+  stream.Write(b[0], length(b));
+  stream.position := 0;
+end;
+
+procedure TFhirWebServer.convertToVersion(stream: TStream; format : TFHIRFormat; version: TFHIRVersion);
+var
+  b : TBytes;
+begin
+  if ServerContext.JavaServices = nil then
+    raise Exception.Create('Version Converion Services are not available');
+
+  b := StreamToBytes(stream);
+  b := ServerContext.JavaServices.uNConvertResource(b, JAVA_FORMATS[format], JAVA_VERSIONS[version]);
+  stream.Size := 0;
+  stream.Write(b[0], length(b));
+  stream.position := 0;
+end;
+
 // procedure TFhirWebServer.ReadTags(Headers: TIdHeaderList; Request: TFHIRRequest);
 // var
 // i : integer;
@@ -3943,68 +3967,51 @@ begin
   // raise Exception.Create('todo');
 end;
 
-function TFhirWebServer.readVersion(request : TIdHTTPRequestInfo): TFHIRVersion;
-  function readVersionFromHeader(tlist : String): TFHIRVersion;
-  var
-    i, s, p, pi,l,r : string;
+
+function TFhirWebServer.readVersion(mt : String): TFHIRVersion;
+var
+  i, s, p, pi,l,r : string;
+begin
+  result := COMPILED_FHIR_VERSION;
+
+  for i in mt.Split([',']) do
   begin
-    result := fhirVersionUnknown;
-    for i in tlist.Split([',']) do
+    s := i.Trim;
+    if s.StartsWith('application/fhir.r') and (s.Length > 18) then
+      case s[19] of
+        '2': exit(fhirVersionRelease2);
+        '3': exit(fhirVersionRelease3);
+        '4': exit(fhirVersionRelease4);
+      end
+    else for p in s.Split([';']) do
     begin
-      s := i.Trim;
-      if s.StartsWith('application/fhir.r') and (s.Length > 18) then
-        case s[19] of
-          '2': exit(fhirVersionRelease2);
-          '3': exit(fhirVersionRelease3);
-          '4': exit(fhirVersionRelease4);
-        end
-      else for p in s.Split([';']) do
+      pi := p.Trim;
+      StringSplit(pi, '=', l, r);
+      if l = 'fhir-version' then
       begin
-        pi := p.Trim;
-        StringSplit(pi, '=', l, r);
-        if l = 'fhir-version' then
-        begin
-          if r = 'r3' then
-            exit(fhirVersionRelease3)
-          else if r = '3.0' then
-            exit(fhirVersionRelease3)
-          else if r = '3.0.1' then
-            exit(fhirVersionRelease3)
-          else if r = 'r2' then
-            exit(fhirVersionRelease2)
-          else if r = '1.0' then
-            exit(fhirVersionRelease2)
-          else if r = '1.0.2' then
-            exit(fhirVersionRelease2)
-          else if r = 'r4' then
-            exit(fhirVersionRelease4)
-          else if r = '3.1' then
-            exit(fhirVersionRelease4)
-          else if r = '3.1.0' then
-            exit(fhirVersionRelease4)
-        end;
+        if r = 'r3' then
+          exit(fhirVersionRelease3)
+        else if r = '3.0' then
+          exit(fhirVersionRelease3)
+        else if r = '3.0.1' then
+          exit(fhirVersionRelease3)
+        else if r = 'r2' then
+          exit(fhirVersionRelease2)
+        else if r = '1.0' then
+          exit(fhirVersionRelease2)
+        else if r = '1.0.2' then
+          exit(fhirVersionRelease2)
+        else if r = 'r4' then
+          exit(fhirVersionRelease4)
+        else if r = '3.2' then
+          exit(fhirVersionRelease4)
+        else if r = '3.2.0' then
+          exit(fhirVersionRelease4)
       end;
     end;
   end;
-var
-  vA, vC : TFHIRVersion;
-begin
-   vA := readVersionFromHeader(request.Accept);
-   if request.ContentType <> '' then
-   begin
-     vC := readVersionFromHeader(request.ContentType);
-     if (va = fhirVersionUnknown) then
-       exit(vC)
-     else if (vC = fhirVersionUnknown) then
-       exit(vA)
-     else if (vA = vC) then
-       exit(vA)
-     else
-       raise EFHIRException.CreateLang('VERSION_HEADER_MISMATCH', request.AcceptLanguage);
-   end
-   else
-     exit(vA);
 end;
+
 
 procedure TFhirWebServer.RecordExchange(req: TFHIRRequest; resp: TFHIRResponse; e: exception);
 var
@@ -4128,7 +4135,6 @@ begin
   s := s.Replace('[%ver%]', FHIR_GENERATED_VERSION, [rfReplaceAll]);
   s := s.Replace('[%path%]', FBasePath, [rfReplaceAll]);
   s := s.Replace('[%spath%]', FSecurePath, [rfReplaceAll]);
-  s := s.Replace('[%xpath%]', FXVersionPath, [rfReplaceAll]);
   s := s.Replace('[%web%]', WebDesc, [rfReplaceAll]);
   s := s.Replace('[%admin%]', FAdminEmail, [rfReplaceAll]);
   if (Session = nil) then
@@ -4444,6 +4450,9 @@ begin
     end;
     GJsHost.Free;
     GJsHost := nil;
+  if FServer.ServerContext.JavaServices <> nil then
+    FServer.ServerContext.JavaServices.detach;
+
 
 {$IFDEF MSWINDOWS}
     CoUninitialize;

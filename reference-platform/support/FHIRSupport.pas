@@ -336,6 +336,7 @@ Type
     FLoadObjects : boolean;
     FGraphQL: TGraphQLPackage;
     FElements: TStringList;
+    FVersion: TFHIRVersion;
     procedure SetResource(const Value: TFhirResource);
     procedure SetSource(const Value: TAdvBuffer);
     procedure SetSession(const Value: TFhirSession);
@@ -459,6 +460,8 @@ Type
     Property patchXml : TMXmlElement read FPatchXml write SetPatchXml;
     property GraphQL : TGraphQLPackage read FGraphQL write SetGraphQL;
 
+    property Version : TFHIRVersion read FVersion write FVersion;
+
     {@member Tags
       Tags on the request - if it's a resource directly
     }
@@ -580,6 +583,7 @@ Type
     FProgress: String;
     FStream : TAdvStream;
     FOnCreateBuilder: TCreateBundleBuilderEvent;
+    FVersion: TFHIRVersion;
 
     procedure SetResource(const Value: TFhirResource);
     function GetBundle: TFhirBundle;
@@ -683,6 +687,7 @@ Type
     }
     property Tags : TFHIRTagList read FTags;
 
+    property Version : TFHIRVersion read FVersion write FVersion;
 
     {@member link_list
       link_list for the response
@@ -1317,6 +1322,7 @@ begin
   FOrigin := origin;
   FCompartmentInformation := compartmentInformation;
   FElements := TStringList.Create;
+  Version := COMPILED_FHIR_VERSION;
 end;
 
 destructor TFHIRRequest.Destroy;
@@ -1573,6 +1579,7 @@ begin
   FTags := TFHIRTagList.create;
   Flink_list := TFhirBundleLinkList.create;
   FCacheControl := cacheNormal;
+  Version := COMPILED_FHIR_VERSION;
 end;
 
 destructor TFHIRResponse.Destroy;

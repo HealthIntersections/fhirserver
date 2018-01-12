@@ -184,6 +184,7 @@ type
     class procedure setBasePath(path: UTF8String);
     class procedure setNeedTools(B: Boolean); // a bit of a hack for use by SmartJC.
     class procedure SetClassicVM(B: Boolean);
+
   end;
 
 function getPackageName(filename: UTF8String): UTF8String;
@@ -632,6 +633,7 @@ begin
   FClasspath.addDir(filename);
 end;
 
+
 function TJavaRuntime.GetClasspath: UTF8String;
 var
   cpath: TClassPath;
@@ -711,6 +713,7 @@ begin
       DLLHandle := 0;
   inherited Destroy;
 end;
+
 
 function TJavaRuntime.FindMSJava: Boolean;
 var
@@ -887,6 +890,7 @@ procedure TJavaRuntime.setVerifyMode(Arg: Integer);
 begin
   FVerifyMode := Arg;
 end;
+
 
 procedure TJavaRuntime.SetCheckSource(Arg: Integer);
 begin

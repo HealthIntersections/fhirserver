@@ -34,6 +34,8 @@ type
     Constructor Create(jarPath : String); virtual;
     Destructor Destroy; override;
 
+    procedure Detach;
+
     procedure init(packPath : String);
     procedure txConnect(txServer : String);
     function status : TJsonObject;
@@ -76,6 +78,7 @@ var
   p : TJavaParams;
   v : jvalue;
 begin
+  Jvm.GetVM.attachThread;
   p := TJavaParams.Create;
   try
     p.addByteArray(convertToJByteArray(source));
@@ -138,10 +141,16 @@ begin
   inherited;
 end;
 
+procedure TJavaLibraryWrapper.Detach;
+begin
+  Jvm.GetVM.detachThread;
+end;
+
 procedure TJavaLibraryWrapper.dropResource(type_, id, url, bver: String);
 var
   p : TJavaParams;
 begin
+  Jvm.GetVM.attachThread;
   p := TJavaParams.Create;
   try
     p.addString(type_);
@@ -160,6 +169,7 @@ var
   p : TJavaParams;
   r : jvalue;
 begin
+  Jvm.GetVM.attachThread;
   p := TJavaParams.Create;
   try
     p.AddString(packPath);
@@ -175,6 +185,7 @@ var
   p : TJavaParams;
   r : jvalue;
 begin
+  Jvm.GetVM.attachThread;
   p := TJavaParams.Create;
   try
     p.AddString(txServer);
@@ -190,6 +201,7 @@ var
   v : jvalue;
   o : TJavaObject;
 begin
+  Jvm.GetVM.attachThread;
   v := JStatus.Call(nil, JLibrary);
   o := TJavaObject.CreateWithHandle(JStringClass, v.l);
   try
@@ -204,6 +216,7 @@ var
   p : TJavaParams;
   v : jvalue;
 begin
+  Jvm.GetVM.attachThread;
   p := TJavaParams.Create;
   try
     p.addByteArray(convertToJByteArray(source));
@@ -224,6 +237,7 @@ var
   jb : TJByteArray;
   v : jvalue;
 begin
+  Jvm.GetVM.attachThread;
   p := TJavaParams.Create;
   try
     p.addString(location);
@@ -247,6 +261,7 @@ var
   b : TBytes;
   jb : TJByteArray;
 begin
+  Jvm.GetVM.attachThread;
   s := TBytesStream.Create();
   try
     xml := TFHIRXmlComposer.Create(nil, OutputStyleNormal, 'en');

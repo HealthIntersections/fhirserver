@@ -82,14 +82,12 @@ type
 
     // IMPORTANT: The following method must be called by native methods
     // that receive a penv argument if they intend to use this unit.
+    // private...
     class procedure setThreadPenv(p: PJNIEnv);
 
-    // This method sets whether you will only be using the JNIWrapper
-    // methods from a single thread of execution. Basically, this
-    // turns off thread-safety in order to obtain better code performance.
-    // Only to be used if you really know what you're doing. Even
-    // then, it's probably rarely worth it.
-    class procedure setSingleThreaded(B: Boolean);
+    function threadAttached : boolean;
+    procedure attachThread;
+    procedure detachThread;
   end; // class TJavaVM
 
   TJavaClass = class;
@@ -309,7 +307,8 @@ begin
   end;
 end;
 
-threadvar penvThread: PJNIEnv;
+threadvar
+  penvThread: PJNIEnv;
 
 var
   penvGlobal: PJNIEnv;
@@ -333,7 +332,7 @@ begin
       penvGlobal := penvThread;
   end;
   if result = Nil then
-    raise EJvmException.Create('No penv pointer is available');
+    raise EJvmException.Create('No penv pointer is available (need to call AttachThread?)');
 end;
 
 constructor TJavaVM.Create(p: PJavaVM);
@@ -347,6 +346,15 @@ begin
   // if pvm <> Nil then
   // CallExit(0);
   inherited Destroy;
+end;
+
+procedure TJavaVM.detachThread;
+begin
+  if threadAttached then
+  begin
+    pvm^.DetachCurrentThread(pvm, @penvThread, nil);
+    penvThread := nil;
+  end;
 end;
 
 procedure TJavaVM.Wait;
@@ -367,11 +375,9 @@ begin
   penvGlobal := p;
 end;
 
-class procedure TJavaVM.setSingleThreaded(B: Boolean);
+function TJavaVM.threadAttached: boolean;
 begin
-  if B then
-    penvGlobal := penvThread;
-  SingleThreaded := B;
+  result := penvThread <> nil;
 end;
 
 class procedure TJavaVM.freeRef(jobj: JObject; isGlobal: Boolean);
@@ -412,6 +418,12 @@ end;
 procedure TJavaVM.clearException;
 begin
   JNIPointer^.ExceptionClear(JNIPointer);
+end;
+
+procedure TJavaVM.attachThread;
+begin
+  if penvThread = nil then
+    pvm^.AttachCurrentThread(pvm, @penvThread, nil);
 end;
 
 class procedure TJavaVM.CallExit(exitCode: Integer);
