@@ -723,8 +723,10 @@ begin
   end;
   GJsHost.Free;
   GJshost := nil;
+  {$IFNDEF FHIR2}
   if ServerContext.JavaServices <> nil then
     ServerContext.JavaServices.detach;
+  {$ENDIF}
 {$IFDEF MSWINDOWS}
   CoUninitialize;
 {$ENDIF}
@@ -809,8 +811,10 @@ Begin
   FActive := active;
   FStartTime := GetTickCount;
   StartServer(active);
+  {$IFNDEF FHIR2}
   if ServerContext.JavaServices <> nil then
     ServerContext.JavaServices.txConnect(Fini.ReadString(voMaybeVersioned, 'Web', 'java-tx', 'http://localhost:'+Fini.ReadString(voMaybeVersioned, 'Web', 'http', '80')+Fini.ReadString(voMaybeVersioned, 'Web', 'base', '/')));
+  {$ENDIF}
 
   if (active) and (ServerContext.SubscriptionManager <> nil) then
   begin
@@ -3918,36 +3922,40 @@ begin
     result := 'http://localhost:' + inttostr(FActualPort) + FBasePath;
 end;
 
-const
-  JAVA_FORMATS : array [TFHIRFormat] of string = ('', 'XML', 'JSON', 'TURTLE', '', '', '');
-  JAVA_VERSIONS : array [TFHIRVersion] of string = ('', 'r1', 'r2', 'r3', 'r4');
-
 procedure TFhirWebServer.convertFromVersion(stream: TStream; format : TFHIRFormat; version: TFHIRVersion);
 var
   b : TBytes;
 begin
+  {$IFDEF FHIR2}
+  raise Exception.Create('Version Conversion Services are not available in R2');
+  {$ELSE}
   if ServerContext.JavaServices = nil then
-    raise Exception.Create('Version Converion Services are not available');
+    raise Exception.Create('Version Conversion Services are not available');
 
   b := StreamToBytes(stream);
-  b := ServerContext.JavaServices.convertResource(b, JAVA_FORMATS[format], JAVA_VERSIONS[version]);
+  b := ServerContext.JavaServices.convertResource(b, format, version);
   stream.Size := 0;
   stream.Write(b[0], length(b));
   stream.position := 0;
+  {$ENDIF}
 end;
 
 procedure TFhirWebServer.convertToVersion(stream: TStream; format : TFHIRFormat; version: TFHIRVersion);
 var
   b : TBytes;
 begin
+  {$IFDEF FHIR2}
+  raise Exception.Create('Version Conversion Services are not available in R2');
+  {$ELSE}
   if ServerContext.JavaServices = nil then
-    raise Exception.Create('Version Converion Services are not available');
+    raise Exception.Create('Version Conversion Services are not available');
 
   b := StreamToBytes(stream);
-  b := ServerContext.JavaServices.uNConvertResource(b, JAVA_FORMATS[format], JAVA_VERSIONS[version]);
+  b := ServerContext.JavaServices.uNConvertResource(b, format, version);
   stream.Size := 0;
   stream.Write(b[0], length(b));
   stream.position := 0;
+  {$ENDIF}
 end;
 
 // procedure TFhirWebServer.ReadTags(Headers: TIdHeaderList; Request: TFHIRRequest);
@@ -4450,8 +4458,10 @@ begin
     end;
     GJsHost.Free;
     GJsHost := nil;
-  if FServer.ServerContext.JavaServices <> nil then
-    FServer.ServerContext.JavaServices.detach;
+    {$IFNDEF FHIR2}
+    if FServer.ServerContext.JavaServices <> nil then
+      FServer.ServerContext.JavaServices.detach;
+    {$ENDIF}
 
 
 {$IFDEF MSWINDOWS}

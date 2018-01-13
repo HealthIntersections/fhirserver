@@ -1,10 +1,9 @@
 ﻿[Setup]
-[Setup]
 ; identification.
 ; AppID can never be changed as subsequent installations require the same installation ID each time
 AppID=FHIRServer
 AppName=Health Intersections FHIR Server
-AppVerName=1.0.199
+AppVerName=Version 1.0.199
 
 ; compilation control
 OutputDir=C:\work\fhirserver\install\build
@@ -88,6 +87,8 @@ Source: "C:\work\fhirserver\Exec\32\FHIRServerUtils.exe";    DestDir: "{app}";  
 
 Source: "C:\work\fhirserver\Exec\fhir.ini";                           DestDir: "{app}";            Flags: ignoreversion onlyifdoesntexist;       DestName: "fhirserver.ini" 
 Source: "C:\work\fhirserver\Libraries\FMM\FastMM_FullDebugMode.dll";  DestDir: "{app}";            Flags: ignoreversion
+Source: "C:\work\fhirserver\Exec\64\ChakraCore.dll";                      DestDir: "{app}";            Flags: ignoreversion
+Source: "C:\work\org.hl7.fhir\build\publish\org.hl7.fhir.validator.jar";  DestDir: "{app}";            Flags: ignoreversion
 
 ; Web resources
 Source: "C:\work\fhirserver\web\*.*"; DestDir: {app}\web; Flags: ignoreversion recursesubdirs
@@ -107,6 +108,7 @@ Source: "C:\work\org.hl7.fhir.us\sdcde\output\examples.json.zip";               
 
 ; R4
 Source: "C:\work\org.hl7.fhir\build\publish\definitions.json.zip";                               DestDir: {app}\web;                                         Components: r4;   Flags: ignoreversion
+Source: "C:\work\org.hl7.fhir\build\publish\definitions.xml.zip";                                DestDir: {app}\web;                                         Components: r4;   Flags: ignoreversion
 Source: "C:\work\org.hl7.fhir\build\publish\examples-json.zip";                                  DestDir: {app}\load;        DestName: fhir.json.zip;        Components: r4;   Flags: ignoreversion
 
 
@@ -174,6 +176,41 @@ var
 
   SctInstallPage : TOutputProgressWizardPage;
   LoadInstallPage : TOutputProgressWizardPage;
+
+// start up check: a jre is required   
+
+function InitializeSetup(): Boolean;
+var
+ ErrorCode: Integer;
+ JavaInstalled : Boolean;
+ ResultMsg : Boolean;
+ Versions: TArrayOfString;
+ I: Integer;
+ regRoot: Integer;
+begin
+  // Check which view of registry should be taken:
+  regRoot := HKLM;
+  if not (RegGetSubkeyNames(regRoot, 'SOFTWARE\JavaSoft\Java Runtime Environment', Versions)) and not (RegGetSubkeyNames(regRoot, 'SOFTWARE\JavaSoft\Java Development Kit', Versions)) then
+    JavaInstalled := false
+  else
+    for I := 0 to GetArrayLength(Versions)-1 do
+      if JavaInstalled = true then
+       //do nothing
+      else if ( Versions[I][2]='.' ) and ( ( StrToInt(Versions[I][1]) > 1 ) or ( ( StrToInt(Versions[I][1]) = 1 ) and ( StrToInt(Versions[I][3]) >= 7 ) ) ) then
+        JavaInstalled := true
+      else
+        JavaInstalled := false;
+ 
+  Result := true;
+  if not JavaInstalled then
+  begin
+    ResultMsg := MsgBox('Oracle Java v1.6 (32bit) or newer not found in the system. Java 1.6 or later is required to run this application (can be installed after this installation too). Do you want to continue?', mbConfirmation, MB_YESNO) = idYes;
+    if ResultMsg = false then
+      Result := false
+    else
+      ShellExec('open', 'http://www.java.com/getjava/', '','',SW_SHOWNORMAL,ewNoWait,ErrorCode);
+  end;
+end;
 
 // ------ Interfaces ---------------------------------------------------------------------------------
 type

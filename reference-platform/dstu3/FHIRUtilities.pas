@@ -1,5 +1,7 @@
 unit FHIRUtilities;
 
+{$I fhir.inc}
+
 {
 Copyright (c) 2011+, HL7 and Health Intersections Pty Ltd (http://www.healthintersections.com.au)
 All rights reserved.
@@ -150,7 +152,8 @@ function CustomResourceNameIsOk(name : String) : boolean;
 function fileToResource(name : String) : TFhirResource; overload;
 function fileToResource(name : String; var format : TFHIRFormat) : TFhirResource; overload;
 function streamToResource(stream : TStream; var format : TFHIRFormat) : TFhirResource;
-function bytesToResource(bytes : TBytes; var format : TFHIRFormat) : TFhirResource;
+function bytesToResource(bytes : TBytes) : TFhirResource; overload;
+function bytesToResource(bytes : TBytes; var format : TFHIRFormat) : TFhirResource; overload;
 procedure resourceToFile(res : TFhirResource; name : String; format : TFHIRFormat; style : TFHIROutputStyle = OutputStyleNormal);
 procedure resourceToStream(res : TFhirResource; stream : TStream; format : TFHIRFormat; style : TFHIROutputStyle = OutputStyleNormal);
 function resourceToString(res : TFhirResource; format : TFHIRFormat; style : TFHIROutputStyle = OutputStyleNormal) : String;
@@ -716,6 +719,7 @@ function gen(obj : TFhirAnnotation) : String; overload;
 function gen(obj : TFhirAttachment) : String; overload;
 function gen(obj : TFhirQuantity) : String; overload;
 function gen(obj : TFhirRange) : String; overload;
+function gen(obj : TFhirDate) : String; overload;
 function gen(obj : TFhirPeriod) : String; overload;
 function gen(obj : TFhirRatio) : String; overload;
 function gen(obj : TFhirSampledData) : String; overload;
@@ -1389,6 +1393,14 @@ begin
     result := ''
   else
     result := gen(obj.start) + ' -> '+gen(obj.end_);
+end;
+
+function gen(obj : TFhirDate) : String;
+begin
+  if obj = nil then
+    result := ''
+  else
+    result := obj.value.toString('c');
 end;
 
 function gen(obj : TFhirRatio) : String;
@@ -3721,6 +3733,8 @@ begin
     result := gen(TFhirContactPoint(t))
   else if t is TFhirTiming then
     result := gen(TFhirTiming(t))
+  else if t is TFhirDate then
+    result := gen(TFhirDate(t))
   else if t is TFhirUsageContext then
     result := gen(TFhirUsageContext(t))
   else if t is TFhirBoolean then
@@ -5559,7 +5573,16 @@ function fileToResource(name : String) : TFhirResource;
 var
   format : TFHIRFormat;
 begin
+  format := ffUnspecified;
   result := fileToResource(name, format);
+end;
+
+function bytesToResource(bytes : TBytes) : TFhirResource;
+var
+  format : TFHIRFormat;
+begin
+  format := ffUnspecified;
+  result := bytesToResource(bytes, format);
 end;
 
 function bytesToResource(bytes : TBytes; var format : TFHIRFormat) : TFhirResource;
@@ -5624,6 +5647,7 @@ begin
   try
     resourceToStream(res, f, format, style);
     result := f.Bytes;
+    SetLength(result, f.size);
   finally
     f.Free;
   end;

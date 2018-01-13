@@ -76,7 +76,7 @@ Type
 
     procedure processCode(doDelete : boolean; list: TFhirValueSetExpansionContainsList; map: TAdvStringObjectMatch; system, version, code, display, definition: string; expansion : TFhirValueSetExpansion; profile : TFhirExpansionProfile; importHash : TStringList);
     procedure addDefinedCode(cs : TFhirCodeSystem; list : TFhirValueSetExpansionContainsList; map : TAdvStringObjectMatch; system : string; c : TFhirCodeSystemConcept; profile : TFhirExpansionProfile; importHash : TStringList);
-    function key(system, code : String): string; overload;
+    function key(system, code, display : String): string; overload;
     function key(c : TFhirValueSetExpansionContains) : string;  overload;
     function chooseDisplay(c: TFhirCodeSystemConcept;  profile: TFHIRExpansionProfile): String; overload;
     function chooseDisplay(c: TFhirValueSetComposeIncludeConcept;  profile: TFHIRExpansionProfile): String; overload;
@@ -284,14 +284,14 @@ begin
   end;
 end;
 
-function TFHIRValueSetExpander.key(system, code : String): string;
+function TFHIRValueSetExpander.key(system, code, display : String): string;
 begin
-  result:= '{'+system+'}'+code;
+  result:= '{'+system+'}'+code+'#1'+display;
 end;
 
 function TFHIRValueSetExpander.key(c: TFhirValueSetExpansionContains): string;
 begin
-  result := key(c.System, c.Code);
+  result := key(c.System, c.Code, c.display);
 end;
 
 procedure TFHIRValueSetExpander.hashImport(hash: TStringList; cc: TFhirValueSetExpansionContains);

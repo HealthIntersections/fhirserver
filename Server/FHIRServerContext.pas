@@ -361,8 +361,8 @@ destructor TFHIRServerContext.Destroy;
 begin
   {$IFNDEF FHIR2}
   FMaps.Free;
-  {$ENDIF}
   FJavaServices.Free;
+  {$ENDIF}
   FEventScriptRegistry.Free;
   FApplicationCache.Free;
   FJWTServices.Free;
@@ -439,12 +439,13 @@ begin
   FClientApplicationVerifier := Value;
 end;
 
-
+{$IFNDEF FHIR2}
 procedure TFHIRServerContext.SetJavaServices(const Value: TJavaLibraryWrapper);
 begin
   FJavaServices.Free;
   FJavaServices := Value;
 end;
+{$ENDIF}
 
 procedure TFHIRServerContext.SetJWTServices(const Value: TJWTServices);
 begin

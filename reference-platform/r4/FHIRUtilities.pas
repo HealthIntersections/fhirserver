@@ -154,7 +154,7 @@ function bytesToResource(bytes : TBytes) : TFhirResource; overload;
 function bytesToResource(bytes : TBytes; var format : TFHIRFormat) : TFhirResource; overload;
 procedure resourceToFile(res : TFhirResource; name : String; format : TFHIRFormat; style : TFHIROutputStyle = OutputStyleNormal);
 procedure resourceToStream(res : TFhirResource; stream : TStream; format : TFHIRFormat; style : TFHIROutputStyle = OutputStyleNormal);
-function resourceToString(res : TFhirResource; format : TFHIRFormat) : String;
+function resourceToString(res : TFhirResource; format : TFHIRFormat; style : TFHIROutputStyle = OutputStyleNormal) : String;
 function resourceToBytes(res : TFhirResource; format : TFHIRFormat; style : TFHIROutputStyle = OutputStyleNormal) : TBytes;
 
 function parseParamsFromForm(stream : TStream) : TFHIRParameters;
@@ -491,7 +491,11 @@ type
     class function Create(aType : TFhirBundleTypeEnum) : TFhirBundle; overload;
     class function wrap(aType : TFhirBundleTypeEnum; resource : TFhirResource) : TFhirBundle; overload;
 
+    function findResource(ref : TFHIRReference) : TFhirResource;
     procedure signRef(code : TSignatureType; whoRef : String; format : TFHIRFormat; cert : String);
+    function signRef2Provenance(code : TSignatureType; whoRef : String; format : TFHIRFormat; cert : String) : TFhirProvenance;
+    function generatePresentation : String;
+    function AsReference : TFHIRDocumentReference;
   end;
 
   TFHIRCodingListHelper = class helper for TFHIRCodingList
@@ -700,6 +704,7 @@ function gen(obj : TFhirAnnotation) : String; overload;
 function gen(obj : TFhirAttachment) : String; overload;
 function gen(obj : TFhirQuantity) : String; overload;
 function gen(obj : TFhirRange) : String; overload;
+function gen(obj : TFhirDate) : String; overload;
 function gen(obj : TFhirPeriod) : String; overload;
 function gen(obj : TFhirRatio) : String; overload;
 function gen(obj : TFhirSampledData) : String; overload;
@@ -776,10 +781,7 @@ begin
   else if (pos('@', s) > 0) and ((pos('@', s) < 10)) then
     result := TFHIRTurtleParser
   else
-  begin
     result := nil;
-    raise Exception.Create('Error Message: '+s);
-  end;
 end;
 
 function DetectFormat(bytes : TBytes) : TFHIRParserClass; overload;
@@ -1359,6 +1361,14 @@ begin
     result := ''
   else
     result := gen(obj.start) + ' -> '+gen(obj.end_);
+end;
+
+function gen(obj : TFhirDate) : String;
+begin
+  if obj = nil then
+    result := ''
+  else
+    result := obj.value.toString('c');
 end;
 
 function gen(obj : TFhirRatio) : String;
@@ -2754,6 +2764,30 @@ end;
 
 { TFHIRBundleHelper }
 
+function TFHIRBundleHelper.AsReference: TFHIRDocumentReference;
+var
+  cmp : TFHIRComposition;
+begin
+  if type_ <> BundleTypeDocument then
+    raise Exception.Create('Cannot create a reference for something that is not a document');
+  cmp := entryList[0].resource as TFhirComposition;
+  result := TFHIRDocumentReference.create;
+  try
+    result.identifierList.Add(identifier.Link);
+    result.status := DocumentReferenceStatusCurrent;
+    result.docStatus := cmp.status;
+    result.identifierList.Add(cmp.identifier.Link);
+    result.class_ := cmp.class_.Link;
+    result.type_ := cmp.type_.Link;
+    result.subject := cmp.subject.Link;
+    result.created := cmp.date;
+    result.date := TDateTimeEx.makeUTC;
+    result.Link;
+  finally
+    result.free;
+  end;
+end;
+
 class function TFHIRBundleHelper.Create(aType: TFhirBundleTypeEnum): TFhirBundle;
 begin
   result := TFhirBundle.Create;
@@ -2767,6 +2801,81 @@ begin
   for i := entryList.Count -1 downto 0 do
     if entryList[i].resource = resource then
       entrylist.DeleteByIndex(i);
+end;
+
+function TFHIRBundleHelper.findResource(ref: TFHIRReference): TFhirResource;
+var
+  be : TFhirBundleEntry;
+  r : String;
+begin
+  r := ref.reference;
+  result := nil;
+  for be in entryList do
+  begin
+    if (be.resource <> nil) then
+    begin
+      if be.fullUrl = r then
+        exit(be.resource);
+      if be.resource.fhirType+'/'+be.resource.id = r then
+        exit(be.resource);
+    end;
+  end;
+end;
+
+function TFHIRBundleHelper.generatePresentation: String;
+var
+  b : TStringBuilder;
+  procedure addNarrative(br : boolean; n : TFhirNarrative);
+  begin
+    if br then
+      b.Append('<br/>'+#13#10);
+    b.Append(TFHIRXhtmlParser.compose(n.div_));
+  end;
+  procedure processSection(section : TFhirCompositionSection);
+  var
+    child : TFhirCompositionSection;
+  begin
+    b.Append('<br/>'+#13#10);
+    if section.text <> nil then
+      b.Append(TFHIRXhtmlParser.compose(section.text.div_));
+    for child in section.sectionList do
+      processSection(child);
+  end;
+var
+  cmp : TFHIRComposition;
+  sbj : TFhirDomainResource;
+  section : TFhirCompositionSection;
+begin
+  if type_ = BundleTypeDocument then
+  begin
+    cmp := entryList[0].resource as TFhirComposition;
+    b := TStringBuilder.Create;
+    try
+      // header
+      b.append(
+        '<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">'+#13#10+
+        '<head>'+#13#10+
+        '  <meta charset="utf-8" http-equiv="X-UA-Compatible" content="IE=edge" />'+#13#10+
+        '  <title>'+cmp.title+'</title>'+#13#10+
+        '</head>'+#13#10+
+        '<body>'+#13#10);
+      sbj := findResource(cmp.subject) as TFhirDomainResource;
+      addNarrative(false, sbj.text);
+      addNarrative(true, cmp.text);
+      for section in cmp.sectionList do
+        processSection(section);
+      // foooter
+      b.append(
+        '</body>'+#13#10+
+        '</html>'+#13#10);
+
+      result := b.tostring;
+    finally
+      b.free;
+    end;
+  end
+  else
+    result := 'not a document';
 end;
 
 function TFHIRBundleHelper.GetLinks(s: string): String;
@@ -2818,6 +2927,69 @@ begin
       end
   else
     raise Exception.Create('The format '+CODES_TFHIRFormat[format]+' is not supported for digital signatures');
+  end;
+end;
+
+function TFHIRBundleHelper.signRef2Provenance(code: TSignatureType; whoRef: String; format: TFHIRFormat; cert: String): TFhirProvenance;
+var
+  c : TFHIRCoding;
+  dig : TDigitalSigner;
+  src : TBytes;
+  sig : TFHIRSignature;
+  cmp : TFHIRComposition;
+begin
+  if type_ = BundleTypeDocument then
+    cmp := entryList[0].resource as TFhirComposition
+  else
+    cmp.Free;
+
+  result := TFhirProvenance.Create;
+  try
+    // first. populate the signature
+    sig := result.signatureList.Append;
+    c := sig.type_List.Append;
+    c.system := 'urn:iso-astm:E1762-95:2013';
+    c.code := CODES_TSignatureType[code];
+    sig.when := TDateTimeEx.makeUTC;
+    sig.who := TFhirReference.Create(whoRef);
+    case format of
+      ffXml:
+        begin
+        sig.sigFormat := 'application/signature+xml';
+        src := resourceToBytes(self, ffXml, OutputStyleCanonical);
+        dig := TDigitalSigner.Create;
+        try
+          dig.PrivateKey := cert;
+          sig.blob := dig.signDetached(src, '', sdXmlRSASha256, 'http://hl7.org/fhir/canonicalization/xml#bundle', true);
+        finally
+          dig.free;
+        end;
+        end;
+      ffJson :
+        begin
+        sig.sigFormat := 'application/jose';
+        src := resourceToBytes(self, ffJson, OutputStyleCanonical);
+        BytesToFile(src, 'c:\temp\can.json');
+        sig.blob := TJWTUtils.Sign_Hmac_RSA256(src, cert, '');
+        end
+    else
+      raise Exception.Create('The format '+CODES_TFHIRFormat[format]+' is not supported for digital signatures');
+    end;
+    // fill out other stuff on provenance
+    result.occurred := TFhirPeriod.Create;
+    TFhirPeriod(result.occurred).start := cmp.date;
+    TFhirPeriod(result.occurred).end_ := cmp.date;
+    result.recorded := TDateTimeEx.makeUTC;
+    with result.agentList.Append do
+    begin
+      c := roleList.Append.codingList.Append;
+      c.system := 'urn:iso-astm:E1762-95:2013';
+      c.code := CODES_TSignatureType[code];
+      who := TFhirReference.Create(whoRef);
+    end;
+    result.link;
+  finally
+    result.free;
   end;
 end;
 
@@ -3529,6 +3701,8 @@ begin
     result := gen(TFhirContactPoint(t))
   else if t is TFhirTiming then
     result := gen(TFhirTiming(t))
+  else if t is TFhirDate then
+    result := gen(TFhirDate(t))
   else if t is TFhirUsageContext then
     result := gen(TFhirUsageContext(t))
   else if t is TFhirBoolean then
@@ -5382,9 +5556,7 @@ begin
       format := p.Format;
     end
   else
-  begin
     raise Exception.Create('Format Not supported');
-  end;
   end;
   try
     p.source := stream;
@@ -5395,13 +5567,13 @@ begin
   end;
 end;
 
-function resourceToString(res : TFhirResource; format : TFHIRFormat) : String;
+function resourceToString(res : TFhirResource; format : TFHIRFormat; style : TFHIROutputStyle = OutputStyleNormal) : String;
 var
   f : TStringStream;
 begin
   f := TStringStream.Create('', TEncoding.UTF8);
   try
-    resourceToStream(res, f, format);
+    resourceToStream(res, f, format, style);
     result := f.DataString;
   finally
     f.Free;
@@ -5416,6 +5588,7 @@ begin
   try
     resourceToStream(res, f, format, style);
     result := f.Bytes;
+    SetLength(result, f.size);
   finally
     f.Free;
   end;

@@ -8,6 +8,7 @@ uses
   AdvObjects, AdvJson,
   FHIRBase, FHIRResources, FHIRParser, FHIRUtilities;
 
+
 type
   TJByteArray = TDshortintArray; //array of jbyte;
 
@@ -40,16 +41,21 @@ type
     procedure txConnect(txServer : String);
     function status : TJsonObject;
 
-    procedure seeResource(r : TFHIRResource);
-    procedure dropResource(type_, id, url, bver : String);
+    procedure seeResource(r : TFHIRResource; src : TBytes);
+    procedure dropResource(type_, id : String);
 
-    function validateResource(location : String; source : TBytes; format : String) : TFHIROperationOutcome;
+    function validateResource(location : String; source : TBytes; format : TFHIRFormat; options : String) : TFHIROperationOutcome; overload;
+    function validateResource(location : String; res : TFHIRResource; options : String) : TFHIROperationOutcome; overload;
 
-    function convertResource(source : TBytes; fmt, version : String) : TBytes;
-    function unConvertResource(source : TBytes; fmt, version : String) : TBytes;
+    function convertResource(source : TBytes; fmt : TFHIRFormat; version : TFHIRVersion) : TBytes;
+    function unConvertResource(source : TBytes; fmt : TFHIRFormat; version : TFHIRVersion) : TBytes;
   end;
 
 implementation
+
+const
+  JAVA_FORMATS : array [TFHIRFormat] of string = ('', 'XML', 'JSON', 'TURTLE', '', '', '');
+  JAVA_VERSIONS : array [TFHIRVersion] of string = ('', 'r1', 'r2', 'r3', 'r4');
 
 { TJavaLibraryWrapper }
 
@@ -73,7 +79,7 @@ begin
   end;
 end;
 
-function TJavaLibraryWrapper.convertResource(source: TBytes; fmt, version: String): TBytes;
+function TJavaLibraryWrapper.convertResource(source: TBytes; fmt : TFHIRFormat; version : TFHIRVersion) : TBytes;
 var
   p : TJavaParams;
   v : jvalue;
@@ -82,8 +88,8 @@ begin
   p := TJavaParams.Create;
   try
     p.addByteArray(convertToJByteArray(source));
-    p.addString(fmt);
-    p.addString(version);
+    p.addString(JAVA_FORMATS[fmt]);
+    p.addString(JAVA_VERSIONS[version]);
     v := JConvert.Call(p, JLibrary);
   finally
     p.Free;
@@ -116,8 +122,8 @@ begin
   JTxConnect := TJavaMethod.Create(JLibraryClass, 'connectToTxSvc', nonstatic, Void, [AString]);
   JStatus := TJavaMethod.Create(JLibraryClass, 'status', nonstatic, AString, []);
   JSeeResource := TJavaMethod.Create(JLibraryClass, 'seeResource', nonstatic, Void, [AByteArray]);
-  JDropResource := TJavaMethod.Create(JLibraryClass, 'dropResource', nonstatic, Void, [AString, AString, AString, AString]);
-  JValidate := TJavaMethod.Create(JLibraryClass, 'validateResource', nonstatic, AByteArray, [AString, AByteArray, AString]);
+  JDropResource := TJavaMethod.Create(JLibraryClass, 'dropResource', nonstatic, Void, [AString, AString]);
+  JValidate := TJavaMethod.Create(JLibraryClass, 'validateResource', nonstatic, AByteArray, [AString, AByteArray, AString, AString]);
   JConvert := TJavaMethod.Create(JLibraryClass, 'convertResource', nonstatic, AByteArray, [AByteArray, AString, AString]);
   JUnConvert := TJavaMethod.Create(JLibraryClass, 'unConvertResource', nonstatic, AByteArray, [AByteArray, AString, AString]);
 end;
@@ -146,7 +152,7 @@ begin
   Jvm.GetVM.detachThread;
 end;
 
-procedure TJavaLibraryWrapper.dropResource(type_, id, url, bver: String);
+procedure TJavaLibraryWrapper.dropResource(type_, id: String);
 var
   p : TJavaParams;
 begin
@@ -155,8 +161,6 @@ begin
   try
     p.addString(type_);
     p.addString(id);
-    p.addString(url);
-    p.addString(bver);
     JDropResource.Call(p, JLibrary);
   finally
     p.Free;
@@ -211,7 +215,7 @@ begin
   end;
 end;
 
-function TJavaLibraryWrapper.unConvertResource(source: TBytes; fmt, version: String): TBytes;
+function TJavaLibraryWrapper.unConvertResource(source: TBytes; fmt : TFHIRFormat; version : TFHIRVersion) : TBytes;
 var
   p : TJavaParams;
   v : jvalue;
@@ -220,8 +224,8 @@ begin
   p := TJavaParams.Create;
   try
     p.addByteArray(convertToJByteArray(source));
-    p.addString(fmt);
-    p.addString(version);
+    p.addString(JAVA_FORMATS[fmt]);
+    p.addString(JAVA_VERSIONS[version]);
     v := JUnConvert.Call(p, JLibrary);
   finally
     p.Free;
@@ -230,7 +234,12 @@ begin
   result := convertFromJByteArray(JbyteArrayToDshortintArray(v.l));
 end;
 
-function TJavaLibraryWrapper.validateResource(location: String; source: TBytes; format: String): TFHIROperationOutcome;
+function TJavaLibraryWrapper.validateResource(location: String; res: TFHIRResource; options: String): TFHIROperationOutcome;
+begin
+  result := validateResource(location, resourceToBytes(res, ffXml), ffXml, options);
+end;
+
+function TJavaLibraryWrapper.validateResource(location: String; source: TBytes; format : TFHIRFormat; options: String): TFHIROperationOutcome;
 var
   p : TJavaParams;
   b : TBytes;
@@ -242,7 +251,8 @@ begin
   try
     p.addString(location);
     p.addByteArray(convertToJByteArray(source));
-    p.addString(format);
+    p.addString(JAVA_FORMATS[format]);
+    p.addString(options);
     v := JValidate.Call(p, JLibrary);
   finally
     p.Free;
@@ -253,37 +263,39 @@ begin
   result := bytesToResource(b) as TFHIROperationOutcome;
 end;
 
-procedure TJavaLibraryWrapper.seeResource(r: TFHIRResource);
+procedure TJavaLibraryWrapper.seeResource(r: TFHIRResource; src : TBytes);
 var
   xml : TFHIRXmlComposer;
   s : TBytesStream;
   p : TJavaParams;
-  b : TBytes;
   jb : TJByteArray;
 begin
   Jvm.GetVM.attachThread;
-  s := TBytesStream.Create();
-  try
-    xml := TFHIRXmlComposer.Create(nil, OutputStyleNormal, 'en');
+  if length(src) = 0 then
+  begin
+    s := TBytesStream.Create();
     try
-      xml.Compose(s, r);
+      xml := TFHIRXmlComposer.Create(nil, OutputStyleNormal, 'en');
+      try
+        xml.Compose(s, r);
+      finally
+        xml.Free;
+      end;
+      src := s.Bytes;
+      setLength(src, s.Size);
     finally
-      xml.Free;
+      s.Free;
     end;
-    b := s.Bytes;
-    setLength(b, s.Size);
-    jb := convertToJByteArray(b);
-    p := TJavaParams.Create;
-    try
-      p.addByteArray(jb);
-      JSeeResource.Call(p, JLibrary);
-    finally
-      p.Free;
-    end;
-    checkException;
-  finally
-    s.Free;
   end;
+  jb := convertToJByteArray(src);
+  p := TJavaParams.Create;
+  try
+    p.addByteArray(jb);
+    JSeeResource.Call(p, JLibrary);
+  finally
+    p.Free;
+  end;
+  checkException;
 end;
 
 //function TJavaLibraryWrapper.unConvertResource(r: TBytes;

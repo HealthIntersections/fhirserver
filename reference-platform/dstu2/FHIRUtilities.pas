@@ -38,7 +38,8 @@ This is the dstu2 version of the FHIR code
 interface
 
 uses
-  Windows, SysUtils, Classes, Soap.EncdDecd, Generics.Collections,
+  {$IFDEF MSWINDOWS} Windows, {$ENDIF}
+  SysUtils, Classes, Soap.EncdDecd, Generics.Collections,
 
   StringSupport, GuidSupport, DateSupport, BytesSupport, OidSupport, EncodeSupport, DecimalSupport, ParseMap,
   AdvObjects, AdvStringBuilders, AdvGenerics,   AdvStreams,  ADvVclStreams, AdvBuffers, AdvMemories, AdvJson,
@@ -145,13 +146,15 @@ function ComposeJson(worker: TFHIRWorkerContext; r : TFhirResource) : String; ov
 Function removeCaseAndAccents(s : String) : String;
 
 function CustomResourceNameIsOk(name : String) : boolean;
-function fileToResource(name : String; var format : TFHIRFormat) : TFhirResource;
+function fileToResource(name : String) : TFhirResource; overload;
+function fileToResource(name : String; var format : TFHIRFormat) : TFhirResource; overload;
 function streamToResource(stream : TStream; var format : TFHIRFormat) : TFhirResource;
-function bytesToResource(bytes : TBytes; var format : TFHIRFormat) : TFhirResource;
-procedure resourceToFile(res : TFhirResource; name : String; format : TFHIRFormat);
+function bytesToResource(bytes : TBytes) : TFhirResource; overload;
+function bytesToResource(bytes : TBytes; var format : TFHIRFormat) : TFhirResource; overload;
+procedure resourceToFile(res : TFhirResource; name : String; format : TFHIRFormat; style : TFHIROutputStyle = OutputStyleNormal);
 procedure resourceToStream(res : TFhirResource; stream : TStream; format : TFHIRFormat; style : TFHIROutputStyle = OutputStyleNormal);
-function resourceToString(res : TFhirResource; format : TFHIRFormat) : String;
-function resourceToBytes(res : TFhirResource; format : TFHIRFormat) : TBytes;
+function resourceToString(res : TFhirResource; format : TFHIRFormat; style : TFHIROutputStyle = OutputStyleNormal) : String;
+function resourceToBytes(res : TFhirResource; format : TFHIRFormat; style : TFHIROutputStyle = OutputStyleNormal) : TBytes;
 
 function parseParamsFromForm(stream : TStream) : TFHIRParameters;
 
@@ -481,6 +484,8 @@ type
     procedure deleteEntry(resource : TFHIRResource);
     class function Create(aType : TFhirBundleTypeEnum) : TFhirBundle; overload;
     class function wrap(aType : TFhirBundleTypeEnum; resource : TFhirResource) : TFhirBundle; overload;
+    function findResource(ref : TFHIRReference) : TFhirResource;
+    function generatePresentation : String;
   end;
 
   TFHIRCodingListHelper = class helper for TFHIRCodingList
@@ -688,7 +693,7 @@ function gen(obj : TFhirRatio) : String; overload;
 function gen(obj : TFhirSampledData) : String; overload;
 function gen(obj : TFhirSignature) : String; overload;
 function gen(obj : TFhirAddress) : String; overload;
-function gen(obj : TFhirContactPoint) : String; overload;
+function gen(obj : TFhirContactPoint; hideType : boolean = false) : String; overload;
 function gen(obj : TFhirTiming) : String; overload;
 
 function gen(t : TFhirType):String; overload;
@@ -697,6 +702,12 @@ function compareValues(e1, e2 : TFHIRObjectList; allowNull : boolean) : boolean;
 function compareValues(e1, e2 : TFHIRPrimitiveType; allowNull : boolean) : boolean; overload;
 function compareValues(e1, e2 : TFHIRXhtmlNode; allowNull : boolean) : boolean; overload;
 function hasProp(props : TList<String>; name : String; def : boolean) : boolean;
+
+type
+  TResourceIteratorProcedure = reference to procedure (node : TFHIRObject);
+
+procedure iterateResource(resource : TFHIRResource; proc : TResourceIteratorProcedure);
+procedure iterateObject(obj : TFHIRObject; proc : TResourceIteratorProcedure);
 
 implementation
 
@@ -1384,10 +1395,12 @@ begin
   end;
 end;
 
-function gen(obj : TFhirContactPoint) : String;
+function gen(obj : TFhirContactPoint; hideType : boolean = false) : String;
 begin
   if (obj = nil) then
     result := ''
+  else if not hideType then
+    result := obj.value
   else
     result := CODES_TFhirContactPointSystemEnum[obj.system]+': '+obj.value;
 end;
@@ -2690,6 +2703,7 @@ end;
 
 { TFHIRBundleHelper }
 
+
 class function TFHIRBundleHelper.Create(aType: TFhirBundleTypeEnum): TFhirBundle;
 begin
   result := TFhirBundle.Create;
@@ -2703,6 +2717,81 @@ begin
   for i := entryList.Count -1 downto 0 do
     if entryList[i].resource = resource then
       entrylist.DeleteByIndex(i);
+end;
+
+function TFHIRBundleHelper.findResource(ref: TFHIRReference): TFhirResource;
+var
+  be : TFhirBundleEntry;
+  r : String;
+begin
+  r := ref.reference;
+  result := nil;
+  for be in entryList do
+  begin
+    if (be.resource <> nil) then
+    begin
+      if be.fullUrl = r then
+        exit(be.resource);
+      if be.resource.fhirType+'/'+be.resource.id = r then
+        exit(be.resource);
+    end;
+  end;
+end;
+
+function TFHIRBundleHelper.generatePresentation: String;
+var
+  b : TStringBuilder;
+  procedure addNarrative(br : boolean; n : TFhirNarrative);
+  begin
+    if br then
+      b.Append('<br/>'+#13#10);
+    b.Append(TFHIRXhtmlParser.compose(n.div_));
+  end;
+  procedure processSection(section : TFhirCompositionSection);
+  var
+    child : TFhirCompositionSection;
+  begin
+    b.Append('<br/>'+#13#10);
+    if section.text <> nil then
+      b.Append(TFHIRXhtmlParser.compose(section.text.div_));
+    for child in section.sectionList do
+      processSection(child);
+  end;
+var
+  cmp : TFHIRComposition;
+  sbj : TFhirDomainResource;
+  section : TFhirCompositionSection;
+begin
+  if type_ = BundleTypeDocument then
+  begin
+    cmp := entryList[0].resource as TFhirComposition;
+    b := TStringBuilder.Create;
+    try
+      // header
+      b.append(
+        '<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">'+#13#10+
+        '<head>'+#13#10+
+        '  <meta charset="utf-8" http-equiv="X-UA-Compatible" content="IE=edge" />'+#13#10+
+        '  <title>'+cmp.title+'</title>'+#13#10+
+        '</head>'+#13#10+
+        '<body>'+#13#10);
+      sbj := findResource(cmp.subject) as TFhirDomainResource;
+      addNarrative(false, sbj.text);
+      addNarrative(true, cmp.text);
+      for section in cmp.sectionList do
+        processSection(section);
+      // foooter
+      b.append(
+        '</body>'+#13#10+
+        '</html>'+#13#10);
+
+      result := b.tostring;
+    finally
+      b.free;
+    end;
+  end
+  else
+    result := 'not a document';
 end;
 
 function TFHIRBundleHelper.GetLinks(s: string): String;
@@ -3390,10 +3479,9 @@ var
 begin
   b := TAdvStringBuilder.Create;
   try
-    if codeSystem <> nil then
-      b.Append(csName(codeSystem.system));
     if (compose <> nil) then
       for comp in compose.includeList do
+        if comp.system <> '' then
         b.Append(csName(comp.system));
     result := b.AsString;
   finally
@@ -5067,6 +5155,22 @@ begin
   end;
 end;
 
+function fileToResource(name : String) : TFhirResource;
+var
+  format : TFHIRFormat;
+begin
+  format := ffUnspecified;
+  result := fileToResource(name, format);
+end;
+
+function bytesToResource(bytes : TBytes) : TFhirResource;
+var
+  format : TFHIRFormat;
+begin
+  format := ffUnspecified;
+  result := bytesToResource(bytes, format);
+end;
+
 function bytesToResource(bytes : TBytes; var format : TFHIRFormat) : TFhirResource;
 var
   b : TBytesStream;
@@ -5107,26 +5211,26 @@ begin
   end;
 end;
 
-function resourceToString(res : TFhirResource; format : TFHIRFormat) : String;
+function resourceToString(res : TFhirResource; format : TFHIRFormat; style : TFHIROutputStyle = OutputStyleNormal) : String;
 var
   f : TStringStream;
 begin
   f := TStringStream.Create('', TEncoding.UTF8);
   try
-    resourceToStream(res, f, format);
+    resourceToStream(res, f, format, style);
     result := f.DataString;
   finally
     f.Free;
   end;
 end;
 
-function resourceToBytes(res : TFhirResource; format : TFHIRFormat) : TBytes;
+function resourceToBytes(res : TFhirResource; format : TFHIRFormat; style : TFHIROutputStyle = OutputStyleNormal) : TBytes;
 var
   f : TBytesStream;
 begin
   f := TBytesStream.Create();
   try
-    resourceToStream(res, f, format);
+    resourceToStream(res, f, format, style);
     result := f.Bytes;
   finally
     f.Free;
@@ -5134,13 +5238,13 @@ begin
 end;
 
 
-procedure resourceToFile(res : TFhirResource; name : String; format : TFHIRFormat);
+procedure resourceToFile(res : TFhirResource; name : String; format : TFHIRFormat; style : TFHIROutputStyle = OutputStyleNormal);
 var
   f : TFileStream;
 begin
   f := TFileStream.Create(name, fmCreate);
   try
-    resourceToStream(res, f, format);
+    resourceToStream(res, f, format, style);
   finally
     f.Free;
   end;
@@ -5442,4 +5546,28 @@ begin
     end_ := TDateTimeEx.makeNull;
 end;
 
+procedure iterateResource(resource : TFHIRResource; proc : TResourceIteratorProcedure);
+begin
+  iterateObject(resource, proc);
+end;
+
+procedure iterateObject(obj : TFHIRObject; proc : TResourceIteratorProcedure);
+var
+  child : TFHIRObject;
+  pl : TFHIRPropertyList;
+  p : TFHIRProperty;
+begin
+  proc(obj);
+  if not obj.isPrimitive then
+  begin
+    pl := obj.createPropertyList(true);
+    try
+      for p in pl do
+        for child in p.Values do
+          iterateObject(child, proc);
+    finally
+      pl.Free;
+    end;
+  end;
+end;
 end.

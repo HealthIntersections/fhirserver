@@ -399,6 +399,11 @@
         <DCCReference Include="..\Libraries\js\Javascript.pas"/>
         <DCCReference Include="..\Libraries\js\ChakraCommon.pas"/>
         <DCCReference Include="..\Libraries\js\FHIRClientJs.pas"/>
+        <DCCReference Include="..\Libraries\java\JNI.pas"/>
+        <DCCReference Include="..\Libraries\java\JNIWrapper.pas"/>
+        <DCCReference Include="..\Libraries\java\JavaRuntime.pas"/>
+        <DCCReference Include="..\Libraries\java\JUtils.pas"/>
+        <DCCReference Include="..\Libraries\java\myUTF8Strings.pas"/>
         <None Include="..\reference-platform\r4\fhirtests4.dpr"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>

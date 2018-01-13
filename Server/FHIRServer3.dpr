@@ -338,7 +338,12 @@ uses
   ServerEventJs in 'ServerEventJs.pas',
   Javascript in '..\Libraries\js\Javascript.pas',
   ChakraCommon in '..\Libraries\js\ChakraCommon.pas',
-  FHIRClientJs in '..\Libraries\js\FHIRClientJs.pas';
+  FHIRClientJs in '..\Libraries\js\FHIRClientJs.pas',
+  JNI in '..\Libraries\java\JNI.pas',
+  JNIWrapper in '..\Libraries\java\JNIWrapper.pas',
+  JavaRuntime in '..\Libraries\java\JavaRuntime.pas',
+  JUtils in '..\Libraries\java\JUtils.pas',
+  myUTF8Strings in '..\Libraries\java\myUTF8Strings.pas';
 
 begin
   logfile := IncludeTrailingPathDelimiter(SystemTemp)+'fhirserver.log';

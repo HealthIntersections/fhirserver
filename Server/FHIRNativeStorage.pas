@@ -699,7 +699,7 @@ type
     procedure RegisterTag(tag: TFHIRTag; conn: TKDBConnection); overload;
     procedure RegisterTag(tag: TFHIRTag); overload;
     procedure checkProposedResource(session : TFhirSession; needsSecure, created : boolean; request : TFHIRRequest; resource : TFhirResource; tags : TFHIRTagList);
-    procedure SeeResource(key, vkey, pvkey: integer; id: string; needsSecure, created : boolean; resource: TFhirResource; conn: TKDBConnection; reload: Boolean; session: TFhirSession);
+    procedure SeeResource(key, vkey, pvkey: integer; id: string; needsSecure, created : boolean; resource: TFhirResource; conn: TKDBConnection; reload: Boolean; session: TFhirSession; src : TBytes);
     procedure checkDropResource(session : TFhirSession; request : TFHIRRequest; resource : TFhirResource; tags : TFHIRTagList);
     procedure DropResource(key, vkey, pvkey: integer; id, resource: string; indexer: TFhirIndexManager; conn: TKDBConnection);
     procedure RegisterConsentRecord(session: TFhirSession); override;
@@ -1056,6 +1056,7 @@ var
   ok : boolean;
   needSecure : boolean;
   list : TMatchingResourceList;
+  src : Tbytes;
 begin
   key := 0;
   CheckCreateNarrative(request);
@@ -1177,7 +1178,8 @@ begin
             FConnection.BindInteger('f', 2);
             FConnection.BindBlob('tb', tags.json);
             FConnection.BindIntegerFromBoolean('ft', tags.hasTestingTag);
-            FConnection.BindBlob('xc', EncodeResource(request.Resource, true, soFull));
+            src := EncodeResource(request.Resource, true, soFull);
+            FConnection.BindBlob('xc', src);
             FConnection.BindBlob('jc', EncodeResource(request.Resource, false, soFull));
             if key = 187 then
               BytesToFile(EncodeResource(request.Resource, false, soFull), 'c:\temp\json\fr-i-'+inttostr(key)+'.json');
@@ -1196,7 +1198,7 @@ begin
 
           CreateIndexer;
           CheckCompartments(FIndexer.execute(resourceKey, sId, request.resource, tags), request.SessionCompartments);
-          FRepository.SeeResource(resourceKey, key, 0, sId, needSecure, true, request.Resource, FConnection, false, request.Session);
+          FRepository.SeeResource(resourceKey, key, 0, sId, needSecure, true, request.Resource, FConnection, false, request.Session, src);
           if request.resourceEnum = frtPatient then
             FConnection.execSQL('update Compartments set CompartmentKey = '+inttostr(resourceKey)+' where Id = '''+sid+''' and CompartmentKey is null');
           response.HTTPCode := 201;
@@ -2372,6 +2374,7 @@ var
   ok : boolean;
   needSecure : boolean;
   list : TMatchingResourceList;
+  src : TBytes;
 begin
   CheckCreateNarrative(request);
 
@@ -2509,7 +2512,8 @@ begin
             FConnection.BindInteger('f', 2);
             FConnection.BindIntegerFromBoolean('ft', tags.hasTestingTag);
             FConnection.BindBlob('tb', tags.json);
-            FConnection.BindBlob('xc', EncodeResource(request.Resource, true, soFull));
+            src := EncodeResource(request.Resource, true, soFull);
+            FConnection.BindBlob('xc', src);
             FConnection.BindBlob('jc', EncodeResource(request.Resource, false, soFull));
             markSubsetted(request.Resource.meta);
             FConnection.BindBlob('xs', EncodeResource(request.Resource, true, soSummary));
@@ -2523,7 +2527,7 @@ begin
           CommitTags(tags, key);
           CreateIndexer;
           FIndexer.execute(resourceKey, request.id, request.resource, tags);
-          FRepository.SeeResource(resourceKey, key, versionKey, request.id, needSecure, false, request.Resource, FConnection, false, request.Session);
+          FRepository.SeeResource(resourceKey, key, versionKey, request.id, needSecure, false, request.Resource, FConnection, false, request.Session, src);
           if ((request.ResourceEnum = frtAuditEvent) and request.Resource.hasTag('verkey')) then
             FConnection.ExecSQL('update Versions set AuditKey = '+inttostr(resourceKey)+' where ResourceVersionKey = '+request.Resource.Tags['verkey']);
 
@@ -2568,6 +2572,7 @@ var
   json, json2 : TJsonObject;
   xml : TMXmlDocument;
   ms : TAdvMemoryStream;
+  src : TBytes;
 begin
   result := false;
   json := nil;
@@ -2742,7 +2747,8 @@ begin
               FConnection.BindInteger('s', request.Session.Key);
             FConnection.BindInteger('f', 2);
             FConnection.BindBlob('tb', tags.json);
-            FConnection.BindBlob('xc', EncodeResource(request.resource, true, soFull));
+            src := EncodeResource(request.resource, true, soFull);
+            FConnection.BindBlob('xc', src);
             FConnection.BindBlob('jc', EncodeResource(request.resource, false, soFull));
             markSubsetted(request.resource.meta);
             FConnection.BindBlob('xs', EncodeResource(request.resource, true, soSummary));
@@ -2756,7 +2762,7 @@ begin
           CommitTags(tags, key);
           CreateIndexer;
           FIndexer.execute(resourceKey, request.id, request.resource, tags);
-          FRepository.SeeResource(resourceKey, key, versionKey, request.id, needSecure, false, request.resource, FConnection, false, request.Session);
+          FRepository.SeeResource(resourceKey, key, versionKey, request.id, needSecure, false, request.resource, FConnection, false, request.Session, src);
 
           if (response.Resource <> nil) and (response.Resource is TFhirBundle)  then
             response.bundle.entryList.add(request.resource.Link)
@@ -2809,6 +2815,7 @@ begin
     end
     else if (request.Source <> nil) and (request.postFOrmat <> ffText) then
     begin
+      {$IFDEF FHIR2}
       ctxt := TFHIRValidatorContext.Create;
       try
         ctxt.IsAnyExtensionsAllowed := true;
@@ -2819,9 +2826,13 @@ begin
       finally
         ctxt.Free;
       end;
+      {$ELSE}
+       response.outcome := ServerContext.JavaServices.validateResource(opDesc, request.Source.AsBytes, request.PostFormat, 'any-extensions id-optional');
+      {$ENDIF}
     end
     else
     begin
+      {$IFDEF FHIR2}
       ctxt := TFHIRValidatorContext.Create;
       try
         ctxt.IsAnyExtensionsAllowed := true;
@@ -2832,6 +2843,9 @@ begin
       finally
         ctxt.Free;
       end;
+      {$ELSE}
+       response.outcome := ServerContext.JavaServices.validateResource(opDesc, request.Resource, 'any-extensions id-optional');
+      {$ENDIF}
     end;
 
     if response.outcome.issueList.IsEmpty then
@@ -8953,8 +8967,10 @@ begin
 
         logt('Load Validation Pack from ' + fn);
         ServerContext.ValidatorContext.LoadFromDefinitions(fn);
+        {$IFNDEF FHIR2}
         logt('Load in Java');
         ServerContext.JavaServices.init(fn);
+        {$ENDIF}
         if ServerContext.forLoad then
         begin
           logt('Load Custom Resources');
@@ -10165,7 +10181,7 @@ begin
   end
 end;
 
-procedure TFHIRNativeStorageService.SeeResource(key, vkey, pvkey: integer; id: string; needsSecure, created : boolean; resource: TFhirResource; conn: TKDBConnection; reload: Boolean; session: TFhirSession);
+procedure TFHIRNativeStorageService.SeeResource(key, vkey, pvkey: integer; id: string; needsSecure, created : boolean; resource: TFhirResource; conn: TKDBConnection; reload: Boolean; session: TFhirSession; src : Tbytes);
 var
   vs : TFHIRValueSet;
 begin
@@ -10193,6 +10209,11 @@ begin
     FServerContext.SubscriptionManager.SeeResource(key, vkey, pvkey, id, subscriptionCreate, resource, conn, reload, session)
   else
     FServerContext.SubscriptionManager.SeeResource(key, vkey, pvkey, id, subscriptionUpdate, resource, conn, reload, session);
+
+  {$IFNDEF FHIR2}
+  if (resource.ResourceType in [frtValueSet, frtStructureDefinition, frtCodeSystem]) then
+    FServerContext.JavaServices.seeResource(resource, src);
+  {$ENDIF}
 
   FLock.Lock('SeeResource');
   try
@@ -10310,6 +10331,11 @@ begin
   if i > -1 then
   begin
     aType := TFhirResourceType(i);
+    {$IFNDEF FHIR2}
+    if (aType in [frtValueSet, frtStructureDefinition, frtCodeSystem]) then
+      FServerContext.JavaServices.dropResource(resource, id);
+    {$ENDIF}
+
     FLock.Lock('DropResource');
     try
       if aType in [frtValueSet, frtConceptMap] then
@@ -10945,7 +10971,7 @@ var
   cback: TKDBConnection;
 begin
   conn.SQL :=
-    'select Ids.ResourceKey, Versions.ResourceVersionKey, Ids.Id, Secure, JsonContent from Ids, Types, Versions where '
+    'select Ids.ResourceKey, Versions.ResourceVersionKey, Ids.Id, Secure, XmlContent from Ids, Types, Versions where '
     + 'Versions.ResourceVersionKey = Ids.MostRecent and ' +
     'Ids.ResourceTypeKey = Types.ResourceTypeKey and ' +
     '(Types.ResourceName in (''ValueSet'', ''EventDefinition'', ''Organization'', ''Device'' , ''CodeSystem'', ''ConceptMap'', ''StructureDefinition'', ''Questionnaire'', ''StructureMap'', ''Subscription'')) and Versions.Status < 2';
@@ -10958,15 +10984,15 @@ begin
       while conn.FetchNext do
       begin
         inc(i);
-        mem := conn.ColBlobByName['JsonContent'];
-        parser := MakeParser(ServerContext.Validator.Context, 'en', ffJson, mem, xppDrop);
+        mem := conn.ColBlobByName['XmlContent'];
+        parser := MakeParser(ServerContext.Validator.Context, 'en', ffXml, mem, xppDrop);
         try
           SeeResource(conn.ColIntegerByName['ResourceKey'],
             conn.ColIntegerByName['ResourceVersionKey'],
             0,
             conn.ColStringByName['Id'],
             conn.ColIntegerByName['Secure'] = 1,
-            false, parser.resource, cback, true, nil);
+            false, parser.resource, cback, true, nil, mem);
         finally
           parser.free;
         end;

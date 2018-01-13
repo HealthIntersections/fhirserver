@@ -671,10 +671,11 @@ begin
     try
       store.ServerContext := ctxt;
       ctxt.RunNumber := FRunNumber;
-
+      {$IFNDEF FHIR2}
       logt('loading Java Services');
       ctxt.JavaServices := TJavaLibraryWrapper.Create(jarPath);
       logt('  .. done');
+      {$ENDIF}
       ctxt.TerminologyServer := FterminologyServer.Link;
       ctxt.Validate := FIni.ReadBool(voVersioningNotApplicable, 'fhir', 'validate', true);
       ctxt.ForLoad := not FindCmdLineSwitch('noload');

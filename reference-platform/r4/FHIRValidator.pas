@@ -1,6 +1,13 @@
 Unit FHIRValidator;
 
 {
+Maintaining the pascal validator is proving too expensive.
+this validator is being retired in favour of using Java
+validator via JNI (see JavaBridge)
+}
+
+
+{
 Copyright (c) 2011+, HL7 and Health Intersections Pty Ltd (http://www.healthintersections.com.au)
   All rights reserved.
 

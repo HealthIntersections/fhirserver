@@ -103,7 +103,7 @@ var
   p : TFHIRPatient;
   b : TBytes;
 begin
-  b := FJavaBridge.convertResource(FileToBytes('C:\work\org.hl7.fhir.old\org.hl7.fhir.dstu2\build\publish\patient-example.xml'), 'xml', 'r2');
+  b := FJavaBridge.convertResource(FileToBytes('C:\work\org.hl7.fhir.old\org.hl7.fhir.dstu2\build\publish\patient-example.xml'), ffXml, fhirVersionRelease2);
   p := bytesToResource(b) as TFhirPatient;
   try
     Assert.isTrue(p.id = 'example');
@@ -118,7 +118,7 @@ begin
     TestSeeResource;
 
   checkStatus('custom-resource-count', 1);
-  FJavaBridge.dropResource('ValueSet', 'dicm-2-AnatomicModifier', 'http://dicom.nema.org/medical/dicom/current/output/chtml/part16/sect_CID_2.html', '20160314');
+  FJavaBridge.dropResource('ValueSet', 'dicm-2-AnatomicModifier');
   checkStatus('custom-resource-count', 0);
 end;
 
@@ -132,7 +132,7 @@ begin
   checkStatus('custom-resource-count', 0);
   r := FileToResource('C:\work\fhirserver\resources\dicom\CID_2.xml');
   try
-    FJavaBridge.seeResource(r);
+    FJavaBridge.seeResource(r, []);
   finally
     r.Free;
   end;
@@ -148,7 +148,7 @@ procedure TJavaBridgeTests.TestUnConvert;
 var
   b : TBytes;
 begin
-  b := FJavaBridge.unConvertResource(FileToBytes('C:\work\org.hl7.fhir\build\publish\patient-example.xml'), 'xml', 'r2');
+  b := FJavaBridge.unConvertResource(FileToBytes('C:\work\org.hl7.fhir\build\publish\patient-example.xml'), ffxml, fhirVersionRelease2);
   Assert.isTrue(length(b) > 0);
 end;
 
@@ -156,7 +156,7 @@ procedure TJavaBridgeTests.TestValidation;
 var
   oo : TFHIROperationOutcome;
 begin
-  oo := FJavaBridge.validateResource('my-loc', fileToBytes('C:\work\fhirserver\resources\r3\patient-group.xml'), 'XML');
+  oo := FJavaBridge.validateResource('my-loc', fileToBytes('C:\work\fhirserver\resources\r3\patient-group.xml'), ffXML, '');
   try
     Assert.IsTrue(oo.issueList.Count > 0);
   finally

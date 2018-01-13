@@ -88,6 +88,7 @@ Source: "C:\work\fhirserver\Exec\64\FHIRServerUtils.exe";    DestDir: "{app}";  
 
 Source: "C:\work\fhirserver\Exec\fhir.ini";                               DestDir: "{app}";            Flags: ignoreversion onlyifdoesntexist;       DestName: "fhirserver.ini" 
 Source: "C:\work\fhirserver\Libraries\FMM\FastMM_FullDebugMode.dll";      DestDir: "{app}";            Flags: ignoreversion
+Source: "C:\work\fhirserver\Exec\64\ChakraCore.dll";                      DestDir: "{app}";            Flags: ignoreversion
 Source: "C:\work\org.hl7.fhir\build\publish\org.hl7.fhir.validator.jar";  DestDir: "{app}";            Flags: ignoreversion
 
 ; Web resources
@@ -204,7 +205,7 @@ begin
   Result := true;
   if not JavaInstalled then
   begin
-    ResultMsg := MsgBox('Oracle Java v1.6 or newer not found in the system. Java 1.6 or later is required to run this application (can be installed after this installation too). Do you want to continue?', mbConfirmation, MB_YESNO) = idYes;
+    ResultMsg := MsgBox('Oracle Java v1.6 (64bit) or newer not found in the system. Java 1.6 or later is required to run this application (can be installed after this installation too). Do you want to continue?', mbConfirmation, MB_YESNO) = idYes;
     if ResultMsg = false then
       Result := false
     else
