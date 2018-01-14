@@ -34,11 +34,12 @@ Libraries
 ---------
 
 The open source FHIR Server includes delphi/pascal implementations of:
-* Xml/XPath/XML Patch
-* JSON/JSONPointer/Json Patch
-* OAuth/openID Connect (including google/facebook clients) + JWT/JWK support
+* Xml/XPath/XML Patch + XML Digital Signature
+* JSON/JSONPointer/Json Patch + JSON Digital Signature (+ JWT/JWK support)
+* OAuth/openID Connect (including google/facebook clients)
 * Turtle format (RDF)
 * GraphQL
+* Javascript and Java invocation libraries
 * SCIM
 * LOINC/SNOMED/RxNorm/CVX/UCUM
 * CQL (Clinical Query Language)
