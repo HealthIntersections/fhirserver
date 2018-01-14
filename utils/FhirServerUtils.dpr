@@ -279,7 +279,13 @@ uses
   ChakraCommon in '..\Libraries\js\ChakraCommon.pas',
   FHIRJavascriptReg in '..\reference-platform\r4\FHIRJavascriptReg.pas',
   FHIRClientJs in '..\Libraries\js\FHIRClientJs.pas',
-  ServerEventJs in '..\Server\ServerEventJs.pas';
+  ServerEventJs in '..\Server\ServerEventJs.pas',
+  JNI in '..\Libraries\java\JNI.pas',
+  JNIWrapper in '..\Libraries\java\JNIWrapper.pas',
+  JavaRuntime in '..\Libraries\java\JavaRuntime.pas',
+  JUtils in '..\Libraries\java\JUtils.pas',
+  myUTF8Strings in '..\Libraries\java\myUTF8Strings.pas',
+  JavaBridge in '..\Server\JavaBridge.pas';
 
 {$R *.res}
 

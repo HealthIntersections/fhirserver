@@ -329,7 +329,8 @@ uses
   JNIWrapper in '..\Libraries\java\JNIWrapper.pas',
   JavaRuntime in '..\Libraries\java\JavaRuntime.pas',
   JUtils in '..\Libraries\java\JUtils.pas',
-  myUTF8Strings in '..\Libraries\java\myUTF8Strings.pas';
+  myUTF8Strings in '..\Libraries\java\myUTF8Strings.pas',
+  JavaBridge in 'JavaBridge.pas';
 
 begin
   logfile := IncludeTrailingPathDelimiter(SystemTemp)+'fhirserver.log';

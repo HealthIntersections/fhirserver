@@ -1957,7 +1957,6 @@ var
   s : String;
   csql : String;
 begin
-    logt('ds.1');
 
   if (session = nil) or session.canReadAll then
     s := 'null'
@@ -1982,7 +1981,6 @@ begin
     sp.Connection := FConnection.link;
 
     sp.build;
-    logt('ds.2');
     sql := 'Insert into SearchEntries Select '+key+', ResourceKey, MostRecent as ResourceVersionKey, '+sp.sort+', null, null from Ids where Deleted = 0 and MostRecent is not null and '+sp.filter+' order by ResourceKey DESC';
     csql := 'Select count(ResourceKey) from Ids where Deleted = 0 and '+sp.filter;
     link := SEARCH_PARAM_NAME_ID+'='+id+'&'+sp.link_;
@@ -1993,7 +1991,6 @@ begin
     sp.free;
   end;
 
-    logt('ds.3 : sql = '+sql);
   if summaryStatus = soCount then
   begin
     total := FConnection.CountSQL(csql);
@@ -2004,7 +2001,6 @@ begin
     FConnection.ExecSQL(sql);
     total := FConnection.CountSQL('Select count(*) from SearchEntries where SearchKey = '+key);
   end;
-    logt('ds.4');
   FConnection.Sql := 'update Searches set Reverse = :r, Link = :l, SqlCode = :s, count = '+inttostr(total)+', Summary = '+inttostr(ord(summaryStatus))+' where SearchKey = '+key;
   FConnection.Prepare;
   try
@@ -2015,7 +2011,6 @@ begin
   finally
     FConnection.Terminate;
   end;
-    logt('ds.5');
 end;
 
 procedure TFHIRNativeOperationEngine.ProcessMPISearch(typekey : integer; session : TFHIRSession; aType : string; params : TParseMap; baseURL : String; requestCompartment : TFHIRCompartmentId; sessionCompartments : TAdvList<TFHIRCompartmentId>; id, key : string; var link, sql : String; var total : Integer; summaryStatus : TFHIRSummaryOption; strict : boolean; var reverse : boolean);
@@ -2208,7 +2203,6 @@ begin
     ok := true;
     count := 0;
     offset := 0;
-    logt('s1');
     { todo:
      conformance
      quantity searches
@@ -2220,7 +2214,6 @@ begin
     else
     begin
       TypeNotFound(request, response);
-    logt('s2');
       if request.resourceName <> '' then
       begin
         key := FConnection.CountSQL('select ResourceTypeKey from Types where supported = 1 and ResourceName = '''+request.ResourceName+'''');
@@ -2239,13 +2232,11 @@ begin
           bundle.setLastUpdated(TDateTimeEx.makeUTC);
 //          bundle.base := request.baseUrl;
 
-    logt('s3');
           summaryStatus := request.Summary;
           if FindSavedSearch(request.parameters.value[SEARCH_PARAM_NAME_ID], request.Session, 1, id, link, sql, title, base, total, summaryStatus, request.strictSearch, reverse) then
             link := SEARCH_PARAM_NAME_ID+'='+request.parameters.value[SEARCH_PARAM_NAME_ID]
           else
             id := BuildSearchResultSet(key, request.Session, request.resourceName, request.Parameters, request.baseUrl, request.compartment, request.SessionCompartments, op, link, sql, total, summaryStatus, request.strictSearch, reverse);
-    logt('s4');
 
           bundle.setTotal(total);
           bundle.Tag('sql', sql);
@@ -2284,12 +2275,10 @@ begin
               if count < total then
                 bundle.addLink('last', base+link+'&'+SEARCH_PARAM_NAME_OFFSET+'='+inttostr((total div count) * count)+'&'+SEARCH_PARAM_NAME_COUNT+'='+inttostr(Count));
             end;
-    logt('s5');
 
             chooseField(response.Format, summaryStatus, request.loadObjects, field, comp, needsObject);
             if (not needsObject) and (request.Elements.Count = 0) and not request.Parameters.VarExists('__wantObject') then // param __wantObject is for internal use only
               comp := nil;
-    logt('s6');
 
             FConnection.SQL := 'Select Ids.ResourceKey, Types.ResourceName, Ids.Id, VersionId, Secure, StatedDate, Name, Versions.Status, Score1, Score2, Tags, '+field+' from Versions, Ids, Sessions, SearchEntries, Types '+
                 'where Ids.Deleted = 0 and SearchEntries.ResourceVersionKey = Versions.ResourceVersionKey and Types.ResourceTypeKey = Ids.ResourceTypeKey and '+'Versions.SessionKey = Sessions.SessionKey and SearchEntries.ResourceKey = Ids.ResourceKey and SearchEntries.SearchKey = '+id;
@@ -2302,7 +2291,6 @@ begin
               FConnection.Execute;
               i := 0;
               t := 0;
-    logt('s7');
               while FConnection.FetchNext do
               Begin
                 inc(i);
@@ -2318,11 +2306,9 @@ begin
             finally
               FConnection.Terminate;
             end;
-    logt('s8');
 
             processIncludes(request.session, request.secure, request.Parameters.GetVar('_include'), request.Parameters.GetVar('_revinclude'), bundle, keys, request.baseUrl, request.lang, field, comp);
           end;
-    logt('s9');
 
           bundle.setId(FhirGUIDToString(CreateGUID));
           if (op.issueList.Count > 0) then
@@ -2351,12 +2337,10 @@ begin
         end;
       end;
     end;
-    logt('sA');
     AuditRest(request.session, request.internalRequestId, request.externalRequestId, request.ip, request.ResourceName, '', '', 0, request.CommandType, request.Provenance, response.httpCode, request.Parameters.Source, response.message);
   except
     on e: exception do
     begin
-    logt('sB');
       AuditRest(request.session, request.internalRequestId, request.externalRequestId, request.ip, request.ResourceName, '', '', 0, request.CommandType, request.Provenance, 500, request.Parameters.Source, e.message);
       recordStack(e);
       raise;
@@ -4225,7 +4209,6 @@ begin
       response.HTTPCode := 200;
       response.Message := 'OK';
       response.bundle := resp.Link;
-      logt('done');
     finally
       req.free;
       resp.free;
