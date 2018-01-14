@@ -15,7 +15,7 @@ Compression=lzma2/ultra64
 ArchitecturesInstallIn64BitMode=x64
 ArchitecturesAllowed=x64
 
-; we will be creating a service so we do need this privilege
+; we might be creating a service so we do need this privilege
 PrivilegesRequired=admin
 AllowUNCPath=no
 AlwaysShowDirOnReadyPage=yes
