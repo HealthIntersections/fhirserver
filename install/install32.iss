@@ -88,7 +88,7 @@ Source: "C:\work\fhirserver\Exec\32\FHIRServerUtils.exe";    DestDir: "{app}";  
 
 Source: "C:\work\fhirserver\Exec\fhir.ini";                           DestDir: "{app}";            Flags: ignoreversion onlyifdoesntexist;       DestName: "fhirserver.ini" 
 Source: "C:\work\fhirserver\Libraries\FMM\FastMM_FullDebugMode.dll";  DestDir: "{app}";            Flags: ignoreversion
-Source: "C:\work\fhirserver\Exec\32\ChakraCore.dll";                      DestDir: "{app}";            Flags: ignoreversion
+Source: "C:\work\fhirserver\Libraries\js\chakra\x32_release\ChakraCore.dll";                      DestDir: "{app}";            Flags: ignoreversion
 Source: "C:\work\org.hl7.fhir\build\publish\org.hl7.fhir.validator.jar";  DestDir: "{app}";            Flags: ignoreversion
 
 ; Web resources
