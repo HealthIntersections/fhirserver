@@ -38,7 +38,7 @@ AppVersion=0.01
 AppSupportURL=https://github.com/grahamegrieve/fhirserver
 AppUpdatesURL=https://github.com/grahamegrieve/fhirserver
 AppCopyright=Copyright � Health Intersections Pty Ltd 2011+
-VersionInfoVersion=0.0.0.1
+VersionInfoVersion=0.0.0.1    
 
 ; dialog support
 LicenseFile=C:\work\fhirserver\license
@@ -50,6 +50,8 @@ InfoBeforeFile=C:\work\fhirserver\install\readme.rtf
 ;  {app}\spec - FHIR specification itself
 ;
 ;  {store}\data - terminology caches
+
+#include <idp.iss>
 
 [Types]
 Name: "fhir4";   Description: "Install R4 Version (Current Build)"
@@ -63,6 +65,7 @@ Name: "r4";   Description: "R4 Components"; Types: fhir4
 
 [Tasks]
 ; Core related tasks
+Name: dep; Description: "Install Dependencies"
 Name: svcInst;   Description: "Install FHIR Server as a Service"
 Name: svcInst\start;   Description: "Start FHIR Server after Installation"
 Name: firewall;  Description: "Allow FHIR Server through the Firewall"
@@ -151,6 +154,7 @@ const
   MB_ICONINFORMATION = $40;
 
 var
+  DependenciesPage : TWizardPage;
   ServicePage : TInputQueryWizardPage;
   cbxStartup : TNewComboBox;
 
@@ -189,6 +193,8 @@ var
  I: Integer;
  regRoot: Integer;
 begin
+  Result := true;
+{
   // Check which view of registry should be taken:
   regRoot := HKLM;
   if not (RegGetSubkeyNames(regRoot, 'SOFTWARE\JavaSoft\Java Runtime Environment', Versions)) and not (RegGetSubkeyNames(regRoot, 'SOFTWARE\JavaSoft\Java Development Kit', Versions)) then
@@ -202,7 +208,6 @@ begin
       else
         JavaInstalled := false;
  
-  Result := true;
   if not JavaInstalled then
   begin
     ResultMsg := MsgBox('Oracle Java v1.6 (32bit) or newer not found in the system. Java 1.6 or later is required to run this application (can be installed after this installation too). Do you want to continue?', mbConfirmation, MB_YESNO) = idYes;
@@ -211,6 +216,7 @@ begin
     else
       ShellExec('open', 'http://www.java.com/getjava/', '','',SW_SHOWNORMAL,ewNoWait,ErrorCode);
   end;
+}
 end;
 
 // ------ Interfaces ---------------------------------------------------------------------------------
@@ -907,7 +913,7 @@ var
   version : TWindowsVersion;
 Begin
   GetWindowsVersionEx(version);
-  ServicePage := CreateInputQueryPage(wpSelectTasks, 'Service Details', 'Configure the FHIRServer Service', 'Leave Blank to run as local system, or DOMAIN\Username and password');
+  ServicePage := CreateInputQueryPage(DependenciesPage.ID, 'Service Details', 'Configure the FHIRServer Service', 'Leave Blank to run as local system, or DOMAIN\Username and password');
   ServicePage.Add('User:', False);
   ServicePage.Add('Password:', True);
 
@@ -949,11 +955,13 @@ End;
 
 function ShouldSkipPage(PageID: Integer): Boolean;
 begin
+  if (PageID = DependenciesPage.Id) Then
+    result := not IsTaskSelected('dep') else
   if (PageID = SctPage.Id) Then
     result := not IsTaskSelected('sct')
   else if (PageID = AdminPage.Id) or (PageID = ConfigPage.Id) Then
     result := not IsTaskSelected('db')
-  else
+  else                                                        
     result := false;
 end;
 
@@ -962,6 +970,7 @@ function NextButtonClick(CurPageID: Integer): Boolean;
 var
   dbtypestr, s : String;
   p : integer;
+  ResultMsg:boolean;
 begin
 
   if (CurpageID = ServicePage.Id) Then
@@ -999,9 +1008,9 @@ begin
       certPWord.Text := GetIniString('web', 'certpword', '', ExpandConstant('{app}')+'\fhirserver.ini');
       AdminPage.Values[0] := GetIniString('admin', 'email', '', ExpandConstant('{app}')+'\fhirserver.ini');
       AdminPage.Values[1] := GetIniString('admin', 'username', '', ExpandConstant('{app}')+'\fhirserver.ini');
-      webpop := true;
+      webpop := true;  
     end;
-  End
+  End          
   Else if (ConnectionPage <> Nil) And (CurPageID = ConnectionPage.ID) then
   begin
 
@@ -1029,6 +1038,18 @@ begin
       else
         MsgBox(s, mbError, MB_OK); 
   end
+  Else if (DependenciesPage <> Nil) And (CurPageID = DependenciesPage.ID) then
+    begin
+      result:=true;
+      //check if there are still dependencies 
+      if 
+        true // TO DO: Any dependency missing?
+      then begin
+        ResultMsg := MsgBox('Not all dependencies are met (can be installed after this installation too). Do you want to continue?', mbConfirmation, MB_YESNO) = idYes;
+        if ResultMsg = false then
+          Result := false
+      end
+    end
   Else if (WebPage <> Nil) And (CurPageID = WebPage.ID) then
   begin
     result := false;
@@ -1149,7 +1170,7 @@ Procedure InstallSctPage;
 var
   lbl : TLabel;
 begin
-  SctPage := CreateInputDirPage(wpSelectTasks, 'Load Snomed CT', 'Provide SNOMED CT Details', 'Select a directory that contains the RF2 snapshot', false, '');  
+  SctPage := CreateInputDirPage(ConfigPage.id, 'Load Snomed CT', 'Provide SNOMED CT Details', 'Select a directory that contains the RF2 snapshot', false, '');  
   SctPage.Add('');
 
   lbl := TLabel.Create(SctPage);
@@ -1195,7 +1216,7 @@ Procedure WebServerPage;
 var
   lbl : TLabel;
 Begin
-  WebPage := CreateCustomPage(wpSelectTasks, 'Web Server Configuration', 'Configure the web server');
+  WebPage := CreateCustomPage(ServicePage.id, 'Web Server Configuration', 'Configure the web server');
   lbl := TLabel.Create(WebPage);
   lbl.Caption := 'Host Name (FQDN):';
   lbl.Top := ScaleX(4);
@@ -1338,7 +1359,7 @@ Begin
 
   shrinkSpace:=scalex(8);    //move each edit a few pixels off so that they fit
 
-  ConnectionPage := CreateInputQueryPage(wpSelectTasks, 'Database Location', 'Select the location of the SQL Server database', 'Leave Username and Password blank to use Windows Authentication');
+  ConnectionPage := CreateInputQueryPage(WebPage.id, 'Database Location', 'Select the location of the SQL Server database', 'Leave Username and Password blank to use Windows Authentication');
   ConnectionPage.add('Server', false);
   ConnectionPage.add('Database', false);
   ConnectionPage.add('UserName', false);
@@ -1390,7 +1411,7 @@ end;
 
 Procedure CreateAdminPage;
 Begin
-  AdminPage := CreateInputQueryPage(wpSelectTasks, 'Administration', '', 'Enter Master Administration details (for administering user accounts)');
+  AdminPage := CreateInputQueryPage(ConnectionPage.id, 'Administration', '', 'Enter Master Administration details (for administering user accounts)');
   AdminPage.Add('Email:', False);
   AdminPage.Add('Username', False);
   AdminPage.Add('Password', True);
@@ -1399,7 +1420,7 @@ end;
 
 Procedure CreateConfigPage;
 Begin
-  ConfigPage := CreateInputOptionPage(wpSelectTasks, 'Configuration', 'Default Security Configuration', 
+  ConfigPage := CreateInputOptionPage(AdminPage.id, 'Configuration', 'Default Security Configuration', 
     'Choose the Basic Security Profile (or leave it as ''closed'' and configure directly after install)', true, false);
   ConfigPage.Add('Open Access (any user, including anonymous, can perform any operation)');
   ConfigPage.Add('Closed Access (all users must be authenticated)');
@@ -1407,6 +1428,251 @@ Begin
   ConfigPage.Add('Terminology Server (terminology resources only, any user can read)');
   ConfigPage.values[0] := true;
 end;
+
+
+procedure LaunchJavaInstall(Sender: TObject);
+var ResultCode:Integer;
+begin
+
+ShellExec('open', 'http://www.java.com/getjava/', '','',SW_SHOWNORMAL,ewNoWait,ResultCode);
+
+end;
+
+
+procedure InstallMySQL(Sender: TObject);
+var ResultCode:Integer;
+begin
+//to do: Make this function get the URL from the TEdit
+idpDownloadFile('https://dev.mysql.com/get/Downloads/MySQLInstaller/mysql-installer-community-5.7.20.0.msi', ExpandConstant('{tmp}\mysql.msi'));
+
+//if not ShellExec('', 'msiexec.exe', ExpandConstant(' /i {tmp}\mysql-installer-web-community-5.7.20.0.msi'),'', SW_SHOWNORMAL, ewWaitUntilTerminated, ResultCode) then
+if not ShellExec('', 'msiexec.exe', ExpandConstant(' /i {tmp}\mysql.msi'),'', SW_SHOWNORMAL, ewWaitUntilTerminated, ResultCode) then
+  MsgBox('Installer failed to run!' + #13#10 + ' ' +
+    SysErrorMessage(ResultCode), mbError, MB_OK);
+end;
+
+
+procedure InstallVCRedist(Sender: TObject);
+var ResultCode:Integer;
+begin
+//to do: Make this function get the URL from the TEdit
+idpDownloadFile('http://download.microsoft.com/download/1/f/e/1febbdb2-aded-4e14-9063-39fb17e88444/vc_redist.x86.exe', ExpandConstant('{tmp}\vcredist.exe'));
+if not ShellExec('', ExpandConstant('{tmp}\vcredist.exe'), '' ,'', SW_SHOWNORMAL, ewWaitUntilTerminated, ResultCode) then
+  MsgBox('Installer failed to run!' + #13#10 + ' ' +
+    SysErrorMessage(ResultCode), mbError, MB_OK);
+end;
+
+
+
+procedure InstallMSSQL(Sender: TObject);
+var ResultCode:Integer;
+begin
+//to do: Make this function get the URL from the TEdit
+idpDownloadFile('http://download.microsoft.com/download/5/1/A/51A153F6-6B08-4F94-A7B2-BA1AD482BC75/SQLEXPR32_x86_ENU.exe', ExpandConstant('{tmp}\mssql.exe'));
+if not ShellExec('', ExpandConstant('{tmp}\mssql.exe'), '' ,'', SW_SHOWNORMAL, ewWaitUntilTerminated, ResultCode) then
+  MsgBox('Installer failed to run!' + #13#10 + ' ' +
+    SysErrorMessage(ResultCode), mbError, MB_OK);
+end;
+
+procedure InstallODBC(Sender: TObject);
+var ResultCode:Integer;
+begin
+//to do: Make this function get the URL from the TEdit
+// Which ODBC Depends on which Database is setup os is being setup
+idpDownloadFile('http://download.microsoft.com/download/1/f/e/1febbdb2-aded-4e14-9063-39fb17e88444/vc_redist.x86.exe', ExpandConstant('{tmp}\odbc.exe'));
+if not ShellExec('', ExpandConstant('{tmp}\odbc.exe'), '' ,'', SW_SHOWNORMAL, ewWaitUntilTerminated, ResultCode) then
+  MsgBox('Installer failed to run!' + #13#10 + ' ' +
+    SysErrorMessage(ResultCode), mbError, MB_OK);
+end;
+
+
+Procedure CreateDependenciesPage;
+var
+
+JRElbl, JREstatus, VClbl, VCStatus, MYSQLlbl, MYSQLStatus, MSSQLlbl, MSSQLStatus, ODBClbl, ODBCStatus : TLabel;
+JREInstall, VCInstall, MYSQLInstall, MSSQLInstall, ODBCInstall:TButton;
+VCPath, MYSQLPath, MSSQLPath, ODBCPath:TEdit;
+
+JavaInstalled : Boolean;
+ResultMsg : Boolean;
+Versions: TArrayOfString;
+I: Integer;
+regRoot: Integer;
+
+
+Begin
+  DependenciesPage := CreateCustomPage(wpSelectTasks, 'Install Dependencies', 'Choose the dependencies to install');
+
+ ////Check Java
+  regRoot := HKLM;
+  if not (RegGetSubkeyNames(regRoot, 'SOFTWARE\JavaSoft\Java Runtime Environment', Versions)) and not (RegGetSubkeyNames(regRoot, 'SOFTWARE\JavaSoft\Java Development Kit', Versions)) then
+    JavaInstalled := false
+  else
+    for I := 0 to GetArrayLength(Versions)-1 do
+      if JavaInstalled = true then
+       //do nothing
+      else if ( Versions[I][2]='.' ) and ( ( StrToInt(Versions[I][1]) > 1 ) or ( ( StrToInt(Versions[I][1]) = 1 ) and ( StrToInt(Versions[I][3]) >= 7 ) ) ) then
+        JavaInstalled := true
+      else
+        JavaInstalled := false;
+
+
+  JRElbl := TLabel.Create(DependenciesPage);
+  with JRElbl do begin
+  Caption := 'Java Status:';
+  Top := ScaleX(0);
+  Parent := DependenciesPage.Surface;
+  end;
+
+  JREstatus := TLabel.Create(DependenciesPage);
+  with JREstatus do begin
+  if JavaInstalled = true then Caption := 'INSTALLED' else Caption := 'NOT INSTALLED';
+  font.style:=[fsBold];
+  Top := ScaleX(0);
+  Left := ScaleX(64);
+  Parent := DependenciesPage.Surface;
+  end;
+
+  JREInstall := TButton.Create(DependenciesPage);
+  with JREInstall do begin
+  Caption := 'Install JRE';
+  Top := ScaleX(16);
+  Parent := DependenciesPage.Surface;
+  OnClick := @LaunchJavaInstall;
+  end;
+
+
+
+  VClbl := TLabel.Create(DependenciesPage);
+  with VClbl do begin
+  Caption := 'Visual C++ Redistributables';
+  Top := ScaleX(50);
+  Parent := DependenciesPage.Surface;
+  end;
+
+  VCstatus := TLabel.Create(DependenciesPage);
+  with VCstatus do begin
+  Caption := 'Visual C++ Redistributables';
+  Top := ScaleX(50);
+  Parent := DependenciesPage.Surface;
+  end;
+
+  VCpath := TEdit.Create(DependenciesPage);
+  with VCPath do begin
+  Text := 'http://download.microsoft.com/download/1/f/e/1febbdb2-aded-4e14-9063-39fb17e88444/vc_redist.x86.exe';
+  Top := ScaleX(66);
+  Left := ScaleX(70);
+  Width:=Scalex(300);
+  Parent := DependenciesPage.Surface;
+  end;
+
+  VCInstall := TButton.Create(DependenciesPage);
+  with VCInstall do begin
+  Caption := 'Install';
+  Top := ScaleX(66);
+  Parent := DependenciesPage.Surface;
+  OnClick := @InstallVCRedist;
+  end;
+
+
+  MYSQLlbl := TLabel.Create(DependenciesPage);
+  with MYSQLlbl do begin
+  Caption := 'MySQL (needs ODBC Driver)';
+  Top := ScaleX(100);
+  Parent := DependenciesPage.Surface;
+  end;
+
+  MYSQLstatus := TLabel.Create(DependenciesPage);
+  with MYSQLstatus do begin
+  Caption := '';
+  Top := ScaleX(100);
+  Parent := DependenciesPage.Surface;
+  end;
+
+  MYSQLpath := TEdit.Create(DependenciesPage);
+  with MYSQLpath do begin
+  Text := 'https://dev.mysql.com/get/Downloads/MySQLInstaller/mysql-installer-community-5.7.20.0.msi';
+  Top := ScaleX(116);
+  Left := ScaleX(70);
+  Width:=Scalex(300);
+  Parent := DependenciesPage.Surface;
+  end;
+
+  MYSQLInstall := TButton.Create(DependenciesPage);
+  with MYSQLInstall do begin
+  Caption := 'Install';
+  Top := ScaleX(116);
+  Parent := DependenciesPage.Surface;
+  OnClick := @InstallMySQL;
+  end;
+
+
+  ODBClbl := TLabel.Create(DependenciesPage);
+  with ODBClbl do begin
+  Caption := 'ODBC Driver';
+  Top := ScaleX(140);
+  Parent := DependenciesPage.Surface;
+  end;
+
+  ODBCstatus := TLabel.Create(DependenciesPage);
+  with ODBCstatus do begin
+  Caption := '';
+  Top := ScaleX(140);
+  Parent := DependenciesPage.Surface;
+  end;
+
+  ODBCpath := TEdit.Create(DependenciesPage);
+  with ODBCpath do begin
+  Text := 'https://dev.mysql.com/get/Downloads/Connector-ODBC/3.51/mysql-connector-odbc-3.51.28-win32.msi';
+  Top := ScaleX(156);
+  Left := ScaleX(70);
+  Width:=Scalex(300);
+  Parent := DependenciesPage.Surface;
+  end;
+
+  ODBCInstall := TButton.Create(DependenciesPage);
+  with ODBCInstall do begin
+  Caption := 'Install';
+  Top := ScaleX(156);
+  Parent := DependenciesPage.Surface;
+  OnClick := @InstallODBC;
+  end;
+
+
+
+  MSSQLlbl := TLabel.Create(DependenciesPage);
+  with MSSQLlbl do begin
+  Caption := 'MS SQL Server';
+  Top := ScaleX(200);
+  Parent := DependenciesPage.Surface;
+  end;
+
+  MSSQLstatus := TLabel.Create(DependenciesPage);
+  with MSSQLstatus do begin
+  Caption := '';
+  Top := ScaleX(200);
+  Parent := DependenciesPage.Surface;
+  end;
+
+  MSSQLpath := TEdit.Create(DependenciesPage);
+  with MSSQLpath do begin
+  Text := 'http://download.microsoft.com/download/5/1/A/51A153F6-6B08-4F94-A7B2-BA1AD482BC75/SQLEXPR32_x86_ENU.exe';
+  Top := ScaleX(216);
+  Left := ScaleX(70);
+  Width:=Scalex(300);
+  Parent := DependenciesPage.Surface;
+  end;
+
+  MSSQLInstall := TButton.Create(DependenciesPage);
+  with MSSQLInstall do begin
+  Caption := 'Install';
+  Top := ScaleX(216);
+  Parent := DependenciesPage.Surface;
+  OnClick := @InstallMSSQL;
+  end;
+
+end;
+
 
 Procedure CreatePostInstallPage;
 Begin
@@ -1417,15 +1683,17 @@ End;
 // ------ Installation Logic -------------------------------------------------------------------------
 
 procedure InitializeWizard();
+var ResultCode: integer;
 Begin
-  CreateConfigPage;
-  CreateAdminPage;
-  CreateConnectionPage;
-  InstallSctPage;
-  WebServerPage;
+  CreateDependenciesPage;
   CreateServiceUserPage;
-
+  WebServerPage;
+  CreateConnectionPage;
+  CreateAdminPage;
+  CreateConfigPage;
+  InstallSctPage;
   CreatePostInstallPage;
+
 End;
 
 Function DetermineStartMode : Integer;
@@ -1592,8 +1860,8 @@ var
   s : String;
   noauto : integer;
   disp : string;
+  resultcode:integer;
 Begin
-
 
 
   if (CurStep = ssInstall) Then
@@ -1601,6 +1869,14 @@ Begin
     if ServiceExists('FHIRServer') Then
       SimpleStopService('FHIRServer', true, true);
   End;
+
+if IsTaskSelected('vcredist') Then
+     MsgBox('Install VCREDIST', mbError, MB_YESNO);
+if IsTaskSelected('dbengine') Then
+     MsgBox('Install DB', mbError, MB_YESNO) ;
+     ShellExec('', 'msiexec.exe', ExpandConstant('/i "{tmp}\mysql-installer-web-community-5.7.20.0.msi"'),'', SW_SHOWNORMAL, ewWaitUntilTerminated, ResultCode)
+if IsTaskSelected('odbc') Then
+     MsgBox('Install ODBC', mbError, MB_YESNO);
 
   if (CurStep = ssPostInstall)  Then
   Begin
@@ -1644,5 +1920,3 @@ Begin
     RemoveFirewallException(ExpandConstant('{app}')+'FHIRServer.exe');
   End;
 End;
-
-
