@@ -64,7 +64,7 @@ begin
         as.defaultvalue = %purpose%
         as.xpos = -1
         as.ypos = -1
-        as.returnvalue = "Major upgrade: javascript, java support, use java validator, \+ fix bug in generating expansions that contain the same code more than once"
+        as.returnvalue = "Major upgrade - Javascript events, Java validator, fix expansion error"
         as.returnvariable = purpose
       end
       action.variables.savetoini
@@ -276,7 +276,6 @@ begin
         action.group
         begin
           description = "Build R4 Server"
-          enabled = false
           id = {323EE148-5CF5-49AC-AABA-35E692B5EEE4}
           action.files.delete
           begin
@@ -300,7 +299,7 @@ begin
             compileridl = true
             configname = Release
             debugversionnumbers = false
-            delphiversion = Delphi10Berlin
+            delphiversion = Delphi10Tokyo
             description = "Compile the Server (DSTU4)"
             eurekalogverboselogging = false
             frameworktype = VCL
@@ -434,7 +433,6 @@ begin
         action.group
         begin
           description = "Build R3 Server"
-          enabled = false
           id = {78F3E5F3-0B09-471F-9389-9FC56201F566}
           action.files.delete
           begin
@@ -458,7 +456,7 @@ begin
             compileridl = true
             configname = Release
             debugversionnumbers = false
-            delphiversion = Delphi10Berlin
+            delphiversion = Delphi10Tokyo
             description = "Compile the Server (DSTU3)"
             eurekalogverboselogging = false
             frameworktype = VCL
@@ -592,7 +590,6 @@ begin
         action.group
         begin
           description = "Build R2 Server"
-          enabled = false
           id = {62943F50-9BF5-4739-8069-CE9D92037FD5}
           action.files.delete
           begin
@@ -616,7 +613,7 @@ begin
             compileridl = true
             configname = Release
             debugversionnumbers = false
-            delphiversion = Delphi10Berlin
+            delphiversion = Delphi10Tokyo
             description = "Compile the Server (DSTU2)"
             eurekalogverboselogging = false
             frameworktype = VCL
@@ -750,7 +747,6 @@ begin
         action.group
         begin
           description = "Build Server Utils"
-          enabled = false
           id = {09782113-23C1-4485-9C83-8C271BE0CCCE}
           action.files.delete
           begin
@@ -774,7 +770,7 @@ begin
             compileridl = true
             configname = Release
             debugversionnumbers = false
-            delphiversion = Delphi10Berlin
+            delphiversion = Delphi10Tokyo
             description = "Compile the ServerUtils"
             eurekalogverboselogging = false
             frameworktype = VCL
@@ -908,7 +904,6 @@ begin
         action.group
         begin
           description = "Sign executables"
-          enabled = false
           id = {DC8781EF-7FEC-44BD-93F6-AB1772EA8B1E}
           action.process.execute
           begin
@@ -1082,7 +1077,7 @@ begin
             compileridl = true
             configname = Release
             debugversionnumbers = false
-            delphiversion = Delphi10Berlin
+            delphiversion = Delphi10Tokyo
             description = "Compile the Server (DSTU4)"
             eurekalogverboselogging = false
             frameworktype = VCL
@@ -1166,7 +1161,7 @@ begin
               mapfile = 3
               maxstacksize = 1048576
               minstacksize = 16384
-              namespaceprefixes = System;Xml;Data;Datasnap;Web;Soap;Winapi;System.Win;Data.Win;Web.Win;Soap.Win;
+              namespaceprefixes = System;Xml;Data;Datasnap;Web;Soap;Winapi;System.Win;Data.Win;Web.Win;Soap.Win;Bde;
               openstrings = true
               optimisation = false
               outputdir = C:\\work\\fhirserver\\Exec\\32
@@ -1239,7 +1234,7 @@ begin
             compileridl = true
             configname = Release
             debugversionnumbers = false
-            delphiversion = Delphi10Berlin
+            delphiversion = Delphi10Tokyo
             description = "Compile the Server (DSTU3)"
             eurekalogverboselogging = false
             frameworktype = VCL
@@ -1323,7 +1318,7 @@ begin
               mapfile = 3
               maxstacksize = 1048576
               minstacksize = 16384
-              namespaceprefixes = System;Xml;Data;Datasnap;Web;Soap;Winapi;System.Win;Data.Win;Web.Win;Soap.Win;
+              namespaceprefixes = System;Xml;Data;Datasnap;Web;Soap;Winapi;System.Win;Data.Win;Web.Win;Soap.Win;Bde;
               openstrings = true
               optimisation = false
               outputdir = C:\\work\\fhirserver\\Exec\\32
@@ -1396,7 +1391,7 @@ begin
             compileridl = true
             configname = Release
             debugversionnumbers = false
-            delphiversion = Delphi10Berlin
+            delphiversion = Delphi10Tokyo
             description = "Compile the Server (DSTU2)"
             eurekalogverboselogging = false
             frameworktype = VCL
@@ -1480,7 +1475,7 @@ begin
               mapfile = 3
               maxstacksize = 1048576
               minstacksize = 16384
-              namespaceprefixes = System;Xml;Data;Datasnap;Web;Soap;Winapi;System.Win;Data.Win;Web.Win;Soap.Win;
+              namespaceprefixes = System;Xml;Data;Datasnap;Web;Soap;Winapi;System.Win;Data.Win;Web.Win;Soap.Win;Bde;
               openstrings = true
               optimisation = false
               outputdir = C:\\work\\fhirserver\\Exec\\32
@@ -1553,7 +1548,7 @@ begin
             compileridl = true
             configname = Release
             debugversionnumbers = false
-            delphiversion = Delphi10Berlin
+            delphiversion = Delphi10Tokyo
             description = "Compile the ServerUtils"
             eurekalogverboselogging = false
             frameworktype = VCL
@@ -1637,7 +1632,7 @@ begin
               mapfile = 3
               maxstacksize = 1048576
               minstacksize = 16384
-              namespaceprefixes = System;Xml;Data;Datasnap;Web;Soap;Winapi;System.Win;Data.Win;Web.Win;Soap.Win;
+              namespaceprefixes = System;Xml;Data;Datasnap;Web;Soap;Winapi;System.Win;Data.Win;Web.Win;Soap.Win;Bde;
               openstrings = true
               optimisation = false
               outputdir = C:\\work\\fhirserver\\Exec\\32

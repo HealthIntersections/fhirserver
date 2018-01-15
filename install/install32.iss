@@ -4,11 +4,11 @@
 ; AppID can never be changed as subsequent installations require the same installation ID each time
 AppID=FHIRServer
 AppName=Health Intersections FHIR Server
-AppVerName=Version 1.0.200
+AppVerName=Version 1.0.195
 
 ; compilation control
 OutputDir=C:\work\fhirserver\install\build
-OutputBaseFilename=fhirserver32-1.0.200
+OutputBaseFilename=fhirserver32-1.0.195
 Compression=lzma2/ultra64
 
 ; 64 bit
@@ -91,7 +91,7 @@ Source: "C:\work\fhirserver\Exec\32\FHIRServerUtils.exe";    DestDir: "{app}";  
 
 Source: "C:\work\fhirserver\Exec\fhir.ini";                           DestDir: "{app}";            Flags: ignoreversion onlyifdoesntexist;       DestName: "fhirserver.ini" 
 Source: "C:\work\fhirserver\Libraries\FMM\FastMM_FullDebugMode.dll";  DestDir: "{app}";            Flags: ignoreversion
-Source: "C:\work\fhirserver\Libraries\js\chakra\x32_release\ChakraCore.dll";                      DestDir: "{app}";            Flags: ignoreversion
+Source: "C:\work\fhirserver\Libraries\js\chakra\x86_release\ChakraCore.dll";                      DestDir: "{app}";            Flags: ignoreversion
 Source: "C:\work\org.hl7.fhir\build\publish\org.hl7.fhir.validator.jar";  DestDir: "{app}";            Flags: ignoreversion
 
 ; Web resources
