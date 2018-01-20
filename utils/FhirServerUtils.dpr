@@ -285,7 +285,8 @@ uses
   JavaRuntime in '..\Libraries\java\JavaRuntime.pas',
   JUtils in '..\Libraries\java\JUtils.pas',
   myUTF8Strings in '..\Libraries\java\myUTF8Strings.pas',
-  JavaBridge in '..\Server\JavaBridge.pas';
+  JavaBridge in '..\Server\JavaBridge.pas',
+  FHIRFactory in '..\reference-platform\support\FHIRFactory.pas';
 
 {$R *.res}
 

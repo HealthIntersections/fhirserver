@@ -812,7 +812,7 @@ Begin
   FStartTime := GetTickCount;
   StartServer(active);
   {$IFNDEF FHIR2}
-  if ServerContext.JavaServices <> nil then
+  if active and (ServerContext.JavaServices <> nil) then
     ServerContext.JavaServices.txConnect(Fini.ReadString(voMaybeVersioned, 'Web', 'java-tx', 'http://localhost:'+Fini.ReadString(voMaybeVersioned, 'Web', 'http', '80')+Fini.ReadString(voMaybeVersioned, 'Web', 'base', '/')));
   {$ENDIF}
 
@@ -1052,6 +1052,7 @@ begin
       req.LoadParams('');
       req.baseUrl := FServerContext.Bases[0];
       Context.message := 'Process ' + name;
+      GJSHost.registry := ServerContext.EventScriptRegistry.link;
       resp := TFHIRResponse.Create;
       try
         resp.OnCreateBuilder := doGetBundleBuilder;
@@ -1944,9 +1945,9 @@ begin
     p := TParseMap.Create(TEncoding.UTF8.GetString(request.Source.AsBytes), true);
     try
       if p.GetVar('srcformat') = 'json' then
-        prsr := TFHIRJsonParser.Create(request.Context.link, request.lang)
+        prsr := FServerContext.Factory.newJsonParser(request.lang)
       else
-        prsr := TFHIRXmlParser.Create(request.Context.link, request.lang);
+        prsr := FServerContext.Factory.newXmlParser(request.lang);
       try
         s := p.GetVar('source');
         prsr.Source := TStringStream.Create(s, TEncoding.UTF8);
@@ -2723,42 +2724,45 @@ begin
       begin
         if Context <> nil then
           Context.progress(trunc(100 * (i - istart) / (iend - istart)));
-        writeln('Parse ' + rdr.Parts[i].name);
-        if rdr.Parts[i].name.EndsWith('.json') then
-          p := TFHIRJsonParser.Create(FServerContext.Validator.Context.link, lang)
-        else if rdr.Parts[i].name.EndsWith('.map') then
-          p := TFHIRTextParser.Create(FServerContext.Validator.Context.link, lang)
-        else
-          p := TFHIRXmlParser.Create(FServerContext.Validator.Context.link, lang);
-        try
-          p.Source := TBytesStream.Create(rdr.Parts[i].AsBytes);
-          p.AllowUnknownContent := true;
-          p.Parse;
-          if p.resource is TFHIRBundle then
-          begin
-            bnd := TFHIRBundle(p.resource);
-            case bnd.type_ of
-              BundleTypeDocument, BundleTypeMessage, BundleTypeHistory, BundleTypeSearchset, BundleTypeCollection:
-                for k := 0 to bnd.entryList.Count - 1 do
-                  if ok(bnd.entryList[k].resource) then
-                    result.entryList.Add(bnd.entryList[k].link);
-              BundleTypeTransaction, BundleTypeTransactionResponse:
-                ; // we ignore these for now
+        if not StringArrayExistsInsensitive(['.info', '.internals', '.zip'], extractFileExt(rdr.Parts[i].name)) then
+        begin
+          writeln('Parse ' + rdr.Parts[i].name);
+          if rdr.Parts[i].name.EndsWith('.json') then
+            p := FServerContext.Factory.newJsonParser(lang)
+          else if rdr.Parts[i].name.EndsWith('.map') then
+            p := TFHIRTextParser.Create(FServerContext.Validator.Context.link, lang)
+          else
+            p := FServerContext.Factory.newXmlParser(lang);
+          try
+            p.Source := TBytesStream.Create(rdr.Parts[i].AsBytes);
+            p.AllowUnknownContent := true;
+            p.Parse;
+            if p.resource is TFHIRBundle then
+            begin
+              bnd := TFHIRBundle(p.resource);
+              case bnd.type_ of
+                BundleTypeDocument, BundleTypeMessage, BundleTypeHistory, BundleTypeSearchset, BundleTypeCollection:
+                  for k := 0 to bnd.entryList.Count - 1 do
+                    if ok(bnd.entryList[k].resource) then
+                      result.entryList.Add(bnd.entryList[k].link);
+                BundleTypeTransaction, BundleTypeTransactionResponse:
+                  ; // we ignore these for now
+              end;
+            end
+            else if not(p.resource is TFhirParameters) and ok(p.resource) then
+            begin
+              e := TFHIRBundleEntry.Create;
+              try
+                e.resource := p.resource.link;
+                result.entryList.Add(e.link);
+              finally
+                e.Free;
+              end;
             end;
-          end
-          else if not(p.resource is TFhirParameters) and ok(p.resource) then
-          begin
-            e := TFHIRBundleEntry.Create;
-            try
-              e.resource := p.resource.link;
-              result.entryList.Add(e.link);
-            finally
-              e.Free;
-            end;
+          finally
+            p.Source.Free;
+            p.Free;
           end;
-        finally
-          p.Source.Free;
-          p.Free;
         end;
       end;
       if iend < rdr.Parts.Count - 1 then
@@ -2920,7 +2924,7 @@ begin
   begin
     ss := TStringStream.Create(header, TEncoding.UTF8);
     try
-      json := TFHIRJsonParser.Create(FServerContext.Validator.Context.link, lang);
+      json := FServerContext.Factory.newJsonParser(lang);
       try
         json.Source := ss;
         json.Parse;

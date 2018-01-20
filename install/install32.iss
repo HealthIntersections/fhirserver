@@ -4,11 +4,11 @@
 ; AppID can never be changed as subsequent installations require the same installation ID each time
 AppID=FHIRServer
 AppName=Health Intersections FHIR Server
-AppVerName=Version 1.0.195
+AppVerName=Version 1.0.204
 
 ; compilation control
 OutputDir=C:\work\fhirserver\install\build
-OutputBaseFilename=fhirserver32-1.0.195
+OutputBaseFilename=fhirserver32-1.0.204
 Compression=lzma2/ultra64
 
 ; 64 bit
@@ -25,6 +25,7 @@ DisableStartUpPrompt=yes
 MinVersion=0,5.0
 UninstallDisplayIcon=C:\work\fhirserver\Server\fhir.ico
 WizardStyle=modern
+DisableDirPage=false
 
 ; directory management
 DefaultDirName={pf}\FHIRServer
@@ -208,6 +209,7 @@ begin
       else
         JavaInstalled := false;
  
+  Result := true;
   if not JavaInstalled then
   begin
     ResultMsg := MsgBox('Oracle Java v1.6 (32bit) or newer not found in the system. Java 1.6 or later is required to run this application (can be installed after this installation too). Do you want to continue?', mbConfirmation, MB_YESNO) = idYes;
