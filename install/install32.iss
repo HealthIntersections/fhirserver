@@ -25,6 +25,7 @@ DisableStartUpPrompt=yes
 MinVersion=0,5.0
 UninstallDisplayIcon=C:\work\fhirserver\Server\fhir.ico
 WizardStyle=modern
+DisableDirPage=false
 
 ; directory management
 DefaultDirName={pf}\FHIRServer
@@ -208,6 +209,7 @@ begin
       else
         JavaInstalled := false;
  
+  Result := true;
   if not JavaInstalled then
   begin
     ResultMsg := MsgBox('Oracle Java v1.6 (32bit) or newer not found in the system. Java 1.6 or later is required to run this application (can be installed after this installation too). Do you want to continue?', mbConfirmation, MB_YESNO) = idYes;

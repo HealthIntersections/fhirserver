@@ -323,7 +323,8 @@ uses
   JavaRuntime in '..\Libraries\java\JavaRuntime.pas',
   JavaBridge in '..\Server\JavaBridge.pas',
   JavaBridgeTests in 'JavaBridgeTests.pas',
-  myUTF8Strings in '..\Libraries\java\myUTF8Strings.pas';
+  myUTF8Strings in '..\Libraries\java\myUTF8Strings.pas',
+  FHIRFactory in '..\reference-platform\support\FHIRFactory.pas';
 
 var
   runner : ITestRunner;
