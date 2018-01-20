@@ -9373,6 +9373,7 @@ begin
       outcome := conn.ColBlobByName['Outcome']
     end;
     conn.Terminate;
+    conn.Release;
   except
     on e : Exception do
     begin
