@@ -405,6 +405,7 @@
         <DCCReference Include="..\Libraries\java\JUtils.pas"/>
         <DCCReference Include="..\Libraries\java\myUTF8Strings.pas"/>
         <DCCReference Include="JavaBridge.pas"/>
+        <DCCReference Include="..\reference-platform\support\FHIRFactory.pas"/>
         <None Include="..\reference-platform\r4\fhirtests4.dpr"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>

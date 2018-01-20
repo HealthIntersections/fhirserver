@@ -344,7 +344,8 @@ uses
   JavaRuntime in '..\Libraries\java\JavaRuntime.pas',
   JUtils in '..\Libraries\java\JUtils.pas',
   myUTF8Strings in '..\Libraries\java\myUTF8Strings.pas',
-  JavaBridge in 'JavaBridge.pas';
+  JavaBridge in 'JavaBridge.pas',
+  FHIRFactory in '..\reference-platform\support\FHIRFactory.pas';
 
 begin
   logfile := IncludeTrailingPathDelimiter(SystemTemp)+'fhirserver.log';

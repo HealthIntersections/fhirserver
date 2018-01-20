@@ -183,10 +183,13 @@ type
 
     function newXmlParser(lang : String) : TFHIRXmlParser;
     function newJsonParser(lang : String) : TFHIRJsonParser;
-    function newTurtleParser(lang : String) : TFHIRTurtleParser;
     function newXmlComposer(lang : String; style : TFHIROutputStyle = OutputStyleNormal) : TFHIRXmlComposer;
     function newJsonComposer(lang : String; style : TFHIROutputStyle = OutputStyleNormal) : TFHIRJsonComposer;
+
+    {$IFNDEF FHIR2}
+    function newTurtleParser(lang : String) : TFHIRTurtleParser;
     function newTurtleComposer(lang : String; style : TFHIROutputStyle = OutputStyleNormal) : TFHIRTurtleComposer;
+    {$ENDIF}
   end;
 
 implementation
@@ -233,6 +236,7 @@ begin
   result := TFHIRJsonParser.Create(context.link, 'en');
 end;
 
+{$IFNDEF FHIR2}
 function TFHIRFactory.newTurtleComposer(lang : String; style : TFHIROutputStyle): TFHIRTurtleComposer;
 begin
   result := TFHIRTurtleComposer.Create(context.link, style, 'en');
@@ -242,6 +246,7 @@ function TFHIRFactory.newTurtleParser(lang : String) : TFHIRTurtleParser;
 begin
   result := TFHIRTurtleParser.Create(context.link, 'en');
 end;
+{$ENDIF}
 
 function TFHIRFactory.newXmlComposer(lang : String; style : TFHIROutputStyle): TFHIRXmlComposer;
 begin
