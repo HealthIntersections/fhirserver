@@ -1211,7 +1211,7 @@ end;
 
 procedure TTerminologyServerStore.AddCodeSystemToCache({$IFNDEF FHIR2} cs : TFhirCodeSystem; {$ELSE} cs : TFHIRValueSet; {$ENDIF} base : boolean);
 var
-  cse : TFHIRCodeSystemEntry;
+  cse, ct : TFHIRCodeSystemEntry;
   supp : TFHIRCodeSystem;
 begin
   cse := TFHIRCodeSystemEntry.Create(cs.Link);
@@ -1224,11 +1224,11 @@ begin
       FSupplementsById.AddOrSetValue(cs.id, cs.Link);
       if cs.supplements.reference.StartsWith('CodeSystem/') then
       begin
-        if FCodeSystemsById.TryGetValue(cs.supplements.reference.Substring(11), cse) then
-          cse.Supplements.Add(cs.Link);
+        if FCodeSystemsById.TryGetValue(cs.supplements.reference.Substring(11), ct) then
+          ct.Supplements.Add(cs.Link);
       end
-      else if FCodeSystemsByUrl.TryGetValue(cs.supplements.reference, cse) then
-        cse.Supplements.Add(cs.Link);
+      else if FCodeSystemsByUrl.TryGetValue(cs.supplements.reference, ct) then
+        ct.Supplements.Add(cs.Link);
     end
     else
     begin

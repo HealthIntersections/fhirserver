@@ -35,7 +35,7 @@ uses
   {$IFDEF MACOS} OSXUtils, {$ELSE} Windows, {$ENDIF} SysUtils, Classes, Generics.Collections,
   OIDSupport, kCritSct, FileSupport, SystemSupport,
   AdvObjects, AdvGenerics, AdvStringMatches,
-  FHIRTypes, FHIRResources, FHIRConstants, FHIRIndexManagers, FHIRUtilities,
+  FHIRTypes, FHIRResources, FHIRConstants, FHIRIndexManagers, FHIRUtilities, FHIRFactory,
   FHIRValidator, ServerValidator, FHIRUserProvider, FHIRStorageService, ServerUtilities, TerminologyServer,
   FHIRSubscriptionManager, FHIRSessionManager, FHIRTagManager, JWTService, ClientApplicationVerifier,
   ApplicationCache, ServerJavascriptHost, JavaBridge;
@@ -84,6 +84,7 @@ Type
     FNamingSystems : TAdvMap<TFHIRNamingSystem>;
     FApplicationCache : TApplicationCache;
     FEventScriptRegistry : TEventScriptRegistry;
+    FFactory: TFHIRFactory;
     {$IFNDEF FHIR2}
     FMaps : TAdvMap<TFHIRStructureMap>;
     FJavaServices: TJavaLibraryWrapper;
@@ -108,6 +109,7 @@ Type
     FRunNumber: integer;
     FRequestId : integer;
 
+    procedure SetFactory(const Value: TFHIRFactory);
     procedure SetUserProvider(const Value: TFHIRUserProvider);
     procedure SetTerminologyServer(const Value: TTerminologyServer);
     procedure SetSubscriptionManager(const Value: TSubscriptionManager);
@@ -136,6 +138,7 @@ Type
     property ClientApplicationVerifier : TClientApplicationVerifier read FClientApplicationVerifier write SetClientApplicationVerifier;
     property ApplicationCache : TApplicationCache read FApplicationCache;
     property EventScriptRegistry : TEventScriptRegistry read FEventScriptRegistry;
+    property Factory : TFHIRFactory read FFactory write SetFactory;
     {$IFNDEF FHIR2}
     property JavaServices : TJavaLibraryWrapper read FJavaServices write SetJavaServices;
     {$ENDIF}
@@ -377,6 +380,7 @@ begin
   FStorage.Free;
   FQuestionnaireCache.free;
   UserProvider.Free;
+  FFactory.free;
 
   FValidator.free;
 //  if FValidatorContext.AdvObjectReferenceCount > 0 then
@@ -465,6 +469,13 @@ begin
   FTerminologyServer := Value;
   ValidatorContext.TerminologyServer := Value.Link;
 end;
+
+procedure TFHIRServerContext.SetFactory(const Value: TFHIRFactory);
+begin
+  FFactory.Free;
+  FFactory := Value;
+end;
+
 
 {$IFNDEF FHIR2}
 function TFHIRServerContext.getMaps: TAdvMap<TFHIRStructureMap>;

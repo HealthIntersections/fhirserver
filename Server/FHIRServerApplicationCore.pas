@@ -67,15 +67,16 @@ Uses
   Windows, SysUtils, Classes, IniFiles, ActiveX, ComObj,
   AdvExceptions,
   SystemService, SystemSupport, FileSupport, ThreadSupport, StringSupport,
+  InternetFetcher,
   SnomedImporter, SnomedServices, SnomedExpressions, RxNormServices, UniiServices,
   LoincImporter, LoincServices,
   KDBManager, KDBOdbc, KDBDialects, KDBSQLite,
   FHIRResources,
   TerminologyServer,
-  FHIRStorageService,
+  FHIRStorageService, FHIRFactory,
   FHIRRestServer, DBInstaller, FHIRConstants, FHIRNativeStorage, FHIRBase, FhirPath,
   FHIRServerConstants, FHIRServerContext, ServerUtilities, WebSourceProvider,
-  JavaBridge, SCIMServer, CDSHooksServices;
+  JavaBridge, SCIMServer, CDSHooksServices, ServerJavascriptHost;
 
 Type
   TFHIRServerDataStore = class (TFHIRNativeStorageService)
@@ -111,6 +112,7 @@ Type
     procedure cb(i : integer; s : WideString);
     procedure identifyValueSets;
     function RegisterValueSet(id: String; conn: TKDBConnection): integer;
+    function fetchFromUrl(fn : String; var bytes : TBytes) : boolean;
   protected
     function CanStart : boolean; Override;
     procedure postStart; override;
@@ -159,117 +161,121 @@ begin
     end;
 
     CoInitialize(nil);
-
-    if not FindCmdLineSwitch('ini', iniName, true, [clstValueNextParam]) then
-      iniName := IncludeTrailingPathDelimiter(ExtractFilePath(ParamStr(0)))+'fhirserver.ini';
-
-    if not FindCmdLineSwitch('name', svcName, true, [clstValueNextParam]) then
-      svcName := 'FHIRServer';
-    if not FindCmdLineSwitch('title', dispName, true, [clstValueNextParam]) then
-      dispName := 'FHIR Server';
-    iniName := iniName.replace('.dstu', '.dev');
-
-    if JclExceptionTrackingActive then
-      logt('FHIR Service '+SERVER_VERSION+'. Using ini file '+iniName+' with stack dumps on')
-    else
-      logt('FHIR Service '+SERVER_VERSION+'. Using ini file '+iniName+' (no stack dumps)');
-    if filelog then
-      logt('Log File = '+logfile);
-    logt('FHIR Version '+FHIR_GENERATED_VERSION);
-    dispName := dispName + ' '+SERVER_VERSION+' (FHIR v '+FHIR_GENERATED_VERSION+')';
-
-    svc := TFHIRService.Create(svcName, dispName, iniName);
+    GJsHost := TJsHost.Create;
     try
-      if FindCmdLineSwitch('installer') then
-      begin
-        svc.FInstaller := true;
-        svc.callback := svc.InstallerCallBack;
-      end;
+      if not FindCmdLineSwitch('ini', iniName, true, [clstValueNextParam]) then
+        iniName := IncludeTrailingPathDelimiter(ExtractFilePath(ParamStr(0)))+'fhirserver.ini';
 
-      svc.FLoadStore := not FindCmdLineSwitch('noload');
-      if FindCmdLineSwitch('mount') then
-      begin
-        svc.InstallDatabase;
-        if FindCmdLineSwitch('unii', fn, true, [clstValueNextParam]) then
-          ImportUnii(fn, svc.Fdb);
-      end
-      else if FindCmdLineSwitch('unmount') then
-        svc.UninstallDatabase
-      else if FindCmdLineSwitch('remount') then
-      begin
-        svc.DebugMode := true;
-        svc.FNotServing := true;
-        svc.UninstallDatabase;
-        svc.InstallDatabase;
-        if FindCmdLineSwitch('unii', fn, true, [clstValueNextParam]) then
-          ImportUnii(fn, svc.Fdb);
-        if FindCmdLineSwitch('profile', fn, true, [clstValueNextParam]) then
-          svc.LoadByProfile(fn, true)
-        else if FindCmdLineSwitch('load', fn, true, [clstValueNextParam]) then
-          svc.Load(fn);
-      end
-      else if FindCmdLineSwitch('load', fn, true, [clstValueNextParam]) then
-      begin
-        svc.DebugMode := true;
-        svc.FNotServing := true;
-        svc.Load(fn);
-      end
-      else if FindCmdLineSwitch('txdirect') then
-      begin
-        svc.UninstallDatabase;
-        svc.InstallDatabase;
-        svc.DebugExecute;
-      end
-      else if FindCmdLineSwitch('profile', fn, true, [clstValueNextParam]) then
-        svc.LoadByProfile(fn, false)
-      else if FindCmdLineSwitch('validate') then
-      begin
-        svc.FNotServing := true;
-        svc.validate;
-      end
-      else if FindCmdLineSwitch('index') then
-        svc.index
-      else if FindCmdLineSwitch('snomed-rf2', dir, true, [clstValueNextParam]) then
-      begin
-        FindCmdLineSwitch('sver', ver, true, [clstValueNextParam]);
-        if not FindCmdLineSwitch('sdest', dest, true, [clstValueNextParam]) then
-          dest := svc.FIni.ReadString(voVersioningNotApplicable, 'internal', 'store', IncludeTrailingPathDelimiter(ProgData)+'fhirserver');
-        svc.FIni.WriteString('snomed', 'cache', importSnomedRF2(dir, dest, ver, svc.callback));
-      end
-      else if FindCmdLineSwitch('loinc', dir, true, [clstValueNextParam]) then
-      begin
-        if not FindCmdLineSwitch('lver', lver, true, [clstValueNextParam]) then
-          writeln('LOINC Version parameter needed: -lver X.XX')
-        else if not FindCmdLineSwitch('ldate', ldate, true, [clstValueNextParam]) then
-          writeln('LOINC Date parameter needed: -ldate MONTH 20XX')
-       else
-          svc.FIni.WriteString('loinc', 'cache', importLoinc(dir, lver, ldate, svc.FIni.ReadString(voVersioningNotApplicable, 'internal', 'store', IncludeTrailingPathDelimiter(ProgData)+'fhirserver')))
-      end
-      else if FindCmdLineSwitch('rxstems', dir, true, []) then
-      begin
-        generateRxStems(TKDBOdbcManager.create('fhir', 100, 0, svc.FIni.ReadString(voMaybeVersioned, 'database', 'driver', ''),
-          svc.FIni.ReadString(voVersioningNotApplicable, 'database', 'server', ''), svc.FIni.ReadString(voVersioningNotApplicable, 'RxNorm', 'database', ''),
-          svc.FIni.ReadString(voVersioningNotApplicable, 'database', 'username', ''), svc.FIni.ReadString(voVersioningNotApplicable, 'database', 'password', '')))
-      end
-      else if FindCmdLineSwitch('ncistems', dir, true, []) then
-      begin
-        generateRxStems(TKDBOdbcManager.create('fhir', 100, 0, svc.FIni.ReadString(voMaybeVersioned, 'database', 'driver', ''),
-          svc.FIni.ReadString(voVersioningNotApplicable, 'database', 'server', ''), svc.FIni.ReadString(voVersioningNotApplicable, 'NciMeta', 'database', ''),
-          svc.FIni.ReadString(voVersioningNotApplicable, 'database', 'username', ''), svc.FIni.ReadString(voVersioningNotApplicable, 'database', 'password', '')))
-      end
-  //    procedure ReIndex;
-  //    procedure clear(types : String);
-      else if FindCmdLineSwitch('unii', fn, true, [clstValueNextParam]) then
-      begin
-       svc.ConnectToDatabase;
-       ImportUnii(fn, svc.Fdb)
-      end
+      if not FindCmdLineSwitch('name', svcName, true, [clstValueNextParam]) then
+        svcName := 'FHIRServer';
+      if not FindCmdLineSwitch('title', dispName, true, [clstValueNextParam]) then
+        dispName := 'FHIR Server';
+      iniName := iniName.replace('.dstu', '.dev');
+
+      if JclExceptionTrackingActive then
+        logt('FHIR Service '+SERVER_VERSION+'. Using ini file '+iniName+' with stack dumps on')
       else
-      begin
-        svc.Execute;
+        logt('FHIR Service '+SERVER_VERSION+'. Using ini file '+iniName+' (no stack dumps)');
+      if filelog then
+        logt('Log File = '+logfile);
+      logt('FHIR Version '+FHIR_GENERATED_VERSION);
+      dispName := dispName + ' '+SERVER_VERSION+' (FHIR v '+FHIR_GENERATED_VERSION+')';
+
+      svc := TFHIRService.Create(svcName, dispName, iniName);
+      try
+        if FindCmdLineSwitch('installer') then
+        begin
+          svc.FInstaller := true;
+          svc.callback := svc.InstallerCallBack;
+        end;
+
+        svc.FLoadStore := not FindCmdLineSwitch('noload');
+        if FindCmdLineSwitch('mount') then
+        begin
+          svc.InstallDatabase;
+          if FindCmdLineSwitch('unii', fn, true, [clstValueNextParam]) then
+            ImportUnii(fn, svc.Fdb);
+        end
+        else if FindCmdLineSwitch('unmount') then
+          svc.UninstallDatabase
+        else if FindCmdLineSwitch('remount') then
+        begin
+          svc.DebugMode := true;
+          svc.FNotServing := true;
+          svc.UninstallDatabase;
+          svc.InstallDatabase;
+          if FindCmdLineSwitch('unii', fn, true, [clstValueNextParam]) then
+            ImportUnii(fn, svc.Fdb);
+          if FindCmdLineSwitch('profile', fn, true, [clstValueNextParam]) then
+            svc.LoadByProfile(fn, true)
+          else if FindCmdLineSwitch('load', fn, true, [clstValueNextParam]) then
+            svc.Load(fn);
+        end
+        else if FindCmdLineSwitch('load', fn, true, [clstValueNextParam]) then
+        begin
+          svc.DebugMode := true;
+          svc.FNotServing := true;
+          svc.Load(fn);
+        end
+        else if FindCmdLineSwitch('txdirect') then
+        begin
+          svc.UninstallDatabase;
+          svc.InstallDatabase;
+          svc.DebugExecute;
+        end
+        else if FindCmdLineSwitch('profile', fn, true, [clstValueNextParam]) then
+          svc.LoadByProfile(fn, false)
+        else if FindCmdLineSwitch('validate') then
+        begin
+          svc.FNotServing := true;
+          svc.validate;
+        end
+        else if FindCmdLineSwitch('index') then
+          svc.index
+        else if FindCmdLineSwitch('snomed-rf2', dir, true, [clstValueNextParam]) then
+        begin
+          FindCmdLineSwitch('sver', ver, true, [clstValueNextParam]);
+          if not FindCmdLineSwitch('sdest', dest, true, [clstValueNextParam]) then
+            dest := svc.FIni.ReadString(voVersioningNotApplicable, 'internal', 'store', IncludeTrailingPathDelimiter(ProgData)+'fhirserver');
+          svc.FIni.WriteString('snomed', 'cache', importSnomedRF2(dir, dest, ver, svc.callback));
+        end
+        else if FindCmdLineSwitch('loinc', dir, true, [clstValueNextParam]) then
+        begin
+          if not FindCmdLineSwitch('lver', lver, true, [clstValueNextParam]) then
+            writeln('LOINC Version parameter needed: -lver X.XX')
+          else if not FindCmdLineSwitch('ldate', ldate, true, [clstValueNextParam]) then
+            writeln('LOINC Date parameter needed: -ldate MONTH 20XX')
+         else
+            svc.FIni.WriteString('loinc', 'cache', importLoinc(dir, lver, ldate, svc.FIni.ReadString(voVersioningNotApplicable, 'internal', 'store', IncludeTrailingPathDelimiter(ProgData)+'fhirserver')))
+        end
+        else if FindCmdLineSwitch('rxstems', dir, true, []) then
+        begin
+          generateRxStems(TKDBOdbcManager.create('fhir', 100, 0, svc.FIni.ReadString(voMaybeVersioned, 'database', 'driver', ''),
+            svc.FIni.ReadString(voVersioningNotApplicable, 'database', 'server', ''), svc.FIni.ReadString(voVersioningNotApplicable, 'RxNorm', 'database', ''),
+            svc.FIni.ReadString(voVersioningNotApplicable, 'database', 'username', ''), svc.FIni.ReadString(voVersioningNotApplicable, 'database', 'password', '')))
+        end
+        else if FindCmdLineSwitch('ncistems', dir, true, []) then
+        begin
+          generateRxStems(TKDBOdbcManager.create('fhir', 100, 0, svc.FIni.ReadString(voMaybeVersioned, 'database', 'driver', ''),
+            svc.FIni.ReadString(voVersioningNotApplicable, 'database', 'server', ''), svc.FIni.ReadString(voVersioningNotApplicable, 'NciMeta', 'database', ''),
+            svc.FIni.ReadString(voVersioningNotApplicable, 'database', 'username', ''), svc.FIni.ReadString(voVersioningNotApplicable, 'database', 'password', '')))
+        end
+    //    procedure ReIndex;
+    //    procedure clear(types : String);
+        else if FindCmdLineSwitch('unii', fn, true, [clstValueNextParam]) then
+        begin
+         svc.ConnectToDatabase;
+         ImportUnii(fn, svc.Fdb)
+        end
+        else
+        begin
+          svc.Execute;
+        end;
+      finally
+        svc.Free;
       end;
     finally
-      svc.Free;
+      GJsHost.free;
     end;
   except
     on e : Exception do
@@ -347,6 +353,32 @@ procedure TFHIRService.dump;
 begin
   inherited;
   logt(KDBManagers.Dump);
+end;
+
+function TFHIRService.fetchFromUrl(fn: String; var bytes: TBytes): boolean;
+var
+  fetch : TInternetFetcher;
+begin
+  fetch := TInternetFetcher.create;
+  try
+    fetch.URL := AppendForwardSlash(fn)+'validator.pack';
+    try
+      fetch.Fetch;
+      bytes := fetch.Buffer.AsBytes;
+      exit(true);
+    except
+    end;
+    fetch.URL := fn;
+    try
+      fetch.Fetch;
+      bytes := fetch.Buffer.AsBytes;
+      exit(true);
+    except
+      exit(false);
+    end;
+  finally
+    fetch.Free;
+  end;
 end;
 
 function TFHIRService.RegisterValueSet(id: String; conn : TKDBConnection): integer;
@@ -491,6 +523,8 @@ var
   first : boolean;
   ini : TFHIRServerIniFile;
   i : integer;
+  bytes : TBytes;
+  bs : TBytesStream;
 begin
   FNotServing := true;
   cb(1, 'Load: Connect to database');
@@ -501,7 +535,21 @@ begin
   logt('Load: register value sets');
   identifyValueSets;
   cb(2, 'Load from '+fn);
-  if {$IFDEF FHIR2} true {$ELSE} fn.EndsWith('.json') or fn.EndsWith('.xml') {$ENDIF} then
+  if fn.StartsWith('http://') or fn.StartsWith('https://') then
+  begin
+    if fetchFromUrl(fn, bytes) then
+    begin
+      bs := TBytesStream.Create(bytes);
+      try
+        FWebServer.Transaction(bs, true, fn, '', nil, callback);
+      finally
+        bs.Free;
+      end;
+    end
+    else
+      raise Exception.Create('Unable to fetch from "'+fn+'"');
+  end
+  else if {$IFDEF FHIR2} true {$ELSE} fn.EndsWith('.json') or fn.EndsWith('.xml') {$ENDIF} then
   begin
     logt('Load database from '+fn);
     f := TFileStream.Create(fn, fmOpenRead + fmShareDenyWrite);
@@ -670,6 +718,7 @@ begin
     ctxt := TFHIRServerContext.Create(store.Link);
     try
       store.ServerContext := ctxt;
+      ctxt.Factory := TFHIRFactory.create(ctxt.ValidatorContext.Link);
       ctxt.RunNumber := FRunNumber;
       {$IFNDEF FHIR2}
       logt('loading Java Services');

@@ -72,6 +72,14 @@ After that, compiling should be simple: open the file fhirprojects.groupproj in 
 
 Note that the FHIRServer is a *big* compile. You may have problems compiling in resource constrained environments.
 
+Building Release
+----------------
+
+Bulding an actual release has a long list of dependencies, including 
+several versions of the FHIR specification, and the following tools
+* Innosetup + InnoSetup download plug-in
+* FinalBuilder
+ 
 Running
 -------
 

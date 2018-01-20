@@ -45,7 +45,7 @@ uses
 
   MimeMessage, TextUtilities, ZLib, InternetFetcher, TurtleParser, MXml, DigitalSignatures, JWT,
 
-  FHIRContext, FHIRSupport, FHIRParserBase, FHIRParser, FHIRBase, FHIRTypes, FHIRResources, FHIRConstants, FHIRXHtml;
+  FHIRContext, FHIRSupport, FHIRParserBase, FHIRParser, FHIRBase, FHIRTypes, FHIRResources, FHIRConstants, FHIRXHtml, FHIRIndexBase;
 
 Type
   ETooCostly = class (Exception);
@@ -726,6 +726,7 @@ type
 
 procedure iterateResource(resource : TFHIRResource; proc : TResourceIteratorProcedure);
 procedure iterateObject(obj : TFHIRObject; proc : TResourceIteratorProcedure);
+
 
 implementation
 

@@ -37,7 +37,7 @@ uses
   AdvObjects, AdvGenerics, AdvStringMatches, AdvNames, AdvStringBuilders, AdvExceptions,
   KDBDialects, DateSupport, GraphQL,
 
-  FHIRBase, FHIRSupport, FHIRTypes, FHIRResources, FHIRConstants, FHIRUtilities, FHIRLang,
+  FHIRBase, FHIRSupport, FHIRTypes, FHIRResources, FHIRConstants, FHIRUtilities, FHIRLang, FHIRFactory,
   FHIRClient, FHIRContext, FHIRXhtml, FHIRIndexInformation, FHIRParserBase, FHIRIndexBase, FHIRGraphQL,
   CDSHooksUtilities,
   FHIRValidator, ServerValidator, FHIRSubscriptionManager, ServerUtilities, FHIRServerConstants, FHIRIndexManagers;

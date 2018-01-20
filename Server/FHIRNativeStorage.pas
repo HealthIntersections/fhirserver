@@ -40,7 +40,7 @@ uses
   FHIRResources, FHIRBase, FHIRTypes, FHIRParser, FHIRParserBase, FHIRConstants, FHIRContext, FHIROperations, FHIRXhtml,
   FHIRTags, FHIRValueSetExpander, FHIRValidator, FHIRIndexManagers, FHIRSupport, DifferenceEngine, FHIRMetaModel,
   FHIRUtilities, FHIRSubscriptionManager, FHIRSecurity, FHIRLang, FHIRProfileUtilities, FHIRPath, FHIRGraphQL, FHIRClient,
-  FHIRNarrativeGenerator, NarrativeGenerator, QuestionnaireBuilder,
+  FHIRFactory, FHIRNarrativeGenerator, NarrativeGenerator, QuestionnaireBuilder,
   CDSHooksUtilities, {$IFNDEF FHIR2}FHIRStructureMapUtilities, ObservationStatsEvaluator, {$ENDIF} ClosureManager, {$IFDEF FHIR4} GraphDefinitionEngine, {$ENDIF}
   ServerUtilities, ServerValidator, TerminologyServices, TerminologyServer, SCIMObjects, SCIMServer, DBInstaller, UcumServices, MPISearch,
   FHIRServerContext, FHIRStorageService, FHIRServerConstants, FHIRCodeGenerator, ServerJavascriptHost;
@@ -126,7 +126,6 @@ type
   private
     FRepository : TFHIRNativeStorageService;
     FConnection : TKDBConnection;
-    FFactory : TFHIRFactory;
     FIndexer : TFHIRIndexManager;
     FTestServer : Boolean;
 
@@ -782,8 +781,6 @@ begin
   FRepository := repository;
   FConnection := Connection;
 
-  FFactory := TFHIRFactory.create(ServerContext.Validator.Context.link, lang);
-
 
   // order of registration matters - general validation must be after value set validation
   FOperations.add(TFhirExpandValueSetOperation.create(ServerContext.TerminologyServer.Link));
@@ -882,7 +879,6 @@ end;
 destructor TFHIRNativeOperationEngine.Destroy;
 begin
   FIndexer.Free;
-  FFactory.Free;
   FRepository.Free;
   inherited;
 end;
@@ -1356,7 +1352,7 @@ begin
         begin
           response.HTTPCode := 200;
           response.Message := GetFhirMessage('MSG_DELETED_DONE', lang);
-          response.Resource := FFactory.makeByName(codes_TFHIRResourceType[request.Resource.resourceType]) as TFhirResource;
+          response.Resource := TFHIRServerContext(FServerContext).Factory.makeByName(codes_TFHIRResourceType[request.Resource.resourceType]) as TFhirResource;
           response.Resource.id := request.id;
           response.Resource.meta := meta.link;
         end;
@@ -8564,7 +8560,7 @@ begin
           if (map <> nil) then
           begin
             try
-              outcome := native(manager).FFactory.makeByName(map.targetType);
+              outcome := TFHIRServerContext(native(manager).FServerContext).Factory.makeByName(map.targetType);
               try
                 utils := TFHIRStructureMapUtilities.Create(native(manager).ServerContext.Validator.Context.link, lib.Link, TServerTransformerServices.create(native(manager).ServerContext.link));
                 try
