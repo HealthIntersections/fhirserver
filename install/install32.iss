@@ -60,7 +60,7 @@ InfoBeforeFile=C:\work\fhirserver\install\readme.rtf
 #define use_sql2008express
 #define use_mysqldb
 ;#define use_mysqlodbcinstalled
-;#define use_mysqlodbc
+#define use_mysqlodbc
 
 ; shared code for installing the products
 #include "scripts\products.iss"
@@ -1649,7 +1649,7 @@ Begin
 
   VCpath := TEdit.Create(DependenciesPage);
   with VCPath do begin
-  Text := 'http://download.microsoft.com/download/1/f/e/1febbdb2-aded-4e14-9063-39fb17e88444/vc_redist.x86.exe';
+  Text := vcredist2017_url;
   Top := ScaleX(76);
   Left := ScaleX(70);
   Width:=Scalex(300);
@@ -1721,7 +1721,7 @@ Begin
 
   ODBCpath := TEdit.Create(DependenciesPage);
   with ODBCpath do begin
-  Text := 'https://dev.mysql.com/get/Downloads/Connector-ODBC/3.51/mysql-connector-odbc-3.51.28-win32.msi';
+  Text := mysqlodbc_url;
   Top := ScaleX(156);
   Left := ScaleX(70);
   Width:=Scalex(300);
@@ -1758,7 +1758,7 @@ Begin
 
   MSSQLpath := TEdit.Create(DependenciesPage);
   with MSSQLpath do begin
-  Text := 'http://download.microsoft.com/download/5/1/A/51A153F6-6B08-4F94-A7B2-BA1AD482BC75/SQLEXPR32_x86_ENU.exe';
+  Text := sql2008expressr2_url;
   Top := ScaleX(216);
   Left := ScaleX(70);
   Width:=Scalex(300);
