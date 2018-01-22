@@ -1,0 +1,120 @@
+﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <PropertyGroup>
+        <ProjectGuid>{09AF4F3A-3C40-46E9-AB64-2E0AA7A9EEFF}</ProjectGuid>
+    </PropertyGroup>
+    <ItemGroup>
+        <Projects Include="Server\fhirserver4.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="tests\FHIRServerTests.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="utils\FhirServerUtils.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="Server\FHIRServer3.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="Server\FHIRServer2.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="bridge\ExampleBridgeServer.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="Server\fhirserverOSX4.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="utils\VocabTxServer\VocabTxServer.dproj">
+            <Dependencies/>
+        </Projects>
+    </ItemGroup>
+    <ProjectExtensions>
+        <Borland.Personality>Default.Personality.12</Borland.Personality>
+        <Borland.ProjectType/>
+        <BorlandProject>
+            <Default.Personality/>
+        </BorlandProject>
+    </ProjectExtensions>
+    <Target Name="fhirserver4">
+        <MSBuild Projects="Server\fhirserver4.dproj"/>
+    </Target>
+    <Target Name="fhirserver4:Clean">
+        <MSBuild Projects="Server\fhirserver4.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="fhirserver4:Make">
+        <MSBuild Projects="Server\fhirserver4.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="FHIRServerTests">
+        <MSBuild Projects="tests\FHIRServerTests.dproj"/>
+    </Target>
+    <Target Name="FHIRServerTests:Clean">
+        <MSBuild Projects="tests\FHIRServerTests.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="FHIRServerTests:Make">
+        <MSBuild Projects="tests\FHIRServerTests.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="FhirServerUtils">
+        <MSBuild Projects="utils\FhirServerUtils.dproj"/>
+    </Target>
+    <Target Name="FhirServerUtils:Clean">
+        <MSBuild Projects="utils\FhirServerUtils.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="FhirServerUtils:Make">
+        <MSBuild Projects="utils\FhirServerUtils.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="FHIRServer3">
+        <MSBuild Projects="Server\FHIRServer3.dproj"/>
+    </Target>
+    <Target Name="FHIRServer3:Clean">
+        <MSBuild Projects="Server\FHIRServer3.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="FHIRServer3:Make">
+        <MSBuild Projects="Server\FHIRServer3.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="FHIRServer2">
+        <MSBuild Projects="Server\FHIRServer2.dproj"/>
+    </Target>
+    <Target Name="FHIRServer2:Clean">
+        <MSBuild Projects="Server\FHIRServer2.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="FHIRServer2:Make">
+        <MSBuild Projects="Server\FHIRServer2.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="ExampleBridgeServer">
+        <MSBuild Projects="bridge\ExampleBridgeServer.dproj"/>
+    </Target>
+    <Target Name="ExampleBridgeServer:Clean">
+        <MSBuild Projects="bridge\ExampleBridgeServer.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="ExampleBridgeServer:Make">
+        <MSBuild Projects="bridge\ExampleBridgeServer.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="fhirserverOSX4">
+        <MSBuild Projects="Server\fhirserverOSX4.dproj"/>
+    </Target>
+    <Target Name="fhirserverOSX4:Clean">
+        <MSBuild Projects="Server\fhirserverOSX4.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="fhirserverOSX4:Make">
+        <MSBuild Projects="Server\fhirserverOSX4.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="VocabTxServer">
+        <MSBuild Projects="utils\VocabTxServer\VocabTxServer.dproj"/>
+    </Target>
+    <Target Name="VocabTxServer:Clean">
+        <MSBuild Projects="utils\VocabTxServer\VocabTxServer.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="VocabTxServer:Make">
+        <MSBuild Projects="utils\VocabTxServer\VocabTxServer.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="Build">
+        <CallTarget Targets="fhirserver4;FHIRServerTests;FhirServerUtils;FHIRServer3;FHIRServer2;ExampleBridgeServer;fhirserverOSX4;VocabTxServer"/>
+    </Target>
+    <Target Name="Clean">
+        <CallTarget Targets="fhirserver4:Clean;FHIRServerTests:Clean;FhirServerUtils:Clean;FHIRServer3:Clean;FHIRServer2:Clean;ExampleBridgeServer:Clean;fhirserverOSX4:Clean;VocabTxServer:Clean"/>
+    </Target>
+    <Target Name="Make">
+        <CallTarget Targets="fhirserver4:Make;FHIRServerTests:Make;FhirServerUtils:Make;FHIRServer3:Make;FHIRServer2:Make;ExampleBridgeServer:Make;fhirserverOSX4:Make;VocabTxServer:Make"/>
+    </Target>
+    <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
+</Project>

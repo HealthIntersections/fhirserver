@@ -239,7 +239,14 @@ uses
   FHIRClientJs in '..\..\Libraries\js\FHIRClientJs.pas',
   ServerEventJs in '..\..\Server\ServerEventJs.pas',
   Javascript in '..\..\Libraries\js\Javascript.pas',
-  ChakraCommon in '..\..\Libraries\js\ChakraCommon.pas';
+  ChakraCommon in '..\..\Libraries\js\ChakraCommon.pas',
+  FHIRFactory in '..\..\reference-platform\support\FHIRFactory.pas',
+  JavaRuntime in '..\..\Libraries\java\JavaRuntime.pas',
+  JNI in '..\..\Libraries\java\JNI.pas',
+  JNIWrapper in '..\..\Libraries\java\JNIWrapper.pas',
+  JUtils in '..\..\Libraries\java\JUtils.pas',
+  myUTF8Strings in '..\..\Libraries\java\myUTF8Strings.pas',
+  JavaBridge in '..\..\Server\JavaBridge.pas';
 
 {$R *.res}
 

@@ -1,0 +1,72 @@
+﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <PropertyGroup>
+        <ProjectGuid>{09AF4F3A-3C40-46E9-AB64-2E0AA7A9EEFF}</ProjectGuid>
+    </PropertyGroup>
+    <ItemGroup>
+        <Projects Include="toolkit\FHIRToolkit.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="npp\fhirnpp.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="vcldemo\FhirVclDemo.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="tests\FHIRServerTests.dproj">
+            <Dependencies/>
+        </Projects>
+    </ItemGroup>
+    <ProjectExtensions>
+        <Borland.Personality>Default.Personality.12</Borland.Personality>
+        <Borland.ProjectType/>
+        <BorlandProject>
+            <Default.Personality/>
+        </BorlandProject>
+    </ProjectExtensions>
+    <Target Name="FHIRToolkit">
+        <MSBuild Projects="toolkit\FHIRToolkit.dproj"/>
+    </Target>
+    <Target Name="FHIRToolkit:Clean">
+        <MSBuild Projects="toolkit\FHIRToolkit.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="FHIRToolkit:Make">
+        <MSBuild Projects="toolkit\FHIRToolkit.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="fhirnpp">
+        <MSBuild Projects="npp\fhirnpp.dproj"/>
+    </Target>
+    <Target Name="fhirnpp:Clean">
+        <MSBuild Projects="npp\fhirnpp.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="fhirnpp:Make">
+        <MSBuild Projects="npp\fhirnpp.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="FhirVclDemo">
+        <MSBuild Projects="vcldemo\FhirVclDemo.dproj"/>
+    </Target>
+    <Target Name="FhirVclDemo:Clean">
+        <MSBuild Projects="vcldemo\FhirVclDemo.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="FhirVclDemo:Make">
+        <MSBuild Projects="vcldemo\FhirVclDemo.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="FHIRServerTests">
+        <MSBuild Projects="tests\FHIRServerTests.dproj"/>
+    </Target>
+    <Target Name="FHIRServerTests:Clean">
+        <MSBuild Projects="tests\FHIRServerTests.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="FHIRServerTests:Make">
+        <MSBuild Projects="tests\FHIRServerTests.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="Build">
+        <CallTarget Targets="FHIRToolkit;fhirnpp;FhirVclDemo;FHIRServerTests"/>
+    </Target>
+    <Target Name="Clean">
+        <CallTarget Targets="FHIRToolkit:Clean;fhirnpp:Clean;FhirVclDemo:Clean;FHIRServerTests:Clean"/>
+    </Target>
+    <Target Name="Make">
+        <CallTarget Targets="FHIRToolkit:Make;fhirnpp:Make;FhirVclDemo:Make;FHIRServerTests:Make"/>
+    </Target>
+    <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
+</Project>

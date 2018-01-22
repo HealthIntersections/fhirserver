@@ -298,6 +298,13 @@
         <DCCReference Include="..\Libraries\js\ChakraCommon.pas"/>
         <DCCReference Include="..\Libraries\js\AdvJavascript.pas"/>
         <DCCReference Include="..\reference-platform\support\DigitalSignatures.pas"/>
+        <DCCReference Include="..\reference-platform\support\FHIRFactory.pas"/>
+        <DCCReference Include="..\Server\JavaBridge.pas"/>
+        <DCCReference Include="..\Libraries\java\myUTF8Strings.pas"/>
+        <DCCReference Include="..\Libraries\java\JUtils.pas"/>
+        <DCCReference Include="..\Libraries\java\JNIWrapper.pas"/>
+        <DCCReference Include="..\Libraries\java\JNI.pas"/>
+        <DCCReference Include="..\Libraries\java\JavaRuntime.pas"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>

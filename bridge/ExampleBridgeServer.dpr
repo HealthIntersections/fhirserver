@@ -248,7 +248,14 @@ uses
   Javascript in '..\Libraries\js\Javascript.pas',
   ChakraCommon in '..\Libraries\js\ChakraCommon.pas',
   AdvJavascript in '..\Libraries\js\AdvJavascript.pas',
-  DigitalSignatures in '..\reference-platform\support\DigitalSignatures.pas';
+  DigitalSignatures in '..\reference-platform\support\DigitalSignatures.pas',
+  FHIRFactory in '..\reference-platform\support\FHIRFactory.pas',
+  JavaBridge in '..\Server\JavaBridge.pas',
+  myUTF8Strings in '..\Libraries\java\myUTF8Strings.pas',
+  JUtils in '..\Libraries\java\JUtils.pas',
+  JNIWrapper in '..\Libraries\java\JNIWrapper.pas',
+  JNI in '..\Libraries\java\JNI.pas',
+  JavaRuntime in '..\Libraries\java\JavaRuntime.pas';
 
 var
   gsrv : TExampleFhirServer;
