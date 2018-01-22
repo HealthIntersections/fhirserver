@@ -4,11 +4,11 @@
 ; AppID can never be changed as subsequent installations require the same installation ID each time
 AppID=FHIRServer
 AppName=Health Intersections FHIR Server
-AppVerName=Version 1.0.195
+AppVerName=Version 1.0.204
 
 ; compilation control
 OutputDir=C:\work\fhirserver\install\build
-OutputBaseFilename=fhirserver64-1.0.195
+OutputBaseFilename=fhirserver64-1.0.204
 Compression=lzma2/ultra64
 
 ; 64 bit
@@ -55,6 +55,45 @@ InfoBeforeFile=C:\work\fhirserver\install\readme.rtf
 
 #include <idp.iss>
 
+#define use_msiproduct
+#define use_vc2015
+#define use_vc2017
+#define use_sql2008express
+#define use_mysqldb
+;#define use_mysqlodbcinstalled
+#define use_mysqlodbc
+
+; shared code for installing the products
+#include "scripts\products.iss"
+
+; helper functions
+#include "scripts\products\stringversion.iss"
+#include "scripts\products\winversion.iss"
+#include "scripts\products\fileversion.iss"
+#include "scripts\products\dotnetfxversion.iss"
+
+
+
+#ifdef use_msiproduct
+#include "scripts\products\msiproduct.iss"
+#endif
+#ifdef use_vc2015
+#include "scripts\products\vcredist2015.iss"
+#endif
+#ifdef use_vc2017
+#include "scripts\products\vcredist2017.iss"
+#endif
+#ifdef use_sql2008express
+#include "scripts\products\sql2008express.iss"
+#endif
+#ifdef use_mysqlodbc
+#include "scripts\products\mysqlodbc.iss"
+#endif
+#ifdef use_mysqldb
+#include "scripts\products\mysqldb.iss"
+#endif
+
+
 [Types]
 Name: "fhir4";   Description: "Install R4 Version (Current Build)"
 Name: "fhir3";   Description: "Install R3 Version"
@@ -91,7 +130,7 @@ Source: "C:\work\fhirserver\Exec\64\FHIRServer3.exe";        DestDir: "{app}";  
 Source: "C:\work\fhirserver\Exec\64\FHIRServer4.exe";        DestDir: "{app}";     DestName: "FHIRServer.exe";       Components: r4; Flags: ignoreversion
 Source: "C:\work\fhirserver\Exec\64\FHIRServerUtils.exe";    DestDir: "{app}";     DestName: "FHIRServerUtils.exe";                  Flags: ignoreversion
 
-Source: "C:\work\fhirserver\Exec\fhir.ini";                               DestDir: "{app}";            Flags: ignoreversion onlyifdoesntexist;       DestName: "fhirserver.ini" 
+Source: "C:\work\fhirserver\Exec\fhir.ini";                           DestDir: "{app}";            Flags: ignoreversion onlyifdoesntexist;       DestName: "fhirserver.ini" 
 Source: "C:\work\fhirserver\Libraries\FMM\FastMM_FullDebugMode.dll";      DestDir: "{app}";            Flags: ignoreversion
 Source: "C:\work\fhirserver\Libraries\js\chakra\x64_release\ChakraCore.dll";                      DestDir: "{app}";            Flags: ignoreversion
 Source: "C:\work\org.hl7.fhir\build\publish\org.hl7.fhir.validator.jar";  DestDir: "{app}";            Flags: ignoreversion
@@ -119,12 +158,12 @@ Source: "C:\work\org.hl7.fhir\build\publish\examples-json.zip";                 
 
 
 ; Load Data
-Source: "C:\work\fhirserver\sql\nucc.xml";                            DestDir: {app}\sql;     DestName: nucc.xml;             Components: r3 r4; Flags: ignoreversion
-Source: "C:\work\fhirserver\sql\tslc.xml";                            DestDir: {app}\sql;     DestName: tslc.xml;             Components: r3 r4; Flags: ignoreversion
+Source: "C:\work\fhirserver\sql\nucc.xml";                                      DestDir: {app}\sql;     DestName: nucc.xml;            Components: r3 r4; Flags: ignoreversion
+Source: "C:\work\fhirserver\sql\tslc.xml";                                      DestDir: {app}\sql;     DestName: tslc.xml;            Components: r3 r4; Flags: ignoreversion
 Source: "C:\work\fhirserver\sql\cvx.xml";                             DestDir: {app}\sql;     DestName: cvx.xml;              Components: r3 r4; Flags: ignoreversion
 Source: "C:\work\fhirserver\sql\icpc2.xml";                           DestDir: {app}\sql;     DestName: icpc2.xml;            Components: r3 r4; Flags: ignoreversion
 Source: "C:\work\fhirserver\sql\country-codes.xml";                   DestDir: {app}\sql;     DestName: country-codes.xml;    Components: r3 r4; Flags: ignoreversion
-Source: "C:\work\fhirserver\install\load.ini";                        DestDir: {app}\load;                                    Components: r3 r4; Flags: ignoreversion
+Source: "C:\work\fhirserver\install\load.ini";                                  DestDir: {app}\load;                                   Components: r3 r4; Flags: ignoreversion
 
 ; Terminology resources
 Source: "C:\work\fhirserver\Exec\ucum-essence.xml";                   DestDir: "{commonappdata}\FHIRServer"
@@ -183,6 +222,9 @@ var
 
   SctInstallPage : TOutputProgressWizardPage;
   LoadInstallPage : TOutputProgressWizardPage;
+
+  VCStatus, MYSQLStatus, MSSQLStatus,  ODBCStatus : TLabel;
+
 
 // start up check: a jre is required   
 
@@ -973,8 +1015,40 @@ function NextButtonClick(CurPageID: Integer): Boolean;
 var
   dbtypestr, s : String;
   p : integer;
-  ResultMsg:boolean;
+  Dependencies_OK, ResultMsg:boolean;
+  SQLSERVER_installed,VCREDIST_installed,MYSQLDB_installed,MYSQLODBC_installed:boolean;
+  version:string;
+  
 begin
+
+
+
+
+// Check if Visual C++ Redist 2015 is installed - should support also 2017?
+    VCREDIST_installed := 
+      (msiproductupgrade(GetString(vcredist2015_upgradecode, vcredist2015_upgradecode_x64, ''), '15')) 
+    OR (msiproductupgrade(GetString(vcredist2017_upgradecode, vcredist2017_upgradecode_x64, ''), '15')); 
+
+// Check if SQL Express is installed - this should be improved - it will return false if the Full version is installed
+    RegQueryStringValue(HKLM, 'SOFTWARE\Microsoft\Microsoft SQL Server\SQLEXPRESS\MSSQLServer\CurrentVersion', 'CurrentVersion', version);
+    SQLSERVER_installed := not (compareversion(version, '10.5') < 0);
+
+// Check if MYSQL ODBC is installed
+    MYSQLODBC_installed := RegKeyExists(HKLM, 'SOFTWARE\MySQL AB\MySQL Connector/ODBC 5.3')
+
+// Check if MYSQL is installed - this should be fixed
+    MYSQLDB_installed := RegKeyExists(HKLM, 'SOFTWARE\MySQL AB\MySQL 5.5');
+    MYSQLDB_installed := true;
+
+
+if VCREDIST_installed then VCstatus.caption := 'INSTALLED' else VCstatus.caption := 'NOT DETECTED' ;
+if MYSQLDB_installed then MYSQLstatus.caption := 'INSTALLED' else MYSQLstatus.caption := 'NOT DETECTED' ;
+if MYSQLODBC_installed then ODBCstatus.caption := 'INSTALLED' else ODBCstatus.caption := 'NOT DETECTED'  ;
+if SQLSERVER_installed  then MSSQLstatus.caption := 'INSTALLED' else MSSQLstatus.caption := 'NOT DETECTED' ; 
+
+
+
+
 
   if (CurpageID = ServicePage.Id) Then
   Begin
@@ -1043,10 +1117,20 @@ begin
   end
   Else if (DependenciesPage <> Nil) And (CurPageID = DependenciesPage.ID) then
     begin
+
+  
+ 
       result:=true;
       //check if there are still dependencies 
-      if 
-        true // TO DO: Any dependency missing?
+Dependencies_OK:=
+(SQLSERVER_installed) OR
+(VCREDIST_installed AND MYSQLDB_installed AND  MYSQLODBC_installed );
+ 
+
+
+
+      if not Dependencies_OK
+
       then begin
         ResultMsg := MsgBox('Not all dependencies are met (can be installed after this installation too). Do you want to continue?', mbConfirmation, MB_YESNO) = idYes;
         if ResultMsg = false then
@@ -1492,9 +1576,10 @@ end;
 Procedure CreateDependenciesPage;
 var
 
-JRElbl, JREstatus, VClbl, VCStatus, MYSQLlbl, MYSQLStatus, MSSQLlbl, MSSQLStatus, ODBClbl, ODBCStatus : TLabel;
+JRElbl, JREstatus, VClbl, MYSQLlbl,  MSSQLlbl, ODBClbl :Tlabel ;
 JREInstall, VCInstall, MYSQLInstall, MSSQLInstall, ODBCInstall:TButton;
 VCPath, MYSQLPath, MSSQLPath, ODBCPath:TEdit;
+
 
 JavaInstalled : Boolean;
 ResultMsg : Boolean;
@@ -1540,6 +1625,7 @@ Begin
   with JREInstall do begin
   Caption := 'Install JRE';
   Top := ScaleX(16);
+  Width := ScaleX(65);
   Parent := DependenciesPage.Surface;
   OnClick := @LaunchJavaInstall;
   end;
@@ -1548,22 +1634,24 @@ Begin
 
   VClbl := TLabel.Create(DependenciesPage);
   with VClbl do begin
-  Caption := 'Visual C++ Redistributables';
-  Top := ScaleX(50);
+  Caption := 'Visual C++ Redistributables (2015 or 2017)';
+  Top := ScaleX(60);
   Parent := DependenciesPage.Surface;
   end;
 
   VCstatus := TLabel.Create(DependenciesPage);
   with VCstatus do begin
-  Caption := 'Visual C++ Redistributables';
-  Top := ScaleX(50);
+  Caption := 'NOT INSTALLED';
+  font.style:=[fsBold];
+  Top := ScaleX(60);
+  Left := ScaleX(220);
   Parent := DependenciesPage.Surface;
   end;
 
   VCpath := TEdit.Create(DependenciesPage);
   with VCPath do begin
-  Text := 'http://download.microsoft.com/download/1/f/e/1febbdb2-aded-4e14-9063-39fb17e88444/vc_redist.x86.exe';
-  Top := ScaleX(66);
+  Text := vcredist2017_url_x64;
+  Top := ScaleX(76);
   Left := ScaleX(70);
   Width:=Scalex(300);
   Parent := DependenciesPage.Surface;
@@ -1572,7 +1660,9 @@ Begin
   VCInstall := TButton.Create(DependenciesPage);
   with VCInstall do begin
   Caption := 'Install';
-  Top := ScaleX(66);
+  Top := ScaleX(76);
+  Width := ScaleX(65);
+  Height := VCpath.Height;
   Parent := DependenciesPage.Surface;
   OnClick := @InstallVCRedist;
   end;
@@ -1588,6 +1678,8 @@ Begin
   MYSQLstatus := TLabel.Create(DependenciesPage);
   with MYSQLstatus do begin
   Caption := '';
+  Left := ScaleX(140);
+  font.style:=[fsBold];
   Top := ScaleX(100);
   Parent := DependenciesPage.Surface;
   end;
@@ -1605,6 +1697,8 @@ Begin
   with MYSQLInstall do begin
   Caption := 'Install';
   Top := ScaleX(116);
+  Width := ScaleX(65);
+  Height := VCpath.Height;
   Parent := DependenciesPage.Surface;
   OnClick := @InstallMySQL;
   end;
@@ -1612,7 +1706,7 @@ Begin
 
   ODBClbl := TLabel.Create(DependenciesPage);
   with ODBClbl do begin
-  Caption := 'ODBC Driver';
+  Caption := 'MYSQL ODBC Driver (5.3+)';
   Top := ScaleX(140);
   Parent := DependenciesPage.Surface;
   end;
@@ -1620,13 +1714,15 @@ Begin
   ODBCstatus := TLabel.Create(DependenciesPage);
   with ODBCstatus do begin
   Caption := '';
+  font.style:=[fsBold];
   Top := ScaleX(140);
+  Left := ScaleX(140);
   Parent := DependenciesPage.Surface;
   end;
 
   ODBCpath := TEdit.Create(DependenciesPage);
   with ODBCpath do begin
-  Text := 'https://dev.mysql.com/get/Downloads/Connector-ODBC/3.51/mysql-connector-odbc-3.51.28-win32.msi';
+  Text := mysqlodbc_url_x64;
   Top := ScaleX(156);
   Left := ScaleX(70);
   Width:=Scalex(300);
@@ -1637,6 +1733,8 @@ Begin
   with ODBCInstall do begin
   Caption := 'Install';
   Top := ScaleX(156);
+  Width := ScaleX(65);
+  Height := VCpath.Height;
   Parent := DependenciesPage.Surface;
   OnClick := @InstallODBC;
   end;
@@ -1652,14 +1750,16 @@ Begin
 
   MSSQLstatus := TLabel.Create(DependenciesPage);
   with MSSQLstatus do begin
+  font.style:=[fsBold];
   Caption := '';
   Top := ScaleX(200);
+  Left := ScaleX(100);
   Parent := DependenciesPage.Surface;
   end;
 
   MSSQLpath := TEdit.Create(DependenciesPage);
   with MSSQLpath do begin
-  Text := 'http://download.microsoft.com/download/5/1/A/51A153F6-6B08-4F94-A7B2-BA1AD482BC75/SQLEXPR32_x86_ENU.exe';
+  Text := sql2008expressr2_url_x64;
   Top := ScaleX(216);
   Left := ScaleX(70);
   Width:=Scalex(300);
@@ -1670,9 +1770,17 @@ Begin
   with MSSQLInstall do begin
   Caption := 'Install';
   Top := ScaleX(216);
+  Width := ScaleX(65);
+  Height := VCpath.Height;
   Parent := DependenciesPage.Surface;
   OnClick := @InstallMSSQL;
   end;
+
+  JREInstall.Height := VCpath.Height;
+
+
+
+
 
 end;
 
