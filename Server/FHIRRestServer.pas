@@ -573,6 +573,14 @@ begin
   end;
 end;
 
+function port(actual, default : integer) : String;
+begin
+  if actual = default then
+    result := ''
+  else
+    result := ':' + inttostr(actual);
+end;
+
 Constructor TFhirWebServer.Create(ini: TFHIRServerIniFile; name: String; TerminologyServer: TTerminologyServer; Context: TFHIRServerContext);
 var
   txu: String;
@@ -595,11 +603,11 @@ Begin
 
   loadConfiguration;
 
-  FServerContext.FormalURLPlain := 'http://' + FIni.ReadString(voMaybeVersioned, 'web', 'host', '') + ':' + inttostr(FStatedPort);
-  FServerContext.FormalURLSecure := 'https://' + FIni.ReadString(voMaybeVersioned, 'web', 'host', '') + ':' + inttostr(FStatedSSLPort);
-  FServerContext.FormalURLPlainOpen := 'http://' + FIni.ReadString(voMaybeVersioned, 'web', 'host', '') + ':' + inttostr(FStatedPort) + FBasePath;
-  FServerContext.FormalURLSecureOpen := 'https://' + FIni.ReadString(voMaybeVersioned, 'web', 'host', '') + ':' + inttostr(FStatedSSLPort) + FBasePath;
-  FServerContext.FormalURLSecureClosed := 'https://' + FIni.ReadString(voMaybeVersioned, 'web', 'host', '') + ':' + inttostr(FStatedSSLPort) + FSecurePath;
+  FServerContext.FormalURLPlain := 'http://' + FIni.ReadString(voMaybeVersioned, 'web', 'host', '') + port(FStatedPort, 80);
+  FServerContext.FormalURLSecure := 'https://' + FIni.ReadString(voMaybeVersioned, 'web', 'host', '') + port(FStatedSSLPort, 443);
+  FServerContext.FormalURLPlainOpen := 'http://' + FIni.ReadString(voMaybeVersioned, 'web', 'host', '') + port(FStatedPort, 80) + FBasePath;
+  FServerContext.FormalURLSecureOpen := 'https://' + FIni.ReadString(voMaybeVersioned, 'web', 'host', '') + port(FStatedSSLPort, 443) + FBasePath;
+  FServerContext.FormalURLSecureClosed := 'https://' + FIni.ReadString(voMaybeVersioned, 'web', 'host', '') + port(FStatedSSLPort, 443) + FSecurePath;
   FServerContext.ClientApplicationVerifier := TClientApplicationVerifier.Create;
   ServerContext.JWTServices := TJWTServices.Create;
   ServerContext.JWTServices.host := FHost;
@@ -773,14 +781,6 @@ var
   i: integer;
 begin
   result := ServeUnknownCertificate or FCertificateIdList.Find(Certificate.FingerprintAsString, i);
-end;
-
-function port(port, default: integer): String;
-begin
-  if (port = default) then
-    result := ''
-  else
-    result := ':' + inttostr(port);
 end;
 
 function TFhirWebServer.EndPointDesc(secure: boolean): String;
