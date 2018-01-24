@@ -8,6 +8,7 @@ __history
 *.map
 *.exe
 *.dll
+!isxdl.dll
 *.dsk
 bin/*
 *.local.ini
