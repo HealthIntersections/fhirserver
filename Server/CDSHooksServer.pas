@@ -126,6 +126,12 @@ end;
 
 procedure TCDSHooksServer.HandleRequest(secure: boolean; basePath : String; session: TFHIRSession; context: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo);
 begin
+  response.CustomHeaders.Add('Access-Control-Allow-Credentials: true');
+  response.CustomHeaders.Add('Access-Control-Allow-Origin: *');
+  response.CustomHeaders.Add('Access-Control-Expose-Headers: Content-Location, Location');
+  response.CustomHeaders.Add('Access-Control-Allow-Methods: GET, POST, PUT, PATCH, DELETE');
+  if request.RawHeaders.Values['Access-Control-Request-Headers'] <> '' then
+    response.CustomHeaders.Add('Access-Control-Allow-Headers: ' + request.RawHeaders.Values['Access-Control-Request-Headers']);
   if request.Document = basePath+'/cds-services' then
     handleServiceList(response)
   else if FServices.ContainsKey(request.Document.Substring(basePath.Length + 14)) then
@@ -189,9 +195,10 @@ var
   jrequest : TJsonObject;
   req : TCDSHookRequest;
   resp : TCDSHookResponse;
+  card : TCDSHookCard;
 begin
   require(request.CommandType = hcPOST, 'Request to cds-hooks service must be a POST');
-  require(request.ContentType = 'application/json', 'Request to cds-hooks service must be a POST');
+  require(request.ContentType = 'application/json', 'Request to cds-hooks service must be a POST of application/json');
   require((request.PostStream <> nil) and (request.PostStream.Size > 0), 'Request to cds-hooks service must include a body');
 
   try
@@ -219,10 +226,20 @@ begin
   except
     on e : Exception do
     begin
-      response.ResponseNo := 200;
-      response.ResponseText := 'OK';
-      response.ContentType := 'test/plain';
-      response.ContentText := e.Message;
+      resp := TCDSHookResponse.Create;
+      try
+        card := resp.addCard;
+        card.indicator := 'error';
+        card.summary := e.Message;
+        card.sourceLabel := server.OwnerName;
+        card.sourceURL := request.Document;
+        response.ResponseNo := 200;
+        response.ResponseText := 'OK';
+        response.ContentType := 'application/json';
+        response.ContentText := resp.asJson;
+      finally
+        resp.Free;
+      end;
     end;
   end;
 end;
