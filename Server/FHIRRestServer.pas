@@ -2612,7 +2612,10 @@ Begin
             else if oRequest.CommandType <> fcmdWebUI then
               try
                 if oRequest.Version <> COMPILED_FHIR_VERSION then
+                begin
                   convertFromVersion(oPostStream, oRequest.PostFormat, oRequest.Version);
+                  oRequest.CopyPost(oPostStream);
+                end;
 
                 parser := MakeParser(FServerContext.Validator.Context, lang, oRequest.PostFormat, oPostStream, xppReject);
                 try
