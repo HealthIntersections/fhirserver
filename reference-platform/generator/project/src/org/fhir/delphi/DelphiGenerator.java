@@ -1604,11 +1604,11 @@ public class DelphiGenerator {
         //        }
 
         if (i == l) {
-          def.append("    "+prefix+getTitle(nf)+"); {@enum.value \""+p.getCode()+"\" "+prefix+getTitle(nf)+" "+d+" }\r\n");
+          def.append("    "+prefix+getTitle(nf)+"); \r\n");
           con3.append("'"+defCodeType.escape(n)+"');");
         }
         else {
-          def.append("    "+prefix+getTitle(nf)+", {@enum.value \""+p.getCode()+"\" "+prefix+getTitle(nf)+" "+d+" }\r\n");
+          def.append("    "+prefix+getTitle(nf)+", \r\n");
           con3.append("'"+defCodeType.escape(n)+"', ");
         }
       }
@@ -1691,7 +1691,7 @@ public class DelphiGenerator {
 
       int l = ac.size();
       int i = 0;
-      def.append("    "+prefix+"Null,  {@enum.value "+prefix+"Null Value is missing from Instance }\r\n");
+      def.append("    "+prefix+"Null, // Value is missing from Instance \r\n");
       con.append("'', ");
       conS.append("'', ");
       for (DefinedCode c : ac) {
@@ -1726,12 +1726,12 @@ public class DelphiGenerator {
           cls = conS.length();
         }
         if (i == l) {
-          def.append("    "+cc+"); {@enum.value "+cc+" "+makeDocoSafe(c.getDefinition())+" }\r\n");
+          def.append("    "+cc+"); \r\n");
           con.append("'"+c.getCode()+"');");
           conS.append("'"+c.getSystem()+"');");
         }
         else {
-          def.append("    "+cc+", {@enum.value "+cc+" "+makeDocoSafe(c.getDefinition())+" }\r\n");
+          def.append("    "+cc+", \r\n");
           con.append("'"+c.getCode()+"', ");
           conS.append("'"+c.getSystem()+"', ");
         }
@@ -4599,7 +4599,7 @@ public class DelphiGenerator {
     def.append("  }\r\n");
     def.append("  TFhirResourceType = (\r\n");
     con.append("  CODES_TFhirResourceType : Array[TFhirResourceType] of String = (");
-    def.append("    frtNull, {@enum.value Resource type not known / not Specified }\r\n");
+    def.append("    frtNull, // Resource type not known / not Specified \r\n");
     con.append("'', ");
     int conl = con.length(); 
     constants.add("TFhirResourceType");
@@ -4619,7 +4619,7 @@ public class DelphiGenerator {
       if (GeneratorUtils.isDelphiReservedWord(s2))
         s2 = s2 + "_";
       con.append("{$IFDEF FHIR_"+s.toUpperCase()+"}'"+s);
-      def.append("    {$IFDEF FHIR_"+s.toUpperCase()+"}"+s2+", {@enum.value "+makeDocoSafe(definitions.getResourceByName(s).getDefinition())+" }{$ENDIF}\r\n");
+      def.append("    {$IFDEF FHIR_"+s.toUpperCase()+"}"+s2+", {$ENDIF}\r\n");
       con.append("',{$ENDIF}\r\n      ");
       conl = conl + s.length()+4;
       if (conl > 1000) {

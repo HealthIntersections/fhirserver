@@ -870,8 +870,10 @@ begin
       try
         client := TRegisteredClientInformation.Create;
         try
-          if Session = nil then
-            raise Exception.Create('User must be identified; log in to the server using the web interface, and get a token that can be used to register the client');
+//          disabled after discussion with Luis Maas - pending further discussion
+//             - determine when this should be done
+//          if Session = nil then
+//            raise Exception.Create('User must be identified; log in to the server using the web interface, and get a token that can be used to register the client');
           // check that it meets business rules
           client.name := checkPresent('client_name');
           client.url := json.str['client_uri'];

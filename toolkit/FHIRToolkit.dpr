@@ -189,7 +189,8 @@ uses
   Logging in '..\Server\Logging.pas',
   PatientHomeForm in 'PatientHomeForm.pas' {PatientHomeFrame: TFrame},
   DigitalSignatures in '..\reference-platform\support\DigitalSignatures.pas',
-  DocumentGenerationForm in 'DocumentGenerationForm.pas' {DocumentGeneratorForm};
+  DocumentGenerationForm in 'DocumentGenerationForm.pas' {DocumentGeneratorForm},
+  LibraryEditor in 'LibraryEditor.pas' {LibraryEditorFrame: TFrame};
 
 {$R *.res}
 

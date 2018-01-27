@@ -40,7 +40,7 @@ uses
   FHIRContext, FHIRProfileUtilities,
   SmartOnFHIRUtilities, EditRegisteredServerDialogFMX, OSXUIUtils,
   ToolkitSettings, ServerForm, CapabilityStatementEditor, BaseResourceFrame, BaseFrame, SourceViewer, ListSelector,
-  ValueSetEditor, HelpContexts, ProcessForm, SettingsDialog, AboutDialog, ToolKitVersion, CodeSystemEditor,
+  ValueSetEditor, HelpContexts, ProcessForm, SettingsDialog, AboutDialog, ToolKitVersion, CodeSystemEditor, LibraryEditor,
   ToolKitUtilities, UpgradeNeededDialog, QuestionnaireEditor, RegistryForm, ProviderDirectoryForm, ResourceLanguageDialog;
 
 type
@@ -359,6 +359,7 @@ begin
     form.ListBox1.items.Add('ValueSet');
     form.ListBox1.items.Add('CodeSystem');
     form.ListBox1.items.Add('Questionnaire');
+    form.ListBox1.items.Add('Library');
     form.caption := 'Create New File';
     if (form.ShowModal = mrOk) then
       case form.ListBox1.ItemIndex of
@@ -366,6 +367,7 @@ begin
         1 : newResource(TFhirValueSet, TValueSetEditorFrame);
         2 : newResource(TFhirCodeSystem, TCodeSystemEditorFrame);
         3 : newResource(TFhirQuestionnaire, TQuestionnaireEditorFrame);
+        4 : newResource(TFhirLibrary, TLibraryEditorFrame);
       end;
   finally
     form.Free;
@@ -391,6 +393,8 @@ begin
           openResourceFromFile(odFile.Filename, res, format, TCodeSystemEditorFrame)
         else if res is TFhirQuestionnaire then
           openResourceFromFile(odFile.Filename, res, format, TQuestionnaireEditorFrame)
+        else if res is TFhirLibrary then
+          openResourceFromFile(odFile.Filename, res, format, TLibraryEditorFrame)
         else
           MessageDlg('Unsupported Resource Type: '+res.fhirType, TMsgDlgType.mtError, [TMsgDlgBtn.mbOK], 0);
       finally
@@ -819,6 +823,8 @@ begin
     result := TCodeSystemEditorFrame
   else if res is TFhirQuestionnaire then
     result := TQuestionnaireEditorFrame
+  else if res is TFhirLibrary then
+    result := TLibraryEditorFrame
   else
     MessageDlg('Unsupported Resource Type: '+res.fhirType, TMsgDlgType.mtError, [TMsgDlgBtn.mbOK], 0);
 end;
@@ -871,7 +877,7 @@ begin
     begin
       newVersion := checkUpgrade;
     end);
-  if newVersion <> '0.0.'+inttostr(buildCount) then
+  if (newVersion <> '') and (newVersion <> '0.0.'+inttostr(buildCount)) then
   begin
     upg := TUpgradeNeededForm.Create(self);
     try

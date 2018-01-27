@@ -3171,7 +3171,7 @@ begin
       end
       else if request.subId <> '' then
       begin
-        if (fmt <> response.Format) and (response.Format <> ffXhtml) then
+        if (fmt <> response.Format) and (response.Format <> ffUnspecified) and (response.Format <> ffXhtml) then
         begin
           response.HTTPCode := 500;
           response.Message := 'Server Error';

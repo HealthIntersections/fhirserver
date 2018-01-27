@@ -4,27 +4,27 @@ unit ParseMap;
 Copyright (c) 2001-2013, Kestral Computing Pty Ltd (http://www.kestral.com.au)
 All rights reserved.
 
-Redistribution and use in source and binary forms, with or without modification, 
+Redistribution and use in source and binary forms, with or without modification,
 are permitted provided that the following conditions are met:
 
- * Redistributions of source code must retain the above copyright notice, this 
+ * Redistributions of source code must retain the above copyright notice, this
    list of conditions and the following disclaimer.
- * Redistributions in binary form must reproduce the above copyright notice, 
-   this list of conditions and the following disclaimer in the documentation 
+ * Redistributions in binary form must reproduce the above copyright notice,
+   this list of conditions and the following disclaimer in the documentation
    and/or other materials provided with the distribution.
- * Neither the name of HL7 nor the names of its contributors may be used to 
-   endorse or promote products derived from this software without specific 
+ * Neither the name of HL7 nor the names of its contributors may be used to
+   endorse or promote products derived from this software without specific
    prior written permission.
 
-THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
-ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED 
-WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. 
-IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, 
-INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT 
-NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR 
-PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, 
-WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
-ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 }
 
@@ -32,9 +32,9 @@ interface
 
 uses
 //  {$IFDEF MSWINDOWS} Windows, {$ENDIF}
-  Classes,
+  Classes, Generics.Collections,
   EncodeSupport, StringSupport,
-  AdvObjects;
+  AdvObjects, AdvGenerics;
 
 const
   HTTPUtilAnonymousItemName = 'ANONYMOUS';
@@ -85,6 +85,29 @@ type
     property Value[const Name: String]: String Read GetVar; default;
   end;
 
+  TContentType = class (TAdvObject)
+  private
+    FParams: TDictionary<String, String>;
+    FBase: String;
+    function GetMain: String;
+    function GetSub: String;
+    procedure SetMain(const Value: String);
+    procedure SetSub(const Value: String);
+  public
+    constructor Create; override;
+    destructor Destroy; override;
+
+    class function parseSingle(s : String) : TContentType;
+    class function parseList(s : String) : TAdvList<TContentType>;
+
+    property base : String read FBase write FBase;
+    property main : String read GetMain write SetMain;
+    property sub : String read GetSub write SetSub;
+
+    property Params : TDictionary<String, String> read FParams;
+    function hasParam(name : String) : boolean;
+  end;
+
 implementation
 
 uses
@@ -92,7 +115,7 @@ uses
 
 const 
   unitname = 'Parsemap';
-  
+
   {------------------------------------------------------------------------------}
 constructor TMultiValList.Create;
 begin
@@ -577,5 +600,90 @@ function TMultiValList.list(index: integer): TStringList;
 begin
   result := TStringList(FItemList.Objects[index]);
 end;
+
+{ TContentType }
+
+constructor TContentType.Create;
+begin
+  inherited;
+  FParams := TDictionary<String, String>.create;
+end;
+
+destructor TContentType.Destroy;
+begin
+  FParams.Free;
+  inherited;
+end;
+
+function TContentType.GetMain: String;
+begin
+  if FBase.Contains('/') then
+    result := FBase.Substring(0, FBase.IndexOf('/'))
+  else
+    result := FBase;
+end;
+
+function TContentType.GetSub: String;
+begin
+  if FBase.Contains('/') then
+    result := FBase.Substring(FBase.IndexOf('/')+1)
+  else
+    result := '';
+end;
+
+function TContentType.hasParam(name: String): boolean;
+begin
+  result := FParams.ContainsKey(name);
+end;
+
+procedure TContentType.SetMain(const Value: String);
+begin
+  if FBase.Contains('/') then
+    FBase := Value+'/'+sub
+  else
+    FBase := Value;
+end;
+
+procedure TContentType.SetSub(const Value: String);
+begin
+  if FBase.Contains('/') then
+    FBase := Main+'/'+value
+  else
+    FBase := 'application/'+Value;
+end;
+
+class function TContentType.parseList(s : String): TAdvList<TContentType>;
+var
+  e : String;
+begin
+  result := TAdvList<TContentType>.create;
+  try
+    for e in s.Split([',']) do
+      result.add(parseSingle(e));
+    result.link;
+  finally
+    result.Free;
+  end;
+end;
+
+class function TContentType.parseSingle(s : String): TContentType;
+var
+  p : string;
+begin
+  result := TContentType.Create;
+  try
+    for p in s.Split([';']) do
+    begin
+      if result.FBase = '' then
+        result.FBase := p
+      else
+        result.FParams.Add(p.Substring(0, p.IndexOf('=')), p.Substring(p.IndexOf('=')+1));
+    end;
+    result.link;
+  finally
+    result.Free;
+  end;
+end;
+
 
 end.

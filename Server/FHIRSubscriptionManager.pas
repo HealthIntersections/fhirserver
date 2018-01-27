@@ -225,6 +225,7 @@ Type
     procedure sendByEmail(id : String; subst : TFhirSubscription; package : TFHIRResource);  overload;
     procedure sendBySms(id : String; subst : TFhirSubscription; package : TFHIRResource);
     procedure sendByWebSocket(conn : TKDBConnection; id : String; subst : TFhirSubscription; package : TFHIRResource);
+    procedure processByScript(conn : TKDBConnection; id : String; subst : TFhirSubscription; package : TFHIRResource);
 
     procedure saveTags(conn : TKDBConnection; ResourceKey : integer; res : TFHIRResource);
     procedure NotifySuccess(userkey, SubscriptionKey : integer);
@@ -1117,6 +1118,11 @@ begin
   end;
 end;
 
+procedure TSubscriptionManager.processByScript(conn: TKDBConnection; id: String; subst: TFhirSubscription; package: TFHIRResource);
+begin
+  raise Exception.Create('Not done yet');
+end;
+
 procedure TSubscriptionManager.processDirectMessage(txt, ct: String; res: TBytesStream);
 var
   p : TFHIRParser;
@@ -1288,6 +1294,9 @@ begin
               SubscriptionChannelTypeEmail: sendByEmail(id, subst, package);
               SubscriptionChannelTypeSms: sendBySms(id, subst, package);
               SubscriptionChannelTypeWebsocket: sendByWebSocket(conn, id, subst, package);
+              {$IFDEF FHIR4}
+              SubscriptionChannelTypeChangeScript: processByScript(conn, id, subst, package);
+              {$ENDIF}
             end;
 
             if (subst.tagList.Count > 0) then

@@ -406,6 +406,11 @@
             <Form>DocumentGeneratorForm</Form>
             <FormType>fmx</FormType>
         </DCCReference>
+        <DCCReference Include="LibraryEditor.pas">
+            <Form>LibraryEditorFrame</Form>
+            <FormType>fmx</FormType>
+            <DesignClass>TFrame</DesignClass>
+        </DCCReference>
         <None Include="q.txt"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
