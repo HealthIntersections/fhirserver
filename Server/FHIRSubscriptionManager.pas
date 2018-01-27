@@ -817,24 +817,33 @@ begin
       msg.Body.Clear;
       msg.MsgId := '<'+NewGuidId+'>';
       part := TIdText.Create(msg.MessageParts);
-      part.Body.Text := 'This email contains a FHIR Bundle as an attachment. Open it with your own personal records program';
+      part.Body.Text := 'This email contains FHIR content as an attachment. Open it with your own personal records program';
       part.ContentType := 'text/plain';
       part.ContentTransfer := '7bit';
-      if subst <> nil then
+      if subst = nil then
+        comp := MakeComposer(OutputStylePretty, 'en', 'application/json', nil)
+      else if subst.channel.payload <> '' then
         comp := MakeComposer(OutputStylePretty, 'en', subst.channel.payload, nil)
       else
-        comp := MakeComposer(OutputStylePretty, 'en', 'application/json', nil);
+        comp := nil;
       try
-        m := TMemoryStream.Create;
-        try
-          comp.Compose(m, resource, nil);
-          m.Position := 0;
-          att := TFHIRIdAttachment.Create(msg.MessageParts);
-          att.LoadFromStream(m);
-          att.ContentDisposition := 'Content-Disposition: attachment; filename="bundle'+comp.extension+'"';
-          att.ContentType := comp.MimeType+'; charset=UTF-8'
-        finally
-          m.Free;
+        if comp <> nil then
+        begin
+          m := TMemoryStream.Create;
+          try
+            comp.Compose(m, resource, nil);
+            m.Position := 0;
+            att := TFHIRIdAttachment.Create(msg.MessageParts);
+            att.LoadFromStream(m);
+            att.ContentDisposition := 'Content-Disposition: attachment; filename="bundle'+comp.extension+'"';
+            att.ContentType := comp.MimeType+'; charset=UTF-8'
+          finally
+            m.Free;
+          end;
+        end
+        else
+        begin
+          part.Body.Text := 'This email informs you that the FHIR content at '+TFHIRServerContext(ServerContext).FormalURLPlain+'/'+resource.fhirType+'/'+resource.id+' has been updated. Retrieve it with your own personal records program';
         end;
       finally
         comp.Free;
