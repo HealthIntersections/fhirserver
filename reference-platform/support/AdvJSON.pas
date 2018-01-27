@@ -279,7 +279,7 @@ Type
     Procedure ValueInArray(value : Int64); overload;
     Procedure ValueInArray(value : Double); overload;
     Procedure ValueDateInArray(aValue : TDateTime); overload;
-    Procedure ValueNullInArray;
+    Procedure ValueNullInArray; virtual;
 
     Procedure WriteObject(name : String; obj : TJsonObject); overload;
     Procedure WriteObjectInner(obj : TJsonObject);
@@ -316,6 +316,7 @@ Type
     Procedure ValueArray(Const name : String); override;
     Procedure FinishArray; override;
     Procedure ValueInArray(Const value : String); overload; override;
+    procedure valueNullInArray; override;
   End;
 
   TCanonicalJsonNodeType = (jntProperty, jntObject, jntArray);
@@ -350,6 +351,7 @@ Type
     Procedure ValueArray(Const name : String); override;
     Procedure FinishArray; override;
     Procedure ValueInArray(Const value : String); overload; override;
+    procedure valueNullInArray; override;
   end;
 
   TJSONLexType = (jltOpen, jltClose, jltString, jltNumber, jltColon, jltComma, jltOpenArray, jltCloseArray, jltEof, jltNull, jltBoolean);
@@ -717,7 +719,7 @@ end;
 
 procedure TJSONWriter.ValueNullInArray;
 begin
-  valueInArray('null');
+  raise Exception.Create('Need to override '+className+'.ValueNullInArray');
 end;
 
 procedure TJSONWriter.ValueNumber(const name, avalue: String);
@@ -931,6 +933,13 @@ begin
     ValueNullInArray
   Else
     FCache := JSONString(value);
+end;
+
+procedure TJsonWriterDirect.valueNullInArray;
+begin
+  if FCache <> '' Then
+    ProduceLine(UseCache+',');
+  FCache := 'null';
 end;
 
 procedure TJsonWriterDirect.FinishObject;
@@ -2723,6 +2732,19 @@ begin
   node := TCanonicalJsonNode.Create(jntProperty);
   try
     node.FValue := value;
+    FStack[FStack.Count - 1].FChildren.add(node.Link);
+  finally
+    node.Free;
+  end;
+end;
+
+procedure TJsonWriterCanonical.valueNullInArray;
+var
+  node : TCanonicalJsonNode;
+begin
+  node := TCanonicalJsonNode.Create(jntProperty);
+  try
+    node.FValue := 'null';
     FStack[FStack.Count - 1].FChildren.add(node.Link);
   finally
     node.Free;
