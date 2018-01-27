@@ -38,7 +38,7 @@ This is the dstu4 version of the FHIR code
 
 interface
 
-// FHIR v3.2.0 generated 2017-12-21T15:48:31+11:00
+// FHIR v3.2.0 generated 2018-01-13T10:54:00+11:00
 
 uses
   Javascript, FHIRJavascript;
@@ -5321,7 +5321,6 @@ begin
   js.registerElement(def, 'ExampleScenario', 'identifier', 'Identifier', js.getFHIRArrayProp, js.setFHIRArrayProp);
   js.registerElement(def, 'ExampleScenario', 'version', 'string', js.getFHIRStringProp, js.setFHIRStringProp);
   js.registerElement(def, 'ExampleScenario', 'name', 'string', js.getFHIRStringProp, js.setFHIRStringProp);
-  js.registerElement(def, 'ExampleScenario', 'title', 'string', js.getFHIRStringProp, js.setFHIRStringProp);
   js.registerElement(def, 'ExampleScenario', 'status', 'code', js.getFHIRStringProp, js.setFHIRStringProp);
   js.registerElement(def, 'ExampleScenario', 'experimental', 'boolean', js.getFHIRBooleanProp, js.setFHIRBooleanProp);
   js.registerElement(def, 'ExampleScenario', 'date', 'dateTime', js.getFHIRDateTimeProp, js.setFHIRDateTimeProp);
@@ -5330,11 +5329,10 @@ begin
   js.registerElement(def, 'ExampleScenario', 'useContext', 'UsageContext', js.getFHIRArrayProp, js.setFHIRArrayProp);
   js.registerElement(def, 'ExampleScenario', 'jurisdiction', 'CodeableConcept', js.getFHIRArrayProp, js.setFHIRArrayProp);
   js.registerElement(def, 'ExampleScenario', 'copyright', 'markdown', js.getFHIRStringProp, js.setFHIRStringProp);
-  js.registerElement(def, 'ExampleScenario', 'description', 'markdown', js.getFHIRStringProp, js.setFHIRStringProp);
   js.registerElement(def, 'ExampleScenario', 'purpose', 'markdown', js.getFHIRStringProp, js.setFHIRStringProp);
   js.registerElement(def, 'ExampleScenario', 'actor', 'ExampleScenarioActor', js.getFHIRArrayProp, js.setFHIRArrayProp);
   js.registerElement(def, 'ExampleScenario', 'instance', 'ExampleScenarioInstance', js.getFHIRArrayProp, js.setFHIRArrayProp);
-  js.registerElement(def, 'ExampleScenario', 'process', 'ExampleScenarioProcess', js.getFHIRObjectProp, js.setFHIRObjectProp);
+  js.registerElement(def, 'ExampleScenario', 'process', 'ExampleScenarioProcess', js.getFHIRArrayProp, js.setFHIRArrayProp);
   js.registerElement(def, 'ExampleScenario', 'workflow', 'Reference(ExampleScenario)', js.getFHIRArrayProp, js.setFHIRArrayProp);
 end;
 
@@ -8784,10 +8782,9 @@ end;
 procedure defineOccupationalDataEmploymentStatusPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineBackboneElementPropsJs(js, def);
-  js.registerElement(def, 'OccupationalDataEmploymentStatus', 'code', 'code', js.getFHIRStringProp, js.setFHIRStringProp);
+  js.registerElement(def, 'OccupationalDataEmploymentStatus', 'code', 'CodeableConcept', js.getFHIRObjectProp, js.setFHIRObjectProp);
   js.registerElement(def, 'OccupationalDataEmploymentStatus', 'effectiveDateTime', 'dateTime', js.getFHIRDateTimeProp, js.setFHIRDateTimeProp);
   js.registerElement(def, 'OccupationalDataEmploymentStatus', 'effectivePeriod', 'Period', js.getFHIRObjectProp, js.setFHIRObjectProp);
-  js.registerElement(def, 'OccupationalDataEmploymentStatus', 'value', 'CodeableConcept', js.getFHIRObjectProp, js.setFHIRObjectProp);
 end;
 
 procedure defineOccupationalDataEmploymentStatusJs(js : TFHIRJavascript);
@@ -8799,50 +8796,13 @@ begin
 end;
 
 
-procedure defineOccupationalDataRetirementStatusPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
-begin
-  defineBackboneElementPropsJs(js, def);
-  js.registerElement(def, 'OccupationalDataRetirementStatus', 'code', 'code', js.getFHIRStringProp, js.setFHIRStringProp);
-  js.registerElement(def, 'OccupationalDataRetirementStatus', 'effectiveDateTime', 'dateTime', js.getFHIRDateTimeProp, js.setFHIRDateTimeProp);
-  js.registerElement(def, 'OccupationalDataRetirementStatus', 'effectivePeriod', 'Period', js.getFHIRObjectProp, js.setFHIRObjectProp);
-  js.registerElement(def, 'OccupationalDataRetirementStatus', 'value', 'CodeableConcept', js.getFHIRObjectProp, js.setFHIRObjectProp);
-end;
-
-procedure defineOccupationalDataRetirementStatusJs(js : TFHIRJavascript);
-var
-  def : TJavascriptClassDefinition;
-begin
-  def := js.defineClass('OccupationalDataRetirementStatus', nil, 'OccupationalDataRetirementStatus', js.FHIRFactoryJs);
-  defineOccupationalDataRetirementStatusPropsJs(js, def);
-end;
-
-
-procedure defineOccupationalDataCombatZoneHazardousDutyPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
-begin
-  defineBackboneElementPropsJs(js, def);
-  js.registerElement(def, 'OccupationalDataCombatZoneHazardousDuty', 'effectiveDateTime', 'dateTime', js.getFHIRDateTimeProp, js.setFHIRDateTimeProp);
-  js.registerElement(def, 'OccupationalDataCombatZoneHazardousDuty', 'effectivePeriod', 'Period', js.getFHIRObjectProp, js.setFHIRObjectProp);
-  js.registerElement(def, 'OccupationalDataCombatZoneHazardousDuty', 'value', 'CodeableConcept', js.getFHIRObjectProp, js.setFHIRObjectProp);
-end;
-
-procedure defineOccupationalDataCombatZoneHazardousDutyJs(js : TFHIRJavascript);
-var
-  def : TJavascriptClassDefinition;
-begin
-  def := js.defineClass('OccupationalDataCombatZoneHazardousDuty', nil, 'OccupationalDataCombatZoneHazardousDuty', js.FHIRFactoryJs);
-  defineOccupationalDataCombatZoneHazardousDutyPropsJs(js, def);
-end;
-
-
 procedure defineOccupationalDataUsualOccupationPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineBackboneElementPropsJs(js, def);
-  js.registerElement(def, 'OccupationalDataUsualOccupation', 'code', 'code', js.getFHIRStringProp, js.setFHIRStringProp);
-  js.registerElement(def, 'OccupationalDataUsualOccupation', 'effectiveDateTime', 'dateTime', js.getFHIRDateTimeProp, js.setFHIRDateTimeProp);
-  js.registerElement(def, 'OccupationalDataUsualOccupation', 'effectivePeriod', 'Period', js.getFHIRObjectProp, js.setFHIRObjectProp);
-  js.registerElement(def, 'OccupationalDataUsualOccupation', 'value', 'CodeableConcept', js.getFHIRObjectProp, js.setFHIRObjectProp);
-  js.registerElement(def, 'OccupationalDataUsualOccupation', 'duration', 'OccupationalDataUsualOccupationDuration', js.getFHIRObjectProp, js.setFHIRObjectProp);
-  js.registerElement(def, 'OccupationalDataUsualOccupation', 'industry', 'OccupationalDataUsualOccupationIndustry', js.getFHIRObjectProp, js.setFHIRObjectProp);
+  js.registerElement(def, 'OccupationalDataUsualOccupation', 'occupationCode', 'CodeableConcept', js.getFHIRObjectProp, js.setFHIRObjectProp);
+  js.registerElement(def, 'OccupationalDataUsualOccupation', 'industryCode', 'CodeableConcept', js.getFHIRObjectProp, js.setFHIRObjectProp);
+  js.registerElement(def, 'OccupationalDataUsualOccupation', 'start', 'dateTime', js.getFHIRDateTimeProp, js.setFHIRDateTimeProp);
+  js.registerElement(def, 'OccupationalDataUsualOccupation', 'duration', 'Duration', js.getFHIRObjectProp, js.setFHIRObjectProp);
 end;
 
 procedure defineOccupationalDataUsualOccupationJs(js : TFHIRJavascript);
@@ -8854,45 +8814,17 @@ begin
 end;
 
 
-procedure defineOccupationalDataUsualOccupationDurationPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
-begin
-  defineBackboneElementPropsJs(js, def);
-  js.registerElement(def, 'OccupationalDataUsualOccupationDuration', 'code', 'CodeableConcept', js.getFHIRObjectProp, js.setFHIRObjectProp);
-  js.registerElement(def, 'OccupationalDataUsualOccupationDuration', 'value', 'Period', js.getFHIRObjectProp, js.setFHIRObjectProp);
-end;
-
-procedure defineOccupationalDataUsualOccupationDurationJs(js : TFHIRJavascript);
-var
-  def : TJavascriptClassDefinition;
-begin
-  def := js.defineClass('OccupationalDataUsualOccupationDuration', nil, 'OccupationalDataUsualOccupationDuration', js.FHIRFactoryJs);
-  defineOccupationalDataUsualOccupationDurationPropsJs(js, def);
-end;
-
-
-procedure defineOccupationalDataUsualOccupationIndustryPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
-begin
-  defineBackboneElementPropsJs(js, def);
-  js.registerElement(def, 'OccupationalDataUsualOccupationIndustry', 'code', 'CodeableConcept', js.getFHIRObjectProp, js.setFHIRObjectProp);
-  js.registerElement(def, 'OccupationalDataUsualOccupationIndustry', 'value', 'CodeableConcept', js.getFHIRObjectProp, js.setFHIRObjectProp);
-end;
-
-procedure defineOccupationalDataUsualOccupationIndustryJs(js : TFHIRJavascript);
-var
-  def : TJavascriptClassDefinition;
-begin
-  def := js.defineClass('OccupationalDataUsualOccupationIndustry', nil, 'OccupationalDataUsualOccupationIndustry', js.FHIRFactoryJs);
-  defineOccupationalDataUsualOccupationIndustryPropsJs(js, def);
-end;
-
-
 procedure defineOccupationalDataPastOrPresentOccupationPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineBackboneElementPropsJs(js, def);
-  js.registerElement(def, 'OccupationalDataPastOrPresentOccupation', 'code', 'CodeableConcept', js.getFHIRObjectProp, js.setFHIRObjectProp);
+  js.registerElement(def, 'OccupationalDataPastOrPresentOccupation', 'occupationCode', 'CodeableConcept', js.getFHIRObjectProp, js.setFHIRObjectProp);
+  js.registerElement(def, 'OccupationalDataPastOrPresentOccupation', 'industryCode', 'CodeableConcept', js.getFHIRObjectProp, js.setFHIRObjectProp);
   js.registerElement(def, 'OccupationalDataPastOrPresentOccupation', 'effectiveDateTime', 'dateTime', js.getFHIRDateTimeProp, js.setFHIRDateTimeProp);
   js.registerElement(def, 'OccupationalDataPastOrPresentOccupation', 'effectivePeriod', 'Period', js.getFHIRObjectProp, js.setFHIRObjectProp);
-  js.registerElement(def, 'OccupationalDataPastOrPresentOccupation', 'value', 'CodeableConcept', js.getFHIRObjectProp, js.setFHIRObjectProp);
+  js.registerElement(def, 'OccupationalDataPastOrPresentOccupation', 'employer', 'Reference(Organization)', js.getFHIRObjectProp, js.setFHIRObjectProp);
+  js.registerElement(def, 'OccupationalDataPastOrPresentOccupation', 'employmentType', 'CodeableConcept', js.getFHIRObjectProp, js.setFHIRObjectProp);
+  js.registerElement(def, 'OccupationalDataPastOrPresentOccupation', 'supervisoryLevel', 'CodeableConcept', js.getFHIRObjectProp, js.setFHIRObjectProp);
+  js.registerElement(def, 'OccupationalDataPastOrPresentOccupation', 'workSchedule', 'OccupationalDataPastOrPresentOccupationWorkSchedule', js.getFHIRObjectProp, js.setFHIRObjectProp);
 end;
 
 procedure defineOccupationalDataPastOrPresentOccupationJs(js : TFHIRJavascript);
@@ -8904,19 +8836,35 @@ begin
 end;
 
 
+procedure defineOccupationalDataPastOrPresentOccupationWorkSchedulePropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
+begin
+  defineBackboneElementPropsJs(js, def);
+  js.registerElement(def, 'OccupationalDataPastOrPresentOccupationWorkSchedule', 'code', 'CodeableConcept', js.getFHIRObjectProp, js.setFHIRObjectProp);
+  js.registerElement(def, 'OccupationalDataPastOrPresentOccupationWorkSchedule', 'weeklyWorkDays', 'decimal', js.getFHIRDecimalProp, js.setFHIRDecimalProp);
+  js.registerElement(def, 'OccupationalDataPastOrPresentOccupationWorkSchedule', 'dailyWorkHours', 'decimal', js.getFHIRDecimalProp, js.setFHIRDecimalProp);
+end;
+
+procedure defineOccupationalDataPastOrPresentOccupationWorkScheduleJs(js : TFHIRJavascript);
+var
+  def : TJavascriptClassDefinition;
+begin
+  def := js.defineClass('OccupationalDataPastOrPresentOccupationWorkSchedule', nil, 'OccupationalDataPastOrPresentOccupationWorkSchedule', js.FHIRFactoryJs);
+  defineOccupationalDataPastOrPresentOccupationWorkSchedulePropsJs(js, def);
+end;
+
+
 procedure defineOccupationalDataPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineDomainResourcePropsJs(js, def);
   js.registerElement(def, 'OccupationalData', 'identifier', 'Identifier', js.getFHIRObjectProp, js.setFHIRObjectProp);
   js.registerElement(def, 'OccupationalData', 'status', 'code', js.getFHIRStringProp, js.setFHIRStringProp);
-  js.registerElement(def, 'OccupationalData', 'subject', 'Reference(Patient)', js.getFHIRObjectProp, js.setFHIRObjectProp);
+  js.registerElement(def, 'OccupationalData', 'subject', 'Reference(Patient|RelatedPerson)', js.getFHIRObjectProp, js.setFHIRObjectProp);
   js.registerElement(def, 'OccupationalData', 'date', 'dateTime', js.getFHIRDateTimeProp, js.setFHIRDateTimeProp);
   js.registerElement(def, 'OccupationalData', 'author', 'Reference(Practitioner|PractitionerRole|Patient|RelatedPerson)', js.getFHIRArrayProp, js.setFHIRArrayProp);
   js.registerElement(def, 'OccupationalData', 'employmentStatus', 'OccupationalDataEmploymentStatus', js.getFHIRObjectProp, js.setFHIRObjectProp);
-  js.registerElement(def, 'OccupationalData', 'retirementStatus', 'OccupationalDataRetirementStatus', js.getFHIRObjectProp, js.setFHIRObjectProp);
-  js.registerElement(def, 'OccupationalData', 'combatZoneHazardousDuty', 'OccupationalDataCombatZoneHazardousDuty', js.getFHIRArrayProp, js.setFHIRArrayProp);
+  js.registerElement(def, 'OccupationalData', 'combatZoneWork', 'Period', js.getFHIRArrayProp, js.setFHIRArrayProp);
   js.registerElement(def, 'OccupationalData', 'usualOccupation', 'OccupationalDataUsualOccupation', js.getFHIRObjectProp, js.setFHIRObjectProp);
-  js.registerElement(def, 'OccupationalData', 'pastOrPresentOccupation', 'OccupationalDataPastOrPresentOccupation', js.getFHIRObjectProp, js.setFHIRObjectProp);
+  js.registerElement(def, 'OccupationalData', 'pastOrPresentOccupation', 'OccupationalDataPastOrPresentOccupation', js.getFHIRArrayProp, js.setFHIRArrayProp);
 end;
 
 procedure defineOccupationalDataJs(js : TFHIRJavascript);
@@ -13802,12 +13750,9 @@ begin
   defineObservationDefinitionQualifiedIntervalJs(js); 
   defineObservationDefinitionJs(js); 
   defineOccupationalDataEmploymentStatusJs(js); 
-  defineOccupationalDataRetirementStatusJs(js); 
-  defineOccupationalDataCombatZoneHazardousDutyJs(js); 
   defineOccupationalDataUsualOccupationJs(js); 
-  defineOccupationalDataUsualOccupationDurationJs(js); 
-  defineOccupationalDataUsualOccupationIndustryJs(js); 
   defineOccupationalDataPastOrPresentOccupationJs(js); 
+  defineOccupationalDataPastOrPresentOccupationWorkScheduleJs(js); 
   defineOccupationalDataJs(js); 
   defineOperationDefinitionParameterJs(js); 
   defineOperationDefinitionParameterBindingJs(js); 
