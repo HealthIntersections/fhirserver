@@ -85,6 +85,8 @@ ucum search
 }
 
 uses
+  FastMM4 in '..\Libraries\FMM\FastMM4.pas',
+  FastMM4Messages in '..\Libraries\FMM\FastMM4Messages.pas',
   Windows,
   SysUtils,
   Classes,
