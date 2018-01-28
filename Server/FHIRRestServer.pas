@@ -159,10 +159,12 @@ Type
     FRequest : TFHIRRequest;
     FFormat : TFHIRFormat;
     files : TAdvMap<TAdvFile>;
+    FBundle : TFHIRBundle;
     procedure SetRequest(const Value: TFHIRRequest);
     procedure SetServer(const Value: TFhirWebServer);
 
     procedure status(status : TAsyncTaskStatus; message : String);
+    procedure details;
     procedure callback(IntParam: Integer; StrParam: String);
 
     procedure saveOutcome(response : TFHIRResponse);
@@ -348,6 +350,7 @@ Type
     procedure SSLPassword(var Password: String);
     procedure SendError(response: TIdHTTPResponseInfo; logid : string; status: word; format: TFHIRFormat; lang, message, url: String; e: exception; Session: TFHIRSession; addLogins: boolean; path: String; relativeReferenceAdjustment: integer; code: TFhirIssueTypeEnum);
     Procedure ProcessRequest(Context: TOperationContext; request: TFHIRRequest; response: TFHIRResponse);
+    function encodeAsyncResponseAsJson(request : TFHIRRequest; reqUrl : String; fmt : TFHIRFormat; transactionTime : TDateTimeEx; names : TStringList) : string;
     Procedure ProcessAsyncRequest(Context: TOperationContext; request: TFHIRRequest; response: TFHIRResponse);
     Procedure ProcessTaskRequest(Context: TOperationContext; request: TFHIRRequest; response: TFHIRResponse);
     function BuildRequest(lang, sBaseURL, sHost, sOrigin, sClient, sContentLocation, sCommand, sResource, sContentType, sContentAccept, sContentEncoding,
@@ -781,6 +784,31 @@ var
   i: integer;
 begin
   result := ServeUnknownCertificate or FCertificateIdList.Find(Certificate.FingerprintAsString, i);
+end;
+
+function TFhirWebServer.encodeAsyncResponseAsJson(request : TFHIRRequest; reqUrl : String; fmt : TFHIRFormat; transactionTime: TDateTimeEx; names: TStringList): string;
+var
+  j, o : TJsonObject;
+  a : TJsonArray;
+  s : String;
+begin
+  j := TJsonObject.Create;
+  try
+    j.str['request'] := reqUrl;
+    j.str['transaction_time'] := transactionTime.toXML;
+    j.bool['secure'] := true;
+    a := j.forceArr['output'];
+    for s in names do
+    begin
+      o := a.addObject;
+      o.str['url'] := request.baseUrl+'task/'+request.id+'/'+s+EXT_WEB_TFHIRFormat[fmt];
+      o.str['type'] := s;
+    end;
+
+    result := TJSONWriter.writeObjectStr(j, true);
+  finally
+    j.Free;
+  end;
 end;
 
 function TFhirWebServer.EndPointDesc(secure: boolean): String;
@@ -3019,6 +3047,29 @@ begin
   result := FormatDateTime('c', Now);
 end;
 
+function parseMimeType(s : String) : TFHIRFormat;
+begin
+  if StringStartsWithInsensitive(s, 'application/x-ndjson') or StringStartsWithInsensitive(s, 'application/fhir+ndjson') then
+    result := ffNDJson
+  else if StringStartsWithInsensitive(s, 'application/json') or StringStartsWithInsensitive(s, 'application/fhir+json') or
+    StringStartsWithInsensitive(s, 'application/json+fhir') or StringStartsWithInsensitive(s, 'json') or
+    StringStartsWithInsensitive(s, 'text/json') Then
+    result := ffJson
+  else if StringStartsWithInsensitive(s, 'text/html') or StringStartsWithInsensitive(s, 'html') or
+    StringStartsWithInsensitive(s, 'application/x-zip-compressed') or StringStartsWithInsensitive(s, 'application/zip') Then
+    result := ffXhtml
+  else if StringStartsWithInsensitive(s, 'text/fhir') Then
+    result := ffText
+  else if StringStartsWithInsensitive(s, 'text/turtle') Then
+    result := ffTurtle
+  else if StringStartsWithInsensitive(s, 'text/xml') or StringStartsWithInsensitive(s, 'application/xml') or
+    StringStartsWithInsensitive(s, 'application/fhir+xml') or StringStartsWithInsensitive(s, 'application/xml+fhir') or
+    StringStartsWithInsensitive(s, 'xml') Then
+    result := ffXml
+  else
+    result := ffUnspecified;
+end;
+
 procedure TFhirWebServer.ProcessAsyncRequest(Context: TOperationContext; request: TFHIRRequest; response: TFHIRResponse);
 var
   thread : TAsyncTaskThread;
@@ -3037,7 +3088,10 @@ begin
   thread.key := ServerContext.Storage.createAsyncTask(request.url, id, response.Format);
   thread.server := self.link as TFhirWebServer;
   thread.request := request.Link;
-  thread.Format := response.Format;
+  if request.Parameters.VarExists('output-format') then
+    thread.Format := parseMimeType(request.Parameters.GetVar('output-format'))
+  else
+    thread.Format := response.Format;
   thread.Start;
   response.HTTPCode := 202;
   response.Message := 'Accepted';
@@ -3145,8 +3199,8 @@ end;
 procedure TFhirWebServer.ProcessTaskRequest(Context: TOperationContext; request: TFHIRRequest; response: TFHIRResponse);
 var
   status : TAsyncTaskStatus;
-  message, s : String;
-  expires : TDateTimeEx;
+  message, s, originalRequest : String;
+  transactionTime, expires : TDateTimeEx;
   names : TStringList;
   outcome : TBytes;
   fmt : TFHIRFormat;
@@ -3158,7 +3212,7 @@ var
 begin
   names := TStringList.Create;
   try
-    if FServerContext.Storage.fetchTaskDetails(request.Id, key, status, fmt, message, expires, names, outcome) then
+    if FServerContext.Storage.fetchTaskDetails(request.Id, key, status, fmt, message, originalRequest, transactionTime, expires, names, outcome) then
     begin
       if request.CommandType = fcmdDeleteTask then
       begin
@@ -3243,8 +3297,6 @@ begin
           atsComplete:
             begin
             // check format
-            if (fmt <> response.Format) and (response.Format <> ffXhtml) then
-              raise EFHIRException.CreateLang('TASK_FMT_MISMATCH', request.Lang, [CODES_TFHIRFormat[response.Format], CODES_TFHIRFormat[fmt]]);
             response.HTTPCode := 200;
             response.Message := 'OK';
             for s in names do
@@ -3270,6 +3322,11 @@ begin
             begin
               response.ContentType := 'text/html';
               response.Body := makeTaskRedirect(request.baseUrl, request.id, '', fmt, names);
+            end
+            else
+            begin
+              response.ContentType := 'application/json';
+              response.Body := encodeAsyncResponseAsJson(request, originalRequest, fmt, transactionTime, names);
             end;
             end;
           atsTerminated, atsError :
@@ -4587,19 +4644,25 @@ begin
   Files.free;
   FRequest.Free;
   FServer.Free;
+  FBundle.Free;
   inherited;
+end;
+
+procedure TAsyncTaskThread.details;
+begin
+  FServer.serverContext.Storage.setAsyncTaskDetails(key, {$IFDEF FHIR4}Fbundle.timestamp{$ELSE}TDateTimeEx.makeUTC{$ENDIF}, Fbundle.Links['self']);
 end;
 
 procedure TAsyncTaskThread.doGetBundleBuilder(request : TFHIRRequest; context: TFHIRResponse; aType: TFhirBundleTypeEnum; out builder: TFhirBundleBuilder);
 begin
+  FBundle := TFHIRBundle.create(aType);
   if context.Format = ffNDJson then
   begin
     files := TAdvMap<TAdvFile>.create;
-    builder := TFHIRBundleBuilderNDJson.Create(TFHIRBundle.create(aType), IncludeTrailingPathDelimiter(FServer.ServerContext.TaskFolder)+'task-'+inttostr(FKey), files.link)
+    builder := TFHIRBundleBuilderNDJson.Create(FBundle.link, IncludeTrailingPathDelimiter(FServer.ServerContext.TaskFolder)+'task-'+inttostr(FKey), files.link)
   end
   else
-    builder := TFHIRBundleBuilderSimple.Create(TFHIRBundle.create(aType));
-
+    builder := TFHIRBundleBuilderSimple.Create(FBundle.link);
 end;
 
 procedure TAsyncTaskThread.Execute;
@@ -4648,6 +4711,7 @@ begin
           raise;
         end;
       end;
+      details;
       saveOutcome(response);
       status(atsComplete, 'Complete');
       t := GetTickCount - t;

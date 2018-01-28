@@ -285,9 +285,10 @@ Type
     function FetchResource(key : integer) : TFHIRResource; virtual;
 
     function createAsyncTask(url, id : string; format : TFHIRFormat) : integer; virtual;
+    procedure setAsyncTaskDetails(key : integer; transactionTime : TDateTimeEx; request : String); virtual;
     procedure updateAsyncTaskStatus(key : integer; status : TAsyncTaskStatus; message : String); virtual;
     procedure MarkTaskForDownload(key : integer; names : TStringList); virtual;
-    function fetchTaskDetails(id : String; var key : integer; var status : TAsyncTaskStatus; var fmt : TFHIRFormat; var message : String; var expires : TDateTimeEx; names : TStringList; var outcome : TBytes): boolean; virtual;
+    function fetchTaskDetails(id : String; var key : integer; var status : TAsyncTaskStatus; var fmt : TFHIRFormat; var message, originalRequest : String; var transactionTime, expires : TDateTimeEx; names : TStringList; var outcome : TBytes): boolean; virtual;
     procedure recordDownload(key : integer; name : String); virtual;
     procedure fetchExpiredTasks(tasks : TAdvList<TAsyncTaskInformation>); virtual;
     procedure MarkTaskDeleted(key : integer); virtual;
@@ -362,7 +363,7 @@ begin
   raise Exception.Create('The function "FetchResourceCounts(comps : String): TStringList" must be overridden in '+className);
 end;
 
-function TFHIRStorageService.fetchTaskDetails(id : String; var key : integer; var status: TAsyncTaskStatus; var fmt : TFHIRFormat; var message: String; var expires: TDateTimeEx; names : TStringList; var outcome: TBytes): boolean;
+function TFHIRStorageService.fetchTaskDetails(id : String; var key : integer; var status: TAsyncTaskStatus; var fmt : TFHIRFormat; var message, originalRequest: String; var transactionTime, expires: TDateTimeEx; names : TStringList; var outcome: TBytes): boolean;
 begin
   raise Exception.Create('This server does not support Async tasks');
 end;
@@ -480,6 +481,11 @@ end;
 procedure TFHIRStorageService.RunValidation;
 begin
   raise Exception.Create('The function "RunValidation" must be overridden in '+className);
+end;
+
+procedure TFHIRStorageService.setAsyncTaskDetails(key: integer; transactionTime: TDateTimeEx; request: String);
+begin
+  raise Exception.Create('This server does not support Async tasks');
 end;
 
 function TFHIRStorageService.storeClient(client: TRegisteredClientInformation; sessionKey : integer): String;

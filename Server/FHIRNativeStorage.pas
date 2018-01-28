@@ -730,7 +730,8 @@ type
     function createAsyncTask(url, id : string; format : TFHIRFormat) : integer; override;
     procedure updateAsyncTaskStatus(key : integer; status : TAsyncTaskStatus; message : String); override;
     procedure MarkTaskForDownload(key : integer; names : TStringList); override;
-    function fetchTaskDetails(id : String; var key : integer; var status : TAsyncTaskStatus; var fmt : TFHIRFormat; var message : String; var expires : TDateTimeEx; names : TStringList; var outcome : TBytes): boolean; override;
+    function fetchTaskDetails(id : String; var key : integer; var status : TAsyncTaskStatus; var fmt : TFHIRFormat; var message, request : String; var transactionTime, expires : TDateTimeEx; names : TStringList; var outcome : TBytes): boolean; override;
+    procedure setAsyncTaskDetails(key : integer; transactionTime : TDateTimeEx; request : String); override;
     procedure recordDownload(key : integer; name : String); override;
     procedure fetchExpiredTasks(tasks : TAdvList<TAsyncTaskInformation>); override;
     procedure MarkTaskDeleted(key : integer); override;
@@ -1681,8 +1682,6 @@ begin
         bundle.setTotal(total);
         bundle.Tag('sql', sql);
         bundle.setLastUpdated(TDateTimeEx.makeUTC);
-        bundle.addLink('self', base+link);
-
         bundle.addLink('self', base+link);
 
         if (offset > 0) or (Count < total) then
@@ -6980,6 +6979,8 @@ begin
           id := native(manager).BuildSearchResultSet(0, request.Session, request.resourceName, params, request.baseUrl, request.compartment, request.SessionCompartments, nil, link, sql, total, wantSummary, request.strictSearch, reverse);
         bundle.setTotal(total);
         bundle.tag('sql', sql);
+        bundle.addLink('self', 'todo');
+
         native(manager).chooseField(response.Format, wantsummary, request.loadObjects, field, prsr, needsObject);
         if (not needsObject) then
           prsr := nil;
@@ -8775,9 +8776,18 @@ begin
 End;
 
 function TFHIRNativeStorageService.createAsyncTask(url, id: string; format : TFHIRFormat): integer;
+var
+  key : integer;
 begin
-  result := NextAsyncTaskKey;
-  DB.ExecSQL('Insert into AsyncTasks (TaskKey, id, SourceUrl, Format, Status, Created) values ('+inttostr(result)+', '''+SQLWrapString(id)+''', '''+SQLWrapString(url)+''', '+inttostr(ord(format))+', '+inttostr(ord(atsCreated))+', '+DBGetDate(DB.Platform)+')', 'async')
+  key := NextAsyncTaskKey;
+  DB.connection('async', procedure(conn : TKDBConnection)
+    begin
+      conn.SQL := 'Insert into AsyncTasks (TaskKey, id, SourceUrl, Format, Status, Created) values ('+inttostr(key)+', '''+SQLWrapString(id)+''', '''+SQLWrapString(url)+''', '+inttostr(ord(format))+', '+inttostr(ord(atsCreated))+', '+DBGetDate(DB.Platform)+')';
+      conn.Prepare;
+      conn.Execute;
+      conn.Terminate;
+    end);
+  result := key;
 end;
 
 procedure TFHIRNativeStorageService.Initialise(ini: TFHIRServerIniFile);
@@ -9230,7 +9240,7 @@ begin
     var
       task : TAsyncTaskInformation;
     begin
-      conn.SQL := 'select * from AsyncTasks where Status != '+inttostr(ord(atsDeleted))+' and Expires < '+DBGetDate(DB.Platform);
+      conn.SQL := 'select TaskKey, Format, Names from AsyncTasks where Status != '+inttostr(ord(atsDeleted))+' and Expires < '+DBGetDate(DB.Platform);
       conn.Prepare;
       conn.Execute;
       while conn.FetchNext do
@@ -9352,13 +9362,13 @@ begin
 
 end;
 
-function TFHIRNativeStorageService.fetchTaskDetails(id : String; var key : integer; var status: TAsyncTaskStatus; var fmt : TFHIRFormat; var message: String; var expires: TDateTimeEx; names : TStringList; var outcome: TBytes): boolean;
+function TFHIRNativeStorageService.fetchTaskDetails(id : String; var key : integer; var status: TAsyncTaskStatus; var fmt : TFHIRFormat; var message, request: String; var transactionTime, expires: TDateTimeEx; names : TStringList; var outcome: TBytes): boolean;
 var
   conn : TKDBConnection;
 begin
   conn := FDB.GetConnection('async');
   try
-    conn.SQL := 'Select TaskKey, Status, Format, Message, Expires, Names, Outcome from AsyncTasks where Id = '''+SQLWrapString(id)+'''';
+    conn.SQL := 'Select TaskKey, Status, Format, Message, Request, TransactionTime, Expires, Names, Outcome from AsyncTasks where Id = '''+SQLWrapString(id)+'''';
     conn.Prepare;
     conn.Execute;
     result := conn.FetchNext;
@@ -9368,6 +9378,8 @@ begin
       status := TAsyncTaskStatus(conn.ColIntegerByName['status']);
       fmt := TFhirFormat(conn.ColIntegerByName['format']);
       message := conn.ColStringByName['Message'];
+      request := conn.ColStringByName['Request'];
+      transactionTime := conn.ColDateTimeExByName['TransactionTime'];
       expires := conn.ColDateTimeExByName['Expires'];
       names.CommaText := TEncoding.UTF8.GetString(conn.ColBlobByName['Names']);
       outcome := conn.ColBlobByName['Outcome']
@@ -10102,11 +10114,16 @@ begin
 end;
 
 procedure TFHIRNativeStorageService.updateAsyncTaskStatus(key: integer; status: TAsyncTaskStatus; message: String);
+var
+  sql : string;
 begin
-  if status in [atsComplete, atsError] then
-    DB.ExecSQL('Update AsyncTasks set Status = '+inttostr(ord(status))+', Message = '''+SQLWrapString(message)+''', Finished = '+DBGetDate(DB.Platform)+' where TaskKey = '+inttostr(key), 'async')
-  else
-    DB.ExecSQL('Update AsyncTasks set Status = '+inttostr(ord(status))+', Message = '''+SQLWrapString(message)+''' where TaskKey = '+inttostr(key), 'async');
+  DB.connection('async', procedure(conn : TKDBConnection)
+    begin
+      if status in [atsComplete, atsError] then
+        conn.ExecSQL('Update AsyncTasks set Status = '+inttostr(ord(status))+', Message = '''+SQLWrapString(message)+''', Finished = '+DBGetDate(DB.Platform)+' where TaskKey = '+inttostr(key))
+      else
+        conn.ExecSQL('Update AsyncTasks set Status = '+inttostr(ord(status))+', Message = '''+SQLWrapString(message)+''' where TaskKey = '+inttostr(key));
+    end);
 end;
 
 procedure TFHIRNativeStorageService.updateOAuthSession(id : String; state, key: integer; var client_id : String);
@@ -10213,6 +10230,19 @@ begin
   finally
     FLock.Unlock;
   end;
+end;
+
+procedure TFHIRNativeStorageService.setAsyncTaskDetails(key: integer; transactionTime: TDateTimeEx; request: String);
+begin
+  DB.connection('async', procedure (conn : TKDBConnection)
+    begin
+      conn.sql := 'Update AsyncTasks set TransactionTime = :t, Request = :r where TaskKey = '+inttostr(key);
+      conn.Prepare;
+      conn.BindString('r', request);
+      conn.BindDateTimeEx('t', transactionTime);
+      conn.Execute;
+      conn.Terminate;
+    end);
 end;
 
 function TFHIRNativeStorageService.storeClient(client: TRegisteredClientInformation; sessionKey : integer): String;

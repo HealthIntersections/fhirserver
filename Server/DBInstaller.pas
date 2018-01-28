@@ -60,7 +60,8 @@ const
 //  ServerDBVersion = 18; // add AsyncTasks
 //  ServerDBVersion = 19; // add RegisteredClients
 //  ServerDBVersion = 20; // add PseudoData
-  ServerDBVersion = 21; // add ClientRegistrations.PatientContext
+//  ServerDBVersion = 21; // add ClientRegistrations.PatientContext
+  ServerDBVersion = 22; // add AsyncTasks.Request and AsyncTasks.TransactionTime
 
   // config table keys
   CK_Transactions = 1;   // whether transactions and batches are allowed or not
@@ -1183,6 +1184,11 @@ begin
       CreatePseudoData;
     if (version < 21) then
       Fconn.ExecSQL('ALTER TABLE dbo.ClientRegistrations ADD PatientContext int NULL');
+    if (version < 22) then
+    begin
+      Fconn.ExecSQL('ALTER TABLE dbo.AsyncTasks ADD Request char(255) NULL');
+      Fconn.ExecSQL('ALTER TABLE dbo.AsyncTasks ADD TransactionTime '+DBDateTimeType(FConn.Owner.Platform)+' NULL');
+    end;
 
     Fconn.ExecSQL('update Config set value = '+inttostr(ServerDBVersion)+' where ConfigKey = 5');
     FConn.commit;
