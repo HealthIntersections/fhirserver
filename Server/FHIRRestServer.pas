@@ -416,6 +416,7 @@ Uses
   Registry,
 {$ENDIF}
   FHIRLog,
+  SystemService,
 
   FileSupport,
   FacebookSupport;
@@ -3153,7 +3154,7 @@ begin
   else
     cs := 'cmd=' + CODES_TFHIRCommandType[request.CommandType];
   logt('Request: ' + cs + ', type=' + request.ResourceName + ', id=' + request.id + ', ' + us + ', params=' + request.Parameters.Source + '. rt = ' +
-    inttostr(t));
+    inttostr(t)+'  ('+GService.MemoryStatus+')');
 end;
 
 procedure TFhirWebServer.ProcessScimRequest(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo);

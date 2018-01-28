@@ -49,7 +49,6 @@ type
     FStopReason : String;
     FTellUser : boolean;
     FIsContained: Boolean;
-    function MemoryStatus : String;
     procedure InternalExecute;
     procedure SetStatus(AState, AControls : DWord);
     procedure CommandInstall;
@@ -71,6 +70,7 @@ type
     function CheckClose(var s: String): Boolean; Virtual;
   Public
     constructor Create(const ASystemName, ADisplayName: String);
+    function MemoryStatus : String;
     procedure DebugExecute;
     procedure ServiceExecute;
     Procedure ContainedStart;
