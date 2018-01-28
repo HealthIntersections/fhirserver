@@ -5915,13 +5915,15 @@ end;
 
 destructor TFHIRBundleBuilderNDJson.Destroy;
 begin
-  writeResource(FBundle);
+  // omitted - disucssion with Dan - we don't need hte bundle: writeResource(FBundle);
   Ffiles.Free;
   inherited;
 end;
 
 function TFHIRBundleBuilderNDJson.fileForType(rType: String): TAdvFile;
 begin
+  if rType = 'Bundle' then
+    writeln('Bundle');
   if not FFiles.TryGetValue(rType, result) then
   begin
     result := TAdvFile.Create(FFileBase+'-'+rType+'.ndjson', fmCreate);
