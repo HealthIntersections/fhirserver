@@ -4894,6 +4894,7 @@ Const
   CODES_TSearchParamsVisionPrescription : Array[TSearchParamsVisionPrescription] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'datewritten', 'encounter', 'identifier', 'patient', 'prescriber', 'status');
 {$ENDIF}
   FHIR_GENERATED_VERSION = '3.2.0';
+  FHIR_GENERATED_VERSION_BASE = '3.2';
 
   FHIR_GENERATED_PUBLICATION = '4';
 

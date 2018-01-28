@@ -70,6 +70,7 @@ Type
     FLastURL: String;
     FProvenance: TFhirProvenance;
     FLastOperationId: String;
+    FVersionSpecific: boolean;
     procedure SetProvenance(const Value: TFhirProvenance);
   protected
     procedure SetLogger(const Value: TFHIRClientLogger); virtual;
@@ -98,6 +99,7 @@ Type
     procedure terminate; virtual;
     function address : String; virtual;
     function format : TFHIRFormat; virtual;
+    property versionSpecific : boolean read FVersionSpecific write FVersionSpecific;
     property LastURL : String read FLastURL write FLastURL;
     property LastOperationId : String read FLastOperationId write FLastOperationId; // some servers return an id that links to their own internal log for debugging
     property Logger : TFHIRClientLogger read FLogger write SetLogger;
@@ -934,6 +936,8 @@ begin
   {$ELSE}
   result := 'application/fhir+'+fmt;
   {$ENDIF}
+  if versionSpecific then
+    result := result + '; fhir-version=r'+FHIR_GENERATED_PUBLICATION;
 end;
 
 {$IFDEF MSWINDOWS}

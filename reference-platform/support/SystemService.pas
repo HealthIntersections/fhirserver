@@ -23,15 +23,17 @@ IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
 INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT 
 NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
 PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
-WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
-ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
+WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 }
 
 interface
 
 uses
+  FastMM4,
   AdvObjects,
+  psapi,
   ThreadSupport,
   Windows,
   WinSvc;
@@ -47,6 +49,7 @@ type
     FStopReason : String;
     FTellUser : boolean;
     FIsContained: Boolean;
+    function MemoryStatus : String;
     procedure InternalExecute;
     procedure SetStatus(AState, AControls : DWord);
     procedure CommandInstall;
@@ -249,6 +252,7 @@ begin
           end;
         postStart;
         repeat
+          SetConsoleTitle(pChar(FDisplayName+MemoryStatus));
           if (LCheckTime < Now) then
             begin
             LCheckTime := now + 10 * DATETIME_SECOND_ONE;
@@ -284,6 +288,33 @@ begin
         end;
       end;
   end;
+end;
+
+function memToMb(v : UInt64) : string;
+begin
+  v := v div 1024;
+  v := v div 1024;
+  result := inttostr(v)+'MB';
+end;
+
+function TSystemService.MemoryStatus: String;
+var
+  st: TMemoryManagerState;
+  sb: TSmallBlockTypeState;
+  v : UInt64;
+  hProcess: THandle;
+  pmc: PROCESS_MEMORY_COUNTERS;
+  total: DWORD;
+begin
+  GetMemoryManagerState(st);
+  v := st.TotalAllocatedMediumBlockSize + st.TotalAllocatedLargeBlockSize;
+  for sb in st.SmallBlockTypeStates do
+    v := v + sb.UseableBlockSize * sb.AllocatedBlockCount;
+  result := ' '+memToMb(v);
+  hProcess := GetCurrentProcess;
+  if (GetProcessMemoryInfo(hProcess, @pmc, SizeOf(pmc))) then
+    result := result +' / '+memToMB(pmc.WorkingSetSize + pmc.QuotaPagedPoolUsage + pmc.QuotaNonPagedPoolUsage);
+  CloseHandle(hProcess);
 end;
 
 procedure TSystemService.postStart;
