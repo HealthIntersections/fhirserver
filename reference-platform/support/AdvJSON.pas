@@ -1190,7 +1190,6 @@ function TJSONParser.GetItemValue: String;
 begin
   if not (FItemType in [jpitBoolean, jpitString, jpitNumber]) Then
     FLex.JSONError('Attempt to read a simple value, but state is '+Codes_TJsonParserItemType[FItemType]);
-
   result := FItemValue;
 end;
 

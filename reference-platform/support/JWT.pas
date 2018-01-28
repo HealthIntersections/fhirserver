@@ -848,7 +848,7 @@ end;
 
 function TJWT.Getexpires : TDateTime;
 begin
-  result := UnixToDateTime(StrToIntDef(payload.num['exp'], 0));
+  result := UnixToDateTime(trunc(StrToFloat(payload.num['exp'])));
 end;
 
 procedure TJWT.Setexpires(value : TDateTime);
