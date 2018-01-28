@@ -1240,8 +1240,7 @@ begin
         if (jwt.expires > now + 5 * DATETIME_MINUTE_ONE)then
           raise Exception.Create('JWT Expiry is too far in the future');
         if (jwt.expires < now) then
-          raise Exception.Create('JWT expiry is too old');
-
+          raise Exception.Create('JWT expiry ('+FormatDateTime('c', jwt.expires)+') is too old');
 
         jwk := TJWKList.create(client.publicKey);
         try
