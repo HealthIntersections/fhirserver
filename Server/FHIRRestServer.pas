@@ -85,7 +85,7 @@ Uses
   IdGlobalProtocols, IdWebSocket,
 
   EncodeSupport, GUIDSupport, DateSupport, BytesSupport, StringSupport,
-  ThreadSupport, CertificateSupport, SystemSupport, HashSupport,
+  ThreadSupport, CertificateSupport, SystemSupport, HashSupport, Logging,
 
   AdvBuffers, AdvObjectLists, AdvStringMatches, AdvZipParts, AdvZipReaders,
   AdvVCLStreams, AdvMemories, AdvIntegerObjectMatches, AdvExceptions,
@@ -241,6 +241,8 @@ Type
     FCertFile: String;
     FRootCertFile: String;
     FSSLPassword: String;
+    FInLog : TLogger;
+    FOutLog : TLogger;
 
     // security admin
     FUseOAuth: boolean;
@@ -322,6 +324,9 @@ Type
     function patientAppList(base, id : String) : string;
     function HandleWebPatient(request: TFHIRRequest; response: TFHIRResponse; secure: boolean): TDateTime;
     function getReferencesByType(t : String) : String;
+
+    procedure logRequest(secure : boolean; id : String; request : TIdHTTPRequestInfo);
+    procedure logResponse(id : String; resp : TIdHTTPResponseInfo);
 
     Procedure ReturnSpecFile(response: TIdHTTPResponseInfo; stated, path: String; secure : boolean);
     // Procedure ReadTags(Headers: TIdHeaderList; Request : TFHIRRequest); overload;
@@ -596,6 +601,22 @@ Begin
   FName := Name;
   FIni := ini;
 
+  if (FolderExists('c:\temp')) then
+    FInLog := TLogger.Create('c:\temp\fhirserver-http-in.log')
+  else
+    FInLog := TLogger.Create(IncludeTrailingPathDelimiter(SystemTemp)+'fhirserver-http-in.log');
+  FInLog.Policy.FullPolicy := lfpChop;
+  FInLog.Policy.MaximumSize := 100*1024*1024;
+  FInLog.Policy.AllowExceptions := false;
+
+  if (FolderExists('c:\temp')) then
+    FOutLog := TLogger.Create('c:\temp\fhirserver-http-out.log')
+  else
+    FOutLog := TLogger.Create(IncludeTrailingPathDelimiter(SystemTemp)+'fhirserver-http-out.log');
+  FOutLog.Policy.FullPolicy := lfpChop;
+  FOutLog.Policy.MaximumSize := 100*1024*1024;
+  FOutLog.Policy.AllowExceptions := false;
+
   FClients := TAdvList<TFHIRWebServerClientInfo>.Create;
   FPatientViewServers := TDictionary<String, String>.Create;
 {$IFDEF MSWINDOWS}
@@ -700,6 +721,7 @@ Begin
   FLock.Free;
   FCertificateIdList.Free;
   FSourceProvider.Free;
+  FInLog.Free;
   Inherited;
 End;
 
@@ -1211,6 +1233,8 @@ begin
   MarkEntry(AContext, request, response);
   try
     id := ServerContext.nextRequestId;
+    logRequest(false, id, request);
+
     response.CustomHeaders.Add('X-Request-Id: '+id);
     if (request.AuthUsername = INTERNAL_SECRET) then
       FServerContext.SessionManager.GetSession(request.AuthPassword, Session, check);
@@ -1288,6 +1312,7 @@ begin
         logt('miss: ' + request.Document);
       end;
     end;
+    logResponse(id, response);
   finally
     MarkExit(AContext);
   end;
@@ -1343,6 +1368,7 @@ begin
   MarkEntry(AContext, request, response);
   try
     id := ServerContext.nextRequestId;
+    logRequest(true, id, request);
     response.CustomHeaders.Add('X-Request-Id: '+id);
     if (request.AuthUsername = INTERNAL_SECRET) then
       if request.AuthPassword.StartsWith('urn:') then
@@ -1432,6 +1458,7 @@ begin
         logt('miss: ' + request.Document);
       end;
     end;
+    logResponse(id, response);
   finally
     MarkExit(AContext);
     Session.Free;
@@ -1752,7 +1779,6 @@ Begin
                 end;
                 if noErrCode then
                   response.ResponseNo := 200;
-                response.WriteContent;
                 RecordExchange(oRequest, oResponse);
               except
                 on e: exception do
@@ -2410,7 +2436,6 @@ begin
       issue.Free;
     end;
   end;
-  response.WriteContent;
 end;
 
 procedure TFhirWebServer.SetSourceProvider(const Value: TFHIRWebServerSourceProvider);
@@ -3229,13 +3254,7 @@ begin
       end
       else if request.subId <> '' then
       begin
-        if (fmt <> response.Format) and (response.Format <> ffUnspecified) and (response.Format <> ffXhtml) then
-        begin
-          response.HTTPCode := 500;
-          response.Message := 'Server Error';
-          response.resource := BuildOperationOutcome(request.Lang, 'Mime Type mismatch. Original request was for '+MIMETYPES_TFHIRFormat[fmt]+', current request is for '+MIMETYPES_TFHIRFormat[response.format]);
-        end
-        else if request.SubId = 'zip' then
+        if request.SubId = 'zip' then
         begin
           m := TAdvMemoryStream.Create;
           try
@@ -3604,6 +3623,85 @@ begin
       raise;
     end;
   End;
+end;
+
+procedure TFhirWebServer.logRequest(secure : boolean; id: String; request: TIdHTTPRequestInfo);
+var
+  package : TStringBuilder;
+  b : TBytes;
+begin
+  package := TStringBuilder.Create;
+  try
+    package.Append('-----------------------------------------------------------------'#13#10);
+    if secure then
+      package.Append('https - ')
+    else
+      package.Append('http - ');
+    package.Append(id);
+    package.Append(' @ ');
+    package.Append(TDateTimeEx.makeUTC.toXML);
+    package.Append(#13#10);
+    package.Append(request.RawHTTPCommand);
+    package.Append(#13#10);
+    package.Append(request.RawHeaders.Text);
+    if request.PostStream <> nil then
+    begin
+      package.Append(#13#10);
+      SetLength(b, request.PostStream.Size);
+      request.PostStream.Read(b[0], length(b));
+      request.PostStream.Position := 0;
+      package.Append(EncodeBase64(@b[0], length(b)));
+      package.Append(#13#10);
+    end
+    else if request.ContentType = 'application/x-www-form-urlencoded' then
+    begin
+      package.Append(#13#10);
+      package.Append(request.UnparsedParams);
+      package.Append(#13#10);
+    end;
+
+    FInLog.WriteToLog(package.ToString);
+  finally
+    package.Free;
+  end;
+end;
+
+procedure TFhirWebServer.logResponse(id: String; resp: TIdHTTPResponseInfo);
+var
+  package : TStringBuilder;
+  b : TBytes;
+begin
+  package := TStringBuilder.Create;
+  try
+    package.Append('-----------------------------------------------------------------'#13#10);
+    package.Append('resp - ');
+    package.Append(id);
+    package.Append(' @ ');
+    package.Append(TDateTimeEx.makeUTC.toXML);
+    package.Append(#13#10);
+    package.Append(inttostr(resp.ResponseNo)+' '+resp.ResponseText);
+    package.Append(#13#10);
+    package.Append(resp.RawHeaders.Text);
+    if resp.ContentStream <> nil then
+    begin
+      package.Append(#13#10);
+      SetLength(b, resp.ContentStream.Size);
+      resp.ContentStream.Read(b[0], length(b));
+      resp.ContentStream.Position := 0;
+      package.Append(EncodeBase64(@b[0], length(b)));
+      package.Append(#13#10);
+    end
+    else if resp.ContentText <> '' then
+    begin
+      package.Append(#13#10);
+      package.Append(resp.ContentText);
+      package.Append(#13#10);
+    end;
+
+    FOutLog.WriteToLog(package.ToString);
+  finally
+    package.Free;
+  end;
 end;
 
 function TFhirWebServer.LookupReference(Context: TFHIRRequest; id: String): TResourceWithReference;
@@ -4651,7 +4749,8 @@ end;
 
 procedure TAsyncTaskThread.details;
 begin
-  FServer.serverContext.Storage.setAsyncTaskDetails(key, {$IFDEF FHIR4}Fbundle.timestamp{$ELSE}TDateTimeEx.makeUTC{$ENDIF}, Fbundle.Links['self']);
+  if FBundle <> nil then
+    FServer.serverContext.Storage.setAsyncTaskDetails(key, {$IFDEF FHIR4}Fbundle.timestamp{$ELSE}TDateTimeEx.makeUTC{$ENDIF}, Fbundle.Links['self']);
 end;
 
 procedure TAsyncTaskThread.doGetBundleBuilder(request : TFHIRRequest; context: TFHIRResponse; aType: TFhirBundleTypeEnum; out builder: TFhirBundleBuilder);
@@ -4756,8 +4855,10 @@ begin
       names.Add('content');
       f := TFileStream.Create(Path([FServer.ServerContext.TaskFolder, 'task-'+inttostr(key)+'-content'+EXT_WEB_TFHIRFormat[format]]), fmCreate);
       try
-        // ffNDJson, { new line delimited JSON }
-        resourceToStream(response.Resource, f, FFormat, OutputStyleNormal);
+        if fFormat = ffNDJson then
+          resourceToStream(response.Resource, f, ffJson, OutputStyleNormal)
+        else
+          resourceToStream(response.Resource, f, FFormat, OutputStyleNormal);
       finally
         f.Free;
       end;
