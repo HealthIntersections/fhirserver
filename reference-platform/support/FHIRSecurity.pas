@@ -247,19 +247,27 @@ begin
       FReadAllowed.add(rn)
     else if scopes.IndexOf('patient/*.*') > -1 then
       FReadAllowed.add(rn)
+    else if scopes.IndexOf('system/*.*') > -1 then
+      FReadAllowed.add(rn)
     else if scopes.IndexOf('*.*') > -1 then
       FReadAllowed.add(rn)
     else if scopes.IndexOf('user/*.read') > -1 then
       FReadAllowed.add(rn)
     else if scopes.IndexOf('patient/*.read') > -1 then
       FReadAllowed.add(rn)
+    else if scopes.IndexOf('system/*.read') > -1 then
+      FReadAllowed.add(rn)
     else if scopes.IndexOf('user/'+rn+'.*') > -1 then
       FReadAllowed.add(rn)
     else if scopes.IndexOf('patient/'+rn+'.*') > -1 then
       FReadAllowed.add(rn)
+    else if scopes.IndexOf('system/'+rn+'.*') > -1 then
+      FReadAllowed.add(rn)
     else if scopes.IndexOf('user/'+rn+'.read') > -1 then
       FReadAllowed.add(rn)
     else if scopes.IndexOf('patient/'+rn+'.read') > -1 then
+      FReadAllowed.add(rn)
+    else if scopes.IndexOf('system/'+rn+'.read') > -1 then
       FReadAllowed.add(rn)
     else
       FReadAllowed.remove(rn);
@@ -274,19 +282,27 @@ begin
       FWriteAllowed.add(rn)
     else if scopes.IndexOf('patient/*.*') > -1 then
       FWriteAllowed.add(rn)
-   else if scopes.IndexOf('*.*') > -1 then
+    else if scopes.IndexOf('system/*.*') > -1 then
+      FWriteAllowed.add(rn)
+    else if scopes.IndexOf('*.*') > -1 then
       FReadAllowed.add(rn)
-   else if scopes.IndexOf('user/*.write') > -1 then
+    else if scopes.IndexOf('user/*.write') > -1 then
       FWriteAllowed.add(rn)
     else if scopes.IndexOf('patient/*.write') > -1 then
+      FWriteAllowed.add(rn)
+    else if scopes.IndexOf('system/*.write') > -1 then
       FWriteAllowed.add(rn)
     else if scopes.IndexOf('user/'+rn+'.*') > -1 then
       FWriteAllowed.add(rn)
     else if scopes.IndexOf('patient/'+rn+'.*') > -1 then
       FWriteAllowed.add(rn)
+    else if scopes.IndexOf('system/'+rn+'.*') > -1 then
+      FWriteAllowed.add(rn)
     else if scopes.IndexOf('user/'+rn+'.write') > -1 then
       FWriteAllowed.add(rn)
     else if scopes.IndexOf('patient/'+rn+'.write') > -1 then
+      FWriteAllowed.add(rn)
+    else if scopes.IndexOf('system/'+rn+'.write') > -1 then
       FWriteAllowed.add(rn)
     else
       FWriteAllowed.remove(rn);
