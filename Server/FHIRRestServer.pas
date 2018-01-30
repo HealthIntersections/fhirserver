@@ -3625,82 +3625,109 @@ begin
   End;
 end;
 
+function isText(ct : String) : boolean;
+begin
+  result := ct.Contains('text/') or
+    ct.Contains('application/fhir') or
+    ct.Contains('xml') or
+    ct.Contains('json') or
+    ct.Contains('turtle');
+end;
+
 procedure TFhirWebServer.logRequest(secure : boolean; id: String; request: TIdHTTPRequestInfo);
 var
-  package : TStringBuilder;
+  package : TAdvBytesBuilder;
   b : TBytes;
 begin
-  package := TStringBuilder.Create;
+  package := TAdvBytesBuilder.Create;
   try
-    package.Append('-----------------------------------------------------------------'#13#10);
+    package.addUtf8('-----------------------------------------------------------------'#13#10);
+    package.addUtf8(id);
+    package.addUtf8(' @ ');
+    package.addUtf8(TDateTimeEx.makeUTC.toXML);
     if secure then
-      package.Append('https - ')
-    else
-      package.Append('http - ');
-    package.Append(id);
-    package.Append(' @ ');
-    package.Append(TDateTimeEx.makeUTC.toXML);
-    package.Append(#13#10);
-    package.Append(request.RawHTTPCommand);
-    package.Append(#13#10);
-    package.Append(request.RawHeaders.Text);
+      package.addUtf8(' (https)');
+    package.addUtf8(#13#10);
+    package.addUtf8(request.RawHTTPCommand);
+    package.addUtf8(#13#10);
+    package.addUtf8(request.RawHeaders.Text);
     if request.PostStream <> nil then
     begin
-      package.Append(#13#10);
+      package.addUtf8(#13#10);
       SetLength(b, request.PostStream.Size);
       request.PostStream.Read(b[0], length(b));
       request.PostStream.Position := 0;
-      package.Append(EncodeBase64(@b[0], length(b)));
-      package.Append(#13#10);
+      if isText(request.ContentType) and (request.ContentEncoding = '') then
+        package.Append(b)
+      else
+        package.addBase64(b);
+      package.addUtf8(#13#10);
     end
     else if request.ContentType = 'application/x-www-form-urlencoded' then
     begin
-      package.Append(#13#10);
-      package.Append(request.UnparsedParams);
-      package.Append(#13#10);
+      package.addUtf8(#13#10);
+      package.addUtf8(request.UnparsedParams);
+      package.addUtf8(#13#10);
     end;
 
-    FInLog.WriteToLog(package.ToString);
+    FInLog.WriteToLog(package.AsBytes);
   finally
     package.Free;
   end;
 end;
 
 procedure TFhirWebServer.logResponse(id: String; resp: TIdHTTPResponseInfo);
-var
-  package : TStringBuilder;
-  b : TBytes;
-begin
-  package := TStringBuilder.Create;
-  try
-    package.Append('-----------------------------------------------------------------'#13#10);
-    package.Append('resp - ');
-    package.Append(id);
-    package.Append(' @ ');
-    package.Append(TDateTimeEx.makeUTC.toXML);
-    package.Append(#13#10);
-    package.Append(inttostr(resp.ResponseNo)+' '+resp.ResponseText);
-    package.Append(#13#10);
-    package.Append(resp.RawHeaders.Text);
-    if resp.ContentStream <> nil then
-    begin
-      package.Append(#13#10);
-      SetLength(b, resp.ContentStream.Size);
-      resp.ContentStream.Read(b[0], length(b));
-      resp.ContentStream.Position := 0;
-      package.Append(EncodeBase64(@b[0], length(b)));
-      package.Append(#13#10);
-    end
-    else if resp.ContentText <> '' then
-    begin
-      package.Append(#13#10);
-      package.Append(resp.ContentText);
-      package.Append(#13#10);
-    end;
+  procedure log(msg : String);
+  var
+    package : TAdvBytesBuilder;
+    b : TBytes;
+  begin
+    package := TAdvBytesBuilder.Create;
+    try
+      package.addUtf8('-----------------------------------------------------------------'#13#10);
+      package.addUtf8(id);
+      package.addUtf8(' @ ');
+      package.addUtf8(TDateTimeEx.makeUTC.toXML);
+      if (msg <> '') then
+        package.addUtf8(' '+msg);
+      package.addUtf8(#13#10);
+      package.addUtf8(inttostr(resp.ResponseNo)+' '+resp.ResponseText);
+      package.addUtf8(#13#10);
+      package.addUtf8(resp.RawHeaders.Text);
+      if resp.ContentStream <> nil then
+      begin
+        package.addUtf8(#13#10);
+        SetLength(b, resp.ContentStream.Size);
+        resp.ContentStream.Read(b[0], length(b));
+        resp.ContentStream.Position := 0;
+        if isText(resp.ContentType) and (resp.ContentEncoding = '') then
+          package.Append(b)
+        else
+          package.addBase64(b);
+        package.addUtf8(#13#10);
+      end
+      else if resp.ContentText <> '' then
+      begin
+        package.addUtf8(#13#10);
+        package.addUtf8(resp.ContentText);
+        package.addUtf8(#13#10);
+      end;
 
-    FOutLog.WriteToLog(package.ToString);
-  finally
-    package.Free;
+      FOutLog.WriteToLog(package.AsBytes);
+    finally
+      package.Free;
+    end;
+  end;
+begin
+  try
+    resp.WriteHeader;
+    log('');
+  except
+    on e : exception do
+    begin
+      log(e.Message);
+      raise;
+    end;
   end;
 end;
 

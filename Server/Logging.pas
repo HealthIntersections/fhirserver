@@ -33,7 +33,7 @@ Interface
 
 Uses
   {$IFDEF MACOS} OSXUtils, {$ELSE} Windows, {$ENDIF}
-  kCritSct,
+  SysUtils, kCritSct,
   FileSupport,
   StringSupport,
   AdvObjects,
@@ -48,7 +48,6 @@ Type
   private
     FClear: Boolean;
     FAllowExceptions: Boolean;
-    FBufferLimit: Integer;
     FMaximumSize: Cardinal;
     FChopAmount: Cardinal;
     FDescription: String;
@@ -83,23 +82,17 @@ Type
     // amount to chop off when chopping file. 0 means 1k
     Property ChopAmount : Cardinal Read FChopAmount Write FChopAmount;
 
-    // number of entries stored in the buffer before committing to file (faster)
-    Property BufferLimit : Integer Read FBufferLimit Write FBufferLimit;
   End;
 
   TLogger = Class (TAdvObject)
   Private
     FLock : TCriticalSection;
-    FBuffer : TAdvStringList;
     FFilename : String;
     FFilenameCanChange : Boolean;
     FPolicy : TLoggerPolicy;
 
     Function ProcessFileName : String;
 
-    Procedure ActualLog(Const s: String);
-
-    Procedure FlushLogQueue;
     Procedure CutFile(sName : String);
     Procedure CycleFile(sName : String);
 
@@ -108,15 +101,14 @@ Type
     Destructor Destroy; Override;
 
     Function Description : String;
-    Procedure WriteToLog(s: String);
+    Procedure WriteToLog(s: String); overload;
+    Procedure WriteToLog(bytes: TBytes); overload;
 
     Property Policy : TLoggerPolicy read FPolicy;
   End;
 
 Implementation
 
-uses
-  SysUtils;
 
 
 { TLogger }
@@ -131,53 +123,16 @@ End;
 
 Destructor TLogger.Destroy;
 Begin
-  FlushLogQueue;
   FPolicy.Free;
-  FBuffer.Free;
   FLock.Free;
   Inherited;
-End;
-
-Procedure TLogger.FlushLogQueue;
-var
-  iLoop : Integer;
-  oBuilder : TAdvStringBuilder;
-Begin
-  // must be locked
-  if (FBuffer <> Nil) Then
-  Begin
-    oBuilder := TAdvStringBuilder.Create;
-    Try
-      For iLoop := 0 to FBuffer.Count - 1 Do
-        oBuilder.Append(FBuffer[iLoop]);
-      ActualLog(oBuilder.AsString);
-    Finally
-      oBuilder.Free;
-    End;
-    FBuffer.Clear;
-  End;
 End;
 
 Procedure TLogger.WriteToLog(s: String);
 Begin
   If s = '' Then
     Exit;
-
-  FLock.Lock;
-  Try
-    If (FPolicy.BufferLimit = 0) Or FFilenameCanChange Then
-      ActualLog(s)
-    Else
-    Begin
-      if FBuffer = nil Then
-        FBuffer := TAdvStringList.Create;
-      FBuffer.Add(s);
-      If FBuffer.Count > FPolicy.BufferLimit Then
-        FlushLogQueue;
-    End;
-  Finally
-    FLock.UnLock;
-  End;
+  WriteToLog(TEncoding.UTF8.GetBytes(s));
 End;
 
 
@@ -211,61 +166,6 @@ Begin
       Result := True; // directory existed. ( but thats O.K.)
 End;
 
-
-Procedure TLogger.ActualLog(Const s: String);
-{$IFDEF MACOS}
-begin
-  raise Exception.Create('Not done yet');
-end;
-{$ELSE}
-Var
-  sName : string;
-  res: Boolean;
-  done: Cardinal;
-  d: Integer;
-  f: HFile;
-  FileSize: Cardinal;
-  bytes : TBytes;
-Begin
-  sName := ProcessFileName;
-
-  f := CreateFile(PChar(sName), GENERIC_WRITE, FILE_SHARE_READ, Nil, OPEN_ALWAYS, 0, 0);
-  If f = INVALID_HANDLE_VALUE Then
-    If FPolicy.AllowExceptions Then
-      Raise Exception.Create('Unable to begin logging for file "' + sName + '": ' + SysErrorMessage(GetLastError))
-    Else
-      Exit;
-  If FPolicy.MaximumSize > 0 Then
-    Begin
-    FileSize := windows.GetFileSize(F, Nil);
-    If (FileSize > FPolicy.MaximumSize) Then
-      Begin
-      CloseHandle(f);
-      Case FPolicy.FullPolicy Of
-        lfpWipe : DeleteFile(sName);
-        lfpChop : CutFile(sName);
-        lfpCycle : CycleFile(sName);
-      Else
-        Exit; // lfpStop
-      End;
-      f := CreateFile(PChar(sName), GENERIC_WRITE, FILE_SHARE_READ, Nil, OPEN_ALWAYS, 0, 0);
-      If f = INVALID_HANDLE_VALUE Then
-        If FPolicy.AllowExceptions Then
-          Raise Exception.Create('Unable to begin logging for file "' + sName + '": ' + SysErrorMessage(GetLastError))
-        Else
-          Exit;
-      End;
-    End;
-
-  SetFilePointer(f, 0, Nil, FILE_END);
-  bytes := TEncoding.UTF8.GetBytes(s);
-  res := WriteFile(f, bytes[0], Length(bytes), done, Nil);
-  CloseHandle(f);
-  d := Done; // suppress warning
-  If FPolicy.AllowExceptions And Not res Or (d <> Length(bytes)) Then
-    Raise Exception.Create('Unable to write to file "' + sName + '": ' + SysErrorMessage(GetLastError));
-End;
-{$ENDIF}
 
 Procedure TLogger.CutFile(sName : String);
 {$IFDEF MACOS}
@@ -352,7 +252,6 @@ begin
   Result := TLoggerPolicy.Create;
   Result.FClear := FClear;
   Result.FAllowExceptions := FAllowExceptions;
-  Result.FBufferLimit := FBufferLimit;
   Result.FMaximumSize := FMaximumSize;
   Result.FChopAmount := FChopAmount;
   Result.FDescription := FDescription;
@@ -391,6 +290,66 @@ begin
   End;
 end;
 
+
+procedure TLogger.WriteToLog(bytes: TBytes);
+{$IFDEF MACOS}
+begin
+  If length(b) = 0 Then
+    Exit;
+  raise Exception.Create('Not done yet');
+end;
+{$ELSE}
+Var
+  sName : string;
+  res: Boolean;
+  done: Cardinal;
+  d: Integer;
+  f: HFile;
+  FileSize: Cardinal;
+Begin
+  FLock.Lock;
+  Try
+    sName := ProcessFileName;
+
+    f := CreateFile(PChar(sName), GENERIC_WRITE, FILE_SHARE_READ, Nil, OPEN_ALWAYS, 0, 0);
+    If f = INVALID_HANDLE_VALUE Then
+      If FPolicy.AllowExceptions Then
+        Raise Exception.Create('Unable to begin logging for file "' + sName + '": ' + SysErrorMessage(GetLastError))
+      Else
+        Exit;
+    If FPolicy.MaximumSize > 0 Then
+      Begin
+      FileSize := windows.GetFileSize(F, Nil);
+      If (FileSize > FPolicy.MaximumSize) Then
+        Begin
+        CloseHandle(f);
+        Case FPolicy.FullPolicy Of
+          lfpWipe : DeleteFile(sName);
+          lfpChop : CutFile(sName);
+          lfpCycle : CycleFile(sName);
+        Else
+          Exit; // lfpStop
+        End;
+        f := CreateFile(PChar(sName), GENERIC_WRITE, FILE_SHARE_READ, Nil, OPEN_ALWAYS, 0, 0);
+        If f = INVALID_HANDLE_VALUE Then
+          If FPolicy.AllowExceptions Then
+            Raise Exception.Create('Unable to begin logging for file "' + sName + '": ' + SysErrorMessage(GetLastError))
+          Else
+            Exit;
+        End;
+      End;
+
+    SetFilePointer(f, 0, Nil, FILE_END);
+    res := WriteFile(f, bytes[0], Length(bytes), done, Nil);
+    CloseHandle(f);
+    d := Done; // suppress warning
+    If FPolicy.AllowExceptions And Not res Or (d <> Length(bytes)) Then
+      Raise Exception.Create('Unable to write to file "' + sName + '": ' + SysErrorMessage(GetLastError));
+  Finally
+    FLock.UnLock;
+  End;
+End;
+{$ENDIF}
 
 End.
 
