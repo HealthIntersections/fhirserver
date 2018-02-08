@@ -42,8 +42,8 @@ uses
   StringSupport, DateSupport,
   AdvObjects, AdvStringObjectMatches, AdvStringLists, AdvGenerics,
   KDBManager,
-  FHIRTypes, FHIRResources, FHIRUtilities, CDSHooksUtilities, FHIROperations,
-  TerminologyServices, SnomedServices, LoincServices, UcumServices, RxNormServices, UniiServices, ACIRServices, ICD10Services,
+  FHIRTypes, FHIRResources, FHIRUtilities, CDSHooksUtilities, FHIROperations, FHIRSupport,
+  TerminologyServices, SnomedServices, LoincServices, UcumServices, RxNormServices, UniiServices, ACIRServices, ICD10Services, AreaCodeServices, CountryCodeServices, USStatesServices,
   IETFLanguageCodeServices, FHIRValueSetChecker, ClosureManager, ServerAdaptations, ServerUtilities,
   TerminologyServerStore, SnomedExpressions;
 
@@ -107,6 +107,7 @@ Type
     {$IFNDEF FHIR2}
     procedure composeCode(req : TFHIRComposeOpRequest; resp : TFHIRComposeOpResponse);
     {$ENDIF}
+    function findCanonicalResources(bundle : TFHIRBundleBuilder; rType : TFhirResourceType; url, version : String) : boolean;
 
     // closures
     function InitClosure(name : String) : String;
@@ -164,6 +165,12 @@ begin
   p := TIETFLanguageCodeServices.Create(ini.ReadString(voVersioningNotApplicable, 'lang', 'source', 'C:\work\fhirserver\sql\lang.txt'));
   ProviderClasses.Add(p.system(nil), p);
   ProviderClasses.Add(p.system(nil)+URI_VERSION_BREAK+p.version(nil), p.link);
+  p := TAreaCodeServices.Create;
+  ProviderClasses.Add(p.system(nil), p);
+  p := TCountryCodeServices.Create;
+  ProviderClasses.Add(p.system(nil), p);
+  p := TUSStateServices.Create;
+  ProviderClasses.Add(p.system(nil), p);
   logt(' - done');
 
   if ini.ReadString(voVersioningNotApplicable, 'RxNorm', 'database', '') <> '' then
@@ -432,6 +439,28 @@ begin
 end;
 
 
+
+function TTerminologyServer.findCanonicalResources(bundle: TFHIRBundleBuilder; rType: TFhirResourceType; url, version: String): boolean;
+var
+  vs : TFHIRValueSet;
+  be : TFHIRBundleEntry;
+begin
+  result := false;
+  if rType = frtValueSet then
+  begin
+    if isKnownValueSet(url, vs) then
+    begin
+      be := TFHIRBundleEntry.Create;
+      try
+        be.resource := vs;
+        be.fullUrl := url;
+        bundle.addEntry(be.Link, false);
+      finally
+        be.Free;
+      end;
+    end;
+  end;
+end;
 
 function TTerminologyServer.expandVS(uri: String; profile : TFhirExpansionProfile; textFilter : String; limit, count, offset : integer): TFHIRValueSet;
 var

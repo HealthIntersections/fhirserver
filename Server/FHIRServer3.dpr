@@ -346,7 +346,9 @@ uses
   myUTF8Strings in '..\Libraries\java\myUTF8Strings.pas',
   JavaBridge in 'JavaBridge.pas',
   FHIRFactory in '..\reference-platform\support\FHIRFactory.pas',
-  Logging in 'Logging.pas';
+  Logging in 'Logging.pas',
+  CountryCodeServices in 'CountryCodeServices.pas',
+  USStatesServices in 'USStatesServices.pas';
 
 begin
   logfile := IncludeTrailingPathDelimiter(SystemTemp)+'fhirserver.log';

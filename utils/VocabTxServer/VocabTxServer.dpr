@@ -246,7 +246,9 @@ uses
   JNIWrapper in '..\..\Libraries\java\JNIWrapper.pas',
   JUtils in '..\..\Libraries\java\JUtils.pas',
   myUTF8Strings in '..\..\Libraries\java\myUTF8Strings.pas',
-  JavaBridge in '..\..\Server\JavaBridge.pas';
+  JavaBridge in '..\..\Server\JavaBridge.pas',
+  CountryCodeServices in '..\..\Server\CountryCodeServices.pas',
+  USStatesServices in '..\..\Server\USStatesServices.pas';
 
 {$R *.res}
 

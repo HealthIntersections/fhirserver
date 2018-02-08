@@ -333,7 +333,9 @@ uses
   JUtils in '..\Libraries\java\JUtils.pas',
   myUTF8Strings in '..\Libraries\java\myUTF8Strings.pas',
   JavaBridge in 'JavaBridge.pas',
-  FHIRFactory in '..\reference-platform\support\FHIRFactory.pas';
+  FHIRFactory in '..\reference-platform\support\FHIRFactory.pas',
+  CountryCodeServices in 'CountryCodeServices.pas',
+  USStatesServices in 'USStatesServices.pas';
 
 begin
   logfile := IncludeTrailingPathDelimiter(SystemTemp)+'fhirserver.log';

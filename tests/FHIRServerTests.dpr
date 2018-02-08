@@ -324,7 +324,11 @@ uses
   JavaBridge in '..\Server\JavaBridge.pas',
   JavaBridgeTests in 'JavaBridgeTests.pas',
   myUTF8Strings in '..\Libraries\java\myUTF8Strings.pas',
-  FHIRFactory in '..\reference-platform\support\FHIRFactory.pas';
+  FHIRFactory in '..\reference-platform\support\FHIRFactory.pas',
+  IdUriParserTests in 'IdUriParserTests.pas',
+  CqlEngine in '..\Libraries\cql\CqlEngine.pas',
+  CountryCodeServices in '..\Server\CountryCodeServices.pas',
+  USStatesServices in '..\Server\USStatesServices.pas';
 
 var
   runner : ITestRunner;

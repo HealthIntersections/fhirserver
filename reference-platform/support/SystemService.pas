@@ -70,7 +70,6 @@ type
     function CheckClose(var s: String): Boolean; Virtual;
   Public
     constructor Create(const ASystemName, ADisplayName: String);
-    function MemoryStatus : String;
     procedure DebugExecute;
     procedure ServiceExecute;
     Procedure ContainedStart;
@@ -95,6 +94,7 @@ uses
   StringSupport,
   kCritSct,
   SysUtils,
+  Logging,
   FHIRLog;
 
 const
@@ -288,33 +288,6 @@ begin
         end;
       end;
   end;
-end;
-
-function memToMb(v : UInt64) : string;
-begin
-  v := v div 1024;
-  v := v div 1024;
-  result := inttostr(v)+'MB';
-end;
-
-function TSystemService.MemoryStatus: String;
-var
-  st: TMemoryManagerState;
-  sb: TSmallBlockTypeState;
-  v : UInt64;
-  hProcess: THandle;
-  pmc: PROCESS_MEMORY_COUNTERS;
-  total: DWORD;
-begin
-  GetMemoryManagerState(st);
-  v := st.TotalAllocatedMediumBlockSize + st.TotalAllocatedLargeBlockSize;
-  for sb in st.SmallBlockTypeStates do
-    v := v + sb.UseableBlockSize * sb.AllocatedBlockCount;
-  result := ' '+memToMb(v);
-  hProcess := GetCurrentProcess;
-  if (GetProcessMemoryInfo(hProcess, @pmc, SizeOf(pmc))) then
-    result := result +' / '+memToMB(pmc.WorkingSetSize + pmc.QuotaPagedPoolUsage + pmc.QuotaNonPagedPoolUsage);
-  CloseHandle(hProcess);
 end;
 
 procedure TSystemService.postStart;

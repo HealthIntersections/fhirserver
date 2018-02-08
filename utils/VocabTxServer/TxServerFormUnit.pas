@@ -168,7 +168,7 @@ begin
     FServer.FIni.WriteString('web', 'clients', IncludeTrailingPathDelimiter(SystemTemp) + 'auth.ini');
     FServer.FIni.WriteString('admin', 'email', 'grahame@hl7.org');
     FServer.FIni.WriteString('ucum', 'source', path([ExtractFilePath(paramstr(0)), 'ucum-essence.xml']));
-    FServer.FIni.WriteString('loinc', 'cache', path([ExtractFilePath(paramstr(0)), 'loinc_261.cache']));
+    FServer.FIni.WriteString('loinc', 'cache', path([ExtractFilePath(paramstr(0)), 'loinc_263.cache']));
     FServer.FIni.WriteString('lang', 'source', path([ExtractFilePath(paramstr(0)), 'lang.txt']));
     FServer.FIni.WriteString('snomed', 'cache', edtSnomed.text);
     FServer.start;
@@ -184,8 +184,8 @@ begin
   s := '';
   if not FileExists(path([ExtractFilePath(paramstr(0)), 'ucum-essence.xml'])) then
     s := s + 'File '+path([ExtractFilePath(paramstr(0)), 'ucum-essence.xml'])+' not found'+#13#10;
-  if not FileExists(path([ExtractFilePath(paramstr(0)), 'loinc_261.cache'])) then
-    s := s + 'File '+path([ExtractFilePath(paramstr(0)), 'loinc_261.cache'])+' not found'+#13#10;
+  if not FileExists(path([ExtractFilePath(paramstr(0)), 'loinc_263.cache'])) then
+    s := s + 'File '+path([ExtractFilePath(paramstr(0)), 'loinc_263.cache'])+' not found'+#13#10;
   if not FileExists(path([ExtractFilePath(paramstr(0)), 'web.zip'])) then
     s := s + 'File '+path([ExtractFilePath(paramstr(0)), 'web.zip'])+' not found'+#13#10;
   if s <> '' then

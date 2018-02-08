@@ -421,7 +421,6 @@ Uses
   Registry,
 {$ENDIF}
   FHIRLog,
-  SystemService,
 
   FileSupport,
   FacebookSupport;
@@ -593,6 +592,7 @@ end;
 Constructor TFhirWebServer.Create(ini: TFHIRServerIniFile; name: String; TerminologyServer: TTerminologyServer; Context: TFHIRServerContext);
 var
   txu: String;
+  fn : String;
 Begin
   Inherited Create;
   FLock := TCriticalSection.Create('fhir-rest');
@@ -601,21 +601,29 @@ Begin
   FName := Name;
   FIni := ini;
 
-  if (FolderExists('c:\temp')) then
-    FInLog := TLogger.Create('c:\temp\fhirserver-http-in.log')
-  else
-    FInLog := TLogger.Create(IncludeTrailingPathDelimiter(SystemTemp)+'fhirserver-http-in.log');
-  FInLog.Policy.FullPolicy := lfpChop;
-  FInLog.Policy.MaximumSize := 100*1024*1024;
-  FInLog.Policy.AllowExceptions := false;
+  fn := ini.ReadString(voMaybeVersioned, 'logging', 'http-in', 'fhirserver-r'+FHIR_GENERATED_PUBLICATION+'-in.log');
+  if (fn <> '') and ((fn <> '-')) then
+  begin
+    if (FolderExists('c:\temp')) then
+      FInLog := TLogger.Create('c:\temp\'+fn)
+    else
+      FInLog := TLogger.Create(IncludeTrailingPathDelimiter(SystemTemp)+fn);
+    FInLog.Policy.FullPolicy := lfpChop;
+    FInLog.Policy.MaximumSize := 100*1024*1024;
+    FInLog.Policy.AllowExceptions := false;
+  end;
 
-  if (FolderExists('c:\temp')) then
-    FOutLog := TLogger.Create('c:\temp\fhirserver-http-out.log')
-  else
-    FOutLog := TLogger.Create(IncludeTrailingPathDelimiter(SystemTemp)+'fhirserver-http-out.log');
-  FOutLog.Policy.FullPolicy := lfpChop;
-  FOutLog.Policy.MaximumSize := 100*1024*1024;
-  FOutLog.Policy.AllowExceptions := false;
+  fn := ini.ReadString(voMaybeVersioned, 'logging', 'http-out', 'fhirserver-r'+FHIR_GENERATED_PUBLICATION+'-out.log');
+  if (fn <> '') and ((fn <> '-')) then
+  begin
+    if (FolderExists('c:\temp')) then
+      FOutLog := TLogger.Create('c:\temp\'+fn)
+    else
+      FOutLog := TLogger.Create(IncludeTrailingPathDelimiter(SystemTemp)+fn);
+    FOutLog.Policy.FullPolicy := lfpChop;
+    FOutLog.Policy.MaximumSize := 300*1024*1024;
+    FOutLog.Policy.AllowExceptions := false;
+  end;
 
   FClients := TAdvList<TFHIRWebServerClientInfo>.Create;
   FPatientViewServers := TDictionary<String, String>.Create;
@@ -3179,7 +3187,7 @@ begin
   else
     cs := 'cmd=' + CODES_TFHIRCommandType[request.CommandType];
   logt('Request: ' + cs + ', type=' + request.ResourceName + ', id=' + request.id + ', ' + us + ', params=' + request.Parameters.Source + '. rt = ' +
-    inttostr(t)+'  ('+GService.MemoryStatus+')');
+    inttostr(t)+'  ('+MemoryStatus+')');
 end;
 
 procedure TFhirWebServer.ProcessScimRequest(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo);
@@ -3639,6 +3647,9 @@ var
   package : TAdvBytesBuilder;
   b : TBytes;
 begin
+  if FInLog = nil then
+    exit;
+
   package := TAdvBytesBuilder.Create;
   try
     package.addUtf8('-----------------------------------------------------------------'#13#10);
@@ -3719,6 +3730,9 @@ procedure TFhirWebServer.logResponse(id: String; resp: TIdHTTPResponseInfo);
     end;
   end;
 begin
+  if FOutLog = nil then
+    exit;
+
   try
     resp.WriteHeader;
     log('');

@@ -33,7 +33,7 @@ Source: "C:\work\fhirserver\utils\VocabTxServer\install\VocabTxServer.exe"; Dest
 Source: "C:\work\fhirserver\utils\VocabTxServer\install\osx\VocabTxServer.app\Contents\MacOS\ucum-essence.xml"; DestDir: "{app}"; Flags: ignoreversion
 Source: "C:\work\fhirserver\utils\VocabTxServer\install\osx\VocabTxServer.app\Contents\MacOS\web.zip"; DestDir: "{app}"; Flags: ignoreversion
 Source: "C:\work\fhirserver\utils\VocabTxServer\install\osx\VocabTxServer.app\Contents\MacOS\lang.txt"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\work\fhirserver\utils\VocabTxServer\install\osx\VocabTxServer.app\Contents\MacOS\loinc_261.cache"; DestDir: "{app}"; Flags: ignoreversion
+Source: "C:\work\fhirserver\utils\VocabTxServer\install\osx\VocabTxServer.app\Contents\MacOS\loinc_263.cache"; DestDir: "{app}"; Flags: ignoreversion
 
 [Icons]
 Name: "{group}\Vocab PoC Terminology Server"; Filename: "{app}\VocabTxServer.exe"

@@ -255,7 +255,9 @@ uses
   JUtils in '..\Libraries\java\JUtils.pas',
   JNIWrapper in '..\Libraries\java\JNIWrapper.pas',
   JNI in '..\Libraries\java\JNI.pas',
-  JavaRuntime in '..\Libraries\java\JavaRuntime.pas';
+  JavaRuntime in '..\Libraries\java\JavaRuntime.pas',
+  CountryCodeServices in '..\Server\CountryCodeServices.pas',
+  USStatesServices in '..\Server\USStatesServices.pas';
 
 var
   gsrv : TExampleFhirServer;

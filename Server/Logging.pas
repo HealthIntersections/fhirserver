@@ -32,7 +32,7 @@ POSSIBILITY OF SUCH DAMAGE.
 Interface
 
 Uses
-  {$IFDEF MACOS} OSXUtils, {$ELSE} Windows, {$ENDIF}
+  {$IFDEF MACOS} OSXUtils, {$ELSE} Windows, psapi, {$ENDIF}
   SysUtils, kCritSct,
   FileSupport,
   StringSupport,
@@ -106,6 +106,8 @@ Type
 
     Property Policy : TLoggerPolicy read FPolicy;
   End;
+
+function MemoryStatus : String;
 
 Implementation
 
@@ -294,7 +296,7 @@ end;
 procedure TLogger.WriteToLog(bytes: TBytes);
 {$IFDEF MACOS}
 begin
-  If length(b) = 0 Then
+  If length(bytes) = 0 Then
     Exit;
   raise Exception.Create('Not done yet');
 end;
@@ -350,6 +352,34 @@ Begin
   End;
 End;
 {$ENDIF}
+
+function memToMb(v : UInt64) : string;
+begin
+  v := v div 1024;
+  v := v div 1024;
+  result := inttostr(v)+'MB';
+end;
+
+function MemoryStatus: String;
+var
+  st: TMemoryManagerState;
+  sb: TSmallBlockTypeState;
+  v : UInt64;
+  hProcess: THandle;
+  pmc: PROCESS_MEMORY_COUNTERS;
+  total: DWORD;
+begin
+  GetMemoryManagerState(st);
+  v := st.TotalAllocatedMediumBlockSize + st.TotalAllocatedLargeBlockSize;
+  for sb in st.SmallBlockTypeStates do
+    v := v + sb.UseableBlockSize * sb.AllocatedBlockCount;
+  result := ' '+memToMb(v);
+  hProcess := GetCurrentProcess;
+  if (GetProcessMemoryInfo(hProcess, @pmc, SizeOf(pmc))) then
+    result := result +' / '+memToMB(pmc.WorkingSetSize + pmc.QuotaPagedPoolUsage + pmc.QuotaNonPagedPoolUsage);
+  CloseHandle(hProcess);
+end;
+
 
 End.
 

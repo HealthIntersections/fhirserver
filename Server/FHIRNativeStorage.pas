@@ -187,6 +187,7 @@ type
     procedure GraphListResources(appInfo : TAdvObject; requestType: String; params : TAdvList<TGraphQLArgument>; list : TAdvList<TFHIRResource>);
     function GetServerContext: TFHIRServerContext;
 
+    function processCanonicalSearch(request : TFHIRRequest; bundle : TFHIRBundleBuilder) : boolean;
 
   protected
     procedure StartTransaction; override;
@@ -2233,73 +2234,80 @@ begin
           else
             id := BuildSearchResultSet(key, request.Session, request.resourceName, request.Parameters, request.baseUrl, request.compartment, request.SessionCompartments, op, link, sql, total, summaryStatus, request.strictSearch, reverse);
 
-          bundle.setTotal(total);
-          bundle.Tag('sql', sql);
+          if (total = 0) and (request.ResourceEnum in CANONICAL_URL_RESOURCE_TYPES) and (request.Parameters.VarExists('url')) then
+            ok := processCanonicalSearch(request, bundle);
 
-          base := AppendForwardSlash(Request.baseUrl)+request.ResourceName+'?';
-          if response.Format <> ffUnspecified then
-            base := base + '_format='+MIMETYPES_TFHIRFormat[response.Format]+'&';
-          bundle.addLink('self', base+link);
-
-          offset := StrToIntDef(request.Parameters.getVar(SEARCH_PARAM_NAME_OFFSET), 0);
-          if request.Parameters.getVar(SEARCH_PARAM_NAME_COUNT) = 'all' then
-            count := SUMMARY_SEARCH_PAGE_LIMIT
-          else
-            count := StrToIntDef(request.Parameters.getVar(SEARCH_PARAM_NAME_COUNT), 0);
-          if (count = 0) and request.Parameters.VarExists(SEARCH_PARAM_NAME_COUNT) then
-            summaryStatus := soCount;
-
-          if (summaryStatus <> soCount) then
+          if not ok then
           begin
-            if (count < 1) then
-              count := SEARCH_PAGE_DEFAULT
-            else if (summaryStatus = soSummary) and (Count > SUMMARY_SEARCH_PAGE_LIMIT) then
+            bundle.setTotal(total);
+            bundle.Tag('sql', sql);
+
+            base := AppendForwardSlash(Request.baseUrl)+request.ResourceName+'?';
+            if response.Format <> ffUnspecified then
+              base := base + '_format='+MIMETYPES_TFHIRFormat[response.Format]+'&';
+            bundle.addLink('self', base+link);
+
+            offset := StrToIntDef(request.Parameters.getVar(SEARCH_PARAM_NAME_OFFSET), 0);
+            if request.Parameters.getVar(SEARCH_PARAM_NAME_COUNT) = 'all' then
               count := SUMMARY_SEARCH_PAGE_LIMIT
-            else if (summaryStatus = soText) and (Count > SUMMARY_TEXT_SEARCH_PAGE_LIMIT) then
-              count := SUMMARY_TEXT_SEARCH_PAGE_LIMIT
-            else if (Count > SEARCH_PAGE_LIMIT) then
-              count := SEARCH_PAGE_LIMIT;
-
-            if (offset > 0) or (Count < total) then
-            begin
-              bundle.addLink('first', base+link+'&'+SEARCH_PARAM_NAME_OFFSET+'=0&'+SEARCH_PARAM_NAME_COUNT+'='+inttostr(Count));
-              if offset - count >= 0 then
-                bundle.addLink('previous', base+link+'&'+SEARCH_PARAM_NAME_OFFSET+'='+inttostr(offset - count)+'&'+SEARCH_PARAM_NAME_COUNT+'='+inttostr(Count));
-              if offset + count < total then
-                bundle.addLink('next', base+link+'&'+SEARCH_PARAM_NAME_OFFSET+'='+inttostr(offset + count)+'&'+SEARCH_PARAM_NAME_COUNT+'='+inttostr(Count));
-              if count < total then
-                bundle.addLink('last', base+link+'&'+SEARCH_PARAM_NAME_OFFSET+'='+inttostr((total div count) * count)+'&'+SEARCH_PARAM_NAME_COUNT+'='+inttostr(Count));
-            end;
-
-            chooseField(response.Format, summaryStatus, request.loadObjects, field, comp, needsObject);
-            if (not needsObject) and (request.Elements.Count = 0) and not request.Parameters.VarExists('__wantObject') then // param __wantObject is for internal use only
-              comp := nil;
-
-            FConnection.SQL := 'Select Ids.ResourceKey, Types.ResourceName, Ids.Id, VersionId, Secure, StatedDate, Name, Versions.Status, Score1, Score2, Tags, '+field+' from Versions, Ids, Sessions, SearchEntries, Types '+
-                'where Ids.Deleted = 0 and SearchEntries.ResourceVersionKey = Versions.ResourceVersionKey and Types.ResourceTypeKey = Ids.ResourceTypeKey and '+'Versions.SessionKey = Sessions.SessionKey and SearchEntries.ResourceKey = Ids.ResourceKey and SearchEntries.SearchKey = '+id;
-            if reverse then
-              FConnection.SQL := FConnection.SQL + ' order by SortValue DESC'
             else
-              FConnection.SQL := FConnection.SQL + ' order by SortValue ASC';
-            FConnection.Prepare;
-            try
-              FConnection.Execute;
-              i := 0;
-              t := 0;
-              while FConnection.FetchNext do
-              Begin
-                inc(i);
-                if (i > offset) then
-                begin
-                  AddResourceTobundle(bundle, request.secure, request.baseUrl, field, comp, SearchEntryModeMatch, false, type_);
-                  keys.Add(TKeyPair.Create(type_, FConnection.ColStringByName['ResourceKey']));
-                  inc(t);
-                end;
-                if (t = count) then
-                  break;
-              End;
-            finally
-              FConnection.Terminate;
+              count := StrToIntDef(request.Parameters.getVar(SEARCH_PARAM_NAME_COUNT), 0);
+            if (count = 0) and request.Parameters.VarExists(SEARCH_PARAM_NAME_COUNT) then
+              summaryStatus := soCount;
+
+
+            if (summaryStatus <> soCount) then
+            begin
+              if (count < 1) then
+                count := SEARCH_PAGE_DEFAULT
+              else if (summaryStatus = soSummary) and (Count > SUMMARY_SEARCH_PAGE_LIMIT) then
+                count := SUMMARY_SEARCH_PAGE_LIMIT
+              else if (summaryStatus = soText) and (Count > SUMMARY_TEXT_SEARCH_PAGE_LIMIT) then
+                count := SUMMARY_TEXT_SEARCH_PAGE_LIMIT
+              else if (Count > SEARCH_PAGE_LIMIT) then
+                count := SEARCH_PAGE_LIMIT;
+
+              if (offset > 0) or (Count < total) then
+              begin
+                bundle.addLink('first', base+link+'&'+SEARCH_PARAM_NAME_OFFSET+'=0&'+SEARCH_PARAM_NAME_COUNT+'='+inttostr(Count));
+                if offset - count >= 0 then
+                  bundle.addLink('previous', base+link+'&'+SEARCH_PARAM_NAME_OFFSET+'='+inttostr(offset - count)+'&'+SEARCH_PARAM_NAME_COUNT+'='+inttostr(Count));
+                if offset + count < total then
+                  bundle.addLink('next', base+link+'&'+SEARCH_PARAM_NAME_OFFSET+'='+inttostr(offset + count)+'&'+SEARCH_PARAM_NAME_COUNT+'='+inttostr(Count));
+                if count < total then
+                  bundle.addLink('last', base+link+'&'+SEARCH_PARAM_NAME_OFFSET+'='+inttostr((total div count) * count)+'&'+SEARCH_PARAM_NAME_COUNT+'='+inttostr(Count));
+              end;
+
+              chooseField(response.Format, summaryStatus, request.loadObjects, field, comp, needsObject);
+              if (not needsObject) and (request.Elements.Count = 0) and not request.Parameters.VarExists('__wantObject') then // param __wantObject is for internal use only
+                comp := nil;
+
+              FConnection.SQL := 'Select Ids.ResourceKey, Types.ResourceName, Ids.Id, VersionId, Secure, StatedDate, Name, Versions.Status, Score1, Score2, Tags, '+field+' from Versions, Ids, Sessions, SearchEntries, Types '+
+                  'where Ids.Deleted = 0 and SearchEntries.ResourceVersionKey = Versions.ResourceVersionKey and Types.ResourceTypeKey = Ids.ResourceTypeKey and '+'Versions.SessionKey = Sessions.SessionKey and SearchEntries.ResourceKey = Ids.ResourceKey and SearchEntries.SearchKey = '+id;
+              if reverse then
+                FConnection.SQL := FConnection.SQL + ' order by SortValue DESC'
+              else
+                FConnection.SQL := FConnection.SQL + ' order by SortValue ASC';
+              FConnection.Prepare;
+              try
+                FConnection.Execute;
+                i := 0;
+                t := 0;
+                while FConnection.FetchNext do
+                Begin
+                  inc(i);
+                  if (i > offset) then
+                  begin
+                    AddResourceTobundle(bundle, request.secure, request.baseUrl, field, comp, SearchEntryModeMatch, false, type_);
+                    keys.Add(TKeyPair.Create(type_, FConnection.ColStringByName['ResourceKey']));
+                    inc(t);
+                  end;
+                  if (t = count) then
+                    break;
+                End;
+              finally
+                FConnection.Terminate;
+              end;
             end;
 
             processIncludes(request.session, request.secure, request.Parameters.GetVar('_include'), request.Parameters.GetVar('_revinclude'), bundle, keys, request.baseUrl, request.lang, field, comp);
@@ -4351,6 +4359,15 @@ begin
   end;
 end;
 
+
+function TFHIRNativeOperationEngine.processCanonicalSearch(request: TFHIRRequest; bundle: TFHIRBundleBuilder) : boolean;
+var
+  res : TFHIRResource;
+begin
+  result := false;
+  if request.ResourceEnum in [frtCodeSystem, frtValueSet] then
+    result := ServerContext.TerminologyServer.findCanonicalResources(bundle, request.ResourceEnum, request.Parameters.Value['url'], request.Parameters.Value['version']);
+end;
 
 procedure TFHIRNativeOperationEngine.LoadTags(tags: TFHIRTagList; ResourceKey: integer);
 var
@@ -8948,7 +8965,7 @@ begin
         fn := ChooseFile(IncludeTrailingPathDelimiter(FAppFolder) + 'definitions.xml.zip', 'C:\work\org.hl7.fhir\build\publish\definitions.xml.zip');
         {$ELSE}
         {$IFDEF FHIR3}
-        fn := ChooseFile(IncludeTrailingPathDelimiter(FAppFolder) + 'definitions.json.zip', 'C:\work\org.hl7.fhir.old\org.hl7.fhir.dstu3\build\publish\definitions.json.zip');
+        fn := ChooseFile(IncludeTrailingPathDelimiter(FAppFolder) + 'definitions.json.zip', 'C:\work\org.hl7.fhir.old\org.hl7.fhir.stu3\build\publish\definitions.json.zip');
         {$ELSE} // fhir2
         fn := ChooseFile(IncludeTrailingPathDelimiter(FAppFolder) + 'validation.json.zip', 'C:\work\org.hl7.fhir.old\org.hl7.fhir.dstu2\build\publish\validation.json.zip');
         {$ENDIF}
