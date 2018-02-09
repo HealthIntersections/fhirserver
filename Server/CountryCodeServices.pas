@@ -32,7 +32,7 @@ POSSIBILITY OF SUCH DAMAGE.
 interface
 
 uses
-  SysUtils, Classes,
+  SysUtils, Classes, RegularExpressions,
   StringSupport,
   AdvObjects, AdvGenerics, AdvFiles, AdvTextExtractors, AdvExceptions,
   FHIRTypes, FHIRResources, TerminologyServices;
@@ -978,7 +978,7 @@ end;
 
 function TCountryCodeServices.locateIsA(code, parent : String) : TCodeSystemProviderContext;
 begin
-  raise Exception.Create('locateIsA not supported by CountryCode'); // CountryCode doesn't have formal subsumption property, so this is not used
+  result := nil; // no subsumption
 end;
 
 
@@ -999,8 +999,26 @@ begin
 end;
 
 function TCountryCodeServices.filter(prop : String; op : TFhirFilterOperatorEnum; value : String; prep : TCodeSystemProviderFilterPreparationContext) : TCodeSystemProviderFilterContext;
+var
+  regex : TRegex;
+  list : TCountryCodeConceptFilter;
+  concept : TCountryCodeConcept;
 begin
-  raise Exception.Create('the filter '+prop+' '+CODES_TFhirFilterOperatorEnum[op]+' = '+value+' is not support for '+system(nil));
+  if (op = FilterOperatorRegex) and (prop = 'code') then
+  begin
+    list := TCountryCodeConceptFilter.Create;
+    try
+      regex := TRegEx.Create(value);
+      for concept in FCodes do
+        if regex.IsMatch(concept.code) then
+          list.FList.Add(concept.link);
+      result := list.link;
+    finally
+      list.Free;
+    end;
+  end
+  else
+    raise Exception.Create('the filter '+prop+' '+CODES_TFhirFilterOperatorEnum[op]+' = '+value+' is not support for '+system(nil));
 end;
 
 function TCountryCodeServices.filterLocate(ctxt : TCodeSystemProviderFilterContext; code : String; var message : String) : TCodeSystemProviderContext;

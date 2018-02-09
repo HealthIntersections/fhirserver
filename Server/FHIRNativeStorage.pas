@@ -6483,10 +6483,10 @@ begin
 
         conn.SQL :=
           'Select '+#13#10+
-          '  ResourceKey, ResourceName, Id, 0 as Score1, 0 as Score2, VersionId, Secure, StatedDate, Status, CodeList, Tags, JsonContent '+#13#10+
+          '  ResourceKey, ResourceName, Id, 0 as Score1, 0 as Score2, VersionId, Secure, StatedDate, Status, CodeList, Tags, '+field+' '+#13#10+
           'from ( '+#13#10+
           'Select '+#13#10+
-          '  Ids.ResourceKey, Types.ResourceName, Ids.Id, 0 as Score1, 0 as Score2, VersionId, Secure, StatedDate, Versions.Status, CodeList, Tags, JsonContent, '+#13#10+
+          '  Ids.ResourceKey, Types.ResourceName, Ids.Id, 0 as Score1, 0 as Score2, VersionId, Secure, StatedDate, Versions.Status, CodeList, Tags, '+field+', '+#13#10+
           '  ROW_NUMBER() OVER (PARTITION BY CodeList '+#13#10+
           '                              ORDER BY StatedDate DESC '+#13#10+
           '                             ) '+#13#10+
