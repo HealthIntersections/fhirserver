@@ -314,6 +314,14 @@ type
     procedure setExtensionCode(url, value : String);
   end;
 
+  TFhirCanonicalHelper = class helper for TFhirCanonical
+  private
+    function GetReference: String;
+    procedure SetReference(const sValue: String);
+  public
+    property reference : String read GetReference write SetReference;
+  end;
+
   TFHIRBackboneElementHelper = class helper for TFHIRBackboneElement
   public
     procedure checkNoModifiers(place, role : String); overload;
@@ -324,6 +332,21 @@ type
   public
     function hasType(t : String; out profile : String) : boolean;  overload;
     function hasType(t : String) : boolean; overload;
+  end;
+
+  TFhirElementDefinitionTypeHelper = class helper for TFhirElementDefinitionType
+  private
+    function GetProfile: String;
+  public
+    property profile : String read GetProfile;
+  end;
+
+  TFhirConceptMapGroupElementTargetDependsOnHelper = class helper for TFhirConceptMapGroupElementTargetDependsOn
+  private
+    function GetCode: String;
+    procedure SetCode(const sValue: String);
+  public
+    property code : String read GetCode write SetCode;
   end;
 
   TFhirQuantityHelper = class helper for TFhirQuantity
@@ -375,6 +398,12 @@ type
   end;
 
   TFhirUriListHelper = class helper for TFhirUriList
+  public
+    function hasUri(uri : String) : boolean;
+    procedure removeUri(uri : String);
+  end;
+
+  TFhirCanonicalListHelper = class helper for TFhirCanonicalList
   public
     function hasUri(uri : String) : boolean;
     procedure removeUri(uri : String);
@@ -4571,10 +4600,12 @@ var
   edt : TFhirElementDefinitionType;
 begin
   result := false;
+  profile := '';
   for edt in type_List do
     if SameText(edt.code, t) then
     begin
-      profile := edt.profile;
+      if edt.profileList.Count > 0 then
+        profile := edt.profileList[0].value;
       exit(true);
     end;
 end;
@@ -6123,6 +6154,61 @@ end;
 function TFHIRCompositionHelper.summary: String;
 begin
   result := title + '('+date.toString('c')+')';
+end;
+
+{ TFhirCanonicalListHelper }
+
+function TFhirCanonicalListHelper.hasUri(uri: String): boolean;
+var
+  i : integer;
+begin
+  result := false;
+  for i := Count - 1 downto 0 do
+    if (Item(i).value = uri) then
+      Exit(true);
+end;
+
+procedure TFhirCanonicalListHelper.removeUri(uri: String);
+var
+  i : integer;
+begin
+ for i := Count - 1 downto 0 do
+   if (Item(i).value = uri) then
+     Remove(i);
+end;
+
+{ TFhirElementDefinitionTypeHelper }
+
+function TFhirElementDefinitionTypeHelper.GetProfile: String;
+begin
+  if Profilelist.count > 0 then
+    result := Profilelist[0].value
+  else
+    result := '';
+end;
+
+{ TFhirCanonicalHelper }
+
+function TFhirCanonicalHelper.GetReference: String;
+begin
+  result := value;
+end;
+
+procedure TFhirCanonicalHelper.SetReference(const sValue: String);
+begin
+  Value := sValue;
+end;
+
+{ TFhirConceptMapGroupElementTargetDependsOnHelper }
+
+function TFhirConceptMapGroupElementTargetDependsOnHelper.GetCode: String;
+begin
+  result := value;
+end;
+
+procedure TFhirConceptMapGroupElementTargetDependsOnHelper.SetCode(const sValue: String);
+begin
+  value := sValue;
 end;
 
 end.

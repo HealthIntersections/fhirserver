@@ -38,12 +38,12 @@ uses
   AdvStringBuilders, AdvGenerics, AdvExceptions, AdvBuffers, AdvJson,
   KDBManager, KDBDialects, XmlSupport, MXML, XmlPatch, GraphQL, JWT,
   FHIRResources, FHIRBase, FHIRTypes, FHIRParser, FHIRParserBase, FHIRConstants, FHIRContext, FHIROperations, FHIRXhtml,
-  FHIRTags, FHIRValueSetExpander, FHIRValidator, FHIRIndexManagers, FHIRSupport, DifferenceEngine, FHIRMetaModel,
+  FHIRTags, FHIRValueSetExpander, FHIRIndexManagers, FHIRSupport, DifferenceEngine, FHIRMetaModel,
   FHIRUtilities, FHIRSubscriptionManager, FHIRSecurity, FHIRLang, FHIRProfileUtilities, FHIRPath, FHIRGraphQL, FHIRClient,
   FHIRFactory, FHIRNarrativeGenerator, NarrativeGenerator, QuestionnaireBuilder,
   CDSHooksUtilities, {$IFNDEF FHIR2}FHIRStructureMapUtilities, ObservationStatsEvaluator, {$ENDIF} ClosureManager, {$IFDEF FHIR4} GraphDefinitionEngine, {$ENDIF}
   ServerUtilities, ServerValidator, TerminologyServices, TerminologyServer, SCIMObjects, SCIMServer, DBInstaller, UcumServices, MPISearch,
-  FHIRServerContext, FHIRStorageService, FHIRServerConstants, FHIRCodeGenerator, ServerJavascriptHost;
+  FHIRValidator, FHIRServerContext, FHIRStorageService, FHIRServerConstants, FHIRCodeGenerator, ServerJavascriptHost;
 
 const
   MAXSQLDATE = 365 * 3000;
@@ -146,7 +146,7 @@ type
     procedure ProcessMPISearch(typekey : integer; session : TFHIRSession; aType : String; params : TParseMap; baseURL : String; requestCompartment : TFHIRCompartmentId; sessionCompartments : TAdvList<TFHIRCompartmentId>; id, key : string; var link, sql : String; var total : Integer; summaryStatus : TFHIRSummaryOption; strict : boolean; var reverse : boolean);
     function getResourceByReference(source : TFHIRResource; url : string; req : TFHIRRequest; allowNil : boolean; var needSecure : boolean): TFHIRResource;
     function loadResources(keys : TList<integer>) : TAdvList<TFHIRResource>;
-    function loadResourceVersion(versionKey : integer) : TFHIRResource;
+    function loadResourceVersion(versionKey : integer; allowNil : boolean) : TFHIRResource;
     procedure updateProvenance(prv : TFHIRProvenance; rtype, id, vid : String);
 
     function FindResourceVersion(aType : String; sId, sVersionId : String; bAllowDeleted : boolean; var resourceVersionKey : integer; request: TFHIRRequest; response: TFHIRResponse): boolean;
@@ -984,7 +984,7 @@ begin
     begin
       mem := TBytesStream.Create(FConnection.ColBlobByName[field]);
       try
-        parser := comp.Create(ServerContext.Validator.Context.link, lang);
+        parser := comp.Create(ServerContext.ValidatorContext.link, lang);
         try
           parser.source := mem;
           parser.ParserPolicy := xppDrop;
@@ -1028,9 +1028,9 @@ begin
   b :=  TBytesStream.Create;
   try
     if (xml) then
-      comp := TFHIRXmlComposer.Create(ServerContext.Validator.Context.Link, OutputStyleNormal, 'en')
+      comp := TFHIRXmlComposer.Create(ServerContext.ValidatorContext.Link, OutputStyleNormal, 'en')
     else
-      comp := TFHIRJsonComposer.Create(ServerContext.Validator.Context.Link, OutputStyleNormal, 'en');
+      comp := TFHIRJsonComposer.Create(ServerContext.ValidatorContext.Link, OutputStyleNormal, 'en');
     try
       comp.SummaryOption := summary;
       comp.NoHeader := true;
@@ -1316,7 +1316,7 @@ begin
         FRepository.checkDropResource(request.session, request, request.Resource, tags);
         GJsHost.checkChanges(TriggerTypeDataRemoved, request.Session,
             function : TFHIRClient begin result := createClient(request.Lang, request.Session); end,
-            function : TFHIRResource begin result := loadResourceVersion(versionKey); end,
+            function : TFHIRResource begin result := loadResourceVersion(versionKey, true); end,
             nil);
 
         for i := 0 to tags.count - 1 do
@@ -2470,7 +2470,7 @@ begin
           FRepository.checkProposedResource(request.Session, needSecure, true, request, request.Resource, tags);
           GJsHost.checkChanges(TriggerTypeDataModified, request.Session,
             function : TFHIRClient begin result := createClient(request.Lang, request.Session); end,
-            function : TFHIRResource begin result := loadResourceVersion(versionKey); end,
+            function : TFHIRResource begin result := loadResourceVersion(versionKey, true); end,
             request.Resource);
 
           for i := 0 to tags.count - 1 do
@@ -2710,7 +2710,7 @@ begin
           FRepository.checkProposedResource(request.Session, needSecure, true, request, request.Resource, tags);
           GJsHost.checkChanges(TriggerTypeDataModified, request.Session,
             function : TFHIRClient begin result := createClient(request.Lang, request.Session); end,
-            function : TFHIRResource begin result := loadResourceVersion(versionKey); end,
+            function : TFHIRResource begin result := loadResourceVersion(versionKey, true); end,
             request.Resource);
 
           for i := 0 to tags.count - 1 do
@@ -3164,7 +3164,7 @@ begin
         while FConnection.FetchNext do
         begin
           s := FConnection.ColBlobByName['JsonContent'];
-          parser := MakeParser(ServerContext.Validator.Context, lang, ffJson, s, xppDrop);
+          parser := MakeParser(ServerContext.ValidatorContext, lang, ffJson, s, xppDrop);
           try
             result.Add(parser.resource.Link);
           finally
@@ -3183,7 +3183,7 @@ begin
   end;
 end;
 
-function TFHIRNativeOperationEngine.loadResourceVersion(versionKey: integer): TFHIRResource;
+function TFHIRNativeOperationEngine.loadResourceVersion(versionKey: integer; allowNil : boolean): TFHIRResource;
 var
   parser : TFHIRParser;
   s : TBytes;
@@ -3193,9 +3193,12 @@ begin
   try
     FConnection.Execute;
     if not FConnection.FetchNext then
-      raise Exception.Create('Unable to find previous version of resource');
+      if allowNil then
+        exit(nil)
+      else
+        raise Exception.Create('Unable to find previous version of resource');
     s := FConnection.ColBlobByName['JsonContent'];
-    parser := MakeParser(ServerContext.Validator.Context, lang, ffJson, s, xppDrop);
+    parser := MakeParser(ServerContext.ValidatorContext, lang, ffJson, s, xppDrop);
     try
       result := parser.resource.Link;
     finally
@@ -4174,7 +4177,7 @@ begin
           request.PostFormat := ffXml;
           if not context.upload and ServerContext.validate and (request.resource <> nil) then
           begin
-            comp := TFHIRXmlComposer.Create(ServerContext.Validator.Context.Link, OutputStylePretty, 'en');
+            comp := TFHIRXmlComposer.Create(ServerContext.ValidatorContext.Link, OutputStylePretty, 'en');
             mem := TAdvMemoryStream.Create;
             m := TVCLStream.Create;
             try
@@ -4345,7 +4348,7 @@ var
 begin
   mem := TBytesStream.Create(FConnection.ColBlobByName[field]);
   try
-    parser := comp.Create(ServerContext.Validator.Context.link, lang);
+    parser := comp.Create(ServerContext.ValidatorContext.link, lang);
     try
       parser.source := mem;
       parser.ParserPolicy := xppDrop;
@@ -4429,7 +4432,7 @@ begin
       if FConnection.FetchNext then
       begin
         s := FConnection.ColBlobByName['JsonContent'];
-        parser := MakeParser(ServerContext.Validator.Context, lang, ffJson, s, xppDrop);
+        parser := MakeParser(ServerContext.ValidatorContext, lang, ffJson, s, xppDrop);
         try
           result := TResourceWithReference.Create(id, parser.resource.Link);
         finally
@@ -4699,7 +4702,7 @@ begin
         raise ERestfulException.create('TFHIRNativeOperationEngine', 'GetResourceByUrl', 'Unknown '+CODES_TFHIRResourceType[aType]+' '+url, 404, IssueTypeUnknown);
     needSecure := FConnection.ColIntegerByName['Secure'] = 1;
     s := FConnection.ColBlobByName['JsonContent'];
-    parser := MakeParser(ServerContext.Validator.Context, lang, ffJson, s, xppDrop);
+    parser := MakeParser(ServerContext.ValidatorContext, lang, ffJson, s, xppDrop);
     try
       result := parser.resource.Link as TFHIRResource;
       try
@@ -4736,7 +4739,7 @@ begin
       begin
         s := FConnection.ColBlobByName['JsonContent'];
         needSecure := FConnection.ColIntegerByName['Secure'] = 1;
-        parser := MakeParser(ServerContext.Validator.Context, lang, ffJson, s, xppDrop);
+        parser := MakeParser(ServerContext.ValidatorContext, lang, ffJson, s, xppDrop);
         try
           result.Add(parser.resource.Link);
         finally
@@ -4924,7 +4927,7 @@ begin
       begin
         s := FConnection.ColBlobByName['JsonContent'];
         needSecure := FConnection.ColIntegerByName['Secure'] = 1;
-        parser := MakeParser(ServerContext.Validator.Context, lang, ffJson, s, xppDrop);
+        parser := MakeParser(ServerContext.ValidatorContext, lang, ffJson, s, xppDrop);
         try
           result := parser.resource.Link;
         finally
@@ -4954,7 +4957,7 @@ begin
     begin
       needSecure := FConnection.ColIntegerByName['Secure'] = 1;
       s := FConnection.ColBlobByName['JsonContent'];
-      parser := MakeParser(ServerContext.Validator.Context, lang, ffJson, s, xppDrop);
+      parser := MakeParser(ServerContext.ValidatorContext, lang, ffJson, s, xppDrop);
       try
         result := parser.resource.Link;
       finally
@@ -5026,7 +5029,7 @@ begin
       begin
         s := FConnection.ColBlobByName['JsonContent'];
         needSecure := FConnection.ColIntegerByName['Secure'] = 1;
-        parser := MakeParser(ServerContext.Validator.Context, lang, ffJson, s, xppDrop);
+        parser := MakeParser(ServerContext.ValidatorContext, lang, ffJson, s, xppDrop);
         try
           result := parser.resource.Link;
         finally
@@ -5374,7 +5377,7 @@ begin
       begin
         tags := TFHIRTagList.create;
         try
-          parser := MakeParser(ServerContext.Validator.Context, 'en', ffJson, Connection.ColBlobByName['JsonContent'], xppDrop);
+          parser := MakeParser(ServerContext.ValidatorContext, 'en', ffJson, Connection.ColBlobByName['JsonContent'], xppDrop);
           try
             r := parser.resource;
             FConnection.terminate;
@@ -6250,8 +6253,12 @@ begin
           ctxt.ResourceIdRule := risOptional;
           ctxt.IsAnyExtensionsAllowed := true;
           ctxt.OperationDescription := 'Produce Questionnaire';
+          {$IFDEF FHIR2}
           native(manager).ServerContext.Validator.validate(ctxt, response.Resource);
           op := native(manager).ServerContext.Validator.describe(ctxt);
+          {$ELSE}
+          raise Exception.Create('Not done yet - need to use Java services');
+          {$ENDIF}
         finally
           ctxt.Free;
         end;
@@ -6584,7 +6591,7 @@ var
   c : TFHIRCodING;
   {$ENDIF}
 begin
-  if consent.status <> ConsentStateCodesActive then
+  if consent.status <> {$IFDEF FHIR4}EventStatusInProgress{$ELSE}ConsentStateCodesActive{$ENDIF} then
     raise EFHIRException.create('Consent must be active');
   if consent.patient = nil then
     raise EFHIRException.create('Consent has no identified patient');
@@ -6793,7 +6800,11 @@ begin
       begin
         profiles := TValidationProfileSet.create(profile);
         try
+          {$IFDEF FHIR2}
           native(manager).ServerContext.Validator.validate(ctxt, request.Source, request.PostFormat, profiles)
+          {$ELSE}
+          raise Exception.Create('Not done yet- call Java');
+          {$ENDIF}
         finally
           profiles.Free;
         end;
@@ -6804,12 +6815,20 @@ begin
           request.resource := native(manager).GetResourceById(request, request.ResourceName, request.Id, '', needSecure);
         profiles := TValidationProfileSet.create(profile);
         try
+          {$IFDEF FHIR2}
           native(manager).ServerContext.Validator.validate(ctxt, request.Resource, profiles);
+          {$ELSE}
+          raise Exception.Create('Not done yet - call Java');
+          {$ENDIF}
         finally
           profiles.Free;
         end;
       end;
+      {$IFDEF FHIR2}
       outcome := native(manager).ServerContext.Validator.describe(ctxt);
+      {$ELSE}
+      raise Exception.Create('Not done yet - call Java');
+      {$ENDIF}
     finally
       ctxt.Free;
     end;
@@ -7663,7 +7682,11 @@ begin
         utils := TProfileUtilities.create(native(manager).ServerContext.ValidatorContext.link, op.issueList.Link);
         try
           try
+            {$IFDEF FHIR2}
             utils.generateSnapshot(sdBase, sdParam, sdParam.url, sdParam.name);
+            {$ELSE}
+            raise Exception.Create('Not done yet - call Java');
+            {$ENDIF}
             response.HTTPCode := 200;
             response.Message := 'OK';
             response.Body := '';
@@ -7712,7 +7735,6 @@ end;
 function TFhirGenerateSnapshotOperation.Name: String;
 begin
   result := 'snapshot';
-
 end;
 
 function TFhirGenerateSnapshotOperation.owningResource: TFhirResourceType;
@@ -8580,7 +8602,7 @@ begin
             try
               outcome := TFHIRServerContext(native(manager).FServerContext).Factory.makeByName(map.targetType);
               try
-                utils := TFHIRStructureMapUtilities.Create(native(manager).ServerContext.Validator.Context.link, lib.Link, TServerTransformerServices.create(native(manager).ServerContext.link));
+                utils := TFHIRStructureMapUtilities.Create(native(manager).ServerContext.ValidatorContext.link, lib.Link, TServerTransformerServices.create(native(manager).ServerContext.link));
                 try
                   try
                     utils.transform(nil, params.content, map, outcome);
@@ -9325,7 +9347,7 @@ begin
       if not conn.FetchNext then
         raise EFHIRException.create('Unable to load resource '+inttostr(key));
       mem := conn.ColBlobByName['JsonContent'];
-      parser := MakeParser(ServerContext.Validator.Context, 'en', ffJson, mem, xppDrop);
+      parser := MakeParser(ServerContext.ValidatorContext, 'en', ffJson, mem, xppDrop);
       try
         result := parser.resource.Link;
       finally
@@ -9515,7 +9537,7 @@ begin
   begin
     pc := TFhirConsent.Create;
     try
-      pc.status := ConsentStateCodesActive;
+      pc.status := {$IFDEF FHIR4}EventStatusInProgress{$ELSE}ConsentStateCodesActive{$ENDIF};
       with pc.categoryList.Append.codingList.append do
       begin
         system := 'http://hl7.org/fhir/consentcategorycodes';
@@ -9947,8 +9969,12 @@ begin
   try
     ctxt := TFHIRValidatorContext.Create;
     try
+      {$IFDEF FHIR2}
       ServerContext.Validator.validate(ctxt, bufXml, ffXml);
       ServerContext.Validator.validate(ctxt, bufJson, ffJson);
+      {$ELSE}
+      raise Exception.Create('Not done yet - call Java');
+      {$ENDIF}
       if (ctxt.Errors.Count = 0) then
         logt(inttostr(i)+': '+rtype+'/'+id+': passed validation')
       else
@@ -11012,7 +11038,7 @@ begin
       begin
         inc(i);
         mem := conn.ColBlobByName['XmlContent'];
-        parser := MakeParser(ServerContext.Validator.Context, 'en', ffXml, mem, xppDrop);
+        parser := MakeParser(ServerContext.ValidatorContext, 'en', ffXml, mem, xppDrop);
         try
           SeeResource(conn.ColIntegerByName['ResourceKey'],
             conn.ColIntegerByName['ResourceVersionKey'],
@@ -11053,7 +11079,7 @@ begin
   if not conn.FetchNext then
     raise EFHIRException.create('unable to find resource '+inttostr(key));
   mem := conn.ColBlobByName['JsonContent'];
-  parser := MakeParser(ServerContext.Validator.Context, 'en', ffJson, mem, xppDrop);
+  parser := MakeParser(ServerContext.ValidatorContext, 'en', ffJson, mem, xppDrop);
   try
     result := parser.resource.Link;
   finally

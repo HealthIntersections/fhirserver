@@ -27,7 +27,7 @@ public class Generator {
     addExtensionSearch(definitions, "dna-variant", "http://hl7.org/fhir/StructureDefinition/observation-geneticsDNASequenceVariantName", SearchParamType.TOKEN, "Observation");
     addExtensionSearch(definitions, "gene-dnavariant", "http://hl7.org/fhir/StructureDefinition/observation-geneticsDNAVariantId", SearchParamType.TOKEN, "Observation");
     addExtensionSearch(definitions, "gene-identifier", "http://hl7.org/fhir/StructureDefinition/observation-geneticsGene", SearchParamType.TOKEN, "Observation");
-    new DelphiGenerator(args[1]).generate(definitions, definitions.getVersion(), definitions.getGenDate(), Integer.parseInt(args[2]));
+    new DelphiGenerator(args[1], args[2]).generate(definitions, definitions.getVersion(), definitions.getGenDate());
     System.out.println("Done");
   }
 

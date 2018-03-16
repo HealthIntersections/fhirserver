@@ -1219,15 +1219,15 @@ begin
     if base then
       FBaseCodeSystems.AddOrSetValue(cs.url, cse.Link);
     {$IFDEF FHIR4}
-    if (cs.supplements <> nil) then
+    if (cs.supplements <> '') then
     begin
       FSupplementsById.AddOrSetValue(cs.id, cs.Link);
-      if cs.supplements.reference.StartsWith('CodeSystem/') then
+      if cs.supplements.StartsWith('CodeSystem/') then
       begin
-        if FCodeSystemsById.TryGetValue(cs.supplements.reference.Substring(11), ct) then
+        if FCodeSystemsById.TryGetValue(cs.supplements.Substring(11), ct) then
           ct.Supplements.Add(cs.Link);
       end
-      else if FCodeSystemsByUrl.TryGetValue(cs.supplements.reference, ct) then
+      else if FCodeSystemsByUrl.TryGetValue(cs.supplements, ct) then
         ct.Supplements.Add(cs.Link);
     end
     else
@@ -1243,7 +1243,7 @@ begin
         BuildStems({$IFDEF FHIR2}cs.codeSystem{$ELSE}cs{$ENDIF}); // todo: move this out of the lock
       {$IFDEF FHIR4}
       for supp in FSupplementsById.values do
-        if (supp.supplements.reference = cs.url) or (supp.supplements.reference = 'CodeSystem/'+cs.id) then
+        if (supp.supplements = cs.url) or (supp.supplements = 'CodeSystem/'+cs.id) then
           cse.Supplements.Add(cs.Link);
     end;
    {$ENDIF}
@@ -1281,12 +1281,12 @@ begin
   begin
     cs1 := FBaseCodeSystems[cs.url].Link;
     try
-      if cs.supplements.reference.StartsWith('CodeSystem/') then
+      if cs.supplements.StartsWith('CodeSystem/') then
       begin
-        if FCodeSystemsById.TryGetValue(cs.supplements.reference.Substring(11), cse) then
+        if FCodeSystemsById.TryGetValue(cs.supplements.Substring(11), cse) then
           cse.Supplements.Remove(cs);
       end
-      else if FCodeSystemsByUrl.TryGetValue(cs.supplements.reference, cse) then
+      else if FCodeSystemsByUrl.TryGetValue(cs.supplements, cse) then
         cse.Supplements.remove(cs);
       if cs1 <> nil then
         AddCodeSystemToCache(cs1.codeSystem, false);

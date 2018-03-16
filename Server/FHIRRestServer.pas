@@ -1959,9 +1959,9 @@ begin
     begin
 
       if request.Parameters.GetVar('srcformat') = 'json' then
-        comp := TFHIRJsonComposer.Create(FServerContext.Validator.Context.link, OutputStylePretty, request.lang)
+        comp := TFHIRJsonComposer.Create(FServerContext.ValidatorContext.link, OutputStylePretty, request.lang)
       else
-        comp := TFHIRXMLComposer.Create(FServerContext.Validator.Context.link, OutputStylePretty, request.lang);
+        comp := TFHIRXMLComposer.Create(FServerContext.ValidatorContext.link, OutputStylePretty, request.lang);
       try
         comp.LogId := request.internalRequestId;
         s := comp.Compose(r, nil);
@@ -2268,13 +2268,13 @@ begin
       qa := r as TFhirQuestionnaireResponse;
       q := (FindContainedResource(qa, qa.questionnaire) as TFHIRQuestionnaire).link;
       if q = nil then
-        raise EFHIRException.CreateLang('CANNOT_FIND', request.lang, ['Questionnaire', qa.questionnaire.reference.Substring(1)]);
+        raise EFHIRException.CreateLang('CANNOT_FIND', request.lang, ['Questionnaire', qa.questionnaireElement.reference.Substring(1)]);
 
       // convert to xhtml
       s := transform1(q, request.lang, 'QuestionnaireToHTML.xslt', true);
 
       // make clean qa
-      qa.questionnaire.reference := 'Questionnaire/' + qa.questionnaire.reference.Substring(1);
+      qa.questionnaireElement.reference := 'Questionnaire/' + qa.questionnaireElement.reference.Substring(1);
       qa.containedList.Clear;
       json := TFHIRJsonComposer.Create(request.Context.link, OutputStyleNormal, request.lang);
       try
@@ -2418,19 +2418,19 @@ begin
       oComp := nil;
       case format of
         ffXml:
-          oComp := TFHIRXMLComposer.Create(FServerContext.Validator.Context.link, OutputStyleNormal, lang);
+          oComp := TFHIRXMLComposer.Create(FServerContext.ValidatorContext.link, OutputStyleNormal, lang);
         ffXhtml:
           begin
-            oComp := TFHIRXhtmlComposer.Create(FServerContext.Validator.Context.link, OutputStyleNormal, lang);
+            oComp := TFHIRXhtmlComposer.Create(FServerContext.ValidatorContext.link, OutputStyleNormal, lang);
             TFHIRXhtmlComposer(oComp).baseUrl := AppendForwardSlash(url);
             TFHIRXhtmlComposer(oComp).Version := SERVER_VERSION;
             TFHIRXhtmlComposer(oComp).Session := Session.link;
             TFHIRXhtmlComposer(oComp).relativeReferenceAdjustment := relativeReferenceAdjustment;
           end;
         ffJson, ffNDJson:
-          oComp := TFHIRJsonComposer.Create(FServerContext.Validator.Context.link, OutputStyleNormal, lang);
+          oComp := TFHIRJsonComposer.Create(FServerContext.ValidatorContext.link, OutputStyleNormal, lang);
         ffText:
-          oComp := TFHIRTextComposer.Create(FServerContext.Validator.Context.link, OutputStyleNormal, lang);
+          oComp := TFHIRTextComposer.Create(FServerContext.ValidatorContext.link, OutputStyleNormal, lang);
       end;
       try
         response.contentType := oComp.MimeType;
@@ -2679,7 +2679,7 @@ Begin
                   oRequest.CopyPost(oPostStream);
                 end;
 
-                parser := MakeParser(FServerContext.Validator.Context, lang, oRequest.PostFormat, oPostStream, xppReject);
+                parser := MakeParser(FServerContext.ValidatorContext, lang, oRequest.PostFormat, oPostStream, xppReject);
                 try
                   oRequest.resource := parser.resource.link;
                   if oRequest.PostFormat = ffUnspecified then
@@ -2795,7 +2795,7 @@ begin
           if rdr.Parts[i].name.EndsWith('.json') then
             p := FServerContext.Factory.newJsonParser(lang)
           else if rdr.Parts[i].name.EndsWith('.map') then
-            p := TFHIRTextParser.Create(FServerContext.Validator.Context.link, lang)
+            p := TFHIRTextParser.Create(FServerContext.ValidatorContext.link, lang)
           else
             p := FServerContext.Factory.newXmlParser(lang);
           try
@@ -2901,10 +2901,10 @@ begin
           // response.Expires := Now; //don't want anyone caching anything
           response.Pragma := 'no-cache';
           if oResponse.format = ffJson then
-            oComp := TFHIRJsonComposer.Create(FServerContext.Validator.Context.link, style, oRequest.lang)
+            oComp := TFHIRJsonComposer.Create(FServerContext.ValidatorContext.link, style, oRequest.lang)
           else if oResponse.format = ffXhtml then
           begin
-            oComp := TFHIRXhtmlComposer.Create(FServerContext.Validator.Context.link, style, oRequest.lang);
+            oComp := TFHIRXhtmlComposer.Create(FServerContext.ValidatorContext.link, style, oRequest.lang);
             TFHIRXhtmlComposer(oComp).baseUrl := AppendForwardSlash(oRequest.baseUrl);
             TFHIRXhtmlComposer(oComp).Version := SERVER_VERSION;
             TFHIRXhtmlComposer(oComp).Session := oRequest.Session.link;
@@ -2916,23 +2916,23 @@ begin
             response.Pragma := '';
           end
           else if oResponse.format = ffNDJson then
-            oComp := TFHIRNDJsonComposer.Create(FServerContext.Validator.Context.link, style, oRequest.lang)
+            oComp := TFHIRNDJsonComposer.Create(FServerContext.ValidatorContext.link, style, oRequest.lang)
           else if oResponse.format = ffXml then
-            oComp := TFHIRXMLComposer.Create(FServerContext.Validator.Context.link, style, oRequest.lang)
+            oComp := TFHIRXMLComposer.Create(FServerContext.ValidatorContext.link, style, oRequest.lang)
           else if oResponse.format = ffText then
-            oComp := TFHIRTextComposer.Create(FServerContext.Validator.Context.link, style, oRequest.lang)
+            oComp := TFHIRTextComposer.Create(FServerContext.ValidatorContext.link, style, oRequest.lang)
 {$IFNDEF FHIR2}
           else if (oResponse.format = ffTurtle) or (res._source_format = ffTurtle) then
           begin
-            oComp := TFHIRTurtleComposer.Create(FServerContext.Validator.Context.link, style, oRequest.lang);
+            oComp := TFHIRTurtleComposer.Create(FServerContext.ValidatorContext.link, style, oRequest.lang);
             if (res <> nil) and (res.id <> '') then
               TFHIRTurtleComposer(oComp).url := AppendForwardSlash(oRequest.baseUrl) + CODES_TFhirResourceType[res.ResourceType] + '/' + res.id;
           end
 {$ENDIF}
           else if res._source_format = ffJson then
-            oComp := TFHIRJsonComposer.Create(FServerContext.Validator.Context.link, style, oRequest.lang)
+            oComp := TFHIRJsonComposer.Create(FServerContext.ValidatorContext.link, style, oRequest.lang)
           else
-            oComp := TFHIRXMLComposer.Create(FServerContext.Validator.Context.link, style, oRequest.lang);
+            oComp := TFHIRXMLComposer.Create(FServerContext.ValidatorContext.link, style, oRequest.lang);
           try
             response.contentType := oComp.MimeType;
             oComp.SummaryOption := oRequest.Summary;
@@ -4241,9 +4241,9 @@ begin
     op.type_ := TFHIRCoding.Create('http://hl7.org/fhir/testscript-operation-codes', CODES_TFHIRCommandType[req.CommandType].ToLower);
   op.resourceElement := TFhirCode.Create(req.ResourceName);
   if resp.format = ffJson then
-    op.Accept := ContentTypeJson
+    op.Accept := {$IFDEF FHIR4} 'application/fhir+json'{$ELSE}ContentTypeJson{$ENDIF}
   else
-    op.Accept := ContentTypeXml;
+    op.Accept := {$IFDEF FHIR4} 'application/fhir+xml'{$ELSE}ContentTypeXml{$ENDIF};
   op.params := req.Parameters.Source;
   op.requestHeaderList.Add('Host', req.baseUrl);
   op.requestHeaderList.Add('Content-Type', MIMETYPES_TFHIRFormat[req.PostFormat]);
@@ -4306,7 +4306,7 @@ begin
   params := TParseMap.create(request.UnparsedParams);
   try
     s := params.GetVar('handler');
-  {$IFNDEF FHIR2}
+  {$IFDEF FHIR3}
     if s = 'coverage' then
       handler := TFHIRServerCoveragePostHandler.Create
     else {$ENDIF}

@@ -340,7 +340,11 @@ var
   v : TFHIRObject;
   node: TFHIRPathExpressionNode;
   vl : TAdvList<TGraphQLValue>;
+  i, t, offset, count : integer;
 begin
+  offset := 0;
+  count := MAXINT;
+
   result := TAdvList<TFHIRObject>.create;
   try
     if values.Count > 0 then
@@ -357,6 +361,10 @@ begin
               raise Exception.Create('Attempt to use a filter ('+arg.Name+') on a primtive type ('+prop.Type_+')');
             if (arg.Name = 'fhirpath') then
               fp.Append(' and '+vl[0].ToString)
+            else if (arg.Name = '_offset') then
+              offset := StrToInt(vl[0].ToString)
+            else if (arg.Name = '_count') then
+              count := StrToInt(vl[0].ToString)
             else
             begin
               p := values[0].getPropertyValue(arg.Name);
@@ -370,18 +378,37 @@ begin
           end;
         end;
         if fp.Length = 0 then
+        begin
+          i := 0;
+          t := 0;
           for v in values do
           begin
-            if passesExtensionMode(v) then
-              result.Add(v.Link)
+            if (i >= offset) and passesExtensionMode(v) then
+            begin
+              result.Add(v.Link);
+              inc(t);
+              if (t >= count) then
+               break;
+            end;
+            inc(i);
           end
+        end
         else
         begin
           node := FPathEngine.parse(fp.ToString.Substring(5));
           try
+            i := 0;
             for v in values do
-             if passesExtensionMode(v) and FPathEngine.evaluateToBoolean(nil, context, v, node) then
-               result.Add(v.Link)
+            begin
+              if (i >= offset) and passesExtensionMode(v) and FPathEngine.evaluateToBoolean(nil, context, v, node) then
+              begin
+                result.Add(v.Link);
+                inc(t);
+                if (t >= count) then
+                  break;
+              end;
+              inc(i);
+            end;
           finally
             node.Free;
           end;

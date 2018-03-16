@@ -1304,7 +1304,7 @@ begin
               SubscriptionChannelTypeSms: sendBySms(id, subst, package);
               SubscriptionChannelTypeWebsocket: sendByWebSocket(conn, id, subst, package);
               {$IFDEF FHIR4}
-              SubscriptionChannelTypeChangeScript: processByScript(conn, id, subst, package);
+//              SubscriptionChannelTypeChangeScript: processByScript(conn, id, subst, package);
               {$ENDIF}
             end;
 

@@ -261,7 +261,6 @@ uses
   FHIRLang in '..\reference-platform\support\FHIRLang.pas',
   FHIRUtilities in '..\reference-platform\r4\FHIRUtilities.pas',
   FHIRClient in '..\reference-platform\client\FHIRClient.pas',
-  FHIRValidator in '..\reference-platform\r4\FHIRValidator.pas',
   ClosureManager in 'ClosureManager.pas',
   CDSHooksUtilities in '..\reference-platform\support\CDSHooksUtilities.pas',
   MarkdownProcessor in '..\..\markdown\source\MarkdownProcessor.pas',
@@ -335,7 +334,8 @@ uses
   JavaBridge in 'JavaBridge.pas',
   FHIRFactory in '..\reference-platform\support\FHIRFactory.pas',
   CountryCodeServices in 'CountryCodeServices.pas',
-  USStatesServices in 'USStatesServices.pas';
+  USStatesServices in 'USStatesServices.pas',
+  FHIRValidator in '..\reference-platform\r4\FHIRValidator.pas';
 
 begin
   logfile := IncludeTrailingPathDelimiter(SystemTemp)+'fhirserver.log';

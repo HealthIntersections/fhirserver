@@ -134,7 +134,7 @@ end;
 procedure TFHIRValidatorTests.validate(path: String; errorCount: integer; fmt : TFHIRFormat);
 var
   src : TAdvBuffer;
-  val : TFHIRValidator;
+//  val : TFHIRValidator;
   ctxt : TFHIRValidatorContext;
   ec : integer;
   msg : TFhirOperationOutcomeIssue;
@@ -145,12 +145,12 @@ begin
     ctxt := TFHIRValidatorContext.Create;
     try
       ctxt.ResourceIdRule := risOptional;
-      val := TFHIRValidator.Create(FServices.link);
-      try
-        val.validate(ctxt, src, fmt);
-      finally
-        val.Free;
-      end;
+//      val := TFHIRValidator.Create(FServices.link);
+//      try
+//        val.validate(ctxt, src, fmt);
+//      finally
+//        val.Free;
+//      end;
       ec := 0;
       for msg in ctxt.Errors do
       begin
@@ -177,7 +177,7 @@ procedure TFHIRValidatorTests.validateResource(path: String; errorCount: integer
 var
   p : TFHIRParser;
   f : TFilestream;
-  val : TFHIRValidator;
+//  val : TFHIRValidator;
   ctxt : TFHIRValidatorContext;
   ec : integer;
   msg : TFhirOperationOutcomeIssue;
@@ -196,12 +196,12 @@ begin
       ctxt := TFHIRValidatorContext.Create;
       try
         ctxt.ResourceIdRule := risOptional;
-        val := TFHIRValidator.Create(FServices.link);
-        try
-          val.validate(ctxt, p.resource);
-        finally
-          val.Free;
-        end;
+//        val := TFHIRValidator.Create(FServices.link);
+//        try
+//          val.validate(ctxt, p.resource);
+//        finally
+//          val.Free;
+//        end;
         ec := 0;
         s := '';
         for msg in ctxt.Errors do

@@ -179,7 +179,6 @@
         <DCCReference Include="..\support\FHIRSupport.pas"/>
         <DCCReference Include="tests\FHIRTestWorker.pas"/>
         <DCCReference Include="FHIRUtilities.pas"/>
-        <DCCReference Include="tests\FHIRValidatorTests.pas"/>
         <DCCReference Include="..\support\FHIRXhtml.pas"/>
         <DCCReference Include="..\support\FileSupport.pas"/>
         <DCCReference Include="..\Support\GUIDSupport.pas"/>

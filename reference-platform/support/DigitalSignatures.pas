@@ -178,6 +178,8 @@ Type
     function verifySignature(xml : TBytes) : boolean;
   end;
 
+function base64(bytes : TBytes): String;
+function unbase64(value : String): TBytes;
 
 implementation
 

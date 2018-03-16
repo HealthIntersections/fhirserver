@@ -585,7 +585,7 @@ public class ElementDefn {
         if (t.getCode() == null)
           throw new Error("no code on "+ed.getPath());
         if (t.getCode().equals("Reference") && t.hasTargetProfile()) {
-          String ref = t.getTargetProfile().substring(40);
+          String ref = t.getTargetProfile().get(0).getValue().substring(40);
           if (ref.equals("Resource"))
             ref = "Any";
           if (types.size() > 0 && types.get(types.size() -1).getName().equals("Reference")) {
@@ -664,10 +664,10 @@ public class ElementDefn {
     bs.setBindingMethod(BindingMethod.CodeList);
     bs.setDefinition(b.getDescription());
     bs.setStrength(BindingStrength.REQUIRED);
-    if (b.hasValueSetReference()) {
-      org.hl7.fhir.r4.model.ValueSet vs = vsmap.get(b.getValueSetReference().getReference());
+    if (b.hasValueSetCanonicalType()) {
+      org.hl7.fhir.r4.model.ValueSet vs = vsmap.get(b.getValueSetCanonicalType().getValue());
       if (vs == null)
-        throw new Error("Unable to find value set "+b.getValueSetReference().getReference());
+        throw new Error("Unable to find value set "+b.getValueSetCanonicalType().getValue());
       bs.loadFromExpansion(vs);
       bs.setUri(vs.getUrl());
       bs.setName(vs.getName().replace(" ", ""));

@@ -65,11 +65,6 @@ public class DelphiCodeGenerator extends OutputStreamWriter {
           "  POSSIBILITY OF SUCH DAMAGE.\r\n"+
           "  \r\n";
 
-  public static final String VERSION_MARK = 
-      "{$IFNDEF FHIR%%}\r\n"+
-          "This is the dstu%% version of the FHIR code\r\n"+
-          "{$ENDIF}\r\n";
-
 
   // fragments
   public String name;
@@ -87,14 +82,11 @@ public class DelphiCodeGenerator extends OutputStreamWriter {
   public List<String> procs = new ArrayList<String>();
   public List<String> procsPub = new ArrayList<String>();
 
-  private String dstuID;
+  private String rId;
 
-  private String sfxDstuID;
-
-  public DelphiCodeGenerator(OutputStream out, String dstuID, String sfxDstuID) throws UnsupportedEncodingException {
+  public DelphiCodeGenerator(OutputStream out, String rId) throws UnsupportedEncodingException {
     super(out, "ASCII");
-    this.dstuID = dstuID;
-    this.sfxDstuID = sfxDstuID;
+    this.rId = rId;
   }
 
   public void start() throws Exception {
@@ -134,12 +126,11 @@ public class DelphiCodeGenerator extends OutputStreamWriter {
       }
       write("\r\n");
     }
-    write("unit "+name+sfxDstuID+";\r\n");
+    write("unit "+name+rId+";\r\n");
     write("\r\n");
-    write("{$I fhir.inc}\r\n");
+    write("{$I fhir"+rId+".inc}\r\n");
     write("\r\n");
     write("{\r\n"+FULL_LICENSE_CODE+"}\r\n");
-    write("\r\n"+VERSION_MARK.replace("%%", dstuID)+"\r\n");
     write("\r\n");
     write("interface\r\n");
     write("\r\n");

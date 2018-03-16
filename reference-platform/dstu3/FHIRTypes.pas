@@ -41,7 +41,7 @@ interface
 // FHIR v3.0.1 generated 2017-04-27T17:09:41+10:00
 
 uses
-  Classes, SysUtils, DecimalSupport, StringSupport, AdvBuffers, EncdDecd, DateSupport, FHIRBase;
+  Classes, SysUtils, DecimalSupport, StringSupport, AdvBuffers, EncdDecd, DateSupport, FHIRBase, DigitalSignatures;
 
 Type
   {@Enum TFhirPublicationStatusEnum
@@ -14436,10 +14436,30 @@ Function IntegerAsTFhirVisionEyeCodesEnumList(i : integer) : TFhirVisionEyeCodes
 Function TFhirVisionBaseCodesEnumListAsInteger(aSet : TFhirVisionBaseCodesEnumList) : Integer; overload;
 Function IntegerAsTFhirVisionBaseCodesEnumList(i : integer) : TFhirVisionBaseCodesEnumList; overload;
 
+function asEnum(systems, values: array of String; obj : TFHIRObject) : TFhirEnum;
+function asDate(obj : TFHIRObject) : TFhirDate;
+function asDateTime(obj : TFHIRObject) : TFhirDateTime;
+function asString(obj : TFHIRObject) : TFhirString;
+function asInteger(obj : TFHIRObject) : TFhirInteger;
+function asUri(obj : TFHIRObject) : TFhirUri;
+function asInstant(obj : TFHIRObject) : TFhirInstant;
+function asXhtml(obj : TFHIRObject) : TFhirXhtml;
+function asBoolean(obj : TFHIRObject) : TFhirBoolean;
+function asBase64Binary(obj : TFHIRObject) : TFhirBase64Binary;
+function asTime(obj : TFHIRObject) : TFhirTime;
+function asDecimal(obj : TFHIRObject) : TFhirDecimal;
+function asCode(obj : TFHIRObject) : TFhirCode;
+function asOid(obj : TFHIRObject) : TFhirOid;
+function asUuid(obj : TFHIRObject) : TFhirUuid;
+function asMarkdown(obj : TFHIRObject) : TFhirMarkdown;
+function asUnsignedInt(obj : TFHIRObject) : TFhirUnsignedInt;
+function asId(obj : TFHIRObject) : TFhirId;
+function asPositiveInt(obj : TFHIRObject) : TFhirPositiveInt;
+
 implementation
 
 uses
-  FHIRUtilities;
+  FHIRMetaModel, FHIRUtilities;
 
 { TFhirElement }
 
@@ -40810,6 +40830,389 @@ begin
   end;
  end;
 
+
+function asEnum(systems, values: array of String; obj : TFHIRObject) : TFHIREnum;
+begin
+  if obj is TFHIREnum then
+    result := obj as TFHIREnum
+  else if obj is TFHIRCode then
+  begin
+    result := TFHIREnum.create(systems[StringArrayIndexOf(values, TFHIRCode(obj).value)], TFHIRCode(obj).value);
+    obj.Free;
+  end
+  else if obj is TFHIRString then
+  begin
+    result := TFHIREnum.create(systems[StringArrayIndexOf(values, TFHIRString(obj).value)], TFHIRString(obj).value);
+    obj.Free;
+  end
+  else
+  begin
+    obj.Free;
+    raise Exception.Create('Type mismatch: cannot convert from "'+obj.className+'" to "TFHIRCode"')
+  end;
+end;
+function asDate(obj : TFHIRObject) : TFHIRDate;
+begin
+  if obj is TFHIRDate then
+    result := obj as TFHIRDate
+  else if obj is TFHIRMMElement then
+  begin
+    result := TFHIRDate.create(TDateTimeEx.fromXml(TFHIRMMElement(obj).value));
+    obj.Free;
+  end
+  else if (obj is TFHIRObject) and (TFHIRObject(obj).isPrimitive) then
+  begin
+    result := TFHIRDate.create(TDateTimeEx.fromXml(TFHIRObject(obj).primitiveValue));
+    obj.Free;
+  end
+  else
+  begin
+    obj.Free;
+    raise Exception.Create('Type mismatch: cannot convert from "'+obj.className+'" to "TFHIRDate"')
+  end;
+end;
+function asDateTime(obj : TFHIRObject) : TFHIRDateTime;
+begin
+  if obj is TFHIRDateTime then
+    result := obj as TFHIRDateTime
+  else if obj is TFHIRMMElement then
+  begin
+    result := TFHIRDateTime.create(TDateTimeEx.fromXml(TFHIRMMElement(obj).value));
+    obj.Free;
+  end
+  else if (obj is TFHIRObject) and (TFHIRObject(obj).isPrimitive) then
+  begin
+    result := TFHIRDateTime.create(TDateTimeEx.fromXml(TFHIRObject(obj).primitiveValue));
+    obj.Free;
+  end
+  else
+  begin
+    obj.Free;
+    raise Exception.Create('Type mismatch: cannot convert from "'+obj.className+'" to "TFHIRDateTime"')
+  end;
+end;
+function asString(obj : TFHIRObject) : TFHIRString;
+begin
+  if obj is TFHIRString then
+    result := obj as TFHIRString
+  else if obj is TFHIRMMElement then
+  begin
+    result := TFHIRString.create(TFHIRMMElement(obj).value);
+    obj.Free;
+  end
+  else if (obj is TFHIRObject) and (TFHIRObject(obj).isPrimitive) then
+  begin
+    result := TFHIRString.create(TFHIRObject(obj).primitiveValue);
+    obj.Free;
+  end
+  else
+  begin
+    obj.Free;
+    raise Exception.Create('Type mismatch: cannot convert from "'+obj.className+'" to "TFHIRString"')
+  end;
+end;
+function asInteger(obj : TFHIRObject) : TFHIRInteger;
+begin
+  if obj is TFHIRInteger then
+    result := obj as TFHIRInteger
+  else if obj is TFHIRMMElement then
+  begin
+    result := TFHIRInteger.create(TFHIRMMElement(obj).value);
+    obj.Free;
+  end
+  else if (obj is TFHIRObject) and (TFHIRObject(obj).isPrimitive) then
+  begin
+    result := TFHIRInteger.create(TFHIRObject(obj).primitiveValue);
+    obj.Free;
+  end
+  else
+  begin
+    obj.Free;
+    raise Exception.Create('Type mismatch: cannot convert from "'+obj.className+'" to "TFHIRInteger"')
+  end;
+end;
+function asUri(obj : TFHIRObject) : TFHIRUri;
+begin
+  if obj is TFHIRUri then
+    result := obj as TFHIRUri
+  else if obj is TFHIRMMElement then
+  begin
+    result := TFHIRUri.create(TFHIRMMElement(obj).value);
+    obj.Free;
+  end
+  else if (obj is TFHIRObject) and (TFHIRObject(obj).isPrimitive) then
+  begin
+    result := TFHIRUri.create(TFHIRObject(obj).primitiveValue);
+    obj.Free;
+  end
+  else
+  begin
+    obj.Free;
+    raise Exception.Create('Type mismatch: cannot convert from "'+obj.className+'" to "TFHIRUri"')
+  end;
+end;
+function asInstant(obj : TFHIRObject) : TFHIRInstant;
+begin
+  if obj is TFHIRInstant then
+    result := obj as TFHIRInstant
+  else if obj is TFHIRMMElement then
+  begin
+    result := TFHIRInstant.create(TDateTimeEx.fromXml(TFHIRMMElement(obj).value));
+    obj.Free;
+  end
+  else if (obj is TFHIRObject) and (TFHIRObject(obj).isPrimitive) then
+  begin
+    result := TFHIRInstant.create(TDateTimeEx.fromXml(TFHIRObject(obj).primitiveValue));
+    obj.Free;
+  end
+  else
+  begin
+    obj.Free;
+    raise Exception.Create('Type mismatch: cannot convert from "'+obj.className+'" to "TFHIRInstant"')
+  end;
+end;
+function asXhtml(obj : TFHIRObject) : TFHIRXhtml;
+begin
+  if obj is TFHIRXhtml then
+    result := obj as TFHIRXhtml
+  else if obj is TFHIRMMElement then
+  begin
+    result := TFHIRXhtml.create(TFHIRMMElement(obj).value);
+    obj.Free;
+  end
+  else if (obj is TFHIRObject) and (TFHIRObject(obj).isPrimitive) then
+  begin
+    result := TFHIRXhtml.create(TFHIRObject(obj).primitiveValue);
+    obj.Free;
+  end
+  else
+  begin
+    obj.Free;
+    raise Exception.Create('Type mismatch: cannot convert from "'+obj.className+'" to "TFHIRXhtml"')
+  end;
+end;
+function asBoolean(obj : TFHIRObject) : TFHIRBoolean;
+begin
+  if obj is TFHIRBoolean then
+    result := obj as TFHIRBoolean
+  else if obj is TFHIRMMElement then
+  begin
+    result := TFHIRBoolean.create(TFHIRMMElement(obj).value = 'true');
+    obj.Free;
+  end
+  else if (obj is TFHIRObject) and (TFHIRObject(obj).isPrimitive) then
+  begin
+    result := TFHIRBoolean.create(TFHIRObject(obj).primitiveValue = 'true');
+    obj.Free;
+  end
+  else
+  begin
+    obj.Free;
+    raise Exception.Create('Type mismatch: cannot convert from "'+obj.className+'" to "TFHIRBoolean"')
+  end;
+end;
+function asBase64Binary(obj : TFHIRObject) : TFHIRBase64Binary;
+begin
+  if obj is TFHIRBase64Binary then
+    result := obj as TFHIRBase64Binary
+  else if obj is TFHIRMMElement then
+  begin
+    result := TFHIRBase64Binary.create(unBase64(TFHIRMMElement(obj).value));
+    obj.Free;
+  end
+  else if (obj is TFHIRObject) and (TFHIRObject(obj).isPrimitive) then
+  begin
+    result := TFHIRBase64Binary.create(unBase64(TFHIRObject(obj).primitiveValue));
+    obj.Free;
+  end
+  else
+  begin
+    obj.Free;
+    raise Exception.Create('Type mismatch: cannot convert from "'+obj.className+'" to "TFHIRBase64Binary"')
+  end;
+end;
+function asTime(obj : TFHIRObject) : TFHIRTime;
+begin
+  if obj is TFHIRTime then
+    result := obj as TFHIRTime
+  else if obj is TFHIRMMElement then
+  begin
+    result := TFHIRTime.create(TFHIRMMElement(obj).value);
+    obj.Free;
+  end
+  else if (obj is TFHIRObject) and (TFHIRObject(obj).isPrimitive) then
+  begin
+    result := TFHIRTime.create(TFHIRObject(obj).primitiveValue);
+    obj.Free;
+  end
+  else
+  begin
+    obj.Free;
+    raise Exception.Create('Type mismatch: cannot convert from "'+obj.className+'" to "TFHIRTime"')
+  end;
+end;
+function asDecimal(obj : TFHIRObject) : TFHIRDecimal;
+begin
+  if obj is TFHIRDecimal then
+    result := obj as TFHIRDecimal
+  else if obj is TFHIRMMElement then
+  begin
+    result := TFHIRDecimal.create(TFHIRMMElement(obj).value);
+    obj.Free;
+  end
+  else if (obj is TFHIRObject) and (TFHIRObject(obj).isPrimitive) then
+  begin
+    result := TFHIRDecimal.create(TFHIRObject(obj).primitiveValue);
+    obj.Free;
+  end
+  else
+  begin
+    obj.Free;
+    raise Exception.Create('Type mismatch: cannot convert from "'+obj.className+'" to "TFHIRDecimal"')
+  end;
+end;
+function asCode(obj : TFHIRObject) : TFHIRCode;
+begin
+  if obj is TFHIRCode then
+    result := obj as TFHIRCode
+  else if obj is TFHIRMMElement then
+  begin
+    result := TFHIRCode.create(TFHIRMMElement(obj).value);
+    obj.Free;
+  end
+  else if (obj is TFHIRObject) and (TFHIRObject(obj).isPrimitive) then
+  begin
+    result := TFHIRCode.create(TFHIRObject(obj).primitiveValue);
+    obj.Free;
+  end
+  else
+  begin
+    obj.Free;
+    raise Exception.Create('Type mismatch: cannot convert from "'+obj.className+'" to "TFHIRCode"')
+  end;
+end;
+
+function asOid(obj : TFHIRObject) : TFHIROid;
+begin
+  if obj is TFHIROid then
+    result := obj as TFHIROid
+  else if obj is TFHIRMMElement then
+  begin
+    result := TFHIROid.create(TFHIRMMElement(obj).value);
+    obj.Free;
+  end
+  else if (obj is TFHIRObject) and (TFHIRObject(obj).isPrimitive) then
+  begin
+    result := TFHIROid.create(TFHIRObject(obj).primitiveValue);
+    obj.Free;
+  end
+  else
+  begin
+    obj.Free;
+    raise Exception.Create('Type mismatch: cannot convert from "'+obj.className+'" to "TFHIROid"')
+  end;
+end;
+function asUuid(obj : TFHIRObject) : TFHIRUuid;
+begin
+  if obj is TFHIRUuid then
+    result := obj as TFHIRUuid
+  else if obj is TFHIRMMElement then
+  begin
+    result := TFHIRUuid.create(TFHIRMMElement(obj).value);
+    obj.Free;
+  end
+  else if (obj is TFHIRObject) and (TFHIRObject(obj).isPrimitive) then
+  begin
+    result := TFHIRUuid.create(TFHIRObject(obj).primitiveValue);
+    obj.Free;
+  end
+  else
+  begin
+    obj.Free;
+    raise Exception.Create('Type mismatch: cannot convert from "'+obj.className+'" to "TFHIRUuid"')
+  end;
+end;
+
+function asMarkdown(obj : TFHIRObject) : TFHIRMarkdown;
+begin
+  if obj is TFHIRMarkdown then
+    result := obj as TFHIRMarkdown
+  else if obj is TFHIRMMElement then
+  begin
+    result := TFHIRMarkdown.create(TFHIRMMElement(obj).value);
+    obj.Free;
+  end
+  else if (obj is TFHIRObject) and (TFHIRObject(obj).isPrimitive) then
+  begin
+    result := TFHIRMarkdown.create(TFHIRObject(obj).primitiveValue);
+    obj.Free;
+  end
+  else
+  begin
+    obj.Free;
+    raise Exception.Create('Type mismatch: cannot convert from "'+obj.className+'" to "TFHIRMarkdown"')
+  end;
+end;
+function asUnsignedInt(obj : TFHIRObject) : TFHIRUnsignedInt;
+begin
+  if obj is TFHIRUnsignedInt then
+    result := obj as TFHIRUnsignedInt
+  else if obj is TFHIRMMElement then
+  begin
+    result := TFHIRUnsignedInt.create(TFHIRMMElement(obj).value);
+    obj.Free;
+  end
+  else if (obj is TFHIRObject) and (TFHIRObject(obj).isPrimitive) then
+  begin
+    result := TFHIRUnsignedInt.create(TFHIRObject(obj).primitiveValue);
+    obj.Free;
+  end
+  else
+  begin
+    obj.Free;
+    raise Exception.Create('Type mismatch: cannot convert from "'+obj.className+'" to "TFHIRUnsignedInt"')
+  end;
+end;
+function asId(obj : TFHIRObject) : TFHIRId;
+begin
+  if obj is TFHIRId then
+    result := obj as TFHIRId
+  else if obj is TFHIRMMElement then
+  begin
+    result := TFHIRId.create(TFHIRMMElement(obj).value);
+    obj.Free;
+  end
+  else if (obj is TFHIRObject) and (TFHIRObject(obj).isPrimitive) then
+  begin
+    result := TFHIRId.create(TFHIRObject(obj).primitiveValue);
+    obj.Free;
+  end
+  else
+  begin
+    obj.Free;
+    raise Exception.Create('Type mismatch: cannot convert from "'+obj.className+'" to "TFHIRId"')
+  end;
+end;
+function asPositiveInt(obj : TFHIRObject) : TFHIRPositiveInt;
+begin
+  if obj is TFHIRPositiveInt then
+    result := obj as TFHIRPositiveInt
+  else if obj is TFHIRMMElement then
+  begin
+    result := TFHIRPositiveInt.create(TFHIRMMElement(obj).value);
+    obj.Free;
+  end
+  else if (obj is TFHIRObject) and (TFHIRObject(obj).isPrimitive) then
+  begin
+    result := TFHIRPositiveInt.create(TFHIRObject(obj).primitiveValue);
+    obj.Free;
+  end
+  else
+  begin
+    obj.Free;
+    raise Exception.Create('Type mismatch: cannot convert from "'+obj.className+'" to "TFHIRPositiveInt"')
+  end;
+end;
 
 end.
 

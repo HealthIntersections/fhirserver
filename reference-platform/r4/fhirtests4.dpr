@@ -103,7 +103,6 @@ uses
   FHIRSupport in '..\support\FHIRSupport.pas',
   FHIRTestWorker in 'tests\FHIRTestWorker.pas',
   FHIRUtilities in 'FHIRUtilities.pas',
-  FHIRValidatorTests in 'tests\FHIRValidatorTests.pas',
   FHIRXhtml in '..\support\FHIRXhtml.pas',
   FileSupport in '..\support\FileSupport.pas',
   GUIDSupport in '..\Support\GUIDSupport.pas',

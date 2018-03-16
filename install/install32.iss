@@ -4,11 +4,11 @@
 ; AppID can never be changed as subsequent installations require the same installation ID each time
 AppID=FHIRServer
 AppName=Health Intersections FHIR Server
-AppVerName=Version 1.0.204
+AppVerName=Version 1.0.200
 
 ; compilation control
 OutputDir=C:\work\fhirserver\install\build
-OutputBaseFilename=fhirserver32-1.0.204
+OutputBaseFilename=fhirserver32-1.0.200
 Compression=lzma2/ultra64
 
 ; 64 bit
@@ -143,12 +143,12 @@ Source: "C:\work\org.hl7.fhir.old\org.hl7.fhir.dstu2\build\publish\examples.zip"
 Source: "C:\work\org.hl7.fhir.old\org.hl7.fhir.dstu2\build\publish\validation-min.json.zip";     DestDir: {app}\web;         DestName: validation.json.zip;  Components: r2;   Flags: ignoreversion  
 
 ; R3
-Source: "C:\work\org.hl7.fhir.old\org.hl7.fhir.dstu3\build\publish\definitions.json.zip";        DestDir: {app}\web;                                         Components: r3;   Flags: ignoreversion
-Source: "C:\work\org.hl7.fhir.old\org.hl7.fhir.dstu3\build\publish\examples-json.zip";           DestDir: {app}\load;        DestName: fhir.json.zip;        Components: r3;   Flags: ignoreversion
-Source: "C:\work\org.hl7.fhir.us\core\output\examples.json.zip";                                 DestDir: {app}\load;        DestName: us-core.json.zip;     Components: r3;   Flags: ignoreversion
-Source: "C:\work\org.hl7.fhir.us\daf\output\examples.json.zip";                                  DestDir: {app}\load;        DestName: us-daf.json.zip;      Components: r3;   Flags: ignoreversion
-Source: "C:\work\org.hl7.fhir.us\sdc\output\examples.json.zip";                                  DestDir: {app}\load;        DestName: us-sdc.json.zip;      Components: r3;   Flags: ignoreversion
-Source: "C:\work\org.hl7.fhir.us\sdcde\output\examples.json.zip";                                DestDir: {app}\load;        DestName: us-sdcde.json.zip;    Components: r3;   Flags: ignoreversion
+Source: "C:\work\org.hl7.fhir.old\org.hl7.fhir.stu3\build\publish\definitions.json.zip";        DestDir: {app}\web;                                         Components: r3;   Flags: ignoreversion
+Source: "C:\work\org.hl7.fhir.old\org.hl7.fhir.stu3\build\publish\examples-json.zip";           DestDir: {app}\load;        DestName: fhir.json.zip;        Components: r3;   Flags: ignoreversion
+;Source: "C:\work\org.hl7.fhir.us\core\output\examples.json.zip";                                 DestDir: {app}\load;        DestName: us-core.json.zip;     Components: r3;   Flags: ignoreversion
+;Source: "C:\work\org.hl7.fhir.us\daf\output\examples.json.zip";                                  DestDir: {app}\load;        DestName: us-daf.json.zip;      Components: r3;   Flags: ignoreversion
+;Source: "C:\work\org.hl7.fhir.us\sdc\output\examples.json.zip";                                  DestDir: {app}\load;        DestName: us-sdc.json.zip;      Components: r3;   Flags: ignoreversion
+;Source: "C:\work\org.hl7.fhir.us\sdcde\output\examples.json.zip";                                DestDir: {app}\load;        DestName: us-sdcde.json.zip;    Components: r3;   Flags: ignoreversion
 
 ; R4
 Source: "C:\work\org.hl7.fhir\build\publish\definitions.json.zip";                               DestDir: {app}\web;                                         Components: r4;   Flags: ignoreversion

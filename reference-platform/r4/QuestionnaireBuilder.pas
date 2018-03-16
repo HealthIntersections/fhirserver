@@ -300,8 +300,7 @@ begin
   begin
     // no identifier - this is transient
     FQuestionnaire.xmlId := nextId('qs');
-    FAnswers.questionnaire := TFHIRReference.Create;
-    FAnswers.questionnaire.reference := '#'+FQuestionnaire.xmlId;
+    FAnswers.questionnaire := {$IFNDEF FHIR4}TFHIRReference.Create{$ENDIF}('#'+FQuestionnaire.xmlId);
     FAnswers.containedList.Add(FQuestionnaire.Link);
     FAnswers.status := QuestionnaireAnswersStatusInProgress;
     FAnswers.ItemList.Add(TFhirQuestionnaireResponseItem.Create);
@@ -553,8 +552,8 @@ begin
       if cc.system = 'http://hl7.org/fhir/resource-types' then
       begin
         result.code := 'Reference';
-        {$IFDEF FHIR2CM}
-        result.profileList.add(TFhirUri.Create('http://hl7.org/fhir/Profile/'+cc.code));
+        {$IFDEF FHIR4}
+        result.profileList.add(TFhirCanonical.Create('http://hl7.org/fhir/Profile/'+cc.code));
         {$ELSE}
         result.profile := 'http://hl7.org/fhir/Profile/'+cc.code;
         {$ENDIF}
@@ -1234,11 +1233,10 @@ begin
     result := group.itemList.Append;
     if vs <> nil then
     begin
-      result.options := TFhirReference.Create;
       if (vs.expansion = nil) then
       begin
-        result.options.reference := vs.url;
-        result.options.addExtension(EXTENSION_FILTER_ONLY, TFhirBoolean.Create(true));
+        result.options := {$IFNDEF FHIR4}TFhirReference.Create{$ENDIF}(vs.url);
+        result.optionsElement.addExtension(EXTENSION_FILTER_ONLY, TFhirBoolean.Create(true));
       end
       else
       begin
@@ -1257,13 +1255,13 @@ begin
             vse.publisherElement := nil;
             vse.copyrightElement := nil;
             questionnaire.containedList.Add(vse.Link);
-            result.options.reference := '#'+vse.xmlId;
+            result.options := {$IFNDEF FHIR4}TFhirReference.Create{$ENDIF}('#'+vse.xmlId);
           finally
             vse.Free;
           end;
         end
         else
-          result.options.reference := '#'+vs.xmlId;
+          result.options := {$IFNDEF FHIR4}TFhirReference.Create{$ENDIF}('#'+vs.xmlId);
       end;
     end;
 

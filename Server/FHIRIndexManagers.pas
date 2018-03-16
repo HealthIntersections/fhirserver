@@ -226,6 +226,9 @@ Type
     procedure index(aType : String; key, parent : integer; value : TFhirCoding; name : String); overload;
     procedure index(aType : String; key, parent : integer; value : TFhirCodingList; name : String); overload;
     procedure index(aType : String; key, parent : integer; value : TFhirCodeableConcept; name : String); overload;
+    {$IFDEF FHIR4}
+    procedure index(aType : String; key, parent : integer; value : TFhirStructureDefinitionContext; name : String); overload;
+    {$ENDIF}
     procedure index(aType : String; key, parent : integer; value : TFhirCodeableConceptList; name : String); overload;
     procedure index(aType : String; key, parent : integer; value : TFhirIdentifier; name : String); overload;
     procedure index(aType : String; key, parent : integer; value : TFhirIdentifierList; name : String); overload;
@@ -797,6 +800,10 @@ begin
                     index(resource.fhirType, key, 0, TFhirContactPoint(work), ndx.Name)
                   else if work is TFhirReference then
                     index(context, resource.fhirType, key, 0, TFhirReference(work), ndx.Name, ndx.specifiedTarget)
+                  {$IFDEF FHIR4}
+                  else if work is TFhirStructureDefinitionContext then
+                    index(resource.fhirType, key, 0, TFhirStructureDefinitionContext(work), ndx.Name)
+                  {$ENDIF}
                   else if work is TFhirResource then
                     // index(context, resource.fhirType, key, 0, TFhirReference(work), ndx.Name, ndx.specifiedTarget)
                   else if not (work is TFHIRAttachment) and not (work is TFHIRBase64Binary) then
@@ -1662,6 +1669,24 @@ begin
     raise Exception.create('unknown composite index '+ndx.Name);
   result := FEntries.add(key, parent, ndx);
 end;
+
+{$IFDEF FHIR4}
+procedure TFhirIndexManager.index(aType: String; key, parent: integer; value: TFhirStructureDefinitionContext; name: String);
+var
+  c : TFHIRCoding;
+begin
+  if value = nil then
+    exit;
+  if value.type_Element = nil then
+    exit;
+  c := TFhirCoding.Create('http://hl7.org/fhir/extension-context-type#'+value.type_Element.value, value.expression);
+  try
+    index(aType, key, parent, c, name);
+  finally
+    c.Free;
+  end;
+end;
+{$ENDIF}
 
 procedure TFhirIndexManager.index(aType: String; key, parent: integer; value: TFhirDecimal; name: String);
 var

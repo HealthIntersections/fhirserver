@@ -39,7 +39,7 @@ Type
     function execute : TDictionary<String, String>; virtual;
   end;
 
-  {$IFNDEF FHIR2}
+  {$IFDEF FHIR3}
   TFHIRServerCoveragePostHandler = class (TFHIRServerPostHandler)
   private
   public
@@ -178,7 +178,7 @@ begin
   FSession := Value;
 end;
 
-  {$IFNDEF FHIR2}
+{$IFDEF FHIR3}
 
 { TFHIRServerCoveragePostHandler }
 

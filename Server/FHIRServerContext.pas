@@ -75,7 +75,9 @@ Type
     FResConfig: TAdvMap<TFHIRResourceConfig>;
     FUserProvider : TFHIRUserProvider;
     FValidatorContext : TFHIRServerWorkerContext;
+    {$IFDEF FHIR2}
     FValidator: TFHIRValidator;
+    {$ENDIF}
     FTerminologyServer: TTerminologyServer;
     FIndexes : TFHIRIndexInformation;
     FSubscriptionManager : TSubscriptionManager;
@@ -128,7 +130,9 @@ Type
     Property Bases: TStringList read FBases;
     Property ResConfig: TAdvMap<TFHIRResourceConfig> read FResConfig;
     Property ValidatorContext : TFHIRServerWorkerContext read FValidatorContext;
+    {$IFDEF FHIR2}
     Property Validator: TFHIRValidator read FValidator;
+    {$ENDIF}
     Property TerminologyServer: TTerminologyServer read FTerminologyServer write SetTerminologyServer;
     property Indexes : TFHIRIndexInformation read FIndexes;
     property SubscriptionManager : TSubscriptionManager read FSubscriptionManager write SetSubscriptionManager;
@@ -343,7 +347,9 @@ begin
     FResConfig.Add(cfg.name,  cfg);
   end;
   FValidatorContext := TFHIRServerWorkerContext.Create;
+  {$IFDEF FHIR2}
   FValidator := TFHIRValidator.Create(FValidatorContext.link);
+  {$ENDIF}
   FSessionManager := TFHIRSessionManager.Create(self);
   FTagManager := TFHIRTagManager.create;
   FNamingSystems := TAdvMap<TFHIRNamingSystem>.create;
@@ -382,7 +388,9 @@ begin
   UserProvider.Free;
   FFactory.free;
 
+  {$IFDEF FHIR2}
   FValidator.free;
+  {$ENDIF}
 //  if FValidatorContext.AdvObjectReferenceCount > 0 then
 //    raise Exception.Create('There are still '+inttostr(FValidatorContext.AdvObjectReferenceCount)+' uses of the WorkerContext live');
 

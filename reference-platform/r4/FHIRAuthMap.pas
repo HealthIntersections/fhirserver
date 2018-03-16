@@ -108,8 +108,6 @@ const
     tcClinical, // frtImmunizationEvaluation
     tcClinical, // frtImmunizationRecommendation
     tcOther, // frtImplementationGuide
-    tcOther, // frtImplementationGuideInput
-    tcOther, // frtImplementationGuideOutput
     tcFinancial, // frtInvoice
     tcMedicationDefinition, // frtItemInstance
     tcOther, // frtLibrary
@@ -166,7 +164,7 @@ const
     tcOther, // frtSearchParameter
     tcClinical, // frtSequence
     tcOther, // frtServiceDefinition
-    tcClinical, // frtServiceRequest
+//    tcClinical, // frtServiceRequest
     tcSchedule, // frtSlot
     tcClinical, // frtSpecimen
     tcOther, // frtSpecimenDefinition

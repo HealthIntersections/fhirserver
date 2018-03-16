@@ -35,7 +35,7 @@ Uses
   SysUtils, Classes,
   StringSupport, kCritSct,
   AdvObjects, AdvGenerics, AdvBuffers, AdvNameBuffers, AdvMemories, AdvVclStreams, AdvZipReaders, AdvZipParts,
-  FHIRTypes, FHIRResources, FHIRValidator, FHIRParser, FHIRContext, FHIRUtilities, FHIRSupport, FHIRProfileUtilities, FHIRConstants,
+  FHIRTypes, FHIRResources, FHIRParser, FHIRContext, FHIRUtilities, FHIRSupport, FHIRProfileUtilities, FHIRConstants,
   TerminologyServer;
 
 Type

@@ -40,7 +40,7 @@ uses
   FHIRBase, FHIRSupport, FHIRTypes, FHIRResources, FHIRConstants, FHIRUtilities, FHIRLang, FHIRFactory,
   FHIRClient, FHIRContext, FHIRXhtml, FHIRIndexInformation, FHIRParserBase, FHIRIndexBase, FHIRGraphQL,
   CDSHooksUtilities,
-  FHIRValidator, ServerValidator, FHIRSubscriptionManager, ServerUtilities, FHIRServerConstants, FHIRIndexManagers;
+  ServerValidator, FHIRSubscriptionManager, ServerUtilities, FHIRServerConstants, FHIRIndexManagers;
 
 
 Type
@@ -718,8 +718,9 @@ begin
     end;
     if assigned(OnPopulateConformance) then
       OnPopulateConformance(self, oConf);
-
+    {$IFNDEF FHIR4}
     oConf.acceptUnknown := UnknownContentCodeBoth;
+    {$ENDIF}
     {$IFNDEF FHIR2}
     oConf.formatList.Append.value := 'application/fhir+xml';
     oConf.formatList.Append.value := 'application/fhir+json';
@@ -741,8 +742,11 @@ begin
     oConf.text := TFhirNarrative.create;
     oConf.text.status := NarrativeStatusGenerated;
 
-    {$IFNDEF FHIR2}
+    {$IFDEF FHIR3}
     oConf.instantiatesList.AddItem(TFHIRUri.Create('http://hl7.org/fhir/Conformance/terminology-server'));
+    {$ENDIF}
+    {$IFDEF FHIR4}
+    oConf.instantiatesList.AddItem(TFHIRCanonical.Create('http://hl7.org/fhir/Conformance/terminology-server'));
     {$ENDIF}
     {$IFDEF FHIR2}
     ServerContext.TerminologyServer.declareSystems(oConf);
@@ -769,7 +773,7 @@ begin
           try
             res.type_Element := TFhirEnum.create('http://hl7.org/fhir/resource-types', a);
             if a <> 'Binary' then
-              res.profile := TFHIRReference.Create(request.baseUrl+'StructureDefinition/'+lowercase(a));
+              res.profile := {$IFNDEF FHIR4}TFHIRReference.Create{$ENDIF}(request.baseUrl+'StructureDefinition/'+lowercase(a));
             if (a <> 'MessageHeader') and (a <> 'Parameters') Then
             begin
               if request.canRead(a)  then
@@ -869,9 +873,9 @@ begin
         op := oConf.restList[0].operationList.Append;
         op.name := TFhirOperation(FOperations[i]).Name;
         if TFhirOperation(FOperations[i]).formalURL <> '' then
-          op.definition := TFHIRReference.create(TFhirOperation(FOperations[i]).formalURL)
+          op.definition := {$IFNDEF FHIR4}TFHIRReference.create{$ENDIF}(TFhirOperation(FOperations[i]).formalURL)
         else
-          op.definition := TFHIRReference.create('OperationDefinition/fso-'+op.name);
+          op.definition := {$IFNDEF FHIR4}TFHIRReference.create{$ENDIF}('OperationDefinition/fso-'+op.name);
         html.append(' <li>'+op.name+': see OperationDefinition/fso-'+op.name+'</li>'#13#10);
       end;
       html.append('</ul>'#13#10);
@@ -1521,8 +1525,7 @@ begin
     result.date := TDateTimeEx.fromXml(FHIR_GENERATED_DATE);
     result.kind := OperationKindOperation;
     result.code := name;
-    result.base := TFhirReference.Create;
-    result.base.reference := 'http://hl7.org/fhir/OperationDefinition/'+name;
+    result.base := {$IFNDEF FHIR4}TFhirReference.Create{$ENDIF}('http://hl7.org/fhir/OperationDefinition/'+name);
     result.Link;
   finally
     result.Free;
