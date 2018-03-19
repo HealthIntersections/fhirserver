@@ -108,7 +108,7 @@
         <DCC_SYMBOL_PLATFORM>false</DCC_SYMBOL_PLATFORM>
         <DCC_SYMBOL_DEPRECATED>false</DCC_SYMBOL_DEPRECATED>
         <DCC_UNIT_PLATFORM>false</DCC_UNIT_PLATFORM>
-        <Debugger_RunParams>-xnoload -xremount -debug -ini &quot;C:\work\fhirserver\Exec\fhir.dev.local.ini&quot; -xload &quot;C:\work\fhirserver\install\local-load.ini&quot; -password 1234g -no-text-index -xload C:\work\fhirserver\resources\dicom -xload http://hl7.org/fhir/uv/ecr/2018Jan</Debugger_RunParams>
+        <Debugger_RunParams>-xnoload -remount -debug -ini &quot;C:\work\fhirserver\Exec\fhir.dev.local.ini&quot; -load &quot;C:\work\fhirserver\install\local-load.ini&quot; -password 1234g -no-text-index -xload C:\work\fhirserver\resources\dicom -xload http://hl7.org/fhir/uv/ecr/2018Jan</Debugger_RunParams>
         <DCC_DcuOutput>C:\work\com.healthintersections.fhir\scratch\units_3_64</DCC_DcuOutput>
         <DCC_ExeOutput>C:\work\fhirserver\Server\win64_4\Debug\</DCC_ExeOutput>
         <DCC_Define>FHIR4;$(DCC_Define)</DCC_Define>
@@ -122,6 +122,8 @@
         <Icon_MainIcon>FHIRServer4_Icon.ico</Icon_MainIcon>
         <VerInfo_Locale>1033</VerInfo_Locale>
         <Manifest_File>None</Manifest_File>
+        <DCC_ConsoleTarget>true</DCC_ConsoleTarget>
+        <VerInfo_Keys>CompanyName=;FileVersion=1.0.0.0;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProductVersion=1.0.0.0;Comments=;ProgramID=com.embarcadero.$(MSBuildProjectName);FileDescription=$(MSBuildProjectName);ProductName=$(MSBuildProjectName)</VerInfo_Keys>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_2)'!=''">
         <DCC_LocalDebugSymbols>false</DCC_LocalDebugSymbols>
@@ -453,8 +455,8 @@
                     <Source Name="MainSource">FHIRServer4.dpr</Source>
                 </Source>
                 <Excluded_Packages>
-                    <Excluded_Packages Name="$(BDSBIN)\dcloffice2k240.bpl">Microsoft Office 2000 Sample Automation Server Wrapper Components</Excluded_Packages>
-                    <Excluded_Packages Name="$(BDSBIN)\dclofficexp240.bpl">Microsoft Office XP Sample Automation Server Wrapper Components</Excluded_Packages>
+                    <Excluded_Packages Name="$(BDSBIN)\dcloffice2k250.bpl">Microsoft Office 2000 Sample Automation Server Wrapper Components</Excluded_Packages>
+                    <Excluded_Packages Name="$(BDSBIN)\dclofficexp250.bpl">Microsoft Office XP Sample Automation Server Wrapper Components</Excluded_Packages>
                 </Excluded_Packages>
             </Delphi.Personality>
             <Deployment Version="3">

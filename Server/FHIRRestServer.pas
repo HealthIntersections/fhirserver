@@ -104,7 +104,7 @@ Uses
   TerminologyServer, TerminologyServerStore, SnomedServices, SnomedPublisher,
   SnomedExpressions, LoincServices, LoincPublisher,
   TerminologyWebServer, AuthServer, TwilioClient, ReverseClient, CDSHooksServer,
-  WebSourceProvider,
+  WebSourceProvider, GoogleAnalyticsProvider,
 
   FHIRUserProvider, FHIRServerContext, FHIRServerConstants, SCIMServer,
   ServerUtilities, ClientApplicationVerifier, JWTService, TerminologyServices, ServerJavascriptHost,
@@ -254,6 +254,7 @@ Type
     FServeMissingJWT: boolean;
     FServeUnverifiedJWT: boolean;
     FJWTAuthorities: TDictionary<String, String>;
+    FGoogle : TGoogleAnalyticsProvider;
 
     // Reverse proxy support. stated vs actual: to allow for a reverse proxy
     FStatedPort: integer;
@@ -704,6 +705,8 @@ Begin
     logt(' ...paths: <none>');
   FCDSHooksServer := TCDSHooksServer.Create(FServerContext);
 
+  FGoogle := TGoogleAnalyticsProvider.Create;
+  FGoogle.serverId := ini.ReadString(voMaybeVersioned, 'web', 'googleid', '');
   // FAuthRequired := FIni.ReadString('fhir', 'oauth-secure', '') = '1';
   // FAppSecrets := FIni.ReadString('fhir', 'oauth-secrets', '');
 End;
@@ -730,6 +733,7 @@ Begin
   FCertificateIdList.Free;
   FSourceProvider.Free;
   FInLog.Free;
+  FGoogle.Free;
   Inherited;
 End;
 
@@ -1737,6 +1741,11 @@ Begin
                     try
                       Context.upload := upload;
                       checkRequestByJs(context, oRequest);
+                      if (oRequest.CommandType = fcmdOperation) then
+                        FGoogle.recordEvent(request.Document, '$'+oRequest.OperationName, oRequest.Session.UserName, request.RemoteIP, request.UserAgent)
+                      else
+                        FGoogle.recordEvent(request.Document, CODES_TFHIRCommandType[oRequest.CommandType], oRequest.Session.UserName, request.RemoteIP, request.UserAgent);
+
                       if oRequest.CommandType = fcmdWebUI then
                         HandleWebUIRequest(oRequest, oResponse, secure)
                       else if oRequest.commandType in [fcmdTask, fcmdDeleteTask] then
@@ -4626,6 +4635,8 @@ begin
         try
           FServer.ServerContext.TerminologyServer.MaintenanceThreadStatus := 'Sweeping Sessions';
           FServer.FServerContext.Storage.Sweep;
+          if not FServer.ServerContext.ForLoad then
+            FServer.FGoogle.commit;
         except
         end;
         FLastSweep := Now;

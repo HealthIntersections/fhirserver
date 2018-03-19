@@ -409,6 +409,7 @@
         <DCCReference Include="Logging.pas"/>
         <DCCReference Include="CountryCodeServices.pas"/>
         <DCCReference Include="USStatesServices.pas"/>
+        <DCCReference Include="GoogleAnalyticsProvider.pas"/>
         <None Include="..\reference-platform\r4\fhirtests4.dpr"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>

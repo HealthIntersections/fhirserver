@@ -348,7 +348,8 @@ uses
   FHIRFactory in '..\reference-platform\support\FHIRFactory.pas',
   Logging in 'Logging.pas',
   CountryCodeServices in 'CountryCodeServices.pas',
-  USStatesServices in 'USStatesServices.pas';
+  USStatesServices in 'USStatesServices.pas',
+  GoogleAnalyticsProvider in 'GoogleAnalyticsProvider.pas';
 
 begin
   logfile := IncludeTrailingPathDelimiter(SystemTemp)+'fhirserver.log';

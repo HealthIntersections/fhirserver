@@ -71,12 +71,14 @@ Type
   end;
 {$ENDIF}
 
+
   // Actually, T must be TAdvObject, but this doesn't work because of forwards class definitions
   TAdvList<T : class> = class (TAdvEnumerable<T>)
   private
     function GetEmpty: boolean;
   type
     arrayofT = array of T;
+    TAdvListRemoveFunction =  reference to function(item : T):boolean;
   var
     FItems: arrayofT;
     FCount: Integer;
@@ -133,7 +135,8 @@ Type
     procedure Pack; overload;
 
     function Remove(const Value: T): Integer;
-    procedure RemoveAll(list : TAdvList<T>);
+    procedure RemoveAll(list : TAdvList<T>); overload;
+    procedure RemoveAll(filter : TAdvListRemoveFunction); overload;
     function RemoveItem(const Value: T; Direction: TDirection): Integer;
     procedure Delete(Index: Integer);
     procedure DeleteRange(AIndex, ACount: Integer);
@@ -736,6 +739,15 @@ begin
   Result := IndexOf(Value);
   if Result >= 0 then
     Delete(Result);
+end;
+
+procedure TAdvList<T>.RemoveAll(filter: TAdvListRemoveFunction);
+var
+  i : integer;
+begin
+  for i := Count - 1 downto 0 do
+    if (filter(Items[i])) then
+      Delete(i);
 end;
 
 procedure TAdvList<T>.RemoveAll(list: TAdvList<T>);
