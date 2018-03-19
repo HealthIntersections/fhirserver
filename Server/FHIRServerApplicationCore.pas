@@ -152,6 +152,7 @@ var
   dir, fn, ver, ldate, lver, dest : String;
   svc : TFHIRService;
 begin
+  AllocConsole;
   try
     Consolelog := true;
     if FindCmdLineSwitch('log', fn, true, [clstValueNextParam]) then
