@@ -64,7 +64,7 @@ begin
         as.defaultvalue = %purpose%
         as.xpos = -1
         as.ypos = -1
-        as.returnvalue = "Candidate R4 Ballot 1 release"
+        as.returnvalue = "fix console bug"
         as.returnvariable = purpose
       end
       action.variables.savetoini
@@ -276,7 +276,6 @@ begin
         action.group
         begin
           description = "Build R4 Server"
-          enabled = false
           id = {323EE148-5CF5-49AC-AABA-35E692B5EEE4}
           action.files.delete
           begin
@@ -361,7 +360,7 @@ begin
                                  "-w-UNSAFE_CAST\=0" +
                                  ""
               conditionals = FHIR4
-              consoleapp = false
+              consoleapp = true
               debuginfo = false
               definitionsonly = true
               emitruntimetypeinformation = false
@@ -434,7 +433,6 @@ begin
         action.group
         begin
           description = "Build R3 Server"
-          enabled = false
           id = {78F3E5F3-0B09-471F-9389-9FC56201F566}
           action.files.delete
           begin
@@ -519,7 +517,7 @@ begin
                                  "-w-UNSAFE_CAST\=0" +
                                  ""
               conditionals = FHIR3
-              consoleapp = false
+              consoleapp = true
               debuginfo = false
               definitionsonly = true
               emitruntimetypeinformation = false
@@ -592,7 +590,6 @@ begin
         action.group
         begin
           description = "Build R2 Server"
-          enabled = false
           id = {62943F50-9BF5-4739-8069-CE9D92037FD5}
           action.files.delete
           begin
@@ -677,7 +674,7 @@ begin
                                  "-w-UNSAFE_CAST\=0" +
                                  ""
               conditionals = FHIR2;FHIR2CM
-              consoleapp = false
+              consoleapp = true
               debuginfo = false
               definitionsonly = true
               emitruntimetypeinformation = false
@@ -750,7 +747,6 @@ begin
         action.group
         begin
           description = "Build Server Utils"
-          enabled = false
           id = {09782113-23C1-4485-9C83-8C271BE0CCCE}
           action.files.delete
           begin
@@ -908,7 +904,6 @@ begin
         action.group
         begin
           description = "Sign executables"
-          enabled = false
           id = {DC8781EF-7FEC-44BD-93F6-AB1772EA8B1E}
           action.process.execute
           begin
@@ -1143,7 +1138,7 @@ begin
                                  "-w-UNSAFE_CAST\=0" +
                                  ""
               conditionals = FHIR4
-              consoleapp = false
+              consoleapp = true
               debuginfo = false
               definitionsonly = true
               emitruntimetypeinformation = false
@@ -1300,7 +1295,7 @@ begin
                                  "-w-UNSAFE_CAST\=0" +
                                  ""
               conditionals = FHIR3
-              consoleapp = false
+              consoleapp = true
               debuginfo = false
               definitionsonly = true
               emitruntimetypeinformation = false
@@ -1457,7 +1452,7 @@ begin
                                  "-w-UNSAFE_CAST\=0" +
                                  ""
               conditionals = FHIR2;FHIR2CM
-              consoleapp = false
+              consoleapp = true
               debuginfo = false
               definitionsonly = true
               emitruntimetypeinformation = false
