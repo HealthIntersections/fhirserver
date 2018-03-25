@@ -2185,7 +2185,7 @@ var
   i, total, t : Integer;
   key : integer;
   offset, count : integer;
-  ok, reverse : boolean;
+  ok, reverse, cok : boolean;
   summaryStatus : TFHIRSummaryOption;
   title: string;
   keys : TKeyList;
@@ -2234,10 +2234,11 @@ begin
           else
             id := BuildSearchResultSet(key, request.Session, request.resourceName, request.Parameters, request.baseUrl, request.compartment, request.SessionCompartments, op, link, sql, total, summaryStatus, request.strictSearch, reverse);
 
+          cok := false;
           if (total = 0) and (request.ResourceEnum in CANONICAL_URL_RESOURCE_TYPES) and (request.Parameters.VarExists('url')) then
-            ok := processCanonicalSearch(request, bundle);
+            cok := processCanonicalSearch(request, bundle);
 
-          if not ok then
+          if not cok then
           begin
             bundle.setTotal(total);
             bundle.Tag('sql', sql);
