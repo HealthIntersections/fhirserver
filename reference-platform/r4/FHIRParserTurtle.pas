@@ -33,7 +33,7 @@ unit FHIRParserTurtle;
 
 interface
 
-// FHIR v3.2.0 generated 2018-03-09T01:05:48+11:00
+// FHIR v3.2.0 generated 2018-04-01T19:29:27+10:00
 
 uses
   SysUtils, Classes, StringSupport, DateSupport, DecimalSupport, FHIRParserBase, FHIRBase, FHIRResources, FHIRConstants, FHIRTypes, AdvStringMatches, TurtleParser;
@@ -94,6 +94,8 @@ Type
     procedure ParseDataRequirementCodeFilterProperties(obj : TTurtleComplex; result : TFhirDataRequirementCodeFilter); overload; {b\}
     function ParseDataRequirementDateFilter(obj : TTurtleComplex) : TFhirDataRequirementDateFilter; overload; {b\}
     procedure ParseDataRequirementDateFilterProperties(obj : TTurtleComplex; result : TFhirDataRequirementDateFilter); overload; {b\}
+    function ParseDataRequirementSort(obj : TTurtleComplex) : TFhirDataRequirementSort; overload; {b\}
+    procedure ParseDataRequirementSortProperties(obj : TTurtleComplex; result : TFhirDataRequirementSort); overload; {b\}
     function ParseDataRequirement(obj : TTurtleComplex) : TFhirDataRequirement; overload;
     procedure ParseDataRequirementProperties(obj : TTurtleComplex; result : TFhirDataRequirement); overload;
     function ParseDosageDoseAndRate(obj : TTurtleComplex) : TFhirDosageDoseAndRate; overload; {b\}
@@ -788,16 +790,28 @@ Type
     procedure ParseImmunizationRecommendationProperties(obj : TTurtleComplex; result : TFhirImmunizationRecommendation); overload;
 {$ENDIF FHIR_IMMUNIZATIONRECOMMENDATION}
 {$IFDEF FHIR_IMPLEMENTATIONGUIDE}
-    function ParseImplementationGuideDependency(obj : TTurtleComplex) : TFhirImplementationGuideDependency; overload; {b\}
-    procedure ParseImplementationGuideDependencyProperties(obj : TTurtleComplex; result : TFhirImplementationGuideDependency); overload; {b\}
-    function ParseImplementationGuidePackage(obj : TTurtleComplex) : TFhirImplementationGuidePackage; overload; {b\}
-    procedure ParseImplementationGuidePackageProperties(obj : TTurtleComplex; result : TFhirImplementationGuidePackage); overload; {b\}
-    function ParseImplementationGuidePackageResource(obj : TTurtleComplex) : TFhirImplementationGuidePackageResource; overload; {b\}
-    procedure ParseImplementationGuidePackageResourceProperties(obj : TTurtleComplex; result : TFhirImplementationGuidePackageResource); overload; {b\}
+    function ParseImplementationGuideDependsOn(obj : TTurtleComplex) : TFhirImplementationGuideDependsOn; overload; {b\}
+    procedure ParseImplementationGuideDependsOnProperties(obj : TTurtleComplex; result : TFhirImplementationGuideDependsOn); overload; {b\}
     function ParseImplementationGuideGlobal(obj : TTurtleComplex) : TFhirImplementationGuideGlobal; overload; {b\}
     procedure ParseImplementationGuideGlobalProperties(obj : TTurtleComplex; result : TFhirImplementationGuideGlobal); overload; {b\}
-    function ParseImplementationGuidePage(obj : TTurtleComplex) : TFhirImplementationGuidePage; overload; {b\}
-    procedure ParseImplementationGuidePageProperties(obj : TTurtleComplex; result : TFhirImplementationGuidePage); overload; {b\}
+    function ParseImplementationGuideDefinition(obj : TTurtleComplex) : TFhirImplementationGuideDefinition; overload; {b\}
+    procedure ParseImplementationGuideDefinitionProperties(obj : TTurtleComplex; result : TFhirImplementationGuideDefinition); overload; {b\}
+    function ParseImplementationGuideDefinitionPackage(obj : TTurtleComplex) : TFhirImplementationGuideDefinitionPackage; overload; {b\}
+    procedure ParseImplementationGuideDefinitionPackageProperties(obj : TTurtleComplex; result : TFhirImplementationGuideDefinitionPackage); overload; {b\}
+    function ParseImplementationGuideDefinitionResource(obj : TTurtleComplex) : TFhirImplementationGuideDefinitionResource; overload; {b\}
+    procedure ParseImplementationGuideDefinitionResourceProperties(obj : TTurtleComplex; result : TFhirImplementationGuideDefinitionResource); overload; {b\}
+    function ParseImplementationGuideDefinitionPage(obj : TTurtleComplex) : TFhirImplementationGuideDefinitionPage; overload; {b\}
+    procedure ParseImplementationGuideDefinitionPageProperties(obj : TTurtleComplex; result : TFhirImplementationGuideDefinitionPage); overload; {b\}
+    function ParseImplementationGuideDefinitionParameter(obj : TTurtleComplex) : TFhirImplementationGuideDefinitionParameter; overload; {b\}
+    procedure ParseImplementationGuideDefinitionParameterProperties(obj : TTurtleComplex; result : TFhirImplementationGuideDefinitionParameter); overload; {b\}
+    function ParseImplementationGuideDefinitionTemplate(obj : TTurtleComplex) : TFhirImplementationGuideDefinitionTemplate; overload; {b\}
+    procedure ParseImplementationGuideDefinitionTemplateProperties(obj : TTurtleComplex; result : TFhirImplementationGuideDefinitionTemplate); overload; {b\}
+    function ParseImplementationGuideManifest(obj : TTurtleComplex) : TFhirImplementationGuideManifest; overload; {b\}
+    procedure ParseImplementationGuideManifestProperties(obj : TTurtleComplex; result : TFhirImplementationGuideManifest); overload; {b\}
+    function ParseImplementationGuideManifestResource(obj : TTurtleComplex) : TFhirImplementationGuideManifestResource; overload; {b\}
+    procedure ParseImplementationGuideManifestResourceProperties(obj : TTurtleComplex; result : TFhirImplementationGuideManifestResource); overload; {b\}
+    function ParseImplementationGuideManifestPage(obj : TTurtleComplex) : TFhirImplementationGuideManifestPage; overload; {b\}
+    procedure ParseImplementationGuideManifestPageProperties(obj : TTurtleComplex; result : TFhirImplementationGuideManifestPage); overload; {b\}
     function ParseImplementationGuide(obj : TTurtleComplex) : TFhirImplementationGuide; overload;
     procedure ParseImplementationGuideProperties(obj : TTurtleComplex; result : TFhirImplementationGuide); overload;
 {$ENDIF FHIR_IMPLEMENTATIONGUIDE}
@@ -1607,6 +1621,7 @@ Type
     procedure ComposeAttachment(parent :  TTurtleComplex; parentType, name : String; elem : TFhirAttachment; useType : boolean; index : integer);
     procedure ComposeDataRequirementCodeFilter(parent :  TTurtleComplex; parentType, name : String; elem : TFhirDataRequirementCodeFilter; useType : boolean; index : integer);
     procedure ComposeDataRequirementDateFilter(parent :  TTurtleComplex; parentType, name : String; elem : TFhirDataRequirementDateFilter; useType : boolean; index : integer);
+    procedure ComposeDataRequirementSort(parent :  TTurtleComplex; parentType, name : String; elem : TFhirDataRequirementSort; useType : boolean; index : integer);
     procedure ComposeDataRequirement(parent :  TTurtleComplex; parentType, name : String; elem : TFhirDataRequirement; useType : boolean; index : integer);
     procedure ComposeDosageDoseAndRate(parent :  TTurtleComplex; parentType, name : String; elem : TFhirDosageDoseAndRate; useType : boolean; index : integer);
     procedure ComposeDosage(parent :  TTurtleComplex; parentType, name : String; elem : TFhirDosage; useType : boolean; index : integer);
@@ -2017,11 +2032,17 @@ Type
     procedure ComposeImmunizationRecommendation(parent :  TTurtleComplex; parentType, name : String; elem : TFhirImmunizationRecommendation; useType : boolean; index : integer);
 {$ENDIF FHIR_IMMUNIZATIONRECOMMENDATION}
 {$IFDEF FHIR_IMPLEMENTATIONGUIDE}
-    procedure ComposeImplementationGuideDependency(parent :  TTurtleComplex; parentType, name : String; elem : TFhirImplementationGuideDependency; useType : boolean; index : integer);
-    procedure ComposeImplementationGuidePackage(parent :  TTurtleComplex; parentType, name : String; elem : TFhirImplementationGuidePackage; useType : boolean; index : integer);
-    procedure ComposeImplementationGuidePackageResource(parent :  TTurtleComplex; parentType, name : String; elem : TFhirImplementationGuidePackageResource; useType : boolean; index : integer);
+    procedure ComposeImplementationGuideDependsOn(parent :  TTurtleComplex; parentType, name : String; elem : TFhirImplementationGuideDependsOn; useType : boolean; index : integer);
     procedure ComposeImplementationGuideGlobal(parent :  TTurtleComplex; parentType, name : String; elem : TFhirImplementationGuideGlobal; useType : boolean; index : integer);
-    procedure ComposeImplementationGuidePage(parent :  TTurtleComplex; parentType, name : String; elem : TFhirImplementationGuidePage; useType : boolean; index : integer);
+    procedure ComposeImplementationGuideDefinition(parent :  TTurtleComplex; parentType, name : String; elem : TFhirImplementationGuideDefinition; useType : boolean; index : integer);
+    procedure ComposeImplementationGuideDefinitionPackage(parent :  TTurtleComplex; parentType, name : String; elem : TFhirImplementationGuideDefinitionPackage; useType : boolean; index : integer);
+    procedure ComposeImplementationGuideDefinitionResource(parent :  TTurtleComplex; parentType, name : String; elem : TFhirImplementationGuideDefinitionResource; useType : boolean; index : integer);
+    procedure ComposeImplementationGuideDefinitionPage(parent :  TTurtleComplex; parentType, name : String; elem : TFhirImplementationGuideDefinitionPage; useType : boolean; index : integer);
+    procedure ComposeImplementationGuideDefinitionParameter(parent :  TTurtleComplex; parentType, name : String; elem : TFhirImplementationGuideDefinitionParameter; useType : boolean; index : integer);
+    procedure ComposeImplementationGuideDefinitionTemplate(parent :  TTurtleComplex; parentType, name : String; elem : TFhirImplementationGuideDefinitionTemplate; useType : boolean; index : integer);
+    procedure ComposeImplementationGuideManifest(parent :  TTurtleComplex; parentType, name : String; elem : TFhirImplementationGuideManifest; useType : boolean; index : integer);
+    procedure ComposeImplementationGuideManifestResource(parent :  TTurtleComplex; parentType, name : String; elem : TFhirImplementationGuideManifestResource; useType : boolean; index : integer);
+    procedure ComposeImplementationGuideManifestPage(parent :  TTurtleComplex; parentType, name : String; elem : TFhirImplementationGuideManifestPage; useType : boolean; index : integer);
     procedure ComposeImplementationGuide(parent :  TTurtleComplex; parentType, name : String; elem : TFhirImplementationGuide; useType : boolean; index : integer);
 {$ENDIF FHIR_IMPLEMENTATIONGUIDE}
 {$IFDEF FHIR_INVOICE}
@@ -3958,8 +3979,8 @@ var
 begin
     ParseElementProperties(obj, result);
     result.pathElement := ParseString(obj.complex('http://hl7.org/fhir/DataRequirement.codeFilter.path'));{q1}
-    if obj.has('http://hl7.org/fhir/DataRequirement.codeFilter.valueSetReference', item) {a3} then
-      result.valueSet := ParseReference(item);
+    if obj.has('http://hl7.org/fhir/DataRequirement.codeFilter.valueSetCanonical', item) then
+      result.valueSet := parseCanonical(item);
     if obj.has('http://hl7.org/fhir/DataRequirement.codeFilter.valueSetUri', item) then
       result.valueSet := parseUri(item);
     for item in obj.complexes('http://hl7.org/fhir/DataRequirement.codeFilter.code') do
@@ -3984,8 +4005,8 @@ begin
   composeElement(this, '', name, elem, false, index);
   if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeString(this, 'DataRequirement.codeFilter', 'path', elem.pathElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.valueSet is TFhirReference) {2} then
-    ComposeReference(this, 'DataRequirement.codeFilter', 'valueSetReference', TFhirReference(elem.valueSet), false,-1){x.d8}
+  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.valueSet is TFhirCanonical) {6} then
+    ComposeCanonical(this, 'DataRequirement.codeFilter', 'valueSetCanonical', TFhirCanonical(elem.valueSet), false, -1){x.d9}
   else if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.valueSet is TFhirUri) {6} then
     ComposeUri(this, 'DataRequirement.codeFilter', 'valueSetUri', TFhirUri(elem.valueSet), false, -1);{x.d9}
   if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
@@ -4045,6 +4066,47 @@ begin
     ComposeDateTime(this, 'DataRequirement.dateFilter', 'valueDateTime', TFhirDateTime(elem.value), false, -1);{x.d9}
 end;
 
+function TFHIRTurtleParser.ParseDataRequirementSort(obj : TTurtleComplex) : TFhirDataRequirementSort;
+begin
+  if (obj = nil) then
+    exit(nil);
+  result := TFhirDataRequirementSort.create;
+  try
+    ParseDataRequirementSortProperties(obj, result);
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFHIRTurtleParser.ParseDataRequirementSortProperties(obj : TTurtleComplex; result : TFhirDataRequirementSort);
+begin
+    ParseElementProperties(obj, result);
+    result.pathElement := ParseString(obj.complex('http://hl7.org/fhir/DataRequirement.sort.path'));{q1}
+    result.directionElement := ParseEnum(obj.complex('http://hl7.org/fhir/DataRequirement.sort.direction'), CODES_TFhirSortDirectionEnum, SYSTEMS_TFhirSortDirectionEnum);
+end;
+
+procedure TFHIRTurtleComposer.ComposeDataRequirementSort(parent :  TTurtleComplex; parentType, name : String; elem : TFhirDataRequirementSort; useType : boolean; index : integer);
+var
+  this : TTurtleComplex;
+begin
+  if (elem = nil) then
+    exit;
+  if (parentType = '') then
+    this := parent
+  else
+  begin
+    this := parent.addPredicate('fhir:'+parentType+'.'+name);
+    if (useType) then
+      this.addPredicate('a', 'fhir:DataRequirementSort'); {z}
+  end;
+  composeElement(this, '', name, elem, false, index);
+  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+    ComposeString(this, 'DataRequirement.sort', 'path', elem.pathElement, false, -1);{x.2ea}
+  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+     ComposeEnum(this, 'DataRequirement.sort', 'direction', elem.DirectionElement, CODES_TFhirSortDirectionEnum, SYSTEMS_TFhirSortDirectionEnum, false, -1);{x.d4}
+end;
+
 function TFHIRTurtleParser.ParseDataRequirement(obj : TTurtleComplex) : TFhirDataRequirement;
 begin
   if (obj = nil) then
@@ -4066,12 +4128,19 @@ begin
     result.type_Element := ParseEnum(obj.complex('http://hl7.org/fhir/DataRequirement.type'), CODES_TFhirAllTypesEnum, SYSTEMS_TFhirAllTypesEnum);
     for item in obj.complexes('http://hl7.org/fhir/DataRequirement.profile') do
       result.profileList.Add(parseCanonical(item));
+    if obj.has('http://hl7.org/fhir/DataRequirement.subjectCodeableConcept', item) then
+      result.subject := parseCodeableConcept(item);
+    if obj.has('http://hl7.org/fhir/DataRequirement.subjectReference', item) {a3} then
+      result.subject := ParseReference(item);
     for item in obj.complexes('http://hl7.org/fhir/DataRequirement.mustSupport') do
       result.mustSupportList.Add(parseString(item));
     for item in obj.complexes('http://hl7.org/fhir/DataRequirement.codeFilter') do
       result.codeFilterList.Add(parseDataRequirementCodeFilter(item));
     for item in obj.complexes('http://hl7.org/fhir/DataRequirement.dateFilter') do
       result.dateFilterList.Add(parseDataRequirementDateFilter(item));
+    result.limitElement := ParsePositiveInt(obj.complex('http://hl7.org/fhir/DataRequirement.limit'));{q1}
+    for item in obj.complexes('http://hl7.org/fhir/DataRequirement.sort') do
+      result.sortList.Add(parseDataRequirementSort(item));
 end;
 
 procedure TFHIRTurtleComposer.ComposeDataRequirement(parent :  TTurtleComplex; parentType, name : String; elem : TFhirDataRequirement; useType : boolean; index : integer);
@@ -4095,6 +4164,10 @@ begin
   if not elem.noCompose and (SummaryOption in [soFull, soSummary, soText, soData]) then
     for i := 0 to elem.profileList.Count - 1 do
       ComposeCanonical(this, 'DataRequirement', 'profile', elem.profileList[i], false, i);{x.d3}
+  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.subject is TFhirCodeableConcept) {6} then
+    ComposeCodeableConcept(this, 'DataRequirement', 'subjectCodeableConcept', TFhirCodeableConcept(elem.subject), false, -1){x.d9}
+  else if not elem.noCompose and (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.subject is TFhirReference) {2} then
+    ComposeReference(this, 'DataRequirement', 'subjectReference', TFhirReference(elem.subject), false,-1);{x.d8}
   if not elem.noCompose and (SummaryOption in [soFull, soSummary, soText, soData]) then
     for i := 0 to elem.mustSupportList.Count - 1 do
       ComposeString(this, 'DataRequirement', 'mustSupport', elem.mustSupportList[i], false, i);{x.d3}
@@ -4104,6 +4177,11 @@ begin
   if not elem.noCompose and (SummaryOption in [soFull, soSummary, soText, soData]) then
     for i := 0 to elem.dateFilterList.Count - 1 do
       ComposeDataRequirementDateFilter(this, 'DataRequirement', 'dateFilter', elem.dateFilterList[i], false, i);{x.d3}
+  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soText, soData]) then
+    ComposePositiveInt(this, 'DataRequirement', 'limit', elem.limitElement, false, -1);{x.2ea}
+  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soText, soData]) then
+    for i := 0 to elem.sortList.Count - 1 do
+      ComposeDataRequirementSort(this, 'DataRequirement', 'sort', elem.sortList[i], false, i);{x.d3}
 end;
 
 function TFHIRTurtleParser.ParseDosageDoseAndRate(obj : TTurtleComplex) : TFhirDosageDoseAndRate;
@@ -5417,7 +5495,7 @@ begin
     result.maxElement := ParseString(obj.complex('http://hl7.org/fhir/ParameterDefinition.max'));{q1}
     result.documentationElement := ParseString(obj.complex('http://hl7.org/fhir/ParameterDefinition.documentation'));{q1}
     result.type_Element := ParseEnum(obj.complex('http://hl7.org/fhir/ParameterDefinition.type'), CODES_TFhirAllTypesEnum, SYSTEMS_TFhirAllTypesEnum);
-    result.profile := ParseReference{TFhirStructureDefinition}(obj.complex('http://hl7.org/fhir/ParameterDefinition.profile'));{q3b}
+    result.profileElement := ParseCanonical(obj.complex('http://hl7.org/fhir/ParameterDefinition.profile'));{q1}
 end;
 
 procedure TFHIRTurtleComposer.ComposeParameterDefinition(parent :  TTurtleComplex; parentType, name : String; elem : TFhirParameterDefinition; useType : boolean; index : integer);
@@ -5448,7 +5526,7 @@ begin
   if not elem.noCompose and (SummaryOption in [soFull, soSummary, soText, soData]) then
      ComposeEnum(this, 'ParameterDefinition', 'type', elem.Type_Element, CODES_TFhirAllTypesEnum, SYSTEMS_TFhirAllTypesEnum, false, -1);{x.d4}
   if not elem.noCompose and (SummaryOption in [soFull, soSummary, soText, soData]) then
-    ComposeReference{TFhirStructureDefinition}(this, 'ParameterDefinition', 'profile', elem.profileElement, false, -1);{x.2f}
+    ComposeCanonical(this, 'ParameterDefinition', 'profile', elem.profileElement, false, -1);{x.2ea}
 end;
 
 function TFHIRTurtleParser.ParseContactPoint(obj : TTurtleComplex) : TFhirContactPoint;
@@ -22957,8 +23035,14 @@ begin
       result.doseStatusReasonList.Add(parseCodeableConcept(item));
     result.descriptionElement := ParseString(obj.complex('http://hl7.org/fhir/ImmunizationEvaluation.description'));{q1}
     result.seriesElement := ParseString(obj.complex('http://hl7.org/fhir/ImmunizationEvaluation.series'));{q1}
-    result.doseNumberElement := ParsePositiveInt(obj.complex('http://hl7.org/fhir/ImmunizationEvaluation.doseNumber'));{q1}
-    result.seriesDosesElement := ParsePositiveInt(obj.complex('http://hl7.org/fhir/ImmunizationEvaluation.seriesDoses'));{q1}
+    if obj.has('http://hl7.org/fhir/ImmunizationEvaluation.doseNumberPositiveInt', item) then
+      result.doseNumber := parsePositiveInt(item);
+    if obj.has('http://hl7.org/fhir/ImmunizationEvaluation.doseNumberString', item) then
+      result.doseNumber := parseString(item);
+    if obj.has('http://hl7.org/fhir/ImmunizationEvaluation.seriesDosesPositiveInt', item) then
+      result.seriesDoses := parsePositiveInt(item);
+    if obj.has('http://hl7.org/fhir/ImmunizationEvaluation.seriesDosesString', item) then
+      result.seriesDoses := parseString(item);
 end;
 
 procedure TFHIRTurtleComposer.ComposeImmunizationEvaluation(parent :  TTurtleComplex; parentType, name : String; elem : TFhirImmunizationEvaluation; useType : boolean; index : integer);
@@ -23002,10 +23086,14 @@ begin
     ComposeString(this, 'ImmunizationEvaluation', 'description', elem.descriptionElement, false, -1);{x.2ea}
   if not elem.noCompose and doCompose('series') and (SummaryOption in [soFull, soData]) then
     ComposeString(this, 'ImmunizationEvaluation', 'series', elem.seriesElement, false, -1);{x.2ea}
-  if not elem.noCompose and doCompose('doseNumber') and (SummaryOption in [soFull, soData]) then
-    ComposePositiveInt(this, 'ImmunizationEvaluation', 'doseNumber', elem.doseNumberElement, false, -1);{x.2ea}
-  if not elem.noCompose and doCompose('seriesDoses') and (SummaryOption in [soFull, soData]) then
-    ComposePositiveInt(this, 'ImmunizationEvaluation', 'seriesDoses', elem.seriesDosesElement, false, -1);{x.2ea}
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.doseNumber is TFhirPositiveInt) {6} then
+    ComposePositiveInt(this, 'ImmunizationEvaluation', 'doseNumberPositiveInt', TFhirPositiveInt(elem.doseNumber), false, -1){x.d9}
+  else if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.doseNumber is TFhirString) {6} then
+    ComposeString(this, 'ImmunizationEvaluation', 'doseNumberString', TFhirString(elem.doseNumber), false, -1);{x.d9}
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.seriesDoses is TFhirPositiveInt) {6} then
+    ComposePositiveInt(this, 'ImmunizationEvaluation', 'seriesDosesPositiveInt', TFhirPositiveInt(elem.seriesDoses), false, -1){x.d9}
+  else if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.seriesDoses is TFhirString) {6} then
+    ComposeString(this, 'ImmunizationEvaluation', 'seriesDosesString', TFhirString(elem.seriesDoses), false, -1);{x.d9}
 end;
 
 {$ENDIF FHIR_IMMUNIZATIONEVALUATION}
@@ -23040,8 +23128,14 @@ begin
       result.dateCriterionList.Add(parseImmunizationRecommendationRecommendationDateCriterion(item));
     result.descriptionElement := ParseString(obj.complex('http://hl7.org/fhir/ImmunizationRecommendation.recommendation.description'));{q1}
     result.seriesElement := ParseString(obj.complex('http://hl7.org/fhir/ImmunizationRecommendation.recommendation.series'));{q1}
-    result.doseNumberElement := ParsePositiveInt(obj.complex('http://hl7.org/fhir/ImmunizationRecommendation.recommendation.doseNumber'));{q1}
-    result.seriesDosesElement := ParsePositiveInt(obj.complex('http://hl7.org/fhir/ImmunizationRecommendation.recommendation.seriesDoses'));{q1}
+    if obj.has('http://hl7.org/fhir/ImmunizationRecommendation.recommendation.doseNumberPositiveInt', item) then
+      result.doseNumber := parsePositiveInt(item);
+    if obj.has('http://hl7.org/fhir/ImmunizationRecommendation.recommendation.doseNumberString', item) then
+      result.doseNumber := parseString(item);
+    if obj.has('http://hl7.org/fhir/ImmunizationRecommendation.recommendation.seriesDosesPositiveInt', item) then
+      result.seriesDoses := parsePositiveInt(item);
+    if obj.has('http://hl7.org/fhir/ImmunizationRecommendation.recommendation.seriesDosesString', item) then
+      result.seriesDoses := parseString(item);
     for item in obj.complexes('http://hl7.org/fhir/ImmunizationRecommendation.recommendation.supportingImmunization') do
       result.supportingImmunizationList.Add(parseReference{TFhirImmunization}(item));
     for item in obj.complexes('http://hl7.org/fhir/ImmunizationRecommendation.recommendation.supportingPatientInformation') do
@@ -23084,10 +23178,14 @@ begin
     ComposeString(this, 'ImmunizationRecommendation.recommendation', 'description', elem.descriptionElement, false, -1);{x.2ea}
   if not elem.noCompose and (SummaryOption in [soFull, soData]) then
     ComposeString(this, 'ImmunizationRecommendation.recommendation', 'series', elem.seriesElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
-    ComposePositiveInt(this, 'ImmunizationRecommendation.recommendation', 'doseNumber', elem.doseNumberElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
-    ComposePositiveInt(this, 'ImmunizationRecommendation.recommendation', 'seriesDoses', elem.seriesDosesElement, false, -1);{x.2ea}
+  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.doseNumber is TFhirPositiveInt) {6} then
+    ComposePositiveInt(this, 'ImmunizationRecommendation.recommendation', 'doseNumberPositiveInt', TFhirPositiveInt(elem.doseNumber), false, -1){x.d9}
+  else if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.doseNumber is TFhirString) {6} then
+    ComposeString(this, 'ImmunizationRecommendation.recommendation', 'doseNumberString', TFhirString(elem.doseNumber), false, -1);{x.d9}
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.seriesDoses is TFhirPositiveInt) {6} then
+    ComposePositiveInt(this, 'ImmunizationRecommendation.recommendation', 'seriesDosesPositiveInt', TFhirPositiveInt(elem.seriesDoses), false, -1){x.d9}
+  else if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.seriesDoses is TFhirString) {6} then
+    ComposeString(this, 'ImmunizationRecommendation.recommendation', 'seriesDosesString', TFhirString(elem.seriesDoses), false, -1);{x.d9}
   if not elem.noCompose and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.supportingImmunizationList.Count - 1 do
       ComposeReference{TFhirImmunization}(this, 'ImmunizationRecommendation.recommendation', 'supportingImmunization', elem.supportingImmunizationList[i], false, i);{x.d3}
@@ -23196,27 +23294,27 @@ end;
 
 {$ENDIF FHIR_IMMUNIZATIONRECOMMENDATION}
 {$IFDEF FHIR_IMPLEMENTATIONGUIDE}
-function TFHIRTurtleParser.ParseImplementationGuideDependency(obj : TTurtleComplex) : TFhirImplementationGuideDependency;
+function TFHIRTurtleParser.ParseImplementationGuideDependsOn(obj : TTurtleComplex) : TFhirImplementationGuideDependsOn;
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirImplementationGuideDependency.create;
+  result := TFhirImplementationGuideDependsOn.create;
   try
-    ParseImplementationGuideDependencyProperties(obj, result);
+    ParseImplementationGuideDependsOnProperties(obj, result);
     result.link;
   finally
     result.free;
   end;
 end;
 
-procedure TFHIRTurtleParser.ParseImplementationGuideDependencyProperties(obj : TTurtleComplex; result : TFhirImplementationGuideDependency);
+procedure TFHIRTurtleParser.ParseImplementationGuideDependsOnProperties(obj : TTurtleComplex; result : TFhirImplementationGuideDependsOn);
 begin
     ParseBackboneElementProperties(obj, result);
-    result.type_Element := ParseEnum(obj.complex('http://hl7.org/fhir/ImplementationGuide.dependency.type'), CODES_TFhirGuideDependencyTypeEnum, SYSTEMS_TFhirGuideDependencyTypeEnum);
-    result.uriElement := ParseUri(obj.complex('http://hl7.org/fhir/ImplementationGuide.dependency.uri'));{q1}
+    result.uriElement := ParseCanonical(obj.complex('http://hl7.org/fhir/ImplementationGuide.dependsOn.uri'));{q1}
+    result.versionElement := ParseString(obj.complex('http://hl7.org/fhir/ImplementationGuide.dependsOn.version'));{q1}
 end;
 
-procedure TFHIRTurtleComposer.ComposeImplementationGuideDependency(parent :  TTurtleComplex; parentType, name : String; elem : TFhirImplementationGuideDependency; useType : boolean; index : integer);
+procedure TFHIRTurtleComposer.ComposeImplementationGuideDependsOn(parent :  TTurtleComplex; parentType, name : String; elem : TFhirImplementationGuideDependsOn; useType : boolean; index : integer);
 var
   this : TTurtleComplex;
 begin
@@ -23228,122 +23326,13 @@ begin
   begin
     this := parent.addPredicate('fhir:'+parentType+'.'+name);
     if (useType) then
-      this.addPredicate('a', 'fhir:ImplementationGuideDependency'); {z}
+      this.addPredicate('a', 'fhir:ImplementationGuideDependsOn'); {z}
   end;
   composeBackboneElement(this, '', name, elem, false, index);
   if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
-     ComposeEnum(this, 'ImplementationGuide.dependency', 'type', elem.Type_Element, CODES_TFhirGuideDependencyTypeEnum, SYSTEMS_TFhirGuideDependencyTypeEnum, false, -1);{x.d4}
+    ComposeCanonical(this, 'ImplementationGuide.dependsOn', 'uri', elem.uriElement, false, -1);{x.2ea}
   if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
-    ComposeUri(this, 'ImplementationGuide.dependency', 'uri', elem.uriElement, false, -1);{x.2ea}
-end;
-
-function TFHIRTurtleParser.ParseImplementationGuidePackage(obj : TTurtleComplex) : TFhirImplementationGuidePackage;
-begin
-  if (obj = nil) then
-    exit(nil);
-  result := TFhirImplementationGuidePackage.create;
-  try
-    ParseImplementationGuidePackageProperties(obj, result);
-    result.link;
-  finally
-    result.free;
-  end;
-end;
-
-procedure TFHIRTurtleParser.ParseImplementationGuidePackageProperties(obj : TTurtleComplex; result : TFhirImplementationGuidePackage);
-var
-  item : TTurtleComplex;
-begin
-    ParseBackboneElementProperties(obj, result);
-    result.nameElement := ParseString(obj.complex('http://hl7.org/fhir/ImplementationGuide.package.name'));{q1}
-    result.descriptionElement := ParseString(obj.complex('http://hl7.org/fhir/ImplementationGuide.package.description'));{q1}
-    for item in obj.complexes('http://hl7.org/fhir/ImplementationGuide.package.resource') do
-      result.resourceList.Add(parseImplementationGuidePackageResource(item));
-end;
-
-procedure TFHIRTurtleComposer.ComposeImplementationGuidePackage(parent :  TTurtleComplex; parentType, name : String; elem : TFhirImplementationGuidePackage; useType : boolean; index : integer);
-var
-  this : TTurtleComplex;
-  i : integer;
-begin
-  if (elem = nil) then
-    exit;
-  if (parentType = '') then
-    this := parent
-  else
-  begin
-    this := parent.addPredicate('fhir:'+parentType+'.'+name);
-    if (useType) then
-      this.addPredicate('a', 'fhir:ImplementationGuidePackage'); {z}
-  end;
-  composeBackboneElement(this, '', name, elem, false, index);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
-    ComposeString(this, 'ImplementationGuide.package', 'name', elem.nameElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
-    ComposeString(this, 'ImplementationGuide.package', 'description', elem.descriptionElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
-    for i := 0 to elem.resourceList.Count - 1 do
-      ComposeImplementationGuidePackageResource(this, 'ImplementationGuide.package', 'resource', elem.resourceList[i], false, i);{x.d3}
-end;
-
-function TFHIRTurtleParser.ParseImplementationGuidePackageResource(obj : TTurtleComplex) : TFhirImplementationGuidePackageResource;
-begin
-  if (obj = nil) then
-    exit(nil);
-  result := TFhirImplementationGuidePackageResource.create;
-  try
-    ParseImplementationGuidePackageResourceProperties(obj, result);
-    result.link;
-  finally
-    result.free;
-  end;
-end;
-
-procedure TFHIRTurtleParser.ParseImplementationGuidePackageResourceProperties(obj : TTurtleComplex; result : TFhirImplementationGuidePackageResource);
-var
-  item : TTurtleComplex;
-begin
-    ParseBackboneElementProperties(obj, result);
-    result.exampleElement := ParseBoolean(obj.complex('http://hl7.org/fhir/ImplementationGuide.package.resource.example'));{q1}
-    result.nameElement := ParseString(obj.complex('http://hl7.org/fhir/ImplementationGuide.package.resource.name'));{q1}
-    result.descriptionElement := ParseString(obj.complex('http://hl7.org/fhir/ImplementationGuide.package.resource.description'));{q1}
-    result.acronymElement := ParseString(obj.complex('http://hl7.org/fhir/ImplementationGuide.package.resource.acronym'));{q1}
-    if obj.has('http://hl7.org/fhir/ImplementationGuide.package.resource.sourceReference', item) {a3} then
-      result.source := ParseReference(item);
-    if obj.has('http://hl7.org/fhir/ImplementationGuide.package.resource.sourceUri', item) then
-      result.source := parseUri(item);
-    result.exampleForElement := ParseCanonical(obj.complex('http://hl7.org/fhir/ImplementationGuide.package.resource.exampleFor'));{q1}
-end;
-
-procedure TFHIRTurtleComposer.ComposeImplementationGuidePackageResource(parent :  TTurtleComplex; parentType, name : String; elem : TFhirImplementationGuidePackageResource; useType : boolean; index : integer);
-var
-  this : TTurtleComplex;
-begin
-  if (elem = nil) then
-    exit;
-  if (parentType = '') then
-    this := parent
-  else
-  begin
-    this := parent.addPredicate('fhir:'+parentType+'.'+name);
-    if (useType) then
-      this.addPredicate('a', 'fhir:ImplementationGuidePackageResource'); {z}
-  end;
-  composeBackboneElement(this, '', name, elem, false, index);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
-    ComposeBoolean(this, 'ImplementationGuide.package.resource', 'example', elem.exampleElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
-    ComposeString(this, 'ImplementationGuide.package.resource', 'name', elem.nameElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
-    ComposeString(this, 'ImplementationGuide.package.resource', 'description', elem.descriptionElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
-    ComposeString(this, 'ImplementationGuide.package.resource', 'acronym', elem.acronymElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.source is TFhirReference) {2} then
-    ComposeReference(this, 'ImplementationGuide.package.resource', 'sourceReference', TFhirReference(elem.source), false,-1){x.d8}
-  else if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.source is TFhirUri) {6} then
-    ComposeUri(this, 'ImplementationGuide.package.resource', 'sourceUri', TFhirUri(elem.source), false, -1);{x.d9}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
-    ComposeCanonical(this, 'ImplementationGuide.package.resource', 'exampleFor', elem.exampleForElement, false, -1);{x.2ea}
+    ComposeString(this, 'ImplementationGuide.dependsOn', 'version', elem.versionElement, false, -1);{x.2ea}
 end;
 
 function TFHIRTurtleParser.ParseImplementationGuideGlobal(obj : TTurtleComplex) : TFhirImplementationGuideGlobal;
@@ -23387,37 +23376,36 @@ begin
     ComposeCanonical(this, 'ImplementationGuide.global', 'profile', elem.profileElement, false, -1);{x.2ea}
 end;
 
-function TFHIRTurtleParser.ParseImplementationGuidePage(obj : TTurtleComplex) : TFhirImplementationGuidePage;
+function TFHIRTurtleParser.ParseImplementationGuideDefinition(obj : TTurtleComplex) : TFhirImplementationGuideDefinition;
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirImplementationGuidePage.create;
+  result := TFhirImplementationGuideDefinition.create;
   try
-    ParseImplementationGuidePageProperties(obj, result);
+    ParseImplementationGuideDefinitionProperties(obj, result);
     result.link;
   finally
     result.free;
   end;
 end;
 
-procedure TFHIRTurtleParser.ParseImplementationGuidePageProperties(obj : TTurtleComplex; result : TFhirImplementationGuidePage);
+procedure TFHIRTurtleParser.ParseImplementationGuideDefinitionProperties(obj : TTurtleComplex; result : TFhirImplementationGuideDefinition);
 var
   item : TTurtleComplex;
 begin
     ParseBackboneElementProperties(obj, result);
-    result.sourceElement := ParseUri(obj.complex('http://hl7.org/fhir/ImplementationGuide.page.source'));{q1}
-    result.titleElement := ParseString(obj.complex('http://hl7.org/fhir/ImplementationGuide.page.title'));{q1}
-    result.kindElement := ParseEnum(obj.complex('http://hl7.org/fhir/ImplementationGuide.page.kind'), CODES_TFhirGuidePageKindEnum, SYSTEMS_TFhirGuidePageKindEnum);
-    for item in obj.complexes('http://hl7.org/fhir/ImplementationGuide.page.type') do
-      result.type_.Add(parseEnum(item, CODES_TFhirResourceTypesEnum, SYSTEMS_TFhirResourceTypesEnum));
-    for item in obj.complexes('http://hl7.org/fhir/ImplementationGuide.page.package') do
-      result.packageList.Add(parseString(item));
-    result.formatElement := ParseCode(obj.complex('http://hl7.org/fhir/ImplementationGuide.page.format'));{q1}
-    for item in obj.complexes('http://hl7.org/fhir/ImplementationGuide.page.page') do
-      result.pageList.Add(parseImplementationGuidePage(item));
+    for item in obj.complexes('http://hl7.org/fhir/ImplementationGuide.definition.package') do
+      result.packageList.Add(parseImplementationGuideDefinitionPackage(item));
+    for item in obj.complexes('http://hl7.org/fhir/ImplementationGuide.definition.resource') do
+      result.resourceList.Add(parseImplementationGuideDefinitionResource(item));
+    result.page := ParseImplementationGuideDefinitionPage(obj.complex('http://hl7.org/fhir/ImplementationGuide.definition.page'));{q3b}
+    for item in obj.complexes('http://hl7.org/fhir/ImplementationGuide.definition.parameter') do
+      result.parameterList.Add(parseImplementationGuideDefinitionParameter(item));
+    for item in obj.complexes('http://hl7.org/fhir/ImplementationGuide.definition.template') do
+      result.templateList.Add(parseImplementationGuideDefinitionTemplate(item));
 end;
 
-procedure TFHIRTurtleComposer.ComposeImplementationGuidePage(parent :  TTurtleComplex; parentType, name : String; elem : TFhirImplementationGuidePage; useType : boolean; index : integer);
+procedure TFHIRTurtleComposer.ComposeImplementationGuideDefinition(parent :  TTurtleComplex; parentType, name : String; elem : TFhirImplementationGuideDefinition; useType : boolean; index : integer);
 var
   this : TTurtleComplex;
   i : integer;
@@ -23430,29 +23418,424 @@ begin
   begin
     this := parent.addPredicate('fhir:'+parentType+'.'+name);
     if (useType) then
-      this.addPredicate('a', 'fhir:ImplementationGuidePage'); {z}
+      this.addPredicate('a', 'fhir:ImplementationGuideDefinition'); {z}
+  end;
+  composeBackboneElement(this, '', name, elem, false, index);
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    for i := 0 to elem.packageList.Count - 1 do
+      ComposeImplementationGuideDefinitionPackage(this, 'ImplementationGuide.definition', 'package', elem.packageList[i], false, i);{x.d3}
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    for i := 0 to elem.resourceList.Count - 1 do
+      ComposeImplementationGuideDefinitionResource(this, 'ImplementationGuide.definition', 'resource', elem.resourceList[i], false, i);{x.d3}
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeImplementationGuideDefinitionPage(this, 'ImplementationGuide.definition', 'page', elem.pageElement, false, -1);{x.2f}
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    for i := 0 to elem.parameterList.Count - 1 do
+      ComposeImplementationGuideDefinitionParameter(this, 'ImplementationGuide.definition', 'parameter', elem.parameterList[i], false, i);{x.d3}
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    for i := 0 to elem.templateList.Count - 1 do
+      ComposeImplementationGuideDefinitionTemplate(this, 'ImplementationGuide.definition', 'template', elem.templateList[i], false, i);{x.d3}
+end;
+
+function TFHIRTurtleParser.ParseImplementationGuideDefinitionPackage(obj : TTurtleComplex) : TFhirImplementationGuideDefinitionPackage;
+begin
+  if (obj = nil) then
+    exit(nil);
+  result := TFhirImplementationGuideDefinitionPackage.create;
+  try
+    ParseImplementationGuideDefinitionPackageProperties(obj, result);
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFHIRTurtleParser.ParseImplementationGuideDefinitionPackageProperties(obj : TTurtleComplex; result : TFhirImplementationGuideDefinitionPackage);
+begin
+    ParseBackboneElementProperties(obj, result);
+    result.nameElement := ParseString(obj.complex('http://hl7.org/fhir/ImplementationGuide.definition.package.name'));{q1}
+    result.descriptionElement := ParseString(obj.complex('http://hl7.org/fhir/ImplementationGuide.definition.package.description'));{q1}
+end;
+
+procedure TFHIRTurtleComposer.ComposeImplementationGuideDefinitionPackage(parent :  TTurtleComplex; parentType, name : String; elem : TFhirImplementationGuideDefinitionPackage; useType : boolean; index : integer);
+var
+  this : TTurtleComplex;
+begin
+  if (elem = nil) then
+    exit;
+  if (parentType = '') then
+    this := parent
+  else
+  begin
+    this := parent.addPredicate('fhir:'+parentType+'.'+name);
+    if (useType) then
+      this.addPredicate('a', 'fhir:ImplementationGuideDefinitionPackage'); {z}
+  end;
+  composeBackboneElement(this, '', name, elem, false, index);
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeString(this, 'ImplementationGuide.definition.package', 'name', elem.nameElement, false, -1);{x.2ea}
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeString(this, 'ImplementationGuide.definition.package', 'description', elem.descriptionElement, false, -1);{x.2ea}
+end;
+
+function TFHIRTurtleParser.ParseImplementationGuideDefinitionResource(obj : TTurtleComplex) : TFhirImplementationGuideDefinitionResource;
+begin
+  if (obj = nil) then
+    exit(nil);
+  result := TFhirImplementationGuideDefinitionResource.create;
+  try
+    ParseImplementationGuideDefinitionResourceProperties(obj, result);
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFHIRTurtleParser.ParseImplementationGuideDefinitionResourceProperties(obj : TTurtleComplex; result : TFhirImplementationGuideDefinitionResource);
+var
+  item : TTurtleComplex;
+begin
+    ParseBackboneElementProperties(obj, result);
+    result.reference := ParseReference{TFhirReference}(obj.complex('http://hl7.org/fhir/ImplementationGuide.definition.resource.reference'));{q3b}
+    result.nameElement := ParseString(obj.complex('http://hl7.org/fhir/ImplementationGuide.definition.resource.name'));{q1}
+    result.descriptionElement := ParseString(obj.complex('http://hl7.org/fhir/ImplementationGuide.definition.resource.description'));{q1}
+    if obj.has('http://hl7.org/fhir/ImplementationGuide.definition.resource.exampleCanonical', item) then
+      result.example := parseCanonical(item);
+    if obj.has('http://hl7.org/fhir/ImplementationGuide.definition.resource.exampleBoolean', item) then
+      result.example := parseBoolean(item);
+    result.packageElement := ParseId(obj.complex('http://hl7.org/fhir/ImplementationGuide.definition.resource.package'));{q1}
+end;
+
+procedure TFHIRTurtleComposer.ComposeImplementationGuideDefinitionResource(parent :  TTurtleComplex; parentType, name : String; elem : TFhirImplementationGuideDefinitionResource; useType : boolean; index : integer);
+var
+  this : TTurtleComplex;
+begin
+  if (elem = nil) then
+    exit;
+  if (parentType = '') then
+    this := parent
+  else
+  begin
+    this := parent.addPredicate('fhir:'+parentType+'.'+name);
+    if (useType) then
+      this.addPredicate('a', 'fhir:ImplementationGuideDefinitionResource'); {z}
+  end;
+  composeBackboneElement(this, '', name, elem, false, index);
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeReference{TFhirReference}(this, 'ImplementationGuide.definition.resource', 'reference', elem.referenceElement, false, -1);{x.2f}
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeString(this, 'ImplementationGuide.definition.resource', 'name', elem.nameElement, false, -1);{x.2ea}
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeString(this, 'ImplementationGuide.definition.resource', 'description', elem.descriptionElement, false, -1);{x.2ea}
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.example is TFhirCanonical) {6} then
+    ComposeCanonical(this, 'ImplementationGuide.definition.resource', 'exampleCanonical', TFhirCanonical(elem.example), false, -1){x.d9}
+  else if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.example is TFhirBoolean) {6} then
+    ComposeBoolean(this, 'ImplementationGuide.definition.resource', 'exampleBoolean', TFhirBoolean(elem.example), false, -1);{x.d9}
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeId(this, 'ImplementationGuide.definition.resource', 'package', elem.packageElement, false, -1);{x.2ea}
+end;
+
+function TFHIRTurtleParser.ParseImplementationGuideDefinitionPage(obj : TTurtleComplex) : TFhirImplementationGuideDefinitionPage;
+begin
+  if (obj = nil) then
+    exit(nil);
+  result := TFhirImplementationGuideDefinitionPage.create;
+  try
+    ParseImplementationGuideDefinitionPageProperties(obj, result);
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFHIRTurtleParser.ParseImplementationGuideDefinitionPageProperties(obj : TTurtleComplex; result : TFhirImplementationGuideDefinitionPage);
+var
+  item : TTurtleComplex;
+begin
+    ParseBackboneElementProperties(obj, result);
+    if obj.has('http://hl7.org/fhir/ImplementationGuide.definition.page.nameUrl', item) then
+      result.name := parseUrl(item);
+    if obj.has('http://hl7.org/fhir/ImplementationGuide.definition.page.nameReference', item) {a3} then
+      result.name := ParseReference(item);
+    result.titleElement := ParseString(obj.complex('http://hl7.org/fhir/ImplementationGuide.definition.page.title'));{q1}
+    result.generationElement := ParseEnum(obj.complex('http://hl7.org/fhir/ImplementationGuide.definition.page.generation'), CODES_TFhirGuidePageGenerationEnum, SYSTEMS_TFhirGuidePageGenerationEnum);
+    for item in obj.complexes('http://hl7.org/fhir/ImplementationGuide.definition.page.page') do
+      result.pageList.Add(parseImplementationGuideDefinitionPage(item));
+end;
+
+procedure TFHIRTurtleComposer.ComposeImplementationGuideDefinitionPage(parent :  TTurtleComplex; parentType, name : String; elem : TFhirImplementationGuideDefinitionPage; useType : boolean; index : integer);
+var
+  this : TTurtleComplex;
+  i : integer;
+begin
+  if (elem = nil) then
+    exit;
+  if (parentType = '') then
+    this := parent
+  else
+  begin
+    this := parent.addPredicate('fhir:'+parentType+'.'+name);
+    if (useType) then
+      this.addPredicate('a', 'fhir:ImplementationGuideDefinitionPage'); {z}
+  end;
+  composeBackboneElement(this, '', name, elem, false, index);
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.name is TFhirUrl) {6} then
+    ComposeUrl(this, 'ImplementationGuide.definition.page', 'nameUrl', TFhirUrl(elem.name), false, -1){x.d9}
+  else if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.name is TFhirReference) {2} then
+    ComposeReference(this, 'ImplementationGuide.definition.page', 'nameReference', TFhirReference(elem.name), false,-1);{x.d8}
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeString(this, 'ImplementationGuide.definition.page', 'title', elem.titleElement, false, -1);{x.2ea}
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+     ComposeEnum(this, 'ImplementationGuide.definition.page', 'generation', elem.GenerationElement, CODES_TFhirGuidePageGenerationEnum, SYSTEMS_TFhirGuidePageGenerationEnum, false, -1);{x.d4}
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    for i := 0 to elem.pageList.Count - 1 do
+      ComposeImplementationGuideDefinitionPage(this, 'ImplementationGuide.definition.page', 'page', elem.pageList[i], false, i);{x.d3}
+end;
+
+function TFHIRTurtleParser.ParseImplementationGuideDefinitionParameter(obj : TTurtleComplex) : TFhirImplementationGuideDefinitionParameter;
+begin
+  if (obj = nil) then
+    exit(nil);
+  result := TFhirImplementationGuideDefinitionParameter.create;
+  try
+    ParseImplementationGuideDefinitionParameterProperties(obj, result);
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFHIRTurtleParser.ParseImplementationGuideDefinitionParameterProperties(obj : TTurtleComplex; result : TFhirImplementationGuideDefinitionParameter);
+begin
+    ParseBackboneElementProperties(obj, result);
+    result.codeElement := ParseEnum(obj.complex('http://hl7.org/fhir/ImplementationGuide.definition.parameter.code'), CODES_TFhirGuideParameterCodeEnum, SYSTEMS_TFhirGuideParameterCodeEnum);
+    result.valueElement := ParseString(obj.complex('http://hl7.org/fhir/ImplementationGuide.definition.parameter.value'));{q1}
+end;
+
+procedure TFHIRTurtleComposer.ComposeImplementationGuideDefinitionParameter(parent :  TTurtleComplex; parentType, name : String; elem : TFhirImplementationGuideDefinitionParameter; useType : boolean; index : integer);
+var
+  this : TTurtleComplex;
+begin
+  if (elem = nil) then
+    exit;
+  if (parentType = '') then
+    this := parent
+  else
+  begin
+    this := parent.addPredicate('fhir:'+parentType+'.'+name);
+    if (useType) then
+      this.addPredicate('a', 'fhir:ImplementationGuideDefinitionParameter'); {z}
+  end;
+  composeBackboneElement(this, '', name, elem, false, index);
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+     ComposeEnum(this, 'ImplementationGuide.definition.parameter', 'code', elem.CodeElement, CODES_TFhirGuideParameterCodeEnum, SYSTEMS_TFhirGuideParameterCodeEnum, false, -1);{x.d4}
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeString(this, 'ImplementationGuide.definition.parameter', 'value', elem.valueElement, false, -1);{x.2ea}
+end;
+
+function TFHIRTurtleParser.ParseImplementationGuideDefinitionTemplate(obj : TTurtleComplex) : TFhirImplementationGuideDefinitionTemplate;
+begin
+  if (obj = nil) then
+    exit(nil);
+  result := TFhirImplementationGuideDefinitionTemplate.create;
+  try
+    ParseImplementationGuideDefinitionTemplateProperties(obj, result);
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFHIRTurtleParser.ParseImplementationGuideDefinitionTemplateProperties(obj : TTurtleComplex; result : TFhirImplementationGuideDefinitionTemplate);
+begin
+    ParseBackboneElementProperties(obj, result);
+    result.codeElement := ParseCode(obj.complex('http://hl7.org/fhir/ImplementationGuide.definition.template.code'));{q1}
+    result.sourceElement := ParseString(obj.complex('http://hl7.org/fhir/ImplementationGuide.definition.template.source'));{q1}
+    result.scopeElement := ParseString(obj.complex('http://hl7.org/fhir/ImplementationGuide.definition.template.scope'));{q1}
+end;
+
+procedure TFHIRTurtleComposer.ComposeImplementationGuideDefinitionTemplate(parent :  TTurtleComplex; parentType, name : String; elem : TFhirImplementationGuideDefinitionTemplate; useType : boolean; index : integer);
+var
+  this : TTurtleComplex;
+begin
+  if (elem = nil) then
+    exit;
+  if (parentType = '') then
+    this := parent
+  else
+  begin
+    this := parent.addPredicate('fhir:'+parentType+'.'+name);
+    if (useType) then
+      this.addPredicate('a', 'fhir:ImplementationGuideDefinitionTemplate'); {z}
+  end;
+  composeBackboneElement(this, '', name, elem, false, index);
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeCode(this, 'ImplementationGuide.definition.template', 'code', elem.codeElement, false, -1);{x.2ea}
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeString(this, 'ImplementationGuide.definition.template', 'source', elem.sourceElement, false, -1);{x.2ea}
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeString(this, 'ImplementationGuide.definition.template', 'scope', elem.scopeElement, false, -1);{x.2ea}
+end;
+
+function TFHIRTurtleParser.ParseImplementationGuideManifest(obj : TTurtleComplex) : TFhirImplementationGuideManifest;
+begin
+  if (obj = nil) then
+    exit(nil);
+  result := TFhirImplementationGuideManifest.create;
+  try
+    ParseImplementationGuideManifestProperties(obj, result);
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFHIRTurtleParser.ParseImplementationGuideManifestProperties(obj : TTurtleComplex; result : TFhirImplementationGuideManifest);
+var
+  item : TTurtleComplex;
+begin
+    ParseBackboneElementProperties(obj, result);
+    result.renderingElement := ParseUrl(obj.complex('http://hl7.org/fhir/ImplementationGuide.manifest.rendering'));{q1}
+    for item in obj.complexes('http://hl7.org/fhir/ImplementationGuide.manifest.resource') do
+      result.resourceList.Add(parseImplementationGuideManifestResource(item));
+    for item in obj.complexes('http://hl7.org/fhir/ImplementationGuide.manifest.page') do
+      result.pageList.Add(parseImplementationGuideManifestPage(item));
+    for item in obj.complexes('http://hl7.org/fhir/ImplementationGuide.manifest.image') do
+      result.imageList.Add(parseString(item));
+    for item in obj.complexes('http://hl7.org/fhir/ImplementationGuide.manifest.other') do
+      result.otherList.Add(parseString(item));
+end;
+
+procedure TFHIRTurtleComposer.ComposeImplementationGuideManifest(parent :  TTurtleComplex; parentType, name : String; elem : TFhirImplementationGuideManifest; useType : boolean; index : integer);
+var
+  this : TTurtleComplex;
+  i : integer;
+begin
+  if (elem = nil) then
+    exit;
+  if (parentType = '') then
+    this := parent
+  else
+  begin
+    this := parent.addPredicate('fhir:'+parentType+'.'+name);
+    if (useType) then
+      this.addPredicate('a', 'fhir:ImplementationGuideManifest'); {z}
   end;
   composeBackboneElement(this, '', name, elem, false, index);
   if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
-    ComposeUri(this, 'ImplementationGuide.page', 'source', elem.sourceElement, false, -1);{x.2ea}
+    ComposeUrl(this, 'ImplementationGuide.manifest', 'rendering', elem.renderingElement, false, -1);{x.2ea}
   if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
-    ComposeString(this, 'ImplementationGuide.page', 'title', elem.titleElement, false, -1);{x.2ea}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
-     ComposeEnum(this, 'ImplementationGuide.page', 'kind', elem.KindElement, CODES_TFhirGuidePageKindEnum, SYSTEMS_TFhirGuidePageKindEnum, false, -1);{x.d4}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
-    for i := 0 to elem.type_.Count - 1 do
-      ComposeEnum(this, 'ImplementationGuide.page', 'type', elem.type_[i], CODES_TFhirResourceTypesEnum, SYSTEMS_TFhirResourceTypesEnum, false, i); {x.d1}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
-    for i := 0 to elem.type_.Count - 1 do
-      ComposeEnum(this, 'ImplementationGuide.page', 'type', elem.type_[i], CODES_TFhirResourceTypesEnum, SYSTEMS_TFhirResourceTypesEnum, false, i);{x.d2}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
-    for i := 0 to elem.packageList.Count - 1 do
-      ComposeString(this, 'ImplementationGuide.page', 'package', elem.packageList[i], false, i);{x.d3}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
-    ComposeCode(this, 'ImplementationGuide.page', 'format', elem.formatElement, false, -1);{x.2ea}
+    for i := 0 to elem.resourceList.Count - 1 do
+      ComposeImplementationGuideManifestResource(this, 'ImplementationGuide.manifest', 'resource', elem.resourceList[i], false, i);{x.d3}
   if not elem.noCompose and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.pageList.Count - 1 do
-      ComposeImplementationGuidePage(this, 'ImplementationGuide.page', 'page', elem.pageList[i], false, i);{x.d3}
+      ComposeImplementationGuideManifestPage(this, 'ImplementationGuide.manifest', 'page', elem.pageList[i], false, i);{x.d3}
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    for i := 0 to elem.imageList.Count - 1 do
+      ComposeString(this, 'ImplementationGuide.manifest', 'image', elem.imageList[i], false, i);{x.d3}
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    for i := 0 to elem.otherList.Count - 1 do
+      ComposeString(this, 'ImplementationGuide.manifest', 'other', elem.otherList[i], false, i);{x.d3}
+end;
+
+function TFHIRTurtleParser.ParseImplementationGuideManifestResource(obj : TTurtleComplex) : TFhirImplementationGuideManifestResource;
+begin
+  if (obj = nil) then
+    exit(nil);
+  result := TFhirImplementationGuideManifestResource.create;
+  try
+    ParseImplementationGuideManifestResourceProperties(obj, result);
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFHIRTurtleParser.ParseImplementationGuideManifestResourceProperties(obj : TTurtleComplex; result : TFhirImplementationGuideManifestResource);
+var
+  item : TTurtleComplex;
+begin
+    ParseBackboneElementProperties(obj, result);
+    result.reference := ParseReference{TFhirReference}(obj.complex('http://hl7.org/fhir/ImplementationGuide.manifest.resource.reference'));{q3b}
+    if obj.has('http://hl7.org/fhir/ImplementationGuide.manifest.resource.exampleCanonical', item) then
+      result.example := parseCanonical(item);
+    if obj.has('http://hl7.org/fhir/ImplementationGuide.manifest.resource.exampleBoolean', item) then
+      result.example := parseBoolean(item);
+    result.relativePathElement := ParseUrl(obj.complex('http://hl7.org/fhir/ImplementationGuide.manifest.resource.relativePath'));{q1}
+end;
+
+procedure TFHIRTurtleComposer.ComposeImplementationGuideManifestResource(parent :  TTurtleComplex; parentType, name : String; elem : TFhirImplementationGuideManifestResource; useType : boolean; index : integer);
+var
+  this : TTurtleComplex;
+begin
+  if (elem = nil) then
+    exit;
+  if (parentType = '') then
+    this := parent
+  else
+  begin
+    this := parent.addPredicate('fhir:'+parentType+'.'+name);
+    if (useType) then
+      this.addPredicate('a', 'fhir:ImplementationGuideManifestResource'); {z}
+  end;
+  composeBackboneElement(this, '', name, elem, false, index);
+  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+    ComposeReference{TFhirReference}(this, 'ImplementationGuide.manifest.resource', 'reference', elem.referenceElement, false, -1);{x.2f}
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.example is TFhirCanonical) {6} then
+    ComposeCanonical(this, 'ImplementationGuide.manifest.resource', 'exampleCanonical', TFhirCanonical(elem.example), false, -1){x.d9}
+  else if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.example is TFhirBoolean) {6} then
+    ComposeBoolean(this, 'ImplementationGuide.manifest.resource', 'exampleBoolean', TFhirBoolean(elem.example), false, -1);{x.d9}
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeUrl(this, 'ImplementationGuide.manifest.resource', 'relativePath', elem.relativePathElement, false, -1);{x.2ea}
+end;
+
+function TFHIRTurtleParser.ParseImplementationGuideManifestPage(obj : TTurtleComplex) : TFhirImplementationGuideManifestPage;
+begin
+  if (obj = nil) then
+    exit(nil);
+  result := TFhirImplementationGuideManifestPage.create;
+  try
+    ParseImplementationGuideManifestPageProperties(obj, result);
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFHIRTurtleParser.ParseImplementationGuideManifestPageProperties(obj : TTurtleComplex; result : TFhirImplementationGuideManifestPage);
+var
+  item : TTurtleComplex;
+begin
+    ParseBackboneElementProperties(obj, result);
+    result.nameElement := ParseString(obj.complex('http://hl7.org/fhir/ImplementationGuide.manifest.page.name'));{q1}
+    result.titleElement := ParseString(obj.complex('http://hl7.org/fhir/ImplementationGuide.manifest.page.title'));{q1}
+    for item in obj.complexes('http://hl7.org/fhir/ImplementationGuide.manifest.page.anchor') do
+      result.anchorList.Add(parseString(item));
+end;
+
+procedure TFHIRTurtleComposer.ComposeImplementationGuideManifestPage(parent :  TTurtleComplex; parentType, name : String; elem : TFhirImplementationGuideManifestPage; useType : boolean; index : integer);
+var
+  this : TTurtleComplex;
+  i : integer;
+begin
+  if (elem = nil) then
+    exit;
+  if (parentType = '') then
+    this := parent
+  else
+  begin
+    this := parent.addPredicate('fhir:'+parentType+'.'+name);
+    if (useType) then
+      this.addPredicate('a', 'fhir:ImplementationGuideManifestPage'); {z}
+  end;
+  composeBackboneElement(this, '', name, elem, false, index);
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeString(this, 'ImplementationGuide.manifest.page', 'name', elem.nameElement, false, -1);{x.2ea}
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeString(this, 'ImplementationGuide.manifest.page', 'title', elem.titleElement, false, -1);{x.2ea}
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    for i := 0 to elem.anchorList.Count - 1 do
+      ComposeString(this, 'ImplementationGuide.manifest.page', 'anchor', elem.anchorList[i], false, i);{x.d3}
 end;
 
 function TFHIRTurtleParser.ParseImplementationGuide(obj : TTurtleComplex) : TFhirImplementationGuide;
@@ -23489,15 +23872,12 @@ begin
       result.jurisdictionList.Add(parseCodeableConcept(item));
     result.copyrightElement := ParseMarkdown(obj.complex('http://hl7.org/fhir/ImplementationGuide.copyright'));{q1}
     result.fhirVersionElement := ParseId(obj.complex('http://hl7.org/fhir/ImplementationGuide.fhirVersion'));{q1}
-    for item in obj.complexes('http://hl7.org/fhir/ImplementationGuide.dependency') do
-      result.dependencyList.Add(parseImplementationGuideDependency(item));
-    for item in obj.complexes('http://hl7.org/fhir/ImplementationGuide.package') do
-      result.packageList.Add(parseImplementationGuidePackage(item));
+    for item in obj.complexes('http://hl7.org/fhir/ImplementationGuide.dependsOn') do
+      result.dependsOnList.Add(parseImplementationGuideDependsOn(item));
     for item in obj.complexes('http://hl7.org/fhir/ImplementationGuide.global') do
       result.globalList.Add(parseImplementationGuideGlobal(item));
-    for item in obj.complexes('http://hl7.org/fhir/ImplementationGuide.binary') do
-      result.binaryList.Add(parseUri(item));
-    result.page := ParseImplementationGuidePage(obj.complex('http://hl7.org/fhir/ImplementationGuide.page'));{q3b}
+    result.definition := ParseImplementationGuideDefinition(obj.complex('http://hl7.org/fhir/ImplementationGuide.definition'));{q3b}
+    result.manifest := ParseImplementationGuideManifest(obj.complex('http://hl7.org/fhir/ImplementationGuide.manifest'));{q3b}
 end;
 
 procedure TFHIRTurtleComposer.ComposeImplementationGuide(parent :  TTurtleComplex; parentType, name : String; elem : TFhirImplementationGuide; useType : boolean; index : integer);
@@ -23545,20 +23925,16 @@ begin
     ComposeMarkdown(this, 'ImplementationGuide', 'copyright', elem.copyrightElement, false, -1);{x.2ea}
   if not elem.noCompose and doCompose('fhirVersion') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeId(this, 'ImplementationGuide', 'fhirVersion', elem.fhirVersionElement, false, -1);{x.2ea}
-  if not elem.noCompose and doCompose('dependency') and (SummaryOption in [soFull, soSummary, soData]) then
-    for i := 0 to elem.dependencyList.Count - 1 do
-      ComposeImplementationGuideDependency(this, 'ImplementationGuide', 'dependency', elem.dependencyList[i], false, i);{x.d3}
-  if not elem.noCompose and doCompose('package') and (SummaryOption in [soFull, soSummary, soData]) then
-    for i := 0 to elem.packageList.Count - 1 do
-      ComposeImplementationGuidePackage(this, 'ImplementationGuide', 'package', elem.packageList[i], false, i);{x.d3}
+  if not elem.noCompose and doCompose('dependsOn') and (SummaryOption in [soFull, soSummary, soData]) then
+    for i := 0 to elem.dependsOnList.Count - 1 do
+      ComposeImplementationGuideDependsOn(this, 'ImplementationGuide', 'dependsOn', elem.dependsOnList[i], false, i);{x.d3}
   if not elem.noCompose and doCompose('global') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.globalList.Count - 1 do
       ComposeImplementationGuideGlobal(this, 'ImplementationGuide', 'global', elem.globalList[i], false, i);{x.d3}
-  if not elem.noCompose and doCompose('binary') and (SummaryOption in [soFull, soData]) then
-    for i := 0 to elem.binaryList.Count - 1 do
-      ComposeUri(this, 'ImplementationGuide', 'binary', elem.binaryList[i], false, i);{x.d3}
-  if not elem.noCompose and doCompose('page') and (SummaryOption in [soFull, soSummary, soData]) then
-    ComposeImplementationGuidePage(this, 'ImplementationGuide', 'page', elem.pageElement, false, -1);{x.2f}
+  if not elem.noCompose and doCompose('definition') and (SummaryOption in [soFull, soData]) then
+    ComposeImplementationGuideDefinition(this, 'ImplementationGuide', 'definition', elem.definitionElement, false, -1);{x.2f}
+  if not elem.noCompose and doCompose('manifest') and (SummaryOption in [soFull, soData]) then
+    ComposeImplementationGuideManifest(this, 'ImplementationGuide', 'manifest', elem.manifestElement, false, -1);{x.2f}
 end;
 
 {$ENDIF FHIR_IMPLEMENTATIONGUIDE}
@@ -36631,7 +37007,7 @@ begin
       result.contextList.Add(parseStructureDefinitionContext(item));
     for item in obj.complexes('http://hl7.org/fhir/StructureDefinition.contextInvariant') do
       result.contextInvariantList.Add(parseString(item));
-    result.type_Element := ParseCode(obj.complex('http://hl7.org/fhir/StructureDefinition.type'));{q1}
+    result.type_Element := ParseUri(obj.complex('http://hl7.org/fhir/StructureDefinition.type'));{q1}
     result.baseDefinitionElement := ParseCanonical(obj.complex('http://hl7.org/fhir/StructureDefinition.baseDefinition'));{q1}
     result.derivationElement := ParseEnum(obj.complex('http://hl7.org/fhir/StructureDefinition.derivation'), CODES_TFhirTypeDerivationRuleEnum, SYSTEMS_TFhirTypeDerivationRuleEnum);
     result.snapshot := ParseStructureDefinitionSnapshot(obj.complex('http://hl7.org/fhir/StructureDefinition.snapshot'));{q3b}
@@ -36707,7 +37083,7 @@ begin
     for i := 0 to elem.contextInvariantList.Count - 1 do
       ComposeString(this, 'StructureDefinition', 'contextInvariant', elem.contextInvariantList[i], false, i);{x.d3}
   if not elem.noCompose and doCompose('type_') and (SummaryOption in [soFull, soSummary, soData]) then
-    ComposeCode(this, 'StructureDefinition', 'type', elem.type_Element, false, -1);{x.2ea}
+    ComposeUri(this, 'StructureDefinition', 'type', elem.type_Element, false, -1);{x.2ea}
   if not elem.noCompose and doCompose('baseDefinition') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeCanonical(this, 'StructureDefinition', 'baseDefinition', elem.baseDefinitionElement, false, -1);{x.2ea}
   if not elem.noCompose and doCompose('derivation') and (SummaryOption in [soFull, soSummary, soData]) then
@@ -41116,7 +41492,7 @@ begin
     result.destinationElement := ParseInteger(obj.complex('http://hl7.org/fhir/TestScript.metadata.capability.destination'));{q1}
     for item in obj.complexes('http://hl7.org/fhir/TestScript.metadata.capability.link') do
       result.link_List.Add(parseUri(item));
-    result.capabilities := ParseReference{TFhirCapabilityStatement}(obj.complex('http://hl7.org/fhir/TestScript.metadata.capability.capabilities'));{q3b}
+    result.capabilitiesElement := ParseCanonical(obj.complex('http://hl7.org/fhir/TestScript.metadata.capability.capabilities'));{q1}
 end;
 
 procedure TFHIRTurtleComposer.ComposeTestScriptMetadataCapability(parent :  TTurtleComplex; parentType, name : String; elem : TFhirTestScriptMetadataCapability; useType : boolean; index : integer);
@@ -41150,7 +41526,7 @@ begin
     for i := 0 to elem.link_List.Count - 1 do
       ComposeUri(this, 'TestScript.metadata.capability', 'link', elem.link_List[i], false, i);{x.d3}
   if not elem.noCompose and (SummaryOption in [soFull, soData]) then
-    ComposeReference{TFhirCapabilityStatement}(this, 'TestScript.metadata.capability', 'capabilities', elem.capabilitiesElement, false, -1);{x.2f}
+    ComposeCanonical(this, 'TestScript.metadata.capability', 'capabilities', elem.capabilitiesElement, false, -1);{x.2ea}
 end;
 
 function TFHIRTurtleParser.ParseTestScriptFixture(obj : TTurtleComplex) : TFhirTestScriptFixture;

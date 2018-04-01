@@ -713,6 +713,7 @@ procedure TFHIRService.InitialiseRestServer;
 var
   ctxt : TFHIRServerContext;
   store : TFHIRServerDataStore;
+  jp : String;
 begin
   store := TFHIRServerDataStore.create(FDB.Link, ProcessPath(ExtractFilePath(Fini.FileName), FIni.ReadString(voVersioningNotApplicable, 'fhir', 'web', '')));
   try
@@ -722,8 +723,9 @@ begin
       ctxt.Factory := TFHIRFactory.create(ctxt.ValidatorContext.Link);
       ctxt.RunNumber := FRunNumber;
       {$IFNDEF FHIR2}
-      logt('loading Java Services');
-      ctxt.JavaServices := TJavaLibraryWrapper.Create(jarPath);
+      jp := jarPath;
+      logt('loading Java Services from '+jp);
+      ctxt.JavaServices := TJavaLibraryWrapper.Create(jarPath+jp);
       logt('  .. done');
       {$ENDIF}
       ctxt.TerminologyServer := FterminologyServer.Link;

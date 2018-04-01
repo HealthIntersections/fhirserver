@@ -175,7 +175,9 @@ type
     procedure ReIndex;
     procedure CheckCreateNarrative(request : TFHIRRequest);
     procedure CreateIndexer;
+    {$IFDEF FHIR3}
     function loadCustomResource(ig : TFHIRImplementationGuide; package : TFhirImplementationGuidePackage) : TFHIRCustomResourceInformation;
+    {$ENDIF}
     procedure ExecuteGraphQL(context : TOperationContext; request: TFHIRRequest; response : TFHIRResponse);
     procedure ExecuteGraphQLSystem(context : TOperationContext; request: TFHIRRequest; response : TFHIRResponse);
     procedure ExecuteGraphQLInstance(context : TOperationContext; request: TFHIRRequest; response : TFHIRResponse);
@@ -3108,6 +3110,7 @@ begin
 end;
 
 function TFHIRNativeOperationEngine.loadCustomResources(response : TFHIRResponse; key: integer; startup : boolean; names : TStringList) : boolean;
+{$IFDEF FHIR3}
 var
   ig : TFHIRImplementationGuide;
   package : TFhirImplementationGuidePackage;
@@ -3115,7 +3118,9 @@ var
   crs : TAdvList<TFHIRCustomResourceInformation>;
   cr : TFHIRCustomResourceInformation;
   sp : TFhirSearchParameter;
+{$ENDIF}
 begin
+{$IFDEF FHIR3}
   result := false;
   crs := TAdvList<TFHIRCustomResourceInformation>.create;
   try
@@ -3142,6 +3147,7 @@ begin
   finally
     crs.free;
   end;
+{$ENDIF}
 end;
 
 function TFHIRNativeOperationEngine.loadResources(keys: TList<integer>): TAdvList<TFHIRResource>;
@@ -3211,6 +3217,7 @@ begin
 end;
 
 function TFHIRNativeOperationEngine.loadCustomResources(response : TFHIRResponse; id: String; startup : boolean; names : TStringList) : boolean;
+{$IFDEF FHIR3}
 var
   ig : TFHIRImplementationGuide;
   package : TFhirImplementationGuidePackage;
@@ -3218,7 +3225,9 @@ var
   crs : TAdvList<TFHIRCustomResourceInformation>;
   cr : TFHIRCustomResourceInformation;
   sp : TFhirSearchParameter;
+{$ENDIF}
 begin
+{$IFDEF FHIR3}
   crs := TAdvList<TFHIRCustomResourceInformation>.create;
   try
     ig := GetResourceById(nil, 'ImplementationGuide', id, '', needsSecure) as TFHIRImplementationGuide;
@@ -3245,8 +3254,10 @@ begin
   finally
     crs.free;
   end;
+{$ENDIF}
 end;
 
+{$IFDEF FHIR3}
 function TFHIRNativeOperationEngine.loadCustomResource(ig : TFHIRImplementationGuide; package : TFhirImplementationGuidePackage) : TFHIRCustomResourceInformation;
 var
   rd : TFhirImplementationGuidePackageResource;
@@ -3292,6 +3303,7 @@ begin
     list.Free;
   end;
 end;
+{$ENDIF}
 
 function TFHIRNativeOperationEngine.checkOkToStore(request: TFHIRRequest; response: TFHIRResponse; var secure : boolean): boolean;
 begin

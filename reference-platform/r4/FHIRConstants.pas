@@ -33,7 +33,7 @@ unit FHIRConstants;
 
 interface
 
-// FHIR v3.2.0 generated 2018-03-09T01:05:48+11:00
+// FHIR v3.2.0 generated 2018-04-01T19:29:27+10:00
 
 uses
   SysUtils, Classes, StringSupport, DecimalSupport, AdvBuffers, DateSupport, FHIRBase, FHIRTypes, FHIRResources;
@@ -259,8 +259,7 @@ Type
     spBinary__query, 
     spBinary__security, 
     spBinary__source, 
-    spBinary__tag, 
-    spBinary_Contenttype); 
+    spBinary__tag); 
 {$ENDIF}
 
 {$IFDEF FHIR_BIOLOGICALLYDERIVEDPRODUCT}
@@ -1573,13 +1572,12 @@ Type
     spImplementationGuide__tag, 
     spImplementationGuide__text, 
     spImplementationGuide_Date, 
-    spImplementationGuide_Dependency, 
+    spImplementationGuide_Dependson, 
     spImplementationGuide_Description, 
     spImplementationGuide_Experimental, 
     spImplementationGuide_Jurisdiction, 
     spImplementationGuide_Name, 
     spImplementationGuide_Publisher, 
-    spImplementationGuide_Resource, 
     spImplementationGuide_Status, 
     spImplementationGuide_Url, 
     spImplementationGuide_Version); 
@@ -4103,7 +4101,7 @@ Const
   CODES_TSearchParamsBasic : Array[TSearchParamsBasic] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'author', 'code', 'created', 'identifier', 'patient', 'subject');
 {$ENDIF}
 {$IFDEF FHIR_BINARY}
-  CODES_TSearchParamsBinary : Array[TSearchParamsBinary] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', 'contenttype');
+  CODES_TSearchParamsBinary : Array[TSearchParamsBinary] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag');
 {$ENDIF}
 {$IFDEF FHIR_BIOLOGICALLYDERIVEDPRODUCT}
   CODES_TSearchParamsBiologicallyDerivedProduct : Array[TSearchParamsBiologicallyDerivedProduct] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text');
@@ -4262,7 +4260,7 @@ Const
   CODES_TSearchParamsImmunizationRecommendation : Array[TSearchParamsImmunizationRecommendation] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'date', 'dose-number', 'dose-sequence', 'identifier', 'information', 'patient', 'status', 'support', 'target-disease', 'vaccine-type');
 {$ENDIF}
 {$IFDEF FHIR_IMPLEMENTATIONGUIDE}
-  CODES_TSearchParamsImplementationGuide : Array[TSearchParamsImplementationGuide] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'date', 'dependency', 'description', 'experimental', 'jurisdiction', 'name', 'publisher', 'resource', 'status', 'url', 'version');
+  CODES_TSearchParamsImplementationGuide : Array[TSearchParamsImplementationGuide] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'date', 'depends-on', 'description', 'experimental', 'jurisdiction', 'name', 'publisher', 'status', 'url', 'version');
 {$ENDIF}
 {$IFDEF FHIR_INVOICE}
   CODES_TSearchParamsInvoice : Array[TSearchParamsInvoice] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'account', 'date', 'identifier', 'issuer', 'participant', 'participant-role', 'patient', 'recipient', 'status', 'subject', 'totalgross', 'totalnet', 'type');
@@ -4493,7 +4491,7 @@ Const
 
   FHIR_GENERATED_PUBLICATION = '4';
 
-  FHIR_GENERATED_DATE = '2018-03-09T01:05:48+11:00';
+  FHIR_GENERATED_DATE = '2018-04-01T19:29:27+10:00';
 
 
 

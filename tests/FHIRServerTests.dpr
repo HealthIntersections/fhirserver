@@ -328,7 +328,8 @@ uses
   IdUriParserTests in 'IdUriParserTests.pas',
   CqlEngine in '..\Libraries\cql\CqlEngine.pas',
   CountryCodeServices in '..\Server\CountryCodeServices.pas',
-  USStatesServices in '..\Server\USStatesServices.pas';
+  USStatesServices in '..\Server\USStatesServices.pas',
+  GoogleAnalyticsProvider in '..\Server\GoogleAnalyticsProvider.pas';
 
 var
   runner : ITestRunner;

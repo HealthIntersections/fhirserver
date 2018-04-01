@@ -33,7 +33,7 @@ unit FHIRParserJson;
 
 interface
 
-// FHIR v3.2.0 generated 2018-03-09T01:05:48+11:00
+// FHIR v3.2.0 generated 2018-04-01T19:29:27+10:00
 
 uses
   SysUtils, Classes, StringSupport, DateSupport, DecimalSupport, FHIRParserBase, FHIRBase, FHIRResources, FHIRConstants, FHIRTypes, AdvStringMatches, AdvJSON;
@@ -126,6 +126,9 @@ Type
     function ParseDataRequirementDateFilter(jsn : TJsonObject) : TFhirDataRequirementDateFilter; overload; {b\}
     procedure ParseDataRequirementDateFilterProperties(jsn : TJsonObject; result : TFhirDataRequirementDateFilter); overload; {b\}
     procedure ParseDataRequirementDateFilter(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+    function ParseDataRequirementSort(jsn : TJsonObject) : TFhirDataRequirementSort; overload; {b\}
+    procedure ParseDataRequirementSortProperties(jsn : TJsonObject; result : TFhirDataRequirementSort); overload; {b\}
+    procedure ParseDataRequirementSort(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
     function ParseDataRequirement(jsn : TJsonObject) : TFhirDataRequirement; overload;
     procedure ParseDataRequirementProperties(jsn : TJsonObject; result : TFhirDataRequirement); overload;
     procedure ParseDataRequirement(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
@@ -1105,21 +1108,39 @@ Type
     procedure ParseImmunizationRecommendation(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
 {$ENDIF FHIR_IMMUNIZATIONRECOMMENDATION}
 {$IFDEF FHIR_IMPLEMENTATIONGUIDE}
-    function ParseImplementationGuideDependency(jsn : TJsonObject) : TFhirImplementationGuideDependency; overload; {b\}
-    procedure ParseImplementationGuideDependencyProperties(jsn : TJsonObject; result : TFhirImplementationGuideDependency); overload; {b\}
-    procedure ParseImplementationGuideDependency(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
-    function ParseImplementationGuidePackage(jsn : TJsonObject) : TFhirImplementationGuidePackage; overload; {b\}
-    procedure ParseImplementationGuidePackageProperties(jsn : TJsonObject; result : TFhirImplementationGuidePackage); overload; {b\}
-    procedure ParseImplementationGuidePackage(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
-    function ParseImplementationGuidePackageResource(jsn : TJsonObject) : TFhirImplementationGuidePackageResource; overload; {b\}
-    procedure ParseImplementationGuidePackageResourceProperties(jsn : TJsonObject; result : TFhirImplementationGuidePackageResource); overload; {b\}
-    procedure ParseImplementationGuidePackageResource(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+    function ParseImplementationGuideDependsOn(jsn : TJsonObject) : TFhirImplementationGuideDependsOn; overload; {b\}
+    procedure ParseImplementationGuideDependsOnProperties(jsn : TJsonObject; result : TFhirImplementationGuideDependsOn); overload; {b\}
+    procedure ParseImplementationGuideDependsOn(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
     function ParseImplementationGuideGlobal(jsn : TJsonObject) : TFhirImplementationGuideGlobal; overload; {b\}
     procedure ParseImplementationGuideGlobalProperties(jsn : TJsonObject; result : TFhirImplementationGuideGlobal); overload; {b\}
     procedure ParseImplementationGuideGlobal(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
-    function ParseImplementationGuidePage(jsn : TJsonObject) : TFhirImplementationGuidePage; overload; {b\}
-    procedure ParseImplementationGuidePageProperties(jsn : TJsonObject; result : TFhirImplementationGuidePage); overload; {b\}
-    procedure ParseImplementationGuidePage(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+    function ParseImplementationGuideDefinition(jsn : TJsonObject) : TFhirImplementationGuideDefinition; overload; {b\}
+    procedure ParseImplementationGuideDefinitionProperties(jsn : TJsonObject; result : TFhirImplementationGuideDefinition); overload; {b\}
+    procedure ParseImplementationGuideDefinition(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+    function ParseImplementationGuideDefinitionPackage(jsn : TJsonObject) : TFhirImplementationGuideDefinitionPackage; overload; {b\}
+    procedure ParseImplementationGuideDefinitionPackageProperties(jsn : TJsonObject; result : TFhirImplementationGuideDefinitionPackage); overload; {b\}
+    procedure ParseImplementationGuideDefinitionPackage(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+    function ParseImplementationGuideDefinitionResource(jsn : TJsonObject) : TFhirImplementationGuideDefinitionResource; overload; {b\}
+    procedure ParseImplementationGuideDefinitionResourceProperties(jsn : TJsonObject; result : TFhirImplementationGuideDefinitionResource); overload; {b\}
+    procedure ParseImplementationGuideDefinitionResource(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+    function ParseImplementationGuideDefinitionPage(jsn : TJsonObject) : TFhirImplementationGuideDefinitionPage; overload; {b\}
+    procedure ParseImplementationGuideDefinitionPageProperties(jsn : TJsonObject; result : TFhirImplementationGuideDefinitionPage); overload; {b\}
+    procedure ParseImplementationGuideDefinitionPage(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+    function ParseImplementationGuideDefinitionParameter(jsn : TJsonObject) : TFhirImplementationGuideDefinitionParameter; overload; {b\}
+    procedure ParseImplementationGuideDefinitionParameterProperties(jsn : TJsonObject; result : TFhirImplementationGuideDefinitionParameter); overload; {b\}
+    procedure ParseImplementationGuideDefinitionParameter(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+    function ParseImplementationGuideDefinitionTemplate(jsn : TJsonObject) : TFhirImplementationGuideDefinitionTemplate; overload; {b\}
+    procedure ParseImplementationGuideDefinitionTemplateProperties(jsn : TJsonObject; result : TFhirImplementationGuideDefinitionTemplate); overload; {b\}
+    procedure ParseImplementationGuideDefinitionTemplate(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+    function ParseImplementationGuideManifest(jsn : TJsonObject) : TFhirImplementationGuideManifest; overload; {b\}
+    procedure ParseImplementationGuideManifestProperties(jsn : TJsonObject; result : TFhirImplementationGuideManifest); overload; {b\}
+    procedure ParseImplementationGuideManifest(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+    function ParseImplementationGuideManifestResource(jsn : TJsonObject) : TFhirImplementationGuideManifestResource; overload; {b\}
+    procedure ParseImplementationGuideManifestResourceProperties(jsn : TJsonObject; result : TFhirImplementationGuideManifestResource); overload; {b\}
+    procedure ParseImplementationGuideManifestResource(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+    function ParseImplementationGuideManifestPage(jsn : TJsonObject) : TFhirImplementationGuideManifestPage; overload; {b\}
+    procedure ParseImplementationGuideManifestPageProperties(jsn : TJsonObject; result : TFhirImplementationGuideManifestPage); overload; {b\}
+    procedure ParseImplementationGuideManifestPage(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
     function ParseImplementationGuide(jsn : TJsonObject) : TFhirImplementationGuide; overload;
     procedure ParseImplementationGuideProperties(jsn : TJsonObject; result : TFhirImplementationGuide); overload;
     procedure ParseImplementationGuide(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
@@ -2252,6 +2273,7 @@ Type
     procedure ComposeAttachment(json : TJSONWriter; name : string; elem : TFhirAttachment; noObj : boolean = false);
     procedure ComposeDataRequirementCodeFilter(json : TJSONWriter; name : string; elem : TFhirDataRequirementCodeFilter; noObj : boolean = false);
     procedure ComposeDataRequirementDateFilter(json : TJSONWriter; name : string; elem : TFhirDataRequirementDateFilter; noObj : boolean = false);
+    procedure ComposeDataRequirementSort(json : TJSONWriter; name : string; elem : TFhirDataRequirementSort; noObj : boolean = false);
     procedure ComposeDataRequirement(json : TJSONWriter; name : string; elem : TFhirDataRequirement; noObj : boolean = false);
     procedure ComposeDosageDoseAndRate(json : TJSONWriter; name : string; elem : TFhirDosageDoseAndRate; noObj : boolean = false);
     procedure ComposeDosage(json : TJSONWriter; name : string; elem : TFhirDosage; noObj : boolean = false);
@@ -2661,11 +2683,17 @@ Type
     procedure ComposeImmunizationRecommendation(json : TJSONWriter; name : string; elem : TFhirImmunizationRecommendation; noObj : boolean = false);
 {$ENDIF FHIR_IMMUNIZATIONRECOMMENDATION}
 {$IFDEF FHIR_IMPLEMENTATIONGUIDE}
-    procedure ComposeImplementationGuideDependency(json : TJSONWriter; name : string; elem : TFhirImplementationGuideDependency; noObj : boolean = false);
-    procedure ComposeImplementationGuidePackage(json : TJSONWriter; name : string; elem : TFhirImplementationGuidePackage; noObj : boolean = false);
-    procedure ComposeImplementationGuidePackageResource(json : TJSONWriter; name : string; elem : TFhirImplementationGuidePackageResource; noObj : boolean = false);
+    procedure ComposeImplementationGuideDependsOn(json : TJSONWriter; name : string; elem : TFhirImplementationGuideDependsOn; noObj : boolean = false);
     procedure ComposeImplementationGuideGlobal(json : TJSONWriter; name : string; elem : TFhirImplementationGuideGlobal; noObj : boolean = false);
-    procedure ComposeImplementationGuidePage(json : TJSONWriter; name : string; elem : TFhirImplementationGuidePage; noObj : boolean = false);
+    procedure ComposeImplementationGuideDefinition(json : TJSONWriter; name : string; elem : TFhirImplementationGuideDefinition; noObj : boolean = false);
+    procedure ComposeImplementationGuideDefinitionPackage(json : TJSONWriter; name : string; elem : TFhirImplementationGuideDefinitionPackage; noObj : boolean = false);
+    procedure ComposeImplementationGuideDefinitionResource(json : TJSONWriter; name : string; elem : TFhirImplementationGuideDefinitionResource; noObj : boolean = false);
+    procedure ComposeImplementationGuideDefinitionPage(json : TJSONWriter; name : string; elem : TFhirImplementationGuideDefinitionPage; noObj : boolean = false);
+    procedure ComposeImplementationGuideDefinitionParameter(json : TJSONWriter; name : string; elem : TFhirImplementationGuideDefinitionParameter; noObj : boolean = false);
+    procedure ComposeImplementationGuideDefinitionTemplate(json : TJSONWriter; name : string; elem : TFhirImplementationGuideDefinitionTemplate; noObj : boolean = false);
+    procedure ComposeImplementationGuideManifest(json : TJSONWriter; name : string; elem : TFhirImplementationGuideManifest; noObj : boolean = false);
+    procedure ComposeImplementationGuideManifestResource(json : TJSONWriter; name : string; elem : TFhirImplementationGuideManifestResource; noObj : boolean = false);
+    procedure ComposeImplementationGuideManifestPage(json : TJSONWriter; name : string; elem : TFhirImplementationGuideManifestPage; noObj : boolean = false);
     procedure ComposeImplementationGuide(json : TJSONWriter; name : string; elem : TFhirImplementationGuide; noObj : boolean = false);
 {$ENDIF FHIR_IMPLEMENTATIONGUIDE}
 {$IFDEF FHIR_INVOICE}
@@ -5242,8 +5270,8 @@ begin
     ParseElementProperties(jsn, result);
     if jsn.has('path') or jsn.has('_path') then
         result.pathElement := ParseString(jsn['path'], jsn.vObj['_path']);{q}
-    if jsn.has('valueSetReference') {a3} then
-      result.valueSet := ParseReference(jsn.vObj['valueSetReference']);
+    if jsn.has('valueSetCanonical') or jsn.has('_valueSetCanonical') then
+      result.valueSet := parseCanonical(jsn['valueSetCanonical'], jsn.vObj['_valueSetCanonical']);
     if jsn.has('valueSetUri') or jsn.has('_valueSetUri') then
       result.valueSet := parseUri(jsn['valueSetUri'], jsn.vObj['_valueSetUri']);
     if jsn.has('code') then
@@ -5262,8 +5290,11 @@ begin
     ComposeStringValue(json, 'path', elem.pathElement, false);
   if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeStringProps(json, 'path', elem.pathElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.valueSet is TFhirReference) then
-    ComposeReference(json, 'valueSetReference', TFhirReference(elem.valueSet))
+  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.valueSet is TFhirCanonical) then 
+  begin
+    ComposeCanonicalValue(json, 'valueSetCanonical', TFhirCanonical(elem.valueSet), false);
+    ComposeCanonicalProps(json, 'valueSetCanonical', TFhirCanonical(elem.valueSet), false);
+  end
   else if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.valueSet is TFhirUri) then 
   begin
     ComposeUriValue(json, 'valueSetUri', TFhirUri(elem.valueSet), false);
@@ -5330,6 +5361,48 @@ begin
   if not noObj then json.finishObject;
 end;
 
+procedure TFHIRJsonParser.ParseDataRequirementSort(jsn : TJsonObject; ctxt : TFHIRObjectList);
+begin
+  ctxt.add(ParseDataRequirementSort(jsn)); {2}
+end;
+
+function TFHIRJsonParser.ParseDataRequirementSort(jsn : TJsonObject) : TFhirDataRequirementSort;
+begin
+  result := TFhirDataRequirementSort.create;
+  try
+    ParseDataRequirementSortProperties(jsn, result);
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFHIRJsonParser.ParseDataRequirementSortProperties(jsn : TJsonObject; result : TFhirDataRequirementSort);
+begin
+    ParseElementProperties(jsn, result);
+    if jsn.has('path') or jsn.has('_path') then
+        result.pathElement := ParseString(jsn['path'], jsn.vObj['_path']);{q}
+    if jsn.has('direction') or jsn.has('_direction')  then
+      result.directionElement := parseEnum(jsn.path+'/direction', jsn['direction'], jsn.vObj['_direction'], CODES_TFhirSortDirectionEnum, SYSTEMS_TFhirSortDirectionEnum);
+end;
+
+procedure TFHIRJsonComposer.ComposeDataRequirementSort(json : TJSONWriter; name : string; elem : TFhirDataRequirementSort; noObj : boolean = false);
+begin
+  if (elem = nil) then
+    exit;
+  if not noObj then json.valueObject(name);
+  ComposeElementProperties(json, elem); {c6}
+  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+    ComposeStringValue(json, 'path', elem.pathElement, false);
+  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+    ComposeStringProps(json, 'path', elem.pathElement, false);
+  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+     ComposeEnumValue(json, 'direction', elem.DirectionElement, CODES_TFhirSortDirectionEnum, false);
+  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+     ComposeEnumProps(json, 'direction', elem.DirectionElement, CODES_TFhirSortDirectionEnum, false);
+  if not noObj then json.finishObject;
+end;
+
 procedure TFHIRJsonParser.ParseDataRequirement(jsn : TJsonObject; ctxt : TFHIRObjectList);
 begin
   ctxt.add(ParseDataRequirement(jsn)); {2}
@@ -5353,12 +5426,20 @@ begin
       result.type_Element := parseEnum(jsn.path+'/type', jsn['type'], jsn.vObj['_type'], CODES_TFhirAllTypesEnum, SYSTEMS_TFhirAllTypesEnum);
       if jsn.has('profile') or jsn.has('_profile') then
       iteratePrimitiveArray(jsn.vArr['profile'], jsn.vArr['_profile'], result.profileList, parseCanonical);
+    if jsn.has('subjectCodeableConcept') {a4} then
+      result.subject := ParseCodeableConcept(jsn.vObj['subjectCodeableConcept']);
+    if jsn.has('subjectReference') {a3} then
+      result.subject := ParseReference(jsn.vObj['subjectReference']);
       if jsn.has('mustSupport') or jsn.has('_mustSupport') then
       iteratePrimitiveArray(jsn.vArr['mustSupport'], jsn.vArr['_mustSupport'], result.mustSupportList, parseString);
     if jsn.has('codeFilter') then
       iterateArray(jsn.vArr['codeFilter'], result.codeFilterList, parseDataRequirementCodeFilter);
     if jsn.has('dateFilter') then
       iterateArray(jsn.vArr['dateFilter'], result.dateFilterList, parseDataRequirementDateFilter);
+    if jsn.has('limit') or jsn.has('_limit') then
+        result.limitElement := ParsePositiveInt(jsn['limit'], jsn.vObj['_limit']);{q}
+    if jsn.has('sort') then
+      iterateArray(jsn.vArr['sort'], result.sortList, parseDataRequirementSort);
 end;
 
 procedure TFHIRJsonComposer.ComposeDataRequirement(json : TJSONWriter; name : string; elem : TFhirDataRequirement; noObj : boolean = false);
@@ -5399,6 +5480,10 @@ begin
       json.FinishArray;
     end;
   end;
+  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.subject is TFhirCodeableConcept) then 
+    ComposeCodeableConcept(json, 'subjectCodeableConcept', TFhirCodeableConcept(elem.subject)) 
+  else if not elem.noCompose and (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.subject is TFhirReference) then
+    ComposeReference(json, 'subjectReference', TFhirReference(elem.subject));
   if not elem.noCompose and (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.mustSupportList.Count > 0) then
   begin
     ext := false;
@@ -5435,6 +5520,17 @@ begin
     json.valueArray('dateFilter');
     for i := 0 to elem.dateFilterList.Count - 1 do
       ComposeDataRequirementDateFilter(json, '', elem.dateFilterList[i]); {z - }
+    json.FinishArray;
+  end;
+  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soText, soData]) then
+    ComposePositiveIntValue(json, 'limit', elem.limitElement, false);
+  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soText, soData]) then
+    ComposePositiveIntProps(json, 'limit', elem.limitElement, false);
+  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.sortList.Count > 0) then
+  begin
+    json.valueArray('sort');
+    for i := 0 to elem.sortList.Count - 1 do
+      ComposeDataRequirementSort(json, '', elem.sortList[i]); {z - }
     json.FinishArray;
   end;
   if not noObj then json.finishObject;
@@ -6909,8 +7005,8 @@ begin
         result.documentationElement := ParseString(jsn['documentation'], jsn.vObj['_documentation']);{q}
     if jsn.has('type') or jsn.has('_type')  then
       result.type_Element := parseEnum(jsn.path+'/type', jsn['type'], jsn.vObj['_type'], CODES_TFhirAllTypesEnum, SYSTEMS_TFhirAllTypesEnum);
-    if jsn.has('profile') then
-        result.profile := ParseReference{TFhirStructureDefinition}(jsn.vObj['profile']);{q3}
+    if jsn.has('profile') or jsn.has('_profile') then
+        result.profileElement := ParseCanonical(jsn['profile'], jsn.vObj['_profile']);{q}
 end;
 
 procedure TFHIRJsonComposer.ComposeParameterDefinition(json : TJSONWriter; name : string; elem : TFhirParameterDefinition; noObj : boolean = false);
@@ -6944,7 +7040,9 @@ begin
   if not elem.noCompose and (SummaryOption in [soFull, soSummary, soText, soData]) then
      ComposeEnumProps(json, 'type', elem.Type_Element, CODES_TFhirAllTypesEnum, false);
   if not elem.noCompose and (SummaryOption in [soFull, soSummary, soText, soData]) then
-    ComposeReference{TFhirStructureDefinition}(json, 'profile', elem.profile); {a}
+    ComposeCanonicalValue(json, 'profile', elem.profileElement, false);
+  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soText, soData]) then
+    ComposeCanonicalProps(json, 'profile', elem.profileElement, false);
   if not noObj then json.finishObject;
 end;
 
@@ -29259,10 +29357,14 @@ begin
         result.descriptionElement := ParseString(jsn['description'], jsn.vObj['_description']);{q}
     if jsn.has('series') or jsn.has('_series') then
         result.seriesElement := ParseString(jsn['series'], jsn.vObj['_series']);{q}
-    if jsn.has('doseNumber') or jsn.has('_doseNumber') then
-        result.doseNumberElement := ParsePositiveInt(jsn['doseNumber'], jsn.vObj['_doseNumber']);{q}
-    if jsn.has('seriesDoses') or jsn.has('_seriesDoses') then
-        result.seriesDosesElement := ParsePositiveInt(jsn['seriesDoses'], jsn.vObj['_seriesDoses']);{q}
+    if jsn.has('doseNumberPositiveInt') or jsn.has('_doseNumberPositiveInt') then
+      result.doseNumber := parsePositiveInt(jsn['doseNumberPositiveInt'], jsn.vObj['_doseNumberPositiveInt']);
+    if jsn.has('doseNumberString') or jsn.has('_doseNumberString') then
+      result.doseNumber := parseString(jsn['doseNumberString'], jsn.vObj['_doseNumberString']);
+    if jsn.has('seriesDosesPositiveInt') or jsn.has('_seriesDosesPositiveInt') then
+      result.seriesDoses := parsePositiveInt(jsn['seriesDosesPositiveInt'], jsn.vObj['_seriesDosesPositiveInt']);
+    if jsn.has('seriesDosesString') or jsn.has('_seriesDosesString') then
+      result.seriesDoses := parseString(jsn['seriesDosesString'], jsn.vObj['_seriesDosesString']);
 end;
 
 procedure TFHIRJsonComposer.ComposeImmunizationEvaluation(json : TJSONWriter; name : string; elem : TFhirImmunizationEvaluation; noObj : boolean = false);
@@ -29317,14 +29419,26 @@ begin
     ComposeStringValue(json, 'series', elem.seriesElement, false);
   if not elem.noCompose and doCompose('series') and (SummaryOption in [soFull, soData]) then
     ComposeStringProps(json, 'series', elem.seriesElement, false);
-  if not elem.noCompose and doCompose('doseNumber') and (SummaryOption in [soFull, soData]) then
-    ComposePositiveIntValue(json, 'doseNumber', elem.doseNumberElement, false);
-  if not elem.noCompose and doCompose('doseNumber') and (SummaryOption in [soFull, soData]) then
-    ComposePositiveIntProps(json, 'doseNumber', elem.doseNumberElement, false);
-  if not elem.noCompose and doCompose('seriesDoses') and (SummaryOption in [soFull, soData]) then
-    ComposePositiveIntValue(json, 'seriesDoses', elem.seriesDosesElement, false);
-  if not elem.noCompose and doCompose('seriesDoses') and (SummaryOption in [soFull, soData]) then
-    ComposePositiveIntProps(json, 'seriesDoses', elem.seriesDosesElement, false);
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.doseNumber is TFhirPositiveInt) then 
+  begin
+    ComposePositiveIntValue(json, 'doseNumberPositiveInt', TFhirPositiveInt(elem.doseNumber), false);
+    ComposePositiveIntProps(json, 'doseNumberPositiveInt', TFhirPositiveInt(elem.doseNumber), false);
+  end
+  else if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.doseNumber is TFhirString) then 
+  begin
+    ComposeStringValue(json, 'doseNumberString', TFhirString(elem.doseNumber), false);
+    ComposeStringProps(json, 'doseNumberString', TFhirString(elem.doseNumber), false);
+  end;
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.seriesDoses is TFhirPositiveInt) then 
+  begin
+    ComposePositiveIntValue(json, 'seriesDosesPositiveInt', TFhirPositiveInt(elem.seriesDoses), false);
+    ComposePositiveIntProps(json, 'seriesDosesPositiveInt', TFhirPositiveInt(elem.seriesDoses), false);
+  end
+  else if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.seriesDoses is TFhirString) then 
+  begin
+    ComposeStringValue(json, 'seriesDosesString', TFhirString(elem.seriesDoses), false);
+    ComposeStringProps(json, 'seriesDosesString', TFhirString(elem.seriesDoses), false);
+  end;
 end;
 
 {$ENDIF FHIR_IMMUNIZATIONEVALUATION}
@@ -29364,10 +29478,14 @@ begin
         result.descriptionElement := ParseString(jsn['description'], jsn.vObj['_description']);{q}
     if jsn.has('series') or jsn.has('_series') then
         result.seriesElement := ParseString(jsn['series'], jsn.vObj['_series']);{q}
-    if jsn.has('doseNumber') or jsn.has('_doseNumber') then
-        result.doseNumberElement := ParsePositiveInt(jsn['doseNumber'], jsn.vObj['_doseNumber']);{q}
-    if jsn.has('seriesDoses') or jsn.has('_seriesDoses') then
-        result.seriesDosesElement := ParsePositiveInt(jsn['seriesDoses'], jsn.vObj['_seriesDoses']);{q}
+    if jsn.has('doseNumberPositiveInt') or jsn.has('_doseNumberPositiveInt') then
+      result.doseNumber := parsePositiveInt(jsn['doseNumberPositiveInt'], jsn.vObj['_doseNumberPositiveInt']);
+    if jsn.has('doseNumberString') or jsn.has('_doseNumberString') then
+      result.doseNumber := parseString(jsn['doseNumberString'], jsn.vObj['_doseNumberString']);
+    if jsn.has('seriesDosesPositiveInt') or jsn.has('_seriesDosesPositiveInt') then
+      result.seriesDoses := parsePositiveInt(jsn['seriesDosesPositiveInt'], jsn.vObj['_seriesDosesPositiveInt']);
+    if jsn.has('seriesDosesString') or jsn.has('_seriesDosesString') then
+      result.seriesDoses := parseString(jsn['seriesDosesString'], jsn.vObj['_seriesDosesString']);
     if jsn.has('supportingImmunization') then
       iterateArray(jsn.vArr['supportingImmunization'], result.supportingImmunizationList, parseReference{TFhirImmunization});
     if jsn.has('supportingPatientInformation') then
@@ -29422,14 +29540,26 @@ begin
     ComposeStringValue(json, 'series', elem.seriesElement, false);
   if not elem.noCompose and (SummaryOption in [soFull, soData]) then
     ComposeStringProps(json, 'series', elem.seriesElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
-    ComposePositiveIntValue(json, 'doseNumber', elem.doseNumberElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
-    ComposePositiveIntProps(json, 'doseNumber', elem.doseNumberElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
-    ComposePositiveIntValue(json, 'seriesDoses', elem.seriesDosesElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
-    ComposePositiveIntProps(json, 'seriesDoses', elem.seriesDosesElement, false);
+  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.doseNumber is TFhirPositiveInt) then 
+  begin
+    ComposePositiveIntValue(json, 'doseNumberPositiveInt', TFhirPositiveInt(elem.doseNumber), false);
+    ComposePositiveIntProps(json, 'doseNumberPositiveInt', TFhirPositiveInt(elem.doseNumber), false);
+  end
+  else if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.doseNumber is TFhirString) then 
+  begin
+    ComposeStringValue(json, 'doseNumberString', TFhirString(elem.doseNumber), false);
+    ComposeStringProps(json, 'doseNumberString', TFhirString(elem.doseNumber), false);
+  end;
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.seriesDoses is TFhirPositiveInt) then 
+  begin
+    ComposePositiveIntValue(json, 'seriesDosesPositiveInt', TFhirPositiveInt(elem.seriesDoses), false);
+    ComposePositiveIntProps(json, 'seriesDosesPositiveInt', TFhirPositiveInt(elem.seriesDoses), false);
+  end
+  else if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.seriesDoses is TFhirString) then 
+  begin
+    ComposeStringValue(json, 'seriesDosesString', TFhirString(elem.seriesDoses), false);
+    ComposeStringProps(json, 'seriesDosesString', TFhirString(elem.seriesDoses), false);
+  end;
   if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.supportingImmunizationList.Count > 0) then
   begin
     json.valueArray('supportingImmunization');
@@ -29551,169 +29681,45 @@ end;
 
 {$ENDIF FHIR_IMMUNIZATIONRECOMMENDATION}
 {$IFDEF FHIR_IMPLEMENTATIONGUIDE}
-procedure TFHIRJsonParser.ParseImplementationGuideDependency(jsn : TJsonObject; ctxt : TFHIRObjectList);
+procedure TFHIRJsonParser.ParseImplementationGuideDependsOn(jsn : TJsonObject; ctxt : TFHIRObjectList);
 begin
-  ctxt.add(ParseImplementationGuideDependency(jsn)); {2}
+  ctxt.add(ParseImplementationGuideDependsOn(jsn)); {2}
 end;
 
-function TFHIRJsonParser.ParseImplementationGuideDependency(jsn : TJsonObject) : TFhirImplementationGuideDependency;
+function TFHIRJsonParser.ParseImplementationGuideDependsOn(jsn : TJsonObject) : TFhirImplementationGuideDependsOn;
 begin
-  result := TFhirImplementationGuideDependency.create;
+  result := TFhirImplementationGuideDependsOn.create;
   try
-    ParseImplementationGuideDependencyProperties(jsn, result);
+    ParseImplementationGuideDependsOnProperties(jsn, result);
     result.link;
   finally
     result.free;
   end;
 end;
 
-procedure TFHIRJsonParser.ParseImplementationGuideDependencyProperties(jsn : TJsonObject; result : TFhirImplementationGuideDependency);
+procedure TFHIRJsonParser.ParseImplementationGuideDependsOnProperties(jsn : TJsonObject; result : TFhirImplementationGuideDependsOn);
 begin
     ParseBackboneElementProperties(jsn, result);
-    if jsn.has('type') or jsn.has('_type')  then
-      result.type_Element := parseEnum(jsn.path+'/type', jsn['type'], jsn.vObj['_type'], CODES_TFhirGuideDependencyTypeEnum, SYSTEMS_TFhirGuideDependencyTypeEnum);
     if jsn.has('uri') or jsn.has('_uri') then
-        result.uriElement := ParseUri(jsn['uri'], jsn.vObj['_uri']);{q}
+        result.uriElement := ParseCanonical(jsn['uri'], jsn.vObj['_uri']);{q}
+    if jsn.has('version') or jsn.has('_version') then
+        result.versionElement := ParseString(jsn['version'], jsn.vObj['_version']);{q}
 end;
 
-procedure TFHIRJsonComposer.ComposeImplementationGuideDependency(json : TJSONWriter; name : string; elem : TFhirImplementationGuideDependency; noObj : boolean = false);
+procedure TFHIRJsonComposer.ComposeImplementationGuideDependsOn(json : TJSONWriter; name : string; elem : TFhirImplementationGuideDependsOn; noObj : boolean = false);
 begin
   if (elem = nil) then
     exit;
   if not noObj then json.valueObject(name);
   ComposeBackboneElementProperties(json, elem); {c2}
   if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
-     ComposeEnumValue(json, 'type', elem.Type_Element, CODES_TFhirGuideDependencyTypeEnum, false);
+    ComposeCanonicalValue(json, 'uri', elem.uriElement, false);
   if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
-     ComposeEnumProps(json, 'type', elem.Type_Element, CODES_TFhirGuideDependencyTypeEnum, false);
+    ComposeCanonicalProps(json, 'uri', elem.uriElement, false);
   if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
-    ComposeUriValue(json, 'uri', elem.uriElement, false);
+    ComposeStringValue(json, 'version', elem.versionElement, false);
   if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
-    ComposeUriProps(json, 'uri', elem.uriElement, false);
-  if not noObj then json.finishObject;
-end;
-
-procedure TFHIRJsonParser.ParseImplementationGuidePackage(jsn : TJsonObject; ctxt : TFHIRObjectList);
-begin
-  ctxt.add(ParseImplementationGuidePackage(jsn)); {2}
-end;
-
-function TFHIRJsonParser.ParseImplementationGuidePackage(jsn : TJsonObject) : TFhirImplementationGuidePackage;
-begin
-  result := TFhirImplementationGuidePackage.create;
-  try
-    ParseImplementationGuidePackageProperties(jsn, result);
-    result.link;
-  finally
-    result.free;
-  end;
-end;
-
-procedure TFHIRJsonParser.ParseImplementationGuidePackageProperties(jsn : TJsonObject; result : TFhirImplementationGuidePackage);
-begin
-    ParseBackboneElementProperties(jsn, result);
-    if jsn.has('name') or jsn.has('_name') then
-        result.nameElement := ParseString(jsn['name'], jsn.vObj['_name']);{q}
-    if jsn.has('description') or jsn.has('_description') then
-        result.descriptionElement := ParseString(jsn['description'], jsn.vObj['_description']);{q}
-    if jsn.has('resource') then
-      iterateArray(jsn.vArr['resource'], result.resourceList, parseImplementationGuidePackageResource);
-end;
-
-procedure TFHIRJsonComposer.ComposeImplementationGuidePackage(json : TJSONWriter; name : string; elem : TFhirImplementationGuidePackage; noObj : boolean = false);
-var
-  i : integer;
-begin
-  if (elem = nil) then
-    exit;
-  if not noObj then json.valueObject(name);
-  ComposeBackboneElementProperties(json, elem); {c2}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
-    ComposeStringValue(json, 'name', elem.nameElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
-    ComposeStringProps(json, 'name', elem.nameElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
-    ComposeStringValue(json, 'description', elem.descriptionElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
-    ComposeStringProps(json, 'description', elem.descriptionElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.resourceList.Count > 0) then
-  begin
-    json.valueArray('resource');
-    for i := 0 to elem.resourceList.Count - 1 do
-      ComposeImplementationGuidePackageResource(json, '', elem.resourceList[i]); {z - }
-    json.FinishArray;
-  end;
-  if not noObj then json.finishObject;
-end;
-
-procedure TFHIRJsonParser.ParseImplementationGuidePackageResource(jsn : TJsonObject; ctxt : TFHIRObjectList);
-begin
-  ctxt.add(ParseImplementationGuidePackageResource(jsn)); {2}
-end;
-
-function TFHIRJsonParser.ParseImplementationGuidePackageResource(jsn : TJsonObject) : TFhirImplementationGuidePackageResource;
-begin
-  result := TFhirImplementationGuidePackageResource.create;
-  try
-    ParseImplementationGuidePackageResourceProperties(jsn, result);
-    result.link;
-  finally
-    result.free;
-  end;
-end;
-
-procedure TFHIRJsonParser.ParseImplementationGuidePackageResourceProperties(jsn : TJsonObject; result : TFhirImplementationGuidePackageResource);
-begin
-    ParseBackboneElementProperties(jsn, result);
-    if jsn.has('example') or jsn.has('_example') then
-        result.exampleElement := ParseBoolean(jsn['example'], jsn.vObj['_example']);{q}
-    if jsn.has('name') or jsn.has('_name') then
-        result.nameElement := ParseString(jsn['name'], jsn.vObj['_name']);{q}
-    if jsn.has('description') or jsn.has('_description') then
-        result.descriptionElement := ParseString(jsn['description'], jsn.vObj['_description']);{q}
-    if jsn.has('acronym') or jsn.has('_acronym') then
-        result.acronymElement := ParseString(jsn['acronym'], jsn.vObj['_acronym']);{q}
-    if jsn.has('sourceReference') {a3} then
-      result.source := ParseReference(jsn.vObj['sourceReference']);
-    if jsn.has('sourceUri') or jsn.has('_sourceUri') then
-      result.source := parseUri(jsn['sourceUri'], jsn.vObj['_sourceUri']);
-    if jsn.has('exampleFor') or jsn.has('_exampleFor') then
-        result.exampleForElement := ParseCanonical(jsn['exampleFor'], jsn.vObj['_exampleFor']);{q}
-end;
-
-procedure TFHIRJsonComposer.ComposeImplementationGuidePackageResource(json : TJSONWriter; name : string; elem : TFhirImplementationGuidePackageResource; noObj : boolean = false);
-begin
-  if (elem = nil) then
-    exit;
-  if not noObj then json.valueObject(name);
-  ComposeBackboneElementProperties(json, elem); {c2}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
-    ComposeBooleanValue(json, 'example', elem.exampleElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
-    ComposeBooleanProps(json, 'example', elem.exampleElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
-    ComposeStringValue(json, 'name', elem.nameElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
-    ComposeStringProps(json, 'name', elem.nameElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
-    ComposeStringValue(json, 'description', elem.descriptionElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
-    ComposeStringProps(json, 'description', elem.descriptionElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
-    ComposeStringValue(json, 'acronym', elem.acronymElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
-    ComposeStringProps(json, 'acronym', elem.acronymElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.source is TFhirReference) then
-    ComposeReference(json, 'sourceReference', TFhirReference(elem.source))
-  else if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.source is TFhirUri) then 
-  begin
-    ComposeUriValue(json, 'sourceUri', TFhirUri(elem.source), false);
-    ComposeUriProps(json, 'sourceUri', TFhirUri(elem.source), false);
-  end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
-    ComposeCanonicalValue(json, 'exampleFor', elem.exampleForElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
-    ComposeCanonicalProps(json, 'exampleFor', elem.exampleForElement, false);
+    ComposeStringProps(json, 'version', elem.versionElement, false);
   if not noObj then json.finishObject;
 end;
 
@@ -29759,42 +29765,372 @@ begin
   if not noObj then json.finishObject;
 end;
 
-procedure TFHIRJsonParser.ParseImplementationGuidePage(jsn : TJsonObject; ctxt : TFHIRObjectList);
+procedure TFHIRJsonParser.ParseImplementationGuideDefinition(jsn : TJsonObject; ctxt : TFHIRObjectList);
 begin
-  ctxt.add(ParseImplementationGuidePage(jsn)); {2}
+  ctxt.add(ParseImplementationGuideDefinition(jsn)); {2}
 end;
 
-function TFHIRJsonParser.ParseImplementationGuidePage(jsn : TJsonObject) : TFhirImplementationGuidePage;
+function TFHIRJsonParser.ParseImplementationGuideDefinition(jsn : TJsonObject) : TFhirImplementationGuideDefinition;
 begin
-  result := TFhirImplementationGuidePage.create;
+  result := TFhirImplementationGuideDefinition.create;
   try
-    ParseImplementationGuidePageProperties(jsn, result);
+    ParseImplementationGuideDefinitionProperties(jsn, result);
     result.link;
   finally
     result.free;
   end;
 end;
 
-procedure TFHIRJsonParser.ParseImplementationGuidePageProperties(jsn : TJsonObject; result : TFhirImplementationGuidePage);
+procedure TFHIRJsonParser.ParseImplementationGuideDefinitionProperties(jsn : TJsonObject; result : TFhirImplementationGuideDefinition);
 begin
     ParseBackboneElementProperties(jsn, result);
-    if jsn.has('source') or jsn.has('_source') then
-        result.sourceElement := ParseUri(jsn['source'], jsn.vObj['_source']);{q}
-    if jsn.has('title') or jsn.has('_title') then
-        result.titleElement := ParseString(jsn['title'], jsn.vObj['_title']);{q}
-    if jsn.has('kind') or jsn.has('_kind')  then
-      result.kindElement := parseEnum(jsn.path+'/kind', jsn['kind'], jsn.vObj['_kind'], CODES_TFhirGuidePageKindEnum, SYSTEMS_TFhirGuidePageKindEnum);
-    if jsn.has('type') or jsn.has('_type') then
-      iterateEnumArray(jsn.vArr['type'], jsn.vArr['_type'], jsn.path+'/type', result.type_, parseEnum, CODES_TFhirResourceTypesEnum, SYSTEMS_TFhirResourceTypesEnum);
-      if jsn.has('package') or jsn.has('_package') then
-      iteratePrimitiveArray(jsn.vArr['package'], jsn.vArr['_package'], result.packageList, parseString);
-    if jsn.has('format') or jsn.has('_format') then
-        result.formatElement := ParseCode(jsn['format'], jsn.vObj['_format']);{q}
+    if jsn.has('package') then
+      iterateArray(jsn.vArr['package'], result.packageList, parseImplementationGuideDefinitionPackage);
+    if jsn.has('resource') then
+      iterateArray(jsn.vArr['resource'], result.resourceList, parseImplementationGuideDefinitionResource);
     if jsn.has('page') then
-      iterateArray(jsn.vArr['page'], result.pageList, parseImplementationGuidePage);
+        result.page := ParseImplementationGuideDefinitionPage(jsn.vObj['page']);{q3}
+    if jsn.has('parameter') then
+      iterateArray(jsn.vArr['parameter'], result.parameterList, parseImplementationGuideDefinitionParameter);
+    if jsn.has('template') then
+      iterateArray(jsn.vArr['template'], result.templateList, parseImplementationGuideDefinitionTemplate);
 end;
 
-procedure TFHIRJsonComposer.ComposeImplementationGuidePage(json : TJSONWriter; name : string; elem : TFhirImplementationGuidePage; noObj : boolean = false);
+procedure TFHIRJsonComposer.ComposeImplementationGuideDefinition(json : TJSONWriter; name : string; elem : TFhirImplementationGuideDefinition; noObj : boolean = false);
+var
+  i : integer;
+begin
+  if (elem = nil) then
+    exit;
+  if not noObj then json.valueObject(name);
+  ComposeBackboneElementProperties(json, elem); {c2}
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.packageList.Count > 0) then
+  begin
+    json.valueArray('package');
+    for i := 0 to elem.packageList.Count - 1 do
+      ComposeImplementationGuideDefinitionPackage(json, '', elem.packageList[i]); {z - }
+    json.FinishArray;
+  end;
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.resourceList.Count > 0) then
+  begin
+    json.valueArray('resource');
+    for i := 0 to elem.resourceList.Count - 1 do
+      ComposeImplementationGuideDefinitionResource(json, '', elem.resourceList[i]); {z - }
+    json.FinishArray;
+  end;
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeImplementationGuideDefinitionPage(json, 'page', elem.page); {a}
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.parameterList.Count > 0) then
+  begin
+    json.valueArray('parameter');
+    for i := 0 to elem.parameterList.Count - 1 do
+      ComposeImplementationGuideDefinitionParameter(json, '', elem.parameterList[i]); {z - }
+    json.FinishArray;
+  end;
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.templateList.Count > 0) then
+  begin
+    json.valueArray('template');
+    for i := 0 to elem.templateList.Count - 1 do
+      ComposeImplementationGuideDefinitionTemplate(json, '', elem.templateList[i]); {z - }
+    json.FinishArray;
+  end;
+  if not noObj then json.finishObject;
+end;
+
+procedure TFHIRJsonParser.ParseImplementationGuideDefinitionPackage(jsn : TJsonObject; ctxt : TFHIRObjectList);
+begin
+  ctxt.add(ParseImplementationGuideDefinitionPackage(jsn)); {2}
+end;
+
+function TFHIRJsonParser.ParseImplementationGuideDefinitionPackage(jsn : TJsonObject) : TFhirImplementationGuideDefinitionPackage;
+begin
+  result := TFhirImplementationGuideDefinitionPackage.create;
+  try
+    ParseImplementationGuideDefinitionPackageProperties(jsn, result);
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFHIRJsonParser.ParseImplementationGuideDefinitionPackageProperties(jsn : TJsonObject; result : TFhirImplementationGuideDefinitionPackage);
+begin
+    ParseBackboneElementProperties(jsn, result);
+    if jsn.has('name') or jsn.has('_name') then
+        result.nameElement := ParseString(jsn['name'], jsn.vObj['_name']);{q}
+    if jsn.has('description') or jsn.has('_description') then
+        result.descriptionElement := ParseString(jsn['description'], jsn.vObj['_description']);{q}
+end;
+
+procedure TFHIRJsonComposer.ComposeImplementationGuideDefinitionPackage(json : TJSONWriter; name : string; elem : TFhirImplementationGuideDefinitionPackage; noObj : boolean = false);
+begin
+  if (elem = nil) then
+    exit;
+  if not noObj then json.valueObject(name);
+  ComposeBackboneElementProperties(json, elem); {c2}
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeStringValue(json, 'name', elem.nameElement, false);
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeStringProps(json, 'name', elem.nameElement, false);
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeStringValue(json, 'description', elem.descriptionElement, false);
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeStringProps(json, 'description', elem.descriptionElement, false);
+  if not noObj then json.finishObject;
+end;
+
+procedure TFHIRJsonParser.ParseImplementationGuideDefinitionResource(jsn : TJsonObject; ctxt : TFHIRObjectList);
+begin
+  ctxt.add(ParseImplementationGuideDefinitionResource(jsn)); {2}
+end;
+
+function TFHIRJsonParser.ParseImplementationGuideDefinitionResource(jsn : TJsonObject) : TFhirImplementationGuideDefinitionResource;
+begin
+  result := TFhirImplementationGuideDefinitionResource.create;
+  try
+    ParseImplementationGuideDefinitionResourceProperties(jsn, result);
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFHIRJsonParser.ParseImplementationGuideDefinitionResourceProperties(jsn : TJsonObject; result : TFhirImplementationGuideDefinitionResource);
+begin
+    ParseBackboneElementProperties(jsn, result);
+    if jsn.has('reference') then
+        result.reference := ParseReference{TFhirReference}(jsn.vObj['reference']);{q3}
+    if jsn.has('name') or jsn.has('_name') then
+        result.nameElement := ParseString(jsn['name'], jsn.vObj['_name']);{q}
+    if jsn.has('description') or jsn.has('_description') then
+        result.descriptionElement := ParseString(jsn['description'], jsn.vObj['_description']);{q}
+    if jsn.has('exampleCanonical') or jsn.has('_exampleCanonical') then
+      result.example := parseCanonical(jsn['exampleCanonical'], jsn.vObj['_exampleCanonical']);
+    if jsn.has('exampleBoolean') or jsn.has('_exampleBoolean') then
+      result.example := parseBoolean(jsn['exampleBoolean'], jsn.vObj['_exampleBoolean']);
+    if jsn.has('package') or jsn.has('_package') then
+        result.packageElement := ParseId(jsn['package'], jsn.vObj['_package']);{q}
+end;
+
+procedure TFHIRJsonComposer.ComposeImplementationGuideDefinitionResource(json : TJSONWriter; name : string; elem : TFhirImplementationGuideDefinitionResource; noObj : boolean = false);
+begin
+  if (elem = nil) then
+    exit;
+  if not noObj then json.valueObject(name);
+  ComposeBackboneElementProperties(json, elem); {c2}
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeReference{TFhirReference}(json, 'reference', elem.reference); {a}
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeStringValue(json, 'name', elem.nameElement, false);
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeStringProps(json, 'name', elem.nameElement, false);
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeStringValue(json, 'description', elem.descriptionElement, false);
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeStringProps(json, 'description', elem.descriptionElement, false);
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.example is TFhirCanonical) then 
+  begin
+    ComposeCanonicalValue(json, 'exampleCanonical', TFhirCanonical(elem.example), false);
+    ComposeCanonicalProps(json, 'exampleCanonical', TFhirCanonical(elem.example), false);
+  end
+  else if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.example is TFhirBoolean) then 
+  begin
+    ComposeBooleanValue(json, 'exampleBoolean', TFhirBoolean(elem.example), false);
+    ComposeBooleanProps(json, 'exampleBoolean', TFhirBoolean(elem.example), false);
+  end;
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeIdValue(json, 'package', elem.packageElement, false);
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeIdProps(json, 'package', elem.packageElement, false);
+  if not noObj then json.finishObject;
+end;
+
+procedure TFHIRJsonParser.ParseImplementationGuideDefinitionPage(jsn : TJsonObject; ctxt : TFHIRObjectList);
+begin
+  ctxt.add(ParseImplementationGuideDefinitionPage(jsn)); {2}
+end;
+
+function TFHIRJsonParser.ParseImplementationGuideDefinitionPage(jsn : TJsonObject) : TFhirImplementationGuideDefinitionPage;
+begin
+  result := TFhirImplementationGuideDefinitionPage.create;
+  try
+    ParseImplementationGuideDefinitionPageProperties(jsn, result);
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFHIRJsonParser.ParseImplementationGuideDefinitionPageProperties(jsn : TJsonObject; result : TFhirImplementationGuideDefinitionPage);
+begin
+    ParseBackboneElementProperties(jsn, result);
+    if jsn.has('nameUrl') or jsn.has('_nameUrl') then
+      result.name := parseUrl(jsn['nameUrl'], jsn.vObj['_nameUrl']);
+    if jsn.has('nameReference') {a3} then
+      result.name := ParseReference(jsn.vObj['nameReference']);
+    if jsn.has('title') or jsn.has('_title') then
+        result.titleElement := ParseString(jsn['title'], jsn.vObj['_title']);{q}
+    if jsn.has('generation') or jsn.has('_generation')  then
+      result.generationElement := parseEnum(jsn.path+'/generation', jsn['generation'], jsn.vObj['_generation'], CODES_TFhirGuidePageGenerationEnum, SYSTEMS_TFhirGuidePageGenerationEnum);
+    if jsn.has('page') then
+      iterateArray(jsn.vArr['page'], result.pageList, parseImplementationGuideDefinitionPage);
+end;
+
+procedure TFHIRJsonComposer.ComposeImplementationGuideDefinitionPage(json : TJSONWriter; name : string; elem : TFhirImplementationGuideDefinitionPage; noObj : boolean = false);
+var
+  i : integer;
+begin
+  if (elem = nil) then
+    exit;
+  if not noObj then json.valueObject(name);
+  ComposeBackboneElementProperties(json, elem); {c2}
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.name is TFhirUrl) then 
+  begin
+    ComposeUrlValue(json, 'nameUrl', TFhirUrl(elem.name), false);
+    ComposeUrlProps(json, 'nameUrl', TFhirUrl(elem.name), false);
+  end
+  else if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.name is TFhirReference) then
+    ComposeReference(json, 'nameReference', TFhirReference(elem.name));
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeStringValue(json, 'title', elem.titleElement, false);
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeStringProps(json, 'title', elem.titleElement, false);
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+     ComposeEnumValue(json, 'generation', elem.GenerationElement, CODES_TFhirGuidePageGenerationEnum, false);
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+     ComposeEnumProps(json, 'generation', elem.GenerationElement, CODES_TFhirGuidePageGenerationEnum, false);
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.pageList.Count > 0) then
+  begin
+    json.valueArray('page');
+    for i := 0 to elem.pageList.Count - 1 do
+      ComposeImplementationGuideDefinitionPage(json, '', elem.pageList[i]); {z - @ImplementationGuide.definition.page}
+    json.FinishArray;
+  end;
+  if not noObj then json.finishObject;
+end;
+
+procedure TFHIRJsonParser.ParseImplementationGuideDefinitionParameter(jsn : TJsonObject; ctxt : TFHIRObjectList);
+begin
+  ctxt.add(ParseImplementationGuideDefinitionParameter(jsn)); {2}
+end;
+
+function TFHIRJsonParser.ParseImplementationGuideDefinitionParameter(jsn : TJsonObject) : TFhirImplementationGuideDefinitionParameter;
+begin
+  result := TFhirImplementationGuideDefinitionParameter.create;
+  try
+    ParseImplementationGuideDefinitionParameterProperties(jsn, result);
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFHIRJsonParser.ParseImplementationGuideDefinitionParameterProperties(jsn : TJsonObject; result : TFhirImplementationGuideDefinitionParameter);
+begin
+    ParseBackboneElementProperties(jsn, result);
+    if jsn.has('code') or jsn.has('_code')  then
+      result.codeElement := parseEnum(jsn.path+'/code', jsn['code'], jsn.vObj['_code'], CODES_TFhirGuideParameterCodeEnum, SYSTEMS_TFhirGuideParameterCodeEnum);
+    if jsn.has('value') or jsn.has('_value') then
+        result.valueElement := ParseString(jsn['value'], jsn.vObj['_value']);{q}
+end;
+
+procedure TFHIRJsonComposer.ComposeImplementationGuideDefinitionParameter(json : TJSONWriter; name : string; elem : TFhirImplementationGuideDefinitionParameter; noObj : boolean = false);
+begin
+  if (elem = nil) then
+    exit;
+  if not noObj then json.valueObject(name);
+  ComposeBackboneElementProperties(json, elem); {c2}
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+     ComposeEnumValue(json, 'code', elem.CodeElement, CODES_TFhirGuideParameterCodeEnum, false);
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+     ComposeEnumProps(json, 'code', elem.CodeElement, CODES_TFhirGuideParameterCodeEnum, false);
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeStringValue(json, 'value', elem.valueElement, false);
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeStringProps(json, 'value', elem.valueElement, false);
+  if not noObj then json.finishObject;
+end;
+
+procedure TFHIRJsonParser.ParseImplementationGuideDefinitionTemplate(jsn : TJsonObject; ctxt : TFHIRObjectList);
+begin
+  ctxt.add(ParseImplementationGuideDefinitionTemplate(jsn)); {2}
+end;
+
+function TFHIRJsonParser.ParseImplementationGuideDefinitionTemplate(jsn : TJsonObject) : TFhirImplementationGuideDefinitionTemplate;
+begin
+  result := TFhirImplementationGuideDefinitionTemplate.create;
+  try
+    ParseImplementationGuideDefinitionTemplateProperties(jsn, result);
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFHIRJsonParser.ParseImplementationGuideDefinitionTemplateProperties(jsn : TJsonObject; result : TFhirImplementationGuideDefinitionTemplate);
+begin
+    ParseBackboneElementProperties(jsn, result);
+    if jsn.has('code') or jsn.has('_code') then
+        result.codeElement := ParseCode(jsn['code'], jsn.vObj['_code']);{q}
+    if jsn.has('source') or jsn.has('_source') then
+        result.sourceElement := ParseString(jsn['source'], jsn.vObj['_source']);{q}
+    if jsn.has('scope') or jsn.has('_scope') then
+        result.scopeElement := ParseString(jsn['scope'], jsn.vObj['_scope']);{q}
+end;
+
+procedure TFHIRJsonComposer.ComposeImplementationGuideDefinitionTemplate(json : TJSONWriter; name : string; elem : TFhirImplementationGuideDefinitionTemplate; noObj : boolean = false);
+begin
+  if (elem = nil) then
+    exit;
+  if not noObj then json.valueObject(name);
+  ComposeBackboneElementProperties(json, elem); {c2}
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeCodeValue(json, 'code', elem.codeElement, false);
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeCodeProps(json, 'code', elem.codeElement, false);
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeStringValue(json, 'source', elem.sourceElement, false);
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeStringProps(json, 'source', elem.sourceElement, false);
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeStringValue(json, 'scope', elem.scopeElement, false);
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeStringProps(json, 'scope', elem.scopeElement, false);
+  if not noObj then json.finishObject;
+end;
+
+procedure TFHIRJsonParser.ParseImplementationGuideManifest(jsn : TJsonObject; ctxt : TFHIRObjectList);
+begin
+  ctxt.add(ParseImplementationGuideManifest(jsn)); {2}
+end;
+
+function TFHIRJsonParser.ParseImplementationGuideManifest(jsn : TJsonObject) : TFhirImplementationGuideManifest;
+begin
+  result := TFhirImplementationGuideManifest.create;
+  try
+    ParseImplementationGuideManifestProperties(jsn, result);
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFHIRJsonParser.ParseImplementationGuideManifestProperties(jsn : TJsonObject; result : TFhirImplementationGuideManifest);
+begin
+    ParseBackboneElementProperties(jsn, result);
+    if jsn.has('rendering') or jsn.has('_rendering') then
+        result.renderingElement := ParseUrl(jsn['rendering'], jsn.vObj['_rendering']);{q}
+    if jsn.has('resource') then
+      iterateArray(jsn.vArr['resource'], result.resourceList, parseImplementationGuideManifestResource);
+    if jsn.has('page') then
+      iterateArray(jsn.vArr['page'], result.pageList, parseImplementationGuideManifestPage);
+      if jsn.has('image') or jsn.has('_image') then
+      iteratePrimitiveArray(jsn.vArr['image'], jsn.vArr['_image'], result.imageList, parseString);
+      if jsn.has('other') or jsn.has('_other') then
+      iteratePrimitiveArray(jsn.vArr['other'], jsn.vArr['_other'], result.otherList, parseString);
+end;
+
+procedure TFHIRJsonComposer.ComposeImplementationGuideManifest(json : TJSONWriter; name : string; elem : TFhirImplementationGuideManifest; noObj : boolean = false);
 var
   i : integer;
   ext : boolean;
@@ -29805,75 +30141,196 @@ begin
   if not noObj then json.valueObject(name);
   ComposeBackboneElementProperties(json, elem); {c2}
   if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
-    ComposeUriValue(json, 'source', elem.sourceElement, false);
+    ComposeUrlValue(json, 'rendering', elem.renderingElement, false);
   if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
-    ComposeUriProps(json, 'source', elem.sourceElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
-    ComposeStringValue(json, 'title', elem.titleElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
-    ComposeStringProps(json, 'title', elem.titleElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
-     ComposeEnumValue(json, 'kind', elem.KindElement, CODES_TFhirGuidePageKindEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
-     ComposeEnumProps(json, 'kind', elem.KindElement, CODES_TFhirGuidePageKindEnum, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.type_.Count > 0) then
+    ComposeUrlProps(json, 'rendering', elem.renderingElement, false);
+  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.resourceList.Count > 0) then
   begin
-    val := false;
-    ext := false;
-    for i := 0 to elem.type_.Count - 1 do
-    begin
-      val := val or (elem.type_[i].hasPrimitiveValue);
-      ext := ext or ((elem.type_[i].id <> '') or (elem.type_[i].hasExtensionList));
-    end;
-    if val then
-    begin
-      json.valueArray('type');
-      for i := 0 to elem.type_.Count - 1 do
-        ComposeEnumValue(json, '', elem.type_[i], CODES_TFhirResourceTypesEnum, true);
-      json.FinishArray;
-    end;
-    if ext then
-    begin
-      json.valueArray('_type');
-      for i := 0 to elem.type_.Count - 1 do
-        ComposeEnumProps(json, '', elem.type_[i], CODES_TFhirResourceTypesEnum, true);
-      json.FinishArray;
-    end;
+    json.valueArray('resource');
+    for i := 0 to elem.resourceList.Count - 1 do
+      ComposeImplementationGuideManifestResource(json, '', elem.resourceList[i]); {z - }
+    json.FinishArray;
   end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.packageList.Count > 0) then
-  begin
-    ext := false;
-    val := false;
-    for i := 0 to elem.packageList.Count - 1 do
-    begin
-      ext := ext or ((elem.packageList[i].id <> '') or (elem.packageList[i].hasExtensionList) {no-comments or (elem.packageList[i].hasComments)});
-      val := val or (elem.packageList[i].hasPrimitiveValue);
-    end;
-    if val then
-    begin
-      json.valueArray('package');
-      for i := 0 to elem.packageList.Count - 1 do
-        ComposeStringValue(json, '',elem.packageList[i], true);
-      json.FinishArray;
-    end;
-    if ext then
-    begin
-      json.valueArray('_package');
-      for i := 0 to elem.packageList.Count - 1 do
-        ComposeStringProps(json, '',elem.packageList[i], true);
-      json.FinishArray;
-    end;
-  end;
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
-    ComposeCodeValue(json, 'format', elem.formatElement, false);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
-    ComposeCodeProps(json, 'format', elem.formatElement, false);
   if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.pageList.Count > 0) then
   begin
     json.valueArray('page');
     for i := 0 to elem.pageList.Count - 1 do
-      ComposeImplementationGuidePage(json, '', elem.pageList[i]); {z - @ImplementationGuide.page}
+      ComposeImplementationGuideManifestPage(json, '', elem.pageList[i]); {z - }
     json.FinishArray;
+  end;
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.imageList.Count > 0) then
+  begin
+    ext := false;
+    val := false;
+    for i := 0 to elem.imageList.Count - 1 do
+    begin
+      ext := ext or ((elem.imageList[i].id <> '') or (elem.imageList[i].hasExtensionList) {no-comments or (elem.imageList[i].hasComments)});
+      val := val or (elem.imageList[i].hasPrimitiveValue);
+    end;
+    if val then
+    begin
+      json.valueArray('image');
+      for i := 0 to elem.imageList.Count - 1 do
+        ComposeStringValue(json, '',elem.imageList[i], true);
+      json.FinishArray;
+    end;
+    if ext then
+    begin
+      json.valueArray('_image');
+      for i := 0 to elem.imageList.Count - 1 do
+        ComposeStringProps(json, '',elem.imageList[i], true);
+      json.FinishArray;
+    end;
+  end;
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.otherList.Count > 0) then
+  begin
+    ext := false;
+    val := false;
+    for i := 0 to elem.otherList.Count - 1 do
+    begin
+      ext := ext or ((elem.otherList[i].id <> '') or (elem.otherList[i].hasExtensionList) {no-comments or (elem.otherList[i].hasComments)});
+      val := val or (elem.otherList[i].hasPrimitiveValue);
+    end;
+    if val then
+    begin
+      json.valueArray('other');
+      for i := 0 to elem.otherList.Count - 1 do
+        ComposeStringValue(json, '',elem.otherList[i], true);
+      json.FinishArray;
+    end;
+    if ext then
+    begin
+      json.valueArray('_other');
+      for i := 0 to elem.otherList.Count - 1 do
+        ComposeStringProps(json, '',elem.otherList[i], true);
+      json.FinishArray;
+    end;
+  end;
+  if not noObj then json.finishObject;
+end;
+
+procedure TFHIRJsonParser.ParseImplementationGuideManifestResource(jsn : TJsonObject; ctxt : TFHIRObjectList);
+begin
+  ctxt.add(ParseImplementationGuideManifestResource(jsn)); {2}
+end;
+
+function TFHIRJsonParser.ParseImplementationGuideManifestResource(jsn : TJsonObject) : TFhirImplementationGuideManifestResource;
+begin
+  result := TFhirImplementationGuideManifestResource.create;
+  try
+    ParseImplementationGuideManifestResourceProperties(jsn, result);
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFHIRJsonParser.ParseImplementationGuideManifestResourceProperties(jsn : TJsonObject; result : TFhirImplementationGuideManifestResource);
+begin
+    ParseBackboneElementProperties(jsn, result);
+    if jsn.has('reference') then
+        result.reference := ParseReference{TFhirReference}(jsn.vObj['reference']);{q3}
+    if jsn.has('exampleCanonical') or jsn.has('_exampleCanonical') then
+      result.example := parseCanonical(jsn['exampleCanonical'], jsn.vObj['_exampleCanonical']);
+    if jsn.has('exampleBoolean') or jsn.has('_exampleBoolean') then
+      result.example := parseBoolean(jsn['exampleBoolean'], jsn.vObj['_exampleBoolean']);
+    if jsn.has('relativePath') or jsn.has('_relativePath') then
+        result.relativePathElement := ParseUrl(jsn['relativePath'], jsn.vObj['_relativePath']);{q}
+end;
+
+procedure TFHIRJsonComposer.ComposeImplementationGuideManifestResource(json : TJSONWriter; name : string; elem : TFhirImplementationGuideManifestResource; noObj : boolean = false);
+begin
+  if (elem = nil) then
+    exit;
+  if not noObj then json.valueObject(name);
+  ComposeBackboneElementProperties(json, elem); {c2}
+  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+    ComposeReference{TFhirReference}(json, 'reference', elem.reference); {a}
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.example is TFhirCanonical) then 
+  begin
+    ComposeCanonicalValue(json, 'exampleCanonical', TFhirCanonical(elem.example), false);
+    ComposeCanonicalProps(json, 'exampleCanonical', TFhirCanonical(elem.example), false);
+  end
+  else if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.example is TFhirBoolean) then 
+  begin
+    ComposeBooleanValue(json, 'exampleBoolean', TFhirBoolean(elem.example), false);
+    ComposeBooleanProps(json, 'exampleBoolean', TFhirBoolean(elem.example), false);
+  end;
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeUrlValue(json, 'relativePath', elem.relativePathElement, false);
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeUrlProps(json, 'relativePath', elem.relativePathElement, false);
+  if not noObj then json.finishObject;
+end;
+
+procedure TFHIRJsonParser.ParseImplementationGuideManifestPage(jsn : TJsonObject; ctxt : TFHIRObjectList);
+begin
+  ctxt.add(ParseImplementationGuideManifestPage(jsn)); {2}
+end;
+
+function TFHIRJsonParser.ParseImplementationGuideManifestPage(jsn : TJsonObject) : TFhirImplementationGuideManifestPage;
+begin
+  result := TFhirImplementationGuideManifestPage.create;
+  try
+    ParseImplementationGuideManifestPageProperties(jsn, result);
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFHIRJsonParser.ParseImplementationGuideManifestPageProperties(jsn : TJsonObject; result : TFhirImplementationGuideManifestPage);
+begin
+    ParseBackboneElementProperties(jsn, result);
+    if jsn.has('name') or jsn.has('_name') then
+        result.nameElement := ParseString(jsn['name'], jsn.vObj['_name']);{q}
+    if jsn.has('title') or jsn.has('_title') then
+        result.titleElement := ParseString(jsn['title'], jsn.vObj['_title']);{q}
+      if jsn.has('anchor') or jsn.has('_anchor') then
+      iteratePrimitiveArray(jsn.vArr['anchor'], jsn.vArr['_anchor'], result.anchorList, parseString);
+end;
+
+procedure TFHIRJsonComposer.ComposeImplementationGuideManifestPage(json : TJSONWriter; name : string; elem : TFhirImplementationGuideManifestPage; noObj : boolean = false);
+var
+  i : integer;
+  ext : boolean;
+  val : boolean;
+begin
+  if (elem = nil) then
+    exit;
+  if not noObj then json.valueObject(name);
+  ComposeBackboneElementProperties(json, elem); {c2}
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeStringValue(json, 'name', elem.nameElement, false);
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeStringProps(json, 'name', elem.nameElement, false);
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeStringValue(json, 'title', elem.titleElement, false);
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeStringProps(json, 'title', elem.titleElement, false);
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.anchorList.Count > 0) then
+  begin
+    ext := false;
+    val := false;
+    for i := 0 to elem.anchorList.Count - 1 do
+    begin
+      ext := ext or ((elem.anchorList[i].id <> '') or (elem.anchorList[i].hasExtensionList) {no-comments or (elem.anchorList[i].hasComments)});
+      val := val or (elem.anchorList[i].hasPrimitiveValue);
+    end;
+    if val then
+    begin
+      json.valueArray('anchor');
+      for i := 0 to elem.anchorList.Count - 1 do
+        ComposeStringValue(json, '',elem.anchorList[i], true);
+      json.FinishArray;
+    end;
+    if ext then
+    begin
+      json.valueArray('_anchor');
+      for i := 0 to elem.anchorList.Count - 1 do
+        ComposeStringProps(json, '',elem.anchorList[i], true);
+      json.FinishArray;
+    end;
   end;
   if not noObj then json.finishObject;
 end;
@@ -29923,23 +30380,19 @@ begin
         result.copyrightElement := ParseMarkdown(jsn['copyright'], jsn.vObj['_copyright']);{q}
     if jsn.has('fhirVersion') or jsn.has('_fhirVersion') then
         result.fhirVersionElement := ParseId(jsn['fhirVersion'], jsn.vObj['_fhirVersion']);{q}
-    if jsn.has('dependency') then
-      iterateArray(jsn.vArr['dependency'], result.dependencyList, parseImplementationGuideDependency);
-    if jsn.has('package') then
-      iterateArray(jsn.vArr['package'], result.packageList, parseImplementationGuidePackage);
+    if jsn.has('dependsOn') then
+      iterateArray(jsn.vArr['dependsOn'], result.dependsOnList, parseImplementationGuideDependsOn);
     if jsn.has('global') then
       iterateArray(jsn.vArr['global'], result.globalList, parseImplementationGuideGlobal);
-      if jsn.has('binary') or jsn.has('_binary') then
-      iteratePrimitiveArray(jsn.vArr['binary'], jsn.vArr['_binary'], result.binaryList, parseUri);
-    if jsn.has('page') then
-        result.page := ParseImplementationGuidePage(jsn.vObj['page']);{q3}
+    if jsn.has('definition') then
+        result.definition := ParseImplementationGuideDefinition(jsn.vObj['definition']);{q3}
+    if jsn.has('manifest') then
+        result.manifest := ParseImplementationGuideManifest(jsn.vObj['manifest']);{q3}
 end;
 
 procedure TFHIRJsonComposer.ComposeImplementationGuide(json : TJSONWriter; name : string; elem : TFhirImplementationGuide; noObj : boolean = false);
 var
   i : integer;
-  ext : boolean;
-  val : boolean;
 begin
   if (elem = nil) then
     exit;
@@ -30005,18 +30458,11 @@ begin
     ComposeIdValue(json, 'fhirVersion', elem.fhirVersionElement, false);
   if not elem.noCompose and doCompose('fhirVersion') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeIdProps(json, 'fhirVersion', elem.fhirVersionElement, false);
-  if not elem.noCompose and doCompose('dependency') and (SummaryOption in [soFull, soSummary, soData]) and (elem.dependencyList.Count > 0) then
+  if not elem.noCompose and doCompose('dependsOn') and (SummaryOption in [soFull, soSummary, soData]) and (elem.dependsOnList.Count > 0) then
   begin
-    json.valueArray('dependency');
-    for i := 0 to elem.dependencyList.Count - 1 do
-      ComposeImplementationGuideDependency(json, '', elem.dependencyList[i]); {z - }
-    json.FinishArray;
-  end;
-  if not elem.noCompose and doCompose('package') and (SummaryOption in [soFull, soSummary, soData]) and (elem.packageList.Count > 0) then
-  begin
-    json.valueArray('package');
-    for i := 0 to elem.packageList.Count - 1 do
-      ComposeImplementationGuidePackage(json, '', elem.packageList[i]); {z - }
+    json.valueArray('dependsOn');
+    for i := 0 to elem.dependsOnList.Count - 1 do
+      ComposeImplementationGuideDependsOn(json, '', elem.dependsOnList[i]); {z - }
     json.FinishArray;
   end;
   if not elem.noCompose and doCompose('global') and (SummaryOption in [soFull, soSummary, soData]) and (elem.globalList.Count > 0) then
@@ -30026,32 +30472,10 @@ begin
       ComposeImplementationGuideGlobal(json, '', elem.globalList[i]); {z - }
     json.FinishArray;
   end;
-  if not elem.noCompose and doCompose('binary') and (SummaryOption in [soFull, soData]) and (elem.binaryList.Count > 0) then
-  begin
-    ext := false;
-    val := false;
-    for i := 0 to elem.binaryList.Count - 1 do
-    begin
-      ext := ext or ((elem.binaryList[i].id <> '') or (elem.binaryList[i].hasExtensionList) {no-comments or (elem.binaryList[i].hasComments)});
-      val := val or (elem.binaryList[i].hasPrimitiveValue);
-    end;
-    if val then
-    begin
-      json.valueArray('binary');
-      for i := 0 to elem.binaryList.Count - 1 do
-        ComposeUriValue(json, '',elem.binaryList[i], true);
-      json.FinishArray;
-    end;
-    if ext then
-    begin
-      json.valueArray('_binary');
-      for i := 0 to elem.binaryList.Count - 1 do
-        ComposeUriProps(json, '',elem.binaryList[i], true);
-      json.FinishArray;
-    end;
-  end;
-  if not elem.noCompose and doCompose('page') and (SummaryOption in [soFull, soSummary, soData]) then
-    ComposeImplementationGuidePage(json, 'page', elem.page); {a}
+  if not elem.noCompose and doCompose('definition') and (SummaryOption in [soFull, soData]) then
+    ComposeImplementationGuideDefinition(json, 'definition', elem.definition); {a}
+  if not elem.noCompose and doCompose('manifest') and (SummaryOption in [soFull, soData]) then
+    ComposeImplementationGuideManifest(json, 'manifest', elem.manifest); {a}
 end;
 
 {$ENDIF FHIR_IMPLEMENTATIONGUIDE}
@@ -46715,7 +47139,7 @@ begin
       if jsn.has('contextInvariant') or jsn.has('_contextInvariant') then
       iteratePrimitiveArray(jsn.vArr['contextInvariant'], jsn.vArr['_contextInvariant'], result.contextInvariantList, parseString);
     if jsn.has('type') or jsn.has('_type') then
-        result.type_Element := ParseCode(jsn['type'], jsn.vObj['_type']);{q}
+        result.type_Element := ParseUri(jsn['type'], jsn.vObj['_type']);{q}
     if jsn.has('baseDefinition') or jsn.has('_baseDefinition') then
         result.baseDefinitionElement := ParseCanonical(jsn['baseDefinition'], jsn.vObj['_baseDefinition']);{q}
     if jsn.has('derivation') or jsn.has('_derivation')  then
@@ -46865,9 +47289,9 @@ begin
     end;
   end;
   if not elem.noCompose and doCompose('type_') and (SummaryOption in [soFull, soSummary, soData]) then
-    ComposeCodeValue(json, 'type', elem.type_Element, false);
+    ComposeUriValue(json, 'type', elem.type_Element, false);
   if not elem.noCompose and doCompose('type_') and (SummaryOption in [soFull, soSummary, soData]) then
-    ComposeCodeProps(json, 'type', elem.type_Element, false);
+    ComposeUriProps(json, 'type', elem.type_Element, false);
   if not elem.noCompose and doCompose('baseDefinition') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeCanonicalValue(json, 'baseDefinition', elem.baseDefinitionElement, false);
   if not elem.noCompose and doCompose('baseDefinition') and (SummaryOption in [soFull, soSummary, soData]) then
@@ -52180,8 +52604,8 @@ begin
         result.destinationElement := ParseInteger(jsn['destination'], jsn.vObj['_destination']);{q}
       if jsn.has('link') or jsn.has('_link') then
       iteratePrimitiveArray(jsn.vArr['link'], jsn.vArr['_link'], result.link_List, parseUri);
-    if jsn.has('capabilities') then
-        result.capabilities := ParseReference{TFhirCapabilityStatement}(jsn.vObj['capabilities']);{q3}
+    if jsn.has('capabilities') or jsn.has('_capabilities') then
+        result.capabilitiesElement := ParseCanonical(jsn['capabilities'], jsn.vObj['_capabilities']);{q}
 end;
 
 procedure TFHIRJsonComposer.ComposeTestScriptMetadataCapability(json : TJSONWriter; name : string; elem : TFhirTestScriptMetadataCapability; noObj : boolean = false);
@@ -52259,7 +52683,9 @@ begin
     end;
   end;
   if not elem.noCompose and (SummaryOption in [soFull, soData]) then
-    ComposeReference{TFhirCapabilityStatement}(json, 'capabilities', elem.capabilities); {a}
+    ComposeCanonicalValue(json, 'capabilities', elem.capabilitiesElement, false);
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeCanonicalProps(json, 'capabilities', elem.capabilitiesElement, false);
   if not noObj then json.finishObject;
 end;
 
@@ -56705,6 +57131,8 @@ begin
     composeDataRequirementCodeFilter(json, name, TFhirDataRequirementCodeFilter(base), false)
   else if (base is TFhirDataRequirementDateFilter) then
     composeDataRequirementDateFilter(json, name, TFhirDataRequirementDateFilter(base), false)
+  else if (base is TFhirDataRequirementSort) then
+    composeDataRequirementSort(json, name, TFhirDataRequirementSort(base), false)
   else if (base is TFhirDataRequirement) then
     composeDataRequirement(json, name, TFhirDataRequirement(base), false)
   else if (base is TFhirDosageDoseAndRate) then
@@ -57398,16 +57826,28 @@ begin
     composeImmunizationRecommendation(json, name, TFhirImmunizationRecommendation(base), false)
 {$ENDIF FHIR_IMMUNIZATIONRECOMMENDATION}
 {$IFDEF FHIR_IMPLEMENTATIONGUIDE}
-  else if (base is TFhirImplementationGuideDependency) then
-    composeImplementationGuideDependency(json, name, TFhirImplementationGuideDependency(base), false)
-  else if (base is TFhirImplementationGuidePackage) then
-    composeImplementationGuidePackage(json, name, TFhirImplementationGuidePackage(base), false)
-  else if (base is TFhirImplementationGuidePackageResource) then
-    composeImplementationGuidePackageResource(json, name, TFhirImplementationGuidePackageResource(base), false)
+  else if (base is TFhirImplementationGuideDependsOn) then
+    composeImplementationGuideDependsOn(json, name, TFhirImplementationGuideDependsOn(base), false)
   else if (base is TFhirImplementationGuideGlobal) then
     composeImplementationGuideGlobal(json, name, TFhirImplementationGuideGlobal(base), false)
-  else if (base is TFhirImplementationGuidePage) then
-    composeImplementationGuidePage(json, name, TFhirImplementationGuidePage(base), false)
+  else if (base is TFhirImplementationGuideDefinition) then
+    composeImplementationGuideDefinition(json, name, TFhirImplementationGuideDefinition(base), false)
+  else if (base is TFhirImplementationGuideDefinitionPackage) then
+    composeImplementationGuideDefinitionPackage(json, name, TFhirImplementationGuideDefinitionPackage(base), false)
+  else if (base is TFhirImplementationGuideDefinitionResource) then
+    composeImplementationGuideDefinitionResource(json, name, TFhirImplementationGuideDefinitionResource(base), false)
+  else if (base is TFhirImplementationGuideDefinitionPage) then
+    composeImplementationGuideDefinitionPage(json, name, TFhirImplementationGuideDefinitionPage(base), false)
+  else if (base is TFhirImplementationGuideDefinitionParameter) then
+    composeImplementationGuideDefinitionParameter(json, name, TFhirImplementationGuideDefinitionParameter(base), false)
+  else if (base is TFhirImplementationGuideDefinitionTemplate) then
+    composeImplementationGuideDefinitionTemplate(json, name, TFhirImplementationGuideDefinitionTemplate(base), false)
+  else if (base is TFhirImplementationGuideManifest) then
+    composeImplementationGuideManifest(json, name, TFhirImplementationGuideManifest(base), false)
+  else if (base is TFhirImplementationGuideManifestResource) then
+    composeImplementationGuideManifestResource(json, name, TFhirImplementationGuideManifestResource(base), false)
+  else if (base is TFhirImplementationGuideManifestPage) then
+    composeImplementationGuideManifestPage(json, name, TFhirImplementationGuideManifestPage(base), false)
   else if (base is TFhirImplementationGuide) then
     composeImplementationGuide(json, name, TFhirImplementationGuide(base), false)
 {$ENDIF FHIR_IMPLEMENTATIONGUIDE}

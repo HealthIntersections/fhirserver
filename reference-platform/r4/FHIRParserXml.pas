@@ -33,7 +33,7 @@ unit FHIRParserXml;
 
 interface
 
-// FHIR v3.2.0 generated 2018-03-09T01:05:48+11:00
+// FHIR v3.2.0 generated 2018-04-01T19:29:27+10:00
 
 uses
   SysUtils, Classes, StringSupport, DateSupport, DecimalSupport, FHIRParserBase, FHIRBase, FHIRResources, FHIRConstants, FHIRTypes, AdvStringMatches, XmlBuilder, MXml;
@@ -96,6 +96,8 @@ Type
     function ParseDataRequirementCodeFilterChild(element : TFhirDataRequirementCodeFilter; path : string; child : TMXmlElement) : boolean;
     function ParseDataRequirementDateFilter(element : TMXmlElement; path : string) : TFhirDataRequirementDateFilter;
     function ParseDataRequirementDateFilterChild(element : TFhirDataRequirementDateFilter; path : string; child : TMXmlElement) : boolean;
+    function ParseDataRequirementSort(element : TMXmlElement; path : string) : TFhirDataRequirementSort;
+    function ParseDataRequirementSortChild(element : TFhirDataRequirementSort; path : string; child : TMXmlElement) : boolean;
     function ParseDataRequirement(element : TMXmlElement; path : string) : TFhirDataRequirement;
     function ParseDataRequirementChild(element : TFhirDataRequirement; path : string; child : TMXmlElement) : boolean;
     function ParseDosageDoseAndRate(element : TMXmlElement; path : string) : TFhirDosageDoseAndRate;
@@ -790,16 +792,28 @@ Type
     function ParseImmunizationRecommendationChild(element : TFhirImmunizationRecommendation; path : string; child : TMXmlElement) : boolean;
 {$ENDIF FHIR_IMMUNIZATIONRECOMMENDATION}
 {$IFDEF FHIR_IMPLEMENTATIONGUIDE}
-    function ParseImplementationGuideDependency(element : TMXmlElement; path : string) : TFhirImplementationGuideDependency;
-    function ParseImplementationGuideDependencyChild(element : TFhirImplementationGuideDependency; path : string; child : TMXmlElement) : boolean;
-    function ParseImplementationGuidePackage(element : TMXmlElement; path : string) : TFhirImplementationGuidePackage;
-    function ParseImplementationGuidePackageChild(element : TFhirImplementationGuidePackage; path : string; child : TMXmlElement) : boolean;
-    function ParseImplementationGuidePackageResource(element : TMXmlElement; path : string) : TFhirImplementationGuidePackageResource;
-    function ParseImplementationGuidePackageResourceChild(element : TFhirImplementationGuidePackageResource; path : string; child : TMXmlElement) : boolean;
+    function ParseImplementationGuideDependsOn(element : TMXmlElement; path : string) : TFhirImplementationGuideDependsOn;
+    function ParseImplementationGuideDependsOnChild(element : TFhirImplementationGuideDependsOn; path : string; child : TMXmlElement) : boolean;
     function ParseImplementationGuideGlobal(element : TMXmlElement; path : string) : TFhirImplementationGuideGlobal;
     function ParseImplementationGuideGlobalChild(element : TFhirImplementationGuideGlobal; path : string; child : TMXmlElement) : boolean;
-    function ParseImplementationGuidePage(element : TMXmlElement; path : string) : TFhirImplementationGuidePage;
-    function ParseImplementationGuidePageChild(element : TFhirImplementationGuidePage; path : string; child : TMXmlElement) : boolean;
+    function ParseImplementationGuideDefinition(element : TMXmlElement; path : string) : TFhirImplementationGuideDefinition;
+    function ParseImplementationGuideDefinitionChild(element : TFhirImplementationGuideDefinition; path : string; child : TMXmlElement) : boolean;
+    function ParseImplementationGuideDefinitionPackage(element : TMXmlElement; path : string) : TFhirImplementationGuideDefinitionPackage;
+    function ParseImplementationGuideDefinitionPackageChild(element : TFhirImplementationGuideDefinitionPackage; path : string; child : TMXmlElement) : boolean;
+    function ParseImplementationGuideDefinitionResource(element : TMXmlElement; path : string) : TFhirImplementationGuideDefinitionResource;
+    function ParseImplementationGuideDefinitionResourceChild(element : TFhirImplementationGuideDefinitionResource; path : string; child : TMXmlElement) : boolean;
+    function ParseImplementationGuideDefinitionPage(element : TMXmlElement; path : string) : TFhirImplementationGuideDefinitionPage;
+    function ParseImplementationGuideDefinitionPageChild(element : TFhirImplementationGuideDefinitionPage; path : string; child : TMXmlElement) : boolean;
+    function ParseImplementationGuideDefinitionParameter(element : TMXmlElement; path : string) : TFhirImplementationGuideDefinitionParameter;
+    function ParseImplementationGuideDefinitionParameterChild(element : TFhirImplementationGuideDefinitionParameter; path : string; child : TMXmlElement) : boolean;
+    function ParseImplementationGuideDefinitionTemplate(element : TMXmlElement; path : string) : TFhirImplementationGuideDefinitionTemplate;
+    function ParseImplementationGuideDefinitionTemplateChild(element : TFhirImplementationGuideDefinitionTemplate; path : string; child : TMXmlElement) : boolean;
+    function ParseImplementationGuideManifest(element : TMXmlElement; path : string) : TFhirImplementationGuideManifest;
+    function ParseImplementationGuideManifestChild(element : TFhirImplementationGuideManifest; path : string; child : TMXmlElement) : boolean;
+    function ParseImplementationGuideManifestResource(element : TMXmlElement; path : string) : TFhirImplementationGuideManifestResource;
+    function ParseImplementationGuideManifestResourceChild(element : TFhirImplementationGuideManifestResource; path : string; child : TMXmlElement) : boolean;
+    function ParseImplementationGuideManifestPage(element : TMXmlElement; path : string) : TFhirImplementationGuideManifestPage;
+    function ParseImplementationGuideManifestPageChild(element : TFhirImplementationGuideManifestPage; path : string; child : TMXmlElement) : boolean;
     function ParseImplementationGuide(element : TMXmlElement; path : string) : TFhirImplementationGuide;
     function ParseImplementationGuideChild(element : TFhirImplementationGuide; path : string; child : TMXmlElement) : boolean;
 {$ENDIF FHIR_IMPLEMENTATIONGUIDE}
@@ -1620,6 +1634,8 @@ Type
     procedure ComposeDataRequirementCodeFilterChildren(xml : TXmlBuilder; elem : TFhirDataRequirementCodeFilter);
     procedure ComposeDataRequirementDateFilter(xml : TXmlBuilder; name : string; elem : TFhirDataRequirementDateFilter);
     procedure ComposeDataRequirementDateFilterChildren(xml : TXmlBuilder; elem : TFhirDataRequirementDateFilter);
+    procedure ComposeDataRequirementSort(xml : TXmlBuilder; name : string; elem : TFhirDataRequirementSort);
+    procedure ComposeDataRequirementSortChildren(xml : TXmlBuilder; elem : TFhirDataRequirementSort);
     procedure ComposeDataRequirement(xml : TXmlBuilder; name : string; elem : TFhirDataRequirement);
     procedure ComposeDataRequirementChildren(xml : TXmlBuilder; elem : TFhirDataRequirement);
     procedure ComposeDosageDoseAndRate(xml : TXmlBuilder; name : string; elem : TFhirDosageDoseAndRate);
@@ -2314,16 +2330,28 @@ Type
     procedure ComposeImmunizationRecommendationChildren(xml : TXmlBuilder; elem : TFhirImmunizationRecommendation);
 {$ENDIF FHIR_IMMUNIZATIONRECOMMENDATION}
 {$IFDEF FHIR_IMPLEMENTATIONGUIDE}
-    procedure ComposeImplementationGuideDependency(xml : TXmlBuilder; name : string; elem : TFhirImplementationGuideDependency);
-    procedure ComposeImplementationGuideDependencyChildren(xml : TXmlBuilder; elem : TFhirImplementationGuideDependency);
-    procedure ComposeImplementationGuidePackage(xml : TXmlBuilder; name : string; elem : TFhirImplementationGuidePackage);
-    procedure ComposeImplementationGuidePackageChildren(xml : TXmlBuilder; elem : TFhirImplementationGuidePackage);
-    procedure ComposeImplementationGuidePackageResource(xml : TXmlBuilder; name : string; elem : TFhirImplementationGuidePackageResource);
-    procedure ComposeImplementationGuidePackageResourceChildren(xml : TXmlBuilder; elem : TFhirImplementationGuidePackageResource);
+    procedure ComposeImplementationGuideDependsOn(xml : TXmlBuilder; name : string; elem : TFhirImplementationGuideDependsOn);
+    procedure ComposeImplementationGuideDependsOnChildren(xml : TXmlBuilder; elem : TFhirImplementationGuideDependsOn);
     procedure ComposeImplementationGuideGlobal(xml : TXmlBuilder; name : string; elem : TFhirImplementationGuideGlobal);
     procedure ComposeImplementationGuideGlobalChildren(xml : TXmlBuilder; elem : TFhirImplementationGuideGlobal);
-    procedure ComposeImplementationGuidePage(xml : TXmlBuilder; name : string; elem : TFhirImplementationGuidePage);
-    procedure ComposeImplementationGuidePageChildren(xml : TXmlBuilder; elem : TFhirImplementationGuidePage);
+    procedure ComposeImplementationGuideDefinition(xml : TXmlBuilder; name : string; elem : TFhirImplementationGuideDefinition);
+    procedure ComposeImplementationGuideDefinitionChildren(xml : TXmlBuilder; elem : TFhirImplementationGuideDefinition);
+    procedure ComposeImplementationGuideDefinitionPackage(xml : TXmlBuilder; name : string; elem : TFhirImplementationGuideDefinitionPackage);
+    procedure ComposeImplementationGuideDefinitionPackageChildren(xml : TXmlBuilder; elem : TFhirImplementationGuideDefinitionPackage);
+    procedure ComposeImplementationGuideDefinitionResource(xml : TXmlBuilder; name : string; elem : TFhirImplementationGuideDefinitionResource);
+    procedure ComposeImplementationGuideDefinitionResourceChildren(xml : TXmlBuilder; elem : TFhirImplementationGuideDefinitionResource);
+    procedure ComposeImplementationGuideDefinitionPage(xml : TXmlBuilder; name : string; elem : TFhirImplementationGuideDefinitionPage);
+    procedure ComposeImplementationGuideDefinitionPageChildren(xml : TXmlBuilder; elem : TFhirImplementationGuideDefinitionPage);
+    procedure ComposeImplementationGuideDefinitionParameter(xml : TXmlBuilder; name : string; elem : TFhirImplementationGuideDefinitionParameter);
+    procedure ComposeImplementationGuideDefinitionParameterChildren(xml : TXmlBuilder; elem : TFhirImplementationGuideDefinitionParameter);
+    procedure ComposeImplementationGuideDefinitionTemplate(xml : TXmlBuilder; name : string; elem : TFhirImplementationGuideDefinitionTemplate);
+    procedure ComposeImplementationGuideDefinitionTemplateChildren(xml : TXmlBuilder; elem : TFhirImplementationGuideDefinitionTemplate);
+    procedure ComposeImplementationGuideManifest(xml : TXmlBuilder; name : string; elem : TFhirImplementationGuideManifest);
+    procedure ComposeImplementationGuideManifestChildren(xml : TXmlBuilder; elem : TFhirImplementationGuideManifest);
+    procedure ComposeImplementationGuideManifestResource(xml : TXmlBuilder; name : string; elem : TFhirImplementationGuideManifestResource);
+    procedure ComposeImplementationGuideManifestResourceChildren(xml : TXmlBuilder; elem : TFhirImplementationGuideManifestResource);
+    procedure ComposeImplementationGuideManifestPage(xml : TXmlBuilder; name : string; elem : TFhirImplementationGuideManifestPage);
+    procedure ComposeImplementationGuideManifestPageChildren(xml : TXmlBuilder; elem : TFhirImplementationGuideManifestPage);
     procedure ComposeImplementationGuide(xml : TXmlBuilder; name : string; elem : TFhirImplementationGuide);
     procedure ComposeImplementationGuideChildren(xml : TXmlBuilder; elem : TFhirImplementationGuide);
 {$ENDIF FHIR_IMPLEMENTATIONGUIDE}
@@ -4851,8 +4879,8 @@ begin
   result := true;
       if (child.localName = 'path') then
         element.pathElement := ParseString(child, path+'/path') {b}
-      else if (child.localName = 'valueSetReference') then
-        element.valueSet := ParseReference(child, path+'/valueSetReference') {a}
+      else if (child.localName = 'valueSetCanonical') then
+        element.valueSet := ParseCanonical(child, path+'/valueSetCanonical'){x.3}
       else if (child.localName = 'valueSetUri') then
         element.valueSet := ParseUri(child, path+'/valueSetUri'){x.3}
       else if (child.localName = 'code') then
@@ -4879,8 +4907,8 @@ begin
   composeElementChildren(xml, elem);
   if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeString(xml, 'path', elem.pathElement);{x.2b}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.valueSet is TFhirReference) {2} then
-    ComposeReference(xml, 'valueSetReference', TFhirReference(elem.valueSet))
+  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.valueSet is TFhirCanonical) {6} then
+    ComposeCanonical(xml, 'valueSetCanonical', TFhirCanonical(elem.valueSet))
   else if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.valueSet is TFhirUri) {6} then
     ComposeUri(xml, 'valueSetUri', TFhirUri(elem.valueSet));
   if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
@@ -4949,6 +4977,59 @@ begin
     ComposeDateTime(xml, 'valueDateTime', TFhirDateTime(elem.value));
 end;
 
+function TFHIRXmlParser.ParseDataRequirementSort(element : TMXmlElement; path : string) : TFhirDataRequirementSort;
+var
+  child : TMXmlElement;
+begin
+  result := TFhirDataRequirementSort.create;
+  try
+    parseElementAttributes(result, path, element);
+    child := FirstChild(element);
+    while (child <> nil) do
+    begin
+      if not ParseDataRequirementSortChild(result, path, child) then
+        UnknownContent(child, path);
+      child := NextSibling(child);
+    end;
+    closeOutElement(result, element);
+
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+function TFHIRXmlParser.ParseDataRequirementSortChild(element : TFhirDataRequirementSort; path : string; child : TMXmlElement) : boolean;
+begin
+  result := true;
+      if (child.localName = 'path') then
+        element.pathElement := ParseString(child, path+'/path') {b}
+      else if (child.localName = 'direction') then
+        element.directionElement := ParseEnum(CODES_TFhirSortDirectionEnum, SYSTEMS_TFhirSortDirectionEnum, path+'/direction', child){1a}
+      else if Not ParseElementChild(element, path, child) then
+    result := false;
+end;
+
+procedure TFHIRXmlComposer.ComposeDataRequirementSort(xml : TXmlBuilder; name : String; elem : TFhirDataRequirementSort);
+begin
+  if (elem = nil) then
+    exit;
+  composeElementAttributes(xml, elem);
+  xml.open(name);
+  composeDataRequirementSortChildren(xml, elem);
+  closeOutElement(xml, elem);
+  xml.close(name);
+end;
+
+procedure TFHIRXmlComposer.ComposeDataRequirementSortChildren(xml : TXmlBuilder; elem : TFhirDataRequirementSort);
+begin
+  composeElementChildren(xml, elem);
+  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+    ComposeString(xml, 'path', elem.pathElement);{x.2b}
+  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+     ComposeEnum(xml, 'direction', elem.DirectionElement, CODES_TFhirSortDirectionEnum);
+end;
+
 function TFHIRXmlParser.ParseDataRequirement(element : TMXmlElement; path : string) : TFhirDataRequirement;
 var
   child : TMXmlElement;
@@ -4978,12 +5059,20 @@ begin
         element.type_Element := ParseEnum(CODES_TFhirAllTypesEnum, SYSTEMS_TFhirAllTypesEnum, path+'/type', child){1a}
       else if (child.localName = 'profile') then
         element.profileList.Add(ParseCanonical(child, path+'/profile')){y.2}
+      else if (child.localName = 'subjectCodeableConcept') then
+        element.subject := ParseCodeableConcept(child, path+'/subjectCodeableConcept'){x.3}
+      else if (child.localName = 'subjectReference') then
+        element.subject := ParseReference(child, path+'/subjectReference') {a}
       else if (child.localName = 'mustSupport') then
         element.mustSupportList.Add(ParseString(child, path+'/mustSupport')){y.2}
       else if (child.localName = 'codeFilter') then
         element.codeFilterList.Add(ParseDataRequirementCodeFilter(child, path+'/codeFilter')){y.2}
       else if (child.localName = 'dateFilter') then
         element.dateFilterList.Add(ParseDataRequirementDateFilter(child, path+'/dateFilter')){y.2}
+      else if (child.localName = 'limit') then
+        element.limitElement := ParsePositiveInt(child, path+'/limit') {b}
+      else if (child.localName = 'sort') then
+        element.sortList.Add(ParseDataRequirementSort(child, path+'/sort')){y.2}
       else if Not ParseElementChild(element, path, child) then
     result := false;
 end;
@@ -5009,6 +5098,10 @@ begin
   if not elem.noCompose and (SummaryOption in [soFull, soSummary, soText, soData]) then
     for i := 0 to elem.profileList.Count - 1 do
       ComposeCanonical(xml, 'profile', elem.profileList[i]);
+  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.subject is TFhirCodeableConcept) {6} then
+    ComposeCodeableConcept(xml, 'subjectCodeableConcept', TFhirCodeableConcept(elem.subject))
+  else if not elem.noCompose and (SummaryOption in [soFull, soSummary, soText, soData]) and (elem.subject is TFhirReference) {2} then
+    ComposeReference(xml, 'subjectReference', TFhirReference(elem.subject));
   if not elem.noCompose and (SummaryOption in [soFull, soSummary, soText, soData]) then
     for i := 0 to elem.mustSupportList.Count - 1 do
       ComposeString(xml, 'mustSupport', elem.mustSupportList[i]);
@@ -5018,6 +5111,11 @@ begin
   if not elem.noCompose and (SummaryOption in [soFull, soSummary, soText, soData]) then
     for i := 0 to elem.dateFilterList.Count - 1 do
       ComposeDataRequirementDateFilter(xml, 'dateFilter', elem.dateFilterList[i]);
+  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soText, soData]) then
+    ComposePositiveInt(xml, 'limit', elem.limitElement);{x.2b}
+  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soText, soData]) then
+    for i := 0 to elem.sortList.Count - 1 do
+      ComposeDataRequirementSort(xml, 'sort', elem.sortList[i]);
 end;
 
 function TFHIRXmlParser.ParseDosageDoseAndRate(element : TMXmlElement; path : string) : TFhirDosageDoseAndRate;
@@ -6663,7 +6761,7 @@ begin
       else if (child.localName = 'type') then
         element.type_Element := ParseEnum(CODES_TFhirAllTypesEnum, SYSTEMS_TFhirAllTypesEnum, path+'/type', child){1a}
       else if (child.localName = 'profile') then
-        element.profile := ParseReference{TFhirStructureDefinition}(child, path+'/profile') {b}
+        element.profileElement := ParseCanonical(child, path+'/profile') {b}
       else if Not ParseElementChild(element, path, child) then
     result := false;
 end;
@@ -6695,7 +6793,7 @@ begin
   if not elem.noCompose and (SummaryOption in [soFull, soSummary, soText, soData]) then
      ComposeEnum(xml, 'type', elem.Type_Element, CODES_TFhirAllTypesEnum);
   if not elem.noCompose and (SummaryOption in [soFull, soSummary, soText, soData]) then
-    ComposeReference{TFhirStructureDefinition}(xml, 'profile', elem.profile);{x.2a}
+    ComposeCanonical(xml, 'profile', elem.profileElement);{x.2b}
 end;
 
 function TFHIRXmlParser.ParseContactPoint(element : TMXmlElement; path : string) : TFhirContactPoint;
@@ -27771,10 +27869,14 @@ begin
         element.descriptionElement := ParseString(child, path+'/description') {b}
       else if (child.localName = 'series') then
         element.seriesElement := ParseString(child, path+'/series') {b}
-      else if (child.localName = 'doseNumber') then
-        element.doseNumberElement := ParsePositiveInt(child, path+'/doseNumber') {b}
-      else if (child.localName = 'seriesDoses') then
-        element.seriesDosesElement := ParsePositiveInt(child, path+'/seriesDoses') {b}
+      else if (child.localName = 'doseNumberPositiveInt') then
+        element.doseNumber := ParsePositiveInt(child, path+'/doseNumberPositiveInt'){x.3}
+      else if (child.localName = 'doseNumberString') then
+        element.doseNumber := ParseString(child, path+'/doseNumberString'){x.3}
+      else if (child.localName = 'seriesDosesPositiveInt') then
+        element.seriesDoses := ParsePositiveInt(child, path+'/seriesDosesPositiveInt'){x.3}
+      else if (child.localName = 'seriesDosesString') then
+        element.seriesDoses := ParseString(child, path+'/seriesDosesString'){x.3}
       else if Not ParseDomainResourceChild(element, path, child) then
     result := false;
 end;
@@ -27820,10 +27922,14 @@ begin
     ComposeString(xml, 'description', elem.descriptionElement);{x.2b}
   if not elem.noCompose and doCompose('series') and (SummaryOption in [soFull, soData]) then
     ComposeString(xml, 'series', elem.seriesElement);{x.2b}
-  if not elem.noCompose and doCompose('doseNumber') and (SummaryOption in [soFull, soData]) then
-    ComposePositiveInt(xml, 'doseNumber', elem.doseNumberElement);{x.2b}
-  if not elem.noCompose and doCompose('seriesDoses') and (SummaryOption in [soFull, soData]) then
-    ComposePositiveInt(xml, 'seriesDoses', elem.seriesDosesElement);{x.2b}
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.doseNumber is TFhirPositiveInt) {6} then
+    ComposePositiveInt(xml, 'doseNumberPositiveInt', TFhirPositiveInt(elem.doseNumber))
+  else if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.doseNumber is TFhirString) {6} then
+    ComposeString(xml, 'doseNumberString', TFhirString(elem.doseNumber));
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.seriesDoses is TFhirPositiveInt) {6} then
+    ComposePositiveInt(xml, 'seriesDosesPositiveInt', TFhirPositiveInt(elem.seriesDoses))
+  else if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.seriesDoses is TFhirString) {6} then
+    ComposeString(xml, 'seriesDosesString', TFhirString(elem.seriesDoses));
 end;
 
 {$ENDIF FHIR_IMMUNIZATIONEVALUATION}
@@ -27869,10 +27975,14 @@ begin
         element.descriptionElement := ParseString(child, path+'/description') {b}
       else if (child.localName = 'series') then
         element.seriesElement := ParseString(child, path+'/series') {b}
-      else if (child.localName = 'doseNumber') then
-        element.doseNumberElement := ParsePositiveInt(child, path+'/doseNumber') {b}
-      else if (child.localName = 'seriesDoses') then
-        element.seriesDosesElement := ParsePositiveInt(child, path+'/seriesDoses') {b}
+      else if (child.localName = 'doseNumberPositiveInt') then
+        element.doseNumber := ParsePositiveInt(child, path+'/doseNumberPositiveInt'){x.3}
+      else if (child.localName = 'doseNumberString') then
+        element.doseNumber := ParseString(child, path+'/doseNumberString'){x.3}
+      else if (child.localName = 'seriesDosesPositiveInt') then
+        element.seriesDoses := ParsePositiveInt(child, path+'/seriesDosesPositiveInt'){x.3}
+      else if (child.localName = 'seriesDosesString') then
+        element.seriesDoses := ParseString(child, path+'/seriesDosesString'){x.3}
       else if (child.localName = 'supportingImmunization') then
         element.supportingImmunizationList.Add(ParseReference{TFhirImmunization}(child, path+'/supportingImmunization')){y.2}
       else if (child.localName = 'supportingPatientInformation') then
@@ -27917,10 +28027,14 @@ begin
     ComposeString(xml, 'description', elem.descriptionElement);{x.2b}
   if not elem.noCompose and (SummaryOption in [soFull, soData]) then
     ComposeString(xml, 'series', elem.seriesElement);{x.2b}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
-    ComposePositiveInt(xml, 'doseNumber', elem.doseNumberElement);{x.2b}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
-    ComposePositiveInt(xml, 'seriesDoses', elem.seriesDosesElement);{x.2b}
+  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.doseNumber is TFhirPositiveInt) {6} then
+    ComposePositiveInt(xml, 'doseNumberPositiveInt', TFhirPositiveInt(elem.doseNumber))
+  else if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.doseNumber is TFhirString) {6} then
+    ComposeString(xml, 'doseNumberString', TFhirString(elem.doseNumber));
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.seriesDoses is TFhirPositiveInt) {6} then
+    ComposePositiveInt(xml, 'seriesDosesPositiveInt', TFhirPositiveInt(elem.seriesDoses))
+  else if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.seriesDoses is TFhirString) {6} then
+    ComposeString(xml, 'seriesDosesString', TFhirString(elem.seriesDoses));
   if not elem.noCompose and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.supportingImmunizationList.Count - 1 do
       ComposeReference{TFhirImmunization}(xml, 'supportingImmunization', elem.supportingImmunizationList[i]);
@@ -28053,17 +28167,17 @@ end;
 
 {$ENDIF FHIR_IMMUNIZATIONRECOMMENDATION}
 {$IFDEF FHIR_IMPLEMENTATIONGUIDE}
-function TFHIRXmlParser.ParseImplementationGuideDependency(element : TMXmlElement; path : string) : TFhirImplementationGuideDependency;
+function TFHIRXmlParser.ParseImplementationGuideDependsOn(element : TMXmlElement; path : string) : TFhirImplementationGuideDependsOn;
 var
   child : TMXmlElement;
 begin
-  result := TFhirImplementationGuideDependency.create;
+  result := TFhirImplementationGuideDependsOn.create;
   try
     parseElementAttributes(result, path, element);
     child := FirstChild(element);
     while (child <> nil) do
     begin
-      if not ParseImplementationGuideDependencyChild(result, path, child) then
+      if not ParseImplementationGuideDependsOnChild(result, path, child) then
         UnknownContent(child, path);
       child := NextSibling(child);
     end;
@@ -28075,168 +28189,35 @@ begin
   end;
 end;
 
-function TFHIRXmlParser.ParseImplementationGuideDependencyChild(element : TFhirImplementationGuideDependency; path : string; child : TMXmlElement) : boolean;
+function TFHIRXmlParser.ParseImplementationGuideDependsOnChild(element : TFhirImplementationGuideDependsOn; path : string; child : TMXmlElement) : boolean;
 begin
   result := true;
-      if (child.localName = 'type') then
-        element.type_Element := ParseEnum(CODES_TFhirGuideDependencyTypeEnum, SYSTEMS_TFhirGuideDependencyTypeEnum, path+'/type', child){1a}
-      else if (child.localName = 'uri') then
-        element.uriElement := ParseUri(child, path+'/uri') {b}
+      if (child.localName = 'uri') then
+        element.uriElement := ParseCanonical(child, path+'/uri') {b}
+      else if (child.localName = 'version') then
+        element.versionElement := ParseString(child, path+'/version') {b}
       else if Not ParseBackboneElementChild(element, path, child) then
     result := false;
 end;
 
-procedure TFHIRXmlComposer.ComposeImplementationGuideDependency(xml : TXmlBuilder; name : String; elem : TFhirImplementationGuideDependency);
+procedure TFHIRXmlComposer.ComposeImplementationGuideDependsOn(xml : TXmlBuilder; name : String; elem : TFhirImplementationGuideDependsOn);
 begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
   xml.open(name);
-  composeImplementationGuideDependencyChildren(xml, elem);
+  composeImplementationGuideDependsOnChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
 end;
 
-procedure TFHIRXmlComposer.ComposeImplementationGuideDependencyChildren(xml : TXmlBuilder; elem : TFhirImplementationGuideDependency);
+procedure TFHIRXmlComposer.ComposeImplementationGuideDependsOnChildren(xml : TXmlBuilder; elem : TFhirImplementationGuideDependsOn);
 begin
   composeBackboneElementChildren(xml, elem);
   if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
-     ComposeEnum(xml, 'type', elem.Type_Element, CODES_TFhirGuideDependencyTypeEnum);
+    ComposeCanonical(xml, 'uri', elem.uriElement);{x.2b}
   if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
-    ComposeUri(xml, 'uri', elem.uriElement);{x.2b}
-end;
-
-function TFHIRXmlParser.ParseImplementationGuidePackage(element : TMXmlElement; path : string) : TFhirImplementationGuidePackage;
-var
-  child : TMXmlElement;
-begin
-  result := TFhirImplementationGuidePackage.create;
-  try
-    parseElementAttributes(result, path, element);
-    child := FirstChild(element);
-    while (child <> nil) do
-    begin
-      if not ParseImplementationGuidePackageChild(result, path, child) then
-        UnknownContent(child, path);
-      child := NextSibling(child);
-    end;
-    closeOutElement(result, element);
-
-    result.link;
-  finally
-    result.free;
-  end;
-end;
-
-function TFHIRXmlParser.ParseImplementationGuidePackageChild(element : TFhirImplementationGuidePackage; path : string; child : TMXmlElement) : boolean;
-begin
-  result := true;
-      if (child.localName = 'name') then
-        element.nameElement := ParseString(child, path+'/name') {b}
-      else if (child.localName = 'description') then
-        element.descriptionElement := ParseString(child, path+'/description') {b}
-      else if (child.localName = 'resource') then
-        element.resourceList.Add(ParseImplementationGuidePackageResource(child, path+'/resource')){y.2}
-      else if Not ParseBackboneElementChild(element, path, child) then
-    result := false;
-end;
-
-procedure TFHIRXmlComposer.ComposeImplementationGuidePackage(xml : TXmlBuilder; name : String; elem : TFhirImplementationGuidePackage);
-begin
-  if (elem = nil) then
-    exit;
-  composeElementAttributes(xml, elem);
-  xml.open(name);
-  composeImplementationGuidePackageChildren(xml, elem);
-  closeOutElement(xml, elem);
-  xml.close(name);
-end;
-
-procedure TFHIRXmlComposer.ComposeImplementationGuidePackageChildren(xml : TXmlBuilder; elem : TFhirImplementationGuidePackage);
-var
-  i : integer;
-begin
-  composeBackboneElementChildren(xml, elem);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
-    ComposeString(xml, 'name', elem.nameElement);{x.2b}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
-    ComposeString(xml, 'description', elem.descriptionElement);{x.2b}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
-    for i := 0 to elem.resourceList.Count - 1 do
-      ComposeImplementationGuidePackageResource(xml, 'resource', elem.resourceList[i]);
-end;
-
-function TFHIRXmlParser.ParseImplementationGuidePackageResource(element : TMXmlElement; path : string) : TFhirImplementationGuidePackageResource;
-var
-  child : TMXmlElement;
-begin
-  result := TFhirImplementationGuidePackageResource.create;
-  try
-    parseElementAttributes(result, path, element);
-    child := FirstChild(element);
-    while (child <> nil) do
-    begin
-      if not ParseImplementationGuidePackageResourceChild(result, path, child) then
-        UnknownContent(child, path);
-      child := NextSibling(child);
-    end;
-    closeOutElement(result, element);
-
-    result.link;
-  finally
-    result.free;
-  end;
-end;
-
-function TFHIRXmlParser.ParseImplementationGuidePackageResourceChild(element : TFhirImplementationGuidePackageResource; path : string; child : TMXmlElement) : boolean;
-begin
-  result := true;
-      if (child.localName = 'example') then
-        element.exampleElement := ParseBoolean(child, path+'/example') {b}
-      else if (child.localName = 'name') then
-        element.nameElement := ParseString(child, path+'/name') {b}
-      else if (child.localName = 'description') then
-        element.descriptionElement := ParseString(child, path+'/description') {b}
-      else if (child.localName = 'acronym') then
-        element.acronymElement := ParseString(child, path+'/acronym') {b}
-      else if (child.localName = 'sourceReference') then
-        element.source := ParseReference(child, path+'/sourceReference') {a}
-      else if (child.localName = 'sourceUri') then
-        element.source := ParseUri(child, path+'/sourceUri'){x.3}
-      else if (child.localName = 'exampleFor') then
-        element.exampleForElement := ParseCanonical(child, path+'/exampleFor') {b}
-      else if Not ParseBackboneElementChild(element, path, child) then
-    result := false;
-end;
-
-procedure TFHIRXmlComposer.ComposeImplementationGuidePackageResource(xml : TXmlBuilder; name : String; elem : TFhirImplementationGuidePackageResource);
-begin
-  if (elem = nil) then
-    exit;
-  composeElementAttributes(xml, elem);
-  xml.open(name);
-  composeImplementationGuidePackageResourceChildren(xml, elem);
-  closeOutElement(xml, elem);
-  xml.close(name);
-end;
-
-procedure TFHIRXmlComposer.ComposeImplementationGuidePackageResourceChildren(xml : TXmlBuilder; elem : TFhirImplementationGuidePackageResource);
-begin
-  composeBackboneElementChildren(xml, elem);
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
-    ComposeBoolean(xml, 'example', elem.exampleElement);{x.2b}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
-    ComposeString(xml, 'name', elem.nameElement);{x.2b}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
-    ComposeString(xml, 'description', elem.descriptionElement);{x.2b}
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
-    ComposeString(xml, 'acronym', elem.acronymElement);{x.2b}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.source is TFhirReference) {2} then
-    ComposeReference(xml, 'sourceReference', TFhirReference(elem.source))
-  else if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) and (elem.source is TFhirUri) {6} then
-    ComposeUri(xml, 'sourceUri', TFhirUri(elem.source));
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
-    ComposeCanonical(xml, 'exampleFor', elem.exampleForElement);{x.2b}
+    ComposeString(xml, 'version', elem.versionElement);{x.2b}
 end;
 
 function TFHIRXmlParser.ParseImplementationGuideGlobal(element : TMXmlElement; path : string) : TFhirImplementationGuideGlobal;
@@ -28292,17 +28273,17 @@ begin
     ComposeCanonical(xml, 'profile', elem.profileElement);{x.2b}
 end;
 
-function TFHIRXmlParser.ParseImplementationGuidePage(element : TMXmlElement; path : string) : TFhirImplementationGuidePage;
+function TFHIRXmlParser.ParseImplementationGuideDefinition(element : TMXmlElement; path : string) : TFhirImplementationGuideDefinition;
 var
   child : TMXmlElement;
 begin
-  result := TFhirImplementationGuidePage.create;
+  result := TFhirImplementationGuideDefinition.create;
   try
     parseElementAttributes(result, path, element);
     child := FirstChild(element);
     while (child <> nil) do
     begin
-      if not ParseImplementationGuidePageChild(result, path, child) then
+      if not ParseImplementationGuideDefinitionChild(result, path, child) then
         UnknownContent(child, path);
       child := NextSibling(child);
     end;
@@ -28314,60 +28295,545 @@ begin
   end;
 end;
 
-function TFHIRXmlParser.ParseImplementationGuidePageChild(element : TFhirImplementationGuidePage; path : string; child : TMXmlElement) : boolean;
+function TFHIRXmlParser.ParseImplementationGuideDefinitionChild(element : TFhirImplementationGuideDefinition; path : string; child : TMXmlElement) : boolean;
 begin
   result := true;
-      if (child.localName = 'source') then
-        element.sourceElement := ParseUri(child, path+'/source') {b}
-      else if (child.localName = 'title') then
-        element.titleElement := ParseString(child, path+'/title') {b}
-      else if (child.localName = 'kind') then
-        element.kindElement := ParseEnum(CODES_TFhirGuidePageKindEnum, SYSTEMS_TFhirGuidePageKindEnum, path+'/kind', child){1a}
-      else if (child.localName = 'type') then
-        element.type_.Add(ParseEnum(CODES_TFhirResourceTypesEnum, SYSTEMS_TFhirResourceTypesEnum, path+'/type', child)){y.1}
-      else if (child.localName = 'package') then
-        element.packageList.Add(ParseString(child, path+'/package')){y.2}
-      else if (child.localName = 'format') then
-        element.formatElement := ParseCode(child, path+'/format') {b}
+      if (child.localName = 'package') then
+        element.packageList.Add(ParseImplementationGuideDefinitionPackage(child, path+'/package')){y.2}
+      else if (child.localName = 'resource') then
+        element.resourceList.Add(ParseImplementationGuideDefinitionResource(child, path+'/resource')){y.2}
       else if (child.localName = 'page') then
-        element.pageList.Add(ParseImplementationGuidePage(child, path+'/page')){y.2}
+        element.page := ParseImplementationGuideDefinitionPage(child, path+'/page') {b}
+      else if (child.localName = 'parameter') then
+        element.parameterList.Add(ParseImplementationGuideDefinitionParameter(child, path+'/parameter')){y.2}
+      else if (child.localName = 'template') then
+        element.templateList.Add(ParseImplementationGuideDefinitionTemplate(child, path+'/template')){y.2}
       else if Not ParseBackboneElementChild(element, path, child) then
     result := false;
 end;
 
-procedure TFHIRXmlComposer.ComposeImplementationGuidePage(xml : TXmlBuilder; name : String; elem : TFhirImplementationGuidePage);
+procedure TFHIRXmlComposer.ComposeImplementationGuideDefinition(xml : TXmlBuilder; name : String; elem : TFhirImplementationGuideDefinition);
 begin
   if (elem = nil) then
     exit;
   composeElementAttributes(xml, elem);
   xml.open(name);
-  composeImplementationGuidePageChildren(xml, elem);
+  composeImplementationGuideDefinitionChildren(xml, elem);
   closeOutElement(xml, elem);
   xml.close(name);
 end;
 
-procedure TFHIRXmlComposer.ComposeImplementationGuidePageChildren(xml : TXmlBuilder; elem : TFhirImplementationGuidePage);
+procedure TFHIRXmlComposer.ComposeImplementationGuideDefinitionChildren(xml : TXmlBuilder; elem : TFhirImplementationGuideDefinition);
+var
+  i : integer;
+begin
+  composeBackboneElementChildren(xml, elem);
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    for i := 0 to elem.packageList.Count - 1 do
+      ComposeImplementationGuideDefinitionPackage(xml, 'package', elem.packageList[i]);
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    for i := 0 to elem.resourceList.Count - 1 do
+      ComposeImplementationGuideDefinitionResource(xml, 'resource', elem.resourceList[i]);
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeImplementationGuideDefinitionPage(xml, 'page', elem.page);{x.2a}
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    for i := 0 to elem.parameterList.Count - 1 do
+      ComposeImplementationGuideDefinitionParameter(xml, 'parameter', elem.parameterList[i]);
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    for i := 0 to elem.templateList.Count - 1 do
+      ComposeImplementationGuideDefinitionTemplate(xml, 'template', elem.templateList[i]);
+end;
+
+function TFHIRXmlParser.ParseImplementationGuideDefinitionPackage(element : TMXmlElement; path : string) : TFhirImplementationGuideDefinitionPackage;
+var
+  child : TMXmlElement;
+begin
+  result := TFhirImplementationGuideDefinitionPackage.create;
+  try
+    parseElementAttributes(result, path, element);
+    child := FirstChild(element);
+    while (child <> nil) do
+    begin
+      if not ParseImplementationGuideDefinitionPackageChild(result, path, child) then
+        UnknownContent(child, path);
+      child := NextSibling(child);
+    end;
+    closeOutElement(result, element);
+
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+function TFHIRXmlParser.ParseImplementationGuideDefinitionPackageChild(element : TFhirImplementationGuideDefinitionPackage; path : string; child : TMXmlElement) : boolean;
+begin
+  result := true;
+      if (child.localName = 'name') then
+        element.nameElement := ParseString(child, path+'/name') {b}
+      else if (child.localName = 'description') then
+        element.descriptionElement := ParseString(child, path+'/description') {b}
+      else if Not ParseBackboneElementChild(element, path, child) then
+    result := false;
+end;
+
+procedure TFHIRXmlComposer.ComposeImplementationGuideDefinitionPackage(xml : TXmlBuilder; name : String; elem : TFhirImplementationGuideDefinitionPackage);
+begin
+  if (elem = nil) then
+    exit;
+  composeElementAttributes(xml, elem);
+  xml.open(name);
+  composeImplementationGuideDefinitionPackageChildren(xml, elem);
+  closeOutElement(xml, elem);
+  xml.close(name);
+end;
+
+procedure TFHIRXmlComposer.ComposeImplementationGuideDefinitionPackageChildren(xml : TXmlBuilder; elem : TFhirImplementationGuideDefinitionPackage);
+begin
+  composeBackboneElementChildren(xml, elem);
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeString(xml, 'name', elem.nameElement);{x.2b}
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeString(xml, 'description', elem.descriptionElement);{x.2b}
+end;
+
+function TFHIRXmlParser.ParseImplementationGuideDefinitionResource(element : TMXmlElement; path : string) : TFhirImplementationGuideDefinitionResource;
+var
+  child : TMXmlElement;
+begin
+  result := TFhirImplementationGuideDefinitionResource.create;
+  try
+    parseElementAttributes(result, path, element);
+    child := FirstChild(element);
+    while (child <> nil) do
+    begin
+      if not ParseImplementationGuideDefinitionResourceChild(result, path, child) then
+        UnknownContent(child, path);
+      child := NextSibling(child);
+    end;
+    closeOutElement(result, element);
+
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+function TFHIRXmlParser.ParseImplementationGuideDefinitionResourceChild(element : TFhirImplementationGuideDefinitionResource; path : string; child : TMXmlElement) : boolean;
+begin
+  result := true;
+      if (child.localName = 'reference') then
+        element.reference := ParseReference{TFhirReference}(child, path+'/reference') {b}
+      else if (child.localName = 'name') then
+        element.nameElement := ParseString(child, path+'/name') {b}
+      else if (child.localName = 'description') then
+        element.descriptionElement := ParseString(child, path+'/description') {b}
+      else if (child.localName = 'exampleCanonical') then
+        element.example := ParseCanonical(child, path+'/exampleCanonical'){x.3}
+      else if (child.localName = 'exampleBoolean') then
+        element.example := ParseBoolean(child, path+'/exampleBoolean'){x.3}
+      else if (child.localName = 'package') then
+        element.packageElement := ParseId(child, path+'/package') {b}
+      else if Not ParseBackboneElementChild(element, path, child) then
+    result := false;
+end;
+
+procedure TFHIRXmlComposer.ComposeImplementationGuideDefinitionResource(xml : TXmlBuilder; name : String; elem : TFhirImplementationGuideDefinitionResource);
+begin
+  if (elem = nil) then
+    exit;
+  composeElementAttributes(xml, elem);
+  xml.open(name);
+  composeImplementationGuideDefinitionResourceChildren(xml, elem);
+  closeOutElement(xml, elem);
+  xml.close(name);
+end;
+
+procedure TFHIRXmlComposer.ComposeImplementationGuideDefinitionResourceChildren(xml : TXmlBuilder; elem : TFhirImplementationGuideDefinitionResource);
+begin
+  composeBackboneElementChildren(xml, elem);
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeReference{TFhirReference}(xml, 'reference', elem.reference);{x.2a}
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeString(xml, 'name', elem.nameElement);{x.2b}
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeString(xml, 'description', elem.descriptionElement);{x.2b}
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.example is TFhirCanonical) {6} then
+    ComposeCanonical(xml, 'exampleCanonical', TFhirCanonical(elem.example))
+  else if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.example is TFhirBoolean) {6} then
+    ComposeBoolean(xml, 'exampleBoolean', TFhirBoolean(elem.example));
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeId(xml, 'package', elem.packageElement);{x.2b}
+end;
+
+function TFHIRXmlParser.ParseImplementationGuideDefinitionPage(element : TMXmlElement; path : string) : TFhirImplementationGuideDefinitionPage;
+var
+  child : TMXmlElement;
+begin
+  result := TFhirImplementationGuideDefinitionPage.create;
+  try
+    parseElementAttributes(result, path, element);
+    child := FirstChild(element);
+    while (child <> nil) do
+    begin
+      if not ParseImplementationGuideDefinitionPageChild(result, path, child) then
+        UnknownContent(child, path);
+      child := NextSibling(child);
+    end;
+    closeOutElement(result, element);
+
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+function TFHIRXmlParser.ParseImplementationGuideDefinitionPageChild(element : TFhirImplementationGuideDefinitionPage; path : string; child : TMXmlElement) : boolean;
+begin
+  result := true;
+      if (child.localName = 'nameUrl') then
+        element.name := ParseUrl(child, path+'/nameUrl'){x.3}
+      else if (child.localName = 'nameReference') then
+        element.name := ParseReference(child, path+'/nameReference') {a}
+      else if (child.localName = 'title') then
+        element.titleElement := ParseString(child, path+'/title') {b}
+      else if (child.localName = 'generation') then
+        element.generationElement := ParseEnum(CODES_TFhirGuidePageGenerationEnum, SYSTEMS_TFhirGuidePageGenerationEnum, path+'/generation', child){1a}
+      else if (child.localName = 'page') then
+        element.pageList.Add(ParseImplementationGuideDefinitionPage(child, path+'/page')){y.2}
+      else if Not ParseBackboneElementChild(element, path, child) then
+    result := false;
+end;
+
+procedure TFHIRXmlComposer.ComposeImplementationGuideDefinitionPage(xml : TXmlBuilder; name : String; elem : TFhirImplementationGuideDefinitionPage);
+begin
+  if (elem = nil) then
+    exit;
+  composeElementAttributes(xml, elem);
+  xml.open(name);
+  composeImplementationGuideDefinitionPageChildren(xml, elem);
+  closeOutElement(xml, elem);
+  xml.close(name);
+end;
+
+procedure TFHIRXmlComposer.ComposeImplementationGuideDefinitionPageChildren(xml : TXmlBuilder; elem : TFhirImplementationGuideDefinitionPage);
+var
+  i : integer;
+begin
+  composeBackboneElementChildren(xml, elem);
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.name is TFhirUrl) {6} then
+    ComposeUrl(xml, 'nameUrl', TFhirUrl(elem.name))
+  else if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.name is TFhirReference) {2} then
+    ComposeReference(xml, 'nameReference', TFhirReference(elem.name));
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeString(xml, 'title', elem.titleElement);{x.2b}
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+     ComposeEnum(xml, 'generation', elem.GenerationElement, CODES_TFhirGuidePageGenerationEnum);
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    for i := 0 to elem.pageList.Count - 1 do
+      ComposeImplementationGuideDefinitionPage(xml, 'page', elem.pageList[i]);
+end;
+
+function TFHIRXmlParser.ParseImplementationGuideDefinitionParameter(element : TMXmlElement; path : string) : TFhirImplementationGuideDefinitionParameter;
+var
+  child : TMXmlElement;
+begin
+  result := TFhirImplementationGuideDefinitionParameter.create;
+  try
+    parseElementAttributes(result, path, element);
+    child := FirstChild(element);
+    while (child <> nil) do
+    begin
+      if not ParseImplementationGuideDefinitionParameterChild(result, path, child) then
+        UnknownContent(child, path);
+      child := NextSibling(child);
+    end;
+    closeOutElement(result, element);
+
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+function TFHIRXmlParser.ParseImplementationGuideDefinitionParameterChild(element : TFhirImplementationGuideDefinitionParameter; path : string; child : TMXmlElement) : boolean;
+begin
+  result := true;
+      if (child.localName = 'code') then
+        element.codeElement := ParseEnum(CODES_TFhirGuideParameterCodeEnum, SYSTEMS_TFhirGuideParameterCodeEnum, path+'/code', child){1a}
+      else if (child.localName = 'value') then
+        element.valueElement := ParseString(child, path+'/value') {b}
+      else if Not ParseBackboneElementChild(element, path, child) then
+    result := false;
+end;
+
+procedure TFHIRXmlComposer.ComposeImplementationGuideDefinitionParameter(xml : TXmlBuilder; name : String; elem : TFhirImplementationGuideDefinitionParameter);
+begin
+  if (elem = nil) then
+    exit;
+  composeElementAttributes(xml, elem);
+  xml.open(name);
+  composeImplementationGuideDefinitionParameterChildren(xml, elem);
+  closeOutElement(xml, elem);
+  xml.close(name);
+end;
+
+procedure TFHIRXmlComposer.ComposeImplementationGuideDefinitionParameterChildren(xml : TXmlBuilder; elem : TFhirImplementationGuideDefinitionParameter);
+begin
+  composeBackboneElementChildren(xml, elem);
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+     ComposeEnum(xml, 'code', elem.CodeElement, CODES_TFhirGuideParameterCodeEnum);
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeString(xml, 'value', elem.valueElement);{x.2b}
+end;
+
+function TFHIRXmlParser.ParseImplementationGuideDefinitionTemplate(element : TMXmlElement; path : string) : TFhirImplementationGuideDefinitionTemplate;
+var
+  child : TMXmlElement;
+begin
+  result := TFhirImplementationGuideDefinitionTemplate.create;
+  try
+    parseElementAttributes(result, path, element);
+    child := FirstChild(element);
+    while (child <> nil) do
+    begin
+      if not ParseImplementationGuideDefinitionTemplateChild(result, path, child) then
+        UnknownContent(child, path);
+      child := NextSibling(child);
+    end;
+    closeOutElement(result, element);
+
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+function TFHIRXmlParser.ParseImplementationGuideDefinitionTemplateChild(element : TFhirImplementationGuideDefinitionTemplate; path : string; child : TMXmlElement) : boolean;
+begin
+  result := true;
+      if (child.localName = 'code') then
+        element.codeElement := ParseCode(child, path+'/code') {b}
+      else if (child.localName = 'source') then
+        element.sourceElement := ParseString(child, path+'/source') {b}
+      else if (child.localName = 'scope') then
+        element.scopeElement := ParseString(child, path+'/scope') {b}
+      else if Not ParseBackboneElementChild(element, path, child) then
+    result := false;
+end;
+
+procedure TFHIRXmlComposer.ComposeImplementationGuideDefinitionTemplate(xml : TXmlBuilder; name : String; elem : TFhirImplementationGuideDefinitionTemplate);
+begin
+  if (elem = nil) then
+    exit;
+  composeElementAttributes(xml, elem);
+  xml.open(name);
+  composeImplementationGuideDefinitionTemplateChildren(xml, elem);
+  closeOutElement(xml, elem);
+  xml.close(name);
+end;
+
+procedure TFHIRXmlComposer.ComposeImplementationGuideDefinitionTemplateChildren(xml : TXmlBuilder; elem : TFhirImplementationGuideDefinitionTemplate);
+begin
+  composeBackboneElementChildren(xml, elem);
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeCode(xml, 'code', elem.codeElement);{x.2b}
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeString(xml, 'source', elem.sourceElement);{x.2b}
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeString(xml, 'scope', elem.scopeElement);{x.2b}
+end;
+
+function TFHIRXmlParser.ParseImplementationGuideManifest(element : TMXmlElement; path : string) : TFhirImplementationGuideManifest;
+var
+  child : TMXmlElement;
+begin
+  result := TFhirImplementationGuideManifest.create;
+  try
+    parseElementAttributes(result, path, element);
+    child := FirstChild(element);
+    while (child <> nil) do
+    begin
+      if not ParseImplementationGuideManifestChild(result, path, child) then
+        UnknownContent(child, path);
+      child := NextSibling(child);
+    end;
+    closeOutElement(result, element);
+
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+function TFHIRXmlParser.ParseImplementationGuideManifestChild(element : TFhirImplementationGuideManifest; path : string; child : TMXmlElement) : boolean;
+begin
+  result := true;
+      if (child.localName = 'rendering') then
+        element.renderingElement := ParseUrl(child, path+'/rendering') {b}
+      else if (child.localName = 'resource') then
+        element.resourceList.Add(ParseImplementationGuideManifestResource(child, path+'/resource')){y.2}
+      else if (child.localName = 'page') then
+        element.pageList.Add(ParseImplementationGuideManifestPage(child, path+'/page')){y.2}
+      else if (child.localName = 'image') then
+        element.imageList.Add(ParseString(child, path+'/image')){y.2}
+      else if (child.localName = 'other') then
+        element.otherList.Add(ParseString(child, path+'/other')){y.2}
+      else if Not ParseBackboneElementChild(element, path, child) then
+    result := false;
+end;
+
+procedure TFHIRXmlComposer.ComposeImplementationGuideManifest(xml : TXmlBuilder; name : String; elem : TFhirImplementationGuideManifest);
+begin
+  if (elem = nil) then
+    exit;
+  composeElementAttributes(xml, elem);
+  xml.open(name);
+  composeImplementationGuideManifestChildren(xml, elem);
+  closeOutElement(xml, elem);
+  xml.close(name);
+end;
+
+procedure TFHIRXmlComposer.ComposeImplementationGuideManifestChildren(xml : TXmlBuilder; elem : TFhirImplementationGuideManifest);
 var
   i : integer;
 begin
   composeBackboneElementChildren(xml, elem);
   if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
-    ComposeUri(xml, 'source', elem.sourceElement);{x.2b}
+    ComposeUrl(xml, 'rendering', elem.renderingElement);{x.2b}
   if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
-    ComposeString(xml, 'title', elem.titleElement);{x.2b}
-  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
-     ComposeEnum(xml, 'kind', elem.KindElement, CODES_TFhirGuidePageKindEnum);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
-    for i := 0 to elem.type_.Count - 1 do
-      ComposeEnum(xml, 'type', elem.type_[i], CODES_TFhirResourceTypesEnum);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
-    for i := 0 to elem.packageList.Count - 1 do
-      ComposeString(xml, 'package', elem.packageList[i]);
-  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
-    ComposeCode(xml, 'format', elem.formatElement);{x.2b}
+    for i := 0 to elem.resourceList.Count - 1 do
+      ComposeImplementationGuideManifestResource(xml, 'resource', elem.resourceList[i]);
   if not elem.noCompose and (SummaryOption in [soFull, soData]) then
     for i := 0 to elem.pageList.Count - 1 do
-      ComposeImplementationGuidePage(xml, 'page', elem.pageList[i]);
+      ComposeImplementationGuideManifestPage(xml, 'page', elem.pageList[i]);
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    for i := 0 to elem.imageList.Count - 1 do
+      ComposeString(xml, 'image', elem.imageList[i]);
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    for i := 0 to elem.otherList.Count - 1 do
+      ComposeString(xml, 'other', elem.otherList[i]);
+end;
+
+function TFHIRXmlParser.ParseImplementationGuideManifestResource(element : TMXmlElement; path : string) : TFhirImplementationGuideManifestResource;
+var
+  child : TMXmlElement;
+begin
+  result := TFhirImplementationGuideManifestResource.create;
+  try
+    parseElementAttributes(result, path, element);
+    child := FirstChild(element);
+    while (child <> nil) do
+    begin
+      if not ParseImplementationGuideManifestResourceChild(result, path, child) then
+        UnknownContent(child, path);
+      child := NextSibling(child);
+    end;
+    closeOutElement(result, element);
+
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+function TFHIRXmlParser.ParseImplementationGuideManifestResourceChild(element : TFhirImplementationGuideManifestResource; path : string; child : TMXmlElement) : boolean;
+begin
+  result := true;
+      if (child.localName = 'reference') then
+        element.reference := ParseReference{TFhirReference}(child, path+'/reference') {b}
+      else if (child.localName = 'exampleCanonical') then
+        element.example := ParseCanonical(child, path+'/exampleCanonical'){x.3}
+      else if (child.localName = 'exampleBoolean') then
+        element.example := ParseBoolean(child, path+'/exampleBoolean'){x.3}
+      else if (child.localName = 'relativePath') then
+        element.relativePathElement := ParseUrl(child, path+'/relativePath') {b}
+      else if Not ParseBackboneElementChild(element, path, child) then
+    result := false;
+end;
+
+procedure TFHIRXmlComposer.ComposeImplementationGuideManifestResource(xml : TXmlBuilder; name : String; elem : TFhirImplementationGuideManifestResource);
+begin
+  if (elem = nil) then
+    exit;
+  composeElementAttributes(xml, elem);
+  xml.open(name);
+  composeImplementationGuideManifestResourceChildren(xml, elem);
+  closeOutElement(xml, elem);
+  xml.close(name);
+end;
+
+procedure TFHIRXmlComposer.ComposeImplementationGuideManifestResourceChildren(xml : TXmlBuilder; elem : TFhirImplementationGuideManifestResource);
+begin
+  composeBackboneElementChildren(xml, elem);
+  if not elem.noCompose and (SummaryOption in [soFull, soSummary, soData]) then
+    ComposeReference{TFhirReference}(xml, 'reference', elem.reference);{x.2a}
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.example is TFhirCanonical) {6} then
+    ComposeCanonical(xml, 'exampleCanonical', TFhirCanonical(elem.example))
+  else if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.example is TFhirBoolean) {6} then
+    ComposeBoolean(xml, 'exampleBoolean', TFhirBoolean(elem.example));
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeUrl(xml, 'relativePath', elem.relativePathElement);{x.2b}
+end;
+
+function TFHIRXmlParser.ParseImplementationGuideManifestPage(element : TMXmlElement; path : string) : TFhirImplementationGuideManifestPage;
+var
+  child : TMXmlElement;
+begin
+  result := TFhirImplementationGuideManifestPage.create;
+  try
+    parseElementAttributes(result, path, element);
+    child := FirstChild(element);
+    while (child <> nil) do
+    begin
+      if not ParseImplementationGuideManifestPageChild(result, path, child) then
+        UnknownContent(child, path);
+      child := NextSibling(child);
+    end;
+    closeOutElement(result, element);
+
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+function TFHIRXmlParser.ParseImplementationGuideManifestPageChild(element : TFhirImplementationGuideManifestPage; path : string; child : TMXmlElement) : boolean;
+begin
+  result := true;
+      if (child.localName = 'name') then
+        element.nameElement := ParseString(child, path+'/name') {b}
+      else if (child.localName = 'title') then
+        element.titleElement := ParseString(child, path+'/title') {b}
+      else if (child.localName = 'anchor') then
+        element.anchorList.Add(ParseString(child, path+'/anchor')){y.2}
+      else if Not ParseBackboneElementChild(element, path, child) then
+    result := false;
+end;
+
+procedure TFHIRXmlComposer.ComposeImplementationGuideManifestPage(xml : TXmlBuilder; name : String; elem : TFhirImplementationGuideManifestPage);
+begin
+  if (elem = nil) then
+    exit;
+  composeElementAttributes(xml, elem);
+  xml.open(name);
+  composeImplementationGuideManifestPageChildren(xml, elem);
+  closeOutElement(xml, elem);
+  xml.close(name);
+end;
+
+procedure TFHIRXmlComposer.ComposeImplementationGuideManifestPageChildren(xml : TXmlBuilder; elem : TFhirImplementationGuideManifestPage);
+var
+  i : integer;
+begin
+  composeBackboneElementChildren(xml, elem);
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeString(xml, 'name', elem.nameElement);{x.2b}
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeString(xml, 'title', elem.titleElement);{x.2b}
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    for i := 0 to elem.anchorList.Count - 1 do
+      ComposeString(xml, 'anchor', elem.anchorList[i]);
 end;
 
 function TFHIRXmlParser.ParseImplementationGuide(element : TMXmlElement; path : string) : TFhirImplementationGuide;
@@ -28421,16 +28887,14 @@ begin
         element.copyrightElement := ParseMarkdown(child, path+'/copyright') {b}
       else if (child.localName = 'fhirVersion') then
         element.fhirVersionElement := ParseId(child, path+'/fhirVersion') {b}
-      else if (child.localName = 'dependency') then
-        element.dependencyList.Add(ParseImplementationGuideDependency(child, path+'/dependency')){y.2}
-      else if (child.localName = 'package') then
-        element.packageList.Add(ParseImplementationGuidePackage(child, path+'/package')){y.2}
+      else if (child.localName = 'dependsOn') then
+        element.dependsOnList.Add(ParseImplementationGuideDependsOn(child, path+'/dependsOn')){y.2}
       else if (child.localName = 'global') then
         element.globalList.Add(ParseImplementationGuideGlobal(child, path+'/global')){y.2}
-      else if (child.localName = 'binary') then
-        element.binaryList.Add(ParseUri(child, path+'/binary')){y.2}
-      else if (child.localName = 'page') then
-        element.page := ParseImplementationGuidePage(child, path+'/page') {b}
+      else if (child.localName = 'definition') then
+        element.definition := ParseImplementationGuideDefinition(child, path+'/definition') {b}
+      else if (child.localName = 'manifest') then
+        element.manifest := ParseImplementationGuideManifest(child, path+'/manifest') {b}
       else if Not ParseDomainResourceChild(element, path, child) then
     result := false;
 end;
@@ -28480,20 +28944,16 @@ begin
     ComposeMarkdown(xml, 'copyright', elem.copyrightElement);{x.2b}
   if not elem.noCompose and doCompose('fhirVersion') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeId(xml, 'fhirVersion', elem.fhirVersionElement);{x.2b}
-  if not elem.noCompose and doCompose('dependency') and (SummaryOption in [soFull, soSummary, soData]) then
-    for i := 0 to elem.dependencyList.Count - 1 do
-      ComposeImplementationGuideDependency(xml, 'dependency', elem.dependencyList[i]);
-  if not elem.noCompose and doCompose('package') and (SummaryOption in [soFull, soSummary, soData]) then
-    for i := 0 to elem.packageList.Count - 1 do
-      ComposeImplementationGuidePackage(xml, 'package', elem.packageList[i]);
+  if not elem.noCompose and doCompose('dependsOn') and (SummaryOption in [soFull, soSummary, soData]) then
+    for i := 0 to elem.dependsOnList.Count - 1 do
+      ComposeImplementationGuideDependsOn(xml, 'dependsOn', elem.dependsOnList[i]);
   if not elem.noCompose and doCompose('global') and (SummaryOption in [soFull, soSummary, soData]) then
     for i := 0 to elem.globalList.Count - 1 do
       ComposeImplementationGuideGlobal(xml, 'global', elem.globalList[i]);
-  if not elem.noCompose and doCompose('binary') and (SummaryOption in [soFull, soData]) then
-    for i := 0 to elem.binaryList.Count - 1 do
-      ComposeUri(xml, 'binary', elem.binaryList[i]);
-  if not elem.noCompose and doCompose('page') and (SummaryOption in [soFull, soSummary, soData]) then
-    ComposeImplementationGuidePage(xml, 'page', elem.page);{x.2a}
+  if not elem.noCompose and doCompose('definition') and (SummaryOption in [soFull, soData]) then
+    ComposeImplementationGuideDefinition(xml, 'definition', elem.definition);{x.2a}
+  if not elem.noCompose and doCompose('manifest') and (SummaryOption in [soFull, soData]) then
+    ComposeImplementationGuideManifest(xml, 'manifest', elem.manifest);{x.2a}
 end;
 
 {$ENDIF FHIR_IMPLEMENTATIONGUIDE}
@@ -44268,7 +44728,7 @@ begin
       else if (child.localName = 'contextInvariant') then
         element.contextInvariantList.Add(ParseString(child, path+'/contextInvariant')){y.2}
       else if (child.localName = 'type') then
-        element.type_Element := ParseCode(child, path+'/type') {b}
+        element.type_Element := ParseUri(child, path+'/type') {b}
       else if (child.localName = 'baseDefinition') then
         element.baseDefinitionElement := ParseCanonical(child, path+'/baseDefinition') {b}
       else if (child.localName = 'derivation') then
@@ -44350,7 +44810,7 @@ begin
     for i := 0 to elem.contextInvariantList.Count - 1 do
       ComposeString(xml, 'contextInvariant', elem.contextInvariantList[i]);
   if not elem.noCompose and doCompose('type_') and (SummaryOption in [soFull, soSummary, soData]) then
-    ComposeCode(xml, 'type', elem.type_Element);{x.2b}
+    ComposeUri(xml, 'type', elem.type_Element);{x.2b}
   if not elem.noCompose and doCompose('baseDefinition') and (SummaryOption in [soFull, soSummary, soData]) then
     ComposeCanonical(xml, 'baseDefinition', elem.baseDefinitionElement);{x.2b}
   if not elem.noCompose and doCompose('derivation') and (SummaryOption in [soFull, soSummary, soData]) then
@@ -49629,7 +50089,7 @@ begin
       else if (child.localName = 'link') then
         element.link_List.Add(ParseUri(child, path+'/link')){y.2}
       else if (child.localName = 'capabilities') then
-        element.capabilities := ParseReference{TFhirCapabilityStatement}(child, path+'/capabilities') {b}
+        element.capabilitiesElement := ParseCanonical(child, path+'/capabilities') {b}
       else if Not ParseBackboneElementChild(element, path, child) then
     result := false;
 end;
@@ -49665,7 +50125,7 @@ begin
     for i := 0 to elem.link_List.Count - 1 do
       ComposeUri(xml, 'link', elem.link_List[i]);
   if not elem.noCompose and (SummaryOption in [soFull, soData]) then
-    ComposeReference{TFhirCapabilityStatement}(xml, 'capabilities', elem.capabilities);{x.2a}
+    ComposeCanonical(xml, 'capabilities', elem.capabilitiesElement);{x.2b}
 end;
 
 function TFHIRXmlParser.ParseTestScriptFixture(element : TMXmlElement; path : string) : TFhirTestScriptFixture;
@@ -54879,6 +55339,8 @@ begin
     composeDataRequirementCodeFilter(xml, name,  TFhirDataRequirementCodeFilter(base))
   else if (base is TFhirDataRequirementDateFilter) then
     composeDataRequirementDateFilter(xml, name,  TFhirDataRequirementDateFilter(base))
+  else if (base is TFhirDataRequirementSort) then
+    composeDataRequirementSort(xml, name,  TFhirDataRequirementSort(base))
   else if (base is TFhirDataRequirement) then
     composeDataRequirement(xml, name,  TFhirDataRequirement(base))
   else if (base is TFhirDosageDoseAndRate) then
@@ -55572,16 +56034,28 @@ begin
     composeImmunizationRecommendation(xml, name,  TFhirImmunizationRecommendation(base))
 {$ENDIF FHIR_IMMUNIZATIONRECOMMENDATION}
 {$IFDEF FHIR_IMPLEMENTATIONGUIDE}
-  else if (base is TFhirImplementationGuideDependency) then
-    composeImplementationGuideDependency(xml, name,  TFhirImplementationGuideDependency(base))
-  else if (base is TFhirImplementationGuidePackage) then
-    composeImplementationGuidePackage(xml, name,  TFhirImplementationGuidePackage(base))
-  else if (base is TFhirImplementationGuidePackageResource) then
-    composeImplementationGuidePackageResource(xml, name,  TFhirImplementationGuidePackageResource(base))
+  else if (base is TFhirImplementationGuideDependsOn) then
+    composeImplementationGuideDependsOn(xml, name,  TFhirImplementationGuideDependsOn(base))
   else if (base is TFhirImplementationGuideGlobal) then
     composeImplementationGuideGlobal(xml, name,  TFhirImplementationGuideGlobal(base))
-  else if (base is TFhirImplementationGuidePage) then
-    composeImplementationGuidePage(xml, name,  TFhirImplementationGuidePage(base))
+  else if (base is TFhirImplementationGuideDefinition) then
+    composeImplementationGuideDefinition(xml, name,  TFhirImplementationGuideDefinition(base))
+  else if (base is TFhirImplementationGuideDefinitionPackage) then
+    composeImplementationGuideDefinitionPackage(xml, name,  TFhirImplementationGuideDefinitionPackage(base))
+  else if (base is TFhirImplementationGuideDefinitionResource) then
+    composeImplementationGuideDefinitionResource(xml, name,  TFhirImplementationGuideDefinitionResource(base))
+  else if (base is TFhirImplementationGuideDefinitionPage) then
+    composeImplementationGuideDefinitionPage(xml, name,  TFhirImplementationGuideDefinitionPage(base))
+  else if (base is TFhirImplementationGuideDefinitionParameter) then
+    composeImplementationGuideDefinitionParameter(xml, name,  TFhirImplementationGuideDefinitionParameter(base))
+  else if (base is TFhirImplementationGuideDefinitionTemplate) then
+    composeImplementationGuideDefinitionTemplate(xml, name,  TFhirImplementationGuideDefinitionTemplate(base))
+  else if (base is TFhirImplementationGuideManifest) then
+    composeImplementationGuideManifest(xml, name,  TFhirImplementationGuideManifest(base))
+  else if (base is TFhirImplementationGuideManifestResource) then
+    composeImplementationGuideManifestResource(xml, name,  TFhirImplementationGuideManifestResource(base))
+  else if (base is TFhirImplementationGuideManifestPage) then
+    composeImplementationGuideManifestPage(xml, name,  TFhirImplementationGuideManifestPage(base))
   else if (base is TFhirImplementationGuide) then
     composeImplementationGuide(xml, name,  TFhirImplementationGuide(base))
 {$ENDIF FHIR_IMPLEMENTATIONGUIDE}
