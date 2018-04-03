@@ -33,7 +33,7 @@ unit FHIRConstants;
 
 interface
 
-// FHIR v3.2.0 generated 2018-04-01T19:29:27+10:00
+// FHIR v3.3.0 generated 2018-04-03T06:47:16+10:00
 
 uses
   SysUtils, Classes, StringSupport, DecimalSupport, AdvBuffers, DateSupport, FHIRBase, FHIRTypes, FHIRResources;
@@ -752,7 +752,8 @@ Type
     spConsent_Purpose, 
     spConsent_Scope, 
     spConsent_Securitylabel, 
-    spConsent_Source, 
+    spConsent_Sourceidentifier, 
+    spConsent_Sourcereference, 
     spConsent_Status); 
 {$ENDIF}
 
@@ -4155,7 +4156,7 @@ Const
   CODES_TSearchParamsCondition : Array[TSearchParamsCondition] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'abatement-age', 'abatement-date', 'abatement-string', 'asserted-date', 'asserter', 'body-site', 'category', 'clinical-status', 'code', 'context', 'encounter', 'evidence', 'evidence-detail', 'identifier', 'onset-age', 'onset-date', 'onset-info', 'patient', 'severity', 'stage', 'subject', 'verification-status');
 {$ENDIF}
 {$IFDEF FHIR_CONSENT}
-  CODES_TSearchParamsConsent : Array[TSearchParamsConsent] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'action', 'actor', 'category', 'consentor', 'data', 'date', 'identifier', 'organization', 'patient', 'period', 'purpose', 'scope', 'securitylabel', 'source', 'status');
+  CODES_TSearchParamsConsent : Array[TSearchParamsConsent] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'action', 'actor', 'category', 'consentor', 'data', 'date', 'identifier', 'organization', 'patient', 'period', 'purpose', 'scope', 'securitylabel', 'source-identifier', 'source-reference', 'status');
 {$ENDIF}
 {$IFDEF FHIR_CONTRACT}
   CODES_TSearchParamsContract : Array[TSearchParamsContract] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'authority', 'domain', 'identifier', 'issued', 'patient', 'signer', 'status', 'subject');
@@ -4487,11 +4488,11 @@ Const
 {$IFDEF FHIR_VISIONPRESCRIPTION}
   CODES_TSearchParamsVisionPrescription : Array[TSearchParamsVisionPrescription] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'datewritten', 'encounter', 'identifier', 'patient', 'prescriber', 'status');
 {$ENDIF}
-  FHIR_GENERATED_VERSION = '3.2.0';
+  FHIR_GENERATED_VERSION = '3.3.0';
 
   FHIR_GENERATED_PUBLICATION = '4';
 
-  FHIR_GENERATED_DATE = '2018-04-01T19:29:27+10:00';
+  FHIR_GENERATED_DATE = '2018-04-03T06:47:16+10:00';
 
 
 

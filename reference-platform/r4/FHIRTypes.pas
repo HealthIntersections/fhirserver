@@ -33,7 +33,7 @@ unit FHIRTypes;
 
 interface
 
-// FHIR v3.2.0 generated 2018-04-01T19:29:27+10:00
+// FHIR v3.3.0 generated 2018-04-03T06:47:16+10:00
 
 uses
   Classes, SysUtils, DecimalSupport, StringSupport, AdvBuffers, EncdDecd, DateSupport, FHIRBase, DigitalSignatures;
@@ -2694,7 +2694,7 @@ Type
     // Unique id for the element within a resource (for internal references). This may be any string value that does not contain spaces.
     property idElement : TFhirId read FId write SetId;
 
-    // May be used to represent additional information that is not part of the basic definition of the element. To make the use of extensions safe and manageable, there is a strict set of governance  applied to the definition and use of extensions. Though any implementer is allowed to define an extension, there is a set of requirements that SHALL be met as part of the definition of the extension.
+    // May be used to represent additional information that is not part of the basic definition of the element. To make the use of extensions safe and manageable, there is a strict set of governance  applied to the definition and use of extensions. Though any implementer can define an extension, there is a set of requirements that SHALL be met as part of the definition of the extension.
     property extensionList : TFhirExtensionList read GetExtensionList;
     property hasExtensionList : boolean read GetHasExtensionList;
 
@@ -2852,7 +2852,7 @@ Type
     function isEmpty : boolean; override;
     {!script show}
   published
-    // May be used to represent additional information that is not part of the basic definition of the element, and that modifies the understanding of the element in which it is contained. Usually modifier elements provide negation or qualification. To make the use of extensions safe and manageable, there is a strict set of governance applied to the definition and use of extensions. Though any implementer is allowed to define an extension, there is a set of requirements that SHALL be met as part of the definition of the extension. Applications processing a resource are required to check for modifier extensions.
+    // May be used to represent additional information that is not part of the basic definition of the element and that modifies the understanding of the element in which it is contained. Usually modifier elements provide negation or qualification. To make the use of extensions safe and manageable, there is a strict set of governance applied to the definition and use of extensions. Though any implementer can define an extension, there is a set of requirements that SHALL be met as part of the definition of the extension. Applications processing a resource are required to check for modifier extensions.
     property modifierExtensionList : TFhirExtensionList read GetModifierExtensionList;
     property hasModifierExtensionList : boolean read GetHasModifierExtensionList;
 
@@ -2981,7 +2981,7 @@ Type
     function isEmpty : boolean; override;
     {!script show}
   published
-    // May be used to represent additional information that is not part of the basic definition of the element, and that modifies the understanding of the element in which it is contained. Usually modifier elements provide negation or qualification. To make the use of extensions safe and manageable, there is a strict set of governance applied to the definition and use of extensions. Though any implementer is allowed to define an extension, there is a set of requirements that SHALL be met as part of the definition of the extension. Applications processing a resource are required to check for modifier extensions.
+    // May be used to represent additional information that is not part of the basic definition of the element and that modifies the understanding of the element in which it is contained. Usually modifier elements provide negation or qualification. To make the use of extensions safe and manageable, there is a strict set of governance applied to the definition and use of extensions. Though any implementer can define an extension, there is a set of requirements that SHALL be met as part of the definition of the extension. Applications processing a resource are required to check for modifier extensions.
     property modifierExtensionList : TFhirExtensionList read GetModifierExtensionList;
     property hasModifierExtensionList : boolean read GetHasModifierExtensionList;
 
@@ -9908,7 +9908,7 @@ Type
   End;
 
 
-  // The shelf-life and storage information for a medicinal product item or container can be described using the this class.
+  // The shelf-life and storage information for a medicinal product item or container can be described using this class.
   TFhirProductShelfLife = class (TFHIRBackboneType)
   protected
     FIdentifier : TFhirIdentifier;
@@ -9947,9 +9947,9 @@ Type
     // Unique identifier for the packaged Medicinal Product.
     property identifierElement : TFhirIdentifier read FIdentifier write SetIdentifier;
 
-    // Typed access to This describes the shelf life, taking into account various scenarios such as shelf life of the packaged Medicinal Product itself, shelf life after transformation where necessary and shelf life after the first opening of a bottle, etc The shelf life type shall be specified using an appropriate controlled vocabulary The controlled term and the controlled term identifier shall be specified. (defined for API consistency)
+    // Typed access to This describes the shelf life, taking into account various scenarios such as shelf life of the packaged Medicinal Product itself, shelf life after transformation where necessary and shelf life after the first opening of a bottle, etc. The shelf life type shall be specified using an appropriate controlled vocabulary The controlled term and the controlled term identifier shall be specified. (defined for API consistency)
     property type_ : TFhirCodeableConcept read FType_ write SetType_;
-    // This describes the shelf life, taking into account various scenarios such as shelf life of the packaged Medicinal Product itself, shelf life after transformation where necessary and shelf life after the first opening of a bottle, etc The shelf life type shall be specified using an appropriate controlled vocabulary The controlled term and the controlled term identifier shall be specified.
+    // This describes the shelf life, taking into account various scenarios such as shelf life of the packaged Medicinal Product itself, shelf life after transformation where necessary and shelf life after the first opening of a bottle, etc. The shelf life type shall be specified using an appropriate controlled vocabulary The controlled term and the controlled term identifier shall be specified.
     property type_Element : TFhirCodeableConcept read FType_ write SetType_;
 
     // Typed access to The shelf life time period can be specified using a numerical value for the period of time and its unit of time measurement The unit of measurement shall be specified in accordance with ISO 11240 and the resulting terminology The symbol and the symbol identifier shall be used. (defined for API consistency)
@@ -10198,7 +10198,7 @@ Type
   End;
 
 
-  // Specifies clinical/business/etc metadata that can be used to retrieve, index and/or categorize an artifact. This metadata can either be specific to the applicable population (e.g., age category, DRG) or the specific context of care (e.g., venue, care setting, provider of care).
+  // Specifies clinical/business/etc. metadata that can be used to retrieve, index and/or categorize an artifact. This metadata can either be specific to the applicable population (e.g., age category, DRG) or the specific context of care (e.g., venue, care setting, provider of care).
   TFhirUsageContext = class (TFhirType)
   protected
     FCode : TFhirCoding;
@@ -11995,10 +11995,10 @@ Type
     property type_Element : TFhirEnum read FType_ write SetType_;
 
     {@member path
-      Typed access to A FHIRPath expression, using [the simple subset of FHIRPath](simplefhirpath.html), that is used to identify the element on which discrimination is based.
+      Typed access to A FHIRPath expression, using [the simple subset of FHIRPath](fhirpath.html#simple), that is used to identify the element on which discrimination is based.
     }
     property path : String read GetPathST write SetPathST;
-    // A FHIRPath expression, using [the simple subset of FHIRPath](simplefhirpath.html), that is used to identify the element on which discrimination is based.
+    // A FHIRPath expression, using [the simple subset of FHIRPath](fhirpath.html#simple), that is used to identify the element on which discrimination is based.
     property pathElement : TFhirString read FPath write SetPath;
 
   end;
@@ -12636,10 +12636,10 @@ Type
     property humanElement : TFhirString read FHuman write SetHuman;
 
     {@member expression
-      Typed access to A [FHIRPath](http://hl7.org/fhirpath) expression of constraint that can be executed to see if this constraint is met.
+      Typed access to A [FHIRPath](fhirpath.html) expression of constraint that can be executed to see if this constraint is met.
     }
     property expression : String read GetExpressionST write SetExpressionST;
-    // A [FHIRPath](http://hl7.org/fhirpath) expression of constraint that can be executed to see if this constraint is met.
+    // A [FHIRPath](fhirpath.html) expression of constraint that can be executed to see if this constraint is met.
     property expressionElement : TFhirString read FExpression write SetExpression;
 
     {@member xpath

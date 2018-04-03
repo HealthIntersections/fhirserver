@@ -725,7 +725,7 @@ begin
       {$IFNDEF FHIR2}
       jp := jarPath;
       logt('loading Java Services from '+jp);
-      ctxt.JavaServices := TJavaLibraryWrapper.Create(jarPath+jp);
+      ctxt.JavaServices := TJavaLibraryWrapper.Create(jp);
       logt('  .. done');
       {$ENDIF}
       ctxt.TerminologyServer := FterminologyServer.Link;
