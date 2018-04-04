@@ -390,6 +390,7 @@ Type
     Procedure Stop;
     Procedure Transaction(stream: TStream; init : boolean; name, base: String; ini: TFHIRServerIniFile; callback: TInstallerCallback);
     Procedure ReturnProcessedFile(request : TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; Session: TFHIRSession; path: String; secure: boolean; variables: TDictionary<String, String> = nil); overload;
+    Procedure ReturnJavaStatus(request : TIdHTTPRequestInfo; response: TIdHTTPResponseInfo); overload;
     Procedure ReturnProcessedFile(request : TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; Session: TFHIRSession; claimed, actual: String; secure: boolean; variables: TDictionary<String, String> = nil); overload;
     Procedure RunPostHandler(request : TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; Session: TFHIRSession; claimed, actual: String; secure: boolean);
 
@@ -1305,6 +1306,8 @@ begin
       ReturnDiagnostics(AContext, request, response, false, false, FSecurePath)
     else if request.Document = '/' then
       ReturnProcessedFile(request, response, Session, '/' + FHomePage, FSourceProvider.AltFile('/' + FHomePage, FBasePath), false)
+    else if request.Document = '/java-status' then
+      ReturnJavaStatus(request, response)
     else if (FTerminologyWebServer <> nil) and FTerminologyWebServer.handlesRequest(request.Document) then
       FTerminologyWebServer.Process(AContext, request, Session, response, false)
     else
@@ -4301,6 +4304,24 @@ begin
     vars.Free;
   end;
 
+end;
+
+procedure TFhirWebServer.ReturnJavaStatus(request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo);
+var
+  s : String;
+  o : TJsonObject;
+begin
+  o := ServerContext.JavaServices.status;
+  try
+    s := TJSONWriter.writeObjectStr(o, true);
+  finally
+    o.Free;
+  end;
+
+  response.Expires := Now + 1;
+  response.ContentStream := TBytesStream.Create(TEncoding.UTF8.GetBytes(s));
+  response.FreeContentStream := true;
+  response.contentType := 'application/json';
 end;
 
 procedure TFhirWebServer.ReturnProcessedFile(request : TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; Session: TFHIRSession; path: String; secure: boolean; variables: TDictionary<String, String> = nil);

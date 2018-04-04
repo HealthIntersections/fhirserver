@@ -2671,7 +2671,7 @@ end;
 function isPrimitiveType(name : String) : boolean;
 begin
   result := StringArrayExistsSensitive(['integer', 'unsignedInt', 'positiveInt', 'decimal', 'dateTime', 'date',
-    'time', 'instant', 'string', 'uri', 'oid', 'uuid', 'id', 'boolean', 'code', 'markdown', 'xhtml', 'base64Binary'], name);
+    'time', 'instant', 'string', 'uri', 'oid', 'uuid', 'id', 'boolean', 'code', 'markdown', 'xhtml', 'base64Binary', 'canonical', 'url'], name);
 end;
 
 { TFHIRSelection }

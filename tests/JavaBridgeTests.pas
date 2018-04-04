@@ -90,7 +90,7 @@ procedure TJavaBridgeTests.Setup;
 begin
   FJavaBridge := TJavaLibraryWrapper.create('C:\work\org.hl7.fhir\build\publish\org.hl7.fhir.validator.jar');
   FJavaBridge.init('C:\work\org.hl7.fhir\build\publish\definitions.xml.zip');
-  FJavaBridge.txConnect('http://tx.fhir.org/r3');
+  FJavaBridge.txConnect('http://tx.fhir.org/r4');
 end;
 
 procedure TJavaBridgeTests.TearDown;
