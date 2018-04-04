@@ -1,0 +1,2544 @@
+<CodeSystem xmlns="http://hl7.org/fhir">
+  <url value="http://hl7.org/fhir/sid/cvx"/>
+  <name value="CVX"/>
+  <title value="CVX - US Vaccine Codes"/>
+  <status value="active"/>
+  <experimental value="false"/>
+  <date value="2013-12-05"/>
+  <publisher value="Health Intersections"/>
+  <description value="CVX Codes for vaccines"/>
+  <caseSensitive value="true"/>
+  <content value="complete"/>
+  <property>
+    <code value="non-vaccine"/>
+    <type value="integer"/>
+  </property>
+
+  <concept>  
+    <code value="998"/>
+    <display value="no vaccine administered"/>
+    <definition value="no vaccine administered"/>
+    <property>
+      <code value="non-vaccine"/>
+      <valueString value="1"/>
+    </property>
+    <property>
+      <code value="use-notes"/>
+      <valueString value="Code 998 was added for use in VXU HL7 messages where the OBX segment is nested with the RXA segment, but the message does not contain information about a vaccine administration. An example of this use is to report the vaccines due next for a patient when no vaccine administration is being reported."/>
+    </property>
+    <property>
+      <code value="status"/>
+      <valueString value="Inactive"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="99"/>
+    <display value="RESERVED - do not use"/>
+    <definition value="RESERVED - do not use"/>
+    <property>
+      <code value="non-vaccine"/>
+      <valueString value="1"/>
+    </property>
+    <property>
+      <code value="use-notes"/>
+      <valueString value="Code 99 will not be used in this table to avoid confusion with code 999."/>
+    </property>
+    <property>
+      <code value="status"/>
+      <valueString value="Inactive"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="999"/>
+    <display value="unknown"/>
+    <definition value="unknown vaccine or immune globulin"/>
+    <property>
+      <code value="non-vaccine"/>
+      <valueString value="1"/>
+    </property>
+    <property>
+      <code value="use-notes"/>
+      <valueString value="This CVX code has little utility and should rarely be used."/>
+    </property>
+    <property>
+      <code value="status"/>
+      <valueString value="Inactive"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="143"/>
+    <display value="Adenovirus types 4 and 7"/>
+    <definition value="Adenovirus, type 4 and type 7, live, oral"/>
+    <property>
+      <code value="non-vaccine"/>
+      <valueString value="0"/>
+    </property>
+    <property>
+      <code value="use-notes"/>
+      <valueString value="This vaccine is administered as 2 tablets."/>
+    </property>
+    <property>
+      <code value="status"/>
+      <valueString value="Active"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="54"/>
+    <display value="adenovirus, type 4"/>
+    <definition value="adenovirus vaccine, type 4, live, oral"/>
+    <property>
+      <code value="non-vaccine"/>
+      <valueString value="0"/>
+    </property>
+    <property>
+      <code value="status"/>
+      <valueString value="Inactive"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="55"/>
+    <display value="adenovirus, type 7"/>
+    <definition value="adenovirus vaccine, type 7, live, oral"/>
+    <property>
+      <code value="non-vaccine"/>
+      <valueString value="0"/>
+    </property>
+    <property>
+      <code value="status"/>
+      <valueString value="Inactive"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="82"/>
+    <display value="adenovirus, unspecified formulation"/>
+    <definition value="adenovirus vaccine, unspecified formulation"/>
+    <property>
+      <code value="non-vaccine"/>
+      <valueString value="0"/>
+    </property>
+    <property>
+      <code value="use-notes"/>
+      <valueString value="This CVX code allows reporting of a vaccination when formulation is unknown (for example, when recording a adenovirus vaccination when noted on a vaccination card)"/>
+    </property>
+    <property>
+      <code value="status"/>
+      <valueString value="Inactive"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="24"/>
+    <display value="anthrax"/>
+    <definition value="anthrax vaccine"/>
+    <property>
+      <code value="non-vaccine"/>
+      <valueString value="0"/>
+    </property>
+    <property>
+      <code value="status"/>
+      <valueString value="Active"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="801"/>
+    <display value="AS03 Adjuvant"/>
+    <definition value="AS03 Adjuvant"/>
+    <property>
+      <code value="non-vaccine"/>
+      <valueString value="0"/>
+    </property>
+    <property>
+      <code value="use-notes"/>
+      <valueString value="This is the adjuvant that is packaged with H5N1 vaccine, adjuvanted"/>
+    </property>
+    <property>
+      <code value="status"/>
+      <valueString value="Active"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="19"/>
+    <display value="BCG"/>
+    <definition value="Bacillus Calmette-Guerin vaccine"/>
+    <property>
+      <code value="non-vaccine"/>
+      <valueString value="0"/>
+    </property>
+    <property>
+      <code value="status"/>
+      <valueString value="Active"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="27"/>
+    <display value="botulinum antitoxin"/>
+    <definition value="botulinum antitoxin"/>
+    <property>
+      <code value="non-vaccine"/>
+      <valueString value="0"/>
+    </property>
+    <property>
+      <code value="status"/>
+      <valueString value="Active"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="26"/>
+    <display value="cholera"/>
+    <definition value="cholera vaccine"/>
+    <property>
+      <code value="non-vaccine"/>
+      <valueString value="0"/>
+    </property>
+    <property>
+      <code value="status"/>
+      <valueString value="Inactive"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="29"/>
+    <display value="CMVIG"/>
+    <definition value="cytomegalovirus immune globulin, intravenous"/>
+    <property>
+      <code value="non-vaccine"/>
+      <valueString value="0"/>
+    </property>
+    <property>
+      <code value="status"/>
+      <valueString value="Active"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="56"/>
+    <display value="dengue fever"/>
+    <definition value="dengue fever vaccine"/>
+    <property>
+      <code value="non-vaccine"/>
+      <valueString value="0"/>
+    </property>
+    <property>
+      <code value="status"/>
+      <valueString value="Never"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="12"/>
+    <display value="diphtheria antitoxin"/>
+    <definition value="diphtheria antitoxin"/>
+    <property>
+      <code value="non-vaccine"/>
+      <valueString value="0"/>
+    </property>
+    <property>
+      <code value="status"/>
+      <valueString value="Active"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="28"/>
+    <display value="DT (pediatric)"/>
+    <definition value="diphtheria and tetanus toxoids, adsorbed for pediatric use"/>
+    <property>
+      <code value="non-vaccine"/>
+      <valueString value="0"/>
+    </property>
+    <property>
+      <code value="status"/>
+      <valueString value="Active"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="20"/>
+    <display value="DTaP"/>
+    <definition value="diphtheria, tetanus toxoids and acellular pertussis vaccine"/>
+    <property>
+      <code value="non-vaccine"/>
+      <valueString value="0"/>
+    </property>
+    <property>
+      <code value="status"/>
+      <valueString value="Active"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="106"/>
+    <display value="DTaP, 5 pertussis antigens"/>
+    <definition value="diphtheria, tetanus toxoids and acellular pertussis vaccine, 5 pertussis antigens"/>
+    <property>
+      <code value="non-vaccine"/>
+      <valueString value="0"/>
+    </property>
+    <property>
+      <code value="status"/>
+      <valueString value="Active"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="107"/>
+    <display value="DTaP, unspecified formulation"/>
+    <definition value="diphtheria, tetanus toxoids and acellular pertussis vaccine, unspecified formulation"/>
+    <property>
+      <code value="non-vaccine"/>
+      <valueString value="0"/>
+    </property>
+    <property>
+      <code value="use-notes"/>
+      <valueString value="This CVX code allows reporting of a vaccination when formulation is unknown (for example, when recording a DTaP vaccination when noted on a vaccination card)"/>
+    </property>
+    <property>
+      <code value="status"/>
+      <valueString value="Inactive"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="146"/>
+    <display value="DTaP,IPV,Hib,HepB"/>
+    <definition value="Diphtheria and Tetanus Toxoids and Acellular Pertussis Adsorbed, Inactivated Poliovirus, Haemophilus b Conjugate (Meningococcal Outer Membrane Protein Complex), and Hepatitis B (Recombinant) Vaccine."/>
+    <property>
+      <code value="non-vaccine"/>
+      <valueString value="0"/>
+    </property>
+    <property>
+      <code value="use-notes"/>
+      <valueString value="Note that this vaccine is different from CVX 132."/>
+    </property>
+    <property>
+      <code value="status"/>
+      <valueString value="Pending"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="102"/>
+    <display value="DTaP/DTP-Hib-Hep B"/>
+    <definition value="DTP- Haemophilus influenzae type b conjugate and hepatitis b vaccine"/>
+    <property>
+      <code value="non-vaccine"/>
+      <valueString value="0"/>
+    </property>
+    <property>
+      <code value="use-notes"/>
+      <valueString value="This non-US vaccine contained DTP prior to 2007 and now contains DTaP"/>
+    </property>
+    <property>
+      <code value="status"/>
+      <valueString value="Inactive"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="110"/>
+    <display value="DTaP-Hep B-IPV"/>
+    <definition value="DTaP-hepatitis B and poliovirus vaccine"/>
+    <property>
+      <code value="non-vaccine"/>
+      <valueString value="0"/>
+    </property>
+    <property>
+      <code value="status"/>
+      <valueString value="Active"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="50"/>
+    <display value="DTaP-Hib"/>
+    <definition value="DTaP-Haemophilus influenzae type b conjugate vaccine"/>
+    <property>
+      <code value="non-vaccine"/>
+      <valueString value="0"/>
+    </property>
+    <property>
+      <code value="status"/>
+      <valueString value="Active"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="120"/>
+    <display value="DTaP-Hib-IPV"/>
+    <definition value="diphtheria, tetanus toxoids and acellular pertussis vaccine, Haemophilus influenzae type b conjugate, and poliovirus vaccine, inactivated (DTaP-Hib-IPV)"/>
+    <property>
+      <code value="non-vaccine"/>
+      <valueString value="0"/>
+    </property>
+    <property>
+      <code value="status"/>
+      <valueString value="Active"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="130"/>
+    <display value="DTaP-IPV"/>
+    <definition value="Diphtheria, tetanus toxoids and acellular pertussis vaccine, and poliovirus vaccine, inactivated"/>
+    <property>
+      <code value="non-vaccine"/>
+      <valueString value="0"/>
+    </property>
+    <property>
+      <code value="status"/>
+      <valueString value="Active"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="132"/>
+    <display value="DTaP-IPV-HIB-HEP B, historical"/>
+    <definition value="Historical record of vaccine containing diphtheria, tetanus toxoids and acellular pertussis, poliovirus, inactivated, Haemophilus influenzae type b conjugate, Hepatitis B (DTaP-Hib-IPV)"/>
+    <property>
+      <code value="non-vaccine"/>
+      <valueString value="0"/>
+    </property>
+    <property>
+      <code value="use-notes"/>
+      <valueString value="This is not the same as CVX 146, Hexavalent vaccine."/>
+    </property>
+    <property>
+      <code value="status"/>
+      <valueString value="Inactive"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="01"/>
+    <display value="DTP"/>
+    <definition value="diphtheria, tetanus toxoids and pertussis vaccine"/>
+    <property>
+      <code value="non-vaccine"/>
+      <valueString value="0"/>
+    </property>
+    <property>
+      <code value="status"/>
+      <valueString value="Inactive"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="22"/>
+    <display value="DTP-Hib"/>
+    <definition value="DTP-Haemophilus influenzae type b conjugate vaccine"/>
+    <property>
+      <code value="non-vaccine"/>
+      <valueString value="0"/>
+    </property>
+    <property>
+      <code value="status"/>
+      <valueString value="Inactive"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="57"/>
+    <display value="hantavirus"/>
+    <definition value="hantavirus vaccine"/>
+    <property>
+      <code value="non-vaccine"/>
+      <valueString value="0"/>
+    </property>
+    <property>
+      <code value="status"/>
+      <valueString value="Never"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="30"/>
+    <display value="HBIG"/>
+    <definition value="hepatitis B immune globulin"/>
+    <property>
+      <code value="non-vaccine"/>
+      <valueString value="0"/>
+    </property>
+    <property>
+      <code value="status"/>
+      <valueString value="Active"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="52"/>
+    <display value="Hep A, adult"/>
+    <definition value="hepatitis A vaccine, adult dosage"/>
+    <property>
+      <code value="non-vaccine"/>
+      <valueString value="0"/>
+    </property>
+    <property>
+      <code value="status"/>
+      <valueString value="Active"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="154"/>
+    <display value="Hep A, IG"/>
+    <definition value="Hepatitis A immune globulin"/>
+    <property>
+      <code value="non-vaccine"/>
+      <valueString value="0"/>
+    </property>
+    <property>
+      <code value="use-notes"/>
+      <valueString value="Do not use this code. This product may be used for Hep A and other viral infections. The correct vaccine / CVX is 86 (IG)."/>
+    </property>
+    <property>
+      <code value="status"/>
+      <valueString value="Never"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="83"/>
+    <display value="Hep A, ped/adol, 2 dose"/>
+    <definition value="hepatitis A vaccine, pediatric/adolescent dosage, 2 dose schedule"/>
+    <property>
+      <code value="non-vaccine"/>
+      <valueString value="0"/>
+    </property>
+    <property>
+      <code value="status"/>
+      <valueString value="Active"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="84"/>
+    <display value="Hep A, ped/adol, 3 dose"/>
+    <definition value="hepatitis A vaccine, pediatric/adolescent dosage, 3 dose schedule"/>
+    <property>
+      <code value="non-vaccine"/>
+      <valueString value="0"/>
+    </property>
+    <property>
+      <code value="use-notes"/>
+      <valueString value="This vaccine formulation is inactive and should not be used, except to record historic vaccinations with this formulation."/>
+    </property>
+    <property>
+      <code value="status"/>
+      <valueString value="Inactive"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="31"/>
+    <display value="Hep A, pediatric, unspecified formulation"/>
+    <definition value="hepatitis A vaccine, pediatric dosage, unspecified formulation"/>
+    <property>
+      <code value="non-vaccine"/>
+      <valueString value="0"/>
+    </property>
+    <property>
+      <code value="use-notes"/>
+      <valueString value="Do NOT use this code.  If formulation is unknown, use CVX 85.  There is only one formulation of Hep A, peds."/>
+    </property>
+    <property>
+      <code value="status"/>
+      <valueString value="Inactive"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="85"/>
+    <display value="Hep A, unspecified formulation"/>
+    <definition value="hepatitis A vaccine, unspecified formulation"/>
+    <property>
+      <code value="non-vaccine"/>
+      <valueString value="0"/>
+    </property>
+    <property>
+      <code value="use-notes"/>
+      <valueString value="This CVX code allows reporting of a vaccination when formulation is unknown (for example, when recording a HepA vaccination when noted on a vaccination card)"/>
+    </property>
+    <property>
+      <code value="status"/>
+      <valueString value="Inactive"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="104"/>
+    <display value="Hep A-Hep B"/>
+    <definition value="hepatitis A and hepatitis B vaccine"/>
+    <property>
+      <code value="non-vaccine"/>
+      <valueString value="0"/>
+    </property>
+    <property>
+      <code value="status"/>
+      <valueString value="Active"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="08"/>
+    <display value="Hep B, adolescent or pediatric"/>
+    <definition value="hepatitis B vaccine, pediatric or pediatric/adolescent dosage"/>
+    <property>
+      <code value="non-vaccine"/>
+      <valueString value="0"/>
+    </property>
+    <property>
+      <code value="use-notes"/>
+      <valueString value="This code applies to any standard pediatric formulation of Hepatitis B vaccine. It should not be used for the 2-dose hepatitis B schedule for adolescents (11-15 year olds). It requires Merck''s Recombivax HB® adult formulation. Use code 43 for that vaccine."/>
+    </property>
+    <property>
+      <code value="status"/>
+      <valueString value="Active"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="42"/>
+    <display value="Hep B, adolescent/high risk infant"/>
+    <definition value="hepatitis B vaccine, adolescent/high risk infant dosage"/>
+    <property>
+      <code value="non-vaccine"/>
+      <valueString value="0"/>
+    </property>
+    <property>
+      <code value="use-notes"/>
+      <valueString value="As of August 27, 1998, Merck ceased distribution of their adolescent/high risk infant hepatitis B vaccine dosage. Code 42 should only be used to record historical records. For current administration of hepatitis B vaccine, pediatric/adolescent dosage, use code 08."/>
+    </property>
+    <property>
+      <code value="status"/>
+      <valueString value="Inactive"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="43"/>
+    <display value="Hep B, adult"/>
+    <definition value="hepatitis B vaccine, adult dosage"/>
+    <property>
+      <code value="non-vaccine"/>
+      <valueString value="0"/>
+    </property>
+    <property>
+      <code value="use-notes"/>
+      <valueString value="As of September 1999, a 2-dose hepatitis B schedule for adolescents (11-15 year olds) was FDA approved for Merck''s Recombivax HB® adult formulation. Use code 43 for the 2-dose. This code should be used for any use of standard adult formulation of hepatitis B vaccine."/>
+    </property>
+    <property>
+      <code value="status"/>
+      <valueString value="Active"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="44"/>
+    <display value="Hep B, dialysis"/>
+    <definition value="hepatitis B vaccine, dialysis patient dosage"/>
+    <property>
+      <code value="non-vaccine"/>
+      <valueString value="0"/>
+    </property>
+    <property>
+      <code value="status"/>
+      <valueString value="Active"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="45"/>
+    <display value="Hep B, unspecified formulation"/>
+    <definition value="hepatitis B vaccine, unspecified formulation"/>
+    <property>
+      <code value="non-vaccine"/>
+      <valueString value="0"/>
+    </property>
+    <property>
+      <code value="use-notes"/>
+      <valueString value="This CVX code allows reporting of a vaccination when formulation is unknown (for example, when recording a HepB vaccination when noted on a vaccination card)"/>
+    </property>
+    <property>
+      <code value="status"/>
+      <valueString value="Inactive"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="58"/>
+    <display value="Hep C"/>
+    <definition value="hepatitis C vaccine"/>
+    <property>
+      <code value="non-vaccine"/>
+      <valueString value="0"/>
+    </property>
+    <property>
+      <code value="status"/>
+      <valueString value="Never"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="59"/>
+    <display value="Hep E"/>
+    <definition value="hepatitis E vaccine"/>
+    <property>
+      <code value="non-vaccine"/>
+      <valueString value="0"/>
+    </property>
+    <property>
+      <code value="status"/>
+      <valueString value="Never"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="60"/>
+    <display value="herpes simplex 2"/>
+    <definition value="herpes simplex virus, type 2 vaccine"/>
+    <property>
+      <code value="non-vaccine"/>
+      <valueString value="0"/>
+    </property>
+    <property>
+      <code value="status"/>
+      <valueString value="Never"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="47"/>
+    <display value="Hib (HbOC)"/>
+    <definition value="Haemophilus influenzae type b vaccine, HbOC conjugate"/>
+    <property>
+      <code value="non-vaccine"/>
+      <valueString value="0"/>
+    </property>
+    <property>
+      <code value="status"/>
+      <valueString value="Inactive"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="46"/>
+    <display value="Hib (PRP-D)"/>
+    <definition value="Haemophilus influenzae type b vaccine, PRP-D conjugate"/>
+    <property>
+      <code value="non-vaccine"/>
+      <valueString value="0"/>
+    </property>
+    <property>
+      <code value="status"/>
+      <valueString value="Inactive"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="49"/>
+    <display value="Hib (PRP-OMP)"/>
+    <definition value="Haemophilus influenzae type b vaccine, PRP-OMP conjugate"/>
+    <property>
+      <code value="non-vaccine"/>
+      <valueString value="0"/>
+    </property>
+    <property>
+      <code value="status"/>
+      <valueString value="Active"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="48"/>
+    <display value="Hib (PRP-T)"/>
+    <definition value="Haemophilus influenzae type b vaccine, PRP-T conjugate"/>
+    <property>
+      <code value="non-vaccine"/>
+      <valueString value="0"/>
+    </property>
+    <property>
+      <code value="status"/>
+      <valueString value="Active"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="17"/>
+    <display value="Hib, unspecified formulation"/>
+    <definition value="Haemophilus influenzae type b vaccine, conjugate unspecified formulation"/>
+    <property>
+      <code value="non-vaccine"/>
+      <valueString value="0"/>
+    </property>
+    <property>
+      <code value="status"/>
+      <valueString value="Inactive"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="51"/>
+    <display value="Hib-Hep B"/>
+    <definition value="Haemophilus influenzae type b conjugate and Hepatitis B vaccine"/>
+    <property>
+      <code value="non-vaccine"/>
+      <valueString value="0"/>
+    </property>
+    <property>
+      <code value="status"/>
+      <valueString value="Active"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="61"/>
+    <display value="HIV"/>
+    <definition value="human immunodeficiency virus vaccine"/>
+    <property>
+      <code value="non-vaccine"/>
+      <valueString value="0"/>
+    </property>
+    <property>
+      <code value="status"/>
+      <valueString value="Never"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="118"/>
+    <display value="HPV, bivalent"/>
+    <definition value="human papilloma virus vaccine, bivalent"/>
+    <property>
+      <code value="non-vaccine"/>
+      <valueString value="0"/>
+    </property>
+    <property>
+      <code value="status"/>
+      <valueString value="Active"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="62"/>
+    <display value="HPV, quadrivalent"/>
+    <definition value="human papilloma virus vaccine, quadrivalent"/>
+    <property>
+      <code value="non-vaccine"/>
+      <valueString value="0"/>
+    </property>
+    <property>
+      <code value="status"/>
+      <valueString value="Active"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="137"/>
+    <display value="HPV, unspecified formulation"/>
+    <definition value="HPV, unspecified formulation"/>
+    <property>
+      <code value="non-vaccine"/>
+      <valueString value="0"/>
+    </property>
+    <property>
+      <code value="use-notes"/>
+      <valueString value="This CVX code allows reporting of a vaccination when formulation is unknown (for example, when recording a HPV vaccination when noted on a vaccination card)"/>
+    </property>
+    <property>
+      <code value="status"/>
+      <valueString value="Inactive"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="86"/>
+    <display value="IG"/>
+    <definition value="immune globulin, intramuscular"/>
+    <property>
+      <code value="non-vaccine"/>
+      <valueString value="0"/>
+    </property>
+    <property>
+      <code value="status"/>
+      <valueString value="Active"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="14"/>
+    <display value="IG, unspecified formulation"/>
+    <definition value="immune globulin, unspecified formulation"/>
+    <property>
+      <code value="non-vaccine"/>
+      <valueString value="0"/>
+    </property>
+    <property>
+      <code value="status"/>
+      <valueString value="Inactive"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="87"/>
+    <display value="IGIV"/>
+    <definition value="immune globulin, intravenous"/>
+    <property>
+      <code value="non-vaccine"/>
+      <valueString value="0"/>
+    </property>
+    <property>
+      <code value="status"/>
+      <valueString value="Active"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="160"/>
+    <display value="Influenza A monovalent (H5N1), ADJUVANTED-2013"/>
+    <definition value="Influenza A monovalent (H5N1), adjuvanted, National stockpile 2013"/>
+    <property>
+      <code value="non-vaccine"/>
+      <valueString value="0"/>
+    </property>
+    <property>
+      <code value="use-notes"/>
+      <valueString value="Approved by FDA 2013, adjuvant is mixed at point of administration."/>
+    </property>
+    <property>
+      <code value="status"/>
+      <valueString value="Active"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="151"/>
+    <display value="influenza nasal, unspecified formulation"/>
+    <definition value="influenza nasal, unspecified formulation"/>
+    <property>
+      <code value="non-vaccine"/>
+      <valueString value="0"/>
+    </property>
+    <property>
+      <code value="use-notes"/>
+      <valueString value="This CVX should only be used for historical records where the formulation of nasal flu vaccine is not known."/>
+    </property>
+    <property>
+      <code value="status"/>
+      <valueString value="Inactive"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="123"/>
+    <display value="influenza, H5N1-1203"/>
+    <definition value="influenza virus vaccine, H5N1, A/Vietnam/1203/2004 (national stockpile)"/>
+    <property>
+      <code value="non-vaccine"/>
+      <valueString value="0"/>
+    </property>
+    <property>
+      <code value="status"/>
+      <valueString value="Inactive"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="135"/>
+    <display value="Influenza, high dose seasonal"/>
+    <definition value="influenza, high dose seasonal, preservative-free"/>
+    <property>
+      <code value="non-vaccine"/>
+      <valueString value="0"/>
+    </property>
+    <property>
+      <code value="status"/>
+      <valueString value="Active"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="153"/>
+    <display value="Influenza, injectable, MDCK, preservative free"/>
+    <definition value="Influenza, injectable, Madin Darby Canine Kidney, preservative free"/>
+    <property>
+      <code value="non-vaccine"/>
+      <valueString value="0"/>
+    </property>
+    <property>
+      <code value="use-notes"/>
+      <valueString value="ccIIV3"/>
+    </property>
+    <property>
+      <code value="status"/>
+      <valueString value="Active"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="158"/>
+    <display value="influenza, injectable, quadrivalent"/>
+    <definition value="influenza, injectable, quadrivalent, contains preservative"/>
+    <property>
+      <code value="non-vaccine"/>
+      <valueString value="0"/>
+    </property>
+    <property>
+      <code value="use-notes"/>
+      <valueString value="New in 2013.  IIV4"/>
+    </property>
+    <property>
+      <code value="status"/>
+      <valueString value="Active"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="150"/>
+    <display value="influenza, injectable, quadrivalent, preservative free"/>
+    <definition value="Influenza, injectable, quadrivalent, preservative free"/>
+    <property>
+      <code value="non-vaccine"/>
+      <valueString value="0"/>
+    </property>
+    <property>
+      <code value="use-notes"/>
+      <valueString value="New in 2012.  IIV4"/>
+    </property>
+    <property>
+      <code value="status"/>
+      <valueString value="Active"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="161"/>
+    <display value="Influenza, injectable,quadrivalent, preservative free, pediatric"/>
+    <definition value="Influenza, injectable,quadrivalent, preservative free, pediatric"/>
+    <property>
+      <code value="non-vaccine"/>
+      <valueString value="0"/>
+    </property>
+    <property>
+      <code value="status"/>
+      <valueString value="Active"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="111"/>
+    <display value="influenza, live, intranasal"/>
+    <definition value="influenza virus vaccine, live, attenuated, for intranasal use"/>
+    <property>
+      <code value="non-vaccine"/>
+      <valueString value="0"/>
+    </property>
+    <property>
+      <code value=""/>
+      <valueString value="LAIV3"/>
+    </property>
+    <property>
+      <code value="status"/>
+      <valueString value="Inactive"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="149"/>
+    <display value="influenza, live, intranasal, quadrivalent"/>
+    <definition value="influenza, live, intranasal, quadrivalent"/>
+    <property>
+      <code value="non-vaccine"/>
+      <valueString value="0"/>
+    </property>
+    <property>
+      <code value="use-notes"/>
+      <valueString value="new in 2012.  LAIV4"/>
+    </property>
+    <property>
+      <code value="status"/>
+      <valueString value="Active"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="155"/>
+    <display value="influenza, recombinant, injectable, preservative free"/>
+    <definition value="Seasonal, trivalent, recombinant, injectable influenza vaccine, preservative free"/>
+    <property>
+      <code value="non-vaccine"/>
+      <valueString value="0"/>
+    </property>
+    <property>
+      <code value="use-notes"/>
+      <valueString value="RIV"/>
+    </property>
+    <property>
+      <code value="status"/>
+      <valueString value="Active"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="141"/>
+    <display value="Influenza, seasonal, injectable"/>
+    <definition value="Influenza, seasonal, injectable"/>
+    <property>
+      <code value="non-vaccine"/>
+      <valueString value="0"/>
+    </property>
+    <property>
+      <code value="use-notes"/>
+      <valueString value="IIV3. This is one of two codes replacing CVX 15, which is being retired."/>
+    </property>
+    <property>
+      <code value="status"/>
+      <valueString value="Active"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="140"/>
+    <display value="Influenza, seasonal, injectable, preservative free"/>
+    <definition value="Influenza, seasonal, injectable, preservative free"/>
+    <property>
+      <code value="non-vaccine"/>
+      <valueString value="0"/>
+    </property>
+    <property>
+      <code value="use-notes"/>
+      <valueString value="IIV3. This vaccine code is one of two which replace CVX 15, influenza, split virus."/>
+    </property>
+    <property>
+      <code value="status"/>
+      <valueString value="Active"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="144"/>
+    <display value="influenza, seasonal, intradermal, preservative free"/>
+    <definition value="seasonal influenza, intradermal, preservative free"/>
+    <property>
+      <code value="non-vaccine"/>
+      <valueString value="0"/>
+    </property>
+    <property>
+      <code value="use-notes"/>
+      <valueString value="IIV3"/>
+    </property>
+    <property>
+      <code value="status"/>
+      <valueString value="Active"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="15"/>
+    <display value="influenza, split (incl. purified surface antigen)"/>
+    <definition value="influenza virus vaccine, split virus (incl. purified surface antigen)-retired CODE"/>
+    <property>
+      <code value="non-vaccine"/>
+      <valueString value="0"/>
+    </property>
+    <property>
+      <code value="use-notes"/>
+      <valueString value="This code is being retired. It will still be found in older immunization records. It included both preservative free and non-preservative free."/>
+    </property>
+    <property>
+      <code value="status"/>
+      <valueString value="Inactive"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="88"/>
+    <display value="influenza, unspecified formulation"/>
+    <definition value="influenza virus vaccine, unspecified formulation"/>
+    <property>
+      <code value="non-vaccine"/>
+      <valueString value="0"/>
+    </property>
+    <property>
+      <code value="use-notes"/>
+      <valueString value="This CVX code allows reporting of a vaccination when formulation is unknown (for example, when recording a Influenza vaccination when noted on a vaccination card)"/>
+    </property>
+    <property>
+      <code value="status"/>
+      <valueString value="Inactive"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="16"/>
+    <display value="influenza, whole"/>
+    <definition value="influenza virus vaccine, whole virus"/>
+    <property>
+      <code value="non-vaccine"/>
+      <valueString value="0"/>
+    </property>
+    <property>
+      <code value="status"/>
+      <valueString value="Inactive"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="10"/>
+    <display value="IPV"/>
+    <definition value="poliovirus vaccine, inactivated"/>
+    <property>
+      <code value="non-vaccine"/>
+      <valueString value="0"/>
+    </property>
+    <property>
+      <code value="status"/>
+      <valueString value="Active"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="134"/>
+    <display value="Japanese Encephalitis IM"/>
+    <definition value="Japanese Encephalitis vaccine for intramuscular administration"/>
+    <property>
+      <code value="non-vaccine"/>
+      <valueString value="0"/>
+    </property>
+    <property>
+      <code value="status"/>
+      <valueString value="Active"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="39"/>
+    <display value="Japanese encephalitis SC"/>
+    <definition value="Japanese Encephalitis Vaccine SC"/>
+    <property>
+      <code value="non-vaccine"/>
+      <valueString value="0"/>
+    </property>
+    <property>
+      <code value="status"/>
+      <valueString value="Active"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="129"/>
+    <display value="Japanese Encephalitis, unspecified formulation"/>
+    <definition value="Japanese Encephalitis vaccine, unspecified formulation"/>
+    <property>
+      <code value="non-vaccine"/>
+      <valueString value="0"/>
+    </property>
+    <property>
+      <code value="use-notes"/>
+      <valueString value="This CVX code allows reporting of a vaccination when formulation is unknown (for example, when recording a JE vaccination when noted on a vaccination card)"/>
+    </property>
+    <property>
+      <code value="status"/>
+      <valueString value="Inactive"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="63"/>
+    <display value="Junin virus"/>
+    <definition value="Junin virus vaccine"/>
+    <property>
+      <code value="non-vaccine"/>
+      <valueString value="0"/>
+    </property>
+    <property>
+      <code value="status"/>
+      <valueString value="Never"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="64"/>
+    <display value="leishmaniasis"/>
+    <definition value="leishmaniasis vaccine"/>
+    <property>
+      <code value="non-vaccine"/>
+      <valueString value="0"/>
+    </property>
+    <property>
+      <code value="status"/>
+      <valueString value="Never"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="65"/>
+    <display value="leprosy"/>
+    <definition value="leprosy vaccine"/>
+    <property>
+      <code value="non-vaccine"/>
+      <valueString value="0"/>
+    </property>
+    <property>
+      <code value="status"/>
+      <valueString value="Never"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="66"/>
+    <display value="Lyme disease"/>
+    <definition value="Lyme disease vaccine"/>
+    <property>
+      <code value="non-vaccine"/>
+      <valueString value="0"/>
+    </property>
+    <property>
+      <code value="status"/>
+      <valueString value="Inactive"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="04"/>
+    <display value="M/R"/>
+    <definition value="measles and rubella virus vaccine"/>
+    <property>
+      <code value="non-vaccine"/>
+      <valueString value="0"/>
+    </property>
+    <property>
+      <code value="status"/>
+      <valueString value="Inactive"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="67"/>
+    <display value="malaria"/>
+    <definition value="malaria vaccine"/>
+    <property>
+      <code value="non-vaccine"/>
+      <valueString value="0"/>
+    </property>
+    <property>
+      <code value="status"/>
+      <valueString value="Never"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="05"/>
+    <display value="measles"/>
+    <definition value="measles virus vaccine"/>
+    <property>
+      <code value="non-vaccine"/>
+      <valueString value="0"/>
+    </property>
+    <property>
+      <code value="status"/>
+      <valueString value="Inactive"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="68"/>
+    <display value="melanoma"/>
+    <definition value="melanoma vaccine"/>
+    <property>
+      <code value="non-vaccine"/>
+      <valueString value="0"/>
+    </property>
+    <property>
+      <code value="status"/>
+      <valueString value="Never"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="163"/>
+    <display value="meningococcal B, OMV"/>
+    <definition value="meningococcal B vaccine, recombinant, OMV, adjuvanted"/>
+    <property>
+      <code value="non-vaccine"/>
+      <valueString value="0"/>
+    </property>
+    <property>
+      <code value="status"/>
+      <valueString value="Pending"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="162"/>
+    <display value="meningococcal B, recombinant"/>
+    <definition value="meningococcal B vaccine, fully recombinant"/>
+    <property>
+      <code value="non-vaccine"/>
+      <valueString value="0"/>
+    </property>
+    <property>
+      <code value="status"/>
+      <valueString value="Active"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="164"/>
+    <display value="meningococcal B, unspecified"/>
+    <definition value="meningococcal B, unspecified formulation"/>
+    <property>
+      <code value="non-vaccine"/>
+      <valueString value="0"/>
+    </property>
+    <property>
+      <code value="status"/>
+      <valueString value="Inactive"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="103"/>
+    <display value="meningococcal C conjugate"/>
+    <definition value="meningococcal C conjugate vaccine"/>
+    <property>
+      <code value="non-vaccine"/>
+      <valueString value="0"/>
+    </property>
+    <property>
+      <code value="status"/>
+      <valueString value="Inactive"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="148"/>
+    <display value="Meningococcal C/Y-HIB PRP"/>
+    <definition value="Meningococcal Groups C and Y and Haemophilus b Tetanus Toxoid Conjugate Vaccine"/>
+    <property>
+      <code value="non-vaccine"/>
+      <valueString value="0"/>
+    </property>
+    <property>
+      <code value="status"/>
+      <valueString value="Active"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="147"/>
+    <display value="meningococcal MCV4, unspecified formulation"/>
+    <definition value="Meningococcal, MCV4, unspecified formulation(groups A, C, Y and W-135)"/>
+    <property>
+      <code value="non-vaccine"/>
+      <valueString value="0"/>
+    </property>
+    <property>
+      <code value="use-notes"/>
+      <valueString value="This CVX should only be used for historical doses of meningococcal conjugate vaccine where the formulation is unknown (oligosaccharide vs polysaccharide). It is not the same as CVX 108, Meningococcal, unspecified formulation."/>
+    </property>
+    <property>
+      <code value="status"/>
+      <valueString value="Inactive"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="136"/>
+    <display value="Meningococcal MCV4O"/>
+    <definition value="meningococcal oligosaccharide (groups A, C, Y and W-135) diphtheria toxoid conjugate vaccine (MCV4O)"/>
+    <property>
+      <code value="non-vaccine"/>
+      <valueString value="0"/>
+    </property>
+    <property>
+      <code value="status"/>
+      <valueString value="Active"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="114"/>
+    <display value="meningococcal MCV4P"/>
+    <definition value="meningococcal polysaccharide (groups A, C, Y and W-135) diphtheria toxoid conjugate vaccine (MCV4P)"/>
+    <property>
+      <code value="non-vaccine"/>
+      <valueString value="0"/>
+    </property>
+    <property>
+      <code value="status"/>
+      <valueString value="Active"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="32"/>
+    <display value="meningococcal MPSV4"/>
+    <definition value="meningococcal polysaccharide vaccine (MPSV4)"/>
+    <property>
+      <code value="non-vaccine"/>
+      <valueString value="0"/>
+    </property>
+    <property>
+      <code value="status"/>
+      <valueString value="Active"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="108"/>
+    <display value="meningococcal, unspecified formulation"/>
+    <definition value="meningococcal vaccine, unspecified formulation"/>
+    <property>
+      <code value="non-vaccine"/>
+      <valueString value="0"/>
+    </property>
+    <property>
+      <code value="use-notes"/>
+      <valueString value="This CVX code allows reporting of a vaccination when formulation is unknown (for example, when recording a meningococcal vaccination when noted on a vaccination card)"/>
+    </property>
+    <property>
+      <code value="status"/>
+      <valueString value="Inactive"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="03"/>
+    <display value="MMR"/>
+    <definition value="measles, mumps and rubella virus vaccine"/>
+    <property>
+      <code value="non-vaccine"/>
+      <valueString value="0"/>
+    </property>
+    <property>
+      <code value="status"/>
+      <valueString value="Active"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="94"/>
+    <display value="MMRV"/>
+    <definition value="measles, mumps, rubella, and varicella virus vaccine"/>
+    <property>
+      <code value="non-vaccine"/>
+      <valueString value="0"/>
+    </property>
+    <property>
+      <code value="status"/>
+      <valueString value="Active"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="07"/>
+    <display value="mumps"/>
+    <definition value="mumps virus vaccine"/>
+    <property>
+      <code value="non-vaccine"/>
+      <valueString value="0"/>
+    </property>
+    <property>
+      <code value="status"/>
+      <valueString value="Active"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="127"/>
+    <display value="Novel influenza-H1N1-09"/>
+    <definition value="Novel influenza-H1N1-09, injectable"/>
+    <property>
+      <code value="non-vaccine"/>
+      <valueString value="0"/>
+    </property>
+    <property>
+      <code value="status"/>
+      <valueString value="Inactive"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="128"/>
+    <display value="Novel Influenza-H1N1-09, all formulations"/>
+    <definition value="Novel influenza-H1N1-09, all formulations"/>
+    <property>
+      <code value="non-vaccine"/>
+      <valueString value="0"/>
+    </property>
+    <property>
+      <code value="use-notes"/>
+      <valueString value="This code is used whenever the actual formulation is not determined or when aggregating all Novel H1N1 Influenza-09 immunizations for reporting to CRA. It should not be used for seasonal influenza vaccine that is not otherwise specified. (NOS)"/>
+    </property>
+    <property>
+      <code value="status"/>
+      <valueString value="Inactive"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="125"/>
+    <display value="Novel Influenza-H1N1-09, nasal"/>
+    <definition value="Novel Influenza-H1N1-09, live virus for nasal administration"/>
+    <property>
+      <code value="non-vaccine"/>
+      <valueString value="0"/>
+    </property>
+    <property>
+      <code value="status"/>
+      <valueString value="Inactive"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="126"/>
+    <display value="Novel influenza-H1N1-09, preservative-free"/>
+    <definition value="Novel influenza-H1N1-09, preservative-free, injectable"/>
+    <property>
+      <code value="non-vaccine"/>
+      <valueString value="0"/>
+    </property>
+    <property>
+      <code value="status"/>
+      <valueString value="Inactive"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="02"/>
+    <display value="OPV"/>
+    <definition value="poliovirus vaccine, live, oral"/>
+    <property>
+      <code value="non-vaccine"/>
+      <valueString value="0"/>
+    </property>
+    <property>
+      <code value="status"/>
+      <valueString value="Inactive"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="69"/>
+    <display value="parainfluenza-3"/>
+    <definition value="parainfluenza-3 virus vaccine"/>
+    <property>
+      <code value="non-vaccine"/>
+      <valueString value="0"/>
+    </property>
+    <property>
+      <code value="status"/>
+      <valueString value="Inactive"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="11"/>
+    <display value="pertussis"/>
+    <definition value="pertussis vaccine"/>
+    <property>
+      <code value="non-vaccine"/>
+      <valueString value="0"/>
+    </property>
+    <property>
+      <code value="status"/>
+      <valueString value="Inactive"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="23"/>
+    <display value="plague"/>
+    <definition value="plague vaccine"/>
+    <property>
+      <code value="non-vaccine"/>
+      <valueString value="0"/>
+    </property>
+    <property>
+      <code value="status"/>
+      <valueString value="Active"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="133"/>
+    <display value="Pneumococcal conjugate PCV 13"/>
+    <definition value="pneumococcal conjugate vaccine, 13 valent"/>
+    <property>
+      <code value="non-vaccine"/>
+      <valueString value="0"/>
+    </property>
+    <property>
+      <code value="status"/>
+      <valueString value="Active"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="100"/>
+    <display value="pneumococcal conjugate PCV 7"/>
+    <definition value="pneumococcal conjugate vaccine, 7 valent"/>
+    <property>
+      <code value="non-vaccine"/>
+      <valueString value="0"/>
+    </property>
+    <property>
+      <code value="status"/>
+      <valueString value="Inactive"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="152"/>
+    <display value="Pneumococcal Conjugate, unspecified formulation"/>
+    <definition value="Pneumococcal Conjugate, unspecified formulation"/>
+    <property>
+      <code value="non-vaccine"/>
+      <valueString value="0"/>
+    </property>
+    <property>
+      <code value="use-notes"/>
+      <valueString value="This CVX should only be used for historical records where the formulation of pneumococcal conjugate vaccine is not known."/>
+    </property>
+    <property>
+      <code value="status"/>
+      <valueString value="Inactive"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="33"/>
+    <display value="pneumococcal polysaccharide PPV23"/>
+    <definition value="pneumococcal polysaccharide vaccine, 23 valent"/>
+    <property>
+      <code value="non-vaccine"/>
+      <valueString value="0"/>
+    </property>
+    <property>
+      <code value="status"/>
+      <valueString value="Active"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="109"/>
+    <display value="pneumococcal, unspecified formulation"/>
+    <definition value="pneumococcal vaccine, unspecified formulation"/>
+    <property>
+      <code value="non-vaccine"/>
+      <valueString value="0"/>
+    </property>
+    <property>
+      <code value="use-notes"/>
+      <valueString value="This CVX code allows reporting of a vaccination when formulation is unknown (for example, when recording a pneumococcal vaccination when noted on a vaccination card)"/>
+    </property>
+    <property>
+      <code value="status"/>
+      <valueString value="Inactive"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="89"/>
+    <display value="polio, unspecified formulation"/>
+    <definition value="poliovirus vaccine, unspecified formulation"/>
+    <property>
+      <code value="non-vaccine"/>
+      <valueString value="0"/>
+    </property>
+    <property>
+      <code value="use-notes"/>
+      <valueString value="This CVX code allows reporting of a vaccination when formulation is unknown (for example, when recording a polio vaccination when noted on a vaccination card)"/>
+    </property>
+    <property>
+      <code value="status"/>
+      <valueString value="Inactive"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="70"/>
+    <display value="Q fever"/>
+    <definition value="Q fever vaccine"/>
+    <property>
+      <code value="non-vaccine"/>
+      <valueString value="0"/>
+    </property>
+    <property>
+      <code value="status"/>
+      <valueString value="Never"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="40"/>
+    <display value="rabies, intradermal injection"/>
+    <definition value="rabies vaccine, for intradermal injection"/>
+    <property>
+      <code value="non-vaccine"/>
+      <valueString value="0"/>
+    </property>
+    <property>
+      <code value="status"/>
+      <valueString value="Active"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="18"/>
+    <display value="rabies, intramuscular injection"/>
+    <definition value="rabies vaccine, for intramuscular injection"/>
+    <property>
+      <code value="non-vaccine"/>
+      <valueString value="0"/>
+    </property>
+    <property>
+      <code value="status"/>
+      <valueString value="Active"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="90"/>
+    <display value="rabies, unspecified formulation"/>
+    <definition value="rabies vaccine, unspecified formulation"/>
+    <property>
+      <code value="non-vaccine"/>
+      <valueString value="0"/>
+    </property>
+    <property>
+      <code value="use-notes"/>
+      <valueString value="This CVX code allows reporting of a vaccination when formulation is unknown (for example, when recording a rabies vaccination when noted on a vaccination card)"/>
+    </property>
+    <property>
+      <code value="status"/>
+      <valueString value="Inactive"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="72"/>
+    <display value="rheumatic fever"/>
+    <definition value="rheumatic fever vaccine"/>
+    <property>
+      <code value="non-vaccine"/>
+      <valueString value="0"/>
+    </property>
+    <property>
+      <code value="status"/>
+      <valueString value="Never"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="159"/>
+    <display value="Rho(D) - Unspecified formulation"/>
+    <definition value="Rho(D) Unspecified formulation"/>
+    <property>
+      <code value="non-vaccine"/>
+      <valueString value="0"/>
+    </property>
+    <property>
+      <code value="status"/>
+      <valueString value="Inactive"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="157"/>
+    <display value="Rho(D) -IG IM"/>
+    <definition value="Rho(D) Immune globulin - IM"/>
+    <property>
+      <code value="non-vaccine"/>
+      <valueString value="0"/>
+    </property>
+    <property>
+      <code value="use-notes"/>
+      <valueString value="This immune globulin may be administered IM only."/>
+    </property>
+    <property>
+      <code value="status"/>
+      <valueString value="Active"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="156"/>
+    <display value="Rho(D)-IG"/>
+    <definition value="Rho(D) Immune globulin- IV or IM"/>
+    <property>
+      <code value="non-vaccine"/>
+      <valueString value="0"/>
+    </property>
+    <property>
+      <code value="use-notes"/>
+      <valueString value="This immune globulin may be administered either IM or IV."/>
+    </property>
+    <property>
+      <code value="status"/>
+      <valueString value="Active"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="73"/>
+    <display value="Rift Valley fever"/>
+    <definition value="Rift Valley fever vaccine"/>
+    <property>
+      <code value="non-vaccine"/>
+      <valueString value="0"/>
+    </property>
+    <property>
+      <code value="status"/>
+      <valueString value="Never"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="34"/>
+    <display value="RIG"/>
+    <definition value="rabies immune globulin"/>
+    <property>
+      <code value="non-vaccine"/>
+      <valueString value="0"/>
+    </property>
+    <property>
+      <code value="status"/>
+      <valueString value="Active"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="119"/>
+    <display value="rotavirus, monovalent"/>
+    <definition value="rotavirus, live, monovalent vaccine"/>
+    <property>
+      <code value="non-vaccine"/>
+      <valueString value="0"/>
+    </property>
+    <property>
+      <code value="status"/>
+      <valueString value="Active"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="116"/>
+    <display value="rotavirus, pentavalent"/>
+    <definition value="rotavirus, live, pentavalent vaccine"/>
+    <property>
+      <code value="non-vaccine"/>
+      <valueString value="0"/>
+    </property>
+    <property>
+      <code value="status"/>
+      <valueString value="Active"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="74"/>
+    <display value="rotavirus, tetravalent"/>
+    <definition value="rotavirus, live, tetravalent vaccine"/>
+    <property>
+      <code value="non-vaccine"/>
+      <valueString value="0"/>
+    </property>
+    <property>
+      <code value="status"/>
+      <valueString value="Inactive"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="122"/>
+    <display value="rotavirus, unspecified formulation"/>
+    <definition value="rotavirus vaccine, unspecified formulation"/>
+    <property>
+      <code value="non-vaccine"/>
+      <valueString value="0"/>
+    </property>
+    <property>
+      <code value="status"/>
+      <valueString value="Inactive"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="71"/>
+    <display value="RSV-IGIV"/>
+    <definition value="respiratory syncytial virus immune globulin, intravenous"/>
+    <property>
+      <code value="non-vaccine"/>
+      <valueString value="0"/>
+    </property>
+    <property>
+      <code value="status"/>
+      <valueString value="Active"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="93"/>
+    <display value="RSV-MAb"/>
+    <definition value="respiratory syncytial virus monoclonal antibody (palivizumab), intramuscular"/>
+    <property>
+      <code value="non-vaccine"/>
+      <valueString value="0"/>
+    </property>
+    <property>
+      <code value="status"/>
+      <valueString value="Active"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="145"/>
+    <display value="RSV-MAb (new)"/>
+    <definition value="respiratory syncytial virus monoclonal antibody (motavizumab), intramuscular"/>
+    <property>
+      <code value="non-vaccine"/>
+      <valueString value="0"/>
+    </property>
+    <property>
+      <code value="status"/>
+      <valueString value="Pending"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="06"/>
+    <display value="rubella"/>
+    <definition value="rubella virus vaccine"/>
+    <property>
+      <code value="non-vaccine"/>
+      <valueString value="0"/>
+    </property>
+    <property>
+      <code value="status"/>
+      <valueString value="Active"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="38"/>
+    <display value="rubella/mumps"/>
+    <definition value="rubella and mumps virus vaccine"/>
+    <property>
+      <code value="non-vaccine"/>
+      <valueString value="0"/>
+    </property>
+    <property>
+      <code value="status"/>
+      <valueString value="Inactive"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="76"/>
+    <display value="Staphylococcus bacterio lysate"/>
+    <definition value="Staphylococcus bacteriophage lysate"/>
+    <property>
+      <code value="non-vaccine"/>
+      <valueString value="0"/>
+    </property>
+    <property>
+      <code value="status"/>
+      <valueString value="Inactive"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="138"/>
+    <display value="Td (adult)"/>
+    <definition value="tetanus and diphtheria toxoids, not adsorbed, for adult use"/>
+    <property>
+      <code value="non-vaccine"/>
+      <valueString value="0"/>
+    </property>
+    <property>
+      <code value="use-notes"/>
+      <valueString value="Note that this Td is not adsorbed."/>
+    </property>
+    <property>
+      <code value="status"/>
+      <valueString value="Active"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="113"/>
+    <display value="Td (adult) preservative free"/>
+    <definition value="tetanus and diphtheria toxoids, adsorbed, preservative free, for adult use"/>
+    <property>
+      <code value="non-vaccine"/>
+      <valueString value="0"/>
+    </property>
+    <property>
+      <code value="status"/>
+      <valueString value="Active"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="09"/>
+    <display value="Td (adult), adsorbed"/>
+    <definition value="tetanus and diphtheria toxoids, adsorbed, for adult use"/>
+    <property>
+      <code value="non-vaccine"/>
+      <valueString value="0"/>
+    </property>
+    <property>
+      <code value="use-notes"/>
+      <valueString value="Note that this vaccine name has changed.  See also Td (adult). It is not adsorbed."/>
+    </property>
+    <property>
+      <code value="status"/>
+      <valueString value="Active"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="139"/>
+    <display value="Td(adult) unspecified formulation"/>
+    <definition value="Td(adult) unspecified formulation"/>
+    <property>
+      <code value="non-vaccine"/>
+      <valueString value="0"/>
+    </property>
+    <property>
+      <code value="use-notes"/>
+      <valueString value="This CVX code allows reporting of a vaccination when formulation is unknown (for example, when recording a Td vaccination when noted on a vaccination card)"/>
+    </property>
+    <property>
+      <code value="status"/>
+      <valueString value="Inactive"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="115"/>
+    <display value="Tdap"/>
+    <definition value="tetanus toxoid, reduced diphtheria toxoid, and acellular pertussis vaccine, adsorbed"/>
+    <property>
+      <code value="non-vaccine"/>
+      <valueString value="0"/>
+    </property>
+    <property>
+      <code value="status"/>
+      <valueString value="Active"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="35"/>
+    <display value="tetanus toxoid, adsorbed"/>
+    <definition value="tetanus toxoid, adsorbed"/>
+    <property>
+      <code value="non-vaccine"/>
+      <valueString value="0"/>
+    </property>
+    <property>
+      <code value="status"/>
+      <valueString value="Active"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="142"/>
+    <display value="tetanus toxoid, not adsorbed"/>
+    <definition value="tetanus toxoid, not adsorbed"/>
+    <property>
+      <code value="non-vaccine"/>
+      <valueString value="0"/>
+    </property>
+    <property>
+      <code value="status"/>
+      <valueString value="Active"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="112"/>
+    <display value="tetanus toxoid, unspecified formulation"/>
+    <definition value="tetanus toxoid, unspecified formulation"/>
+    <property>
+      <code value="non-vaccine"/>
+      <valueString value="0"/>
+    </property>
+    <property>
+      <code value="status"/>
+      <valueString value="Inactive"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="77"/>
+    <display value="tick-borne encephalitis"/>
+    <definition value="tick-borne encephalitis vaccine"/>
+    <property>
+      <code value="non-vaccine"/>
+      <valueString value="0"/>
+    </property>
+    <property>
+      <code value="status"/>
+      <valueString value="Inactive"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="13"/>
+    <display value="TIG"/>
+    <definition value="tetanus immune globulin"/>
+    <property>
+      <code value="non-vaccine"/>
+      <valueString value="0"/>
+    </property>
+    <property>
+      <code value="status"/>
+      <valueString value="Active"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="98"/>
+    <display value="TST, unspecified formulation"/>
+    <definition value="tuberculin skin test; unspecified formulation"/>
+    <property>
+      <code value="non-vaccine"/>
+      <valueString value="0"/>
+    </property>
+    <property>
+      <code value="use-notes"/>
+      <valueString value="TB Skin test is not vaccine."/>
+    </property>
+    <property>
+      <code value="status"/>
+      <valueString value="Inactive"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="95"/>
+    <display value="TST-OT tine test"/>
+    <definition value="tuberculin skin test; old tuberculin, multipuncture device"/>
+    <property>
+      <code value="non-vaccine"/>
+      <valueString value="0"/>
+    </property>
+    <property>
+      <code value="use-notes"/>
+      <valueString value="TB Skin test is not vaccine."/>
+    </property>
+    <property>
+      <code value="status"/>
+      <valueString value="Inactive"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="96"/>
+    <display value="TST-PPD intradermal"/>
+    <definition value="tuberculin skin test; purified protein derivative solution, intradermal"/>
+    <property>
+      <code value="non-vaccine"/>
+      <valueString value="0"/>
+    </property>
+    <property>
+      <code value="use-notes"/>
+      <valueString value="TB Skin test is not vaccine."/>
+    </property>
+    <property>
+      <code value="status"/>
+      <valueString value="Inactive"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="97"/>
+    <display value="TST-PPD tine test"/>
+    <definition value="tuberculin skin test; purified protein derivative, multipuncture device"/>
+    <property>
+      <code value="non-vaccine"/>
+      <valueString value="0"/>
+    </property>
+    <property>
+      <code value="use-notes"/>
+      <valueString value="TB Skin test is not vaccine."/>
+    </property>
+    <property>
+      <code value="status"/>
+      <valueString value="Inactive"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="78"/>
+    <display value="tularemia vaccine"/>
+    <definition value="tularemia vaccine"/>
+    <property>
+      <code value="non-vaccine"/>
+      <valueString value="0"/>
+    </property>
+    <property>
+      <code value="status"/>
+      <valueString value="Inactive"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="25"/>
+    <display value="typhoid, oral"/>
+    <definition value="typhoid vaccine, live, oral"/>
+    <property>
+      <code value="non-vaccine"/>
+      <valueString value="0"/>
+    </property>
+    <property>
+      <code value="status"/>
+      <valueString value="Active"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="41"/>
+    <display value="typhoid, parenteral"/>
+    <definition value="typhoid vaccine, parenteral, other than acetone-killed, dried"/>
+    <property>
+      <code value="non-vaccine"/>
+      <valueString value="0"/>
+    </property>
+    <property>
+      <code value="status"/>
+      <valueString value="Active"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="53"/>
+    <display value="typhoid, parenteral, AKD (U.S. military)"/>
+    <definition value="typhoid vaccine, parenteral, acetone-killed, dried (U.S. military)"/>
+    <property>
+      <code value="non-vaccine"/>
+      <valueString value="0"/>
+    </property>
+    <property>
+      <code value="status"/>
+      <valueString value="Active"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="91"/>
+    <display value="typhoid, unspecified formulation"/>
+    <definition value="typhoid vaccine, unspecified formulation"/>
+    <property>
+      <code value="non-vaccine"/>
+      <valueString value="0"/>
+    </property>
+    <property>
+      <code value="use-notes"/>
+      <valueString value="This CVX code allows reporting of a vaccination when formulation is unknown (for example, when recording a typhoid vaccination when noted on a vaccination card)"/>
+    </property>
+    <property>
+      <code value="status"/>
+      <valueString value="Inactive"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="101"/>
+    <display value="typhoid, ViCPs"/>
+    <definition value="typhoid Vi capsular polysaccharide vaccine"/>
+    <property>
+      <code value="non-vaccine"/>
+      <valueString value="0"/>
+    </property>
+    <property>
+      <code value="status"/>
+      <valueString value="Active"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="131"/>
+    <display value="typhus, historical"/>
+    <definition value="Historical record of a typhus vaccination"/>
+    <property>
+      <code value="non-vaccine"/>
+      <valueString value="0"/>
+    </property>
+    <property>
+      <code value="status"/>
+      <valueString value="Inactive"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="75"/>
+    <display value="vaccinia (smallpox)"/>
+    <definition value="vaccinia (smallpox) vaccine"/>
+    <property>
+      <code value="non-vaccine"/>
+      <valueString value="0"/>
+    </property>
+    <property>
+      <code value="status"/>
+      <valueString value="Active"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="105"/>
+    <display value="vaccinia (smallpox) diluted"/>
+    <definition value="vaccinia (smallpox) vaccine, diluted"/>
+    <property>
+      <code value="non-vaccine"/>
+      <valueString value="0"/>
+    </property>
+    <property>
+      <code value="status"/>
+      <valueString value="Inactive"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="79"/>
+    <display value="vaccinia immune globulin"/>
+    <definition value="vaccinia immune globulin"/>
+    <property>
+      <code value="non-vaccine"/>
+      <valueString value="0"/>
+    </property>
+    <property>
+      <code value="status"/>
+      <valueString value="Active"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="21"/>
+    <display value="varicella"/>
+    <definition value="varicella virus vaccine"/>
+    <property>
+      <code value="non-vaccine"/>
+      <valueString value="0"/>
+    </property>
+    <property>
+      <code value="status"/>
+      <valueString value="Active"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="81"/>
+    <display value="VEE, inactivated"/>
+    <definition value="Venezuelan equine encephalitis, inactivated"/>
+    <property>
+      <code value="non-vaccine"/>
+      <valueString value="0"/>
+    </property>
+    <property>
+      <code value="status"/>
+      <valueString value="Inactive"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="80"/>
+    <display value="VEE, live"/>
+    <definition value="Venezuelan equine encephalitis, live, attenuated"/>
+    <property>
+      <code value="non-vaccine"/>
+      <valueString value="0"/>
+    </property>
+    <property>
+      <code value="status"/>
+      <valueString value="Inactive"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="92"/>
+    <display value="VEE, unspecified formulation"/>
+    <definition value="Venezuelan equine encephalitis vaccine, unspecified formulation"/>
+    <property>
+      <code value="non-vaccine"/>
+      <valueString value="0"/>
+    </property>
+    <property>
+      <code value="use-notes"/>
+      <valueString value="This CVX code allows reporting of a vaccination when formulation is unknown (for example, when recording a VEE vaccination when noted on a vaccination card)"/>
+    </property>
+    <property>
+      <code value="status"/>
+      <valueString value="Inactive"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="36"/>
+    <display value="VZIG"/>
+    <definition value="varicella zoster immune globulin"/>
+    <property>
+      <code value="non-vaccine"/>
+      <valueString value="0"/>
+    </property>
+    <property>
+      <code value="status"/>
+      <valueString value="Active"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="117"/>
+    <display value="VZIG (IND)"/>
+    <definition value="varicella zoster immune globulin (Investigational New Drug)"/>
+    <property>
+      <code value="non-vaccine"/>
+      <valueString value="0"/>
+    </property>
+    <property>
+      <code value="status"/>
+      <valueString value="Inactive"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="37"/>
+    <display value="yellow fever"/>
+    <definition value="yellow fever vaccine"/>
+    <property>
+      <code value="non-vaccine"/>
+      <valueString value="0"/>
+    </property>
+    <property>
+      <code value="status"/>
+      <valueString value="Active"/>
+    </property>
+  </concept>
+
+  <concept>  
+    <code value="121"/>
+    <display value="zoster"/>
+    <definition value="zoster vaccine, live"/>
+    <property>
+      <code value="non-vaccine"/>
+      <valueString value="0"/>
+    </property>
+    <property>
+      <code value="status/"/>
+      <valueString value="Active"/>
+    </property>
+  </concept>
+</CodeSystem>

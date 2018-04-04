@@ -577,10 +577,10 @@ end;
 procedure TFHIRJsonParserBase.ParseComments(base: TFHIRObject; jsn : TJsonObject);
 begin
   checkTimeOut;
-  if jsn.has('_xml_comments_start') then
+{  if jsn.has('_xml_comments_start') then
     base.xml_commentsStart.AsText:= jsn['_xml_comments_start'];
   if jsn.has('_xml_comments_end') then
-    base.xml_commentsEnd.AsText:= jsn['_xml_comments_end'];
+    base.xml_commentsEnd.AsText:= jsn['_xml_comments_end'];}
 end;
 
 procedure TFHIRJsonParserBase.parseDomainResource(jsn : TJsonObject; ctxt : TFHIRObjectList);
@@ -618,7 +618,8 @@ begin
   if arr <> nil then
   begin
     for i := 0 to arr.Count - 1 do
-      handler(arr.Obj[i], ctxt);
+      if (arr.Obj[i] <> nil) then
+        handler(arr.Obj[i], ctxt);
   end;
 end;
 
@@ -1219,10 +1220,11 @@ begin
   if not FComments then
     exit;
 
-  if base.HasXmlCommentsStart then
+{  if base.HasXmlCommentsStart then
     json.Value('_xml_comments_start', base.xml_commentsStart.AsText);
   if base.HasXmlCommentsEnd then
     json.Value('_xml_comments_end', base.xml_commentsEnd.AsText);
+}
 end;
 
 //procedure TFHIRJsonComposerBase.Compose(stream: TStream; ResourceType : TFhirResourceType; oTags: TFHIRCodingList; isPretty: Boolean);

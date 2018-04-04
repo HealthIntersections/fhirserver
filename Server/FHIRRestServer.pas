@@ -2801,41 +2801,44 @@ begin
         if not StringArrayExistsInsensitive(['.info', '.internals', '.zip'], extractFileExt(rdr.Parts[i].name)) then
         begin
           writeln('Parse ' + rdr.Parts[i].name);
-          if rdr.Parts[i].name.EndsWith('.json') then
-            p := FServerContext.Factory.newJsonParser(lang)
-          else if rdr.Parts[i].name.EndsWith('.map') then
-            p := TFHIRTextParser.Create(FServerContext.ValidatorContext.link, lang)
-          else
-            p := FServerContext.Factory.newXmlParser(lang);
-          try
-            p.Source := TBytesStream.Create(rdr.Parts[i].AsBytes);
-            p.AllowUnknownContent := true;
-            p.Parse;
-            if p.resource is TFHIRBundle then
-            begin
-              bnd := TFHIRBundle(p.resource);
-              case bnd.type_ of
-                BundleTypeDocument, BundleTypeMessage, BundleTypeHistory, BundleTypeSearchset, BundleTypeCollection:
-                  for k := 0 to bnd.entryList.Count - 1 do
-                    if ok(bnd.entryList[k].resource) then
-                      result.entryList.Add(bnd.entryList[k].link);
-                BundleTypeTransaction, BundleTypeTransactionResponse:
-                  ; // we ignore these for now
+          if (rdr.Parts[i].name <> 'package.json') then
+          begin
+            if rdr.Parts[i].name.EndsWith('.json') then
+              p := FServerContext.Factory.newJsonParser(lang)
+            else if rdr.Parts[i].name.EndsWith('.map') then
+              p := TFHIRTextParser.Create(FServerContext.ValidatorContext.link, lang)
+            else
+              p := FServerContext.Factory.newXmlParser(lang);
+            try
+              p.Source := TBytesStream.Create(rdr.Parts[i].AsBytes);
+              p.AllowUnknownContent := true;
+              p.Parse;
+              if p.resource is TFHIRBundle then
+              begin
+                bnd := TFHIRBundle(p.resource);
+                case bnd.type_ of
+                  BundleTypeDocument, BundleTypeMessage, BundleTypeHistory, BundleTypeSearchset, BundleTypeCollection:
+                    for k := 0 to bnd.entryList.Count - 1 do
+                      if ok(bnd.entryList[k].resource) then
+                        result.entryList.Add(bnd.entryList[k].link);
+                  BundleTypeTransaction, BundleTypeTransactionResponse:
+                    ; // we ignore these for now
+                end;
+              end
+              else if not(p.resource is TFhirParameters) and ok(p.resource) then
+              begin
+                e := TFHIRBundleEntry.Create;
+                try
+                  e.resource := p.resource.link;
+                  result.entryList.Add(e.link);
+                finally
+                  e.Free;
+                end;
               end;
-            end
-            else if not(p.resource is TFhirParameters) and ok(p.resource) then
-            begin
-              e := TFHIRBundleEntry.Create;
-              try
-                e.resource := p.resource.link;
-                result.entryList.Add(e.link);
-              finally
-                e.Free;
-              end;
+            finally
+              p.Source.Free;
+              p.Free;
             end;
-          finally
-            p.Source.Free;
-            p.Free;
           end;
         end;
       end;
