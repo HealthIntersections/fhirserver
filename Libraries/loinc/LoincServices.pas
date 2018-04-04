@@ -2234,7 +2234,7 @@ end;
 function TLoincServices.FilterBySubset(op: TFhirFilterOperatorEnum; subset : TLoincSubsetId): TCodeSystemProviderFilterContext;
 begin
   if op <> FilterOperatorEqual then
-    raise Exception.Create('Unsupported operator type '+CODES_TFhirFilterOperatorEnum[op]);
+    raise ETerminologyError.Create('Unsupported operator type '+CODES_TFhirFilterOperatorEnum[op]);
 
   result := THolder.create;
   THolder(result).Children := FRefs.GetCardinals(FSubsets[subset]);

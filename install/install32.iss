@@ -14,7 +14,7 @@ Compression=lzma2/ultra64
 ; 64 bit
 ArchitecturesAllowed=x64 x86
 
-; we will be creating a service so we do need this privilege
+; we might be creating a service so we do need this privilege
 PrivilegesRequired=admin
 AllowUNCPath=no
 AlwaysShowDirOnReadyPage=yes
@@ -157,12 +157,21 @@ Source: "C:\work\org.hl7.fhir\build\publish\examples-json.zip";                 
 
 
 ; Load Data
-Source: "C:\work\fhirserver\sql\nucc.xml";                                      DestDir: {app}\sql;     DestName: nucc.xml;            Components: r3 r4; Flags: ignoreversion
-Source: "C:\work\fhirserver\sql\tslc.xml";                                      DestDir: {app}\sql;     DestName: tslc.xml;            Components: r3 r4; Flags: ignoreversion
-Source: "C:\work\fhirserver\sql\cvx.xml";                             DestDir: {app}\sql;     DestName: cvx.xml;              Components: r3 r4; Flags: ignoreversion
-Source: "C:\work\fhirserver\sql\icpc2.xml";                           DestDir: {app}\sql;     DestName: icpc2.xml;            Components: r3 r4; Flags: ignoreversion
-Source: "C:\work\fhirserver\sql\country-codes.xml";                   DestDir: {app}\sql;     DestName: country-codes.xml;    Components: r3 r4; Flags: ignoreversion
-Source: "C:\work\fhirserver\install\load.ini";                                  DestDir: {app}\load;                                   Components: r3 r4; Flags: ignoreversion
+Source: "C:\work\fhirserver\install\load.ini";                            DestDir: {app}\load;                                    Components: r3; Flags: ignoreversion
+Source: "C:\work\fhirserver\resources\r3\country-codes.xml";              DestDir: {app}\load;     DestName: country-codes.xml;   Components: r3; Flags: ignoreversion
+Source: "C:\work\fhirserver\resources\r3\cvx.xml";                        DestDir: {app}\load;     DestName: cvx.xml;             Components: r3; Flags: ignoreversion
+Source: "C:\work\fhirserver\resources\r3\icpc2.xml";                      DestDir: {app}\load;     DestName: icpc2.xml;           Components: r3; Flags: ignoreversion
+Source: "C:\work\fhirserver\resources\r3\nucc.xml";                       DestDir: {app}\load;     DestName: nucc.xml;            Components: r3; Flags: ignoreversion
+Source: "C:\work\fhirserver\resources\r3\patient-group.xml";              DestDir: {app}\load;     DestName: patient-group.xml;   Components: r3; Flags: ignoreversion
+Source: "C:\work\fhirserver\resources\r3\patient-list.xml";               DestDir: {app}\load;     DestName: patient-list.xml;    Components: r3; Flags: ignoreversion
+Source: "C:\work\fhirserver\resources\r3\tslc.xml";                       DestDir: {app}\load;     DestName: tslc.xml;            Components: r3; Flags: ignoreversion
+Source: "C:\work\fhirserver\resources\r4\country-codes.xml";              DestDir: {app}\load;     DestName: country-codes.xml;   Components: r4; Flags: ignoreversion
+Source: "C:\work\fhirserver\resources\r4\cvx.xml";                        DestDir: {app}\load;     DestName: cvx.xml;             Components: r4; Flags: ignoreversion
+Source: "C:\work\fhirserver\resources\r4\icpc2.xml";                      DestDir: {app}\load;     DestName: icpc2.xml;           Components: r4; Flags: ignoreversion
+Source: "C:\work\fhirserver\resources\r4\nucc.xml";                       DestDir: {app}\load;     DestName: nucc.xml;            Components: r4; Flags: ignoreversion
+Source: "C:\work\fhirserver\resources\r4\patient-group.xml";              DestDir: {app}\load;     DestName: patient-group.xml;   Components: r4; Flags: ignoreversion
+Source: "C:\work\fhirserver\resources\r4\patient-list.xml";               DestDir: {app}\load;     DestName: patient-list.xml;    Components: r4; Flags: ignoreversion
+Source: "C:\work\fhirserver\resources\r4\tslc.xml";                       DestDir: {app}\load;     DestName: tslc.xml;            Components: r4; Flags: ignoreversion
 
 ; Terminology resources
 Source: "C:\work\fhirserver\Exec\ucum-essence.xml";                   DestDir: "{commonappdata}\FHIRServer"
