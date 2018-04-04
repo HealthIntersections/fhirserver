@@ -390,7 +390,9 @@ Type
     Procedure Stop;
     Procedure Transaction(stream: TStream; init : boolean; name, base: String; ini: TFHIRServerIniFile; callback: TInstallerCallback);
     Procedure ReturnProcessedFile(request : TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; Session: TFHIRSession; path: String; secure: boolean; variables: TDictionary<String, String> = nil); overload;
+    {$IFNDEF FHIR2}
     Procedure ReturnJavaStatus(request : TIdHTTPRequestInfo; response: TIdHTTPResponseInfo); overload;
+    {$ENDIF}
     Procedure ReturnProcessedFile(request : TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; Session: TFHIRSession; claimed, actual: String; secure: boolean; variables: TDictionary<String, String> = nil); overload;
     Procedure RunPostHandler(request : TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; Session: TFHIRSession; claimed, actual: String; secure: boolean);
 
@@ -1306,8 +1308,10 @@ begin
       ReturnDiagnostics(AContext, request, response, false, false, FSecurePath)
     else if request.Document = '/' then
       ReturnProcessedFile(request, response, Session, '/' + FHomePage, FSourceProvider.AltFile('/' + FHomePage, FBasePath), false)
+    {$IFNDEF FHIR2}
     else if request.Document = '/java-status' then
       ReturnJavaStatus(request, response)
+    {$ENDIF}
     else if (FTerminologyWebServer <> nil) and FTerminologyWebServer.handlesRequest(request.Document) then
       FTerminologyWebServer.Process(AContext, request, Session, response, false)
     else
@@ -4303,9 +4307,9 @@ begin
   finally
     vars.Free;
   end;
-
 end;
 
+{$IFNDEF FHIR2}
 procedure TFhirWebServer.ReturnJavaStatus(request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo);
 var
   s : String;
@@ -4323,6 +4327,7 @@ begin
   response.FreeContentStream := true;
   response.contentType := 'application/json';
 end;
+{$ENDIF}
 
 procedure TFhirWebServer.ReturnProcessedFile(request : TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; Session: TFHIRSession; path: String; secure: boolean; variables: TDictionary<String, String> = nil);
 begin
