@@ -35,7 +35,7 @@ uses
   SysUtils, Generics.Collections,
   StringSupport, DecimalSupport, GUIDSupport, TextUtilities,
   AdvObjects, AdvGenerics,
-  FHIRBase, FHIRTypes, FHIRResources, FHIRContext, FHIRPath, FHIRXhtml;
+  FHIRBase, FHIRPathNode, FHIRTypes, FHIRResources, FHIRContext, FHIRPath, FHIRXhtml;
 
 type
   TVariableMode = (vmINPUT, vmOUTPUT);
@@ -151,7 +151,7 @@ begin
 	FWorker := context;
   FLib := lib;
   FServices := services;
-  fpe := TFHIRPathEngine.Create(context.link);
+  fpe := TFHIRPathEngine.Create(context.link, nil);
   fpp := TFHIRPathParser.create;
 end;
 

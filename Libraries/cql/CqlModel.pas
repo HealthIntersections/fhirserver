@@ -33,7 +33,7 @@ uses
   SysUtils, Classes,
   ParserSupport,
   AdvObjects, AdvGenerics,
-  FHIRBase;
+  FHIRBase, FHIRPathNode;
 
 type
   TCqlContextType = (CqlContextPatient, CqlContextPopulation);

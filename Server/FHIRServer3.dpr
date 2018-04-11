@@ -349,7 +349,9 @@ uses
   Logging in 'Logging.pas',
   CountryCodeServices in 'CountryCodeServices.pas',
   USStatesServices in 'USStatesServices.pas',
-  GoogleAnalyticsProvider in 'GoogleAnalyticsProvider.pas';
+  GoogleAnalyticsProvider in 'GoogleAnalyticsProvider.pas',
+  FHIRPathNode in '..\reference-platform\dstu3\FHIRPathNode.pas',
+  UcumServiceInterface in '..\reference-platform\support\UcumServiceInterface.pas';
 
 begin
   logfile := IncludeTrailingPathDelimiter(SystemTemp)+'fhirserver.log';

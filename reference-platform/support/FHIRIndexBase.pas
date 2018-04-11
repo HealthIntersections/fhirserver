@@ -33,7 +33,7 @@ uses
   SysUtils,
   System.Generics.Collections,
   AdvObjects, AdvObjectLists, AdvGenerics,
-  FHIRBase, FHIRTypes, FHIRConstants, FHIRResources;
+  FHIRBase, FHIRTypes, FHIRConstants, FHIRResources, FHIRPathNode;
 
 type
   TFhirIndex = class (TAdvObject)

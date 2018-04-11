@@ -749,7 +749,7 @@ end;
 constructor TDifferenceEngine.Create(context: TFHIRWorkerContext);
 begin
   inherited create;
-  fpe := TFHIRPathEngine.Create(context);
+  fpe := TFHIRPathEngine.Create(context, nil);
 end;
 
 destructor TDifferenceEngine.Destroy;

@@ -33,7 +33,7 @@ unit FHIRConstants;
 
 interface
 
-// FHIR v3.3.0 generated 2018-04-03T06:47:16+10:00
+// FHIR v3.4.0 generated 2018-04-11T14:46:13+10:00
 
 uses
   SysUtils, Classes, StringSupport, DecimalSupport, AdvBuffers, DateSupport, FHIRBase, FHIRTypes, FHIRResources;
@@ -1886,6 +1886,35 @@ Type
     spMedicationDispense_Whenprepared); 
 {$ENDIF}
 
+{$IFDEF FHIR_MEDICATIONKNOWLEDGE}
+  // Search Parameters for MedicationKnowledge
+  TSearchParamsMedicationKnowledge = (
+    spMedicationKnowledge__content, 
+    spMedicationKnowledge__id, 
+    spMedicationKnowledge__lastUpdated, 
+    spMedicationKnowledge__profile, 
+    spMedicationKnowledge__query, 
+    spMedicationKnowledge__security, 
+    spMedicationKnowledge__source, 
+    spMedicationKnowledge__tag, 
+    spMedicationKnowledge__text, 
+    spMedicationKnowledge_Classification, 
+    spMedicationKnowledge_Classificationtype, 
+    spMedicationKnowledge_Code, 
+    spMedicationKnowledge_Expirationdate, 
+    spMedicationKnowledge_Form, 
+    spMedicationKnowledge_Formulary, 
+    spMedicationKnowledge_Ingredient, 
+    spMedicationKnowledge_Ingredientcode, 
+    spMedicationKnowledge_Lotnumber, 
+    spMedicationKnowledge_Manufacturer, 
+    spMedicationKnowledge_Monitoringprogramname, 
+    spMedicationKnowledge_Monitoringprogramtype, 
+    spMedicationKnowledge_Monograph, 
+    spMedicationKnowledge_Serialnumber, 
+    spMedicationKnowledge_Status); 
+{$ENDIF}
+
 {$IFDEF FHIR_MEDICATIONREQUEST}
   // Search Parameters for MedicationRequest
   TSearchParamsMedicationRequest = (
@@ -3451,6 +3480,7 @@ Const
       {$IFDEF FHIR_MEDICATION}'Medication',{$ENDIF}
       {$IFDEF FHIR_MEDICATIONADMINISTRATION}'MedicationAdministration',{$ENDIF}
       {$IFDEF FHIR_MEDICATIONDISPENSE}'MedicationDispense',{$ENDIF}
+      {$IFDEF FHIR_MEDICATIONKNOWLEDGE}'MedicationKnowledge',{$ENDIF}
       {$IFDEF FHIR_MEDICATIONREQUEST}'MedicationRequest',{$ENDIF}
       {$IFDEF FHIR_MEDICATIONSTATEMENT}'MedicationStatement',{$ENDIF}
       {$IFDEF FHIR_MEDICINALPRODUCT}'MedicinalProduct',{$ENDIF}
@@ -3485,8 +3515,8 @@ Const
       {$IFDEF FHIR_PRODUCTPLAN}'ProductPlan',{$ENDIF}
       {$IFDEF FHIR_PROVENANCE}'Provenance',{$ENDIF}
       {$IFDEF FHIR_QUESTIONNAIRE}'Questionnaire',{$ENDIF}
-      {$IFDEF FHIR_QUESTIONNAIRERESPONSE}'QuestionnaireResponse',{$ENDIF}
       
+      {$IFDEF FHIR_QUESTIONNAIRERESPONSE}'QuestionnaireResponse',{$ENDIF}
       {$IFDEF FHIR_RELATEDPERSON}'RelatedPerson',{$ENDIF}
       {$IFDEF FHIR_REQUESTGROUP}'RequestGroup',{$ENDIF}
       {$IFDEF FHIR_RESEARCHSTUDY}'ResearchStudy',{$ENDIF}
@@ -3591,6 +3621,7 @@ Const
      {$IFDEF FHIR_MEDICATION}'medication',{$ENDIF}
      {$IFDEF FHIR_MEDICATIONADMINISTRATION}'medicationadministration',{$ENDIF}
      {$IFDEF FHIR_MEDICATIONDISPENSE}'medicationdispense',{$ENDIF}
+     {$IFDEF FHIR_MEDICATIONKNOWLEDGE}'medicationknowledge',{$ENDIF}
      {$IFDEF FHIR_MEDICATIONREQUEST}'medicationrequest',{$ENDIF}
      {$IFDEF FHIR_MEDICATIONSTATEMENT}'medicationstatement',{$ENDIF}
      {$IFDEF FHIR_MEDICINALPRODUCT}'medicinalproduct',{$ENDIF}
@@ -3731,6 +3762,7 @@ Const
      {$IFDEF FHIR_MEDICATION}TFhirMedication,{$ENDIF}
      {$IFDEF FHIR_MEDICATIONADMINISTRATION}TFhirMedicationAdministration,{$ENDIF}
      {$IFDEF FHIR_MEDICATIONDISPENSE}TFhirMedicationDispense,{$ENDIF}
+     {$IFDEF FHIR_MEDICATIONKNOWLEDGE}TFhirMedicationKnowledge,{$ENDIF}
      {$IFDEF FHIR_MEDICATIONREQUEST}TFhirMedicationRequest,{$ENDIF}
      {$IFDEF FHIR_MEDICATIONSTATEMENT}TFhirMedicationStatement,{$ENDIF}
      {$IFDEF FHIR_MEDICINALPRODUCT}TFhirMedicinalProduct,{$ENDIF}
@@ -3871,6 +3903,7 @@ Const
      {$IFDEF FHIR_MEDICATION}frtMedication,{$ENDIF}
      {$IFDEF FHIR_MEDICATIONADMINISTRATION}frtMedicationAdministration,{$ENDIF}
      {$IFDEF FHIR_MEDICATIONDISPENSE}frtMedicationDispense,{$ENDIF}
+     {$IFDEF FHIR_MEDICATIONKNOWLEDGE}frtMedicationKnowledge,{$ENDIF}
      {$IFDEF FHIR_MEDICATIONREQUEST}frtMedicationRequest,{$ENDIF}
      {$IFDEF FHIR_MEDICATIONSTATEMENT}frtMedicationStatement,{$ENDIF}
      {$IFDEF FHIR_MEDICINALPRODUCT}frtMedicinalProduct,{$ENDIF}
@@ -4011,6 +4044,7 @@ Const
      {$IFDEF FHIR_MEDICATION}'Medication',{$ENDIF}
      {$IFDEF FHIR_MEDICATIONADMINISTRATION}'MedicationAdministration',{$ENDIF}
      {$IFDEF FHIR_MEDICATIONDISPENSE}'MedicationDispense',{$ENDIF}
+     {$IFDEF FHIR_MEDICATIONKNOWLEDGE}'MedicationKnowledge',{$ENDIF}
      {$IFDEF FHIR_MEDICATIONREQUEST}'MedicationRequest',{$ENDIF}
      {$IFDEF FHIR_MEDICATIONSTATEMENT}'MedicationStatement',{$ENDIF}
      {$IFDEF FHIR_MEDICINALPRODUCT}'MedicinalProduct',{$ENDIF}
@@ -4299,6 +4333,9 @@ Const
 {$IFDEF FHIR_MEDICATIONDISPENSE}
   CODES_TSearchParamsMedicationDispense : Array[TSearchParamsMedicationDispense] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'code', 'context', 'destination', 'identifier', 'medication', 'patient', 'performer', 'prescription', 'receiver', 'responsibleparty', 'status', 'subject', 'type', 'whenhandedover', 'whenprepared');
 {$ENDIF}
+{$IFDEF FHIR_MEDICATIONKNOWLEDGE}
+  CODES_TSearchParamsMedicationKnowledge : Array[TSearchParamsMedicationKnowledge] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'classification', 'classification-type', 'code', 'expiration-date', 'form', 'formulary', 'ingredient', 'ingredient-code', 'lot-number', 'manufacturer', 'monitoring-program-name', 'monitoring-program-type', 'monograph', 'serial-number', 'status');
+{$ENDIF}
 {$IFDEF FHIR_MEDICATIONREQUEST}
   CODES_TSearchParamsMedicationRequest : Array[TSearchParamsMedicationRequest] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'authoredon', 'category', 'code', 'context', 'date', 'identifier', 'intended-dispenser', 'intended-performer', 'intended-performertype', 'intent', 'medication', 'patient', 'priority', 'requester', 'status', 'subject');
 {$ENDIF}
@@ -4488,11 +4525,11 @@ Const
 {$IFDEF FHIR_VISIONPRESCRIPTION}
   CODES_TSearchParamsVisionPrescription : Array[TSearchParamsVisionPrescription] of String = ('_content', '_id', '_lastUpdated', '_profile', '_query', '_security', '_source', '_tag', '_text', 'datewritten', 'encounter', 'identifier', 'patient', 'prescriber', 'status');
 {$ENDIF}
-  FHIR_GENERATED_VERSION = '3.3.0';
+  FHIR_GENERATED_VERSION = '3.4.0';
 
-  FHIR_GENERATED_PUBLICATION = '4';
+  FHIR_GENERATED_PUBLICATION = '';
 
-  FHIR_GENERATED_DATE = '2018-04-03T06:47:16+10:00';
+  FHIR_GENERATED_DATE = '2018-04-11T14:46:13+10:00';
 
 
 

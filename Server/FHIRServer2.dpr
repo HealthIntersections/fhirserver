@@ -282,7 +282,9 @@ uses
   JavaBridge in 'JavaBridge.pas',
   FHIRFactory in '..\reference-platform\support\FHIRFactory.pas',
   USStatesServices in 'USStatesServices.pas',
-  CountryCodeServices in 'CountryCodeServices.pas';
+  CountryCodeServices in 'CountryCodeServices.pas',
+  FHIRPathNode in '..\reference-platform\dstu2\FHIRPathNode.pas',
+  UcumServiceInterface in '..\reference-platform\support\UcumServiceInterface.pas';
 
 begin
   logfile := Path([SystemTemp, 'fhirserver.log']);

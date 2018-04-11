@@ -49,7 +49,7 @@ uses
   kCritSct, KDBManager, KDBDialects,  ParseMap,
   AdvObjects, AdvObjectLists, AdvGenerics, AdvBuffers, AdvJson,
   IdHTTP, IdSSLOpenSSL, IdSMTP, IdMessage, IdExplicitTLSClientServerBase, idGlobal, IdWebSocket, IdText, IdAttachment, IdPop3, IdMessageParts,
-  FHIRBase, FhirResources, FHIRTypes, FHIRConstants, FHIRUtilities, FHIRClient,
+  FHIRBase, FhirResources, FHIRTypes, FHIRConstants, FHIRUtilities, FHIRClient, FHIRPathNode,
   FhirSupport, FHIRIndexManagers, FHIRServerUtilities, FHIRParser, FHIRParserBase, FHIRPath, FHIRContext, FHIRLog, ServerUtilities;
 
 const
@@ -289,7 +289,7 @@ begin
   FSubscriptionTrackers := TSubscriptionTrackerList.Create;
   FSemaphores := TAdvMap<TWebSocketQueueInfo>.Create;
   fpp := TFHIRPathParser.create;
-  fpe := TFHIRPathEngine.Create(TFHIRServerContext(ServerContext).ValidatorContext.Link);
+  fpe := TFHIRPathEngine.Create(TFHIRServerContext(ServerContext).ValidatorContext.Link, nil);
   FCloseAll := false;
   FLastPopCheck := 0;
   {$IFDEF FHIR4}
@@ -1362,7 +1362,7 @@ begin
       value := Codes_TFHIRResourceType[resource.ResourceType]+'/'+resource.id
     else
     begin
-      qry := TFHIRPathEngine.create(nil);
+      qry := TFHIRPathEngine.create(nil, nil);
       try
         results := qry.evaluate(nil, resource, code);
         try

@@ -257,7 +257,10 @@ uses
   JNI in '..\Libraries\java\JNI.pas',
   JavaRuntime in '..\Libraries\java\JavaRuntime.pas',
   CountryCodeServices in '..\Server\CountryCodeServices.pas',
-  USStatesServices in '..\Server\USStatesServices.pas';
+  USStatesServices in '..\Server\USStatesServices.pas',
+  FHIRPathNode in '..\reference-platform\dstu3\FHIRPathNode.pas',
+  GoogleAnalyticsProvider in '..\Server\GoogleAnalyticsProvider.pas',
+  UcumServiceInterface in '..\reference-platform\support\UcumServiceInterface.pas';
 
 var
   gsrv : TExampleFhirServer;

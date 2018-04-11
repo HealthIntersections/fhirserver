@@ -42,7 +42,9 @@ uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, {$IFDEF NPPUNICODE} NppForms,{$ENDIF} Vcl.OleCtrls, Vcl.StdCtrls, Vcl.ExtCtrls,
   Vcl.Buttons, Vcl.ComCtrls, VirtualTrees, FHIRResources, FHIRBase, FHIRTypes, nppplugin, FHIRPath, FHIRProfileUtilities,
-  FHIRParserBase, FHIRParser, System.ImageList, Vcl.ImgList, AdvObjectLists, AdvGenerics, pluginutilities, FHIRContext, CDSHooksClientManager;
+  FHIRPathNode,
+  FHIRParserBase, FHIRParser, System.ImageList, Vcl.ImgList, AdvObjectLists, AdvGenerics, pluginutilities,
+  FHIRContext, CDSHooksClientManager;
 
 const
   UMSG = WM_USER + 1;
@@ -311,7 +313,7 @@ begin
   mInput2.Text := '';
   mOutcome.Text := '';
   mConsole.Text := '';
-  FEngine := TFHIRPathEngine.create(FServices.link);
+  FEngine := TFHIRPathEngine.create(FServices.link, nil);
   FEngine.OnDebug := DoDebug;
   try
     FExpression := FEngine.parse(mSource.Text);

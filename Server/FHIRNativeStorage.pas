@@ -38,7 +38,7 @@ uses
   AdvStringBuilders, AdvGenerics, AdvExceptions, AdvBuffers, AdvJson,
   KDBManager, KDBDialects, XmlSupport, MXML, XmlPatch, GraphQL, JWT,
   FHIRResources, FHIRBase, FHIRTypes, FHIRParser, FHIRParserBase, FHIRConstants, FHIRContext, FHIROperations, FHIRXhtml,
-  FHIRTags, FHIRValueSetExpander, FHIRIndexManagers, FHIRSupport, DifferenceEngine, FHIRMetaModel,
+  FHIRTags, FHIRValueSetExpander, FHIRIndexManagers, FHIRSupport, DifferenceEngine, FHIRMetaModel, FHIRPathNode,
   FHIRUtilities, FHIRSubscriptionManager, FHIRSecurity, FHIRLang, FHIRProfileUtilities, FHIRPath, FHIRGraphQL, FHIRClient,
   FHIRFactory, FHIRNarrativeGenerator, NarrativeGenerator, QuestionnaireBuilder,
   CDSHooksUtilities, {$IFNDEF FHIR2}FHIRStructureMapUtilities, ObservationStatsEvaluator, {$ENDIF} ClosureManager, {$IFDEF FHIR4} GraphDefinitionEngine, {$ENDIF}
@@ -3353,7 +3353,7 @@ procedure TFHIRNativeOperationEngine.CreateIndexer;
 begin
   if FIndexer = nil then
   begin
-    FIndexer := TFHIRIndexManager.Create(Repository.FSpaces.Link as TFhirIndexSpaces, FConnection.Link, ServerContext.Indexes.Link, ServerContext.ValidatorContext.Link, ServerContext.ResConfig.Link);
+    FIndexer := TFHIRIndexManager.Create(Repository.FSpaces.Link as TFhirIndexSpaces, FConnection.Link, ServerContext.Indexes.Link, ServerContext.ValidatorContext.Link, ServerContext.ResConfig.Link, ServerContext.TerminologyServer.Ucum.link);
     FIndexer.TerminologyServer := ServerContext.TerminologyServer.Link;
     FIndexer.Bases := ServerContext.Bases;
     FIndexer.KeyEvent := FRepository.GetNextKey;
@@ -9787,7 +9787,7 @@ begin
   s := '';
   c := 0;
   t := 0;
-  fpe:= TFHIRPathEngine.create(ServerContext.ValidatorContext.Link);
+  fpe:= TFHIRPathEngine.create(ServerContext.ValidatorContext.Link, TUcumServiceImplementation.Create(ServerContext.TerminologyServer.Ucum.Link));
   try
     for sd in ServerContext.ValidatorContext.Profiles.ProfilesByURL.Values do
       {$IFDEF FHIR2}

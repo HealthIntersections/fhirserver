@@ -44,7 +44,8 @@ Uses
 
   ParserSupport, MXML, AdvXmlEntities, AdvJSON,
 
-  FHIRBase, FHIRContext, FHIRResources, FHIRTypes, FHIRParser, FHIRSupport, FHIRPath, FHIRMetaModel, FHIRXhtml;
+  FHIRBase, FHIRContext, FHIRResources, FHIRTypes, FHIRParser, FHIRSupport,
+  FHIRPathNode, FHIRPath, FHIRMetaModel, FHIRXhtml;
 
 Type
 {

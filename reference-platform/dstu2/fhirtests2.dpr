@@ -151,7 +151,8 @@ uses
   SCIMObjects in '..\support\SCIMObjects.pas',
   FHIRSecurity in '..\support\FHIRSecurity.pas',
   TurtleParser in '..\support\TurtleParser.pas',
-  FHIRIndexBase in '..\support\FHIRIndexBase.pas';
+  FHIRIndexBase in '..\support\FHIRIndexBase.pas',
+  UcumServiceInterface in '..\support\UcumServiceInterface.pas';
 
 (*
 procedure SaveStringToFile(s : AnsiString; fn : String);

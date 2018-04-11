@@ -329,7 +329,9 @@ uses
   CqlEngine in '..\Libraries\cql\CqlEngine.pas',
   CountryCodeServices in '..\Server\CountryCodeServices.pas',
   USStatesServices in '..\Server\USStatesServices.pas',
-  GoogleAnalyticsProvider in '..\Server\GoogleAnalyticsProvider.pas';
+  GoogleAnalyticsProvider in '..\Server\GoogleAnalyticsProvider.pas',
+  FHIRPathNode in '..\reference-platform\r4\FHIRPathNode.pas',
+  UcumServiceInterface in '..\reference-platform\support\UcumServiceInterface.pas';
 
 var
   runner : ITestRunner;

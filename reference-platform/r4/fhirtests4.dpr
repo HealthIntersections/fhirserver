@@ -149,7 +149,8 @@ uses
   Javascript in '..\..\Libraries\js\Javascript.pas',
   ChakraCommon in '..\..\Libraries\js\ChakraCommon.pas',
   JavascriptTests in '..\..\Libraries\js\JavascriptTests.pas',
-  DigitalSignatures in '..\support\DigitalSignatures.pas';
+  DigitalSignatures in '..\support\DigitalSignatures.pas',
+  UcumServiceInterface in '..\support\UcumServiceInterface.pas';
 
 var
   s: String;

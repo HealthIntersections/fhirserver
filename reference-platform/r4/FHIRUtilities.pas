@@ -354,6 +354,7 @@ type
     function GetEditString: String;
     procedure SetEditString(vs: String);
   public
+    class function fromUcum(value, code : String) : TFhirQuantity;
     function asDuration : TDateTime;
     class function fromDuration(v : TDateTime) : TFhirQuantity;
     class function fromPair(v : Double; units : String) : TFhirQuantity;
@@ -5215,6 +5216,14 @@ begin
   finally
     result.Free;
   end;
+end;
+
+class function TFhirQuantityHelper.fromUcum(value, code: String): TFhirQuantity;
+begin
+  result := TFHIRQuantity.create;
+  result.value := value;
+  result.system := 'http://unitsofmeasure.org';
+  result.code := code;
 end;
 
 function TFhirQuantityHelper.GetEditString: String;

@@ -33,7 +33,7 @@ unit FHIRParserTurtle;
 
 interface
 
-// FHIR v3.3.0 generated 2018-04-03T06:47:16+10:00
+// FHIR v3.4.0 generated 2018-04-11T14:46:13+10:00
 
 uses
   SysUtils, Classes, StringSupport, DateSupport, DecimalSupport, FHIRParserBase, FHIRBase, FHIRResources, FHIRConstants, FHIRTypes, AdvStringMatches, TurtleParser;
@@ -907,6 +907,28 @@ Type
     function ParseMedicationDispense(obj : TTurtleComplex) : TFhirMedicationDispense; overload;
     procedure ParseMedicationDispenseProperties(obj : TTurtleComplex; result : TFhirMedicationDispense); overload;
 {$ENDIF FHIR_MEDICATIONDISPENSE}
+{$IFDEF FHIR_MEDICATIONKNOWLEDGE}
+    function ParseMedicationKnowledgeIngredient(obj : TTurtleComplex) : TFhirMedicationKnowledgeIngredient; overload; {b\}
+    procedure ParseMedicationKnowledgeIngredientProperties(obj : TTurtleComplex; result : TFhirMedicationKnowledgeIngredient); overload; {b\}
+    function ParseMedicationKnowledgeCost(obj : TTurtleComplex) : TFhirMedicationKnowledgeCost; overload; {b\}
+    procedure ParseMedicationKnowledgeCostProperties(obj : TTurtleComplex; result : TFhirMedicationKnowledgeCost); overload; {b\}
+    function ParseMedicationKnowledgeMonitoringProgram(obj : TTurtleComplex) : TFhirMedicationKnowledgeMonitoringProgram; overload; {b\}
+    procedure ParseMedicationKnowledgeMonitoringProgramProperties(obj : TTurtleComplex; result : TFhirMedicationKnowledgeMonitoringProgram); overload; {b\}
+    function ParseMedicationKnowledgeAdministrationGuidelines(obj : TTurtleComplex) : TFhirMedicationKnowledgeAdministrationGuidelines; overload; {b\}
+    procedure ParseMedicationKnowledgeAdministrationGuidelinesProperties(obj : TTurtleComplex; result : TFhirMedicationKnowledgeAdministrationGuidelines); overload; {b\}
+    function ParseMedicationKnowledgeAdministrationGuidelinesPatientCharacteristics(obj : TTurtleComplex) : TFhirMedicationKnowledgeAdministrationGuidelinesPatientCharacteristics; overload; {b\}
+    procedure ParseMedicationKnowledgeAdministrationGuidelinesPatientCharacteristicsProperties(obj : TTurtleComplex; result : TFhirMedicationKnowledgeAdministrationGuidelinesPatientCharacteristics); overload; {b\}
+    function ParseMedicationKnowledgeMedicineClassification(obj : TTurtleComplex) : TFhirMedicationKnowledgeMedicineClassification; overload; {b\}
+    procedure ParseMedicationKnowledgeMedicineClassificationProperties(obj : TTurtleComplex; result : TFhirMedicationKnowledgeMedicineClassification); overload; {b\}
+    function ParseMedicationKnowledgeBatch(obj : TTurtleComplex) : TFhirMedicationKnowledgeBatch; overload; {b\}
+    procedure ParseMedicationKnowledgeBatchProperties(obj : TTurtleComplex; result : TFhirMedicationKnowledgeBatch); overload; {b\}
+    function ParseMedicationKnowledgePackaging(obj : TTurtleComplex) : TFhirMedicationKnowledgePackaging; overload; {b\}
+    procedure ParseMedicationKnowledgePackagingProperties(obj : TTurtleComplex; result : TFhirMedicationKnowledgePackaging); overload; {b\}
+    function ParseMedicationKnowledgeDrugCharacteristic(obj : TTurtleComplex) : TFhirMedicationKnowledgeDrugCharacteristic; overload; {b\}
+    procedure ParseMedicationKnowledgeDrugCharacteristicProperties(obj : TTurtleComplex; result : TFhirMedicationKnowledgeDrugCharacteristic); overload; {b\}
+    function ParseMedicationKnowledge(obj : TTurtleComplex) : TFhirMedicationKnowledge; overload;
+    procedure ParseMedicationKnowledgeProperties(obj : TTurtleComplex; result : TFhirMedicationKnowledge); overload;
+{$ENDIF FHIR_MEDICATIONKNOWLEDGE}
 {$IFDEF FHIR_MEDICATIONREQUEST}
     function ParseMedicationRequestDispenseRequest(obj : TTurtleComplex) : TFhirMedicationRequestDispenseRequest; overload; {b\}
     procedure ParseMedicationRequestDispenseRequestProperties(obj : TTurtleComplex; result : TFhirMedicationRequestDispenseRequest); overload; {b\}
@@ -2103,6 +2125,18 @@ Type
     procedure ComposeMedicationDispenseSubstitution(parent :  TTurtleComplex; parentType, name : String; elem : TFhirMedicationDispenseSubstitution; useType : boolean; index : integer);
     procedure ComposeMedicationDispense(parent :  TTurtleComplex; parentType, name : String; elem : TFhirMedicationDispense; useType : boolean; index : integer);
 {$ENDIF FHIR_MEDICATIONDISPENSE}
+{$IFDEF FHIR_MEDICATIONKNOWLEDGE}
+    procedure ComposeMedicationKnowledgeIngredient(parent :  TTurtleComplex; parentType, name : String; elem : TFhirMedicationKnowledgeIngredient; useType : boolean; index : integer);
+    procedure ComposeMedicationKnowledgeCost(parent :  TTurtleComplex; parentType, name : String; elem : TFhirMedicationKnowledgeCost; useType : boolean; index : integer);
+    procedure ComposeMedicationKnowledgeMonitoringProgram(parent :  TTurtleComplex; parentType, name : String; elem : TFhirMedicationKnowledgeMonitoringProgram; useType : boolean; index : integer);
+    procedure ComposeMedicationKnowledgeAdministrationGuidelines(parent :  TTurtleComplex; parentType, name : String; elem : TFhirMedicationKnowledgeAdministrationGuidelines; useType : boolean; index : integer);
+    procedure ComposeMedicationKnowledgeAdministrationGuidelinesPatientCharacteristics(parent :  TTurtleComplex; parentType, name : String; elem : TFhirMedicationKnowledgeAdministrationGuidelinesPatientCharacteristics; useType : boolean; index : integer);
+    procedure ComposeMedicationKnowledgeMedicineClassification(parent :  TTurtleComplex; parentType, name : String; elem : TFhirMedicationKnowledgeMedicineClassification; useType : boolean; index : integer);
+    procedure ComposeMedicationKnowledgeBatch(parent :  TTurtleComplex; parentType, name : String; elem : TFhirMedicationKnowledgeBatch; useType : boolean; index : integer);
+    procedure ComposeMedicationKnowledgePackaging(parent :  TTurtleComplex; parentType, name : String; elem : TFhirMedicationKnowledgePackaging; useType : boolean; index : integer);
+    procedure ComposeMedicationKnowledgeDrugCharacteristic(parent :  TTurtleComplex; parentType, name : String; elem : TFhirMedicationKnowledgeDrugCharacteristic; useType : boolean; index : integer);
+    procedure ComposeMedicationKnowledge(parent :  TTurtleComplex; parentType, name : String; elem : TFhirMedicationKnowledge; useType : boolean; index : integer);
+{$ENDIF FHIR_MEDICATIONKNOWLEDGE}
 {$IFDEF FHIR_MEDICATIONREQUEST}
     procedure ComposeMedicationRequestDispenseRequest(parent :  TTurtleComplex; parentType, name : String; elem : TFhirMedicationRequestDispenseRequest; useType : boolean; index : integer);
     procedure ComposeMedicationRequestSubstitution(parent :  TTurtleComplex; parentType, name : String; elem : TFhirMedicationRequestSubstitution; useType : boolean; index : integer);
@@ -26258,6 +26292,529 @@ begin
 end;
 
 {$ENDIF FHIR_MEDICATIONDISPENSE}
+{$IFDEF FHIR_MEDICATIONKNOWLEDGE}
+function TFHIRTurtleParser.ParseMedicationKnowledgeIngredient(obj : TTurtleComplex) : TFhirMedicationKnowledgeIngredient;
+begin
+  if (obj = nil) then
+    exit(nil);
+  result := TFhirMedicationKnowledgeIngredient.create;
+  try
+    ParseMedicationKnowledgeIngredientProperties(obj, result);
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFHIRTurtleParser.ParseMedicationKnowledgeIngredientProperties(obj : TTurtleComplex; result : TFhirMedicationKnowledgeIngredient);
+var
+  item : TTurtleComplex;
+begin
+    ParseBackboneElementProperties(obj, result);
+    if obj.has('http://hl7.org/fhir/MedicationKnowledge.ingredient.itemCodeableConcept', item) then
+      result.item := parseCodeableConcept(item);
+    if obj.has('http://hl7.org/fhir/MedicationKnowledge.ingredient.itemReference', item) {a3} then
+      result.item := ParseReference(item);
+    result.isActiveElement := ParseBoolean(obj.complex('http://hl7.org/fhir/MedicationKnowledge.ingredient.isActive'));{q1}
+    result.amount := ParseRatio(obj.complex('http://hl7.org/fhir/MedicationKnowledge.ingredient.amount'));{q3b}
+end;
+
+procedure TFHIRTurtleComposer.ComposeMedicationKnowledgeIngredient(parent :  TTurtleComplex; parentType, name : String; elem : TFhirMedicationKnowledgeIngredient; useType : boolean; index : integer);
+var
+  this : TTurtleComplex;
+begin
+  if (elem = nil) then
+    exit;
+  if (parentType = '') then
+    this := parent
+  else
+  begin
+    this := parent.addPredicate('fhir:'+parentType+'.'+name);
+    if (useType) then
+      this.addPredicate('a', 'fhir:MedicationKnowledgeIngredient'); {z}
+  end;
+  composeBackboneElement(this, '', name, elem, false, index);
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.item is TFhirCodeableConcept) {6} then
+    ComposeCodeableConcept(this, 'MedicationKnowledge.ingredient', 'itemCodeableConcept', TFhirCodeableConcept(elem.item), false, -1){x.d9}
+  else if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.item is TFhirReference) {2} then
+    ComposeReference(this, 'MedicationKnowledge.ingredient', 'itemReference', TFhirReference(elem.item), false,-1);{x.d8}
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeBoolean(this, 'MedicationKnowledge.ingredient', 'isActive', elem.isActiveElement, false, -1);{x.2ea}
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeRatio(this, 'MedicationKnowledge.ingredient', 'amount', elem.amountElement, false, -1);{x.2f}
+end;
+
+function TFHIRTurtleParser.ParseMedicationKnowledgeCost(obj : TTurtleComplex) : TFhirMedicationKnowledgeCost;
+begin
+  if (obj = nil) then
+    exit(nil);
+  result := TFhirMedicationKnowledgeCost.create;
+  try
+    ParseMedicationKnowledgeCostProperties(obj, result);
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFHIRTurtleParser.ParseMedicationKnowledgeCostProperties(obj : TTurtleComplex; result : TFhirMedicationKnowledgeCost);
+begin
+    ParseBackboneElementProperties(obj, result);
+    result.formularyElement := ParseString(obj.complex('http://hl7.org/fhir/MedicationKnowledge.cost.formulary'));{q1}
+    result.cost := ParseMoney(obj.complex('http://hl7.org/fhir/MedicationKnowledge.cost.cost'));{q3b}
+end;
+
+procedure TFHIRTurtleComposer.ComposeMedicationKnowledgeCost(parent :  TTurtleComplex; parentType, name : String; elem : TFhirMedicationKnowledgeCost; useType : boolean; index : integer);
+var
+  this : TTurtleComplex;
+begin
+  if (elem = nil) then
+    exit;
+  if (parentType = '') then
+    this := parent
+  else
+  begin
+    this := parent.addPredicate('fhir:'+parentType+'.'+name);
+    if (useType) then
+      this.addPredicate('a', 'fhir:MedicationKnowledgeCost'); {z}
+  end;
+  composeBackboneElement(this, '', name, elem, false, index);
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeString(this, 'MedicationKnowledge.cost', 'formulary', elem.formularyElement, false, -1);{x.2ea}
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeMoney(this, 'MedicationKnowledge.cost', 'cost', elem.costElement, false, -1);{x.2f}
+end;
+
+function TFHIRTurtleParser.ParseMedicationKnowledgeMonitoringProgram(obj : TTurtleComplex) : TFhirMedicationKnowledgeMonitoringProgram;
+begin
+  if (obj = nil) then
+    exit(nil);
+  result := TFhirMedicationKnowledgeMonitoringProgram.create;
+  try
+    ParseMedicationKnowledgeMonitoringProgramProperties(obj, result);
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFHIRTurtleParser.ParseMedicationKnowledgeMonitoringProgramProperties(obj : TTurtleComplex; result : TFhirMedicationKnowledgeMonitoringProgram);
+begin
+    ParseBackboneElementProperties(obj, result);
+    result.type_ := ParseCodeableConcept(obj.complex('http://hl7.org/fhir/MedicationKnowledge.monitoringProgram.type'));{q3b}
+    result.nameElement := ParseString(obj.complex('http://hl7.org/fhir/MedicationKnowledge.monitoringProgram.name'));{q1}
+end;
+
+procedure TFHIRTurtleComposer.ComposeMedicationKnowledgeMonitoringProgram(parent :  TTurtleComplex; parentType, name : String; elem : TFhirMedicationKnowledgeMonitoringProgram; useType : boolean; index : integer);
+var
+  this : TTurtleComplex;
+begin
+  if (elem = nil) then
+    exit;
+  if (parentType = '') then
+    this := parent
+  else
+  begin
+    this := parent.addPredicate('fhir:'+parentType+'.'+name);
+    if (useType) then
+      this.addPredicate('a', 'fhir:MedicationKnowledgeMonitoringProgram'); {z}
+  end;
+  composeBackboneElement(this, '', name, elem, false, index);
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeCodeableConcept(this, 'MedicationKnowledge.monitoringProgram', 'type', elem.type_Element, false, -1);{x.2f}
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeString(this, 'MedicationKnowledge.monitoringProgram', 'name', elem.nameElement, false, -1);{x.2ea}
+end;
+
+function TFHIRTurtleParser.ParseMedicationKnowledgeAdministrationGuidelines(obj : TTurtleComplex) : TFhirMedicationKnowledgeAdministrationGuidelines;
+begin
+  if (obj = nil) then
+    exit(nil);
+  result := TFhirMedicationKnowledgeAdministrationGuidelines.create;
+  try
+    ParseMedicationKnowledgeAdministrationGuidelinesProperties(obj, result);
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFHIRTurtleParser.ParseMedicationKnowledgeAdministrationGuidelinesProperties(obj : TTurtleComplex; result : TFhirMedicationKnowledgeAdministrationGuidelines);
+var
+  item : TTurtleComplex;
+begin
+    ParseBackboneElementProperties(obj, result);
+    for item in obj.complexes('http://hl7.org/fhir/MedicationKnowledge.administrationGuidelines.dosage') do
+      result.dosageList.Add(parseDosage(item));
+    for item in obj.complexes('http://hl7.org/fhir/MedicationKnowledge.administrationGuidelines.indication') do
+      result.indicationList.Add(parseCodeableConcept(item));
+    for item in obj.complexes('http://hl7.org/fhir/MedicationKnowledge.administrationGuidelines.patientCharacteristics') do
+      result.patientCharacteristicsList.Add(parseMedicationKnowledgeAdministrationGuidelinesPatientCharacteristics(item));
+end;
+
+procedure TFHIRTurtleComposer.ComposeMedicationKnowledgeAdministrationGuidelines(parent :  TTurtleComplex; parentType, name : String; elem : TFhirMedicationKnowledgeAdministrationGuidelines; useType : boolean; index : integer);
+var
+  this : TTurtleComplex;
+  i : integer;
+begin
+  if (elem = nil) then
+    exit;
+  if (parentType = '') then
+    this := parent
+  else
+  begin
+    this := parent.addPredicate('fhir:'+parentType+'.'+name);
+    if (useType) then
+      this.addPredicate('a', 'fhir:MedicationKnowledgeAdministrationGuidelines'); {z}
+  end;
+  composeBackboneElement(this, '', name, elem, false, index);
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    for i := 0 to elem.dosageList.Count - 1 do
+      ComposeDosage(this, 'MedicationKnowledge.administrationGuidelines', 'dosage', elem.dosageList[i], false, i);{x.d3}
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    for i := 0 to elem.indicationList.Count - 1 do
+      ComposeCodeableConcept(this, 'MedicationKnowledge.administrationGuidelines', 'indication', elem.indicationList[i], false, i);{x.d3}
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    for i := 0 to elem.patientCharacteristicsList.Count - 1 do
+      ComposeMedicationKnowledgeAdministrationGuidelinesPatientCharacteristics(this, 'MedicationKnowledge.administrationGuidelines', 'patientCharacteristics', elem.patientCharacteristicsList[i], false, i);{x.d3}
+end;
+
+function TFHIRTurtleParser.ParseMedicationKnowledgeAdministrationGuidelinesPatientCharacteristics(obj : TTurtleComplex) : TFhirMedicationKnowledgeAdministrationGuidelinesPatientCharacteristics;
+begin
+  if (obj = nil) then
+    exit(nil);
+  result := TFhirMedicationKnowledgeAdministrationGuidelinesPatientCharacteristics.create;
+  try
+    ParseMedicationKnowledgeAdministrationGuidelinesPatientCharacteristicsProperties(obj, result);
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFHIRTurtleParser.ParseMedicationKnowledgeAdministrationGuidelinesPatientCharacteristicsProperties(obj : TTurtleComplex; result : TFhirMedicationKnowledgeAdministrationGuidelinesPatientCharacteristics);
+var
+  item : TTurtleComplex;
+begin
+    ParseBackboneElementProperties(obj, result);
+    result.characteristic := ParseCodeableConcept(obj.complex('http://hl7.org/fhir/MedicationKnowledge.administrationGuidelines.patientCharacteristics.characteristic'));{q3b}
+    for item in obj.complexes('http://hl7.org/fhir/MedicationKnowledge.administrationGuidelines.patientCharacteristics.value') do
+      result.valueList.Add(parseString(item));
+end;
+
+procedure TFHIRTurtleComposer.ComposeMedicationKnowledgeAdministrationGuidelinesPatientCharacteristics(parent :  TTurtleComplex; parentType, name : String; elem : TFhirMedicationKnowledgeAdministrationGuidelinesPatientCharacteristics; useType : boolean; index : integer);
+var
+  this : TTurtleComplex;
+  i : integer;
+begin
+  if (elem = nil) then
+    exit;
+  if (parentType = '') then
+    this := parent
+  else
+  begin
+    this := parent.addPredicate('fhir:'+parentType+'.'+name);
+    if (useType) then
+      this.addPredicate('a', 'fhir:MedicationKnowledgeAdministrationGuidelinesPatientCharacteristics'); {z}
+  end;
+  composeBackboneElement(this, '', name, elem, false, index);
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeCodeableConcept(this, 'MedicationKnowledge.administrationGuidelines.patientCharacteristics', 'characteristic', elem.characteristicElement, false, -1);{x.2f}
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    for i := 0 to elem.valueList.Count - 1 do
+      ComposeString(this, 'MedicationKnowledge.administrationGuidelines.patientCharacteristics', 'value', elem.valueList[i], false, i);{x.d3}
+end;
+
+function TFHIRTurtleParser.ParseMedicationKnowledgeMedicineClassification(obj : TTurtleComplex) : TFhirMedicationKnowledgeMedicineClassification;
+begin
+  if (obj = nil) then
+    exit(nil);
+  result := TFhirMedicationKnowledgeMedicineClassification.create;
+  try
+    ParseMedicationKnowledgeMedicineClassificationProperties(obj, result);
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFHIRTurtleParser.ParseMedicationKnowledgeMedicineClassificationProperties(obj : TTurtleComplex; result : TFhirMedicationKnowledgeMedicineClassification);
+var
+  item : TTurtleComplex;
+begin
+    ParseBackboneElementProperties(obj, result);
+    result.type_ := ParseCodeableConcept(obj.complex('http://hl7.org/fhir/MedicationKnowledge.medicineClassification.type'));{q3b}
+    for item in obj.complexes('http://hl7.org/fhir/MedicationKnowledge.medicineClassification.classification') do
+      result.classificationList.Add(parseString(item));
+end;
+
+procedure TFHIRTurtleComposer.ComposeMedicationKnowledgeMedicineClassification(parent :  TTurtleComplex; parentType, name : String; elem : TFhirMedicationKnowledgeMedicineClassification; useType : boolean; index : integer);
+var
+  this : TTurtleComplex;
+  i : integer;
+begin
+  if (elem = nil) then
+    exit;
+  if (parentType = '') then
+    this := parent
+  else
+  begin
+    this := parent.addPredicate('fhir:'+parentType+'.'+name);
+    if (useType) then
+      this.addPredicate('a', 'fhir:MedicationKnowledgeMedicineClassification'); {z}
+  end;
+  composeBackboneElement(this, '', name, elem, false, index);
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeCodeableConcept(this, 'MedicationKnowledge.medicineClassification', 'type', elem.type_Element, false, -1);{x.2f}
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    for i := 0 to elem.classificationList.Count - 1 do
+      ComposeString(this, 'MedicationKnowledge.medicineClassification', 'classification', elem.classificationList[i], false, i);{x.d3}
+end;
+
+function TFHIRTurtleParser.ParseMedicationKnowledgeBatch(obj : TTurtleComplex) : TFhirMedicationKnowledgeBatch;
+begin
+  if (obj = nil) then
+    exit(nil);
+  result := TFhirMedicationKnowledgeBatch.create;
+  try
+    ParseMedicationKnowledgeBatchProperties(obj, result);
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFHIRTurtleParser.ParseMedicationKnowledgeBatchProperties(obj : TTurtleComplex; result : TFhirMedicationKnowledgeBatch);
+begin
+    ParseBackboneElementProperties(obj, result);
+    result.lotNumberElement := ParseString(obj.complex('http://hl7.org/fhir/MedicationKnowledge.batch.lotNumber'));{q1}
+    result.expirationDateElement := ParseDateTime(obj.complex('http://hl7.org/fhir/MedicationKnowledge.batch.expirationDate'));{q1}
+    result.serialNumberElement := ParseString(obj.complex('http://hl7.org/fhir/MedicationKnowledge.batch.serialNumber'));{q1}
+end;
+
+procedure TFHIRTurtleComposer.ComposeMedicationKnowledgeBatch(parent :  TTurtleComplex; parentType, name : String; elem : TFhirMedicationKnowledgeBatch; useType : boolean; index : integer);
+var
+  this : TTurtleComplex;
+begin
+  if (elem = nil) then
+    exit;
+  if (parentType = '') then
+    this := parent
+  else
+  begin
+    this := parent.addPredicate('fhir:'+parentType+'.'+name);
+    if (useType) then
+      this.addPredicate('a', 'fhir:MedicationKnowledgeBatch'); {z}
+  end;
+  composeBackboneElement(this, '', name, elem, false, index);
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeString(this, 'MedicationKnowledge.batch', 'lotNumber', elem.lotNumberElement, false, -1);{x.2ea}
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeDateTime(this, 'MedicationKnowledge.batch', 'expirationDate', elem.expirationDateElement, false, -1);{x.2ea}
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeString(this, 'MedicationKnowledge.batch', 'serialNumber', elem.serialNumberElement, false, -1);{x.2ea}
+end;
+
+function TFHIRTurtleParser.ParseMedicationKnowledgePackaging(obj : TTurtleComplex) : TFhirMedicationKnowledgePackaging;
+begin
+  if (obj = nil) then
+    exit(nil);
+  result := TFhirMedicationKnowledgePackaging.create;
+  try
+    ParseMedicationKnowledgePackagingProperties(obj, result);
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFHIRTurtleParser.ParseMedicationKnowledgePackagingProperties(obj : TTurtleComplex; result : TFhirMedicationKnowledgePackaging);
+begin
+    ParseBackboneElementProperties(obj, result);
+    result.type_ := ParseCodeableConcept(obj.complex('http://hl7.org/fhir/MedicationKnowledge.packaging.type'));{q3b}
+    result.quantity := ParseQuantity(obj.complex('http://hl7.org/fhir/MedicationKnowledge.packaging.quantity'));{q3b}
+end;
+
+procedure TFHIRTurtleComposer.ComposeMedicationKnowledgePackaging(parent :  TTurtleComplex; parentType, name : String; elem : TFhirMedicationKnowledgePackaging; useType : boolean; index : integer);
+var
+  this : TTurtleComplex;
+begin
+  if (elem = nil) then
+    exit;
+  if (parentType = '') then
+    this := parent
+  else
+  begin
+    this := parent.addPredicate('fhir:'+parentType+'.'+name);
+    if (useType) then
+      this.addPredicate('a', 'fhir:MedicationKnowledgePackaging'); {z}
+  end;
+  composeBackboneElement(this, '', name, elem, false, index);
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeCodeableConcept(this, 'MedicationKnowledge.packaging', 'type', elem.type_Element, false, -1);{x.2f}
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeQuantity(this, 'MedicationKnowledge.packaging', 'quantity', elem.quantityElement, false, -1);{x.2f}
+end;
+
+function TFHIRTurtleParser.ParseMedicationKnowledgeDrugCharacteristic(obj : TTurtleComplex) : TFhirMedicationKnowledgeDrugCharacteristic;
+begin
+  if (obj = nil) then
+    exit(nil);
+  result := TFhirMedicationKnowledgeDrugCharacteristic.create;
+  try
+    ParseMedicationKnowledgeDrugCharacteristicProperties(obj, result);
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFHIRTurtleParser.ParseMedicationKnowledgeDrugCharacteristicProperties(obj : TTurtleComplex; result : TFhirMedicationKnowledgeDrugCharacteristic);
+begin
+    ParseBackboneElementProperties(obj, result);
+    result.type_ := ParseCodeableConcept(obj.complex('http://hl7.org/fhir/MedicationKnowledge.drugCharacteristic.type'));{q3b}
+    result.valueElement := ParseString(obj.complex('http://hl7.org/fhir/MedicationKnowledge.drugCharacteristic.value'));{q1}
+end;
+
+procedure TFHIRTurtleComposer.ComposeMedicationKnowledgeDrugCharacteristic(parent :  TTurtleComplex; parentType, name : String; elem : TFhirMedicationKnowledgeDrugCharacteristic; useType : boolean; index : integer);
+var
+  this : TTurtleComplex;
+begin
+  if (elem = nil) then
+    exit;
+  if (parentType = '') then
+    this := parent
+  else
+  begin
+    this := parent.addPredicate('fhir:'+parentType+'.'+name);
+    if (useType) then
+      this.addPredicate('a', 'fhir:MedicationKnowledgeDrugCharacteristic'); {z}
+  end;
+  composeBackboneElement(this, '', name, elem, false, index);
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeCodeableConcept(this, 'MedicationKnowledge.drugCharacteristic', 'type', elem.type_Element, false, -1);{x.2f}
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeString(this, 'MedicationKnowledge.drugCharacteristic', 'value', elem.valueElement, false, -1);{x.2ea}
+end;
+
+function TFHIRTurtleParser.ParseMedicationKnowledge(obj : TTurtleComplex) : TFhirMedicationKnowledge;
+begin
+  if (obj = nil) then
+    exit(nil);
+  result := TFhirMedicationKnowledge.create;
+  try
+    ParseMedicationKnowledgeProperties(obj, result);
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFHIRTurtleParser.ParseMedicationKnowledgeProperties(obj : TTurtleComplex; result : TFhirMedicationKnowledge);
+var
+  item : TTurtleComplex;
+begin
+    ParseDomainResourceProperties(obj, result);
+    result.code := ParseCodeableConcept(obj.complex('http://hl7.org/fhir/MedicationKnowledge.code'));{q3b}
+    result.statusElement := ParseEnum(obj.complex('http://hl7.org/fhir/MedicationKnowledge.status'), CODES_TFhirMedicationKnowledgeStatusEnum, SYSTEMS_TFhirMedicationKnowledgeStatusEnum);
+    result.manufacturer := ParseReference{TFhirOrganization}(obj.complex('http://hl7.org/fhir/MedicationKnowledge.manufacturer'));{q3b}
+    result.form := ParseCodeableConcept(obj.complex('http://hl7.org/fhir/MedicationKnowledge.form'));{q3b}
+    result.amount := ParseQuantity(obj.complex('http://hl7.org/fhir/MedicationKnowledge.amount'));{q3b}
+    for item in obj.complexes('http://hl7.org/fhir/MedicationKnowledge.name') do
+      result.nameList.Add(parseString(item));
+    for item in obj.complexes('http://hl7.org/fhir/MedicationKnowledge.description') do
+      result.descriptionList.Add(parseString(item));
+    for item in obj.complexes('http://hl7.org/fhir/MedicationKnowledge.generalizedMedicine') do
+      result.generalizedMedicineList.Add(parseReference{TFhirMedication}(item));
+    for item in obj.complexes('http://hl7.org/fhir/MedicationKnowledge.type') do
+      result.type_List.Add(parseCodeableConcept(item));
+    for item in obj.complexes('http://hl7.org/fhir/MedicationKnowledge.monograph') do
+      result.monographList.Add(parseReference{TFhirDocumentReference}(item));
+    result.halfLifePeriod := ParseDuration(obj.complex('http://hl7.org/fhir/MedicationKnowledge.halfLifePeriod'));{q3b}
+    for item in obj.complexes('http://hl7.org/fhir/MedicationKnowledge.ingredient') do
+      result.ingredientList.Add(parseMedicationKnowledgeIngredient(item));
+    for item in obj.complexes('http://hl7.org/fhir/MedicationKnowledge.cost') do
+      result.costList.Add(parseMedicationKnowledgeCost(item));
+    for item in obj.complexes('http://hl7.org/fhir/MedicationKnowledge.monitoringProgram') do
+      result.monitoringProgramList.Add(parseMedicationKnowledgeMonitoringProgram(item));
+    for item in obj.complexes('http://hl7.org/fhir/MedicationKnowledge.administrationGuidelines') do
+      result.administrationGuidelinesList.Add(parseMedicationKnowledgeAdministrationGuidelines(item));
+    for item in obj.complexes('http://hl7.org/fhir/MedicationKnowledge.medicineClassification') do
+      result.medicineClassificationList.Add(parseMedicationKnowledgeMedicineClassification(item));
+    result.batch := ParseMedicationKnowledgeBatch(obj.complex('http://hl7.org/fhir/MedicationKnowledge.batch'));{q3b}
+    result.packaging := ParseMedicationKnowledgePackaging(obj.complex('http://hl7.org/fhir/MedicationKnowledge.packaging'));{q3b}
+    for item in obj.complexes('http://hl7.org/fhir/MedicationKnowledge.drugCharacteristic') do
+      result.drugCharacteristicList.Add(parseMedicationKnowledgeDrugCharacteristic(item));
+end;
+
+procedure TFHIRTurtleComposer.ComposeMedicationKnowledge(parent :  TTurtleComplex; parentType, name : String; elem : TFhirMedicationKnowledge; useType : boolean; index : integer);
+var
+  this : TTurtleComplex;
+  i : integer;
+begin
+  if (elem = nil) then
+    exit;
+  if (parentType = '') then
+    this := parent
+  else
+  begin
+    this := parent.addPredicate('fhir:'+parentType+'.'+name);
+    if (useType) then
+      this.addPredicate('a', 'fhir:MedicationKnowledge'); {z}
+  end;
+  composeDomainResource(this, '', name, elem, false, index);
+  if not elem.noCompose and doCompose('code') and (SummaryOption in [soFull, soSummary, soData]) then
+    ComposeCodeableConcept(this, 'MedicationKnowledge', 'code', elem.codeElement, false, -1);{x.2f}
+  if not elem.noCompose and doCompose('status') and (SummaryOption in [soFull, soSummary, soData]) then
+     ComposeEnum(this, 'MedicationKnowledge', 'status', elem.StatusElement, CODES_TFhirMedicationKnowledgeStatusEnum, SYSTEMS_TFhirMedicationKnowledgeStatusEnum, false, -1);{x.d4}
+  if not elem.noCompose and doCompose('manufacturer') and (SummaryOption in [soFull, soSummary, soData]) then
+    ComposeReference{TFhirOrganization}(this, 'MedicationKnowledge', 'manufacturer', elem.manufacturerElement, false, -1);{x.2f}
+  if not elem.noCompose and doCompose('form') and (SummaryOption in [soFull, soData]) then
+    ComposeCodeableConcept(this, 'MedicationKnowledge', 'form', elem.formElement, false, -1);{x.2f}
+  if not elem.noCompose and doCompose('amount') and (SummaryOption in [soFull, soSummary, soData]) then
+    ComposeQuantity(this, 'MedicationKnowledge', 'amount', elem.amountElement, false, -1);{x.2f}
+  if not elem.noCompose and doCompose('name') and (SummaryOption in [soFull, soSummary, soData]) then
+    for i := 0 to elem.nameList.Count - 1 do
+      ComposeString(this, 'MedicationKnowledge', 'name', elem.nameList[i], false, i);{x.d3}
+  if not elem.noCompose and doCompose('description') and (SummaryOption in [soFull, soData]) then
+    for i := 0 to elem.descriptionList.Count - 1 do
+      ComposeString(this, 'MedicationKnowledge', 'description', elem.descriptionList[i], false, i);{x.d3}
+  if not elem.noCompose and doCompose('generalizedMedicine') and (SummaryOption in [soFull, soData]) then
+    for i := 0 to elem.generalizedMedicineList.Count - 1 do
+      ComposeReference{TFhirMedication}(this, 'MedicationKnowledge', 'generalizedMedicine', elem.generalizedMedicineList[i], false, i);{x.d3}
+  if not elem.noCompose and doCompose('type_') and (SummaryOption in [soFull, soData]) then
+    for i := 0 to elem.type_List.Count - 1 do
+      ComposeCodeableConcept(this, 'MedicationKnowledge', 'type', elem.type_List[i], false, i);{x.d3}
+  if not elem.noCompose and doCompose('monograph') and (SummaryOption in [soFull, soData]) then
+    for i := 0 to elem.monographList.Count - 1 do
+      ComposeReference{TFhirDocumentReference}(this, 'MedicationKnowledge', 'monograph', elem.monographList[i], false, i);{x.d3}
+  if not elem.noCompose and doCompose('halfLifePeriod') and (SummaryOption in [soFull, soData]) then
+    ComposeDuration(this, 'MedicationKnowledge', 'halfLifePeriod', elem.halfLifePeriodElement, false, -1);{x.2f}
+  if not elem.noCompose and doCompose('ingredient') and (SummaryOption in [soFull, soData]) then
+    for i := 0 to elem.ingredientList.Count - 1 do
+      ComposeMedicationKnowledgeIngredient(this, 'MedicationKnowledge', 'ingredient', elem.ingredientList[i], false, i);{x.d3}
+  if not elem.noCompose and doCompose('cost') and (SummaryOption in [soFull, soData]) then
+    for i := 0 to elem.costList.Count - 1 do
+      ComposeMedicationKnowledgeCost(this, 'MedicationKnowledge', 'cost', elem.costList[i], false, i);{x.d3}
+  if not elem.noCompose and doCompose('monitoringProgram') and (SummaryOption in [soFull, soData]) then
+    for i := 0 to elem.monitoringProgramList.Count - 1 do
+      ComposeMedicationKnowledgeMonitoringProgram(this, 'MedicationKnowledge', 'monitoringProgram', elem.monitoringProgramList[i], false, i);{x.d3}
+  if not elem.noCompose and doCompose('administrationGuidelines') and (SummaryOption in [soFull, soData]) then
+    for i := 0 to elem.administrationGuidelinesList.Count - 1 do
+      ComposeMedicationKnowledgeAdministrationGuidelines(this, 'MedicationKnowledge', 'administrationGuidelines', elem.administrationGuidelinesList[i], false, i);{x.d3}
+  if not elem.noCompose and doCompose('medicineClassification') and (SummaryOption in [soFull, soData]) then
+    for i := 0 to elem.medicineClassificationList.Count - 1 do
+      ComposeMedicationKnowledgeMedicineClassification(this, 'MedicationKnowledge', 'medicineClassification', elem.medicineClassificationList[i], false, i);{x.d3}
+  if not elem.noCompose and doCompose('batch') and (SummaryOption in [soFull, soData]) then
+    ComposeMedicationKnowledgeBatch(this, 'MedicationKnowledge', 'batch', elem.batchElement, false, -1);{x.2f}
+  if not elem.noCompose and doCompose('packaging') and (SummaryOption in [soFull, soData]) then
+    ComposeMedicationKnowledgePackaging(this, 'MedicationKnowledge', 'packaging', elem.packagingElement, false, -1);{x.2f}
+  if not elem.noCompose and doCompose('drugCharacteristic') and (SummaryOption in [soFull, soData]) then
+    for i := 0 to elem.drugCharacteristicList.Count - 1 do
+      ComposeMedicationKnowledgeDrugCharacteristic(this, 'MedicationKnowledge', 'drugCharacteristic', elem.drugCharacteristicList[i], false, i);{x.d3}
+end;
+
+{$ENDIF FHIR_MEDICATIONKNOWLEDGE}
 {$IFDEF FHIR_MEDICATIONREQUEST}
 function TFHIRTurtleParser.ParseMedicationRequestDispenseRequest(obj : TTurtleComplex) : TFhirMedicationRequestDispenseRequest;
 begin
@@ -44249,6 +44806,10 @@ begin
   else if SameText(type_, 'MedicationDispense') then
     result := parseMedicationDispense(obj)
 {$ENDIF FHIR_MEDICATIONDISPENSE}
+{$IFDEF FHIR_MEDICATIONKNOWLEDGE}
+  else if SameText(type_, 'MedicationKnowledge') then
+    result := parseMedicationKnowledge(obj)
+{$ENDIF FHIR_MEDICATIONKNOWLEDGE}
 {$IFDEF FHIR_MEDICATIONREQUEST}
   else if SameText(type_, 'MedicationRequest') then
     result := parseMedicationRequest(obj)
@@ -44968,6 +45529,11 @@ begin
      frtMedicationDispense: ComposeMedicationDispense(this, '', 'MedicationDispense', TFhirMedicationDispense(resource), true, -1); 
   {$ENDIF}
 {$ENDIF FHIR_MEDICATIONDISPENSE}
+{$IFDEF FHIR_MEDICATIONKNOWLEDGE}
+  {$IFDEF FHIR_MEDICATIONKNOWLEDGE}
+     frtMedicationKnowledge: ComposeMedicationKnowledge(this, '', 'MedicationKnowledge', TFhirMedicationKnowledge(resource), true, -1); 
+  {$ENDIF}
+{$ENDIF FHIR_MEDICATIONKNOWLEDGE}
 {$IFDEF FHIR_MEDICATIONREQUEST}
   {$IFDEF FHIR_MEDICATIONREQUEST}
      frtMedicationRequest: ComposeMedicationRequest(this, '', 'MedicationRequest', TFhirMedicationRequest(resource), true, -1); 
@@ -45741,6 +46307,12 @@ begin
     result := ParseMedicationDispense(obj) 
   {$ENDIF}
 {$ENDIF FHIR_MEDICATIONDISPENSE}
+{$IFDEF FHIR_MEDICATIONKNOWLEDGE}
+  {$IFDEF FHIR_MEDICATIONKNOWLEDGE}
+   else if s = 'MedicationKnowledge' Then
+    result := ParseMedicationKnowledge(obj) 
+  {$ENDIF}
+{$ENDIF FHIR_MEDICATIONKNOWLEDGE}
 {$IFDEF FHIR_MEDICATIONREQUEST}
   {$IFDEF FHIR_MEDICATIONREQUEST}
    else if s = 'MedicationRequest' Then

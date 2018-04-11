@@ -33,7 +33,8 @@ interface
 
 uses
   Windows, Messages, SysUtils, Variants, Classes, Vcl.Graphics, Vcl.Controls, Vcl.Forms,
-  Vcl.Dialogs, NppForms, Vcl.StdCtrls, Vcl.Imaging.pngimage, Vcl.ExtCtrls, nppplugin, AdvGenerics, FHIRBase;
+  Vcl.Dialogs, NppForms, Vcl.StdCtrls, Vcl.Imaging.pngimage, Vcl.ExtCtrls, nppplugin, AdvGenerics,
+  FHIRBase, FHIRPathNode;
 
 type
   TPathOutcomeDialogMode = (pomError, pomNoMatch, pomMatch);

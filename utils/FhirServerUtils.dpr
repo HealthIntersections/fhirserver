@@ -288,7 +288,9 @@ uses
   JavaBridge in '..\Server\JavaBridge.pas',
   FHIRFactory in '..\reference-platform\support\FHIRFactory.pas',
   USStatesServices in '..\Server\USStatesServices.pas',
-  CountryCodeServices in '..\Server\CountryCodeServices.pas';
+  CountryCodeServices in '..\Server\CountryCodeServices.pas',
+  FHIRPathNode in '..\reference-platform\r4\FHIRPathNode.pas',
+  UcumServiceInterface in '..\reference-platform\support\UcumServiceInterface.pas';
 
 {$R *.res}
 

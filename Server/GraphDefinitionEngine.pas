@@ -34,7 +34,7 @@ uses
   StringSupport, FileSupport, MathSupport, ParseMap,
   AdvObjects, AdvGenerics, AdvJson,
   GraphQL,
-  FHIRBase, FHIRTypes, FHIRResources, FHIRUtilities, FHIRContext, FHIRPath,
+  FHIRBase, FHIRTypes, FHIRResources, FHIRUtilities, FHIRContext, FHIRPath, FHIRPathNode,
   FHIRGraphQL;
 
 type
@@ -124,7 +124,7 @@ constructor TFHIRGraphDefinitionEngine.Create(context : TFHIRWorkerContext);
 begin
   inherited Create;
   FContext := context;
-  FPathEngine := TFHIRPathEngine.Create(context.link);
+  FPathEngine := TFHIRPathEngine.Create(context.link, nil);
 end;
 
 destructor TFHIRGraphDefinitionEngine.Destroy;

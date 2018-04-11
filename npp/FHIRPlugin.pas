@@ -72,7 +72,7 @@ uses
   AdvObjects, AdvGenerics, AdvBuffers, AdvWinInetClients,
   ParserSupport, XmlBuilder, MsXml, MsXmlParser, TextUtilities,
 
-  FHIRBase, FHIRValidator, FHIRResources, FHIRTypes, FHIRParser, FHIRParserBase, FHIRUtilities, FHIRClient, FHIRConstants,
+  FHIRBase, FHIRPathNode, FHIRValidator, FHIRResources, FHIRTypes, FHIRParser, FHIRParserBase, FHIRUtilities, FHIRClient, FHIRConstants,
   FHIRPluginSettings, FHIRPluginValidator, FHIRNarrativeGenerator, FHIRPath, FHIRXhtml, FHIRContext,
   SmartOnFhirUtilities, SmartOnFhirLogin, nppBuildcount, PluginUtilities,
   FHIRToolboxForm, AboutForms, SettingsForm, NewResourceForm, FetchResourceForm, PathDialogForms, ValidationOutcomes, CodeGenerationForm,
@@ -924,7 +924,7 @@ begin
   if assigned(FHIRToolbox) and (FHIRToolbox.hasValidPath) and parse(0, fmt, res) then
   try
     loadValidator;
-    engine := TFHIRPathEngine.Create(FWorker.Link);
+    engine := TFHIRPathEngine.Create(FWorker.Link, nil);
     try
       expr := engine.parse(FHIRToolbox.mPath.Text);
       try
@@ -1561,7 +1561,7 @@ var
   engine : TFHIRPathEngine;
 begin
   loadValidator;
-  engine := TFHIRPathEngine.Create(FWorker.Link);
+  engine := TFHIRPathEngine.Create(FWorker.Link, nil);
   try
     expr := engine.parse(FHIRToolbox.mPath.Text);
     try

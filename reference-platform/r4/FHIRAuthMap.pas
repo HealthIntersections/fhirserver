@@ -120,6 +120,7 @@ const
     tcMeds, // frtMedication
     tcMeds, // frtMedicationAdministration
     tcMeds, // frtMedicationDispense
+    tcMedicationDefinition, // frtMedicinalKnowledge9
     tcMeds, // frtMedicationRequest
     tcMeds, // frtMedicationStatement
     tcMedicationDefinition, // frtMedicinalProduct

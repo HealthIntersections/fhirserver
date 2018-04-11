@@ -34,7 +34,8 @@ uses
   DateSupport, HashSupport, GuidSupport, StringSupport,
   AdvGenerics, AdvJson,
   FHIRBase, FHIRSupport, FHIRTypes, FHIRResources, SCIMObjects, FHIRSecurity, FHIRUtilities, FHIRSearch, FHIRPath, FHIRLang,
-  FHIRStorageService, FHIRUserProvider, TerminologyServer, FHIRServerContext, TerminologyOperations;
+  FHIRStorageService, FHIRUserProvider, TerminologyServer, FHIRServerContext,
+  UcumServices, TerminologyOperations;
 
 const
   TX_SEARCH_PAGE_DEFAULT = 10;
@@ -279,7 +280,7 @@ constructor TTerminologyServerOperationEngine.create(server: TTerminologyServer;
 begin
   inherited Create(ServerContext, lang);
   FServer := server;
-  FEngine := TFHIRPathEngine.create(ServerContext.ValidatorContext.Link);
+  FEngine := TFHIRPathEngine.create(ServerContext.ValidatorContext.Link, TUcumServiceImplementation.Create(ServerContext.TerminologyServer.Ucum.Link));
   FOperations.add(TFhirExpandValueSetOperation.create(ServerContext.TerminologyServer.Link));
   FOperations.add(TFhirLookupCodeSystemOperation.create(ServerContext.TerminologyServer.Link));
   FOperations.add(TFhirValueSetValidationOperation.create(ServerContext.TerminologyServer.Link));

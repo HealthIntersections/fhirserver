@@ -34,7 +34,8 @@ interface
 uses
   SysUtils, classes,
   ActiveX, ComObj, Variants, StringSupport, FileSupport, AdvGenerics,
-  FHIRTestWorker, FHIRResources, FHIRBase, FHIRParser, FHIRPath, FHIRTypes,
+  FHIRTestWorker, FHIRResources, FHIRBase, FHIRParser, FHIRPath, FHIRTypes, FHIRPathNode,
+  UcumServices,
   MXML, DUnitX.TestFramework;
 
 Type
@@ -210,17 +211,20 @@ begin
       expected := TAdvList<TMXmlElement>.Create;
       try
         test.listElements('output', expected);
-        Assert.isTrue(outcome.count = expected.count, StringFormat('Expected %d objects but found %d', [expected.count, outcome.count]));
+        Assert.isTrue(outcome.count = expected.count, StringFormat('Expected %d objects but found %d for %s', [expected.count, outcome.count, expression]));
         for i := 0 to outcome.count- 1 do
         begin
           tn := TMXmlElement(expected[i]).attribute['type'];
           if (tn <> '') then
-            Assert.isTrue(tn = outcome[i].value.fhirType(), StringFormat('Outcome %d: Type should be %s but was %s', [i, tn, outcome[i].value.fhirType()]));
+            Assert.isTrue(tn = outcome[i].value.fhirType(), StringFormat('Outcome %d: Type should be %s but was %s for %s', [i, tn, outcome[i].value.fhirType(), expression]));
           s := TMXmlElement(expected[i]).Text;
           if (s <> '') then
           begin
-            Assert.isTrue(outcome[i].value is TFHIRPrimitiveType, StringFormat('Outcome %d: Value should be a primitive type but was %s', [i, outcome[i].value.fhirType()]));
-            Assert.isTrue(s = TFHIRPrimitiveType(outcome[i].value).StringValue, StringFormat('Outcome %d: Value should be %s but was %s', [i, s, outcome[i].value.toString()]));
+            Assert.isTrue((outcome[i].value is TFHIRPrimitiveType) or (outcome[i].value is TFhirQuantity), StringFormat('Outcome %d: Value should be a primitive type but was %s for %s', [i, outcome[i].value.fhirType(), expression]));
+            if outcome[i].value is TFhirQuantity then
+              Assert.isTrue(s = engine.convertToString(outcome[i].value), StringFormat('Outcome %d: Value should be %s but was %s for %s', [i, s, outcome[i].value.toString(), expression]))
+            else
+              Assert.isTrue(s = TFHIRPrimitiveType(outcome[i].value).StringValue, StringFormat('Outcome %d: Value should be %s but was %s for %s', [i, s, outcome[i].value.toString(), expression]));
           end;
         end;
       finally
@@ -236,9 +240,13 @@ begin
 end;
 
 procedure TFHIRPathTest.setup;
+var
+  ucum : TUcumServices;
 begin
   tests := TMXmlParser.ParseFile('C:\work\fluentpath\tests\r4\tests-fhir-r4.xml', [xpDropWhitespace, xpDropComments]);
-  engine := TFHIRPathEngine.Create(TTestingWorkerContext.Use);
+  ucum := TUcumServices.Create;
+  engine := TFHIRPathEngine.Create(TTestingWorkerContext.Use, TUcumServiceImplementation.Create(ucum));
+  ucum.Import('C:\work\fhirserver\Exec\ucum-essence.xml');
 end;
 
 procedure TFHIRPathTest.teardown;

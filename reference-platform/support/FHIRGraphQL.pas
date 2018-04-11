@@ -36,7 +36,7 @@ uses
   StringSupport,
   AdvObjects, AdvGenerics,
   ParseMap, GraphQL,
-  FHIRBase, FHIRTypes, FHIRResources, FHIRConstants, FHIRParser, FHIRUtilities, FHIRPath;
+  FHIRBase, FHIRTypes, FHIRResources, FHIRConstants, FHIRParser, FHIRUtilities, FHIRPathNode, FHIRPath;
 
 type
   TFHIRGraphQLEngineDereferenceEvent = function(appInfo : TAdvObject; context : TFHIRResource; reference : TFHIRReference; out targetContext, target : TFHIRResource) : boolean of Object;
@@ -206,7 +206,7 @@ constructor TFHIRGraphQLEngine.Create;
 begin
   inherited;
   FWorkingVariables := TAdvMap<TGraphQLArgument>.create;
-  FPathEngine := TFHIRPathEngine.Create(nil);
+  FPathEngine := TFHIRPathEngine.Create(nil, nil);
   FMagicExpression := TFHIRPathExpressionNode.Create(0);
 end;
 
@@ -438,7 +438,7 @@ begin
           result.Add(be.resource.Link)
       else
       begin
-        fpe := TFHIRPathEngine.Create(nil);
+        fpe := TFHIRPathEngine.Create(nil, nil);
         try
           node := fpe.parse(getSingleValue(fhirpath));
           try
@@ -474,7 +474,7 @@ begin
           result.Add(v.Link)
       else
       begin
-        fpe := TFHIRPathEngine.Create(nil);
+        fpe := TFHIRPathEngine.Create(nil, nil);
         try
           node := fpe.parse(getSingleValue(fhirpath));
           try

@@ -36,28 +36,14 @@ Uses
   MathSupport, FileSupport,
   AdvFiles, AdvPersistents, AdvPersistentLists, AdvStringLists, AdvObjectLists, AdvObjects,
   DecimalSupport, ParserSupport, MXML,
-  UcumHandlers, UcumValidators, UcumExpressions, Ucum,
+  UcumHandlers, UcumValidators, UcumExpressions, Ucum, UcumServiceInterface,
   FHIRResources, FHIRTypes, FHIRUtilities, FHIRParser, CDSHooksUtilities,
   TerminologyServices;
 
 Type
-  EUCUMServices = class (Exception);
+  TUcumPair = UcumServiceInterface.TUcumPair;
 
-  TUcumPair = class (TAdvObject)
-  private
-    FUnitCode: String;
-    FValue: TSmartDecimal;
-  Public
-    Constructor Create(oValue : TSmartDecimal; sUnitCode : String); Overload;
-
-    Property Value : TSmartDecimal read FValue write FValue;
-    Property UnitCode : String read FUnitCode write FUnitCode;
-  End;
-
-{ TUCUMCodeHolder }
-
-Type
-  TUCUMContext  = class (TCodeSystemProviderContext)
+  TUCUMContext = class (TCodeSystemProviderContext)
   private
     FConcept: TFhirValueSetComposeIncludeConcept;
     procedure SetConcept(const Value: TFhirValueSetComposeIncludeConcept);
@@ -275,6 +261,16 @@ Type
     Property DefaultDefinition : TUcumServices Read FDefinition write SetDefinition;
     Property Definition[iIndex : Integer] : TUcumServices read GetDefinition; Default;
   End;
+
+  TUcumServiceImplementation = class (TUcumServiceInterface)
+  private
+    FSvc : TUcumServices;
+  public
+    constructor Create(svc : TUcumServices);
+    destructor Destroy; override;
+    Function multiply(o1, o2 : TUcumPair) : TUcumPair; override;
+    function getCanonicalForm(value : TUcumPair) : TUcumPair; override;
+  end;
 
 Implementation
 
@@ -496,7 +492,7 @@ begin
   res := TUcumPair.Create(TSmartDecimal.One, '');
   Try
     res.value := o1.value.Multiply(o2.Value);
-    res.FUnitCode := o1.FUnitCode +'.'+o2.UnitCode;
+    res.UnitCode := o1.UnitCode +'.'+o2.UnitCode;
     result := getCanonicalForm(res);
   Finally
     res.Free;
@@ -698,15 +694,6 @@ end;
 function TUcumServices.Link: TUcumServices;
 begin
   result := TUcumServices(Inherited Link);
-end;
-
-{ TUcumPair }
-
-constructor TUcumPair.Create(oValue: TSmartDecimal; sUnitCode: String);
-begin
-  Create;
-  Value := oValue;
-  UnitCode := sUnitCode;
 end;
 
 
@@ -1113,6 +1100,30 @@ procedure TUCUMContext.SetConcept(const Value: TFhirValueSetComposeIncludeConcep
 begin
   FConcept.Free;
   FConcept := Value;
+end;
+
+{ TUcumServiceImplementation }
+
+constructor TUcumServiceImplementation.Create(svc: TUcumServices);
+begin
+  inherited create;
+  FSvc := svc;
+end;
+
+destructor TUcumServiceImplementation.Destroy;
+begin
+  FSvc.Free;
+  inherited;
+end;
+
+function TUcumServiceImplementation.getCanonicalForm(value: TUcumPair): TUcumPair;
+begin
+  result := FSvc.getCanonicalForm(value);
+end;
+
+function TUcumServiceImplementation.multiply(o1, o2: TUcumPair): TUcumPair;
+begin
+  result := FSvc.multiply(o1, o2);
 end;
 
 End.

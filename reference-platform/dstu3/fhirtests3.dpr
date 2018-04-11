@@ -157,7 +157,8 @@ uses
   FHIRSecurity in '..\support\FHIRSecurity.pas',
   TurtleParser in '..\support\TurtleParser.pas',
   FHIRIndexBase in '..\support\FHIRIndexBase.pas',
-  DigitalSignatures in '..\support\DigitalSignatures.pas';
+  DigitalSignatures in '..\support\DigitalSignatures.pas',
+  UcumServiceInterface in '..\support\UcumServiceInterface.pas';
 
 var
   s: String;

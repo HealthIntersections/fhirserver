@@ -191,7 +191,9 @@ uses
   CDSHooksClientManager in '..\reference-platform\support\CDSHooksClientManager.pas',
   FHIRClientSettings in '..\reference-platform\client\FHIRClientSettings.pas',
   FHIRIndexBase in '..\reference-platform\support\FHIRIndexBase.pas',
-  DigitalSignatures in '..\reference-platform\support\DigitalSignatures.pas';
+  DigitalSignatures in '..\reference-platform\support\DigitalSignatures.pas',
+  UcumServiceInterface in '..\reference-platform\support\UcumServiceInterface.pas',
+  FHIRPathNode in '..\reference-platform\dstu2\FHIRPathNode.pas';
 
 {$R *.res}
 

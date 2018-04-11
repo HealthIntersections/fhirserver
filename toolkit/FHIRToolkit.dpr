@@ -190,7 +190,9 @@ uses
   PatientHomeForm in 'PatientHomeForm.pas' {PatientHomeFrame: TFrame},
   DigitalSignatures in '..\reference-platform\support\DigitalSignatures.pas',
   DocumentGenerationForm in 'DocumentGenerationForm.pas' {DocumentGeneratorForm},
-  LibraryEditor in 'LibraryEditor.pas' {LibraryEditorFrame: TFrame};
+  LibraryEditor in 'LibraryEditor.pas' {LibraryEditorFrame: TFrame},
+  UcumServiceInterface in '..\reference-platform\support\UcumServiceInterface.pas',
+  FHIRPathNode in '..\reference-platform\dstu2\FHIRPathNode.pas';
 
 {$R *.res}
 

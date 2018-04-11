@@ -335,7 +335,9 @@ uses
   FHIRFactory in '..\reference-platform\support\FHIRFactory.pas',
   CountryCodeServices in 'CountryCodeServices.pas',
   USStatesServices in 'USStatesServices.pas',
-  FHIRValidator in '..\reference-platform\r4\FHIRValidator.pas';
+  FHIRValidator in '..\reference-platform\r4\FHIRValidator.pas',
+  FHIRPathNode in '..\reference-platform\r4\FHIRPathNode.pas',
+  UcumServiceInterface in '..\reference-platform\support\UcumServiceInterface.pas';
 
 begin
   logfile := IncludeTrailingPathDelimiter(SystemTemp)+'fhirserver.log';

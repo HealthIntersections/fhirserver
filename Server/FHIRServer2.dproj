@@ -393,6 +393,8 @@
         <DCCReference Include="..\reference-platform\support\FHIRFactory.pas"/>
         <DCCReference Include="USStatesServices.pas"/>
         <DCCReference Include="CountryCodeServices.pas"/>
+        <DCCReference Include="..\reference-platform\dstu2\FHIRPathNode.pas"/>
+        <DCCReference Include="..\reference-platform\support\UcumServiceInterface.pas"/>
         <None Include="Profiling\AQtimeModule1.aqt"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>

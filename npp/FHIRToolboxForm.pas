@@ -288,7 +288,7 @@ begin
   else
   begin
     try
-      qry := TFHIRPathEngine.create(nil);
+      qry := TFHIRPathEngine.create(nil, nil);
       try
         qry.parse(mPath.Text).free;
         mPath.Color := clWindow;

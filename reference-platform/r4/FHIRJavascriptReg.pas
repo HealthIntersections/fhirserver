@@ -33,7 +33,7 @@ unit FHIRJavascriptReg;
 
 interface
 
-// FHIR v3.3.0 generated 2018-04-03T06:47:16+10:00
+// FHIR v3.4.0 generated 2018-04-11T14:46:13+10:00
 
 uses
   Javascript, FHIRJavascript;
@@ -7571,6 +7571,183 @@ begin
 end;
 
 
+procedure defineMedicationKnowledgeIngredientPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
+begin
+  defineBackboneElementPropsJs(js, def);
+  js.registerElement(def, 'MedicationKnowledgeIngredient', 'itemCodeableConcept', 'CodeableConcept', js.getFHIRObjectProp, js.setFHIRObjectProp);
+  js.registerElement(def, 'MedicationKnowledgeIngredient', 'itemReference', 'Reference', js.getFHIRObjectProp, js.setFHIRObjectProp);
+  js.registerElement(def, 'MedicationKnowledgeIngredient', 'isActive', 'boolean', js.getFHIRBooleanProp, js.setFHIRBooleanProp);
+  js.registerElement(def, 'MedicationKnowledgeIngredient', 'amount', 'Ratio', js.getFHIRObjectProp, js.setFHIRObjectProp);
+end;
+
+procedure defineMedicationKnowledgeIngredientJs(js : TFHIRJavascript);
+var
+  def : TJavascriptClassDefinition;
+begin
+  def := js.defineClass('MedicationKnowledgeIngredient', nil, 'MedicationKnowledgeIngredient', js.FHIRFactoryJs);
+  defineMedicationKnowledgeIngredientPropsJs(js, def);
+end;
+
+
+procedure defineMedicationKnowledgeCostPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
+begin
+  defineBackboneElementPropsJs(js, def);
+  js.registerElement(def, 'MedicationKnowledgeCost', 'formulary', 'string', js.getFHIRStringProp, js.setFHIRStringProp);
+  js.registerElement(def, 'MedicationKnowledgeCost', 'cost', 'Money', js.getFHIRObjectProp, js.setFHIRObjectProp);
+end;
+
+procedure defineMedicationKnowledgeCostJs(js : TFHIRJavascript);
+var
+  def : TJavascriptClassDefinition;
+begin
+  def := js.defineClass('MedicationKnowledgeCost', nil, 'MedicationKnowledgeCost', js.FHIRFactoryJs);
+  defineMedicationKnowledgeCostPropsJs(js, def);
+end;
+
+
+procedure defineMedicationKnowledgeMonitoringProgramPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
+begin
+  defineBackboneElementPropsJs(js, def);
+  js.registerElement(def, 'MedicationKnowledgeMonitoringProgram', 'type', 'CodeableConcept', js.getFHIRObjectProp, js.setFHIRObjectProp);
+  js.registerElement(def, 'MedicationKnowledgeMonitoringProgram', 'name', 'string', js.getFHIRStringProp, js.setFHIRStringProp);
+end;
+
+procedure defineMedicationKnowledgeMonitoringProgramJs(js : TFHIRJavascript);
+var
+  def : TJavascriptClassDefinition;
+begin
+  def := js.defineClass('MedicationKnowledgeMonitoringProgram', nil, 'MedicationKnowledgeMonitoringProgram', js.FHIRFactoryJs);
+  defineMedicationKnowledgeMonitoringProgramPropsJs(js, def);
+end;
+
+
+procedure defineMedicationKnowledgeAdministrationGuidelinesPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
+begin
+  defineBackboneElementPropsJs(js, def);
+  js.registerElement(def, 'MedicationKnowledgeAdministrationGuidelines', 'dosage', 'Dosage', js.getFHIRArrayProp, js.setFHIRArrayProp);
+  js.registerElement(def, 'MedicationKnowledgeAdministrationGuidelines', 'indication', 'CodeableConcept', js.getFHIRArrayProp, js.setFHIRArrayProp);
+  js.registerElement(def, 'MedicationKnowledgeAdministrationGuidelines', 'patientCharacteristics', 'MedicationKnowledgeAdministrationGuidelinesPatientCharacteristics', js.getFHIRArrayProp, js.setFHIRArrayProp);
+end;
+
+procedure defineMedicationKnowledgeAdministrationGuidelinesJs(js : TFHIRJavascript);
+var
+  def : TJavascriptClassDefinition;
+begin
+  def := js.defineClass('MedicationKnowledgeAdministrationGuidelines', nil, 'MedicationKnowledgeAdministrationGuidelines', js.FHIRFactoryJs);
+  defineMedicationKnowledgeAdministrationGuidelinesPropsJs(js, def);
+end;
+
+
+procedure defineMedicationKnowledgeAdministrationGuidelinesPatientCharacteristicsPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
+begin
+  defineBackboneElementPropsJs(js, def);
+  js.registerElement(def, 'MedicationKnowledgeAdministrationGuidelinesPatientCharacteristics', 'characteristic', 'CodeableConcept', js.getFHIRObjectProp, js.setFHIRObjectProp);
+end;
+
+procedure defineMedicationKnowledgeAdministrationGuidelinesPatientCharacteristicsJs(js : TFHIRJavascript);
+var
+  def : TJavascriptClassDefinition;
+begin
+  def := js.defineClass('MedicationKnowledgeAdministrationGuidelinesPatientCharacteristics', nil, 'MedicationKnowledgeAdministrationGuidelinesPatientCharacteristics', js.FHIRFactoryJs);
+  defineMedicationKnowledgeAdministrationGuidelinesPatientCharacteristicsPropsJs(js, def);
+end;
+
+
+procedure defineMedicationKnowledgeMedicineClassificationPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
+begin
+  defineBackboneElementPropsJs(js, def);
+  js.registerElement(def, 'MedicationKnowledgeMedicineClassification', 'type', 'CodeableConcept', js.getFHIRObjectProp, js.setFHIRObjectProp);
+end;
+
+procedure defineMedicationKnowledgeMedicineClassificationJs(js : TFHIRJavascript);
+var
+  def : TJavascriptClassDefinition;
+begin
+  def := js.defineClass('MedicationKnowledgeMedicineClassification', nil, 'MedicationKnowledgeMedicineClassification', js.FHIRFactoryJs);
+  defineMedicationKnowledgeMedicineClassificationPropsJs(js, def);
+end;
+
+
+procedure defineMedicationKnowledgeBatchPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
+begin
+  defineBackboneElementPropsJs(js, def);
+  js.registerElement(def, 'MedicationKnowledgeBatch', 'lotNumber', 'string', js.getFHIRStringProp, js.setFHIRStringProp);
+  js.registerElement(def, 'MedicationKnowledgeBatch', 'expirationDate', 'dateTime', js.getFHIRDateTimeProp, js.setFHIRDateTimeProp);
+  js.registerElement(def, 'MedicationKnowledgeBatch', 'serialNumber', 'string', js.getFHIRStringProp, js.setFHIRStringProp);
+end;
+
+procedure defineMedicationKnowledgeBatchJs(js : TFHIRJavascript);
+var
+  def : TJavascriptClassDefinition;
+begin
+  def := js.defineClass('MedicationKnowledgeBatch', nil, 'MedicationKnowledgeBatch', js.FHIRFactoryJs);
+  defineMedicationKnowledgeBatchPropsJs(js, def);
+end;
+
+
+procedure defineMedicationKnowledgePackagingPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
+begin
+  defineBackboneElementPropsJs(js, def);
+  js.registerElement(def, 'MedicationKnowledgePackaging', 'type', 'CodeableConcept', js.getFHIRObjectProp, js.setFHIRObjectProp);
+  js.registerElement(def, 'MedicationKnowledgePackaging', 'quantity', 'Quantity', js.getFHIRObjectProp, js.setFHIRObjectProp);
+end;
+
+procedure defineMedicationKnowledgePackagingJs(js : TFHIRJavascript);
+var
+  def : TJavascriptClassDefinition;
+begin
+  def := js.defineClass('MedicationKnowledgePackaging', nil, 'MedicationKnowledgePackaging', js.FHIRFactoryJs);
+  defineMedicationKnowledgePackagingPropsJs(js, def);
+end;
+
+
+procedure defineMedicationKnowledgeDrugCharacteristicPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
+begin
+  defineBackboneElementPropsJs(js, def);
+  js.registerElement(def, 'MedicationKnowledgeDrugCharacteristic', 'type', 'CodeableConcept', js.getFHIRObjectProp, js.setFHIRObjectProp);
+  js.registerElement(def, 'MedicationKnowledgeDrugCharacteristic', 'value', 'string', js.getFHIRStringProp, js.setFHIRStringProp);
+end;
+
+procedure defineMedicationKnowledgeDrugCharacteristicJs(js : TFHIRJavascript);
+var
+  def : TJavascriptClassDefinition;
+begin
+  def := js.defineClass('MedicationKnowledgeDrugCharacteristic', nil, 'MedicationKnowledgeDrugCharacteristic', js.FHIRFactoryJs);
+  defineMedicationKnowledgeDrugCharacteristicPropsJs(js, def);
+end;
+
+
+procedure defineMedicationKnowledgePropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
+begin
+  defineDomainResourcePropsJs(js, def);
+  js.registerElement(def, 'MedicationKnowledge', 'code', 'CodeableConcept', js.getFHIRObjectProp, js.setFHIRObjectProp);
+  js.registerElement(def, 'MedicationKnowledge', 'status', 'code', js.getFHIRStringProp, js.setFHIRStringProp);
+  js.registerElement(def, 'MedicationKnowledge', 'manufacturer', 'Reference(Organization)', js.getFHIRObjectProp, js.setFHIRObjectProp);
+  js.registerElement(def, 'MedicationKnowledge', 'form', 'CodeableConcept', js.getFHIRObjectProp, js.setFHIRObjectProp);
+  js.registerElement(def, 'MedicationKnowledge', 'amount', 'Quantity', js.getFHIRObjectProp, js.setFHIRObjectProp);
+  js.registerElement(def, 'MedicationKnowledge', 'generalizedMedicine', 'Reference(Medication)', js.getFHIRArrayProp, js.setFHIRArrayProp);
+  js.registerElement(def, 'MedicationKnowledge', 'type', 'CodeableConcept', js.getFHIRArrayProp, js.setFHIRArrayProp);
+  js.registerElement(def, 'MedicationKnowledge', 'monograph', 'Reference(DocumentReference)', js.getFHIRArrayProp, js.setFHIRArrayProp);
+  js.registerElement(def, 'MedicationKnowledge', 'halfLifePeriod', 'Duration', js.getFHIRObjectProp, js.setFHIRObjectProp);
+  js.registerElement(def, 'MedicationKnowledge', 'ingredient', 'MedicationKnowledgeIngredient', js.getFHIRArrayProp, js.setFHIRArrayProp);
+  js.registerElement(def, 'MedicationKnowledge', 'cost', 'MedicationKnowledgeCost', js.getFHIRArrayProp, js.setFHIRArrayProp);
+  js.registerElement(def, 'MedicationKnowledge', 'monitoringProgram', 'MedicationKnowledgeMonitoringProgram', js.getFHIRArrayProp, js.setFHIRArrayProp);
+  js.registerElement(def, 'MedicationKnowledge', 'administrationGuidelines', 'MedicationKnowledgeAdministrationGuidelines', js.getFHIRArrayProp, js.setFHIRArrayProp);
+  js.registerElement(def, 'MedicationKnowledge', 'medicineClassification', 'MedicationKnowledgeMedicineClassification', js.getFHIRArrayProp, js.setFHIRArrayProp);
+  js.registerElement(def, 'MedicationKnowledge', 'batch', 'MedicationKnowledgeBatch', js.getFHIRObjectProp, js.setFHIRObjectProp);
+  js.registerElement(def, 'MedicationKnowledge', 'packaging', 'MedicationKnowledgePackaging', js.getFHIRObjectProp, js.setFHIRObjectProp);
+  js.registerElement(def, 'MedicationKnowledge', 'drugCharacteristic', 'MedicationKnowledgeDrugCharacteristic', js.getFHIRArrayProp, js.setFHIRArrayProp);
+end;
+
+procedure defineMedicationKnowledgeJs(js : TFHIRJavascript);
+var
+  def : TJavascriptClassDefinition;
+begin
+  def := js.defineClass('MedicationKnowledge', nil, 'MedicationKnowledge', js.FHIRFactoryJs);
+  defineMedicationKnowledgePropsJs(js, def);
+end;
+
+
 procedure defineMedicationRequestDispenseRequestPropsJs(js : TFHIRJavascript; def : TJavascriptClassDefinition);
 begin
   defineBackboneElementPropsJs(js, def);
@@ -13656,6 +13833,16 @@ begin
   defineMedicationDispensePerformerJs(js); 
   defineMedicationDispenseSubstitutionJs(js); 
   defineMedicationDispenseJs(js); 
+  defineMedicationKnowledgeIngredientJs(js); 
+  defineMedicationKnowledgeCostJs(js); 
+  defineMedicationKnowledgeMonitoringProgramJs(js); 
+  defineMedicationKnowledgeAdministrationGuidelinesJs(js); 
+  defineMedicationKnowledgeAdministrationGuidelinesPatientCharacteristicsJs(js); 
+  defineMedicationKnowledgeMedicineClassificationJs(js); 
+  defineMedicationKnowledgeBatchJs(js); 
+  defineMedicationKnowledgePackagingJs(js); 
+  defineMedicationKnowledgeDrugCharacteristicJs(js); 
+  defineMedicationKnowledgeJs(js); 
   defineMedicationRequestDispenseRequestJs(js); 
   defineMedicationRequestSubstitutionJs(js); 
   defineMedicationRequestJs(js); 

@@ -33,7 +33,7 @@ unit FHIRParserJson;
 
 interface
 
-// FHIR v3.3.0 generated 2018-04-03T06:47:16+10:00
+// FHIR v3.4.0 generated 2018-04-11T14:46:13+10:00
 
 uses
   SysUtils, Classes, StringSupport, DateSupport, DecimalSupport, FHIRParserBase, FHIRBase, FHIRResources, FHIRConstants, FHIRTypes, AdvStringMatches, AdvJSON;
@@ -1271,6 +1271,38 @@ Type
     procedure ParseMedicationDispenseProperties(jsn : TJsonObject; result : TFhirMedicationDispense); overload;
     procedure ParseMedicationDispense(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
 {$ENDIF FHIR_MEDICATIONDISPENSE}
+{$IFDEF FHIR_MEDICATIONKNOWLEDGE}
+    function ParseMedicationKnowledgeIngredient(jsn : TJsonObject) : TFhirMedicationKnowledgeIngredient; overload; {b\}
+    procedure ParseMedicationKnowledgeIngredientProperties(jsn : TJsonObject; result : TFhirMedicationKnowledgeIngredient); overload; {b\}
+    procedure ParseMedicationKnowledgeIngredient(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+    function ParseMedicationKnowledgeCost(jsn : TJsonObject) : TFhirMedicationKnowledgeCost; overload; {b\}
+    procedure ParseMedicationKnowledgeCostProperties(jsn : TJsonObject; result : TFhirMedicationKnowledgeCost); overload; {b\}
+    procedure ParseMedicationKnowledgeCost(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+    function ParseMedicationKnowledgeMonitoringProgram(jsn : TJsonObject) : TFhirMedicationKnowledgeMonitoringProgram; overload; {b\}
+    procedure ParseMedicationKnowledgeMonitoringProgramProperties(jsn : TJsonObject; result : TFhirMedicationKnowledgeMonitoringProgram); overload; {b\}
+    procedure ParseMedicationKnowledgeMonitoringProgram(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+    function ParseMedicationKnowledgeAdministrationGuidelines(jsn : TJsonObject) : TFhirMedicationKnowledgeAdministrationGuidelines; overload; {b\}
+    procedure ParseMedicationKnowledgeAdministrationGuidelinesProperties(jsn : TJsonObject; result : TFhirMedicationKnowledgeAdministrationGuidelines); overload; {b\}
+    procedure ParseMedicationKnowledgeAdministrationGuidelines(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+    function ParseMedicationKnowledgeAdministrationGuidelinesPatientCharacteristics(jsn : TJsonObject) : TFhirMedicationKnowledgeAdministrationGuidelinesPatientCharacteristics; overload; {b\}
+    procedure ParseMedicationKnowledgeAdministrationGuidelinesPatientCharacteristicsProperties(jsn : TJsonObject; result : TFhirMedicationKnowledgeAdministrationGuidelinesPatientCharacteristics); overload; {b\}
+    procedure ParseMedicationKnowledgeAdministrationGuidelinesPatientCharacteristics(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+    function ParseMedicationKnowledgeMedicineClassification(jsn : TJsonObject) : TFhirMedicationKnowledgeMedicineClassification; overload; {b\}
+    procedure ParseMedicationKnowledgeMedicineClassificationProperties(jsn : TJsonObject; result : TFhirMedicationKnowledgeMedicineClassification); overload; {b\}
+    procedure ParseMedicationKnowledgeMedicineClassification(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+    function ParseMedicationKnowledgeBatch(jsn : TJsonObject) : TFhirMedicationKnowledgeBatch; overload; {b\}
+    procedure ParseMedicationKnowledgeBatchProperties(jsn : TJsonObject; result : TFhirMedicationKnowledgeBatch); overload; {b\}
+    procedure ParseMedicationKnowledgeBatch(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+    function ParseMedicationKnowledgePackaging(jsn : TJsonObject) : TFhirMedicationKnowledgePackaging; overload; {b\}
+    procedure ParseMedicationKnowledgePackagingProperties(jsn : TJsonObject; result : TFhirMedicationKnowledgePackaging); overload; {b\}
+    procedure ParseMedicationKnowledgePackaging(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+    function ParseMedicationKnowledgeDrugCharacteristic(jsn : TJsonObject) : TFhirMedicationKnowledgeDrugCharacteristic; overload; {b\}
+    procedure ParseMedicationKnowledgeDrugCharacteristicProperties(jsn : TJsonObject; result : TFhirMedicationKnowledgeDrugCharacteristic); overload; {b\}
+    procedure ParseMedicationKnowledgeDrugCharacteristic(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+    function ParseMedicationKnowledge(jsn : TJsonObject) : TFhirMedicationKnowledge; overload;
+    procedure ParseMedicationKnowledgeProperties(jsn : TJsonObject; result : TFhirMedicationKnowledge); overload;
+    procedure ParseMedicationKnowledge(jsn : TJsonObject; ctxt : TFHIRObjectList); overload; {b.}
+{$ENDIF FHIR_MEDICATIONKNOWLEDGE}
 {$IFDEF FHIR_MEDICATIONREQUEST}
     function ParseMedicationRequestDispenseRequest(jsn : TJsonObject) : TFhirMedicationRequestDispenseRequest; overload; {b\}
     procedure ParseMedicationRequestDispenseRequestProperties(jsn : TJsonObject; result : TFhirMedicationRequestDispenseRequest); overload; {b\}
@@ -2754,6 +2786,18 @@ Type
     procedure ComposeMedicationDispenseSubstitution(json : TJSONWriter; name : string; elem : TFhirMedicationDispenseSubstitution; noObj : boolean = false);
     procedure ComposeMedicationDispense(json : TJSONWriter; name : string; elem : TFhirMedicationDispense; noObj : boolean = false);
 {$ENDIF FHIR_MEDICATIONDISPENSE}
+{$IFDEF FHIR_MEDICATIONKNOWLEDGE}
+    procedure ComposeMedicationKnowledgeIngredient(json : TJSONWriter; name : string; elem : TFhirMedicationKnowledgeIngredient; noObj : boolean = false);
+    procedure ComposeMedicationKnowledgeCost(json : TJSONWriter; name : string; elem : TFhirMedicationKnowledgeCost; noObj : boolean = false);
+    procedure ComposeMedicationKnowledgeMonitoringProgram(json : TJSONWriter; name : string; elem : TFhirMedicationKnowledgeMonitoringProgram; noObj : boolean = false);
+    procedure ComposeMedicationKnowledgeAdministrationGuidelines(json : TJSONWriter; name : string; elem : TFhirMedicationKnowledgeAdministrationGuidelines; noObj : boolean = false);
+    procedure ComposeMedicationKnowledgeAdministrationGuidelinesPatientCharacteristics(json : TJSONWriter; name : string; elem : TFhirMedicationKnowledgeAdministrationGuidelinesPatientCharacteristics; noObj : boolean = false);
+    procedure ComposeMedicationKnowledgeMedicineClassification(json : TJSONWriter; name : string; elem : TFhirMedicationKnowledgeMedicineClassification; noObj : boolean = false);
+    procedure ComposeMedicationKnowledgeBatch(json : TJSONWriter; name : string; elem : TFhirMedicationKnowledgeBatch; noObj : boolean = false);
+    procedure ComposeMedicationKnowledgePackaging(json : TJSONWriter; name : string; elem : TFhirMedicationKnowledgePackaging; noObj : boolean = false);
+    procedure ComposeMedicationKnowledgeDrugCharacteristic(json : TJSONWriter; name : string; elem : TFhirMedicationKnowledgeDrugCharacteristic; noObj : boolean = false);
+    procedure ComposeMedicationKnowledge(json : TJSONWriter; name : string; elem : TFhirMedicationKnowledge; noObj : boolean = false);
+{$ENDIF FHIR_MEDICATIONKNOWLEDGE}
 {$IFDEF FHIR_MEDICATIONREQUEST}
     procedure ComposeMedicationRequestDispenseRequest(json : TJSONWriter; name : string; elem : TFhirMedicationRequestDispenseRequest; noObj : boolean = false);
     procedure ComposeMedicationRequestSubstitution(json : TJSONWriter; name : string; elem : TFhirMedicationRequestSubstitution; noObj : boolean = false);
@@ -33391,6 +33435,648 @@ begin
 end;
 
 {$ENDIF FHIR_MEDICATIONDISPENSE}
+{$IFDEF FHIR_MEDICATIONKNOWLEDGE}
+procedure TFHIRJsonParser.ParseMedicationKnowledgeIngredient(jsn : TJsonObject; ctxt : TFHIRObjectList);
+begin
+  ctxt.add(ParseMedicationKnowledgeIngredient(jsn)); {2}
+end;
+
+function TFHIRJsonParser.ParseMedicationKnowledgeIngredient(jsn : TJsonObject) : TFhirMedicationKnowledgeIngredient;
+begin
+  result := TFhirMedicationKnowledgeIngredient.create;
+  try
+    ParseMedicationKnowledgeIngredientProperties(jsn, result);
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFHIRJsonParser.ParseMedicationKnowledgeIngredientProperties(jsn : TJsonObject; result : TFhirMedicationKnowledgeIngredient);
+begin
+    ParseBackboneElementProperties(jsn, result);
+    if jsn.has('itemCodeableConcept') {a4} then
+      result.item := ParseCodeableConcept(jsn.vObj['itemCodeableConcept']);
+    if jsn.has('itemReference') {a3} then
+      result.item := ParseReference(jsn.vObj['itemReference']);
+    if jsn.has('isActive') or jsn.has('_isActive') then
+        result.isActiveElement := ParseBoolean(jsn['isActive'], jsn.vObj['_isActive']);{q}
+    if jsn.has('amount') then
+        result.amount := ParseRatio(jsn.vObj['amount']);{q3}
+end;
+
+procedure TFHIRJsonComposer.ComposeMedicationKnowledgeIngredient(json : TJSONWriter; name : string; elem : TFhirMedicationKnowledgeIngredient; noObj : boolean = false);
+begin
+  if (elem = nil) then
+    exit;
+  if not noObj then json.valueObject(name);
+  ComposeBackboneElementProperties(json, elem); {c2}
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.item is TFhirCodeableConcept) then 
+    ComposeCodeableConcept(json, 'itemCodeableConcept', TFhirCodeableConcept(elem.item)) 
+  else if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.item is TFhirReference) then
+    ComposeReference(json, 'itemReference', TFhirReference(elem.item));
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeBooleanValue(json, 'isActive', elem.isActiveElement, false);
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeBooleanProps(json, 'isActive', elem.isActiveElement, false);
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeRatio(json, 'amount', elem.amount); {a}
+  if not noObj then json.finishObject;
+end;
+
+procedure TFHIRJsonParser.ParseMedicationKnowledgeCost(jsn : TJsonObject; ctxt : TFHIRObjectList);
+begin
+  ctxt.add(ParseMedicationKnowledgeCost(jsn)); {2}
+end;
+
+function TFHIRJsonParser.ParseMedicationKnowledgeCost(jsn : TJsonObject) : TFhirMedicationKnowledgeCost;
+begin
+  result := TFhirMedicationKnowledgeCost.create;
+  try
+    ParseMedicationKnowledgeCostProperties(jsn, result);
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFHIRJsonParser.ParseMedicationKnowledgeCostProperties(jsn : TJsonObject; result : TFhirMedicationKnowledgeCost);
+begin
+    ParseBackboneElementProperties(jsn, result);
+    if jsn.has('formulary') or jsn.has('_formulary') then
+        result.formularyElement := ParseString(jsn['formulary'], jsn.vObj['_formulary']);{q}
+    if jsn.has('cost') then
+        result.cost := ParseMoney(jsn.vObj['cost']);{q3}
+end;
+
+procedure TFHIRJsonComposer.ComposeMedicationKnowledgeCost(json : TJSONWriter; name : string; elem : TFhirMedicationKnowledgeCost; noObj : boolean = false);
+begin
+  if (elem = nil) then
+    exit;
+  if not noObj then json.valueObject(name);
+  ComposeBackboneElementProperties(json, elem); {c2}
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeStringValue(json, 'formulary', elem.formularyElement, false);
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeStringProps(json, 'formulary', elem.formularyElement, false);
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeMoney(json, 'cost', elem.cost); {a}
+  if not noObj then json.finishObject;
+end;
+
+procedure TFHIRJsonParser.ParseMedicationKnowledgeMonitoringProgram(jsn : TJsonObject; ctxt : TFHIRObjectList);
+begin
+  ctxt.add(ParseMedicationKnowledgeMonitoringProgram(jsn)); {2}
+end;
+
+function TFHIRJsonParser.ParseMedicationKnowledgeMonitoringProgram(jsn : TJsonObject) : TFhirMedicationKnowledgeMonitoringProgram;
+begin
+  result := TFhirMedicationKnowledgeMonitoringProgram.create;
+  try
+    ParseMedicationKnowledgeMonitoringProgramProperties(jsn, result);
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFHIRJsonParser.ParseMedicationKnowledgeMonitoringProgramProperties(jsn : TJsonObject; result : TFhirMedicationKnowledgeMonitoringProgram);
+begin
+    ParseBackboneElementProperties(jsn, result);
+    if jsn.has('type') then
+        result.type_ := ParseCodeableConcept(jsn.vObj['type']);{q3}
+    if jsn.has('name') or jsn.has('_name') then
+        result.nameElement := ParseString(jsn['name'], jsn.vObj['_name']);{q}
+end;
+
+procedure TFHIRJsonComposer.ComposeMedicationKnowledgeMonitoringProgram(json : TJSONWriter; name : string; elem : TFhirMedicationKnowledgeMonitoringProgram; noObj : boolean = false);
+begin
+  if (elem = nil) then
+    exit;
+  if not noObj then json.valueObject(name);
+  ComposeBackboneElementProperties(json, elem); {c2}
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeCodeableConcept(json, 'type', elem.type_); {a}
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeStringValue(json, 'name', elem.nameElement, false);
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeStringProps(json, 'name', elem.nameElement, false);
+  if not noObj then json.finishObject;
+end;
+
+procedure TFHIRJsonParser.ParseMedicationKnowledgeAdministrationGuidelines(jsn : TJsonObject; ctxt : TFHIRObjectList);
+begin
+  ctxt.add(ParseMedicationKnowledgeAdministrationGuidelines(jsn)); {2}
+end;
+
+function TFHIRJsonParser.ParseMedicationKnowledgeAdministrationGuidelines(jsn : TJsonObject) : TFhirMedicationKnowledgeAdministrationGuidelines;
+begin
+  result := TFhirMedicationKnowledgeAdministrationGuidelines.create;
+  try
+    ParseMedicationKnowledgeAdministrationGuidelinesProperties(jsn, result);
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFHIRJsonParser.ParseMedicationKnowledgeAdministrationGuidelinesProperties(jsn : TJsonObject; result : TFhirMedicationKnowledgeAdministrationGuidelines);
+begin
+    ParseBackboneElementProperties(jsn, result);
+    if jsn.has('dosage') then
+      iterateArray(jsn.vArr['dosage'], result.dosageList, parseDosage);
+    if jsn.has('indication') then
+      iterateArray(jsn.vArr['indication'], result.indicationList, parseCodeableConcept);
+    if jsn.has('patientCharacteristics') then
+      iterateArray(jsn.vArr['patientCharacteristics'], result.patientCharacteristicsList, parseMedicationKnowledgeAdministrationGuidelinesPatientCharacteristics);
+end;
+
+procedure TFHIRJsonComposer.ComposeMedicationKnowledgeAdministrationGuidelines(json : TJSONWriter; name : string; elem : TFhirMedicationKnowledgeAdministrationGuidelines; noObj : boolean = false);
+var
+  i : integer;
+begin
+  if (elem = nil) then
+    exit;
+  if not noObj then json.valueObject(name);
+  ComposeBackboneElementProperties(json, elem); {c2}
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.dosageList.Count > 0) then
+  begin
+    json.valueArray('dosage');
+    for i := 0 to elem.dosageList.Count - 1 do
+      ComposeDosage(json, '', elem.dosageList[i]); {z - Dosage}
+    json.FinishArray;
+  end;
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.indicationList.Count > 0) then
+  begin
+    json.valueArray('indication');
+    for i := 0 to elem.indicationList.Count - 1 do
+      ComposeCodeableConcept(json, '', elem.indicationList[i]); {z - CodeableConcept}
+    json.FinishArray;
+  end;
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.patientCharacteristicsList.Count > 0) then
+  begin
+    json.valueArray('patientCharacteristics');
+    for i := 0 to elem.patientCharacteristicsList.Count - 1 do
+      ComposeMedicationKnowledgeAdministrationGuidelinesPatientCharacteristics(json, '', elem.patientCharacteristicsList[i]); {z - }
+    json.FinishArray;
+  end;
+  if not noObj then json.finishObject;
+end;
+
+procedure TFHIRJsonParser.ParseMedicationKnowledgeAdministrationGuidelinesPatientCharacteristics(jsn : TJsonObject; ctxt : TFHIRObjectList);
+begin
+  ctxt.add(ParseMedicationKnowledgeAdministrationGuidelinesPatientCharacteristics(jsn)); {2}
+end;
+
+function TFHIRJsonParser.ParseMedicationKnowledgeAdministrationGuidelinesPatientCharacteristics(jsn : TJsonObject) : TFhirMedicationKnowledgeAdministrationGuidelinesPatientCharacteristics;
+begin
+  result := TFhirMedicationKnowledgeAdministrationGuidelinesPatientCharacteristics.create;
+  try
+    ParseMedicationKnowledgeAdministrationGuidelinesPatientCharacteristicsProperties(jsn, result);
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFHIRJsonParser.ParseMedicationKnowledgeAdministrationGuidelinesPatientCharacteristicsProperties(jsn : TJsonObject; result : TFhirMedicationKnowledgeAdministrationGuidelinesPatientCharacteristics);
+begin
+    ParseBackboneElementProperties(jsn, result);
+    if jsn.has('characteristic') then
+        result.characteristic := ParseCodeableConcept(jsn.vObj['characteristic']);{q3}
+      if jsn.has('value') or jsn.has('_value') then
+      iteratePrimitiveArray(jsn.vArr['value'], jsn.vArr['_value'], result.valueList, parseString);
+end;
+
+procedure TFHIRJsonComposer.ComposeMedicationKnowledgeAdministrationGuidelinesPatientCharacteristics(json : TJSONWriter; name : string; elem : TFhirMedicationKnowledgeAdministrationGuidelinesPatientCharacteristics; noObj : boolean = false);
+var
+  i : integer;
+  ext : boolean;
+  val : boolean;
+begin
+  if (elem = nil) then
+    exit;
+  if not noObj then json.valueObject(name);
+  ComposeBackboneElementProperties(json, elem); {c2}
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeCodeableConcept(json, 'characteristic', elem.characteristic); {a}
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.valueList.Count > 0) then
+  begin
+    ext := false;
+    val := false;
+    for i := 0 to elem.valueList.Count - 1 do
+    begin
+      ext := ext or ((elem.valueList[i].id <> '') or (elem.valueList[i].hasExtensionList) {no-comments or (elem.valueList[i].hasComments)});
+      val := val or (elem.valueList[i].hasPrimitiveValue);
+    end;
+    if val then
+    begin
+      json.valueArray('value');
+      for i := 0 to elem.valueList.Count - 1 do
+        ComposeStringValue(json, '',elem.valueList[i], true);
+      json.FinishArray;
+    end;
+    if ext then
+    begin
+      json.valueArray('_value');
+      for i := 0 to elem.valueList.Count - 1 do
+        ComposeStringProps(json, '',elem.valueList[i], true);
+      json.FinishArray;
+    end;
+  end;
+  if not noObj then json.finishObject;
+end;
+
+procedure TFHIRJsonParser.ParseMedicationKnowledgeMedicineClassification(jsn : TJsonObject; ctxt : TFHIRObjectList);
+begin
+  ctxt.add(ParseMedicationKnowledgeMedicineClassification(jsn)); {2}
+end;
+
+function TFHIRJsonParser.ParseMedicationKnowledgeMedicineClassification(jsn : TJsonObject) : TFhirMedicationKnowledgeMedicineClassification;
+begin
+  result := TFhirMedicationKnowledgeMedicineClassification.create;
+  try
+    ParseMedicationKnowledgeMedicineClassificationProperties(jsn, result);
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFHIRJsonParser.ParseMedicationKnowledgeMedicineClassificationProperties(jsn : TJsonObject; result : TFhirMedicationKnowledgeMedicineClassification);
+begin
+    ParseBackboneElementProperties(jsn, result);
+    if jsn.has('type') then
+        result.type_ := ParseCodeableConcept(jsn.vObj['type']);{q3}
+      if jsn.has('classification') or jsn.has('_classification') then
+      iteratePrimitiveArray(jsn.vArr['classification'], jsn.vArr['_classification'], result.classificationList, parseString);
+end;
+
+procedure TFHIRJsonComposer.ComposeMedicationKnowledgeMedicineClassification(json : TJSONWriter; name : string; elem : TFhirMedicationKnowledgeMedicineClassification; noObj : boolean = false);
+var
+  i : integer;
+  ext : boolean;
+  val : boolean;
+begin
+  if (elem = nil) then
+    exit;
+  if not noObj then json.valueObject(name);
+  ComposeBackboneElementProperties(json, elem); {c2}
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeCodeableConcept(json, 'type', elem.type_); {a}
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.classificationList.Count > 0) then
+  begin
+    ext := false;
+    val := false;
+    for i := 0 to elem.classificationList.Count - 1 do
+    begin
+      ext := ext or ((elem.classificationList[i].id <> '') or (elem.classificationList[i].hasExtensionList) {no-comments or (elem.classificationList[i].hasComments)});
+      val := val or (elem.classificationList[i].hasPrimitiveValue);
+    end;
+    if val then
+    begin
+      json.valueArray('classification');
+      for i := 0 to elem.classificationList.Count - 1 do
+        ComposeStringValue(json, '',elem.classificationList[i], true);
+      json.FinishArray;
+    end;
+    if ext then
+    begin
+      json.valueArray('_classification');
+      for i := 0 to elem.classificationList.Count - 1 do
+        ComposeStringProps(json, '',elem.classificationList[i], true);
+      json.FinishArray;
+    end;
+  end;
+  if not noObj then json.finishObject;
+end;
+
+procedure TFHIRJsonParser.ParseMedicationKnowledgeBatch(jsn : TJsonObject; ctxt : TFHIRObjectList);
+begin
+  ctxt.add(ParseMedicationKnowledgeBatch(jsn)); {2}
+end;
+
+function TFHIRJsonParser.ParseMedicationKnowledgeBatch(jsn : TJsonObject) : TFhirMedicationKnowledgeBatch;
+begin
+  result := TFhirMedicationKnowledgeBatch.create;
+  try
+    ParseMedicationKnowledgeBatchProperties(jsn, result);
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFHIRJsonParser.ParseMedicationKnowledgeBatchProperties(jsn : TJsonObject; result : TFhirMedicationKnowledgeBatch);
+begin
+    ParseBackboneElementProperties(jsn, result);
+    if jsn.has('lotNumber') or jsn.has('_lotNumber') then
+        result.lotNumberElement := ParseString(jsn['lotNumber'], jsn.vObj['_lotNumber']);{q}
+    if jsn.has('expirationDate') or jsn.has('_expirationDate') then
+        result.expirationDateElement := ParseDateTime(jsn['expirationDate'], jsn.vObj['_expirationDate']);{q}
+    if jsn.has('serialNumber') or jsn.has('_serialNumber') then
+        result.serialNumberElement := ParseString(jsn['serialNumber'], jsn.vObj['_serialNumber']);{q}
+end;
+
+procedure TFHIRJsonComposer.ComposeMedicationKnowledgeBatch(json : TJSONWriter; name : string; elem : TFhirMedicationKnowledgeBatch; noObj : boolean = false);
+begin
+  if (elem = nil) then
+    exit;
+  if not noObj then json.valueObject(name);
+  ComposeBackboneElementProperties(json, elem); {c2}
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeStringValue(json, 'lotNumber', elem.lotNumberElement, false);
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeStringProps(json, 'lotNumber', elem.lotNumberElement, false);
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeDateTimeValue(json, 'expirationDate', elem.expirationDateElement, false);
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeDateTimeProps(json, 'expirationDate', elem.expirationDateElement, false);
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeStringValue(json, 'serialNumber', elem.serialNumberElement, false);
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeStringProps(json, 'serialNumber', elem.serialNumberElement, false);
+  if not noObj then json.finishObject;
+end;
+
+procedure TFHIRJsonParser.ParseMedicationKnowledgePackaging(jsn : TJsonObject; ctxt : TFHIRObjectList);
+begin
+  ctxt.add(ParseMedicationKnowledgePackaging(jsn)); {2}
+end;
+
+function TFHIRJsonParser.ParseMedicationKnowledgePackaging(jsn : TJsonObject) : TFhirMedicationKnowledgePackaging;
+begin
+  result := TFhirMedicationKnowledgePackaging.create;
+  try
+    ParseMedicationKnowledgePackagingProperties(jsn, result);
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFHIRJsonParser.ParseMedicationKnowledgePackagingProperties(jsn : TJsonObject; result : TFhirMedicationKnowledgePackaging);
+begin
+    ParseBackboneElementProperties(jsn, result);
+    if jsn.has('type') then
+        result.type_ := ParseCodeableConcept(jsn.vObj['type']);{q3}
+    if jsn.has('quantity') then
+        result.quantity := ParseQuantity(jsn.vObj['quantity']);{q3}
+end;
+
+procedure TFHIRJsonComposer.ComposeMedicationKnowledgePackaging(json : TJSONWriter; name : string; elem : TFhirMedicationKnowledgePackaging; noObj : boolean = false);
+begin
+  if (elem = nil) then
+    exit;
+  if not noObj then json.valueObject(name);
+  ComposeBackboneElementProperties(json, elem); {c2}
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeCodeableConcept(json, 'type', elem.type_); {a}
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeQuantity(json, 'quantity', elem.quantity); {a}
+  if not noObj then json.finishObject;
+end;
+
+procedure TFHIRJsonParser.ParseMedicationKnowledgeDrugCharacteristic(jsn : TJsonObject; ctxt : TFHIRObjectList);
+begin
+  ctxt.add(ParseMedicationKnowledgeDrugCharacteristic(jsn)); {2}
+end;
+
+function TFHIRJsonParser.ParseMedicationKnowledgeDrugCharacteristic(jsn : TJsonObject) : TFhirMedicationKnowledgeDrugCharacteristic;
+begin
+  result := TFhirMedicationKnowledgeDrugCharacteristic.create;
+  try
+    ParseMedicationKnowledgeDrugCharacteristicProperties(jsn, result);
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFHIRJsonParser.ParseMedicationKnowledgeDrugCharacteristicProperties(jsn : TJsonObject; result : TFhirMedicationKnowledgeDrugCharacteristic);
+begin
+    ParseBackboneElementProperties(jsn, result);
+    if jsn.has('type') then
+        result.type_ := ParseCodeableConcept(jsn.vObj['type']);{q3}
+    if jsn.has('value') or jsn.has('_value') then
+        result.valueElement := ParseString(jsn['value'], jsn.vObj['_value']);{q}
+end;
+
+procedure TFHIRJsonComposer.ComposeMedicationKnowledgeDrugCharacteristic(json : TJSONWriter; name : string; elem : TFhirMedicationKnowledgeDrugCharacteristic; noObj : boolean = false);
+begin
+  if (elem = nil) then
+    exit;
+  if not noObj then json.valueObject(name);
+  ComposeBackboneElementProperties(json, elem); {c2}
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeCodeableConcept(json, 'type', elem.type_); {a}
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeStringValue(json, 'value', elem.valueElement, false);
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeStringProps(json, 'value', elem.valueElement, false);
+  if not noObj then json.finishObject;
+end;
+
+procedure TFHIRJsonParser.ParseMedicationKnowledge(jsn : TJsonObject; ctxt : TFHIRObjectList);
+begin
+  ctxt.add(ParseMedicationKnowledge(jsn)); {2}
+end;
+
+function TFHIRJsonParser.ParseMedicationKnowledge(jsn : TJsonObject) : TFhirMedicationKnowledge;
+begin
+  result := TFhirMedicationKnowledge.create;
+  try
+    ParseMedicationKnowledgeProperties(jsn, result);
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFHIRJsonParser.ParseMedicationKnowledgeProperties(jsn : TJsonObject; result : TFhirMedicationKnowledge);
+begin
+    ParseDomainResourceProperties(jsn, result);
+    if jsn.has('code') then
+        result.code := ParseCodeableConcept(jsn.vObj['code']);{q3}
+    if jsn.has('status') or jsn.has('_status')  then
+      result.statusElement := parseEnum(jsn.path+'/status', jsn['status'], jsn.vObj['_status'], CODES_TFhirMedicationKnowledgeStatusEnum, SYSTEMS_TFhirMedicationKnowledgeStatusEnum);
+    if jsn.has('manufacturer') then
+        result.manufacturer := ParseReference{TFhirOrganization}(jsn.vObj['manufacturer']);{q3}
+    if jsn.has('form') then
+        result.form := ParseCodeableConcept(jsn.vObj['form']);{q3}
+    if jsn.has('amount') then
+        result.amount := ParseQuantity(jsn.vObj['amount']);{q3}
+      if jsn.has('name') or jsn.has('_name') then
+      iteratePrimitiveArray(jsn.vArr['name'], jsn.vArr['_name'], result.nameList, parseString);
+      if jsn.has('description') or jsn.has('_description') then
+      iteratePrimitiveArray(jsn.vArr['description'], jsn.vArr['_description'], result.descriptionList, parseString);
+    if jsn.has('generalizedMedicine') then
+      iterateArray(jsn.vArr['generalizedMedicine'], result.generalizedMedicineList, parseReference{TFhirMedication});
+    if jsn.has('type') then
+      iterateArray(jsn.vArr['type'], result.type_List, parseCodeableConcept);
+    if jsn.has('monograph') then
+      iterateArray(jsn.vArr['monograph'], result.monographList, parseReference{TFhirDocumentReference});
+    if jsn.has('halfLifePeriod') then
+        result.halfLifePeriod := ParseDuration(jsn.vObj['halfLifePeriod']);{q3}
+    if jsn.has('ingredient') then
+      iterateArray(jsn.vArr['ingredient'], result.ingredientList, parseMedicationKnowledgeIngredient);
+    if jsn.has('cost') then
+      iterateArray(jsn.vArr['cost'], result.costList, parseMedicationKnowledgeCost);
+    if jsn.has('monitoringProgram') then
+      iterateArray(jsn.vArr['monitoringProgram'], result.monitoringProgramList, parseMedicationKnowledgeMonitoringProgram);
+    if jsn.has('administrationGuidelines') then
+      iterateArray(jsn.vArr['administrationGuidelines'], result.administrationGuidelinesList, parseMedicationKnowledgeAdministrationGuidelines);
+    if jsn.has('medicineClassification') then
+      iterateArray(jsn.vArr['medicineClassification'], result.medicineClassificationList, parseMedicationKnowledgeMedicineClassification);
+    if jsn.has('batch') then
+        result.batch := ParseMedicationKnowledgeBatch(jsn.vObj['batch']);{q3}
+    if jsn.has('packaging') then
+        result.packaging := ParseMedicationKnowledgePackaging(jsn.vObj['packaging']);{q3}
+    if jsn.has('drugCharacteristic') then
+      iterateArray(jsn.vArr['drugCharacteristic'], result.drugCharacteristicList, parseMedicationKnowledgeDrugCharacteristic);
+end;
+
+procedure TFHIRJsonComposer.ComposeMedicationKnowledge(json : TJSONWriter; name : string; elem : TFhirMedicationKnowledge; noObj : boolean = false);
+var
+  i : integer;
+  ext : boolean;
+  val : boolean;
+begin
+  if (elem = nil) then
+    exit;
+  ComposeDomainResourceProperties(json, elem); {c1}
+  if not elem.noCompose and doCompose('code') and (SummaryOption in [soFull, soSummary, soData]) then
+    ComposeCodeableConcept(json, 'code', elem.code); {a}
+  if not elem.noCompose and doCompose('status') and (SummaryOption in [soFull, soSummary, soData]) then
+     ComposeEnumValue(json, 'status', elem.StatusElement, CODES_TFhirMedicationKnowledgeStatusEnum, false);
+  if not elem.noCompose and doCompose('status') and (SummaryOption in [soFull, soSummary, soData]) then
+     ComposeEnumProps(json, 'status', elem.StatusElement, CODES_TFhirMedicationKnowledgeStatusEnum, false);
+  if not elem.noCompose and doCompose('manufacturer') and (SummaryOption in [soFull, soSummary, soData]) then
+    ComposeReference{TFhirOrganization}(json, 'manufacturer', elem.manufacturer); {a}
+  if not elem.noCompose and doCompose('form') and (SummaryOption in [soFull, soData]) then
+    ComposeCodeableConcept(json, 'form', elem.form); {a}
+  if not elem.noCompose and doCompose('amount') and (SummaryOption in [soFull, soSummary, soData]) then
+    ComposeQuantity(json, 'amount', elem.amount); {a}
+  if not elem.noCompose and doCompose('name') and (SummaryOption in [soFull, soSummary, soData]) and (elem.nameList.Count > 0) then
+  begin
+    ext := false;
+    val := false;
+    for i := 0 to elem.nameList.Count - 1 do
+    begin
+      ext := ext or ((elem.nameList[i].id <> '') or (elem.nameList[i].hasExtensionList) {no-comments or (elem.nameList[i].hasComments)});
+      val := val or (elem.nameList[i].hasPrimitiveValue);
+    end;
+    if val then
+    begin
+      json.valueArray('name');
+      for i := 0 to elem.nameList.Count - 1 do
+        ComposeStringValue(json, '',elem.nameList[i], true);
+      json.FinishArray;
+    end;
+    if ext then
+    begin
+      json.valueArray('_name');
+      for i := 0 to elem.nameList.Count - 1 do
+        ComposeStringProps(json, '',elem.nameList[i], true);
+      json.FinishArray;
+    end;
+  end;
+  if not elem.noCompose and doCompose('description') and (SummaryOption in [soFull, soData]) and (elem.descriptionList.Count > 0) then
+  begin
+    ext := false;
+    val := false;
+    for i := 0 to elem.descriptionList.Count - 1 do
+    begin
+      ext := ext or ((elem.descriptionList[i].id <> '') or (elem.descriptionList[i].hasExtensionList) {no-comments or (elem.descriptionList[i].hasComments)});
+      val := val or (elem.descriptionList[i].hasPrimitiveValue);
+    end;
+    if val then
+    begin
+      json.valueArray('description');
+      for i := 0 to elem.descriptionList.Count - 1 do
+        ComposeStringValue(json, '',elem.descriptionList[i], true);
+      json.FinishArray;
+    end;
+    if ext then
+    begin
+      json.valueArray('_description');
+      for i := 0 to elem.descriptionList.Count - 1 do
+        ComposeStringProps(json, '',elem.descriptionList[i], true);
+      json.FinishArray;
+    end;
+  end;
+  if not elem.noCompose and doCompose('generalizedMedicine') and (SummaryOption in [soFull, soData]) and (elem.generalizedMedicineList.Count > 0) then
+  begin
+    json.valueArray('generalizedMedicine');
+    for i := 0 to elem.generalizedMedicineList.Count - 1 do
+      ComposeReference{TFhirMedication}(json, '', elem.generalizedMedicineList[i]); {z - Reference(Medication)}
+    json.FinishArray;
+  end;
+  if not elem.noCompose and doCompose('type_') and (SummaryOption in [soFull, soData]) and (elem.type_List.Count > 0) then
+  begin
+    json.valueArray('type');
+    for i := 0 to elem.type_List.Count - 1 do
+      ComposeCodeableConcept(json, '', elem.type_List[i]); {z - CodeableConcept}
+    json.FinishArray;
+  end;
+  if not elem.noCompose and doCompose('monograph') and (SummaryOption in [soFull, soData]) and (elem.monographList.Count > 0) then
+  begin
+    json.valueArray('monograph');
+    for i := 0 to elem.monographList.Count - 1 do
+      ComposeReference{TFhirDocumentReference}(json, '', elem.monographList[i]); {z - Reference(DocumentReference)}
+    json.FinishArray;
+  end;
+  if not elem.noCompose and doCompose('halfLifePeriod') and (SummaryOption in [soFull, soData]) then
+    ComposeDuration(json, 'halfLifePeriod', elem.halfLifePeriod); {a}
+  if not elem.noCompose and doCompose('ingredient') and (SummaryOption in [soFull, soData]) and (elem.ingredientList.Count > 0) then
+  begin
+    json.valueArray('ingredient');
+    for i := 0 to elem.ingredientList.Count - 1 do
+      ComposeMedicationKnowledgeIngredient(json, '', elem.ingredientList[i]); {z - }
+    json.FinishArray;
+  end;
+  if not elem.noCompose and doCompose('cost') and (SummaryOption in [soFull, soData]) and (elem.costList.Count > 0) then
+  begin
+    json.valueArray('cost');
+    for i := 0 to elem.costList.Count - 1 do
+      ComposeMedicationKnowledgeCost(json, '', elem.costList[i]); {z - }
+    json.FinishArray;
+  end;
+  if not elem.noCompose and doCompose('monitoringProgram') and (SummaryOption in [soFull, soData]) and (elem.monitoringProgramList.Count > 0) then
+  begin
+    json.valueArray('monitoringProgram');
+    for i := 0 to elem.monitoringProgramList.Count - 1 do
+      ComposeMedicationKnowledgeMonitoringProgram(json, '', elem.monitoringProgramList[i]); {z - }
+    json.FinishArray;
+  end;
+  if not elem.noCompose and doCompose('administrationGuidelines') and (SummaryOption in [soFull, soData]) and (elem.administrationGuidelinesList.Count > 0) then
+  begin
+    json.valueArray('administrationGuidelines');
+    for i := 0 to elem.administrationGuidelinesList.Count - 1 do
+      ComposeMedicationKnowledgeAdministrationGuidelines(json, '', elem.administrationGuidelinesList[i]); {z - }
+    json.FinishArray;
+  end;
+  if not elem.noCompose and doCompose('medicineClassification') and (SummaryOption in [soFull, soData]) and (elem.medicineClassificationList.Count > 0) then
+  begin
+    json.valueArray('medicineClassification');
+    for i := 0 to elem.medicineClassificationList.Count - 1 do
+      ComposeMedicationKnowledgeMedicineClassification(json, '', elem.medicineClassificationList[i]); {z - }
+    json.FinishArray;
+  end;
+  if not elem.noCompose and doCompose('batch') and (SummaryOption in [soFull, soData]) then
+    ComposeMedicationKnowledgeBatch(json, 'batch', elem.batch); {a}
+  if not elem.noCompose and doCompose('packaging') and (SummaryOption in [soFull, soData]) then
+    ComposeMedicationKnowledgePackaging(json, 'packaging', elem.packaging); {a}
+  if not elem.noCompose and doCompose('drugCharacteristic') and (SummaryOption in [soFull, soData]) and (elem.drugCharacteristicList.Count > 0) then
+  begin
+    json.valueArray('drugCharacteristic');
+    for i := 0 to elem.drugCharacteristicList.Count - 1 do
+      ComposeMedicationKnowledgeDrugCharacteristic(json, '', elem.drugCharacteristicList[i]); {z - }
+    json.FinishArray;
+  end;
+end;
+
+{$ENDIF FHIR_MEDICATIONKNOWLEDGE}
 {$IFDEF FHIR_MEDICATIONREQUEST}
 procedure TFHIRJsonParser.ParseMedicationRequestDispenseRequest(jsn : TJsonObject; ctxt : TFHIRObjectList);
 begin
@@ -55967,6 +56653,12 @@ begin
     result := ParseMedicationDispense(jsn) 
   {$ENDIF}
 {$ENDIF FHIR_MEDICATIONDISPENSE}
+{$IFDEF FHIR_MEDICATIONKNOWLEDGE}
+  {$IFDEF FHIR_MEDICATIONKNOWLEDGE}
+   else if s = 'MedicationKnowledge' Then
+    result := ParseMedicationKnowledge(jsn) 
+  {$ENDIF}
+{$ENDIF FHIR_MEDICATIONKNOWLEDGE}
 {$IFDEF FHIR_MEDICATIONREQUEST}
   {$IFDEF FHIR_MEDICATIONREQUEST}
    else if s = 'MedicationRequest' Then
@@ -56733,6 +57425,10 @@ begin
   else if (type_ = 'TFhirMedicationDispense') then
     result := parseMedicationDispense(jsn)
 {$ENDIF FHIR_MEDICATIONDISPENSE}
+{$IFDEF FHIR_MEDICATIONKNOWLEDGE}
+  else if (type_ = 'TFhirMedicationKnowledge') then
+    result := parseMedicationKnowledge(jsn)
+{$ENDIF FHIR_MEDICATIONKNOWLEDGE}
 {$IFDEF FHIR_MEDICATIONREQUEST}
   else if (type_ = 'TFhirMedicationRequest') then
     result := parseMedicationRequest(jsn)
@@ -57943,6 +58639,28 @@ begin
   else if (base is TFhirMedicationDispense) then
     composeMedicationDispense(json, name, TFhirMedicationDispense(base), false)
 {$ENDIF FHIR_MEDICATIONDISPENSE}
+{$IFDEF FHIR_MEDICATIONKNOWLEDGE}
+  else if (base is TFhirMedicationKnowledgeIngredient) then
+    composeMedicationKnowledgeIngredient(json, name, TFhirMedicationKnowledgeIngredient(base), false)
+  else if (base is TFhirMedicationKnowledgeCost) then
+    composeMedicationKnowledgeCost(json, name, TFhirMedicationKnowledgeCost(base), false)
+  else if (base is TFhirMedicationKnowledgeMonitoringProgram) then
+    composeMedicationKnowledgeMonitoringProgram(json, name, TFhirMedicationKnowledgeMonitoringProgram(base), false)
+  else if (base is TFhirMedicationKnowledgeAdministrationGuidelines) then
+    composeMedicationKnowledgeAdministrationGuidelines(json, name, TFhirMedicationKnowledgeAdministrationGuidelines(base), false)
+  else if (base is TFhirMedicationKnowledgeAdministrationGuidelinesPatientCharacteristics) then
+    composeMedicationKnowledgeAdministrationGuidelinesPatientCharacteristics(json, name, TFhirMedicationKnowledgeAdministrationGuidelinesPatientCharacteristics(base), false)
+  else if (base is TFhirMedicationKnowledgeMedicineClassification) then
+    composeMedicationKnowledgeMedicineClassification(json, name, TFhirMedicationKnowledgeMedicineClassification(base), false)
+  else if (base is TFhirMedicationKnowledgeBatch) then
+    composeMedicationKnowledgeBatch(json, name, TFhirMedicationKnowledgeBatch(base), false)
+  else if (base is TFhirMedicationKnowledgePackaging) then
+    composeMedicationKnowledgePackaging(json, name, TFhirMedicationKnowledgePackaging(base), false)
+  else if (base is TFhirMedicationKnowledgeDrugCharacteristic) then
+    composeMedicationKnowledgeDrugCharacteristic(json, name, TFhirMedicationKnowledgeDrugCharacteristic(base), false)
+  else if (base is TFhirMedicationKnowledge) then
+    composeMedicationKnowledge(json, name, TFhirMedicationKnowledge(base), false)
+{$ENDIF FHIR_MEDICATIONKNOWLEDGE}
 {$IFDEF FHIR_MEDICATIONREQUEST}
   else if (base is TFhirMedicationRequestDispenseRequest) then
     composeMedicationRequestDispenseRequest(json, name, TFhirMedicationRequestDispenseRequest(base), false)
@@ -58988,6 +59706,11 @@ begin
      frtMedicationDispense: ComposeMedicationDispense(json, 'MedicationDispense', TFhirMedicationDispense(resource));
    {$ENDIF}
 {$ENDIF FHIR_MEDICATIONDISPENSE}
+{$IFDEF FHIR_MEDICATIONKNOWLEDGE}
+  {$IFDEF FHIR_MEDICATIONKNOWLEDGE}
+     frtMedicationKnowledge: ComposeMedicationKnowledge(json, 'MedicationKnowledge', TFhirMedicationKnowledge(resource));
+   {$ENDIF}
+{$ENDIF FHIR_MEDICATIONKNOWLEDGE}
 {$IFDEF FHIR_MEDICATIONREQUEST}
   {$IFDEF FHIR_MEDICATIONREQUEST}
      frtMedicationRequest: ComposeMedicationRequest(json, 'MedicationRequest', TFhirMedicationRequest(resource));

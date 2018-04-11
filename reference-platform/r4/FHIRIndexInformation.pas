@@ -33,7 +33,7 @@ unit FHIRIndexInformation;
 
 interface
 
-// FHIR v3.3.0 generated 2018-04-03T06:47:16+10:00
+// FHIR v3.4.0 generated 2018-04-11T14:46:13+10:00
 
 uses
   SysUtils, Classes, StringSupport, DecimalSupport, AdvBuffers, DateSupport, FHIRResources, FHIRTypes, FHIRConstants, FHIRIndexBase, FHIRSupport;
@@ -263,6 +263,9 @@ Type
     {$ENDIF}
     {$IFDEF FHIR_MEDICATIONDISPENSE}
     procedure buildIndexesForMedicationDispense(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+    {$ENDIF}
+    {$IFDEF FHIR_MEDICATIONKNOWLEDGE}
+    procedure buildIndexesForMedicationKnowledge(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
     {$ENDIF}
     {$IFDEF FHIR_MEDICATIONREQUEST}
     procedure buildIndexesForMedicationRequest(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
@@ -1436,8 +1439,8 @@ begin
   indexes.add('DeviceRequest', 'patient', 'Individual the service is ordered for', SearchParamTypeREFERENCE, ['Group', 'Patient'], 'DocumentManifest.subject | Goal.subject | Consent.patient | DocumentReference.subject | ServiceRequest.subject | RiskAssessment.subject | CareTeam.subject | ImagingStudy.subject | FamilyMemberHistory.patient | Encounter.subject | DeviceUseStatement.s'+'ubject | DeviceRequest.subject | AllergyIntolerance.patient | CarePlan.subject | EpisodeOfCare.patient | Procedure.subject | List.subject | Immunization.patient | VisionPrescription.patient | Flag.subject | Observation.subject | DiagnosticReport.subj'+'ect | NutritionOrder.patient | Condition.subject | Composition.subject | DetectedIssue.patient | SupplyDelivery.patient | ClinicalImpression.subject', SearchXpathUsageNormal);
   indexes.add('DeviceRequest', 'performer', 'Desired performer for service', SearchParamTypeREFERENCE, ['Practitioner', 'Organization', 'CareTeam', 'Device', 'Patient', 'HealthcareService', 'PractitionerRole', 'RelatedPerson'], 'DeviceRequest.performer', SearchXpathUsageNormal);
   indexes.add('DeviceRequest', 'priorrequest', 'Request takes the place of referenced completed or terminated requests', SearchParamTypeREFERENCE, ALL_RESOURCE_TYPE_NAMES, 'DeviceRequest.priorRequest', SearchXpathUsageNormal);
-  indexes.add('DeviceRequest', 'requester', 'Who/what is requesting service?', SearchParamTypeREFERENCE, ['Practitioner', 'Organization', 'Device', 'PractitionerRole'], 'DeviceRequest.requester', SearchXpathUsageNormal);
-  indexes.add('DeviceRequest', 'status', 'entered-in-error | draft | active |suspended | completed?', SearchParamTypeTOKEN, [], 'DeviceRequest.status', SearchXpathUsageNormal);
+  indexes.add('DeviceRequest', 'requester', 'Who/what is requesting service', SearchParamTypeREFERENCE, ['Practitioner', 'Organization', 'Device', 'PractitionerRole'], 'DeviceRequest.requester', SearchXpathUsageNormal);
+  indexes.add('DeviceRequest', 'status', 'entered-in-error | draft | active |suspended | completed', SearchParamTypeTOKEN, [], 'DeviceRequest.status', SearchXpathUsageNormal);
   indexes.add('DeviceRequest', 'subject', 'Individual the service is ordered for', SearchParamTypeREFERENCE, ['Group', 'Device', 'Patient', 'Location'], 'DeviceRequest.subject', SearchXpathUsageNormal);
   compartments.register(frtDevice, 'DeviceRequest', ['device', 'subject', 'requester', 'performer']);
   compartments.register(frtEncounter, 'DeviceRequest', ['encounter']);
@@ -2516,6 +2519,36 @@ begin
   indexes.add('MedicationDispense', 'whenprepared', 'Returns dispenses prepared on this date', SearchParamTypeDATE, [], 'MedicationDispense.whenPrepared', SearchXpathUsageNormal);
   compartments.register(frtPatient, 'MedicationDispense', ['subject', 'patient', 'receiver']);
   compartments.register(frtPractitioner, 'MedicationDispense', ['performer', 'receiver']);
+end;
+{$ENDIF}
+
+{$IFDEF FHIR_MEDICATIONKNOWLEDGE}
+procedure TFHIRIndexBuilder.buildIndexesForMedicationKnowledge(Indexes : TFhirIndexList; compartments : TFHIRCompartmentList);
+begin
+  indexes.add('MedicationKnowledge', '_content', 'Search on the entire content of the resource', SearchParamTypeSTRING, [], '', SearchXpathUsageNormal);
+  indexes.add('MedicationKnowledge', '_id', 'Logical id of this artifact', SearchParamTypeTOKEN, [], 'Resource.id', SearchXpathUsageNormal);
+  indexes.add('MedicationKnowledge', '_lastUpdated', 'When the resource version last changed', SearchParamTypeDATE, [], 'Resource.meta.lastUpdated', SearchXpathUsageNormal);
+  indexes.add('MedicationKnowledge', '_profile', 'Profiles this resource claims to conform to', SearchParamTypeREFERENCE, [], 'Resource.meta.profile', SearchXpathUsageNormal);
+  indexes.add('MedicationKnowledge', '_query', 'A custom search profile that describes a specific defined query operation', SearchParamTypeTOKEN, [], '', SearchXpathUsageNormal);
+  indexes.add('MedicationKnowledge', '_security', 'Security Labels applied to this resource', SearchParamTypeTOKEN, [], 'Resource.meta.security', SearchXpathUsageNormal);
+  indexes.add('MedicationKnowledge', '_source', 'Identifies where the resource comes from', SearchParamTypeURI, [], 'Resource.meta.source', SearchXpathUsageNormal);
+  indexes.add('MedicationKnowledge', '_tag', 'Tags applied to this resource', SearchParamTypeTOKEN, [], 'Resource.meta.tag', SearchXpathUsageNormal);
+  indexes.add('MedicationKnowledge', '_text', 'Search on the narrative of the resource', SearchParamTypeSTRING, [], '', SearchXpathUsageNormal);
+  indexes.add('MedicationKnowledge', 'classification', 'Specific category assigned to the medication', SearchParamTypeTOKEN, [], 'MedicationKnowledge.medicineClassification.classification', SearchXpathUsageNormal);
+  indexes.add('MedicationKnowledge', 'classification-type', 'The type of category for the medication (for example, therapeutic classification, therapeutic sub-classification)', SearchParamTypeTOKEN, [], 'MedicationKnowledge.medicineClassification.type', SearchXpathUsageNormal);
+  indexes.add('MedicationKnowledge', 'code', 'Codes that identify this medication', SearchParamTypeTOKEN, [], 'MedicationKnowledge.code', SearchXpathUsageNormal);
+  indexes.add('MedicationKnowledge', 'expiration-date', 'When batch will expire', SearchParamTypeDATE, [], 'MedicationKnowledge.batch.expirationDate', SearchXpathUsageNormal);
+  indexes.add('MedicationKnowledge', 'form', 'powder | tablets | capsule +', SearchParamTypeTOKEN, [], 'MedicationKnowledge.form', SearchXpathUsageNormal);
+  indexes.add('MedicationKnowledge', 'formulary', 'The formulary which applies to the price', SearchParamTypeTOKEN, [], 'MedicationKnowledge.cost.formulary', SearchXpathUsageNormal);
+  indexes.add('MedicationKnowledge', 'ingredient', 'Medication(s) or substance(s) contained in the medication', SearchParamTypeREFERENCE, ['Medication', 'Substance'], 'MedicationKnowledge.ingredient.item.as(Reference)', SearchXpathUsageNormal);
+  indexes.add('MedicationKnowledge', 'ingredient-code', 'Medication(s) or substance(s) contained in the medication', SearchParamTypeTOKEN, [], 'MedicationKnowledge.ingredient.item.as(CodeableConcept)', SearchXpathUsageNormal);
+  indexes.add('MedicationKnowledge', 'lot-number', 'Identifier assigned to batch', SearchParamTypeTOKEN, [], 'MedicationKnowledge.batch.lotNumber', SearchXpathUsageNormal);
+  indexes.add('MedicationKnowledge', 'manufacturer', 'Manufacturer of the item', SearchParamTypeREFERENCE, ['Organization'], 'MedicationKnowledge.manufacturer', SearchXpathUsageNormal);
+  indexes.add('MedicationKnowledge', 'monitoring-program-name', 'Name of the reviewing program', SearchParamTypeTOKEN, [], 'MedicationKnowledge.monitoringProgram.name', SearchXpathUsageNormal);
+  indexes.add('MedicationKnowledge', 'monitoring-program-type', 'Type of program under which the medication is monitored', SearchParamTypeTOKEN, [], 'MedicationKnowledge.monitoringProgram.type', SearchXpathUsageNormal);
+  indexes.add('MedicationKnowledge', 'monograph', 'Associated documentation about the medication', SearchParamTypeREFERENCE, ['DocumentReference'], 'MedicationKnowledge.monograph', SearchXpathUsageNormal);
+  indexes.add('MedicationKnowledge', 'serial-number', 'Identifier assigned to a drug at the time of manufacture', SearchParamTypeTOKEN, [], 'MedicationKnowledge.batch.serialNumber', SearchXpathUsageNormal);
+  indexes.add('MedicationKnowledge', 'status', 'active | inactive | entered-in-error', SearchParamTypeTOKEN, [], 'MedicationKnowledge.status', SearchXpathUsageNormal);
 end;
 {$ENDIF}
 
@@ -4374,6 +4407,9 @@ begin
   {$ENDIF}
   {$IFDEF FHIR_MEDICATIONDISPENSE}
   buildIndexesForMedicationDispense(Indexes, compartments);
+  {$ENDIF}
+  {$IFDEF FHIR_MEDICATIONKNOWLEDGE}
+  buildIndexesForMedicationKnowledge(Indexes, compartments);
   {$ENDIF}
   {$IFDEF FHIR_MEDICATIONREQUEST}
   buildIndexesForMedicationRequest(Indexes, compartments);

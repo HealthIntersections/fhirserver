@@ -50,7 +50,7 @@ Uses
 
   ParserSupport, MXML, AdvXmlEntities, AdvJSON,
 
-  FHIRBase, FHIRContext, FHIRResources, FHIRTypes, FHIRParser, FHIRSupport, FHIRPath, FHIRMetaModel, FHIRXhtml;
+  FHIRBase, FHIRPathNode, FHIRContext, FHIRResources, FHIRTypes, FHIRParser, FHIRSupport, FHIRPath, FHIRMetaModel, FHIRXhtml;
 
 Type
   EDiscriminatorException = class (Exception);
@@ -464,7 +464,7 @@ constructor TFHIRValidator.Create(context: TFHIRWorkerContext);
 begin
   inherited Create;
   FContext := context;
-  FPathEngine := TFHIRPathEngine.create(FContext.link);
+  FPathEngine := TFHIRPathEngine.create(FContext.link, nil);
   FPathEngine.OnResolveReference := FHIRPathResolveReference;
 end;
 

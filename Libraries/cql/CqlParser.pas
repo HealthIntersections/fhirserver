@@ -33,7 +33,7 @@ uses
   SysUtils, Generics.Collections,
   StringSupport, ParserSupport, DecimalSupport,
   AdvObjects, AdvGenerics,
-  FHIRBase, FHIRPath,
+  FHIRBase, FHIRPathNode, FHIRPath,
   CQLModel;
 
 Type
@@ -734,7 +734,7 @@ function TCqlParser.expConstant(lexer : TCqlLexer; value: String): TCqlExpressio
 begin
   result := TCqlExpressionNode.Create(lexer.nextId);
   try
-    result.constant := value;
+    result.constant := lexer.processConstant;
     result.kind := enkConstant;
     result.Link;
   finally
@@ -746,7 +746,7 @@ function TCqlParser.expNull(lexer: TCqlLexer): TCqlExpressionNode;
 begin
   result := TCqlExpressionNode.Create(lexer.nextId);
   try
-    result.constant := '$$null';
+    result.constant := TFHIRConstant.create('$$null');
     result.kind := enkConstant;
     result.Link;
   finally
@@ -1204,7 +1204,7 @@ procedure TCqlParser.readConstant(lexer: TCqlLexer; expression : TCqlExpressionN
 begin
   if lexer.current.startsWith('''') then
     lexer.processConstant(lexer.current);
-  expression.Constant := lexer.take;
+  expression.Constant := lexer.processConstant;
   expression.kind := enkConstant;
   expression.SourceLocationEnd := lexer.CurrentLocation;
   if lexer.isUnit() or lexer.isConstant then

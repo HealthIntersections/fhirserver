@@ -217,6 +217,7 @@ Function StringExcludeAfter(Const sText : String; cSymbol : Char) : String; Over
 Function StringExcludeAfter(Const sText, sSymbol : String) : String; Overload;
 
 
+function capitalise(s : String) : String;
 function jsonEscape(s : String; isString : boolean) : String;
 
 function StringFindEndOfNumber(const s : String; index : integer) : integer;
@@ -1513,6 +1514,13 @@ Begin
     Delete(Result, Length(sText), 1);
 End;
 
+function capitalise(s : String) : String;
+begin
+  if (s = '') then
+    result := s
+  else
+    result := UpperCase(s[1]) + s.Substring(1);
+end;
 
 function jsonEscape(s : String; isString : boolean) : String;
 var

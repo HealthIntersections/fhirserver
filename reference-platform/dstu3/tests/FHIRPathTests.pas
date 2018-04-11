@@ -34,7 +34,7 @@ interface
 uses
   SysUtils, classes,
   ActiveX, ComObj, Variants, StringSupport, AdvGenerics,
-  FHIRTestWorker, FHIRResources, FHIRBase, FHIRParser, FHIRPath, FHIRTypes,
+  FHIRTestWorker, FHIRResources, FHIRBase, FHIRPathNode, FHIRParser, FHIRPath, FHIRTypes,
   MsXml, MsXmlParser, DUnitX.TestFramework;
 
 Type
@@ -278,7 +278,7 @@ end;
   *)
 procedure TFHIRPathTest.setup;
 begin
-  engine := TFHIRPathEngine.Create(TTestingWorkerContext.Use);
+  engine := TFHIRPathEngine.Create(TTestingWorkerContext.Use, nil);
 end;
 
 procedure TFHIRPathTest.teardown;

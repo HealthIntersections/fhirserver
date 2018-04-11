@@ -36,6 +36,7 @@ uses
   Vcl.Dialogs, NppDockingForms, Vcl.StdCtrls, NppPlugin, Vcl.ToolWin, SystemSupport,
   FHIRTypes, FHIRResources, FHIRUtilities, CDSHooksUtilities,
   Vcl.ComCtrls, System.ImageList, Vcl.ImgList, Vcl.ExtCtrls, Vcl.Styles, Vcl.Themes,
+  FHIRPathNode,
   FHIRPathDocumentation, Vcl.Buttons, Vcl.OleCtrls, SHDocVw, TextUtilities, FHIRBase,
   AdvGenerics, PluginUtilities, VirtualTrees, kCritSct, AdvBuffers, ShellSupport,
   IdSocketHandle, IdContext, IdHTTPServer, IdCustomHTTPServer, SmartOnFhirUtilities,

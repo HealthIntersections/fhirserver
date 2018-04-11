@@ -52,7 +52,7 @@ uses
   KDBManager,
   FHIRBase, FHIRIndexBase, FHIRContext, FhirSupport, FHIRResources, FHIRConstants, FHIRTypes, FHIRTags, FHIRUtilities, FHIRParser, FHIRPath, FHIRProfileUtilities, FHIRXhtml,
   TerminologyServer, ServerUtilities,
-  UcumServices;
+  UcumServices, UcumServiceInterface;
 
 Const
   INDEX_ENTRY_LENGTH = 210;
@@ -184,6 +184,7 @@ Type
     FTerminologyServer : TTerminologyServer;
     FResConfig: TAdvMap<TFHIRResourceConfig>;
     FforTesting : boolean;
+    FUcum : TUcumServices;
 
     procedure GetBoundaries(value : String; comparator: TFhirQuantityComparatorEnum; var low, high : String);
 
@@ -347,7 +348,7 @@ Type
     procedure evaluateByFHIRPath(key : integer; context, resource : TFhirResource);
     function transform(base : TFHIRObject; uri : String) : TFHIRObject;
   public
-    constructor Create(aSpaces : TFhirIndexSpaces; connection : TKDBConnection; aInfo : TFHIRIndexInformation; ValidationInfo : TFHIRWorkerContext; ResConfig: TAdvMap<TFHIRResourceConfig>);
+    constructor Create(aSpaces : TFhirIndexSpaces; connection : TKDBConnection; aInfo : TFHIRIndexInformation; ValidationInfo : TFHIRWorkerContext; ResConfig: TAdvMap<TFHIRResourceConfig>; Ucum : TUcumServices);
     destructor Destroy; override;
     function Link : TFHIRIndexManager; overload;
     property TerminologyServer : TTerminologyServer read FTerminologyServer write SetTerminologyServer;
@@ -497,7 +498,7 @@ end;
 
 { TFhirIndexManager }
 
-constructor TFhirIndexManager.Create(aSpaces : TFhirIndexSpaces; connection : TKDBConnection; aInfo : TFHIRIndexInformation; ValidationInfo : TFHIRWorkerContext; ResConfig: TAdvMap<TFHIRResourceConfig>);
+constructor TFhirIndexManager.Create(aSpaces : TFhirIndexSpaces; connection : TKDBConnection; aInfo : TFHIRIndexInformation; ValidationInfo : TFHIRWorkerContext; ResConfig: TAdvMap<TFHIRResourceConfig>; Ucum : TUcumServices);
 begin
   inherited Create;
   FCompartments := TFhirCompartmentEntryList.create;
@@ -507,10 +508,12 @@ begin
   FInfo := aInfo;
   FEntries := TFhirIndexEntryList.Create;
   FResConfig := ResConfig;
+  FUcum := ucum;
 end;
 
 destructor TFhirIndexManager.Destroy;
 begin
+  FUcum.Free;
   FValidationInfo.Free;
   FTerminologyServer.free;
   FCompartments.Free;
@@ -733,7 +736,7 @@ var
   s : string;
   ie : TFhirIndexEntry;
 begin
-  path := TFHIRPathEngine.Create(FValidationInfo.link);
+  path := TFHIRPathEngine.Create(FValidationInfo.link, TUcumServiceImplementation.Create(FUcum.link));
   try
     for i := 0 to FInfo.Indexes.Count - 1 do
     begin

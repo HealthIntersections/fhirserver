@@ -108,7 +108,9 @@ uses
   MarkdownDaringFireball in '..\..\markdown\source\MarkdownDaringFireball.pas',
   MarkdownCommonMark in '..\..\markdown\source\MarkdownCommonMark.pas',
   ShellSupport in '..\reference-platform\support\ShellSupport.pas',
-  SmartOnFhirLogin in '..\reference-platform\client\SmartOnFhirLogin.pas' {SmartOnFhirLoginForm};
+  SmartOnFhirLogin in '..\reference-platform\client\SmartOnFhirLogin.pas' {SmartOnFhirLoginForm},
+  UcumServiceInterface in '..\reference-platform\support\UcumServiceInterface.pas',
+  FHIRPathNode in '..\reference-platform\dstu2\FHIRPathNode.pas';
 
 {$R *.res}
 

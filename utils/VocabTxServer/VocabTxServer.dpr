@@ -248,7 +248,10 @@ uses
   myUTF8Strings in '..\..\Libraries\java\myUTF8Strings.pas',
   JavaBridge in '..\..\Server\JavaBridge.pas',
   CountryCodeServices in '..\..\Server\CountryCodeServices.pas',
-  USStatesServices in '..\..\Server\USStatesServices.pas';
+  USStatesServices in '..\..\Server\USStatesServices.pas',
+  FHIRPathNode in '..\..\reference-platform\r4\FHIRPathNode.pas',
+  GoogleAnalyticsProvider in '..\..\Server\GoogleAnalyticsProvider.pas',
+  UcumServiceInterface in '..\..\reference-platform\support\UcumServiceInterface.pas';
 
 {$R *.res}
 

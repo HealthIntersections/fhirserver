@@ -33,7 +33,7 @@ unit FHIRParserXml;
 
 interface
 
-// FHIR v3.3.0 generated 2018-04-03T06:47:16+10:00
+// FHIR v3.4.0 generated 2018-04-11T14:46:13+10:00
 
 uses
   SysUtils, Classes, StringSupport, DateSupport, DecimalSupport, FHIRParserBase, FHIRBase, FHIRResources, FHIRConstants, FHIRTypes, AdvStringMatches, XmlBuilder, MXml;
@@ -909,6 +909,28 @@ Type
     function ParseMedicationDispense(element : TMXmlElement; path : string) : TFhirMedicationDispense;
     function ParseMedicationDispenseChild(element : TFhirMedicationDispense; path : string; child : TMXmlElement) : boolean;
 {$ENDIF FHIR_MEDICATIONDISPENSE}
+{$IFDEF FHIR_MEDICATIONKNOWLEDGE}
+    function ParseMedicationKnowledgeIngredient(element : TMXmlElement; path : string) : TFhirMedicationKnowledgeIngredient;
+    function ParseMedicationKnowledgeIngredientChild(element : TFhirMedicationKnowledgeIngredient; path : string; child : TMXmlElement) : boolean;
+    function ParseMedicationKnowledgeCost(element : TMXmlElement; path : string) : TFhirMedicationKnowledgeCost;
+    function ParseMedicationKnowledgeCostChild(element : TFhirMedicationKnowledgeCost; path : string; child : TMXmlElement) : boolean;
+    function ParseMedicationKnowledgeMonitoringProgram(element : TMXmlElement; path : string) : TFhirMedicationKnowledgeMonitoringProgram;
+    function ParseMedicationKnowledgeMonitoringProgramChild(element : TFhirMedicationKnowledgeMonitoringProgram; path : string; child : TMXmlElement) : boolean;
+    function ParseMedicationKnowledgeAdministrationGuidelines(element : TMXmlElement; path : string) : TFhirMedicationKnowledgeAdministrationGuidelines;
+    function ParseMedicationKnowledgeAdministrationGuidelinesChild(element : TFhirMedicationKnowledgeAdministrationGuidelines; path : string; child : TMXmlElement) : boolean;
+    function ParseMedicationKnowledgeAdministrationGuidelinesPatientCharacteristics(element : TMXmlElement; path : string) : TFhirMedicationKnowledgeAdministrationGuidelinesPatientCharacteristics;
+    function ParseMedicationKnowledgeAdministrationGuidelinesPatientCharacteristicsChild(element : TFhirMedicationKnowledgeAdministrationGuidelinesPatientCharacteristics; path : string; child : TMXmlElement) : boolean;
+    function ParseMedicationKnowledgeMedicineClassification(element : TMXmlElement; path : string) : TFhirMedicationKnowledgeMedicineClassification;
+    function ParseMedicationKnowledgeMedicineClassificationChild(element : TFhirMedicationKnowledgeMedicineClassification; path : string; child : TMXmlElement) : boolean;
+    function ParseMedicationKnowledgeBatch(element : TMXmlElement; path : string) : TFhirMedicationKnowledgeBatch;
+    function ParseMedicationKnowledgeBatchChild(element : TFhirMedicationKnowledgeBatch; path : string; child : TMXmlElement) : boolean;
+    function ParseMedicationKnowledgePackaging(element : TMXmlElement; path : string) : TFhirMedicationKnowledgePackaging;
+    function ParseMedicationKnowledgePackagingChild(element : TFhirMedicationKnowledgePackaging; path : string; child : TMXmlElement) : boolean;
+    function ParseMedicationKnowledgeDrugCharacteristic(element : TMXmlElement; path : string) : TFhirMedicationKnowledgeDrugCharacteristic;
+    function ParseMedicationKnowledgeDrugCharacteristicChild(element : TFhirMedicationKnowledgeDrugCharacteristic; path : string; child : TMXmlElement) : boolean;
+    function ParseMedicationKnowledge(element : TMXmlElement; path : string) : TFhirMedicationKnowledge;
+    function ParseMedicationKnowledgeChild(element : TFhirMedicationKnowledge; path : string; child : TMXmlElement) : boolean;
+{$ENDIF FHIR_MEDICATIONKNOWLEDGE}
 {$IFDEF FHIR_MEDICATIONREQUEST}
     function ParseMedicationRequestDispenseRequest(element : TMXmlElement; path : string) : TFhirMedicationRequestDispenseRequest;
     function ParseMedicationRequestDispenseRequestChild(element : TFhirMedicationRequestDispenseRequest; path : string; child : TMXmlElement) : boolean;
@@ -2447,6 +2469,28 @@ Type
     procedure ComposeMedicationDispense(xml : TXmlBuilder; name : string; elem : TFhirMedicationDispense);
     procedure ComposeMedicationDispenseChildren(xml : TXmlBuilder; elem : TFhirMedicationDispense);
 {$ENDIF FHIR_MEDICATIONDISPENSE}
+{$IFDEF FHIR_MEDICATIONKNOWLEDGE}
+    procedure ComposeMedicationKnowledgeIngredient(xml : TXmlBuilder; name : string; elem : TFhirMedicationKnowledgeIngredient);
+    procedure ComposeMedicationKnowledgeIngredientChildren(xml : TXmlBuilder; elem : TFhirMedicationKnowledgeIngredient);
+    procedure ComposeMedicationKnowledgeCost(xml : TXmlBuilder; name : string; elem : TFhirMedicationKnowledgeCost);
+    procedure ComposeMedicationKnowledgeCostChildren(xml : TXmlBuilder; elem : TFhirMedicationKnowledgeCost);
+    procedure ComposeMedicationKnowledgeMonitoringProgram(xml : TXmlBuilder; name : string; elem : TFhirMedicationKnowledgeMonitoringProgram);
+    procedure ComposeMedicationKnowledgeMonitoringProgramChildren(xml : TXmlBuilder; elem : TFhirMedicationKnowledgeMonitoringProgram);
+    procedure ComposeMedicationKnowledgeAdministrationGuidelines(xml : TXmlBuilder; name : string; elem : TFhirMedicationKnowledgeAdministrationGuidelines);
+    procedure ComposeMedicationKnowledgeAdministrationGuidelinesChildren(xml : TXmlBuilder; elem : TFhirMedicationKnowledgeAdministrationGuidelines);
+    procedure ComposeMedicationKnowledgeAdministrationGuidelinesPatientCharacteristics(xml : TXmlBuilder; name : string; elem : TFhirMedicationKnowledgeAdministrationGuidelinesPatientCharacteristics);
+    procedure ComposeMedicationKnowledgeAdministrationGuidelinesPatientCharacteristicsChildren(xml : TXmlBuilder; elem : TFhirMedicationKnowledgeAdministrationGuidelinesPatientCharacteristics);
+    procedure ComposeMedicationKnowledgeMedicineClassification(xml : TXmlBuilder; name : string; elem : TFhirMedicationKnowledgeMedicineClassification);
+    procedure ComposeMedicationKnowledgeMedicineClassificationChildren(xml : TXmlBuilder; elem : TFhirMedicationKnowledgeMedicineClassification);
+    procedure ComposeMedicationKnowledgeBatch(xml : TXmlBuilder; name : string; elem : TFhirMedicationKnowledgeBatch);
+    procedure ComposeMedicationKnowledgeBatchChildren(xml : TXmlBuilder; elem : TFhirMedicationKnowledgeBatch);
+    procedure ComposeMedicationKnowledgePackaging(xml : TXmlBuilder; name : string; elem : TFhirMedicationKnowledgePackaging);
+    procedure ComposeMedicationKnowledgePackagingChildren(xml : TXmlBuilder; elem : TFhirMedicationKnowledgePackaging);
+    procedure ComposeMedicationKnowledgeDrugCharacteristic(xml : TXmlBuilder; name : string; elem : TFhirMedicationKnowledgeDrugCharacteristic);
+    procedure ComposeMedicationKnowledgeDrugCharacteristicChildren(xml : TXmlBuilder; elem : TFhirMedicationKnowledgeDrugCharacteristic);
+    procedure ComposeMedicationKnowledge(xml : TXmlBuilder; name : string; elem : TFhirMedicationKnowledge);
+    procedure ComposeMedicationKnowledgeChildren(xml : TXmlBuilder; elem : TFhirMedicationKnowledge);
+{$ENDIF FHIR_MEDICATIONKNOWLEDGE}
 {$IFDEF FHIR_MEDICATIONREQUEST}
     procedure ComposeMedicationRequestDispenseRequest(xml : TXmlBuilder; name : string; elem : TFhirMedicationRequestDispenseRequest);
     procedure ComposeMedicationRequestDispenseRequestChildren(xml : TXmlBuilder; elem : TFhirMedicationRequestDispenseRequest);
@@ -31786,6 +31830,646 @@ begin
 end;
 
 {$ENDIF FHIR_MEDICATIONDISPENSE}
+{$IFDEF FHIR_MEDICATIONKNOWLEDGE}
+function TFHIRXmlParser.ParseMedicationKnowledgeIngredient(element : TMXmlElement; path : string) : TFhirMedicationKnowledgeIngredient;
+var
+  child : TMXmlElement;
+begin
+  result := TFhirMedicationKnowledgeIngredient.create;
+  try
+    parseElementAttributes(result, path, element);
+    child := FirstChild(element);
+    while (child <> nil) do
+    begin
+      if not ParseMedicationKnowledgeIngredientChild(result, path, child) then
+        UnknownContent(child, path);
+      child := NextSibling(child);
+    end;
+    closeOutElement(result, element);
+
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+function TFHIRXmlParser.ParseMedicationKnowledgeIngredientChild(element : TFhirMedicationKnowledgeIngredient; path : string; child : TMXmlElement) : boolean;
+begin
+  result := true;
+      if (child.localName = 'itemCodeableConcept') then
+        element.item := ParseCodeableConcept(child, path+'/itemCodeableConcept'){x.3}
+      else if (child.localName = 'itemReference') then
+        element.item := ParseReference(child, path+'/itemReference') {a}
+      else if (child.localName = 'isActive') then
+        element.isActiveElement := ParseBoolean(child, path+'/isActive') {b}
+      else if (child.localName = 'amount') then
+        element.amount := ParseRatio(child, path+'/amount') {b}
+      else if Not ParseBackboneElementChild(element, path, child) then
+    result := false;
+end;
+
+procedure TFHIRXmlComposer.ComposeMedicationKnowledgeIngredient(xml : TXmlBuilder; name : String; elem : TFhirMedicationKnowledgeIngredient);
+begin
+  if (elem = nil) then
+    exit;
+  composeElementAttributes(xml, elem);
+  xml.open(name);
+  composeMedicationKnowledgeIngredientChildren(xml, elem);
+  closeOutElement(xml, elem);
+  xml.close(name);
+end;
+
+procedure TFHIRXmlComposer.ComposeMedicationKnowledgeIngredientChildren(xml : TXmlBuilder; elem : TFhirMedicationKnowledgeIngredient);
+begin
+  composeBackboneElementChildren(xml, elem);
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.item is TFhirCodeableConcept) {6} then
+    ComposeCodeableConcept(xml, 'itemCodeableConcept', TFhirCodeableConcept(elem.item))
+  else if not elem.noCompose and (SummaryOption in [soFull, soData]) and (elem.item is TFhirReference) {2} then
+    ComposeReference(xml, 'itemReference', TFhirReference(elem.item));
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeBoolean(xml, 'isActive', elem.isActiveElement);{x.2b}
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeRatio(xml, 'amount', elem.amount);{x.2a}
+end;
+
+function TFHIRXmlParser.ParseMedicationKnowledgeCost(element : TMXmlElement; path : string) : TFhirMedicationKnowledgeCost;
+var
+  child : TMXmlElement;
+begin
+  result := TFhirMedicationKnowledgeCost.create;
+  try
+    parseElementAttributes(result, path, element);
+    child := FirstChild(element);
+    while (child <> nil) do
+    begin
+      if not ParseMedicationKnowledgeCostChild(result, path, child) then
+        UnknownContent(child, path);
+      child := NextSibling(child);
+    end;
+    closeOutElement(result, element);
+
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+function TFHIRXmlParser.ParseMedicationKnowledgeCostChild(element : TFhirMedicationKnowledgeCost; path : string; child : TMXmlElement) : boolean;
+begin
+  result := true;
+      if (child.localName = 'formulary') then
+        element.formularyElement := ParseString(child, path+'/formulary') {b}
+      else if (child.localName = 'cost') then
+        element.cost := ParseMoney(child, path+'/cost') {b}
+      else if Not ParseBackboneElementChild(element, path, child) then
+    result := false;
+end;
+
+procedure TFHIRXmlComposer.ComposeMedicationKnowledgeCost(xml : TXmlBuilder; name : String; elem : TFhirMedicationKnowledgeCost);
+begin
+  if (elem = nil) then
+    exit;
+  composeElementAttributes(xml, elem);
+  xml.open(name);
+  composeMedicationKnowledgeCostChildren(xml, elem);
+  closeOutElement(xml, elem);
+  xml.close(name);
+end;
+
+procedure TFHIRXmlComposer.ComposeMedicationKnowledgeCostChildren(xml : TXmlBuilder; elem : TFhirMedicationKnowledgeCost);
+begin
+  composeBackboneElementChildren(xml, elem);
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeString(xml, 'formulary', elem.formularyElement);{x.2b}
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeMoney(xml, 'cost', elem.cost);{x.2a}
+end;
+
+function TFHIRXmlParser.ParseMedicationKnowledgeMonitoringProgram(element : TMXmlElement; path : string) : TFhirMedicationKnowledgeMonitoringProgram;
+var
+  child : TMXmlElement;
+begin
+  result := TFhirMedicationKnowledgeMonitoringProgram.create;
+  try
+    parseElementAttributes(result, path, element);
+    child := FirstChild(element);
+    while (child <> nil) do
+    begin
+      if not ParseMedicationKnowledgeMonitoringProgramChild(result, path, child) then
+        UnknownContent(child, path);
+      child := NextSibling(child);
+    end;
+    closeOutElement(result, element);
+
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+function TFHIRXmlParser.ParseMedicationKnowledgeMonitoringProgramChild(element : TFhirMedicationKnowledgeMonitoringProgram; path : string; child : TMXmlElement) : boolean;
+begin
+  result := true;
+      if (child.localName = 'type') then
+        element.type_ := ParseCodeableConcept(child, path+'/type') {b}
+      else if (child.localName = 'name') then
+        element.nameElement := ParseString(child, path+'/name') {b}
+      else if Not ParseBackboneElementChild(element, path, child) then
+    result := false;
+end;
+
+procedure TFHIRXmlComposer.ComposeMedicationKnowledgeMonitoringProgram(xml : TXmlBuilder; name : String; elem : TFhirMedicationKnowledgeMonitoringProgram);
+begin
+  if (elem = nil) then
+    exit;
+  composeElementAttributes(xml, elem);
+  xml.open(name);
+  composeMedicationKnowledgeMonitoringProgramChildren(xml, elem);
+  closeOutElement(xml, elem);
+  xml.close(name);
+end;
+
+procedure TFHIRXmlComposer.ComposeMedicationKnowledgeMonitoringProgramChildren(xml : TXmlBuilder; elem : TFhirMedicationKnowledgeMonitoringProgram);
+begin
+  composeBackboneElementChildren(xml, elem);
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeCodeableConcept(xml, 'type', elem.type_);{x.2a}
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeString(xml, 'name', elem.nameElement);{x.2b}
+end;
+
+function TFHIRXmlParser.ParseMedicationKnowledgeAdministrationGuidelines(element : TMXmlElement; path : string) : TFhirMedicationKnowledgeAdministrationGuidelines;
+var
+  child : TMXmlElement;
+begin
+  result := TFhirMedicationKnowledgeAdministrationGuidelines.create;
+  try
+    parseElementAttributes(result, path, element);
+    child := FirstChild(element);
+    while (child <> nil) do
+    begin
+      if not ParseMedicationKnowledgeAdministrationGuidelinesChild(result, path, child) then
+        UnknownContent(child, path);
+      child := NextSibling(child);
+    end;
+    closeOutElement(result, element);
+
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+function TFHIRXmlParser.ParseMedicationKnowledgeAdministrationGuidelinesChild(element : TFhirMedicationKnowledgeAdministrationGuidelines; path : string; child : TMXmlElement) : boolean;
+begin
+  result := true;
+      if (child.localName = 'dosage') then
+        element.dosageList.Add(ParseDosage(child, path+'/dosage')){y.2}
+      else if (child.localName = 'indication') then
+        element.indicationList.Add(ParseCodeableConcept(child, path+'/indication')){y.2}
+      else if (child.localName = 'patientCharacteristics') then
+        element.patientCharacteristicsList.Add(ParseMedicationKnowledgeAdministrationGuidelinesPatientCharacteristics(child, path+'/patientCharacteristics')){y.2}
+      else if Not ParseBackboneElementChild(element, path, child) then
+    result := false;
+end;
+
+procedure TFHIRXmlComposer.ComposeMedicationKnowledgeAdministrationGuidelines(xml : TXmlBuilder; name : String; elem : TFhirMedicationKnowledgeAdministrationGuidelines);
+begin
+  if (elem = nil) then
+    exit;
+  composeElementAttributes(xml, elem);
+  xml.open(name);
+  composeMedicationKnowledgeAdministrationGuidelinesChildren(xml, elem);
+  closeOutElement(xml, elem);
+  xml.close(name);
+end;
+
+procedure TFHIRXmlComposer.ComposeMedicationKnowledgeAdministrationGuidelinesChildren(xml : TXmlBuilder; elem : TFhirMedicationKnowledgeAdministrationGuidelines);
+var
+  i : integer;
+begin
+  composeBackboneElementChildren(xml, elem);
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    for i := 0 to elem.dosageList.Count - 1 do
+      ComposeDosage(xml, 'dosage', elem.dosageList[i]);
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    for i := 0 to elem.indicationList.Count - 1 do
+      ComposeCodeableConcept(xml, 'indication', elem.indicationList[i]);
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    for i := 0 to elem.patientCharacteristicsList.Count - 1 do
+      ComposeMedicationKnowledgeAdministrationGuidelinesPatientCharacteristics(xml, 'patientCharacteristics', elem.patientCharacteristicsList[i]);
+end;
+
+function TFHIRXmlParser.ParseMedicationKnowledgeAdministrationGuidelinesPatientCharacteristics(element : TMXmlElement; path : string) : TFhirMedicationKnowledgeAdministrationGuidelinesPatientCharacteristics;
+var
+  child : TMXmlElement;
+begin
+  result := TFhirMedicationKnowledgeAdministrationGuidelinesPatientCharacteristics.create;
+  try
+    parseElementAttributes(result, path, element);
+    child := FirstChild(element);
+    while (child <> nil) do
+    begin
+      if not ParseMedicationKnowledgeAdministrationGuidelinesPatientCharacteristicsChild(result, path, child) then
+        UnknownContent(child, path);
+      child := NextSibling(child);
+    end;
+    closeOutElement(result, element);
+
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+function TFHIRXmlParser.ParseMedicationKnowledgeAdministrationGuidelinesPatientCharacteristicsChild(element : TFhirMedicationKnowledgeAdministrationGuidelinesPatientCharacteristics; path : string; child : TMXmlElement) : boolean;
+begin
+  result := true;
+      if (child.localName = 'characteristic') then
+        element.characteristic := ParseCodeableConcept(child, path+'/characteristic') {b}
+      else if (child.localName = 'value') then
+        element.valueList.Add(ParseString(child, path+'/value')){y.2}
+      else if Not ParseBackboneElementChild(element, path, child) then
+    result := false;
+end;
+
+procedure TFHIRXmlComposer.ComposeMedicationKnowledgeAdministrationGuidelinesPatientCharacteristics(xml : TXmlBuilder; name : String; elem : TFhirMedicationKnowledgeAdministrationGuidelinesPatientCharacteristics);
+begin
+  if (elem = nil) then
+    exit;
+  composeElementAttributes(xml, elem);
+  xml.open(name);
+  composeMedicationKnowledgeAdministrationGuidelinesPatientCharacteristicsChildren(xml, elem);
+  closeOutElement(xml, elem);
+  xml.close(name);
+end;
+
+procedure TFHIRXmlComposer.ComposeMedicationKnowledgeAdministrationGuidelinesPatientCharacteristicsChildren(xml : TXmlBuilder; elem : TFhirMedicationKnowledgeAdministrationGuidelinesPatientCharacteristics);
+var
+  i : integer;
+begin
+  composeBackboneElementChildren(xml, elem);
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeCodeableConcept(xml, 'characteristic', elem.characteristic);{x.2a}
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    for i := 0 to elem.valueList.Count - 1 do
+      ComposeString(xml, 'value', elem.valueList[i]);
+end;
+
+function TFHIRXmlParser.ParseMedicationKnowledgeMedicineClassification(element : TMXmlElement; path : string) : TFhirMedicationKnowledgeMedicineClassification;
+var
+  child : TMXmlElement;
+begin
+  result := TFhirMedicationKnowledgeMedicineClassification.create;
+  try
+    parseElementAttributes(result, path, element);
+    child := FirstChild(element);
+    while (child <> nil) do
+    begin
+      if not ParseMedicationKnowledgeMedicineClassificationChild(result, path, child) then
+        UnknownContent(child, path);
+      child := NextSibling(child);
+    end;
+    closeOutElement(result, element);
+
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+function TFHIRXmlParser.ParseMedicationKnowledgeMedicineClassificationChild(element : TFhirMedicationKnowledgeMedicineClassification; path : string; child : TMXmlElement) : boolean;
+begin
+  result := true;
+      if (child.localName = 'type') then
+        element.type_ := ParseCodeableConcept(child, path+'/type') {b}
+      else if (child.localName = 'classification') then
+        element.classificationList.Add(ParseString(child, path+'/classification')){y.2}
+      else if Not ParseBackboneElementChild(element, path, child) then
+    result := false;
+end;
+
+procedure TFHIRXmlComposer.ComposeMedicationKnowledgeMedicineClassification(xml : TXmlBuilder; name : String; elem : TFhirMedicationKnowledgeMedicineClassification);
+begin
+  if (elem = nil) then
+    exit;
+  composeElementAttributes(xml, elem);
+  xml.open(name);
+  composeMedicationKnowledgeMedicineClassificationChildren(xml, elem);
+  closeOutElement(xml, elem);
+  xml.close(name);
+end;
+
+procedure TFHIRXmlComposer.ComposeMedicationKnowledgeMedicineClassificationChildren(xml : TXmlBuilder; elem : TFhirMedicationKnowledgeMedicineClassification);
+var
+  i : integer;
+begin
+  composeBackboneElementChildren(xml, elem);
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeCodeableConcept(xml, 'type', elem.type_);{x.2a}
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    for i := 0 to elem.classificationList.Count - 1 do
+      ComposeString(xml, 'classification', elem.classificationList[i]);
+end;
+
+function TFHIRXmlParser.ParseMedicationKnowledgeBatch(element : TMXmlElement; path : string) : TFhirMedicationKnowledgeBatch;
+var
+  child : TMXmlElement;
+begin
+  result := TFhirMedicationKnowledgeBatch.create;
+  try
+    parseElementAttributes(result, path, element);
+    child := FirstChild(element);
+    while (child <> nil) do
+    begin
+      if not ParseMedicationKnowledgeBatchChild(result, path, child) then
+        UnknownContent(child, path);
+      child := NextSibling(child);
+    end;
+    closeOutElement(result, element);
+
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+function TFHIRXmlParser.ParseMedicationKnowledgeBatchChild(element : TFhirMedicationKnowledgeBatch; path : string; child : TMXmlElement) : boolean;
+begin
+  result := true;
+      if (child.localName = 'lotNumber') then
+        element.lotNumberElement := ParseString(child, path+'/lotNumber') {b}
+      else if (child.localName = 'expirationDate') then
+        element.expirationDateElement := ParseDateTime(child, path+'/expirationDate') {b}
+      else if (child.localName = 'serialNumber') then
+        element.serialNumberElement := ParseString(child, path+'/serialNumber') {b}
+      else if Not ParseBackboneElementChild(element, path, child) then
+    result := false;
+end;
+
+procedure TFHIRXmlComposer.ComposeMedicationKnowledgeBatch(xml : TXmlBuilder; name : String; elem : TFhirMedicationKnowledgeBatch);
+begin
+  if (elem = nil) then
+    exit;
+  composeElementAttributes(xml, elem);
+  xml.open(name);
+  composeMedicationKnowledgeBatchChildren(xml, elem);
+  closeOutElement(xml, elem);
+  xml.close(name);
+end;
+
+procedure TFHIRXmlComposer.ComposeMedicationKnowledgeBatchChildren(xml : TXmlBuilder; elem : TFhirMedicationKnowledgeBatch);
+begin
+  composeBackboneElementChildren(xml, elem);
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeString(xml, 'lotNumber', elem.lotNumberElement);{x.2b}
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeDateTime(xml, 'expirationDate', elem.expirationDateElement);{x.2b}
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeString(xml, 'serialNumber', elem.serialNumberElement);{x.2b}
+end;
+
+function TFHIRXmlParser.ParseMedicationKnowledgePackaging(element : TMXmlElement; path : string) : TFhirMedicationKnowledgePackaging;
+var
+  child : TMXmlElement;
+begin
+  result := TFhirMedicationKnowledgePackaging.create;
+  try
+    parseElementAttributes(result, path, element);
+    child := FirstChild(element);
+    while (child <> nil) do
+    begin
+      if not ParseMedicationKnowledgePackagingChild(result, path, child) then
+        UnknownContent(child, path);
+      child := NextSibling(child);
+    end;
+    closeOutElement(result, element);
+
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+function TFHIRXmlParser.ParseMedicationKnowledgePackagingChild(element : TFhirMedicationKnowledgePackaging; path : string; child : TMXmlElement) : boolean;
+begin
+  result := true;
+      if (child.localName = 'type') then
+        element.type_ := ParseCodeableConcept(child, path+'/type') {b}
+      else if (child.localName = 'quantity') then
+        element.quantity := ParseQuantity(child, path+'/quantity') {b}
+      else if Not ParseBackboneElementChild(element, path, child) then
+    result := false;
+end;
+
+procedure TFHIRXmlComposer.ComposeMedicationKnowledgePackaging(xml : TXmlBuilder; name : String; elem : TFhirMedicationKnowledgePackaging);
+begin
+  if (elem = nil) then
+    exit;
+  composeElementAttributes(xml, elem);
+  xml.open(name);
+  composeMedicationKnowledgePackagingChildren(xml, elem);
+  closeOutElement(xml, elem);
+  xml.close(name);
+end;
+
+procedure TFHIRXmlComposer.ComposeMedicationKnowledgePackagingChildren(xml : TXmlBuilder; elem : TFhirMedicationKnowledgePackaging);
+begin
+  composeBackboneElementChildren(xml, elem);
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeCodeableConcept(xml, 'type', elem.type_);{x.2a}
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeQuantity(xml, 'quantity', elem.quantity);{x.2a}
+end;
+
+function TFHIRXmlParser.ParseMedicationKnowledgeDrugCharacteristic(element : TMXmlElement; path : string) : TFhirMedicationKnowledgeDrugCharacteristic;
+var
+  child : TMXmlElement;
+begin
+  result := TFhirMedicationKnowledgeDrugCharacteristic.create;
+  try
+    parseElementAttributes(result, path, element);
+    child := FirstChild(element);
+    while (child <> nil) do
+    begin
+      if not ParseMedicationKnowledgeDrugCharacteristicChild(result, path, child) then
+        UnknownContent(child, path);
+      child := NextSibling(child);
+    end;
+    closeOutElement(result, element);
+
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+function TFHIRXmlParser.ParseMedicationKnowledgeDrugCharacteristicChild(element : TFhirMedicationKnowledgeDrugCharacteristic; path : string; child : TMXmlElement) : boolean;
+begin
+  result := true;
+      if (child.localName = 'type') then
+        element.type_ := ParseCodeableConcept(child, path+'/type') {b}
+      else if (child.localName = 'value') then
+        element.valueElement := ParseString(child, path+'/value') {b}
+      else if Not ParseBackboneElementChild(element, path, child) then
+    result := false;
+end;
+
+procedure TFHIRXmlComposer.ComposeMedicationKnowledgeDrugCharacteristic(xml : TXmlBuilder; name : String; elem : TFhirMedicationKnowledgeDrugCharacteristic);
+begin
+  if (elem = nil) then
+    exit;
+  composeElementAttributes(xml, elem);
+  xml.open(name);
+  composeMedicationKnowledgeDrugCharacteristicChildren(xml, elem);
+  closeOutElement(xml, elem);
+  xml.close(name);
+end;
+
+procedure TFHIRXmlComposer.ComposeMedicationKnowledgeDrugCharacteristicChildren(xml : TXmlBuilder; elem : TFhirMedicationKnowledgeDrugCharacteristic);
+begin
+  composeBackboneElementChildren(xml, elem);
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeCodeableConcept(xml, 'type', elem.type_);{x.2a}
+  if not elem.noCompose and (SummaryOption in [soFull, soData]) then
+    ComposeString(xml, 'value', elem.valueElement);{x.2b}
+end;
+
+function TFHIRXmlParser.ParseMedicationKnowledge(element : TMXmlElement; path : string) : TFhirMedicationKnowledge;
+var
+  child : TMXmlElement;
+begin
+  result := TFhirMedicationKnowledge.create;
+  try
+    parseDomainResourceAttributes(result, path, element);
+    child := FirstChild(element);
+    while (child <> nil) do
+    begin
+      if not ParseMedicationKnowledgeChild(result, path, child) then
+        UnknownContent(child, path);
+      child := NextSibling(child);
+    end;
+    closeOutElement(result, element);
+
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+function TFHIRXmlParser.ParseMedicationKnowledgeChild(element : TFhirMedicationKnowledge; path : string; child : TMXmlElement) : boolean;
+begin
+  result := true;
+      if (child.localName = 'code') then
+        element.code := ParseCodeableConcept(child, path+'/code') {b}
+      else if (child.localName = 'status') then
+        element.statusElement := ParseEnum(CODES_TFhirMedicationKnowledgeStatusEnum, SYSTEMS_TFhirMedicationKnowledgeStatusEnum, path+'/status', child){1a}
+      else if (child.localName = 'manufacturer') then
+        element.manufacturer := ParseReference{TFhirOrganization}(child, path+'/manufacturer') {b}
+      else if (child.localName = 'form') then
+        element.form := ParseCodeableConcept(child, path+'/form') {b}
+      else if (child.localName = 'amount') then
+        element.amount := ParseQuantity(child, path+'/amount') {b}
+      else if (child.localName = 'name') then
+        element.nameList.Add(ParseString(child, path+'/name')){y.2}
+      else if (child.localName = 'description') then
+        element.descriptionList.Add(ParseString(child, path+'/description')){y.2}
+      else if (child.localName = 'generalizedMedicine') then
+        element.generalizedMedicineList.Add(ParseReference{TFhirMedication}(child, path+'/generalizedMedicine')){y.2}
+      else if (child.localName = 'type') then
+        element.type_List.Add(ParseCodeableConcept(child, path+'/type')){y.2}
+      else if (child.localName = 'monograph') then
+        element.monographList.Add(ParseReference{TFhirDocumentReference}(child, path+'/monograph')){y.2}
+      else if (child.localName = 'halfLifePeriod') then
+        element.halfLifePeriod := ParseDuration(child, path+'/halfLifePeriod') {b}
+      else if (child.localName = 'ingredient') then
+        element.ingredientList.Add(ParseMedicationKnowledgeIngredient(child, path+'/ingredient')){y.2}
+      else if (child.localName = 'cost') then
+        element.costList.Add(ParseMedicationKnowledgeCost(child, path+'/cost')){y.2}
+      else if (child.localName = 'monitoringProgram') then
+        element.monitoringProgramList.Add(ParseMedicationKnowledgeMonitoringProgram(child, path+'/monitoringProgram')){y.2}
+      else if (child.localName = 'administrationGuidelines') then
+        element.administrationGuidelinesList.Add(ParseMedicationKnowledgeAdministrationGuidelines(child, path+'/administrationGuidelines')){y.2}
+      else if (child.localName = 'medicineClassification') then
+        element.medicineClassificationList.Add(ParseMedicationKnowledgeMedicineClassification(child, path+'/medicineClassification')){y.2}
+      else if (child.localName = 'batch') then
+        element.batch := ParseMedicationKnowledgeBatch(child, path+'/batch') {b}
+      else if (child.localName = 'packaging') then
+        element.packaging := ParseMedicationKnowledgePackaging(child, path+'/packaging') {b}
+      else if (child.localName = 'drugCharacteristic') then
+        element.drugCharacteristicList.Add(ParseMedicationKnowledgeDrugCharacteristic(child, path+'/drugCharacteristic')){y.2}
+      else if Not ParseDomainResourceChild(element, path, child) then
+    result := false;
+end;
+
+procedure TFHIRXmlComposer.ComposeMedicationKnowledge(xml : TXmlBuilder; name : String; elem : TFhirMedicationKnowledge);
+begin
+  if (elem = nil) then
+    exit;
+  composeDomainResourceAttributes(xml, elem);
+  xml.open(name);
+  composeMedicationKnowledgeChildren(xml, elem);
+  closeOutElement(xml, elem);
+  xml.close(name);
+end;
+
+procedure TFHIRXmlComposer.ComposeMedicationKnowledgeChildren(xml : TXmlBuilder; elem : TFhirMedicationKnowledge);
+var
+  i : integer;
+begin
+  composeDomainResourceChildren(xml, elem);
+  if not elem.noCompose and doCompose('code') and (SummaryOption in [soFull, soSummary, soData]) then
+    ComposeCodeableConcept(xml, 'code', elem.code);{x.2a}
+  if not elem.noCompose and doCompose('status') and (SummaryOption in [soFull, soSummary, soData]) then
+     ComposeEnum(xml, 'status', elem.StatusElement, CODES_TFhirMedicationKnowledgeStatusEnum);
+  if not elem.noCompose and doCompose('manufacturer') and (SummaryOption in [soFull, soSummary, soData]) then
+    ComposeReference{TFhirOrganization}(xml, 'manufacturer', elem.manufacturer);{x.2a}
+  if not elem.noCompose and doCompose('form') and (SummaryOption in [soFull, soData]) then
+    ComposeCodeableConcept(xml, 'form', elem.form);{x.2a}
+  if not elem.noCompose and doCompose('amount') and (SummaryOption in [soFull, soSummary, soData]) then
+    ComposeQuantity(xml, 'amount', elem.amount);{x.2a}
+  if not elem.noCompose and doCompose('name') and (SummaryOption in [soFull, soSummary, soData]) then
+    for i := 0 to elem.nameList.Count - 1 do
+      ComposeString(xml, 'name', elem.nameList[i]);
+  if not elem.noCompose and doCompose('description') and (SummaryOption in [soFull, soData]) then
+    for i := 0 to elem.descriptionList.Count - 1 do
+      ComposeString(xml, 'description', elem.descriptionList[i]);
+  if not elem.noCompose and doCompose('generalizedMedicine') and (SummaryOption in [soFull, soData]) then
+    for i := 0 to elem.generalizedMedicineList.Count - 1 do
+      ComposeReference{TFhirMedication}(xml, 'generalizedMedicine', elem.generalizedMedicineList[i]);
+  if not elem.noCompose and doCompose('type_') and (SummaryOption in [soFull, soData]) then
+    for i := 0 to elem.type_List.Count - 1 do
+      ComposeCodeableConcept(xml, 'type', elem.type_List[i]);
+  if not elem.noCompose and doCompose('monograph') and (SummaryOption in [soFull, soData]) then
+    for i := 0 to elem.monographList.Count - 1 do
+      ComposeReference{TFhirDocumentReference}(xml, 'monograph', elem.monographList[i]);
+  if not elem.noCompose and doCompose('halfLifePeriod') and (SummaryOption in [soFull, soData]) then
+    ComposeDuration(xml, 'halfLifePeriod', elem.halfLifePeriod);{x.2a}
+  if not elem.noCompose and doCompose('ingredient') and (SummaryOption in [soFull, soData]) then
+    for i := 0 to elem.ingredientList.Count - 1 do
+      ComposeMedicationKnowledgeIngredient(xml, 'ingredient', elem.ingredientList[i]);
+  if not elem.noCompose and doCompose('cost') and (SummaryOption in [soFull, soData]) then
+    for i := 0 to elem.costList.Count - 1 do
+      ComposeMedicationKnowledgeCost(xml, 'cost', elem.costList[i]);
+  if not elem.noCompose and doCompose('monitoringProgram') and (SummaryOption in [soFull, soData]) then
+    for i := 0 to elem.monitoringProgramList.Count - 1 do
+      ComposeMedicationKnowledgeMonitoringProgram(xml, 'monitoringProgram', elem.monitoringProgramList[i]);
+  if not elem.noCompose and doCompose('administrationGuidelines') and (SummaryOption in [soFull, soData]) then
+    for i := 0 to elem.administrationGuidelinesList.Count - 1 do
+      ComposeMedicationKnowledgeAdministrationGuidelines(xml, 'administrationGuidelines', elem.administrationGuidelinesList[i]);
+  if not elem.noCompose and doCompose('medicineClassification') and (SummaryOption in [soFull, soData]) then
+    for i := 0 to elem.medicineClassificationList.Count - 1 do
+      ComposeMedicationKnowledgeMedicineClassification(xml, 'medicineClassification', elem.medicineClassificationList[i]);
+  if not elem.noCompose and doCompose('batch') and (SummaryOption in [soFull, soData]) then
+    ComposeMedicationKnowledgeBatch(xml, 'batch', elem.batch);{x.2a}
+  if not elem.noCompose and doCompose('packaging') and (SummaryOption in [soFull, soData]) then
+    ComposeMedicationKnowledgePackaging(xml, 'packaging', elem.packaging);{x.2a}
+  if not elem.noCompose and doCompose('drugCharacteristic') and (SummaryOption in [soFull, soData]) then
+    for i := 0 to elem.drugCharacteristicList.Count - 1 do
+      ComposeMedicationKnowledgeDrugCharacteristic(xml, 'drugCharacteristic', elem.drugCharacteristicList[i]);
+end;
+
+{$ENDIF FHIR_MEDICATIONKNOWLEDGE}
 {$IFDEF FHIR_MEDICATIONREQUEST}
 function TFHIRXmlParser.ParseMedicationRequestDispenseRequest(element : TMXmlElement; path : string) : TFhirMedicationRequestDispenseRequest;
 var
@@ -53475,6 +54159,12 @@ begin
     result := ParseMedicationDispense(element, path+'/MedicationDispense') 
   {$ENDIF}
 {$ENDIF FHIR_MEDICATIONDISPENSE}
+{$IFDEF FHIR_MEDICATIONKNOWLEDGE}
+  {$IFDEF FHIR_MEDICATIONKNOWLEDGE}
+   else if element.localName = 'MedicationKnowledge' Then
+    result := ParseMedicationKnowledge(element, path+'/MedicationKnowledge') 
+  {$ENDIF}
+{$ENDIF FHIR_MEDICATIONKNOWLEDGE}
 {$IFDEF FHIR_MEDICATIONREQUEST}
   {$IFDEF FHIR_MEDICATIONREQUEST}
    else if element.localName = 'MedicationRequest' Then
@@ -54235,6 +54925,11 @@ begin
      frtMedicationDispense: ComposeMedicationDispense(xml, 'MedicationDispense', TFhirMedicationDispense(resource)); 
   {$ENDIF}
 {$ENDIF FHIR_MEDICATIONDISPENSE}
+{$IFDEF FHIR_MEDICATIONKNOWLEDGE}
+  {$IFDEF FHIR_MEDICATIONKNOWLEDGE}
+     frtMedicationKnowledge: ComposeMedicationKnowledge(xml, 'MedicationKnowledge', TFhirMedicationKnowledge(resource)); 
+  {$ENDIF}
+{$ENDIF FHIR_MEDICATIONKNOWLEDGE}
 {$IFDEF FHIR_MEDICATIONREQUEST}
   {$IFDEF FHIR_MEDICATIONREQUEST}
      frtMedicationRequest: ComposeMedicationRequest(xml, 'MedicationRequest', TFhirMedicationRequest(resource)); 
@@ -54939,6 +55634,10 @@ begin
   else if SameText(element.Name, 'TFhirMedicationDispense') then
     result := parseMedicationDispense(element, element.Name)
 {$ENDIF FHIR_MEDICATIONDISPENSE}
+{$IFDEF FHIR_MEDICATIONKNOWLEDGE}
+  else if SameText(element.Name, 'TFhirMedicationKnowledge') then
+    result := parseMedicationKnowledge(element, element.Name)
+{$ENDIF FHIR_MEDICATIONKNOWLEDGE}
 {$IFDEF FHIR_MEDICATIONREQUEST}
   else if SameText(element.Name, 'TFhirMedicationRequest') then
     result := parseMedicationRequest(element, element.Name)
@@ -56151,6 +56850,28 @@ begin
   else if (base is TFhirMedicationDispense) then
     composeMedicationDispense(xml, name,  TFhirMedicationDispense(base))
 {$ENDIF FHIR_MEDICATIONDISPENSE}
+{$IFDEF FHIR_MEDICATIONKNOWLEDGE}
+  else if (base is TFhirMedicationKnowledgeIngredient) then
+    composeMedicationKnowledgeIngredient(xml, name,  TFhirMedicationKnowledgeIngredient(base))
+  else if (base is TFhirMedicationKnowledgeCost) then
+    composeMedicationKnowledgeCost(xml, name,  TFhirMedicationKnowledgeCost(base))
+  else if (base is TFhirMedicationKnowledgeMonitoringProgram) then
+    composeMedicationKnowledgeMonitoringProgram(xml, name,  TFhirMedicationKnowledgeMonitoringProgram(base))
+  else if (base is TFhirMedicationKnowledgeAdministrationGuidelines) then
+    composeMedicationKnowledgeAdministrationGuidelines(xml, name,  TFhirMedicationKnowledgeAdministrationGuidelines(base))
+  else if (base is TFhirMedicationKnowledgeAdministrationGuidelinesPatientCharacteristics) then
+    composeMedicationKnowledgeAdministrationGuidelinesPatientCharacteristics(xml, name,  TFhirMedicationKnowledgeAdministrationGuidelinesPatientCharacteristics(base))
+  else if (base is TFhirMedicationKnowledgeMedicineClassification) then
+    composeMedicationKnowledgeMedicineClassification(xml, name,  TFhirMedicationKnowledgeMedicineClassification(base))
+  else if (base is TFhirMedicationKnowledgeBatch) then
+    composeMedicationKnowledgeBatch(xml, name,  TFhirMedicationKnowledgeBatch(base))
+  else if (base is TFhirMedicationKnowledgePackaging) then
+    composeMedicationKnowledgePackaging(xml, name,  TFhirMedicationKnowledgePackaging(base))
+  else if (base is TFhirMedicationKnowledgeDrugCharacteristic) then
+    composeMedicationKnowledgeDrugCharacteristic(xml, name,  TFhirMedicationKnowledgeDrugCharacteristic(base))
+  else if (base is TFhirMedicationKnowledge) then
+    composeMedicationKnowledge(xml, name,  TFhirMedicationKnowledge(base))
+{$ENDIF FHIR_MEDICATIONKNOWLEDGE}
 {$IFDEF FHIR_MEDICATIONREQUEST}
   else if (base is TFhirMedicationRequestDispenseRequest) then
     composeMedicationRequestDispenseRequest(xml, name,  TFhirMedicationRequestDispenseRequest(base))

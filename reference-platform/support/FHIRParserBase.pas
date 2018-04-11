@@ -37,7 +37,7 @@ uses
   DateSupport, StringSupport, DecimalSupport, EncodeSupport, BytesSupport, TextUtilities, GuidSupport,
   AdvBuffers, AdvStringLists,  AdvStringMatches, AdvVCLStreams, AdvStringBuilders, AdvGenerics, AdvStreams,
   ParserSupport, MXML, XmlBuilder, MXmlBuilder, AdvXmlBuilders, AdvJSON, TurtleParser,
-  FHIRBase, FHIRResources, FHIRTypes, FHIRConstants, FHIRContext, FHIRSupport, FHIRTags, FHIRLang, FHIRXhtml;
+  FHIRBase, FHIRResources, FHIRTypes, FHIRConstants, FHIRContext, FHIRSupport, FHIRTags, FHIRLang, FHIRXhtml, FHIRPathNode;
 
 const
   ATOM_NS = 'http://www.w3.org/2005/Atom';
@@ -827,7 +827,7 @@ begin
       end;
     enkConstant :
       begin
-        xml.AddAttribute('value', expr.constant);
+        xml.AddAttribute('value', expr.presentConstant);
         xml.Tag('constant');
       end;
     enkGroup :
@@ -1063,7 +1063,7 @@ begin
         end;
         json.FinishArray();
       end;
-    enkConstant: json.value('constant', expr.constant);
+    enkConstant: json.value('constant', expr.presentConstant);
     enkGroup:
       begin
       json.valueObject('group');

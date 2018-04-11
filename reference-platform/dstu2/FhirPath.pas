@@ -40,7 +40,8 @@ uses
   StringSupport, TextUtilities, SystemSupport, MathSupport,
   AdvObjects, AdvGenerics, DecimalSupport, DateSupport,
   ParserSupport,
-  FHIRBase, FHIRTypes, FHIRResources, FHIRUtilities, FHIRContext, FHIRConstants,
+  UcumServiceInterface,
+  FHIRBase, FHIRPathNode, FHIRTypes, FHIRResources, FHIRUtilities, FHIRContext, FHIRConstants,
   FHIRParser;
 
 const
@@ -325,7 +326,7 @@ type
     function evaluateCustomFunctionType(context: TFHIRPathExecutionTypeContext; focus: TFHIRTypeDetails; exp: TFHIRPathExpressionNode): TFHIRTypeDetails; virtual;
 
   public
-    constructor Create(context : TFHIRWorkerContext);
+    constructor Create(context : TFHIRWorkerContext; ucum : TUcumServiceInterface);
     destructor Destroy; override;
     property Ondebug : TFHIRPathDebugEvent read FOndebug write FOndebug;
     property OnResolveReference : TFHIRResolveReferenceEvent read FOnResolveReference write FOnResolveReference;
@@ -438,7 +439,7 @@ begin
 end;
 
 
-constructor TFHIRPathEngine.create(context: TFHIRWorkerContext);
+constructor TFHIRPathEngine.create(context: TFHIRWorkerContext; ucum : TUcumServiceInterface);
 var
   sd : TFhirStructureDefinition;
 begin
