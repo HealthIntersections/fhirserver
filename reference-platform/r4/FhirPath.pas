@@ -3485,7 +3485,10 @@ begin
     else
     begin
       tn := convertToString(right);
-      result.add(TFHIRBoolean.create(left[0].value.hasType(tn)).noExtensions);
+      if not (left[0].value is TFHIRElement) or (left[0].value as TFHIRElement).DisallowExtensions then
+        result.add(TFHIRBoolean.create(capitalise(left[0].value.fhirType) = tn).noExtensions)
+      else
+        result.add(TFHIRBoolean.create(left[0].value.hasType(tn)).noExtensions);
     end;
     result.link;
   finally
