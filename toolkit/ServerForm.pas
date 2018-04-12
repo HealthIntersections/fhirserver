@@ -695,7 +695,7 @@ begin
     4: Value := pat.birthDate.toString('cd');
     5: if pat.activeElement <> nil then Value := BooleanToString(pat.active);
     6: if pat.deceased <> nil then if pat.deceased is TFhirBoolean then Value := BooleanToString(pat.active) else Value := (pat.deceased as TFhirDateTime).value.toString('c');
-    7: if pat.animal = nil then Value := '(human)' else Value := gen(pat.animal.species);
+    7: {$IFDEF FHIR4}Value := 'n/a' {$ELSE}if pat.animal = nil then Value := '(human)' else Value := gen(pat.animal.species){$ENDIF};
     8: Value := pat.identifierList.withCommas;
   end;
 end;

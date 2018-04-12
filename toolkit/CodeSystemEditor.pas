@@ -155,6 +155,8 @@ type
     btnPublisher: TButton;
     ImageColumn1: TImageColumn;
     ImageColumn2: TImageColumn;
+    Label15: TLabel;
+    edtSupplements: TEdit;
     procedure tvStructureClick(Sender: TObject);
     procedure inputChanged(Sender: TObject);
     procedure btnMemoForDescClick(Sender: TObject);
@@ -799,6 +801,9 @@ begin
     CodeSystem.identifier := nil;
   CodeSystem.valueSet := edtValueSet.Text;
   CodeSystem.hierarchyMeaning := TFhirCodesystemHierarchyMeaningEnum(cbxHeirarchy.ItemIndex);
+  {$IFDEF FHIR4}
+  CodeSystem.supplements := edtSupplements.Text;
+  {$ENDIF}
   CodeSystem.content := TFhirCodesystemContentModeEnum(cbxContent.ItemIndex);
   if (edtConceptCount.Text = '') or StringIsInteger32(edtConceptCount.Text) then
     CodeSystem.count := edtConceptCount.Text
@@ -1242,6 +1247,13 @@ begin
     edtIdValue.Text := '';
   end;
   edtValueSet.Text := CodeSystem.valueSet;
+  {$IFDEF FHIR4}
+  edtSupplements.Text := CodeSystem.supplements;
+  if cbxContent.Items.IndexOf('Supplement') = -1 then
+    cbxContent.Items.Add('Supplement');
+  {$ELSE}
+  edtSupplements.Enabled := false;
+  {$ENDIF}
   cbxHeirarchy.ItemIndex := ord(CodeSystem.hierarchyMeaning);
   cbxContent.ItemIndex := ord(CodeSystem.content);
   edtConceptCount.Text := CodeSystem.count;

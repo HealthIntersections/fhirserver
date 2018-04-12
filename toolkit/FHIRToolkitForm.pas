@@ -36,7 +36,7 @@ uses
   System.ImageList, FMX.ImgList, FMX.Menus, FMX.WebBrowser,
   IdSSLOpenSSLHeaders, libeay32,
   SystemSupport, TextUtilities, Logging,
-  FHIRBase, FHIRTypes, FHIRResources, FHIRClient, FHIRUtilities, FHIRIndexBase, FHIRIndexInformation, FHIRSupport,
+  FHIRBase, FHIRTypes, FHIRResources, FHIRClient, FHIRUtilities, FHIRIndexBase, FHIRIndexInformation, FHIRSupport, FHIRConstants,
   FHIRContext, FHIRProfileUtilities,
   SmartOnFHIRUtilities, EditRegisteredServerDialogFMX, OSXUIUtils,
   ToolkitSettings, ServerForm, CapabilityStatementEditor, BaseResourceFrame, BaseFrame, SourceViewer, ListSelector,
@@ -713,8 +713,8 @@ begin
       procedure
       begin
         FContext := TBaseWorkerContext.Create;
-        FContext.LoadFromFile(IncludeTrailingPathDelimiter(ExtractFilePath(ParamStr(0)))+'profiles-types.xml');
-        FContext.LoadFromFile(IncludeTrailingPathDelimiter(ExtractFilePath(ParamStr(0)))+'profiles-resources.xml');
+        FContext.LoadFromFile(IncludeTrailingPathDelimiter(ExtractFilePath(ParamStr(0)))+'profiles-types-r'+FHIR_GENERATED_PUBLICATION+'.xml');
+        FContext.LoadFromFile(IncludeTrailingPathDelimiter(ExtractFilePath(ParamStr(0)))+'profiles-resources-r'+FHIR_GENERATED_PUBLICATION+'.xml');
         if not (IdSSLOpenSSLHeaders.load and LoadEAYExtensions) then
           raise Exception.Create('Unable to load openSSL - SSL/Crypto functions will fail');
       end);
@@ -782,6 +782,7 @@ begin
   {$IFDEF MACOS}
   mnuFileExit.Text := '&Quit';
   {$ENDIF}
+  Caption := 'FHIR Toolkit (R'+FHIR_GENERATED_PUBLICATION+')';
   ToolkitLogger := TToolkitLogger.create;
 end;
 

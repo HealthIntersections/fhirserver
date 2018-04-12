@@ -29,14 +29,16 @@ ArchitecturesAllowed=x64
 Name: "english"; MessagesFile: "compiler:Default.isl"
 
 [Files]
-Source: "C:\work\fhirserver\toolkit\install\FHIRToolkit.exe"; DestDir: "{app}"; Flags: ignoreversion
+Source: "C:\work\fhirserver\toolkit\install\FHIRToolkitR4.exe"; DestDir: "{app}"; Flags: ignoreversion
+Source: "C:\work\fhirserver\toolkit\install\FHIRToolkitR3.exe"; DestDir: "{app}"; Flags: ignoreversion
 Source: "C:\work\fhirserver\toolkit\install\osx\FHIRToolkit.app\Contents\MacOS\toolkit.png"; DestDir: "{app}"; Flags: ignoreversion
 Source: "C:\work\fhirserver\toolkit\install\osx\FHIRToolkit.app\Contents\MacOS\*.xml"; DestDir: "{app}"; Flags: ignoreversion
 
 [Icons]
-Name: "{group}\Toolkit"; Filename: "{app}\FHIRToolkit.exe"
+Name: "{group}\Toolkit (R4)"; Filename: "{app}\FHIRToolkitR4.exe"
+Name: "{group}\Toolkit (R3)"; Filename: "{app}\FHIRToolkitR3.exe"
 Name: "{group}\{cm:ProgramOnTheWeb,FHIR Toolkit}"; Filename: "http://www.healthintersections.com.au/FhirServer"
 
 [Run]
-Filename: "{app}\FHIRToolkit.exe"; Description: "{cm:LaunchProgram,FHIR Toolkit}"; Flags: nowait postinstall skipifsilent
+Filename: "{app}\FHIRToolkitR3.exe"; Description: "{cm:LaunchProgram,FHIR Toolkit (R3)}"; Flags: nowait postinstall skipifsilent
 

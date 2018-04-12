@@ -993,6 +993,9 @@ procedure TCapabilityStatementEditorFrame.commitResource(res: TFhirCapabilitySta
   end;
 begin
   res.documentation := mDocoRes.Text;
+  {$IFDEF FHIR4}
+  res.profile := edtProfile.Text;
+  {$ELSE}
   if edtProfile.Text = '' then
     res.profile := nil
   else
@@ -1001,6 +1004,7 @@ begin
       res.profile := TFhirReference.Create();
     res.profile.reference := edtProfile.Text;
   end;
+  {$ENDIF}
 
   interaction(TypeRestfulInteractionread, cbRead, edtDocoRead);
   interaction(TypeRestfulInteractionVread, cbVRead, edtDocoVRead);
@@ -1261,10 +1265,14 @@ var
 begin
   mDocoRes.Text := res.documentation;
   mDocoRes.TagObject := res;
+  {$IFDEF FHIR4}
+  edtProfile.Text := res.profile;
+  {$ELSE}
   if res.profile <> nil then
     edtProfile.Text := res.profile.reference
   else
     edtProfile.Text := '';
+  {$ENDIF}
 
   interaction(TypeRestfulInteractionread, cbRead, edtDocoRead);
   interaction(TypeRestfulInteractionVread, cbVRead, edtDocoVRead);

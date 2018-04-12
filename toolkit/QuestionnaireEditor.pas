@@ -423,7 +423,7 @@ begin
       item.text := form.item.text;
       item.type_ := form.item.type_;
       item.maxLength := form.item.maxLength;
-      item.options := form.item.options.Link;
+      item.options := form.item.options{$IFNDEF FHIR4}.Link{$ENDIF};
       item.extensionList.Assign(form.item.extensionList);
       item.enableWhenList.Assign(form.item.enableWhenList);
       grdItems.EndUpdate;

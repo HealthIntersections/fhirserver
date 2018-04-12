@@ -3,7 +3,10 @@
         <ProjectGuid>{09AF4F3A-3C40-46E9-AB64-2E0AA7A9EEFF}</ProjectGuid>
     </PropertyGroup>
     <ItemGroup>
-        <Projects Include="toolkit\FHIRToolkit.dproj">
+        <Projects Include="toolkit\FHIRToolkitR3.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="toolkit\FHIRToolkitR4.dproj">
             <Dependencies/>
         </Projects>
         <Projects Include="npp\fhirnpp.dproj">
@@ -23,14 +26,23 @@
             <Default.Personality/>
         </BorlandProject>
     </ProjectExtensions>
-    <Target Name="FHIRToolkit">
-        <MSBuild Projects="toolkit\FHIRToolkit.dproj"/>
+    <Target Name="FHIRToolkitR3">
+        <MSBuild Projects="toolkit\FHIRToolkitR3.dproj"/>
     </Target>
-    <Target Name="FHIRToolkit:Clean">
-        <MSBuild Projects="toolkit\FHIRToolkit.dproj" Targets="Clean"/>
+    <Target Name="FHIRToolkitR3:Clean">
+        <MSBuild Projects="toolkit\FHIRToolkitR3.dproj" Targets="Clean"/>
     </Target>
-    <Target Name="FHIRToolkit:Make">
-        <MSBuild Projects="toolkit\FHIRToolkit.dproj" Targets="Make"/>
+    <Target Name="FHIRToolkitR3:Make">
+        <MSBuild Projects="toolkit\FHIRToolkitR3.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="FHIRToolkitR4">
+        <MSBuild Projects="toolkit\FHIRToolkitR4.dproj"/>
+    </Target>
+    <Target Name="FHIRToolkitR4:Clean">
+        <MSBuild Projects="toolkit\FHIRToolkitR4.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="FHIRToolkitR4:Make">
+        <MSBuild Projects="toolkit\FHIRToolkitR4.dproj" Targets="Make"/>
     </Target>
     <Target Name="fhirnpp">
         <MSBuild Projects="npp\fhirnpp.dproj"/>
@@ -60,13 +72,13 @@
         <MSBuild Projects="tests\FHIRServerTests.dproj" Targets="Make"/>
     </Target>
     <Target Name="Build">
-        <CallTarget Targets="FHIRToolkit;fhirnpp;FhirVclDemo;FHIRServerTests"/>
+        <CallTarget Targets="FHIRToolkitR3;FHIRToolkitR4;fhirnpp;FhirVclDemo;FHIRServerTests"/>
     </Target>
     <Target Name="Clean">
-        <CallTarget Targets="FHIRToolkit:Clean;fhirnpp:Clean;FhirVclDemo:Clean;FHIRServerTests:Clean"/>
+        <CallTarget Targets="FHIRToolkitR3:Clean;FHIRToolkitR4:Clean;fhirnpp:Clean;FhirVclDemo:Clean;FHIRServerTests:Clean"/>
     </Target>
     <Target Name="Make">
-        <CallTarget Targets="FHIRToolkit:Make;fhirnpp:Make;FhirVclDemo:Make;FHIRServerTests:Make"/>
+        <CallTarget Targets="FHIRToolkitR3:Make;FHIRToolkitR4:Make;fhirnpp:Make;FhirVclDemo:Make;FHIRServerTests:Make"/>
     </Target>
     <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
 </Project>

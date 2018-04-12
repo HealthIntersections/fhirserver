@@ -1,5 +1,7 @@
 unit FHIRUtilities;
 
+{$I fhir.inc}
+
 {
 Copyright (c) 2011+, HL7 and Health Intersections Pty Ltd (http://www.healthintersections.com.au)
 All rights reserved.
@@ -512,9 +514,25 @@ type
     function asExceptionMessage : String;
   end;
 
+  TFhirHealthcareServiceHelper = class helper (TFHIRResourceHelper) for TFhirHealthcareService
+  public
+    function category : TFhirCodeableConcept;
+    function type_ : TFhirCodeableConcept;
+  end;
+
+  TFhirLocationHelper = class helper (TFHIRResourceHelper) for TFhirLocation
+  public
+    function type_ : TFhirCodeableConcept;
+  end;
+
   TFHIRCompositionHelper = class helper (TFHIRResourceHelper) for TFHIRComposition
   public
     function summary : String;
+  end;
+
+  TFHIRCompositionSectionHelper = class helper (TFHIRElementHelper) for TFHIRCompositionSection
+  public
+    function display : String;
   end;
 
   TFhirConceptMapHelper = class helper (TFhirResourceHelper) for TFhirConceptMap
@@ -672,8 +690,12 @@ type
   end;
 
   TFhirQuestionnaireItemHelper = class helper for TFhirQuestionnaireItem
+  private
+    function getinitial: TFHIRType;
+    procedure SetInitial(const Value: TFHIRType);
   public
     function countDescendents : integer;
+    property initial : TFHIRType read GetInitial write SetInitial;
   end;
 
   TFhirQuestionnaireHelper = class helper for TFhirQuestionnaire
@@ -711,6 +733,11 @@ type
   TFHIRAttachmentHelper = class helper for TFHIRAttachment
   public
     function asZipPart(i: integer) : TAdvZipPart;
+  end;
+
+  TFHIRPractitionerHelper = class helper for TFHIRPractitioner
+  public
+    function display : string;
   end;
 
   TFhirReferenceHelper = class helper for TFhirReference
@@ -5869,6 +5896,22 @@ begin
     inc(result, c.countDescendents);
 end;
 
+function TFhirQuestionnaireItemHelper.getinitial: TFHIRType;
+begin
+  if initialList.Count = 0 then
+    result := nil
+  else
+    result := initialList[0].value;
+end;
+
+procedure TFhirQuestionnaireItemHelper.SetInitial(const Value: TFHIRType);
+begin
+  if initialList.Count = 0 then
+    initialList.Append.value := value
+  else
+    initialList[0].value := value;
+end;
+
 { TFhirQuestionnaireHelper }
 
 function TFhirQuestionnaireHelper.itemCount: integer;
@@ -6165,6 +6208,17 @@ begin
   result := title + '('+date.toString('c')+')';
 end;
 
+{ TFHIRPractitionerHelper }
+
+function TFHIRPractitionerHelper.display: string;
+begin
+  if nameList.Count > 0 then
+    result := gen(nameList[0])
+  else
+    result := '??'; // ??
+end;
+
+
 { TFhirCanonicalListHelper }
 
 function TFhirCanonicalListHelper.hasUri(uri: String): boolean;
@@ -6218,6 +6272,45 @@ end;
 procedure TFhirConceptMapGroupElementTargetDependsOnHelper.SetCode(const sValue: String);
 begin
   value := sValue;
+end;
+
+{ TFHIRCompositionSectionHelper }
+
+function TFHIRCompositionSectionHelper.display: String;
+begin
+  result := title;
+  if result = '' then
+    result := gen(code);
+  if result = '' then
+    result := 'section';
+end;
+
+{ TFhirHealthcareServiceHelper }
+
+function TFhirHealthcareServiceHelper.category: TFhirCodeableConcept;
+begin
+  if categoryList.Count = 0 then
+    result := nil
+  else
+    result := categoryList[0];
+end;
+
+function TFhirHealthcareServiceHelper.type_: TFhirCodeableConcept;
+begin
+  if type_List.Count = 0 then
+    result := nil
+  else
+    result := type_List[0];
+end;
+
+{ TFhirLocationHelper }
+
+function TFhirLocationHelper.type_: TFhirCodeableConcept;
+begin
+  if type_List.Count = 0 then
+    result := nil
+  else
+    result := type_List[0];
 end;
 
 end.

@@ -320,7 +320,11 @@ begin
     begin
       s := '';
       for a := low(TFhirCompositionAttestationModeEnum) to high(TFhirCompositionAttestationModeEnum) do
+        {$IFDEF FHIR4}
+        if a = att.mode then
+        {$ELSE}
         if a in att.mode then
+        {$ENDIF}
           s := s + ','+CODES_TFhirCompositionAttestationModeEnum[a];
       addItem(s.substring(1), att.party, false, g);
     end;

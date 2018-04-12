@@ -149,6 +149,7 @@ type
     btnValueText: TButton;
     btnText: TButton;
     btnPrefix: TButton;
+    OperatorColumn: TPopupColumn;
     procedure FormShow(Sender: TObject);
     procedure btnOkClick(Sender: TObject);
     procedure cbxTypeChange(Sender: TObject);
@@ -183,6 +184,7 @@ type
     procedure SetSettings(const Value: TFHIRToolkitSettings);
     procedure SetQuestionnaire(const Value: TFhirQuestionnaire);
     procedure listQuestions(list : TFhirQuestionnaireItemList);
+    procedure refreshConditions;
   public
     destructor Destroy; override;
     property item : TFhirQuestionnaireItem read FItem write SetItem;
@@ -339,6 +341,10 @@ begin
         try
           cedValueSet.Items.Clear;
           cedValueSet.Items.BeginUpdate;
+          {$IFDEF FHIR4}
+          if item.options <> '' then
+            cedValueSet.Items.add(item.options);
+          {$ELSE}
           if item.options <> nil then
           begin
             if item.options.display <> '' then
@@ -346,6 +352,7 @@ begin
             else
               cedValueSet.Items.Add(item.options.reference);
           end;
+          {$ENDIF}
           for be in bundle.entryList do
           begin
             if (be.resource <> nil) and (be.resource is TFhirValueSet) then
@@ -450,6 +457,9 @@ var
 begin
   if Loading then
     exit;
+  {$IFDEF FHIR4}
+  item.options := cedValueSet.Text;
+  {$ELSE}
   if cedValueSet.Text = '' then
     item.options := nil
   else
@@ -468,6 +478,7 @@ begin
       item.options.display := '';
     end;
   end;
+  {$ENDIF}
 end;
 
 procedure TQuestionnaireItemForm.commit;
@@ -575,9 +586,17 @@ procedure TQuestionnaireItemForm.FormShow(Sender: TObject);
   end;
 var
   ex : TFhirExtension;
+  s : String;
 begin
   Loading := true;
   try
+    {$IFDEF FHIR4}
+    for s in CODES_TFhirQuestionnaireEnableOperatorEnum do
+      OperatorColumn.Items.Add(s);
+    {$ELSE}
+    OperatorColumn.Items.Add('exists');
+    OperatorColumn.Items.Add('=');
+    {$ENDIF}
     cbRequired.IsChecked := item.required;
     cbRepeats.IsChecked := item.repeats;
     cbReadOnly.IsChecked := item.readOnly;
@@ -678,13 +697,28 @@ begin
   cond := item.enableWhenList[ARow];
   case aCol of
     0: value := cond.question;
-    1: if (cond.hasAnswerElement <> nil) or (cond.answer = nil) then
-         value := 'Has Answer'
+    1: {$IFDEF FHIR4}
+       Value := CODES_TFhirQuestionnaireEnableOperatorEnum[cond.operator];
+       {$ELSE}
+       if cond.hasAnswer then
+         Value := 'exists'
        else
-         value := cond.answer.fhirType +' Value';
-    2: if cond.hasAnswerElement <> nil then
+         Value := '=';
+       {$ENDIF}
+    2: if cond.answer <> nil then
+         value := cond.answer.fhirType
+       {$IFNDEF FHIR4}
+       else if cond.hasAnswerElement <> nil then
+         value := 'boolean'
+       {$ENDIF}
+       else
+         value := '';
+    3: {$IFNDEF FHIR4}
+       if cond.hasAnswerElement <> nil then
          value := cond.hasAnswerElement.primitiveValue
-       else if cond.answer = nil then
+       else
+       {$ENDIF}
+       if cond.answer = nil then
          value := ''
        else if cond.answer is TFHIRCoding then
          value := (cond.answer as TFHIRCoding).editString
@@ -704,44 +738,71 @@ begin
   cond := item.enableWhenList[ARow];
   case aCol of
     0: cond.question := value.AsString;
-    1: if value.AsString = 'Has Answer' then
+    1: {$IFDEF FHIR4}
+       cond.operator := TFhirQuestionnaireEnableOperatorEnum(StringArrayIndexOfSensitive(CODES_TFhirQuestionnaireEnableOperatorEnum, value.AsString));
+       {$ELSE}
+       if value.AsString = 'exists' then
        begin
-         if (cond.answer <> nil) then
-           cond.answer := nil;
-         if (cond.hasAnswerElement = nil) then
+         if (cond.hasAnswerElement = nil) or (cond.Answer <> nil) then
+         begin
            cond.hasAnswerElement := TFhirBoolean.Create(true);
+           cond.answer := nil;
+           refreshConditions;
+         end;
        end
-       else if (cond.answer = nil) or (cond.answer.fhirType+' Value' <> value.AsString) then
+       else
        begin
-         cond.hasAnswerElement := nil;
-         if Value.AsString = 'boolean Value' then
-           cond.answer := TFhirBoolean.Create(true)
-         else if Value.AsString = 'decimal Value' then
-           cond.answer := TFhirDecimal.Create('0')
-         else if Value.AsString = 'integer Value' then
-           cond.answer := TFhirInteger.Create('0')
-         else if Value.AsString = 'date Value' then
-           cond.answer := TFhirDate.Create(TDateTimeEx.makeToday)
-         else if Value.AsString = 'dateTime Value' then
-           cond.answer := TFhirDateTime.Create(TDateTimeEx.makeLocal)
-         else if Value.AsString = 'time Value' then
-           cond.answer := TFhirTime.Create('00:00')
-         else if Value.AsString = 'string Value' then
-           cond.answer := TFhirString.Create('..')
-         else if Value.AsString = 'uri Value' then
-           cond.answer := TFhirUri.Create('http://')
-         else if Value.AsString = 'Coding Value' then
-           cond.answer := TFhirCoding.Create()
-         else if Value.AsString = 'Quantity Value' then
-           cond.answer := TFhirQuantity.Create()
-         else if Value.AsString = 'Reference Value' then
-           cond.answer := TFhirReference.Create()
-         else
-           raise Exception.Create('??');
+         if (cond.hasAnswerElement <> nil) then
+         begin
+           cond.hasAnswerElement := nil;
+           refreshConditions;
+         end;
        end;
-    2: if (cond.hasAnswerElement <> nil) then
-         cond.hasAnswer := StrToBool(value.AsString)
-       else if cond.answer is TFHIRCoding then
+       {$ENDIF}
+    2: {$IFNDEF FHIR4}
+       if cond.hasAnswerElement <> nil then
+       begin
+         if value.AsString <> 'boolean' then
+           refreshConditions;
+       end
+       else
+       {$ENDIF}
+       if (cond.answer = nil) or (cond.answer.fhirType <> value.AsString) then
+       begin
+         if Value.AsString = 'boolean' then
+           cond.answer := TFhirBoolean.Create(true)
+         else if Value.AsString = 'decimal' then
+           cond.answer := TFhirDecimal.Create('0')
+         else if Value.AsString = 'integer' then
+           cond.answer := TFhirInteger.Create('0')
+         else if Value.AsString = 'date' then
+           cond.answer := TFhirDate.Create(TDateTimeEx.makeToday)
+         else if Value.AsString = 'dateTime' then
+           cond.answer := TFhirDateTime.Create(TDateTimeEx.makeLocal)
+         else if Value.AsString = 'time' then
+           cond.answer := TFhirTime.Create('00:00')
+         else if Value.AsString = 'string' then
+           cond.answer := TFhirString.Create('..')
+         else if Value.AsString = 'uri' then
+           cond.answer := TFhirUri.Create('http://')
+         else if Value.AsString = 'Coding' then
+           cond.answer := TFhirCoding.Create()
+         else if Value.AsString = 'Quantity' then
+           cond.answer := TFhirQuantity.Create()
+         else if Value.AsString = 'Reference' then
+           cond.answer := TFhirReference.Create();
+         refreshConditions;
+       end;
+    3: begin
+       {$IFNDEF FHIR4}
+       if cond.hasAnswerElement <> nil then
+       begin
+         cond.hasAnswerElement.value := StrToBool(value.AsString);
+         refreshConditions;
+       end
+       else
+       {$ENDIF}
+       if cond.answer is TFHIRCoding then
          (cond.answer as TFHIRCoding).editString := value.AsString
        else if cond.answer is TFHIRQuantity then
          (cond.answer as TFHIRQuantity).editString := value.AsString
@@ -762,9 +823,9 @@ begin
        else if cond.answer is TFhirString then
          TFhirString(cond.answer).value := value.AsString
        else if cond.answer is TFhirUri then
-         TFhirUri(cond.answer).value := value.AsString
-       else
-         raise Exception.Create('??');
+         TFhirUri(cond.answer).value := value.AsString;
+       refreshConditions;
+       end;
   end;
 end;
 
@@ -981,16 +1042,20 @@ begin
 
   if item.type_ in [ItemTypeChoice, ItemTypeOpenChoice] then
   begin
-    if (item.options <> nil) then
+    if (item.options <> {$IFDEF FHIR4} '' {$ELSE} nil {$ENDIF}) then
     begin
       tabValueSet.Enabled := true;
       tabOptionList.Enabled := false;
       tabOptions.ActiveTab := tabValueSet;
       cedValueSet.Enabled := true;
+      {$IFDEF FHIR4}
+      cedValueSet.Text := item.options;
+      {$ELSE}
       if item.options.display <> '' then
         cedValueSet.Text := item.options.reference + ' : '+item.options.display
       else
         cedValueSet.Text := item.options.reference;
+      {$ENDIF}
       grdOptions.RowCount := 0;
     end
     else if item.optionList.Count > 0 then
@@ -1049,6 +1114,11 @@ begin
     tabOptions.ActiveTab := tabValueSet;
     cedValueSet.Enabled := false;
   end;
+end;
+
+procedure TQuestionnaireItemForm.refreshConditions;
+begin
+  grdConditions.RealignContent;
 end;
 
 procedure TQuestionnaireItemForm.saveInitialValue;
