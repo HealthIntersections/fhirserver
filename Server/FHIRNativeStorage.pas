@@ -190,6 +190,7 @@ type
     function GetServerContext: TFHIRServerContext;
 
     function processCanonicalSearch(request : TFHIRRequest; bundle : TFHIRBundleBuilder) : boolean;
+    function PerformQuery(context: TFHIRObject; path: String): TFHIRObjectList;
 
   protected
     procedure StartTransaction; override;
@@ -2817,6 +2818,8 @@ begin
         ctxt.Free;
       end;
       {$ELSE}
+       if ServerContext.JavaServices = nil then
+         raise Exception.Create('No Java Services loaded in ExecuteValidation');
        response.outcome := ServerContext.JavaServices.validateResource(opDesc, request.Source.AsBytes, request.PostFormat, 'any-extensions id-optional');
       {$ENDIF}
     end
@@ -2834,6 +2837,8 @@ begin
         ctxt.Free;
       end;
       {$ELSE}
+       if ServerContext.JavaServices = nil then
+         raise Exception.Create('No Java Services loaded in ExecuteValidation');
        response.outcome := ServerContext.JavaServices.validateResource(opDesc, request.Resource, 'any-extensions id-optional');
       {$ENDIF}
     end;
@@ -4263,6 +4268,25 @@ begin
   result := list[0];
 end;
 
+function TFHIRNativeOperationEngine.PerformQuery(context : TFHIRObject; path: String): TFHIRObjectList;
+var
+  qry : TFHIRPathEngine;
+  list : TFHIRSelectionList;
+begin
+  qry := TFHIRPathEngine.create(nil, nil);
+  try
+    list := qry.evaluate(nil, context, path);
+    try
+      result := list.asValues;
+    finally
+      list.Free;
+    end;
+  finally
+    qry.free;
+  end;
+end;
+
+
 procedure TFHIRNativeOperationEngine.CollectIncludes(session : TFhirSession; includes: TReferenceList; resource: TFHIRResource; path: String);
 var
   s : String;
@@ -4275,7 +4299,7 @@ begin
   while path <> '' do
   begin
     StringSplit(path, ';', s, path);
-    matches := resource.PerformQuery(s);
+    matches := PerformQuery(resource, s);
     try
       for i := 0 to matches.count - 1 do
         if (matches[i] is TFhirReference) and (TFhirReference(matches[i]).reference <> '') and (Session.canRead(typeForReference(TFhirReference(matches[i]).reference))) then
@@ -8997,7 +9021,7 @@ begin
       begin
         // the order here is important: specification resources must be loaded prior to stored resources
         {$IFDEF FHIR4}
-        fn := ChooseFile(IncludeTrailingPathDelimiter(FAppFolder) + 'definitions.xml.zip', 'C:\work\org.hl7.fhir\build\publish\definitions.xml.zip');
+        fn := ChooseFile(IncludeTrailingPathDelimiter(FAppFolder) + 'definitions.json.zip', 'C:\work\org.hl7.fhir\build\publish\definitions.json.zip');
         {$ELSE}
         {$IFDEF FHIR3}
         fn := ChooseFile(IncludeTrailingPathDelimiter(FAppFolder) + 'definitions.json.zip', 'C:\work\org.hl7.fhir.old\org.hl7.fhir.stu3\build\publish\definitions.json.zip');
@@ -9009,8 +9033,11 @@ begin
         logt('Load Validation Pack from ' + fn);
         ServerContext.ValidatorContext.LoadFromDefinitions(fn);
         {$IFNDEF FHIR2}
-        logt('Load in Java');
-        ServerContext.JavaServices.init(fn);
+        if ServerContext.JavaServices <> nil then
+        begin
+          logt('Load in Java');
+          ServerContext.JavaServices.init(fn);
+        end;
         {$ENDIF}
         if ServerContext.forLoad then
         begin
@@ -10265,7 +10292,8 @@ begin
 
   {$IFNDEF FHIR2}
   if (resource.ResourceType in [frtValueSet, frtStructureDefinition, frtCodeSystem]) then
-    FServerContext.JavaServices.seeResource(resource, src);
+    if ServerContext.JavaServices <> nil then
+      FServerContext.JavaServices.seeResource(resource, src);
   {$ENDIF}
 
   FLock.Lock('SeeResource');
@@ -10399,7 +10427,8 @@ begin
     aType := TFhirResourceType(i);
     {$IFNDEF FHIR2}
     if (aType in [frtValueSet, frtStructureDefinition, frtCodeSystem]) then
-      FServerContext.JavaServices.dropResource(resource, id);
+      if ServerContext.JavaServices <> nil then
+        FServerContext.JavaServices.dropResource(resource, id);
     {$ENDIF}
 
     FLock.Lock('DropResource');

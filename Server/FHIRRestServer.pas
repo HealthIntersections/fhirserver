@@ -3728,7 +3728,8 @@ procedure TFhirWebServer.logResponse(id: String; resp: TIdHTTPResponseInfo);
       begin
         package.addUtf8(#13#10);
         SetLength(b, resp.ContentStream.Size);
-        resp.ContentStream.Read(b[0], length(b));
+        if (length(b) > 0) then
+          resp.ContentStream.Read(b[0], length(b));
         resp.ContentStream.Position := 0;
         if isText(resp.ContentType) and (resp.ContentEncoding = '') then
           package.Append(b)
@@ -4315,11 +4316,16 @@ var
   s : String;
   o : TJsonObject;
 begin
-  o := ServerContext.JavaServices.status;
-  try
-    s := TJSONWriter.writeObjectStr(o, true);
-  finally
-    o.Free;
+  if ServerContext.JavaServices = nil then
+    s := '{ "status" : "No Java Services" }'
+  else
+  begin
+    o := ServerContext.JavaServices.status;
+    try
+      s := TJSONWriter.writeObjectStr(o, true);
+    finally
+      o.Free;
+    end;
   end;
 
   response.Expires := Now + 1;
