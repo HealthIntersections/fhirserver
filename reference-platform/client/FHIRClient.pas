@@ -304,6 +304,40 @@ type
     function format : TFHIRFormat; override;
   end;
 
+  TFHIRClientAsyncContextState = (asyncReady, asyncInitialQuery, asyncInitialWait, asyncDelay, asyncPing, asyncPingWait, asyncReadyToDownload, async);
+
+  TFHIRClientAsyncContext = class (TAdvObject)
+  private
+    FClient : TFhirClient;
+    FFolder: String;
+    FTypes: TFhirResourceTypeSet;
+    FQuery: string;
+    FMimeType: String;
+    FSince: TDateTimeEx;
+    FLog : String;
+    FStart : TDateTime;
+    FStatus : TFHIRClientAsyncContextState;
+    procedure SetTypes(const Value: TFhirResourceTypeSet);
+    procedure log(s : String);
+  public
+    Constructor create(client : TFhirClient);
+    Destructor Destroy; override;
+
+    // setup
+    property query : string read FQuery write FQuery;
+    property mimeType : String read FMimeType write FMimeType;
+    property folder : String read FFolder write FFolder;
+    property since : TDateTimeEx read FSince write FSince;
+    property types : TFhirResourceTypeSet read FTypes write SetTypes;
+
+    // operation
+    function logText : String;
+    function status : String;
+    procedure next;
+    function Finished : boolean;
+  end;
+
+
 implementation
 
 uses
@@ -1765,6 +1799,64 @@ end;
 procedure TNullLogger.logExchange(verb, url, status, requestHeaders, responseHeaders: String; request, response: TStream);
 begin
   // nothing
+end;
+
+{ TFHIRClientAsyncContext }
+
+constructor TFHIRClientAsyncContext.create(client: TFhirClient);
+begin
+  inherited Create;
+  FClient := client;
+  FLog := '';
+  FStart := now;
+  FStatus := asyncReady;
+  log('Initialised at '+FormatDateTime('c', now));
+end;
+
+destructor TFHIRClientAsyncContext.Destroy;
+begin
+  FClient.Free;
+  inherited;
+end;
+
+function TFHIRClientAsyncContext.Finished: boolean;
+begin
+  result := false;
+end;
+
+procedure TFHIRClientAsyncContext.log(s: String);
+begin
+  s := DescribePeriod(now - FStart) + ' '+ s + #13#10;
+  Flog := s + Flog;
+end;
+
+function TFHIRClientAsyncContext.logText : String;
+begin
+  result := Flog;
+end;
+
+procedure TFHIRClientAsyncContext.next;
+begin
+  case FStatus of
+    asyncReady: raise Exception.Create('Not done yet');
+    asyncInitialQuery: raise Exception.Create('Not done yet');
+    asyncInitialWait: raise Exception.Create('Not done yet');
+    asyncDelay: raise Exception.Create('Not done yet');
+    asyncPing: raise Exception.Create('Not done yet');
+    asyncPingWait: raise Exception.Create('Not done yet');
+    asyncReadyToDownload: raise Exception.Create('Not done yet');
+    async: raise Exception.Create('Not done yet');
+  end;
+end;
+
+procedure TFHIRClientAsyncContext.SetTypes(const Value: TFhirResourceTypeSet);
+begin
+  FTypes := Value;
+end;
+
+function TFHIRClientAsyncContext.status: String;
+begin
+  result := 'Status to be determined';
 end;
 
 end.

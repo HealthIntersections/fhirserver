@@ -5356,6 +5356,7 @@ begin
         if TFhirResource(list[i]).Tag <> nil then
           request.lastModifiedDate := TDateTimeExWrapper(TFhirResource(list[i]).Tag).Value.DateTime;
         request.Session := nil;
+        context.upload := true;
         Execute(context, request, response);
       end;
     finally

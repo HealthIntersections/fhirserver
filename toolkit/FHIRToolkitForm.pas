@@ -763,13 +763,20 @@ begin
   end;
 end;
 
+function versionSettingsString : String;
+begin
+  result := '';
+  if (FHIR_GENERATED_PUBLICATION <> '3') then
+    result := '-r'+ FHIR_GENERATED_PUBLICATION;
+end;
+
 procedure TMasterToolsForm.FormCreate(Sender: TObject);
 begin
   FSettings := TFHIRToolkitSettings.Create(IncludeTrailingPathDelimiter(SystemTemp) + 'fhir-toolkit-settings.json');
   FSettings.ListServers('', lbServers.Items);
   lbServers.ItemIndex := 0;
   lbServersClick(self);
-  FSettings.getValues('Files', lbFiles.Items);
+  FSettings.getValues('Files'+versionSettingsString, lbFiles.Items);
   if lbFiles.Items.count > 0 then
     lbFiles.ItemIndex := 0;
   lbFilesClick(self);
@@ -1063,7 +1070,7 @@ var
   s : String;
 begin
   try
-    FSettings.storeValues('Files', lbFiles.Items);
+    FSettings.storeValues('Files'+versionSettingsString, lbFiles.Items);
     FSettings.save;
   except
     // nothing we can do

@@ -38,9 +38,12 @@ uses
   StringSupport, DateSupport,
   ToolkitSettings,
   FHIRTypes, FHIRResources, FHIRClient, FHIRUtilities,
+  BaseDialog,
   ResourceEditingSupport, BaseFrame, ToolkitUtilities, TranslationsEditorDialog, MemoEditorDialog;
 
 type
+  TForm = TBaseForm;
+
   TQuestionnaireItemForm = class(TForm)
     Panel1: TPanel;
     btnOk: TButton;
@@ -191,7 +194,6 @@ type
     property questionnaire : TFhirQuestionnaire read FQuestionnaire write SetQuestionnaire;
 
     property Settings : TFHIRToolkitSettings read FSettings write SetSettings;
-    property OnWork : TWorkEvent read FOnWork write FOnWork;
   end;
 
 var

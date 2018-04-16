@@ -39,7 +39,7 @@ uses
   AdvGenerics,
   FHIRTypes, FHIRResources, FHIRClient, FHIRUtilities,
   BaseFrame, AppEndorserFrame, CapabilityStatementEditor, VitalSignsGeneratorDialog,
-  ProviderDirectoryForm, PatientHomeForm;
+  ProviderDirectoryForm, PatientHomeForm, BulkDataForm;
 
 type
   TFrame = TBaseFrame; // re-aliasing the Frame to work around a designer bug
@@ -141,6 +141,7 @@ type
     btnFetchMore: TButton;
     Button2: TButton;
     Button3: TButton;
+    btnBulkData: TButton;
     procedure btnTestClick(Sender: TObject);
     procedure btnCloseClick(Sender: TObject);
     procedure Button1Click(Sender: TObject);
@@ -158,6 +159,7 @@ type
     procedure Button2Click(Sender: TObject);
     procedure Button3Click(Sender: TObject);
     procedure gridPMatchesCellDblClick(const Column: TColumn; const Row: Integer);
+    procedure btnBulkDataClick(Sender: TObject);
   private
     FClient: TFHIRClient;
     FCapabilityStatement: TFhirCapabilityStatement;
@@ -185,6 +187,20 @@ implementation
 {$R *.fmx}
 
 { TServerFrame }
+
+procedure TServerFrame.btnBulkDataClick(Sender: TObject);
+var
+  form : TBulkDataDialog;
+begin
+  form := TBulkDataDialog.create(self);
+  try
+    form.server := client.link;
+    form.settings := settings.link;
+    form.showmodal;
+  finally
+    form.free;
+  end;
+end;
 
 procedure TServerFrame.btnCloseClick(Sender: TObject);
 begin

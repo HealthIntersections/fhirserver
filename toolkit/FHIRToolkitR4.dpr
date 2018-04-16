@@ -193,12 +193,15 @@ uses
   UcumServiceInterface in '..\reference-platform\support\UcumServiceInterface.pas',
   FHIRPathNode in '..\reference-platform\r4\FHIRPathNode.pas',
   FHIRLog in '..\reference-platform\support\FHIRLog.pas',
-  QuestionnaireRenderer in '..\reference-platform\r4\QuestionnaireRenderer.pas';
+  QuestionnaireRenderer in '..\reference-platform\r4\QuestionnaireRenderer.pas',
+  BulkDataForm in 'BulkDataForm.pas' {BulkDataDialog},
+  BaseDialog in 'BaseDialog.pas';
 
 {$R *.res}
 
 begin
   Application.Initialize;
   Application.CreateForm(TMasterToolsForm, MasterToolsForm);
+  Application.CreateForm(TBulkDataDialog, BulkDataDialog);
   Application.Run;
 end.
