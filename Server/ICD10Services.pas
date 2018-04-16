@@ -247,7 +247,7 @@ begin
   p := TFHIRLookupOpRespProperty_.Create;
   resp.property_List.Add(p);
   p.code := 'descendents';
-  p.value := inttostr(TICD10Node(ctxt).FDescendentCount);
+  p.value := TFHIRInteger.Create(inttostr(TICD10Node(ctxt).FDescendentCount));
 {$ENDIF}
 end;
 

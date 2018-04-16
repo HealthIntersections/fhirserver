@@ -247,6 +247,7 @@ var
   {$ENDIF}
   checker : TValueSetChecker;
   uri : TFhirUri;
+  s : String;
 begin
   result := false;
   {special case:}
@@ -306,6 +307,13 @@ begin
         else
         begin
           cs := TCodeSystemProvider(FOthers.matches[cc.system]);
+          if cc.hasExtension('http://hl7.org/fhir/StructureDefinition/valueset-supplement') then
+          begin
+            s := cc.getExtensionString('http://hl7.org/fhir/StructureDefinition/valueset-supplement');
+            if not cs.hasSupplement(s) then
+              raise Exception.Create('Value Set Validation depends on supplement '+s+' on '+cs.system(nil)+' that is not known');
+          end;
+
           result := ((system = SYSTEM_NOT_APPLICABLE) or (cs.system(nil) = system)) and checkConceptSet(cs, cc, code, abstractOk, displays, message);
         end;
         {$IFNDEF FHIR2}
@@ -326,6 +334,12 @@ begin
           else
           begin
             cs := TCodeSystemProvider(FOthers.matches[cc.system]);
+            if cc.hasExtension('http://hl7.org/fhir/StructureDefinition/valueset-supplement') then
+            begin
+              s := cc.getExtensionString('http://hl7.org/fhir/StructureDefinition/valueset-supplement');
+              if not cs.hasSupplement(s) then
+                raise Exception.Create('Value Set Validation depends on supplement '+s+' on '+cs.system(nil)+' that is not known');
+            end;
             excluded := ((system = SYSTEM_NOT_APPLICABLE) or (cs.system(nil) = system)) and checkConceptSet(cs, cc, code, abstractOk, displays, message);
           end;
           {$IFDEF FHIR3}

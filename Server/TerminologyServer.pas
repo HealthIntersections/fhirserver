@@ -292,7 +292,7 @@ begin
         p := TFHIRLookupOpRespProperty_.create;
         resp.property_List.add(p);
         p.code := 'abstract';
-        p.value := 'true';
+        p.value := TFhirBoolean.Create(true);
         {$ELSE}
         resp.abstract := true;
         {$ENDIF}

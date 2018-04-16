@@ -150,6 +150,7 @@ Type
     function getParent(ctxt : TFhirCodeSystemConcept) : TFhirCodeSystemConcept;
     procedure FilterCodes(dest : TFhirCodeSystemProviderFilterContext; source : TFhirCodeSystemConceptList; filter : TSearchFilterText);
     procedure iterateCodes(base: TFhirCodeSystemConcept; list: TFhirCodeSystemProviderFilterContext);
+    procedure iterateConceptsByProperty(src : TFhirCodeSystemConceptList; pp : TFhirCodeSystemProperty; value : String; list: TFhirCodeSystemProviderFilterContext);
     function locCode(list: TFhirCodeSystemConceptList; code: String): TFhirCodeSystemConcept;
     {$IFNDEF FHIR2}
     function getProperty(code : String) : TFhirCodeSystemProperty;
@@ -174,6 +175,7 @@ Type
     function getDefinition(code : String):String; override;
     function Definition(context : TCodeSystemProviderContext) : string; override;
 
+    function hasSupplement(url : String) : boolean; override;
     function filter(prop : String; op : TFhirFilterOperatorEnum; value : String; prep : TCodeSystemProviderFilterPreparationContext) : TCodeSystemProviderFilterContext; override;
     function FilterMore(ctxt : TCodeSystemProviderFilterContext) : boolean; override;
     function FilterConcept(ctxt : TCodeSystemProviderFilterContext): TCodeSystemProviderContext; override;
@@ -1706,7 +1708,8 @@ begin
     end
     else
       result := FProviderClasses[system].Link
-  end else if system = ANY_CODE_VS then
+  end
+  else if system = ANY_CODE_VS then
     result := TAllCodeSystemsProvider.create(self.link)
   else
   begin
@@ -2218,12 +2221,27 @@ end;
 function TFhirCodeSystemProvider.getProperty(code: String): TFhirCodeSystemProperty;
 var
   p : TFhirCodeSystemProperty;
+  cs : TFhirCodeSystem;
 begin
   result := nil;
   for p in FCs.CodeSystem.property_List do
     if (p.code = code) then
       exit(p);
+  for cs in FCs.Supplements do
+    for p in cs.property_List do
+      if (p.code = code) then
+        exit(p);
 end;
+function TFhirCodeSystemProvider.hasSupplement(url: String): boolean;
+var
+  cs : TFHIRCodeSystem;
+begin
+  result := false;
+  for cs in FCs.Supplements do
+    if cs.url = url then
+      exit(true);
+end;
+
 {$ENDIF}
 
 function TFhirCodeSystemProvider.locCode(list : TFhirCodeSystemConceptList; code : String) : TFhirCodeSystemConcept;
@@ -2315,7 +2333,7 @@ begin
         p := TFHIRLookupOpRespProperty_.create;
         resp.property_List.Add(p);
         p.code := 'parent';
-        p.value := parent.code;
+        p.value := TFhirCode.Create(parent.code);
         p.description := parent.display;
       end;
     end;
@@ -2327,7 +2345,7 @@ begin
         p := TFHIRLookupOpRespProperty_.create;
         resp.property_List.Add(p);
         p.code := 'child';
-        p.value := child.code;
+        p.value := TFhirCode.Create(child.code);
         p.description := child.display;
       end;
     end;
@@ -2358,12 +2376,12 @@ begin
       for cp in cc.property_List do
       begin
         pp := getProperty(cp.code);
-        if hasProp(props, cp.code, true) then
+        if (pp <> nil) and hasProp(props, cp.code, true) then
         begin
           p := TFHIRLookupOpRespProperty_.create;
           resp.property_List.Add(p);
           p.code := cp.code;
-          p.value := cp.value.primitiveValue;
+          p.value := cp.value.link; // todo: should we check this?
         end;
       end;
   finally
@@ -2474,11 +2492,53 @@ begin
     end;
 end;
 
+procedure TFhirCodeSystemProvider.iterateConceptsByProperty(src : TFhirCodeSystemConceptList; pp: TFhirCodeSystemProperty; value: String; list: TFhirCodeSystemProviderFilterContext);
+var
+  c, cc : TFhirCodeSystemConcept;
+  concepts : TAdvList<TFhirCodeSystemConcept>;
+  css : TFhirCodeSystem;
+  cp : TFhirCodeSystemConceptProperty;
+  ok : boolean;
+begin
+  concepts := TAdvList<TFhirCodeSystemConcept>.create;
+  try
+    for c in src do
+    begin
+      concepts.Clear;
+      concepts.Add(c.Link);
+      for css in FCs.Supplements do
+      begin
+        cc := locCode(css.conceptList, c.code);
+        if (cc <> nil) then
+          concepts.Add(cc.Link);
+      end;
+      for cc in concepts do
+      begin
+        ok := false;
+        for cp in cc.property_List do
+          if not ok and (cp.code = pp.code) then
+            case pp.type_ of
+              ConceptPropertyTypeCode, ConceptPropertyTypeString, ConceptPropertyTypeInteger, ConceptPropertyTypeBoolean, ConceptPropertyTypeDateTime, ConceptPropertyTypeDecimal:
+                ok := cp.value.primitiveValue = value;
+              ConceptPropertyTypeCoding:
+                ok := (cp.value as TFHIRCoding).code = value;
+            end;
+        if ok then
+          list.Add(c.Link, 0);
+      end;
+      iterateConceptsByProperty(c.conceptList, pp, value, list);
+    end;
+  finally
+    concepts.Free;
+  end;
+end;
+
 function TFhirCodeSystemProvider.filter(prop: String; op: TFhirFilterOperatorEnum; value: String; prep : TCodeSystemProviderFilterPreparationContext): TCodeSystemProviderFilterContext;
 var
   code : TFhirCodeSystemProviderContext;
   ts : TStringList;
   i: Integer;
+  pp : TFhirCodeSystemProperty;
 begin
   if (op = FilterOperatorIsA) and (prop = 'concept') then
   begin
@@ -2528,7 +2588,21 @@ begin
     end;
   end
   else
-    result := nil;
+  begin
+    pp := getProperty(prop);
+    if (pp <> nil) and (op = FilterOperatorEqual)  then
+    begin
+      result := TFhirCodeSystemProviderFilterContext.create;
+      try
+        iterateConceptsByProperty(FCs.CodeSystem.conceptList, pp, value, result as TFhirCodeSystemProviderFilterContext);
+        result.link;
+      finally
+        result.Free;
+      end;
+    end
+    else
+      result := nil;
+  end
 end;
 
 procedure TFhirCodeSystemProvider.FilterCodes(dest : TFhirCodeSystemProviderFilterContext; source: TFhirCodeSystemConceptList; filter : TSearchFilterText);

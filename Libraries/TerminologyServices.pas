@@ -108,6 +108,7 @@ Type
     procedure Displays(code : String; list : TStringList; lang : String); overload; virtual; abstract;
     function doesFilter(prop : String; op : TFhirFilterOperatorEnum; value : String) : boolean; virtual;
 
+    function hasSupplement(url : String) : boolean; virtual;
     function getPrepContext : TCodeSystemProviderFilterPreparationContext; virtual;
     function searchFilter(filter : TSearchFilterText; prep : TCodeSystemProviderFilterPreparationContext; sort : boolean) : TCodeSystemProviderFilterContext; virtual; abstract;
     function specialFilter(prep : TCodeSystemProviderFilterPreparationContext; sort : boolean) : TCodeSystemProviderFilterContext; virtual;
@@ -180,6 +181,11 @@ end;
 function TCodeSystemProvider.getPrepContext: TCodeSystemProviderFilterPreparationContext;
 begin
   result := nil;
+end;
+
+function TCodeSystemProvider.hasSupplement(url: String): boolean;
+begin
+  result := false;
 end;
 
 function TCodeSystemProvider.IsInactive(context: TCodeSystemProviderContext): boolean;

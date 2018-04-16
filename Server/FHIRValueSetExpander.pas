@@ -42,8 +42,9 @@ todo:
 }
 uses
   SysUtils, Classes, StringSupport, GuidSupport,
+  DateSupport,
   AdvStringObjectMatches, AdvObjects, AdvObjectLists, AdvExceptions, AdvGenerics,
-  FHIRBase, FHIRTypes, FHIRResources, FHIRUtilities, DateSupport,
+  FHIRBase, FHIRTypes, FHIRResources, FHIRUtilities, FHIRXhtml,
   TerminologyServices, LoincServices, SnomedServices, UcumServices,
   TerminologyServer, TerminologyServerStore;
 
@@ -208,7 +209,6 @@ begin
       result.expansion.addParam('excludeNotForUI', profile.excludeNotForUI);
     if profile.excludePostCoordinated then
       result.expansion.addParam('excludePostCoordinated', profile.excludePostCoordinated);
-
 
     try
       {$IFDEF FHIR2}
@@ -534,7 +534,7 @@ var
   ok : boolean;
   prep : TCodeSystemProviderFilterPreparationContext;
   inner : boolean;
-  display : String;
+  s, display : String;
   imports : TAdvList<TFHIRValueSet>;
   hash : TStringList;
   uri : TFhirUri;
@@ -565,6 +565,13 @@ begin
       try
         cs := FStore.getProvider(cset.system, cset.version, FProfile);
         try
+          if cset.hasExtension('http://hl7.org/fhir/StructureDefinition/valueset-supplement') then
+          begin
+            s := cset.getExtensionString('http://hl7.org/fhir/StructureDefinition/valueset-supplement');
+            if not cs.hasSupplement(s) then
+              raise Exception.Create('Expansion depends on supplement '+s+' on '+cs.system(nil)+' that is not known');
+          end;
+
           if (cset.conceptList.count = 0) and (cset.filterList.count = 0) then
           begin
             if (cs.SpecialEnumeration <> '') and Fprofile.limitedExpansion then
@@ -659,7 +666,7 @@ begin
                   fc.checkNoModifiers('ValueSetExpander.processCodes', 'filter');
                   filters[i+offset] := cs.filter(fc.property_, fc.Op, fc.value, prep);
                   if filters[i+offset] = nil then
-                    raise Exception.create('The filter "'+fc.property_ +' '+ CODES_TFhirFilterOperatorEnum[fc.Op]+ ' '+fc.value+'" was not understood in the context of '+cs.system(nil));
+                    raise ETerminologyError.create('The filter "'+fc.property_ +' '+ CODES_TFhirFilterOperatorEnum[fc.Op]+ ' '+fc.value+'" was not understood in the context of '+cs.system(nil));
                   if cs.isNotClosed(filter, filters[i+offset]) then
                     notClosed := true;
                 end;
