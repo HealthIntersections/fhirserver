@@ -36,7 +36,8 @@ interface
 // FHIR v3.4.0 generated 2018-04-11T14:46:13+10:00
 
 uses
-  Classes, SysUtils, DecimalSupport, StringSupport, AdvBuffers, EncdDecd, DateSupport, FHIRBase, DigitalSignatures;
+  Classes, SysUtils, DecimalSupport, StringSupport, AdvBuffers, EncdDecd, DateSupport, DigitalSignatures,
+  FHIRBase, FHIRXhtml;
 
 Type
   // The lifecycle status of an artifact. from http://hl7.org/fhir/ValueSet/publication-status

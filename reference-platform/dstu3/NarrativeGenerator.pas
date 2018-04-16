@@ -40,7 +40,7 @@ interface
 uses
   SysUtils, Generics.Collections,
   AdvObjects, StringSupport,
-  FHIRResources, FHIRTypes, FHIRBase, FHIRCOnstants, FHIRUtilities, FHIRSupport,
+  FHIRResources, FHIRTypes, FHIRBase, FHIRCOnstants, FHIRUtilities, FHIRSupport, FHIRXhtml,
   FHIRProfileUtilities, QuestionnaireBuilder;
 
 type

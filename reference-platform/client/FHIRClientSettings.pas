@@ -69,12 +69,20 @@ type
 
 implementation
 
+uses FHIRConstants;
+
 function srvname(purpose : String): String;
+var
+  v : String;
 begin
+  v := '';
+  if (FHIR_GENERATED_PUBLICATION <> '3') then
+    v := '-r'+ FHIR_GENERATED_PUBLICATION;
+
   if purpose = '' then
-    result := 'Servers'
+    result := 'Servers'+v
   else
-    result := 'Servers-'+purpose;
+    result := 'Servers'+v+'-'+purpose;
 end;
 
 

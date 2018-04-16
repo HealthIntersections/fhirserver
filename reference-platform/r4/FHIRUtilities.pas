@@ -372,6 +372,8 @@ type
     property xmlId : String read GetXmlId write SetmlId;
 
     procedure checkNoImplicitRules(place, role : String);
+
+    function textSummary : String;
   end;
 
   TFHIRDomainResourceHelper = class helper (TFHIRResourceHelper) for TFHIRDomainResource
@@ -2844,6 +2846,52 @@ end;
 procedure TFHIRResourceHelper.SetmlId(const Value: String);
 begin
   id := value;
+end;
+
+function patSummary(pat : TFHIRPatient) : string;
+var
+  b : TStringBuilder;
+begin
+  b := TStringBuilder.Create;
+  try
+    b.Append(HumanNamesAsText(pat.nameList));
+    b.Append(' ');
+    b.Append(CODES_TFhirAdministrativeGenderEnum[pat.gender]);
+    b.Append(' ');
+    b.Append(pat.birthDate.toString('c'));
+    result := b.ToString;
+  finally
+    b.Free;
+  end;
+end;
+
+function groupSummary(grp : TFHIRGroup) : string;
+var
+  b : TStringBuilder;
+begin
+  b := TStringBuilder.Create;
+  try
+    b.Append(grp.name);
+    if (grp.code <> nil) then
+    begin
+      b.Append(' (');
+      b.Append(gen(grp.code));
+      b.Append(')');
+    end;
+    result := b.ToString;
+  finally
+    b.Free;
+  end;
+end;
+
+function TFHIRResourceHelper.textSummary: String;
+begin
+  case ResourceType of
+    frtPatient: result := patSummary(self as TFHIRPatient);
+    frtGroup: result := groupSummary(self as TFHIRGroup);
+  else
+    result := fhirType+'/'+id;
+  end;
 end;
 
 { TFHIRBundleHelper }

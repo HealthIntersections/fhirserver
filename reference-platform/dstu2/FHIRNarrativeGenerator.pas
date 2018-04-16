@@ -39,7 +39,8 @@ uses
   SysUtils, Generics.Collections, EncdDecd,
   StringSupport, EncodeSupport,
   AdvObjects, AdvGenerics,
-  FHIRBase, FHIRResources, FHIRTypes, FHIRConstants, FHIRContext, FHIRSupport, FHIRUtilities;
+  FHIRBase, FHIRXhtml,
+  FHIRResources, FHIRTypes, FHIRConstants, FHIRContext, FHIRSupport, FHIRUtilities;
 
 Const
   BooleanStrings : array [boolean] of String = ('false', 'true');

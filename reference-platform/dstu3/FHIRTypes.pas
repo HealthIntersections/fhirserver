@@ -41,7 +41,8 @@ interface
 // FHIR v3.0.1 generated 2017-04-27T17:09:41+10:00
 
 uses
-  Classes, SysUtils, DecimalSupport, StringSupport, AdvBuffers, EncdDecd, DateSupport, FHIRBase, DigitalSignatures;
+  Classes, SysUtils, DecimalSupport, StringSupport, AdvBuffers, EncdDecd, DateSupport, DigitalSignatures,
+  FHIRBase, FHIRXhtml;
 
 Type
   {@Enum TFhirPublicationStatusEnum

@@ -446,9 +446,10 @@ Type
   TFHIRLookupOpRespProperty_ = class (TFHIROperationObject)
   private
     FCode : String;
-    FValue : String;
+    FValue : TFHIRType;
     FDescription : String;
     FSubpropertyList : TAdvList<TFHIRLookupOpRespSubproperty>;
+    procedure SetValue(const Value: TFHIRType);
   protected
     function isKnownName(name : String) : boolean; override;
   public
@@ -457,7 +458,7 @@ Type
     destructor Destroy; override;
     function asParams(name : String) : TFHIRParametersParameter; override;
     property code : String read FCode write FCode;
-    property value : String read FValue write FValue;
+    property value : TFHIRType read FValue write SetValue;
     property description : String read FDescription write FDescription;
     property subpropertyList : TAdvList<TFHIRLookupOpRespSubproperty> read FSubpropertyList;
   end;
@@ -2673,7 +2674,7 @@ begin
   inherited create();
   FSubpropertyList := TAdvList<TFHIRLookupOpRespSubproperty>.create;
   FCode := params.str['code'];
-  FValue := params.str['value'];
+  FValue := params.value.Link;
   FDescription := params.str['description'];
   for p in params.partList do
     if p.name = 'subproperty' then
@@ -2683,6 +2684,7 @@ end;
 
 destructor TFHIRLookupOpRespProperty_.Destroy;
 begin
+  FValue.free;
   FSubpropertyList.free;
   inherited;
 end;
@@ -2696,8 +2698,8 @@ begin
     result.name := name;
     if (FCode <> '') then
       result.addParameter('code', TFHIRCode.create(FCode));{oz.5f}
-    if (FValue <> '') then
-      result.addParameter('value', TFHIRCode.create(FValue));{oz.5f}
+    if (FValue <> nil) then
+      result.addParameter('value', FValue.Link);{oz.5f}
     if (FDescription <> '') then
       result.addParameter('description', TFHIRString.create(FDescription));{oz.5f}
     for v1 in FSubpropertyList do
@@ -2712,6 +2714,12 @@ end;
 function TFHIRLookupOpRespProperty_.isKnownName(name : String) : boolean;
 begin
   result := StringArrayExists(['code', 'value', 'description', 'subproperty'], name);
+end;
+
+procedure TFHIRLookupOpRespProperty_.SetValue(const Value: TFHIRType);
+begin
+  FValue.Free;
+  FValue := Value;
 end;
 
 constructor TFHIRLookupOpResponse.create;
