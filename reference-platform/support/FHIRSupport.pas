@@ -113,7 +113,7 @@ Type
 
 
   {@Class TFhirSession
-    User session associated with a FHIR request.
+    User session associated with a FHIR request.                                                         9
     There is always a session, but it may only have ip address
 
     If the user has logged in using OAuth, then the user may have identifying details

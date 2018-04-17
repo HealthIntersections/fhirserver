@@ -575,8 +575,8 @@ begin
   end;
   if not fileExists(result) then
     case version of
-      defV3 : result := 'C:\work\org.hl7.fhir.old\org.hl7.fhir.dstu3\build\publish\igpack.zip';
-      defV2 : result := 'C:\work\org.hl7.fhir.old\org.hl7.fhir.dstu3\build\publish\definitions-r2asr3.xml.zip';
+      defV3 : result := 'C:\work\org.hl7.fhir.old\org.hl7.fhir.stu3\build\publish\igpack.zip';
+      defV2 : result := 'C:\work\org.hl7.fhir.old\org.hl7.fhir.stu3\build\publish\definitions-r2asr3.xml.zip';
     else
       raise Exception.Create('not done yet');
     end;

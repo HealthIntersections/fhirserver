@@ -3275,7 +3275,7 @@ begin
     p := TFHIRLookupOpRespProperty_.create;
     resp.property_List.Add(p);
     p.code := 'copyright';
-    p.value := 'This response content from SNOMED CT, which is copyright © 2002+ International Health Terminology Standards Development Organisation (IHTSDO), and distributed '+'by agreement between IHTSDO and HL7. Implementer use of SNOMED CT is not covered by this agreement';
+    p.value := TFHIRString.create('This response content from SNOMED CT, which is copyright © 2002+ International Health Terminology Standards Development Organisation (IHTSDO), and distributed '+'by agreement between IHTSDO and HL7. Implementer use of SNOMED CT is not covered by this agreement');
     {$ELSE}
     resp.addExtension('copyright', 'This response content from SNOMED CT, which is copyright © 2002+ International Health Terminology Standards Development Organisation (IHTSDO), '+'and distributed by agreement between IHTSDO and HL7. Implementer use of SNOMED CT is not covered by this agreement');
     {$ENDIF}
@@ -3285,7 +3285,7 @@ begin
       p := TFHIRLookupOpRespProperty_.create;
       resp.property_List.Add(p);
       p.code := 'inactive';
-      p.value := BooleanToString(not IsActive(TSnomedExpressionContext(ctxt).reference));
+      p.value := TFHIRBoolean.create(not IsActive(TSnomedExpressionContext(ctxt).reference));
       {$ELSE}
       resp.addExtension('inactive', BooleanToString(IsActive(TSnomedExpressionContext(ctxt).reference)));
       {$ENDIF}
@@ -3299,7 +3299,7 @@ begin
       p := TFHIRLookupOpRespProperty_.create;
       resp.property_List.Add(p);
       p.code := 'moduleId';
-      p.value := getConceptId(Concept.GetModuleId(TSnomedExpressionContext(ctxt).reference));
+      p.value := TFhirCode.Create(getConceptId(Concept.GetModuleId(TSnomedExpressionContext(ctxt).reference)));
       {$ELSE}
       resp.addExtension('moduleId', inttostr(Concept.GetModuleId(TSnomedExpressionContext(ctxt).reference)));
       {$ENDIF}
@@ -3313,11 +3313,11 @@ begin
         p := TFHIRLookupOpRespProperty_.create;
         resp.property_List.Add(p);
         p.code := 'normalForm';
-        p.value := renderExpression(exp, sroFillMissing);
+        p.value := TFHIRString.Create(renderExpression(exp, sroFillMissing));
         p := TFHIRLookupOpRespProperty_.create;
         resp.property_List.Add(p);
         p.code := 'normalFormTerse';
-        p.value := renderExpression(exp, sroMinimal);
+        p.value := TFHIRString.Create(renderExpression(exp, sroMinimal));
         {$ELSE}
         resp.addExtension('normalForm', renderExpression(exp, sroFillMissing));
         resp.addExtension('normalFormTerse', renderExpression(exp, sroMinimal));
@@ -3364,7 +3364,7 @@ begin
           p := TFHIRLookupOpRespProperty_.create;
           resp.property_List.Add(p);
           p.code := 'parent';
-          p.value := IntToStr(Identity);
+          p.value := TFHIRCode.Create(IntToStr(Identity));
           p.description := GetPN(Descriptions);
           {$ELSE}
           resp.addExtension('parent', IntToStr(Identity));
@@ -3387,7 +3387,7 @@ begin
           p := TFHIRLookupOpRespProperty_.create;
           resp.property_List.Add(p);
           p.code := 'child';
-          p.value := IntToStr(Identity);
+          p.value := TFHIRCode.create(IntToStr(Identity));
           p.description := GetPN(Descriptions);
           {$ELSE}
           resp.addExtension('child', IntToStr(Identity));
@@ -3404,11 +3404,11 @@ begin
       p := TFHIRLookupOpRespProperty_.create;
       resp.property_List.Add(p);
       p.code := 'normalForm';
-      p.value := renderExpression(exp, sroFillMissing);
+      p.value := TFHIRString.create(renderExpression(exp, sroFillMissing));
       p := TFHIRLookupOpRespProperty_.create;
       resp.property_List.Add(p);
       p.code := 'normalFormTerse';
-      p.value := renderExpression(exp, sroMinimal);
+      p.value := TFHIRString.create(renderExpression(exp, sroMinimal));
       {$ELSE}
       resp.addExtension('normalForm', renderExpression(exp, sroFillMissing));
       resp.addExtension('normalFormTerse', renderExpression(exp, sroMinimal));

@@ -150,10 +150,10 @@ Type
     function getParent(ctxt : TFhirCodeSystemConcept) : TFhirCodeSystemConcept;
     procedure FilterCodes(dest : TFhirCodeSystemProviderFilterContext; source : TFhirCodeSystemConceptList; filter : TSearchFilterText);
     procedure iterateCodes(base: TFhirCodeSystemConcept; list: TFhirCodeSystemProviderFilterContext);
-    procedure iterateConceptsByProperty(src : TFhirCodeSystemConceptList; pp : TFhirCodeSystemProperty; value : String; list: TFhirCodeSystemProviderFilterContext);
     function locCode(list: TFhirCodeSystemConceptList; code: String): TFhirCodeSystemConcept;
     {$IFNDEF FHIR2}
     function getProperty(code : String) : TFhirCodeSystemProperty;
+    procedure iterateConceptsByProperty(src : TFhirCodeSystemConceptList; pp : TFhirCodeSystemProperty; value : String; list: TFhirCodeSystemProviderFilterContext);
     {$ENDIF}
   public
     constructor Create(vs : TFhirCodeSystemEntry); overload;
@@ -2232,6 +2232,8 @@ begin
       if (p.code = code) then
         exit(p);
 end;
+{$ENDIF}
+
 function TFhirCodeSystemProvider.hasSupplement(url: String): boolean;
 var
   cs : TFHIRCodeSystem;
@@ -2241,8 +2243,6 @@ begin
     if cs.url = url then
       exit(true);
 end;
-
-{$ENDIF}
 
 function TFhirCodeSystemProvider.locCode(list : TFhirCodeSystemConceptList; code : String) : TFhirCodeSystemConcept;
 var
@@ -2492,6 +2492,7 @@ begin
     end;
 end;
 
+{$IFNDEF FHIR2}
 procedure TFhirCodeSystemProvider.iterateConceptsByProperty(src : TFhirCodeSystemConceptList; pp: TFhirCodeSystemProperty; value: String; list: TFhirCodeSystemProviderFilterContext);
 var
   c, cc : TFhirCodeSystemConcept;
@@ -2518,7 +2519,7 @@ begin
         for cp in cc.property_List do
           if not ok and (cp.code = pp.code) then
             case pp.type_ of
-              ConceptPropertyTypeCode, ConceptPropertyTypeString, ConceptPropertyTypeInteger, ConceptPropertyTypeBoolean, ConceptPropertyTypeDateTime, ConceptPropertyTypeDecimal:
+              ConceptPropertyTypeCode, ConceptPropertyTypeString, ConceptPropertyTypeInteger, ConceptPropertyTypeBoolean, ConceptPropertyTypeDateTime{$IFDEF FHIR4}, ConceptPropertyTypeDecimal{$ENDIF}:
                 ok := cp.value.primitiveValue = value;
               ConceptPropertyTypeCoding:
                 ok := (cp.value as TFHIRCoding).code = value;
@@ -2532,13 +2533,16 @@ begin
     concepts.Free;
   end;
 end;
+{$ENDIF}
 
 function TFhirCodeSystemProvider.filter(prop: String; op: TFhirFilterOperatorEnum; value: String; prep : TCodeSystemProviderFilterPreparationContext): TCodeSystemProviderFilterContext;
 var
   code : TFhirCodeSystemProviderContext;
   ts : TStringList;
   i: Integer;
+{$IFNDEF FHIR2}
   pp : TFhirCodeSystemProperty;
+{$ENDIF}
 begin
   if (op = FilterOperatorIsA) and (prop = 'concept') then
   begin
@@ -2589,6 +2593,7 @@ begin
   end
   else
   begin
+{$IFNDEF FHIR2}
     pp := getProperty(prop);
     if (pp <> nil) and (op = FilterOperatorEqual)  then
     begin
@@ -2601,6 +2606,7 @@ begin
       end;
     end
     else
+{$ENDIF}
       result := nil;
   end
 end;

@@ -470,7 +470,7 @@ begin
     p := TFHIRLookupOpRespProperty_.create;
     resp.property_List.Add(p);
     p.code := 'inactive';
-    p.value := BooleanToString(b);
+    p.value := TFHIRBoolean.create(b);
     {$ELSE}
     resp.addExtension('inactive', b);
     {$ENDIF}
