@@ -221,6 +221,7 @@ type
   TFhirAuditEventParticipantNetwork  = TFhirAuditEventAgentNetwork;
   TFhirNamingSystemContact = TFHIRContactDetail;
   TFhirConformanceContact = TFHIRContactDetail;
+  TFhirCanonical = TFhirUri;
 
   TResourceWithReference = class (TAdvObject)
   private
@@ -261,6 +262,11 @@ type
   public
     function BySystem(uri : String) : TFhirIdentifier;
     function withCommas : String;
+  end;
+
+  TFhirPrimitiveTypeHelper = class helper for TFhirPrimitiveType
+  public
+    constructor create(value : String); overload;
   end;
 
   TFhirAuditEventHelper = class helper for TFhirAuditEvent
@@ -311,6 +317,7 @@ type
     procedure setExtension(url : String; t : TFHIRType);
     procedure setExtensionString(url, value : String);
     procedure setExtensionInteger(url, value : String);
+    procedure setExtensionBoolean(url, value : String);
     procedure setExtensionDecimal(url, value : String);
     procedure setExtensionURI(url, value : String);
     procedure setExtensionDate(url, value : String);
@@ -329,6 +336,11 @@ type
   public
     function hasType(t : String; out profile : String) : boolean;  overload;
     function hasType(t : String) : boolean; overload;
+  end;
+
+  TFhirRangeHelper = class helper for TFhirRange
+  public
+    function either : TFhirQuantity;
   end;
 
   TFhirQuantityHelper = class helper for TFhirQuantity
@@ -352,6 +364,8 @@ type
     property xmlId : String read GetXmlId write SetmlId;
 
     procedure checkNoImplicitRules(place, role : String);
+
+    function textSummary : String;
   end;
 
   TFHIRDomainResourceHelper = class helper (TFHIRResourceHelper) for TFHIRDomainResource
@@ -456,6 +470,7 @@ type
   public
     Constructor Create(system, code : String); overload;
 
+    function hasCode(System, Code : String) : boolean;
     class function fromEdit(s : String) : TFhirCoding;
     property editString : String read GetEditString write SetEditString;
   end;
@@ -611,6 +626,9 @@ type
     function HasTag(system, code : String)  : boolean;
     function addTag(system, code, display : String) : TFhirCoding;
     function removeTag(system, code : String) : boolean;
+    function hasProfile(url : String) : boolean;
+    procedure addProfile(url : String);
+    procedure dropProfile(url : String);
   end;
 
   TFhirOperationOutcomeIssueHelper = class helper for TFhirOperationOutcomeIssue
@@ -2315,6 +2333,16 @@ begin
   ext.value := t.link;
 end;
 
+procedure TFHIRElementHelper.setExtensionBoolean(url, value: String);
+var
+  ext : TFhirExtension;
+begin
+  removeExtension(url);
+  ext := self.ExtensionList.Append;
+  ext.url := url;
+  ext.value := TFhirBoolean.Create(value = 'true');
+end;
+
 procedure TFHIRElementHelper.setExtensionCode(url, value: String);
 var
   ext : TFhirExtension;
@@ -2822,6 +2850,52 @@ begin
   id := value;
 end;
 
+function patSummary(pat : TFHIRPatient) : string;
+var
+  b : TStringBuilder;
+begin
+  b := TStringBuilder.Create;
+  try
+    b.Append(HumanNamesAsText(pat.nameList));
+    b.Append(' ');
+    b.Append(CODES_TFhirAdministrativeGenderEnum[pat.gender]);
+    b.Append(' ');
+    b.Append(pat.birthDate.toString('c'));
+    result := b.ToString;
+  finally
+    b.Free;
+  end;
+end;
+
+function groupSummary(grp : TFHIRGroup) : string;
+var
+  b : TStringBuilder;
+begin
+  b := TStringBuilder.Create;
+  try
+    b.Append(grp.name);
+    if (grp.code <> nil) then
+    begin
+      b.Append(' (');
+      b.Append(gen(grp.code));
+      b.Append(')');
+    end;
+    result := b.ToString;
+  finally
+    b.Free;
+  end;
+end;
+
+function TFHIRResourceHelper.textSummary: String;
+begin
+  case ResourceType of
+    frtPatient: result := patSummary(self as TFHIRPatient);
+    frtGroup: result := groupSummary(self as TFHIRGroup);
+  else
+    result := fhirType+'/'+id;
+  end;
+end;
+
 { TFHIRBundleHelper }
 
 function TFHIRBundleHelper.AsReference: TFHIRDocumentReference;
@@ -3000,7 +3074,7 @@ begin
   if type_ = BundleTypeDocument then
     cmp := entryList[0].resource as TFhirComposition
   else
-    cmp.Free;
+    cmp := nil;
 
   result := TFhirProvenance.Create;
   try
@@ -3036,8 +3110,11 @@ begin
     end;
     // fill out other stuff on provenance
     result.period := TFhirPeriod.Create;
-    result.period.start := cmp.date;
-    result.period.end_ := cmp.date;
+    if (cmp <> nil) then
+    begin
+      result.period.start := cmp.date;
+      result.period.end_ := cmp.date;
+    end;
     result.recorded := TDateTimeEx.makeUTC;
     with result.agentList.Append do
     begin
@@ -3503,7 +3580,7 @@ begin
     raise Exception.Create('Unable to find code in '+StringArrayToString(systems));
 end;
 
-function TFHIRCodeableConceptHelper.HasCode(System, Code: String): boolean;
+function TFHIRCodeableConceptHelper.hasCode(System, Code: String): boolean;
 var
   i : integer;
 begin
@@ -3526,6 +3603,12 @@ end;
 
 { TFhirResourceMetaHelper }
 
+procedure TFhirResourceMetaHelper.addProfile(url: String);
+begin
+  if not hasProfile(url) then
+    profileList.Add(TFHIRUri.Create(url));
+end;
+
 function TFhirResourceMetaHelper.addTag(system, code, display: String): TFhirCoding;
 var
   c : TFhirCoding;
@@ -3540,6 +3623,15 @@ begin
   end
   else
     result := getTag(system, code);
+end;
+
+procedure TFhirResourceMetaHelper.dropProfile(url: String);
+var
+  i : integer;
+begin
+  for I := ProfileList.Count - 1 downto 0 do
+    if ProfileList[i].value = url then
+      ProfileList.Remove(i);
 end;
 
 function TFhirResourceMetaHelper.HasTag(system, code: String): boolean;
@@ -3562,6 +3654,16 @@ begin
       result := taglist[i];
       exit;
     end;
+end;
+
+function TFhirResourceMetaHelper.hasProfile(url: String): boolean;
+var
+  u : TFhirUri;
+begin
+  result := false;
+  for u in profileList do
+    if u.value = url then
+      exit(true);
 end;
 
 function TFhirResourceMetaHelper.removeTag(system, code : String): boolean;
@@ -4968,6 +5070,11 @@ begin
 end;
 
 
+function TFhirCodingHelper.hasCode(System, Code: String): boolean;
+begin
+  result := (self.system = system) and (self.code = code);
+end;
+
 procedure TFhirCodingHelper.SetEditString(const Value: String);
 var
   s, c : String;
@@ -6213,6 +6320,25 @@ begin
     result := gen(code);
   if result = '' then
     result := 'section';
+end;
+
+
+{ TFhirPrimitiveTypeHelper }
+
+constructor TFhirPrimitiveTypeHelper.create(value: String);
+begin
+  Create;
+  StringValue := value;
+end;
+
+{ TFhirRangeHelper }
+
+function TFhirRangeHelper.either: TFhirQuantity;
+begin
+  if low <> nil then
+    result := low
+  else
+    result := high;
 end;
 
 end.

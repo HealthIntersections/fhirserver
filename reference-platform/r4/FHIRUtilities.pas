@@ -268,6 +268,11 @@ type
     function withCommas : String;
   end;
 
+  TFhirPrimitiveTypeHelper = class helper for TFhirPrimitiveType
+  public
+    constructor create(value : String); overload;
+  end;
+
   TFhirAuditEventHelper = class helper for TFhirAuditEvent
   private
     function getevent: TFhirAuditEvent;
@@ -307,6 +312,7 @@ type
     procedure removeExtension(url : String);
     procedure setExtension(url : String; t : TFHIRType);
     procedure setExtensionString(url, value : String);
+    procedure setExtensionCanonical(url, value : String);
     procedure setExtensionInteger(url, value : String);
     procedure setExtensionDecimal(url, value : String);
     procedure setExtensionURI(url, value : String);
@@ -314,6 +320,7 @@ type
     procedure setExtensionDateTime(url, value : String);
     procedure setExtensionTime(url, value : String);
     procedure setExtensionCode(url, value : String);
+    procedure setExtensionBoolean(url, value : String);
   end;
 
   TFhirCanonicalHelper = class helper for TFhirCanonical
@@ -349,6 +356,11 @@ type
     procedure SetCode(const sValue: String);
   public
     property code : String read GetCode write SetCode;
+  end;
+
+  TFhirRangeHelper = class helper for TFhirRange
+  public
+    function either : TFhirQuantity;
   end;
 
   TFhirQuantityHelper = class helper for TFhirQuantity
@@ -484,6 +496,7 @@ type
   public
     Constructor Create(system, code : String); overload;
 
+    function hasCode(System, Code : String) : boolean;
     class function fromEdit(s : String) : TFhirCoding;
     property editString : String read GetEditString write SetEditString;
   end;
@@ -650,6 +663,9 @@ type
     function HasTag(system, code : String)  : boolean;
     function addTag(system, code, display : String) : TFhirCoding;
     function removeTag(system, code : String) : boolean;
+    function hasProfile(url : String) : boolean;
+    procedure addProfile(url : String);
+    procedure dropProfile(url : String);
   end;
 
   TFhirOperationOutcomeIssueHelper = class helper for TFhirOperationOutcomeIssue
@@ -2341,6 +2357,16 @@ begin
   ext.value := t.link;
 end;
 
+procedure TFHIRElementHelper.setExtensionBoolean(url, value: String);
+var
+  ext : TFhirExtension;
+begin
+  removeExtension(url);
+  ext := self.ExtensionList.Append;
+  ext.url := url;
+  ext.value := TFhirBoolean.Create(value = 'true');
+end;
+
 procedure TFHIRElementHelper.setExtensionCode(url, value: String);
 var
   ext : TFhirExtension;
@@ -2399,6 +2425,16 @@ begin
   ext := self.ExtensionList.Append;
   ext.url := url;
   ext.value := TFhirString.Create(value);
+end;
+
+procedure TFHIRElementHelper.setExtensionCanonical(url, value: String);
+var
+  ext : TFhirExtension;
+begin
+  removeExtension(url);
+  ext := self.ExtensionList.Append;
+  ext.url := url;
+  ext.value := TFhirCanonical.Create(value);
 end;
 
 procedure TFHIRElementHelper.setExtensionTime(url, value: String);
@@ -3073,7 +3109,7 @@ begin
   if type_ = BundleTypeDocument then
     cmp := entryList[0].resource as TFhirComposition
   else
-    cmp.Free;
+    cmp := nil;
 
   result := TFhirProvenance.Create;
   try
@@ -3109,8 +3145,11 @@ begin
     end;
     // fill out other stuff on provenance
     result.occurred := TFhirPeriod.Create;
-    TFhirPeriod(result.occurred).start := cmp.date;
-    TFhirPeriod(result.occurred).end_ := cmp.date;
+    if (cmp <> nil) then
+    begin
+      TFhirPeriod(result.occurred).start := cmp.date;
+      TFhirPeriod(result.occurred).end_ := cmp.date;
+    end;
     result.recorded := TDateTimeEx.makeUTC;
     with result.agentList.Append do
     begin
@@ -3599,6 +3638,12 @@ end;
 
 { TFhirResourceMetaHelper }
 
+procedure TFhirResourceMetaHelper.addProfile(url: String);
+begin
+  if not hasProfile(url) then
+    profileList.Add(TFHIRUri.Create(url));
+end;
+
 function TFhirResourceMetaHelper.addTag(system, code, display: String): TFhirCoding;
 var
   c : TFhirCoding;
@@ -3613,6 +3658,15 @@ begin
   end
   else
     result := getTag(system, code);
+end;
+
+procedure TFhirResourceMetaHelper.dropProfile(url: String);
+var
+  i : integer;
+begin
+  for I := ProfileList.Count - 1 downto 0 do
+    if ProfileList[i].value = url then
+      ProfileList.Remove(i);
 end;
 
 function TFhirResourceMetaHelper.HasTag(system, code: String): boolean;
@@ -3635,6 +3689,16 @@ begin
       result := taglist[i];
       exit;
     end;
+end;
+
+function TFhirResourceMetaHelper.hasProfile(url: String): boolean;
+var
+  u : TFhirUri;
+begin
+  result := false;
+  for u in profileList do
+    if u.value = url then
+      exit(true);
 end;
 
 function TFhirResourceMetaHelper.removeTag(system, code : String): boolean;
@@ -5016,6 +5080,11 @@ begin
 end;
 
 
+function TFhirCodingHelper.hasCode(System, Code: String): boolean;
+begin
+  result := (self.system = system) and (self.code = code);
+end;
+
 procedure TFhirCodingHelper.SetEditString(const Value: String);
 var
   s, c : String;
@@ -6359,6 +6428,24 @@ begin
     result := nil
   else
     result := type_List[0];
+end;
+
+{ TFhirPrimitiveTypeHelper }
+
+constructor TFhirPrimitiveTypeHelper.create(value: String);
+begin
+  Create;
+  StringValue := value;
+end;
+
+{ TFhirRangeHelper }
+
+function TFhirRangeHelper.either: TFhirQuantity;
+begin
+  if low <> nil then
+    result := low
+  else
+    result := high;
 end;
 
 end.

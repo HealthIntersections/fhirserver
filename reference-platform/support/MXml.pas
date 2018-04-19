@@ -2618,8 +2618,8 @@ begin
         o := TSmartDecimal.ValueOf(sl).Compares(TSmartDecimal.ValueOf(sr)) > 0
       else
         o := sl > sr;
+      result.Add(TMXmlBoolean.Create(o));
     end;
-    result.Add(TMXmlBoolean.Create(o));
     result.link;
   finally
     result.free;
@@ -2645,8 +2645,8 @@ begin
         o := TSmartDecimal.ValueOf(sl).Compares(TSmartDecimal.ValueOf(sr)) >= 0
       else
         o := sl >= sr;
+      result.Add(TMXmlBoolean.Create(o));
     end;
-    result.Add(TMXmlBoolean.Create(o));
     result.link;
   finally
     result.free;
@@ -2672,8 +2672,8 @@ begin
         o := TSmartDecimal.ValueOf(sl).Compares(TSmartDecimal.ValueOf(sr)) < 0
       else
         o := sl < sr;
+      result.Add(TMXmlBoolean.Create(o));
     end;
-    result.Add(TMXmlBoolean.Create(o));
     result.link;
   finally
     result.free;
@@ -2699,8 +2699,8 @@ begin
         o := TSmartDecimal.ValueOf(sl).Compares(TSmartDecimal.ValueOf(sr)) <= 0
       else
         o := sl <= sr;
+      result.Add(TMXmlBoolean.Create(o));
     end;
-    result.Add(TMXmlBoolean.Create(o));
     result.link;
   finally
     result.free;

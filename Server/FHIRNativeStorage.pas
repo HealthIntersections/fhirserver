@@ -4736,7 +4736,7 @@ begin
       if allowNil then
         exit(nil)
       else
-        raise ERestfulException.create('TFHIRNativeOperationEngine', 'GetResourceByUrl', 'Unknown '+CODES_TFHIRResourceType[aType]+' '+url, 404, IssueTypeUnknown);
+        raise ERestfulException.create('TFHIRNativeOperationEngine', 'GetResourceByUrl', 'Unknown '+CODES_TFHIRResourceType[aType]+' url: '+url, 404, IssueTypeUnknown);
     needSecure := FConnection.ColIntegerByName['Secure'] = 1;
     s := FConnection.ColBlobByName['JsonContent'];
     parser := MakeParser(ServerContext.ValidatorContext, lang, ffJson, s, xppDrop);

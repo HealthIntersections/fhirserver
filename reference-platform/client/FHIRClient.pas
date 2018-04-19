@@ -52,6 +52,17 @@ Type
     property issue : TFhirOperationOutcome read FIssue;
   end;
 
+  THTTPHeaders = record
+    contentType : String;
+    accept : String;
+    prefer : String;
+    location : String;
+    contentLocation : String;
+    lastOperationId : String; // some servers return an id that links to their own internal log for debugging
+
+    function asString : string;
+  end;
+
   TFHIRClientLogger = class (TAdvObject)
   public
     function Link : TFHIRClientLogger; overload;
@@ -68,15 +79,16 @@ Type
   private
     FLogger : TFHIRClientLogger;
     FLastURL: String;
+    FLastStatus : integer;
     FProvenance: TFhirProvenance;
-    FLastOperationId: String;
     FVersionSpecific: boolean;
+    FHeaders : THTTPHeaders;
     procedure SetProvenance(const Value: TFhirProvenance);
   protected
     procedure SetLogger(const Value: TFHIRClientLogger); virtual;
     function encodeParams(params: TStringList): String;
   public
-    Destructor Destroy; override;
+    destructor Destroy; override;
     function link : TFhirClient; overload;
     property provenance : TFhirProvenance read FProvenance write SetProvenance;
 
@@ -95,13 +107,15 @@ Type
     function operation(atype : TFhirResourceType; opName : String; params : TFhirParameters) : TFHIRResource; overload; virtual;
     function operation(atype : TFhirResourceType; id, opName : String; params : TFhirParameters) : TFHIRResource; overload; virtual;
     function historyType(atype : TFhirResourceType; allRecords : boolean; params : TStringList) : TFHIRBundle; virtual;
+    function custom(path : String; headers : THTTPHeaders) : TAdvBuffer; virtual;
 
     procedure terminate; virtual;
     function address : String; virtual;
     function format : TFHIRFormat; virtual;
     property versionSpecific : boolean read FVersionSpecific write FVersionSpecific;
     property LastURL : String read FLastURL write FLastURL;
-    property LastOperationId : String read FLastOperationId write FLastOperationId; // some servers return an id that links to their own internal log for debugging
+    property LastHeaders : THTTPHeaders read FHeaders;
+    property LastStatus : integer read FLastStatus;
     property Logger : TFHIRClientLogger read FLogger write SetLogger;
   end;
 
@@ -143,17 +157,17 @@ type
     function makeUrl(tail : String; params : TStringList = nil) : String;
     function makeUrlPath(tail : String) : String;
     function CreateParser(stream : TStream) : TFHIRParser;
-    function exchange(url : String; verb : TFhirHTTPClientHTTPVerb; source : TStream; ct : String = '') : TStream;
-    function fetchResource(url : String; verb : TFhirHTTPClientHTTPVerb; source : TStream; ct : String = '') : TFhirResource;
+    function exchange(url : String; verb : TFhirHTTPClientHTTPVerb; source : TStream; headers : THTTPHeaders) : TStream;
+    function fetchResource(url : String; verb : TFhirHTTPClientHTTPVerb; source : TStream; headers : THTTPHeaders) : TFhirResource;
     function makeMultipart(stream: TStream; streamName: string; params: TStringList; var mp : TStream) : String;
     procedure SetSmartToken(const Value: TSmartOnFhirAccessToken);
     procedure SetTimeout(const Value: cardinal);
     procedure createClient;
     procedure setHeader(name, value : String);
     function GetHeader(name : String) : String;
-    function exchangeIndy(url: String; verb: TFhirHTTPClientHTTPVerb; source: TStream; ct: String): TStream;
+    function exchangeIndy(url: String; verb: TFhirHTTPClientHTTPVerb; source: TStream; headers : THTTPHeaders): TStream;
     {$IFDEF MSWINDOWS}
-    function exchangeHTTP(url: String; verb: TFhirHTTPClientHTTPVerb; source: TStream; ct: String): TStream;
+    function exchangeHTTP(url: String; verb: TFhirHTTPClientHTTPVerb; source: TStream; headers : THTTPHeaders): TStream;
     {$ENDIF}
 
     function authoriseByOWinIndy(server, username, password : String): TJsonObject;
@@ -207,6 +221,7 @@ type
     function operation(atype : TFhirResourceType; id, opName : String; params : TFhirParameters) : TFHIRResource; overload; override;
     function historyType(atype : TFhirResourceType; allRecords : boolean; params : TStringList) : TFHIRBundle; override;
     function cdshook(id : String; request : TCDSHookRequest) : TCDSHookResponse;
+    function custom(path : String; headers : THTTPHeaders) : TAdvBuffer; override;
 
     procedure terminate; override;
 
@@ -235,6 +250,9 @@ type
     FResource: TFhirResource;
     FName: String;
     FLastURL: String;
+    FLastStatus : integer;
+    FHeaders : THTTPHeaders;
+    FBuffer : TAdvBuffer;
     procedure SetResult(const Value: TFhirResource);
     procedure SetResource(const Value: TFhirResource);
   public
@@ -258,6 +276,7 @@ type
     property result : TFhirResource read FResult write SetResult;
     property error : String read FError write FError;
     property lastUrl : String read FLastURL write FLastURL;
+    property lastStatus : integer read FLastStatus write FLastStatus;
   end;
 
   TThreadClientThread = class (TThread)
@@ -299,6 +318,7 @@ type
     function operation(atype : TFhirResourceType; opName : String; params : TFhirParameters) : TFHIRResource; overload; override;
     function operation(atype : TFhirResourceType; id, opName : String; params : TFhirParameters) : TFHIRResource; overload; override;
     function historyType(atype : TFhirResourceType; allRecords : boolean; params : TStringList) : TFHIRBundle; override;
+    function custom(path : String; headers : THTTPHeaders) : TAdvBuffer; override;
 
     function address : String; override;
     function format : TFHIRFormat; override;
@@ -306,26 +326,28 @@ type
 
   TFHIRClientAsyncContextState = (asyncReady, asyncInitialQuery, asyncInitialWait, asyncDelay, asyncPing, asyncPingWait, asyncReadyToDownload, async);
 
-  TFHIRClientAsyncContext = class (TAdvObject)
+  TFHIRClientAsyncTask = class (TAdvObject)
   private
     FClient : TFhirClient;
     FFolder: String;
     FTypes: TFhirResourceTypeSet;
     FQuery: string;
-    FMimeType: String;
+    FFormat : TFHIRFormat;
     FSince: TDateTimeEx;
     FLog : String;
     FStart : TDateTime;
     FStatus : TFHIRClientAsyncContextState;
+    FTaskLocation : String;
     procedure SetTypes(const Value: TFhirResourceTypeSet);
     procedure log(s : String);
+    procedure makeInitialRequest;
   public
     Constructor create(client : TFhirClient);
     Destructor Destroy; override;
 
     // setup
     property query : string read FQuery write FQuery;
-    property mimeType : String read FMimeType write FMimeType;
+    property format : TFHIRFormat read FFormat write FFormat;
     property folder : String read FFolder write FFolder;
     property since : TDateTimeEx read FSince write FSince;
     property types : TFhirResourceTypeSet read FTypes write SetTypes;
@@ -426,12 +448,13 @@ end;
 function TFhirHTTPClient.conformance(summary : boolean): TFhirCapabilityStatement;
 var
   params : TStringList;
+  headers : THTTPHeaders;
 begin
   params := TStringList.create;
   try
     if summary then
       params.AddPair('_summary', 'true');
-    result := FetchResource(MakeUrl('metadata', params), httpGet, nil) as TFhirCapabilityStatement;
+    result := FetchResource(MakeUrl('metadata', params), httpGet, nil, headers) as TFhirCapabilityStatement;
   finally
     params.Free;
   end;
@@ -448,10 +471,11 @@ end;
 function TFhirHTTPClient.transaction(bundle : TFHIRBundle) : TFHIRBundle;
 Var
   src : TStream;
+  headers : THTTPHeaders;
 begin
   src := serialise(bundle);
   try
-    result := fetchResource(makeUrl(''), httpPost, src) as TFhirBundle;
+    result := fetchResource(makeUrl(''), httpPost, src, headers) as TFhirBundle;
   finally
     src.free;
   end;
@@ -481,12 +505,13 @@ end;
 function TFhirHTTPClient.createResource(resource: TFhirResource; var id : String): TFHIRResource;
 Var
   src : TStream;
+  headers : THTTPHeaders;
 begin
   src := serialise(resource);
   try
     result := nil;
     try
-      result := fetchResource(MakeUrl(CODES_TFhirResourceType[resource.resourceType]), httpPost, src);
+      result := fetchResource(MakeUrl(CODES_TFhirResourceType[resource.resourceType]), httpPost, src, headers);
       id := readIdFromLocation(CODES_TFhirResourceType[resource.resourceType], getHeader('Location'));
       result.link;
     finally
@@ -497,24 +522,46 @@ begin
   end;
 end;
 
+function TFhirHTTPClient.custom(path: String; headers: THTTPHeaders): TAdvBuffer;
+var
+  ret : TStream;
+begin
+  ret := exchange(url+'/'+path, httpGet, nil, headers);
+  try
+    result := TAdvBuffer.Create;
+    try
+      result.LoadFromStream(ret);
+
+      result.link;
+    finally
+      result.Free;
+    end;
+  finally
+    ret.Free;
+  end;
+end;
+
 function TFhirHTTPClient.updateResource(resource : TFhirResource) : TFHIRResource;
 Var
   src : TStream;
+  headers : THTTPHeaders;
 begin
   if (resource.meta <> nil) and (resource.meta.versionId <> '') then
     SetHeader('Content-Location', MakeUrlPath(CODES_TFhirResourceType[resource.resourceType]+'/'+resource.id+'/history/'+resource.meta.versionId));
 
   src := serialise(resource);
   try
-      result := fetchResource(MakeUrl(CODES_TFhirResourceType[resource.resourceType]+'/'+resource.id), httpPut, src);
+    result := fetchResource(MakeUrl(CODES_TFhirResourceType[resource.resourceType]+'/'+resource.id), httpPut, src, headers);
   finally
     src.free;
   end;
 end;
 
 procedure TFhirHTTPClient.deleteResource(atype : TFhirResourceType; id : String);
+var
+  headers : THTTPHeaders;
 begin
-  exchange(MakeUrl(CODES_TFhirResourceType[aType]+'/'+id), httpDelete, nil).free;
+  exchange(MakeUrl(CODES_TFhirResourceType[aType]+'/'+id), httpDelete, nil, headers).free;
 end;
 
 //-- Worker Routines -----------------------------------------------------------
@@ -626,8 +673,9 @@ var
   s : String;
   res : TFHIRResource;
   feed : TFHIRBundle;
+  headers : THTTPHeaders;
 begin
-  res := fetchResource(makeUrl(CODES_TFhirResourceType[aType])+'?'+params, httpGet, nil);
+  res := fetchResource(makeUrl(CODES_TFhirResourceType[aType])+'?'+params, httpGet, nil, headers);
 //    client.Request.RawHeaders.Values['Content-Location'] := MakeUrlPath(CODES_TFhirResourceType[resource.resourceType]+'/'+id+'/history/'+ver);
   if not (res is TFHIRBundle) then
     raise Exception.Create('Found a resource of type '+res.fhirType+' expecting a Bundle');
@@ -637,7 +685,7 @@ begin
     s := result.links['next'];
     while AllRecords and (s <> '') do
     begin
-      feed := fetchResource(s, httpGet, nil) as TFhirBundle;
+      feed := fetchResource(s, httpGet, nil, headers) as TFhirBundle;
       try
         result.entryList.AddAll(feed.entryList);
         s := feed.links['next'];
@@ -659,8 +707,10 @@ begin
 end;
 
 function TFhirHTTPClient.searchAgain(link: String): TFHIRBundle;
+var
+  headers : THTTPHeaders;
 begin
-  result := fetchResource(link, httpGet, nil) as TFHIRBundle;
+  result := fetchResource(link, httpGet, nil, headers) as TFHIRBundle;
 end;
 
 function TFhirHTTPClient.search(allRecords: boolean; params: TStringList): TFHIRBundle;
@@ -672,13 +722,14 @@ function TFhirHTTPClient.searchPost(atype: TFhirResourceType; allRecords: boolea
 var
   src, frm : TStream;
   ct : String;
+  headers : THTTPHeaders;
 begin
   src := serialise(resource);
   try
     src.Position := 0;
     ct := makeMultipart(src, 'src', params, frm);
     try
-      result := fetchResource(makeUrl(CODES_TFhirResourceType[aType])+'/_search', httpPost, frm) as TFhirBundle;
+      result := fetchResource(makeUrl(CODES_TFhirResourceType[aType])+'/_search', httpPost, frm, headers) as TFhirBundle;
     finally
       frm.Free;
     end;
@@ -691,14 +742,15 @@ end;
 function TFhirHTTPClient.operation(atype : TFhirResourceType; opName : String; params : TFhirParameters) : TFHIRResource;
 Var
   src : TStream;
+  headers : THTTPHeaders;
 begin
   src := serialise(params);
   try
     src.Position := 0;
     if aType = frtNull then
-      result := fetchResource(makeUrl('$'+opName), httpPost, src)
+      result := fetchResource(makeUrl('$'+opName), httpPost, src, headers)
     else
-    result := fetchResource(makeUrl(CODES_TFhirResourceType[aType])+'/$'+opName, httpPost, src);
+    result := fetchResource(makeUrl(CODES_TFhirResourceType[aType])+'/$'+opName, httpPost, src, headers);
   finally
     src.free;
   end;
@@ -707,30 +759,31 @@ end;
 function TFhirHTTPClient.operation(atype : TFhirResourceType; id, opName : String; params : TFhirParameters) : TFHIRResource;
 Var
   src : TStream;
+  headers : THTTPHeaders;
 begin
   if params = nil then
   begin
-    result := fetchResource(makeUrl(CODES_TFhirResourceType[aType])+'/'+id+'/$'+opName, httpGet, nil);
+    result := fetchResource(makeUrl(CODES_TFhirResourceType[aType])+'/'+id+'/$'+opName, httpGet, nil, headers);
   end
   else
   begin
     src := serialise(params);
     try
       src.Position := 0;
-      result := fetchResource(makeUrl(CODES_TFhirResourceType[aType])+'/'+id+'/$'+opName, httpPost, src);
+      result := fetchResource(makeUrl(CODES_TFhirResourceType[aType])+'/'+id+'/$'+opName, httpPost, src, headers);
     finally
       src.free;
     end;
   end;
 end;
 
-function TFhirHTTPClient.fetchResource(url: String; verb: TFhirHTTPClientHTTPVerb; source: TStream; ct : String = ''): TFhirResource;
+function TFhirHTTPClient.fetchResource(url: String; verb: TFhirHTTPClientHTTPVerb; source: TStream; headers : THTTPHeaders): TFhirResource;
 var
   ret, conv : TStream;
   p : TFHIRParser;
 begin
   FTerminated := false;
-  ret := exchange(url, verb, source, ct);
+  ret := exchange(url, verb, source, headers);
   if FTerminated then
     abort;
   try
@@ -825,11 +878,12 @@ begin
 end;
 
 function TFhirHTTPClient.readResource(atype: TFhirResourceType; id: String): TFHIRResource;
+var
+  headers : THTTPHeaders;
 begin
-
   result := nil;
   try
-    result := fetchResource(MakeUrl(CODES_TFhirResourceType[AType]+'/'+id), httpGet, nil);
+    result := fetchResource(MakeUrl(CODES_TFhirResourceType[AType]+'/'+id), httpGet, nil, headers);
     result.link;
   finally
     result.free;
@@ -850,10 +904,11 @@ var
   s : String;
   feed : TFHIRBundle;
   i : integer;
+  headers : THTTPHeaders;
 begin
 //    client.Request.RawHeaders.Values['Content-Location'] := MakeUrlPath(CODES_TFhirResourceType[resource.resourceType]+'/'+id+'/history/'+ver);
   status('Fetch History for '+CODES_TFhirResourceType[aType]);
-  result := fetchResource(makeUrl(CODES_TFhirResourceType[aType])+'/_history?'+encodeParams(params), httpGet, nil) as TFhirBundle;
+  result := fetchResource(makeUrl(CODES_TFhirResourceType[aType])+'/_history?'+encodeParams(params), httpGet, nil, headers) as TFhirBundle;
   try
     s := result.links['next'];
     i := 1;
@@ -861,7 +916,7 @@ begin
     begin
       inc(i);
       status('Fetch History for '+CODES_TFhirResourceType[aType]+' page '+inttostr(i));
-      feed := fetchResource(s, httpGet, nil) as TFhirBundle;
+      feed := fetchResource(s, httpGet, nil, headers) as TFhirBundle;
       try
         result.entryList.AddAll(feed.entryList);
         s := feed.links['next'];
@@ -951,15 +1006,17 @@ begin
   Password := FCertPWord;
 end;
 
-function TFhirHTTPClient.exchange(url : String; verb : TFhirHTTPClientHTTPVerb; source : TStream; ct : String = '') : TStream;
+function TFhirHTTPClient.exchange(url : String; verb : TFhirHTTPClientHTTPVerb; source : TStream; headers : THTTPHeaders) : TStream;
 begin
+  FHeaders.accept := '';
+  FHeaders.prefer := '';
   createClient;
   LastURL := url;
   if FUseIndy then
-    result := exchangeIndy(url, verb, source, ct)
+    result := exchangeIndy(url, verb, source, headers)
   {$IFDEF MSWINDOWS}
   else
-    result := exchangeHTTP(url, verb, source, ct)
+    result := exchangeHTTP(url, verb, source, headers)
   {$ENDIF}
 end;
 
@@ -975,7 +1032,7 @@ begin
 end;
 
 {$IFDEF MSWINDOWS}
-function TFhirHTTPClient.exchangeHTTP(url: String; verb: TFhirHTTPClientHTTPVerb; source: TStream; ct: String): TStream;
+function TFhirHTTPClient.exchangeHTTP(url: String; verb: TFhirHTTPClientHTTPVerb; source: TStream; headers : THTTPHeaders): TStream;
 var
   ok : boolean;
   op : TFHIROperationOutcome;
@@ -1029,8 +1086,8 @@ begin
     http.RequestType := mimeType('xml')+'; charset=utf-8';
     http.ResponseType := mimeType('xml')+'; charset=utf-8';
   end;
-  if ct <> '' then
-    http.RequestType := ct;
+  if headers.contentType <> '' then
+    http.RequestType := headers.contentType;
 
   if provenance <> nil then
     http.Headers['X-Provenance'] := resourceToString(Provenance, ffJson)
@@ -1081,13 +1138,17 @@ begin
       http.Execute;
 
       code := StrToInt(http.ResponseCode);
+      FLastStatus := code;
       if (code < 200) or (code >= 600) Then
         raise exception.create('unexpected condition');
     if (code >= 300) and (code < 400) then
       url := http.getResponseHeader('Location');
   until (code < 300) or (code >= 400);
 
-  FLastOperationId := http.Headers['X-Request-Id'];
+  FHeaders.contentType := http.Headers['Content-Type'];
+  FHeaders.location := http.Headers['Location'];
+  FHeaders.contentLocation := http.Headers['Content-Location'];
+  FHeaders.LastOperationId := http.Headers['X-Request-Id'];
 
   if code >= 300 then
     processException;
@@ -1100,7 +1161,7 @@ begin
 {$ENDIF}
 
 
-function TFhirHTTPClient.exchangeIndy(url : String; verb : TFhirHTTPClientHTTPVerb; source : TStream; ct : String) : TStream;
+function TFhirHTTPClient.exchangeIndy(url : String; verb : TFhirHTTPClientHTTPVerb; source : TStream; headers : THTTPHeaders) : TStream;
 var
   comp : TFHIRParser;
   ok : boolean;
@@ -1117,8 +1178,13 @@ begin
     indy.Request.ContentType := mimeType('xml')+'; charset=utf-8';
     indy.Request.Accept := mimeType('xml')+'; charset=utf-8';
   end;
-  if ct <> '' then
-    indy.Request.ContentType := ct;
+  if headers.contentType <> '' then
+    indy.Request.ContentType := headers.contentType;
+  if headers.accept <> '' then
+    indy.Request.Accept := headers.accept;
+  if headers.prefer <> '' then
+    indy.Request.CustomHeaders.values['Prefer'] := headers.prefer;
+
   if smartToken <> nil then
     indy.Request.CustomHeaders.values['Authorization'] := 'Bearer '+smartToken.accessToken;
 
@@ -1158,7 +1224,11 @@ begin
       ok := true;
       if (result <> nil) then
          result.Position := 0;
-      FLastOperationId := indy.Response.RawHeaders.Values['X-Request-Id'];
+      FHeaders.contentType := indy.Response.ContentType;
+      FHeaders.location := indy.Response.Location;
+      FHeaders.LastOperationId := indy.Response.RawHeaders.Values['X-Request-Id'];
+      FHeaders.contentLocation := indy.Response.RawHeaders.Values['Content-Location'];
+      FLastStatus := indy.ResponseCode;
     except
       on E:EIdHTTPProtocolException do
       begin
@@ -1166,7 +1236,11 @@ begin
         cnt := e.ErrorMessage;
         if cnt = '' then
           cnt := e.message;
-        FLastOperationId := indy.Response.RawHeaders.Values['X-Request-Id'];
+        FHeaders.contentType := indy.Response.ContentType;
+        FHeaders.location := indy.Response.Location;
+        FHeaders.contentLocation := indy.Response.RawHeaders.Values['Content-Location'];
+        FHeaders.LastOperationId := indy.Response.RawHeaders.Values['X-Request-Id'];
+        FLastStatus := indy.ResponseCode;
 
         if StringFind(cnt, 'OperationOutcome') > 0 then
         begin
@@ -1293,13 +1367,15 @@ var
   b : TBytes;
   req, resp : TStream;
   json : TJsonObject;
+  headers : THTTPHeaders;
 begin
+  headers.contentType := 'application/json';
   b := TEncoding.UTF8.GetBytes(request.AsJson);
   req := TMemoryStream.Create;
   try
     req.Write(b[0], length(b));
     req.Position := 0;
-    resp := exchange(UrlPath([FURL, 'cds-services', id]), httpPost, req, 'application/json');
+    resp := exchange(UrlPath([FURL, 'cds-services', id]), httpPost, req, headers);
     try
       json := TJSONParser.Parse(resp);
       try
@@ -1340,6 +1416,11 @@ end;
 function TFhirClient.createResource(resource: TFhirResource; var id: String): TFHIRResource;
 begin
   raise Exception.Create('Must override createResource() in '+className);
+end;
+
+function TFhirClient.custom(path: String; headers: THTTPHeaders): TAdvBuffer;
+begin
+  raise Exception.Create('Must override custom() in '+className);
 end;
 
 procedure TFhirClient.deleteResource(atype: TFhirResourceType; id: String);
@@ -1436,7 +1517,9 @@ begin
     pack.Thread := TThreadClientThread.create(FInternal.link, pack.Link);
     wait(pack);
     result := pack.result.link as TFhirCapabilityStatement;
+    FHeaders := FInternal.LastHeaders;
     LastUrl := pack.lastUrl;
+    FLastStatus := pack.lastStatus;
   finally
     pack.free;
   end;
@@ -1461,10 +1544,34 @@ begin
     wait(pack);
     result := pack.result.link;
     id := pack.id;
+    FHeaders := FInternal.LastHeaders;
     LastUrl := pack.lastUrl;
+    FLastStatus := pack.lastStatus;
   finally
     pack.free;
   end;
+end;
+
+function TFhirThreadedClient.custom(path: String; headers: THTTPHeaders): TAdvBuffer;
+var
+  pack : TFHIRThreadedClientPackage;
+begin
+  pack := TFHIRThreadedClientPackage.create;
+  try
+    pack.command := fcmdTask;
+    pack.resourceType := frtNull;
+    pack.paramString := path;
+    pack.Fheaders := Headers;
+    pack.Thread := TThreadClientThread.create(FInternal.link, pack.Link);
+    wait(pack);
+    FHeaders := FInternal.LastHeaders;
+    result := pack.Fbuffer.link;
+    LastUrl := pack.lastUrl;
+    FLastStatus := pack.lastStatus;
+  finally
+    pack.free;
+  end;
+
 end;
 
 procedure TFhirThreadedClient.deleteResource(atype: TFhirResourceType; id: String);
@@ -1507,7 +1614,9 @@ begin
     pack.Thread := TThreadClientThread.create(FInternal.link, pack.Link);
     wait(pack);
     result := pack.result.link;
+    FHeaders := FInternal.LastHeaders;
     LastUrl := pack.lastUrl;
+    FLastStatus := pack.lastStatus;
   finally
     pack.free;
   end;
@@ -1526,7 +1635,9 @@ begin
     pack.Thread := TThreadClientThread.create(FInternal.link, pack.Link);
     wait(pack);
     result := pack.result.link;
+    FHeaders := FInternal.LastHeaders;
     LastUrl := pack.lastUrl;
+    FLastStatus := pack.lastStatus;
   finally
     pack.free;
   end;
@@ -1544,7 +1655,9 @@ begin
     pack.Thread := TThreadClientThread.create(FInternal.link, pack.Link);
     wait(pack);
     result := pack.result.link;
+    FHeaders := FInternal.LastHeaders;
     LastUrl := pack.lastUrl;
+    FLastStatus := pack.lastStatus;
   finally
     pack.free;
   end;
@@ -1563,7 +1676,9 @@ begin
     pack.Thread := TThreadClientThread.create(FInternal.link, pack.Link);
     wait(pack);
     result := pack.result.link as TFHIRBundle;
+    FHeaders := FInternal.LastHeaders;
     LastUrl := pack.lastUrl;
+    FLastStatus := pack.lastStatus;
   finally
     pack.free;
   end;
@@ -1582,7 +1697,9 @@ begin
     pack.Thread := TThreadClientThread.create(FInternal.link, pack.Link);
     wait(pack);
     result := pack.result.link as TFHIRBundle;
+    FHeaders := FInternal.LastHeaders;
     LastUrl := pack.lastUrl;
+    FLastStatus := pack.lastStatus;
   finally
     pack.free;
   end;
@@ -1601,7 +1718,9 @@ begin
     pack.Thread := TThreadClientThread.create(FInternal.link, pack.Link);
     wait(pack);
     result := pack.result.link as TFHIRBundle;
+    FHeaders := FInternal.LastHeaders;
     LastUrl := pack.lastUrl;
+    FLastStatus := pack.lastStatus;
   finally
     pack.free;
   end;
@@ -1618,7 +1737,9 @@ begin
     pack.Thread := TThreadClientThread.create(FInternal.link, pack.Link);
     wait(pack);
     result := pack.result.link as TFHIRBundle;
+    FHeaders := FInternal.LastHeaders;
     LastUrl := pack.lastUrl;
+    FLastStatus := pack.lastStatus;
   finally
     pack.free;
   end;
@@ -1646,7 +1767,9 @@ begin
     pack.Thread := TThreadClientThread.create(FInternal.link, pack.Link);
     wait(pack);
     result := pack.result.link as TFHIRBundle;
+    FHeaders := FInternal.LastHeaders;
     LastUrl := pack.lastUrl;
+    FLastStatus := pack.lastStatus;
   finally
     pack.free;
   end;
@@ -1663,7 +1786,9 @@ begin
     pack.Thread := TThreadClientThread.create(FInternal.link, pack.Link);
     wait(pack);
     result := pack.result.link as TFHIRResource;
+    FHeaders := FInternal.LastHeaders;
     LastUrl := pack.lastUrl;
+    FLastStatus := pack.lastStatus;
   finally
     pack.free;
   end;
@@ -1767,6 +1892,8 @@ begin
             FPackage.result := FClient.operation(FPackage.resourceType, FPackage.id, FPackage.name, FPackage.resource as TFhirParameters)
           else
             FPackage.result := FClient.operation(FPackage.resourceType, FPackage.name, FPackage.resource as TFhirParameters);
+        fcmdTask :
+            FPackage.FBuffer := FClient.custom(FPackage.paramString, FPackage.FHeaders);
       else
         raise Exception.Create('Not done yet');
       end;
@@ -1775,6 +1902,8 @@ begin
         FPackage.error := e.Message;
     end;
     FPackage.FLastURL := FClient.FLastURL;
+    FPackage.FLastStatus := FClient.LastStatus;
+    FPackage.FHeaders := FClient.LastHeaders;
   finally
     FPackage.FDone := true;
   end;
@@ -1801,9 +1930,9 @@ begin
   // nothing
 end;
 
-{ TFHIRClientAsyncContext }
+{ TFHIRClientAsyncTask }
 
-constructor TFHIRClientAsyncContext.create(client: TFhirClient);
+constructor TFHIRClientAsyncTask.create(client: TFhirClient);
 begin
   inherited Create;
   FClient := client;
@@ -1813,32 +1942,66 @@ begin
   log('Initialised at '+FormatDateTime('c', now));
 end;
 
-destructor TFHIRClientAsyncContext.Destroy;
+destructor TFHIRClientAsyncTask.Destroy;
 begin
   FClient.Free;
   inherited;
 end;
 
-function TFHIRClientAsyncContext.Finished: boolean;
+function TFHIRClientAsyncTask.Finished: boolean;
 begin
   result := false;
 end;
 
-procedure TFHIRClientAsyncContext.log(s: String);
+procedure TFHIRClientAsyncTask.log(s: String);
 begin
   s := DescribePeriod(now - FStart) + ' '+ s + #13#10;
   Flog := s + Flog;
 end;
 
-function TFHIRClientAsyncContext.logText : String;
+function TFHIRClientAsyncTask.logText : String;
 begin
   result := Flog;
 end;
 
-procedure TFHIRClientAsyncContext.next;
+procedure TFHIRClientAsyncTask.makeInitialRequest;
+var
+  headers : THTTPHeaders;
+  p, t : String;
+  a : TFhirResourceType;
+  buf : TAdvBuffer;
+begin
+  headers.accept := 'application/fhir+json';
+  headers.prefer := 'respond-async';
+  p := FQuery+'?_outputFormat=application/fhir+ndjson';
+  if since.notNull then
+    p := p + '&_since='+since.toXML;
+  t := '';
+  for a := low(TFHIRResourceType) to high(TFHIRResourceType) do
+    if a in types then
+      CommaAdd(t, CODES_TFHIRResourceType[a]);
+  if t <> '' then
+    p := '&_type='+t;
+  log('Make request of '+p+' with headers '+headers.asString);
+  buf := FClient.custom(p, headers);
+  try
+    if FClient.LastStatus = 202 then
+    begin
+      FTaskLocation := FClient.LastHeaders.ContentLocation;
+      FStatus := asyncDelay;
+      log('Accepted. Task Location = '+FTaskLocation);
+    end
+    else
+      raise Exception.Create('Error?');
+  finally
+    buf.Free;
+  end;
+end;
+
+procedure TFHIRClientAsyncTask.next;
 begin
   case FStatus of
-    asyncReady: raise Exception.Create('Not done yet');
+    asyncReady: makeInitialRequest;
     asyncInitialQuery: raise Exception.Create('Not done yet');
     asyncInitialWait: raise Exception.Create('Not done yet');
     asyncDelay: raise Exception.Create('Not done yet');
@@ -1849,14 +2012,41 @@ begin
   end;
 end;
 
-procedure TFHIRClientAsyncContext.SetTypes(const Value: TFhirResourceTypeSet);
+procedure TFHIRClientAsyncTask.SetTypes(const Value: TFhirResourceTypeSet);
 begin
   FTypes := Value;
 end;
 
-function TFHIRClientAsyncContext.status: String;
+function TFHIRClientAsyncTask.status: String;
 begin
+  case FStatus of
+    asyncReady: result := 'Ready to make Request';
+    asyncInitialQuery: result := 'Not done yet';
+    asyncInitialWait: result := 'Not done yet';
+    asyncDelay: result := 'Not done yet';
+    asyncPing: result := 'Not done yet';
+    asyncPingWait: result := 'Not done yet';
+    asyncReadyToDownload: result := 'Not done yet';
+    async: result := 'Not done yet';
+  end;
   result := 'Status to be determined';
+end;
+
+{ THTTPHeaders }
+
+function THTTPHeaders.asString: string;
+begin
+  result := '';
+  if (contentType <> '') then
+    CommaAdd(result, 'ContentType: '+contentType);
+  if (accept <> '') then
+    CommaAdd(result, 'Accept: '+accept);
+  if (prefer <> '') then
+    CommaAdd(result, 'Prefer: '+prefer);
+  if (location <> '') then
+    CommaAdd(result, 'Location: '+location);
+  if (lastOperationId <> '') then
+    CommaAdd(result, 'X-Last-Operation-Id: '+lastOperationId);
 end;
 
 end.

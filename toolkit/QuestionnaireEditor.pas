@@ -41,7 +41,7 @@ uses
   FHIRBase, FHIRConstants, FHIRTypes, FHIRResources, FHIRUtilities, FHIRIndexBase, FHIRIndexInformation, FHIRSupport,
   QuestionnaireRenderer,
   BaseResourceFrame,
-  ToolkitUtilities, QuestionnaireItemDialog, MemoEditorDialog, QuestionnairePanel, TranslationsEditorDialog;
+  ToolkitUtilities, QuestionnaireItemDialog, MemoEditorDialog, QuestionnairePanel, TranslationsEditorDialog, UsageContextForm;
 
 type
   TFrame = TBaseResourceFrame; // re-aliasing the Frame to work around a designer bug
@@ -98,7 +98,7 @@ type
     Label18: TLabel;
     Label19: TLabel;
     lbResources: TListBox;
-    Grid1: TGrid;
+    grdUseContext: TGrid;
     grdItems: TGrid;
     StringColumn1: TStringColumn;
     StringColumn2: TStringColumn;
@@ -137,6 +137,34 @@ type
     btnAddQuestionItem: TButton;
     Label12: TLabel;
     ComboBox1: TComboBox;
+    cbSDC: TCheckBox;
+    Label22: TLabel;
+    edtSDCEndPoint: TEdit;
+    cbProvenanceSignatureRequired: TCheckBox;
+    cbStyleSensitive: TCheckBox;
+    Label23: TLabel;
+    Label24: TLabel;
+    edtSDCsourceStructureMap: TEdit;
+    Label25: TLabel;
+    edtSDCtargetStructureMap: TEdit;
+    Label26: TLabel;
+    Label27: TLabel;
+    edtSDCIdSystem: TEdit;
+    Label28: TLabel;
+    edtSDCIdValue: TEdit;
+    tvSDC: TTreeViewItem;
+    tbSDC: TTabItem;
+    ScrollBox2: TScrollBox;
+    Label21: TLabel;
+    Label29: TLabel;
+    edtSDCTitleStyle: TEdit;
+    edtSDCTitleXtml: TEdit;
+    Label30: TLabel;
+    btnAddCode: TButton;
+    btnEditCode: TButton;
+    btnRemoveCode: TButton;
+    gcUsageCode: TStringColumn;
+    gcUsageValue: TStringColumn;
     procedure tvStructureClick(Sender: TObject);
     procedure inputChanged(Sender: TObject);
     procedure btnDescriptionClick(Sender: TObject);
@@ -159,6 +187,10 @@ type
     procedure btnTitleClick(Sender: TObject);
     procedure btnNameClick(Sender: TObject);
     procedure btnAddQuestionItemClick(Sender: TObject);
+    procedure grdUseContextGetValue(Sender: TObject; const ACol, ARow: Integer; var Value: TValue);
+    procedure btnAddCodeClick(Sender: TObject);
+    procedure btnEditCodeClick(Sender: TObject);
+    procedure btnRemoveCodeClick(Sender: TObject);
   private
     flatItems : TAdvList<TFhirQuestionnaireItem>;
     FLoading : boolean;
@@ -174,11 +206,13 @@ type
     procedure updateStatus(sel : TFhirQuestionnaireItem);
 
     procedure loadMetadata;
+    procedure loadSDC;
     procedure loadContext;
     procedure loadGrid;
     procedure loadForm;
 
     procedure commitMetadata;
+    procedure commitSDC;
 //    procedure commitGrid;
 //    procedure commitItems;
   public
@@ -231,6 +265,24 @@ begin
   ResourceIsDirty := true;
   grdItems.SelectCell(1, flatItems.IndexOf(c));
   btnEditItemClick(nil);
+end;
+
+procedure TQuestionnaireEditorFrame.btnAddCodeClick(Sender: TObject);
+var
+  dlg : TUsageContextDialog;
+begin
+  dlg := TUsageContextDialog.create(nil);
+  try
+    dlg.UsageContext := TFhirUsageContext.Create;
+    dlg.Settings := Settings.link;
+    if dlg.ShowModal = mrOk then
+    begin
+      Questionnaire.useContextList.Add(dlg.UsageContext.Link);
+      grdUseContext.RowCount := Questionnaire.useContextList.Count;
+    end;
+  finally
+    dlg.free;
+  end;
 end;
 
 procedure TQuestionnaireEditorFrame.btnAddItemClick(Sender: TObject);
@@ -399,6 +451,31 @@ begin
   editStringDialog(self, 'Questionnaire Name', btnName, edtName, Questionnaire, Questionnaire.nameElement);
 end;
 
+procedure TQuestionnaireEditorFrame.btnEditCodeClick(Sender: TObject);
+var
+  dlg : TUsageContextDialog;
+  i : integer;
+begin
+  i := grdUseContext.Row;
+  if i < 0 then
+    i := 0;
+
+  dlg := TUsageContextDialog.create(nil);
+  try
+    dlg.UsageContext := Questionnaire.useContextList[i].Clone;
+    dlg.Settings := Settings.link;
+    if dlg.ShowModal = mrOk then
+    begin
+      Questionnaire.useContextList[i].assign(dlg.UsageContext);
+      grdUseContext.RowCount := 0;
+      grdUseContext.RowCount := Questionnaire.useContextList.Count;
+      grdUseContext.Row := i;
+    end;
+  finally
+    dlg.free;
+  end;
+end;
+
 procedure TQuestionnaireEditorFrame.btnEditItemClick(Sender: TObject);
 var
   form : TQuestionnaireItemForm;
@@ -462,6 +539,24 @@ begin
   editMarkdownDialog(self, 'Questionnaire Purpose', btnPurpose, edtPurpose, Questionnaire, Questionnaire.purposeElement);
 end;
 
+procedure TQuestionnaireEditorFrame.btnRemoveCodeClick(Sender: TObject);
+var
+  i : integer;
+begin
+  i := grdUseContext.Row;
+  if i >= 0 then
+  begin
+    if FMX.Dialogs.MessageDlg('Delete '+gen(Questionnaire.useContextList[i].code)+' : '+gen(Questionnaire.useContextList[i].value),
+       TMsgDlgType.mtConfirmation, mbYesNo, 0) = mrYes then
+    begin
+      Questionnaire.useContextList.Remove(i);
+      grdUseContext.RowCount := 0;
+      grdUseContext.RowCount := Questionnaire.useContextList.Count;
+      grdUseContext.Row := i-1;
+    end;
+  end;
+end;
+
 procedure TQuestionnaireEditorFrame.btnTitleClick(Sender: TObject);
 begin
   if Questionnaire.titleElement = nil then
@@ -484,6 +579,8 @@ procedure TQuestionnaireEditorFrame.commit;
 begin
   if tvStructure.Selected = tvMetadata then
     CommitMetadata;
+  if tvStructure.Selected = tvSDC then
+    CommitSDC;
   ResourceIsDirty := true;
 end;
 
@@ -525,9 +622,44 @@ begin
     Questionnaire.effectivePeriod.end_ := makeDT(dedEnd);
   end;
   Questionnaire.jurisdictionList.Clear;
+
   cc := getJurisdiction(cbxJurisdiction.ItemIndex);
   if (cc <> nil) then
     Questionnaire.jurisdictionList.add(cc);
+end;
+
+procedure TQuestionnaireEditorFrame.commitSDC;
+begin
+  if cbSDC.IsChecked then
+  begin
+    if Questionnaire.meta = nil then
+      Questionnaire.meta := TFhirMeta.Create;
+    Questionnaire.meta.addProfile('http://hl7.org/fhir/us/sdc/StructureDefinition/sdc-questionnaire');
+  end
+  else if Questionnaire.meta <> nil then
+    Questionnaire.meta.dropProfile('http://hl7.org/fhir/us/sdc/StructureDefinition/sdc-questionnaire');
+  writeExtension(Questionnaire, 'http://hl7.org/fhir/us/sdc/StructureDefinition/sdc-questionnaire-endpoint', edtSDCEndPoint.Text, TFhirUri);
+  if cbProvenanceSignatureRequired.IsChecked then
+    writeExtension(Questionnaire, 'http://hl7.org/fhir/us/sdc/StructureDefinition/sdc-questionnaire-provenanceSignatureRequired', 'true', TFhirBoolean)
+  else
+    writeExtension(Questionnaire, 'http://hl7.org/fhir/us/sdc/StructureDefinition/sdc-questionnaire-provenanceSignatureRequired', '', TFhirBoolean);
+  if cbStyleSensitive.IsChecked then
+    writeExtension(Questionnaire, 'http://hl7.org/fhir/StructureDefinition/rendering-styleSensitive', 'true', TFhirBoolean)
+  else
+    writeExtension(Questionnaire, 'http://hl7.org/fhir/StructureDefinition/rendering-styleSensitive', '', TFhirBoolean);
+  writeExtension(Questionnaire, 'http://hl7.org/fhir/StructureDefinition/questionnaire-sourceStructureMap', edtSDCsourceStructureMap.Text, TFhirCanonical);
+  writeExtension(Questionnaire, 'http://hl7.org/fhir/StructureDefinition/questionnaire-targetStructureMap', edtSDCtargetStructureMap.Text, TFhirCanonical);
+
+  if (edtSDCIdSystem.Text <> '') or (edtSDCIdValue.Text <> '') then
+    writeExtension(Questionnaire, 'http://hl7.org/fhir/StructureDefinition/questionnaire-studyProtocolIdentifier',
+      TFhirIdentifier.Create(edtSDCIdSystem.Text, edtSDCIdValue.Text))
+  else
+    writeExtension(Questionnaire, 'http://hl7.org/fhir/StructureDefinition/questionnaire-studyProtocolIdentifier', nil);
+
+  if (Questionnaire.titleElement = nil) then
+    Questionnaire.titleElement := TFhirString.Create;
+  writeExtension(Questionnaire.titleElement, 'http://hl7.org/fhir/StructureDefinition/rendering-style', edtSDCTitleStyle.Text, TFHIRString);
+  writeExtension(Questionnaire.titleElement, 'http://hl7.org/fhir/StructureDefinition/rendering-xhtml', edtSDCTitleXtml.Text, TFHIRString);
 end;
 
 constructor TQuestionnaireEditorFrame.Create(owner: TComponent);
@@ -626,6 +758,35 @@ begin
     9: item.readOnly := value.AsBoolean;
   end;
   ResourceIsDirty := true;
+end;
+
+procedure TQuestionnaireEditorFrame.grdUseContextGetValue(Sender: TObject; const ACol, ARow: Integer; var Value: TValue);
+var
+  uc : TFhirUsageContext;
+begin
+  uc := Questionnaire.useContextList[aRow];
+  case ACol of
+    0 :
+      if uc.code.hasCode('http://hl7.org/fhir/usage-context-type', 'gender') then
+        value := 'Gender'
+      else if uc.code.hasCode('http://hl7.org/fhir/usage-context-type', 'age') then
+        value := 'Age'
+      else if uc.code.hasCode('http://hl7.org/fhir/usage-context-type', 'focus') then
+        value := 'Focus'
+      else if uc.code.hasCode('http://hl7.org/fhir/usage-context-type', 'user') then
+        value := 'User Type'
+      else if uc.code.hasCode('http://hl7.org/fhir/usage-context-type', 'workflow') then
+        value := 'Workflow Context'
+      else if uc.code.hasCode('http://hl7.org/fhir/usage-context-type', 'task') then
+        value := 'Task Type'
+      else if uc.code.hasCode('http://hl7.org/fhir/usage-context-type', 'venue') then
+        value := 'Venue'
+      else if uc.code.hasCode('http://hl7.org/fhir/usage-context-type', 'species') then
+        value := 'Species'
+      else
+        value := gen(uc.code);
+    1 : value := gen(uc.value);
+  end;
 end;
 
 function displayLang(lang : String) : string;
@@ -738,15 +899,23 @@ var
   c : TFhirEnum;
   ok : boolean;
 begin
-  for rt := low(TFhirResourceType) to High(TFhirResourceType) do
-    if rt <> frtNull then
-    begin
-      ok := false;
-      for c in Questionnaire.subjectTypeList do
-        ok := ok or (c.value = CODES_TFhirResourceType[rt]);
-      lbResources.Items.Add(CODES_TFhirResourceType[rt]);
-      lbResources.ListItems[lbResources.Items.Count - 1].IsChecked := ok;
-    end;
+  grdUseContext.RowCount := Questionnaire.useContextList.Count;
+
+  lbResources.Items.clear;
+  lbResources.BeginUpdate;
+  try
+    for rt := low(TFhirResourceType) to High(TFhirResourceType) do
+      if rt <> frtNull then
+      begin
+        ok := false;
+        for c in Questionnaire.subjectTypeList do
+          ok := ok or (c.value = CODES_TFhirResourceType[rt]);
+        lbResources.Items.Add(CODES_TFhirResourceType[rt]);
+        lbResources.ListItems[lbResources.Items.Count - 1].IsChecked := ok;
+      end;
+  finally
+    lbResources.EndUpdate;
+  end;
 end;
 
 procedure TQuestionnaireEditorFrame.loadForm;
@@ -837,6 +1006,44 @@ begin
   end;
 end;
 
+procedure TQuestionnaireEditorFrame.loadSDC;
+var
+  id : TFhirIdentifier;
+begin
+  Loading := true;
+  try
+    cbSDC.IsChecked := (Questionnaire.meta <> nil) and (Questionnaire.meta.hasProfile('http://hl7.org/fhir/us/sdc/StructureDefinition/sdc-questionnaire'));
+    edtSDCEndPoint.Text := readExtension(Questionnaire, 'http://hl7.org/fhir/us/sdc/StructureDefinition/sdc-questionnaire-endpoint');
+    cbProvenanceSignatureRequired.IsChecked := readExtension(Questionnaire, 'http://hl7.org/fhir/us/sdc/StructureDefinition/sdc-questionnaire-provenanceSignatureRequired') = 'true';
+    cbStyleSensitive.IsChecked := readExtension(Questionnaire, 'http://hl7.org/fhir/StructureDefinition/rendering-styleSensitive') = 'true';
+    edtSDCsourceStructureMap.Text := readExtension(Questionnaire, 'http://hl7.org/fhir/StructureDefinition/questionnaire-sourceStructureMap');
+    edtSDCtargetStructureMap.Text := readExtension(Questionnaire, 'http://hl7.org/fhir/StructureDefinition/questionnaire-targetStructureMap');
+    id := Questionnaire.getExtensionValue('http://hl7.org/fhir/StructureDefinition/questionnaire-studyProtocolIdentifier') as TFhirIdentifier;
+    if (id <> nil) then
+    begin
+      edtSDCIdSystem.Text := id.system;
+      edtSDCIdValue.Text := id.value;
+    end
+    else
+    begin
+      edtSDCIdSystem.Text := '';
+      edtSDCIdValue.Text := '';
+    end;
+    if (Questionnaire.titleElement <> nil) then
+    begin
+      edtSDCTitleStyle.Text := readExtension(Questionnaire.titleElement, 'http://hl7.org/fhir/StructureDefinition/rendering-style');
+      edtSDCTitleXtml.Text := readExtension(Questionnaire.titleElement, 'http://hl7.org/fhir/StructureDefinition/rendering-xhtml');
+    end
+    else
+    begin
+      edtSDCTitleStyle.Text := '';
+      edtSDCTitleXtml.Text := '';
+    end;
+  finally
+    loading := false;
+  end;
+end;
+
 function TQuestionnaireEditorFrame.readJurisdiction: Integer;
 var
   cc : TFhirCodeableConcept;
@@ -898,6 +1105,11 @@ begin
     begin
       tbStructure.ActiveTab := tbMetadata;
       loadMetadata;
+    end
+    else if tvStructure.Selected = tvSDC then
+    begin
+      tbStructure.ActiveTab := tbSDC;
+      loadSDC;
     end
     else if tvStructure.Selected = tvContext then
     begin

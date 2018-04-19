@@ -419,6 +419,10 @@
             <FormType>fmx</FormType>
         </DCCReference>
         <DCCReference Include="BaseDialog.pas"/>
+        <DCCReference Include="UsageContextForm.pas">
+            <Form>UsageContextDialog</Form>
+            <FormType>fmx</FormType>
+        </DCCReference>
         <None Include="q.txt"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>

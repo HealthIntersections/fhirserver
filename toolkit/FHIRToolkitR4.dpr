@@ -195,7 +195,8 @@ uses
   FHIRLog in '..\reference-platform\support\FHIRLog.pas',
   QuestionnaireRenderer in '..\reference-platform\r4\QuestionnaireRenderer.pas',
   BulkDataForm in 'BulkDataForm.pas' {BulkDataDialog},
-  BaseDialog in 'BaseDialog.pas';
+  BaseDialog in 'BaseDialog.pas',
+  UsageContextForm in 'UsageContextForm.pas' {UsageContextDialog};
 
 {$R *.res}
 
@@ -203,5 +204,6 @@ begin
   Application.Initialize;
   Application.CreateForm(TMasterToolsForm, MasterToolsForm);
   Application.CreateForm(TBulkDataDialog, BulkDataDialog);
+  Application.CreateForm(TUsageContextDialog, UsageContextDialog);
   Application.Run;
 end.

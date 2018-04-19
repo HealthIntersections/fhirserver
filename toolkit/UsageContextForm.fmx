@@ -1,0 +1,349 @@
+object UsageContextDialog: TUsageContextDialog
+  Left = 0
+  Top = 0
+  Caption = 'Edit Usage Context'
+  ClientHeight = 500
+  ClientWidth = 434
+  FormFactor.Width = 320
+  FormFactor.Height = 480
+  FormFactor.Devices = [Desktop]
+  OnShow = FormShow
+  DesignerMasterStyle = 0
+  object Panel1: TPanel
+    Align = Top
+    Size.Width = 434.000000000000000000
+    Size.Height = 161.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 0
+    object Label1: TLabel
+      StyledSettings = [Family, Size, FontColor]
+      Position.X = 16.000000000000000000
+      Position.Y = 8.000000000000000000
+      TextSettings.Font.StyleExt = {00070000000000000004000000}
+      Text = 'Code'
+      TabOrder = 1
+    end
+    object Label2: TLabel
+      Position.X = 24.000000000000000000
+      Position.Y = 40.000000000000000000
+      Text = 'Presets:'
+      TabOrder = 2
+    end
+    object cbxCommon: TComboBox
+      Items.Strings = (
+        'Gender'
+        'Age'
+        'Focus'
+        'User Type'
+        'Workflow Context'
+        'Task Type'
+        'Venue'
+        'Species'
+        'Other...')
+      Position.X = 80.000000000000000000
+      Position.Y = 40.000000000000000000
+      Size.Width = 337.000000000000000000
+      Size.Height = 22.000000000000000000
+      Size.PlatformDefault = False
+      TabOrder = 3
+      OnChange = cbxCommonChange
+    end
+    object Label3: TLabel
+      Position.X = 24.000000000000000000
+      Position.Y = 72.000000000000000000
+      Size.Width = 57.000000000000000000
+      Size.Height = 17.000000000000000000
+      Size.PlatformDefault = False
+      Text = 'System:'
+      TabOrder = 4
+    end
+    object Label4: TLabel
+      Position.X = 24.000000000000000000
+      Position.Y = 104.000000000000000000
+      Size.Width = 57.000000000000000000
+      Size.Height = 17.000000000000000000
+      Size.PlatformDefault = False
+      Text = 'Code:'
+      TabOrder = 5
+    end
+    object edtSystem: TEdit
+      Touch.InteractiveGestures = [LongTap, DoubleTap]
+      TabOrder = 7
+      Position.X = 80.000000000000000000
+      Position.Y = 72.000000000000000000
+      Size.Width = 337.000000000000000000
+      Size.Height = 22.000000000000000000
+      Size.PlatformDefault = False
+    end
+    object edtCode: TEdit
+      Touch.InteractiveGestures = [LongTap, DoubleTap]
+      TabOrder = 6
+      Position.X = 80.000000000000000000
+      Position.Y = 104.000000000000000000
+      Size.Width = 337.000000000000000000
+      Size.Height = 22.000000000000000000
+      Size.PlatformDefault = False
+    end
+    object Label5: TLabel
+      StyledSettings = [Family, Size, FontColor]
+      Position.X = 16.000000000000000000
+      Position.Y = 136.000000000000000000
+      TextSettings.Font.StyleExt = {00070000000000000004000000}
+      Text = 'Value'
+      TabOrder = 0
+    end
+  end
+  object Panel3: TPanel
+    Align = Bottom
+    Position.Y = 460.000000000000000000
+    Size.Width = 434.000000000000000000
+    Size.Height = 40.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 1
+    object Button1: TButton
+      Anchors = [akTop, akRight]
+      Cancel = True
+      ModalResult = 2
+      Position.X = 346.000000000000000000
+      Position.Y = 8.000000000000000000
+      TabOrder = 0
+      Text = 'Cancel'
+    end
+    object Button2: TButton
+      Anchors = [akTop, akRight]
+      Default = True
+      Position.X = 258.000000000000000000
+      Position.Y = 8.000000000000000000
+      TabOrder = 1
+      Text = 'OK'
+      OnClick = Button2Click
+    end
+  end
+  object TabControl1: TTabControl
+    Align = Client
+    Size.Width = 434.000000000000000000
+    Size.Height = 299.000000000000000000
+    Size.PlatformDefault = False
+    TabIndex = 0
+    TabOrder = 2
+    TabPosition = PlatformDefault
+    Sizes = (
+      434s
+      273s
+      434s
+      273s
+      434s
+      273s)
+    object TabItem1: TTabItem
+      CustomIcon = <
+        item
+        end>
+      IsSelected = True
+      Size.Width = 48.000000000000000000
+      Size.Height = 26.000000000000000000
+      Size.PlatformDefault = False
+      StyleLookup = ''
+      TabOrder = 0
+      Text = 'Code'
+      ExplicitSize.cx = 48.000000000000000000
+      ExplicitSize.cy = 26.000000000000000000
+      object Label6: TLabel
+        Position.X = 16.000000000000000000
+        Position.Y = 22.000000000000000000
+        Size.Width = 41.000000000000000000
+        Size.Height = 17.000000000000000000
+        Size.PlatformDefault = False
+        Text = 'Text:'
+        TabOrder = 0
+      end
+      object edtCCText: TEdit
+        Touch.InteractiveGestures = [LongTap, DoubleTap]
+        TabOrder = 1
+        Position.X = 56.000000000000000000
+        Position.Y = 22.000000000000000000
+        Size.Width = 361.000000000000000000
+        Size.Height = 22.000000000000000000
+        Size.PlatformDefault = False
+      end
+      object Label7: TLabel
+        Position.X = 16.000000000000000000
+        Position.Y = 54.000000000000000000
+        Text = 'Code:'
+        TabOrder = 2
+      end
+      object lbCodes: TListBox
+        Position.X = 56.000000000000000000
+        Position.Y = 56.000000000000000000
+        Size.Width = 361.000000000000000000
+        Size.Height = 177.000000000000000000
+        Size.PlatformDefault = False
+        TabOrder = 4
+        DisableFocusEffect = True
+        DefaultItemStyles.ItemStyle = ''
+        DefaultItemStyles.GroupHeaderStyle = ''
+        DefaultItemStyles.GroupFooterStyle = ''
+        Viewport.Width = 357.000000000000000000
+        Viewport.Height = 173.000000000000000000
+      end
+      object lblErr: TLabel
+        Position.X = 8.000000000000000000
+        Position.Y = 240.000000000000000000
+        Size.Width = 417.000000000000000000
+        Size.Height = 33.000000000000000000
+        Size.PlatformDefault = False
+        TextSettings.HorzAlign = Center
+        Text = 'lblErr'
+        TabOrder = 3
+      end
+    end
+    object TabItem2: TTabItem
+      CustomIcon = <
+        item
+        end>
+      IsSelected = False
+      Size.Width = 66.000000000000000000
+      Size.Height = 26.000000000000000000
+      Size.PlatformDefault = False
+      StyleLookup = ''
+      TabOrder = 0
+      Text = 'Quantity'
+      ExplicitSize.cx = 66.000000000000000000
+      ExplicitSize.cy = 26.000000000000000000
+      object Label8: TLabel
+        Position.X = 16.000000000000000000
+        Position.Y = 22.000000000000000000
+        Text = 'Value:'
+        TabOrder = 0
+      end
+      object Label9: TLabel
+        Position.X = 16.000000000000000000
+        Position.Y = 54.000000000000000000
+        Text = 'Unit:'
+        TabOrder = 1
+      end
+      object Label10: TLabel
+        Position.X = 16.000000000000000000
+        Position.Y = 86.000000000000000000
+        Text = 'Code:'
+        TabOrder = 2
+      end
+      object edtQValue: TEdit
+        Touch.InteractiveGestures = [LongTap, DoubleTap]
+        TabOrder = 3
+        Position.X = 64.000000000000000000
+        Position.Y = 22.000000000000000000
+        Size.Width = 353.000000000000000000
+        Size.Height = 22.000000000000000000
+        Size.PlatformDefault = False
+      end
+      object edtQUnit: TEdit
+        Touch.InteractiveGestures = [LongTap, DoubleTap]
+        TabOrder = 4
+        Position.X = 64.000000000000000000
+        Position.Y = 54.000000000000000000
+        Size.Width = 353.000000000000000000
+        Size.Height = 22.000000000000000000
+        Size.PlatformDefault = False
+      end
+      object edtQCode: TEdit
+        Touch.InteractiveGestures = [LongTap, DoubleTap]
+        TabOrder = 5
+        Position.X = 64.000000000000000000
+        Position.Y = 86.000000000000000000
+        Size.Width = 249.000000000000000000
+        Size.Height = 22.000000000000000000
+        Size.PlatformDefault = False
+      end
+      object cbxQSystem: TComboBox
+        Items.Strings = (
+          'UCUM'
+          'SNOMED CT')
+        Position.X = 320.000000000000000000
+        Position.Y = 86.000000000000000000
+        TabOrder = 6
+      end
+    end
+    object TabItem3: TTabItem
+      CustomIcon = <
+        item
+        end>
+      IsSelected = False
+      Size.Width = 54.000000000000000000
+      Size.Height = 26.000000000000000000
+      Size.PlatformDefault = False
+      StyleLookup = ''
+      TabOrder = 0
+      Text = 'Range'
+      ExplicitSize.cx = 54.000000000000000000
+      ExplicitSize.cy = 26.000000000000000000
+      object Label11: TLabel
+        Position.X = 16.000000000000000000
+        Position.Y = 54.000000000000000000
+        Text = 'High:'
+        TabOrder = 1
+      end
+      object edtRangeUnit: TEdit
+        Touch.InteractiveGestures = [LongTap, DoubleTap]
+        TabOrder = 6
+        Position.X = 64.000000000000000000
+        Position.Y = 86.000000000000000000
+        Size.Width = 353.000000000000000000
+        Size.Height = 22.000000000000000000
+        Size.PlatformDefault = False
+      end
+      object Label12: TLabel
+        Position.X = 16.000000000000000000
+        Position.Y = 86.000000000000000000
+        Text = 'Unit:'
+        TabOrder = 2
+      end
+      object edtRangeHigh: TEdit
+        Touch.InteractiveGestures = [LongTap, DoubleTap]
+        TabOrder = 5
+        Position.X = 64.000000000000000000
+        Position.Y = 54.000000000000000000
+        Size.Width = 353.000000000000000000
+        Size.Height = 22.000000000000000000
+        Size.PlatformDefault = False
+      end
+      object Label13: TLabel
+        Position.X = 16.000000000000000000
+        Position.Y = 118.000000000000000000
+        Text = 'Code:'
+        TabOrder = 4
+      end
+      object edtRangeCode: TEdit
+        Touch.InteractiveGestures = [LongTap, DoubleTap]
+        TabOrder = 7
+        Position.X = 64.000000000000000000
+        Position.Y = 118.000000000000000000
+        Size.Width = 249.000000000000000000
+        Size.Height = 22.000000000000000000
+        Size.PlatformDefault = False
+      end
+      object cbxRangeSystem: TComboBox
+        Items.Strings = (
+          'UCUM'
+          'SNOMED CT')
+        Position.X = 320.000000000000000000
+        Position.Y = 118.000000000000000000
+        TabOrder = 8
+      end
+      object Label14: TLabel
+        Position.X = 16.000000000000000000
+        Position.Y = 22.000000000000000000
+        Text = 'Low:'
+        TabOrder = 0
+      end
+      object edtRangeLow: TEdit
+        Touch.InteractiveGestures = [LongTap, DoubleTap]
+        TabOrder = 3
+        Position.X = 64.000000000000000000
+        Position.Y = 22.000000000000000000
+        Size.Width = 353.000000000000000000
+        Size.Height = 22.000000000000000000
+        Size.PlatformDefault = False
+      end
+    end
+  end
+end

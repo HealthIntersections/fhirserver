@@ -33,7 +33,9 @@ uses
   SysUtils, Classes,
   IdHTTP, IdSSLOpenSSL, IdComponent,
   OSXUIUtils,
-  FHIRTypes;
+  FMX.Edit, FMX.ListBox, FMX.StdCtrls,
+  AdvObjects,
+  FHIRTypes, FHIRResources, FHIRUtilities, FHIRClient;
 
 function checkUpgrade : String;
 procedure doUpgrade(newVersion : String);
@@ -41,6 +43,33 @@ function translationsImageIndex(element : TFHIRElement): integer;
 function langDesc(code : String) : String;
 function langCode(desc : String) : String;
 function langList : TStringList;
+
+function readExtension(src : TFHIRDomainResource; url : String) : String; overload;
+function readExtension(src : TFHIRElement; url : String) : String; overload;
+procedure writeExtension(src : TFHIRElement; url : String; value : String; clss : TFHIRPrimitiveTypeClass); overload;
+procedure writeExtension(src : TFHIRDomainResource; url : String; value : String; clss : TFHIRPrimitiveTypeClass); overload;
+procedure writeExtension(src : TFHIRDomainResource; url : String; value : TFhirType); overload;
+
+type
+  TCodeableConceptLookup = class (TAdvObject)
+  private
+    FValueSet: String;
+    FChanging : boolean;
+    FEdit : TEdit;
+    FList : TListBox;
+    FLabel : TLabel;
+    FServer : TFHIRClient;
+    FExpansion : TFhirValueSet;
+    procedure SetValueSet(const Value: String);
+    procedure editChange(sender : TObject);
+    procedure listDblClick(sender : TObject);
+  public
+    constructor Create(edit : TEdit; list : TListBox; labl : TLabel; txServer : TFHIRClient);
+    destructor Destroy; override;
+    property ValueSet : String read FValueSet write SetValueSet;
+    procedure initialise(cc : TFHIRCodeableConcept);
+    procedure populate(cc : TFHIRCodeableConcept);
+  end;
 
 implementation
 
@@ -270,6 +299,223 @@ begin
   result.add('zh-HK');
   result.add('zh-SG');
   result.add('zh-TW');
+end;
+
+function readExtension(src : TFHIRDomainResource; url : String) : String;
+var
+  e : TFHIRExtension;
+begin
+  result := '';
+  for e in src.extensionList do
+    if e.url = url then
+    begin
+      if e.value.isPrimitive then
+        exit(e.value.primitiveValue)
+      else
+        exit(gen(e.value));
+    end;
+end;
+
+function readExtension(src : TFHIRElement; url : String) : String;
+var
+  e : TFHIRExtension;
+begin
+  result := '';
+  for e in src.extensionList do
+    if e.url = url then
+    begin
+      if e.value.isPrimitive then
+        exit(e.value.primitiveValue)
+      else
+        exit(gen(e.value));
+    end;
+end;
+
+procedure writeExtension(src : TFHIRDomainResource; url : String; value : TFhirType); overload;
+var
+  e : TFHIRExtension;
+begin
+  if value = nil then
+    src.removeExtension(url)
+  else
+  begin
+    for e in src.extensionList do
+      if e.url = url then
+      begin
+        e.value := value;
+        exit;
+      end;
+    e := TFhirExtension.Create;
+    try
+      e.url := url;
+      e.value := value;
+      src.extensionList.Add(e.Link);
+    finally
+      e.Free;
+    end;
+  end;
+end;
+
+procedure writeExtension(src : TFHIRDomainResource; url : String; value : String; clss : TFHIRPrimitiveTypeClass);
+var
+  e : TFHIRExtension;
+begin
+  if value = '' then
+    src.removeExtension(url)
+  else
+  begin
+    for e in src.extensionList do
+      if e.url = url then
+      begin
+        e.value := clss.Create(value);
+        exit;
+      end;
+    e := TFhirExtension.Create;
+    try
+      e.url := url;
+      e.value := clss.Create(value);
+      src.extensionList.Add(e.Link);
+    finally
+      e.Free;
+    end;
+  end;
+end;
+
+procedure writeExtension(src : TFHIRElement; url : String; value : String; clss : TFHIRPrimitiveTypeClass);
+var
+  e : TFHIRExtension;
+begin
+  if value = '' then
+    src.removeExtension(url)
+  else
+  begin
+    for e in src.extensionList do
+      if e.url = url then
+      begin
+        e.value := clss.Create(value);
+        exit;
+      end;
+    e := TFhirExtension.Create;
+    try
+      e.url := url;
+      e.value := clss.Create(value);
+      src.extensionList.Add(e.Link);
+    finally
+      e.Free;
+    end;
+  end;
+end;
+
+{ TCodeableConceptLookup }
+
+constructor TCodeableConceptLookup.Create(edit: TEdit; list: TListBox; labl : TLabel; txServer : TFHIRClient);
+begin
+  inherited create;
+  FEdit := edit;
+  FList := list;
+  FLabel := labl;
+  FLabel.text := '';
+  FEdit.OnChange := editChange;
+  FEdit.OnChangeTracking := editChange;
+  FList.OnDblClick := listDblClick;
+  FServer := txServer;
+end;
+
+destructor TCodeableConceptLookup.Destroy;
+begin
+  FServer.Free;
+  FExpansion.Free;
+  inherited;
+end;
+
+procedure TCodeableConceptLookup.editChange(sender: TObject);
+var
+  params : TFHIRParameters;
+  ec : TFhirValueSetExpansionContains;
+begin
+  if FChanging  then
+    exit;
+
+  FLabel.text := '';
+
+  if FExpansion <> nil then
+  begin
+    FExpansion.Free;
+    FExpansion := nil;
+  end;
+
+  try
+    FList.Items.Clear;
+    if (FEdit.text <> '') and (FValueSet <> '') then
+    begin
+      params := TFhirParameters.Create;
+      try
+        params.AddParameter('url', FValueSet);
+        params.AddParameter('filter', FEdit.Text);
+        FExpansion := FServer.operation(frtValueSet, 'expand', params) as TFHIRValueSet;
+        for ec in FExpansion.expansion.containsList do
+          FList.Items.Add(ec.display);
+      finally
+        params.Free;
+      end;
+    end;
+  except
+    on e : exception do
+      FLabel.text := e.message;
+  end;
+end;
+
+procedure TCodeableConceptLookup.initialise(cc: TFHIRCodeableConcept);
+begin
+  FChanging := true;
+  try
+    FEdit.Text := cc.text;
+    if cc.codingList.Count > 0 then
+    begin
+      FList.Items.Add(cc.codingList[0].display);
+      FExpansion := TFhirValueSet.Create;
+      FExpansion.expansion := TFhirValueSetExpansion.Create;
+      with FExpansion.expansion.containsList.Append do
+      begin
+        system := cc.codingList[0].system;
+        code := cc.codingList[0].code;
+        display := cc.codingList[0].display;
+      end;
+    end;
+  finally
+    FChanging := false;
+  end;
+end;
+
+procedure TCodeableConceptLookup.listDblClick(sender: TObject);
+begin
+  FChanging := true;
+  try
+    FEdit.Text := FList.Items[FList.ItemIndex];
+  finally
+    FChanging := false;
+  end;
+end;
+
+procedure TCodeableConceptLookup.populate(cc: TFHIRCodeableConcept);
+begin
+  cc.text := FEdit.Text;
+  cc.codingList.Clear;
+  if FList.ItemIndex >= 0 then
+    with cc.codingList.Append do
+    begin
+      system := FExpansion.expansion.containsList[FList.ItemIndex].system;
+      code := FExpansion.expansion.containsList[FList.ItemIndex].code;
+      display := FExpansion.expansion.containsList[FList.ItemIndex].display;
+    end;
+end;
+
+procedure TCodeableConceptLookup.SetValueSet(const Value: String);
+begin
+  FList.Items.Clear;
+  FValueSet := Value;
+  if FEdit.Text <> '' then
+    editChange(nil);
 end;
 
 end.

@@ -8,7 +8,7 @@ uses
   FMX.Memo, FMX.StdCtrls, FMX.Edit, FMX.ListBox, FMX.Controls.Presentation,
   FMX.Ani,
   FileSupport, KCritSct,
-  FHIRConstants, FHIRTypes, FHIRResources, FHIRUtilities, FHIRClient,
+  FHIRBase, FHIRConstants, FHIRTypes, FHIRResources, FHIRUtilities, FHIRClient,
   BaseDialog, ToolkitSettings;
 
 type
@@ -47,7 +47,7 @@ type
   private
     FServer: TFHIRClient;
     FSettings: TFHIRToolkitSettings;
-    FAsync : TFHIRClientAsyncContext;
+    FAsync : TFHIRClientAsyncTask;
 
     procedure SetServer(const Value: TFHIRClient);
     procedure SetSettings(const Value: TFHIRToolkitSettings);
@@ -98,8 +98,8 @@ begin
 
   btnExecute.Enabled := false;
   btnCancel.Enabled := true;
-  FAsync := TFHIRClientAsyncContext.create(server.link);
-  FAsync.mimeType := 'application/fhir+ndjson';
+  FAsync := TFHIRClientAsyncTask.create(server.link);
+  FAsync.format := ffNDJson;
   if (id = '') then
     FAsync.query := CODES_TFhirResourceType[rType]+'/$export'
   else

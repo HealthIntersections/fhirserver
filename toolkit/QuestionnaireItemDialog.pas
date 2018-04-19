@@ -35,11 +35,12 @@ uses
   FMX.Controls.Presentation, System.Rtti, FMX.Grid.Style, FMX.Grid,
   FMX.ComboEdit, FMX.ScrollBox, FMX.Memo, FMX.DateTimeCtrls, FMX.TabControl,
   FMX.ListBox, FMX.Edit, FMX.DialogService, System.ImageList, FMX.ImgList,
-  StringSupport, DateSupport,
+  StringSupport, DateSupport, AdvGenerics,
   ToolkitSettings,
-  FHIRTypes, FHIRResources, FHIRClient, FHIRUtilities,
+  FHIRTypes, FHIRResources, FHIRConstants, FHIRClient, FHIRUtilities,
   BaseDialog,
-  ResourceEditingSupport, BaseFrame, ToolkitUtilities, TranslationsEditorDialog, MemoEditorDialog;
+  ResourceEditingSupport, BaseFrame, ToolkitUtilities, TranslationsEditorDialog, MemoEditorDialog,
+  FMX.Layouts;
 
 type
   TForm = TBaseForm;
@@ -133,26 +134,59 @@ type
     edtXMimeTypes: TEdit;
     Label16: TLabel;
     edtXMinLength: TEdit;
-    Label17: TLabel;
-    cbxXChoiceOrientation: TComboBox;
     Label18: TLabel;
     Label19: TLabel;
     edtXMaxOccurs: TEdit;
     edtXMinOccurs: TEdit;
-    Label20: TLabel;
-    edxSupportingURL: TEdit;
-    Label21: TLabel;
-    edtXDefinedUnit: TEdit;
     Label22: TLabel;
     edtXRegexRule: TEdit;
-    Label23: TLabel;
-    cbxXUiControlType: TComboBox;
     ToolbarImages: TImageList;
     btnValueString: TButton;
     btnValueText: TButton;
     btnText: TButton;
     btnPrefix: TButton;
     OperatorColumn: TPopupColumn;
+    TabItem15: TTabItem;
+    Label20: TLabel;
+    edxSupportingURL: TEdit;
+    Label23: TLabel;
+    cbxXUiControlType: TComboBox;
+    Label17: TLabel;
+    cbxXChoiceOrientation: TComboBox;
+    TabControl1: TTabControl;
+    TabItem16: TTabItem;
+    Label24: TLabel;
+    cbxXUnitValueSet: TComboEdit;
+    Button3: TButton;
+    TabItem17: TTabItem;
+    Panel4: TPanel;
+    btnXUnitAdd: TButton;
+    btnXUnitUp: TButton;
+    btnXUnitDown: TButton;
+    btnXUnitDelete: TButton;
+    grdXUnit: TGrid;
+    TabItem18: TTabItem;
+    Label21: TLabel;
+    edtXDefinedUnit: TEdit;
+    StringColumn2: TStringColumn;
+    StringColumn3: TStringColumn;
+    Label25: TLabel;
+    cbxXHidden: TComboBox;
+    Label26: TLabel;
+    cbxXUsageMode: TComboBox;
+    Label27: TLabel;
+    cbxXOptional: TComboBox;
+    Label28: TLabel;
+    cbxXCategory: TComboBox;
+    Label29: TLabel;
+    edtXFilter: TEdit;
+    Label30: TLabel;
+    edtXLookup: TEdit;
+    Label31: TLabel;
+    Label32: TLabel;
+    mXProfiles: TMemo;
+    Label33: TLabel;
+    lbXResources: TListBox;
     procedure FormShow(Sender: TObject);
     procedure btnOkClick(Sender: TObject);
     procedure cbxTypeChange(Sender: TObject);
@@ -173,12 +207,20 @@ type
     procedure btnTextClick(Sender: TObject);
     procedure btnValueStringClick(Sender: TObject);
     procedure btnValueTextClick(Sender: TObject);
+    procedure cbxXUnitValueSetChange(Sender: TObject);
+    procedure grdXUnitGetValue(Sender: TObject; const ACol, ARow: Integer; var Value: TValue);
+    procedure btnXUnitAddClick(Sender: TObject);
+    procedure grdXUnitSetValue(Sender: TObject; const ACol, ARow: Integer; const Value: TValue);
+    procedure btnXUnitUpClick(Sender: TObject);
+    procedure btnXUnitDownClick(Sender: TObject);
+    procedure btnXUnitDeleteClick(Sender: TObject);
   private
     FItem: TFhirQuestionnaireItem;
     Loading : boolean;
     FSettings: TFHIRToolkitSettings;
     FOnWork: TWorkEvent;
     FQuestionnaire: TFhirQuestionnaire;
+    FUnits : TAdvList<TFHIRCoding>;
     procedure SetItem(const Value: TFhirQuestionnaireItem);
     procedure loadInitialValue;
     procedure saveInitialValue;
@@ -296,6 +338,59 @@ end;
 procedure TQuestionnaireItemForm.btnValueTextClick(Sender: TObject);
 begin
   editMarkdownDialog(self, 'Questionnaire Item Initial', btnValueText, memDefaultText, Questionnaire, item.initial as TFhirString);
+end;
+
+procedure TQuestionnaireItemForm.btnXUnitAddClick(Sender: TObject);
+begin
+  grdXUnit.BeginUpdate;
+  grdXUnit.RowCount := grdXUnit.RowCount + 1;
+  FUnits.add(TFHIRCoding.Create('http://unitsofmeasure.org', ''));
+  grdXUnit.EndUpdate;
+end;
+
+procedure TQuestionnaireItemForm.btnXUnitDeleteClick(Sender: TObject);
+var
+  i : integer;
+begin
+  i := grdXUnit.Row;
+  if (i >= 0) then
+  begin
+    grdXUnit.BeginUpdate;
+    FUnits.Delete(i);
+    grdXUnit.RowCount := grdXUnit.RowCount - 1;
+    grdXUnit.EndUpdate;
+    if i > 0 then
+      grdXUnit.Row := i - 1;
+  end;
+end;
+
+procedure TQuestionnaireItemForm.btnXUnitDownClick(Sender: TObject);
+var
+  i : integer;
+begin
+  i := grdXUnit.Row;
+  if (i < FUnits.Count - 1) then
+  begin
+    grdXUnit.BeginUpdate;
+    FUnits.Exchange(i, i+1);
+    grdXUnit.EndUpdate;
+    grdXUnit.Row := i + 1;
+  end;
+
+end;
+
+procedure TQuestionnaireItemForm.btnXUnitUpClick(Sender: TObject);
+var
+  i : integer;
+begin
+  i := grdXUnit.Row;
+  if (i > 0) then
+  begin
+    grdXUnit.BeginUpdate;
+    FUnits.Exchange(i, i-1);
+    grdXUnit.EndUpdate;
+    grdXUnit.Row := i - 1;
+  end;
 end;
 
 procedure TQuestionnaireItemForm.btnAddConditionClick(Sender: TObject);
@@ -449,10 +544,51 @@ begin
   if not edtMaxLength.Enabled then
     item.maxLength := '';
   edtMaxLength.Text := item.maxLength;
+  edtXMaxAttachSize.Enabled := nType = ItemTypeAttachment;
+  edtXMimeTypes.Enabled := nType = ItemTypeAttachment;
+  edtXFormatPrompt.Enabled := nType in [ItemTypeDecimal, ItemTypeInteger, ItemTypeDate, ItemTypeDateTime, ItemTypeTime, ItemTypeString, ItemTypeUrl];
+  edtXRegexRule.Enabled := edtXFormatPrompt.Enabled;
+  edtXMaxDecPlaces.Enabled := nType in [ItemTypeDecimal, ItemTypeQuantity];
+  edtXMinValue.Enabled := nType in [ItemTypeDecimal, ItemTypeInteger, ItemTypeDate, ItemTypeDateTime, ItemTypeTime];
+  edtXMaxValue.Enabled := edtXMinValue.Enabled;
+  edtXMinLength.Enabled := nType in [ItemTypeDecimal, ItemTypeInteger, ItemTypeDate, ItemTypeDateTime, ItemTypeTime, ItemTypeString, ItemTypeText, ItemTypeUrl];
+  edtXDefinedUnit.Enabled := nType = ItemTypeQuantity;
+  cbxXUnitValueSet.Enabled := nType = ItemTypeQuantity;
+  btnXUnitAdd.Enabled := nType = ItemTypeQuantity;
+  btnXUnitUp.Enabled := nType = ItemTypeQuantity;
+  btnXUnitDown.Enabled := nType = ItemTypeQuantity;
+  btnXUnitDelete.Enabled := nType = ItemTypeQuantity;
+  edtXFilter.Enabled := nType = ItemTypeReference;
+  edtXLookup.Enabled := nType = ItemTypeReference;
+  lbXResources.Enabled := nType = ItemTypeReference;
+  mXProfiles.Enabled := nType = ItemTypeReference;
+
   loadInitialValue;
   loadOptions;
 end;
 
+procedure TQuestionnaireItemForm.cbxXUnitValueSetChange(Sender: TObject);
+begin
+end;
+
+{
+    ItemTypeBoolean,
+    ItemTypeDecimal,
+    ItemTypeInteger,
+    ItemTypeDate,
+    ItemTypeDateTime,
+    ItemTypeTime,
+    ItemTypeString,
+    ItemTypeText,
+    ItemTypeUrl,
+    ItemTypeChoice,
+    ItemTypeOpenChoice,
+    ItemTypeAttachment,
+    ItemTypeReference,
+    ItemTypeQuantity);
+
+
+}
 procedure TQuestionnaireItemForm.cedValueSetChange(Sender: TObject);
 var
   l, r : String;
@@ -486,6 +622,9 @@ end;
 procedure TQuestionnaireItemForm.commit;
 var
   s : string;
+  l, r : String;
+  ref : TFhirReference;
+  i : integer;
 begin
   item.required := cbRequired.IsChecked;
   item.repeats := cbRepeats.IsChecked;
@@ -553,20 +692,92 @@ begin
     item.setExtensionUri('http://hl7.org/fhir/StructureDefinition/questionnaire-supportLink', edxSupportingURL.Text)
   else
     item.removeExtension('http://hl7.org/fhir/StructureDefinition/questionnaire-supportLink');
-  if edtXDefinedUnit.Text <> '' then
-    item.setExtension('http://hl7.org/fhir/StructureDefinition/questionnaire-unit', TFHIRCoding.fromEdit(edtXDefinedUnit.Text))
+  if edtXFilter.Text <> '' then
+    item.setExtensionUri('http://hl7.org/fhir/StructureDefinition/questionnaire-referenceFilter', edtXFilter.Text)
   else
-    item.removeExtension('http://hl7.org/fhir/StructureDefinition/questionnaire-unit');
+    item.removeExtension('http://hl7.org/fhir/StructureDefinition/questionnaire-referenceFilter');
+  if edtXLookup.Text <> '' then
+    item.setExtensionUri('http://hl7.org/fhir/StructureDefinition/questionnaire-lookupQuestionnaire', edtXLookup.Text)
+  else
+    item.removeExtension('http://hl7.org/fhir/StructureDefinition/questionnaire-lookupQuestionnaire');
+  if cbxXHidden.ItemIndex > 0 then
+    item.setExtensionBoolean('http://hl7.org/fhir/StructureDefinition/questionnaire-hidden', cbxXHidden.Items[cbxXHidden.ItemIndex])
+  else
+    item.removeExtension('http://hl7.org/fhir/StructureDefinition/questionnaire-hidden');
+  if cbxXOptional.ItemIndex > 0 then
+    item.setExtensionBoolean('http://hl7.org/fhir/us/sdc/StructureDefinition/sdc-questionnaire-optionalDisplay', cbxXOptional.Items[cbxXOptional.ItemIndex])
+  else
+    item.removeExtension('http://hl7.org/fhir/us/sdc/StructureDefinition/sdc-questionnaire-optionalDisplay');
+  if cbxXUsageMode.ItemIndex > 0 then
+    item.setExtensionBoolean('http://hl7.org/fhir/StructureDefinition/questionnaire-usageMode', cbxXUsageMode.Items[cbxXUsageMode.ItemIndex])
+  else
+    item.removeExtension('http://hl7.org/fhir/StructureDefinition/questionnaire-usageMode');
+
   if edtXRegexRule.Text <> '' then
     item.setExtensionString('http://hl7.org/fhir/StructureDefinition/regex', edtXRegexRule.Text)
   else
     item.removeExtension('http://hl7.org/fhir/StructureDefinition/regex');
+
+  if edtXDefinedUnit.Text <> '' then
+    item.setExtension('http://hl7.org/fhir/StructureDefinition/questionnaire-unit', TFHIRCoding.fromEdit(edtXDefinedUnit.Text))
+  else
+    item.removeExtension('http://hl7.org/fhir/StructureDefinition/questionnaire-unit');
+
+  {$IFDEF FHIR4}
+  item.setExtensionCanonical('http://hl7.org/fhir/StructureDefinition/questionnaire-unit-valueSet', cbxXUnitValueSet.Text);
+  {$ELSE}
+  if cbxXUnitValueSet.Text = '' then
+    item.removeExtension('http://hl7.org/fhir/StructureDefinition/questionnaire-unit-valueSet')
+  else
+  begin
+    ref := TFhirReference.Create;
+    try
+      if cbxXUnitValueSet.text.IndexOf(':') > 0 then
+      begin
+        StringSplit(cbxXUnitValueSet.text, ':', l, r);
+        ref.reference := l.Trim;
+        ref.display := r.Trim;
+      end
+      else
+        ref.reference := cbxXUnitValueSet.Text;
+      item.setExtension('http://hl7.org/fhir/StructureDefinition/questionnaire-unit-valueSet', ref.Link);
+    finally
+      ref.Free;
+    end;
+  end;
+  {$ENDIF}
+
+  if cbxXUiControlType.ItemIndex = 0 then
+    item.removeExtension('http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl')
+  else
+    item.setExtension('http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl',
+      TFHIRCodeableConcept.Create('http://hl7.org/fhir/questionnaire-item-control', cbxXUiControlType.Items[cbxXUiControlType.ItemIndex]));
+  if cbxXChoiceOrientation.ItemIndex = 0 then
+    item.removeExtension('http://hl7.org/fhir/StructureDefinition/questionnaire-cbxXChoiceOrientation')
+  else
+    item.setExtensionCode('http://hl7.org/fhir/StructureDefinition/questionnaire-cbxXChoiceOrientation', cbxXUiControlType.Items[cbxXUiControlType.ItemIndex]);
+  if cbxXCategory.ItemIndex = 0 then
+    item.removeExtension('http://hl7.org/fhir/StructureDefinition/questionnaire-displayCategory')
+  else
+    item.setExtension('http://hl7.org/fhir/StructureDefinition/questionnaire-displayCategory',
+      TFHIRCodeableConcept.Create('http://hl7.org/fhir/questionnaire-display-category', cbxXCategory.Items[cbxXCategory.ItemIndex]));
+
+  item.removeExtension('http://hl7.org/fhir/StructureDefinition/questionnaire-allowedResource');
+  for i := 0 to lbXResources.Count - 1 do
+    if lbXResources.ListItems[i].IsChecked then
+      item.addExtension('http://hl7.org/fhir/StructureDefinition/questionnaire-allowedResource', TFHIRCode.Create(lbXResources.Items[i]));
+
+  item.removeExtension('http://hl7.org/fhir/StructureDefinition/questionnaire-allowedProfile');
+  for i := 0 to mXProfiles.Lines.Count - 1 do
+    if trim(mXProfiles.Lines[i]) <> '' then
+      item.addExtension('http://hl7.org/fhir/StructureDefinition/questionnaire-allowedProfile', TFHIRCanonical.Create(trim(mXProfiles.Lines[i])));
 
   saveInitialValue;
 end;
 
 destructor TQuestionnaireItemForm.Destroy;
 begin
+  FUnits.Free;
   FQuestionnaire.free;
   FSettings.Free;
   FItem.Free;
@@ -589,7 +800,14 @@ procedure TQuestionnaireItemForm.FormShow(Sender: TObject);
 var
   ex : TFhirExtension;
   s : String;
+  a : TFhirResourceType;
+  i : integer;
 begin
+  FUnits := TAdvList<TFHIRCoding>.create;
+  for a := Low(TFhirResourceType) to High(TFhirResourceType) do
+    if not (a in [frtNull, frtCustom]) then
+      lbXResources.items.add(CODES_TFhirResourceType[a]);
+
   Loading := true;
   try
     {$IFDEF FHIR4}
@@ -676,16 +894,69 @@ begin
       edxSupportingURL.Text := ex.value.primitiveValue
     else
       edxSupportingURL.Text := '';
-
-    if hasExtension('http://hl7.org/fhir/StructureDefinition/questionnaire-unit', ex) then
-      edtXDefinedUnit.Text := ex.value.primitiveValue
+    if hasExtension('http://hl7.org/fhir/StructureDefinition/questionnaire-referenceFilter', ex) then
+      edtXFilter.Text := ex.value.primitiveValue
     else
-      edtXDefinedUnit.Text := '';
+      edtXFilter.Text := '';
+    if hasExtension('http://hl7.org/fhir/StructureDefinition/questionnaire-lookupQuestionnaire', ex) then
+      edtXLookup.Text := ex.value.primitiveValue
+    else
+      edtXLookup.Text := '';
+    if hasExtension('http://hl7.org/fhir/StructureDefinition/questionnaire-hidden', ex) then
+      cbxXHidden.ItemIndex := cbxXHidden.Items.IndexOf(ex.value.primitiveValue)
+    else
+      cbxXHidden.ItemIndex := 0;
+    if hasExtension('http://hl7.org/fhir/us/sdc/StructureDefinition/sdc-questionnaire-optionalDisplay', ex) then
+      cbxXOptional.ItemIndex := cbxXOptional.Items.IndexOf(ex.value.primitiveValue)
+    else
+      cbxXOptional.ItemIndex := 0;
+    if hasExtension('http://hl7.org/fhir/StructureDefinition/questionnaire-usageMode', ex) then
+      cbxXUsageMode.ItemIndex := cbxXUsageMode.Items.IndexOf(ex.value.primitiveValue)
+    else
+      cbxXUsageMode.ItemIndex := 0;
+
     if hasExtension('http://hl7.org/fhir/StructureDefinition/regex', ex) then
       edtXRegexRule.Text := ex.value.primitiveValue
     else
       edtXRegexRule.Text := '';
 
+    if hasExtension('http://hl7.org/fhir/StructureDefinition/questionnaire-unit', ex) then
+      edtXDefinedUnit.Text := ex.value.primitiveValue
+    else
+      edtXDefinedUnit.Text := '';
+    if hasExtension('http://hl7.org/fhir/StructureDefinition/questionnaire-unit-valueSet', ex) then
+      cbxXUnitValueSet.Text := ex.value.primitiveValue
+    else
+      cbxXUnitValueSet.Text := '';
+    Funits.Clear;
+    for ex in item.extensionList do
+      if ex.url = 'http://hl7.org/fhir/StructureDefinition/questionnaire-unit-option' then
+        FUnits.Add((ex.value as TFhirCoding).link);
+    grdXUnit.RowCount := FUnits.Count;
+
+    if hasExtension('http://hl7.org/fhir/StructureDefinition/questionnaire-itemControl', ex) then
+      cbxXUiControlType.ItemIndex := cbxXUiControlType.Items.IndexOf(ex.value.primitiveValue)
+    else
+      cbxXUiControlType.ItemIndex := 0;
+    if hasExtension('http://hl7.org/fhir/StructureDefinition/questionnaire-displayCategory', ex) then
+      cbxXCategory.ItemIndex := cbxXCategory.Items.IndexOf(ex.value.primitiveValue)
+    else
+      cbxXCategory.ItemIndex := 0;
+    if hasExtension('http://hl7.org/fhir/StructureDefinition/questionnaire-choiceOrientation', ex) then
+      cbxXChoiceOrientation.ItemIndex := cbxXChoiceOrientation.Items.IndexOf(ex.value.primitiveValue)
+    else
+      cbxXChoiceOrientation.ItemIndex := 0;
+    for i := 0 to lbXResources.Count - 1 do
+      lbXResources.ListItems[i].IsChecked := false;
+    for ex in item.extensionList do
+      if ex.url = 'http://hl7.org/fhir/StructureDefinition/questionnaire-allowedResource' then
+        for i := 0 to lbXResources.Count - 1 do
+          if lbXResources.Items[i] = ex.value.primitiveValue then
+            lbXResources.ListItems[i].IsChecked := false;
+    mXProfiles.Text := '';
+    for ex in item.extensionList do
+      if ex.url = 'http://hl7.org/fhir/StructureDefinition/questionnaire-allowedProfile' then
+        mXProfiles.Text := mXProfiles.Text+ex.value.primitiveValue+#13#10;
     grdConditions.RowCount := item.enableWhenList.Count;
   finally
     Loading := false;
@@ -866,6 +1137,22 @@ begin
       1: (v.value as TFhirCoding).code := value.AsString;
       2: (v.value as TFhirCoding).display := value.AsString;
     end;
+  end;
+end;
+
+procedure TQuestionnaireItemForm.grdXUnitGetValue(Sender: TObject; const ACol, ARow: Integer; var Value: TValue);
+begin
+  case ACol of
+    0: Value := FUnits[aRow].system;
+    1: Value := FUnits[aRow].code;
+  end;
+end;
+
+procedure TQuestionnaireItemForm.grdXUnitSetValue(Sender: TObject; const ACol, ARow: Integer; const Value: TValue);
+begin
+  case ACol of
+    0: FUnits[aRow].system := value.AsString;
+    1: FUnits[aRow].code := value.AsString;
   end;
 end;
 

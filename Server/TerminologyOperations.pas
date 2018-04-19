@@ -276,7 +276,7 @@ begin
             else if (url.startsWith(request.baseURL+'ValueSet/')) then
               vs := manager.GetResourceById(request, 'ValueSet', url.substring(9), request.baseUrl, needSecure) as TFHIRValueSet
             else if not FServer.isKnownValueSet(url, vs) then
-              vs := manager.GetResourceByUrl(frtValueSet, request.Parameters.getvar('url'), request.Parameters.getvar('version'), false, needSecure) as TFHIRValueSet;
+              vs := manager.GetResourceByUrl(frtValueSet, url, request.Parameters.getvar('version'), false, needSecure) as TFHIRValueSet;
             cacheId := vs.url;
             if vs.version <> '' then
               cacheId := cacheId + vs.version;
