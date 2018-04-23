@@ -34,7 +34,14 @@ interface
 uses
   Windows, SysUtils, classes,
   StringSupport, AdvGenerics, TextUtilities,
-  FHIRTestWorker, FHIRResources, FHIRBase, FHIRParserBase, FHIRParser, FHIRTypes, DifferenceEngine,
+  FHIRBase, FHIRParserBase, FHIRParser,
+  {$IFDEF FHIR3}
+  FHIRTestWorker3, FHIRResources3, FHIRTypes3,
+  {$ENDIF}
+  {$IFDEF FHIR4}
+  FHIRTestWorker4, FHIRResources4, FHIRTypes4,
+  {$ENDIF}
+  DifferenceEngine,
   MXML, DUnitX.TestFramework;
 
 Type
@@ -227,7 +234,7 @@ begin
   try
     p.Element := elem.firstElement.Link;
     p.Parse;
-    result := p.resource.Link;
+    result := p.resource.Link as TFHIRResource;
   finally
     p.Free;
   end;

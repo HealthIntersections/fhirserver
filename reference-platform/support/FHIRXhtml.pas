@@ -644,7 +644,7 @@ end;
 constructor TFhirXHtmlNode.Create(nodeType: TFHIRHtmlNodeType);
 begin
   Create;
-  NodeType := fhntElement;
+  self.NodeType := fhntElement;
 end;
 
 constructor TFhirXHtmlNode.Create(name: String);
@@ -1128,7 +1128,7 @@ begin
     result := false
   else
   begin
-    result := false; //div1.equalsDeep(div2);
+//    result := false; //div1.equalsDeep(div2);
     raise Exception.Create('Not done yet');
   end;
 end;

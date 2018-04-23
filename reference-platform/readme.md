@@ -53,18 +53,38 @@ wants to help, assistance will be welcome.
 FHIR Versions
 -------------
 This reference implementation supports 3 FHIR versions:
-* FHIR DSTU 1 - no longer maintained actively (no longer compiling - needs week)
 * FHIR DSTU 2 - stable supported release 
 * FHIR DSTU 3 - stable supported release
 * FHIR DSTU 4 - current trunk. This is unstable and may not work at times
 
-To save implementers from confusion, you must add one of the following
-defines to your project options: FHIR1, FHIR2, FHIR3, or FHIR4,
-depending on which version you want to support (as well as including the 
-correct files)
+It's possible to support more than one version of FHIR in a single executable,
+but one version of FHIR must be selected as the primary version, and is the
+version on which all the caching/logic is based. 
 
-Note: this does mean you can't support more than one version of FHIR 
-in the same executable, and is under further consideration.
+With respect to version, the FHIR units fit into 3 categories
+* supports any FHIR verson: FHIRBase and FHIRParserBase
+* version specific: any fhir unit that has a name ending in 2, 3, or 4
+* all other code: supports the primary FHIR version
+
+The primary version is indicated by the presence of a compile directive:
+
+  FHIR2
+  FHIR3
+  FHIR4
+  
+One (and only one) of these must be defined in the project somewhere, or 
+the code will not compile. In addition, unit aliases must be set up that
+alias the un-versioned reference to one of the version specific units.
+
+These are the alias strings for the project options:
+
+* 2: FHIRAuthMap=FHIRAuthMap2;FHIRConstants=FHIRConstants2;FHIRContext=FHIRContext2;FHIRIndexInformation=FHIRIndexInformation2;FHIRJavascriptReg=FHIRJavascriptReg2;FHIRMetaModel=FHIRMetaModel2;FHIRNarrativeGenerator=FHIRNarrativeGenerator2;FHIROperations=FHIROperations2;FHIRParserJson=FHIRParserJson2;FHIRParserTurtle=FHIRParserTurtle2;FHIRParserXml=FHIRParserXml2;FHIRPathNode=FHIRPathNode2;FHIRProfileUtilities=FHIRProfileUtilities2;FHIRResources=FHIRResources2;FHIRStructureMapUtilities=FHIRStructureMapUtilities2;FHIRTags=FHIRTags2;FHIRTestWorker=FHIRTestWorker2;FHIRTypes=FHIRTypes2;FHIRUtilities=FHIRUtilities2;FHIRValidator=FHIRValidator2;FhirOpBase=FhirOpBase2;FhirPath=FhirPath2;NarrativeGenerator=NarrativeGenerator2;QuestionnaireBuilder=QuestionnaireBuilder2;FHIRBaseX=FHIRBase2
+* 3: FHIRAuthMap=FHIRAuthMap3;FHIRConstants=FHIRConstants3;FHIRContext=FHIRContext3;FHIRIndexInformation=FHIRIndexInformation3;FHIRJavascriptReg=FHIRJavascriptReg3;FHIRMetaModel=FHIRMetaModel3;FHIRNarrativeGenerator=FHIRNarrativeGenerator3;FHIROperations=FHIROperations3;FHIRParserJson=FHIRParserJson3;FHIRParserTurtle=FHIRParserTurtle3;FHIRParserXml=FHIRParserXml3;FHIRPathNode=FHIRPathNode3;FHIRProfileUtilities=FHIRProfileUtilities3;FHIRResources=FHIRResources3;FHIRStructureMapUtilities=FHIRStructureMapUtilities3;FHIRTags=FHIRTags3;FHIRTestWorker=FHIRTestWorker3;FHIRTypes=FHIRTypes3;FHIRUtilities=FHIRUtilities3;FHIRValidator=FHIRValidator3;FhirOpBase=FhirOpBase3;FhirPath=FhirPath3;NarrativeGenerator=NarrativeGenerator3;QuestionnaireBuilder=QuestionnaireBuilder3;FHIRBaseX=FHIRBase3
+* 4: FHIRAuthMap=FHIRAuthMap4;FHIRConstants=FHIRConstants4;FHIRContext=FHIRContext4;FHIRIndexInformation=FHIRIndexInformation4;FHIRJavascriptReg=FHIRJavascriptReg4;FHIRMetaModel=FHIRMetaModel4;FHIRNarrativeGenerator=FHIRNarrativeGenerator4;FHIROperations=FHIROperations4;FHIRParserJson=FHIRParserJson4;FHIRParserTurtle=FHIRParserTurtle4;FHIRParserXml=FHIRParserXml4;FHIRPathNode=FHIRPathNode4;FHIRProfileUtilities=FHIRProfileUtilities4;FHIRResources=FHIRResources4;FHIRStructureMapUtilities=FHIRStructureMapUtilities4;FHIRTags=FHIRTags4;FHIRTestWorker=FHIRTestWorker4;FHIRTypes=FHIRTypes4;FHIRUtilities=FHIRUtilities4;FHIRValidator=FHIRValidator4;FhirOpBase=FhirOpBase4;FhirPath=FhirPath4;NarrativeGenerator=NarrativeGenerator4;QuestionnaireBuilder=QuestionnaireBuilder4;FHIRBaseX=FHIRBase4
+
+Note: FHIR DSTU 1 units are still found in the code, but these are no longer maintained 
+actively and don't compile correctly anymore.
+
 
 Using the library 
 -----------------

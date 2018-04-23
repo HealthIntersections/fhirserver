@@ -580,7 +580,7 @@ begin
     else
       comp := TFHIRXmlComposer.create(FWorker.link, OutputStyleNormal, 'en');
     try
-      comp.Compose(result, resource, nil);
+      comp.Compose(result, resource);
     finally
       comp.free;
     end;
@@ -798,7 +798,7 @@ begin
           p.parse;
           if (p.resource = nil) then
             raise Exception.create('No response bundle');
-          result := p.resource.link;
+          result := p.resource.link as TFhirResource;
         finally
           p.free;
         end;
@@ -1053,7 +1053,7 @@ var
       try
         comp.source := TBytesStream.create(http.response.AsBytes);
         comp.Parse;
-        if (comp.resource <> nil) and (comp.resource.ResourceType = frtOperationOutcome) then
+        if (comp.resource <> nil) and (comp.resource.fhirType = 'OperationOutcome') then
         begin
           op := TFhirOperationOutcome(comp.resource);
           if (op.text <> nil) and (op.text.div_ <> nil) then
@@ -1252,7 +1252,7 @@ begin
           try
             comp.source := TStringStream.create(cnt);
             comp.Parse;
-            if (comp.resource <> nil) and (comp.resource.ResourceType = frtOperationOutcome) then
+            if (comp.resource <> nil) and (comp.resource.fhirType = 'OperationOutcome') then
             begin
               op := TFhirOperationOutcome(comp.resource);
               if (op.text <> nil) and (op.text.div_ <> nil) then

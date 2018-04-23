@@ -119,6 +119,8 @@
         <Debugger_RunParams>-xnoload -xremount -xtests -xvalidate -password g -ini C:\work\fhirserver\Exec\fhir.dev.local.ini -xsnomed-rf2 &quot;C:\data\terminologies\sct-us&quot; -sver &quot;http://snomed.info/sct/731000124108/version/20150901&quot; -xtests -xindex -xloinc &quot;C:\Data\terminologies\Loinc\2.54&quot; -lver 2.54 -xload C:\work\org.hl7.fhir.old\org.hl7.fhir.dstu2\build\publish\examples.zip -xunii C:\Data\terminologies\uniis\unii.txt -xncistems -xprofile &quot;C:\ork\fhirserver\profiles\daf-upload.ini&quot; -debug </Debugger_RunParams>
         <VerInfo_Locale>1033</VerInfo_Locale>
         <Manifest_File>None</Manifest_File>
+        <DCC_UnitAlias>FHIRAuthMap=FHIRAuthMap2;FHIRConstants=FHIRConstants2;FHIRContext=FHIRContext2;FHIRIndexInformation=FHIRIndexInformation2;FHIRJavascriptReg=FHIRJavascriptReg2;FHIRMetaModel=FHIRMetaModel2;FHIRNarrativeGenerator=FHIRNarrativeGenerator2;FHIROperations=FHIROperations2;FHIRParserJson=FHIRParserJson2;FHIRParserTurtle=FHIRParserTurtle2;FHIRParserXml=FHIRParserXml2;FHIRPathNode=FHIRPathNode2;FHIRProfileUtilities=FHIRProfileUtilities2;FHIRResources=FHIRResources2;FHIRStructureMapUtilities=FHIRStructureMapUtilities2;FHIRTags=FHIRTags2;FHIRTestWorker=FHIRTestWorker2;FHIRTypes=FHIRTypes2;FHIRUtilities=FHIRUtilities2;FHIRValidator=FHIRValidator2;FhirOpBase=FhirOpBase2;FhirPath=FhirPath2;NarrativeGenerator=NarrativeGenerator2;QuestionnaireBuilder=QuestionnaireBuilder2;FHIRBaseX=FHIRBase2;$(DCC_UnitAlias)</DCC_UnitAlias>
+        <VerInfo_Keys>CompanyName=;FileVersion=1.0.0.0;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProductVersion=1.0.0.0;Comments=;ProgramID=com.embarcadero.$(MSBuildProjectName);FileDescription=$(MSBuildProjectName);ProductName=$(MSBuildProjectName)</VerInfo_Keys>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_2)'!=''">
         <DCC_LocalDebugSymbols>false</DCC_LocalDebugSymbols>
@@ -305,28 +307,28 @@
         <DCCReference Include="..\reference-platform\Support\MsXML.pas"/>
         <DCCReference Include="..\reference-platform\Support\MimeMessage.pas"/>
         <DCCReference Include="..\reference-platform\Support\kCritSct.pas"/>
-        <DCCReference Include="..\reference-platform\dstu2\QuestionnaireBuilder.pas"/>
+        <DCCReference Include="..\reference-platform\dstu2\QuestionnaireBuilder2.pas"/>
         <DCCReference Include="..\reference-platform\support\SCIMObjects.pas"/>
-        <DCCReference Include="..\reference-platform\dstu2\NarrativeGenerator.pas"/>
+        <DCCReference Include="..\reference-platform\dstu2\NarrativeGenerator2.pas"/>
         <DCCReference Include="..\reference-platform\support\FHIRSecurity.pas"/>
-        <DCCReference Include="..\reference-platform\dstu2\FHIRNarrativeGenerator.pas"/>
+        <DCCReference Include="..\reference-platform\dstu2\FHIRNarrativeGenerator2.pas"/>
         <DCCReference Include="..\reference-platform\client\SmartOnFhirUtilities.pas"/>
-        <DCCReference Include="..\reference-platform\dstu2\FHIRPath.pas"/>
-        <DCCReference Include="..\reference-platform\dstu2\FHIRTags.pas"/>
-        <DCCReference Include="..\reference-platform\dstu2\FHIRProfileUtilities.pas"/>
+        <DCCReference Include="..\reference-platform\dstu2\FHIRPath2.pas"/>
+        <DCCReference Include="..\reference-platform\dstu2\FHIRTags2.pas"/>
+        <DCCReference Include="..\reference-platform\dstu2\FHIRProfileUtilities2.pas"/>
         <DCCReference Include="..\reference-platform\support\FHIRBase.pas"/>
-        <DCCReference Include="..\reference-platform\dstu2\FHIRTypes.pas"/>
-        <DCCReference Include="..\reference-platform\dstu2\FHIRResources.pas"/>
+        <DCCReference Include="..\reference-platform\dstu2\FHIRTypes2.pas"/>
+        <DCCReference Include="..\reference-platform\dstu2\FHIRResources2.pas"/>
         <DCCReference Include="..\reference-platform\support\FHIRParser.pas"/>
-        <DCCReference Include="..\reference-platform\dstu2\FHIRParserXml.pas"/>
-        <DCCReference Include="..\reference-platform\dstu2\FHIRParserJson.pas"/>
+        <DCCReference Include="..\reference-platform\dstu2\FHIRParserXml2.pas"/>
+        <DCCReference Include="..\reference-platform\dstu2\FHIRParserJson2.pas"/>
         <DCCReference Include="..\reference-platform\support\FHIRParserBase.pas"/>
-        <DCCReference Include="..\reference-platform\dstu2\FHIRConstants.pas"/>
+        <DCCReference Include="..\reference-platform\dstu2\FHIRConstants2.pas"/>
         <DCCReference Include="..\reference-platform\support\FHIRSupport.pas"/>
         <DCCReference Include="..\reference-platform\support\FHIRLang.pas"/>
-        <DCCReference Include="..\reference-platform\dstu2\FHIRUtilities.pas"/>
+        <DCCReference Include="..\reference-platform\dstu2\FHIRUtilities2.pas"/>
         <DCCReference Include="..\reference-platform\client\FHIRClient.pas"/>
-        <DCCReference Include="..\reference-platform\dstu2\FHIRValidator.pas"/>
+        <DCCReference Include="..\reference-platform\dstu2\FHIRValidator2.pas"/>
         <DCCReference Include="ClosureManager.pas"/>
         <DCCReference Include="..\reference-platform\support\CDSHooksUtilities.pas"/>
         <DCCReference Include="..\..\markdown\source\MarkdownProcessor.pas"/>
@@ -335,16 +337,16 @@
         <DCCReference Include="AccessControlEngine.pas"/>
         <DCCReference Include="MPISearch.pas"/>
         <DCCReference Include="..\reference-platform\support\RDFUtilities.pas"/>
-        <DCCReference Include="..\reference-platform\dstu2\FHIROperations.pas"/>
-        <DCCReference Include="..\reference-platform\dstu2\FHIRMetaModel.pas"/>
-        <DCCReference Include="..\reference-platform\dstu2\FHIRIndexInformation.pas"/>
-        <DCCReference Include="..\reference-platform\dstu2\FhirOpBase.pas"/>
+        <DCCReference Include="..\reference-platform\dstu2\FHIROperations2.pas"/>
+        <DCCReference Include="..\reference-platform\dstu2\FHIRMetaModel2.pas"/>
+        <DCCReference Include="..\reference-platform\dstu2\FHIRIndexInformation2.pas"/>
+        <DCCReference Include="..\reference-platform\dstu2\FhirOpBase2.pas"/>
         <DCCReference Include="..\reference-platform\support\FHIRXhtml.pas"/>
-        <DCCReference Include="..\reference-platform\dstu2\FHIRContext.pas"/>
+        <DCCReference Include="..\reference-platform\dstu2\FHIRContext2.pas"/>
         <DCCReference Include="..\reference-platform\support\XmlPatch.pas"/>
         <DCCReference Include="..\reference-platform\support\FHIRLog.pas"/>
         <DCCReference Include="Logging.pas"/>
-        <DCCReference Include="..\reference-platform\dstu2\FHIRAuthMap.pas"/>
+        <DCCReference Include="..\reference-platform\dstu2\FHIRAuthMap2.pas"/>
         <DCCReference Include="..\reference-platform\support\AdvZipWriters.pas"/>
         <DCCReference Include="..\reference-platform\support\DifferenceEngine.pas"/>
         <DCCReference Include="ACIRServices.pas"/>
@@ -378,7 +380,7 @@
         <DCCReference Include="ServerPostHandlers.pas"/>
         <DCCReference Include="ServerJavascriptHost.pas"/>
         <DCCReference Include="..\Libraries\js\AdvJavascript.pas"/>
-        <DCCReference Include="..\reference-platform\dstu2\FHIRJavascriptReg.pas"/>
+        <DCCReference Include="..\reference-platform\dstu2\FHIRJavascriptReg2.pas"/>
         <DCCReference Include="..\Libraries\js\FHIRJavascript.pas"/>
         <DCCReference Include="..\Libraries\js\FHIRClientJs.pas"/>
         <DCCReference Include="ServerEventJs.pas"/>
@@ -393,8 +395,11 @@
         <DCCReference Include="..\reference-platform\support\FHIRFactory.pas"/>
         <DCCReference Include="USStatesServices.pas"/>
         <DCCReference Include="CountryCodeServices.pas"/>
-        <DCCReference Include="..\reference-platform\dstu2\FHIRPathNode.pas"/>
+        <DCCReference Include="..\reference-platform\dstu2\FHIRPathNode2.pas"/>
         <DCCReference Include="..\reference-platform\support\UcumServiceInterface.pas"/>
+        <DCCReference Include="..\reference-platform\dstu2\FHIRBase2.pas"/>
+        <DCCReference Include="..\reference-platform\Support\FHIRXhtmlComposer.pas"/>
+        <DCCReference Include="..\reference-platform\dstu2\FHIRParserBase2.pas"/>
         <None Include="Profiling\AQtimeModule1.aqt"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
@@ -452,8 +457,8 @@
                     <Source Name="MainSource">FHIRServer2.dpr</Source>
                 </Source>
                 <Excluded_Packages>
-                    <Excluded_Packages Name="$(BDSBIN)\dcloffice2k240.bpl">Microsoft Office 2000 Sample Automation Server Wrapper Components</Excluded_Packages>
-                    <Excluded_Packages Name="$(BDSBIN)\dclofficexp240.bpl">Microsoft Office XP Sample Automation Server Wrapper Components</Excluded_Packages>
+                    <Excluded_Packages Name="$(BDSBIN)\dcloffice2k250.bpl">Microsoft Office 2000 Sample Automation Server Wrapper Components</Excluded_Packages>
+                    <Excluded_Packages Name="$(BDSBIN)\dclofficexp250.bpl">Microsoft Office XP Sample Automation Server Wrapper Components</Excluded_Packages>
                 </Excluded_Packages>
             </Delphi.Personality>
             <Deployment Version="3">
@@ -463,14 +468,14 @@
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
-                <DeployFile LocalName="Win64\Debug\FHIRServer2.rsm" Configuration="Debug" Class="DebugSymbols">
-                    <Platform Name="Win64">
-                        <RemoteName>FHIRServer2.rsm</RemoteName>
+                <DeployFile LocalName="Win32\Debug\FHIRServer2.exe" Configuration="Debug" Class="ProjectOutput">
+                    <Platform Name="Win32">
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
-                <DeployFile LocalName="Win32\Debug\FHIRServer2.exe" Configuration="Debug" Class="ProjectOutput">
-                    <Platform Name="Win32">
+                <DeployFile LocalName="Win64\Debug\FHIRServer2.rsm" Configuration="Debug" Class="DebugSymbols">
+                    <Platform Name="Win64">
+                        <RemoteName>FHIRServer2.rsm</RemoteName>
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>

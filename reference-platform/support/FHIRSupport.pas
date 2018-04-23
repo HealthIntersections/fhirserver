@@ -43,7 +43,16 @@ uses
   StringSupport, DecimalSupport, GuidSupport, DateSupport,
   AdvObjects, AdvBuffers, AdvStringLists, AdvStringMatches, AdvJson, AdvGenerics, AdvNameBuffers, AdvStreams,
   MimeMessage, JWT, SCIMObjects, MXML, GraphQL,
-  FHIRBase, FHIRIndexBase, FHirResources, FHIRConstants, FHIRTypes, FHIRContext, FHIRSecurity, FHIRTags, FHIRLang, FHIRXhtml;
+  FHIRBase, FHIRIndexBase, FHIRSecurity, FHIRLang, FHIRXhtml,
+  {$IFDEF FHIR2}
+  FHIRResources2, FHIRConstants2, FHIRTypes2, FHIRContext2, FHIRTags2;
+  {$ENDIF}
+  {$IFDEF FHIR3}
+  FHIRResources3, FHIRConstants3, FHIRTypes3, FHIRContext3, FHIRTags3;
+  {$ENDIF}
+  {$IFDEF FHIR4}
+  FHIRResources4, FHIRConstants4, FHIRTypes4, FHIRContext4, FHIRTags4;
+  {$ENDIF}
 
 Const
    HTTP_OK_200 = 200;
@@ -730,7 +739,15 @@ implementation
 uses
   FHIRParser,
   FHIRParserBase,
-  FHIRUtilities;
+  {$IFDEF FHIR2}
+  FHIRUtilities2;
+  {$ENDIF}
+  {$IFDEF FHIR3}
+  FHIRUtilities3;
+  {$ENDIF}
+  {$IFDEF FHIR4}
+  FHIRUtilities4;
+  {$ENDIF}
 
 { ERestfulException }
 
@@ -1124,7 +1141,7 @@ begin
   try
     comp := TFHIRXmlComposer.create(Fworker.link, OutputStylePretty, lang);
     try
-      comp.Compose(stream, resource, nil);
+      comp.Compose(stream, resource);
     finally
       comp.free;
     end;

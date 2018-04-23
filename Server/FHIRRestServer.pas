@@ -97,7 +97,7 @@ Uses
   MXML, GraphQL, {$IFDEF MSWINDOWS} MsXml, MsXmlParser, {$ENDIF}
   FHIRTypes, FHIRResources, FHIRParser, FHIRConstants,
   FHIRBase, FHIRParserBase, FHIRTags, FHIRSupport, FHIRLang, FHIRStorageService,
-  FHIRUtilities, FHIRSecurity, SmartOnFhirUtilities,
+  FHIRUtilities, FHIRSecurity, SmartOnFhirUtilities, FHIRXhtmlComposer,
   QuestionnaireBuilder, FHIRClient, CDSHooksUtilities, CDSHooksClientManager,
   FHIRXhtml, FHIRGraphQL,
 
@@ -1104,9 +1104,9 @@ begin
     try
       req.CommandType := fcmdTransaction;
       if ExtractFileExt(name) = '.xml' then
-        req.resource := TFHIRXmlParser.ParseFile(FServerContext.ValidatorContext.link, 'en', name)
+        req.resource := TFHIRParsers.ParseFile(FServerContext.ValidatorContext.link, ffXml, 'en', name)
       else if ExtractFileExt(name) = '.json' then
-        req.resource := TFHIRJsonParser.ParseFile(FServerContext.ValidatorContext.link, 'en', name)
+        req.resource := TFHIRParsers.ParseFile(FServerContext.ValidatorContext.link, ffJson, 'en', name)
       else
         req.resource := ProcessZip('en', stream, name, base, init, ini, Context, cursor);
       if not (req.Resource is TFHIRBundle) then
@@ -1980,7 +1980,7 @@ begin
         comp := TFHIRXMLComposer.Create(FServerContext.ValidatorContext.link, OutputStylePretty, request.lang);
       try
         comp.LogId := request.internalRequestId;
-        s := comp.Compose(r, nil);
+        s := comp.Compose(r);
       finally
         comp.Free;
       end;
@@ -2032,7 +2032,7 @@ begin
         prsr.Source := TStringStream.Create(s, TEncoding.UTF8);
         try
           prsr.Parse;
-          request.resource := prsr.resource.link;
+          request.resource := prsr.resource.link as TFHIRResource;
           checkRequestByJs(context, request);
           ProcessRequest(Context, request, response);
           if response.HTTPCode < 300 then
@@ -2294,7 +2294,7 @@ begin
       qa.containedList.Clear;
       json := TFHIRJsonComposer.Create(request.Context.link, OutputStyleNormal, request.lang);
       try
-        j := json.Compose(qa, nil);
+        j := json.Compose(qa);
       finally
         json.Free;
       end;
@@ -2451,7 +2451,7 @@ begin
       try
         response.contentType := oComp.MimeType;
         oComp.LogId := logId;
-        oComp.Compose(response.ContentStream, issue, nil);
+        oComp.Compose(response.ContentStream, issue);
         response.ContentStream.Position := 0;
       finally
         oComp.Free;
@@ -2697,7 +2697,7 @@ Begin
 
                 parser := MakeParser(FServerContext.ValidatorContext, lang, oRequest.PostFormat, oPostStream, xppReject);
                 try
-                  oRequest.resource := parser.resource.link;
+                  oRequest.resource := parser.resource.link as TFHIRResource;
                   if oRequest.PostFormat = ffUnspecified then
                     oRequest.PostFormat := parser.format;
 
@@ -2832,11 +2832,11 @@ begin
                     ; // we ignore these for now
                 end;
               end
-              else if not(p.resource is TFhirParameters) and ok(p.resource) then
+              else if not(p.resource is TFhirParameters) and ok(p.resource as TFHIRResource) then
               begin
                 e := TFHIRBundleEntry.Create;
                 try
-                  e.resource := p.resource.link;
+                  e.resource := p.resource.link as TFHIRResource;
                   result.entryList.Add(e.link);
                 finally
                   e.Free;
@@ -2931,6 +2931,7 @@ begin
             TFHIRXhtmlComposer(oComp).relativeReferenceAdjustment := relativeReferenceAdjustment;
             TFHIRXhtmlComposer(oComp).OnGetLink := GetWebUILink;
             TFHIRXhtmlComposer(oComp).OperationName := oRequest.OperationName;
+            TFHIRXhtmlComposer(oComp).Links := oResponse.link_List.link;
             // response.Expires := 0;
             response.Pragma := '';
           end
@@ -2957,7 +2958,7 @@ begin
             oComp.SummaryOption := oRequest.Summary;
             oComp.ElementToCompose.Assign(oRequest.Elements);
             oComp.LogId := oRequest.internalRequestId;
-            oComp.Compose(stream, res, oResponse.link_List);
+            oComp.Compose(stream, res);
           finally
             oComp.Free;
           end;
@@ -4276,7 +4277,7 @@ begin
     op.requestHeaderList.Add('if-modified-since', DateTimeToXMLDateTimeTimeZoneString(req.IfModifiedSince, TimeZoneBias));
   op.requestHeaderList.Add('if-none-exist', req.IfNoneExist);
   if req.provenance <> nil then
-    op.requestHeaderList.Add('x-provenance', ComposeJson(FServerContext.ValidatorContext, req.provenance));
+    op.requestHeaderList.Add('X-Provenance', ComposeJson(FServerContext.ValidatorContext, req.provenance));
   op.url := req.url;
 end;
 
@@ -4530,7 +4531,7 @@ begin
   try
     xml := TFHIRXMLComposer.Create(FServerContext.ValidatorContext.link, OutputStyleNormal, lang);
     try
-      xml.Compose(b, resource, nil);
+      xml.Compose(b, resource);
     finally
       xml.Free;
     end;

@@ -73,10 +73,10 @@ uses
   ParserSupport, XmlBuilder, MsXml, MsXmlParser, TextUtilities,
 
   FHIRBase, FHIRPathNode, FHIRValidator, FHIRResources, FHIRTypes, FHIRParser, FHIRParserBase, FHIRUtilities, FHIRClient, FHIRConstants,
-  FHIRPluginSettings, FHIRPluginValidator, FHIRNarrativeGenerator, FHIRPath, FHIRXhtml, FHIRContext,
+  FHIRPluginSettings, FHIRPluginValidator, FHIRNarrativeGenerator, FHIRPath, FHIRXhtml, FHIRContext, FHIRExpressionComposer,
   SmartOnFhirUtilities, SmartOnFhirLogin, nppBuildcount, PluginUtilities,
   FHIRToolboxForm, AboutForms, SettingsForm, NewResourceForm, FetchResourceForm, PathDialogForms, ValidationOutcomes, CodeGenerationForm,
-  FHIRVisualiser, FHIRPathDebugger, WelcomeScreen, UpgradePrompt, DifferenceEngine, ResDisplayForm;
+  FHIRVisualiser, FHIRPathDebugger3, WelcomeScreen, UpgradePrompt, DifferenceEngine, ResDisplayForm;
 
 const
   INDIC_INFORMATION = 21;
@@ -1313,7 +1313,7 @@ begin
       prsr.KeepLineNumbers := false;
       prsr.source := s;
       prsr.Parse;
-      result := prsr.resource.Link;
+      result := prsr.resource.Link as TFHIRResource;
     finally
       prsr.Free;
     end;
@@ -1353,7 +1353,7 @@ begin
             exit(false);
           end;
         end;
-        res := prsr.resource.Link;
+        res := prsr.resource.Link as TFHIRResource;
       finally
         prsr.Free;
       end;
@@ -1395,14 +1395,11 @@ end;
 
 function TFHIRPlugin.showOutcomes(fmt : TFHIRFormat; items : TFHIRObjectList; expr : TFHIRPathExpressionNode; types : TAdvStringSet): string;
 var
-  comp : TFHIRComposer;
+  comp : TFHIRExpressionNodeComposer;
 begin
-  if fmt = ffXml then
-    comp := TFHIRXmlComposer.Create(FWorker.link, OutputStylePretty, 'en')
-  else
-    comp := TFHIRJsonComposer.Create(FWorker.link, OutputStylePretty, 'en');
+  comp := TFHIRExpressionNodeComposer.create(FWorker.link, OutputStylePretty, 'en');
   try
-    result := comp.Compose(expr, items, types);
+    result := comp.Compose(expr, fmt, items, types);
   finally
     comp.Free;
   end;

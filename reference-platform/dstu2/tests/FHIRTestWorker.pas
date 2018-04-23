@@ -30,18 +30,14 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 }
 
-{$IFNDEF FHIR2}
-This is the dstu2 version of the FHIR code
-{$ENDIF}
-
 
 interface
 
 uses
   SysUtils, Classes, Windows, WinAPI.ShellAPI, Soap.EncdDecd,
   StringSupport,
-  FHIRBase, FHIRTypes, FHIRResources, FHIRConstants, FHIRParser, FHIRContext,
-  FHIRSupport, FHIRProfileUtilities, FHIRPath,
+  FHIRBase, FHIRParser, FHIRSupport, 
+  FHIRTypes2, FHIRResources2, FHIRConstants2, FHIRProfileUtilities2, FHIRPath2, FHIRContext2,
   MsXml, MsXmlParser, AdvJson,
   DUnitX.TestFramework;
 

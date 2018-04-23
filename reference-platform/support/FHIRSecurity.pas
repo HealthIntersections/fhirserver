@@ -34,7 +34,15 @@ interface
 uses
   SysUtils, Classes, IniFiles,
   AdvObjects, AdvGenerics,
-  FHIRResources, FHIRConstants, FHIRContext,
+  {$IFDEF FHIR2}
+  FHIRResources2, FHIRConstants2, FHIRContext2,
+  {$ENDIF}
+  {$IFDEF FHIR3}
+  FHIRResources3, FHIRConstants3, FHIRContext3,
+  {$ENDIF}
+  {$IFDEF FHIR4}
+  FHIRResources4, FHIRConstants4, FHIRContext4,
+  {$ENDIF}
   SCIMObjects;
 
 Const

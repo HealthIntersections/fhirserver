@@ -36,7 +36,7 @@ uses
   EncodeSupport, TextUtilities,
   AdvObjects,
   FHIRBase, FHIRXhtml,
-  FHIRParserBase,
+  FHIRParserBase, FHIRXhtmlComposer,
   FHIRConstants; // todo: really need to sort out how XHTML template is done
 
 Type

@@ -33,12 +33,12 @@ uses
   FastMM4 in '..\..\Libraries\FMM\FastMM4.pas',
   FastMM4Messages in '..\..\Libraries\FMM\FastMM4Messages.pas',
   TestInsight.DUnitX,
-  FHIRTests,
+  FHIRTestCases2,
   DecimalTests in '..\support\tests\DecimalTests.pas',
   JWTTests in '..\Support\tests\JWTTests.pas',
   FluentPathTests in 'tests\FluentPathTests.pas',
   FHIRValidatorTests in 'tests\FHIRValidatorTests.pas',
-  FHIRConstants,
+  FHIRConstants2,
   SysUtils,
   Classes,
   ActiveX,
@@ -99,10 +99,10 @@ uses
   HL7V2DateSupport in '..\support\HL7V2DateSupport.pas',
   FHIRBase in '..\support\FHIRBase.pas',
   AdvStringMatches in '..\support\AdvStringMatches.pas',
-  FHIRResources in 'FHIRResources.pas',
+  FHIRResources2 in 'FHIRResources2.pas',
   FHIRParser in '..\support\FHIRParser.pas',
-  FHIRParserXml,
-  FHIRParserJson,
+  FHIRParserXml2,
+  FHIRParserJson2,
   FHIRParserBase in '..\support\FHIRParserBase.pas',
   FHIRSupport in '..\support\FHIRSupport.pas',
   ParseMap in '..\support\ParseMap.pas',
@@ -119,12 +119,12 @@ uses
   AdvJSON in '..\support\AdvJSON.pas',
   AdvGenerics in '..\support\AdvGenerics.pas',
   FHIRLang in '..\support\FHIRLang.pas',
-  FHIRPath in 'FHIRPath.pas',
+  FHIRPath2 in 'FHIRPath2.pas',
   AfsResourceVolumes in '..\support\AfsResourceVolumes.pas',
   AfsVolumes in '..\support\AfsVolumes.pas',
   AfsStreamManagers in '..\support\AfsStreamManagers.pas',
   AdvObjectMatches in '..\support\AdvObjectMatches.pas',
-  FHIRUtilities in 'FHIRUtilities.pas',
+  FHIRUtilities2 in 'FHIRUtilities2.pas',
   AdvStringObjectMatches in '..\support\AdvStringObjectMatches.pas',
   JWT in '..\support\JWT.pas',
   HMAC in '..\support\HMAC.pas',
@@ -143,7 +143,7 @@ uses
   FHIRTestWorker in 'tests\FHIRTestWorker.pas',
   FHIRXhtml in '..\support\FHIRXhtml.pas',
   InternetFetcher in '..\support\InternetFetcher.pas',
-  FHIRContext in 'FHIRContext.pas',
+  FHIRContext2 in 'FHIRContext2.pas',
   GraphQL in '..\support\GraphQL.pas',
   ParserSupport in '..\support\ParserSupport.pas',
   MXML in '..\support\MXML.pas',
@@ -152,13 +152,14 @@ uses
   FHIRSecurity in '..\support\FHIRSecurity.pas',
   TurtleParser in '..\support\TurtleParser.pas',
   FHIRIndexBase in '..\support\FHIRIndexBase.pas',
-  UcumServiceInterface in '..\support\UcumServiceInterface.pas';
+  UcumServiceInterface in '..\support\UcumServiceInterface.pas',
+  FHIRXhtmlComposer in '..\support\FHIRXhtmlComposer.pas';
 
 (*
 procedure SaveStringToFile(s : AnsiString; fn : String);
 var
   f : TFileStream;
-begin  
+begin
   f := TFileStream.Create(fn, fmCreate);
   try
     f.Write(s[1], length(s));

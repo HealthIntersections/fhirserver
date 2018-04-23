@@ -36,7 +36,7 @@ uses
   SysUtils, Classes,
   DUnitX.TestFramework,
   FHIRBase, FHIRResources, FHIRParser, FHIRMetaModel,
-  FHIRContext, FHIRTestWorker, XmlTests, JsonTests;
+  FHIRContext2, FHIRTestWorker, XmlTests, JsonTests;
 
 type
   FHIRParserTestCaseAttribute = class (FHIRFolderBasedTestCaseAttribute)

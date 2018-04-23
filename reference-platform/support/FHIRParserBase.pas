@@ -37,7 +37,7 @@ uses
   DateSupport, StringSupport, DecimalSupport, EncodeSupport, BytesSupport, TextUtilities, GuidSupport,
   AdvBuffers, AdvStringLists,  AdvStringMatches, AdvVCLStreams, AdvStringBuilders, AdvGenerics, AdvStreams,
   ParserSupport, MXML, XmlBuilder, MXmlBuilder, AdvXmlBuilders, AdvJSON, TurtleParser,
-  FHIRBase, FHIRResources, FHIRTypes, FHIRConstants, FHIRContext, FHIRSupport, FHIRTags, FHIRLang, FHIRXhtml, FHIRPathNode;
+  FHIRBase, FHIRSupport, FHIRLang, FHIRXhtml;
 
 const
   ATOM_NS = 'http://www.w3.org/2005/Atom';
@@ -71,16 +71,16 @@ Type
   TFHIRParser = class abstract (TFHIRObject)
   private
     FAllowUnknownContent: Boolean;
-    Fresource: TFhirResource;
+    Fresource: TFhirResourceV;
     FSource: TStream;
     FLang: String;
     FParserPolicy : TFHIRXhtmlParserPolicy;
     FKeepLineNumbers : boolean;
     FTimeLimit: Cardinal;
     FTimeToAbort : Cardinal;
-    FWorker : TFHIRWorkerContext;
     FIgnoreHtml: Boolean;
-    procedure SetResource(const Value: TFhirResource);
+    FWorker : TFHIRWorkerContextV;
+    procedure SetResource(const Value: TFhirResourceV);
     procedure start;
     procedure checkTimeOut;
   protected
@@ -90,13 +90,13 @@ Type
     function StringArrayToCommaString(Const aNames : Array Of String) : String;
     function GetFormat: TFHIRFormat; virtual; abstract;
   public
-    Constructor Create(worker : TFHIRWorkerContext; lang : String); Virtual;
+    Constructor Create(worker : TFHIRWorkerContextV; lang : String); Virtual;
     Destructor Destroy; Override;
     property source : TStream read FSource write FSource;
     procedure Parse; Virtual; abstract;
-    function ParseDT(rootName : String; type_ : TFHIRTypeClass) : TFHIRType; Virtual; abstract;
-    property resource : TFhirResource read Fresource write SetResource;
+    property resource : TFhirResourceV read Fresource write SetResource;
 
+    function ParseDT(rootName : String; type_ : TClass) : TFHIRObject; Virtual; abstract;
 
     procedure ParseFile(filename : String); overload;
     Property AllowUnknownContent : Boolean read FAllowUnknownContent write FAllowUnknownContent;
@@ -134,20 +134,18 @@ Type
 
     Procedure XmlError(const sPath, sMessage : String);
 
-    Function ParseDomainResource(element: TMXmlElement; path : String) : TFhirResource;
-    Function ParseInnerResource(element : TMXmlElement; path : String) : TFhirResource; Virtual;
-    Function ParseResource(element : TMXmlElement; path : String) : TFhirResource; Virtual;
-//    function parseBinary(element : TMXmlElement; path : String) : TFhirBinary;
+    Function ParseDomainResourceV(element: TMXmlElement; path : String) : TFhirResourceV;
+    Function ParseResourceV(element : TMXmlElement; path : String) : TFhirResourceV; Virtual;
+    function ParseDataTypeV(element : TMXmlElement; name : String; type_ : TClass) : TFHIRObject; virtual;
+
     Procedure checkOtherAttributes(value : TMXmlElement; path : String);
-    function ParseDataType(element : TMXmlElement; name : String; type_ : TFHIRTypeClass) : TFHIRType; virtual;
     function GetFormat: TFHIRFormat; override;
   Public
     Destructor Destroy; Override;
     procedure Parse; Override;
-    function ParseDT(rootName : String; type_ : TFHIRTypeClass) : TFHIRType; Override;
+    function ParseDT(rootName : String; type_ : TClass) : TFHIRObject; override;
+
     property Element : TMXmlElement read FElement write SeTFhirElement;
-    class function ParseFragment(worker : TFHIRWorkerContext; fragment, lang : String) : TFHIRObject; overload;
-    class function ParseFile(worker : TFHIRWorkerContext; lang : String; filename : String) : TFHIRResource; overload;
   End;
 
 
@@ -159,9 +157,9 @@ Type
   Protected
     Function ParseXHtmlNode(path, value : String) : TFhirXHtmlNode;
 
-    Function ParseResource(jsn : TJsonObject) : TFhirResource; Virtual;
+    Function ParseResourceV(jsn : TJsonObject) : TFhirResourceV; Virtual;
+    function ParseDataTypeV(jsn : TJsonObject; name : String; type_ : TClass) : TFHIRObject; virtual;
     procedure ParseComments(base : TFHIRObject; jsn : TJsonObject);
-    function ParseDataType(jsn : TJsonObject; name : String; type_ : TFHIRTypeClass) : TFHIRType; virtual;
 
     procedure iterateArray(arr : TJsonArray; ctxt : TFHIRObjectList; handler : TJsonObjectHandler);
     procedure iteratePrimitiveArray(arr1, arr2 : TJsonArray; ctxt : TFHIRObjectList; handler : TJsonObjectPrimitiveHandler);
@@ -169,32 +167,25 @@ Type
 
     // handlers
     procedure parseDomainResource(jsn : TJsonObject; ctxt : TFHIRObjectList);
-    procedure ParseInnerResource(jsn : TJsonObject; ctxt : TFHIRObjectList);  overload;
-    function ParseInnerResource(jsn: TJsonObject) : TFhirResource; overload;
     function GetFormat: TFHIRFormat; override;
   Public
     procedure Parse; Overload; Override;
     procedure Parse(obj : TJsonObject); Reintroduce; Overload; Virtual;
-    function ParseDT(rootName : String; type_ : TFHIRTypeClass) : TFHIRType; Override;
-    class function ParseFragment(worker : TFHIRWorkerContext; fragment, type_, lang : String) : TFHIRObject; overload;
-    class function ParseFile(worker : TFHIRWorkerContext; lang : String; filename : String) : TFHIRResource; overload;
+    function ParseDT(rootName : String; type_ : TClass) : TFHIRObject; override;
   End;
 
   {$IFNDEF FHIR2}
   TFHIRTurtleParserBase = class (TFHIRParser)
-  private
-    Fdoc : TTurtleDocument;
   protected
+    Fdoc : TTurtleDocument;
+
     function GetFormat: TFHIRFormat; override;
     function rdfsType(obj : TTurtleComplex) : string;
-    function ParseInnerResource(obj : TTurtleObject) : TFHIRResource;
-    function ParseResource(obj : TTurtleComplex) : TFHIRResource; virtual;
-    function ParseDataType(obj : TTurtleComplex; name : String; type_ : TFHIRTypeClass) : TFHIRType; virtual;
+    function ParseResourceV(obj : TTurtleComplex) : TFHIRResourceV; virtual;
     function ParseXHtmlNode(literal : String) : TFhirXHtmlNode;
   public
     procedure Parse; Overload; Override;
-    function ParseDT(rootName : String; type_ : TFHIRTypeClass) : TFHIRType; Override;
-    class function ParseFile(worker : TFHIRWorkerContext; lang : String; filename : String) : TFHIRResource; overload;
+    function ParseDT(rootName : String; type_ : TClass) : TFHIRObject; override;
   end;
   {$ENDIF}
 
@@ -203,11 +194,9 @@ Type
     function GetFormat: TFHIRFormat; override;
   Public
     procedure Parse; Overload; Override;
-    function ParseDT(rootName : String; type_ : TFHIRTypeClass) : TFHIRType; Override;
-    class function ParseFile(worker : TFHIRWorkerContext; lang : String; filename : String) : TFHIRResource; overload;
   End;
 
-  TFHIRComposer = {abstract} class (TFHIRObject)
+  TFHIRComposer = {abstract} class (TAdvObject)
   private
     FLang: String;
     FSummaryOption: TFHIRSummaryOption;
@@ -215,17 +204,15 @@ Type
     FElements : TStringList;
     FLogId: string;
   protected
-    FWorker : TFHIRWorkerContext;
+    FWorker : TFHIRWorkerContextV;
     FStyle : TFHIROutputStyle;
 
     function isPretty : boolean;
     function isCanonical : boolean;
     function doCompose(name : String) : boolean;
 
-    Procedure ComposeResource(xml : TXmlBuilder; oResource : TFhirResource; links : TFhirBundleLinkList = nil); overload; virtual;
-//    Procedure ComposeBinary(xml : TXmlBuilder; binary : TFhirBinary);
+    Procedure ComposeResourceV(xml : TXmlBuilder; oResource : TFhirResourceV); overload; virtual;
     procedure ComposeXHtmlNode(xml : TXmlBuilder; name : String; node: TFhirXHtmlNode); overload;
-//    procedure ComposeXHtmlNode(s : TAdvStringBuilder; node: TFhirXHtmlNode; indent, relativeReferenceAdjustment : integer); overload;
 
     function ResourceMediaType: String; virtual;
 
@@ -233,17 +220,14 @@ Type
     function asString(value : TBytes):String; overload;
     function asString(value : string):String; overload;
     function asString(value : boolean):String; overload;
-    procedure ComposeExpression(stream : TStream; expr : TFHIRPathExpressionNode; items : TFHIRObjectList; types : TAdvStringSet); Virtual;
     procedure ComposeItems(stream : TStream; name : String; items : TFHIRObjectList); Virtual;
     procedure ComposeItem(stream : TStream; name : String; item : TFHIRObject); Virtual;
   public
-    Constructor Create(worker : TFHIRWorkerContext; style : TFHIROutputStyle; lang : String); Virtual;
+    Constructor Create(worker : TFHIRWorkerContextV; style : TFHIROutputStyle; lang : String); Virtual;
     Destructor Destroy; override;
-    Procedure Compose(stream : TStream; oResource : TFhirResource; links : TFhirBundleLinkList = nil); Overload; Virtual;
-//    Procedure Compose(stream : TStream; ResourceType : TFhirResourceType; statedType, id, ver : String; oTags : TFHIRCodingList); Overload; Virtual; Abstract;
+    Procedure Compose(stream : TStream; oResource : TFhirResourceV); Overload; Virtual;
 
-    function Compose(oResource : TFhirResource; links : TFhirBundleLinkList = nil) : String; Overload;
-    function Compose(expr : TFHIRPathExpressionNode; items : TFHIRObjectList; types : TAdvStringSet): String; Overload;
+    function Compose(oResource : TFhirResourceV) : String; Overload;
     function Compose(name : String; items : TFHIRObjectList): String; Overload;
     function Compose(name : String; item : TFHIRObject): String; Overload;
 
@@ -262,29 +246,23 @@ Type
   private
     FComment: String;
   Protected
-//    xml : TXmlBuilder;
     procedure commentsStart(xml : TXmlBuilder; value : TFHIRObject);
     procedure commentsEnd(xml : TXmlBuilder; value : TFHIRObject);
     Procedure Attribute(xml : TXmlBuilder; name, value : String);
     Procedure Text(xml : TXmlBuilder; name, value : String);
     procedure closeOutElement(xml : TXmlBuilder; value : TFHIRObject);
-    Procedure ComposeDomainResource(xml : TXmlBuilder; name : String; value : TFhirDomainResource);
-    Procedure ComposeInnerResource(xml : TXmlBuilder; name : String; holder : TFhirDomainResource; value : TFhirResource); overload;
-    Procedure ComposeInnerResource(xml : TXmlBuilder; name : String; holder : TFHIRElement; value : TFhirResource); overload;
-    procedure ComposeExpression(stream : TStream; expr : TFHIRPathExpressionNode; items : TFHIRObjectList; types : TAdvStringSet); overload; override;
-    procedure ComposeExpression(xml : TXmlBuilder; expr : TFHIRPathExpressionNode); reintroduce; overload; virtual;
-    procedure ComposeBase(xml : TXmlBuilder; name : String; base : TFHIRObject); virtual;
+    Procedure ComposeDomainResource(xml : TXmlBuilder; name : String; value : TFhirResourceV);
+    Procedure ComposeInnerResource(xml : TXmlBuilder; name : String; holder : TFhirResourceV; value : TFhirResourceV); overload;
+    Procedure ComposeInnerResource(xml : TXmlBuilder; name : String; holder : TFHIRObject; value : TFhirResourceV); overload;
     procedure ComposeItems(stream : TStream; name : String; items : TFHIRObjectList); override;
     procedure ComposeItem(stream : TStream; name : String; item : TFHIRObject); override;
   Public
-    Procedure Compose(stream : TStream; oResource : TFhirResource; links : TFhirBundleLinkList = nil); Override;
-    Procedure Compose(node : TMXmlElement; oResource : TFhirResource; links : TFhirBundleLinkList = nil); Overload;
-//    Procedure Compose(stream : TStream; ResourceType : TFhirResourceType; oTags : TFHIRCodingList); Override;
-//    Procedure ComposeXHtmlNode(xml : TXmlBuilder; name : String; value : TFhirXHtmlNode); overload;
+    Procedure Compose(stream : TStream; oResource : TFhirResourceV); Override;
+    Procedure Compose(node : TMXmlElement; oResource : TFhirResourceV); Overload;
     Function MimeType : String; Override;
     function Extension : String; Override;
     Property Comment : String read FComment write FComment;
-    class procedure composeFile(worker : TFHIRWorkerContext; r : TFHIRResource; lang : String; filename : String; style : TFHIROutputStyle); overload;
+    procedure ComposeBase(xml : TXmlBuilder; name : String; base : TFHIRObject); virtual;
   End;
 
   TFHIRJsonComposerBase = class (TFHIRComposer)
@@ -296,37 +274,24 @@ Type
     Procedure PropNumber(json : TJSONWriter; name, value : String); overload;
     Procedure Prop(json : TJSONWriter; name : String; value : boolean); overload;
     Procedure ComposeXHtmlNode(json : TJSONWriter; name : String; value : TFhirXHtmlNode); overload;
-//    Procedure ComposeExtensions(json : TJSONWriter; extensions : TFhirExtensionList);
-//    Procedure ComposeModifierExtensions(json : TJSONWriter; extensions : TFhirExtensionList);
 
     Procedure composeComments(json : TJSONWriter; base : TFHIRObject);
-    procedure ComposeDomainResource(json : TJSONWriter; name : String; oResource : TFhirDomainResource); overload; virtual;
-    procedure ComposeInnerResource(json : TJSONWriter; name : String; holder : TFHIRElement; oResource : TFhirResource); overload; virtual;
-    procedure ComposeInnerResource(json : TJSONWriter; name : String; holder : TFhirDomainResource; oResource : TFhirResource); overload; virtual;
-    Procedure ComposeResource(json : TJSONWriter; oResource : TFhirResource; links : TFhirBundleLinkList); overload; virtual;
-    Procedure ComposeResource(xml : TXmlBuilder; oResource : TFhirResource; links : TFhirBundleLinkList); overload; override;
-//    Procedure ComposeExtension(json : TJSONWriter; name : String; extension : TFhirExtension; noObj : boolean = false); virtual;
-//    Procedure ComposeBinary(json : TJSONWriter; binary : TFhirBinary);
-    procedure ComposeExpression(stream : TStream; expr : TFHIRPathExpressionNode; items : TFHIRObjectList; types : TAdvStringSet); overload; override;
-    procedure ComposeExpression(json: TJSONWriter; expr : TFHIRPathExpressionNode); reintroduce; overload; virtual;
-    procedure ComposeBase(json: TJSONWriter; name : String; base : TFHIRObject); virtual;
+    procedure ComposeDomainResource(json : TJSONWriter; name : String; oResource : TFhirResourceV); overload; virtual;
+    procedure ComposeInnerResource(json : TJSONWriter; name : String; holder : TFHIRObject; oResource : TFhirResourceV); overload; virtual;
+    procedure ComposeInnerResource(json : TJSONWriter; name : String; holder : TFhirResourceV; oResource : TFhirResourceV); overload; virtual;
+    Procedure ComposeResourceV(json : TJSONWriter; oResource : TFhirResourceV); overload; virtual;
+//    Procedure ComposeResourceV(xml : TXmlBuilder; oResource : TFhirResourceV); overload;
     procedure ComposeItems(stream : TStream; name : String; items : TFHIRObjectList); override;
     procedure ComposeItem(stream : TStream; name : String; item : TFHIRObject); override;
   Public
-    Procedure Compose(stream : TStream; oResource : TFhirResource; links : TFhirBundleLinkList = nil); Override;
-    Procedure Compose(stream : TAdvStream; oResource : TFhirResource; links : TFhirBundleLinkList = nil); overload;
-    Procedure Compose(json: TJSONWriter; oResource : TFhirResource; links : TFhirBundleLinkList = nil); Overload;
-//    Procedure Compose(stream : TStream; ResourceType : TFhirResourceType; statedType, id, ver : String; oTags : TFHIRCodingList); Override;
-    class procedure composeFile(worker : TFHIRWorkerContext; r : TFHIRResource; lang : String; filename : String; style : TFHIROutputStyle); overload;
+    Procedure Compose(stream : TStream; oResource : TFhirResourceV); Override;
+    Procedure Compose(stream : TAdvStream; oResource : TFhirResourceV); overload;
+    Procedure Compose(json: TJSONWriter; oResource : TFhirResourceV); Overload;
     Function MimeType : String; Override;
     function Extension : String; Override;
     Property Comments : Boolean read FComments write FComments;
+    procedure ComposeBase(json: TJSONWriter; name : String; base : TFHIRObject); virtual;
   End;
-
-  TFHIRNDJsonComposer = class (TFHIRComposer)
-  public
-    Procedure Compose(stream : TStream; oResource : TFhirResource; links : TFhirBundleLinkList = nil); Override;
-  end;
 
   {$IFNDEF FHIR2}
   TFHIRTurtleComposerBase = class (TFHIRComposer)
@@ -337,75 +302,27 @@ Type
     procedure ComposeXHtmlNode(parent : TTurtleComplex; parentType, name : String; value: TFhirXHtmlNode; useType : boolean; index : integer); overload;
 
     function dateXsdType(value : TDateTimeEx) : string;
-    Procedure ComposeResource(xml : TXmlBuilder; oResource : TFhirResource; links : TFhirBundleLinkList); overload; override;
-    procedure ComposeExpression(stream : TStream; expr : TFHIRPathExpressionNode; items : TFHIRObjectList; types : TAdvStringSet); overload; override;
+    Procedure ComposeResource(xml : TXmlBuilder; oResource : TFhirResourceV); overload;
     procedure ComposeItems(stream : TStream; name : String; items : TFHIRObjectList); override;
     procedure ComposeItem(stream : TStream; name : String; item : TFHIRObject); override;
 
-    Procedure ComposeResource(parent :  TTurtleComplex; oResource : TFhirResource); overload; virtual;
-    Procedure ComposeInnerResource(this : TTurtleComplex; parentType, name : String; elem : TFhirResource; useType : boolean; index : integer); overload;
+    Procedure ComposeResourceV(parent :  TTurtleComplex; oResource : TFhirResourceV); overload; virtual;
+    Procedure ComposeInnerResource(this : TTurtleComplex; parentType, name : String; elem : TFhirResourceV; useType : boolean; index : integer); overload;
   public
-    Procedure Compose(stream : TStream; oResource : TFhirResource; links : TFhirBundleLinkList = nil); Override;
+    Procedure Compose(stream : TStream; oResource : TFhirResourceV); Override;
     Function MimeType : String; Override;
     property URL : String read FURL write FURL;
     function Extension : String; Override;
   end;
   {$ENDIF}
 
-  TFHIRXhtmlComposerGetLink = procedure (resource : TFhirResource; base, statedType, id, ver : String; var link, text : String) of object;
-
-  TFHIRXhtmlComposer = class (TFHIRComposer)
-  private
-    FBaseURL: String;
-    FSession: TFhirSession;
-    FTags : TFHIRTagList;
-    FrelativeReferenceAdjustment: integer;
-    FOnGetLink: TFHIRXhtmlComposerGetLink;
-    FOperationName : String;
-    FVersion: String;
-
-    procedure SetSession(const Value: TFhirSession);
-    function PresentTags(aType : TFhirResourceType; target : String; tags : TFHIRTagList; c : integer):String; overload;
-    function PresentTags(aType : TFhirResourceType; target : String; meta: TFhirMeta; c : integer):String; overload;
-    procedure SetTags(const Value: TFHIRTagList);
-    function PatchToWeb(url: String): String;
-//    xml : TXmlBuilder;
-//    procedure ComposeNode(node : TFhirXHtmlNode);
-    Procedure ComposeBundle(stream : TStream; bundle : TFHIRBundle);
-
-
-  protected
-    function ResourceMediaType: String; override;
-  public
-    Constructor Create(worker: TFHIRWorkerContext; Style : TFHIROutputStyle; lang, BaseURL : String); reintroduce; overload;
-    Destructor Destroy; override;
-    property BaseURL : String read FBaseURL write FBaseURL;
-    Property Session : TFhirSession read FSession write SetSession;
-    Property Version : String read FVersion write FVersion;
-    property Tags : TFHIRTagList read FTags write SetTags;
-    Procedure ComposeResource(xml : TXmlBuilder; oResource : TFhirResource; links : TFhirBundleLinkList = nil); Override;
-    Procedure Compose(stream : TStream; oResource : TFhirResource; links : TFhirBundleLinkList = nil); Override;
-    Function MimeType : String; Override;
-    function Extension : String; Override;
-
-    Property relativeReferenceAdjustment : integer read FrelativeReferenceAdjustment write FrelativeReferenceAdjustment;
-    Property OnGetLink : TFHIRXhtmlComposerGetLink read FOnGetLink write FOnGetLink;
-    Property OperationName : String read FOperationName write FOperationName;
-
-    class function ResourceLinks(a, lang, base : String; count : integer; bTable, bPrefixLinks, canRead : boolean): String;
-    class function PageLinks : String;
-    class function Header(Session : TFhirSession; base, lang, version : String) : String;
-    class function Footer(base, lang, logId : String; tail : boolean = true) : string;
-  end;
-
   TFHIRTextComposer = class (TFHIRComposer)
   private
-    function render(op : TFHIROperationOutcome) : String;
   protected
     function ResourceMediaType: String; override;
   public
-    Procedure ComposeResource(xml : TXmlBuilder; oResource : TFhirResource; links : TFhirBundleLinkList = nil); Override;
-    Procedure Compose(stream : TStream; oResource : TFhirResource; links : TFhirBundleLinkList = nil); Override;
+    Procedure ComposeResource(xml : TXmlBuilder; oResource : TFhirResourceV); overload;
+    Procedure Compose(stream : TStream; oResource : TFhirResourceV); Override;
     Function MimeType : String; Override;
     function Extension : String; Override;
   end;
@@ -413,11 +330,7 @@ Type
 Implementation
 
 uses
-  RegularExpressions,
-  FHIRParser,
-  FHIRUtilities,
-  FHIRProfileUtilities,
-  FHIRMetaModel;
+  RegularExpressions;
 
 Function TFHIRXmlParserBase.LoadXml(stream : TStream) : TMXmlDocument;
 begin
@@ -429,9 +342,6 @@ procedure TFHIRXmlParserBase.Parse;
 var
   xml : TMXmlDocument;
   root : TMXmlElement;
-  sd : TFHIRStructureDefinition;
-  e : TFHIRMMElement;
-  x : TFHIRMMXmlParser;
 begin
   xml := nil;
   try
@@ -446,32 +356,9 @@ begin
         root := element;
 
       if root.namespaceURI = FHIR_NS Then
-        resource := ParseResource(root, '')
+        resource := ParseResourceV(root, '')
       else
-      begin
-        // well, ok, we'll look to see if it's a logical model....
-        if FWorker = nil then
-          sd := nil
-        else
-          sd := FWorker.getStructure(root.namespaceURI, root.localName);
-        if sd = nil then
-          XmlError('/', StringFormat(GetFhirMessage('MSG_WRONG_NS', lang), [root.namespaceURI]))
-        else
-        begin
-          x := TFHIRMMXmlParser.create(FWorker.Link);
-          try
-            e := x.parse(root, sd);
-            try
-              resource := TFHIRCustomResource.create(e.link);
-            finally
-              e.free;
-            end;
-          finally
-            x.free;
-          end;
-        end;
-      end;
-
+        XmlError('/', StringFormat(GetFhirMessage('MSG_WRONG_NS', lang), [root.namespaceURI]))
     finally
       FComments.Free;
     end;
@@ -480,7 +367,7 @@ begin
   end;
 end;
 
-function TFHIRXmlParserBase.ParseResource(element: TMXmlElement; path : String): TFhirResource;
+function TFHIRXmlParserBase.ParseResourceV(element: TMXmlElement; path : String): TFhirResourceV;
 begin
   raise exception.create('don''t use TFHIRXmlParserBase directly - use TFHIRXmlParser');
 end;
@@ -496,14 +383,27 @@ begin
   start;
   obj := TJSONParser.Parse(source, timeLimit);
   try
-    resource := ParseResource(obj);
+    resource := ParseResourceV(obj);
   finally
     obj.Free;
   end;
 end;
 
 
-function TFHIRJsonParserBase.ParseResource(jsn : TJsonObject): TFhirResource;
+function TFHIRJsonParserBase.ParseDT(rootName: String; type_: TClass): TFHIRObject;
+var
+  obj : TJsonObject;
+begin
+  start;
+  obj := TJSONParser.Parse(source, timelimit);
+  try
+    result := ParseDataTypeV(obj, rootName, type_);
+  finally
+    obj.Free;
+  end;
+end;
+
+function TFHIRJsonParserBase.ParseResourceV(jsn : TJsonObject): TFhirResourceV;
 begin
   raise exception.create('don''t use TFHIRJsonParserBase directly - use TFHIRJsonParser');
 end;
@@ -551,59 +451,25 @@ begin
     result := TFHIRXhtmlParser.Parse(lang, FParserPolicy, [], element, path, FHIR_NS);
 end;
 
-
-//function TFHIRJsonParserBase.parseBinary(jsn : TJsonObject): TFhirBinary;
-//begin
-//  result := TFhirBinary.create;
-//  try
-//    if jsn.has('contentType') then
-//      result.ContentType:= jsn['contentType'];
-//    if jsn.has('content') then
-//      result.content.AsBytes := DecodeBase64(AnsiString(jsn['content']));
-//    if jsn.has('id') then
-//      result.xmlId:= jsn['id'];
-//    result.link;
-//  finally
-//    result.free;
-//  end;
-//end;
-
 procedure TFHIRJsonParserBase.Parse(obj: TJsonObject);
 begin
   start;
-  resource := ParseResource(obj);
+  resource := ParseResourceV(obj);
 end;
 
 procedure TFHIRJsonParserBase.ParseComments(base: TFHIRObject; jsn : TJsonObject);
 begin
   checkTimeOut;
-{  if jsn.has('_xml_comments_start') then
-    base.xml_commentsStart.AsText:= jsn['_xml_comments_start'];
-  if jsn.has('_xml_comments_end') then
-    base.xml_commentsEnd.AsText:= jsn['_xml_comments_end'];}
 end;
 
-procedure TFHIRJsonParserBase.parseDomainResource(jsn : TJsonObject; ctxt : TFHIRObjectList);
-begin
-  ctxt.add(ParseResource(jsn));
-end;
-
-function TFHIRJsonParserBase.ParseDataType(jsn : TJsonObject; name : String; type_ : TFHIRTypeClass) : TFHIRType;
+function TFHIRJsonParserBase.ParseDataTypeV(jsn: TJsonObject; name: String; type_: TClass): TFHIRObject;
 begin
   raise exception.create('don''t use TFHIRJsonParserBase directly - use TFHIRJsonParser');
 end;
 
-function TFHIRJsonParserBase.ParseDT(rootName: String; type_: TFHIRTypeClass): TFHIRType;
-var
-  obj : TJsonObject;
+procedure TFHIRJsonParserBase.parseDomainResource(jsn : TJsonObject; ctxt : TFHIRObjectList);
 begin
-  start;
-  obj := TJSONParser.Parse(source, timelimit);
-  try
-    result := ParseDataType(obj, rootName, type_);
-  finally
-    obj.Free;
-  end;
+  ctxt.add(ParseResourceV(jsn));
 end;
 
 function TFHIRJsonParserBase.GetFormat: TFHIRFormat;
@@ -648,38 +514,25 @@ end;
 
 { TFHIRXmlComposerBase }
 
-procedure TFHIRXmlComposerBase.Compose(stream: TStream; oResource: TFhirResource; links : TFhirBundleLinkList);
+procedure TFHIRXmlComposerBase.Compose(stream: TStream; oResource: TFhirResourceV);
 var
   xml : TXmlBuilder;
-  mx : TFHIRMMXmlParser;
 begin
-  if (oResource <> nil) and (oResource.resourceType = frtCustom) then
-  begin
-    mx := TFHIRMMXmlParser.create(FWorker.Link);
-    try
-      mx.compose(TFHIRCustomResource(oResource).Root, stream, isPretty, '');
-    finally
-      mx.free;
-    end;
-  end
-  else
-  begin
-    xml := TAdvXmlBuilder.Create;
-    try
-      xml.IsPretty := isPretty;
-      xml.NoHeader := NoHeader;
-      if isCanonical then
-        TAdvXmlBuilder(xml).CanonicalEntities := true;
-      xml.CurrentNamespaces.DefaultNS := FHIR_NS;
-      xml.Start;
-      if not isCanonical and (FComment <> '') then
-        xml.Comment(FComment);
-      ComposeResource(xml, oResource, links);
-      xml.Finish;
-      xml.Build(stream);
-    finally
-      xml.Free;
-    end;
+  xml := TAdvXmlBuilder.Create;
+  try
+    xml.IsPretty := isPretty;
+    xml.NoHeader := NoHeader;
+    if isCanonical then
+      TAdvXmlBuilder(xml).CanonicalEntities := true;
+    xml.CurrentNamespaces.DefaultNS := FHIR_NS;
+    xml.Start;
+    if not isCanonical and (FComment <> '') then
+      xml.Comment(FComment);
+    ComposeResourceV(xml, oResource);
+    xml.Finish;
+    xml.Build(stream);
+  finally
+    xml.Free;
   end;
 end;
 
@@ -720,7 +573,7 @@ begin
       xml.AddAttribute(name, value);
 end;
 
-procedure TFHIRXmlComposerBase.Compose(node: TMXmlElement; oResource: TFhirResource; links : TFhirBundleLinkList);
+procedure TFHIRXmlComposerBase.Compose(node: TMXmlElement; oResource: TFhirResourceV);
 var
   xml : TXmlBuilder;
 begin
@@ -730,7 +583,7 @@ begin
     xml.CurrentNamespaces.DefaultNS := FHIR_NS;
     if FComment <> '' then
       xml.Comment(FComment);
-    ComposeResource(xml, oResource, links);
+    ComposeResourceV(xml, oResource);
     xml.Finish;
   finally
     xml.Free;
@@ -765,6 +618,9 @@ begin
   if isCanonical then
     exit;
 
+  if value = nil then
+    exit;
+
   if not value.HasXmlCommentsStart then
     exit;
 
@@ -791,140 +647,28 @@ begin
   commentsEnd(xml, value);
 end;
 
-procedure TFHIRXmlComposerBase.composeDomainResource(xml: TXmlBuilder; name: String; value: TFhirDomainResource);
+procedure TFHIRXmlComposerBase.composeDomainResource(xml: TXmlBuilder; name: String; value: TFhirResourceV);
 begin
   xml.open(name);
-  ComposeResource(xml, value, nil);
+  ComposeResourceV(xml, value);
   xml.close(name);
 end;
 
-procedure TFHIRXmlComposerBase.ComposeExpression(xml: TXmlBuilder; expr: TFHIRPathExpressionNode);
-var
-  p : TFHIRPathExpressionNode;
-begin
-  if expr.Proximal then
-  begin
-    xml.AddAttribute('value', 'true');
-    xml.Tag('proximal');
-  end;
 
-  case expr.kind of
-    enkName :
-      begin
-        xml.AddAttribute('value', expr.name);
-        xml.Tag('name');
-      end;
-    enkFunction :
-      begin
-        xml.AddAttribute('value', CODES_TFHIRPathFunctions[expr.FunctionId]);
-        xml.Tag('function');
-        for p in expr.Parameters do
-        begin
-          xml.open('parameter');
-          ComposeExpression(xml, p);
-          xml.close('parameter');
-        end;
-      end;
-    enkConstant :
-      begin
-        xml.AddAttribute('value', expr.presentConstant);
-        xml.Tag('constant');
-      end;
-    enkGroup :
-      begin
-        xml.Open('group');
-        ComposeExpression(xml, expr.Group);
-        xml.Close('group');
-      end;
-  end;
-  if expr.Types <> nil then
-  begin
-    xml.AddAttribute('value', expr.types.ToString);
-    xml.Tag('types');
-  end;
-  if expr.Inner <> nil then
-  begin
-    xml.open('inner');
-    ComposeExpression(xml, expr.Inner);
-    xml.close('inner');
-  end;
-  if expr.Operation <> popNull then
-  begin
-    xml.AddAttribute('kind', CODES_TFHIRPathOperation[expr.Operation]);
-    xml.open('operation');
-    ComposeExpression(xml, expr.OpNext);
-    xml.close('operation');
-  end;
-  if expr.OpTypes <> nil then
-  begin
-    xml.AddAttribute('value', expr.optypes.ToString);
-    xml.Tag('op-types');
-  end;
-end;
-
-class procedure TFHIRXmlComposerBase.composeFile(worker : TFHIRWorkerContext; r: TFHIRResource; lang, filename: String; style : TFHIROutputStyle);
-var
-  x: TFHIRXmlComposer;
-  f : TFileStream;
-begin
-  f := TFileStream.Create(filename, fmCreate);
-  try
-    x := TFHIRXmlComposer.Create(worker.link, style, lang);
-    try
-      x.Compose(f, r);
-    finally
-      x.Free;
-    end;
-  finally
-    f.Free;
-  end;
-end;
-
-procedure TFHIRXmlComposerBase.ComposeInnerResource(xml: TXmlBuilder; name: String; holder: TFhirDomainResource; value: TFhirResource);
+procedure TFHIRXmlComposerBase.ComposeInnerResource(xml: TXmlBuilder; name: String; holder: TFhirResourceV; value: TFhirResourceV);
 begin
   if value <> nil then
   begin
     xml.open(name);
-    ComposeResource(xml, value, nil);
+    ComposeResourceV(xml, value);
     xml.close(name);
   end;
 end;
 
-//procedure TFHIRXmlComposerBase.Compose(stream: TStream; ResourceType : TFhirResourceType; oTags: TFHIRCodingList; isPretty: Boolean);
-//var
-//  xml : TXmlBuilder;
-//  i : integer;
-//begin
-//  xml := TAdvXmlBuilder.Create;
-//  try
-//    xml.IsPretty := isPretty;
-//    xml.CurrentNamespaces.DefaultNS := FHIR_NS;
-//    xml.Start;
-//    if FComment <> '' then
-//      xml.Comment(FComment);
-//    xml.Open('TagList');
-//    for i := 0 to oTags.Count - 1 do
-//    begin
-//    // todo-bundle
-////      xml.AddAttribute('scheme', oTags[i].scheme);
-////      xml.AddAttribute('term', oTags[i].term);
-////      if oTags[i].label_ <> '' then
-////        xml.AddAttribute('label', oTags[i].label_);
-////      xml.Tag('category');
-//    end;
-//
-//    xml.Close('TagList');
-//    xml.Finish;
-//    xml.Build(stream);
-//  finally
-//    xml.Free;
-//  end;
-//end;
-
 { TFHIRJsonComposerBase }
 
 
-procedure TFHIRJsonComposerBase.Compose(stream: TStream; oResource: TFhirResource; links : TFhirBundleLinkList);
+procedure TFHIRJsonComposerBase.Compose(stream: TStream; oResource: TFhirResourceV);
 var
   oStream : TAdvVCLStream;
   json : TJSONWriter;
@@ -939,7 +683,7 @@ begin
     oStream.Stream := stream;
     json.HasWhitespace := isPretty;
     json.Start;
-    ComposeResource(json, oResource, links);
+    ComposeResourceV(json, oResource);
     json.Finish;
   finally
     json.free;
@@ -961,19 +705,19 @@ begin
     json.ValueNumber(name, value);
 end;
 
-procedure TFHIRJsonComposerBase.Compose(json : TJSONWriter; oResource: TFhirResource; links : TFhirBundleLinkList);
+procedure TFHIRJsonComposerBase.Compose(json : TJSONWriter; oResource: TFhirResourceV);
 begin
   json := json.Link;
-  ComposeResource(json, oResource, links);
+  ComposeResourceV(json, oResource);
 end;
 
-procedure TFHIRJsonComposerBase.Compose(stream: TAdvStream; oResource: TFhirResource; links: TFhirBundleLinkList);
+procedure TFHIRJsonComposerBase.Compose(stream: TAdvStream; oResource: TFhirResourceV);
 var
   v : TVCLStream;
 begin
   v :=  TVCLStream.Create(stream.Link);
   try
-    Compose(v, oResource, links);
+    Compose(v, oResource);
   finally
     v.Free;
   end;
@@ -986,23 +730,24 @@ begin
   json.FinishObject;
 end;
 
-procedure TFHIRJsonComposerBase.ComposeResource(json : TJSONWriter; oResource: TFhirResource; links : TFhirBundleLinkList);
+procedure TFHIRJsonComposerBase.ComposeResourceV(json : TJSONWriter; oResource: TFhirResourceV);
 begin
   raise exception.create('don''t use TFHIRJsonComposerBase directly - use TFHIRJsonComposer');
 end;
 
-Procedure TFHIRJsonComposerBase.ComposeResource(xml : TXmlBuilder; oResource : TFhirResource; links : TFhirBundleLinkList);
+{Procedure TFHIRJsonComposerBase.ComposeResourceV(xml : TXmlBuilder; oResource : TFhirResourceV);
 var
   s : TBytesStream;
 begin
   s := TBytesStream.Create();
   try
-    compose(s, oResource, links);
+    compose(s, oResource);
     xml.Text(TEncoding.UTF8.getString(s.bytes, 0, s.size));
   finally
     s.free;
   end;
 end;
+}
 
 procedure TFHIRJsonComposerBase.ComposeXHtmlNode(json : TJSONWriter; name: String; value: TFhirXHtmlNode);
 begin
@@ -1028,92 +773,21 @@ begin
 end;
 
 
-function tail(s : String):String;
-begin
-  result := copy(s, LastDelimiter('/', s)+1, $FF);
-end;
 
 
-
-procedure TFHIRJsonComposerBase.composeDomainResource(json: TJSONWriter; name: String; oResource: TFhirDomainResource);
+procedure TFHIRJsonComposerBase.composeDomainResource(json: TJSONWriter; name: String; oResource: TFhirResourceV);
 begin
   json.ValueObject('');
-  ComposeResource(json, oResource, nil);
+  ComposeResourceV(json, oResource);
   json.FinishObject;
 end;
 
-procedure TFHIRJsonComposerBase.ComposeExpression(json: TJSONWriter; expr: TFHIRPathExpressionNode);
-var
-  p : TFHIRPathExpressionNode;
-begin
-  if expr.Proximal then
-    json.value('proximal', true);
-
-  case expr.kind of
-    enkName: json.value('name', expr.name);
-    enkFunction:
-      begin
-        json.value('function', CODES_TFHIRPathFunctions[expr.FunctionId]);
-        json.ValueArray('parameters');
-        for p in expr.Parameters do
-        begin
-          json.ValueObject('');
-          ComposeExpression(json, p);
-          json.FinishObject;
-        end;
-        json.FinishArray();
-      end;
-    enkConstant: json.value('constant', expr.presentConstant);
-    enkGroup:
-      begin
-      json.valueObject('group');
-      ComposeExpression(json, expr.Group);
-      json.FinishObject;
-      end;
-  end;
-  if expr.Types <> nil then
-    json.value('types', expr.types.ToString);
-  if expr.Inner <> nil then
-  begin
-    json.ValueObject('inner');
-    ComposeExpression(json, expr.Inner);
-    json.FinishObject;
-  end;
-  if expr.Operation <> popNull then
-  begin
-    json.ValueObject('operation');
-    json.value('kind', CODES_TFHIRPathOperation[expr.Operation]);
-    ComposeExpression(json, expr.OpNext);
-    json.FinishObject;
-  end;
-  if expr.OpTypes <> nil then
-    json.value('op-types', expr.optypes.ToString);
-end;
-
-class procedure TFHIRJsonComposerBase.composeFile(worker: TFHIRWorkerContext; r: TFHIRResource; lang, filename: String; style: TFHIROutputStyle);
-var
-  j: TFHIRJsonComposer;
-  f : TFileStream;
-begin
-  f := TFileStream.Create(filename, fmCreate);
-  try
-    j := TFHIRJsonComposer.Create(worker.link, style, lang);
-    try
-      j.Compose(f, r);
-    finally
-      j.Free;
-    end;
-  finally
-    f.Free;
-  end;
-end;
-
-procedure TFHIRJsonComposerBase.ComposeInnerResource(json: TJSONWriter; name: String; holder: TFhirDomainResource; oResource: TFhirResource);
+procedure TFHIRJsonComposerBase.ComposeInnerResource(json: TJSONWriter; name: String; holder: TFhirResourceV; oResource: TFhirResourceV);
 begin
   if oResource <> nil then
   begin
     json.ValueObject(name);
-    ComposeResource(json, oResource, nil);
+    ComposeResourceV(json, oResource);
     json.FinishObject;
   end;
 end;
@@ -1160,36 +834,7 @@ begin
   end;
 end;
 
-procedure TFHIRJsonComposerBase.ComposeExpression(stream: TStream; expr : TFHIRPathExpressionNode; items: TFHIRObjectList; types : TAdvStringSet);
-var
-  oStream : TAdvVCLStream;
-  json : TJSONWriter;
-  base : TFHIRObject;
-begin
-  json := TJsonWriterDirect.create;
-  try
-    oStream := TAdvVCLStream.Create;
-    json.Stream := oStream;
-    oStream.Stream := stream;
-    json.HasWhitespace := isPretty;
-    json.Start;
-    json.ValueArray('outcome');
-    for base in items do
-      ComposeBase(json, '', base);
-    json.FinishArray;
-    json.Value('canonical', expr.Canonical);
-    json.ValueObject('tree');
-    composeExpression(json, expr);
-    json.FinishObject;
-    if (types <> nil) then
-      json.Value('types', types.ToString);
-    json.Finish;
-  finally
-    json.free;
-  end;
-end;
-
-procedure TFHIRJsonComposerBase.composeInnerResource(json: TJSONWriter; name: String; holder : TFHIRElement; oResource: TFhirResource);
+procedure TFHIRJsonComposerBase.composeInnerResource(json: TJSONWriter; name: String; holder : TFHIRObject; oResource: TFhirResourceV);
 var
   blob : TAdvBuffer;
   bytes : TBytes;
@@ -1203,61 +848,17 @@ begin
   else if oResource <> nil then
   begin
     json.ValueObject(name);
-    ComposeResource(json, oResource, nil);
+    ComposeResourceV(json, oResource);
     json.FinishObject;
   end;
 end;
-
-//procedure TFHIRJsonComposerBase.ComposeBinary(json: TJSONWriter; binary: TFhirBinary);
-//begin
-//  Prop(json, 'id', binary.xmlId);
-//  Prop(json, 'contentType', binary.ContentType);
-//  Prop(json, 'content', StringReplace(string(EncodeBase64(binary.Content.Data, binary.Content.Size)), #13#10, ''));
-//end;
 
 procedure TFHIRJsonComposerBase.composeComments(json: TJSONWriter; base: TFHIRObject);
 begin
   if not FComments then
     exit;
-
-{  if base.HasXmlCommentsStart then
-    json.Value('_xml_comments_start', base.xml_commentsStart.AsText);
-  if base.HasXmlCommentsEnd then
-    json.Value('_xml_comments_end', base.xml_commentsEnd.AsText);
-}
 end;
 
-//procedure TFHIRJsonComposerBase.Compose(stream: TStream; ResourceType : TFhirResourceType; oTags: TFHIRCodingList; isPretty: Boolean);
-//var
-//  oStream : TAdvVCLStream;
-//  json : TJSONWriter;
-//  i : integer;
-//begin
-//  json := TJsonWriterDirect.create;
-//  try
-//    oStream := TAdvVCLStream.Create;
-//    json.Stream := oStream;
-//    oStream.Stream := stream;
-//    json.Start;
-//    json.Value('resourceType', 'TagList');
-//    json.ValueArray('category');
-//    for i := 0 to oTags.Count - 1 do
-//    begin
-//      json.ValueObject;
-//      // todo-bundle
-////      Prop(json, 'scheme', oTags[i].scheme);
-////      Prop(json, 'term', oTags[i].term);
-////      if oTags[i].label_ <> '' then
-////        Prop(json, 'label', oTags[i].label_);
-//      json.FinishObject;
-//    end;
-//    json.FinishArray;
-//    json.Finish;
-//  finally
-//    json.free;
-//  end;
-//end;
-//
 procedure TFHIRJsonComposerBase.Prop(json: TJSONWriter; name: String; value: boolean);
 begin
   json.Value(name, value);
@@ -1303,7 +904,7 @@ begin
     abort;
 end;
 
-constructor TFHIRParser.Create(worker : TFHIRWorkerContext; lang: String);
+constructor TFHIRParser.Create(worker : TFHIRWorkerContextV; lang: String);
 begin
   Inherited Create;
   FLang := lang;
@@ -1318,19 +919,6 @@ begin
 end;
 
 
-class function TFHIRXmlParserBase.ParseFile(worker : TFHIRWorkerContext; lang : String; filename: String): TFHIRResource;
-var
-  x : TFHIRXmlParser;
-begin
-  x := TFHIRXmlParser.Create(worker.link, lang);
-  try
-    x.ParseFile(filename);
-    result := x.resource.Link;
-  finally
-    x.Free;
-  end;
-end;
-
 procedure TFHIRParser.ParseFile(filename: String);
 var
   f : TFileStream;
@@ -1344,83 +932,7 @@ begin
   end;
 end;
 
-class function TFHIRJsonParserBase.ParseFile(worker: TFHIRWorkerContext; lang, filename: String): TFHIRResource;
-var
-  j : TFHIRJsonParser;
-begin
-  j := TFHIRJsonParser.Create(worker.link, lang );
-  try
-    j.ParseFile(filename);
-    result := j.resource.Link;
-  finally
-    j.Free;
-  end;
-end;
-
-class function TFHIRJsonParserBase.ParseFragment(worker: TFHIRWorkerContext; fragment, type_, lang: String): TFHIRObject;
-var
-  ss : TBytesStream;
-  p : TFHIRJsonParser;
-  jsn : TJsonObject;
-begin
-  ss := TBytesStream.Create(TEncoding.UTF8.getBytes(fragment));
-  try
-    jsn := TJSONParser.Parse(ss);
-    try
-      p := TFHIRJsonParser.Create(worker.link, lang);
-      try
-        result := p.ParseFragment(jsn, type_);
-      finally
-        p.Free;
-      end;
-    finally
-      jsn.Free;
-    end;
-  finally
-    ss.Free;
-  end;
-end;
-
-procedure TFHIRJsonParserBase.ParseInnerResource(jsn: TJsonObject; ctxt: TFHIRObjectList);
-begin
-  ctxt.add(ParseResource(jsn));
-end;
-
-function TFHIRJsonParserBase.ParseInnerResource(jsn: TJsonObject) : TFhirResource;
-begin
-  result := ParseResource(jsn);
-end;
-
-class function TFHIRXmlParserBase.ParseFragment(worker: TFHIRWorkerContext; fragment, lang: String): TFHIRObject;
-var
-  ss : TBytesStream;
-  p : TFHIRXmlParser;
-  xml : TMXmlDocument;
-begin
-  result := nil;
-  ss := TBytesStream.Create(TEncoding.UTF8.getBytes(fragment));
-  try
-    p := TFHIRXmlParser.Create(worker.link, lang);
-    try
-      p.source := ss;
-      xml := p.LoadXml(ss);
-      try
-        if xml.document.namespaceURI <> FHIR_NS Then
-          raise Exception.Create('Unknown namespace');
-        result := p.ParseFragment(xml.document);
-      finally
-        xml.Free;
-      end;
-    finally
-      p.free;
-    end;
-  finally
-    ss.Free;
-  end;
-
-end;
-
-procedure TFHIRParser.SetResource(const Value: TFhirResource);
+procedure TFHIRParser.SetResource(const Value: TFhirResourceV);
 begin
   Fresource.Free;
   Fresource := Value;
@@ -1440,78 +952,13 @@ begin
   FElement := Value;
 end;
 
-function TFHIRXmlParserBase.ParseDataType(element: TMXmlElement; name: String; type_: TFHIRTypeClass): TFHIRType;
-begin
-  raise exception.create('don''t use TFHIRXmlParserBase directly - use TFHIRXmlParser');
-end;
-
-function TFHIRXmlParserBase.ParseDT(rootName: String; type_: TFHIRTypeClass): TFHIRType;
-var
-  xml : TMXmlDocument;
-  root : TMXmlElement;
-begin
-  start;
-  xml := nil;
-  try
-    FComments := TAdvStringList.create;
-    try
-      if (Element = nil) then
-      begin
-        xml := LoadXml(Source);
-        root := xml.document;
-      end
-      else
-        root := element;
-
-      if root.namespaceURI <> FHIR_NS Then
-        XmlError('/', StringFormat(GetFhirMessage('MSG_WRONG_NS', lang), [root.namespaceURI]));
-
-      result := ParseDataType(root, rootName, type_);
-    finally
-      FComments.Free;
-    end;
-  finally
-    xml.Free;
-  end;
-end;
-
-
-function TFHIRXmlParserBase.ParseInnerResource(element: TMXmlElement; path: String): TFhirResource;
-var
-  child : TMXmlElement;
-begin
-  child := FirstChild(element);
-  result := ParseResource(child, path);
-  try
-    child := NextSibling(child);
-    if (child <> nil) then
-      UnknownContent(child, path);
-    result.link;
-  finally
-    result.free;
-  end;
-end;
-
 {atom }
 
-procedure TFHIRComposer.Compose(stream: TStream; oResource: TFhirResource; links: TFhirBundleLinkList);
+procedure TFHIRComposer.Compose(stream: TStream; oResource: TFhirResourceV);
 begin
   raise Exception.Create('Error: call to TFHIRComposer.Compose(stream: TStream; oResource: TFhirResource; isPretty: Boolean; links: TFhirBundleLinkList)');
 end;
 
-
-function TFHIRComposer.Compose(expr : TFHIRPathExpressionNode; items: TFHIRObjectList; types : TAdvStringSet): String;
-var
-  stream : TBytesStream;
-begin
-  stream := TBytesStream.create;
-  try
-    composeExpression(stream, expr, items, types);
-    result := TEncoding.UTF8.GetString(copy(stream.Bytes, 0, stream.position));
-  finally
-    stream.Free;
-  end;
-end;
 
 function TFHIRComposer.Compose(name : String; items : TFHIRObjectList): String;
 var
@@ -1553,11 +1000,6 @@ begin
 end;
 
 
-procedure TFHIRComposer.ComposeExpression(stream: TStream; expr : TFHIRPathExpressionNode; items: TFHIRObjectList; types : TAdvStringSet);
-begin
-  raise Exception.Create('ComposeExpression is Not supported for '+className);
-end;
-
 procedure TFHIRComposer.ComposeItem(stream: TStream; name: String; item: TFHIRObject);
 begin
   raise Exception.Create('ComposeExpression is Not supported for '+className);
@@ -1568,7 +1010,7 @@ begin
   raise Exception.Create('ComposeExpression is Not supported for '+className);
 end;
 
-procedure TFHIRComposer.ComposeResource(xml : TXmlBuilder; oResource: TFhirResource; links : TFhirBundleLinkList);
+procedure TFHIRComposer.ComposeResourceV(xml : TXmlBuilder; oResource: TFhirResourceV);
 begin
   raise exception.create('don''t use '+className+' directly - use TFHIRXmlComposer');
 end;
@@ -1578,7 +1020,7 @@ begin
   TFHIRXhtmlParser.Compose(node, xml);
 end;
 
-procedure TFHIRXmlComposerBase.ComposeInnerResource(xml: TXmlBuilder; name: String; holder : TFHIRElement; value: TFhirResource);
+procedure TFHIRXmlComposerBase.ComposeInnerResource(xml: TXmlBuilder; name: String; holder : TFHIRObject; value: TFhirResourceV);
 var
   blob : TAdvBuffer;
 begin
@@ -1592,7 +1034,7 @@ begin
   else if value <> nil then
   begin
     xml.open(name);
-    ComposeResource(xml, value, nil);
+    ComposeResourceV(xml, value);
     xml.close(name);
   end;
 end;
@@ -1646,331 +1088,11 @@ begin
   result := '.xml';
 end;
 
-procedure TFHIRXmlComposerBase.ComposeExpression(stream: TStream; expr : TFHIRPathExpressionNode; items: TFHIRObjectList; types : TAdvStringSet);
-var
-  xml : TXmlBuilder;
-  base : TFHIRObject;
-begin
-  xml := TAdvXmlBuilder.Create;
-  try
-    xml.IsPretty := isPretty;
-    xml.NoHeader := NoHeader;
-    xml.CurrentNamespaces.DefaultNS := FHIR_NS;
-    xml.Start;
-    xml.Open('Expression');
-    if items <> nil then
-      xml.addattribute('count', inttostr(items.count))
-    else
-      xml.addattribute('count', 'nil');
-    xml.Open('outcome');
-    if items <> nil then
-      for base in items do
-        if (base = nil) then
-          xml.tag('Null')
-        else
-          ComposeBase(xml, base.FhirType, base);
-    xml.Close('outcome');
-    xml.TagText('canonical', expr.Canonical);
-    xml.Open('tree');
-    composeExpression(xml, expr);
-    xml.Close('tree');
-    if (types <> nil) then
-    begin
-      xml.AddAttribute('value', types.ToString);
-      xml.Tag('types');
-    end;
-    xml.Close('Expression');
-    xml.Finish;
-    xml.Build(stream);
-  finally
-    xml.Free;
-  end;
-end;
-
 function TFHIRComposer.MimeType: String;
 begin
   result := '??';
 end;
 
-{ TFHIRXhtmlComposer }
-
-procedure TFHIRXhtmlComposer.Compose(stream: TStream; oResource: TFhirResource; links : TFhirBundleLinkList);
-var
-  s : TAdvStringBuilder;
-  ss : TBytesStream;
-  xml : TFHIRXmlComposer;
-  c : integer;
-  title : String;
-  link, text : String;
-  id : String;
-  ver : String;
-  statedType : String;
-begin
-  if (oResource is TFhirBundle) then
-  begin
-    composeBundle(stream, oResource as TFhirBundle);
-    exit;
-  end;
-
-  id := oResource.id;
-  if (oResource.meta <> nil) then
-    ver := oResource.meta.versionId;
-  statedType := CODES_TFhirResourceType[oResource.resourceType]; // todo: resolve this
-
-  if (id = '') and (ver = '') then
-  begin
-    if FOperationName <> '' then
-      title := 'Results from '+FOperationName
-    else
-      title := FormatTextToXml(GetFhirMessage(CODES_TFhirResourceType[oResource.resourceType], lang), xmlText)
-  end
-  else if (ver = '') then
-    title := FormatTextToXml(GetFhirMessage('NAME_RESOURCE', lang)+' "'+id + '" ('+CODES_TFhirResourceType[oResource.ResourceType]+') ', xmlText)
-  else
-    title := FormatTextToXml(GetFhirMessage('NAME_RESOURCE', lang)+' "'+id+'" '+GetFhirMessage('NAME_VERSION', lang)+' "'+ver + '" ('+CODES_TFhirResourceType[oResource.ResourceType]+') ', xmlText);
-
-  c := 0;
-  s := TAdvStringBuilder.create;
-  try
-    s.append(
-'<?xml version="1.0" encoding="UTF-8"?>'+#13#10+
-'<!DOCTYPE HTML'+#13#10+
-'       "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">'+#13#10+
-''+#13#10+
-'<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">'+#13#10+
-'<head>'+#13#10+
-'    <title>'+title+'</title>'+#13#10+
-PageLinks+
-FHIR_JS+
-'</head>'+#13#10+
-''+#13#10+
-'<body>'+#13#10+
-''+#13#10+
-Header(Session, FBaseURL, lang, version)+
-'<h2>'+title+'</h2>'+#13#10);
-
-    if oResource is TFhirBinary then
-    begin
-      if StringStartsWith(TFhirBinary(oResource).ContentType, 'image/') then
-        s.append('<img src="'+CODES_TFhirResourceType[oResource.ResourceType]+'/'+id+'">'+#13#10)
-      else
-        s.append('<pre class="xml">'+#13#10+'('+GetFhirMessage('NAME_BINARY', lang)+')'+#13#10+'</pre>'+#13#10);
-    end
-    else
-    begin
-      inc(c);
-      if assigned(FTags) then
-        if ver <> '' then
-          s.append('<p><a href="./_tags">'+GetFhirMessage('NAME_TAGS', lang)+'</a>: '+PresentTags(oResource.resourceType, FBaseURL+CODES_TFhirResourceType[oResource.ResourceType]+'/'+id+'/_history/'+ver+'/_tags', Ftags, c)+'</p>'+#13#10)
-        else if id <> '' then
-          s.append('<p><a href="./_tags">'+GetFhirMessage('NAME_TAGS', lang)+'</a>: '+PresentTags(oResource.resourceType, FBaseURL+CODES_TFhirResourceType[oResource.ResourceType]+'/'+id+'/_tags', Ftags, c)+'</p>'+#13#10);
-      if id <> '' then
-      begin
-        if assigned(FOnGetLink) then
-          FOnGetLink(oResource, BaseURL, statedType, id, ver, link, text)
-        else
-          link := '';
-        if link <> '' then
-          s.append('<p><a href="?_format=xml">XML</a> or <a href="?_format=json">JSON</a> '+GetFhirMessage('NAME_REPRESENTATION', lang)+'. <a href="'+link+'">'+FormatTextToHTML(text)+'</a>'+#13#10)
-        else
-          s.append('<p><a href="?_format=xml">XML</a> or <a href="?_format=json">JSON</a> '+GetFhirMessage('NAME_REPRESENTATION', lang)+#13#10);
-
-        if (links <> nil) and (links.Matches['z-edit-src'] <> '') then
-          s.append('. Edit this as <a href="'+patchToWeb(links.Matches['z-edit-src'])+'?srcformat=xml">XML</a> or <a href="'+patchToWeb(links.Matches['z-edit-src'])+'?srcformat=json">JSON</a>');
-        {$IFDEF FHIR_QUESTIONNAIRERESPONSE}
-        if (links <> nil) and (links.Matches['edit-form'] <> '') then
-          if (oResource is TFHIRQuestionnaireResponse) then
-          begin
-            if (TFHIRQuestionnaireResponse(oResource).questionnaire <> nil) then
-              s.append('. <a href="'+patchToWeb(links.Matches['edit-form'])+'">Edit this Resource</a> (or <a href="'+TFHIRQuestionnaireResponse(oResource).questionnaire.reference+'">see the questionnaire</a>)')
-          end
-          else
-            s.append('. <a href="'+patchToWeb(links.Matches['edit-form'])+'">Edit this Resource</a> (or <a href="'+links.Matches['edit-form']+'">see resources underlying that</a>)');
-        {$ENDIF}
-        if (links <> nil) and (links.Matches['edit-post'] <> '') then
-          s.append('. Submit edited content by POST to '+links.Matches['edit-post']);
-        if not (oResource.resourceType in [frtProvenance, frtAuditEvent]) then
-          s.append('. <a href="'+FBaseURL+'Provenance?target='+oResource.fhirType+'/'+oResource.id+'">provenance for this resource</a>');
-        s.append('</p>'#13#10);
-      end;
-
-      if (oResource is TFhirDomainResource) and (TFHIRDomainResource(oResource).text <> nil) then
-        TFHIRXhtmlParser.Compose(TFHIRDomainResource(oResource).text.div_, s, false, 0, relativeReferenceAdjustment);
-      s.append('<hr/>'+#13#10);
-      xml := TFHIRXmlComposer.create(FWorker.link, OutputStylePretty, lang);
-      ss := TBytesStream.create();
-      try
-        xml.Compose(ss, oResource, links);
-        s.append('<pre class="xml">'+#13#10+FormatXMLToHTML(TEncoding.UTF8.getString(ss.bytes, 0, ss.size))+#13#10+'</pre>'+#13#10);
-      finally
-        ss.free;
-        xml.free;
-      end;
-    end;
-    s.append(
-'<p><br/>'+
-Footer(FBaseURL, lang, logid)
-    );
-    s.WriteToStream(stream);
-  finally
-    s.free;
-  end;
-end;
-
-function TFHIRXhtmlComposer.PatchToWeb(url : String) : String;
-begin
-  result := FBaseURL+'_web/'+url.substring(FBaseURL.length);
-end;
-
-function TFHIRXhtmlComposer.PresentTags(aType: TFhirResourceType; target: String; tags: TFHIRTagList; c: integer): String;
-begin
-//  PresentTags()
-end;
-
-//procedure TFHIRXhtmlComposer.Compose(stream: TStream; oFeed: TFHIRAtomFeed; isPretty: Boolean);
-//var
-//  s : TAdvStringBuilder;
-//  i : integer;
-//  a : string;
-//  e : TFHIRAtomEntry;
-//  ss : TBytesStream;
-//  xml : TFHIRXmlComposer;
-//  link, text : String;
-//  u : string;
-//begin
-//  a := oFeed.authorUri;
-//  s := TAdvStringBuilder.create;
-//  try
-//    s.append(
-//'<?xml version="1.0" encoding="UTF-8"?>'+#13#10+
-//'<!DOCTYPE HTML'+#13#10+
-//'       "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">'+#13#10+
-//''+#13#10+
-//'<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">'+#13#10+
-//'<head>'+#13#10+
-//'    <title>'+FormatTextToXml(oFeed.title)+'</title>'+#13#10+
-//PageLinks+
-//FHIR_JS+#13#10+
-//'</head>'+#13#10+
-//''+#13#10+
-//'<body>'+#13#10+
-//''+#13#10+
-//Header(Session, FBaseURL, lang)+
-//'<h1>'+FormatTextToXml(oFeed.title)+'</h1>'+#13#10);
-//
-//  u := ofeed.links['self'];
-//  if not u.contains('?') then
-//    u := u + '?'
-//  else
-//    u := u + '&';
-//  s.append('<p><a href="'+u+'_format=xml"><img src="/rss.png"> XML</a> '+GetFhirMessage('OR', lang)+' <a href="'+u+'_format=json">JSON</a> '+GetFhirMessage('NAME_REPRESENTATION', lang)+'</p>'+#13#10);
-//
-//    if (ofeed.isSearch) then
-//    begin
-//      s.append('<p>'+GetFhirMessage('NAME_LINKS', lang)+':&nbsp;');
-//      if (ofeed.links['first'] <> '') then
-//        s.append('<a href="'+ofeed.links.getrel('first')+'">'+GetFhirMessage('NAME_FIRST', lang)+'</a>&nbsp;')
-//      else
-//        s.append('<span style="color: grey">'+GetFhirMessage('NAME_FIRST', lang)+'</span>&nbsp;');
-//      if (ofeed.links['previous'] <> '') then
-//        s.append('<a href="'+ofeed.links.getrel('previous')+'">'+GetFhirMessage('NAME_PREVIOUS', lang)+'</a>&nbsp;')
-//      else
-//        s.append('<span style="color: grey">'+GetFhirMessage('NAME_PREVIOUS', lang)+'</span>&nbsp;');
-//      if (ofeed.links['next'] <> '') then
-//        s.append('<a href="'+ofeed.links.getrel('next')+'">'+GetFhirMessage('NAME_NEXT', lang)+'</a>&nbsp;')
-//      else
-//        s.append('<span style="color: grey">'+GetFhirMessage('NAME_NEXT', lang)+'</span>&nbsp;');
-//      if (ofeed.links['last'] <> '') then
-//        s.append('<a href="'+ofeed.links.getrel('last')+'">'+GetFhirMessage('NAME_LAST', lang)+'</a>&nbsp;')
-//      else
-//        s.append('<span style="color: grey">'+GetFhirMessage('NAME_LAST', lang)+'</span>&nbsp;');
-//      if oFeed.SearchTotal <> 0 then
-//        s.append(' ('+inttostr(oFeed.SearchTotal)+' '+GetFhirMessage('FOUND', lang)+'). ');
-//      s.append('<span style="color: grey">'+GetFhirMessage('NAME_SEARCH', lang)+': '+ofeed.links.getrel('self')+'</span>&nbsp;</p>');
-//      s.append('<p>SQL: <span style="color: maroon">'+FormatTextToXML(oFeed.sql)+'</span></p>');
-//    end;
-//
-//    for i := 0 to oFeed.entries.Count - 1 do
-//    begin
-//      e := oFeed.entries[i];
-//      s.append('<h2>'+FormatTextToXml(e.title)+'</h2>'+#13#10);
-//      if (e.categories <> nil) and (e.Resource <> nil) then
-//        s.append('<p><a href="'+e.id+'/_tags">'+GetFhirMessage('NAME_TAGS', lang)+'</a>: '+PresentTags(e.resource.ResourceType, e.links.GetRel('self')+'/_tags', e.categories, i+1        )+'</p>'+#13#10);
-//
-//      u := e.Links.rel['self'];
-//      if (u <> '')  then
-//      begin
-//        s.append('<p><a href="'+e.Links.rel['self']+'">'+GetFhirMessage('THIS_RESOURCE', lang)+'</a> ');
-//      if not (e.resource is TFhirBinary) then
-//        begin
-//        s.append(
-//          ', <a href="'+e.Links.rel['self']+'?_format=xml">XML</a> '+GetFhirMessage('OR', lang)+' '+
-//        '<a href="'+e.Links.rel['self']+'?_format=json">JSON</a> '+GetFhirMessage('NAME_REPRESENTATION', lang));
-//        s.append(
-//          ', '+GetFhirMessage('OR', lang)+' <a href="'+e.id+'/_history">'+GetFhirMessage('NAME_HISTORY', lang)+'</a>.');
-//
-//        if (e.links <> nil) and (e.links.GetRel('z-edit-src') <> '') then
-//          s.append(' Edit this as <a href="'+patchToWeb(e.links.GetRel('z-edit-src'))+'?srcformat=xml">XML</a> or <a href="'+patchToWeb(e.links.GetRel('z-edit-src'))+'?srcformat=json">JSON</a>.');
-//
-//        {$IFNDEF FHIR_DSTU}
-//        if e.links.GetRel('edit-form') <> '' then
-//          if (e.resource is TFHIRQuestionnaireResponse) then
-//          begin
-//            if (TFHIRQuestionnaireResponse(e.resource).questionnaire <> nil) then
-//              s.append(' <a href="'+patchToWeb(e.links.GetRel('edit-form'))+'">Edit this Resource</a> (or <a href="'+TFHIRQuestionnaireResponse(e.resource).questionnaire.reference+'">see the questionnaire</a>)')
-//          end
-//          else
-//            s.append(' <a href="'+patchToWeb(e.links.GetRel('edit-form'))+'">Edit this Resource</a> (or just see <a href="'+e.links.GetRel('edit-form')+'">the Questionnaire</a>)');
-//        if e.links.GetRel('edit-post') <> '' then
-//          s.append(' Submit edited content by POST to '+e.links.GetRel('edit-post'));
-//        {$ENDIF}
-//
-//        if assigned(FOnGetLink) then
-//        begin
-//          FOnGetLink(e.resource, BaseURL, '', tail(e.id), tail(e.Links.rel['self']), link, text);
-//          if (link <> '') then
-//            s.append(' <a href="'+link+'">'+FormatTextToHTML(text)+'</a>');
-//        end;
-//        s.append('</br> Updated: '+e.updated.AsXML+'; Author: '+Author(e, a)+'</p>'+#13#10);
-//        end;
-//      end;
-//
-//      if e.deleted then
-//        s.append('<p>'+GetFhirMessage('MSG_DELETED', lang)+'</p>')
-//      else if e.resource = nil then
-//        s.append('<p>(--)</p>')
-//      else if e.resource is TFhirBinary then
-//      begin
-//        if StringStartsWith(TFhirBinary(e.resource).ContentType, 'image/') then
-//          s.append('<img src="'+CODES_TFhirResourceType[e.resource.resourcetype]+'/'+e.id+'">'+#13#10)
-//        else
-//          s.append('<pre class="xml">'+#13#10+'('+GetFhirMessage('NAME_BINARY', lang)+')'+#13#10+'</pre>'+#13#10);
-//      end
-//      else
-//      begin
-//        xml := TFHIRXmlComposer.create(lang);
-//        ss := TBytesStream.create('');
-//        try
-//          if (e.resource.text <> nil) and (e.resource.text.div_ <> nil) then
-//            ComposeXHtmlNode(s, e.resource.text.div_, 2, relativeReferenceAdjustment);
-//          xml.Compose(ss, '', e.id, tail(e.links.rel['self']), e.resource, true, e.links);
-//          s.append('<hr/>'+#13#10+'<pre class="xml">'+#13#10+FormatXMLToHTML(ss.dataString)+#13#10+'</pre>'+#13#10);
-//        finally
-//          ss.free;
-//          xml.free;
-//        end;
-//      end;
-//    end;
-//    s.append(
-//'<p><br/>'
-//+footer(FBaseUrl, lang)
-//    );
-//    s.WriteToStream(stream);
-//  finally
-//    s.free;
-//  end;
-//end;
-//
 function paramForScheme(scheme : String): String;
 begin
   if scheme = 'http://hl7.org/fhir/tag' then
@@ -1983,463 +1105,6 @@ begin
     result := '_othertag';
 end;
 
-
-const
-  TYPE_TITLE : Array[TFhirBundleTypeEnum] of String = ('', 'Document', 'Message', 'Transaction', 'Transaction Response', 'Batch', 'Batch Response', 'History Record', 'Search Results', 'Resource Collection');
-
-{
-procedure TFHIRXhtmlComposer.Compose(stream: TStream; oMeta: TFhirMeta; ResourceType : TFhirResourceType; id, ver : String; isPretty: Boolean; links: TFhirBundleLinkList);
-var
-  s : TAdvStringBuilder;
-  i : integer;
-begin
-  s := TAdvStringBuilder.create;
-  try
-    s.append(
-'<?xml version="1.0" encoding="UTF-8"?>'+#13#10+
-'<!DOCTYPE HTML'+#13#10+
-'       "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">'+#13#10+
-''+#13#10+
-'<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">'+#13#10+
-'<head>'+#13#10);
-  if ResourceType = frtNull then
-    s.append('    <title>'+FormatTextToXml(GetFhirMessage('SYSTEM_TAGS', lang))+'</title>'+#13#10)
-  else if id = '' then
-    s.append('    <title>'+FormatTextToXml(StringFormat(GetFhirMessage('RESOURCE_TYPE_TAGS', lang), [CODES_TFhirResourceType[ResourceType]]))+'</title>'+#13#10)
-  else if ver = '' then
-    s.append('    <title>'+FormatTextToXml(StringFormat(GetFhirMessage('RESOURCE_TAGS', lang), [CODES_TFhirResourceType[ResourceType], id]))+'</title>'+#13#10)
-  else
-    s.append('    <title>'+FormatTextToXml(StringFormat(GetFhirMessage('RESOURCE_VER_TAGS', lang), [CODES_TFhirResourceType[ResourceType], id, ver]))+'</title>'+#13#10);
-
-    s.append(
-PageLinks+#13#10+
-FHIR_JS+#13#10+
-'</head>'+#13#10+
-''+#13#10+
-'<body>'+#13#10+
-''+#13#10+
-Header(Session, FBaseURL, Lang));
-
-  if ResourceType = frtNull then
-    s.append('    <h2>'+FormatTextToXml(GetFhirMessage('SYSTEM_TAGS', lang))+'</title>'+#13#10+
-     '<p></p><p>'+GetFhirMessage('NAME_LINKS', lang)+': <a href="?_format=xml">XML</a> or <a href="?_format=json">JSON</a> '+GetFhirMessage('NAME_REPRESENTATION', lang)+'. '+
-     'Or: <a href="'+FBaseUrl+'"/>Home Page</a> </p>')
-  else if id = '' then
-    s.append('    <h2>'+FormatTextToXml(StringFormat(GetFhirMessage('RESOURCE_TYPE_TAGS', lang), [CODES_TFhirResourceType[ResourceType]]))+'</h2>'+#13#10+
-     '<p></p><p>'+GetFhirMessage('NAME_LINKS', lang)+': <a href="?_format=xml">XML</a> or <a href="?_format=json">JSON</a> '+GetFhirMessage('NAME_REPRESENTATION', lang)+'. '+
-     'Or: '+ResourceLinks(ResourceType, lang, FBaseURL, 0, false, false, false)+' </p>')
-  else if ver = '' then
-    s.append('    <h2>'+FormatTextToXml(StringFormat(GetFhirMessage('RESOURCE_TAGS', lang), [CODES_TFhirResourceType[ResourceType], id]))+'</h2>'+#13#10+
-     '<p></p><p>'+GetFhirMessage('NAME_LINKS', lang)+': <a href="?_format=xml">XML</a> or <a href="?_format=json">JSON</a> '+GetFhirMessage('NAME_REPRESENTATION', lang)+'. '+
-     'Or: <a href="../'+id+'">This Resource</a> </p>')
-  else
-    s.append('    <h2>'+FormatTextToXml(StringFormat(GetFhirMessage('RESOURCE_VER_TAGS', lang), [CODES_TFhirResourceType[ResourceType], id, ver]))+'</h2>'+#13#10+
-     '<p></p><p>'+GetFhirMessage('NAME_LINKS', lang)+': <a href="?_format=xml">XML</a> or <a href="?_format=json">JSON</a> '+GetFhirMessage('NAME_REPRESENTATION', lang)+'. '+
-     'Or: <a href="../'+ver+'">This Resource Version</a> </p>');
-
-   s.append('<p></p>'+#13#10);
-   if (oMeta.profileList.Count + oMeta.tagList.Count + oMeta.securityList.Count = 0) then
-     s.append('<p>'+GetFhirMessage('NO_TAGS', lang)+'</p>'+#13#10)
-   else
-   begin
-     s.append('<table>'+#13#10);
-     s.append(' <tr><td><b>Type</b></td><td></td><td><b>identity</b></td><td></td><td><b>Label</b></td></tr>'+#13#10);
-     for i := 0 to oMeta.profileList.Count - 1 do
-       s.append(' <tr><td>Profile</td><td></td><td>'+oMeta.profileList[i].value+'</td><td></td><td></td></tr>'+#13#10);
-     for i := 0 to oMeta.tagList.Count - 1 do
-       s.append(' <tr><td>Tag</td><td></td><td>'+oMeta.tagList[i].system+'::'+oMeta.tagList[i].code+'</td><td></td><td>'+oMeta.tagList[i].display+'</td></tr>'+#13#10);
-     for i := 0 to oMeta.securityList.Count - 1 do
-       s.append(' <tr><td>Security Label</td><td></td><td>'+oMeta.securityList[i].system+'::'+oMeta.securityList[i].code+'</td><td></td><td>'+oMeta.securityList[i].display+'</td></tr>'+#13#10);
-     s.append('</table>'+#13#10);
-   end;
-   s.append('<p></p>'+#13#10);
-
-    s.append(
-'<p><br/>'+Footer(FBaseURL, lang)
-    );
-    s.WriteToStream(stream);
-  finally
-    s.free;
-  end;
-end;
-}
-
-procedure TFHIRXhtmlComposer.ComposeBundle(stream: TStream; bundle: TFHIRBundle);
-var
-  s : TAdvStringBuilder;
-  i : integer;
-  e : TFhirBundleEntry;
-  ss : TBytesStream;
-  xml : TFHIRXmlComposer;
-  r : TFhirResource;
-  t, link, text, sl, ul : String;
-  a : TArray<String>;
-begin
-  s := TAdvStringBuilder.create;
-  try
-    s.append(
-'<?xml version="1.0" encoding="UTF-8"?>'+#13#10+
-'<!DOCTYPE HTML'+#13#10+
-'       "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">'+#13#10+
-''+#13#10+
-'<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">'+#13#10+
-'<head>'+#13#10+
-'    <title>'+TYPE_TITLE[bundle.type_]+'</title>'+#13#10+
-PageLinks+
-FHIR_JS+#13#10+
-'</head>'+#13#10+
-''+#13#10+
-'<body>'+#13#10+
-''+#13#10+
-Header(Session, FBaseURL, lang, FVersion)+
-'<h1>'+TYPE_TITLE[bundle.type_]+'</h1>'+#13#10);
-
-  ul := bundle.link_List.Matches['self'];
-  if pos('?', ul) = 0 then
-    ul := ul + '?'
-  else
-    ul := ul + '&';
-  s.append('<p><a href="'+ul+'_format=xml">XML</a> '+GetFhirMessage('OR', lang)+' <a href="'+ul+'_format=json">JSON</a> '+GetFhirMessage('NAME_REPRESENTATION', lang)+'</p>'+#13#10);
-
-    if (bundle.type_ in [BundleTypeSearchset, BundleTypeHistory])  then
-    begin
-      s.append('<p>'+GetFhirMessage('NAME_LINKS', lang)+':&nbsp;');
-      if (bundle.link_List.Matches['first'] <> '') then
-        s.append('<a href="'+bundle.link_List.Matches['first']+'">'+GetFhirMessage('NAME_FIRST', lang)+'</a>&nbsp;')
-      else
-        s.append('<span style="color: grey">'+GetFhirMessage('NAME_FIRST', lang)+'</span>&nbsp;');
-      if (bundle.link_List.Matches['previous'] <> '') then
-        s.append('<a href="'+bundle.link_List.Matches['previous']+'">'+GetFhirMessage('NAME_PREVIOUS', lang)+'</a>&nbsp;')
-      else
-        s.append('<span style="color: grey">'+GetFhirMessage('NAME_PREVIOUS', lang)+'</span>&nbsp;');
-      if (bundle.link_List.Matches['next'] <> '') then
-        s.append('<a href="'+bundle.link_List.Matches['next']+'">'+GetFhirMessage('NAME_NEXT', lang)+'</a>&nbsp;')
-      else
-        s.append('<span style="color: grey">'+GetFhirMessage('NAME_NEXT', lang)+'</span>&nbsp;');
-      if (bundle.link_List.Matches['last'] <> '') then
-        s.append('<a href="'+bundle.link_List.Matches['last']+'">'+GetFhirMessage('NAME_LAST', lang)+'</a>&nbsp;')
-      else
-        s.append('<span style="color: grey">'+GetFhirMessage('NAME_LAST', lang)+'</span>&nbsp;');
-      if bundle.Total <> '' then
-        s.append(' ('+bundle.Total+' '+GetFhirMessage('FOUND', lang)+'). ');
-      s.append('<span style="color: grey">'+GetFhirMessage('NAME_SEARCH', lang)+': '+bundle.link_List.Matches['self']+'</span>&nbsp;</p>');
-      if bundle.tags['sql'] <> '' then
-        s.append('<p>SQL (for debugging): <span style="color: maroon">'+FormatTextToXML(bundle.tags['sql'], xmlText)+'</span></p>');
-    end;
-
-    for i := 0 to bundle.entryList.Count - 1 do
-    begin
-      e := bundle.entryList[i];
-      r := e.resource;
-      if (r = nil) then
-      begin
-        if (e.request <> nil) and (e.request.method = HttpVerbDELETE) then
-        begin
-          a := e.request.url.Split(['/']);
-          s.append('<h2>'+a[length(a)-2]+' '+a[length(a)-1]+' deleted</h2>'+#13#10);
-          s.append('<p>'+FormatTextToXML(e.tags['opdesc'], xmlText));
-          if e.link_List.Matches['audit'] <> '' then
-
-            s.append(' (<a href="'+BaseURL+e.link_List.Matches['audit']+'">Audit</a>)');
-          s.append('</p>'+#13#10);
-        end
-        else
-          s.append('<h2>nil?</h2>'+#13#10)
-      end
-      else
-      begin
-      t := GetFhirMessage(CODES_TFHIRResourceType[r.ResourceType], lang)+' "'+r.id+'"';
-      if (r.id = '') then
-        sl := ''
-      else
-      begin
-        sl := AppendForwardSlash(BaseURL)+ CODES_TFHIRResourceType[r.ResourceType]+'/'+r.id;
-        if (r.meta <> nil) and (r.meta.versionId <> '') then
-        begin
-          t := t +' '+GetFhirMessage('NAME_VERSION', lang)+' "'+r.meta.versionId+'"';
-          sl := sl + '/_history/'+r.meta.versionId;
-        end;
-      end;
-
-      s.append('<h2>'+FormatTextToXml(t, xmlText)+'</h2>'+#13#10);
-      if e.tags['opdesc'] <>'' then
-      begin
-        s.append('<p>'+FormatTextToXML(e.tags['opdesc'], xmlText));
-        if e.link_List.Matches['audit'] <> '' then
-          s.append(' (<a href="'+BaseURL+e.link_List.Matches['audit']+'">Audit</a>)');
-        s.append('</p>'+#13#10);
-      end;
-      if (r.meta <> nil) then
-        s.append('<p><a href="'+e.id+'/_tags">'+GetFhirMessage('NAME_TAGS', lang)+'</a>: '+PresentTags(r.ResourceType, sl+'/_tags', r.meta, i+1)+'</p>'+#13#10);
-
-      if e.search <> nil then
-      begin
-        s.Append('<p>Search Information: Mode = '+CODES_TFhirSearchEntryModeEnum[e.search.mode]);
-        if e.search.scoreElement <> nil then
-          s.Append(', score = '+e.search.score);
-        if e.search.hasExtension('http://hl7.org/fhir/StructureDefinition/patient-mpi-match') then
-          s.Append(', mpi says '+e.search.getExtensionString('http://hl7.org/fhir/StructureDefinition/patient-mpi-match'));
-        s.Append('</p>');
-      end;
-
-      if (sl <> '')  then
-      begin
-        s.append('<p><a href="'+sl+'">'+GetFhirMessage('THIS_RESOURCE', lang)+'</a> ');
-      if not (r is TFhirBinary) then
-        begin
-        s.append(
-          ', <a href="'+sl+'?_format=xml">XML</a> '+GetFhirMessage('OR', lang)+' '+
-        '<a href="'+sl+'?_format=json">JSON</a> '+GetFhirMessage('NAME_REPRESENTATION', lang));
-        s.append(
-          ', '+GetFhirMessage('OR', lang)+' <a href="'+e.id+'/_history">'+GetFhirMessage('NAME_HISTORY', lang)+'</a>.');
-
-        if (e.tags['z-edit-src'] <> '') then
-          s.append(' Edit this as <a href="'+patchToWeb(e.tags['z-edit-src'])+'?srcformat=xml">XML</a> or <a href="'+patchToWeb(e.tags['z-edit-src'])+'?srcformat=json">JSON</a>.');
-
-        {$IFDEF FHIR_QUESTIONNAIRERESPONSE}
-        if e.tags['edit-form'] <> '' then
-          if (r is TFHIRQuestionnaireResponse) then
-          begin
-            if (TFHIRQuestionnaireResponse(r).questionnaire <> nil) then
-              s.append(' <a href="'+patchToWeb(e.tags['edit-form'])+'">Edit this Resource</a> (or <a href="'+TFHIRQuestionnaireResponse(r).questionnaire.reference+'">see the questionnaire</a>)')
-          end
-          else
-            s.append(' <a href="'+patchToWeb(e.tags['edit-form'])+'">Edit this Resource</a> (or just see <a href="'+e.tags['edit-form']+'">the Questionnaire</a>)');
-        if e.tags['edit-post'] <> '' then
-          s.append(' Submit edited content by POST to '+e.tags['edit-post']);
-        {$ENDIF}
-
-        if assigned(FOnGetLink) then
-        begin
-          FOnGetLink(r, BaseURL, '', tail(e.id), tail(sl), link, text);
-          if (link <> '') then
-            s.append(' <a href="'+link+'">'+FormatTextToHTML(text)+'</a>');
-        end;
-        if not (r.resourceType in [frtProvenance, frtAuditEvent]) then
-          s.append('. <a href="'+FBaseURL+'Provenance/target='+r.fhirType+'/'+r.id+'">provenance for this resource</a>');
-        s.append('</br> Updated: '+e.tags['updated']+' by '+e.tags['author']+'</p>'+#13#10);
-        end;
-      end;
-
-//      if e.deleted then
-//        s.append('<p>'+GetFhirMessage('MSG_DELETED', lang)+'</p>')
-//      else if r = nil then
-//        s.append('<p>(--)</p>')
-//      else
-      if r is TFhirBinary then
-      begin
-        if StringStartsWith(TFhirBinary(r).ContentType, 'image/', true) then
-          s.append('<img src="'+CODES_TFhirResourceType[r.resourcetype]+'/'+e.id+'">'+#13#10)
-        else
-          s.append('<pre class="xml">'+#13#10+'('+GetFhirMessage('NAME_BINARY', lang)+')'+#13#10+'</pre>'+#13#10);
-      end
-      else
-      begin
-        xml := TFHIRXmlComposer.create(Fworker.link, OutputStylePretty, lang);
-        ss := TBytesStream.create();
-        try
-          if (r is TFhirDomainResource) and (TFhirDomainResource(r).text <> nil) and (TFhirDomainResource(r).text.div_ <> nil) then
-            TFHIRXhtmlParser.Compose(TFhirDomainResource(r).text.div_, s, false, 2, relativeReferenceAdjustment);
-          xml.Compose(ss, r, nil);
-          s.append('<hr/>'+#13#10+'<pre class="xml">'+#13#10+FormatXMLToHTML(TENcoding.UTF8.getString(ss.bytes, 0, ss.size))+#13#10+'</pre>'+#13#10);
-        finally
-          ss.free;
-          xml.free;
-        end;
-      end;
-      end;
-    end;
-    s.append(
-'<p><br/>'
-+footer(FBaseUrl, lang, logid)
-    );
-    s.WriteToStream(stream);
-  finally
-    s.free;
-  end;
-end;
-
-procedure TFHIRXhtmlComposer.ComposeResource(xml: TXmlBuilder; oResource: TFhirResource; links : TFhirBundleLinkList);
-var
-  oHtml : TFhirXHtmlNode;
-  oDoc : TFhirXHtmlNode;
-  oHead : TFhirXHtmlNode;
-  oWork : TFhirXHtmlNode;
-begin
-  oHtml := TFhirXHtmlNode.create;
-  try
-    oHtml.NodeType := fhntDocument;
-    oHtml.AddComment('Generated by Server automatically');
-    oDoc := oHtml.AddChild('html');
-    oHead := oDoc.AddChild('head');
-    oWork := oHead.AddChild('title');
-    oWork.AddText('test title');
-    oWork := oHead.AddChild('link');
-    oWork.SetAttribute('rel', 'Stylesheet');
-    oWork.SetAttribute('href', '/css/fhir.css');
-    oWork.SetAttribute('type', 'text/css');
-    oWork.SetAttribute('media', 'screen');
-    oWork := oDoc.AddChild('body');
-    if (oResource is TFhirDomainResource) and (TFhirDomainResource(oResource).text <> nil) And (TFhirDomainResource(oResource).text.div_ <> nil) Then
-    begin
-      oWork.Attributes.addAll(TFhirDomainResource(oResource).text.div_.Attributes);
-      oWork.ChildNodes.AddAll(TFhirDomainResource(oResource).text.div_.ChildNodes);
-    end;
-    TFHIRXhtmlParser.compose(oHtml, xml);
-  finally
-    oHtml.Free;
-  end;
-end;
-
-constructor TFHIRXhtmlComposer.Create(worker: TFHIRWorkerContext; Style : TFHIROutputStyle; lang, BaseURL: String);
-begin
-  Create(worker, Style, lang);
-  FBaseURL := BaseURL;
-end;
-
-
-destructor TFHIRXhtmlComposer.Destroy;
-begin
-  FSession.free;
-  FTags.Free;
-  inherited;
-end;
-
-function TFHIRXhtmlComposer.Extension: String;
-begin
-  result := '.html';
-end;
-
-class function TFHIRXhtmlComposer.Footer(base, lang, logId : String; tail : boolean = true): string;
-begin
-  result :=
-    '</div>'+#13#10+
-    ''+#13#10+
-    ''+#13#10+
-    '				</div>  <!-- /inner-wrapper -->'+#13#10+
-    '            </div>  <!-- /row -->'+#13#10+
-    '        </div>  <!-- /container -->'+#13#10+
-    '    </div>  <!-- /segment-content -->'+#13#10+
-    ''+#13#10+
-    ''+#13#10+
-    '	<div id="segment-footer" class="segment">  <!-- segment-footer -->'+#13#10+
-    '		<div class="container">  <!-- container -->'+#13#10+
-    '			<div class="inner-wrapper">'+#13#10+
-    '				<p>'+#13#10+
-    '        <a href="'+base+'" style="color: gold">'+GetFhirMessage('SERVER_HOME', lang)+'</a>.&nbsp;|&nbsp;FHIR &copy; HL7.org 2011+. &nbsp;|&nbsp; FHIR '+GetFhirMessage('NAME_VERSION', lang)+' <a href="'+FHIR_SPEC_URL+'" style="color: gold">'+FHIR_GENERATED_VERSION+'</a>'+#13#10+
-    '        | Request-id: '+logId+
-    '        </span>'+#13#10+
-    '        </p>'+#13#10+
-    '			</div>  <!-- /inner-wrapper -->'+#13#10+
-    '		</div>  <!-- /container -->'+#13#10+
-    '	</div>  <!-- /segment-footer -->'+#13#10+
-    ''+#13#10+
-    ''+#13#10+
-    '	<div id="segment-post-footer" class="segment hidden">  <!-- segment-post-footer -->'+#13#10+
-    '		<div class="container">  <!-- container -->'+#13#10+
-    '		</div>  <!-- /container -->'+#13#10+
-    '	</div>  <!-- /segment-post-footer -->'+#13#10+
-    ''+#13#10+
-    ''+#13#10+
-    ''+#13#10+
-    ''+#13#10+
-    ''+#13#10+
-    '      <!-- JS and analytics only. -->'+#13#10+
-    '      <!-- Bootstrap core JavaScript'+#13#10+
-    '================================================== -->'+#13#10+
-    '  <!-- Placed at the end of the document so the pages load faster -->'+#13#10+
-    '<script src="/assets/js/jquery.js"/>'+#13#10+
-    '<script src="/dist/js/bootstrap.min.js"/>'+#13#10+
-    '<script src="/assets/js/respond.min.js"/>'+#13#10+
-    ''+#13#10+
-    '<script src="/assets/js/fhir.js"/>'+#13#10+
-    ''+#13#10+
-    '  <!-- Analytics Below'+#13#10+
-    '================================================== -->'+#13#10+
-    ''+#13#10+
-    ''+#13#10+
-    ''+#13#10;
-if tail then
-  result := result +
-    '</body>'+#13#10+
-    '</html>'+#13#10;
-end;
-
-class function TFHIRXhtmlComposer.Header(Session : TFhirSession; base, lang, version: String): String;
-var
-   id : TFHIRCompartmentId;
-   f : boolean;
-begin
-  result :=
-    '	<div id="segment-navbar" class="segment">  <!-- segment-breadcrumb -->'+#13#10+
-    '		<div id="stripe"> </div>'+#13#10+
-    '		<div class="container">  <!-- container -->'+#13#10+
-    '		<div style="background-color: #ad1f2f; padding: 6px; color: white;">  <!-- container -->'+#13#10;
-
-
-  result := result +
-    '  <a href="http://www.hl7.org/fhir" style="color: gold" title="'+GetFhirMessage('MSG_HOME_PAGE_TITLE', lang)+'"><img border="0" src="/icon-fhir-16.png" style="vertical-align: text-bottom"/> <b>FHIR</b></a>'#13#10+
-    ''#13#10+
-    '  &copy; HL7.org'#13#10+
-    '  &nbsp;|&nbsp;'#13#10+
-    '  <a href="/" style="color: gold">'+GetFhirMessage('SERVER_HOME', lang)+'</a> '+
-    '  &nbsp;|&nbsp;'#13#10+
-    '  <a href="http://www.healthintersections.com.au" style="color: gold">Health Intersections</a> '+GetFhirMessage('NAME_SERVER', lang)+' v'+version+#13#10+
-    '  &nbsp;|&nbsp;'#13#10+
-    '  <a href="'+FHIR_SPEC_URL+'" style="color: gold">FHIR '+GetFhirMessage('NAME_VERSION', lang)+' '+FHIR_GENERATED_VERSION+'</a>'#13#10;
-
-  if (session <> nil)  then
-  begin
-    result := result +'&nbsp;|&nbsp;';
-    if session.canGetUser then
-      result := result +'User: '+FormatTextToXml(Session.SessionName, xmlText)
-    else
-      result := result +'User: [n/a]';
-    if session.UserEvidence <> userAnonymous then
-      result := result +'&nbsp; <a href="'+base+'/logout" title="Log Out"><img src="/logout.png"></a>';
-    if session.Compartments.Count > 0 then
-    begin
-      if session.Compartments.Count = 1 then
-        result := result+'  &nbsp;'#13#10+'</div><div style="background-color: #e5e600; padding: 6px; color: black;"> This session limited to '+CODES_TFhirResourceType[session.Compartments[0].Enum]+' '
-      else
-        result := result+'  &nbsp;'#13#10+'</div><div style="background-color: #e5e600; padding: 6px; color: black;"> . This session limited to the following compartments: ';
-      f := true;
-      for id in session.Compartments do
-      begin
-        if f then
-          f := false
-        else
-          result := result +', ';
-        result := result + id.ToString;
-      end;
-    end;
-  end;
-
-  result := result +
-    '  &nbsp;'#13#10+
-    '		</div>  <!-- /container -->'+#13#10+
-    '		</div>  <!-- /container -->'+#13#10+
-    '</div>'#13#10+
-    ''#13#10;
-//    if FFacebookLike and (FOauthUrl <> '') then
-//      result := result + '<iframe src="https://www.facebook.com/plugins/like.php?href='+FOauthUrl+'" scrolling="no" frameborder="0" style="border:none; width:450px; height:30px"></iframe>'#13#10;
-
-  result := result +
-    '	<!-- /segment-breadcrumb -->'+#13#10+
-    ''+#13#10+
-    '	<div id="segment-content" class="segment">  <!-- segment-content -->'+#13#10+
-    '	<div class="container">  <!-- container -->'+#13#10+
-    '            <div class="row">'+#13#10+
-    '            	<div class="inner-wrapper">'+#13#10+
-    ' <div id="div-cnt" class="col-9">'+#13#10+
-    ''+#13#10+
-    ''+#13#10;
-end;
-
-function TFHIRXhtmlComposer.MimeType: String;
-begin
-  result := 'text/html; charset=UTF-8';
-end;
 
 function TFHIRComposer.ResourceMediaType: String;
 begin
@@ -2459,146 +1124,6 @@ begin
   i := Pos('?', result);
   if i > 0 then
     result := copy(result, 1, i-1);
-end;
-
-class function TFHIRXhtmlComposer.PageLinks: String;
-begin
-  result :=
-    '  <meta charset="utf-8"/>'+#13#10+
-    '  <meta charset="utf-8" http-equiv="X-UA-Compatible" content="IE=edge" />'+#13#10+
-    '  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>'+#13#10+
-    '  <meta content="http://hl7.org/fhir" name="author"/>'+#13#10+
-    ''+#13#10+
-    '  <link rel="stylesheet" href="/fhir.css"/>'+#13#10+
-    ''+#13#10+
-    ''+#13#10+
-    '    <!-- Bootstrap core CSS -->'+#13#10+
-    '  <link rel="stylesheet" href="/dist/css/bootstrap.css"/>'+#13#10+
-    '  <link rel="stylesheet" href="/assets/css/bootstrap-fhir.css"/>'+#13#10+
-    ''+#13#10+
-    '    <!-- Project extras -->'+#13#10+
-    '  <link rel="stylesheet" href="/assets/css/project.css"/>'+#13#10+
-    '  <link rel="stylesheet" href="/assets/css/pygments-manni.css"/>'+#13#10+
-    ''+#13#10+
-    '    <!-- FHIR Server stuff -->'+#13#10+
-    '  <link rel="stylesheet" href="/css/tags.css"/>'+#13#10+
-    ''+#13#10+
-    '    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->'+#13#10+
-    '    <!-- [if lt IE 9]>'+#13#10+
-    '  <script src="/assets/js/html5shiv.js"></script>'+#13#10+
-    '  <script src="/assets/js/respond.min.js"></script>'+#13#10+
-    '  <![endif] -->'+#13#10+
-    ''+#13#10+
-    '    <!-- Favicons -->'+#13#10+
-    '  <link sizes="144x144" rel="apple-touch-icon-precomposed" href="/assets/ico/apple-touch-icon-144-precomposed.png"/>'+#13#10+
-    '  <link sizes="114x114" rel="apple-touch-icon-precomposed" href="/assets/ico/apple-touch-icon-114-precomposed.png"/>'+#13#10+
-    '  <link sizes="72x72" rel="apple-touch-icon-precomposed" href="/assets/ico/apple-touch-icon-72-precomposed.png"/>'+#13#10+
-    '  <link rel="apple-touch-icon-precomposed" href="/assets/ico/apple-touch-icon-57-precomposed.png"/>'+#13#10+
-    '  <link rel="shortcut icon" href="/assets/ico/favicon.png"/>'+#13#10;
-end;
-
-function TFHIRXhtmlComposer.PresentTags(aType : TFhirResourceType; target : String; meta: TFhirMeta; c : integer): String;
-var
-  i : integer;
-//  lbl : string;
-//  clss, typ : string;
-begin
-  if tags.count = 0 then
-    result := '(no tags)'
-  else
-  begin
-    result := '';
-    for i := 0 to tags.count - 1 do
-    begin
-{ todo-bundle
-      lbl := tags[i].label_;
-      if lbl = '' then
-        lbl := URLTail(tags[i].term);
-      if (length(lbl) > 20) then
-        lbl := Copy(lbl, 1, 20)+'..';
-
-      if tags[i].scheme = TAG_FHIR_SCHEME_PROFILE then
-      begin
-        clss := 'tag-profile';
-        typ := 'Profile: ';
-      end
-      else if tags[i].scheme = TAG_FHIR_SCHEME_SECURITY then
-    begin
-        clss := 'tag-security';
-        typ := 'Security: ';
-      end
-      else
-        clss := 'tag';
-
-      if aType = frtNull then
-        result := result + '<a href="'+FBaseUrl+'_search?'+paramForScheme(tags[i].scheme)+'='+EncodeMIME(tags[i].term)+'" class="'+clss+'" title="'+typ+tags[i].term+'">'+lbl+'</a>'
-      else
-      begin
-        result := result + '<a href="'+FBaseUrl+CODES_TFhirResourceType[aType]+'/_search?'+paramForScheme(tags[i].scheme)+'='+EncodeMIME(tags[i].term)+'" class="'+clss+'" title="'+typ+tags[i].term+'">'+lbl+'</a>';
-        if (target <> '') then
-          result := result + '<a href="javascript:deleteTag('''+target+'/_delete'', '''+tags[i].scheme+''', '''+tags[i].term+''')" class="tag-delete" title="Delete '+tags[i].term+'">-</a>'
-      end;
-      result := result + '&nbsp;';
-    }
-    end;
-  end;
-  if target <> '' then
-    result := result +'&nbsp; <a id="tb'+inttostr(c)+'" class="tag" title="Add a tag" href="javascript:addTag(''tb'+inttostr(c)+''', '''+FBaseUrl+''', '''+target+''')">+</a>';
-end;
-
-class function TFHIRXhtmlComposer.ResourceLinks(a : String; lang, base : String; count : integer; bTable, bPrefixLinks : boolean; canRead : boolean): String;
-var
-  bef, aft, pfx, pfxp : String;
-begin
-  if bPrefixLinks then
-  begin
-    pfx := base+'/'+a+'/';
-    pfxp := base+'/'+'StructureDefinition/'
-  end
-  else
-  begin
-    pfxp := '../StructureDefinition/';
-    pfx := '';
-  end;
-
-  if bTable then
-  begin
-    bef := '<td>';
-    aft := '</td>';
-  end
-  else
-  begin
-    bef := '&nbsp;';
-    aft := '';
-  end;
-  result := bef + a + aft;
-  if not bTable then
-    result := result + ':';
-  if count > -1 then
-    result := result + bef + inttostr(count) + aft;
-  if a = 'Binary' then
-    result := result + bef + 'n/a' + aft
-  else
-    result := result + bef + '<a class="button" href="'+pfxp+a+'">'+GetFhirMessage('NAME_PROFILE', lang)+'</a>' + aft;
-  if canRead then
-  begin
-    result := result + bef + '<a class="button" href="'+pfx+'_history">'+GetFhirMessage('NAME_UPDATES', lang)+'</a>' + aft;
-    if a = 'Binary' then
-      result := result + bef + 'n/a' + aft
-    else
-      result := result + bef + '<a class="button" href="'+pfx+'_search">'+GetFhirMessage('NAME_SEARCH', lang)+'</a>' + aft;
-    if bTable then
-      result := result + bef + '<a class="tag" href="'+pfx+'_tags">'+GetFhirMessage('NAME_TAGS', lang)+'</a>' + aft;
-  end
-  else if bTable then
-    result := result + bef + aft + bef + aft + bef + aft
-  else
-    result := result + bef + aft + bef + aft;
-end;
-
-function TFHIRXhtmlComposer.ResourceMediaType: String;
-begin
-  result := 'text/html; charset=UTF-8';
 end;
 
 function TFHIRXmlParserBase.GetAttribute(element: TMXmlElement; const name : String): String;
@@ -2669,13 +1194,13 @@ begin
   end;
 end;
 
-function TFHIRComposer.Compose(oResource: TFhirResource; links: TFhirBundleLinkList): String;
+function TFHIRComposer.Compose(oResource: TFhirResourceV): String;
 var
   stream : TBytesStream;
 begin
   stream := TBytesStream.create;
   try
-    compose(stream, oResource, links);
+    compose(stream, oResource);
     result := TEncoding.UTF8.GetString(copy(stream.Bytes, 0, stream.position));
   finally
     stream.Free;
@@ -2716,12 +1241,17 @@ begin
   inherited;
 end;
 
-function TFHIRXmlParserBase.ParseDomainResource(element: TMXmlElement; path : String): TFhirResource;
+function TFHIRXmlParserBase.ParseDataTypeV(element: TMXmlElement; name: String; type_: TClass): TFHIRObject;
+begin
+  raise exception.create('don''t use TFHIRXmlParserBase directly - use TFHIRXmlParser');
+end;
+
+function TFHIRXmlParserBase.ParseDomainResourceV(element: TMXmlElement; path : String): TFhirResourceV;
 var
   child : TMXmlElement;
 begin
   child := FirstChild(element);
-  result := ParseResource(child, path);
+  result := ParseResourceV(child, path);
   try
     child := NextSibling(child);
     if (child <> nil) then
@@ -2729,6 +1259,36 @@ begin
     result.link;
   finally
     result.free;
+  end;
+end;
+
+function TFHIRXmlParserBase.ParseDT(rootName: String; type_: TClass): TFHIRObject;
+var
+  xml : TMXmlDocument;
+  root : TMXmlElement;
+begin
+  start;
+  xml := nil;
+  try
+    FComments := TAdvStringList.create;
+    try
+      if (Element = nil) then
+      begin
+        xml := LoadXml(Source);
+        root := xml.document;
+      end
+      else
+        root := element;
+
+      if root.namespaceURI <> FHIR_NS Then
+        XmlError('/', StringFormat(GetFhirMessage('MSG_WRONG_NS', lang), [root.namespaceURI]));
+
+      result := ParseDataTypeV(root, rootName, type_);
+    finally
+      FComments.Free;
+    end;
+  finally
+    xml.Free;
   end;
 end;
 
@@ -2753,7 +1313,7 @@ begin
     result := value.ToXML;
 end;
 
-constructor TFHIRComposer.Create(worker: TFHIRWorkerContext; Style : TFHIROutputStyle; lang: String);
+constructor TFHIRComposer.Create(worker: TFHIRWorkerContextV; Style : TFHIROutputStyle; lang: String);
 begin
   inherited Create;
   FWorker := worker;
@@ -2789,19 +1349,6 @@ begin
   result := FStyle = OutputStylePretty;
 end;
 
-procedure TFHIRXhtmlComposer.SetSession(const Value: TFhirSession);
-begin
-  FSession.free;
-  FSession := Value;
-end;
-
-
-procedure TFHIRXhtmlComposer.SetTags(const Value: TFHIRTagList);
-begin
-  FTags.free;
-  FTags := Value;
-end;
-
 function TFHIRParser.StringArrayToCommaString(const aNames: array of String): String;
 var
   i : integer;
@@ -2819,7 +1366,7 @@ end;
 {$IFNDEF FHIR2}
 { TFHIRTurtleComposerBase }
 
-procedure TFHIRTurtleComposerBase.Compose(stream: TStream; oResource: TFhirResource; links: TFhirBundleLinkList);
+procedure TFHIRTurtleComposerBase.Compose(stream: TStream; oResource: TFhirResourceV);
 var
   base : TTurtleComplex;
 begin
@@ -2835,13 +1382,13 @@ begin
 
     base := TTurtleComplex.Create(nullLoc);
     try
-      base.addUriPredicate('a', 'fhir:'+CODES_TFHIRResourceType[oResource.ResourceType]);
+      base.addUriPredicate('a', 'fhir:'+oResource.fhirType);
       base.addUriPredicate('fhir:nodeRole', 'fhir:treeRoot');
       if URL <> '' then
         Fttl.addObject(url, base.link)
       else
         Fttl.addObject('_', base.link);
-      composeResource(base, oResource);
+      composeResourceV(base, oResource);
     finally
       base.free;
     end;
@@ -2866,12 +1413,7 @@ begin
   end;
 end;
 
-procedure TFHIRTurtleComposerBase.ComposeExpression(stream: TStream; expr: TFHIRPathExpressionNode; items: TFHIRObjectList; types: TAdvStringSet);
-begin
-  raise Exception.Create('not implemented yet');
-end;
-
-procedure TFHIRTurtleComposerBase.ComposeInnerResource(this: TTurtleComplex; parentType, name: String; elem: TFhirResource; useType: boolean; index: integer);
+procedure TFHIRTurtleComposerBase.ComposeInnerResource(this: TTurtleComplex; parentType, name: String; elem: TFhirResourceV; useType: boolean; index: integer);
 var
   base : TTurtleComplex;
   url : String;
@@ -2882,9 +1424,9 @@ begin
   this.addUriPredicate('fhir:'+parentType+'.'+name, url);
   base := TTurtleComplex.Create(nullLoc);
   try
-    base.addUriPredicate('a', 'fhir:'+CODES_TFHIRResourceType[elem.ResourceType]);
+    base.addUriPredicate('a', 'fhir:'+elem.fhirType);
     Fttl.addObject(url, base.link);
-    composeResource(base, elem);
+    composeResourceV(base, elem);
   finally
     base.free;
   end;
@@ -2900,7 +1442,7 @@ begin
   raise Exception.Create('not implemented yet');
 end;
 
-procedure TFHIRTurtleComposerBase.ComposeResource(parent :  TTurtleComplex; oResource: TFhirResource);
+procedure TFHIRTurtleComposerBase.ComposeResourceV(parent :  TTurtleComplex; oResource: TFhirResourceV);
 begin
   raise Exception.Create('do not instantiate TFHIRTurtleComposerBase directly');
 end;
@@ -2928,7 +1470,7 @@ begin
   result := '.ttl';
 end;
 
-procedure TFHIRTurtleComposerBase.ComposeResource(xml: TXmlBuilder; oResource: TFhirResource; links: TFhirBundleLinkList);
+procedure TFHIRTurtleComposerBase.ComposeResource(xml: TXmlBuilder; oResource: TFhirResourceV);
 begin
   raise Exception.Create('not implemented yet');
 end;
@@ -2940,24 +1482,6 @@ end;
 {$ENDIF}
 
 { TFHIRTextParser }
-
-function TFHIRTextParser.ParseDT(rootName: String; type_: TFHIRTypeClass): TFHIRType;
-begin
-  raise Exception.Create('Not supported');
-end;
-
-class function TFHIRTextParser.ParseFile(worker: TFHIRWorkerContext; lang, filename: String): TFHIRResource;
-var
-  t : TFHIRTextParser;
-begin
-  t := TFHIRTextParser.Create(worker.link, lang);
-  try
-    t.ParseFile(filename);
-    result := t.resource.Link;
-  finally
-    t.Free;
-  end;
-end;
 
 function TFHIRTextParser.GetFormat: TFHIRFormat;
 begin
@@ -2975,16 +1499,12 @@ end;
 
 { TFHIRTextComposer }
 
-procedure TFHIRTextComposer.Compose(stream: TStream; oResource: TFhirResource; links: TFhirBundleLinkList);
+procedure TFHIRTextComposer.Compose(stream: TStream; oResource: TFhirResourceV);
 begin
-  case oResource.ResourceType of
-    frtOperationOutcome : StringToStream(render(oResource as TFHIROperationOutcome), stream, TEncoding.UTF8);
-  else
-    raise Exception.Create('Text format not supported for '+oResource.fhirtype);
-  end;
+  raise Exception.Create('Not Done Yet');
 end;
 
-procedure TFHIRTextComposer.ComposeResource(xml: TXmlBuilder; oResource: TFhirResource; links: TFhirBundleLinkList);
+procedure TFHIRTextComposer.ComposeResource(xml: TXmlBuilder; oResource: TFhirResourceV);
 begin
   raise Exception.Create('Not Done Yet');
 end;
@@ -2997,42 +1517,6 @@ end;
 function TFHIRTextComposer.MimeType: String;
 begin
   result := 'text/fhir';
-end;
-
-function TFHIRTextComposer.render(op: TFHIROperationOutcome): String;
-var
-  b : TStringBuilder;
-  iss : TFhirOperationOutcomeIssue;
-begin
-  b := TStringBuilder.create;
-  try
-    if op.issueList.Count = 0 then
-      b.Append('All Ok (no issues)')
-    else
-      for iss in op.issueList do
-      begin
-        b.Append(CODES_TFhirIssueSeverityEnum[iss.severity]);
-        b.Append(': ');
-        b.Append(gen(iss.details));
-        {$IFDEF FHIR2}
-        if (iss.locationList.Count > 0) then
-        {$ELSE}
-        if (iss.expressionList.Count > 0) then
-        {$ENDIF}
-        begin
-          b.Append(' @ ');
-          {$IFDEF FHIR2}
-          b.Append(iss.locationList[0].Value);
-          {$ELSE}
-          b.Append(iss.expressionList[0].Value);
-          {$ENDIF}
-        end;
-        b.Append(#13#10);
-      end;
-    result := b.toString;
-  finally
-    b.free;
-  end;
 end;
 
 function TFHIRTextComposer.ResourceMediaType: String;
@@ -3070,61 +1554,21 @@ begin
     if (p = nil) then
       raise Exception.Create('No tree node start point found in Turtle Format');
 
-    resource := ParseResource(p.Value);
+    resource := ParseResourceV(p.Value);
     resource.Tags['rdf-url'] := p.URL.uri;
   finally
     Fdoc.Free;
   end;
 end;
 
-function TFHIRTurtleParserBase.ParseDataType(obj: TTurtleComplex; name: String; type_: TFHIRTypeClass): TFHIRType;
-begin
-  raise Exception.Create('Must be overriden in '+className);
-end;
-
-function TFHIRTurtleParserBase.ParseDT(rootName: String; type_: TFHIRTypeClass): TFHIRType;
+function TFHIRTurtleParserBase.ParseDT(rootName: String; type_: TClass): TFHIRObject;
 begin
   raise Exception.Create('not supported');
 end;
 
-class function TFHIRTurtleParserBase.ParseFile(worker: TFHIRWorkerContext; lang, filename: String): TFHIRResource;
-var
-  j : TFHIRTurtleParser;
+function TFHIRTurtleParserBase.ParseResourceV(obj: TTurtleComplex): TFHIRResourceV;
 begin
-  j := TFHIRTurtleParser.Create(worker.link, lang);
-  try
-    j.ParseFile(filename);
-    result := j.resource.Link;
-  finally
-    j.Free;
-  end;
-end;
-
-function TFHIRTurtleParserBase.ParseInnerResource(obj: TTurtleObject): TFHIRResource;
-var
-  c : TTurtleComplex;
-begin
-  if obj = nil then
-    result := nil
-  else
-  begin
-    if obj is TTurtleComplex then
-      c := obj as TTurtleComplex
-    else if (obj is TTurtleURL) then
-    begin
-      c := FDoc.getObject(TTurtleURL(obj).uri);
-      if c = nil then
-        raise Exception.Create('Unable to resolve internal resource reference in RDF - to '+TTurtleURL(obj).uri)
-    end
-    else
-      raise Exception.Create('Unable to process internal resource reference in RDF');
-    result := ParseResource(c);
-  end;
-end;
-
-function TFHIRTurtleParserBase.ParseResource(obj: TTurtleComplex): TFHIRResource;
-begin
-  raise Exception.Create('Need to override ParseResource() in '+className);
+  raise Exception.Create('Need to override ParseResourceV() in '+className);
 end;
 
 function TFHIRTurtleParserBase.ParseXHtmlNode(literal: String): TFhirXHtmlNode;
@@ -3148,50 +1592,5 @@ begin
 end;
 {$ENDIF}
 
-{ TFHIRNDJsonComposer }
-
-procedure TFHIRNDJsonComposer.Compose(stream: TStream; oResource: TFhirResource; links: TFhirBundleLinkList);
-var
-  oStream : TAdvVCLStream;
-  json : TFHIRJsonComposer;
-  be : TFhirBundleEntry;
-  first : boolean;
-  ch : char;
-begin
-  ch := #10;
-  if oResource.ResourceType = frtBundle then
-  begin
-    first := true;
-    for be in TFHIRBundle(oResource).entryList do
-    begin
-      if first then
-        first := false
-      else
-        stream.Write(ch, 1);
-      if be.resource <> nil then
-      begin
-        json := TFHIRJsonComposer.Create(FWorker.link, OutputStyleNormal, lang);
-        try
-          json.Compose(stream, be.resource, links);
-        finally
-          json.Free;
-        end;
-      end
-      else if be.tag is TAdvBuffer then
-      begin
-        TAdvBuffer(be.tag).SaveToStream(stream);
-      end;
-    end;
-  end
-  else
-  begin
-    json := TFHIRJsonComposer.Create(FWorker.link, OutputStyleNormal, lang);
-    try
-      json.Compose(stream, oResource, links);
-    finally
-      json.Free;
-    end;
-  end;
-end;
 
 End.

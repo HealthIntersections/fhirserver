@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="src"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.7"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/org.hl7.fhir.dstu2"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/org.hl7.fhir.utilities"/>
 	<classpathentry kind="lib" path="C:/work/org.hl7.fhir/build/tools/java/imports/xpp3_xpath-1.1.4c.jar"/>
@@ -11,5 +11,6 @@
 	<classpathentry kind="lib" path="C:/work/org.hl7.fhir/build/tools/java/imports/commons-codec-1.9.jar"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/org.hl7.fhir.convertors"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/org.hl7.fhir.r4"/>
+	<classpathentry kind="lib" path="C:/work/fhirserver/reference-platform/generator/dependencies/javaparser-core-3.6.1.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

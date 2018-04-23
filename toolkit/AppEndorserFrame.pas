@@ -198,7 +198,7 @@ var
 begin
   if odUpload.Execute then
   begin
-    bnd := TFHIRJsonParser.ParseFile(nil, 'en', odUpload.filename) as TFhirBundle;
+    bnd := TFHIRParsers.ParseFile(nil, ffXml, 'en', odUpload.filename) as TFhirBundle;
     try
       bnd.type_ := BundleTypeTransaction;
       for be in bnd.entryList do
@@ -924,7 +924,7 @@ begin
           resource := endorsement.Link;
           fullUrl := URLPath([FClient.address, 'Observation', endorsement.id]);
         end;
-      TFHIRJsonComposer.composeFile(nil, bnd, 'en', sdPack.FileName, OutputStylePretty);
+      TFHIRParsers.ComposeFile(nil, ffJson, bnd, 'en', sdPack.FileName, OutputStylePretty);
     finally
       bnd.Free;
     end;

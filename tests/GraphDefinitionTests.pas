@@ -98,11 +98,11 @@ end;
 procedure TFHIRGraphDefinitionTests.ListResources(appInfo: TAdvObject; requestType: String; params: TAdvList<TGraphQLArgument>; list: TAdvList<TFHIRResource>);
 begin
   if requestType = 'Condition' then
-    list.add(TFHIRXmlParser.ParseFile(nil, 'en', 'C:\work\org.hl7.fhir\build\publish\condition-example.xml'))
+    list.add(TFHIRParsers.ParseFile(nil, ffXml, 'en', 'C:\work\org.hl7.fhir\build\publish\condition-example.xml'))
   else if requestType = 'Patient' then
   begin
-    list.Add(TFHIRXmlParser.ParseFile(nil, 'en', 'C:\work\org.hl7.fhir\build\publish\patient-example.xml'));
-    list.Add(TFHIRXmlParser.ParseFile(nil, 'en', 'C:\work\org.hl7.fhir\build\publish\patient-example-xds.xml'));
+    list.Add(TFHIRParsers.ParseFile(nil, ffXml, 'en', 'C:\work\org.hl7.fhir\build\publish\patient-example.xml'));
+    list.Add(TFHIRParsers.ParseFile(nil, ffXml, 'en', 'C:\work\org.hl7.fhir\build\publish\patient-example-xds.xml'));
   end;
 end;
 
@@ -121,7 +121,7 @@ begin
     try
       x.source := f;
       x.Parse;
-      result := x.resource.Link;
+      result := x.resource.Link as TFHIRResource;
     finally
       x.Free;
     end;
@@ -157,7 +157,7 @@ begin
     filename := 'C:\work\org.hl7.fhir\build\publish\'+parts[0].ToLower+'-'+parts[1].ToLower+'.xml';
     result := FileExists(filename);
     if result then
-      target := TFHIRXmlParser.ParseFile(nil, 'en', filename)
+      target := TFHIRParsers.ParseFile(nil, ffXml, 'en', filename)
     else
     begin
       for filename in TDirectory.GetFiles('C:\work\org.hl7.fhir\build\publish', parts[0].ToLower+'-*.xml', TSearchOption.soTopDirectoryOnly) do
@@ -167,7 +167,7 @@ begin
           src := fileToString(filename, TEncoding.UTF8);
           if (src.Contains('<id value="'+parts[1]+'"/>')) then
           begin
-            target := TFHIRXmlParser.ParseFile(nil, 'en', filename);
+            target := TFHIRParsers.ParseFile(nil, ffXml, 'en', filename);
             exit;
           end;
         end;

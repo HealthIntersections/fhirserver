@@ -180,6 +180,7 @@ type
 
   TFHIRProperty = class (TAdvObject)
   Private
+    FOwner : TFHIRObject; // noown
     FName : String;
     FType : String;
     FIsList : boolean;
@@ -193,7 +194,7 @@ type
     Constructor Create(oOwner : TFHIRObject; Const sName, sType : String; bList : boolean; cClass : TClass; oList : TAdvList<TFHIRObject>); Overload;
     Constructor Create(oOwner : TFHIRObject; Const sName, sType : String; bList : boolean; cClass : TClass; sValue : String); Overload;
     Constructor Create(oOwner : TFHIRObject; Const sName, sType : String; bList : boolean; cClass : TClass; Value : TBytes); Overload;
-    Constructor CreateEnum(oOwner : TFHIRObject; Const sName : String; bList: boolean; enumName : String; sValue : String); Overload;
+    Constructor CreateEnum(oOwner : TFHIRObject; Const sName : String;     bList: boolean; cClass : TClass; enumName : String; sValue : String); Overload;
     Destructor Destroy; Override;
 
     Function Link : TFHIRProperty; overload;
@@ -274,6 +275,11 @@ type
 
     procedure deletePropertyValue(name : String; list : TFHIRObjectList; value : TFHIRObject);
     procedure replacePropertyValue(name : String; list : TFHIRObjectList; existing, new : TFHIRObject);
+
+    // version delegation
+    function makeStringValue(v : String) : TFHIRObject; virtual;
+    function makeCodeValue(v : String) : TFHIRObject; virtual;
+    function GetVersion: TFHIRVersion; virtual;
   public
     Constructor Create; override;
     Destructor Destroy; override;
@@ -347,6 +353,9 @@ type
     Property _source_format : TFHIRFormat read FFormat write FFormat;
 
     property noCompose : boolean read FNoCompose write FNoCompose; // used by various filtering techniques to ensure that an element is not rendered
+
+    Property version : TFHIRVersion read GetVersion;
+    Property id : String read Getid;
   end;
 
   TFHIRObjectClass = class of TFHIRObject;
@@ -388,6 +397,20 @@ type
     // javascript caching
     property jsInstance : cardinal read FJsInstance write FJsInstance;
     property jsHandle : pointer read FJsHandle write FJsHandle;
+  end;
+
+  TFHIRResourceV = class (TFHIRObject)
+  public
+    function link : TFHIRResourceV; overload;
+  end;
+
+  TFHIRWorkerContextV = class (TAdvObject)
+  protected
+    function GetVersion: TFHIRVersion; virtual;
+  public
+    function link : TFHIRWorkerContextV; overload;
+
+    Property version : TFHIRVersion read GetVersion;
   end;
 
   TFHIRObjectText = class (TFHIRObject)
@@ -456,9 +479,7 @@ function isEmptyProp(v : TFHIRObjectList) : boolean; overload;
 Implementation
 
 Uses
-  StringSupport,
-  FHIRTypes;
-
+  StringSupport;
 
 { TFHIRObject }
 
@@ -561,6 +582,11 @@ begin
     result := '';
 end;
 
+function TFHIRObject.GetVersion: TFHIRVersion;
+begin
+  result := fhirVersionUnknown;
+end;
+
 function TFHIRObject.HasTag(name: String): boolean;
 begin
   result := (FTags <> nil) and FTags.ContainsKey(name);
@@ -575,6 +601,16 @@ end;
 procedure TFHIRObject.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
 begin
   // nothing to add here
+end;
+
+function TFHIRObject.makeCodeValue(v: String): TFHIRObject;
+begin
+  raise Exception.Create('Must override makeCodeValue in '+className);
+end;
+
+function TFHIRObject.makeStringValue(v: String): TFHIRObject;
+begin
+  raise Exception.Create('Must override makeCodeValue in '+className);
 end;
 
 function TFHIRObject.createPropertyValue(propName: string): TFHIRObject;
@@ -874,6 +910,7 @@ end;
 constructor TFHIRProperty.Create(oOwner: TFHIRObject; const sName, sType: String; bList : boolean; cClass : TClass; oObject: TFHIRObject);
 begin
   Create;
+  FOwner := oOwner;
   FName := sName;
   FType := sType;
   FClass := cClass;
@@ -891,6 +928,7 @@ var
   i : integer;
 begin
   Create;
+  FOwner := oOwner;
   FName := sName;
   FType := sType;
   FClass := cClass;
@@ -906,13 +944,14 @@ end;
 constructor TFHIRProperty.Create(oOwner: TFHIRObject; const sName, sType: String; bList : boolean; cClass : TClass; sValue: String);
 begin
   Create;
+  FOwner := oOwner;
   FName := sName;
   FType := sType;
   FClass := cClass;
   FIsList := bList;
   FList := TFHIRObjectList.Create;
   if (sValue <> '') then
-    FList.Add(TFhirString.Create(sValue));
+    FList.Add(Fowner.makeStringValue(sValue));
 end;
 
 destructor TFHIRProperty.Destroy;
@@ -940,26 +979,28 @@ end;
 constructor TFHIRProperty.Create(oOwner: TFHIRObject; const sName, sType: String; bList : boolean; cClass : TClass; Value: TBytes);
 begin
   Create;
+  FOwner := oOwner;
   FName := sName;
   FType := sType;
   FClass := cClass;
   FIsList := bList;
   FList := TFHIRObjectList.Create;
   if (length(value) > 0) then
-    FList.Add(TFhirString.Create(String(EncodeBase64(@value[0], length(value)))));
+    FList.Add(FOwner.makeStringValue(String(EncodeBase64(@value[0], length(value)))));
 end;
 
-constructor TFHIRProperty.CreateEnum(oOwner: TFHIRObject; const sName: String; bList: boolean; enumName, sValue: String);
+constructor TFHIRProperty.CreateEnum(oOwner: TFHIRObject; const sName: String; bList: boolean; cClass : TClass; enumName, sValue: String);
 begin
   Create;
+  FOwner := oOwner;
   FName := sName;
   FType := 'code';
-  FClass := TFHIREnum;
+  FClass := cClass;
   FEnumName := enumName;
   FIsList := false;
   FList := TFHIRObjectList.Create;
   if (sValue <> '') then
-    FList.Add(TFhirCode.Create(sValue));
+    FList.Add(FOwner.makeCodeValue(sValue));
 end;
 
 constructor TFHIRProperty.Create(oOwner: TFHIRObject; const sName, sType: String; bList: boolean; cClass: TClass; oList: TAdvList<TFHIRObject>);
@@ -967,6 +1008,7 @@ var
   i : integer;
 begin
   Create;
+  FOwner := oOwner;
   FName := sName;
   FType := sType;
   FClass := cClass;
@@ -1309,6 +1351,25 @@ begin
       if not isEmptyProp(o) then
         exit(false);
   end;
+end;
+
+{ TFHIRWorkerContextV }
+
+function TFHIRWorkerContextV.GetVersion: TFHIRVersion;
+begin
+  result := fhirVersionUnknown;
+end;
+
+function TFHIRWorkerContextV.link: TFHIRWorkerContextV;
+begin
+  result := TFHIRWorkerContextV(inherited Link);
+end;
+
+{ TFHIRResourceV }
+
+function TFHIRResourceV.link: TFHIRResourceV;
+begin
+  result := TFHIRResourceV(inherited Link);
 end;
 
 End.

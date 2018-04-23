@@ -36,7 +36,7 @@ uses
   StringSupport,
   AdvObjects, AdvGenerics,
   ParseMap, GraphQL,
-  FHIRBase, FHIRTypes, FHIRResources, FHIRConstants, FHIRParser, FHIRUtilities, FHIRPathNode, FHIRPath;
+  FHIRBase, FHIRBaseX, FHIRTypes, FHIRResources, FHIRConstants, FHIRParser, FHIRUtilities, FHIRPathNode, FHIRPath;
 
 type
   TFHIRGraphQLEngineDereferenceEvent = function(appInfo : TAdvObject; context : TFHIRResource; reference : TFHIRReference; out targetContext, target : TFHIRResource) : boolean of Object;
@@ -110,7 +110,7 @@ type
     procedure execute;
   end;
 
-  TFHIRGraphQLSearchWrapper = class (TFHIRObject)
+  TFHIRGraphQLSearchWrapper = class (TFHIRObjectX)
   private
     FBundle: TFhirBundle;
     FParseMap : TParseMap;
@@ -127,7 +127,7 @@ type
     function getPropertyValue(propName : string): TFHIRProperty; override;
   end;
 
-  TFHIRGraphQLSearchEdge = class (TFHIRObject)
+  TFHIRGraphQLSearchEdge = class (TFHIRObjectX)
   private
     FEntry: TFhirBundleEntry;
     procedure SetEntry(const Value: TFhirBundleEntry);

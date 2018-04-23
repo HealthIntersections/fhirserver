@@ -316,7 +316,7 @@ Type
     Procedure ValueArray(Const name : String); override;
     Procedure FinishArray; override;
     Procedure ValueInArray(Const value : String); overload; override;
-    procedure valueNullInArray; override;
+    procedure ValueNullInArray; override;
   End;
 
   TCanonicalJsonNodeType = (jntProperty, jntObject, jntArray);
@@ -340,6 +340,7 @@ Type
     FStack : TAdvList<TCanonicalJsonNode>;
     procedure commitObject(node : TCanonicalJsonNode);
     procedure commitArray(node : TCanonicalJsonNode);
+  protected
     procedure doValue(name, value : String); override;
   public
     Function Link: TJsonWriterCanonical; overload;

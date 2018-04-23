@@ -88,7 +88,6 @@ Type
   Private
     FLock : TCriticalSection;
     FFilename : String;
-    FFilenameCanChange : Boolean;
     FPolicy : TLoggerPolicy;
 
     Function ProcessFileName : String;
@@ -367,7 +366,6 @@ var
   v : UInt64;
   hProcess: THandle;
   pmc: PROCESS_MEMORY_COUNTERS;
-  total: DWORD;
 begin
   GetMemoryManagerState(st);
   v := st.TotalAllocatedMediumBlockSize + st.TotalAllocatedLargeBlockSize;

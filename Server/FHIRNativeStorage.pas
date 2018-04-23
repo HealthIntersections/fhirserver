@@ -994,8 +994,8 @@ begin
           parser.Parse;
           entry := TFHIRBundleEntry.Create;
           try
-            entry.resource := parser.resource.Link;
-            entry.fullUrl := AppendForwardSlash(base)+CODES_TFhirResourceType[parser.resource.ResourceType]+'/'+parser.resource.id;
+            entry.resource := parser.resource.Link as TFHIRResource;
+            entry.fullUrl := AppendForwardSlash(base)+parser.resource.fhirType+'/'+parser.resource.id;
             if (purpose <> SearchEntryModeNull) then
             begin
               entry.search := TFhirBundleEntrySearch.Create;
@@ -1038,7 +1038,7 @@ begin
       comp.SummaryOption := summary;
       comp.NoHeader := true;
 
-      comp.Compose(b, r, nil);
+      comp.Compose(b, r);
     finally
       comp.Free;
     end;
@@ -2642,7 +2642,7 @@ begin
             parser := TFHIRJsonParser.Create(request.Context.link, request.lang);
             try
               TFHIRJsonParser(parser).parse(json2);
-              request.Resource := parser.resource.Link;
+              request.Resource := parser.resource.Link as TFHIRResource;
               request.PostFormat := ffJson;
               ms := TAdvMemoryStream.Create;
               try
@@ -2668,7 +2668,7 @@ begin
           try
             TFHIRXmlParser(parser).element := xml.document.Link;
             parser.parse();
-            request.Resource := parser.resource.Link;
+            request.Resource := parser.resource.Link as TFHIRResource;
           finally
             parser.Free;
           end;
@@ -3178,7 +3178,7 @@ begin
           s := FConnection.ColBlobByName['JsonContent'];
           parser := MakeParser(ServerContext.ValidatorContext, lang, ffJson, s, xppDrop);
           try
-            result.Add(parser.resource.Link);
+            result.Add(parser.resource.Link as TFHIRResource);
           finally
             parser.free;
           end;
@@ -3212,7 +3212,7 @@ begin
     s := FConnection.ColBlobByName['JsonContent'];
     parser := MakeParser(ServerContext.ValidatorContext, lang, ffJson, s, xppDrop);
     try
-      result := parser.resource.Link;
+      result := parser.resource.Link as TFHIRResource;
     finally
       parser.free;
     end;
@@ -4390,7 +4390,7 @@ begin
       parser.source := mem;
       parser.ParserPolicy := xppDrop;
       parser.Parse;
-      response.Resource := parser.resource.Link;
+      response.Resource := parser.resource.Link as TFHIRResource;
     finally
       parser.free;
     end;
@@ -4471,7 +4471,7 @@ begin
         s := FConnection.ColBlobByName['JsonContent'];
         parser := MakeParser(ServerContext.ValidatorContext, lang, ffJson, s, xppDrop);
         try
-          result := TResourceWithReference.Create(id, parser.resource.Link);
+          result := TResourceWithReference.Create(id, parser.resource.Link as TFHIRResource);
         finally
           parser.free;
         end;
@@ -4778,7 +4778,7 @@ begin
         needSecure := FConnection.ColIntegerByName['Secure'] = 1;
         parser := MakeParser(ServerContext.ValidatorContext, lang, ffJson, s, xppDrop);
         try
-          result.Add(parser.resource.Link);
+          result.Add(parser.resource.Link as TFHIRResource);
         finally
           parser.free;
         end;
@@ -4877,7 +4877,7 @@ begin
       begin
         json.source := TBytesStream.Create(FConnection.ColBlobByName['JsonContent']);
         json.Parse;
-        list.Add(json.resource.Link);
+        list.Add(json.resource.Link as TFHIRResource);
       end;
     finally
       FConnection.Terminate;
@@ -4966,7 +4966,7 @@ begin
         needSecure := FConnection.ColIntegerByName['Secure'] = 1;
         parser := MakeParser(ServerContext.ValidatorContext, lang, ffJson, s, xppDrop);
         try
-          result := parser.resource.Link;
+          result := parser.resource.Link as TFHIRResource;
         finally
           parser.free;
         end;
@@ -4996,7 +4996,7 @@ begin
       s := FConnection.ColBlobByName['JsonContent'];
       parser := MakeParser(ServerContext.ValidatorContext, lang, ffJson, s, xppDrop);
       try
-        result := parser.resource.Link;
+        result := parser.resource.Link as TFHIRResource;
       finally
         parser.free;
       end;
@@ -5068,7 +5068,7 @@ begin
         needSecure := FConnection.ColIntegerByName['Secure'] = 1;
         parser := MakeParser(ServerContext.ValidatorContext, lang, ffJson, s, xppDrop);
         try
-          result := parser.resource.Link;
+          result := parser.resource.Link as TFHIRResource;
         finally
           parser.free;
         end;
@@ -5417,7 +5417,7 @@ begin
         try
           parser := MakeParser(ServerContext.ValidatorContext, 'en', ffJson, Connection.ColBlobByName['JsonContent'], xppDrop);
           try
-            r := parser.resource;
+            r := parser.resource as TFHIRResource;
             FConnection.terminate;
             Connection.StartTransact;
             try
@@ -8214,23 +8214,23 @@ begin
           end
           else
           begin
-            if parser.resource.meta = nil then
-              parser.resource.meta := TFHIRMeta.Create;
-            tags.writeTags(parser.resource.meta);
-            native(manager).FConnection.BindBlob('xc', native(manager).EncodeResource(parser.Resource, true, soFull));
-            native(manager).FConnection.BindBlob('jc', native(manager).EncodeResource(parser.Resource, false, soFull));
-            native(manager).markSubsetted(parser.resource.meta);
-            native(manager).FConnection.BindBlob('xs', native(manager).EncodeResource(parser.Resource, true, soSummary));
-            native(manager).FConnection.BindBlob('js', native(manager).EncodeResource(parser.Resource, false, soSummary));
-            native(manager).unmarkSubsetted(parser.resource.meta);
-            TFHIRParameters(response.Resource).AddParameter('return', parser.resource.meta.link);
+            if (parser.resource  as TFHIRResource).meta = nil then
+              (parser.resource as TFHIRResource).meta := TFHIRMeta.Create;
+            tags.writeTags((parser.resource  as TFHIRResource).meta);
+            native(manager).FConnection.BindBlob('xc', native(manager).EncodeResource(parser.Resource as TFHIRResource, true, soFull));
+            native(manager).FConnection.BindBlob('jc', native(manager).EncodeResource(parser.Resource as TFHIRResource, false, soFull));
+            native(manager).markSubsetted((parser.resource  as TFHIRResource).meta);
+            native(manager).FConnection.BindBlob('xs', native(manager).EncodeResource(parser.Resource as TFHIRResource, true, soSummary));
+            native(manager).FConnection.BindBlob('js', native(manager).EncodeResource(parser.Resource as TFHIRResource, false, soSummary));
+            native(manager).unmarkSubsetted((parser.resource  as TFHIRResource).meta);
+            TFHIRParameters(response.Resource).AddParameter('return', (parser.resource  as TFHIRResource).meta.link);
           end;
           native(manager).FConnection.Execute;
           native(manager).FConnection.Terminate;
           if not deleted and (resourceVersionKey = versionKey) then
           begin
             native(manager).CreateIndexer;
-            native(manager).FIndexer.execute(resourceKey, request.Id, parser.resource, tags);
+            native(manager).FIndexer.execute(resourceKey, request.Id, parser.resource as TFHIRResource, tags);
           end;
         finally
           parser.free;
@@ -8372,23 +8372,23 @@ begin
           end
           else
           begin
-            if parser.resource.meta = nil then
-              parser.resource.meta := TFHIRMeta.Create;
-            tags.writeTags(parser.resource.meta);
-            native(manager).FConnection.BindBlob('xc', native(manager).EncodeResource(parser.Resource, true, soFull));
-            native(manager).FConnection.BindBlob('jc', native(manager).EncodeResource(parser.Resource, false, soFull));
-            native(manager).markSubsetted(parser.resource.meta);
-            native(manager).FConnection.BindBlob('xs', native(manager).EncodeResource(parser.Resource, true, soSummary));
-            native(manager).FConnection.BindBlob('js', native(manager).EncodeResource(parser.Resource, false, soSummary));
-            native(manager).unmarkSubsetted(parser.resource.meta);
-            TFHIRParameters(response.Resource).AddParameter('return', parser.resource.meta.link);
+            if (parser.resource as TFHIRResource).meta = nil then
+              (parser.resource as TFHIRResource).meta := TFHIRMeta.Create;
+            tags.writeTags((parser.resource as TFHIRResource).meta);
+            native(manager).FConnection.BindBlob('xc', native(manager).EncodeResource(parser.Resource as TFHIRResource, true, soFull));
+            native(manager).FConnection.BindBlob('jc', native(manager).EncodeResource(parser.Resource as TFHIRResource, false, soFull));
+            native(manager).markSubsetted((parser.resource  as TFHIRResource).meta);
+            native(manager).FConnection.BindBlob('xs', native(manager).EncodeResource(parser.Resource as TFHIRResource, true, soSummary));
+            native(manager).FConnection.BindBlob('js', native(manager).EncodeResource(parser.Resource as TFHIRResource, false, soSummary));
+            native(manager).unmarkSubsetted((parser.resource  as TFHIRResource).meta);
+            TFHIRParameters(response.Resource).AddParameter('return', (parser.resource  as TFHIRResource).meta.link);
           end;
           native(manager).FConnection.Execute;
           native(manager).FConnection.Terminate;
           if not deleted and (resourceVersionKey = versionKey) then
           begin
             native(manager).CreateIndexer;
-            native(manager).FIndexer.execute(resourceKey, request.Id, parser.resource, tags);
+            native(manager).FIndexer.execute(resourceKey, request.Id, parser.resource as TFHIRResource, tags);
           end;
         finally
           parser.free;
@@ -9390,7 +9390,7 @@ begin
       mem := conn.ColBlobByName['JsonContent'];
       parser := MakeParser(ServerContext.ValidatorContext, 'en', ffJson, mem, xppDrop);
       try
-        result := parser.resource.Link;
+        result := parser.resource.Link as TFHIRResource;
       finally
         parser.free;
       end;
@@ -11088,7 +11088,7 @@ begin
             0,
             conn.ColStringByName['Id'],
             conn.ColIntegerByName['Secure'] = 1,
-            false, parser.resource, cback, true, nil, mem);
+            false, parser.resource as TFHIRResource, cback, true, nil, mem);
         finally
           parser.free;
         end;
@@ -11124,7 +11124,7 @@ begin
   mem := conn.ColBlobByName['JsonContent'];
   parser := MakeParser(ServerContext.ValidatorContext, 'en', ffJson, mem, xppDrop);
   try
-    result := parser.resource.Link;
+    result := parser.resource.Link as TFHIRResource;
   finally
     parser.Free;
   end;

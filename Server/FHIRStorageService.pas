@@ -38,7 +38,7 @@ uses
   KDBDialects, DateSupport, GraphQL,
 
   FHIRBase, FHIRSupport, FHIRTypes, FHIRResources, FHIRConstants, FHIRUtilities, FHIRLang, FHIRFactory,
-  FHIRClient, FHIRContext, FHIRXhtml, FHIRIndexInformation, FHIRParserBase, FHIRIndexBase, FHIRGraphQL,
+  FHIRClient, FHIRContext, FHIRXhtml, FHIRIndexInformation, FHIRParserBase, FHIRIndexBase, FHIRGraphQL, FHIRXhtmlComposer,
   CDSHooksUtilities,
   ServerValidator, FHIRSubscriptionManager, ServerUtilities, FHIRServerConstants, FHIRIndexManagers;
 

@@ -170,7 +170,7 @@
         <DCCReference Include="..\support\HL7V2DateSupport.pas"/>
         <DCCReference Include="..\support\FHIRBase.pas"/>
         <DCCReference Include="..\support\AdvStringMatches.pas"/>
-        <DCCReference Include="FHIRResources.pas"/>
+        <DCCReference Include="FHIRResources2.pas"/>
         <DCCReference Include="..\support\FHIRParser.pas"/>
         <DCCReference Include="..\support\FHIRParserBase.pas"/>
         <DCCReference Include="..\support\FHIRSupport.pas"/>
@@ -188,12 +188,12 @@
         <DCCReference Include="..\support\AdvJSON.pas"/>
         <DCCReference Include="..\support\AdvGenerics.pas"/>
         <DCCReference Include="..\support\FHIRLang.pas"/>
-        <DCCReference Include="FHIRPath.pas"/>
+        <DCCReference Include="FHIRPath2.pas"/>
         <DCCReference Include="..\support\AfsResourceVolumes.pas"/>
         <DCCReference Include="..\support\AfsVolumes.pas"/>
         <DCCReference Include="..\support\AfsStreamManagers.pas"/>
         <DCCReference Include="..\support\AdvObjectMatches.pas"/>
-        <DCCReference Include="FHIRUtilities.pas"/>
+        <DCCReference Include="FHIRUtilities2.pas"/>
         <DCCReference Include="..\support\AdvStringObjectMatches.pas"/>
         <DCCReference Include="..\support\JWT.pas"/>
         <DCCReference Include="..\support\HMAC.pas"/>
@@ -212,7 +212,7 @@
         <DCCReference Include="tests\FHIRTestWorker.pas"/>
         <DCCReference Include="..\support\FHIRXhtml.pas"/>
         <DCCReference Include="..\support\InternetFetcher.pas"/>
-        <DCCReference Include="FHIRContext.pas"/>
+        <DCCReference Include="FHIRContext2.pas"/>
         <DCCReference Include="..\support\GraphQL.pas"/>
         <DCCReference Include="..\support\ParserSupport.pas"/>
         <DCCReference Include="..\support\MXML.pas"/>
@@ -222,6 +222,7 @@
         <DCCReference Include="..\support\TurtleParser.pas"/>
         <DCCReference Include="..\support\FHIRIndexBase.pas"/>
         <DCCReference Include="..\support\UcumServiceInterface.pas"/>
+        <DCCReference Include="..\support\FHIRXhtmlComposer.pas"/>
         <None Include="Profiling\AQtimeModule1.aqt"/>
         <None Include="..\r4\fhirtests4.dpr"/>
         <BuildConfiguration Include="Debug">

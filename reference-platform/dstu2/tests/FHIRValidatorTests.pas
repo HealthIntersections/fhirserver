@@ -34,7 +34,8 @@ interface
 
 uses
   AdvObjects, AdvBuffers,
-  FHIRBase, FHIRContext, FHIRSupport, FHIRTestWorker, FHIRValidator, FHIRParser,
+  FHIRBase,  FHIRSupport, FHIRTestWorker, FHIRValidator2, FHIRParser,
+  FHIRContext2,
   DUnitX.TestFramework;
 
 type
@@ -115,7 +116,8 @@ implementation
 
 uses
   SysUtils, Classes, StringSupport,
-  FHIRParserBase, FHIRTypes, FHIRResources;
+  FHIRParserBase,
+  FHIRTypes2, FHIRResources2;
 
 { TFHIRValidatorTests }
 
@@ -191,7 +193,7 @@ begin
         ctxt.ResourceIdRule := risOptional;
         val := TFHIRValidator.Create(FServices.link);
         try
-          val.validate(ctxt, p.resource);
+          val.validate(ctxt, p.resource as TFHIRResource);
         finally
           val.Free;
         end;

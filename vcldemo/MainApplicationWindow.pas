@@ -440,12 +440,12 @@ begin
     except
       on e : Exception do
       begin
-        FLogService.recordResourceSearchFail(FClient.LastOperationId, frtAllergyIntolerance, params, e);
+        FLogService.recordResourceSearchFail(FClient.LastHeaders.lastOperationId, frtAllergyIntolerance, params, e);
         raise
       end;
     end;
     try
-      FLogService.recordResourceSearchSuccess(FClient.LastOperationId, frtAllergyIntolerance, params, bnd);
+      FLogService.recordResourceSearchSuccess(FClient.LastHeaders.lastOperationId, frtAllergyIntolerance, params, bnd);
       for be in bnd.entryList do
       begin
         if (be.search = nil) or (be.search.mode = SearchEntryModeMatch) then
@@ -487,12 +487,12 @@ begin
     except
       on e : Exception do
       begin
-        FLogService.recordResourceSearchFail(FClient.LastOperationId, frtMedicationOrder, params, e);
+        FLogService.recordResourceSearchFail(FClient.LastHeaders.lastOperationId, frtMedicationOrder, params, e);
         raise
       end;
     end;
     try
-      FLogService.recordResourceSearchSuccess(FClient.LastOperationId, frtMedicationOrder, params, bnd);
+      FLogService.recordResourceSearchSuccess(FClient.LastHeaders.lastOperationId, frtMedicationOrder, params, bnd);
       for be in bnd.entryList do
       begin
         if (be.search = nil) or (be.search.mode = SearchEntryModeMatch) then
@@ -508,12 +508,12 @@ begin
     except
       on e : Exception do
       begin
-        FLogService.recordResourceSearchFail(FClient.LastOperationId, frtMedicationStatement, params, e);
+        FLogService.recordResourceSearchFail(FClient.LastHeaders.lastOperationId, frtMedicationStatement, params, e);
         raise
       end;
     end;
     try
-      FLogService.recordResourceSearchSuccess(FClient.LastOperationId, frtMedicationStatement, params, bnd);
+      FLogService.recordResourceSearchSuccess(FClient.LastHeaders.lastOperationId, frtMedicationStatement, params, bnd);
       for be in bnd.entryList do
       begin
         if (be.search = nil) or (be.search.mode = SearchEntryModeMatch) then
@@ -551,11 +551,11 @@ begin
   FProgressForm.Message := 'Loading Patient';
   try
     pat := FClient.readResource(frtPatient, FPatientId) as TFhirPatient;
-    FLogService.recordResourceReadSuccess(FClient.LastOperationId, frtPatient, FPatientId, pat);
+    FLogService.recordResourceReadSuccess(FClient.LastHeaders.lastOperationId, frtPatient, FPatientId, pat);
   except
     on e : Exception do
     begin
-      FLogService.recordResourceReadFail(FClient.LastOperationId, frtPatient, FPatientId, e);
+      FLogService.recordResourceReadFail(FClient.LastHeaders.lastOperationId, frtPatient, FPatientId, e);
       showMessage('Unable to retrieve patient: '+e.Message);
       exit;
     end;

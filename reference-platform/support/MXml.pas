@@ -978,7 +978,6 @@ end;
 class function TMXmlParser.parseXPath(content: String): TMXPathExpressionNode;
 var
   this : TMXmlParser;
-  b, a : String;
 begin
   this := TMXmlParser.Create;
   try
@@ -2592,7 +2591,7 @@ begin
     xeoNotEquals: result := opNotEqual(left, right);
     xeoUnion: result := opUnion(left, right);
     xeoLessThan: result := opLessThan(left, right);
-    xeoLessEquals: opLessThanEqual(left, right);
+    xeoLessEquals: result := opLessThanEqual(left, right);
     xeoSequence: raise EMXPathEngine.create('Operation , not done yet');
   else
     raise EMXPathEngine.create('Unknown operation (internal error');
@@ -3176,3 +3175,4 @@ begin
 end;
 
 end.
+

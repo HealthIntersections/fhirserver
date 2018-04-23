@@ -831,7 +831,7 @@ begin
         begin
           m := TMemoryStream.Create;
           try
-            comp.Compose(m, resource, nil);
+            comp.Compose(m, resource);
             m.Position := 0;
             att := TFHIRIdAttachment.Create(msg.MessageParts);
             att.LoadFromStream(m);
@@ -1141,7 +1141,7 @@ begin
     p.source := res;
     p.Parse;
     p.resource.Tags['process'] := 'true';
-    TFHIRServerContext(ServerContext).Storage.QueueResource(p.resource);
+    TFHIRServerContext(ServerContext).Storage.QueueResource(p.resource as TFHIRResource);
   finally
     p.Free;
   end;

@@ -34,7 +34,9 @@ interface
 uses
   SysUtils, classes,
   ActiveX, ComObj, Variants, StringSupport, AdvGenerics,
-  FHIRTestWorker, FHIRPathNode, FHIRResources, FHIRBase, FHIRParser, FHIRPath, FHIRTypes,
+  FHIRTestWorker,
+  FHIRBase, FHIRParser,
+  FHIRPathNode2, FHIRResources2, FHIRPath2, FHIRTypes2,
   MsXml, MsXmlParser, DUnitX.TestFramework;
 
 Type
@@ -177,7 +179,7 @@ begin
             try
               p.source := f;
               p.parse;
-              res := p.resource.Link;
+              res := p.resource.Link as TFHIRResource;
             finally
               f.Free;
             end;

@@ -34,7 +34,16 @@ interface
 uses
   SysUtils, Classes,
   AdvObjects, AdvGenerics, StringSupport, TextUtilities,
-  FHIRBase, FHIRTypes, FHIRResources, FHIRParser, FHIRXhtml, FHIRUtilities, FHIRPath, FHIRContext, FHIRParserBase,
+  FHIRBase, FHIRParserBase, FHIRParser, FHIRXhtml,
+  {$IFDEF FHIR2}
+  FHIRTypes2, FHIRResources2, FHIRUtilities2, FHIRPath2, FHIRContext2,
+  {$ENDIF}
+  {$IFDEF FHIR3}
+  FHIRTypes3, FHIRResources3, FHIRUtilities3, FHIRPath3, FHIRContext3,
+  {$ENDIF}
+  {$IFDEF FHIR4}
+  FHIRTypes4, FHIRResources4, FHIRUtilities4, FHIRPath4, FHIRContext4,
+  {$ENDIF}
   MXML, EncodeSupport;
 
 type

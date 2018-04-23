@@ -33,7 +33,16 @@ uses
   SysUtils,
   System.Generics.Collections,
   AdvObjects, AdvObjectLists, AdvGenerics,
-  FHIRBase, FHIRTypes, FHIRConstants, FHIRResources, FHIRPathNode;
+  FHIRBase,
+  {$IFDEF FHIR2}
+  FHIRResources2, FHIRTypes2, FHIRConstants2, FHIRPathNode2;
+  {$ENDIF}
+  {$IFDEF FHIR3}
+  FHIRResources3, FHIRTypes3, FHIRConstants3, FHIRPathNode3;
+  {$ENDIF}
+  {$IFDEF FHIR4}
+  FHIRResources4, FHIRTypes4, FHIRConstants4, FHIRPathNode4;
+  {$ENDIF}
 
 type
   TFhirIndex = class (TAdvObject)

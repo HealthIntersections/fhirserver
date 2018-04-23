@@ -146,6 +146,8 @@
         <VerInfo_Locale>1033</VerInfo_Locale>
         <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
         <BT_BuildType>Debug</BT_BuildType>
+        <DCC_UnitAlias>FHIRAuthMap=FHIRAuthMap3;FHIRConstants=FHIRConstants3;FHIRContext=FHIRContext3;FHIRIndexInformation=FHIRIndexInformation3;FHIRJavascriptReg=FHIRJavascriptReg3;FHIRMetaModel=FHIRMetaModel3;FHIRNarrativeGenerator=FHIRNarrativeGenerator3;FHIROperations=FHIROperations3;FHIRParserJson=FHIRParserJson3;FHIRParserTurtle=FHIRParserTurtle3;FHIRParserXml=FHIRParserXml3;FHIRPathNode=FHIRPathNode3;FHIRProfileUtilities=FHIRProfileUtilities3;FHIRResources=FHIRResources3;FHIRStructureMapUtilities=FHIRStructureMapUtilities3;FHIRTags=FHIRTags3;FHIRTestWorker=FHIRTestWorker3;FHIRTypes=FHIRTypes3;FHIRUtilities=FHIRUtilities3;FHIRValidator=FHIRValidator3;FhirOpBase=FhirOpBase3;FhirPath=FhirPath3;NarrativeGenerator=NarrativeGenerator3;QuestionnaireBuilder=QuestionnaireBuilder3;QuestionnaireRenderer=QuestionnaireRenderer3;$(DCC_UnitAlias)</DCC_UnitAlias>
+        <DCC_DcuOutput>C:\work\com.healthintersections.fhir\scratch\units_3_64\</DCC_DcuOutput>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_2)'!=''">
         <DCC_LocalDebugSymbols>false</DCC_LocalDebugSymbols>
@@ -213,7 +215,7 @@
         <DCCReference Include="..\reference-platform\support\TextUtilities.pas"/>
         <DCCReference Include="..\reference-platform\support\ParserSupport.pas"/>
         <DCCReference Include="..\reference-platform\support\FHIRParser.pas"/>
-        <DCCReference Include="..\reference-platform\dstu3\FHIRParserXml.pas"/>
+        <DCCReference Include="..\reference-platform\dstu3\FHIRParserXml3.pas"/>
         <DCCReference Include="..\reference-platform\support\FHIRParserBase.pas"/>
         <DCCReference Include="..\reference-platform\support\MXML.pas"/>
         <DCCReference Include="..\reference-platform\support\XMLBuilder.pas"/>
@@ -224,7 +226,7 @@
         <DCCReference Include="..\reference-platform\support\TurtleParser.pas"/>
         <DCCReference Include="..\reference-platform\support\FHIRBase.pas"/>
         <DCCReference Include="..\reference-platform\support\AdvNames.pas"/>
-        <DCCReference Include="..\reference-platform\dstu3\FHIRUtilities.pas"/>
+        <DCCReference Include="..\reference-platform\dstu3\FHIRUtilities3.pas"/>
         <DCCReference Include="..\reference-platform\support\OIDSupport.pas"/>
         <DCCReference Include="..\reference-platform\support\ParseMap.pas"/>
         <DCCReference Include="..\reference-platform\support\AdvZipWriters.pas"/>
@@ -235,27 +237,27 @@
         <DCCReference Include="..\reference-platform\support\AdvNameBuffers.pas"/>
         <DCCReference Include="..\reference-platform\support\AdvObjectMatches.pas"/>
         <DCCReference Include="..\reference-platform\support\InternetFetcher.pas"/>
-        <DCCReference Include="..\reference-platform\dstu3\FHIRContext.pas"/>
-        <DCCReference Include="..\reference-platform\dstu3\FHIRTypes.pas"/>
-        <DCCReference Include="..\reference-platform\dstu3\FHIRResources.pas"/>
+        <DCCReference Include="..\reference-platform\dstu3\FHIRContext3.pas"/>
+        <DCCReference Include="..\reference-platform\dstu3\FHIRTypes3.pas"/>
+        <DCCReference Include="..\reference-platform\dstu3\FHIRResources3.pas"/>
         <DCCReference Include="..\reference-platform\support\FHIRSupport.pas"/>
         <DCCReference Include="..\reference-platform\support\JWT.pas"/>
         <DCCReference Include="..\reference-platform\support\HMAC.pas"/>
         <DCCReference Include="..\reference-platform\support\libeay32.pas"/>
         <DCCReference Include="..\reference-platform\support\SCIMObjects.pas"/>
         <DCCReference Include="..\reference-platform\support\GraphQL.pas"/>
-        <DCCReference Include="..\reference-platform\dstu3\FHIRConstants.pas"/>
+        <DCCReference Include="..\reference-platform\dstu3\FHIRConstants3.pas"/>
         <DCCReference Include="..\reference-platform\support\FHIRSecurity.pas"/>
-        <DCCReference Include="..\reference-platform\dstu3\FHIRTags.pas"/>
+        <DCCReference Include="..\reference-platform\dstu3\FHIRTags3.pas"/>
         <DCCReference Include="..\reference-platform\support\FHIRLang.pas"/>
         <DCCReference Include="..\reference-platform\support\FHIRXhtml.pas"/>
-        <DCCReference Include="..\reference-platform\dstu3\FHIRParserJson.pas"/>
-        <DCCReference Include="..\reference-platform\dstu3\FHIRParserTurtle.pas"/>
-        <DCCReference Include="..\reference-platform\dstu3\FHIRMetaModel.pas"/>
-        <DCCReference Include="..\reference-platform\dstu3\FHIRProfileUtilities.pas"/>
+        <DCCReference Include="..\reference-platform\dstu3\FHIRParserJson3.pas"/>
+        <DCCReference Include="..\reference-platform\dstu3\FHIRParserTurtle3.pas"/>
+        <DCCReference Include="..\reference-platform\dstu3\FHIRMetaModel3.pas"/>
+        <DCCReference Include="..\reference-platform\dstu3\FHIRProfileUtilities3.pas"/>
         <DCCReference Include="..\reference-platform\support\kCritSct.pas"/>
         <DCCReference Include="..\reference-platform\support\AdvZipReaders.pas"/>
-        <DCCReference Include="..\reference-platform\dstu3\FhirPath.pas"/>
+        <DCCReference Include="..\reference-platform\dstu3\FhirPath3.pas"/>
         <DCCReference Include="..\reference-platform\support\SystemSupport.pas"/>
         <DCCReference Include="..\reference-platform\support\ThreadSupport.pas"/>
         <DCCReference Include="..\reference-platform\client\SmartOnFhirUtilities.pas"/>
@@ -296,7 +298,7 @@
         <DCCReference Include="ListSelector.pas">
             <Form>ListSelectorForm</Form>
         </DCCReference>
-        <DCCReference Include="..\reference-platform\dstu3\FHIRIndexInformation.pas"/>
+        <DCCReference Include="..\reference-platform\dstu3\FHIRIndexInformation3.pas"/>
         <DCCReference Include="..\reference-platform\support\FHIRIndexBase.pas"/>
         <DCCReference Include="AddRestResourceDialog.pas">
             <Form>AddRestResourceForm</Form>
@@ -411,9 +413,12 @@
             <DesignClass>TFrame</DesignClass>
         </DCCReference>
         <DCCReference Include="..\reference-platform\support\UcumServiceInterface.pas"/>
-        <DCCReference Include="..\reference-platform\dstu3\FHIRPathNode.pas"/>
+        <DCCReference Include="..\reference-platform\dstu3\FHIRPathNode3.pas"/>
         <DCCReference Include="..\reference-platform\support\FHIRLog.pas"/>
-        <DCCReference Include="..\reference-platform\dstu3\QuestionnaireRenderer.pas"/>
+        <DCCReference Include="..\reference-platform\dstu3\QuestionnaireRenderer3.pas"/>
+        <DCCReference Include="..\reference-platform\dstu3\FHIRBase3.pas"/>
+        <DCCReference Include="..\reference-platform\dstu3\FHIRParserBase3.pas"/>
+        <DCCReference Include="..\reference-platform\support\FHIRXhtmlComposer.pas"/>
         <None Include="q.txt"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
@@ -454,15 +459,10 @@
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
-                <DeployFile LocalName="Win64\Debug\FHIRToolkitR3.exe" Configuration="Debug" Class="ProjectOutput">
-                    <Platform Name="Win64">
-                        <RemoteName>FHIRToolkitR3.exe</RemoteName>
-                        <Overwrite>true</Overwrite>
-                    </Platform>
-                </DeployFile>
-                <DeployFile LocalName="Win64\Debug\FHIRToolkitR3.rsm" Configuration="Debug" Class="DebugSymbols">
-                    <Platform Name="Win64">
-                        <RemoteName>FHIRToolkitR3.rsm</RemoteName>
+                <DeployFile LocalName="Win64\Debug\profiles-resources.xml" Configuration="Debug" Class="File">
+                    <Platform Name="OSX32">
+                        <RemoteDir>Contents\MacOS\</RemoteDir>
+                        <RemoteName>profiles-resources.xml</RemoteName>
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
@@ -477,15 +477,21 @@
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
+                <DeployFile LocalName="..\..\org.hl7.fhir\build\tools\html\assets\images\icon-fhir-150.png" Configuration="Debug" Class="UWP_DelphiLogo150">
+                    <Platform Name="OSX32">
+                        <RemoteDir>Assets\</RemoteDir>
+                        <RemoteName>Logo150x150.png</RemoteName>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
                 <DeployFile LocalName="$(BDS)\Redist\osx32\libcgsqlite3.dylib" Class="DependencyModule">
                     <Platform Name="OSX32">
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
-                <DeployFile LocalName="..\..\org.hl7.fhir\build\tools\html\assets\images\icon-fhir-150.png" Configuration="Debug" Class="UWP_DelphiLogo150">
-                    <Platform Name="OSX32">
-                        <RemoteDir>Assets\</RemoteDir>
-                        <RemoteName>Logo150x150.png</RemoteName>
+                <DeployFile LocalName="Win64\Debug\FHIRToolkitR3.exe" Configuration="Debug" Class="ProjectOutput">
+                    <Platform Name="Win64">
+                        <RemoteName>FHIRToolkitR3.exe</RemoteName>
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
@@ -496,10 +502,15 @@
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
-                <DeployFile LocalName="Win64\Debug\profiles-resources.xml" Configuration="Debug" Class="File">
-                    <Platform Name="OSX32">
-                        <RemoteDir>Contents\MacOS\</RemoteDir>
-                        <RemoteName>profiles-resources.xml</RemoteName>
+                <DeployFile LocalName="Win32\Debug\FHIRToolkitR3.exe" Configuration="Debug" Class="ProjectOutput">
+                    <Platform Name="Win32">
+                        <RemoteName>FHIRToolkitR3.exe</RemoteName>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
+                <DeployFile LocalName="Win64\Debug\FHIRToolkitR3.rsm" Configuration="Debug" Class="DebugSymbols">
+                    <Platform Name="Win64">
+                        <RemoteName>FHIRToolkitR3.rsm</RemoteName>
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
@@ -540,20 +551,14 @@
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
-                <DeployFile LocalName="OSX32\Debug\FHIRToolkitR3" Configuration="Debug" Class="ProjectOutput">
-                    <Platform Name="OSX32">
-                        <RemoteName>FHIRToolkitR3</RemoteName>
-                        <Overwrite>true</Overwrite>
-                    </Platform>
-                </DeployFile>
                 <DeployFile LocalName="$(BDS)\Redist\iossimulator\libPCRE.dylib" Class="DependencyModule">
                     <Platform Name="iOSSimulator">
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
-                <DeployFile LocalName="Win32\Debug\FHIRToolkitR3.exe" Configuration="Debug" Class="ProjectOutput">
-                    <Platform Name="Win32">
-                        <RemoteName>FHIRToolkitR3.exe</RemoteName>
+                <DeployFile LocalName="OSX32\Debug\FHIRToolkitR3" Configuration="Debug" Class="ProjectOutput">
+                    <Platform Name="OSX32">
+                        <RemoteName>FHIRToolkitR3</RemoteName>
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>

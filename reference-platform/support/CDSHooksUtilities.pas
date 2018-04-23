@@ -559,7 +559,7 @@ begin
     p := TFHIRJsonParser.Create(nil, 'en');
     try
       p.Parse(TJsonObject(n));
-      FContext.Add(p.resource.Link);
+      FContext.Add(p.resource.Link as TFhirResource);
     finally
       p.Free;
     end;
@@ -582,7 +582,7 @@ begin
           p := TFHIRJsonParser.Create(nil, 'en');
           try
             p.Parse(e.obj['resource']);
-            be.resource := p.resource.Link;
+            be.resource := p.resource.Link as TFhirResource;
           finally
             p.Free;
           end;

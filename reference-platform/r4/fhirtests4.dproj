@@ -173,12 +173,12 @@
         <DCCReference Include="..\support\FHIRLang.pas"/>
         <DCCReference Include="..\support\FHIRParser.pas"/>
         <DCCReference Include="..\support\FHIRParserBase.pas"/>
-        <DCCReference Include="FHIRPath.pas"/>
-        <DCCReference Include="tests\FHIRPathTests.pas"/>
-        <DCCReference Include="FHIRResources.pas"/>
+        <DCCReference Include="FHIRPath4.pas"/>
+        <DCCReference Include="tests\FHIRPathTests4.pas"/>
+        <DCCReference Include="FHIRResources4.pas"/>
         <DCCReference Include="..\support\FHIRSupport.pas"/>
-        <DCCReference Include="tests\FHIRTestWorker.pas"/>
-        <DCCReference Include="FHIRUtilities.pas"/>
+        <DCCReference Include="tests\FHIRTestWorker4.pas"/>
+        <DCCReference Include="FHIRUtilities4.pas"/>
         <DCCReference Include="..\support\FHIRXhtml.pas"/>
         <DCCReference Include="..\support\FileSupport.pas"/>
         <DCCReference Include="..\Support\GUIDSupport.pas"/>
@@ -212,10 +212,10 @@
         <DCCReference Include="..\support\XmlPatch.pas"/>
         <DCCReference Include="..\support\SCIMObjects.pas"/>
         <DCCReference Include="..\support\FHIRSecurity.pas"/>
-        <DCCReference Include="FHIRParserXml.pas"/>
-        <DCCReference Include="FHIRParserJson.pas"/>
+        <DCCReference Include="FHIRParserXml4.pas"/>
+        <DCCReference Include="FHIRParserJson4.pas"/>
         <DCCReference Include="..\support\TurtleParser.pas"/>
-        <DCCReference Include="FHIRParserTurtle.pas"/>
+        <DCCReference Include="FHIRParserTurtle4.pas"/>
         <DCCReference Include="..\support\FHIRLog.pas"/>
         <DCCReference Include="..\..\Server\Logging.pas"/>
         <DCCReference Include="..\support\FHIRIndexBase.pas"/>
@@ -224,6 +224,7 @@
         <DCCReference Include="..\..\Libraries\js\JavascriptTests.pas"/>
         <DCCReference Include="..\support\DigitalSignatures.pas"/>
         <DCCReference Include="..\support\UcumServiceInterface.pas"/>
+        <DCCReference Include="..\support\FHIRXhtmlComposer.pas"/>
         <None Include="Profiling\AQtimeModule1.aqt"/>
         <BuildConfiguration Include="Debug">
             <Key>Cfg_2</Key>

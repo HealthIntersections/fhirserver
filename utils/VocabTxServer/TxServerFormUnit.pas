@@ -36,7 +36,7 @@ uses
   FMX.Controls.Presentation, FMX.StdCtrls, FMX.ScrollBox, FMX.Memo, FMX.Edit, IOUtils,
   OSXUIUtils,
   FileSupport, SystemSupport, kCritSct, StringSupport, DateSupport,
-  FHIRResources, FHIRParser, FHIRSecurity,
+  FHIRBase, FHIRResources, FHIRParser, FHIRSecurity,
   FHIRServerContext, FHIRUserProvider, FHIRStorageService, FHIRRestServer, ServerUtilities, FHIRLog,
   VocabPocServerCore, TerminologyServer, WebSourceProvider;
 
@@ -511,7 +511,7 @@ var
     res : TFHIRResource;
   begin
     inc(count);
-    res := TFHIRXmlParser.ParseFile(nil, 'en', fn);
+    res := TFHIRParsers.ParseFile(nil, ffXML, 'en', fn);
     try
       server.SeeTerminologyResource(res);
     finally
