@@ -118,7 +118,7 @@ Type
   private
     FMsg: String;
   public
-    Constructor Create(Const sSender, sMethod, sReason, sMsg: String; aStatus: word); Overload; Virtual;
+    Constructor Create(Const sContext : String; sMessage, sCaption, lang : String); overload;
     Property Msg: String read FMsg;
   end;
 
@@ -390,9 +390,6 @@ Type
     Procedure Stop;
     Procedure Transaction(stream: TStream; init : boolean; name, base: String; ini: TFHIRServerIniFile; callback: TInstallerCallback);
     Procedure ReturnProcessedFile(request : TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; Session: TFHIRSession; path: String; secure: boolean; variables: TDictionary<String, String> = nil); overload;
-    {$IFNDEF FHIR2}
-    Procedure ReturnJavaStatus(request : TIdHTTPRequestInfo; response: TIdHTTPResponseInfo); overload;
-    {$ENDIF}
     Procedure ReturnProcessedFile(request : TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; Session: TFHIRSession; claimed, actual: String; secure: boolean; variables: TDictionary<String, String> = nil); overload;
     Procedure RunPostHandler(request : TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; Session: TFHIRSession; claimed, actual: String; secure: boolean);
 
@@ -772,10 +769,6 @@ begin
   end;
   GJsHost.Free;
   GJshost := nil;
-  {$IFNDEF FHIR2}
-  if ServerContext.JavaServices <> nil then
-    ServerContext.JavaServices.detach;
-  {$ENDIF}
 {$IFDEF MSWINDOWS}
   CoUninitialize;
 {$ENDIF}
@@ -877,10 +870,6 @@ Begin
   FActive := active;
   FStartTime := GetTickCount;
   StartServer(active);
-  {$IFNDEF FHIR2}
-  if active and (ServerContext.JavaServices <> nil) then
-    ServerContext.JavaServices.txConnect(Fini.ReadString(voMaybeVersioned, 'Web', 'java-tx', 'http://localhost:'+Fini.ReadString(voMaybeVersioned, 'Web', 'http', '80')+Fini.ReadString(voMaybeVersioned, 'Web', 'base', '/')));
-  {$ENDIF}
 
   if (active) and (ServerContext.SubscriptionManager <> nil) then
   begin
@@ -1308,10 +1297,6 @@ begin
       ReturnDiagnostics(AContext, request, response, false, false, FSecurePath)
     else if request.Document = '/' then
       ReturnProcessedFile(request, response, Session, '/' + FHomePage, FSourceProvider.AltFile('/' + FHomePage, FBasePath), false)
-    {$IFNDEF FHIR2}
-    else if request.Document = '/java-status' then
-      ReturnJavaStatus(request, response)
-    {$ENDIF}
     else if (FTerminologyWebServer <> nil) and FTerminologyWebServer.handlesRequest(request.Document) then
       FTerminologyWebServer.Process(AContext, request, Session, response, false)
     else
@@ -1863,9 +1848,9 @@ Begin
       on e: ERestfulException do
       begin
         if noErrCode then
-          SendError(response, logId, 200, aFormat, lang, e.message, sPath, e, Session, false, path, relativeReferenceAdjustment, e.code)
+          SendError(response, logId, 200, aFormat, lang, e.message, sPath, e, Session, false, path, relativeReferenceAdjustment, ExceptionTypeTranslations[e.code])
         else
-          SendError(response, logId, e.status, aFormat, lang, e.message, sPath, e, Session, false, path, relativeReferenceAdjustment, e.code);
+          SendError(response, logId, e.status, aFormat, lang, e.message, sPath, e, Session, false, path, relativeReferenceAdjustment, ExceptionTypeTranslations[e.code]);
       end;
       on e: exception do
       begin
@@ -2517,10 +2502,9 @@ Begin
     If Not StringStartsWithSensitive(sResource, sBaseURL) Then
     begin
       if StringStartsWith(sResource, '/images/', false) then
-        Raise ERestfulException.Create('TFhirWebServer', 'HTTPRequest', 'images not served', HTTP_ERR_NOTFOUND, IssueTypeNotFound)
+        Raise ERestfulException.Create('TFhirWebServer.HTTPRequest', HTTP_ERR_NOTFOUND, etNotFound, 'images not served', lang)
       else
-        Raise ERestfulException.Create('TFhirWebServer', 'HTTPRequest', StringFormat(GetFhirMessage('MSG_NO_MODULE', lang), [sResource]), HTTP_ERR_NOTFOUND,
-          IssueTypeNotFound);
+        Raise ERestfulException.Create('TFhirWebServer.HTTPRequest', HTTP_ERR_NOTFOUND, etNotFound, 'MSG_NO_MODULE', lang, [sResource]);
     end;
 
     sURL := copy(sResource, Length(sBaseURL) + 1, $FFF);
@@ -2609,13 +2593,13 @@ Begin
       else if (sURL <> 'auth-login') and FServerContext.SessionManager.GetSession(sCookie, Session, check) then
       begin
         if check and not CheckSessionOK(Session, sClient) then
-          Raise ERestfulAuthenticationNeeded.Create('TFhirWebServer', 'HTTPRequest', GetFhirMessage('MSG_AUTH_REQUIRED', lang), Msg, HTTP_ERR_UNAUTHORIZED);
+          Raise ERestfulAuthenticationNeeded.Create('TFhirWebServer.HTTPRequest', 'MSG_AUTH_REQUIRED', Msg, lang);
         oRequest.Session := Session
       end
       else if (secure and FServerContext.SessionManager.isOkBearer(sBearer, sClient, Session)) then
         oRequest.Session := Session
       else
-        Raise ERestfulAuthenticationNeeded.Create('TFhirWebServer', 'HTTPRequest', GetFhirMessage('MSG_AUTH_REQUIRED', lang), Msg, HTTP_ERR_UNAUTHORIZED);
+        Raise ERestfulAuthenticationNeeded.Create('TFhirWebServer.HTTPRequest', 'MSG_AUTH_REQUIRED', Msg, lang);
     end
     else if cert <> nil then
       oRequest.Session := FServerContext.SessionManager.CreateImplicitSession(sClient, cert.CanonicalName, 'Anonymous', systemFromCertificate, false, false)
@@ -3235,19 +3219,16 @@ begin
   begin
     try
       if check and not CheckSessionOK(Session, request.RemoteIP) then
-        Raise ERestfulAuthenticationNeeded.Create('TFhirWebServer', 'HTTPRequest', GetFhirMessage('MSG_AUTH_REQUIRED', request.AcceptLanguage),
-          'Session Expired', HTTP_ERR_UNAUTHORIZED);
+        Raise ERestfulAuthenticationNeeded.Create('TFhirWebServer.HTTPRequest', 'MSG_AUTH_REQUIRED', 'Session Expired', request.AcceptLanguage);
       if not Session.canAdministerUsers then
-        Raise ERestfulAuthenticationNeeded.Create('TFhirWebServer', 'HTTPRequest', GetFhirMessage('MSG_AUTH_REQUIRED', request.AcceptLanguage),
-          'This Session is not authorised to manage users', HTTP_ERR_UNAUTHORIZED);
+        Raise ERestfulAuthenticationNeeded.Create('TFhirWebServer.HTTPRequest', 'MSG_AUTH_REQUIRED', 'This Session is not authorised to manage users', request.AcceptLanguage);
       ServerContext.UserProvider.ProcessRequest(AContext, request, response, Session);
     finally
       Session.Free;
     end;
   end
   else
-    Raise ERestfulAuthenticationNeeded.Create('TFhirWebServer', 'HTTPRequest', GetFhirMessage('MSG_AUTH_REQUIRED', request.AcceptLanguage),
-      'Authentication required', HTTP_ERR_UNAUTHORIZED);
+    Raise ERestfulAuthenticationNeeded.Create('TFhirWebServer.HTTPRequest', 'MSG_AUTH_REQUIRED', 'Authentication required', request.AcceptLanguage);
 end;
 
 procedure TFhirWebServer.ProcessTaskRequest(Context: TOperationContext; request: TFHIRRequest; response: TFHIRResponse);
@@ -4086,10 +4067,10 @@ begin
 end;
 {$ENDIF}
 
-constructor ERestfulAuthenticationNeeded.Create(const sSender, sMethod, sReason, sMsg: String; aStatus: word);
+Constructor ERestfulAuthenticationNeeded.Create(Const sContext : String; sMessage, sCaption, lang : String);
 begin
-  Create(sSender, sMethod, sReason, aStatus, IssueTypeLogin);
-  FMsg := sMsg;
+  inherited Create(sContext, HTTP_ERR_UNAUTHORIZED, etLogin, sMessage, lang);
+  FMsg := sCaption;
 end;
 
 procedure TFhirWebServer.CheckAsyncTasks;
@@ -4151,36 +4132,14 @@ procedure TFhirWebServer.convertFromVersion(stream: TStream; format : TFHIRForma
 var
   b : TBytes;
 begin
-  {$IFDEF FHIR2}
-  raise Exception.Create('Version Conversion Services are not available in R2');
-  {$ELSE}
-  if ServerContext.JavaServices = nil then
-    raise Exception.Create('Version Conversion Services are not available');
-
-  b := StreamToBytes(stream);
-  b := ServerContext.JavaServices.convertResource(b, format, version);
-  stream.Size := 0;
-  stream.Write(b[0], length(b));
-  stream.position := 0;
-  {$ENDIF}
+  raise Exception.Create('Version Conversion Services are not yet available');
 end;
 
 procedure TFhirWebServer.convertToVersion(stream: TStream; format : TFHIRFormat; version: TFHIRVersion);
 var
   b : TBytes;
 begin
-  {$IFDEF FHIR2}
-  raise Exception.Create('Version Conversion Services are not available in R2');
-  {$ELSE}
-  if ServerContext.JavaServices = nil then
-    raise Exception.Create('Version Conversion Services are not available');
-
-  b := StreamToBytes(stream);
-  b := ServerContext.JavaServices.uNConvertResource(b, format, version);
-  stream.Size := 0;
-  stream.Write(b[0], length(b));
-  stream.position := 0;
-  {$ENDIF}
+  raise Exception.Create('Version Conversion Services are not yet available');
 end;
 
 // procedure TFhirWebServer.ReadTags(Headers: TIdHeaderList; Request: TFHIRRequest);
@@ -4310,31 +4269,6 @@ begin
     vars.Free;
   end;
 end;
-
-{$IFNDEF FHIR2}
-procedure TFhirWebServer.ReturnJavaStatus(request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo);
-var
-  s : String;
-  o : TJsonObject;
-begin
-  if ServerContext.JavaServices = nil then
-    s := '{ "status" : "No Java Services" }'
-  else
-  begin
-    o := ServerContext.JavaServices.status;
-    try
-      s := TJSONWriter.writeObjectStr(o, true);
-    finally
-      o.Free;
-    end;
-  end;
-
-  response.Expires := Now + 1;
-  response.ContentStream := TBytesStream.Create(TEncoding.UTF8.GetBytes(s));
-  response.FreeContentStream := true;
-  response.contentType := 'application/json';
-end;
-{$ENDIF}
 
 procedure TFhirWebServer.ReturnProcessedFile(request : TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; Session: TFHIRSession; path: String; secure: boolean; variables: TDictionary<String, String> = nil);
 begin
@@ -4709,10 +4643,6 @@ begin
     end;
     GJsHost.Free;
     GJsHost := nil;
-    {$IFNDEF FHIR2}
-    if FServer.ServerContext.JavaServices <> nil then
-      FServer.ServerContext.JavaServices.detach;
-    {$ENDIF}
 
 
 {$IFDEF MSWINDOWS}

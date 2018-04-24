@@ -34,7 +34,7 @@ uses
   SysUtils, Classes, Variants, Math,
   AdvObjects, AdvGenerics, AdvStreams, AdvBuffers, AdvVclStreams,  AdvMemories,
   ParserSupport, MXML, XmlBuilder, AdvXmlBuilders, AdvJson, DateSupport, TextUtilities,
-  FHIRBase, FHIRSupport, FHIRXHtml, 
+  FHIRBase, FHIRLang, FHIRSupport, FHIRXHtml,
   FHIRBase3, FHIRTypes3, FHIRResources3, FHIRContext3, FHIRUtilities3, FHIRPathNode3;
 
 

@@ -71,7 +71,7 @@ Uses
   kCritSct, DateSupport, FileSupport,
   AdvObjects, AdvGenerics, AdvStringLists, AdvCSVFormatters, AdvCSVExtractors, AdvFiles, AdvJson, HashSupport,
 
-  FHIRTypes, FHIRResources, FHIRConstants, FHIRSupport, FHIRUtilities, SCIMObjects,
+  FHIRTypes, FHIRLang, FHIRResources, FHIRConstants, FHIRSupport, FHIRUtilities, SCIMObjects,
   FHIRUserProvider, FHIRServerContext, FHIRStorageService, FHIRRestServer, ServerUtilities, WebSourceProvider;
 
 Const
@@ -461,15 +461,15 @@ begin
 
     id := pat.identifierList.BySystem(SYSTEM_ID);
     if (id = nil) then
-      raise ERestfulException.Create('TExampleFHIROperationEngine', 'dataFromPatient', 'A MRN is required', 422, IssueTypeRequired);
+      raise ERestfulException.Create('TExampleFHIROperationEngine.dataFromPatient', 422, etRequired, 'A MRN is required', lang);
     result.Add(id.value);
 
     if (pat.nameList.IsEmpty) then
-      raise ERestfulException.Create('TExampleFHIROperationEngine', 'dataFromPatient', 'A name is required', 422, IssueTypeRequired);
+      raise ERestfulException.Create('TExampleFHIROperationEngine.dataFromPatient', 422, etRequired, 'A name is required', lang);
     if (pat.nameList[0].family = '') then
-      raise ERestfulException.Create('TExampleFHIROperationEngine', 'dataFromPatient', 'A family name is required', 422, IssueTypeRequired);
+      raise ERestfulException.Create('TExampleFHIROperationEngine.dataFromPatient', 422, etRequired, 'A family name is required', lang);
     if (pat.nameList[0].givenList.isEmpty) then
-      raise ERestfulException.Create('TExampleFHIROperationEngine', 'dataFromPatient', 'A given name is required', 422, IssueTypeRequired);
+      raise ERestfulException.Create('TExampleFHIROperationEngine.dataFromPatient', 422, etRequired, 'A given name is required', lang);
     result.Add(pat.nameList[0].family);
     result.Add(pat.nameList[0].givenList[0].value);
     if (pat.nameList[0].givenList.Count > 1) then
@@ -519,7 +519,7 @@ var
 begin
   odata := FData.FPatients.GetById(request.Id);
   if odata = nil then
-    raise ERestfulException.Create('TExampleFHIROperationEngine', 'patientUpdate', 'Cannot update a patient that does not already exist', 422, IssueTypeBusinessRule);
+    raise ERestfulException.Create('TExampleFHIROperationEngine.patientUpdate', 422, etBusinessRule, 'Cannot update a patient that does not already exist', lang);
   try
     if request.Resource.meta = nil then
       request.Resource.meta := TFHIRMeta.Create;
@@ -530,7 +530,7 @@ begin
     try
       // can't change MRN
       if odata[2] <> ndata[2] then
-        raise ERestfulException.Create('TExampleFHIROperationEngine', 'patientUpdate', 'Cannot change a patient''s MRN', 422, IssueTypeBusinessRule);
+        raise ERestfulException.Create('TExampleFHIROperationEngine.patientUpdate', 422, etBusinessRule, 'Cannot change a patient''s MRN', lang);
 
       response.Resource := patientFromData(ndata);
       response.Id := request.Id;

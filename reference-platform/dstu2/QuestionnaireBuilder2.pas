@@ -33,7 +33,7 @@ interface
 uses
   SysUtils, Classes, Generics.Collections,
   GUIDSupport, DateSupport, AdvObjects, ShellSupport, StringSupport, AdvStringMatches, AdvExceptions,
-  FHIRBase, FHIRParser, FHIRFactory, FHIRSupport, 
+  FHIRBase, FHIRLang, FHIRParser, FHIRFactory, FHIRSupport,
   FHIRResources2, FHIRTypes2, FHIRConstants2, FHIRProfileUtilities2, FHIRUtilities2;
 
 Const

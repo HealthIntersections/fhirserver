@@ -1984,9 +1984,10 @@ Type
   TFhirItemTypeEnum = (
     ItemTypeNull, // Value is missing from Instance 
     ItemTypeGroup, 
-    ItemTypeDisplay, 
-    ItemTypeBoolean, 
-    ItemTypeDecimal, 
+    ItemTypeDisplay,
+    ItemTypeQuestion,
+    ItemTypeBoolean,
+    ItemTypeDecimal,
     ItemTypeInteger, 
     ItemTypeDate, 
     ItemTypeDateTime, 
@@ -14865,8 +14866,8 @@ Const
   SYSTEMS_TFhirProcessOutcomeEnum : Array[TFhirProcessOutcomeEnum] of String = ('', 'http://hl7.org/fhir/processoutcomecodes', 'http://hl7.org/fhir/processoutcomecodes', 'http://hl7.org/fhir/processoutcomecodes');
   CODES_TFhirProvenanceEntityRoleEnum : Array[TFhirProvenanceEntityRoleEnum] of String = ('', 'derivation', 'revision', 'quotation', 'source', 'removal');
   SYSTEMS_TFhirProvenanceEntityRoleEnum : Array[TFhirProvenanceEntityRoleEnum] of String = ('', 'http://hl7.org/fhir/provenance-entity-role', 'http://hl7.org/fhir/provenance-entity-role', 'http://hl7.org/fhir/provenance-entity-role', 'http://hl7.org/fhir/provenance-entity-role', 'http://hl7.org/fhir/provenance-entity-role');
-  CODES_TFhirItemTypeEnum : Array[TFhirItemTypeEnum] of String = ('', 'group', 'display', 'boolean', 'decimal', 'integer', 'date', 'dateTime', 'time', 'string', 'text', 'url', 'choice', 'open-choice', 'attachment', 'reference', 'quantity');
-  SYSTEMS_TFhirItemTypeEnum : Array[TFhirItemTypeEnum] of String = ('', 'http://hl7.org/fhir/item-type', 'http://hl7.org/fhir/item-type', 'http://hl7.org/fhir/item-type', 'http://hl7.org/fhir/item-type', 'http://hl7.org/fhir/item-type', 'http://hl7.org/fhir/item-type', 'http://hl7.org/fhir/item-type', 'http://hl7.org/fhir/item-type', 'http://hl7.org/fhir/item-type', 'http://hl7.org/fhir/item-type', 'http://hl7.org/fhir/item-type', 'http://hl7.org/fhir/item-type', 'http://hl7.org/fhir/item-type', 'http://hl7.org/fhir/item-type', 'http://hl7.org/fhir/item-type', 'http://hl7.org/fhir/item-type');
+  CODES_TFhirItemTypeEnum : Array[TFhirItemTypeEnum] of String = ('', 'group', 'display', 'question', 'boolean', 'decimal', 'integer', 'date', 'dateTime', 'time', 'string', 'text', 'url', 'choice', 'open-choice', 'attachment', 'reference', 'quantity');
+  SYSTEMS_TFhirItemTypeEnum : Array[TFhirItemTypeEnum] of String = ('', 'http://hl7.org/fhir/item-type', 'http://hl7.org/fhir/item-type', 'http://hl7.org/fhir/item-type', 'http://hl7.org/fhir/item-type', 'http://hl7.org/fhir/item-type', 'http://hl7.org/fhir/item-type', 'http://hl7.org/fhir/item-type', 'http://hl7.org/fhir/item-type', 'http://hl7.org/fhir/item-type', 'http://hl7.org/fhir/item-type', 'http://hl7.org/fhir/item-type', 'http://hl7.org/fhir/item-type', 'http://hl7.org/fhir/item-type', 'http://hl7.org/fhir/item-type', 'http://hl7.org/fhir/item-type', 'http://hl7.org/fhir/item-type', 'http://hl7.org/fhir/item-type');
   CODES_TFhirQuestionnaireEnableOperatorEnum : Array[TFhirQuestionnaireEnableOperatorEnum] of String = ('', 'exists', '=', '!=', '>', '<', '>=', '<=');
   SYSTEMS_TFhirQuestionnaireEnableOperatorEnum : Array[TFhirQuestionnaireEnableOperatorEnum] of String = ('', 'http://hl7.org/fhir/questionnaire-enable-operator', 'http://hl7.org/fhir/questionnaire-enable-operator', 'http://hl7.org/fhir/questionnaire-enable-operator', 'http://hl7.org/fhir/questionnaire-enable-operator', 'http://hl7.org/fhir/questionnaire-enable-operator', 'http://hl7.org/fhir/questionnaire-enable-operator', 'http://hl7.org/fhir/questionnaire-enable-operator');
   CODES_TFhirQuestionnaireEnableBehaviorEnum : Array[TFhirQuestionnaireEnableBehaviorEnum] of String = ('', 'all', 'any');

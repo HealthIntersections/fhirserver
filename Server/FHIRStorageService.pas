@@ -192,7 +192,7 @@ Type
     property lang : String read FLang write FLang;
 
     function opAllowed(resource : string; command : TFHIRCommandType) : Boolean; virtual;
-    function check(response : TFHIRResponse; test : boolean; code : Integer; lang, message : String; issueCode : TFhirIssueTypeEnum) : Boolean; virtual;
+    function check(response : TFHIRResponse; test : boolean; code : Integer; lang, message : String; issueCode : TExceptionType) : Boolean; virtual;
     Function Execute(context : TOperationContext; request: TFHIRRequest; response : TFHIRResponse) : String;  virtual;
     function LookupReference(context : TFHIRRequest; id : String) : TResourceWithReference; virtual;
     function getResourcesByParam(aType : TFhirResourceType; name, value : string; var needSecure : boolean): TAdvList<TFHIRResource>; virtual;
@@ -616,7 +616,7 @@ begin
   response.Resource := BuildOperationOutcome(lang, response.Message);
 end;
 
-function TFHIROperationEngine.check(response: TFHIRResponse; test: boolean; code : Integer; lang, message: String; issueCode : TFhirIssueTypeEnum): Boolean;
+function TFHIROperationEngine.check(response: TFHIRResponse; test: boolean; code : Integer; lang, message: String; issueCode : TExceptionType): Boolean;
 begin
   result := test;
   if not test and (response <> nil) then
@@ -625,7 +625,7 @@ begin
     response.Message := message;
     response.ContentType := 'text/plain';
     response.Body := message;
-    response.Resource := BuildOperationOutcome(lang, message, issueCode);
+    response.Resource := BuildOperationOutcome(lang, message, ExceptionTypeTranslations[issueCode]);
   end;
 end;
 

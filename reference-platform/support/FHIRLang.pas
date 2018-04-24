@@ -31,7 +31,8 @@ POSSIBILITY OF SUCH DAMAGE.
 interface
 
 uses
-  SysUtils, classes, Generics.Collections;
+  SysUtils, classes, Generics.Collections,
+  FHIRBase;
 
 function GetFhirMessage(id, lang : String):String; overload;
 function GetFhirMessage(id, lang, def : String):String; overload;
@@ -41,12 +42,33 @@ procedure LoadMessages;
 var
   FHIRExeModuleName : String;
 
+// exceptions
+
 Type
   EFHIRException = class (Exception)
   public
     constructor CreateLang(code, lang : String); overload;
     constructor CreateLang(code, lang : String; const Args: array of const); overload;
   end;
+
+  ETooCostly = class (Exception);
+  EUnsafeOperation = class (Exception);
+  DefinitionException = class (Exception);
+
+  TExceptionType = (etNull, etInvalid, etStructure, etRequired, etValue, etInvariant, etSecurity, etLogin, etUnknown, etExpired, etForbidden, etSuppressed, etProcessing, etNotSupported, etDuplicate, etNotFound, etTooLong, etCodeInvalid, etExtension, etTooCostly, etBusinessRule, etConflict, etIncomplete, etTransient, etLockError, etNoStore, etException, etTimeout, etThrottled, etInformational);
+
+  ERestfulException = class (Exception)
+  Private
+    FContext : String;
+    FStatus : word;
+    FCode : TExceptionType;
+  Public
+    Constructor Create(Const sContext : String; aStatus : word; code : TExceptionType; sMessage, lang : String); Overload; Virtual;
+    Constructor Create(Const sContext : String; aStatus : word; code : TExceptionType; sMessage, lang : String; const Args: array of const); Overload; Virtual;
+
+    Property Status : word read FStatus write FStatus;
+    Property Code : TExceptionType read FCode write FCode;
+  End;
 
 implementation
 
@@ -204,6 +226,27 @@ end;
 constructor EFHIRException.CreateLang(code, lang: String; const Args: array of const);
 begin
   inherited Create(Format(GetFhirMessage(code, lang), args));
+end;
+
+
+{ ERestfulException }
+
+constructor ERestfulException.Create(const sContext: String; aStatus: word; code: TExceptionType; sMessage, lang: String; const Args: array of const);
+begin
+  inherited Create(Format(GetFhirMessage(sMessage, lang), args));
+
+  FContext := sContext;
+  FStatus := aStatus;
+  FCode := code;
+end;
+
+constructor ERestfulException.Create(const sContext: String; aStatus: word; code: TExceptionType; sMessage, lang: String);
+begin
+  inherited Create(GetFhirMessage(sMessage, lang));
+
+  FContext := sContext;
+  FStatus := aStatus;
+  FCode := code;
 end;
 
 initialization

@@ -42,16 +42,16 @@ uses
 
   MimeMessage, TextUtilities, ZLib, InternetFetcher, TurtleParser, MXml, DigitalSignatures, JWT,
 
-  FHIRSupport, FHIRParserBase, FHIRParser, FHIRBase, FHIRXHtml, FHIRIndexBase, FHIRXhtmlComposer,
+  FHIRSupport, FHIRParserBase, FHIRParser, FHIRBase, FHIRXHtml, FHIRIndexBase, FHIRXhtmlComposer, FHIRLang,
   FHIRContext4, FHIRTypes4, FHIRResources4, FHIRConstants4;
-
-Type
-  ETooCostly = class (Exception);
-  EUnsafeOperation = class (Exception);
-  DefinitionException = class (Exception);
 
 
 const
+  ExceptionTypeTranslations : array [TExceptionType] of TFhirIssueTypeEnum = (IssueTypeNull, IssueTypeInvalid, IssueTypeStructure, IssueTypeRequired, IssueTypeValue,
+    IssueTypeInvariant, IssueTypeSecurity, IssueTypeLogin, IssueTypeUnknown, IssueTypeExpired, IssueTypeForbidden, IssueTypeSuppressed, IssueTypeProcessing,
+    IssueTypeNotSupported, IssueTypeDuplicate, IssueTypeNotFound, IssueTypeTooLong, IssueTypeCodeInvalid, IssueTypeExtension, IssueTypeTooCostly, IssueTypeBusinessRule,
+    IssueTypeConflict, IssueTypeIncomplete, IssueTypeTransient, IssueTypeLockError, IssueTypeNoStore, IssueTypeException, IssueTypeTimeout, IssueTypeThrottled, IssueTypeInformational);
+
   MIN_DATE = DATETIME_MIN;
   MAX_DATE = DATETIME_MAX;
   ANY_CODE_VS = 'http://hl7.org/fhir/ValueSet/@all';
@@ -91,7 +91,7 @@ function isResourceName(name : String; canbeLower : boolean = false) : boolean;
 
 Function RecogniseFHIRResourceName(Const sName : String; out aType : TFhirResourceType): boolean;
 Function RecogniseFHIRResourceManagerName(Const sName : String; out aType : TFhirResourceType): boolean;
-Function RecogniseFHIRFormat(Const sName : String): TFHIRFormat;
+Function RecogniseFHIRFormat(Const sName, lang : String): TFHIRFormat;
 function MakeParser(oWorker : TFHIRWorkerContext; lang : String; aFormat: TFHIRFormat; oContent: TStream; policy : TFHIRXhtmlParserPolicy): TFHIRParser; overload;
 function MakeParser(oWorker : TFHIRWorkerContext; lang : String; aFormat: TFHIRFormat; content: TBytes; policy : TFHIRXhtmlParserPolicy): TFHIRParser; overload;
 function MakeParser(oWorker : TFHIRWorkerContext; lang : String; mimetype : String; content: TBytes; policy : TFHIRXhtmlParserPolicy): TFHIRParser; overload;
@@ -185,6 +185,7 @@ function parseParamsFromForm(stream : TStream) : TFHIRParameters;
 
 const
   frtProcedureRequest = frtServiceRequest;
+
 type
   TFhirProcedureRequest = TFhirServiceRequest;
   TFhirCapabilityStatementRestOperation = TFhirCapabilityStatementRestResourceOperation;
@@ -297,11 +298,13 @@ type
 
   TFHIRElementHelper = class helper for TFHIRElement
   public
+    function addExtension(ext : TFHIRExtension) : TFHIRExtension; overload;
     function addExtension(url : String) : TFHIRExtension; overload;
     procedure addExtension(url : String; t : TFhirType); overload;
     procedure addExtension(url : String; v : String); overload;
     function hasExtension(url : String) : boolean;
     function getExtension(url : String) : Integer;
+    function getExtensionByUrl(url : String) : TFHIRExtension;
     function getExtensionCount(url : String) : Integer;
     function getExtensionString(url : String) : String; overload;
     function getExtensionString(url : String; index : integer) : String; overload;
@@ -399,6 +402,7 @@ type
     function getExtensionCount(url : String) : Integer;
     function getExtensionString(url : String) : String; overload;
     function getExtensionString(url : String; index : integer) : String; overload;
+    function getExtensionByUrl(url : String) : TFHIRExtension;
     procedure removeExtension(url : String);
     procedure setExtensionString(url, value : String);
     function narrativeAsWebPage : String;
@@ -1020,7 +1024,7 @@ Begin
     aType := TFhirResourceType(iIndex);
 End;
 
-Function RecogniseFHIRFormat(Const sName : String): TFHIRFormat;
+Function RecogniseFHIRFormat(Const sName, lang : String): TFHIRFormat;
 Begin
   if (sName = '.xml') or (sName = 'xml') or (sName = '.xsd') or (sName = 'xsd') Then
     result := ffXml
@@ -1029,7 +1033,7 @@ Begin
   else if sName = '' then
     result := ffUnspecified
   else
-    raise ERestfulException.create('FHIRBase', 'RecogniseFHIRFormat', 'Unknown format '+sName, HTTP_ERR_BAD_REQUEST, IssueTypeStructure);
+    raise ERestfulException.create('FHIRUtilities.RecogniseFHIRFormat', HTTP_ERR_BAD_REQUEST, etStructure, 'Unknown format '+sName, lang);
 End;
 
 
@@ -2294,6 +2298,12 @@ begin
   result.url := url;
 end;
 
+function TFHIRElementHelper.addExtension(ext: TFHIRExtension): TFHIRExtension;
+begin
+  self.extensionList.add(ext);
+  result := ext;
+end;
+
 function TFHIRElementHelper.getExtension(url: String): Integer;
 var
   i : integer;
@@ -2302,6 +2312,16 @@ begin
   for i := 0 to self.ExtensionList.Count -1 do
     if self.ExtensionList[i].url = url then
       result := i;
+end;
+
+function TFHIRElementHelper.getExtensionByUrl(url: String): TFHIRExtension;
+var
+  i : integer;
+begin
+  result := nil;
+  for i := 0 to self.ExtensionList.Count -1 do
+    if self.ExtensionList[i].url = url then
+      result := self.ExtensionList[i];
 end;
 
 function TFHIRElementHelper.getExtensionString(url: String): String;
@@ -2485,6 +2505,16 @@ begin
   for i := 0 to self.ExtensionList.Count -1 do
     if self.ExtensionList[i].url = url then
       result := i;
+end;
+
+function TFHIRDomainResourceHelper.getExtensionByUrl( url: String): TFHIRExtension;
+var
+  i : integer;
+begin
+  result := nil;
+  for i := 0 to self.ExtensionList.Count -1 do
+    if self.ExtensionList[i].url = url then
+      result := self.ExtensionList[i];
 end;
 
 function TFHIRDomainResourceHelper.getExtensionCount(url: String): Integer;

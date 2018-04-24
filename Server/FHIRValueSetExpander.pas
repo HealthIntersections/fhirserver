@@ -44,7 +44,7 @@ uses
   SysUtils, Classes, StringSupport, GuidSupport,
   DateSupport,
   AdvStringObjectMatches, AdvObjects, AdvObjectLists, AdvExceptions, AdvGenerics,
-  FHIRBase, FHIRTypes, FHIRResources, FHIRUtilities, FHIRXhtml,
+  FHIRBase, FHIRLang, FHIRTypes, FHIRResources, FHIRUtilities, FHIRXhtml,
   TerminologyServices, LoincServices, SnomedServices, UcumServices,
   TerminologyServer, TerminologyServerStore;
 

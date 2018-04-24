@@ -38,7 +38,7 @@ uses
   FHIRTypes, FHIRResources, FHIRConstants, FHIRIndexManagers, FHIRUtilities, FHIRFactory,
   FHIRValidator, ServerValidator, FHIRUserProvider, FHIRStorageService, ServerUtilities, TerminologyServer,
   FHIRSubscriptionManager, FHIRSessionManager, FHIRTagManager, JWTService, ClientApplicationVerifier,
-  ApplicationCache, ServerJavascriptHost, JavaBridge;
+  ApplicationCache, ServerJavascriptHost;
 
 Const
   OAUTH_LOGIN_PREFIX = 'os9z4tw9HdmR-';
@@ -75,9 +75,7 @@ Type
     FResConfig: TAdvMap<TFHIRResourceConfig>;
     FUserProvider : TFHIRUserProvider;
     FValidatorContext : TFHIRServerWorkerContext;
-    {$IFDEF FHIR2}
     FValidator: TFHIRValidator;
-    {$ENDIF}
     FTerminologyServer: TTerminologyServer;
     FIndexes : TFHIRIndexInformation;
     FSubscriptionManager : TSubscriptionManager;
@@ -89,7 +87,6 @@ Type
     FFactory: TFHIRFactory;
     {$IFNDEF FHIR2}
     FMaps : TAdvMap<TFHIRStructureMap>;
-    FJavaServices: TJavaLibraryWrapper;
     {$ENDIF}
 
     FOwnerName: String;
@@ -117,9 +114,6 @@ Type
     procedure SetSubscriptionManager(const Value: TSubscriptionManager);
     procedure SetClientApplicationVerifier(const Value: TClientApplicationVerifier);
     procedure SetJWTServices(const Value: TJWTServices);
-    {$IFNDEF FHIR2}
-    procedure SetJavaServices(const Value: TJavaLibraryWrapper);
-    {$ENDIF}
   public
     Constructor Create(storage : TFHIRStorageService);
     Destructor Destroy; override;
@@ -130,9 +124,7 @@ Type
     Property Bases: TStringList read FBases;
     Property ResConfig: TAdvMap<TFHIRResourceConfig> read FResConfig;
     Property ValidatorContext : TFHIRServerWorkerContext read FValidatorContext;
-    {$IFDEF FHIR2}
     Property Validator: TFHIRValidator read FValidator;
-    {$ENDIF}
     Property TerminologyServer: TTerminologyServer read FTerminologyServer write SetTerminologyServer;
     property Indexes : TFHIRIndexInformation read FIndexes;
     property SubscriptionManager : TSubscriptionManager read FSubscriptionManager write SetSubscriptionManager;
@@ -143,9 +135,6 @@ Type
     property ApplicationCache : TApplicationCache read FApplicationCache;
     property EventScriptRegistry : TEventScriptRegistry read FEventScriptRegistry;
     property Factory : TFHIRFactory read FFactory write SetFactory;
-    {$IFNDEF FHIR2}
-    property JavaServices : TJavaLibraryWrapper read FJavaServices write SetJavaServices;
-    {$ENDIF}
 
     property JWTServices : TJWTServices read FJWTServices write SetJWTServices;
 
@@ -347,9 +336,7 @@ begin
     FResConfig.Add(cfg.name,  cfg);
   end;
   FValidatorContext := TFHIRServerWorkerContext.Create;
-  {$IFDEF FHIR2}
   FValidator := TFHIRValidator.Create(FValidatorContext.link);
-  {$ENDIF}
   FSessionManager := TFHIRSessionManager.Create(self);
   FTagManager := TFHIRTagManager.create;
   FNamingSystems := TAdvMap<TFHIRNamingSystem>.create;
@@ -370,7 +357,6 @@ destructor TFHIRServerContext.Destroy;
 begin
   {$IFNDEF FHIR2}
   FMaps.Free;
-  FJavaServices.Free;
   {$ENDIF}
   FEventScriptRegistry.Free;
   FApplicationCache.Free;
@@ -388,9 +374,7 @@ begin
   UserProvider.Free;
   FFactory.free;
 
-  {$IFDEF FHIR2}
   FValidator.free;
-  {$ENDIF}
 //  if FValidatorContext.AdvObjectReferenceCount > 0 then
 //    raise Exception.Create('There are still '+inttostr(FValidatorContext.AdvObjectReferenceCount)+' uses of the WorkerContext live');
 
@@ -451,13 +435,6 @@ begin
   FClientApplicationVerifier := Value;
 end;
 
-{$IFNDEF FHIR2}
-procedure TFHIRServerContext.SetJavaServices(const Value: TJavaLibraryWrapper);
-begin
-  FJavaServices.Free;
-  FJavaServices := Value;
-end;
-{$ENDIF}
 
 procedure TFHIRServerContext.SetJWTServices(const Value: TJWTServices);
 begin

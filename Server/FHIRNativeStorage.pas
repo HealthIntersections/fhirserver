@@ -702,7 +702,7 @@ type
     procedure RegisterTag(tag: TFHIRTag; conn: TKDBConnection); overload;
     procedure RegisterTag(tag: TFHIRTag); overload;
     procedure checkProposedResource(session : TFhirSession; needsSecure, created : boolean; request : TFHIRRequest; resource : TFhirResource; tags : TFHIRTagList);
-    procedure SeeResource(key, vkey, pvkey: integer; id: string; needsSecure, created : boolean; resource: TFhirResource; conn: TKDBConnection; reload: Boolean; session: TFhirSession; src : TBytes);
+    procedure SeeResource(key, vkey, pvkey: integer; id: string; needsSecure, created : boolean; resource: TFhirResource; conn: TKDBConnection; reload: Boolean; session: TFhirSession; lang: string; src : TBytes);
     procedure checkDropResource(session : TFhirSession; request : TFHIRRequest; resource : TFhirResource; tags : TFHIRTagList);
     procedure DropResource(key, vkey, pvkey: integer; id, resource: string; indexer: TFhirIndexManager; conn: TKDBConnection);
     procedure RegisterConsentRecord(session: TFhirSession); override;
@@ -1063,13 +1063,13 @@ begin
   CheckCreateNarrative(request);
   try
     ok := true;
-    if not check(response, request.canWrite(request.ResourceName), 400, lang, StringFormat(GetFhirMessage('MSG_OP_NOT_ALLOWED', lang), [CODES_TFHIRCommandType[request.CommandType], request.ResourceName]), IssueTypeForbidden) then
+    if not check(response, request.canWrite(request.ResourceName), 400, lang, StringFormat(GetFhirMessage('MSG_OP_NOT_ALLOWED', lang), [CODES_TFHIRCommandType[request.CommandType], request.ResourceName]), etForbidden) then
       ok := false;
-    if ok and not check(response, opAllowed(request.ResourceName, fcmdCreate), 400, lang, StringFormat(GetFhirMessage('MSG_OP_NOT_ALLOWED', lang), [CODES_TFHIRCommandType[request.CommandType], request.ResourceName]), IssueTypeForbidden) then
+    if ok and not check(response, opAllowed(request.ResourceName, fcmdCreate), 400, lang, StringFormat(GetFhirMessage('MSG_OP_NOT_ALLOWED', lang), [CODES_TFHIRCommandType[request.CommandType], request.ResourceName]), etForbidden) then
       ok := false;
 
-    if ok and (not check(response, request.Resource <> nil, 400, lang, GetFhirMessage('MSG_RESOURCE_REQUIRED', lang), IssueTypeRequired)
-         or not check(response, request.ResourceName = request.resource.fhirType, 400, lang, GetFhirMessage('MSG_RESOURCE_TYPE_MISMATCH', lang), IssueTypeInvalid)) then
+    if ok and (not check(response, request.Resource <> nil, 400, lang, GetFhirMessage('MSG_RESOURCE_REQUIRED', lang), etRequired)
+         or not check(response, request.ResourceName = request.resource.fhirType, 400, lang, GetFhirMessage('MSG_RESOURCE_TYPE_MISMATCH', lang), etInvalid)) then
       ok := false;
 
     ok := ok and checkOkToStore(request, response, needSecure);
@@ -1095,7 +1095,7 @@ begin
           response.HTTPCode := 200;
         end
         else if list.Count > 1 then
-          check(response, false, 412, lang, GetFhirMessage('UPDATE_MULTIPLE_MATCHES', lang), IssueTypeNotFound)
+          check(response, false, 412, lang, GetFhirMessage('UPDATE_MULTIPLE_MATCHES', lang), etNotFound)
         else
           ok := true;
       finally
@@ -1120,14 +1120,14 @@ begin
         else if (idState = idCheckNew) then
         begin
           sId := request.Id;
-          if not check(response, sId <> '', 404, lang, GetFhirMessage('MSG_INVALID_ID', lang), IssueTypeInvalid) or
-            not check(response, (Length(sId) <= ID_LENGTH) and AddNewResourceId(request.resourceName, sId, lang, tags.hasTestingTag, resourceKey), 404, lang, GetFhirMessage('MSG_INVALID_ID', lang), IssueTypeInvalid) then
+          if not check(response, sId <> '', 404, lang, GetFhirMessage('MSG_INVALID_ID', lang), etInvalid) or
+            not check(response, (Length(sId) <= ID_LENGTH) and AddNewResourceId(request.resourceName, sId, lang, tags.hasTestingTag, resourceKey), 404, lang, GetFhirMessage('MSG_INVALID_ID', lang), etInvalid) then
               ok := false;
         end
         else if (idState = idMaybeNew) and (request.Id <> '') then
         begin
           sId := request.Id;
-          if not check(response, (Length(sId) <= ID_LENGTH) and AddNewResourceId(request.resourceName, sId, lang, tags.hasTestingTag, resourceKey), 404, lang, GetFhirMessage('MSG_INVALID_ID', lang), IssueTypeInvalid) then
+          if not check(response, (Length(sId) <= ID_LENGTH) and AddNewResourceId(request.resourceName, sId, lang, tags.hasTestingTag, resourceKey), 404, lang, GetFhirMessage('MSG_INVALID_ID', lang), etInvalid) then
             ok := false;
         end
         else if (idState = idIsNew) then
@@ -1135,14 +1135,14 @@ begin
           sid := request.id;
           resourceKey := iAssignedKey;
         end
-        else if not check(response, GetNewResourceId(request.ResourceName, tags.hasTestingTag, sId, resourceKey), 404, lang, StringFormat(GetFhirMessage('MSG_DUPLICATE_ID', lang), [sId, request.ResourceName]), IssueTypeDuplicate) then
+        else if not check(response, GetNewResourceId(request.ResourceName, tags.hasTestingTag, sId, resourceKey), 404, lang, StringFormat(GetFhirMessage('MSG_DUPLICATE_ID', lang), [sId, request.ResourceName]), etDuplicate) then
            ok := false
 
         else
           request.resource.id := sId;
 
         if ok then
-          if not check(response, request.Resource.id = sId, 400, lang, GetFhirMessage('MSG_RESOURCE_ID_MISMATCH', lang)+' '+request.Resource.id+'/'+sId+' (1)', IssueTypeInvalid) then
+          if not check(response, request.Resource.id = sId, 400, lang, GetFhirMessage('MSG_RESOURCE_ID_MISMATCH', lang)+' '+request.Resource.id+'/'+sId+' (1)', etInvalid) then
             ok := false;
 
         updateProvenance(request.Provenance, request.ResourceName, sid, '1');
@@ -1199,7 +1199,7 @@ begin
 
           CreateIndexer;
           CheckCompartments(FIndexer.execute(resourceKey, sId, request.resource, tags), request.SessionCompartments);
-          FRepository.SeeResource(resourceKey, key, 0, sId, needSecure, true, request.Resource, FConnection, false, request.Session, src);
+          FRepository.SeeResource(resourceKey, key, 0, sId, needSecure, true, request.Resource, FConnection, false, request.Session, request.Lang, src);
           if request.resourceEnum = frtPatient then
             FConnection.execSQL('update Compartments set CompartmentKey = '+inttostr(resourceKey)+' where Id = '''+sid+''' and CompartmentKey is null');
           response.HTTPCode := 201;
@@ -1247,7 +1247,7 @@ begin
   nvid := 0;
   try
     ok := true;
-    if not check(response, request.canWrite(request.ResourceName) and opAllowed(request.ResourceName, request.CommandType), 400, lang, StringFormat(GetFhirMessage('MSG_OP_NOT_ALLOWED', lang), [CODES_TFHIRCommandType[request.CommandType], request.ResourceName]), IssueTypeForbidden) then
+    if not check(response, request.canWrite(request.ResourceName) and opAllowed(request.ResourceName, request.CommandType), 400, lang, StringFormat(GetFhirMessage('MSG_OP_NOT_ALLOWED', lang), [CODES_TFHIRCommandType[request.CommandType], request.ResourceName]), etForbidden) then
       ok := false;
 
     if (request.DefaultSearch) then
@@ -1258,7 +1258,7 @@ begin
         if list.count = 0 then
           NoMatch(request, response)
         else if list.Count > 1 then
-          check(response, false, 412, lang, GetFhirMessage('DELETE_MULTIPLE_MATCHES', lang), IssueTypeNotFound)
+          check(response, false, 412, lang, GetFhirMessage('DELETE_MULTIPLE_MATCHES', lang), etNotFound)
         else
         begin
           request.Id := list[0].name;
@@ -1269,7 +1269,7 @@ begin
       end;
     end;
 
-    if ok and not check(response, length(request.id) <= ID_LENGTH, 400, lang, StringFormat(GetFhirMessage('MSG_ID_TOO_LONG', lang), [request.id]), IssueTypeInvalid) then
+    if ok and not check(response, length(request.id) <= ID_LENGTH, 400, lang, StringFormat(GetFhirMessage('MSG_ID_TOO_LONG', lang), [request.id]), etInvalid) then
       ok := false;
 
     if ok and (not FindResource(request.ResourceName, request.Id, [froFindDeletedResource, froForCommit], resourceKey, versionKey, request, response, nil)) then
@@ -1281,10 +1281,10 @@ begin
       ok := false;
     end;
 
-    if ok and FTestServer and not check(response, request.id <> 'example', 400, lang, GetFhirMessage('MSG_RESOURCE_EXAMPLE_PROTECTED', lang), IssueTypeForbidden) then
+    if ok and FTestServer and not check(response, request.id <> 'example', 400, lang, GetFhirMessage('MSG_RESOURCE_EXAMPLE_PROTECTED', lang), etForbidden) then
       ok := false;
 
-    if ok and ((request.Resource <> nil) and not check(response, request.id = request.Resource.id, 400, lang, GetFhirMessage('MSG_RESOURCE_ID_MISMATCH', lang)+' '+request.id+'/'+request.resource.id+' (2)', IssueTypeInvalid)) Then
+    if ok and ((request.Resource <> nil) and not check(response, request.id = request.Resource.id, 400, lang, GetFhirMessage('MSG_RESOURCE_ID_MISMATCH', lang)+' '+request.id+'/'+request.resource.id+' (2)', etInvalid)) Then
       ok := false;
 
     if ok then
@@ -1517,7 +1517,7 @@ begin
     fcmdHistoryInstance :
       begin
         TypeNotFound(request, response);
-        if not check(response, request.canRead(request.ResourceName) and opAllowed(request.ResourceName, request.CommandType), 400, lang, StringFormat(GetFhirMessage('MSG_OP_NOT_ALLOWED', lang), [CODES_TFHIRCommandType[request.CommandType], request.ResourceName]), IssueTypeForbidden) then
+        if not check(response, request.canRead(request.ResourceName) and opAllowed(request.ResourceName, request.CommandType), 400, lang, StringFormat(GetFhirMessage('MSG_OP_NOT_ALLOWED', lang), [CODES_TFHIRCommandType[request.CommandType], request.ResourceName]), etForbidden) then
           result := false
         else if (length(request.id) > ID_LENGTH) or not FindResource(request.ResourceName, request.Id, [froFindDeletedResource], resourceKey, versionKey, request, response, nil) then
           result := false
@@ -1531,7 +1531,7 @@ begin
     fcmdHistoryType :
       begin
         TypeNotFound(request, response);
-        if not check(response, request.canRead(request.ResourceName) and opAllowed(request.ResourceName, request.CommandType), 400, lang, StringFormat(GetFhirMessage('MSG_OP_NOT_ALLOWED', lang), [CODES_TFHIRCommandType[request.CommandType], request.ResourceName]), IssueTypeForbidden) then
+        if not check(response, request.canRead(request.ResourceName) and opAllowed(request.ResourceName, request.CommandType), 400, lang, StringFormat(GetFhirMessage('MSG_OP_NOT_ALLOWED', lang), [CODES_TFHIRCommandType[request.CommandType], request.ResourceName]), etForbidden) then
           result := false
         else
         begin
@@ -1653,7 +1653,7 @@ begin
     if request.parameters.value[HISTORY_PARAM_NAME_ID] <> '' then
     begin
       ok := FindSavedSearch(request.parameters.value[HISTORY_PARAM_NAME_ID], request.Session, 2, id, link, sql, title, base, total, dummy, request.strictSearch, reverse);
-      if check(response, ok, 400, lang, StringFormat(GetFhirMessage('MSG_HISTORY_EXPIRED', lang), [request.parameters.value[HISTORY_PARAM_NAME_ID]]), IssueTypeProcessing) then
+      if check(response, ok, 400, lang, StringFormat(GetFhirMessage('MSG_HISTORY_EXPIRED', lang), [request.parameters.value[HISTORY_PARAM_NAME_ID]]), etProcessing) then
         link := HISTORY_PARAM_NAME_ID+'='+request.parameters.value[HISTORY_PARAM_NAME_ID]
     end
     else
@@ -1753,7 +1753,7 @@ begin
   result := false;
   try
     NotFound(request, response);
-    if request.canRead(request.ResourceName) and check(response, opAllowed(request.ResourceName, request.CommandType), 400, lang, StringFormat(GetFhirMessage('MSG_OP_NOT_ALLOWED', lang), [CODES_TFHIRCommandType[request.CommandType], request.ResourceName]), IssueTypeForbidden) then
+    if request.canRead(request.ResourceName) and check(response, opAllowed(request.ResourceName, request.CommandType), 400, lang, StringFormat(GetFhirMessage('MSG_OP_NOT_ALLOWED', lang), [CODES_TFHIRCommandType[request.CommandType], request.ResourceName]), etForbidden) then
     begin
       if (length(request.id) <= ID_LENGTH) and FindResource(request.ResourceName, request.Id, [], resourceKey, versionKey, request, response, nil) then
       begin
@@ -1765,7 +1765,7 @@ begin
           if FConnection.FetchNext then
           Begin
             if (FConnection.ColIntegerByName['Secure'] = 1) and not request.secure then
-              check(response, false, 403, lang, 'This resource is labelled with a security tag that means this server will only send it if the connection is secure', IssueTypeSuppressed)
+              check(response, false, 403, lang, 'This resource is labelled with a security tag that means this server will only send it if the connection is secure', etSuppressed)
             else if not ignoreHeaders and (request.IfNoneMatch <> '') and (request.IfNoneMatch = FConnection.GetColStringByName('VersionId')) then
             begin
               response.HTTPCode := 304;
@@ -2206,7 +2206,7 @@ begin
      conformance
      quantity searches
     }
-    if not check(response, request.canRead(request.ResourceName) and opAllowed(request.ResourceName, request.CommandType), 400, lang, StringFormat(GetFhirMessage('MSG_OP_NOT_ALLOWED', lang), [CODES_TFHIRCommandType[request.CommandType], request.ResourceName]), IssueTypeForbidden) then
+    if not check(response, request.canRead(request.ResourceName) and opAllowed(request.ResourceName, request.CommandType), 400, lang, StringFormat(GetFhirMessage('MSG_OP_NOT_ALLOWED', lang), [CODES_TFHIRCommandType[request.CommandType], request.ResourceName]), etForbidden) then
       // ok := false
     else if (request.Parameters.getItemCount = 0) and (response.Format = ffXhtml) and not request.hasCompartments then
       BuildSearchForm(request, response)
@@ -2216,7 +2216,7 @@ begin
       if request.resourceName <> '' then
       begin
         key := FConnection.CountSQL('select ResourceTypeKey from Types where supported = 1 and ResourceName = '''+request.ResourceName+'''');
-        if not check(response, key > 0, 404, lang, 'Resource Type '+request.ResourceName+' not known', IssueTypeNotSupported) then
+        if not check(response, key > 0, 404, lang, 'Resource Type '+request.ResourceName+' not known', etNotSupported) then
             ok := false;
       end
       else
@@ -2373,13 +2373,13 @@ begin
   key := 0;
   try
     ok := true;
-    if ok and not check(response, request.canWrite(request.ResourceName) or opAllowed(request.ResourceName, request.CommandType), 400, lang, StringFormat(GetFhirMessage('MSG_OP_NOT_ALLOWED', lang), [CODES_TFHIRCommandType[request.CommandType], request.ResourceName]), IssueTypeForbidden) then
+    if ok and not check(response, request.canWrite(request.ResourceName) or opAllowed(request.ResourceName, request.CommandType), 400, lang, StringFormat(GetFhirMessage('MSG_OP_NOT_ALLOWED', lang), [CODES_TFHIRCommandType[request.CommandType], request.ResourceName]), etForbidden) then
       ok := false;
 
-    if ok and (not check(response, request.Resource <> nil, 400, lang, GetFhirMessage('MSG_RESOURCE_REQUIRED', lang), IssueTypeRequired) or
-       not check(response, request.ResourceName = request.resource.fhirType, 400, lang, GetFhirMessage('MSG_RESOURCE_TYPE_MISMATCH', lang), IssueTypeInvalid) or
-       not check(response, request.id = request.resource.id, 400, lang, GetFhirMessage('MSG_RESOURCE_ID_MISMATCH', lang)+'('+request.id +' / '+request.resource.id+')', IssueTypeInvalid) or
-       not check(response, length(request.id) <= ID_LENGTH, 400, lang, StringFormat(GetFhirMessage('MSG_ID_TOO_LONG', lang), [request.id]), IssueTypeInvalid)) then
+    if ok and (not check(response, request.Resource <> nil, 400, lang, GetFhirMessage('MSG_RESOURCE_REQUIRED', lang), etRequired) or
+       not check(response, request.ResourceName = request.resource.fhirType, 400, lang, GetFhirMessage('MSG_RESOURCE_TYPE_MISMATCH', lang), etInvalid) or
+       not check(response, request.id = request.resource.id, 400, lang, GetFhirMessage('MSG_RESOURCE_ID_MISMATCH', lang)+'('+request.id +' / '+request.resource.id+')', etInvalid) or
+       not check(response, length(request.id) <= ID_LENGTH, 400, lang, StringFormat(GetFhirMessage('MSG_ID_TOO_LONG', lang), [request.id]), etInvalid)) then
       ok := false;
 
     ok := checkOkToStore(request, response, needSecure);
@@ -2406,7 +2406,7 @@ begin
         if (list.Count > 1) then
         begin
           ok := false;
-          check(response, false, 412, lang, GetFhirMessage('UPDATE_MULTIPLE_MATCHES', lang), IssueTypeNotFound);
+          check(response, false, 412, lang, GetFhirMessage('UPDATE_MULTIPLE_MATCHES', lang), etNotFound);
         end
         else
         begin
@@ -2418,9 +2418,9 @@ begin
       end;
     end;
 
-    if ok and not check(response, request.Resource.id <> '', 400, lang, GetFhirMessage('MSG_RESOURCE_ID_MISSING', lang)+' '+request.id+'/'+request.resource.id+' (3)', IssueTypeRequired) Then
+    if ok and not check(response, request.Resource.id <> '', 400, lang, GetFhirMessage('MSG_RESOURCE_ID_MISSING', lang)+' '+request.id+'/'+request.resource.id+' (3)', etRequired) Then
       ok := false;
-    if ok and not check(response, request.id = request.Resource.id, 400, lang, GetFhirMessage('MSG_RESOURCE_ID_MISMATCH', lang)+' '+request.id+'/'+request.resource.id+' (3)', IssueTypeInvalid) Then
+    if ok and not check(response, request.id = request.Resource.id, 400, lang, GetFhirMessage('MSG_RESOURCE_ID_MISMATCH', lang)+' '+request.id+'/'+request.resource.id+' (3)', etInvalid) Then
       ok := false;
 
 
@@ -2434,7 +2434,7 @@ begin
     end;
 
 
-    if ok and not check(response, not ServerContext.ResConfig[request.ResourceName].versionUpdates or (request.ifMatch <> ''), 412, lang, GetFhirMessage('MSG_VERSION_AWARE', lang), IssueTypeBusinessRule) then
+    if ok and not check(response, not ServerContext.ResConfig[request.ResourceName].versionUpdates or (request.ifMatch <> ''), 412, lang, GetFhirMessage('MSG_VERSION_AWARE', lang), etBusinessRule) then
       ok := false;
 
 
@@ -2447,7 +2447,7 @@ begin
       begin
         s := request.IfMatch;
 
-        if not check(response, s = inttostr(nvid-1), 412, lang, StringFormat(GetFhirMessage('MSG_VERSION_AWARE_CONFLICT', lang), [inttostr(nvid-1), s]), IssueTypeConflict) then
+        if not check(response, s = inttostr(nvid-1), 412, lang, StringFormat(GetFhirMessage('MSG_VERSION_AWARE_CONFLICT', lang), [inttostr(nvid-1), s]), etConflict) then
           ok := false;
       end;
     end;
@@ -2518,7 +2518,7 @@ begin
           CommitTags(tags, key);
           CreateIndexer;
           FIndexer.execute(resourceKey, request.id, request.resource, tags);
-          FRepository.SeeResource(resourceKey, key, versionKey, request.id, needSecure, false, request.Resource, FConnection, false, request.Session, src);
+          FRepository.SeeResource(resourceKey, key, versionKey, request.id, needSecure, false, request.Resource, FConnection, false, request.Session, request.Lang, src);
           if ((request.ResourceEnum = frtAuditEvent) and request.Resource.hasTag('verkey')) then
             FConnection.ExecSQL('update Versions set AuditKey = '+inttostr(resourceKey)+' where ResourceVersionKey = '+request.Resource.Tags['verkey']);
 
@@ -2572,18 +2572,18 @@ begin
   key := 0;
   try
     ok := true;
-    if ok and not check(response, request.canWrite(request.ResourceName) or opAllowed(request.ResourceName, request.CommandType), 400, lang, StringFormat(GetFhirMessage('MSG_OP_NOT_ALLOWED', lang), [CODES_TFHIRCommandType[request.CommandType], request.ResourceName]), IssueTypeForbidden) then
+    if ok and not check(response, request.canWrite(request.ResourceName) or opAllowed(request.ResourceName, request.CommandType), 400, lang, StringFormat(GetFhirMessage('MSG_OP_NOT_ALLOWED', lang), [CODES_TFHIRCommandType[request.CommandType], request.ResourceName]), etForbidden) then
       ok := false;
 
-    if ok and (not check(response, (request.patchJson <> nil) or (request.patchXml <> nil), 400, lang, GetFhirMessage('MSG_RESOURCE_REQUIRED', lang), IssueTypeRequired) or
-       not check(response, length(request.id) <= ID_LENGTH, 400, lang, StringFormat(GetFhirMessage('MSG_ID_TOO_LONG', lang), [request.id]), IssueTypeInvalid)) then
+    if ok and (not check(response, (request.patchJson <> nil) or (request.patchXml <> nil), 400, lang, GetFhirMessage('MSG_RESOURCE_REQUIRED', lang), etRequired) or
+       not check(response, length(request.id) <= ID_LENGTH, 400, lang, StringFormat(GetFhirMessage('MSG_ID_TOO_LONG', lang), [request.id]), etInvalid)) then
       ok := false;
 
     if ok and request.DefaultSearch then // conditional update
     begin
       list := ResolveSearchId(request.ResourceName, request.compartment, request.SessionCompartments, request.baseUrl, request.Parameters.Source);
       try
-        if check(response, list.count = 1, 412, lang, GetFhirMessage('UPDATE_NOT_ONE_MATCH', lang), IssueTypeNotFound) then
+        if check(response, list.count = 1, 412, lang, GetFhirMessage('UPDATE_NOT_ONE_MATCH', lang), etNotFound) then
           request.Id := list[0].name
         else
           ok := false;
@@ -2596,7 +2596,7 @@ begin
       if not FindResource(request.ResourceName, request.Id, [froFindDeletedResource, froForCommit], resourceKey, versionKey, request, response, nil) Then
         ok := false;
 
-    if ok and not check(response, not ServerContext.ResConfig[request.ResourceName].versionUpdates or (request.ifMatch <> ''), 412, lang, GetFhirMessage('MSG_VERSION_AWARE', lang), IssueTypeBusinessRule) then
+    if ok and not check(response, not ServerContext.ResConfig[request.ResourceName].versionUpdates or (request.ifMatch <> ''), 412, lang, GetFhirMessage('MSG_VERSION_AWARE', lang), etBusinessRule) then
       ok := false;
 
 
@@ -2609,7 +2609,7 @@ begin
       begin
         s := request.IfMatch;
 
-        if not check(response, s = inttostr(nvid-1), 412, lang, StringFormat(GetFhirMessage('MSG_VERSION_AWARE_CONFLICT', lang), [inttostr(nvid-1), s]), IssueTypeConflict) then
+        if not check(response, s = inttostr(nvid-1), 412, lang, StringFormat(GetFhirMessage('MSG_VERSION_AWARE_CONFLICT', lang), [inttostr(nvid-1), s]), etConflict) then
           ok := false;
       end;
     end;
@@ -2622,7 +2622,7 @@ begin
     FConnection.Prepare;
     try
       FConnection.Execute;
-      if not check(response, FConnection.FetchNext, 500, lang, 'Not Found internally', IssueTypeNotFound) then
+      if not check(response, FConnection.FetchNext, 500, lang, 'Not Found internally', etNotFound) then
         ok := false
       else if (request.patchJson <> nil) then
         json := TJSONParser.Parse(FConnection.ColBlobByName['JsonContent'])
@@ -2688,11 +2688,11 @@ begin
         response.Resource := nil;
       end;
 
-      if ok and not check(response, request.resource.id <> '', 400, lang, GetFhirMessage('MSG_RESOURCE_ID_MISSING', lang)+' '+request.id+'/'+request.resource.id+' (3)', IssueTypeRequired) Then
+      if ok and not check(response, request.resource.id <> '', 400, lang, GetFhirMessage('MSG_RESOURCE_ID_MISSING', lang)+' '+request.id+'/'+request.resource.id+' (3)', etRequired) Then
         ok := false;
-      if ok and not check(response, request.ResourceName = request.resource.fhirType, 400, lang, GetFhirMessage('MSG_RESOURCE_TYPE_MISMATCH', lang), IssueTypeInvalid) then
+      if ok and not check(response, request.ResourceName = request.resource.fhirType, 400, lang, GetFhirMessage('MSG_RESOURCE_TYPE_MISMATCH', lang), etInvalid) then
         ok := false;
-      if ok and not check(response, request.id = request.resource.id, 400, lang, GetFhirMessage('MSG_RESOURCE_ID_MISMATCH', lang)+' '+request.id+'/'+request.resource.id+' (3)', IssueTypeInvalid) Then
+      if ok and not check(response, request.id = request.resource.id, 400, lang, GetFhirMessage('MSG_RESOURCE_ID_MISMATCH', lang)+' '+request.id+'/'+request.resource.id+' (3)', etInvalid) Then
         ok := false;
 
       if ok then
@@ -2753,7 +2753,7 @@ begin
           CommitTags(tags, key);
           CreateIndexer;
           FIndexer.execute(resourceKey, request.id, request.resource, tags);
-          FRepository.SeeResource(resourceKey, key, versionKey, request.id, needSecure, false, request.resource, FConnection, false, request.Session, src);
+          FRepository.SeeResource(resourceKey, key, versionKey, request.id, needSecure, false, request.resource, FConnection, false, request.Session, request.Lang, src);
 
           if (response.Resource <> nil) and (response.Resource is TFhirBundle)  then
             response.bundle.entryList.add(request.resource.Link)
@@ -2806,7 +2806,6 @@ begin
     end
     else if (request.Source <> nil) and (request.postFOrmat <> ffText) then
     begin
-      {$IFDEF FHIR2}
       ctxt := TFHIRValidatorContext.Create;
       try
         ctxt.IsAnyExtensionsAllowed := true;
@@ -2817,15 +2816,9 @@ begin
       finally
         ctxt.Free;
       end;
-      {$ELSE}
-       if ServerContext.JavaServices = nil then
-         raise Exception.Create('No Java Services loaded in ExecuteValidation');
-       response.outcome := ServerContext.JavaServices.validateResource(opDesc, request.Source.AsBytes, request.PostFormat, 'any-extensions id-optional');
-      {$ENDIF}
     end
     else
     begin
-      {$IFDEF FHIR2}
       ctxt := TFHIRValidatorContext.Create;
       try
         ctxt.IsAnyExtensionsAllowed := true;
@@ -2836,11 +2829,6 @@ begin
       finally
         ctxt.Free;
       end;
-      {$ELSE}
-       if ServerContext.JavaServices = nil then
-         raise Exception.Create('No Java Services loaded in ExecuteValidation');
-       response.outcome := ServerContext.JavaServices.validateResource(opDesc, request.Resource, 'any-extensions id-optional');
-      {$ENDIF}
     end;
 
     if response.outcome.issueList.IsEmpty then
@@ -2882,7 +2870,7 @@ var
 begin
   try
     NotFound(request, response);
-    if check(response, request.canRead(request.ResourceName) and opAllowed(request.ResourceName, request.CommandType), 400, lang, StringFormat(GetFhirMessage('MSG_OP_NOT_ALLOWED', lang), [CODES_TFHIRCommandType[request.CommandType], request.ResourceName]), IssueTypeForbidden) then
+    if check(response, request.canRead(request.ResourceName) and opAllowed(request.ResourceName, request.CommandType), 400, lang, StringFormat(GetFhirMessage('MSG_OP_NOT_ALLOWED', lang), [CODES_TFHIRCommandType[request.CommandType], request.ResourceName]), etForbidden) then
     begin
       if (length(request.id) <= ID_LENGTH) and (length(request.subid) <= ID_LENGTH) and FindResource(request.ResourceName, request.Id, [froFindDeletedResource], resourceKey, versionKey, request, response, nil) then
       begin
@@ -2897,7 +2885,7 @@ begin
           if FConnection.FetchNext then
           Begin
             if (FConnection.ColIntegerByName['Secure'] = 1) and not request.secure then
-              check(response, false, 403, lang, 'This resource is labelled with a security tag that means this server will only send it if the connection is secure', IssueTypeSuppressed)
+              check(response, false, 403, lang, 'This resource is labelled with a security tag that means this server will only send it if the connection is secure', etSuppressed)
             else if (request.IfNoneMatch <> '') and (request.IfNoneMatch = FConnection.GetColStringByName('VersionId')) then
             begin
               response.HTTPCode := 304;
@@ -2961,7 +2949,7 @@ begin
     else
     begin
       if response <> nil then
-        check(response, false, 410, lang, StringFormat(GetFhirMessage('MSG_DELETED_ID', lang), [sId]), IssueTypeNotFound);
+        check(response, false, 410, lang, StringFormat(GetFhirMessage('MSG_DELETED_ID', lang), [sId]), etNotFound);
       result := false;
     end;
   end
@@ -2978,12 +2966,12 @@ begin
       FConnection.execute;
       if FConnection.FetchNext then
       begin
-        check(response, false, 403, lang, StringFormat(GetFhirMessage('MSG_NO_ACCESS', lang), [aType+'/'+sid]), IssueTypeSecurity);
+        check(response, false, 403, lang, StringFormat(GetFhirMessage('MSG_NO_ACCESS', lang), [aType+'/'+sid]), etSecurity);
         abort;
       end;
     end;
     if response <> nil then
-      check(response, false, 404 , lang, StringFormat(GetFhirMessage('MSG_NO_EXIST', lang), [aType+'/'+sid]), IssueTypeNotFound);
+      check(response, false, 404 , lang, StringFormat(GetFhirMessage('MSG_NO_EXIST', lang), [aType+'/'+sid]), etNotFound);
   end;
   FConnection.terminate;
 end;
@@ -3008,7 +2996,7 @@ begin
     FConnection.Terminate;
 
     if exists then
-      raise ERestfulException.create('TFHIRNativeOperationEngine', 'AddNewResourceId', StringFormat(GetFhirMessage('MSG_DUPLICATE_ID', lang), [id, aType]), 404, IssueTypeDuplicate);
+      raise ERestfulException.create('TFHIRNativeOperationEngine.AddNewResourceId', 404, etDuplicate, 'MSG_DUPLICATE_ID', lang, [id, aType]);
 
     FConnection.SQL := 'insert into Ids (ResourceKey, ResourceTypeKey, Id, MostRecent, Deleted, ForTesting) values (:k, :r, :i, null, 0, :ft)';
     FConnection.Prepare;
@@ -3102,11 +3090,11 @@ begin
     StringArrayExistsSensitive(['CPLYCD', 'CPLYJPP', 'CPLYOPP', 'CPLYOSP', 'CPLYPOL', 'ENCRYPT', 'ENCRYPTR', 'ENCRYPTT', 'ENCRYPTU',
                 'ETH', 'GDIS', 'HIV', 'PSY', 'SCA', 'SDV', 'SEX', 'STD', 'TBOO', 'SICKLE', 'DEMO', 'DOB', 'GENDER', 'LIVARG', 'MARST', 'RACE', 'REL',
                 'B', 'EMPL', 'LOCIS', 'SSP', 'ADOL', 'CEL', 'DIA', 'DRGIS', 'EMP', 'PDS', 'PRS'], c.code),
-        403, lang, 'This security label can only be deleted on a secure connection', IssueTypeSuppressed);
+        403, lang, 'This security label can only be deleted on a secure connection', etSuppressed);
   if result then
     result := check(response, request.secure or (c.system <> 'http://hl7.org/fhir/v3/Confidentiality') or not
             StringArrayExistsSensitive(['L', 'M', 'N', 'R', 'U', 'V', 'B', 'D', 'I', 'ETH', 'HIV', 'PSY', 'SDV', 'C', 'S', 'T'], c.code),
-        403, lang, 'This security label can only be deleted on a secure connection', IssueTypeSuppressed);
+        403, lang, 'This security label can only be deleted on a secure connection', etSuppressed);
 end;
 
 function TFHIRNativeOperationEngine.Link: TFHIRNativeOperationEngine;
@@ -3136,8 +3124,8 @@ begin
       for cr in crs do
       begin
         names.add(cr.Name);
-        result := check(response, not ServerContext.ValidatorContext.hasCustomResource(cr.Name), 400, lang, 'Custom resource is already defined', IssueTypeBusinessRule) and
-                  check(response, startup or CustomResourceNameIsOk(cr.Name), 400, lang, 'Custom resource is already defined', IssueTypeBusinessRule);
+        result := check(response, not ServerContext.ValidatorContext.hasCustomResource(cr.Name), 400, lang, 'Custom resource is already defined', etBusinessRule) and
+                  check(response, startup or CustomResourceNameIsOk(cr.Name), 400, lang, 'Custom resource is already defined', etBusinessRule);
       end;
       if result then
         for cr in crs do
@@ -3243,8 +3231,8 @@ begin
       for cr in crs do
       begin
         names.Add(cr.Name);
-        result := result and check(response, not ServerContext.ValidatorContext.hasCustomResource(cr.Name), 400, lang, 'Custom resource is already defined', IssueTypeBusinessRule) and
-                  check(response, startup or CustomResourceNameIsOk(cr.Name), 400, lang, 'Custom resource is already defined', IssueTypeBusinessRule);
+        result := result and check(response, not ServerContext.ValidatorContext.hasCustomResource(cr.Name), 400, lang, 'Custom resource is already defined', etBusinessRule) and
+                  check(response, startup or CustomResourceNameIsOk(cr.Name), 400, lang, 'Custom resource is already defined', etBusinessRule);
       end;
       if result then
         for cr in crs do
@@ -3316,12 +3304,12 @@ begin
   secure := false;
   result := check(response,
       not hasActCodeSecurityLabel(request.Resource, ['CPLYCD', 'CPLYJPP', 'CPLYOPP', 'CPLYOSP', 'CPLYPOL']),
-        403, lang, 'This resource is labelled with a security tag that requires compliance with a policy, but no policy is known', IssueTypeNotSupported);
+        403, lang, 'This resource is labelled with a security tag that requires compliance with a policy, but no policy is known', etNotSupported);
   if result then
     if hasActCodeSecurityLabel(request.Resource, ['ENCRYPT', 'ENCRYPTR', 'ENCRYPTT', 'ENCRYPTU']) then
     begin
       secure := true;
-      result := check(response, request.secure, 403, lang, 'This resource is labelled with a security tag that requires encryption, but encryption was not used', IssueTypeBusinessRule);
+      result := check(response, request.secure, 403, lang, 'This resource is labelled with a security tag that requires encryption, but encryption was not used', etBusinessRule);
     end;
   // extra conditions
   if result and not secure then
@@ -3378,13 +3366,13 @@ var
 begin
   try
     ok := true;
-    if not check(response, opAllowed(request.ResourceName, request.CommandType), 400, lang, StringFormat(GetFhirMessage('MSG_OP_NOT_ALLOWED', lang), [CODES_TFHIRCommandType[request.CommandType], request.ResourceName]), IssueTypeForbidden) then
+    if not check(response, opAllowed(request.ResourceName, request.CommandType), 400, lang, StringFormat(GetFhirMessage('MSG_OP_NOT_ALLOWED', lang), [CODES_TFHIRCommandType[request.CommandType], request.ResourceName]), etForbidden) then
       ok := false;
 
-    if ok and not check(response, request.canWrite(request.ResourceName) and (request.Resource <> nil), 400, lang, GetFhirMessage('MSG_RESOURCE_REQUIRED', lang), IssueTypeRequired) then
+    if ok and not check(response, request.canWrite(request.ResourceName) and (request.Resource <> nil), 400, lang, GetFhirMessage('MSG_RESOURCE_REQUIRED', lang), etRequired) then
       ok := false;
     if ok and (request.Resource <> nil) then
-      if not check(response, request.ResourceName = request.resource.fhirType, 400, lang, GetFhirMessage('MSG_RESOURCE_TYPE_MISMATCH', lang), IssueTypeInvalid) then
+      if not check(response, request.ResourceName = request.resource.fhirType, 400, lang, GetFhirMessage('MSG_RESOURCE_TYPE_MISMATCH', lang), etInvalid) then
         ok := false;
     // todo: check version id integrity
     // todo: check version integrity
@@ -4007,7 +3995,7 @@ begin
     else if response.Resource is TFhirOperationOutcome then
       result := false
     else
-      result := check(response, response.HTTPCode < 300, response.HTTPCode, lang, response.Message, IssueTypeNull);
+      result := check(response, response.HTTPCode < 300, response.HTTPCode, lang, response.Message, etNull);
     ne := id.entry;
     ne.resource := response.resource.Link;
     ne.response := TFhirBundleEntryResponse.Create;
@@ -4043,9 +4031,9 @@ var
 begin
   try
     ok := true;
-    if not check(response, ServerContext.SupportTransaction, 405, lang, 'Transaction Operations not allowed', IssueTypeNotSupported) then
+    if not check(response, ServerContext.SupportTransaction, 405, lang, 'Transaction Operations not allowed', etNotSupported) then
       ok := false;
-    if ok and not check(response, request.Resource is TFhirBundle, 400, lang, 'A bundle is required for a Transaction operation', IssueTypeInvalid) then
+    if ok and not check(response, request.Resource is TFhirBundle, 400, lang, 'A bundle is required for a Transaction operation', etInvalid) then
       ok := false;
 
     if ok then
@@ -4494,7 +4482,7 @@ end;
 //begin
 //  try
 //    NotFound(request, response);
-//    if check(response, opAllowed(request.ResourceName, request.CommandType), 400, lang, StringFormat(GetFhirMessage('MSG_OP_NOT_ALLOWED', lang), [CODES_TFHIRCommandType[request.CommandType], request.ResourceName]), IssueTypeForbidden) then
+//    if check(response, opAllowed(request.ResourceName, request.CommandType), 400, lang, StringFormat(GetFhirMessage('MSG_OP_NOT_ALLOWED', lang), [CODES_TFHIRCommandType[request.CommandType], request.ResourceName]), etForbidden) then
 //    begin
 //      if FindResource(request.ResourceName, request.Id, false, resourceKey, request, response, request.compartments) then
 //      begin
@@ -4572,7 +4560,7 @@ begin
   if result then
     resourceVersionKey := FConnection.ColIntegerByName['ResourceVersionKey']
   else
-    check(response, false, 404 , lang, StringFormat(GetFhirMessage('MSG_NO_EXIST', lang), [request.subid]), IssueTypeNotFound);
+    check(response, false, 404 , lang, StringFormat(GetFhirMessage('MSG_NO_EXIST', lang), [request.subid]), etNotFound);
   FConnection.terminate;
 end;
 
@@ -4621,7 +4609,7 @@ var
 //begin
 //  try
 //    NotFound(request, response);
-//    if check(response, opAllowed(request.ResourceName, request.CommandType), 400, lang, StringFormat(GetFhirMessage('MSG_OP_NOT_ALLOWED', lang), [CODES_TFHIRCommandType[request.CommandType], request.ResourceName]), IssueTypeForbidden) then
+//    if check(response, opAllowed(request.ResourceName, request.CommandType), 400, lang, StringFormat(GetFhirMessage('MSG_OP_NOT_ALLOWED', lang), [CODES_TFHIRCommandType[request.CommandType], request.ResourceName]), etForbidden) then
 //    begin
 //      if (request.id = '') or ((length(request.id) <= ID_LENGTH) and FindResource(frtStructureDefinition, request.Id, false, resourceKey, request, response, request.compartments)) then
 //      begin
@@ -4736,7 +4724,7 @@ begin
       if allowNil then
         exit(nil)
       else
-        raise ERestfulException.create('TFHIRNativeOperationEngine', 'GetResourceByUrl', 'Unknown '+CODES_TFHIRResourceType[aType]+' url: '+url, 404, IssueTypeUnknown);
+        raise ERestfulException.create('TFHIRNativeOperationEngine.GetResourceByUrl', 404, etUnknown, 'Unknown '+CODES_TFHIRResourceType[aType]+' url: '+url, lang);
     needSecure := FConnection.ColIntegerByName['Secure'] = 1;
     s := FConnection.ColBlobByName['JsonContent'];
     parser := MakeParser(ServerContext.ValidatorContext, lang, ffJson, s, xppDrop);
@@ -4744,7 +4732,7 @@ begin
       result := parser.resource.Link as TFHIRResource;
       try
         if FConnection.FetchNext then
-          raise ERestfulException.create('TFHIRNativeOperationEngine', 'GetResourceByUrl', 'Found multiple matches for '+CODES_TFHIRResourceType[aType]+' '+url+'. Pick one by the resource id', 404, IssueTypeNotFound);
+          raise ERestfulException.create('TFHIRNativeOperationEngine.GetResourceByUrl', 404, etNotFound, 'Found multiple matches for '+CODES_TFHIRResourceType[aType]+' '+url+'. Pick one by the resource id', lang);
         result.link;
       finally
         result.free;
@@ -4972,13 +4960,13 @@ begin
         end;
       end
       else
-        raise ERestfulException.create('TFHIRNativeOperationEngine', 'GetResourceByUrl', 'Unable to find '+aType+'/'+id, 404, IssueTypeNotFound);
+        raise ERestfulException.create('TFHIRNativeOperationEngine.GetResourceByUrl', 404, etNotFound, 'Unable to find '+aType+'/'+id, lang);
     finally
       FConnection.Terminate;
     end;
   end
   else
-    raise ERestfulException.create('TFHIRNativeOperationEngine', 'GetResourceByUrl', 'Unknown resource '+aType+'/'+id, 404, IssueTypeNotFound);
+    raise ERestfulException.create('TFHIRNativeOperationEngine.GetResourceByUrl', 404, etNotFound, 'Unknown resource '+aType+'/'+id, lang);
 end;
 
 function TFHIRNativeOperationEngine.GetResourceByKey(key: integer; var needSecure : boolean): TFHIRResource;
@@ -5002,7 +4990,7 @@ begin
       end;
     end
     else
-      raise ERestfulException.create('TFHIRNativeOperationEngine', 'GetResourceByUrl', 'Unable to find resource '+inttostr(key), 404, IssueTypeNotFound);
+      raise ERestfulException.create('TFHIRNativeOperationEngine.GetResourceByUrl', 404, etNotFound, 'Unable to find resource '+inttostr(key), lang);
   finally
     FConnection.Terminate;
   end;
@@ -5025,7 +5013,7 @@ begin
     for res in TFHIRDomainResource(source).containedList do
       if '#'+res.id = url then
         exit(res);
-    raise ERestfulException.create('TFHIRNativeOperationEngine', 'GetResourceByUrl', 'Cannot resolve local reference: '+url, 404, IssueTypeNotFound);
+    raise ERestfulException.create('TFHIRNativeOperationEngine.GetResourceByUrl', 404, etNotFound, 'Cannot resolve local reference: '+url, lang);
   end;
 
   for i := 0 to ServerContext.Bases.Count - 1 do
@@ -5033,25 +5021,25 @@ begin
       url := url.Substring(ServerContext.Bases[i].Length);
 
   if (url.StartsWith('http://') or url.StartsWith('https://')) then
-    raise ERestfulException.create('TFHIRNativeOperationEngine', 'GetResourceByUrl', 'Cannot resolve external reference: '+url, 404, IssueTypeNotFound);
+    raise ERestfulException.create('TFHIRNativeOperationEngine.GetResourceByUrl', 404, etNotFound, 'Cannot resolve external reference: '+url, lang);
 
   parts := url.Split(['/']);
   if length(parts) = 2 then
   begin
     if not StringArrayExistsSensitive(CODES_TFhirResourceType, parts[0])  and not ServerContext.ValidatorContext.hasCustomResource(parts[0]) then
-      raise ERestfulException.create('TFHIRNativeOperationEngine', 'GetResourceByUrl', 'URL not understood: '+url, 404, IssueTypeNotFound);
+      raise ERestfulException.create('TFHIRNativeOperationEngine.GetResourceByUrl', 404, etNotFound, 'URL not understood: '+url, lang);
     rType := parts[0];
     id := parts[1];
   end else if (length(parts) = 4) and (parts[2] = '_history') then
   begin
     if not StringArrayExistsSensitive(CODES_TFhirResourceType, parts[0])  and not ServerContext.ValidatorContext.hasCustomResource(parts[0]) then
-      raise ERestfulException.create('TFHIRNativeOperationEngine', 'GetResourceByUrl', 'URL not understood: '+url, 404, IssueTypeNotFound);
+      raise ERestfulException.create('TFHIRNativeOperationEngine.GetResourceByUrl', 404, etNotFound, 'URL not understood: '+url, lang);
     rType := parts[0];
     id := parts[1];
     ver := parts[3];
   end
   else
-    raise ERestfulException.create('TFHIRNativeOperationEngine', 'GetResourceByUrl', 'URL not understood: '+url, 404, IssueTypeNotFound);
+    raise ERestfulException.create('TFHIRNativeOperationEngine.GetResourceByUrl', 404, etNotFound, 'URL not understood: '+url, lang);
 
   if FindResource(rtype, id, [], key, versionKey, req, nil, nil) then
   begin
@@ -5074,7 +5062,7 @@ begin
         end;
       end
       else if not allowNil then
-        raise ERestfulException.create('TFHIRNativeOperationEngine', 'GetResourceByUrl', 'Unable to find resource '+inttostr(key), 404, IssueTypeNotFound);
+        raise ERestfulException.create('TFHIRNativeOperationEngine.GetResourceByUrl', 404, etNotFound, 'Unable to find resource '+inttostr(key), lang);
     finally
       FConnection.Terminate;
     end;
@@ -5465,9 +5453,9 @@ begin
     if list.Count = 1 then
       result := parts[0]+'/'+list[0].Name
     else if list.Count > 1 then
-      raise ERestfulException.Create('TFHIRNativeOperationEngine', 'resolveConditionalURL', 'Multiple matches found for '+url, 412, IssueTypeConflict)
+      raise ERestfulException.create('TFHIRNativeOperationEngine.resolveConditionalURL', 412, etConflict, 'Multiple matches found for '+url, lang)
     else
-      raise ERestfulException.Create('TFHIRNativeOperationEngine', 'resolveConditionalURL', 'No matches found for '+url, 404, IssueTypeConflict);
+      raise ERestfulException.create('TFHIRNativeOperationEngine.resolveConditionalURL', 404, etConflict, 'No matches found for '+url, lang);
   finally
     list.Free;
   end;
@@ -6099,7 +6087,7 @@ var
 begin
   try
     manager.NotFound(request, response);
-    if native(manager).check(response, manager.opAllowed(request.ResourceName, request.CommandType), 400, manager.lang, StringFormat(GetFhirMessage('MSG_OP_NOT_ALLOWED', manager.lang), [CODES_TFHIRCommandType[request.CommandType], request.ResourceName]), IssueTypeForbidden) then
+    if native(manager).check(response, manager.opAllowed(request.ResourceName, request.CommandType), 400, manager.lang, StringFormat(GetFhirMessage('MSG_OP_NOT_ALLOWED', manager.lang), [CODES_TFHIRCommandType[request.CommandType], request.ResourceName]), etForbidden) then
     begin
       if (request.id = '') or ((length(request.id) <= ID_LENGTH) and manager.FindResource(request.ResourceName, request.Id, [], resourceKey, versionKey, request, response, nil)) then
       begin
@@ -6220,7 +6208,7 @@ var
 begin
   try
     manager.NotFound(request, response);
-    if manager.check(response, request.Session.canRead(request.ResourceName) and manager.opAllowed(request.ResourceName, request.CommandType), 400, request.lang, StringFormat(GetFhirMessage('MSG_OP_NOT_ALLOWED', request.lang), [CODES_TFHIRCommandType[request.CommandType], request.ResourceName]), IssueTypeForbidden) then
+    if manager.check(response, request.Session.canRead(request.ResourceName) and manager.opAllowed(request.ResourceName, request.CommandType), 400, request.lang, StringFormat(GetFhirMessage('MSG_OP_NOT_ALLOWED', request.lang), [CODES_TFHIRCommandType[request.CommandType], request.ResourceName]), etForbidden) then
     begin
       if (request.id = '') or ((length(request.id) <= ID_LENGTH) and manager.FindResource('StructureDefinition', request.Id, [], resourceKey, versionKey, request, response, nil)) then
       begin
@@ -6945,7 +6933,7 @@ var
 begin
   try
     manager.NotFound(request, response);
-    if (request.Id <> '') and manager.check(response, manager.opAllowed(request.ResourceName, request.CommandType), 400, manager.lang, StringFormat(GetFhirMessage('MSG_OP_NOT_ALLOWED', manager.lang), [CODES_TFHIRCommandType[request.CommandType], request.ResourceName]), IssueTypeForbidden) then
+    if (request.Id <> '') and manager.check(response, manager.opAllowed(request.ResourceName, request.CommandType), 400, manager.lang, StringFormat(GetFhirMessage('MSG_OP_NOT_ALLOWED', manager.lang), [CODES_TFHIRCommandType[request.CommandType], request.ResourceName]), etForbidden) then
     begin
       if ((length(request.id) <= ID_LENGTH) and manager.FindResource(request.ResourceName, request.Id, [], resourceKey, versionKey, request, response, nil)) then
       begin
@@ -7330,7 +7318,7 @@ begin
       if needSecure and not secure then
       begin
         if required then
-          raise ERestfulException.Create('TFhirGenerateDocumentOperation', 'Execute', 'This document contains resources labelled with a security tag that means this server will only send it if the connection is secure', 403, IssueTypeSuppressed);
+          raise ERestfulException.Create('TFhirGenerateDocumentOperation.Execute', 403, etSuppressed, 'This document contains resources labelled with a security tag that means this server will only send it if the connection is secure', manager.lang);
       end
       else
       begin
@@ -7405,7 +7393,7 @@ var
 begin
   try
     manager.NotFound(request, response);
-    if manager.check(response, manager.opAllowed(request.ResourceName, request.CommandType), 400, manager.lang, StringFormat(GetFhirMessage('MSG_OP_NOT_ALLOWED', manager.lang), [CODES_TFHIRCommandType[request.CommandType], request.ResourceName]), IssueTypeForbidden) then
+    if manager.check(response, manager.opAllowed(request.ResourceName, request.CommandType), 400, manager.lang, StringFormat(GetFhirMessage('MSG_OP_NOT_ALLOWED', manager.lang), [CODES_TFHIRCommandType[request.CommandType], request.ResourceName]), etForbidden) then
     begin
       if manager.FindResource(request.ResourceName, request.Id, [], resourceKey, versionKey, request, response, nil) then
       begin
@@ -7414,7 +7402,7 @@ begin
           composition.checkNoImplicitRules('GenerateDocument', 'composition');
           composition.checkNoModifiers('GenerateDocument', 'composition');
           if needSecure and not request.secure then
-            raise ERestfulException.Create('TFhirGenerateDocumentOperation', 'Execute', 'This document contains resources labelled with a security tag that means this server will only send it if the connection is secure', 403, IssueTypeSuppressed);
+            raise ERestfulException.Create('TFhirGenerateDocumentOperation.Execute', 403, etSuppressed, 'This document contains resources labelled with a security tag that means this server will only send it if the connection is secure', manager.lang);
 
           bundle := TFhirBundle.Create(BundleTypeDocument);
           try
@@ -7555,7 +7543,7 @@ var
 begin
   try
     manager.NotFound(request, response);
-    if manager.check(response, manager.opAllowed(request.ResourceName, request.CommandType), 400, manager.lang, StringFormat(GetFhirMessage('MSG_OP_NOT_ALLOWED', manager.lang), [CODES_TFHIRCommandType[request.CommandType], request.ResourceName]), IssueTypeForbidden) then
+    if manager.check(response, manager.opAllowed(request.ResourceName, request.CommandType), 400, manager.lang, StringFormat(GetFhirMessage('MSG_OP_NOT_ALLOWED', manager.lang), [CODES_TFHIRCommandType[request.CommandType], request.ResourceName]), etForbidden) then
     begin
       if (request.id = '') or ((length(request.id) <= ID_LENGTH) and manager.FindResource(request.ResourceName, request.Id, [], resourceKey, versionKey, request, response, nil)) then
       begin
@@ -7685,7 +7673,7 @@ var
 begin
   try
     manager.NotFound(request, response);
-    if manager.check(response, manager.opAllowed(request.ResourceName, request.CommandType), 400, manager.lang, StringFormat(GetFhirMessage('MSG_OP_NOT_ALLOWED', manager.lang), [CODES_TFHIRCommandType[request.CommandType], request.ResourceName]), IssueTypeForbidden) then
+    if manager.check(response, manager.opAllowed(request.ResourceName, request.CommandType), 400, manager.lang, StringFormat(GetFhirMessage('MSG_OP_NOT_ALLOWED', manager.lang), [CODES_TFHIRCommandType[request.CommandType], request.ResourceName]), etForbidden) then
     begin
       sdParam := nil;
       sdBase := nil;
@@ -7804,7 +7792,7 @@ var
 begin
   try
     manager.NotFound(request, response);
-    if manager.check(response, request.Session.canRead(request.ResourceName) and manager.opAllowed(request.ResourceName, request.CommandType), 400, request.lang, StringFormat(GetFhirMessage('MSG_OP_NOT_ALLOWED', request.lang), [CODES_TFHIRCommandType[request.CommandType], request.ResourceName]), IssueTypeForbidden) then
+    if manager.check(response, request.Session.canRead(request.ResourceName) and manager.opAllowed(request.ResourceName, request.CommandType), 400, request.lang, StringFormat(GetFhirMessage('MSG_OP_NOT_ALLOWED', request.lang), [CODES_TFHIRCommandType[request.CommandType], request.ResourceName]), etForbidden) then
     begin
       if (request.id = '') or ((length(request.id) <= ID_LENGTH) and manager.FindResource('StructureDefinition', request.Id, [], resourceKey, versionKey, request, response, nil)) then
       begin
@@ -8008,14 +7996,14 @@ begin
     end
     else if request.Id = '' then
     begin
-      if not manager.check(response, request.canRead(request.ResourceName) and manager.opAllowed(request.ResourceName, fcmdRead) and native(manager).ServerContext.ResConfig[request.ResourceName].Supported, 400, request.lang, StringFormat(GetFhirMessage('MSG_OP_NOT_ALLOWED', request.lang), [CODES_TFHIRCommandType[request.CommandType], request.ResourceName]), IssueTypeForbidden) then
+      if not manager.check(response, request.canRead(request.ResourceName) and manager.opAllowed(request.ResourceName, fcmdRead) and native(manager).ServerContext.ResConfig[request.ResourceName].Supported, 400, request.lang, StringFormat(GetFhirMessage('MSG_OP_NOT_ALLOWED', request.lang), [CODES_TFHIRCommandType[request.CommandType], request.ResourceName]), etForbidden) then
         ok := false
       else
         native(manager).Connection.sql := 'Select Kind, Uri, Code, Display, (select count(*) from VersionTags where Tags.TagKey = VersionTags.TagKey and ResourceVersionKey in (select MostRecent from Ids where ResourceTypeKey = '+inttostr(native(manager).ServerContext.ResConfig[request.ResourceName].Key)+')) as usecount  from Tags where TagKey in (Select TagKey from VersionTags where ResourceVersionKey in (select MostRecent from Ids where ResourceTypeKey = '+inttostr(native(manager).ServerContext.ResConfig[request.ResourceName].Key)+')) order by Kind, Uri, Code'
     end
     else if request.SubId = '' then
     begin
-      if not manager.check(response, request.canRead(request.ResourceName) and manager.opAllowed(request.ResourceName, fcmdRead), 400, request.lang, StringFormat(GetFhirMessage('MSG_OP_NOT_ALLOWED', request.lang), [CODES_TFHIRCommandType[request.CommandType], request.ResourceName]), IssueTypeForbidden) then
+      if not manager.check(response, request.canRead(request.ResourceName) and manager.opAllowed(request.ResourceName, fcmdRead), 400, request.lang, StringFormat(GetFhirMessage('MSG_OP_NOT_ALLOWED', request.lang), [CODES_TFHIRCommandType[request.CommandType], request.ResourceName]), etForbidden) then
          Ok := false
       else
         native(manager).Connection.sql := 'Select Kind, Uri, Code, VersionTags.Display, 1 as UseCount from Tags, VersionTags '+
@@ -8023,7 +8011,7 @@ begin
     end
     else
     begin
-      if not manager.check(response, request.canRead(request.ResourceName) and manager.opAllowed(request.ResourceName, fcmdVersionRead), 400, request.lang, StringFormat(GetFhirMessage('MSG_OP_NOT_ALLOWED', request.lang), [CODES_TFHIRCommandType[request.CommandType], request.ResourceName]), IssueTypeForbidden) then
+      if not manager.check(response, request.canRead(request.ResourceName) and manager.opAllowed(request.ResourceName, fcmdVersionRead), 400, request.lang, StringFormat(GetFhirMessage('MSG_OP_NOT_ALLOWED', request.lang), [CODES_TFHIRCommandType[request.CommandType], request.ResourceName]), etForbidden) then
         ok := false
       else
         native(manager).FConnection.sql := 'Select Kind, Uri, Code, VersionTags.Display, 1 as UseCount  from Tags, VersionTags '+
@@ -8149,7 +8137,7 @@ begin
 
   try
     ok := true;
-    if not manager.check(response, request.canWrite(request.ResourceName) and manager.opAllowed(request.ResourceName, fcmdUpdate), 400, request.lang, StringFormat(GetFhirMessage('MSG_OP_NOT_ALLOWED', request.lang), [CODES_TFHIRCommandType[request.CommandType], request.ResourceName]), IssueTypeForbidden) then
+    if not manager.check(response, request.canWrite(request.ResourceName) and manager.opAllowed(request.ResourceName, fcmdUpdate), 400, request.lang, StringFormat(GetFhirMessage('MSG_OP_NOT_ALLOWED', request.lang), [CODES_TFHIRCommandType[request.CommandType], request.ResourceName]), etForbidden) then
       ok := false;
     if ok then
       manager.NotFound(request, response);
@@ -8161,7 +8149,7 @@ begin
     begin
       if request.SubId <> '' then
       begin
-        if not manager.check(response, manager.opAllowed(request.ResourceName, fcmdUpdate), 400, request.lang, StringFormat(GetFhirMessage('MSG_OP_NOT_ALLOWED', request.lang), [CODES_TFHIRCommandType[request.CommandType], request.ResourceName]), IssueTypeForbidden) then
+        if not manager.check(response, manager.opAllowed(request.ResourceName, fcmdUpdate), 400, request.lang, StringFormat(GetFhirMessage('MSG_OP_NOT_ALLOWED', request.lang), [CODES_TFHIRCommandType[request.CommandType], request.ResourceName]), etForbidden) then
           ok := false;
        if ok and Not native(manager).FindResourceVersion(request.ResourceName, request.Id, request.SubId, false, resourceVersionKey, request, response) then
          ok := false;
@@ -8302,7 +8290,7 @@ begin
   meta := nil;
   try
     ok := true;
-    if not manager.check(response, request.canWrite(request.ResourceName) and manager.opAllowed(request.ResourceName, fcmdUpdate), 400, request.lang, StringFormat(GetFhirMessage('MSG_OP_NOT_ALLOWED', request.lang), [CODES_TFHIRCommandType[request.CommandType], request.ResourceName]), IssueTypeForbidden) then
+    if not manager.check(response, request.canWrite(request.ResourceName) and manager.opAllowed(request.ResourceName, fcmdUpdate), 400, request.lang, StringFormat(GetFhirMessage('MSG_OP_NOT_ALLOWED', request.lang), [CODES_TFHIRCommandType[request.CommandType], request.ResourceName]), etForbidden) then
       ok := false;
     if ok then
       manager.NotFound(request, response);
@@ -8314,7 +8302,7 @@ begin
     begin
       if request.SubId <> '' then
       begin
-        if not manager.check(response, manager.opAllowed(request.ResourceName, fcmdUpdate), 400, request.lang, StringFormat(GetFhirMessage('MSG_OP_NOT_ALLOWED', request.lang), [CODES_TFHIRCommandType[request.CommandType], request.ResourceName]), IssueTypeForbidden) then
+        if not manager.check(response, manager.opAllowed(request.ResourceName, fcmdUpdate), 400, request.lang, StringFormat(GetFhirMessage('MSG_OP_NOT_ALLOWED', request.lang), [CODES_TFHIRCommandType[request.CommandType], request.ResourceName]), etForbidden) then
           ok := false;
        if ok and Not native(manager).FindResourceVersion(request.ResourceName, request.Id, request.SubId, false, resourceVersionKey, request, response) then
          ok := false;
@@ -8460,13 +8448,13 @@ var
 begin
   try
     ok := true;
-    if not manager.check(response, request.canRead(request.ResourceName) and manager.opAllowed(request.ResourceName, fcmdRead), 400, request.lang, StringFormat(GetFhirMessage('MSG_OP_NOT_ALLOWED', request.lang), [CODES_TFHIRCommandType[request.CommandType], request.ResourceName]), IssueTypeForbidden) then
+    if not manager.check(response, request.canRead(request.ResourceName) and manager.opAllowed(request.ResourceName, fcmdRead), 400, request.lang, StringFormat(GetFhirMessage('MSG_OP_NOT_ALLOWED', request.lang), [CODES_TFHIRCommandType[request.CommandType], request.ResourceName]), etForbidden) then
       ok := false;
     if ok then
       manager.NotFound(request, response);
     if ok and not manager.FindResource(request.ResourceName, request.Id, [], resourceKey, versionKey, request, response, nil) then
       ok := false;
-    if ok and not manager.check(response, request.Resource <> nil, 400, request.lang, 'A resource to compare must be posted', IssueTypeRequired) then
+    if ok and not manager.check(response, request.Resource <> nil, 400, request.lang, 'A resource to compare must be posted', etRequired) then
       ok := false;
     if not ok then
       // nothing
@@ -8603,7 +8591,7 @@ var
 begin
   try
     manager.NotFound(request, response);
-    if manager.check(response, manager.opAllowed(request.ResourceName, request.CommandType), 400, manager.lang, StringFormat(GetFhirMessage('MSG_OP_NOT_ALLOWED', manager.lang), [CODES_TFHIRCommandType[request.CommandType], request.ResourceName]), IssueTypeForbidden) then
+    if manager.check(response, manager.opAllowed(request.ResourceName, request.CommandType), 400, manager.lang, StringFormat(GetFhirMessage('MSG_OP_NOT_ALLOWED', manager.lang), [CODES_TFHIRCommandType[request.CommandType], request.ResourceName]), etForbidden) then
     begin
       params := TFHIRTransformOpRequest.Create;
       try
@@ -8625,16 +8613,16 @@ begin
             begin
               map := native(manager).GetResourceByKey(rkey, needSecure) as TFHIRStructureMap;
               if needSecure and not request.secure then
-                raise ERestfulException.Create('TFhirGenerateDocumentOperation', 'Execute', 'This document contains resources labelled with a security tag that means this server will only send it if the connection is secure', 403, IssueTypeSuppressed);
+                raise ERestfulException.Create('TFhirGenerateDocumentOperation.Execute', 403, etSuppressed, 'This document contains resources labelled with a security tag that means this server will only send it if the connection is secure', manager.lang);
             end;
           end
           else if params.source <> '' then
           begin
             map := lib[params.source].link;
-            manager.check(response, map <> nil, 404 , manager.lang, StringFormat(GetFhirMessage('MSG_NO_EXIST', manager.lang), [params.source]), IssueTypeNotFound);
+            manager.check(response, map <> nil, 404 , manager.lang, StringFormat(GetFhirMessage('MSG_NO_EXIST', manager.lang), [params.source]), etNotFound);
           end
           else
-            manager.check(response, false, 404, manager.lang, StringFormat(GetFhirMessage('MSG_NO_EXIST', manager.lang), ['no id provided']), IssueTypeNotFound);
+            manager.check(response, false, 404, manager.lang, StringFormat(GetFhirMessage('MSG_NO_EXIST', manager.lang), ['no id provided']), etNotFound);
           if (map <> nil) then
           begin
             try
@@ -8654,7 +8642,7 @@ begin
                       response.Resource := TFHIRCustomResource.createFromBase(native(manager).ServerContext.ValidatorContext, outcome);
                   except
                     on e : exception do
-                      native(manager).check(response, false, 500, manager.lang, e.Message, IssueTypeProcessing);
+                      native(manager).check(response, false, 500, manager.lang, e.Message, etProcessing);
                   end;
                 finally
                   utils.Free;
@@ -8765,7 +8753,7 @@ begin
   try
     try
       manager.NotFound(request, response);
-      if manager.check(response, manager.opAllowed(request.ResourceName, request.CommandType), 400, manager.lang, StringFormat(GetFhirMessage('MSG_OP_NOT_ALLOWED', manager.lang), [CODES_TFHIRCommandType[request.CommandType], request.ResourceName]), IssueTypeForbidden) and
+      if manager.check(response, manager.opAllowed(request.ResourceName, request.CommandType), 400, manager.lang, StringFormat(GetFhirMessage('MSG_OP_NOT_ALLOWED', manager.lang), [CODES_TFHIRCommandType[request.CommandType], request.ResourceName]), etForbidden) and
         manager.FindResource('ImplementationGuide', request.Id, [], rkey, versionKey, request, response, nil) then
       begin
         ok := native(manager).loadCustomResources(response, rkey, false, names);
@@ -9033,13 +9021,6 @@ begin
 
         logt('Load Validation Pack from ' + fn);
         ServerContext.ValidatorContext.LoadFromDefinitions(fn);
-        {$IFNDEF FHIR2}
-        if ServerContext.JavaServices <> nil then
-        begin
-          logt('Load in Java');
-          ServerContext.JavaServices.init(fn);
-        end;
-        {$ENDIF}
         if ServerContext.forLoad then
         begin
           logt('Load Custom Resources');
@@ -9872,7 +9853,7 @@ var
   vs : TFHIRValueset;
 begin
   if (resource.ResourceType in [frtValueSet, frtConceptMap, frtStructureDefinition, frtQuestionnaire, frtSubscription]) and (needsSecure or ((resource.meta <> nil) and not resource.meta.securityList.IsEmpty)) then
-    raise ERestfulException.Create('TFHIRNativeStorageService', 'SeeResource', 'Resources of type '+CODES_TFHIRResourceType[resource.ResourceType]+' are not allowed to have a security label on them', 400, IssueTypeBusinessRule);
+    raise ERestfulException.Create('TFHIRNativeStorageService.SeeResource', 400, etBusinessRule, 'Resources of type '+CODES_TFHIRResourceType[resource.ResourceType]+' are not allowed to have a security label on them', request.lang);
 
   ServerContext.ApplicationCache.checkResource(resource);
   if resource.ResourceType = frtValueSet then
@@ -10262,12 +10243,12 @@ begin
   end
 end;
 
-procedure TFHIRNativeStorageService.SeeResource(key, vkey, pvkey: integer; id: string; needsSecure, created : boolean; resource: TFhirResource; conn: TKDBConnection; reload: Boolean; session: TFhirSession; src : Tbytes);
+procedure TFHIRNativeStorageService.SeeResource(key, vkey, pvkey: integer; id: string; needsSecure, created : boolean; resource: TFhirResource; conn: TKDBConnection; reload: Boolean; session: TFhirSession; lang: string; src : Tbytes);
 var
   vs : TFHIRValueSet;
 begin
   if (resource.ResourceType in [frtValueSet, frtConceptMap, frtStructureDefinition, frtQuestionnaire, frtSubscription]) and (needsSecure or ((resource.meta <> nil) and not resource.meta.securityList.IsEmpty)) then
-    raise ERestfulException.Create('TFHIRNativeStorageService', 'SeeResource', 'Resources of type '+CODES_TFHIRResourceType[resource.ResourceType]+' are not allowed to have a security label on them', 400, IssueTypeBusinessRule);
+    raise ERestfulException.Create('TFHIRNativeStorageService.SeeResource', 400, etBusinessRule, 'Resources of type '+CODES_TFHIRResourceType[resource.ResourceType]+' are not allowed to have a security label on them', lang);
 
   ServerContext.ApplicationCache.seeResource(resource);
   if resource.ResourceType = frtValueSet then
@@ -10291,11 +10272,6 @@ begin
   else
     FServerContext.SubscriptionManager.SeeResource(key, vkey, pvkey, id, subscriptionUpdate, resource, conn, reload, session);
 
-  {$IFNDEF FHIR2}
-  if (resource.ResourceType in [frtValueSet, frtStructureDefinition, frtCodeSystem]) then
-    if ServerContext.JavaServices <> nil then
-      FServerContext.JavaServices.seeResource(resource, src);
-  {$ENDIF}
 
   FLock.Lock('SeeResource');
   try
@@ -10426,11 +10402,6 @@ begin
   if i > -1 then
   begin
     aType := TFhirResourceType(i);
-    {$IFNDEF FHIR2}
-    if (aType in [frtValueSet, frtStructureDefinition, frtCodeSystem]) then
-      if ServerContext.JavaServices <> nil then
-        FServerContext.JavaServices.dropResource(resource, id);
-    {$ENDIF}
 
     FLock.Lock('DropResource');
     try
@@ -11088,7 +11059,7 @@ begin
             0,
             conn.ColStringByName['Id'],
             conn.ColIntegerByName['Secure'] = 1,
-            false, parser.resource as TFHIRResource, cback, true, nil, mem);
+            false, parser.resource as TFHIRResource, cback, true, nil, 'en', mem);
         finally
           parser.free;
         end;

@@ -300,12 +300,6 @@
         <DCCReference Include="..\Libraries\js\AdvJavascript.pas"/>
         <DCCReference Include="..\reference-platform\support\DigitalSignatures.pas"/>
         <DCCReference Include="..\reference-platform\support\FHIRFactory.pas"/>
-        <DCCReference Include="..\Server\JavaBridge.pas"/>
-        <DCCReference Include="..\Libraries\java\myUTF8Strings.pas"/>
-        <DCCReference Include="..\Libraries\java\JUtils.pas"/>
-        <DCCReference Include="..\Libraries\java\JNIWrapper.pas"/>
-        <DCCReference Include="..\Libraries\java\JNI.pas"/>
-        <DCCReference Include="..\Libraries\java\JavaRuntime.pas"/>
         <DCCReference Include="..\Server\CountryCodeServices.pas"/>
         <DCCReference Include="..\Server\USStatesServices.pas"/>
         <DCCReference Include="..\reference-platform\dstu3\FHIRPathNode3.pas"/>

@@ -1,11 +1,4 @@
 Unit FHIRValidator3;
-
-{
-Maintaining the pascal validator is proving too expensive.
-this validator is being retired in favour of using Java
-validator via JNI (see JavaBridge)
-}
-
 {
 Copyright (c) 2011+, HL7 and Health Intersections Pty Ltd (http://www.healthintersections.com.au)
   All rights reserved.
@@ -45,7 +38,7 @@ Uses
 
   ParserSupport, MXML, AdvXmlEntities, AdvJSON,
 
-  FHIRBase, FHIRParser, FHIRSupport, FHIRXhtml, 
+  FHIRBase, FHIRLang, FHIRParser, FHIRSupport, FHIRXhtml,
   FHIRPathNode3, FHIRContext3, FHIRResources3, FHIRTypes3, FHIRPath3, FHIRMetaModel3;
 
 Type

@@ -368,7 +368,7 @@ begin
   result := false;
   NotFound(request, response);
   filename := Path(['C:\work\org.hl7.fhir\build\publish', 'patient-'+request.Id+'.xml']);
-  if check(response, FIsReadAllowed and (request.ResourceName = 'Patient') and FileExists(filename), 400, lang, StringFormat(GetFhirMessage('MSG_OP_NOT_ALLOWED', lang), [CODES_TFHIRCommandType[request.CommandType], request.ResourceName]), IssueTypeForbidden) then
+  if check(response, FIsReadAllowed and (request.ResourceName = 'Patient') and FileExists(filename), 400, lang, StringFormat(GetFhirMessage('MSG_OP_NOT_ALLOWED', lang), [CODES_TFHIRCommandType[request.CommandType], request.ResourceName]), etForbidden) then
   begin
     result := true;
     FStorage.FLastReadUser := request.Session.Username;

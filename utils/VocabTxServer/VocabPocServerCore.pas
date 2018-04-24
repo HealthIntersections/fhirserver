@@ -665,7 +665,7 @@ begin
   begin
     res := FServer.getCodeSystemById(sId);
     try
-      if check(response, res <> nil, 410, lang, StringFormat(GetFhirMessage('MSG_NO_EXIST', lang), [aType+'/'+request.id]), IssueTypeNotFound) then
+      if check(response, res <> nil, 410, lang, StringFormat(GetFhirMessage('MSG_NO_EXIST', lang), [aType+'/'+request.id]), etNotFound) then
       begin
         result := true;
         resourceKey := res.tagInt;
@@ -679,7 +679,7 @@ begin
   begin
     res := FServer.getValueSetById(sId);
     try
-      if check(response, res <> nil, 410, lang, StringFormat(GetFhirMessage('MSG_NO_EXIST', lang), [aType+'/'+request.id]), IssueTypeNotFound) then
+      if check(response, res <> nil, 410, lang, StringFormat(GetFhirMessage('MSG_NO_EXIST', lang), [aType+'/'+request.id]), etNotFound) then
       begin
         result := true;
         resourceKey := res.tagInt;
@@ -690,7 +690,7 @@ begin
     end;
   end
   else
-    check(response, false, 404 , lang, StringFormat(GetFhirMessage('MSG_NO_EXIST', lang), [aType+'/'+sId]), IssueTypeNotFound);
+    check(response, false, 404 , lang, StringFormat(GetFhirMessage('MSG_NO_EXIST', lang), [aType+'/'+sId]), etNotFound);
 end;
 
 function TTerminologyServerOperationEngine.GetResourceById(request: TFHIRRequest; aType, id, base: String; var needSecure: boolean): TFHIRResource;

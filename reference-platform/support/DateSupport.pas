@@ -191,6 +191,9 @@ type
     class function isValidXmlDate(value : String) : Boolean; static;
 
     property Precision : TDateTimeExPrecision read FPrecision;
+
+    function clone : TDateTimeEx;
+    function link : TDateTimeEx;
   end;
 
 
@@ -305,6 +308,23 @@ begin
     result := -1
   else
     result := 0;
+end;
+
+function TDateTimeEx.clone: TDateTimeEx;
+begin
+  result.Source := Source;
+  result.year := year;
+  result.month := month;
+  result.day := day;
+  result.hour := hour;
+  result.minute := minute;
+  result.second := second;
+  result.fraction := fraction;
+  result.FPrecision := FPrecision;
+  result.FractionPrecision := FractionPrecision;
+  result.TimezoneType := TimezoneType;
+  result.TimeZoneHours := TimeZoneHours;
+  result.TimezoneMins := TimezoneMins;
 end;
 
 function TDateTimeEx.DateTime: TDateTime;
@@ -644,6 +664,11 @@ begin
   if result.FPrecision > dtpYear then
     result.FPrecision := pred(result.FPrecision);
   result.RollUp;
+end;
+
+function TDateTimeEx.link: TDateTimeEx;
+begin
+  result := self;
 end;
 
 function TDateTimeEx.IncrementWeek : TDateTimeEx;

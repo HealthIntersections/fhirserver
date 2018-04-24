@@ -317,12 +317,6 @@ uses
   FHIRClientJs in '..\Libraries\js\FHIRClientJs.pas',
   ServerEventJs in '..\Server\ServerEventJs.pas',
   ServerJavascriptHost in '..\Server\ServerJavascriptHost.pas',
-  JNIWrapper in '..\Libraries\java\JNIWrapper.pas',
-  JNI in '..\Libraries\java\JNI.pas',
-  JUtils in '..\Libraries\java\JUtils.pas',
-  JavaRuntime in '..\Libraries\java\JavaRuntime.pas',
-  JavaBridge in '..\Server\JavaBridge.pas',
-  JavaBridgeTests in 'JavaBridgeTests.pas',
   myUTF8Strings in '..\Libraries\java\myUTF8Strings.pas',
   FHIRFactory in '..\reference-platform\support\FHIRFactory.pas',
   IdUriParserTests in 'IdUriParserTests.pas',
@@ -334,7 +328,17 @@ uses
   UcumServiceInterface in '..\reference-platform\support\UcumServiceInterface.pas',
   FHIRBase4 in '..\reference-platform\r4\FHIRBase4.pas',
   FHIRXhtmlComposer in '..\reference-platform\Support\FHIRXhtmlComposer.pas',
-  FHIRParserBase4 in '..\reference-platform\r4\FHIRParserBase4.pas';
+  FHIRParserBase4 in '..\reference-platform\r4\FHIRParserBase4.pas',
+  VersionConvertor_30_40 in '..\reference-platform\xversion\VersionConvertor_30_40.pas',
+  FHIRResources3 in '..\reference-platform\dstu3\FHIRResources3.pas',
+  FHIRBase3 in '..\reference-platform\dstu3\FHIRBase3.pas',
+  FHIRTypes3 in '..\reference-platform\dstu3\FHIRTypes3.pas',
+  FHIRMetaModel3 in '..\reference-platform\dstu3\FHIRMetaModel3.pas',
+  FHIRContext3 in '..\reference-platform\dstu3\FHIRContext3.pas',
+  FHIRUtilities3 in '..\reference-platform\dstu3\FHIRUtilities3.pas',
+  FHIRConstants3 in '..\reference-platform\dstu3\FHIRConstants3.pas',
+  FHIRPathNode3 in '..\reference-platform\dstu3\FHIRPathNode3.pas',
+  FHIRProfileUtilities3 in '..\reference-platform\dstu3\FHIRProfileUtilities3.pas';
 
 var
   runner : ITestRunner;

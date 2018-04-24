@@ -43,16 +43,16 @@ uses
 
   MimeMessage, TextUtilities, ZLib, InternetFetcher,
 
-  FHIRSupport, FHIRParserBase, FHIRParser, FHIRBase, FHIRXHtml, FHIRXHtmlComposer,
+  FHIRSupport, FHIRLang, FHIRParserBase, FHIRParser, FHIRBase, FHIRXHtml, FHIRXHtmlComposer,
   FHIRTypes2, FHIRResources2, FHIRConstants2, FHIRContext2;
-
-Type
-  ETooCostly = class (Exception);
-  EUnsafeOperation = class (Exception);
-  DefinitionException = class (Exception);
 
 
 const
+  ExceptionTypeTranslations : array [TExceptionType] of TFhirIssueTypeEnum = (IssueTypeNull, IssueTypeInvalid, IssueTypeStructure, IssueTypeRequired, IssueTypeValue,
+    IssueTypeInvariant, IssueTypeSecurity, IssueTypeLogin, IssueTypeUnknown, IssueTypeExpired, IssueTypeForbidden, IssueTypeSuppressed, IssueTypeProcessing,
+    IssueTypeNotSupported, IssueTypeDuplicate, IssueTypeNotFound, IssueTypeTooLong, IssueTypeCodeInvalid, IssueTypeExtension, IssueTypeTooCostly, IssueTypeBusinessRule,
+    IssueTypeConflict, IssueTypeIncomplete, IssueTypeTransient, IssueTypeLockError, IssueTypeNoStore, IssueTypeException, IssueTypeTimeout, IssueTypeThrottled, IssueTypeInformational);
+
   MIN_DATE = DATETIME_MIN;
   MAX_DATE = DATETIME_MAX;
   ANY_CODE_VS = 'http://hl7.org/fhir/ValueSet/@all';
@@ -92,7 +92,7 @@ function isResourceName(name : String; canbeLower : boolean = false) : boolean;
 
 Function RecogniseFHIRResourceName(Const sName : String; out aType : TFhirResourceType): boolean;
 Function RecogniseFHIRResourceManagerName(Const sName : String; out aType : TFhirResourceType): boolean;
-Function RecogniseFHIRFormat(Const sName : String): TFHIRFormat;
+Function RecogniseFHIRFormat(Const sName, lang : String): TFHIRFormat;
 function MakeParser(oWorker : TFHIRWorkerContext; lang : String; aFormat: TFHIRFormat; oContent: TStream; policy : TFHIRXhtmlParserPolicy): TFHIRParser; overload;
 function MakeParser(oWorker : TFHIRWorkerContext; lang : String; aFormat: TFHIRFormat; content: TBytes; policy : TFHIRXhtmlParserPolicy): TFHIRParser; overload;
 function MakeParser(oWorker : TFHIRWorkerContext; lang : String; mimetype : String; content: TBytes; policy : TFHIRXhtmlParserPolicy): TFHIRParser; overload;
@@ -923,7 +923,7 @@ Begin
     aType := TFhirResourceType(iIndex);
 End;
 
-Function RecogniseFHIRFormat(Const sName : String): TFHIRFormat;
+Function RecogniseFHIRFormat(Const sName, lang : String): TFHIRFormat;
 Begin
   if (sName = '.xml') or (sName = 'xml') or (sName = '.xsd') or (sName = 'xsd') Then
     result := ffXml
@@ -932,7 +932,7 @@ Begin
   else if sName = '' then
     result := ffUnspecified
   else
-    raise ERestfulException.create('FHIRBase', 'RecogniseFHIRFormat', 'Unknown format '+sName, HTTP_ERR_BAD_REQUEST, IssueTypeStructure);
+    raise ERestfulException.create('FHIRBase.RecogniseFHIRFormat', HTTP_ERR_BAD_REQUEST, etStructure, 'Unknown format '+sName, lang);
 End;
 
 

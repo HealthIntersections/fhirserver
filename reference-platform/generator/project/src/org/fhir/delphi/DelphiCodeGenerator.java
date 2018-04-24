@@ -83,11 +83,23 @@ public class DelphiCodeGenerator extends OutputStreamWriter {
   public List<String> procsPub = new ArrayList<String>();
 
   private String rId;
+  boolean include = true;
 
   public DelphiCodeGenerator(OutputStream out, String rId) throws UnsupportedEncodingException {
     super(out, "ASCII");
     this.rId = rId;
   }
+
+  
+  public boolean isInclude() {
+    return include;
+  }
+
+
+  public void setInclude(boolean include) {
+    this.include = include;
+  }
+
 
   public void start() throws Exception {
   }
@@ -128,8 +140,10 @@ public class DelphiCodeGenerator extends OutputStreamWriter {
     }
     write("unit "+name+rId+";\r\n");
     write("\r\n");
-    write("{$I fhir"+rId+".inc}\r\n");
-    write("\r\n");
+    if (include) {
+      write("{$I fhir"+rId+".inc}\r\n");
+      write("\r\n");
+    }
     write("{\r\n"+FULL_LICENSE_CODE+"}\r\n");
     write("\r\n");
     write("interface\r\n");

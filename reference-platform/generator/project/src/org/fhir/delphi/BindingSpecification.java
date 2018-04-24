@@ -94,6 +94,7 @@ public class BindingSpecification {
   private String vsOid;
 //  private List<DefinedCode> childCodes;
   private List<DefinedCode> allCodes;
+private String vsUrl;
   
 
   
@@ -352,6 +353,7 @@ public class BindingSpecification {
   }
 
   public void loadFromExpansion(org.hl7.fhir.dstu3.model.ValueSet vs) {
+    vsUrl = vs.getUrl();
     allCodes = new ArrayList<DefinedCode>();
     for (org.hl7.fhir.dstu3.model.ValueSet.ValueSetExpansionContainsComponent c : vs.getExpansion().getContains()) {
       DefinedCode cd = new DefinedCode();
@@ -363,6 +365,7 @@ public class BindingSpecification {
     
   }
   public void loadFromExpansion(org.hl7.fhir.r4.model.ValueSet vs) {
+    vsUrl = vs.getUrl();
     allCodes = new ArrayList<DefinedCode>();
     for (org.hl7.fhir.r4.model.ValueSet.ValueSetExpansionContainsComponent c : vs.getExpansion().getContains()) {
       DefinedCode cd = new DefinedCode();
@@ -374,6 +377,7 @@ public class BindingSpecification {
     
   }
   public void loadFromExpansion(ValueSet vs) {
+    vsUrl = vs.getUrl();
     allCodes = new ArrayList<DefinedCode>();
     for (ValueSetExpansionContainsComponent c : vs.getExpansion().getContains()) {
       DefinedCode cd = new DefinedCode();
@@ -387,6 +391,10 @@ public class BindingSpecification {
 
   public boolean hasAllCodes() {
     return allCodes != null;
+  }
+
+  public String getVsUrl() {
+    return vsUrl;
   }  
   
   

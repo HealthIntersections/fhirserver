@@ -1,5 +1,6 @@
 package org.fhir.delphi;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -14,12 +15,15 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.Map.Entry;
 
+import org.fhir.delphi.VersionConvertorTranslator.ClassInfo;
 import org.hl7.fhir.dstu2.model.DateTimeType;
 import org.hl7.fhir.dstu3.model.OperationDefinition;
 import org.hl7.fhir.dstu3.model.OperationDefinition.OperationDefinitionParameterComponent;
 import org.hl7.fhir.dstu3.model.OperationDefinition.OperationParameterUse;
 import org.hl7.fhir.dstu3.model.StructureDefinition;
+import org.hl7.fhir.utilities.CommaSeparatedStringBuilder;
 import org.hl7.fhir.utilities.TextFile;
 import org.hl7.fhir.utilities.Utilities;
 
@@ -33,6 +37,8 @@ import org.hl7.fhir.utilities.Utilities;
  */
 public class DelphiGenerator {
 
+  private static final boolean WANT_SAVE = false;
+  
   // this is to generate code with generics, but due to limitations with 
   // delphi's generics (no covariance) it it not used. retained for possible
   // future use if delphi generics are ever sorted out
@@ -108,18 +114,22 @@ public class DelphiGenerator {
   private StringBuilder converterImpls = new StringBuilder();
   
   private Map<String, String> simpleTypes = new HashMap<String, String>();
-
+  private Map<String, String> allenums = new HashMap<String, String>();
+  
   private List<String> types = new ArrayList<String>();
   private List<String> constants = new ArrayList<String>();
   private List<String> opNames = new ArrayList<String>();
   private String destDir;
   private String rId;
 
+  private String version;
+
 
   public DelphiGenerator(String destDir, String rId) {
     super();
     this.destDir = destDir;
     this.rId = ""; // rId;
+    this.version = rId;
   }
 
   public void generate(Definitions definitions, String version, DateTimeType dateTimeType)  throws Exception {
@@ -250,7 +260,6 @@ public class DelphiGenerator {
 
     finishIndexer();
 
-    TextFile.stringToFile(include.toString(), Utilities.path(destDir, "fhir"+rId+".inc"));
     
     defCodeConstGen.enumConsts.add("  FHIR_GENERATED_VERSION"+rId+" = '"+version+"';\r\n");
     defCodeConstGen.enumConsts.add("  FHIR_GENERATED_PUBLICATION"+rId+" = '"+rId+"';\r\n");
@@ -262,29 +271,43 @@ public class DelphiGenerator {
     defCodeRes.classImpls.add("function TFHIRResourceFactory"+rId+".makeByName(const name : String) : TFHIRObject;\r\nbegin\r\n  "+factoryByName.toString().substring(7)+"  else\r\n    result := nil;\r\nend;\r\n\r\n");
     defCodeType.procsPub.add(converterDefs.toString());
     defCodeType.procs.add(converterImpls.toString());
-    defCodeType.finish();
-    defCodeRes.finish();
-    defCodeOp.finish();
-    defCodeConstGen.finish();
-    defIndexer.finish();
-    
     jsCode.procsPub.add("procedure registerFHIRTypes(js : TFHIRJavascript);\r\n");
     jsCode.procs.add("procedure registerFHIRTypes(js : TFHIRJavascript);\r\n");
     jsCode.procs.add("begin\r\n");
     jsCode.procs.add(jsRegM.toString());
     jsCode.procs.add("end;\r\n");
-    jsCode.finish();
-
     prsrCodeX.classDefs.add(buildParserXml());
     prsrCodeX.classImpls.add(prsrImplX.toString());
-    prsrCodeX.finish();
     prsrCodeJ.classDefs.add(buildParserJson());
     prsrCodeJ.classImpls.add(prsrImplJ.toString());
-    prsrCodeJ.finish();
     prsrCodeT.classDefs.add(buildParserTurtle());
     prsrCodeT.classImpls.add(prsrImplT.toString());
-    prsrCodeT.finish();
+
+    if (WANT_SAVE) {
+      TextFile.stringToFile(include.toString(), Utilities.path(destDir, "fhir"+rId+".inc"));
+      defCodeType.finish();
+      defCodeRes.finish();
+      defCodeOp.finish();
+      defCodeConstGen.finish();
+      defIndexer.finish();
+
+      jsCode.finish();
+
+      prsrCodeX.finish();
+      prsrCodeJ.finish();
+      prsrCodeT.finish();
+    }
+    saveEnums();
   }
+
+  private void saveEnums() throws IOException {
+    StringBuilder b = new StringBuilder();
+    for (Entry<String, String> e : allenums.entrySet()) {
+      b.append(e.getKey()+"="+e.getValue()+"\r\n");
+    }
+    TextFile.stringToFile(b.toString(), new File("c:\\temp\\delphi.enums.r"+version+".cache"), false);
+  }
+
 
   private void ifdef(String n) {
     defCodeRes.ifdef(n);
@@ -1664,6 +1687,8 @@ public class DelphiGenerator {
     BindingSpecification cd = e.getBinding();
     List<DefinedCode> ac = cd.getAllCodes();
 
+    String url = cd.getVsUrl();
+    
     if (ac.size() == 0)
       throw new Error("Element "+e.getName()+" codes have no codes on binding "+e.getBinding().getName());
 
@@ -1680,6 +1705,7 @@ public class DelphiGenerator {
     codes.clear();
 
     enumSizes.put(tn, ac.size());
+    CommaSeparatedStringBuilder el = new CommaSeparatedStringBuilder();
 
 
     String prefix = tn.substring(0, tn.length()-(4+rId.length())).substring(5);
@@ -1724,6 +1750,7 @@ public class DelphiGenerator {
         codes.add(cc);
 
         cc = prefix + getTitle(cc);
+        el.append(cc);
         if ((con.length() - cl) + c.getCode().length() > 1010) {
           con.append("\r\n    ");
           cl = con.length();
@@ -1780,6 +1807,8 @@ public class DelphiGenerator {
       impl.append(" end;\r\n\r\n");
 
       defCodeType.classImpls.add(impl.toString());
+      el.append(prefix+"Null");
+      allenums.put(tn, url+"|"+el.toString());
     }
   }
 

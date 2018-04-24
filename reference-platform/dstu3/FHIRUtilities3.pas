@@ -42,16 +42,16 @@ uses
 
   MimeMessage, TextUtilities, ZLib, InternetFetcher, TurtleParser, MXml, DigitalSignatures, JWT,
 
-  FHIRSupport, FHIRParserBase, FHIRParser, FHIRBase, FHIRXHtml,
+  FHIRSupport, FHIRLang, FHIRParserBase, FHIRParser, FHIRBase, FHIRXHtml,
   FHIRContext3, FHIRTypes3, FHIRResources3, FHIRConstants3;
-
-Type
-  ETooCostly = class (Exception);
-  EUnsafeOperation = class (Exception);
-  DefinitionException = class (Exception);
 
 
 const
+  ExceptionTypeTranslations : array [TExceptionType] of TFhirIssueTypeEnum = (IssueTypeNull, IssueTypeInvalid, IssueTypeStructure, IssueTypeRequired, IssueTypeValue,
+    IssueTypeInvariant, IssueTypeSecurity, IssueTypeLogin, IssueTypeUnknown, IssueTypeExpired, IssueTypeForbidden, IssueTypeSuppressed, IssueTypeProcessing,
+    IssueTypeNotSupported, IssueTypeDuplicate, IssueTypeNotFound, IssueTypeTooLong, IssueTypeCodeInvalid, IssueTypeExtension, IssueTypeTooCostly, IssueTypeBusinessRule,
+    IssueTypeConflict, IssueTypeIncomplete, IssueTypeTransient, IssueTypeLockError, IssueTypeNoStore, IssueTypeException, IssueTypeTimeout, IssueTypeThrottled, IssueTypeInformational);
+
   MIN_DATE = DATETIME_MIN;
   MAX_DATE = DATETIME_MAX;
   ANY_CODE_VS = 'http://hl7.org/fhir/ValueSet/@all';
@@ -91,7 +91,7 @@ function isResourceName(name : String; canbeLower : boolean = false) : boolean;
 
 Function RecogniseFHIRResourceName(Const sName : String; out aType : TFhirResourceType): boolean;
 Function RecogniseFHIRResourceManagerName(Const sName : String; out aType : TFhirResourceType): boolean;
-Function RecogniseFHIRFormat(Const sName : String): TFHIRFormat;
+Function RecogniseFHIRFormat(Const sName, lang : String): TFHIRFormat;
 function MakeParser(oWorker : TFHIRWorkerContext; lang : String; aFormat: TFHIRFormat; oContent: TStream; policy : TFHIRXhtmlParserPolicy): TFHIRParser; overload;
 function MakeParser(oWorker : TFHIRWorkerContext; lang : String; aFormat: TFHIRFormat; content: TBytes; policy : TFHIRXhtmlParserPolicy): TFHIRParser; overload;
 function MakeParser(oWorker : TFHIRWorkerContext; lang : String; mimetype : String; content: TBytes; policy : TFHIRXhtmlParserPolicy): TFHIRParser; overload;
@@ -184,6 +184,7 @@ function resourceToBytes(res : TFhirResource; format : TFHIRFormat; style : TFHI
 function parseParamsFromForm(stream : TStream) : TFHIRParameters;
 
 type
+  {$IFDEF FHIR3}
   TFHIRBundleBuilderSimple = class (TFHIRBundleBuilder)
   public
     procedure addEntry(entry : TFhirBundleEntry; first : boolean); override;
@@ -206,6 +207,7 @@ type
     function moveToFirst(res : TFhirResource) : TFhirBundleEntry; override;
     function getBundle : TFHIRBundle; override;
   end;
+  {$ENDIF}
 
   TFHIRProfileStructureHolder = TFhirStructureDefinitionSnapshot;
   TFHIRProfileStructureElement = TFhirElementDefinition;
@@ -301,6 +303,7 @@ type
 
   TFHIRElementHelper = class helper for TFHIRElement
   public
+    function addExtension(ext : TFHIRExtension) : TFHIRExtension; overload;
     function addExtension(url : String) : TFHIRExtension; overload;
     procedure addExtension(url : String; t : TFhirType); overload;
     procedure addExtension(url : String; v : String); overload;
@@ -996,7 +999,7 @@ Begin
     aType := TFhirResourceType(iIndex);
 End;
 
-Function RecogniseFHIRFormat(Const sName : String): TFHIRFormat;
+Function RecogniseFHIRFormat(Const sName, lang : String): TFHIRFormat;
 Begin
   if (sName = '.xml') or (sName = 'xml') or (sName = '.xsd') or (sName = 'xsd') Then
     result := ffXml
@@ -1005,7 +1008,7 @@ Begin
   else if sName = '' then
     result := ffUnspecified
   else
-    raise ERestfulException.create('FHIRBase', 'RecogniseFHIRFormat', 'Unknown format '+sName, HTTP_ERR_BAD_REQUEST, IssueTypeStructure);
+    raise ERestfulException.create('FHIRBase.RecogniseFHIRFormat', HTTP_ERR_BAD_REQUEST, etStructure, 'Unknown format '+sName, lang);
 End;
 
 
@@ -2269,6 +2272,12 @@ function TFHIRElementHelper.addExtension(url: String): TFHIRExtension;
 begin
   result := self.ExtensionList.Append;
   result.url := url;
+end;
+
+function TFHIRElementHelper.addExtension(ext: TFHIRExtension): TFHIRExtension;
+begin
+  self.extensionList.add(ext);
+  result := ext;
 end;
 
 function TFHIRElementHelper.getExtension(url: String): Integer;
@@ -4890,8 +4899,6 @@ begin
       exit(true);
 end;
 
-{$IFDEF FHIR3}
-
 { TFhirExpansionProfileHelper }
 
 class function TFhirExpansionProfileHelper.defaultProfile: TFhirExpansionProfile;
@@ -4905,22 +4912,6 @@ begin
    BooleanToString(excludeNested)+BooleanToString(excludeNotForUI)+BooleanToString(excludePostCoordinated)+displayLanguage;
 end;
 
-{$ELSE}
-{ TFhirExpansionProfile }
-
-function TFhirExpansionProfile.hash: string;
-begin
-  result := BooleanToString(FincludeDefinition)+'|'+BooleanToString(FlimitedExpansion);
-end;
-
-function TFhirExpansionProfile.Link: TFhirExpansionProfile;
-begin
-  result := TFhirExpansionProfile(inherited Link);
-end;
-
-{$ENDIF}
-
-{$IFDEF FHIR3}
 { TFhirAuditEventHelper }
 
 function TFhirAuditEventHelper.GetdateTime: TDateTimeEx;
@@ -4960,8 +4951,6 @@ begin
   result := agentList;
 end;
 
-
-{$ENDIF}
 
 { TFhirCodingHelper }
 
@@ -6013,6 +6002,7 @@ end;
 
 { TFHIRBundleBuilderSimple }
 
+{$IFDEF FHIR3}
 procedure TFHIRBundleBuilderSimple.addEntry(entry: TFhirBundleEntry; first : boolean);
 begin
   if first then
@@ -6128,6 +6118,8 @@ begin
   end;
   cnt.SaveToStream(f);
 end;
+
+{$ENDIF}
 
 { TFhirExtensionListHelper }
 

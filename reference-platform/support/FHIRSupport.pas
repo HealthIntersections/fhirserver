@@ -719,17 +719,6 @@ Type
     property OnCreateBuilder : TCreateBundleBuilderEvent read FOnCreateBuilder write FOnCreateBuilder;
   end;
 
-  ERestfulException = class (EAdvException)
-  Private
-    FStatus : word;
-    FCode : TFhirIssueTypeEnum;
-  Public
-    Constructor Create(Const sSender, sMethod, sReason : String; aStatus : word; code : TFhirIssueTypeEnum); Overload; Virtual;
-
-    Property Status : word read FStatus write FStatus;
-    Property Code : TFhirIssueTypeEnum read FCode write FCode;
-  End;
-
 
 Function IdTail(s : String):String;
 Function IdHead(s : String):String;
@@ -748,15 +737,6 @@ uses
   {$IFDEF FHIR4}
   FHIRUtilities4;
   {$ENDIF}
-
-{ ERestfulException }
-
-constructor ERestfulException.Create(const sSender, sMethod, sReason: String; aStatus : word; code : TFhirIssueTypeEnum);
-begin
-  Create(sSender, sMethod, sReason);
-  FStatus := aStatus;
-  FCode := code;
-end;
 
 
 { TFHIRRequest }
@@ -785,10 +765,10 @@ var
   i : integer;
 begin
   if (Length(id) > ID_LENGTH) then
-    Raise ERestfulException.Create('TFhirWebServer', 'SplitId', StringFormat(GetFhirMessage('MSG_ID_TOO_LONG', lang), [id]), HTTP_ERR_BAD_REQUEST, IssueTypeInvalid);
+    Raise ERestfulException.Create('TFhirWebServer.CheckId', HTTP_ERR_BAD_REQUEST, etInvalid, 'MSG_ID_TOO_LONG', lang, [id]);
   for i := 1 to length(id) do
     if not CharInSet(id[i], ['a'..'z', '0'..'9', 'A'..'Z', '.', '-', '_']) then
-      Raise ERestfulException.Create('TFhirWebServer', 'SplitId', StringFormat(GetFhirMessage('MSG_ID_INVALID', lang), [id, id[i]]), HTTP_ERR_BAD_REQUEST, IssueTypeInvalid);
+      Raise ERestfulException.Create('TFhirWebServer.CheckId', HTTP_ERR_BAD_REQUEST, etInvalid, 'MSG_ID_INVALID', lang, [id, id[i]]);
 end;
 
 
@@ -816,7 +796,7 @@ Var
   procedure ForceMethod(sMethod : String);
   begin
     if (sCommand <> sMethod) Then
-      raise ERestfulException.Create('TFhirWebServer', 'HTTPRequest', StringFormat(GetFhirMessage('MSG_BAD_FORMAT', lang), [sUrl, sMethod]), HTTP_ERR_FORBIDDEN, IssueTypeInvalid);
+      raise ERestfulException.Create('TFhirWebServer.HTTPRequest', HTTP_ERR_FORBIDDEN, etInvalid, 'MSG_BAD_FORMAT', lang, [sUrl, sMethod]);
   end;
 var
   s, soURL : String;
@@ -888,11 +868,11 @@ begin
     if FId.endsWith('.zip') then
       StringSplit(FId, '.', FId, FSubId);
     if not IsGuid(FId) then
-      raise ERestfulException.Create('TFhirWebServer', 'HTTPRequest', StringFormat(GetFhirMessage('MSG_BAD_FORMAT', lang), [sUrl, FId]), HTTP_ERR_FORBIDDEN, IssueTypeInvalid);
+      raise ERestfulException.Create('TFhirWebServer.HTTPRequest', HTTP_ERR_FORBIDDEN, etInvalid, 'MSG_BAD_FORMAT', lang, [sUrl, FId]);
     if sCommand = 'DELETE' then
     begin
       if FSubid <> '' then
-        raise ERestfulException.Create('TFhirWebServer', 'HTTPRequest', StringFormat(GetFhirMessage('MSG_BAD_FORMAT', lang), [sUrl, FSubid]), HTTP_ERR_FORBIDDEN, IssueTypeInvalid);
+        raise ERestfulException.Create('TFhirWebServer.HTTPRequest', HTTP_ERR_FORBIDDEN, etInvalid, 'MSG_BAD_FORMAT', lang, [sUrl, FSubid]);
       CommandType := fcmdDeleteTask;
     end
     else
@@ -909,14 +889,14 @@ begin
   begin
     CommandType := fcmdSearch;
     if (sCommand <> 'GET') and (sCommand <> 'POST') then
-      raise ERestfulException.Create('TFhirWebServer', 'HTTPRequest', StringFormat(GetFhirMessage('MSG_BAD_SYNTAX', lang), [soURL]), HTTP_ERR_BAD_REQUEST, IssueTypeInvalid);
+      raise ERestfulException.Create('TFhirWebServer.HTTPRequest', HTTP_ERR_BAD_REQUEST, etInvalid, 'MSG_BAD_SYNTAX', lang, [soURL]);
   end
   else
   begin
     {$IFDEF FHIR2}
     if (sType <> '') then
       if not RecogniseFHIRResourceManagerName(sType, aResourceType) and not RecogniseCustomResource(sType, aResourceType) then
-      Raise ERestfulException.Create('TFhirWebServer', 'HTTPRequest', StringFormat(GetFhirMessage('MSG_NO_MODULE', lang), [sType]), HTTP_ERR_NOTFOUND, IssueTypeNotSupported);
+      Raise ERestfulException.Create('TFhirWebServer.HTTPRequest', HTTP_ERR_NOTFOUND, etNotSupported, 'MSG_NO_MODULE', lang, [sType]);
     ResourceName := sType;
     FResourceEnum := aResourceType;
     {$ELSE}
@@ -928,7 +908,7 @@ begin
         ResourceName := adaptor.ResourceName;
       end
       else if not RecogniseFHIRResourceManagerName(sType, aResourceType) and not RecogniseCustomResource(sType, aResourceType) then
-        Raise ERestfulException.Create('TFhirWebServer', 'HTTPRequest', StringFormat(GetFhirMessage('MSG_NO_MODULE', lang), [sType]), HTTP_ERR_NOTFOUND, IssueTypeNotSupported)
+        Raise ERestfulException.Create('TFhirWebServer.HTTPRequest', HTTP_ERR_NOTFOUND, etNotSupported, 'MSG_NO_MODULE', lang, [sType])
       else
         ResourceName := sType;
     // FResourceEnum := aResourceType;
@@ -949,7 +929,7 @@ begin
         DefaultSearch := true;
       end
       else
-        raise ERestfulException.Create('TFhirWebServer', 'HTTPRequest', StringFormat(GetFhirMessage('MSG_BAD_SYNTAX', lang), [soURL]), HTTP_ERR_BAD_REQUEST, IssueTypeInvalid);
+        raise ERestfulException.Create('TFhirWebServer.HTTPRequest', HTTP_ERR_BAD_REQUEST, etInvalid, 'MSG_BAD_SYNTAX', lang, [soURL]);
     end
     else if StringStartsWith(sId, '$', false) then
     begin
@@ -977,7 +957,7 @@ begin
         else if sCommand = 'OPTIONS' then // CORS
           CommandType := fcmdConformanceStmt
         else
-          raise ERestfulException.Create('TFhirWebServer', 'HTTPRequest', StringFormat(GetFhirMessage('MSG_BAD_FORMAT', lang), [soURL, 'GET, PUT or DELETE']), HTTP_ERR_FORBIDDEN, IssueTypeNotSupported);
+          raise ERestfulException.Create('TFhirWebServer.HTTPRequest', HTTP_ERR_FORBIDDEN, etNotSupported, 'MSG_BAD_FORMAT', lang, [soURL, 'GET, PUT or DELETE']);
       end
       else if StringStartsWith(sId, '$', false)  then
       begin
@@ -1023,15 +1003,15 @@ begin
             OperationName := 'meta-delete';
           end
           else
-            raise ERestfulException.Create('TFhirWebServer', 'HTTPRequest', StringFormat(GetFhirMessage('MSG_BAD_SYNTAX', lang), [soURL]), HTTP_ERR_BAD_REQUEST, IssueTypeInvalid);
+            raise ERestfulException.Create('TFhirWebServer.HTTPRequest', HTTP_ERR_BAD_REQUEST, etInvalid, 'MSG_BAD_SYNTAX', lang, [soURL]);
         end
         else
-          raise ERestfulException.Create('TFhirWebServer', 'HTTPRequest', StringFormat(GetFhirMessage('MSG_BAD_SYNTAX', lang), [soURL]), HTTP_ERR_BAD_REQUEST, IssueTypeInvalid);
+          raise ERestfulException.Create('TFhirWebServer.HTTPRequest', HTTP_ERR_BAD_REQUEST, etInvalid, 'MSG_BAD_SYNTAX', lang, [soURL]);
       end
       else if sId = '*' then // all types
       begin
         if not FCompartmentInformation.hasCompartment(ResourceEnum) then
-          raise ERestfulException.Create('TFhirWebServer', 'HTTPRequest', StringFormat(GetFhirMessage('MSG_UNKNOWN_COMPARTMENT', lang), [soURL, 'GET, POST or DELETE']), HTTP_ERR_FORBIDDEN, IssueTypeNotSupported);
+          raise ERestfulException.Create('TFhirWebServer.HTTPRequest', HTTP_ERR_FORBIDDEN, etNotSupported, 'MSG_UNKNOWN_COMPARTMENT', lang, [soURL, 'GET, POST or DELETE']);
 
         compartment := TFHIRCompartmentId.Create(ResourceEnum, Id);
         CommandType := fcmdSearch;
@@ -1043,7 +1023,7 @@ begin
         if FCompartmentInformation.existsInCompartment(ResourceEnum, sId) then
         begin
           if not FCompartmentInformation.hasCompartment(ResourceEnum) then
-            raise ERestfulException.Create('TFhirWebServer', 'HTTPRequest', StringFormat(GetFhirMessage('MSG_UNKNOWN_COMPARTMENT', lang), [soURL, 'GET, POST or DELETE']), HTTP_ERR_FORBIDDEN, IssueTypeNotSupported);
+            raise ERestfulException.Create('TFhirWebServer.HTTPRequest', HTTP_ERR_FORBIDDEN, etNotSupported, 'MSG_UNKNOWN_COMPARTMENT', lang, [soURL, 'GET, POST or DELETE']);
 
           compartment := TFHIRCompartmentId.Create(ResourceEnum, Id);
           CommandType := fcmdSearch;
@@ -1051,10 +1031,10 @@ begin
           Id := '';
         end
         else
-          raise ERestfulException.Create('TFhirWebServer', 'HTTPRequest', StringFormat(GetFhirMessage('MSG_BAD_SYNTAX', lang), [soURL]), HTTP_ERR_BAD_REQUEST, IssueTypeInvalid);
+          raise ERestfulException.Create('TFhirWebServer.HTTPRequest', HTTP_ERR_BAD_REQUEST, etInvalid, 'MSG_BAD_SYNTAX', lang, [soURL]);
       end
       else
-        raise ERestfulException.Create('TFhirWebServer', 'HTTPRequest', StringFormat(GetFhirMessage('MSG_BAD_SYNTAX', lang), [soURL]), HTTP_ERR_BAD_REQUEST, IssueTypeInvalid);
+        raise ERestfulException.Create('TFhirWebServer.HTTPRequest', HTTP_ERR_BAD_REQUEST, etInvalid, 'MSG_BAD_SYNTAX', lang, [soURL]);
     end
     else if (sId = '_validate') Then
     begin
@@ -1064,7 +1044,7 @@ begin
       if sId <> '' Then
       Begin
         if (sURL <> '') or (sId = '') Then
-          raise ERestfulException.Create('TFhirWebServer', 'HTTPRequest', 'Bad Syntax in "'+soURL+'"', HTTP_ERR_BAD_REQUEST, IssueTypeInvalid);
+          raise ERestfulException.Create('TFhirWebServer.HTTPRequest', HTTP_ERR_BAD_REQUEST, etInvalid, 'MSG_BAD_SYNTAX', lang, [soURL]);
         CheckId(lang, copy(sId, 2, $FF));
         Id := copy(sId, 2, $FF);
       End;
@@ -1083,11 +1063,11 @@ begin
       PostFormat := ffXhtml;
     end
     else
-      raise ERestfulException.Create('TFhirWebServer', 'HTTPRequest', StringFormat(GetFhirMessage('MSG_BAD_SYNTAX', lang), ['URL'+soURL]), HTTP_ERR_BAD_REQUEST, IssueTypeInvalid);
+      raise ERestfulException.Create('TFhirWebServer.HTTPRequest', HTTP_ERR_BAD_REQUEST, etInvalid, 'MSG_BAD_SYNTAX', lang, ['URL'+soURL]);
   End;
   if (CommandType <> fcmdNull)  then
     if (sURL <> '') then
-      raise ERestfulException.Create('TFhirWebServer', 'HTTPRequest', StringFormat(GetFhirMessage('MSG_BAD_SYNTAX', lang), [soURL]), HTTP_ERR_BAD_REQUEST, IssueTypeInvalid);
+      raise ERestfulException.Create('TFhirWebServer.HTTPRequest', HTTP_ERR_BAD_REQUEST, etInvalid, 'MSG_BAD_SYNTAX', lang, [soURL]);
   {$IFNDEF FHIR2}
   if (CommandType = fcmdSearch) and (Adaptor <> nil) then
     Adaptor.editSearch(self);

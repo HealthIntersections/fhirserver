@@ -49,7 +49,7 @@ uses
   kCritSct, KDBManager, KDBDialects,  ParseMap,
   AdvObjects, AdvObjectLists, AdvGenerics, AdvBuffers, AdvJson,
   IdHTTP, IdSSLOpenSSL, IdSMTP, IdMessage, IdExplicitTLSClientServerBase, idGlobal, IdWebSocket, IdText, IdAttachment, IdPop3, IdMessageParts,
-  FHIRBase, FhirResources, FHIRTypes, FHIRConstants, FHIRUtilities, FHIRClient, FHIRPathNode,
+  FHIRBase, FHIRLang, FhirResources, FHIRTypes, FHIRConstants, FHIRUtilities, FHIRClient, FHIRPathNode,
   FhirSupport, FHIRIndexManagers, FHIRServerUtilities, FHIRParser, FHIRParserBase, FHIRPath, FHIRContext, FHIRLog, ServerUtilities;
 
 const

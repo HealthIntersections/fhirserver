@@ -390,12 +390,6 @@
         <DCCReference Include="..\reference-platform\r4\FHIRJavascriptReg4.pas"/>
         <DCCReference Include="..\Libraries\js\FHIRClientJs.pas"/>
         <DCCReference Include="ServerEventJs.pas"/>
-        <DCCReference Include="..\Libraries\java\JNI.pas"/>
-        <DCCReference Include="..\Libraries\java\JNIWrapper.pas"/>
-        <DCCReference Include="..\Libraries\java\JavaRuntime.pas"/>
-        <DCCReference Include="..\Libraries\java\JUtils.pas"/>
-        <DCCReference Include="..\Libraries\java\myUTF8Strings.pas"/>
-        <DCCReference Include="JavaBridge.pas"/>
         <DCCReference Include="..\reference-platform\support\FHIRFactory.pas"/>
         <DCCReference Include="CountryCodeServices.pas"/>
         <DCCReference Include="USStatesServices.pas"/>

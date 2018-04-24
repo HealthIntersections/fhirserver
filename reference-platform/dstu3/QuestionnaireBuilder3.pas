@@ -34,7 +34,7 @@ interface
 uses
   SysUtils, Classes, Generics.Collections,
   GUIDSupport, DateSupport, AdvObjects, ShellSupport, StringSupport, AdvStringMatches, AdvExceptions,
-  FHIRBase, FHIRParser, FHIRFactory, FHIRSupport,
+  FHIRBase, FHIRLang, FHIRParser, FHIRFactory, FHIRSupport,
   FHIRResources3, FHIRTypes3, FHIRConstants3, FHIRUtilities3, FHIRProfileUtilities3;
 
 Const

@@ -76,7 +76,7 @@ Uses
   FHIRStorageService, FHIRFactory,
   FHIRRestServer, DBInstaller, FHIRConstants, FHIRNativeStorage, FHIRBase, FhirPath,
   FHIRServerConstants, FHIRServerContext, ServerUtilities, WebSourceProvider,
-  JavaBridge, SCIMServer, CDSHooksServices, ServerJavascriptHost;
+  SCIMServer, CDSHooksServices, ServerJavascriptHost;
 
 Type
   TFHIRServerDataStore = class (TFHIRNativeStorageService)
@@ -696,19 +696,6 @@ begin
   DoStop;
 end;
 
-function jarPath : String;
-var
-  fn : String;
-begin
-  fn := IncludeTrailingPathDelimiter(ExtractFilePath(ParamStr(0)))+'org.hl7.fhir.validator.jar';
-  if (fileExists(fn)) then
-    exit(fn);
-  fn := 'C:\work\org.hl7.fhir\build\publish\org.hl7.fhir.validator.jar';
-  if (fileExists(fn)) then
-    exit(fn);
-  raise Exception.Create('Unable to find Java Services Jar (org.hl7.fhir.validator.jar)');
-end;
-
 procedure TFHIRService.InitialiseRestServer;
 var
   ctxt : TFHIRServerContext;
@@ -722,17 +709,6 @@ begin
       store.ServerContext := ctxt;
       ctxt.Factory := TFHIRFactory.create(ctxt.ValidatorContext.Link);
       ctxt.RunNumber := FRunNumber;
-      {$IFNDEF FHIR2}
-      if FIni.ReadBool(voMaybeVersioned, 'java', 'no-load', false) then
-        logt('not Loading Java Services')
-      else
-      begin
-        jp := jarPath;
-        logt('loading Java Services from '+jp);
-        ctxt.JavaServices := TJavaLibraryWrapper.Create(jp);
-        logt('  .. done');
-      end;
-      {$ENDIF}
       ctxt.TerminologyServer := FterminologyServer.Link;
       ctxt.Validate := FIni.ReadBool(voVersioningNotApplicable, 'fhir', 'validate', true);
       ctxt.ForLoad := not FindCmdLineSwitch('noload');
