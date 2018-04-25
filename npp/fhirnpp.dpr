@@ -197,7 +197,8 @@ uses
   FHIRParserBase3 in '..\reference-platform\dstu3\FHIRParserBase3.pas',
   FHIRBase3 in '..\reference-platform\dstu3\FHIRBase3.pas',
   FHIRXhtmlComposer in '..\reference-platform\support\FHIRXhtmlComposer.pas',
-  FHIRExpressionComposer in '..\reference-platform\support\FHIRExpressionComposer.pas';
+  FHIRExpressionComposer in '..\reference-platform\support\FHIRExpressionComposer.pas',
+  FHIRParser3 in '..\reference-platform\dstu3\FHIRParser3.pas';
 
 {$R *.res}
 

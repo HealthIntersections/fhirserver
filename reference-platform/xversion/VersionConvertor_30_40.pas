@@ -39,978 +39,996 @@ Type
 
   TVersionConvertor_30_40 = class (TAdvObject)
   private
-    class procedure copyElement(src : FHIRTypes3.TFhirElement; tgt : FHIRTypes4.TFhirElement); overload; virtual;
-    class procedure copyElement(src : FHIRTypes4.TFhirElement; tgt : FHIRTypes3.TFhirElement); overload; virtual;
-    class procedure copyBackboneElement(src : FHIRTypes3.TFhirBackboneElement; tgt : FHIRTypes4.TFhirBackboneElement); overload; virtual;
-    class procedure copyBackboneElement(src : FHIRTypes4.TFhirBackboneElement; tgt : FHIRTypes3.TFhirBackboneElement); overload; virtual;
-    class function convertNarrativeStatus(src : FHIRTypes3.TFhirNarrativeStatusEnum) : FHIRTypes4.TFhirNarrativeStatusEnum; overload; virtual;
-    class function convertNarrativeStatus(src : FHIRTypes4.TFhirNarrativeStatusEnum) : FHIRTypes3.TFhirNarrativeStatusEnum; overload; virtual;
-    class function convertIdentifierUse(src : FHIRTypes3.TFhirIdentifierUseEnum) : FHIRTypes4.TFhirIdentifierUseEnum; overload; virtual;
-    class function convertIdentifierUse(src : FHIRTypes4.TFhirIdentifierUseEnum) : FHIRTypes3.TFhirIdentifierUseEnum; overload; virtual;
-    class function convertQuantityComparator(src : FHIRTypes3.TFhirQuantityComparatorEnum) : FHIRTypes4.TFhirQuantityComparatorEnum; overload; virtual;
-    class function convertQuantityComparator(src : FHIRTypes4.TFhirQuantityComparatorEnum) : FHIRTypes3.TFhirQuantityComparatorEnum; overload; virtual;
-    class function convertAddressUse(src : FHIRTypes3.TFhirAddressUseEnum) : FHIRTypes4.TFhirAddressUseEnum; overload; virtual;
-    class function convertAddressUse(src : FHIRTypes4.TFhirAddressUseEnum) : FHIRTypes3.TFhirAddressUseEnum; overload; virtual;
-    class function convertAddressType(src : FHIRTypes3.TFhirAddressTypeEnum) : FHIRTypes4.TFhirAddressTypeEnum; overload; virtual;
-    class function convertAddressType(src : FHIRTypes4.TFhirAddressTypeEnum) : FHIRTypes3.TFhirAddressTypeEnum; overload; virtual;
-    class function convertContactPointSystem(src : FHIRTypes3.TFhirContactPointSystemEnum) : FHIRTypes4.TFhirContactPointSystemEnum; overload; virtual;
-    class function convertContactPointSystem(src : FHIRTypes4.TFhirContactPointSystemEnum) : FHIRTypes3.TFhirContactPointSystemEnum; overload; virtual;
-    class function convertContactPointUse(src : FHIRTypes3.TFhirContactPointUseEnum) : FHIRTypes4.TFhirContactPointUseEnum; overload; virtual;
-    class function convertContactPointUse(src : FHIRTypes4.TFhirContactPointUseEnum) : FHIRTypes3.TFhirContactPointUseEnum; overload; virtual;
-    class function convertContributorType(src : FHIRTypes3.TFhirContributorTypeEnum) : FHIRTypes4.TFhirContributorTypeEnum; overload; virtual;
-    class function convertContributorType(src : FHIRTypes4.TFhirContributorTypeEnum) : FHIRTypes3.TFhirContributorTypeEnum; overload; virtual;
-    class function convertPropertyRepresentation(src : FHIRTypes3.TFhirPropertyRepresentationEnum) : FHIRTypes4.TFhirPropertyRepresentationEnum; overload; virtual;
-    class function convertPropertyRepresentation(src : FHIRTypes4.TFhirPropertyRepresentationEnum) : FHIRTypes3.TFhirPropertyRepresentationEnum; overload; virtual;
-    class function convertSlicingRules(src : FHIRTypes3.TFhirResourceSlicingRulesEnum) : FHIRTypes4.TFhirResourceSlicingRulesEnum; overload; virtual;
-    class function convertSlicingRules(src : FHIRTypes4.TFhirResourceSlicingRulesEnum) : FHIRTypes3.TFhirResourceSlicingRulesEnum; overload; virtual;
-    class function convertDiscriminatorType(src : FHIRTypes3.TFhirDiscriminatorTypeEnum) : FHIRTypes4.TFhirDiscriminatorTypeEnum; overload; virtual;
-    class function convertDiscriminatorType(src : FHIRTypes4.TFhirDiscriminatorTypeEnum) : FHIRTypes3.TFhirDiscriminatorTypeEnum; overload; virtual;
-    class function convertAggregationMode(src : FHIRTypes3.TFhirResourceAggregationModeEnum) : FHIRTypes4.TFhirResourceAggregationModeEnum; overload; virtual;
-    class function convertAggregationMode(src : FHIRTypes4.TFhirResourceAggregationModeEnum) : FHIRTypes3.TFhirResourceAggregationModeEnum; overload; virtual;
-    class function convertReferenceVersionRules(src : FHIRTypes3.TFhirReferenceVersionRulesEnum) : FHIRTypes4.TFhirReferenceVersionRulesEnum; overload; virtual;
-    class function convertReferenceVersionRules(src : FHIRTypes4.TFhirReferenceVersionRulesEnum) : FHIRTypes3.TFhirReferenceVersionRulesEnum; overload; virtual;
-    class function convertConstraintSeverity(src : FHIRTypes3.TFhirConstraintSeverityEnum) : FHIRTypes4.TFhirConstraintSeverityEnum; overload; virtual;
-    class function convertConstraintSeverity(src : FHIRTypes4.TFhirConstraintSeverityEnum) : FHIRTypes3.TFhirConstraintSeverityEnum; overload; virtual;
-    class function convertBindingStrength(src : FHIRTypes3.TFhirBindingStrengthEnum) : FHIRTypes4.TFhirBindingStrengthEnum; overload; virtual;
-    class function convertBindingStrength(src : FHIRTypes4.TFhirBindingStrengthEnum) : FHIRTypes3.TFhirBindingStrengthEnum; overload; virtual;
-    class function convertNameUse(src : FHIRTypes3.TFhirNameUseEnum) : FHIRTypes4.TFhirNameUseEnum; overload; virtual;
-    class function convertNameUse(src : FHIRTypes4.TFhirNameUseEnum) : FHIRTypes3.TFhirNameUseEnum; overload; virtual;
-    class function convertParameterUse(src : FHIRTypes3.TFhirOperationParameterUseEnum) : FHIRTypes4.TFhirOperationParameterUseEnum; overload; virtual;
-    class function convertParameterUse(src : FHIRTypes4.TFhirOperationParameterUseEnum) : FHIRTypes3.TFhirOperationParameterUseEnum; overload; virtual;
-    class function convertRelatedArtifactType(src : FHIRTypes3.TFhirRelatedArtifactTypeEnum) : FHIRTypes4.TFhirRelatedArtifactTypeEnum; overload; virtual;
-    class function convertRelatedArtifactType(src : FHIRTypes4.TFhirRelatedArtifactTypeEnum) : FHIRTypes3.TFhirRelatedArtifactTypeEnum; overload; virtual;
-    class function convertUnitsOfTime(src : FHIRTypes3.TFhirUnitsOfTimeEnum) : FHIRTypes4.TFhirUnitsOfTimeEnum; overload; virtual;
-    class function convertUnitsOfTime(src : FHIRTypes4.TFhirUnitsOfTimeEnum) : FHIRTypes3.TFhirUnitsOfTimeEnum; overload; virtual;
-    class function convertDayOfWeek(src : FHIRTypes3.TFhirDaysOfWeekEnum) : FHIRTypes4.TFhirDaysOfWeekEnum; overload; virtual;
-    class function convertDayOfWeek(src : FHIRTypes4.TFhirDaysOfWeekEnum) : FHIRTypes3.TFhirDaysOfWeekEnum; overload; virtual;
-    class function convertEventTiming(src : FHIRTypes3.TFhirEventTimingEnum) : FHIRTypes4.TFhirEventTimingEnum; overload; virtual;
-    class function convertEventTiming(src : FHIRTypes4.TFhirEventTimingEnum) : FHIRTypes3.TFhirEventTimingEnum; overload; virtual;
-    class function convertTriggerType(src : FHIRTypes3.TFhirTriggerTypeEnum) : FHIRTypes4.TFhirTriggerTypeEnum; overload; virtual;
-    class function convertTriggerType(src : FHIRTypes4.TFhirTriggerTypeEnum) : FHIRTypes3.TFhirTriggerTypeEnum; overload; virtual;
-    class procedure copyDomainResource(src : FHIRResources3.TFhirDomainResource; tgt : FHIRResources4.TFhirDomainResource); overload; virtual;
-    class procedure copyDomainResource(src : FHIRResources4.TFhirDomainResource; tgt : FHIRResources3.TFhirDomainResource); overload; virtual;
-    class procedure copyResource(src : FHIRResources3.TFhirResource; tgt : FHIRResources4.TFhirResource); overload; virtual;
-    class procedure copyResource(src : FHIRResources4.TFhirResource; tgt : FHIRResources3.TFhirResource); overload; virtual;
-    class function convertPublicationStatus(src : FHIRTypes3.TFhirPublicationStatusEnum) : FHIRTypes4.TFhirPublicationStatusEnum; overload; virtual;
-    class function convertPublicationStatus(src : FHIRTypes4.TFhirPublicationStatusEnum) : FHIRTypes3.TFhirPublicationStatusEnum; overload; virtual;
-    class function convertActivityDefinitionKind(src : FHIRTypes3.TFhirResourceTypesEnum) : FHIRTypes4.TFhirResourceTypesEnum; overload; virtual;
-    class function convertActivityDefinitionKind(src : FHIRTypes4.TFhirResourceTypesEnum) : FHIRTypes3.TFhirResourceTypesEnum; overload; virtual;
-    class function convertActivityParticipantType(src : FHIRTypes3.TFhirActionParticipantTypeEnum) : FHIRTypes4.TFhirActionParticipantTypeEnum; overload; virtual;
-    class function convertActivityParticipantType(src : FHIRTypes4.TFhirActionParticipantTypeEnum) : FHIRTypes3.TFhirActionParticipantTypeEnum; overload; virtual;
-    class function convertAllergyIntoleranceClinicalStatus(src : FHIRTypes3.TFhirAllergyClinicalStatusEnum) : FHIRTypes4.TFhirAllergyClinicalStatusEnum; overload; virtual;
-    class function convertAllergyIntoleranceClinicalStatus(src : FHIRTypes4.TFhirAllergyClinicalStatusEnum) : FHIRTypes3.TFhirAllergyClinicalStatusEnum; overload; virtual;
-    class function convertAllergyIntoleranceVerificationStatus(src : FHIRTypes3.TFhirAllergyVerificationStatusEnum) : FHIRTypes4.TFhirAllergyVerificationStatusEnum; overload; virtual;
-    class function convertAllergyIntoleranceVerificationStatus(src : FHIRTypes4.TFhirAllergyVerificationStatusEnum) : FHIRTypes3.TFhirAllergyVerificationStatusEnum; overload; virtual;
-    class function convertAllergyIntoleranceType(src : FHIRTypes3.TFhirAllergyIntoleranceTypeEnum) : FHIRTypes4.TFhirAllergyIntoleranceTypeEnum; overload; virtual;
-    class function convertAllergyIntoleranceType(src : FHIRTypes4.TFhirAllergyIntoleranceTypeEnum) : FHIRTypes3.TFhirAllergyIntoleranceTypeEnum; overload; virtual;
-    class function convertAllergyIntoleranceCategory(src : FHIRTypes3.TFhirAllergyIntoleranceCategoryEnum) : FHIRTypes4.TFhirAllergyIntoleranceCategoryEnum; overload; virtual;
-    class function convertAllergyIntoleranceCategory(src : FHIRTypes4.TFhirAllergyIntoleranceCategoryEnum) : FHIRTypes3.TFhirAllergyIntoleranceCategoryEnum; overload; virtual;
-    class function convertAllergyIntoleranceCriticality(src : FHIRTypes3.TFhirAllergyIntoleranceCriticalityEnum) : FHIRTypes4.TFhirAllergyIntoleranceCriticalityEnum; overload; virtual;
-    class function convertAllergyIntoleranceCriticality(src : FHIRTypes4.TFhirAllergyIntoleranceCriticalityEnum) : FHIRTypes3.TFhirAllergyIntoleranceCriticalityEnum; overload; virtual;
-    class function convertAllergyIntoleranceSeverity(src : FHIRTypes3.TFhirReactionEventSeverityEnum) : FHIRTypes4.TFhirReactionEventSeverityEnum; overload; virtual;
-    class function convertAllergyIntoleranceSeverity(src : FHIRTypes4.TFhirReactionEventSeverityEnum) : FHIRTypes3.TFhirReactionEventSeverityEnum; overload; virtual;
-    class function convertAppointmentStatus(src : FHIRTypes3.TFhirAppointmentstatusEnum) : FHIRTypes4.TFhirAppointmentstatusEnum; overload; virtual;
-    class function convertAppointmentStatus(src : FHIRTypes4.TFhirAppointmentstatusEnum) : FHIRTypes3.TFhirAppointmentstatusEnum; overload; virtual;
-    class function convertParticipantRequired(src : FHIRTypes3.TFhirParticipantrequiredEnum) : FHIRTypes4.TFhirParticipantrequiredEnum; overload; virtual;
-    class function convertParticipantRequired(src : FHIRTypes4.TFhirParticipantrequiredEnum) : FHIRTypes3.TFhirParticipantrequiredEnum; overload; virtual;
-    class function convertParticipationStatus(src : FHIRTypes3.TFhirParticipationstatusEnum) : FHIRTypes4.TFhirParticipationstatusEnum; overload; virtual;
-    class function convertParticipationStatus(src : FHIRTypes4.TFhirParticipationstatusEnum) : FHIRTypes3.TFhirParticipationstatusEnum; overload; virtual;
-    class function convertParticipantStatus(src : FHIRTypes3.TFhirParticipationstatusEnum) : FHIRTypes4.TFhirParticipationstatusEnum; overload; virtual;
-    class function convertParticipantStatus(src : FHIRTypes4.TFhirParticipationstatusEnum) : FHIRTypes3.TFhirParticipationstatusEnum; overload; virtual;
-    class function convertAuditEventAction(src : FHIRTypes3.TFhirAuditEventActionEnum) : FHIRTypes4.TFhirAuditEventActionEnum; overload; virtual;
-    class function convertAuditEventAction(src : FHIRTypes4.TFhirAuditEventActionEnum) : FHIRTypes3.TFhirAuditEventActionEnum; overload; virtual;
-    class function convertAuditEventOutcome(src : FHIRTypes3.TFhirAuditEventOutcomeEnum) : FHIRTypes4.TFhirAuditEventOutcomeEnum; overload; virtual;
-    class function convertAuditEventOutcome(src : FHIRTypes4.TFhirAuditEventOutcomeEnum) : FHIRTypes3.TFhirAuditEventOutcomeEnum; overload; virtual;
-    class function convertAuditEventAgentNetworkType(src : FHIRTypes3.TFhirNetworkTypeEnum) : FHIRTypes4.TFhirNetworkTypeEnum; overload; virtual;
-    class function convertAuditEventAgentNetworkType(src : FHIRTypes4.TFhirNetworkTypeEnum) : FHIRTypes3.TFhirNetworkTypeEnum; overload; virtual;
-    class function convertBundleType(src : FHIRTypes3.TFhirBundleTypeEnum) : FHIRTypes4.TFhirBundleTypeEnum; overload; virtual;
-    class function convertBundleType(src : FHIRTypes4.TFhirBundleTypeEnum) : FHIRTypes3.TFhirBundleTypeEnum; overload; virtual;
-    class function convertSearchEntryMode(src : FHIRTypes3.TFhirSearchEntryModeEnum) : FHIRTypes4.TFhirSearchEntryModeEnum; overload; virtual;
-    class function convertSearchEntryMode(src : FHIRTypes4.TFhirSearchEntryModeEnum) : FHIRTypes3.TFhirSearchEntryModeEnum; overload; virtual;
-    class function convertHTTPVerb(src : FHIRTypes3.TFhirHttpVerbEnum) : FHIRTypes4.TFhirHttpVerbEnum; overload; virtual;
-    class function convertHTTPVerb(src : FHIRTypes4.TFhirHttpVerbEnum) : FHIRTypes3.TFhirHttpVerbEnum; overload; virtual;
-    class function convertCapabilityStatementKind(src : FHIRTypes3.TFhirCapabilityStatementKindEnum) : FHIRTypes4.TFhirCapabilityStatementKindEnum; overload; virtual;
-    class function convertCapabilityStatementKind(src : FHIRTypes4.TFhirCapabilityStatementKindEnum) : FHIRTypes3.TFhirCapabilityStatementKindEnum; overload; virtual;
-    class function convertRestfulCapabilityMode(src : FHIRTypes3.TFhirRestfulCapabilityModeEnum) : FHIRTypes4.TFhirRestfulCapabilityModeEnum; overload; virtual;
-    class function convertRestfulCapabilityMode(src : FHIRTypes4.TFhirRestfulCapabilityModeEnum) : FHIRTypes3.TFhirRestfulCapabilityModeEnum; overload; virtual;
-    class function convertReferenceToCanonical(src : FHIRTypes3.TFhirReference) : FHIRTypes4.TFhirCanonical; overload; virtual;
-    class function convertCanonicalToReference(src : FHIRTypes4.TFhirCanonical) : FHIRTypes3.TFhirReference; overload; virtual;
-    class function convertResourceVersionPolicy(src : FHIRTypes3.TFhirVersioningPolicyEnum) : FHIRTypes4.TFhirVersioningPolicyEnum; overload; virtual;
-    class function convertResourceVersionPolicy(src : FHIRTypes4.TFhirVersioningPolicyEnum) : FHIRTypes3.TFhirVersioningPolicyEnum; overload; virtual;
-    class function convertConditionalReadStatus(src : FHIRTypes3.TFhirConditionalReadStatusEnum) : FHIRTypes4.TFhirConditionalReadStatusEnum; overload; virtual;
-    class function convertConditionalReadStatus(src : FHIRTypes4.TFhirConditionalReadStatusEnum) : FHIRTypes3.TFhirConditionalReadStatusEnum; overload; virtual;
-    class function convertConditionalDeleteStatus(src : FHIRTypes3.TFhirConditionalDeleteStatusEnum) : FHIRTypes4.TFhirConditionalDeleteStatusEnum; overload; virtual;
-    class function convertConditionalDeleteStatus(src : FHIRTypes4.TFhirConditionalDeleteStatusEnum) : FHIRTypes3.TFhirConditionalDeleteStatusEnum; overload; virtual;
-    class function convertReferenceHandlingPolicy(src : FHIRTypes3.TFhirReferenceHandlingPolicyEnum) : FHIRTypes4.TFhirReferenceHandlingPolicyEnum; overload; virtual;
-    class function convertReferenceHandlingPolicy(src : FHIRTypes4.TFhirReferenceHandlingPolicyEnum) : FHIRTypes3.TFhirReferenceHandlingPolicyEnum; overload; virtual;
-    class function convertTypeRestfulInteraction(src : FHIRTypes3.TFhirTypeRestfulInteractionEnum) : FHIRTypes4.TFhirTypeRestfulInteractionEnum; overload; virtual;
-    class function convertTypeRestfulInteraction(src : FHIRTypes4.TFhirTypeRestfulInteractionEnum) : FHIRTypes3.TFhirTypeRestfulInteractionEnum; overload; virtual;
-    class function convertSearchParamType(src : FHIRTypes3.TFhirSearchParamTypeEnum) : FHIRTypes4.TFhirSearchParamTypeEnum; overload; virtual;
-    class function convertSearchParamType(src : FHIRTypes4.TFhirSearchParamTypeEnum) : FHIRTypes3.TFhirSearchParamTypeEnum; overload; virtual;
-    class function convertSystemRestfulInteraction(src : FHIRTypes3.TFhirSystemRestfulInteractionEnum) : FHIRTypes4.TFhirSystemRestfulInteractionEnum; overload; virtual;
-    class function convertSystemRestfulInteraction(src : FHIRTypes4.TFhirSystemRestfulInteractionEnum) : FHIRTypes3.TFhirSystemRestfulInteractionEnum; overload; virtual;
-    class function convertEventCapabilityMode(src : FHIRTypes3.TFhirEventCapabilityModeEnum) : FHIRTypes4.TFhirEventCapabilityModeEnum; overload; virtual;
-    class function convertEventCapabilityMode(src : FHIRTypes4.TFhirEventCapabilityModeEnum) : FHIRTypes3.TFhirEventCapabilityModeEnum; overload; virtual;
-    class function convertDocumentMode(src : FHIRTypes3.TFhirDocumentModeEnum) : FHIRTypes4.TFhirDocumentModeEnum; overload; virtual;
-    class function convertDocumentMode(src : FHIRTypes4.TFhirDocumentModeEnum) : FHIRTypes3.TFhirDocumentModeEnum; overload; virtual;
-    class function convertCareTeamStatus(src : FHIRTypes3.TFhirCareTeamStatusEnum) : FHIRTypes4.TFhirCareTeamStatusEnum; overload; virtual;
-    class function convertCareTeamStatus(src : FHIRTypes4.TFhirCareTeamStatusEnum) : FHIRTypes3.TFhirCareTeamStatusEnum; overload; virtual;
-    class function convertChargeItemStatus(src : FHIRTypes3.TFhirChargeitemStatusEnum) : FHIRTypes4.TFhirChargeitemStatusEnum; overload; virtual;
-    class function convertChargeItemStatus(src : FHIRTypes4.TFhirChargeitemStatusEnum) : FHIRTypes3.TFhirChargeitemStatusEnum; overload; virtual;
-    class function convertClaimStatus(src : FHIRTypes3.TFhirFmStatusEnum) : FHIRTypes4.TFhirFmStatusEnum; overload; virtual;
-    class function convertClaimStatus(src : FHIRTypes4.TFhirFmStatusEnum) : FHIRTypes3.TFhirFmStatusEnum; overload; virtual;
-    class function convertUse(src : FHIRTypes3.TFhirClaimUseEnum) : FHIRTypes4.TFhirClaimUseEnum; overload; virtual;
-    class function convertUse(src : FHIRTypes4.TFhirClaimUseEnum) : FHIRTypes3.TFhirClaimUseEnum; overload; virtual;
-    class function convertClinicalImpressionStatus(src : FHIRTypes3.TFhirClinicalImpressionStatusEnum) : FHIRTypes4.TFhirClinicalImpressionStatusEnum; overload; virtual;
-    class function convertClinicalImpressionStatus(src : FHIRTypes4.TFhirClinicalImpressionStatusEnum) : FHIRTypes3.TFhirClinicalImpressionStatusEnum; overload; virtual;
-    class function convertCodeSystemHierarchyMeaning(src : FHIRTypes3.TFhirCodesystemHierarchyMeaningEnum) : FHIRTypes4.TFhirCodesystemHierarchyMeaningEnum; overload; virtual;
-    class function convertCodeSystemHierarchyMeaning(src : FHIRTypes4.TFhirCodesystemHierarchyMeaningEnum) : FHIRTypes3.TFhirCodesystemHierarchyMeaningEnum; overload; virtual;
-    class function convertCodeSystemContentMode(src : FHIRTypes3.TFhirCodesystemContentModeEnum) : FHIRTypes4.TFhirCodesystemContentModeEnum; overload; virtual;
-    class function convertCodeSystemContentMode(src : FHIRTypes4.TFhirCodesystemContentModeEnum) : FHIRTypes3.TFhirCodesystemContentModeEnum; overload; virtual;
-    class function convertFilterOperator(src : FHIRTypes3.TFhirFilterOperatorEnum) : FHIRTypes4.TFhirFilterOperatorEnum; overload; virtual;
-    class function convertFilterOperator(src : FHIRTypes4.TFhirFilterOperatorEnum) : FHIRTypes3.TFhirFilterOperatorEnum; overload; virtual;
-    class function convertPropertyType(src : FHIRTypes3.TFhirConceptPropertyTypeEnum) : FHIRTypes4.TFhirConceptPropertyTypeEnum; overload; virtual;
-    class function convertPropertyType(src : FHIRTypes4.TFhirConceptPropertyTypeEnum) : FHIRTypes3.TFhirConceptPropertyTypeEnum; overload; virtual;
-    class function convertCommunicationStatus(src : FHIRTypes3.TFhirEventStatusEnum) : FHIRTypes4.TFhirEventStatusEnum; overload; virtual;
-    class function convertCommunicationStatus(src : FHIRTypes4.TFhirEventStatusEnum) : FHIRTypes3.TFhirEventStatusEnum; overload; virtual;
-    class function convertCompartmentType(src : FHIRTypes3.TFhirCompartmentTypeEnum) : FHIRTypes4.TFhirCompartmentTypeEnum; overload; virtual;
-    class function convertCompartmentType(src : FHIRTypes4.TFhirCompartmentTypeEnum) : FHIRTypes3.TFhirCompartmentTypeEnum; overload; virtual;
-    class function convertCompositionStatus(src : FHIRTypes3.TFhirCompositionStatusEnum) : FHIRTypes4.TFhirCompositionStatusEnum; overload; virtual;
-    class function convertCompositionStatus(src : FHIRTypes4.TFhirCompositionStatusEnum) : FHIRTypes3.TFhirCompositionStatusEnum; overload; virtual;
-    class function convertDocumentConfidentiality(src : FHIRTypes3.TFhirV3ConfidentialityClassificationEnum) : FHIRTypes4.TFhirV3ConfidentialityClassificationEnum; overload; virtual;
-    class function convertDocumentConfidentiality(src : FHIRTypes4.TFhirV3ConfidentialityClassificationEnum) : FHIRTypes3.TFhirV3ConfidentialityClassificationEnum; overload; virtual;
-    class function convertCompositionAttestationMode(src : FHIRTypes3.TFhirCompositionAttestationModeEnum) : FHIRTypes4.TFhirCompositionAttestationModeEnum; overload; virtual;
-    class function convertCompositionAttestationMode(src : FHIRTypes4.TFhirCompositionAttestationModeEnum) : FHIRTypes3.TFhirCompositionAttestationModeEnum; overload; virtual;
-    class function convertDocumentRelationshipType(src : FHIRTypes3.TFhirDocumentRelationshipTypeEnum) : FHIRTypes4.TFhirDocumentRelationshipTypeEnum; overload; virtual;
-    class function convertDocumentRelationshipType(src : FHIRTypes4.TFhirDocumentRelationshipTypeEnum) : FHIRTypes3.TFhirDocumentRelationshipTypeEnum; overload; virtual;
-    class function convertSectionMode(src : FHIRTypes3.TFhirListModeEnum) : FHIRTypes4.TFhirListModeEnum; overload; virtual;
-    class function convertSectionMode(src : FHIRTypes4.TFhirListModeEnum) : FHIRTypes3.TFhirListModeEnum; overload; virtual;
-    class function convertConceptMapEquivalence(src : FHIRTypes3.TFhirConceptMapEquivalenceEnum) : FHIRTypes4.TFhirConceptMapEquivalenceEnum; overload; virtual;
-    class function convertConceptMapEquivalence(src : FHIRTypes4.TFhirConceptMapEquivalenceEnum) : FHIRTypes3.TFhirConceptMapEquivalenceEnum; overload; virtual;
-    class function convertConceptMapGroupUnmappedMode(src : FHIRTypes3.TFhirConceptmapUnmappedModeEnum) : FHIRTypes4.TFhirConceptmapUnmappedModeEnum; overload; virtual;
-    class function convertConceptMapGroupUnmappedMode(src : FHIRTypes4.TFhirConceptmapUnmappedModeEnum) : FHIRTypes3.TFhirConceptmapUnmappedModeEnum; overload; virtual;
-    class function convertConditionClinicalStatus(src : FHIRTypes3.TFhirConditionClinicalEnum) : FHIRTypes4.TFhirConditionClinicalEnum; overload; virtual;
-    class function convertConditionClinicalStatus(src : FHIRTypes4.TFhirConditionClinicalEnum) : FHIRTypes3.TFhirConditionClinicalEnum; overload; virtual;
-    class function convertConditionVerificationStatus(src : FHIRTypes3.TFhirConditionVerStatusEnum) : FHIRTypes4.TFhirConditionVerStatusEnum; overload; virtual;
-    class function convertConditionVerificationStatus(src : FHIRTypes4.TFhirConditionVerStatusEnum) : FHIRTypes3.TFhirConditionVerStatusEnum; overload; virtual;
-    class function convertConsentDataMeaning(src : FHIRTypes3.TFhirConsentDataMeaningEnum) : FHIRTypes4.TFhirConsentDataMeaningEnum; overload; virtual;
-    class function convertConsentDataMeaning(src : FHIRTypes4.TFhirConsentDataMeaningEnum) : FHIRTypes3.TFhirConsentDataMeaningEnum; overload; virtual;
-    class function convertDetectedIssueStatus(src : FHIRTypes3.TFhirObservationStatusEnum) : FHIRTypes4.TFhirObservationStatusEnum; overload; virtual;
-    class function convertDetectedIssueStatus(src : FHIRTypes4.TFhirObservationStatusEnum) : FHIRTypes3.TFhirObservationStatusEnum; overload; virtual;
-    class function convertDetectedIssueSeverity(src : FHIRTypes3.TFhirDetectedissueSeverityEnum) : FHIRTypes4.TFhirDetectedissueSeverityEnum; overload; virtual;
-    class function convertDetectedIssueSeverity(src : FHIRTypes4.TFhirDetectedissueSeverityEnum) : FHIRTypes3.TFhirDetectedissueSeverityEnum; overload; virtual;
-    class function convertFHIRDeviceStatus(src : FHIRTypes3.TFhirDeviceStatusEnum) : FHIRTypes4.TFhirDeviceStatusEnum; overload; virtual;
-    class function convertFHIRDeviceStatus(src : FHIRTypes4.TFhirDeviceStatusEnum) : FHIRTypes3.TFhirDeviceStatusEnum; overload; virtual;
-    class function convertUDIEntryType(src : FHIRTypes3.TFhirUdiEntryTypeEnum) : FHIRTypes4.TFhirUdiEntryTypeEnum; overload; virtual;
-    class function convertUDIEntryType(src : FHIRTypes4.TFhirUdiEntryTypeEnum) : FHIRTypes3.TFhirUdiEntryTypeEnum; overload; virtual;
-    class function convertMeasmntPrinciple(src : FHIRTypes3.TFhirMeasurementPrincipleEnum) : FHIRTypes4.TFhirMeasurementPrincipleEnum; overload; virtual;
-    class function convertMeasmntPrinciple(src : FHIRTypes4.TFhirMeasurementPrincipleEnum) : FHIRTypes3.TFhirMeasurementPrincipleEnum; overload; virtual;
-    class function convertDeviceMetricOperationalStatus(src : FHIRTypes3.TFhirMetricOperationalStatusEnum) : FHIRTypes4.TFhirMetricOperationalStatusEnum; overload; virtual;
-    class function convertDeviceMetricOperationalStatus(src : FHIRTypes4.TFhirMetricOperationalStatusEnum) : FHIRTypes3.TFhirMetricOperationalStatusEnum; overload; virtual;
-    class function convertDeviceMetricColor(src : FHIRTypes3.TFhirMetricColorEnum) : FHIRTypes4.TFhirMetricColorEnum; overload; virtual;
-    class function convertDeviceMetricColor(src : FHIRTypes4.TFhirMetricColorEnum) : FHIRTypes3.TFhirMetricColorEnum; overload; virtual;
-    class function convertDeviceMetricCategory(src : FHIRTypes3.TFhirMetricCategoryEnum) : FHIRTypes4.TFhirMetricCategoryEnum; overload; virtual;
-    class function convertDeviceMetricCategory(src : FHIRTypes4.TFhirMetricCategoryEnum) : FHIRTypes3.TFhirMetricCategoryEnum; overload; virtual;
-    class function convertDeviceMetricCalibrationType(src : FHIRTypes3.TFhirMetricCalibrationTypeEnum) : FHIRTypes4.TFhirMetricCalibrationTypeEnum; overload; virtual;
-    class function convertDeviceMetricCalibrationType(src : FHIRTypes4.TFhirMetricCalibrationTypeEnum) : FHIRTypes3.TFhirMetricCalibrationTypeEnum; overload; virtual;
-    class function convertDeviceMetricCalibrationState(src : FHIRTypes3.TFhirMetricCalibrationStateEnum) : FHIRTypes4.TFhirMetricCalibrationStateEnum; overload; virtual;
-    class function convertDeviceMetricCalibrationState(src : FHIRTypes4.TFhirMetricCalibrationStateEnum) : FHIRTypes3.TFhirMetricCalibrationStateEnum; overload; virtual;
-    class function convertDeviceUseStatementStatus(src : FHIRTypes3.TFhirDeviceStatementStatusEnum) : FHIRTypes4.TFhirDeviceStatementStatusEnum; overload; virtual;
-    class function convertDeviceUseStatementStatus(src : FHIRTypes4.TFhirDeviceStatementStatusEnum) : FHIRTypes3.TFhirDeviceStatementStatusEnum; overload; virtual;
-    class function convertDiagnosticReportStatus(src : FHIRTypes3.TFhirDiagnosticReportStatusEnum) : FHIRTypes4.TFhirDiagnosticReportStatusEnum; overload; virtual;
-    class function convertDiagnosticReportStatus(src : FHIRTypes4.TFhirDiagnosticReportStatusEnum) : FHIRTypes3.TFhirDiagnosticReportStatusEnum; overload; virtual;
-    class function convertDocumentReferenceStatus(src : FHIRTypes3.TFhirDocumentReferenceStatusEnum) : FHIRTypes4.TFhirDocumentReferenceStatusEnum; overload; virtual;
-    class function convertDocumentReferenceStatus(src : FHIRTypes4.TFhirDocumentReferenceStatusEnum) : FHIRTypes3.TFhirDocumentReferenceStatusEnum; overload; virtual;
-    class function convertReferredDocumentStatus(src : FHIRTypes3.TFhirCompositionStatusEnum) : FHIRTypes4.TFhirCompositionStatusEnum; overload; virtual;
-    class function convertReferredDocumentStatus(src : FHIRTypes4.TFhirCompositionStatusEnum) : FHIRTypes3.TFhirCompositionStatusEnum; overload; virtual;
-    class function convertEncounterStatus(src : FHIRTypes3.TFhirEncounterStatusEnum) : FHIRTypes4.TFhirEncounterStatusEnum; overload; virtual;
-    class function convertEncounterStatus(src : FHIRTypes4.TFhirEncounterStatusEnum) : FHIRTypes3.TFhirEncounterStatusEnum; overload; virtual;
-    class function convertEncounterLocationStatus(src : FHIRTypes3.TFhirEncounterLocationStatusEnum) : FHIRTypes4.TFhirEncounterLocationStatusEnum; overload; virtual;
-    class function convertEncounterLocationStatus(src : FHIRTypes4.TFhirEncounterLocationStatusEnum) : FHIRTypes3.TFhirEncounterLocationStatusEnum; overload; virtual;
-    class function convertEndpointStatus(src : FHIRTypes3.TFhirEndpointStatusEnum) : FHIRTypes4.TFhirEndpointStatusEnum; overload; virtual;
-    class function convertEndpointStatus(src : FHIRTypes4.TFhirEndpointStatusEnum) : FHIRTypes3.TFhirEndpointStatusEnum; overload; virtual;
-    class function convertEpisodeOfCareStatus(src : FHIRTypes3.TFhirEpisodeOfCareStatusEnum) : FHIRTypes4.TFhirEpisodeOfCareStatusEnum; overload; virtual;
-    class function convertEpisodeOfCareStatus(src : FHIRTypes4.TFhirEpisodeOfCareStatusEnum) : FHIRTypes3.TFhirEpisodeOfCareStatusEnum; overload; virtual;
-    class function convertSystemVersionProcessingMode(src : FHIRTypes3.TFhirSystemVersionProcessingModeEnum) : FHIRTypes4.TFhirSystemVersionProcessingModeEnum; overload; virtual;
-    class function convertSystemVersionProcessingMode(src : FHIRTypes4.TFhirSystemVersionProcessingModeEnum) : FHIRTypes3.TFhirSystemVersionProcessingModeEnum; overload; virtual;
-    class function convertFamilyHistoryStatus(src : FHIRTypes3.TFhirHistoryStatusEnum) : FHIRTypes4.TFhirHistoryStatusEnum; overload; virtual;
-    class function convertFamilyHistoryStatus(src : FHIRTypes4.TFhirHistoryStatusEnum) : FHIRTypes3.TFhirHistoryStatusEnum; overload; virtual;
-    class function convertAdministrativeGender(src : FHIRTypes3.TFhirAdministrativeGenderEnum) : FHIRTypes4.TFhirAdministrativeGenderEnum; overload; virtual;
-    class function convertAdministrativeGender(src : FHIRTypes4.TFhirAdministrativeGenderEnum) : FHIRTypes3.TFhirAdministrativeGenderEnum; overload; virtual;
-    class function convertFlagStatus(src : FHIRTypes3.TFhirFlagStatusEnum) : FHIRTypes4.TFhirFlagStatusEnum; overload; virtual;
-    class function convertFlagStatus(src : FHIRTypes4.TFhirFlagStatusEnum) : FHIRTypes3.TFhirFlagStatusEnum; overload; virtual;
-    class function convertGoalStatus(src : FHIRTypes3.TFhirGoalStatusEnum) : FHIRTypes4.TFhirGoalStatusEnum; overload; virtual;
-    class function convertGoalStatus(src : FHIRTypes4.TFhirGoalStatusEnum) : FHIRTypes3.TFhirGoalStatusEnum; overload; virtual;
-    class function convertCompartmentCode(src : FHIRTypes3.TFhirCompartmentTypeEnum) : FHIRTypes4.TFhirCompartmentTypeEnum; overload; virtual;
-    class function convertCompartmentCode(src : FHIRTypes4.TFhirCompartmentTypeEnum) : FHIRTypes3.TFhirCompartmentTypeEnum; overload; virtual;
-    class function convertGraphCompartmentRule(src : FHIRTypes3.TFhirGraphCompartmentRuleEnum) : FHIRTypes4.TFhirGraphCompartmentRuleEnum; overload; virtual;
-    class function convertGraphCompartmentRule(src : FHIRTypes4.TFhirGraphCompartmentRuleEnum) : FHIRTypes3.TFhirGraphCompartmentRuleEnum; overload; virtual;
-    class function convertGroupType(src : FHIRTypes3.TFhirGroupTypeEnum) : FHIRTypes4.TFhirGroupTypeEnum; overload; virtual;
-    class function convertGroupType(src : FHIRTypes4.TFhirGroupTypeEnum) : FHIRTypes3.TFhirGroupTypeEnum; overload; virtual;
-    class function convertDaysOfWeek(src : FHIRTypes3.TFhirDaysOfWeekEnum) : FHIRTypes4.TFhirDaysOfWeekEnum; overload; virtual;
-    class function convertDaysOfWeek(src : FHIRTypes4.TFhirDaysOfWeekEnum) : FHIRTypes3.TFhirDaysOfWeekEnum; overload; virtual;
-    class function convertImmunizationStatus(src : FHIRTypes3.TFhirImmunizationStatusEnum) : FHIRTypes4.TFhirImmunizationStatusEnum; overload; virtual;
-    class function convertImmunizationStatus(src : FHIRTypes4.TFhirImmunizationStatusEnum) : FHIRTypes3.TFhirImmunizationStatusEnum; overload; virtual;
-    class function findPackage(definition : FHIRResources3.TFhirImplementationGuidePackageList; id : String) : FHIRResources3.TFhirImplementationGuidePackage; overload; virtual;
-    class function convertPageGeneration(kind : FHIRTypes3.TFhirGuidePageKindEnum) : FHIRTypes4.TFhirGuidePageGenerationEnum; overload; virtual;
-    class function convertPageGeneration(generation : FHIRTypes4.TFhirGuidePageGenerationEnum) : FHIRTypes3.TFhirGuidePageKindEnum; overload; virtual;
-    class function convertLinkageType(src : FHIRTypes3.TFhirLinkageTypeEnum) : FHIRTypes4.TFhirLinkageTypeEnum; overload; virtual;
-    class function convertLinkageType(src : FHIRTypes4.TFhirLinkageTypeEnum) : FHIRTypes3.TFhirLinkageTypeEnum; overload; virtual;
-    class function convertListStatus(src : FHIRTypes3.TFhirListStatusEnum) : FHIRTypes4.TFhirListStatusEnum; overload; virtual;
-    class function convertListStatus(src : FHIRTypes4.TFhirListStatusEnum) : FHIRTypes3.TFhirListStatusEnum; overload; virtual;
-    class function convertListMode(src : FHIRTypes3.TFhirListModeEnum) : FHIRTypes4.TFhirListModeEnum; overload; virtual;
-    class function convertListMode(src : FHIRTypes4.TFhirListModeEnum) : FHIRTypes3.TFhirListModeEnum; overload; virtual;
-    class function convertLocationStatus(src : FHIRTypes3.TFhirLocationStatusEnum) : FHIRTypes4.TFhirLocationStatusEnum; overload; virtual;
-    class function convertLocationStatus(src : FHIRTypes4.TFhirLocationStatusEnum) : FHIRTypes3.TFhirLocationStatusEnum; overload; virtual;
-    class function convertLocationMode(src : FHIRTypes3.TFhirLocationModeEnum) : FHIRTypes4.TFhirLocationModeEnum; overload; virtual;
-    class function convertLocationMode(src : FHIRTypes4.TFhirLocationModeEnum) : FHIRTypes3.TFhirLocationModeEnum; overload; virtual;
-    class function convertMedicationStatus(src : FHIRTypes3.TFhirMedicationStatusEnum) : FHIRTypes4.TFhirMedicationStatusEnum; overload; virtual;
-    class function convertMedicationStatus(src : FHIRTypes4.TFhirMedicationStatusEnum) : FHIRTypes3.TFhirMedicationStatusEnum; overload; virtual;
-    class function convertMedicationAdministrationStatus(src : FHIRTypes3.TFhirMedicationAdminStatusEnum) : FHIRTypes4.TFhirMedicationAdminStatusEnum; overload; virtual;
-    class function convertMedicationAdministrationStatus(src : FHIRTypes4.TFhirMedicationAdminStatusEnum) : FHIRTypes3.TFhirMedicationAdminStatusEnum; overload; virtual;
-    class function convertMedicationDispenseStatus(src : FHIRTypes3.TFhirMedicationDispenseStatusEnum) : FHIRTypes4.TFhirMedicationDispenseStatusEnum; overload; virtual;
-    class function convertMedicationDispenseStatus(src : FHIRTypes4.TFhirMedicationDispenseStatusEnum) : FHIRTypes3.TFhirMedicationDispenseStatusEnum; overload; virtual;
-    class function convertMedicationRequestStatus(src : FHIRTypes3.TFhirMedicationRequestStatusEnum) : FHIRTypes4.TFhirMedicationRequestStatusEnum; overload; virtual;
-    class function convertMedicationRequestStatus(src : FHIRTypes4.TFhirMedicationRequestStatusEnum) : FHIRTypes3.TFhirMedicationRequestStatusEnum; overload; virtual;
-    class function convertMedicationRequestIntent(src : FHIRTypes3.TFhirMedicationRequestIntentEnum) : FHIRTypes4.TFhirMedicationRequestIntentEnum; overload; virtual;
-    class function convertMedicationRequestIntent(src : FHIRTypes4.TFhirMedicationRequestIntentEnum) : FHIRTypes3.TFhirMedicationRequestIntentEnum; overload; virtual;
-    class function convertMedicationRequestPriority(src : FHIRTypes3.TFhirMedicationRequestPriorityEnum) : FHIRTypes4.TFhirRequestPriorityEnum; overload; virtual;
-    class function convertMedicationRequestPriority(src : FHIRTypes4.TFhirRequestPriorityEnum) : FHIRTypes3.TFhirMedicationRequestPriorityEnum; overload; virtual;
-    class function convertMedicationStatementStatus(src : FHIRTypes3.TFhirMedicationStatementStatusEnum) : FHIRTypes4.TFhirMedicationStatementStatusEnum; overload; virtual;
-    class function convertMedicationStatementStatus(src : FHIRTypes4.TFhirMedicationStatementStatusEnum) : FHIRTypes3.TFhirMedicationStatementStatusEnum; overload; virtual;
-    class function convertMessageSignificanceCategory(src : FHIRTypes3.TFhirMessageSignificanceCategoryEnum) : FHIRTypes4.TFhirMessageSignificanceCategoryEnum; overload; virtual;
-    class function convertMessageSignificanceCategory(src : FHIRTypes4.TFhirMessageSignificanceCategoryEnum) : FHIRTypes3.TFhirMessageSignificanceCategoryEnum; overload; virtual;
-    class function convertResponseType(src : FHIRTypes3.TFhirResponseCodeEnum) : FHIRTypes4.TFhirResponseCodeEnum; overload; virtual;
-    class function convertResponseType(src : FHIRTypes4.TFhirResponseCodeEnum) : FHIRTypes3.TFhirResponseCodeEnum; overload; virtual;
-    class function convertNamingSystemType(src : FHIRTypes3.TFhirNamingsystemTypeEnum) : FHIRTypes4.TFhirNamingsystemTypeEnum; overload; virtual;
-    class function convertNamingSystemType(src : FHIRTypes4.TFhirNamingsystemTypeEnum) : FHIRTypes3.TFhirNamingsystemTypeEnum; overload; virtual;
-    class function convertNamingSystemIdentifierType(src : FHIRTypes3.TFhirNamingsystemIdentifierTypeEnum) : FHIRTypes4.TFhirNamingsystemIdentifierTypeEnum; overload; virtual;
-    class function convertNamingSystemIdentifierType(src : FHIRTypes4.TFhirNamingsystemIdentifierTypeEnum) : FHIRTypes3.TFhirNamingsystemIdentifierTypeEnum; overload; virtual;
-    class function convertObservationStatus(src : FHIRTypes3.TFhirObservationStatusEnum) : FHIRTypes4.TFhirObservationStatusEnum; overload; virtual;
-    class function convertObservationStatus(src : FHIRTypes4.TFhirObservationStatusEnum) : FHIRTypes3.TFhirObservationStatusEnum; overload; virtual;
-    class function convertOperationKind(src : FHIRTypes3.TFhirOperationKindEnum) : FHIRTypes4.TFhirOperationKindEnum; overload; virtual;
-    class function convertOperationKind(src : FHIRTypes4.TFhirOperationKindEnum) : FHIRTypes3.TFhirOperationKindEnum; overload; virtual;
-    class function convertOperationParameterUse(src : FHIRTypes3.TFhirOperationParameterUseEnum) : FHIRTypes4.TFhirOperationParameterUseEnum; overload; virtual;
-    class function convertOperationParameterUse(src : FHIRTypes4.TFhirOperationParameterUseEnum) : FHIRTypes3.TFhirOperationParameterUseEnum; overload; virtual;
-    class function convertIssueSeverity(src : FHIRTypes3.TFhirIssueSeverityEnum) : FHIRTypes4.TFhirIssueSeverityEnum; overload; virtual;
-    class function convertIssueSeverity(src : FHIRTypes4.TFhirIssueSeverityEnum) : FHIRTypes3.TFhirIssueSeverityEnum; overload; virtual;
-    class function convertIssueType(src : FHIRTypes3.TFhirIssueTypeEnum) : FHIRTypes4.TFhirIssueTypeEnum; overload; virtual;
-    class function convertIssueType(src : FHIRTypes4.TFhirIssueTypeEnum) : FHIRTypes3.TFhirIssueTypeEnum; overload; virtual;
-    class function convertLinkType(src : FHIRTypes3.TFhirLinkTypeEnum) : FHIRTypes4.TFhirLinkTypeEnum; overload; virtual;
-    class function convertLinkType(src : FHIRTypes4.TFhirLinkTypeEnum) : FHIRTypes3.TFhirLinkTypeEnum; overload; virtual;
-    class function convertPaymentNoticeStatus(src : FHIRTypes3.TFhirFmStatusEnum) : FHIRTypes4.TFhirFmStatusEnum; overload; virtual;
-    class function convertPaymentNoticeStatus(src : FHIRTypes4.TFhirFmStatusEnum) : FHIRTypes3.TFhirFmStatusEnum; overload; virtual;
-    class function convertIdentityAssuranceLevel(src : FHIRTypes3.TFhirIdentityAssuranceLevelEnum) : FHIRTypes4.TFhirIdentityAssuranceLevelEnum; overload; virtual;
-    class function convertIdentityAssuranceLevel(src : FHIRTypes4.TFhirIdentityAssuranceLevelEnum) : FHIRTypes3.TFhirIdentityAssuranceLevelEnum; overload; virtual;
-    class function convertQuestionnaireItemType(src : FHIRTypes3.TFhirItemTypeEnum) : FHIRTypes4.TFhirItemTypeEnum; overload; virtual;
-    class function convertQuestionnaireItemType(src : FHIRTypes4.TFhirItemTypeEnum) : FHIRTypes3.TFhirItemTypeEnum; overload; virtual;
-    class function convertQuestionnaireResponseStatus(src : FHIRTypes3.TFhirQuestionnaireAnswersStatusEnum) : FHIRTypes4.TFhirQuestionnaireAnswersStatusEnum; overload; virtual;
-    class function convertQuestionnaireResponseStatus(src : FHIRTypes4.TFhirQuestionnaireAnswersStatusEnum) : FHIRTypes3.TFhirQuestionnaireAnswersStatusEnum; overload; virtual;
-    class function convertRiskAssessmentStatus(src : FHIRTypes3.TFhirObservationStatusEnum) : FHIRTypes4.TFhirObservationStatusEnum; overload; virtual;
-    class function convertRiskAssessmentStatus(src : FHIRTypes4.TFhirObservationStatusEnum) : FHIRTypes3.TFhirObservationStatusEnum; overload; virtual;
-    class function convertXPathUsageType(src : FHIRTypes3.TFhirSearchXpathUsageEnum) : FHIRTypes4.TFhirSearchXpathUsageEnum; overload; virtual;
-    class function convertXPathUsageType(src : FHIRTypes4.TFhirSearchXpathUsageEnum) : FHIRTypes3.TFhirSearchXpathUsageEnum; overload; virtual;
-    class function convertSearchComparator(src : FHIRTypes3.TFhirSearchComparatorEnum) : FHIRTypes4.TFhirSearchComparatorEnum; overload; virtual;
-    class function convertSearchComparator(src : FHIRTypes4.TFhirSearchComparatorEnum) : FHIRTypes3.TFhirSearchComparatorEnum; overload; virtual;
-    class function convertSearchModifierCode(src : FHIRTypes3.TFhirSearchModifierCodeEnum) : FHIRTypes4.TFhirSearchModifierCodeEnum; overload; virtual;
-    class function convertSearchModifierCode(src : FHIRTypes4.TFhirSearchModifierCodeEnum) : FHIRTypes3.TFhirSearchModifierCodeEnum; overload; virtual;
-    class function convertQualityType(src : FHIRTypes3.TFhirQualityTypeEnum) : FHIRTypes4.TFhirQualityTypeEnum; overload; virtual;
-    class function convertQualityType(src : FHIRTypes4.TFhirQualityTypeEnum) : FHIRTypes3.TFhirQualityTypeEnum; overload; virtual;
-    class function convertRepositoryType(src : FHIRTypes3.TFhirRepositoryTypeEnum) : FHIRTypes4.TFhirRepositoryTypeEnum; overload; virtual;
-    class function convertRepositoryType(src : FHIRTypes4.TFhirRepositoryTypeEnum) : FHIRTypes3.TFhirRepositoryTypeEnum; overload; virtual;
-    class function convertSlotStatus(src : FHIRTypes3.TFhirSlotstatusEnum) : FHIRTypes4.TFhirSlotstatusEnum; overload; virtual;
-    class function convertSlotStatus(src : FHIRTypes4.TFhirSlotstatusEnum) : FHIRTypes3.TFhirSlotstatusEnum; overload; virtual;
-    class function convertSpecimenStatus(src : FHIRTypes3.TFhirSpecimenStatusEnum) : FHIRTypes4.TFhirSpecimenStatusEnum; overload; virtual;
-    class function convertSpecimenStatus(src : FHIRTypes4.TFhirSpecimenStatusEnum) : FHIRTypes3.TFhirSpecimenStatusEnum; overload; virtual;
-    class function convertStructureDefinitionKind(src : FHIRTypes3.TFhirStructureDefinitionKindEnum) : FHIRTypes4.TFhirStructureDefinitionKindEnum; overload; virtual;
-    class function convertStructureDefinitionKind(src : FHIRTypes4.TFhirStructureDefinitionKindEnum) : FHIRTypes3.TFhirStructureDefinitionKindEnum; overload; virtual;
-    class function convertExtensionContext(src : FHIRTypes3.TFhirExtensionContextEnum) : FHIRTypes4.TFhirExtensionContextTypeEnum; overload; virtual;
-    class function convertExtensionContext(src : FHIRTypes4.TFhirExtensionContextTypeEnum) : FHIRTypes3.TFhirExtensionContextEnum; overload; virtual;
-    class function convertTypeDerivationRule(src : FHIRTypes3.TFhirTypeDerivationRuleEnum) : FHIRTypes4.TFhirTypeDerivationRuleEnum; overload; virtual;
-    class function convertTypeDerivationRule(src : FHIRTypes4.TFhirTypeDerivationRuleEnum) : FHIRTypes3.TFhirTypeDerivationRuleEnum; overload; virtual;
-    class function convertStructureMapModelMode(src : FHIRTypes3.TFhirMapModelModeEnum) : FHIRTypes4.TFhirMapModelModeEnum; overload; virtual;
-    class function convertStructureMapModelMode(src : FHIRTypes4.TFhirMapModelModeEnum) : FHIRTypes3.TFhirMapModelModeEnum; overload; virtual;
-    class function convertStructureMapGroupTypeMode(src : FHIRTypes3.TFhirMapGroupTypeModeEnum) : FHIRTypes4.TFhirMapGroupTypeModeEnum; overload; virtual;
-    class function convertStructureMapGroupTypeMode(src : FHIRTypes4.TFhirMapGroupTypeModeEnum) : FHIRTypes3.TFhirMapGroupTypeModeEnum; overload; virtual;
-    class function convertStructureMapInputMode(src : FHIRTypes3.TFhirMapInputModeEnum) : FHIRTypes4.TFhirMapInputModeEnum; overload; virtual;
-    class function convertStructureMapInputMode(src : FHIRTypes4.TFhirMapInputModeEnum) : FHIRTypes3.TFhirMapInputModeEnum; overload; virtual;
-    class function convertStructureMapSourceListMode(src : FHIRTypes3.TFhirMapSourceListModeEnum) : FHIRTypes4.TFhirMapSourceListModeEnum; overload; virtual;
-    class function convertStructureMapSourceListMode(src : FHIRTypes4.TFhirMapSourceListModeEnum) : FHIRTypes3.TFhirMapSourceListModeEnum; overload; virtual;
-    class function convertStructureMapContextType(src : FHIRTypes3.TFhirMapContextTypeEnum) : FHIRTypes4.TFhirMapContextTypeEnum; overload; virtual;
-    class function convertStructureMapContextType(src : FHIRTypes4.TFhirMapContextTypeEnum) : FHIRTypes3.TFhirMapContextTypeEnum; overload; virtual;
-    class function convertStructureMapTargetListMode(src : FHIRTypes3.TFhirMapTargetListModeEnum) : FHIRTypes4.TFhirMapTargetListModeEnum; overload; virtual;
-    class function convertStructureMapTargetListMode(src : FHIRTypes4.TFhirMapTargetListModeEnum) : FHIRTypes3.TFhirMapTargetListModeEnum; overload; virtual;
-    class function convertStructureMapTransform(src : FHIRTypes3.TFhirMapTransformEnum) : FHIRTypes4.TFhirMapTransformEnum; overload; virtual;
-    class function convertStructureMapTransform(src : FHIRTypes4.TFhirMapTransformEnum) : FHIRTypes3.TFhirMapTransformEnum; overload; virtual;
-    class function convertSubscriptionStatus(src : FHIRTypes3.TFhirSubscriptionStatusEnum) : FHIRTypes4.TFhirSubscriptionStatusEnum; overload; virtual;
-    class function convertSubscriptionStatus(src : FHIRTypes4.TFhirSubscriptionStatusEnum) : FHIRTypes3.TFhirSubscriptionStatusEnum; overload; virtual;
-    class function convertSubscriptionChannelType(src : FHIRTypes3.TFhirSubscriptionChannelTypeEnum) : FHIRTypes4.TFhirSubscriptionChannelTypeEnum; overload; virtual;
-    class function convertSubscriptionChannelType(src : FHIRTypes4.TFhirSubscriptionChannelTypeEnum) : FHIRTypes3.TFhirSubscriptionChannelTypeEnum; overload; virtual;
-    class function convertFHIRSubstanceStatus(src : FHIRTypes3.TFhirSubstanceStatusEnum) : FHIRTypes4.TFhirSubstanceStatusEnum; overload; virtual;
-    class function convertFHIRSubstanceStatus(src : FHIRTypes4.TFhirSubstanceStatusEnum) : FHIRTypes3.TFhirSubstanceStatusEnum; overload; virtual;
-    class function convertSupplyDeliveryStatus(src : FHIRTypes3.TFhirSupplydeliveryStatusEnum) : FHIRTypes4.TFhirSupplydeliveryStatusEnum; overload; virtual;
-    class function convertSupplyDeliveryStatus(src : FHIRTypes4.TFhirSupplydeliveryStatusEnum) : FHIRTypes3.TFhirSupplydeliveryStatusEnum; overload; virtual;
-    class function convertContentType(src : FHIRTypes3.TFhirContentTypeEnum) : String; overload; virtual;
-    class function convertActionGroupingBehavior(src : FHIRTypes3.TFhirActionGroupingBehaviorEnum) : FHIRTypes4.TFhirActionGroupingBehaviorEnum; overload; virtual;
-    class function convertActionGroupingBehavior(src : FHIRTypes4.TFhirActionGroupingBehaviorEnum) : FHIRTypes3.TFhirActionGroupingBehaviorEnum; overload; virtual;
-    class function convertActionSelectionBehavior(src : FHIRTypes3.TFhirActionSelectionBehaviorEnum) : FHIRTypes4.TFhirActionSelectionBehaviorEnum; overload; virtual;
-    class function convertActionSelectionBehavior(src : FHIRTypes4.TFhirActionSelectionBehaviorEnum) : FHIRTypes3.TFhirActionSelectionBehaviorEnum; overload; virtual;
-    class function convertActionRequiredBehavior(src : FHIRTypes3.TFhirActionRequiredBehaviorEnum) : FHIRTypes4.TFhirActionRequiredBehaviorEnum; overload; virtual;
-    class function convertActionRequiredBehavior(src : FHIRTypes4.TFhirActionRequiredBehaviorEnum) : FHIRTypes3.TFhirActionRequiredBehaviorEnum; overload; virtual;
-    class function convertActionPrecheckBehavior(src : FHIRTypes3.TFhirActionPrecheckBehaviorEnum) : FHIRTypes4.TFhirActionPrecheckBehaviorEnum; overload; virtual;
-    class function convertActionPrecheckBehavior(src : FHIRTypes4.TFhirActionPrecheckBehaviorEnum) : FHIRTypes3.TFhirActionPrecheckBehaviorEnum; overload; virtual;
-    class function convertActionCardinalityBehavior(src : FHIRTypes3.TFhirActionCardinalityBehaviorEnum) : FHIRTypes4.TFhirActionCardinalityBehaviorEnum; overload; virtual;
-    class function convertActionCardinalityBehavior(src : FHIRTypes4.TFhirActionCardinalityBehaviorEnum) : FHIRTypes3.TFhirActionCardinalityBehaviorEnum; overload; virtual;
-    class function convertActionConditionKind(src : FHIRTypes3.TFhirActionConditionKindEnum) : FHIRTypes4.TFhirActionConditionKindEnum; overload; virtual;
-    class function convertActionConditionKind(src : FHIRTypes4.TFhirActionConditionKindEnum) : FHIRTypes3.TFhirActionConditionKindEnum; overload; virtual;
-    class function convertActionRelationshipType(src : FHIRTypes3.TFhirActionRelationshipTypeEnum) : FHIRTypes4.TFhirActionRelationshipTypeEnum; overload; virtual;
-    class function convertActionRelationshipType(src : FHIRTypes4.TFhirActionRelationshipTypeEnum) : FHIRTypes3.TFhirActionRelationshipTypeEnum; overload; virtual;
-    class function convertActionParticipantType(src : FHIRTypes3.TFhirActionParticipantTypeEnum) : FHIRTypes4.TFhirActionParticipantTypeEnum; overload; virtual;
-    class function convertActionParticipantType(src : FHIRTypes4.TFhirActionParticipantTypeEnum) : FHIRTypes3.TFhirActionParticipantTypeEnum; overload; virtual;
+    class procedure copyElement(src : FHIRTypes3.TFhirElement; tgt : FHIRTypes4.TFhirElement); overload;
+    class procedure copyElement(src : FHIRTypes4.TFhirElement; tgt : FHIRTypes3.TFhirElement); overload;
+    class procedure copyBackboneElement(src : FHIRTypes3.TFhirBackboneElement; tgt : FHIRTypes4.TFhirBackboneElement); overload;
+    class procedure copyBackboneElement(src : FHIRTypes4.TFhirBackboneElement; tgt : FHIRTypes3.TFhirBackboneElement); overload;
+    class function convertNarrativeStatus(src : FHIRTypes3.TFhirNarrativeStatusEnum) : FHIRTypes4.TFhirNarrativeStatusEnum; overload;
+    class function convertNarrativeStatus(src : FHIRTypes4.TFhirNarrativeStatusEnum) : FHIRTypes3.TFhirNarrativeStatusEnum; overload;
+    class function convertIdentifierUse(src : FHIRTypes3.TFhirIdentifierUseEnum) : FHIRTypes4.TFhirIdentifierUseEnum; overload;
+    class function convertIdentifierUse(src : FHIRTypes4.TFhirIdentifierUseEnum) : FHIRTypes3.TFhirIdentifierUseEnum; overload;
+    class function convertQuantityComparator(src : FHIRTypes3.TFhirQuantityComparatorEnum) : FHIRTypes4.TFhirQuantityComparatorEnum; overload;
+    class function convertQuantityComparator(src : FHIRTypes4.TFhirQuantityComparatorEnum) : FHIRTypes3.TFhirQuantityComparatorEnum; overload;
+    class function convertAddressUse(src : FHIRTypes3.TFhirAddressUseEnum) : FHIRTypes4.TFhirAddressUseEnum; overload;
+    class function convertAddressUse(src : FHIRTypes4.TFhirAddressUseEnum) : FHIRTypes3.TFhirAddressUseEnum; overload;
+    class function convertAddressType(src : FHIRTypes3.TFhirAddressTypeEnum) : FHIRTypes4.TFhirAddressTypeEnum; overload;
+    class function convertAddressType(src : FHIRTypes4.TFhirAddressTypeEnum) : FHIRTypes3.TFhirAddressTypeEnum; overload;
+    class function convertContactPointSystem(src : FHIRTypes3.TFhirContactPointSystemEnum) : FHIRTypes4.TFhirContactPointSystemEnum; overload;
+    class function convertContactPointSystem(src : FHIRTypes4.TFhirContactPointSystemEnum) : FHIRTypes3.TFhirContactPointSystemEnum; overload;
+    class function convertContactPointUse(src : FHIRTypes3.TFhirContactPointUseEnum) : FHIRTypes4.TFhirContactPointUseEnum; overload;
+    class function convertContactPointUse(src : FHIRTypes4.TFhirContactPointUseEnum) : FHIRTypes3.TFhirContactPointUseEnum; overload;
+    class function convertContributorType(src : FHIRTypes3.TFhirContributorTypeEnum) : FHIRTypes4.TFhirContributorTypeEnum; overload;
+    class function convertContributorType(src : FHIRTypes4.TFhirContributorTypeEnum) : FHIRTypes3.TFhirContributorTypeEnum; overload;
+    class function convertPropertyRepresentation(src : FHIRTypes3.TFhirPropertyRepresentationEnum) : FHIRTypes4.TFhirPropertyRepresentationEnum; overload;
+    class function convertPropertyRepresentation(src : FHIRTypes4.TFhirPropertyRepresentationEnum) : FHIRTypes3.TFhirPropertyRepresentationEnum; overload;
+    class function convertSlicingRules(src : FHIRTypes3.TFhirResourceSlicingRulesEnum) : FHIRTypes4.TFhirResourceSlicingRulesEnum; overload;
+    class function convertSlicingRules(src : FHIRTypes4.TFhirResourceSlicingRulesEnum) : FHIRTypes3.TFhirResourceSlicingRulesEnum; overload;
+    class function convertDiscriminatorType(src : FHIRTypes3.TFhirDiscriminatorTypeEnum) : FHIRTypes4.TFhirDiscriminatorTypeEnum; overload;
+    class function convertDiscriminatorType(src : FHIRTypes4.TFhirDiscriminatorTypeEnum) : FHIRTypes3.TFhirDiscriminatorTypeEnum; overload;
+    class function convertAggregationMode(src : FHIRTypes3.TFhirResourceAggregationModeEnum) : FHIRTypes4.TFhirResourceAggregationModeEnum; overload;
+    class function convertAggregationMode(src : FHIRTypes4.TFhirResourceAggregationModeEnum) : FHIRTypes3.TFhirResourceAggregationModeEnum; overload;
+    class function convertReferenceVersionRules(src : FHIRTypes3.TFhirReferenceVersionRulesEnum) : FHIRTypes4.TFhirReferenceVersionRulesEnum; overload;
+    class function convertReferenceVersionRules(src : FHIRTypes4.TFhirReferenceVersionRulesEnum) : FHIRTypes3.TFhirReferenceVersionRulesEnum; overload;
+    class function convertConstraintSeverity(src : FHIRTypes3.TFhirConstraintSeverityEnum) : FHIRTypes4.TFhirConstraintSeverityEnum; overload;
+    class function convertConstraintSeverity(src : FHIRTypes4.TFhirConstraintSeverityEnum) : FHIRTypes3.TFhirConstraintSeverityEnum; overload;
+    class function convertBindingStrength(src : FHIRTypes3.TFhirBindingStrengthEnum) : FHIRTypes4.TFhirBindingStrengthEnum; overload;
+    class function convertBindingStrength(src : FHIRTypes4.TFhirBindingStrengthEnum) : FHIRTypes3.TFhirBindingStrengthEnum; overload;
+    class function convertNameUse(src : FHIRTypes3.TFhirNameUseEnum) : FHIRTypes4.TFhirNameUseEnum; overload;
+    class function convertNameUse(src : FHIRTypes4.TFhirNameUseEnum) : FHIRTypes3.TFhirNameUseEnum; overload;
+    class function convertParameterUse(src : FHIRTypes3.TFhirOperationParameterUseEnum) : FHIRTypes4.TFhirOperationParameterUseEnum; overload;
+    class function convertParameterUse(src : FHIRTypes4.TFhirOperationParameterUseEnum) : FHIRTypes3.TFhirOperationParameterUseEnum; overload;
+    class function convertRelatedArtifactType(src : FHIRTypes3.TFhirRelatedArtifactTypeEnum) : FHIRTypes4.TFhirRelatedArtifactTypeEnum; overload;
+    class function convertRelatedArtifactType(src : FHIRTypes4.TFhirRelatedArtifactTypeEnum) : FHIRTypes3.TFhirRelatedArtifactTypeEnum; overload;
+    class function convertUnitsOfTime(src : FHIRTypes3.TFhirUnitsOfTimeEnum) : FHIRTypes4.TFhirUnitsOfTimeEnum; overload;
+    class function convertUnitsOfTime(src : FHIRTypes4.TFhirUnitsOfTimeEnum) : FHIRTypes3.TFhirUnitsOfTimeEnum; overload;
+    class function convertDayOfWeek(src : FHIRTypes3.TFhirDaysOfWeekEnum) : FHIRTypes4.TFhirDaysOfWeekEnum; overload;
+    class function convertDayOfWeek(src : FHIRTypes4.TFhirDaysOfWeekEnum) : FHIRTypes3.TFhirDaysOfWeekEnum; overload;
+    class function convertEventTiming(src : FHIRTypes3.TFhirEventTimingEnum) : FHIRTypes4.TFhirEventTimingEnum; overload;
+    class function convertEventTiming(src : FHIRTypes4.TFhirEventTimingEnum) : FHIRTypes3.TFhirEventTimingEnum; overload;
+    class function convertTriggerType(src : FHIRTypes3.TFhirTriggerTypeEnum) : FHIRTypes4.TFhirTriggerTypeEnum; overload;
+    class function convertTriggerType(src : FHIRTypes4.TFhirTriggerTypeEnum) : FHIRTypes3.TFhirTriggerTypeEnum; overload;
+    class procedure copyDomainResource(src : FHIRResources3.TFhirDomainResource; tgt : FHIRResources4.TFhirDomainResource); overload;
+    class procedure copyDomainResource(src : FHIRResources4.TFhirDomainResource; tgt : FHIRResources3.TFhirDomainResource); overload;
+    class procedure copyResource(src : FHIRResources3.TFhirResource; tgt : FHIRResources4.TFhirResource); overload;
+    class procedure copyResource(src : FHIRResources4.TFhirResource; tgt : FHIRResources3.TFhirResource); overload;
+    class function convertPublicationStatus(src : FHIRTypes3.TFhirPublicationStatusEnum) : FHIRTypes4.TFhirPublicationStatusEnum; overload;
+    class function convertPublicationStatus(src : FHIRTypes4.TFhirPublicationStatusEnum) : FHIRTypes3.TFhirPublicationStatusEnum; overload;
+    class function convertActivityDefinitionKind(src : FHIRTypes3.TFhirResourceTypesEnum) : FHIRTypes4.TFhirResourceTypesEnum; overload;
+    class function convertActivityDefinitionKind(src : FHIRTypes4.TFhirResourceTypesEnum) : FHIRTypes3.TFhirResourceTypesEnum; overload;
+    class function convertActivityParticipantType(src : FHIRTypes3.TFhirActionParticipantTypeEnum) : FHIRTypes4.TFhirActionParticipantTypeEnum; overload;
+    class function convertActivityParticipantType(src : FHIRTypes4.TFhirActionParticipantTypeEnum) : FHIRTypes3.TFhirActionParticipantTypeEnum; overload;
+    class function convertAllergyIntoleranceClinicalStatus(src : FHIRTypes3.TFhirAllergyClinicalStatusEnum) : FHIRTypes4.TFhirAllergyClinicalStatusEnum; overload;
+    class function convertAllergyIntoleranceClinicalStatus(src : FHIRTypes4.TFhirAllergyClinicalStatusEnum) : FHIRTypes3.TFhirAllergyClinicalStatusEnum; overload;
+    class function convertAllergyIntoleranceVerificationStatus(src : FHIRTypes3.TFhirAllergyVerificationStatusEnum) : FHIRTypes4.TFhirAllergyVerificationStatusEnum; overload;
+    class function convertAllergyIntoleranceVerificationStatus(src : FHIRTypes4.TFhirAllergyVerificationStatusEnum) : FHIRTypes3.TFhirAllergyVerificationStatusEnum; overload;
+    class function convertAllergyIntoleranceType(src : FHIRTypes3.TFhirAllergyIntoleranceTypeEnum) : FHIRTypes4.TFhirAllergyIntoleranceTypeEnum; overload;
+    class function convertAllergyIntoleranceType(src : FHIRTypes4.TFhirAllergyIntoleranceTypeEnum) : FHIRTypes3.TFhirAllergyIntoleranceTypeEnum; overload;
+    class function convertAllergyIntoleranceCategory(src : FHIRTypes3.TFhirAllergyIntoleranceCategoryEnum) : FHIRTypes4.TFhirAllergyIntoleranceCategoryEnum; overload;
+    class function convertAllergyIntoleranceCategory(src : FHIRTypes4.TFhirAllergyIntoleranceCategoryEnum) : FHIRTypes3.TFhirAllergyIntoleranceCategoryEnum; overload;
+    class function convertAllergyIntoleranceCriticality(src : FHIRTypes3.TFhirAllergyIntoleranceCriticalityEnum) : FHIRTypes4.TFhirAllergyIntoleranceCriticalityEnum; overload;
+    class function convertAllergyIntoleranceCriticality(src : FHIRTypes4.TFhirAllergyIntoleranceCriticalityEnum) : FHIRTypes3.TFhirAllergyIntoleranceCriticalityEnum; overload;
+    class function convertAllergyIntoleranceSeverity(src : FHIRTypes3.TFhirReactionEventSeverityEnum) : FHIRTypes4.TFhirReactionEventSeverityEnum; overload;
+    class function convertAllergyIntoleranceSeverity(src : FHIRTypes4.TFhirReactionEventSeverityEnum) : FHIRTypes3.TFhirReactionEventSeverityEnum; overload;
+    class function convertAppointmentStatus(src : FHIRTypes3.TFhirAppointmentstatusEnum) : FHIRTypes4.TFhirAppointmentstatusEnum; overload;
+    class function convertAppointmentStatus(src : FHIRTypes4.TFhirAppointmentstatusEnum) : FHIRTypes3.TFhirAppointmentstatusEnum; overload;
+    class function convertParticipantRequired(src : FHIRTypes3.TFhirParticipantrequiredEnum) : FHIRTypes4.TFhirParticipantrequiredEnum; overload;
+    class function convertParticipantRequired(src : FHIRTypes4.TFhirParticipantrequiredEnum) : FHIRTypes3.TFhirParticipantrequiredEnum; overload;
+    class function convertParticipationStatus(src : FHIRTypes3.TFhirParticipationstatusEnum) : FHIRTypes4.TFhirParticipationstatusEnum; overload;
+    class function convertParticipationStatus(src : FHIRTypes4.TFhirParticipationstatusEnum) : FHIRTypes3.TFhirParticipationstatusEnum; overload;
+    class function convertParticipantStatus(src : FHIRTypes3.TFhirParticipationstatusEnum) : FHIRTypes4.TFhirParticipationstatusEnum; overload;
+    class function convertParticipantStatus(src : FHIRTypes4.TFhirParticipationstatusEnum) : FHIRTypes3.TFhirParticipationstatusEnum; overload;
+    class function convertAuditEventAction(src : FHIRTypes3.TFhirAuditEventActionEnum) : FHIRTypes4.TFhirAuditEventActionEnum; overload;
+    class function convertAuditEventAction(src : FHIRTypes4.TFhirAuditEventActionEnum) : FHIRTypes3.TFhirAuditEventActionEnum; overload;
+    class function convertAuditEventOutcome(src : FHIRTypes3.TFhirAuditEventOutcomeEnum) : FHIRTypes4.TFhirAuditEventOutcomeEnum; overload;
+    class function convertAuditEventOutcome(src : FHIRTypes4.TFhirAuditEventOutcomeEnum) : FHIRTypes3.TFhirAuditEventOutcomeEnum; overload;
+    class function convertAuditEventAgentNetworkType(src : FHIRTypes3.TFhirNetworkTypeEnum) : FHIRTypes4.TFhirNetworkTypeEnum; overload;
+    class function convertAuditEventAgentNetworkType(src : FHIRTypes4.TFhirNetworkTypeEnum) : FHIRTypes3.TFhirNetworkTypeEnum; overload;
+    class function convertBundleType(src : FHIRTypes3.TFhirBundleTypeEnum) : FHIRTypes4.TFhirBundleTypeEnum; overload;
+    class function convertBundleType(src : FHIRTypes4.TFhirBundleTypeEnum) : FHIRTypes3.TFhirBundleTypeEnum; overload;
+    class function convertSearchEntryMode(src : FHIRTypes3.TFhirSearchEntryModeEnum) : FHIRTypes4.TFhirSearchEntryModeEnum; overload;
+    class function convertSearchEntryMode(src : FHIRTypes4.TFhirSearchEntryModeEnum) : FHIRTypes3.TFhirSearchEntryModeEnum; overload;
+    class function convertHTTPVerb(src : FHIRTypes3.TFhirHttpVerbEnum) : FHIRTypes4.TFhirHttpVerbEnum; overload;
+    class function convertHTTPVerb(src : FHIRTypes4.TFhirHttpVerbEnum) : FHIRTypes3.TFhirHttpVerbEnum; overload;
+    class function convertCapabilityStatementKind(src : FHIRTypes3.TFhirCapabilityStatementKindEnum) : FHIRTypes4.TFhirCapabilityStatementKindEnum; overload;
+    class function convertCapabilityStatementKind(src : FHIRTypes4.TFhirCapabilityStatementKindEnum) : FHIRTypes3.TFhirCapabilityStatementKindEnum; overload;
+    class function convertRestfulCapabilityMode(src : FHIRTypes3.TFhirRestfulCapabilityModeEnum) : FHIRTypes4.TFhirRestfulCapabilityModeEnum; overload;
+    class function convertRestfulCapabilityMode(src : FHIRTypes4.TFhirRestfulCapabilityModeEnum) : FHIRTypes3.TFhirRestfulCapabilityModeEnum; overload;
+    class function convertReferenceToCanonical(src : FHIRTypes3.TFhirReference) : FHIRTypes4.TFhirCanonical; overload;
+    class function convertCanonicalToReference(src : FHIRTypes4.TFhirCanonical) : FHIRTypes3.TFhirReference; overload;
+    class function convertResourceVersionPolicy(src : FHIRTypes3.TFhirVersioningPolicyEnum) : FHIRTypes4.TFhirVersioningPolicyEnum; overload;
+    class function convertResourceVersionPolicy(src : FHIRTypes4.TFhirVersioningPolicyEnum) : FHIRTypes3.TFhirVersioningPolicyEnum; overload;
+    class function convertConditionalReadStatus(src : FHIRTypes3.TFhirConditionalReadStatusEnum) : FHIRTypes4.TFhirConditionalReadStatusEnum; overload;
+    class function convertConditionalReadStatus(src : FHIRTypes4.TFhirConditionalReadStatusEnum) : FHIRTypes3.TFhirConditionalReadStatusEnum; overload;
+    class function convertConditionalDeleteStatus(src : FHIRTypes3.TFhirConditionalDeleteStatusEnum) : FHIRTypes4.TFhirConditionalDeleteStatusEnum; overload;
+    class function convertConditionalDeleteStatus(src : FHIRTypes4.TFhirConditionalDeleteStatusEnum) : FHIRTypes3.TFhirConditionalDeleteStatusEnum; overload;
+    class function convertReferenceHandlingPolicy(src : FHIRTypes3.TFhirReferenceHandlingPolicyEnum) : FHIRTypes4.TFhirReferenceHandlingPolicyEnum; overload;
+    class function convertReferenceHandlingPolicy(src : FHIRTypes4.TFhirReferenceHandlingPolicyEnum) : FHIRTypes3.TFhirReferenceHandlingPolicyEnum; overload;
+    class function convertTypeRestfulInteraction(src : FHIRTypes3.TFhirTypeRestfulInteractionEnum) : FHIRTypes4.TFhirTypeRestfulInteractionEnum; overload;
+    class function convertTypeRestfulInteraction(src : FHIRTypes4.TFhirTypeRestfulInteractionEnum) : FHIRTypes3.TFhirTypeRestfulInteractionEnum; overload;
+    class function convertSearchParamType(src : FHIRTypes3.TFhirSearchParamTypeEnum) : FHIRTypes4.TFhirSearchParamTypeEnum; overload;
+    class function convertSearchParamType(src : FHIRTypes4.TFhirSearchParamTypeEnum) : FHIRTypes3.TFhirSearchParamTypeEnum; overload;
+    class function convertSystemRestfulInteraction(src : FHIRTypes3.TFhirSystemRestfulInteractionEnum) : FHIRTypes4.TFhirSystemRestfulInteractionEnum; overload;
+    class function convertSystemRestfulInteraction(src : FHIRTypes4.TFhirSystemRestfulInteractionEnum) : FHIRTypes3.TFhirSystemRestfulInteractionEnum; overload;
+    class function convertEventCapabilityMode(src : FHIRTypes3.TFhirEventCapabilityModeEnum) : FHIRTypes4.TFhirEventCapabilityModeEnum; overload;
+    class function convertEventCapabilityMode(src : FHIRTypes4.TFhirEventCapabilityModeEnum) : FHIRTypes3.TFhirEventCapabilityModeEnum; overload;
+    class function convertDocumentMode(src : FHIRTypes3.TFhirDocumentModeEnum) : FHIRTypes4.TFhirDocumentModeEnum; overload;
+    class function convertDocumentMode(src : FHIRTypes4.TFhirDocumentModeEnum) : FHIRTypes3.TFhirDocumentModeEnum; overload;
+    class function convertCareTeamStatus(src : FHIRTypes3.TFhirCareTeamStatusEnum) : FHIRTypes4.TFhirCareTeamStatusEnum; overload;
+    class function convertCareTeamStatus(src : FHIRTypes4.TFhirCareTeamStatusEnum) : FHIRTypes3.TFhirCareTeamStatusEnum; overload;
+    class function convertChargeItemStatus(src : FHIRTypes3.TFhirChargeitemStatusEnum) : FHIRTypes4.TFhirChargeitemStatusEnum; overload;
+    class function convertChargeItemStatus(src : FHIRTypes4.TFhirChargeitemStatusEnum) : FHIRTypes3.TFhirChargeitemStatusEnum; overload;
+    class function convertClaimStatus(src : FHIRTypes3.TFhirFmStatusEnum) : FHIRTypes4.TFhirFmStatusEnum; overload;
+    class function convertClaimStatus(src : FHIRTypes4.TFhirFmStatusEnum) : FHIRTypes3.TFhirFmStatusEnum; overload;
+    class function convertUse(src : FHIRTypes3.TFhirClaimUseEnum) : FHIRTypes4.TFhirClaimUseEnum; overload;
+    class function convertUse(src : FHIRTypes4.TFhirClaimUseEnum) : FHIRTypes3.TFhirClaimUseEnum; overload;
+    class function convertClinicalImpressionStatus(src : FHIRTypes3.TFhirClinicalImpressionStatusEnum) : FHIRTypes4.TFhirClinicalImpressionStatusEnum; overload;
+    class function convertClinicalImpressionStatus(src : FHIRTypes4.TFhirClinicalImpressionStatusEnum) : FHIRTypes3.TFhirClinicalImpressionStatusEnum; overload;
+    class function convertCodeSystemHierarchyMeaning(src : FHIRTypes3.TFhirCodesystemHierarchyMeaningEnum) : FHIRTypes4.TFhirCodesystemHierarchyMeaningEnum; overload;
+    class function convertCodeSystemHierarchyMeaning(src : FHIRTypes4.TFhirCodesystemHierarchyMeaningEnum) : FHIRTypes3.TFhirCodesystemHierarchyMeaningEnum; overload;
+    class function convertCodeSystemContentMode(src : FHIRTypes3.TFhirCodesystemContentModeEnum) : FHIRTypes4.TFhirCodesystemContentModeEnum; overload;
+    class function convertCodeSystemContentMode(src : FHIRTypes4.TFhirCodesystemContentModeEnum) : FHIRTypes3.TFhirCodesystemContentModeEnum; overload;
+    class function convertFilterOperator(src : FHIRTypes3.TFhirFilterOperatorEnum) : FHIRTypes4.TFhirFilterOperatorEnum; overload;
+    class function convertFilterOperator(src : FHIRTypes4.TFhirFilterOperatorEnum) : FHIRTypes3.TFhirFilterOperatorEnum; overload;
+    class function convertPropertyType(src : FHIRTypes3.TFhirConceptPropertyTypeEnum) : FHIRTypes4.TFhirConceptPropertyTypeEnum; overload;
+    class function convertPropertyType(src : FHIRTypes4.TFhirConceptPropertyTypeEnum) : FHIRTypes3.TFhirConceptPropertyTypeEnum; overload;
+    class function convertCommunicationStatus(src : FHIRTypes3.TFhirEventStatusEnum) : FHIRTypes4.TFhirEventStatusEnum; overload;
+    class function convertCommunicationStatus(src : FHIRTypes4.TFhirEventStatusEnum) : FHIRTypes3.TFhirEventStatusEnum; overload;
+    class function convertCompartmentType(src : FHIRTypes3.TFhirCompartmentTypeEnum) : FHIRTypes4.TFhirCompartmentTypeEnum; overload;
+    class function convertCompartmentType(src : FHIRTypes4.TFhirCompartmentTypeEnum) : FHIRTypes3.TFhirCompartmentTypeEnum; overload;
+    class function convertCompositionStatus(src : FHIRTypes3.TFhirCompositionStatusEnum) : FHIRTypes4.TFhirCompositionStatusEnum; overload;
+    class function convertCompositionStatus(src : FHIRTypes4.TFhirCompositionStatusEnum) : FHIRTypes3.TFhirCompositionStatusEnum; overload;
+    class function convertDocumentConfidentiality(src : FHIRTypes3.TFhirV3ConfidentialityClassificationEnum) : FHIRTypes4.TFhirV3ConfidentialityClassificationEnum; overload;
+    class function convertDocumentConfidentiality(src : FHIRTypes4.TFhirV3ConfidentialityClassificationEnum) : FHIRTypes3.TFhirV3ConfidentialityClassificationEnum; overload;
+    class function convertCompositionAttestationMode(src : FHIRTypes3.TFhirCompositionAttestationModeEnum) : FHIRTypes4.TFhirCompositionAttestationModeEnum; overload;
+    class function convertCompositionAttestationMode(src : FHIRTypes4.TFhirCompositionAttestationModeEnum) : FHIRTypes3.TFhirCompositionAttestationModeEnum; overload;
+    class function convertDocumentRelationshipType(src : FHIRTypes3.TFhirDocumentRelationshipTypeEnum) : FHIRTypes4.TFhirDocumentRelationshipTypeEnum; overload;
+    class function convertDocumentRelationshipType(src : FHIRTypes4.TFhirDocumentRelationshipTypeEnum) : FHIRTypes3.TFhirDocumentRelationshipTypeEnum; overload;
+    class function convertSectionMode(src : FHIRTypes3.TFhirListModeEnum) : FHIRTypes4.TFhirListModeEnum; overload;
+    class function convertSectionMode(src : FHIRTypes4.TFhirListModeEnum) : FHIRTypes3.TFhirListModeEnum; overload;
+    class function convertConceptMapEquivalence(src : FHIRTypes3.TFhirConceptMapEquivalenceEnum) : FHIRTypes4.TFhirConceptMapEquivalenceEnum; overload;
+    class function convertConceptMapEquivalence(src : FHIRTypes4.TFhirConceptMapEquivalenceEnum) : FHIRTypes3.TFhirConceptMapEquivalenceEnum; overload;
+    class function convertConceptMapGroupUnmappedMode(src : FHIRTypes3.TFhirConceptmapUnmappedModeEnum) : FHIRTypes4.TFhirConceptmapUnmappedModeEnum; overload;
+    class function convertConceptMapGroupUnmappedMode(src : FHIRTypes4.TFhirConceptmapUnmappedModeEnum) : FHIRTypes3.TFhirConceptmapUnmappedModeEnum; overload;
+    class function convertConditionClinicalStatus(src : FHIRTypes3.TFhirConditionClinicalEnum) : FHIRTypes4.TFhirConditionClinicalEnum; overload;
+    class function convertConditionClinicalStatus(src : FHIRTypes4.TFhirConditionClinicalEnum) : FHIRTypes3.TFhirConditionClinicalEnum; overload;
+    class function convertConditionVerificationStatus(src : FHIRTypes3.TFhirConditionVerStatusEnum) : FHIRTypes4.TFhirConditionVerStatusEnum; overload;
+    class function convertConditionVerificationStatus(src : FHIRTypes4.TFhirConditionVerStatusEnum) : FHIRTypes3.TFhirConditionVerStatusEnum; overload;
+    class function convertConsentDataMeaning(src : FHIRTypes3.TFhirConsentDataMeaningEnum) : FHIRTypes4.TFhirConsentDataMeaningEnum; overload;
+    class function convertConsentDataMeaning(src : FHIRTypes4.TFhirConsentDataMeaningEnum) : FHIRTypes3.TFhirConsentDataMeaningEnum; overload;
+    class function convertDetectedIssueStatus(src : FHIRTypes3.TFhirObservationStatusEnum) : FHIRTypes4.TFhirObservationStatusEnum; overload;
+    class function convertDetectedIssueStatus(src : FHIRTypes4.TFhirObservationStatusEnum) : FHIRTypes3.TFhirObservationStatusEnum; overload;
+    class function convertDetectedIssueSeverity(src : FHIRTypes3.TFhirDetectedissueSeverityEnum) : FHIRTypes4.TFhirDetectedissueSeverityEnum; overload;
+    class function convertDetectedIssueSeverity(src : FHIRTypes4.TFhirDetectedissueSeverityEnum) : FHIRTypes3.TFhirDetectedissueSeverityEnum; overload;
+    class function convertFHIRDeviceStatus(src : FHIRTypes3.TFhirDeviceStatusEnum) : FHIRTypes4.TFhirDeviceStatusEnum; overload;
+    class function convertFHIRDeviceStatus(src : FHIRTypes4.TFhirDeviceStatusEnum) : FHIRTypes3.TFhirDeviceStatusEnum; overload;
+    class function convertUDIEntryType(src : FHIRTypes3.TFhirUdiEntryTypeEnum) : FHIRTypes4.TFhirUdiEntryTypeEnum; overload;
+    class function convertUDIEntryType(src : FHIRTypes4.TFhirUdiEntryTypeEnum) : FHIRTypes3.TFhirUdiEntryTypeEnum; overload;
+    class function convertMeasmntPrinciple(src : FHIRTypes3.TFhirMeasurementPrincipleEnum) : FHIRTypes4.TFhirMeasurementPrincipleEnum; overload;
+    class function convertMeasmntPrinciple(src : FHIRTypes4.TFhirMeasurementPrincipleEnum) : FHIRTypes3.TFhirMeasurementPrincipleEnum; overload;
+    class function convertDeviceMetricOperationalStatus(src : FHIRTypes3.TFhirMetricOperationalStatusEnum) : FHIRTypes4.TFhirMetricOperationalStatusEnum; overload;
+    class function convertDeviceMetricOperationalStatus(src : FHIRTypes4.TFhirMetricOperationalStatusEnum) : FHIRTypes3.TFhirMetricOperationalStatusEnum; overload;
+    class function convertDeviceMetricColor(src : FHIRTypes3.TFhirMetricColorEnum) : FHIRTypes4.TFhirMetricColorEnum; overload;
+    class function convertDeviceMetricColor(src : FHIRTypes4.TFhirMetricColorEnum) : FHIRTypes3.TFhirMetricColorEnum; overload;
+    class function convertDeviceMetricCategory(src : FHIRTypes3.TFhirMetricCategoryEnum) : FHIRTypes4.TFhirMetricCategoryEnum; overload;
+    class function convertDeviceMetricCategory(src : FHIRTypes4.TFhirMetricCategoryEnum) : FHIRTypes3.TFhirMetricCategoryEnum; overload;
+    class function convertDeviceMetricCalibrationType(src : FHIRTypes3.TFhirMetricCalibrationTypeEnum) : FHIRTypes4.TFhirMetricCalibrationTypeEnum; overload;
+    class function convertDeviceMetricCalibrationType(src : FHIRTypes4.TFhirMetricCalibrationTypeEnum) : FHIRTypes3.TFhirMetricCalibrationTypeEnum; overload;
+    class function convertDeviceMetricCalibrationState(src : FHIRTypes3.TFhirMetricCalibrationStateEnum) : FHIRTypes4.TFhirMetricCalibrationStateEnum; overload;
+    class function convertDeviceMetricCalibrationState(src : FHIRTypes4.TFhirMetricCalibrationStateEnum) : FHIRTypes3.TFhirMetricCalibrationStateEnum; overload;
+    class function convertDeviceUseStatementStatus(src : FHIRTypes3.TFhirDeviceStatementStatusEnum) : FHIRTypes4.TFhirDeviceStatementStatusEnum; overload;
+    class function convertDeviceUseStatementStatus(src : FHIRTypes4.TFhirDeviceStatementStatusEnum) : FHIRTypes3.TFhirDeviceStatementStatusEnum; overload;
+    class function convertDiagnosticReportStatus(src : FHIRTypes3.TFhirDiagnosticReportStatusEnum) : FHIRTypes4.TFhirDiagnosticReportStatusEnum; overload;
+    class function convertDiagnosticReportStatus(src : FHIRTypes4.TFhirDiagnosticReportStatusEnum) : FHIRTypes3.TFhirDiagnosticReportStatusEnum; overload;
+    class function convertDocumentReferenceStatus(src : FHIRTypes3.TFhirDocumentReferenceStatusEnum) : FHIRTypes4.TFhirDocumentReferenceStatusEnum; overload;
+    class function convertDocumentReferenceStatus(src : FHIRTypes4.TFhirDocumentReferenceStatusEnum) : FHIRTypes3.TFhirDocumentReferenceStatusEnum; overload;
+    class function convertReferredDocumentStatus(src : FHIRTypes3.TFhirCompositionStatusEnum) : FHIRTypes4.TFhirCompositionStatusEnum; overload;
+    class function convertReferredDocumentStatus(src : FHIRTypes4.TFhirCompositionStatusEnum) : FHIRTypes3.TFhirCompositionStatusEnum; overload;
+    class function convertEncounterStatus(src : FHIRTypes3.TFhirEncounterStatusEnum) : FHIRTypes4.TFhirEncounterStatusEnum; overload;
+    class function convertEncounterStatus(src : FHIRTypes4.TFhirEncounterStatusEnum) : FHIRTypes3.TFhirEncounterStatusEnum; overload;
+    class function convertEncounterLocationStatus(src : FHIRTypes3.TFhirEncounterLocationStatusEnum) : FHIRTypes4.TFhirEncounterLocationStatusEnum; overload;
+    class function convertEncounterLocationStatus(src : FHIRTypes4.TFhirEncounterLocationStatusEnum) : FHIRTypes3.TFhirEncounterLocationStatusEnum; overload;
+    class function convertEndpointStatus(src : FHIRTypes3.TFhirEndpointStatusEnum) : FHIRTypes4.TFhirEndpointStatusEnum; overload;
+    class function convertEndpointStatus(src : FHIRTypes4.TFhirEndpointStatusEnum) : FHIRTypes3.TFhirEndpointStatusEnum; overload;
+    class function convertEpisodeOfCareStatus(src : FHIRTypes3.TFhirEpisodeOfCareStatusEnum) : FHIRTypes4.TFhirEpisodeOfCareStatusEnum; overload;
+    class function convertEpisodeOfCareStatus(src : FHIRTypes4.TFhirEpisodeOfCareStatusEnum) : FHIRTypes3.TFhirEpisodeOfCareStatusEnum; overload;
+    class function convertSystemVersionProcessingMode(src : FHIRTypes3.TFhirSystemVersionProcessingModeEnum) : FHIRTypes4.TFhirSystemVersionProcessingModeEnum; overload;
+    class function convertSystemVersionProcessingMode(src : FHIRTypes4.TFhirSystemVersionProcessingModeEnum) : FHIRTypes3.TFhirSystemVersionProcessingModeEnum; overload;
+    class function convertFamilyHistoryStatus(src : FHIRTypes3.TFhirHistoryStatusEnum) : FHIRTypes4.TFhirHistoryStatusEnum; overload;
+    class function convertFamilyHistoryStatus(src : FHIRTypes4.TFhirHistoryStatusEnum) : FHIRTypes3.TFhirHistoryStatusEnum; overload;
+    class function convertAdministrativeGender(src : FHIRTypes3.TFhirAdministrativeGenderEnum) : FHIRTypes4.TFhirAdministrativeGenderEnum; overload;
+    class function convertAdministrativeGender(src : FHIRTypes4.TFhirAdministrativeGenderEnum) : FHIRTypes3.TFhirAdministrativeGenderEnum; overload;
+    class function convertFlagStatus(src : FHIRTypes3.TFhirFlagStatusEnum) : FHIRTypes4.TFhirFlagStatusEnum; overload;
+    class function convertFlagStatus(src : FHIRTypes4.TFhirFlagStatusEnum) : FHIRTypes3.TFhirFlagStatusEnum; overload;
+    class function convertGoalStatus(src : FHIRTypes3.TFhirGoalStatusEnum) : FHIRTypes4.TFhirGoalStatusEnum; overload;
+    class function convertGoalStatus(src : FHIRTypes4.TFhirGoalStatusEnum) : FHIRTypes3.TFhirGoalStatusEnum; overload;
+    class function convertCompartmentCode(src : FHIRTypes3.TFhirCompartmentTypeEnum) : FHIRTypes4.TFhirCompartmentTypeEnum; overload;
+    class function convertCompartmentCode(src : FHIRTypes4.TFhirCompartmentTypeEnum) : FHIRTypes3.TFhirCompartmentTypeEnum; overload;
+    class function convertGraphCompartmentRule(src : FHIRTypes3.TFhirGraphCompartmentRuleEnum) : FHIRTypes4.TFhirGraphCompartmentRuleEnum; overload;
+    class function convertGraphCompartmentRule(src : FHIRTypes4.TFhirGraphCompartmentRuleEnum) : FHIRTypes3.TFhirGraphCompartmentRuleEnum; overload;
+    class function convertGroupType(src : FHIRTypes3.TFhirGroupTypeEnum) : FHIRTypes4.TFhirGroupTypeEnum; overload;
+    class function convertGroupType(src : FHIRTypes4.TFhirGroupTypeEnum) : FHIRTypes3.TFhirGroupTypeEnum; overload;
+    class function convertDaysOfWeek(src : FHIRTypes3.TFhirDaysOfWeekEnum) : FHIRTypes4.TFhirDaysOfWeekEnum; overload;
+    class function convertDaysOfWeek(src : FHIRTypes4.TFhirDaysOfWeekEnum) : FHIRTypes3.TFhirDaysOfWeekEnum; overload;
+    class function convertImmunizationStatus(src : FHIRTypes3.TFhirImmunizationStatusEnum) : FHIRTypes4.TFhirImmunizationStatusEnum; overload;
+    class function convertImmunizationStatus(src : FHIRTypes4.TFhirImmunizationStatusEnum) : FHIRTypes3.TFhirImmunizationStatusEnum; overload;
+    class function findPackage(definition : FHIRResources3.TFhirImplementationGuidePackageList; id : String) : FHIRResources3.TFhirImplementationGuidePackage; overload;
+    class function convertPageGeneration(kind : FHIRTypes3.TFhirGuidePageKindEnum) : FHIRTypes4.TFhirGuidePageGenerationEnum; overload;
+    class function convertPageGeneration(generation : FHIRTypes4.TFhirGuidePageGenerationEnum) : FHIRTypes3.TFhirGuidePageKindEnum; overload;
+    class function convertLinkageType(src : FHIRTypes3.TFhirLinkageTypeEnum) : FHIRTypes4.TFhirLinkageTypeEnum; overload;
+    class function convertLinkageType(src : FHIRTypes4.TFhirLinkageTypeEnum) : FHIRTypes3.TFhirLinkageTypeEnum; overload;
+    class function convertListStatus(src : FHIRTypes3.TFhirListStatusEnum) : FHIRTypes4.TFhirListStatusEnum; overload;
+    class function convertListStatus(src : FHIRTypes4.TFhirListStatusEnum) : FHIRTypes3.TFhirListStatusEnum; overload;
+    class function convertListMode(src : FHIRTypes3.TFhirListModeEnum) : FHIRTypes4.TFhirListModeEnum; overload;
+    class function convertListMode(src : FHIRTypes4.TFhirListModeEnum) : FHIRTypes3.TFhirListModeEnum; overload;
+    class function convertLocationStatus(src : FHIRTypes3.TFhirLocationStatusEnum) : FHIRTypes4.TFhirLocationStatusEnum; overload;
+    class function convertLocationStatus(src : FHIRTypes4.TFhirLocationStatusEnum) : FHIRTypes3.TFhirLocationStatusEnum; overload;
+    class function convertLocationMode(src : FHIRTypes3.TFhirLocationModeEnum) : FHIRTypes4.TFhirLocationModeEnum; overload;
+    class function convertLocationMode(src : FHIRTypes4.TFhirLocationModeEnum) : FHIRTypes3.TFhirLocationModeEnum; overload;
+    class function convertMedicationStatus(src : FHIRTypes3.TFhirMedicationStatusEnum) : FHIRTypes4.TFhirMedicationStatusEnum; overload;
+    class function convertMedicationStatus(src : FHIRTypes4.TFhirMedicationStatusEnum) : FHIRTypes3.TFhirMedicationStatusEnum; overload;
+    class function convertMedicationAdministrationStatus(src : FHIRTypes3.TFhirMedicationAdminStatusEnum) : FHIRTypes4.TFhirMedicationAdminStatusEnum; overload;
+    class function convertMedicationAdministrationStatus(src : FHIRTypes4.TFhirMedicationAdminStatusEnum) : FHIRTypes3.TFhirMedicationAdminStatusEnum; overload;
+    class function convertMedicationDispenseStatus(src : FHIRTypes3.TFhirMedicationDispenseStatusEnum) : FHIRTypes4.TFhirMedicationDispenseStatusEnum; overload;
+    class function convertMedicationDispenseStatus(src : FHIRTypes4.TFhirMedicationDispenseStatusEnum) : FHIRTypes3.TFhirMedicationDispenseStatusEnum; overload;
+    class function convertMedicationRequestStatus(src : FHIRTypes3.TFhirMedicationRequestStatusEnum) : FHIRTypes4.TFhirMedicationRequestStatusEnum; overload;
+    class function convertMedicationRequestStatus(src : FHIRTypes4.TFhirMedicationRequestStatusEnum) : FHIRTypes3.TFhirMedicationRequestStatusEnum; overload;
+    class function convertMedicationRequestIntent(src : FHIRTypes3.TFhirMedicationRequestIntentEnum) : FHIRTypes4.TFhirMedicationRequestIntentEnum; overload;
+    class function convertMedicationRequestIntent(src : FHIRTypes4.TFhirMedicationRequestIntentEnum) : FHIRTypes3.TFhirMedicationRequestIntentEnum; overload;
+    class function convertMedicationRequestPriority(src : FHIRTypes3.TFhirMedicationRequestPriorityEnum) : FHIRTypes4.TFhirRequestPriorityEnum; overload;
+    class function convertMedicationRequestPriority(src : FHIRTypes4.TFhirRequestPriorityEnum) : FHIRTypes3.TFhirMedicationRequestPriorityEnum; overload;
+    class function convertMedicationStatementStatus(src : FHIRTypes3.TFhirMedicationStatementStatusEnum) : FHIRTypes4.TFhirMedicationStatementStatusEnum; overload;
+    class function convertMedicationStatementStatus(src : FHIRTypes4.TFhirMedicationStatementStatusEnum) : FHIRTypes3.TFhirMedicationStatementStatusEnum; overload;
+    class function convertMessageSignificanceCategory(src : FHIRTypes3.TFhirMessageSignificanceCategoryEnum) : FHIRTypes4.TFhirMessageSignificanceCategoryEnum; overload;
+    class function convertMessageSignificanceCategory(src : FHIRTypes4.TFhirMessageSignificanceCategoryEnum) : FHIRTypes3.TFhirMessageSignificanceCategoryEnum; overload;
+    class function convertProvenanceEntityRole(src : FHIRTypes4.TFhirProvenanceEntityRoleEnum) : FHIRTypes3.TFhirProvenanceEntityRoleEnum; overload;
+    class function convertProvenanceEntityRole(src : FHIRTypes3.TFhirProvenanceEntityRoleEnum) : FHIRTypes4.TFhirProvenanceEntityRoleEnum; overload;
+    class function convertResponseType(src : FHIRTypes3.TFhirResponseCodeEnum) : FHIRTypes4.TFhirResponseCodeEnum; overload;
+    class function convertResponseType(src : FHIRTypes4.TFhirResponseCodeEnum) : FHIRTypes3.TFhirResponseCodeEnum; overload;
+    class function convertNamingSystemType(src : FHIRTypes3.TFhirNamingsystemTypeEnum) : FHIRTypes4.TFhirNamingsystemTypeEnum; overload;
+    class function convertNamingSystemType(src : FHIRTypes4.TFhirNamingsystemTypeEnum) : FHIRTypes3.TFhirNamingsystemTypeEnum; overload;
+    class function convertNamingSystemIdentifierType(src : FHIRTypes3.TFhirNamingsystemIdentifierTypeEnum) : FHIRTypes4.TFhirNamingsystemIdentifierTypeEnum; overload;
+    class function convertNamingSystemIdentifierType(src : FHIRTypes4.TFhirNamingsystemIdentifierTypeEnum) : FHIRTypes3.TFhirNamingsystemIdentifierTypeEnum; overload;
+    class function convertObservationStatus(src : FHIRTypes3.TFhirObservationStatusEnum) : FHIRTypes4.TFhirObservationStatusEnum; overload;
+    class function convertObservationStatus(src : FHIRTypes4.TFhirObservationStatusEnum) : FHIRTypes3.TFhirObservationStatusEnum; overload;
+    class function convertOperationKind(src : FHIRTypes3.TFhirOperationKindEnum) : FHIRTypes4.TFhirOperationKindEnum; overload;
+    class function convertOperationKind(src : FHIRTypes4.TFhirOperationKindEnum) : FHIRTypes3.TFhirOperationKindEnum; overload;
+    class function convertOperationParameterUse(src : FHIRTypes3.TFhirOperationParameterUseEnum) : FHIRTypes4.TFhirOperationParameterUseEnum; overload;
+    class function convertOperationParameterUse(src : FHIRTypes4.TFhirOperationParameterUseEnum) : FHIRTypes3.TFhirOperationParameterUseEnum; overload;
+    class function convertIssueSeverity(src : FHIRTypes3.TFhirIssueSeverityEnum) : FHIRTypes4.TFhirIssueSeverityEnum; overload;
+    class function convertIssueSeverity(src : FHIRTypes4.TFhirIssueSeverityEnum) : FHIRTypes3.TFhirIssueSeverityEnum; overload;
+    class function convertIssueType(src : FHIRTypes3.TFhirIssueTypeEnum) : FHIRTypes4.TFhirIssueTypeEnum; overload;
+    class function convertIssueType(src : FHIRTypes4.TFhirIssueTypeEnum) : FHIRTypes3.TFhirIssueTypeEnum; overload;
+    class function convertLinkType(src : FHIRTypes3.TFhirLinkTypeEnum) : FHIRTypes4.TFhirLinkTypeEnum; overload;
+    class function convertLinkType(src : FHIRTypes4.TFhirLinkTypeEnum) : FHIRTypes3.TFhirLinkTypeEnum; overload;
+    class function convertPaymentNoticeStatus(src : FHIRTypes3.TFhirFmStatusEnum) : FHIRTypes4.TFhirFmStatusEnum; overload;
+    class function convertPaymentNoticeStatus(src : FHIRTypes4.TFhirFmStatusEnum) : FHIRTypes3.TFhirFmStatusEnum; overload;
+    class function convertIdentityAssuranceLevel(src : FHIRTypes3.TFhirIdentityAssuranceLevelEnum) : FHIRTypes4.TFhirIdentityAssuranceLevelEnum; overload;
+    class function convertIdentityAssuranceLevel(src : FHIRTypes4.TFhirIdentityAssuranceLevelEnum) : FHIRTypes3.TFhirIdentityAssuranceLevelEnum; overload;
+    class function convertQuestionnaireItemType(src : FHIRTypes3.TFhirItemTypeEnum) : FHIRTypes4.TFhirItemTypeEnum; overload;
+    class function convertQuestionnaireItemType(src : FHIRTypes4.TFhirItemTypeEnum) : FHIRTypes3.TFhirItemTypeEnum; overload;
+    class function convertQuestionnaireResponseStatus(src : FHIRTypes3.TFhirQuestionnaireAnswersStatusEnum) : FHIRTypes4.TFhirQuestionnaireAnswersStatusEnum; overload;
+    class function convertQuestionnaireResponseStatus(src : FHIRTypes4.TFhirQuestionnaireAnswersStatusEnum) : FHIRTypes3.TFhirQuestionnaireAnswersStatusEnum; overload;
+    class function convertRiskAssessmentStatus(src : FHIRTypes3.TFhirObservationStatusEnum) : FHIRTypes4.TFhirObservationStatusEnum; overload;
+    class function convertRiskAssessmentStatus(src : FHIRTypes4.TFhirObservationStatusEnum) : FHIRTypes3.TFhirObservationStatusEnum; overload;
+    class function convertXPathUsageType(src : FHIRTypes3.TFhirSearchXpathUsageEnum) : FHIRTypes4.TFhirSearchXpathUsageEnum; overload;
+    class function convertXPathUsageType(src : FHIRTypes4.TFhirSearchXpathUsageEnum) : FHIRTypes3.TFhirSearchXpathUsageEnum; overload;
+    class function convertSearchComparator(src : FHIRTypes3.TFhirSearchComparatorEnum) : FHIRTypes4.TFhirSearchComparatorEnum; overload;
+    class function convertSearchComparator(src : FHIRTypes4.TFhirSearchComparatorEnum) : FHIRTypes3.TFhirSearchComparatorEnum; overload;
+    class function convertSearchModifierCode(src : FHIRTypes3.TFhirSearchModifierCodeEnum) : FHIRTypes4.TFhirSearchModifierCodeEnum; overload;
+    class function convertSearchModifierCode(src : FHIRTypes4.TFhirSearchModifierCodeEnum) : FHIRTypes3.TFhirSearchModifierCodeEnum; overload;
+    class function convertQualityType(src : FHIRTypes3.TFhirQualityTypeEnum) : FHIRTypes4.TFhirQualityTypeEnum; overload;
+    class function convertQualityType(src : FHIRTypes4.TFhirQualityTypeEnum) : FHIRTypes3.TFhirQualityTypeEnum; overload;
+    class function convertRepositoryType(src : FHIRTypes3.TFhirRepositoryTypeEnum) : FHIRTypes4.TFhirRepositoryTypeEnum; overload;
+    class function convertRepositoryType(src : FHIRTypes4.TFhirRepositoryTypeEnum) : FHIRTypes3.TFhirRepositoryTypeEnum; overload;
+    class function convertSlotStatus(src : FHIRTypes3.TFhirSlotstatusEnum) : FHIRTypes4.TFhirSlotstatusEnum; overload;
+    class function convertSlotStatus(src : FHIRTypes4.TFhirSlotstatusEnum) : FHIRTypes3.TFhirSlotstatusEnum; overload;
+    class function convertSpecimenStatus(src : FHIRTypes3.TFhirSpecimenStatusEnum) : FHIRTypes4.TFhirSpecimenStatusEnum; overload;
+    class function convertSpecimenStatus(src : FHIRTypes4.TFhirSpecimenStatusEnum) : FHIRTypes3.TFhirSpecimenStatusEnum; overload;
+    class function convertStructureDefinitionKind(src : FHIRTypes3.TFhirStructureDefinitionKindEnum) : FHIRTypes4.TFhirStructureDefinitionKindEnum; overload;
+    class function convertStructureDefinitionKind(src : FHIRTypes4.TFhirStructureDefinitionKindEnum) : FHIRTypes3.TFhirStructureDefinitionKindEnum; overload;
+    class function convertExtensionContext(src : FHIRTypes3.TFhirExtensionContextEnum) : FHIRTypes4.TFhirExtensionContextTypeEnum; overload;
+    class function convertExtensionContext(src : FHIRTypes4.TFhirExtensionContextTypeEnum) : FHIRTypes3.TFhirExtensionContextEnum; overload;
+    class function convertTypeDerivationRule(src : FHIRTypes3.TFhirTypeDerivationRuleEnum) : FHIRTypes4.TFhirTypeDerivationRuleEnum; overload;
+    class function convertTypeDerivationRule(src : FHIRTypes4.TFhirTypeDerivationRuleEnum) : FHIRTypes3.TFhirTypeDerivationRuleEnum; overload;
+    class function convertStructureMapModelMode(src : FHIRTypes3.TFhirMapModelModeEnum) : FHIRTypes4.TFhirMapModelModeEnum; overload;
+    class function convertStructureMapModelMode(src : FHIRTypes4.TFhirMapModelModeEnum) : FHIRTypes3.TFhirMapModelModeEnum; overload;
+    class function convertStructureMapGroupTypeMode(src : FHIRTypes3.TFhirMapGroupTypeModeEnum) : FHIRTypes4.TFhirMapGroupTypeModeEnum; overload;
+    class function convertStructureMapGroupTypeMode(src : FHIRTypes4.TFhirMapGroupTypeModeEnum) : FHIRTypes3.TFhirMapGroupTypeModeEnum; overload;
+    class function convertStructureMapInputMode(src : FHIRTypes3.TFhirMapInputModeEnum) : FHIRTypes4.TFhirMapInputModeEnum; overload;
+    class function convertStructureMapInputMode(src : FHIRTypes4.TFhirMapInputModeEnum) : FHIRTypes3.TFhirMapInputModeEnum; overload;
+    class function convertStructureMapSourceListMode(src : FHIRTypes3.TFhirMapSourceListModeEnum) : FHIRTypes4.TFhirMapSourceListModeEnum; overload;
+    class function convertStructureMapSourceListMode(src : FHIRTypes4.TFhirMapSourceListModeEnum) : FHIRTypes3.TFhirMapSourceListModeEnum; overload;
+    class function convertStructureMapContextType(src : FHIRTypes3.TFhirMapContextTypeEnum) : FHIRTypes4.TFhirMapContextTypeEnum; overload;
+    class function convertStructureMapContextType(src : FHIRTypes4.TFhirMapContextTypeEnum) : FHIRTypes3.TFhirMapContextTypeEnum; overload;
+    class function convertStructureMapTargetListMode(src : FHIRTypes3.TFhirMapTargetListModeEnum) : FHIRTypes4.TFhirMapTargetListModeEnum; overload;
+    class function convertStructureMapTargetListMode(src : FHIRTypes4.TFhirMapTargetListModeEnum) : FHIRTypes3.TFhirMapTargetListModeEnum; overload;
+    class function convertStructureMapTransform(src : FHIRTypes3.TFhirMapTransformEnum) : FHIRTypes4.TFhirMapTransformEnum; overload;
+    class function convertStructureMapTransform(src : FHIRTypes4.TFhirMapTransformEnum) : FHIRTypes3.TFhirMapTransformEnum; overload;
+    class function convertSubscriptionStatus(src : FHIRTypes3.TFhirSubscriptionStatusEnum) : FHIRTypes4.TFhirSubscriptionStatusEnum; overload;
+    class function convertSubscriptionStatus(src : FHIRTypes4.TFhirSubscriptionStatusEnum) : FHIRTypes3.TFhirSubscriptionStatusEnum; overload;
+    class function convertSubscriptionChannelType(src : FHIRTypes3.TFhirSubscriptionChannelTypeEnum) : FHIRTypes4.TFhirSubscriptionChannelTypeEnum; overload;
+    class function convertSubscriptionChannelType(src : FHIRTypes4.TFhirSubscriptionChannelTypeEnum) : FHIRTypes3.TFhirSubscriptionChannelTypeEnum; overload;
+    class function convertFHIRSubstanceStatus(src : FHIRTypes3.TFhirSubstanceStatusEnum) : FHIRTypes4.TFhirSubstanceStatusEnum; overload;
+    class function convertFHIRSubstanceStatus(src : FHIRTypes4.TFhirSubstanceStatusEnum) : FHIRTypes3.TFhirSubstanceStatusEnum; overload;
+    class function convertSupplyDeliveryStatus(src : FHIRTypes3.TFhirSupplydeliveryStatusEnum) : FHIRTypes4.TFhirSupplydeliveryStatusEnum; overload;
+    class function convertSupplyDeliveryStatus(src : FHIRTypes4.TFhirSupplydeliveryStatusEnum) : FHIRTypes3.TFhirSupplydeliveryStatusEnum; overload;
+    class function convertContentType(src : FHIRTypes3.TFhirContentTypeEnum) : String; overload;
+    class function convertActionGroupingBehavior(src : FHIRTypes3.TFhirActionGroupingBehaviorEnum) : FHIRTypes4.TFhirActionGroupingBehaviorEnum; overload;
+    class function convertActionGroupingBehavior(src : FHIRTypes4.TFhirActionGroupingBehaviorEnum) : FHIRTypes3.TFhirActionGroupingBehaviorEnum; overload;
+    class function convertActionSelectionBehavior(src : FHIRTypes3.TFhirActionSelectionBehaviorEnum) : FHIRTypes4.TFhirActionSelectionBehaviorEnum; overload;
+    class function convertActionSelectionBehavior(src : FHIRTypes4.TFhirActionSelectionBehaviorEnum) : FHIRTypes3.TFhirActionSelectionBehaviorEnum; overload;
+    class function convertActionRequiredBehavior(src : FHIRTypes3.TFhirActionRequiredBehaviorEnum) : FHIRTypes4.TFhirActionRequiredBehaviorEnum; overload;
+    class function convertActionRequiredBehavior(src : FHIRTypes4.TFhirActionRequiredBehaviorEnum) : FHIRTypes3.TFhirActionRequiredBehaviorEnum; overload;
+    class function convertActionPrecheckBehavior(src : FHIRTypes3.TFhirActionPrecheckBehaviorEnum) : FHIRTypes4.TFhirActionPrecheckBehaviorEnum; overload;
+    class function convertActionPrecheckBehavior(src : FHIRTypes4.TFhirActionPrecheckBehaviorEnum) : FHIRTypes3.TFhirActionPrecheckBehaviorEnum; overload;
+    class function convertActionCardinalityBehavior(src : FHIRTypes3.TFhirActionCardinalityBehaviorEnum) : FHIRTypes4.TFhirActionCardinalityBehaviorEnum; overload;
+    class function convertActionCardinalityBehavior(src : FHIRTypes4.TFhirActionCardinalityBehaviorEnum) : FHIRTypes3.TFhirActionCardinalityBehaviorEnum; overload;
+    class function convertActionConditionKind(src : FHIRTypes3.TFhirActionConditionKindEnum) : FHIRTypes4.TFhirActionConditionKindEnum; overload;
+    class function convertActionConditionKind(src : FHIRTypes4.TFhirActionConditionKindEnum) : FHIRTypes3.TFhirActionConditionKindEnum; overload;
+    class function convertActionRelationshipType(src : FHIRTypes3.TFhirActionRelationshipTypeEnum) : FHIRTypes4.TFhirActionRelationshipTypeEnum; overload;
+    class function convertActionRelationshipType(src : FHIRTypes4.TFhirActionRelationshipTypeEnum) : FHIRTypes3.TFhirActionRelationshipTypeEnum; overload;
+    class function convertActionParticipantType(src : FHIRTypes3.TFhirActionParticipantTypeEnum) : FHIRTypes4.TFhirActionParticipantTypeEnum; overload;
+    class function convertActionParticipantType(src : FHIRTypes4.TFhirActionParticipantTypeEnum) : FHIRTypes3.TFhirActionParticipantTypeEnum; overload;
   public
-    class function convertBase64Binary(src : FHIRTypes3.TFhirBase64Binary) : FHIRTypes4.TFhirBase64Binary; overload; virtual;
-    class function convertBase64Binary(src : FHIRTypes4.TFhirBase64Binary) : FHIRTypes3.TFhirBase64Binary; overload; virtual;
-    class function convertBoolean(src : FHIRTypes3.TFhirBoolean) : FHIRTypes4.TFhirBoolean; overload; virtual;
-    class function convertBoolean(src : FHIRTypes4.TFhirBoolean) : FHIRTypes3.TFhirBoolean; overload; virtual;
-    class function convertCode(src : FHIRTypes3.TFhirCode) : FHIRTypes4.TFhirCode; overload; virtual;
-    class function convertCode(src : FHIRTypes4.TFhirCode) : FHIRTypes3.TFhirCode; overload; virtual;
-    class function convertDate(src : FHIRTypes3.TFhirDate) : FHIRTypes4.TFhirDate; overload; virtual;
-    class function convertDate(src : FHIRTypes4.TFhirDate) : FHIRTypes3.TFhirDate; overload; virtual;
-    class function convertDateTime(src : FHIRTypes3.TFhirDateTime) : FHIRTypes4.TFhirDateTime; overload; virtual;
-    class function convertDateTime(src : FHIRTypes4.TFhirDateTime) : FHIRTypes3.TFhirDateTime; overload; virtual;
-    class function convertDecimal(src : FHIRTypes3.TFhirDecimal) : FHIRTypes4.TFhirDecimal; overload; virtual;
-    class function convertDecimal(src : FHIRTypes4.TFhirDecimal) : FHIRTypes3.TFhirDecimal; overload; virtual;
-    class function convertId(src : FHIRTypes3.TFhirId) : FHIRTypes4.TFhirId; overload; virtual;
-    class function convertId(src : FHIRTypes4.TFhirId) : FHIRTypes3.TFhirId; overload; virtual;
-    class function convertInstant(src : FHIRTypes3.TFhirInstant) : FHIRTypes4.TFhirInstant; overload; virtual;
-    class function convertInstant(src : FHIRTypes4.TFhirInstant) : FHIRTypes3.TFhirInstant; overload; virtual;
-    class function convertInteger(src : FHIRTypes3.TFhirInteger) : FHIRTypes4.TFhirInteger; overload; virtual;
-    class function convertInteger(src : FHIRTypes4.TFhirInteger) : FHIRTypes3.TFhirInteger; overload; virtual;
-    class function convertMarkdown(src : FHIRTypes3.TFhirMarkdown) : FHIRTypes4.TFhirMarkdown; overload; virtual;
-    class function convertMarkdown(src : FHIRTypes4.TFhirMarkdown) : FHIRTypes3.TFhirMarkdown; overload; virtual;
-    class function convertOid(src : FHIRTypes3.TFhirOid) : FHIRTypes4.TFhirOid; overload; virtual;
-    class function convertOid(src : FHIRTypes4.TFhirOid) : FHIRTypes3.TFhirOid; overload; virtual;
-    class function convertPositiveInt(src : FHIRTypes3.TFhirPositiveInt) : FHIRTypes4.TFhirPositiveInt; overload; virtual;
-    class function convertPositiveInt(src : FHIRTypes4.TFhirPositiveInt) : FHIRTypes3.TFhirPositiveInt; overload; virtual;
-    class function convertString(src : FHIRTypes3.TFhirString) : FHIRTypes4.TFhirString; overload; virtual;
-    class function convertString(src : FHIRTypes4.TFhirString) : FHIRTypes3.TFhirString; overload; virtual;
-    class function convertTime(src : FHIRTypes3.TFhirTime) : FHIRTypes4.TFhirTime; overload; virtual;
-    class function convertTime(src : FHIRTypes4.TFhirTime) : FHIRTypes3.TFhirTime; overload; virtual;
-    class function convertUnsignedInt(src : FHIRTypes3.TFhirUnsignedInt) : FHIRTypes4.TFhirUnsignedInt; overload; virtual;
-    class function convertUnsignedInt(src : FHIRTypes4.TFhirUnsignedInt) : FHIRTypes3.TFhirUnsignedInt; overload; virtual;
-    class function convertUri(src : FHIRTypes3.TFhirUri) : FHIRTypes4.TFhirUri; overload; virtual;
-    class function convertUriToUrl(src : FHIRTypes3.TFhirUri) : FHIRTypes4.TFhirUrl; overload; virtual;
-    class function convertUri(src : FHIRTypes4.TFhirUri) : FHIRTypes3.TFhirUri; overload; virtual;
-    class function convertUuid(src : FHIRTypes3.TFhirUuid) : FHIRTypes4.TFhirUuid; overload; virtual;
-    class function convertUuid(src : FHIRTypes4.TFhirUuid) : FHIRTypes3.TFhirUuid; overload; virtual;
-    class function convertExtension(src : FHIRTypes3.TFhirExtension) : FHIRTypes4.TFhirExtension; overload; virtual;
-    class function convertExtension(src : FHIRTypes4.TFhirExtension) : FHIRTypes3.TFhirExtension; overload; virtual;
-    class function convertNarrative(src : FHIRTypes3.TFhirNarrative) : FHIRTypes4.TFhirNarrative; overload; virtual;
-    class function convertNarrative(src : FHIRTypes4.TFhirNarrative) : FHIRTypes3.TFhirNarrative; overload; virtual;
-    class function convertAge(src : FHIRTypes3.TFhirAge) : FHIRTypes4.TFhirAge; overload; virtual;
-    class function convertAge(src : FHIRTypes4.TFhirAge) : FHIRTypes3.TFhirAge; overload; virtual;
-    class function convertAnnotation(src : FHIRTypes3.TFhirAnnotation) : FHIRTypes4.TFhirAnnotation; overload; virtual;
-    class function convertAnnotation(src : FHIRTypes4.TFhirAnnotation) : FHIRTypes3.TFhirAnnotation; overload; virtual;
-    class function convertAttachment(src : FHIRTypes3.TFhirAttachment) : FHIRTypes4.TFhirAttachment; overload; virtual;
-    class function convertAttachment(src : FHIRTypes4.TFhirAttachment) : FHIRTypes3.TFhirAttachment; overload; virtual;
-    class function convertCodeableConcept(src : FHIRTypes3.TFhirCodeableConcept) : FHIRTypes4.TFhirCodeableConcept; overload; virtual;
-    class function convertCodeableConcept(src : FHIRTypes4.TFhirCodeableConcept) : FHIRTypes3.TFhirCodeableConcept; overload; virtual;
-    class function convertCodeableConceptToCoding(src : FHIRTypes4.TFhirCodeableConcept) : FHIRTypes3.TFhirCoding; overload; virtual;
-    class function convertCodeableConceptToCoding(src : FHIRTypes3.TFhirCodeableConcept) : FHIRTypes4.TFhirCoding; overload; virtual;
-    class function convertCoding(src : FHIRTypes3.TFhirCoding) : FHIRTypes4.TFhirCoding; overload; virtual;
-    class function convertCoding(src : FHIRTypes4.TFhirCoding) : FHIRTypes3.TFhirCoding; overload; virtual;
-    class function convertCoding(src : FHIRTypes3.TFhirCode) : FHIRTypes4.TFhirCoding; overload; virtual;
-    class function convertCount(src : FHIRTypes3.TFhirCount) : FHIRTypes4.TFhirCount; overload; virtual;
-    class function convertCount(src : FHIRTypes4.TFhirCount) : FHIRTypes3.TFhirCount; overload; virtual;
-    class function convertDistance(src : FHIRTypes3.TFhirDistance) : FHIRTypes4.TFhirDistance; overload; virtual;
-    class function convertDistance(src : FHIRTypes4.TFhirDistance) : FHIRTypes3.TFhirDistance; overload; virtual;
-    class function convertDuration(src : FHIRTypes3.TFhirDuration) : FHIRTypes4.TFhirDuration; overload; virtual;
-    class function convertDuration(src : FHIRTypes4.TFhirDuration) : FHIRTypes3.TFhirDuration; overload; virtual;
-    class function convertIdentifier(src : FHIRTypes3.TFhirIdentifier) : FHIRTypes4.TFhirIdentifier; overload; virtual;
-    class function convertIdentifier(src : FHIRTypes4.TFhirIdentifier) : FHIRTypes3.TFhirIdentifier; overload; virtual;
-    class function convertMoney(src : FHIRTypes3.TFhirMoney) : FHIRTypes4.TFhirMoney; overload; virtual;
-    class function convertMoney(src : FHIRTypes4.TFhirMoney) : FHIRTypes3.TFhirMoney; overload; virtual;
-    class function convertPeriod(src : FHIRTypes3.TFhirPeriod) : FHIRTypes4.TFhirPeriod; overload; virtual;
-    class function convertPeriod(src : FHIRTypes4.TFhirPeriod) : FHIRTypes3.TFhirPeriod; overload; virtual;
-    class procedure copyQuantity(src : FHIRTypes3.TFhirQuantity; tgt : FHIRTypes4.TFhirQuantity); overload; virtual;
-    class procedure copyQuantity(src : FHIRTypes4.TFhirQuantity; tgt : FHIRTypes3.TFhirQuantity); overload; virtual;
-    class function convertQuantity(src : FHIRTypes3.TFhirQuantity) : FHIRTypes4.TFhirQuantity; overload; virtual;
-    class function convertQuantity(src : FHIRTypes4.TFhirQuantity) : FHIRTypes3.TFhirQuantity; overload; virtual;
-    class function convertRange(src : FHIRTypes3.TFhirRange) : FHIRTypes4.TFhirRange; overload; virtual;
-    class function convertRange(src : FHIRTypes4.TFhirRange) : FHIRTypes3.TFhirRange; overload; virtual;
-    class function convertRatio(src : FHIRTypes3.TFhirRatio) : FHIRTypes4.TFhirRatio; overload; virtual;
-    class function convertRatio(src : FHIRTypes4.TFhirRatio) : FHIRTypes3.TFhirRatio; overload; virtual;
-    class function convertReference(src : FHIRTypes3.TFhirReference) : FHIRTypes4.TFhirReference; overload; virtual;
-    class function convertReference(src : FHIRTypes4.TFhirReference) : FHIRTypes3.TFhirReference; overload; virtual;
-    class function convertSampledData(src : FHIRTypes3.TFhirSampledData) : FHIRTypes4.TFhirSampledData; overload; virtual;
-    class function convertSampledData(src : FHIRTypes4.TFhirSampledData) : FHIRTypes3.TFhirSampledData; overload; virtual;
-    class function convertSignature(src : FHIRTypes3.TFhirSignature) : FHIRTypes4.TFhirSignature; overload; virtual;
-    class function convertSignature(src : FHIRTypes4.TFhirSignature) : FHIRTypes3.TFhirSignature; overload; virtual;
-    class function convertAddress(src : FHIRTypes3.TFhirAddress) : FHIRTypes4.TFhirAddress; overload; virtual;
-    class function convertAddress(src : FHIRTypes4.TFhirAddress) : FHIRTypes3.TFhirAddress; overload; virtual;
-    class function convertContactDetail(src : FHIRTypes3.TFhirContactDetail) : FHIRTypes4.TFhirContactDetail; overload; virtual;
-    class function convertContactDetail(src : FHIRTypes4.TFhirContactDetail) : FHIRTypes3.TFhirContactDetail; overload; virtual;
-    class function convertContactPoint(src : FHIRTypes3.TFhirContactPoint) : FHIRTypes4.TFhirContactPoint; overload; virtual;
-    class function convertContactPoint(src : FHIRTypes4.TFhirContactPoint) : FHIRTypes3.TFhirContactPoint; overload; virtual;
-    class function convertContributor(src : FHIRTypes3.TFhirContributor) : FHIRTypes4.TFhirContributor; overload; virtual;
-    class function convertContributor(src : FHIRTypes4.TFhirContributor) : FHIRTypes3.TFhirContributor; overload; virtual;
-    class function convertDosage(src : FHIRTypes3.TFhirDosage) : FHIRTypes4.TFhirDosage; overload; virtual;
-    class function convertDosage(src : FHIRTypes4.TFhirDosage) : FHIRTypes3.TFhirDosage; overload; virtual;
-    class function convertElementDefinition(src : FHIRTypes3.TFhirElementDefinition) : FHIRTypes4.TFhirElementDefinition; overload; virtual;
-    class function convertElementDefinition(src : FHIRTypes4.TFhirElementDefinition) : FHIRTypes3.TFhirElementDefinition; overload; virtual;
-    class function convertElementDefinitionSlicingComponent(src : FHIRTypes3.TFhirElementDefinitionSlicing) : FHIRTypes4.TFhirElementDefinitionSlicing; overload; virtual;
-    class function convertElementDefinitionSlicingComponent(src : FHIRTypes4.TFhirElementDefinitionSlicing) : FHIRTypes3.TFhirElementDefinitionSlicing; overload; virtual;
-    class function convertElementDefinitionSlicingDiscriminatorComponent(src : FHIRTypes3.TFhirElementDefinitionSlicingDiscriminator) : FHIRTypes4.TFhirElementDefinitionSlicingDiscriminator; overload; virtual;
-    class function convertElementDefinitionSlicingDiscriminatorComponent(src : FHIRTypes4.TFhirElementDefinitionSlicingDiscriminator) : FHIRTypes3.TFhirElementDefinitionSlicingDiscriminator; overload; virtual;
-    class function convertElementDefinitionBaseComponent(src : FHIRTypes3.TFhirElementDefinitionBase) : FHIRTypes4.TFhirElementDefinitionBase; overload; virtual;
-    class function convertElementDefinitionBaseComponent(src : FHIRTypes4.TFhirElementDefinitionBase) : FHIRTypes3.TFhirElementDefinitionBase; overload; virtual;
-    class procedure convertTypeRefComponent(src : FHIRTypes3.TFhirElementDefinitionType; list : FHIRTypes4.TFhirElementDefinitionTypeList); overload; virtual;
-    class procedure convertTypeRefComponent(src : FHIRTypes4.TFhirElementDefinitionType; list : FHIRTypes3.TFhirElementDefinitionTypeList); overload; virtual;
-    class function convertElementDefinitionExampleComponent(src : FHIRTypes3.TFhirElementDefinitionExample) : FHIRTypes4.TFhirElementDefinitionExample; overload; virtual;
-    class function convertElementDefinitionExampleComponent(src : FHIRTypes4.TFhirElementDefinitionExample) : FHIRTypes3.TFhirElementDefinitionExample; overload; virtual;
-    class function convertElementDefinitionConstraintComponent(src : FHIRTypes3.TFhirElementDefinitionConstraint) : FHIRTypes4.TFhirElementDefinitionConstraint; overload; virtual;
-    class function convertElementDefinitionConstraintComponent(src : FHIRTypes4.TFhirElementDefinitionConstraint) : FHIRTypes3.TFhirElementDefinitionConstraint; overload; virtual;
-    class function convertElementDefinitionBindingComponent(src : FHIRTypes3.TFhirElementDefinitionBinding) : FHIRTypes4.TFhirElementDefinitionBinding; overload; virtual;
-    class function convertElementDefinitionBindingComponent(src : FHIRTypes4.TFhirElementDefinitionBinding) : FHIRTypes3.TFhirElementDefinitionBinding; overload; virtual;
-    class function convertElementDefinitionMappingComponent(src : FHIRTypes3.TFhirElementDefinitionMapping) : FHIRTypes4.TFhirElementDefinitionMapping; overload; virtual;
-    class function convertElementDefinitionMappingComponent(src : FHIRTypes4.TFhirElementDefinitionMapping) : FHIRTypes3.TFhirElementDefinitionMapping; overload; virtual;
-    class function convertHumanName(src : FHIRTypes3.TFhirHumanName) : FHIRTypes4.TFhirHumanName; overload; virtual;
-    class function convertHumanName(src : FHIRTypes4.TFhirHumanName) : FHIRTypes3.TFhirHumanName; overload; virtual;
-    class function convertMeta(src : FHIRTypes3.TFhirMeta) : FHIRTypes4.TFhirMeta; overload; virtual;
-    class function convertMeta(src : FHIRTypes4.TFhirMeta) : FHIRTypes3.TFhirMeta; overload; virtual;
-    class function convertParameterDefinition(src : FHIRTypes3.TFhirParameterDefinition) : FHIRTypes4.TFhirParameterDefinition; overload; virtual;
-    class function convertParameterDefinition(src : FHIRTypes4.TFhirParameterDefinition) : FHIRTypes3.TFhirParameterDefinition; overload; virtual;
-    class function convertRelatedArtifact(src : FHIRTypes3.TFhirRelatedArtifact) : FHIRTypes4.TFhirRelatedArtifact; overload; virtual;
-    class function convertRelatedArtifact(src : FHIRTypes4.TFhirRelatedArtifact) : FHIRTypes3.TFhirRelatedArtifact; overload; virtual;
-    class function convertTiming(src : FHIRTypes3.TFhirTiming) : FHIRTypes4.TFhirTiming; overload; virtual;
-    class function convertTiming(src : FHIRTypes4.TFhirTiming) : FHIRTypes3.TFhirTiming; overload; virtual;
-    class function convertTimingRepeatComponent(src : FHIRTypes3.TFhirTimingRepeat) : FHIRTypes4.TFhirTimingRepeat; overload; virtual;
-    class function convertTimingRepeatComponent(src : FHIRTypes4.TFhirTimingRepeat) : FHIRTypes3.TFhirTimingRepeat; overload; virtual;
-    class function convertUsageContext(src : FHIRTypes3.TFhirUsageContext) : FHIRTypes4.TFhirUsageContext; overload; virtual;
-    class function convertUsageContext(src : FHIRTypes4.TFhirUsageContext) : FHIRTypes3.TFhirUsageContext; overload; virtual;
-    class function convertSimpleQuantity(src : FHIRTypes3.TFhirQuantity) : FHIRTypes4.TFhirQuantity; overload; virtual;
-    class function convertSimpleQuantity(src : FHIRTypes4.TFhirQuantity) : FHIRTypes3.TFhirQuantity; overload; virtual;
-    class function convertTriggerDefinition(src : FHIRTypes3.TFhirTriggerDefinition) : FHIRTypes4.TFhirTriggerDefinition; overload; virtual;
-    class function convertTriggerDefinition(src : FHIRTypes4.TFhirTriggerDefinition) : FHIRTypes3.TFhirTriggerDefinition; overload; virtual;
-    class function convertDataRequirement(src : FHIRTypes3.TFhirDataRequirement) : FHIRTypes4.TFhirDataRequirement; overload; virtual;
-    class function convertDataRequirement(src : FHIRTypes4.TFhirDataRequirement) : FHIRTypes3.TFhirDataRequirement; overload; virtual;
-    class function convertDataRequirementCodeFilterComponent(src : FHIRTypes3.TFhirDataRequirementCodeFilter) : FHIRTypes4.TFhirDataRequirementCodeFilter; overload; virtual;
-    class function convertDataRequirementCodeFilterComponent(src : FHIRTypes4.TFhirDataRequirementCodeFilter) : FHIRTypes3.TFhirDataRequirementCodeFilter; overload; virtual;
-    class function convertDataRequirementDateFilterComponent(src : FHIRTypes3.TFhirDataRequirementDateFilter) : FHIRTypes4.TFhirDataRequirementDateFilter; overload; virtual;
-    class function convertDataRequirementDateFilterComponent(src : FHIRTypes4.TFhirDataRequirementDateFilter) : FHIRTypes3.TFhirDataRequirementDateFilter; overload; virtual;
-    class function convertType(src : FHIRTypes3.TFhirType) : FHIRTypes4.TFhirType; overload; virtual;
-    class function convertType(src : FHIRTypes4.TFhirType) : FHIRTypes3.TFhirType; overload; virtual;
-    class function convertParameters(src : FHIRResources3.TFhirParameters) : FHIRResources4.TFhirParameters; overload; virtual;
-    class function convertParameters(src : FHIRResources4.TFhirParameters) : FHIRResources3.TFhirParameters; overload; virtual;
-    class function convertParametersParameterComponent(src : FHIRResources3.TFhirParametersParameter) : FHIRResources4.TFhirParametersParameter; overload; virtual;
-    class function convertParametersParameterComponent(src : FHIRResources4.TFhirParametersParameter) : FHIRResources3.TFhirParametersParameter; overload; virtual;
-    class function convertActivityDefinition(src : FHIRResources3.TFhirActivityDefinition) : FHIRResources4.TFhirActivityDefinition; overload; virtual;
-    class function convertActivityDefinition(src : FHIRResources4.TFhirActivityDefinition) : FHIRResources3.TFhirActivityDefinition; overload; virtual;
-    class function convertActivityDefinitionParticipantComponent(src : FHIRResources3.TFhirActivityDefinitionParticipant) : FHIRResources4.TFhirActivityDefinitionParticipant; overload; virtual;
-    class function convertActivityDefinitionParticipantComponent(src : FHIRResources4.TFhirActivityDefinitionParticipant) : FHIRResources3.TFhirActivityDefinitionParticipant; overload; virtual;
-    class function convertActivityDefinitionDynamicValueComponent(src : FHIRResources3.TFhirActivityDefinitionDynamicValue) : FHIRResources4.TFhirActivityDefinitionDynamicValue; overload; virtual;
-    class function convertActivityDefinitionDynamicValueComponent(src : FHIRResources4.TFhirActivityDefinitionDynamicValue) : FHIRResources3.TFhirActivityDefinitionDynamicValue; overload; virtual;
-    class function convertAllergyIntolerance(src : FHIRResources3.TFhirAllergyIntolerance) : FHIRResources4.TFhirAllergyIntolerance; overload; virtual;
-    class function convertAllergyIntolerance(src : FHIRResources4.TFhirAllergyIntolerance) : FHIRResources3.TFhirAllergyIntolerance; overload; virtual;
-    class function convertAllergyIntoleranceReactionComponent(src : FHIRResources3.TFhirAllergyIntoleranceReaction) : FHIRResources4.TFhirAllergyIntoleranceReaction; overload; virtual;
-    class function convertAllergyIntoleranceReactionComponent(src : FHIRResources4.TFhirAllergyIntoleranceReaction) : FHIRResources3.TFhirAllergyIntoleranceReaction; overload; virtual;
-    class function convertAppointment(src : FHIRResources3.TFhirAppointment) : FHIRResources4.TFhirAppointment; overload; virtual;
-    class function convertAppointment(src : FHIRResources4.TFhirAppointment) : FHIRResources3.TFhirAppointment; overload; virtual;
-    class function convertAppointmentParticipantComponent(src : FHIRResources3.TFhirAppointmentParticipant) : FHIRResources4.TFhirAppointmentParticipant; overload; virtual;
-    class function convertAppointmentParticipantComponent(src : FHIRResources4.TFhirAppointmentParticipant) : FHIRResources3.TFhirAppointmentParticipant; overload; virtual;
-    class function convertAppointmentResponse(src : FHIRResources3.TFhirAppointmentResponse) : FHIRResources4.TFhirAppointmentResponse; overload; virtual;
-    class function convertAppointmentResponse(src : FHIRResources4.TFhirAppointmentResponse) : FHIRResources3.TFhirAppointmentResponse; overload; virtual;
-    class function convertAuditEvent(src : FHIRResources3.TFhirAuditEvent) : FHIRResources4.TFhirAuditEvent; overload; virtual;
-    class function convertAuditEvent(src : FHIRResources4.TFhirAuditEvent) : FHIRResources3.TFhirAuditEvent; overload; virtual;
-    class function convertAuditEventAgentComponent(src : FHIRResources3.TFhirAuditEventAgent) : FHIRResources4.TFhirAuditEventAgent; overload; virtual;
-    class function convertAuditEventAgentComponent(src : FHIRResources4.TFhirAuditEventAgent) : FHIRResources3.TFhirAuditEventAgent; overload; virtual;
-    class function convertAuditEventAgentNetworkComponent(src : FHIRResources3.TFhirAuditEventAgentNetwork) : FHIRResources4.TFhirAuditEventAgentNetwork; overload; virtual;
-    class function convertAuditEventAgentNetworkComponent(src : FHIRResources4.TFhirAuditEventAgentNetwork) : FHIRResources3.TFhirAuditEventAgentNetwork; overload; virtual;
-    class function convertAuditEventSourceComponent(src : FHIRResources3.TFhirAuditEventSource) : FHIRResources4.TFhirAuditEventSource; overload; virtual;
-    class function convertAuditEventSourceComponent(src : FHIRResources4.TFhirAuditEventSource) : FHIRResources3.TFhirAuditEventSource; overload; virtual;
-    class function convertAuditEventEntityComponent(src : FHIRResources3.TFhirAuditEventEntity) : FHIRResources4.TFhirAuditEventEntity; overload; virtual;
-    class function convertAuditEventEntityComponent(src : FHIRResources4.TFhirAuditEventEntity) : FHIRResources3.TFhirAuditEventEntity; overload; virtual;
-    class function convertAuditEventEntityDetailComponent(src : FHIRResources3.TFhirAuditEventEntityDetail) : FHIRResources4.TFhirAuditEventEntityDetail; overload; virtual;
-    class function convertAuditEventEntityDetailComponent(src : FHIRResources4.TFhirAuditEventEntityDetail) : FHIRResources3.TFhirAuditEventEntityDetail; overload; virtual;
-    class function convertBasic(src : FHIRResources3.TFhirBasic) : FHIRResources4.TFhirBasic; overload; virtual;
-    class function convertBasic(src : FHIRResources4.TFhirBasic) : FHIRResources3.TFhirBasic; overload; virtual;
-    class function convertBinary(src : FHIRResources3.TFhirBinary) : FHIRResources4.TFhirBinary; overload; virtual;
-    class function convertBinary(src : FHIRResources4.TFhirBinary) : FHIRResources3.TFhirBinary; overload; virtual;
-    class function convertBodySite(src : FHIRResources3.TFhirBodySite) : FHIRResources4.TFhirBodyStructure; overload; virtual;
-    class function convertBodySite(src : FHIRResources4.TFhirBodyStructure) : FHIRResources3.TFhirBodySite; overload; virtual;
-    class function convertBundle(src : FHIRResources3.TFhirBundle) : FHIRResources4.TFhirBundle; overload; virtual;
-    class function convertBundle(src : FHIRResources4.TFhirBundle) : FHIRResources3.TFhirBundle; overload; virtual;
-    class function convertBundleLinkComponent(src : FHIRResources3.TFhirBundleLink) : FHIRResources4.TFhirBundleLink; overload; virtual;
-    class function convertBundleLinkComponent(src : FHIRResources4.TFhirBundleLink) : FHIRResources3.TFhirBundleLink; overload; virtual;
-    class function convertBundleEntryComponent(src : FHIRResources3.TFhirBundleEntry) : FHIRResources4.TFhirBundleEntry; overload; virtual;
-    class function convertBundleEntryComponent(src : FHIRResources4.TFhirBundleEntry) : FHIRResources3.TFhirBundleEntry; overload; virtual;
-    class function convertBundleEntrySearchComponent(src : FHIRResources3.TFhirBundleEntrySearch) : FHIRResources4.TFhirBundleEntrySearch; overload; virtual;
-    class function convertBundleEntrySearchComponent(src : FHIRResources4.TFhirBundleEntrySearch) : FHIRResources3.TFhirBundleEntrySearch; overload; virtual;
-    class function convertBundleEntryRequestComponent(src : FHIRResources3.TFhirBundleEntryRequest) : FHIRResources4.TFhirBundleEntryRequest; overload; virtual;
-    class function convertBundleEntryRequestComponent(src : FHIRResources4.TFhirBundleEntryRequest) : FHIRResources3.TFhirBundleEntryRequest; overload; virtual;
-    class function convertBundleEntryResponseComponent(src : FHIRResources3.TFhirBundleEntryResponse) : FHIRResources4.TFhirBundleEntryResponse; overload; virtual;
-    class function convertBundleEntryResponseComponent(src : FHIRResources4.TFhirBundleEntryResponse) : FHIRResources3.TFhirBundleEntryResponse; overload; virtual;
-    class function convertCapabilityStatement(src : FHIRResources3.TFhirCapabilityStatement) : FHIRResources4.TFhirCapabilityStatement; overload; virtual;
-    class function convertCapabilityStatement(src : FHIRResources4.TFhirCapabilityStatement) : FHIRResources3.TFhirCapabilityStatement; overload; virtual;
-    class function convertCapabilityStatementSoftwareComponent(src : FHIRResources3.TFhirCapabilityStatementSoftware) : FHIRResources4.TFhirCapabilityStatementSoftware; overload; virtual;
-    class function convertCapabilityStatementSoftwareComponent(src : FHIRResources4.TFhirCapabilityStatementSoftware) : FHIRResources3.TFhirCapabilityStatementSoftware; overload; virtual;
-    class function convertCapabilityStatementImplementationComponent(src : FHIRResources3.TFhirCapabilityStatementImplementation) : FHIRResources4.TFhirCapabilityStatementImplementation; overload; virtual;
-    class function convertCapabilityStatementImplementationComponent(src : FHIRResources4.TFhirCapabilityStatementImplementation) : FHIRResources3.TFhirCapabilityStatementImplementation; overload; virtual;
-    class function convertCapabilityStatementRestComponent(src : FHIRResources3.TFhirCapabilityStatementRest) : FHIRResources4.TFhirCapabilityStatementRest; overload; virtual;
-    class function convertCapabilityStatementRestComponent(src : FHIRResources4.TFhirCapabilityStatementRest) : FHIRResources3.TFhirCapabilityStatementRest; overload; virtual;
-    class function convertCapabilityStatementRestSecurityComponent(src : FHIRResources3.TFhirCapabilityStatementRestSecurity) : FHIRResources4.TFhirCapabilityStatementRestSecurity; overload; virtual;
-    class function convertCapabilityStatementRestSecurityComponent(src : FHIRResources4.TFhirCapabilityStatementRestSecurity) : FHIRResources3.TFhirCapabilityStatementRestSecurity; overload; virtual;
-    class function convertCapabilityStatementRestResourceComponent(src : FHIRResources3.TFhirCapabilityStatementRestResource) : FHIRResources4.TFhirCapabilityStatementRestResource; overload; virtual;
-    class function convertCapabilityStatementRestResourceComponent(src : FHIRResources4.TFhirCapabilityStatementRestResource) : FHIRResources3.TFhirCapabilityStatementRestResource; overload; virtual;
-    class function convertResourceInteractionComponent(src : FHIRResources3.TFhirCapabilityStatementRestResourceInteraction) : FHIRResources4.TFhirCapabilityStatementRestResourceInteraction; overload; virtual;
-    class function convertResourceInteractionComponent(src : FHIRResources4.TFhirCapabilityStatementRestResourceInteraction) : FHIRResources3.TFhirCapabilityStatementRestResourceInteraction; overload; virtual;
-    class function convertCapabilityStatementRestResourceSearchParamComponent(src : FHIRResources3.TFhirCapabilityStatementRestResourceSearchParam) : FHIRResources4.TFhirCapabilityStatementRestResourceSearchParam; overload; virtual;
-    class function convertCapabilityStatementRestResourceSearchParamComponent(src : FHIRResources4.TFhirCapabilityStatementRestResourceSearchParam) : FHIRResources3.TFhirCapabilityStatementRestResourceSearchParam; overload; virtual;
-    class function convertSystemInteractionComponent(src : FHIRResources3.TFhirCapabilityStatementRestInteraction) : FHIRResources4.TFhirCapabilityStatementRestInteraction; overload; virtual;
-    class function convertSystemInteractionComponent(src : FHIRResources4.TFhirCapabilityStatementRestInteraction) : FHIRResources3.TFhirCapabilityStatementRestInteraction; overload; virtual;
-    class function convertCapabilityStatementRestOperationComponent(src : FHIRResources3.TFhirCapabilityStatementRestOperation) : FHIRResources4.TFhirCapabilityStatementRestResourceOperation; overload; virtual;
-    class function convertCapabilityStatementRestOperationComponent(src : FHIRResources4.TFhirCapabilityStatementRestResourceOperation) : FHIRResources3.TFhirCapabilityStatementRestOperation; overload; virtual;
-    class function convertCapabilityStatementMessagingComponent(src : FHIRResources3.TFhirCapabilityStatementMessaging) : FHIRResources4.TFhirCapabilityStatementMessaging; overload; virtual;
-    class function convertCapabilityStatementMessagingComponent(src : FHIRResources4.TFhirCapabilityStatementMessaging) : FHIRResources3.TFhirCapabilityStatementMessaging; overload; virtual;
-    class function convertCapabilityStatementMessagingEndpointComponent(src : FHIRResources3.TFhirCapabilityStatementMessagingEndpoint) : FHIRResources4.TFhirCapabilityStatementMessagingEndpoint; overload; virtual;
-    class function convertCapabilityStatementMessagingEndpointComponent(src : FHIRResources4.TFhirCapabilityStatementMessagingEndpoint) : FHIRResources3.TFhirCapabilityStatementMessagingEndpoint; overload; virtual;
-    class function convertCapabilityStatementMessagingSupportedMessageComponent(src : FHIRResources3.TFhirCapabilityStatementMessagingSupportedMessage) : FHIRResources4.TFhirCapabilityStatementMessagingSupportedMessage; overload; virtual;
-    class function convertCapabilityStatementMessagingSupportedMessageComponent(src : FHIRResources4.TFhirCapabilityStatementMessagingSupportedMessage) : FHIRResources3.TFhirCapabilityStatementMessagingSupportedMessage; overload; virtual;
-    class function convertCapabilityStatementDocumentComponent(src : FHIRResources3.TFhirCapabilityStatementDocument) : FHIRResources4.TFhirCapabilityStatementDocument; overload; virtual;
-    class function convertCapabilityStatementDocumentComponent(src : FHIRResources4.TFhirCapabilityStatementDocument) : FHIRResources3.TFhirCapabilityStatementDocument; overload; virtual;
-    class function convertCareTeam(src : FHIRResources3.TFhirCareTeam) : FHIRResources4.TFhirCareTeam; overload; virtual;
-    class function convertCareTeam(src : FHIRResources4.TFhirCareTeam) : FHIRResources3.TFhirCareTeam; overload; virtual;
-    class function convertCareTeamParticipantComponent(src : FHIRResources3.TFhirCareTeamParticipant) : FHIRResources4.TFhirCareTeamParticipant; overload; virtual;
-    class function convertCareTeamParticipantComponent(src : FHIRResources4.TFhirCareTeamParticipant) : FHIRResources3.TFhirCareTeamParticipant; overload; virtual;
-    class function convertChargeItem(src : FHIRResources3.TFhirChargeItem) : FHIRResources4.TFhirChargeItem; overload; virtual;
-    class function convertChargeItem(src : FHIRResources4.TFhirChargeItem) : FHIRResources3.TFhirChargeItem; overload; virtual;
-    class function convertChargeItemParticipantComponent(src : FHIRResources3.TFhirChargeItemParticipant) : FHIRResources4.TFhirChargeItemParticipant; overload; virtual;
-    class function convertChargeItemParticipantComponent(src : FHIRResources4.TFhirChargeItemParticipant) : FHIRResources3.TFhirChargeItemParticipant; overload; virtual;
-    class function convertClaim(src : FHIRResources3.TFhirClaim) : FHIRResources4.TFhirClaim; overload; virtual;
-    class function convertClaim(src : FHIRResources4.TFhirClaim) : FHIRResources3.TFhirClaim; overload; virtual;
-    class function convertRelatedClaimComponent(src : FHIRResources3.TFhirClaimRelated) : FHIRResources4.TFhirClaimRelated; overload; virtual;
-    class function convertRelatedClaimComponent(src : FHIRResources4.TFhirClaimRelated) : FHIRResources3.TFhirClaimRelated; overload; virtual;
-    class function convertPayeeComponent(src : FHIRResources3.TFhirClaimPayee) : FHIRResources4.TFhirClaimPayee; overload; virtual;
-    class function convertPayeeComponent(src : FHIRResources4.TFhirClaimPayee) : FHIRResources3.TFhirClaimPayee; overload; virtual;
-    class function convertCareTeamComponent(src : FHIRResources3.TFhirClaimCareTeam) : FHIRResources4.TFhirClaimCareTeam; overload; virtual;
-    class function convertCareTeamComponent(src : FHIRResources4.TFhirClaimCareTeam) : FHIRResources3.TFhirClaimCareTeam; overload; virtual;
-    class function convertSpecialConditionComponent(src : FHIRResources3.TFhirClaimInformation) : FHIRResources4.TFhirClaimInformation; overload; virtual;
-    class function convertSpecialConditionComponent(src : FHIRResources4.TFhirClaimInformation) : FHIRResources3.TFhirClaimInformation; overload; virtual;
-    class function convertDiagnosisComponent(src : FHIRResources3.TFhirClaimDiagnosis) : FHIRResources4.TFhirClaimDiagnosis; overload; virtual;
-    class function convertDiagnosisComponent(src : FHIRResources4.TFhirClaimDiagnosis) : FHIRResources3.TFhirClaimDiagnosis; overload; virtual;
-    class function convertProcedureComponent(src : FHIRResources3.TFhirClaimProcedure) : FHIRResources4.TFhirClaimProcedure; overload; virtual;
-    class function convertProcedureComponent(src : FHIRResources4.TFhirClaimProcedure) : FHIRResources3.TFhirClaimProcedure; overload; virtual;
-    class function convertInsuranceComponent(src : FHIRResources3.TFhirClaimInsurance) : FHIRResources4.TFhirClaimInsurance; overload; virtual;
-    class function convertInsuranceComponent(src : FHIRResources4.TFhirClaimInsurance) : FHIRResources3.TFhirClaimInsurance; overload; virtual;
-    class function convertAccidentComponent(src : FHIRResources3.TFhirClaimAccident) : FHIRResources4.TFhirClaimAccident; overload; virtual;
-    class function convertAccidentComponent(src : FHIRResources4.TFhirClaimAccident) : FHIRResources3.TFhirClaimAccident; overload; virtual;
-    class function convertItemComponent(src : FHIRResources3.TFhirClaimItem) : FHIRResources4.TFhirClaimItem; overload; virtual;
-    class function convertItemComponent(src : FHIRResources4.TFhirClaimItem) : FHIRResources3.TFhirClaimItem; overload; virtual;
-    class function convertDetailComponent(src : FHIRResources3.TFhirClaimItemDetail) : FHIRResources4.TFhirClaimItemDetail; overload; virtual;
-    class function convertDetailComponent(src : FHIRResources4.TFhirClaimItemDetail) : FHIRResources3.TFhirClaimItemDetail; overload; virtual;
-    class function convertSubDetailComponent(src : FHIRResources3.TFhirClaimItemDetailSubDetail) : FHIRResources4.TFhirClaimItemDetailSubDetail; overload; virtual;
-    class function convertSubDetailComponent(src : FHIRResources4.TFhirClaimItemDetailSubDetail) : FHIRResources3.TFhirClaimItemDetailSubDetail; overload; virtual;
-    class function convertClinicalImpression(src : FHIRResources3.TFhirClinicalImpression) : FHIRResources4.TFhirClinicalImpression; overload; virtual;
-    class function convertClinicalImpression(src : FHIRResources4.TFhirClinicalImpression) : FHIRResources3.TFhirClinicalImpression; overload; virtual;
-    class function convertClinicalImpressionInvestigationComponent(src : FHIRResources3.TFhirClinicalImpressionInvestigation) : FHIRResources4.TFhirClinicalImpressionInvestigation; overload; virtual;
-    class function convertClinicalImpressionInvestigationComponent(src : FHIRResources4.TFhirClinicalImpressionInvestigation) : FHIRResources3.TFhirClinicalImpressionInvestigation; overload; virtual;
-    class function convertClinicalImpressionFindingComponent(src : FHIRResources3.TFhirClinicalImpressionFinding) : FHIRResources4.TFhirClinicalImpressionFinding; overload; virtual;
-    class function convertClinicalImpressionFindingComponent(src : FHIRResources4.TFhirClinicalImpressionFinding) : FHIRResources3.TFhirClinicalImpressionFinding; overload; virtual;
-    class function convertCodeSystem(src : FHIRResources3.TFhirCodeSystem) : FHIRResources4.TFhirCodeSystem; overload; virtual;
-    class function convertCodeSystem(src : FHIRResources4.TFhirCodeSystem) : FHIRResources3.TFhirCodeSystem; overload; virtual;
-    class function convertCodeSystemFilterComponent(src : FHIRResources3.TFhirCodeSystemFilter) : FHIRResources4.TFhirCodeSystemFilter; overload; virtual;
-    class function convertCodeSystemFilterComponent(src : FHIRResources4.TFhirCodeSystemFilter) : FHIRResources3.TFhirCodeSystemFilter; overload; virtual;
-    class function convertPropertyComponent(src : FHIRResources3.TFhirCodeSystemProperty) : FHIRResources4.TFhirCodeSystemProperty; overload; virtual;
-    class function convertPropertyComponent(src : FHIRResources4.TFhirCodeSystemProperty) : FHIRResources3.TFhirCodeSystemProperty; overload; virtual;
-    class function convertConceptDefinitionComponent(src : FHIRResources3.TFhirCodeSystemConcept) : FHIRResources4.TFhirCodeSystemConcept; overload; virtual;
-    class function convertConceptDefinitionComponent(src : FHIRResources4.TFhirCodeSystemConcept) : FHIRResources3.TFhirCodeSystemConcept; overload; virtual;
-    class function convertConceptDefinitionDesignationComponent(src : FHIRResources3.TFhirCodeSystemConceptDesignation) : FHIRResources4.TFhirCodeSystemConceptDesignation; overload; virtual;
-    class function convertConceptDefinitionDesignationComponent(src : FHIRResources4.TFhirCodeSystemConceptDesignation) : FHIRResources3.TFhirCodeSystemConceptDesignation; overload; virtual;
-    class function convertConceptPropertyComponent(src : FHIRResources3.TFhirCodeSystemConceptProperty) : FHIRResources4.TFhirCodeSystemConceptProperty; overload; virtual;
-    class function convertConceptPropertyComponent(src : FHIRResources4.TFhirCodeSystemConceptProperty) : FHIRResources3.TFhirCodeSystemConceptProperty; overload; virtual;
-    class function convertCommunication(src : FHIRResources3.TFhirCommunication) : FHIRResources4.TFhirCommunication; overload; virtual;
-    class function convertCommunication(src : FHIRResources4.TFhirCommunication) : FHIRResources3.TFhirCommunication; overload; virtual;
-    class function convertCommunicationPayloadComponent(src : FHIRResources3.TFhirCommunicationPayload) : FHIRResources4.TFhirCommunicationPayload; overload; virtual;
-    class function convertCommunicationPayloadComponent(src : FHIRResources4.TFhirCommunicationPayload) : FHIRResources3.TFhirCommunicationPayload; overload; virtual;
-    class function convertCompartmentDefinition(src : FHIRResources3.TFhirCompartmentDefinition) : FHIRResources4.TFhirCompartmentDefinition; overload; virtual;
-    class function convertCompartmentDefinition(src : FHIRResources4.TFhirCompartmentDefinition) : FHIRResources3.TFhirCompartmentDefinition; overload; virtual;
-    class function convertCompartmentDefinitionResourceComponent(src : FHIRResources3.TFhirCompartmentDefinitionResource) : FHIRResources4.TFhirCompartmentDefinitionResource; overload; virtual;
-    class function convertCompartmentDefinitionResourceComponent(src : FHIRResources4.TFhirCompartmentDefinitionResource) : FHIRResources3.TFhirCompartmentDefinitionResource; overload; virtual;
-    class function convertComposition(src : FHIRResources3.TFhirComposition) : FHIRResources4.TFhirComposition; overload; virtual;
-    class function convertComposition(src : FHIRResources4.TFhirComposition) : FHIRResources3.TFhirComposition; overload; virtual;
-    class function convertCompositionAttesterComponent(src : FHIRResources3.TFhirCompositionAttester) : FHIRResources4.TFhirCompositionAttester; overload; virtual;
-    class function convertCompositionAttesterComponent(src : FHIRResources4.TFhirCompositionAttester) : FHIRResources3.TFhirCompositionAttester; overload; virtual;
-    class function convertCompositionRelatesToComponent(src : FHIRResources3.TFhirCompositionRelatesTo) : FHIRResources4.TFhirCompositionRelatesTo; overload; virtual;
-    class function convertCompositionRelatesToComponent(src : FHIRResources4.TFhirCompositionRelatesTo) : FHIRResources3.TFhirCompositionRelatesTo; overload; virtual;
-    class function convertCompositionEventComponent(src : FHIRResources3.TFhirCompositionEvent) : FHIRResources4.TFhirCompositionEvent; overload; virtual;
-    class function convertCompositionEventComponent(src : FHIRResources4.TFhirCompositionEvent) : FHIRResources3.TFhirCompositionEvent; overload; virtual;
-    class function convertSectionComponent(src : FHIRResources3.TFhirCompositionSection) : FHIRResources4.TFhirCompositionSection; overload; virtual;
-    class function convertSectionComponent(src : FHIRResources4.TFhirCompositionSection) : FHIRResources3.TFhirCompositionSection; overload; virtual;
-    class function convertConceptMap(src : FHIRResources3.TFhirConceptMap) : FHIRResources4.TFhirConceptMap; overload; virtual;
-    class function convertConceptMap(src : FHIRResources4.TFhirConceptMap) : FHIRResources3.TFhirConceptMap; overload; virtual;
-    class function convertConceptMapGroupComponent(src : FHIRResources3.TFhirConceptMapGroup) : FHIRResources4.TFhirConceptMapGroup; overload; virtual;
-    class function convertConceptMapGroupComponent(src : FHIRResources4.TFhirConceptMapGroup) : FHIRResources3.TFhirConceptMapGroup; overload; virtual;
-    class function convertSourceElementComponent(src : FHIRResources3.TFhirConceptMapGroupElement) : FHIRResources4.TFhirConceptMapGroupElement; overload; virtual;
-    class function convertSourceElementComponent(src : FHIRResources4.TFhirConceptMapGroupElement) : FHIRResources3.TFhirConceptMapGroupElement; overload; virtual;
-    class function convertTargetElementComponent(src : FHIRResources3.TFhirConceptMapGroupElementTarget) : FHIRResources4.TFhirConceptMapGroupElementTarget; overload; virtual;
-    class function convertTargetElementComponent(src : FHIRResources4.TFhirConceptMapGroupElementTarget) : FHIRResources3.TFhirConceptMapGroupElementTarget; overload; virtual;
-    class function convertOtherElementComponent(src : FHIRResources3.TFhirConceptMapGroupElementTargetDependsOn) : FHIRResources4.TFhirConceptMapGroupElementTargetDependsOn; overload; virtual;
-    class function convertOtherElementComponent(src : FHIRResources4.TFhirConceptMapGroupElementTargetDependsOn) : FHIRResources3.TFhirConceptMapGroupElementTargetDependsOn; overload; virtual;
-    class function convertConceptMapGroupUnmappedComponent(src : FHIRResources3.TFhirConceptMapGroupUnmapped) : FHIRResources4.TFhirConceptMapGroupUnmapped; overload; virtual;
-    class function convertConceptMapGroupUnmappedComponent(src : FHIRResources4.TFhirConceptMapGroupUnmapped) : FHIRResources3.TFhirConceptMapGroupUnmapped; overload; virtual;
-    class function convertCondition(src : FHIRResources3.TFhirCondition) : FHIRResources4.TFhirCondition; overload; virtual;
-    class function convertCondition(src : FHIRResources4.TFhirCondition) : FHIRResources3.TFhirCondition; overload; virtual;
-    class function convertConditionStageComponent(src : FHIRResources3.TFhirConditionStage) : FHIRResources4.TFhirConditionStage; overload; virtual;
-    class function convertConditionStageComponent(src : FHIRResources4.TFhirConditionStage) : FHIRResources3.TFhirConditionStage; overload; virtual;
-    class function convertConditionEvidenceComponent(src : FHIRResources3.TFhirConditionEvidence) : FHIRResources4.TFhirConditionEvidence; overload; virtual;
-    class function convertConditionEvidenceComponent(src : FHIRResources4.TFhirConditionEvidence) : FHIRResources3.TFhirConditionEvidence; overload; virtual;
-    class function convertConsent(src : FHIRResources3.TFhirConsent) : FHIRResources4.TFhirConsent; overload; virtual;
-    class function convertConsent(src : FHIRResources4.TFhirConsent) : FHIRResources3.TFhirConsent; overload; virtual;
-    class function convertConsentPolicyComponent(src : FHIRResources3.TFhirConsentPolicy) : FHIRResources4.TFhirConsentPolicy; overload; virtual;
-    class function convertConsentPolicyComponent(src : FHIRResources4.TFhirConsentPolicy) : FHIRResources3.TFhirConsentPolicy; overload; virtual;
-    class function convertDataElement(src : FHIRResources3.TFhirDataElement) : FHIRResources4.TFhirStructureDefinition; overload; virtual;
-    class function convertDataElementMappingComponent(src : FHIRResources3.TFhirDataElementMapping) : FHIRResources4.TFhirStructureDefinitionMapping; overload; virtual;
-    class function convertDetectedIssue(src : FHIRResources3.TFhirDetectedIssue) : FHIRResources4.TFhirDetectedIssue; overload; virtual;
-    class function convertDetectedIssue(src : FHIRResources4.TFhirDetectedIssue) : FHIRResources3.TFhirDetectedIssue; overload; virtual;
-    class function convertDetectedIssueMitigationComponent(src : FHIRResources3.TFhirDetectedIssueMitigation) : FHIRResources4.TFhirDetectedIssueMitigation; overload; virtual;
-    class function convertDetectedIssueMitigationComponent(src : FHIRResources4.TFhirDetectedIssueMitigation) : FHIRResources3.TFhirDetectedIssueMitigation; overload; virtual;
-    class function convertDevice(src : FHIRResources3.TFhirDevice) : FHIRResources4.TFhirDevice; overload; virtual;
-    class function convertDevice(src : FHIRResources4.TFhirDevice) : FHIRResources3.TFhirDevice; overload; virtual;
-    class function convertDeviceUdiComponent(src : FHIRResources3.TFhirDeviceUdi) : FHIRResources4.TFhirDeviceUdi; overload; virtual;
-    class function convertDeviceUdiComponent(src : FHIRResources4.TFhirDeviceUdi) : FHIRResources3.TFhirDeviceUdi; overload; virtual;
-    class function convertDeviceComponent(src : FHIRResources3.TFhirDeviceComponent) : FHIRResources4.TFhirDeviceComponent; overload; virtual;
-    class function convertDeviceComponent(src : FHIRResources4.TFhirDeviceComponent) : FHIRResources3.TFhirDeviceComponent; overload; virtual;
-    class function convertDeviceComponentProductionSpecificationComponent(src : FHIRResources3.TFhirDeviceComponentProductionSpecification) : FHIRResources4.TFhirDeviceComponentProductionSpecification; overload; virtual;
-    class function convertDeviceComponentProductionSpecificationComponent(src : FHIRResources4.TFhirDeviceComponentProductionSpecification) : FHIRResources3.TFhirDeviceComponentProductionSpecification; overload; virtual;
-    class function convertDeviceMetric(src : FHIRResources3.TFhirDeviceMetric) : FHIRResources4.TFhirDeviceMetric; overload; virtual;
-    class function convertDeviceMetric(src : FHIRResources4.TFhirDeviceMetric) : FHIRResources3.TFhirDeviceMetric; overload; virtual;
-    class function convertDeviceMetricCalibrationComponent(src : FHIRResources3.TFhirDeviceMetricCalibration) : FHIRResources4.TFhirDeviceMetricCalibration; overload; virtual;
-    class function convertDeviceMetricCalibrationComponent(src : FHIRResources4.TFhirDeviceMetricCalibration) : FHIRResources3.TFhirDeviceMetricCalibration; overload; virtual;
-    class function convertDeviceUseStatement(src : FHIRResources3.TFhirDeviceUseStatement) : FHIRResources4.TFhirDeviceUseStatement; overload; virtual;
-    class function convertDeviceUseStatement(src : FHIRResources4.TFhirDeviceUseStatement) : FHIRResources3.TFhirDeviceUseStatement; overload; virtual;
-    class function convertDiagnosticReport(src : FHIRResources3.TFhirDiagnosticReport) : FHIRResources4.TFhirDiagnosticReport; overload; virtual;
-    class function convertDiagnosticReport(src : FHIRResources4.TFhirDiagnosticReport) : FHIRResources3.TFhirDiagnosticReport; overload; virtual;
-    class function convertDiagnosticReportImageComponent(src : FHIRResources3.TFhirDiagnosticReportImage) : FHIRResources4.TFhirDiagnosticReportMedia; overload; virtual;
-    class function convertDiagnosticReportImageComponent(src : FHIRResources4.TFhirDiagnosticReportMedia) : FHIRResources3.TFhirDiagnosticReportImage; overload; virtual;
-    class function convertDocumentManifestRelatedComponent(src : FHIRResources3.TFhirDocumentManifestRelated) : FHIRResources4.TFhirDocumentManifestRelated; overload; virtual;
-    class function convertDocumentManifestRelatedComponent(src : FHIRResources4.TFhirDocumentManifestRelated) : FHIRResources3.TFhirDocumentManifestRelated; overload; virtual;
-    class function convertDocumentReference(src : FHIRResources3.TFhirDocumentReference) : FHIRResources4.TFhirDocumentReference; overload; virtual;
-    class function convertDocumentReference(src : FHIRResources4.TFhirDocumentReference) : FHIRResources3.TFhirDocumentReference; overload; virtual;
-    class function convertDocumentReferenceRelatesToComponent(src : FHIRResources3.TFhirDocumentReferenceRelatesTo) : FHIRResources4.TFhirDocumentReferenceRelatesTo; overload; virtual;
-    class function convertDocumentReferenceRelatesToComponent(src : FHIRResources4.TFhirDocumentReferenceRelatesTo) : FHIRResources3.TFhirDocumentReferenceRelatesTo; overload; virtual;
-    class function convertDocumentReferenceContentComponent(src : FHIRResources3.TFhirDocumentReferenceContent) : FHIRResources4.TFhirDocumentReferenceContent; overload; virtual;
-    class function convertDocumentReferenceContentComponent(src : FHIRResources4.TFhirDocumentReferenceContent) : FHIRResources3.TFhirDocumentReferenceContent; overload; virtual;
-    class function convertDocumentReferenceContextComponent(src : FHIRResources3.TFhirDocumentReferenceContext) : FHIRResources4.TFhirDocumentReferenceContext; overload; virtual;
-    class function convertDocumentReferenceContextComponent(src : FHIRResources4.TFhirDocumentReferenceContext) : FHIRResources3.TFhirDocumentReferenceContext; overload; virtual;
-    class function convertDocumentReferenceContextRelatedComponent(src : FHIRResources3.TFhirDocumentReferenceContextRelated) : FHIRResources4.TFhirDocumentReferenceContextRelated; overload; virtual;
-    class function convertDocumentReferenceContextRelatedComponent(src : FHIRResources4.TFhirDocumentReferenceContextRelated) : FHIRResources3.TFhirDocumentReferenceContextRelated; overload; virtual;
-    class function convertEncounter(src : FHIRResources3.TFhirEncounter) : FHIRResources4.TFhirEncounter; overload; virtual;
-    class function convertEncounter(src : FHIRResources4.TFhirEncounter) : FHIRResources3.TFhirEncounter; overload; virtual;
-    class function convertStatusHistoryComponent(src : FHIRResources3.TFhirEncounterStatusHistory) : FHIRResources4.TFhirEncounterStatusHistory; overload; virtual;
-    class function convertStatusHistoryComponent(src : FHIRResources4.TFhirEncounterStatusHistory) : FHIRResources3.TFhirEncounterStatusHistory; overload; virtual;
-    class function convertClassHistoryComponent(src : FHIRResources3.TFhirEncounterClassHistory) : FHIRResources4.TFhirEncounterClassHistory; overload; virtual;
-    class function convertClassHistoryComponent(src : FHIRResources4.TFhirEncounterClassHistory) : FHIRResources3.TFhirEncounterClassHistory; overload; virtual;
-    class function convertEncounterParticipantComponent(src : FHIRResources3.TFhirEncounterParticipant) : FHIRResources4.TFhirEncounterParticipant; overload; virtual;
-    class function convertEncounterParticipantComponent(src : FHIRResources4.TFhirEncounterParticipant) : FHIRResources3.TFhirEncounterParticipant; overload; virtual;
-    class function convertEncounterHospitalizationComponent(src : FHIRResources3.TFhirEncounterHospitalization) : FHIRResources4.TFhirEncounterHospitalization; overload; virtual;
-    class function convertEncounterHospitalizationComponent(src : FHIRResources4.TFhirEncounterHospitalization) : FHIRResources3.TFhirEncounterHospitalization; overload; virtual;
-    class function convertDiagnosisComponent(src : FHIRResources3.TFhirEncounterDiagnosis) : FHIRResources4.TFhirEncounterDiagnosis; overload; virtual;
-    class function convertDiagnosisComponent(src : FHIRResources4.TFhirEncounterDiagnosis) : FHIRResources3.TFhirEncounterDiagnosis; overload; virtual;
-    class function convertEncounterLocationComponent(src : FHIRResources3.TFhirEncounterLocation) : FHIRResources4.TFhirEncounterLocation; overload; virtual;
-    class function convertEncounterLocationComponent(src : FHIRResources4.TFhirEncounterLocation) : FHIRResources3.TFhirEncounterLocation; overload; virtual;
-    class function convertEndpoint(src : FHIRResources3.TFhirEndpoint) : FHIRResources4.TFhirEndpoint; overload; virtual;
-    class function convertEndpoint(src : FHIRResources4.TFhirEndpoint) : FHIRResources3.TFhirEndpoint; overload; virtual;
-    class function convertEpisodeOfCare(src : FHIRResources3.TFhirEpisodeOfCare) : FHIRResources4.TFhirEpisodeOfCare; overload; virtual;
-    class function convertEpisodeOfCare(src : FHIRResources4.TFhirEpisodeOfCare) : FHIRResources3.TFhirEpisodeOfCare; overload; virtual;
-    class function convertDiagnosisComponent(src : FHIRResources3.TFhirEpisodeOfCareDiagnosis) : FHIRResources4.TFhirEpisodeOfCareDiagnosis; overload; virtual;
-    class function convertDiagnosisComponent(src : FHIRResources4.TFhirEpisodeOfCareDiagnosis) : FHIRResources3.TFhirEpisodeOfCareDiagnosis; overload; virtual;
-    class function convertEpisodeOfCareStatusHistoryComponent(src : FHIRResources3.TFhirEpisodeOfCareStatusHistory) : FHIRResources4.TFhirEpisodeOfCareStatusHistory; overload; virtual;
-    class function convertEpisodeOfCareStatusHistoryComponent(src : FHIRResources4.TFhirEpisodeOfCareStatusHistory) : FHIRResources3.TFhirEpisodeOfCareStatusHistory; overload; virtual;
-    class function convertExpansionProfile(src : FHIRResources3.TFhirExpansionProfile) : FHIRResources4.TFhirExpansionProfile; overload; virtual;
-    class function convertExpansionProfile(src : FHIRResources4.TFhirExpansionProfile) : FHIRResources3.TFhirExpansionProfile; overload; virtual;
-    class function convertExpansionProfileFixedVersionComponent(src : FHIRResources3.TFhirExpansionProfileFixedVersion) : FHIRResources4.TFhirExpansionProfileFixedVersion; overload; virtual;
-    class function convertExpansionProfileFixedVersionComponent(src : FHIRResources4.TFhirExpansionProfileFixedVersion) : FHIRResources3.TFhirExpansionProfileFixedVersion; overload; virtual;
-    class function convertExpansionProfileExcludedSystemComponent(src : FHIRResources3.TFhirExpansionProfileExcludedSystem) : FHIRResources4.TFhirExpansionProfileExcludedSystem; overload; virtual;
-    class function convertExpansionProfileExcludedSystemComponent(src : FHIRResources4.TFhirExpansionProfileExcludedSystem) : FHIRResources3.TFhirExpansionProfileExcludedSystem; overload; virtual;
-    class function convertExpansionProfileDesignationComponent(src : FHIRResources3.TFhirExpansionProfileDesignation) : FHIRResources4.TFhirExpansionProfileDesignation; overload; virtual;
-    class function convertExpansionProfileDesignationComponent(src : FHIRResources4.TFhirExpansionProfileDesignation) : FHIRResources3.TFhirExpansionProfileDesignation; overload; virtual;
-    class function convertDesignationIncludeComponent(src : FHIRResources3.TFhirExpansionProfileDesignationInclude) : FHIRResources4.TFhirExpansionProfileDesignationInclude; overload; virtual;
-    class function convertDesignationIncludeComponent(src : FHIRResources4.TFhirExpansionProfileDesignationInclude) : FHIRResources3.TFhirExpansionProfileDesignationInclude; overload; virtual;
-    class function convertDesignationIncludeDesignationComponent(src : FHIRResources3.TFhirExpansionProfileDesignationIncludeDesignation) : FHIRResources4.TFhirExpansionProfileDesignationIncludeDesignation; overload; virtual;
-    class function convertDesignationIncludeDesignationComponent(src : FHIRResources4.TFhirExpansionProfileDesignationIncludeDesignation) : FHIRResources3.TFhirExpansionProfileDesignationIncludeDesignation; overload; virtual;
-    class function convertDesignationExcludeComponent(src : FHIRResources3.TFhirExpansionProfileDesignationExclude) : FHIRResources4.TFhirExpansionProfileDesignationExclude; overload; virtual;
-    class function convertDesignationExcludeComponent(src : FHIRResources4.TFhirExpansionProfileDesignationExclude) : FHIRResources3.TFhirExpansionProfileDesignationExclude; overload; virtual;
-    class function convertDesignationExcludeDesignationComponent(src : FHIRResources3.TFhirExpansionProfileDesignationExcludeDesignation) : FHIRResources4.TFhirExpansionProfileDesignationExcludeDesignation; overload; virtual;
-    class function convertDesignationExcludeDesignationComponent(src : FHIRResources4.TFhirExpansionProfileDesignationExcludeDesignation) : FHIRResources3.TFhirExpansionProfileDesignationExcludeDesignation; overload; virtual;
-    class function convertFamilyMemberHistory(src : FHIRResources3.TFhirFamilyMemberHistory) : FHIRResources4.TFhirFamilyMemberHistory; overload; virtual;
-    class function convertFamilyMemberHistory(src : FHIRResources4.TFhirFamilyMemberHistory) : FHIRResources3.TFhirFamilyMemberHistory; overload; virtual;
-    class function convertFamilyMemberHistoryConditionComponent(src : FHIRResources3.TFhirFamilyMemberHistoryCondition) : FHIRResources4.TFhirFamilyMemberHistoryCondition; overload; virtual;
-    class function convertFamilyMemberHistoryConditionComponent(src : FHIRResources4.TFhirFamilyMemberHistoryCondition) : FHIRResources3.TFhirFamilyMemberHistoryCondition; overload; virtual;
-    class function convertFlag(src : FHIRResources3.TFhirFlag) : FHIRResources4.TFhirFlag; overload; virtual;
-    class function convertFlag(src : FHIRResources4.TFhirFlag) : FHIRResources3.TFhirFlag; overload; virtual;
-    class function convertGoal(src : FHIRResources3.TFhirGoal) : FHIRResources4.TFhirGoal; overload; virtual;
-    class function convertGoal(src : FHIRResources4.TFhirGoal) : FHIRResources3.TFhirGoal; overload; virtual;
-    class function convertGoalTargetComponent(src : FHIRResources3.TFhirGoalTarget) : FHIRResources4.TFhirGoalTarget; overload; virtual;
-    class function convertGoalTargetComponent(src : FHIRResources4.TFhirGoalTarget) : FHIRResources3.TFhirGoalTarget; overload; virtual;
-    class function convertGraphDefinition(src : FHIRResources3.TFhirGraphDefinition) : FHIRResources4.TFhirGraphDefinition; overload; virtual;
-    class function convertGraphDefinition(src : FHIRResources4.TFhirGraphDefinition) : FHIRResources3.TFhirGraphDefinition; overload; virtual;
-    class function convertGraphDefinitionLinkComponent(src : FHIRResources3.TFhirGraphDefinitionLink) : FHIRResources4.TFhirGraphDefinitionLink; overload; virtual;
-    class function convertGraphDefinitionLinkComponent(src : FHIRResources4.TFhirGraphDefinitionLink) : FHIRResources3.TFhirGraphDefinitionLink; overload; virtual;
-    class function convertGraphDefinitionLinkTargetComponent(src : FHIRResources3.TFhirGraphDefinitionLinkTarget) : FHIRResources4.TFhirGraphDefinitionLinkTarget; overload; virtual;
-    class function convertGraphDefinitionLinkTargetComponent(src : FHIRResources4.TFhirGraphDefinitionLinkTarget) : FHIRResources3.TFhirGraphDefinitionLinkTarget; overload; virtual;
-    class function convertGraphDefinitionLinkTargetCompartmentComponent(src : FHIRResources3.TFhirGraphDefinitionLinkTargetCompartment) : FHIRResources4.TFhirGraphDefinitionLinkTargetCompartment; overload; virtual;
-    class function convertGraphDefinitionLinkTargetCompartmentComponent(src : FHIRResources4.TFhirGraphDefinitionLinkTargetCompartment) : FHIRResources3.TFhirGraphDefinitionLinkTargetCompartment; overload; virtual;
-    class function convertGroup(src : FHIRResources3.TFhirGroup) : FHIRResources4.TFhirGroup; overload; virtual;
-    class function convertGroup(src : FHIRResources4.TFhirGroup) : FHIRResources3.TFhirGroup; overload; virtual;
-    class function convertGroupCharacteristicComponent(src : FHIRResources3.TFhirGroupCharacteristic) : FHIRResources4.TFhirGroupCharacteristic; overload; virtual;
-    class function convertGroupCharacteristicComponent(src : FHIRResources4.TFhirGroupCharacteristic) : FHIRResources3.TFhirGroupCharacteristic; overload; virtual;
-    class function convertGroupMemberComponent(src : FHIRResources3.TFhirGroupMember) : FHIRResources4.TFhirGroupMember; overload; virtual;
-    class function convertGroupMemberComponent(src : FHIRResources4.TFhirGroupMember) : FHIRResources3.TFhirGroupMember; overload; virtual;
-    class function convertHealthcareService(src : FHIRResources3.TFhirHealthcareService) : FHIRResources4.TFhirHealthcareService; overload; virtual;
-    class function convertHealthcareService(src : FHIRResources4.TFhirHealthcareService) : FHIRResources3.TFhirHealthcareService; overload; virtual;
-    class function convertHealthcareServiceAvailableTimeComponent(src : FHIRResources3.TFhirHealthcareServiceAvailableTime) : FHIRResources4.TFhirHealthcareServiceAvailableTime; overload; virtual;
-    class function convertHealthcareServiceAvailableTimeComponent(src : FHIRResources4.TFhirHealthcareServiceAvailableTime) : FHIRResources3.TFhirHealthcareServiceAvailableTime; overload; virtual;
-    class function convertHealthcareServiceNotAvailableComponent(src : FHIRResources3.TFhirHealthcareServiceNotAvailable) : FHIRResources4.TFhirHealthcareServiceNotAvailable; overload; virtual;
-    class function convertHealthcareServiceNotAvailableComponent(src : FHIRResources4.TFhirHealthcareServiceNotAvailable) : FHIRResources3.TFhirHealthcareServiceNotAvailable; overload; virtual;
-    class function convertImmunization(src : FHIRResources3.TFhirImmunization) : FHIRResources4.TFhirImmunization; overload; virtual;
-    class function convertImmunization(src : FHIRResources4.TFhirImmunization) : FHIRResources3.TFhirImmunization; overload; virtual;
-    class function convertImmunizationPractitionerComponent(src : FHIRResources3.TFhirImmunizationPractitioner) : FHIRResources4.TFhirImmunizationPerformer; overload; virtual;
-    class function convertImmunizationPractitionerComponent(src : FHIRResources4.TFhirImmunizationPerformer) : FHIRResources3.TFhirImmunizationPractitioner; overload; virtual;
-    class function convertImplementationGuide(src : FHIRResources3.TFhirImplementationGuide) : FHIRResources4.TFhirImplementationGuide; overload; virtual;
-    class function convertImplementationGuide(src : FHIRResources4.TFhirImplementationGuide) : FHIRResources3.TFhirImplementationGuide; overload; virtual;
-    class function convertImplementationGuideDependencyComponent(src : FHIRResources3.TFhirImplementationGuideDependency) : FHIRResources4.TFhirImplementationGuideDependsOn; overload; virtual;
-    class function convertImplementationGuideDependencyComponent(src : FHIRResources4.TFhirImplementationGuideDependsOn) : FHIRResources3.TFhirImplementationGuideDependency; overload; virtual;
-    class function convertImplementationGuidePackageComponent(context : FHIRResources4.TFhirImplementationGuideDefinition; src : FHIRResources3.TFhirImplementationGuidePackage) : FHIRResources4.TFhirImplementationGuideDefinitionPackage; overload; virtual;
-    class function convertImplementationGuidePackageComponent(src : FHIRResources4.TFhirImplementationGuideDefinitionPackage) : FHIRResources3.TFhirImplementationGuidePackage; overload; virtual;
-    class function convertImplementationGuidePackageResourceComponent(src : FHIRResources3.TFhirImplementationGuidePackageResource) : FHIRResources4.TFhirImplementationGuideDefinitionResource; overload; virtual;
-    class function convertImplementationGuidePackageResourceComponent(src : FHIRResources4.TFhirImplementationGuideDefinitionResource) : FHIRResources3.TFhirImplementationGuidePackageResource; overload; virtual;
-    class function convertImplementationGuideGlobalComponent(src : FHIRResources3.TFhirImplementationGuideGlobal) : FHIRResources4.TFhirImplementationGuideGlobal; overload; virtual;
-    class function convertImplementationGuideGlobalComponent(src : FHIRResources4.TFhirImplementationGuideGlobal) : FHIRResources3.TFhirImplementationGuideGlobal; overload; virtual;
-    class function convertImplementationGuidePageComponent(src : FHIRResources3.TFhirImplementationGuidePage) : FHIRResources4.TFhirImplementationGuideDefinitionPage; overload; virtual;
-    class function convertImplementationGuidePageComponent(src : FHIRResources4.TFhirImplementationGuideDefinitionPage) : FHIRResources3.TFhirImplementationGuidePage; overload; virtual;
-    class function convertLinkage(src : FHIRResources3.TFhirLinkage) : FHIRResources4.TFhirLinkage; overload; virtual;
-    class function convertLinkage(src : FHIRResources4.TFhirLinkage) : FHIRResources3.TFhirLinkage; overload; virtual;
-    class function convertLinkageItemComponent(src : FHIRResources3.TFhirLinkageItem) : FHIRResources4.TFhirLinkageItem; overload; virtual;
-    class function convertLinkageItemComponent(src : FHIRResources4.TFhirLinkageItem) : FHIRResources3.TFhirLinkageItem; overload; virtual;
-    class function convertList(src : FHIRResources3.TFhirList) : FHIRResources4.TFhirList; overload; virtual;
-    class function convertList(src : FHIRResources4.TFhirList) : FHIRResources3.TFhirList; overload; virtual;
-    class function convertListEntryComponent(src : FHIRResources3.TFhirListEntry) : FHIRResources4.TFhirListEntry; overload; virtual;
-    class function convertListEntryComponent(src : FHIRResources4.TFhirListEntry) : FHIRResources3.TFhirListEntry; overload; virtual;
-    class function convertLocation(src : FHIRResources3.TFhirLocation) : FHIRResources4.TFhirLocation; overload; virtual;
-    class function convertLocation(src : FHIRResources4.TFhirLocation) : FHIRResources3.TFhirLocation; overload; virtual;
-    class function convertLocationPositionComponent(src : FHIRResources3.TFhirLocationPosition) : FHIRResources4.TFhirLocationPosition; overload; virtual;
-    class function convertLocationPositionComponent(src : FHIRResources4.TFhirLocationPosition) : FHIRResources3.TFhirLocationPosition; overload; virtual;
-    class function convertMedicationIngredientComponent(src : FHIRResources3.TFhirMedicationIngredient) : FHIRResources4.TFhirMedicationIngredient; overload; virtual;
-    class function convertMedicationIngredientComponent(src : FHIRResources4.TFhirMedicationIngredient) : FHIRResources3.TFhirMedicationIngredient; overload; virtual;
-    class function convertMedicationAdministration(src : FHIRResources3.TFhirMedicationAdministration) : FHIRResources4.TFhirMedicationAdministration; overload; virtual;
-    class function convertMedicationAdministration(src : FHIRResources4.TFhirMedicationAdministration) : FHIRResources3.TFhirMedicationAdministration; overload; virtual;
-    class function convertMedicationAdministrationPerformerComponent(src : FHIRResources3.TFhirMedicationAdministrationPerformer) : FHIRResources4.TFhirMedicationAdministrationPerformer; overload; virtual;
-    class function convertMedicationAdministrationPerformerComponent(src : FHIRResources4.TFhirMedicationAdministrationPerformer) : FHIRResources3.TFhirMedicationAdministrationPerformer; overload; virtual;
-    class function convertMedicationAdministrationDosageComponent(src : FHIRResources3.TFhirMedicationAdministrationDosage) : FHIRResources4.TFhirMedicationAdministrationDosage; overload; virtual;
-    class function convertMedicationAdministrationDosageComponent(src : FHIRResources4.TFhirMedicationAdministrationDosage) : FHIRResources3.TFhirMedicationAdministrationDosage; overload; virtual;
-    class function convertMedicationDispense(src : FHIRResources3.TFhirMedicationDispense) : FHIRResources4.TFhirMedicationDispense; overload; virtual;
-    class function convertMedicationDispense(src : FHIRResources4.TFhirMedicationDispense) : FHIRResources3.TFhirMedicationDispense; overload; virtual;
-    class function convertMedicationDispensePerformerComponent(src : FHIRResources3.TFhirMedicationDispensePerformer) : FHIRResources4.TFhirMedicationDispensePerformer; overload; virtual;
-    class function convertMedicationDispensePerformerComponent(src : FHIRResources4.TFhirMedicationDispensePerformer) : FHIRResources3.TFhirMedicationDispensePerformer; overload; virtual;
-    class function convertMedicationDispenseSubstitutionComponent(src : FHIRResources3.TFhirMedicationDispenseSubstitution) : FHIRResources4.TFhirMedicationDispenseSubstitution; overload; virtual;
-    class function convertMedicationDispenseSubstitutionComponent(src : FHIRResources4.TFhirMedicationDispenseSubstitution) : FHIRResources3.TFhirMedicationDispenseSubstitution; overload; virtual;
-    class function convertMedicationRequest(src : FHIRResources3.TFhirMedicationRequest) : FHIRResources4.TFhirMedicationRequest; overload; virtual;
-    class function convertMedicationRequest(src : FHIRResources4.TFhirMedicationRequest) : FHIRResources3.TFhirMedicationRequest; overload; virtual;
-    class function convertMedicationRequestDispenseRequestComponent(src : FHIRResources3.TFhirMedicationRequestDispenseRequest) : FHIRResources4.TFhirMedicationRequestDispenseRequest; overload; virtual;
-    class function convertMedicationRequestDispenseRequestComponent(src : FHIRResources4.TFhirMedicationRequestDispenseRequest) : FHIRResources3.TFhirMedicationRequestDispenseRequest; overload; virtual;
-    class function convertMedicationRequestSubstitutionComponent(src : FHIRResources3.TFhirMedicationRequestSubstitution) : FHIRResources4.TFhirMedicationRequestSubstitution; overload; virtual;
-    class function convertMedicationRequestSubstitutionComponent(src : FHIRResources4.TFhirMedicationRequestSubstitution) : FHIRResources3.TFhirMedicationRequestSubstitution; overload; virtual;
-    class function convertMedicationStatement(src : FHIRResources3.TFhirMedicationStatement) : FHIRResources4.TFhirMedicationStatement; overload; virtual;
-    class function convertMedicationStatement(src : FHIRResources4.TFhirMedicationStatement) : FHIRResources3.TFhirMedicationStatement; overload; virtual;
-    class function convertMessageDefinition(src : FHIRResources3.TFhirMessageDefinition) : FHIRResources4.TFhirMessageDefinition; overload; virtual;
-    class function convertCoding2Uri(code : FHIRTypes3.TFhirCoding) : String; overload; virtual;
-    class function convertMessageDefinition(src : FHIRResources4.TFhirMessageDefinition) : FHIRResources3.TFhirMessageDefinition; overload; virtual;
-    class function convertUri2Coding(uri : String) : FHIRTypes3.TFhirCoding; overload; virtual;
-    class function convertMessageDefinitionFocusComponent(src : FHIRResources3.TFhirMessageDefinitionFocus) : FHIRResources4.TFhirMessageDefinitionFocus; overload; virtual;
-    class function convertMessageDefinitionFocusComponent(src : FHIRResources4.TFhirMessageDefinitionFocus) : FHIRResources3.TFhirMessageDefinitionFocus; overload; virtual;
-    class function convertMessageDefinitionAllowedResponseComponent(src : FHIRResources3.TFhirMessageDefinitionAllowedResponse) : FHIRResources4.TFhirMessageDefinitionAllowedResponse; overload; virtual;
-    class function convertMessageDefinitionAllowedResponseComponent(src : FHIRResources4.TFhirMessageDefinitionAllowedResponse) : FHIRResources3.TFhirMessageDefinitionAllowedResponse; overload; virtual;
-    class function convertMessageHeader(src : FHIRResources3.TFhirMessageHeader) : FHIRResources4.TFhirMessageHeader; overload; virtual;
-    class function convertMessageHeader(src : FHIRResources4.TFhirMessageHeader) : FHIRResources3.TFhirMessageHeader; overload; virtual;
-    class function convertMessageDestinationComponent(src : FHIRResources3.TFhirMessageHeaderDestination) : FHIRResources4.TFhirMessageHeaderDestination; overload; virtual;
-    class function convertMessageDestinationComponent(src : FHIRResources4.TFhirMessageHeaderDestination) : FHIRResources3.TFhirMessageHeaderDestination; overload; virtual;
-    class function convertMessageSourceComponent(src : FHIRResources3.TFhirMessageHeaderSource) : FHIRResources4.TFhirMessageHeaderSource; overload; virtual;
-    class function convertMessageSourceComponent(src : FHIRResources4.TFhirMessageHeaderSource) : FHIRResources3.TFhirMessageHeaderSource; overload; virtual;
-    class function convertMessageHeaderResponseComponent(src : FHIRResources3.TFhirMessageHeaderResponse) : FHIRResources4.TFhirMessageHeaderResponse; overload; virtual;
-    class function convertMessageHeaderResponseComponent(src : FHIRResources4.TFhirMessageHeaderResponse) : FHIRResources3.TFhirMessageHeaderResponse; overload; virtual;
-    class function convertNamingSystem(src : FHIRResources3.TFhirNamingSystem) : FHIRResources4.TFhirNamingSystem; overload; virtual;
-    class function convertNamingSystem(src : FHIRResources4.TFhirNamingSystem) : FHIRResources3.TFhirNamingSystem; overload; virtual;
-    class function convertNamingSystemUniqueIdComponent(src : FHIRResources3.TFhirNamingSystemUniqueId) : FHIRResources4.TFhirNamingSystemUniqueId; overload; virtual;
-    class function convertNamingSystemUniqueIdComponent(src : FHIRResources4.TFhirNamingSystemUniqueId) : FHIRResources3.TFhirNamingSystemUniqueId; overload; virtual;
-    class function convertObservation(src : FHIRResources3.TFhirObservation) : FHIRResources4.TFhirObservation; overload; virtual;
-    class function convertObservation(src : FHIRResources4.TFhirObservation) : FHIRResources3.TFhirObservation; overload; virtual;
-    class function convertObservationReferenceRangeComponent(src : FHIRResources3.TFhirObservationReferenceRange) : FHIRResources4.TFhirObservationReferenceRange; overload; virtual;
-    class function convertObservationReferenceRangeComponent(src : FHIRResources4.TFhirObservationReferenceRange) : FHIRResources3.TFhirObservationReferenceRange; overload; virtual;
-    class function convertObservationRelatedComponent(src : FHIRTypes4.TFhirReference; type_ : FHIRTypes3.TFhirObservationRelationshiptypesEnum) : FHIRResources3.TFhirObservationRelated; overload; virtual;
-    class function convertObservationComponentComponent(src : FHIRResources3.TFhirObservationComponent) : FHIRResources4.TFhirObservationComponent; overload; virtual;
-    class function convertObservationComponentComponent(src : FHIRResources4.TFhirObservationComponent) : FHIRResources3.TFhirObservationComponent; overload; virtual;
-    class function convertOperationDefinition(src : FHIRResources3.TFhirOperationDefinition) : FHIRResources4.TFhirOperationDefinition; overload; virtual;
-    class function convertOperationDefinition(src : FHIRResources4.TFhirOperationDefinition) : FHIRResources3.TFhirOperationDefinition; overload; virtual;
-    class function convertOperationDefinitionParameterComponent(src : FHIRResources3.TFhirOperationDefinitionParameter) : FHIRResources4.TFhirOperationDefinitionParameter; overload; virtual;
-    class function convertOperationDefinitionParameterComponent(src : FHIRResources4.TFhirOperationDefinitionParameter) : FHIRResources3.TFhirOperationDefinitionParameter; overload; virtual;
-    class function convertOperationDefinitionParameterBindingComponent(src : FHIRResources3.TFhirOperationDefinitionParameterBinding) : FHIRResources4.TFhirOperationDefinitionParameterBinding; overload; virtual;
-    class function convertOperationDefinitionParameterBindingComponent(src : FHIRResources4.TFhirOperationDefinitionParameterBinding) : FHIRResources3.TFhirOperationDefinitionParameterBinding; overload; virtual;
-    class function convertOperationDefinitionOverloadComponent(src : FHIRResources3.TFhirOperationDefinitionOverload) : FHIRResources4.TFhirOperationDefinitionOverload; overload; virtual;
-    class function convertOperationDefinitionOverloadComponent(src : FHIRResources4.TFhirOperationDefinitionOverload) : FHIRResources3.TFhirOperationDefinitionOverload; overload; virtual;
-    class function convertOperationOutcome(src : FHIRResources3.TFhirOperationOutcome) : FHIRResources4.TFhirOperationOutcome; overload; virtual;
-    class function convertOperationOutcome(src : FHIRResources4.TFhirOperationOutcome) : FHIRResources3.TFhirOperationOutcome; overload; virtual;
-    class function convertOperationOutcomeIssueComponent(src : FHIRResources3.TFhirOperationOutcomeIssue) : FHIRResources4.TFhirOperationOutcomeIssue; overload; virtual;
-    class function convertOperationOutcomeIssueComponent(src : FHIRResources4.TFhirOperationOutcomeIssue) : FHIRResources3.TFhirOperationOutcomeIssue; overload; virtual;
-    class function convertOrganization(src : FHIRResources3.TFhirOrganization) : FHIRResources4.TFhirOrganization; overload; virtual;
-    class function convertOrganization(src : FHIRResources4.TFhirOrganization) : FHIRResources3.TFhirOrganization; overload; virtual;
-    class function convertOrganizationContactComponent(src : FHIRResources3.TFhirOrganizationContact) : FHIRResources4.TFhirOrganizationContact; overload; virtual;
-    class function convertOrganizationContactComponent(src : FHIRResources4.TFhirOrganizationContact) : FHIRResources3.TFhirOrganizationContact; overload; virtual;
-    class function convertPatient(src : FHIRResources3.TFhirPatient) : FHIRResources4.TFhirPatient; overload; virtual;
-    class function convertPatient(src : FHIRResources4.TFhirPatient) : FHIRResources3.TFhirPatient; overload; virtual;
-    class function convertContactComponent(src : FHIRResources3.TFhirPatientContact) : FHIRResources4.TFhirPatientContact; overload; virtual;
-    class function convertContactComponent(src : FHIRResources4.TFhirPatientContact) : FHIRResources3.TFhirPatientContact; overload; virtual;
-    class function convertAnimalComponent(src : FHIRResources3.TFhirPatientAnimal) : FHIRTypes4.TFhirExtension; overload; virtual;
-    class function convertAnimalComponent(src : FHIRTypes4.TFhirExtension) : FHIRResources3.TFhirPatientAnimal; overload; virtual;
-    class function convertPatientCommunicationComponent(src : FHIRResources3.TFhirPatientCommunication) : FHIRResources4.TFhirPatientCommunication; overload; virtual;
-    class function convertPatientCommunicationComponent(src : FHIRResources4.TFhirPatientCommunication) : FHIRResources3.TFhirPatientCommunication; overload; virtual;
-    class function convertPatientLinkComponent(src : FHIRResources3.TFhirPatientLink) : FHIRResources4.TFhirPatientLink; overload; virtual;
-    class function convertPatientLinkComponent(src : FHIRResources4.TFhirPatientLink) : FHIRResources3.TFhirPatientLink; overload; virtual;
-    class function convertPaymentNotice(src : FHIRResources3.TFhirPaymentNotice) : FHIRResources4.TFhirPaymentNotice; overload; virtual;
-    class function convertPaymentNotice(src : FHIRResources4.TFhirPaymentNotice) : FHIRResources3.TFhirPaymentNotice; overload; virtual;
-    class function convertPerson(src : FHIRResources3.TFhirPerson) : FHIRResources4.TFhirPerson; overload; virtual;
-    class function convertPerson(src : FHIRResources4.TFhirPerson) : FHIRResources3.TFhirPerson; overload; virtual;
-    class function convertPersonLinkComponent(src : FHIRResources3.TFhirPersonLink) : FHIRResources4.TFhirPersonLink; overload; virtual;
-    class function convertPersonLinkComponent(src : FHIRResources4.TFhirPersonLink) : FHIRResources3.TFhirPersonLink; overload; virtual;
-    class function convertPractitioner(src : FHIRResources3.TFhirPractitioner) : FHIRResources4.TFhirPractitioner; overload; virtual;
-    class function convertPractitioner(src : FHIRResources4.TFhirPractitioner) : FHIRResources3.TFhirPractitioner; overload; virtual;
-    class function convertPractitionerQualificationComponent(src : FHIRResources3.TFhirPractitionerQualification) : FHIRResources4.TFhirPractitionerQualification; overload; virtual;
-    class function convertPractitionerQualificationComponent(src : FHIRResources4.TFhirPractitionerQualification) : FHIRResources3.TFhirPractitionerQualification; overload; virtual;
-    class function convertPractitionerRole(src : FHIRResources3.TFhirPractitionerRole) : FHIRResources4.TFhirPractitionerRole; overload; virtual;
-    class function convertPractitionerRole(src : FHIRResources4.TFhirPractitionerRole) : FHIRResources3.TFhirPractitionerRole; overload; virtual;
-    class function convertPractitionerRoleAvailableTimeComponent(src : FHIRResources3.TFhirPractitionerRoleAvailableTime) : FHIRResources4.TFhirPractitionerRoleAvailableTime; overload; virtual;
-    class function convertPractitionerRoleAvailableTimeComponent(src : FHIRResources4.TFhirPractitionerRoleAvailableTime) : FHIRResources3.TFhirPractitionerRoleAvailableTime; overload; virtual;
-    class function convertPractitionerRoleNotAvailableComponent(src : FHIRResources3.TFhirPractitionerRoleNotAvailable) : FHIRResources4.TFhirPractitionerRoleNotAvailable; overload; virtual;
-    class function convertPractitionerRoleNotAvailableComponent(src : FHIRResources4.TFhirPractitionerRoleNotAvailable) : FHIRResources3.TFhirPractitionerRoleNotAvailable; overload; virtual;
-    class function convertQuestionnaire(src : FHIRResources3.TFhirQuestionnaire) : FHIRResources4.TFhirQuestionnaire; overload; virtual;
-    class function convertQuestionnaire(src : FHIRResources4.TFhirQuestionnaire) : FHIRResources3.TFhirQuestionnaire; overload; virtual;
-    class function convertQuestionnaireItemComponent(src : FHIRResources3.TFhirQuestionnaireItem) : FHIRResources4.TFhirQuestionnaireItem; overload; virtual;
-    class function convertQuestionnaireItemComponent(src : FHIRResources4.TFhirQuestionnaireItem) : FHIRResources3.TFhirQuestionnaireItem; overload; virtual;
-    class function convertQuestionnaireItemEnableWhenComponent(src : FHIRResources3.TFhirQuestionnaireItemEnableWhen) : FHIRResources4.TFhirQuestionnaireItemEnableWhen; overload; virtual;
-    class function convertQuestionnaireItemEnableWhenComponent(src : FHIRResources4.TFhirQuestionnaireItemEnableWhen) : FHIRResources3.TFhirQuestionnaireItemEnableWhen; overload; virtual;
-    class function convertQuestionnaireItemOptionComponent(src : FHIRResources3.TFhirQuestionnaireItemOption) : FHIRResources4.TFhirQuestionnaireItemOption; overload; virtual;
-    class function convertQuestionnaireItemOptionComponent(src : FHIRResources4.TFhirQuestionnaireItemOption) : FHIRResources3.TFhirQuestionnaireItemOption; overload; virtual;
-    class function convertQuestionnaireResponse(src : FHIRResources3.TFhirQuestionnaireResponse) : FHIRResources4.TFhirQuestionnaireResponse; overload; virtual;
-    class function convertQuestionnaireResponse(src : FHIRResources4.TFhirQuestionnaireResponse) : FHIRResources3.TFhirQuestionnaireResponse; overload; virtual;
-    class function convertQuestionnaireResponseItemComponent(src : FHIRResources3.TFhirQuestionnaireResponseItem) : FHIRResources4.TFhirQuestionnaireResponseItem; overload; virtual;
-    class function convertQuestionnaireResponseItemComponent(src : FHIRResources4.TFhirQuestionnaireResponseItem) : FHIRResources3.TFhirQuestionnaireResponseItem; overload; virtual;
-    class function convertQuestionnaireResponseItemAnswerComponent(src : FHIRResources3.TFhirQuestionnaireResponseItemAnswer) : FHIRResources4.TFhirQuestionnaireResponseItemAnswer; overload; virtual;
-    class function convertQuestionnaireResponseItemAnswerComponent(src : FHIRResources4.TFhirQuestionnaireResponseItemAnswer) : FHIRResources3.TFhirQuestionnaireResponseItemAnswer; overload; virtual;
-    class function convertRiskAssessment(src : FHIRResources3.TFhirRiskAssessment) : FHIRResources4.TFhirRiskAssessment; overload; virtual;
-    class function convertRiskAssessment(src : FHIRResources4.TFhirRiskAssessment) : FHIRResources3.TFhirRiskAssessment; overload; virtual;
-    class function convertRiskAssessmentPredictionComponent(src : FHIRResources3.TFhirRiskAssessmentPrediction) : FHIRResources4.TFhirRiskAssessmentPrediction; overload; virtual;
-    class function convertRiskAssessmentPredictionComponent(src : FHIRResources4.TFhirRiskAssessmentPrediction) : FHIRResources3.TFhirRiskAssessmentPrediction; overload; virtual;
-    class function convertSchedule(src : FHIRResources3.TFhirSchedule) : FHIRResources4.TFhirSchedule; overload; virtual;
-    class function convertSchedule(src : FHIRResources4.TFhirSchedule) : FHIRResources3.TFhirSchedule; overload; virtual;
-    class function convertSearchParameter(src : FHIRResources3.TFhirSearchParameter) : FHIRResources4.TFhirSearchParameter; overload; virtual;
-    class function convertSearchParameter(src : FHIRResources4.TFhirSearchParameter) : FHIRResources3.TFhirSearchParameter; overload; virtual;
-    class function convertSearchParameterComponentComponent(src : FHIRResources3.TFhirSearchParameterComponent) : FHIRResources4.TFhirSearchParameterComponent; overload; virtual;
-    class function convertSearchParameterComponentComponent(src : FHIRResources4.TFhirSearchParameterComponent) : FHIRResources3.TFhirSearchParameterComponent; overload; virtual;
-    class function convertSequence(src : FHIRResources3.TFhirSequence) : FHIRResources4.TFhirSequence; overload; virtual;
-    class function convertSequence(src : FHIRResources4.TFhirSequence) : FHIRResources3.TFhirSequence; overload; virtual;
-    class function convertSequenceReferenceSeqComponent(src : FHIRResources3.TFhirSequenceReferenceSeq) : FHIRResources4.TFhirSequenceReferenceSeq; overload; virtual;
-    class function convertSequenceReferenceSeqComponent(src : FHIRResources4.TFhirSequenceReferenceSeq) : FHIRResources3.TFhirSequenceReferenceSeq; overload; virtual;
-    class function convertSequenceVariantComponent(src : FHIRResources3.TFhirSequenceVariant) : FHIRResources4.TFhirSequenceVariant; overload; virtual;
-    class function convertSequenceVariantComponent(src : FHIRResources4.TFhirSequenceVariant) : FHIRResources3.TFhirSequenceVariant; overload; virtual;
-    class function convertSequenceQualityComponent(src : FHIRResources3.TFhirSequenceQuality) : FHIRResources4.TFhirSequenceQuality; overload; virtual;
-    class function convertSequenceQualityComponent(src : FHIRResources4.TFhirSequenceQuality) : FHIRResources3.TFhirSequenceQuality; overload; virtual;
-    class function convertSequenceRepositoryComponent(src : FHIRResources3.TFhirSequenceRepository) : FHIRResources4.TFhirSequenceRepository; overload; virtual;
-    class function convertSequenceRepositoryComponent(src : FHIRResources4.TFhirSequenceRepository) : FHIRResources3.TFhirSequenceRepository; overload; virtual;
-    class function convertSlot(src : FHIRResources3.TFhirSlot) : FHIRResources4.TFhirSlot; overload; virtual;
-    class function convertSlot(src : FHIRResources4.TFhirSlot) : FHIRResources3.TFhirSlot; overload; virtual;
-    class function convertSpecimen(src : FHIRResources3.TFhirSpecimen) : FHIRResources4.TFhirSpecimen; overload; virtual;
-    class function convertSpecimen(src : FHIRResources4.TFhirSpecimen) : FHIRResources3.TFhirSpecimen; overload; virtual;
-    class function convertSpecimenCollectionComponent(src : FHIRResources3.TFhirSpecimenCollection) : FHIRResources4.TFhirSpecimenCollection; overload; virtual;
-    class function convertSpecimenCollectionComponent(src : FHIRResources4.TFhirSpecimenCollection) : FHIRResources3.TFhirSpecimenCollection; overload; virtual;
-    class function convertSpecimenProcessingComponent(src : FHIRResources3.TFhirSpecimenProcessing) : FHIRResources4.TFhirSpecimenProcessing; overload; virtual;
-    class function convertSpecimenProcessingComponent(src : FHIRResources4.TFhirSpecimenProcessing) : FHIRResources3.TFhirSpecimenProcessing; overload; virtual;
-    class function convertSpecimenContainerComponent(src : FHIRResources3.TFhirSpecimenContainer) : FHIRResources4.TFhirSpecimenContainer; overload; virtual;
-    class function convertSpecimenContainerComponent(src : FHIRResources4.TFhirSpecimenContainer) : FHIRResources3.TFhirSpecimenContainer; overload; virtual;
-    class function convertStructureDefinition(src : FHIRResources3.TFhirStructureDefinition) : FHIRResources4.TFhirStructureDefinition; overload; virtual;
-    class function convertStructureDefinition(src : FHIRResources4.TFhirStructureDefinition) : FHIRResources3.TFhirStructureDefinition; overload; virtual;
-    class function convertStructureDefinitionMappingComponent(src : FHIRResources3.TFhirStructureDefinitionMapping) : FHIRResources4.TFhirStructureDefinitionMapping; overload; virtual;
-    class function convertStructureDefinitionMappingComponent(src : FHIRResources4.TFhirStructureDefinitionMapping) : FHIRResources3.TFhirStructureDefinitionMapping; overload; virtual;
-    class function convertStructureDefinitionSnapshotComponent(src : FHIRResources3.TFhirStructureDefinitionSnapshot) : FHIRResources4.TFhirStructureDefinitionSnapshot; overload; virtual;
-    class function convertStructureDefinitionSnapshotComponent(src : FHIRResources4.TFhirStructureDefinitionSnapshot) : FHIRResources3.TFhirStructureDefinitionSnapshot; overload; virtual;
-    class function convertStructureDefinitionDifferentialComponent(src : FHIRResources3.TFhirStructureDefinitionDifferential) : FHIRResources4.TFhirStructureDefinitionDifferential; overload; virtual;
-    class function convertStructureDefinitionDifferentialComponent(src : FHIRResources4.TFhirStructureDefinitionDifferential) : FHIRResources3.TFhirStructureDefinitionDifferential; overload; virtual;
-    class function convertStructureMap(src : FHIRResources3.TFhirStructureMap) : FHIRResources4.TFhirStructureMap; overload; virtual;
-    class function convertStructureMap(src : FHIRResources4.TFhirStructureMap) : FHIRResources3.TFhirStructureMap; overload; virtual;
-    class function convertStructureMapStructureComponent(src : FHIRResources3.TFhirStructureMapStructure) : FHIRResources4.TFhirStructureMapStructure; overload; virtual;
-    class function convertStructureMapStructureComponent(src : FHIRResources4.TFhirStructureMapStructure) : FHIRResources3.TFhirStructureMapStructure; overload; virtual;
-    class function convertStructureMapGroupComponent(src : FHIRResources3.TFhirStructureMapGroup) : FHIRResources4.TFhirStructureMapGroup; overload; virtual;
-    class function convertStructureMapGroupComponent(src : FHIRResources4.TFhirStructureMapGroup) : FHIRResources3.TFhirStructureMapGroup; overload; virtual;
-    class function convertStructureMapGroupInputComponent(src : FHIRResources3.TFhirStructureMapGroupInput) : FHIRResources4.TFhirStructureMapGroupInput; overload; virtual;
-    class function convertStructureMapGroupInputComponent(src : FHIRResources4.TFhirStructureMapGroupInput) : FHIRResources3.TFhirStructureMapGroupInput; overload; virtual;
-    class function convertStructureMapGroupRuleComponent(src : FHIRResources3.TFhirStructureMapGroupRule) : FHIRResources4.TFhirStructureMapGroupRule; overload; virtual;
-    class function convertStructureMapGroupRuleComponent(src : FHIRResources4.TFhirStructureMapGroupRule) : FHIRResources3.TFhirStructureMapGroupRule; overload; virtual;
-    class function convertStructureMapGroupRuleSourceComponent(src : FHIRResources3.TFhirStructureMapGroupRuleSource) : FHIRResources4.TFhirStructureMapGroupRuleSource; overload; virtual;
-    class function convertStructureMapGroupRuleSourceComponent(src : FHIRResources4.TFhirStructureMapGroupRuleSource) : FHIRResources3.TFhirStructureMapGroupRuleSource; overload; virtual;
-    class function convertStructureMapGroupRuleTargetComponent(src : FHIRResources3.TFhirStructureMapGroupRuleTarget) : FHIRResources4.TFhirStructureMapGroupRuleTarget; overload; virtual;
-    class function convertStructureMapGroupRuleTargetComponent(src : FHIRResources4.TFhirStructureMapGroupRuleTarget) : FHIRResources3.TFhirStructureMapGroupRuleTarget; overload; virtual;
-    class function convertStructureMapGroupRuleTargetParameterComponent(src : FHIRResources3.TFhirStructureMapGroupRuleTargetParameter) : FHIRResources4.TFhirStructureMapGroupRuleTargetParameter; overload; virtual;
-    class function convertStructureMapGroupRuleTargetParameterComponent(src : FHIRResources4.TFhirStructureMapGroupRuleTargetParameter) : FHIRResources3.TFhirStructureMapGroupRuleTargetParameter; overload; virtual;
-    class function convertStructureMapGroupRuleDependentComponent(src : FHIRResources3.TFhirStructureMapGroupRuleDependent) : FHIRResources4.TFhirStructureMapGroupRuleDependent; overload; virtual;
-    class function convertStructureMapGroupRuleDependentComponent(src : FHIRResources4.TFhirStructureMapGroupRuleDependent) : FHIRResources3.TFhirStructureMapGroupRuleDependent; overload; virtual;
-    class function convertSubscription(src : FHIRResources3.TFhirSubscription) : FHIRResources4.TFhirSubscription; overload; virtual;
-    class function convertSubscription(src : FHIRResources4.TFhirSubscription) : FHIRResources3.TFhirSubscription; overload; virtual;
-    class function convertSubscriptionChannelComponent(src : FHIRResources3.TFhirSubscriptionChannel) : FHIRResources4.TFhirSubscriptionChannel; overload; virtual;
-    class function convertSubscriptionChannelComponent(src : FHIRResources4.TFhirSubscriptionChannel) : FHIRResources3.TFhirSubscriptionChannel; overload; virtual;
-    class function convertSubstance(src : FHIRResources3.TFhirSubstance) : FHIRResources4.TFhirSubstance; overload; virtual;
-    class function convertSubstance(src : FHIRResources4.TFhirSubstance) : FHIRResources3.TFhirSubstance; overload; virtual;
-    class function convertSubstanceInstanceComponent(src : FHIRResources3.TFhirSubstanceInstance) : FHIRResources4.TFhirSubstanceInstance; overload; virtual;
-    class function convertSubstanceInstanceComponent(src : FHIRResources4.TFhirSubstanceInstance) : FHIRResources3.TFhirSubstanceInstance; overload; virtual;
-    class function convertSubstanceIngredientComponent(src : FHIRResources3.TFhirSubstanceIngredient) : FHIRResources4.TFhirSubstanceIngredient; overload; virtual;
-    class function convertSubstanceIngredientComponent(src : FHIRResources4.TFhirSubstanceIngredient) : FHIRResources3.TFhirSubstanceIngredient; overload; virtual;
-    class function convertSupplyDelivery(src : FHIRResources3.TFhirSupplyDelivery) : FHIRResources4.TFhirSupplyDelivery; overload; virtual;
-    class function convertSupplyDelivery(src : FHIRResources4.TFhirSupplyDelivery) : FHIRResources3.TFhirSupplyDelivery; overload; virtual;
-    class function convertSupplyDeliverySuppliedItemComponent(src : FHIRResources3.TFhirSupplyDeliverySuppliedItem) : FHIRResources4.TFhirSupplyDeliverySuppliedItem; overload; virtual;
-    class function convertSupplyDeliverySuppliedItemComponent(src : FHIRResources4.TFhirSupplyDeliverySuppliedItem) : FHIRResources3.TFhirSupplyDeliverySuppliedItem; overload; virtual;
-    class function convertValueSet(src : FHIRResources3.TFhirValueSet) : FHIRResources4.TFhirValueSet; overload; virtual;
-    class function convertValueSet(src : FHIRResources4.TFhirValueSet) : FHIRResources3.TFhirValueSet; overload; virtual;
-    class function convertValueSetComposeComponent(src : FHIRResources3.TFhirValueSetCompose) : FHIRResources4.TFhirValueSetCompose; overload; virtual;
-    class function convertValueSetComposeComponent(src : FHIRResources4.TFhirValueSetCompose) : FHIRResources3.TFhirValueSetCompose; overload; virtual;
-    class function convertConceptSetComponent(src : FHIRResources3.TFhirValueSetComposeInclude) : FHIRResources4.TFhirValueSetComposeInclude; overload; virtual;
-    class function convertConceptSetComponent(src : FHIRResources4.TFhirValueSetComposeInclude) : FHIRResources3.TFhirValueSetComposeInclude; overload; virtual;
-    class function convertConceptReferenceComponent(src : FHIRResources3.TFhirValueSetComposeIncludeConcept) : FHIRResources4.TFhirValueSetComposeIncludeConcept; overload; virtual;
-    class function convertConceptReferenceComponent(src : FHIRResources4.TFhirValueSetComposeIncludeConcept) : FHIRResources3.TFhirValueSetComposeIncludeConcept; overload; virtual;
-    class function convertConceptReferenceDesignationComponent(src : FHIRResources3.TFhirValueSetComposeIncludeConceptDesignation) : FHIRResources4.TFhirValueSetComposeIncludeConceptDesignation; overload; virtual;
-    class function convertConceptReferenceDesignationComponent(src : FHIRResources4.TFhirValueSetComposeIncludeConceptDesignation) : FHIRResources3.TFhirValueSetComposeIncludeConceptDesignation; overload; virtual;
-    class function convertConceptSetFilterComponent(src : FHIRResources3.TFhirValueSetComposeIncludeFilter) : FHIRResources4.TFhirValueSetComposeIncludeFilter; overload; virtual;
-    class function convertConceptSetFilterComponent(src : FHIRResources4.TFhirValueSetComposeIncludeFilter) : FHIRResources3.TFhirValueSetComposeIncludeFilter; overload; virtual;
-    class function convertValueSetExpansionComponent(src : FHIRResources3.TFhirValueSetExpansion) : FHIRResources4.TFhirValueSetExpansion; overload; virtual;
-    class function convertValueSetExpansionComponent(src : FHIRResources4.TFhirValueSetExpansion) : FHIRResources3.TFhirValueSetExpansion; overload; virtual;
-    class function convertValueSetExpansionParameterComponent(src : FHIRResources3.TFhirValueSetExpansionParameter) : FHIRResources4.TFhirValueSetExpansionParameter; overload; virtual;
-    class function convertValueSetExpansionParameterComponent(src : FHIRResources4.TFhirValueSetExpansionParameter) : FHIRResources3.TFhirValueSetExpansionParameter; overload; virtual;
-    class function convertValueSetExpansionContainsComponent(src : FHIRResources3.TFhirValueSetExpansionContains) : FHIRResources4.TFhirValueSetExpansionContains; overload; virtual;
-    class function convertValueSetExpansionContainsComponent(src : FHIRResources4.TFhirValueSetExpansionContains) : FHIRResources3.TFhirValueSetExpansionContains; overload; virtual;
-    class function convertPlanDefinition(src : FHIRResources3.TFhirPlanDefinition) : FHIRResources4.TFhirPlanDefinition; overload; virtual;
-    class function convertPlanDefinition(src : FHIRResources4.TFhirPlanDefinition) : FHIRResources3.TFhirPlanDefinition; overload; virtual;
-    class function convertPlanDefinitionGoalComponent(src : FHIRResources3.TFhirPlanDefinitionGoal) : FHIRResources4.TFhirPlanDefinitionGoal; overload; virtual;
-    class function convertPlanDefinitionGoalComponent(src : FHIRResources4.TFhirPlanDefinitionGoal) : FHIRResources3.TFhirPlanDefinitionGoal; overload; virtual;
-    class function convertPlanDefinitionGoalTargetComponent(src : FHIRResources3.TFhirPlanDefinitionGoalTarget) : FHIRResources4.TFhirPlanDefinitionGoalTarget; overload; virtual;
-    class function convertPlanDefinitionGoalTargetComponent(src : FHIRResources4.TFhirPlanDefinitionGoalTarget) : FHIRResources3.TFhirPlanDefinitionGoalTarget; overload; virtual;
-    class function convertPlanDefinitionActionComponent(src : FHIRResources3.TFhirPlanDefinitionAction) : FHIRResources4.TFhirPlanDefinitionAction; overload; virtual;
-    class function convertPlanDefinitionActionComponent(src : FHIRResources4.TFhirPlanDefinitionAction) : FHIRResources3.TFhirPlanDefinitionAction; overload; virtual;
-    class function convertPlanDefinitionActionConditionComponent(src : FHIRResources3.TFhirPlanDefinitionActionCondition) : FHIRResources4.TFhirPlanDefinitionActionCondition; overload; virtual;
-    class function convertPlanDefinitionActionConditionComponent(src : FHIRResources4.TFhirPlanDefinitionActionCondition) : FHIRResources3.TFhirPlanDefinitionActionCondition; overload; virtual;
-    class function convertPlanDefinitionActionRelatedActionComponent(src : FHIRResources3.TFhirPlanDefinitionActionRelatedAction) : FHIRResources4.TFhirPlanDefinitionActionRelatedAction; overload; virtual;
-    class function convertPlanDefinitionActionRelatedActionComponent(src : FHIRResources4.TFhirPlanDefinitionActionRelatedAction) : FHIRResources3.TFhirPlanDefinitionActionRelatedAction; overload; virtual;
-    class function convertPlanDefinitionActionParticipantComponent(src : FHIRResources3.TFhirPlanDefinitionActionParticipant) : FHIRResources4.TFhirPlanDefinitionActionParticipant; overload; virtual;
-    class function convertPlanDefinitionActionParticipantComponent(src : FHIRResources4.TFhirPlanDefinitionActionParticipant) : FHIRResources3.TFhirPlanDefinitionActionParticipant; overload; virtual;
-    class function convertPlanDefinitionActionDynamicValueComponent(src : FHIRResources3.TFhirPlanDefinitionActionDynamicValue) : FHIRResources4.TFhirPlanDefinitionActionDynamicValue; overload; virtual;
-    class function convertPlanDefinitionActionDynamicValueComponent(src : FHIRResources4.TFhirPlanDefinitionActionDynamicValue) : FHIRResources3.TFhirPlanDefinitionActionDynamicValue; overload; virtual;
-    class function convertResource(src : FHIRResources3.TFhirResource) : FHIRResources4.TFhirResource; overload; virtual;
-    class function convertResource(src : FHIRResources4.TFhirResource) : FHIRResources3.TFhirResource; overload; virtual;
+    class function convertBase64Binary(src : FHIRTypes3.TFhirBase64Binary) : FHIRTypes4.TFhirBase64Binary; overload;
+    class function convertBase64Binary(src : FHIRTypes4.TFhirBase64Binary) : FHIRTypes3.TFhirBase64Binary; overload;
+    class function convertBoolean(src : FHIRTypes3.TFhirBoolean) : FHIRTypes4.TFhirBoolean; overload;
+    class function convertBoolean(src : FHIRTypes4.TFhirBoolean) : FHIRTypes3.TFhirBoolean; overload;
+    class function convertCode(src : FHIRTypes3.TFhirCode) : FHIRTypes4.TFhirCode; overload;
+    class function convertCode(src : FHIRTypes4.TFhirCode) : FHIRTypes3.TFhirCode; overload;
+    class function convertCode(src : FHIRTypes3.TFhirEnum) : FHIRTypes4.TFhirEnum; overload;
+    class function convertCode(src : FHIRTypes4.TFhirEnum) : FHIRTypes3.TFhirEnum; overload;
+    class function convertDate(src : FHIRTypes3.TFhirDate) : FHIRTypes4.TFhirDate; overload;
+    class function convertDate(src : FHIRTypes4.TFhirDate) : FHIRTypes3.TFhirDate; overload;
+    class function convertDateTime(src : FHIRTypes3.TFhirDateTime) : FHIRTypes4.TFhirDateTime; overload;
+    class function convertDateTime(src : FHIRTypes4.TFhirDateTime) : FHIRTypes3.TFhirDateTime; overload;
+    class function convertDecimal(src : FHIRTypes3.TFhirDecimal) : FHIRTypes4.TFhirDecimal; overload;
+    class function convertDecimal(src : FHIRTypes4.TFhirDecimal) : FHIRTypes3.TFhirDecimal; overload;
+    class function convertId(src : FHIRTypes3.TFhirId) : FHIRTypes4.TFhirId; overload;
+    class function convertId(src : FHIRTypes4.TFhirId) : FHIRTypes3.TFhirId; overload;
+    class function convertInstant(src : FHIRTypes3.TFhirInstant) : FHIRTypes4.TFhirInstant; overload;
+    class function convertInstant(src : FHIRTypes4.TFhirInstant) : FHIRTypes3.TFhirInstant; overload;
+    class function convertInteger(src : FHIRTypes3.TFhirInteger) : FHIRTypes4.TFhirInteger; overload;
+    class function convertInteger(src : FHIRTypes4.TFhirInteger) : FHIRTypes3.TFhirInteger; overload;
+    class function convertMarkdown(src : FHIRTypes3.TFhirMarkdown) : FHIRTypes4.TFhirMarkdown; overload;
+    class function convertMarkdown(src : FHIRTypes4.TFhirMarkdown) : FHIRTypes3.TFhirMarkdown; overload;
+    class function convertOid(src : FHIRTypes3.TFhirOid) : FHIRTypes4.TFhirOid; overload;
+    class function convertOid(src : FHIRTypes4.TFhirOid) : FHIRTypes3.TFhirOid; overload;
+    class function convertPositiveInt(src : FHIRTypes3.TFhirPositiveInt) : FHIRTypes4.TFhirPositiveInt; overload;
+    class function convertPositiveInt(src : FHIRTypes4.TFhirPositiveInt) : FHIRTypes3.TFhirPositiveInt; overload;
+    class function convertString(src : FHIRTypes3.TFhirString) : FHIRTypes4.TFhirString; overload;
+    class function convertString(src : FHIRTypes4.TFhirString) : FHIRTypes3.TFhirString; overload;
+    class function convertTime(src : FHIRTypes3.TFhirTime) : FHIRTypes4.TFhirTime; overload;
+    class function convertTime(src : FHIRTypes4.TFhirTime) : FHIRTypes3.TFhirTime; overload;
+    class function convertUnsignedInt(src : FHIRTypes3.TFhirUnsignedInt) : FHIRTypes4.TFhirUnsignedInt; overload;
+    class function convertUnsignedInt(src : FHIRTypes4.TFhirUnsignedInt) : FHIRTypes3.TFhirUnsignedInt; overload;
+    class function convertUri(src : FHIRTypes3.TFhirUri) : FHIRTypes4.TFhirUri; overload;
+    class function convertUriToUrl(src : FHIRTypes3.TFhirUri) : FHIRTypes4.TFhirUrl; overload;
+    class function convertUri(src : FHIRTypes4.TFhirUri) : FHIRTypes3.TFhirUri; overload;
+    class function convertUuid(src : FHIRTypes3.TFhirUuid) : FHIRTypes4.TFhirUuid; overload;
+    class function convertUuid(src : FHIRTypes4.TFhirUuid) : FHIRTypes3.TFhirUuid; overload;
+    class function convertExtension(src : FHIRTypes3.TFhirExtension) : FHIRTypes4.TFhirExtension; overload;
+    class function convertExtension(src : FHIRTypes4.TFhirExtension) : FHIRTypes3.TFhirExtension; overload;
+    class function convertNarrative(src : FHIRTypes3.TFhirNarrative) : FHIRTypes4.TFhirNarrative; overload;
+    class function convertNarrative(src : FHIRTypes4.TFhirNarrative) : FHIRTypes3.TFhirNarrative; overload;
+    class function convertAge(src : FHIRTypes3.TFhirAge) : FHIRTypes4.TFhirAge; overload;
+    class function convertAge(src : FHIRTypes4.TFhirAge) : FHIRTypes3.TFhirAge; overload;
+    class function convertAnnotation(src : FHIRTypes3.TFhirAnnotation) : FHIRTypes4.TFhirAnnotation; overload;
+    class function convertAnnotation(src : FHIRTypes4.TFhirAnnotation) : FHIRTypes3.TFhirAnnotation; overload;
+    class function convertAttachment(src : FHIRTypes3.TFhirAttachment) : FHIRTypes4.TFhirAttachment; overload;
+    class function convertAttachment(src : FHIRTypes4.TFhirAttachment) : FHIRTypes3.TFhirAttachment; overload;
+    class function convertCodeableConcept(src : FHIRTypes3.TFhirCodeableConcept) : FHIRTypes4.TFhirCodeableConcept; overload;
+    class function convertCodeableConcept(src : FHIRTypes4.TFhirCodeableConcept) : FHIRTypes3.TFhirCodeableConcept; overload;
+    class function convertCodeableConceptToCoding(src : FHIRTypes4.TFhirCodeableConcept) : FHIRTypes3.TFhirCoding; overload;
+    class function convertCodeableConceptToCoding(src : FHIRTypes3.TFhirCodeableConcept) : FHIRTypes4.TFhirCoding; overload;
+    class function convertCoding(src : FHIRTypes3.TFhirCoding) : FHIRTypes4.TFhirCoding; overload;
+    class function convertCoding(src : FHIRTypes4.TFhirCoding) : FHIRTypes3.TFhirCoding; overload;
+    class function convertCoding(src : FHIRTypes3.TFhirCode) : FHIRTypes4.TFhirCoding; overload;
+    class function convertCoding(src : FHIRTypes3.TFhirCodeableConcept) : FHIRTypes4.TFhirCoding; overload;
+    class function convertCoding(src : FHIRTypes4.TFhirCodeableConcept) : FHIRTypes3.TFhirCoding; overload;
+    class function convertCodingToCodeableConcept(src : FHIRTypes3.TFhirCoding) : FHIRTypes4.TFhirCodeableConcept; overload;
+    class function convertCodingToCodeableConcept(src : FHIRTypes4.TFhirCoding) : FHIRTypes3.TFhirCodeableConcept; overload;
+    class function convertCount(src : FHIRTypes3.TFhirCount) : FHIRTypes4.TFhirCount; overload;
+    class function convertCount(src : FHIRTypes4.TFhirCount) : FHIRTypes3.TFhirCount; overload;
+    class function convertDistance(src : FHIRTypes3.TFhirDistance) : FHIRTypes4.TFhirDistance; overload;
+    class function convertDistance(src : FHIRTypes4.TFhirDistance) : FHIRTypes3.TFhirDistance; overload;
+    class function convertDuration(src : FHIRTypes3.TFhirDuration) : FHIRTypes4.TFhirDuration; overload;
+    class function convertDuration(src : FHIRTypes4.TFhirDuration) : FHIRTypes3.TFhirDuration; overload;
+    class function convertIdentifier(src : FHIRTypes3.TFhirIdentifier) : FHIRTypes4.TFhirIdentifier; overload;
+    class function convertIdentifier(src : FHIRTypes4.TFhirIdentifier) : FHIRTypes3.TFhirIdentifier; overload;
+    class function convertMoney(src : FHIRTypes3.TFhirMoney) : FHIRTypes4.TFhirMoney; overload;
+    class function convertMoney(src : FHIRTypes4.TFhirMoney) : FHIRTypes3.TFhirMoney; overload;
+    class function convertPeriod(src : FHIRTypes3.TFhirPeriod) : FHIRTypes4.TFhirPeriod; overload;
+    class function convertPeriod(src : FHIRTypes4.TFhirPeriod) : FHIRTypes3.TFhirPeriod; overload;
+    class procedure copyQuantity(src : FHIRTypes3.TFhirQuantity; tgt : FHIRTypes4.TFhirQuantity); overload;
+    class procedure copyQuantity(src : FHIRTypes4.TFhirQuantity; tgt : FHIRTypes3.TFhirQuantity); overload;
+    class function convertQuantity(src : FHIRTypes3.TFhirQuantity) : FHIRTypes4.TFhirQuantity; overload;
+    class function convertQuantity(src : FHIRTypes4.TFhirQuantity) : FHIRTypes3.TFhirQuantity; overload;
+    class function convertRange(src : FHIRTypes3.TFhirRange) : FHIRTypes4.TFhirRange; overload;
+    class function convertRange(src : FHIRTypes4.TFhirRange) : FHIRTypes3.TFhirRange; overload;
+    class function convertRatio(src : FHIRTypes3.TFhirRatio) : FHIRTypes4.TFhirRatio; overload;
+    class function convertRatio(src : FHIRTypes4.TFhirRatio) : FHIRTypes3.TFhirRatio; overload;
+    class function convertReference(src : FHIRTypes3.TFhirReference) : FHIRTypes4.TFhirReference; overload;
+    class function convertReference(src : FHIRTypes4.TFhirReference) : FHIRTypes3.TFhirReference; overload;
+    class function convertSampledData(src : FHIRTypes3.TFhirSampledData) : FHIRTypes4.TFhirSampledData; overload;
+    class function convertSampledData(src : FHIRTypes4.TFhirSampledData) : FHIRTypes3.TFhirSampledData; overload;
+    class function convertSignature(src : FHIRTypes3.TFhirSignature) : FHIRTypes4.TFhirSignature; overload;
+    class function convertSignature(src : FHIRTypes4.TFhirSignature) : FHIRTypes3.TFhirSignature; overload;
+    class function convertAddress(src : FHIRTypes3.TFhirAddress) : FHIRTypes4.TFhirAddress; overload;
+    class function convertAddress(src : FHIRTypes4.TFhirAddress) : FHIRTypes3.TFhirAddress; overload;
+    class function convertContactDetail(src : FHIRTypes3.TFhirContactDetail) : FHIRTypes4.TFhirContactDetail; overload;
+    class function convertContactDetail(src : FHIRTypes4.TFhirContactDetail) : FHIRTypes3.TFhirContactDetail; overload;
+    class function convertContactPoint(src : FHIRTypes3.TFhirContactPoint) : FHIRTypes4.TFhirContactPoint; overload;
+    class function convertContactPoint(src : FHIRTypes4.TFhirContactPoint) : FHIRTypes3.TFhirContactPoint; overload;
+    class function convertContributor(src : FHIRTypes3.TFhirContributor) : FHIRTypes4.TFhirContributor; overload;
+    class function convertContributor(src : FHIRTypes4.TFhirContributor) : FHIRTypes3.TFhirContributor; overload;
+    class function convertDosage(src : FHIRTypes3.TFhirDosage) : FHIRTypes4.TFhirDosage; overload;
+    class function convertDosage(src : FHIRTypes4.TFhirDosage) : FHIRTypes3.TFhirDosage; overload;
+    class function convertElementDefinition(src : FHIRTypes3.TFhirElementDefinition) : FHIRTypes4.TFhirElementDefinition; overload;
+    class function convertElementDefinition(src : FHIRTypes4.TFhirElementDefinition) : FHIRTypes3.TFhirElementDefinition; overload;
+    class function convertElementDefinitionSlicingComponent(src : FHIRTypes3.TFhirElementDefinitionSlicing) : FHIRTypes4.TFhirElementDefinitionSlicing; overload;
+    class function convertElementDefinitionSlicingComponent(src : FHIRTypes4.TFhirElementDefinitionSlicing) : FHIRTypes3.TFhirElementDefinitionSlicing; overload;
+    class function convertElementDefinitionSlicingDiscriminatorComponent(src : FHIRTypes3.TFhirElementDefinitionSlicingDiscriminator) : FHIRTypes4.TFhirElementDefinitionSlicingDiscriminator; overload;
+    class function convertElementDefinitionSlicingDiscriminatorComponent(src : FHIRTypes4.TFhirElementDefinitionSlicingDiscriminator) : FHIRTypes3.TFhirElementDefinitionSlicingDiscriminator; overload;
+    class function convertElementDefinitionBaseComponent(src : FHIRTypes3.TFhirElementDefinitionBase) : FHIRTypes4.TFhirElementDefinitionBase; overload;
+    class function convertElementDefinitionBaseComponent(src : FHIRTypes4.TFhirElementDefinitionBase) : FHIRTypes3.TFhirElementDefinitionBase; overload;
+    class procedure convertTypeRefComponent(src : FHIRTypes3.TFhirElementDefinitionType; list : FHIRTypes4.TFhirElementDefinitionTypeList); overload;
+    class procedure convertTypeRefComponent(src : FHIRTypes4.TFhirElementDefinitionType; list : FHIRTypes3.TFhirElementDefinitionTypeList); overload;
+    class function convertElementDefinitionExampleComponent(src : FHIRTypes3.TFhirElementDefinitionExample) : FHIRTypes4.TFhirElementDefinitionExample; overload;
+    class function convertElementDefinitionExampleComponent(src : FHIRTypes4.TFhirElementDefinitionExample) : FHIRTypes3.TFhirElementDefinitionExample; overload;
+    class function convertElementDefinitionConstraintComponent(src : FHIRTypes3.TFhirElementDefinitionConstraint) : FHIRTypes4.TFhirElementDefinitionConstraint; overload;
+    class function convertElementDefinitionConstraintComponent(src : FHIRTypes4.TFhirElementDefinitionConstraint) : FHIRTypes3.TFhirElementDefinitionConstraint; overload;
+    class function convertElementDefinitionBindingComponent(src : FHIRTypes3.TFhirElementDefinitionBinding) : FHIRTypes4.TFhirElementDefinitionBinding; overload;
+    class function convertElementDefinitionBindingComponent(src : FHIRTypes4.TFhirElementDefinitionBinding) : FHIRTypes3.TFhirElementDefinitionBinding; overload;
+    class function convertElementDefinitionMappingComponent(src : FHIRTypes3.TFhirElementDefinitionMapping) : FHIRTypes4.TFhirElementDefinitionMapping; overload;
+    class function convertElementDefinitionMappingComponent(src : FHIRTypes4.TFhirElementDefinitionMapping) : FHIRTypes3.TFhirElementDefinitionMapping; overload;
+    class function convertHumanName(src : FHIRTypes3.TFhirHumanName) : FHIRTypes4.TFhirHumanName; overload;
+    class function convertHumanName(src : FHIRTypes4.TFhirHumanName) : FHIRTypes3.TFhirHumanName; overload;
+    class function convertMeta(src : FHIRTypes3.TFhirMeta) : FHIRTypes4.TFhirMeta; overload;
+    class function convertMeta(src : FHIRTypes4.TFhirMeta) : FHIRTypes3.TFhirMeta; overload;
+    class function convertParameterDefinition(src : FHIRTypes3.TFhirParameterDefinition) : FHIRTypes4.TFhirParameterDefinition; overload;
+    class function convertParameterDefinition(src : FHIRTypes4.TFhirParameterDefinition) : FHIRTypes3.TFhirParameterDefinition; overload;
+    class function convertRelatedArtifact(src : FHIRTypes3.TFhirRelatedArtifact) : FHIRTypes4.TFhirRelatedArtifact; overload;
+    class function convertRelatedArtifact(src : FHIRTypes4.TFhirRelatedArtifact) : FHIRTypes3.TFhirRelatedArtifact; overload;
+    class function convertTiming(src : FHIRTypes3.TFhirTiming) : FHIRTypes4.TFhirTiming; overload;
+    class function convertTiming(src : FHIRTypes4.TFhirTiming) : FHIRTypes3.TFhirTiming; overload;
+    class function convertTimingRepeatComponent(src : FHIRTypes3.TFhirTimingRepeat) : FHIRTypes4.TFhirTimingRepeat; overload;
+    class function convertTimingRepeatComponent(src : FHIRTypes4.TFhirTimingRepeat) : FHIRTypes3.TFhirTimingRepeat; overload;
+    class function convertUsageContext(src : FHIRTypes3.TFhirUsageContext) : FHIRTypes4.TFhirUsageContext; overload;
+    class function convertUsageContext(src : FHIRTypes4.TFhirUsageContext) : FHIRTypes3.TFhirUsageContext; overload;
+    class function convertSimpleQuantity(src : FHIRTypes3.TFhirQuantity) : FHIRTypes4.TFhirQuantity; overload;
+    class function convertSimpleQuantity(src : FHIRTypes4.TFhirQuantity) : FHIRTypes3.TFhirQuantity; overload;
+    class function convertTriggerDefinition(src : FHIRTypes3.TFhirTriggerDefinition) : FHIRTypes4.TFhirTriggerDefinition; overload;
+    class function convertTriggerDefinition(src : FHIRTypes4.TFhirTriggerDefinition) : FHIRTypes3.TFhirTriggerDefinition; overload;
+    class function convertDataRequirement(src : FHIRTypes3.TFhirDataRequirement) : FHIRTypes4.TFhirDataRequirement; overload;
+    class function convertDataRequirement(src : FHIRTypes4.TFhirDataRequirement) : FHIRTypes3.TFhirDataRequirement; overload;
+    class function convertDataRequirementCodeFilterComponent(src : FHIRTypes3.TFhirDataRequirementCodeFilter) : FHIRTypes4.TFhirDataRequirementCodeFilter; overload;
+    class function convertDataRequirementCodeFilterComponent(src : FHIRTypes4.TFhirDataRequirementCodeFilter) : FHIRTypes3.TFhirDataRequirementCodeFilter; overload;
+    class function convertDataRequirementDateFilterComponent(src : FHIRTypes3.TFhirDataRequirementDateFilter) : FHIRTypes4.TFhirDataRequirementDateFilter; overload;
+    class function convertDataRequirementDateFilterComponent(src : FHIRTypes4.TFhirDataRequirementDateFilter) : FHIRTypes3.TFhirDataRequirementDateFilter; overload;
+    class function convertType(src : FHIRTypes3.TFhirType) : FHIRTypes4.TFhirType; overload;
+    class function convertType(src : FHIRTypes4.TFhirType) : FHIRTypes3.TFhirType; overload;
+    class function convertParameters(src : FHIRResources3.TFhirParameters) : FHIRResources4.TFhirParameters; overload;
+    class function convertParameters(src : FHIRResources4.TFhirParameters) : FHIRResources3.TFhirParameters; overload;
+    class function convertParametersParameterComponent(src : FHIRResources3.TFhirParametersParameter) : FHIRResources4.TFhirParametersParameter; overload;
+    class function convertParametersParameterComponent(src : FHIRResources4.TFhirParametersParameter) : FHIRResources3.TFhirParametersParameter; overload;
+    class function convertActivityDefinition(src : FHIRResources3.TFhirActivityDefinition) : FHIRResources4.TFhirActivityDefinition; overload;
+    class function convertActivityDefinition(src : FHIRResources4.TFhirActivityDefinition) : FHIRResources3.TFhirActivityDefinition; overload;
+    class function convertActivityDefinitionParticipantComponent(src : FHIRResources3.TFhirActivityDefinitionParticipant) : FHIRResources4.TFhirActivityDefinitionParticipant; overload;
+    class function convertActivityDefinitionParticipantComponent(src : FHIRResources4.TFhirActivityDefinitionParticipant) : FHIRResources3.TFhirActivityDefinitionParticipant; overload;
+    class function convertActivityDefinitionDynamicValueComponent(src : FHIRResources3.TFhirActivityDefinitionDynamicValue) : FHIRResources4.TFhirActivityDefinitionDynamicValue; overload;
+    class function convertActivityDefinitionDynamicValueComponent(src : FHIRResources4.TFhirActivityDefinitionDynamicValue) : FHIRResources3.TFhirActivityDefinitionDynamicValue; overload;
+    class function convertAllergyIntolerance(src : FHIRResources3.TFhirAllergyIntolerance) : FHIRResources4.TFhirAllergyIntolerance; overload;
+    class function convertAllergyIntolerance(src : FHIRResources4.TFhirAllergyIntolerance) : FHIRResources3.TFhirAllergyIntolerance; overload;
+    class function convertAllergyIntoleranceReactionComponent(src : FHIRResources3.TFhirAllergyIntoleranceReaction) : FHIRResources4.TFhirAllergyIntoleranceReaction; overload;
+    class function convertAllergyIntoleranceReactionComponent(src : FHIRResources4.TFhirAllergyIntoleranceReaction) : FHIRResources3.TFhirAllergyIntoleranceReaction; overload;
+    class function convertAppointment(src : FHIRResources3.TFhirAppointment) : FHIRResources4.TFhirAppointment; overload;
+    class function convertAppointment(src : FHIRResources4.TFhirAppointment) : FHIRResources3.TFhirAppointment; overload;
+    class function convertAppointmentParticipantComponent(src : FHIRResources3.TFhirAppointmentParticipant) : FHIRResources4.TFhirAppointmentParticipant; overload;
+    class function convertAppointmentParticipantComponent(src : FHIRResources4.TFhirAppointmentParticipant) : FHIRResources3.TFhirAppointmentParticipant; overload;
+    class function convertAppointmentResponse(src : FHIRResources3.TFhirAppointmentResponse) : FHIRResources4.TFhirAppointmentResponse; overload;
+    class function convertAppointmentResponse(src : FHIRResources4.TFhirAppointmentResponse) : FHIRResources3.TFhirAppointmentResponse; overload;
+    class function convertAuditEvent(src : FHIRResources3.TFhirAuditEvent) : FHIRResources4.TFhirAuditEvent; overload;
+    class function convertAuditEvent(src : FHIRResources4.TFhirAuditEvent) : FHIRResources3.TFhirAuditEvent; overload;
+    class function convertAuditEventAgentComponent(src : FHIRResources3.TFhirAuditEventAgent) : FHIRResources4.TFhirAuditEventAgent; overload;
+    class function convertAuditEventAgentComponent(src : FHIRResources4.TFhirAuditEventAgent) : FHIRResources3.TFhirAuditEventAgent; overload;
+    class function convertAuditEventAgentNetworkComponent(src : FHIRResources3.TFhirAuditEventAgentNetwork) : FHIRResources4.TFhirAuditEventAgentNetwork; overload;
+    class function convertAuditEventAgentNetworkComponent(src : FHIRResources4.TFhirAuditEventAgentNetwork) : FHIRResources3.TFhirAuditEventAgentNetwork; overload;
+    class function convertAuditEventSourceComponent(src : FHIRResources3.TFhirAuditEventSource) : FHIRResources4.TFhirAuditEventSource; overload;
+    class function convertAuditEventSourceComponent(src : FHIRResources4.TFhirAuditEventSource) : FHIRResources3.TFhirAuditEventSource; overload;
+    class function convertAuditEventEntityComponent(src : FHIRResources3.TFhirAuditEventEntity) : FHIRResources4.TFhirAuditEventEntity; overload;
+    class function convertAuditEventEntityComponent(src : FHIRResources4.TFhirAuditEventEntity) : FHIRResources3.TFhirAuditEventEntity; overload;
+    class function convertAuditEventEntityDetailComponent(src : FHIRResources3.TFhirAuditEventEntityDetail) : FHIRResources4.TFhirAuditEventEntityDetail; overload;
+    class function convertAuditEventEntityDetailComponent(src : FHIRResources4.TFhirAuditEventEntityDetail) : FHIRResources3.TFhirAuditEventEntityDetail; overload;
+    class function convertBasic(src : FHIRResources3.TFhirBasic) : FHIRResources4.TFhirBasic; overload;
+    class function convertBasic(src : FHIRResources4.TFhirBasic) : FHIRResources3.TFhirBasic; overload;
+    class function convertBinary(src : FHIRResources3.TFhirBinary) : FHIRResources4.TFhirBinary; overload;
+    class function convertBinary(src : FHIRResources4.TFhirBinary) : FHIRResources3.TFhirBinary; overload;
+    class function convertBodySite(src : FHIRResources3.TFhirBodySite) : FHIRResources4.TFhirBodyStructure; overload;
+    class function convertBodySite(src : FHIRResources4.TFhirBodyStructure) : FHIRResources3.TFhirBodySite; overload;
+    class function convertBundle(src : FHIRResources3.TFhirBundle) : FHIRResources4.TFhirBundle; overload;
+    class function convertBundle(src : FHIRResources4.TFhirBundle) : FHIRResources3.TFhirBundle; overload;
+    class function convertBundleLinkComponent(src : FHIRResources3.TFhirBundleLink) : FHIRResources4.TFhirBundleLink; overload;
+    class function convertBundleLinkComponent(src : FHIRResources4.TFhirBundleLink) : FHIRResources3.TFhirBundleLink; overload;
+    class function convertBundleEntryComponent(src : FHIRResources3.TFhirBundleEntry) : FHIRResources4.TFhirBundleEntry; overload;
+    class function convertBundleEntryComponent(src : FHIRResources4.TFhirBundleEntry) : FHIRResources3.TFhirBundleEntry; overload;
+    class function convertBundleEntrySearchComponent(src : FHIRResources3.TFhirBundleEntrySearch) : FHIRResources4.TFhirBundleEntrySearch; overload;
+    class function convertBundleEntrySearchComponent(src : FHIRResources4.TFhirBundleEntrySearch) : FHIRResources3.TFhirBundleEntrySearch; overload;
+    class function convertBundleEntryRequestComponent(src : FHIRResources3.TFhirBundleEntryRequest) : FHIRResources4.TFhirBundleEntryRequest; overload;
+    class function convertBundleEntryRequestComponent(src : FHIRResources4.TFhirBundleEntryRequest) : FHIRResources3.TFhirBundleEntryRequest; overload;
+    class function convertBundleEntryResponseComponent(src : FHIRResources3.TFhirBundleEntryResponse) : FHIRResources4.TFhirBundleEntryResponse; overload;
+    class function convertBundleEntryResponseComponent(src : FHIRResources4.TFhirBundleEntryResponse) : FHIRResources3.TFhirBundleEntryResponse; overload;
+    class function convertCapabilityStatement(src : FHIRResources3.TFhirCapabilityStatement) : FHIRResources4.TFhirCapabilityStatement; overload;
+    class function convertCapabilityStatement(src : FHIRResources4.TFhirCapabilityStatement) : FHIRResources3.TFhirCapabilityStatement; overload;
+    class function convertCapabilityStatementSoftwareComponent(src : FHIRResources3.TFhirCapabilityStatementSoftware) : FHIRResources4.TFhirCapabilityStatementSoftware; overload;
+    class function convertCapabilityStatementSoftwareComponent(src : FHIRResources4.TFhirCapabilityStatementSoftware) : FHIRResources3.TFhirCapabilityStatementSoftware; overload;
+    class function convertCapabilityStatementImplementationComponent(src : FHIRResources3.TFhirCapabilityStatementImplementation) : FHIRResources4.TFhirCapabilityStatementImplementation; overload;
+    class function convertCapabilityStatementImplementationComponent(src : FHIRResources4.TFhirCapabilityStatementImplementation) : FHIRResources3.TFhirCapabilityStatementImplementation; overload;
+    class function convertCapabilityStatementRestComponent(src : FHIRResources3.TFhirCapabilityStatementRest) : FHIRResources4.TFhirCapabilityStatementRest; overload;
+    class function convertCapabilityStatementRestComponent(src : FHIRResources4.TFhirCapabilityStatementRest) : FHIRResources3.TFhirCapabilityStatementRest; overload;
+    class function convertCapabilityStatementRestSecurityComponent(src : FHIRResources3.TFhirCapabilityStatementRestSecurity) : FHIRResources4.TFhirCapabilityStatementRestSecurity; overload;
+    class function convertCapabilityStatementRestSecurityComponent(src : FHIRResources4.TFhirCapabilityStatementRestSecurity) : FHIRResources3.TFhirCapabilityStatementRestSecurity; overload;
+    class function convertCapabilityStatementRestResourceComponent(src : FHIRResources3.TFhirCapabilityStatementRestResource) : FHIRResources4.TFhirCapabilityStatementRestResource; overload;
+    class function convertCapabilityStatementRestResourceComponent(src : FHIRResources4.TFhirCapabilityStatementRestResource) : FHIRResources3.TFhirCapabilityStatementRestResource; overload;
+    class function convertResourceInteractionComponent(src : FHIRResources3.TFhirCapabilityStatementRestResourceInteraction) : FHIRResources4.TFhirCapabilityStatementRestResourceInteraction; overload;
+    class function convertResourceInteractionComponent(src : FHIRResources4.TFhirCapabilityStatementRestResourceInteraction) : FHIRResources3.TFhirCapabilityStatementRestResourceInteraction; overload;
+    class function convertCapabilityStatementRestResourceSearchParamComponent(src : FHIRResources3.TFhirCapabilityStatementRestResourceSearchParam) : FHIRResources4.TFhirCapabilityStatementRestResourceSearchParam; overload;
+    class function convertCapabilityStatementRestResourceSearchParamComponent(src : FHIRResources4.TFhirCapabilityStatementRestResourceSearchParam) : FHIRResources3.TFhirCapabilityStatementRestResourceSearchParam; overload;
+    class function convertSystemInteractionComponent(src : FHIRResources3.TFhirCapabilityStatementRestInteraction) : FHIRResources4.TFhirCapabilityStatementRestInteraction; overload;
+    class function convertSystemInteractionComponent(src : FHIRResources4.TFhirCapabilityStatementRestInteraction) : FHIRResources3.TFhirCapabilityStatementRestInteraction; overload;
+    class function convertCapabilityStatementRestOperationComponent(src : FHIRResources3.TFhirCapabilityStatementRestOperation) : FHIRResources4.TFhirCapabilityStatementRestResourceOperation; overload;
+    class function convertCapabilityStatementRestOperationComponent(src : FHIRResources4.TFhirCapabilityStatementRestResourceOperation) : FHIRResources3.TFhirCapabilityStatementRestOperation; overload;
+    class function convertCapabilityStatementMessagingComponent(src : FHIRResources3.TFhirCapabilityStatementMessaging) : FHIRResources4.TFhirCapabilityStatementMessaging; overload;
+    class function convertCapabilityStatementMessagingComponent(src : FHIRResources4.TFhirCapabilityStatementMessaging) : FHIRResources3.TFhirCapabilityStatementMessaging; overload;
+    class function convertCapabilityStatementMessagingEndpointComponent(src : FHIRResources3.TFhirCapabilityStatementMessagingEndpoint) : FHIRResources4.TFhirCapabilityStatementMessagingEndpoint; overload;
+    class function convertCapabilityStatementMessagingEndpointComponent(src : FHIRResources4.TFhirCapabilityStatementMessagingEndpoint) : FHIRResources3.TFhirCapabilityStatementMessagingEndpoint; overload;
+    class function convertCapabilityStatementMessagingSupportedMessageComponent(src : FHIRResources3.TFhirCapabilityStatementMessagingSupportedMessage) : FHIRResources4.TFhirCapabilityStatementMessagingSupportedMessage; overload;
+    class function convertCapabilityStatementMessagingSupportedMessageComponent(src : FHIRResources4.TFhirCapabilityStatementMessagingSupportedMessage) : FHIRResources3.TFhirCapabilityStatementMessagingSupportedMessage; overload;
+    class function convertCapabilityStatementDocumentComponent(src : FHIRResources3.TFhirCapabilityStatementDocument) : FHIRResources4.TFhirCapabilityStatementDocument; overload;
+    class function convertCapabilityStatementDocumentComponent(src : FHIRResources4.TFhirCapabilityStatementDocument) : FHIRResources3.TFhirCapabilityStatementDocument; overload;
+    class function convertCareTeam(src : FHIRResources3.TFhirCareTeam) : FHIRResources4.TFhirCareTeam; overload;
+    class function convertCareTeam(src : FHIRResources4.TFhirCareTeam) : FHIRResources3.TFhirCareTeam; overload;
+    class function convertCareTeamParticipantComponent(src : FHIRResources3.TFhirCareTeamParticipant) : FHIRResources4.TFhirCareTeamParticipant; overload;
+    class function convertCareTeamParticipantComponent(src : FHIRResources4.TFhirCareTeamParticipant) : FHIRResources3.TFhirCareTeamParticipant; overload;
+    class function convertChargeItem(src : FHIRResources3.TFhirChargeItem) : FHIRResources4.TFhirChargeItem; overload;
+    class function convertChargeItem(src : FHIRResources4.TFhirChargeItem) : FHIRResources3.TFhirChargeItem; overload;
+    class function convertChargeItemParticipantComponent(src : FHIRResources3.TFhirChargeItemParticipant) : FHIRResources4.TFhirChargeItemParticipant; overload;
+    class function convertChargeItemParticipantComponent(src : FHIRResources4.TFhirChargeItemParticipant) : FHIRResources3.TFhirChargeItemParticipant; overload;
+    class function convertClaim(src : FHIRResources3.TFhirClaim) : FHIRResources4.TFhirClaim; overload;
+    class function convertClaim(src : FHIRResources4.TFhirClaim) : FHIRResources3.TFhirClaim; overload;
+    class function convertRelatedClaimComponent(src : FHIRResources3.TFhirClaimRelated) : FHIRResources4.TFhirClaimRelated; overload;
+    class function convertRelatedClaimComponent(src : FHIRResources4.TFhirClaimRelated) : FHIRResources3.TFhirClaimRelated; overload;
+    class function convertPayeeComponent(src : FHIRResources3.TFhirClaimPayee) : FHIRResources4.TFhirClaimPayee; overload;
+    class function convertPayeeComponent(src : FHIRResources4.TFhirClaimPayee) : FHIRResources3.TFhirClaimPayee; overload;
+    class function convertCareTeamComponent(src : FHIRResources3.TFhirClaimCareTeam) : FHIRResources4.TFhirClaimCareTeam; overload;
+    class function convertCareTeamComponent(src : FHIRResources4.TFhirClaimCareTeam) : FHIRResources3.TFhirClaimCareTeam; overload;
+    class function convertSpecialConditionComponent(src : FHIRResources3.TFhirClaimInformation) : FHIRResources4.TFhirClaimInformation; overload;
+    class function convertSpecialConditionComponent(src : FHIRResources4.TFhirClaimInformation) : FHIRResources3.TFhirClaimInformation; overload;
+    class function convertDiagnosisComponent(src : FHIRResources3.TFhirClaimDiagnosis) : FHIRResources4.TFhirClaimDiagnosis; overload;
+    class function convertDiagnosisComponent(src : FHIRResources4.TFhirClaimDiagnosis) : FHIRResources3.TFhirClaimDiagnosis; overload;
+    class function convertProcedureComponent(src : FHIRResources3.TFhirClaimProcedure) : FHIRResources4.TFhirClaimProcedure; overload;
+    class function convertProcedureComponent(src : FHIRResources4.TFhirClaimProcedure) : FHIRResources3.TFhirClaimProcedure; overload;
+    class function convertInsuranceComponent(src : FHIRResources3.TFhirClaimInsurance) : FHIRResources4.TFhirClaimInsurance; overload;
+    class function convertInsuranceComponent(src : FHIRResources4.TFhirClaimInsurance) : FHIRResources3.TFhirClaimInsurance; overload;
+    class function convertAccidentComponent(src : FHIRResources3.TFhirClaimAccident) : FHIRResources4.TFhirClaimAccident; overload;
+    class function convertAccidentComponent(src : FHIRResources4.TFhirClaimAccident) : FHIRResources3.TFhirClaimAccident; overload;
+    class function convertItemComponent(src : FHIRResources3.TFhirClaimItem) : FHIRResources4.TFhirClaimItem; overload;
+    class function convertItemComponent(src : FHIRResources4.TFhirClaimItem) : FHIRResources3.TFhirClaimItem; overload;
+    class function convertDetailComponent(src : FHIRResources3.TFhirClaimItemDetail) : FHIRResources4.TFhirClaimItemDetail; overload;
+    class function convertDetailComponent(src : FHIRResources4.TFhirClaimItemDetail) : FHIRResources3.TFhirClaimItemDetail; overload;
+    class function convertSubDetailComponent(src : FHIRResources3.TFhirClaimItemDetailSubDetail) : FHIRResources4.TFhirClaimItemDetailSubDetail; overload;
+    class function convertSubDetailComponent(src : FHIRResources4.TFhirClaimItemDetailSubDetail) : FHIRResources3.TFhirClaimItemDetailSubDetail; overload;
+    class function convertClinicalImpression(src : FHIRResources3.TFhirClinicalImpression) : FHIRResources4.TFhirClinicalImpression; overload;
+    class function convertClinicalImpression(src : FHIRResources4.TFhirClinicalImpression) : FHIRResources3.TFhirClinicalImpression; overload;
+    class function convertClinicalImpressionInvestigationComponent(src : FHIRResources3.TFhirClinicalImpressionInvestigation) : FHIRResources4.TFhirClinicalImpressionInvestigation; overload;
+    class function convertClinicalImpressionInvestigationComponent(src : FHIRResources4.TFhirClinicalImpressionInvestigation) : FHIRResources3.TFhirClinicalImpressionInvestigation; overload;
+    class function convertClinicalImpressionFindingComponent(src : FHIRResources3.TFhirClinicalImpressionFinding) : FHIRResources4.TFhirClinicalImpressionFinding; overload;
+    class function convertClinicalImpressionFindingComponent(src : FHIRResources4.TFhirClinicalImpressionFinding) : FHIRResources3.TFhirClinicalImpressionFinding; overload;
+    class function convertCodeSystem(src : FHIRResources3.TFhirCodeSystem) : FHIRResources4.TFhirCodeSystem; overload;
+    class function convertCodeSystem(src : FHIRResources4.TFhirCodeSystem) : FHIRResources3.TFhirCodeSystem; overload;
+    class function convertCodeSystemFilterComponent(src : FHIRResources3.TFhirCodeSystemFilter) : FHIRResources4.TFhirCodeSystemFilter; overload;
+    class function convertCodeSystemFilterComponent(src : FHIRResources4.TFhirCodeSystemFilter) : FHIRResources3.TFhirCodeSystemFilter; overload;
+    class function convertPropertyComponent(src : FHIRResources3.TFhirCodeSystemProperty) : FHIRResources4.TFhirCodeSystemProperty; overload;
+    class function convertPropertyComponent(src : FHIRResources4.TFhirCodeSystemProperty) : FHIRResources3.TFhirCodeSystemProperty; overload;
+    class function convertConceptDefinitionComponent(src : FHIRResources3.TFhirCodeSystemConcept) : FHIRResources4.TFhirCodeSystemConcept; overload;
+    class function convertConceptDefinitionComponent(src : FHIRResources4.TFhirCodeSystemConcept) : FHIRResources3.TFhirCodeSystemConcept; overload;
+    class function convertConceptDefinitionDesignationComponent(src : FHIRResources3.TFhirCodeSystemConceptDesignation) : FHIRResources4.TFhirCodeSystemConceptDesignation; overload;
+    class function convertConceptDefinitionDesignationComponent(src : FHIRResources4.TFhirCodeSystemConceptDesignation) : FHIRResources3.TFhirCodeSystemConceptDesignation; overload;
+    class function convertConceptPropertyComponent(src : FHIRResources3.TFhirCodeSystemConceptProperty) : FHIRResources4.TFhirCodeSystemConceptProperty; overload;
+    class function convertConceptPropertyComponent(src : FHIRResources4.TFhirCodeSystemConceptProperty) : FHIRResources3.TFhirCodeSystemConceptProperty; overload;
+    class function convertCommunication(src : FHIRResources3.TFhirCommunication) : FHIRResources4.TFhirCommunication; overload;
+    class function convertCommunication(src : FHIRResources4.TFhirCommunication) : FHIRResources3.TFhirCommunication; overload;
+    class function convertCommunicationPayloadComponent(src : FHIRResources3.TFhirCommunicationPayload) : FHIRResources4.TFhirCommunicationPayload; overload;
+    class function convertCommunicationPayloadComponent(src : FHIRResources4.TFhirCommunicationPayload) : FHIRResources3.TFhirCommunicationPayload; overload;
+    class function convertCompartmentDefinition(src : FHIRResources3.TFhirCompartmentDefinition) : FHIRResources4.TFhirCompartmentDefinition; overload;
+    class function convertCompartmentDefinition(src : FHIRResources4.TFhirCompartmentDefinition) : FHIRResources3.TFhirCompartmentDefinition; overload;
+    class function convertCompartmentDefinitionResourceComponent(src : FHIRResources3.TFhirCompartmentDefinitionResource) : FHIRResources4.TFhirCompartmentDefinitionResource; overload;
+    class function convertCompartmentDefinitionResourceComponent(src : FHIRResources4.TFhirCompartmentDefinitionResource) : FHIRResources3.TFhirCompartmentDefinitionResource; overload;
+    class function convertComposition(src : FHIRResources3.TFhirComposition) : FHIRResources4.TFhirComposition; overload;
+    class function convertComposition(src : FHIRResources4.TFhirComposition) : FHIRResources3.TFhirComposition; overload;
+    class function convertCompositionAttesterComponent(src : FHIRResources3.TFhirCompositionAttester) : FHIRResources4.TFhirCompositionAttester; overload;
+    class function convertCompositionAttesterComponent(src : FHIRResources4.TFhirCompositionAttester) : FHIRResources3.TFhirCompositionAttester; overload;
+    class function convertCompositionRelatesToComponent(src : FHIRResources3.TFhirCompositionRelatesTo) : FHIRResources4.TFhirCompositionRelatesTo; overload;
+    class function convertCompositionRelatesToComponent(src : FHIRResources4.TFhirCompositionRelatesTo) : FHIRResources3.TFhirCompositionRelatesTo; overload;
+    class function convertCompositionEventComponent(src : FHIRResources3.TFhirCompositionEvent) : FHIRResources4.TFhirCompositionEvent; overload;
+    class function convertCompositionEventComponent(src : FHIRResources4.TFhirCompositionEvent) : FHIRResources3.TFhirCompositionEvent; overload;
+    class function convertSectionComponent(src : FHIRResources3.TFhirCompositionSection) : FHIRResources4.TFhirCompositionSection; overload;
+    class function convertSectionComponent(src : FHIRResources4.TFhirCompositionSection) : FHIRResources3.TFhirCompositionSection; overload;
+    class function convertConceptMap(src : FHIRResources3.TFhirConceptMap) : FHIRResources4.TFhirConceptMap; overload;
+    class function convertConceptMap(src : FHIRResources4.TFhirConceptMap) : FHIRResources3.TFhirConceptMap; overload;
+    class function convertConceptMapGroupComponent(src : FHIRResources3.TFhirConceptMapGroup) : FHIRResources4.TFhirConceptMapGroup; overload;
+    class function convertConceptMapGroupComponent(src : FHIRResources4.TFhirConceptMapGroup) : FHIRResources3.TFhirConceptMapGroup; overload;
+    class function convertSourceElementComponent(src : FHIRResources3.TFhirConceptMapGroupElement) : FHIRResources4.TFhirConceptMapGroupElement; overload;
+    class function convertSourceElementComponent(src : FHIRResources4.TFhirConceptMapGroupElement) : FHIRResources3.TFhirConceptMapGroupElement; overload;
+    class function convertTargetElementComponent(src : FHIRResources3.TFhirConceptMapGroupElementTarget) : FHIRResources4.TFhirConceptMapGroupElementTarget; overload;
+    class function convertTargetElementComponent(src : FHIRResources4.TFhirConceptMapGroupElementTarget) : FHIRResources3.TFhirConceptMapGroupElementTarget; overload;
+    class function convertOtherElementComponent(src : FHIRResources3.TFhirConceptMapGroupElementTargetDependsOn) : FHIRResources4.TFhirConceptMapGroupElementTargetDependsOn; overload;
+    class function convertOtherElementComponent(src : FHIRResources4.TFhirConceptMapGroupElementTargetDependsOn) : FHIRResources3.TFhirConceptMapGroupElementTargetDependsOn; overload;
+    class function convertConceptMapGroupUnmappedComponent(src : FHIRResources3.TFhirConceptMapGroupUnmapped) : FHIRResources4.TFhirConceptMapGroupUnmapped; overload;
+    class function convertConceptMapGroupUnmappedComponent(src : FHIRResources4.TFhirConceptMapGroupUnmapped) : FHIRResources3.TFhirConceptMapGroupUnmapped; overload;
+    class function convertCondition(src : FHIRResources3.TFhirCondition) : FHIRResources4.TFhirCondition; overload;
+    class function convertCondition(src : FHIRResources4.TFhirCondition) : FHIRResources3.TFhirCondition; overload;
+    class function convertConditionStageComponent(src : FHIRResources3.TFhirConditionStage) : FHIRResources4.TFhirConditionStage; overload;
+    class function convertConditionStageComponent(src : FHIRResources4.TFhirConditionStage) : FHIRResources3.TFhirConditionStage; overload;
+    class function convertConditionEvidenceComponent(src : FHIRResources3.TFhirConditionEvidence) : FHIRResources4.TFhirConditionEvidence; overload;
+    class function convertConditionEvidenceComponent(src : FHIRResources4.TFhirConditionEvidence) : FHIRResources3.TFhirConditionEvidence; overload;
+    class function convertConsent(src : FHIRResources3.TFhirConsent) : FHIRResources4.TFhirConsent; overload;
+    class function convertConsent(src : FHIRResources4.TFhirConsent) : FHIRResources3.TFhirConsent; overload;
+    class function convertConsentPolicyComponent(src : FHIRResources3.TFhirConsentPolicy) : FHIRResources4.TFhirConsentPolicy; overload;
+    class function convertConsentPolicyComponent(src : FHIRResources4.TFhirConsentPolicy) : FHIRResources3.TFhirConsentPolicy; overload;
+    class function convertDataElement(src : FHIRResources3.TFhirDataElement) : FHIRResources4.TFhirStructureDefinition; overload;
+    class function convertDataElementMappingComponent(src : FHIRResources3.TFhirDataElementMapping) : FHIRResources4.TFhirStructureDefinitionMapping; overload;
+    class function convertDetectedIssue(src : FHIRResources3.TFhirDetectedIssue) : FHIRResources4.TFhirDetectedIssue; overload;
+    class function convertDetectedIssue(src : FHIRResources4.TFhirDetectedIssue) : FHIRResources3.TFhirDetectedIssue; overload;
+    class function convertDetectedIssueMitigationComponent(src : FHIRResources3.TFhirDetectedIssueMitigation) : FHIRResources4.TFhirDetectedIssueMitigation; overload;
+    class function convertDetectedIssueMitigationComponent(src : FHIRResources4.TFhirDetectedIssueMitigation) : FHIRResources3.TFhirDetectedIssueMitigation; overload;
+    class function convertDevice(src : FHIRResources3.TFhirDevice) : FHIRResources4.TFhirDevice; overload;
+    class function convertDevice(src : FHIRResources4.TFhirDevice) : FHIRResources3.TFhirDevice; overload;
+    class function convertDeviceUdiComponent(src : FHIRResources3.TFhirDeviceUdi) : FHIRResources4.TFhirDeviceUdi; overload;
+    class function convertDeviceUdiComponent(src : FHIRResources4.TFhirDeviceUdi) : FHIRResources3.TFhirDeviceUdi; overload;
+    class function convertDeviceComponent(src : FHIRResources3.TFhirDeviceComponent) : FHIRResources4.TFhirDeviceComponent; overload;
+    class function convertDeviceComponent(src : FHIRResources4.TFhirDeviceComponent) : FHIRResources3.TFhirDeviceComponent; overload;
+    class function convertDeviceComponentProductionSpecificationComponent(src : FHIRResources3.TFhirDeviceComponentProductionSpecification) : FHIRResources4.TFhirDeviceComponentProductionSpecification; overload;
+    class function convertDeviceComponentProductionSpecificationComponent(src : FHIRResources4.TFhirDeviceComponentProductionSpecification) : FHIRResources3.TFhirDeviceComponentProductionSpecification; overload;
+    class function convertDeviceMetric(src : FHIRResources3.TFhirDeviceMetric) : FHIRResources4.TFhirDeviceMetric; overload;
+    class function convertDeviceMetric(src : FHIRResources4.TFhirDeviceMetric) : FHIRResources3.TFhirDeviceMetric; overload;
+    class function convertDeviceMetricCalibrationComponent(src : FHIRResources3.TFhirDeviceMetricCalibration) : FHIRResources4.TFhirDeviceMetricCalibration; overload;
+    class function convertDeviceMetricCalibrationComponent(src : FHIRResources4.TFhirDeviceMetricCalibration) : FHIRResources3.TFhirDeviceMetricCalibration; overload;
+    class function convertDeviceUseStatement(src : FHIRResources3.TFhirDeviceUseStatement) : FHIRResources4.TFhirDeviceUseStatement; overload;
+    class function convertDeviceUseStatement(src : FHIRResources4.TFhirDeviceUseStatement) : FHIRResources3.TFhirDeviceUseStatement; overload;
+    class function convertDiagnosticReport(src : FHIRResources3.TFhirDiagnosticReport) : FHIRResources4.TFhirDiagnosticReport; overload;
+    class function convertDiagnosticReport(src : FHIRResources4.TFhirDiagnosticReport) : FHIRResources3.TFhirDiagnosticReport; overload;
+    class function convertDiagnosticReportImageComponent(src : FHIRResources3.TFhirDiagnosticReportImage) : FHIRResources4.TFhirDiagnosticReportMedia; overload;
+    class function convertDiagnosticReportImageComponent(src : FHIRResources4.TFhirDiagnosticReportMedia) : FHIRResources3.TFhirDiagnosticReportImage; overload;
+    class function convertDocumentManifestRelatedComponent(src : FHIRResources3.TFhirDocumentManifestRelated) : FHIRResources4.TFhirDocumentManifestRelated; overload;
+    class function convertDocumentManifestRelatedComponent(src : FHIRResources4.TFhirDocumentManifestRelated) : FHIRResources3.TFhirDocumentManifestRelated; overload;
+    class function convertDocumentReference(src : FHIRResources3.TFhirDocumentReference) : FHIRResources4.TFhirDocumentReference; overload;
+    class function convertDocumentReference(src : FHIRResources4.TFhirDocumentReference) : FHIRResources3.TFhirDocumentReference; overload;
+    class function convertDocumentReferenceRelatesToComponent(src : FHIRResources3.TFhirDocumentReferenceRelatesTo) : FHIRResources4.TFhirDocumentReferenceRelatesTo; overload;
+    class function convertDocumentReferenceRelatesToComponent(src : FHIRResources4.TFhirDocumentReferenceRelatesTo) : FHIRResources3.TFhirDocumentReferenceRelatesTo; overload;
+    class function convertDocumentReferenceContentComponent(src : FHIRResources3.TFhirDocumentReferenceContent) : FHIRResources4.TFhirDocumentReferenceContent; overload;
+    class function convertDocumentReferenceContentComponent(src : FHIRResources4.TFhirDocumentReferenceContent) : FHIRResources3.TFhirDocumentReferenceContent; overload;
+    class function convertDocumentReferenceContextComponent(src : FHIRResources3.TFhirDocumentReferenceContext) : FHIRResources4.TFhirDocumentReferenceContext; overload;
+    class function convertDocumentReferenceContextComponent(src : FHIRResources4.TFhirDocumentReferenceContext) : FHIRResources3.TFhirDocumentReferenceContext; overload;
+    class function convertDocumentReferenceContextRelatedComponent(src : FHIRResources3.TFhirDocumentReferenceContextRelated) : FHIRResources4.TFhirDocumentReferenceContextRelated; overload;
+    class function convertDocumentReferenceContextRelatedComponent(src : FHIRResources4.TFhirDocumentReferenceContextRelated) : FHIRResources3.TFhirDocumentReferenceContextRelated; overload;
+    class function convertEncounter(src : FHIRResources3.TFhirEncounter) : FHIRResources4.TFhirEncounter; overload;
+    class function convertEncounter(src : FHIRResources4.TFhirEncounter) : FHIRResources3.TFhirEncounter; overload;
+    class function convertStatusHistoryComponent(src : FHIRResources3.TFhirEncounterStatusHistory) : FHIRResources4.TFhirEncounterStatusHistory; overload;
+    class function convertStatusHistoryComponent(src : FHIRResources4.TFhirEncounterStatusHistory) : FHIRResources3.TFhirEncounterStatusHistory; overload;
+    class function convertClassHistoryComponent(src : FHIRResources3.TFhirEncounterClassHistory) : FHIRResources4.TFhirEncounterClassHistory; overload;
+    class function convertClassHistoryComponent(src : FHIRResources4.TFhirEncounterClassHistory) : FHIRResources3.TFhirEncounterClassHistory; overload;
+    class function convertEncounterParticipantComponent(src : FHIRResources3.TFhirEncounterParticipant) : FHIRResources4.TFhirEncounterParticipant; overload;
+    class function convertEncounterParticipantComponent(src : FHIRResources4.TFhirEncounterParticipant) : FHIRResources3.TFhirEncounterParticipant; overload;
+    class function convertEncounterHospitalizationComponent(src : FHIRResources3.TFhirEncounterHospitalization) : FHIRResources4.TFhirEncounterHospitalization; overload;
+    class function convertEncounterHospitalizationComponent(src : FHIRResources4.TFhirEncounterHospitalization) : FHIRResources3.TFhirEncounterHospitalization; overload;
+    class function convertDiagnosisComponent(src : FHIRResources3.TFhirEncounterDiagnosis) : FHIRResources4.TFhirEncounterDiagnosis; overload;
+    class function convertDiagnosisComponent(src : FHIRResources4.TFhirEncounterDiagnosis) : FHIRResources3.TFhirEncounterDiagnosis; overload;
+    class function convertEncounterLocationComponent(src : FHIRResources3.TFhirEncounterLocation) : FHIRResources4.TFhirEncounterLocation; overload;
+    class function convertEncounterLocationComponent(src : FHIRResources4.TFhirEncounterLocation) : FHIRResources3.TFhirEncounterLocation; overload;
+    class function convertEndpoint(src : FHIRResources3.TFhirEndpoint) : FHIRResources4.TFhirEndpoint; overload;
+    class function convertEndpoint(src : FHIRResources4.TFhirEndpoint) : FHIRResources3.TFhirEndpoint; overload;
+    class function convertEpisodeOfCare(src : FHIRResources3.TFhirEpisodeOfCare) : FHIRResources4.TFhirEpisodeOfCare; overload;
+    class function convertEpisodeOfCare(src : FHIRResources4.TFhirEpisodeOfCare) : FHIRResources3.TFhirEpisodeOfCare; overload;
+    class function convertDiagnosisComponent(src : FHIRResources3.TFhirEpisodeOfCareDiagnosis) : FHIRResources4.TFhirEpisodeOfCareDiagnosis; overload;
+    class function convertDiagnosisComponent(src : FHIRResources4.TFhirEpisodeOfCareDiagnosis) : FHIRResources3.TFhirEpisodeOfCareDiagnosis; overload;
+    class function convertEpisodeOfCareStatusHistoryComponent(src : FHIRResources3.TFhirEpisodeOfCareStatusHistory) : FHIRResources4.TFhirEpisodeOfCareStatusHistory; overload;
+    class function convertEpisodeOfCareStatusHistoryComponent(src : FHIRResources4.TFhirEpisodeOfCareStatusHistory) : FHIRResources3.TFhirEpisodeOfCareStatusHistory; overload;
+    class function convertExpansionProfile(src : FHIRResources3.TFhirExpansionProfile) : FHIRResources4.TFhirExpansionProfile; overload;
+    class function convertExpansionProfile(src : FHIRResources4.TFhirExpansionProfile) : FHIRResources3.TFhirExpansionProfile; overload;
+    class function convertExpansionProfileFixedVersionComponent(src : FHIRResources3.TFhirExpansionProfileFixedVersion) : FHIRResources4.TFhirExpansionProfileFixedVersion; overload;
+    class function convertExpansionProfileFixedVersionComponent(src : FHIRResources4.TFhirExpansionProfileFixedVersion) : FHIRResources3.TFhirExpansionProfileFixedVersion; overload;
+    class function convertExpansionProfileExcludedSystemComponent(src : FHIRResources3.TFhirExpansionProfileExcludedSystem) : FHIRResources4.TFhirExpansionProfileExcludedSystem; overload;
+    class function convertExpansionProfileExcludedSystemComponent(src : FHIRResources4.TFhirExpansionProfileExcludedSystem) : FHIRResources3.TFhirExpansionProfileExcludedSystem; overload;
+    class function convertExpansionProfileDesignationComponent(src : FHIRResources3.TFhirExpansionProfileDesignation) : FHIRResources4.TFhirExpansionProfileDesignation; overload;
+    class function convertExpansionProfileDesignationComponent(src : FHIRResources4.TFhirExpansionProfileDesignation) : FHIRResources3.TFhirExpansionProfileDesignation; overload;
+    class function convertDesignationIncludeComponent(src : FHIRResources3.TFhirExpansionProfileDesignationInclude) : FHIRResources4.TFhirExpansionProfileDesignationInclude; overload;
+    class function convertDesignationIncludeComponent(src : FHIRResources4.TFhirExpansionProfileDesignationInclude) : FHIRResources3.TFhirExpansionProfileDesignationInclude; overload;
+    class function convertDesignationIncludeDesignationComponent(src : FHIRResources3.TFhirExpansionProfileDesignationIncludeDesignation) : FHIRResources4.TFhirExpansionProfileDesignationIncludeDesignation; overload;
+    class function convertDesignationIncludeDesignationComponent(src : FHIRResources4.TFhirExpansionProfileDesignationIncludeDesignation) : FHIRResources3.TFhirExpansionProfileDesignationIncludeDesignation; overload;
+    class function convertDesignationExcludeComponent(src : FHIRResources3.TFhirExpansionProfileDesignationExclude) : FHIRResources4.TFhirExpansionProfileDesignationExclude; overload;
+    class function convertDesignationExcludeComponent(src : FHIRResources4.TFhirExpansionProfileDesignationExclude) : FHIRResources3.TFhirExpansionProfileDesignationExclude; overload;
+    class function convertDesignationExcludeDesignationComponent(src : FHIRResources3.TFhirExpansionProfileDesignationExcludeDesignation) : FHIRResources4.TFhirExpansionProfileDesignationExcludeDesignation; overload;
+    class function convertDesignationExcludeDesignationComponent(src : FHIRResources4.TFhirExpansionProfileDesignationExcludeDesignation) : FHIRResources3.TFhirExpansionProfileDesignationExcludeDesignation; overload;
+    class function convertFamilyMemberHistory(src : FHIRResources3.TFhirFamilyMemberHistory) : FHIRResources4.TFhirFamilyMemberHistory; overload;
+    class function convertFamilyMemberHistory(src : FHIRResources4.TFhirFamilyMemberHistory) : FHIRResources3.TFhirFamilyMemberHistory; overload;
+    class function convertFamilyMemberHistoryConditionComponent(src : FHIRResources3.TFhirFamilyMemberHistoryCondition) : FHIRResources4.TFhirFamilyMemberHistoryCondition; overload;
+    class function convertFamilyMemberHistoryConditionComponent(src : FHIRResources4.TFhirFamilyMemberHistoryCondition) : FHIRResources3.TFhirFamilyMemberHistoryCondition; overload;
+    class function convertFlag(src : FHIRResources3.TFhirFlag) : FHIRResources4.TFhirFlag; overload;
+    class function convertFlag(src : FHIRResources4.TFhirFlag) : FHIRResources3.TFhirFlag; overload;
+    class function convertGoal(src : FHIRResources3.TFhirGoal) : FHIRResources4.TFhirGoal; overload;
+    class function convertGoal(src : FHIRResources4.TFhirGoal) : FHIRResources3.TFhirGoal; overload;
+    class function convertGoalTargetComponent(src : FHIRResources3.TFhirGoalTarget) : FHIRResources4.TFhirGoalTarget; overload;
+    class function convertGoalTargetComponent(src : FHIRResources4.TFhirGoalTarget) : FHIRResources3.TFhirGoalTarget; overload;
+    class function convertGraphDefinition(src : FHIRResources3.TFhirGraphDefinition) : FHIRResources4.TFhirGraphDefinition; overload;
+    class function convertGraphDefinition(src : FHIRResources4.TFhirGraphDefinition) : FHIRResources3.TFhirGraphDefinition; overload;
+    class function convertGraphDefinitionLinkComponent(src : FHIRResources3.TFhirGraphDefinitionLink) : FHIRResources4.TFhirGraphDefinitionLink; overload;
+    class function convertGraphDefinitionLinkComponent(src : FHIRResources4.TFhirGraphDefinitionLink) : FHIRResources3.TFhirGraphDefinitionLink; overload;
+    class function convertGraphDefinitionLinkTargetComponent(src : FHIRResources3.TFhirGraphDefinitionLinkTarget) : FHIRResources4.TFhirGraphDefinitionLinkTarget; overload;
+    class function convertGraphDefinitionLinkTargetComponent(src : FHIRResources4.TFhirGraphDefinitionLinkTarget) : FHIRResources3.TFhirGraphDefinitionLinkTarget; overload;
+    class function convertGraphDefinitionLinkTargetCompartmentComponent(src : FHIRResources3.TFhirGraphDefinitionLinkTargetCompartment) : FHIRResources4.TFhirGraphDefinitionLinkTargetCompartment; overload;
+    class function convertGraphDefinitionLinkTargetCompartmentComponent(src : FHIRResources4.TFhirGraphDefinitionLinkTargetCompartment) : FHIRResources3.TFhirGraphDefinitionLinkTargetCompartment; overload;
+    class function convertGroup(src : FHIRResources3.TFhirGroup) : FHIRResources4.TFhirGroup; overload;
+    class function convertGroup(src : FHIRResources4.TFhirGroup) : FHIRResources3.TFhirGroup; overload;
+    class function convertGroupCharacteristicComponent(src : FHIRResources3.TFhirGroupCharacteristic) : FHIRResources4.TFhirGroupCharacteristic; overload;
+    class function convertGroupCharacteristicComponent(src : FHIRResources4.TFhirGroupCharacteristic) : FHIRResources3.TFhirGroupCharacteristic; overload;
+    class function convertGroupMemberComponent(src : FHIRResources3.TFhirGroupMember) : FHIRResources4.TFhirGroupMember; overload;
+    class function convertGroupMemberComponent(src : FHIRResources4.TFhirGroupMember) : FHIRResources3.TFhirGroupMember; overload;
+    class function convertHealthcareService(src : FHIRResources3.TFhirHealthcareService) : FHIRResources4.TFhirHealthcareService; overload;
+    class function convertHealthcareService(src : FHIRResources4.TFhirHealthcareService) : FHIRResources3.TFhirHealthcareService; overload;
+    class function convertHealthcareServiceAvailableTimeComponent(src : FHIRResources3.TFhirHealthcareServiceAvailableTime) : FHIRResources4.TFhirHealthcareServiceAvailableTime; overload;
+    class function convertHealthcareServiceAvailableTimeComponent(src : FHIRResources4.TFhirHealthcareServiceAvailableTime) : FHIRResources3.TFhirHealthcareServiceAvailableTime; overload;
+    class function convertHealthcareServiceNotAvailableComponent(src : FHIRResources3.TFhirHealthcareServiceNotAvailable) : FHIRResources4.TFhirHealthcareServiceNotAvailable; overload;
+    class function convertHealthcareServiceNotAvailableComponent(src : FHIRResources4.TFhirHealthcareServiceNotAvailable) : FHIRResources3.TFhirHealthcareServiceNotAvailable; overload;
+    class function convertImmunization(src : FHIRResources3.TFhirImmunization) : FHIRResources4.TFhirImmunization; overload;
+    class function convertImmunization(src : FHIRResources4.TFhirImmunization) : FHIRResources3.TFhirImmunization; overload;
+    class function convertImmunizationPractitionerComponent(src : FHIRResources3.TFhirImmunizationPractitioner) : FHIRResources4.TFhirImmunizationPerformer; overload;
+    class function convertImmunizationPractitionerComponent(src : FHIRResources4.TFhirImmunizationPerformer) : FHIRResources3.TFhirImmunizationPractitioner; overload;
+    class function convertImplementationGuide(src : FHIRResources3.TFhirImplementationGuide) : FHIRResources4.TFhirImplementationGuide; overload;
+    class function convertImplementationGuide(src : FHIRResources4.TFhirImplementationGuide) : FHIRResources3.TFhirImplementationGuide; overload;
+    class function convertImplementationGuideDependencyComponent(src : FHIRResources3.TFhirImplementationGuideDependency) : FHIRResources4.TFhirImplementationGuideDependsOn; overload;
+    class function convertImplementationGuideDependencyComponent(src : FHIRResources4.TFhirImplementationGuideDependsOn) : FHIRResources3.TFhirImplementationGuideDependency; overload;
+    class function convertImplementationGuidePackageComponent(context : FHIRResources4.TFhirImplementationGuideDefinition; src : FHIRResources3.TFhirImplementationGuidePackage) : FHIRResources4.TFhirImplementationGuideDefinitionPackage; overload;
+    class function convertImplementationGuidePackageComponent(src : FHIRResources4.TFhirImplementationGuideDefinitionPackage) : FHIRResources3.TFhirImplementationGuidePackage; overload;
+    class function convertImplementationGuidePackageResourceComponent(src : FHIRResources3.TFhirImplementationGuidePackageResource) : FHIRResources4.TFhirImplementationGuideDefinitionResource; overload;
+    class function convertImplementationGuidePackageResourceComponent(src : FHIRResources4.TFhirImplementationGuideDefinitionResource) : FHIRResources3.TFhirImplementationGuidePackageResource; overload;
+    class function convertImplementationGuideGlobalComponent(src : FHIRResources3.TFhirImplementationGuideGlobal) : FHIRResources4.TFhirImplementationGuideGlobal; overload;
+    class function convertImplementationGuideGlobalComponent(src : FHIRResources4.TFhirImplementationGuideGlobal) : FHIRResources3.TFhirImplementationGuideGlobal; overload;
+    class function convertImplementationGuidePageComponent(src : FHIRResources3.TFhirImplementationGuidePage) : FHIRResources4.TFhirImplementationGuideDefinitionPage; overload;
+    class function convertImplementationGuidePageComponent(src : FHIRResources4.TFhirImplementationGuideDefinitionPage) : FHIRResources3.TFhirImplementationGuidePage; overload;
+    class function convertLinkage(src : FHIRResources3.TFhirLinkage) : FHIRResources4.TFhirLinkage; overload;
+    class function convertLinkage(src : FHIRResources4.TFhirLinkage) : FHIRResources3.TFhirLinkage; overload;
+    class function convertLinkageItemComponent(src : FHIRResources3.TFhirLinkageItem) : FHIRResources4.TFhirLinkageItem; overload;
+    class function convertLinkageItemComponent(src : FHIRResources4.TFhirLinkageItem) : FHIRResources3.TFhirLinkageItem; overload;
+    class function convertList(src : FHIRResources3.TFhirList) : FHIRResources4.TFhirList; overload;
+    class function convertList(src : FHIRResources4.TFhirList) : FHIRResources3.TFhirList; overload;
+    class function convertListEntryComponent(src : FHIRResources3.TFhirListEntry) : FHIRResources4.TFhirListEntry; overload;
+    class function convertListEntryComponent(src : FHIRResources4.TFhirListEntry) : FHIRResources3.TFhirListEntry; overload;
+    class function convertLocation(src : FHIRResources3.TFhirLocation) : FHIRResources4.TFhirLocation; overload;
+    class function convertLocation(src : FHIRResources4.TFhirLocation) : FHIRResources3.TFhirLocation; overload;
+    class function convertLocationPositionComponent(src : FHIRResources3.TFhirLocationPosition) : FHIRResources4.TFhirLocationPosition; overload;
+    class function convertLocationPositionComponent(src : FHIRResources4.TFhirLocationPosition) : FHIRResources3.TFhirLocationPosition; overload;
+    class function convertMedicationIngredientComponent(src : FHIRResources3.TFhirMedicationIngredient) : FHIRResources4.TFhirMedicationIngredient; overload;
+    class function convertMedicationIngredientComponent(src : FHIRResources4.TFhirMedicationIngredient) : FHIRResources3.TFhirMedicationIngredient; overload;
+    class function convertMedication(src : FHIRResources3.TFhirMedication) : FHIRResources4.TFhirMedication; overload;
+    class function convertMedication(src : FHIRResources4.TFhirMedication) : FHIRResources3.TFhirMedication; overload;
+    class function convertMedicationPackageBatchComponent(src : FHIRResources3.TFhirMedicationPackageBatch) : FHIRResources4.TFhirMedicationBatch; overload;
+    class function convertMedicationPackageBatchComponent(src : FHIRResources4.TFhirMedicationBatch) : FHIRResources3.TFhirMedicationPackageBatch; overload;
+    class function convertMedicationAdministration(src : FHIRResources3.TFhirMedicationAdministration) : FHIRResources4.TFhirMedicationAdministration; overload;
+    class function convertMedicationAdministration(src : FHIRResources4.TFhirMedicationAdministration) : FHIRResources3.TFhirMedicationAdministration; overload;
+    class function convertMedicationAdministrationPerformerComponent(src : FHIRResources3.TFhirMedicationAdministrationPerformer) : FHIRResources4.TFhirMedicationAdministrationPerformer; overload;
+    class function convertMedicationAdministrationPerformerComponent(src : FHIRResources4.TFhirMedicationAdministrationPerformer) : FHIRResources3.TFhirMedicationAdministrationPerformer; overload;
+    class function convertMedicationAdministrationDosageComponent(src : FHIRResources3.TFhirMedicationAdministrationDosage) : FHIRResources4.TFhirMedicationAdministrationDosage; overload;
+    class function convertMedicationAdministrationDosageComponent(src : FHIRResources4.TFhirMedicationAdministrationDosage) : FHIRResources3.TFhirMedicationAdministrationDosage; overload;
+    class function convertMedicationDispense(src : FHIRResources3.TFhirMedicationDispense) : FHIRResources4.TFhirMedicationDispense; overload;
+    class function convertMedicationDispense(src : FHIRResources4.TFhirMedicationDispense) : FHIRResources3.TFhirMedicationDispense; overload;
+    class function convertMedicationDispensePerformerComponent(src : FHIRResources3.TFhirMedicationDispensePerformer) : FHIRResources4.TFhirMedicationDispensePerformer; overload;
+    class function convertMedicationDispensePerformerComponent(src : FHIRResources4.TFhirMedicationDispensePerformer) : FHIRResources3.TFhirMedicationDispensePerformer; overload;
+    class function convertMedicationDispenseSubstitutionComponent(src : FHIRResources3.TFhirMedicationDispenseSubstitution) : FHIRResources4.TFhirMedicationDispenseSubstitution; overload;
+    class function convertMedicationDispenseSubstitutionComponent(src : FHIRResources4.TFhirMedicationDispenseSubstitution) : FHIRResources3.TFhirMedicationDispenseSubstitution; overload;
+    class function convertMedicationRequest(src : FHIRResources3.TFhirMedicationRequest) : FHIRResources4.TFhirMedicationRequest; overload;
+    class function convertMedicationRequest(src : FHIRResources4.TFhirMedicationRequest) : FHIRResources3.TFhirMedicationRequest; overload;
+    class function convertMedicationRequestDispenseRequestComponent(src : FHIRResources3.TFhirMedicationRequestDispenseRequest) : FHIRResources4.TFhirMedicationRequestDispenseRequest; overload;
+    class function convertMedicationRequestDispenseRequestComponent(src : FHIRResources4.TFhirMedicationRequestDispenseRequest) : FHIRResources3.TFhirMedicationRequestDispenseRequest; overload;
+    class function convertMedicationRequestSubstitutionComponent(src : FHIRResources3.TFhirMedicationRequestSubstitution) : FHIRResources4.TFhirMedicationRequestSubstitution; overload;
+    class function convertMedicationRequestSubstitutionComponent(src : FHIRResources4.TFhirMedicationRequestSubstitution) : FHIRResources3.TFhirMedicationRequestSubstitution; overload;
+    class function convertMedicationStatement(src : FHIRResources3.TFhirMedicationStatement) : FHIRResources4.TFhirMedicationStatement; overload;
+    class function convertMedicationStatement(src : FHIRResources4.TFhirMedicationStatement) : FHIRResources3.TFhirMedicationStatement; overload;
+    class function convertMessageDefinition(src : FHIRResources3.TFhirMessageDefinition) : FHIRResources4.TFhirMessageDefinition; overload;
+    class function convertCoding2Uri(code : FHIRTypes3.TFhirCoding) : String; overload;
+    class function convertMessageDefinition(src : FHIRResources4.TFhirMessageDefinition) : FHIRResources3.TFhirMessageDefinition; overload;
+    class function convertUri2Coding(uri : String) : FHIRTypes3.TFhirCoding; overload;
+    class function convertMessageDefinitionFocusComponent(src : FHIRResources3.TFhirMessageDefinitionFocus) : FHIRResources4.TFhirMessageDefinitionFocus; overload;
+    class function convertMessageDefinitionFocusComponent(src : FHIRResources4.TFhirMessageDefinitionFocus) : FHIRResources3.TFhirMessageDefinitionFocus; overload;
+    class function convertMessageDefinitionAllowedResponseComponent(src : FHIRResources3.TFhirMessageDefinitionAllowedResponse) : FHIRResources4.TFhirMessageDefinitionAllowedResponse; overload;
+    class function convertMessageDefinitionAllowedResponseComponent(src : FHIRResources4.TFhirMessageDefinitionAllowedResponse) : FHIRResources3.TFhirMessageDefinitionAllowedResponse; overload;
+    class function convertMessageHeader(src : FHIRResources3.TFhirMessageHeader) : FHIRResources4.TFhirMessageHeader; overload;
+    class function convertMessageHeader(src : FHIRResources4.TFhirMessageHeader) : FHIRResources3.TFhirMessageHeader; overload;
+    class function convertMessageDestinationComponent(src : FHIRResources3.TFhirMessageHeaderDestination) : FHIRResources4.TFhirMessageHeaderDestination; overload;
+    class function convertMessageDestinationComponent(src : FHIRResources4.TFhirMessageHeaderDestination) : FHIRResources3.TFhirMessageHeaderDestination; overload;
+    class function convertMessageSourceComponent(src : FHIRResources3.TFhirMessageHeaderSource) : FHIRResources4.TFhirMessageHeaderSource; overload;
+    class function convertMessageSourceComponent(src : FHIRResources4.TFhirMessageHeaderSource) : FHIRResources3.TFhirMessageHeaderSource; overload;
+    class function convertMessageHeaderResponseComponent(src : FHIRResources3.TFhirMessageHeaderResponse) : FHIRResources4.TFhirMessageHeaderResponse; overload;
+    class function convertMessageHeaderResponseComponent(src : FHIRResources4.TFhirMessageHeaderResponse) : FHIRResources3.TFhirMessageHeaderResponse; overload;
+    class function convertNamingSystem(src : FHIRResources3.TFhirNamingSystem) : FHIRResources4.TFhirNamingSystem; overload;
+    class function convertNamingSystem(src : FHIRResources4.TFhirNamingSystem) : FHIRResources3.TFhirNamingSystem; overload;
+    class function convertNamingSystemUniqueIdComponent(src : FHIRResources3.TFhirNamingSystemUniqueId) : FHIRResources4.TFhirNamingSystemUniqueId; overload;
+    class function convertNamingSystemUniqueIdComponent(src : FHIRResources4.TFhirNamingSystemUniqueId) : FHIRResources3.TFhirNamingSystemUniqueId; overload;
+    class function convertObservation(src : FHIRResources3.TFhirObservation) : FHIRResources4.TFhirObservation; overload;
+    class function convertObservation(src : FHIRResources4.TFhirObservation) : FHIRResources3.TFhirObservation; overload;
+    class function convertObservationReferenceRangeComponent(src : FHIRResources3.TFhirObservationReferenceRange) : FHIRResources4.TFhirObservationReferenceRange; overload;
+    class function convertObservationReferenceRangeComponent(src : FHIRResources4.TFhirObservationReferenceRange) : FHIRResources3.TFhirObservationReferenceRange; overload;
+    class function convertObservationRelatedComponent(src : FHIRTypes4.TFhirReference; type_ : FHIRTypes3.TFhirObservationRelationshiptypesEnum) : FHIRResources3.TFhirObservationRelated; overload;
+    class function convertObservationComponentComponent(src : FHIRResources3.TFhirObservationComponent) : FHIRResources4.TFhirObservationComponent; overload;
+    class function convertObservationComponentComponent(src : FHIRResources4.TFhirObservationComponent) : FHIRResources3.TFhirObservationComponent; overload;
+    class function convertOperationDefinition(src : FHIRResources3.TFhirOperationDefinition) : FHIRResources4.TFhirOperationDefinition; overload;
+    class function convertOperationDefinition(src : FHIRResources4.TFhirOperationDefinition) : FHIRResources3.TFhirOperationDefinition; overload;
+    class function convertOperationDefinitionParameterComponent(src : FHIRResources3.TFhirOperationDefinitionParameter) : FHIRResources4.TFhirOperationDefinitionParameter; overload;
+    class function convertOperationDefinitionParameterComponent(src : FHIRResources4.TFhirOperationDefinitionParameter) : FHIRResources3.TFhirOperationDefinitionParameter; overload;
+    class function convertOperationDefinitionParameterBindingComponent(src : FHIRResources3.TFhirOperationDefinitionParameterBinding) : FHIRResources4.TFhirOperationDefinitionParameterBinding; overload;
+    class function convertOperationDefinitionParameterBindingComponent(src : FHIRResources4.TFhirOperationDefinitionParameterBinding) : FHIRResources3.TFhirOperationDefinitionParameterBinding; overload;
+    class function convertOperationDefinitionOverloadComponent(src : FHIRResources3.TFhirOperationDefinitionOverload) : FHIRResources4.TFhirOperationDefinitionOverload; overload;
+    class function convertOperationDefinitionOverloadComponent(src : FHIRResources4.TFhirOperationDefinitionOverload) : FHIRResources3.TFhirOperationDefinitionOverload; overload;
+    class function convertOperationOutcome(src : FHIRResources3.TFhirOperationOutcome) : FHIRResources4.TFhirOperationOutcome; overload;
+    class function convertOperationOutcome(src : FHIRResources4.TFhirOperationOutcome) : FHIRResources3.TFhirOperationOutcome; overload;
+    class function convertOperationOutcomeIssueComponent(src : FHIRResources3.TFhirOperationOutcomeIssue) : FHIRResources4.TFhirOperationOutcomeIssue; overload;
+    class function convertOperationOutcomeIssueComponent(src : FHIRResources4.TFhirOperationOutcomeIssue) : FHIRResources3.TFhirOperationOutcomeIssue; overload;
+    class function convertOrganization(src : FHIRResources3.TFhirOrganization) : FHIRResources4.TFhirOrganization; overload;
+    class function convertOrganization(src : FHIRResources4.TFhirOrganization) : FHIRResources3.TFhirOrganization; overload;
+    class function convertOrganizationContactComponent(src : FHIRResources3.TFhirOrganizationContact) : FHIRResources4.TFhirOrganizationContact; overload;
+    class function convertOrganizationContactComponent(src : FHIRResources4.TFhirOrganizationContact) : FHIRResources3.TFhirOrganizationContact; overload;
+    class function convertPatient(src : FHIRResources3.TFhirPatient) : FHIRResources4.TFhirPatient; overload;
+    class function convertPatient(src : FHIRResources4.TFhirPatient) : FHIRResources3.TFhirPatient; overload;
+    class function convertContactComponent(src : FHIRResources3.TFhirPatientContact) : FHIRResources4.TFhirPatientContact; overload;
+    class function convertContactComponent(src : FHIRResources4.TFhirPatientContact) : FHIRResources3.TFhirPatientContact; overload;
+    class function convertAnimalComponent(src : FHIRResources3.TFhirPatientAnimal) : FHIRTypes4.TFhirExtension; overload;
+    class function convertAnimalComponent(src : FHIRTypes4.TFhirExtension) : FHIRResources3.TFhirPatientAnimal; overload;
+    class function convertPatientCommunicationComponent(src : FHIRResources3.TFhirPatientCommunication) : FHIRResources4.TFhirPatientCommunication; overload;
+    class function convertPatientCommunicationComponent(src : FHIRResources4.TFhirPatientCommunication) : FHIRResources3.TFhirPatientCommunication; overload;
+    class function convertPatientLinkComponent(src : FHIRResources3.TFhirPatientLink) : FHIRResources4.TFhirPatientLink; overload;
+    class function convertPatientLinkComponent(src : FHIRResources4.TFhirPatientLink) : FHIRResources3.TFhirPatientLink; overload;
+    class function convertPaymentNotice(src : FHIRResources3.TFhirPaymentNotice) : FHIRResources4.TFhirPaymentNotice; overload;
+    class function convertPaymentNotice(src : FHIRResources4.TFhirPaymentNotice) : FHIRResources3.TFhirPaymentNotice; overload;
+    class function convertPerson(src : FHIRResources3.TFhirPerson) : FHIRResources4.TFhirPerson; overload;
+    class function convertPerson(src : FHIRResources4.TFhirPerson) : FHIRResources3.TFhirPerson; overload;
+    class function convertPersonLinkComponent(src : FHIRResources3.TFhirPersonLink) : FHIRResources4.TFhirPersonLink; overload;
+    class function convertPersonLinkComponent(src : FHIRResources4.TFhirPersonLink) : FHIRResources3.TFhirPersonLink; overload;
+    class function convertPractitioner(src : FHIRResources3.TFhirPractitioner) : FHIRResources4.TFhirPractitioner; overload;
+    class function convertPractitioner(src : FHIRResources4.TFhirPractitioner) : FHIRResources3.TFhirPractitioner; overload;
+    class function convertPractitionerQualificationComponent(src : FHIRResources3.TFhirPractitionerQualification) : FHIRResources4.TFhirPractitionerQualification; overload;
+    class function convertPractitionerQualificationComponent(src : FHIRResources4.TFhirPractitionerQualification) : FHIRResources3.TFhirPractitionerQualification; overload;
+    class function convertPractitionerRole(src : FHIRResources3.TFhirPractitionerRole) : FHIRResources4.TFhirPractitionerRole; overload;
+    class function convertPractitionerRole(src : FHIRResources4.TFhirPractitionerRole) : FHIRResources3.TFhirPractitionerRole; overload;
+    class function convertPractitionerRoleAvailableTimeComponent(src : FHIRResources3.TFhirPractitionerRoleAvailableTime) : FHIRResources4.TFhirPractitionerRoleAvailableTime; overload;
+    class function convertPractitionerRoleAvailableTimeComponent(src : FHIRResources4.TFhirPractitionerRoleAvailableTime) : FHIRResources3.TFhirPractitionerRoleAvailableTime; overload;
+    class function convertPractitionerRoleNotAvailableComponent(src : FHIRResources3.TFhirPractitionerRoleNotAvailable) : FHIRResources4.TFhirPractitionerRoleNotAvailable; overload;
+    class function convertPractitionerRoleNotAvailableComponent(src : FHIRResources4.TFhirPractitionerRoleNotAvailable) : FHIRResources3.TFhirPractitionerRoleNotAvailable; overload;
+    class function convertProvenance(src : FHIRResources3.TFhirProvenance) : FHIRResources4.TFhirProvenance; overload;
+    class function convertProvenance(src : FHIRResources4.TFhirProvenance) : FHIRResources3.TFhirProvenance; overload;
+    class function convertProvenanceAgentComponent(src : FHIRResources3.TFhirProvenanceAgent) : FHIRResources4.TFhirProvenanceAgent; overload;
+    class function convertProvenanceAgentComponent(src : FHIRResources4.TFhirProvenanceAgent) : FHIRResources3.TFhirProvenanceAgent; overload;
+    class function convertProvenanceEntityComponent(src : FHIRResources3.TFhirProvenanceEntity) : FHIRResources4.TFhirProvenanceEntity; overload;
+    class function convertProvenanceEntityComponent(src : FHIRResources4.TFhirProvenanceEntity) : FHIRResources3.TFhirProvenanceEntity; overload;
+    class function convertQuestionnaire(src : FHIRResources3.TFhirQuestionnaire) : FHIRResources4.TFhirQuestionnaire; overload;
+    class function convertQuestionnaire(src : FHIRResources4.TFhirQuestionnaire) : FHIRResources3.TFhirQuestionnaire; overload;
+    class function convertQuestionnaireItemComponent(src : FHIRResources3.TFhirQuestionnaireItem) : FHIRResources4.TFhirQuestionnaireItem; overload;
+    class function convertQuestionnaireItemComponent(src : FHIRResources4.TFhirQuestionnaireItem) : FHIRResources3.TFhirQuestionnaireItem; overload;
+    class function convertQuestionnaireItemEnableWhenComponent(src : FHIRResources3.TFhirQuestionnaireItemEnableWhen) : FHIRResources4.TFhirQuestionnaireItemEnableWhen; overload;
+    class function convertQuestionnaireItemEnableWhenComponent(src : FHIRResources4.TFhirQuestionnaireItemEnableWhen) : FHIRResources3.TFhirQuestionnaireItemEnableWhen; overload;
+    class function convertQuestionnaireItemOptionComponent(src : FHIRResources3.TFhirQuestionnaireItemOption) : FHIRResources4.TFhirQuestionnaireItemOption; overload;
+    class function convertQuestionnaireItemOptionComponent(src : FHIRResources4.TFhirQuestionnaireItemOption) : FHIRResources3.TFhirQuestionnaireItemOption; overload;
+    class function convertQuestionnaireResponse(src : FHIRResources3.TFhirQuestionnaireResponse) : FHIRResources4.TFhirQuestionnaireResponse; overload;
+    class function convertQuestionnaireResponse(src : FHIRResources4.TFhirQuestionnaireResponse) : FHIRResources3.TFhirQuestionnaireResponse; overload;
+    class function convertQuestionnaireResponseItemComponent(src : FHIRResources3.TFhirQuestionnaireResponseItem) : FHIRResources4.TFhirQuestionnaireResponseItem; overload;
+    class function convertQuestionnaireResponseItemComponent(src : FHIRResources4.TFhirQuestionnaireResponseItem) : FHIRResources3.TFhirQuestionnaireResponseItem; overload;
+    class function convertQuestionnaireResponseItemAnswerComponent(src : FHIRResources3.TFhirQuestionnaireResponseItemAnswer) : FHIRResources4.TFhirQuestionnaireResponseItemAnswer; overload;
+    class function convertQuestionnaireResponseItemAnswerComponent(src : FHIRResources4.TFhirQuestionnaireResponseItemAnswer) : FHIRResources3.TFhirQuestionnaireResponseItemAnswer; overload;
+    class function convertRiskAssessment(src : FHIRResources3.TFhirRiskAssessment) : FHIRResources4.TFhirRiskAssessment; overload;
+    class function convertRiskAssessment(src : FHIRResources4.TFhirRiskAssessment) : FHIRResources3.TFhirRiskAssessment; overload;
+    class function convertRiskAssessmentPredictionComponent(src : FHIRResources3.TFhirRiskAssessmentPrediction) : FHIRResources4.TFhirRiskAssessmentPrediction; overload;
+    class function convertRiskAssessmentPredictionComponent(src : FHIRResources4.TFhirRiskAssessmentPrediction) : FHIRResources3.TFhirRiskAssessmentPrediction; overload;
+    class function convertSchedule(src : FHIRResources3.TFhirSchedule) : FHIRResources4.TFhirSchedule; overload;
+    class function convertSchedule(src : FHIRResources4.TFhirSchedule) : FHIRResources3.TFhirSchedule; overload;
+    class function convertSearchParameter(src : FHIRResources3.TFhirSearchParameter) : FHIRResources4.TFhirSearchParameter; overload;
+    class function convertSearchParameter(src : FHIRResources4.TFhirSearchParameter) : FHIRResources3.TFhirSearchParameter; overload;
+    class function convertSearchParameterComponentComponent(src : FHIRResources3.TFhirSearchParameterComponent) : FHIRResources4.TFhirSearchParameterComponent; overload;
+    class function convertSearchParameterComponentComponent(src : FHIRResources4.TFhirSearchParameterComponent) : FHIRResources3.TFhirSearchParameterComponent; overload;
+    class function convertSequence(src : FHIRResources3.TFhirSequence) : FHIRResources4.TFhirSequence; overload;
+    class function convertSequence(src : FHIRResources4.TFhirSequence) : FHIRResources3.TFhirSequence; overload;
+    class function convertSequenceReferenceSeqComponent(src : FHIRResources3.TFhirSequenceReferenceSeq) : FHIRResources4.TFhirSequenceReferenceSeq; overload;
+    class function convertSequenceReferenceSeqComponent(src : FHIRResources4.TFhirSequenceReferenceSeq) : FHIRResources3.TFhirSequenceReferenceSeq; overload;
+    class function convertSequenceVariantComponent(src : FHIRResources3.TFhirSequenceVariant) : FHIRResources4.TFhirSequenceVariant; overload;
+    class function convertSequenceVariantComponent(src : FHIRResources4.TFhirSequenceVariant) : FHIRResources3.TFhirSequenceVariant; overload;
+    class function convertSequenceQualityComponent(src : FHIRResources3.TFhirSequenceQuality) : FHIRResources4.TFhirSequenceQuality; overload;
+    class function convertSequenceQualityComponent(src : FHIRResources4.TFhirSequenceQuality) : FHIRResources3.TFhirSequenceQuality; overload;
+    class function convertSequenceRepositoryComponent(src : FHIRResources3.TFhirSequenceRepository) : FHIRResources4.TFhirSequenceRepository; overload;
+    class function convertSequenceRepositoryComponent(src : FHIRResources4.TFhirSequenceRepository) : FHIRResources3.TFhirSequenceRepository; overload;
+    class function convertSlot(src : FHIRResources3.TFhirSlot) : FHIRResources4.TFhirSlot; overload;
+    class function convertSlot(src : FHIRResources4.TFhirSlot) : FHIRResources3.TFhirSlot; overload;
+    class function convertSpecimen(src : FHIRResources3.TFhirSpecimen) : FHIRResources4.TFhirSpecimen; overload;
+    class function convertSpecimen(src : FHIRResources4.TFhirSpecimen) : FHIRResources3.TFhirSpecimen; overload;
+    class function convertSpecimenCollectionComponent(src : FHIRResources3.TFhirSpecimenCollection) : FHIRResources4.TFhirSpecimenCollection; overload;
+    class function convertSpecimenCollectionComponent(src : FHIRResources4.TFhirSpecimenCollection) : FHIRResources3.TFhirSpecimenCollection; overload;
+    class function convertSpecimenProcessingComponent(src : FHIRResources3.TFhirSpecimenProcessing) : FHIRResources4.TFhirSpecimenProcessing; overload;
+    class function convertSpecimenProcessingComponent(src : FHIRResources4.TFhirSpecimenProcessing) : FHIRResources3.TFhirSpecimenProcessing; overload;
+    class function convertSpecimenContainerComponent(src : FHIRResources3.TFhirSpecimenContainer) : FHIRResources4.TFhirSpecimenContainer; overload;
+    class function convertSpecimenContainerComponent(src : FHIRResources4.TFhirSpecimenContainer) : FHIRResources3.TFhirSpecimenContainer; overload;
+    class function convertStructureDefinition(src : FHIRResources3.TFhirStructureDefinition) : FHIRResources4.TFhirStructureDefinition; overload;
+    class function convertStructureDefinition(src : FHIRResources4.TFhirStructureDefinition) : FHIRResources3.TFhirStructureDefinition; overload;
+    class function convertStructureDefinitionMappingComponent(src : FHIRResources3.TFhirStructureDefinitionMapping) : FHIRResources4.TFhirStructureDefinitionMapping; overload;
+    class function convertStructureDefinitionMappingComponent(src : FHIRResources4.TFhirStructureDefinitionMapping) : FHIRResources3.TFhirStructureDefinitionMapping; overload;
+    class function convertStructureDefinitionSnapshotComponent(src : FHIRResources3.TFhirStructureDefinitionSnapshot) : FHIRResources4.TFhirStructureDefinitionSnapshot; overload;
+    class function convertStructureDefinitionSnapshotComponent(src : FHIRResources4.TFhirStructureDefinitionSnapshot) : FHIRResources3.TFhirStructureDefinitionSnapshot; overload;
+    class function convertStructureDefinitionDifferentialComponent(src : FHIRResources3.TFhirStructureDefinitionDifferential) : FHIRResources4.TFhirStructureDefinitionDifferential; overload;
+    class function convertStructureDefinitionDifferentialComponent(src : FHIRResources4.TFhirStructureDefinitionDifferential) : FHIRResources3.TFhirStructureDefinitionDifferential; overload;
+    class function convertStructureMap(src : FHIRResources3.TFhirStructureMap) : FHIRResources4.TFhirStructureMap; overload;
+    class function convertStructureMap(src : FHIRResources4.TFhirStructureMap) : FHIRResources3.TFhirStructureMap; overload;
+    class function convertStructureMapStructureComponent(src : FHIRResources3.TFhirStructureMapStructure) : FHIRResources4.TFhirStructureMapStructure; overload;
+    class function convertStructureMapStructureComponent(src : FHIRResources4.TFhirStructureMapStructure) : FHIRResources3.TFhirStructureMapStructure; overload;
+    class function convertStructureMapGroupComponent(src : FHIRResources3.TFhirStructureMapGroup) : FHIRResources4.TFhirStructureMapGroup; overload;
+    class function convertStructureMapGroupComponent(src : FHIRResources4.TFhirStructureMapGroup) : FHIRResources3.TFhirStructureMapGroup; overload;
+    class function convertStructureMapGroupInputComponent(src : FHIRResources3.TFhirStructureMapGroupInput) : FHIRResources4.TFhirStructureMapGroupInput; overload;
+    class function convertStructureMapGroupInputComponent(src : FHIRResources4.TFhirStructureMapGroupInput) : FHIRResources3.TFhirStructureMapGroupInput; overload;
+    class function convertStructureMapGroupRuleComponent(src : FHIRResources3.TFhirStructureMapGroupRule) : FHIRResources4.TFhirStructureMapGroupRule; overload;
+    class function convertStructureMapGroupRuleComponent(src : FHIRResources4.TFhirStructureMapGroupRule) : FHIRResources3.TFhirStructureMapGroupRule; overload;
+    class function convertStructureMapGroupRuleSourceComponent(src : FHIRResources3.TFhirStructureMapGroupRuleSource) : FHIRResources4.TFhirStructureMapGroupRuleSource; overload;
+    class function convertStructureMapGroupRuleSourceComponent(src : FHIRResources4.TFhirStructureMapGroupRuleSource) : FHIRResources3.TFhirStructureMapGroupRuleSource; overload;
+    class function convertStructureMapGroupRuleTargetComponent(src : FHIRResources3.TFhirStructureMapGroupRuleTarget) : FHIRResources4.TFhirStructureMapGroupRuleTarget; overload;
+    class function convertStructureMapGroupRuleTargetComponent(src : FHIRResources4.TFhirStructureMapGroupRuleTarget) : FHIRResources3.TFhirStructureMapGroupRuleTarget; overload;
+    class function convertStructureMapGroupRuleTargetParameterComponent(src : FHIRResources3.TFhirStructureMapGroupRuleTargetParameter) : FHIRResources4.TFhirStructureMapGroupRuleTargetParameter; overload;
+    class function convertStructureMapGroupRuleTargetParameterComponent(src : FHIRResources4.TFhirStructureMapGroupRuleTargetParameter) : FHIRResources3.TFhirStructureMapGroupRuleTargetParameter; overload;
+    class function convertStructureMapGroupRuleDependentComponent(src : FHIRResources3.TFhirStructureMapGroupRuleDependent) : FHIRResources4.TFhirStructureMapGroupRuleDependent; overload;
+    class function convertStructureMapGroupRuleDependentComponent(src : FHIRResources4.TFhirStructureMapGroupRuleDependent) : FHIRResources3.TFhirStructureMapGroupRuleDependent; overload;
+    class function convertSubscription(src : FHIRResources3.TFhirSubscription) : FHIRResources4.TFhirSubscription; overload;
+    class function convertSubscription(src : FHIRResources4.TFhirSubscription) : FHIRResources3.TFhirSubscription; overload;
+    class function convertSubscriptionChannelComponent(src : FHIRResources3.TFhirSubscriptionChannel) : FHIRResources4.TFhirSubscriptionChannel; overload;
+    class function convertSubscriptionChannelComponent(src : FHIRResources4.TFhirSubscriptionChannel) : FHIRResources3.TFhirSubscriptionChannel; overload;
+    class function convertSubstance(src : FHIRResources3.TFhirSubstance) : FHIRResources4.TFhirSubstance; overload;
+    class function convertSubstance(src : FHIRResources4.TFhirSubstance) : FHIRResources3.TFhirSubstance; overload;
+    class function convertSubstanceInstanceComponent(src : FHIRResources3.TFhirSubstanceInstance) : FHIRResources4.TFhirSubstanceInstance; overload;
+    class function convertSubstanceInstanceComponent(src : FHIRResources4.TFhirSubstanceInstance) : FHIRResources3.TFhirSubstanceInstance; overload;
+    class function convertSubstanceIngredientComponent(src : FHIRResources3.TFhirSubstanceIngredient) : FHIRResources4.TFhirSubstanceIngredient; overload;
+    class function convertSubstanceIngredientComponent(src : FHIRResources4.TFhirSubstanceIngredient) : FHIRResources3.TFhirSubstanceIngredient; overload;
+    class function convertSupplyDelivery(src : FHIRResources3.TFhirSupplyDelivery) : FHIRResources4.TFhirSupplyDelivery; overload;
+    class function convertSupplyDelivery(src : FHIRResources4.TFhirSupplyDelivery) : FHIRResources3.TFhirSupplyDelivery; overload;
+    class function convertSupplyDeliverySuppliedItemComponent(src : FHIRResources3.TFhirSupplyDeliverySuppliedItem) : FHIRResources4.TFhirSupplyDeliverySuppliedItem; overload;
+    class function convertSupplyDeliverySuppliedItemComponent(src : FHIRResources4.TFhirSupplyDeliverySuppliedItem) : FHIRResources3.TFhirSupplyDeliverySuppliedItem; overload;
+    class function convertValueSet(src : FHIRResources3.TFhirValueSet) : FHIRResources4.TFhirValueSet; overload;
+    class function convertValueSet(src : FHIRResources4.TFhirValueSet) : FHIRResources3.TFhirValueSet; overload;
+    class function convertValueSetComposeComponent(src : FHIRResources3.TFhirValueSetCompose) : FHIRResources4.TFhirValueSetCompose; overload;
+    class function convertValueSetComposeComponent(src : FHIRResources4.TFhirValueSetCompose) : FHIRResources3.TFhirValueSetCompose; overload;
+    class function convertConceptSetComponent(src : FHIRResources3.TFhirValueSetComposeInclude) : FHIRResources4.TFhirValueSetComposeInclude; overload;
+    class function convertConceptSetComponent(src : FHIRResources4.TFhirValueSetComposeInclude) : FHIRResources3.TFhirValueSetComposeInclude; overload;
+    class function convertConceptReferenceComponent(src : FHIRResources3.TFhirValueSetComposeIncludeConcept) : FHIRResources4.TFhirValueSetComposeIncludeConcept; overload;
+    class function convertConceptReferenceComponent(src : FHIRResources4.TFhirValueSetComposeIncludeConcept) : FHIRResources3.TFhirValueSetComposeIncludeConcept; overload;
+    class function convertConceptReferenceDesignationComponent(src : FHIRResources3.TFhirValueSetComposeIncludeConceptDesignation) : FHIRResources4.TFhirValueSetComposeIncludeConceptDesignation; overload;
+    class function convertConceptReferenceDesignationComponent(src : FHIRResources4.TFhirValueSetComposeIncludeConceptDesignation) : FHIRResources3.TFhirValueSetComposeIncludeConceptDesignation; overload;
+    class function convertConceptSetFilterComponent(src : FHIRResources3.TFhirValueSetComposeIncludeFilter) : FHIRResources4.TFhirValueSetComposeIncludeFilter; overload;
+    class function convertConceptSetFilterComponent(src : FHIRResources4.TFhirValueSetComposeIncludeFilter) : FHIRResources3.TFhirValueSetComposeIncludeFilter; overload;
+    class function convertValueSetExpansionComponent(src : FHIRResources3.TFhirValueSetExpansion) : FHIRResources4.TFhirValueSetExpansion; overload;
+    class function convertValueSetExpansionComponent(src : FHIRResources4.TFhirValueSetExpansion) : FHIRResources3.TFhirValueSetExpansion; overload;
+    class function convertValueSetExpansionParameterComponent(src : FHIRResources3.TFhirValueSetExpansionParameter) : FHIRResources4.TFhirValueSetExpansionParameter; overload;
+    class function convertValueSetExpansionParameterComponent(src : FHIRResources4.TFhirValueSetExpansionParameter) : FHIRResources3.TFhirValueSetExpansionParameter; overload;
+    class function convertValueSetExpansionContainsComponent(src : FHIRResources3.TFhirValueSetExpansionContains) : FHIRResources4.TFhirValueSetExpansionContains; overload;
+    class function convertValueSetExpansionContainsComponent(src : FHIRResources4.TFhirValueSetExpansionContains) : FHIRResources3.TFhirValueSetExpansionContains; overload;
+    class function convertPlanDefinition(src : FHIRResources3.TFhirPlanDefinition) : FHIRResources4.TFhirPlanDefinition; overload;
+    class function convertPlanDefinition(src : FHIRResources4.TFhirPlanDefinition) : FHIRResources3.TFhirPlanDefinition; overload;
+    class function convertPlanDefinitionGoalComponent(src : FHIRResources3.TFhirPlanDefinitionGoal) : FHIRResources4.TFhirPlanDefinitionGoal; overload;
+    class function convertPlanDefinitionGoalComponent(src : FHIRResources4.TFhirPlanDefinitionGoal) : FHIRResources3.TFhirPlanDefinitionGoal; overload;
+    class function convertPlanDefinitionGoalTargetComponent(src : FHIRResources3.TFhirPlanDefinitionGoalTarget) : FHIRResources4.TFhirPlanDefinitionGoalTarget; overload;
+    class function convertPlanDefinitionGoalTargetComponent(src : FHIRResources4.TFhirPlanDefinitionGoalTarget) : FHIRResources3.TFhirPlanDefinitionGoalTarget; overload;
+    class function convertPlanDefinitionActionComponent(src : FHIRResources3.TFhirPlanDefinitionAction) : FHIRResources4.TFhirPlanDefinitionAction; overload;
+    class function convertPlanDefinitionActionComponent(src : FHIRResources4.TFhirPlanDefinitionAction) : FHIRResources3.TFhirPlanDefinitionAction; overload;
+    class function convertPlanDefinitionActionConditionComponent(src : FHIRResources3.TFhirPlanDefinitionActionCondition) : FHIRResources4.TFhirPlanDefinitionActionCondition; overload;
+    class function convertPlanDefinitionActionConditionComponent(src : FHIRResources4.TFhirPlanDefinitionActionCondition) : FHIRResources3.TFhirPlanDefinitionActionCondition; overload;
+    class function convertPlanDefinitionActionRelatedActionComponent(src : FHIRResources3.TFhirPlanDefinitionActionRelatedAction) : FHIRResources4.TFhirPlanDefinitionActionRelatedAction; overload;
+    class function convertPlanDefinitionActionRelatedActionComponent(src : FHIRResources4.TFhirPlanDefinitionActionRelatedAction) : FHIRResources3.TFhirPlanDefinitionActionRelatedAction; overload;
+    class function convertPlanDefinitionActionParticipantComponent(src : FHIRResources3.TFhirPlanDefinitionActionParticipant) : FHIRResources4.TFhirPlanDefinitionActionParticipant; overload;
+    class function convertPlanDefinitionActionParticipantComponent(src : FHIRResources4.TFhirPlanDefinitionActionParticipant) : FHIRResources3.TFhirPlanDefinitionActionParticipant; overload;
+    class function convertPlanDefinitionActionDynamicValueComponent(src : FHIRResources3.TFhirPlanDefinitionActionDynamicValue) : FHIRResources4.TFhirPlanDefinitionActionDynamicValue; overload;
+    class function convertPlanDefinitionActionDynamicValueComponent(src : FHIRResources4.TFhirPlanDefinitionActionDynamicValue) : FHIRResources3.TFhirPlanDefinitionActionDynamicValue; overload;
+    class function convertResource(src : FHIRResources3.TFhirResource) : FHIRResources4.TFhirResource; overload;
+    class function convertResource(src : FHIRResources4.TFhirResource) : FHIRResources3.TFhirResource; overload;
   end;
 
 implementation
@@ -4139,6 +4157,32 @@ begin
   end;
 end;
 
+class function TVersionConvertor_30_40.convertProvenanceEntityRole(src : FHIRTypes4.TFhirProvenanceEntityRoleEnum) : FHIRTypes3.TFhirProvenanceEntityRoleEnum;
+begin
+  case (src) of
+    FHIRTypes4.ProvenanceEntityRoleDerivation: exit(FHIRTypes3.ProvenanceEntityRoleDerivation);
+    FHIRTypes4.ProvenanceEntityRoleRevision: exit(FHIRTypes3.ProvenanceEntityRoleRevision);
+    FHIRTypes4.ProvenanceEntityRoleQuotation: exit(FHIRTypes3.ProvenanceEntityRoleQuotation);
+    FHIRTypes4.ProvenanceEntityRoleSource: exit(FHIRTypes3.ProvenanceEntityRoleSource);
+    FHIRTypes4.ProvenanceEntityRoleRemoval: exit(FHIRTypes3.ProvenanceEntityRoleRemoval);
+    else exit(FHIRTypes3.ProvenanceEntityRoleNull);
+  end;
+end;
+
+
+class function TVersionConvertor_30_40.convertProvenanceEntityRole(src : FHIRTypes3.TFhirProvenanceEntityRoleEnum) : FHIRTypes4.TFhirProvenanceEntityRoleEnum;
+begin
+  case (src) of
+    FHIRTypes3.ProvenanceEntityRoleDerivation: exit(FHIRTypes4.ProvenanceEntityRoleDerivation);
+    FHIRTypes3.ProvenanceEntityRoleRevision: exit(FHIRTypes4.ProvenanceEntityRoleRevision);
+    FHIRTypes3.ProvenanceEntityRoleQuotation: exit(FHIRTypes4.ProvenanceEntityRoleQuotation);
+    FHIRTypes3.ProvenanceEntityRoleSource: exit(FHIRTypes4.ProvenanceEntityRoleSource);
+    FHIRTypes3.ProvenanceEntityRoleRemoval: exit(FHIRTypes4.ProvenanceEntityRoleRemoval);
+    else exit(FHIRTypes4.ProvenanceEntityRoleNull);
+  end;
+end;
+
+
 class function TVersionConvertor_30_40.convertResponseType(src : FHIRTypes4.TFhirResponseCodeEnum) : FHIRTypes3.TFhirResponseCodeEnum;
 begin
   case (src) of
@@ -5209,8 +5253,12 @@ var
   tgt : FHIRTypes4.TFhirBase64Binary;
 begin
   tgt := FHIRTypes4.TFhirBase64Binary.Create(src.value);
+  try
   copyElement(src, tgt);
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertBase64Binary(src : FHIRTypes4.TFhirBase64Binary) : FHIRTypes3.TFhirBase64Binary;
@@ -5218,8 +5266,12 @@ var
   tgt : FHIRTypes3.TFhirBase64Binary;
 begin
   tgt := FHIRTypes3.TFhirBase64Binary.Create(src.value);
+  try
   copyElement(src, tgt);
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertBoolean(src : FHIRTypes3.TFhirBoolean) : FHIRTypes4.TFhirBoolean;
@@ -5227,8 +5279,12 @@ var
   tgt : FHIRTypes4.TFhirBoolean;
 begin
   tgt := FHIRTypes4.TFhirBoolean.Create(src.value);
+  try
   copyElement(src, tgt);
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertBoolean(src : FHIRTypes4.TFhirBoolean) : FHIRTypes3.TFhirBoolean;
@@ -5236,8 +5292,12 @@ var
   tgt : FHIRTypes3.TFhirBoolean;
 begin
   tgt := FHIRTypes3.TFhirBoolean.Create(src.value);
+  try
   copyElement(src, tgt);
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertCode(src : FHIRTypes3.TFhirCode) : FHIRTypes4.TFhirCode;
@@ -5245,8 +5305,12 @@ var
   tgt : FHIRTypes4.TFhirCode;
 begin
   tgt := FHIRTypes4.TFhirCode.Create(src.value);
+  try
   copyElement(src, tgt);
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertCode(src : FHIRTypes4.TFhirCode) : FHIRTypes3.TFhirCode;
@@ -5254,8 +5318,38 @@ var
   tgt : FHIRTypes3.TFhirCode;
 begin
   tgt := FHIRTypes3.TFhirCode.Create(src.value);
+  try
   copyElement(src, tgt);
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
+end;
+
+class function TVersionConvertor_30_40.convertCode(src : FHIRTypes3.TFhirEnum) : FHIRTypes4.TFhirEnum;
+var
+  tgt : FHIRTypes4.TFhirEnum;
+begin
+  tgt := FHIRTypes4.TFhirEnum.Create(src.system, src.value);
+  try
+  copyElement(src, tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
+end;
+
+class function TVersionConvertor_30_40.convertCode(src : FHIRTypes4.TFhirEnum) : FHIRTypes3.TFhirEnum;
+var
+  tgt : FHIRTypes3.TFhirEnum;
+begin
+  tgt := FHIRTypes3.TFhirEnum.Create(src.system, src.value);
+  try
+  copyElement(src, tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertDate(src : FHIRTypes3.TFhirDate) : FHIRTypes4.TFhirDate;
@@ -5263,8 +5357,12 @@ var
   tgt : FHIRTypes4.TFhirDate;
 begin
   tgt := FHIRTypes4.TFhirDate.Create(src.value);
+  try
   copyElement(src, tgt);
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertDate(src : FHIRTypes4.TFhirDate) : FHIRTypes3.TFhirDate;
@@ -5272,8 +5370,12 @@ var
   tgt : FHIRTypes3.TFhirDate;
 begin
   tgt := FHIRTypes3.TFhirDate.Create(src.value);
+  try
   copyElement(src, tgt);
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertDateTime(src : FHIRTypes3.TFhirDateTime) : FHIRTypes4.TFhirDateTime;
@@ -5281,8 +5383,12 @@ var
   tgt : FHIRTypes4.TFhirDateTime;
 begin
   tgt := FHIRTypes4.TFhirDateTime.Create(src.value);
+  try
   copyElement(src, tgt);
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertDateTime(src : FHIRTypes4.TFhirDateTime) : FHIRTypes3.TFhirDateTime;
@@ -5290,8 +5396,12 @@ var
   tgt : FHIRTypes3.TFhirDateTime;
 begin
   tgt := FHIRTypes3.TFhirDateTime.Create(src.value);
+  try
   copyElement(src, tgt);
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertDecimal(src : FHIRTypes3.TFhirDecimal) : FHIRTypes4.TFhirDecimal;
@@ -5299,8 +5409,12 @@ var
   tgt : FHIRTypes4.TFhirDecimal;
 begin
   tgt := FHIRTypes4.TFhirDecimal.Create(src.value);
+  try
   copyElement(src, tgt);
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertDecimal(src : FHIRTypes4.TFhirDecimal) : FHIRTypes3.TFhirDecimal;
@@ -5308,8 +5422,12 @@ var
   tgt : FHIRTypes3.TFhirDecimal;
 begin
   tgt := FHIRTypes3.TFhirDecimal.Create(src.value);
+  try
   copyElement(src, tgt);
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertId(src : FHIRTypes3.TFhirId) : FHIRTypes4.TFhirId;
@@ -5317,8 +5435,12 @@ var
   tgt : FHIRTypes4.TFhirId;
 begin
   tgt := FHIRTypes4.TFhirId.Create(src.value);
+  try
   copyElement(src, tgt);
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertId(src : FHIRTypes4.TFhirId) : FHIRTypes3.TFhirId;
@@ -5326,8 +5448,12 @@ var
   tgt : FHIRTypes3.TFhirId;
 begin
   tgt := FHIRTypes3.TFhirId.Create(src.value);
+  try
   copyElement(src, tgt);
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertInstant(src : FHIRTypes3.TFhirInstant) : FHIRTypes4.TFhirInstant;
@@ -5335,8 +5461,12 @@ var
   tgt : FHIRTypes4.TFhirInstant;
 begin
   tgt := FHIRTypes4.TFhirInstant.Create(src.value);
+  try
   copyElement(src, tgt);
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertInstant(src : FHIRTypes4.TFhirInstant) : FHIRTypes3.TFhirInstant;
@@ -5344,8 +5474,12 @@ var
   tgt : FHIRTypes3.TFhirInstant;
 begin
   tgt := FHIRTypes3.TFhirInstant.Create(src.value);
+  try
   copyElement(src, tgt);
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertInteger(src : FHIRTypes3.TFhirInteger) : FHIRTypes4.TFhirInteger;
@@ -5353,8 +5487,12 @@ var
   tgt : FHIRTypes4.TFhirInteger;
 begin
   tgt := FHIRTypes4.TFhirInteger.Create(src.value);
+  try
   copyElement(src, tgt);
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertInteger(src : FHIRTypes4.TFhirInteger) : FHIRTypes3.TFhirInteger;
@@ -5362,8 +5500,12 @@ var
   tgt : FHIRTypes3.TFhirInteger;
 begin
   tgt := FHIRTypes3.TFhirInteger.Create(src.value);
+  try
   copyElement(src, tgt);
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertMarkdown(src : FHIRTypes3.TFhirMarkdown) : FHIRTypes4.TFhirMarkdown;
@@ -5371,8 +5513,12 @@ var
   tgt : FHIRTypes4.TFhirMarkdown;
 begin
   tgt := FHIRTypes4.TFhirMarkdown.Create(src.value);
+  try
   copyElement(src, tgt);
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertMarkdown(src : FHIRTypes4.TFhirMarkdown) : FHIRTypes3.TFhirMarkdown;
@@ -5380,8 +5526,12 @@ var
   tgt : FHIRTypes3.TFhirMarkdown;
 begin
   tgt := FHIRTypes3.TFhirMarkdown.Create(src.value);
+  try
   copyElement(src, tgt);
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertOid(src : FHIRTypes3.TFhirOid) : FHIRTypes4.TFhirOid;
@@ -5389,8 +5539,12 @@ var
   tgt : FHIRTypes4.TFhirOid;
 begin
   tgt := FHIRTypes4.TFhirOid.Create(src.value);
+  try
   copyElement(src, tgt);
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertOid(src : FHIRTypes4.TFhirOid) : FHIRTypes3.TFhirOid;
@@ -5398,8 +5552,12 @@ var
   tgt : FHIRTypes3.TFhirOid;
 begin
   tgt := FHIRTypes3.TFhirOid.Create(src.value);
+  try
   copyElement(src, tgt);
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertPositiveInt(src : FHIRTypes3.TFhirPositiveInt) : FHIRTypes4.TFhirPositiveInt;
@@ -5407,8 +5565,12 @@ var
   tgt : FHIRTypes4.TFhirPositiveInt;
 begin
   tgt := FHIRTypes4.TFhirPositiveInt.Create(src.value);
+  try
   copyElement(src, tgt);
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertPositiveInt(src : FHIRTypes4.TFhirPositiveInt) : FHIRTypes3.TFhirPositiveInt;
@@ -5416,8 +5578,12 @@ var
   tgt : FHIRTypes3.TFhirPositiveInt;
 begin
   tgt := FHIRTypes3.TFhirPositiveInt.Create(src.value);
+  try
   copyElement(src, tgt);
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertString(src : FHIRTypes3.TFhirString) : FHIRTypes4.TFhirString;
@@ -5425,8 +5591,12 @@ var
   tgt : FHIRTypes4.TFhirString;
 begin
   tgt := FHIRTypes4.TFhirString.Create(src.value);
+  try
   copyElement(src, tgt);
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertString(src : FHIRTypes4.TFhirString) : FHIRTypes3.TFhirString;
@@ -5434,8 +5604,12 @@ var
   tgt : FHIRTypes3.TFhirString;
 begin
   tgt := FHIRTypes3.TFhirString.Create(src.value);
+  try
   copyElement(src, tgt);
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertTime(src : FHIRTypes3.TFhirTime) : FHIRTypes4.TFhirTime;
@@ -5443,8 +5617,12 @@ var
   tgt : FHIRTypes4.TFhirTime;
 begin
   tgt := FHIRTypes4.TFhirTime.Create(src.value);
+  try
   copyElement(src, tgt);
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertTime(src : FHIRTypes4.TFhirTime) : FHIRTypes3.TFhirTime;
@@ -5452,8 +5630,12 @@ var
   tgt : FHIRTypes3.TFhirTime;
 begin
   tgt := FHIRTypes3.TFhirTime.Create(src.value);
+  try
   copyElement(src, tgt);
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertUnsignedInt(src : FHIRTypes3.TFhirUnsignedInt) : FHIRTypes4.TFhirUnsignedInt;
@@ -5461,8 +5643,12 @@ var
   tgt : FHIRTypes4.TFhirUnsignedInt;
 begin
   tgt := FHIRTypes4.TFhirUnsignedInt.Create(src.value);
+  try
   copyElement(src, tgt);
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertUnsignedInt(src : FHIRTypes4.TFhirUnsignedInt) : FHIRTypes3.TFhirUnsignedInt;
@@ -5470,8 +5656,12 @@ var
   tgt : FHIRTypes3.TFhirUnsignedInt;
 begin
   tgt := FHIRTypes3.TFhirUnsignedInt.Create(src.value);
+  try
   copyElement(src, tgt);
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertUri(src : FHIRTypes3.TFhirUri) : FHIRTypes4.TFhirUri;
@@ -5479,8 +5669,12 @@ var
   tgt : FHIRTypes4.TFhirUri;
 begin
   tgt := FHIRTypes4.TFhirUri.Create(src.value);
+  try
   copyElement(src, tgt);
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertUriToUrl(src : FHIRTypes3.TFhirUri) : FHIRTypes4.TFhirUrl;
@@ -5488,8 +5682,12 @@ var
   tgt : FHIRTypes4.TFhirUrl;
 begin
   tgt := FHIRTypes4.TFhirUrl.Create(src.value);
+  try
   copyElement(src, tgt);
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertUri(src : FHIRTypes4.TFhirUri) : FHIRTypes3.TFhirUri;
@@ -5497,8 +5695,12 @@ var
   tgt : FHIRTypes3.TFhirUri;
 begin
   tgt := FHIRTypes3.TFhirUri.Create(src.value);
+  try
   copyElement(src, tgt);
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertUuid(src : FHIRTypes3.TFhirUuid) : FHIRTypes4.TFhirUuid;
@@ -5506,8 +5708,12 @@ var
   tgt : FHIRTypes4.TFhirUuid;
 begin
   tgt := FHIRTypes4.TFhirUuid.Create(src.value);
+  try
   copyElement(src, tgt);
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertUuid(src : FHIRTypes4.TFhirUuid) : FHIRTypes3.TFhirUuid;
@@ -5515,8 +5721,12 @@ var
   tgt : FHIRTypes3.TFhirUuid;
 begin
   tgt := FHIRTypes3.TFhirUuid.Create(src.value);
+  try
   copyElement(src, tgt);
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertExtension(src : FHIRTypes3.TFhirExtension) : FHIRTypes4.TFhirExtension;
@@ -5526,6 +5736,7 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRTypes4.TFhirExtension.Create();
+  try
   copyElement(src, tgt);
   if (src.url <> '') then
     tgt.url := src.url;
@@ -5533,7 +5744,10 @@ begin
   if (src.value <> nil) then
     tgt.value := convertType(src.value);
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertExtension(src : FHIRTypes4.TFhirExtension) : FHIRTypes3.TFhirExtension;
@@ -5543,6 +5757,7 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRTypes3.TFhirExtension.Create();
+  try
   copyElement(src, tgt);
   if (src.url <> '') then
     tgt.url := src.url;
@@ -5550,7 +5765,10 @@ begin
   if (src.value <> nil) then
     tgt.value := convertType(src.value);
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertNarrative(src : FHIRTypes3.TFhirNarrative) : FHIRTypes4.TFhirNarrative;
@@ -5560,11 +5778,15 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRTypes4.TFhirNarrative.Create();
+  try
   copyElement(src, tgt);
   tgt.status := convertNarrativeStatus(src.status);
   tgt.div_ := src.div_.link;
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertNarrative(src : FHIRTypes4.TFhirNarrative) : FHIRTypes3.TFhirNarrative;
@@ -5574,12 +5796,16 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRTypes3.TFhirNarrative.Create();
+  try
   copyElement(src, tgt);
   tgt.status := convertNarrativeStatus(src.status);
 
   tgt.div_ := src.div_.link;
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertAge(src : FHIRTypes3.TFhirAge) : FHIRTypes4.TFhirAge;
@@ -5589,8 +5815,12 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRTypes4.TFhirAge.Create();
+  try
   copyQuantity(src, tgt);
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertAge(src : FHIRTypes4.TFhirAge) : FHIRTypes3.TFhirAge;
@@ -5600,8 +5830,12 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRTypes3.TFhirAge.Create();
+  try
   copyQuantity(src, tgt);
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertAnnotation(src : FHIRTypes3.TFhirAnnotation) : FHIRTypes4.TFhirAnnotation;
@@ -5611,6 +5845,7 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRTypes4.TFhirAnnotation.Create();
+  try
   copyElement(src, tgt);
   if (src.author <> nil) then
     tgt.author := convertType(src.author);
@@ -5618,7 +5853,10 @@ begin
   tgt.time := src.time.clone;
   tgt.text := src.text;
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertAnnotation(src : FHIRTypes4.TFhirAnnotation) : FHIRTypes3.TFhirAnnotation;
@@ -5628,6 +5866,7 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRTypes3.TFhirAnnotation.Create();
+  try
   copyElement(src, tgt);
   if (src.author <> nil) then
     tgt.author := convertType(src.author);
@@ -5637,7 +5876,10 @@ begin
   if (src.text <> '') then
     tgt.text := src.text;
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertAttachment(src : FHIRTypes3.TFhirAttachment) : FHIRTypes4.TFhirAttachment;
@@ -5647,6 +5889,7 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRTypes4.TFhirAttachment.Create();
+  try
   copyElement(src, tgt);
   if (src.contentType <> '') then
     tgt.contentType := src.contentType;
@@ -5665,7 +5908,10 @@ begin
   tgt.title := src.title;
   tgt.creation := src.creation;
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertAttachment(src : FHIRTypes4.TFhirAttachment) : FHIRTypes3.TFhirAttachment;
@@ -5675,6 +5921,7 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRTypes3.TFhirAttachment.Create();
+  try
   copyElement(src, tgt);
   if (src.contentType <> '') then
     tgt.contentType := src.contentType;
@@ -5691,7 +5938,10 @@ begin
   tgt.title := src.title;
   tgt.creation := src.creation;
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertCodeableConcept(src : FHIRTypes3.TFhirCodeableConcept) : FHIRTypes4.TFhirCodeableConcept;
@@ -5702,6 +5952,7 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRTypes4.TFhirCodeableConcept.Create();
+  try
   copyElement(src, tgt);
   for t in src.codingList do
   begin
@@ -5709,7 +5960,10 @@ begin
   end;
   tgt.text := src.text;
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertCodeableConcept(src : FHIRTypes4.TFhirCodeableConcept) : FHIRTypes3.TFhirCodeableConcept;
@@ -5720,6 +5974,7 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRTypes3.TFhirCodeableConcept.Create();
+  try
   copyElement(src, tgt);
   for t in src.codingList do
   begin
@@ -5728,7 +5983,10 @@ begin
   if (src.text <> '') then
     tgt.text := src.text;
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertCodeableConceptToCoding(src : FHIRTypes4.TFhirCodeableConcept) : FHIRTypes3.TFhirCoding;
@@ -5754,6 +6012,7 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRTypes4.TFhirCoding.Create();
+  try
   copyElement(src, tgt);
   if (src.system <> '') then
     tgt.system := src.system;
@@ -5769,7 +6028,10 @@ begin
 
   tgt.userSelected := src.userSelected;
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertCoding(src : FHIRTypes4.TFhirCoding) : FHIRTypes3.TFhirCoding;
@@ -5779,6 +6041,7 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRTypes3.TFhirCoding.Create();
+  try
   copyElement(src, tgt);
   if (src.system <> '') then
     tgt.system := src.system;
@@ -5794,8 +6057,58 @@ begin
 
   tgt.userSelected := src.userSelected;
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
+
+class function TVersionConvertor_30_40.convertCoding(src : FHIRTypes3.TFhirCodeableConcept) : FHIRTypes4.TFhirCoding;
+begin
+  if (src = nil) or (src.codingList.Count = 0)  then
+    exit(nil)
+  else
+    result := convertCoding(src.codingList[0]);
+end;
+
+class function TVersionConvertor_30_40.convertCoding(src : FHIRTypes4.TFhirCodeableConcept) : FHIRTypes3.TFhirCoding;
+begin
+  if (src = nil) or (src.codingList.Count = 0)  then
+    exit(nil)
+  else
+    result := convertCoding(src.codingList[0]);
+end;
+
+class function TVersionConvertor_30_40.convertCodingToCodeableConcept(src : FHIRTypes3.TFhirCoding) : FHIRTypes4.TFhirCodeableConcept;
+var
+  tgt : FHIRTypes4.TFhirCodeableConcept;
+begin
+  if (src = nil) then
+    exit(nil);
+  tgt := FHIRTypes4.TFhirCodeableConcept.Create();
+  try
+    tgt.codingList.Add(convertCoding(src));
+    exit(tgt.link);
+  finally
+    tgt.free;
+  end;
+end;
+
+class function TVersionConvertor_30_40.convertCodingToCodeableConcept(src : FHIRTypes4.TFhirCoding) : FHIRTypes3.TFhirCodeableConcept;
+var
+  tgt : FHIRTypes3.TFhirCodeableConcept;
+begin
+  if (src = nil) then
+    exit(nil);
+  tgt := FHIRTypes3.TFhirCodeableConcept.Create();
+  try
+    tgt.codingList.Add(convertCoding(src));
+    exit(tgt.link);
+  finally
+    tgt.free;
+  end;
+end;
+
 
 class function TVersionConvertor_30_40.convertCoding(src : FHIRTypes3.TFhirCode) : FHIRTypes4.TFhirCoding;
 var
@@ -5804,9 +6117,13 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRTypes4.TFhirCoding.Create();
+  try
   copyElement(src, tgt);
   tgt.code := src.value;
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertCount(src : FHIRTypes3.TFhirCount) : FHIRTypes4.TFhirCount;
@@ -5816,8 +6133,12 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRTypes4.TFhirCount.Create();
+  try
   copyQuantity(src, tgt);
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertCount(src : FHIRTypes4.TFhirCount) : FHIRTypes3.TFhirCount;
@@ -5827,8 +6148,12 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRTypes3.TFhirCount.Create();
+  try
   copyQuantity(src, tgt);
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertDistance(src : FHIRTypes3.TFhirDistance) : FHIRTypes4.TFhirDistance;
@@ -5838,8 +6163,12 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRTypes4.TFhirDistance.Create();
+  try
   copyQuantity(src, tgt);
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertDistance(src : FHIRTypes4.TFhirDistance) : FHIRTypes3.TFhirDistance;
@@ -5849,8 +6178,12 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRTypes3.TFhirDistance.Create();
+  try
   copyQuantity(src, tgt);
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertDuration(src : FHIRTypes3.TFhirDuration) : FHIRTypes4.TFhirDuration;
@@ -5860,8 +6193,12 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRTypes4.TFhirDuration.Create();
+  try
   copyQuantity(src, tgt);
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertDuration(src : FHIRTypes4.TFhirDuration) : FHIRTypes3.TFhirDuration;
@@ -5871,8 +6208,12 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRTypes3.TFhirDuration.Create();
+  try
   copyQuantity(src, tgt);
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertIdentifier(src : FHIRTypes3.TFhirIdentifier) : FHIRTypes4.TFhirIdentifier;
@@ -5882,6 +6223,7 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRTypes4.TFhirIdentifier.Create();
+  try
   copyElement(src, tgt);
   tgt.use := convertIdentifierUse(src.use);
 
@@ -5900,7 +6242,10 @@ begin
   if (src.assigner <> nil) then
     tgt.assigner := convertReference(src.assigner);
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertIdentifier(src : FHIRTypes4.TFhirIdentifier) : FHIRTypes3.TFhirIdentifier;
@@ -5910,6 +6255,7 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRTypes3.TFhirIdentifier.Create();
+  try
   copyElement(src, tgt);
   tgt.use := convertIdentifierUse(src.use);
 
@@ -5927,7 +6273,10 @@ begin
   if (src.assigner <> nil) then
     tgt.assigner := convertReference(src.assigner);
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertMoney(src : FHIRTypes3.TFhirMoney) : FHIRTypes4.TFhirMoney;
@@ -5937,8 +6286,12 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRTypes4.TFhirMoney.Create();
+  try
   copyQuantity(src, tgt);
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertMoney(src : FHIRTypes4.TFhirMoney) : FHIRTypes3.TFhirMoney;
@@ -5948,8 +6301,12 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRTypes3.TFhirMoney.Create();
+  try
   copyQuantity(src, tgt);
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertPeriod(src : FHIRTypes3.TFhirPeriod) : FHIRTypes4.TFhirPeriod;
@@ -5959,11 +6316,15 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRTypes4.TFhirPeriod.Create();
+  try
   copyElement(src, tgt);
   tgt.start := src.start;
   tgt.end_ := src.end_;
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertPeriod(src : FHIRTypes4.TFhirPeriod) : FHIRTypes3.TFhirPeriod;
@@ -5973,11 +6334,15 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRTypes3.TFhirPeriod.Create();
+  try
   copyElement(src, tgt);
   tgt.start := src.start;
   tgt.end_ := src.end_;
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class procedure TVersionConvertor_30_40.copyQuantity(src : FHIRTypes3.TFhirQuantity; tgt : FHIRTypes4.TFhirQuantity);
@@ -6015,6 +6380,7 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRTypes4.TFhirQuantity.Create();
+  try
   copyElement(src, tgt);
   tgt.value := src.value;
   tgt.comparator := convertQuantityComparator(src.comparator);
@@ -6022,7 +6388,10 @@ begin
   tgt.system := src.system;
   tgt.code := src.code;
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertQuantity(src : FHIRTypes4.TFhirQuantity) : FHIRTypes3.TFhirQuantity;
@@ -6032,6 +6401,7 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRTypes3.TFhirQuantity.Create();
+  try
   copyElement(src, tgt);
   tgt.value := src.value;
   tgt.comparator := convertQuantityComparator(src.comparator);
@@ -6039,7 +6409,10 @@ begin
   tgt.system := src.system;
   tgt.code := src.code;
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertRange(src : FHIRTypes3.TFhirRange) : FHIRTypes4.TFhirRange;
@@ -6049,6 +6422,7 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRTypes4.TFhirRange.Create();
+  try
   copyElement(src, tgt);
   if (src.low <> nil) then
     tgt.low := convertSimpleQuantity(src.low);
@@ -6056,7 +6430,10 @@ begin
   if (src.high <> nil) then
     tgt.high := convertSimpleQuantity(src.high);
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertRange(src : FHIRTypes4.TFhirRange) : FHIRTypes3.TFhirRange;
@@ -6066,6 +6443,7 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRTypes3.TFhirRange.Create();
+  try
   copyElement(src, tgt);
   if (src.low <> nil) then
     tgt.low := convertSimpleQuantity(src.low);
@@ -6073,7 +6451,10 @@ begin
   if (src.high <> nil) then
     tgt.high := convertSimpleQuantity(src.high);
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertRatio(src : FHIRTypes3.TFhirRatio) : FHIRTypes4.TFhirRatio;
@@ -6083,6 +6464,7 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRTypes4.TFhirRatio.Create();
+  try
   copyElement(src, tgt);
   if (src.numerator <> nil) then
     tgt.numerator := convertQuantity(src.numerator);
@@ -6090,7 +6472,10 @@ begin
   if (src.denominator <> nil) then
     tgt.denominator := convertQuantity(src.denominator);
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertRatio(src : FHIRTypes4.TFhirRatio) : FHIRTypes3.TFhirRatio;
@@ -6100,6 +6485,7 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRTypes3.TFhirRatio.Create();
+  try
   copyElement(src, tgt);
   if (src.numerator <> nil) then
     tgt.numerator := convertQuantity(src.numerator);
@@ -6107,7 +6493,10 @@ begin
   if (src.denominator <> nil) then
     tgt.denominator := convertQuantity(src.denominator);
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertReference(src : FHIRTypes3.TFhirReference) : FHIRTypes4.TFhirReference;
@@ -6117,6 +6506,7 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRTypes4.TFhirReference.Create();
+  try
   copyElement(src, tgt);
   if (src.reference <> '') then
     tgt.reference := src.reference;
@@ -6127,7 +6517,10 @@ begin
   if (src.display <> '') then
     tgt.display := src.display;
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertReference(src : FHIRTypes4.TFhirReference) : FHIRTypes3.TFhirReference;
@@ -6137,6 +6530,7 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRTypes3.TFhirReference.Create();
+  try
   copyElement(src, tgt);
   if (src.reference <> '') then
     tgt.reference := src.reference;
@@ -6147,7 +6541,10 @@ begin
   if (src.display <> '') then
     tgt.display := src.display;
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertSampledData(src : FHIRTypes3.TFhirSampledData) : FHIRTypes4.TFhirSampledData;
@@ -6157,6 +6554,7 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRTypes4.TFhirSampledData.Create();
+  try
   copyElement(src, tgt);
   if (src.origin <> nil) then
     tgt.origin := convertSimpleQuantity(src.origin);
@@ -6168,7 +6566,10 @@ begin
   tgt.dimensions := src.dimensions;
   tgt.data := src.data;
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertSampledData(src : FHIRTypes4.TFhirSampledData) : FHIRTypes3.TFhirSampledData;
@@ -6178,6 +6579,7 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRTypes3.TFhirSampledData.Create();
+  try
   copyElement(src, tgt);
   if (src.origin <> nil) then
     tgt.origin := convertSimpleQuantity(src.origin);
@@ -6189,7 +6591,10 @@ begin
   tgt.dimensions := src.dimensions;
   tgt.data := src.data;
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertSignature(src : FHIRTypes3.TFhirSignature) : FHIRTypes4.TFhirSignature;
@@ -6200,6 +6605,7 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRTypes4.TFhirSignature.Create();
+  try
   copyElement(src, tgt);
   for t in src.type_List do
   begin
@@ -6218,7 +6624,10 @@ begin
 
   tgt.blob := src.blob;
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertSignature(src : FHIRTypes4.TFhirSignature) : FHIRTypes3.TFhirSignature;
@@ -6229,6 +6638,7 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRTypes3.TFhirSignature.Create();
+  try
   copyElement(src, tgt);
   for t in src.type_List do
   begin
@@ -6247,7 +6657,10 @@ begin
 
   tgt.blob := src.blob;
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertAddress(src : FHIRTypes3.TFhirAddress) : FHIRTypes4.TFhirAddress;
@@ -6258,6 +6671,7 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRTypes4.TFhirAddress.Create();
+  try
   copyElement(src, tgt);
   tgt.use := convertAddressUse(src.use);
   tgt.type_ := convertAddressType(src.type_);
@@ -6287,7 +6701,10 @@ begin
   if (src.period <> nil) then
     tgt.period := convertPeriod(src.period);
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertAddress(src : FHIRTypes4.TFhirAddress) : FHIRTypes3.TFhirAddress;
@@ -6298,6 +6715,7 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRTypes3.TFhirAddress.Create();
+  try
   copyElement(src, tgt);
   tgt.use := convertAddressUse(src.use);
   tgt.type_ := convertAddressType(src.type_);
@@ -6327,7 +6745,10 @@ begin
   if (src.period <> nil) then
     tgt.period := convertPeriod(src.period);
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertContactDetail(src : FHIRTypes3.TFhirContactDetail) : FHIRTypes4.TFhirContactDetail;
@@ -6338,6 +6759,7 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRTypes4.TFhirContactDetail.Create();
+  try
   copyElement(src, tgt);
   if (src.name <> '') then
     tgt.name := src.name;
@@ -6346,7 +6768,10 @@ begin
   begin
     tgt.telecomList.add(convertContactPoint(t));
   end;
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertContactDetail(src : FHIRTypes4.TFhirContactDetail) : FHIRTypes3.TFhirContactDetail;
@@ -6357,6 +6782,7 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRTypes3.TFhirContactDetail.Create();
+  try
   copyElement(src, tgt);
   if (src.name <> '') then
     tgt.name := src.name;
@@ -6365,7 +6791,10 @@ begin
   begin
     tgt.telecomList.add(convertContactPoint(t));
   end;
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertContactPoint(src : FHIRTypes3.TFhirContactPoint) : FHIRTypes4.TFhirContactPoint;
@@ -6375,6 +6804,7 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRTypes4.TFhirContactPoint.Create();
+  try
   copyElement(src, tgt);
   tgt.system := convertContactPointSystem(src.system);
 
@@ -6388,7 +6818,10 @@ begin
   if (src.period <> nil) then
     tgt.period := convertPeriod(src.period);
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertContactPoint(src : FHIRTypes4.TFhirContactPoint) : FHIRTypes3.TFhirContactPoint;
@@ -6398,6 +6831,7 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRTypes3.TFhirContactPoint.Create();
+  try
   copyElement(src, tgt);
   tgt.system := convertContactPointSystem(src.system);
 
@@ -6411,7 +6845,10 @@ begin
   if (src.period <> nil) then
     tgt.period := convertPeriod(src.period);
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertContributor(src : FHIRTypes3.TFhirContributor) : FHIRTypes4.TFhirContributor;
@@ -6422,6 +6859,7 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRTypes4.TFhirContributor.Create();
+  try
   copyElement(src, tgt);
   tgt.type_ := convertContributorType(src.type_);
 
@@ -6432,7 +6870,10 @@ begin
   begin
     tgt.contactList.add(convertContactDetail(t));
   end;
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertContributor(src : FHIRTypes4.TFhirContributor) : FHIRTypes3.TFhirContributor;
@@ -6443,6 +6884,7 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRTypes3.TFhirContributor.Create();
+  try
   copyElement(src, tgt);
     tgt.type_ := convertContributorType(src.type_);
 
@@ -6453,7 +6895,10 @@ begin
   begin
     tgt.contactList.add(convertContactDetail(t));
   end;
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertDosage(src : FHIRTypes3.TFhirDosage) : FHIRTypes4.TFhirDosage;
@@ -6465,6 +6910,7 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRTypes4.TFhirDosage.Create();
+  try
   copyElement(src, tgt);
   tgt.sequence := src.sequence;
 
@@ -6513,7 +6959,10 @@ begin
   if (src.maxDosePerLifetime <> nil) then
     tgt.maxDosePerLifetime := convertSimpleQuantity(src.maxDosePerLifetime);
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertDosage(src : FHIRTypes4.TFhirDosage) : FHIRTypes3.TFhirDosage;
@@ -6524,6 +6973,7 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRTypes3.TFhirDosage.Create();
+  try
   copyElement(src, tgt);
   tgt.sequence := src.sequence;
 
@@ -6567,7 +7017,10 @@ begin
   if (src.DoseAndRateList <> nil) and (src.DoseAndRateList[0].Rate <> nil) then
     tgt.rate := convertType(src.DoseAndRateList[0].rate);
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertElementDefinition(src : FHIRTypes3.TFhirElementDefinition) : FHIRTypes4.TFhirElementDefinition;
@@ -6587,6 +7040,7 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRTypes4.TFhirElementDefinition.Create();
+  try
   copyElement(src, tgt);
   if (src.path <> '') then
     tgt.path := src.path;
@@ -6694,7 +7148,10 @@ begin
   begin
     tgt.mappingList.add(convertElementDefinitionMappingComponent(t8));
   end;
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertElementDefinition(src : FHIRTypes4.TFhirElementDefinition) : FHIRTypes3.TFhirElementDefinition;
@@ -6713,6 +7170,7 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRTypes3.TFhirElementDefinition.Create();
+  try
   copyElement(src, tgt);
   if (src.path <> '') then
     tgt.path := src.path;
@@ -6814,7 +7272,10 @@ begin
   begin
     tgt.mappingList.add(convertElementDefinitionMappingComponent(t7));
   end;
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertElementDefinitionSlicingComponent(src : FHIRTypes3.TFhirElementDefinitionSlicing) : FHIRTypes4.TFhirElementDefinitionSlicing;
@@ -6825,6 +7286,7 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRTypes4.TFhirElementDefinitionSlicing.Create();
+  try
   copyElement(src, tgt);
   for t in src.discriminatorList do
   begin
@@ -6836,7 +7298,10 @@ begin
   tgt.ordered := src.ordered;
   tgt.rules := convertSlicingRules(src.rules);
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertElementDefinitionSlicingComponent(src : FHIRTypes4.TFhirElementDefinitionSlicing) : FHIRTypes3.TFhirElementDefinitionSlicing;
@@ -6847,6 +7312,7 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRTypes3.TFhirElementDefinitionSlicing.Create();
+  try
   copyElement(src, tgt);
   for t in src.discriminatorList do
   begin
@@ -6858,7 +7324,10 @@ begin
   tgt.ordered := src.ordered;
   tgt.rules := convertSlicingRules(src.rules);
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertElementDefinitionSlicingDiscriminatorComponent(src : FHIRTypes3.TFhirElementDefinitionSlicingDiscriminator) : FHIRTypes4.TFhirElementDefinitionSlicingDiscriminator;
@@ -6868,11 +7337,15 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRTypes4.TFhirElementDefinitionSlicingDiscriminator.Create();
+  try
   copyElement(src, tgt);
   tgt.type_ := convertDiscriminatorType(src.type_);
   tgt.path := src.path;
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertElementDefinitionSlicingDiscriminatorComponent(src : FHIRTypes4.TFhirElementDefinitionSlicingDiscriminator) : FHIRTypes3.TFhirElementDefinitionSlicingDiscriminator;
@@ -6882,11 +7355,15 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRTypes3.TFhirElementDefinitionSlicingDiscriminator.Create();
+  try
   copyElement(src, tgt);
   tgt.type_ := convertDiscriminatorType(src.type_);
   tgt.path := src.path;
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertElementDefinitionBaseComponent(src : FHIRTypes3.TFhirElementDefinitionBase) : FHIRTypes4.TFhirElementDefinitionBase;
@@ -6896,6 +7373,7 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRTypes4.TFhirElementDefinitionBase.Create();
+  try
   copyElement(src, tgt);
   if (src.path <> '') then
     tgt.path := src.path;
@@ -6905,7 +7383,10 @@ begin
   if (src.max <> '') then
     tgt.max := src.max;
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertElementDefinitionBaseComponent(src : FHIRTypes4.TFhirElementDefinitionBase) : FHIRTypes3.TFhirElementDefinitionBase;
@@ -6915,6 +7396,7 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRTypes3.TFhirElementDefinitionBase.Create();
+  try
   copyElement(src, tgt);
   if (src.path <> '') then
     tgt.path := src.path;
@@ -6924,7 +7406,10 @@ begin
   if (src.max <> '') then
     tgt.max := src.max;
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class procedure TVersionConvertor_30_40.convertTypeRefComponent(src : FHIRTypes3.TFhirElementDefinitionType; list : FHIRTypes4.TFhirElementDefinitionTypeList);
@@ -7019,6 +7504,7 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRTypes4.TFhirElementDefinitionExample.Create();
+  try
   copyElement(src, tgt);
   if (src.label_ <> '') then
     tgt.label_ := src.label_;
@@ -7026,7 +7512,10 @@ begin
   if (src.value <> nil) then
     tgt.value := convertType(src.value);
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertElementDefinitionExampleComponent(src : FHIRTypes4.TFhirElementDefinitionExample) : FHIRTypes3.TFhirElementDefinitionExample;
@@ -7036,6 +7525,7 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRTypes3.TFhirElementDefinitionExample.Create();
+  try
   copyElement(src, tgt);
   if (src.label_ <> '') then
     tgt.label_ := src.label_;
@@ -7043,7 +7533,10 @@ begin
   if (src.value <> nil) then
     tgt.value := convertType(src.value);
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertElementDefinitionConstraintComponent(src : FHIRTypes3.TFhirElementDefinitionConstraint) : FHIRTypes4.TFhirElementDefinitionConstraint;
@@ -7053,6 +7546,7 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRTypes4.TFhirElementDefinitionConstraint.Create();
+  try
   copyElement(src, tgt);
   if (src.key <> '') then
     tgt.key := src.key;
@@ -7074,7 +7568,10 @@ begin
   if (src.source <> '') then
     tgt.source := src.source;
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertElementDefinitionConstraintComponent(src : FHIRTypes4.TFhirElementDefinitionConstraint) : FHIRTypes3.TFhirElementDefinitionConstraint;
@@ -7084,6 +7581,7 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRTypes3.TFhirElementDefinitionConstraint.Create();
+  try
   copyElement(src, tgt);
   if (src.key <> '') then
     tgt.key := src.key;
@@ -7105,7 +7603,10 @@ begin
   if (src.source <> '') then
     tgt.source := src.source;
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertElementDefinitionBindingComponent(src : FHIRTypes3.TFhirElementDefinitionBinding) : FHIRTypes4.TFhirElementDefinitionBinding;
@@ -7116,6 +7617,7 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRTypes4.TFhirElementDefinitionBinding.Create();
+  try
   copyElement(src, tgt);
   tgt.strength := convertBindingStrength(src.strength);
 
@@ -7126,12 +7628,18 @@ begin
   begin
     vs := convertType(src.ValueSet);
     if (vs is FHIRTypes4.TFhirReference) then
-      tgt.ValueSet := FHIRTypes4.TFHIRCanonical.create(FHIRTypes4.TFhirReference(vs).Reference)
+    begin
+      tgt.ValueSet := FHIRTypes4.TFHIRCanonical.create(FHIRTypes4.TFhirReference(vs).Reference);
+      vs.Free;
+    end
      else
        tgt.ValueSet := vs;
   end;
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertElementDefinitionBindingComponent(src : FHIRTypes4.TFhirElementDefinitionBinding) : FHIRTypes3.TFhirElementDefinitionBinding;
@@ -7141,6 +7649,7 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRTypes3.TFhirElementDefinitionBinding.Create();
+  try
   copyElement(src, tgt);
   tgt.strength := convertBindingStrength(src.strength);
 
@@ -7155,7 +7664,10 @@ begin
       tgt.ValueSet := convertType(src.ValueSet);
   end;
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertElementDefinitionMappingComponent(src : FHIRTypes3.TFhirElementDefinitionMapping) : FHIRTypes4.TFhirElementDefinitionMapping;
@@ -7165,6 +7677,7 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRTypes4.TFhirElementDefinitionMapping.Create();
+  try
   copyElement(src, tgt);
   if (src.identity <> '') then
     tgt.identity := src.identity;
@@ -7178,7 +7691,10 @@ begin
   if (src.comment <> '') then
     tgt.comment := src.comment;
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertElementDefinitionMappingComponent(src : FHIRTypes4.TFhirElementDefinitionMapping) : FHIRTypes3.TFhirElementDefinitionMapping;
@@ -7188,6 +7704,7 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRTypes3.TFhirElementDefinitionMapping.Create();
+  try
   copyElement(src, tgt);
   if (src.identity <> '') then
     tgt.identity := src.identity;
@@ -7201,7 +7718,10 @@ begin
   if (src.comment <> '') then
     tgt.comment := src.comment;
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertHumanName(src : FHIRTypes3.TFhirHumanName) : FHIRTypes4.TFhirHumanName;
@@ -7214,6 +7734,7 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRTypes4.TFhirHumanName.Create();
+  try
   copyElement(src, tgt);
   tgt.use := convertNameUse(src.use);
 
@@ -7238,7 +7759,10 @@ begin
   if (src.period <> nil) then
     tgt.period := convertPeriod(src.period);
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertHumanName(src : FHIRTypes4.TFhirHumanName) : FHIRTypes3.TFhirHumanName;
@@ -7249,6 +7773,7 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRTypes3.TFhirHumanName.Create();
+  try
   copyElement(src, tgt);
   tgt.use := convertNameUse(src.use);
 
@@ -7273,7 +7798,10 @@ begin
   if (src.period <> nil) then
     tgt.period := convertPeriod(src.period);
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertMeta(src : FHIRTypes3.TFhirMeta) : FHIRTypes4.TFhirMeta;
@@ -7285,6 +7813,7 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRTypes4.TFhirMeta.Create();
+  try
   copyElement(src, tgt);
   if (src.versionId <> '') then
     tgt.versionId := src.versionId;
@@ -7303,7 +7832,10 @@ begin
   begin
     tgt.tagList.add(convertCoding(t2));
   end;
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertMeta(src : FHIRTypes4.TFhirMeta) : FHIRTypes3.TFhirMeta;
@@ -7315,6 +7847,7 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRTypes3.TFhirMeta.Create();
+  try
   copyElement(src, tgt);
   if (src.versionId <> '') then
     tgt.versionId := src.versionId;
@@ -7333,7 +7866,10 @@ begin
   begin
     tgt.tagList.add(convertCoding(t2));
   end;
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertParameterDefinition(src : FHIRTypes3.TFhirParameterDefinition) : FHIRTypes4.TFhirParameterDefinition;
@@ -7343,6 +7879,7 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRTypes4.TFhirParameterDefinition.Create();
+  try
   copyElement(src, tgt);
   if (src.name <> '') then
     tgt.name := src.name;
@@ -7361,7 +7898,10 @@ begin
   if (src.profile <> nil) then
       tgt.profile := convertReference(src.Profile).reference;
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertParameterDefinition(src : FHIRTypes4.TFhirParameterDefinition) : FHIRTypes3.TFhirParameterDefinition;
@@ -7371,6 +7911,7 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRTypes3.TFhirParameterDefinition.Create();
+  try
   copyElement(src, tgt);
   if (src.name <> '') then
     tgt.name := src.name;
@@ -7389,7 +7930,10 @@ begin
   if (src.profile <> '') then
     tgt.Profile := FHIRTypes3.TFhirReference.Create(src.Profile);
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertRelatedArtifact(src : FHIRTypes3.TFhirRelatedArtifact) : FHIRTypes4.TFhirRelatedArtifact;
@@ -7399,6 +7943,7 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRTypes4.TFhirRelatedArtifact.Create();
+  try
   copyElement(src, tgt);
   tgt.type_ := convertRelatedArtifactType(src.type_);
 
@@ -7417,7 +7962,10 @@ begin
   if (src.resource <> nil) then
     tgt.resourceElement := convertReferenceToCanonical(src.resource);
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertRelatedArtifact(src : FHIRTypes4.TFhirRelatedArtifact) : FHIRTypes3.TFhirRelatedArtifact;
@@ -7427,6 +7975,7 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRTypes3.TFhirRelatedArtifact.Create();
+  try
   copyElement(src, tgt);
   tgt.type_ := convertRelatedArtifactType(src.type_);
 
@@ -7445,7 +7994,10 @@ begin
   if (src.resource <> '') then
     tgt.resource := convertCanonicalToReference(src.resourceElement);
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertTiming(src : FHIRTypes3.TFhirTiming) : FHIRTypes4.TFhirTiming;
@@ -7456,6 +8008,7 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRTypes4.TFhirTiming.Create();
+  try
   copyElement(src, tgt);
   for t in src.eventList do
   begin
@@ -7467,7 +8020,10 @@ begin
   if (src.code <> nil) then
     tgt.code := convertCodeableConcept(src.code);
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertTiming(src : FHIRTypes4.TFhirTiming) : FHIRTypes3.TFhirTiming;
@@ -7478,6 +8034,7 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRTypes3.TFhirTiming.Create();
+  try
   copyElement(src, tgt);
   for t in src.eventList do
   begin
@@ -7489,7 +8046,10 @@ begin
   if (src.code <> nil) then
     tgt.code := convertCodeableConcept(src.code);
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertTimingRepeatComponent(src : FHIRTypes3.TFhirTimingRepeat) : FHIRTypes4.TFhirTimingRepeat;
@@ -7504,6 +8064,7 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRTypes4.TFhirTimingRepeat.Create();
+  try
   copyElement(src, tgt);
   if (src.bounds <> nil) then
     tgt.bounds := convertType(src.bounds);
@@ -7535,7 +8096,10 @@ begin
   tgt.When := a2;
   tgt.offset := src.offset;
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertTimingRepeatComponent(src : FHIRTypes4.TFhirTimingRepeat) : FHIRTypes3.TFhirTimingRepeat;
@@ -7550,6 +8114,7 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRTypes3.TFhirTimingRepeat.Create();
+  try
   copyElement(src, tgt);
   if (src.bounds <> nil) then
     tgt.bounds := convertType(src.bounds);
@@ -7581,7 +8146,10 @@ begin
   tgt.When := a2;
   tgt.offset := src.offset;
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertUsageContext(src : FHIRTypes3.TFhirUsageContext) : FHIRTypes4.TFhirUsageContext;
@@ -7591,6 +8159,7 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRTypes4.TFhirUsageContext.Create();
+  try
   copyElement(src, tgt);
   if (src.code <> nil) then
     tgt.code := convertCoding(src.code);
@@ -7598,7 +8167,10 @@ begin
   if (src.value <> nil) then
     tgt.value := convertType(src.value);
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertUsageContext(src : FHIRTypes4.TFhirUsageContext) : FHIRTypes3.TFhirUsageContext;
@@ -7608,6 +8180,7 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRTypes3.TFhirUsageContext.Create();
+  try
   copyElement(src, tgt);
   if (src.code <> nil) then
     tgt.code := convertCoding(src.code);
@@ -7615,7 +8188,10 @@ begin
   if (src.value <> nil) then
     tgt.value := convertType(src.value);
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertSimpleQuantity(src : FHIRTypes3.TFhirQuantity) : FHIRTypes4.TFhirQuantity;
@@ -7625,6 +8201,7 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRTypes4.TFhirQuantity.Create();
+  try
   copyElement(src, tgt);
   tgt.value := src.value;
   tgt.comparator := convertQuantityComparator(src.comparator);
@@ -7632,7 +8209,10 @@ begin
   tgt.system := src.system;
   tgt.code := src.code;
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertSimpleQuantity(src : FHIRTypes4.TFhirQuantity) : FHIRTypes3.TFhirQuantity;
@@ -7642,6 +8222,7 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRTypes3.TFhirQuantity.Create();
+  try
   copyElement(src, tgt);
   tgt.value := src.value;
   tgt.comparator := convertQuantityComparator(src.comparator);
@@ -7649,7 +8230,10 @@ begin
   tgt.system := src.system;
   tgt.code := src.code;
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertTriggerDefinition(src : FHIRTypes3.TFhirTriggerDefinition) : FHIRTypes4.TFhirTriggerDefinition;
@@ -7659,6 +8243,7 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRTypes4.TFhirTriggerDefinition.Create();
+  try
   copyElement(src, tgt);
   tgt.type_ := convertTriggerType(src.type_);
 
@@ -7671,7 +8256,10 @@ begin
   if (src.eventData <> nil) then
     tgt.data := convertDataRequirement(src.eventData);
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertTriggerDefinition(src : FHIRTypes4.TFhirTriggerDefinition) : FHIRTypes3.TFhirTriggerDefinition;
@@ -7681,6 +8269,7 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRTypes3.TFhirTriggerDefinition.Create();
+  try
   copyElement(src, tgt);
   tgt.type_ := convertTriggerType(src.type_);
 
@@ -7693,7 +8282,10 @@ begin
   if (src.data <> nil) then
     tgt.eventData := convertDataRequirement(src.data);
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertDataRequirement(src : FHIRTypes3.TFhirDataRequirement) : FHIRTypes4.TFhirDataRequirement;
@@ -7707,6 +8299,7 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRTypes4.TFhirDataRequirement.Create();
+  try
   copyElement(src, tgt);
   tgt.type_element := convertType(src.type_Element) as FHIRTypes4.TFHIREnum;
 
@@ -7726,7 +8319,10 @@ begin
   begin
     tgt.dateFilterList.add(convertDataRequirementDateFilterComponent(t4));
   end;
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertDataRequirement(src : FHIRTypes4.TFhirDataRequirement) : FHIRTypes3.TFhirDataRequirement;
@@ -7740,6 +8336,7 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRTypes3.TFhirDataRequirement.Create();
+  try
   copyElement(src, tgt);
   tgt.type_element := convertType(src.type_Element) as FHIRTypes3.TFHIREnum;
 
@@ -7759,7 +8356,10 @@ begin
   begin
     tgt.dateFilterList.add(convertDataRequirementDateFilterComponent(t4));
   end;
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertDataRequirementCodeFilterComponent(src : FHIRTypes3.TFhirDataRequirementCodeFilter) : FHIRTypes4.TFhirDataRequirementCodeFilter;
@@ -7773,6 +8373,7 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRTypes4.TFhirDataRequirementCodeFilter.Create();
+  try
   copyElement(src, tgt);
   if (src.path <> '') then
     tgt.path := src.path;
@@ -7798,7 +8399,10 @@ begin
   begin
     tgt.codeList.add(convertCodeableConceptToCoding(t4));
   end;
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertDataRequirementCodeFilterComponent(src : FHIRTypes4.TFhirDataRequirementCodeFilter) : FHIRTypes3.TFhirDataRequirementCodeFilter;
@@ -7809,6 +8413,7 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRTypes3.TFhirDataRequirementCodeFilter.Create();
+  try
   copyElement(src, tgt);
   if (src.path <> '') then
     tgt.path := src.path;
@@ -7823,7 +8428,10 @@ begin
   begin
       tgt.valueCodingList.add(convertCoding(t));
   end;
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertDataRequirementDateFilterComponent(src : FHIRTypes3.TFhirDataRequirementDateFilter) : FHIRTypes4.TFhirDataRequirementDateFilter;
@@ -7833,6 +8441,7 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRTypes4.TFhirDataRequirementDateFilter.Create();
+  try
   copyElement(src, tgt);
   if (src.path <> '') then
     tgt.path := src.path;
@@ -7840,7 +8449,10 @@ begin
   if (src.value <> nil) then
     tgt.value := convertType(src.value);
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertDataRequirementDateFilterComponent(src : FHIRTypes4.TFhirDataRequirementDateFilter) : FHIRTypes3.TFhirDataRequirementDateFilter;
@@ -7850,6 +8462,7 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRTypes3.TFhirDataRequirementDateFilter.Create();
+  try
   copyElement(src, tgt);
   if (src.path <> '') then
     tgt.path := src.path;
@@ -7857,7 +8470,10 @@ begin
   if (src.value <> nil) then
     tgt.value := convertType(src.value);
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertType(src : FHIRTypes3.TFhirType) : FHIRTypes4.TFhirType;
@@ -7870,6 +8486,8 @@ begin
     exit(convertBoolean(src as FHIRTypes3.TFhirBoolean));
   if (src is FHIRTypes3.TFhirCode) then
     exit(convertCode(src as FHIRTypes3.TFhirCode));
+  if (src is FHIRTypes3.TFhirEnum) then
+    exit(convertCode(src as FHIRTypes3.TFhirEnum));
   if (src is FHIRTypes3.TFhirDate) then
     exit(convertDate(src as FHIRTypes3.TFhirDate));
   if (src is FHIRTypes3.TFhirDateTime) then
@@ -7976,6 +8594,8 @@ begin
     exit(convertBoolean(src as FHIRTypes4.TFhirBoolean));
   if (src is FHIRTypes4.TFhirCode) then
     exit(convertCode(src as FHIRTypes4.TFhirCode));
+  if (src is FHIRTypes4.TFhirEnum) then
+    exit(convertCode(src as FHIRTypes4.TFhirEnum));
   if (src is FHIRTypes4.TFhirDate) then
     exit(convertDate(src as FHIRTypes4.TFhirDate));
   if (src is FHIRTypes4.TFhirDateTime) then
@@ -8069,7 +8689,7 @@ begin
     exit(convertElementDefinition(src as FHIRTypes4.TFhirElementDefinition));
   if (src is FHIRTypes4.TFhirDataRequirement) then
     exit(convertDataRequirement(src as FHIRTypes4.TFhirDataRequirement));
-  raise Exception.create('Unknown type_ ' + src.fhirType());
+  raise Exception.create('Unknown type_ ' + src.fhirType()+' for '+src.className);
 end;
 
 class function TVersionConvertor_30_40.convertParameters(src : FHIRResources3.TFhirParameters) : FHIRResources4.TFhirParameters;
@@ -8080,12 +8700,16 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources4.TFhirParameters.Create();
+  try
   copyResource(src, tgt);
   for t in src.parameterList do
   begin
     tgt.parameterList.add(convertParametersParameterComponent(t));
   end;
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertParameters(src : FHIRResources4.TFhirParameters) : FHIRResources3.TFhirParameters;
@@ -8096,12 +8720,16 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources3.TFhirParameters.Create();
+  try
   copyResource(src, tgt);
   for t in src.parameterList do
   begin
     tgt.parameterList.add(convertParametersParameterComponent(t));
   end;
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertParametersParameterComponent(src : FHIRResources3.TFhirParametersParameter) : FHIRResources4.TFhirParametersParameter;
@@ -8112,7 +8740,8 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources4.TFhirParametersParameter.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   if (src.name <> '') then
     tgt.name := src.name;
 
@@ -8126,7 +8755,10 @@ begin
   begin
     tgt.partList.add(convertParametersParameterComponent(t));
   end;
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertParametersParameterComponent(src : FHIRResources4.TFhirParametersParameter) : FHIRResources3.TFhirParametersParameter;
@@ -8137,7 +8769,8 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources3.TFhirParametersParameter.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   if (src.name <> '') then
     tgt.name := src.name;
 
@@ -8151,7 +8784,10 @@ begin
   begin
     tgt.partList.add(convertParametersParameterComponent(t));
   end;
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertActivityDefinition(src : FHIRResources3.TFhirActivityDefinition) : FHIRResources4.TFhirActivityDefinition;
@@ -8173,6 +8809,7 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources4.TFhirActivityDefinition.Create();
+  try
   copyDomainResource(src, tgt);
   if (src.url <> '') then
     tgt.url := src.url;
@@ -8279,7 +8916,10 @@ begin
   begin
     tgt.dynamicValueList.add(convertActivityDefinitionDynamicValueComponent(tc));
   end;
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertActivityDefinition(src : FHIRResources4.TFhirActivityDefinition) : FHIRResources3.TFhirActivityDefinition;
@@ -8301,6 +8941,7 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources3.TFhirActivityDefinition.Create();
+  try
   copyDomainResource(src, tgt);
   if (src.url <> '') then
     tgt.url := src.url;
@@ -8406,7 +9047,10 @@ begin
   begin
     tgt.dynamicValueList.add(convertActivityDefinitionDynamicValueComponent(tc));
   end;
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertActivityDefinitionParticipantComponent(src : FHIRResources3.TFhirActivityDefinitionParticipant) : FHIRResources4.TFhirActivityDefinitionParticipant;
@@ -8416,13 +9060,17 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources4.TFhirActivityDefinitionParticipant.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   tgt.type_ := convertActivityParticipantType(src.type_);
 
   if (src.role <> nil) then
     tgt.role := convertCodeableConcept(src.role);
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertActivityDefinitionParticipantComponent(src : FHIRResources4.TFhirActivityDefinitionParticipant) : FHIRResources3.TFhirActivityDefinitionParticipant;
@@ -8432,13 +9080,17 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources3.TFhirActivityDefinitionParticipant.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   tgt.type_ := convertActivityParticipantType(src.type_);
 
   if (src.role <> nil) then
     tgt.role := convertCodeableConcept(src.role);
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertActivityDefinitionDynamicValueComponent(src : FHIRResources3.TFhirActivityDefinitionDynamicValue) : FHIRResources4.TFhirActivityDefinitionDynamicValue;
@@ -8448,7 +9100,8 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources4.TFhirActivityDefinitionDynamicValue.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   if (src.description <> '') then
     tgt.description := src.description;
 
@@ -8461,7 +9114,10 @@ begin
   if (src.expression <> '') then
     tgt.expression := src.expression;
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertActivityDefinitionDynamicValueComponent(src : FHIRResources4.TFhirActivityDefinitionDynamicValue) : FHIRResources3.TFhirActivityDefinitionDynamicValue;
@@ -8471,7 +9127,8 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources3.TFhirActivityDefinitionDynamicValue.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   if (src.description <> '') then
     tgt.description := src.description;
 
@@ -8484,7 +9141,10 @@ begin
   if (src.expression <> '') then
     tgt.expression := src.expression;
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertAllergyIntolerance(src : FHIRResources3.TFhirAllergyIntolerance) : FHIRResources4.TFhirAllergyIntolerance;
@@ -8499,6 +9159,7 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources4.TFhirAllergyIntolerance.Create();
+  try
   copyDomainResource(src, tgt);
   for t1 in src.identifierList do
   begin
@@ -8545,7 +9206,10 @@ begin
   begin
     tgt.reactionList.add(convertAllergyIntoleranceReactionComponent(t4));
   end;
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertAllergyIntolerance(src : FHIRResources4.TFhirAllergyIntolerance) : FHIRResources3.TFhirAllergyIntolerance;
@@ -8560,6 +9224,7 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources3.TFhirAllergyIntolerance.Create();
+  try
   copyDomainResource(src, tgt);
   for t in src.identifierList do
   begin
@@ -8605,7 +9270,10 @@ begin
   begin
     tgt.reactionList.add(convertAllergyIntoleranceReactionComponent(t4));
   end;
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertAllergyIntoleranceReactionComponent(src : FHIRResources3.TFhirAllergyIntoleranceReaction) : FHIRResources4.TFhirAllergyIntoleranceReaction;
@@ -8617,7 +9285,8 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources4.TFhirAllergyIntoleranceReaction.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   if (src.substance <> nil) then
     tgt.substance := convertCodeableConcept(src.substance);
 
@@ -8639,7 +9308,10 @@ begin
   begin
     tgt.noteList.add(convertAnnotation(t1));
   end;
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertAllergyIntoleranceReactionComponent(src : FHIRResources4.TFhirAllergyIntoleranceReaction) : FHIRResources3.TFhirAllergyIntoleranceReaction;
@@ -8651,7 +9323,8 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources3.TFhirAllergyIntoleranceReaction.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   if (src.substance <> nil) then
     tgt.substance := convertCodeableConcept(src.substance);
 
@@ -8673,7 +9346,10 @@ begin
   begin
     tgt.noteList.add(convertAnnotation(t1));
   end;
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertAppointment(src : FHIRResources3.TFhirAppointment) : FHIRResources4.TFhirAppointment;
@@ -8693,6 +9369,7 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources4.TFhirAppointment.Create();
+  try
   copyDomainResource(src, tgt);
   for t in src.identifierList do
   begin
@@ -8758,7 +9435,10 @@ begin
   begin
     tgt.requestedPeriodList.add(convertPeriod(t9));
   end;
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertAppointment(src : FHIRResources4.TFhirAppointment) : FHIRResources3.TFhirAppointment;
@@ -8778,6 +9458,7 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources3.TFhirAppointment.Create();
+  try
   copyDomainResource(src, tgt);
   for t1 in src.identifierList do
   begin
@@ -8843,7 +9524,10 @@ begin
   begin
     tgt.requestedPeriodList.add(convertPeriod(ta));
   end;
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertAppointmentParticipantComponent(src : FHIRResources3.TFhirAppointmentParticipant) : FHIRResources4.TFhirAppointmentParticipant;
@@ -8854,7 +9538,8 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources4.TFhirAppointmentParticipant.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   for t in src.type_List do
   begin
     tgt.type_List.add(convertCodeableConcept(t));
@@ -8866,7 +9551,10 @@ begin
 
   tgt.status := convertParticipationStatus(src.status);
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertAppointmentParticipantComponent(src : FHIRResources4.TFhirAppointmentParticipant) : FHIRResources3.TFhirAppointmentParticipant;
@@ -8877,7 +9565,8 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources3.TFhirAppointmentParticipant.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   for t in src.type_List do
   begin
     tgt.type_List.add(convertCodeableConcept(t));
@@ -8889,7 +9578,10 @@ begin
 
   tgt.status := convertParticipationStatus(src.status);
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertAppointmentResponse(src : FHIRResources3.TFhirAppointmentResponse) : FHIRResources4.TFhirAppointmentResponse;
@@ -8901,6 +9593,7 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources4.TFhirAppointmentResponse.Create();
+  try
   copyDomainResource(src, tgt);
   for t1 in src.identifierList do
   begin
@@ -8925,7 +9618,10 @@ begin
   if (src.comment <> '') then
     tgt.comment := src.comment;
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertAppointmentResponse(src : FHIRResources4.TFhirAppointmentResponse) : FHIRResources3.TFhirAppointmentResponse;
@@ -8937,6 +9633,7 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources3.TFhirAppointmentResponse.Create();
+  try
   copyDomainResource(src, tgt);
   for t in src.identifierList do
   begin
@@ -8961,7 +9658,10 @@ begin
   if (src.comment <> '') then
     tgt.comment := src.comment;
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertAuditEvent(src : FHIRResources3.TFhirAuditEvent) : FHIRResources4.TFhirAuditEvent;
@@ -8975,6 +9675,7 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources4.TFhirAuditEvent.Create();
+  try
   copyDomainResource(src, tgt);
   tgt.type_ := convertCoding(src.type_);
 
@@ -9006,7 +9707,10 @@ begin
   begin
     tgt.entityList.add(convertAuditEventEntityComponent(t4));
   end;
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertAuditEvent(src : FHIRResources4.TFhirAuditEvent) : FHIRResources3.TFhirAuditEvent;
@@ -9020,6 +9724,7 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources3.TFhirAuditEvent.Create();
+  try
   copyDomainResource(src, tgt);
   tgt.type_ := convertCoding(src.type_);
 
@@ -9051,7 +9756,10 @@ begin
   begin
     tgt.entityList.add(convertAuditEventEntityComponent(t4));
   end;
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertAuditEventAgentComponent(src : FHIRResources3.TFhirAuditEventAgent) : FHIRResources4.TFhirAuditEventAgent;
@@ -9064,7 +9772,8 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources4.TFhirAuditEventAgent.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   for t1 in src.roleList do
   begin
     tgt.roleList.add(convertCodeableConcept(t1));
@@ -9100,7 +9809,10 @@ begin
   begin
     tgt.purposeOfUseList.add(convertCodeableConcept(t3));
   end;
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertAuditEventAgentComponent(src : FHIRResources4.TFhirAuditEventAgent) : FHIRResources3.TFhirAuditEventAgent;
@@ -9113,7 +9825,8 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources3.TFhirAuditEventAgent.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   for t1 in src.roleList do
   begin
     tgt.roleList.add(convertCodeableConcept(t1));
@@ -9149,7 +9862,10 @@ begin
   begin
     tgt.purposeOfUseList.add(convertCodeableConcept(t3));
   end;
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertAuditEventAgentNetworkComponent(src : FHIRResources3.TFhirAuditEventAgentNetwork) : FHIRResources4.TFhirAuditEventAgentNetwork;
@@ -9159,13 +9875,17 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources4.TFhirAuditEventAgentNetwork.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   if (src.address <> '') then
     tgt.address := src.address;
 
   tgt.type_ := convertAuditEventAgentNetworkType(src.type_);
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertAuditEventAgentNetworkComponent(src : FHIRResources4.TFhirAuditEventAgentNetwork) : FHIRResources3.TFhirAuditEventAgentNetwork;
@@ -9175,13 +9895,17 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources3.TFhirAuditEventAgentNetwork.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   if (src.address <> '') then
     tgt.address := src.address;
 
   tgt.type_ := convertAuditEventAgentNetworkType(src.type_);
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertAuditEventSourceComponent(src : FHIRResources3.TFhirAuditEventSource) : FHIRResources4.TFhirAuditEventSource;
@@ -9192,7 +9916,8 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources4.TFhirAuditEventSource.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   if (src.site <> '') then
     tgt.site := src.site;
 
@@ -9203,7 +9928,10 @@ begin
   begin
     tgt.type_List.add(convertCoding(t));
   end;
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertAuditEventSourceComponent(src : FHIRResources4.TFhirAuditEventSource) : FHIRResources3.TFhirAuditEventSource;
@@ -9214,7 +9942,8 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources3.TFhirAuditEventSource.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   if (src.site <> '') then
     tgt.site := src.site;
 
@@ -9225,7 +9954,10 @@ begin
   begin
     tgt.type_List.add(convertCoding(t));
   end;
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertAuditEventEntityComponent(src : FHIRResources3.TFhirAuditEventEntity) : FHIRResources4.TFhirAuditEventEntity;
@@ -9237,7 +9969,8 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources4.TFhirAuditEventEntity.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   if (src.identifier <> nil) then
     tgt.identifier := convertIdentifier(src.identifier);
 
@@ -9268,7 +10001,10 @@ begin
   begin
     tgt.detailList.add(convertAuditEventEntityDetailComponent(t2));
   end;
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertAuditEventEntityComponent(src : FHIRResources4.TFhirAuditEventEntity) : FHIRResources3.TFhirAuditEventEntity;
@@ -9280,7 +10016,8 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources3.TFhirAuditEventEntity.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   if (src.identifier <> nil) then
     tgt.identifier := convertIdentifier(src.identifier);
 
@@ -9310,7 +10047,10 @@ begin
   begin
     tgt.detailList.add(convertAuditEventEntityDetailComponent(t2));
   end;
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertAuditEventEntityDetailComponent(src : FHIRResources3.TFhirAuditEventEntityDetail) : FHIRResources4.TFhirAuditEventEntityDetail;
@@ -9320,14 +10060,18 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources4.TFhirAuditEventEntityDetail.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   if (src.type_ <> '') then
     tgt.type_ := src.type_;
 
   if (src.value <> nil) then
     tgt.Value := FHIRTypes4.TFHirBase64Binary.create(src.Value);
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertAuditEventEntityDetailComponent(src : FHIRResources4.TFhirAuditEventEntityDetail) : FHIRResources3.TFhirAuditEventEntityDetail;
@@ -9337,7 +10081,8 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources3.TFhirAuditEventEntityDetail.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   if (src.type_ <> '') then
     tgt.type_ := src.type_;
 
@@ -9347,7 +10092,10 @@ begin
     tgt.value := (src.value as FHIRTypes4.TFhirBase64Binary).value;
 
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertBasic(src : FHIRResources3.TFhirBasic) : FHIRResources4.TFhirBasic;
@@ -9358,6 +10106,7 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources4.TFhirBasic.Create();
+  try
   copyDomainResource(src, tgt);
   for t in src.identifierList do
   begin
@@ -9374,7 +10123,10 @@ begin
   if (src.author <> nil) then
     tgt.author := convertReference(src.author);
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertBasic(src : FHIRResources4.TFhirBasic) : FHIRResources3.TFhirBasic;
@@ -9385,6 +10137,7 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources3.TFhirBasic.Create();
+  try
   copyDomainResource(src, tgt);
   for t in src.identifierList do
   begin
@@ -9401,7 +10154,10 @@ begin
   if (src.author <> nil) then
     tgt.author := convertReference(src.author);
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertBinary(src : FHIRResources3.TFhirBinary) : FHIRResources4.TFhirBinary;
@@ -9411,6 +10167,7 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources4.TFhirBinary.Create();
+  try
   copyResource(src, tgt);
   if (src.contentType <> '') then
     tgt.contentType := src.contentType;
@@ -9420,7 +10177,10 @@ begin
 
   tgt.content := src.content;
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertBinary(src : FHIRResources4.TFhirBinary) : FHIRResources3.TFhirBinary;
@@ -9430,6 +10190,7 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources3.TFhirBinary.Create();
+  try
   copyResource(src, tgt);
   if (src.contentType <> '') then
     tgt.contentType := src.contentType;
@@ -9439,7 +10200,10 @@ begin
 
   tgt.content := src.content;
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertBodySite(src : FHIRResources3.TFhirBodySite) : FHIRResources4.TFhirBodyStructure;
@@ -9451,6 +10215,7 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources4.TFhirBodyStructure.Create();
+  try
   copyDomainResource(src, tgt);
   for t1 in src.identifierList do
   begin
@@ -9468,7 +10233,10 @@ begin
   if (src.patient <> nil) then
     tgt.patient := convertReference(src.patient);
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertBodySite(src : FHIRResources4.TFhirBodyStructure) : FHIRResources3.TFhirBodySite;
@@ -9480,6 +10248,7 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources3.TFhirBodySite.Create();
+  try
   copyDomainResource(src, tgt);
   for t1 in src.identifierList do
   begin
@@ -9497,7 +10266,10 @@ begin
   if (src.patient <> nil) then
     tgt.patient := convertReference(src.patient);
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertBundle(src : FHIRResources3.TFhirBundle) : FHIRResources4.TFhirBundle;
@@ -9509,6 +10281,7 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources4.TFhirBundle.Create();
+  try
   copyResource(src, tgt);
   if (src.identifier <> nil) then
     tgt.identifier := convertIdentifier(src.identifier);
@@ -9528,7 +10301,10 @@ begin
   if (src.signature <> nil) then
     tgt.signature := convertSignature(src.signature);
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertBundle(src : FHIRResources4.TFhirBundle) : FHIRResources3.TFhirBundle;
@@ -9540,6 +10316,7 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources3.TFhirBundle.Create();
+  try
   copyResource(src, tgt);
   if (src.identifier <> nil) then
     tgt.identifier := convertIdentifier(src.identifier);
@@ -9559,7 +10336,10 @@ begin
   if (src.signature <> nil) then
     tgt.signature := convertSignature(src.signature);
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertBundleLinkComponent(src : FHIRResources3.TFhirBundleLink) : FHIRResources4.TFhirBundleLink;
@@ -9569,14 +10349,18 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources4.TFhirBundleLink.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   if (src.relation <> '') then
     tgt.relation := src.relation;
 
   if (src.url <> '') then
     tgt.url := src.url;
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertBundleLinkComponent(src : FHIRResources4.TFhirBundleLink) : FHIRResources3.TFhirBundleLink;
@@ -9586,14 +10370,18 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources3.TFhirBundleLink.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   if (src.relation <> '') then
     tgt.relation := src.relation;
 
   if (src.url <> '') then
     tgt.url := src.url;
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertBundleEntryComponent(src : FHIRResources3.TFhirBundleEntry) : FHIRResources4.TFhirBundleEntry;
@@ -9604,7 +10392,8 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources4.TFhirBundleEntry.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   for t in src.link_List do
   begin
     tgt.link_List.add(convertBundleLinkComponent(t));
@@ -9624,7 +10413,10 @@ begin
   if (src.response <> nil) then
     tgt.response := convertBundleEntryResponseComponent(src.response);
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertBundleEntryComponent(src : FHIRResources4.TFhirBundleEntry) : FHIRResources3.TFhirBundleEntry;
@@ -9635,7 +10427,8 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources3.TFhirBundleEntry.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   for t in src.link_List do
   begin
     tgt.link_List.add(convertBundleLinkComponent(t));
@@ -9655,7 +10448,10 @@ begin
   if (src.response <> nil) then
     tgt.response := convertBundleEntryResponseComponent(src.response);
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertBundleEntrySearchComponent(src : FHIRResources3.TFhirBundleEntrySearch) : FHIRResources4.TFhirBundleEntrySearch;
@@ -9665,12 +10461,16 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources4.TFhirBundleEntrySearch.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   tgt.mode := convertSearchEntryMode(src.mode);
 
   tgt.score := src.score;
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertBundleEntrySearchComponent(src : FHIRResources4.TFhirBundleEntrySearch) : FHIRResources3.TFhirBundleEntrySearch;
@@ -9680,12 +10480,16 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources3.TFhirBundleEntrySearch.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   tgt.mode := convertSearchEntryMode(src.mode);
 
   tgt.score := src.score;
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertBundleEntryRequestComponent(src : FHIRResources3.TFhirBundleEntryRequest) : FHIRResources4.TFhirBundleEntryRequest;
@@ -9695,7 +10499,8 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources4.TFhirBundleEntryRequest.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   tgt.method := convertHTTPVerb(src.method);
 
   if (src.url <> '') then
@@ -9712,7 +10517,10 @@ begin
   if (src.ifNoneExist <> '') then
     tgt.ifNoneExist := src.ifNoneExist;
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertBundleEntryRequestComponent(src : FHIRResources4.TFhirBundleEntryRequest) : FHIRResources3.TFhirBundleEntryRequest;
@@ -9722,7 +10530,8 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources3.TFhirBundleEntryRequest.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   tgt.method := convertHTTPVerb(src.method);
 
   if (src.url <> '') then
@@ -9739,7 +10548,10 @@ begin
   if (src.ifNoneExist <> '') then
     tgt.ifNoneExist := src.ifNoneExist;
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertBundleEntryResponseComponent(src : FHIRResources3.TFhirBundleEntryResponse) : FHIRResources4.TFhirBundleEntryResponse;
@@ -9749,7 +10561,8 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources4.TFhirBundleEntryResponse.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   if (src.status <> '') then
     tgt.status := src.status;
 
@@ -9763,7 +10576,10 @@ begin
 
   tgt.outcome := convertResource(src.outcome);
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertBundleEntryResponseComponent(src : FHIRResources4.TFhirBundleEntryResponse) : FHIRResources3.TFhirBundleEntryResponse;
@@ -9773,7 +10589,8 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources3.TFhirBundleEntryResponse.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   if (src.status <> '') then
     tgt.status := src.status;
 
@@ -9787,7 +10604,10 @@ begin
 
   tgt.outcome := convertResource(src.outcome);
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertCapabilityStatement(src : FHIRResources3.TFhirCapabilityStatement) : FHIRResources4.TFhirCapabilityStatement;
@@ -9806,6 +10626,7 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources4.TFhirCapabilityStatement.Create();
+  try
   copyDomainResource(src, tgt);
   if (src.url <> '') then
     tgt.url := src.url;
@@ -9886,7 +10707,10 @@ begin
   begin
     tgt.documentList.add(convertCapabilityStatementDocumentComponent(t9));
   end;
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertCapabilityStatement(src : FHIRResources4.TFhirCapabilityStatement) : FHIRResources3.TFhirCapabilityStatement;
@@ -9909,6 +10733,7 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources3.TFhirCapabilityStatement.Create();
+  try
   copyDomainResource(src, tgt);
   if (src.url <> '') then
     tgt.url := src.url;
@@ -9999,7 +10824,10 @@ begin
   begin
     tgt.documentList.add(convertCapabilityStatementDocumentComponent(tb));
   end;
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertCapabilityStatementSoftwareComponent(src : FHIRResources3.TFhirCapabilityStatementSoftware) : FHIRResources4.TFhirCapabilityStatementSoftware;
@@ -10009,7 +10837,8 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources4.TFhirCapabilityStatementSoftware.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   if (src.name <> '') then
     tgt.name := src.name;
 
@@ -10018,7 +10847,10 @@ begin
 
   tgt.releaseDate := src.releaseDate;
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertCapabilityStatementSoftwareComponent(src : FHIRResources4.TFhirCapabilityStatementSoftware) : FHIRResources3.TFhirCapabilityStatementSoftware;
@@ -10028,7 +10860,8 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources3.TFhirCapabilityStatementSoftware.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   if (src.name <> '') then
     tgt.name := src.name;
 
@@ -10037,7 +10870,10 @@ begin
 
   tgt.releaseDate := src.releaseDate;
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertCapabilityStatementImplementationComponent(src : FHIRResources3.TFhirCapabilityStatementImplementation) : FHIRResources4.TFhirCapabilityStatementImplementation;
@@ -10047,14 +10883,18 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources4.TFhirCapabilityStatementImplementation.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   if (src.description <> '') then
     tgt.description := src.description;
 
   if (src.url <> '') then
     tgt.url := src.url;
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertCapabilityStatementImplementationComponent(src : FHIRResources4.TFhirCapabilityStatementImplementation) : FHIRResources3.TFhirCapabilityStatementImplementation;
@@ -10064,14 +10904,18 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources3.TFhirCapabilityStatementImplementation.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   if (src.description <> '') then
     tgt.description := src.description;
 
   if (src.url <> '') then
     tgt.url := src.url;
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertCapabilityStatementRestComponent(src : FHIRResources3.TFhirCapabilityStatementRest) : FHIRResources4.TFhirCapabilityStatementRest;
@@ -10086,7 +10930,8 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources4.TFhirCapabilityStatementRest.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   tgt.mode := convertRestfulCapabilityMode(src.mode);
 
   if (src.documentation <> '') then
@@ -10115,7 +10960,10 @@ begin
   begin
     tgt.compartmentList.add(convertUri(t5));
   end;
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertCapabilityStatementRestComponent(src : FHIRResources4.TFhirCapabilityStatementRest) : FHIRResources3.TFhirCapabilityStatementRest;
@@ -10130,7 +10978,8 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources3.TFhirCapabilityStatementRest.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   tgt.mode := convertRestfulCapabilityMode(src.mode);
 
   if (src.documentation <> '') then
@@ -10159,7 +11008,10 @@ begin
   begin
     tgt.compartmentList.add(convertUri(t5));
   end;
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertCapabilityStatementRestSecurityComponent(src : FHIRResources3.TFhirCapabilityStatementRestSecurity) : FHIRResources4.TFhirCapabilityStatementRestSecurity;
@@ -10170,7 +11022,8 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources4.TFhirCapabilityStatementRestSecurity.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   tgt.cors := src.cors;
 
   for t in src.serviceList do
@@ -10180,7 +11033,10 @@ begin
   if (src.description <> '') then
     tgt.description := src.description;
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertCapabilityStatementRestSecurityComponent(src : FHIRResources4.TFhirCapabilityStatementRestSecurity) : FHIRResources3.TFhirCapabilityStatementRestSecurity;
@@ -10191,7 +11047,8 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources3.TFhirCapabilityStatementRestSecurity.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   tgt.cors := src.cors;
 
   for t in src.serviceList do
@@ -10201,7 +11058,10 @@ begin
   if (src.description <> '') then
     tgt.description := src.description;
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertCapabilityStatementRestResourceComponent(src : FHIRResources3.TFhirCapabilityStatementRestResource) : FHIRResources4.TFhirCapabilityStatementRestResource;
@@ -10217,7 +11077,8 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources4.TFhirCapabilityStatementRestResource.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   tgt.type_element := convertType(src.type_Element) as FHIRTypes4.TFHIREnum;
 
   if (src.profile <> nil) then
@@ -10256,7 +11117,10 @@ begin
   begin
     tgt.searchParamList.add(convertCapabilityStatementRestResourceSearchParamComponent(t5));
   end;
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertCapabilityStatementRestResourceComponent(src : FHIRResources4.TFhirCapabilityStatementRestResource) : FHIRResources3.TFhirCapabilityStatementRestResource;
@@ -10272,7 +11136,8 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources3.TFhirCapabilityStatementRestResource.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   tgt.type_element := convertType(src.type_Element) as FHIRTypes3.TFHIREnum;
 
   if (src.profile <> '') then
@@ -10311,7 +11176,10 @@ begin
   begin
     tgt.searchParamList.add(convertCapabilityStatementRestResourceSearchParamComponent(t5));
   end;
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertResourceInteractionComponent(src : FHIRResources3.TFhirCapabilityStatementRestResourceInteraction) : FHIRResources4.TFhirCapabilityStatementRestResourceInteraction;
@@ -10321,13 +11189,17 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources4.TFhirCapabilityStatementRestResourceInteraction.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   tgt.code := convertTypeRestfulInteraction(src.code);
 
   if (src.documentation <> '') then
     tgt.documentation := src.documentation;
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertResourceInteractionComponent(src : FHIRResources4.TFhirCapabilityStatementRestResourceInteraction) : FHIRResources3.TFhirCapabilityStatementRestResourceInteraction;
@@ -10337,13 +11209,17 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources3.TFhirCapabilityStatementRestResourceInteraction.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   tgt.code := convertTypeRestfulInteraction(src.code);
 
   if (src.documentation <> '') then
     tgt.documentation := src.documentation;
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertCapabilityStatementRestResourceSearchParamComponent(src : FHIRResources3.TFhirCapabilityStatementRestResourceSearchParam) : FHIRResources4.TFhirCapabilityStatementRestResourceSearchParam;
@@ -10353,7 +11229,8 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources4.TFhirCapabilityStatementRestResourceSearchParam.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   if (src.name <> '') then
     tgt.name := src.name;
 
@@ -10365,7 +11242,10 @@ begin
   if (src.documentation <> '') then
     tgt.documentation := src.documentation;
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertCapabilityStatementRestResourceSearchParamComponent(src : FHIRResources4.TFhirCapabilityStatementRestResourceSearchParam) : FHIRResources3.TFhirCapabilityStatementRestResourceSearchParam;
@@ -10375,7 +11255,8 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources3.TFhirCapabilityStatementRestResourceSearchParam.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   if (src.name <> '') then
     tgt.name := src.name;
 
@@ -10387,7 +11268,10 @@ begin
   if (src.documentation <> '') then
     tgt.documentation := src.documentation;
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertSystemInteractionComponent(src : FHIRResources3.TFhirCapabilityStatementRestInteraction) : FHIRResources4.TFhirCapabilityStatementRestInteraction;
@@ -10397,13 +11281,17 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources4.TFhirCapabilityStatementRestInteraction.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   tgt.code := convertSystemRestfulInteraction(src.code);
 
   if (src.documentation <> '') then
     tgt.documentation := src.documentation;
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertSystemInteractionComponent(src : FHIRResources4.TFhirCapabilityStatementRestInteraction) : FHIRResources3.TFhirCapabilityStatementRestInteraction;
@@ -10413,13 +11301,17 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources3.TFhirCapabilityStatementRestInteraction.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   tgt.code := convertSystemRestfulInteraction(src.code);
 
   if (src.documentation <> '') then
     tgt.documentation := src.documentation;
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertCapabilityStatementRestOperationComponent(src : FHIRResources3.TFhirCapabilityStatementRestOperation) : FHIRResources4.TFhirCapabilityStatementRestResourceOperation;
@@ -10429,14 +11321,18 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources4.TFhirCapabilityStatementRestResourceOperation.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   if (src.name <> '') then
     tgt.name := src.name;
 
   if (src.definition <> nil) then
     tgt.definitionElement := convertReferenceToCanonical(src.definition);
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertCapabilityStatementRestOperationComponent(src : FHIRResources4.TFhirCapabilityStatementRestResourceOperation) : FHIRResources3.TFhirCapabilityStatementRestOperation;
@@ -10446,14 +11342,18 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources3.TFhirCapabilityStatementRestOperation.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   if (src.name <> '') then
     tgt.name := src.name;
 
   if (src.definition <> '') then
     tgt.definition := convertCanonicalToReference(src.definitionElement);
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertCapabilityStatementMessagingComponent(src : FHIRResources3.TFhirCapabilityStatementMessaging) : FHIRResources4.TFhirCapabilityStatementMessaging;
@@ -10465,7 +11365,8 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources4.TFhirCapabilityStatementMessaging.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   for t in src.endpointList do
   begin
     tgt.endpointList.add(convertCapabilityStatementMessagingEndpointComponent(t));
@@ -10479,7 +11380,10 @@ begin
   begin
     tgt.supportedMessageList.add(convertCapabilityStatementMessagingSupportedMessageComponent(t1));
   end;
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertCapabilityStatementMessagingComponent(src : FHIRResources4.TFhirCapabilityStatementMessaging) : FHIRResources3.TFhirCapabilityStatementMessaging;
@@ -10491,7 +11395,8 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources3.TFhirCapabilityStatementMessaging.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   for t in src.endpointList do
   begin
     tgt.endpointList.add(convertCapabilityStatementMessagingEndpointComponent(t));
@@ -10505,7 +11410,10 @@ begin
   begin
     tgt.supportedMessageList.add(convertCapabilityStatementMessagingSupportedMessageComponent(t2));
   end;
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertCapabilityStatementMessagingEndpointComponent(src : FHIRResources3.TFhirCapabilityStatementMessagingEndpoint) : FHIRResources4.TFhirCapabilityStatementMessagingEndpoint;
@@ -10515,14 +11423,18 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources4.TFhirCapabilityStatementMessagingEndpoint.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   if (src.protocol <> nil) then
     tgt.protocol := convertCoding(src.protocol);
 
   if (src.address <> '') then
     tgt.address := src.address;
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertCapabilityStatementMessagingEndpointComponent(src : FHIRResources4.TFhirCapabilityStatementMessagingEndpoint) : FHIRResources3.TFhirCapabilityStatementMessagingEndpoint;
@@ -10532,14 +11444,18 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources3.TFhirCapabilityStatementMessagingEndpoint.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   if (src.protocol <> nil) then
     tgt.protocol := convertCoding(src.protocol);
 
   if (src.address <> '') then
     tgt.address := src.address;
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertCapabilityStatementMessagingSupportedMessageComponent(src : FHIRResources3.TFhirCapabilityStatementMessagingSupportedMessage) : FHIRResources4.TFhirCapabilityStatementMessagingSupportedMessage;
@@ -10549,13 +11465,17 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources4.TFhirCapabilityStatementMessagingSupportedMessage.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   tgt.mode := convertEventCapabilityMode(src.mode);
 
   if (src.definition <> nil) then
     tgt.definitionElement := convertReferenceToCanonical(src.definition);
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertCapabilityStatementMessagingSupportedMessageComponent(src : FHIRResources4.TFhirCapabilityStatementMessagingSupportedMessage) : FHIRResources3.TFhirCapabilityStatementMessagingSupportedMessage;
@@ -10565,13 +11485,17 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources3.TFhirCapabilityStatementMessagingSupportedMessage.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   tgt.mode := convertEventCapabilityMode(src.mode);
 
   if (src.definition <> '') then
     tgt.definition := convertCanonicalToReference(src.definitionElement);
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertCapabilityStatementDocumentComponent(src : FHIRResources3.TFhirCapabilityStatementDocument) : FHIRResources4.TFhirCapabilityStatementDocument;
@@ -10581,7 +11505,8 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources4.TFhirCapabilityStatementDocument.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   tgt.mode := convertDocumentMode(src.mode);
 
   if (src.documentation <> '') then
@@ -10590,7 +11515,10 @@ begin
   if (src.profile <> nil) then
     tgt.profileElement := convertReferenceToCanonical(src.profile);
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertCapabilityStatementDocumentComponent(src : FHIRResources4.TFhirCapabilityStatementDocument) : FHIRResources3.TFhirCapabilityStatementDocument;
@@ -10600,7 +11528,8 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources3.TFhirCapabilityStatementDocument.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   tgt.mode := convertDocumentMode(src.mode);
 
   if (src.documentation <> '') then
@@ -10609,7 +11538,10 @@ begin
   if (src.profile <> '') then
     tgt.profile := convertCanonicalToReference(src.profileElement);
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertCareTeam(src : FHIRResources3.TFhirCareTeam) : FHIRResources4.TFhirCareTeam;
@@ -10626,6 +11558,7 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources4.TFhirCareTeam.Create();
+  try
   copyDomainResource(src, tgt);
   for t1 in src.identifierList do
   begin
@@ -10669,7 +11602,10 @@ begin
   begin
     tgt.noteList.add(convertAnnotation(t7));
   end;
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertCareTeam(src : FHIRResources4.TFhirCareTeam) : FHIRResources3.TFhirCareTeam;
@@ -10686,6 +11622,7 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources3.TFhirCareTeam.Create();
+  try
   copyDomainResource(src, tgt);
   for t1 in src.identifierList do
   begin
@@ -10729,7 +11666,10 @@ begin
   begin
     tgt.noteList.add(convertAnnotation(t7));
   end;
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertCareTeamParticipantComponent(src : FHIRResources3.TFhirCareTeamParticipant) : FHIRResources4.TFhirCareTeamParticipant;
@@ -10739,7 +11679,8 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources4.TFhirCareTeamParticipant.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   if (src.role <> nil) then
     tgt.role := convertCodeableConcept(src.role);
 
@@ -10752,7 +11693,10 @@ begin
   if (src.period <> nil) then
     tgt.period := convertPeriod(src.period);
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertCareTeamParticipantComponent(src : FHIRResources4.TFhirCareTeamParticipant) : FHIRResources3.TFhirCareTeamParticipant;
@@ -10762,7 +11706,8 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources3.TFhirCareTeamParticipant.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   if (src.role <> nil) then
     tgt.role := convertCodeableConcept(src.role);
 
@@ -10775,7 +11720,10 @@ begin
   if (src.period <> nil) then
     tgt.period := convertPeriod(src.period);
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertChargeItem(src : FHIRResources3.TFhirChargeItem) : FHIRResources4.TFhirChargeItem;
@@ -10794,6 +11742,7 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources4.TFhirChargeItem.Create();
+  try
   copyDomainResource(src, tgt);
   if (src.identifier <> nil) then
     tgt.identifierList.add(convertIdentifier(src.Identifier));
@@ -10869,7 +11818,10 @@ begin
   begin
     tgt.supportingInformationList.add(convertReference(t9));
   end;
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertChargeItem(src : FHIRResources4.TFhirChargeItem) : FHIRResources3.TFhirChargeItem;
@@ -10888,6 +11840,7 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources3.TFhirChargeItem.Create();
+  try
   copyDomainResource(src, tgt);
   if (src.identifierList.Count > 0) then
     tgt.Identifier := convertIdentifier(src.IdentifierList[0]);
@@ -10963,7 +11916,10 @@ begin
   begin
     tgt.supportingInformationList.add(convertReference(t9));
   end;
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertChargeItemParticipantComponent(src : FHIRResources3.TFhirChargeItemParticipant) : FHIRResources4.TFhirChargeItemParticipant;
@@ -10973,14 +11929,18 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources4.TFhirChargeItemParticipant.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   if (src.role <> nil) then
     tgt.role := convertCodeableConcept(src.role);
 
   if (src.actor <> nil) then
     tgt.actor := convertReference(src.actor);
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertChargeItemParticipantComponent(src : FHIRResources4.TFhirChargeItemParticipant) : FHIRResources3.TFhirChargeItemParticipant;
@@ -10990,14 +11950,18 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources3.TFhirChargeItemParticipant.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   if (src.role <> nil) then
     tgt.role := convertCodeableConcept(src.role);
 
   if (src.actor <> nil) then
     tgt.actor := convertReference(src.actor);
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertClaim(src : FHIRResources3.TFhirClaim) : FHIRResources4.TFhirClaim;
@@ -11016,6 +11980,7 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources4.TFhirClaim.Create();
+  try
   copyDomainResource(src, tgt);
   for t1 in src.identifierList do
   begin
@@ -11103,7 +12068,10 @@ begin
   if (src.total <> nil) then
     tgt.total := convertMoney(src.total);
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertClaim(src : FHIRResources4.TFhirClaim) : FHIRResources3.TFhirClaim;
@@ -11122,6 +12090,7 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources3.TFhirClaim.Create();
+  try
   copyDomainResource(src, tgt);
   for t1 in src.identifierList do
   begin
@@ -11209,7 +12178,10 @@ begin
   if (src.total <> nil) then
     tgt.total := convertMoney(src.total);
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertRelatedClaimComponent(src : FHIRResources3.TFhirClaimRelated) : FHIRResources4.TFhirClaimRelated;
@@ -11219,7 +12191,8 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources4.TFhirClaimRelated.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   if (src.claim <> nil) then
     tgt.claim := convertReference(src.claim);
 
@@ -11229,7 +12202,10 @@ begin
   if (src.reference <> nil) then
     tgt.reference := convertIdentifier(src.reference);
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertRelatedClaimComponent(src : FHIRResources4.TFhirClaimRelated) : FHIRResources3.TFhirClaimRelated;
@@ -11239,7 +12215,8 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources3.TFhirClaimRelated.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   if (src.claim <> nil) then
     tgt.claim := convertReference(src.claim);
 
@@ -11249,7 +12226,10 @@ begin
   if (src.reference <> nil) then
     tgt.reference := convertIdentifier(src.reference);
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertPayeeComponent(src : FHIRResources3.TFhirClaimPayee) : FHIRResources4.TFhirClaimPayee;
@@ -11259,7 +12239,8 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources4.TFhirClaimPayee.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   tgt.type_ := convertCodeableConcept(src.type_);
 
   if (src.resourceType <> nil) then
@@ -11268,7 +12249,10 @@ begin
   if (src.party <> nil) then
     tgt.party := convertReference(src.party);
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertPayeeComponent(src : FHIRResources4.TFhirClaimPayee) : FHIRResources3.TFhirClaimPayee;
@@ -11278,7 +12262,8 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources3.TFhirClaimPayee.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   tgt.type_ := convertCodeableConcept(src.type_);
 
   if (src.resource <> nil) then
@@ -11287,7 +12272,10 @@ begin
   if (src.party <> nil) then
     tgt.party := convertReference(src.party);
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertCareTeamComponent(src : FHIRResources3.TFhirClaimCareTeam) : FHIRResources4.TFhirClaimCareTeam;
@@ -11297,7 +12285,8 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources4.TFhirClaimCareTeam.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   tgt.sequence := src.sequence;
 
   if (src.provider <> nil) then
@@ -11311,7 +12300,10 @@ begin
   if (src.qualification <> nil) then
     tgt.qualification := convertCodeableConcept(src.qualification);
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertCareTeamComponent(src : FHIRResources4.TFhirClaimCareTeam) : FHIRResources3.TFhirClaimCareTeam;
@@ -11321,7 +12313,8 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources3.TFhirClaimCareTeam.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   tgt.sequence := src.sequence;
 
   if (src.provider <> nil) then
@@ -11335,7 +12328,10 @@ begin
   if (src.qualification <> nil) then
     tgt.qualification := convertCodeableConcept(src.qualification);
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertSpecialConditionComponent(src : FHIRResources3.TFhirClaimInformation) : FHIRResources4.TFhirClaimInformation;
@@ -11345,7 +12341,8 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources4.TFhirClaimInformation.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   tgt.sequence := src.sequence;
 
   if (src.category <> nil) then
@@ -11362,7 +12359,10 @@ begin
   if (src.reason <> nil) then
     tgt.reason := convertCodeableConcept(src.reason);
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertSpecialConditionComponent(src : FHIRResources4.TFhirClaimInformation) : FHIRResources3.TFhirClaimInformation;
@@ -11372,7 +12372,8 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources3.TFhirClaimInformation.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   tgt.sequence := src.sequence;
 
   if (src.category <> nil) then
@@ -11389,7 +12390,10 @@ begin
   if (src.reason <> nil) then
     tgt.reason := convertCodeableConcept(src.reason);
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertDiagnosisComponent(src : FHIRResources3.TFhirClaimDiagnosis) : FHIRResources4.TFhirClaimDiagnosis;
@@ -11400,7 +12404,8 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources4.TFhirClaimDiagnosis.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   tgt.sequence := src.sequence;
 
   if (src.diagnosis <> nil) then
@@ -11413,7 +12418,10 @@ begin
   if (src.packageCode <> nil) then
     tgt.packageCode := convertCodeableConcept(src.packageCode);
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertDiagnosisComponent(src : FHIRResources4.TFhirClaimDiagnosis) : FHIRResources3.TFhirClaimDiagnosis;
@@ -11424,7 +12432,8 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources3.TFhirClaimDiagnosis.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   tgt.sequence := src.sequence;
 
   if (src.diagnosis <> nil) then
@@ -11437,7 +12446,10 @@ begin
   if (src.packageCode <> nil) then
     tgt.packageCode := convertCodeableConcept(src.packageCode);
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertProcedureComponent(src : FHIRResources3.TFhirClaimProcedure) : FHIRResources4.TFhirClaimProcedure;
@@ -11447,14 +12459,18 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources4.TFhirClaimProcedure.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   tgt.sequence := src.sequence;
   tgt.date := src.date;
 
   if (src.procedure_ <> nil) then
     tgt.procedure_ := convertType(src.procedure_);
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertProcedureComponent(src : FHIRResources4.TFhirClaimProcedure) : FHIRResources3.TFhirClaimProcedure;
@@ -11464,7 +12480,8 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources3.TFhirClaimProcedure.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   tgt.sequence := src.sequence;
 
   tgt.date := src.date;
@@ -11472,7 +12489,10 @@ begin
   if (src.procedure_ <> nil) then
     tgt.procedure_ := convertType(src.procedure_);
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertInsuranceComponent(src : FHIRResources3.TFhirClaimInsurance) : FHIRResources4.TFhirClaimInsurance;
@@ -11483,7 +12503,8 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources4.TFhirClaimInsurance.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   tgt.sequence := src.sequence;
 
   tgt.focal := src.focal;
@@ -11501,7 +12522,10 @@ begin
   if (src.claimResponse <> nil) then
     tgt.claimResponse := convertReference(src.claimResponse);
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertInsuranceComponent(src : FHIRResources4.TFhirClaimInsurance) : FHIRResources3.TFhirClaimInsurance;
@@ -11512,7 +12536,8 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources3.TFhirClaimInsurance.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   tgt.sequence := src.sequence;
 
   tgt.focal := src.focal;
@@ -11530,7 +12555,10 @@ begin
   if (src.claimResponse <> nil) then
     tgt.claimResponse := convertReference(src.claimResponse);
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertAccidentComponent(src : FHIRResources3.TFhirClaimAccident) : FHIRResources4.TFhirClaimAccident;
@@ -11540,7 +12568,8 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources4.TFhirClaimAccident.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   tgt.date := src.date;
 
   tgt.type_ := convertCodeableConcept(src.type_);
@@ -11548,7 +12577,10 @@ begin
   if (src.location <> nil) then
     tgt.location := convertType(src.location);
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertAccidentComponent(src : FHIRResources4.TFhirClaimAccident) : FHIRResources3.TFhirClaimAccident;
@@ -11558,7 +12590,8 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources3.TFhirClaimAccident.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   tgt.date := src.date;
 
   tgt.type_ := convertCodeableConcept(src.type_);
@@ -11566,7 +12599,10 @@ begin
   if (src.location <> nil) then
     tgt.location := convertType(src.location);
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertItemComponent(src : FHIRResources3.TFhirClaimItem) : FHIRResources4.TFhirClaimItem;
@@ -11586,7 +12622,8 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources4.TFhirClaimItem.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   tgt.sequence := src.sequence;
 
   for t1 in src.careTeamLinkIdList do
@@ -11658,7 +12695,10 @@ begin
   begin
     tgt.detailList.add(convertDetailComponent(ta));
   end;
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertItemComponent(src : FHIRResources4.TFhirClaimItem) : FHIRResources3.TFhirClaimItem;
@@ -11678,7 +12718,8 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources3.TFhirClaimItem.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   tgt.sequence := src.sequence;
 
   for t1 in src.careTeamSequenceList do
@@ -11750,7 +12791,10 @@ begin
   begin
     tgt.detailList.add(convertDetailComponent(ta));
   end;
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertDetailComponent(src : FHIRResources3.TFhirClaimItemDetail) : FHIRResources4.TFhirClaimItemDetail;
@@ -11764,7 +12808,8 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources4.TFhirClaimItemDetail.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   tgt.sequence := src.sequence;
 
   if (src.revenue <> nil) then
@@ -11803,7 +12848,10 @@ begin
   begin
     tgt.subDetailList.add(convertSubDetailComponent(t4));
   end;
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertDetailComponent(src : FHIRResources4.TFhirClaimItemDetail) : FHIRResources3.TFhirClaimItemDetail;
@@ -11817,7 +12865,8 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources3.TFhirClaimItemDetail.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   tgt.sequence := src.sequence;
 
   if (src.revenue <> nil) then
@@ -11856,7 +12905,10 @@ begin
   begin
     tgt.subDetailList.add(convertSubDetailComponent(t4));
   end;
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertSubDetailComponent(src : FHIRResources3.TFhirClaimItemDetailSubDetail) : FHIRResources4.TFhirClaimItemDetailSubDetail;
@@ -11869,7 +12921,8 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources4.TFhirClaimItemDetailSubDetail.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   tgt.sequence := src.sequence;
 
   if (src.revenue <> nil) then
@@ -11904,7 +12957,10 @@ begin
   begin
     tgt.udiList.add(convertReference(t3));
   end;
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertSubDetailComponent(src : FHIRResources4.TFhirClaimItemDetailSubDetail) : FHIRResources3.TFhirClaimItemDetailSubDetail;
@@ -11917,7 +12973,8 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources3.TFhirClaimItemDetailSubDetail.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   tgt.sequence := src.sequence;
 
   if (src.revenue <> nil) then
@@ -11952,7 +13009,10 @@ begin
   begin
     tgt.udiList.add(convertReference(t3));
   end;
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertClinicalImpression(src : FHIRResources3.TFhirClinicalImpression) : FHIRResources4.TFhirClinicalImpression;
@@ -11971,6 +13031,7 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources4.TFhirClinicalImpression.Create();
+  try
   copyDomainResource(src, tgt);
   for t1 in src.identifierList do
   begin
@@ -12035,7 +13096,10 @@ begin
   begin
     tgt.noteList.add(convertAnnotation(t9));
   end;
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertClinicalImpression(src : FHIRResources4.TFhirClinicalImpression) : FHIRResources3.TFhirClinicalImpression;
@@ -12054,6 +13118,7 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources3.TFhirClinicalImpression.Create();
+  try
   copyDomainResource(src, tgt);
   for t1 in src.identifierList do
   begin
@@ -12118,7 +13183,10 @@ begin
   begin
     tgt.noteList.add(convertAnnotation(t9));
   end;
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertClinicalImpressionInvestigationComponent(src : FHIRResources3.TFhirClinicalImpressionInvestigation) : FHIRResources4.TFhirClinicalImpressionInvestigation;
@@ -12129,14 +13197,18 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources4.TFhirClinicalImpressionInvestigation.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   tgt.code := convertCodeableConcept(src.code);
 
   for t in src.itemList do
   begin
     tgt.itemList.add(convertReference(t));
   end;
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertClinicalImpressionInvestigationComponent(src : FHIRResources4.TFhirClinicalImpressionInvestigation) : FHIRResources3.TFhirClinicalImpressionInvestigation;
@@ -12147,14 +13219,18 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources3.TFhirClinicalImpressionInvestigation.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   tgt.code := convertCodeableConcept(src.code);
 
   for t in src.itemList do
   begin
     tgt.itemList.add(convertReference(t));
   end;
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertClinicalImpressionFindingComponent(src : FHIRResources3.TFhirClinicalImpressionFinding) : FHIRResources4.TFhirClinicalImpressionFinding;
@@ -12164,7 +13240,8 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources4.TFhirClinicalImpressionFinding.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   if (src.item is FHIRTypes3.TFHIRCodeableConcept) then
     tgt.itemCodeableConcept := convertCodeableConcept(src.item as FHIRTypes3.TFHIRCodeableConcept);
 
@@ -12174,7 +13251,10 @@ begin
   if (src.basis <> '') then
     tgt.basis := src.basis;
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertClinicalImpressionFindingComponent(src : FHIRResources4.TFhirClinicalImpressionFinding) : FHIRResources3.TFhirClinicalImpressionFinding;
@@ -12184,7 +13264,8 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources3.TFhirClinicalImpressionFinding.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   if (src.itemCodeableConcept <> nil) then
     tgt.item := convertType(src.itemCodeableConcept)
   else
@@ -12194,7 +13275,10 @@ begin
   if (src.basis <> '') then
     tgt.basis := src.basis;
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertCodeSystem(src : FHIRResources3.TFhirCodeSystem) : FHIRResources4.TFhirCodeSystem;
@@ -12210,6 +13294,7 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources4.TFhirCodeSystem.Create();
+  try
   copyDomainResource(src, tgt);
   if (src.url <> '') then
     tgt.url := src.url;
@@ -12282,7 +13367,10 @@ begin
   begin
     tgt.conceptList.add(convertConceptDefinitionComponent(t6));
   end;
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertCodeSystem(src : FHIRResources4.TFhirCodeSystem) : FHIRResources3.TFhirCodeSystem;
@@ -12298,6 +13386,7 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources3.TFhirCodeSystem.Create();
+  try
   copyDomainResource(src, tgt);
   if (src.url <> '') then
     tgt.url := src.url;
@@ -12370,7 +13459,10 @@ begin
   begin
     tgt.conceptList.add(convertConceptDefinitionComponent(t6));
   end;
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertCodeSystemFilterComponent(src : FHIRResources3.TFhirCodeSystemFilter) : FHIRResources4.TFhirCodeSystemFilter;
@@ -12382,7 +13474,8 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources4.TFhirCodeSystemFilter.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   if (src.code <> '') then
     tgt.code := src.code;
 
@@ -12398,7 +13491,10 @@ begin
   if (src.value <> '') then
     tgt.value := src.value;
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertCodeSystemFilterComponent(src : FHIRResources4.TFhirCodeSystemFilter) : FHIRResources3.TFhirCodeSystemFilter;
@@ -12410,7 +13506,8 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources3.TFhirCodeSystemFilter.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   if (src.code <> '') then
     tgt.code := src.code;
 
@@ -12425,7 +13522,10 @@ begin
   if (src.value <> '') then
     tgt.value := src.value;
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertPropertyComponent(src : FHIRResources3.TFhirCodeSystemProperty) : FHIRResources4.TFhirCodeSystemProperty;
@@ -12435,7 +13535,8 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources4.TFhirCodeSystemProperty.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   if (src.code <> '') then
     tgt.code := src.code;
 
@@ -12447,7 +13548,10 @@ begin
 
   tgt.type_ := convertPropertyType(src.type_);
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertPropertyComponent(src : FHIRResources4.TFhirCodeSystemProperty) : FHIRResources3.TFhirCodeSystemProperty;
@@ -12457,7 +13561,8 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources3.TFhirCodeSystemProperty.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   if (src.code <> '') then
     tgt.code := src.code;
 
@@ -12469,7 +13574,10 @@ begin
 
   tgt.type_ := convertPropertyType(src.type_);
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertConceptDefinitionComponent(src : FHIRResources3.TFhirCodeSystemConcept) : FHIRResources4.TFhirCodeSystemConcept;
@@ -12482,7 +13590,8 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources4.TFhirCodeSystemConcept.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   if (src.code <> '') then
     tgt.code := src.code;
 
@@ -12504,7 +13613,10 @@ begin
   begin
     tgt.conceptList.add(convertConceptDefinitionComponent(t3));
   end;
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertConceptDefinitionComponent(src : FHIRResources4.TFhirCodeSystemConcept) : FHIRResources3.TFhirCodeSystemConcept;
@@ -12517,7 +13629,8 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources3.TFhirCodeSystemConcept.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   if (src.code <> '') then
     tgt.code := src.code;
 
@@ -12539,7 +13652,10 @@ begin
   begin
     tgt.conceptList.add(convertConceptDefinitionComponent(t3));
   end;
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertConceptDefinitionDesignationComponent(src : FHIRResources3.TFhirCodeSystemConceptDesignation) : FHIRResources4.TFhirCodeSystemConceptDesignation;
@@ -12549,7 +13665,8 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources4.TFhirCodeSystemConceptDesignation.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   if (src.language <> '') then
     tgt.language := src.language;
 
@@ -12559,7 +13676,10 @@ begin
   if (src.value <> '') then
     tgt.value := src.value;
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertConceptDefinitionDesignationComponent(src : FHIRResources4.TFhirCodeSystemConceptDesignation) : FHIRResources3.TFhirCodeSystemConceptDesignation;
@@ -12569,7 +13689,8 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources3.TFhirCodeSystemConceptDesignation.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   if (src.language <> '') then
     tgt.language := src.language;
 
@@ -12579,7 +13700,10 @@ begin
   if (src.value <> '') then
     tgt.value := src.value;
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertConceptPropertyComponent(src : FHIRResources3.TFhirCodeSystemConceptProperty) : FHIRResources4.TFhirCodeSystemConceptProperty;
@@ -12589,14 +13713,18 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources4.TFhirCodeSystemConceptProperty.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   if (src.code <> '') then
     tgt.code := src.code;
 
   if (src.value <> nil) then
     tgt.value := convertType(src.value);
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertConceptPropertyComponent(src : FHIRResources4.TFhirCodeSystemConceptProperty) : FHIRResources3.TFhirCodeSystemConceptProperty;
@@ -12606,14 +13734,18 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources3.TFhirCodeSystemConceptProperty.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   if (src.code <> '') then
     tgt.code := src.code;
 
   if (src.value <> nil) then
     tgt.value := convertType(src.value);
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertCommunication(src : FHIRResources3.TFhirCommunication) : FHIRResources4.TFhirCommunication;
@@ -12634,6 +13766,7 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources4.TFhirCommunication.Create();
+  try
   copyDomainResource(src, tgt);
   for t1 in src.identifierList do
   begin
@@ -12700,7 +13833,10 @@ begin
   begin
     tgt.noteList.add(convertAnnotation(tb));
   end;
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertCommunication(src : FHIRResources4.TFhirCommunication) : FHIRResources3.TFhirCommunication;
@@ -12721,6 +13857,7 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources3.TFhirCommunication.Create();
+  try
   copyDomainResource(src, tgt);
   for t1 in src.identifierList do
   begin
@@ -12787,7 +13924,10 @@ begin
   begin
     tgt.noteList.add(convertAnnotation(tb));
   end;
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertCommunicationPayloadComponent(src : FHIRResources3.TFhirCommunicationPayload) : FHIRResources4.TFhirCommunicationPayload;
@@ -12797,11 +13937,15 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources4.TFhirCommunicationPayload.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   if (src.content <> nil) then
     tgt.content := convertType(src.content);
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertCommunicationPayloadComponent(src : FHIRResources4.TFhirCommunicationPayload) : FHIRResources3.TFhirCommunicationPayload;
@@ -12811,11 +13955,15 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources3.TFhirCommunicationPayload.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   if (src.content <> nil) then
     tgt.content := convertType(src.content);
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertCompartmentDefinition(src : FHIRResources3.TFhirCompartmentDefinition) : FHIRResources4.TFhirCompartmentDefinition;
@@ -12829,6 +13977,7 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources4.TFhirCompartmentDefinition.Create();
+  try
   copyDomainResource(src, tgt);
   if (src.url <> '') then
     tgt.url := src.url;
@@ -12873,7 +14022,10 @@ begin
   begin
     tgt.resourceList.add(convertCompartmentDefinitionResourceComponent(t4));
   end;
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertCompartmentDefinition(src : FHIRResources4.TFhirCompartmentDefinition) : FHIRResources3.TFhirCompartmentDefinition;
@@ -12887,6 +14039,7 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources3.TFhirCompartmentDefinition.Create();
+  try
   copyDomainResource(src, tgt);
   if (src.url <> '') then
     tgt.url := src.url;
@@ -12931,7 +14084,10 @@ begin
   begin
     tgt.resourceList.add(convertCompartmentDefinitionResourceComponent(t4));
   end;
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertCompartmentDefinitionResourceComponent(src : FHIRResources3.TFhirCompartmentDefinitionResource) : FHIRResources4.TFhirCompartmentDefinitionResource;
@@ -12942,7 +14098,8 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources4.TFhirCompartmentDefinitionResource.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   tgt.code := convertActivityDefinitionKind(src.code);
 
   for t in src.paramList do
@@ -12952,7 +14109,10 @@ begin
   if (src.documentation <> '') then
     tgt.documentation := src.documentation;
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertCompartmentDefinitionResourceComponent(src : FHIRResources4.TFhirCompartmentDefinitionResource) : FHIRResources3.TFhirCompartmentDefinitionResource;
@@ -12963,7 +14123,8 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources3.TFhirCompartmentDefinitionResource.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   tgt.code := convertActivityDefinitionKind(src.code);
 
   for t in src.paramList do
@@ -12973,7 +14134,10 @@ begin
   if (src.documentation <> '') then
     tgt.documentation := src.documentation;
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertComposition(src : FHIRResources3.TFhirComposition) : FHIRResources4.TFhirComposition;
@@ -12988,6 +14152,7 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources4.TFhirComposition.Create();
+  try
   copyDomainResource(src, tgt);
   if (src.identifier <> nil) then
     tgt.identifier := convertIdentifier(src.identifier);
@@ -13035,7 +14200,10 @@ begin
   begin
     tgt.sectionList.add(convertSectionComponent(t5));
   end;
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertComposition(src : FHIRResources4.TFhirComposition) : FHIRResources3.TFhirComposition;
@@ -13050,6 +14218,7 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources3.TFhirComposition.Create();
+  try
   copyDomainResource(src, tgt);
   if (src.identifier <> nil) then
     tgt.identifier := convertIdentifier(src.identifier);
@@ -13097,7 +14266,10 @@ begin
   begin
     tgt.sectionList.add(convertSectionComponent(t5));
   end;
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertCompositionAttesterComponent(src : FHIRResources3.TFhirCompositionAttester) : FHIRResources4.TFhirCompositionAttester;
@@ -13108,7 +14280,8 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources4.TFhirCompositionAttester.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   for t := low(FHIRTypes3.TFhirCompositionAttestationModeEnum) to high(FHIRTypes3.TFhirCompositionAttestationModeEnum) do
     if t in src.mode then
       tgt.mode := convertCompositionAttestationMode(t);
@@ -13118,7 +14291,10 @@ begin
   if (src.party <> nil) then
     tgt.party := convertReference(src.party);
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertCompositionAttesterComponent(src : FHIRResources4.TFhirCompositionAttester) : FHIRResources3.TFhirCompositionAttester;
@@ -13128,7 +14304,8 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources3.TFhirCompositionAttester.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   tgt.mode := [convertCompositionAttestationMode(src.Mode)];
 
   tgt.time := src.time.link;
@@ -13136,7 +14313,10 @@ begin
   if (src.party <> nil) then
     tgt.party := convertReference(src.party);
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertCompositionRelatesToComponent(src : FHIRResources3.TFhirCompositionRelatesTo) : FHIRResources4.TFhirCompositionRelatesTo;
@@ -13146,13 +14326,17 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources4.TFhirCompositionRelatesTo.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   tgt.code := convertDocumentRelationshipType(src.code);
 
   if (src.target <> nil) then
     tgt.target := convertType(src.target);
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertCompositionRelatesToComponent(src : FHIRResources4.TFhirCompositionRelatesTo) : FHIRResources3.TFhirCompositionRelatesTo;
@@ -13162,13 +14346,17 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources3.TFhirCompositionRelatesTo.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   tgt.code := convertDocumentRelationshipType(src.code);
 
   if (src.target <> nil) then
     tgt.target := convertType(src.target);
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertCompositionEventComponent(src : FHIRResources3.TFhirCompositionEvent) : FHIRResources4.TFhirCompositionEvent;
@@ -13180,7 +14368,8 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources4.TFhirCompositionEvent.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   for t1 in src.codeList do
   begin
     tgt.codeList.add(convertCodeableConcept(t1));
@@ -13192,7 +14381,10 @@ begin
   begin
     tgt.detailList.add(convertReference(t2));
   end;
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertCompositionEventComponent(src : FHIRResources4.TFhirCompositionEvent) : FHIRResources3.TFhirCompositionEvent;
@@ -13204,7 +14396,8 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources3.TFhirCompositionEvent.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   for t1 in src.codeList do
   begin
     tgt.codeList.add(convertCodeableConcept(t1));
@@ -13216,7 +14409,10 @@ begin
   begin
     tgt.detailList.add(convertReference(t2));
   end;
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertSectionComponent(src : FHIRResources3.TFhirCompositionSection) : FHIRResources4.TFhirCompositionSection;
@@ -13228,7 +14424,8 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources4.TFhirCompositionSection.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   if (src.title <> '') then
     tgt.title := src.title;
 
@@ -13253,7 +14450,10 @@ begin
   begin
     tgt.sectionList.add(convertSectionComponent(t2));
   end;
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertSectionComponent(src : FHIRResources4.TFhirCompositionSection) : FHIRResources3.TFhirCompositionSection;
@@ -13265,7 +14465,8 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources3.TFhirCompositionSection.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   if (src.title <> '') then
     tgt.title := src.title;
 
@@ -13290,7 +14491,10 @@ begin
   begin
     tgt.sectionList.add(convertSectionComponent(t2));
   end;
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertConceptMap(src : FHIRResources3.TFhirConceptMap) : FHIRResources4.TFhirConceptMap;
@@ -13306,6 +14510,7 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources4.TFhirConceptMap.Create();
+  try
   copyDomainResource(src, tgt);
   if (src.url <> '') then
     tgt.url := src.url;
@@ -13355,8 +14560,11 @@ begin
   begin
     t4 := convertType(src.Source);
     if (t4 is FHIRTypes4.TFhirReference) then
-      tgt.Source := FHIRTypes4.TFhirCanonical.create((t4 as FHIRTypes4.TFhirReference).Reference)
-     else
+    begin
+      tgt.Source := FHIRTypes4.TFhirCanonical.create((t4 as FHIRTypes4.TFhirReference).Reference);
+      t4.Free;
+    end
+    else
       tgt.Source := t4;
   end;
 
@@ -13364,7 +14572,10 @@ begin
   begin
     t5 := convertType(src.Target);
     if (t5 is FHIRTypes4.TFhirReference) then
-      tgt.Source := FHIRTypes4.TFhirCanonical.create((t5 as FHIRTypes4.TFhirReference).Reference)
+    begin
+      tgt.Source := FHIRTypes4.TFhirCanonical.create((t5 as FHIRTypes4.TFhirReference).Reference);
+      t5.Free;
+    end
     else
       tgt.Source := t5;
   end;
@@ -13373,7 +14584,10 @@ begin
   begin
     tgt.groupList.add(convertConceptMapGroupComponent(t6));
   end;
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertConceptMap(src : FHIRResources4.TFhirConceptMap) : FHIRResources3.TFhirConceptMap;
@@ -13387,6 +14601,7 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources3.TFhirConceptMap.Create();
+  try
   copyDomainResource(src, tgt);
   if (src.url <> '') then
     tgt.url := src.url;
@@ -13442,7 +14657,10 @@ begin
   begin
     tgt.groupList.add(convertConceptMapGroupComponent(t4));
   end;
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertConceptMapGroupComponent(src : FHIRResources3.TFhirConceptMapGroup) : FHIRResources4.TFhirConceptMapGroup;
@@ -13453,7 +14671,8 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources4.TFhirConceptMapGroup.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   if (src.source <> '') then
     tgt.source := src.source;
 
@@ -13473,7 +14692,10 @@ begin
   if (src.unmapped <> nil) then
     tgt.unmapped := convertConceptMapGroupUnmappedComponent(src.unmapped);
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertConceptMapGroupComponent(src : FHIRResources4.TFhirConceptMapGroup) : FHIRResources3.TFhirConceptMapGroup;
@@ -13484,7 +14706,8 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources3.TFhirConceptMapGroup.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   if (src.source <> '') then
     tgt.source := src.source;
 
@@ -13504,7 +14727,10 @@ begin
   if (src.unmapped <> nil) then
     tgt.unmapped := convertConceptMapGroupUnmappedComponent(src.unmapped);
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertSourceElementComponent(src : FHIRResources3.TFhirConceptMapGroupElement) : FHIRResources4.TFhirConceptMapGroupElement;
@@ -13515,7 +14741,8 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources4.TFhirConceptMapGroupElement.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   if (src.code <> '') then
     tgt.code := src.code;
 
@@ -13526,7 +14753,10 @@ begin
   begin
     tgt.targetList.add(convertTargetElementComponent(t));
   end;
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertSourceElementComponent(src : FHIRResources4.TFhirConceptMapGroupElement) : FHIRResources3.TFhirConceptMapGroupElement;
@@ -13537,7 +14767,8 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources3.TFhirConceptMapGroupElement.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   if (src.code <> '') then
     tgt.code := src.code;
 
@@ -13548,7 +14779,10 @@ begin
   begin
     tgt.targetList.add(convertTargetElementComponent(t));
   end;
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertTargetElementComponent(src : FHIRResources3.TFhirConceptMapGroupElementTarget) : FHIRResources4.TFhirConceptMapGroupElementTarget;
@@ -13560,7 +14794,8 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources4.TFhirConceptMapGroupElementTarget.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   if (src.code <> '') then
     tgt.code := src.code;
 
@@ -13580,7 +14815,10 @@ begin
   begin
     tgt.productList.add(convertOtherElementComponent(t2));
   end;
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertTargetElementComponent(src : FHIRResources4.TFhirConceptMapGroupElementTarget) : FHIRResources3.TFhirConceptMapGroupElementTarget;
@@ -13592,7 +14830,8 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources3.TFhirConceptMapGroupElementTarget.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   if (src.code <> '') then
     tgt.code := src.code;
 
@@ -13612,7 +14851,10 @@ begin
   begin
     tgt.productList.add(convertOtherElementComponent(t2));
   end;
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertOtherElementComponent(src : FHIRResources3.TFhirConceptMapGroupElementTargetDependsOn) : FHIRResources4.TFhirConceptMapGroupElementTargetDependsOn;
@@ -13622,7 +14864,8 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources4.TFhirConceptMapGroupElementTargetDependsOn.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   tgt.property_ := src.property_;
 
   if (src.system <> '') then
@@ -13634,7 +14877,10 @@ begin
   if (src.display <> '') then
     tgt.display := src.display;
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertOtherElementComponent(src : FHIRResources4.TFhirConceptMapGroupElementTargetDependsOn) : FHIRResources3.TFhirConceptMapGroupElementTargetDependsOn;
@@ -13644,7 +14890,8 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources3.TFhirConceptMapGroupElementTargetDependsOn.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   tgt.property_ := src.property_;
 
   if (src.system <> '') then
@@ -13656,7 +14903,10 @@ begin
   if (src.display <> '') then
     tgt.display := src.display;
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertConceptMapGroupUnmappedComponent(src : FHIRResources3.TFhirConceptMapGroupUnmapped) : FHIRResources4.TFhirConceptMapGroupUnmapped;
@@ -13666,7 +14916,8 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources4.TFhirConceptMapGroupUnmapped.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   tgt.mode := convertConceptMapGroupUnmappedMode(src.mode);
 
   if (src.code <> '') then
@@ -13678,7 +14929,10 @@ begin
   if (src.url <> '') then
     tgt.url := src.url;
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertConceptMapGroupUnmappedComponent(src : FHIRResources4.TFhirConceptMapGroupUnmapped) : FHIRResources3.TFhirConceptMapGroupUnmapped;
@@ -13688,7 +14942,8 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources3.TFhirConceptMapGroupUnmapped.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   tgt.mode := convertConceptMapGroupUnmappedMode(src.mode);
 
   if (src.code <> '') then
@@ -13700,7 +14955,10 @@ begin
   if (src.url <> '') then
     tgt.url := src.url;
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertCondition(src : FHIRResources3.TFhirCondition) : FHIRResources4.TFhirCondition;
@@ -13715,6 +14973,7 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources4.TFhirCondition.Create();
+  try
   copyDomainResource(src, tgt);
   for t1 in src.identifierList do
   begin
@@ -13764,7 +15023,10 @@ begin
   begin
     tgt.noteList.add(convertAnnotation(t5));
   end;
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertCondition(src : FHIRResources4.TFhirCondition) : FHIRResources3.TFhirCondition;
@@ -13779,6 +15041,7 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources3.TFhirCondition.Create();
+  try
   copyDomainResource(src, tgt);
   for t1 in src.identifierList do
   begin
@@ -13828,7 +15091,10 @@ begin
   begin
     tgt.noteList.add(convertAnnotation(t5));
   end;
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertConditionStageComponent(src : FHIRResources3.TFhirConditionStage) : FHIRResources4.TFhirConditionStage;
@@ -13839,7 +15105,8 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources4.TFhirConditionStage.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   if (src.summary <> nil) then
     tgt.summary := convertCodeableConcept(src.summary);
 
@@ -13847,7 +15114,10 @@ begin
   begin
     tgt.assessmentList.add(convertReference(t));
   end;
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertConditionStageComponent(src : FHIRResources4.TFhirConditionStage) : FHIRResources3.TFhirConditionStage;
@@ -13858,7 +15128,8 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources3.TFhirConditionStage.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   if (src.summary <> nil) then
     tgt.summary := convertCodeableConcept(src.summary);
 
@@ -13866,7 +15137,10 @@ begin
   begin
     tgt.assessmentList.add(convertReference(t));
   end;
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertConditionEvidenceComponent(src : FHIRResources3.TFhirConditionEvidence) : FHIRResources4.TFhirConditionEvidence;
@@ -13878,7 +15152,8 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources4.TFhirConditionEvidence.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   for t1 in src.codeList do
   begin
     tgt.codeList.add(convertCodeableConcept(t1));
@@ -13887,7 +15162,10 @@ begin
   begin
     tgt.detailList.add(convertReference(t2));
   end;
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertConditionEvidenceComponent(src : FHIRResources4.TFhirConditionEvidence) : FHIRResources3.TFhirConditionEvidence;
@@ -13899,7 +15177,8 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources3.TFhirConditionEvidence.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   for t1 in src.codeList do
   begin
     tgt.codeList.add(convertCodeableConcept(t1));
@@ -13908,7 +15187,10 @@ begin
   begin
     tgt.detailList.add(convertReference(t2));
   end;
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertConsent(src : FHIRResources3.TFhirConsent) : FHIRResources4.TFhirConsent;
@@ -13918,7 +15200,11 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources4.TFhirConsent.Create();
-  exit(tgt);
+  try
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertConsent(src : FHIRResources4.TFhirConsent) : FHIRResources3.TFhirConsent;
@@ -13928,7 +15214,11 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources3.TFhirConsent.Create();
-  exit(tgt);
+  try
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertConsentPolicyComponent(src : FHIRResources3.TFhirConsentPolicy) : FHIRResources4.TFhirConsentPolicy;
@@ -13938,14 +15228,18 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources4.TFhirConsentPolicy.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   if (src.authority <> '') then
     tgt.authority := src.authority;
 
   if (src.uri <> '') then
     tgt.uri := src.uri;
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertConsentPolicyComponent(src : FHIRResources4.TFhirConsentPolicy) : FHIRResources3.TFhirConsentPolicy;
@@ -13955,14 +15249,18 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources3.TFhirConsentPolicy.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   if (src.authority <> '') then
     tgt.authority := src.authority;
 
   if (src.uri <> '') then
     tgt.uri := src.uri;
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertDataElement(src : FHIRResources3.TFhirDataElement) : FHIRResources4.TFhirStructureDefinition;
@@ -13978,6 +15276,7 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources4.TFhirStructureDefinition.Create();
+  try
   copyDomainResource(src, tgt);
   if (src.url <> '') then
     tgt.Url := src.Url.replace('/DataElement/', '/StructureDefinition/de-');
@@ -14031,7 +15330,10 @@ begin
   tgt.type_ := tgt.name;
   tgt.baseDefinition := 'http://hl7.org/fhir/StructureDefinition/Element';
   tgt.Derivation := FHIRTypes4.TypeDerivationRuleSpecialization;
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertDataElementMappingComponent(src : FHIRResources3.TFhirDataElementMapping) : FHIRResources4.TFhirStructureDefinitionMapping;
@@ -14041,7 +15343,8 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources4.TFhirStructureDefinitionMapping.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   if (src.identity <> '') then
     tgt.identity := src.identity;
 
@@ -14054,7 +15357,10 @@ begin
   if (src.comment <> '') then
     tgt.comment := src.comment;
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertDetectedIssue(src : FHIRResources3.TFhirDetectedIssue) : FHIRResources4.TFhirDetectedIssue;
@@ -14066,6 +15372,7 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources4.TFhirDetectedIssue.Create();
+  try
   copyDomainResource(src, tgt);
   if (src.identifier <> nil) then
     tgt.identifierList.add(convertIdentifier(src.Identifier));
@@ -14099,7 +15406,10 @@ begin
   begin
     tgt.mitigationList.add(convertDetectedIssueMitigationComponent(t2));
   end;
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertDetectedIssue(src : FHIRResources4.TFhirDetectedIssue) : FHIRResources3.TFhirDetectedIssue;
@@ -14111,6 +15421,7 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources3.TFhirDetectedIssue.Create();
+  try
   copyDomainResource(src, tgt);
   if (src.identifierList.count > 0) then
     tgt.identifier := convertIdentifier(src.identifierList[0]);
@@ -14144,7 +15455,10 @@ begin
   begin
     tgt.mitigationList.add(convertDetectedIssueMitigationComponent(t2));
   end;
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertDetectedIssueMitigationComponent(src : FHIRResources3.TFhirDetectedIssueMitigation) : FHIRResources4.TFhirDetectedIssueMitigation;
@@ -14154,7 +15468,8 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources4.TFhirDetectedIssueMitigation.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   if (src.action <> nil) then
     tgt.action := convertCodeableConcept(src.action);
 
@@ -14163,7 +15478,10 @@ begin
   if (src.author <> nil) then
     tgt.author := convertReference(src.author);
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertDetectedIssueMitigationComponent(src : FHIRResources4.TFhirDetectedIssueMitigation) : FHIRResources3.TFhirDetectedIssueMitigation;
@@ -14173,7 +15491,8 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources3.TFhirDetectedIssueMitigation.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   if (src.action <> nil) then
     tgt.action := convertCodeableConcept(src.action);
 
@@ -14182,7 +15501,10 @@ begin
   if (src.author <> nil) then
     tgt.author := convertReference(src.author);
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertDevice(src : FHIRResources3.TFhirDevice) : FHIRResources4.TFhirDevice;
@@ -14196,6 +15518,7 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources4.TFhirDevice.Create();
+  try
   copyDomainResource(src, tgt);
   for t1 in src.identifierList do
   begin
@@ -14248,7 +15571,10 @@ begin
   begin
     tgt.safetyList.add(convertCodeableConcept(t4));
   end;
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertDevice(src : FHIRResources4.TFhirDevice) : FHIRResources3.TFhirDevice;
@@ -14262,6 +15588,7 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources3.TFhirDevice.Create();
+  try
   copyDomainResource(src, tgt);
   for t1 in src.identifierList do
   begin
@@ -14314,7 +15641,10 @@ begin
   begin
     tgt.safetyList.add(convertCodeableConcept(t4));
   end;
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertDeviceUdiComponent(src : FHIRResources3.TFhirDeviceUdi) : FHIRResources4.TFhirDeviceUdi;
@@ -14324,7 +15654,8 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources4.TFhirDeviceUdi.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   if (src.deviceIdentifier <> '') then
     tgt.deviceIdentifier := src.deviceIdentifier;
 
@@ -14345,7 +15676,10 @@ begin
 
   tgt.entryType := convertUDIEntryType(src.entryType);
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertDeviceUdiComponent(src : FHIRResources4.TFhirDeviceUdi) : FHIRResources3.TFhirDeviceUdi;
@@ -14355,7 +15689,8 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources3.TFhirDeviceUdi.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   if (src.deviceIdentifier <> '') then
     tgt.deviceIdentifier := src.deviceIdentifier;
 
@@ -14376,7 +15711,10 @@ begin
 
   tgt.entryType := convertUDIEntryType(src.entryType);
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertDeviceComponent(src : FHIRResources3.TFhirDeviceComponent) : FHIRResources4.TFhirDeviceComponent;
@@ -14388,6 +15726,7 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources4.TFhirDeviceComponent.Create();
+  try
   copyDomainResource(src, tgt);
   if (src.identifier <> nil) then
     tgt.identifierList.add(convertIdentifier(src.Identifier));
@@ -14418,7 +15757,10 @@ begin
   if (src.languageCode <> nil) then
     tgt.languageCode := convertCodeableConcept(src.languageCode);
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertDeviceComponent(src : FHIRResources4.TFhirDeviceComponent) : FHIRResources3.TFhirDeviceComponent;
@@ -14430,6 +15772,7 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources3.TFhirDeviceComponent.Create();
+  try
   copyDomainResource(src, tgt);
   if (src.identifierList.count > 0) then
     tgt.identifier := convertIdentifier(src.identifierList[0]);
@@ -14460,7 +15803,10 @@ begin
   if (src.languageCode <> nil) then
     tgt.languageCode := convertCodeableConcept(src.languageCode);
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertDeviceComponentProductionSpecificationComponent(src : FHIRResources3.TFhirDeviceComponentProductionSpecification) : FHIRResources4.TFhirDeviceComponentProductionSpecification;
@@ -14470,7 +15816,8 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources4.TFhirDeviceComponentProductionSpecification.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   if (src.specType <> nil) then
     tgt.specType := convertCodeableConcept(src.specType);
 
@@ -14480,7 +15827,10 @@ begin
   if (src.productionSpec <> '') then
     tgt.productionSpec := src.productionSpec;
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertDeviceComponentProductionSpecificationComponent(src : FHIRResources4.TFhirDeviceComponentProductionSpecification) : FHIRResources3.TFhirDeviceComponentProductionSpecification;
@@ -14490,7 +15840,8 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources3.TFhirDeviceComponentProductionSpecification.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   if (src.specType <> nil) then
     tgt.specType := convertCodeableConcept(src.specType);
 
@@ -14500,7 +15851,10 @@ begin
   if (src.productionSpec <> '') then
     tgt.productionSpec := src.productionSpec;
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertDeviceMetric(src : FHIRResources3.TFhirDeviceMetric) : FHIRResources4.TFhirDeviceMetric;
@@ -14511,6 +15865,7 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources4.TFhirDeviceMetric.Create();
+  try
   copyDomainResource(src, tgt);
   if (src.identifier <> nil) then
     tgt.identifierList.add(convertIdentifier(src.Identifier));
@@ -14539,7 +15894,10 @@ begin
   begin
     tgt.calibrationList.add(convertDeviceMetricCalibrationComponent(t));
   end;
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertDeviceMetric(src : FHIRResources4.TFhirDeviceMetric) : FHIRResources3.TFhirDeviceMetric;
@@ -14550,6 +15908,7 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources3.TFhirDeviceMetric.Create();
+  try
   copyDomainResource(src, tgt);
   if (src.identifierList.count > 0) then
     tgt.identifier := convertIdentifier(src.identifierList[0]);
@@ -14576,7 +15935,10 @@ begin
   begin
     tgt.calibrationList.add(convertDeviceMetricCalibrationComponent(t));
   end;
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertDeviceMetricCalibrationComponent(src : FHIRResources3.TFhirDeviceMetricCalibration) : FHIRResources4.TFhirDeviceMetricCalibration;
@@ -14586,14 +15948,18 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources4.TFhirDeviceMetricCalibration.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   tgt.type_ := convertDeviceMetricCalibrationType(src.type_);
 
   tgt.state := convertDeviceMetricCalibrationState(src.state);
 
   tgt.time := src.time.link;
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertDeviceMetricCalibrationComponent(src : FHIRResources4.TFhirDeviceMetricCalibration) : FHIRResources3.TFhirDeviceMetricCalibration;
@@ -14603,14 +15969,18 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources3.TFhirDeviceMetricCalibration.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   tgt.type_ := convertDeviceMetricCalibrationType(src.type_);
 
   tgt.state := convertDeviceMetricCalibrationState(src.state);
 
   tgt.time := src.time.link;
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertDeviceUseStatement(src : FHIRResources3.TFhirDeviceUseStatement) : FHIRResources4.TFhirDeviceUseStatement;
@@ -14623,6 +15993,7 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources4.TFhirDeviceUseStatement.Create();
+  try
   copyDomainResource(src, tgt);
   for t1 in src.identifierList do
   begin
@@ -14655,7 +16026,10 @@ begin
   begin
     tgt.noteList.add(convertAnnotation(t3));
   end;
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertDeviceUseStatement(src : FHIRResources4.TFhirDeviceUseStatement) : FHIRResources3.TFhirDeviceUseStatement;
@@ -14668,6 +16042,7 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources3.TFhirDeviceUseStatement.Create();
+  try
   copyDomainResource(src, tgt);
   for t1 in src.identifierList do
   begin
@@ -14700,7 +16075,10 @@ begin
   begin
     tgt.noteList.add(convertAnnotation(t3));
   end;
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertDiagnosticReport(src : FHIRResources3.TFhirDiagnosticReport) : FHIRResources4.TFhirDiagnosticReport;
@@ -14718,6 +16096,7 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources4.TFhirDiagnosticReport.Create();
+  try
   copyDomainResource(src, tgt);
   for t1 in src.identifierList do
   begin
@@ -14772,7 +16151,10 @@ begin
   begin
     tgt.presentedFormList.add(convertAttachment(t8));
   end;
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertDiagnosisComponent(src: FHIRResources3.TFhirEpisodeOfCareDiagnosis): FHIRResources4.TFhirEpisodeOfCareDiagnosis;
@@ -14783,11 +16165,15 @@ begin
     exit(nil);
 
   tgt := FHIRResources4.TFhirEpisodeOfCareDiagnosis.Create;
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   tgt.Condition := convertReference(src.Condition);
   tgt.Role := convertCodeableConcept(src.Role);
   tgt.Rank := src.Rank;
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertDiagnosisComponent(src: FHIRResources4.TFhirEpisodeOfCareDiagnosis): FHIRResources3.TFhirEpisodeOfCareDiagnosis;
@@ -14798,11 +16184,15 @@ begin
     exit(nil);
 
   tgt := FHIRResources3.TFhirEpisodeOfCareDiagnosis.Create;
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   tgt.Condition := convertReference(src.Condition);
   tgt.Role := convertCodeableConcept(src.Role);
   tgt.Rank := src.Rank;
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertDiagnosisComponent(src: FHIRResources3.TFhirEncounterDiagnosis): FHIRResources4.TFhirEncounterDiagnosis;
@@ -14813,11 +16203,15 @@ begin
     exit(nil);
 
   tgt := FHIRResources4.TFhirEncounterDiagnosis.Create;
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   tgt.Condition := convertReference(src.Condition);
   tgt.Role := convertCodeableConcept(src.Role);
   tgt.Rank := src.Rank;
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertDiagnosisComponent(src: FHIRResources4.TFhirEncounterDiagnosis): FHIRResources3.TFhirEncounterDiagnosis;
@@ -14828,11 +16222,15 @@ begin
     exit(nil);
 
   tgt := FHIRResources3.TFhirEncounterDiagnosis.Create;
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   tgt.Condition := convertReference(src.Condition);
   tgt.Role := convertCodeableConcept(src.Role);
   tgt.Rank := src.Rank;
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertDiagnosticReport(src : FHIRResources4.TFhirDiagnosticReport) : FHIRResources3.TFhirDiagnosticReport;
@@ -14850,6 +16248,7 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources3.TFhirDiagnosticReport.Create();
+  try
   copyDomainResource(src, tgt);
   for t1 in src.identifierList do
   begin
@@ -14904,7 +16303,10 @@ begin
   begin
     tgt.presentedFormList.add(convertAttachment(t8));
   end;
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertDiagnosticReportImageComponent(src : FHIRResources3.TFhirDiagnosticReportImage) : FHIRResources4.TFhirDiagnosticReportMedia;
@@ -14914,14 +16316,18 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources4.TFhirDiagnosticReportMedia.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   if (src.comment <> '') then
     tgt.comment := src.comment;
 
   if (src.link_ <> nil) then
     tgt.link_ := convertReference(src.link_);
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertDiagnosticReportImageComponent(src : FHIRResources4.TFhirDiagnosticReportMedia) : FHIRResources3.TFhirDiagnosticReportImage;
@@ -14931,14 +16337,18 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources3.TFhirDiagnosticReportImage.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   if (src.comment <> '') then
     tgt.comment := src.comment;
 
   if (src.link_ <> nil) then
     tgt.link_ := convertReference(src.link_);
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertDocumentManifestRelatedComponent(src : FHIRResources3.TFhirDocumentManifestRelated) : FHIRResources4.TFhirDocumentManifestRelated;
@@ -14948,14 +16358,18 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources4.TFhirDocumentManifestRelated.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   if (src.identifier <> nil) then
     tgt.identifier := convertIdentifier(src.identifier);
 
   if (src.ref <> nil) then
     tgt.ref := convertReference(src.ref);
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertDocumentManifestRelatedComponent(src : FHIRResources4.TFhirDocumentManifestRelated) : FHIRResources3.TFhirDocumentManifestRelated;
@@ -14965,14 +16379,18 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources3.TFhirDocumentManifestRelated.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   if (src.identifier <> nil) then
     tgt.identifier := convertIdentifier(src.identifier);
 
   if (src.ref <> nil) then
     tgt.ref := convertReference(src.ref);
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertDocumentReference(src : FHIRResources3.TFhirDocumentReference) : FHIRResources4.TFhirDocumentReference;
@@ -14986,6 +16404,7 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources4.TFhirDocumentReference.Create();
+  try
   copyDomainResource(src, tgt);
   if (src.masterIdentifier <> nil) then
     tgt.masterIdentifier := convertIdentifier(src.masterIdentifier);
@@ -15032,7 +16451,10 @@ begin
   if (src.context <> nil) then
     tgt.context := convertDocumentReferenceContextComponent(src.context);
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertDocumentReference(src : FHIRResources4.TFhirDocumentReference) : FHIRResources3.TFhirDocumentReference;
@@ -15046,6 +16468,7 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources3.TFhirDocumentReference.Create();
+  try
   copyDomainResource(src, tgt);
   if (src.masterIdentifier <> nil) then
     tgt.masterIdentifier := convertIdentifier(src.masterIdentifier);
@@ -15092,7 +16515,10 @@ begin
   if (src.context <> nil) then
     tgt.context := convertDocumentReferenceContextComponent(src.context);
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertDocumentReferenceRelatesToComponent(src : FHIRResources3.TFhirDocumentReferenceRelatesTo) : FHIRResources4.TFhirDocumentReferenceRelatesTo;
@@ -15102,13 +16528,17 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources4.TFhirDocumentReferenceRelatesTo.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   tgt.code := convertDocumentRelationshipType(src.code);
 
   if (src.target <> nil) then
     tgt.target := convertReference(src.target);
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertDocumentReferenceRelatesToComponent(src : FHIRResources4.TFhirDocumentReferenceRelatesTo) : FHIRResources3.TFhirDocumentReferenceRelatesTo;
@@ -15118,13 +16548,17 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources3.TFhirDocumentReferenceRelatesTo.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   tgt.code := convertDocumentRelationshipType(src.code);
 
   if (src.target <> nil) then
     tgt.target := convertReference(src.target);
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertDocumentReferenceContentComponent(src : FHIRResources3.TFhirDocumentReferenceContent) : FHIRResources4.TFhirDocumentReferenceContent;
@@ -15134,14 +16568,18 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources4.TFhirDocumentReferenceContent.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   if (src.attachment <> nil) then
     tgt.attachment := convertAttachment(src.attachment);
 
   if (src.format <> nil) then
     tgt.format := convertCoding(src.format);
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertDocumentReferenceContentComponent(src : FHIRResources4.TFhirDocumentReferenceContent) : FHIRResources3.TFhirDocumentReferenceContent;
@@ -15151,14 +16589,18 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources3.TFhirDocumentReferenceContent.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   if (src.attachment <> nil) then
     tgt.attachment := convertAttachment(src.attachment);
 
   if (src.format <> nil) then
     tgt.format := convertCoding(src.format);
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertDocumentReferenceContextComponent(src : FHIRResources3.TFhirDocumentReferenceContext) : FHIRResources4.TFhirDocumentReferenceContext;
@@ -15170,7 +16612,8 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources4.TFhirDocumentReferenceContext.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   if (src.encounter <> nil) then
     tgt.encounter := convertReference(src.encounter);
 
@@ -15194,7 +16637,10 @@ begin
   begin
     tgt.relatedList.add(convertDocumentReferenceContextRelatedComponent(t2));
   end;
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertDocumentReferenceContextComponent(src : FHIRResources4.TFhirDocumentReferenceContext) : FHIRResources3.TFhirDocumentReferenceContext;
@@ -15206,7 +16652,8 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources3.TFhirDocumentReferenceContext.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   if (src.encounter <> nil) then
     tgt.encounter := convertReference(src.encounter);
 
@@ -15230,7 +16677,10 @@ begin
   begin
     tgt.relatedList.add(convertDocumentReferenceContextRelatedComponent(t2));
   end;
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertDocumentReferenceContextRelatedComponent(src : FHIRResources3.TFhirDocumentReferenceContextRelated) : FHIRResources4.TFhirDocumentReferenceContextRelated;
@@ -15240,14 +16690,18 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources4.TFhirDocumentReferenceContextRelated.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   if (src.identifier <> nil) then
     tgt.identifier := convertIdentifier(src.identifier);
 
   if (src.ref <> nil) then
     tgt.ref := convertReference(src.ref);
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertDocumentReferenceContextRelatedComponent(src : FHIRResources4.TFhirDocumentReferenceContextRelated) : FHIRResources3.TFhirDocumentReferenceContextRelated;
@@ -15257,14 +16711,18 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources3.TFhirDocumentReferenceContextRelated.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   if (src.identifier <> nil) then
     tgt.identifier := convertIdentifier(src.identifier);
 
   if (src.ref <> nil) then
     tgt.ref := convertReference(src.ref);
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertEncounter(src : FHIRResources3.TFhirEncounter) : FHIRResources4.TFhirEncounter;
@@ -15285,6 +16743,7 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources4.TFhirEncounter.Create();
+  try
   copyDomainResource(src, tgt);
   for t1 in src.identifierList do
   begin
@@ -15359,7 +16818,10 @@ begin
   if (src.partOf <> nil) then
     tgt.partOf := convertReference(src.partOf);
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertEncounter(src : FHIRResources4.TFhirEncounter) : FHIRResources3.TFhirEncounter;
@@ -15380,6 +16842,7 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources3.TFhirEncounter.Create();
+  try
   copyDomainResource(src, tgt);
   for t1 in src.identifierList do
   begin
@@ -15454,7 +16917,10 @@ begin
   if (src.partOf <> nil) then
     tgt.partOf := convertReference(src.partOf);
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertStatusHistoryComponent(src : FHIRResources3.TFhirEncounterStatusHistory) : FHIRResources4.TFhirEncounterStatusHistory;
@@ -15464,13 +16930,17 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources4.TFhirEncounterStatusHistory.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   tgt.status := convertEncounterStatus(src.status);
 
   if (src.period <> nil) then
     tgt.period := convertPeriod(src.period);
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertStatusHistoryComponent(src : FHIRResources4.TFhirEncounterStatusHistory) : FHIRResources3.TFhirEncounterStatusHistory;
@@ -15480,13 +16950,17 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources3.TFhirEncounterStatusHistory.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   tgt.status := convertEncounterStatus(src.status);
 
   if (src.period <> nil) then
     tgt.period := convertPeriod(src.period);
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertClassHistoryComponent(src : FHIRResources3.TFhirEncounterClassHistory) : FHIRResources4.TFhirEncounterClassHistory;
@@ -15496,14 +16970,18 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources4.TFhirEncounterClassHistory.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   if (src.class_ <> nil) then
     tgt.class_ := convertCoding(src.class_);
 
   if (src.period <> nil) then
     tgt.period := convertPeriod(src.period);
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertClassHistoryComponent(src : FHIRResources4.TFhirEncounterClassHistory) : FHIRResources3.TFhirEncounterClassHistory;
@@ -15513,14 +16991,18 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources3.TFhirEncounterClassHistory.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   if (src.class_ <> nil) then
     tgt.class_ := convertCoding(src.class_);
 
   if (src.period <> nil) then
     tgt.period := convertPeriod(src.period);
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertEncounterParticipantComponent(src : FHIRResources3.TFhirEncounterParticipant) : FHIRResources4.TFhirEncounterParticipant;
@@ -15531,7 +17013,8 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources4.TFhirEncounterParticipant.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   for t in src.type_List do
   begin
     tgt.type_List.add(convertCodeableConcept(t));
@@ -15542,7 +17025,10 @@ begin
   if (src.individual <> nil) then
     tgt.individual := convertReference(src.individual);
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertEncounterParticipantComponent(src : FHIRResources4.TFhirEncounterParticipant) : FHIRResources3.TFhirEncounterParticipant;
@@ -15553,7 +17039,8 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources3.TFhirEncounterParticipant.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   for t in src.type_List do
   begin
     tgt.type_List.add(convertCodeableConcept(t));
@@ -15564,7 +17051,10 @@ begin
   if (src.individual <> nil) then
     tgt.individual := convertReference(src.individual);
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertEncounterHospitalizationComponent(src : FHIRResources3.TFhirEncounterHospitalization) : FHIRResources4.TFhirEncounterHospitalization;
@@ -15577,7 +17067,8 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources4.TFhirEncounterHospitalization.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   if (src.preAdmissionIdentifier <> nil) then
     tgt.preAdmissionIdentifier := convertIdentifier(src.preAdmissionIdentifier);
 
@@ -15608,7 +17099,10 @@ begin
   if (src.dischargeDisposition <> nil) then
     tgt.dischargeDisposition := convertCodeableConcept(src.dischargeDisposition);
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertEncounterHospitalizationComponent(src : FHIRResources4.TFhirEncounterHospitalization) : FHIRResources3.TFhirEncounterHospitalization;
@@ -15621,7 +17115,8 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources3.TFhirEncounterHospitalization.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   if (src.preAdmissionIdentifier <> nil) then
     tgt.preAdmissionIdentifier := convertIdentifier(src.preAdmissionIdentifier);
 
@@ -15652,7 +17147,10 @@ begin
   if (src.dischargeDisposition <> nil) then
     tgt.dischargeDisposition := convertCodeableConcept(src.dischargeDisposition);
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertEncounterLocationComponent(src : FHIRResources3.TFhirEncounterLocation) : FHIRResources4.TFhirEncounterLocation;
@@ -15662,7 +17160,8 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources4.TFhirEncounterLocation.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   if (src.location <> nil) then
     tgt.location := convertReference(src.location);
 
@@ -15671,7 +17170,10 @@ begin
   if (src.period <> nil) then
     tgt.period := convertPeriod(src.period);
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertEncounterLocationComponent(src : FHIRResources4.TFhirEncounterLocation) : FHIRResources3.TFhirEncounterLocation;
@@ -15681,7 +17183,8 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources3.TFhirEncounterLocation.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   if (src.location <> nil) then
     tgt.location := convertReference(src.location);
 
@@ -15690,7 +17193,10 @@ begin
   if (src.period <> nil) then
     tgt.period := convertPeriod(src.period);
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertEndpoint(src : FHIRResources3.TFhirEndpoint) : FHIRResources4.TFhirEndpoint;
@@ -15705,6 +17211,7 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources4.TFhirEndpoint.Create();
+  try
   copyDomainResource(src, tgt);
   for t1 in src.identifierList do
   begin
@@ -15743,7 +17250,10 @@ begin
   begin
     tgt.headerList.add(convertString(t5));
   end;
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertEndpoint(src : FHIRResources4.TFhirEndpoint) : FHIRResources3.TFhirEndpoint;
@@ -15758,6 +17268,7 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources3.TFhirEndpoint.Create();
+  try
   copyDomainResource(src, tgt);
   for t1 in src.identifierList do
   begin
@@ -15796,7 +17307,10 @@ begin
   begin
     tgt.headerList.add(convertString(t5));
   end;
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertEpisodeOfCare(src : FHIRResources3.TFhirEpisodeOfCare) : FHIRResources4.TFhirEpisodeOfCare;
@@ -15813,6 +17327,7 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources4.TFhirEpisodeOfCare.Create();
+  try
   copyDomainResource(src, tgt);
   for t1 in src.identifierList do
   begin
@@ -15856,7 +17371,10 @@ begin
   begin
     tgt.accountList.add(convertReference(t7));
   end;
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertEpisodeOfCare(src : FHIRResources4.TFhirEpisodeOfCare) : FHIRResources3.TFhirEpisodeOfCare;
@@ -15872,6 +17390,7 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources3.TFhirEpisodeOfCare.Create();
+  try
   copyDomainResource(src, tgt);
   for t1 in src.identifierList do
   begin
@@ -15915,7 +17434,10 @@ begin
   begin
     tgt.accountList.add(convertReference(t6));
   end;
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertEpisodeOfCareStatusHistoryComponent(src : FHIRResources3.TFhirEpisodeOfCareStatusHistory) : FHIRResources4.TFhirEpisodeOfCareStatusHistory;
@@ -15925,13 +17447,17 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources4.TFhirEpisodeOfCareStatusHistory.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   tgt.status := convertEpisodeOfCareStatus(src.status);
 
   if (src.period <> nil) then
     tgt.period := convertPeriod(src.period);
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertEpisodeOfCareStatusHistoryComponent(src : FHIRResources4.TFhirEpisodeOfCareStatusHistory) : FHIRResources3.TFhirEpisodeOfCareStatusHistory;
@@ -15941,13 +17467,17 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources3.TFhirEpisodeOfCareStatusHistory.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   tgt.status := convertEpisodeOfCareStatus(src.status);
 
   if (src.period <> nil) then
     tgt.period := convertPeriod(src.period);
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertExpansionProfile(src : FHIRResources3.TFhirExpansionProfile) : FHIRResources4.TFhirExpansionProfile;
@@ -15961,6 +17491,7 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources4.TFhirExpansionProfile.Create();
+  try
   copyDomainResource(src, tgt);
   if (src.url <> '') then
     tgt.url := src.url;
@@ -16020,7 +17551,10 @@ begin
 
   tgt.limitedExpansion := src.limitedExpansion;
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertExpansionProfile(src : FHIRResources4.TFhirExpansionProfile) : FHIRResources3.TFhirExpansionProfile;
@@ -16034,6 +17568,7 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources3.TFhirExpansionProfile.Create();
+  try
   copyDomainResource(src, tgt);
   if (src.url <> '') then
     tgt.url := src.url;
@@ -16093,7 +17628,10 @@ begin
 
   tgt.limitedExpansion := src.limitedExpansion;
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertExpansionProfileFixedVersionComponent(src : FHIRResources3.TFhirExpansionProfileFixedVersion) : FHIRResources4.TFhirExpansionProfileFixedVersion;
@@ -16103,7 +17641,8 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources4.TFhirExpansionProfileFixedVersion.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   if (src.system <> '') then
     tgt.system := src.system;
 
@@ -16112,7 +17651,10 @@ begin
 
   tgt.mode := convertSystemVersionProcessingMode(src.mode);
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertExpansionProfileFixedVersionComponent(src : FHIRResources4.TFhirExpansionProfileFixedVersion) : FHIRResources3.TFhirExpansionProfileFixedVersion;
@@ -16122,7 +17664,8 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources3.TFhirExpansionProfileFixedVersion.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   if (src.system <> '') then
     tgt.system := src.system;
 
@@ -16131,7 +17674,10 @@ begin
 
   tgt.mode := convertSystemVersionProcessingMode(src.mode);
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertExpansionProfileExcludedSystemComponent(src : FHIRResources3.TFhirExpansionProfileExcludedSystem) : FHIRResources4.TFhirExpansionProfileExcludedSystem;
@@ -16141,14 +17687,18 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources4.TFhirExpansionProfileExcludedSystem.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   if (src.system <> '') then
     tgt.system := src.system;
 
   if (src.version <> '') then
     tgt.version := src.version;
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertExpansionProfileExcludedSystemComponent(src : FHIRResources4.TFhirExpansionProfileExcludedSystem) : FHIRResources3.TFhirExpansionProfileExcludedSystem;
@@ -16158,14 +17708,18 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources3.TFhirExpansionProfileExcludedSystem.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   if (src.system <> '') then
     tgt.system := src.system;
 
   if (src.version <> '') then
     tgt.version := src.version;
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertExpansionProfileDesignationComponent(src : FHIRResources3.TFhirExpansionProfileDesignation) : FHIRResources4.TFhirExpansionProfileDesignation;
@@ -16175,14 +17729,18 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources4.TFhirExpansionProfileDesignation.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   if (src.include <> nil) then
     tgt.include := convertDesignationIncludeComponent(src.include);
 
   if (src.exclude <> nil) then
     tgt.exclude := convertDesignationExcludeComponent(src.exclude);
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertExpansionProfileDesignationComponent(src : FHIRResources4.TFhirExpansionProfileDesignation) : FHIRResources3.TFhirExpansionProfileDesignation;
@@ -16192,14 +17750,18 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources3.TFhirExpansionProfileDesignation.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   if (src.include <> nil) then
     tgt.include := convertDesignationIncludeComponent(src.include);
 
   if (src.exclude <> nil) then
     tgt.exclude := convertDesignationExcludeComponent(src.exclude);
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertDesignationIncludeComponent(src : FHIRResources3.TFhirExpansionProfileDesignationInclude) : FHIRResources4.TFhirExpansionProfileDesignationInclude;
@@ -16210,12 +17772,16 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources4.TFhirExpansionProfileDesignationInclude.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   for t in src.designationList do
   begin
     tgt.designationList.add(convertDesignationIncludeDesignationComponent(t));
   end;
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertDesignationIncludeComponent(src : FHIRResources4.TFhirExpansionProfileDesignationInclude) : FHIRResources3.TFhirExpansionProfileDesignationInclude;
@@ -16226,12 +17792,16 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources3.TFhirExpansionProfileDesignationInclude.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   for t in src.designationList do
   begin
     tgt.designationList.add(convertDesignationIncludeDesignationComponent(t));
   end;
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertDesignationIncludeDesignationComponent(src : FHIRResources3.TFhirExpansionProfileDesignationIncludeDesignation) : FHIRResources4.TFhirExpansionProfileDesignationIncludeDesignation;
@@ -16241,14 +17811,18 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources4.TFhirExpansionProfileDesignationIncludeDesignation.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   if (src.language <> '') then
     tgt.language := src.language;
 
   if (src.use <> nil) then
     tgt.use := convertCoding(src.use);
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertDesignationIncludeDesignationComponent(src : FHIRResources4.TFhirExpansionProfileDesignationIncludeDesignation) : FHIRResources3.TFhirExpansionProfileDesignationIncludeDesignation;
@@ -16258,14 +17832,18 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources3.TFhirExpansionProfileDesignationIncludeDesignation.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   if (src.language <> '') then
     tgt.language := src.language;
 
   if (src.use <> nil) then
     tgt.use := convertCoding(src.use);
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertDesignationExcludeComponent(src : FHIRResources3.TFhirExpansionProfileDesignationExclude) : FHIRResources4.TFhirExpansionProfileDesignationExclude;
@@ -16276,12 +17854,16 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources4.TFhirExpansionProfileDesignationExclude.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   for t in src.designationList do
   begin
     tgt.designationList.add(convertDesignationExcludeDesignationComponent(t));
   end;
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertDesignationExcludeComponent(src : FHIRResources4.TFhirExpansionProfileDesignationExclude) : FHIRResources3.TFhirExpansionProfileDesignationExclude;
@@ -16292,12 +17874,16 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources3.TFhirExpansionProfileDesignationExclude.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   for t in src.designationList do
   begin
     tgt.designationList.add(convertDesignationExcludeDesignationComponent(t));
   end;
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertDesignationExcludeDesignationComponent(src : FHIRResources3.TFhirExpansionProfileDesignationExcludeDesignation) : FHIRResources4.TFhirExpansionProfileDesignationExcludeDesignation;
@@ -16307,14 +17893,18 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources4.TFhirExpansionProfileDesignationExcludeDesignation.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   if (src.language <> '') then
     tgt.language := src.language;
 
   if (src.use <> nil) then
     tgt.use := convertCoding(src.use);
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertDesignationExcludeDesignationComponent(src : FHIRResources4.TFhirExpansionProfileDesignationExcludeDesignation) : FHIRResources3.TFhirExpansionProfileDesignationExcludeDesignation;
@@ -16324,14 +17914,18 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources3.TFhirExpansionProfileDesignationExcludeDesignation.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   if (src.language <> '') then
     tgt.language := src.language;
 
   if (src.use <> nil) then
     tgt.use := convertCoding(src.use);
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertFamilyMemberHistory(src : FHIRResources3.TFhirFamilyMemberHistory) : FHIRResources4.TFhirFamilyMemberHistory;
@@ -16347,6 +17941,7 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources4.TFhirFamilyMemberHistory.Create();
+  try
   copyDomainResource(src, tgt);
   for t1 in src.identifierList do
   begin
@@ -16401,7 +17996,10 @@ begin
   begin
     tgt.conditionList.add(convertFamilyMemberHistoryConditionComponent(t6));
   end;
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertFamilyMemberHistory(src : FHIRResources4.TFhirFamilyMemberHistory) : FHIRResources3.TFhirFamilyMemberHistory;
@@ -16417,6 +18015,7 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources3.TFhirFamilyMemberHistory.Create();
+  try
   copyDomainResource(src, tgt);
   for t1 in src.identifierList do
   begin
@@ -16471,7 +18070,10 @@ begin
   begin
     tgt.conditionList.add(convertFamilyMemberHistoryConditionComponent(t6));
   end;
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertFamilyMemberHistoryConditionComponent(src : FHIRResources3.TFhirFamilyMemberHistoryCondition) : FHIRResources4.TFhirFamilyMemberHistoryCondition;
@@ -16482,7 +18084,8 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources4.TFhirFamilyMemberHistoryCondition.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   tgt.code := convertCodeableConcept(src.code);
 
   tgt.outcome := convertCodeableConcept(src.outcome);
@@ -16494,7 +18097,10 @@ begin
   begin
     tgt.noteList.add(convertAnnotation(t));
   end;
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertFamilyMemberHistoryConditionComponent(src : FHIRResources4.TFhirFamilyMemberHistoryCondition) : FHIRResources3.TFhirFamilyMemberHistoryCondition;
@@ -16505,7 +18111,8 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources3.TFhirFamilyMemberHistoryCondition.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   tgt.code := convertCodeableConcept(src.code);
 
   tgt.outcome := convertCodeableConcept(src.outcome);
@@ -16517,7 +18124,10 @@ begin
   begin
     tgt.noteList.add(convertAnnotation(t));
   end;
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertFlag(src : FHIRResources3.TFhirFlag) : FHIRResources4.TFhirFlag;
@@ -16528,6 +18138,7 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources4.TFhirFlag.Create();
+  try
   copyDomainResource(src, tgt);
   for t in src.identifierList do
   begin
@@ -16552,7 +18163,10 @@ begin
   if (src.author <> nil) then
     tgt.author := convertReference(src.author);
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertFlag(src : FHIRResources4.TFhirFlag) : FHIRResources3.TFhirFlag;
@@ -16563,6 +18177,7 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources3.TFhirFlag.Create();
+  try
   copyDomainResource(src, tgt);
   for t in src.identifierList do
   begin
@@ -16587,7 +18202,10 @@ begin
   if (src.author <> nil) then
     tgt.author := convertReference(src.author);
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertGoal(src : FHIRResources3.TFhirGoal) : FHIRResources4.TFhirGoal;
@@ -16603,6 +18221,7 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources4.TFhirGoal.Create();
+  try
   copyDomainResource(src, tgt);
   for t1 in src.identifierList do
   begin
@@ -16653,7 +18272,10 @@ begin
   begin
     tgt.outcomeReferenceList.add(convertReference(t6));
   end;
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertGoal(src : FHIRResources4.TFhirGoal) : FHIRResources3.TFhirGoal;
@@ -16669,6 +18291,7 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources3.TFhirGoal.Create();
+  try
   copyDomainResource(src, tgt);
   for t1 in src.identifierList do
   begin
@@ -16719,7 +18342,10 @@ begin
   begin
     tgt.outcomeReferenceList.add(convertReference(t6));
   end;
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertGoalTargetComponent(src : FHIRResources3.TFhirGoalTarget) : FHIRResources4.TFhirGoalTarget;
@@ -16729,7 +18355,8 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources4.TFhirGoalTarget.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   if (src.measure <> nil) then
     tgt.measure := convertCodeableConcept(src.measure);
 
@@ -16739,7 +18366,10 @@ begin
   if (src.due <> nil) then
     tgt.due := convertType(src.due);
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertGoalTargetComponent(src : FHIRResources4.TFhirGoalTarget) : FHIRResources3.TFhirGoalTarget;
@@ -16749,7 +18379,8 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources3.TFhirGoalTarget.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   if (src.measure <> nil) then
     tgt.measure := convertCodeableConcept(src.measure);
 
@@ -16759,7 +18390,10 @@ begin
   if (src.due <> nil) then
     tgt.due := convertType(src.due);
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertGraphDefinition(src : FHIRResources3.TFhirGraphDefinition) : FHIRResources4.TFhirGraphDefinition;
@@ -16773,6 +18407,7 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources4.TFhirGraphDefinition.Create();
+  try
   copyDomainResource(src, tgt);
   if (src.url <> '') then
     tgt.url := src.url;
@@ -16818,7 +18453,10 @@ begin
   begin
     tgt.link_List.add(convertGraphDefinitionLinkComponent(t4));
   end;
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertGraphDefinition(src : FHIRResources4.TFhirGraphDefinition) : FHIRResources3.TFhirGraphDefinition;
@@ -16832,6 +18470,7 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources3.TFhirGraphDefinition.Create();
+  try
   copyDomainResource(src, tgt);
   if (src.url <> '') then
     tgt.url := src.url;
@@ -16877,7 +18516,10 @@ begin
   begin
     tgt.link_List.add(convertGraphDefinitionLinkComponent(t4));
   end;
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertGraphDefinitionLinkComponent(src : FHIRResources3.TFhirGraphDefinitionLink) : FHIRResources4.TFhirGraphDefinitionLink;
@@ -16888,7 +18530,8 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources4.TFhirGraphDefinitionLink.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   if (src.path <> '') then
     tgt.path := src.path;
 
@@ -16907,7 +18550,10 @@ begin
   begin
     tgt.targetList.add(convertGraphDefinitionLinkTargetComponent(t));
   end;
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertGraphDefinitionLinkComponent(src : FHIRResources4.TFhirGraphDefinitionLink) : FHIRResources3.TFhirGraphDefinitionLink;
@@ -16918,7 +18564,8 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources3.TFhirGraphDefinitionLink.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   if (src.path <> '') then
     tgt.path := src.path;
 
@@ -16937,7 +18584,10 @@ begin
   begin
     tgt.targetList.add(convertGraphDefinitionLinkTargetComponent(t));
   end;
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertGraphDefinitionLinkTargetComponent(src : FHIRResources3.TFhirGraphDefinitionLinkTarget) : FHIRResources4.TFhirGraphDefinitionLinkTarget;
@@ -16949,7 +18599,8 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources4.TFhirGraphDefinitionLinkTarget.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   tgt.type_ := convertActivityDefinitionKind(src.type_);
 
   if (src.profile <> '') then
@@ -16963,7 +18614,10 @@ begin
   begin
     tgt.link_List.add(convertGraphDefinitionLinkComponent(t2));
   end;
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertGraphDefinitionLinkTargetComponent(src : FHIRResources4.TFhirGraphDefinitionLinkTarget) : FHIRResources3.TFhirGraphDefinitionLinkTarget;
@@ -16975,7 +18629,8 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources3.TFhirGraphDefinitionLinkTarget.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   tgt.type_ := convertActivityDefinitionKind(src.type_);
 
   if (src.profile <> '') then
@@ -16989,7 +18644,10 @@ begin
   begin
     tgt.link_List.add(convertGraphDefinitionLinkComponent(t2));
   end;
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertGraphDefinitionLinkTargetCompartmentComponent(src : FHIRResources3.TFhirGraphDefinitionLinkTargetCompartment) : FHIRResources4.TFhirGraphDefinitionLinkTargetCompartment;
@@ -16999,7 +18657,8 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources4.TFhirGraphDefinitionLinkTargetCompartment.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   tgt.code := convertCompartmentCode(src.code);
 
   tgt.rule := convertGraphCompartmentRule(src.rule);
@@ -17010,7 +18669,10 @@ begin
   if (src.description <> '') then
     tgt.description := src.description;
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertGraphDefinitionLinkTargetCompartmentComponent(src : FHIRResources4.TFhirGraphDefinitionLinkTargetCompartment) : FHIRResources3.TFhirGraphDefinitionLinkTargetCompartment;
@@ -17020,7 +18682,8 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources3.TFhirGraphDefinitionLinkTargetCompartment.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   tgt.code := convertCompartmentCode(src.code);
 
   tgt.rule := convertGraphCompartmentRule(src.rule);
@@ -17031,7 +18694,10 @@ begin
   if (src.description <> '') then
     tgt.description := src.description;
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertGroup(src : FHIRResources3.TFhirGroup) : FHIRResources4.TFhirGroup;
@@ -17044,6 +18710,7 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources4.TFhirGroup.Create();
+  try
   copyDomainResource(src, tgt);
   for t1 in src.identifierList do
   begin
@@ -17070,7 +18737,10 @@ begin
   begin
     tgt.memberList.add(convertGroupMemberComponent(t3));
   end;
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertGroup(src : FHIRResources4.TFhirGroup) : FHIRResources3.TFhirGroup;
@@ -17083,6 +18753,7 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources3.TFhirGroup.Create();
+  try
   copyDomainResource(src, tgt);
   for t1 in src.identifierList do
   begin
@@ -17109,7 +18780,10 @@ begin
   begin
     tgt.memberList.add(convertGroupMemberComponent(t3));
   end;
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertGroupCharacteristicComponent(src : FHIRResources3.TFhirGroupCharacteristic) : FHIRResources4.TFhirGroupCharacteristic;
@@ -17119,7 +18793,8 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources4.TFhirGroupCharacteristic.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   tgt.code := convertCodeableConcept(src.code);
 
   if (src.value <> nil) then
@@ -17130,7 +18805,10 @@ begin
   if (src.period <> nil) then
     tgt.period := convertPeriod(src.period);
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertGroupCharacteristicComponent(src : FHIRResources4.TFhirGroupCharacteristic) : FHIRResources3.TFhirGroupCharacteristic;
@@ -17140,7 +18818,8 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources3.TFhirGroupCharacteristic.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   tgt.code := convertCodeableConcept(src.code);
 
   if (src.value <> nil) then
@@ -17151,7 +18830,10 @@ begin
   if (src.period <> nil) then
     tgt.period := convertPeriod(src.period);
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertGroupMemberComponent(src : FHIRResources3.TFhirGroupMember) : FHIRResources4.TFhirGroupMember;
@@ -17161,7 +18843,8 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources4.TFhirGroupMember.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   if (src.entity <> nil) then
     tgt.entity := convertReference(src.entity);
 
@@ -17170,7 +18853,10 @@ begin
 
   tgt.inactive := src.inactive;
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertGroupMemberComponent(src : FHIRResources4.TFhirGroupMember) : FHIRResources3.TFhirGroupMember;
@@ -17180,7 +18866,8 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources3.TFhirGroupMember.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   if (src.entity <> nil) then
     tgt.entity := convertReference(src.entity);
 
@@ -17189,7 +18876,10 @@ begin
 
   tgt.inactive := src.inactive;
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertHealthcareService(src : FHIRResources3.TFhirHealthcareService) : FHIRResources4.TFhirHealthcareService;
@@ -17212,6 +18902,7 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources4.TFhirHealthcareService.Create();
+  try
   copyDomainResource(src, tgt);
   for t1 in src.identifierList do
   begin
@@ -17296,7 +18987,10 @@ begin
   begin
     tgt.endpointList.add(convertReference(td));
   end;
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertHealthcareService(src : FHIRResources4.TFhirHealthcareService) : FHIRResources3.TFhirHealthcareService;
@@ -17319,6 +19013,7 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources3.TFhirHealthcareService.Create();
+  try
   copyDomainResource(src, tgt);
   for t1 in src.identifierList do
   begin
@@ -17403,7 +19098,10 @@ begin
   begin
     tgt.endpointList.add(convertReference(td));
   end;
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertHealthcareServiceAvailableTimeComponent(src : FHIRResources3.TFhirHealthcareServiceAvailableTime) : FHIRResources4.TFhirHealthcareServiceAvailableTime;
@@ -17415,7 +19113,8 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources4.TFhirHealthcareServiceAvailableTime.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
 
   a := [];
   for t := low(FHIRTypes3.TFhirDaysOfWeekEnum) to high(FHIRTypes3.TFhirDaysOfWeekEnum) do
@@ -17431,7 +19130,10 @@ begin
   if (src.availableEndTime <> '') then
     tgt.availableEndTime := src.availableEndTime;
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 
@@ -17444,7 +19146,8 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources3.TFhirHealthcareServiceAvailableTime.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   a := [];
   for t := low(FHIRTypes4.TFhirDaysOfWeekEnum) to high(FHIRTypes4.TFhirDaysOfWeekEnum) do
     if t in src.daysOfWeek then
@@ -17459,7 +19162,10 @@ begin
   if (src.availableEndTime <> '') then
     tgt.availableEndTime := src.availableEndTime;
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertHealthcareServiceNotAvailableComponent(src : FHIRResources3.TFhirHealthcareServiceNotAvailable) : FHIRResources4.TFhirHealthcareServiceNotAvailable;
@@ -17469,14 +19175,18 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources4.TFhirHealthcareServiceNotAvailable.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   if (src.description <> '') then
     tgt.description := src.description;
 
   if (src.during <> nil) then
     tgt.during := convertPeriod(src.during);
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertHealthcareServiceNotAvailableComponent(src : FHIRResources4.TFhirHealthcareServiceNotAvailable) : FHIRResources3.TFhirHealthcareServiceNotAvailable;
@@ -17486,14 +19196,18 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources3.TFhirHealthcareServiceNotAvailable.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   if (src.description <> '') then
     tgt.description := src.description;
 
   if (src.during <> nil) then
     tgt.during := convertPeriod(src.during);
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertImmunization(src : FHIRResources3.TFhirImmunization) : FHIRResources4.TFhirImmunization;
@@ -17507,6 +19221,7 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources4.TFhirImmunization.Create();
+  try
   copyDomainResource(src, tgt);
   for t1 in src.identifierList do
   begin
@@ -17563,7 +19278,10 @@ begin
     begin
       tgt.reasonCodeList.add(convertCodeableConcept(t4));
     end;
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertImmunization(src : FHIRResources4.TFhirImmunization) : FHIRResources3.TFhirImmunization;
@@ -17577,6 +19295,7 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources3.TFhirImmunization.Create();
+  try
   copyDomainResource(src, tgt);
   for t1 in src.identifierList do
   begin
@@ -17634,7 +19353,10 @@ begin
       tgt.Explanation := TFhirImmunizationExplanation.create;
     tgt.Explanation.reasonList.add(convertCodeableConcept(t4));
   end;
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertImmunizationPractitionerComponent(src : FHIRResources3.TFhirImmunizationPractitioner) : FHIRResources4.TFhirImmunizationPerformer;
@@ -17644,14 +19366,18 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources4.TFhirImmunizationPerformer.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   if (src.role <> nil) then
     tgt.function_ := convertCodeableConcept(src.role);
 
   if (src.actor <> nil) then
     tgt.actor := convertReference(src.actor);
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertImmunizationPractitionerComponent(src : FHIRResources4.TFhirImmunizationPerformer) : FHIRResources3.TFhirImmunizationPractitioner;
@@ -17661,14 +19387,18 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources3.TFhirImmunizationPractitioner.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   if (src.function_ <> nil) then
     tgt.role := convertCodeableConcept(src.function_);
 
   if (src.actor <> nil) then
     tgt.actor := convertReference(src.actor);
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertImplementationGuide(src : FHIRResources3.TFhirImplementationGuide) : FHIRResources4.TFhirImplementationGuide;
@@ -17684,6 +19414,7 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources4.TFhirImplementationGuide.Create();
+  try
   copyDomainResource(src, tgt);
   if (src.url <> '') then
     tgt.url := src.url;
@@ -17729,6 +19460,9 @@ begin
   end;
   for t5 in src.packageList do
   begin
+    if tgt.definition = nil then
+      tgt.definition := FHIRResources4.TFhirImplementationGuideDefinition.create;
+
     tgt.Definition.packageList.add(convertImplementationGuidePackageComponent(tgt.Definition, t5));
   end;
   for t6 in src.globalList do
@@ -17738,7 +19472,10 @@ begin
   if (src.page <> nil) then
     tgt.Definition.page := convertImplementationGuidePageComponent(src.page);
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertImplementationGuide(src : FHIRResources4.TFhirImplementationGuide) : FHIRResources3.TFhirImplementationGuide;
@@ -17755,6 +19492,7 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources3.TFhirImplementationGuide.Create();
+  try
   copyDomainResource(src, tgt);
   if (src.url <> '') then
     tgt.url := src.url;
@@ -17813,7 +19551,10 @@ begin
   if (src.Definition.page <> nil) then
     tgt.page := convertImplementationGuidePageComponent(src.Definition.page);
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertImplementationGuideDependencyComponent(src : FHIRResources3.TFhirImplementationGuideDependency) : FHIRResources4.TFhirImplementationGuideDependsOn;
@@ -17823,11 +19564,15 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources4.TFhirImplementationGuideDependsOn.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   if (src.uri <> '') then
     tgt.uri := src.uri;
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertImplementationGuideDependencyComponent(src : FHIRResources4.TFhirImplementationGuideDependsOn) : FHIRResources3.TFhirImplementationGuideDependency;
@@ -17837,12 +19582,16 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources3.TFhirImplementationGuideDependency.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   tgt.type_ := FHIRTypes3.GuideDependencyTypeReference;
   if (src.uri <> '') then
     tgt.uri := src.uri;
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertImplementationGuidePackageComponent(context : FHIRResources4.TFhirImplementationGuideDefinition; src : FHIRResources3.TFhirImplementationGuidePackage) : FHIRResources4.TFhirImplementationGuideDefinitionPackage;
@@ -17854,8 +19603,9 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources4.TFhirImplementationGuideDefinitionPackage.Create();
+  try
   tgt.Id := 'p' + inttostr(context.packageList.count() + 1);
-  copyElement(src, tgt);
+  copyBackboneElement(src, tgt);
   if (src.name <> '') then
     tgt.name := src.name;
 
@@ -17868,7 +19618,10 @@ begin
       tn.package := tgt.id;
       context.resourceList.add(tn);
   end;
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertImplementationGuidePackageComponent(src : FHIRResources4.TFhirImplementationGuideDefinitionPackage) : FHIRResources3.TFhirImplementationGuidePackage;
@@ -17878,7 +19631,8 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources3.TFhirImplementationGuidePackage.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   tgt.id := src.id;
   if (src.name <> '') then
     tgt.name := src.name;
@@ -17886,7 +19640,10 @@ begin
   if (src.description <> '') then
     tgt.description := src.description;
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertImplementationGuidePackageResourceComponent(src : FHIRResources3.TFhirImplementationGuidePackageResource) : FHIRResources4.TFhirImplementationGuideDefinitionResource;
@@ -17897,12 +19654,16 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources4.TFhirImplementationGuideDefinitionResource.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   if (src.exampleFor <> nil) then
   begin
     t := convertType(src.ExampleFor);
     if t is FHIRTypes4.TFhirReference then
-      tgt.Example := FHIRTypes4.TFhirCanonical.create((t as FHIRTypes4.TFhirReference).Reference)
+    begin
+      tgt.Example := FHIRTypes4.TFhirCanonical.create((t as FHIRTypes4.TFhirReference).Reference);
+      t.Free;
+    end
     else
       tgt.Example := t;
   end
@@ -17921,7 +19682,10 @@ begin
     if (src.source is FHIRTypes3.TFHIRUri) then
       tgt.Reference := FHIRTypes4.TFhirReference.create((src.Source as FHIRTypes3.TFHIRUri).value);
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertImplementationGuidePackageResourceComponent(src : FHIRResources4.TFhirImplementationGuideDefinitionResource) : FHIRResources3.TFhirImplementationGuidePackageResource;
@@ -17931,7 +19695,8 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources3.TFhirImplementationGuidePackageResource.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   if (src.example is FHIRTypes4.TFHIRCanonical) then
   begin
     tgt.exampleFor := convertCanonicalToReference(src.example as FHIRTypes4.TFHIRCanonical);
@@ -17950,7 +19715,10 @@ begin
   if (src.reference <> nil) then
     tgt.source := convertReference(src.reference);
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertImplementationGuideGlobalComponent(src : FHIRResources3.TFhirImplementationGuideGlobal) : FHIRResources4.TFhirImplementationGuideGlobal;
@@ -17960,13 +19728,17 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources4.TFhirImplementationGuideGlobal.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   tgt.type_ := convertActivityDefinitionKind(src.type_);
 
   if (src.profile <> nil) then
     tgt.profileElement := convertReferenceToCanonical(src.profile);
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertImplementationGuideGlobalComponent(src : FHIRResources4.TFhirImplementationGuideGlobal) : FHIRResources3.TFhirImplementationGuideGlobal;
@@ -17976,13 +19748,17 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources3.TFhirImplementationGuideGlobal.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   tgt.type_ := convertActivityDefinitionKind(src.type_);
 
   if (src.profile <> '') then
     tgt.profile := convertCanonicalToReference(src.profileElement);
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertImplementationGuidePageComponent(src : FHIRResources3.TFhirImplementationGuidePage) : FHIRResources4.TFhirImplementationGuideDefinitionPage;
@@ -17993,7 +19769,8 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources4.TFhirImplementationGuideDefinitionPage.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   if (src.source <> '') then
     tgt.name := convertUriToUrl(src.sourceElement);
 
@@ -18006,7 +19783,10 @@ begin
   begin
     tgt.pageList.add(convertImplementationGuidePageComponent(t));
   end;
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertImplementationGuidePageComponent(src : FHIRResources4.TFhirImplementationGuideDefinitionPage) : FHIRResources3.TFhirImplementationGuidePage;
@@ -18017,7 +19797,8 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources3.TFhirImplementationGuidePage.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   if (src.name is FHIRTypes4.TFHIRUrl) then
     tgt.source := (src.Name as FHIRTypes4.TFHIRUrl).value;
 
@@ -18030,7 +19811,10 @@ begin
   begin
     tgt.pageList.add(convertImplementationGuidePageComponent(t));
   end;
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertLinkage(src : FHIRResources3.TFhirLinkage) : FHIRResources4.TFhirLinkage;
@@ -18041,6 +19825,7 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources4.TFhirLinkage.Create();
+  try
   copyDomainResource(src, tgt);
   tgt.active := src.active;
 
@@ -18051,7 +19836,10 @@ begin
   begin
     tgt.itemList.add(convertLinkageItemComponent(t));
   end;
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertLinkage(src : FHIRResources4.TFhirLinkage) : FHIRResources3.TFhirLinkage;
@@ -18062,6 +19850,7 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources3.TFhirLinkage.Create();
+  try
   copyDomainResource(src, tgt);
   tgt.active := src.active;
 
@@ -18072,7 +19861,10 @@ begin
   begin
     tgt.itemList.add(convertLinkageItemComponent(t));
   end;
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertLinkageItemComponent(src : FHIRResources3.TFhirLinkageItem) : FHIRResources4.TFhirLinkageItem;
@@ -18082,13 +19874,17 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources4.TFhirLinkageItem.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   tgt.type_ := convertLinkageType(src.type_);
 
   if (src.resource <> nil) then
     tgt.resource := convertReference(src.resource);
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertLinkageItemComponent(src : FHIRResources4.TFhirLinkageItem) : FHIRResources3.TFhirLinkageItem;
@@ -18098,13 +19894,17 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources3.TFhirLinkageItem.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   tgt.type_ := convertLinkageType(src.type_);
 
   if (src.resource <> nil) then
     tgt.resource := convertReference(src.resource);
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertList(src : FHIRResources3.TFhirList) : FHIRResources4.TFhirList;
@@ -18117,6 +19917,7 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources4.TFhirList.Create();
+  try
   copyDomainResource(src, tgt);
   for t1 in src.identifierList do
   begin
@@ -18156,7 +19957,10 @@ begin
   if (src.emptyReason <> nil) then
     tgt.emptyReason := convertCodeableConcept(src.emptyReason);
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertList(src : FHIRResources4.TFhirList) : FHIRResources3.TFhirList;
@@ -18169,6 +19973,7 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources3.TFhirList.Create();
+  try
   copyDomainResource(src, tgt);
   for t1 in src.identifierList do
   begin
@@ -18208,7 +20013,10 @@ begin
   if (src.emptyReason <> nil) then
     tgt.emptyReason := convertCodeableConcept(src.emptyReason);
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertListEntryComponent(src : FHIRResources3.TFhirListEntry) : FHIRResources4.TFhirListEntry;
@@ -18218,7 +20026,8 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources4.TFhirListEntry.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   if (src.flag <> nil) then
     tgt.flag := convertCodeableConcept(src.flag);
 
@@ -18229,7 +20038,10 @@ begin
   if (src.item <> nil) then
     tgt.item := convertReference(src.item);
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertListEntryComponent(src : FHIRResources4.TFhirListEntry) : FHIRResources3.TFhirListEntry;
@@ -18239,7 +20051,8 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources3.TFhirListEntry.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   if (src.flag <> nil) then
     tgt.flag := convertCodeableConcept(src.flag);
 
@@ -18250,7 +20063,10 @@ begin
   if (src.item <> nil) then
     tgt.item := convertReference(src.item);
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertLocation(src : FHIRResources3.TFhirLocation) : FHIRResources4.TFhirLocation;
@@ -18264,6 +20080,7 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources4.TFhirLocation.Create();
+  try
   copyDomainResource(src, tgt);
   for t1 in src.identifierList do
   begin
@@ -18311,7 +20128,10 @@ begin
   begin
     tgt.endpointList.add(convertReference(t4));
   end;
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertLocation(src : FHIRResources4.TFhirLocation) : FHIRResources3.TFhirLocation;
@@ -18325,6 +20145,7 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources3.TFhirLocation.Create();
+  try
   copyDomainResource(src, tgt);
   for t1 in src.identifierList do
   begin
@@ -18373,7 +20194,10 @@ begin
   begin
     tgt.endpointList.add(convertReference(t4));
   end;
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertLocationPositionComponent(src : FHIRResources3.TFhirLocationPosition) : FHIRResources4.TFhirLocationPosition;
@@ -18383,12 +20207,16 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources4.TFhirLocationPosition.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   tgt.longitude := src.longitude;
   tgt.latitude := src.latitude;
   tgt.altitude := src.altitude;
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertLocationPositionComponent(src : FHIRResources4.TFhirLocationPosition) : FHIRResources3.TFhirLocationPosition;
@@ -18398,12 +20226,16 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources3.TFhirLocationPosition.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   tgt.longitude := src.longitude;
   tgt.latitude := src.latitude;
   tgt.altitude := src.altitude;
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertMedicationIngredientComponent(src : FHIRResources3.TFhirMedicationIngredient) : FHIRResources4.TFhirMedicationIngredient;
@@ -18413,7 +20245,8 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources4.TFhirMedicationIngredient.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   if (src.item <> nil) then
     tgt.item := convertType(src.item);
 
@@ -18422,7 +20255,10 @@ begin
   if (src.amount <> nil) then
     tgt.amount := convertRatio(src.amount);
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertMedicationIngredientComponent(src : FHIRResources4.TFhirMedicationIngredient) : FHIRResources3.TFhirMedicationIngredient;
@@ -18432,7 +20268,8 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources3.TFhirMedicationIngredient.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   if (src.item <> nil) then
     tgt.item := convertType(src.item);
 
@@ -18441,7 +20278,95 @@ begin
   if (src.amount <> nil) then
     tgt.amount := convertRatio(src.amount);
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
+end;
+
+class function TVersionConvertor_30_40.convertMedicationPackageBatchComponent(src : FHIRResources3.TFhirMedicationPackageBatch) : FHIRResources4.TFhirMedicationBatch;
+var
+  tgt : FHIRResources4.TFhirMedicationBatch;
+begin
+  if (src = nil) then
+    exit(nil);
+  tgt := FHIRResources4.TFhirMedicationBatch.Create();
+  try
+  copyBackboneElement(src, tgt);
+  tgt.LotNumber := src.LotNumber;
+  tgt.ExpirationDate := src.ExpirationDate;
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
+end;
+
+class function TVersionConvertor_30_40.convertMedicationPackageBatchComponent(src : FHIRResources4.TFhirMedicationBatch) : FHIRResources3.TFhirMedicationPackageBatch;
+var
+  tgt : FHIRResources3.TFhirMedicationPackageBatch;
+begin
+  if (src = nil) then
+    exit(nil);
+  tgt := FHIRResources3.TFhirMedicationPackageBatch.Create();
+  try
+  copyBackboneElement(src, tgt);
+  tgt.LotNumber := src.LotNumber;
+  tgt.ExpirationDate := src.ExpirationDate;
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
+end;
+
+class function TVersionConvertor_30_40.convertMedication(src : FHIRResources4.TFhirMedication) : FHIRResources3.TFhirMedication;
+var
+  tgt : FHIRResources3.TFhirMedication;
+  t : FHIRResources4.TFhirMedicationIngredient;
+begin
+  if (src = nil) then
+    exit(nil);
+  tgt := FHIRResources3.TFhirMedication.Create();
+  try
+  copyDomainResource(src, tgt);
+  tgt.Code := convertCodeableConcept(src.Code);
+  tgt.Status := convertMedicationStatus(src.Status);
+  tgt.Manufacturer := convertReference(src.Manufacturer);
+  tgt.Form := convertCodeableConcept(src.Form);
+  for t in src.ingredientList do
+    tgt.IngredientList.add(convertMedicationIngredientComponent(t));
+  if (src.batch <> nil) then
+  begin
+    tgt.package := FHIRResources3.TFhirMedicationPackage.Create;
+    tgt.package.BatchList.add(convertMedicationPackageBatchComponent(src.batch));
+  end;
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
+end;
+
+class function TVersionConvertor_30_40.convertMedication(src : FHIRResources3.TFhirMedication) : FHIRResources4.TFhirMedication;
+var
+  tgt : FHIRResources4.TFhirMedication;
+  t : FHIRResources3.TFhirMedicationIngredient;
+begin
+  if (src = nil) then
+    exit(nil);
+  tgt := FHIRResources4.TFhirMedication.Create();
+  try
+  copyDomainResource(src, tgt);
+  tgt.Code := convertCodeableConcept(src.Code);
+  tgt.Status := convertMedicationStatus(src.Status);
+  tgt.Manufacturer := convertReference(src.Manufacturer);
+  tgt.Form := convertCodeableConcept(src.Form);
+  for t in src.ingredientList do
+    tgt.IngredientList.add(convertMedicationIngredientComponent(t));
+  if (src.package <> nil) and (src.Package.batchList.Count > 0) then
+    tgt.batch := convertMedicationPackageBatchComponent(src.Package.batchList[0]);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertMedicationAdministration(src : FHIRResources3.TFhirMedicationAdministration) : FHIRResources4.TFhirMedicationAdministration;
@@ -18461,6 +20386,7 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources4.TFhirMedicationAdministration.Create();
+  try
   copyDomainResource(src, tgt);
   for t1 in src.identifierList do
   begin
@@ -18525,7 +20451,10 @@ begin
   begin
     tgt.eventHistoryList.add(convertReference(ta));
   end;
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertMedicationAdministration(src : FHIRResources4.TFhirMedicationAdministration) : FHIRResources3.TFhirMedicationAdministration;
@@ -18545,6 +20474,7 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources3.TFhirMedicationAdministration.Create();
+  try
   copyDomainResource(src, tgt);
   for t1 in src.identifierList do
   begin
@@ -18609,7 +20539,10 @@ begin
   begin
     tgt.eventHistoryList.add(convertReference(ta));
   end;
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertMedicationAdministrationPerformerComponent(src : FHIRResources3.TFhirMedicationAdministrationPerformer) : FHIRResources4.TFhirMedicationAdministrationPerformer;
@@ -18619,11 +20552,15 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources4.TFhirMedicationAdministrationPerformer.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   if (src.actor <> nil) then
     tgt.actor := convertReference(src.actor);
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertMedicationAdministrationPerformerComponent(src : FHIRResources4.TFhirMedicationAdministrationPerformer) : FHIRResources3.TFhirMedicationAdministrationPerformer;
@@ -18633,11 +20570,15 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources3.TFhirMedicationAdministrationPerformer.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   if (src.actor <> nil) then
     tgt.actor := convertReference(src.actor);
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertMedicationAdministrationDosageComponent(src : FHIRResources3.TFhirMedicationAdministrationDosage) : FHIRResources4.TFhirMedicationAdministrationDosage;
@@ -18647,7 +20588,8 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources4.TFhirMedicationAdministrationDosage.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   if (src.text <> '') then
     tgt.text := src.text;
 
@@ -18666,7 +20608,10 @@ begin
   if (src.rate <> nil) then
     tgt.rate := convertType(src.rate);
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertMedicationAdministrationDosageComponent(src : FHIRResources4.TFhirMedicationAdministrationDosage) : FHIRResources3.TFhirMedicationAdministrationDosage;
@@ -18676,7 +20621,8 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources3.TFhirMedicationAdministrationDosage.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   if (src.text <> '') then
     tgt.text := src.text;
 
@@ -18695,7 +20641,10 @@ begin
   if (src.rate <> nil) then
     tgt.rate := convertType(src.rate);
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertMedicationDispense(src : FHIRResources3.TFhirMedicationDispense) : FHIRResources4.TFhirMedicationDispense;
@@ -18715,6 +20664,7 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources4.TFhirMedicationDispense.Create();
+  try
   copyDomainResource(src, tgt);
   for t1 in src.identifierList do
   begin
@@ -18787,7 +20737,10 @@ begin
   begin
     tgt.eventHistoryList.add(convertReference(ta));
   end;
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertMedicationDispense(src : FHIRResources4.TFhirMedicationDispense) : FHIRResources3.TFhirMedicationDispense;
@@ -18807,6 +20760,7 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources3.TFhirMedicationDispense.Create();
+  try
   copyDomainResource(src, tgt);
   for t1 in src.identifierList do
   begin
@@ -18879,7 +20833,10 @@ begin
   begin
     tgt.eventHistoryList.add(convertReference(ta));
   end;
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertMedicationDispensePerformerComponent(src : FHIRResources3.TFhirMedicationDispensePerformer) : FHIRResources4.TFhirMedicationDispensePerformer;
@@ -18889,11 +20846,15 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources4.TFhirMedicationDispensePerformer.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   if (src.actor <> nil) then
     tgt.actor := convertReference(src.actor);
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertMedicationDispensePerformerComponent(src : FHIRResources4.TFhirMedicationDispensePerformer) : FHIRResources3.TFhirMedicationDispensePerformer;
@@ -18903,11 +20864,15 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources3.TFhirMedicationDispensePerformer.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   if (src.actor <> nil) then
     tgt.actor := convertReference(src.actor);
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertMedicationDispenseSubstitutionComponent(src : FHIRResources3.TFhirMedicationDispenseSubstitution) : FHIRResources4.TFhirMedicationDispenseSubstitution;
@@ -18919,7 +20884,8 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources4.TFhirMedicationDispenseSubstitution.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   tgt.wasSubstituted := src.wasSubstituted;
 
   tgt.type_ := convertCodeableConcept(src.type_);
@@ -18932,7 +20898,10 @@ begin
   begin
     tgt.responsiblePartyList.add(convertReference(t2));
   end;
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertMedicationDispenseSubstitutionComponent(src : FHIRResources4.TFhirMedicationDispenseSubstitution) : FHIRResources3.TFhirMedicationDispenseSubstitution;
@@ -18944,7 +20913,8 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources3.TFhirMedicationDispenseSubstitution.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   tgt.wasSubstituted := src.wasSubstituted;
 
   tgt.type_ := convertCodeableConcept(src.type_);
@@ -18957,7 +20927,10 @@ begin
   begin
     tgt.responsiblePartyList.add(convertReference(t2));
   end;
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertMedicationRequest(src : FHIRResources3.TFhirMedicationRequest) : FHIRResources4.TFhirMedicationRequest;
@@ -18976,6 +20949,7 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources4.TFhirMedicationRequest.Create();
+  try
   copyDomainResource(src, tgt);
   for t1 in src.identifierList do
   begin
@@ -19045,7 +21019,10 @@ begin
   begin
     tgt.eventHistoryList.add(convertReference(t9));
   end;
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertMedicationRequest(src : FHIRResources4.TFhirMedicationRequest) : FHIRResources3.TFhirMedicationRequest;
@@ -19064,6 +21041,7 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources3.TFhirMedicationRequest.Create();
+  try
   copyDomainResource(src, tgt);
   for t1 in src.identifierList do
   begin
@@ -19133,7 +21111,10 @@ begin
   begin
     tgt.eventHistoryList.add(convertReference(t9));
   end;
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertMedicationRequestDispenseRequestComponent(src : FHIRResources3.TFhirMedicationRequestDispenseRequest) : FHIRResources4.TFhirMedicationRequestDispenseRequest;
@@ -19143,7 +21124,8 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources4.TFhirMedicationRequestDispenseRequest.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   if (src.validityPeriod <> nil) then
     tgt.validityPeriod := convertPeriod(src.validityPeriod);
 
@@ -19158,7 +21140,10 @@ begin
   if (src.performer <> nil) then
     tgt.performer := convertReference(src.performer);
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertMedicationRequestDispenseRequestComponent(src : FHIRResources4.TFhirMedicationRequestDispenseRequest) : FHIRResources3.TFhirMedicationRequestDispenseRequest;
@@ -19168,7 +21153,8 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources3.TFhirMedicationRequestDispenseRequest.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   if (src.validityPeriod <> nil) then
     tgt.validityPeriod := convertPeriod(src.validityPeriod);
 
@@ -19183,7 +21169,10 @@ begin
   if (src.performer <> nil) then
     tgt.performer := convertReference(src.performer);
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertMedicationRequestSubstitutionComponent(src : FHIRResources3.TFhirMedicationRequestSubstitution) : FHIRResources4.TFhirMedicationRequestSubstitution;
@@ -19193,13 +21182,17 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources4.TFhirMedicationRequestSubstitution.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   tgt.allowed := src.allowed;
 
   if (src.reason <> nil) then
     tgt.reason := convertCodeableConcept(src.reason);
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertMedicationRequestSubstitutionComponent(src : FHIRResources4.TFhirMedicationRequestSubstitution) : FHIRResources3.TFhirMedicationRequestSubstitution;
@@ -19209,13 +21202,17 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources3.TFhirMedicationRequestSubstitution.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   tgt.allowed := src.allowed;
 
   if (src.reason <> nil) then
     tgt.reason := convertCodeableConcept(src.reason);
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertMedicationStatement(src : FHIRResources3.TFhirMedicationStatement) : FHIRResources4.TFhirMedicationStatement;
@@ -19233,6 +21230,7 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources4.TFhirMedicationStatement.Create();
+  try
   copyDomainResource(src, tgt);
   for t1 in src.identifierList do
   begin
@@ -19288,7 +21286,10 @@ begin
   begin
     tgt.dosageList.add(convertDosage(t8));
   end;
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertMedicationStatement(src : FHIRResources4.TFhirMedicationStatement) : FHIRResources3.TFhirMedicationStatement;
@@ -19306,6 +21307,7 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources3.TFhirMedicationStatement.Create();
+  try
   copyDomainResource(src, tgt);
   for t1 in src.identifierList do
   begin
@@ -19361,7 +21363,10 @@ begin
   begin
     tgt.dosageList.add(convertDosage(t8));
   end;
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertMessageDefinition(src : FHIRResources3.TFhirMessageDefinition) : FHIRResources4.TFhirMessageDefinition;
@@ -19378,6 +21383,7 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources4.TFhirMessageDefinition.Create();
+  try
   copyDomainResource(src, tgt);
   if (src.url <> '') then
     tgt.url := src.url;
@@ -19452,7 +21458,10 @@ begin
   begin
     tgt.allowedResponseList.add(convertMessageDefinitionAllowedResponseComponent(t7));
   end;
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertCoding2Uri(code : FHIRTypes3.TFhirCoding) : String;
@@ -19474,6 +21483,7 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources3.TFhirMessageDefinition.Create();
+  try
   copyDomainResource(src, tgt);
   if (src.url <> '') then
     tgt.url := src.url;
@@ -19545,7 +21555,10 @@ begin
   begin
     tgt.allowedResponseList.add(convertMessageDefinitionAllowedResponseComponent(t7));
   end;
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertUri2Coding(uri : String) : FHIRTypes3.TFhirCoding;
@@ -19563,7 +21576,8 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources4.TFhirMessageDefinitionFocus.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   tgt.code := convertActivityDefinitionKind(src.code);
 
   if (src.profile <> nil) then
@@ -19574,7 +21588,10 @@ begin
   if (src.max <> '') then
     tgt.max := src.max;
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertMessageDefinitionFocusComponent(src : FHIRResources4.TFhirMessageDefinitionFocus) : FHIRResources3.TFhirMessageDefinitionFocus;
@@ -19584,7 +21601,8 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources3.TFhirMessageDefinitionFocus.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   tgt.code := convertActivityDefinitionKind(src.code);
 
   if (src.profile <> '') then
@@ -19595,7 +21613,10 @@ begin
   if (src.max <> '') then
     tgt.max := src.max;
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertMessageDefinitionAllowedResponseComponent(src : FHIRResources3.TFhirMessageDefinitionAllowedResponse) : FHIRResources4.TFhirMessageDefinitionAllowedResponse;
@@ -19605,14 +21626,18 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources4.TFhirMessageDefinitionAllowedResponse.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   if (src.message <> nil) then
     tgt.messageElement := convertReferenceToCanonical(src.message);
 
   if (src.situation <> '') then
     tgt.situation := src.situation;
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertMessageDefinitionAllowedResponseComponent(src : FHIRResources4.TFhirMessageDefinitionAllowedResponse) : FHIRResources3.TFhirMessageDefinitionAllowedResponse;
@@ -19622,14 +21647,18 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources3.TFhirMessageDefinitionAllowedResponse.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   if (src.message <> '') then
     tgt.message := convertCanonicalToReference(src.messageElement);
 
   if (src.situation <> '') then
     tgt.situation := src.situation;
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertMessageHeader(src : FHIRResources3.TFhirMessageHeader) : FHIRResources4.TFhirMessageHeader;
@@ -19641,6 +21670,7 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources4.TFhirMessageHeader.Create();
+  try
   copyDomainResource(src, tgt);
   if (src.event <> nil) then
     tgt.event := convertCoding(src.event);
@@ -19674,7 +21704,10 @@ begin
   begin
     tgt.focusList.add(convertReference(t2));
   end;
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertMessageHeader(src : FHIRResources4.TFhirMessageHeader) : FHIRResources3.TFhirMessageHeader;
@@ -19686,6 +21719,7 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources3.TFhirMessageHeader.Create();
+  try
   copyDomainResource(src, tgt);
   if (src.event is FHIRTypes4.TFhirCoding) then
     tgt.event := convertCoding(src.event as FHIRTypes4.TFhirCoding);
@@ -19719,7 +21753,10 @@ begin
   begin
     tgt.focusList.add(convertReference(t2));
   end;
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertMessageDestinationComponent(src : FHIRResources3.TFhirMessageHeaderDestination) : FHIRResources4.TFhirMessageHeaderDestination;
@@ -19729,7 +21766,8 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources4.TFhirMessageHeaderDestination.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   if (src.name <> '') then
     tgt.name := src.name;
 
@@ -19739,7 +21777,10 @@ begin
   if (src.endpoint <> '') then
     tgt.endpoint := src.endpoint;
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertMessageDestinationComponent(src : FHIRResources4.TFhirMessageHeaderDestination) : FHIRResources3.TFhirMessageHeaderDestination;
@@ -19749,7 +21790,8 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources3.TFhirMessageHeaderDestination.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   if (src.name <> '') then
     tgt.name := src.name;
 
@@ -19759,7 +21801,10 @@ begin
   if (src.endpoint <> '') then
     tgt.endpoint := src.endpoint;
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertMessageSourceComponent(src : FHIRResources3.TFhirMessageHeaderSource) : FHIRResources4.TFhirMessageHeaderSource;
@@ -19769,7 +21814,8 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources4.TFhirMessageHeaderSource.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   if (src.name <> '') then
     tgt.name := src.name;
 
@@ -19785,7 +21831,10 @@ begin
   if (src.endpoint <> '') then
     tgt.endpoint := src.endpoint;
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertMessageSourceComponent(src : FHIRResources4.TFhirMessageHeaderSource) : FHIRResources3.TFhirMessageHeaderSource;
@@ -19795,7 +21844,8 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources3.TFhirMessageHeaderSource.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   if (src.name <> '') then
     tgt.name := src.name;
 
@@ -19811,7 +21861,10 @@ begin
   if (src.endpoint <> '') then
     tgt.endpoint := src.endpoint;
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertMessageHeaderResponseComponent(src : FHIRResources3.TFhirMessageHeaderResponse) : FHIRResources4.TFhirMessageHeaderResponse;
@@ -19821,7 +21874,8 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources4.TFhirMessageHeaderResponse.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   if (src.identifier <> '') then
     tgt.identifier := src.identifier;
 
@@ -19830,7 +21884,10 @@ begin
   if (src.details <> nil) then
     tgt.details := convertReference(src.details);
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertMessageHeaderResponseComponent(src : FHIRResources4.TFhirMessageHeaderResponse) : FHIRResources3.TFhirMessageHeaderResponse;
@@ -19840,7 +21897,8 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources3.TFhirMessageHeaderResponse.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   if (src.identifier <> '') then
     tgt.identifier := src.identifier;
 
@@ -19849,7 +21907,10 @@ begin
   if (src.details <> nil) then
     tgt.details := convertReference(src.details);
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertNamingSystem(src : FHIRResources3.TFhirNamingSystem) : FHIRResources4.TFhirNamingSystem;
@@ -19863,6 +21924,7 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources4.TFhirNamingSystem.Create();
+  try
   copyDomainResource(src, tgt);
   if (src.name <> '') then
     tgt.name := src.name;
@@ -19902,7 +21964,10 @@ begin
   begin
     tgt.uniqueIdList.add(convertNamingSystemUniqueIdComponent(t4));
   end;
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertNamingSystem(src : FHIRResources4.TFhirNamingSystem) : FHIRResources3.TFhirNamingSystem;
@@ -19916,6 +21981,7 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources3.TFhirNamingSystem.Create();
+  try
   copyDomainResource(src, tgt);
   if (src.name <> '') then
     tgt.name := src.name;
@@ -19955,7 +22021,10 @@ begin
   begin
     tgt.uniqueIdList.add(convertNamingSystemUniqueIdComponent(t4));
   end;
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertNamingSystemUniqueIdComponent(src : FHIRResources3.TFhirNamingSystemUniqueId) : FHIRResources4.TFhirNamingSystemUniqueId;
@@ -19965,7 +22034,8 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources4.TFhirNamingSystemUniqueId.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   tgt.type_ := convertNamingSystemIdentifierType(src.type_);
 
   if (src.value <> '') then
@@ -19979,7 +22049,10 @@ begin
   if (src.period <> nil) then
     tgt.period := convertPeriod(src.period);
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertNamingSystemUniqueIdComponent(src : FHIRResources4.TFhirNamingSystemUniqueId) : FHIRResources3.TFhirNamingSystemUniqueId;
@@ -19989,7 +22062,8 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources3.TFhirNamingSystemUniqueId.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   tgt.type_ := convertNamingSystemIdentifierType(src.type_);
 
   if (src.value <> '') then
@@ -20003,7 +22077,10 @@ begin
   if (src.period <> nil) then
     tgt.period := convertPeriod(src.period);
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertObservation(src : FHIRResources3.TFhirObservation) : FHIRResources4.TFhirObservation;
@@ -20020,6 +22097,7 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources4.TFhirObservation.Create();
+  try
   copyDomainResource(src, tgt);
   for t1 in src.identifierList do
   begin
@@ -20091,7 +22169,10 @@ begin
   begin
     tgt.componentList.add(convertObservationComponentComponent(t7));
   end;
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertObservation(src : FHIRResources4.TFhirObservation) : FHIRResources3.TFhirObservation;
@@ -20109,6 +22190,7 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources3.TFhirObservation.Create();
+  try
   copyDomainResource(src, tgt);
   for t1 in src.identifierList do
   begin
@@ -20181,7 +22263,10 @@ begin
   begin
     tgt.componentList.add(convertObservationComponentComponent(t8));
   end;
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertObservationReferenceRangeComponent(src : FHIRResources3.TFhirObservationReferenceRange) : FHIRResources4.TFhirObservationReferenceRange;
@@ -20192,7 +22277,8 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources4.TFhirObservationReferenceRange.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   if (src.low <> nil) then
     tgt.low := convertSimpleQuantity(src.low);
 
@@ -20211,7 +22297,10 @@ begin
   if (src.text <> '') then
     tgt.text := src.text;
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertObservationReferenceRangeComponent(src : FHIRResources4.TFhirObservationReferenceRange) : FHIRResources3.TFhirObservationReferenceRange;
@@ -20222,7 +22311,8 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources3.TFhirObservationReferenceRange.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   if (src.low <> nil) then
     tgt.low := convertSimpleQuantity(src.low);
 
@@ -20241,7 +22331,10 @@ begin
   if (src.text <> '') then
     tgt.text := src.text;
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertObservationRelatedComponent(src : FHIRTypes4.TFhirReference; type_ : FHIRTypes3.TFhirObservationRelationshiptypesEnum) : FHIRResources3.TFhirObservationRelated;
@@ -20251,10 +22344,14 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources3.TFhirObservationRelated.Create();
+  try
   copyElement(src, tgt);
   tgt.type_ := type_;
   tgt.Target := convertReference(src);
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertObservationComponentComponent(src : FHIRResources3.TFhirObservationComponent) : FHIRResources4.TFhirObservationComponent;
@@ -20265,7 +22362,8 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources4.TFhirObservationComponent.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   tgt.code := convertCodeableConcept(src.code);
 
   if (src.value <> nil) then
@@ -20281,7 +22379,10 @@ begin
   begin
     tgt.referenceRangeList.add(convertObservationReferenceRangeComponent(t));
   end;
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertObservationComponentComponent(src : FHIRResources4.TFhirObservationComponent) : FHIRResources3.TFhirObservationComponent;
@@ -20292,7 +22393,8 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources3.TFhirObservationComponent.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   tgt.code := convertCodeableConcept(src.code);
 
   if (src.value <> nil) then
@@ -20308,7 +22410,10 @@ begin
   begin
     tgt.referenceRangeList.add(convertObservationReferenceRangeComponent(t));
   end;
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertOperationDefinition(src : FHIRResources3.TFhirOperationDefinition) : FHIRResources4.TFhirOperationDefinition;
@@ -20323,6 +22428,7 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources4.TFhirOperationDefinition.Create();
+  try
   copyDomainResource(src, tgt);
   if (src.url <> '') then
     tgt.url := src.url;
@@ -20391,7 +22497,10 @@ begin
   begin
     tgt.overloadList.add(convertOperationDefinitionOverloadComponent(t6));
   end;
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertOperationDefinition(src : FHIRResources4.TFhirOperationDefinition) : FHIRResources3.TFhirOperationDefinition;
@@ -20406,6 +22515,7 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources3.TFhirOperationDefinition.Create();
+  try
   copyDomainResource(src, tgt);
   if (src.url <> '') then
     tgt.url := src.url;
@@ -20475,7 +22585,10 @@ begin
   begin
     tgt.overloadList.add(convertOperationDefinitionOverloadComponent(t6));
   end;
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertOperationDefinitionParameterComponent(src : FHIRResources3.TFhirOperationDefinitionParameter) : FHIRResources4.TFhirOperationDefinitionParameter;
@@ -20486,7 +22599,8 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources4.TFhirOperationDefinitionParameter.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   if (src.name <> '') then
     tgt.name := src.name;
 
@@ -20514,7 +22628,10 @@ begin
   begin
     tgt.partList.add(convertOperationDefinitionParameterComponent(t));
   end;
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertOperationDefinitionParameterComponent(src : FHIRResources4.TFhirOperationDefinitionParameter) : FHIRResources3.TFhirOperationDefinitionParameter;
@@ -20526,7 +22643,8 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources3.TFhirOperationDefinitionParameter.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   if (src.name <> '') then
     tgt.name := src.name;
 
@@ -20555,7 +22673,10 @@ begin
   begin
     tgt.partList.add(convertOperationDefinitionParameterComponent(t2));
   end;
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertOperationDefinitionParameterBindingComponent(src : FHIRResources3.TFhirOperationDefinitionParameterBinding) : FHIRResources4.TFhirOperationDefinitionParameterBinding;
@@ -20566,19 +22687,26 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources4.TFhirOperationDefinitionParameterBinding.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   tgt.strength := convertBindingStrength(src.strength);
 
   if (src.valueSet <> nil) then
   begin
     t := convertType(src.ValueSet);
     if t is FHIRTypes4.TFhirReference then
-      tgt.valueSet := FHIRTypes4.TFhirCanonical.create((t as FHIRTypes4.TFhirReference).Reference)
+    begin
+      tgt.valueSet := FHIRTypes4.TFhirCanonical.create((t as FHIRTypes4.TFhirReference).Reference);
+      t.Free;
+    end
     else
       tgt.valueSet := t;
   end;
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertOperationDefinitionParameterBindingComponent(src : FHIRResources4.TFhirOperationDefinitionParameterBinding) : FHIRResources3.TFhirOperationDefinitionParameterBinding;
@@ -20588,13 +22716,17 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources3.TFhirOperationDefinitionParameterBinding.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   tgt.strength := convertBindingStrength(src.strength);
 
   if (src.valueSet <> nil) then
     tgt.valueSet := convertType(src.valueSet);
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertOperationDefinitionOverloadComponent(src : FHIRResources3.TFhirOperationDefinitionOverload) : FHIRResources4.TFhirOperationDefinitionOverload;
@@ -20605,7 +22737,8 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources4.TFhirOperationDefinitionOverload.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   for t in src.parameterNameList do
   begin
     tgt.parameterNameList.add(convertString(t));
@@ -20613,7 +22746,10 @@ begin
   if (src.comment <> '') then
     tgt.comment := src.comment;
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertOperationDefinitionOverloadComponent(src : FHIRResources4.TFhirOperationDefinitionOverload) : FHIRResources3.TFhirOperationDefinitionOverload;
@@ -20624,7 +22760,8 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources3.TFhirOperationDefinitionOverload.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   for t in src.parameterNameList do
   begin
     tgt.parameterNameList.add(convertString(t));
@@ -20632,7 +22769,10 @@ begin
   if (src.comment <> '') then
     tgt.comment := src.comment;
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertOperationOutcome(src : FHIRResources3.TFhirOperationOutcome) : FHIRResources4.TFhirOperationOutcome;
@@ -20643,12 +22783,16 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources4.TFhirOperationOutcome.Create();
+  try
   copyDomainResource(src, tgt);
   for t in src.issueList do
   begin
     tgt.issueList.add(convertOperationOutcomeIssueComponent(t));
   end;
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertOperationOutcome(src : FHIRResources4.TFhirOperationOutcome) : FHIRResources3.TFhirOperationOutcome;
@@ -20659,12 +22803,16 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources3.TFhirOperationOutcome.Create();
+  try
   copyDomainResource(src, tgt);
   for t in src.issueList do
   begin
     tgt.issueList.add(convertOperationOutcomeIssueComponent(t));
   end;
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertOperationOutcomeIssueComponent(src : FHIRResources3.TFhirOperationOutcomeIssue) : FHIRResources4.TFhirOperationOutcomeIssue;
@@ -20675,7 +22823,8 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources4.TFhirOperationOutcomeIssue.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   tgt.severity := convertIssueSeverity(src.severity);
 
   tgt.code := convertIssueType(src.code);
@@ -20694,7 +22843,10 @@ begin
   begin
     tgt.expressionList.add(convertString(t));
   end;
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertOperationOutcomeIssueComponent(src : FHIRResources4.TFhirOperationOutcomeIssue) : FHIRResources3.TFhirOperationOutcomeIssue;
@@ -20705,7 +22857,8 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources3.TFhirOperationOutcomeIssue.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   tgt.severity := convertIssueSeverity(src.severity);
 
   tgt.code := convertIssueType(src.code);
@@ -20724,7 +22877,10 @@ begin
   begin
     tgt.expressionList.add(convertString(t));
   end;
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertOrganization(src : FHIRResources3.TFhirOrganization) : FHIRResources4.TFhirOrganization;
@@ -20741,6 +22897,7 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources4.TFhirOrganization.Create();
+  try
   copyDomainResource(src, tgt);
   for t1 in src.identifierList do
   begin
@@ -20778,7 +22935,10 @@ begin
   begin
     tgt.endpointList.add(convertReference(t7));
   end;
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertOrganization(src : FHIRResources4.TFhirOrganization) : FHIRResources3.TFhirOrganization;
@@ -20795,6 +22955,7 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources3.TFhirOrganization.Create();
+  try
   copyDomainResource(src, tgt);
   for t1 in src.identifierList do
   begin
@@ -20832,7 +22993,10 @@ begin
   begin
     tgt.endpointList.add(convertReference(t7));
   end;
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertOrganizationContactComponent(src : FHIRResources3.TFhirOrganizationContact) : FHIRResources4.TFhirOrganizationContact;
@@ -20843,7 +23007,8 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources4.TFhirOrganizationContact.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   if (src.purpose <> nil) then
     tgt.purpose := convertCodeableConcept(src.purpose);
 
@@ -20857,7 +23022,10 @@ begin
   if (src.address <> nil) then
     tgt.address := convertAddress(src.address);
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertOrganizationContactComponent(src : FHIRResources4.TFhirOrganizationContact) : FHIRResources3.TFhirOrganizationContact;
@@ -20868,7 +23036,8 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources3.TFhirOrganizationContact.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   if (src.purpose <> nil) then
     tgt.purpose := convertCodeableConcept(src.purpose);
 
@@ -20882,7 +23051,10 @@ begin
   if (src.address <> nil) then
     tgt.address := convertAddress(src.address);
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertPatient(src : FHIRResources3.TFhirPatient) : FHIRResources4.TFhirPatient;
@@ -20901,6 +23073,7 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources4.TFhirPatient.Create();
+  try
   copyDomainResource(src, tgt);
   for t1 in src.identifierList do
   begin
@@ -20959,7 +23132,10 @@ begin
   begin
     tgt.link_List.add(convertPatientLinkComponent(t9));
   end;
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertPatient(src : FHIRResources4.TFhirPatient) : FHIRResources3.TFhirPatient;
@@ -20978,6 +23154,7 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources3.TFhirPatient.Create();
+  try
   copyDomainResource(src, tgt);
   for t1 in src.identifierList do
   begin
@@ -21036,7 +23213,10 @@ begin
   begin
     tgt.link_List.add(convertPatientLinkComponent(t9));
   end;
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertContactComponent(src : FHIRResources3.TFhirPatientContact) : FHIRResources4.TFhirPatientContact;
@@ -21048,7 +23228,8 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources4.TFhirPatientContact.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   for t1 in src.relationshipList do
   begin
     tgt.relationshipList.add(convertCodeableConcept(t1));
@@ -21071,7 +23252,10 @@ begin
   if (src.period <> nil) then
     tgt.period := convertPeriod(src.period);
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertContactComponent(src : FHIRResources4.TFhirPatientContact) : FHIRResources3.TFhirPatientContact;
@@ -21083,7 +23267,8 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources3.TFhirPatientContact.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   for t1 in src.relationshipList do
   begin
     tgt.relationshipList.add(convertCodeableConcept(t1));
@@ -21106,7 +23291,10 @@ begin
   if (src.period <> nil) then
     tgt.period := convertPeriod(src.period);
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertAnimalComponent(src : FHIRResources3.TFhirPatientAnimal) : FHIRTypes4.TFhirExtension;
@@ -21116,6 +23304,7 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRTypes4.TFhirExtension.Create();
+  try
   tgt.url := 'http://hl7.org/fhir/StructureDefinition/patient-animal';
   copyElement(src, tgt);
   if (src.species <> nil) then
@@ -21127,7 +23316,10 @@ begin
   if (src.genderStatus <> nil) then
     tgt.addExtension('genderStatus', convertCodeableConcept(src.GenderStatus));
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertAnimalComponent(src : FHIRTypes4.TFhirExtension) : FHIRResources3.TFhirPatientAnimal;
@@ -21138,6 +23330,7 @@ begin
     exit(nil);
 
   tgt := FHIRResources3.TFhirPatientAnimal.Create();
+  try
   copyElement(src, tgt);
   if (src.hasExtension('species')) then
     tgt.Species := convertCodeableConcept(src.getExtensionByUrl('species').Value as FHIRTypes4.TFhirCodeableConcept);
@@ -21148,7 +23341,10 @@ begin
   if (src.hasExtension('genderStatus')) then
     tgt.GenderStatus := convertCodeableConcept(src.getExtensionByUrl('genderStatus').Value as FHIRTypes4.TFhirCodeableConcept);
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertPatientCommunicationComponent(src : FHIRResources3.TFhirPatientCommunication) : FHIRResources4.TFhirPatientCommunication;
@@ -21158,13 +23354,17 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources4.TFhirPatientCommunication.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   if (src.language <> nil) then
     tgt.language := convertCodeableConcept(src.language);
 
   tgt.preferred := src.preferred;
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertPatientCommunicationComponent(src : FHIRResources4.TFhirPatientCommunication) : FHIRResources3.TFhirPatientCommunication;
@@ -21174,13 +23374,17 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources3.TFhirPatientCommunication.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   if (src.language <> nil) then
     tgt.language := convertCodeableConcept(src.language);
 
   tgt.preferred := src.preferred;
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertPatientLinkComponent(src : FHIRResources3.TFhirPatientLink) : FHIRResources4.TFhirPatientLink;
@@ -21190,13 +23394,17 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources4.TFhirPatientLink.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   if (src.other <> nil) then
     tgt.other := convertReference(src.other);
 
   tgt.type_ := convertLinkType(src.type_);
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertPatientLinkComponent(src : FHIRResources4.TFhirPatientLink) : FHIRResources3.TFhirPatientLink;
@@ -21206,13 +23414,17 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources3.TFhirPatientLink.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   if (src.other <> nil) then
     tgt.other := convertReference(src.other);
 
   tgt.type_ := convertLinkType(src.type_);
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertPaymentNotice(src : FHIRResources3.TFhirPaymentNotice) : FHIRResources4.TFhirPaymentNotice;
@@ -21223,6 +23435,7 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources4.TFhirPaymentNotice.Create();
+  try
   copyDomainResource(src, tgt);
   for t in src.identifierList do
   begin
@@ -21249,7 +23462,10 @@ begin
   if (src.paymentStatus <> nil) then
     tgt.paymentStatus := convertCodeableConcept(src.paymentStatus);
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertPaymentNotice(src : FHIRResources4.TFhirPaymentNotice) : FHIRResources3.TFhirPaymentNotice;
@@ -21260,6 +23476,7 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources3.TFhirPaymentNotice.Create();
+  try
   copyDomainResource(src, tgt);
   for t in src.identifierList do
   begin
@@ -21286,7 +23503,10 @@ begin
   if (src.paymentStatus <> nil) then
     tgt.paymentStatus := convertCodeableConcept(src.paymentStatus);
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertPerson(src : FHIRResources3.TFhirPerson) : FHIRResources4.TFhirPerson;
@@ -21301,6 +23521,7 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources4.TFhirPerson.Create();
+  try
   copyDomainResource(src, tgt);
   for t1 in src.identifierList do
   begin
@@ -21335,7 +23556,10 @@ begin
   begin
     tgt.link_List.add(convertPersonLinkComponent(t5));
   end;
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertPerson(src : FHIRResources4.TFhirPerson) : FHIRResources3.TFhirPerson;
@@ -21350,6 +23574,7 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources3.TFhirPerson.Create();
+  try
   copyDomainResource(src, tgt);
   for t1 in src.identifierList do
   begin
@@ -21383,7 +23608,10 @@ begin
   begin
     tgt.link_List.add(convertPersonLinkComponent(t5));
   end;
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertPersonLinkComponent(src : FHIRResources3.TFhirPersonLink) : FHIRResources4.TFhirPersonLink;
@@ -21393,13 +23621,17 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources4.TFhirPersonLink.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   if (src.target <> nil) then
     tgt.target := convertReference(src.target);
 
   tgt.assurance := convertIdentityAssuranceLevel(src.assurance);
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertPersonLinkComponent(src : FHIRResources4.TFhirPersonLink) : FHIRResources3.TFhirPersonLink;
@@ -21409,13 +23641,17 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources3.TFhirPersonLink.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   if (src.target <> nil) then
     tgt.target := convertReference(src.target);
 
   tgt.assurance := convertIdentityAssuranceLevel(src.assurance);
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertPractitioner(src : FHIRResources3.TFhirPractitioner) : FHIRResources4.TFhirPractitioner;
@@ -21432,6 +23668,7 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources4.TFhirPractitioner.Create();
+  try
   copyDomainResource(src, tgt);
   for t1 in src.identifierList do
   begin
@@ -21467,7 +23704,10 @@ begin
   begin
     tgt.communicationList.add(convertCodeableConcept(t7));
   end;
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertPractitioner(src : FHIRResources4.TFhirPractitioner) : FHIRResources3.TFhirPractitioner;
@@ -21484,6 +23724,7 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources3.TFhirPractitioner.Create();
+  try
   copyDomainResource(src, tgt);
   for t1 in src.identifierList do
   begin
@@ -21519,7 +23760,10 @@ begin
   begin
     tgt.communicationList.add(convertCodeableConcept(t7));
   end;
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertPractitionerQualificationComponent(src : FHIRResources3.TFhirPractitionerQualification) : FHIRResources4.TFhirPractitionerQualification;
@@ -21530,7 +23774,8 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources4.TFhirPractitionerQualification.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   for t in src.identifierList do
   begin
     tgt.identifierList.add(convertIdentifier(t));
@@ -21543,7 +23788,10 @@ begin
   if (src.issuer <> nil) then
     tgt.issuer := convertReference(src.issuer);
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertPractitionerQualificationComponent(src : FHIRResources4.TFhirPractitionerQualification) : FHIRResources3.TFhirPractitionerQualification;
@@ -21554,7 +23802,8 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources3.TFhirPractitionerQualification.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   for t in src.identifierList do
   begin
     tgt.identifierList.add(convertIdentifier(t));
@@ -21567,7 +23816,10 @@ begin
   if (src.issuer <> nil) then
     tgt.issuer := convertReference(src.issuer);
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertPractitionerRole(src : FHIRResources3.TFhirPractitionerRole) : FHIRResources4.TFhirPractitionerRole;
@@ -21586,6 +23838,7 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources4.TFhirPractitionerRole.Create();
+  try
   copyDomainResource(src, tgt);
   for t1 in src.identifierList do
   begin
@@ -21637,7 +23890,10 @@ begin
   begin
     tgt.endpointList.add(convertReference(t9));
   end;
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertPractitionerRole(src : FHIRResources4.TFhirPractitionerRole) : FHIRResources3.TFhirPractitionerRole;
@@ -21656,6 +23912,7 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources3.TFhirPractitionerRole.Create();
+  try
   copyDomainResource(src, tgt);
   for t1 in src.identifierList do
   begin
@@ -21707,7 +23964,10 @@ begin
   begin
     tgt.endpointList.add(convertReference(t9));
   end;
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertPractitionerRoleAvailableTimeComponent(src : FHIRResources3.TFhirPractitionerRoleAvailableTime) : FHIRResources4.TFhirPractitionerRoleAvailableTime;
@@ -21719,7 +23979,8 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources4.TFhirPractitionerRoleAvailableTime.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   a := [];
   for t := low(FHIRTypes3.TFhirDaysOfWeekEnum) to high(FHIRTypes3.TFhirDaysOfWeekEnum) do
     if t in src.daysOfWeek then
@@ -21734,7 +23995,10 @@ begin
   if (src.availableEndTime <> '') then
     tgt.availableEndTime := src.availableEndTime;
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertPractitionerRoleAvailableTimeComponent(src : FHIRResources4.TFhirPractitionerRoleAvailableTime) : FHIRResources3.TFhirPractitionerRoleAvailableTime;
@@ -21746,7 +24010,8 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources3.TFhirPractitionerRoleAvailableTime.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   a := [];
   for t := low(FHIRTypes4.TFhirDaysOfWeekEnum) to high(FHIRTypes4.TFhirDaysOfWeekEnum) do
     if t in src.daysOfWeek then
@@ -21760,7 +24025,10 @@ begin
   if (src.availableEndTime <> '') then
     tgt.availableEndTime := src.availableEndTime;
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertPractitionerRoleNotAvailableComponent(src : FHIRResources3.TFhirPractitionerRoleNotAvailable) : FHIRResources4.TFhirPractitionerRoleNotAvailable;
@@ -21770,14 +24038,18 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources4.TFhirPractitionerRoleNotAvailable.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   if (src.description <> '') then
     tgt.description := src.description;
 
   if (src.during <> nil) then
     tgt.during := convertPeriod(src.during);
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertPractitionerRoleNotAvailableComponent(src : FHIRResources4.TFhirPractitionerRoleNotAvailable) : FHIRResources3.TFhirPractitionerRoleNotAvailable;
@@ -21787,14 +24059,18 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources3.TFhirPractitionerRoleNotAvailable.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   if (src.description <> '') then
     tgt.description := src.description;
 
   if (src.during <> nil) then
     tgt.during := convertPeriod(src.during);
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertQuestionnaire(src : FHIRResources3.TFhirQuestionnaire) : FHIRResources4.TFhirQuestionnaire;
@@ -21810,6 +24086,7 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources4.TFhirQuestionnaire.Create();
+  try
   copyDomainResource(src, tgt);
   if (src.url <> '') then
     tgt.url := src.url;
@@ -21874,7 +24151,168 @@ begin
   begin
     tgt.itemList.add(convertQuestionnaireItemComponent(t7));
   end;
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
+end;
+
+class function TVersionConvertor_30_40.convertProvenance(src : FHIRResources3.TFhirProvenance) : FHIRResources4.TFhirProvenance;
+var
+  tgt : FHIRResources4.TFhirProvenance;
+  t1 : FHIRTypes3.TFhirReference;
+  t2 : FHIRTypes3.TFHIRUri;
+  t3 : FHIRTypes3.TFHIRCoding;
+  t4 : FHIRResources3.TFhirProvenanceAgent;
+  t5 : FHIRResources3.TFhirProvenanceEntity;
+  t6 : FHIRTypes3.TFhirSignature;
+begin
+  if (src = nil) then
+    exit(nil);
+  tgt := FHIRResources4.TFhirProvenance.Create();
+  try
+  copyDomainResource(src, tgt);
+  for t1 in src.targetList do
+    tgt.TargetList.add(convertReference(t1));
+  tgt.Occurred := convertPeriod(src.Period);
+  tgt.Recorded := src.Recorded;
+  for t2 in src.policyList do
+    tgt.PolicyList.add(ConvertUri(t2));
+  tgt.Location := convertReference(src.Location);
+  for t3 in src.reasonList do
+    tgt.ReasonList.add(convertCodingToCodeableConcept(t3));
+  tgt.Activity := convertCodingToCodeableConcept(src.Activity);
+  for t4 in src.agentList do
+    tgt.AgentList.add(convertProvenanceAgentComponent(t4));
+  for t5 in src.EntityList do
+    tgt.EntityList.add(convertProvenanceEntityComponent(t5));
+  for t6 in src.signatureList do
+    tgt.SignatureList.add(convertSignature(t6));
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
+end;
+
+class function TVersionConvertor_30_40.convertProvenance(src : FHIRResources4.TFhirProvenance) : FHIRResources3.TFhirProvenance;
+var
+  tgt : FHIRResources3.TFhirProvenance;
+  t1 : FHIRTypes4.TFhirReference;
+  t2 : FHIRTypes4.TFHIRUri;
+  t3 : FHIRTypes4.TFHIRCodeableConcept;
+  c : FHIRTypes4.TFHIRCoding;
+  t4 : FHIRResources4.TFhirProvenanceAgent;
+  t5 : FHIRResources4.TFhirProvenanceEntity;
+  t6 : FHIRTypes4.TFhirSignature;
+begin
+  if (src = nil) then
+    exit(nil);
+  tgt := FHIRResources3.TFhirProvenance.Create();
+  try
+  for t1 in src.targetList do
+    tgt.TargetList.add(convertReference(t1));
+  if src.Occurred is FHIRTypes4.TFhirPeriod then
+    tgt.Period := convertPeriod(src.Occurred as FHIRTypes4.TFhirPeriod);
+  tgt.Recorded := src.Recorded;
+  for t2 in src.policyList do
+    tgt.PolicyList.add(ConvertUri(t2));
+  tgt.Location := convertReference(src.Location);
+  for t3 in src.reasonList do
+    for c in t3.codingList do
+      tgt.ReasonList.add(convertCoding(c));
+  tgt.Activity := convertCoding(src.Activity);
+  for t4 in src.agentList do
+    tgt.AgentList.add(convertProvenanceAgentComponent(t4));
+  for t5 in src.EntityList do
+    tgt.EntityList.add(convertProvenanceEntityComponent(t5));
+  for t6 in src.signatureList do
+    tgt.SignatureList.add(convertSignature(t6));
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
+end;
+
+class function TVersionConvertor_30_40.convertProvenanceAgentComponent(src : FHIRResources3.TFhirProvenanceAgent) : FHIRResources4.TFhirProvenanceAgent;
+var
+  tgt : FHIRResources4.TFhirProvenanceAgent;
+  t : FHIRTypes3.TFhirCodeableConcept;
+begin
+  if (src = nil) then
+    exit(nil);
+  tgt := FHIRResources4.TFhirProvenanceAgent.Create();
+  try
+    copyBackboneElement(src, tgt);
+    for t in src.roleList do
+      tgt.RoleList.add(convertCodeableConcept(t));
+    tgt.Who := convertType(src.Who);
+    tgt.OnBehalfOf := convertType(src.OnBehalfOf);
+    exit(tgt.link);
+  finally
+    tgt.free;
+  end;
+end;
+
+class function TVersionConvertor_30_40.convertProvenanceAgentComponent(src : FHIRResources4.TFhirProvenanceAgent) : FHIRResources3.TFhirProvenanceAgent;
+var
+  tgt : FHIRResources3.TFhirProvenanceAgent;
+  t : FHIRTypes4.TFhirCodeableConcept;
+begin
+  if (src = nil) then
+    exit(nil);
+  tgt := FHIRResources3.TFhirProvenanceAgent.Create();
+  try
+    copyBackboneElement(src, tgt);
+    for t in src.roleList do
+      tgt.RoleList.add(convertCodeableConcept(t));
+    tgt.Who := convertType(src.Who);
+    tgt.OnBehalfOf := convertType(src.OnBehalfOf);
+    exit(tgt.link);
+  finally
+    tgt.free;
+  end;
+end;
+
+class function TVersionConvertor_30_40.convertProvenanceEntityComponent(src : FHIRResources3.TFhirProvenanceEntity) : FHIRResources4.TFhirProvenanceEntity;
+var
+  tgt : FHIRResources4.TFhirProvenanceEntity;
+  t : FHIRTypes3.TFhirCodeableConcept;
+  t4 : FHIRResources3.TFhirProvenanceAgent;
+begin
+  if (src = nil) then
+    exit(nil);
+  tgt := FHIRResources4.TFhirProvenanceEntity.Create();
+  try
+  copyBackboneElement(src, tgt);
+  tgt.Role := convertProvenanceEntityRole(src.role);
+  tgt.what := convertType(src.what);
+  for t4 in src.agentList do
+    tgt.AgentList.add(convertProvenanceAgentComponent(t4));
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
+end;
+
+class function TVersionConvertor_30_40.convertProvenanceEntityComponent(src : FHIRResources4.TFhirProvenanceEntity) : FHIRResources3.TFhirProvenanceEntity;
+var
+  tgt : FHIRResources3.TFhirProvenanceEntity;
+  t : FHIRTypes4.TFhirCodeableConcept;
+  t4 : FHIRResources4.TFhirProvenanceAgent;
+begin
+  if (src = nil) then
+    exit(nil);
+  tgt := FHIRResources3.TFhirProvenanceEntity.Create();
+  try
+  copyBackboneElement(src, tgt);
+  tgt.Role := convertProvenanceEntityRole(src.role);
+  tgt.what := convertType(src.what);
+  for t4 in src.agentList do
+    tgt.AgentList.add(convertProvenanceAgentComponent(t4));
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertQuestionnaire(src : FHIRResources4.TFhirQuestionnaire) : FHIRResources3.TFhirQuestionnaire;
@@ -21890,6 +24328,7 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources3.TFhirQuestionnaire.Create();
+  try
   copyDomainResource(src, tgt);
   if (src.url <> '') then
     tgt.url := src.url;
@@ -21956,7 +24395,10 @@ begin
   begin
     tgt.itemList.add(convertQuestionnaireItemComponent(t7));
   end;
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertQuestionnaireItemComponent(src : FHIRResources3.TFhirQuestionnaireItem) : FHIRResources4.TFhirQuestionnaireItem;
@@ -21970,7 +24412,8 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources4.TFhirQuestionnaireItem.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   if (src.linkId <> '') then
     tgt.linkId := src.linkId;
 
@@ -22012,7 +24455,10 @@ begin
   begin
     tgt.itemList.add(convertQuestionnaireItemComponent(t4));
   end;
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertQuestionnaireItemComponent(src : FHIRResources4.TFhirQuestionnaireItem) : FHIRResources3.TFhirQuestionnaireItem;
@@ -22026,7 +24472,8 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources3.TFhirQuestionnaireItem.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   if (src.linkId <> '') then
     tgt.linkId := src.linkId;
 
@@ -22068,7 +24515,10 @@ begin
   begin
     tgt.itemList.add(convertQuestionnaireItemComponent(t4));
   end;
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertQuestionnaireItemEnableWhenComponent(src : FHIRResources3.TFhirQuestionnaireItemEnableWhen) : FHIRResources4.TFhirQuestionnaireItemEnableWhen;
@@ -22078,7 +24528,8 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources4.TFhirQuestionnaireItemEnableWhen.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   if (src.question <> '') then
     tgt.question := src.question;
 
@@ -22090,7 +24541,10 @@ begin
   else if (src.answer <> nil) then
     tgt.answer := convertType(src.answer);
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertQuestionnaireItemEnableWhenComponent(src : FHIRResources4.TFhirQuestionnaireItemEnableWhen) : FHIRResources3.TFhirQuestionnaireItemEnableWhen;
@@ -22100,7 +24554,8 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources3.TFhirQuestionnaireItemEnableWhen.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   if (src.question <> '') then
     tgt.question := src.question;
 
@@ -22110,7 +24565,10 @@ begin
     tgt.answer := convertType(src.answer);
 
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertQuestionnaireItemOptionComponent(src : FHIRResources3.TFhirQuestionnaireItemOption) : FHIRResources4.TFhirQuestionnaireItemOption;
@@ -22120,11 +24578,15 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources4.TFhirQuestionnaireItemOption.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   if (src.value <> nil) then
     tgt.value := convertType(src.value);
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertQuestionnaireItemOptionComponent(src : FHIRResources4.TFhirQuestionnaireItemOption) : FHIRResources3.TFhirQuestionnaireItemOption;
@@ -22134,11 +24596,15 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources3.TFhirQuestionnaireItemOption.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   if (src.value <> nil) then
     tgt.value := convertType(src.value);
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertQuestionnaireResponse(src : FHIRResources3.TFhirQuestionnaireResponse) : FHIRResources4.TFhirQuestionnaireResponse;
@@ -22151,6 +24617,7 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources4.TFhirQuestionnaireResponse.Create();
+  try
   copyDomainResource(src, tgt);
   if (src.identifier <> nil) then
     tgt.identifier := convertIdentifier(src.identifier);
@@ -22186,7 +24653,10 @@ begin
   begin
     tgt.itemList.add(convertQuestionnaireResponseItemComponent(t3));
   end;
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertQuestionnaireResponse(src : FHIRResources4.TFhirQuestionnaireResponse) : FHIRResources3.TFhirQuestionnaireResponse;
@@ -22199,6 +24669,7 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources3.TFhirQuestionnaireResponse.Create();
+  try
   copyDomainResource(src, tgt);
   if (src.identifier <> nil) then
     tgt.identifier := convertIdentifier(src.identifier);
@@ -22234,7 +24705,10 @@ begin
   begin
     tgt.itemList.add(convertQuestionnaireResponseItemComponent(t3));
   end;
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertQuestionnaireResponseItemComponent(src : FHIRResources3.TFhirQuestionnaireResponseItem) : FHIRResources4.TFhirQuestionnaireResponseItem;
@@ -22246,7 +24720,8 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources4.TFhirQuestionnaireResponseItem.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   if (src.linkId <> '') then
     tgt.linkId := src.linkId;
 
@@ -22267,7 +24742,10 @@ begin
   begin
     tgt.itemList.add(convertQuestionnaireResponseItemComponent(t2));
   end;
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertQuestionnaireResponseItemComponent(src : FHIRResources4.TFhirQuestionnaireResponseItem) : FHIRResources3.TFhirQuestionnaireResponseItem;
@@ -22279,7 +24757,8 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources3.TFhirQuestionnaireResponseItem.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   if (src.linkId <> '') then
     tgt.linkId := src.linkId;
 
@@ -22300,7 +24779,10 @@ begin
   begin
     tgt.itemList.add(convertQuestionnaireResponseItemComponent(t2));
   end;
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertQuestionnaireResponseItemAnswerComponent(src : FHIRResources3.TFhirQuestionnaireResponseItemAnswer) : FHIRResources4.TFhirQuestionnaireResponseItemAnswer;
@@ -22311,7 +24793,8 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources4.TFhirQuestionnaireResponseItemAnswer.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   if (src.value <> nil) then
     tgt.value := convertType(src.value);
 
@@ -22319,7 +24802,10 @@ begin
   begin
     tgt.itemList.add(convertQuestionnaireResponseItemComponent(t));
   end;
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertQuestionnaireResponseItemAnswerComponent(src : FHIRResources4.TFhirQuestionnaireResponseItemAnswer) : FHIRResources3.TFhirQuestionnaireResponseItemAnswer;
@@ -22330,7 +24816,8 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources3.TFhirQuestionnaireResponseItemAnswer.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   if (src.value <> nil) then
     tgt.value := convertType(src.value);
 
@@ -22338,7 +24825,10 @@ begin
   begin
     tgt.itemList.add(convertQuestionnaireResponseItemComponent(t));
   end;
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertRiskAssessment(src : FHIRResources3.TFhirRiskAssessment) : FHIRResources4.TFhirRiskAssessment;
@@ -22351,6 +24841,7 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources4.TFhirRiskAssessment.Create();
+  try
   copyDomainResource(src, tgt);
   if (src.identifier <> nil) then
     tgt.identifierList.add(convertIdentifier(src.Identifier));
@@ -22406,7 +24897,10 @@ begin
   if (src.comment <> '') then
     tgt.NoteList.append.text := src.comment;
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertRiskAssessment(src : FHIRResources4.TFhirRiskAssessment) : FHIRResources3.TFhirRiskAssessment;
@@ -22418,6 +24912,7 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources3.TFhirRiskAssessment.Create();
+  try
   copyDomainResource(src, tgt);
   if (src.identifierList.count > 0) then
     tgt.identifier := convertIdentifier(src.identifierList[0]);
@@ -22470,7 +24965,10 @@ begin
   if (src.NoteList.count > 0) then
     tgt.comment := src.NoteList[0].text;
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertRiskAssessmentPredictionComponent(src : FHIRResources3.TFhirRiskAssessmentPrediction) : FHIRResources4.TFhirRiskAssessmentPrediction;
@@ -22480,7 +24978,8 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources4.TFhirRiskAssessmentPrediction.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   tgt.outcome := convertCodeableConcept(src.outcome);
 
   if (src.probability <> nil) then
@@ -22497,7 +24996,10 @@ begin
   if (src.rationale <> '') then
     tgt.rationale := src.rationale;
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertRiskAssessmentPredictionComponent(src : FHIRResources4.TFhirRiskAssessmentPrediction) : FHIRResources3.TFhirRiskAssessmentPrediction;
@@ -22507,7 +25009,8 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources3.TFhirRiskAssessmentPrediction.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   tgt.outcome := convertCodeableConcept(src.outcome);
 
   if (src.probability <> nil) then
@@ -22524,7 +25027,10 @@ begin
   if (src.rationale <> '') then
     tgt.rationale := src.rationale;
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertSchedule(src : FHIRResources3.TFhirSchedule) : FHIRResources4.TFhirSchedule;
@@ -22538,6 +25044,7 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources4.TFhirSchedule.Create();
+  try
   copyDomainResource(src, tgt);
   for t1 in src.identifierList do
   begin
@@ -22566,7 +25073,10 @@ begin
   if (src.comment <> '') then
     tgt.comment := src.comment;
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertSchedule(src : FHIRResources4.TFhirSchedule) : FHIRResources3.TFhirSchedule;
@@ -22580,6 +25090,7 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources3.TFhirSchedule.Create();
+  try
   copyDomainResource(src, tgt);
   for t1 in src.identifierList do
   begin
@@ -22608,7 +25119,10 @@ begin
   if (src.comment <> '') then
     tgt.comment := src.comment;
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertSearchParameter(src : FHIRResources3.TFhirSearchParameter) : FHIRResources4.TFhirSearchParameter;
@@ -22628,6 +25142,7 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources4.TFhirSearchParameter.Create();
+  try
   copyDomainResource(src, tgt);
   if (src.url <> '') then
     tgt.url := src.url;
@@ -22714,7 +25229,10 @@ begin
   begin
     tgt.componentList.add(convertSearchParameterComponentComponent(t9));
   end;
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertSearchParameter(src : FHIRResources4.TFhirSearchParameter) : FHIRResources3.TFhirSearchParameter;
@@ -22733,6 +25251,7 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources3.TFhirSearchParameter.Create();
+  try
   copyDomainResource(src, tgt);
   if (src.url <> '') then
     tgt.url := src.url;
@@ -22818,7 +25337,10 @@ begin
   begin
     tgt.componentList.add(convertSearchParameterComponentComponent(t9));
   end;
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertSearchParameterComponentComponent(src : FHIRResources3.TFhirSearchParameterComponent) : FHIRResources4.TFhirSearchParameterComponent;
@@ -22828,14 +25350,18 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources4.TFhirSearchParameterComponent.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   if (src.definition <> nil) then
     tgt.definitionElement := convertReferenceToCanonical(src.definition);
 
   if (src.expression <> '') then
     tgt.expression := src.expression;
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertSearchParameterComponentComponent(src : FHIRResources4.TFhirSearchParameterComponent) : FHIRResources3.TFhirSearchParameterComponent;
@@ -22845,14 +25371,18 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources3.TFhirSearchParameterComponent.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   if (src.definition <> '') then
     tgt.definition := convertCanonicalToReference(src.definitionElement);
 
   if (src.expression <> '') then
     tgt.expression := src.expression;
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertSequence(src : FHIRResources3.TFhirSequence) : FHIRResources4.TFhirSequence;
@@ -22867,6 +25397,7 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources4.TFhirSequence.Create();
+  try
   copyDomainResource(src, tgt);
   for t1 in src.identifierList do
   begin
@@ -22915,7 +25446,10 @@ begin
   begin
     tgt.pointerList.add(convertReference(t5));
   end;
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertSequence(src : FHIRResources4.TFhirSequence) : FHIRResources3.TFhirSequence;
@@ -22930,6 +25464,7 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources3.TFhirSequence.Create();
+  try
   copyDomainResource(src, tgt);
   for t1 in src.identifierList do
   begin
@@ -22978,7 +25513,10 @@ begin
   begin
     tgt.pointerList.add(convertReference(t5));
   end;
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertSequenceReferenceSeqComponent(src : FHIRResources3.TFhirSequenceReferenceSeq) : FHIRResources4.TFhirSequenceReferenceSeq;
@@ -22988,7 +25526,8 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources4.TFhirSequenceReferenceSeq.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   if (src.chromosome <> nil) then
     tgt.chromosome := convertCodeableConcept(src.chromosome);
 
@@ -23008,7 +25547,10 @@ begin
 
   tgt.windowEnd := src.windowEnd;
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertSequenceReferenceSeqComponent(src : FHIRResources4.TFhirSequenceReferenceSeq) : FHIRResources3.TFhirSequenceReferenceSeq;
@@ -23018,7 +25560,8 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources3.TFhirSequenceReferenceSeq.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   if (src.chromosome <> nil) then
     tgt.chromosome := convertCodeableConcept(src.chromosome);
 
@@ -23038,7 +25581,10 @@ begin
 
   tgt.windowEnd := src.windowEnd;
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertSequenceVariantComponent(src : FHIRResources3.TFhirSequenceVariant) : FHIRResources4.TFhirSequenceVariant;
@@ -23048,7 +25594,8 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources4.TFhirSequenceVariant.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   tgt.start := src.start;
 
   tgt.end_ := src.end_;
@@ -23065,7 +25612,10 @@ begin
   if (src.variantPointer <> nil) then
     tgt.variantPointer := convertReference(src.variantPointer);
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertSequenceVariantComponent(src : FHIRResources4.TFhirSequenceVariant) : FHIRResources3.TFhirSequenceVariant;
@@ -23075,7 +25625,8 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources3.TFhirSequenceVariant.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   tgt.start := src.start;
 
   tgt.end_ := src.end_;
@@ -23092,7 +25643,10 @@ begin
   if (src.variantPointer <> nil) then
     tgt.variantPointer := convertReference(src.variantPointer);
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertSequenceQualityComponent(src : FHIRResources3.TFhirSequenceQuality) : FHIRResources4.TFhirSequenceQuality;
@@ -23102,7 +25656,8 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources4.TFhirSequenceQuality.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   tgt.type_ := convertQualityType(src.type_);
 
   if (src.standardSequence <> nil) then
@@ -23127,7 +25682,10 @@ begin
   tgt.recall := src.recall;
   tgt.fScore_ := src.fScore_;
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertSequenceQualityComponent(src : FHIRResources4.TFhirSequenceQuality) : FHIRResources3.TFhirSequenceQuality;
@@ -23137,7 +25695,8 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources3.TFhirSequenceQuality.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   tgt.type_ := convertQualityType(src.type_);
 
   if (src.standardSequence <> nil) then
@@ -23161,7 +25720,10 @@ begin
   tgt.recall := src.recall;
   tgt.fScore_ := src.fScore_;
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertSequenceRepositoryComponent(src : FHIRResources3.TFhirSequenceRepository) : FHIRResources4.TFhirSequenceRepository;
@@ -23171,7 +25733,8 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources4.TFhirSequenceRepository.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   tgt.type_ := convertRepositoryType(src.type_);
 
   if (src.url <> '') then
@@ -23189,7 +25752,10 @@ begin
   if (src.readsetId <> '') then
     tgt.readsetId := src.readsetId;
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertSequenceRepositoryComponent(src : FHIRResources4.TFhirSequenceRepository) : FHIRResources3.TFhirSequenceRepository;
@@ -23199,7 +25765,8 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources3.TFhirSequenceRepository.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   tgt.type_ := convertRepositoryType(src.type_);
 
   if (src.url <> '') then
@@ -23217,7 +25784,10 @@ begin
   if (src.readsetId <> '') then
     tgt.readsetId := src.readsetId;
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertSlot(src : FHIRResources3.TFhirSlot) : FHIRResources4.TFhirSlot;
@@ -23230,6 +25800,7 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources4.TFhirSlot.Create();
+  try
   copyDomainResource(src, tgt);
   for t1 in src.identifierList do
   begin
@@ -23263,7 +25834,10 @@ begin
   if (src.comment <> '') then
     tgt.comment := src.comment;
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertSlot(src : FHIRResources4.TFhirSlot) : FHIRResources3.TFhirSlot;
@@ -23276,6 +25850,7 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources3.TFhirSlot.Create();
+  try
   copyDomainResource(src, tgt);
   for t1 in src.identifierList do
   begin
@@ -23309,7 +25884,10 @@ begin
   if (src.comment <> '') then
     tgt.comment := src.comment;
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertSpecimen(src : FHIRResources3.TFhirSpecimen) : FHIRResources4.TFhirSpecimen;
@@ -23325,6 +25903,7 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources4.TFhirSpecimen.Create();
+  try
   copyDomainResource(src, tgt);
   for t1 in src.identifierList do
   begin
@@ -23365,7 +25944,10 @@ begin
   begin
     tgt.noteList.add(convertAnnotation(t6));
   end;
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertSpecimen(src : FHIRResources4.TFhirSpecimen) : FHIRResources3.TFhirSpecimen;
@@ -23381,6 +25963,7 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources3.TFhirSpecimen.Create();
+  try
   copyDomainResource(src, tgt);
   for t1 in src.identifierList do
   begin
@@ -23421,7 +26004,10 @@ begin
   begin
     tgt.noteList.add(convertAnnotation(t6));
   end;
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertSpecimenCollectionComponent(src : FHIRResources3.TFhirSpecimenCollection) : FHIRResources4.TFhirSpecimenCollection;
@@ -23431,7 +26017,8 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources4.TFhirSpecimenCollection.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   if (src.collector <> nil) then
     tgt.collector := convertReference(src.collector);
 
@@ -23447,7 +26034,10 @@ begin
   if (src.bodySite <> nil) then
     tgt.bodySite := convertCodeableConcept(src.bodySite);
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertSpecimenCollectionComponent(src : FHIRResources4.TFhirSpecimenCollection) : FHIRResources3.TFhirSpecimenCollection;
@@ -23457,7 +26047,8 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources3.TFhirSpecimenCollection.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   if (src.collector <> nil) then
     tgt.collector := convertReference(src.collector);
 
@@ -23473,7 +26064,10 @@ begin
   if (src.bodySite <> nil) then
     tgt.bodySite := convertCodeableConcept(src.bodySite);
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertSpecimenProcessingComponent(src : FHIRResources3.TFhirSpecimenProcessing) : FHIRResources4.TFhirSpecimenProcessing;
@@ -23484,7 +26078,8 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources4.TFhirSpecimenProcessing.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   if (src.description <> '') then
     tgt.description := src.description;
 
@@ -23498,7 +26093,10 @@ begin
   if (src.time <> nil) then
     tgt.time := convertType(src.time);
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertSpecimenProcessingComponent(src : FHIRResources4.TFhirSpecimenProcessing) : FHIRResources3.TFhirSpecimenProcessing;
@@ -23509,7 +26107,8 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources3.TFhirSpecimenProcessing.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   if (src.description <> '') then
     tgt.description := src.description;
 
@@ -23523,7 +26122,10 @@ begin
   if (src.time <> nil) then
     tgt.time := convertType(src.time);
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertSpecimenContainerComponent(src : FHIRResources3.TFhirSpecimenContainer) : FHIRResources4.TFhirSpecimenContainer;
@@ -23534,7 +26136,8 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources4.TFhirSpecimenContainer.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   for t in src.identifierList do
   begin
     tgt.identifierList.add(convertIdentifier(t));
@@ -23553,7 +26156,10 @@ begin
   if (src.additive <> nil) then
     tgt.additive := convertType(src.additive);
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertSpecimenContainerComponent(src : FHIRResources4.TFhirSpecimenContainer) : FHIRResources3.TFhirSpecimenContainer;
@@ -23564,7 +26170,8 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources3.TFhirSpecimenContainer.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   for t in src.identifierList do
   begin
     tgt.identifierList.add(convertIdentifier(t));
@@ -23583,7 +26190,10 @@ begin
   if (src.additive <> nil) then
     tgt.additive := convertType(src.additive);
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertStructureDefinition(src : FHIRResources3.TFhirStructureDefinition) : FHIRResources4.TFhirStructureDefinition;
@@ -23603,6 +26213,7 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources4.TFhirStructureDefinition.Create();
+  try
   copyDomainResource(src, tgt);
   if (src.url <> '') then
     tgt.url := src.url;
@@ -23702,7 +26313,10 @@ begin
     end;
   end;
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertStructureDefinition(src : FHIRResources4.TFhirStructureDefinition) : FHIRResources3.TFhirStructureDefinition;
@@ -23720,6 +26334,7 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources3.TFhirStructureDefinition.Create();
+  try
   copyDomainResource(src, tgt);
   if (src.url <> '') then
     tgt.url := src.url;
@@ -23807,7 +26422,10 @@ begin
   if (src.differential <> nil) then
     tgt.differential := convertStructureDefinitionDifferentialComponent(src.differential);
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertStructureDefinitionMappingComponent(src : FHIRResources3.TFhirStructureDefinitionMapping) : FHIRResources4.TFhirStructureDefinitionMapping;
@@ -23817,7 +26435,8 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources4.TFhirStructureDefinitionMapping.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   if (src.identity <> '') then
     tgt.identity := src.identity;
 
@@ -23830,7 +26449,10 @@ begin
   if (src.comment <> '') then
     tgt.comment := src.comment;
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertStructureDefinitionMappingComponent(src : FHIRResources4.TFhirStructureDefinitionMapping) : FHIRResources3.TFhirStructureDefinitionMapping;
@@ -23840,7 +26462,8 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources3.TFhirStructureDefinitionMapping.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   if (src.identity <> '') then
     tgt.identity := src.identity;
 
@@ -23853,7 +26476,10 @@ begin
   if (src.comment <> '') then
     tgt.comment := src.comment;
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertStructureDefinitionSnapshotComponent(src : FHIRResources3.TFhirStructureDefinitionSnapshot) : FHIRResources4.TFhirStructureDefinitionSnapshot;
@@ -23864,12 +26490,16 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources4.TFhirStructureDefinitionSnapshot.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   for t in src.elementList do
   begin
     tgt.elementList.add(convertElementDefinition(t));
   end;
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertStructureDefinitionSnapshotComponent(src : FHIRResources4.TFhirStructureDefinitionSnapshot) : FHIRResources3.TFhirStructureDefinitionSnapshot;
@@ -23880,12 +26510,16 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources3.TFhirStructureDefinitionSnapshot.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   for t in src.elementList do
   begin
     tgt.elementList.add(convertElementDefinition(t));
   end;
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertStructureDefinitionDifferentialComponent(src : FHIRResources3.TFhirStructureDefinitionDifferential) : FHIRResources4.TFhirStructureDefinitionDifferential;
@@ -23896,12 +26530,16 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources4.TFhirStructureDefinitionDifferential.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   for t in src.elementList do
   begin
     tgt.elementList.add(convertElementDefinition(t));
   end;
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertStructureDefinitionDifferentialComponent(src : FHIRResources4.TFhirStructureDefinitionDifferential) : FHIRResources3.TFhirStructureDefinitionDifferential;
@@ -23912,12 +26550,16 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources3.TFhirStructureDefinitionDifferential.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   for t in src.elementList do
   begin
     tgt.elementList.add(convertElementDefinition(t));
   end;
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertStructureMap(src : FHIRResources3.TFhirStructureMap) : FHIRResources4.TFhirStructureMap;
@@ -23934,6 +26576,7 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources4.TFhirStructureMap.Create();
+  try
   copyDomainResource(src, tgt);
   if (src.url <> '') then
     tgt.url := src.url;
@@ -23992,7 +26635,10 @@ begin
   begin
     tgt.groupList.add(convertStructureMapGroupComponent(t7));
   end;
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertStructureMap(src : FHIRResources4.TFhirStructureMap) : FHIRResources3.TFhirStructureMap;
@@ -24009,6 +26655,7 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources3.TFhirStructureMap.Create();
+  try
   copyDomainResource(src, tgt);
   if (src.url <> '') then
     tgt.url := src.url;
@@ -24067,7 +26714,10 @@ begin
   begin
     tgt.groupList.add(convertStructureMapGroupComponent(t7));
   end;
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertStructureMapStructureComponent(src : FHIRResources3.TFhirStructureMapStructure) : FHIRResources4.TFhirStructureMapStructure;
@@ -24077,7 +26727,8 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources4.TFhirStructureMapStructure.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   if (src.url <> '') then
     tgt.url := src.url;
 
@@ -24089,7 +26740,10 @@ begin
   if (src.documentation <> '') then
     tgt.documentation := src.documentation;
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertStructureMapStructureComponent(src : FHIRResources4.TFhirStructureMapStructure) : FHIRResources3.TFhirStructureMapStructure;
@@ -24099,7 +26753,8 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources3.TFhirStructureMapStructure.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   if (src.url <> '') then
     tgt.url := src.url;
 
@@ -24111,7 +26766,10 @@ begin
   if (src.documentation <> '') then
     tgt.documentation := src.documentation;
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertStructureMapGroupComponent(src : FHIRResources3.TFhirStructureMapGroup) : FHIRResources4.TFhirStructureMapGroup;
@@ -24123,7 +26781,8 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources4.TFhirStructureMapGroup.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   if (src.name <> '') then
     tgt.name := src.name;
 
@@ -24143,7 +26802,10 @@ begin
   begin
     tgt.ruleList.add(convertStructureMapGroupRuleComponent(t2));
   end;
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertStructureMapGroupComponent(src : FHIRResources4.TFhirStructureMapGroup) : FHIRResources3.TFhirStructureMapGroup;
@@ -24155,7 +26817,8 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources3.TFhirStructureMapGroup.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   if (src.name <> '') then
     tgt.name := src.name;
 
@@ -24175,7 +26838,10 @@ begin
   begin
     tgt.ruleList.add(convertStructureMapGroupRuleComponent(t2));
   end;
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertStructureMapGroupInputComponent(src : FHIRResources3.TFhirStructureMapGroupInput) : FHIRResources4.TFhirStructureMapGroupInput;
@@ -24185,7 +26851,8 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources4.TFhirStructureMapGroupInput.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   if (src.name <> '') then
     tgt.name := src.name;
 
@@ -24197,7 +26864,10 @@ begin
   if (src.documentation <> '') then
     tgt.documentation := src.documentation;
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertStructureMapGroupInputComponent(src : FHIRResources4.TFhirStructureMapGroupInput) : FHIRResources3.TFhirStructureMapGroupInput;
@@ -24207,7 +26877,8 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources3.TFhirStructureMapGroupInput.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   if (src.name <> '') then
     tgt.name := src.name;
 
@@ -24219,7 +26890,10 @@ begin
   if (src.documentation <> '') then
     tgt.documentation := src.documentation;
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertStructureMapGroupRuleComponent(src : FHIRResources3.TFhirStructureMapGroupRule) : FHIRResources4.TFhirStructureMapGroupRule;
@@ -24233,7 +26907,8 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources4.TFhirStructureMapGroupRule.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   if (src.name <> '') then
     tgt.name := src.name;
 
@@ -24256,7 +26931,10 @@ begin
   if (src.documentation <> '') then
     tgt.documentation := src.documentation;
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertStructureMapGroupRuleComponent(src : FHIRResources4.TFhirStructureMapGroupRule) : FHIRResources3.TFhirStructureMapGroupRule;
@@ -24270,7 +26948,8 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources3.TFhirStructureMapGroupRule.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   if (src.name <> '') then
     tgt.name := src.name;
 
@@ -24293,7 +26972,10 @@ begin
   if (src.documentation <> '') then
     tgt.documentation := src.documentation;
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertStructureMapGroupRuleSourceComponent(src : FHIRResources3.TFhirStructureMapGroupRuleSource) : FHIRResources4.TFhirStructureMapGroupRuleSource;
@@ -24303,7 +26985,8 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources4.TFhirStructureMapGroupRuleSource.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   if (src.context <> '') then
     tgt.context := src.context;
 
@@ -24332,7 +27015,10 @@ begin
   if (src.check <> '') then
     tgt.check := src.check;
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertStructureMapGroupRuleSourceComponent(src : FHIRResources4.TFhirStructureMapGroupRuleSource) : FHIRResources3.TFhirStructureMapGroupRuleSource;
@@ -24342,7 +27028,8 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources3.TFhirStructureMapGroupRuleSource.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   if (src.context <> '') then
     tgt.context := src.context;
 
@@ -24371,7 +27058,10 @@ begin
   if (src.check <> '') then
     tgt.check := src.check;
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertStructureMapGroupRuleTargetComponent(src : FHIRResources3.TFhirStructureMapGroupRuleTarget) : FHIRResources4.TFhirStructureMapGroupRuleTarget;
@@ -24384,7 +27074,8 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources4.TFhirStructureMapGroupRuleTarget.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   if (src.context <> '') then
     tgt.context := src.context;
 
@@ -24411,7 +27102,10 @@ begin
   begin
     tgt.parameterList.add(convertStructureMapGroupRuleTargetParameterComponent(t2));
   end;
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertStructureMapGroupRuleTargetComponent(src : FHIRResources4.TFhirStructureMapGroupRuleTarget) : FHIRResources3.TFhirStructureMapGroupRuleTarget;
@@ -24424,7 +27118,8 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources3.TFhirStructureMapGroupRuleTarget.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   if (src.context <> '') then
     tgt.context := src.context;
 
@@ -24450,7 +27145,10 @@ begin
   begin
     tgt.parameterList.add(convertStructureMapGroupRuleTargetParameterComponent(t2));
   end;
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertStructureMapGroupRuleTargetParameterComponent(src : FHIRResources3.TFhirStructureMapGroupRuleTargetParameter) : FHIRResources4.TFhirStructureMapGroupRuleTargetParameter;
@@ -24460,11 +27158,15 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources4.TFhirStructureMapGroupRuleTargetParameter.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   if (src.value <> nil) then
     tgt.value := convertType(src.value);
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertStructureMapGroupRuleTargetParameterComponent(src : FHIRResources4.TFhirStructureMapGroupRuleTargetParameter) : FHIRResources3.TFhirStructureMapGroupRuleTargetParameter;
@@ -24474,11 +27176,15 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources3.TFhirStructureMapGroupRuleTargetParameter.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   if (src.value <> nil) then
     tgt.value := convertType(src.value);
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertStructureMapGroupRuleDependentComponent(src : FHIRResources3.TFhirStructureMapGroupRuleDependent) : FHIRResources4.TFhirStructureMapGroupRuleDependent;
@@ -24489,7 +27195,8 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources4.TFhirStructureMapGroupRuleDependent.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   if (src.name <> '') then
     tgt.name := src.name;
 
@@ -24497,7 +27204,10 @@ begin
   begin
     tgt.variableList.add(convertString(t));
   end;
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertStructureMapGroupRuleDependentComponent(src : FHIRResources4.TFhirStructureMapGroupRuleDependent) : FHIRResources3.TFhirStructureMapGroupRuleDependent;
@@ -24508,7 +27218,8 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources3.TFhirStructureMapGroupRuleDependent.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   if (src.name <> '') then
     tgt.name := src.name;
 
@@ -24516,7 +27227,10 @@ begin
   begin
     tgt.variableList.add(convertString(t));
   end;
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertSubscription(src : FHIRResources3.TFhirSubscription) : FHIRResources4.TFhirSubscription;
@@ -24528,6 +27242,7 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources4.TFhirSubscription.Create();
+  try
   copyDomainResource(src, tgt);
   tgt.status := convertSubscriptionStatus(src.status);
 
@@ -24553,7 +27268,10 @@ begin
   begin
     tgt.tagList.add(convertCoding(t2));
   end;
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertSubscription(src : FHIRResources4.TFhirSubscription) : FHIRResources3.TFhirSubscription;
@@ -24565,6 +27283,7 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources3.TFhirSubscription.Create();
+  try
   copyDomainResource(src, tgt);
   tgt.status := convertSubscriptionStatus(src.status);
 
@@ -24590,7 +27309,10 @@ begin
   begin
     tgt.tagList.add(convertCoding(t2));
   end;
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertSubscriptionChannelComponent(src : FHIRResources3.TFhirSubscriptionChannel) : FHIRResources4.TFhirSubscriptionChannel;
@@ -24601,7 +27323,8 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources4.TFhirSubscriptionChannel.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   tgt.type_ := convertSubscriptionChannelType(src.type_);
 
   if (src.endpoint <> '') then
@@ -24614,7 +27337,10 @@ begin
   begin
     tgt.headerList.add(convertString(t));
   end;
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertSubscriptionChannelComponent(src : FHIRResources4.TFhirSubscriptionChannel) : FHIRResources3.TFhirSubscriptionChannel;
@@ -24625,7 +27351,8 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources3.TFhirSubscriptionChannel.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   tgt.type_ := convertSubscriptionChannelType(src.type_);
 
   if (src.endpoint <> '') then
@@ -24638,7 +27365,10 @@ begin
   begin
     tgt.headerList.add(convertString(t));
   end;
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertSubstance(src : FHIRResources3.TFhirSubstance) : FHIRResources4.TFhirSubstance;
@@ -24652,6 +27382,7 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources4.TFhirSubstance.Create();
+  try
   copyDomainResource(src, tgt);
   for t1 in src.identifierList do
   begin
@@ -24676,7 +27407,10 @@ begin
   begin
     tgt.ingredientList.add(convertSubstanceIngredientComponent(t4));
   end;
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertSubstance(src : FHIRResources4.TFhirSubstance) : FHIRResources3.TFhirSubstance;
@@ -24690,6 +27424,7 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources3.TFhirSubstance.Create();
+  try
   copyDomainResource(src, tgt);
   for t1 in src.identifierList do
   begin
@@ -24714,7 +27449,10 @@ begin
   begin
     tgt.ingredientList.add(convertSubstanceIngredientComponent(t4));
   end;
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertSubstanceInstanceComponent(src : FHIRResources3.TFhirSubstanceInstance) : FHIRResources4.TFhirSubstanceInstance;
@@ -24724,7 +27462,8 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources4.TFhirSubstanceInstance.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   if (src.identifier <> nil) then
     tgt.identifier := convertIdentifier(src.identifier);
 
@@ -24733,7 +27472,10 @@ begin
   if (src.quantity <> nil) then
     tgt.quantity := convertSimpleQuantity(src.quantity);
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertSubstanceInstanceComponent(src : FHIRResources4.TFhirSubstanceInstance) : FHIRResources3.TFhirSubstanceInstance;
@@ -24743,7 +27485,8 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources3.TFhirSubstanceInstance.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   if (src.identifier <> nil) then
     tgt.identifier := convertIdentifier(src.identifier);
 
@@ -24752,7 +27495,10 @@ begin
   if (src.quantity <> nil) then
     tgt.quantity := convertSimpleQuantity(src.quantity);
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertSubstanceIngredientComponent(src : FHIRResources3.TFhirSubstanceIngredient) : FHIRResources4.TFhirSubstanceIngredient;
@@ -24762,14 +27508,18 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources4.TFhirSubstanceIngredient.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   if (src.quantity <> nil) then
     tgt.quantity := convertRatio(src.quantity);
 
   if (src.substance <> nil) then
     tgt.substance := convertType(src.substance);
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertSubstanceIngredientComponent(src : FHIRResources4.TFhirSubstanceIngredient) : FHIRResources3.TFhirSubstanceIngredient;
@@ -24779,14 +27529,18 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources3.TFhirSubstanceIngredient.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   if (src.quantity <> nil) then
     tgt.quantity := convertRatio(src.quantity);
 
   if (src.substance <> nil) then
     tgt.substance := convertType(src.substance);
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertSupplyDelivery(src : FHIRResources3.TFhirSupplyDelivery) : FHIRResources4.TFhirSupplyDelivery;
@@ -24799,6 +27553,7 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources4.TFhirSupplyDelivery.Create();
+  try
   copyDomainResource(src, tgt);
   if (src.identifier <> nil) then
     tgt.identifierList.add(convertIdentifier(src.Identifier));
@@ -24834,7 +27589,10 @@ begin
   begin
     tgt.receiverList.add(convertReference(t3));
   end;
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertSupplyDelivery(src : FHIRResources4.TFhirSupplyDelivery) : FHIRResources3.TFhirSupplyDelivery;
@@ -24847,6 +27605,7 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources3.TFhirSupplyDelivery.Create();
+  try
   copyDomainResource(src, tgt);
   if (src.identifierList.count > 0) then
     tgt.identifier := convertIdentifier(src.identifierList[0]);
@@ -24882,7 +27641,10 @@ begin
   begin
     tgt.receiverList.add(convertReference(t3));
   end;
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertSupplyDeliverySuppliedItemComponent(src : FHIRResources3.TFhirSupplyDeliverySuppliedItem) : FHIRResources4.TFhirSupplyDeliverySuppliedItem;
@@ -24892,14 +27654,18 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources4.TFhirSupplyDeliverySuppliedItem.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   if (src.quantity <> nil) then
     tgt.quantity := convertSimpleQuantity(src.quantity);
 
   if (src.item <> nil) then
     tgt.item := convertType(src.item);
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertSupplyDeliverySuppliedItemComponent(src : FHIRResources4.TFhirSupplyDeliverySuppliedItem) : FHIRResources3.TFhirSupplyDeliverySuppliedItem;
@@ -24909,14 +27675,18 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources3.TFhirSupplyDeliverySuppliedItem.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   if (src.quantity <> nil) then
     tgt.quantity := convertSimpleQuantity(src.quantity);
 
   if (src.item <> nil) then
     tgt.item := convertType(src.item);
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertValueSet(src : FHIRResources3.TFhirValueSet) : FHIRResources4.TFhirValueSet;
@@ -24930,6 +27700,7 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources4.TFhirValueSet.Create();
+  try
   copyDomainResource(src, tgt);
   if (src.url <> '') then
     tgt.url := src.url;
@@ -24986,7 +27757,10 @@ begin
   if (src.expansion <> nil) then
     tgt.expansion := convertValueSetExpansionComponent(src.expansion);
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertValueSet(src : FHIRResources4.TFhirValueSet) : FHIRResources3.TFhirValueSet;
@@ -25000,6 +27774,7 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources3.TFhirValueSet.Create();
+  try
   copyDomainResource(src, tgt);
   if (src.url <> '') then
     tgt.url := src.url;
@@ -25056,7 +27831,10 @@ begin
   if (src.expansion <> nil) then
     tgt.expansion := convertValueSetExpansionComponent(src.expansion);
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertValueSetComposeComponent(src : FHIRResources3.TFhirValueSetCompose) : FHIRResources4.TFhirValueSetCompose;
@@ -25068,7 +27846,8 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources4.TFhirValueSetCompose.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   tgt.lockedDate := src.lockedDate.link;
 
   tgt.inactive := src.inactive;
@@ -25081,7 +27860,10 @@ begin
   begin
     tgt.excludeList.add(convertConceptSetComponent(t2));
   end;
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertValueSetComposeComponent(src : FHIRResources4.TFhirValueSetCompose) : FHIRResources3.TFhirValueSetCompose;
@@ -25093,7 +27875,8 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources3.TFhirValueSetCompose.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   tgt.lockedDate := src.lockedDate.link;
 
   tgt.inactive := src.inactive;
@@ -25106,7 +27889,10 @@ begin
   begin
     tgt.excludeList.add(convertConceptSetComponent(t2));
   end;
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertConceptSetComponent(src : FHIRResources3.TFhirValueSetComposeInclude) : FHIRResources4.TFhirValueSetComposeInclude;
@@ -25119,7 +27905,8 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources4.TFhirValueSetComposeInclude.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   if (src.system <> '') then
     tgt.system := src.system;
 
@@ -25138,7 +27925,10 @@ begin
   begin
     tgt.valueSetList.add(convertUri(t3));
   end;
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertConceptSetComponent(src : FHIRResources4.TFhirValueSetComposeInclude) : FHIRResources3.TFhirValueSetComposeInclude;
@@ -25151,7 +27941,8 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources3.TFhirValueSetComposeInclude.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   if (src.system <> '') then
     tgt.system := src.system;
 
@@ -25170,7 +27961,10 @@ begin
   begin
     tgt.valueSetList.add(convertUri(t3));
   end;
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertConceptReferenceComponent(src : FHIRResources3.TFhirValueSetComposeIncludeConcept) : FHIRResources4.TFhirValueSetComposeIncludeConcept;
@@ -25181,7 +27975,8 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources4.TFhirValueSetComposeIncludeConcept.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   if (src.code <> '') then
     tgt.code := src.code;
 
@@ -25192,7 +27987,10 @@ begin
   begin
     tgt.designationList.add(convertConceptReferenceDesignationComponent(t));
   end;
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertConceptReferenceComponent(src : FHIRResources4.TFhirValueSetComposeIncludeConcept) : FHIRResources3.TFhirValueSetComposeIncludeConcept;
@@ -25203,7 +28001,8 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources3.TFhirValueSetComposeIncludeConcept.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   if (src.code <> '') then
     tgt.code := src.code;
 
@@ -25214,7 +28013,10 @@ begin
   begin
     tgt.designationList.add(convertConceptReferenceDesignationComponent(t));
   end;
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertConceptReferenceDesignationComponent(src : FHIRResources3.TFhirValueSetComposeIncludeConceptDesignation) : FHIRResources4.TFhirValueSetComposeIncludeConceptDesignation;
@@ -25224,7 +28026,8 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources4.TFhirValueSetComposeIncludeConceptDesignation.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   if (src.language <> '') then
     tgt.language := src.language;
 
@@ -25234,7 +28037,10 @@ begin
   if (src.value <> '') then
     tgt.value := src.value;
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertConceptReferenceDesignationComponent(src : FHIRResources4.TFhirValueSetComposeIncludeConceptDesignation) : FHIRResources3.TFhirValueSetComposeIncludeConceptDesignation;
@@ -25244,7 +28050,8 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources3.TFhirValueSetComposeIncludeConceptDesignation.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   if (src.language <> '') then
     tgt.language := src.language;
 
@@ -25254,7 +28061,10 @@ begin
   if (src.value <> '') then
     tgt.value := src.value;
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertConceptSetFilterComponent(src : FHIRResources3.TFhirValueSetComposeIncludeFilter) : FHIRResources4.TFhirValueSetComposeIncludeFilter;
@@ -25264,14 +28074,18 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources4.TFhirValueSetComposeIncludeFilter.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   tgt.property_ := src.property_;
   tgt.op := convertFilterOperator(src.op);
 
   if (src.value <> '') then
     tgt.value := src.value;
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertConceptSetFilterComponent(src : FHIRResources4.TFhirValueSetComposeIncludeFilter) : FHIRResources3.TFhirValueSetComposeIncludeFilter;
@@ -25281,12 +28095,16 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources3.TFhirValueSetComposeIncludeFilter.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   tgt.property_ := src.property_;
   tgt.op := convertFilterOperator(src.op);
   tgt.value := src.value;
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertValueSetExpansionComponent(src : FHIRResources3.TFhirValueSetExpansion) : FHIRResources4.TFhirValueSetExpansion;
@@ -25298,7 +28116,8 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources4.TFhirValueSetExpansion.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   if (src.identifier <> '') then
     tgt.identifier := src.identifier;
 
@@ -25316,7 +28135,10 @@ begin
   begin
     tgt.containsList.add(convertValueSetExpansionContainsComponent(t2));
   end;
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertValueSetExpansionComponent(src : FHIRResources4.TFhirValueSetExpansion) : FHIRResources3.TFhirValueSetExpansion;
@@ -25328,7 +28150,8 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources3.TFhirValueSetExpansion.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   if (src.identifier <> '') then
     tgt.identifier := src.identifier;
 
@@ -25346,7 +28169,10 @@ begin
   begin
     tgt.containsList.add(convertValueSetExpansionContainsComponent(t2));
   end;
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertValueSetExpansionParameterComponent(src : FHIRResources3.TFhirValueSetExpansionParameter) : FHIRResources4.TFhirValueSetExpansionParameter;
@@ -25356,14 +28182,18 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources4.TFhirValueSetExpansionParameter.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   if (src.name <> '') then
     tgt.name := src.name;
 
   if (src.value <> nil) then
     tgt.value := convertType(src.value);
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertValueSetExpansionParameterComponent(src : FHIRResources4.TFhirValueSetExpansionParameter) : FHIRResources3.TFhirValueSetExpansionParameter;
@@ -25373,14 +28203,18 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources3.TFhirValueSetExpansionParameter.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   if (src.name <> '') then
     tgt.name := src.name;
 
   if (src.value <> nil) then
     tgt.value := convertType(src.value);
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertValueSetExpansionContainsComponent(src : FHIRResources3.TFhirValueSetExpansionContains) : FHIRResources4.TFhirValueSetExpansionContains;
@@ -25392,7 +28226,8 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources4.TFhirValueSetExpansionContains.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   if (src.system <> '') then
     tgt.system := src.system;
 
@@ -25417,7 +28252,10 @@ begin
   begin
     tgt.containsList.add(convertValueSetExpansionContainsComponent(t2));
   end;
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertValueSetExpansionContainsComponent(src : FHIRResources4.TFhirValueSetExpansionContains) : FHIRResources3.TFhirValueSetExpansionContains;
@@ -25429,7 +28267,8 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources3.TFhirValueSetExpansionContains.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   if (src.system <> '') then
     tgt.system := src.system;
 
@@ -25453,7 +28292,10 @@ begin
   begin
     tgt.containsList.add(convertValueSetExpansionContainsComponent(t2));
   end;
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertPlanDefinition(src : FHIRResources3.TFhirPlanDefinition) : FHIRResources4.TFhirPlanDefinition;
@@ -25473,6 +28315,7 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources4.TFhirPlanDefinition.Create();
+  try
   copyDomainResource(src, tgt);
   if (src.url <> '') then
     tgt.url := src.url;
@@ -25553,7 +28396,10 @@ begin
   begin
     tgt.actionList.add(convertPlanDefinitionActionComponent(ta));
   end;
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertPlanDefinition(src : FHIRResources4.TFhirPlanDefinition) : FHIRResources3.TFhirPlanDefinition;
@@ -25573,6 +28419,7 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources3.TFhirPlanDefinition.Create();
+  try
   copyDomainResource(src, tgt);
   if (src.url <> '') then
     tgt.url := src.url;
@@ -25653,7 +28500,10 @@ begin
   begin
     tgt.actionList.add(convertPlanDefinitionActionComponent(ta));
   end;
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertPlanDefinitionGoalComponent(src : FHIRResources3.TFhirPlanDefinitionGoal) : FHIRResources4.TFhirPlanDefinitionGoal;
@@ -25666,7 +28516,8 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources4.TFhirPlanDefinitionGoal.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   if (src.category <> nil) then
     tgt.category := convertCodeableConcept(src.category);
 
@@ -25691,7 +28542,10 @@ begin
   begin
     tgt.targetList.add(convertPlanDefinitionGoalTargetComponent(t3));
   end;
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertPlanDefinitionGoalComponent(src : FHIRResources4.TFhirPlanDefinitionGoal) : FHIRResources3.TFhirPlanDefinitionGoal;
@@ -25704,7 +28558,8 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources3.TFhirPlanDefinitionGoal.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   if (src.category <> nil) then
     tgt.category := convertCodeableConcept(src.category);
 
@@ -25729,7 +28584,10 @@ begin
   begin
     tgt.targetList.add(convertPlanDefinitionGoalTargetComponent(t3));
   end;
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertPlanDefinitionGoalTargetComponent(src : FHIRResources3.TFhirPlanDefinitionGoalTarget) : FHIRResources4.TFhirPlanDefinitionGoalTarget;
@@ -25739,7 +28597,8 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources4.TFhirPlanDefinitionGoalTarget.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   if (src.measure <> nil) then
     tgt.measure := convertCodeableConcept(src.measure);
 
@@ -25749,7 +28608,10 @@ begin
   if (src.due <> nil) then
     tgt.due := convertDuration(src.due);
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertPlanDefinitionGoalTargetComponent(src : FHIRResources4.TFhirPlanDefinitionGoalTarget) : FHIRResources3.TFhirPlanDefinitionGoalTarget;
@@ -25759,7 +28621,8 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources3.TFhirPlanDefinitionGoalTarget.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   if (src.measure <> nil) then
     tgt.measure := convertCodeableConcept(src.measure);
 
@@ -25769,7 +28632,10 @@ begin
   if (src.due <> nil) then
     tgt.due := convertDuration(src.due);
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertPlanDefinitionActionComponent(src : FHIRResources3.TFhirPlanDefinitionAction) : FHIRResources4.TFhirPlanDefinitionAction;
@@ -25791,7 +28657,8 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources4.TFhirPlanDefinitionAction.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   if (src.label_ <> '') then
     tgt.prefix := src.label_;
 
@@ -25874,7 +28741,10 @@ begin
   begin
     tgt.actionList.add(convertPlanDefinitionActionComponent(tc));
   end;
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertPlanDefinitionActionComponent(src : FHIRResources4.TFhirPlanDefinitionAction) : FHIRResources3.TFhirPlanDefinitionAction;
@@ -25896,7 +28766,8 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources3.TFhirPlanDefinitionAction.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   if (src.prefix <> '') then
     tgt.label_ := src.prefix;
 
@@ -25975,7 +28846,10 @@ begin
   begin
     tgt.actionList.add(convertPlanDefinitionActionComponent(tc));
   end;
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertPlanDefinitionActionConditionComponent(src : FHIRResources3.TFhirPlanDefinitionActionCondition) : FHIRResources4.TFhirPlanDefinitionActionCondition;
@@ -25985,7 +28859,8 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources4.TFhirPlanDefinitionActionCondition.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   tgt.kind := convertActionConditionKind(src.kind);
 
   if (src.description <> '') then
@@ -25997,7 +28872,10 @@ begin
   if (src.expression <> '') then
     tgt.expression := src.expression;
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertPlanDefinitionActionConditionComponent(src : FHIRResources4.TFhirPlanDefinitionActionCondition) : FHIRResources3.TFhirPlanDefinitionActionCondition;
@@ -26007,7 +28885,8 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources3.TFhirPlanDefinitionActionCondition.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   tgt.kind := convertActionConditionKind(src.kind);
 
   if (src.description <> '') then
@@ -26019,7 +28898,10 @@ begin
   if (src.expression <> '') then
     tgt.expression := src.expression;
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertPlanDefinitionActionRelatedActionComponent(src : FHIRResources3.TFhirPlanDefinitionActionRelatedAction) : FHIRResources4.TFhirPlanDefinitionActionRelatedAction;
@@ -26029,7 +28911,8 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources4.TFhirPlanDefinitionActionRelatedAction.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   if (src.actionId <> '') then
     tgt.actionId := src.actionId;
 
@@ -26038,7 +28921,10 @@ begin
   if (src.offset <> nil) then
     tgt.offset := convertType(src.offset);
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertPlanDefinitionActionRelatedActionComponent(src : FHIRResources4.TFhirPlanDefinitionActionRelatedAction) : FHIRResources3.TFhirPlanDefinitionActionRelatedAction;
@@ -26048,7 +28934,8 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources3.TFhirPlanDefinitionActionRelatedAction.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   if (src.actionId <> '') then
     tgt.actionId := src.actionId;
 
@@ -26057,7 +28944,10 @@ begin
   if (src.offset <> nil) then
     tgt.offset := convertType(src.offset);
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertPlanDefinitionActionParticipantComponent(src : FHIRResources3.TFhirPlanDefinitionActionParticipant) : FHIRResources4.TFhirPlanDefinitionActionParticipant;
@@ -26067,13 +28957,17 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources4.TFhirPlanDefinitionActionParticipant.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   tgt.type_ := convertActionParticipantType(src.type_);
 
   if (src.role <> nil) then
     tgt.role := convertCodeableConcept(src.role);
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertPlanDefinitionActionParticipantComponent(src : FHIRResources4.TFhirPlanDefinitionActionParticipant) : FHIRResources3.TFhirPlanDefinitionActionParticipant;
@@ -26083,13 +28977,17 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources3.TFhirPlanDefinitionActionParticipant.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   tgt.type_ := convertActionParticipantType(src.type_);
 
   if (src.role <> nil) then
     tgt.role := convertCodeableConcept(src.role);
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertPlanDefinitionActionDynamicValueComponent(src : FHIRResources3.TFhirPlanDefinitionActionDynamicValue) : FHIRResources4.TFhirPlanDefinitionActionDynamicValue;
@@ -26099,7 +28997,8 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources4.TFhirPlanDefinitionActionDynamicValue.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   if (src.description <> '') then
     tgt.description := src.description;
 
@@ -26112,7 +29011,10 @@ begin
   if (src.expression <> '') then
     tgt.expression := src.expression;
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertPlanDefinitionActionDynamicValueComponent(src : FHIRResources4.TFhirPlanDefinitionActionDynamicValue) : FHIRResources3.TFhirPlanDefinitionActionDynamicValue;
@@ -26122,7 +29024,8 @@ begin
   if (src = nil) then
     exit(nil);
   tgt := FHIRResources3.TFhirPlanDefinitionActionDynamicValue.Create();
-  copyElement(src, tgt);
+  try
+  copyBackboneElement(src, tgt);
   if (src.description <> '') then
     tgt.description := src.description;
 
@@ -26135,7 +29038,10 @@ begin
   if (src.expression <> '') then
     tgt.expression := src.expression;
 
-  exit(tgt);
+  exit(tgt.link);
+  finally
+    tgt.free;
+  end;
 end;
 
 class function TVersionConvertor_30_40.convertResource(src : FHIRResources3.TFhirResource) : FHIRResources4.TFhirResource;
@@ -26232,6 +29138,8 @@ begin
     exit(convertList(src as FHIRResources3.TFhirList));
   if (src is FHIRResources3.TFhirLocation) then
     exit(convertLocation(src as FHIRResources3.TFhirLocation));
+  if (src is FHIRResources3.TFhirMedication) then
+    exit(convertMedication(src as FHIRResources3.TFhirMedication));
   if (src is FHIRResources3.TFhirMedicationAdministration) then
     exit(convertMedicationAdministration(src as FHIRResources3.TFhirMedicationAdministration));
   if (src is FHIRResources3.TFhirMedicationDispense) then
@@ -26264,6 +29172,8 @@ begin
     exit(convertPractitioner(src as FHIRResources3.TFhirPractitioner));
   if (src is FHIRResources3.TFhirPractitionerRole) then
     exit(convertPractitionerRole(src as FHIRResources3.TFhirPractitionerRole));
+  if (src is FHIRResources3.TFhirProvenance) then
+    exit(convertProvenance(src as FHIRResources3.TFhirProvenance));
   if (src is FHIRResources3.TFhirQuestionnaire) then
     exit(convertQuestionnaire(src as FHIRResources3.TFhirQuestionnaire));
   if (src is FHIRResources3.TFhirQuestionnaireResponse) then
@@ -26387,6 +29297,8 @@ begin
     exit(convertList(src as FHIRResources4.TFhirList));
   if (src is FHIRResources4.TFhirLocation) then
     exit(convertLocation(src as FHIRResources4.TFhirLocation));
+  if (src is FHIRResources4.TFhirMedication) then
+    exit(convertMedication(src as FHIRResources4.TFhirMedication));
   if (src is FHIRResources4.TFhirMedicationAdministration) then
     exit(convertMedicationAdministration(src as FHIRResources4.TFhirMedicationAdministration));
   if (src is FHIRResources4.TFhirMedicationDispense) then
@@ -26419,6 +29331,8 @@ begin
     exit(convertPractitioner(src as FHIRResources4.TFhirPractitioner));
   if (src is FHIRResources4.TFhirPractitionerRole) then
     exit(convertPractitionerRole(src as FHIRResources4.TFhirPractitionerRole));
+  if (src is FHIRResources4.TFhirProvenance) then
+    exit(convertProvenance(src as FHIRResources4.TFhirProvenance));
   if (src is FHIRResources4.TFhirQuestionnaire) then
     exit(convertQuestionnaire(src as FHIRResources4.TFhirQuestionnaire));
   if (src is FHIRResources4.TFhirQuestionnaireResponse) then

@@ -411,6 +411,23 @@
         <DCCReference Include="..\reference-platform\dstu3\FHIRBase3.pas"/>
         <DCCReference Include="..\reference-platform\Support\FHIRXhtmlComposer.pas"/>
         <DCCReference Include="..\reference-platform\dstu3\FHIRParserBase3.pas"/>
+        <DCCReference Include="..\reference-platform\dstu3\FHIRParser3.pas"/>
+        <DCCReference Include="..\reference-platform\xversion\FhirVersionConvertors.pas"/>
+        <DCCReference Include="..\reference-platform\xversion\VersionConvertor_30_40.pas"/>
+        <DCCReference Include="..\reference-platform\r4\FHIRResources4.pas"/>
+        <DCCReference Include="..\reference-platform\r4\FHIRParser4.pas"/>
+        <DCCReference Include="..\reference-platform\r4\FHIRBase4.pas"/>
+        <DCCReference Include="..\reference-platform\r4\FHIRTypes4.pas"/>
+        <DCCReference Include="..\reference-platform\r4\FHIRMetaModel4.pas"/>
+        <DCCReference Include="..\reference-platform\r4\FHIRUtilities4.pas"/>
+        <DCCReference Include="..\reference-platform\r4\FHIRContext4.pas"/>
+        <DCCReference Include="..\reference-platform\r4\FHIRConstants4.pas"/>
+        <DCCReference Include="..\reference-platform\r4\FHIRPathNode4.pas"/>
+        <DCCReference Include="..\reference-platform\r4\FHIRProfileUtilities4.pas"/>
+        <DCCReference Include="..\reference-platform\r4\FHIRParserXml4.pas"/>
+        <DCCReference Include="..\reference-platform\r4\FHIRParserBase4.pas"/>
+        <DCCReference Include="..\reference-platform\r4\FHIRParserJson4.pas"/>
+        <DCCReference Include="..\reference-platform\r4\FHIRParserTurtle4.pas"/>
         <None Include="..\reference-platform\r4\fhirtests4.dpr"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>

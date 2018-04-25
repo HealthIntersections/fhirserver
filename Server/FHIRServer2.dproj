@@ -106,7 +106,7 @@
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_1_Win64)'!=''">
         <DCC_DcuOutput>C:\work\com.healthintersections.fhir\scratch\units_2_64</DCC_DcuOutput>
-        <DCC_Define>FHIR2;FHIR2CM;$(DCC_Define)</DCC_Define>
+        <DCC_Define>FHIR2;FHIR2CM;NO_CONVERSION;$(DCC_Define)</DCC_Define>
         <DCC_UnitSearchPath>..\Libraries\jcl;$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
         <DCC_MapFile>3</DCC_MapFile>
         <DCC_RunTimeTypeInfo>true</DCC_RunTimeTypeInfo>
@@ -394,6 +394,7 @@
         <DCCReference Include="..\reference-platform\dstu2\FHIRBase2.pas"/>
         <DCCReference Include="..\reference-platform\Support\FHIRXhtmlComposer.pas"/>
         <DCCReference Include="..\reference-platform\dstu2\FHIRParserBase2.pas"/>
+        <DCCReference Include="..\reference-platform\dstu2\FHIRParser2.pas"/>
         <None Include="Profiling\AQtimeModule1.aqt"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
@@ -462,14 +463,14 @@
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
-                <DeployFile LocalName="Win64\Debug\FHIRServer2.rsm" Configuration="Debug" Class="DebugSymbols">
-                    <Platform Name="Win64">
-                        <RemoteName>FHIRServer2.rsm</RemoteName>
+                <DeployFile LocalName="Win32\Debug\FHIRServer2.exe" Configuration="Debug" Class="ProjectOutput">
+                    <Platform Name="Win32">
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
-                <DeployFile LocalName="Win32\Debug\FHIRServer2.exe" Configuration="Debug" Class="ProjectOutput">
-                    <Platform Name="Win32">
+                <DeployFile LocalName="Win64\Debug\FHIRServer2.rsm" Configuration="Debug" Class="DebugSymbols">
+                    <Platform Name="Win64">
+                        <RemoteName>FHIRServer2.rsm</RemoteName>
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>

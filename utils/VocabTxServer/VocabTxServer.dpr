@@ -248,7 +248,8 @@ uses
   UcumServiceInterface in '..\..\reference-platform\support\UcumServiceInterface.pas',
   FHIRBase4 in '..\..\reference-platform\r4\FHIRBase4.pas',
   FHIRXhtmlComposer in '..\..\reference-platform\support\FHIRXhtmlComposer.pas',
-  FHIRParserBase4 in '..\..\reference-platform\r4\FHIRParserBase4.pas';
+  FHIRParserBase4 in '..\..\reference-platform\r4\FHIRParserBase4.pas',
+  FHIRParser4 in '..\..\reference-platform\r4\FHIRParser4.pas';
 
 {$R *.res}
 

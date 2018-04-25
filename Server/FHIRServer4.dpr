@@ -334,7 +334,24 @@ uses
   UcumServiceInterface in '..\reference-platform\support\UcumServiceInterface.pas',
   FHIRBase4 in '..\reference-platform\r4\FHIRBase4.pas',
   FHIRParserBase4 in '..\reference-platform\r4\FHIRParserBase4.pas',
-  FHIRXhtmlComposer in '..\reference-platform\support\FHIRXhtmlComposer.pas';
+  FHIRXhtmlComposer in '..\reference-platform\support\FHIRXhtmlComposer.pas',
+  FHIRParser4 in '..\reference-platform\r4\FHIRParser4.pas',
+  FhirVersionConvertors in '..\reference-platform\xversion\FhirVersionConvertors.pas',
+  VersionConvertor_30_40 in '..\reference-platform\xversion\VersionConvertor_30_40.pas',
+  FHIRUtilities3 in '..\reference-platform\dstu3\FHIRUtilities3.pas',
+  FHIRConstants3 in '..\reference-platform\dstu3\FHIRConstants3.pas',
+  FHIRResources3 in '..\reference-platform\dstu3\FHIRResources3.pas',
+  FHIRBase3 in '..\reference-platform\dstu3\FHIRBase3.pas',
+  FHIRTypes3 in '..\reference-platform\dstu3\FHIRTypes3.pas',
+  FHIRMetaModel3 in '..\reference-platform\dstu3\FHIRMetaModel3.pas',
+  FHIRContext3 in '..\reference-platform\dstu3\FHIRContext3.pas',
+  FHIRPathNode3 in '..\reference-platform\dstu3\FHIRPathNode3.pas',
+  FHIRProfileUtilities3 in '..\reference-platform\dstu3\FHIRProfileUtilities3.pas',
+  FHIRParser3 in '..\reference-platform\dstu3\FHIRParser3.pas',
+  FHIRParserXml3 in '..\reference-platform\dstu3\FHIRParserXml3.pas',
+  FHIRParserBase3 in '..\reference-platform\dstu3\FHIRParserBase3.pas',
+  FHIRParserJson3 in '..\reference-platform\dstu3\FHIRParserJson3.pas',
+  FHIRParserTurtle3 in '..\reference-platform\dstu3\FHIRParserTurtle3.pas';
 
 begin
   logfile := IncludeTrailingPathDelimiter(SystemTemp)+'fhirserver.log';

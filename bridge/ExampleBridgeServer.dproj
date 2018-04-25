@@ -68,7 +68,7 @@
         <DCC_UNIT_DEPRECATED>false</DCC_UNIT_DEPRECATED>
         <DCC_SYMBOL_PLATFORM>false</DCC_SYMBOL_PLATFORM>
         <Manifest_File>(None)</Manifest_File>
-        <DCC_Define>FHIR3;$(DCC_Define)</DCC_Define>
+        <DCC_Define>FHIR3;NO_CONVERSION;$(DCC_Define)</DCC_Define>
         <VerInfo_Locale>1033</VerInfo_Locale>
         <DCC_RemoteDebug>false</DCC_RemoteDebug>
         <DCC_UnitAlias>FHIRAuthMap=FHIRAuthMap3;FHIRConstants=FHIRConstants3;FHIRContext=FHIRContext3;FHIRIndexInformation=FHIRIndexInformation3;FHIRJavascriptReg=FHIRJavascriptReg3;FHIRMetaModel=FHIRMetaModel3;FHIRNarrativeGenerator=FHIRNarrativeGenerator3;FHIROperations=FHIROperations3;FHIRParserJson=FHIRParserJson3;FHIRParserTurtle=FHIRParserTurtle3;FHIRParserXml=FHIRParserXml3;FHIRPathNode=FHIRPathNode3;FHIRProfileUtilities=FHIRProfileUtilities3;FHIRResources=FHIRResources3;FHIRStructureMapUtilities=FHIRStructureMapUtilities3;FHIRTags=FHIRTags3;FHIRTestWorker=FHIRTestWorker3;FHIRTypes=FHIRTypes3;FHIRUtilities=FHIRUtilities3;FHIRValidator=FHIRValidator3;FhirOpBase=FhirOpBase3;FhirPath=FhirPath3;NarrativeGenerator=NarrativeGenerator3;QuestionnaireBuilder=QuestionnaireBuilder3;FHIRBaseX=FHIRBase3;$(DCC_UnitAlias)</DCC_UnitAlias>
@@ -308,6 +308,7 @@
         <DCCReference Include="..\reference-platform\Support\FHIRXhtmlComposer.pas"/>
         <DCCReference Include="..\reference-platform\dstu3\FHIRParserBase3.pas"/>
         <DCCReference Include="..\reference-platform\dstu3\FHIRBase3.pas"/>
+        <DCCReference Include="..\reference-platform\dstu3\FHIRParser3.pas"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>

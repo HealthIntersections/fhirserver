@@ -196,7 +196,8 @@ uses
   QuestionnaireRenderer3 in '..\reference-platform\dstu3\QuestionnaireRenderer3.pas',
   FHIRBase3 in '..\reference-platform\dstu3\FHIRBase3.pas',
   FHIRParserBase3 in '..\reference-platform\dstu3\FHIRParserBase3.pas',
-  FHIRXhtmlComposer in '..\reference-platform\support\FHIRXhtmlComposer.pas';
+  FHIRXhtmlComposer in '..\reference-platform\support\FHIRXhtmlComposer.pas',
+  FHIRParser3 in '..\reference-platform\dstu3\FHIRParser3.pas';
 
 {$R *.res}
 

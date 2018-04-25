@@ -113,7 +113,8 @@ uses
   FHIRPathNode2 in '..\reference-platform\dstu2\FHIRPathNode2.pas',
   FHIRBase2 in '..\reference-platform\dstu2\FHIRBase2.pas',
   FHIRParserBase2 in '..\reference-platform\dstu2\FHIRParserBase2.pas',
-  FHIRXhtmlComposer in '..\reference-platform\support\FHIRXhtmlComposer.pas';
+  FHIRXhtmlComposer in '..\reference-platform\support\FHIRXhtmlComposer.pas',
+  FHIRParser2 in '..\reference-platform\dstu2\FHIRParser2.pas';
 
 {$R *.res}
 

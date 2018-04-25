@@ -281,7 +281,8 @@ uses
   UcumServiceInterface in '..\reference-platform\support\UcumServiceInterface.pas',
   FHIRBase2 in '..\reference-platform\dstu2\FHIRBase2.pas',
   FHIRXhtmlComposer in '..\reference-platform\Support\FHIRXhtmlComposer.pas',
-  FHIRParserBase2 in '..\reference-platform\dstu2\FHIRParserBase2.pas';
+  FHIRParserBase2 in '..\reference-platform\dstu2\FHIRParserBase2.pas',
+  FHIRParser2 in '..\reference-platform\dstu2\FHIRParser2.pas';
 
 begin
   logfile := Path([SystemTemp, 'fhirserver.log']);

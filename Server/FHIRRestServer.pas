@@ -100,6 +100,9 @@ Uses
   FHIRUtilities, FHIRSecurity, SmartOnFhirUtilities, FHIRXhtmlComposer,
   QuestionnaireBuilder, FHIRClient, CDSHooksUtilities, CDSHooksClientManager,
   FHIRXhtml, FHIRGraphQL,
+  {$IFNDEF NO_CONVERSION}
+  FHIRVersionConvertors,
+  {$ENDIF}
 
   TerminologyServer, TerminologyServerStore, SnomedServices, SnomedPublisher,
   SnomedExpressions, LoincServices, LoincPublisher,
@@ -291,8 +294,8 @@ Type
     FThreads : TList<TAsyncTaskThread>;
 
     function readVersion(mt : String) : TFHIRVersion;
-    procedure convertFromVersion(stream : TStream; format : TFHIRFormat; version : TFHIRVersion);
-    procedure convertToVersion(stream : TStream; format : TFHIRFormat; version : TFHIRVersion);
+    procedure convertFromVersion(stream : TStream; format : TFHIRFormat; version : TFHIRVersion; lang : String);
+    procedure convertToVersion(stream : TStream; format : TFHIRFormat; version : TFHIRVersion; lang : String);
     function OAuthPath(secure: boolean): String;
     procedure PopulateConformanceAuth(rest: TFhirCapabilityStatementRest);
     procedure PopulateConformance(sender: TObject; conf: TFhirCapabilityStatement);
@@ -2675,7 +2678,7 @@ Begin
               try
                 if oRequest.Version <> COMPILED_FHIR_VERSION then
                 begin
-                  convertFromVersion(oPostStream, oRequest.PostFormat, oRequest.Version);
+                  convertFromVersion(oPostStream, oRequest.PostFormat, oRequest.Version, oRequest.Lang);
                   oRequest.CopyPost(oPostStream);
                 end;
 
@@ -2947,7 +2950,7 @@ begin
             oComp.Free;
           end;
           if oResponse.Version <> COMPILED_FHIR_VERSION then
-            convertToVersion(stream, oResponse.Format, oResponse.Version);
+            convertToVersion(stream, oResponse.Format, oResponse.Version, oRequest.lang);
         end;
       end
     end
@@ -4128,18 +4131,34 @@ begin
     result := 'http://localhost:' + inttostr(FActualPort) + FBasePath;
 end;
 
-procedure TFhirWebServer.convertFromVersion(stream: TStream; format : TFHIRFormat; version: TFHIRVersion);
+procedure TFhirWebServer.convertFromVersion(stream: TStream; format : TFHIRFormat; version: TFHIRVersion; lang : String);
 var
   b : TBytes;
 begin
-  raise Exception.Create('Version Conversion Services are not yet available');
+  {$IfDEF NO_CONVERSION}
+  raise Exception.Create('Version Conversion Services are not made available on this server');
+  {$ELSE}
+  b := StreamToBytes(stream);
+  b := TFhirVersionConvertors.convertResource(b, format, OutputStyleNormal, lang, version, CURRENT_FHIR_VERSION);
+  stream.Size := 0;
+  stream.Write(b, 0, length(b));
+  stream.Position := 0;
+  {$ENDIF}
 end;
 
-procedure TFhirWebServer.convertToVersion(stream: TStream; format : TFHIRFormat; version: TFHIRVersion);
+procedure TFhirWebServer.convertToVersion(stream: TStream; format : TFHIRFormat; version: TFHIRVersion; lang : String);
 var
   b : TBytes;
 begin
-  raise Exception.Create('Version Conversion Services are not yet available');
+  {$IfDEF NO_CONVERSION}
+  raise Exception.Create('Version Conversion Services are not made available on this server');
+  {$ELSE}
+  b := StreamToBytes(stream);
+  b := TFhirVersionConvertors.convertResource(b, format, OutputStyleNormal, lang, CURRENT_FHIR_VERSION, version);
+  stream.Size := 0;
+  stream.Write(b, 0, length(b));
+  stream.Position := 0;
+  {$ENDIF}
 end;
 
 // procedure TFhirWebServer.ReadTags(Headers: TIdHeaderList; Request: TFHIRRequest);

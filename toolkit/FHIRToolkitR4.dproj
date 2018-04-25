@@ -427,6 +427,7 @@
         <DCCReference Include="..\reference-platform\r4\FHIRBase4.pas"/>
         <DCCReference Include="..\reference-platform\r4\FHIRParserBase4.pas"/>
         <DCCReference Include="..\reference-platform\support\FHIRXhtmlComposer.pas"/>
+        <DCCReference Include="..\reference-platform\r4\FHIRParser4.pas"/>
         <None Include="q.txt"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>

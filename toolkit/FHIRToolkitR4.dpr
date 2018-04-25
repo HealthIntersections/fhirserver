@@ -199,7 +199,8 @@ uses
   UsageContextForm in 'UsageContextForm.pas' {UsageContextDialog},
   FHIRBase4 in '..\reference-platform\r4\FHIRBase4.pas',
   FHIRParserBase4 in '..\reference-platform\r4\FHIRParserBase4.pas',
-  FHIRXhtmlComposer in '..\reference-platform\support\FHIRXhtmlComposer.pas';
+  FHIRXhtmlComposer in '..\reference-platform\support\FHIRXhtmlComposer.pas',
+  FHIRParser4 in '..\reference-platform\r4\FHIRParser4.pas';
 
 {$R *.res}
 

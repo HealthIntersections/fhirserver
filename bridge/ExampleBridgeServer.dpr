@@ -257,7 +257,8 @@ uses
   UcumServiceInterface in '..\reference-platform\support\UcumServiceInterface.pas',
   FHIRXhtmlComposer in '..\reference-platform\Support\FHIRXhtmlComposer.pas',
   FHIRParserBase3 in '..\reference-platform\dstu3\FHIRParserBase3.pas',
-  FHIRBase3 in '..\reference-platform\dstu3\FHIRBase3.pas';
+  FHIRBase3 in '..\reference-platform\dstu3\FHIRBase3.pas',
+  FHIRParser3 in '..\reference-platform\dstu3\FHIRParser3.pas';
 
 var
   gsrv : TExampleFhirServer;

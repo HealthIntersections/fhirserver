@@ -287,7 +287,8 @@ uses
   UcumServiceInterface in '..\reference-platform\support\UcumServiceInterface.pas',
   FHIRParserBase4 in '..\reference-platform\r4\FHIRParserBase4.pas',
   FHIRXhtmlComposer in '..\reference-platform\Support\FHIRXhtmlComposer.pas',
-  FHIRBase4 in '..\reference-platform\r4\FHIRBase4.pas';
+  FHIRBase4 in '..\reference-platform\r4\FHIRBase4.pas',
+  FHIRParser4 in '..\reference-platform\r4\FHIRParser4.pas';
 
 {$R *.res}
 

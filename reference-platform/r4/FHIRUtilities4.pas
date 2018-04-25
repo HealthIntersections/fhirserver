@@ -190,6 +190,7 @@ type
   TFhirProcedureRequest = TFhirServiceRequest;
   TFhirCapabilityStatementRestOperation = TFhirCapabilityStatementRestResourceOperation;
 
+  {$IFDEF FHIR4}
   TFHIRBundleBuilderSimple = class (TFHIRBundleBuilder)
   public
     procedure addEntry(entry : TFhirBundleEntry; first : boolean); override;
@@ -212,6 +213,7 @@ type
     function moveToFirst(res : TFhirResource) : TFhirBundleEntry; override;
     function getBundle : TFHIRBundle; override;
   end;
+  {$ENDIF}
 
   TFHIRProfileStructureHolder = TFhirStructureDefinitionSnapshot;
   TFHIRProfileStructureElement = TFhirElementDefinition;
@@ -6068,6 +6070,8 @@ end;
 
 { TFHIRBundleBuilderSimple }
 
+{$IFDEF FHIR4}
+
 procedure TFHIRBundleBuilderSimple.addEntry(entry: TFhirBundleEntry; first : boolean);
 begin
   if first then
@@ -6181,6 +6185,7 @@ begin
   end;
   cnt.SaveToStream(f);
 end;
+{$ENDIF}
 
 { TFhirExtensionListHelper }
 

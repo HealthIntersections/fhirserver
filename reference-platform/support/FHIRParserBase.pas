@@ -96,6 +96,10 @@ Type
     procedure Parse; Virtual; abstract;
     property resource : TFhirResourceV read Fresource write SetResource;
 
+    function parseResource(src : TStream) : TFHIRResourceV; overload;
+    function parseResource(src : TBytes) : TFHIRResourceV; overload;
+    function parseResource(src : String) : TFHIRResourceV; overload;
+
     function ParseDT(rootName : String; type_ : TClass) : TFHIRObject; Virtual; abstract;
 
     procedure ParseFile(filename : String); overload;
@@ -929,6 +933,37 @@ begin
     parse;
   finally
     f.Free;
+  end;
+end;
+
+function TFHIRParser.parseResource(src: TStream): TFHIRResourceV;
+begin
+  source := src;
+  parse;
+  result := resource.link;
+end;
+
+function TFHIRParser.parseResource(src: TBytes): TFHIRResourceV;
+begin
+  source := TBytesStream.Create(src);
+  try
+    parse;
+    result := resource.link;
+  finally
+    source.free;
+    source := nil;
+  end;
+end;
+
+function TFHIRParser.parseResource(src: String): TFHIRResourceV;
+begin
+  source := TStringStream.Create(src, TEncoding.UTF8);
+  try
+    parse;
+    result := resource.link;
+  finally
+    source.free;
+    source := nil;
   end;
 end;
 

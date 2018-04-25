@@ -338,7 +338,15 @@ uses
   FHIRUtilities3 in '..\reference-platform\dstu3\FHIRUtilities3.pas',
   FHIRConstants3 in '..\reference-platform\dstu3\FHIRConstants3.pas',
   FHIRPathNode3 in '..\reference-platform\dstu3\FHIRPathNode3.pas',
-  FHIRProfileUtilities3 in '..\reference-platform\dstu3\FHIRProfileUtilities3.pas';
+  FHIRProfileUtilities3 in '..\reference-platform\dstu3\FHIRProfileUtilities3.pas',
+  VersionConvertorTests in '..\reference-platform\xversion\VersionConvertorTests.pas',
+  FHIRParser3 in '..\reference-platform\dstu3\FHIRParser3.pas',
+  FHIRParser4 in '..\reference-platform\r4\FHIRParser4.pas',
+  FHIRParserXml3 in '..\reference-platform\dstu3\FHIRParserXml3.pas',
+  FHIRParserBase3 in '..\reference-platform\dstu3\FHIRParserBase3.pas',
+  FHIRParserJson3 in '..\reference-platform\dstu3\FHIRParserJson3.pas',
+  FHIRParserTurtle3 in '..\reference-platform\dstu3\FHIRParserTurtle3.pas',
+  FhirVersionConvertors in '..\reference-platform\xversion\FhirVersionConvertors.pas';
 
 var
   runner : ITestRunner;

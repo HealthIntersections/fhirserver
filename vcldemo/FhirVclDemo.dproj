@@ -254,6 +254,7 @@
         <DCCReference Include="..\reference-platform\dstu2\FHIRBase2.pas"/>
         <DCCReference Include="..\reference-platform\dstu2\FHIRParserBase2.pas"/>
         <DCCReference Include="..\reference-platform\support\FHIRXhtmlComposer.pas"/>
+        <DCCReference Include="..\reference-platform\dstu2\FHIRParser2.pas"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>
