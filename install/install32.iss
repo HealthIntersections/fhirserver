@@ -1710,12 +1710,6 @@ Begin
   OnClick := @InstallMSSQL;
   end;
 
-  JREInstall.Height := VCpath.Height;
-
-
-
-
-
 end;
 
 
