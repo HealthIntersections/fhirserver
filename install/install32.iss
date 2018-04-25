@@ -132,7 +132,6 @@ Source: "C:\work\fhirserver\Exec\32\FHIRServerUtils.exe";    DestDir: "{app}";  
 Source: "C:\work\fhirserver\Exec\fhir.ini";                           DestDir: "{app}";            Flags: ignoreversion onlyifdoesntexist;       DestName: "fhirserver.ini" 
 Source: "C:\work\fhirserver\Libraries\FMM\FastMM_FullDebugMode.dll";  DestDir: "{app}";            Flags: ignoreversion
 Source: "C:\work\fhirserver\Libraries\js\chakra\x86_release\ChakraCore.dll";                      DestDir: "{app}";            Flags: ignoreversion
-Source: "C:\work\org.hl7.fhir\build\publish\org.hl7.fhir.validator.jar";  DestDir: "{app}";            Flags: ignoreversion
 
 ; Web resources
 Source: "C:\work\fhirserver\web\*.*"; DestDir: {app}\web; Flags: ignoreversion recursesubdirs
@@ -239,37 +238,12 @@ var
 function InitializeSetup(): Boolean;
 var
  ErrorCode: Integer;
- JavaInstalled : Boolean;
  ResultMsg : Boolean;
  Versions: TArrayOfString;
  I: Integer;
  regRoot: Integer;
 begin
   Result := true;
-{
-  // Check which view of registry should be taken:
-  regRoot := HKLM;
-  if not (RegGetSubkeyNames(regRoot, 'SOFTWARE\JavaSoft\Java Runtime Environment', Versions)) and not (RegGetSubkeyNames(regRoot, 'SOFTWARE\JavaSoft\Java Development Kit', Versions)) then
-    JavaInstalled := false
-  else
-    for I := 0 to GetArrayLength(Versions)-1 do
-      if JavaInstalled = true then
-       //do nothing
-      else if ( Versions[I][2]='.' ) and ( ( StrToInt(Versions[I][1]) > 1 ) or ( ( StrToInt(Versions[I][1]) = 1 ) and ( StrToInt(Versions[I][3]) >= 7 ) ) ) then
-        JavaInstalled := true
-      else
-        JavaInstalled := false;
- 
-  Result := true;
-  if not JavaInstalled then
-  begin
-    ResultMsg := MsgBox('Oracle Java v1.6 (32bit) or newer not found in the system. Java 1.6 or later is required to run this application (can be installed after this installation too). Do you want to continue?', mbConfirmation, MB_YESNO) = idYes;
-    if ResultMsg = false then
-      Result := false
-    else
-      ShellExec('open', 'http://www.java.com/getjava/', '','',SW_SHOWNORMAL,ewNoWait,ErrorCode);
-  end;
-}
 end;
 
 // ------ Interfaces ---------------------------------------------------------------------------------
@@ -1526,14 +1500,6 @@ Begin
 end;
 
 
-procedure LaunchJavaInstall(Sender: TObject);
-var ResultCode:Integer;
-begin
-
-ShellExec('open', 'http://www.java.com/getjava/', '','',SW_SHOWNORMAL,ewNoWait,ResultCode);
-
-end;
-
 
 procedure InstallMySQL(Sender: TObject);
 var ResultCode:Integer;
@@ -1590,7 +1556,6 @@ JREInstall, VCInstall, MYSQLInstall, MSSQLInstall, ODBCInstall:TButton;
 VCPath, MYSQLPath, MSSQLPath, ODBCPath:TEdit;
 
 
-JavaInstalled : Boolean;
 ResultMsg : Boolean;
 Versions: TArrayOfString;
 I: Integer;
@@ -1599,46 +1564,6 @@ regRoot: Integer;
 
 Begin
   DependenciesPage := CreateCustomPage(wpSelectTasks, 'Install Dependencies', 'Choose the dependencies to install');
-
- ////Check Java
-  regRoot := HKLM;
-  if not (RegGetSubkeyNames(regRoot, 'SOFTWARE\JavaSoft\Java Runtime Environment', Versions)) and not (RegGetSubkeyNames(regRoot, 'SOFTWARE\JavaSoft\Java Development Kit', Versions)) then
-    JavaInstalled := false
-  else
-    for I := 0 to GetArrayLength(Versions)-1 do
-      if JavaInstalled = true then
-       //do nothing
-      else if ( Versions[I][2]='.' ) and ( ( StrToInt(Versions[I][1]) > 1 ) or ( ( StrToInt(Versions[I][1]) = 1 ) and ( StrToInt(Versions[I][3]) >= 7 ) ) ) then
-        JavaInstalled := true
-      else
-        JavaInstalled := false;
-
-
-  JRElbl := TLabel.Create(DependenciesPage);
-  with JRElbl do begin
-  Caption := 'Java Status:';
-  Top := ScaleX(0);
-  Parent := DependenciesPage.Surface;
-  end;
-
-  JREstatus := TLabel.Create(DependenciesPage);
-  with JREstatus do begin
-  if JavaInstalled = true then Caption := 'INSTALLED' else Caption := 'NOT INSTALLED';
-  font.style:=[fsBold];
-  Top := ScaleX(0);
-  Left := ScaleX(64);
-  Parent := DependenciesPage.Surface;
-  end;
-
-  JREInstall := TButton.Create(DependenciesPage);
-  with JREInstall do begin
-  Caption := 'Install JRE';
-  Top := ScaleX(16);
-  Width := ScaleX(65);
-  Parent := DependenciesPage.Surface;
-  OnClick := @LaunchJavaInstall;
-  end;
-
 
 
   VClbl := TLabel.Create(DependenciesPage);
