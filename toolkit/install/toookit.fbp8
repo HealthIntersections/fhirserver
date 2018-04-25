@@ -63,7 +63,7 @@ begin
         as.defaultvalue = %npp-purpose%
         as.xpos = -1
         as.ypos = -1
-        as.returnvalue = "SDC Questionnaire support"
+        as.returnvalue = "SDC support"
         as.returnvariable = npp-purpose
       end
       action.variables.savetoini
@@ -196,7 +196,7 @@ begin
                              "-w-UNSAFE_CODE\=0" +
                              "-w-UNSAFE_CAST\=0" +
                              ""
-          conditionals = RELEASE;FHIR3
+          conditionals = RELEASE;FHIR4
           consoleapp = false
           debuginfo = false
           definitionsonly = false
@@ -236,7 +236,7 @@ begin
           stackframes = false
           stringchecks = true
           typedpointers = false
-          unitaliases = WinTypes\=Windows;WinProcs\=Windows;DbiTypes\=BDE;DbiProcs\=BDE;DbiErrs\=BDE;FHIRAuthMap\=FHIRAuthMap4;FHIRConstants\=FHIRConstants4;FHIRContext\=FHIRContext4;FHIRIndexInformation\=FHIRIndexInformation4;FHIRJavascriptReg\=FHIRJavascriptReg4;FHIRMetaModel\=FHIRMetaModel4;FHIRNarrativeGenerator\=FHIRNarrativeGenerator4;FHIROperations\=FHIROperations4;FHIRParserJson\=FHIRParserJson4;FHIRParserTurtle\=FHIRParserTurtle4;FHIRParserXml\=FHIRParserXml4;FHIRPathNode\=FHIRPathNode4;FHIRProfileUtilities\=FHIRProfileUtilities4;FHIRResources\=FHIRResources4;FHIRStructureMapUtilities\=FHIRStructureMapUtilities4;FHIRTags\=FHIRTags4;FHIRTestWorker\=FHIRTestWorker4;FHIRTypes\=FHIRTypes4;FHIRUtilities\=FHIRUtilities4;FHIRValidator\=FHIRValidator4;FhirOpBase\=FhirOpBase4;FhirPath\=FhirPath4;NarrativeGenerator\=NarrativeGenerator4;QuestionnaireBuilder\=QuestionnaireBuilder4;FHIRBaseX\=FHIRBase4
+          unitaliases = WinTypes\=Windows;WinProcs\=Windows;DbiTypes\=BDE;DbiProcs\=BDE;DbiErrs\=BDE;FHIRAuthMap\=FHIRAuthMap4;FHIRConstants\=FHIRConstants4;FHIRContext\=FHIRContext4;FHIRIndexInformation\=FHIRIndexInformation4;FHIRJavascriptReg\=FHIRJavascriptReg4;FHIRMetaModel\=FHIRMetaModel4;FHIRNarrativeGenerator\=FHIRNarrativeGenerator4;FHIROperations\=FHIROperations4;FHIRParserJson\=FHIRParserJson4;FHIRParserTurtle\=FHIRParserTurtle4;FHIRParserXml\=FHIRParserXml4;FHIRPathNode\=FHIRPathNode4;FHIRProfileUtilities\=FHIRProfileUtilities4;FHIRResources\=FHIRResources4;FHIRStructureMapUtilities\=FHIRStructureMapUtilities4;FHIRTags\=FHIRTags4;FHIRTestWorker\=FHIRTestWorker4;FHIRTypes\=FHIRTypes4;FHIRUtilities\=FHIRUtilities4;FHIRValidator\=FHIRValidator4;FhirOpBase\=FhirOpBase4;FhirPath\=FhirPath4;NarrativeGenerator\=NarrativeGenerator4;QuestionnaireBuilder\=QuestionnaireBuilder4;FHIRBaseX\=FHIRBase4;QuestionnaireRenderer\=QuestionnaireRenderer4
           unitoutputdir = C:\\work\\fhirserver\\utils\\VocabTxServer\\install\\units
           usedebugdcu = false
           usepackages = false
@@ -357,7 +357,7 @@ begin
           stackframes = false
           stringchecks = true
           typedpointers = false
-          unitaliases = WinTypes\=Windows;WinProcs\=Windows;DbiTypes\=BDE;DbiProcs\=BDE;DbiErrs\=BDE;FHIRAuthMap\=FHIRAuthMap3;FHIRConstants\=FHIRConstants3;FHIRContext\=FHIRContext3;FHIRIndexInformation\=FHIRIndexInformation3;FHIRJavascriptReg\=FHIRJavascriptReg3;FHIRMetaModel\=FHIRMetaModel3;FHIRNarrativeGenerator\=FHIRNarrativeGenerator3;FHIROperations\=FHIROperations3;FHIRParserJson\=FHIRParserJson3;FHIRParserTurtle\=FHIRParserTurtle3;FHIRParserXml\=FHIRParserXml3;FHIRPathNode\=FHIRPathNode3;FHIRProfileUtilities\=FHIRProfileUtilities3;FHIRResources\=FHIRResources3;FHIRStructureMapUtilities\=FHIRStructureMapUtilities3;FHIRTags\=FHIRTags3;FHIRTestWorker\=FHIRTestWorker3;FHIRTypes\=FHIRTypes3;FHIRUtilities\=FHIRUtilities3;FHIRValidator\=FHIRValidator3;FhirOpBase\=FhirOpBase3;FhirPath\=FhirPath3;NarrativeGenerator\=NarrativeGenerator3;QuestionnaireBuilder\=QuestionnaireBuilder3;FHIRBaseX\=FHIRBase3
+          unitaliases = WinTypes\=Windows;WinProcs\=Windows;DbiTypes\=BDE;DbiProcs\=BDE;DbiErrs\=BDE;FHIRAuthMap\=FHIRAuthMap3;FHIRConstants\=FHIRConstants3;FHIRContext\=FHIRContext3;FHIRIndexInformation\=FHIRIndexInformation3;FHIRJavascriptReg\=FHIRJavascriptReg3;FHIRMetaModel\=FHIRMetaModel3;FHIRNarrativeGenerator\=FHIRNarrativeGenerator3;FHIROperations\=FHIROperations3;FHIRParserJson\=FHIRParserJson3;FHIRParserTurtle\=FHIRParserTurtle3;FHIRParserXml\=FHIRParserXml3;FHIRPathNode\=FHIRPathNode3;FHIRProfileUtilities\=FHIRProfileUtilities3;FHIRResources\=FHIRResources3;FHIRStructureMapUtilities\=FHIRStructureMapUtilities3;FHIRTags\=FHIRTags3;FHIRTestWorker\=FHIRTestWorker3;FHIRTypes\=FHIRTypes3;FHIRUtilities\=FHIRUtilities3;FHIRValidator\=FHIRValidator3;FhirOpBase\=FhirOpBase3;FhirPath\=FhirPath3;NarrativeGenerator\=NarrativeGenerator3;QuestionnaireBuilder\=QuestionnaireBuilder3;FHIRBaseX\=FHIRBase3;QuestionnaireRenderer\=QuestionnaireRenderer3
           unitoutputdir = C:\\work\\fhirserver\\utils\\VocabTxServer\\install\\units
           usedebugdcu = false
           usepackages = false
