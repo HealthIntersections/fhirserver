@@ -602,7 +602,6 @@ Begin
       inc(OverallCount);
       if OverallCount mod UPDATE_FREQ = 0 then
         Progress(STEP_READ_CONCEPT, iCursor / Length(s), '');
-      inc(iCount);
     End;
   End;
 

@@ -166,24 +166,20 @@ end;
 
 procedure TEditRegisteredServerForm.loadCapabilityStatement;
 var
-  client : TFhirHTTPClient;
+  client : TFhirClient;
 begin
   try
     clHooks.items.Clear;
-    client := TFhirHTTPClient.Create(nil, edtServer.text, true);
+    client := TFhirClients.makeHTTP(nil, edtServer.text, true, 5000);
     try
-      client.timeout := 5000;
-      client.allowR2 := true;
       FCapabilityStatement := client.conformance(false);
     finally
       client.Free;
     end;
     loadHooks;
   except
-    client := TFhirHTTPClient.Create(nil, edtServer.text, false);
+    client := TFhirClients.makeHTTP(nil, edtServer.text, false, 5000);
     try
-      client.timeout := 5000;
-      client.allowR2 := true;
       FCapabilityStatement := client.conformance(false);
     finally
       client.Free;

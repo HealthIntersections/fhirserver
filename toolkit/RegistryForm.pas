@@ -259,7 +259,7 @@ end;
 function TRegistryFrame.client: TFhirClient;
 begin
   if FClient = nil then
-    FClient := TFhirHTTPClient.Create(nil, 'http://registry-api.fhir.org/open', false);
+    FClient := TFhirClients.makeHTTP(nil, 'http://registry-api.fhir.org/open', false);
   result := FClient;
 end;
 

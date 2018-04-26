@@ -317,25 +317,21 @@ end;
 
 procedure TEditRegisteredServerForm.loadCapabilityStatement;
 var
-  client : TFhirHTTPClient;
+  client : TFhirClient;
 begin
   if not isAbsoluteUrl(edtUrl.Text) then
     raise Exception.Create('Plase supply a valid URL for the server');
 
   try
-    client := TFhirHTTPClient.Create(nil, edtUrl.text, true);
+    client := TFhirClients.makeHTTP(nil, edtUrl.text, true, 5000);
     try
-      client.timeout := 5000;
-      client.allowR2 := true;
       FCapabilityStatement := client.conformance(false);
     finally
       client.Free;
     end;
   except
-    client := TFhirHTTPClient.Create(nil, edtUrl.text, false);
+    client := TFhirClients.makeHTTP(nil, edtUrl.text, false, 5000);
     try
-      client.timeout := 5000;
-      client.allowR2 := true;
       FCapabilityStatement := client.conformance(false);
     finally
       client.Free;

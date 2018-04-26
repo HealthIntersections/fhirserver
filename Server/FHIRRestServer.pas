@@ -604,6 +604,7 @@ Begin
   FCertificateIdList := TStringList.Create;
   FName := Name;
   FIni := ini;
+  FInLog := nil;
 
   fn := ini.ReadString(voMaybeVersioned, 'logging', 'http-in', 'fhirserver-r'+FHIR_GENERATED_PUBLICATION+'-in.log');
   if (fn <> '') and ((fn <> '-')) then
@@ -736,6 +737,7 @@ Begin
   FCertificateIdList.Free;
   FSourceProvider.Free;
   FInLog.Free;
+  FOutLog.Free;
   FGoogle.Free;
   Inherited;
 End;

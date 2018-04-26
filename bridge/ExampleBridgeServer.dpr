@@ -258,7 +258,11 @@ uses
   FHIRXhtmlComposer in '..\reference-platform\Support\FHIRXhtmlComposer.pas',
   FHIRParserBase3 in '..\reference-platform\dstu3\FHIRParserBase3.pas',
   FHIRBase3 in '..\reference-platform\dstu3\FHIRBase3.pas',
-  FHIRParser3 in '..\reference-platform\dstu3\FHIRParser3.pas';
+  FHIRParser3 in '..\reference-platform\dstu3\FHIRParser3.pas',
+  FHIRClientBase in '..\reference-platform\client\FHIRClientBase.pas',
+  FHIRClientHTTP in '..\reference-platform\client\FHIRClientHTTP.pas',
+  FHIRClientThreaded in '..\reference-platform\client\FHIRClientThreaded.pas',
+  FHIRClient3 in '..\reference-platform\dstu3\FHIRClient3.pas';
 
 var
   gsrv : TExampleFhirServer;

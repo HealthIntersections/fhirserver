@@ -73,7 +73,7 @@ Type
   private
     FProc : TThreadProcedure;
   protected
-    procedure execute; override;
+    procedure Execute; override;
   public
     Constructor Create(proc : TThreadProcedure);
   end;

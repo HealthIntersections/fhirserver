@@ -59,7 +59,6 @@ implementation
 procedure TFHIRUtilityTests.TestBundleSigningXml;
 var
   bnd : TFhirBundle;
-  b : TBytes;
 begin
   bnd := fileToResource('C:\work\org.hl7.fhir\build\publish\document-example-dischargesummary.xml') as TFHIRBundle;
   try
@@ -80,7 +79,6 @@ end;
 procedure TFHIRUtilityTests.TestBundleSigningJson;
 var
   bnd : TFhirBundle;
-  b : TBytes;
 begin
   bnd := fileToResource('C:\work\org.hl7.fhir\build\publish\document-example-dischargesummary.xml') as TFHIRBundle;
   try

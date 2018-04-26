@@ -331,6 +331,8 @@ Type
     function Extension : String; Override;
   end;
 
+procedure RemoveBOM(var s : String);
+
 Implementation
 
 uses
@@ -1626,6 +1628,12 @@ begin
   result := TTurtleURL(t).uri.Substring(20);
 end;
 {$ENDIF}
+
+procedure RemoveBOM(var s : String);
+begin
+  if s.startsWith(#$FEFF) then
+    s := s.substring(1);
+end;
 
 
 End.

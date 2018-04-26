@@ -9027,8 +9027,11 @@ begin
           LoadCustomResources(implGuides);
           logt('Load Store');
           LoadExistingResources(conn);
-//          logt('Check Definitions');
-//          checkDefinitions();
+          if (false) then
+          begin
+          logt('Check Definitions');
+          checkDefinitions();
+          end;
         end;
         logt('Load Subscription Queue');
         ServerContext.SubscriptionManager.LoadQueue(conn);

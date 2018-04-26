@@ -680,7 +680,7 @@ end;
 procedure TCDSHooksManagerWorkThread.Execute;
 var
   resp : TCDSHookResponse;
-  client : TFhirHTTPClient;
+  client : TFhirClient;
 begin
   {$IFDEF MSWINDOWS}
   CoInitialize(nil);
@@ -689,12 +689,8 @@ begin
     try
       try
         try
-          client := TFhirHTTPClient.Create(nil, server.fhirEndpoint, true);
+          client := TFhirClients.makeHTTP(nil, server.fhirEndpoint, true, 15000);
           try
-            client.timeout := 15000;
-            {$IFNDEF FHIR2}
-            client.allowR2 := true;
-            {$ENDIF}
             client.smartToken := token.link;
             resp := client.cdshook(FID, FRequest);
             try

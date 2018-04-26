@@ -428,6 +428,10 @@
         <DCCReference Include="..\reference-platform\r4\FHIRParserBase4.pas"/>
         <DCCReference Include="..\reference-platform\r4\FHIRParserJson4.pas"/>
         <DCCReference Include="..\reference-platform\r4\FHIRParserTurtle4.pas"/>
+        <DCCReference Include="..\reference-platform\dstu3\FHIRClient3.pas"/>
+        <DCCReference Include="..\reference-platform\client\FHIRClientBase.pas"/>
+        <DCCReference Include="..\reference-platform\client\FHIRClientHTTP.pas"/>
+        <DCCReference Include="..\reference-platform\client\FHIRClientThreaded.pas"/>
         <None Include="..\reference-platform\r4\fhirtests4.dpr"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>

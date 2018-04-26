@@ -117,7 +117,7 @@ type
     procedure vtMatchesDblClick(Sender: TObject);
   private
     { Private declarations }
-    FClient : TFhirHTTPClient;
+    FClient : TFhirClient;
     FCapabilityStatement : TFHIRCapabilityStatement;
     FProfiles : TProfileManager;
 
@@ -129,7 +129,7 @@ type
     FSelectedId: String;
     FSelectedType: TFhirResourceType;
 
-    procedure SetClient(const Value: TFhirHTTPClient);
+    procedure SetClient(const Value: TFhirClient);
     procedure SetCapabilityStatement(const Value: TFHIRCapabilityStatement);
 
     // choosing type
@@ -159,7 +159,7 @@ type
     function GetCell(res : TFhirResource; path : String ) : String;
   public
     { Public declarations }
-    property Client : TFhirHTTPClient read FClient write SetClient;
+    property Client : TFhirClient read FClient write SetClient;
     property Conformance : TFHIRCapabilityStatement read FCapabilityStatement write SetCapabilityStatement;
     property Profiles : TProfileManager read FProfiles write SetProfiles;
 
@@ -310,8 +310,8 @@ begin
   Clipboard.Open;
   s := Clipboard.AsText;
   Clipboard.Close;
-  if (s.StartsWith(FClient.url)) and not s.Contains('?') then
-    fetchUrl(s.Substring(FClient.url.Length+1))
+  if (s.StartsWith(FClient.address)) and not s.Contains('?') then
+    fetchUrl(s.Substring(FClient.address.Length+1))
   else
   begin
     if s.Contains('?') then
@@ -618,7 +618,7 @@ begin
     edtPageCount.Value := StrToIntDef(pm.GetVar('_count'), 20);
 end;
 
-procedure TFetchResourceFrm.SetClient(const Value: TFhirHTTPClient);
+procedure TFetchResourceFrm.SetClient(const Value: TFhirClient);
 begin
   FClient.Free;
   FClient := Value;

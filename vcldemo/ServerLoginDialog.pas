@@ -151,16 +151,16 @@ type
     procedure btnLoginClick(Sender: TObject);
   private
     FIni : TIniFile;
-    FClient: TFhirHTTPClient;
+    FClient: TFhirClient;
     FProgressForm : TProgressWindow;
     FLogService: TLoggingService;
-    procedure SetClient(const Value: TFhirHTTPClient);
+    procedure SetClient(const Value: TFhirClient);
     procedure DoOpenURL(url : UnicodeString);
     procedure DoIdle(out stop : boolean);
   public
     destructor Destroy; override;
     Property Ini : TIniFile read FIni write FIni;
-    Property Client : TFhirHTTPClient read FClient write SetClient;
+    Property Client : TFhirClient read FClient write SetClient;
     property ProgressForm : TProgressWindow read FProgressForm write FProgressForm;
     property LogService : TLoggingService read FLogService write FLogService;
   end;
@@ -217,8 +217,7 @@ begin
   ini.WriteBool('Server', 'InProcess', chkInProgress.Checked);
   ini.WriteString('Server','AuthScope',cbAuthScope.Text);
 
-  FClient := TFhirHTTPClient.Create(nil, cbxServer.Text, true);
-  FClient.UseIndy := true;
+  FClient := TFhirClients.makeIndy(nil, cbxServer.Text, true);
   server := TRegisteredFHIRServer.create;
   try
     server.fhirEndPoint := cbxServer.Text;
@@ -261,7 +260,7 @@ begin
             form.ShowModal;
             if form.Token <> nil then
             begin
-              TFhirHTTPClient(client).smartToken := form.token.link;
+              client.smartToken := form.token.link;
               FLogService.openIdToken := form.token.idToken.link;
               FLogService.Server := server.link;
               FLogService.recordLogin;
@@ -294,7 +293,7 @@ begin
             end
             else
             begin
-              TFhirHTTPClient(client).smartToken := login.token.link;
+              client.smartToken := login.token.link;
               FLogService.openIdToken := login.token.idToken.link;
               FLogService.Server := server.Link;
               FLogService.recordLogin;
@@ -326,7 +325,7 @@ begin
   ExecuteOpen(url);
 end;
 
-procedure TServerLoginForm.SetClient(const Value: TFhirHTTPClient);
+procedure TServerLoginForm.SetClient(const Value: TFhirClient);
 begin
   FClient.Free;
   FClient := Value;

@@ -104,7 +104,6 @@ function fullResourceUri(base: String; url : String) : String; overload;
 function fullResourceUri(base: String; ref : TFhirReference) : String; overload;
 function isHistoryURL(url : String) : boolean;
 procedure splitHistoryUrl(var url : String; var history : String);
-procedure RemoveBOM(var s : String);
 function isAbsoluteUrl(s: String): boolean;
 function languageMatches(spec, possible : String) : boolean;
 
@@ -3598,12 +3597,6 @@ begin
         result := true;
         break;
       end;
-end;
-
-procedure RemoveBOM(var s : String);
-begin
-  if s.startsWith(#$FEFF) then
-    s := s.substring(1);
 end;
 
 

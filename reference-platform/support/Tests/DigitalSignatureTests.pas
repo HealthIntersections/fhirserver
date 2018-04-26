@@ -96,7 +96,6 @@ procedure TDigitalSignatureTests.testGenRsa_1;
 var
   bytes : TBytes;
   sig : TDigitalSigner;
-  output : string;
 begin
   sig := TDigitalSigner.Create;
   try
@@ -119,7 +118,6 @@ procedure TDigitalSignatureTests.testGenRsa_256;
 var
   bytes : TBytes;
   sig : TDigitalSigner;
-  output : string;
 begin
   sig := TDigitalSigner.Create;
   try

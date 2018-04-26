@@ -270,7 +270,7 @@ begin
     btnReplace.Enabled := false;
 
     if FClient = nil then
-      FClient := TFhirThreadedClient.Create(TFhirHTTPClient.Create(nil, FSettings.serverAddress('Terminology', cbxServer.itemIndex), false, FSettings.timeout * 1000, FSettings.proxy), MasterToolsForm.threadMonitorProc);
+      FClient := TFhirClients.makeThreaded(nil, TFhirClients.makeHTTP(nil, FSettings.serverAddress('Terminology', cbxServer.itemIndex), false, FSettings.timeout * 1000, FSettings.proxy), MasterToolsForm.threadMonitorProc);
 
     MasterToolsForm.dowork(self, 'Searching', true,
       procedure

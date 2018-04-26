@@ -759,10 +759,9 @@ implementation
 
 procedure TTurtleTests.parseTtl(filename: String; ok: boolean);
 var
-  s{, p, m} : String;
+  s : String;
   ttl : TTurtleDocument;
 begin
-  ttl := nil;
   s := fileToString('C:\work\org.hl7.fhir\build\tests\turtle\'+filename, TEncoding.UTF8);
   try
     ttl := TTurtleParser.parse(s);

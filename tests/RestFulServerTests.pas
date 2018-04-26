@@ -55,7 +55,7 @@ type
     FIsReadAllowed : boolean;
     FStorage : TTestStorageService;
   public
-    function opAllowed(resource : string; command : TFHIRCommandType) : Boolean;
+    function opAllowed(resource : string; command : TFHIRCommandType) : Boolean; override;
 
     procedure StartTransaction; override;
     procedure CommitTransaction; override;
@@ -120,10 +120,10 @@ type
     FStore : TTestStorageService;
     FContext : TFHIRServerContext;
     FServer : TFhirWebServer;
-    FClientXml : TFhirHTTPClient;
-    FClientJson : TFhirHTTPClient;
-    FClientSSL : TFhirHTTPClient;
-    FClientSSLCert : TFhirHTTPClient;
+    FClientXml : TFhirClient;
+    FClientJson : TFhirClient;
+    FClientSSL : TFhirClient;
+    FClientSSLCert : TFhirClient;
   public
     [Setup] procedure Setup;
     [TearDown] procedure TearDown;
@@ -422,14 +422,10 @@ begin
   FServer.Start(true);
   FServer.SourceProvider := TFHIRWebServerSourceFolderProvider.Create('C:\work\fhirserver\web');
 
-  FClientXml := TFhirHTTPClient.Create(FContext.ValidatorContext.Link, FServer.ClientAddress(false), false);
-  FClientXml.UseIndy := true;
-  FClientJson := TFhirHTTPClient.Create(FContext.ValidatorContext.Link, FServer.ClientAddress(false), true);
-  FClientJson.UseIndy := true;
-  FClientSSL := TFhirHTTPClient.Create(FContext.ValidatorContext.Link, FServer.ClientAddress(true), false);
-  FClientSSL.UseIndy := true;
-  FClientSSLCert := TFhirHTTPClient.Create(FContext.ValidatorContext.Link, FServer.ClientAddress(true), true);
-  FClientSSLCert.UseIndy := true;
+  FClientXml := TFhirClients.makeIndy(FContext.ValidatorContext.Link, FServer.ClientAddress(false), false);
+  FClientJson := TFhirClients.makeIndy(FContext.ValidatorContext.Link, FServer.ClientAddress(false), true);
+  FClientSSL := TFhirClients.makeIndy(FContext.ValidatorContext.Link, FServer.ClientAddress(true), false);
+  FClientSSLCert := TFhirClients.makeIndy(FContext.ValidatorContext.Link, FServer.ClientAddress(true), true);
 end;
 
 procedure TRestFulServerTests.TearDown;
@@ -524,8 +520,8 @@ begin
   FServer.CertificateIdList.clear;
   FServer.Start(true);
   FClientSSL.smartToken := nil;
-  FClientSSL.certFile := 'C:\work\fhirserver\tests\client.test.fhir.org.cert';
-  FClientSSL.certPWord := 'test';
+  (FClientSSL.Communicator as TFHIRHTTPCommunicator).certFile := 'C:\work\fhirserver\tests\client.test.fhir.org.cert';
+  (FClientSSL.Communicator as TFHIRHTTPCommunicator).certPWord := 'test';
 
   cs := FClientSSL.conformance(false);
   try
@@ -551,8 +547,8 @@ begin
   FServer.CertificateIdList.clear;
   FServer.Start(true);
   FClientSSL.smartToken := nil;
-  FClientSSL.certFile := 'C:\work\fhirserver\tests\client.test.fhir.org.cert';
-  FClientSSL.certPWord := 'test';
+  (FClientSSL.Communicator as TFHIRHTTPCommunicator).certFile := 'C:\work\fhirserver\tests\client.test.fhir.org.cert';
+  (FClientSSL.Communicator as TFHIRHTTPCommunicator).certPWord := 'test';
 
   try
     cs := FClientSSL.conformance(false);
@@ -581,8 +577,8 @@ begin
   FServer.CertificateIdList.clear;
   FServer.Start(true);
   FClientSSL.smartToken := nil;
-  FClientSSL.certFile := '';
-  FClientSSL.certPWord := '';
+  (FClientSSL.Communicator as TFHIRHTTPCommunicator).certFile := '';
+  (FClientSSL.Communicator as TFHIRHTTPCommunicator).certPWord := '';
 
   try
     cs := FClientSSL.conformance(false);
@@ -612,8 +608,8 @@ begin
   FServer.CertificateIdList.add('B7:90:70:D1:D8:D1:1B:9D:03:86:F4:5B:B5:69:E3:C4');
   FServer.Start(true);
   FClientSSL.smartToken := nil;
-  FClientSSL.certFile := '';
-  FClientSSL.certPWord := '';
+  (FClientSSL.Communicator as TFHIRHTTPCommunicator).certFile := '';
+  (FClientSSL.Communicator as TFHIRHTTPCommunicator).certPWord := '';
 
   cs := FClientSSL.conformance(false);
   try
@@ -638,8 +634,8 @@ begin
   FServer.CertificateIdList.add('B7:90:70:D1:D8:D1:1B:9D:03:86:F4:5B:B5:69:E3:C4');
   FServer.Start(true);
   FClientSSL.smartToken := nil;
-  FClientSSL.certFile := 'C:\work\fhirserver\tests\client.test.fhir.org.cert';
-  FClientSSL.certPWord := 'test';
+  (FClientSSL.Communicator as TFHIRHTTPCommunicator).certFile := 'C:\work\fhirserver\tests\client.test.fhir.org.cert';
+  (FClientSSL.Communicator as TFHIRHTTPCommunicator).certPWord := 'test';
 
   cs := FClientSSL.conformance(false);
   try
@@ -664,8 +660,8 @@ begin
   FServer.CertificateIdList.add('B7:90:70:D1:D8:D1:1B:9D:03:86:F4:5B:B5:69:E3:C4');
   FServer.Start(true);
   FClientSSL.smartToken := nil;
-  FClientSSL.certFile := 'C:\work\fhirserver\tests\local.fhir.org.cert';
-  FClientSSL.certPWord := 'test';
+  (FClientSSL.Communicator as TFHIRHTTPCommunicator).certFile := 'C:\work\fhirserver\tests\local.fhir.org.cert';
+  (FClientSSL.Communicator as TFHIRHTTPCommunicator).certPWord := 'test';
 
   try
     cs := FClientSSL.conformance(false);
@@ -694,8 +690,8 @@ begin
   FServer.CertificateIdList.add('B7:90:70:D1:D8:D1:1B:9D:03:86:F4:5B:B5:69:E3:C4');
   FServer.Start(true);
   FClientSSL.smartToken := nil;
-  FClientSSL.certFile := 'C:\work\fhirserver\tests\client.test.fhir.org.cert';
-  FClientSSL.certPWord := 'test';
+  (FClientSSL.Communicator as TFHIRHTTPCommunicator).certFile := 'C:\work\fhirserver\tests\client.test.fhir.org.cert';
+  (FClientSSL.Communicator as TFHIRHTTPCommunicator).certPWord := 'test';
 
   cs := FClientSSL.conformance(false);
   try
@@ -721,8 +717,8 @@ begin
   FServer.CertificateIdList.add('B7:90:70:D1:D8:D1:1B:9D:03:86:F4:5B:B5:69:E3:C4');
   FServer.Start(true);
   FClientSSL.smartToken := nil;
-  FClientSSL.certFile := 'C:\work\fhirserver\tests\local.fhir.org.cert';
-  FClientSSL.certPWord := 'test';
+  (FClientSSL.Communicator as TFHIRHTTPCommunicator).certFile := 'C:\work\fhirserver\tests\local.fhir.org.cert';
+  (FClientSSL.Communicator as TFHIRHTTPCommunicator).certPWord := 'test';
 
   try
     cs := FClientSSL.conformance(false);
@@ -750,8 +746,8 @@ begin
   FServer.ServeMissingCertificate := false;
   FServer.Start(true);
   FClientSSL.smartToken := nil;
-  FClientSSL.certFile := 'C:\work\fhirserver\tests\client.test.fhir.org.cert';
-  FClientSSL.certPWord := 'test';
+  (FClientSSL.Communicator as TFHIRHTTPCommunicator).certFile := 'C:\work\fhirserver\tests\client.test.fhir.org.cert';
+  (FClientSSL.Communicator as TFHIRHTTPCommunicator).certPWord := 'test';
 
   try
     res := FClientSSL.readResource(frtPatient, 'example');
@@ -762,7 +758,7 @@ begin
     end;
   except
     on e:EFHIRClientException do
-      Assert.isTrue(e.issue.hasIssueList and (e.issue.issueList[0].code = IssueTypeLogin), 'Isseue type is wrong');
+      Assert.isTrue(e.issue.code = etLogin, 'Isseue type is wrong');
     on e:exception do
       Assert.isTrue(false, e.ClassName+'; '+ e.Message);
   end;
@@ -780,8 +776,8 @@ begin
   FServer.Stop;
   FServer.ServeMissingCertificate := true;
   FServer.Start(true);
-  FClientSSL.certFile := 'C:\work\fhirserver\tests\client.test.fhir.org.cert';
-  FClientSSL.certPWord := 'test';
+  (FClientSSL.Communicator as TFHIRHTTPCommunicator).certFile := 'C:\work\fhirserver\tests\client.test.fhir.org.cert';
+  (FClientSSL.Communicator as TFHIRHTTPCommunicator).certPWord := 'test';
   FClientSSL.smartToken := TSmartOnFhirAccessToken.create;
   FClientSSL.smartToken.accessToken := JWT;
   FClientSSL.smartToken.expires := now + 20 * DATETIME_MINUTE_ONE;
@@ -858,10 +854,10 @@ begin
   FServer.CertificateIdList.clear;
   FServer.Start(true);
   FClientSSL.smartToken := nil;
-  FClientSSL.certFile := '';
-  FClientSSL.certPWord := '';
+  (FClientSSL.Communicator as TFHIRHTTPCommunicator).certFile := '';
+  (FClientSSL.Communicator as TFHIRHTTPCommunicator).certPWord := '';
 
-  FClientSSL.authoriseByOWin(FClientSSL.url+'/'+OWIN_TOKEN_PATH, 'test', 'test');
+  (FClientSSL.Communicator as TFHIRHTTPCommunicator).authoriseByOWin(FClientSSL.address+'/'+OWIN_TOKEN_PATH, 'test', 'test');
   res := FClientSSL.readResource(frtPatient, 'example');
   try
     Assert.IsNotNull(res, 'no resource returned');
@@ -887,8 +883,8 @@ begin
   FServer.CertificateIdList.clear;
   FServer.Start(true);
   FClientSSL.smartToken := nil;
-  FClientSSL.certFile := '';
-  FClientSSL.certPWord := '';
+  (FClientSSL.Communicator as TFHIRHTTPCommunicator).certFile := '';
+  (FClientSSL.Communicator as TFHIRHTTPCommunicator).certPWord := '';
 
   tester := TSmartOnFhirTestingLogin.create;
   try
@@ -931,8 +927,8 @@ begin
   FServer.CertificateIdList.clear;
   FServer.Start(true);
   FClientSSL.smartToken := nil;
-  FClientSSL.certFile := '';
-  FClientSSL.certPWord := '';
+  (FClientSSL.Communicator as TFHIRHTTPCommunicator).certFile := '';
+  (FClientSSL.Communicator as TFHIRHTTPCommunicator).certPWord := '';
 
   try
     res := FClientSSL.readResource(frtPatient, 'example');
@@ -943,7 +939,7 @@ begin
     end;
   except
     on e:EFHIRClientException do
-      Assert.isTrue(e.issue.hasIssueList and (e.issue.issueList[0].code = IssueTypeLogin), 'Isseue type is wrong');
+      Assert.isTrue(e.issue.code = etLogin, 'Isseue type is wrong');
     on e:exception do
       Assert.isTrue(false, e.ClassName+'; '+ e.Message);
   end;

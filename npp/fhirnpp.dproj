@@ -303,6 +303,10 @@
         <DCCReference Include="..\reference-platform\support\FHIRXhtmlComposer.pas"/>
         <DCCReference Include="..\reference-platform\support\FHIRExpressionComposer.pas"/>
         <DCCReference Include="..\reference-platform\dstu3\FHIRParser3.pas"/>
+        <DCCReference Include="..\reference-platform\client\FHIRClientBase.pas"/>
+        <DCCReference Include="..\reference-platform\dstu3\FHIRClient3.pas"/>
+        <DCCReference Include="..\reference-platform\client\FHIRClientHTTP.pas"/>
+        <DCCReference Include="..\reference-platform\client\FHIRClientThreaded.pas"/>
         <BuildConfiguration Include="Debug">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>

@@ -109,7 +109,7 @@ type
     errorSorter : TFHIRAnnotationComparer;
     FWorker : TFHIRWorkerContext;
     FValidator : TFHIRValidator;
-    FClient : TFhirHTTPClient;
+    FClient : TFhirClient;
     FCapabilityStatement : TFhirCapabilityStatement;
     init : boolean;
     FLastSrc : String;
@@ -754,9 +754,7 @@ begin
     try
       try
         OpMessage('Connecting to Server', 'Connecting to Server '+server.fhirEndpoint);
-        FClient := TFhirHTTPClient.Create(FWorker.link, server.fhirEndpoint, false);
-        FClient.timeout := 5000;
-        FClient.allowR2 := true;
+        FClient := TFhirClients.makeHTTP(FWorker.link, server.fhirEndpoint, false, 5000);
         ok := true;
         if server.SmartAppLaunchMode <> salmNone then
           if not DoSmartOnFHIR(server) then
@@ -768,10 +766,10 @@ begin
         if ok then
         begin
           try
-            FClient.json := false;
+            FClient.format := ffXml;
             FCapabilityStatement := FClient.conformance(false);
           except
-            FClient.json := not FClient.Json;
+            FClient.format := ffJson;
             FCapabilityStatement := FClient.conformance(false);
           end;
           FCapabilityStatement.checkCompatible();
@@ -1262,19 +1260,13 @@ begin
       try
         if (MessageDlg('Success. Open transaction response?', mtConfirmation, mbYesNo, 0) = mrYes) then
         begin
-          if FClient.Json then
-            comp := TFHIRJsonComposer.Create(FWorker.link, OutputStylePretty, 'en')
-          else
-            comp := TFHIRXmlComposer.Create(FWorker.link, OutputStylePretty, 'en');
+          comp := FClient.makeComposer(FClient.format, OutputStylePretty);
           try
             s := TStringStream.Create;
             try
               comp.Compose(s, res);
               NewFile(s.DataString);
-              if FClient.Json then
-                saveFileAs(IncludeTrailingPathDelimiter(SystemTemp)+CODES_TFhirResourceType[res.ResourceType]+'-'+res.id+'.json')
-              else
-                saveFileAs(IncludeTrailingPathDelimiter(SystemTemp)+CODES_TFhirResourceType[res.ResourceType]+'-'+res.id+'.xml');
+              saveFileAs(IncludeTrailingPathDelimiter(SystemTemp)+CODES_TFhirResourceType[res.ResourceType]+'-'+res.id+EXT_ACTUAL_TFHIRFormat[FClient.format]);
             finally
               s.Free;
             end;

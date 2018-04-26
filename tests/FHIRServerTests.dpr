@@ -346,7 +346,11 @@ uses
   FHIRParserBase3 in '..\reference-platform\dstu3\FHIRParserBase3.pas',
   FHIRParserJson3 in '..\reference-platform\dstu3\FHIRParserJson3.pas',
   FHIRParserTurtle3 in '..\reference-platform\dstu3\FHIRParserTurtle3.pas',
-  FhirVersionConvertors in '..\reference-platform\xversion\FhirVersionConvertors.pas';
+  FhirVersionConvertors in '..\reference-platform\xversion\FhirVersionConvertors.pas',
+  FHIRClientBase in '..\reference-platform\client\FHIRClientBase.pas',
+  FHIRClientHTTP in '..\reference-platform\client\FHIRClientHTTP.pas',
+  FHIRClientThreaded in '..\reference-platform\client\FHIRClientThreaded.pas',
+  FHIRClient4 in '..\reference-platform\r4\FHIRClient4.pas';
 
 var
   runner : ITestRunner;

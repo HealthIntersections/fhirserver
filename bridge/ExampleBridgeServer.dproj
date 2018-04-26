@@ -309,6 +309,10 @@
         <DCCReference Include="..\reference-platform\dstu3\FHIRParserBase3.pas"/>
         <DCCReference Include="..\reference-platform\dstu3\FHIRBase3.pas"/>
         <DCCReference Include="..\reference-platform\dstu3\FHIRParser3.pas"/>
+        <DCCReference Include="..\reference-platform\client\FHIRClientBase.pas"/>
+        <DCCReference Include="..\reference-platform\client\FHIRClientHTTP.pas"/>
+        <DCCReference Include="..\reference-platform\client\FHIRClientThreaded.pas"/>
+        <DCCReference Include="..\reference-platform\dstu3\FHIRClient3.pas"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>

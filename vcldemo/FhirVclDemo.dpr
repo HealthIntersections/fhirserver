@@ -114,7 +114,11 @@ uses
   FHIRBase2 in '..\reference-platform\dstu2\FHIRBase2.pas',
   FHIRParserBase2 in '..\reference-platform\dstu2\FHIRParserBase2.pas',
   FHIRXhtmlComposer in '..\reference-platform\support\FHIRXhtmlComposer.pas',
-  FHIRParser2 in '..\reference-platform\dstu2\FHIRParser2.pas';
+  FHIRParser2 in '..\reference-platform\dstu2\FHIRParser2.pas',
+  FHIRClientBase in '..\reference-platform\client\FHIRClientBase.pas',
+  FHIRClientHTTP in '..\reference-platform\client\FHIRClientHTTP.pas',
+  FHIRClientThreaded in '..\reference-platform\client\FHIRClientThreaded.pas',
+  FHIRClient2 in '..\reference-platform\dstu2\FHIRClient2.pas';
 
 {$R *.res}
 

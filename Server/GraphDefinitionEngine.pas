@@ -339,9 +339,6 @@ begin
   finally
     list.Free;
   end;
-
-
-
 end;
 
 { TFHIRGraphDefinitionParser }

@@ -947,7 +947,6 @@ begin
     Begin
       if iLoop mod STEP_COUNT = 0 then
         Progress(14, iLoop / oCodes.Count, '');
-      inc(iCount);
       oCode := TCode(oCodes[iLoop]);
       if oCode.Comps <> nil Then
         FCode.SetComponents(oCode.Index, FRefs.AddCardinals(listConcepts(oCode.Comps)));

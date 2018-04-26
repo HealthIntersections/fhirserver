@@ -876,7 +876,7 @@ end;
 procedure TSubscriptionManager.sendByRest(id : String; subst: TFhirSubscription; package : TFHIRResource);
 var
   http : TIdHTTP;
-  client : TFhirHTTPClient;
+  client : TFhirClient;
   ssl : TIdSSLIOHandlerSocketOpenSSL;
   stream : TMemoryStream;
   s : TFHIRString;
@@ -905,7 +905,7 @@ begin
   end
   else
   begin
-    client := TFhirHTTPClient.create(nil, subst.channel.endpoint, subst.channel.payload.Contains('json'));
+    client := TFhirClients.makeHTTP(nil, subst.channel.endpoint, subst.channel.payload);
     try
       if (package is TFHIRBundle) and (TFHIRBundle(package).type_ = BundleTypeTransaction) then
         client.transaction(TFHIRBundle(package))

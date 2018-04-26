@@ -31,7 +31,7 @@ implementation
 
 function TFHIRClientJSHelper.CreateFHIRClientJs(js : TJavascript; classDef : TJavascriptClassDefinition; params : TJsValues; var owns : boolean) : TObject;
 begin
-  result := TFhirHTTPClient.Create(nil, js.asString(params[0]), js.asBoolean(params[1]));
+  result := TFhirClients.makeHTTP(nil, js.asString(params[0]), js.asBoolean(params[1]));
 end;
 
 function TFHIRClientJSHelper.FHIRClientAddressJs(js : TJavascript; propDef : TJavascriptRegisteredProperty; this : TObject; parameters : TJsValues ) : JsValueRef;

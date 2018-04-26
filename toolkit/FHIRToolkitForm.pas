@@ -36,7 +36,7 @@ uses
   System.ImageList, FMX.ImgList, FMX.Menus, FMX.WebBrowser,
   IdSSLOpenSSLHeaders, libeay32,
   SystemSupport, TextUtilities, Logging,
-  FHIRBase, FHIRTypes, FHIRResources, FHIRClient, FHIRUtilities, FHIRIndexBase, FHIRIndexInformation, FHIRSupport, FHIRConstants,
+  FHIRBase, FHIRTypes, FHIRResources, FHIRClientBase, FHIRClient, FHIRUtilities, FHIRIndexBase, FHIRIndexInformation, FHIRSupport, FHIRConstants,
   FHIRContext, FHIRProfileUtilities,
   SmartOnFHIRUtilities, EditRegisteredServerDialogFMX, OSXUIUtils,
   ToolkitSettings, ServerForm, CapabilityStatementEditor, BaseResourceFrame, BaseFrame, SourceViewer, ListSelector,
@@ -175,7 +175,7 @@ type
     procedure checkVersion(reportIfCurrent: boolean);
   public
     procedure dowork(Sender : TObject; opName : String; canCancel : boolean; proc : TWorkProc);
-    procedure threadMonitorProc(sender : TFhirClient; var stop : boolean);
+    procedure threadMonitorProc(sender : TFhirClientV; var stop : boolean);
   end;
 
 var
@@ -219,7 +219,7 @@ end;
 
 procedure TMasterToolsForm.btnConnectClick(Sender: TObject);
 var
-  http: TFhirHTTPClient;
+  http: TFhirClient;
   client : TFhirClient;
   tab : TTabItem;
   serverForm : TServerFrame;
@@ -230,15 +230,15 @@ var
 begin
   server := FSettings.serverInfo('', lbServers.ItemIndex);
   try
-    http := TFhirHTTPClient.Create(nil, server.fhirEndpoint, false, FSettings.Timeout* 1000, FSettings.proxy);
+    http := TFhirClients.makeHTTP(nil, server.fhirEndpoint, false, FSettings.Timeout* 1000, FSettings.proxy);
     try
-      http.username := server.username;
-      http.password := server.password;
+      (http.Communicator as TFHIRHTTPCommunicator).username := server.username;
+      (http.Communicator as TFHIRHTTPCommunicator).password := server.password;
       if server.isSSL then
       begin
-        http.certFile := server.SSLPublicCert;
-        http.certKey := server.SSLPrivateKey;
-        http.certPWord := server.SSLPassphrase;
+        (http.Communicator as TFHIRHTTPCommunicator).certFile := server.SSLPublicCert;
+        (http.Communicator as TFHIRHTTPCommunicator).certKey := server.SSLPrivateKey;
+        (http.Communicator as TFHIRHTTPCommunicator).certPWord := server.SSLPassphrase;
       end;
       http.Logger := ToolkitLogger.Link;
       ok := false;
@@ -267,7 +267,7 @@ begin
         ok := true;
       if not ok then
         exit;
-      client := TFhirThreadedClient.create(http.link, threadMonitorProc);
+      client := TFhirClients.makeThreaded(nil, http.link, threadMonitorProc);
       try
         cs := nil;
         doWork(nil, 'Connect', true,
@@ -496,7 +496,7 @@ begin
   end;
 end;
 
-procedure TMasterToolsForm.threadMonitorProc(sender: TFhirClient; var stop: boolean);
+procedure TMasterToolsForm.threadMonitorProc(sender: TFhirClientV; var stop: boolean);
 begin
   Application.ProcessMessages;
   stop :=  FIsStopped;

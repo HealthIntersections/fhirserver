@@ -365,7 +365,11 @@ uses
   FHIRParserXml4 in '..\reference-platform\r4\FHIRParserXml4.pas',
   FHIRParserBase4 in '..\reference-platform\r4\FHIRParserBase4.pas',
   FHIRParserJson4 in '..\reference-platform\r4\FHIRParserJson4.pas',
-  FHIRParserTurtle4 in '..\reference-platform\r4\FHIRParserTurtle4.pas';
+  FHIRParserTurtle4 in '..\reference-platform\r4\FHIRParserTurtle4.pas',
+  FHIRClient3 in '..\reference-platform\dstu3\FHIRClient3.pas',
+  FHIRClientBase in '..\reference-platform\client\FHIRClientBase.pas',
+  FHIRClientHTTP in '..\reference-platform\client\FHIRClientHTTP.pas',
+  FHIRClientThreaded in '..\reference-platform\client\FHIRClientThreaded.pas';
 
 begin
   logfile := IncludeTrailingPathDelimiter(SystemTemp)+'fhirserver.log';

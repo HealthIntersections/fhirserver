@@ -43,7 +43,7 @@ Type
   TFHIRPluginValidatorContext = class (TBaseWorkerContext)
   private
     FUrl : String;
-    FServer : TFhirHTTPClient;
+    FServer : TFhirClient;
     FCapabilityStatement : TFHIRCapabilityStatement;
     FValueSets : TAdvMap<TFHIRValueSet>;
     FCodeSystems : TAdvMap<TFHIRCodeSystem>;
@@ -78,9 +78,7 @@ begin
   begin
     if FServer <> nil then
       FServer.Free;
-    FServer := TFhirHTTPClient.Create(self.link, FUrl, true);
-    FServer.timeout := 5000;
-    FServer.allowR2 := true;
+    FServer := TFhirClients.makeHTTP(self.link, FUrl, true, 5000);
     FCapabilityStatement := FServer.conformance(true);
     if FCapabilityStatement.fhirVersion <> FHIR_GENERATED_VERSION then
       raise Exception.Create('Terminology Server / Plug-in Version mismatch ('+FCapabilityStatement.fhirVersion+' / '+FHIR_GENERATED_VERSION+')');

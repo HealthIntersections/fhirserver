@@ -72,6 +72,7 @@ Const
   {$ENDIF}
 
   CODES_TFHIRVersion : Array [TFHIRVersion] of String = ('', 'r1', 'r2', 'r3', 'r4');
+  CODES_FHIR_GENERATED_PUBLICATION : array [TFHIRVersion] of string = ('', '1', '2', '3', '4');
   CURRENT_FHIR_VERSION = {$IFDEF FHIR1} fhirVersionRelease1 {$ENDIF} {$IFDEF FHIR2} fhirVersionRelease2 {$ENDIF}{$IFDEF FHIR3} fhirVersionRelease3 {$ENDIF} {$IFDEF FHIR4}  fhirVersionRelease4{$ENDIF} ;
 
 
@@ -156,6 +157,7 @@ Type
 //    property Code : String read FCode write FCode;
 //    property Display : String read FDisplay write FDisplay;
 //  end;
+  TFhirResourceTypeV = string;
 
 Const
   FHIR_NS = 'http://hl7.org/fhir';
@@ -166,6 +168,16 @@ Const
   EXT_ACTUAL_TFHIRFormat : Array [TFHIRFormat] of String = ('.bin', '.xml', '.json', '.ttl', '.txt', '.ndjson', '.html');
   EXT_WEB_TFHIRFormat : Array [TFHIRFormat] of String = ('.bin', '.xml', '.json', '.ttl', '.txt', '.ndjson', '.xml');
   MIMETYPES_TFHIRFormat : Array [TFHIRFormat] of String = ('', 'application/fhir+xml', 'application/fhir+json', 'text/turtle; x-dialect=fhir', 'text/fhir', 'application/x-ndjson', 'text/xhtml');
+  MIMETYPES_TFHIRFormat_Version : Array [TFHIRFormat, TFHIRVersion] of String = (
+    ('', '', '', '', ''),
+    ('', 'application/xml+fhir', 'application/xml+fhir', 'application/fhir+xml', 'application/fhir+xml'),
+    ('', 'application/json+fhir', 'application/json+fhir', 'application/fhir+json', 'application/fhir+json'),
+    ('','','','text/turtle; x-dialect=fhir','text/turtle; x-dialect=fhir'),
+    ('','','','text/fhir','text/fhir'),
+    ('','','','','application/x-ndjson'),
+    ('', 'text/xhtml', 'text/xhtml', 'text/xhtml', 'text/xhtml')
+    );
+
   Names_TFHIRAuthProvider : Array [TFHIRAuthProvider] of String = ('', 'Custom', 'Facebook', 'Google', 'HL7');
   USER_SCHEME_IMPLICIT = 'http://healthintersections.com.au/fhir/user/implicit';
   USER_SCHEME_PROVIDER : array [TFHIRAuthProvider] of String =

@@ -249,7 +249,11 @@ uses
   FHIRBase4 in '..\..\reference-platform\r4\FHIRBase4.pas',
   FHIRXhtmlComposer in '..\..\reference-platform\support\FHIRXhtmlComposer.pas',
   FHIRParserBase4 in '..\..\reference-platform\r4\FHIRParserBase4.pas',
-  FHIRParser4 in '..\..\reference-platform\r4\FHIRParser4.pas';
+  FHIRParser4 in '..\..\reference-platform\r4\FHIRParser4.pas',
+  FHIRClientBase in '..\..\reference-platform\client\FHIRClientBase.pas',
+  FHIRClientHTTP in '..\..\reference-platform\client\FHIRClientHTTP.pas',
+  FHIRClientThreaded in '..\..\reference-platform\client\FHIRClientThreaded.pas',
+  FHIRClient4 in '..\..\reference-platform\r4\FHIRClient4.pas';
 
 {$R *.res}
 
