@@ -337,7 +337,6 @@ end;
 function TKDBSQLiteConnection.FetchMetaDataV: TKDBMetaData;
 var
   tbl : TKDBTable;
-  col : TKDBColumn;
   s : String;
   a : TArray<String>;
 begin

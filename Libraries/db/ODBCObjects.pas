@@ -2855,8 +2855,10 @@ End;
 // inserting/skipping the high 16 bits until a bug manifests...
 
 function fromOdbcPChar(p : PChar; length : integer) : String;
+  {$IFDEF MACOS}
 var
   i : integer;
+  {$ENDIF}
 begin
   {$IFDEF MACOS}
   SetLength(result, length);
@@ -2868,8 +2870,6 @@ begin
 end;
 
 function odbcPChar(s : String) : PChar; overload;
-var
-  i : integer;
 begin
   if s = '' then
     result := nil
@@ -2878,8 +2878,6 @@ begin
     {$IFDEF MACOS}
     getMem(result, (length(s)+1) * 4);
     fillChar(result^, (length(s)+1)*4, 0);
-//    for i := 1 to length(s) do
-//      result[(i-1) * 2] := s[i];
     {$ELSE}
     getMem(result, (length(s)+1) * 2);
     fillChar(result^, (length(s)+1)*2, 0);
@@ -5873,7 +5871,6 @@ End;
 Procedure TOdbcStatement.Execute;
 Var
   ParsedSQL: PChar;
-  RetCode: SQLRETURN;
 Begin
   Log(1, 'TOdbcStatement.Execute');
 
@@ -10363,7 +10360,6 @@ end;
 
 procedure TCatalogTable.RetrieveColumns;
 var
-  RetCode: SQLRETURN;
   ATableOwner: Pointer;
   temp: TCatalogColumn;
 begin
@@ -10373,10 +10369,8 @@ begin
     ATableOwner:= PChar(FTableOwner);
 
   FCatalog.FHstmt.Terminate;
-  RetCode:= SQLColumns(FCatalog.FHstmt.Handle, nil, 0, ATableOwner, Length(FTableOwner),
+  SQLColumns(FCatalog.FHstmt.Handle, nil, 0, ATableOwner, Length(FTableOwner),
     Pointer(PChar(FTableName)), Length(FTableName), nil, 0);
-//!  if not FEnv.Error.Success(RetCode) then
-//!    FEnv.Error.RaiseError(FCatalog.FHstmt, RetCode);
 
   FColumns.FreeItems;
   while FCatalog.FHstmt.FetchNext do
@@ -11250,5 +11244,3 @@ end;
 End.
 
 
-    getMem(result, (length(s) + 1) * 2);
-    fillChar(result^, (length(s) + 1)*2, 0);

@@ -613,7 +613,6 @@ End;
 function TKDBOdbcConnection.TableSizeMSSQL(sName : String) : int64;
 Begin
   try
-  result := 0;
   SQL := 'sp_spaceused '+sName;
   Prepare;
   try

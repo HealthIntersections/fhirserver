@@ -36,7 +36,7 @@ unit SQLite3Wrap;
 interface
 
 uses
-  SysUtils, Classes,
+  SysUtils, Classes, Types,
   SQLite3,
   DateSupport;
 
